@@ -11019,6 +11019,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     map.on('dblclick', (e) => {
+        // ── Finish operation boundary drawing on double-click ──
+        if (operationBoundaryDrawMode) {
+            e.originalEvent?.preventDefault?.();
+            finishBoundaryDrawing();
+            return;
+        }
         const target = e.originalEvent?.target;
         if (!target || !map.getContainer().contains(target) || target.closest?.('.sidebar') || target.closest?.('.top-bar') || target.closest?.('.modal')) return;
         if (currentMode === 'line' && selectedTmgType && isParametricCatkPlacementType(selectedTmgType) && catkPlacementState?.phase === 'bodyDrawing') {
@@ -11119,6 +11125,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     map.on('click', (e) => {
+
+        // ── Operation boundary drawing intercept ──
+        if (operationBoundaryDrawMode && e.latlng) {
+            addBoundaryVertex(e.latlng);
+            return;
+        }
 
         if (window.freeDrawSignatureRecentClick) {
             // Don't consume — just clear the flag. The placement click was already

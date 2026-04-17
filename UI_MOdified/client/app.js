@@ -4691,6 +4691,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((e.code === 'Escape' || e.key === 'Escape') && topFavoritesPanel && !topFavoritesPanel.classList.contains('hidden')) {
             setTopFavoritesOpen(false);
         }
+        // Cancel boundary drawing on Escape
+        if ((e.code === 'Escape' || e.key === 'Escape') && operationBoundaryDrawMode) {
+            cancelBoundaryDrawing();
+        }
     });
 
     // --- Layer Template Favorites ---

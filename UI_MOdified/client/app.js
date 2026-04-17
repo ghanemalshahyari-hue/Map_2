@@ -3851,15 +3851,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
         } else if (mode === '8&20') {
-            // ── BOTH: FRONT ORG + DEEP ORG ──
+            // ── BOTH: FRONT ORG (8km, orange) + DEEP ORG (remaining to 20km) ──
             const front = buildAngularBoundary(ordered, dist1);
             const deep  = buildAngularBoundary(ordered, dist2);
+
+            // Front-org boundary drawn in orange to distinguish from deep-org
+            const frontBorderOpt = {
+                color: '#f59e0b',
+                weight: 3,
+                opacity: 0.85,
+                interactive: true,
+                className: 'auto-flank-border'
+            };
 
             if (front.boundary.length < 2 || deep.boundary.length < 2) { drawn = 0; }
             else {
                 const polys = buildClippedDualPolygons(
                     ordered, front.boundary, deep.boundary,
-                    borderOpt, sessionId, tag, dist1, dist2);
+                    frontBorderOpt, borderOpt, sessionId, tag, dist1, dist2);
                 drawn = polys.length ? ordered.length : 0;
             }
         }

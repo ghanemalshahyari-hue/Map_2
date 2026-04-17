@@ -2496,6 +2496,97 @@ document.addEventListener('DOMContentLoaded', () => {
     let obstaclePolygons = [];
     let obstacleGeoLoadPromise = null;
 
+    // ═══════════════════════════════════════════════════════════════════
+    // OPERATION BOUNDARY — user-defined envelope constraining auto-draw
+    // ═══════════════════════════════════════════════════════════════════
+    let operationBoundaryLatLngs = null;   // Array of L.LatLng — the closed boundary polygon
+    let operationBoundaryLayer = null;     // L.Polygon visual on map
+    let operationBoundaryDrawMode = false; // true while user is placing boundary vertices
+    let operationBoundaryVertices = [];    // temporary vertices during drawing
+    let operationBoundaryPreviewLine = null; // temporary polyline preview
+
+    /**
+     * Set the operation boundary from an array of L.LatLng points.
+     * Auto-draw will clip all output to stay within this polygon.
+     */
+    function setOperationBoundary(latlngs) {
+        clearOperationBoundary();
+        if (!latlngs || latlngs.length < 3) return;
+        operationBoundaryLatLngs = latlngs.map(p => L.latLng(p.lat, p.lng));
+        operationBoundaryLayer = L.polygon(operationBoundaryLatLngs, {
+            color: '#9333ea',
+            weight: 2,
+            opacity: 0.8,
+            fillColor: '#9333ea',
+            fillOpacity: 0.08,
+            dashArray: '8,4',
+            interactive: false,
+            className: 'operation-boundary'
+        });
+        operationBoundaryLayer.addTo(map);
+        console.log('[AutoDraw] Operation boundary set with ' + latlngs.length + ' vertices');
+    }
+
+    function getOperationBoundary() {
+        return operationBoundaryLatLngs;
+    }
+
+    function clearOperationBoundary() {
+        if (operationBoundaryLayer && map) {
+            map.removeLayer(operationBoundaryLayer);
+        }
+        operationBoundaryLayer = null;
+        operationBoundaryLatLngs = null;
+    }
+
+    function startBoundaryDrawing() {
+        operationBoundaryDrawMode = true;
+        operationBoundaryVertices = [];
+        clearOperationBoundary();
+        map.getContainer().style.cursor = 'crosshair';
+        if (operationBoundaryPreviewLine) { map.removeLayer(operationBoundaryPreviewLine); }
+        operationBoundaryPreviewLine = L.polyline([], {
+            color: '#9333ea', weight: 2, dashArray: '6,3', opacity: 0.7
+        }).addTo(map);
+        console.log('[AutoDraw] Boundary drawing started');
+    }
+
+    function addBoundaryVertex(latlng) {
+        if (!operationBoundaryDrawMode) return;
+        operationBoundaryVertices.push(L.latLng(latlng.lat, latlng.lng));
+        if (operationBoundaryPreviewLine) {
+            const preview = operationBoundaryVertices.slice();
+            if (preview.length > 1) preview.push(preview[0]); // close visually
+            operationBoundaryPreviewLine.setLatLngs(preview);
+        }
+    }
+
+    function finishBoundaryDrawing() {
+        operationBoundaryDrawMode = false;
+        map.getContainer().style.cursor = '';
+        if (operationBoundaryPreviewLine) {
+            map.removeLayer(operationBoundaryPreviewLine);
+            operationBoundaryPreviewLine = null;
+        }
+        if (operationBoundaryVertices.length >= 3) {
+            setOperationBoundary(operationBoundaryVertices);
+        }
+        operationBoundaryVertices = [];
+        console.log('[AutoDraw] Boundary drawing finished');
+    }
+
+    function cancelBoundaryDrawing() {
+        operationBoundaryDrawMode = false;
+        operationBoundaryVertices = [];
+        map.getContainer().style.cursor = '';
+        if (operationBoundaryPreviewLine) {
+            map.removeLayer(operationBoundaryPreviewLine);
+            operationBoundaryPreviewLine = null;
+        }
+    }
+
+    function isBoundaryDrawing() { return operationBoundaryDrawMode; }
+
     function parseObstacleGeoJSON(fc) {
         const polys = [];
         if (!fc) return polys;

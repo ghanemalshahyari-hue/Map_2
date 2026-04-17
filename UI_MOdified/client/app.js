@@ -3235,17 +3235,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const obstacles = getRoutingObstaclePolygons();
         const clipped = clipPolygonByObstacles(rawRing, obstacles, ordered);
 
-        // ── 3. Extract the non-front border from the clipped polygon ──
-        //    The front line (scalloped) is rendered separately — only draw
-        //    the flanks + baseline as polylines (no fill).
+        // ── 3. Render clipped area polygon + non-front border polylines ──
         const result = [];
         for (const poly of clipped) {
             const ring = poly.outer;
             if (!ring || ring.length < 3) continue;
 
-            // Find the two ring vertices closest to the first and last circle centres.
-            // The arc between them that does NOT pass through intermediate circle centres
-            // is the non-front border (flanks + baseline).
+            // ── 3a. Area overlay (non-interactive, does not block map clicks) ──
+            const areaRings = poly.holes && poly.holes.length > 0
+                ? [ring, ...poly.holes] : [ring];
+            const areaPoly = L.polygon(areaRings, {
+                color: lineOpts.color || '#3b82f6',
+                weight: 0,
+                fillColor: lineOpts.color || '#3b82f6',
+                fillOpacity: 0.08,
+                interactive: false,
+                className: 'auto-flank-area'
+            });
+            areaPoly._autoFlankLine = true;
+            areaPoly._autoFlankArea = true;
+            areaPoly._tmgData = {
+                typeId: 'auto-flank-area',
+                sessionId, tag, lengthKm
+            };
+            addToActiveLayer(areaPoly);
+            result.push(areaPoly);
+
+            // ── 3b. Non-front border extraction ──
             const firstCtr = ordered[0];
             const lastCtr  = ordered[ordered.length - 1];
             let si = 0, ei = 0, sd = Infinity, ed = Infinity;
@@ -3256,7 +3272,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (d2 < ed) { ed = d2; ei = i; }
             }
 
-            // Build two candidate arcs: ei→si forward, ei→si backward
             function arcBetween(from, to, dir) {
                 const pts = [];
                 const n = ring.length;
@@ -3271,16 +3286,39 @@ document.addEventListener('DOMContentLoaded', () => {
             const fwd = arcBetween(ei, si, +1);
             const bwd = arcBetween(ei, si, -1);
 
-            // The non-front arc is the one whose midpoint is farther from the
-            // front-line axis (closer to the baseline).  Quick proxy: sum of
-            // distances of each arc point to the centre of the ordered array.
-            const midCtr = ordered[Math.floor(ordered.length / 2)];
-            const avgDist = (pts) => {
+            // Distance-to-front-polyline approach: measures the average
+            // minimum distance from each arc point to the ordered centres
+            // chain. More robust than single-center heuristic — handles
+            // curved front lines and obstacle-shifted ring vertices.
+            function minDistToFrontPolyline(pt) {
+                if (ordered.length < 2) {
+                    return ordered.length === 1 ? map.distance(pt, ordered[0]) : 0;
+                }
+                let minD = Infinity;
+                for (let k = 0; k < ordered.length - 1; k++) {
+                    const a = ordered[k], b = ordered[k + 1];
+                    const pa = map.latLngToLayerPoint(a);
+                    const pb = map.latLngToLayerPoint(b);
+                    const pp = map.latLngToLayerPoint(pt);
+                    const dx = pb.x - pa.x, dy = pb.y - pa.y;
+                    const lenSq = dx * dx + dy * dy;
+                    let t = lenSq > 0 ? ((pp.x - pa.x) * dx + (pp.y - pa.y) * dy) / lenSq : 0;
+                    t = Math.max(0, Math.min(1, t));
+                    const proj = L.latLng(
+                        a.lat + t * (b.lat - a.lat),
+                        a.lng + t * (b.lng - a.lng)
+                    );
+                    const d = map.distance(pt, proj);
+                    if (d < minD) minD = d;
+                }
+                return minD;
+            }
+            const avgDistToFront = (pts) => {
                 let s = 0;
-                for (const p of pts) s += map.distance(p, midCtr);
+                for (const p of pts) s += minDistToFrontPolyline(p);
                 return s / (pts.length || 1);
             };
-            const nonFront = avgDist(fwd) >= avgDist(bwd) ? fwd : bwd;
+            const nonFront = avgDistToFront(fwd) >= avgDistToFront(bwd) ? fwd : bwd;
 
             if (nonFront.length >= 2) {
                 const pl = L.polyline(nonFront, lineOpts);

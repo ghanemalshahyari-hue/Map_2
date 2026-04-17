@@ -14527,4 +14527,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.AppChat.init();
+    window.AppUnits?.init?.();
 });

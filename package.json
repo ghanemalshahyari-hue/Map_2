@@ -1,0 +1,12 @@
+{
+  "name": "map",
+  "private": true,
+  "description": "Run rmooz from repo root; app lives in UI_MOdified/",
+  "scripts": {
+    "postinstall": "npm install --prefix UI_MOdified",
+    "app": "npm run app --prefix UI_MOdified",
+    "start": "npm run start --prefix UI_MOdified",
+    "serve": "npm run serve --prefix UI_MOdified",
+    "web": "npm run web --prefix UI_MOdified"
+  }
+}

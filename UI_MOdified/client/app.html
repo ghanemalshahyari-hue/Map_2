@@ -69,6 +69,15 @@
                     <span data-i18n="tool-erase">Erase</span>
                 </button>
 
+                <button class="tool-rail-btn" data-tool="units" type="button" title="Add Unit">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3v18"/>
+                        <path d="M3 12h18"/>
+                        <path d="M7 7h10v10H7z" opacity="0.25"/>
+                    </svg>
+                    <span data-i18n="tool-units">Units</span>
+                </button>
+
                 <div class="tool-rail-spacer"></div>
 
                 <button class="tool-rail-btn" data-tool="layers" type="button" title="Layers">
@@ -892,6 +901,85 @@
         </div>
     </div>
 
+    <!-- Units (Add Unit) modal -->
+    <div id="units-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" id="units-modal-backdrop"></div>
+        <div class="modal-panel units-modal-panel" role="dialog" aria-modal="true" aria-label="Units">
+            <div class="modal-header">
+                <div class="modal-title" data-i18n="units-title">Units</div>
+                <button type="button" class="modal-close" id="units-modal-close" data-i18n="close">Close</button>
+            </div>
+            <div class="units-modal-body">
+                <div class="units-left">
+                    <div class="units-search-row">
+                        <input id="units-search-input" type="text" class="glass-input" autocomplete="off" spellcheck="false" maxlength="200" data-i18n-placeholder="units-search-placeholder" placeholder="Search by name or code" />
+                        <button type="button" id="units-refresh-btn" class="glass-btn secondary" data-i18n="refresh">Refresh</button>
+                    </div>
+                    <div class="units-tree-wrap">
+                        <div id="units-tree" class="units-tree" role="tree" aria-label="Units tree"></div>
+                    </div>
+                </div>
+                <div class="units-right">
+                    <div class="units-editor-header">
+                        <div class="units-selected-label" data-i18n="units-selected">Selected</div>
+                        <div id="units-selected-name" class="units-selected-name">—</div>
+                        <div id="units-selected-meta" class="units-selected-meta"></div>
+                    </div>
+
+                    <div class="units-form">
+                        <div class="units-form-grid">
+                            <div class="field">
+                                <label class="field-label" for="units-code" data-i18n="units-code">Code</label>
+                                <input id="units-code" type="text" class="glass-input" maxlength="80" autocomplete="off" spellcheck="false" />
+                            </div>
+                            <div class="field">
+                                <label class="field-label" for="units-name" data-i18n="units-name">Name</label>
+                                <input id="units-name" type="text" class="glass-input" maxlength="200" autocomplete="off" />
+                            </div>
+                            <div class="field">
+                                <label class="field-label" for="units-level" data-i18n="units-level">Level</label>
+                                <select id="units-level" class="glass-select">
+                                    <option value="0" data-i18n="units-level-army">Army</option>
+                                    <option value="1" data-i18n="units-level-landforce">Land Force</option>
+                                    <option value="2" data-i18n="units-level-brigade">Brigade</option>
+                                    <option value="3" data-i18n="units-level-battalion">Battalion</option>
+                                    <option value="4" data-i18n="units-level-company">Company</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label class="field-label" for="units-parent" data-i18n="units-parent">Parent</label>
+                                <select id="units-parent" class="glass-select"></select>
+                            </div>
+                            <div class="field">
+                                <label class="field-label" for="units-sidc" data-i18n="units-sidc">SIDC</label>
+                                <input id="units-sidc" type="text" class="glass-input" maxlength="60" autocomplete="off" spellcheck="false" />
+                            </div>
+                            <div class="field">
+                                <label class="field-label" for="units-type" data-i18n="units-type">Type</label>
+                                <input id="units-type" type="text" class="glass-input" maxlength="120" autocomplete="off" />
+                            </div>
+                            <div class="field">
+                                <label class="field-label" for="units-include-deleted">
+                                    <input id="units-include-deleted" type="checkbox" />
+                                    <span data-i18n="units-include-deleted">Show deleted</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="units-actions">
+                            <button type="button" id="units-create-btn" class="glass-btn" data-i18n="units-create">Create</button>
+                            <button type="button" id="units-save-btn" class="glass-btn secondary" data-i18n="save">Save</button>
+                            <button type="button" id="units-move-btn" class="glass-btn secondary" data-i18n="units-move">Move</button>
+                            <button type="button" id="units-delete-btn" class="glass-btn danger" data-i18n="delete">Delete</button>
+                            <button type="button" id="units-restore-btn" class="glass-btn secondary" data-i18n="restore">Restore</button>
+                        </div>
+                        <div id="units-error" class="units-error hidden" role="alert"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Layer template favorites modal -->
     <div id="layer-templates-modal" class="modal hidden" aria-hidden="true">
         <div class="modal-backdrop" id="layer-templates-modal-backdrop"></div>
@@ -969,6 +1057,7 @@
     <script src="popups.js"></script>
     <script src="dialog.js"></script>
     <script src="chat.js"></script>
+    <script src="units.js"></script>
     <script src="i18n.js"></script>
     <script src="../lib/leaflet.js"></script>
     <script src="../lib/mgrs.min.js"></script>

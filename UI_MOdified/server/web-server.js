@@ -6,6 +6,13 @@ const http = require('http');
 const fs   = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+let Database;
+try {
+    Database = require('better-sqlite3');
+} catch (e) {
+    // Units feature (and tile server) require better-sqlite3; keep server usable even if missing.
+    Database = null;
+}
 
 const PORT = 8000;
 /** Project root — env var (set by Electron) or parent of server/ */
@@ -29,6 +36,100 @@ const CHAT_PRESENCE_MAX_MS = 90 * 1000;
 // Ensure writable directories exist on first launch
 try { fs.mkdirSync(DATA_DIR,   { recursive: true }); } catch {}
 try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch {}
+
+// -------------------- Units DB (SQLite) --------------------
+const UNITS_DB_FILE = process.env.RMOOZ_UNITS_DB_FILE || path.join(DATA_DIR, 'units.db');
+let unitsDb = null;
+
+function nowIso() {
+    return new Date().toISOString();
+}
+
+function genId() {
+    if (crypto.randomUUID) return crypto.randomUUID();
+    return 'u-' + Date.now().toString(36) + '-' + crypto.randomBytes(12).toString('hex');
+}
+
+function toBoolish(v) {
+    const s = String(v ?? '').trim().toLowerCase();
+    return s === '1' || s === 'true' || s === 'yes' || s === 'y' || s === 'on';
+}
+
+function toIntOrNull(v) {
+    if (v == null || v === '') return null;
+    const n = Number.parseInt(String(v), 10);
+    return Number.isFinite(n) ? n : null;
+}
+
+function normalizeText(v, maxLen = 300) {
+    if (v == null) return null;
+    const s = String(v).trim();
+    if (!s) return null;
+    return s.length > maxLen ? s.slice(0, maxLen) : s;
+}
+
+function initUnitsDb() {
+    if (!Database) return null;
+    if (unitsDb) return unitsDb;
+    try {
+        unitsDb = new Database(UNITS_DB_FILE);
+        unitsDb.pragma('journal_mode = WAL');
+        unitsDb.exec(`
+            CREATE TABLE IF NOT EXISTS units (
+                id TEXT PRIMARY KEY,
+                code TEXT UNIQUE NOT NULL,
+                name TEXT NOT NULL,
+                level INTEGER NOT NULL CHECK(level BETWEEN 0 AND 4),
+                parent_id TEXT NULL,
+                sidc TEXT NULL,
+                unit_type TEXT NULL,
+                size TEXT NULL,
+                deleted_at TEXT NULL,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_units_parent  ON units(parent_id);
+            CREATE INDEX IF NOT EXISTS idx_units_level   ON units(level);
+            CREATE INDEX IF NOT EXISTS idx_units_deleted ON units(deleted_at);
+        `);
+        return unitsDb;
+    } catch (e) {
+        unitsDb = null;
+        return null;
+    }
+}
+
+const UNITS_LEVEL_LABELS = {
+    0: 'Army',
+    1: 'Land Force',
+    2: 'Brigade',
+    3: 'Battalion',
+    4: 'Company',
+};
+
+function codePrefixForLevel(level) {
+    switch (level) {
+        case 0: return 'ARMY';
+        case 1: return 'LF';
+        case 2: return 'BDE';
+        case 3: return 'BN';
+        case 4: return 'CO';
+        default: return 'U';
+    }
+}
+
+function generateUnitCode(db, level) {
+    const prefix = codePrefixForLevel(level);
+    // short random suffix, collision-resistant with uniqueness check loop
+    for (let i = 0; i < 15; i++) {
+        const suffix = crypto.randomBytes(2).toString('hex').toUpperCase(); // 4 chars
+        const code = `${prefix}-${suffix}`;
+        const existing = db.prepare('SELECT id FROM units WHERE code=? LIMIT 1').get(code);
+        if (!existing) return code;
+    }
+    // fallback: include timestamp if we had very bad luck
+    return `${prefix}-${Date.now().toString(36).toUpperCase()}`;
+}
 
 const MIME = {
     '.html' : 'text/html; charset=utf-8',
@@ -69,6 +170,29 @@ function writeAllMessages(messages) {
 function sendJson(res, status, payload) {
     res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
     res.end(JSON.stringify(payload));
+}
+
+function readJsonBody(req, opts = {}) {
+    const maxBytes = opts.maxBytes ?? 200000; // 200KB
+    return new Promise((resolve, reject) => {
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk;
+            if (body.length > maxBytes) {
+                try { req.destroy(); } catch {}
+                reject(Object.assign(new Error('Body too large'), { code: 'BODY_TOO_LARGE' }));
+            }
+        });
+        req.on('end', () => {
+            if (!body) return resolve({});
+            try {
+                resolve(JSON.parse(body));
+            } catch (e) {
+                reject(Object.assign(new Error('Invalid JSON'), { code: 'INVALID_JSON' }));
+            }
+        });
+        req.on('error', reject);
+    });
 }
 
 function ensureUploadsDir() {
@@ -256,7 +380,7 @@ function generateInviteCode() {
     return s;
 }
 
-http.createServer((req, res) => {
+const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://localhost');
     const pathname = url.pathname;
 
@@ -720,6 +844,318 @@ http.createServer((req, res) => {
         res.writeHead(405); res.end(); return;
     }
 
+    // --- Units API (SQLite) ---
+    if (pathname === '/api/units/tree' && req.method === 'GET') {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        const includeDeleted = toBoolish(url.searchParams.get('includeDeleted'));
+        const rows = db.prepare(
+            includeDeleted
+                ? 'SELECT * FROM units ORDER BY level ASC, name ASC'
+                : 'SELECT * FROM units WHERE deleted_at IS NULL ORDER BY level ASC, name ASC'
+        ).all();
+        const byId = new Map(rows.map(r => [r.id, r]));
+        const childrenMap = new Map();
+        for (const r of rows) {
+            const pid = r.parent_id || null;
+            if (!childrenMap.has(pid)) childrenMap.set(pid, []);
+            childrenMap.get(pid).push(r);
+        }
+        function nodeFor(r) {
+            const kids = childrenMap.get(r.id) || [];
+            return {
+                id: r.id,
+                code: r.code,
+                name: r.name,
+                level: r.level,
+                levelLabel: UNITS_LEVEL_LABELS[r.level] || String(r.level),
+                parentId: r.parent_id || null,
+                sidc: r.sidc || null,
+                unitType: r.unit_type || null,
+                deletedAt: r.deleted_at || null,
+                createdAt: r.created_at,
+                updatedAt: r.updated_at,
+                children: kids.map(nodeFor),
+            };
+        }
+        const roots = (childrenMap.get(null) || []).filter(r => !r.parent_id || !byId.has(r.parent_id)).map(nodeFor);
+        sendJson(res, 200, { roots, units: rows });
+        return;
+    }
+
+    if (pathname.startsWith('/api/units/') && req.method === 'GET' && pathname.endsWith('/children')) {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        const parts = pathname.split('/').filter(Boolean); // api, units, :id, children
+        const id = parts[2];
+        const depth = Math.max(1, toIntOrNull(url.searchParams.get('depth')) || 1);
+        const includeDeleted = toBoolish(url.searchParams.get('includeDeleted'));
+        const root = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+        if (!root || (!includeDeleted && root.deleted_at)) { sendJson(res, 404, { error: 'Unit not found' }); return; }
+        const rows = db.prepare(includeDeleted ? 'SELECT * FROM units' : 'SELECT * FROM units WHERE deleted_at IS NULL').all();
+        const childrenMap = new Map();
+        for (const r of rows) {
+            const pid = r.parent_id || null;
+            if (!childrenMap.has(pid)) childrenMap.set(pid, []);
+            childrenMap.get(pid).push(r);
+        }
+        const out = [];
+        function walk(pid, d) {
+            if (d <= 0) return;
+            const kids = childrenMap.get(pid) || [];
+            for (const k of kids) {
+                out.push(k);
+                walk(k.id, d - 1);
+            }
+        }
+        walk(id, depth);
+        sendJson(res, 200, { unit: root, depth, children: out });
+        return;
+    }
+
+    if (pathname === '/api/units/search' && req.method === 'GET') {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        const q = normalizeText(url.searchParams.get('q'), 200) || '';
+        const includeDeleted = toBoolish(url.searchParams.get('includeDeleted'));
+        if (!q) { sendJson(res, 200, { q: '', results: [] }); return; }
+        const like = '%' + q + '%';
+        const stmt = db.prepare(
+            includeDeleted
+                ? "SELECT * FROM units WHERE code LIKE ? OR name LIKE ? ORDER BY level ASC, name ASC LIMIT 200"
+                : "SELECT * FROM units WHERE deleted_at IS NULL AND (code LIKE ? OR name LIKE ?) ORDER BY level ASC, name ASC LIMIT 200"
+        );
+        const results = stmt.all(like, like);
+        sendJson(res, 200, { q, results });
+        return;
+    }
+
+    if (pathname === '/api/units/code-check' && req.method === 'GET') {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        const raw = normalizeText(url.searchParams.get('code'), 80);
+        const code = raw ? raw.trim() : '';
+        const excludeId = normalizeText(url.searchParams.get('excludeId'), 80);
+        if (!code) { sendJson(res, 200, { code: '', available: false, reason: 'empty' }); return; }
+        const row = db.prepare('SELECT id FROM units WHERE code=? LIMIT 1').get(code);
+        if (!row) { sendJson(res, 200, { code, available: true }); return; }
+        if (excludeId && row.id === excludeId) { sendJson(res, 200, { code, available: true, existingId: row.id }); return; }
+        sendJson(res, 200, { code, available: false, existingId: row.id });
+        return;
+    }
+
+    if (pathname === '/api/units' && req.method === 'POST') {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        readJsonBody(req).then(body => {
+            let code = normalizeText(body.code, 80);
+            const name = normalizeText(body.name, 200);
+            const level = toIntOrNull(body.level);
+            const parentId = normalizeText(body.parentId, 80);
+            const sidc = normalizeText(body.sidc, 60);
+            const unitType = normalizeText(body.unitType, 120);
+            if (!name) return sendJson(res, 400, { error: 'name is required' });
+            if (level == null || level < 0 || level > 4) return sendJson(res, 400, { error: 'level must be 0..4' });
+            if (!parentId && level !== 0) return sendJson(res, 400, { error: 'root units must be level 0 (Army)' });
+
+            let parent = null;
+            if (parentId) {
+                parent = db.prepare('SELECT * FROM units WHERE id=?').get(parentId);
+                if (!parent || parent.deleted_at) return sendJson(res, 400, { error: 'parentId not found' });
+                if ((parent.level + 1) !== level) return sendJson(res, 400, { error: 'child level must be parent level + 1' });
+            }
+
+            if (!code) {
+                code = generateUnitCode(db, level);
+            } else {
+                const existing = db.prepare('SELECT id FROM units WHERE code=? LIMIT 1').get(code);
+                if (existing) return sendJson(res, 409, { error: 'code must be unique' });
+            }
+
+            const id = genId();
+            const t = nowIso();
+            try {
+                db.prepare(
+                    'INSERT INTO units (id, code, name, level, parent_id, sidc, unit_type, deleted_at, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)'
+                ).run(id, code, name, level, parentId || null, sidc, unitType, null, t, t);
+                const row = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+                sendJson(res, 201, row);
+            } catch (e) {
+                if (String(e && e.message || '').toLowerCase().includes('unique')) {
+                    return sendJson(res, 409, { error: 'code must be unique' });
+                }
+                sendJson(res, 500, { error: 'Failed to create unit' });
+            }
+        }).catch(err => {
+            sendJson(res, err && err.code === 'INVALID_JSON' ? 400 : 500, { error: err && err.code === 'INVALID_JSON' ? 'Invalid JSON' : 'Request failed' });
+        });
+        return;
+    }
+
+    if (pathname.startsWith('/api/units/') && req.method === 'PATCH') {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        const parts = pathname.split('/').filter(Boolean); // api, units, :id
+        const id = parts[2];
+        readJsonBody(req).then(body => {
+            const existing = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+            if (!existing) return sendJson(res, 404, { error: 'Unit not found' });
+
+            const name = body.name !== undefined ? normalizeText(body.name, 200) : undefined;
+            const code = body.code !== undefined ? normalizeText(body.code, 80) : undefined;
+            const level = body.level !== undefined ? toIntOrNull(body.level) : undefined;
+            const sidc = body.sidc !== undefined ? normalizeText(body.sidc, 60) : undefined;
+            const unitType = body.unitType !== undefined ? normalizeText(body.unitType, 120) : undefined;
+
+            if (code !== undefined && !code) return sendJson(res, 400, { error: 'code cannot be empty' });
+            if (name !== undefined && !name) return sendJson(res, 400, { error: 'name cannot be empty' });
+            if (level !== undefined && (level == null || level < 0 || level > 4)) return sendJson(res, 400, { error: 'level must be 0..4' });
+            if (code !== undefined) {
+                const existingCode = db.prepare('SELECT id FROM units WHERE code=? LIMIT 1').get(code);
+                if (existingCode && existingCode.id !== id) return sendJson(res, 409, { error: 'code must be unique' });
+            }
+
+            // If changing level, validate against parent/children (strict +1 rule)
+            if (level !== undefined) {
+                if (!existing.parent_id && level !== 0) return sendJson(res, 400, { error: 'root units must be level 0 (Army)' });
+                if (existing.parent_id) {
+                    const parent = db.prepare('SELECT * FROM units WHERE id=?').get(existing.parent_id);
+                    if (!parent || parent.deleted_at) return sendJson(res, 400, { error: 'parentId not found' });
+                    if ((parent.level + 1) !== level) return sendJson(res, 400, { error: 'child level must be parent level + 1' });
+                }
+                const kids = db.prepare('SELECT * FROM units WHERE parent_id=? AND deleted_at IS NULL').all(existing.id);
+                for (const k of kids) {
+                    if (k.level !== (level + 1)) return sendJson(res, 400, { error: 'cannot change level: child levels would be invalid' });
+                }
+            }
+
+            const sets = [];
+            const vals = [];
+            function setCol(col, v) { sets.push(col + '=?'); vals.push(v); }
+            if (code !== undefined) setCol('code', code);
+            if (name !== undefined) setCol('name', name);
+            if (level !== undefined) setCol('level', level);
+            if (sidc !== undefined) setCol('sidc', sidc);
+            if (unitType !== undefined) setCol('unit_type', unitType);
+            setCol('updated_at', nowIso());
+            if (sets.length === 0) return sendJson(res, 200, existing);
+
+            try {
+                db.prepare('UPDATE units SET ' + sets.join(', ') + ' WHERE id=?').run(...vals, id);
+                const row = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+                sendJson(res, 200, row);
+            } catch (e) {
+                if (String(e && e.message || '').toLowerCase().includes('unique')) {
+                    return sendJson(res, 409, { error: 'code must be unique' });
+                }
+                sendJson(res, 500, { error: 'Failed to update unit' });
+            }
+        }).catch(err => {
+            sendJson(res, err && err.code === 'INVALID_JSON' ? 400 : 500, { error: err && err.code === 'INVALID_JSON' ? 'Invalid JSON' : 'Request failed' });
+        });
+        return;
+    }
+
+    if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/move')) {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        const parts = pathname.split('/').filter(Boolean); // api, units, :id, move
+        const id = parts[2];
+        readJsonBody(req).then(body => {
+            const newParentId = normalizeText(body.newParentId, 80);
+            const unit = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+            if (!unit || unit.deleted_at) return sendJson(res, 404, { error: 'Unit not found' });
+            if (!newParentId) return sendJson(res, 400, { error: 'newParentId is required' });
+            const parent = db.prepare('SELECT * FROM units WHERE id=?').get(newParentId);
+            if (!parent || parent.deleted_at) return sendJson(res, 400, { error: 'newParentId not found' });
+            if ((parent.level + 1) !== unit.level) return sendJson(res, 400, { error: 'unit level must be parent level + 1' });
+
+            // cycle check: walk up parent chain from newParentId
+            let cur = parent;
+            const seen = new Set();
+            while (cur) {
+                if (cur.id === unit.id) return sendJson(res, 400, { error: 'move would create a cycle' });
+                if (seen.has(cur.id)) break;
+                seen.add(cur.id);
+                if (!cur.parent_id) break;
+                cur = db.prepare('SELECT * FROM units WHERE id=?').get(cur.parent_id);
+            }
+
+            db.prepare('UPDATE units SET parent_id=?, updated_at=? WHERE id=?').run(newParentId, nowIso(), id);
+            const row = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+            sendJson(res, 200, row);
+        }).catch(err => {
+            sendJson(res, err && err.code === 'INVALID_JSON' ? 400 : 500, { error: err && err.code === 'INVALID_JSON' ? 'Invalid JSON' : 'Request failed' });
+        });
+        return;
+    }
+
+    if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/delete')) {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        const parts = pathname.split('/').filter(Boolean); // api, units, :id, delete
+        const id = parts[2];
+        const unit = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+        if (!unit || unit.deleted_at) { sendJson(res, 404, { error: 'Unit not found' }); return; }
+
+        const all = db.prepare('SELECT id, parent_id FROM units').all();
+        const childMap = new Map();
+        for (const r of all) {
+            const pid = r.parent_id || null;
+            if (!childMap.has(pid)) childMap.set(pid, []);
+            childMap.get(pid).push(r.id);
+        }
+        const toDelete = [];
+        (function walk(curId) {
+            toDelete.push(curId);
+            const kids = childMap.get(curId) || [];
+            for (const k of kids) walk(k);
+        })(id);
+
+        const t = nowIso();
+        const stmt = db.prepare('UPDATE units SET deleted_at=?, updated_at=? WHERE id=? AND deleted_at IS NULL');
+        const tx = db.transaction(() => {
+            for (const uid of toDelete) stmt.run(t, t, uid);
+        });
+        tx();
+        sendJson(res, 200, { id, deletedAt: t, affected: toDelete.length });
+        return;
+    }
+
+    if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/restore')) {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        const parts = pathname.split('/').filter(Boolean); // api, units, :id, restore
+        const id = parts[2];
+        const unit = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+        if (!unit) { sendJson(res, 404, { error: 'Unit not found' }); return; }
+
+        // restore just this node (children remain as-is; if they were deleted by cascade, restore them too)
+        const all = db.prepare('SELECT id, parent_id FROM units').all();
+        const childMap = new Map();
+        for (const r of all) {
+            const pid = r.parent_id || null;
+            if (!childMap.has(pid)) childMap.set(pid, []);
+            childMap.get(pid).push(r.id);
+        }
+        const toRestore = [];
+        (function walk(curId) {
+            toRestore.push(curId);
+            const kids = childMap.get(curId) || [];
+            for (const k of kids) walk(k);
+        })(id);
+
+        const t = nowIso();
+        const stmt = db.prepare('UPDATE units SET deleted_at=NULL, updated_at=? WHERE id=?');
+        const tx = db.transaction(() => {
+            for (const uid of toRestore) stmt.run(t, uid);
+        });
+        tx();
+        const row = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+        sendJson(res, 200, { unit: row, affected: toRestore.length });
+        return;
+    }
+
     // --- Static files (including /uploads and /maps) ---
     let urlPath = decodeURIComponent(url.pathname);
     if (urlPath === '/') urlPath = '/index.html';
@@ -770,6 +1206,20 @@ http.createServer((req, res) => {
         res.writeHead(200, headers);
         res.end(data);
     });
-}).listen(PORT, '0.0.0.0', () => {
-    console.log('Web server running at http://localhost:' + PORT + ' (LAN accessible)');
+});
+
+server.on('error', (err) => {
+    if (err && err.code === 'EADDRINUSE') {
+        console.error('Port ' + PORT + ' is already in use. Stop the other process (e.g. lsof -ti :' + PORT + ' | xargs kill) or set PORT=8001 before starting.');
+    } else {
+        console.error(err);
+    }
+    process.exit(1);
+});
+
+server.listen(PORT, '0.0.0.0', () => {
+    const base = 'http://localhost:' + PORT;
+    console.log('Web server running at ' + base + ' (LAN accessible)');
+    console.log('  Open workspace: ' + base + '/app.html');
+    console.log('  Landing page:   ' + base + '/');
 });

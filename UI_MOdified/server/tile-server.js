@@ -83,10 +83,18 @@ app.get('/services/:tileset/:z/:x/:y.:fmt', (req, res) => {
 });
 
 loadAll();
-app.listen(PORT, '127.0.0.1', () => {
+const tileListener = app.listen(PORT, '127.0.0.1', () => {
     console.log('');
     console.log('  Tile server running at http://localhost:' + PORT);
     console.log('  Tilesets ready:', Object.keys(dbs).join(', ') || '(none - check maps/ folder)');
     console.log('  (Supports large files - reads from disk, no size limit)');
     console.log('');
+});
+tileListener.on('error', (err) => {
+    if (err && err.code === 'EADDRINUSE') {
+        console.error('Port ' + PORT + ' is already in use. Stop the other tile server (e.g. lsof -ti tcp:' + PORT + ' | xargs kill) or change PORT in server/tile-server.js.');
+    } else {
+        console.error(err);
+    }
+    process.exit(1);
 });

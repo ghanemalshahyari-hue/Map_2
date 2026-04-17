@@ -3129,6 +3129,146 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * Compute polygon intersection: subject ∩ clip.
+     * Both are arrays of [lng, lat] (NOT closed — first ≠ last).
+     * Returns array of result rings (each an array of [lng, lat]).
+     *
+     * Algorithm: Weiler-Atherton adapted for intersection (dual of _polyDifference).
+     *  • Walk subject forward while INSIDE clip
+     *  • At "exiting" intersection → switch to clip, walk FORWARD
+     *  • At next intersection on clip → switch back to subject
+     */
+    function _polyIntersection(subject, clip) {
+        const sN = subject.length, cN = clip.length;
+        if (!sN || !cN) return [];
+
+        // ── 1. Find all intersection points ──
+        const ixList = [];
+        for (let si = 0; si < sN; si++) {
+            const s1 = subject[si], s2 = subject[(si + 1) % sN];
+            for (let ci = 0; ci < cN; ci++) {
+                const c1 = clip[ci], c2 = clip[(ci + 1) % cN];
+                const ix = _segSeg(s1, s2, c1, c2);
+                if (ix) {
+                    ixList.push({
+                        pt: [ix.x, ix.y],
+                        sEdge: si, sT: ix.ta,
+                        cEdge: ci, cT: ix.tb,
+                        entering: false,
+                        visited: false
+                    });
+                }
+            }
+        }
+
+        // ── 2. Trivial cases (no crossing) ──
+        if (ixList.length < 2) {
+            if (_ptInRing(subject[0][0], subject[0][1], clip)) return [subject.slice()]; // subject fully inside clip
+            if (_ptInRing(clip[0][0], clip[0][1], subject)) return [clip.slice()]; // clip fully inside subject
+            return []; // disjoint
+        }
+
+        // ── 3. Classify entering / exiting ──
+        for (const ix of ixList) {
+            const si = ix.sEdge;
+            const dx = subject[(si + 1) % sN][0] - subject[si][0];
+            const dy = subject[(si + 1) % sN][1] - subject[si][1];
+            const len = Math.hypot(dx, dy) || 1;
+            const test = [ix.pt[0] + 1e-7 * dx / len, ix.pt[1] + 1e-7 * dy / len];
+            ix.entering = _ptInRing(test[0], test[1], clip);
+        }
+
+        // ── 4. Sort along subject boundary ──
+        ixList.sort((a, b) => a.sEdge !== b.sEdge ? a.sEdge - b.sEdge : a.sT - b.sT);
+        ixList.forEach((ix, i) => { ix.sIdx = i; });
+        const clipOrder = ixList.slice().sort((a, b) =>
+            a.cEdge !== b.cEdge ? a.cEdge - b.cEdge : a.cT - b.cT);
+        clipOrder.forEach((ix, i) => { ix.cIdx = i; });
+
+        // ── 5. Build augmented subject vertex list ──
+        const sAug = [];
+        let ixPtr = 0;
+        for (let si = 0; si < sN; si++) {
+            sAug.push({ pt: subject[si].slice(), isIx: false });
+            while (ixPtr < ixList.length && ixList[ixPtr].sEdge === si) {
+                sAug.push({ pt: ixList[ixPtr].pt.slice(), isIx: true, ix: ixList[ixPtr] });
+                ixPtr++;
+            }
+        }
+
+        // ── 6. Build augmented clip vertex list ──
+        const cAug = [];
+        let cPtr = 0;
+        for (let ci = 0; ci < cN; ci++) {
+            cAug.push({ pt: clip[ci].slice(), isIx: false });
+            while (cPtr < clipOrder.length && clipOrder[cPtr].cEdge === ci) {
+                cAug.push({ pt: clipOrder[cPtr].pt.slice(), isIx: true, ix: clipOrder[cPtr] });
+                cPtr++;
+            }
+        }
+
+        // Cross-link
+        for (const ix of ixList) {
+            ix._sAugIdx = sAug.findIndex(n => n.isIx && n.ix === ix);
+            ix._cAugIdx = cAug.findIndex(n => n.isIx && n.ix === ix);
+        }
+
+        // ── 7. Trace result polygons (INTERSECTION variant) ──
+        const results = [];
+        const maxTotal = (sAug.length + cAug.length) * 2;
+
+        for (const ix of ixList) {
+            if (ix.visited || !ix.entering) continue; // start at ENTERING intersections
+            const ring = [];
+            let onSubject = true;
+            let idx = ix._sAugIdx;
+            let steps = 0;
+
+            do {
+                const list = onSubject ? sAug : cAug;
+                const node = list[idx];
+                ring.push(node.pt.slice());
+
+                if (node.isIx && node.ix && node.ix !== ix && !node.ix.visited) {
+                    node.ix.visited = true;
+                }
+
+                if (node.isIx && node.ix) {
+                    if (onSubject && !node.ix.entering) {
+                        // Exiting clip → switch to clip boundary, walk FORWARD
+                        node.ix.visited = true;
+                        onSubject = false;
+                        idx = node.ix._cAugIdx;
+                        idx = (idx + 1) % cAug.length;
+                    } else if (!onSubject) {
+                        // Back at intersection while on clip → switch to subject
+                        node.ix.visited = true;
+                        onSubject = true;
+                        idx = node.ix._sAugIdx;
+                        idx = (idx + 1) % sAug.length;
+                    } else {
+                        idx = (idx + 1) % sAug.length;
+                    }
+                } else {
+                    if (onSubject) {
+                        idx = (idx + 1) % sAug.length;
+                    } else {
+                        idx = (idx + 1) % cAug.length;
+                    }
+                }
+
+                steps++;
+            } while (steps < maxTotal &&
+                     !(onSubject && idx === ix._sAugIdx));
+
+            ix.visited = true;
+            if (ring.length >= 3) results.push(ring);
+        }
+
+        return results;
+    }
+
+    /**
      * Clip a polygon by ALL obstacle polygons, then discard detached fragments.
      *
      * @param {Array<L.LatLng>} ring  – closed polygon as LatLng array

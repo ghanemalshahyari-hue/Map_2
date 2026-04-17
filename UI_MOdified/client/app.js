@@ -698,6 +698,9 @@ document.addEventListener('DOMContentLoaded', () => {
     map.createPane('geoObstacleHatchPane');
     map.getPane('geoObstacleHatchPane').style.zIndex = 415;
     map.getPane('geoObstacleHatchPane').style.pointerEvents = 'none';
+    map.createPane('autoFlankAreaPane');
+    map.getPane('autoFlankAreaPane').style.zIndex = 395;
+    map.getPane('autoFlankAreaPane').style.pointerEvents = 'none';
     const previewLayer = L.layerGroup().addTo(map);
     let previewMarker = null;
     let previewPolyline = null;

@@ -3415,6 +3415,219 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }
 
+    // ═══════════════════════════════════════════════════════════════════
+    // BOUNDARY-CONSTRAINED, OBSTACLE-AWARE AUTO-DRAW PIPELINE HELPERS
+    // ═══════════════════════════════════════════════════════════════════
+
+    /**
+     * Clip polygon(s) to the user-defined operation boundary.
+     * Uses _polyIntersection to retain only the parts inside the boundary.
+     *
+     * @param {Array<{ring: number[][], holes: number[][][]}>} currentPolys – polygons in [lng,lat]
+     * @returns {Array<{ring: number[][], holes: number[][][]}>} clipped polygon(s)
+     */
+    function clipByOperationBoundary(currentPolys) {
+        if (!operationBoundaryLatLngs || operationBoundaryLatLngs.length < 3) return currentPolys;
+        let boundaryRing = operationBoundaryLatLngs.map(p => [p.lng, p.lat]);
+        // Ensure not self-closed
+        if (boundaryRing.length > 1 &&
+            boundaryRing[0][0] === boundaryRing[boundaryRing.length - 1][0] &&
+            boundaryRing[0][1] === boundaryRing[boundaryRing.length - 1][1]) {
+            boundaryRing = boundaryRing.slice(0, -1);
+        }
+        if (boundaryRing.length < 3) return currentPolys;
+
+        console.groupCollapsed('[AutoDraw] clipByOperationBoundary');
+        console.log('  boundary vertices:', boundaryRing.length, '  input polys:', currentPolys.length);
+
+        const result = [];
+        for (const poly of currentPolys) {
+            const intersected = _polyIntersection(poly.ring, boundaryRing);
+            for (const r of intersected) {
+                result.push({ ring: r, holes: (poly.holes || []).slice() });
+            }
+        }
+
+        console.log('  output polys:', result.length);
+        console.groupEnd();
+
+        return result.length > 0 ? result : [];
+    }
+
+    /**
+     * Subtract obstacle polygons from a set of polygons.
+     * Same logic as the inner loop of clipPolygonByObstacles, but without
+     * fragment retention — that is handled separately.
+     *
+     * @param {Array<{ring: number[][], holes: number[][][]}>} currentPolys
+     * @param {Array<{outer: number[][], holes: number[][][]}>} obstacles
+     * @returns {Array<{ring: number[][], holes: number[][][]}>}
+     */
+    function subtractObstacles(currentPolys, obstacles) {
+        if (!currentPolys.length || !obstacles || !obstacles.length) return currentPolys;
+
+        console.groupCollapsed('[AutoDraw] subtractObstacles');
+        console.log('  obstacles:', obstacles.length, '  input polys:', currentPolys.length);
+
+        let polys = currentPolys.slice();
+        for (const obs of obstacles) {
+            let clipRing = obs.outer.slice();
+            if (clipRing.length > 1 &&
+                clipRing[0][0] === clipRing[clipRing.length - 1][0] &&
+                clipRing[0][1] === clipRing[clipRing.length - 1][1]) {
+                clipRing = clipRing.slice(0, -1);
+            }
+            if (clipRing.length < 3) continue;
+
+            const next = [];
+            for (const poly of polys) {
+                const diffResults = _polyDifference(poly.ring, clipRing);
+                for (const r of diffResults) {
+                    const holes = (poly.holes || []).slice();
+                    if (r._holes) holes.push(...r._holes);
+                    next.push({ ring: r, holes });
+                }
+            }
+            polys = next;
+            if (polys.length === 0) break;
+        }
+
+        console.log('  output polys:', polys.length);
+        console.groupEnd();
+
+        return polys;
+    }
+
+    /**
+     * Retain polygon fragments connected to anchor points (circle centres).
+     * Replaces the old "keep largest" heuristic.
+     *
+     * Policy:
+     *   1. Keep any polygon that contains at least one anchor point.
+     *   2. Keep any polygon whose boundary passes within tolerance of an anchor.
+     *   3. If keepAll=true, return all valid (≥3 vertex) fragments.
+     *   4. Fallback: if no anchor match, keep largest polygon.
+     *
+     * @param {Array<{ring: number[][], holes: number[][][]}>} currentPolys  – [lng,lat] ring format
+     * @param {Array<number[]>} anchorPoints – [[lng,lat], …] anchor positions
+     * @param {boolean} [keepAll=false] – if true, keep all valid components
+     * @returns {Array<{ring: number[][], holes: number[][][]}>}
+     */
+    function retainAnchorConnectedFragments(currentPolys, anchorPoints, keepAll) {
+        if (!currentPolys || currentPolys.length <= 1) return currentPolys;
+        if (keepAll) return currentPolys.filter(p => p.ring && p.ring.length >= 3);
+
+        console.groupCollapsed('[AutoDraw] retainAnchorConnectedFragments');
+        console.log('  polys:', currentPolys.length, '  anchors:', anchorPoints.length);
+
+        const kept = [];
+        for (let i = 0; i < currentPolys.length; i++) {
+            const poly = currentPolys[i];
+            if (!poly.ring || poly.ring.length < 3) continue;
+            let connected = false;
+
+            for (const anchor of anchorPoints) {
+                // Check if anchor is inside polygon
+                if (_ptInRing(anchor[0], anchor[1], poly.ring)) {
+                    connected = true;
+                    break;
+                }
+                // Check if anchor is on or very near a polygon edge
+                const ring = poly.ring;
+                for (let j = 0; j < ring.length; j++) {
+                    const j2 = (j + 1) % ring.length;
+                    const dx = ring[j2][0] - ring[j][0];
+                    const dy = ring[j2][1] - ring[j][1];
+                    const len2 = dx * dx + dy * dy;
+                    if (len2 < 1e-20) continue;
+                    const t = Math.max(0, Math.min(1,
+                        ((anchor[0] - ring[j][0]) * dx + (anchor[1] - ring[j][1]) * dy) / len2));
+                    const px = ring[j][0] + t * dx;
+                    const py = ring[j][1] + t * dy;
+                    const dist2 = (anchor[0] - px) * (anchor[0] - px) + (anchor[1] - py) * (anchor[1] - py);
+                    // ~1e-8 in lng/lat² ≈ ~11m tolerance at equator
+                    if (dist2 < 1e-8) {
+                        connected = true;
+                        break;
+                    }
+                }
+                if (connected) break;
+            }
+
+            if (connected) {
+                kept.push(poly);
+                console.log('  poly[' + i + '] KEPT (anchor-connected), area=' +
+                    Math.abs(_signedRingArea(poly.ring)).toFixed(6));
+            } else {
+                console.log('  poly[' + i + '] DROPPED (no anchor connection), area=' +
+                    Math.abs(_signedRingArea(poly.ring)).toFixed(6));
+            }
+        }
+
+        if (kept.length === 0) {
+            // Fallback: keep largest polygon (preserve old behavior as last resort)
+            console.warn('  No anchor-connected fragments found — falling back to largest');
+            let bestIdx = 0, bestArea = 0;
+            for (let i = 0; i < currentPolys.length; i++) {
+                const a = Math.abs(_signedRingArea(currentPolys[i].ring));
+                if (a > bestArea) { bestArea = a; bestIdx = i; }
+            }
+            console.groupEnd();
+            return [currentPolys[bestIdx]];
+        }
+
+        console.log('  Retained ' + kept.length + '/' + currentPolys.length + ' fragments');
+        console.groupEnd();
+        return kept;
+    }
+
+    /**
+     * Score the generated geometry against target dimensions and log deviation.
+     * This is for debug/doctrinal validation — it does not modify geometry.
+     *
+     * @param {Array<{ring: number[][]}>} polys – clipped polygon(s) in [lng,lat]
+     * @param {number} targetDistKm – the target org distance (front or deep)
+     * @param {L.LatLng[]} ordered  – circle centres (front line)
+     */
+    function scoreGeometryAgainstTargets(polys, targetDistKm, ordered) {
+        if (!polys || !polys.length || !ordered || ordered.length < 2) return;
+
+        console.groupCollapsed('[AutoDraw] scoreGeometryAgainstTargets');
+
+        // Measure approximate front width
+        const frontWidthM = haversineDistance(
+            ordered[0].lat, ordered[0].lng,
+            ordered[ordered.length - 1].lat, ordered[ordered.length - 1].lng
+        );
+        const frontWidthKm = frontWidthM / 1000;
+
+        // Measure max deep extent from any anchor to the farthest polygon vertex
+        let maxDeepKm = 0;
+        for (const poly of polys) {
+            for (const pt of poly.ring) {
+                for (const center of ordered) {
+                    const d = haversineDistance(pt[1], pt[0], center.lat, center.lng) / 1000;
+                    if (d > maxDeepKm) maxDeepKm = d;
+                }
+            }
+        }
+
+        const deepDev = Math.abs(maxDeepKm - targetDistKm);
+        const devPct = targetDistKm > 0 ? ((deepDev / targetDistKm) * 100).toFixed(1) : '—';
+
+        console.log('  targetDist=' + targetDistKm + 'km');
+        console.log('  frontWidth=' + frontWidthKm.toFixed(2) + 'km');
+        console.log('  maxDeep=' + maxDeepKm.toFixed(2) + 'km');
+        console.log('  deepDeviation=' + deepDev.toFixed(2) + 'km (' + devPct + '%)');
+
+        if (deepDev > targetDistKm * 0.2) {
+            console.warn('  Deep extent deviates >' + (targetDistKm * 0.2).toFixed(1) +
+                'km from target. Reason: boundary/obstacle clipping.');
+        }
+
+        console.groupEnd();
+    }
+
     /**
      * Build a closed polygon ring from the ordered circle centres
      * and the angular-boundary points, then clip it against obstacles.

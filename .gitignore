@@ -1,0 +1,33 @@
+# Dependencies
+UI_MOdified/node_modules/
+
+# Large map tile files
+*.mbtiles
+
+# Uploads (user-generated at runtime)
+UI_MOdified/uploads/
+
+# Electron build output
+dist/
+build/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor files
+.vscode/
+*.swp
+*.swo
+
+# Claude Code local settings
+.claude/
+
+# Environment / secrets
+.env
+.env.*
+
+# SQLite databases (runtime data)
+*.sqlite
+*.db

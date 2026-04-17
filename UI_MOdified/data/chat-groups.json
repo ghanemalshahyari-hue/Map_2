@@ -1,0 +1,104 @@
+{
+  "groups": {
+    "grp-3efe6cd5859c8c3f5b7d9805f5817ec6": {
+      "id": "grp-3efe6cd5859c8c3f5b7d9805f5817ec6",
+      "name": "123",
+      "inviteCode": "C3Xybvpl",
+      "members": [
+        "u-mmu8y8on-r33lribz"
+      ],
+      "createdBy": "u-mmu8y8on-r33lribz",
+      "createdAt": "2026-03-25T05:18:52.261Z"
+    },
+    "grp-d4c2dee00dd63d591208a3ae4597628f": {
+      "id": "grp-d4c2dee00dd63d591208a3ae4597628f",
+      "name": "السيطرة العليا",
+      "inviteCode": "AI2TwFlH",
+      "members": [
+        "u-mn5h24fy-vrolcjyv"
+      ],
+      "createdBy": "u-mn5h24fy-vrolcjyv",
+      "createdAt": "2026-03-26T06:08:31.696Z"
+    },
+    "grp-4b241d648303b22820a3f6da6df9373e": {
+      "id": "grp-4b241d648303b22820a3f6da6df9373e",
+      "name": "السيطرة الدنيا",
+      "inviteCode": "arqh6hNb",
+      "members": [
+        "u-mn5h24fy-vrolcjyv"
+      ],
+      "createdBy": "u-mn5h24fy-vrolcjyv",
+      "createdAt": "2026-03-26T06:09:29.025Z"
+    },
+    "grp-10601fd8233c0554d71d87d4a15ab7d1": {
+      "id": "grp-10601fd8233c0554d71d87d4a15ab7d1",
+      "name": "المكون البري",
+      "inviteCode": "iueAwphQ",
+      "members": [
+        "u-mn5h24fy-vrolcjyv"
+      ],
+      "createdBy": "u-mn5h24fy-vrolcjyv",
+      "createdAt": "2026-03-26T06:09:56.644Z"
+    },
+    "grp-d5db8bda47414fa7d310365218daf0e7": {
+      "id": "grp-d5db8bda47414fa7d310365218daf0e7",
+      "name": "المكون الجوي",
+      "inviteCode": "6oJU3PoJ",
+      "members": [
+        "u-mn5h24fy-vrolcjyv"
+      ],
+      "createdBy": "u-mn5h24fy-vrolcjyv",
+      "createdAt": "2026-03-26T06:10:19.067Z"
+    },
+    "grp-b6b24efdb4938c41fc954070b3729282": {
+      "id": "grp-b6b24efdb4938c41fc954070b3729282",
+      "name": "المكون البحري",
+      "inviteCode": "sOhUwPWb",
+      "members": [
+        "u-mn5h24fy-vrolcjyv"
+      ],
+      "createdBy": "u-mn5h24fy-vrolcjyv",
+      "createdAt": "2026-03-26T06:11:13.284Z"
+    },
+    "grp-b63054194f8549e1b95b85ac6143d355": {
+      "id": "grp-b63054194f8549e1b95b85ac6143d355",
+      "name": "2311",
+      "inviteCode": "GdVMb6yq",
+      "members": [
+        "u-mncs6uta-jSQsT2c00jPo"
+      ],
+      "createdBy": "u-mncs6uta-jSQsT2c00jPo",
+      "createdAt": "2026-03-30T06:46:31.129Z"
+    },
+    "grp-7a57925178580a03373ed3504ab2cfc5": {
+      "id": "grp-7a57925178580a03373ed3504ab2cfc5",
+      "name": "T",
+      "inviteCode": "GSG9SBAu",
+      "members": [
+        "u-mncs6uta-jSQsT2c00jPo"
+      ],
+      "createdBy": "u-mncs6uta-jSQsT2c00jPo",
+      "createdAt": "2026-03-30T07:09:09.056Z"
+    },
+    "grp-aa98f98164e33244ad8b49e06c8a2deb": {
+      "id": "grp-aa98f98164e33244ad8b49e06c8a2deb",
+      "name": "123",
+      "inviteCode": "12341564896",
+      "members": [
+        "u-mncum4j2-QS7Xo2HmCUSJ"
+      ],
+      "createdBy": "u-mncum4j2-QS7Xo2HmCUSJ",
+      "createdAt": "2026-03-30T07:10:31.391Z"
+    },
+    "grp-ef285d358d6c2ffe16e54a055c13f381": {
+      "id": "grp-ef285d358d6c2ffe16e54a055c13f381",
+      "name": "trial1",
+      "inviteCode": "12121221",
+      "members": [
+        "u-mncum4j2-QS7Xo2HmCUSJ"
+      ],
+      "createdBy": "u-mncum4j2-QS7Xo2HmCUSJ",
+      "createdAt": "2026-03-31T05:12:51.162Z"
+    }
+  }
+}

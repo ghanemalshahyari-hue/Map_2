@@ -1,0 +1,844 @@
+/* Embedded symbol picker — readable layout, clear hierarchy (works offline). */
+:root {
+  --picker-bg: #0f172a;
+  --picker-surface: #1e293b;
+  --picker-elevated: #334155;
+  --picker-border: rgba(148, 163, 184, 0.35);
+  --picker-text: #f8fafc;
+  --picker-muted: #cbd5e1;
+  --picker-accent: #38bdf8;
+  --picker-accent-soft: rgba(56, 189, 248, 0.15);
+  --picker-success: #34d399;
+}
+
+/* Fill the iframe: no whole-page scroll; only the form column scrolls */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+#app {
+  height: 100%;
+}
+
+.application--wrap,
+.v-application--wrap {
+  min-height: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+main.v-content {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  padding-top: 0 !important; /* toolbar hidden; reclaim space */
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+/* Vuetify 1: router output sits directly under v-content */
+main.v-content > * {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.v-content__wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.v-content__wrap > .container,
+.v-content__wrap > .container-fluid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Toolbar hidden in iframe embed */
+.mtoolbar,
+.v-application .v-toolbar,
+.v-application .v-app-bar {
+  display: none !important;
+}
+
+body,
+.v-application,
+.v-application .v-main,
+.v-content {
+  background-color: var(--picker-bg) !important;
+  color: var(--picker-text) !important;
+}
+
+/* Shell: column flex filling iframe */
+.picker-shell.v-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* --- Friendly intro (collapsible; closed by default) --- */
+details.picker-intro {
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+  padding: 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(52, 211, 153, 0.08));
+  border: 1px solid var(--picker-border);
+  overflow: hidden;
+}
+
+.picker-intro-summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--picker-accent);
+  user-select: none;
+}
+
+.picker-intro-summary::-webkit-details-marker {
+  display: none;
+}
+
+details.picker-intro[open] .picker-intro-summary {
+  border-bottom: 1px solid var(--picker-border);
+}
+
+details.picker-intro .picker-intro-title,
+details.picker-intro .picker-intro-steps {
+  margin-left: 0.85rem;
+  margin-right: 0.85rem;
+}
+
+.picker-intro-title {
+  margin: 0.65rem 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--picker-text);
+  letter-spacing: 0.01em;
+}
+
+.picker-intro-steps {
+  margin: 0 0 0.75rem;
+  padding-inline-start: 1.25rem;
+  color: var(--picker-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.picker-intro-steps li + li {
+  margin-top: 0.25rem;
+}
+
+/* --- Columns --- */
+.picker-main-layout.picker-main-flex {
+  flex: 1 1 auto;
+  min-height: 0;
+  align-items: stretch !important;
+}
+
+@media (min-width: 960px) {
+  .picker-main-layout.picker-main-flex {
+    flex-wrap: nowrap !important;
+  }
+}
+
+.picker-form-column {
+  padding-right: 8px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.picker-form-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 4px;
+  /* Room below last dropdown (Modifier 2) so it is not clipped at the scroll bottom */
+  padding-bottom: 2.75rem;
+  scroll-padding-bottom: 2.5rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.picker-preview-column {
+  padding-left: 8px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+@media (max-width: 959px) {
+  .picker-form-column,
+  .picker-preview-column {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .picker-preview-column {
+    margin-top: 1rem;
+  }
+}
+
+/* --- Search (hero) --- */
+.picker-search-wrap {
+  margin-bottom: 0.75rem;
+}
+
+.picker-search-hero.v-text-field--box .v-input__slot {
+  min-height: 52px !important;
+  align-items: center;
+  background: var(--picker-surface) !important;
+  border: 1px solid var(--picker-border) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25) !important;
+}
+
+.picker-search-hero .v-label {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: var(--picker-text) !important;
+}
+
+.picker-search-hero input {
+  font-size: 1rem !important;
+  color: var(--picker-text) !important;
+}
+
+/* --- SIDC field --- */
+.picker-sidc-form {
+  margin-bottom: 0.5rem;
+}
+
+.picker-sidc-field.v-text-field--box .v-input__slot {
+  background: var(--picker-surface) !important;
+  border: 1px solid var(--picker-border) !important;
+  border-radius: 10px !important;
+}
+
+.picker-sidc-field .v-messages {
+  color: var(--picker-muted) !important;
+  font-size: 0.8rem !important;
+  margin-top: 6px !important;
+}
+
+.sidc-field .v-input__slot input {
+  color: var(--picker-success) !important;
+  font-weight: 600 !important;
+}
+
+/* --- Grouped form fields --- */
+.sidc-picker-fields .picker-section {
+  margin-top: 0.65rem;
+  padding: 0.55rem 0.65rem 0.65rem;
+  border-radius: 10px;
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid var(--picker-border);
+}
+
+.sidc-picker-fields .picker-section:first-of-type {
+  margin-top: 0.35rem;
+}
+
+.sidc-picker-fields .picker-section:last-child {
+  margin-bottom: 0.5rem;
+  padding-bottom: 1rem;
+}
+
+.picker-section-title {
+  margin: 0 0 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--picker-accent);
+}
+
+.picker-field {
+  margin-bottom: 6px !important;
+}
+
+.picker-field:last-child {
+  margin-bottom: 4px !important;
+}
+
+.picker-field.v-text-field--box .v-input__slot {
+  background: var(--picker-elevated) !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+  border-radius: 8px !important;
+  min-height: 44px !important;
+}
+
+.picker-field .v-label {
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  color: #f1f5f9 !important;
+  opacity: 1 !important;
+}
+
+/* Box fields: floating label states (Vuetify 1) */
+.picker-field.v-text-field--box .v-label,
+.picker-search-hero.v-text-field--box .v-label,
+.picker-sidc-field.v-text-field--box .v-label {
+  color: #e2e8f0 !important;
+}
+
+.picker-field .v-label--active,
+.picker-search-hero .v-label--active,
+.picker-sidc-field .v-label--active {
+  color: var(--picker-accent) !important;
+}
+
+.picker-field .v-select__selection,
+.picker-field input {
+  color: var(--picker-text) !important;
+  font-size: 0.9rem !important;
+}
+
+/* --- Tabs --- */
+.picker-tabs.v-tabs {
+  margin-top: 0.75rem;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  border: 1px solid var(--picker-border);
+  border-bottom: none;
+  background: var(--picker-surface) !important;
+}
+
+.picker-tabs .v-tabs__bar {
+  background: transparent !important;
+}
+
+.picker-tabs .v-tabs__container {
+  height: 48px !important;
+}
+
+.picker-tabs .v-tab {
+  font-weight: 600 !important;
+  font-size: 0.92rem !important;
+  color: #e2e8f0 !important;
+  opacity: 1 !important;
+  text-transform: none !important;
+  letter-spacing: 0.02em !important;
+}
+
+.picker-tabs .v-tab--active {
+  color: #ffffff !important;
+}
+
+.picker-tabs .v-tabs__slider {
+  height: 3px !important;
+  border-radius: 3px 3px 0 0;
+  background-color: var(--picker-accent) !important;
+}
+
+.picker-tab-panel {
+  padding: 0.55rem 0.45rem 2rem !important;
+  background: rgba(30, 41, 59, 0.5) !important;
+  border: 1px solid var(--picker-border);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  min-height: 80px;
+}
+
+.picker-tab-hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--picker-muted);
+}
+
+.picker-clear-amps {
+  border: 1px solid var(--picker-border) !important;
+  color: var(--picker-text) !important;
+  background: var(--picker-elevated) !important;
+}
+
+/* --- Preview card (fills column height; stays visible while form scrolls) --- */
+.picker-preview-card {
+  border-radius: 14px !important;
+  overflow: hidden;
+  border: 1px solid var(--picker-border) !important;
+  background: linear-gradient(180deg, var(--picker-surface) 0%, #0c1220 100%) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45) !important;
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.picker-preview-card-title {
+  padding: 16px 18px 8px !important;
+  background: transparent !important;
+}
+
+.picker-preview-heading {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--picker-text) !important;
+}
+
+.picker-preview-sub {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: #e2e8f0 !important;
+}
+
+.picker-preview-graphic-wrap {
+  padding: 12px 12px 16px !important;
+  background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.08), transparent 70%) !important;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.picker-preview-symbol-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: min(120px, 28vh);
+  min-width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.picker-preview-caption {
+  padding: 10px 14px 14px !important;
+  flex-shrink: 0;
+  font-size: 0.85rem !important;
+  line-height: 1.45 !important;
+  color: var(--picker-text) !important;
+  border-top: 1px solid var(--picker-border);
+  background: rgba(15, 23, 42, 0.5) !important;
+}
+
+.picker-preview-caption-muted {
+  color: var(--picker-muted) !important;
+  font-style: italic;
+}
+
+/* --- Legacy panels / menus --- */
+.symbol-sticky,
+.v-sheet,
+.v-card:not(.picker-preview-card),
+.v-list,
+.v-menu__content,
+.v-dialog__content {
+  background-color: var(--picker-elevated) !important;
+  border-color: var(--picker-border) !important;
+}
+
+.v-label,
+.standard-group label,
+.v-expansion-panel-header,
+.v-input__control .v-label {
+  color: var(--picker-text) !important;
+}
+
+.v-tabs:not(.picker-tabs),
+.v-tabs-items,
+.v-window-item {
+  background-color: transparent !important;
+}
+
+.v-tab:not(.picker-tabs .v-tab) {
+  color: var(--picker-text) !important;
+}
+
+.v-tabs:not(.picker-tabs) .v-tab--active {
+  color: var(--picker-success) !important;
+}
+
+.v-tabs:not(.picker-tabs) .v-tabs-slider {
+  background-color: var(--picker-success) !important;
+}
+
+.v-divider {
+  border-color: var(--picker-border) !important;
+}
+
+.v-list-item__content,
+.v-list-item__title,
+.list__tile__title,
+.list__tile__sub-title,
+.v-list__tile__title,
+.v-list__tile__sub-title {
+  color: var(--picker-text) !important;
+}
+
+.v-menu__content,
+.v-list {
+  background-color: var(--picker-surface) !important;
+  border: 1px solid var(--picker-border) !important;
+  border-radius: 8px !important;
+}
+
+.v-list-item--active,
+.v-list-item:hover {
+  background-color: var(--picker-accent-soft) !important;
+}
+
+.v-expansion-panel,
+.v-expansion-panel-header {
+  background-color: var(--picker-elevated) !important;
+  color: var(--picker-text) !important;
+}
+
+.v-expansion-panel-content {
+  background-color: var(--picker-surface) !important;
+}
+
+::placeholder {
+  color: var(--picker-muted) !important;
+  opacity: 0.9 !important;
+}
+
+/* Dropdown arrow substitute (Material Icons font) */
+.v-icon.material-icons,
+i.material-icons {
+  font-family: inherit !important;
+  font-size: 0 !important;
+  color: transparent !important;
+  line-height: 1 !important;
+}
+
+.v-icon.material-icons::before,
+i.material-icons::before {
+  content: "▼" !important;
+  font-size: 18px !important;
+  font-family: inherit !important;
+  color: var(--picker-text) !important;
+  line-height: 1 !important;
+  display: inline-block;
+}
+
+/* Air symbol Pending identity color fix */
+.picker-preview-card svg [fill="rgb(255,0,255)"],
+.picker-preview-card svg [fill="rgb(255, 0, 255)"],
+.symbol-sticky svg [fill="rgb(255,0,255)"],
+.symbol-sticky svg [fill="rgb(255, 0, 255)"],
+.v-card svg [fill="rgb(255,0,255)"],
+.v-card svg [fill="rgb(255, 0, 255)"] {
+  fill: rgb(0, 255, 255) !important;
+}
+
+.picker-preview-card svg [stroke="rgb(255,0,255)"],
+.picker-preview-card svg [stroke="rgb(255, 0, 255)"],
+.symbol-sticky svg [stroke="rgb(255,0,255)"],
+.symbol-sticky svg [stroke="rgb(255, 0, 255)"],
+.v-card svg [stroke="rgb(255,0,255)"],
+.v-card svg [stroke="rgb(255, 0, 255)"] {
+  stroke: rgb(0, 255, 255) !important;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--picker-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--picker-elevated);
+  border-radius: 4px;
+}
+
+/* ========== Navigation drawers (Vuetify 1.5: v-list__tile__*, not list__tile__*) ========== */
+.v-navigation-drawer,
+.navigation-drawer,
+aside.navigation-drawer {
+  background-color: var(--picker-surface) !important;
+  border-right: 1px solid var(--picker-border) !important;
+}
+
+.mdrawer.v-navigation-drawer,
+.mdrawer.navigation-drawer,
+.navigation-drawer.mdrawer {
+  background-color: #1a2332 !important;
+}
+
+/* Light theme sets v-list color to near-black; tiles inherit it — force readable text on drawer */
+.v-navigation-drawer .v-list,
+.navigation-drawer .v-list {
+  color: #ffffff !important;
+  background-color: transparent !important;
+}
+
+.v-navigation-drawer .v-list__tile,
+.navigation-drawer .v-list__tile,
+.mdrawer .v-list__tile {
+  color: #ffffff !important;
+}
+
+.v-navigation-drawer .toolbar__title,
+.v-navigation-drawer .v-toolbar__title,
+.navigation-drawer .toolbar__title,
+.navigation-drawer .v-toolbar__title,
+.mdrawer .toolbar__title,
+.mdrawer .v-toolbar__title {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+}
+
+.v-navigation-drawer .subheader,
+.v-navigation-drawer .v-subheader,
+.navigation-drawer .subheader,
+.navigation-drawer .v-subheader,
+aside.navigation-drawer .subheader,
+aside.navigation-drawer .v-subheader {
+  color: #f1f5f9 !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 1 !important;
+}
+
+/* Vuetify 1.5 tile titles (router links use .v-list__tile--link) */
+.v-navigation-drawer .v-list__tile__title,
+.v-navigation-drawer .v-list__tile__sub-title,
+.navigation-drawer .v-list__tile__title,
+.navigation-drawer .v-list__tile__sub-title,
+.navigation-drawer a.v-list__tile .v-list__tile__title,
+.mdrawer .v-list__tile__title,
+.mdrawer .v-list__tile__sub-title {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  font-size: 0.95rem !important;
+  opacity: 1 !important;
+}
+
+.v-navigation-drawer .v-list__tile:not(.v-list__tile--active):not(.v-list__tile--highlighted) .v-list__tile__title,
+.navigation-drawer .v-list__tile:not(.v-list__tile--active):not(.v-list__tile--highlighted) .v-list__tile__title {
+  color: #f8fafc !important;
+}
+
+.v-navigation-drawer .v-list__tile--active .v-list__tile__title,
+.v-navigation-drawer .v-list__tile--highlighted .v-list__tile__title,
+.navigation-drawer .v-list__tile--active .v-list__tile__title,
+.navigation-drawer .v-list__tile--highlighted .v-list__tile__title {
+  color: #7dd3fc !important;
+  font-weight: 600 !important;
+}
+
+.v-navigation-drawer .v-list__tile .v-icon,
+.v-navigation-drawer .v-list__tile__action .v-icon,
+.navigation-drawer .v-list__tile .v-icon,
+.navigation-drawer .v-list__tile__action .v-icon,
+.mdrawer .v-list__tile .v-icon {
+  color: #e2e8f0 !important;
+  opacity: 1 !important;
+}
+
+.v-navigation-drawer .v-list__tile--active .v-icon,
+.v-navigation-drawer .v-list__tile--highlighted .v-icon,
+.navigation-drawer .v-list__tile--active .v-icon,
+.navigation-drawer .v-list__tile--highlighted .v-icon {
+  color: #7dd3fc !important;
+}
+
+.v-navigation-drawer .v-list__tile--link:hover,
+.navigation-drawer .v-list__tile--link:hover,
+.mdrawer .v-list__tile--link:hover {
+  background-color: rgba(56, 189, 248, 0.15) !important;
+}
+
+/* Drawer: radios & switches */
+.v-navigation-drawer .standard-group label,
+.v-navigation-drawer .v-radio label,
+.v-navigation-drawer .input-group label,
+.v-navigation-drawer .v-input--selection-controls label,
+.navigation-drawer .standard-group label,
+.navigation-drawer .v-radio label,
+.navigation-drawer .input-group label,
+.navigation-drawer .v-input--selection-controls label {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  opacity: 1 !important;
+}
+
+.v-navigation-drawer .v-input--switch .v-input__slot,
+.v-navigation-drawer .v-input--radio-group .v-input__slot,
+.navigation-drawer .v-input--switch .v-input__slot,
+.navigation-drawer .v-input--radio-group .v-input__slot {
+  color: #f8fafc !important;
+}
+
+.v-navigation-drawer .primary--text,
+.navigation-drawer .primary--text {
+  color: #7dd3fc !important;
+  caret-color: #7dd3fc !important;
+}
+
+/* Right drawer (saved symbols) */
+.navigation-drawer--right,
+.navigation-drawer.navigation-drawer--right,
+.v-navigation-drawer--right {
+  background-color: var(--picker-surface) !important;
+}
+
+.navigation-drawer--right .v-list__tile__title,
+.navigation-drawer--right .subheader,
+.navigation-drawer--right .v-subheader,
+.v-navigation-drawer--right .v-list__tile__title {
+  color: #ffffff !important;
+}
+
+/* theme--light + dark drawer: beat .theme--light .v-list … rgba(0,0,0,.87) */
+.application.theme--light .v-navigation-drawer .v-list,
+.application.theme--light .navigation-drawer .v-list {
+  color: #ffffff !important;
+}
+
+.application.theme--light .v-navigation-drawer .v-list__tile__title,
+.application.theme--light .v-navigation-drawer .v-list__tile__sub-title,
+.application.theme--light .navigation-drawer .v-list__tile__title,
+.application.theme--light .navigation-drawer .v-list__tile__sub-title,
+.application.theme--light .v-navigation-drawer .subheader,
+.application.theme--light .v-navigation-drawer .v-subheader,
+.application.theme--light .navigation-drawer .subheader,
+.application.theme--light .navigation-drawer .v-subheader,
+.application.theme--light .mdrawer .v-list__tile__title,
+.application.theme--light .mdrawer .subheader,
+.application.theme--light .mdrawer .v-subheader {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+.application.theme--light .v-navigation-drawer .v-icon,
+.application.theme--light .navigation-drawer .v-icon,
+.application.theme--light .mdrawer .v-icon {
+  color: #e2e8f0 !important;
+  opacity: 1 !important;
+}
+
+/* Legacy class names (older Vuetify) if any remain */
+.navigation-drawer .list__tile__title,
+.navigation-drawer .list__tile__sub-title,
+.mdrawer .list__tile__title {
+  color: #ffffff !important;
+}
+
+/* ========== Select / autocomplete menus (portaled; theme--light uses dark tile text) ========== */
+.v-menu__content,
+.menuable__content__active.v-menu__content {
+  background-color: var(--picker-surface) !important;
+  border: 1px solid var(--picker-border) !important;
+}
+
+.theme--light .v-menu__content .v-list,
+.v-menu__content .v-list {
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+.theme--light .v-menu__content .v-list__tile,
+.v-menu__content .v-list__tile {
+  color: #f8fafc !important;
+}
+
+.theme--light .v-menu__content .v-list__tile__title,
+.theme--light .v-menu__content .v-list__tile__sub-title,
+.v-menu__content .v-list__tile__title,
+.v-menu__content .v-list__tile__sub-title {
+  color: #f8fafc !important;
+  opacity: 1 !important;
+}
+
+.theme--light .v-menu__content .v-list__tile--active .v-list__tile__title,
+.v-menu__content .v-list__tile--active .v-list__tile__title {
+  color: #7dd3fc !important;
+  font-weight: 600 !important;
+}
+
+.theme--light .v-menu__content .v-list__tile--highlighted,
+.theme--light .v-menu__content .v-list__tile--link:hover,
+.v-menu__content .v-list__tile--link:hover {
+  background-color: rgba(56, 189, 248, 0.15) !important;
+}
+
+.theme--light .v-menu__content .v-list__tile .v-icon,
+.theme--light .v-menu__content .v-list__tile__avatar .v-icon,
+.v-menu__content .v-list__tile .v-icon,
+.v-menu__content .v-list__tile__action .v-icon {
+  color: #e2e8f0 !important;
+  opacity: 1 !important;
+}
+
+/* Theme class sometimes sits on the menu panel itself */
+.v-menu__content.theme--light .v-list__tile__title,
+.theme--light.v-menu__content .v-list__tile__title,
+.v-menu__content.theme--light .v-list__tile__sub-title {
+  color: #f8fafc !important;
+}
+
+/* ========== Global white text override — force all remaining black text to white ========== */
+.theme--light.application,
+.theme--light .v-input,
+.theme--light .v-input input,
+.theme--light .v-input textarea,
+.theme--light .v-select__selection,
+.theme--light .v-select__selection--comma,
+.theme--light .v-list__tile__title,
+.theme--light .v-list__tile__sub-title,
+.theme--light .v-list__tile,
+.theme--light .v-list,
+.theme--light .v-card,
+.theme--light .v-card__title,
+.theme--light .v-card__text,
+.theme--light .v-card__subtitle,
+.theme--light .v-expansion-panel__header,
+.theme--light .v-label,
+.theme--light label,
+.theme--light .v-chip,
+.theme--light .v-chip__content,
+.theme--light .v-btn:not(.v-btn--icon),
+.theme--light .subheader,
+.theme--light .v-subheader,
+.theme--light p,
+.theme--light span,
+.theme--light div {
+  color: #ffffff !important;
+}
+
+.application.theme--light,
+.application.theme--light .v-input input,
+.application.theme--light .v-input textarea,
+.application.theme--light .v-select__selection,
+.application.theme--light .v-list__tile__title,
+.application.theme--light .v-list__tile,
+.application.theme--light .v-card,
+.application.theme--light .v-label,
+.application.theme--light label {
+  color: #ffffff !important;
+}
+

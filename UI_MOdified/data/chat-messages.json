@@ -1,0 +1,443 @@
+[
+  {
+    "id": "1773652203110-voln5pfjwg",
+    "roomId": "default-ops-room",
+    "userId": "planner-1",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "a",
+    "timestamp": "2026-03-16T09:10:03.110Z"
+  },
+  {
+    "id": "1773652207359-17oik55k4qv",
+    "roomId": "default-ops-room",
+    "userId": "planner-1",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "a",
+    "timestamp": "2026-03-16T09:10:07.359Z"
+  },
+  {
+    "id": "1773652208076-ut2aznc96el",
+    "roomId": "default-ops-room",
+    "userId": "planner-1",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "a",
+    "timestamp": "2026-03-16T09:10:08.076Z"
+  },
+  {
+    "id": "1773652215472-160u75ac24l",
+    "roomId": "default-ops-room",
+    "userId": "planner-1",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "vv",
+    "timestamp": "2026-03-16T09:10:15.472Z"
+  },
+  {
+    "id": "1773717721160-oiu762ckw3",
+    "roomId": "default-ops-room",
+    "userId": "planner-1",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "hi",
+    "timestamp": "2026-03-17T03:22:01.160Z"
+  },
+  {
+    "id": "1773717734256-ijxrruo6sw",
+    "roomId": "default-ops-room",
+    "userId": "planner-1",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "dadadad",
+    "timestamp": "2026-03-17T03:22:14.256Z"
+  },
+  {
+    "id": "1773717757374-x6h0js8uyfp",
+    "roomId": "default-ops-room",
+    "userId": "planner-1",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "hello",
+    "timestamp": "2026-03-17T03:22:37.374Z"
+  },
+  {
+    "id": "1773718095083-c7qc0m71e8u",
+    "roomId": "default-ops-room",
+    "userId": "planner-1",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "http://192.168.1.201:8000?name=Planner%202&id=planner-2",
+    "timestamp": "2026-03-17T03:28:15.083Z"
+  },
+  {
+    "id": "1773718122121-ohu40qap8ho",
+    "roomId": "default-ops-room",
+    "userId": "planner-2",
+    "userName": "Planner 2",
+    "role": "planner",
+    "text": ".",
+    "timestamp": "2026-03-17T03:28:42.121Z"
+  },
+  {
+    "id": "1773718134369-pyfuy5g36jo",
+    "roomId": "default-ops-room",
+    "userId": "planner-2",
+    "userName": "Planner 2",
+    "role": "planner",
+    "text": "sir",
+    "timestamp": "2026-03-17T03:28:54.369Z"
+  },
+  {
+    "id": "1773718137138-e7c3bom6yrg",
+    "roomId": "default-ops-room",
+    "userId": "planner-2",
+    "userName": "Planner 2",
+    "role": "planner",
+    "text": "can yuou hear me",
+    "timestamp": "2026-03-17T03:28:57.138Z"
+  },
+  {
+    "id": "1773718141517-7bg2o3zkdf",
+    "roomId": "default-ops-room",
+    "userId": "planner-1",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "hi",
+    "timestamp": "2026-03-17T03:29:01.517Z"
+  },
+  {
+    "id": "1773718278419-0iwedt3u49ps",
+    "roomId": "default-ops-room",
+    "userId": "planner-2",
+    "userName": "Planner 2",
+    "role": "planner",
+    "text": "File: /uploads/1773718278413_zx46x5zjp3o_nato-map-layers__5_.json",
+    "timestamp": "2026-03-17T03:31:18.419Z"
+  },
+  {
+    "id": "1773718314665-f7dcn5soxp",
+    "roomId": "default-ops-room",
+    "userId": "planner-2",
+    "userName": "Planner 2",
+    "role": "planner",
+    "text": "File: /uploads/1773718314657_rcmbp28mx4_nato-map-layers.json",
+    "timestamp": "2026-03-17T03:31:54.665Z"
+  },
+  {
+    "id": "1773718679081-xag2pqqpgre",
+    "roomId": "default-ops-room",
+    "userId": "planner-2",
+    "userName": "Planner 2",
+    "role": "planner",
+    "text": "File: /uploads/1773718679078_2756m2ynqf7_nato-map-layers__3_.json",
+    "timestamp": "2026-03-17T03:37:59.081Z"
+  },
+  {
+    "id": "1773718809989-h4iq52fzd1",
+    "roomId": "default-ops-room",
+    "userId": "user-5gjlewtj",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "File: /uploads/1773718809983_bjvj8i27xz_Screenshot_from_2026-03-05_11-15-22.png",
+    "timestamp": "2026-03-17T03:40:09.989Z"
+  },
+  {
+    "id": "1773719354313-ehul1v8mnyh",
+    "roomId": "default-ops-room",
+    "userId": "planner-mmu2q1xp",
+    "userName": "Steve",
+    "role": "planner",
+    "text": "xxx",
+    "timestamp": "2026-03-17T03:49:14.313Z"
+  },
+  {
+    "id": "1773719403355-bpasrmvk6wo",
+    "roomId": "default-ops-room",
+    "userId": "planner-mmu2qbyu",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "aaa",
+    "timestamp": "2026-03-17T03:50:03.355Z"
+  },
+  {
+    "id": "1773719404223-oecqmusj7sl",
+    "roomId": "default-ops-room",
+    "userId": "planner-mmu2qbyu",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "aa",
+    "timestamp": "2026-03-17T03:50:04.223Z"
+  },
+  {
+    "id": "1773719404720-64uylqlwydk",
+    "roomId": "default-ops-room",
+    "userId": "planner-mmu2qbyu",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "aa",
+    "timestamp": "2026-03-17T03:50:04.720Z"
+  },
+  {
+    "id": "1773719791340-prdnexl5j6",
+    "roomId": "default-ops-room",
+    "userId": "planner-mmu2zaty",
+    "userName": "steve",
+    "role": "planner",
+    "text": "xxxx+",
+    "timestamp": "2026-03-17T03:56:31.340Z"
+  },
+  {
+    "id": "1773719931234-d7wreik03mc",
+    "roomId": "default-ops-room",
+    "userId": "planner-2",
+    "userName": "Planner 2",
+    "role": "planner",
+    "text": "12111",
+    "timestamp": "2026-03-17T03:58:51.234Z"
+  },
+  {
+    "id": "1773719940283-2q8zeqxv12",
+    "roomId": "default-ops-room",
+    "userId": "planner-mmu32pvy",
+    "userName": "111",
+    "role": "planner",
+    "text": "1111",
+    "timestamp": "2026-03-17T03:59:00.283Z"
+  },
+  {
+    "id": "1773720119373-3wywxdv1b3m",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "Planner 2",
+    "role": "planner",
+    "text": "123123123",
+    "timestamp": "2026-03-17T04:01:59.373Z"
+  },
+  {
+    "id": "1773720121373-tiqp7ji695",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "Planner 2",
+    "role": "planner",
+    "text": "13121132",
+    "timestamp": "2026-03-17T04:02:01.373Z"
+  },
+  {
+    "id": "1773720148545-c4fmvbx5miv",
+    "roomId": "default-ops-room",
+    "userId": "planner-mmu373ue",
+    "userName": "steve",
+    "role": "planner",
+    "text": "232132",
+    "timestamp": "2026-03-17T04:02:28.545Z"
+  },
+  {
+    "id": "1773720151139-i7r4jdtwnq",
+    "roomId": "default-ops-room",
+    "userId": "planner-mmu373ue",
+    "userName": "steve",
+    "role": "planner",
+    "text": "2321323",
+    "timestamp": "2026-03-17T04:02:31.139Z"
+  },
+  {
+    "id": "1773720151978-k7ni3l3axwa",
+    "roomId": "default-ops-room",
+    "userId": "planner-mmu373ue",
+    "userName": "steve",
+    "role": "planner",
+    "text": "232",
+    "timestamp": "2026-03-17T04:02:31.978Z"
+  },
+  {
+    "id": "1773720153258-ksgv6imlnp",
+    "roomId": "default-ops-room",
+    "userId": "planner-mmu373ue",
+    "userName": "steve",
+    "role": "planner",
+    "text": "232",
+    "timestamp": "2026-03-17T04:02:33.258Z"
+  },
+  {
+    "id": "1773720479236-vhykaloneb",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "steve",
+    "role": "planner",
+    "text": "44444444444444444444444",
+    "timestamp": "2026-03-17T04:07:59.236Z"
+  },
+  {
+    "id": "1773720501553-tjgbeit5jo",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "steve",
+    "role": "planner",
+    "text": "http://192.168.1.201:8000/?name=Planner%202&id=steve",
+    "timestamp": "2026-03-17T04:08:21.553Z"
+  },
+  {
+    "id": "1773720510953-bcmyzo5ncib",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "Planner 2",
+    "role": "planner",
+    "text": "2222",
+    "timestamp": "2026-03-17T04:08:30.953Z"
+  },
+  {
+    "id": "1773721231187-ypoqe6nqga",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "1333333333333333",
+    "role": "planner",
+    "text": "11111111111111",
+    "timestamp": "2026-03-17T04:20:31.187Z"
+  },
+  {
+    "id": "1773721240933-ktq9jgexd1",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "Planner 2",
+    "role": "planner",
+    "text": "133333333333333333333",
+    "timestamp": "2026-03-17T04:20:40.932Z"
+  },
+  {
+    "id": "1773721379999-75chpv0kqkb",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "Planner 2",
+    "role": "planner",
+    "text": "aaa",
+    "timestamp": "2026-03-17T04:22:59.999Z"
+  },
+  {
+    "id": "1773721392543-lvkf1p0ewh",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "amam",
+    "role": "planner",
+    "text": "aaaa",
+    "timestamp": "2026-03-17T04:23:12.543Z"
+  },
+  {
+    "id": "1773721402448-47b7x1bus5b",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "amam",
+    "role": "planner",
+    "text": "aaaaa",
+    "timestamp": "2026-03-17T04:23:22.448Z"
+  },
+  {
+    "id": "1773721406063-93cguhfnm4m",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "amam",
+    "role": "planner",
+    "text": "ffffd",
+    "timestamp": "2026-03-17T04:23:26.063Z"
+  },
+  {
+    "id": "1773721646713-liygqatbza",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "amam",
+    "role": "planner",
+    "text": "ddkfkdfgfsd",
+    "timestamp": "2026-03-17T04:27:26.713Z"
+  },
+  {
+    "id": "1773721664657-6e4ayos26sk",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "amam",
+    "role": "planner",
+    "text": "..",
+    "timestamp": "2026-03-17T04:27:44.657Z"
+  },
+  {
+    "id": "1773721727258-vkrhcqk78sq",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "amam",
+    "role": "planner",
+    "text": "File: /uploads/1773721727252_df4wlii9spj_1773718809983_bjvj8i27xz_Screenshot_from_2026-03-05_11-15-22.png",
+    "timestamp": "2026-03-17T04:28:47.258Z"
+  },
+  {
+    "id": "1773722966189-3edeltpyfut",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "aaaaaaa",
+    "role": "planner",
+    "text": "aaaaa",
+    "timestamp": "2026-03-17T04:49:26.189Z"
+  },
+  {
+    "id": "1773726576319-vti5u5cobg",
+    "roomId": "default-ops-room",
+    "userId": "steve",
+    "userName": "aaaaaaa",
+    "role": "planner",
+    "text": ".....",
+    "timestamp": "2026-03-17T05:49:36.319Z"
+  },
+  {
+    "id": "1774250257780-bune366pmc",
+    "roomId": "default-ops-room",
+    "userId": "user-z74v8cyc",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "z",
+    "timestamp": "2026-03-23T07:17:37.780Z"
+  },
+  {
+    "id": "1774518561195-ahv8hq5c667",
+    "roomId": "grp-d4c2dee00dd63d591208a3ae4597628f",
+    "userId": "u-mn5h24fy-vrolcjyv",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "2332",
+    "timestamp": "2026-03-26T09:49:21.195Z"
+  },
+  {
+    "id": "1774518595047-3q476tzc214",
+    "roomId": "grp-d4c2dee00dd63d591208a3ae4597628f",
+    "userId": "u-mn5h24fy-vrolcjyv",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "File: /uploads/1774518595040_xg5fcjcdhv8_nato-map-layers__10_.json",
+    "timestamp": "2026-03-26T09:49:55.047Z"
+  },
+  {
+    "id": "1774518779922-6rcoj44wc7m",
+    "roomId": "grp-d4c2dee00dd63d591208a3ae4597628f",
+    "userId": "u-mn5h24fy-vrolcjyv",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "File: /uploads/1774518779918_8ucjp2fwwmc_nato-map-layers__6_.json",
+    "timestamp": "2026-03-26T09:52:59.922Z"
+  },
+  {
+    "id": "1774862269520-8l0v0sbno9p",
+    "roomId": "default-ops-room",
+    "userId": "u-mncum4j2-QS7Xo2HmCUSJ",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "hi",
+    "timestamp": "2026-03-30T09:17:49.520Z"
+  },
+  {
+    "id": "1774934039704-ob0jnqlyf6d",
+    "roomId": "default-ops-room",
+    "userId": "u-mncum4j2-QS7Xo2HmCUSJ",
+    "userName": "Planner 1",
+    "role": "planner",
+    "text": "File: /uploads/1774934039690_jyxeehs0ati_nato-map-layers__9_.json",
+    "timestamp": "2026-03-31T05:13:59.704Z"
+  }
+]

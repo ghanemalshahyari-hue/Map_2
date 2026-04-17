@@ -1,0 +1,6 @@
+{
+  "mbtiles": [
+    "satellite-2017-11-02_asia_gcc-states.mbtiles"
+  ],
+  "tileServer": "http://localhost:8080"
+}

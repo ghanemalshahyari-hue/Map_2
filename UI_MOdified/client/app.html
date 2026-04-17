@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>rmooz - رموز</title>
+    <link rel="stylesheet" href="../lib/leaflet.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-shell">
+
+        <!-- ═══════════ HEADER ═══════════ -->
+        <header class="app-header">
+            <div class="header-left">
+                <img src="../assets/brand-logo.jpeg" alt="RMOOZ" class="brand-logo" width="200" height="112" decoding="async">
+                <div class="brand-meta">
+
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="chat-toggle-btn" class="header-btn header-btn--chat" type="button" aria-expanded="false" aria-controls="chat-sidebar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    دردشة
+                </button>
+                <button id="lang-toggle-btn" class="header-btn" type="button" title="Switch language">عربي</button>
+                <button id="theme-toggle-btn" class="header-btn" type="button" title="تبديل الوضع الفاتح/الداكن">☀</button>
+                <button id="settings-toggle-btn" class="header-btn" type="button" title="الإعدادات والأدوات">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+                <!-- Hidden backward-compat: distance unit toggle (still used by app.js) -->
+                <button id="distance-unit-toggle-btn" class="header-btn header-btn--text" type="button" title="" style="display:none">كم</button>
+            </div>
+        </header>
+
+        <!-- ═══════════ WORKSPACE ═══════════ -->
+        <div class="workspace">
+
+            <!-- ── LEFT TOOL RAIL ── -->
+            <nav class="tool-rail" aria-label="Main tools">
+                <button class="tool-rail-btn active" data-tool="select" type="button" title="Select & Inspect (M)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>
+                    <span data-i18n="tool-select">Select</span>
+                </button>
+                <button class="tool-rail-btn" data-tool="symbol" type="button" title="Place Symbol">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L21 12L12 21L3 12Z"/></svg>
+                    <span data-i18n="tool-symbol">Symbol</span>
+                </button>
+                <button class="tool-rail-btn" data-tool="draw" type="button" title="Draw Line / Path">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                    <span data-i18n="tool-draw">Draw</span>
+                </button>
+                <button class="tool-rail-btn" data-tool="text" type="button" title="Text Box (T)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="8" y1="20" x2="16" y2="20"/></svg>
+                    <span data-i18n="tool-text">Text</span>
+                </button>
+                <button class="tool-rail-btn" data-tool="measure" type="button" title="Measure Distance">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
+                    <span data-i18n="tool-measure">Measure</span>
+                </button>
+                <button class="tool-rail-btn" data-tool="shapes" type="button" title="Geometric Shapes">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    <span data-i18n="tool-shapes">Shapes</span>
+                </button>
+                <button class="tool-rail-btn" data-tool="erase" type="button" title="Erase (E)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>
+                    <span data-i18n="tool-erase">Erase</span>
+                </button>
+
+                <div class="tool-rail-spacer"></div>
+
+                <button class="tool-rail-btn" data-tool="layers" type="button" title="Layers">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                    <span>Layers</span>
+                </button>
+            </nav>
+
+            <!-- ── CONTEXT PANEL (replaces old sidebar; keeps .sidebar class for backward compat) ── -->
+            <aside class="context-panel sidebar" id="context-panel">
+
+                <!-- Dynamic tool header -->
+                <div class="context-panel-header" id="context-panel-header">
+                    <h2 class="context-panel-title" id="context-panel-title">Select</h2>
+                    <p class="context-panel-hint" id="context-panel-hint">Click or drag on the map to select items</p>
+                </div>
+
+                <!-- Hidden backward-compat: sidebar tabs + mode dropdown (JS reads these) -->
+                <div style="display:none!important" aria-hidden="true">
+                    <div class="sidebar-tabs">
+                        <button type="button" class="sidebar-tab active" data-tab="drawing" data-i18n="tab-drawing">Drawing</button>
+                        <button type="button" class="sidebar-tab" data-tab="geo" data-i18n="tab-geo">Geographical Tools</button>
+                    </div>
+                    <select id="tool-mode" class="glass-select">
+                        <option value="pan" data-i18n-option="mode-pan">Pan & Inspect map</option>
+                        <option value="symbol" data-i18n-option="mode-symbol">Place Symbol</option>
+                        <option value="line" data-i18n-option="mode-line">Draw Line Path</option>
+                        <option value="eraser" data-i18n-option="mode-eraser">Eraser</option>
+                        <option value="select" data-i18n-option="mode-select">Select Area</option>
+                        <option value="text" data-i18n-option="mode-text">Text Box</option>
+                    </select>
+                </div>
+
+                <!-- ▸ DRAWING PANEL (shown for select/symbol/draw/text) -->
+                <div id="drawing-panel" class="sidebar-panel context-section">
+
+                    <!-- Select tool panel -->
+                    <section class="tools-section tool-panel select-panel" id="select-panel" style="display: none;">
+                        <div class="panel-section">
+                            <div class="inline-hint" data-i18n="select-panel-hint">Click any item on the map to inspect it, or drag to select multiple items.</div>
+                        </div>
+                        <div class="panel-section">
+                            <label class="field-label" data-i18n="select-panel-tips-label">Tips</label>
+                            <ul class="select-tips-list">
+                                <li data-i18n="select-panel-tip-ctrl">Hold <kbd>Ctrl</kbd> + click to add/remove items</li>
+                                <li data-i18n="select-panel-tip-delete">Press <kbd>Delete</kbd> to remove selected items</li>
+                                <li data-i18n="select-panel-tip-dbl">Double-click a symbol to edit its properties</li>
+                            </ul>
+                        </div>
+                        <div class="panel-section">
+                            <div class="select-count-display" id="select-panel-count" data-i18n="select-panel-no-items">No items selected</div>
+                        </div>
+                    </section>
+
+                    <!-- Erase tool panel -->
+                    <section class="tools-section tool-panel erase-panel" id="erase-panel" style="display: none;">
+                        <div class="panel-section">
+                            <div class="inline-hint" data-i18n="erase-panel-hint">Remove map items or trim freehand drawings.</div>
+                        </div>
+                        <div class="panel-section">
+                            <label class="field-label" data-i18n="erase-panel-mode-label">Erase mode</label>
+                            <div class="tool-card-grid" id="erase-mode-cards">
+                                <button type="button" class="tool-card active" data-erase-mode="object">
+                                    <strong data-i18n="erase-panel-object-title">Object erase</strong>
+                                    <span data-i18n="erase-panel-object-desc">Click an item to remove it</span>
+                                </button>
+                                <button type="button" class="tool-card" data-erase-mode="area">
+                                    <strong data-i18n="erase-panel-area-title">Area erase</strong>
+                                    <span data-i18n="erase-panel-area-desc">Drag to select, then delete</span>
+                                </button>
+                                <button type="button" class="tool-card" data-erase-mode="trim">
+                                    <strong data-i18n="erase-panel-trim-title">Stroke trim</strong>
+                                    <span data-i18n="erase-panel-trim-desc">Trim freehand by dragging</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="panel-section">
+                            <div class="inline-hint" id="erase-hint" data-i18n="erase-panel-map-hint">Click an item on the map to erase it.</div>
+                        </div>
+                    </section>
+
+                    <!-- Text tool panel -->
+                    <section class="tools-section tool-panel text-panel" id="text-manager" style="display: none;">
+
+                        <!-- Inline text input (bypasses modal when filled) -->
+                        <div class="panel-section">
+                            <label for="text-panel-input" class="field-label" data-i18n="text-panel-label">Text</label>
+                            <input id="text-panel-input" class="glass-input" type="text" placeholder="...Enter label" data-i18n-placeholder="text-panel-placeholder" autocomplete="off" />
+                        </div>
+
+                        <!-- Quick presets -->
+                        <div class="panel-section">
+                            <label class="field-label" data-i18n="text-panel-presets-label">Quick presets</label>
+                            <div class="preset-row" id="text-panel-presets">
+                                <button type="button" class="preset-btn" data-value="x">x</button>
+                                <button type="button" class="preset-btn" data-value="I">I</button>
+                                <button type="button" class="preset-btn" data-value="II">II</button>
+                                <button type="button" class="preset-btn" data-value="III">III</button>
+                                <button type="button" class="preset-btn" data-value="X">X</button>
+                                <button type="button" class="preset-btn" data-value="XX">XX</button>
+                                <button type="button" class="preset-btn" data-value="XXX">XXX</button>
+                                <button type="button" class="preset-btn" data-value="0">0</button>
+                                <button type="button" class="preset-btn" data-value="1">1</button>
+                                <button type="button" class="preset-btn" data-value="2">2</button>
+                                <button type="button" class="preset-btn" data-value="3">3</button>
+                                <button type="button" class="preset-btn" data-value="4">4</button>
+                                <button type="button" class="preset-btn" data-value="5">5</button>
+                            </div>
+                        </div>
+
+                        <!-- Size control (backward-compat: app.js reads #text-label-default-size and .text-default-size-btn) -->
+                        <div class="panel-section">
+                            <label class="field-label" data-i18n="text-size">Size</label>
+                            <div class="size-control">
+                                <button type="button" class="text-default-size-btn glass-btn secondary" data-dir="-1">−</button>
+                                <input type="number" id="text-label-default-size" class="glass-input" min="10" max="32" value="22" style="width:64px;text-align:center;">
+                                <button type="button" class="text-default-size-btn glass-btn secondary" data-dir="1">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Color (backward-compat: app.js queries .text-color-btn.active inside #text-manager) -->
+                        <div class="panel-section">
+                            <label class="field-label" data-i18n="text-color">Color</label>
+                            <div class="color-row">
+                                <button type="button" class="text-color-btn color-btn active" data-color="#3b82f6" data-i18n-title="color-blue" title="Blue"></button>
+                                <button type="button" class="text-color-btn color-btn" data-color="#ef4444" data-i18n-title="color-red" title="Red"></button>
+                                <button type="button" class="text-color-btn color-btn" data-color="#000000" data-i18n-title="color-black" title="Black"></button>
+                            </div>
+                        </div>
+
+                        <!-- Placement hint -->
+                        <div class="panel-section">
+                            <div class="inline-hint" id="text-panel-hint" data-i18n="text-panel-hint">Enter text, then click the map to place it.</div>
+                        </div>
+                    </section>
+
+                    <!-- Draw / Line tool section -->
+                    <section class="tools-section tool-panel draw-panel" id="line-manager" style="display: none;">
+
+                        <!-- Draw mode selector -->
+                        <div class="panel-section">
+                            <label class="field-label" data-i18n="draw-mode-label">Mode</label>
+                            <div class="draw-mode-cards" id="draw-mode-cards">
+                                <button type="button" class="draw-mode-card active" data-draw-mode="path" title="Draw connected line path">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                    <span data-i18n="draw-mode-path">Path</span>
+                                </button>
+                                <button type="button" class="draw-mode-card" data-draw-mode="mission" title="Place mission graphics">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                    <span data-i18n="draw-mode-mission">Mission</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Path mode controls -->
+                        <div id="draw-path-controls">
+                            <div class="control-group">
+                                <label data-i18n="draw-side-label">Side</label>
+                                <div class="line-color-row">
+                                    <button type="button" class="line-color-btn line-affiliation-btn active" data-color="#3b82f6" data-i18n-title="friendly" data-i18n="friendly">Friendly</button>
+                                    <button type="button" class="line-color-btn line-affiliation-btn" data-color="#ef4444" data-i18n-title="enemy" data-i18n="enemy">Enemy</button>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label data-i18n="line-style">Style</label>
+                                <select id="line-style" class="glass-select">
+                                    <option value="solid" selected data-i18n-option="solid">Solid</option>
+                                    <option value="dotted" data-i18n-option="dotted">Dotted</option>
+                                </select>
+                            </div>
+
+                            <!-- Auto Draw workflow button -->
+                            <div class="control-group" style="margin-top:4px;">
+                                <button id="free-draw-signature-btn" class="glass-btn secondary" type="button" data-i18n="auto-draw-btn" title="Free Draw Circle X workflow">Auto Draw</button>
+                            </div>
+                        </div>
+
+                        <!-- Mission graphics section -->
+                        <div id="draw-tmg-section" class="control-group tmg-section" style="display:none;">
+                            <div class="control-group">
+                                <label>Side</label>
+                                <div class="line-color-row">
+                                    <button type="button" class="tmg-affiliation-btn line-affiliation-btn active" data-color="#3b82f6" data-i18n-title="friendly" data-i18n="friendly">Friendly</button>
+                                    <button type="button" class="tmg-affiliation-btn line-affiliation-btn" data-color="#ef4444" data-i18n-title="enemy" data-i18n="enemy">Enemy</button>
+                                </div>
+                            </div>
+                            <label class="tmg-section-heading">Mission Graphics</label>
+                            <small class="field-hint tmg-picker-hint" data-i18n="tmg-hint">Click a graphic, then click on the map to place. Adjust size below.</small>
+                            <div class="tmg-picker-wrap">
+                                <div class="tmg-size-controls">
+                                    <div class="tmg-size-row">
+                                        <label for="tmg-length-input" id="tmg-length-field-label" class="tmg-size-label">Length (km):</label>
+                                        <input id="tmg-length-input" type="number" min="0.1" max="50" value="0.5" step="0.1" class="tmg-size-input">
+                                    </div>
+                                    <div class="tmg-size-row">
+                                        <label for="tmg-width-input" class="tmg-size-label" data-i18n="tmg-width-label">Width:</label>
+                                        <input id="tmg-width-input" type="number" min="1" max="30" value="1.5" step="0.5" class="tmg-size-input">
+                                    </div>
+                                    <input id="tmg-width-slider" type="range" min="1" max="30" value="4" step="0.5" class="tmg-width-slider-full">
+                                </div>
+                                <div id="tmg-grid" class="tmg-grid" role="list"></div>
+                            </div>
+                            <!-- Arrow shape controls (shown when arrow-type TMG is selected) -->
+                            <div id="arrow-shape-controls" class="control-group" style="display:none;">
+                                <div class="tmg-size-row">
+                                    <label for="tmg-arrow-tip-input" class="tmg-size-label">Arrow tip scale:</label>
+                                    <input id="tmg-arrow-tip-input" type="number" min="0.3" max="4.0" value="1.0" step="0.1" class="tmg-size-input">
+                                </div>
+                                <input id="tmg-arrow-tip-slider" type="range" min="0.3" max="4.0" value="1.0" step="0.1" class="tmg-width-slider-full">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Symbol tool panel -->
+                    <section class="tools-section tool-panel symbol-panel" id="symbol-manager" style="display: none;">
+
+                        <!-- Step indicator -->
+                        <div class="step-indicator" id="symbol-step-indicator">
+                            <div class="step-dot active" data-step="1" title="Choose symbol"></div>
+                            <div class="step-connector"></div>
+                            <div class="step-dot" data-step="2" title="Set identity"></div>
+                            <div class="step-connector"></div>
+                            <div class="step-dot" data-step="3" title="Configure"></div>
+                            <div class="step-connector"></div>
+                            <div class="step-dot" data-step="4" title="Place"></div>
+                        </div>
+
+                        <!-- Search bar -->
+                        <div class="symbol-search-wrap">
+                            <input type="text" id="symbol-search-input" class="symbol-search-input" data-i18n-placeholder="symbol-search-placeholder" placeholder="Search symbols... (e.g. Infantry, HQ, Recon)" autocomplete="off" spellcheck="false" />
+                            <svg class="symbol-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </div>
+
+                        <!-- Preview card (large, centered) -->
+                        <div class="symbol-preview-card" id="symbol-preview-card">
+                            <div id="symbol-preview" class="symbol-preview-box">
+                                <!-- Empty state shown when no symbol selected -->
+                                <div class="symbol-empty-state" id="symbol-empty-state">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"><path d="M12 3L21 12L12 21L3 12Z"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="15" r="0.5" fill="currentColor"/></svg>
+                                </div>
+                            </div>
+                            <div class="symbol-preview-meta">
+                                <div id="picked-sidc-display" class="sidc-selected-display" data-i18n="apply-symbol">No symbol selected</div>
+                                <div id="sidc-code-display" class="code-display muted"></div>
+                            </div>
+                            <!-- Summary tags (populated by JS) -->
+                            <div class="symbol-summary" id="symbol-summary"></div>
+                        </div>
+
+                        <!-- Browse & Saved Symbols row -->
+                        <div class="panel-section">
+                            <button id="open-sidc-picker" class="glass-btn" type="button">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                <span data-i18n="open-picker">Browse Symbol Library</span>
+                            </button>
+                        </div>
+
+                        <!-- Quick-start presets (from saved symbols) -->
+                        <div class="quick-start-section" id="quick-start-section">
+                            <div class="quick-start-label" data-i18n="symbol-quick-start">Quick Start</div>
+                            <div class="quick-start-grid" id="quick-start-grid">
+                                <!-- Populated by JS from saved symbols -->
+                            </div>
+                        </div>
+
+                        <!-- Saved Symbols (favorites) -->
+                        <div class="panel-section" id="top-favorites-wrap">
+                            <button type="button" id="top-favorites-btn" class="glass-btn secondary" data-i18n-title="favorites-btn-title" title="Quick presets">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                <span data-i18n="symbol-saved-btn">Saved Symbols</span>
+                            </button>
+                            <div id="top-favorites-panel" class="top-favorites-panel hidden" role="region" aria-hidden="true">
+                                <div class="top-favorites-panel-header" data-i18n="favorites-title">Saved Symbols</div>
+                                <div id="top-favorites-list" class="top-favorites-list"></div>
+                                <div class="top-favorites-actions">
+                                    <button type="button" class="glass-btn secondary top-favorites-add-btn" id="top-favorites-add-current" data-i18n="favorites-add-current">Add current symbol</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="section-divider" />
+
+                        <!-- Who is it? (Side / Affiliation) -->
+                        <div class="panel-section">
+                            <label class="field-label" data-i18n="symbol-side-label">Who is it?</label>
+                            <span class="field-sublabel" data-i18n="symbol-identity-label">Standard identity</span>
+                            <div class="segmented-control" id="symbol-affiliation-group">
+                                <button type="button" class="segment-btn active" data-affiliation="3" title="Friendly" data-i18n="symbol-side-friendly">Friendly</button>
+                                <button type="button" class="segment-btn" data-affiliation="6" title="Hostile" data-i18n="symbol-side-enemy">Hostile</button>
+                                <button type="button" class="segment-btn" data-affiliation="4" title="Neutral" data-i18n="symbol-side-neutral">Neutral</button>
+                                <button type="button" class="segment-btn" data-affiliation="1" title="Unknown" data-i18n="symbol-side-unknown">Unknown</button>
+                            </div>
+                        </div>
+
+                        <!-- Label & Notes card -->
+                        <div class="builder-card">
+                            <div class="builder-card-header">
+                                <span class="builder-card-title" data-i18n="symbol-label-notes">Label &amp; Notes</span>
+                                <span class="builder-card-subtitle" data-i18n="symbol-label-notes-sub">Optional</span>
+                            </div>
+                            <div class="two-col">
+                                <div class="field-group">
+                                    <label for="text-unique-designation" data-i18n="symbol-unit-label">Unit name</label>
+                                    <input id="text-unique-designation" class="glass-input" type="text" data-i18n-placeholder="symbol-unit-placeholder" placeholder="e.g. Alpha 1" autocomplete="off" />
+                                </div>
+                                <div class="field-group">
+                                    <label for="text-additional-info" data-i18n="symbol-notes-label">Notes</label>
+                                    <input id="text-additional-info" class="glass-input" type="text" data-i18n-placeholder="symbol-notes-placeholder" placeholder="Optional" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- More Options (collapsed by default) -->
+                        <button type="button" class="more-options-toggle" id="symbol-more-options-toggle">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                            <span data-i18n="symbol-more-options">More options</span>
+                        </button>
+
+                        <div id="symbol-extra-options" style="display:none;">
+                            <!-- Advanced details card -->
+                            <details class="panel-section advanced-details" style="margin-top:12px;">
+                                <summary class="details-summary" data-i18n="symbol-advanced-label">Advanced details</summary>
+                                <div class="advanced-fields">
+                                    <label for="text-altitude-depth" class="field-label">Altitude / Depth</label>
+                                    <input id="text-altitude-depth" class="glass-input" type="text" placeholder="Optional" autocomplete="off" />
+                                    <label for="text-quantity" class="field-label">Quantity</label>
+                                    <input id="text-quantity" class="glass-input" type="text" placeholder="Optional" autocomplete="off" />
+                                    <label for="text-higher-formation" class="field-label">Parent unit</label>
+                                    <input id="text-higher-formation" class="glass-input" type="text" placeholder="Optional" autocomplete="off" />
+                                </div>
+                            </details>
+
+                            <!-- SIDC code (expert only) -->
+                            <details class="panel-section advanced-details" style="margin-top:8px;">
+                                <summary class="details-summary">SIDC Code (Expert)</summary>
+                                <div class="advanced-fields">
+                                    <label for="sidc-manual" class="field-label">Raw SIDC</label>
+                                    <div style="display:flex;gap:6px;align-items:center;">
+                                        <input id="sidc-manual" class="glass-input" type="text" placeholder="e.g. 10031000001211000000" style="flex:1;" />
+                                        <button id="sync-sidc-from-picker" class="glass-btn secondary" type="button" style="margin-top:0;">Apply</button>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+
+                        <!-- Placement hint -->
+                        <div class="panel-section">
+                            <div class="inline-hint" id="symbol-placement-hint">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px;opacity:0.7;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <span data-i18n="symbol-placement-hint">Choose a symbol to begin.</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ▸ GEO PANEL (shown for measure/shapes) -->
+                <div id="geo-panel" class="sidebar-panel hidden context-section">
+                    <!-- Hidden select driven programmatically by tool-rail.js / measure-controller / shapes-controller -->
+                    <select id="geo-tool-select" style="display:none;">
+                        <option value="none">None</option>
+                        <option value="distance">Distance</option>
+                        <option value="range-circle">Range Circle</option>
+                        <option value="range-sector">Range Sector</option>
+                        <option value="circle-2pt">Circle (2pt)</option>
+                        <option value="semi-circle">Semi-Circle</option>
+                        <option value="rectangle">Rectangle</option>
+                        <option value="oval">Oval</option>
+                        <option value="polygon">Polygon</option>
+                        <option value="freeform">Freeform</option>
+                        <option value="freehand">Freehand</option>
+                        <option value="minefield">Minefield</option>
+                    </select>
+                    <section class="tools-section geo-tools-section glass-panel">
+                        <h2 data-i18n="measure-panel-title">Measure</h2>
+                        <div class="inline-hint" data-i18n="measure-panel-hint">Click points on the map to measure distance</div>
+                        <div class="control-group">
+                            <label data-i18n="measure-panel-type-label">Measure type</label>
+                            <div class="measure-type-cards">
+                                <button type="button" class="measure-type-card" data-measure-type="range-circle">
+                                    <strong data-i18n="measure-panel-radius-title">Radius Circle</strong>
+                                    <span data-i18n="measure-panel-radius-desc">Range from a center point</span>
+                                </button>
+                                <button type="button" class="measure-type-card" data-measure-type="distance">
+                                    <strong data-i18n="measure-panel-distance-title">Distance</strong>
+                                    <span data-i18n="measure-panel-distance-desc">Measure between points</span>
+                                </button>
+                                <button type="button" class="measure-type-card" data-measure-type="range-sector">
+                                    <strong data-i18n="measure-panel-sector-title">Direction Cone</strong>
+                                    <span data-i18n="measure-panel-sector-desc">Directional range overlay</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="inline-hint" data-i18n="measure-panel-bottom-hint">Click points on the map to measure distance</div>
+                        <div class="control-group">
+                            <label data-i18n="geo-fill-style">Fill Style</label>
+                            <select id="geo-fill-style-select" class="glass-select">
+                                <option value="solid" data-i18n-option="geo-fill-solid">Solid</option>
+                                <option value="outline" selected data-i18n-option="geo-fill-outline">Outline only</option>
+                                <option value="vertical" data-i18n-option="geo-fill-vertical">Vertical lines</option>
+                                <option value="horizontal" data-i18n-option="geo-fill-horizontal">Horizontal lines</option>
+                                <option value="both" data-i18n-option="geo-fill-both">Both (cross-hatch)</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Color</label>
+                            <div class="line-color-row geo-color-row">
+                                <button type="button" class="geo-color-btn active" data-color="#3b82f6" data-i18n-title="friendly" title="Friendly"></button>
+                                <button type="button" class="geo-color-btn" data-color="#ef4444" data-i18n-title="enemy" title="Enemy"></button>
+                                <button type="button" class="geo-color-btn" data-color="#22c55e" title="Green"></button>
+                                <button type="button" class="geo-color-btn" data-color="#eab308" title="Yellow"></button>
+                                <button type="button" class="geo-color-btn" data-color="#92400e" title="Brown"></button>
+                                <button type="button" class="geo-color-btn" data-color="#1f2937" title="Black"></button>
+                            </div>
+                        </div>
+                        <!-- Tool-specific options (shown/hidden by existing JS) -->
+                        <div id="geo-distance-options" class="geo-tool-options" style="display:none;">
+                            <small class="field-hint" data-i18n="geo-distance-hint">Click to add points. Double-click or Finish to complete (min 2 points).</small>
+                        </div>
+                        <div id="geo-range-circle-options" class="geo-tool-options" style="display:none;">
+                            <label data-i18n="geo-radius">Radius (km)</label>
+                            <input type="number" id="geo-radius-input" class="glass-input" min="0.1" max="5000" step="0.1" value="5" placeholder="5">
+                            <small class="field-hint" data-i18n="geo-range-circle-hint">Click on the map to place the center.</small>
+                        </div>
+                        <div id="geo-range-sector-options" class="geo-tool-options" style="display:none;">
+                            <label data-i18n="geo-radius">Radius (km)</label>
+                            <input type="number" id="geo-sector-radius-input" class="glass-input" min="0.1" max="5000" step="0.1" value="5" placeholder="5">
+                            <label data-i18n="geo-bearing">Bearing (°)</label>
+                            <input type="number" id="geo-bearing-input" class="glass-input" min="0" max="360" step="1" value="0" placeholder="0">
+                            <label data-i18n="geo-aperture">Aperture (°)</label>
+                            <input type="number" id="geo-aperture-input" class="glass-input" min="1" max="360" step="1" value="90" placeholder="90">
+                            <small class="field-hint" data-i18n="geo-range-sector-hint">Click on the map to place the center. Bearing 0° = North.</small>
+                        </div>
+                        <div id="geo-circle-2pt-options" class="geo-tool-options" style="display:none;">
+                            <small class="field-hint" data-i18n="geo-circle-2pt-hint">Click center, then click edge to define radius.</small>
+                        </div>
+                        <div id="geo-semi-circle-options" class="geo-tool-options" style="display:none;">
+                            <label data-i18n="geo-radius">Radius (km)</label>
+                            <input type="number" id="geo-semi-radius-input" class="glass-input" min="0.1" max="5000" step="0.1" value="5" placeholder="5">
+                            <label data-i18n="geo-bearing">Bearing (°)</label>
+                            <input type="number" id="geo-semi-bearing-input" class="glass-input" min="0" max="360" step="1" value="0" placeholder="0">
+                            <small class="field-hint" data-i18n="geo-semi-circle-hint">Click on the map to place the center. Bearing 0° = North.</small>
+                        </div>
+                        <div id="geo-rectangle-options" class="geo-tool-options" style="display:none;">
+                            <small class="field-hint" data-i18n="geo-rectangle-hint">Click two opposite corners of the rectangle.</small>
+                        </div>
+                        <div id="geo-oval-options" class="geo-tool-options" style="display:none;">
+                            <small class="field-hint" data-i18n="geo-oval-hint">Click two opposite corners of the box around the oval.</small>
+                        </div>
+                        <div id="geo-polygon-options" class="geo-tool-options" style="display:none;">
+                            <label data-i18n="geo-sides">Sides</label>
+                            <input type="number" id="geo-polygon-sides-input" class="glass-input" min="3" max="20" step="1" value="6" placeholder="6">
+                            <label data-i18n="geo-radius">Radius (km)</label>
+                            <input type="number" id="geo-polygon-radius-input" class="glass-input" min="0.1" max="5000" step="0.1" value="5" placeholder="5">
+                            <label data-i18n="geo-bearing">Rotation (°)</label>
+                            <input type="number" id="geo-polygon-rotation-input" class="glass-input" min="0" max="360" step="1" value="0" placeholder="0">
+                            <small class="field-hint" data-i18n="geo-polygon-hint">Click on the map to place the center.</small>
+                        </div>
+                        <div id="geo-freeform-options" class="geo-tool-options" style="display:none;">
+                            <small class="field-hint" data-i18n="geo-freeform-hint">Click to add points. Double-click or Finish to complete (min 3 points).</small>
+                        </div>
+                        <div id="geo-minefield-options" class="geo-tool-options" style="display:none;">
+                            <label data-i18n="geo-mine-type">Mine Type</label>
+                            <select id="geo-mine-type-select" class="glass-select">
+                                <option value="ap" selected data-i18n-option="geo-mine-ap">Anti-Personnel (AP)</option>
+                                <option value="at" data-i18n-option="geo-mine-at">Anti-Tank (AT)</option>
+                                <option value="mixed" data-i18n-option="geo-mine-mixed">Mixed (AP + AT)</option>
+                            </select>
+                            <small class="field-hint" data-i18n="geo-minefield-hint">Click two opposite corners to define the minefield area.</small>
+                        </div>
+                        <div id="geo-freehand-options" class="geo-tool-options" style="display:none;">
+                            <small class="field-hint" data-i18n="geo-freehand-hint">Click and hold to start drawing. Move the mouse to draw. Release click to stop.</small>
+                            <button type="button" id="geo-freehand-eraser-btn" class="glass-btn secondary" style="margin-top:8px;width:100%;" data-i18n="geo-freehand-eraser">Eraser (click to trim)</button>
+                            <button type="button" id="geo-freehand-trimmer-btn" class="glass-btn secondary" style="margin-top:6px;width:100%;" data-i18n="geo-freehand-trimmer">Freehand Trimmer (drag to erase)</button>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ▸ MEASURE PANEL -->
+                <div id="measure-panel" class="sidebar-panel hidden context-section">
+                    <section class="tools-section tool-panel">
+                        <div class="panel-section">
+                            <label class="field-label">Measure type</label>
+                            <div class="tool-card-grid" id="measure-type-cards">
+                                <button type="button" class="tool-card active" data-measure="distance">
+                                    <strong data-i18n="measure-panel-distance-title">Distance</strong>
+                                    <span data-i18n="measure-panel-distance-desc">Measure between points</span>
+                                </button>
+                                <button type="button" class="tool-card" data-measure="range-circle">
+                                    <strong data-i18n="measure-panel-radius-title">Radius Circle</strong>
+                                    <span data-i18n="measure-panel-radius-desc">Range from a center point</span>
+                                </button>
+                                <button type="button" class="tool-card" data-measure="range-sector">
+                                    <strong data-i18n="measure-panel-sector-title">Direction Cone</strong>
+                                    <span data-i18n="measure-panel-sector-desc">Directional range overlay</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="panel-section">
+                            <div class="inline-hint" id="measure-hint" data-i18n="measure-panel-bottom-hint">Click points on the map to measure distance</div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ▸ SHAPES PANEL -->
+                <div id="shapes-panel" class="sidebar-panel hidden context-section">
+                    <section class="tools-section tool-panel">
+                        <div class="panel-section">
+                            <label class="field-label" data-i18n="shapes-panel-shape-label">Shape</label>
+                            <div class="tool-card-grid" id="shape-type-cards">
+                                <button type="button" class="tool-card active" data-shape="rectangle">
+                                    <strong data-i18n="shapes-panel-rectangle-title">Rectangle</strong>
+                                    <span data-i18n="shapes-panel-rectangle-desc">Two opposite corners</span>
+                                </button>
+                                <button type="button" class="tool-card" data-shape="circle-2pt">
+                                    <strong data-i18n="shapes-panel-circle-title">Circle</strong>
+                                    <span data-i18n="shapes-panel-circle-desc">Center and edge</span>
+                                </button>
+                                <button type="button" class="tool-card" data-shape="oval">
+                                    <strong data-i18n="shapes-panel-oval-title">Oval</strong>
+                                    <span data-i18n="shapes-panel-oval-desc">Bounding box</span>
+                                </button>
+                                <button type="button" class="tool-card" data-shape="polygon">
+                                    <strong data-i18n="shapes-panel-polygon-title">Polygon</strong>
+                                    <span data-i18n="shapes-panel-polygon-desc">Regular polygon</span>
+                                </button>
+                                <button type="button" class="tool-card" data-shape="freeform">
+                                    <strong data-i18n="shapes-panel-freeform-title">Custom Area</strong>
+                                    <span data-i18n="shapes-panel-freeform-desc">Click to add points</span>
+                                </button>
+                            </div>
+                        </div>
+                        <details class="panel-section advanced-details">
+                            <summary class="details-summary" data-i18n="shapes-panel-advanced-label">Advanced shapes</summary>
+                            <div class="tool-card-grid" style="margin-top:8px;">
+                                <button type="button" class="tool-card" data-shape="semi-circle">
+                                    <strong data-i18n="shapes-panel-semicircle-title">Semi-circle</strong>
+                                    <span data-i18n="shapes-panel-semicircle-desc">Half circle by radius</span>
+                                </button>
+                                <button type="button" class="tool-card" data-shape="range-sector">
+                                    <strong data-i18n="shapes-panel-sector-title">Direction Cone</strong>
+                                    <span data-i18n="shapes-panel-sector-desc">Directional sector</span>
+                                </button>
+                                <button type="button" class="tool-card" data-shape="minefield">
+                                    <strong data-i18n="shapes-panel-minefield-title">Minefield</strong>
+                                    <span data-i18n="shapes-panel-minefield-desc">Obstacle area</span>
+                                </button>
+                                <button type="button" class="tool-card" data-shape="freehand">
+                                    <strong data-i18n="shapes-panel-freehand-title">Freehand</strong>
+                                    <span data-i18n="shapes-panel-freehand-desc">Draw free-form lines</span>
+                                </button>
+                            </div>
+                        </details>
+                        <div class="panel-section">
+                            <label for="shapes-fill-style" class="field-label" data-i18n="shapes-panel-fill-label">Fill style</label>
+                            <select id="shapes-fill-style" class="glass-select">
+                                <option value="outline" selected data-i18n-option="shapes-panel-fill-outline">Outline only</option>
+                                <option value="solid" data-i18n-option="shapes-panel-fill-solid">Solid</option>
+                                <option value="vertical" data-i18n-option="shapes-panel-fill-vertical">Vertical lines</option>
+                                <option value="horizontal" data-i18n-option="shapes-panel-fill-horizontal">Horizontal lines</option>
+                                <option value="both" data-i18n-option="shapes-panel-fill-both">Cross-hatch</option>
+                            </select>
+                        </div>
+                        <div class="panel-section">
+                            <label class="field-label" data-i18n="shapes-panel-color-label">Color</label>
+                            <div class="color-row" id="shapes-color-group">
+                                <button type="button" class="color-btn active" data-color="#3b82f6" title="Blue"></button>
+                                <button type="button" class="color-btn" data-color="#ef4444" title="Red"></button>
+                                <button type="button" class="color-btn" data-color="#22c55e" title="Green"></button>
+                                <button type="button" class="color-btn" data-color="#eab308" title="Yellow"></button>
+                                <button type="button" class="color-btn" data-color="#1f2937" title="Black"></button>
+                            </div>
+                        </div>
+                        <div class="panel-section">
+                            <div class="inline-hint" id="shapes-hint" data-i18n="shapes-panel-bottom-hint">Click two opposite corners to draw a rectangle.</div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ▸ LAYERS PANEL -->
+                <section class="tools-section layers-section glass-panel context-section hidden" id="layers-section">
+                    <!-- Layer actions bar: search + add -->
+                    <div class="layers-toolbar">
+                        <div class="layers-search-wrap">
+                            <svg class="layers-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" id="layers-search-input" class="layers-search-input" placeholder="Search layers..." autocomplete="off" spellcheck="false">
+                        </div>
+                        <div class="layers-toolbar-actions">
+                            <button id="add-layer-btn" class="layers-toolbar-btn" type="button" data-i18n-title="add-layer" title="Add layer">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            </button>
+                            <button id="add-folder-btn" class="layers-toolbar-btn" type="button" data-i18n-title="add-folder" title="Add folder">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Layers tree -->
+                    <div id="layers-list" class="layers-list"></div>
+
+                    <!-- Secondary actions (collapsible) -->
+                    <details class="layers-secondary" id="layers-secondary-details">
+                        <summary class="layers-secondary-summary">Manage & Transfer</summary>
+                        <div class="layers-secondary-body">
+                            <button id="layer-templates-btn" class="glass-btn secondary" type="button" data-i18n="layer-template-btn">Saved Sets</button>
+                            <div class="layers-transfer-row">
+                                <button id="export-layers-btn" class="glass-btn secondary" type="button" data-i18n-title="export-title" data-i18n="export">Export</button>
+                                <button id="import-layers-btn" class="glass-btn secondary" type="button" data-i18n-title="import-title" data-i18n="import">Import</button>
+                            </div>
+                        </div>
+                    </details>
+                    <input type="file" id="import-layers-input" accept=".json" style="display:none">
+                </section>
+
+                <!-- ▸ SETTINGS PANEL (backward-compat shell — selects moved to utility panel) -->
+                <div id="settings-panel" class="context-section hidden" style="display:none!important"></div>
+
+                <!-- ▸ ACTION AREA (always visible at bottom) -->
+                <section class="tools-section glass-panel sidebar-tool-actions">
+                    <p id="instruction-text" hidden aria-hidden="true"></p>
+                    <div id="line-drawing-controls" class="line-drawing-controls hidden">
+                        <button id="finish-line-btn" class="glass-btn secondary" type="button" data-i18n="finish">Finish</button>
+                        <button id="cancel-line-btn" class="glass-btn danger" type="button" data-i18n="cancel">Cancel</button>
+                    </div>
+                    <div id="geo-drawing-controls" class="line-drawing-controls hidden">
+                        <button id="finish-geo-polygon-btn" class="glass-btn secondary" type="button" data-i18n="finish">Finish</button>
+                        <button id="cancel-geo-polygon-btn" class="glass-btn danger" type="button" data-i18n="cancel">Cancel</button>
+                    </div>
+                    <div id="selection-controls" class="line-drawing-controls hidden">
+                        <span id="selection-count" style="font-size:0.85rem;margin-right:8px;"></span>
+                        <button id="selection-copy-btn" class="glass-btn secondary" type="button" data-i18n="selection-copy">Copy</button>
+                        <button id="selection-duplicate-btn" class="glass-btn secondary" type="button" data-i18n="selection-duplicate">Duplicate</button>
+                        <button id="selection-move-btn" class="glass-btn secondary" type="button" data-i18n="selection-move">Move</button>
+                        <button id="selection-delete-btn" class="glass-btn danger" type="button" data-i18n="selection-delete">Delete</button>
+                        <button id="selection-clear-btn" class="glass-btn secondary" type="button" data-i18n="selection-clear">Deselect</button>
+                    </div>
+                    <div class="action-buttons">
+                        <button id="undo-btn" class="glass-btn secondary" type="button" data-i18n-title="undo-title" data-i18n="undo">↶ Undo</button>
+                        <button id="redo-btn" class="glass-btn secondary" type="button" data-i18n-title="redo-title" data-i18n="redo">↷ Redo</button>
+                        <button id="clear-map-btn" class="glass-btn danger" data-i18n="clear-map">Clear Map</button>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- ── UTILITY PANEL (slide-out from right of context panel) ── -->
+            <aside class="utility-panel hidden" id="utility-panel" aria-label="Settings & Utilities">
+                <div class="utility-panel-header">
+                    <h2 class="utility-panel-title">Settings</h2>
+                    <button type="button" class="utility-panel-close" id="utility-panel-close" aria-label="Close settings">&times;</button>
+                </div>
+                <div class="utility-panel-body">
+                    <section class="utility-section">
+                        <h3 data-i18n="coord-system">Coordinates</h3>
+                        <div class="control-group">
+                            <label data-i18n="coord-system-label">Display & input format</label>
+                            <select id="coord-system-select" class="glass-select">
+                                <option value="wgs84" data-i18n-option="coord-wgs84">WGS84 (Decimal)</option>
+                                <option value="dms" data-i18n-option="coord-dms">DMS (Degrees Minutes Seconds)</option>
+                                <option value="utm" data-i18n-option="coord-utm">UTM</option>
+                                <option value="mgrs" data-i18n-option="coord-mgrs">MGRS</option>
+                            </select>
+                        </div>
+                    </section>
+                    <section class="utility-section">
+                        <h3 data-i18n="distance-unit-section">Units</h3>
+                        <div class="control-group">
+                            <label data-i18n="distance-unit-label">Primary unit for lengths</label>
+                            <select id="distance-unit-select" class="glass-select">
+                                <option value="km" data-i18n-option="distance-unit-opt-km">Kilometers (km) first</option>
+                                <option value="nm" data-i18n-option="distance-unit-opt-nm">Nautical miles (NM) first</option>
+                            </select>
+                        </div>
+                    </section>
+                </div>
+            </aside>
+
+            <!-- ── MAP WORKSPACE ── -->
+            <main class="map-workspace">
+                <div class="map-statusbar" id="map-statusbar">
+                    <div class="statusbar-tool" id="statusbar-tool-display">Select</div>
+                    <div class="statusbar-divider">|</div>
+                    <div class="statusbar-hint" id="statusbar-hint-display">Click or drag on the map to select items</div>
+                </div>
+                <div class="map-canvas-wrap">
+                    <div id="map"></div>
+                    <div id="mission-graphic-assist" class="mission-graphic-assist hidden" aria-live="polite" aria-atomic="true">
+                        <div id="mission-assist-title" class="mission-assist-title">Workflow</div>
+                        <div class="mission-assist-steps">
+                            <div class="mission-assist-step" data-step="1">
+                                <span class="mission-assist-num">1</span>
+                                <span id="mission-assist-step1" class="mission-assist-text">Place tail</span>
+                            </div>
+                            <div class="mission-assist-step" data-step="2">
+                                <span class="mission-assist-num">2</span>
+                                <span id="mission-assist-step2" class="mission-assist-text">Set direction + size</span>
+                            </div>
+                            <div class="mission-assist-step" data-step="3">
+                                <span class="mission-assist-num">3</span>
+                                <span id="mission-assist-step3" class="mission-assist-text">Add bends, double-click tip</span>
+                            </div>
+                        </div>
+                        <div id="mission-assist-hint" class="mission-assist-hint"></div>
+                    </div>
+                    <div id="coord-tooltip" class="coord-tooltip"></div>
+                    <div id="popup-anchor" class="popup-anchor"></div>
+                    <div id="selection-toolbar-floating" class="selection-toolbar-floating hidden"></div>
+                </div>
+            </main>
+
+            <!-- ── CHAT SIDEBAR ── -->
+            <aside id="chat-sidebar" class="chat-sidebar collapsed" aria-label="Team chat panel">
+                <header class="chat-header">
+                    <div class="chat-header-main">
+                        <div class="chat-title-row">
+                            <span class="chat-title">Team Chat</span>
+                            <span class="chat-you">You: <span id="chat-user-name">Planner 1</span></span>
+                            <button id="chat-set-name-btn" type="button" class="chat-set-name-btn" title="Change your display name">✎</button>
+                            <button id="chat-notify-toggle" type="button" class="chat-set-name-btn" aria-pressed="true" title="Mute or unmute new-message sound">🔔</button>
+                        </div>
+                        <div id="chat-status" class="chat-status">Initializing…</div>
+                    </div>
+                    <button id="chat-close-btn" class="chat-close-btn" type="button" aria-label="Close chat">×</button>
+                </header>
+                <div class="chat-room-bar">
+                    <label class="chat-room-label" for="chat-room-select"><span data-i18n="chat-room-label">Room</span></label>
+                    <select id="chat-room-select" class="chat-room-select glass-input" aria-label="Chat room"></select>
+                    <button type="button" id="chat-new-group-btn" class="glass-btn secondary chat-room-action" data-i18n="chat-new-group">New group</button>
+                    <button type="button" id="chat-join-code-btn" class="glass-btn secondary chat-room-action" data-i18n="chat-join-code">Join code</button>
+                    <button type="button" id="chat-view-members-btn" class="glass-btn secondary chat-room-action" data-i18n="chat-view-members">Members</button>
+                </div>
+                <div id="chat-private-actions" class="chat-private-actions hidden" aria-label="Private group actions">
+                    <button type="button" id="chat-show-invite-btn" class="glass-btn secondary chat-room-action" data-i18n="chat-show-invite">Display code</button>
+                    <button type="button" id="chat-leave-group-btn" class="glass-btn secondary chat-room-action" data-i18n="chat-leave-group">Leave</button>
+                    <button type="button" id="chat-delete-group-btn" class="glass-btn danger chat-room-action" data-i18n="chat-delete-group">Delete</button>
+                </div>
+                <div id="chat-messages" class="chat-messages" aria-live="polite"></div>
+                <form id="chat-form" class="chat-input-row">
+                    <button id="chat-attach-btn" class="glass-btn secondary chat-attach-btn" type="button" title="Attach file">+</button>
+                    <input id="chat-input" class="chat-input glass-input" type="text" autocomplete="off" placeholder="Type a message and press Enter" />
+                    <button id="chat-send-btn" class="glass-btn secondary chat-send-btn" type="submit">Send</button>
+                    <input id="chat-file-input" class="chat-file-input" type="file" style="display:none" />
+                </form>
+            </aside>
+
+        </div><!-- /.workspace -->
+
+
+
+    </div><!-- /.app-shell -->
+
+    <!-- Hidden backward-compat buttons (JS attaches listeners to these IDs) -->
+    <div style="display:none!important" aria-hidden="true">
+        <button id="pan-inspect-m-btn" type="button"></button>
+        <button id="text-tool-t-btn" type="button"></button>
+        <button id="freehand-f-btn" type="button"></button>
+        <button id="select-area-header-btn" type="button"></button>
+        <button id="eraser-e-btn" type="button"></button>
+    </div>
+
+    <!-- ═══════════ MODALS (unchanged) ═══════════ -->
+
+    <!-- Chat room members -->
+    <div id="chat-members-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" id="chat-members-backdrop"></div>
+        <div class="chat-members-dialog">
+            <div class="chat-members-dialog-header">
+                <span class="chat-members-dialog-title" data-i18n="chat-members-title">Room members</span>
+                <button type="button" id="chat-members-close" class="chat-members-close" aria-label="Close">×</button>
+            </div>
+            <div id="chat-members-list" class="chat-members-list" role="list"></div>
+        </div>
+    </div>
+
+    <!-- Group invite code modal -->
+    <div id="chat-invite-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" id="chat-invite-backdrop"></div>
+        <div class="chat-invite-dialog">
+            <div class="chat-invite-dialog-header">
+                <span class="chat-invite-dialog-title" data-i18n="chat-invite-modal-title">Group invite code</span>
+                <button type="button" id="chat-invite-close" class="chat-members-close" aria-label="Close">×</button>
+            </div>
+            <div class="chat-invite-body">
+                <div class="chat-invite-field">
+                    <span class="chat-invite-label" data-i18n="chat-invite-current-label">Current code</span>
+                    <div class="chat-invite-current-row">
+                        <code id="chat-invite-current-display" class="chat-invite-code-display"></code>
+                        <button type="button" id="chat-invite-copy-btn" class="glass-btn secondary chat-invite-copy" data-i18n="chat-invite-copy-btn">Copy</button>
+                    </div>
+                </div>
+                <div class="chat-invite-field">
+                    <label class="chat-invite-label" for="chat-invite-new-input" data-i18n="chat-invite-new-label">Change to your own code</label>
+                    <input id="chat-invite-new-input" type="text" class="glass-input chat-invite-new-input" maxlength="40" autocomplete="off" spellcheck="false" data-i18n-placeholder="chat-invite-new-placeholder" placeholder="letters, numbers, _ or - (3–40 chars)" />
+                </div>
+                <div id="chat-invite-modal-error" class="chat-invite-modal-error hidden" role="alert"></div>
+                <div class="chat-invite-actions">
+                    <button type="button" id="chat-invite-save-btn" class="glass-btn secondary" data-i18n="chat-invite-save">Save new code</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export layers selection modal -->
+    <div id="export-layers-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" id="export-layers-modal-backdrop"></div>
+        <div class="modal-panel export-select-modal-panel">
+            <div class="modal-header">
+                <div class="modal-title" data-i18n="export-select-title">Export selection</div>
+                <button type="button" class="modal-close" id="export-layers-modal-close" data-i18n="close">Close</button>
+            </div>
+            <div class="export-select-body">
+                <p class="export-select-hint" data-i18n="export-select-hint">Choose folders and layers to include.</p>
+                <div class="export-select-actions-bar">
+                    <button type="button" class="glass-btn secondary" id="export-select-all-btn" data-i18n="export-select-all">Select all</button>
+                    <button type="button" class="glass-btn secondary" id="export-select-none-btn" data-i18n="export-select-none">Select none</button>
+                </div>
+                <div id="export-select-tree" class="export-select-tree"></div>
+            </div>
+            <div class="export-select-footer">
+                <button type="button" class="glass-btn secondary" id="export-select-cancel-btn" data-i18n="cancel">Cancel</button>
+                <button type="button" class="glass-btn" id="export-select-download-btn" data-i18n="export-select-download">Download JSON</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Layer template favorites modal -->
+    <div id="layer-templates-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" id="layer-templates-modal-backdrop"></div>
+        <div class="modal-panel layer-templates-modal-panel">
+            <div class="modal-header">
+                <div class="modal-title" data-i18n="layer-template-title">Saved Layer Sets</div>
+                <button type="button" class="modal-close" id="layer-templates-modal-close" data-i18n="close">Close</button>
+            </div>
+            <div class="layer-templates-body">
+                <p class="layer-templates-hint" data-i18n="layer-template-hint">Save current layer setup as reusable presets.</p>
+                <div class="layer-templates-save-row">
+                    <input id="layer-template-name-input" type="text" class="glass-input" maxlength="80" autocomplete="off" data-i18n-placeholder="layer-template-name-placeholder" placeholder="Template name" />
+                    <button type="button" class="glass-btn secondary" id="layer-template-save-active-btn" data-i18n="layer-template-save-active">Save active layer</button>
+                </div>
+                <div id="layer-templates-list" class="layer-templates-list" role="list" aria-live="polite"></div>
+            </div>
+            <div class="layer-templates-footer">
+                <button type="button" class="glass-btn secondary" id="layer-templates-footer-close-btn" data-i18n="close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Text label modal -->
+    <div id="text-label-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop text-label-modal-cancel"></div>
+        <div class="text-label-dialog">
+            <div class="text-label-dialog-header" data-i18n="text-label-prompt">Enter text for label:</div>
+            <div class="text-label-presets">
+                <span class="text-label-quick-label" data-i18n="text-label-quick">Quick:</span>
+                <button type="button" class="text-label-preset-btn" data-value="x">x</button>
+                <button type="button" class="text-label-preset-btn" data-value="I">I</button>
+                <button type="button" class="text-label-preset-btn" data-value="II">II</button>
+                <button type="button" class="text-label-preset-btn" data-value="III">III</button>
+                <button type="button" class="text-label-preset-btn" data-value="XX">XX</button>
+                <button type="button" class="text-label-preset-btn" data-value="XXX">XXX</button>
+                <button type="button" class="text-label-preset-btn" data-value="0">0</button>
+                <button type="button" class="text-label-preset-btn" data-value="1">1</button>
+                <button type="button" class="text-label-preset-btn" data-value="2">2</button>
+                <button type="button" class="text-label-preset-btn" data-value="3">3</button>
+                <button type="button" class="text-label-preset-btn" data-value="4">4</button>
+                <button type="button" class="text-label-preset-btn" data-value="5">5</button>
+                <button type="button" class="text-label-preset-btn" data-value="6">6</button>
+                <button type="button" class="text-label-preset-btn" data-value="7">7</button>
+                <button type="button" class="text-label-preset-btn" data-value="8">8</button>
+                <button type="button" class="text-label-preset-btn" data-value="9">9</button>
+            </div>
+            <input type="text" id="text-label-input" class="glass-input" placeholder="" autocomplete="off">
+            <div class="text-label-dialog-actions">
+                <button type="button" id="text-label-ok-btn" class="glass-btn" data-i18n="ok">OK</button>
+                <button type="button" id="text-label-cancel-btn" class="glass-btn secondary" data-i18n="cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full symbol picker modal -->
+    <div id="sidc-picker-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" id="sidc-picker-close"></div>
+        <div class="modal-panel picker-modal-shell">
+            <div class="modal-header">
+                <div class="modal-title" data-i18n="picker-modal-title">Symbol Library (APP-6D)</div>
+                <button id="sidc-picker-close-btn" class="modal-close" type="button" data-i18n="close">Close</button>
+            </div>
+            <iframe id="sidc-picker-frame" class="modal-frame picker-modal-frame" title="Symbol picker" src="about:blank"></iframe>
+        </div>
+    </div>
+
+    <!-- ═══════════ SCRIPTS ═══════════ -->
+    <script src="sidc-data.js"></script>
+    <script src="config.js"></script>
+    <script src="identity.js"></script>
+    <script src="utils.js"></script>
+    <script src="symbology.js"></script>
+    <script src="graphics.js"></script>
+    <script src="io.js"></script>
+    <script src="popups.js"></script>
+    <script src="dialog.js"></script>
+    <script src="chat.js"></script>
+    <script src="i18n.js"></script>
+    <script src="../lib/leaflet.js"></script>
+    <script src="../lib/mgrs.min.js"></script>
+    <script src="../lib/coord-utils.js"></script>
+    <script src="../lib/sql.js"></script>
+    <script src="../lib/Leaflet.TileLayer.MBTiles.js"></script>
+    <script src="free_draw_signature.js"></script>
+    <script src="../lib/milsymbol.js"></script>
+    <script src="map-engine.js"></script>
+    <script src="app.js?v=11"></script>
+    <script src="tool-rail.js"></script>
+
+    <!-- New modular panel system (ES modules — run after app.js) -->
+    <script type="module" src="ui/utils/app-bridge.js"></script>
+    <script type="module" src="ui/panels/symbol-panel.js"></script>
+    <script type="module" src="ui/panels/text-panel.js"></script>
+    <script type="module" src="ui/panels/select-panel.js"></script>
+    <script type="module" src="ui/panels/draw-panel.js"></script>
+    <script type="module" src="ui/panels/erase-panel.js"></script>
+    <script type="module" src="ui/panels/shapes-panel.js"></script>
+    <script type="module" src="ui/panels/measure-panel.js"></script>
+    <script type="module" src="ui/panels/layers-panel.js"></script>
+    <script type="module" src="ui/panels/utility-panel.js"></script>
+    <script type="module" src="ui/panels/welcome-panel.js"></script>
+</body>
+
+</html>

@@ -3129,13 +3129,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Clip a polygon by ALL obstacle polygons, then discard detached fragments.
+     * Clip a polygon by ALL obstacle polygons, then filter fragments.
+     * When anchorPoints are provided, keeps fragments containing anchors;
+     * otherwise falls back to keeping only the largest fragment.
      *
-     * @param {Array<L.LatLng>} ring  – closed polygon as LatLng array
-     * @param {Array}           polys – obstacle records { outer, holes }
+     * @param {Array<L.LatLng>} ring           – closed polygon as LatLng array
+     * @param {Array}           polys          – obstacle records { outer, holes }
+     * @param {L.LatLng[]}      [anchorPoints] – optional anchor points for fragment retention
      * @returns {{ outer: L.LatLng[], holes: L.LatLng[][] }[]}  kept polygon(s)
      */
-    function clipPolygonByObstacles(ring, polys) {
+    function clipPolygonByObstacles(ring, polys, anchorPoints) {
         if (!ring || ring.length < 3 || !polys || !polys.length) {
             return [{ outer: ring, holes: [] }];
         }
@@ -3167,14 +3170,25 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentPolys.length === 0) break;
         }
 
-        // ── Remove detached fragments: keep only the largest polygon ──
+        // ── Fragment filtering: preserve anchor-connected fragments ──
         if (currentPolys.length > 1) {
-            let bestIdx = 0, bestArea = 0;
-            for (let i = 0; i < currentPolys.length; i++) {
-                const a = Math.abs(_signedRingArea(currentPolys[i].ring));
-                if (a > bestArea) { bestArea = a; bestIdx = i; }
+            let kept;
+            if (anchorPoints && anchorPoints.length > 0) {
+                // Keep fragments that contain at least one anchor point
+                kept = currentPolys.filter(poly =>
+                    anchorPoints.some(a => pointInRingLngLat(a.lng, a.lat, poly.ring))
+                );
             }
-            currentPolys = [currentPolys[bestIdx]];
+            // Fallback: keep only the largest polygon
+            if (!kept || kept.length === 0) {
+                let bestIdx = 0, bestArea = 0;
+                for (let i = 0; i < currentPolys.length; i++) {
+                    const a = Math.abs(_signedRingArea(currentPolys[i].ring));
+                    if (a > bestArea) { bestArea = a; bestIdx = i; }
+                }
+                kept = [currentPolys[bestIdx]];
+            }
+            currentPolys = kept;
         }
 
         // Convert back to LatLng

@@ -3253,6 +3253,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fillColor: lineOpts.color || '#3b82f6',
                 fillOpacity: 0.08,
                 interactive: false,
+                pane: 'autoFlankAreaPane',
                 className: 'auto-flank-area'
             });
             areaPoly._autoFlankLine = true;
@@ -3352,6 +3353,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (frontBoundary.length >= 2 && deepBoundary.length >= 2) {
             results.push(...buildClippedAutoDrawPolygon(
                 frontBoundary, deepBoundary, lineOpts, sessionId, tag, dist2));
+        }
+        // Explicit middle line: the shared 8km boundary dividing front-org
+        // from deep-org. Drawn last so it renders above both area overlays.
+        if (frontBoundary.length >= 2) {
+            const midLine = L.polyline(frontBoundary, {
+                color: lineOpts.color || '#3b82f6',
+                weight: lineOpts.weight || 3,
+                opacity: lineOpts.opacity || 0.85,
+                dashArray: '8, 6',
+                interactive: false,
+                className: 'auto-flank-middle'
+            });
+            midLine._autoFlankLine = true;
+            midLine._tmgData = {
+                typeId: 'auto-flank-polygon',
+                sessionId, tag, lengthKm: dist1
+            };
+            addToActiveLayer(midLine);
+            results.push(midLine);
         }
         return results;
     }

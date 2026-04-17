@@ -3339,28 +3339,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Build TWO nested border polylines for 8&20 mode:
-     *  • front-org border (centres → front boundary, excluding front edge)
-     *  • deep-org border  (front boundary → deep boundary, excluding front-boundary edge)
-     * Both clipped by obstacles.
+     * Build TWO nested zone polygons for 8&20 mode:
+     *  • front-org (8km): centres → front boundary, orange border + fill
+     *  • deep-org (remaining to 20km): front boundary → deep boundary, affiliation color
+     * Plus an explicit dashed middle line at the shared 8km boundary.
+     * Both zones clipped by obstacles independently.
+     *
+     * @param {L.LatLng[]} ordered        – circle centres sorted along front axis
+     * @param {L.LatLng[]} frontBoundary  – 8km boundary points
+     * @param {L.LatLng[]} deepBoundary   – 20km boundary points
+     * @param {Object}     frontOpts      – Leaflet style for front-org (8km) borders
+     * @param {Object}     deepOpts       – Leaflet style for deep-org (20km) borders
+     * @param {string}     sessionId
+     * @param {string}     tag
+     * @param {number}     dist1          – front-org distance in km
+     * @param {number}     dist2          – deep-org distance in km
+     * @returns {(L.Polyline|L.Polygon)[]}  all generated layers
      */
-    function buildClippedDualPolygons(ordered, frontBoundary, deepBoundary, lineOpts, sessionId, tag, dist1, dist2) {
+    function buildClippedDualPolygons(ordered, frontBoundary, deepBoundary, frontOpts, deepOpts, sessionId, tag, dist1, dist2) {
         const results = [];
-        // Front-org: centres → front boundary (front edge = scalloped, hidden)
+        // Front-org: centres → front boundary (8km zone, orange)
         results.push(...buildClippedAutoDrawPolygon(
-            ordered, frontBoundary, lineOpts, sessionId, tag, dist1));
-        // Deep-org: front boundary → deep boundary (shared edge = front baseline, hidden)
+            ordered, frontBoundary, frontOpts, sessionId, tag, dist1));
+        // Deep-org: front boundary → deep boundary (remaining 12km zone)
         if (frontBoundary.length >= 2 && deepBoundary.length >= 2) {
             results.push(...buildClippedAutoDrawPolygon(
-                frontBoundary, deepBoundary, lineOpts, sessionId, tag, dist2));
+                frontBoundary, deepBoundary, deepOpts, sessionId, tag, dist2));
         }
         // Explicit middle line: the shared 8km boundary dividing front-org
         // from deep-org. Drawn last so it renders above both area overlays.
         if (frontBoundary.length >= 2) {
             const midLine = L.polyline(frontBoundary, {
-                color: lineOpts.color || '#3b82f6',
-                weight: lineOpts.weight || 3,
-                opacity: lineOpts.opacity || 0.85,
+                color: frontOpts.color || '#f59e0b',
+                weight: frontOpts.weight || 3,
+                opacity: frontOpts.opacity || 0.85,
                 dashArray: '8, 6',
                 interactive: false,
                 className: 'auto-flank-middle'

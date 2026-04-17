@@ -4396,6 +4396,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.autoDrawCircleXFlankLines = autoDrawCircleXFlankLines;
 
+    // ── Expose operation boundary API for free_draw_signature.js ──
+    window.setOperationBoundary = setOperationBoundary;
+    window.getOperationBoundary = getOperationBoundary;
+    window.clearOperationBoundary = clearOperationBoundary;
+    window.startBoundaryDrawing = startBoundaryDrawing;
+    window.finishBoundaryDrawing = finishBoundaryDrawing;
+    window.cancelBoundaryDrawing = cancelBoundaryDrawing;
+    window.isBoundaryDrawing = isBoundaryDrawing;
+
     // Clear auto-flank elements (lines and polygons) that belong to a specific tag
     window.clearAutoFlankLinesByTag = function (tag) {
         const sessionId = window.freeDrawSignatureSessionId;

@@ -4261,11 +4261,72 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // ── INTERNAL SEPARATORS for 3+ circles ──
+        // Draw obstacle-aware connector lines from each middle circle centre
+        // to its corresponding boundary point, structuring sectors.
+        if (drawn > 0 && ordered.length >= 3) {
+            console.groupCollapsed('[AutoDraw] Internal separators for ' + (ordered.length - 2) + ' middle circles');
+            const separatorOpt = {
+                color: lineColor,
+                weight: 2,
+                opacity: 0.65,
+                dashArray: '6,4',
+                interactive: true,
+                className: 'auto-flank-separator'
+            };
+
+            // Gather all boundary results (front, deep, or both) for separator endpoints
+            const boundaryResults = [];
+            if (mode === '8' || mode === '8&20') {
+                const fb = buildAngularBoundary(ordered, dist1);
+                if (fb.circleToPoint) boundaryResults.push(fb);
+            }
+            if (mode === '20' || mode === '8&20') {
+                const db = buildAngularBoundary(ordered, dist2);
+                if (db.circleToPoint) boundaryResults.push(db);
+            }
+
+            const obstacles = getRoutingObstaclePolygons();
+            for (let ci = 1; ci < ordered.length - 1; ci++) {
+                const circleCenter = ordered[ci];
+                for (const bResult of boundaryResults) {
+                    if (!bResult.circleToPoint || ci >= bResult.circleToPoint.length) continue;
+                    const bndPt = bResult.circleToPoint[ci];
+                    // Route around obstacles
+                    let separatorPath = bendLatLngSegmentAroundObstacles(circleCenter, bndPt, obstacles);
+                    if (!separatorPath || separatorPath.length < 2) separatorPath = [circleCenter, bndPt];
+
+                    // Clip separator to operation boundary (if set)
+                    if (operationBoundaryLatLngs && operationBoundaryLatLngs.length >= 3) {
+                        // Simple clipping: only keep the segment if both endpoints are inside boundary
+                        const bndRing = operationBoundaryLatLngs.map(p => [p.lng, p.lat]);
+                        const lastPt = separatorPath[separatorPath.length - 1];
+                        if (!_ptInRing(lastPt.lng, lastPt.lat, bndRing)) {
+                            console.log('  separator[' + ci + '] endpoint outside boundary — skipped');
+                            continue;
+                        }
+                    }
+
+                    const pl = L.polyline(separatorPath, separatorOpt);
+                    pl._autoFlankLine = true;
+                    pl._tmgData = {
+                        typeId: 'auto-flank-separator',
+                        sessionId, tag,
+                        separatorIndex: ci
+                    };
+                    addToActiveLayer(pl);
+                    console.log('  separator[' + ci + '] drawn with ' + separatorPath.length + ' vertices');
+                }
+            }
+            console.groupEnd();
+        }
+
         if (drawn === 0) {
             setCriticalMessage('No valid front line found for auto flank generation. Ensure a scalloped front line exists.');
             lastAutoFlankModeBySession[stateKey] = null;
         } else {
-            setCriticalMessage(`Auto-drew polygon area (${tag} / ${mode}), clipped by obstacles.`);
+            const bndMsg = operationBoundaryLatLngs ? ', boundary-constrained' : '';
+            setCriticalMessage(`Auto-drew polygon area (${tag} / ${mode}${bndMsg}), clipped by obstacles.`);
             lastAutoFlankModeBySession[stateKey] = mode;
             if (window.freeDrawSignature) {
                 window.freeDrawSignatureStage = 'post-flank';

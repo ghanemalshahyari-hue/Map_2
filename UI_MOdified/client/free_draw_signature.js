@@ -947,6 +947,83 @@
         controls.querySelector('#fd-brig-both')?.addEventListener('click', () => callFlank('8&20', 'brigade'));
     }
 
+    /**
+     * Wire the operation boundary Set/Clear buttons in the auto-flank panel.
+     * – "Set Boundary" enters boundary drawing mode (clicks on map add vertices,
+     *   double-click or pressing the button again finishes the polygon).
+     * – "Clear" removes the current boundary.
+     */
+    function attachBoundaryControls(panel) {
+        const setBtn = panel.querySelector('#fd-set-boundary-btn');
+        const clearBtn = panel.querySelector('#fd-clear-boundary-btn');
+        const statusEl = panel.querySelector('#fd-boundary-status');
+        if (!setBtn) return;
+
+        function updateBoundaryUI() {
+            const hasBoundary = typeof window.getOperationBoundary === 'function' && window.getOperationBoundary();
+            const isDrawing = typeof window.isBoundaryDrawing === 'function' && window.isBoundaryDrawing();
+
+            if (isDrawing) {
+                setBtn.textContent = 'Finish Boundary';
+                setBtn.style.background = '#16a34a';
+                if (clearBtn) clearBtn.style.display = 'none';
+                if (statusEl) {
+                    statusEl.style.display = 'block';
+                    statusEl.textContent = 'Click map to add vertices. Double-click or press button to finish.';
+                }
+            } else if (hasBoundary) {
+                setBtn.textContent = 'Set Boundary';
+                setBtn.style.background = '#7c3aed';
+                if (clearBtn) clearBtn.style.display = 'block';
+                if (statusEl) {
+                    statusEl.style.display = 'block';
+                    statusEl.textContent = 'Boundary active — auto-draw constrained.';
+                    statusEl.style.color = '#a78bfa';
+                }
+            } else {
+                setBtn.textContent = 'Set Boundary';
+                setBtn.style.background = '#7c3aed';
+                if (clearBtn) clearBtn.style.display = 'none';
+                if (statusEl) {
+                    statusEl.style.display = 'none';
+                    statusEl.textContent = '';
+                }
+            }
+        }
+
+        setBtn.addEventListener('click', function () {
+            const isDrawing = typeof window.isBoundaryDrawing === 'function' && window.isBoundaryDrawing();
+            if (isDrawing) {
+                // Finish drawing
+                if (typeof window.finishBoundaryDrawing === 'function') window.finishBoundaryDrawing();
+            } else {
+                // Start drawing
+                if (typeof window.startBoundaryDrawing === 'function') window.startBoundaryDrawing();
+            }
+            updateBoundaryUI();
+        });
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function () {
+                if (typeof window.clearOperationBoundary === 'function') window.clearOperationBoundary();
+                updateBoundaryUI();
+            });
+        }
+
+        // Watch for boundary changes (poll — lightweight since it's just checking a variable)
+        let _lastBoundaryState = null;
+        setInterval(function () {
+            const current = (typeof window.getOperationBoundary === 'function' && window.getOperationBoundary()) ? 'set' :
+                            (typeof window.isBoundaryDrawing === 'function' && window.isBoundaryDrawing()) ? 'drawing' : 'none';
+            if (current !== _lastBoundaryState) {
+                _lastBoundaryState = current;
+                updateBoundaryUI();
+            }
+        }, 500);
+
+        updateBoundaryUI();
+    }
+
     function setSelectedFlankTag(tag) {
         selectedFlankTag = tag || null;
         const batt = document.getElementById('fd-col-battalion');

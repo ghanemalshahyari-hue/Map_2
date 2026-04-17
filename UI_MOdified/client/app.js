@@ -2496,97 +2496,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let obstaclePolygons = [];
     let obstacleGeoLoadPromise = null;
 
-    // ═══════════════════════════════════════════════════════════════════
-    // OPERATION BOUNDARY — user-defined envelope constraining auto-draw
-    // ═══════════════════════════════════════════════════════════════════
-    let operationBoundaryLatLngs = null;   // Array of L.LatLng — the closed boundary polygon
-    let operationBoundaryLayer = null;     // L.Polygon visual on map
-    let operationBoundaryDrawMode = false; // true while user is placing boundary vertices
-    let operationBoundaryVertices = [];    // temporary vertices during drawing
-    let operationBoundaryPreviewLine = null; // temporary polyline preview
-
-    /**
-     * Set the operation boundary from an array of L.LatLng points.
-     * Auto-draw will clip all output to stay within this polygon.
-     */
-    function setOperationBoundary(latlngs) {
-        clearOperationBoundary();
-        if (!latlngs || latlngs.length < 3) return;
-        operationBoundaryLatLngs = latlngs.map(p => L.latLng(p.lat, p.lng));
-        operationBoundaryLayer = L.polygon(operationBoundaryLatLngs, {
-            color: '#9333ea',
-            weight: 2,
-            opacity: 0.8,
-            fillColor: '#9333ea',
-            fillOpacity: 0.08,
-            dashArray: '8,4',
-            interactive: false,
-            className: 'operation-boundary'
-        });
-        operationBoundaryLayer.addTo(map);
-        console.log('[AutoDraw] Operation boundary set with ' + latlngs.length + ' vertices');
-    }
-
-    function getOperationBoundary() {
-        return operationBoundaryLatLngs;
-    }
-
-    function clearOperationBoundary() {
-        if (operationBoundaryLayer && map) {
-            map.removeLayer(operationBoundaryLayer);
-        }
-        operationBoundaryLayer = null;
-        operationBoundaryLatLngs = null;
-    }
-
-    function startBoundaryDrawing() {
-        operationBoundaryDrawMode = true;
-        operationBoundaryVertices = [];
-        clearOperationBoundary();
-        map.getContainer().style.cursor = 'crosshair';
-        if (operationBoundaryPreviewLine) { map.removeLayer(operationBoundaryPreviewLine); }
-        operationBoundaryPreviewLine = L.polyline([], {
-            color: '#9333ea', weight: 2, dashArray: '6,3', opacity: 0.7
-        }).addTo(map);
-        console.log('[AutoDraw] Boundary drawing started');
-    }
-
-    function addBoundaryVertex(latlng) {
-        if (!operationBoundaryDrawMode) return;
-        operationBoundaryVertices.push(L.latLng(latlng.lat, latlng.lng));
-        if (operationBoundaryPreviewLine) {
-            const preview = operationBoundaryVertices.slice();
-            if (preview.length > 1) preview.push(preview[0]); // close visually
-            operationBoundaryPreviewLine.setLatLngs(preview);
-        }
-    }
-
-    function finishBoundaryDrawing() {
-        operationBoundaryDrawMode = false;
-        map.getContainer().style.cursor = '';
-        if (operationBoundaryPreviewLine) {
-            map.removeLayer(operationBoundaryPreviewLine);
-            operationBoundaryPreviewLine = null;
-        }
-        if (operationBoundaryVertices.length >= 3) {
-            setOperationBoundary(operationBoundaryVertices);
-        }
-        operationBoundaryVertices = [];
-        console.log('[AutoDraw] Boundary drawing finished');
-    }
-
-    function cancelBoundaryDrawing() {
-        operationBoundaryDrawMode = false;
-        operationBoundaryVertices = [];
-        map.getContainer().style.cursor = '';
-        if (operationBoundaryPreviewLine) {
-            map.removeLayer(operationBoundaryPreviewLine);
-            operationBoundaryPreviewLine = null;
-        }
-    }
-
-    function isBoundaryDrawing() { return operationBoundaryDrawMode; }
-
     function parseObstacleGeoJSON(fc) {
         const polys = [];
         if (!fc) return polys;
@@ -3220,146 +3129,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Compute polygon intersection: subject ∩ clip.
-     * Both are arrays of [lng, lat] (NOT closed — first ≠ last).
-     * Returns array of result rings (each an array of [lng, lat]).
-     *
-     * Algorithm: Weiler-Atherton adapted for intersection (dual of _polyDifference).
-     *  • Walk subject forward while INSIDE clip
-     *  • At "exiting" intersection → switch to clip, walk FORWARD
-     *  • At next intersection on clip → switch back to subject
-     */
-    function _polyIntersection(subject, clip) {
-        const sN = subject.length, cN = clip.length;
-        if (!sN || !cN) return [];
-
-        // ── 1. Find all intersection points ──
-        const ixList = [];
-        for (let si = 0; si < sN; si++) {
-            const s1 = subject[si], s2 = subject[(si + 1) % sN];
-            for (let ci = 0; ci < cN; ci++) {
-                const c1 = clip[ci], c2 = clip[(ci + 1) % cN];
-                const ix = _segSeg(s1, s2, c1, c2);
-                if (ix) {
-                    ixList.push({
-                        pt: [ix.x, ix.y],
-                        sEdge: si, sT: ix.ta,
-                        cEdge: ci, cT: ix.tb,
-                        entering: false,
-                        visited: false
-                    });
-                }
-            }
-        }
-
-        // ── 2. Trivial cases (no crossing) ──
-        if (ixList.length < 2) {
-            if (_ptInRing(subject[0][0], subject[0][1], clip)) return [subject.slice()]; // subject fully inside clip
-            if (_ptInRing(clip[0][0], clip[0][1], subject)) return [clip.slice()]; // clip fully inside subject
-            return []; // disjoint
-        }
-
-        // ── 3. Classify entering / exiting ──
-        for (const ix of ixList) {
-            const si = ix.sEdge;
-            const dx = subject[(si + 1) % sN][0] - subject[si][0];
-            const dy = subject[(si + 1) % sN][1] - subject[si][1];
-            const len = Math.hypot(dx, dy) || 1;
-            const test = [ix.pt[0] + 1e-7 * dx / len, ix.pt[1] + 1e-7 * dy / len];
-            ix.entering = _ptInRing(test[0], test[1], clip);
-        }
-
-        // ── 4. Sort along subject boundary ──
-        ixList.sort((a, b) => a.sEdge !== b.sEdge ? a.sEdge - b.sEdge : a.sT - b.sT);
-        ixList.forEach((ix, i) => { ix.sIdx = i; });
-        const clipOrder = ixList.slice().sort((a, b) =>
-            a.cEdge !== b.cEdge ? a.cEdge - b.cEdge : a.cT - b.cT);
-        clipOrder.forEach((ix, i) => { ix.cIdx = i; });
-
-        // ── 5. Build augmented subject vertex list ──
-        const sAug = [];
-        let ixPtr = 0;
-        for (let si = 0; si < sN; si++) {
-            sAug.push({ pt: subject[si].slice(), isIx: false });
-            while (ixPtr < ixList.length && ixList[ixPtr].sEdge === si) {
-                sAug.push({ pt: ixList[ixPtr].pt.slice(), isIx: true, ix: ixList[ixPtr] });
-                ixPtr++;
-            }
-        }
-
-        // ── 6. Build augmented clip vertex list ──
-        const cAug = [];
-        let cPtr = 0;
-        for (let ci = 0; ci < cN; ci++) {
-            cAug.push({ pt: clip[ci].slice(), isIx: false });
-            while (cPtr < clipOrder.length && clipOrder[cPtr].cEdge === ci) {
-                cAug.push({ pt: clipOrder[cPtr].pt.slice(), isIx: true, ix: clipOrder[cPtr] });
-                cPtr++;
-            }
-        }
-
-        // Cross-link
-        for (const ix of ixList) {
-            ix._sAugIdx = sAug.findIndex(n => n.isIx && n.ix === ix);
-            ix._cAugIdx = cAug.findIndex(n => n.isIx && n.ix === ix);
-        }
-
-        // ── 7. Trace result polygons (INTERSECTION variant) ──
-        const results = [];
-        const maxTotal = (sAug.length + cAug.length) * 2;
-
-        for (const ix of ixList) {
-            if (ix.visited || !ix.entering) continue; // start at ENTERING intersections
-            const ring = [];
-            let onSubject = true;
-            let idx = ix._sAugIdx;
-            let steps = 0;
-
-            do {
-                const list = onSubject ? sAug : cAug;
-                const node = list[idx];
-                ring.push(node.pt.slice());
-
-                if (node.isIx && node.ix && node.ix !== ix && !node.ix.visited) {
-                    node.ix.visited = true;
-                }
-
-                if (node.isIx && node.ix) {
-                    if (onSubject && !node.ix.entering) {
-                        // Exiting clip → switch to clip boundary, walk FORWARD
-                        node.ix.visited = true;
-                        onSubject = false;
-                        idx = node.ix._cAugIdx;
-                        idx = (idx + 1) % cAug.length;
-                    } else if (!onSubject) {
-                        // Back at intersection while on clip → switch to subject
-                        node.ix.visited = true;
-                        onSubject = true;
-                        idx = node.ix._sAugIdx;
-                        idx = (idx + 1) % sAug.length;
-                    } else {
-                        idx = (idx + 1) % sAug.length;
-                    }
-                } else {
-                    if (onSubject) {
-                        idx = (idx + 1) % sAug.length;
-                    } else {
-                        idx = (idx + 1) % cAug.length;
-                    }
-                }
-
-                steps++;
-            } while (steps < maxTotal &&
-                     !(onSubject && idx === ix._sAugIdx));
-
-            ix.visited = true;
-            if (ring.length >= 3) results.push(ring);
-        }
-
-        return results;
-    }
-
-    /**
      * Clip a polygon by ALL obstacle polygons, then discard detached fragments.
      *
      * @param {Array<L.LatLng>} ring  – closed polygon as LatLng array
@@ -3415,219 +3184,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    // BOUNDARY-CONSTRAINED, OBSTACLE-AWARE AUTO-DRAW PIPELINE HELPERS
-    // ═══════════════════════════════════════════════════════════════════
-
-    /**
-     * Clip polygon(s) to the user-defined operation boundary.
-     * Uses _polyIntersection to retain only the parts inside the boundary.
-     *
-     * @param {Array<{ring: number[][], holes: number[][][]}>} currentPolys – polygons in [lng,lat]
-     * @returns {Array<{ring: number[][], holes: number[][][]}>} clipped polygon(s)
-     */
-    function clipByOperationBoundary(currentPolys) {
-        if (!operationBoundaryLatLngs || operationBoundaryLatLngs.length < 3) return currentPolys;
-        let boundaryRing = operationBoundaryLatLngs.map(p => [p.lng, p.lat]);
-        // Ensure not self-closed
-        if (boundaryRing.length > 1 &&
-            boundaryRing[0][0] === boundaryRing[boundaryRing.length - 1][0] &&
-            boundaryRing[0][1] === boundaryRing[boundaryRing.length - 1][1]) {
-            boundaryRing = boundaryRing.slice(0, -1);
-        }
-        if (boundaryRing.length < 3) return currentPolys;
-
-        console.groupCollapsed('[AutoDraw] clipByOperationBoundary');
-        console.log('  boundary vertices:', boundaryRing.length, '  input polys:', currentPolys.length);
-
-        const result = [];
-        for (const poly of currentPolys) {
-            const intersected = _polyIntersection(poly.ring, boundaryRing);
-            for (const r of intersected) {
-                result.push({ ring: r, holes: (poly.holes || []).slice() });
-            }
-        }
-
-        console.log('  output polys:', result.length);
-        console.groupEnd();
-
-        return result.length > 0 ? result : [];
-    }
-
-    /**
-     * Subtract obstacle polygons from a set of polygons.
-     * Same logic as the inner loop of clipPolygonByObstacles, but without
-     * fragment retention — that is handled separately.
-     *
-     * @param {Array<{ring: number[][], holes: number[][][]}>} currentPolys
-     * @param {Array<{outer: number[][], holes: number[][][]}>} obstacles
-     * @returns {Array<{ring: number[][], holes: number[][][]}>}
-     */
-    function subtractObstacles(currentPolys, obstacles) {
-        if (!currentPolys.length || !obstacles || !obstacles.length) return currentPolys;
-
-        console.groupCollapsed('[AutoDraw] subtractObstacles');
-        console.log('  obstacles:', obstacles.length, '  input polys:', currentPolys.length);
-
-        let polys = currentPolys.slice();
-        for (const obs of obstacles) {
-            let clipRing = obs.outer.slice();
-            if (clipRing.length > 1 &&
-                clipRing[0][0] === clipRing[clipRing.length - 1][0] &&
-                clipRing[0][1] === clipRing[clipRing.length - 1][1]) {
-                clipRing = clipRing.slice(0, -1);
-            }
-            if (clipRing.length < 3) continue;
-
-            const next = [];
-            for (const poly of polys) {
-                const diffResults = _polyDifference(poly.ring, clipRing);
-                for (const r of diffResults) {
-                    const holes = (poly.holes || []).slice();
-                    if (r._holes) holes.push(...r._holes);
-                    next.push({ ring: r, holes });
-                }
-            }
-            polys = next;
-            if (polys.length === 0) break;
-        }
-
-        console.log('  output polys:', polys.length);
-        console.groupEnd();
-
-        return polys;
-    }
-
-    /**
-     * Retain polygon fragments connected to anchor points (circle centres).
-     * Replaces the old "keep largest" heuristic.
-     *
-     * Policy:
-     *   1. Keep any polygon that contains at least one anchor point.
-     *   2. Keep any polygon whose boundary passes within tolerance of an anchor.
-     *   3. If keepAll=true, return all valid (≥3 vertex) fragments.
-     *   4. Fallback: if no anchor match, keep largest polygon.
-     *
-     * @param {Array<{ring: number[][], holes: number[][][]}>} currentPolys  – [lng,lat] ring format
-     * @param {Array<number[]>} anchorPoints – [[lng,lat], …] anchor positions
-     * @param {boolean} [keepAll=false] – if true, keep all valid components
-     * @returns {Array<{ring: number[][], holes: number[][][]}>}
-     */
-    function retainAnchorConnectedFragments(currentPolys, anchorPoints, keepAll) {
-        if (!currentPolys || currentPolys.length <= 1) return currentPolys;
-        if (keepAll) return currentPolys.filter(p => p.ring && p.ring.length >= 3);
-
-        console.groupCollapsed('[AutoDraw] retainAnchorConnectedFragments');
-        console.log('  polys:', currentPolys.length, '  anchors:', anchorPoints.length);
-
-        const kept = [];
-        for (let i = 0; i < currentPolys.length; i++) {
-            const poly = currentPolys[i];
-            if (!poly.ring || poly.ring.length < 3) continue;
-            let connected = false;
-
-            for (const anchor of anchorPoints) {
-                // Check if anchor is inside polygon
-                if (_ptInRing(anchor[0], anchor[1], poly.ring)) {
-                    connected = true;
-                    break;
-                }
-                // Check if anchor is on or very near a polygon edge
-                const ring = poly.ring;
-                for (let j = 0; j < ring.length; j++) {
-                    const j2 = (j + 1) % ring.length;
-                    const dx = ring[j2][0] - ring[j][0];
-                    const dy = ring[j2][1] - ring[j][1];
-                    const len2 = dx * dx + dy * dy;
-                    if (len2 < 1e-20) continue;
-                    const t = Math.max(0, Math.min(1,
-                        ((anchor[0] - ring[j][0]) * dx + (anchor[1] - ring[j][1]) * dy) / len2));
-                    const px = ring[j][0] + t * dx;
-                    const py = ring[j][1] + t * dy;
-                    const dist2 = (anchor[0] - px) * (anchor[0] - px) + (anchor[1] - py) * (anchor[1] - py);
-                    // ~1e-8 in lng/lat² ≈ ~11m tolerance at equator
-                    if (dist2 < 1e-8) {
-                        connected = true;
-                        break;
-                    }
-                }
-                if (connected) break;
-            }
-
-            if (connected) {
-                kept.push(poly);
-                console.log('  poly[' + i + '] KEPT (anchor-connected), area=' +
-                    Math.abs(_signedRingArea(poly.ring)).toFixed(6));
-            } else {
-                console.log('  poly[' + i + '] DROPPED (no anchor connection), area=' +
-                    Math.abs(_signedRingArea(poly.ring)).toFixed(6));
-            }
-        }
-
-        if (kept.length === 0) {
-            // Fallback: keep largest polygon (preserve old behavior as last resort)
-            console.warn('  No anchor-connected fragments found — falling back to largest');
-            let bestIdx = 0, bestArea = 0;
-            for (let i = 0; i < currentPolys.length; i++) {
-                const a = Math.abs(_signedRingArea(currentPolys[i].ring));
-                if (a > bestArea) { bestArea = a; bestIdx = i; }
-            }
-            console.groupEnd();
-            return [currentPolys[bestIdx]];
-        }
-
-        console.log('  Retained ' + kept.length + '/' + currentPolys.length + ' fragments');
-        console.groupEnd();
-        return kept;
-    }
-
-    /**
-     * Score the generated geometry against target dimensions and log deviation.
-     * This is for debug/doctrinal validation — it does not modify geometry.
-     *
-     * @param {Array<{ring: number[][]}>} polys – clipped polygon(s) in [lng,lat]
-     * @param {number} targetDistKm – the target org distance (front or deep)
-     * @param {L.LatLng[]} ordered  – circle centres (front line)
-     */
-    function scoreGeometryAgainstTargets(polys, targetDistKm, ordered) {
-        if (!polys || !polys.length || !ordered || ordered.length < 2) return;
-
-        console.groupCollapsed('[AutoDraw] scoreGeometryAgainstTargets');
-
-        // Measure approximate front width
-        const frontWidthM = haversineDistance(
-            ordered[0].lat, ordered[0].lng,
-            ordered[ordered.length - 1].lat, ordered[ordered.length - 1].lng
-        );
-        const frontWidthKm = frontWidthM / 1000;
-
-        // Measure max deep extent from any anchor to the farthest polygon vertex
-        let maxDeepKm = 0;
-        for (const poly of polys) {
-            for (const pt of poly.ring) {
-                for (const center of ordered) {
-                    const d = haversineDistance(pt[1], pt[0], center.lat, center.lng) / 1000;
-                    if (d > maxDeepKm) maxDeepKm = d;
-                }
-            }
-        }
-
-        const deepDev = Math.abs(maxDeepKm - targetDistKm);
-        const devPct = targetDistKm > 0 ? ((deepDev / targetDistKm) * 100).toFixed(1) : '—';
-
-        console.log('  targetDist=' + targetDistKm + 'km');
-        console.log('  frontWidth=' + frontWidthKm.toFixed(2) + 'km');
-        console.log('  maxDeep=' + maxDeepKm.toFixed(2) + 'km');
-        console.log('  deepDeviation=' + deepDev.toFixed(2) + 'km (' + devPct + '%)');
-
-        if (deepDev > targetDistKm * 0.2) {
-            console.warn('  Deep extent deviates >' + (targetDistKm * 0.2).toFixed(1) +
-                'km from target. Reason: boundary/obstacle clipping.');
-        }
-
-        console.groupEnd();
-    }
-
     /**
      * Build a closed polygon ring from the ordered circle centres
      * and the angular-boundary points, then clip it against obstacles.
@@ -3643,10 +3199,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function buildClippedAutoDrawPolygon(ordered, boundary, lineOpts, sessionId, tag, lengthKm) {
         if (!ordered || ordered.length < 2 || !boundary || boundary.length < 2) return [];
 
-        console.groupCollapsed('[AutoDraw] buildClippedAutoDrawPolygon – ' + tag + '/' + lengthKm + 'km');
-
         // ── 1. Form closed polygon: front → right flank → baseline → left flank ──
         const rawRing = [];
+        const frontCount = ordered.length; // first N points are the front line
         // Front line (circle centres, left to right)
         for (const pt of ordered) rawRing.push(pt);
         // Right flank: last centre → last boundary point (skip if same)
@@ -3662,50 +3217,11 @@ document.addEventListener('DOMContentLoaded', () => {
             rawRing.push(boundary[0]);
         }
 
-        console.log('  rawRing vertices:', rawRing.length);
-
-        // ── 2. PIPELINE: boundary → obstacles → anchor retention → score ──
-        // Convert to [lng,lat] for clipping math
-        let currentPolys = [{ ring: rawRing.map(p => [p.lng, p.lat]), holes: [] }];
-
-        // Anchor points for fragment retention (all circle centres + boundary endpoints)
-        const anchorPts = ordered.map(p => [p.lng, p.lat]);
-
-        // Step 2a: Clip to operation boundary (if defined)
-        currentPolys = clipByOperationBoundary(currentPolys);
-        if (currentPolys.length === 0) {
-            console.warn('  Entire polygon outside operation boundary — nothing to render');
-            console.groupEnd();
-            return [];
-        }
-
-        // Step 2b: Subtract obstacles
+        // ── 2. Clip by obstacle polygons ──
         const obstacles = getRoutingObstaclePolygons();
-        currentPolys = subtractObstacles(currentPolys, obstacles);
-        if (currentPolys.length === 0) {
-            console.warn('  Polygon fully consumed by obstacles — nothing to render');
-            console.groupEnd();
-            return [];
-        }
+        const clipped = clipPolygonByObstacles(rawRing, obstacles);
 
-        // Step 2c: Retain anchor-connected fragments (replaces keep-largest)
-        currentPolys = retainAnchorConnectedFragments(currentPolys, anchorPts, false);
-
-        // Step 2d: Score geometry against target distance
-        scoreGeometryAgainstTargets(currentPolys, lengthKm, ordered);
-
-        // Step 2e: Validate — remove self-intersections (degenerate rings)
-        currentPolys = currentPolys.filter(p => p.ring && p.ring.length >= 3);
-
-        // Convert back to LatLng for rendering
-        const clipped = currentPolys.map(p => ({
-            outer: p.ring.map(c => L.latLng(c[1], c[0])),
-            holes: (p.holes || []).map(h => h.map(c => L.latLng(c[1], c[0])))
-        }));
-
-        console.log('  clipped polygons to render:', clipped.length);
-
-        // ── 3. Extract the non-front border from each clipped polygon ──
+        // ── 3. Extract the non-front border from the clipped polygon ──
         //    The front line (scalloped) is rendered separately — only draw
         //    the flanks + baseline as polylines (no fill).
         const result = [];
@@ -3714,6 +3230,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!ring || ring.length < 3) continue;
 
             // Find the two ring vertices closest to the first and last circle centres.
+            // The arc between them that does NOT pass through intermediate circle centres
+            // is the non-front border (flanks + baseline).
             const firstCtr = ordered[0];
             const lastCtr  = ordered[ordered.length - 1];
             let si = 0, ei = 0, sd = Infinity, ed = Infinity;
@@ -3740,7 +3258,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const bwd = arcBetween(ei, si, -1);
 
             // The non-front arc is the one whose midpoint is farther from the
-            // front-line axis (closer to the baseline).
+            // front-line axis (closer to the baseline).  Quick proxy: sum of
+            // distances of each arc point to the centre of the ordered array.
             const midCtr = ordered[Math.floor(ordered.length / 2)];
             const avgDist = (pts) => {
                 let s = 0;
@@ -3760,9 +3279,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 result.push(pl);
             }
         }
-
-        console.log('  rendered polylines:', result.length);
-        console.groupEnd();
         return result;
     }
 
@@ -4261,72 +3777,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // ── INTERNAL SEPARATORS for 3+ circles ──
-        // Draw obstacle-aware connector lines from each middle circle centre
-        // to its corresponding boundary point, structuring sectors.
-        if (drawn > 0 && ordered.length >= 3) {
-            console.groupCollapsed('[AutoDraw] Internal separators for ' + (ordered.length - 2) + ' middle circles');
-            const separatorOpt = {
-                color: lineColor,
-                weight: 2,
-                opacity: 0.65,
-                dashArray: '6,4',
-                interactive: true,
-                className: 'auto-flank-separator'
-            };
-
-            // Gather all boundary results (front, deep, or both) for separator endpoints
-            const boundaryResults = [];
-            if (mode === '8' || mode === '8&20') {
-                const fb = buildAngularBoundary(ordered, dist1);
-                if (fb.circleToPoint) boundaryResults.push(fb);
-            }
-            if (mode === '20' || mode === '8&20') {
-                const db = buildAngularBoundary(ordered, dist2);
-                if (db.circleToPoint) boundaryResults.push(db);
-            }
-
-            const obstacles = getRoutingObstaclePolygons();
-            for (let ci = 1; ci < ordered.length - 1; ci++) {
-                const circleCenter = ordered[ci];
-                for (const bResult of boundaryResults) {
-                    if (!bResult.circleToPoint || ci >= bResult.circleToPoint.length) continue;
-                    const bndPt = bResult.circleToPoint[ci];
-                    // Route around obstacles
-                    let separatorPath = bendLatLngSegmentAroundObstacles(circleCenter, bndPt, obstacles);
-                    if (!separatorPath || separatorPath.length < 2) separatorPath = [circleCenter, bndPt];
-
-                    // Clip separator to operation boundary (if set)
-                    if (operationBoundaryLatLngs && operationBoundaryLatLngs.length >= 3) {
-                        // Simple clipping: only keep the segment if both endpoints are inside boundary
-                        const bndRing = operationBoundaryLatLngs.map(p => [p.lng, p.lat]);
-                        const lastPt = separatorPath[separatorPath.length - 1];
-                        if (!_ptInRing(lastPt.lng, lastPt.lat, bndRing)) {
-                            console.log('  separator[' + ci + '] endpoint outside boundary — skipped');
-                            continue;
-                        }
-                    }
-
-                    const pl = L.polyline(separatorPath, separatorOpt);
-                    pl._autoFlankLine = true;
-                    pl._tmgData = {
-                        typeId: 'auto-flank-separator',
-                        sessionId, tag,
-                        separatorIndex: ci
-                    };
-                    addToActiveLayer(pl);
-                    console.log('  separator[' + ci + '] drawn with ' + separatorPath.length + ' vertices');
-                }
-            }
-            console.groupEnd();
-        }
-
         if (drawn === 0) {
             setCriticalMessage('No valid front line found for auto flank generation. Ensure a scalloped front line exists.');
             lastAutoFlankModeBySession[stateKey] = null;
         } else {
-            const bndMsg = operationBoundaryLatLngs ? ', boundary-constrained' : '';
-            setCriticalMessage(`Auto-drew polygon area (${tag} / ${mode}${bndMsg}), clipped by obstacles.`);
+            setCriticalMessage(`Auto-drew polygon area (${tag} / ${mode}), clipped by obstacles.`);
             lastAutoFlankModeBySession[stateKey] = mode;
             if (window.freeDrawSignature) {
                 window.freeDrawSignatureStage = 'post-flank';
@@ -4395,15 +3850,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.autoDrawCircleXFlankLines = autoDrawCircleXFlankLines;
-
-    // ── Expose operation boundary API for free_draw_signature.js ──
-    window.setOperationBoundary = setOperationBoundary;
-    window.getOperationBoundary = getOperationBoundary;
-    window.clearOperationBoundary = clearOperationBoundary;
-    window.startBoundaryDrawing = startBoundaryDrawing;
-    window.finishBoundaryDrawing = finishBoundaryDrawing;
-    window.cancelBoundaryDrawing = cancelBoundaryDrawing;
-    window.isBoundaryDrawing = isBoundaryDrawing;
 
     // Clear auto-flank elements (lines and polygons) that belong to a specific tag
     window.clearAutoFlankLinesByTag = function (tag) {
@@ -5013,10 +4459,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if ((e.code === 'Escape' || e.key === 'Escape') && topFavoritesPanel && !topFavoritesPanel.classList.contains('hidden')) {
             setTopFavoritesOpen(false);
-        }
-        // Cancel boundary drawing on Escape
-        if ((e.code === 'Escape' || e.key === 'Escape') && operationBoundaryDrawMode) {
-            cancelBoundaryDrawing();
         }
     });
 
@@ -11346,12 +10788,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     map.on('dblclick', (e) => {
-        // ── Finish operation boundary drawing on double-click ──
-        if (operationBoundaryDrawMode) {
-            e.originalEvent?.preventDefault?.();
-            finishBoundaryDrawing();
-            return;
-        }
         const target = e.originalEvent?.target;
         if (!target || !map.getContainer().contains(target) || target.closest?.('.sidebar') || target.closest?.('.top-bar') || target.closest?.('.modal')) return;
         if (currentMode === 'line' && selectedTmgType && isParametricCatkPlacementType(selectedTmgType) && catkPlacementState?.phase === 'bodyDrawing') {
@@ -11452,12 +10888,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     map.on('click', (e) => {
-
-        // ── Operation boundary drawing intercept ──
-        if (operationBoundaryDrawMode && e.latlng) {
-            addBoundaryVertex(e.latlng);
-            return;
-        }
 
         if (window.freeDrawSignatureRecentClick) {
             // Don't consume — just clear the flag. The placement click was already

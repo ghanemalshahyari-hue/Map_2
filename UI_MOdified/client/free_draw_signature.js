@@ -947,83 +947,6 @@
         controls.querySelector('#fd-brig-both')?.addEventListener('click', () => callFlank('8&20', 'brigade'));
     }
 
-    /**
-     * Wire the operation boundary Set/Clear buttons in the auto-flank panel.
-     * – "Set Boundary" enters boundary drawing mode (clicks on map add vertices,
-     *   double-click or pressing the button again finishes the polygon).
-     * – "Clear" removes the current boundary.
-     */
-    function attachBoundaryControls(panel) {
-        const setBtn = panel.querySelector('#fd-set-boundary-btn');
-        const clearBtn = panel.querySelector('#fd-clear-boundary-btn');
-        const statusEl = panel.querySelector('#fd-boundary-status');
-        if (!setBtn) return;
-
-        function updateBoundaryUI() {
-            const hasBoundary = typeof window.getOperationBoundary === 'function' && window.getOperationBoundary();
-            const isDrawing = typeof window.isBoundaryDrawing === 'function' && window.isBoundaryDrawing();
-
-            if (isDrawing) {
-                setBtn.textContent = 'Finish Boundary';
-                setBtn.style.background = '#16a34a';
-                if (clearBtn) clearBtn.style.display = 'none';
-                if (statusEl) {
-                    statusEl.style.display = 'block';
-                    statusEl.textContent = 'Click map to add vertices. Double-click or press button to finish.';
-                }
-            } else if (hasBoundary) {
-                setBtn.textContent = 'Set Boundary';
-                setBtn.style.background = '#7c3aed';
-                if (clearBtn) clearBtn.style.display = 'block';
-                if (statusEl) {
-                    statusEl.style.display = 'block';
-                    statusEl.textContent = 'Boundary active — auto-draw constrained.';
-                    statusEl.style.color = '#a78bfa';
-                }
-            } else {
-                setBtn.textContent = 'Set Boundary';
-                setBtn.style.background = '#7c3aed';
-                if (clearBtn) clearBtn.style.display = 'none';
-                if (statusEl) {
-                    statusEl.style.display = 'none';
-                    statusEl.textContent = '';
-                }
-            }
-        }
-
-        setBtn.addEventListener('click', function () {
-            const isDrawing = typeof window.isBoundaryDrawing === 'function' && window.isBoundaryDrawing();
-            if (isDrawing) {
-                // Finish drawing
-                if (typeof window.finishBoundaryDrawing === 'function') window.finishBoundaryDrawing();
-            } else {
-                // Start drawing
-                if (typeof window.startBoundaryDrawing === 'function') window.startBoundaryDrawing();
-            }
-            updateBoundaryUI();
-        });
-
-        if (clearBtn) {
-            clearBtn.addEventListener('click', function () {
-                if (typeof window.clearOperationBoundary === 'function') window.clearOperationBoundary();
-                updateBoundaryUI();
-            });
-        }
-
-        // Watch for boundary changes (poll — lightweight since it's just checking a variable)
-        let _lastBoundaryState = null;
-        setInterval(function () {
-            const current = (typeof window.getOperationBoundary === 'function' && window.getOperationBoundary()) ? 'set' :
-                            (typeof window.isBoundaryDrawing === 'function' && window.isBoundaryDrawing()) ? 'drawing' : 'none';
-            if (current !== _lastBoundaryState) {
-                _lastBoundaryState = current;
-                updateBoundaryUI();
-            }
-        }, 500);
-
-        updateBoundaryUI();
-    }
-
     function setSelectedFlankTag(tag) {
         selectedFlankTag = tag || null;
         const batt = document.getElementById('fd-col-battalion');
@@ -1115,19 +1038,7 @@
         panel = document.createElement('div');
         panel.id = 'auto-flank-controls';
         panel.style.cssText = 'position:fixed;top:60px;right:18px;z-index:9999;background:rgba(15,23,42,0.95);color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.4);display:flex;flex-direction:column;gap:10px;align-items:stretch;';
-        const BTN_PURPLE = 'background:#7c3aed;color:#fff;border:none;border-radius:5px;padding:6px 9px;font-size:0.78rem;cursor:pointer;width:100%;font-weight:600;';
-        const BTN_PURPLE_OUTLINE = 'background:transparent;color:#a78bfa;border:1px solid #7c3aed;border-radius:5px;padding:5px 9px;font-size:0.78rem;cursor:pointer;width:100%;';
-
         panel.innerHTML = `
-            <div id="fd-boundary-section" style="display:flex;flex-direction:column;gap:4px;margin-bottom:2px;">
-                <span style="font-size:0.72rem;color:#a78bfa;font-weight:600;">Operation Boundary</span>
-                <div style="display:flex;gap:4px;">
-                    <button id="fd-set-boundary-btn" style="${BTN_PURPLE}">Set Boundary</button>
-                    <button id="fd-clear-boundary-btn" style="${BTN_PURPLE_OUTLINE}display:none;">Clear</button>
-                </div>
-                <span id="fd-boundary-status" style="font-size:0.65rem;color:#94a3b8;display:none;"></span>
-            </div>
-            <div style="height:1px;background:rgba(147,51,234,0.25);"></div>
             <div id="fd-col-battalion" style="${COL}">
                 <span data-fd-i18n="battalion" style="font-size:0.8rem;font-weight:700;color:#93c5fd;margin-bottom:2px;">Battalion</span>
                 <div style="${ROW}"><span data-fd-i18n="front-org" style="${LBL}">Front Org:</span><input id="fd-bat-front" type="number" min="1" max="999" value="${savedBatFront}" style="${INPUT}"/><span data-fd-i18n="km" style="${LBL}">km</span><button data-fd-i18n="draw" id="fd-bat-front-draw" style="${BTN_BLUE}">Draw</button></div>
@@ -1146,7 +1057,6 @@
         document.body.appendChild(panel);
 
         attachAutoFlankControls();
-        attachBoundaryControls(panel);
         attachFlankCardSelection(panel);
         setSelectedFlankTag(selectedFlankTag);
         applyFdTranslations();

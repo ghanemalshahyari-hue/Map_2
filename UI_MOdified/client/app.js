@@ -3201,21 +3201,21 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Build a closed polygon ring from the ordered circle centres
      * and the angular-boundary points, then clip it against obstacles.
+     * Renders both a non-interactive area overlay and non-front border polylines.
      *
      * @param {L.LatLng[]} ordered     – circle centres sorted along front axis
      * @param {L.LatLng[]} boundary    – boundary points from buildAngularBoundary
-     * @param {Object}     polyOpts    – Leaflet polygon style options
+     * @param {Object}     lineOpts    – Leaflet polyline style options for border lines
      * @param {string}     sessionId
      * @param {string}     tag
      * @param {number}     lengthKm
-     * @returns {L.Polyline[]}  Leaflet polyline(s) added to the map (border only, no fill, no front edge)
+     * @returns {(L.Polyline|L.Polygon)[]}  border polylines and area polygon(s) added to the map
      */
     function buildClippedAutoDrawPolygon(ordered, boundary, lineOpts, sessionId, tag, lengthKm) {
         if (!ordered || ordered.length < 2 || !boundary || boundary.length < 2) return [];
 
         // ── 1. Form closed polygon: front → right flank → baseline → left flank ──
         const rawRing = [];
-        const frontCount = ordered.length; // first N points are the front line
         // Front line (circle centres, left to right)
         for (const pt of ordered) rawRing.push(pt);
         // Right flank: last centre → last boundary point (skip if same)
@@ -3233,7 +3233,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ── 2. Clip by obstacle polygons ──
         const obstacles = getRoutingObstaclePolygons();
-        const clipped = clipPolygonByObstacles(rawRing, obstacles);
+        const clipped = clipPolygonByObstacles(rawRing, obstacles, ordered);
 
         // ── 3. Extract the non-front border from the clipped polygon ──
         //    The front line (scalloped) is rendered separately — only draw

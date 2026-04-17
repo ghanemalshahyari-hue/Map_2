@@ -3743,19 +3743,6 @@ document.addEventListener('DOMContentLoaded', () => {
             className: 'auto-flank-border'
         };
 
-        // Draw perpendicular connector lines from middle circle X centres
-        // to their corresponding boundary points.  The first and last circles
-        // are already connected by the left/right flank lines.
-        function drawMiddleCircleConnectors(cOrdered, cCircleToPoint, cLineOpts, cSessionId, cTag, cLengthKm) {
-            for (let i = 1; i < cOrdered.length - 1; i++) {
-                if (!cCircleToPoint[i]) continue;
-                const pl = L.polyline([cOrdered[i], cCircleToPoint[i]], cLineOpts);
-                pl._autoFlankLine = true;
-                pl._tmgData = { typeId: 'auto-flank-polygon', sessionId: cSessionId, tag: cTag, lengthKm: cLengthKm };
-                addToActiveLayer(pl);
-            }
-        }
-
         if (mode === '8') {
             // ── FRONT ORG ──
             const front = buildAngularBoundary(ordered, dist1);
@@ -3763,7 +3750,6 @@ document.addEventListener('DOMContentLoaded', () => {
             else {
                 const polys = buildClippedAutoDrawPolygon(
                     ordered, front.boundary, borderOpt, sessionId, tag, dist1);
-                drawMiddleCircleConnectors(ordered, front.circleToPoint, borderOpt, sessionId, tag, dist1);
                 drawn = polys.length ? ordered.length : 0;
             }
 
@@ -3774,7 +3760,6 @@ document.addEventListener('DOMContentLoaded', () => {
             else {
                 const polys = buildClippedAutoDrawPolygon(
                     ordered, deep.boundary, borderOpt, sessionId, tag, dist2);
-                drawMiddleCircleConnectors(ordered, deep.circleToPoint, borderOpt, sessionId, tag, dist2);
                 drawn = polys.length ? ordered.length : 0;
             }
 
@@ -3788,8 +3773,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const polys = buildClippedDualPolygons(
                     ordered, front.boundary, deep.boundary,
                     borderOpt, sessionId, tag, dist1, dist2);
-                drawMiddleCircleConnectors(ordered, front.circleToPoint, borderOpt, sessionId, tag, dist1);
-                drawMiddleCircleConnectors(ordered, deep.circleToPoint, borderOpt, sessionId, tag, dist2);
                 drawn = polys.length ? ordered.length : 0;
             }
         }

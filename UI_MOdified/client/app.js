@@ -3643,9 +3643,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function buildClippedAutoDrawPolygon(ordered, boundary, lineOpts, sessionId, tag, lengthKm) {
         if (!ordered || ordered.length < 2 || !boundary || boundary.length < 2) return [];
 
+        console.groupCollapsed('[AutoDraw] buildClippedAutoDrawPolygon – ' + tag + '/' + lengthKm + 'km');
+
         // ── 1. Form closed polygon: front → right flank → baseline → left flank ──
         const rawRing = [];
-        const frontCount = ordered.length; // first N points are the front line
         // Front line (circle centres, left to right)
         for (const pt of ordered) rawRing.push(pt);
         // Right flank: last centre → last boundary point (skip if same)
@@ -3661,11 +3662,50 @@ document.addEventListener('DOMContentLoaded', () => {
             rawRing.push(boundary[0]);
         }
 
-        // ── 2. Clip by obstacle polygons ──
-        const obstacles = getRoutingObstaclePolygons();
-        const clipped = clipPolygonByObstacles(rawRing, obstacles);
+        console.log('  rawRing vertices:', rawRing.length);
 
-        // ── 3. Extract the non-front border from the clipped polygon ──
+        // ── 2. PIPELINE: boundary → obstacles → anchor retention → score ──
+        // Convert to [lng,lat] for clipping math
+        let currentPolys = [{ ring: rawRing.map(p => [p.lng, p.lat]), holes: [] }];
+
+        // Anchor points for fragment retention (all circle centres + boundary endpoints)
+        const anchorPts = ordered.map(p => [p.lng, p.lat]);
+
+        // Step 2a: Clip to operation boundary (if defined)
+        currentPolys = clipByOperationBoundary(currentPolys);
+        if (currentPolys.length === 0) {
+            console.warn('  Entire polygon outside operation boundary — nothing to render');
+            console.groupEnd();
+            return [];
+        }
+
+        // Step 2b: Subtract obstacles
+        const obstacles = getRoutingObstaclePolygons();
+        currentPolys = subtractObstacles(currentPolys, obstacles);
+        if (currentPolys.length === 0) {
+            console.warn('  Polygon fully consumed by obstacles — nothing to render');
+            console.groupEnd();
+            return [];
+        }
+
+        // Step 2c: Retain anchor-connected fragments (replaces keep-largest)
+        currentPolys = retainAnchorConnectedFragments(currentPolys, anchorPts, false);
+
+        // Step 2d: Score geometry against target distance
+        scoreGeometryAgainstTargets(currentPolys, lengthKm, ordered);
+
+        // Step 2e: Validate — remove self-intersections (degenerate rings)
+        currentPolys = currentPolys.filter(p => p.ring && p.ring.length >= 3);
+
+        // Convert back to LatLng for rendering
+        const clipped = currentPolys.map(p => ({
+            outer: p.ring.map(c => L.latLng(c[1], c[0])),
+            holes: (p.holes || []).map(h => h.map(c => L.latLng(c[1], c[0])))
+        }));
+
+        console.log('  clipped polygons to render:', clipped.length);
+
+        // ── 3. Extract the non-front border from each clipped polygon ──
         //    The front line (scalloped) is rendered separately — only draw
         //    the flanks + baseline as polylines (no fill).
         const result = [];
@@ -3674,8 +3714,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!ring || ring.length < 3) continue;
 
             // Find the two ring vertices closest to the first and last circle centres.
-            // The arc between them that does NOT pass through intermediate circle centres
-            // is the non-front border (flanks + baseline).
             const firstCtr = ordered[0];
             const lastCtr  = ordered[ordered.length - 1];
             let si = 0, ei = 0, sd = Infinity, ed = Infinity;
@@ -3702,8 +3740,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const bwd = arcBetween(ei, si, -1);
 
             // The non-front arc is the one whose midpoint is farther from the
-            // front-line axis (closer to the baseline).  Quick proxy: sum of
-            // distances of each arc point to the centre of the ordered array.
+            // front-line axis (closer to the baseline).
             const midCtr = ordered[Math.floor(ordered.length / 2)];
             const avgDist = (pts) => {
                 let s = 0;
@@ -3723,6 +3760,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 result.push(pl);
             }
         }
+
+        console.log('  rendered polylines:', result.length);
+        console.groupEnd();
         return result;
     }
 

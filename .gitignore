@@ -31,3 +31,6 @@ Desktop.ini
 # SQLite databases (runtime data)
 *.sqlite
 *.db
+*.db-wal
+*.db-shm
+UI_MOdified/data/units.db

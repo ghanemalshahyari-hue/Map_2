@@ -4309,6 +4309,26 @@ document.addEventListener('DOMContentLoaded', () => {
         toRemove.forEach(el => removeFromLayer(el));
     };
 
+    window.removeFrontlineSessionElements = function (sessionId) {
+        if (!sessionId) return;
+        const toRemove = getAllElements().filter(el => {
+            // Scalloped frontline group (LayerGroup with segments)
+            if (el instanceof L.LayerGroup && el._tmgData?.typeId === 'scalloped') {
+                const segs = el._tmgData?.segments;
+                if (Array.isArray(segs) && segs.length > 0) {
+                    return segs[0]?._tmgData?.sessionId === sessionId;
+                }
+                return el._tmgData?.sessionId === sessionId;
+            }
+            // Single scalloped marker/polyline
+            if (el._tmgData?.typeId === 'scalloped' && el._tmgData?.sessionId === sessionId) return true;
+            // Auto-flank area and division lines
+            if ((el instanceof L.Polyline || el instanceof L.Polygon) && el._autoFlankLine && el._tmgData?.sessionId === sessionId) return true;
+            return false;
+        });
+        toRemove.forEach(el => removeFromLayer(el));
+    };
+
 
     function buildLinePopupContent(polyline) {
         const color = (polyline.options?.color || '#3b82f6').toString().toLowerCase();
@@ -9823,7 +9843,7 @@ document.addEventListener('DOMContentLoaded', () => {
         getMap: () => map,
         getLayers: () => layers,
         getDrawLinePolyline: () => drawLinePolyline,
-        getCircleXSnapLatLng: (rawLatLng) => findClosestCircleXCenter(rawLatLng),
+        getCircleXSnapLatLng: (rawLatLng) => findClosestCircleXCenter(rawLatLng, getCircleXSnapPx()),
         getAllElements,
         getSelectedTmgType: () => selectedTmgType,
         getAddingPointTmgGroup: () => addingPointTmgGroup,
@@ -11826,16 +11846,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const addPoint = () => {
                     tmgClickPendingTimeout = null;
                     if (selectedTmgType === 'scalloped' && areAnyCircleXRingsOverlapping()) {
-                        if (instructionText) {
-                            instructionText.removeAttribute('hidden');
-                            instructionText.setAttribute('aria-hidden', 'false');
-                            instructionText.style.color = '#ef4444';
-                            instructionText.innerText = 'Circles are too close — zoom in until the rings are apart, then draw the front line';
-                            setTimeout(() => {
-                                instructionText.style.color = '';
-                                const def = TACTICAL_GRAPHICS.find(d => d.id === selectedTmgType);
-                                instructionText.innerText = def ? t(instPlaceTmgKeyForTypeId(def.id), getTmgLabel(def)) : t('inst-line-draw');
-                            }, 3000);
+                        const _existingWarn = document.getElementById('circle-too-close-warning');
+                        if (!_existingWarn) {
+                            const _warn = document.createElement('div');
+                            _warn.id = 'circle-too-close-warning';
+                            _warn.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20000;background:rgba(15,23,42,0.97);color:#f8fafc;border:1px solid #ef4444;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.5);padding:24px 28px;min-width:300px;max-width:380px;text-align:center;font-size:0.95rem;';
+                            _warn.innerHTML =
+                                '<div style="font-size:1.6rem;margin-bottom:10px;">⚠️</div>' +
+                                '<div style="font-weight:700;font-size:1.05rem;margin-bottom:10px;color:#ef4444;">Circles Too Close</div>' +
+                                '<div style="line-height:1.6;margin-bottom:18px;color:#e2e8f0;">The green rings are overlapping.<br>Zoom in until the rings are <b>apart</b>, then draw the front line.</div>' +
+                                '<button id="circle-too-close-ok" style="padding:9px 32px;border-radius:8px;border:none;background:#3b82f6;color:#fff;font-weight:700;cursor:pointer;font-size:0.95rem;">Got it</button>';
+                            document.body.appendChild(_warn);
+                            document.getElementById('circle-too-close-ok').addEventListener('click', () => _warn.remove());
+                            setTimeout(() => { if (_warn.parentNode) _warn.remove(); }, 4000);
                         }
                         return;
                     }

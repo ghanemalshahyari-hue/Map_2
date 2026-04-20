@@ -83,23 +83,19 @@
         }
 
         // Global dismiss: clicking anywhere outside the flank panel / affiliation popup
-        // hides the step overlay and the battalion/brigade panel.
+        // hides the battalion/brigade flank panel when the workflow is idle.
         document.addEventListener('click', function (e) {
-            // Keep overlay visible during any active workflow stage
-            if (stage !== 'idle') return;
             var target = e.target;
-            // Don't dismiss if clicking inside the flank panel itself
+            // Always ignore clicks inside the flank panel first (even if stage strings desync).
             var flankPanel = document.getElementById('auto-flank-controls');
             if (flankPanel && flankPanel.contains(target)) return;
+            if (stage !== 'idle') return;
             // Don't dismiss if clicking inside the affiliation popup
             var affPopup = document.getElementById('free-draw-affiliation-popup');
             if (affPopup && affPopup.contains(target)) return;
             // Don't dismiss if clicking the free-draw button (it starts the workflow)
             if (target.closest && target.closest('#free-draw-signature-btn')) return;
 
-            // Hide the step overlay
-            hideMapOverlay();
-            // Hide the battalion/brigade flank panel
             hideAutoFlankControls();
         }, true);
 
@@ -238,10 +234,24 @@
     }
 
     function setCriticalMessage(text) {
-        const el = document.getElementById('free-draw-critical');
-        if (!el) return;
-        el.textContent = text || '';
+        const msg = text || '';
+        let el = document.getElementById('free-draw-critical');
+        if (!el) {
+            el = document.createElement('p');
+            el.id = 'free-draw-critical';
+            el.setAttribute('aria-live', 'polite');
+            el.style.cssText = 'margin-top:8px;font-size:0.78rem;line-height:1.35;color:#fbbf24;min-height:1.2em;';
+            const anchor = document.getElementById('free-draw-signature-btn');
+            if (anchor && anchor.parentNode) {
+                anchor.parentNode.appendChild(el);
+            } else {
+                document.body.appendChild(el);
+            }
+        }
+        el.textContent = msg;
     }
+    /** Exposed for app.js auto-flank (same DOM slot as free-draw status). */
+    window.setCriticalMessage = setCriticalMessage;
 
     // ── Validation toast (small corner toast) ──────────────────────────────
     var _toastTimer = null;
@@ -392,12 +402,6 @@
 
     // ── End Formation → Affiliation dependency helpers ──────────────────
 
-    // ── On-map step-by-step instruction overlay ──────────────────────────
-    var mapOverlay = null;
-    var mapOverlayStep = null;
-    var mapOverlayText = null;
-    var mapOverlayAutoHideTimer = null;
-
     function isArabic() {
         return typeof window.getCurrentLang === 'function' && window.getCurrentLang() === 'ar';
     }
@@ -520,36 +524,6 @@
             sBtn.style.color       = ready ? '#ffffff' : '#d1d5db';
             sBtn.style.boxShadow   = ready ? '0 0 8px rgba(22,163,74,0.4)' : 'none';
         }
-    }
-
-    function showMapOverlay(step, text, subText) {
-        if (!map) return;
-        var container = map.getContainer();
-        if (!mapOverlay) {
-            mapOverlay = document.createElement('div');
-            mapOverlay.id = 'fd-map-overlay';
-            mapOverlay.style.cssText = 'position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:800;' +
-                'background:rgba(15,23,42,0.92);color:#f8fafc;padding:10px 22px;border-radius:10px;' +
-                'box-shadow:0 4px 16px rgba(0,0,0,0.45);pointer-events:none;text-align:center;' +
-                'max-width:480px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;' +
-                'border:1px solid rgba(59,130,246,0.4);transition:opacity 0.3s;';
-            mapOverlayStep = document.createElement('div');
-            mapOverlayStep.style.cssText = 'font-size:0.72rem;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;';
-            mapOverlay.appendChild(mapOverlayStep);
-            mapOverlayText = document.createElement('div');
-            mapOverlayText.style.cssText = 'font-size:0.88rem;line-height:1.45;color:#e2e8f0;';
-            mapOverlay.appendChild(mapOverlayText);
-            container.appendChild(mapOverlay);
-        }
-        if (mapOverlayAutoHideTimer) { clearTimeout(mapOverlayAutoHideTimer); mapOverlayAutoHideTimer = null; }
-        mapOverlay.style.opacity = '1';
-        mapOverlay.style.display = 'block';
-        mapOverlay.dir = isArabic() ? 'rtl' : 'ltr';
-        mapOverlay.style.fontFamily = isArabic()
-            ? 'Tahoma,Arial,system-ui,sans-serif'
-            : 'system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif';
-        mapOverlayStep.textContent = step || '';
-        mapOverlayText.innerHTML = text + (subText ? '<div style="font-size:0.75rem;color:#94a3b8;margin-top:4px;">' + subText + '</div>' : '');
     }
 
     function getSelectedFrontOrgDistance() {
@@ -736,16 +710,6 @@
         }).addTo(map);
     }
 
-    function hideMapOverlay() {
-        if (mapOverlayAutoHideTimer) { clearTimeout(mapOverlayAutoHideTimer); mapOverlayAutoHideTimer = null; }
-        if (mapOverlay) { mapOverlay.style.display = 'none'; }
-    }
-
-    function flashMapOverlay(step, text, duration) {
-        showMapOverlay(step, text);
-        mapOverlayAutoHideTimer = setTimeout(function () { hideMapOverlay(); }, duration || 3000);
-    }
-
     function recognizeCircleX(points) {
         if (!points || points.length < 20) return false;
 
@@ -842,13 +806,6 @@
         }
 
         setCriticalMessage(`Circle X placed (${circleXCount}/${maxCircleX}). Place one more.`);
-        showMapOverlay(
-            isArabic() ? 'الخطوة ٢ من ٤ — وضع نقطة تنسيق  ⊗' : 'Step 2 of 4 — Place Circle-X Obstacles',
-            isArabic()
-                ? 'انقر على الخريطة لوضع <b>⊗</b> التالية.'
-                : 'Click on the map to place the next <b>⊗ Circle-X</b>.',
-            (isArabic() ? circleXCount + ' من ' + maxCircleX + ' تم وضعها' : circleXCount + ' of ' + maxCircleX + ' placed')
-        );
     }
 
     function createConvertLineButton() {
@@ -919,7 +876,10 @@
     }
 
     function callFlank(mode, tag) {
-        if (typeof window.autoDrawCircleXFlankLines !== 'function') return;
+        if (typeof window.autoDrawCircleXFlankLines !== 'function') {
+            setCriticalMessage('Auto-flank draw is not ready yet. Reload the page if this persists.');
+            return;
+        }
         const dist1 = parseFloat(document.getElementById('fd-bat-front')?.value) || savedBatFront;
         const dist2 = parseFloat(document.getElementById('fd-bat-deep')?.value) || savedBatDeep;
         const dist3 = parseFloat(document.getElementById('fd-brig-front')?.value) || savedBrigFront;
@@ -929,22 +889,64 @@
         if (typeof window.clearAutoFlankLinesByTag === 'function') {
             window.clearAutoFlankLinesByTag(otherTag);
         }
-        if (tag === 'battalion') {
-            window.autoDrawCircleXFlankLines({ mode, tag: 'battalion', dist1, dist2 });
-        } else {
-            window.autoDrawCircleXFlankLines({ mode, tag: 'brigade', dist1: dist3, dist2: dist4 });
+        const opts = tag === 'battalion'
+            ? { mode, tag: 'battalion', dist1, dist2 }
+            : { mode, tag: 'brigade', dist1: dist3, dist2: dist4 };
+        const p = window.autoDrawCircleXFlankLines(opts);
+        if (p && typeof p.then === 'function') {
+            p.catch((err) => {
+                console.error('autoDrawCircleXFlankLines', err);
+                setCriticalMessage('Auto-flank failed: ' + (err && err.message ? err.message : String(err)));
+            });
         }
     }
 
-    function attachAutoFlankControls() {
-        const controls = document.getElementById('auto-flank-controls');
-        if (!controls) return;
-        controls.querySelector('#fd-bat-front-draw')?.addEventListener('click', () => callFlank('8', 'battalion'));
-        controls.querySelector('#fd-bat-deep-draw')?.addEventListener('click', () => callFlank('20', 'battalion'));
-        controls.querySelector('#fd-bat-both')?.addEventListener('click', () => callFlank('8&20', 'battalion'));
-        controls.querySelector('#fd-brig-front-draw')?.addEventListener('click', () => callFlank('8', 'brigade'));
-        controls.querySelector('#fd-brig-deep-draw')?.addEventListener('click', () => callFlank('20', 'brigade'));
-        controls.querySelector('#fd-brig-both')?.addEventListener('click', () => callFlank('8&20', 'brigade'));
+    /**
+     * Flank Draw / Both: wire on the floating panel only. Uses capture-phase pointerdown + click
+     * (debounced) so a gesture still runs if another layer eats one of the events.
+     */
+    function wireAutoFlankDrawButtons() {
+        const panel = document.getElementById('auto-flank-controls');
+        if (!panel) return;
+        const pairs = [
+            ['fd-bat-front-draw', '8', 'battalion'],
+            ['fd-bat-deep-draw', '20', 'battalion'],
+            ['fd-bat-both', '8&20', 'battalion'],
+            ['fd-brig-front-draw', '8', 'brigade'],
+            ['fd-brig-deep-draw', '20', 'brigade'],
+            ['fd-brig-both', '8&20', 'brigade']
+        ];
+        pairs.forEach(([id, mode, tag]) => {
+            const btn = panel.querySelector('#' + id);
+            if (!btn) return;
+            const prev = btn._fdFlankWire;
+            if (prev) {
+                btn.removeEventListener('pointerdown', prev.pd, true);
+                btn.removeEventListener('click', prev.ck, true);
+            }
+            let lastFire = 0;
+            function invoke(e) {
+                const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+                if (now - lastFire < 450) return;
+                lastFire = now;
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+                }
+                callFlank(mode, tag);
+            }
+            function onPointerDown(e) {
+                if (e.pointerType === 'mouse' && e.button !== 0) return;
+                invoke(e);
+            }
+            function onClick(e) {
+                invoke(e);
+            }
+            btn.addEventListener('pointerdown', onPointerDown, true);
+            btn.addEventListener('click', onClick, true);
+            btn._fdFlankWire = { pd: onPointerDown, ck: onClick };
+        });
     }
 
     function setSelectedFlankTag(tag) {
@@ -998,11 +1000,17 @@
         const brig = panel.querySelector('#fd-col-brigade');
         if (batt) {
             batt.style.cursor = 'pointer';
-            batt.addEventListener('click', () => setSelectedFlankTag('battalion'));
+            batt.addEventListener('click', (ev) => {
+                if (ev.target.closest('button[id^="fd-bat-"]')) return;
+                setSelectedFlankTag('battalion');
+            });
         }
         if (brig) {
             brig.style.cursor = 'pointer';
-            brig.addEventListener('click', () => setSelectedFlankTag('brigade'));
+            brig.addEventListener('click', (ev) => {
+                if (ev.target.closest('button[id^="fd-brig-"]')) return;
+                setSelectedFlankTag('brigade');
+            });
         }
     }
 
@@ -1037,29 +1045,29 @@
 
         panel = document.createElement('div');
         panel.id = 'auto-flank-controls';
-        panel.style.cssText = 'position:fixed;top:60px;right:18px;z-index:9999;background:rgba(15,23,42,0.95);color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.4);display:flex;flex-direction:column;gap:10px;align-items:stretch;';
+        panel.style.cssText = 'position:fixed;top:60px;right:18px;z-index:50000;background:rgba(15,23,42,0.95);color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.4);display:flex;flex-direction:column;gap:10px;align-items:stretch;';
         panel.innerHTML = `
             <div id="fd-col-battalion" style="${COL}">
                 <span data-fd-i18n="battalion" style="font-size:0.8rem;font-weight:700;color:#93c5fd;margin-bottom:2px;">Battalion</span>
-                <div style="${ROW}"><span data-fd-i18n="front-org" style="${LBL}">Front Org:</span><input id="fd-bat-front" type="number" min="1" max="999" value="${savedBatFront}" style="${INPUT}"/><span data-fd-i18n="km" style="${LBL}">km</span><button data-fd-i18n="draw" id="fd-bat-front-draw" style="${BTN_BLUE}">Draw</button></div>
-                <div style="${ROW}"><span data-fd-i18n="deep-org" style="${LBL}">Deep Org:&nbsp;</span><input id="fd-bat-deep" type="number" min="1" max="999" value="${savedBatDeep}" style="${INPUT}"/><span data-fd-i18n="km" style="${LBL}">km</span><button data-fd-i18n="draw" id="fd-bat-deep-draw" style="${BTN_BLUE}">Draw</button></div>
-                <button data-fd-i18n="both" id="fd-bat-both" style="${BTN_GREEN}">Both</button>
+                <div style="${ROW}"><span data-fd-i18n="front-org" style="${LBL}">Front Org:</span><input id="fd-bat-front" type="number" min="1" max="999" value="${savedBatFront}" style="${INPUT}"/><span data-fd-i18n="km" style="${LBL}">km</span><button type="button" data-fd-i18n="draw" id="fd-bat-front-draw" style="${BTN_BLUE}">Draw</button></div>
+                <div style="${ROW}"><span data-fd-i18n="deep-org" style="${LBL}">Deep Org:&nbsp;</span><input id="fd-bat-deep" type="number" min="1" max="999" value="${savedBatDeep}" style="${INPUT}"/><span data-fd-i18n="km" style="${LBL}">km</span><button type="button" data-fd-i18n="draw" id="fd-bat-deep-draw" style="${BTN_BLUE}">Draw</button></div>
+                <button type="button" data-fd-i18n="both" id="fd-bat-both" style="${BTN_GREEN}">Both</button>
             </div>
             <div id="fd-col-divider" style="height:1px;background:rgba(255,255,255,0.12);"></div>
             <div id="fd-col-brigade" style="${COL}">
                 <span data-fd-i18n="brigade" style="font-size:0.8rem;font-weight:700;color:#86efac;margin-bottom:2px;">Brigade</span>
-                <div style="${ROW}"><span data-fd-i18n="front-org" style="${LBL}">Front Org:</span><input id="fd-brig-front" type="number" min="1" max="999" value="${savedBrigFront}" style="${INPUT}"/><span data-fd-i18n="km" style="${LBL}">km</span><button data-fd-i18n="draw" id="fd-brig-front-draw" style="${BTN_BLUE}">Draw</button></div>
-                <div style="${ROW}"><span data-fd-i18n="deep-org" style="${LBL}">Deep Org:&nbsp;</span><input id="fd-brig-deep" type="number" min="1" max="999" value="${savedBrigDeep}" style="${INPUT}"/><span data-fd-i18n="km" style="${LBL}">km</span><button data-fd-i18n="draw" id="fd-brig-deep-draw" style="${BTN_BLUE}">Draw</button></div>
-                <button data-fd-i18n="both" id="fd-brig-both" style="${BTN_GREEN}">Both</button>
+                <div style="${ROW}"><span data-fd-i18n="front-org" style="${LBL}">Front Org:</span><input id="fd-brig-front" type="number" min="1" max="999" value="${savedBrigFront}" style="${INPUT}"/><span data-fd-i18n="km" style="${LBL}">km</span><button type="button" data-fd-i18n="draw" id="fd-brig-front-draw" style="${BTN_BLUE}">Draw</button></div>
+                <div style="${ROW}"><span data-fd-i18n="deep-org" style="${LBL}">Deep Org:&nbsp;</span><input id="fd-brig-deep" type="number" min="1" max="999" value="${savedBrigDeep}" style="${INPUT}"/><span data-fd-i18n="km" style="${LBL}">km</span><button type="button" data-fd-i18n="draw" id="fd-brig-deep-draw" style="${BTN_BLUE}">Draw</button></div>
+                <button type="button" data-fd-i18n="both" id="fd-brig-both" style="${BTN_GREEN}">Both</button>
             </div>
         `;
         panel.style.display = 'none';
         document.body.appendChild(panel);
 
-        attachAutoFlankControls();
         attachFlankCardSelection(panel);
         setSelectedFlankTag(selectedFlankTag);
         applyFdTranslations();
+        wireAutoFlankDrawButtons();
         return panel;
     }
 
@@ -1104,17 +1112,10 @@
         }
 
         controls.style.display = 'flex';
-        // Advance stage so the dismiss handler knows it's safe to hide overlay on outside clicks
+        // Advance stage so the global dismiss handler may hide this panel when idle
         stage = 'post-flank';
         window.freeDrawSignatureStage = stage;
-        // Frontline is drawn — remove the done button now that flank panel is showing
-        showMapOverlay(
-            isArabic() ? 'الخطوة ٤ من ٤ — تحديد الخطوط التكتيكية بشكل آلي ' : 'Step 4 of 4 — Set Flank Lines',
-            isArabic()
-                ? 'استخدم لوحة <b>' + (tag === 'battalion' ? 'الكتيبة' : 'اللواء') + '</b> لرسم خطوط التنظيم الأمامي والعمق.'
-                : 'Use the <b>' + (tag === 'battalion' ? 'Battalion' : 'Brigade') + '</b> panel to draw front/deep lines.',
-            isArabic() ? 'اللوحة في أعلى اليمين ←' : 'Panel is on the top-right →'
-        );
+        wireAutoFlankDrawButtons();
     }
     window.showAutoFlankControls = showAutoFlankControls;
 
@@ -1529,13 +1530,6 @@
             setupComplete = true;  // Step 1 done — drawing is now allowed
             updateInstruction('Affiliation set to ' + (aff === 'enemy' ? 'Enemy' : 'Friendly') + '. Click map to place symbol.');
             removeAffiliationPopup();
-            showMapOverlay(
-                isArabic() ? 'الخطوة ٢ من ٤ — وضع نقاط التنسيق   ⊗' : 'Step 2 of 4 — Place Circle-X Obstacles',
-                isArabic()
-                    ? 'انقر على الخريطة نقاط التنسيق <b>⊗</b>   (' + maxCircleX + ' العدد).'
-                    : 'Click on the map to place <b>⊗ Circle-X</b> markers (' + maxCircleX + ' total).',
-                isArabic() ? '٠ من ' + maxCircleX + ' تم وضعها' : '0 of ' + maxCircleX + ' placed'
-            );
             showChangeSetupButton();
         }
 
@@ -1575,8 +1569,6 @@
         });
         document.getElementById('fd-aff-close')?.addEventListener('click', () => {
             removeAffiliationPopup();
-            // Hide instructional overlay and unhighlight Auto Draw button
-            if (window.hideMapOverlay) window.hideMapOverlay();
             const btn = document.getElementById('free-draw-signature-btn');
             if (btn) btn.classList.remove('fd-btn-active');
         });
@@ -1632,7 +1624,6 @@
         window.freeDrawSignatureRecentClick = true;
         clearCirclePlacementPreview();
         setStepMessage([]);
-        flashMapOverlay('Complete', 'Free Draw workflow finished.', 3000);
     }
 
     // Force-cancel from any stage — used when user switches to another tool
@@ -1651,7 +1642,6 @@
         window.freeDrawSignatureActive = false;
         clearCirclePlacementPreview();
         setStepMessage([]);
-        hideMapOverlay();
         hideAutoFlankControls();
         // Also remove the center warning if visible
         var warn = document.getElementById('fd-center-warning');
@@ -1666,14 +1656,6 @@
 
         setCriticalMessage('Now draw the front line between the circles.');
         updateInstruction('Click near a circle-X to start drawing the front line. Double-click or press Finish to complete.');
-
-        showMapOverlay(
-            isArabic() ? 'الخطوة ٣ من ٤ — رسم خط المواجهة' : 'Step 3 of 4 — Draw Front Line',
-            isArabic()
-                ? 'انقر قرب دائرة <b>⊗</b> للبدء. قم بالتحرييك ووضع النقاط على المسار المخطط     .<br>انقر على وسط كل دائرة او بالقرب منها لتثبيت الخط   <b>⊗</b>    .'
-                : 'Click near a <b>⊗</b> circle to start. Click to add points along the line.<br>Click the last <b>⊗</b> circle to auto-finish.',
-            isArabic() ? 'سيلتصق الخط بالدوائر تلقائياً' : 'The line will snap to circles automatically'
-        );
 
         // Directly select scalloped (Front Line Border) TMG type with affiliation color
         var lineColor = (chosenAffiliation === 'enemy') ? '#ef4444' : '#3b82f6';
@@ -1771,16 +1753,8 @@
         const oldPanel = document.getElementById('auto-flank-controls');
         if (oldPanel) oldPanel.remove();
         updateInstruction('Free draw signature active: click map once to place circle X obstacle. Repeat as needed. Double-click or tick to finish.');
-        setCriticalMessage('Step 1: Place 2 Circle X obstacles (hover icons shown).');
+        setCriticalMessage('');
         map.getContainer().style.cursor = 'crosshair';
-
-        showMapOverlay(
-            isArabic() ? 'الخطوة ١ من ٤ — تجهيز قبل الرسم' : 'Step 1 of 4 — Setup',
-            isArabic()
-                ? 'اختر <b>صديق</b> أو <b>عدو</b> وحدد عدد نقاط التنسيق المراد وضعها واختر هل هيه كتيبة أم لواء.'
-                : 'Choose <b>Friendly</b> or <b>Enemy</b> and how many circles to place.',
-            isArabic() ? 'استخدم اللوحة على اليمين ←' : 'Use the panel on the right →'
-        );
 
         removeConvertLineButton();
         cleanupSketch(true);
@@ -1822,6 +1796,13 @@
         cancel: cancelFreeDrawWorkflow,
         isActive: () => isActive,
         getStage: () => stage,
-        getRequiredTMG: () => REQUIRED_TMG_ID
+        getRequiredTMG: () => REQUIRED_TMG_ID,
+        /** Keeps internal `stage` in sync after app.js auto-flank draw (avoids idle dismiss / odd UI state). */
+        syncPostFlankStage: () => {
+            stage = 'post-flank';
+            window.freeDrawSignatureStage = stage;
+        },
+        /** Circle X centres in placement order: left, center, right (for auto-flank rectangle geometry). */
+        getOrderedCircleCenters: () => placedCircleCenters.map(p => L.latLng(p.lat, p.lng))
     };
 })();

@@ -92,6 +92,8 @@ function initUnitsDb() {
             CREATE INDEX IF NOT EXISTS idx_units_level   ON units(level);
             CREATE INDEX IF NOT EXISTS idx_units_deleted ON units(deleted_at);
         `);
+        // Safe migration: add side column if it doesn't exist yet
+        try { unitsDb.exec(`ALTER TABLE units ADD COLUMN side TEXT NULL DEFAULT 'friendly'`); } catch (_) {}
         return unitsDb;
     } catch (e) {
         unitsDb = null;
@@ -954,6 +956,8 @@ const server = http.createServer((req, res) => {
             const parentId = normalizeText(body.parentId, 80);
             const sidc = normalizeText(body.sidc, 60);
             const unitType = normalizeText(body.unitType, 120);
+            const VALID_SIDES = ['friendly', 'hostile', 'neutral', 'unknown'];
+            const side = VALID_SIDES.includes(body.side) ? body.side : 'friendly';
             if (!name) return sendJson(res, 400, { error: 'name is required' });
             if (level == null || level < 0 || level > 4) return sendJson(res, 400, { error: 'level must be 0..4' });
             if (!parentId && level !== 0) return sendJson(res, 400, { error: 'root units must be level 0 (Army)' });
@@ -976,8 +980,8 @@ const server = http.createServer((req, res) => {
             const t = nowIso();
             try {
                 db.prepare(
-                    'INSERT INTO units (id, code, name, level, parent_id, sidc, unit_type, deleted_at, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)'
-                ).run(id, code, name, level, parentId || null, sidc, unitType, null, t, t);
+                    'INSERT INTO units (id, code, name, level, parent_id, sidc, unit_type, side, deleted_at, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)'
+                ).run(id, code, name, level, parentId || null, sidc, unitType, side, null, t, t);
                 const row = db.prepare('SELECT * FROM units WHERE id=?').get(id);
                 sendJson(res, 201, row);
             } catch (e) {
@@ -1006,6 +1010,8 @@ const server = http.createServer((req, res) => {
             const level = body.level !== undefined ? toIntOrNull(body.level) : undefined;
             const sidc = body.sidc !== undefined ? normalizeText(body.sidc, 60) : undefined;
             const unitType = body.unitType !== undefined ? normalizeText(body.unitType, 120) : undefined;
+            const VALID_SIDES_P = ['friendly', 'hostile', 'neutral', 'unknown'];
+            const side = body.side !== undefined ? (VALID_SIDES_P.includes(body.side) ? body.side : existing.side) : undefined;
 
             if (code !== undefined && !code) return sendJson(res, 400, { error: 'code cannot be empty' });
             if (name !== undefined && !name) return sendJson(res, 400, { error: 'name cannot be empty' });
@@ -1037,6 +1043,7 @@ const server = http.createServer((req, res) => {
             if (level !== undefined) setCol('level', level);
             if (sidc !== undefined) setCol('sidc', sidc);
             if (unitType !== undefined) setCol('unit_type', unitType);
+            if (side !== undefined) setCol('side', side);
             setCol('updated_at', nowIso());
             if (sets.length === 0) return sendJson(res, 200, existing);
 

@@ -1,5 +1,5 @@
-1. Auto Draw Middle line [Ghanem]
-2. Snap to green dotted point
+1. Auto Draw Middle line [Lahej]
+2. Snap to green dotted point[Ghanem]
 3. Coordinates on tghe side of the screen[Lahej]
 4. Remove info center top of the screen[Lahej]
 5. add page for adding units [Lahej]

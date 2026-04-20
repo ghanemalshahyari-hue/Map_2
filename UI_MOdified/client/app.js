@@ -698,6 +698,8 @@ document.addEventListener('DOMContentLoaded', () => {
     map.createPane('geoObstacleHatchPane');
     map.getPane('geoObstacleHatchPane').style.zIndex = 415;
     map.getPane('geoObstacleHatchPane').style.pointerEvents = 'none';
+    // Hide obstacle hatch overlay by default (obstacles still used for routing/clipping).
+    if (window.showObstacleHatchOverlay == null) window.showObstacleHatchOverlay = false;
     map.createPane('autoFlankAreaPane');
     map.getPane('autoFlankAreaPane').style.zIndex = 395;
     map.getPane('autoFlankAreaPane').style.pointerEvents = 'none';
@@ -2417,19 +2419,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Which side of the front axis the scalloped segments bulge toward (+1 / −1).
-     * @param {L.LatLng[]} [orderedAlongFront] – circle centres in **front-line order** (same as
-     *    `orderCentersAlongAxis`). When omitted, falls back to `getCircleXCenters()` order, which
-     *    can disagree with travel along the scallop and invert the offset side.
+     * Which side of a directed chord A→B the scalloped segments bulge toward (+1 / −1).
+     * Uses the actual front chord direction so the sign is independent of draw direction.
      */
-    function getFrontSideFromScallops(orderedAlongFront) {
-        const centers = (orderedAlongFront && orderedAlongFront.length >= 2)
-            ? orderedAlongFront
-            : getCircleXCenters();
-        if (!map || centers.length < 2) return null;
-
-        const start = map.latLngToLayerPoint(centers[0]);
-        const end = map.latLngToLayerPoint(centers[centers.length - 1]);
+    function getScallopBulgeSideRelativeToChord(chordA, chordB) {
+        if (!map || !chordA || !chordB) return null;
+        const start = map.latLngToLayerPoint(chordA);
+        const end = map.latLngToLayerPoint(chordB);
         const lineLen = Math.hypot(end.x - start.x, end.y - start.y);
         if (lineLen === 0) return null;
         const ux = (end.x - start.x) / lineLen;
@@ -3221,12 +3217,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }
 
-    /** Rear geographic bearing: perpendicular to L–R chord, org on side opposite scallops. */
-    function getAutoFlankRearBearingChord(leftPt, rightPt, orderedLCR) {
-        const scallopSide = getFrontSideFromScallops(orderedLCR);
-        // Use same sign as scallopSide so zones project toward the side the scallop teeth face.
-        const perpMult = scallopSide ? scallopSide : 1;
+    /**
+     * Rear geographic bearing: choose the perpendicular to the trueLeft→trueRight chord that places
+     * the rear offset on the side opposite the scallop bulge (teeth point toward enemy).
+     */
+    function getAutoFlankRearBearingChord(leftPt, rightPt) {
         const chordBear = bearingDegrees(leftPt, rightPt);
+        const bulgeSide = getScallopBulgeSideRelativeToChord(leftPt, rightPt);
+        const perpMult = bulgeSide ? -bulgeSide : 1;
         return ((chordBear + perpMult * 90) % 360 + 360) % 360;
     }
 
@@ -3458,6 +3456,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return { Qsnap, leftPath, rightPath };
     }
 
+    function makeAutoFlankBorderBand(a, b) {
+        // Thin polygon band around segment a→b so borders remain polygons (not polylines).
+        // Width tuned to ~2–4 px at typical tactical zoom.
+        const bear = bearingDegrees(a, b);
+        const perp = (bear + 90 + 360) % 360;
+        const w = 0.01; // km (10 m half-width)
+        return [
+            latLngAtBearing(a, w, perp),
+            latLngAtBearing(b, w, perp),
+            latLngAtBearing(b, w, (perp + 180) % 360),
+            latLngAtBearing(a, w, (perp + 180) % 360)
+        ];
+    }
+
     /**
      * Rectangle auto-flank: front = full scalloped front line (endpoint to endpoint), split at arc
      * midpoint for the two battalion zones; rear is a straight rectangle.
@@ -3476,14 +3488,27 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!flat || flat.length < 2) return null;
         const frontPath = flat.map(p => L.latLng(p.lat, p.lng));
 
+        // Normalize: ensure frontPath[0] is on the same side as leftPt (the ordered
+        // geographic-left circle center). This makes rearBear consistent regardless
+        // of which direction the user drew the scalloped frontline.
+        if (frontPath.length >= 2) {
+            const d0 = map.distance(frontPath[0], leftPt);
+            const dN = map.distance(frontPath[frontPath.length - 1], leftPt);
+            if (dN < d0) frontPath.reverse();
+        }
+
         // Zone corners derived from scalloped front endpoints.
         const trueLeft  = frontPath[0];
         const trueRight = frontPath[frontPath.length - 1];
 
         // Rear bearing perpendicular to actual scallop chord, toward friendly side.
-        // Use trueLeft/trueRight (not clustered circles) so the chord direction is stable.
-        const rearBear = getAutoFlankRearBearingChord(trueLeft, trueRight, [trueLeft, trueRight]);
+        // orderedLCR is already sorted geographic left→right, so getFrontSideFromScallops
+        // receives a consistent axis direction regardless of how the scallops were drawn.
+        const rearBear = getAutoFlankRearBearingChord(trueLeft, trueRight);
         const { pt: trueMid, idx: midIdx } = frontPathMidByArcLength(frontPath);
+        // Insert trueMid as an explicit vertex so the battalion polygon boundary passes
+        // through exactly the same point where the divider polygon starts.
+        frontPath.splice(midIdx + 1, 0, trueMid);
 
         const trueLeft8   = latLngAtBearing(trueLeft,  distBatKm,  rearBear);
         const trueRight8  = latLngAtBearing(trueRight, distBatKm,  rearBear);
@@ -3491,18 +3516,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const trueLeft20  = latLngAtBearing(trueLeft,  distBrigKm, rearBear);
         const trueRight20 = latLngAtBearing(trueRight, distBrigKm, rearBear);
 
-        // Split scalloped front at arc midpoint.
-        const leftFront  = frontPath.slice(0, midIdx + 1).concat([trueMid]);
-        const rightFront = [trueMid].concat(frontPath.slice(midIdx + 1));
-
         const ringsMeta = [];
 
         if (mode === '20') {
             ringsMeta.push({
                 ring: [trueLeft, trueRight, trueRight20, trueLeft20],
                 lengthKm: distBrigKm,
-                clipAnchors: [trueLeft, trueRight]
+                clipAnchors: [trueLeft, trueRight],
+                role: 'area'
             });
+            // Borders (polygon bands): rear + left + right. Front border is scalloped graphic.
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft20, trueRight20), lengthKm: distBrigKm, clipAnchors: [trueLeft20, trueRight20], role: 'border' });
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft, trueLeft20), lengthKm: distBrigKm, clipAnchors: [trueLeft, trueLeft20], role: 'border' });
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueRight, trueRight20), lengthKm: distBrigKm, clipAnchors: [trueRight, trueRight20], role: 'border' });
             return { ringsMeta };
         }
 
@@ -3510,23 +3536,42 @@ document.addEventListener('DOMContentLoaded', () => {
             ringsMeta.push({
                 ring: [...frontPath, trueRight8, trueLeft8],
                 lengthKm: distBatKm,
-                clipAnchors: [trueLeft, trueRight]
+                clipAnchors: [trueLeft, trueRight],
+                splitSegment: [trueMid, trueMid8],
+                role: 'area'
             });
-            return { ringsMeta, dividers: [[trueMid, trueMid8]] };
+            // Borders (polygon bands): rear + left + right + divider. Front border is scalloped graphic.
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft8, trueRight8), lengthKm: distBatKm, clipAnchors: [trueLeft8, trueRight8], role: 'border' });
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft, trueLeft8), lengthKm: distBatKm, clipAnchors: [trueLeft, trueLeft8], role: 'border' });
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueRight, trueRight8), lengthKm: distBatKm, clipAnchors: [trueRight, trueRight8], role: 'border' });
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueMid, trueMid8), lengthKm: distBatKm, clipAnchors: [trueMid, trueMid8], role: 'border' });
+            return { ringsMeta };
         }
 
         if (mode === '8&20') {
             ringsMeta.push({
                 ring: [...frontPath, trueRight8, trueLeft8],
                 lengthKm: distBatKm,
-                clipAnchors: [trueLeft, trueRight]
+                clipAnchors: [trueLeft, trueRight],
+                splitSegment: [trueMid, trueMid8],
+                role: 'area'
             });
             ringsMeta.push({
                 ring: [trueLeft8, trueRight8, trueRight20, trueLeft20],
                 lengthKm: distBrigKm,
-                clipAnchors: [trueLeft8, trueRight8]
+                clipAnchors: [trueLeft8, trueRight8],
+                role: 'area'
             });
-            return { ringsMeta, dividers: [[trueMid, trueMid8]] };
+            // Battalion borders
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft8, trueRight8), lengthKm: distBatKm, clipAnchors: [trueLeft8, trueRight8], role: 'border' });
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft, trueLeft8), lengthKm: distBatKm, clipAnchors: [trueLeft, trueLeft8], role: 'border' });
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueRight, trueRight8), lengthKm: distBatKm, clipAnchors: [trueRight, trueRight8], role: 'border' });
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueMid, trueMid8), lengthKm: distBatKm, clipAnchors: [trueMid, trueMid8], role: 'border' });
+            // Brigade borders (rear + left + right). Front of brigade is the battalion rear line.
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft20, trueRight20), lengthKm: distBrigKm, clipAnchors: [trueLeft20, trueRight20], role: 'border' });
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft8, trueLeft20), lengthKm: distBrigKm, clipAnchors: [trueLeft8, trueLeft20], role: 'border' });
+            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueRight8, trueRight20), lengthKm: distBrigKm, clipAnchors: [trueRight8, trueRight20], role: 'border' });
+            return { ringsMeta };
         }
 
         return null;
@@ -3535,7 +3580,172 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderClippedAutoFlankRings(ringsMeta, lineOpts, sessionId, tag) {
         const obstacles = getRoutingObstaclePolygons();
         const result = [];
-        for (const { ring: rawRing, lengthKm, clipAnchors } of ringsMeta) {
+        function _splitPolygonLatLng(polyOuter, polyHoles, splitSeg) {
+            if (!splitSeg || splitSeg.length !== 2) return null;
+            const a = splitSeg[0], b = splitSeg[1];
+            if (!a || !b) return null;
+            const A = map.latLngToLayerPoint(a);
+            const B = map.latLngToLayerPoint(b);
+            const outerLP = (polyOuter || []).map(p => map.latLngToLayerPoint(p));
+            if (outerLP.length < 3) return null;
+
+            const EPS = 1e-6;
+            const dist2 = (p, q) => {
+                const dx = p.x - q.x, dy = p.y - q.y;
+                return dx * dx + dy * dy;
+            };
+            const uniqPush = (arr, item) => {
+                if (!item) return;
+                for (const it of arr) {
+                    if (dist2(it.pt, item.pt) <= 1) return; // ~1px tolerance
+                }
+                arr.push(item);
+            };
+
+            function segSegIntersect(p, p2, q, q2) {
+                // Returns {pt, t} where pt lies on p->p2 at parameter t (0..1), or null.
+                const r = L.point(p2.x - p.x, p2.y - p.y);
+                const s = L.point(q2.x - q.x, q2.y - q.y);
+                const rxs = r.x * s.y - r.y * s.x;
+                const q_p = L.point(q.x - p.x, q.y - p.y);
+                const qpxr = q_p.x * r.y - q_p.y * r.x;
+                if (Math.abs(rxs) < EPS) {
+                    // Parallel (including collinear). We ignore collinear overlaps here.
+                    return null;
+                }
+                const t = (q_p.x * s.y - q_p.y * s.x) / rxs;
+                const u = qpxr / rxs;
+                if (t < -EPS || t > 1 + EPS || u < -EPS || u > 1 + EPS) return null;
+                return { pt: L.point(p.x + t * r.x, p.y + t * r.y), t };
+            }
+
+            // Find intersections of split segment AB with polygon outer edges.
+            const hits = [];
+            for (let i = 0; i < outerLP.length; i++) {
+                const p1 = outerLP[i];
+                const p2 = outerLP[(i + 1) % outerLP.length];
+                const hit = segSegIntersect(p1, p2, A, B);
+                if (hit) uniqPush(hits, { edgeIdx: i, t: hit.t, pt: hit.pt });
+            }
+            if (hits.length < 2) return null;
+            // Pick two farthest apart intersections to define the cut.
+            let h1 = hits[0], h2 = hits[1], bestD = -1;
+            for (let i = 0; i < hits.length; i++) {
+                for (let j = i + 1; j < hits.length; j++) {
+                    const d = dist2(hits[i].pt, hits[j].pt);
+                    if (d > bestD) { bestD = d; h1 = hits[i]; h2 = hits[j]; }
+                }
+            }
+
+            function buildWalk(startHit, endHit) {
+                const out = [startHit.pt];
+                let idx = (startHit.edgeIdx + 1) % outerLP.length;
+                // Walk vertices until reaching endHit.edgeIdx+1, then append endHit.pt
+                while (idx !== (endHit.edgeIdx + 1) % outerLP.length) {
+                    out.push(outerLP[idx]);
+                    idx = (idx + 1) % outerLP.length;
+                    if (out.length > outerLP.length + 10) break;
+                }
+                out.push(endHit.pt);
+                return out;
+            }
+
+            const walk12 = buildWalk(h1, h2);
+            const walk21 = buildWalk(h2, h1);
+
+            // Close each piece by adding the split segment back.
+            const piece1LP = walk12.concat([h1.pt]);
+            const piece2LP = walk21.concat([h2.pt]);
+
+            const toLatLngRing = (ringLP) => ringLP.map(lp => map.layerPointToLatLng(lp));
+            const piece1 = piece1LP.length >= 4 ? toLatLngRing(piece1LP) : null;
+            const piece2 = piece2LP.length >= 4 ? toLatLngRing(piece2LP) : null;
+
+            // Assign holes (if any). If a hole intersects the divider segment, split the hole too.
+            function pointInPoly(pt, ring) {
+                let inside = false;
+                for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+                    const xi = ring[i].x, yi = ring[i].y;
+                    const xj = ring[j].x, yj = ring[j].y;
+                    const intersect = ((yi > pt.y) !== (yj > pt.y)) &&
+                        (pt.x < (xj - xi) * (pt.y - yi) / ((yj - yi) || 1e-9) + xi);
+                    if (intersect) inside = !inside;
+                }
+                return inside;
+            }
+
+            const holes = polyHoles || [];
+            const p1LP = piece1 ? piece1LP : null;
+            const p2LP = piece2 ? piece2LP : null;
+            const leftHoles = [];
+            const rightHoles = [];
+            for (const h of holes) {
+                const hLP = (h || []).map(p => map.latLngToLayerPoint(p));
+                if (hLP.length < 3) continue;
+                // Find intersections of divider segment AB with this hole ring.
+                const hhits = [];
+                for (let i = 0; i < hLP.length; i++) {
+                    const q1 = hLP[i];
+                    const q2 = hLP[(i + 1) % hLP.length];
+                    const hit = segSegIntersect(q1, q2, A, B);
+                    if (hit) uniqPush(hhits, { edgeIdx: i, t: hit.t, pt: hit.pt });
+                }
+
+                const assignHolePiece = (holePieceLP) => {
+                    if (!holePieceLP || holePieceLP.length < 3) return;
+                    const probe = holePieceLP[0];
+                    if (p1LP && pointInPoly(probe, p1LP)) leftHoles.push(holePieceLP.map(lp => map.layerPointToLatLng(lp)));
+                    else if (p2LP && pointInPoly(probe, p2LP)) rightHoles.push(holePieceLP.map(lp => map.layerPointToLatLng(lp)));
+                };
+
+                if (hhits.length >= 2) {
+                    // Choose two farthest intersections on the hole.
+                    let g1 = hhits[0], g2 = hhits[1], gBest = -1;
+                    for (let i = 0; i < hhits.length; i++) {
+                        for (let j = i + 1; j < hhits.length; j++) {
+                            const d = dist2(hhits[i].pt, hhits[j].pt);
+                            if (d > gBest) { gBest = d; g1 = hhits[i]; g2 = hhits[j]; }
+                        }
+                    }
+
+                    const holeWalk12 = (function buildHoleWalk(startHit, endHit) {
+                        const out = [startHit.pt];
+                        let idx = (startHit.edgeIdx + 1) % hLP.length;
+                        while (idx !== (endHit.edgeIdx + 1) % hLP.length) {
+                            out.push(hLP[idx]);
+                            idx = (idx + 1) % hLP.length;
+                            if (out.length > hLP.length + 10) break;
+                        }
+                        out.push(endHit.pt);
+                        return out;
+                    })(g1, g2);
+                    const holeWalk21 = (function buildHoleWalk(startHit, endHit) {
+                        const out = [startHit.pt];
+                        let idx = (startHit.edgeIdx + 1) % hLP.length;
+                        while (idx !== (endHit.edgeIdx + 1) % hLP.length) {
+                            out.push(hLP[idx]);
+                            idx = (idx + 1) % hLP.length;
+                            if (out.length > hLP.length + 10) break;
+                        }
+                        out.push(endHit.pt);
+                        return out;
+                    })(g2, g1);
+
+                    assignHolePiece(holeWalk12);
+                    assignHolePiece(holeWalk21);
+                } else {
+                    // No intersection with divider: assign entire hole based on containment.
+                    assignHolePiece(hLP);
+                }
+            }
+
+            return {
+                left: piece1 ? [piece1, ...leftHoles] : null,
+                right: piece2 ? [piece2, ...rightHoles] : null
+            };
+        }
+
+        for (const { ring: rawRing, lengthKm, clipAnchors, splitSegment, role } of ringsMeta) {
             if (!rawRing || rawRing.length < 3) continue;
             const anchors = clipAnchors && clipAnchors.length ? clipAnchors : rawRing.slice(0, 2);
             const clipped = clipPolygonByObstacles(rawRing, obstacles, anchors);
@@ -3543,24 +3753,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 const ring = poly.outer;
                 if (!ring || ring.length < 3) continue;
 
-                const areaRings = poly.holes && poly.holes.length > 0
-                    ? [ring, ...poly.holes] : [ring];
                 const w = lineOpts.weight != null ? lineOpts.weight : 3;
-                const areaPoly = L.polygon(areaRings, {
+                const baseOpts = {
                     color: lineOpts.color || '#3b82f6',
                     weight: w,
                     fillColor: lineOpts.color || '#3b82f6',
-                    fillOpacity: 0.08,
+                    fillOpacity: role === 'border' ? 0 : 0.08,
+                    stroke: role === 'area' ? false : true,
                     interactive: false,
                     pane: 'autoFlankAreaPane',
                     className: 'auto-flank-area'
-                });
+                };
+
+                // If this ring requests a split (battalion L/R), split AFTER obstacle clipping so both
+                // sub-polygons are consistent and share the same divider edge.
+                if (splitSegment && splitSegment.length === 2) {
+                    const split = _splitPolygonLatLng(ring, poly.holes || [], splitSegment);
+                    const pieces = [];
+                    if (split && split.left) pieces.push(split.left);
+                    if (split && split.right) pieces.push(split.right);
+                    if (pieces.length) {
+                        for (const areaRings of pieces) {
+                            const areaPoly = L.polygon(areaRings, baseOpts);
+                            areaPoly._autoFlankLine = true;
+                            areaPoly._autoFlankArea = true;
+                            areaPoly._tmgData = { typeId: 'auto-flank-area', sessionId, tag, lengthKm };
+                            addToActiveLayer(areaPoly);
+                            result.push(areaPoly);
+                        }
+                        continue;
+                    }
+                    // If split fails, fall through to render unsplit polygon rather than rendering nothing.
+                }
+
+                const areaRings = poly.holes && poly.holes.length > 0 ? [ring, ...poly.holes] : [ring];
+                const areaPoly = L.polygon(areaRings, baseOpts);
                 areaPoly._autoFlankLine = true;
                 areaPoly._autoFlankArea = true;
-                areaPoly._tmgData = {
-                    typeId: 'auto-flank-area',
-                    sessionId, tag, lengthKm
-                };
+                areaPoly._tmgData = { typeId: 'auto-flank-area', sessionId, tag, lengthKm };
                 addToActiveLayer(areaPoly);
                 result.push(areaPoly);
             }
@@ -3733,6 +3963,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function applyGeoObstacleAwareLineHatch(el) {
         clearGeoObstacleHatchLines(el);
+        // User preference: hide obstacle hatch overlay (keep obstacles for routing/clipping).
+        if (window.showObstacleHatchOverlay === false) return;
         if (!map || !el._path) return;
         const d = el._geoData;
         if (!d) return;
@@ -3834,10 +4066,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         autoFlankDrawInFlight = true;
         try {
-            await ensureObstaclePolygonsLoaded();
-            // Re-route the existing scalloped frontline around obstacles before
-            // computing flank lines (flank axis depends on the frontline geometry).
-            rerouteScallopedFrontlineAroundObstacles();
+            // (B) Draw immediately with whatever obstacle data is currently available,
+            // then refresh once full `maps/obstacle.geojson` finishes loading.
+            const beforeObstacleCount = Array.isArray(obstaclePolygons) ? obstaclePolygons.length : 0;
+            const obstaclePromise = ensureObstaclePolygonsLoaded();
             let mode = options.mode != null ? String(options.mode).trim() : '8';
             if (mode === 'both' || mode === '8+20' || mode === '8-20' || mode.toLowerCase() === '8 and 20') {
                 mode = '8&20';
@@ -3859,6 +4091,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const sessionId = window.freeDrawSignatureSessionId;
             const stateKey = sessionId + '|' + tag;
+            const refreshToken = (autoFlankObstacleRefreshTokenByKey[stateKey] || 0) + 1;
+            autoFlankObstacleRefreshTokenByKey[stateKey] = refreshToken;
             // Only remove flank elements belonging to the CURRENT session AND tag — preserve other groups'.
             const existing = getAllLayerElements().filter(el =>
                 (el instanceof L.Polyline || el instanceof L.Polygon) && el._autoFlankLine &&
@@ -3901,19 +4135,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 drawn = 0;
             } else {
                 const polys = renderClippedAutoFlankRings(zoneSpec.ringsMeta, borderOpt, sessionId, tag);
-                for (const [a, b] of (zoneSpec.dividers || [])) {
-                    const divLine = L.polyline([a, b], {
-                        color: borderOpt.color || '#3b82f6',
-                        weight: borderOpt.weight != null ? borderOpt.weight : 3,
-                        interactive: false,
-                        pane: 'autoFlankAreaPane'
-                    });
-                    divLine._autoFlankLine = true;
-                    divLine._tmgData = { typeId: 'auto-flank-area', sessionId, tag };
-                    addToActiveLayer(divLine);
-                }
                 drawn = polys.length > 0 ? circleCenters.length : 0;
             }
+
+            // Async refresh once full obstacle set is loaded.
+            Promise.resolve(obstaclePromise).then(() => {
+                if (!map) return;
+                if (autoFlankObstacleRefreshTokenByKey[stateKey] !== refreshToken) return; // stale
+                const afterObstacleCount = Array.isArray(obstaclePolygons) ? obstaclePolygons.length : 0;
+                if (afterObstacleCount === beforeObstacleCount) return; // nothing new loaded
+
+                // Reroute scalloped frontline around newly loaded obstacles, then redraw.
+                rerouteScallopedFrontlineAroundObstacles();
+
+                const existing2 = getAllLayerElements().filter(el =>
+                    (el instanceof L.Polyline || el instanceof L.Polygon) && el._autoFlankLine &&
+                    el._tmgData?.sessionId === sessionId && el._tmgData?.tag === tag
+                );
+                existing2.forEach(el => removeFromLayer(el));
+
+                const axisData2 = getFrontLineAxis();
+                if (!axisData2) return;
+                const lcr2 = getOrderedLCRCircleCentersForAutoFlank(axisData2);
+                if (!lcr2) return;
+                const { L: flkL2, C: flkC2, R: flkR2 } = lcr2;
+                const zoneSpec2 = buildRectangleAutoFlankZoneRings(mode, flkL2, flkC2, flkR2, dist1, dist2);
+                if (!zoneSpec2 || !zoneSpec2.ringsMeta || !zoneSpec2.ringsMeta.length) return;
+                renderClippedAutoFlankRings(zoneSpec2.ringsMeta, borderOpt, sessionId, tag);
+            }).catch(() => { /* ignore obstacle refresh errors */ });
 
             if (drawn === 0) {
                 crit('No valid front line found for auto flank generation. Ensure a scalloped front line exists.');
@@ -5201,6 +5450,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Keyed by sessionId so each drawing session tracks its own last-drawn mode independently.
     const lastAutoFlankModeBySession = {};
     let autoFlankDrawInFlight = false;
+    // Token per session|tag so we can ignore stale async obstacle-refresh callbacks.
+    const autoFlankObstacleRefreshTokenByKey = {};
 
     function nudgePointAtCircleEdge(point, nextPoint) {
         if (!point || !nextPoint) return point;
@@ -10990,8 +11241,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.originalEvent.preventDefault();
             if (tmgClickPendingTimeout) { clearTimeout(tmgClickPendingTimeout); tmgClickPendingTimeout = null; }
             const dll = snapLatLngForTmgPlacement(e.latlng);
-            if (tmgPoints.length === 1) tmgPoints.push(dll);
-            if (tmgPoints.length === 2) tmgPoints.push(dll);  // capture 3rd point from dblclick (click that added it was cancelled by timeout clear)
+            if (tmgPoints.length === 1) pushDedupedLatLng(tmgPoints, dll, 3);
+            if (tmgPoints.length === 2) pushDedupedLatLng(tmgPoints, dll, 3);  // capture 3rd point from dblclick (click that added it was cancelled by timeout clear)
             while (tmgPoints.length > 2) {
                 const last = tmgPoints[tmgPoints.length - 1];
                 const prev = tmgPoints[tmgPoints.length - 2];
@@ -11019,6 +11270,27 @@ document.addEventListener('DOMContentLoaded', () => {
             finishGeoDistancePolyline();
         }
     });
+
+    function pushDedupedLatLng(points, nextLatLng, pxThreshold = 3) {
+        if (!Array.isArray(points) || !nextLatLng) return;
+        const next = L.latLng(nextLatLng.lat, nextLatLng.lng);
+        if (points.length === 0) {
+            points.push(next);
+            return;
+        }
+        const last = points[points.length - 1];
+        if (!last || last.lat == null || last.lng == null) {
+            points.push(next);
+            return;
+        }
+        const p1 = map.latLngToLayerPoint(last);
+        const p2 = map.latLngToLayerPoint(next);
+        if (Math.hypot(p1.x - p2.x, p1.y - p2.y) <= pxThreshold) {
+            points[points.length - 1] = next;
+            return;
+        }
+        points.push(next);
+    }
 
     let currentPopupSource = null;
     map.on('popupopen', (e) => {
@@ -11590,7 +11862,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         return;
                     }
+
+                    pushDedupedLatLng(tmgPoints, latlng, 3);
+
                     tmgPoints.push(latlng);
+
 
                     // Auto-finish scalloped when ending at a different circle-X than the start
                     if (selectedTmgType === 'scalloped' && tmgPoints.length >= 2) {
@@ -11631,7 +11907,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             if (shouldBlockTacticalLinePlacementClick()) return;
-            drawLineCoords.push(snapLatLngForLinePlacement(e.latlng));
+            pushDedupedLatLng(drawLineCoords, snapLatLngForLinePlacement(e.latlng), 3);
             updateLineDrawingControls();
 
             const color = getLineColor();

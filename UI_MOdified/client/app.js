@@ -2416,8 +2416,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
-    function getFrontSideFromScallops() {
-        const centers = getCircleXCenters();
+    /**
+     * Which side of the front axis the scalloped segments bulge toward (+1 / −1).
+     * @param {L.LatLng[]} [orderedAlongFront] – circle centres in **front-line order** (same as
+     *    `orderCentersAlongAxis`). When omitted, falls back to `getCircleXCenters()` order, which
+     *    can disagree with travel along the scallop and invert the offset side.
+     */
+    function getFrontSideFromScallops(orderedAlongFront) {
+        const centers = (orderedAlongFront && orderedAlongFront.length >= 2)
+            ? orderedAlongFront
+            : getCircleXCenters();
         if (!map || centers.length < 2) return null;
 
         const start = map.latLngToLayerPoint(centers[0]);
@@ -2825,12 +2833,28 @@ document.addEventListener('DOMContentLoaded', () => {
         return out;
     }
 
-    function shortestBoundaryPathBetween(P, Q, ringLatLng) {
+    function shortestBoundaryPathBetween(P, Q, ringLatLng, polysToAvoid) {
         const lp = locatePointOnRingLatLng(P, ringLatLng);
         const lq = locatePointOnRingLatLng(Q, ringLatLng);
         if (!lp || !lq || lp.dist > 25 || lq.dist > 25) return [P, Q];
         const fwd = boundaryPathForward(P, lp.edge, Q, lq.edge, ringLatLng);
         const alt = boundaryPathForward(Q, lq.edge, P, lp.edge, ringLatLng).slice().reverse();
+
+        if (polysToAvoid && polysToAvoid.length) {
+            // Sample the midpoint of each candidate arc to check obstacle penetration.
+            function arcMidClear(arc) {
+                if (arc.length < 2) return true;
+                const mid = arc[Math.floor(arc.length / 2)];
+                return !pointInObstaclePolygons(mid.lng, mid.lat, polysToAvoid);
+            }
+            const fwdClear = arcMidClear(fwd);
+            const altClear = arcMidClear(alt);
+            // Prefer an arc that stays outside obstacles; only fall back to
+            // length-based choice when both candidates are equally clear/blocked.
+            if (fwdClear && !altClear) return fwd;
+            if (altClear && !fwdClear) return alt;
+        }
+
         const lf = pathLengthLatLngs(fwd);
         const la = pathLengthLatLngs(alt);
         return lf <= la ? fwd : alt;
@@ -2914,7 +2938,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 pushDistinct(c);
             }
             const ringLL = obstacleOuterRingToLatLngArray(polys[sp.polyIndex].outer);
-            const arc = shortestBoundaryPathBetween(Pentry, Pexit, ringLL);
+            const arc = shortestBoundaryPathBetween(Pentry, Pexit, ringLL, polys);
             for (let ai = 1; ai < arc.length; ai++) pushDistinct(arc[ai]);
             tCursor = sp.t1;
         }
@@ -3089,10 +3113,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const node = list[idx];
                 ring.push(node.pt.slice());
 
-                if (node.isIx && node.ix && node.ix !== ix && !node.ix.visited) {
-                    node.ix.visited = true;
-                }
-
                 // Check for switching at intersection nodes
                 if (node.isIx && node.ix) {
                     if (onSubject && node.ix.entering) {
@@ -3101,8 +3121,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         onSubject = false;
                         idx = node.ix._cAugIdx;
                         idx = (idx - 1 + cAug.length) % cAug.length;
-                    } else if (!onSubject) {
-                        // Back at an intersection while on clip → switch to subject
+                    } else if (!onSubject && !node.ix.entering) {
+                        // Back at an EXITING intersection while on clip → switch to subject
                         node.ix.visited = true;
                         onSubject = true;
                         idx = node.ix._sAugIdx;
@@ -3201,191 +3221,377 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }
 
+    /** Rear geographic bearing: perpendicular to L–R chord, org on side opposite scallops. */
+    function getAutoFlankRearBearingChord(leftPt, rightPt, orderedLCR) {
+        const scallopSide = getFrontSideFromScallops(orderedLCR);
+        // Use same sign as scallopSide so zones project toward the side the scallop teeth face.
+        const perpMult = scallopSide ? scallopSide : 1;
+        const chordBear = bearingDegrees(leftPt, rightPt);
+        return ((chordBear + perpMult * 90) % 360 + 360) % 360;
+    }
+
+    function collectOrderedScallopedSegmentsForSession() {
+        const sessionId = window.freeDrawSignatureSessionId;
+        const matched = [];
+        const anySession = [];
+        getAllLayerElements().forEach(el => {
+            if (el instanceof L.LayerGroup && el._tmgData?.typeId === 'scalloped' && Array.isArray(el._tmgData.segments)) {
+                el._tmgData.segments.forEach(seg => {
+                    if (seg?._tmgData?.typeId !== 'scalloped') return;
+                    anySession.push(seg);
+                    if (!sessionId || seg._tmgData.sessionId === sessionId) matched.push(seg);
+                });
+            } else if (el instanceof L.Marker && el._tmgData?.typeId === 'scalloped') {
+                anySession.push(el);
+                if (!sessionId || el._tmgData.sessionId === sessionId) matched.push(el);
+            }
+        });
+        // If every segment missed sessionId (legacy / reroute edge), still build geometry from visible scallops.
+        return matched.length ? matched : anySession;
+    }
+
+    function flattenScallopedVerticesFromSegments(segments) {
+        const verts = [];
+        const EPS = 0.5;
+        for (let i = 0; i < segments.length; i++) {
+            const d = segments[i]._tmgData;
+            if (!d || !d.latlng1 || !d.latlng2) continue;
+            const a = L.latLng(d.latlng1.lat, d.latlng1.lng);
+            const b = L.latLng(d.latlng2.lat, d.latlng2.lng);
+            if (!verts.length) {
+                verts.push(a, b);
+            } else {
+                const lp = verts[verts.length - 1];
+                const da = map.distance(lp, a);
+                const db = map.distance(lp, b);
+                if (da <= db) {
+                    if (da > EPS) verts.push(a);
+                    if (map.distance(verts[verts.length - 1], b) > EPS) verts.push(b);
+                } else {
+                    if (db > EPS) verts.push(b);
+                    if (map.distance(verts[verts.length - 1], a) > EPS) verts.push(a);
+                }
+            }
+        }
+        return verts;
+    }
+
+    /** Walk a LatLng path and return the point exactly at 50% of its total arc length. */
+    function frontPathMidByArcLength(path) {
+        if (!path || path.length < 2) return { pt: path && path[0] || L.latLng(0, 0), idx: 0 };
+        let total = 0;
+        for (let i = 0; i < path.length - 1; i++) total += map.distance(path[i], path[i + 1]);
+        let acc = 0;
+        const half = total / 2;
+        for (let i = 0; i < path.length - 1; i++) {
+            const seg = map.distance(path[i], path[i + 1]);
+            if (acc + seg >= half) {
+                const t = seg > 0 ? (half - acc) / seg : 0;
+                return {
+                    pt: L.latLng(
+                        path[i].lat + t * (path[i + 1].lat - path[i].lat),
+                        path[i].lng + t * (path[i + 1].lng - path[i].lng)
+                    ),
+                    idx: i
+                };
+            }
+            acc += seg;
+        }
+        const mid = Math.floor(path.length / 2);
+        return { pt: path[mid], idx: mid };
+    }
+
+    function orientScallopedVertsFromLToR(verts, leftPt, rightPt) {
+        if (!verts || verts.length < 2) return verts || [];
+        let arr = verts.slice();
+        const d0L = map.distance(arr[0], leftPt) + map.distance(arr[arr.length - 1], rightPt);
+        const d0R = map.distance(arr[0], rightPt) + map.distance(arr[arr.length - 1], leftPt);
+        if (d0R < d0L) arr.reverse();
+        let iL = 0;
+        let bestL = Infinity;
+        for (let i = 0; i < arr.length; i++) {
+            const d = map.distance(arr[i], leftPt);
+            if (d < bestL) { bestL = d; iL = i; }
+        }
+        let iR = 0;
+        let bestR = Infinity;
+        for (let i = 0; i < arr.length; i++) {
+            const d = map.distance(arr[i], rightPt);
+            if (d < bestR) { bestR = d; iR = i; }
+        }
+        if (iL > iR) {
+            const t = iL;
+            iL = iR;
+            iR = t;
+        }
+        return arr.slice(iL, iR + 1);
+    }
+
+    function buildFrontTopPath(leftPt, rightPt, orientedVerts) {
+        const EPS = 0.05;
+        const path = [leftPt];
+        for (const p of orientedVerts) {
+            if (map.distance(p, leftPt) > EPS && map.distance(p, rightPt) > EPS) {
+                path.push(L.latLng(p.lat, p.lng));
+            }
+        }
+        path.push(rightPt);
+        const dedup = [path[0]];
+        for (let i = 1; i < path.length; i++) {
+            if (map.distance(path[i], dedup[dedup.length - 1]) > EPS) dedup.push(path[i]);
+        }
+        return dedup;
+    }
+
+    function layerPerpThroughC(leftPt, rightPt, centerPt) {
+        const pL = map.latLngToLayerPoint(leftPt);
+        const pR = map.latLngToLayerPoint(rightPt);
+        let vx = pR.x - pL.x;
+        let vy = pR.y - pL.y;
+        const len = Math.hypot(vx, vy);
+        if (len < 1e-6) return null;
+        vx /= len;
+        vy /= len;
+        const dx = -vy;
+        const dy = vx;
+        const O = map.latLngToLayerPoint(centerPt);
+        return { O, D: { x: dx, y: dy } };
+    }
+
+    function layerLineIntersectOpenSegment(O, D, A, B) {
+        const ax = A.x, ay = A.y, bx = B.x, by = B.y;
+        const wx = bx - ax, wy = by - ay;
+        const denom = D.x * wy - D.y * wx;
+        if (Math.abs(denom) < 1e-9) return null;
+        const ox = O.x - ax, oy = O.y - ay;
+        const u = (D.x * oy - D.y * ox) / denom;
+        if (u < -1e-6 || u > 1 + 1e-6) return null;
+        const t = (ox * wy - oy * wx) / denom;
+        const pt = L.point(O.x + t * D.x, O.y + t * D.y);
+        return { t, u, pt };
+    }
+
+    function bestIntersectionOnOpenPolyline(O, D, polylinePts, preferNear) {
+        let best = null;
+        let bestScore = Infinity;
+        for (let i = 0; i < polylinePts.length - 1; i++) {
+            const A = map.latLngToLayerPoint(polylinePts[i]);
+            const B = map.latLngToLayerPoint(polylinePts[i + 1]);
+            const hit = layerLineIntersectOpenSegment(O, D, A, B);
+            if (!hit) continue;
+            const ll = map.layerPointToLatLng(hit.pt);
+            const score = map.distance(ll, preferNear);
+            if (score < bestScore) {
+                bestScore = score;
+                best = ll;
+            }
+        }
+        return best;
+    }
+
+    /** All intersections of infinite line (O,D) with open polyline; each entry has segment index. */
+    function collectLinePolylineIntersections(O, D, polylinePts) {
+        const out = [];
+        for (let i = 0; i < polylinePts.length - 1; i++) {
+            const A = map.latLngToLayerPoint(polylinePts[i]);
+            const B = map.latLngToLayerPoint(polylinePts[i + 1]);
+            const hit = layerLineIntersectOpenSegment(O, D, A, B);
+            if (!hit) continue;
+            out.push({ ll: map.layerPointToLatLng(hit.pt), segIndex: i });
+        }
+        return out;
+    }
+
+    /** When the perpendicular through C meets the scalloped front several times, prefer a central hit. */
+    function pickFrontSplitPointOnScallops(frontPath, leftPt, rightPt, centerPt) {
+        const perp = layerPerpThroughC(leftPt, rightPt, centerPt);
+        if (!perp) return null;
+        const hits = collectLinePolylineIntersections(perp.O, perp.D, frontPath);
+        if (!hits.length) return null;
+        if (hits.length === 1) return L.latLng(hits[0].ll.lat, hits[0].ll.lng);
+        hits.sort((a, b) => a.segIndex - b.segIndex);
+        const mid = hits[Math.floor((hits.length - 1) / 2)];
+        return L.latLng(mid.ll.lat, mid.ll.lng);
+    }
+
+    function projectPointToSegmentLatLng(Q, A, B) {
+        const pa = map.latLngToLayerPoint(A);
+        const pb = map.latLngToLayerPoint(B);
+        const pq = map.latLngToLayerPoint(Q);
+        const dx = pb.x - pa.x;
+        const dy = pb.y - pa.y;
+        const lenSq = dx * dx + dy * dy;
+        let t = lenSq > 0 ? ((pq.x - pa.x) * dx + (pq.y - pa.y) * dy) / lenSq : 0;
+        t = Math.max(0, Math.min(1, t));
+        return {
+            proj: map.layerPointToLatLng(L.point(pa.x + t * dx, pa.y + t * dy)),
+            t
+        };
+    }
+
+    function splitOpenPathAtPoint(frontPath, Q) {
+        const SNAP = 2;
+        for (let i = 0; i < frontPath.length - 1; i++) {
+            const a = frontPath[i];
+            const b = frontPath[i + 1];
+            const { proj, t } = projectPointToSegmentLatLng(Q, a, b);
+            if (t >= -1e-6 && t <= 1 + 1e-6 && map.distance(Q, proj) < SNAP) {
+                const left = frontPath.slice(0, i + 1).map(p => L.latLng(p.lat, p.lng));
+                if (map.distance(left[left.length - 1], proj) > 0.05) left.push(proj);
+                const right = [];
+                if (map.distance(proj, b) > 0.05) right.push(proj);
+                for (let j = i + 1; j < frontPath.length; j++) {
+                    right.push(L.latLng(frontPath[j].lat, frontPath[j].lng));
+                }
+                return { Qsnap: left[left.length - 1], leftPath: left, rightPath: right };
+            }
+        }
+        let bestIdx = 0;
+        let bd = Infinity;
+        for (let i = 0; i < frontPath.length; i++) {
+            const d = map.distance(frontPath[i], Q);
+            if (d < bd) { bd = d; bestIdx = i; }
+        }
+        const Qsnap = L.latLng(frontPath[bestIdx].lat, frontPath[bestIdx].lng);
+        const leftPath = frontPath.slice(0, bestIdx + 1).map(p => L.latLng(p.lat, p.lng));
+        const rightPath = frontPath.slice(bestIdx).map(p => L.latLng(p.lat, p.lng));
+        return { Qsnap, leftPath, rightPath };
+    }
+
     /**
-     * Build a closed polygon ring from the ordered circle centres
-     * and the angular-boundary points, then clip it against obstacles.
-     * Renders both a non-interactive area overlay and non-front border polylines.
+     * Rectangle auto-flank: front = full scalloped front line (endpoint to endpoint), split at arc
+     * midpoint for the two battalion zones; rear is a straight rectangle.
      *
-     * @param {L.LatLng[]} ordered     – circle centres sorted along front axis
-     * @param {L.LatLng[]} boundary    – boundary points from buildAngularBoundary
-     * @param {Object}     lineOpts    – Leaflet polyline style options for border lines
-     * @param {string}     sessionId
-     * @param {string}     tag
-     * @param {number}     lengthKm
-     * @returns {(L.Polyline|L.Polygon)[]}  border polylines and area polygon(s) added to the map
+     * The three circle positions (leftPt/centerPt/rightPt) are only used to determine the rear
+     * bearing (friendly side). Zone corners are derived entirely from the scalloped line so that
+     * clustered circles never collapse the zones into degenerate triangles.
+     *
+     * @returns {{ ringsMeta: Array<{ring:L.LatLng[],lengthKm:number,clipAnchors:L.LatLng[]}> } | null}
      */
-    function buildClippedAutoDrawPolygon(ordered, boundary, lineOpts, sessionId, tag, lengthKm) {
-        if (!ordered || ordered.length < 2 || !boundary || boundary.length < 2) return [];
+    function buildRectangleAutoFlankZoneRings(mode, leftPt, centerPt, rightPt, distBatKm, distBrigKm) {
+        const orderedLCR = [leftPt, centerPt, rightPt];
+        const segs = collectOrderedScallopedSegmentsForSession();
+        if (!segs.length) return null;
+        const flat = flattenScallopedVerticesFromSegments(segs);
+        if (!flat || flat.length < 2) return null;
+        const frontPath = flat.map(p => L.latLng(p.lat, p.lng));
 
-        // ── 1. Form closed polygon: front → right flank → baseline → left flank ──
-        const rawRing = [];
-        // Front line (circle centres, left to right)
-        for (const pt of ordered) rawRing.push(pt);
-        // Right flank: last centre → last boundary point (skip if same)
-        if (map.distance(ordered[ordered.length - 1], boundary[boundary.length - 1]) > 0.5) {
-            rawRing.push(boundary[boundary.length - 1]);
-        }
-        // Baseline (reversed, right to left) — skip first & last as they're the flank endpoints
-        for (let i = boundary.length - 2; i >= 1; i--) {
-            rawRing.push(boundary[i]);
-        }
-        // Left flank: first boundary point → first centre (close)
-        if (map.distance(boundary[0], ordered[0]) > 0.5) {
-            rawRing.push(boundary[0]);
-        }
+        // Zone corners derived from scalloped front endpoints.
+        const trueLeft  = frontPath[0];
+        const trueRight = frontPath[frontPath.length - 1];
 
-        // ── 2. Clip by obstacle polygons ──
-        const obstacles = getRoutingObstaclePolygons();
-        const clipped = clipPolygonByObstacles(rawRing, obstacles, ordered);
+        // Rear bearing perpendicular to actual scallop chord, toward friendly side.
+        // Use trueLeft/trueRight (not clustered circles) so the chord direction is stable.
+        const rearBear = getAutoFlankRearBearingChord(trueLeft, trueRight, [trueLeft, trueRight]);
+        const { pt: trueMid, idx: midIdx } = frontPathMidByArcLength(frontPath);
 
-        // ── 3. Render clipped area polygon + non-front border polylines ──
-        const result = [];
-        for (const poly of clipped) {
-            const ring = poly.outer;
-            if (!ring || ring.length < 3) continue;
+        const trueLeft8   = latLngAtBearing(trueLeft,  distBatKm,  rearBear);
+        const trueRight8  = latLngAtBearing(trueRight, distBatKm,  rearBear);
+        const trueMid8    = latLngAtBearing(trueMid,   distBatKm,  rearBear);
+        const trueLeft20  = latLngAtBearing(trueLeft,  distBrigKm, rearBear);
+        const trueRight20 = latLngAtBearing(trueRight, distBrigKm, rearBear);
 
-            // ── 3a. Area overlay (non-interactive, does not block map clicks) ──
-            const areaRings = poly.holes && poly.holes.length > 0
-                ? [ring, ...poly.holes] : [ring];
-            const areaPoly = L.polygon(areaRings, {
-                color: lineOpts.color || '#3b82f6',
-                weight: 0,
-                fillColor: lineOpts.color || '#3b82f6',
-                fillOpacity: 0.08,
-                interactive: false,
-                pane: 'autoFlankAreaPane',
-                className: 'auto-flank-area'
+        // Split scalloped front at arc midpoint.
+        const leftFront  = frontPath.slice(0, midIdx + 1).concat([trueMid]);
+        const rightFront = [trueMid].concat(frontPath.slice(midIdx + 1));
+
+        const ringsMeta = [];
+
+        if (mode === '20') {
+            ringsMeta.push({
+                ring: [trueLeft, trueRight, trueRight20, trueLeft20],
+                lengthKm: distBrigKm,
+                clipAnchors: [trueLeft, trueRight]
             });
-            areaPoly._autoFlankLine = true;
-            areaPoly._autoFlankArea = true;
-            areaPoly._tmgData = {
-                typeId: 'auto-flank-area',
-                sessionId, tag, lengthKm
-            };
-            addToActiveLayer(areaPoly);
-            result.push(areaPoly);
+            return { ringsMeta };
+        }
 
-            // ── 3b. Non-front border extraction ──
-            const firstCtr = ordered[0];
-            const lastCtr  = ordered[ordered.length - 1];
-            let si = 0, ei = 0, sd = Infinity, ed = Infinity;
-            for (let i = 0; i < ring.length; i++) {
-                const d1 = map.distance(ring[i], firstCtr);
-                const d2 = map.distance(ring[i], lastCtr);
-                if (d1 < sd) { sd = d1; si = i; }
-                if (d2 < ed) { ed = d2; ei = i; }
-            }
+        if (mode === '8') {
+            ringsMeta.push({
+                ring: [...frontPath, trueRight8, trueLeft8],
+                lengthKm: distBatKm,
+                clipAnchors: [trueLeft, trueRight]
+            });
+            return { ringsMeta, dividers: [[trueMid, trueMid8]] };
+        }
 
-            function arcBetween(from, to, dir) {
-                const pts = [];
-                const n = ring.length;
-                let idx = from;
-                for (let s = 0; s <= n; s++) {
-                    pts.push(ring[idx]);
-                    if (idx === to && s > 0) break;
-                    idx = (idx + dir + n) % n;
-                }
-                return pts;
-            }
-            const fwd = arcBetween(ei, si, +1);
-            const bwd = arcBetween(ei, si, -1);
+        if (mode === '8&20') {
+            ringsMeta.push({
+                ring: [...frontPath, trueRight8, trueLeft8],
+                lengthKm: distBatKm,
+                clipAnchors: [trueLeft, trueRight]
+            });
+            ringsMeta.push({
+                ring: [trueLeft8, trueRight8, trueRight20, trueLeft20],
+                lengthKm: distBrigKm,
+                clipAnchors: [trueLeft8, trueRight8]
+            });
+            return { ringsMeta, dividers: [[trueMid, trueMid8]] };
+        }
 
-            // Distance-to-front-polyline approach: measures the average
-            // minimum distance from each arc point to the ordered centres
-            // chain. More robust than single-center heuristic — handles
-            // curved front lines and obstacle-shifted ring vertices.
-            function minDistToFrontPolyline(pt) {
-                if (ordered.length < 2) {
-                    return ordered.length === 1 ? map.distance(pt, ordered[0]) : 0;
-                }
-                let minD = Infinity;
-                for (let k = 0; k < ordered.length - 1; k++) {
-                    const a = ordered[k], b = ordered[k + 1];
-                    const pa = map.latLngToLayerPoint(a);
-                    const pb = map.latLngToLayerPoint(b);
-                    const pp = map.latLngToLayerPoint(pt);
-                    const dx = pb.x - pa.x, dy = pb.y - pa.y;
-                    const lenSq = dx * dx + dy * dy;
-                    let t = lenSq > 0 ? ((pp.x - pa.x) * dx + (pp.y - pa.y) * dy) / lenSq : 0;
-                    t = Math.max(0, Math.min(1, t));
-                    const proj = L.latLng(
-                        a.lat + t * (b.lat - a.lat),
-                        a.lng + t * (b.lng - a.lng)
-                    );
-                    const d = map.distance(pt, proj);
-                    if (d < minD) minD = d;
-                }
-                return minD;
-            }
-            const avgDistToFront = (pts) => {
-                let s = 0;
-                for (const p of pts) s += minDistToFrontPolyline(p);
-                return s / (pts.length || 1);
-            };
-            const nonFront = avgDistToFront(fwd) >= avgDistToFront(bwd) ? fwd : bwd;
+        return null;
+    }
 
-            if (nonFront.length >= 2) {
-                const pl = L.polyline(nonFront, lineOpts);
-                pl._autoFlankLine = true;
-                pl._tmgData = {
-                    typeId: 'auto-flank-polygon',
+    function renderClippedAutoFlankRings(ringsMeta, lineOpts, sessionId, tag) {
+        const obstacles = getRoutingObstaclePolygons();
+        const result = [];
+        for (const { ring: rawRing, lengthKm, clipAnchors } of ringsMeta) {
+            if (!rawRing || rawRing.length < 3) continue;
+            const anchors = clipAnchors && clipAnchors.length ? clipAnchors : rawRing.slice(0, 2);
+            const clipped = clipPolygonByObstacles(rawRing, obstacles, anchors);
+            for (const poly of clipped) {
+                const ring = poly.outer;
+                if (!ring || ring.length < 3) continue;
+
+                const areaRings = poly.holes && poly.holes.length > 0
+                    ? [ring, ...poly.holes] : [ring];
+                const w = lineOpts.weight != null ? lineOpts.weight : 3;
+                const areaPoly = L.polygon(areaRings, {
+                    color: lineOpts.color || '#3b82f6',
+                    weight: w,
+                    fillColor: lineOpts.color || '#3b82f6',
+                    fillOpacity: 0.08,
+                    interactive: false,
+                    pane: 'autoFlankAreaPane',
+                    className: 'auto-flank-area'
+                });
+                areaPoly._autoFlankLine = true;
+                areaPoly._autoFlankArea = true;
+                areaPoly._tmgData = {
+                    typeId: 'auto-flank-area',
                     sessionId, tag, lengthKm
                 };
-                addToActiveLayer(pl);
-                result.push(pl);
+                addToActiveLayer(areaPoly);
+                result.push(areaPoly);
             }
         }
         return result;
     }
 
-    /**
-     * Build TWO nested zone polygons for 8&20 mode:
-     *  • front-org (8km): centres → front boundary, orange border + fill
-     *  • deep-org (remaining to 20km): front boundary → deep boundary, affiliation color
-     * Plus an explicit dashed middle line at the shared 8km boundary.
-     * Both zones clipped by obstacles independently.
-     *
-     * @param {L.LatLng[]} ordered        – circle centres sorted along front axis
-     * @param {L.LatLng[]} frontBoundary  – 8km boundary points
-     * @param {L.LatLng[]} deepBoundary   – 20km boundary points
-     * @param {Object}     frontOpts      – Leaflet style for front-org (8km) borders
-     * @param {Object}     deepOpts       – Leaflet style for deep-org (20km) borders
-     * @param {string}     sessionId
-     * @param {string}     tag
-     * @param {number}     dist1          – front-org distance in km
-     * @param {number}     dist2          – deep-org distance in km
-     * @returns {(L.Polyline|L.Polygon)[]}  all generated layers
-     */
-    function buildClippedDualPolygons(ordered, frontBoundary, deepBoundary, frontOpts, deepOpts, sessionId, tag, dist1, dist2) {
-        const results = [];
-        // Front-org: centres → front boundary (8km zone, orange)
-        results.push(...buildClippedAutoDrawPolygon(
-            ordered, frontBoundary, frontOpts, sessionId, tag, dist1));
-        // Deep-org: front boundary → deep boundary (remaining 12km zone)
-        if (frontBoundary.length >= 2 && deepBoundary.length >= 2) {
-            results.push(...buildClippedAutoDrawPolygon(
-                frontBoundary, deepBoundary, deepOpts, sessionId, tag, dist2));
+    function getOrderedLCRCircleCentersForAutoFlank(axisData) {
+        if (!axisData) return null;
+        let centers = null;
+        const fn = window.freeDrawSignature && typeof window.freeDrawSignature.getOrderedCircleCenters === 'function'
+            ? window.freeDrawSignature.getOrderedCircleCenters
+            : null;
+        if (fn) {
+            const arr = fn();
+            if (arr && arr.length >= 3) centers = arr.slice(0, 3);
         }
-        // Explicit middle line: the shared 8km boundary dividing front-org
-        // from deep-org. Drawn last so it renders above both area overlays.
-        if (frontBoundary.length >= 2) {
-            const midLine = L.polyline(frontBoundary, {
-                color: frontOpts.color || '#f59e0b',
-                weight: frontOpts.weight || 3,
-                opacity: frontOpts.opacity || 0.85,
-                dashArray: '8, 6',
-                interactive: false,
-                className: 'auto-flank-middle'
-            });
-            midLine._autoFlankLine = true;
-            midLine._tmgData = {
-                typeId: 'auto-flank-polygon',
-                sessionId, tag, lengthKm: dist1
-            };
-            addToActiveLayer(midLine);
-            results.push(midLine);
-        }
-        return results;
+        if (!centers || centers.length < 3) centers = getCircleXCenters();
+        if (!centers || centers.length < 3) return null;
+        // Always sort by front-line axis so L/C/R match geometry. Placement order (1st/2nd/3rd click)
+        // can disagree with left→right along the scalloped front and produces self-crossing rings.
+        const sorted = [...centers].sort((a, b) => {
+            const pa = map.latLngToLayerPoint(a);
+            const pb = map.latLngToLayerPoint(b);
+            const sa = (pa.x - axisData.origin.x) * axisData.axis.x
+                     + (pa.y - axisData.origin.y) * axisData.axis.y;
+            const sb = (pb.x - axisData.origin.x) * axisData.axis.x
+                     + (pb.y - axisData.origin.y) * axisData.axis.y;
+            return sa - sb;
+        });
+        return { L: sorted[0], C: sorted[1], R: sorted[2] };
     }
 
     /**
@@ -3615,274 +3821,119 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function autoDrawCircleXFlankLines(options = {}) {
-        if (!map) return;
-        await ensureObstaclePolygonsLoaded();
-        // Re-route the existing scalloped frontline around obstacles before
-        // computing flank lines (flank axis depends on the frontline geometry).
-        rerouteScallopedFrontlineAroundObstacles();
-        const mode = options.mode || '8';
-        const dist1 = parseFloat(options.dist1) || 8;
-        const dist2 = parseFloat(options.dist2) || 20;
-        // tag scopes battalion/brigade lines independently within the same session
-        const tag = options.tag || 'default';
-
-        const circleCenters = getCircleXCenters();
-        if (!circleCenters.length) {
-            setCriticalMessage('No Circle X obstacles found. Place Circle X first.');
-            return;
-        }
-
-        const sessionId = window.freeDrawSignatureSessionId;
-        const stateKey = sessionId + '|' + tag;
-        // Only remove flank elements belonging to the CURRENT session AND tag — preserve other groups'.
-        const existing = getAllLayerElements().filter(el =>
-            (el instanceof L.Polyline || el instanceof L.Polygon) && el._autoFlankLine &&
-            el._tmgData?.sessionId === sessionId && el._tmgData?.tag === tag
-        );
-        if (lastAutoFlankModeBySession[stateKey] === mode && existing.length > 0) {
-            setCriticalMessage(`Auto flank polygon for mode '${mode}' (${tag}) is already drawn. Clear or change selection to redraw.`);
-            return;
-        }
-        existing.forEach(el => removeFromLayer(el));
-
-        const affiliation = (typeof window.freeDrawSignatureAffiliation === 'string') ? window.freeDrawSignatureAffiliation : 'friendly';
-        const lineColor = (affiliation === 'enemy') ? '#ef4444' : '#3b82f6';
-        const axisData = getFrontLineAxis();
-        if (!axisData) {
-            setCriticalMessage('Cannot determine front line direction. Draw a frontline first.');
-            return;
-        }
-
-        let drawn = 0;
-
-        // ═══════════════════════════════════════════════════════════
-        // SEGMENT-BASED ORG LINE GENERATION
-        // Instead of a single global-axis offset, each front-line
-        // segment (circle→circle) is offset independently and then
-        // stitched into an angular tactical boundary.
-        // ═══════════════════════════════════════════════════════════
-
-        // Sort circle centres along the front-line axis direction.
-        function orderCentersAlongAxis(centers) {
-            return [...centers].sort((a, b) => {
-                const pa = map.latLngToLayerPoint(a);
-                const pb = map.latLngToLayerPoint(b);
-                const sa = (pa.x - axisData.origin.x) * axisData.axis.x
-                         + (pa.y - axisData.origin.y) * axisData.axis.y;
-                const sb = (pb.x - axisData.origin.x) * axisData.axis.x
-                         + (pb.y - axisData.origin.y) * axisData.axis.y;
-                return sa - sb;
-            });
-        }
-
-        // Offset one segment (from→to) parallel at distKm.
-        // perpMult: +1 → bearing+90 (right of travel), −1 → bearing−90 (left of travel).
-        function offsetSegmentParallel(from, to, distKm, perpMult) {
-            const bearing = bearingDegrees(from, to);
-            const perpBearing = ((bearing + perpMult * 90) % 360 + 360) % 360;
-            return {
-                from: latLngAtBearing(from, distKm, perpBearing),
-                to:   latLngAtBearing(to,   distKm, perpBearing),
-                perpBearing
+        const crit = (typeof window.setCriticalMessage === 'function')
+            ? window.setCriticalMessage.bind(window)
+            : (text) => {
+                const el = document.getElementById('free-draw-critical');
+                if (el) el.textContent = text || '';
             };
+        if (!map) return;
+        if (autoFlankDrawInFlight) {
+            crit('Auto-flank is still running. Wait for it to finish, then try again.');
+            return;
         }
+        autoFlankDrawInFlight = true;
+        try {
+            await ensureObstaclePolygonsLoaded();
+            // Re-route the existing scalloped frontline around obstacles before
+            // computing flank lines (flank axis depends on the frontline geometry).
+            rerouteScallopedFrontlineAroundObstacles();
+            let mode = options.mode != null ? String(options.mode).trim() : '8';
+            if (mode === 'both' || mode === '8+20' || mode === '8-20' || mode.toLowerCase() === '8 and 20') {
+                mode = '8&20';
+            }
+            const dist1 = parseFloat(options.dist1) || 8;
+            const dist2 = parseFloat(options.dist2) || 20;
+            // tag scopes battalion/brigade lines independently within the same session
+            const tag = options.tag || 'default';
 
-        // Intersect two infinite lines (a1→a2) × (b1→b2).
-        // Uses lat/lng as pseudo-Cartesian (accurate for tactical distances).
-        function geoLineIntersection(a1, a2, b1, b2) {
-            const x1 = a1.lng, y1 = a1.lat, x2 = a2.lng, y2 = a2.lat;
-            const x3 = b1.lng, y3 = b1.lat, x4 = b2.lng, y4 = b2.lat;
-            const denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-            if (Math.abs(denom) < 1e-12) return null; // parallel
-            const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom;
-            return L.latLng(y1 + t * (y2 - y1), x1 + t * (x2 - x1));
-        }
-
-        // Build an angular boundary by offsetting each circle→circle
-        // segment independently and stitching at intersection corners.
-        //
-        // Returns:
-        //   boundary      – [L.latLng …] the connected angular polyline
-        //   circleToPoint – [L.latLng …] one boundary target per circle
-        //                   (endpoint = offset end, middle = junction)
-        //   offsetSegs    – per-segment offset data
-        function buildAngularBoundary(ordered, distKm) {
-            // ── Determine perpendicular direction ──
-            // Scallop bumps face the ENEMY. Org lines go BEHIND the front
-            // line (opposite side). Detect scallop side and flip accordingly.
-            //
-            // getFrontSideFromScallops() returns:
-            //   +1  → scallops are LEFT of travel direction (screen cross-product)
-            //   −1  → scallops are RIGHT of travel direction
-            //   null → cannot determine
-            //
-            // Geographic bearing + 90 = RIGHT of travel.
-            // perpMult = −scallopSide flips the offset to the opposite side.
-            const scallopSide = getFrontSideFromScallops();
-            const perpMult = scallopSide ? -scallopSide : 1;
-            console.log('[OrgLine] scallopSide=' + scallopSide, 'perpMult=' + perpMult,
-                (perpMult === 1 ? '(bearing+90, right of travel)' : '(bearing-90, left of travel)'));
-
-            if (ordered.length < 2) {
-                // Single circle: fall back to global-axis perpendicular
-                if (ordered.length === 1) {
-                    const proj = getFrontLineProjection(ordered[0]);
-                    if (proj) {
-                        const n = ((proj.forwardBearing + perpMult * 90) % 360 + 360) % 360;
-                        const pt = latLngAtBearing(ordered[0], distKm, n);
-                        console.log('[OrgLine] single-circle fallback, bearing:', n, 'dist:', distKm);
-                        return { boundary: [pt], circleToPoint: [pt], offsetSegs: [] };
-                    }
-                }
-                return { boundary: [], circleToPoint: [], offsetSegs: [] };
+            const circleCenters = getCircleXCenters();
+            if (!circleCenters.length) {
+                crit('No Circle X obstacles found. Place Circle X first.');
+                return;
+            }
+            if (circleCenters.length !== 3) {
+                crit('Auto flank needs exactly three Circle X markers (left, center, right).');
+                return;
             }
 
-            // ── Miter limit: if a join exceeds this multiple of distKm
-            //    from the corresponding circle, fall back to a bevel midpoint
-            //    to prevent the "miter explosion" at sharp angles.
-            const MITER_LIMIT = 2.0;
-            const maxMiterMeters = MITER_LIMIT * distKm * 1000;
+            const sessionId = window.freeDrawSignatureSessionId;
+            const stateKey = sessionId + '|' + tag;
+            // Only remove flank elements belonging to the CURRENT session AND tag — preserve other groups'.
+            const existing = getAllLayerElements().filter(el =>
+                (el instanceof L.Polyline || el instanceof L.Polygon) && el._autoFlankLine &&
+                el._tmgData?.sessionId === sessionId && el._tmgData?.tag === tag
+            );
+            existing.forEach(el => removeFromLayer(el));
 
-            // Offset each segment independently (perpMult controls direction)
-            const offsetSegs = [];
-            for (let i = 0; i < ordered.length - 1; i++) {
-                offsetSegs.push(offsetSegmentParallel(ordered[i], ordered[i + 1], distKm, perpMult));
+            const affiliation = (typeof window.freeDrawSignatureAffiliation === 'string') ? window.freeDrawSignatureAffiliation : 'friendly';
+            const lineColor = (affiliation === 'enemy') ? '#ef4444' : '#3b82f6';
+            const axisData = getFrontLineAxis();
+            if (!axisData) {
+                crit('Cannot determine front line direction. Draw a frontline first.');
+                return;
             }
 
-            console.log('[OrgLine] buildAngularBoundary: circles=' + ordered.length,
-                'distKm=' + distKm, 'segments=' + offsetSegs.length,
-                'miterLimit=' + MITER_LIMIT + ' (' + (maxMiterMeters/1000).toFixed(1) + 'km)');
-            for (let d = 0; d < offsetSegs.length; d++) {
-                console.log('  seg[' + d + '] perpBearing=' + offsetSegs[d].perpBearing.toFixed(1) + '°',
-                    'from:', offsetSegs[d].from.lat.toFixed(5), offsetSegs[d].from.lng.toFixed(5),
-                    '→ to:', offsetSegs[d].to.lat.toFixed(5), offsetSegs[d].to.lng.toFixed(5));
+            let drawn = 0;
+
+            const lcr = getOrderedLCRCircleCentersForAutoFlank(axisData);
+            if (!lcr) {
+                crit('Cannot resolve left / center / right Circle X order for auto flank.');
+                lastAutoFlankModeBySession[stateKey] = null;
+                return;
             }
+            // Must not destructure { L, C, R } — `L` would be block-scoped and shadow Leaflet's global
+            // `L` for this entire try, breaking `L.Polyline` / `L.Polygon` above (TDZ ReferenceError).
+            const { L: flkL, C: flkC, R: flkR } = lcr;
 
-            // Stitch with angular joins (intersection or direct connect)
-            const boundary = [];
-            const circleToPoint = [];
-
-            // First circle → start of first offset segment
-            boundary.push(offsetSegs[0].from);
-            circleToPoint.push(offsetSegs[0].from);
-
-            // Middle circles → junction of adjacent offset segments
-            for (let i = 0; i < offsetSegs.length - 1; i++) {
-                const curr = offsetSegs[i];
-                const next = offsetSegs[i + 1];
-                const ix = geoLineIntersection(curr.from, curr.to, next.from, next.to);
-                if (ix) {
-                    // Miter limit check: distance from circle to intersection
-                    const circleCenter = ordered[i + 1];
-                    const miterDist = circleCenter.distanceTo(ix); // meters
-                    if (miterDist <= maxMiterMeters) {
-                        boundary.push(ix);
-                        circleToPoint.push(ix);
-                        console.log('  join[' + (i+1) + '] MITER ok, dist=' + (miterDist/1000).toFixed(2) + 'km');
-                    } else {
-                        // Miter exceeded — fall back to bevel midpoint
-                        const mid = L.latLng(
-                            (curr.to.lat + next.from.lat) / 2,
-                            (curr.to.lng + next.from.lng) / 2);
-                        boundary.push(mid);
-                        circleToPoint.push(mid);
-                        console.warn('  join[' + (i+1) + '] MITER CLAMPED! dist=' + (miterDist/1000).toFixed(2)
-                            + 'km > limit ' + (maxMiterMeters/1000).toFixed(1) + 'km → bevel midpoint');
-                    }
-                } else {
-                    // Parallel segments → midpoint fallback
-                    const mid = L.latLng(
-                        (curr.to.lat + next.from.lat) / 2,
-                        (curr.to.lng + next.from.lng) / 2);
-                    boundary.push(mid);
-                    circleToPoint.push(mid);
-                    console.log('  join[' + (i+1) + '] parallel → midpoint');
-                }
-            }
-
-            // Last circle → end of last offset segment
-            boundary.push(offsetSegs[offsetSegs.length - 1].to);
-            circleToPoint.push(offsetSegs[offsetSegs.length - 1].to);
-
-            console.log('[OrgLine] boundary points:', boundary.length,
-                boundary.map((p,i) => '[' + i + '] ' + p.lat.toFixed(5) + ',' + p.lng.toFixed(5)).join(' | '));
-
-            return { boundary, circleToPoint, offsetSegs };
-        }
-
-        // ───────────────────────────────────────────────────────
-        //  MODE DISPATCH  —  polygon-based obstacle clipping
-        //
-        //  1. Build straight lines (no per-segment obstacle routing)
-        //  2. Convert to closed polygon
-        //  3. Clip polygon against obstacle.geojson areas
-        //  4. Discard detached fragments (keep largest polygon)
-        // ───────────────────────────────────────────────────────
-
-        const ordered = orderCentersAlongAxis(circleCenters);
-
-        // Border-only style (no fill — front edge is the scalloped line)
-        const borderOpt = {
-            color: lineColor,
-            weight: 3,
-            opacity: 0.85,
-            interactive: true,
-            className: 'auto-flank-border'
-        };
-
-        if (mode === '8') {
-            // ── FRONT ORG ──
-            const front = buildAngularBoundary(ordered, dist1);
-            if (front.boundary.length < 2) { drawn = 0; }
-            else {
-                const polys = buildClippedAutoDrawPolygon(
-                    ordered, front.boundary, borderOpt, sessionId, tag, dist1);
-                drawn = polys.length ? ordered.length : 0;
-            }
-
-        } else if (mode === '20') {
-            // ── DEEP ORG ──
-            const deep = buildAngularBoundary(ordered, dist2);
-            if (deep.boundary.length < 2) { drawn = 0; }
-            else {
-                const polys = buildClippedAutoDrawPolygon(
-                    ordered, deep.boundary, borderOpt, sessionId, tag, dist2);
-                drawn = polys.length ? ordered.length : 0;
-            }
-
-        } else if (mode === '8&20') {
-            // ── BOTH: FRONT ORG (8km, orange) + DEEP ORG (remaining to 20km) ──
-            const front = buildAngularBoundary(ordered, dist1);
-            const deep  = buildAngularBoundary(ordered, dist2);
-
-            // Front-org boundary drawn in orange to distinguish from deep-org
-            const frontBorderOpt = {
-                color: '#f59e0b',
+            const borderOpt = {
+                color: lineColor,
                 weight: 3,
                 opacity: 0.85,
                 interactive: true,
-                className: 'auto-flank-border'
+                className: 'auto-flank-border',
+                lineJoin: 'round',
+                lineCap: 'round'
             };
 
-            if (front.boundary.length < 2 || deep.boundary.length < 2) { drawn = 0; }
-            else {
-                const polys = buildClippedDualPolygons(
-                    ordered, front.boundary, deep.boundary,
-                    frontBorderOpt, borderOpt, sessionId, tag, dist1, dist2);
-                drawn = polys.length ? ordered.length : 0;
+            const zoneSpec = buildRectangleAutoFlankZoneRings(mode, flkL, flkC, flkR, dist1, dist2);
+            if (!zoneSpec || !zoneSpec.ringsMeta || !zoneSpec.ringsMeta.length) {
+                drawn = 0;
+            } else {
+                const polys = renderClippedAutoFlankRings(zoneSpec.ringsMeta, borderOpt, sessionId, tag);
+                for (const [a, b] of (zoneSpec.dividers || [])) {
+                    const divLine = L.polyline([a, b], {
+                        color: borderOpt.color || '#3b82f6',
+                        weight: borderOpt.weight != null ? borderOpt.weight : 3,
+                        interactive: false,
+                        pane: 'autoFlankAreaPane'
+                    });
+                    divLine._autoFlankLine = true;
+                    divLine._tmgData = { typeId: 'auto-flank-area', sessionId, tag };
+                    addToActiveLayer(divLine);
+                }
+                drawn = polys.length > 0 ? circleCenters.length : 0;
             }
-        }
 
-        if (drawn === 0) {
-            setCriticalMessage('No valid front line found for auto flank generation. Ensure a scalloped front line exists.');
-            lastAutoFlankModeBySession[stateKey] = null;
-        } else {
-            setCriticalMessage(`Auto-drew polygon area (${tag} / ${mode}), clipped by obstacles.`);
-            lastAutoFlankModeBySession[stateKey] = mode;
-            if (window.freeDrawSignature) {
-                window.freeDrawSignatureStage = 'post-flank';
-                window.freeDrawSignatureActive = false;
+            if (drawn === 0) {
+                crit('No valid front line found for auto flank generation. Ensure a scalloped front line exists.');
+                lastAutoFlankModeBySession[stateKey] = null;
+            } else {
+                crit(`Auto-drew flank area (${tag} / ${mode}).`);
+                lastAutoFlankModeBySession[stateKey] = mode;
+                if (window.freeDrawSignature) {
+                    window.freeDrawSignatureStage = 'post-flank';
+                    window.freeDrawSignatureActive = false;
+                    if (typeof window.freeDrawSignature.syncPostFlankStage === 'function') {
+                        window.freeDrawSignature.syncPostFlankStage();
+                    }
+                }
             }
+        } catch (err) {
+            console.error('autoDrawCircleXFlankLines', err);
+            crit('Auto-flank error: ' + (err && err.message ? err.message : String(err)));
+        } finally {
+            autoFlankDrawInFlight = false;
         }
     }
 
@@ -5114,6 +5165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const CIRCLE_EDGE_OFFSET_KM = 0.05;
     // Keyed by sessionId so each drawing session tracks its own last-drawn mode independently.
     const lastAutoFlankModeBySession = {};
+    let autoFlankDrawInFlight = false;
 
     function nudgePointAtCircleEdge(point, nextPoint) {
         if (!point || !nextPoint) return point;
@@ -10954,6 +11006,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', (e) => {
         if (!suppressNextMapClickAfterOverlayHandleDrag) return;
         const t = e.target;
+        if (t.closest?.('#auto-flank-controls')) return;
         if (!map.getContainer().contains(t)) return;
         if (t.closest?.('.leaflet-popup')) return;
         if (t.closest?.('.sidebar') || t.closest?.('.top-bar') || t.closest?.('.modal')) return;
@@ -11733,6 +11786,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let circleXSnapRing = null;
     const coordTooltip = document.getElementById('coord-tooltip');
+    let coordTooltipLayoutRaf = null;
+    function layoutCoordTooltipBelowZoom() {
+        if (!coordTooltip || coordTooltip.style.display === 'none') return;
+        const zoomEl = map.getContainer().querySelector('.leaflet-control-zoom');
+        if (!zoomEl) return;
+        const zr = zoomEl.getBoundingClientRect();
+        let cx = zr.left + zr.width / 2;
+        const top = zr.bottom + 6;
+        coordTooltip.style.position = 'fixed';
+        coordTooltip.style.top = Math.round(top) + 'px';
+        coordTooltip.style.right = 'auto';
+        coordTooltip.style.bottom = 'auto';
+        coordTooltip.style.left = Math.round(cx) + 'px';
+        // After translateX(-50%), keep full label inside the viewport (long strings + distance suffix)
+        const pad = 6;
+        const half = coordTooltip.getBoundingClientRect().width / 2;
+        cx = Math.max(pad + half, Math.min(cx, window.innerWidth - pad - half));
+        coordTooltip.style.left = Math.round(cx) + 'px';
+    }
+    function scheduleCoordTooltipLayout() {
+        if (!coordTooltip || coordTooltip.style.display === 'none') return;
+        if (coordTooltipLayoutRaf != null) cancelAnimationFrame(coordTooltipLayoutRaf);
+        coordTooltipLayoutRaf = requestAnimationFrame(() => {
+            coordTooltipLayoutRaf = null;
+            layoutCoordTooltipBelowZoom();
+        });
+    }
+    window.addEventListener('resize', scheduleCoordTooltipLayout);
+    map.on('resize zoomend', scheduleCoordTooltipLayout);
     let _mousemoveRafPending = false;
     map.on('mousemove', (e) => {
         // Clear the recent-click guard once the mouse moves — any future click is intentional.
@@ -11803,8 +11885,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             coordTooltip.textContent = tipText;
             coordTooltip.style.display = 'block';
-            coordTooltip.style.left = (e.originalEvent.clientX + 14) + 'px';
-            coordTooltip.style.top = (e.originalEvent.clientY + 14) + 'px';
+            scheduleCoordTooltipLayout();
         }
     });
 

@@ -1738,6 +1738,10 @@
     }
 
     function startNewFreeDrawSession() {
+        const prevSessionId = window.freeDrawSignatureSessionId;
+        if (prevSessionId && typeof window.removeFrontlineSessionElements === 'function') {
+            window.removeFrontlineSessionElements(prevSessionId);
+        }
         window.freeDrawSignatureSessionId = 'free-draw-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
         isActive = true;
         stage = 'placement';

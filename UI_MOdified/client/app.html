@@ -902,7 +902,7 @@
         </div>
     </div>
 
-    <!-- Units (Add Unit) modal -->
+    <!-- Units modal -->
     <div id="units-modal" class="modal hidden" aria-hidden="true">
         <div class="modal-backdrop" id="units-modal-backdrop"></div>
         <div class="modal-panel units-modal-panel" role="dialog" aria-modal="true" aria-label="Units">
@@ -911,72 +911,226 @@
                 <button type="button" class="modal-close" id="units-modal-close" data-i18n="close">Close</button>
             </div>
             <div class="units-modal-body">
+
+                <!-- LEFT: hierarchy tree -->
                 <div class="units-left">
                     <div class="units-search-row">
-                        <input id="units-search-input" type="text" class="glass-input" autocomplete="off" spellcheck="false" maxlength="200" data-i18n-placeholder="units-search-placeholder" placeholder="Search by name or code" />
-                        <button type="button" id="units-refresh-btn" class="glass-btn secondary" data-i18n="refresh">Refresh</button>
+                        <input id="units-search-input" type="text" class="glass-input" autocomplete="off" spellcheck="false" maxlength="200" placeholder="Search by name or code" />
+                        <button type="button" id="units-refresh-btn" class="glass-btn secondary">Refresh</button>
+                    </div>
+                    <div class="units-tree-controls">
+                        <button type="button" id="units-expand-all-btn" class="units-tree-ctrl-btn" title="Expand all">▼ Expand All</button>
+                        <button type="button" id="units-collapse-all-btn" class="units-tree-ctrl-btn" title="Collapse all">▶ Collapse All</button>
+                        <button type="button" id="units-new-army-btn" class="units-tree-ctrl-btn units-new-army-btn" title="Create a new top-level Army">+ New Army</button>
                     </div>
                     <div class="units-tree-wrap">
                         <div id="units-tree" class="units-tree" role="tree" aria-label="Units tree"></div>
                     </div>
+                    <div class="units-tree-footer">
+                        <label class="units-show-deleted-label">
+                            <input id="units-include-deleted" type="checkbox" />
+                            <span>Show deleted units</span>
+                        </label>
+                    </div>
                 </div>
+
+                <!-- RIGHT: context-driven form -->
                 <div class="units-right">
-                    <div class="units-editor-header">
-                        <div class="units-selected-label" data-i18n="units-selected">Selected</div>
-                        <div id="units-selected-name" class="units-selected-name">—</div>
-                        <div id="units-selected-meta" class="units-selected-meta"></div>
+
+                    <!-- Context bar: selected unit -->
+                    <div class="units-ctx-bar">
+                        <div id="units-ctx-root" class="units-ctx-pane">
+                            <div class="units-ctx-root-text">
+                                <div class="units-ctx-root-title">Unit Management</div>
+                                <div class="units-ctx-root-hint">Select a unit from the tree, or create a new Army below.</div>
+                            </div>
+                        </div>
+                        <div id="units-ctx-sel" class="units-ctx-pane" style="display:none">
+                            <div class="units-ctx-sel-info">
+                                <div id="units-ctx-breadcrumb" class="units-breadcrumb"></div>
+                                <div class="units-ctx-sel-row">
+                                    <span id="units-ctx-lvl-badge" class="units-tree-level units-tree-level-0">Army</span>
+                                    <span id="units-ctx-side-badge" class="units-side-badge units-side-friendly">Friendly</span>
+                                    <span id="units-ctx-sel-name" class="units-ctx-sel-name">—</span>
+                                    <span id="units-ctx-sel-code" class="units-ctx-sel-code"></span>
+                                    <span id="units-ctx-child-count" class="units-ctx-child-count"></span>
+                                </div>
+                            </div>
+                            <button type="button" id="units-edit-btn" class="units-edit-btn">&#9998;&nbsp;Edit</button>
+                        </div>
                     </div>
 
-                    <div class="units-form">
-                        <div class="units-form-grid">
-                            <div class="field">
-                                <label class="field-label" for="units-code" data-i18n="units-code">Code</label>
-                                <input id="units-code" type="text" class="glass-input" maxlength="80" autocomplete="off" spellcheck="false" />
-                            </div>
-                            <div class="field">
-                                <label class="field-label" for="units-name" data-i18n="units-name">Name</label>
-                                <input id="units-name" type="text" class="glass-input" maxlength="200" autocomplete="off" />
-                            </div>
-                            <div class="field">
-                                <label class="field-label" for="units-level" data-i18n="units-level">Level</label>
-                                <select id="units-level" class="glass-select">
-                                    <option value="0" data-i18n="units-level-army">Army</option>
-                                    <option value="1" data-i18n="units-level-landforce">Land Force</option>
-                                    <option value="2" data-i18n="units-level-brigade">Brigade</option>
-                                    <option value="3" data-i18n="units-level-battalion">Battalion</option>
-                                    <option value="4" data-i18n="units-level-company">Company</option>
-                                </select>
-                            </div>
-                            <div class="field">
-                                <label class="field-label" for="units-parent" data-i18n="units-parent">Parent</label>
-                                <select id="units-parent" class="glass-select"></select>
-                            </div>
-                            <div class="field">
-                                <label class="field-label" for="units-sidc" data-i18n="units-sidc">SIDC</label>
-                                <input id="units-sidc" type="text" class="glass-input" maxlength="60" autocomplete="off" spellcheck="false" />
-                            </div>
-                            <div class="field">
-                                <label class="field-label" for="units-type" data-i18n="units-type">Type</label>
-                                <input id="units-type" type="text" class="glass-input" maxlength="120" autocomplete="off" />
-                            </div>
-                            <div class="field">
-                                <label class="field-label" for="units-include-deleted">
-                                    <input id="units-include-deleted" type="checkbox" />
-                                    <span data-i18n="units-include-deleted">Show deleted</span>
-                                </label>
+                    <!-- MAIN PANEL: create child unit -->
+                    <div id="units-main-panel" class="units-main-panel">
+
+                        <!-- What we are creating -->
+                        <div id="units-creating-card" class="units-creating-card">
+                            <div class="units-creating-row">
+                                <span class="units-creating-verb">Creating:</span>
+                                <span id="units-creating-badge" class="units-tree-level units-tree-level-0">Army</span>
+                                <span id="units-creating-under" class="units-creating-under"></span>
                             </div>
                         </div>
 
-                        <div class="units-actions">
-                            <button type="button" id="units-create-btn" class="glass-btn" data-i18n="units-create">Create</button>
-                            <button type="button" id="units-save-btn" class="glass-btn secondary" data-i18n="save">Save</button>
-                            <button type="button" id="units-move-btn" class="glass-btn secondary" data-i18n="units-move">Move</button>
-                            <button type="button" id="units-delete-btn" class="glass-btn danger" data-i18n="delete">Delete</button>
-                            <button type="button" id="units-restore-btn" class="glass-btn secondary" data-i18n="restore">Restore</button>
+                        <!-- Side selector (always visible) -->
+                        <div class="units-side-row">
+                            <div class="units-side-label">Side / Affiliation</div>
+                            <div class="units-side-btns" id="units-side-btns">
+                                <button type="button" class="units-side-btn active" data-side="friendly">&#9658; Friendly</button>
+                                <button type="button" class="units-side-btn" data-side="hostile">&#9632; Hostile</button>
+                                <button type="button" class="units-side-btn" data-side="neutral">&#9670; Neutral</button>
+                                <button type="button" class="units-side-btn" data-side="unknown">? Unknown</button>
+                            </div>
                         </div>
-                        <div id="units-error" class="units-error hidden" role="alert"></div>
+
+                        <!-- Domain selector (Force level only) -->
+                        <div id="units-domain-row" class="units-domain-row" style="display:none">
+                            <div class="units-domain-label">Domain / Branch</div>
+                            <div class="units-domain-btns" id="units-domain-btns">
+                                <button type="button" class="units-domain-btn" data-domain="Air">&#9992; Air</button>
+                                <button type="button" class="units-domain-btn" data-domain="Land">&#9878; Land</button>
+                                <button type="button" class="units-domain-btn" data-domain="Naval">&#9875; Naval</button>
+                                <button type="button" class="units-domain-btn" data-domain="Support">&#9671; Support</button>
+                                <button type="button" class="units-domain-btn" data-domain="Artillery">&#9675; Artillery</button>
+                            </div>
+                        </div>
+
+                        <!-- Name + Code -->
+                        <div class="units-qa-fields">
+                            <div class="field">
+                                <label class="field-label" for="units-qa-name">Unit Name</label>
+                                <input id="units-qa-name" type="text" class="glass-input" maxlength="200" autocomplete="off" placeholder="Unit name…" />
+                            </div>
+                            <div class="field">
+                                <label class="field-label" for="units-qa-code">Code <small class="field-hint">(auto)</small></label>
+                                <input id="units-qa-code" type="text" class="glass-input" maxlength="80" autocomplete="off" spellcheck="false" />
+                            </div>
+                        </div>
+
+                        <!-- SIDC -->
+                        <div class="units-qa-fields">
+                            <div class="field" style="grid-column:1/-1">
+                                <label class="field-label" for="units-qa-sidc">SIDC <small class="field-hint">(optional)</small></label>
+                                <input id="units-qa-sidc" type="text" class="glass-input" maxlength="60" autocomplete="off" spellcheck="false" />
+                            </div>
+                        </div>
+
+                        <!-- Quick Setup (Army only) -->
+                        <div id="units-quick-setup" class="units-quick-setup" style="display:none">
+                            <div class="units-qs-header">&#9889; Quick Setup — Auto-create standard forces after saving:</div>
+                            <div class="units-qs-options">
+                                <label class="units-qs-opt"><input type="checkbox" id="qs-air"   checked> &#9992; Air Force</label>
+                                <label class="units-qs-opt"><input type="checkbox" id="qs-land"  checked> &#9878; Land Force</label>
+                                <label class="units-qs-opt"><input type="checkbox" id="qs-naval" checked> &#9875; Naval Force</label>
+                            </div>
+                        </div>
+
+                        <!-- Error -->
+                        <div id="units-qa-error" class="units-error" style="display:none" role="alert"></div>
+
+                        <!-- Create button -->
+                        <button type="button" id="units-create-btn" class="glass-btn units-create-btn" disabled>+ Create Army</button>
+                        <div class="units-qa-hint">Press <kbd>Enter</kbd> in the name field to create quickly.</div>
+
+                        <!-- Generate Children (non-Company units that are selected) -->
+                        <div id="units-generate-section" class="units-generate-section" style="display:none">
+                            <button type="button" class="units-gen-toggle" id="units-gen-toggle">&#8853; Generate multiple children at once</button>
+                            <div class="units-gen-form" id="units-gen-form" style="display:none">
+                                <div class="units-qa-fields">
+                                    <div class="field">
+                                        <label class="field-label" for="units-gen-count">How many?</label>
+                                        <input type="number" id="units-gen-count" class="glass-input" min="1" max="20" value="3" />
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label" for="units-gen-prefix">Name prefix</label>
+                                        <input type="text" id="units-gen-prefix" class="glass-input" placeholder="e.g. Brigade" />
+                                    </div>
+                                </div>
+                                <div id="units-gen-error" class="units-error" style="display:none" role="alert"></div>
+                                <button type="button" id="units-gen-btn" class="glass-btn secondary">&#9881; Generate</button>
+                            </div>
+                        </div>
+
+                        <!-- No children message (Company selected) -->
+                        <div id="units-no-children" class="units-no-children" style="display:none">
+                            <div class="units-no-children-msg">
+                                Company is the lowest level — it cannot contain child units.<br>
+                                Click <strong>Edit</strong> to modify it, or select a higher-level unit to add under.
+                            </div>
+                        </div>
+
                     </div>
+
+                    <!-- EDIT PANEL -->
+                    <div id="units-edit-panel" class="units-edit-panel" style="display:none">
+                        <div class="units-edit-panel-hdr">
+                            <span class="units-edit-panel-hdr-title">Edit Unit</span>
+                            <button type="button" id="units-edit-back-btn" class="units-edit-back-btn">&#8592; Back</button>
+                        </div>
+                        <div class="units-edit-scroll">
+                            <div class="units-section">
+                                <div class="units-section-label">Identity</div>
+                                <div class="units-section-fields">
+                                    <div class="field">
+                                        <label class="field-label" for="units-edit-name">Name</label>
+                                        <input id="units-edit-name" type="text" class="glass-input" maxlength="200" autocomplete="off" />
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label" for="units-edit-code">Code</label>
+                                        <input id="units-edit-code" type="text" class="glass-input" maxlength="80" autocomplete="off" spellcheck="false" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="units-section">
+                                <div class="units-section-label">Side / Affiliation</div>
+                                <div class="units-side-btns" id="units-edit-side-btns">
+                                    <button type="button" class="units-side-btn active" data-side="friendly">&#9658; Friendly</button>
+                                    <button type="button" class="units-side-btn" data-side="hostile">&#9632; Hostile</button>
+                                    <button type="button" class="units-side-btn" data-side="neutral">&#9670; Neutral</button>
+                                    <button type="button" class="units-side-btn" data-side="unknown">? Unknown</button>
+                                </div>
+                            </div>
+                            <div class="units-section">
+                                <div class="units-section-label">Classification</div>
+                                <div class="units-section-fields">
+                                    <div class="field">
+                                        <label class="field-label" for="units-edit-type">Domain / Branch</label>
+                                        <input id="units-edit-type" type="text" class="glass-input" maxlength="120" autocomplete="off" placeholder="Air, Land, Naval, Support…" />
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label" for="units-edit-sidc">SIDC</label>
+                                        <input id="units-edit-sidc" type="text" class="glass-input" maxlength="60" autocomplete="off" spellcheck="false" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="units-section">
+                                <div class="units-section-label">Position in Hierarchy</div>
+                                <div class="units-section-fields">
+                                    <div class="field">
+                                        <label class="field-label">Level</label>
+                                        <div id="units-edit-level-display" class="units-edit-level-display"></div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="field-label" for="units-edit-parent">Move under</label>
+                                        <select id="units-edit-parent" class="glass-select"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="units-edit-error" class="units-error" style="display:none" role="alert"></div>
+                            <button type="button" id="units-save-btn" class="glass-btn units-save-btn">&#10004; Save Changes</button>
+                            <div class="units-danger-zone">
+                                <div class="units-danger-divider"></div>
+                                <div class="units-danger-row">
+                                    <button type="button" id="units-restore-btn" class="glass-btn secondary">Restore</button>
+                                    <div class="units-danger-spacer"></div>
+                                    <button type="button" id="units-delete-btn" class="glass-btn danger">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+
             </div>
         </div>
     </div>

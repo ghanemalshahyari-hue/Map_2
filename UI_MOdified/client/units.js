@@ -1,26 +1,28 @@
 /**
  * FILE: units.js
- *
- * Units management modal (SQLite-backed via /api/units/* endpoints).
- *
- * Bridge name: window.AppUnits
+ * Hierarchy Rules Engine:
+ *   Army → Force → Brigade → Battalion → Company
+ * Level is ALWAYS auto-determined from the selected parent.
+ * User never picks Level manually in create mode.
  */
 (function () {
     'use strict';
 
     const LEVELS = [
         { value: 0, label: 'Army' },
-        { value: 1, label: 'Land Force' },
+        { value: 1, label: 'Force' },
         { value: 2, label: 'Brigade' },
         { value: 3, label: 'Battalion' },
         { value: 4, label: 'Company' },
     ];
 
-    function qs(sel) { return document.querySelector(sel); }
+    const PREFIXES = ['ARMY', 'FRC', 'BDE', 'BN', 'CO'];
+
     function byId(id) { return document.getElementById(id); }
 
     function escapeHtml(s) {
-        return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c]));
+        return String(s ?? '').replace(/[&<>"']/g, c =>
+            ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c]));
     }
 
     async function apiJson(url, opts = {}) {
@@ -33,398 +35,659 @@
         let json = null;
         try { json = txt ? JSON.parse(txt) : null; } catch {}
         if (!res.ok) {
-            const msg = json && json.error ? json.error : (txt || (res.status + ' ' + res.statusText));
-            const err = new Error(msg);
+            const err = new Error(json?.error || txt || `${res.status} ${res.statusText}`);
             err.status = res.status;
-            err.payload = json;
             throw err;
         }
         return json;
     }
 
-    function flattenTree(roots) {
+    function flattenTree(roots, collapsedSet = new Set()) {
         const out = [];
         (function walk(nodes, depth) {
             for (const n of nodes || []) {
-                out.push({ ...n, _depth: depth });
-                if (n.children && n.children.length) walk(n.children, depth + 1);
+                const hasChildren = !!(n.children?.length);
+                out.push({ ...n, _depth: depth, _hasChildren: hasChildren, _childCount: n.children?.length || 0 });
+                if (hasChildren && !collapsedSet.has(n.id)) walk(n.children, depth + 1);
             }
         })(roots || [], 0);
         return out;
     }
 
+    function computeBreadcrumb(units, unitId) {
+        const path = [];
+        let id = unitId;
+        const seen = new Set();
+        while (id) {
+            if (seen.has(id)) break;
+            seen.add(id);
+            const u = units.find(x => x.id === id);
+            if (!u) break;
+            path.unshift(u);
+            id = u.parent_id || null;
+        }
+        return path;
+    }
+
+    function randCode(level) {
+        const prefix = PREFIXES[level] ?? 'U';
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let s = '';
+        for (let i = 0; i < 4; i++) s += chars[Math.floor(Math.random() * chars.length)];
+        return `${prefix}-${s}`;
+    }
+
+    function levelLabel(lvl) {
+        return LEVELS.find(l => l.value === lvl)?.label ?? `L${lvl}`;
+    }
+
     function init() {
-        const modal = byId('units-modal');
+        const modal    = byId('units-modal');
         const backdrop = byId('units-modal-backdrop');
         const closeBtn = byId('units-modal-close');
-        const treeEl = byId('units-tree');
+        const treeEl   = byId('units-tree');
         const searchInput = byId('units-search-input');
-        const refreshBtn = byId('units-refresh-btn');
+        const refreshBtn  = byId('units-refresh-btn');
         const includeDeletedCb = byId('units-include-deleted');
-
-        const selectedNameEl = byId('units-selected-name');
-        const selectedMetaEl = byId('units-selected-meta');
-        const errorEl = byId('units-error');
-
-        const codeEl = byId('units-code');
-        const nameEl = byId('units-name');
-        const levelEl = byId('units-level');
-        const parentEl = byId('units-parent');
-        const sidcEl = byId('units-sidc');
-        const typeEl = byId('units-type');
-
-        const createBtn = byId('units-create-btn');
-        const saveBtn = byId('units-save-btn');
-        const moveBtn = byId('units-move-btn');
-        const deleteBtn = byId('units-delete-btn');
-        const restoreBtn = byId('units-restore-btn');
-
-        const railBtn = document.querySelector('.tool-rail-btn[data-tool="units"]');
-
+        const railBtn  = document.querySelector('.tool-rail-btn[data-tool="units"]');
         if (!modal || !treeEl || !railBtn) return;
 
-        let state = {
-            roots: [],
-            units: [],
-            selectedId: null,
-        };
+        // Context bar
+        const ctxRoot      = byId('units-ctx-root');
+        const ctxSel       = byId('units-ctx-sel');
+        const ctxBreadcrumb= byId('units-ctx-breadcrumb');
+        const ctxLvlBadge  = byId('units-ctx-lvl-badge');
+        const ctxSelName   = byId('units-ctx-sel-name');
+        const ctxSelCode   = byId('units-ctx-sel-code');
+        const ctxChildCount  = byId('units-ctx-child-count');
+        const ctxSideBadge   = byId('units-ctx-side-badge');
+        const editBtn        = byId('units-edit-btn');
 
-        let lastAutoGeneratedCode = '';
+        // Side selectors
+        const sideBtnsEl     = byId('units-side-btns');
+        const editSideBtnsEl = byId('units-edit-side-btns');
+
+        // Main panel
+        const mainPanel       = byId('units-main-panel');
+        const creatingBadge   = byId('units-creating-badge');
+        const creatingUnder   = byId('units-creating-under');
+        const domainRow       = byId('units-domain-row');
+        const domainBtns      = byId('units-domain-btns');
+        const qaNameEl        = byId('units-qa-name');
+        const qaCodeEl        = byId('units-qa-code');
+        const qaSidcEl        = byId('units-qa-sidc');
+        const quickSetupEl    = byId('units-quick-setup');
+        const qaErrorEl       = byId('units-qa-error');
+        const createBtn       = byId('units-create-btn');
+        const generateSection = byId('units-generate-section');
+        const genToggle       = byId('units-gen-toggle');
+        const genForm         = byId('units-gen-form');
+        const genCount        = byId('units-gen-count');
+        const genPrefix       = byId('units-gen-prefix');
+        const genErrorEl      = byId('units-gen-error');
+        const genBtn          = byId('units-gen-btn');
+        const noChildrenEl    = byId('units-no-children');
+
+        // Edit panel
+        const editPanel      = byId('units-edit-panel');
+        const editBackBtn    = byId('units-edit-back-btn');
+        const editNameEl     = byId('units-edit-name');
+        const editCodeEl     = byId('units-edit-code');
+        const editTypeEl     = byId('units-edit-type');
+        const editSidcEl     = byId('units-edit-sidc');
+        const editLevelDisp  = byId('units-edit-level-display');
+        const editParentEl   = byId('units-edit-parent');
+        const editErrorEl    = byId('units-edit-error');
+        const saveBtn        = byId('units-save-btn');
+        const deleteBtn      = byId('units-delete-btn');
+        const restoreBtn     = byId('units-restore-btn');
+
+        const SIDES = [
+            { value: 'friendly', label: 'Friendly' },
+            { value: 'hostile',  label: 'Hostile'  },
+            { value: 'neutral',  label: 'Neutral'  },
+            { value: 'unknown',  label: 'Unknown'  },
+        ];
+
+        let state     = { roots: [], units: [], selectedId: null };
+        let collapsed = new Set();
+        let selectedDomain = null; // for Force creation
+        let selectedSide   = 'friendly'; // for create form
+        let editSelectedSide = 'friendly'; // for edit panel
         let codeCheckTimer = null;
+        let editCodeCheckTimer = null;
         let codeAvailable = true;
+        let editCodeAvailable = true;
 
-        function setButtonsEnabled() {
-            const hasCode = !!(codeEl.value || '').trim();
-            const hasName = !!(nameEl.value || '').trim();
-            const ok = hasName && hasCode && codeAvailable;
-            if (createBtn) createBtn.disabled = !ok;
-            if (saveBtn) saveBtn.disabled = !ok || !getSelected();
+        // ── Visibility helpers ─────────────────────────────────────────────────
+        function show(el, display = '')  { if (el) el.style.display = display || ''; }
+        function hide(el)                { if (el) el.style.display = 'none'; }
+        function showFlex(el)            { if (el) { el.style.display = 'flex'; } }
+
+        // ── Side helpers ───────────────────────────────────────────────────────
+        function setSideUI(container, sideValue) {
+            if (!container) return;
+            container.querySelectorAll('.units-side-btn').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('data-side') === sideValue);
+            });
         }
 
-        function showError(msg) {
-            if (!errorEl) return;
-            errorEl.textContent = msg ? String(msg) : '';
-            errorEl.classList.toggle('hidden', !msg);
-        }
-
-        function open() {
-            modal.classList.remove('hidden');
-            modal.setAttribute('aria-hidden', 'false');
-            showError('');
-            refresh();
-        }
-
-        function close() {
-            modal.classList.add('hidden');
-            modal.setAttribute('aria-hidden', 'true');
-            showError('');
-        }
-
-        function getSelected() {
-            return state.units.find(u => u.id === state.selectedId) || null;
-        }
-
-        function setSelected(id) {
-            state.selectedId = id;
+        // ── Context bar ────────────────────────────────────────────────────────
+        function updateCtxBar() {
             const u = getSelected();
-            if (!u) {
-                selectedNameEl.textContent = '—';
-                selectedMetaEl.textContent = '';
-                codeEl.value = '';
-                nameEl.value = '';
-                sidcEl.value = '';
-                typeEl.value = '';
+            if (u) { hide(ctxRoot); showFlex(ctxSel); } else { show(ctxRoot); hide(ctxSel); }
+            if (!u) return;
+            const lbl = levelLabel(u.level);
+            if (ctxLvlBadge) { ctxLvlBadge.textContent = lbl; ctxLvlBadge.className = `units-tree-level units-tree-level-${u.level}`; }
+            const side = u.side || 'friendly';
+            if (ctxSideBadge) { ctxSideBadge.textContent = side.charAt(0).toUpperCase() + side.slice(1); ctxSideBadge.className = `units-side-badge units-side-${side}`; }
+            if (ctxSelName)   ctxSelName.textContent  = u.name || '—';
+            if (ctxSelCode)   ctxSelCode.textContent  = u.code || '';
+            const childCount = state.roots ? countDirectChildren(u.id) : 0;
+            if (ctxChildCount) ctxChildCount.textContent = childCount > 0 ? `${childCount} ${levelLabel(u.level + 1)}${childCount !== 1 ? 's' : ''}` : '';
+            if (ctxBreadcrumb) {
+                const path = computeBreadcrumb(state.units, u.id);
+                ctxBreadcrumb.innerHTML = path.length > 1
+                    ? path.slice(0, -1).map(p => `<span class="units-bc-item">${escapeHtml(p.name)}</span>`).join('<span class="units-bc-sep">›</span>') + '<span class="units-bc-sep">›</span>'
+                    : '';
+            }
+        }
+
+        function countDirectChildren(parentId) {
+            return state.units.filter(u => u.parent_id === parentId && !u.deleted_at).length;
+        }
+
+        // ── Main panel ─────────────────────────────────────────────────────────
+        function getCreateLevel() {
+            const u = getSelected();
+            return u ? u.level + 1 : 0;
+        }
+
+        function updateMainPanel() {
+            const u   = getSelected();
+            const lvl = getCreateLevel();
+
+            // Company selected — no children
+            if (u && u.level >= 4) {
+                show(noChildrenEl, 'flex');
+                hide(mainPanel.querySelector('.units-creating-card'));
+                hide(domainRow);
+                hide(quickSetupEl);
+                hide(generateSection);
+                if (createBtn) createBtn.style.display = 'none';
                 return;
             }
-            selectedNameEl.textContent = u.name || '—';
-            selectedMetaEl.textContent = `${u.code || ''}${u.level != null ? ' • L' + u.level : ''}${u.deleted_at ? ' • deleted' : ''}`;
-            codeEl.value = u.code || '';
-            nameEl.value = u.name || '';
-            levelEl.value = String(u.level ?? 0);
-            parentEl.value = u.parent_id || '';
-            sidcEl.value = u.sidc || '';
-            typeEl.value = u.unit_type || '';
-        }
 
-        function prefixForLevel(level) {
-            switch (Number(level)) {
-                case 0: return 'ARMY';
-                case 1: return 'LF';
-                case 2: return 'BDE';
-                case 3: return 'BN';
-                case 4: return 'CO';
-                default: return 'U';
+            hide(noChildrenEl);
+            if (createBtn) createBtn.style.display = '';
+
+            // Creating indicator
+            const lbl = levelLabel(lvl);
+            if (creatingBadge) { creatingBadge.textContent = lbl; creatingBadge.className = `units-tree-level units-tree-level-${lvl}`; }
+            if (creatingUnder) creatingUnder.textContent = u ? `under ${u.name}` : '';
+            if (createBtn) createBtn.textContent = `+ Create ${lbl}`;
+
+            // Show creating card
+            const creatingCard = mainPanel ? mainPanel.querySelector('.units-creating-card') : null;
+            if (creatingCard) creatingCard.style.display = '';
+
+            // Domain row (Force only)
+            if (lvl === 1) show(domainRow, 'flex'); else hide(domainRow);
+
+            // Quick Setup (Army only — shown when creating Army, i.e. no parent)
+            if (lvl === 0) show(quickSetupEl); else hide(quickSetupEl);
+
+            // Generate children (when a unit is selected and it's not Company)
+            if (u && u.level < 4) {
+                show(generateSection);
+                if (genPrefix && !genPrefix.value) genPrefix.value = levelLabel(lvl);
+            } else {
+                hide(generateSection);
             }
+
+            // Fresh code
+            if (qaCodeEl && !(qaCodeEl.value || '').trim()) qaCodeEl.value = randCode(lvl);
         }
 
-        function randSuffix() {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            let s = '';
-            for (let i = 0; i < 4; i++) s += chars[Math.floor(Math.random() * chars.length)];
-            return s;
+        function resetMainForm() {
+            if (qaNameEl) qaNameEl.value = '';
+            if (qaCodeEl) qaCodeEl.value = '';
+            if (qaSidcEl) qaSidcEl.value = '';
+            selectedDomain = null;
+            domainBtns?.querySelectorAll('.units-domain-btn').forEach(b => b.classList.remove('active'));
+            selectedSide = 'friendly';
+            setSideUI(sideBtnsEl, 'friendly');
+            showQaError('');
+            codeAvailable = true;
+            updateMainPanel();
+            setCreateEnabled();
         }
 
-        function autoGenerateCodeIfEmpty() {
-            const current = (codeEl.value || '').trim();
-            if (current) return;
-            const lvl = Number.parseInt(levelEl.value, 10);
-            const suggestion = `${prefixForLevel(lvl)}-${randSuffix()}`;
-            lastAutoGeneratedCode = suggestion;
-            codeEl.value = suggestion;
+        // ── Edit panel ─────────────────────────────────────────────────────────
+        function openEditPanel() {
+            const u = getSelected();
+            if (!u) return;
+            hide(mainPanel);
+            if (editPanel) { editPanel.style.display = 'flex'; editPanel.style.flexDirection = 'column'; }
+            if (editNameEl)  editNameEl.value  = u.name || '';
+            if (editCodeEl)  editCodeEl.value  = u.code || '';
+            if (editTypeEl)  editTypeEl.value  = u.unit_type || '';
+            if (editSidcEl)  editSidcEl.value  = u.sidc || '';
+            editSelectedSide = u.side || 'friendly';
+            setSideUI(editSideBtnsEl, editSelectedSide);
+            if (editLevelDisp) editLevelDisp.textContent = levelLabel(u.level);
+            renderEditParents(u.id, u.level);
+            if (editParentEl) editParentEl.value = u.parent_id || '';
+            showEditError('');
+            editCodeAvailable = true;
+            setEditEnabled();
         }
 
-        async function checkCodeAvailability() {
-            const code = (codeEl.value || '').trim();
-            if (!code) {
-                codeAvailable = false;
-                setButtonsEnabled();
-                return;
+        function closeEditPanel() {
+            hide(editPanel);
+            show(mainPanel);
+        }
+
+        function renderEditParents(excludeId, level) {
+            if (!editParentEl) return;
+            if (level === 0) { editParentEl.innerHTML = `<option value="">— None (root) —</option>`; editParentEl.disabled = true; return; }
+            editParentEl.disabled = false;
+            const parentLvl = level - 1;
+            const incDel = !!includeDeletedCb?.checked;
+            const pool = incDel ? state.units : state.units.filter(u => !u.deleted_at);
+            const opts = [`<option value="">— Select ${levelLabel(parentLvl)} —</option>`];
+            for (const u of pool) {
+                if (u.level !== parentLvl) continue;
+                if (excludeId && u.id === excludeId) continue;
+                opts.push(`<option value="${escapeHtml(u.id)}">${escapeHtml(u.name)}</option>`);
             }
-            const sel = getSelected();
-            const excludeId = sel ? sel.id : '';
-            try {
-                const data = await apiJson(`/api/units/code-check?code=${encodeURIComponent(code)}&excludeId=${encodeURIComponent(excludeId)}`);
-                codeAvailable = !!data.available;
-                if (!codeAvailable) {
-                    showError('Code already exists. Choose a different code.');
-                } else if (String(showError) && errorEl && errorEl.textContent && errorEl.textContent.includes('Code already exists')) {
-                    showError('');
-                }
-            } catch (e) {
-                // If check endpoint fails, don't block the user; server will still enforce uniqueness.
-                codeAvailable = true;
-            }
-            setButtonsEnabled();
+            editParentEl.innerHTML = opts.join('');
         }
 
-        function renderParentOptions() {
-            const includeDeleted = !!includeDeletedCb?.checked;
-            const units = includeDeleted ? state.units : state.units.filter(u => !u.deleted_at);
-            const selected = getSelected();
-
-            const opt = [];
-            opt.push(`<option value="">—</option>`);
-            for (const u of units) {
-                // only allow parent levels 0..3
-                if (u.level == null || u.level >= 4) continue;
-                // cannot parent to itself
-                if (selected && u.id === selected.id) continue;
-                opt.push(`<option value="${escapeHtml(u.id)}">${escapeHtml(u.code)} — ${escapeHtml(u.name)} (L${u.level})</option>`);
-            }
-            parentEl.innerHTML = opt.join('');
+        // ── Buttons ────────────────────────────────────────────────────────────
+        function setCreateEnabled() {
+            if (!createBtn) return;
+            const ok = !!(qaNameEl?.value || '').trim() && !!(qaCodeEl?.value || '').trim() && codeAvailable;
+            createBtn.disabled = !ok;
         }
 
+        function setEditEnabled() {
+            if (!saveBtn) return;
+            saveBtn.disabled = !((editNameEl?.value || '').trim()) || !((editCodeEl?.value || '').trim()) || !editCodeAvailable;
+        }
+
+        function showQaError(msg) {
+            if (!qaErrorEl) return;
+            qaErrorEl.textContent = msg || '';
+            if (msg) show(qaErrorEl); else hide(qaErrorEl);
+        }
+
+        function showEditError(msg) {
+            if (!editErrorEl) return;
+            editErrorEl.textContent = msg || '';
+            if (msg) show(editErrorEl); else hide(editErrorEl);
+        }
+
+        function showGenError(msg) {
+            if (!genErrorEl) return;
+            genErrorEl.textContent = msg || '';
+            if (msg) show(genErrorEl); else hide(genErrorEl);
+        }
+
+        // ── Open / Close ───────────────────────────────────────────────────────
+        function open() { modal.classList.remove('hidden'); modal.setAttribute('aria-hidden', 'false'); refresh(); }
+        function close() { modal.classList.add('hidden'); modal.setAttribute('aria-hidden', 'true'); }
+
+        // ── Selection ──────────────────────────────────────────────────────────
+        function getSelected() { return state.units.find(u => u.id === state.selectedId) || null; }
+
+        function selectUnit(id) {
+            state.selectedId = id;
+            closeEditPanel();
+            updateCtxBar();
+            resetMainForm();
+            renderTree();
+            qaNameEl?.focus();
+        }
+
+        // ── Tree ───────────────────────────────────────────────────────────────
         function renderTree() {
-            const flat = flattenTree(state.roots);
-            const selectedId = state.selectedId;
-            const html = flat.map(n => {
-                const pad = 8 + n._depth * 14;
-                const isSel = n.id === selectedId;
-                const deleted = !!n.deletedAt || !!n.deleted_at;
-                const label = `${escapeHtml(n.code)} — ${escapeHtml(n.name)}`;
-                return `
-                  <div class="units-tree-row ${isSel ? 'active' : ''} ${deleted ? 'deleted' : ''}" data-id="${escapeHtml(n.id)}" style="padding-inline-start:${pad}px">
-                    <span class="units-tree-level">L${escapeHtml(n.level)}</span>
-                    <span class="units-tree-label">${label}</span>
-                  </div>
-                `;
-            }).join('');
-            treeEl.innerHTML = html || `<div class="units-tree-empty">No units</div>`;
+            const flat  = flattenTree(state.roots, collapsed);
+            const selId = state.selectedId;
+            treeEl.innerHTML = flat.map(n => {
+                const pad        = 8 + n._depth * 16;
+                const isSel      = n.id === selId;
+                const deleted    = !!(n.deletedAt || n.deleted_at);
+                const lbl        = levelLabel(n.level);
+                const isCol      = collapsed.has(n.id);
+                const toggleEl   = n._hasChildren
+                    ? `<button class="units-toggle-btn${isCol ? ' collapsed' : ''}" data-toggle-id="${escapeHtml(n.id)}">${isCol ? '▶' : '▼'}</button>`
+                    : `<span class="units-toggle-spacer"></span>`;
+                const countBadge = n._childCount > 0 ? `<span class="units-tree-count">${n._childCount}</span>` : '';
+                const delBtn = deleted
+                    ? `<button class="units-tree-restore-btn" data-restore-id="${escapeHtml(n.id)}" title="Restore">↩</button>`
+                    : `<button class="units-tree-del-btn" data-del-id="${escapeHtml(n.id)}" title="Delete">×</button>`;
+                const nodeSide = n.side || 'friendly';
+                const nodeSideLabel = nodeSide.charAt(0).toUpperCase() + nodeSide.slice(1);
+                return `<div class="units-tree-row ${isSel ? 'active' : ''} ${deleted ? 'deleted' : ''} units-side-row-${nodeSide}" data-id="${escapeHtml(n.id)}" style="padding-inline-start:${pad}px">
+                  ${toggleEl}
+                  <span class="units-tree-level units-tree-level-${n.level}">${escapeHtml(lbl)}</span>
+                  <span class="units-tree-label">${escapeHtml(n.name)}</span>
+                  ${countBadge}
+                  <span class="units-tree-spacer"></span>
+                  <span class="units-side-dot units-side-dot-${nodeSide}" title="${nodeSideLabel}"></span>
+                  ${delBtn}
+                </div>`;
+            }).join('') || `<div class="units-tree-empty">No units found.</div>`;
         }
 
+        // ── Refresh ────────────────────────────────────────────────────────────
         async function refresh() {
-            showError('');
-            const includeDeleted = !!includeDeletedCb?.checked;
+            const incDel = !!includeDeletedCb?.checked;
             try {
-                const data = await apiJson(`/api/units/tree?includeDeleted=${includeDeleted ? 1 : 0}`);
+                const data = await apiJson(`/api/units/tree?includeDeleted=${incDel ? 1 : 0}`);
                 state.roots = data.roots || [];
                 state.units = data.units || [];
-                renderParentOptions();
+                if (state.selectedId && !state.units.find(u => u.id === state.selectedId)) state.selectedId = null;
+                updateCtxBar();
+                updateMainPanel();
                 renderTree();
-                // keep selection if possible
-                if (state.selectedId && !state.units.find(u => u.id === state.selectedId)) {
-                    state.selectedId = null;
-                }
-                setSelected(state.selectedId);
-                setButtonsEnabled();
-            } catch (e) {
-                showError(e.message || 'Failed to load units');
-            }
+                setCreateEnabled();
+                setEditEnabled();
+            } catch (e) { showQaError(e.message || 'Failed to load units'); }
         }
 
+        // ── Search ─────────────────────────────────────────────────────────────
         async function doSearch() {
-            const q = (searchInput.value || '').trim();
+            const q = (searchInput?.value || '').trim();
             if (!q) return refresh();
-            const includeDeleted = !!includeDeletedCb?.checked;
-            showError('');
+            const incDel = !!includeDeletedCb?.checked;
             try {
-                const data = await apiJson(`/api/units/search?q=${encodeURIComponent(q)}&includeDeleted=${includeDeleted ? 1 : 0}`);
-                // Render as a flat list in the tree area
+                const data = await apiJson(`/api/units/search?q=${encodeURIComponent(q)}&includeDeleted=${incDel ? 1 : 0}`);
                 state.roots = [];
-                state.units = (data.results || []);
-                renderParentOptions();
-                treeEl.innerHTML = (data.results || []).map(u => {
+                state.units = data.results || [];
+                treeEl.innerHTML = state.units.map(u => {
                     const isSel = u.id === state.selectedId;
-                    const deleted = !!u.deleted_at;
-                    return `
-                      <div class="units-tree-row ${isSel ? 'active' : ''} ${deleted ? 'deleted' : ''}" data-id="${escapeHtml(u.id)}" style="padding-inline-start:8px">
-                        <span class="units-tree-level">L${escapeHtml(u.level)}</span>
-                        <span class="units-tree-label">${escapeHtml(u.code)} — ${escapeHtml(u.name)}</span>
-                      </div>
-                    `;
+                    return `<div class="units-tree-row ${isSel ? 'active' : ''} ${u.deleted_at ? 'deleted' : ''}" data-id="${escapeHtml(u.id)}" style="padding-inline-start:8px">
+                      <span class="units-toggle-spacer"></span>
+                      <span class="units-tree-level units-tree-level-${u.level}">${escapeHtml(levelLabel(u.level))}</span>
+                      <span class="units-tree-label">${escapeHtml(u.name)}</span>
+                    </div>`;
                 }).join('') || `<div class="units-tree-empty">No results</div>`;
-            } catch (e) {
-                showError(e.message || 'Search failed');
-            }
+            } catch (e) { showQaError(e.message || 'Search failed'); }
         }
 
+        // ── Code checks ────────────────────────────────────────────────────────
+        async function checkQaCode() {
+            const code = (qaCodeEl?.value || '').trim();
+            if (!code) { codeAvailable = false; setCreateEnabled(); return; }
+            try {
+                const d = await apiJson(`/api/units/code-check?code=${encodeURIComponent(code)}&excludeId=`);
+                codeAvailable = !!d.available;
+                if (!codeAvailable) showQaError('Code already in use — please change it.');
+                else if (qaErrorEl?.textContent.includes('Code already')) showQaError('');
+            } catch { codeAvailable = true; }
+            setCreateEnabled();
+        }
+
+        async function checkEditCode() {
+            const u    = getSelected();
+            const code = (editCodeEl?.value || '').trim();
+            if (!code) { editCodeAvailable = false; setEditEnabled(); return; }
+            try {
+                const d = await apiJson(`/api/units/code-check?code=${encodeURIComponent(code)}&excludeId=${encodeURIComponent(u?.id || '')}`);
+                editCodeAvailable = !!d.available;
+                if (!editCodeAvailable) showEditError('Code already in use.');
+                else if (editErrorEl?.textContent.includes('Code already')) showEditError('');
+            } catch { editCodeAvailable = true; }
+            setEditEnabled();
+        }
+
+        // ── CREATE ─────────────────────────────────────────────────────────────
         async function createUnit() {
-            showError('');
-            await checkCodeAvailability();
+            showQaError('');
+            const lvl      = getCreateLevel();
+            const u        = getSelected();
+            const parentId = u ? u.id : null;
+            await checkQaCode();
             if (!codeAvailable) return;
             const payload = {
-                code: (codeEl.value || '').trim(),
-                name: (nameEl.value || '').trim(),
-                level: Number.parseInt(levelEl.value, 10),
-                parentId: (parentEl.value || '').trim() || null,
-                sidc: (sidcEl.value || '').trim() || null,
-                unitType: (typeEl.value || '').trim() || null,
+                code:     (qaCodeEl?.value || '').trim(),
+                name:     (qaNameEl?.value || '').trim(),
+                level:    lvl,
+                parentId,
+                sidc:     (qaSidcEl?.value || '').trim() || null,
+                unitType: selectedDomain || null,
+                side:     selectedSide || 'friendly',
             };
             try {
                 const row = await apiJson('/api/units', { method: 'POST', body: JSON.stringify(payload) });
+
+                // Quick Setup: auto-create standard forces under a new Army
+                if (lvl === 0) {
+                    const forces = [];
+                    if (byId('qs-air')?.checked)   forces.push({ name: 'Air Force',   unitType: 'Air' });
+                    if (byId('qs-land')?.checked)  forces.push({ name: 'Land Force',  unitType: 'Land' });
+                    if (byId('qs-naval')?.checked) forces.push({ name: 'Naval Force', unitType: 'Naval' });
+                    for (const f of forces) {
+                        await apiJson('/api/units', { method: 'POST', body: JSON.stringify({
+                            code: randCode(1), name: f.name, level: 1,
+                            parentId: row.id, sidc: null, unitType: f.unitType,
+                        })}).catch(() => {});
+                    }
+                }
+
                 state.selectedId = row.id;
                 await refresh();
-            } catch (e) {
-                showError(e.message || 'Create failed');
-            }
+                resetMainForm();
+                qaNameEl?.focus();
+            } catch (e) { showQaError(e.message || 'Create failed'); }
         }
 
+        // ── GENERATE CHILDREN ──────────────────────────────────────────────────
+        async function generateChildren() {
+            showGenError('');
+            const u = getSelected();
+            if (!u || u.level >= 4) return;
+            const childLvl = u.level + 1;
+            const count    = Math.max(1, Math.min(20, parseInt(genCount?.value || '3', 10)));
+            const prefix   = (genPrefix?.value || levelLabel(childLvl)).trim();
+            if (genBtn) genBtn.disabled = true;
+            try {
+                for (let i = 1; i <= count; i++) {
+                    await apiJson('/api/units', { method: 'POST', body: JSON.stringify({
+                        code: randCode(childLvl),
+                        name: `${prefix} ${i}`,
+                        level: childLvl,
+                        parentId: u.id,
+                        sidc: null, unitType: null,
+                    })});
+                }
+                await refresh();
+                hide(genForm);
+            } catch (e) { showGenError(e.message || 'Generate failed'); }
+            finally { if (genBtn) genBtn.disabled = false; }
+        }
+
+        // ── SAVE ───────────────────────────────────────────────────────────────
         async function saveUnit() {
             const u = getSelected();
             if (!u) return;
-            showError('');
-            await checkCodeAvailability();
-            if (!codeAvailable) return;
+            showEditError('');
+            await checkEditCode();
+            if (!editCodeAvailable) return;
+            const newParentId   = (editParentEl?.value || '').trim() || null;
+            const parentChanged = newParentId !== (u.parent_id || null);
             const payload = {
-                code: (codeEl.value || '').trim(),
-                name: (nameEl.value || '').trim(),
-                level: Number.parseInt(levelEl.value, 10),
-                sidc: (sidcEl.value || '').trim() || null,
-                unitType: (typeEl.value || '').trim() || null,
+                code:     (editCodeEl?.value || '').trim(),
+                name:     (editNameEl?.value || '').trim(),
+                level:    u.level, // level never changes via edit
+                sidc:     (editSidcEl?.value || '').trim() || null,
+                unitType: (editTypeEl?.value || '').trim() || null,
+                side:     editSelectedSide || 'friendly',
             };
             try {
                 const row = await apiJson(`/api/units/${encodeURIComponent(u.id)}`, { method: 'PATCH', body: JSON.stringify(payload) });
+                if (parentChanged) await apiJson(`/api/units/${encodeURIComponent(u.id)}/move`, { method: 'POST', body: JSON.stringify({ newParentId }) });
                 state.selectedId = row.id;
+                closeEditPanel();
                 await refresh();
-            } catch (e) {
-                showError(e.message || 'Save failed');
-            }
+            } catch (e) { showEditError(e.message || 'Save failed'); }
         }
 
-        async function moveUnit() {
-            const u = getSelected();
-            if (!u) return;
-            showError('');
-            const newParentId = (parentEl.value || '').trim();
-            if (!newParentId) { showError('new parent is required'); return; }
-            try {
-                const row = await apiJson(`/api/units/${encodeURIComponent(u.id)}/move`, { method: 'POST', body: JSON.stringify({ newParentId }) });
-                state.selectedId = row.id;
-                await refresh();
-            } catch (e) {
-                showError(e.message || 'Move failed');
-            }
-        }
-
+        // ── DELETE / RESTORE ───────────────────────────────────────────────────
         async function deleteUnit() {
             const u = getSelected();
             if (!u) return;
-            showError('');
+            showEditError('');
             try {
                 await apiJson(`/api/units/${encodeURIComponent(u.id)}/delete`, { method: 'POST', body: '{}' });
+                state.selectedId = null;
+                closeEditPanel();
                 await refresh();
-            } catch (e) {
-                showError(e.message || 'Delete failed');
-            }
+            } catch (e) { showEditError(e.message || 'Delete failed'); }
         }
 
         async function restoreUnit() {
             const u = getSelected();
             if (!u) return;
-            showError('');
+            showEditError('');
             try {
                 await apiJson(`/api/units/${encodeURIComponent(u.id)}/restore`, { method: 'POST', body: '{}' });
                 await refresh();
-            } catch (e) {
-                showError(e.message || 'Restore failed');
-            }
+            } catch (e) { showEditError(e.message || 'Restore failed'); }
         }
 
-        // Events
-        railBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            open();
-        });
+        // ── Events ─────────────────────────────────────────────────────────────
+        railBtn.addEventListener('click', (e) => { e.preventDefault(); open(); });
         backdrop?.addEventListener('click', close);
         closeBtn?.addEventListener('click', close);
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !modal.classList.contains('hidden')) close();
-        });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) close(); });
         refreshBtn?.addEventListener('click', refresh);
         includeDeletedCb?.addEventListener('change', refresh);
 
-        treeEl.addEventListener('click', (e) => {
-            const row = e.target && e.target.closest ? e.target.closest('.units-tree-row') : null;
-            const id = row ? row.getAttribute('data-id') : null;
-            if (id) setSelected(id);
+        byId('units-collapse-all-btn')?.addEventListener('click', () => {
+            flattenTree(state.roots).forEach(n => { if (n._hasChildren) collapsed.add(n.id); });
+            renderTree();
+        });
+        byId('units-expand-all-btn')?.addEventListener('click', () => { collapsed.clear(); renderTree(); });
+        byId('units-new-army-btn')?.addEventListener('click', () => selectUnit(null));
+
+        // Tree
+        treeEl.addEventListener('click', async (e) => {
+            const toggleBtn = e.target?.closest?.('.units-toggle-btn');
+            if (toggleBtn) {
+                e.stopPropagation();
+                const id = toggleBtn.getAttribute('data-toggle-id');
+                if (collapsed.has(id)) collapsed.delete(id); else collapsed.add(id);
+                renderTree(); return;
+            }
+            const delBtn = e.target?.closest?.('.units-tree-del-btn');
+            if (delBtn) {
+                e.stopPropagation();
+                const id = delBtn.getAttribute('data-del-id');
+                const u  = state.units.find(x => x.id === id);
+                if (!u) return;
+                if (!confirm(`Delete "${u.name}"?`)) return;
+                try {
+                    await apiJson(`/api/units/${encodeURIComponent(id)}/delete`, { method: 'POST', body: '{}' });
+                    if (state.selectedId === id) { state.selectedId = null; closeEditPanel(); }
+                    await refresh();
+                } catch (err) { alert(err.message || 'Delete failed'); }
+                return;
+            }
+            const restoreBtn = e.target?.closest?.('.units-tree-restore-btn');
+            if (restoreBtn) {
+                e.stopPropagation();
+                const id = restoreBtn.getAttribute('data-restore-id');
+                try {
+                    await apiJson(`/api/units/${encodeURIComponent(id)}/restore`, { method: 'POST', body: '{}' });
+                    await refresh();
+                } catch (err) { alert(err.message || 'Restore failed'); }
+                return;
+            }
+            const row = e.target?.closest?.('.units-tree-row');
+            const id  = row?.getAttribute('data-id');
+            if (id) selectUnit(id);
         });
 
         let searchTimer = null;
-        searchInput?.addEventListener('input', () => {
-            if (searchTimer) clearTimeout(searchTimer);
-            searchTimer = setTimeout(doSearch, 250);
-        });
+        searchInput?.addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(doSearch, 250); });
 
-        createBtn?.addEventListener('click', createUnit);
-        saveBtn?.addEventListener('click', saveUnit);
-        moveBtn?.addEventListener('click', moveUnit);
-        deleteBtn?.addEventListener('click', deleteUnit);
+        // Edit panel
+        editBtn?.addEventListener('click', openEditPanel);
+        editBackBtn?.addEventListener('click', closeEditPanel);
+        editNameEl?.addEventListener('input', setEditEnabled);
+        editCodeEl?.addEventListener('input', () => {
+            editCodeAvailable = true;
+            clearTimeout(editCodeCheckTimer);
+            editCodeCheckTimer = setTimeout(checkEditCode, 300);
+            setEditEnabled();
+        });
+        saveBtn?.addEventListener('click',    saveUnit);
+        deleteBtn?.addEventListener('click',  deleteUnit);
         restoreBtn?.addEventListener('click', restoreUnit);
 
-        // Populate level select defensively (in case HTML changes)
-        if (levelEl && levelEl.options && levelEl.options.length === 0) {
-            levelEl.innerHTML = LEVELS.map(l => `<option value="${l.value}">${escapeHtml(l.label)}</option>`).join('');
-        }
-
-        // Auto-generate code when level/parent changes (only if code is empty)
-        levelEl?.addEventListener('change', () => {
-            autoGenerateCodeIfEmpty();
-            checkCodeAvailability();
-        });
-        parentEl?.addEventListener('change', () => {
-            autoGenerateCodeIfEmpty();
-            checkCodeAvailability();
+        // Side buttons (create form)
+        sideBtnsEl?.addEventListener('click', (e) => {
+            const btn = e.target?.closest?.('.units-side-btn');
+            if (!btn) return;
+            selectedSide = btn.getAttribute('data-side') || 'friendly';
+            setSideUI(sideBtnsEl, selectedSide);
         });
 
-        // Code uniqueness checks on edit
-        codeEl?.addEventListener('input', () => {
-            showError('');
+        // Side buttons (edit panel)
+        editSideBtnsEl?.addEventListener('click', (e) => {
+            const btn = e.target?.closest?.('.units-side-btn');
+            if (!btn) return;
+            editSelectedSide = btn.getAttribute('data-side') || 'friendly';
+            setSideUI(editSideBtnsEl, editSelectedSide);
+        });
+
+        // Domain buttons
+        domainBtns?.addEventListener('click', (e) => {
+            const btn = e.target?.closest?.('.units-domain-btn');
+            if (!btn) return;
+            const domain = btn.getAttribute('data-domain');
+            if (selectedDomain === domain) {
+                selectedDomain = null;
+                btn.classList.remove('active');
+            } else {
+                selectedDomain = domain;
+                domainBtns.querySelectorAll('.units-domain-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        });
+
+        // Generate section toggle
+        genToggle?.addEventListener('click', () => {
+            const isHidden = genForm?.style.display === 'none' || !genForm?.style.display;
+            if (isHidden) show(genForm, 'flex'); else hide(genForm);
+        });
+        genBtn?.addEventListener('click', generateChildren);
+
+        // Quick-add fields
+        qaNameEl?.addEventListener('input', setCreateEnabled);
+        qaCodeEl?.addEventListener('input', () => {
             codeAvailable = true;
-            setButtonsEnabled();
-            if (codeCheckTimer) clearTimeout(codeCheckTimer);
-            codeCheckTimer = setTimeout(checkCodeAvailability, 300);
+            clearTimeout(codeCheckTimer);
+            codeCheckTimer = setTimeout(checkQaCode, 300);
+            setCreateEnabled();
         });
-        codeEl?.addEventListener('blur', () => {
-            if (codeCheckTimer) clearTimeout(codeCheckTimer);
-            checkCodeAvailability();
+        qaNameEl?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if ((qaCodeEl?.value || '').trim()) createUnit(); else qaCodeEl?.focus();
+            }
         });
-        nameEl?.addEventListener('input', setButtonsEnabled);
+        qaCodeEl?.addEventListener('keydown', (e) => { if (e.key === 'Enter') createUnit(); });
+        createBtn?.addEventListener('click', createUnit);
 
         // Initial state
-        autoGenerateCodeIfEmpty();
-        setButtonsEnabled();
+        hide(ctxSel); hide(editPanel); hide(noChildrenEl); hide(domainRow); hide(quickSetupEl); hide(generateSection);
+        show(ctxRoot); show(mainPanel);
+        updateMainPanel();
+        setCreateEnabled();
     }
 
     window.AppUnits = { init };
 })();
-

@@ -112,6 +112,23 @@
             const pts = (el.getLatLngs?.() || d.points || []).map(p => toLatLngArr(p && p.lat !== undefined ? p : (Array.isArray(p) ? L.latLng(p[0], p[1]) : null)));
             return assignDisplayNameOnExport({ type: 'geo-freehand', points: pts.filter(Boolean), color: d.color || '#3b82f6' }, d.displayName);
         }
+        if (el instanceof L.Polygon) {
+            const lls = el.getLatLngs?.() || [];
+            const rings = (lls.length && Array.isArray(lls[0])) ? lls : [lls];
+            const outRings = rings
+                .map(ring => (ring || []).map(toLatLngArr).filter(Boolean))
+                .filter(ring => ring.length >= 3);
+            if (outRings.length === 0) return null;
+            return assignDisplayNameOnExport({
+                type: 'polygon',
+                rings: outRings,
+                color: el.options.color || '#3b82f6',
+                weight: el._baseLineWeight != null ? el._baseLineWeight : (el.options.weight || 4),
+                fillColor: el.options.fillColor || el.options.color || '#3b82f6',
+                fillOpacity: el.options.fillOpacity != null ? el.options.fillOpacity : 0.08,
+                dashArray: el.options.dashArray
+            }, el._lineDisplayName);
+        }
         if (el instanceof L.Polyline) {
             const lls = el.getLatLngs();
             const flat = (lls.length && lls[0] && Array.isArray(lls[0])) ? lls.flat() : lls;
@@ -331,6 +348,25 @@
                         layer.elements.push(marker);
                         layer.group.addLayer(marker);
                     }
+                } else if (elData.type === 'polygon') {
+                    const rings = (elData.rings || [])
+                        .map(r => (r || []).map(fromLatLngArr).filter(Boolean))
+                        .filter(r => r.length >= 3);
+                    if (rings.length === 0) return;
+                    const opts = {
+                        color: elData.color || '#3b82f6',
+                        weight: elData.weight || 4,
+                        fillColor: elData.fillColor || elData.color || '#3b82f6',
+                        fillOpacity: elData.fillOpacity != null ? elData.fillOpacity : 0.08,
+                        dashArray: elData.dashArray
+                    };
+                    const poly = L.polygon(rings, opts);
+                    poly._baseLineWeight = elData.weight != null ? elData.weight : 4;
+                    const dn = trimmedDisplayNameFrom(elData.displayName);
+                    if (dn) poly._lineDisplayName = dn;
+                    poly._layerId = layer.id;
+                    layer.elements.push(poly);
+                    layer.group.addLayer(poly);
                 } else if (elData.type === 'polyline') {
                     const latlngs = (elData.latlngs || []).map(fromLatLngArr).filter(Boolean);
                     if (latlngs.length < 2) return;

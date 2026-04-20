@@ -5162,6 +5162,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return centers;
     }
 
+    function areAnyCircleXRingsOverlapping() {
+        const centers = getCircleXCenters();
+        if (centers.length < 2) return false;
+        const ringRadius = Math.max(20, (48 * getMapViewPixelScale()) / 2 + 4);
+        const minDist = ringRadius * 2;
+        for (let i = 0; i < centers.length; i++) {
+            const pi = map.latLngToLayerPoint(centers[i]);
+            for (let j = i + 1; j < centers.length; j++) {
+                const pj = map.latLngToLayerPoint(centers[j]);
+                if (Math.hypot(pj.x - pi.x, pj.y - pi.y) < minDist) return true;
+            }
+        }
+        return false;
+    }
+
     const CIRCLE_EDGE_OFFSET_KM = 0.05;
     // Keyed by sessionId so each drawing session tracks its own last-drawn mode independently.
     const lastAutoFlankModeBySession = {};
@@ -11538,6 +11553,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isCircleSnap = selectedTmgType === 'scalloped' && findClosestCircleXCenter(latlng, getCircleXSnapPx());
                 const addPoint = () => {
                     tmgClickPendingTimeout = null;
+                    if (selectedTmgType === 'scalloped' && areAnyCircleXRingsOverlapping()) {
+                        if (instructionText) {
+                            instructionText.removeAttribute('hidden');
+                            instructionText.setAttribute('aria-hidden', 'false');
+                            instructionText.style.color = '#ef4444';
+                            instructionText.innerText = 'Circles are too close — zoom in until the rings are apart, then draw the front line';
+                            setTimeout(() => {
+                                instructionText.style.color = '';
+                                const def = TACTICAL_GRAPHICS.find(d => d.id === selectedTmgType);
+                                instructionText.innerText = def ? t(instPlaceTmgKeyForTypeId(def.id), getTmgLabel(def)) : t('inst-line-draw');
+                            }, 3000);
+                        }
+                        return;
+                    }
                     tmgPoints.push(latlng);
 
                     // Auto-finish scalloped when ending at a different circle-X than the start
@@ -11847,13 +11876,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentMode === 'line') {
                     const nearCircle = findClosestCircleXCenter(latlng, getCircleXSnapPx());
                     if (nearCircle) {
-                        const ringRadius = Math.max(20, (48 * getMapViewPixelScale()) / 2 + 4);
+                        const ringRadius = Math.max(10, (35 * getMapViewPixelScale()) / 2 + 4);
+                        const ringColor = areAnyCircleXRingsOverlapping() ? '#ef4444' : '#22c55e';
                         if (!circleXSnapRing) {
-                            circleXSnapRing = L.circleMarker(nearCircle, { radius: ringRadius, color: '#22c55e', weight: 2, fill: false, dashArray: '6,4', interactive: false, pane: 'placementPreviewPane' });
+                            circleXSnapRing = L.circleMarker(nearCircle, { radius: ringRadius, color: ringColor, weight: 2, fill: false, dashArray: '6,4', interactive: false, pane: 'placementPreviewPane' });
                             previewLayer.addLayer(circleXSnapRing);
                         } else {
                             circleXSnapRing.setLatLng(nearCircle);
                             circleXSnapRing.setRadius(ringRadius);
+                            circleXSnapRing.setStyle({ color: ringColor });
                         }
                     } else if (circleXSnapRing) {
                         previewLayer.removeLayer(circleXSnapRing);

@@ -11839,7 +11839,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         return;
                     }
+
                     pushDedupedLatLng(tmgPoints, latlng, 3);
+
+                    tmgPoints.push(latlng);
+
 
                     // Auto-finish scalloped when ending at a different circle-X than the start
                     if (selectedTmgType === 'scalloped' && tmgPoints.length >= 2) {

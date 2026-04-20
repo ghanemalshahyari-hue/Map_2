@@ -3224,8 +3224,8 @@ document.addEventListener('DOMContentLoaded', () => {
     /** Rear geographic bearing: perpendicular to L–R chord, org on side opposite scallops. */
     function getAutoFlankRearBearingChord(leftPt, rightPt, orderedLCR) {
         const scallopSide = getFrontSideFromScallops(orderedLCR);
-        // Use same sign as scallopSide so zones project toward the side the scallop teeth face.
-        const perpMult = scallopSide ? scallopSide : 1;
+        // Rear is on the side opposite the scallop bulge direction.
+        const perpMult = scallopSide ? -scallopSide : 1;
         const chordBear = bearingDegrees(leftPt, rightPt);
         return ((chordBear + perpMult * 90) % 360 + 360) % 360;
     }
@@ -10970,8 +10970,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.originalEvent.preventDefault();
             if (tmgClickPendingTimeout) { clearTimeout(tmgClickPendingTimeout); tmgClickPendingTimeout = null; }
             const dll = snapLatLngForTmgPlacement(e.latlng);
-            if (tmgPoints.length === 1) tmgPoints.push(dll);
-            if (tmgPoints.length === 2) tmgPoints.push(dll);  // capture 3rd point from dblclick (click that added it was cancelled by timeout clear)
+            if (tmgPoints.length === 1) pushDedupedLatLng(tmgPoints, dll, 3);
+            if (tmgPoints.length === 2) pushDedupedLatLng(tmgPoints, dll, 3);  // capture 3rd point from dblclick (click that added it was cancelled by timeout clear)
             while (tmgPoints.length > 2) {
                 const last = tmgPoints[tmgPoints.length - 1];
                 const prev = tmgPoints[tmgPoints.length - 2];
@@ -10999,6 +10999,27 @@ document.addEventListener('DOMContentLoaded', () => {
             finishGeoDistancePolyline();
         }
     });
+
+    function pushDedupedLatLng(points, nextLatLng, pxThreshold = 3) {
+        if (!Array.isArray(points) || !nextLatLng) return;
+        const next = L.latLng(nextLatLng.lat, nextLatLng.lng);
+        if (points.length === 0) {
+            points.push(next);
+            return;
+        }
+        const last = points[points.length - 1];
+        if (!last || last.lat == null || last.lng == null) {
+            points.push(next);
+            return;
+        }
+        const p1 = map.latLngToLayerPoint(last);
+        const p2 = map.latLngToLayerPoint(next);
+        if (Math.hypot(p1.x - p2.x, p1.y - p2.y) <= pxThreshold) {
+            points[points.length - 1] = next;
+            return;
+        }
+        points.push(next);
+    }
 
     let currentPopupSource = null;
     map.on('popupopen', (e) => {
@@ -11567,7 +11588,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         return;
                     }
-                    tmgPoints.push(latlng);
+                    pushDedupedLatLng(tmgPoints, latlng, 3);
 
                     // Auto-finish scalloped when ending at a different circle-X than the start
                     if (selectedTmgType === 'scalloped' && tmgPoints.length >= 2) {
@@ -11608,7 +11629,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             if (shouldBlockTacticalLinePlacementClick()) return;
-            drawLineCoords.push(snapLatLngForLinePlacement(e.latlng));
+            pushDedupedLatLng(drawLineCoords, snapLatLngForLinePlacement(e.latlng), 3);
             updateLineDrawingControls();
 
             const color = getLineColor();

@@ -20,9 +20,9 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "electron": "^31.7.7",
-    "electron-builder": "^24.13.3",
-    "jimp": "^0.22.12",
+    "electron": "^41.2.1",
+    "electron-builder": "^26.8.1",
+    "jimp": "^1.6.1",
     "png-to-ico": "^2.1.8"
   },
   "build": {

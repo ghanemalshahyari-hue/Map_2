@@ -14898,6 +14898,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         scheduleSaveToStorage();
     }
+    window.renderLayersListFromServer = renderLayersList;
 
     // Initialise map data serialiser — export constants plus all importLayersData deps
     window.AppIO.init({
@@ -14988,7 +14989,15 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(saveToStorageTimeout);
         saveToStorageTimeout = setTimeout(() => {
             try {
-                localStorage.setItem(STORAGE_KEY, exportLayersData());
+                const payload = exportLayersData();
+                const sync = window.rmoozServerSync;
+                if (sync && sync.isHttpOrigin) {
+                    if (sync.activePlanId) {
+                        sync.savePlanPayload(payload).catch(() => {});
+                    }
+                } else {
+                    localStorage.setItem(STORAGE_KEY, payload);
+                }
             } catch (e) { /* quota or disabled */ }
         }, 400);
     }
@@ -15521,22 +15530,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initialize instructions text based on default mode
-    modeSelect.dispatchEvent(new Event('change'));
-    updateTopBarQuickToolButtons();
-    renderLayersList();
-    updateLineDrawingControls();
-
-    // Load saved state from localStorage (persists across refresh/restart)
-    const savedData = localStorage.getItem(STORAGE_KEY);
-    if (savedData) {
-        try {
-            importLayersData(savedData, true);
-        } catch (e) {
-            /* keep default Layer 1 */
-        }
-    }
-
     /** RTL flex layout and late font/layout can leave Leaflet with a stale size; re-sync so vectors match tiles after refresh. */
     function syncMapSizeAndOverlays() {
         try {
@@ -15544,10 +15537,6 @@ document.addEventListener('DOMContentLoaded', () => {
             refreshZoomScaledMapOverlays();
         } catch (e) { /* ignore */ }
     }
-    requestAnimationFrame(() => {
-        requestAnimationFrame(syncMapSizeAndOverlays);
-    });
-    window.addEventListener('load', syncMapSizeAndOverlays);
 
     function updateTmgGridLabels() {
         if (!tmgGrid) return;
@@ -15581,7 +15570,7 @@ document.addEventListener('DOMContentLoaded', () => {
         syncSidcPickerLocaleToFrame();
     };
 
-    // Light/Dark theme toggle
+    // Light/Dark theme toggle (applied after server prefs pull when using http)
     const THEME_KEY = 'nato-map-planner-theme';
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     function getTheme() {
@@ -15594,64 +15583,99 @@ document.addEventListener('DOMContentLoaded', () => {
             themeToggleBtn.textContent = theme === 'dark' ? '☀' : '☾';
             themeToggleBtn.title = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
         }
+        if (window.rmoozServerSync?.isHttpOrigin && typeof window.rmoozServerSync.schedulePushPreferences === 'function') {
+            window.rmoozServerSync.schedulePushPreferences();
+        }
     }
-    setTheme(getTheme());
-    themeToggleBtn?.addEventListener('click', () => {
-        setTheme(getTheme() === 'dark' ? 'light' : 'dark');
-    });
 
-    syncDistanceUnitToggleButton();
-    syncDistanceUnitSelect();
-    refreshTmgSidebarLengthForUnit();
-    document.getElementById('distance-unit-toggle-btn')?.addEventListener('click', () => {
-        setDistanceUnitPrimary(getDistanceUnitPrimary() === 'nm' ? 'km' : 'nm');
+    function finishDeferredUiInit() {
+        setTheme(getTheme());
+        themeToggleBtn?.addEventListener('click', () => {
+            setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+        });
+
         syncDistanceUnitToggleButton();
         syncDistanceUnitSelect();
-        refreshDistanceUnitDisplays();
-    });
-    document.getElementById('distance-unit-select')?.addEventListener('change', (e) => {
-        const v = e.target?.value;
-        setDistanceUnitPrimary(v === 'nm' ? 'nm' : 'km');
-        syncDistanceUnitToggleButton();
-        refreshDistanceUnitDisplays();
-    });
+        refreshTmgSidebarLengthForUnit();
+        document.getElementById('distance-unit-toggle-btn')?.addEventListener('click', () => {
+            setDistanceUnitPrimary(getDistanceUnitPrimary() === 'nm' ? 'km' : 'nm');
+            syncDistanceUnitToggleButton();
+            syncDistanceUnitSelect();
+            refreshDistanceUnitDisplays();
+            if (window.rmoozServerSync?.isHttpOrigin) window.rmoozServerSync.schedulePushPreferences?.();
+        });
+        document.getElementById('distance-unit-select')?.addEventListener('change', (e) => {
+            const v = e.target?.value;
+            setDistanceUnitPrimary(v === 'nm' ? 'nm' : 'km');
+            syncDistanceUnitToggleButton();
+            refreshDistanceUnitDisplays();
+            if (window.rmoozServerSync?.isHttpOrigin) window.rmoozServerSync.schedulePushPreferences?.();
+        });
 
-    const panInspectMBtn = document.getElementById('pan-inspect-m-btn');
-    panInspectMBtn?.addEventListener('click', () => activatePanInspectMode());
-    document.getElementById('text-tool-t-btn')?.addEventListener('click', () => activateTextBoxMode());
-    document.getElementById('freehand-f-btn')?.addEventListener('click', () => toggleFreehandDrawMode());
-    document.getElementById('eraser-e-btn')?.addEventListener('click', () => activateEraserMode());
+        const panInspectMBtn = document.getElementById('pan-inspect-m-btn');
+        panInspectMBtn?.addEventListener('click', () => activatePanInspectMode());
+        document.getElementById('text-tool-t-btn')?.addEventListener('click', () => activateTextBoxMode());
+        document.getElementById('freehand-f-btn')?.addEventListener('click', () => toggleFreehandDrawMode());
+        document.getElementById('eraser-e-btn')?.addEventListener('click', () => activateEraserMode());
 
-    document.getElementById('select-area-header-btn')?.addEventListener('click', () => {
-        // Deactivate any active geo tool first
-        if (geoToolSelect && geoToolSelect.value !== 'none') {
-            geoToolSelect.value = 'none';
-            geoToolSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        document.getElementById('select-area-header-btn')?.addEventListener('click', () => {
+            if (geoToolSelect && geoToolSelect.value !== 'none') {
+                geoToolSelect.value = 'none';
+                geoToolSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            const modeSelectEl = document.getElementById('tool-mode');
+            if (modeSelectEl) {
+                modeSelectEl.value = 'select';
+                modeSelectEl.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+
+        if (window.freeDrawSignature && typeof window.freeDrawSignature.init === 'function') {
+            window.freeDrawSignature.init({ map });
         }
-        const modeSelectEl = document.getElementById('tool-mode');
-        if (modeSelectEl) {
-            modeSelectEl.value = 'select';
-            modeSelectEl.dispatchEvent(new Event('change', { bubbles: true }));
+        document.getElementById('free-draw-signature-btn')?.addEventListener('click', () => {
+            window.freeDrawSignature?.activate?.();
+        });
+
+        const COORD_SYSTEM_KEY = 'nato-map-planner-coord-system';
+        const savedCoordSystem = localStorage.getItem(COORD_SYSTEM_KEY);
+        if (savedCoordSystem && coordSystemSelect && ['wgs84', 'dms', 'utm', 'mgrs'].includes(savedCoordSystem)) {
+            coordSystemSelect.value = savedCoordSystem;
         }
-    });
+        coordSystemSelect?.addEventListener('change', () => {
+            localStorage.setItem(COORD_SYSTEM_KEY, coordSystemSelect.value);
+            if (window.rmoozServerSync?.isHttpOrigin) window.rmoozServerSync.schedulePushPreferences?.();
+        });
 
-    if (window.freeDrawSignature && typeof window.freeDrawSignature.init === 'function') {
-        window.freeDrawSignature.init({ map });
+        window.AppChat.init();
+        window.AppUnits?.init?.();
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(syncMapSizeAndOverlays);
+        });
+        window.addEventListener('load', syncMapSizeAndOverlays);
     }
-    document.getElementById('free-draw-signature-btn')?.addEventListener('click', () => {
-        window.freeDrawSignature?.activate?.();
-    });
 
-    // Coordinate system preference
-    const COORD_SYSTEM_KEY = 'nato-map-planner-coord-system';
-    const savedCoordSystem = localStorage.getItem(COORD_SYSTEM_KEY);
-    if (savedCoordSystem && coordSystemSelect && ['wgs84', 'dms', 'utm', 'mgrs'].includes(savedCoordSystem)) {
-        coordSystemSelect.value = savedCoordSystem;
-    }
-    coordSystemSelect?.addEventListener('change', () => {
-        localStorage.setItem(COORD_SYSTEM_KEY, coordSystemSelect.value);
-    });
+    const bootPromise = (!window.rmoozServerSync || !window.rmoozServerSync.isHttpOrigin)
+        ? Promise.resolve().then(() => {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                try {
+                    importLayersData(savedData, true);
+                } catch (e) {
+                    /* keep default Layer 1 */
+                }
+            }
+        })
+        : window.rmoozServerSync.runInitialLoad(importLayersData, scheduleSaveToStorage).catch((e) => {
+            console.warn('Server plan bootstrap', e);
+        });
 
-    window.AppChat.init();
-    window.AppUnits?.init?.();
+    bootPromise.finally(() => {
+        modeSelect.dispatchEvent(new Event('change'));
+        updateTopBarQuickToolButtons();
+        renderLayersList();
+        updateLineDrawingControls();
+        finishDeferredUiInit();
+    });
 });

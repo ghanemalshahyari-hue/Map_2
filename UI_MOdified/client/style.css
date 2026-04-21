@@ -2843,3 +2843,8 @@ details[open] > .details-summary {
 @media (max-width: 360px) {
     .glass-btn, .header-btn { padding: 10px 12px; font-size: 0.85rem; }
 }
+
+/* Server-backed plans (http origin) */
+.server-account-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.server-account-bar.hidden { display: none !important; }
+.server-plan-select { max-width: 160px; font: inherit; padding: 4px 8px; border-radius: var(--radius-xs); }

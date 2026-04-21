@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Create Military Symbol</title>
+  <link rel="stylesheet" href="simple.css" />
+</head>
+<body>
+  <div class="picker-app">
+    <header class="picker-header">
+      <div class="picker-title-block">
+        <h1 class="picker-title" data-i18n="sp-title">Create Military Symbol</h1>
+        <p class="picker-subtitle" data-i18n="sp-subtitle">Choose type, then details, then place on map.</p>
+      </div>
+      <div class="picker-header-actions">
+        <div class="picker-search-box">
+          <input id="sp-search" type="search" placeholder="Search by name — e.g. friendly infantry company" data-i18n-placeholder="sp-search-placeholder" autocomplete="off" />
+          <div id="sp-search-results" class="sp-search-results" hidden></div>
+        </div>
+        <button id="sp-advanced-btn" class="picker-btn picker-btn-ghost" type="button" data-i18n="sp-advanced">Advanced mode</button>
+      </div>
+    </header>
+
+    <nav class="picker-stepper" aria-label="Build progress">
+      <ol id="sp-steps">
+        <li data-step="1"><span class="sp-step-num">1</span><span class="sp-step-label" data-i18n="sp-step-side">Side</span></li>
+        <li data-step="2"><span class="sp-step-num">2</span><span class="sp-step-label" data-i18n="sp-step-domain">Domain</span></li>
+        <li data-step="3"><span class="sp-step-num">3</span><span class="sp-step-label" data-i18n="sp-step-type">Type</span></li>
+        <li data-step="4"><span class="sp-step-num">4</span><span class="sp-step-label" data-i18n="sp-step-size">Size</span></li>
+        <li data-step="5"><span class="sp-step-num">5</span><span class="sp-step-label" data-i18n="sp-step-extras">Extras</span></li>
+        <li data-step="6"><span class="sp-step-num">6</span><span class="sp-step-label" data-i18n="sp-step-review">Review</span></li>
+      </ol>
+    </nav>
+
+    <main class="picker-body">
+      <section class="picker-stage" id="sp-stage">
+
+        <!-- Step 1: Side -->
+        <div class="sp-step" data-step="1">
+          <h2 class="sp-step-title" data-i18n="sp-q-side">Who is it?</h2>
+          <p class="sp-step-help" data-i18n="sp-help-side">Choose whether the symbol represents your force, opposing force, or unknown.</p>
+          <div class="sp-card-grid sp-grid-4">
+            <button class="sp-card" data-field="side" data-value="3">
+              <span class="sp-card-dot sp-side-friend"></span>
+              <span class="sp-card-label" data-i18n="sp-side-friend">Friendly</span>
+            </button>
+            <button class="sp-card" data-field="side" data-value="6">
+              <span class="sp-card-dot sp-side-hostile"></span>
+              <span class="sp-card-label" data-i18n="sp-side-hostile">Enemy</span>
+            </button>
+            <button class="sp-card" data-field="side" data-value="4">
+              <span class="sp-card-dot sp-side-neutral"></span>
+              <span class="sp-card-label" data-i18n="sp-side-neutral">Neutral</span>
+            </button>
+            <button class="sp-card" data-field="side" data-value="1">
+              <span class="sp-card-dot sp-side-unknown"></span>
+              <span class="sp-card-label" data-i18n="sp-side-unknown">Unknown</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Domain -->
+        <div class="sp-step" data-step="2" hidden>
+          <h2 class="sp-step-title" data-i18n="sp-q-domain">Where does it operate?</h2>
+          <p class="sp-step-help" data-i18n="sp-help-domain">Pick the environment. You can add mobility and equipment later.</p>
+          <div class="sp-card-grid sp-grid-4">
+            <button class="sp-card" data-field="domain" data-value="10">
+              <span class="sp-card-ico">&#x25A1;</span>
+              <span class="sp-card-label" data-i18n="sp-dom-land">Land</span>
+            </button>
+            <button class="sp-card" data-field="domain" data-value="01">
+              <span class="sp-card-ico">&#x25B3;</span>
+              <span class="sp-card-label" data-i18n="sp-dom-air">Air</span>
+            </button>
+            <button class="sp-card" data-field="domain" data-value="30">
+              <span class="sp-card-ico">&#x25C7;</span>
+              <span class="sp-card-label" data-i18n="sp-dom-sea">Sea</span>
+            </button>
+            <button class="sp-card" data-field="domain" data-value="__more">
+              <span class="sp-card-ico">&#x2026;</span>
+              <span class="sp-card-label" data-i18n="sp-dom-other">Other</span>
+            </button>
+          </div>
+          <div class="sp-secondary-grid" id="sp-domain-more" hidden>
+            <button class="sp-pill" data-field="domain" data-value="15"><span data-i18n="sp-dom-equip">Land equipment</span></button>
+            <button class="sp-pill" data-field="domain" data-value="20"><span data-i18n="sp-dom-install">Installation</span></button>
+            <button class="sp-pill" data-field="domain" data-value="35"><span data-i18n="sp-dom-sub">Subsurface</span></button>
+            <button class="sp-pill" data-field="domain" data-value="40"><span data-i18n="sp-dom-act">Activity</span></button>
+            <button class="sp-pill" data-field="domain" data-value="05"><span data-i18n="sp-dom-space">Space</span></button>
+          </div>
+        </div>
+
+        <!-- Step 3: Type -->
+        <div class="sp-step" data-step="3" hidden>
+          <h2 class="sp-step-title" data-i18n="sp-q-type">What kind of unit or activity?</h2>
+          <p class="sp-step-help" data-i18n="sp-help-type">Common choices appear first. Tap <em>More</em> for the full list.</p>
+          <div class="sp-card-grid sp-grid-3" id="sp-type-common"></div>
+          <button class="sp-more-toggle" id="sp-type-more-btn" type="button" data-i18n="sp-more">More types&hellip;</button>
+          <div class="sp-secondary-grid sp-scroll" id="sp-type-all" hidden></div>
+        </div>
+
+        <!-- Step 4: Size -->
+        <div class="sp-step" data-step="4" hidden>
+          <h2 class="sp-step-title" data-i18n="sp-q-size">How big is it?</h2>
+          <p class="sp-step-help" data-i18n="sp-help-size">Unit level — you can leave this as <em>Unspecified</em>.</p>
+          <div class="sp-pill-grid" id="sp-size-grid"></div>
+        </div>
+
+        <!-- Step 5: Extras -->
+        <div class="sp-step" data-step="5" hidden>
+          <h2 class="sp-step-title" data-i18n="sp-q-extras">Any special details?</h2>
+          <p class="sp-step-help" data-i18n="sp-help-extras">Optional. Leave the defaults if unsure.</p>
+          <div class="sp-extras-section">
+            <div class="sp-extras-label" data-i18n="sp-extras-status">Availability</div>
+            <div class="sp-pill-grid">
+              <button class="sp-pill" data-field="status" data-value="0" data-i18n="sp-status-present">Present</button>
+              <button class="sp-pill" data-field="status" data-value="1" data-i18n="sp-status-planned">Planned</button>
+            </div>
+          </div>
+          <div class="sp-extras-section">
+            <div class="sp-extras-label" data-i18n="sp-extras-role">Special role</div>
+            <div class="sp-pill-grid">
+              <button class="sp-pill" data-field="role" data-value="0" data-i18n="sp-role-none">None</button>
+              <button class="sp-pill" data-field="role" data-value="2" data-i18n="sp-role-hq">HQ</button>
+              <button class="sp-pill" data-field="role" data-value="4" data-i18n="sp-role-tf">Task force</button>
+              <button class="sp-pill" data-field="role" data-value="1" data-i18n="sp-role-dummy">Dummy</button>
+              <button class="sp-pill" data-field="role" data-value="6" data-i18n="sp-role-tfhq">Task force HQ</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6: Review -->
+        <div class="sp-step" data-step="6" hidden>
+          <h2 class="sp-step-title" data-i18n="sp-q-review">Review and apply</h2>
+          <p class="sp-step-help sp-sentence" id="sp-sentence"></p>
+          <details class="sp-advanced-block">
+            <summary data-i18n="sp-adv-summary">Advanced — SIDC code</summary>
+            <code class="sp-sidc" id="sp-sidc-readout">—</code>
+          </details>
+        </div>
+
+      </section>
+
+      <aside class="picker-preview">
+        <div class="sp-preview-title" data-i18n="sp-preview-title">Preview</div>
+        <div class="sp-preview-symbol" id="sp-preview-symbol"></div>
+        <div class="sp-preview-summary" id="sp-preview-summary"></div>
+      </aside>
+    </main>
+
+    <footer class="picker-footer">
+      <button id="sp-back" class="picker-btn picker-btn-ghost" type="button" data-i18n="sp-back">Back</button>
+      <div class="picker-footer-right">
+        <button id="sp-reset" class="picker-btn picker-btn-ghost" type="button" data-i18n="sp-reset">Start over</button>
+        <button id="sp-next" class="picker-btn picker-btn-primary" type="button" data-i18n="sp-next">Next</button>
+        <button id="sp-apply" class="picker-btn picker-btn-success" type="button" hidden data-i18n="sp-apply">Apply Symbol</button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="../../client/sidc-data.js"></script>
+  <script src="../../lib/milsymbol.js"></script>
+  <script src="simple.js"></script>
+</body>
+</html>

@@ -966,7 +966,7 @@ const server = http.createServer((req, res) => {
             const sidc = normalizeText(body.sidc, 60);
             const unitType = normalizeText(body.unitType, 120);
             const VALID_SIDES = ['friendly', 'hostile', 'neutral', 'unknown'];
-            const side = VALID_SIDES.includes(body.side) ? body.side : 'friendly';
+            let side = VALID_SIDES.includes(body.side) ? body.side : 'friendly';
             if (!name) return sendJson(res, 400, { error: 'name is required' });
             if (level == null || level < 0 || level > 4) return sendJson(res, 400, { error: 'level must be 0..4' });
             if (!parentId && level !== 0) return sendJson(res, 400, { error: 'root units must be level 0 (Army)' });
@@ -976,6 +976,8 @@ const server = http.createServer((req, res) => {
                 parent = db.prepare('SELECT * FROM units WHERE id=?').get(parentId);
                 if (!parent || parent.deleted_at) return sendJson(res, 400, { error: 'parentId not found' });
                 if ((parent.level + 1) !== level) return sendJson(res, 400, { error: 'child level must be parent level + 1' });
+                // Always inherit affiliation from parent — child cannot differ from its army
+                if (VALID_SIDES.includes(parent.side)) side = parent.side;
             }
 
             if (!code) {

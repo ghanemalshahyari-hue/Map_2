@@ -923,6 +923,13 @@
                         <input id="units-search-input" type="text" class="glass-input" autocomplete="off" spellcheck="false" maxlength="200" placeholder="Search by name or code" />
                         <button type="button" id="units-refresh-btn" class="glass-btn secondary">Refresh</button>
                     </div>
+                    <div class="units-filter-row">
+                        <button type="button" class="units-filter-btn active" data-filter-side="all">All</button>
+                        <button type="button" class="units-filter-btn" data-filter-side="friendly">▶ Friendly</button>
+                        <button type="button" class="units-filter-btn" data-filter-side="hostile">■ Hostile</button>
+                        <button type="button" class="units-filter-btn" data-filter-side="neutral">◆ Neutral</button>
+                        <button type="button" class="units-filter-btn" data-filter-side="unknown">? Unknown</button>
+                    </div>
                     <div class="units-tree-controls">
                         <button type="button" id="units-expand-all-btn" class="units-tree-ctrl-btn" title="Expand all">▼ Expand All</button>
                         <button type="button" id="units-collapse-all-btn" class="units-tree-ctrl-btn" title="Collapse all">▶ Collapse All</button>

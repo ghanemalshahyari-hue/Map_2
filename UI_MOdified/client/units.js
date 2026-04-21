@@ -151,6 +151,7 @@
 
         let state     = { roots: [], units: [], selectedId: null };
         let collapsed = new Set();
+        let filterSide = null; // null = show all; 'friendly'|'hostile'|'neutral'|'unknown' = filter
         let selectedDomain = null; // for Force creation
         let selectedSide   = 'friendly'; // for create form
         let editSelectedSide = 'friendly'; // for edit panel
@@ -255,8 +256,10 @@
             if (qaSidcEl) qaSidcEl.value = '';
             selectedDomain = null;
             domainBtns?.querySelectorAll('.units-domain-btn').forEach(b => b.classList.remove('active'));
-            selectedSide = 'friendly';
-            setSideUI(sideBtnsEl, 'friendly');
+            // Inherit side from the selected parent so children follow their army's affiliation
+            const parentUnit = getSelected();
+            selectedSide = (parentUnit?.side) || 'friendly';
+            setSideUI(sideBtnsEl, selectedSide);
             showQaError('');
             codeAvailable = true;
             updateMainPanel();
@@ -352,7 +355,8 @@
 
         // ── Tree ───────────────────────────────────────────────────────────────
         function renderTree() {
-            const flat  = flattenTree(state.roots, collapsed);
+            let flat = flattenTree(state.roots, collapsed);
+            if (filterSide) flat = flat.filter(n => (n.side || 'friendly') === filterSide);
             const selId = state.selectedId;
             treeEl.innerHTML = flat.map(n => {
                 const pad        = 8 + n._depth * 16;
@@ -609,6 +613,16 @@
             const row = e.target?.closest?.('.units-tree-row');
             const id  = row?.getAttribute('data-id');
             if (id) selectUnit(id);
+        });
+
+        // Affiliation filter buttons
+        modal.querySelectorAll('.units-filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const side = btn.getAttribute('data-filter-side');
+                filterSide = (side === 'all') ? null : side;
+                modal.querySelectorAll('.units-filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+                renderTree();
+            });
         });
 
         let searchTimer = null;

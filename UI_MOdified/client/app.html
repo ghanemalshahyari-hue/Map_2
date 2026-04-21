@@ -931,8 +931,7 @@
                         <button type="button" class="units-filter-btn" data-filter-side="unknown">? Unknown</button>
                     </div>
                     <div class="units-tree-controls">
-                        <button type="button" id="units-expand-all-btn" class="units-tree-ctrl-btn" title="Expand all">▼ Expand All</button>
-                        <button type="button" id="units-collapse-all-btn" class="units-tree-ctrl-btn" title="Collapse all">▶ Collapse All</button>
+                        <button type="button" id="units-toggle-all-btn" class="units-tree-ctrl-btn" title="Expand / collapse all">▼ Expand All</button>
                         <button type="button" id="units-new-army-btn" class="units-tree-ctrl-btn units-new-army-btn" title="Create a new top-level Army">+ New Army</button>
                     </div>
                     <div class="units-tree-wrap">
@@ -984,14 +983,22 @@
                             </div>
                         </div>
 
-                        <!-- Side selector (always visible) -->
-                        <div class="units-side-row">
+                        <!-- Side selector (shown only when creating a root Army) -->
+                        <div class="units-side-row" id="units-side-row">
                             <div class="units-side-label">Side / Affiliation</div>
                             <div class="units-side-btns" id="units-side-btns">
                                 <button type="button" class="units-side-btn active" data-side="friendly">&#9658; Friendly</button>
                                 <button type="button" class="units-side-btn" data-side="hostile">&#9632; Hostile</button>
                                 <button type="button" class="units-side-btn" data-side="neutral">&#9670; Neutral</button>
                                 <button type="button" class="units-side-btn" data-side="unknown">? Unknown</button>
+                            </div>
+                        </div>
+
+                        <!-- Inherited affiliation notice (shown when creating a child) -->
+                        <div class="units-side-row" id="units-side-inherited" style="display:none">
+                            <div class="units-side-label">Side / Affiliation</div>
+                            <div class="units-side-inherited-info">
+                                Inherits from parent: <span id="units-side-inherited-badge" class="units-side-badge units-side-friendly">Friendly</span>
                             </div>
                         </div>
 
@@ -1064,10 +1071,11 @@
                         </div>
 
                         <!-- No children message (Company selected) -->
-                        <div id="units-no-children" class="units-no-children" style="display:none">
+                        <div id="units-no-children" class="units-no-children" style="display:none" title="Click to start a new Army">
                             <div class="units-no-children-msg">
                                 Company is the lowest level — it cannot contain child units.<br>
                                 Click <strong>Edit</strong> to modify it, or select a higher-level unit to add under.
+                                <div class="units-no-children-hint">Click anywhere here to start a <strong>+ New Army</strong></div>
                             </div>
                         </div>
 

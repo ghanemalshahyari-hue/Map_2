@@ -5255,7 +5255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.warn('buildSidcPickerIframeSrc: lang read failed', e);
         }
-        return `../vendor/sidc-picker/index.html?lang=${lang}#/APP6`;
+        return `../vendor/sidc-picker/simple.html?lang=${lang}`;
     }
     function syncSidcPickerLocaleToFrame() {
         if (!pickerFrame || !pickerFrame.contentWindow) return;

@@ -2447,7 +2447,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const proj = L.point(start.x + dot * ux, start.y + dot * uy);
             const offX = mx - proj.x;
             const offY = my - proj.y;
-            const cross = ux * offY - uy * offX;
+            // Leaflet layer points are in screen space (Y grows downward), so the cross-product sign is inverted.
+            const cross = -(ux * offY - uy * offX);
             if (cross !== 0) {
                 signSum += Math.sign(cross);
                 count += 1;
@@ -3010,6 +3011,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const sN = subject.length, cN = clip.length;
         if (!sN || !cN) return sN ? [subject.slice()] : [];
 
+        const _cmpNum = (a, b) => (a < b ? -1 : (a > b ? 1 : 0));
+        const _cmpPt = (p, q) => {
+            const cx = _cmpNum(p[0], q[0]);
+            if (cx) return cx;
+            return _cmpNum(p[1], q[1]);
+        };
+
         // ── 1. Find all intersection points ──
         const ixList = [];
         for (let si = 0; si < sN; si++) {
@@ -3052,12 +3060,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ── 4. Sort along subject boundary ──
-        ixList.sort((a, b) => a.sEdge !== b.sEdge ? a.sEdge - b.sEdge : a.sT - b.sT);
+        ixList.sort((a, b) => {
+            let c = _cmpNum(a.sEdge, b.sEdge);
+            if (c) return c;
+            c = _cmpNum(a.sT, b.sT);
+            if (c) return c;
+            c = _cmpNum(a.cEdge, b.cEdge);
+            if (c) return c;
+            c = _cmpNum(a.cT, b.cT);
+            if (c) return c;
+            return _cmpPt(a.pt, b.pt);
+        });
         // Assign sequential ID for cross-lookup
         ixList.forEach((ix, i) => { ix.sIdx = i; });
         // Build clip-sorted index
-        const clipOrder = ixList.slice().sort((a, b) =>
-            a.cEdge !== b.cEdge ? a.cEdge - b.cEdge : a.cT - b.cT);
+        const clipOrder = ixList.slice().sort((a, b) => {
+            let c = _cmpNum(a.cEdge, b.cEdge);
+            if (c) return c;
+            c = _cmpNum(a.cT, b.cT);
+            if (c) return c;
+            c = _cmpNum(a.sEdge, b.sEdge);
+            if (c) return c;
+            c = _cmpNum(a.sT, b.sT);
+            if (c) return c;
+            return _cmpPt(a.pt, b.pt);
+        });
         clipOrder.forEach((ix, i) => { ix.cIdx = i; });
 
         // ── 5. Build augmented subject vertex list ──
@@ -3085,6 +3112,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Cross-link: find index of each intersection in sAug and cAug
         for (const ix of ixList) {
+            // Deterministic: find the first matching node for this ix.
             ix._sAugIdx = sAug.findIndex(n => n.isIx && n.ix === ix);
             ix._cAugIdx = cAug.findIndex(n => n.isIx && n.ix === ix);
         }
@@ -3162,18 +3190,65 @@ document.addEventListener('DOMContentLoaded', () => {
             return [{ outer: ring, holes: [] }];
         }
 
+        const CLIP_ROUND_DECIMALS = 7; // ~1cm; improves determinism in boolean ops
+        const CLIP_ROUND_FACTOR = Math.pow(10, CLIP_ROUND_DECIMALS);
+        const roundCoord = (x) => Math.round(x * CLIP_ROUND_FACTOR) / CLIP_ROUND_FACTOR;
+        const same2 = (a, b) => a && b && a[0] === b[0] && a[1] === b[1];
+
+        function normalizeRingLngLat(r) {
+            if (!r || r.length < 3) return [];
+            // Round coords and drop invalids
+            let out = r
+                .filter(p => p && isFinite(p[0]) && isFinite(p[1]))
+                .map(p => [roundCoord(p[0]), roundCoord(p[1])]);
+            if (out.length < 3) return [];
+
+            // Remove explicit closure if present
+            if (out.length > 1 && same2(out[0], out[out.length - 1])) out = out.slice(0, -1);
+            if (out.length < 3) return [];
+
+            // Remove consecutive duplicates
+            const dedup = [out[0]];
+            for (let i = 1; i < out.length; i++) {
+                if (!same2(out[i], dedup[dedup.length - 1])) dedup.push(out[i]);
+            }
+            out = dedup;
+            if (out.length < 3) return [];
+
+            // Rotate so ring starts at lexicographically smallest vertex (stable)
+            let minI = 0;
+            for (let i = 1; i < out.length; i++) {
+                const a = out[i];
+                const b = out[minI];
+                if (a[0] < b[0] || (a[0] === b[0] && a[1] < b[1])) minI = i;
+            }
+            if (minI > 0) out = out.slice(minI).concat(out.slice(0, minI));
+
+            // Enforce consistent orientation (CCW => positive signed area per _signedRingArea comment)
+            const area = _signedRingArea(out);
+            if (area < 0) {
+                out.reverse();
+                // Re-rotate after reverse (keeps canonical start)
+                minI = 0;
+                for (let i = 1; i < out.length; i++) {
+                    const a = out[i];
+                    const b = out[minI];
+                    if (a[0] < b[0] || (a[0] === b[0] && a[1] < b[1])) minI = i;
+                }
+                if (minI > 0) out = out.slice(minI).concat(out.slice(0, minI));
+            }
+            return out;
+        }
+
         // Convert LatLng ring → [lng, lat] for clipping math
-        let currentPolys = [{ ring: ring.map(p => [p.lng, p.lat]), holes: [] }];
+        const subject0 = normalizeRingLngLat(ring.map(p => [p.lng, p.lat]));
+        let currentPolys = subject0.length >= 3 ? [{ ring: subject0, holes: [] }] : [];
+        if (currentPolys.length === 0) return [{ outer: ring, holes: [] }];
 
         for (const obs of polys) {
             const obsOuter = obs.outer;
             // Ensure obstacle ring is not self-closed
-            let clipRing = obsOuter.slice();
-            if (clipRing.length > 1 &&
-                clipRing[0][0] === clipRing[clipRing.length - 1][0] &&
-                clipRing[0][1] === clipRing[clipRing.length - 1][1]) {
-                clipRing = clipRing.slice(0, -1);
-            }
+            let clipRing = normalizeRingLngLat(obsOuter.slice());
             if (clipRing.length < 3) continue;
 
             const nextPolys = [];
@@ -3182,7 +3257,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (const r of diffResults) {
                     const holes = (poly.holes || []).slice();
                     if (r._holes) holes.push(...r._holes);
-                    nextPolys.push({ ring: r, holes });
+                    const nr = normalizeRingLngLat(r);
+                    if (nr.length < 3) continue;
+                    const nholes = (holes || []).map(h => normalizeRingLngLat(h)).filter(h => h.length >= 3);
+                    nextPolys.push({ ring: nr, holes: nholes });
                 }
             }
             currentPolys = nextPolys;
@@ -3519,58 +3597,81 @@ document.addEventListener('DOMContentLoaded', () => {
         const ringsMeta = [];
 
         if (mode === '20') {
+            const midFront = L.latLng((trueLeft.lat + trueRight.lat) / 2, (trueLeft.lng + trueRight.lng) / 2);
+            const retainAnchor = latLngAtBearing(midFront, Math.max(0.05, distBrigKm * 0.5), rearBear);
             ringsMeta.push({
                 ring: [trueLeft, trueRight, trueRight20, trueLeft20],
                 lengthKm: distBrigKm,
                 clipAnchors: [trueLeft, trueRight],
-                role: 'area'
+                role: 'area',
+                // The frontline is represented by the scalloped graphic; hide the straight front edge stroke.
+                hideFrontEdge: true,
+                frontMaskPath: frontPath,
+                retainAnchor
             });
-            // Borders (polygon bands): rear + left + right. Front border is scalloped graphic.
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft20, trueRight20), lengthKm: distBrigKm, clipAnchors: [trueLeft20, trueRight20], role: 'border' });
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft, trueLeft20), lengthKm: distBrigKm, clipAnchors: [trueLeft, trueLeft20], role: 'border' });
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueRight, trueRight20), lengthKm: distBrigKm, clipAnchors: [trueRight, trueRight20], role: 'border' });
             return { ringsMeta };
         }
 
         if (mode === '8') {
+            const retainAnchor = latLngAtBearing(trueMid, Math.max(0.05, distBatKm * 0.5), rearBear);
             ringsMeta.push({
                 ring: [...frontPath, trueRight8, trueLeft8],
                 lengthKm: distBatKm,
                 clipAnchors: [trueLeft, trueRight],
                 splitSegment: [trueMid, trueMid8],
-                role: 'area'
+                role: 'area',
+                // The frontline is represented by the scalloped graphic; hide the straight front edge stroke.
+                hideFrontEdge: true,
+                frontMaskPath: frontPath,
+                retainAnchor
             });
-            // Borders (polygon bands): rear + left + right + divider. Front border is scalloped graphic.
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft8, trueRight8), lengthKm: distBatKm, clipAnchors: [trueLeft8, trueRight8], role: 'border' });
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft, trueLeft8), lengthKm: distBatKm, clipAnchors: [trueLeft, trueLeft8], role: 'border' });
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueRight, trueRight8), lengthKm: distBatKm, clipAnchors: [trueRight, trueRight8], role: 'border' });
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueMid, trueMid8), lengthKm: distBatKm, clipAnchors: [trueMid, trueMid8], role: 'border' });
             return { ringsMeta };
         }
 
         if (mode === '8&20') {
+            // Clip ONCE: use a single full-depth polygon (frontPath -> 20km rear),
+            // then split it into battalion (0..8km) and brigade (8..20km).
+            // This keeps the shared seam as the exact same vertex list (no render gaps).
+            const extendSegmentKm = (a, b, km = 0.06) => {
+                if (!a || !b) return [a, b];
+                const bear = bearingDegrees(a, b);
+                const a2 = latLngAtBearing(a, km, (bear + 180) % 360);
+                const b2 = latLngAtBearing(b, km, bear);
+                return [a2, b2];
+            };
+            // Divider origin is the middle Circle-X point (C) for this auto-flank.
+            const circleCenter = centerPt ? L.latLng(centerPt.lat, centerPt.lng) : L.latLng(trueMid.lat, trueMid.lng);
+
+            // Interior anchors (avoid "point on boundary" ambiguity in clip fragment retention).
+            const batAnchorInside = latLngAtBearing(circleCenter, Math.max(0.05, distBatKm * 0.5), rearBear);
+            const brigAnchorInside = latLngAtBearing(circleCenter, Math.max(0.05, (distBatKm + distBrigKm) * 0.5), rearBear);
+            const seamSeg = extendSegmentKm(trueLeft8, trueRight8, 0.25);
+            // Divider is perpendicular to the frontline chord, oriented toward friendly side (rearBear).
+            // Build a long cut line through the Circle-X center so it intersects the clipped battalion polygon.
+            // Long enough to cross the entire battalion polygon after clipping.
+            const divLen = Math.max(2, distBatKm * 3, distBrigKm * 1.2);
+            const divA = latLngAtBearing(circleCenter, divLen, (rearBear + 180) % 360);
+            const divB = latLngAtBearing(circleCenter, divLen, rearBear);
+            const divSeg = [divA, divB];
             ringsMeta.push({
-                ring: [...frontPath, trueRight8, trueLeft8],
-                lengthKm: distBatKm,
-                clipAnchors: [trueLeft, trueRight],
-                splitSegment: [trueMid, trueMid8],
-                role: 'area'
-            });
-            ringsMeta.push({
-                ring: [trueLeft8, trueRight8, trueRight20, trueLeft20],
+                ring: [...frontPath, trueRight20, trueLeft20],
                 lengthKm: distBrigKm,
-                clipAnchors: [trueLeft8, trueRight8],
-                role: 'area'
+                clipAnchors: [batAnchorInside, brigAnchorInside, trueMid],
+                role: 'area-8&20',
+                // First split: battalion/brigade seam at 8km.
+                seamSegment: seamSeg,
+                // Second split (front piece only): battalion L/R divider.
+                battalionDivider: divSeg,
+                battalionLengthKm: distBatKm,
+                brigadeLengthKm: distBrigKm,
+                battalionAnchor: batAnchorInside,
+                brigadeAnchor: brigAnchorInside,
+                frontLeftAnchor: trueLeft,
+                frontRightAnchor: trueRight,
+                // The frontline is represented by the scalloped graphic; hide the straight front edge stroke.
+                hideFrontEdge: true,
+                frontMaskPath: frontPath
             });
-            // Battalion borders
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft8, trueRight8), lengthKm: distBatKm, clipAnchors: [trueLeft8, trueRight8], role: 'border' });
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft, trueLeft8), lengthKm: distBatKm, clipAnchors: [trueLeft, trueLeft8], role: 'border' });
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueRight, trueRight8), lengthKm: distBatKm, clipAnchors: [trueRight, trueRight8], role: 'border' });
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueMid, trueMid8), lengthKm: distBatKm, clipAnchors: [trueMid, trueMid8], role: 'border' });
-            // Brigade borders (rear + left + right). Front of brigade is the battalion rear line.
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft20, trueRight20), lengthKm: distBrigKm, clipAnchors: [trueLeft20, trueRight20], role: 'border' });
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueLeft8, trueLeft20), lengthKm: distBrigKm, clipAnchors: [trueLeft8, trueLeft20], role: 'border' });
-            ringsMeta.push({ ring: makeAutoFlankBorderBand(trueRight8, trueRight20), lengthKm: distBrigKm, clipAnchors: [trueRight8, trueRight20], role: 'border' });
             return { ringsMeta };
         }
 
@@ -3745,10 +3846,631 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
 
-        for (const { ring: rawRing, lengthKm, clipAnchors, splitSegment, role } of ringsMeta) {
+        function ringWalkDistance(ring, startIdx, endIdx, stepDir) {
+            const n = ring.length;
+            let i = startIdx;
+            let sum = 0;
+            while (i !== endIdx) {
+                const j = (i + stepDir + n) % n;
+                sum += map.distance(ring[i], ring[j]);
+                i = j;
+                // safety: prevent infinite loops on malformed data
+                if (sum > 1e9) break;
+            }
+            return sum;
+        }
+
+        function ringWalkSteps(ring, startIdx, endIdx, stepDir) {
+            const n = ring.length;
+            let i = startIdx;
+            let steps = 0;
+            while (i !== endIdx) {
+                i = (i + stepDir + n) % n;
+                steps++;
+                if (steps > n + 2) break;
+            }
+            return steps;
+        }
+
+        function minPixelDistanceToPolyline(midLatLng, polylineLatLngs) {
+            if (!map || !midLatLng || !polylineLatLngs || polylineLatLngs.length < 2) return Infinity;
+            const lp = map.latLngToLayerPoint(midLatLng);
+            let best = Infinity;
+            for (let i = 0; i < polylineLatLngs.length - 1; i++) {
+                const p1 = map.latLngToLayerPoint(polylineLatLngs[i]);
+                const p2 = map.latLngToLayerPoint(polylineLatLngs[i + 1]);
+                const { dist } = distanceAndTToSegment(lp, p1, p2);
+                if (dist < best) best = dist;
+            }
+            return best;
+        }
+
+        /**
+         * Build an outline that skips ONLY the portion overlapping the scalloped front.
+         * Prefer an explicit frontMaskPath test (pixel distance), with a fallback to the old arc heuristic.
+         */
+        function buildOutlineExcludingFront(ring, a, b, frontMaskPath) {
+            if (!map || !ring || ring.length < 3 || !a || !b) return null;
+            const n = ring.length;
+
+            // 1) If we have a frontMaskPath (the scalloped/front polyline), drop any ring edges that lie on it.
+            if (frontMaskPath && frontMaskPath.length >= 2) {
+                const FRONT_TOL_PX = 6;
+                const edgeIsFront = new Array(n).fill(false);
+                for (let i = 0; i < n; i++) {
+                    const j = (i + 1) % n;
+                    const mid = L.latLng(
+                        (ring[i].lat + ring[j].lat) / 2,
+                        (ring[i].lng + ring[j].lng) / 2
+                    );
+                    const dpx = minPixelDistanceToPolyline(mid, frontMaskPath);
+                    if (dpx <= FRONT_TOL_PX) edgeIsFront[i] = true;
+                }
+
+                // Build the longest continuous chain of non-front edges.
+                let bestChain = null;
+                for (let start = 0; start < n; start++) {
+                    if (edgeIsFront[start]) continue;
+                    const chain = [ring[start]];
+                    let i = start;
+                    let steps = 0;
+                    while (steps < n) {
+                        if (edgeIsFront[i]) break;
+                        const j = (i + 1) % n;
+                        chain.push(ring[j]);
+                        i = j;
+                        steps++;
+                    }
+                    if (!bestChain || chain.length > bestChain.length) bestChain = chain;
+                }
+                if (bestChain && bestChain.length >= 2) return bestChain;
+                // If mask path failed to produce a chain, fall through to heuristic.
+            }
+
+            // 2) Fallback: old arc selection between anchors.
+            const idxNear = (pt) => {
+                let bestI = 0;
+                let bestD = Infinity;
+                for (let i = 0; i < n; i++) {
+                    const d = map.distance(pt, ring[i]);
+                    if (d < bestD) { bestD = d; bestI = i; }
+                }
+                return bestI;
+            };
+            const iA = idxNear(a);
+            const iB = idxNear(b);
+            if (iA === iB) return null;
+
+            const dFwd = ringWalkDistance(ring, iA, iB, +1);
+            const dRev = ringWalkDistance(ring, iA, iB, -1);
+            const sFwd = ringWalkSteps(ring, iA, iB, +1);
+            const sRev = ringWalkSteps(ring, iA, iB, -1);
+            const MANY_VERTS = 6;
+            const hasScallopedArc = Math.max(sFwd, sRev) >= MANY_VERTS;
+
+            let useDir;
+            if (hasScallopedArc) {
+                useDir = sFwd <= sRev ? +1 : -1;
+            } else {
+                useDir = dFwd >= dRev ? +1 : -1;
+            }
+
+            const out = [ring[iA]];
+            let i = iA;
+            while (i !== iB) {
+                i = (i + useDir + n) % n;
+                out.push(ring[i]);
+                if (out.length > n + 2) break;
+            }
+            return out.length >= 2 ? out : null;
+        }
+
+        function addAreaOutlinePolyline(outlinePts, baseOpts, lengthKm) {
+            const outlineLine = L.polyline(outlinePts, {
+                color: baseOpts.color,
+                weight: baseOpts.weight,
+                opacity: 1,
+                interactive: false,
+                pane: baseOpts.pane,
+                className: 'auto-flank-area-outline'
+            });
+            outlineLine._autoFlankLine = true;
+            outlineLine._autoFlankArea = true;
+            outlineLine._tmgData = { typeId: 'auto-flank-area-outline', sessionId, tag, lengthKm };
+            addToActiveLayer(outlineLine);
+            result.push(outlineLine);
+        }
+
+        function addAreaPolygonWithOptionalFrontHidden(areaRings, outerRing, baseOpts, lengthKm, anchors, hideFrontEdge, frontMaskPath) {
+            const polyOpts = hideFrontEdge ? { ...baseOpts, stroke: false } : baseOpts;
+            const areaPoly = L.polygon(areaRings, polyOpts);
+            areaPoly._autoFlankLine = true;
+            areaPoly._autoFlankArea = true;
+            areaPoly._tmgData = { typeId: 'auto-flank-area', sessionId, tag, lengthKm };
+            addToActiveLayer(areaPoly);
+            result.push(areaPoly);
+
+            if (hideFrontEdge && anchors && anchors.length >= 2) {
+                const outline = buildOutlineExcludingFront(outerRing, anchors[0], anchors[1], frontMaskPath);
+                if (outline && outline.length >= 2) {
+                    addAreaOutlinePolyline(outline, baseOpts, lengthKm);
+                } else {
+                    // Fallback: never hide ALL outlines; revert to full polygon stroke if partial outline can't be built.
+                    areaPoly.setStyle({ stroke: true });
+                }
+            }
+            return areaPoly;
+        }
+
+        function absAreaLatLngRing(ringLatLng) {
+            if (!ringLatLng || ringLatLng.length < 3) return 0;
+            const ring = ringLatLng.map(p => [p.lng, p.lat]);
+            return Math.abs(_signedRingArea(ring));
+        }
+
+        function centroidLatLngOfRing(ringLatLng) {
+            if (!ringLatLng || ringLatLng.length === 0) return null;
+            let lat = 0, lng = 0;
+            const n = ringLatLng.length;
+            for (let i = 0; i < n; i++) { lat += ringLatLng[i].lat; lng += ringLatLng[i].lng; }
+            return L.latLng(lat / n, lng / n);
+        }
+
+        function distM(a, b) {
+            if (!map || !a || !b) return Infinity;
+            return map.distance(a, b);
+        }
+
+        function minDistMetersToPolyline(ptLatLng, polylineLatLngs) {
+            if (!map || !ptLatLng || !polylineLatLngs || polylineLatLngs.length < 2) return Infinity;
+            const lp = map.latLngToLayerPoint(ptLatLng);
+            let bestM = Infinity;
+            for (let i = 0; i < polylineLatLngs.length - 1; i++) {
+                const a = polylineLatLngs[i];
+                const b = polylineLatLngs[i + 1];
+                const p1 = map.latLngToLayerPoint(a);
+                const p2 = map.latLngToLayerPoint(b);
+                const { t } = distanceAndTToSegment(lp, p1, p2);
+                const projLP = L.point(p1.x + (p2.x - p1.x) * t, p1.y + (p2.y - p1.y) * t);
+                const projLL = map.layerPointToLatLng(projLP);
+                const d = map.distance(ptLatLng, projLL);
+                if (d < bestM) bestM = d;
+            }
+            return bestM;
+        }
+
+        function ringTouchesPolylineInPixels(ringLatLng, polylineLatLngs, tolPx = 10) {
+            if (!map || !ringLatLng || ringLatLng.length < 2 || !polylineLatLngs || polylineLatLngs.length < 2) return false;
+            // Check edge midpoints against polyline distance in pixel space.
+            for (let i = 0; i < ringLatLng.length; i++) {
+                const a = ringLatLng[i];
+                const b = ringLatLng[(i + 1) % ringLatLng.length];
+                if (!a || !b) continue;
+                const mid = L.latLng((a.lat + b.lat) / 2, (a.lng + b.lng) / 2);
+                const dpx = minPixelDistanceToPolyline(mid, polylineLatLngs);
+                if (dpx <= tolPx) return true;
+            }
+            return false;
+        }
+
+        function splitChordEndpointsLatLng(polyOuter, splitSeg) {
+            if (!map || !polyOuter || polyOuter.length < 3 || !splitSeg || splitSeg.length !== 2) return null;
+            const a = splitSeg[0], b = splitSeg[1];
+            if (!a || !b) return null;
+            const A = map.latLngToLayerPoint(a);
+            const B = map.latLngToLayerPoint(b);
+            const outerLP = polyOuter.map(p => map.latLngToLayerPoint(p));
+            if (outerLP.length < 3) return null;
+            const EPS = 1e-6;
+            const dist2 = (p, q) => {
+                const dx = p.x - q.x, dy = p.y - q.y;
+                return dx * dx + dy * dy;
+            };
+            function segSegIntersect(p, p2, q, q2) {
+                const r = L.point(p2.x - p.x, p2.y - p.y);
+                const s = L.point(q2.x - q.x, q2.y - q.y);
+                const rxs = r.x * s.y - r.y * s.x;
+                const q_p = L.point(q.x - p.x, q.y - p.y);
+                if (Math.abs(rxs) < EPS) return null;
+                const t = (q_p.x * s.y - q_p.y * s.x) / rxs;
+                const u = (q_p.x * r.y - q_p.y * r.x) / rxs;
+                if (t < -EPS || t > 1 + EPS || u < -EPS || u > 1 + EPS) return null;
+                return { pt: L.point(p.x + t * r.x, p.y + t * r.y) };
+            }
+            const hits = [];
+            for (let i = 0; i < outerLP.length; i++) {
+                const p1 = outerLP[i];
+                const p2 = outerLP[(i + 1) % outerLP.length];
+                const hit = segSegIntersect(p1, p2, A, B);
+                if (!hit) continue;
+                let dup = false;
+                for (const h of hits) {
+                    if (dist2(h.pt, hit.pt) <= 1) { dup = true; break; }
+                }
+                if (!dup) hits.push(hit);
+            }
+            if (hits.length < 2) return null;
+            // Pick two farthest hits as chord endpoints.
+            let h1 = hits[0], h2 = hits[1], bestD = -1;
+            for (let i = 0; i < hits.length; i++) {
+                for (let j = i + 1; j < hits.length; j++) {
+                    const d = dist2(hits[i].pt, hits[j].pt);
+                    if (d > bestD) { bestD = d; h1 = hits[i]; h2 = hits[j]; }
+                }
+            }
+            const ll1 = map.layerPointToLatLng(h1.pt);
+            const ll2 = map.layerPointToLatLng(h2.pt);
+            return [L.latLng(ll1.lat, ll1.lng), L.latLng(ll2.lat, ll2.lng)];
+        }
+
+        for (const {
+            ring: rawRing,
+            lengthKm,
+            clipAnchors,
+            splitSegment,
+            role,
+            hideFrontEdge,
+            frontMaskPath,
+            retainAnchor,
+            seamSegment,
+            battalionDivider,
+            battalionLengthKm,
+            brigadeLengthKm,
+            battalionAnchor,
+            brigadeAnchor,
+            frontLeftAnchor,
+            frontRightAnchor
+        } of ringsMeta) {
             if (!rawRing || rawRing.length < 3) continue;
             const anchors = clipAnchors && clipAnchors.length ? clipAnchors : rawRing.slice(0, 2);
-            const clipped = clipPolygonByObstacles(rawRing, obstacles, anchors);
+            let clipped = clipPolygonByObstacles(rawRing, obstacles, anchors);
+
+            // If clipping produced multiple fragments, pick a single best fragment for simple 'area' roles.
+            if (role === 'area' && clipped.length > 1) {
+                let kept = null;
+                if (retainAnchor) {
+                    kept = clipped.find(p => pointInPolygonRing(retainAnchor, p.outer));
+                }
+                if (!kept) {
+                    let best = clipped[0];
+                    let bestA = absAreaLatLngRing(best.outer);
+                    for (let i = 1; i < clipped.length; i++) {
+                        const a = absAreaLatLngRing(clipped[i].outer);
+                        if (a > bestA) { bestA = a; best = clipped[i]; }
+                    }
+                    kept = best;
+                }
+                clipped = kept ? [kept] : clipped.slice(0, 1);
+            }
+
+            // Special: 8&20 — collect fragments, assign to roles, render exactly 3 multipolygons.
+            if (role === 'area-8&20' && seamSegment && seamSegment.length === 2) {
+                const batA = battalionAnchor || null;
+                const brigA = brigadeAnchor || null;
+                const leftA = frontLeftAnchor || (frontMaskPath && frontMaskPath.length ? frontMaskPath[0] : null);
+                const rightA = frontRightAnchor || (frontMaskPath && frontMaskPath.length ? frontMaskPath[frontMaskPath.length - 1] : null);
+
+                const w = lineOpts.weight != null ? lineOpts.weight : 3;
+                const baseOpts = {
+                    color: lineOpts.color || '#3b82f6',
+                    weight: w,
+                    fillColor: lineOpts.color || '#3b82f6',
+                    fillOpacity: 0.08,
+                    stroke: false, // battalion outline is custom; brigade opts below force stroke
+                    interactive: false,
+                    pane: 'autoFlankAreaPane',
+                    className: 'auto-flank-area'
+                };
+                const brigadeOpts = { ...baseOpts, stroke: true };
+
+                const brigPieces = [];
+                const batPieces = [];
+                const seamChords = [];
+                const dividerChords = [];
+
+                const pushPiece = (arr, rings) => {
+                    if (!rings || !rings[0] || rings[0].length < 3) return;
+                    arr.push(rings);
+                };
+
+                const pieceKey = (rings) => {
+                    const o = rings?.[0];
+                    if (!o || !o.length) return '';
+                    // stable-ish key from first vertex (inputs already rounded in clipPolygonByObstacles)
+                    const p = o[0];
+                    return `${p.lat.toFixed(7)},${p.lng.toFixed(7)}:${o.length}`;
+                };
+
+                function sortPiecesStable(arr) {
+                    arr.sort((A, B) => {
+                        const a0 = A?.[0];
+                        const b0 = B?.[0];
+                        const aArea = a0 ? absAreaLatLngRing(a0) : 0;
+                        const bArea = b0 ? absAreaLatLngRing(b0) : 0;
+                        if (aArea !== bArea) return bArea - aArea; // larger first
+                        const ka = pieceKey(A);
+                        const kb = pieceKey(B);
+                        return ka < kb ? -1 : (ka > kb ? 1 : 0);
+                    });
+                }
+
+                for (const poly of clipped) {
+                    const ring = poly.outer;
+                    if (!ring || ring.length < 3) continue;
+                    const split8 = _splitPolygonLatLng(ring, poly.holes || [], seamSegment);
+                    const pieces8 = [];
+                    if (split8?.left) pieces8.push(split8.left);
+                    if (split8?.right) pieces8.push(split8.right);
+                    if (pieces8.length < 2) {
+                        // If seam split fails, treat whole fragment as whichever anchor it's closer to.
+                        const c = centroidLatLngOfRing(ring) || ring[0];
+                        const whole = poly.holes && poly.holes.length ? [ring, ...poly.holes] : [ring];
+                        const isBrig = !!(brigA && pointInPolygonRing(brigA, ring));
+                        const isBat = !!(batA && pointInPolygonRing(batA, ring));
+                        if (isBrig && !isBat) pushPiece(brigPieces, whole);
+                        else if (isBat && !isBrig) pushPiece(batPieces, whole);
+                        else {
+                            const dBat = distM(c, batA);
+                            const dBr = distM(c, brigA);
+                            pushPiece((dBat <= dBr) ? batPieces : brigPieces, whole);
+                        }
+                        continue;
+                    }
+
+                    let sawBat = false;
+                    let sawBrig = false;
+                    for (const p of pieces8) {
+                        const outer = p?.[0];
+                        if (!outer || outer.length < 3) continue;
+                        // Hard rule: anything deeper than the battalion depth belongs to REAR,
+                        // even if anchors are ambiguous after clipping.
+                        if (frontMaskPath && battalionLengthKm != null) {
+                            const c0 = centroidLatLngOfRing(outer) || outer[0];
+                            const dFront = minDistMetersToPolyline(c0, frontMaskPath);
+                            const thresholdM = Math.max(120, battalionLengthKm * 1000 * 0.98);
+                            if (dFront > thresholdM) {
+                                pushPiece(brigPieces, p);
+                                sawBrig = true;
+                                continue;
+                            }
+                        }
+                        const isBrig = !!(brigA && pointInPolygonRing(brigA, outer));
+                        const isBat = !!(batA && pointInPolygonRing(batA, outer));
+                        if (isBrig && !isBat) {
+                            pushPiece(brigPieces, p);
+                            sawBrig = true;
+                            continue;
+                        }
+                        if (isBat && !isBrig) {
+                            pushPiece(batPieces, p);
+                            sawBat = true;
+                            continue;
+                        }
+                        const c = centroidLatLngOfRing(outer) || outer[0];
+                        const dBat = distM(c, batA);
+                        const dBr = distM(c, brigA);
+                        if (dBat < dBr) {
+                            pushPiece(batPieces, p);
+                            sawBat = true;
+                        } else if (dBr < dBat) {
+                            pushPiece(brigPieces, p);
+                            sawBrig = true;
+                        } else {
+                            // Tie: deterministically bias toward REAR so battalion doesn't swallow rear on jitter.
+                            pushPiece(brigPieces, p);
+                            sawBrig = true;
+                        }
+                    }
+
+                    // Only draw the seam border for fragments that actually have BOTH sides.
+                    if (sawBat && sawBrig) {
+                        const chord = splitChordEndpointsLatLng(ring, seamSegment);
+                        if (chord) seamChords.push(chord);
+                    }
+                }
+
+                // Fallback: if rear went missing, reclassify by distance to the scalloped front.
+                if (!brigPieces.length && batPieces.length && frontMaskPath && battalionLengthKm != null) {
+                    const thresholdM = Math.max(100, battalionLengthKm * 1000 * 0.92);
+                    const keepBat = [];
+                    for (const p of batPieces) {
+                        const outer = p?.[0];
+                        if (!outer || outer.length < 3) { keepBat.push(p); continue; }
+                        const c = centroidLatLngOfRing(outer) || outer[0];
+                        const dFront = minDistMetersToPolyline(c, frontMaskPath);
+                        if (dFront > thresholdM) pushPiece(brigPieces, p);
+                        else keepBat.push(p);
+                    }
+                    batPieces.length = 0;
+                    keepBat.forEach(k => batPieces.push(k));
+                }
+
+                // Brigade multipolygon (rear).
+                let rearLayer = null;
+                if (brigPieces.length) {
+                    sortPiecesStable(brigPieces);
+                    const mp = L.polygon(brigPieces, brigadeOpts);
+                    mp._autoFlankLine = true;
+                    mp._autoFlankArea = true;
+                    mp._tmgData = { typeId: 'auto-flank-area', sessionId, tag, lengthKm: (brigadeLengthKm != null ? brigadeLengthKm : lengthKm) };
+                    addToActiveLayer(mp);
+                    result.push(mp);
+                    rearLayer = mp;
+                }
+
+                // Battalion: split each piece by divider, then assign to left/right by closest front anchor.
+                const batLeft = [];
+                const batRight = [];
+                for (const bp of batPieces) {
+                    const outer = bp?.[0];
+                    if (!outer || outer.length < 3) continue;
+                    const holes = bp.slice(1);
+                    let subPieces = [bp];
+                    if (battalionDivider && battalionDivider.length === 2) {
+                        const splitBat = _splitPolygonLatLng(outer, holes, battalionDivider);
+                        const tmp = [];
+                        if (splitBat?.left) tmp.push(splitBat.left);
+                        if (splitBat?.right) tmp.push(splitBat.right);
+                        // Divider chord for this battalion fragment (draw on top later).
+                        // Even if the polygon split fails (collinear / numeric edge-case), the chord still
+                        // gives the correct visible "middle line" the user expects.
+                        const chord = splitChordEndpointsLatLng(outer, battalionDivider);
+                        if (chord) dividerChords.push(chord);
+                        if (tmp.length) {
+                            subPieces = tmp;
+                        } else if (chord && chord.length === 2) {
+                            // Retry split using the actual intersection chord; this is often more stable than a long segment.
+                            const retry = _splitPolygonLatLng(outer, holes, chord);
+                            const tmp2 = [];
+                            if (retry?.left) tmp2.push(retry.left);
+                            if (retry?.right) tmp2.push(retry.right);
+                            if (tmp2.length) subPieces = tmp2;
+                        }
+                    }
+                    for (const sp of subPieces) {
+                        const so = sp?.[0];
+                        if (!so || so.length < 3) continue;
+                        // Safety: never render "front" pieces that are actually deeper than battalion depth.
+                        // (Prevents extra triangles when clipping/splitting creates odd fragments.)
+                        if (frontMaskPath && battalionLengthKm != null) {
+                            const cDepth = centroidLatLngOfRing(so) || so[0];
+                            const dFront = minDistMetersToPolyline(cDepth, frontMaskPath);
+                            const thresholdM = Math.max(120, battalionLengthKm * 1000 * 0.98);
+                            if (dFront > thresholdM) {
+                                pushPiece(brigPieces, sp);
+                                continue;
+                            }
+                        }
+                        // Drop disconnected "front" slivers that don't actually touch the scalloped front line.
+                        // This removes small island/water fragments created by clipping that should not be part of battalion.
+                        if (frontMaskPath && !ringTouchesPolylineInPixels(so, frontMaskPath, 12)) {
+                            continue;
+                        }
+                        const c = centroidLatLngOfRing(so) || so[0];
+                        const dL = distM(c, leftA);
+                        const dR = distM(c, rightA);
+                        if (dL < dR) pushPiece(batLeft, sp);
+                        else if (dR < dL) pushPiece(batRight, sp);
+                        else {
+                            // Tie: deterministically bias left.
+                            pushPiece(batLeft, sp);
+                        }
+                    }
+                }
+
+                const batLen = battalionLengthKm != null ? battalionLengthKm : lengthKm;
+                // If we ended up with multiple battalion subpieces but only one side populated,
+                // force a deterministic split so the front area renders as 2 regions.
+                if ((batLeft.length === 0) !== (batRight.length === 0)) {
+                    const all = batLeft.concat(batRight);
+                    if (all.length >= 2) {
+                        const emptyIsLeft = batLeft.length === 0;
+                        let bestIdx = 0;
+                        let bestScore = -1;
+                        for (let i = 0; i < all.length; i++) {
+                            const o = all[i]?.[0];
+                            if (!o || o.length < 3) continue;
+                            const c = centroidLatLngOfRing(o) || o[0];
+                            const score = Math.abs(distM(c, leftA) - distM(c, rightA));
+                            if (score > bestScore) { bestScore = score; bestIdx = i; }
+                        }
+                        const moved = all.splice(bestIdx, 1)[0];
+                        if (emptyIsLeft) batLeft.push(moved);
+                        else batRight.push(moved);
+                        // Rebuild the non-empty side from remaining pieces.
+                        if (emptyIsLeft) { batRight.length = 0; all.forEach(p => batRight.push(p)); }
+                        else { batLeft.length = 0; all.forEach(p => batLeft.push(p)); }
+                    }
+                }
+                if (batLeft.length) {
+                    sortPiecesStable(batLeft);
+                    addAreaPolygonWithOptionalFrontHidden(batLeft, batLeft[0][0], baseOpts, batLen, anchors, true, frontMaskPath);
+                }
+                if (batRight.length) {
+                    sortPiecesStable(batRight);
+                    addAreaPolygonWithOptionalFrontHidden(batRight, batRight[0][0], baseOpts, batLen, anchors, true, frontMaskPath);
+                }
+
+                // Ensure rear border remains visible (stroke) even if fills overlap.
+                if (rearLayer && typeof rearLayer.bringToFront === 'function') rearLayer.bringToFront();
+
+                // Draw the battalion rear border (the 8km seam) on top so it isn't covered by battalion fills.
+                if (seamChords.length) {
+                    // Deduplicate and stable-sort seam chords.
+                    const keyFor = (seg) => {
+                        const a = seg[0], b = seg[1];
+                        const ax = a.lng.toFixed(7), ay = a.lat.toFixed(7);
+                        const bx = b.lng.toFixed(7), by = b.lat.toFixed(7);
+                        const k1 = `${ax},${ay}`;
+                        const k2 = `${bx},${by}`;
+                        return k1 < k2 ? `${k1}|${k2}` : `${k2}|${k1}`;
+                    };
+                    const uniq = new Map();
+                    seamChords.forEach((seg) => {
+                        if (!seg || seg.length !== 2) return;
+                        uniq.set(keyFor(seg), seg);
+                    });
+                    const ordered = Array.from(uniq.entries()).sort((a, b) => a[0] < b[0] ? -1 : (a[0] > b[0] ? 1 : 0)).map(e => e[1]);
+
+                    ordered.forEach((seg) => {
+                        if (!seg || seg.length !== 2) return;
+                        const seamLine = L.polyline(seg, {
+                            color: baseOpts.color,
+                            weight: baseOpts.weight,
+                            opacity: 1,
+                            interactive: false,
+                            pane: baseOpts.pane,
+                            className: 'auto-flank-area-seam'
+                        });
+                        seamLine._autoFlankLine = true;
+                        seamLine._autoFlankArea = true;
+                        seamLine._tmgData = { typeId: 'auto-flank-area-seam', sessionId, tag, lengthKm: batLen };
+                        addToActiveLayer(seamLine);
+                        result.push(seamLine);
+                        if (typeof seamLine.bringToFront === 'function') seamLine.bringToFront();
+                    });
+                }
+
+                // Draw battalion center divider (between front-left and front-right) on top.
+                if (dividerChords.length) {
+                    const keyFor = (seg) => {
+                        const a = seg[0], b = seg[1];
+                        const ax = a.lng.toFixed(7), ay = a.lat.toFixed(7);
+                        const bx = b.lng.toFixed(7), by = b.lat.toFixed(7);
+                        const k1 = `${ax},${ay}`;
+                        const k2 = `${bx},${by}`;
+                        return k1 < k2 ? `${k1}|${k2}` : `${k2}|${k1}`;
+                    };
+                    const uniq = new Map();
+                    dividerChords.forEach((seg) => {
+                        if (!seg || seg.length !== 2) return;
+                        uniq.set(keyFor(seg), seg);
+                    });
+                    const ordered = Array.from(uniq.entries())
+                        .sort((a, b) => a[0] < b[0] ? -1 : (a[0] > b[0] ? 1 : 0))
+                        .map(e => e[1]);
+                    ordered.forEach((seg) => {
+                        if (!seg || seg.length !== 2) return;
+                        const divLine = L.polyline(seg, {
+                            color: baseOpts.color,
+                            weight: baseOpts.weight,
+                            opacity: 1,
+                            interactive: false,
+                            pane: baseOpts.pane,
+                            className: 'auto-flank-area-divider'
+                        });
+                        divLine._autoFlankLine = true;
+                        divLine._autoFlankArea = true;
+                        divLine._tmgData = { typeId: 'auto-flank-area-divider', sessionId, tag, lengthKm: batLen };
+                        addToActiveLayer(divLine);
+                        result.push(divLine);
+                        if (typeof divLine.bringToFront === 'function') divLine.bringToFront();
+                    });
+                }
+
+                continue;
+            }
+
             for (const poly of clipped) {
                 const ring = poly.outer;
                 if (!ring || ring.length < 3) continue;
@@ -3759,7 +4481,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     weight: w,
                     fillColor: lineOpts.color || '#3b82f6',
                     fillOpacity: role === 'border' ? 0 : 0.08,
-                    stroke: role === 'area' ? false : true,
+                    // Use the polygon's own outline (stroke) instead of drawing a separate border polygon.
+                    stroke: hideFrontEdge ? false : true,
                     interactive: false,
                     pane: 'autoFlankAreaPane',
                     className: 'auto-flank-area'
@@ -3774,12 +4497,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (split && split.right) pieces.push(split.right);
                     if (pieces.length) {
                         for (const areaRings of pieces) {
-                            const areaPoly = L.polygon(areaRings, baseOpts);
-                            areaPoly._autoFlankLine = true;
-                            areaPoly._autoFlankArea = true;
-                            areaPoly._tmgData = { typeId: 'auto-flank-area', sessionId, tag, lengthKm };
-                            addToActiveLayer(areaPoly);
-                            result.push(areaPoly);
+                            const outer = areaRings && areaRings.length ? areaRings[0] : null;
+                            if (!outer || outer.length < 3) continue;
+                            addAreaPolygonWithOptionalFrontHidden(areaRings, outer, baseOpts, lengthKm, anchors, hideFrontEdge, frontMaskPath);
                         }
                         continue;
                     }
@@ -3787,12 +4507,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const areaRings = poly.holes && poly.holes.length > 0 ? [ring, ...poly.holes] : [ring];
-                const areaPoly = L.polygon(areaRings, baseOpts);
-                areaPoly._autoFlankLine = true;
-                areaPoly._autoFlankArea = true;
-                areaPoly._tmgData = { typeId: 'auto-flank-area', sessionId, tag, lengthKm };
-                addToActiveLayer(areaPoly);
-                result.push(areaPoly);
+                addAreaPolygonWithOptionalFrontHidden(areaRings, ring, baseOpts, lengthKm, anchors, hideFrontEdge, frontMaskPath);
             }
         }
         return result;
@@ -4540,7 +5255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.warn('buildSidcPickerIframeSrc: lang read failed', e);
         }
-        return `../vendor/sidc-picker/index.html?lang=${lang}#/APP6`;
+        return `../vendor/sidc-picker/simple.html?lang=${lang}`;
     }
     function syncSidcPickerLocaleToFrame() {
         if (!pickerFrame || !pickerFrame.contentWindow) return;

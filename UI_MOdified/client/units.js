@@ -238,6 +238,23 @@
             // Quick Setup (Army only — shown when creating Army, i.e. no parent)
             if (lvl === 0) show(quickSetupEl); else hide(quickSetupEl);
 
+            // Side selector: only visible when creating a root Army; children always inherit
+            const sideRow = byId('units-side-row');
+            const sideInheritedRow = byId('units-side-inherited');
+            const sideBadge = byId('units-side-inherited-badge');
+            if (lvl === 0) {
+                if (sideRow) sideRow.style.display = '';
+                if (sideInheritedRow) sideInheritedRow.style.display = 'none';
+            } else {
+                if (sideRow) sideRow.style.display = 'none';
+                if (sideInheritedRow) sideInheritedRow.style.display = '';
+                const inherited = u?.side || 'friendly';
+                if (sideBadge) {
+                    sideBadge.textContent = inherited.charAt(0).toUpperCase() + inherited.slice(1);
+                    sideBadge.className = `units-side-badge units-side-${inherited}`;
+                }
+            }
+
             // Generate children (when a unit is selected and it's not Company)
             if (u && u.level < 4) {
                 show(generateSection);
@@ -338,7 +355,7 @@
         }
 
         // ── Open / Close ───────────────────────────────────────────────────────
-        function open() { modal.classList.remove('hidden'); modal.setAttribute('aria-hidden', 'false'); refresh(); }
+        function open() { modal.classList.remove('hidden'); modal.setAttribute('aria-hidden', 'false'); refresh({ collapseAll: true }); }
         function close() { modal.classList.add('hidden'); modal.setAttribute('aria-hidden', 'true'); }
 
         // ── Selection ──────────────────────────────────────────────────────────
@@ -386,13 +403,20 @@
         }
 
         // ── Refresh ────────────────────────────────────────────────────────────
-        async function refresh() {
+        async function refresh({ collapseAll = false } = {}) {
             const incDel = !!includeDeletedCb?.checked;
             try {
                 const data = await apiJson(`/api/units/tree?includeDeleted=${incDel ? 1 : 0}`);
                 state.roots = data.roots || [];
                 state.units = data.units || [];
                 if (state.selectedId && !state.units.find(u => u.id === state.selectedId)) state.selectedId = null;
+                if (collapseAll) {
+                    collapsed = new Set(
+                        state.units
+                            .filter(u => state.units.some(c => c.parent_id === u.id))
+                            .map(u => u.id)
+                    );
+                }
                 updateCtxBar();
                 updateMainPanel();
                 renderTree();
@@ -567,15 +591,26 @@
         backdrop?.addEventListener('click', close);
         closeBtn?.addEventListener('click', close);
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) close(); });
-        refreshBtn?.addEventListener('click', refresh);
+        refreshBtn?.addEventListener('click', () => refresh({ collapseAll: true }));
         includeDeletedCb?.addEventListener('change', refresh);
 
-        byId('units-collapse-all-btn')?.addEventListener('click', () => {
-            flattenTree(state.roots).forEach(n => { if (n._hasChildren) collapsed.add(n.id); });
+        byId('units-toggle-all-btn')?.addEventListener('click', (e) => {
+            const btn = e.currentTarget;
+            const parentIds = state.units.filter(u => state.units.some(c => c.parent_id === u.id)).map(u => u.id);
+            const anyExpanded = parentIds.some(id => !collapsed.has(id));
+            if (anyExpanded) {
+                parentIds.forEach(id => collapsed.add(id));
+                btn.textContent = '▼ Expand All';
+            } else {
+                collapsed.clear();
+                btn.textContent = '▶ Collapse All';
+            }
             renderTree();
         });
-        byId('units-expand-all-btn')?.addEventListener('click', () => { collapsed.clear(); renderTree(); });
         byId('units-new-army-btn')?.addEventListener('click', () => selectUnit(null));
+
+        // Click dead-end "Company selected" card → start a new Army
+        noChildrenEl?.addEventListener('click', () => selectUnit(null));
 
         // Tree
         treeEl.addEventListener('click', async (e) => {

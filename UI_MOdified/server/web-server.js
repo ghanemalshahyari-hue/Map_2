@@ -874,6 +874,7 @@ const server = http.createServer((req, res) => {
                 parentId: r.parent_id || null,
                 sidc: r.sidc || null,
                 unitType: r.unit_type || null,
+                side: r.side || 'friendly',
                 deletedAt: r.deleted_at || null,
                 createdAt: r.created_at,
                 updatedAt: r.updated_at,

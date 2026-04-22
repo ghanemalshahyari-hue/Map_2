@@ -1,0 +1,90 @@
+{
+  "type": "FeatureCollection",
+  "app": {
+    "version": 3,
+    "appName": "tactical-map"
+  },
+  "__layers": [
+    {
+      "id": "layer-1",
+      "name": "Layer 1",
+      "visible": true,
+      "active": true
+    }
+  ],
+  "__folders": [],
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.18231201171876,
+            23.95582258583216
+          ],
+          [
+            52.18231201171876,
+            23.95582258583216
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            52.18231201171876,
+            23.95582258583216
+          ],
+          "latlng2": [
+            52.18231201171876,
+            23.95582258583216
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5,
+          "sessionId": "free-draw-1776814096168-8789"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.23758697509766,
+            23.909379448953462
+          ],
+          [
+            52.23758697509766,
+            23.909379448953462
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            52.23758697509766,
+            23.909379448953462
+          ],
+          "latlng2": [
+            52.23758697509766,
+            23.909379448953462
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5,
+          "sessionId": "free-draw-1776814096168-8789"
+        },
+        "layerId": "layer-1"
+      }
+    }
+  ]
+}

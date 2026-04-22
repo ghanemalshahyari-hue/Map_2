@@ -18,6 +18,74 @@
 
     const PREFIXES = ['ARMY', 'FRC', 'BDE', 'BN', 'CO'];
 
+    // ── Symbol / SIDC mapping tables ────────────────────────────────
+    // APP-6D echelon codes per hierarchy level
+    const ECHELON_BY_LEVEL = { 0: '23', 1: '22', 2: '18', 3: '16', 4: '15' };
+    // Standard identity digit (position 3 of 20-digit SIDC)
+    const IDENTITY_BY_SIDE = { friendly: '3', hostile: '6', neutral: '4', unknown: '1' };
+    // Symbol set (positions 4-5)
+    const SET_BY_DOMAIN   = { Land: '10', Air: '01', Naval: '30', Joint: '10', Support: '10' };
+    // Entity code (positions 10-15) per Land branch
+    const ENTITY_BY_BRANCH = {
+        Infantry:   '121100',
+        Armor:      '120500',
+        Artillery:  '130300',
+        AirDefense: '131500',
+        Engineers:  '121000',
+        Recon:      '121300',
+        Signal:     '121400',
+        Medical:    '140600',
+        Logistics:  '141000',
+        HQ:         '110000',
+    };
+    // Default entity suggestion pool per domain (used when no branch is picked)
+    const ENTITIES_BY_DOMAIN = {
+        Land:    ['110000', '121100', '120500', '130300', '121000', '121300'],
+        Air:     ['110200', '110300', '110100', '120000', '140000', '110000'],
+        Naval:   ['120000', '130000', '140000', '120100', '150000', '110000'],
+        Joint:   ['110000', '121100', '120500', '130300', '110200', '120000'],
+        Support: ['141000', '140600', '121400', '121000', '110000', '141200'],
+    };
+
+    // Reverse lookup: given an entity code, find the branch name (only for Land set)
+    function branchFromEntity(entity) {
+        for (const [name, code] of Object.entries(ENTITY_BY_BRANCH)) {
+            if (code === entity) return name;
+        }
+        return null;
+    }
+
+    function domainFromSet(set) {
+        for (const [name, code] of Object.entries(SET_BY_DOMAIN)) {
+            if (code === set) return name;
+        }
+        return null;
+    }
+
+    function buildSidcFromFields({ side, domain, level, entity }) {
+        const identity = IDENTITY_BY_SIDE[side] || '3';
+        const set      = SET_BY_DOMAIN[domain]  || '10';
+        const echelon  = ECHELON_BY_LEVEL[level] ?? '00';
+        const ent      = entity || '000000';
+        // version(10) + context(0) + identity + set + status(0) + hqtf(0) + echelon(2) + entity(6) + mod1(00) + mod2(00)
+        return '10' + '0' + identity + set + '0' + '0' + echelon + ent + '00' + '00';
+    }
+
+    function sidcEntityShort(sidc) {
+        const s = String(sidc || '').replace(/\D/g, '');
+        if (s.length < 20) return '';
+        const setCode = s.substr(4, 2);
+        const code = s.substr(10, 2) + s.substr(12, 2) + s.substr(14, 2);
+        const std  = window.SIDC_PICKER_STANDARD?.APP6;
+        const list = std?.[setCode]?.['main icon'];
+        if (!list || !list.length) return '';
+        let found = list.find(e => e.code === code);
+        if (!found) found = list.find(e => e.code === code.substr(0, 4) + '00');
+        if (!found) found = list.find(e => e.code === code.substr(0, 2) + '0000');
+        if (!found) return '';
+        return found['entity subtype'] || found['entity type'] || found.entity || '';
+    }
+
     function byId(id) { return document.getElementById(id); }
 
     function escapeHtml(s) {
@@ -102,6 +170,7 @@
         const ctxChildCount  = byId('units-ctx-child-count');
         const ctxSideBadge   = byId('units-ctx-side-badge');
         const editBtn        = byId('units-edit-btn');
+        const placeBtn       = byId('units-place-btn');
 
         // Side selectors
         const sideBtnsEl     = byId('units-side-btns');
@@ -113,12 +182,24 @@
         const creatingUnder   = byId('units-creating-under');
         const domainRow       = byId('units-domain-row');
         const domainBtns      = byId('units-domain-btns');
+        const branchRow       = byId('units-branch-row');
+        const branchBtns      = byId('units-branch-btns');
         const qaNameEl        = byId('units-qa-name');
         const qaCodeEl        = byId('units-qa-code');
         const qaSidcEl        = byId('units-qa-sidc');
         const quickSetupEl    = byId('units-quick-setup');
         const qaErrorEl       = byId('units-qa-error');
         const createBtn       = byId('units-create-btn');
+        const createAddBtn    = byId('units-create-and-add-btn');
+
+        // Symbol assignment section
+        const symbolSection   = byId('units-symbol-section');
+        const symbolPreviewEl = byId('units-symbol-preview');
+        const symbolNameEl    = byId('units-symbol-name');
+        const symbolSidcEl    = byId('units-symbol-sidc');
+        const symbolClearBtn  = byId('units-symbol-clear-btn');
+        const symbolChipsEl   = byId('units-symbol-chips');
+        const symbolPickerBtn = byId('units-symbol-picker-btn');
         const generateSection = byId('units-generate-section');
         const genToggle       = byId('units-gen-toggle');
         const genForm         = byId('units-gen-form');
@@ -141,6 +222,8 @@
         const saveBtn        = byId('units-save-btn');
         const deleteBtn      = byId('units-delete-btn');
         const restoreBtn     = byId('units-restore-btn');
+        const placementRow   = byId('units-edit-placement-row');
+        const unplaceBtn     = byId('units-edit-unplace-btn');
 
         const SIDES = [
             { value: 'friendly', label: 'Friendly' },
@@ -152,7 +235,9 @@
         let state     = { roots: [], units: [], selectedId: null };
         let collapsed = new Set();
         let filterSide = null; // null = show all; 'friendly'|'hostile'|'neutral'|'unknown' = filter
-        let selectedDomain = null; // for Force creation
+        let selectedDomain = null; // 'Land' | 'Air' | 'Naval' | 'Joint' | 'Support'
+        let selectedBranch = null; // 'Infantry' | 'Armor' | ... (ENTITY_BY_BRANCH keys)
+        let selectedSidc   = null; // 20-digit SIDC when user explicitly picks from chip/picker/manual
         let selectedSide   = 'friendly'; // for create form
         let editSelectedSide = 'friendly'; // for edit panel
         let codeCheckTimer = null;
@@ -174,6 +259,11 @@
         }
 
         // ── Context bar ────────────────────────────────────────────────────────
+        function isPlaced(unit) {
+            if (!unit) return false;
+            return unit.placed_at != null || unit.placedAt != null || (unit.lat != null && unit.lng != null);
+        }
+
         function updateCtxBar() {
             const u = getSelected();
             if (u) { hide(ctxRoot); showFlex(ctxSel); } else { show(ctxRoot); hide(ctxSel); }
@@ -191,6 +281,13 @@
                 ctxBreadcrumb.innerHTML = path.length > 1
                     ? path.slice(0, -1).map(p => `<span class="units-bc-item">${escapeHtml(p.name)}</span>`).join('<span class="units-bc-sep">›</span>') + '<span class="units-bc-sep">›</span>'
                     : '';
+            }
+            if (placeBtn) {
+                const placed = isPlaced(u);
+                placeBtn.textContent = placed ? '\u{1F4CD} Re-place' : '\u{1F4CD} Place on map';
+                placeBtn.title = placed
+                    ? 'Click on the map to move this unit to a new position'
+                    : 'Click on the map to place this unit';
             }
         }
 
@@ -213,14 +310,19 @@
                 show(noChildrenEl, 'flex');
                 hide(mainPanel.querySelector('.units-creating-card'));
                 hide(domainRow);
+                hide(branchRow);
+                hide(symbolSection);
                 hide(quickSetupEl);
                 hide(generateSection);
                 if (createBtn) createBtn.style.display = 'none';
+                if (createAddBtn) createAddBtn.style.display = 'none';
                 return;
             }
 
             hide(noChildrenEl);
             if (createBtn) createBtn.style.display = '';
+            if (createAddBtn) createAddBtn.style.display = '';
+            show(symbolSection);
 
             // Creating indicator
             const lbl = levelLabel(lvl);
@@ -232,8 +334,13 @@
             const creatingCard = mainPanel ? mainPanel.querySelector('.units-creating-card') : null;
             if (creatingCard) creatingCard.style.display = '';
 
-            // Domain row (Force only)
-            if (lvl === 1) show(domainRow, 'flex'); else hide(domainRow);
+            // Domain row: shown for Force (1) and below. Army (0) skips domain.
+            if (lvl >= 1) show(domainRow, 'flex'); else hide(domainRow);
+
+            // Branch row: shown for Brigade+ (lvl 2-4) when domain is Land/Joint/Support.
+            // Air/Naval are themselves branch-like, so no separate branch picker there.
+            const branchable = selectedDomain === 'Land' || selectedDomain === 'Joint' || selectedDomain === 'Support';
+            if (lvl >= 2 && branchable) show(branchRow, 'flex'); else hide(branchRow);
 
             // Quick Setup (Army only — shown when creating Army, i.e. no parent)
             if (lvl === 0) show(quickSetupEl); else hide(quickSetupEl);
@@ -265,6 +372,189 @@
 
             // Fresh code
             if (qaCodeEl && !(qaCodeEl.value || '').trim()) qaCodeEl.value = randCode(lvl);
+
+            // Refresh symbol preview + chips whenever the form context changes
+            updateSymbolPreview();
+        }
+
+        // ── Symbol preview + suggested chips ─────────────────────────────────────
+        function getFormContext() {
+            const u   = getSelected();
+            const lvl = getCreateLevel();
+            const side = (lvl === 0) ? selectedSide : (u?.side || 'friendly');
+            // For Army (lvl 0) there is no domain; default to Land so preview still renders.
+            const domain = selectedDomain || (lvl === 0 ? 'Land' : null);
+            return { u, lvl, side, domain };
+        }
+
+        function currentDefaultEntity(ctx) {
+            if (selectedBranch && ENTITY_BY_BRANCH[selectedBranch]) return ENTITY_BY_BRANCH[selectedBranch];
+            const domain = ctx.domain || 'Land';
+            return (ENTITIES_BY_DOMAIN[domain] || ENTITIES_BY_DOMAIN.Land)[0];
+        }
+
+        function currentSidc() {
+            if (selectedSidc) return selectedSidc;
+            const ctx = getFormContext();
+            return buildSidcFromFields({ side: ctx.side, domain: ctx.domain || 'Land', level: ctx.lvl, entity: currentDefaultEntity(ctx) });
+        }
+
+        function renderSymbolInto(el, sidc, size) {
+            if (!el) return;
+            el.innerHTML = '';
+            try {
+                if (window.ms && typeof window.ms.Symbol === 'function') {
+                    const sym = new window.ms.Symbol(sidc, { size, simpleStatusModifier: true });
+                    if (sym.isValid()) {
+                        el.appendChild(sym.asDOM());
+                        return;
+                    }
+                }
+            } catch (_) { /* fall through */ }
+            el.innerHTML = '<div class="units-symbol-preview-placeholder">—</div>';
+        }
+
+        function updateSymbolPreview() {
+            if (!symbolPreviewEl) return;
+            const sidc = currentSidc();
+            renderSymbolInto(symbolPreviewEl, sidc, 52);
+            const label = sidcEntityShort(sidc);
+            if (symbolNameEl) symbolNameEl.textContent = label || (selectedBranch || selectedDomain || 'Auto');
+            if (symbolSidcEl) symbolSidcEl.textContent = selectedSidc ? `SIDC: ${sidc}` : `SIDC: ${sidc} (auto)`;
+            if (symbolClearBtn) symbolClearBtn.style.display = selectedSidc ? '' : 'none';
+            if (qaSidcEl) qaSidcEl.value = selectedSidc || '';
+            renderSuggestedChips();
+        }
+
+        function renderSuggestedChips() {
+            if (!symbolChipsEl) return;
+            const ctx = getFormContext();
+            const domain = ctx.domain || 'Land';
+
+            const entities = [];
+            if (selectedBranch && ENTITY_BY_BRANCH[selectedBranch]) {
+                entities.push(ENTITY_BY_BRANCH[selectedBranch]);
+            }
+            for (const e of (ENTITIES_BY_DOMAIN[domain] || ENTITIES_BY_DOMAIN.Land)) {
+                if (!entities.includes(e)) entities.push(e);
+                if (entities.length >= 6) break;
+            }
+
+            const activeSidc = currentSidc();
+            symbolChipsEl.innerHTML = '';
+            for (const entity of entities) {
+                const sidc = buildSidcFromFields({ side: ctx.side, domain, level: ctx.lvl, entity });
+                const isActive = sidc === activeSidc;
+                const chip = document.createElement('button');
+                chip.type = 'button';
+                chip.className = 'units-symbol-chip' + (isActive ? ' active' : '');
+                chip.setAttribute('data-sidc', sidc);
+                const thumb = document.createElement('span');
+                thumb.className = 'units-symbol-chip-thumb';
+                renderSymbolInto(thumb, sidc, 28);
+                chip.appendChild(thumb);
+                const lbl = document.createElement('span');
+                lbl.className = 'units-symbol-chip-label';
+                lbl.textContent = sidcEntityShort(sidc) || 'Unit';
+                chip.appendChild(lbl);
+                symbolChipsEl.appendChild(chip);
+            }
+        }
+
+        // ── SIDC picker iframe integration ───────────────────────────────────────
+        function openSymbolPicker() {
+            const pickerModal = byId('sidc-picker-modal');
+            const pickerFrame = byId('sidc-picker-frame');
+            if (!pickerModal || !pickerFrame) return;
+            const ctx    = getFormContext();
+            const domain = ctx.domain || 'Land';
+            const side   = IDENTITY_BY_SIDE[ctx.side] || '3';
+            const set    = SET_BY_DOMAIN[domain] || '10';
+            const ech    = ECHELON_BY_LEVEL[ctx.lvl] ?? '00';
+            const ent    = currentDefaultEntity(ctx);
+            let lang = 'en';
+            try {
+                if (typeof window.getCurrentLang === 'function') {
+                    const l = window.getCurrentLang();
+                    if (l === 'ar' || l === 'en') lang = l;
+                }
+            } catch (_) { /* ignore */ }
+            const params = new URLSearchParams({
+                lang,
+                target: 'units',
+                side, domain: set, echelon: ech, entity: ent,
+            });
+            window.__APP_UNITS_CAPTURING_SIDC = true;
+            pickerFrame.src = `../vendor/sidc-picker/simple.html?${params.toString()}`;
+            pickerModal.classList.remove('hidden');
+            pickerModal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeSymbolPicker() {
+            const pickerModal = byId('sidc-picker-modal');
+            const pickerFrame = byId('sidc-picker-frame');
+            if (pickerModal) {
+                pickerModal.classList.add('hidden');
+                pickerModal.setAttribute('aria-hidden', 'true');
+            }
+            window.__APP_UNITS_CAPTURING_SIDC = false;
+            // Restore the default picker URL so the toolbar's Symbol panel doesn't open
+            // pre-filtered with the last units-form state.
+            if (pickerFrame) {
+                let lang = 'en';
+                try {
+                    if (typeof window.getCurrentLang === 'function') {
+                        const l = window.getCurrentLang();
+                        if (l === 'ar' || l === 'en') lang = l;
+                    }
+                } catch (_) { /* ignore */ }
+                pickerFrame.src = `../vendor/sidc-picker/simple.html?lang=${lang}`;
+            }
+        }
+
+        // Message listener: capture SIDC from picker when we asked for it
+        window.addEventListener('message', (ev) => {
+            const d = ev?.data;
+            if (!d || d.type !== 'sidc-picker:sidc') return;
+            if (!window.__APP_UNITS_CAPTURING_SIDC) return;
+            const raw = String(d.sidc || '').replace(/\D/g, '');
+            if (raw.length < 20) return;
+            selectedSidc = raw.slice(0, 20);
+            // Reflect entity back into the branch selector if it's a recognized land branch
+            const setCode = selectedSidc.substr(4, 2);
+            const entity  = selectedSidc.substr(10, 6);
+            if (setCode === '10') {
+                const maybeBranch = branchFromEntity(entity);
+                if (maybeBranch) {
+                    selectedBranch = maybeBranch;
+                    setBranchUI(selectedBranch);
+                }
+            }
+            // Reflect domain back from symbol set
+            const maybeDomain = domainFromSet(setCode);
+            if (maybeDomain && maybeDomain !== selectedDomain) {
+                // Only adopt if it's meaningful for current level (don't override Army)
+                const lvl = getCreateLevel();
+                if (lvl >= 1) {
+                    selectedDomain = maybeDomain;
+                    setDomainUI(selectedDomain);
+                    // Re-run panel logic to show/hide Branch row based on new domain
+                    updateMainPanel();
+                }
+            }
+            closeSymbolPicker();
+            updateSymbolPreview();
+        });
+
+        function setDomainUI(domain) {
+            domainBtns?.querySelectorAll('.units-domain-btn').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('data-domain') === domain);
+            });
+        }
+        function setBranchUI(branch) {
+            branchBtns?.querySelectorAll('.units-domain-btn').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('data-branch') === branch);
+            });
         }
 
         function resetMainForm() {
@@ -272,7 +562,10 @@
             if (qaCodeEl) qaCodeEl.value = '';
             if (qaSidcEl) qaSidcEl.value = '';
             selectedDomain = null;
-            domainBtns?.querySelectorAll('.units-domain-btn').forEach(b => b.classList.remove('active'));
+            selectedBranch = null;
+            selectedSidc   = null;
+            setDomainUI(null);
+            setBranchUI(null);
             // Inherit side from the selected parent so children follow their army's affiliation
             const parentUnit = getSelected();
             selectedSide = (parentUnit?.side) || 'friendly';
@@ -300,6 +593,7 @@
             if (editParentEl) editParentEl.value = u.parent_id || '';
             showEditError('');
             editCodeAvailable = true;
+            if (placementRow) placementRow.style.display = isPlaced(u) ? '' : 'none';
             setEditEnabled();
         }
 
@@ -329,6 +623,7 @@
             if (!createBtn) return;
             const ok = !!(qaNameEl?.value || '').trim() && !!(qaCodeEl?.value || '').trim() && codeAvailable;
             createBtn.disabled = !ok;
+            if (createAddBtn) createAddBtn.disabled = !ok;
         }
 
         function setEditEnabled() {
@@ -390,12 +685,16 @@
                     : `<button class="units-tree-del-btn" data-del-id="${escapeHtml(n.id)}" title="Delete">×</button>`;
                 const nodeSide = n.side || 'friendly';
                 const nodeSideLabel = nodeSide.charAt(0).toUpperCase() + nodeSide.slice(1);
+                const placedBadge = isPlaced(n)
+                    ? `<span class="units-tree-placed" title="Placed on map">&#128205;</span>`
+                    : '';
                 return `<div class="units-tree-row ${isSel ? 'active' : ''} ${deleted ? 'deleted' : ''} units-side-row-${nodeSide}" data-id="${escapeHtml(n.id)}" style="padding-inline-start:${pad}px">
                   ${toggleEl}
                   <span class="units-tree-level units-tree-level-${n.level}">${escapeHtml(lbl)}</span>
                   <span class="units-tree-label">${escapeHtml(n.name)}</span>
                   ${countBadge}
                   <span class="units-tree-spacer"></span>
+                  ${placedBadge}
                   <span class="units-side-dot units-side-dot-${nodeSide}" title="${nodeSideLabel}"></span>
                   ${delBtn}
                 </div>`;
@@ -422,6 +721,9 @@
                 renderTree();
                 setCreateEnabled();
                 setEditEnabled();
+                // Resync map markers with whatever the server now reports
+                // (covers cascaded deletes, SIDC edits, parent moves, etc).
+                window.AppUnitsMap?.reload?.();
             } catch (e) { showQaError(e.message || 'Failed to load units'); }
         }
 
@@ -472,7 +774,17 @@
         }
 
         // ── CREATE ─────────────────────────────────────────────────────────────
-        async function createUnit() {
+        function resolveSidcForSave() {
+            // Prefer explicit user pick; else typed Advanced value (if 20 digits); else computed.
+            if (selectedSidc) return selectedSidc;
+            const typed = (qaSidcEl?.value || '').replace(/\D/g, '');
+            if (typed.length >= 20) return typed.slice(0, 20);
+            // Only auto-save a computed SIDC when the user chose a domain — otherwise leave null.
+            if (!selectedDomain && getCreateLevel() > 0) return null;
+            return currentSidc();
+        }
+
+        async function createUnit({ keepParent = false } = {}) {
             showQaError('');
             const lvl      = getCreateLevel();
             const u        = getSelected();
@@ -484,8 +796,8 @@
                 name:     (qaNameEl?.value || '').trim(),
                 level:    lvl,
                 parentId,
-                sidc:     (qaSidcEl?.value || '').trim() || null,
-                unitType: selectedDomain || null,
+                sidc:     resolveSidcForSave(),
+                unitType: selectedBranch || selectedDomain || null,
                 side:     selectedSide || 'friendly',
             };
             try {
@@ -494,18 +806,24 @@
                 // Quick Setup: auto-create standard forces under a new Army
                 if (lvl === 0) {
                     const forces = [];
-                    if (byId('qs-air')?.checked)   forces.push({ name: 'Air Force',   unitType: 'Air' });
-                    if (byId('qs-land')?.checked)  forces.push({ name: 'Land Force',  unitType: 'Land' });
-                    if (byId('qs-naval')?.checked) forces.push({ name: 'Naval Force', unitType: 'Naval' });
+                    if (byId('qs-air')?.checked)   forces.push({ name: 'Air Force',   unitType: 'Air',   domain: 'Air'   });
+                    if (byId('qs-land')?.checked)  forces.push({ name: 'Land Force',  unitType: 'Land',  domain: 'Land'  });
+                    if (byId('qs-naval')?.checked) forces.push({ name: 'Naval Force', unitType: 'Naval', domain: 'Naval' });
                     for (const f of forces) {
+                        const forceSidc = buildSidcFromFields({
+                            side: row.side || 'friendly',
+                            domain: f.domain,
+                            level: 1,
+                            entity: (ENTITIES_BY_DOMAIN[f.domain] || ENTITIES_BY_DOMAIN.Land)[0],
+                        });
                         await apiJson('/api/units', { method: 'POST', body: JSON.stringify({
                             code: randCode(1), name: f.name, level: 1,
-                            parentId: row.id, sidc: null, unitType: f.unitType,
+                            parentId: row.id, sidc: forceSidc, unitType: f.unitType,
                         })}).catch(() => {});
                     }
                 }
 
-                state.selectedId = row.id;
+                if (!keepParent) state.selectedId = row.id;
                 await refresh();
                 resetMainForm();
                 qaNameEl?.focus();
@@ -560,6 +878,13 @@
                 state.selectedId = row.id;
                 closeEditPanel();
                 await refresh();
+                // Refresh the map marker (name/side/sidc may have changed)
+                if (isPlaced(row)) {
+                    document.dispatchEvent(new CustomEvent('units:updated', { detail: {
+                        id: row.id, name: row.name, code: row.code, level: row.level,
+                        side: row.side, sidc: row.sidc, lat: row.lat, lng: row.lng,
+                    } }));
+                }
             } catch (e) { showEditError(e.message || 'Save failed'); }
         }
 
@@ -570,6 +895,7 @@
             showEditError('');
             try {
                 await apiJson(`/api/units/${encodeURIComponent(u.id)}/delete`, { method: 'POST', body: '{}' });
+                document.dispatchEvent(new CustomEvent('units:removed', { detail: { unitId: u.id } }));
                 state.selectedId = null;
                 closeEditPanel();
                 await refresh();
@@ -677,12 +1003,44 @@
         deleteBtn?.addEventListener('click',  deleteUnit);
         restoreBtn?.addEventListener('click', restoreUnit);
 
+        // Place on map — close the modal, hand off to units-map.js
+        placeBtn?.addEventListener('click', () => {
+            const u = getSelected();
+            if (!u || !window.AppUnitsMap) return;
+            // units-map expects a flat unit descriptor
+            const unitRow = state.units.find(x => x.id === u.id) || u;
+            close();
+            window.AppUnitsMap.beginPlacement({
+                id: u.id, name: u.name, code: u.code, level: u.level,
+                side: u.side, sidc: unitRow.sidc || u.sidc || null,
+            });
+        });
+
+        // Remove from map (edit panel)
+        unplaceBtn?.addEventListener('click', async () => {
+            const u = getSelected();
+            if (!u) return;
+            try {
+                await apiJson(`/api/units/${encodeURIComponent(u.id)}/unplace`, { method: 'POST', body: '{}' });
+                window.AppUnitsMap?.removeMarker?.(u.id);
+                if (placementRow) placementRow.style.display = 'none';
+                await refresh();
+            } catch (e) { showEditError(e.message || 'Failed to remove from map'); }
+        });
+
+        // React when the map finishes placing a unit (dispatched by units-map.js)
+        document.addEventListener('units:placed', () => { refresh().catch(() => {}); });
+
         // Side buttons (create form)
         sideBtnsEl?.addEventListener('click', (e) => {
             const btn = e.target?.closest?.('.units-side-btn');
             if (!btn) return;
             selectedSide = btn.getAttribute('data-side') || 'friendly';
             setSideUI(sideBtnsEl, selectedSide);
+            // An explicit side change invalidates a previously-picked SIDC, whose identity
+            // digit would otherwise contradict the new side.
+            selectedSidc = null;
+            updateSymbolPreview();
         });
 
         // Side buttons (edit panel)
@@ -700,11 +1058,75 @@
             const domain = btn.getAttribute('data-domain');
             if (selectedDomain === domain) {
                 selectedDomain = null;
-                btn.classList.remove('active');
             } else {
                 selectedDomain = domain;
-                domainBtns.querySelectorAll('.units-domain-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+            }
+            setDomainUI(selectedDomain);
+            // Changing domain invalidates branch and any explicit SIDC pick
+            selectedBranch = null;
+            setBranchUI(null);
+            selectedSidc = null;
+            updateMainPanel();
+        });
+
+        // Branch buttons
+        branchBtns?.addEventListener('click', (e) => {
+            const btn = e.target?.closest?.('.units-domain-btn');
+            if (!btn) return;
+            const branch = btn.getAttribute('data-branch');
+            if (selectedBranch === branch) {
+                selectedBranch = null;
+            } else {
+                selectedBranch = branch;
+            }
+            setBranchUI(selectedBranch);
+            selectedSidc = null; // branch change → re-auto-suggest
+            updateSymbolPreview();
+        });
+
+        // Symbol suggestion chips
+        symbolChipsEl?.addEventListener('click', (e) => {
+            const chip = e.target?.closest?.('.units-symbol-chip');
+            if (!chip) return;
+            const sidc = chip.getAttribute('data-sidc');
+            if (!sidc) return;
+            selectedSidc = sidc;
+            // Reflect the entity back to branch selector when we can
+            const entity = sidc.substr(10, 6);
+            const maybeBranch = branchFromEntity(entity);
+            if (maybeBranch) {
+                selectedBranch = maybeBranch;
+                setBranchUI(selectedBranch);
+            }
+            updateSymbolPreview();
+        });
+
+        // Clear (reset to auto)
+        symbolClearBtn?.addEventListener('click', () => {
+            selectedSidc = null;
+            updateSymbolPreview();
+        });
+
+        // Open full library
+        symbolPickerBtn?.addEventListener('click', openSymbolPicker);
+
+        // Clear the capture flag if the picker is closed via its own backdrop/close button
+        byId('sidc-picker-close')?.addEventListener('click', () => {
+            if (window.__APP_UNITS_CAPTURING_SIDC) closeSymbolPicker();
+        });
+        byId('sidc-picker-close-btn')?.addEventListener('click', () => {
+            if (window.__APP_UNITS_CAPTURING_SIDC) closeSymbolPicker();
+        });
+
+        // Advanced SIDC manual input
+        qaSidcEl?.addEventListener('input', () => {
+            const raw = (qaSidcEl.value || '').replace(/\D/g, '');
+            if (raw.length >= 20) {
+                selectedSidc = raw.slice(0, 20);
+                updateSymbolPreview();
+            } else if (!raw) {
+                selectedSidc = null;
+                updateSymbolPreview();
             }
         });
 
@@ -729,14 +1151,27 @@
             }
         });
         qaCodeEl?.addEventListener('keydown', (e) => { if (e.key === 'Enter') createUnit(); });
-        createBtn?.addEventListener('click', createUnit);
+        createBtn?.addEventListener('click', () => createUnit());
+        createAddBtn?.addEventListener('click', () => createUnit({ keepParent: true }));
 
         // Initial state
-        hide(ctxSel); hide(editPanel); hide(noChildrenEl); hide(domainRow); hide(quickSetupEl); hide(generateSection);
+        hide(ctxSel); hide(editPanel); hide(noChildrenEl); hide(domainRow); hide(branchRow); hide(quickSetupEl); hide(generateSection);
         show(ctxRoot); show(mainPanel);
         updateMainPanel();
         setCreateEnabled();
+
+        // Expose a way to open the modal on a specific unit (used by map marker popups)
+        publicApi.open = async (unitId) => {
+            modal.classList.remove('hidden');
+            modal.setAttribute('aria-hidden', 'false');
+            await refresh({ collapseAll: true });
+            if (unitId && state.units.find(x => x.id === unitId)) {
+                selectUnit(unitId);
+                openEditPanel();
+            }
+        };
     }
 
-    window.AppUnits = { init };
+    const publicApi = { init };
+    window.AppUnits = publicApi;
 })();

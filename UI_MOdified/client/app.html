@@ -26,6 +26,11 @@
                     دردشة
                 </button>
                 <button id="lang-toggle-btn" class="header-btn" type="button" title="Switch language">عربي</button>
+                <div id="server-account-bar" class="server-account-bar hidden" aria-label="Server plans">
+                    <select id="server-plan-select" class="glass-select server-plan-select" title="Plans"></select>
+                    <button type="button" id="server-new-plan-btn" class="header-btn" title="New plan">+ Plan</button>
+                    <button type="button" id="server-logout-btn" class="header-btn" title="Logout">Logout</button>
+                </div>
                 <button id="theme-toggle-btn" class="header-btn" type="button" title="تبديل الوضع الفاتح/الداكن">☀</button>
                 <button id="settings-toggle-btn" class="header-btn" type="button" title="الإعدادات والأدوات">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -654,6 +659,21 @@
                         <div class="panel-section">
                             <div class="inline-hint" id="shapes-hint" data-i18n="shapes-panel-bottom-hint">Click two opposite corners to draw a rectangle.</div>
                         </div>
+                        <details class="panel-section advanced-details" id="clip-tool-section">
+                            <summary class="details-summary">Clip polygons</summary>
+                            <div style="margin-top:8px;">
+                                <label class="field-label">Operation</label>
+                                <div style="display:flex; gap:12px; margin-bottom:8px;">
+                                    <label><input type="radio" name="clip-op" value="intersect" checked> Intersect</label>
+                                    <label><input type="radio" name="clip-op" value="difference"> Difference</label>
+                                </div>
+                                <div style="display:flex; gap:8px;">
+                                    <button id="clip-start-btn" class="glass-btn secondary" type="button">Start clip</button>
+                                    <button id="clip-cancel-btn" class="glass-btn secondary" type="button" disabled>Cancel</button>
+                                </div>
+                                <div class="inline-hint" id="clip-status-hint" style="margin-top:8px;">Pick an operation and press Start.</div>
+                            </div>
+                        </details>
                     </section>
                 </div>
 
@@ -689,7 +709,7 @@
                             </div>
                         </div>
                     </details>
-                    <input type="file" id="import-layers-input" accept=".json" style="display:none">
+                    <input type="file" id="import-layers-input" accept=".json,.geojson" style="display:none">
                 </section>
 
                 <!-- ▸ SETTINGS PANEL (backward-compat shell — selects moved to utility panel) -->
@@ -962,7 +982,10 @@
                                     <span id="units-ctx-child-count" class="units-ctx-child-count"></span>
                                 </div>
                             </div>
-                            <button type="button" id="units-edit-btn" class="units-edit-btn">&#9998;&nbsp;Edit</button>
+                            <div class="units-ctx-actions">
+                                <button type="button" id="units-place-btn" class="units-place-btn" title="Click on the map to place this unit">&#128205;&nbsp;Place on map</button>
+                                <button type="button" id="units-edit-btn" class="units-edit-btn">&#9998;&nbsp;Edit</button>
+                            </div>
                         </div>
                     </div>
 
@@ -997,15 +1020,32 @@
                             </div>
                         </div>
 
-                        <!-- Domain selector (Force level only) -->
+                        <!-- Domain selector (Force+ level) -->
                         <div id="units-domain-row" class="units-domain-row" style="display:none">
-                            <div class="units-domain-label">Domain / Branch</div>
+                            <div class="units-domain-label">Domain</div>
                             <div class="units-domain-btns" id="units-domain-btns">
-                                <button type="button" class="units-domain-btn" data-domain="Air">&#9992; Air</button>
                                 <button type="button" class="units-domain-btn" data-domain="Land">&#9878; Land</button>
+                                <button type="button" class="units-domain-btn" data-domain="Air">&#9992; Air</button>
                                 <button type="button" class="units-domain-btn" data-domain="Naval">&#9875; Naval</button>
+                                <button type="button" class="units-domain-btn" data-domain="Joint">&#9678; Joint</button>
                                 <button type="button" class="units-domain-btn" data-domain="Support">&#9671; Support</button>
-                                <button type="button" class="units-domain-btn" data-domain="Artillery">&#9675; Artillery</button>
+                            </div>
+                        </div>
+
+                        <!-- Branch selector (Brigade+ level, Land/Joint/Support domains) -->
+                        <div id="units-branch-row" class="units-domain-row" style="display:none">
+                            <div class="units-domain-label">Branch / Function</div>
+                            <div class="units-domain-btns" id="units-branch-btns">
+                                <button type="button" class="units-domain-btn" data-branch="Infantry">Infantry</button>
+                                <button type="button" class="units-domain-btn" data-branch="Armor">Armor</button>
+                                <button type="button" class="units-domain-btn" data-branch="Artillery">Artillery</button>
+                                <button type="button" class="units-domain-btn" data-branch="AirDefense">Air Defense</button>
+                                <button type="button" class="units-domain-btn" data-branch="Engineers">Engineers</button>
+                                <button type="button" class="units-domain-btn" data-branch="Recon">Recon</button>
+                                <button type="button" class="units-domain-btn" data-branch="Signal">Signal</button>
+                                <button type="button" class="units-domain-btn" data-branch="Medical">Medical</button>
+                                <button type="button" class="units-domain-btn" data-branch="Logistics">Logistics</button>
+                                <button type="button" class="units-domain-btn" data-branch="HQ">HQ / C2</button>
                             </div>
                         </div>
 
@@ -1021,12 +1061,26 @@
                             </div>
                         </div>
 
-                        <!-- SIDC -->
-                        <div class="units-qa-fields">
-                            <div class="field" style="grid-column:1/-1">
-                                <label class="field-label" for="units-qa-sidc">SIDC <small class="field-hint">(optional)</small></label>
-                                <input id="units-qa-sidc" type="text" class="glass-input" maxlength="60" autocomplete="off" spellcheck="false" />
+                        <!-- Symbol Assignment -->
+                        <div class="units-symbol-section" id="units-symbol-section">
+                            <div class="units-symbol-header">
+                                <div class="units-domain-label">Symbol</div>
+                                <button type="button" id="units-symbol-picker-btn" class="units-symbol-picker-btn">&#128269; Browse full library</button>
                             </div>
+                            <div class="units-symbol-body">
+                                <div class="units-symbol-preview" id="units-symbol-preview"></div>
+                                <div class="units-symbol-info">
+                                    <div class="units-symbol-name" id="units-symbol-name">&mdash;</div>
+                                    <div class="units-symbol-sidc" id="units-symbol-sidc">SIDC: (auto)</div>
+                                    <button type="button" id="units-symbol-clear-btn" class="units-symbol-clear-btn" style="display:none">Reset to auto</button>
+                                </div>
+                            </div>
+                            <div class="units-symbol-chips-label">Suggested for this unit:</div>
+                            <div class="units-symbol-chips" id="units-symbol-chips"></div>
+                            <details class="units-symbol-advanced">
+                                <summary>Advanced &mdash; enter SIDC manually</summary>
+                                <input id="units-qa-sidc" type="text" class="glass-input" maxlength="60" autocomplete="off" spellcheck="false" placeholder="20-digit SIDC, e.g. 10031018121100000000" />
+                            </details>
                         </div>
 
                         <!-- Quick Setup (Army only) -->
@@ -1042,8 +1096,11 @@
                         <!-- Error -->
                         <div id="units-qa-error" class="units-error" style="display:none" role="alert"></div>
 
-                        <!-- Create button -->
-                        <button type="button" id="units-create-btn" class="glass-btn units-create-btn" disabled>+ Create Army</button>
+                        <!-- Create buttons -->
+                        <div class="units-create-row">
+                            <button type="button" id="units-create-btn" class="glass-btn units-create-btn" disabled>+ Create Army</button>
+                            <button type="button" id="units-create-and-add-btn" class="glass-btn secondary units-create-add-btn" disabled title="Create and keep this parent selected so you can quickly add another sibling">+ Create &amp; Add Another</button>
+                        </div>
                         <div class="units-qa-hint">Press <kbd>Enter</kbd> in the name field to create quickly.</div>
 
                         <!-- Generate Children (non-Company units that are selected) -->
@@ -1133,6 +1190,10 @@
                             </div>
                             <div id="units-edit-error" class="units-error" style="display:none" role="alert"></div>
                             <button type="button" id="units-save-btn" class="glass-btn units-save-btn">&#10004; Save Changes</button>
+                            <div id="units-edit-placement-row" class="units-edit-placement-row" style="display:none">
+                                <span class="units-edit-placement-status">&#128205; Placed on map</span>
+                                <button type="button" id="units-edit-unplace-btn" class="glass-btn secondary">Remove from map</button>
+                            </div>
                             <div class="units-danger-zone">
                                 <div class="units-danger-divider"></div>
                                 <div class="units-danger-row">
@@ -1219,11 +1280,16 @@
     <!-- ═══════════ SCRIPTS ═══════════ -->
     <script src="sidc-data.js"></script>
     <script src="config.js"></script>
+    <script src="server-sync.js"></script>
     <script src="identity.js"></script>
     <script src="utils.js"></script>
     <script src="symbology.js"></script>
     <script src="graphics.js"></script>
-    <script src="io.js"></script>
+    <script src="geo-coords.js?v=3"></script>
+    <script src="plan-migrate.js?v=3"></script>
+    <script src="../lib/turf.min.js?v=3"></script>
+    <script src="geo-convert.js?v=3"></script>
+    <script src="io.js?v=4"></script>
     <script src="popups.js"></script>
     <script src="dialog.js"></script>
     <script src="chat.js"></script>
@@ -1237,7 +1303,8 @@
     <script src="free_draw_signature.js?v=3"></script>
     <script src="../lib/milsymbol.js"></script>
     <script src="map-engine.js"></script>
-    <script src="app.js?v=22"></script>
+    <script src="app.js?v=27"></script>
+    <script src="units-map.js"></script>
     <script src="tool-rail.js"></script>
 
     <!-- New modular panel system (ES modules — run after app.js) -->
@@ -1248,6 +1315,7 @@
     <script type="module" src="ui/panels/draw-panel.js"></script>
     <script type="module" src="ui/panels/erase-panel.js"></script>
     <script type="module" src="ui/panels/shapes-panel.js"></script>
+    <script type="module" src="ui/panels/clip-panel.js"></script>
     <script type="module" src="ui/panels/measure-panel.js"></script>
     <script type="module" src="ui/panels/layers-panel.js"></script>
     <script type="module" src="ui/panels/utility-panel.js"></script>

@@ -313,7 +313,6 @@
   const typeCommonEl   = $("#sp-type-common");
   const typeAllEl      = $("#sp-type-all");
   const typeMoreBtn    = $("#sp-type-more-btn");
-  const domainMoreGrid = $("#sp-domain-more");
   const sizeGridEl     = $("#sp-size-grid");
 
   /* ── Step navigation ─────────────────────────── */
@@ -331,6 +330,7 @@
     const onReview = (n === 6);
     nextBtn.hidden = onReview;
     applyBtn.hidden = !onReview;
+    if (n === 2) renderDomainStep();
     if (n === 3) renderTypeStep();
     if (n === 4) renderSizeStep();
     if (n === 6) renderReview();
@@ -350,6 +350,24 @@
     setSelected("size", state.size);
     setSelected("status", state.status);
     setSelected("role", state.role);
+  }
+
+  /* ── Render: Domain (step 2) ─────────────────── */
+  function renderDomainStep() {
+    $$('[data-field="domain"]').forEach(card => {
+      const set = card.dataset.value;
+      const ico = card.querySelector(".sp-card-ico");
+      if (!ico) return;
+      try {
+        const sidc = "10" + "0" + state.side + set + "0" + "0" + "00" + "000000" + "00" + "00";
+        const sym = new ms.Symbol(sidc, { size: 34, simpleStatusModifier: true });
+        if (sym.isValid()) {
+          ico.innerHTML = "";
+          ico.style.fontSize = "0";
+          ico.appendChild(sym.asDOM());
+        }
+      } catch (_) { /* milsymbol not ready; leave unicode fallback */ }
+    });
   }
 
   /* ── Render: Type (step 3) ───────────────────── */
@@ -571,12 +589,6 @@
       const card = ev.target.closest(`[data-field="${field}"]`);
       if (!card) return;
       const val = card.dataset.value;
-      if (val === "__more") {
-        if (field === "domain") {
-          domainMoreGrid.hidden = !domainMoreGrid.hidden;
-        }
-        return;
-      }
       state[field] = val;
       setSelected(field, val);
       updatePreview();
@@ -584,8 +596,27 @@
     });
   }
 
+  function applyInitialQueryParams() {
+    // When embedded from the Units modal, side/domain/echelon/entity come via URL
+    // so the picker opens pre-aligned with what the user has chosen so far.
+    const q = qs();
+    const validSides   = { "1": 1, "3": 1, "4": 1, "6": 1 };
+    const validSets    = { "01": 1, "02": 1, "05": 1, "10": 1, "11": 1, "15": 1, "20": 1, "25": 1, "27": 1, "30": 1, "35": 1, "36": 1, "40": 1 };
+    if (q.side && validSides[q.side]) state.side = q.side;
+    if (q.domain && validSets[q.domain]) state.domain = q.domain;
+    if (q.echelon && /^\d{2}$/.test(q.echelon)) state.size = q.echelon;
+    if (q.entity && /^\d{6}$/.test(q.entity)) state.type = q.entity;
+    // Prefer starting on Type step when caller supplied side+domain but left entity at default.
+    if (q.target === "units") {
+      if (q.entity && q.entity !== "000000") return 6;  // jump to Review
+      if (q.side && q.domain) return 3;                 // jump to Type
+    }
+    return 1;
+  }
+
   function init() {
     applyI18n();
+    const startStep = applyInitialQueryParams();
 
     // Header actions
     advancedBtn.addEventListener("click", () => {
@@ -613,19 +644,17 @@
       if (n <= state.step || li.classList.contains("done")) showStep(n);
     });
 
-    // Card pickers
-    bindCardClick("side",   () => showStep(2));
-    bindCardClick("domain", (val) => {
+    // Card pickers — selection only; advance via Next button
+    bindCardClick("side",   () => { /* wait for Next */ });
+    bindCardClick("domain", () => {
       // Reset dependent selections when domain changes
       state.type = "000000";
       state.size = "00";
-      if (val === "__more") return;
-      showStep(3);
     });
-    bindCardClick("type",   () => showStep(4));
-    bindCardClick("size",   () => showStep(5));
-    bindCardClick("status", () => { /* stay on step 5 */ });
-    bindCardClick("role",   () => { /* stay on step 5 */ });
+    bindCardClick("type",   () => { /* wait for Next */ });
+    bindCardClick("size",   () => { /* wait for Next */ });
+    bindCardClick("status", () => { /* wait for Next */ });
+    bindCardClick("role",   () => { /* wait for Next */ });
 
     // More-types toggle
     typeMoreBtn.addEventListener("click", () => {
@@ -670,7 +699,7 @@
 
     reflectSelections();
     updatePreview();
-    showStep(1);
+    showStep(startStep || 1);
   }
 
   function publishSidc(sidc) {

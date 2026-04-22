@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="landing-html">
+<html lang="ar" dir="rtl" class="landing-html" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -7,10 +7,9 @@
     <title>rmooz — رموز</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Shared landing backdrop: side gradients + carbon weave (fills img letterboxing from object-fit: contain) */
         html.landing-html,
         body.landing-html,
-        .landing-hit,
+        .landing-shell,
         .landing-logo {
             background-color: #121212;
             background-image:
@@ -58,48 +57,100 @@
         html.landing-html,
         body.landing-html {
             margin: 0;
-            overflow: hidden;
-            height: 100%;
+            min-height: 100%;
+            height: auto;
+            color: var(--text-main, #e5e7eb);
         }
 
-        .landing-hit {
-            position: fixed;
-            inset: 0;
-            display: block;
-            margin: 0;
-            padding: 0;
+        .landing-shell {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 24px 16px 32px;
             box-sizing: border-box;
-            text-decoration: none;
-            color: inherit;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        .landing-hit:focus {
-            outline: none;
-        }
-
-        .landing-hit:focus-visible {
-            outline: 3px solid var(--accent);
-            outline-offset: -3px;
+        .landing-brand {
+            flex: 0 1 auto;
+            width: min(420px, 88vw);
+            max-height: min(40vh, 280px);
         }
 
         .landing-logo {
             display: block;
             width: 100%;
-            height: 100%;
+            height: auto;
+            max-height: min(40vh, 280px);
             object-fit: contain;
             object-position: center;
-            pointer-events: none;
-            user-select: none;
+            border-radius: var(--radius, 12px);
+        }
+
+        .landing-auth-panel {
+            width: min(400px, 100%);
+            padding: 22px 24px;
+            border-radius: 14px;
+            border: 1px solid var(--panel-border, rgba(148, 163, 184, 0.2));
+            box-sizing: border-box;
+        }
+
+        .landing-auth-title {
+            margin: 0 0 18px;
+            font-size: 1.25rem;
+        }
+
+        .landing-auth-label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+        }
+
+        .landing-auth-label input {
+            width: 100%;
+            margin-top: 6px;
+            box-sizing: border-box;
+        }
+
+        .landing-auth-err {
+            min-height: 1.2em;
+            color: #f87171;
+            font-size: 0.88rem;
+            margin: 6px 0;
+        }
+
+        .landing-auth-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 14px;
         }
     </style>
+    <script defer src="landing-auth.js"></script>
 </head>
 
 <body class="landing-html">
-    <a href="app.html" class="landing-hit" aria-label="Continue to workspace">
-        <img src="../assets/brand-logo.jpeg" alt="" class="landing-logo" decoding="async">
-    </a>
+    <div class="landing-shell">
+        <div class="landing-brand">
+            <img src="../assets/brand-logo.jpeg" alt="" class="landing-logo" decoding="async">
+        </div>
+        <div class="landing-auth-panel glass-panel" id="rmooz-landing-auth">
+            <h1 class="landing-auth-title">Sign in</h1>
+            <label class="landing-auth-label">Username
+                <input type="text" id="rmooz-landing-user" autocomplete="username" class="glass-input">
+            </label>
+            <label class="landing-auth-label">Password
+                <input type="password" id="rmooz-landing-pass" autocomplete="current-password" class="glass-input">
+            </label>
+            <p id="rmooz-landing-err" class="landing-auth-err" role="alert"></p>
+            <div class="landing-auth-actions">
+                <button type="button" id="rmooz-landing-submit" class="glass-btn primary">Login</button>
+                <button type="button" id="rmooz-landing-register" class="glass-btn secondary">Register</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

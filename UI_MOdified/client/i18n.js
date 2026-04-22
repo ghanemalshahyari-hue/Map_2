@@ -1203,6 +1203,9 @@
         currentLang = lang;
         localStorage.setItem(STORAGE_KEY, lang);
         applyLanguage();
+        if (window.rmoozServerSync?.isHttpOrigin && typeof window.rmoozServerSync.schedulePushPreferences === 'function') {
+            window.rmoozServerSync.schedulePushPreferences();
+        }
     };
 
     function applyLanguage() {

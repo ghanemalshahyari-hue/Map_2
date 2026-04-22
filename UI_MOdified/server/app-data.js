@@ -1,19 +1,25 @@
 /**
  * Unified app SQLite (auth, plans metadata, prefs, chat) + units in one file.
- * Plan bodies live as JSON files under DATA_DIR/users/<userId>/plans/<planId>.json
+ * Plan bodies live as GeoJSON files under DATA_DIR/users/<userId>/plans/<planId>.geojson
+ * (legacy .json files are auto-migrated to .geojson at startup and on first write).
  */
 'use strict';
 
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const planMigrate = require('../client/plan-migrate.js');
 
 const SESSION_COOKIE = 'rmooz_session';
 const SESSION_MAX_AGE_SEC = 7 * 24 * 60 * 60;
+// Canonical empty plan — a valid GeoJSON FeatureCollection (v3). All new
+// plans are written to disk in this shape with the .geojson extension.
 const EMPTY_PLAN_JSON = JSON.stringify({
-    version: 2,
-    folders: [],
-    layers: [{ id: 'layer-1', name: 'Layer 1', visible: true, active: true, elements: [] }]
+    type: 'FeatureCollection',
+    app: { version: 3, appName: 'tactical-map' },
+    __layers: [{ id: 'layer-1', name: 'Layer 1', visible: true, active: true }],
+    __folders: [],
+    features: []
 }, null, 2);
 
 let _db = null;
@@ -79,10 +85,29 @@ function planDirForUser(userId) {
     return dir;
 }
 
+// Canonical storage path uses .geojson. Reads fall back to legacy .json for
+// files that haven't been migrated yet (migrateLegacyPlanFiles handles bulk
+// rename at startup; the PUT handler also rewrites to .geojson on first save).
 function planFilePath(userId, planId) {
     const pid = String(planId || '').replace(/[^a-zA-Z0-9-]/g, '');
     if (!pid) throw new Error('invalid plan');
+    return path.join(planDirForUser(userId), pid + '.geojson');
+}
+
+function legacyPlanFilePath(userId, planId) {
+    const pid = String(planId || '').replace(/[^a-zA-Z0-9-]/g, '');
+    if (!pid) throw new Error('invalid plan');
     return path.join(planDirForUser(userId), pid + '.json');
+}
+
+// Return whichever of the two plan-file paths exists, preferring the modern
+// .geojson. Used by GET / DELETE paths that need to find the current file.
+function resolvePlanFilePath(userId, planId) {
+    const modern = planFilePath(userId, planId);
+    if (fs.existsSync(modern)) return modern;
+    const legacy = legacyPlanFilePath(userId, planId);
+    if (fs.existsSync(legacy)) return legacy;
+    return modern; // caller handles ENOENT
 }
 
 function atomicWriteFile(filePath, contents) {
@@ -287,6 +312,9 @@ function createSchema(db) {
         );
     `);
     try { db.exec(`ALTER TABLE units ADD COLUMN side TEXT NULL DEFAULT 'friendly'`); } catch (_) {}
+    try { db.exec(`ALTER TABLE units ADD COLUMN lat REAL NULL`); } catch (_) {}
+    try { db.exec(`ALTER TABLE units ADD COLUMN lng REAL NULL`); } catch (_) {}
+    try { db.exec(`ALTER TABLE units ADD COLUMN placed_at TEXT NULL`); } catch (_) {}
 }
 
 function ensureBootstrapUser(db) {
@@ -320,7 +348,68 @@ function initAppData(opts) {
     migrateLegacyUnits(_db);
     migrateLegacyChatFromFiles(_db, _dataDir);
     ensureBootstrapUser(_db);
+    migrateLegacyPlanFiles();
     return _db;
+}
+
+// One-shot startup migration: every DATA_DIR/users/<uid>/plans/*.json is
+// renamed to .geojson, and v2 content (the legacy `{version:2,layers:...}`
+// shape) is upgraded in place to a v3 GeoJSON FeatureCollection. Safe to
+// re-run — files already ending in .geojson are skipped.
+function migrateLegacyPlanFiles() {
+    if (!_dataDir) return;
+    const usersDir = path.join(_dataDir, 'users');
+    let userDirs;
+    try { userDirs = fs.readdirSync(usersDir, { withFileTypes: true }); }
+    catch { return; }
+    let renamed = 0, upgraded = 0;
+    for (const ent of userDirs) {
+        if (!ent.isDirectory()) continue;
+        const plansDir = path.join(usersDir, ent.name, 'plans');
+        let files;
+        try { files = fs.readdirSync(plansDir); }
+        catch { continue; }
+        for (const name of files) {
+            if (!name.endsWith('.json')) continue;
+            const srcPath = path.join(plansDir, name);
+            const dstPath = path.join(plansDir, name.slice(0, -5) + '.geojson');
+            // If both exist (unlikely), prefer the already-migrated .geojson
+            // and drop the legacy twin.
+            if (fs.existsSync(dstPath)) {
+                try { fs.unlinkSync(srcPath); } catch {}
+                continue;
+            }
+            let txt;
+            try { txt = fs.readFileSync(srcPath, 'utf8'); }
+            catch { continue; }
+            let parsed;
+            try { parsed = JSON.parse(txt); }
+            catch {
+                // Unparsable file — rename to preserve data, don't touch content.
+                try { fs.renameSync(srcPath, dstPath); renamed++; }
+                catch {}
+                continue;
+            }
+            let out;
+            if (planMigrate.isV3FeatureCollection(parsed)) {
+                out = parsed;
+            } else if (planMigrate.isV2Plan(parsed)) {
+                try { out = planMigrate.migrateV2PlanToV3(parsed); upgraded++; }
+                catch { out = parsed; }
+            } else {
+                out = parsed; // unknown shape — keep as-is, just change extension
+            }
+            try {
+                atomicWriteFile(dstPath, JSON.stringify(out, null, 2));
+                fs.unlinkSync(srcPath);
+                renamed++;
+            } catch {}
+        }
+    }
+    if (renamed > 0) {
+        // Log only when work actually happened so repeat boots stay quiet.
+        console.log(`[plan-migrate] Renamed ${renamed} .json plan file(s) to .geojson (${upgraded} upgraded from v2 content).`);
+    }
 }
 
 function getDb() {
@@ -619,10 +708,12 @@ function handlePlansApi(req, res, url, pathname, method, sendJson, readJsonBody)
         const sub = pathname.slice(plansPrefix.length + planId.length);
 
         if (method === 'GET' && sub === '') {
-            const fp = planFilePath(user.id, planId);
+            // Resolve to the modern .geojson path first; fall back to the legacy
+            // .json file for plans that predate the format migration.
+            const fp = resolvePlanFilePath(user.id, planId);
             try {
                 const txt = fs.readFileSync(fp, 'utf8');
-                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.writeHead(200, { 'Content-Type': 'application/geo+json; charset=utf-8' });
                 res.end(txt);
             } catch {
                 sendJson(res, 404, { error: 'Plan file missing' });
@@ -633,12 +724,25 @@ function handlePlansApi(req, res, url, pathname, method, sendJson, readJsonBody)
             readBodyText(req, 50 * 1024 * 1024).then(rawStr => {
                 let parsed;
                 try { parsed = JSON.parse(rawStr || '{}'); } catch { return sendJson(res, 400, { error: 'Invalid JSON' }); }
-                if (!parsed || parsed.version !== 2 || !Array.isArray(parsed.layers)) {
+                // Accept either v3 (extended GeoJSON FeatureCollection) or v2
+                // (legacy). Always write v3 to disk — if a cached client sends
+                // v2 we upgrade it before persisting, so the on-disk format
+                // stays canonical GeoJSON regardless of who writes.
+                let toWrite;
+                if (planMigrate.isV3FeatureCollection(parsed)) {
+                    toWrite = parsed;
+                } else if (planMigrate.isV2Plan(parsed)) {
+                    try { toWrite = planMigrate.migrateV2PlanToV3(parsed); }
+                    catch { return sendJson(res, 400, { error: 'Failed to upgrade legacy payload' }); }
+                } else {
                     return sendJson(res, 400, { error: 'Invalid plan format' });
                 }
                 const t = nowIso();
                 try {
-                    atomicWriteFile(planFilePath(user.id, planId), JSON.stringify(parsed, null, 2));
+                    atomicWriteFile(planFilePath(user.id, planId), JSON.stringify(toWrite, null, 2));
+                    // Clean up a lingering .json twin from the first write after
+                    // migration. Best-effort: swallow ENOENT silently.
+                    try { fs.unlinkSync(legacyPlanFilePath(user.id, planId)); } catch {}
                     db.prepare('UPDATE plans SET updated_at=? WHERE id=?').run(t, planId);
                 } catch {
                     return sendJson(res, 500, { error: 'Failed to save plan' });
@@ -661,7 +765,9 @@ function handlePlansApi(req, res, url, pathname, method, sendJson, readJsonBody)
             return true;
         }
         if (method === 'DELETE' && sub === '') {
+            // Remove both the modern .geojson and any lingering legacy .json.
             try { fs.unlinkSync(planFilePath(user.id, planId)); } catch {}
+            try { fs.unlinkSync(legacyPlanFilePath(user.id, planId)); } catch {}
             db.prepare('DELETE FROM plans WHERE id=?').run(planId);
             sendJson(res, 200, { ok: true });
             return true;

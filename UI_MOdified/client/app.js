@@ -142,6 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
         maxZoom: MAP_DEFAULTS.maxZoom
     }).setView([MAP_DEFAULTS.initialLat, MAP_DEFAULTS.initialLng], MAP_DEFAULTS.initialZoom);
 
+    // Expose the Leaflet map so opt-in modules (e.g. units-map.js) can add their
+    // own layers without needing to reach into this IIFE.
+    window.map = map;
+
     L.control.zoom({
         position: 'bottomright'
     }).addTo(map);
@@ -1377,6 +1381,13 @@ document.addEventListener('DOMContentLoaded', () => {
         redoHistory.length = 0;
         if (layersListEl) renderLayersList();
         syncPlacementLayerInteractivity();
+        // If a new obstacle-like element was just added, re-run any active
+        // auto-flank draws so they carve around it. The refresh is debounced.
+        // Skip for auto-flank's own areas (those also pass some obstacle
+        // tests if styled but we flag them explicitly).
+        if (!el._autoFlankLine && !el._autoFlankArea && shouldTreatElementAsRoutingObstacle(el)) {
+            refreshActiveAutoFlanks();
+        }
     }
 
     function removeFromLayer(el, historyOpts) {
@@ -1409,6 +1420,7 @@ document.addEventListener('DOMContentLoaded', () => {
             removeMinefieldDecorations(el);
         }
         clearGeoObstacleHatchLines(el);
+        const wasObstacle = !el._autoFlankLine && !el._autoFlankArea && shouldTreatElementAsRoutingObstacle(el);
         const idx = layer.elements.indexOf(el);
         if (idx >= 0) layer.elements.splice(idx, 1);
         layer.group.removeLayer(el);
@@ -1418,6 +1430,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (layersListEl) renderLayersList();
         scheduleSaveToStorage();
+        // Removing an obstacle means any active auto-flank should reclaim the
+        // previously-carved area; re-run the draw with the latest obstacle set.
+        if (wasObstacle) refreshActiveAutoFlanks();
     }
 
     function createLayer(name) {
@@ -3245,26 +3260,117 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentPolys = subject0.length >= 3 ? [{ ring: subject0, holes: [] }] : [];
         if (currentPolys.length === 0) return [{ outer: ring, holes: [] }];
 
-        for (const obs of polys) {
-            const obsOuter = obs.outer;
-            // Ensure obstacle ring is not self-closed
-            let clipRing = normalizeRingLngLat(obsOuter.slice());
-            if (clipRing.length < 3) continue;
+        // Prefer Turf for the boolean difference: the custom _polyDifference
+        // below only consumes each obstacle's OUTER ring (ignoring holes in
+        // the obstacle) and is numerically fragile on high-vertex rings (the
+        // built-in obstacle MultiPolygon has 2.5k+ vertices + 50 holes).
+        // Turf's difference handles polygon-with-holes natively and is
+        // robust, so we route through it whenever window.turf is available.
+        const turfAvail = (typeof window !== 'undefined'
+            && window.turf && typeof window.turf.difference === 'function'
+            && typeof window.turf.featureCollection === 'function'
+            && typeof window.turf.polygon === 'function');
 
-            const nextPolys = [];
-            for (const poly of currentPolys) {
-                const diffResults = _polyDifference(poly.ring, clipRing);
-                for (const r of diffResults) {
-                    const holes = (poly.holes || []).slice();
-                    if (r._holes) holes.push(...r._holes);
-                    const nr = normalizeRingLngLat(r);
-                    if (nr.length < 3) continue;
-                    const nholes = (holes || []).map(h => normalizeRingLngLat(h)).filter(h => h.length >= 3);
-                    nextPolys.push({ ring: nr, holes: nholes });
-                }
+        function closedRing(r) {
+            if (!r || r.length < 3) return null;
+            const out = r.slice();
+            const f = out[0], l = out[out.length - 1];
+            if (f[0] !== l[0] || f[1] !== l[1]) out.push([f[0], f[1]]);
+            return out;
+        }
+
+        function obstacleToTurfFeature(obs) {
+            const outerC = closedRing(obs.outer);
+            if (!outerC) return null;
+            const holeRings = (obs.holes || [])
+                .map(h => closedRing(h))
+                .filter(h => h && h.length >= 4);
+            try {
+                return window.turf.polygon([outerC, ...holeRings]);
+            } catch { return null; }
+        }
+
+        function polyRecordToTurfFeature(rec) {
+            const outerC = closedRing(rec.ring);
+            if (!outerC) return null;
+            const holeRings = (rec.holes || [])
+                .map(h => closedRing(h))
+                .filter(h => h && h.length >= 4);
+            try {
+                return window.turf.polygon([outerC, ...holeRings]);
+            } catch { return null; }
+        }
+
+        function turfPolyToRecords(feature) {
+            if (!feature || !feature.geometry) return [];
+            const g = feature.geometry;
+            const parts = g.type === 'Polygon' ? [g.coordinates]
+                : (g.type === 'MultiPolygon' ? g.coordinates : []);
+            const out = [];
+            for (const poly of parts) {
+                if (!poly || !poly[0]) continue;
+                const outerOpen = normalizeRingLngLat(poly[0].slice(0, -1));
+                if (outerOpen.length < 3) continue;
+                const holes = poly.slice(1)
+                    .map(h => normalizeRingLngLat(h.slice(0, -1)))
+                    .filter(h => h.length >= 3);
+                out.push({ ring: outerOpen, holes });
             }
-            currentPolys = nextPolys;
-            if (currentPolys.length === 0) break;
+            return out;
+        }
+
+        let turfSucceeded = false;
+        if (turfAvail) {
+            try {
+                let features = currentPolys.map(polyRecordToTurfFeature).filter(Boolean);
+                for (const obs of polys) {
+                    if (features.length === 0) break;
+                    const clipFeat = obstacleToTurfFeature(obs);
+                    if (!clipFeat) continue;
+                    const nextFeatures = [];
+                    for (const subj of features) {
+                        let diff = null;
+                        try {
+                            diff = window.turf.difference(window.turf.featureCollection([subj, clipFeat]));
+                        } catch { diff = null; }
+                        if (!diff) continue; // fully subtracted
+                        if (diff.geometry.type === 'Polygon' || diff.geometry.type === 'MultiPolygon') {
+                            nextFeatures.push(diff);
+                        }
+                    }
+                    features = nextFeatures;
+                }
+                currentPolys = features.flatMap(turfPolyToRecords);
+                turfSucceeded = true;
+            } catch {
+                // Turf path threw — fall through to the custom algorithm.
+                currentPolys = subject0.length >= 3 ? [{ ring: subject0, holes: [] }] : [];
+            }
+        }
+
+        if (!turfSucceeded) {
+            // Custom fallback: outer-only, numerically fragile. Retained so the
+            // function still works before Turf is loaded or if Turf throws.
+            for (const obs of polys) {
+                const obsOuter = obs.outer;
+                let clipRing = normalizeRingLngLat(obsOuter.slice());
+                if (clipRing.length < 3) continue;
+
+                const nextPolys = [];
+                for (const poly of currentPolys) {
+                    const diffResults = _polyDifference(poly.ring, clipRing);
+                    for (const r of diffResults) {
+                        const holes = (poly.holes || []).slice();
+                        if (r._holes) holes.push(...r._holes);
+                        const nr = normalizeRingLngLat(r);
+                        if (nr.length < 3) continue;
+                        const nholes = (holes || []).map(h => normalizeRingLngLat(h)).filter(h => h.length >= 3);
+                        nextPolys.push({ ring: nr, holes: nholes });
+                    }
+                }
+                currentPolys = nextPolys;
+                if (currentPolys.length === 0) break;
+            }
         }
 
         // ── Fragment filtering: preserve anchor-connected fragments ──
@@ -4882,9 +4988,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (drawn === 0) {
                 crit('No valid front line found for auto flank generation. Ensure a scalloped front line exists.');
                 lastAutoFlankModeBySession[stateKey] = null;
+                autoFlankLastOptsBySession[stateKey] = null;
             } else {
                 crit(`Auto-drew flank area (${tag} / ${mode}).`);
                 lastAutoFlankModeBySession[stateKey] = mode;
+                // Remember the exact opts so refreshActiveAutoFlanks() can replay
+                // this draw when an obstacle is added/removed.
+                autoFlankLastOptsBySession[stateKey] = { mode, tag, dist1, dist2 };
                 if (window.freeDrawSignature) {
                     window.freeDrawSignatureStage = 'post-flank';
                     window.freeDrawSignatureActive = false;
@@ -4892,6 +5002,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.freeDrawSignature.syncPostFlankStage();
                     }
                 }
+                // Persist the auto-flank output — addToActiveLayer doesn't trigger
+                // save on its own, and without this the entire overlay is lost on
+                // refresh if the user doesn't perform another save-triggering action.
+                scheduleSaveToStorage();
             }
         } catch (err) {
             console.error('autoDrawCircleXFlankLines', err);
@@ -4961,6 +5075,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.autoDrawCircleXFlankLines = autoDrawCircleXFlankLines;
+    window.refreshActiveAutoFlanks = refreshActiveAutoFlanks;
 
     // Clear auto-flank elements (lines and polygons) that belong to a specific tag
     window.clearAutoFlankLinesByTag = function (tag) {
@@ -4969,6 +5084,13 @@ document.addEventListener('DOMContentLoaded', () => {
             (el instanceof L.Polyline || el instanceof L.Polygon) && el._autoFlankLine &&
             el._tmgData?.sessionId === sessionId && el._tmgData?.tag === tag
         ).forEach(el => removeFromLayer(el));
+        // Drop the stored opts for this tag so a later obstacle change does
+        // not resurrect an auto-flank the user has explicitly dismissed.
+        if (sessionId) {
+            const stateKey = sessionId + '|' + tag;
+            autoFlankLastOptsBySession[stateKey] = null;
+            lastAutoFlankModeBySession[stateKey] = null;
+        }
         const stateKey = sessionId + '|' + tag;
         lastAutoFlankModeBySession[stateKey] = null;
     };
@@ -6167,6 +6289,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let autoFlankDrawInFlight = false;
     // Token per session|tag so we can ignore stale async obstacle-refresh callbacks.
     const autoFlankObstacleRefreshTokenByKey = {};
+    // Full opts captured on each successful auto-flank run, keyed by the same
+    // "<sessionId>|<tag>" stateKey. Used to replay an auto-flank draw when the
+    // set of obstacles changes (new obstacle added, existing one removed) so
+    // the flank stays carved around the latest obstacle geometry.
+    const autoFlankLastOptsBySession = {};
+    let _refreshAutoFlanksTimer = null;
+    function refreshActiveAutoFlanks() {
+        // Debounce: multiple obstacle changes in quick succession should trigger
+        // a single re-run. 120ms is imperceptible but collapses bursts.
+        clearTimeout(_refreshAutoFlanksTimer);
+        _refreshAutoFlanksTimer = setTimeout(() => {
+            const opts = Object.values(autoFlankLastOptsBySession).filter(Boolean);
+            if (opts.length === 0) return;
+            // Replay each session sequentially — autoDrawCircleXFlankLines
+            // guards against re-entrant runs via autoFlankDrawInFlight.
+            (async () => {
+                for (const o of opts) {
+                    try { await autoDrawCircleXFlankLines(o); } catch {}
+                }
+            })();
+        }, 120);
+    }
 
     function nudgePointAtCircleEdge(point, nextPoint) {
         if (!point || !nextPoint) return point;
@@ -7774,6 +7918,78 @@ document.addEventListener('DOMContentLoaded', () => {
     window.getAllLayerElements = getAllElements;
     window.getCurrentDrawLinePolyline = function () { return drawLinePolyline; };
     window.removeFromLayer = (el) => removeFromLayer(el);
+
+    // Bridge for Clip controller (ui/controllers/clip-controller.js). Replaces
+    // `oldEl` in its owning layer with a plain polygon built from a GeoJSON
+    // Polygon or MultiPolygon geometry (coords [lng,lat]). Holes are preserved
+    // (critical for Difference — when the clipper sits inside the target the
+    // result IS a polygon-with-hole; dropping the hole makes the clip look
+    // like a no-op). Style props (color, fillColor, fillOpacity, weight,
+    // dashArray) are copied onto the new polygon. Returns true on success.
+    window.RMOOZ = window.RMOOZ || {};
+    window.RMOOZ.clip = {
+        replaceElementWithPolygonGeometry(oldEl, geometry, style) {
+            if (!oldEl || !geometry) return false;
+            const layer = layers.find(l => l.id === oldEl._layerId);
+            if (!layer) return false;
+            const idx = layer.elements.indexOf(oldEl);
+            if (idx < 0) return false;
+
+            // Normalise to a 3-deep list: [polygon][ring][coord], so a single
+            // Polygon becomes a 1-element list and a MultiPolygon stays as-is.
+            const polysGeo = geometry.type === 'Polygon'
+                ? [geometry.coordinates]
+                : (geometry.type === 'MultiPolygon' ? geometry.coordinates : null);
+            if (!polysGeo) return false;
+
+            const polysLL = polysGeo.map(poly => (
+                (poly || []).map(ring => {
+                    const ll = (ring || [])
+                        .map(c => (c && c.length >= 2) ? L.latLng(c[1], c[0]) : null)
+                        .filter(Boolean);
+                    // Leaflet auto-closes — drop the GeoJSON closing duplicate.
+                    if (ll.length >= 2) {
+                        const f = ll[0], l = ll[ll.length - 1];
+                        if (f.lat === l.lat && f.lng === l.lng) ll.pop();
+                    }
+                    return ll;
+                }).filter(r => r.length >= 3)
+            )).filter(p => p.length >= 1);
+            if (polysLL.length === 0) return false;
+
+            const opts = {
+                color: (style && style.color) || '#3b82f6',
+                weight: (style && style.weight) || 4,
+                fillColor: (style && style.fillColor) || (style && style.color) || '#3b82f6',
+                fillOpacity: (style && style.fillOpacity != null) ? style.fillOpacity : 0.08,
+                dashArray: (style && style.dashArray) || null,
+            };
+            // Single polygon (with optional holes): pass 2-deep array of rings.
+            // Multi-polygon: pass 3-deep nested structure Leaflet expects.
+            const leafletInput = polysLL.length === 1 ? polysLL[0] : polysLL;
+            const newPoly = L.polygon(leafletInput, opts);
+            newPoly._baseLineWeight = opts.weight;
+            newPoly._layerId = layer.id;
+            cleanupElementDecorations(oldEl, layer);
+            layer.group.removeLayer(oldEl);
+            layer.elements.splice(idx, 1);
+            layer.elements.push(newPoly);
+            if (layer.visible) layer.group.addLayer(newPoly);
+            scheduleSaveToStorage();
+            return true;
+        },
+        // Return style hints from an element's options/data for copying onto a clip result.
+        extractStyle(el) {
+            if (!el || !el.options) return {};
+            return {
+                color: el.options.color,
+                weight: el._baseLineWeight != null ? el._baseLineWeight : el.options.weight,
+                fillColor: el.options.fillColor,
+                fillOpacity: el.options.fillOpacity,
+                dashArray: el.options.dashArray,
+            };
+        },
+    };
 
     // Inject CSS once so .scalloped-drawing-active disables pointer events on circle markers
     (function () {
@@ -11467,6 +11683,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('message', (event) => {
         const data = event?.data;
         if (!data || data.type !== 'sidc-picker:sidc') return;
+        // When the Units modal has opened the picker to pick a symbol for a unit,
+        // let units.js capture the message instead of routing it to the map toolbar.
+        if (window.__APP_UNITS_CAPTURING_SIDC) return;
         const sidc = normalizeSidcInput(data.sidc);
         if (!sidc) return;
         setSidcOverride(sidc);
@@ -11500,6 +11719,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('message', (event) => {
         const data = event?.data;
         if (!data || data.type !== 'sidc-picker:sidc') return;
+        if (window.__APP_UNITS_CAPTURING_SIDC) return;
         const sidc = normalizeSidcInput(data.sidc);
         if (!sidc) return;
         setSidcOverride(sidc);
@@ -12083,6 +12303,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (target.closest?.('.tmg-resize-handle') || target.closest?.('.geo-resize-handle') || target.closest?.('.geo-center-move-handle') || target.closest?.('.selection-area-anchor') || target.closest?.('.selection-area-rotate-handle')) return;
         if (suppressNextMapClickAfterOverlayHandleDrag) {
             suppressNextMapClickAfterOverlayHandleDrag = false;
+            return;
+        }
+
+        // Units placement takes precedence over tactical-mode logic: the target checks
+        // above have already rejected clicks on popups/modals/controls, so if the flag
+        // is set we consume this click for unit placement and bail out.
+        if (window.__APP_UNITS_PLACING && e.latlng) {
+            try { window.__APP_UNITS_PLACING.onClick(e.latlng); } catch (err) { console.warn('[units] placement click failed', err); }
             return;
         }
 
@@ -14863,18 +15091,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function exportFolder(folder) {
         const folderLayers = folder.layerIds.map(lid => layers.find(l => l.id === lid)).filter(Boolean);
-        const data = {
-            version: 1,
-            folderName: folder.name,
-            layers: folderLayers.map(layer => ({
-                name: layer.name,
-                visible: layer.visible,
-                active: layer.active,
-                elements: layer.elements.map(el => exportSingleElement(el)).filter(Boolean)
-            }))
-        };
-        const json = JSON.stringify(data, null, 2);
-        const blob = new Blob([json], { type: 'application/json' });
+        const ids = folderLayers.map(l => l.id);
+        const json = exportLayersDataFromSelection(ids);
+        const blob = new Blob([json], { type: 'application/geo+json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -15306,11 +15525,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         const json = exportLayersDataFromSelection(ids);
-        const blob = new Blob([json], { type: 'application/json' });
+        const blob = new Blob([json], { type: 'application/geo+json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'nato-map-layers.json';
+        a.download = 'nato-map-layers.geojson';
         a.click();
         URL.revokeObjectURL(url);
         closeExportLayersModal();
@@ -15649,6 +15868,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.AppChat.init();
         window.AppUnits?.init?.();
+        window.AppUnitsMap?.init?.(map);
 
         requestAnimationFrame(() => {
             requestAnimationFrame(syncMapSizeAndOverlays);

@@ -884,6 +884,9 @@ const server = http.createServer((req, res) => {
                 sidc: r.sidc || null,
                 unitType: r.unit_type || null,
                 side: r.side || 'friendly',
+                lat: (r.lat == null ? null : Number(r.lat)),
+                lng: (r.lng == null ? null : Number(r.lng)),
+                placedAt: r.placed_at || null,
                 deletedAt: r.deleted_at || null,
                 createdAt: r.created_at,
                 updatedAt: r.updated_at,
@@ -1106,6 +1109,42 @@ const server = http.createServer((req, res) => {
         }).catch(err => {
             sendJson(res, err && err.code === 'INVALID_JSON' ? 400 : 500, { error: err && err.code === 'INVALID_JSON' ? 'Invalid JSON' : 'Request failed' });
         });
+        return;
+    }
+
+    if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/place')) {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        const parts = pathname.split('/').filter(Boolean); // api, units, :id, place
+        const id = parts[2];
+        readJsonBody(req).then(body => {
+            const lat = Number(body.lat);
+            const lng = Number(body.lng);
+            if (!Number.isFinite(lat) || lat < -90 || lat > 90) return sendJson(res, 400, { error: 'lat must be a number in [-90, 90]' });
+            if (!Number.isFinite(lng) || lng < -180 || lng > 180) return sendJson(res, 400, { error: 'lng must be a number in [-180, 180]' });
+            const unit = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+            if (!unit || unit.deleted_at) return sendJson(res, 404, { error: 'Unit not found' });
+            const t = nowIso();
+            db.prepare('UPDATE units SET lat=?, lng=?, placed_at=?, updated_at=? WHERE id=?').run(lat, lng, t, t, id);
+            const row = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+            sendJson(res, 200, row);
+        }).catch(err => {
+            sendJson(res, err && err.code === 'INVALID_JSON' ? 400 : 500, { error: err && err.code === 'INVALID_JSON' ? 'Invalid JSON' : 'Request failed' });
+        });
+        return;
+    }
+
+    if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/unplace')) {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        const parts = pathname.split('/').filter(Boolean); // api, units, :id, unplace
+        const id = parts[2];
+        const unit = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+        if (!unit) { sendJson(res, 404, { error: 'Unit not found' }); return; }
+        const t = nowIso();
+        db.prepare('UPDATE units SET lat=NULL, lng=NULL, placed_at=NULL, updated_at=? WHERE id=?').run(t, id);
+        const row = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+        sendJson(res, 200, row);
         return;
     }
 

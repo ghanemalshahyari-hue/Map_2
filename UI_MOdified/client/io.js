@@ -1,20 +1,25 @@
 /**
  * FILE: io.js
  *
- * When you save a plan or share a layer file, this module is doing the translation: it walks your live
- * Leaflet layers and turns markers, polylines, TMG groups, and geographic shapes into plain JSON, and
- * the other way around on import. The goal is a stable, version-friendly snapshot you can store or email
- * without dragging the whole app state along. app.js passes a fat context into init() so these functions
- * can recreate geometry using the same helpers as the interactive map (debounced saves stay in app.js).
+ * Translates between live Leaflet layers and the on-disk plan format
+ * (extended GeoJSON, schema v3). The v3 format is a valid RFC 7946
+ * FeatureCollection with foreign members (__layers, __folders) and every
+ * tactical/parametric detail preserved in each Feature's properties.app.
  *
- * Core responsibilities:
- *   - Export/import LatLng helpers (arrays vs Leaflet objects) for compact JSON
- *   - Serialise single elements and whole layers: symbols, TMG, text labels, geo tools, polylines
- *   - importLayersData: rebuild layers, folders, and map objects from saved JSON (merge or replace flows)
+ * Coordinate-order rule: all coordinates inside a Feature (geometry AND
+ * properties.app.* coordinate fields) are [lng, lat] per GeoJSON spec.
+ * [lat, lng] only exists in Leaflet-facing code. Every flip goes through
+ * window.AppGeoCoords (see geo-coords.js).
  *
- * Dependencies:
- *   - Leaflet (global L) for LatLng, Polyline, Marker, LayerGroup types during import/export
- *   - _ctx from init(ctx): dozens of app closures (createLayer, wireFreehandPolyline, style defaults, etc.)
+ * Back-compat: importLayersData also accepts legacy v2 plans and pipes
+ * them through window.AppPlanMigrate before the v3 load path.
+ *
+ * Geometry vs properties.app: for parametric kinds (circles, sectors,
+ * regular polygons, ellipses), geometry is a polygon approximation
+ * intended for external GIS tools — the app rebuilds exact shapes from
+ * properties.app.* and ignores geometry on reload. For free-shape kinds
+ * (polyline, polygon, geo-freeform, geo-freehand, geo-distance) geometry
+ * IS the source of truth and properties.app omits redundant coord arrays.
  *
  * Bridge name: window.AppIO
  */
@@ -23,19 +28,35 @@
 
     let _ctx = null;
 
-    /** Convert a Leaflet LatLng to a compact [lat, lng] array. */
-    function toLatLngArr(ll) {
-        return ll ? [ll.lat, ll.lng] : null;
+    // Build an app-shape mirror of the v2 element object, coordinate fields in [lng,lat].
+    // The export path wraps this in a Feature. The import path converts back to a
+    // legacy elData shape and feeds it to the existing per-kind reconstruction branches
+    // so none of the tactical logic has to be rewritten.
+    const { latLngToGeoCoord, geoCoordToLatLng, ringLatLngsToGeoCoords, ringGeoCoordsToLatLngs } = window.AppGeoCoords;
+
+    function cornersLatLngsToGeoCoords(ring) {
+        if (!Array.isArray(ring)) return [];
+        return ring.map(latLngToGeoCoord).filter(Boolean);
     }
 
-    /** Restore a [lat, lng] array to a Leaflet LatLng. */
-    function fromLatLngArr(arr) {
-        return arr && arr.length >= 2 ? L.latLng(arr[0], arr[1]) : null;
-    }
-
-    function fromCatkArrowParams(raw) {
+    function toAppArrowParams(raw) {
         if (!raw) return null;
-        const tip = fromLatLngArr(raw.tip);
+        const tipCoord = latLngToGeoCoord(raw.tip);
+        if (!tipCoord) return null;
+        return {
+            tip: tipCoord,
+            directionDeg: raw.directionDeg,
+            bodyWidthKm: raw.bodyWidthKm,
+            headWidthKm: raw.headWidthKm,
+            headLengthKm: raw.headLengthKm,
+            neckOffsetKm: raw.neckOffsetKm,
+            tailLengthKm: raw.tailLengthKm
+        };
+    }
+
+    function fromAppArrowParams(raw) {
+        if (!raw) return null;
+        const tip = geoCoordToLatLng(raw.tip);
         if (!tip) return null;
         return {
             tip,
@@ -48,135 +69,360 @@
         };
     }
 
-    /** Serialise a single map element to a plain JSON object. */
-    function exportSingleElement(el) {
-        const { TEXT_LABEL_COLOR_DEFAULT, TEXT_LABEL_FONT_SIZE_DEFAULT, DEFAULT_GEO_FILL_STYLE, assignDisplayNameOnExport } = _ctx;
+    // Build a GeoJSON geometry for an element using the approximation helpers
+    // in geo-convert.js where parametric, or directly from Leaflet coords for
+    // free-shape kinds. Returns null if the element has insufficient data.
+    function buildGeometry(el, app) {
+        const G = window.AppGeoConvert;
+        switch (app.kind) {
+            case 'text':
+            case 'symbol': {
+                const coord = app.latlng;
+                return coord ? { type: 'Point', coordinates: coord } : null;
+            }
+            case 'polyline': {
+                const coords = (el.getLatLngs?.() || []).map(latLngToGeoCoord).filter(Boolean);
+                if (coords.length < 2) return null;
+                return { type: 'LineString', coordinates: coords };
+            }
+            case 'polygon': {
+                const lls = el.getLatLngs?.() || [];
+                const rings = (lls.length && Array.isArray(lls[0])) ? lls : [lls];
+                const outRings = rings
+                    .map(r => ringLatLngsToGeoCoords(r))
+                    .filter(r => r.length >= 4);
+                if (outRings.length === 0) return null;
+                return { type: 'Polygon', coordinates: outRings };
+            }
+            case 'multipolygon': {
+                // Prefer the app-side polygon list (already in [lng,lat] and
+                // correctly closed) — falls back to reading Leaflet latlngs for
+                // belt-and-braces.
+                const polysApp = Array.isArray(app.polygons) ? app.polygons : null;
+                if (polysApp && polysApp.length) {
+                    const mp = polysApp.map(poly =>
+                        (poly || []).map(ring => {
+                            if (!Array.isArray(ring) || ring.length < 3) return null;
+                            const closed = ring.slice();
+                            const f = closed[0], l = closed[closed.length - 1];
+                            if (f[0] !== l[0] || f[1] !== l[1]) closed.push([f[0], f[1]]);
+                            return closed;
+                        }).filter(Boolean)
+                    ).filter(p => p.length >= 1);
+                    if (mp.length) return { type: 'MultiPolygon', coordinates: mp };
+                }
+                return null;
+            }
+            case 'tmg-single': {
+                const a = app.latlng1, b = app.latlng2;
+                if (!a || !b) return null;
+                return { type: 'LineString', coordinates: [a, b] };
+            }
+            case 'tmg-group':
+            case 'geo-distance':
+            case 'geo-freehand': {
+                const coords = (app.points || []).slice();
+                if (coords.length < 2) return null;
+                return { type: 'LineString', coordinates: coords };
+            }
+            case 'geo-range-circle':
+            case 'geo-circle-2pt': {
+                if (G && typeof G.circleToPolygon === 'function' && app.center && app.radiusKm) {
+                    const ring = G.circleToPolygon(app.center, app.radiusKm);
+                    if (ring) return { type: 'Polygon', coordinates: [ring] };
+                }
+                return app.center ? { type: 'Point', coordinates: app.center } : null;
+            }
+            case 'geo-range-sector': {
+                if (G && typeof G.sectorToPolygon === 'function' && app.center && app.radiusKm) {
+                    const ring = G.sectorToPolygon(app.center, app.radiusKm, app.bearing || 0, app.aperture || 90);
+                    if (ring) return { type: 'Polygon', coordinates: [ring] };
+                }
+                return app.center ? { type: 'Point', coordinates: app.center } : null;
+            }
+            case 'geo-semi-circle': {
+                if (G && typeof G.sectorToPolygon === 'function' && app.center && app.radiusKm) {
+                    const ring = G.sectorToPolygon(app.center, app.radiusKm, app.bearing || 0, 180);
+                    if (ring) return { type: 'Polygon', coordinates: [ring] };
+                }
+                return app.center ? { type: 'Point', coordinates: app.center } : null;
+            }
+            case 'geo-polygon': {
+                if (G && typeof G.regularPolygonToPolygon === 'function' && app.center && app.radiusKm) {
+                    const ring = G.regularPolygonToPolygon(app.center, app.radiusKm, app.sides || 6, app.rotation || 0);
+                    if (ring) return { type: 'Polygon', coordinates: [ring] };
+                }
+                return app.center ? { type: 'Point', coordinates: app.center } : null;
+            }
+            case 'geo-oval': {
+                if (G && typeof G.ellipseFromCorners === 'function' && app.corners && app.corners.length >= 4) {
+                    const ring = G.ellipseFromCorners(app.corners);
+                    if (ring) return { type: 'Polygon', coordinates: [ring] };
+                }
+                // Fallback: use corners directly as a quadrilateral
+                if (app.corners && app.corners.length >= 3) {
+                    const closed = app.corners.slice();
+                    const first = closed[0], last = closed[closed.length - 1];
+                    if (first[0] !== last[0] || first[1] !== last[1]) closed.push(first);
+                    return { type: 'Polygon', coordinates: [closed] };
+                }
+                return null;
+            }
+            case 'geo-rectangle':
+            case 'geo-minefield': {
+                if (app.corners && app.corners.length >= 3) {
+                    const closed = app.corners.slice();
+                    const first = closed[0], last = closed[closed.length - 1];
+                    if (first[0] !== last[0] || first[1] !== last[1]) closed.push(first);
+                    return { type: 'Polygon', coordinates: [closed] };
+                }
+                return null;
+            }
+            case 'geo-freeform': {
+                if (app.points && app.points.length >= 3) {
+                    const closed = app.points.slice();
+                    const first = closed[0], last = closed[closed.length - 1];
+                    if (first[0] !== last[0] || first[1] !== last[1]) closed.push(first);
+                    return { type: 'Polygon', coordinates: [closed] };
+                }
+                return null;
+            }
+            default:
+                return null;
+        }
+    }
+
+    // Extract the v2-style app object for an element (coordinate fields in [lng,lat]).
+    // This is the "properties.app" payload for a Feature. It's also the shape the
+    // import code expects back on reload (after flipping coords to LatLng).
+    function buildAppProps(el) {
+        const { TEXT_LABEL_COLOR_DEFAULT, TEXT_LABEL_FONT_SIZE_DEFAULT, DEFAULT_GEO_FILL_STYLE } = _ctx;
+
         if (el._isTextLabel) {
-            const o = { type: 'text', latlng: toLatLngArr(el.getLatLng()), text: el._textContent, color: el._textColor || TEXT_LABEL_COLOR_DEFAULT, fontSize: el._textFontSize ?? TEXT_LABEL_FONT_SIZE_DEFAULT };
+            const o = {
+                kind: 'text',
+                latlng: latLngToGeoCoord(el.getLatLng()),
+                text: el._textContent,
+                color: el._textColor || TEXT_LABEL_COLOR_DEFAULT,
+                fontSize: el._textFontSize ?? TEXT_LABEL_FONT_SIZE_DEFAULT,
+            };
             if (el._textRotationDeg) o.rotationDeg = el._textRotationDeg;
             return o;
         }
         if (el._geoType === 'distance' && el._geoData) {
             const d = el._geoData;
-            return assignDisplayNameOnExport({ type: 'geo-distance', points: (d.points || el.getLatLngs?.() || []).map(toLatLngArr), distanceKm: d.distanceKm, color: d.color || '#3b82f6', pointLabels: d.pointLabels || [] }, d.displayName);
+            const pts = (d.points || el.getLatLngs?.() || []).map(latLngToGeoCoord).filter(Boolean);
+            return {
+                kind: 'geo-distance', points: pts, distanceKm: d.distanceKm,
+                color: d.color || '#3b82f6', pointLabels: d.pointLabels || []
+            };
         }
         if (el._geoType === 'range-circle' && el._geoData) {
             const d = el._geoData;
-            return assignDisplayNameOnExport({ type: 'geo-range-circle', center: toLatLngArr(d.center), radiusKm: d.radiusKm, color: d.color || '#3b82f6', fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE }, d.displayName);
+            return {
+                kind: 'geo-range-circle', center: latLngToGeoCoord(d.center),
+                radiusKm: d.radiusKm, color: d.color || '#3b82f6',
+                fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE
+            };
         }
         if (el._geoType === 'range-sector' && el._geoData) {
             const d = el._geoData;
-            return assignDisplayNameOnExport({ type: 'geo-range-sector', center: toLatLngArr(d.center), radiusKm: d.radiusKm, bearing: d.bearing, aperture: d.aperture, color: d.color || '#3b82f6', fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE }, d.displayName);
+            return {
+                kind: 'geo-range-sector', center: latLngToGeoCoord(d.center),
+                radiusKm: d.radiusKm, bearing: d.bearing, aperture: d.aperture,
+                color: d.color || '#3b82f6', fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE
+            };
         }
         if (el._geoType === 'circle-2pt' && el._geoData) {
             const d = el._geoData;
-            return assignDisplayNameOnExport({ type: 'geo-circle-2pt', center: toLatLngArr(d.center), radiusKm: d.radiusKm, color: d.color || '#3b82f6', fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE }, d.displayName);
+            return {
+                kind: 'geo-circle-2pt', center: latLngToGeoCoord(d.center),
+                radiusKm: d.radiusKm, color: d.color || '#3b82f6',
+                fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE
+            };
         }
         if (el._geoType === 'semi-circle' && el._geoData) {
             const d = el._geoData;
-            return assignDisplayNameOnExport({ type: 'geo-semi-circle', center: toLatLngArr(d.center), radiusKm: d.radiusKm, bearing: d.bearing, color: d.color || '#3b82f6', fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE }, d.displayName);
+            return {
+                kind: 'geo-semi-circle', center: latLngToGeoCoord(d.center),
+                radiusKm: d.radiusKm, bearing: d.bearing, color: d.color || '#3b82f6',
+                fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE
+            };
         }
         if (el._geoType === 'rectangle' && el._geoData) {
             const d = el._geoData;
             const lls = el.getLatLngs?.();
             const ring = (lls && lls[0]) ? lls[0] : (d.corners || []);
-            const corners = ring.map(p => toLatLngArr(p && p.lat !== undefined ? p : (Array.isArray(p) ? L.latLng(p[0], p[1]) : null)));
-            return assignDisplayNameOnExport({ type: 'geo-rectangle', corners: corners.filter(Boolean), color: d.color || '#3b82f6', fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE }, d.displayName);
+            const corners = ring
+                .map(p => p && p.lat !== undefined ? p : (Array.isArray(p) ? L.latLng(p[0], p[1]) : null))
+                .map(latLngToGeoCoord).filter(Boolean);
+            return {
+                kind: 'geo-rectangle', corners, color: d.color || '#3b82f6',
+                fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE
+            };
         }
         if (el._geoType === 'oval' && el._geoData) {
             const d = el._geoData;
             const ring = d.corners || [];
-            const corners = ring.map(p => toLatLngArr(p && p.lat !== undefined ? p : (Array.isArray(p) ? L.latLng(p[0], p[1]) : null)));
-            return assignDisplayNameOnExport({ type: 'geo-oval', corners: corners.filter(Boolean), color: d.color || '#3b82f6', fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE }, d.displayName);
+            const corners = ring
+                .map(p => p && p.lat !== undefined ? p : (Array.isArray(p) ? L.latLng(p[0], p[1]) : null))
+                .map(latLngToGeoCoord).filter(Boolean);
+            return {
+                kind: 'geo-oval', corners, color: d.color || '#3b82f6',
+                fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE
+            };
         }
         if (el._geoType === 'minefield' && el._geoData) {
             const d = el._geoData;
             const lls = el.getLatLngs?.();
             const ring = (lls && lls[0]) ? lls[0] : (d.corners || []);
-            const corners = ring.map(p => toLatLngArr(p && p.lat !== undefined ? p : (Array.isArray(p) ? L.latLng(p[0], p[1]) : null)));
-            return assignDisplayNameOnExport({ type: 'geo-minefield', corners: corners.filter(Boolean), color: d.color || '#3b82f6', mineType: d.mineType || 'ap' }, d.displayName);
+            const corners = ring
+                .map(p => p && p.lat !== undefined ? p : (Array.isArray(p) ? L.latLng(p[0], p[1]) : null))
+                .map(latLngToGeoCoord).filter(Boolean);
+            return { kind: 'geo-minefield', corners, color: d.color || '#3b82f6', mineType: d.mineType || 'ap' };
         }
         if (el._geoType === 'polygon' && el._geoData) {
             const d = el._geoData;
-            return assignDisplayNameOnExport({ type: 'geo-polygon', center: toLatLngArr(d.center), radiusKm: d.radiusKm, sides: d.sides, rotation: d.rotation, color: d.color || '#3b82f6', fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE }, d.displayName);
+            return {
+                kind: 'geo-polygon', center: latLngToGeoCoord(d.center),
+                radiusKm: d.radiusKm, sides: d.sides, rotation: d.rotation,
+                color: d.color || '#3b82f6', fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE
+            };
         }
         if (el._geoType === 'freeform' && el._geoData) {
             const d = el._geoData;
             const lls = el.getLatLngs?.();
             const ring = (lls && lls[0]) ? lls[0] : (d.points || []);
-            const pts = ring.map(p => toLatLngArr(p && p.lat !== undefined ? p : (Array.isArray(p) ? L.latLng(p[0], p[1]) : null)));
-            return assignDisplayNameOnExport({ type: 'geo-freeform', points: pts.filter(Boolean), color: d.color || '#3b82f6', fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE }, d.displayName);
+            const pts = ring
+                .map(p => p && p.lat !== undefined ? p : (Array.isArray(p) ? L.latLng(p[0], p[1]) : null))
+                .map(latLngToGeoCoord).filter(Boolean);
+            return {
+                kind: 'geo-freeform', points: pts, color: d.color || '#3b82f6',
+                fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE
+            };
         }
         if (el._geoType === 'freehand' && el._geoData) {
             const d = el._geoData;
-            const pts = (el.getLatLngs?.() || d.points || []).map(p => toLatLngArr(p && p.lat !== undefined ? p : (Array.isArray(p) ? L.latLng(p[0], p[1]) : null)));
-            return assignDisplayNameOnExport({ type: 'geo-freehand', points: pts.filter(Boolean), color: d.color || '#3b82f6' }, d.displayName);
+            const pts = (el.getLatLngs?.() || d.points || [])
+                .map(p => p && p.lat !== undefined ? p : (Array.isArray(p) ? L.latLng(p[0], p[1]) : null))
+                .map(latLngToGeoCoord).filter(Boolean);
+            return { kind: 'geo-freehand', points: pts, color: d.color || '#3b82f6' };
         }
         if (el instanceof L.Polygon) {
             const lls = el.getLatLngs?.() || [];
-            const rings = (lls.length && Array.isArray(lls[0])) ? lls : [lls];
-            const outRings = rings
-                .map(ring => (ring || []).map(toLatLngArr).filter(Boolean))
-                .filter(ring => ring.length >= 3);
-            if (outRings.length === 0) return null;
-            return assignDisplayNameOnExport({
-                type: 'polygon',
-                rings: outRings,
+            // Leaflet nesting: depth 1 = simple ring ([LatLng,...]), depth 2 =
+            // polygon with holes ([[LatLng,...], ...]), depth 3 = multi-polygon
+            // ([[[LatLng,...], ...], ...]). Auto-flank's brigade overlay uses
+            // multi-polygon — fail to serialise that and the feature is lost.
+            const depth = (lls.length === 0) ? 0
+                : (Array.isArray(lls[0]) ? (Array.isArray(lls[0][0]) ? 3 : 2) : 1);
+            const style = {
                 color: el.options.color || '#3b82f6',
                 weight: el._baseLineWeight != null ? el._baseLineWeight : (el.options.weight || 4),
                 fillColor: el.options.fillColor || el.options.color || '#3b82f6',
                 fillOpacity: el.options.fillOpacity != null ? el.options.fillOpacity : 0.08,
-                dashArray: el.options.dashArray
-            }, el._lineDisplayName);
+                dashArray: el.options.dashArray || null,
+            };
+            const extras = {};
+            if (el._autoFlankLine || el._autoFlankArea) {
+                extras.autoFlank = {
+                    area: !!el._autoFlankArea,
+                    typeId: el._tmgData?.typeId || null,
+                    sessionId: el._tmgData?.sessionId || null,
+                    tag: el._tmgData?.tag || null,
+                    lengthKm: el._tmgData?.lengthKm || null,
+                    className: (el.options && el.options.className) || null,
+                    stroke: el.options ? (el.options.stroke !== false) : true,
+                };
+            }
+            if (depth === 3) {
+                const polygons = lls.map(p =>
+                    (p || []).map(r => (r || []).map(latLngToGeoCoord).filter(Boolean))
+                        .filter(r => r.length >= 3)
+                ).filter(p => p.length >= 1);
+                if (polygons.length === 0) return null;
+                return { kind: 'multipolygon', polygons, ...style, ...extras };
+            }
+            const rings = (depth === 1) ? [lls] : lls;
+            const outRings = rings
+                .map(r => (r || []).map(latLngToGeoCoord).filter(Boolean))
+                .filter(r => r.length >= 3);
+            if (outRings.length === 0) return null;
+            return { kind: 'polygon', rings: outRings, ...style, ...extras };
         }
         if (el instanceof L.Polyline) {
             const lls = el.getLatLngs();
             const flat = (lls.length && lls[0] && Array.isArray(lls[0])) ? lls.flat() : lls;
-            return assignDisplayNameOnExport({ type: 'polyline', latlngs: flat.map(toLatLngArr), color: el.options.color || '#3b82f6', weight: el._baseLineWeight != null ? el._baseLineWeight : (el.options.weight || 4), dashArray: el.options.dashArray }, el._lineDisplayName);
+            const out = {
+                kind: 'polyline', latlngs: flat.map(latLngToGeoCoord).filter(Boolean),
+                color: el.options.color || '#3b82f6',
+                weight: el._baseLineWeight != null ? el._baseLineWeight : (el.options.weight || 4),
+                dashArray: el.options.dashArray || null,
+            };
+            if (el._autoFlankLine || el._autoFlankArea) {
+                out.autoFlank = {
+                    area: !!el._autoFlankArea,
+                    typeId: el._tmgData?.typeId || null,
+                    sessionId: el._tmgData?.sessionId || null,
+                    tag: el._tmgData?.tag || null,
+                    lengthKm: el._tmgData?.lengthKm || null,
+                    className: (el.options && el.options.className) || null,
+                };
+            }
+            return out;
         }
         if (el instanceof L.LayerGroup && el._tmgData?.isCatkMultiPoint) {
-            const pts = (el._tmgData.points || []).map(toLatLngArr);
-            const catkOut = { type: 'tmg-group', points: pts, typeId: el._tmgData.typeId, color: el._tmgData.color || '#3b82f6', strokeWidth: el._tmgData.strokeWidth ?? 4, catkMultiPoint: true, dashed: !!el._tmgData.dashed };
+            const pts = (el._tmgData.points || []).map(latLngToGeoCoord).filter(Boolean);
+            const catkOut = {
+                kind: 'tmg-group', points: pts, typeId: el._tmgData.typeId,
+                color: el._tmgData.color || '#3b82f6',
+                strokeWidth: el._tmgData.strokeWidth ?? 4,
+                catkMultiPoint: true,
+                dashed: !!el._tmgData.dashed,
+            };
             if (el._tmgData.catkAutoJunction) catkOut.catkAutoJunction = true;
             if (el._tmgData.preserveLegacyPoints) catkOut.preserveLegacyPoints = true;
-            if (isFinite(Number(el._tmgData.legacyBodyWidthKm)) && Number(el._tmgData.legacyBodyWidthKm) > 0) catkOut.legacyBodyWidthKm = Number(el._tmgData.legacyBodyWidthKm);
-            if (el._tmgData.lockedArrowParams) {
-                catkOut.lockedArrowParams = {
-                    tip: toLatLngArr(el._tmgData.lockedArrowParams.tip),
-                    directionDeg: el._tmgData.lockedArrowParams.directionDeg,
-                    bodyWidthKm: el._tmgData.lockedArrowParams.bodyWidthKm,
-                    headWidthKm: el._tmgData.lockedArrowParams.headWidthKm,
-                    headLengthKm: el._tmgData.lockedArrowParams.headLengthKm,
-                    neckOffsetKm: el._tmgData.lockedArrowParams.neckOffsetKm,
-                    tailLengthKm: el._tmgData.lockedArrowParams.tailLengthKm
-                };
+            if (isFinite(Number(el._tmgData.legacyBodyWidthKm)) && Number(el._tmgData.legacyBodyWidthKm) > 0) {
+                catkOut.legacyBodyWidthKm = Number(el._tmgData.legacyBodyWidthKm);
             }
+            if (el._tmgData.lockedArrowParams) catkOut.lockedArrowParams = toAppArrowParams(el._tmgData.lockedArrowParams);
             if (el._tmgData.arrowParams) {
-                catkOut.arrowParams = {
-                    tip: toLatLngArr(el._tmgData.arrowParams.tip),
-                    directionDeg: el._tmgData.arrowParams.directionDeg,
-                    bodyWidthKm: el._tmgData.arrowParams.bodyWidthKm,
-                    headWidthKm: el._tmgData.arrowParams.headWidthKm,
-                    headLengthKm: el._tmgData.arrowParams.headLengthKm,
-                    neckOffsetKm: el._tmgData.arrowParams.neckOffsetKm,
-                    tailLengthKm: el._tmgData.arrowParams.tailLengthKm
-                };
+                catkOut.arrowParams = toAppArrowParams(el._tmgData.arrowParams);
                 catkOut.parametricArrow = true;
             }
-            return assignDisplayNameOnExport(catkOut, el._tmgData.displayName);
+            return catkOut;
         }
         if (el instanceof L.LayerGroup && el._tmgData?.segments) {
             const segs = el._tmgData.segments;
-            const pts = [toLatLngArr(segs[0]._tmgData.latlng1)];
-            segs.forEach(s => pts.push(toLatLngArr(s._tmgData.latlng2)));
-            return assignDisplayNameOnExport({ type: 'tmg-group', points: pts, typeId: el._tmgData.typeId, color: el._tmgData.color || '#3b82f6', filled: el._tmgData.filled !== false, dashed: el._tmgData.dashed || false, strokeWidth: el._tmgData.strokeWidth ?? 4 }, el._tmgData.displayName);
+            const pts = [latLngToGeoCoord(segs[0]._tmgData.latlng1)];
+            segs.forEach(s => pts.push(latLngToGeoCoord(s._tmgData.latlng2)));
+            return {
+                kind: 'tmg-group', points: pts.filter(Boolean), typeId: el._tmgData.typeId,
+                color: el._tmgData.color || '#3b82f6',
+                filled: el._tmgData.filled !== false,
+                dashed: el._tmgData.dashed || false,
+                strokeWidth: el._tmgData.strokeWidth ?? 4,
+            };
         }
         if (el instanceof L.Marker && el._tmgData) {
             const d = el._tmgData;
-            return assignDisplayNameOnExport({ type: 'tmg-single', latlng1: toLatLngArr(d.latlng1), latlng2: toLatLngArr(d.latlng2), typeId: d.typeId, color: d.color || '#3b82f6', filled: d.filled !== false, dashed: d.dashed || false, strokeWidth: d.strokeWidth ?? 4, sessionId: d.sessionId || undefined }, d.displayName);
+            return {
+                kind: 'tmg-single',
+                latlng1: latLngToGeoCoord(d.latlng1),
+                latlng2: latLngToGeoCoord(d.latlng2),
+                typeId: d.typeId, color: d.color || '#3b82f6',
+                filled: d.filled !== false, dashed: d.dashed || false,
+                strokeWidth: d.strokeWidth ?? 4,
+                sessionId: d.sessionId || undefined,
+            };
         }
         if (el instanceof L.Marker) {
-            const out = { type: 'symbol', latlng: toLatLngArr(el.getLatLng()), sidc: el._sidc || '10031000001200000000', textModifiers: el._textModifiers || {}, statusKey: el._statusKey };
+            const out = {
+                kind: 'symbol', latlng: latLngToGeoCoord(el.getLatLng()),
+                sidc: el._sidc || '10031000001200000000',
+                textModifiers: el._textModifiers || {},
+                statusKey: el._statusKey,
+            };
             if (el._symbolRotationDeg) out.symbolRotationDeg = el._symbolRotationDeg;
             const circles = el._rangeCircles || [];
             if (circles.length) out.rangeCircles = circles.map(c => ({ ...c._rangeData }));
@@ -187,93 +433,241 @@
         return null;
     }
 
-    /** Serialise a single layer object (name, visibility, elements). */
+    function getDisplayName(el) {
+        if (el._isTextLabel) return null;
+        if (el._geoData && el._geoData.displayName) return el._geoData.displayName;
+        if (el._tmgData && el._tmgData.displayName) return el._tmgData.displayName;
+        if (el._lineDisplayName) return el._lineDisplayName;
+        return null;
+    }
+
+    // Serialise one element as a GeoJSON Feature. Keeps AppIO surface compatible
+    // with the legacy v2 signature (returns a plain JS object, null on failure).
+    function exportSingleElement(el) {
+        const app = buildAppProps(el);
+        if (!app) return null;
+        const geometry = buildGeometry(el, app);
+        if (!geometry) return null;
+        const properties = { app };
+        const dn = getDisplayName(el);
+        if (dn) properties.displayName = dn;
+        // For free-shape kinds, drop redundant coordinate arrays from properties.app;
+        // geometry is the source of truth on reload.
+        if (app.kind === 'polyline') delete app.latlngs;
+        if (app.kind === 'polygon') delete app.rings;
+        if (app.kind === 'geo-freeform' || app.kind === 'geo-freehand' || app.kind === 'geo-distance') {
+            delete app.points;
+        }
+        return { type: 'Feature', geometry, properties };
+    }
+
+    // Build the subset of Feature objects for a single layer.
+    function exportLayerFeatures(layer) {
+        const out = [];
+        for (const el of layer.elements) {
+            const feat = exportSingleElement(el);
+            if (!feat) continue;
+            feat.properties = feat.properties || {};
+            feat.properties.layerId = layer.id;
+            out.push(feat);
+        }
+        return out;
+    }
+
+    // Legacy name kept for AppIO surface compatibility. Returns a per-layer
+    // descriptor that app.js can flatten into a FeatureCollection.
     function exportLayerData(layer) {
         return {
+            id: layer.id,
             name: layer.name,
             visible: layer.visible,
             active: layer.active,
-            elements: layer.elements.map(el => exportSingleElement(el)).filter(Boolean)
+            features: exportLayerFeatures(layer),
         };
     }
 
-    /** Serialise the full layer/folder tree to a JSON string. */
+    // Serialise the full layer/folder tree to a GeoJSON FeatureCollection string.
     function exportLayersData() {
         const { getLayers, getFolders } = _ctx;
         const layers = getLayers();
         const folders = getFolders();
+        const features = [];
+        const __layers = [];
+        for (const layer of layers) {
+            __layers.push({
+                id: layer.id, name: layer.name,
+                visible: layer.visible !== false, active: !!layer.active,
+            });
+            features.push(...exportLayerFeatures(layer));
+        }
+        const __folders = folders.map(f => ({
+            id: f.id, name: f.name,
+            layerIds: (f.layerIds || []).filter(lid => layers.some(l => l.id === lid)),
+            collapsed: !!f.collapsed,
+        }));
         const data = {
-            version: 2,
-            folders: folders.map(f => ({
-                id: f.id, name: f.name,
-                layerIds: f.layerIds.filter(lid => layers.some(l => l.id === lid)),
-                collapsed: f.collapsed
-            })),
-            layers: layers.map(layer => { const d = exportLayerData(layer); d.id = layer.id; return d; })
+            type: 'FeatureCollection',
+            app: { version: 3, appName: 'tactical-map' },
+            __layers, __folders, features,
         };
         return JSON.stringify(data, null, 2);
     }
 
-    /** Subset of layers; folders only lists exported layers so layout restores on import. */
+    // Subset export; folders only list exported layers so layout restores on import.
     function exportLayersDataFromSelection(selectedLayerIds) {
         const { getLayers, getFolders } = _ctx;
         const layers = getLayers();
         const folders = getFolders();
         const sel = new Set(selectedLayerIds);
-        const exportedLayers = layers.filter(l => sel.has(l.id)).map(layer => { const d = exportLayerData(layer); d.id = layer.id; return d; });
-        const exportedFolders = [];
+        const __layers = [];
+        const features = [];
+        for (const layer of layers) {
+            if (!sel.has(layer.id)) continue;
+            __layers.push({
+                id: layer.id, name: layer.name,
+                visible: layer.visible !== false, active: !!layer.active,
+            });
+            features.push(...exportLayerFeatures(layer));
+        }
+        const __folders = [];
         folders.forEach(f => {
-            const idsInFolder = f.layerIds.filter(lid => sel.has(lid));
+            const idsInFolder = (f.layerIds || []).filter(lid => sel.has(lid));
             if (idsInFolder.length === 0) return;
-            exportedFolders.push({ id: f.id, name: f.name, collapsed: !!f.collapsed, layerIds: [...idsInFolder] });
+            __folders.push({ id: f.id, name: f.name, collapsed: !!f.collapsed, layerIds: [...idsInFolder] });
         });
-        return JSON.stringify({ version: 2, folders: exportedFolders, layers: exportedLayers }, null, 2);
+        const data = {
+            type: 'FeatureCollection',
+            app: { version: 3, appName: 'tactical-map' },
+            __layers, __folders, features,
+        };
+        return JSON.stringify(data, null, 2);
+    }
+
+    // ------------------------------------------------------------------
+    // Import path
+    // ------------------------------------------------------------------
+
+    // Convert a v3 Feature's properties.app object (coords in [lng,lat]) back
+    // into the legacy elData shape (coords in [lat,lng], `type` instead of `kind`)
+    // that the existing per-kind reconstruction branches expect. This keeps the
+    // tactical reconstruction logic untouched.
+    function featureToLegacyElData(feature) {
+        const app = (feature.properties && feature.properties.app) || {};
+        const el = { ...app };
+        el.type = app.kind;
+        delete el.kind;
+
+        // Restore displayName from the outer property slot if present.
+        if (feature.properties && feature.properties.displayName) {
+            el.displayName = feature.properties.displayName;
+        }
+
+        // Flip coordinate fields back to [lat, lng] for the legacy reconstruction code.
+        const flipPair = (c) => (c && c.length >= 2) ? [c[1], c[0]] : null;
+        if (app.latlng) el.latlng = flipPair(app.latlng);
+        if (app.latlng1) el.latlng1 = flipPair(app.latlng1);
+        if (app.latlng2) el.latlng2 = flipPair(app.latlng2);
+        if (app.center) el.center = flipPair(app.center);
+        if (Array.isArray(app.latlngs)) el.latlngs = app.latlngs.map(flipPair).filter(Boolean);
+        if (Array.isArray(app.points)) el.points = app.points.map(flipPair).filter(Boolean);
+        if (Array.isArray(app.corners)) el.corners = app.corners.map(flipPair).filter(Boolean);
+        if (Array.isArray(app.rings)) {
+            el.rings = app.rings.map(r => Array.isArray(r) ? r.map(flipPair).filter(Boolean) : []);
+        }
+        if (Array.isArray(app.polygons)) {
+            el.polygons = app.polygons.map(poly =>
+                Array.isArray(poly) ? poly.map(ring =>
+                    Array.isArray(ring) ? ring.map(flipPair).filter(Boolean) : []
+                ) : []
+            );
+        }
+        if (app.arrowParams && app.arrowParams.tip) {
+            el.arrowParams = { ...app.arrowParams, tip: flipPair(app.arrowParams.tip) };
+        }
+        if (app.lockedArrowParams && app.lockedArrowParams.tip) {
+            el.lockedArrowParams = { ...app.lockedArrowParams, tip: flipPair(app.lockedArrowParams.tip) };
+        }
+
+        // For free-shape kinds, properties.app drops the coord array; rebuild it
+        // from the feature's geometry (which is the source of truth for these).
+        const geom = feature.geometry;
+        if (el.type === 'polyline' && (!el.latlngs || el.latlngs.length < 2)) {
+            if (geom && geom.type === 'LineString' && Array.isArray(geom.coordinates)) {
+                el.latlngs = geom.coordinates.map(flipPair).filter(Boolean);
+            }
+        } else if (el.type === 'polygon' && (!el.rings || el.rings.length === 0)) {
+            if (geom && geom.type === 'Polygon' && Array.isArray(geom.coordinates)) {
+                el.rings = geom.coordinates.map(r =>
+                    Array.isArray(r) ? r.map(flipPair).filter(Boolean) : []);
+                // Drop the GeoJSON closing duplicate per ring so downstream code
+                // doesn't see a doubled vertex.
+                el.rings = el.rings.map(r => {
+                    if (r.length >= 2) {
+                        const first = r[0], last = r[r.length - 1];
+                        if (first[0] === last[0] && first[1] === last[1]) return r.slice(0, -1);
+                    }
+                    return r;
+                });
+            }
+        } else if (el.type === 'multipolygon' && (!el.polygons || el.polygons.length === 0)) {
+            if (geom && geom.type === 'MultiPolygon' && Array.isArray(geom.coordinates)) {
+                el.polygons = geom.coordinates.map(poly =>
+                    (poly || []).map(ring => {
+                        const flipped = ring.map(flipPair).filter(Boolean);
+                        // Drop the GeoJSON closing duplicate — Leaflet auto-closes.
+                        if (flipped.length >= 2) {
+                            const f = flipped[0], l = flipped[flipped.length - 1];
+                            if (f[0] === l[0] && f[1] === l[1]) return flipped.slice(0, -1);
+                        }
+                        return flipped;
+                    })
+                );
+            }
+        } else if ((el.type === 'geo-freeform' || el.type === 'geo-freehand' || el.type === 'geo-distance')
+            && (!el.points || el.points.length < 2)) {
+            if (geom && (geom.type === 'LineString' || geom.type === 'Polygon')) {
+                const coords = geom.type === 'LineString' ? geom.coordinates : (geom.coordinates?.[0] || []);
+                el.points = coords.map(flipPair).filter(Boolean);
+                if (geom.type === 'Polygon' && el.points.length >= 2) {
+                    const first = el.points[0], last = el.points[el.points.length - 1];
+                    if (first[0] === last[0] && first[1] === last[1]) el.points = el.points.slice(0, -1);
+                }
+            }
+        }
+        return el;
     }
 
     /**
      * Reconstruct the full layer/folder/element tree from a JSON string.
-     * Supports merge mode (append) or full replace. Handles every element type.
-     * All app.js dependencies are received through the _ctx object set by init().
+     * Accepts either v3 (extended GeoJSON FeatureCollection) or legacy v2 plans;
+     * v2 is migrated in-memory via window.AppPlanMigrate before the v3 load path.
      */
     function importLayersData(jsonStr, silent, merge) {
         const {
-            // State getters — return live references so in-place mutations propagate
             getLayers, getFolders, getActionHistory, getRedoHistory,
             getMap, getInstructionText, resetIdCounters,
-            // Constants
             TEXT_LABEL_COLOR_DEFAULT, TEXT_LABEL_FONT_SIZE_DEFAULT, DEFAULT_GEO_FILL_STYLE,
             CATK_AUTO_JUNCTION_T, GEO_POPUP_OPTIONS,
-            // Core layer/element management
             cleanupElementDecorations, createLayer, createFolder, moveLayerToFolder,
-            // Text labels
             buildTextLabelIcon, buildTextLabelPopupContent, bindTextLabelPopupHandlers,
-            // Layer operations
             addToActiveLayer, removeFromLayer, wireTacticalLinePolyline,
-            // Counterattack / multi-point tactical graphics
             catkInterpOnTailAxis, catkBuildTailPathFromPoints, catkHitPolylineOptions,
             createCatkUnifiedMarker, createParametricCatkGroup, createLegacyCatkGroup, catkDeriveArrowParamsFromLegacyPoints,
             resolveCatkMultiPointDashed, applyImportedDisplayNameProps,
             buildCatkTailPopupContent, onCatkGroupPopupOpen, removeTmgResizeHandle,
-            // Tactical map graphics
             createTmgLayer, showTmgGroupPopupSelectionUi, scheduleTmgPopupBind,
-            // Symbols
             createSymbolFromData, addRangeCircleToMarker, addRangeSectorToMarker,
-            // Geo distance / shapes
             dedupeConsecutiveDistancePointsMutate, createDistanceWaypointMarkers,
             removeGeoResizeHandles, bindGeoCenterMoveHandle, bindGeoPopupHandlers,
             createGeoResizeHandle, syncGeoShapeHandlesToGeometry, getGeoShapeStyle,
             scheduleGeoPathFill, latLngAtBearing, createSectorPolygon, createRegularPolygon,
             createEllipseRingFromBoundingCorners,
-            // Minefield
             getMinefieldStyle, applyMinefieldFill, addMinefieldDecorations, bindMinefieldResizeHandles,
-            // Freehand
             wireFreehandPolyline,
-            // Post-import cleanup and rendering
             cancelGeoDrawing, cancelLineDrawing, renderLayersList,
             refreshZoomScaledMapOverlays, syncPlacementLayerInteractivity, scheduleSaveToStorage,
         } = _ctx;
 
-        // Grab live mutable state references once; arrays are mutated in-place
         const layers = getLayers();
         const folders = getFolders();
         const actionHistory = getActionHistory();
@@ -281,22 +675,52 @@
         const map = getMap();
         const instructionText = getInstructionText();
 
-        // Cross-module helpers accessible directly from window globals
         const { TACTICAL_GRAPHICS } = window.AppSymbology;
         const { isCounterattackStyleMultiPointType } = window.AppGraphics;
         const { trimmedDisplayNameFrom, totalDistanceKm, haversineDistance } = window.AppUtils;
 
-        let data;
+        let parsed;
         try {
-            data = JSON.parse(jsonStr);
+            parsed = JSON.parse(jsonStr);
         } catch (e) {
             if (!silent) alert('Invalid JSON file.');
             return;
         }
-        if (!data.layers || !Array.isArray(data.layers)) {
-            if (!silent) alert('Invalid format: missing layers array.');
+
+        // Detect format and normalise to v3 FeatureCollection shape.
+        const PM = window.AppPlanMigrate;
+        let fc = null;
+        if (PM && PM.isV3FeatureCollection(parsed)) {
+            fc = parsed;
+        } else if (PM && PM.isV2Plan(parsed)) {
+            try { fc = PM.migrateV2PlanToV3(parsed); }
+            catch { fc = null; }
+        }
+        if (!fc) {
+            if (!silent) alert('Invalid format: not a recognised plan file.');
             return;
         }
+
+        // Group features by layerId so we recreate layers in declaration order.
+        const featuresByLayer = new Map();
+        for (const feat of fc.features) {
+            const lid = (feat.properties && feat.properties.layerId) || (fc.__layers[0] && fc.__layers[0].id) || 'layer-1';
+            if (!featuresByLayer.has(lid)) featuresByLayer.set(lid, []);
+            featuresByLayer.get(lid).push(feat);
+        }
+
+        // Back-compat adapter so the rest of this function can keep calling the
+        // legacy per-kind reconstruction branches unchanged.
+        const data = {
+            version: 2, // internal adapter marker, not serialised
+            folders: fc.__folders || [],
+            layers: (fc.__layers || []).map(L => ({
+                id: L.id, name: L.name,
+                visible: L.visible !== false, active: !!L.active,
+                elements: (featuresByLayer.get(L.id) || []).map(featureToLegacyElData),
+            })),
+        };
+
         if (!merge) {
             layers.forEach(l => {
                 l.elements.forEach(el => {
@@ -324,7 +748,7 @@
 
             (layerData.elements || []).forEach(elData => {
                 if (elData.type === 'text') {
-                    const latlng = fromLatLngArr(elData.latlng);
+                    const latlng = elData.latlng ? L.latLng(elData.latlng[0], elData.latlng[1]) : null;
                     if (!latlng) return;
                     const marker = L.marker(latlng, { icon: null, draggable: true });
                     marker._isTextLabel = true;
@@ -350,7 +774,7 @@
                     }
                 } else if (elData.type === 'polygon') {
                     const rings = (elData.rings || [])
-                        .map(r => (r || []).map(fromLatLngArr).filter(Boolean))
+                        .map(r => (r || []).map(p => p ? L.latLng(p[0], p[1]) : null).filter(Boolean))
                         .filter(r => r.length >= 3);
                     if (rings.length === 0) return;
                     const opts = {
@@ -360,33 +784,93 @@
                         fillOpacity: elData.fillOpacity != null ? elData.fillOpacity : 0.08,
                         dashArray: elData.dashArray
                     };
+                    if (elData.autoFlank) {
+                        if (elData.autoFlank.className) opts.className = elData.autoFlank.className;
+                        if (elData.autoFlank.stroke === false) opts.stroke = false;
+                    }
                     const poly = L.polygon(rings, opts);
                     poly._baseLineWeight = elData.weight != null ? elData.weight : 4;
                     const dn = trimmedDisplayNameFrom(elData.displayName);
                     if (dn) poly._lineDisplayName = dn;
+                    if (elData.autoFlank) {
+                        poly._autoFlankLine = true;
+                        if (elData.autoFlank.area) poly._autoFlankArea = true;
+                        poly._tmgData = {
+                            typeId: elData.autoFlank.typeId || 'auto-flank-area',
+                            sessionId: elData.autoFlank.sessionId || null,
+                            tag: elData.autoFlank.tag || null,
+                            lengthKm: elData.autoFlank.lengthKm || null,
+                        };
+                    }
                     poly._layerId = layer.id;
                     layer.elements.push(poly);
                     layer.group.addLayer(poly);
+                } else if (elData.type === 'multipolygon') {
+                    const polygons = (elData.polygons || [])
+                        .map(poly => (poly || [])
+                            .map(r => (r || []).map(p => p ? L.latLng(p[0], p[1]) : null).filter(Boolean))
+                            .filter(r => r.length >= 3))
+                        .filter(p => p.length >= 1);
+                    if (polygons.length === 0) return;
+                    const opts = {
+                        color: elData.color || '#3b82f6',
+                        weight: elData.weight || 4,
+                        fillColor: elData.fillColor || elData.color || '#3b82f6',
+                        fillOpacity: elData.fillOpacity != null ? elData.fillOpacity : 0.08,
+                        dashArray: elData.dashArray
+                    };
+                    if (elData.autoFlank) {
+                        if (elData.autoFlank.className) opts.className = elData.autoFlank.className;
+                        if (elData.autoFlank.stroke === false) opts.stroke = false;
+                    }
+                    const mp = L.polygon(polygons, opts);
+                    mp._baseLineWeight = elData.weight != null ? elData.weight : 4;
+                    const dnMp = trimmedDisplayNameFrom(elData.displayName);
+                    if (dnMp) mp._lineDisplayName = dnMp;
+                    if (elData.autoFlank) {
+                        mp._autoFlankLine = true;
+                        if (elData.autoFlank.area) mp._autoFlankArea = true;
+                        mp._tmgData = {
+                            typeId: elData.autoFlank.typeId || 'auto-flank-area',
+                            sessionId: elData.autoFlank.sessionId || null,
+                            tag: elData.autoFlank.tag || null,
+                            lengthKm: elData.autoFlank.lengthKm || null,
+                        };
+                    }
+                    mp._layerId = layer.id;
+                    layer.elements.push(mp);
+                    layer.group.addLayer(mp);
                 } else if (elData.type === 'polyline') {
-                    const latlngs = (elData.latlngs || []).map(fromLatLngArr).filter(Boolean);
+                    const latlngs = (elData.latlngs || []).map(p => p ? L.latLng(p[0], p[1]) : null).filter(Boolean);
                     if (latlngs.length < 2) return;
                     const opts = { color: elData.color || '#3b82f6', weight: elData.weight || 4, dashArray: elData.dashArray };
+                    if (elData.autoFlank && elData.autoFlank.className) opts.className = elData.autoFlank.className;
                     const polyline = L.polyline(latlngs, opts);
                     polyline._baseLineWeight = elData.weight != null ? elData.weight : 4;
-                    wireTacticalLinePolyline(polyline);
+                    if (!elData.autoFlank) wireTacticalLinePolyline(polyline);
                     const lineDn = trimmedDisplayNameFrom(elData.displayName);
                     if (lineDn) polyline._lineDisplayName = lineDn;
+                    if (elData.autoFlank) {
+                        polyline._autoFlankLine = true;
+                        if (elData.autoFlank.area) polyline._autoFlankArea = true;
+                        polyline._tmgData = {
+                            typeId: elData.autoFlank.typeId || 'auto-flank-line',
+                            sessionId: elData.autoFlank.sessionId || null,
+                            tag: elData.autoFlank.tag || null,
+                            lengthKm: elData.autoFlank.lengthKm || null,
+                        };
+                    }
                     polyline._layerId = layer.id;
                     layer.elements.push(polyline);
                     layer.group.addLayer(polyline);
                 } else if (elData.type === 'tmg-single') {
-                    const latlng1 = fromLatLngArr(elData.latlng1);
-                    const latlng2 = fromLatLngArr(elData.latlng2);
+                    const latlng1 = elData.latlng1 ? L.latLng(elData.latlng1[0], elData.latlng1[1]) : null;
+                    const latlng2 = elData.latlng2 ? L.latLng(elData.latlng2[0], elData.latlng2[1]) : null;
                     if (!latlng1 || !latlng2) return;
                     let tid = elData.typeId || 'attack';
                     if (tid === 'terrain-map') tid = 'counterattack';
                     if (isCounterattackStyleMultiPointType(tid)) {
-                        const arrowParams = fromCatkArrowParams(elData.arrowParams)
+                        const arrowParams = fromAppArrowParams(elData.arrowParams)
                             || catkDeriveArrowParamsFromLegacyPoints([latlng2, latlng1], elData.strokeWidth ?? 4, elData.arrowHeadScale);
                         const group = createParametricCatkGroup(tid, arrowParams, elData);
                         if (group) {
@@ -405,7 +889,7 @@
                         }
                     }
                 } else if (elData.type === 'tmg-group') {
-                    const pts = (elData.points || []).map(fromLatLngArr).filter(Boolean);
+                    const pts = (elData.points || []).map(p => p ? L.latLng(p[0], p[1]) : null).filter(Boolean);
                     if (pts.length < 2) return;
                     let typeId = elData.typeId || 'attack';
                     if (typeId === 'terrain-map') typeId = 'counterattack';
@@ -416,9 +900,9 @@
                     const def = TACTICAL_GRAPHICS.find(d => d.id === typeId);
                     if (def && def.pointSymbol && pts.length > 2 && !elData.catkMultiPoint) pts.length = 2;
                     if (elData.catkMultiPoint && isCounterattackStyleMultiPointType(typeId) && pts.length > 2) {
-                        const importedArrowParams = fromCatkArrowParams(elData.arrowParams);
+                        const importedArrowParams = fromAppArrowParams(elData.arrowParams);
                         const useLegacyPoints = !!elData.preserveLegacyPoints && !importedArrowParams;
-                        const importedLockedArrowParams = fromCatkArrowParams(elData.lockedArrowParams);
+                        const importedLockedArrowParams = fromAppArrowParams(elData.lockedArrowParams);
                         const group = useLegacyPoints
                             ? createLegacyCatkGroup(typeId, pts, { ...elData, lockedArrowParams: importedLockedArrowParams, preserveLegacyPoints: true })
                             : createParametricCatkGroup(
@@ -433,7 +917,7 @@
                         }
                     } else if (pts.length === 2) {
                         if (isCounterattackStyleMultiPointType(typeId)) {
-                            const arrowParams = fromCatkArrowParams(elData.arrowParams)
+                            const arrowParams = fromAppArrowParams(elData.arrowParams)
                                 || catkDeriveArrowParamsFromLegacyPoints(pts, strokeWidth, elData.arrowHeadScale);
                             const group = createParametricCatkGroup(typeId, arrowParams, elData);
                             if (group) {
@@ -496,7 +980,7 @@
                         }
                     }
                 } else if (elData.type === 'geo-distance') {
-                    const pts = (elData.points || []).map(fromLatLngArr).filter(Boolean);
+                    const pts = (elData.points || []).map(p => p ? L.latLng(p[0], p[1]) : null).filter(Boolean);
                     dedupeConsecutiveDistancePointsMutate(pts);
                     if (pts.length < 2) return;
                     const color = elData.color || '#3b82f6';
@@ -523,7 +1007,7 @@
                     layer.group.addLayer(polyline);
                     setTimeout(() => createDistanceWaypointMarkers(polyline), 0);
                 } else if (elData.type === 'geo-range-circle') {
-                    const center = fromLatLngArr(elData.center);
+                    const center = elData.center ? L.latLng(elData.center[0], elData.center[1]) : null;
                     if (!center) return;
                     const radiusKm = elData.radiusKm || 5;
                     const color = elData.color || '#3b82f6';
@@ -556,7 +1040,7 @@
                     layer.elements.push(circle);
                     layer.group.addLayer(circle);
                 } else if (elData.type === 'geo-range-sector') {
-                    const center = fromLatLngArr(elData.center);
+                    const center = elData.center ? L.latLng(elData.center[0], elData.center[1]) : null;
                     if (!center) return;
                     const radiusKm = elData.radiusKm || 5;
                     const bearing = elData.bearing || 0;
@@ -593,7 +1077,7 @@
                     layer.elements.push(sector);
                     layer.group.addLayer(sector);
                 } else if (elData.type === 'geo-circle-2pt') {
-                    const center = fromLatLngArr(elData.center);
+                    const center = elData.center ? L.latLng(elData.center[0], elData.center[1]) : null;
                     if (!center) return;
                     const radiusKm = elData.radiusKm || 5;
                     const color = elData.color || '#3b82f6';
@@ -626,7 +1110,7 @@
                     layer.elements.push(circle);
                     layer.group.addLayer(circle);
                 } else if (elData.type === 'geo-semi-circle') {
-                    const center = fromLatLngArr(elData.center);
+                    const center = elData.center ? L.latLng(elData.center[0], elData.center[1]) : null;
                     if (!center) return;
                     const radiusKm = elData.radiusKm || 5;
                     const bearing = elData.bearing || 0;
@@ -662,7 +1146,7 @@
                     layer.elements.push(sector);
                     layer.group.addLayer(sector);
                 } else if (elData.type === 'geo-rectangle') {
-                    const corners = (elData.corners || []).map(c => fromLatLngArr(Array.isArray(c) ? c : null)).filter(Boolean);
+                    const corners = (elData.corners || []).map(c => Array.isArray(c) ? L.latLng(c[0], c[1]) : null).filter(Boolean);
                     if (corners.length < 4) return;
                     const color = elData.color || '#3b82f6';
                     const fillStyle = elData.fillStyle || DEFAULT_GEO_FILL_STYLE;
@@ -681,7 +1165,7 @@
                     layer.elements.push(rect);
                     layer.group.addLayer(rect);
                 } else if (elData.type === 'geo-oval') {
-                    const corners = (elData.corners || []).map(c => fromLatLngArr(Array.isArray(c) ? c : null)).filter(Boolean);
+                    const corners = (elData.corners || []).map(c => Array.isArray(c) ? L.latLng(c[0], c[1]) : null).filter(Boolean);
                     if (corners.length < 4) return;
                     const color = elData.color || '#3b82f6';
                     const fillStyle = elData.fillStyle || DEFAULT_GEO_FILL_STYLE;
@@ -701,7 +1185,7 @@
                     layer.elements.push(oval);
                     layer.group.addLayer(oval);
                 } else if (elData.type === 'geo-minefield') {
-                    const corners = (elData.corners || []).map(c => fromLatLngArr(Array.isArray(c) ? c : null)).filter(Boolean);
+                    const corners = (elData.corners || []).map(c => Array.isArray(c) ? L.latLng(c[0], c[1]) : null).filter(Boolean);
                     if (corners.length < 4) return;
                     const color = elData.color || '#3b82f6';
                     const mineType = elData.mineType || 'ap';
@@ -723,7 +1207,7 @@
                     layer.elements.push(mf);
                     layer.group.addLayer(mf);
                 } else if (elData.type === 'geo-polygon') {
-                    const center = fromLatLngArr(elData.center);
+                    const center = elData.center ? L.latLng(elData.center[0], elData.center[1]) : null;
                     if (!center) return;
                     const radiusKm = elData.radiusKm || 5;
                     const sides = Math.max(3, Math.min(20, elData.sides || 6));
@@ -760,7 +1244,7 @@
                     layer.elements.push(poly);
                     layer.group.addLayer(poly);
                 } else if (elData.type === 'geo-freeform') {
-                    const pts = (elData.points || []).map(p => fromLatLngArr(Array.isArray(p) ? p : null)).filter(Boolean);
+                    const pts = (elData.points || []).map(p => Array.isArray(p) ? L.latLng(p[0], p[1]) : null).filter(Boolean);
                     if (pts.length < 3) return;
                     const color = elData.color || '#3b82f6';
                     const fillStyle = elData.fillStyle || DEFAULT_GEO_FILL_STYLE;
@@ -779,7 +1263,7 @@
                     layer.elements.push(poly);
                     layer.group.addLayer(poly);
                 } else if (elData.type === 'geo-freehand') {
-                    const pts = (elData.points || []).map(p => fromLatLngArr(Array.isArray(p) ? p : null)).filter(Boolean);
+                    const pts = (elData.points || []).map(p => Array.isArray(p) ? L.latLng(p[0], p[1]) : null).filter(Boolean);
                     if (pts.length < 2) return;
                     const color = elData.color || '#3b82f6';
                     const polyline = L.polyline(pts, { color, weight: 3 });
@@ -805,15 +1289,6 @@
                     if (layer) moveLayerToFolder(layer, folder);
                 });
             });
-        } else if (data.folderName && !merge) {
-            const folder = createFolder(data.folderName);
-            layers.forEach(l => moveLayerToFolder(l, folder));
-        } else if (data.folderName && merge) {
-            const folder = createFolder(data.folderName);
-            Object.values(layerIdMap).forEach(newId => {
-                const layer = layers.find(l => l.id === newId);
-                if (layer) moveLayerToFolder(layer, folder);
-            });
         }
 
         removeGeoResizeHandles();
@@ -824,6 +1299,11 @@
         refreshZoomScaledMapOverlays();
         syncPlacementLayerInteractivity();
     }
+
+    // Legacy shims still used by app.js for internal [lat,lng]-array data
+    // shapes (NOT for GeoJSON serialisation). Unchanged v2 semantics.
+    function toLatLngArr(ll) { return ll ? [ll.lat, ll.lng] : null; }
+    function fromLatLngArr(arr) { return arr && arr.length >= 2 ? L.latLng(arr[0], arr[1]) : null; }
 
     window.AppIO = {
         init(ctx) { _ctx = ctx; },

@@ -1,7 +1,7 @@
 (() => {
   var BRIDGE_LABELS = {
-    en: { apply: "Apply Symbol", applied: "Applied ✓", notFound: "No SIDC found" },
-    ar: { apply: "تطبيق الرمز", applied: "تم التطبيق ✓", notFound: "لم يُعثر على SIDC" }
+    en: { apply: "Apply Symbol", applied: "Applied ✓", notFound: "No SIDC found", simple: "← Back to simple mode" },
+    ar: { apply: "تطبيق الرمز", applied: "تم التطبيق ✓", notFound: "لم يُعثر على SIDC", simple: "← العودة للوضع البسيط" }
   };
 
   function bridgeLocale() {
@@ -75,8 +75,10 @@
   var bridgeApplyBtn = null;
 
   function setApplyTextFromLocale(locale) {
-    if (!bridgeApplyBtn || bridgeApplyBtn.disabled) return;
     var L = BRIDGE_LABELS[locale === "ar" ? "ar" : "en"];
+    var simpleLink = document.getElementById("bridge-simple-link");
+    if (simpleLink) simpleLink.textContent = L.simple;
+    if (!bridgeApplyBtn || bridgeApplyBtn.disabled) return;
     if (bridgeApplyBtn.textContent === BRIDGE_LABELS.en.applied || bridgeApplyBtn.textContent === BRIDGE_LABELS.ar.applied) return;
     if (bridgeApplyBtn.textContent === BRIDGE_LABELS.en.notFound || bridgeApplyBtn.textContent === BRIDGE_LABELS.ar.notFound) return;
     bridgeApplyBtn.textContent = L.apply;
@@ -112,6 +114,20 @@
         }, 1500);
       }
     };
+    var simpleLink = document.createElement("button");
+    simpleLink.id = "bridge-simple-link";
+    simpleLink.textContent = bridgeLabels().simple;
+    simpleLink.style.cssText =
+      "padding:8px 14px;background:transparent;color:#cbd5e1;border:1px solid rgba(148,163,184,0.4);border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;";
+    simpleLink.onclick = function () {
+      var lang = (document.documentElement.getAttribute("lang") === "ar") ? "ar" : "en";
+      try {
+        var q = String(location.search || "").match(/lang=([a-z]{2})/i);
+        if (q && q[1]) lang = q[1];
+      } catch (_) { /* ignore */ }
+      location.href = "simple.html?lang=" + lang;
+    };
+    bar.appendChild(simpleLink);
     bar.appendChild(btn);
     document.body.appendChild(bar);
   }

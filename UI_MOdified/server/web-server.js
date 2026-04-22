@@ -37,9 +37,16 @@ const CHAT_PRESENCE_MAX_MS = 90 * 1000;
 try { fs.mkdirSync(DATA_DIR,   { recursive: true }); } catch {}
 try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch {}
 
-// -------------------- Units DB (SQLite) --------------------
+const appData = require('./app-data');
+if (Database) {
+    appData.initAppData({ Database, dataDir: DATA_DIR, legacyUnitsFile: process.env.RMOOZ_UNITS_DB_FILE || path.join(DATA_DIR, 'units.db') });
+}
+
+// -------------------- Unified app DB (units + auth + chat + plans meta) --------------------
 const UNITS_DB_FILE = process.env.RMOOZ_UNITS_DB_FILE || path.join(DATA_DIR, 'units.db');
-let unitsDb = null;
+function initUnitsDb() {
+    return appData.getDb();
+}
 
 function nowIso() {
     return new Date().toISOString();
@@ -66,39 +73,6 @@ function normalizeText(v, maxLen = 300) {
     const s = String(v).trim();
     if (!s) return null;
     return s.length > maxLen ? s.slice(0, maxLen) : s;
-}
-
-function initUnitsDb() {
-    if (!Database) return null;
-    if (unitsDb) return unitsDb;
-    try {
-        unitsDb = new Database(UNITS_DB_FILE);
-        unitsDb.pragma('journal_mode = WAL');
-        unitsDb.exec(`
-            CREATE TABLE IF NOT EXISTS units (
-                id TEXT PRIMARY KEY,
-                code TEXT UNIQUE NOT NULL,
-                name TEXT NOT NULL,
-                level INTEGER NOT NULL CHECK(level BETWEEN 0 AND 4),
-                parent_id TEXT NULL,
-                sidc TEXT NULL,
-                unit_type TEXT NULL,
-                size TEXT NULL,
-                deleted_at TEXT NULL,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
-            );
-            CREATE INDEX IF NOT EXISTS idx_units_parent  ON units(parent_id);
-            CREATE INDEX IF NOT EXISTS idx_units_level   ON units(level);
-            CREATE INDEX IF NOT EXISTS idx_units_deleted ON units(deleted_at);
-        `);
-        // Safe migration: add side column if it doesn't exist yet
-        try { unitsDb.exec(`ALTER TABLE units ADD COLUMN side TEXT NULL DEFAULT 'friendly'`); } catch (_) {}
-        return unitsDb;
-    } catch (e) {
-        unitsDb = null;
-        return null;
-    }
 }
 
 const UNITS_LEVEL_LABELS = {
@@ -151,6 +125,7 @@ const MIME = {
 };
 
 function readAllMessages() {
+    if (appData.getDb()) return appData.readAllMessagesDb();
     try {
         const buf = fs.readFileSync(CHAT_FILE, 'utf8');
         const data = JSON.parse(buf);
@@ -162,6 +137,7 @@ function readAllMessages() {
 }
 
 function writeAllMessages(messages) {
+    if (appData.getDb()) return appData.writeAllMessagesDb(messages);
     try {
         fs.writeFileSync(CHAT_FILE, JSON.stringify(messages, null, 2), 'utf8');
     } catch {
@@ -249,6 +225,7 @@ function membersRemove(members, cid) {
 }
 
 function readChatUsers() {
+    if (appData.getDb()) return appData.readChatUsersDb();
     try {
         const buf = fs.readFileSync(CHAT_USERS_FILE, 'utf8');
         const d = JSON.parse(buf);
@@ -259,12 +236,14 @@ function readChatUsers() {
 }
 
 function writeChatUsers(data) {
+    if (appData.getDb()) return appData.writeChatUsersDb(data);
     try {
         fs.writeFileSync(CHAT_USERS_FILE, JSON.stringify(data, null, 2), 'utf8');
     } catch {}
 }
 
 function readChatPresence() {
+    if (appData.getDb()) return appData.readChatPresenceDb();
     try {
         const buf = fs.readFileSync(CHAT_PRESENCE_FILE, 'utf8');
         const d = JSON.parse(buf);
@@ -275,6 +254,7 @@ function readChatPresence() {
 }
 
 function writeChatPresence(data) {
+    if (appData.getDb()) return appData.writeChatPresenceDb(data);
     try {
         fs.writeFileSync(CHAT_PRESENCE_FILE, JSON.stringify(data, null, 2), 'utf8');
     } catch {}
@@ -298,6 +278,7 @@ function pruneStaleChatPresence(presence, maxAgeMs) {
 }
 
 function readChatGroupsStore() {
+    if (appData.getDb()) return appData.readChatGroupsStoreDb();
     try {
         const buf = fs.readFileSync(CHAT_GROUPS_FILE, 'utf8');
         const d = JSON.parse(buf);
@@ -308,6 +289,7 @@ function readChatGroupsStore() {
 }
 
 function writeChatGroupsStore(store) {
+    if (appData.getDb()) return appData.writeChatGroupsStoreDb(store);
     try {
         fs.writeFileSync(CHAT_GROUPS_FILE, JSON.stringify(store, null, 2), 'utf8');
     } catch {}
@@ -384,7 +366,14 @@ function generateInviteCode() {
 
 const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://localhost');
-    const pathname = url.pathname;
+    let pathname = url.pathname;
+    if (pathname.length > 1 && pathname.endsWith('/')) {
+        pathname = pathname.slice(0, -1);
+    }
+
+    if (appData.handleAuthApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
+    if (appData.handlePlansApi(req, res, url, pathname, req.method, sendJson, readJsonBody)) return;
+    if (appData.handlePrefsApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
 
     // --- Chat API: messages (private group rooms require membership) ---
     if (pathname === '/api/chat/messages') {
@@ -432,9 +421,13 @@ const server = http.createServer((req, res) => {
                     text: parsed.text || '',
                     timestamp: now
                 };
-                const all = readAllMessages();
-                all.push(msg);
-                writeAllMessages(all);
+                if (appData.getDb()) {
+                    appData.appendMessageDb(msg);
+                } else {
+                    const all = readAllMessages();
+                    all.push(msg);
+                    writeAllMessages(all);
+                }
                 res.writeHead(201, { 'Content-Type': 'application/json; charset=utf-8', ...cookieHeaders() });
                 res.end(JSON.stringify(msg));
             });
@@ -805,7 +798,7 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // --- Chat API: user identity (cookie + chat-users.json) ---
+    // --- Chat API: user identity (cookie + chat-users map; logged-in user from session when present) ---
     if (pathname === '/api/chat/me') {
         const { cid } = getOrCreateClientCookieId(req);
         const meHeaders = {
@@ -814,6 +807,12 @@ const server = http.createServer((req, res) => {
         };
 
         if (req.method === 'GET') {
+            const su = appData.getSessionUser(req);
+            if (su) {
+                res.writeHead(200, meHeaders);
+                res.end(JSON.stringify({ id: su.id, name: su.displayName || su.username, role: su.role || 'planner' }));
+                return;
+            }
             const users = readChatUsers();
             const user = users[cid];
             if (user && (user.name || user.id)) {
@@ -831,6 +830,16 @@ const server = http.createServer((req, res) => {
             req.on('end', () => {
                 let parsed;
                 try { parsed = JSON.parse(body || '{}'); } catch { return sendJson(res, 400, { error: 'Invalid JSON' }); }
+                const su = appData.getSessionUser(req);
+                const db = appData.getDb();
+                if (su && db && parsed.name) {
+                    const nm = String(parsed.name || '').trim();
+                    if (nm) {
+                        try {
+                            db.prepare('UPDATE users SET display_name=?, updated_at=? WHERE id=?').run(nm, nowIso(), su.id);
+                        } catch (_) {}
+                    }
+                }
                 const users = readChatUsers();
                 users[cid] = {
                     id: parsed.id || users[cid]?.id || cid,
@@ -874,6 +883,10 @@ const server = http.createServer((req, res) => {
                 parentId: r.parent_id || null,
                 sidc: r.sidc || null,
                 unitType: r.unit_type || null,
+                side: r.side || 'friendly',
+                lat: (r.lat == null ? null : Number(r.lat)),
+                lng: (r.lng == null ? null : Number(r.lng)),
+                placedAt: r.placed_at || null,
                 deletedAt: r.deleted_at || null,
                 createdAt: r.created_at,
                 updatedAt: r.updated_at,
@@ -957,7 +970,7 @@ const server = http.createServer((req, res) => {
             const sidc = normalizeText(body.sidc, 60);
             const unitType = normalizeText(body.unitType, 120);
             const VALID_SIDES = ['friendly', 'hostile', 'neutral', 'unknown'];
-            const side = VALID_SIDES.includes(body.side) ? body.side : 'friendly';
+            let side = VALID_SIDES.includes(body.side) ? body.side : 'friendly';
             if (!name) return sendJson(res, 400, { error: 'name is required' });
             if (level == null || level < 0 || level > 4) return sendJson(res, 400, { error: 'level must be 0..4' });
             if (!parentId && level !== 0) return sendJson(res, 400, { error: 'root units must be level 0 (Army)' });
@@ -967,6 +980,8 @@ const server = http.createServer((req, res) => {
                 parent = db.prepare('SELECT * FROM units WHERE id=?').get(parentId);
                 if (!parent || parent.deleted_at) return sendJson(res, 400, { error: 'parentId not found' });
                 if ((parent.level + 1) !== level) return sendJson(res, 400, { error: 'child level must be parent level + 1' });
+                // Always inherit affiliation from parent — child cannot differ from its army
+                if (VALID_SIDES.includes(parent.side)) side = parent.side;
             }
 
             if (!code) {
@@ -1097,6 +1112,42 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/place')) {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        const parts = pathname.split('/').filter(Boolean); // api, units, :id, place
+        const id = parts[2];
+        readJsonBody(req).then(body => {
+            const lat = Number(body.lat);
+            const lng = Number(body.lng);
+            if (!Number.isFinite(lat) || lat < -90 || lat > 90) return sendJson(res, 400, { error: 'lat must be a number in [-90, 90]' });
+            if (!Number.isFinite(lng) || lng < -180 || lng > 180) return sendJson(res, 400, { error: 'lng must be a number in [-180, 180]' });
+            const unit = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+            if (!unit || unit.deleted_at) return sendJson(res, 404, { error: 'Unit not found' });
+            const t = nowIso();
+            db.prepare('UPDATE units SET lat=?, lng=?, placed_at=?, updated_at=? WHERE id=?').run(lat, lng, t, t, id);
+            const row = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+            sendJson(res, 200, row);
+        }).catch(err => {
+            sendJson(res, err && err.code === 'INVALID_JSON' ? 400 : 500, { error: err && err.code === 'INVALID_JSON' ? 'Invalid JSON' : 'Request failed' });
+        });
+        return;
+    }
+
+    if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/unplace')) {
+        const db = initUnitsDb();
+        if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
+        const parts = pathname.split('/').filter(Boolean); // api, units, :id, unplace
+        const id = parts[2];
+        const unit = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+        if (!unit) { sendJson(res, 404, { error: 'Unit not found' }); return; }
+        const t = nowIso();
+        db.prepare('UPDATE units SET lat=NULL, lng=NULL, placed_at=NULL, updated_at=? WHERE id=?').run(t, id);
+        const row = db.prepare('SELECT * FROM units WHERE id=?').get(id);
+        sendJson(res, 200, row);
+        return;
+    }
+
     if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/delete')) {
         const db = initUnitsDb();
         if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
@@ -1164,7 +1215,13 @@ const server = http.createServer((req, res) => {
     }
 
     // --- Static files (including /uploads and /maps) ---
-    let urlPath = decodeURIComponent(url.pathname);
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+        res.writeHead(405, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('Method Not Allowed');
+        return;
+    }
+
+    let urlPath = decodeURIComponent(pathname);
     if (urlPath === '/') urlPath = '/index.html';
     if (urlPath === '/app') urlPath = '/app.html';
 

@@ -227,10 +227,22 @@
         }
         if (el._geoType === 'range-sector' && el._geoData) {
             const d = el._geoData;
+            const wedgesOut = (Array.isArray(d.wedges) && d.wedges.some(w => w && (w.color || (typeof w.label === 'string' && w.label.trim() !== '') || Number.isFinite(w.labelPosition))))
+                ? d.wedges.map(w => ({
+                    color: (w && w.color) || null,
+                    label: (w && typeof w.label === 'string') ? w.label : '',
+                    labelPosition: (w && Number.isFinite(w.labelPosition)) ? w.labelPosition : null
+                  }))
+                : null;
             return {
                 kind: 'geo-range-sector', center: latLngToGeoCoord(d.center),
                 radiusKm: d.radiusKm, bearing: d.bearing, aperture: d.aperture,
-                color: d.color || '#3b82f6', fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE
+                color: d.color || '#3b82f6', fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE,
+                weight: Number.isFinite(d.weight) ? d.weight : null,
+                subdivisions: Number.isFinite(d.subdivisions) && d.subdivisions > 1 ? d.subdivisions : null,
+                wedges: wedgesOut,
+                labelSize: Number.isFinite(d.labelSize) ? d.labelSize : null,
+                labelFont: typeof d.labelFont === 'string' && d.labelFont ? d.labelFont : null
             };
         }
         if (el._geoType === 'circle-2pt' && el._geoData) {
@@ -243,10 +255,22 @@
         }
         if (el._geoType === 'semi-circle' && el._geoData) {
             const d = el._geoData;
+            const wedgesOut = (Array.isArray(d.wedges) && d.wedges.some(w => w && (w.color || (typeof w.label === 'string' && w.label.trim() !== '') || Number.isFinite(w.labelPosition))))
+                ? d.wedges.map(w => ({
+                    color: (w && w.color) || null,
+                    label: (w && typeof w.label === 'string') ? w.label : '',
+                    labelPosition: (w && Number.isFinite(w.labelPosition)) ? w.labelPosition : null
+                  }))
+                : null;
             return {
                 kind: 'geo-semi-circle', center: latLngToGeoCoord(d.center),
                 radiusKm: d.radiusKm, bearing: d.bearing, color: d.color || '#3b82f6',
-                fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE
+                fillStyle: d.fillStyle || DEFAULT_GEO_FILL_STYLE,
+                weight: Number.isFinite(d.weight) ? d.weight : null,
+                subdivisions: Number.isFinite(d.subdivisions) && d.subdivisions > 1 ? d.subdivisions : null,
+                wedges: wedgesOut,
+                labelSize: Number.isFinite(d.labelSize) ? d.labelSize : null,
+                labelFont: typeof d.labelFont === 'string' && d.labelFont ? d.labelFont : null
             };
         }
         if (el._geoType === 'rectangle' && el._geoData) {
@@ -331,6 +355,8 @@
                     sessionId: el._tmgData?.sessionId || null,
                     tag: el._tmgData?.tag || null,
                     lengthKm: el._tmgData?.lengthKm || null,
+                    parentUnitId: el._tmgData?.parentUnitId || null,
+                    areaRole: el._tmgData?.areaRole || null,
                     className: (el.options && el.options.className) || null,
                     stroke: el.options ? (el.options.stroke !== false) : true,
                 };
@@ -366,6 +392,8 @@
                     sessionId: el._tmgData?.sessionId || null,
                     tag: el._tmgData?.tag || null,
                     lengthKm: el._tmgData?.lengthKm || null,
+                    parentUnitId: el._tmgData?.parentUnitId || null,
+                    areaRole: el._tmgData?.areaRole || null,
                     className: (el.options && el.options.className) || null,
                 };
             }
@@ -660,7 +688,7 @@
             dedupeConsecutiveDistancePointsMutate, createDistanceWaypointMarkers,
             removeGeoResizeHandles, bindGeoCenterMoveHandle, bindGeoPopupHandlers,
             createGeoResizeHandle, syncGeoShapeHandlesToGeometry, getGeoShapeStyle,
-            scheduleGeoPathFill, latLngAtBearing, createSectorPolygon, createRegularPolygon,
+            scheduleGeoPathFill, latLngAtBearing, createSectorPolygon, syncSectorWedgeOverlays, removeSectorWedgeOverlays, createRegularPolygon,
             createEllipseRingFromBoundingCorners,
             getMinefieldStyle, applyMinefieldFill, addMinefieldDecorations, bindMinefieldResizeHandles,
             wireFreehandPolyline,
@@ -800,6 +828,8 @@
                             sessionId: elData.autoFlank.sessionId || null,
                             tag: elData.autoFlank.tag || null,
                             lengthKm: elData.autoFlank.lengthKm || null,
+                            parentUnitId: elData.autoFlank.parentUnitId || null,
+                            areaRole: elData.autoFlank.areaRole || null,
                         };
                     }
                     poly._layerId = layer.id;
@@ -835,6 +865,8 @@
                             sessionId: elData.autoFlank.sessionId || null,
                             tag: elData.autoFlank.tag || null,
                             lengthKm: elData.autoFlank.lengthKm || null,
+                            parentUnitId: elData.autoFlank.parentUnitId || null,
+                            areaRole: elData.autoFlank.areaRole || null,
                         };
                     }
                     mp._layerId = layer.id;
@@ -858,6 +890,8 @@
                             sessionId: elData.autoFlank.sessionId || null,
                             tag: elData.autoFlank.tag || null,
                             lengthKm: elData.autoFlank.lengthKm || null,
+                            parentUnitId: elData.autoFlank.parentUnitId || null,
+                            areaRole: elData.autoFlank.areaRole || null,
                         };
                     }
                     polyline._layerId = layer.id;
@@ -1047,10 +1081,21 @@
                     const aperture = elData.aperture || 90;
                     const color = elData.color || '#3b82f6';
                     const fillStyle = elData.fillStyle || DEFAULT_GEO_FILL_STYLE;
-                    const points = createSectorPolygon(center, radiusKm, bearing, aperture);
-                    const sector = L.polygon(points, { ...getGeoShapeStyle(color, fillStyle) });
+                    const weight = Number.isFinite(elData.weight) ? elData.weight : undefined;
+                    const subdivisions = Number.isFinite(elData.subdivisions) && elData.subdivisions > 1 ? elData.subdivisions : undefined;
+                    const wedges = Array.isArray(elData.wedges) ? elData.wedges.map(w => ({
+                        color: (w && w.color) || null,
+                        label: (w && typeof w.label === 'string') ? w.label : '',
+                        ...(w && Number.isFinite(w.labelPosition) ? { labelPosition: w.labelPosition } : {})
+                    })) : undefined;
+                    const labelSize = Number.isFinite(elData.labelSize) ? elData.labelSize : undefined;
+                    const labelFont = typeof elData.labelFont === 'string' && elData.labelFont ? elData.labelFont : undefined;
+                    const points = createSectorPolygon(center, radiusKm, bearing, aperture, subdivisions);
+                    const sector = L.polygon(points, { ...getGeoShapeStyle(color, fillStyle, weight) });
                     sector._geoType = 'range-sector';
-                    sector._geoData = { center, radiusKm, bearing, aperture, color, fillStyle, ...applyImportedDisplayNameProps(elData) };
+                    sector._geoData = { center, radiusKm, bearing, aperture, color, fillStyle, ...(weight != null ? { weight } : {}), ...(subdivisions != null ? { subdivisions } : {}), ...(wedges ? { wedges } : {}), ...(labelSize != null ? { labelSize } : {}), ...(labelFont ? { labelFont } : {}), ...applyImportedDisplayNameProps(elData) };
+                    sector.on('remove', () => { if (typeof _ctx.removeSectorWedgeOverlays === 'function') _ctx.removeSectorWedgeOverlays(sector); });
+                    sector.once('add', () => { if (typeof _ctx.syncSectorWedgeOverlays === 'function') _ctx.syncSectorWedgeOverlays(sector); });
                     if (['vertical', 'horizontal', 'both'].includes(fillStyle)) sector.once('add', () => scheduleGeoPathFill(sector));
                     sector.bindPopup(window.AppPopups.buildGeoPopupContent(sector, 'range-sector', sector._geoData), GEO_POPUP_OPTIONS);
                     sector.on('popupopen', () => {
@@ -1060,8 +1105,9 @@
                         createGeoResizeHandle(handleLat, (newLat, isFinal) => {
                             const distM = haversineDistance(d.center.lat, d.center.lng, newLat.lat, newLat.lng);
                             d.radiusKm = parseFloat((distM / 1000).toFixed(2));
-                            const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing, d.aperture);
+                            const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing, d.aperture, d.subdivisions);
                             sector.setLatLngs(pts);
+                            if (typeof _ctx.syncSectorWedgeOverlays === 'function') _ctx.syncSectorWedgeOverlays(sector);
                             sector.setPopupContent(window.AppPopups.buildGeoPopupContent(sector, 'range-sector', d));
                             bindGeoPopupHandlers(sector, 'range-sector');
                             syncGeoShapeHandlesToGeometry(sector, 'range-sector');
@@ -1116,10 +1162,21 @@
                     const bearing = elData.bearing || 0;
                     const color = elData.color || '#3b82f6';
                     const fillStyle = elData.fillStyle || DEFAULT_GEO_FILL_STYLE;
-                    const points = createSectorPolygon(center, radiusKm, bearing, 180);
-                    const sector = L.polygon(points, { ...getGeoShapeStyle(color, fillStyle) });
+                    const weight = Number.isFinite(elData.weight) ? elData.weight : undefined;
+                    const subdivisions = Number.isFinite(elData.subdivisions) && elData.subdivisions > 1 ? elData.subdivisions : undefined;
+                    const wedges = Array.isArray(elData.wedges) ? elData.wedges.map(w => ({
+                        color: (w && w.color) || null,
+                        label: (w && typeof w.label === 'string') ? w.label : '',
+                        ...(w && Number.isFinite(w.labelPosition) ? { labelPosition: w.labelPosition } : {})
+                    })) : undefined;
+                    const labelSize = Number.isFinite(elData.labelSize) ? elData.labelSize : undefined;
+                    const labelFont = typeof elData.labelFont === 'string' && elData.labelFont ? elData.labelFont : undefined;
+                    const points = createSectorPolygon(center, radiusKm, bearing, 180, subdivisions);
+                    const sector = L.polygon(points, { ...getGeoShapeStyle(color, fillStyle, weight) });
                     sector._geoType = 'semi-circle';
-                    sector._geoData = { center, radiusKm, bearing, aperture: 180, color, fillStyle, ...applyImportedDisplayNameProps(elData) };
+                    sector._geoData = { center, radiusKm, bearing, aperture: 180, color, fillStyle, ...(weight != null ? { weight } : {}), ...(subdivisions != null ? { subdivisions } : {}), ...(wedges ? { wedges } : {}), ...(labelSize != null ? { labelSize } : {}), ...(labelFont ? { labelFont } : {}), ...applyImportedDisplayNameProps(elData) };
+                    sector.on('remove', () => { if (typeof _ctx.removeSectorWedgeOverlays === 'function') _ctx.removeSectorWedgeOverlays(sector); });
+                    sector.once('add', () => { if (typeof _ctx.syncSectorWedgeOverlays === 'function') _ctx.syncSectorWedgeOverlays(sector); });
                     if (['vertical', 'horizontal', 'both'].includes(fillStyle)) sector.once('add', () => scheduleGeoPathFill(sector));
                     sector.bindPopup(window.AppPopups.buildGeoPopupContent(sector, 'semi-circle', sector._geoData), GEO_POPUP_OPTIONS);
                     sector.on('popupopen', () => {
@@ -1129,8 +1186,9 @@
                         createGeoResizeHandle(handleLat, (newLat, isFinal) => {
                             const distM = haversineDistance(d.center.lat, d.center.lng, newLat.lat, newLat.lng);
                             d.radiusKm = parseFloat((distM / 1000).toFixed(2));
-                            const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing, 180);
+                            const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing, 180, d.subdivisions);
                             sector.setLatLngs(pts);
+                            if (typeof _ctx.syncSectorWedgeOverlays === 'function') _ctx.syncSectorWedgeOverlays(sector);
                             sector.setPopupContent(window.AppPopups.buildGeoPopupContent(sector, 'semi-circle', d));
                             bindGeoPopupHandlers(sector, 'semi-circle');
                             syncGeoShapeHandlesToGeometry(sector, 'semi-circle');

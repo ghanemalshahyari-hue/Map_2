@@ -27,8 +27,23 @@
             ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c]));
     }
 
+    function tr(key, fallback) {
+        if (typeof window.t === 'function') {
+            const v = window.t(key);
+            if (v && v !== key) return v;
+        }
+        return fallback != null ? fallback : key;
+    }
+
     function levelLabelFor(level) {
-        return ['Army', 'Force', 'Brigade', 'Battalion', 'Company'][level] ?? `L${level}`;
+        const keys = ['units-level-army', 'units-level-force', 'units-level-brigade', 'units-level-battalion', 'units-level-company'];
+        const k = keys[level];
+        if (k) return tr(k, ['Army', 'Force', 'Brigade', 'Battalion', 'Company'][level]);
+        return `L${level}`;
+    }
+
+    function sideLabelShort(side) {
+        return tr(`units-side-${side}-short`, (side || 'friendly').charAt(0).toUpperCase() + (side || 'friendly').slice(1));
     }
 
     function buildIcon(sidc, size = 34) {
@@ -53,18 +68,19 @@
     function buildPopupContent(unit) {
         const wrap = document.createElement('div');
         wrap.className = 'units-marker-popup';
+        wrap.setAttribute('dir', 'ltr');
         const lvl  = levelLabelFor(unit.level);
         const side = (unit.side || 'friendly');
         wrap.innerHTML = `
           <div class="umpop-title">${escapeHtml(unit.name || '—')}</div>
           <div class="umpop-sub">
             <span class="units-tree-level units-tree-level-${unit.level}">${escapeHtml(lvl)}</span>
-            <span class="units-side-badge units-side-${side}">${escapeHtml(side.charAt(0).toUpperCase() + side.slice(1))}</span>
+            <span class="units-side-badge units-side-${side}">${escapeHtml(sideLabelShort(side))}</span>
             ${unit.code ? `<span class="umpop-code">${escapeHtml(unit.code)}</span>` : ''}
           </div>
           <div class="umpop-actions">
-            <button type="button" class="umpop-btn" data-act="edit">Edit unit</button>
-            <button type="button" class="umpop-btn danger" data-act="unplace">Remove from map</button>
+            <button type="button" class="umpop-btn" data-act="edit">${escapeHtml(tr('units-popup-edit', 'Edit unit'))}</button>
+            <button type="button" class="umpop-btn danger" data-act="unplace">${escapeHtml(tr('units-popup-remove', 'Remove from map'))}</button>
           </div>`;
         wrap.addEventListener('click', async (e) => {
             const btn = e.target?.closest?.('[data-act]');
@@ -169,17 +185,24 @@
         const sidc       = unit.sidc || DEFAULT_SIDC;
         const previewIco = buildIcon(sidc, 30);
 
-        // Banner
-        const banner = document.createElement('div');
-        banner.className = 'units-map-placement-banner';
-        banner.innerHTML = `
-          <span class="umplace-text">Click on the map to place
-            <strong>${escapeHtml(unit.name || 'unit')}</strong>
-            <span class="umplace-hint">— ESC to cancel</span>
-          </span>
-          <button type="button" class="umplace-cancel" data-act="cancel">Cancel</button>`;
-        banner.querySelector('[data-act="cancel"]').addEventListener('click', cancelPlacement);
-        document.body.appendChild(banner);
+        // Banner (force LTR so the layout doesn't flip when the page is Arabic).
+        // Skipped when the Units side-panel owns the placement flow — that UI
+        // already shows a larger status banner + map cue, so a second banner
+        // here would be redundant clutter.
+        let banner = null;
+        if (!window.__APP_UNITS_SIDEPANEL_PLACING) {
+            banner = document.createElement('div');
+            banner.className = 'units-map-placement-banner';
+            banner.setAttribute('dir', 'ltr');
+            banner.innerHTML = `
+              <span class="umplace-text">${escapeHtml(tr('units-place-banner-text', 'Click on the map to place'))}
+                <strong>${escapeHtml(unit.name || 'unit')}</strong>
+                <span class="umplace-hint">${escapeHtml(tr('units-place-banner-hint', '— ESC to cancel'))}</span>
+              </span>
+              <button type="button" class="umplace-cancel" data-act="cancel">${escapeHtml(tr('units-place-banner-cancel', 'Cancel'))}</button>`;
+            banner.querySelector('[data-act="cancel"]').addEventListener('click', cancelPlacement);
+            document.body.appendChild(banner);
+        }
 
         // Cursor-follow preview marker
         let previewMarker = null;
@@ -213,7 +236,9 @@
                     });
                     if (!res.ok) throw new Error(await res.text());
                     const updated = await res.json();
-                    cancelPlacement();
+                    // Silent teardown — a successful placement is not a cancel,
+                    // so listeners tracking real user cancellations shouldn't fire.
+                    cancelPlacement({ silent: true });
                     addOrUpdateMarker({
                         id: updated.id,
                         name: updated.name,
@@ -234,7 +259,7 @@
         };
     }
 
-    function cancelPlacement() {
+    function cancelPlacement({ silent = false } = {}) {
         if (!placement) return;
         const { banner, previewMarker, onMove, onKey } = placement;
         if (map && onMove) map.off('mousemove', onMove);
@@ -244,6 +269,9 @@
         if (map) map.getContainer().style.cursor = '';
         window.__APP_UNITS_PLACING = null;
         placement = null;
+        // Silent teardown happens right after a successful placement so listeners
+        // tracking user-cancel-only flows don't get a false signal.
+        if (!silent) document.dispatchEvent(new CustomEvent('units:placement-cancelled'));
     }
 
     function init(mapRef) {

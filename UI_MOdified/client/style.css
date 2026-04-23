@@ -3331,9 +3331,12 @@ details[open] > .details-summary {
 .orbat-stage.animating {
     transition: transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-/* Entrance animation — opacity only (safe for SVG `transform` attribute) */
+/* Entrance animation — opacity only (safe for SVG `transform` attribute).
+   Suppressed on reflow (collapse/expand) so nodes don't re-fade each time. */
 .orbat-svg .orbat-node        { animation: orbat-fade-in 340ms ease-out both; }
 .orbat-svg .orbat-connectors  { animation: orbat-fade-in 460ms ease-out both; }
+.orbat-stage.no-node-enter .orbat-node { animation: none; }
+.orbat-stage.no-conn-enter .orbat-connectors { animation: none; }
 @keyframes orbat-fade-in {
     from { opacity: 0; }
     to   { opacity: 1; }
@@ -3417,12 +3420,44 @@ details[open] > .details-summary {
 [data-theme="light"] .orbat-node-sep {
     stroke: rgba(148,163,184,0.5);
 }
+/* Legacy ••• indicator — no longer rendered, kept in case older saved SVGs reference it. */
 .orbat-collapsed-dots {
     fill: var(--text-muted);
     font: 700 14px system-ui;
     letter-spacing: 2px;
     pointer-events: none;
 }
+
+/* Expand/collapse pill below each parent card */
+.orbat-node-toggle-bg {
+    fill: rgba(30,41,59,0.92);
+    stroke: rgba(148,163,184,0.45);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    transition: fill 0.12s, stroke 0.12s;
+}
+[data-theme="light"] .orbat-node-toggle-bg {
+    fill: #f8fafc;
+    stroke: rgba(100,116,139,0.5);
+}
+.orbat-node-toggle-label {
+    fill: var(--text-main);
+    font: 600 11px ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Selected (focused) card — stronger border + glow, independent of side color */
+.orbat-node.orbat-selected .orbat-node-card {
+    stroke: var(--accent);
+    stroke-width: 2;
+    filter: drop-shadow(0 0 0 2px rgba(59,130,246,0.25)) drop-shadow(0 6px 18px rgba(59,130,246,0.5));
+}
+
+/* Exiting (collapsing) branch — JS drives opacity/transform; nothing extra here,
+   but the class is available for future styling hooks. */
+.orbat-node.orbat-exiting .orbat-node-toggle { pointer-events: none; }
 
 /* Bottom hint */
 .orbat-hint {

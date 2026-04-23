@@ -6,3 +6,5 @@
 6. Troops location choose
 7. add critical areas
 8. update obstacle areas
+9. create auto draw custom polygon
+10. create OPORD Diagram [Ghanem]

@@ -31,9 +31,12 @@
     // ── Runtime state ───────────────────────────────────────────────────────
     let currentRoot = null;                 // unit object (with .children)
     const collapsed = new Set();            // ids of collapsed nodes
+    const exitingIds = new Set();           // ids currently running the exit animation
+    let selectedId = null;                  // id of the focused node
     let svgEl = null;                       // current SVG element in stage
     let viewState = { zoom: 1, tx: 0, ty: 0 };
     let contentSize = { w: 0, h: 0 };       // chart natural size (SVG units)
+    let prevRenderedIds = new Set();        // node ids visible in the previous render
 
     function tr(key, fallback) {
         if (typeof window.t === 'function') {
@@ -67,8 +70,19 @@
         zoomInBtn?.addEventListener('click', () => zoomBy(1.2));
         zoomOutBtn?.addEventListener('click', () => zoomBy(1 / 1.2));
         fitBtn?.addEventListener('click', fitToScreen);
-        expandBtn?.addEventListener('click', () => { collapsed.clear(); render(); fitToScreen(); });
-        collapseBtn?.addEventListener('click', () => { collapseToLevel(1); render(); fitToScreen(); });
+        expandBtn?.addEventListener('click', () => {
+            // Global action — fit the whole tree so the user sees the scope change.
+            collapsed.clear();
+            const rootId = currentRoot?.id;
+            render({ suppressEnter: true, expandFromId: rootId });
+            setTimeout(() => fitToScreen(true), 520);
+        });
+        collapseBtn?.addEventListener('click', () => {
+            // Global action — fit so the user sees the collapsed scope.
+            collapseToLevel(1);
+            render({ suppressEnter: true, suppressConnEnter: true });
+            fitToScreen(true);
+        });
         exportPngBtn?.addEventListener('click', () => exportImage('png'));
         exportSvgBtn?.addEventListener('click', () => exportImage('svg'));
 
@@ -193,12 +207,195 @@
         applyTransform(animate);
     }
 
+    // ── Selection + branch toggle ───────────────────────────────────────────
+    function selectNode(id) {
+        if (selectedId === id) return;
+        selectedId = id;
+        if (!svgEl) return;
+        svgEl.querySelectorAll('.orbat-node.orbat-selected')
+            .forEach(el => el.classList.remove('orbat-selected'));
+        const next = svgEl.querySelector(`.orbat-node[data-id="${CSS.escape(id)}"]`);
+        if (next) next.classList.add('orbat-selected');
+    }
+
+    function collectVisibleDescendantIds(node, out = []) {
+        if (!node?.children?.length || collapsed.has(node.id)) return out;
+        for (const c of node.children) {
+            out.push(c.id);
+            collectVisibleDescendantIds(c, out);
+        }
+        return out;
+    }
+
+    function findNodeById(id, n = currentRoot) {
+        if (!n) return null;
+        if (n.id === id) return n;
+        for (const c of n.children || []) {
+            const hit = findNodeById(id, c);
+            if (hit) return hit;
+        }
+        return null;
+    }
+
+    function readContentPos(id) {
+        if (!svgEl) return null;
+        const el = svgEl.querySelector(`.orbat-node[data-id="${CSS.escape(id)}"]`);
+        if (!el) return null;
+        const m = /translate\(\s*([-\d.]+)\s*,\s*([-\d.]+)\s*\)/.exec(el.getAttribute('transform') || '');
+        if (!m) return null;
+        return { x: +m[1], y: +m[2] };
+    }
+
+    function anchorParentOnScreen(oldContentPos, id) {
+        if (!oldContentPos) return;
+        const newPos = readContentPos(id);
+        if (!newPos) return;
+        // Adjust stage translation so the parent card stays at the same on-screen location.
+        viewState.tx += (oldContentPos.x - newPos.x) * viewState.zoom;
+        viewState.ty += (oldContentPos.y - newPos.y) * viewState.zoom;
+        applyTransform(false);
+    }
+
+    // Smoothly pan (no zoom change) so the given node ends up centered
+    // in the canvas.
+    function centerOnNode(id, animate = true) {
+        if (!svgEl || !canvasEl) return;
+        const pos = readContentPos(id);
+        if (!pos) return;
+        const rect = canvasEl.getBoundingClientRect();
+        const cx = pos.x + NODE_W / 2;
+        const cy = pos.y + NODE_H / 2;
+        viewState.tx = rect.width / 2 - cx * viewState.zoom;
+        viewState.ty = rect.height / 2 - cy * viewState.zoom;
+        applyTransform(animate);
+    }
+
+    function toggleBranch(id) {
+        const node = findNodeById(id);
+        if (!node || !node.children?.length) return;
+        const wasCollapsed = collapsed.has(id);
+        const oldParentPos = readContentPos(id);
+
+        if (wasCollapsed) {
+            // Expand — children drop from the parent card.
+            collapsed.delete(id);
+            render({ suppressEnter: true, expandFromId: id });
+            anchorParentOnScreen(oldParentPos, id);
+            // After the drop finishes, pan minimally if the new branch peeks off-screen.
+            setTimeout(() => ensureBranchVisibleFor(id), 460);
+            return;
+        }
+
+        // Collapse — play an exit animation on the descendants, then remove them.
+        const exiting = collectVisibleDescendantIds(node);
+        if (!exiting.length) {
+            collapsed.add(id);
+            render({ suppressEnter: true, suppressConnEnter: true });
+            anchorParentOnScreen(oldParentPos, id);
+            centerOnNode(id, true);
+            return;
+        }
+        exiting.forEach(eid => exitingIds.add(eid));
+        // Mark the soon-to-vanish nodes + animate them.
+        exiting.forEach((eid, idx) => {
+            const el = svgEl && svgEl.querySelector(`.orbat-node[data-id="${CSS.escape(eid)}"]`);
+            if (!el) return;
+            el.classList.add('orbat-exiting');
+            animateExit(el, 160, idx * 18);
+        });
+        setTimeout(() => {
+            exiting.forEach(eid => exitingIds.delete(eid));
+            collapsed.add(id);
+            const pos = readContentPos(id);
+            render({ suppressEnter: true, suppressConnEnter: true });
+            // Step 1 (instant): keep the card at its on-screen position so
+            // there's no visible jump right after render.
+            anchorParentOnScreen(pos, id);
+            // Step 2 (animated): glide the card into the middle of the canvas.
+            centerOnNode(id, true);
+        }, 200);
+    }
+
+    function animateExit(g, duration, delay) {
+        const start = performance.now() + (delay || 0);
+        const m = /translate\(\s*([-\d.]+)\s*,\s*([-\d.]+)\s*\)/.exec(g.getAttribute('transform') || '');
+        if (!m) { g.style.opacity = '0'; return; }
+        const x0 = +m[1], y0 = +m[2];
+        function step(now) {
+            const t = (now - start) / duration;
+            if (t < 0) { requestAnimationFrame(step); return; }
+            if (t >= 1) {
+                g.style.opacity = '0';
+                return;
+            }
+            const e = t * t; // easeIn
+            g.setAttribute('transform', `translate(${x0}, ${y0 - 8 * e})`);
+            g.style.opacity = String(1 - e);
+            requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+    }
+
+    // Pan the stage just enough to keep the given content-space bounds visible.
+    // Leaves zoom untouched and does nothing if the box is already on-screen.
+    function ensureBranchVisible(bounds, padding = 40, animate = true) {
+        if (!canvasEl) return;
+        const rect = canvasEl.getBoundingClientRect();
+        const z = viewState.zoom;
+        const sx1 = bounds.x1 * z + viewState.tx;
+        const sy1 = bounds.y1 * z + viewState.ty;
+        const sx2 = bounds.x2 * z + viewState.tx;
+        const sy2 = bounds.y2 * z + viewState.ty;
+        const boxW = sx2 - sx1, boxH = sy2 - sy1;
+
+        let dx = 0, dy = 0;
+        if (boxW <= rect.width - padding * 2) {
+            if (sx1 < padding) dx = padding - sx1;
+            else if (sx2 > rect.width - padding) dx = rect.width - padding - sx2;
+        } else {
+            dx = (rect.width - boxW) / 2 - sx1;
+        }
+        if (boxH <= rect.height - padding * 2) {
+            if (sy1 < padding) dy = padding - sy1;
+            else if (sy2 > rect.height - padding) dy = rect.height - padding - sy2;
+        } else {
+            dy = (rect.height - boxH) / 2 - sy1;
+        }
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+        viewState.tx += dx;
+        viewState.ty += dy;
+        applyTransform(animate);
+    }
+
+    // Compute content-space bounds of a branch (parent + visible descendants)
+    // by reading each node's current transform from the live SVG.
+    function ensureBranchVisibleFor(id) {
+        if (!svgEl) return;
+        const node = findNodeById(id);
+        if (!node) return;
+        const ids = [id, ...collectVisibleDescendantIds(node)];
+        let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
+        for (const nid of ids) {
+            const el = svgEl.querySelector(`.orbat-node[data-id="${CSS.escape(nid)}"]`);
+            if (!el) continue;
+            const m = /translate\(\s*([-\d.]+)\s*,\s*([-\d.]+)\s*\)/.exec(el.getAttribute('transform') || '');
+            if (!m) continue;
+            const x = +m[1], y = +m[2];
+            if (x < x1) x1 = x;
+            if (y < y1) y1 = y;
+            if (x + NODE_W > x2) x2 = x + NODE_W;
+            if (y + NODE_H > y2) y2 = y + NODE_H;
+        }
+        if (x1 === Infinity) return;
+        ensureBranchVisible({ x1, y1, x2, y2 });
+    }
+
     // ── Open / close ────────────────────────────────────────────────────────
     function open(rootNode) {
         if (!ensureBound() || !rootNode) return;
         currentRoot = rootNode;
         collapsed.clear();
-        collapseToLevel(2); // sensible default: show top two layers expanded
+        collapseToLevel(1); // start compact: root + its direct children only
         subjectEl.textContent = rootNode.name || '';
         modal.classList.remove('hidden');
         modal.setAttribute('aria-hidden', 'false');
@@ -212,6 +409,9 @@
         modal.classList.add('hidden');
         modal.setAttribute('aria-hidden', 'true');
         currentRoot = null;
+        selectedId = null;
+        exitingIds.clear();
+        prevRenderedIds = new Set();
         if (stageEl) stageEl.innerHTML = '';
         svgEl = null;
     }
@@ -283,7 +483,7 @@
     function collectAll(t, out = []) { out.push(t); for (const c of t.children) collectAll(c, out); return out; }
 
     // ── Render ──────────────────────────────────────────────────────────────
-    function render() {
+    function render(opts = {}) {
         if (!currentRoot || !stageEl) return;
 
         const layout = buildLayoutTree(currentRoot);
@@ -305,11 +505,64 @@
         contentSize = { w, h };
 
         svgEl = buildSvg(layout, w, h);
+        stageEl.classList.toggle('no-node-enter', !!opts.suppressEnter);
+        stageEl.classList.toggle('no-conn-enter', !!opts.suppressConnEnter);
         stageEl.innerHTML = '';
         stageEl.appendChild(svgEl);
         stageEl.style.width  = w + 'px';
         stageEl.style.height = h + 'px';
         applyTransform();
+
+        // Expand-from animation: new nodes "fall" out of the clicked card
+        // into their final positions, with a stagger by tree depth.
+        const reduceMotion = window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (opts.expandFromId && !reduceMotion) {
+            const parent = all.find(t => t.node.id === opts.expandFromId);
+            if (parent) {
+                const fromX = parent.absX;
+                const fromY = parent.y + PADDING;
+                const depthById = new Map();
+                (function walk(t, d) {
+                    depthById.set(t.node.id, d);
+                    for (const c of t.children) walk(c, d + 1);
+                })(layout, 0);
+                const fromDepth = depthById.get(opts.expandFromId) ?? 0;
+                const nodeEls = svgEl.querySelectorAll('.orbat-node[data-id]');
+                nodeEls.forEach(g => {
+                    const id = g.getAttribute('data-id');
+                    if (prevRenderedIds.has(id)) return;
+                    const t = all.find(x => x.node.id === id);
+                    if (!t) return;
+                    const delay = Math.max(0, (depthById.get(id) ?? 0) - fromDepth - 1) * 55;
+                    animateDrop(g, fromX, fromY, t.absX, t.y + PADDING, 420, delay);
+                });
+            }
+        }
+
+        prevRenderedIds = new Set(all.map(t => t.node.id));
+    }
+
+    function animateDrop(g, sx, sy, ex, ey, duration, delay) {
+        const start = performance.now() + (delay || 0);
+        g.setAttribute('transform', `translate(${sx}, ${sy})`);
+        g.style.opacity = '0';
+        function step(now) {
+            const t = (now - start) / duration;
+            if (t < 0) { requestAnimationFrame(step); return; }
+            if (t >= 1) {
+                g.setAttribute('transform', `translate(${ex}, ${ey})`);
+                g.style.opacity = '';
+                return;
+            }
+            const e = 1 - Math.pow(1 - t, 3); // easeOutCubic
+            const x = sx + (ex - sx) * e;
+            const y = sy + (ey - sy) * e;
+            g.setAttribute('transform', `translate(${x}, ${y})`);
+            g.style.opacity = String(Math.min(1, t * 1.8));
+            requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
     }
 
     function buildSvg(layout, w, h) {
@@ -383,7 +636,11 @@
         const n = t.node;
         const side = n.side || 'friendly';
         const g = document.createElementNS(svgNS, 'g');
-        g.setAttribute('class', `orbat-node orbat-node-side-${side} orbat-node-level-${n.level ?? 0}` + (t.collapsed ? ' orbat-collapsed' : ''));
+        let cls = `orbat-node orbat-node-side-${side} orbat-node-level-${n.level ?? 0}`;
+        if (t.collapsed) cls += ' orbat-collapsed';
+        if (selectedId === n.id) cls += ' orbat-selected';
+        if (exitingIds.has(n.id)) cls += ' orbat-exiting';
+        g.setAttribute('class', cls);
         g.setAttribute('transform', `translate(${t.absX}, ${t.y + PADDING})`);
         g.setAttribute('data-id', n.id);
 
@@ -478,18 +735,8 @@
         meta.textContent = (n.code ? n.code : '') + (childN ? (n.code ? '  •  ' : '') + childN + (childN === 1 ? ' sub' : ' subs') : '');
         g.appendChild(meta);
 
-        // Collapse indicator (three dots) when the node has hidden children
-        if (t.collapsed && n.children?.length) {
-            const dots = document.createElementNS(svgNS, 'text');
-            dots.setAttribute('class', 'orbat-collapsed-dots');
-            dots.setAttribute('x', NODE_W / 2);
-            dots.setAttribute('y', NODE_H + 14);
-            dots.setAttribute('text-anchor', 'middle');
-            dots.textContent = '•••';
-            g.appendChild(dots);
-        }
-
-        // Hover hit-rect on top so click works anywhere over the card
+        // Hover hit-rect on top so click works anywhere over the card.
+        // Card click is the expand/collapse control.
         const hit = document.createElementNS(svgNS, 'rect');
         hit.setAttribute('class', 'orbat-node-hit');
         hit.setAttribute('x', 0); hit.setAttribute('y', 0);
@@ -499,10 +746,41 @@
         hit.addEventListener('click', (ev) => {
             ev.stopPropagation();
             if (!n.children?.length) return;
-            if (collapsed.has(n.id)) collapsed.delete(n.id); else collapsed.add(n.id);
-            render();
+            toggleBranch(n.id);
         });
         g.appendChild(hit);
+
+        // Status indicator pill below the card — shows ▸/▾ + child count.
+        // Pure visual; the card itself is the click target.
+        if (n.children?.length) {
+            const toggle = document.createElementNS(svgNS, 'g');
+            toggle.setAttribute('class', 'orbat-node-toggle' + (t.collapsed ? ' is-collapsed' : ' is-expanded'));
+            toggle.style.pointerEvents = 'none';
+
+            const tgW = 46, tgH = 20;
+            const tgX = (NODE_W - tgW) / 2;
+            const tgY = NODE_H + 4;
+
+            const bg = document.createElementNS(svgNS, 'rect');
+            bg.setAttribute('class', 'orbat-node-toggle-bg');
+            bg.setAttribute('x', tgX);
+            bg.setAttribute('y', tgY);
+            bg.setAttribute('width', tgW);
+            bg.setAttribute('height', tgH);
+            bg.setAttribute('rx', tgH / 2);
+            toggle.appendChild(bg);
+
+            const label = document.createElementNS(svgNS, 'text');
+            label.setAttribute('class', 'orbat-node-toggle-label');
+            label.setAttribute('x', NODE_W / 2);
+            label.setAttribute('y', tgY + tgH / 2 + 4);
+            label.setAttribute('text-anchor', 'middle');
+            const chevron = t.collapsed ? '▸' : '▾';
+            label.textContent = `${chevron} ${n.children.length}`;
+            toggle.appendChild(label);
+
+            g.appendChild(toggle);
+        }
 
         // <title> for native tooltip
         const title = document.createElementNS(svgNS, 'title');

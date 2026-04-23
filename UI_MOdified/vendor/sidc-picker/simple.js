@@ -333,6 +333,7 @@
     if (n === 2) renderDomainStep();
     if (n === 3) renderTypeStep();
     if (n === 4) renderSizeStep();
+    if (n === 5) renderExtrasStep();
     if (n === 6) renderReview();
     // Ensure stage scrolled to top for long lists
     stageEl.scrollTop = 0;
@@ -430,12 +431,28 @@
       if (!/^\d\d\d\d00$/.test(e.code)) return;
       const pill = document.createElement("button");
       pill.type = "button";
-      pill.className = "sp-pill";
+      pill.className = "sp-pill sp-pill-with-icon";
       pill.dataset.field = "type";
       pill.dataset.value = e.code;
       const label = trEntity(e["entity type"] || e.entity || "");
-      pill.textContent = label || e.code;
       pill.title = entityLabel(state.domain, e.code);
+
+      try {
+        const tmpSidc = "10" + "0" + state.side + state.domain + "0000" + e.code + "0000";
+        const sym = new ms.Symbol(tmpSidc, { size: 24, simpleStatusModifier: true });
+        if (sym.isValid()) {
+          const ico = document.createElement("span");
+          ico.className = "sp-pill-ico";
+          ico.appendChild(sym.asDOM());
+          pill.appendChild(ico);
+        }
+      } catch (_) { /* milsymbol not ready; label-only fallback */ }
+
+      const lbl = document.createElement("span");
+      lbl.className = "sp-pill-label";
+      lbl.textContent = label || e.code;
+      pill.appendChild(lbl);
+
       if (state.type === e.code) pill.classList.add("selected");
       typeAllEl.appendChild(pill);
     });
@@ -449,13 +466,77 @@
     echelonsFor(state.domain).forEach(e => {
       const pill = document.createElement("button");
       pill.type = "button";
-      pill.className = "sp-pill";
+      pill.className = "sp-pill sp-pill-with-icon";
       pill.dataset.field = "size";
       pill.dataset.value = e.code;
-      pill.textContent = lang === "ar" ? e.ar : e.en;
+
+      try {
+        const tmpSidc = "10" + "0" + state.side + state.domain + "0" + "0" + e.code + state.type + "0000";
+        const sym = new ms.Symbol(tmpSidc, { size: 28, simpleStatusModifier: true });
+        if (sym.isValid()) {
+          const ico = document.createElement("span");
+          ico.className = "sp-pill-ico";
+          ico.appendChild(sym.asDOM());
+          pill.appendChild(ico);
+        }
+      } catch (_) { /* milsymbol not ready; label-only fallback */ }
+
+      const lbl = document.createElement("span");
+      lbl.className = "sp-pill-label";
+      lbl.textContent = lang === "ar" ? e.ar : e.en;
+      pill.appendChild(lbl);
+
       if (state.size === e.code) pill.classList.add("selected");
       sizeGridEl.appendChild(pill);
     });
+  }
+
+  /* ── Render: Extras (step 5) ─────────────────── */
+  function buildExtrasSidc(overrideField, overrideValue) {
+    const status  = overrideField === "status" ? overrideValue : state.status;
+    const hqtf    = overrideField === "role"   ? overrideValue : state.role;
+    return "10" + "0" + state.side + state.domain + status + hqtf + state.size + state.type + "0000";
+  }
+
+  function enhanceExtrasPill(pill, field) {
+    if (pill.dataset.enhanced === "1") {
+      // Re-render icon only; label is updated by applyI18n.
+      const ico = pill.querySelector(".sp-pill-ico");
+      if (ico) ico.remove();
+    } else {
+      // First pass: wrap label text in a span that keeps data-i18n.
+      const i18nKey = pill.getAttribute("data-i18n");
+      const text = pill.textContent;
+      pill.textContent = "";
+      const lbl = document.createElement("span");
+      lbl.className = "sp-pill-label";
+      lbl.textContent = text;
+      if (i18nKey) {
+        lbl.setAttribute("data-i18n", i18nKey);
+        pill.removeAttribute("data-i18n");
+      }
+      pill.appendChild(lbl);
+      pill.classList.add("sp-pill-with-icon");
+      pill.dataset.enhanced = "1";
+    }
+
+    try {
+      const sidc = buildExtrasSidc(field, pill.dataset.value);
+      const sym = new ms.Symbol(sidc, { size: 28, simpleStatusModifier: true });
+      if (sym.isValid()) {
+        const ico = document.createElement("span");
+        ico.className = "sp-pill-ico";
+        ico.appendChild(sym.asDOM());
+        pill.insertBefore(ico, pill.firstChild);
+      }
+    } catch (_) { /* milsymbol not ready; label-only fallback */ }
+  }
+
+  function renderExtrasStep() {
+    document.querySelectorAll('.sp-step[data-step="5"] [data-field="status"]')
+      .forEach(p => enhanceExtrasPill(p, "status"));
+    document.querySelectorAll('.sp-step[data-step="5"] [data-field="role"]')
+      .forEach(p => enhanceExtrasPill(p, "role"));
   }
 
   /* ── Review: human sentence ─────────────────── */
@@ -653,8 +734,8 @@
     });
     bindCardClick("type",   () => { /* wait for Next */ });
     bindCardClick("size",   () => { /* wait for Next */ });
-    bindCardClick("status", () => { /* wait for Next */ });
-    bindCardClick("role",   () => { /* wait for Next */ });
+    bindCardClick("status", () => { if (state.step === 5) renderExtrasStep(); });
+    bindCardClick("role",   () => { if (state.step === 5) renderExtrasStep(); });
 
     // More-types toggle
     typeMoreBtn.addEventListener("click", () => {
@@ -693,6 +774,7 @@
       applyI18n();
       renderTypeStep();
       renderSizeStep();
+      if (state.step === 5) renderExtrasStep();
       if (state.step === 6) renderReview();
       updatePreview();
     });

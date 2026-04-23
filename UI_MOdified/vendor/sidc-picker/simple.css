@@ -297,6 +297,47 @@ html[dir="rtl"] .picker-stage { padding-right: 0; padding-left: 6px; }
   color: var(--sp-text);
   font-weight: 600;
 }
+.sp-pill-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 8px;
+}
+.sp-pill-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 0;
+  flex: 0 0 auto;
+}
+.sp-pill-ico svg {
+  max-width: 28px;
+  max-height: 28px;
+  width: auto;
+  height: auto;
+}
+.sp-pill-label { line-height: 1.2; }
+
+/* Size step: echelon amplifiers (dashes/dots/Xs) stack above the frame
+   and are drawn in black by milsymbol, so give the icon a light panel
+   and a taller/wider box for the amplifier to read cleanly. */
+#sp-size-grid .sp-pill-with-icon,
+.sp-step[data-step="5"] .sp-pill-with-icon { padding: 4px 12px 4px 4px; }
+#sp-size-grid .sp-pill-ico,
+.sp-step[data-step="5"] .sp-pill-ico {
+  width: 46px;
+  height: 42px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  padding: 2px;
+}
+#sp-size-grid .sp-pill-ico svg,
+.sp-step[data-step="5"] .sp-pill-ico svg {
+  max-width: 42px;
+  max-height: 38px;
+}
 
 .sp-more-toggle {
   background: transparent;
@@ -382,7 +423,7 @@ html[dir="rtl"] .picker-stage { padding-right: 0; padding-left: 6px; }
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.08), transparent 70%);
+  background: radial-gradient(ellipse at center, #ffffff 0%, #e2e8f0 70%, #cbd5e1 100%);
 }
 .sp-preview-symbol svg {
   max-width: 100%;

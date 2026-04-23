@@ -16389,6 +16389,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.AppChat.init();
         window.AppUnits?.init?.();
         window.AppUnitsMap?.init?.(map);
+        window.AppUnitsOrbatDock?.init?.(map);
 
         requestAnimationFrame(() => {
             requestAnimationFrame(syncMapSizeAndOverlays);

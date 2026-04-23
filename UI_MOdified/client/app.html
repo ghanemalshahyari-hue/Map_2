@@ -259,6 +259,11 @@
                                 <button id="free-draw-signature-btn" class="glass-btn secondary" type="button" data-i18n="auto-draw-btn" title="Free Draw Circle X workflow">Auto Draw</button>
                                 <p id="free-draw-critical" aria-live="polite" style="margin-top:8px;font-size:0.78rem;line-height:1.35;color:#fbbf24;min-height:1.2em;"></p>
                             </div>
+
+                            <!-- Position Unit: opens ORBAT dock so the user can drag units onto the map -->
+                            <div class="control-group" style="margin-top:4px;">
+                                <button id="position-unit-btn" class="glass-btn secondary" type="button" data-i18n="position-unit-btn" title="Open ORBAT dock and drag units onto the map">Position Unit</button>
+                            </div>
                         </div>
 
                         <!-- Mission graphics section -->
@@ -1346,6 +1351,26 @@
         </div>
     </div>
 
+    <!-- ORBAT dock — bottom panel with the unit hierarchy as draggable symbols -->
+    <div id="orbat-dock" class="orbat-dock hidden" aria-hidden="true" dir="ltr">
+        <div id="orbat-dock-resize" class="orbat-dock-resize" role="separator" aria-orientation="horizontal" aria-label="Resize ORBAT dock" tabindex="0"></div>
+        <div class="orbat-dock-header">
+            <div class="orbat-dock-title-wrap">
+                <svg class="orbat-dock-icon" viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="2" width="5" height="4" rx="1"/><rect x="1.5" y="13" width="5" height="4" rx="1"/><rect x="7.5" y="13" width="5" height="4" rx="1"/><rect x="13.5" y="13" width="5" height="4" rx="1"/><path d="M10 6v3M4 13v-2h12v2M10 11v2"/></g></svg>
+                <span class="orbat-dock-title" data-i18n="orbat-dock-title">ORBAT</span>
+                <span class="orbat-dock-hint" data-i18n="orbat-dock-hint">— drag a unit onto the map to position it</span>
+            </div>
+            <div class="orbat-dock-tools">
+                <button type="button" id="orbat-dock-refresh" class="orbat-dock-tool-btn" title="Refresh" aria-label="Refresh">&#x21bb;</button>
+                <button type="button" id="orbat-dock-close" class="orbat-dock-tool-btn" title="Close" aria-label="Close">&times;</button>
+            </div>
+        </div>
+        <div id="orbat-dock-body" class="orbat-dock-body">
+            <div id="orbat-dock-tree" class="orbat-dock-tree"></div>
+            <div id="orbat-dock-empty" class="orbat-dock-empty" hidden>No units yet — create some from the Units panel first.</div>
+        </div>
+    </div>
+
     <!-- Full symbol picker modal -->
     <div id="sidc-picker-modal" class="modal hidden" aria-hidden="true">
         <div class="modal-backdrop" id="sidc-picker-close"></div>
@@ -1387,6 +1412,7 @@
     <script src="map-engine.js"></script>
     <script src="app.js?v=27"></script>
     <script src="units-map.js"></script>
+    <script src="units-orbat-dock.js?v=1"></script>
     <script src="tool-rail.js"></script>
 
     <!-- New modular panel system (ES modules — run after app.js) -->

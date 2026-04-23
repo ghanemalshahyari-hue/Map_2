@@ -3482,3 +3482,237 @@ details[open] > .details-summary {
     .orbat-subject { max-width: 140px; }
     .orbat-hint { font-size: 0.68rem; padding: 3px 8px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   ORBAT Dock — bottom panel with draggable unit symbols
+   ═══════════════════════════════════════════════════════════════════ */
+.orbat-dock {
+    position: fixed;
+    left: calc(var(--rail-w) + var(--panel-w));
+    right: 0;
+    bottom: 0;
+    height: 220px;
+    min-height: 120px;
+    max-height: 85vh;
+    z-index: 900;
+    background: var(--panel-bg);
+    border-top: 1px solid var(--panel-border);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+    transform: translateY(0);
+    transition: transform 220ms ease, opacity 220ms ease;
+}
+.orbat-dock.hidden {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+}
+/* While the user is dragging the resize handle we disable transitions so
+   the height follows the pointer 1:1 without animation lag. */
+.orbat-dock.is-resizing {
+    transition: none;
+    user-select: none;
+}
+
+/* Top-edge resize handle */
+.orbat-dock-resize {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    right: 0;
+    height: 10px;
+    cursor: ns-resize;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+.orbat-dock-resize::before {
+    content: '';
+    width: 48px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(148, 163, 184, 0.45);
+    transition: background 120ms ease, width 120ms ease;
+}
+.orbat-dock-resize:hover::before,
+.orbat-dock.is-resizing .orbat-dock-resize::before {
+    background: var(--accent);
+    width: 72px;
+}
+.orbat-dock-resize:focus-visible { outline: none; }
+.orbat-dock-resize:focus-visible::before {
+    background: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-subtle);
+}
+
+.orbat-dock-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 14px;
+    border-bottom: 1px solid var(--panel-border);
+    background: linear-gradient(180deg, rgba(30,41,59,0.85), rgba(15,23,42,0.6));
+    flex: 0 0 auto;
+}
+[data-theme="light"] .orbat-dock-header {
+    background: linear-gradient(180deg, rgba(248,250,252,0.95), rgba(255,255,255,0.7));
+}
+.orbat-dock-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-main);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+.orbat-dock-icon { color: var(--accent); }
+.orbat-dock-hint {
+    font-weight: 400;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    letter-spacing: 0;
+}
+.orbat-dock-tools { display: flex; gap: 4px; }
+.orbat-dock-tool-btn {
+    background: transparent;
+    border: 1px solid var(--panel-border);
+    color: var(--text-main);
+    font-size: 0.95rem;
+    line-height: 1;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    padding: 0;
+    transition: background 120ms ease, border-color 120ms ease;
+}
+.orbat-dock-tool-btn:hover {
+    background: var(--accent-subtle);
+    border-color: var(--accent);
+}
+
+.orbat-dock-body {
+    flex: 1 1 auto;
+    overflow: auto;
+    padding: 10px 14px 14px;
+}
+.orbat-dock-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.orbat-dock-empty {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    padding: 24px;
+    text-align: center;
+}
+
+/* Tree row — one unit (draggable) */
+.orbat-dock-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: var(--radius-xs);
+    cursor: grab;
+    user-select: none;
+    border: 1px solid transparent;
+    transition: background 120ms ease, border-color 120ms ease, opacity 120ms ease;
+}
+.orbat-dock-row:hover {
+    background: var(--accent-subtle);
+    border-color: rgba(59, 130, 246, 0.35);
+}
+.orbat-dock-row:active { cursor: grabbing; }
+.orbat-dock-row.dragging { opacity: 0.55; }
+.orbat-dock-row.is-placed { opacity: 0.6; }
+.orbat-dock-row.is-placed .orbat-dock-placed-badge { display: inline-flex; }
+
+.orbat-dock-caret {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    cursor: pointer;
+    border-radius: 3px;
+    flex: 0 0 auto;
+}
+.orbat-dock-caret:hover { background: rgba(148,163,184,0.2); color: var(--text-main); }
+.orbat-dock-caret.is-leaf { visibility: hidden; }
+
+.orbat-dock-sym {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: rgba(241,245,249,0.04);
+    border: 1px solid rgba(148,163,184,0.18);
+    border-radius: var(--radius-xs);
+    padding: 2px;
+    pointer-events: none;
+}
+[data-theme="light"] .orbat-dock-sym {
+    background: #f8fafc;
+    border-color: rgba(100,116,139,0.25);
+}
+.orbat-dock-sym svg { max-width: 100%; max-height: 100%; display: block; }
+
+.orbat-dock-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1 1 auto;
+    pointer-events: none;
+}
+.orbat-dock-name {
+    color: var(--text-main);
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.orbat-dock-meta {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    letter-spacing: 0.04em;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+.orbat-dock-placed-badge {
+    display: none;
+    font-family: var(--font-family);
+    font-size: 0.62rem;
+    padding: 1px 5px;
+    border-radius: 8px;
+    background: rgba(34,197,94,0.18);
+    color: #22c55e;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* Map-wide drop hint (shown while user is dragging a unit over the map) */
+.map-dock-dragover {
+    outline: 2px dashed var(--accent);
+    outline-offset: -10px;
+}
+
+/* RTL: dock slides from opposite side of the sidebar */
+[dir="rtl"] .orbat-dock {
+    left: 0;
+    right: calc(var(--rail-w) + var(--panel-w));
+}

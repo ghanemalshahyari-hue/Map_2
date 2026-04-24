@@ -24,6 +24,10 @@
     let roots = [];
     let unitsFlat = [];
     const collapsed = new Set();
+    // Ids we've already rendered at least once. Used so that on a refresh we
+    // auto-collapse only brand-new units — previously-expanded branches stay
+    // open, which respects whatever the user has done so far.
+    const seenIds = new Set();
 
     function tr(key, fallback) {
         if (typeof window.t === 'function') {
@@ -49,11 +53,34 @@
     }
 
     // ── Symbol rendering ────────────────────────────────────────────────
-    function buildSymbolHtml(sidc, size) {
+    // Request the HQ render (which extends the viewBox) then swap the
+    // library's non-standard green rectangle for a plain vertical staff
+    // line — the correct NATO command indicator.
+    function applyHqModifier(sidc) {
+        const s = String(sidc || DEFAULT_SIDC);
+        if (s.length < 20) return s;
+        return s.substring(0, 7) + '2' + s.substring(8);
+    }
+
+    function rewriteHqStaff(svg) {
+        return svg.replace(
+            /<path d="M(-?\d+),(-?\d+) l(-?\d+),0 0,(-?\d+) -?\d+,0 z" stroke-width="\d+" stroke="[^"]+" fill="rgb\((?:0,255,0|255,255,0)\)"[^>]*><\/path>/,
+            (_m, x, y, _w, h) => {
+                const top = Number(y) - 5;
+                const bottom = Number(y) + Number(h);
+                return `<path d="M${x},${top} L${x},${bottom}" stroke="black" stroke-width="4" fill="none"></path>`;
+            }
+        );
+    }
+
+    function buildSymbolHtml(sidc, size, isHq) {
+        const effective = isHq ? applyHqModifier(sidc) : (sidc || DEFAULT_SIDC);
         try {
             if (window.ms && typeof window.ms.Symbol === 'function') {
-                const sym = new window.ms.Symbol(sidc || DEFAULT_SIDC, { size, simpleStatusModifier: true });
-                if (sym.isValid()) return sym.asSVG();
+                const sym = new window.ms.Symbol(effective, { size, simpleStatusModifier: true });
+                if (sym.isValid()) {
+                    return isHq ? rewriteHqStaff(sym.asSVG()) : sym.asSVG();
+                }
             }
         } catch (_) { /* fall through */ }
         return '';
@@ -72,10 +99,25 @@
             roots = [];
             unitsFlat = [];
         }
+        // Auto-collapse any parent we haven't rendered before. First load →
+        // every parent is new, so the whole tree starts collapsed (only roots
+        // visible). Refreshes preserve the user's current expand state.
+        for (const u of unitsFlat) {
+            if (u.deleted_at) continue;
+            if (!seenIds.has(u.id)) {
+                seenIds.add(u.id);
+                const hasChildren = unitsFlat.some(c => c.parent_id === u.id && !c.deleted_at);
+                if (hasChildren) collapsed.add(u.id);
+            }
+        }
         render();
     }
 
     // ── Render ──────────────────────────────────────────────────────────
+    // Tree grows LEFT → RIGHT: the root is on the left, each descendant level
+    // is one column further right. A node is a flex row of (card, children).
+    // The children column stacks vertically, so sibling sub-trees don't
+    // compete for horizontal space.
     function render() {
         if (!treeEl) return;
         treeEl.innerHTML = '';
@@ -86,83 +128,155 @@
         }
         if (emptyEl) emptyEl.hidden = true;
 
-        const frag = document.createDocumentFragment();
-        (function walk(nodes, depth) {
-            for (const n of nodes) {
-                if (n.deleted_at) continue;
-                frag.appendChild(buildRow(n, depth));
-                if (n.children?.length && !collapsed.has(n.id)) {
-                    walk(n.children, depth + 1);
-                }
-            }
-        })(roots, 0);
-        treeEl.appendChild(frag);
+        // Multiple roots are stacked vertically; each roots's sub-tree expands
+        // to the right from its own card.
+        const rootsWrap = document.createElement('div');
+        rootsWrap.className = 'orbat-dock-roots';
+        for (const n of roots) {
+            if (n.deleted_at) continue;
+            rootsWrap.appendChild(buildNode(n));
+        }
+        treeEl.appendChild(rootsWrap);
     }
 
-    function buildRow(unit, depth) {
-        const row = document.createElement('div');
-        row.className = 'orbat-dock-row';
-        row.setAttribute('draggable', 'true');
-        row.dataset.unitId = unit.id;
-        row.style.paddingInlineStart = (6 + depth * 18) + 'px';
-        if (isPlaced(unit)) row.classList.add('is-placed');
+    // After an expand, bring the newly-revealed children into the dock
+    // viewport — including the hanging +/− toggle below each card and a bit
+    // of breathing room so the user can see where the next level would land.
+    // Runs after the next paint so the browser has computed the freshly-
+    // rendered children's bounding box.
+    function scrollChildrenIntoView(unitId) {
+        requestAnimationFrame(() => {
+            if (!treeEl) return;
+            const nodeEl = treeEl.querySelector(`.orbat-dock-node[data-unit-id="${CSS.escape(unitId)}"]`);
+            if (!nodeEl) return;
+            const childrenEl = nodeEl.querySelector(':scope > .orbat-dock-children');
+            const body = document.getElementById('orbat-dock-body');
+            if (!childrenEl || !body) return;
 
-        // Caret (expand / collapse)
-        const caret = document.createElement('span');
-        caret.className = 'orbat-dock-caret';
-        if (!unit.children?.length) {
-            caret.classList.add('is-leaf');
-            caret.textContent = '';
-        } else {
-            caret.textContent = collapsed.has(unit.id) ? '▸' : '▾';
-            caret.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (collapsed.has(unit.id)) collapsed.delete(unit.id);
-                else collapsed.add(unit.id);
-                render();
-            });
+            // Target area = children container PLUS the hanging toggle zone
+            // below it (~24px) so the +/− button doesn't clip at the bottom edge.
+            const TAIL = 28;
+            const bodyRect  = body.getBoundingClientRect();
+            const childRect = childrenEl.getBoundingClientRect();
+
+            // Vertical: only scroll if the bottom of the children (+ tail) is
+            // below the visible area. Leaves the dock alone if already in view.
+            const desiredBottom = childRect.bottom + TAIL;
+            const overflowY     = desiredBottom - bodyRect.bottom;
+
+            // Horizontal: center the children row in the viewport so wide
+            // sibling rows don't bleed off either edge.
+            const childCenterX = childRect.left + childRect.width / 2;
+            const viewCenterX  = bodyRect.left + bodyRect.width / 2;
+            const deltaX       = childCenterX - viewCenterX;
+
+            const nextTop  = overflowY > 0 ? body.scrollTop + overflowY : body.scrollTop;
+            const nextLeft = body.scrollLeft + deltaX;
+
+            try {
+                body.scrollTo({ top: nextTop, left: nextLeft, behavior: 'smooth' });
+            } catch (_) {
+                body.scrollTop  = nextTop;
+                body.scrollLeft = nextLeft;
+            }
+        });
+    }
+
+    function buildNode(unit) {
+        const node = document.createElement('div');
+        node.className = 'orbat-dock-node';
+        node.dataset.unitId = unit.id;
+
+        node.appendChild(buildCard(unit));
+
+        const liveChildren = (unit.children || []).filter(c => !c.deleted_at);
+        if (liveChildren.length && !collapsed.has(unit.id)) {
+            const childrenWrap = document.createElement('div');
+            childrenWrap.className = 'orbat-dock-children';
+            for (const c of liveChildren) childrenWrap.appendChild(buildNode(c));
+            node.appendChild(childrenWrap);
         }
-        row.appendChild(caret);
+        return node;
+    }
 
-        // Milsymbol
-        const symWrap = document.createElement('span');
-        symWrap.className = 'orbat-dock-sym';
-        symWrap.innerHTML = buildSymbolHtml(unit.sidc, 22);
-        row.appendChild(symWrap);
+    function buildCard(unit) {
+        const card = document.createElement('div');
+        card.className = 'orbat-dock-card';
+        card.setAttribute('draggable', 'true');
+        card.dataset.unitId = unit.id;
+        if (isPlaced(unit)) card.classList.add('is-placed');
+        const side = unit.side || 'friendly';
+        card.classList.add('side-' + side);
 
-        // Name + meta
-        const info = document.createElement('span');
-        info.className = 'orbat-dock-info';
-        const name = document.createElement('span');
-        name.className = 'orbat-dock-name';
+        const liveChildren = (unit.children || []).filter(c => !c.deleted_at);
+        const isHq = liveChildren.length > 0;
+        if (isHq) card.classList.add('is-hq');
+
+        // Milsymbol (top). Commanders get the proper NATO command-staff line
+        // drawn underneath the frame's lower-left corner.
+        const symWrap = document.createElement('div');
+        symWrap.className = 'orbat-dock-card-sym';
+        symWrap.innerHTML = buildSymbolHtml(unit.sidc, 28, isHq);
+        card.appendChild(symWrap);
+
+        // Name
+        const name = document.createElement('div');
+        name.className = 'orbat-dock-card-name';
         name.textContent = unit.name || '—';
-        info.appendChild(name);
-        const meta = document.createElement('span');
-        meta.className = 'orbat-dock-meta';
+        card.appendChild(name);
+
+        // Meta (level + code + placed badge)
+        const meta = document.createElement('div');
+        meta.className = 'orbat-dock-card-meta';
         meta.innerHTML =
             `<span>${escapeHtml(levelLabel(unit.level))}</span>` +
             (unit.code ? `<span>· ${escapeHtml(unit.code)}</span>` : '') +
             `<span class="orbat-dock-placed-badge">${escapeHtml(tr('orbat-dock-placed', 'placed'))}</span>`;
-        info.appendChild(meta);
-        row.appendChild(info);
+        card.appendChild(meta);
+
+        // Expand/collapse toggle — only if the unit has descendants.
+        if (liveChildren.length) {
+            const toggle = document.createElement('button');
+            toggle.type = 'button';
+            toggle.className = 'orbat-dock-toggle';
+            const isCollapsed = collapsed.has(unit.id);
+            toggle.classList.toggle('is-collapsed', isCollapsed);
+            toggle.setAttribute('aria-label', tr(isCollapsed ? 'orbat-dock-expand' : 'orbat-dock-collapse', isCollapsed ? 'Expand' : 'Collapse'));
+            // Unicode minus (U+2212) is wider and visually balances the '+'.
+            toggle.textContent = isCollapsed ? '+' : '−';
+            toggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const wasCollapsed = isCollapsed;
+                if (wasCollapsed) collapsed.delete(unit.id);
+                else collapsed.add(unit.id);
+                render();
+                // On expand, scroll so the newly-revealed children come into
+                // view. `nearest` keeps motion minimal if they're already
+                // partially visible; `center` horizontally centers wide rows.
+                if (wasCollapsed) scrollChildrenIntoView(unit.id);
+            });
+            // Clicks on the toggle must NOT initiate a drag.
+            toggle.addEventListener('pointerdown', (e) => e.stopPropagation());
+            toggle.addEventListener('mousedown',   (e) => e.stopPropagation());
+            toggle.addEventListener('dragstart',   (e) => e.preventDefault());
+            card.appendChild(toggle);
+        }
 
         // Drag source
-        row.addEventListener('dragstart', (e) => {
-            row.classList.add('dragging');
+        card.addEventListener('dragstart', (e) => {
+            card.classList.add('dragging');
             try {
                 e.dataTransfer.effectAllowed = 'copyMove';
                 e.dataTransfer.setData(DRAG_MIME, JSON.stringify({ id: unit.id }));
                 e.dataTransfer.setData('text/plain', unit.name || unit.id);
             } catch (_) { /* ignore */ }
         });
-        row.addEventListener('dragend', () => {
-            row.classList.remove('dragging');
+        card.addEventListener('dragend', () => {
+            card.classList.remove('dragging');
         });
 
-        // Tooltip
-        row.title = `${unit.name || ''}${unit.code ? ' (' + unit.code + ')' : ''} — drag onto the map to position`;
-
-        return row;
+        card.title = `${unit.name || ''}${unit.code ? ' (' + unit.code + ')' : ''} ${tr('orbat-dock-drag-hint', '— drag onto the map to position')}`;
+        return card;
     }
 
     // ── Map drop target ─────────────────────────────────────────────────
@@ -204,11 +318,272 @@
             const rect = container.getBoundingClientRect();
             const pt = L.point(e.clientX - rect.left, e.clientY - rect.top);
             const latlng = map.containerPointToLatLng(pt);
-            await placeUnitAt(payload.id, latlng);
+            await handleDrop(payload.id, latlng);
         });
     }
 
-    async function placeUnitAt(unitId, latlng) {
+    // Top-level drop router.
+    // - If the drop is a Brigade (level 2) AND lands inside an auto-flank
+    //   polygon, run formation placement across the three regions.
+    // - Otherwise, place the single dropped unit at the drop location.
+    async function handleDrop(unitId, latlng) {
+        const unit = unitsFlat.find(u => u.id === unitId && !u.deleted_at);
+        if (!unit) { await placeUnitAt(unitId, latlng); return; }
+        if (unit.level === 2) {
+            const polys = findAutoFlankSession(latlng);
+            if (polys && polys.length) {
+                await placeBrigadeFormation(unit, polys);
+                return;
+            }
+        }
+        await placeUnitAt(unitId, latlng);
+    }
+
+    // ── Formation placement (Brigade drop on auto-flank area) ──────────
+    // All three regions are tagged `_autoFlankArea=true` with an `areaRole`
+    // of 'battalion-left' | 'battalion-right' | 'brigade-rear'. We find the
+    // polygon that contains the drop point, then gather all polygons of the
+    // same auto-flank session (via _tmgData.sessionId) so battalions can be
+    // distributed across the full formation.
+    function findAutoFlankSession(latlng) {
+        if (typeof window.getAllLayerElements !== 'function') return null;
+        let all = [];
+        try { all = window.getAllLayerElements() || []; } catch (_) { return null; }
+        const flankPolys = all.filter(el =>
+            el && el._autoFlankArea === true && typeof el.getLatLngs === 'function'
+        );
+        if (!flankPolys.length) return null;
+        const hit = flankPolys.find(el => polygonContains(el, latlng));
+        if (!hit) return null;
+        const sid = hit._tmgData && hit._tmgData.sessionId;
+        if (!sid) return [hit];
+        return flankPolys.filter(el => el._tmgData && el._tmgData.sessionId === sid);
+    }
+
+    function outerRingOfPolygon(poly) {
+        let raw;
+        try { raw = poly.getLatLngs(); } catch (_) { return null; }
+        if (!raw) return null;
+        // Walk into nested arrays until we hit LatLngs.
+        let ring = raw;
+        while (Array.isArray(ring) && ring.length && Array.isArray(ring[0])) ring = ring[0];
+        if (!Array.isArray(ring) || !ring.length || typeof ring[0].lat !== 'number') return null;
+        return ring;
+    }
+
+    function pointInRing(latlng, ring) {
+        if (!ring || ring.length < 3) return false;
+        let r = ring;
+        const a = ring[0], b = ring[ring.length - 1];
+        if (a.lat === b.lat && a.lng === b.lng) r = ring.slice(0, -1);
+        if (r.length < 3) return false;
+        const x = latlng.lng, y = latlng.lat;
+        let inside = false;
+        for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+            const xi = r[i].lng, yi = r[i].lat;
+            const xj = r[j].lng, yj = r[j].lat;
+            if (((yi > y) !== (yj > y)) &&
+                (x < ((xj - xi) * (y - yi)) / ((yj - yi) || 1e-18) + xi)) {
+                inside = !inside;
+            }
+        }
+        return inside;
+    }
+
+    function polygonContains(poly, latlng) {
+        const ring = outerRingOfPolygon(poly);
+        if (!ring) return false;
+        return pointInRing(latlng, ring);
+    }
+
+    function polygonCentroid(poly) {
+        const ring = outerRingOfPolygon(poly);
+        if (!ring || !ring.length) return null;
+        let lat = 0, lng = 0;
+        for (const p of ring) { lat += p.lat; lng += p.lng; }
+        return L.latLng(lat / ring.length, lng / ring.length);
+    }
+
+    // Rough "radius" of a polygon in metres — max vertex distance from its
+    // centroid. Good enough for sizing company spacing and front offsets.
+    function polygonRadiusMeters(poly) {
+        const c = polygonCentroid(poly);
+        const ring = outerRingOfPolygon(poly);
+        if (!c || !ring) return 500;
+        let max = 0;
+        for (const p of ring) {
+            const d = c.distanceTo(p);
+            if (d > max) max = d;
+        }
+        return max || 500;
+    }
+
+    // Convert a metre-space offset (dxEast, dyNorth) into an offset latlng
+    // anchored at `center`. Flat-earth OK for formation-scale distances.
+    const EARTH_R = 6378137;
+    function offsetLatLng(center, dxEastM, dyNorthM) {
+        const dLat = (dyNorthM / EARTH_R) * (180 / Math.PI);
+        const dLng = (dxEastM / (EARTH_R * Math.cos(center.lat * Math.PI / 180))) * (180 / Math.PI);
+        return L.latLng(center.lat + dLat, center.lng + dLng);
+    }
+
+    function vectorMetersBetween(from, to) {
+        const midLat = (from.lat + to.lat) / 2;
+        const mPerDegLng = Math.cos(midLat * Math.PI / 180) * (EARTH_R * Math.PI / 180);
+        const mPerDegLat = EARTH_R * Math.PI / 180;
+        return { x: (to.lng - from.lng) * mPerDegLng, y: (to.lat - from.lat) * mPerDegLat };
+    }
+
+    function normalize(v) {
+        const len = Math.hypot(v.x, v.y);
+        if (!len) return { x: 0, y: 1 };
+        return { x: v.x / len, y: v.y / len };
+    }
+
+    function sortByNameNumeric(a, b) {
+        const n = (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' });
+        if (n !== 0) return n;
+        return (a.code || '').localeCompare(b.code || '');
+    }
+
+    // Distribute Brigade + descendants across the formation.
+    //   Brigade HQ                     → brigade-rear centroid
+    //   Battalion[0]                   → battalion-left   polygon
+    //   Battalion[1]                   → battalion-right  polygon
+    //   Battalion[2+]                  → brigade-rear     polygon (stacked)
+    //   Each battalion's companies     → front line of its polygon, 35% forward
+    //   Battalion marker               → ~20% behind its company line
+    //
+    // "Forward" for each battalion polygon is the vector from the rear
+    // polygon's centroid to that polygon's centroid. "Right" is the 90° CCW
+    // rotation of that, so companies spread sideways across the flank.
+    async function placeBrigadeFormation(brigade, polys) {
+        const byRole = {};
+        for (const p of polys) {
+            const role = p._tmgData && p._tmgData.areaRole;
+            if (role && !byRole[role]) byRole[role] = p;
+        }
+        const leftPoly  = byRole['battalion-left']  || null;
+        const rightPoly = byRole['battalion-right'] || null;
+        const rearPoly  = byRole['brigade-rear']    || null;
+        if (!leftPoly && !rightPoly && !rearPoly) return;
+
+        const battalions = unitsFlat
+            .filter(u => !u.deleted_at && u.parent_id === brigade.id && u.level === 3)
+            .sort(sortByNameNumeric);
+
+        const slots = [];
+        if (leftPoly)  slots.push(leftPoly);
+        if (rightPoly) slots.push(rightPoly);
+        if (rearPoly)  slots.push(rearPoly);
+
+        const placements = []; // [{ unitId, lat, lng }, ...]
+
+        // Reference centroid for computing forward direction. Prefer the rear
+        // polygon; fall back to the first flank polygon.
+        const refCentroid = polygonCentroid(rearPoly || leftPoly || rightPoly);
+
+        // Brigade HQ → rear polygon centroid (offset slightly if a battalion
+        // is also being placed in rear, so the two markers don't stack).
+        if (rearPoly) {
+            const rc = polygonCentroid(rearPoly);
+            if (rc) {
+                // Small upward (north) offset toward the rear of the polygon.
+                const rad = polygonRadiusMeters(rearPoly);
+                const hqOffset = battalions.length > 2 ? rad * 0.25 : 0;
+                const forward  = normalize(vectorMetersBetween(refCentroid, rc));
+                const back     = { x: -forward.x, y: -forward.y };
+                const pos = hqOffset
+                    ? offsetLatLng(rc, back.x * hqOffset, back.y * hqOffset)
+                    : rc;
+                const finalPos = polygonContains(rearPoly, pos) ? pos : rc;
+                placements.push({ unitId: brigade.id, lat: finalPos.lat, lng: finalPos.lng });
+            }
+        } else {
+            // No rear polygon? Park the Brigade at the formation centroid.
+            placements.push({ unitId: brigade.id, lat: refCentroid.lat, lng: refCentroid.lng });
+        }
+
+        // Assign battalions to slots; extras stack in the rear slot.
+        for (let i = 0; i < battalions.length; i++) {
+            const slot = slots[Math.min(i, slots.length - 1)];
+            if (!slot) continue;
+            const batt = battalions[i];
+            // If this battalion is the "extra" one stacked into a slot, shift
+            // its block sideways so it doesn't overlap the one before it.
+            const stackIndex = Math.max(0, i - (slots.length - 1));
+            layoutBattalionInPolygon(batt, slot, refCentroid, stackIndex, placements);
+        }
+
+        // Run the POSTs (sequential so the Layers panel count updates cleanly).
+        for (const p of placements) {
+            await placeAndAddMarker(p.unitId, L.latLng(p.lat, p.lng));
+        }
+        // Refresh the ORBAT dock so newly-placed units pick up their badge.
+        await loadTree();
+    }
+
+    function layoutBattalionInPolygon(batt, poly, refCentroid, stackIndex, out) {
+        const centroid = polygonCentroid(poly);
+        if (!centroid) return;
+        const rad = polygonRadiusMeters(poly);
+
+        // Forward = rear→battalion direction. For the rear polygon (where
+        // refCentroid === centroid) we fall back to "north" so the formation
+        // still faces a sensible direction.
+        let forward;
+        const v = vectorMetersBetween(refCentroid, centroid);
+        if (Math.hypot(v.x, v.y) < 1) forward = { x: 0, y: 1 };
+        else forward = normalize(v);
+        const right = { x: -forward.y, y: forward.x }; // 90° CCW
+
+        // Stacking offset — shift the whole block along the "right" axis when
+        // this isn't the first battalion in its polygon.
+        const stackOffset = stackIndex * rad * 0.55;
+
+        const companies = unitsFlat
+            .filter(u => !u.deleted_at && u.parent_id === batt.id && u.level === 4)
+            .sort(sortByNameNumeric);
+
+        if (!companies.length) {
+            const pos = stackOffset
+                ? offsetLatLng(centroid, right.x * stackOffset, right.y * stackOffset)
+                : centroid;
+            const finalPos = polygonContains(poly, pos) ? pos : centroid;
+            out.push({ unitId: batt.id, lat: finalPos.lat, lng: finalPos.lng });
+            return;
+        }
+
+        const frontM   = rad * 0.35;             // companies pushed 35% forward
+        const behindM  = rad * 0.20;             // battalion marker 20% behind centroid
+        const spread   = rad * 1.10;             // total line width (capped by polygon)
+        const step     = companies.length > 1 ? spread / (companies.length - 1) : 0;
+        const half     = step * (companies.length - 1) / 2;
+
+        for (let i = 0; i < companies.length; i++) {
+            const side = -half + i * step + stackOffset;
+            const dx = forward.x * frontM + right.x * side;
+            const dy = forward.y * frontM + right.y * side;
+            const pos = offsetLatLng(centroid, dx, dy);
+            const finalPos = polygonContains(poly, pos) ? pos : centroid;
+            out.push({ unitId: companies[i].id, lat: finalPos.lat, lng: finalPos.lng });
+        }
+
+        // Battalion marker: behind the company line.
+        const bdx = -forward.x * behindM + right.x * stackOffset;
+        const bdy = -forward.y * behindM + right.y * stackOffset;
+        const battPos = offsetLatLng(centroid, bdx, bdy);
+        const finalBattPos = polygonContains(poly, battPos) ? battPos : centroid;
+        out.push({ unitId: batt.id, lat: finalBattPos.lat, lng: finalBattPos.lng });
+    }
+
+    function unitHasChildren(unitId) {
+        return unitsFlat.some(u => u.parent_id === unitId && !u.deleted_at);
+    }
+
+    // Inner helper — POSTs the placement and reflects it in the map. Used by
+    // both the single-drop path (placeUnitAt) and the formation path.
+    async function placeAndAddMarker(unitId, latlng) {
         try {
             const res = await fetch(`/api/units/${encodeURIComponent(unitId)}/place`, {
                 method: 'POST',
@@ -216,7 +591,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ lat: latlng.lat, lng: latlng.lng }),
             });
-            if (!res.ok) throw new Error(await res.text());
+            if (!res.ok) return false;
             const updated = await res.json();
             window.AppUnitsMap?.addOrUpdateMarker?.({
                 id: updated.id,
@@ -227,17 +602,24 @@
                 sidc: updated.sidc,
                 lat: Number(updated.lat),
                 lng: Number(updated.lng),
+                hasChildren: unitHasChildren(unitId),
             });
-            // Reflect the new placement in the dock and anything else that listens.
             document.dispatchEvent(new CustomEvent('units:placed', { detail: { unitId } }));
-            // Update the local copy so the row immediately shows the "placed" style.
-            const u = unitsFlat.find(x => x.id === unitId);
-            if (u) { u.lat = Number(updated.lat); u.lng = Number(updated.lng); }
+            // Reflect in our local cache so the ORBAT dock updates the
+            // "placed" badge without a server round-trip.
+            const local = unitsFlat.find(u => u.id === unitId);
+            if (local) { local.lat = Number(updated.lat); local.lng = Number(updated.lng); }
             patchNodeLatLng(roots, unitId, Number(updated.lat), Number(updated.lng));
-            render();
+            return true;
         } catch (err) {
-            console.warn('[orbat-dock] place failed', err);
+            console.warn('[orbat-dock] place failed for', unitId, err);
+            return false;
         }
+    }
+
+    async function placeUnitAt(unitId, latlng) {
+        const ok = await placeAndAddMarker(unitId, latlng);
+        if (ok) render();
     }
 
     function patchNodeLatLng(nodes, id, lat, lng) {
@@ -249,20 +631,63 @@
     }
 
     // ── Open / close ────────────────────────────────────────────────────
+    // The dock is a fixed-position overlay, so opening it doesn't change
+    // the Leaflet container size — it just covers the bottom of the map.
+    // Without adjustment, part of the geographic area the user was seeing
+    // is now hidden behind the dock. To preserve the visible extent we
+    // re-fit the saved bounds into the area ABOVE the dock (paddingBottomRight).
+
+    function computeVisibleMapBounds() {
+        if (!map || !dockEl) return null;
+        const dockHidden = dockEl.classList.contains('hidden');
+        const dockH = dockHidden ? 0 : (dockEl.getBoundingClientRect().height || 0);
+        const size = map.getSize();
+        const topLeft     = map.containerPointToLatLng(L.point(0, 0));
+        const bottomRight = map.containerPointToLatLng(L.point(size.x, Math.max(0, size.y - dockH)));
+        return L.latLngBounds(topLeft, bottomRight);
+    }
+
     function open() {
         if (!ensureBound()) return;
+        // Capture what the user is currently seeing BEFORE the dock covers
+        // anything. (Dock is still hidden here, so map.getBounds() equals the
+        // user's visible extent.)
+        const savedBounds = map ? map.getBounds() : null;
         dockEl.classList.remove('hidden');
         dockEl.setAttribute('aria-hidden', 'false');
-        // Always refresh on open so we reflect latest server state.
         loadTree();
-        // Map tiles need a size nudge when a chunk of viewport is covered.
+        if (savedBounds && map) {
+            // Wait one frame so the dock's height can be measured now that
+            // it's no longer display:none-equivalent.
+            requestAnimationFrame(() => {
+                const dockH = dockEl.getBoundingClientRect().height || 220;
+                try {
+                    map.fitBounds(savedBounds, {
+                        paddingBottomRight: [0, dockH],
+                        animate: true,
+                        duration: 0.3,
+                        maxZoom: map.getZoom(), // never zoom IN — only out if needed
+                    });
+                } catch (_) { /* leaflet older version — skip */ }
+            });
+        }
         setTimeout(() => { try { map?.invalidateSize?.(); } catch (_) {} }, 260);
     }
 
     function close() {
         if (!dockEl) return;
+        // Capture what the user sees right now (above the dock). After the
+        // dock slides away we zoom the map so they continue to see the same
+        // area, rather than a suddenly-larger reveal.
+        const savedBounds = map ? computeVisibleMapBounds() : null;
         dockEl.classList.add('hidden');
         dockEl.setAttribute('aria-hidden', 'true');
+        if (savedBounds && map) {
+            setTimeout(() => {
+                try { map.fitBounds(savedBounds, { animate: true, duration: 0.3 }); }
+                catch (_) { /* ignore */ }
+            }, 40);
+        }
         setTimeout(() => { try { map?.invalidateSize?.(); } catch (_) {} }, 260);
     }
 

@@ -29,7 +29,7 @@
                 <div id="server-account-bar" class="server-account-bar hidden" aria-label="Server plans">
                     <select id="server-plan-select" class="glass-select server-plan-select" title="Plans"></select>
                     <button type="button" id="server-new-plan-btn" class="header-btn" title="New plan">+ Plan</button>
-                    <button type="button" id="server-logout-btn" class="header-btn" title="Logout">Logout</button>
+                    <button type="button" id="server-logout-btn" class="header-btn" data-i18n-title="logout" data-i18n="logout" title="Logout">Logout</button>
                 </div>
                 <button id="theme-toggle-btn" class="header-btn" type="button" title="تبديل الوضع الفاتح/الداكن">☀</button>
                 <button id="settings-toggle-btn" class="header-btn" type="button" title="الإعدادات والأدوات">
@@ -85,9 +85,9 @@
 
                 <div class="tool-rail-spacer"></div>
 
-                <button class="tool-rail-btn" data-tool="layers" type="button" title="Layers">
+                <button class="tool-rail-btn" data-tool="layers" type="button" data-i18n-title="tool-layers" title="Layers">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                    <span>Layers</span>
+                    <span data-i18n="tool-layers">Layers</span>
                 </button>
             </nav>
 
@@ -96,8 +96,8 @@
 
                 <!-- Dynamic tool header -->
                 <div class="context-panel-header" id="context-panel-header">
-                    <h2 class="context-panel-title" id="context-panel-title">Select</h2>
-                    <p class="context-panel-hint" id="context-panel-hint">Click or drag on the map to select items</p>
+                    <h2 class="context-panel-title" id="context-panel-title" data-i18n="context-panel-default-title">Select</h2>
+                    <p class="context-panel-hint" id="context-panel-hint" data-i18n="context-panel-default-hint">Click or drag on the map to select items</p>
                 </div>
 
                 <!-- Hidden backward-compat: sidebar tabs + mode dropdown (JS reads these) -->
@@ -665,18 +665,18 @@
                             <div class="inline-hint" id="shapes-hint" data-i18n="shapes-panel-bottom-hint">Click two opposite corners to draw a rectangle.</div>
                         </div>
                         <details class="panel-section advanced-details" id="clip-tool-section">
-                            <summary class="details-summary">Clip polygons</summary>
+                            <summary class="details-summary" data-i18n="clip-section-title">Clip polygons</summary>
                             <div style="margin-top:8px;">
-                                <label class="field-label">Operation</label>
+                                <label class="field-label" data-i18n="clip-operation-label">Operation</label>
                                 <div style="display:flex; gap:12px; margin-bottom:8px;">
-                                    <label><input type="radio" name="clip-op" value="intersect" checked> Intersect</label>
-                                    <label><input type="radio" name="clip-op" value="difference"> Difference</label>
+                                    <label><input type="radio" name="clip-op" value="intersect" checked> <span data-i18n="clip-op-intersect">Intersect</span></label>
+                                    <label><input type="radio" name="clip-op" value="difference"> <span data-i18n="clip-op-difference">Difference</span></label>
                                 </div>
                                 <div style="display:flex; gap:8px;">
-                                    <button id="clip-start-btn" class="glass-btn secondary" type="button">Start clip</button>
-                                    <button id="clip-cancel-btn" class="glass-btn secondary" type="button" disabled>Cancel</button>
+                                    <button id="clip-start-btn" class="glass-btn secondary" type="button" data-i18n="clip-start">Start clip</button>
+                                    <button id="clip-cancel-btn" class="glass-btn secondary" type="button" disabled data-i18n="cancel">Cancel</button>
                                 </div>
-                                <div class="inline-hint" id="clip-status-hint" style="margin-top:8px;">Pick an operation and press Start.</div>
+                                <div class="inline-hint" id="clip-status-hint" style="margin-top:8px;" data-i18n="clip-status-hint">Pick an operation and press Start.</div>
                             </div>
                         </details>
                     </section>
@@ -705,7 +705,7 @@
 
                     <!-- Secondary actions (collapsible) -->
                     <details class="layers-secondary" id="layers-secondary-details">
-                        <summary class="layers-secondary-summary">Manage & Transfer</summary>
+                        <summary class="layers-secondary-summary" data-i18n="layers-manage-transfer">Manage & Transfer</summary>
                         <div class="layers-secondary-body">
                             <button id="layer-templates-btn" class="glass-btn secondary" type="button" data-i18n="layer-template-btn">Saved Sets</button>
                             <div class="layers-transfer-row">
@@ -810,6 +810,27 @@
                     <div id="popup-anchor" class="popup-anchor"></div>
                     <div id="selection-toolbar-floating" class="selection-toolbar-floating hidden"></div>
                 </div>
+
+                <!-- ORBAT dock — lives inside .map-workspace so it always spans
+                     the map area regardless of sidebar side (LTR/RTL). -->
+                <div id="orbat-dock" class="orbat-dock hidden" aria-hidden="true">
+                    <div id="orbat-dock-resize" class="orbat-dock-resize" role="separator" aria-orientation="horizontal" aria-label="Resize ORBAT dock" tabindex="0"></div>
+                    <div class="orbat-dock-header">
+                        <div class="orbat-dock-title-wrap">
+                            <svg class="orbat-dock-icon" viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="2" width="5" height="4" rx="1"/><rect x="1.5" y="13" width="5" height="4" rx="1"/><rect x="7.5" y="13" width="5" height="4" rx="1"/><rect x="13.5" y="13" width="5" height="4" rx="1"/><path d="M10 6v3M4 13v-2h12v2M10 11v2"/></g></svg>
+                            <span class="orbat-dock-title" data-i18n="orbat-dock-title">ORBAT</span>
+                            <span class="orbat-dock-hint" data-i18n="orbat-dock-hint">— drag a unit onto the map to position it</span>
+                        </div>
+                        <div class="orbat-dock-tools">
+                            <button type="button" id="orbat-dock-refresh" class="orbat-dock-tool-btn" title="Refresh" aria-label="Refresh">&#x21bb;</button>
+                            <button type="button" id="orbat-dock-close" class="orbat-dock-tool-btn" title="Close" aria-label="Close">&times;</button>
+                        </div>
+                    </div>
+                    <div id="orbat-dock-body" class="orbat-dock-body">
+                        <div id="orbat-dock-tree" class="orbat-dock-tree"></div>
+                        <div id="orbat-dock-empty" class="orbat-dock-empty" hidden data-i18n="orbat-dock-empty">No units yet — create some from the Units panel first.</div>
+                    </div>
+                </div>
             </main>
 
             <!-- ── CHAT SIDEBAR ── -->
@@ -817,12 +838,12 @@
                 <header class="chat-header">
                     <div class="chat-header-main">
                         <div class="chat-title-row">
-                            <span class="chat-title">Team Chat</span>
-                            <span class="chat-you">You: <span id="chat-user-name">Planner 1</span></span>
+                            <span class="chat-title" data-i18n="chat-title">Team Chat</span>
+                            <span class="chat-you"><span data-i18n="chat-you-label">You:</span> <span id="chat-user-name">Planner 1</span></span>
                             <button id="chat-set-name-btn" type="button" class="chat-set-name-btn" title="Change your display name">✎</button>
                             <button id="chat-notify-toggle" type="button" class="chat-set-name-btn" aria-pressed="true" title="Mute or unmute new-message sound">🔔</button>
                         </div>
-                        <div id="chat-status" class="chat-status">Initializing…</div>
+                        <div id="chat-status" class="chat-status" data-i18n="chat-initializing">Initializing…</div>
                     </div>
                     <button id="chat-close-btn" class="chat-close-btn" type="button" aria-label="Close chat">×</button>
                 </header>
@@ -1348,26 +1369,6 @@
                 </div>
                 <div class="orbat-hint" data-i18n="orbat-hint">Drag to pan · Scroll to zoom · Click a node to collapse / expand</div>
             </div>
-        </div>
-    </div>
-
-    <!-- ORBAT dock — bottom panel with the unit hierarchy as draggable symbols -->
-    <div id="orbat-dock" class="orbat-dock hidden" aria-hidden="true" dir="ltr">
-        <div id="orbat-dock-resize" class="orbat-dock-resize" role="separator" aria-orientation="horizontal" aria-label="Resize ORBAT dock" tabindex="0"></div>
-        <div class="orbat-dock-header">
-            <div class="orbat-dock-title-wrap">
-                <svg class="orbat-dock-icon" viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="2" width="5" height="4" rx="1"/><rect x="1.5" y="13" width="5" height="4" rx="1"/><rect x="7.5" y="13" width="5" height="4" rx="1"/><rect x="13.5" y="13" width="5" height="4" rx="1"/><path d="M10 6v3M4 13v-2h12v2M10 11v2"/></g></svg>
-                <span class="orbat-dock-title" data-i18n="orbat-dock-title">ORBAT</span>
-                <span class="orbat-dock-hint" data-i18n="orbat-dock-hint">— drag a unit onto the map to position it</span>
-            </div>
-            <div class="orbat-dock-tools">
-                <button type="button" id="orbat-dock-refresh" class="orbat-dock-tool-btn" title="Refresh" aria-label="Refresh">&#x21bb;</button>
-                <button type="button" id="orbat-dock-close" class="orbat-dock-tool-btn" title="Close" aria-label="Close">&times;</button>
-            </div>
-        </div>
-        <div id="orbat-dock-body" class="orbat-dock-body">
-            <div id="orbat-dock-tree" class="orbat-dock-tree"></div>
-            <div id="orbat-dock-empty" class="orbat-dock-empty" hidden>No units yet — create some from the Units panel first.</div>
         </div>
     </div>
 

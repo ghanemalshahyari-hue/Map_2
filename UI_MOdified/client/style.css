@@ -3487,8 +3487,11 @@ details[open] > .details-summary {
    ORBAT Dock — bottom panel with draggable unit symbols
    ═══════════════════════════════════════════════════════════════════ */
 .orbat-dock {
-    position: fixed;
-    left: calc(var(--rail-w) + var(--panel-w));
+    /* Anchored to .map-workspace (which has position: relative) so the dock
+       always spans the full map area — no gap on either side regardless of
+       whether the sidebar is on the left (LTR) or right (RTL). */
+    position: absolute;
+    left: 0;
     right: 0;
     bottom: 0;
     height: 220px;
@@ -3598,13 +3601,17 @@ details[open] > .details-summary {
 
 .orbat-dock-body {
     flex: 1 1 auto;
-    overflow: auto;
-    padding: 10px 14px 14px;
+    overflow: auto;          /* both axes — tree expands horizontally */
+    padding: 14px 18px 36px; /* extra bottom pad so hanging +/− toggles clear the edge */
+    /* Reserve space around the target when scrollIntoView runs — otherwise
+       children are flush with the bottom and their hanging toggle gets clipped. */
+    scroll-padding-top: 12px;
+    scroll-padding-bottom: 40px;
+    scroll-padding-inline: 24px;
 }
 .orbat-dock-tree {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    display: inline-block;   /* shrink-wrap content so overflow scrolls */
+    min-width: 100%;
 }
 .orbat-dock-empty {
     color: var(--text-muted);
@@ -3613,46 +3620,121 @@ details[open] > .details-summary {
     text-align: center;
 }
 
-/* Tree row — one unit (draggable) */
-.orbat-dock-row {
+/* Vertical (top → bottom) tree layout.
+   A .orbat-dock-node is a flex column of [card, children-row].
+   Multiple roots sit side-by-side inside .orbat-dock-roots, each growing its
+   own subtree downward. The dock body scrolls both axes. */
+.orbat-dock-roots {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+}
+.orbat-dock-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;     /* horizontally-center card over its children row */
+    gap: 28px;               /* vertical spacing parent ↔ children */
+    position: relative;
+}
+.orbat-dock-children {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 18px;
+    position: relative;
+}
+
+/* Connector lines (org-chart style):
+   - Horizontal bus at the top of the children row, between first/last child centers.
+   - Vertical stub from each child's top up to the bus.
+   - Vertical stub from parent card's bottom down to the bus.
+   Card width is 148px, so the bus starts/ends at 74px in from each edge. */
+.orbat-dock-children::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: 74px;
+    right: 74px;
+    height: 1px;
+    background: var(--panel-border);
+}
+/* Single-child case: no visible horizontal bus needed (the stubs align). */
+.orbat-dock-children > .orbat-dock-node:only-child ~ ::before,
+.orbat-dock-children:has(> .orbat-dock-node:only-child)::before {
+    display: none;
+}
+.orbat-dock-children > .orbat-dock-node::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    width: 1px;
+    height: 14px;
+    background: var(--panel-border);
+    transform: translateX(-50%);
+}
+.orbat-dock-node:has(> .orbat-dock-children) > .orbat-dock-card::after {
+    content: '';
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    width: 1px;
+    height: 14px;
+    background: var(--panel-border);
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+/* Unit card (draggable) */
+.orbat-dock-card {
+    position: relative;
+    flex: 0 0 auto;
+    width: 148px;
+    min-height: 96px;
+    padding: 8px 10px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--panel-border);
     border-radius: var(--radius-xs);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
     cursor: grab;
     user-select: none;
-    border: 1px solid transparent;
-    transition: background 120ms ease, border-color 120ms ease, opacity 120ms ease;
+    transition: background 120ms ease, border-color 120ms ease,
+                transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
 }
-.orbat-dock-row:hover {
+.orbat-dock-card:hover {
     background: var(--accent-subtle);
-    border-color: rgba(59, 130, 246, 0.35);
+    border-color: rgba(59, 130, 246, 0.45);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-.orbat-dock-row:active { cursor: grabbing; }
-.orbat-dock-row.dragging { opacity: 0.55; }
-.orbat-dock-row.is-placed { opacity: 0.6; }
-.orbat-dock-row.is-placed .orbat-dock-placed-badge { display: inline-flex; }
+.orbat-dock-card:active { cursor: grabbing; }
+.orbat-dock-card.dragging { opacity: 0.55; transform: none; }
+.orbat-dock-card.is-placed { opacity: 0.7; }
+.orbat-dock-card.is-placed .orbat-dock-placed-badge { display: inline-flex; }
 
-.orbat-dock-caret {
-    width: 16px;
-    height: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    font-size: 0.7rem;
-    cursor: pointer;
-    border-radius: 3px;
-    flex: 0 0 auto;
+/* Side accent: a thin top strip colored per affiliation. */
+.orbat-dock-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-top-left-radius: var(--radius-xs);
+    border-top-right-radius: var(--radius-xs);
+    background: var(--accent);
 }
-.orbat-dock-caret:hover { background: rgba(148,163,184,0.2); color: var(--text-main); }
-.orbat-dock-caret.is-leaf { visibility: hidden; }
+.orbat-dock-card.side-friendly::before { background: #3b82f6; }
+.orbat-dock-card.side-hostile::before  { background: #ef4444; }
+.orbat-dock-card.side-neutral::before  { background: #eab308; }
+.orbat-dock-card.side-unknown::before  { background: #94a3b8; }
 
-.orbat-dock-sym {
-    width: 36px;
-    height: 36px;
-    display: inline-flex;
+.orbat-dock-card-sym {
+    width: 44px;
+    height: 44px;
+    display: flex;
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
@@ -3662,41 +3744,40 @@ details[open] > .details-summary {
     padding: 2px;
     pointer-events: none;
 }
-[data-theme="light"] .orbat-dock-sym {
+[data-theme="light"] .orbat-dock-card-sym {
     background: #f8fafc;
     border-color: rgba(100,116,139,0.25);
 }
-.orbat-dock-sym svg { max-width: 100%; max-height: 100%; display: block; }
+.orbat-dock-card-sym svg { max-width: 100%; max-height: 100%; display: block; }
 
-.orbat-dock-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-    flex: 1 1 auto;
-    pointer-events: none;
-}
-.orbat-dock-name {
+.orbat-dock-card-name {
     color: var(--text-main);
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 600;
+    text-align: center;
+    max-width: 100%;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    pointer-events: none;
 }
-.orbat-dock-meta {
+.orbat-dock-card-meta {
     color: var(--text-muted);
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-family: ui-monospace, Menlo, Consolas, monospace;
     letter-spacing: 0.04em;
     display: flex;
-    gap: 6px;
+    gap: 4px;
     align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 100%;
+    pointer-events: none;
 }
 .orbat-dock-placed-badge {
     display: none;
     font-family: var(--font-family);
-    font-size: 0.62rem;
+    font-size: 0.58rem;
     padding: 1px 5px;
     border-radius: 8px;
     background: rgba(34,197,94,0.18);
@@ -3705,14 +3786,48 @@ details[open] > .details-summary {
     text-transform: uppercase;
 }
 
+/* Expand/collapse button on the bottom edge of a card with children. */
+.orbat-dock-toggle {
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1.5px solid var(--panel-border);
+    background: var(--panel-2);
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    transition: background 120ms ease, color 120ms ease, border-color 120ms ease,
+                transform 120ms ease;
+}
+.orbat-dock-toggle:hover {
+    background: var(--accent-subtle);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateX(-50%) scale(1.08);
+}
+.orbat-dock-toggle.is-collapsed {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
 /* Map-wide drop hint (shown while user is dragging a unit over the map) */
 .map-dock-dragover {
     outline: 2px dashed var(--accent);
     outline-offset: -10px;
 }
 
-/* RTL: dock slides from opposite side of the sidebar */
-[dir="rtl"] .orbat-dock {
-    left: 0;
-    right: calc(var(--rail-w) + var(--panel-w));
-}
+/* No RTL override needed — the dock lives inside .map-workspace which has
+   direction:ltr forced, so it always spans the map area cleanly. */

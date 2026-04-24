@@ -4858,6 +4858,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!controlPts || controlPts.length < 2) return pairs;
         const polys = getRoutingObstaclePolygons();
         let chain = [];
+        // User-click indices within `chain`. We must NOT drop these in the
+        // merge step below — if the user snapped a point onto a circle-X,
+        // losing that point lets neighbouring chords jump straight across
+        // and the front line pulls off the obstacle center.
+        const controlIdxs = [];
         for (let i = 0; i < controlPts.length - 1; i++) {
             const c = L.latLng(controlPts[i].lat, controlPts[i].lng);
             const f = L.latLng(controlPts[i + 1].lat, controlPts[i + 1].lng);
@@ -4867,10 +4872,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 : [c, f];
             if (chain.length === 0) {
                 chain = points.slice();
+                controlIdxs.push(0);
+                controlIdxs.push(chain.length - 1);
             } else {
                 chain.push(...points.slice(1));
+                controlIdxs.push(chain.length - 1);
             }
         }
+        const isControl = new Set(controlIdxs);
         // Merge closely-spaced chain points (from obstacle boundary routing)
         // so each pair has enough pixel length for consistent scallop sizing.
         // One scallop wave ≈ 28px, minimum 3 waves → ~84px minimum per segment.
@@ -4878,6 +4887,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (map && chain.length > 2) {
             const merged = [chain[0]];
             for (let j = 1; j < chain.length - 1; j++) {
+                if (isControl.has(j)) {
+                    // Preserve the user's exact click location (e.g. a point
+                    // snapped to a circle-X center) so the front line stays
+                    // attached to it.
+                    merged.push(chain[j]);
+                    continue;
+                }
                 const lastPx = map.latLngToLayerPoint(merged[merged.length - 1]);
                 const curPx = map.latLngToLayerPoint(chain[j]);
                 if (Math.hypot(curPx.x - lastPx.x, curPx.y - lastPx.y) >= minPxDist) {
@@ -6671,6 +6687,41 @@ document.addEventListener('DOMContentLoaded', () => {
         return (best.center && best.dist <= maxPx) ? best.center : null;
     }
 
+    // Scalloped front-line endpoints that were snapped exactly onto a circle-X
+    // center share that latlng with the obstacle. When the obstacle is dragged,
+    // translate those endpoints by the same delta so the junction stays glued.
+    // Position equality (within a tiny epsilon) is enough here because the snap
+    // placed both points at the exact same coordinate; if the user later drags
+    // an endpoint off the center, equality fails and the segment stops tracking
+    // — which is what they'd want.
+    const CIRCLE_X_ATTACH_EPS = 1e-9;
+    function syncScallopedEndpointsOnCircleXDrag(oldCenter, dLat, dLng) {
+        if (!oldCenter || (dLat === 0 && dLng === 0)) return;
+        const matches = (ll) => ll
+            && Math.abs(ll.lat - oldCenter.lat) < CIRCLE_X_ATTACH_EPS
+            && Math.abs(ll.lng - oldCenter.lng) < CIRCLE_X_ATTACH_EPS;
+        const shift = (ll) => L.latLng(ll.lat + dLat, ll.lng + dLng);
+        const tryShiftSegment = (seg) => {
+            const dd = seg?._tmgData;
+            if (!dd || dd.typeId !== 'scalloped') return false;
+            let changed = false;
+            if (matches(dd.latlng1)) { dd.latlng1 = shift(dd.latlng1); changed = true; }
+            if (matches(dd.latlng2)) { dd.latlng2 = shift(dd.latlng2); changed = true; }
+            if (changed) updateTmgLayer(seg);
+            return changed;
+        };
+        for (const layer of layers) {
+            if (!layer.visible) continue;
+            for (const el of layer.elements) {
+                if (el instanceof L.Marker) {
+                    tryShiftSegment(el);
+                } else if (el instanceof L.LayerGroup && el._tmgData?.typeId === 'scalloped' && el._tmgData.segments?.length) {
+                    el._tmgData.segments.forEach(tryShiftSegment);
+                }
+            }
+        }
+    }
+
     /** Hollow dashed arrowhead + CATK (right of viewBox); left open so map polyline shows through shaft. */
     function buildCatkVectorHeadIconHtml(color, strokeWidth, length, h, angleDeg) {
         const sw = Math.max(1.2, Math.min(4.5, strokeWidth * 0.42));
@@ -8203,6 +8254,10 @@ document.addEventListener('DOMContentLoaded', () => {
             d.latlng1 = L.latLng(d.latlng1.lat + dLat, d.latlng1.lng + dLng);
             d.latlng2 = L.latLng(d.latlng2.lat + dLat, d.latlng2.lng + dLng);
             updateTmgLayer(marker);
+            // Front-line endpoints sitting on this obstacle's center move with it.
+            if (d.typeId === 'circle-x') {
+                syncScallopedEndpointsOnCircleXDrag(oldMid, dLat, dLng);
+            }
         });
         if (!skipPopup) {
                 const buildSingleTmgPopupContent = () => {
@@ -8255,6 +8310,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.getAllLayerElements = getAllElements;
     window.getCurrentDrawLinePolyline = function () { return drawLinePolyline; };
     window.removeFromLayer = (el) => removeFromLayer(el);
+    // units-map.js needs this so that placed unit markers become first-class
+    // members of the active layer (visibility, Layers-panel membership).
+    window.addToActiveLayer = (el) => addToActiveLayer(el);
 
     // Bridge for Clip controller (ui/controllers/clip-controller.js). Replaces
     // `oldEl` in its owning layer with a plain polygon built from a GeoJSON
@@ -16207,24 +16265,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('clear-map-btn').addEventListener('click', () => {
         const layer = getActiveLayer();
-        if (!layer) return;
-        if (layer.elements.length === 0) return;
+        const hasLayerElements = !!(layer && layer.elements.length);
+        // Unit placements live on a dedicated overlay (not inside user layers
+        // when no active layer exists), so we must also consider them when
+        // deciding whether there's anything to clear.
+        const hasPlacedUnits = !!window.AppUnitsMap?.hasPlacedUnits?.();
+        if (!hasLayerElements && !hasPlacedUnits) return;
         removeGeoResizeHandles();
-        layer.elements.forEach(el => {
-            cleanupElementDecorations(el, layer);
-            layer.group.removeLayer(el);
-            const histIdx = actionHistory.findIndex(a => a.type === 'add' && a.element === el);
-            if (histIdx >= 0) actionHistory.splice(histIdx, 1);
-        });
-        layer.elements.length = 0;
-        for (let i = actionHistory.length - 1; i >= 0; i--) {
-            const a = actionHistory[i];
-            if (a.type === 'polylineErase' && a.layer && a.layer.id === layer.id) actionHistory.splice(i, 1);
+        if (hasLayerElements) {
+            layer.elements.forEach(el => {
+                cleanupElementDecorations(el, layer);
+                layer.group.removeLayer(el);
+                const histIdx = actionHistory.findIndex(a => a.type === 'add' && a.element === el);
+                if (histIdx >= 0) actionHistory.splice(histIdx, 1);
+            });
+            layer.elements.length = 0;
+            for (let i = actionHistory.length - 1; i >= 0; i--) {
+                const a = actionHistory[i];
+                if (a.type === 'polylineErase' && a.layer && a.layer.id === layer.id) actionHistory.splice(i, 1);
+            }
         }
         redoHistory.length = 0;
         cancelLineDrawing();
         clearSelection();
         renderLayersList();
+        // Unplace every placed unit server-side and drop its marker.
+        if (hasPlacedUnits) window.AppUnitsMap?.clearAll?.();
     });
 
     const undoBtn = document.getElementById('undo-btn');

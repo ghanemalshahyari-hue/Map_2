@@ -126,6 +126,93 @@
         }
         if (geoCoordBlock) geoCoordBlock = `<div style="margin:6px 0;padding:6px;background:#f8fafc;border-radius:4px;text-align:left;max-height:80px;overflow-y:auto;">${geoCoordBlock}</div>`;
         const showFillStyle = geoType !== 'distance' && geoType !== 'freehand' && geoType !== 'minefield';
+        const showThickness = geoType === 'range-sector' || geoType === 'semi-circle';
+        const thicknessLabel = typeof t === 'function' ? t('geo-thickness') : 'Thickness';
+        const currentWeight = Number.isFinite(data.weight) ? data.weight : 2;
+        const thicknessRow = showThickness
+            ? `<div style="margin:6px 0;"><span style="font-size:0.75rem;color:#6b7280;">${thicknessLabel}:</span>
+                   <input type="number" class="geo-popup-weight-input" min="1" max="20" step="1" value="${currentWeight}" style="width:60px;padding:2px 4px;font-size:0.8rem;margin-left:6px;">
+               </div>`
+            : '';
+        const showSubdivisions = geoType === 'range-sector' || geoType === 'semi-circle';
+        const subdivisionsLabel = typeof t === 'function' ? t('geo-subdivisions') : 'Subdivisions';
+        const currentSubdivisions = Number.isFinite(data.subdivisions) && data.subdivisions >= 1 ? data.subdivisions : 1;
+        const subdivisionsRow = showSubdivisions
+            ? `<div style="margin:6px 0;"><span style="font-size:0.75rem;color:#6b7280;">${subdivisionsLabel}:</span>
+                   <input type="number" class="geo-popup-subdivisions-input" min="1" max="10" step="1" value="${currentSubdivisions}" style="width:60px;padding:2px 4px;font-size:0.8rem;margin-left:6px;">
+               </div>`
+            : '';
+        // Per-wedge color + label editor (only when the sector is subdivided).
+        let wedgesSection = '';
+        if (showSubdivisions && currentSubdivisions > 1) {
+            const wedgesArr = Array.isArray(data.wedges) ? data.wedges : [];
+            const wedgeLabel = typeof t === 'function' ? t('geo-wedge') : 'Wedge';
+            const wedgeLabelPlaceholder = typeof t === 'function' ? t('geo-wedge-label-placeholder') : 'Label';
+            const wedgeClearLabel = typeof t === 'function' ? t('geo-wedge-clear-color') : 'Default';
+            const wedgesSectionTitle = typeof t === 'function' ? t('geo-wedges') : 'Wedges';
+            const labelStyleTitle = typeof t === 'function' ? t('geo-label-style') : 'Label style';
+            const labelSizeLabel = typeof t === 'function' ? t('geo-label-size') : 'Size';
+            const labelPositionLabel = typeof t === 'function' ? t('geo-label-position') : 'Position';
+            const labelFontLabel = typeof t === 'function' ? t('geo-label-font') : 'Font';
+            const labelFontDefaultOpt = typeof t === 'function' ? t('geo-label-font-default') : 'Default';
+            const currentLabelSize = Number.isFinite(data.labelSize) && data.labelSize >= 8 ? data.labelSize : 14;
+            const currentLabelPositionPct = Number.isFinite(data.labelPosition) && data.labelPosition > 0
+                ? Math.round(data.labelPosition * 100) : 55;
+            const currentLabelFont = typeof data.labelFont === 'string' ? data.labelFont : '';
+            const fontOptionsHtml = [
+                ['',       labelFontDefaultOpt],
+                ['arial',  'Arial'],
+                ['tahoma', 'Tahoma'],
+                ['segoe',  'Segoe UI'],
+                ['serif',  'Serif'],
+                ['mono',   'Monospace']
+            ].map(([val, lbl]) =>
+                `<option value="${val}"${currentLabelFont === val ? ' selected' : ''}>${escapeHtml(lbl)}</option>`
+            ).join('');
+            const labelStyleSection = `
+                <div style="margin:0 0 6px 0;padding:6px;background:#ffffff;border:1px solid #e2e8f0;border-radius:4px;">
+                    <div style="font-size:0.72rem;color:#475569;font-weight:700;margin-bottom:4px;">${escapeHtml(labelStyleTitle)}</div>
+                    <div style="display:flex;align-items:center;gap:6px;margin:4px 0;">
+                        <span style="font-size:0.7rem;color:#6b7280;min-width:58px;">${escapeHtml(labelSizeLabel)}:</span>
+                        <input type="range" class="geo-popup-label-size-slider" min="8" max="32" step="1" value="${currentLabelSize}" style="flex:1;">
+                        <input type="number" class="geo-popup-label-size-input" min="8" max="32" step="1" value="${currentLabelSize}" style="width:48px;padding:2px 4px;font-size:0.72rem;">
+                    </div>
+                    <div style="display:flex;align-items:center;gap:6px;margin:4px 0;">
+                        <span style="font-size:0.7rem;color:#6b7280;min-width:58px;">${escapeHtml(labelFontLabel)}:</span>
+                        <select class="geo-popup-label-font-select" style="flex:1;padding:2px 4px;font-size:0.72rem;border:1px solid #cbd5e1;border-radius:4px;">${fontOptionsHtml}</select>
+                    </div>
+                </div>`;
+            const rows = [];
+            for (let i = 0; i < currentSubdivisions; i++) {
+                const w = wedgesArr[i] || {};
+                const wColor = w.color || null;
+                const wLabelText = typeof w.label === 'string' ? w.label : '';
+                const wPosPct = Number.isFinite(w.labelPosition) && w.labelPosition > 0 && w.labelPosition <= 1
+                    ? Math.round(w.labelPosition * 100) : 55;
+                const swatches = colors.map(({ c }) => {
+                    const active = wColor === c;
+                    return `<button type="button" class="geo-popup-wedge-color-btn${active ? ' active' : ''}" data-wedge-index="${i}" data-color="${c}" style="width:18px;height:18px;border-radius:50%;background:${c};border:2px solid ${active ? 'var(--accent)' : '#cbd5e1'};cursor:pointer;margin:1px;" title="${c}"></button>`;
+                }).join('');
+                rows.push(`
+                    <div class="geo-popup-wedge-row" data-wedge-index="${i}" style="margin:4px 0;padding:4px;background:#f8fafc;border-radius:4px;text-align:left;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
+                        <span style="font-size:0.72rem;color:#475569;font-weight:600;min-width:52px;">${escapeHtml(wedgeLabel)} ${i + 1}:</span>
+                        <span style="display:inline-flex;align-items:center;">${swatches}</span>
+                        <button type="button" class="geo-popup-wedge-clear-color-btn" data-wedge-index="${i}" style="padding:1px 6px;font-size:0.65rem;border-radius:4px;border:1px solid #cbd5e1;background:#fff;color:#475569;cursor:pointer;">${escapeHtml(wedgeClearLabel)}</button>
+                        <input type="text" class="geo-popup-wedge-label-input" data-wedge-index="${i}" maxlength="60" value="${escapeHtml(wLabelText)}" placeholder="${escapeHtml(wedgeLabelPlaceholder)}" style="flex:1;min-width:80px;padding:2px 4px;font-size:0.75rem;border:1px solid #cbd5e1;border-radius:4px;">
+                        <div style="flex-basis:100%;display:flex;align-items:center;gap:6px;margin-top:2px;">
+                            <span style="font-size:0.65rem;color:#64748b;min-width:52px;">${escapeHtml(labelPositionLabel)}:</span>
+                            <input type="range" class="geo-popup-wedge-position-slider" data-wedge-index="${i}" min="10" max="95" step="1" value="${wPosPct}" style="flex:1;">
+                            <span class="geo-popup-wedge-position-value" data-wedge-index="${i}" style="font-size:0.65rem;color:#64748b;min-width:34px;text-align:right;">${wPosPct}%</span>
+                        </div>
+                    </div>`);
+            }
+            wedgesSection = `
+                <div style="margin:6px 0;padding:6px;background:#eef2f7;border-radius:6px;">
+                    <div style="font-size:0.75rem;color:#475569;font-weight:700;margin-bottom:4px;">${escapeHtml(wedgesSectionTitle)}</div>
+                    ${labelStyleSection}
+                    ${rows.join('')}
+                </div>`;
+        }
         const dragHint = typeof t === 'function' ? t('geo-drag-move') : 'Drag to move';
         const nameFieldHtml = getFeatureDisplayNameInputHtml('geo-display-name-input', data.displayName, title);
         let distanceWaypointsHtml = '';
@@ -183,6 +270,9 @@
                 ${distanceWaypointsHtml}
                 ${showGeoRotate ? getDrawingRotateControlsHtml() : ''}
                 ${showFillStyle ? `<div style="margin:6px 0;"><span style="font-size:0.75rem;color:#6b7280;">${typeof t === 'function' ? t('geo-fill-style') : 'Fill Style'}:</span><br>${fillStyleBtns}</div>` : ''}
+                ${thicknessRow}
+                ${subdivisionsRow}
+                ${wedgesSection}
                 ${geoType === 'minefield' ? (() => {
                     const mt = data.mineType || 'ap';
                     const types = [
@@ -298,6 +388,14 @@
         const rangeCircleHtml = `<div style="margin:4px 0;">${circleSections}${sectorSections}${rangeAddRow}</div>`;
         const rotRow = getDrawingRotateControlsHtml();
         const mods = marker._textModifiers || {};
+        const symbolSizeLabel = typeof t === 'function' ? t('symbol-size') : 'Symbol size';
+        const currentSymbolSize = Number.isFinite(mods.size) && mods.size > 0 ? mods.size : 25;
+        const symbolSizeRow = `
+            <div style="margin:6px 0;display:flex;align-items:center;justify-content:center;gap:6px;">
+                <label style="font-size:0.8rem;color:#6b7280;">${symbolSizeLabel}:</label>
+                <input type="range" class="symbol-popup-size-slider" min="10" max="80" step="1" value="${currentSymbolSize}" style="flex:1;max-width:140px;">
+                <input type="number" class="symbol-popup-size-input" min="10" max="80" step="1" value="${currentSymbolSize}" style="width:52px;padding:2px 4px;font-size:0.8rem;">
+            </div>`;
         const editLabel = typeof t === 'function' ? t('edit-symbol') : 'Edit';
         const designationLabel = typeof t === 'function' ? t('unique-designation') : 'Designation';
         const additionalLabel = typeof t === 'function' ? t('additional-info') : 'Additional info';
@@ -350,6 +448,7 @@
                     </select>
                 </div>
                 ${rangeCircleHtml}
+                ${symbolSizeRow}
                 ${rotRow}
                 <small style="color:#6b7280;font-size:0.75rem;">${formatted}</small><br>
                 <div style="margin:6px 0;font-size:0.8rem;">

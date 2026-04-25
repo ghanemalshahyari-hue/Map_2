@@ -335,10 +335,16 @@
         return best;
     }
 
-    /** Snap while dragging TMG endpoint handles: scalloped ends (magnet) + general geometry snap; excludes the line/group being edited. */
+    /** Snap while dragging TMG endpoint handles: circle-X centers (sticky) > scalloped ends (magnet) > general geometry snap; excludes the line/group being edited. */
     function snapTmgEndpointHandleLatLng(rawLatLng, excludeEls) {
         const map = _ctx.getMap();
         if (!map || !rawLatLng) return rawLatLng;
+        // Circle-X snap wins first so front-line endpoints stay glued to the
+        // obstacle center and don't get pulled off by a nearby line endpoint.
+        if (typeof _ctx.getCircleXSnapLatLng === 'function') {
+            const circleSnap = _ctx.getCircleXSnapLatLng(rawLatLng);
+            if (circleSnap) return circleSnap;
+        }
         const hit = findScallopedMergeAtExcluding(rawLatLng, SCALLOPED_ENDPOINT_MAGNET_PX, excludeEls);
         if (hit) return hit.latlng;
         const ex = excludeEls instanceof Set ? excludeEls : excludeEls ? new Set([excludeEls]) : null;

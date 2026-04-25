@@ -83,7 +83,8 @@
         if (!found) found = list.find(e => e.code === code.substr(0, 4) + '00');
         if (!found) found = list.find(e => e.code === code.substr(0, 2) + '0000');
         if (!found) return '';
-        return found['entity subtype'] || found['entity type'] || found.entity || '';
+        const raw = found['entity subtype'] || found['entity type'] || found.entity || '';
+        return trEntityName(raw);
     }
 
     function byId(id) { return document.getElementById(id); }
@@ -108,6 +109,17 @@
             throw err;
         }
         return json;
+    }
+
+    function findNodeInRoots(roots, id) {
+        const stack = [...(roots || [])];
+        while (stack.length) {
+            const n = stack.pop();
+            if (!n) continue;
+            if (n.id === id) return n;
+            if (n.children?.length) stack.push(...n.children);
+        }
+        return null;
     }
 
     function flattenTree(roots, collapsedSet = new Set()) {
@@ -145,8 +157,48 @@
         return `${prefix}-${s}`;
     }
 
+    const LEVEL_I18N_KEYS = ['units-level-army', 'units-level-force', 'units-level-brigade', 'units-level-battalion', 'units-level-company'];
+    const LEVEL_I18N_KEYS_P = ['units-level-army-p', 'units-level-force-p', 'units-level-brigade-p', 'units-level-battalion-p', 'units-level-company-p'];
+
     function levelLabel(lvl) {
+        const key = LEVEL_I18N_KEYS[lvl];
+        if (key && typeof window.t === 'function') return window.t(key);
         return LEVELS.find(l => l.value === lvl)?.label ?? `L${lvl}`;
+    }
+
+    function levelLabelPlural(lvl) {
+        const key = LEVEL_I18N_KEYS_P[lvl];
+        if (key && typeof window.t === 'function') return window.t(key);
+        return levelLabel(lvl) + 's';
+    }
+
+    function sideLabelShort(side) {
+        const key = `units-side-${side}-short`;
+        if (typeof window.t === 'function') {
+            const tr = window.t(key);
+            if (tr && tr !== key) return tr;
+        }
+        return (side || 'friendly').charAt(0).toUpperCase() + (side || 'friendly').slice(1);
+    }
+
+    function tr(key, fallback) {
+        if (typeof window.t === 'function') {
+            const v = window.t(key);
+            if (v && v !== key) return v;
+        }
+        return fallback != null ? fallback : key;
+    }
+
+    function isArabicLocale() {
+        return typeof window.getCurrentLang === 'function' && window.getCurrentLang() === 'ar';
+    }
+
+    function trEntityName(name) {
+        if (!name) return '';
+        if (!isArabicLocale()) return name;
+        const dict = window.sidcPickerArTrans;
+        if (dict && dict[name]) return dict[name];
+        return name;
     }
 
     function init() {
@@ -191,6 +243,24 @@
         const qaErrorEl       = byId('units-qa-error');
         const createBtn       = byId('units-create-btn');
         const createAddBtn    = byId('units-create-and-add-btn');
+        const createPlaceBtn  = byId('units-create-and-place-btn');
+
+        // Standalone placement panel (sibling of the units modal)
+        const placementPanelEl       = byId('units-placement-panel');
+        const placementPanelStatusEl = byId('units-placement-panel-status');
+        const placementPanelSymbolEl = byId('units-placement-panel-symbol');
+        const placementPanelNameEl   = byId('units-placement-panel-name');
+        const placementPanelLvlEl    = byId('units-placement-panel-lvl');
+        const placementPanelSideEl   = byId('units-placement-panel-side');
+        const placementPanelCodeEl   = byId('units-placement-panel-code');
+        const placementPanelParentEl     = byId('units-placement-panel-parent');
+        const placementPanelParentNameEl = byId('units-placement-panel-parent-name');
+        const placementContinuousEl  = byId('units-placement-continuous');
+        const placementCancelBtn     = byId('units-placement-cancel-btn');
+        const placementBackBtn       = byId('units-placement-back-btn');
+        const placementQueueEl       = byId('units-placement-panel-queue');
+        const placementQueueCountEl  = byId('units-placement-panel-queue-count');
+        const placementQueueEmptyEl  = byId('units-placement-panel-queue-empty');
 
         // Symbol assignment section
         const symbolSection   = byId('units-symbol-section');
@@ -234,6 +304,11 @@
 
         let state     = { roots: [], units: [], selectedId: null };
         let collapsed = new Set();
+        // True while the standalone placement panel is visible and the main
+        // modal is parked. Used to gate ESC/backdrop/close so they act on the
+        // placement rather than closing the entire units UI.
+        let inPlacement        = false;
+        let currentPlacingUnit = null;
         let filterSide = null; // null = show all; 'friendly'|'hostile'|'neutral'|'unknown' = filter
         let selectedDomain = null; // 'Land' | 'Air' | 'Naval' | 'Joint' | 'Support'
         let selectedBranch = null; // 'Infantry' | 'Armor' | ... (ENTITY_BY_BRANCH keys)
@@ -271,11 +346,15 @@
             const lbl = levelLabel(u.level);
             if (ctxLvlBadge) { ctxLvlBadge.textContent = lbl; ctxLvlBadge.className = `units-tree-level units-tree-level-${u.level}`; }
             const side = u.side || 'friendly';
-            if (ctxSideBadge) { ctxSideBadge.textContent = side.charAt(0).toUpperCase() + side.slice(1); ctxSideBadge.className = `units-side-badge units-side-${side}`; }
+            if (ctxSideBadge) { ctxSideBadge.textContent = sideLabelShort(side); ctxSideBadge.className = `units-side-badge units-side-${side}`; }
             if (ctxSelName)   ctxSelName.textContent  = u.name || '—';
             if (ctxSelCode)   ctxSelCode.textContent  = u.code || '';
             const childCount = state.roots ? countDirectChildren(u.id) : 0;
-            if (ctxChildCount) ctxChildCount.textContent = childCount > 0 ? `${childCount} ${levelLabel(u.level + 1)}${childCount !== 1 ? 's' : ''}` : '';
+            if (ctxChildCount) {
+                ctxChildCount.textContent = childCount > 0
+                    ? `${childCount} ${childCount !== 1 ? levelLabelPlural(u.level + 1) : levelLabel(u.level + 1)}`
+                    : '';
+            }
             if (ctxBreadcrumb) {
                 const path = computeBreadcrumb(state.units, u.id);
                 ctxBreadcrumb.innerHTML = path.length > 1
@@ -284,10 +363,10 @@
             }
             if (placeBtn) {
                 const placed = isPlaced(u);
-                placeBtn.textContent = placed ? '\u{1F4CD} Re-place' : '\u{1F4CD} Place on map';
-                placeBtn.title = placed
-                    ? 'Click on the map to move this unit to a new position'
-                    : 'Click on the map to place this unit';
+                placeBtn.textContent = placed ? tr('units-place-btn-replace', '\u{1F4CD} Re-place')
+                                              : tr('units-place-btn',         '\u{1F4CD} Place on map');
+                placeBtn.title = placed ? tr('units-place-tooltip-replace', 'Click on the map to move this unit to a new position')
+                                        : tr('units-place-tooltip',         'Click on the map to place this unit');
             }
         }
 
@@ -327,8 +406,8 @@
             // Creating indicator
             const lbl = levelLabel(lvl);
             if (creatingBadge) { creatingBadge.textContent = lbl; creatingBadge.className = `units-tree-level units-tree-level-${lvl}`; }
-            if (creatingUnder) creatingUnder.textContent = u ? `under ${u.name}` : '';
-            if (createBtn) createBtn.textContent = `+ Create ${lbl}`;
+            if (creatingUnder) creatingUnder.textContent = u ? tr('units-creating-under', 'under {0}').replace('{0}', u.name) : '';
+            if (createBtn)     createBtn.textContent    = tr('units-create-label', '+ Create {0}').replace('{0}', lbl);
 
             // Show creating card
             const creatingCard = mainPanel ? mainPanel.querySelector('.units-creating-card') : null;
@@ -357,7 +436,7 @@
                 if (sideInheritedRow) sideInheritedRow.style.display = '';
                 const inherited = u?.side || 'friendly';
                 if (sideBadge) {
-                    sideBadge.textContent = inherited.charAt(0).toUpperCase() + inherited.slice(1);
+                    sideBadge.textContent = sideLabelShort(inherited);
                     sideBadge.className = `units-side-badge units-side-${inherited}`;
                 }
             }
@@ -419,8 +498,16 @@
             const sidc = currentSidc();
             renderSymbolInto(symbolPreviewEl, sidc, 52);
             const label = sidcEntityShort(sidc);
-            if (symbolNameEl) symbolNameEl.textContent = label || (selectedBranch || selectedDomain || 'Auto');
-            if (symbolSidcEl) symbolSidcEl.textContent = selectedSidc ? `SIDC: ${sidc}` : `SIDC: ${sidc} (auto)`;
+            const branchKey = selectedBranch ? `units-branch-${selectedBranch.toLowerCase()}` : null;
+            const domainKey = selectedDomain ? `units-domain-${selectedDomain.toLowerCase()}` : null;
+            const fallback  = branchKey ? tr(branchKey, selectedBranch)
+                            : domainKey ? tr(domainKey, selectedDomain)
+                            : tr('units-symbol-default-name', 'Auto');
+            if (symbolNameEl) symbolNameEl.textContent = label || fallback;
+            if (symbolSidcEl) {
+                const autoTag = tr('units-symbol-auto', '(auto)');
+                symbolSidcEl.textContent = selectedSidc ? `SIDC: ${sidc}` : `SIDC: ${sidc} ${autoTag}`;
+            }
             if (symbolClearBtn) symbolClearBtn.style.display = selectedSidc ? '' : 'none';
             if (qaSidcEl) qaSidcEl.value = selectedSidc || '';
             renderSuggestedChips();
@@ -455,7 +542,7 @@
                 chip.appendChild(thumb);
                 const lbl = document.createElement('span');
                 lbl.className = 'units-symbol-chip-label';
-                lbl.textContent = sidcEntityShort(sidc) || 'Unit';
+                lbl.textContent = sidcEntityShort(sidc) || tr('units-symbol-default-name', 'Unit');
                 chip.appendChild(lbl);
                 symbolChipsEl.appendChild(chip);
             }
@@ -602,14 +689,184 @@
             show(mainPanel);
         }
 
+        // ── Standalone placement panel ────────────────────────────────────────
+        // The centred Units modal is "parked" (display:none via .units-modal-parked)
+        // while the dedicated placement panel is visible. Every form field, the
+        // tree selection, and the edit panel content survive the round-trip
+        // untouched — we never call refresh/reset while parking.
+        function setPlacementStatus(key, fallback, placed = false) {
+            if (!placementPanelStatusEl) return;
+            placementPanelStatusEl.textContent = tr(key, fallback);
+            placementPanelStatusEl.classList.toggle('is-placed', !!placed);
+        }
+
+        function populatePlacementCard(unit) {
+            if (!placementPanelEl) return;
+            const sidc = unit.sidc || null;
+            if (placementPanelSymbolEl) {
+                if (sidc) renderSymbolInto(placementPanelSymbolEl, sidc, 84);
+                else placementPanelSymbolEl.innerHTML = '';
+            }
+            if (placementPanelNameEl) placementPanelNameEl.textContent = unit.name || '—';
+            if (placementPanelLvlEl) {
+                placementPanelLvlEl.textContent = levelLabel(unit.level);
+                placementPanelLvlEl.className = `units-tree-level units-tree-level-${unit.level}`;
+            }
+            const side = unit.side || 'friendly';
+            if (placementPanelSideEl) {
+                placementPanelSideEl.textContent = sideLabelShort(side);
+                placementPanelSideEl.className = `units-side-badge units-side-${side}`;
+            }
+            if (placementPanelCodeEl) placementPanelCodeEl.textContent = unit.code || '';
+            const parent = unit.parent_id ? state.units.find(x => x.id === unit.parent_id) : null;
+            if (placementPanelParentEl) {
+                if (parent) {
+                    placementPanelParentEl.style.display = '';
+                    if (placementPanelParentNameEl) placementPanelParentNameEl.textContent = parent.name || '';
+                } else {
+                    placementPanelParentEl.style.display = 'none';
+                }
+            }
+        }
+
+        // Build the list of "other unplaced units" shown under the action
+        // buttons. Clicking a row re-arms placement for that unit — the user
+        // never has to leave the panel to work through many placements.
+        function renderPlacementQueue() {
+            if (!placementQueueEl) return;
+            const currentId = currentPlacingUnit?.id || null;
+            const rows = (state.units || [])
+                .filter(u => !u.deleted_at && !isPlaced(u) && u.id !== currentId)
+                .sort((a, b) => (a.level - b.level) || String(a.name).localeCompare(String(b.name)));
+
+            if (placementQueueCountEl) placementQueueCountEl.textContent = rows.length ? String(rows.length) : '';
+            if (!rows.length) {
+                placementQueueEl.innerHTML = '';
+                if (placementQueueEmptyEl) placementQueueEmptyEl.style.display = '';
+                return;
+            }
+            if (placementQueueEmptyEl) placementQueueEmptyEl.style.display = 'none';
+
+            placementQueueEl.innerHTML = rows.map(u => {
+                const side = u.side || 'friendly';
+                return `<button type="button" class="units-placement-panel-queue-item" data-id="${escapeHtml(u.id)}" role="listitem">
+                    <span class="units-placement-panel-queue-item-symbol" data-sidc="${escapeHtml(u.sidc || '')}"></span>
+                    <span class="units-placement-panel-queue-item-text">
+                        <span class="units-placement-panel-queue-item-name">${escapeHtml(u.name || '—')}</span>
+                        <span class="units-placement-panel-queue-item-meta">
+                            <span class="units-tree-level units-tree-level-${u.level}">${escapeHtml(levelLabel(u.level))}</span>
+                            <span class="units-side-dot units-side-dot-${side}" title="${escapeHtml(sideLabelShort(side))}"></span>
+                            <span class="units-placement-panel-queue-item-code">${escapeHtml(u.code || '')}</span>
+                        </span>
+                    </span>
+                </button>`;
+            }).join('');
+
+            // Lazy-render the symbols after the HTML is in place.
+            placementQueueEl.querySelectorAll('.units-placement-panel-queue-item-symbol').forEach(slot => {
+                const sidc = slot.getAttribute('data-sidc');
+                if (sidc) renderSymbolInto(slot, sidc, 30);
+            });
+        }
+
+        // Switch the active placement target to another unit without closing
+        // or re-opening the panel. Keeps continuous toggle state.
+        function switchPlacementUnit(unitId) {
+            if (!unitId) return;
+            const u = state.units.find(x => x.id === unitId);
+            if (!u) return;
+            currentPlacingUnit = u;
+            // Align tree selection with the unit being placed so "Back to
+            // details" brings the user to the right row in the modal.
+            state.selectedId = u.id;
+            populatePlacementCard(u);
+            setPlacementStatus('units-placement-active', 'Placement mode active — click the map to set the location', false);
+            armMapPlacement(u);
+            renderPlacementQueue();
+        }
+
+        // Floating top-of-map cue (extra reinforcement beyond the side panel)
+        let mapCueEl = null;
+        function showMapCue() {
+            if (mapCueEl || typeof document === 'undefined') return;
+            mapCueEl = document.createElement('div');
+            mapCueEl.className = 'units-map-placement-cue';
+            mapCueEl.setAttribute('dir', isArabicLocale() ? 'rtl' : 'ltr');
+            const cueText = tr('units-map-cue-text', 'Click the map to place');
+            const cueHint = tr('units-map-cue-hint', 'ESC to cancel');
+            mapCueEl.innerHTML = `<span>${escapeHtml(cueText)}</span><kbd>ESC</kbd><span style="opacity:0.85">${escapeHtml(cueHint)}</span>`;
+            document.body.appendChild(mapCueEl);
+        }
+        function hideMapCue() {
+            if (mapCueEl && mapCueEl.parentNode) mapCueEl.parentNode.removeChild(mapCueEl);
+            mapCueEl = null;
+        }
+
+        // Separated from enterPlacementMode so continuous mode can re-arm
+        // the map hook after a successful placement without toggling the panel.
+        function armMapPlacement(unit) {
+            if (!unit || !window.AppUnitsMap) return;
+            window.__APP_UNITS_SIDEPANEL_PLACING = true;
+            const unitRow = state.units.find(x => x.id === unit.id) || unit;
+            window.AppUnitsMap.beginPlacement({
+                id: unit.id, name: unit.name, code: unit.code, level: unit.level,
+                side: unit.side, sidc: unitRow.sidc || unit.sidc || null,
+            });
+        }
+
+        function enterPlacementMode(unit) {
+            if (!unit || !window.AppUnitsMap) return;
+            inPlacement = true;
+            currentPlacingUnit = unit;
+            // Park the centred modal — form/selection state is preserved intact.
+            modal.classList.add('units-modal-parked');
+            if (placementPanelEl) {
+                placementPanelEl.hidden = false;
+                placementPanelEl.setAttribute('aria-hidden', 'false');
+            }
+            populatePlacementCard(unit);
+            setPlacementStatus('units-placement-active', 'Placement mode active — click the map to set the location', false);
+            showMapCue();
+            armMapPlacement(unit);
+            renderPlacementQueue();
+        }
+
+        // returnToModal:
+        //   true  → hide placement panel, unpark modal (user sees the full UI again).
+        //   false → keep placement panel visible (continuous mode post-placement).
+        function exitPlacementMode({ cancel = false, returnToModal = true } = {}) {
+            if (!inPlacement && placementPanelEl?.hidden !== false) return;
+            const wasInPlacement = inPlacement;
+            // Clear state BEFORE calling cancelPlacement so the re-entrant
+            // `units:placement-cancelled` listener short-circuits at its guard.
+            inPlacement = false;
+            window.__APP_UNITS_SIDEPANEL_PLACING = false;
+
+            if (returnToModal) {
+                if (placementPanelEl) {
+                    placementPanelEl.hidden = true;
+                    placementPanelEl.setAttribute('aria-hidden', 'true');
+                }
+                modal.classList.remove('units-modal-parked');
+                hideMapCue();
+                currentPlacingUnit = null;
+            }
+            if (cancel && wasInPlacement) window.AppUnitsMap?.cancelPlacement?.();
+        }
+
         function renderEditParents(excludeId, level) {
             if (!editParentEl) return;
-            if (level === 0) { editParentEl.innerHTML = `<option value="">— None (root) —</option>`; editParentEl.disabled = true; return; }
+            if (level === 0) {
+                editParentEl.innerHTML = `<option value="">${escapeHtml(tr('units-edit-select-none', '— None (root) —'))}</option>`;
+                editParentEl.disabled = true;
+                return;
+            }
             editParentEl.disabled = false;
             const parentLvl = level - 1;
             const incDel = !!includeDeletedCb?.checked;
             const pool = incDel ? state.units : state.units.filter(u => !u.deleted_at);
-            const opts = [`<option value="">— Select ${levelLabel(parentLvl)} —</option>`];
+            const selLabel = tr('units-edit-select-parent', '— Select {0} —').replace('{0}', levelLabel(parentLvl));
+            const opts = [`<option value="">${escapeHtml(selLabel)}</option>`];
             for (const u of pool) {
                 if (u.level !== parentLvl) continue;
                 if (excludeId && u.id === excludeId) continue;
@@ -623,7 +880,8 @@
             if (!createBtn) return;
             const ok = !!(qaNameEl?.value || '').trim() && !!(qaCodeEl?.value || '').trim() && codeAvailable;
             createBtn.disabled = !ok;
-            if (createAddBtn) createAddBtn.disabled = !ok;
+            if (createAddBtn)   createAddBtn.disabled   = !ok;
+            if (createPlaceBtn) createPlaceBtn.disabled = !ok;
         }
 
         function setEditEnabled() {
@@ -651,7 +909,13 @@
 
         // ── Open / Close ───────────────────────────────────────────────────────
         function open() { modal.classList.remove('hidden'); modal.setAttribute('aria-hidden', 'false'); refresh({ collapseAll: true }); }
-        function close() { modal.classList.add('hidden'); modal.setAttribute('aria-hidden', 'true'); }
+        function close() {
+            // Tear down any dangling placement hook before the whole UI disappears.
+            exitPlacementMode({ cancel: true });
+            modal.classList.remove('units-modal-parked');
+            modal.classList.add('hidden');
+            modal.setAttribute('aria-hidden', 'true');
+        }
 
         // ── Selection ──────────────────────────────────────────────────────────
         function getSelected() { return state.units.find(u => u.id === state.selectedId) || null; }
@@ -681,12 +945,15 @@
                     : `<span class="units-toggle-spacer"></span>`;
                 const countBadge = n._childCount > 0 ? `<span class="units-tree-count">${n._childCount}</span>` : '';
                 const delBtn = deleted
-                    ? `<button class="units-tree-restore-btn" data-restore-id="${escapeHtml(n.id)}" title="Restore">↩</button>`
-                    : `<button class="units-tree-del-btn" data-del-id="${escapeHtml(n.id)}" title="Delete">×</button>`;
+                    ? `<button class="units-tree-restore-btn" data-restore-id="${escapeHtml(n.id)}" title="${escapeHtml(tr('units-tree-restore-title', 'Restore'))}">↩</button>`
+                    : `<button class="units-tree-del-btn" data-del-id="${escapeHtml(n.id)}" title="${escapeHtml(tr('units-tree-delete-title', 'Delete'))}">×</button>`;
+                const orbatBtn = n._hasChildren
+                    ? `<button class="units-tree-orbat-btn" data-orbat-id="${escapeHtml(n.id)}" title="${escapeHtml(tr('units-tree-orbat-title', 'View ORBAT tree'))}" aria-label="${escapeHtml(tr('units-tree-orbat-title', 'View ORBAT tree'))}"><svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="2" width="5" height="4" rx="1"/><rect x="1.5" y="13" width="5" height="4" rx="1"/><rect x="7.5" y="13" width="5" height="4" rx="1"/><rect x="13.5" y="13" width="5" height="4" rx="1"/><path d="M10 6v3M4 13v-2h12v2M10 11v2"/></g></svg></button>`
+                    : '';
                 const nodeSide = n.side || 'friendly';
                 const nodeSideLabel = nodeSide.charAt(0).toUpperCase() + nodeSide.slice(1);
                 const placedBadge = isPlaced(n)
-                    ? `<span class="units-tree-placed" title="Placed on map">&#128205;</span>`
+                    ? `<span class="units-tree-placed" title="${escapeHtml(tr('units-tree-placed-title', 'Placed on map'))}">&#128205;</span>`
                     : '';
                 return `<div class="units-tree-row ${isSel ? 'active' : ''} ${deleted ? 'deleted' : ''} units-side-row-${nodeSide}" data-id="${escapeHtml(n.id)}" style="padding-inline-start:${pad}px">
                   ${toggleEl}
@@ -695,10 +962,11 @@
                   ${countBadge}
                   <span class="units-tree-spacer"></span>
                   ${placedBadge}
-                  <span class="units-side-dot units-side-dot-${nodeSide}" title="${nodeSideLabel}"></span>
+                  <span class="units-side-dot units-side-dot-${nodeSide}" title="${escapeHtml(sideLabelShort(nodeSide))}"></span>
+                  ${orbatBtn}
                   ${delBtn}
                 </div>`;
-            }).join('') || `<div class="units-tree-empty">No units found.</div>`;
+            }).join('') || `<div class="units-tree-empty">${escapeHtml(tr('units-tree-empty', 'No units found.'))}</div>`;
         }
 
         // ── Refresh ────────────────────────────────────────────────────────────
@@ -724,7 +992,7 @@
                 // Resync map markers with whatever the server now reports
                 // (covers cascaded deletes, SIDC edits, parent moves, etc).
                 window.AppUnitsMap?.reload?.();
-            } catch (e) { showQaError(e.message || 'Failed to load units'); }
+            } catch (e) { showQaError(e.message || tr('units-err-load', 'Failed to load units')); }
         }
 
         // ── Search ─────────────────────────────────────────────────────────────
@@ -743,8 +1011,8 @@
                       <span class="units-tree-level units-tree-level-${u.level}">${escapeHtml(levelLabel(u.level))}</span>
                       <span class="units-tree-label">${escapeHtml(u.name)}</span>
                     </div>`;
-                }).join('') || `<div class="units-tree-empty">No results</div>`;
-            } catch (e) { showQaError(e.message || 'Search failed'); }
+                }).join('') || `<div class="units-tree-empty">${escapeHtml(tr('units-search-nores', 'No results'))}</div>`;
+            } catch (e) { showQaError(e.message || tr('units-err-search', 'Search failed')); }
         }
 
         // ── Code checks ────────────────────────────────────────────────────────
@@ -754,8 +1022,8 @@
             try {
                 const d = await apiJson(`/api/units/code-check?code=${encodeURIComponent(code)}&excludeId=`);
                 codeAvailable = !!d.available;
-                if (!codeAvailable) showQaError('Code already in use — please change it.');
-                else if (qaErrorEl?.textContent.includes('Code already')) showQaError('');
+                if (!codeAvailable) showQaError(tr('units-err-code-used', 'Code already in use — please change it.'));
+                else if (qaErrorEl?.textContent && /already|مستخدم/.test(qaErrorEl.textContent)) showQaError('');
             } catch { codeAvailable = true; }
             setCreateEnabled();
         }
@@ -767,8 +1035,8 @@
             try {
                 const d = await apiJson(`/api/units/code-check?code=${encodeURIComponent(code)}&excludeId=${encodeURIComponent(u?.id || '')}`);
                 editCodeAvailable = !!d.available;
-                if (!editCodeAvailable) showEditError('Code already in use.');
-                else if (editErrorEl?.textContent.includes('Code already')) showEditError('');
+                if (!editCodeAvailable) showEditError(tr('units-err-code-used', 'Code already in use — please change it.'));
+                else if (editErrorEl?.textContent && /already|مستخدم/.test(editErrorEl.textContent)) showEditError('');
             } catch { editCodeAvailable = true; }
             setEditEnabled();
         }
@@ -784,7 +1052,7 @@
             return currentSidc();
         }
 
-        async function createUnit({ keepParent = false } = {}) {
+        async function createUnit({ keepParent = false, placeAfter = false } = {}) {
             showQaError('');
             const lvl      = getCreateLevel();
             const u        = getSelected();
@@ -823,11 +1091,21 @@
                     }
                 }
 
-                if (!keepParent) state.selectedId = row.id;
+                // "Create & Place" keeps the parent selected (like Create & Add
+                // Another) so the user can immediately create another sibling
+                // after placing — the freshly-created unit is armed for
+                // placement via enterPlacementMode below without touching the
+                // tree selection.
+                if (!keepParent && !placeAfter) state.selectedId = row.id;
                 await refresh();
                 resetMainForm();
+                if (placeAfter && row && row.id) {
+                    const freshRow = state.units.find(x => x.id === row.id) || row;
+                    enterPlacementMode(freshRow);
+                    return;
+                }
                 qaNameEl?.focus();
-            } catch (e) { showQaError(e.message || 'Create failed'); }
+            } catch (e) { showQaError(e.message || tr('units-err-create', 'Create failed')); }
         }
 
         // ── GENERATE CHILDREN ──────────────────────────────────────────────────
@@ -851,7 +1129,7 @@
                 }
                 await refresh();
                 hide(genForm);
-            } catch (e) { showGenError(e.message || 'Generate failed'); }
+            } catch (e) { showGenError(e.message || tr('units-gen-err', 'Generate failed')); }
             finally { if (genBtn) genBtn.disabled = false; }
         }
 
@@ -885,7 +1163,7 @@
                         side: row.side, sidc: row.sidc, lat: row.lat, lng: row.lng,
                     } }));
                 }
-            } catch (e) { showEditError(e.message || 'Save failed'); }
+            } catch (e) { showEditError(e.message || tr('units-err-save', 'Save failed')); }
         }
 
         // ── DELETE / RESTORE ───────────────────────────────────────────────────
@@ -899,7 +1177,7 @@
                 state.selectedId = null;
                 closeEditPanel();
                 await refresh();
-            } catch (e) { showEditError(e.message || 'Delete failed'); }
+            } catch (e) { showEditError(e.message || tr('units-err-delete', 'Delete failed')); }
         }
 
         async function restoreUnit() {
@@ -909,14 +1187,25 @@
             try {
                 await apiJson(`/api/units/${encodeURIComponent(u.id)}/restore`, { method: 'POST', body: '{}' });
                 await refresh();
-            } catch (e) { showEditError(e.message || 'Restore failed'); }
+            } catch (e) { showEditError(e.message || tr('units-err-restore', 'Restore failed')); }
         }
 
         // ── Events ─────────────────────────────────────────────────────────────
         railBtn.addEventListener('click', (e) => { e.preventDefault(); open(); });
-        backdrop?.addEventListener('click', close);
+        // Guard backdrop click — during placement the modal is parked (not visible),
+        // but if the user somehow triggers this we must not close the whole UI
+        // while a placement is armed.
+        backdrop?.addEventListener('click', () => { if (!inPlacement) close(); });
         closeBtn?.addEventListener('click', close);
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) close(); });
+        // ESC behaviour:
+        //   - While placement is active, ESC cancels placement ONLY. The main
+        //     modal re-appears with every field intact. Data is never discarded.
+        //   - Otherwise ESC closes the whole units UI.
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+            if (inPlacement) { exitPlacementMode({ cancel: true }); return; }
+            if (!modal.classList.contains('hidden')) close();
+        });
         refreshBtn?.addEventListener('click', () => refresh({ collapseAll: true }));
         includeDeletedCb?.addEventListener('change', refresh);
 
@@ -947,18 +1236,26 @@
                 if (collapsed.has(id)) collapsed.delete(id); else collapsed.add(id);
                 renderTree(); return;
             }
+            const orbatBtn = e.target?.closest?.('.units-tree-orbat-btn');
+            if (orbatBtn) {
+                e.stopPropagation();
+                const id = orbatBtn.getAttribute('data-orbat-id');
+                const rootNode = findNodeInRoots(state.roots, id);
+                if (rootNode) window.AppUnitsOrbat?.open?.(rootNode);
+                return;
+            }
             const delBtn = e.target?.closest?.('.units-tree-del-btn');
             if (delBtn) {
                 e.stopPropagation();
                 const id = delBtn.getAttribute('data-del-id');
                 const u  = state.units.find(x => x.id === id);
                 if (!u) return;
-                if (!confirm(`Delete "${u.name}"?`)) return;
+                if (!confirm(tr('units-confirm-delete', 'Delete "{0}"?').replace('{0}', u.name))) return;
                 try {
                     await apiJson(`/api/units/${encodeURIComponent(id)}/delete`, { method: 'POST', body: '{}' });
                     if (state.selectedId === id) { state.selectedId = null; closeEditPanel(); }
                     await refresh();
-                } catch (err) { alert(err.message || 'Delete failed'); }
+                } catch (err) { alert(err.message || tr('units-err-delete', 'Delete failed')); }
                 return;
             }
             const restoreBtn = e.target?.closest?.('.units-tree-restore-btn');
@@ -968,7 +1265,7 @@
                 try {
                     await apiJson(`/api/units/${encodeURIComponent(id)}/restore`, { method: 'POST', body: '{}' });
                     await refresh();
-                } catch (err) { alert(err.message || 'Restore failed'); }
+                } catch (err) { alert(err.message || tr('units-err-restore', 'Restore failed')); }
                 return;
             }
             const row = e.target?.closest?.('.units-tree-row');
@@ -1003,17 +1300,33 @@
         deleteBtn?.addEventListener('click',  deleteUnit);
         restoreBtn?.addEventListener('click', restoreUnit);
 
-        // Place on map — close the modal, hand off to units-map.js
+        // Place on map — DO NOT close the modal. Park it and hand off to the
+        // standalone placement panel; every field stays preserved for when the
+        // user comes back via Cancel / Back / post-placement return.
         placeBtn?.addEventListener('click', () => {
             const u = getSelected();
-            if (!u || !window.AppUnitsMap) return;
-            // units-map expects a flat unit descriptor
-            const unitRow = state.units.find(x => x.id === u.id) || u;
-            close();
-            window.AppUnitsMap.beginPlacement({
-                id: u.id, name: u.name, code: u.code, level: u.level,
-                side: u.side, sidc: unitRow.sidc || u.sidc || null,
-            });
+            if (!u) return;
+            enterPlacementMode(u);
+        });
+
+        // Placement panel actions (Cancel / Back / Continuous)
+        placementCancelBtn?.addEventListener('click', () => exitPlacementMode({ cancel: true }));
+        placementBackBtn?.addEventListener('click',   () => exitPlacementMode({ cancel: true }));
+
+        // Queue: click a row to re-arm placement for that unit in-place —
+        // never leaves the panel. Only Cancel / Back exit to the modal.
+        placementQueueEl?.addEventListener('click', (e) => {
+            const row = e.target?.closest?.('.units-placement-panel-queue-item');
+            if (!row) return;
+            const id = row.getAttribute('data-id');
+            if (!id) return;
+            // If the current placement isn't armed (e.g. after continuous
+            // placement just completed), make sure the flag comes back on.
+            if (!inPlacement) {
+                inPlacement = true;
+                window.__APP_UNITS_SIDEPANEL_PLACING = true;
+            }
+            switchPlacementUnit(id);
         });
 
         // Remove from map (edit panel)
@@ -1025,11 +1338,36 @@
                 window.AppUnitsMap?.removeMarker?.(u.id);
                 if (placementRow) placementRow.style.display = 'none';
                 await refresh();
-            } catch (e) { showEditError(e.message || 'Failed to remove from map'); }
+            } catch (e) { showEditError(e.message || tr('units-err-remove-map', 'Failed to remove from map')); }
         });
 
-        // React when the map finishes placing a unit (dispatched by units-map.js)
-        document.addEventListener('units:placed', () => { refresh().catch(() => {}); });
+        // React when the map finishes placing a unit (dispatched by units-map.js).
+        //   - Continuous OFF: exit placement, return to the main modal with
+        //     every field preserved.
+        //   - Continuous ON:  keep the placement panel open. Current unit is
+        //     now placed, so we drop it from state and the queue re-render
+        //     shows the next candidates. User picks one to keep going, or
+        //     clicks Cancel/Back to return to the modal.
+        document.addEventListener('units:placed', async () => {
+            const keepOpen = !!placementContinuousEl?.checked;
+            try { await refresh(); } catch (_) { /* ignore */ }
+            if (keepOpen && inPlacement) {
+                setPlacementStatus('units-placement-placed', 'Placed! Pick another unit below — or Back to return.', true);
+                // Map hook was torn down after success; keep it down until the
+                // user picks the next unit from the queue. currentPlacingUnit
+                // is now a placed unit and shouldn't appear in the list.
+                currentPlacingUnit = null;
+                window.__APP_UNITS_SIDEPANEL_PLACING = false;
+                renderPlacementQueue();
+                return;
+            }
+            exitPlacementMode();
+        });
+        // External cancel (e.g. banner button or map-level ESC path) must also
+        // exit our panel so the main modal re-appears.
+        document.addEventListener('units:placement-cancelled', () => {
+            if (inPlacement) exitPlacementMode();
+        });
 
         // Side buttons (create form)
         sideBtnsEl?.addEventListener('click', (e) => {
@@ -1151,8 +1489,29 @@
             }
         });
         qaCodeEl?.addEventListener('keydown', (e) => { if (e.key === 'Enter') createUnit(); });
-        createBtn?.addEventListener('click', () => createUnit());
-        createAddBtn?.addEventListener('click', () => createUnit({ keepParent: true }));
+        createBtn?.addEventListener('click',      () => createUnit());
+        createAddBtn?.addEventListener('click',   () => createUnit({ keepParent: true }));
+        createPlaceBtn?.addEventListener('click', () => createUnit({ placeAfter: true }));
+
+        // The Company dead-end message contains bold HTML — applyLanguage only sets textContent,
+        // so we populate innerHTML manually here and on every language change.
+        function refreshNoChildrenMsg() {
+            const msg2Wrap = byId('units-no-children-msg-2-wrap');
+            const hintWrap = byId('units-no-children-hint-wrap');
+            if (msg2Wrap) msg2Wrap.innerHTML = tr('units-no-children-msg-2', 'Click <strong>Edit</strong> to modify it, or select a higher-level unit to add under.');
+            if (hintWrap) hintWrap.innerHTML = tr('units-no-children-hint', 'Click anywhere here to start a <strong>+ New Army</strong>');
+        }
+        refreshNoChildrenMsg();
+
+        // Re-render dynamic text when the user toggles language. Chains any existing handler.
+        const prevOnLang = window.onLanguageChange;
+        window.onLanguageChange = function (lang) {
+            try { if (typeof prevOnLang === 'function') prevOnLang(lang); } catch (_) {}
+            refreshNoChildrenMsg();
+            updateCtxBar();
+            updateMainPanel();
+            renderTree();
+        };
 
         // Initial state
         hide(ctxSel); hide(editPanel); hide(noChildrenEl); hide(domainRow); hide(branchRow); hide(quickSetupEl); hide(generateSection);
@@ -1161,7 +1520,14 @@
         setCreateEnabled();
 
         // Expose a way to open the modal on a specific unit (used by map marker popups)
+        publicApi.getSelectedId = () => state.selectedId || null;
+        publicApi.getSelectedUnit = () => getSelected();
+
         publicApi.open = async (unitId) => {
+            // If a placement was somehow left armed, tear it down before showing
+            // the centred modal so we never display both surfaces at once.
+            if (inPlacement) exitPlacementMode({ cancel: true });
+            modal.classList.remove('units-modal-parked');
             modal.classList.remove('hidden');
             modal.setAttribute('aria-hidden', 'false');
             await refresh({ collapseAll: true });

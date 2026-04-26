@@ -67,7 +67,8 @@
                                                                         'symbol-notes-placeholder': 'Optional',
                                                                         'symbol-advanced-label': 'Advanced details',
                                                                         'symbol-placement-hint': 'Choose a symbol to begin.',
-                                                                        'symbol-search-placeholder': 'Search symbols... (e.g. Infantry, HQ, Recon)',
+                                                                        'symbol-search-placeholder': 'Filter saved symbols (press Enter to open Library)',
+                                                                        'symbol-search-empty-cta': 'No match in saved. Open Library →',
                                                                         'symbol-quick-start': 'Quick Start',
                                                                         'symbol-saved-btn': 'Saved Symbols',
                                                                         'symbol-saved-title': 'Saved Symbols',
@@ -75,6 +76,9 @@
                                                                         'symbol-label-notes-sub': 'Optional',
                                                                         'symbol-more-options': 'More options',
                                                                         'symbol-identity-label': 'Standard identity',
+                                                                        'symbol-onboard-step1': 'Pick from Common symbols below, or browse the Library',
+                                                                        'symbol-onboard-step2': 'Choose the side (Friend / Hostile / …)',
+                                                                        'symbol-onboard-step3': 'Click the map to place it',
                                                             'erase-panel-hint': 'Remove map items or trim freehand drawings.',
                                                             'erase-panel-mode-label': 'Erase mode',
                                                             'erase-panel-object-title': 'Object erase',
@@ -97,6 +101,12 @@
                                                 'layers-manage-transfer': 'Manage & Transfer',
                                                 'orbat-dock-empty': 'No units yet — create some from the Units panel first.',
                                                 'chat-title': 'Team Chat',
+                                                'chat-btn': 'Chat',
+                                                'new-plan-btn': '+ Plan',
+                                                'new-plan-title': 'New plan',
+                                                'new-plan-prompt': 'New plan name',
+                                                'default-plan-name': 'My plan',
+                                                'new-plan-default-name': 'New plan',
                                                 'chat-you-label': 'You:',
                                                 'chat-initializing': 'Initializing…',
                                                 'context-panel-default-title': 'Select',
@@ -826,7 +836,8 @@
                                                                         'symbol-notes-placeholder': 'اختياري',
                                                                         'symbol-advanced-label': 'تفاصيل متقدمة',
                                                                         'symbol-placement-hint': 'اختر رمزًا للبدء.',
-                                                                        'symbol-search-placeholder': 'البحث عن رموز... (مثال: مشاة، قيادة، استطلاع)',
+                                                                        'symbol-search-placeholder': 'تصفية الرموز المحفوظة (Enter لفتح المكتبة)',
+                                                                        'symbol-search-empty-cta': 'لا توجد نتائج في المحفوظة. افتح المكتبة ←',
                                                                         'symbol-quick-start': 'بداية سريعة',
                                                                         'symbol-saved-btn': 'الرموز المحفوظة',
                                                                         'symbol-saved-title': 'الرموز المحفوظة',
@@ -834,6 +845,9 @@
                                                                         'symbol-label-notes-sub': 'اختياري',
                                                                         'symbol-more-options': 'خيارات إضافية',
                                                                         'symbol-identity-label': 'الهوية القياسية',
+                                                                        'symbol-onboard-step1': 'اختر من الرموز الشائعة أدناه، أو تصفح المكتبة',
+                                                                        'symbol-onboard-step2': 'اختر الجهة (صديق / عدو / …)',
+                                                                        'symbol-onboard-step3': 'انقر على الخريطة لوضع الرمز',
                                                             'erase-panel-hint': 'إزالة عناصر الخريطة أو تقليم الرسومات الحرة.',
                                                             'erase-panel-mode-label': 'وضع المسح',
                                                             'erase-panel-object-title': 'مسح عنصر',
@@ -856,6 +870,12 @@
                                                 'layers-manage-transfer': 'إدارة ونقل',
                                                 'orbat-dock-empty': 'لا توجد وحدات بعد — أنشئ بعضها من لوحة الوحدات أولاً.',
                                                 'chat-title': 'دردشة الفريق',
+                                                'chat-btn': 'دردشة',
+                                                'new-plan-btn': '+ خطة',
+                                                'new-plan-title': 'خطة جديدة',
+                                                'new-plan-prompt': 'اسم الخطة الجديدة',
+                                                'default-plan-name': 'خطتي',
+                                                'new-plan-default-name': 'خطة جديدة',
                                                 'chat-you-label': 'أنت:',
                                                 'chat-initializing': 'جاري التهيئة…',
                                                 'context-panel-default-title': 'تحديد',
@@ -1612,7 +1632,11 @@
             const text = window.t(key);
             const isStatusPill = el.classList.contains('top-status-pill');
             if (text) {
-                el.textContent = text;
+                if (/<[a-z][\s\S]*?>/i.test(text)) {
+                    el.innerHTML = text;
+                } else {
+                    el.textContent = text;
+                }
                 el.style.display = '';
             } else if (isStatusPill) {
                 el.textContent = key;

@@ -7,6 +7,7 @@
 13. old data must be deleted if click clear layer [Ghanem]
 17. message that apear in auto draw apears in english even if i change the language [Ghanem]
 18. snap to the cnter of the (x) point [Ghanem]
+
 -----------------------------------------------------
 
 12. when zooming the units level change
@@ -19,3 +20,8 @@
 8. update obstacle areas
 9. create auto draw custom polygon
 11. add viewshed
+19. Make it secure and add safety procedure in case of lost 
+20. need to check if they need synronus user chating 
+21. Audit log not present
+22. RBAC for user aceess is  not present 
+23. Auto backup for database

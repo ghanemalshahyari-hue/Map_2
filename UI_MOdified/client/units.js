@@ -24,7 +24,7 @@
     // Standard identity digit (position 3 of 20-digit SIDC)
     const IDENTITY_BY_SIDE = { friendly: '3', hostile: '6', neutral: '4', unknown: '1' };
     // Symbol set (positions 4-5)
-    const SET_BY_DOMAIN   = { Land: '10', Air: '01', Naval: '30', Joint: '10', Support: '10' };
+    const SET_BY_DOMAIN   = { Land: '10', Air: '01', Naval: '30', Joint: '10', Support: '10', Special: '15' };
     // Entity code (positions 10-15) per Land branch
     const ENTITY_BY_BRANCH = {
         Infantry:   '121100',

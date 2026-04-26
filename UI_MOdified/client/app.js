@@ -5822,16 +5822,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateSymbolPreview() {
         const sidc = generateSIDC();
-        sidcDisplay.innerText = `SIDC: ${sidc}`;
-
         const opts = getTextModifiers();
-        const sym = new ms.Symbol(sidc, opts);
+        let sym = new ms.Symbol(sidc, opts);
+        let renderedSidc = sidc;
+
+        // If user-entered SIDC won't render, silently fall back to the default
+        // (Friend infantry) so the preview stays useful instead of showing a
+        // red error to first-time users.
+        if (!sym.isValid()) {
+            renderedSidc = '10031000001200000000';
+            sym = new ms.Symbol(renderedSidc, opts);
+        }
+
+        sidcDisplay.innerText = `SIDC: ${renderedSidc}`;
 
         previewBox.innerHTML = '';
-        if (sym.isValid()) {
-            previewBox.appendChild(sym.asDOM());
-        } else {
-            previewBox.innerHTML = '<span style="color:var(--danger)">Invalid SIDC Code</span>';
+        if (sym.isValid()) previewBox.appendChild(sym.asDOM());
+
+        // Surface SIDC validity inline next to the manual input (expert area)
+        // so power users still see the failure without scaring beginners.
+        if (sidcManualInput) {
+            const userTried = sidcManualInput.value && sidcManualInput.value.replace(/\s+/g, '').length >= 18;
+            const ok = renderedSidc === normalizeSidcInput(sidcManualInput.value);
+            sidcManualInput.classList.toggle('input-error', userTried && !ok);
         }
     }
 
@@ -6033,6 +6046,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const n = normalizeSidcInput(sidc);
         if (!n) return;
         setSidcOverride(n);
+        if (typeof window.__SYMBOL_MARK_PICKED === 'function') window.__SYMBOL_MARK_PICKED();
         if (modeSelect) {
             modeSelect.value = 'symbol';
             modeSelect.dispatchEvent(new Event('change', { bubbles: true }));
@@ -12261,6 +12275,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sidc = normalizeSidcInput(data.sidc);
         if (!sidc) return;
         setSidcOverride(sidc);
+        if (typeof window.__SYMBOL_MARK_PICKED === 'function') window.__SYMBOL_MARK_PICKED();
         updateSymbolPreview();
     });
 
@@ -12295,10 +12310,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const sidc = normalizeSidcInput(data.sidc);
         if (!sidc) return;
         setSidcOverride(sidc);
+        if (typeof window.__SYMBOL_MARK_PICKED === 'function') window.__SYMBOL_MARK_PICKED();
         updateSymbolPreview();
     });
 
-    syncSidcBtn?.addEventListener('click', pullSidcFromManualInput);
+    syncSidcBtn?.addEventListener('click', () => {
+        pullSidcFromManualInput();
+        if (typeof window.__SYMBOL_MARK_PICKED === 'function') window.__SYMBOL_MARK_PICKED();
+    });
 
 
 
@@ -15317,7 +15336,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         clearSelection();
         renderLayersList();
-        scheduleSaveToStorage();
+        flushSaveToStorage();
     });
     selectionClearBtn?.addEventListener('click', () => {
         clearSelection();
@@ -15782,22 +15801,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const STORAGE_KEY = 'nato-map-planner-data';
     let saveToStorageTimeout = null;
+    function doSaveToStorage() {
+        try {
+            const payload = exportLayersData();
+            const sync = window.rmoozServerSync;
+            if (sync && sync.isHttpOrigin) {
+                if (sync.activePlanId) {
+                    sync.savePlanPayload(payload).catch(() => {});
+                }
+            } else {
+                localStorage.setItem(STORAGE_KEY, payload);
+            }
+        } catch (e) { /* quota or disabled */ }
+    }
     function scheduleSaveToStorage() {
         clearTimeout(saveToStorageTimeout);
         saveToStorageTimeout = setTimeout(() => {
-            try {
-                const payload = exportLayersData();
-                const sync = window.rmoozServerSync;
-                if (sync && sync.isHttpOrigin) {
-                    if (sync.activePlanId) {
-                        sync.savePlanPayload(payload).catch(() => {});
-                    }
-                } else {
-                    localStorage.setItem(STORAGE_KEY, payload);
-                }
-            } catch (e) { /* quota or disabled */ }
+            saveToStorageTimeout = null;
+            doSaveToStorage();
         }, 400);
     }
+    function flushSaveToStorage() {
+        if (saveToStorageTimeout) {
+            clearTimeout(saveToStorageTimeout);
+            saveToStorageTimeout = null;
+        }
+        doSaveToStorage();
+    }
+    window.addEventListener('pagehide', flushSaveToStorage);
+    window.addEventListener('beforeunload', flushSaveToStorage);
 
     function createSymbolFromData(d) {
         const latlng = fromLatLngArr(d.latlng);

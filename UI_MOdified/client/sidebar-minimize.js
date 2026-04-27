@@ -44,6 +44,16 @@
         minBtn.addEventListener('click', () => minimize(panel, peek));
         peek.addEventListener('click', () => restore(panel, peek));
 
+        // Auto-restore the panel whenever the user picks a tool from the
+        // left rail — they need to see the tool's options.
+        document.querySelectorAll('.tool-rail-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                if (panel.classList.contains('is-minimized')) {
+                    restore(panel, peek);
+                }
+            });
+        });
+
         // Restore prior state across reloads.
         let wasMinimized = false;
         try { wasMinimized = localStorage.getItem(STORAGE_KEY) === '1'; } catch (_) {}

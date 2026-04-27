@@ -2780,6 +2780,32 @@ details[open] > .details-summary {
 .leaflet-overlay-pane svg path.geo-preview-shadow,
 .leaflet-overlay-pane .leaflet-interactive.geo-preview-shadow { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
 
+/* ── Radius guide line + label (circle/sector placement) ──────────── */
+.leaflet-overlay-pane path.geo-radius-guide { filter: drop-shadow(0 1px 2px rgba(0,0,0,0.45)); }
+.geo-radius-guide-label {
+    background: transparent !important;
+    border: none !important;
+    pointer-events: none;
+    white-space: nowrap;
+    width: auto !important;
+    height: auto !important;
+}
+.geo-radius-guide-label > span {
+    display: inline-block;
+    transform: translate(8px, -50%);
+    padding: 2px 6px;
+    background: rgba(15, 23, 42, 0.85);
+    color: #fff;
+    border: 1px solid #ef4444;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+
 /* ── Geo handles ───────────────────────────────────────────────────── */
 .geo-resize-handle { background: transparent !important; border: none !important; }
 .geo-resize-handle-inner { width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 2px solid var(--accent); cursor: grab; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
@@ -2818,6 +2844,153 @@ details[open] > .details-summary {
 .leaflet-popup-content .tmg-color-btn.active { box-shadow: 0 0 0 2px #fff; }
 .leaflet-popup-content .line-popup-color-btn.active, .leaflet-popup-content .line-popup-style-btn.active { background: var(--accent-subtle); border-color: var(--accent); }
 .leaflet-popup-content .geo-popup-color-btn[data-color="#1f2937"], .leaflet-popup-content .symbol-range-color-btn[data-color="#1f2937"] { background: #1f2937 !important; }
+
+/* Distance / route popup — merged waypoint cards */
+.leaflet-popup-content .geo-distance-waypoints-section {
+    margin: 8px 0;
+    padding-top: 8px;
+    border-top: 1px solid #e5e7eb;
+    text-align: left;
+}
+.leaflet-popup-content .geo-distance-waypoints-title {
+    font-size: 0.7rem;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+.leaflet-popup-content .geo-distance-waypoints {
+    max-height: 240px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 2px;
+}
+.leaflet-popup-content .geo-waypoint-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 4px 0;
+    padding: 6px 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+.leaflet-popup-content .geo-waypoint-card-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.leaflet-popup-content .geo-waypoint-num {
+    flex: 0 0 auto;
+    width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--accent, #3b82f6);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    direction: ltr;
+}
+.leaflet-popup-content .geo-waypoint-card .geo-waypoint-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 4px 6px;
+    font-size: 0.8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #fff;
+}
+.leaflet-popup-content .geo-waypoint-card .geo-waypoint-name:focus {
+    outline: none;
+    border-color: var(--accent, #3b82f6);
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.18);
+}
+.leaflet-popup-content .geo-remove-waypoint-btn {
+    flex: 0 0 auto;
+    width: 22px; height: 22px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.leaflet-popup-content .geo-remove-waypoint-btn:hover {
+    background: #fee2e2;
+    color: #dc2626;
+    border-color: #fca5a5;
+}
+.leaflet-popup-content .geo-waypoint-card-coord {
+    padding-left: 28px;
+    font-variant-numeric: tabular-nums;
+}
+[dir="rtl"] .leaflet-popup-content .geo-waypoint-card-coord {
+    padding-left: 0;
+    padding-right: 28px;
+}
+.leaflet-popup-content .geo-waypoint-card-coord .geo-coord-input {
+    width: 100%;
+    max-width: none;
+    padding: 4px 6px;
+    font-size: 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-variant-numeric: tabular-nums;
+}
+.leaflet-popup-content .geo-waypoint-leg {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 2px 0;
+    padding: 0 8px 0 30px;
+    font-size: 0.7rem;
+    color: #64748b;
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+[dir="rtl"] .leaflet-popup-content .geo-waypoint-leg {
+    padding: 0 30px 0 8px;
+}
+.leaflet-popup-content .geo-waypoint-leg-spine {
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    line-height: 1;
+}
+.leaflet-popup-content .geo-waypoint-leg-dist,
+.leaflet-popup-content .geo-waypoint-leg-bearing {
+    font-weight: 600;
+    color: #475569;
+    font-variant-numeric: tabular-nums;
+}
+.leaflet-popup-content .geo-waypoint-leg-sep {
+    color: #cbd5e1;
+}
+.leaflet-popup-content .geo-add-waypoint-btn {
+    margin-top: 8px;
+    padding: 6px 12px;
+    width: 100%;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    background: transparent;
+    border: 1px dashed #94a3b8;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.leaflet-popup-content .geo-add-waypoint-btn:hover {
+    background: #f1f5f9;
+    border-style: solid;
+    border-color: var(--accent, #3b82f6);
+    color: var(--accent, #3b82f6);
+}
 
 /* TMG handles */
 .tmg-selection-border { pointer-events: none; }
@@ -3743,6 +3916,21 @@ details[open] > .details-summary {
     user-select: none;
 }
 
+/* The zoom/scale/basemap controls in the bottom-right corner of the map
+   ride above the ORBAT dock so they always sit just above its top edge
+   instead of being overlapped or floating awkwardly. The CSS variable
+   `--orbat-dock-h` is published by units-orbat-dock.js whenever the dock
+   height changes (and reset to 0 when the dock is hidden). */
+.map-workspace .leaflet-bottom {
+    bottom: calc(var(--orbat-dock-h, 0px) + 8px);
+    transition: bottom 220ms ease;
+}
+/* During an active resize drag the dock has `is-resizing`; kill the
+   transition so the controls track the pointer 1:1 without lag. */
+body.orbat-dock-resizing .map-workspace .leaflet-bottom {
+    transition: none;
+}
+
 /* Top-edge resize handle */
 .orbat-dock-resize {
     position: absolute;
@@ -3805,6 +3993,64 @@ details[open] > .details-summary {
     letter-spacing: 0;
 }
 .orbat-dock-tools { display: flex; gap: 4px; }
+
+.orbat-dock-collapse-btn svg {
+    display: block;
+    margin: auto;
+    transition: transform 180ms ease;
+}
+.orbat-dock.is-collapsed .orbat-dock-collapse-btn svg {
+    transform: rotate(180deg);
+}
+/* Collapsed state: hide the whole dock visually and shrink it to just the
+   chevron button floating in the corner, so the map underneath is fully
+   visible. The chevron stays clickable to expand the dock again. */
+.orbat-dock.is-collapsed {
+    height: auto !important;
+    min-height: 0;
+    background: transparent;
+    border-top: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    pointer-events: none;
+}
+.orbat-dock.is-collapsed .orbat-dock-resize,
+.orbat-dock.is-collapsed .orbat-dock-body,
+.orbat-dock.is-collapsed .orbat-dock-title-wrap,
+.orbat-dock.is-collapsed #orbat-dock-refresh,
+.orbat-dock.is-collapsed #orbat-dock-close {
+    display: none;
+}
+.orbat-dock.is-collapsed .orbat-dock-header {
+    background: transparent;
+    border-bottom: none;
+    padding: 8px 0;
+    justify-content: center;
+}
+.orbat-dock.is-collapsed .orbat-dock-tools {
+    pointer-events: auto;
+}
+.orbat-dock.is-collapsed .orbat-dock-collapse-btn {
+    width: 56px;
+    height: 28px;
+    border-radius: 14px 14px 4px 4px;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    color: var(--accent);
+    transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+}
+.orbat-dock.is-collapsed .orbat-dock-collapse-btn:hover {
+    transform: translateY(-2px);
+    background: var(--accent-subtle);
+    color: var(--accent);
+}
+.orbat-dock.is-collapsed .orbat-dock-collapse-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.5;
+}
+
 .orbat-dock-tool-btn {
     background: transparent;
     border: 1px solid var(--panel-border);

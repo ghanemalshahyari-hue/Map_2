@@ -657,8 +657,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return { fillColor: c, fillOpacity: 0.15, color: c };
     }
 
-    function getGeoShapeStyle(color, fillStyle) {
-        return { weight: 2, ...getGeoFillStyleOptions(fillStyle || DEFAULT_GEO_FILL_STYLE, color) };
+    function getGeoShapeStyle(color, fillStyle, weight) {
+        const w = Number.isFinite(weight) && weight >= 1 ? Math.min(20, weight) : 2;
+        return { weight: w, ...getGeoFillStyleOptions(fillStyle || DEFAULT_GEO_FILL_STYLE, color) };
     }
 
     function applyGeoPathFill(el) {
@@ -2129,20 +2130,208 @@ document.addEventListener('DOMContentLoaded', () => {
         return pts;
     }
 
-    function createSectorPolygon(center, radiusKm, bearingDeg, apertureDeg) {
+    function createSectorPolygon(center, radiusKm, bearingDeg, apertureDeg, subdivisions) {
         const radiusM = radiusKm * 1000;
-        const bearing = (bearingDeg - apertureDeg / 2) * Math.PI / 180;
-        const endBearing = (bearingDeg + apertureDeg / 2) * Math.PI / 180;
-        const steps = Math.max(8, Math.ceil(apertureDeg / 5));
-        const points = [center];
+        const subs = Number.isFinite(subdivisions) && subdivisions >= 1 ? Math.floor(subdivisions) : 1;
+
+        // Backward-compatible path: single wedge returns a flat ring, exactly
+        // like before. All existing callers that forward this to setLatLngs /
+        // L.polygon keep working without any change.
+        if (subs <= 1) {
+            const bearing = (bearingDeg - apertureDeg / 2) * Math.PI / 180;
+            const endBearing = (bearingDeg + apertureDeg / 2) * Math.PI / 180;
+            const steps = Math.max(8, Math.ceil(apertureDeg / 5));
+            const points = [center];
+            for (let i = 0; i <= steps; i++) {
+                const b = bearing + (endBearing - bearing) * i / steps;
+                const lat = center.lat + (radiusM / 111320) * Math.cos(b);
+                const lng = center.lng + (radiusM / (111320 * Math.cos(center.lat * Math.PI / 180))) * Math.sin(b);
+                points.push(L.latLng(lat, lng));
+            }
+            points.push(center);
+            return points;
+        }
+
+        // Subdivision path: build N equal-aperture wedges sharing the apex and
+        // return a Leaflet multipolygon (one outer ring per wedge). Adjacent
+        // wedges share their radial edges, which renders as internal dividers
+        // in the sector's own stroke.
+        const startBearing = (bearingDeg - apertureDeg / 2) * Math.PI / 180;
+        const wedgeAp = apertureDeg / subs;
+        const stepsPerWedge = Math.max(4, Math.ceil(wedgeAp / 5));
+        const wedges = [];
+        for (let w = 0; w < subs; w++) {
+            const wBearStart = startBearing + (wedgeAp * w * Math.PI / 180);
+            const wBearEnd   = wBearStart + (wedgeAp * Math.PI / 180);
+            const ring = [center];
+            for (let i = 0; i <= stepsPerWedge; i++) {
+                const b = wBearStart + (wBearEnd - wBearStart) * i / stepsPerWedge;
+                const lat = center.lat + (radiusM / 111320) * Math.cos(b);
+                const lng = center.lng + (radiusM / (111320 * Math.cos(center.lat * Math.PI / 180))) * Math.sin(b);
+                ring.push(L.latLng(lat, lng));
+            }
+            ring.push(center);
+            wedges.push([ring]); // one outer ring, no holes
+        }
+        return wedges;
+    }
+
+    /**
+     * Per-wedge helpers for subdivided Range Semi-Cones / Range Sectors.
+     * These read the sector's outer geometry (center, radius, bearing, aperture,
+     * subdivisions) and derive per-wedge geometry without generating any new
+     * "logical" shape — the main sector polygon is still the authoritative
+     * element. Overlays are purely cosmetic (custom fill colors + labels).
+     */
+    function computeWedgeRing(center, radiusKm, bearingDeg, apertureDeg, subdivisions, wedgeIndex) {
+        const subs = Number.isFinite(subdivisions) && subdivisions >= 1 ? Math.floor(subdivisions) : 1;
+        const radiusM = radiusKm * 1000;
+        const startBearingRad = (bearingDeg - apertureDeg / 2) * Math.PI / 180;
+        const wedgeApDeg = apertureDeg / subs;
+        const wBearStart = startBearingRad + (wedgeApDeg * wedgeIndex) * Math.PI / 180;
+        const wBearEnd = wBearStart + wedgeApDeg * Math.PI / 180;
+        const steps = Math.max(4, Math.ceil(wedgeApDeg / 5));
+        const ring = [center];
         for (let i = 0; i <= steps; i++) {
-            const b = bearing + (endBearing - bearing) * i / steps;
+            const b = wBearStart + (wBearEnd - wBearStart) * i / steps;
             const lat = center.lat + (radiusM / 111320) * Math.cos(b);
             const lng = center.lng + (radiusM / (111320 * Math.cos(center.lat * Math.PI / 180))) * Math.sin(b);
-            points.push(L.latLng(lat, lng));
+            ring.push(L.latLng(lat, lng));
         }
-        points.push(center);
-        return points;
+        ring.push(center);
+        return ring;
+    }
+
+    function computeWedgeCentroid(center, radiusKm, bearingDeg, apertureDeg, subdivisions, wedgeIndex, positionFrac) {
+        const subs = Number.isFinite(subdivisions) && subdivisions >= 1 ? Math.floor(subdivisions) : 1;
+        const wedgeApDeg = apertureDeg / subs;
+        // Center bearing of wedge i, measured from north clockwise.
+        const wedgeMidDeg = (bearingDeg - apertureDeg / 2) + wedgeApDeg * (wedgeIndex + 0.5);
+        // Position along the radial: default 55% of radius, overridable per sector.
+        const frac = Number.isFinite(positionFrac) && positionFrac > 0 && positionFrac <= 1 ? positionFrac : 0.55;
+        return latLngAtBearing(center, radiusKm * frac, wedgeMidDeg);
+    }
+
+    const GEO_WEDGE_LABEL_FONT_STACKS = {
+        '':       null,
+        'arial':  '"Arial", "Helvetica", sans-serif',
+        'tahoma': '"Tahoma", "Geeza Pro", sans-serif',
+        'segoe':  '"Segoe UI", "Tahoma", sans-serif',
+        'serif':  '"Georgia", "Times New Roman", "Traditional Arabic", serif',
+        'mono':   '"Courier New", "Consolas", monospace'
+    };
+
+    /**
+     * Rebuild the per-wedge overlays (colored polygon + text label) for a
+     * subdivided sector. Safe to call repeatedly — it cleans up existing
+     * overlays first. A no-op for single-wedge sectors (subdivisions <= 1)
+     * or sectors with no custom wedge data.
+     */
+    function syncSectorWedgeOverlays(sector) {
+        if (!sector) return;
+        const d = sector._geoData;
+        if (!d) return;
+
+        // Remove any previously-added overlays for this sector.
+        const prev = sector._wedgeOverlays || [];
+        const prevLayer = layers.find(l => l.id === sector._layerId);
+        prev.forEach((o) => {
+            if (!o) return;
+            if (prevLayer && prevLayer.group && prevLayer.group.hasLayer(o)) {
+                prevLayer.group.removeLayer(o);
+            } else if (o._map && typeof o.remove === 'function') {
+                o.remove();
+            }
+        });
+        sector._wedgeOverlays = [];
+
+        const subs = Number.isFinite(d.subdivisions) && d.subdivisions >= 1 ? Math.floor(d.subdivisions) : 1;
+        if (subs <= 1) return;
+
+        const wedges = Array.isArray(d.wedges) ? d.wedges : [];
+        if (!wedges.length) return;
+
+        const layer = layers.find(l => l.id === sector._layerId);
+        if (!layer) return;
+
+        const geoType = sector._geoType;
+        const apertureDeg = geoType === 'semi-circle' ? 180 : (d.aperture ?? 90);
+        const centerLL = d.center;
+        if (!centerLL) return;
+
+        for (let i = 0; i < subs; i++) {
+            const w = wedges[i] || {};
+            const hasCustomColor = !!(w.color && w.color !== d.color);
+            const hasLabel = typeof w.label === 'string' && w.label.trim() !== '';
+            if (!hasCustomColor && !hasLabel) continue;
+
+            if (hasCustomColor) {
+                const ring = computeWedgeRing(centerLL, d.radiusKm ?? 5, d.bearing ?? 0, apertureDeg, subs, i);
+                const overlayStyle = getGeoShapeStyle(w.color, d.fillStyle, d.weight);
+                const overlay = L.polygon(ring, { ...overlayStyle, interactive: false });
+                overlay._wedgeOverlayOf = sector;
+                overlay._wedgeIndex = i;
+                layer.group.addLayer(overlay);
+                sector._wedgeOverlays.push(overlay);
+                if (['vertical', 'horizontal', 'both'].includes(d.fillStyle)) {
+                    overlay.once('add', () => scheduleGeoPathFill(overlay));
+                }
+            }
+
+            if (hasLabel) {
+                // Position is per-wedge (fallback to 0.55 if not set).
+                const wedgePosFrac = Number.isFinite(w.labelPosition) && w.labelPosition > 0 && w.labelPosition <= 1
+                    ? w.labelPosition : 0.55;
+                const labelSizePx = Number.isFinite(d.labelSize) && d.labelSize >= 8 ? Math.min(48, Math.round(d.labelSize)) : 14;
+                const labelFontCss = GEO_WEDGE_LABEL_FONT_STACKS[d.labelFont || ''] || null;
+                const centroid = computeWedgeCentroid(centerLL, d.radiusKm ?? 5, d.bearing ?? 0, apertureDeg, subs, i, wedgePosFrac);
+                // Rotate the label so its baseline follows the wedge's radial
+                // (apex → arc) direction. Compass bearing → CSS rotation, then
+                // flip by 180° when the text would otherwise read upside-down.
+                // dir="auto" keeps Arabic (and any RTL) text in its natural
+                // right-to-left reading order after rotation.
+                const wedgeApDeg = apertureDeg / subs;
+                const wedgeBearingDeg = (d.bearing ?? 0) - apertureDeg / 2 + wedgeApDeg * (i + 0.5);
+                let cssRot = wedgeBearingDeg - 90;
+                cssRot = ((cssRot + 180) % 360 + 360) % 360 - 180;
+                if (cssRot > 90 || cssRot < -90) {
+                    cssRot += 180;
+                    cssRot = ((cssRot + 180) % 360 + 360) % 360 - 180;
+                }
+                const safeLabel = String(w.label).replace(/[&<>"']/g, c =>
+                    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c]));
+                const fontFamilyCss = labelFontCss ? `font-family:${labelFontCss};` : '';
+                // dir="auto" lets the browser detect Arabic/Hebrew from the
+                // first strong character. Do NOT set font-feature-settings —
+                // listing "init/medi/fina/isol" forces all glyphs into their
+                // isolated form and breaks Arabic contextual joining. Let the
+                // browser's text shaper handle Arabic naturally.
+                const icon = L.divIcon({
+                    className: 'geo-wedge-label',
+                    html: `<div dir="auto" style="font-weight:700;font-size:${labelSizePx}px;${fontFamilyCss}line-height:1;color:#0f172a;text-shadow:-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff,1px 1px 0 #fff,-1px 0 0 #fff,1px 0 0 #fff,0 -1px 0 #fff,0 1px 0 #fff;text-align:center;white-space:nowrap;pointer-events:none;unicode-bidi:isolate;text-rendering:geometricPrecision;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;backface-visibility:hidden;transform:translate3d(-50%,-50%,0) rotate(${cssRot.toFixed(2)}deg);">${safeLabel}</div>`,
+                    iconSize: [0, 0],
+                    iconAnchor: [0, 0]
+                });
+                const labelMarker = L.marker(centroid, { icon, interactive: false, keyboard: false });
+                labelMarker._wedgeLabelOf = sector;
+                labelMarker._wedgeIndex = i;
+                layer.group.addLayer(labelMarker);
+                sector._wedgeOverlays.push(labelMarker);
+            }
+        }
+    }
+
+    /** Remove all wedge overlays attached to a sector (used on sector removal). */
+    function removeSectorWedgeOverlays(sector) {
+        if (!sector) return;
+        const list = sector._wedgeOverlays || [];
+        const layer = layers.find(l => l.id === sector._layerId);
+        list.forEach((o) => {
+            if (!o) return;
+            if (layer && layer.group && layer.group.hasLayer(o)) layer.group.removeLayer(o);
+            else if (o._map && typeof o.remove === 'function') o.remove();
+        });
+        sector._wedgeOverlays = [];
     }
 
     function createRegularPolygon(center, radiusKm, sides, rotationDeg) {
@@ -4393,12 +4582,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Brigade multipolygon (rear).
                 let rearLayer = null;
+                const _autoFlankParentUnitId = (typeof window !== 'undefined' && window.freeDrawSignatureParentUnitId) || null;
                 if (brigPieces.length) {
                     sortPiecesStable(brigPieces);
                     const mp = L.polygon(brigPieces, brigadeOpts);
                     mp._autoFlankLine = true;
                     mp._autoFlankArea = true;
-                    mp._tmgData = { typeId: 'auto-flank-area', sessionId, tag, lengthKm: (brigadeLengthKm != null ? brigadeLengthKm : lengthKm) };
+                    mp._tmgData = {
+                        typeId: 'auto-flank-area',
+                        sessionId, tag,
+                        lengthKm: (brigadeLengthKm != null ? brigadeLengthKm : lengthKm),
+                        parentUnitId: _autoFlankParentUnitId,
+                        areaRole: 'brigade-rear'
+                    };
                     addToActiveLayer(mp);
                     result.push(mp);
                     rearLayer = mp;
@@ -4490,11 +4686,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 if (batLeft.length) {
                     sortPiecesStable(batLeft);
-                    addAreaPolygonWithOptionalFrontHidden(batLeft, batLeft[0][0], baseOpts, batLen, anchors, true, frontMaskPath);
+                    const batLeftLayer = addAreaPolygonWithOptionalFrontHidden(batLeft, batLeft[0][0], baseOpts, batLen, anchors, true, frontMaskPath);
+                    if (batLeftLayer && batLeftLayer._tmgData) {
+                        batLeftLayer._tmgData.parentUnitId = _autoFlankParentUnitId;
+                        batLeftLayer._tmgData.areaRole = 'battalion-left';
+                    }
                 }
                 if (batRight.length) {
                     sortPiecesStable(batRight);
-                    addAreaPolygonWithOptionalFrontHidden(batRight, batRight[0][0], baseOpts, batLen, anchors, true, frontMaskPath);
+                    const batRightLayer = addAreaPolygonWithOptionalFrontHidden(batRight, batRight[0][0], baseOpts, batLen, anchors, true, frontMaskPath);
+                    if (batRightLayer && batRightLayer._tmgData) {
+                        batRightLayer._tmgData.parentUnitId = _autoFlankParentUnitId;
+                        batRightLayer._tmgData.areaRole = 'battalion-right';
+                    }
                 }
 
                 // Ensure rear border remains visible (stroke) even if fills overlap.
@@ -4530,7 +4734,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                         seamLine._autoFlankLine = true;
                         seamLine._autoFlankArea = true;
-                        seamLine._tmgData = { typeId: 'auto-flank-area-seam', sessionId, tag, lengthKm: batLen };
+                        seamLine._tmgData = { typeId: 'auto-flank-area-seam', sessionId, tag, lengthKm: batLen, parentUnitId: _autoFlankParentUnitId };
                         addToActiveLayer(seamLine);
                         result.push(seamLine);
                         if (typeof seamLine.bringToFront === 'function') seamLine.bringToFront();
@@ -4567,7 +4771,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                         divLine._autoFlankLine = true;
                         divLine._autoFlankArea = true;
-                        divLine._tmgData = { typeId: 'auto-flank-area-divider', sessionId, tag, lengthKm: batLen };
+                        divLine._tmgData = { typeId: 'auto-flank-area-divider', sessionId, tag, lengthKm: batLen, parentUnitId: _autoFlankParentUnitId };
                         addToActiveLayer(divLine);
                         result.push(divLine);
                         if (typeof divLine.bringToFront === 'function') divLine.bringToFront();
@@ -4654,6 +4858,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!controlPts || controlPts.length < 2) return pairs;
         const polys = getRoutingObstaclePolygons();
         let chain = [];
+        // User-click indices within `chain`. We must NOT drop these in the
+        // merge step below — if the user snapped a point onto a circle-X,
+        // losing that point lets neighbouring chords jump straight across
+        // and the front line pulls off the obstacle center.
+        const controlIdxs = [];
         for (let i = 0; i < controlPts.length - 1; i++) {
             const c = L.latLng(controlPts[i].lat, controlPts[i].lng);
             const f = L.latLng(controlPts[i + 1].lat, controlPts[i + 1].lng);
@@ -4663,10 +4872,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 : [c, f];
             if (chain.length === 0) {
                 chain = points.slice();
+                controlIdxs.push(0);
+                controlIdxs.push(chain.length - 1);
             } else {
                 chain.push(...points.slice(1));
+                controlIdxs.push(chain.length - 1);
             }
         }
+        const isControl = new Set(controlIdxs);
         // Merge closely-spaced chain points (from obstacle boundary routing)
         // so each pair has enough pixel length for consistent scallop sizing.
         // One scallop wave ≈ 28px, minimum 3 waves → ~84px minimum per segment.
@@ -4674,6 +4887,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (map && chain.length > 2) {
             const merged = [chain[0]];
             for (let j = 1; j < chain.length - 1; j++) {
+                if (isControl.has(j)) {
+                    // Preserve the user's exact click location (e.g. a point
+                    // snapped to a circle-X center) so the front line stays
+                    // attached to it.
+                    merged.push(chain[j]);
+                    continue;
+                }
                 const lastPx = map.latLngToLayerPoint(merged[merged.length - 1]);
                 const curPx = map.latLngToLayerPoint(chain[j]);
                 if (Math.hypot(curPx.x - lastPx.x, curPx.y - lastPx.y) >= minPxDist) {
@@ -4873,6 +5093,130 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 150);
     }
 
+    /**
+     * Read the already-generated auto-flank polygons and place subordinate
+     * battalion symbols inside them. MVP assignment:
+     *   battalion[0] → battalion-left
+     *   battalion[1] → battalion-right
+     *   battalion[2+] → brigade-rear
+     *
+     * Precondition: `renderClippedAutoFlankRings` has just run for mode '8&20'
+     * and stamped `_tmgData.areaRole` + `_tmgData.parentUnitId` on the three
+     * fill polygons. This helper only READS those polygons — it does not
+     * generate any new geometry and does not touch the clipping/splitting math.
+     */
+    async function placeSubordinatesInsideAutoFlank(polys) {
+        const parentUnitId = window.freeDrawSignatureParentUnitId || null;
+        if (!parentUnitId) return;
+        if (!Array.isArray(polys) || !polys.length) return;
+
+        const byRole = {};
+        for (const el of polys) {
+            const role = el && el._tmgData && el._tmgData.areaRole;
+            if (!role) continue;
+            // First write wins — we only stamp one poly per role.
+            if (!byRole[role]) byRole[role] = el;
+        }
+        if (!byRole['battalion-left'] && !byRole['battalion-right'] && !byRole['brigade-rear']) return;
+
+        // Walk the hierarchy and collect battalion (level 3) children of the
+        // selected parent. This reuses the same endpoint the Units modal uses.
+        let tree;
+        try {
+            const res = await fetch('/api/units/tree', { credentials: 'include' });
+            if (!res.ok) return;
+            tree = await res.json();
+        } catch (_) { return; }
+
+        const rows = (tree && Array.isArray(tree.units)) ? tree.units : [];
+        const battalions = rows.filter((u) =>
+            u && !u.deleted_at && u.parent_id === parentUnitId && u.level === 3
+        );
+        if (!battalions.length) return;
+
+        battalions.sort((a, b) => {
+            const an = (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' });
+            if (an !== 0) return an;
+            return (a.code || '').localeCompare(b.code || '');
+        });
+
+        const slots = [];
+        if (byRole['battalion-left'])  slots.push(byRole['battalion-left']);
+        if (byRole['battalion-right']) slots.push(byRole['battalion-right']);
+        const rear = byRole['brigade-rear'] || null;
+
+        const assignments = [];
+        for (let i = 0; i < battalions.length; i++) {
+            const poly = i < slots.length ? slots[i] : rear;
+            if (!poly) continue;
+            assignments.push({ unit: battalions[i], poly });
+        }
+        if (!assignments.length) return;
+
+        for (const { unit, poly } of assignments) {
+            const anchor = polygonLatLngAnchor(poly);
+            if (!anchor) continue;
+            try {
+                const res = await fetch(`/api/units/${encodeURIComponent(unit.id)}/place`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lat: anchor.lat, lng: anchor.lng }),
+                });
+                if (!res.ok) continue;
+                const updated = await res.json();
+                if (window.AppUnitsMap && typeof window.AppUnitsMap.addOrUpdateMarker === 'function') {
+                    window.AppUnitsMap.addOrUpdateMarker({
+                        id: updated.id, name: updated.name, code: updated.code,
+                        level: updated.level, side: updated.side, sidc: updated.sidc,
+                        lat: Number(updated.lat), lng: Number(updated.lng),
+                    });
+                }
+                document.dispatchEvent(new CustomEvent('units:placed', { detail: { unitId: unit.id } }));
+            } catch (_) { /* best-effort; move on to the next unit */ }
+        }
+    }
+
+    /**
+     * Pick a reasonable "inside the polygon" anchor for a Leaflet polygon layer.
+     * Handles single polygons (optionally with holes) and multipolygons by
+     * choosing the largest-area outer ring and averaging its vertices.
+     * Good enough for MVP placement — not a true visual center.
+     */
+    function polygonLatLngAnchor(poly) {
+        if (!poly || typeof poly.getLatLngs !== 'function') return null;
+        let raw;
+        try { raw = poly.getLatLngs(); } catch (_) { return null; }
+        if (!raw) return null;
+
+        const depth = Array.isArray(raw)
+            ? (Array.isArray(raw[0]) ? (Array.isArray(raw[0][0]) ? 3 : 2) : 1)
+            : 0;
+        let outer = null;
+        if (depth === 3) {
+            let bestArea = -1;
+            for (const polyRings of raw) {
+                const r = polyRings && polyRings[0];
+                if (!r || r.length < 3) continue;
+                let signed = 0;
+                for (let i = 0, n = r.length; i < n; i++) {
+                    const p1 = r[i], p2 = r[(i + 1) % n];
+                    signed += (p1.lng * p2.lat) - (p2.lng * p1.lat);
+                }
+                const abs = Math.abs(signed);
+                if (abs > bestArea) { bestArea = abs; outer = r; }
+            }
+        } else if (depth === 2) {
+            outer = raw[0];
+        } else if (depth === 1) {
+            outer = raw;
+        }
+        if (!outer || !outer.length) return null;
+        let lat = 0, lng = 0;
+        for (const p of outer) { lat += p.lat; lng += p.lng; }
+        return L.latLng(lat / outer.length, lng / outer.length);
+    }
+
     async function autoDrawCircleXFlankLines(options = {}) {
         const crit = (typeof window.setCriticalMessage === 'function')
             ? window.setCriticalMessage.bind(window)
@@ -4957,6 +5301,15 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 const polys = renderClippedAutoFlankRings(zoneSpec.ringsMeta, borderOpt, sessionId, tag);
                 drawn = polys.length > 0 ? circleCenters.length : 0;
+                // After the initial render of an 8&20 layout, drop subordinate
+                // battalion symbols into the battalion-left / battalion-right /
+                // brigade-rear polygons we just produced. Fire-and-forget — the
+                // obstacle-refresh redraw below intentionally does NOT re-place.
+                if (drawn > 0 && mode === '8&20' && window.freeDrawSignatureParentUnitId) {
+                    placeSubordinatesInsideAutoFlank(polys).catch((e) => {
+                        console.warn('placeSubordinatesInsideAutoFlank', e);
+                    });
+                }
             }
 
             // Async refresh once full obstacle set is loaded.
@@ -6332,6 +6685,41 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         return (best.center && best.dist <= maxPx) ? best.center : null;
+    }
+
+    // Scalloped front-line endpoints that were snapped exactly onto a circle-X
+    // center share that latlng with the obstacle. When the obstacle is dragged,
+    // translate those endpoints by the same delta so the junction stays glued.
+    // Position equality (within a tiny epsilon) is enough here because the snap
+    // placed both points at the exact same coordinate; if the user later drags
+    // an endpoint off the center, equality fails and the segment stops tracking
+    // — which is what they'd want.
+    const CIRCLE_X_ATTACH_EPS = 1e-9;
+    function syncScallopedEndpointsOnCircleXDrag(oldCenter, dLat, dLng) {
+        if (!oldCenter || (dLat === 0 && dLng === 0)) return;
+        const matches = (ll) => ll
+            && Math.abs(ll.lat - oldCenter.lat) < CIRCLE_X_ATTACH_EPS
+            && Math.abs(ll.lng - oldCenter.lng) < CIRCLE_X_ATTACH_EPS;
+        const shift = (ll) => L.latLng(ll.lat + dLat, ll.lng + dLng);
+        const tryShiftSegment = (seg) => {
+            const dd = seg?._tmgData;
+            if (!dd || dd.typeId !== 'scalloped') return false;
+            let changed = false;
+            if (matches(dd.latlng1)) { dd.latlng1 = shift(dd.latlng1); changed = true; }
+            if (matches(dd.latlng2)) { dd.latlng2 = shift(dd.latlng2); changed = true; }
+            if (changed) updateTmgLayer(seg);
+            return changed;
+        };
+        for (const layer of layers) {
+            if (!layer.visible) continue;
+            for (const el of layer.elements) {
+                if (el instanceof L.Marker) {
+                    tryShiftSegment(el);
+                } else if (el instanceof L.LayerGroup && el._tmgData?.typeId === 'scalloped' && el._tmgData.segments?.length) {
+                    el._tmgData.segments.forEach(tryShiftSegment);
+                }
+            }
+        }
     }
 
     /** Hollow dashed arrowhead + CATK (right of viewBox); left open so map polyline shows through shaft. */
@@ -7866,6 +8254,10 @@ document.addEventListener('DOMContentLoaded', () => {
             d.latlng1 = L.latLng(d.latlng1.lat + dLat, d.latlng1.lng + dLng);
             d.latlng2 = L.latLng(d.latlng2.lat + dLat, d.latlng2.lng + dLng);
             updateTmgLayer(marker);
+            // Front-line endpoints sitting on this obstacle's center move with it.
+            if (d.typeId === 'circle-x') {
+                syncScallopedEndpointsOnCircleXDrag(oldMid, dLat, dLng);
+            }
         });
         if (!skipPopup) {
                 const buildSingleTmgPopupContent = () => {
@@ -7918,6 +8310,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.getAllLayerElements = getAllElements;
     window.getCurrentDrawLinePolyline = function () { return drawLinePolyline; };
     window.removeFromLayer = (el) => removeFromLayer(el);
+    // units-map.js needs this so that placed unit markers become first-class
+    // members of the active layer (visibility, Layers-panel membership).
+    window.addToActiveLayer = (el) => addToActiveLayer(el);
 
     // Bridge for Clip controller (ui/controllers/clip-controller.js). Replaces
     // `oldEl` in its owning layer with a plain polygon built from a GeoJSON
@@ -9206,8 +9601,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (geoType === 'range-circle' || geoType === 'circle-2pt') return;
         if (geoType === 'range-sector' || geoType === 'semi-circle') {
             d.bearing = normalizeBearingDeg((d.bearing ?? 0) + deltaDeg);
-            const pts = createSectorPolygon(d.center, d.radiusKm ?? 5, d.bearing, geoType === 'range-sector' ? (d.aperture ?? 90) : 180);
+            const pts = createSectorPolygon(d.center, d.radiusKm ?? 5, d.bearing, geoType === 'range-sector' ? (d.aperture ?? 90) : 180, d.subdivisions);
             el.setLatLngs(pts);
+            syncSectorWedgeOverlays(el);
         } else if (geoType === 'polygon') {
             d.rotation = normalizeBearingDeg((d.rotation ?? 0) + deltaDeg);
             const ring = createRegularPolygon(d.center, d.radiusKm ?? 5, d.sides ?? 6, d.rotation);
@@ -9351,8 +9747,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (el.setLatLng) el.setLatLng(d.center);
         } else if (geoType === 'range-sector' || geoType === 'semi-circle') {
             d.center = move(L.latLng(d.center.lat, d.center.lng));
-            const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing, geoType === 'range-sector' ? (d.aperture ?? 90) : 180);
+            const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing, geoType === 'range-sector' ? (d.aperture ?? 90) : 180, d.subdivisions);
             el.setLatLngs(pts);
+            syncSectorWedgeOverlays(el);
         } else if (geoType === 'polygon') {
             d.center = move(L.latLng(d.center.lat, d.center.lng));
             const ring = createRegularPolygon(d.center, d.radiusKm ?? 5, d.sides ?? 6, d.rotation ?? 0);
@@ -9469,14 +9866,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 return true;
             case 'range-sector': {
                 d.radiusKm = parseFloat(km.toFixed(4));
-                const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing ?? 0, d.aperture ?? 90);
+                const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing ?? 0, d.aperture ?? 90, d.subdivisions);
                 el.setLatLngs(pts);
+                syncSectorWedgeOverlays(el);
                 return true;
             }
             case 'semi-circle': {
                 d.radiusKm = parseFloat(km.toFixed(4));
-                const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing ?? 0, 180);
+                const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing ?? 0, 180, d.subdivisions);
                 el.setLatLngs(pts);
+                syncSectorWedgeOverlays(el);
                 return true;
             }
             case 'polygon': {
@@ -9789,7 +10188,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateMinefieldDecorations(el);
             return;
         }
-        const style = getGeoShapeStyle(d.color, d.fillStyle);
+        const style = getGeoShapeStyle(d.color, d.fillStyle, d.weight);
         if (el.setStyle) el.setStyle(style);
         if (['vertical', 'horizontal', 'both'].includes(d.fillStyle)) {
             scheduleGeoPathFill(el);
@@ -10466,7 +10865,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const newSidc = normalizeSidcInput(sidcInput?.value);
             if (newSidc) marker._sidc = newSidc;
 
-            const mods = { ...(marker._textModifiers || {}), size: 25 };
+            const prevSize = (marker._textModifiers && Number.isFinite(marker._textModifiers.size) && marker._textModifiers.size > 0)
+                ? marker._textModifiers.size : 25;
+            const mods = { ...(marker._textModifiers || {}), size: prevSize };
             const desig = content.querySelector('.symbol-edit-designation')?.value?.trim();
             const addtl = content.querySelector('.symbol-edit-additional')?.value?.trim();
             const alt = content.querySelector('.symbol-edit-altitude')?.value?.trim();
@@ -10482,6 +10883,29 @@ document.addEventListener('DOMContentLoaded', () => {
             bindSymbolPopupHandlers(marker);
             scheduleSaveToStorage();
         });
+        const sizeSlider = content.querySelector('.symbol-popup-size-slider');
+        const sizeInput = content.querySelector('.symbol-popup-size-input');
+        if (sizeSlider || sizeInput) {
+            const applySymbolSize = (rawValue, persist) => {
+                const n = parseFloat(rawValue);
+                if (!Number.isFinite(n) || n < 10 || n > 80) return;
+                const size = Math.round(n);
+                const prev = marker._textModifiers || {};
+                marker._textModifiers = { ...prev, size };
+                if (sizeSlider && sizeSlider.value !== String(size)) sizeSlider.value = String(size);
+                if (sizeInput && sizeInput.value !== String(size)) sizeInput.value = String(size);
+                refreshSymbolIcon(marker);
+                if (persist) scheduleSaveToStorage();
+            };
+            if (sizeSlider) {
+                sizeSlider.addEventListener('input', () => applySymbolSize(sizeSlider.value, false));
+                sizeSlider.addEventListener('change', () => applySymbolSize(sizeSlider.value, true));
+            }
+            if (sizeInput) {
+                sizeInput.addEventListener('input', () => applySymbolSize(sizeInput.value, false));
+                sizeInput.addEventListener('change', () => applySymbolSize(sizeInput.value, true));
+            }
+        }
         bindDrawingRotateControls(content, (delta) => {
             marker._symbolRotationDeg = normalizeBearingDeg((marker._symbolRotationDeg || 0) + delta);
             refreshSymbolIcon(marker);
@@ -10538,8 +10962,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (geoType === 'range-circle' || geoType === 'circle-2pt') {
                         if (el.setLatLng) el.setLatLng(newLl);
                     } else if (geoType === 'range-sector' || geoType === 'semi-circle') {
-                        const pts = createSectorPolygon(newLl, d.radiusKm ?? 5, d.bearing ?? 0, geoType === 'range-sector' ? (d.aperture ?? 90) : 180);
+                        const pts = createSectorPolygon(newLl, d.radiusKm ?? 5, d.bearing ?? 0, geoType === 'range-sector' ? (d.aperture ?? 90) : 180, d.subdivisions);
                         el.setLatLngs(pts);
+                        syncSectorWedgeOverlays(el);
                     } else if (geoType === 'polygon') {
                         const pts = createRegularPolygon(newLl, d.radiusKm ?? 5, d.sides ?? 6, d.rotation ?? 0);
                         el.setLatLngs([pts]);
@@ -10687,6 +11112,153 @@ document.addEventListener('DOMContentLoaded', () => {
                 scheduleSaveToStorage();
             });
         });
+        const geoWeightInput = content.querySelector('.geo-popup-weight-input');
+        if (geoWeightInput) {
+            const applyWeight = (persist) => {
+                const w = parseFloat(geoWeightInput.value);
+                if (!isFinite(w) || w < 1 || w > 20) return;
+                el._geoData.weight = Math.round(w);
+                applyGeoShapeStyle(el);
+                // Per-wedge color overlays were created with the old weight;
+                // rebuild them so the thickness change applies uniformly across
+                // every subdivision's outline.
+                if (geoType === 'range-sector' || geoType === 'semi-circle') {
+                    syncSectorWedgeOverlays(el);
+                }
+                if (persist) scheduleSaveToStorage();
+            };
+            geoWeightInput.addEventListener('input', () => applyWeight(false));
+            geoWeightInput.addEventListener('change', () => applyWeight(true));
+        }
+        const geoSubdivisionsInput = content.querySelector('.geo-popup-subdivisions-input');
+        if (geoSubdivisionsInput && (geoType === 'range-sector' || geoType === 'semi-circle')) {
+            const applySubdivisions = (persist) => {
+                const n = parseInt(geoSubdivisionsInput.value, 10);
+                if (!Number.isFinite(n) || n < 1 || n > 10) return;
+                const d = el._geoData;
+                if (!d) return;
+                d.subdivisions = n;
+                // Keep the wedges array length in sync with subdivisions. Preserve
+                // existing per-wedge data on increase; drop trailing entries on
+                // decrease. A length of 0 for a single wedge is fine — there are
+                // no per-wedge overlays when subdivisions <= 1.
+                if (!Array.isArray(d.wedges)) d.wedges = [];
+                if (n > d.wedges.length) {
+                    while (d.wedges.length < n) d.wedges.push({ color: null, label: '' });
+                } else if (n < d.wedges.length) {
+                    d.wedges.length = n;
+                }
+                const apertureDeg = geoType === 'range-sector' ? (d.aperture ?? 90) : 180;
+                const pts = createSectorPolygon(d.center, d.radiusKm ?? 5, d.bearing ?? 0, apertureDeg, d.subdivisions);
+                el.setLatLngs(pts);
+                syncSectorWedgeOverlays(el);
+                if (['vertical', 'horizontal', 'both'].includes(d.fillStyle)) scheduleGeoPathFill(el);
+                // Rebuild the popup so the Wedges list reflects the new count.
+                el.setPopupContent(buildGeoPopupContent(el, geoType, d));
+                bindGeoPopupHandlers(el, geoType);
+                if (persist) scheduleSaveToStorage();
+            };
+            geoSubdivisionsInput.addEventListener('change', () => applySubdivisions(true));
+        }
+        if (geoType === 'range-sector' || geoType === 'semi-circle') {
+            const ensureWedgesArr = () => {
+                const d = el._geoData;
+                if (!d) return null;
+                const subs = Number.isFinite(d.subdivisions) && d.subdivisions >= 1 ? Math.floor(d.subdivisions) : 1;
+                if (!Array.isArray(d.wedges)) d.wedges = [];
+                while (d.wedges.length < subs) d.wedges.push({ color: null, label: '' });
+                if (d.wedges.length > subs) d.wedges.length = subs;
+                return d.wedges;
+            };
+            content.querySelectorAll('.geo-popup-wedge-color-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.wedgeIndex, 10);
+                    const color = btn.dataset.color || null;
+                    if (!Number.isFinite(idx)) return;
+                    const arr = ensureWedgesArr();
+                    if (!arr || !arr[idx]) return;
+                    // Toggle: clicking the currently-active swatch clears the override.
+                    arr[idx].color = (arr[idx].color === color) ? null : color;
+                    syncSectorWedgeOverlays(el);
+                    el.setPopupContent(buildGeoPopupContent(el, geoType, el._geoData));
+                    bindGeoPopupHandlers(el, geoType);
+                    scheduleSaveToStorage();
+                });
+            });
+            content.querySelectorAll('.geo-popup-wedge-clear-color-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.wedgeIndex, 10);
+                    if (!Number.isFinite(idx)) return;
+                    const arr = ensureWedgesArr();
+                    if (!arr || !arr[idx]) return;
+                    arr[idx].color = null;
+                    syncSectorWedgeOverlays(el);
+                    el.setPopupContent(buildGeoPopupContent(el, geoType, el._geoData));
+                    bindGeoPopupHandlers(el, geoType);
+                    scheduleSaveToStorage();
+                });
+            });
+            content.querySelectorAll('.geo-popup-wedge-label-input').forEach(inp => {
+                const applyLabel = (persist) => {
+                    const idx = parseInt(inp.dataset.wedgeIndex, 10);
+                    if (!Number.isFinite(idx)) return;
+                    const arr = ensureWedgesArr();
+                    if (!arr || !arr[idx]) return;
+                    arr[idx].label = String(inp.value || '').slice(0, 60);
+                    syncSectorWedgeOverlays(el);
+                    if (persist) scheduleSaveToStorage();
+                };
+                inp.addEventListener('input', () => applyLabel(false));
+                inp.addEventListener('change', () => applyLabel(true));
+            });
+            const labelSizeSlider = content.querySelector('.geo-popup-label-size-slider');
+            const labelSizeInput = content.querySelector('.geo-popup-label-size-input');
+            if (labelSizeSlider || labelSizeInput) {
+                const applyLabelSize = (raw, persist) => {
+                    const n = parseFloat(raw);
+                    if (!Number.isFinite(n) || n < 8 || n > 32) return;
+                    const size = Math.round(n);
+                    el._geoData.labelSize = size;
+                    if (labelSizeSlider && labelSizeSlider.value !== String(size)) labelSizeSlider.value = String(size);
+                    if (labelSizeInput && labelSizeInput.value !== String(size)) labelSizeInput.value = String(size);
+                    syncSectorWedgeOverlays(el);
+                    if (persist) scheduleSaveToStorage();
+                };
+                if (labelSizeSlider) {
+                    labelSizeSlider.addEventListener('input', () => applyLabelSize(labelSizeSlider.value, false));
+                    labelSizeSlider.addEventListener('change', () => applyLabelSize(labelSizeSlider.value, true));
+                }
+                if (labelSizeInput) {
+                    labelSizeInput.addEventListener('input', () => applyLabelSize(labelSizeInput.value, false));
+                    labelSizeInput.addEventListener('change', () => applyLabelSize(labelSizeInput.value, true));
+                }
+            }
+            content.querySelectorAll('.geo-popup-wedge-position-slider').forEach(slider => {
+                const applyWedgePosition = (persist) => {
+                    const idx = parseInt(slider.dataset.wedgeIndex, 10);
+                    const pct = parseFloat(slider.value);
+                    if (!Number.isFinite(idx) || !Number.isFinite(pct) || pct < 10 || pct > 95) return;
+                    const arr = ensureWedgesArr();
+                    if (!arr || !arr[idx]) return;
+                    arr[idx].labelPosition = pct / 100;
+                    const valSpan = content.querySelector(`.geo-popup-wedge-position-value[data-wedge-index="${idx}"]`);
+                    if (valSpan) valSpan.textContent = `${Math.round(pct)}%`;
+                    syncSectorWedgeOverlays(el);
+                    if (persist) scheduleSaveToStorage();
+                };
+                slider.addEventListener('input', () => applyWedgePosition(false));
+                slider.addEventListener('change', () => applyWedgePosition(true));
+            });
+            const labelFontSelect = content.querySelector('.geo-popup-label-font-select');
+            if (labelFontSelect) {
+                labelFontSelect.addEventListener('change', () => {
+                    const v = labelFontSelect.value || '';
+                    el._geoData.labelFont = v || null;
+                    syncSectorWedgeOverlays(el);
+                    scheduleSaveToStorage();
+                });
+            }
+        }
         if (geoType === 'distance') {
             content.querySelector('.geo-add-waypoint-btn')?.addEventListener('click', () => {
                 const d = el._geoData;
@@ -12451,6 +13023,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 sector._geoType = 'range-sector';
                 sector._geoData = { center: e.latlng, radiusKm, bearing, aperture, color: geoColor, fillStyle };
                 sector.bindPopup(buildGeoPopupContent(sector, 'range-sector', sector._geoData), GEO_POPUP_OPTIONS);
+                sector.on('remove', () => removeSectorWedgeOverlays(sector));
                 sector.on('popupopen', () => {
                     removeGeoResizeHandles();
                     const d = sector._geoData;
@@ -12458,8 +13031,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     createGeoResizeHandle(handleLat, (newLat, isFinal) => {
                         const distM = haversineDistance(d.center.lat, d.center.lng, newLat.lat, newLat.lng);
                         d.radiusKm = parseFloat((distM / 1000).toFixed(2));
-                        const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing, d.aperture);
+                        const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing, d.aperture, d.subdivisions);
                         sector.setLatLngs(pts);
+                        syncSectorWedgeOverlays(sector);
                         sector.setPopupContent(buildGeoPopupContent(sector, 'range-sector', d));
                         bindGeoPopupHandlers(sector, 'range-sector');
                         syncGeoShapeHandlesToGeometry(sector, 'range-sector');
@@ -12526,6 +13100,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 sector._geoType = 'semi-circle';
                 sector._geoData = { center: e.latlng, radiusKm, bearing, aperture: 180, color: geoColor, fillStyle };
                 sector.bindPopup(buildGeoPopupContent(sector, 'semi-circle', sector._geoData), GEO_POPUP_OPTIONS);
+                sector.on('remove', () => removeSectorWedgeOverlays(sector));
                 sector.on('popupopen', () => {
                     removeGeoResizeHandles();
                     const d = sector._geoData;
@@ -12533,8 +13108,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     createGeoResizeHandle(handleLat, (newLat, isFinal) => {
                         const distM = haversineDistance(d.center.lat, d.center.lng, newLat.lat, newLat.lng);
                         d.radiusKm = parseFloat((distM / 1000).toFixed(2));
-                        const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing, 180);
+                        const pts = createSectorPolygon(d.center, d.radiusKm, d.bearing, 180, d.subdivisions);
                         sector.setLatLngs(pts);
+                        syncSectorWedgeOverlays(sector);
                         sector.setPopupContent(buildGeoPopupContent(sector, 'semi-circle', d));
                         bindGeoPopupHandlers(sector, 'semi-circle');
                         syncGeoShapeHandlesToGeometry(sector, 'semi-circle');
@@ -15184,6 +15760,8 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleGeoPathFill,
         latLngAtBearing,
         createSectorPolygon,
+        syncSectorWedgeOverlays,
+        removeSectorWedgeOverlays,
         createRegularPolygon,
         createEllipseRingFromBoundingCorners,
         // Minefield
@@ -15687,24 +16265,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('clear-map-btn').addEventListener('click', () => {
         const layer = getActiveLayer();
-        if (!layer) return;
-        if (layer.elements.length === 0) return;
+        const hasLayerElements = !!(layer && layer.elements.length);
+        // Unit placements live on a dedicated overlay (not inside user layers
+        // when no active layer exists), so we must also consider them when
+        // deciding whether there's anything to clear.
+        const hasPlacedUnits = !!window.AppUnitsMap?.hasPlacedUnits?.();
+        if (!hasLayerElements && !hasPlacedUnits) return;
         removeGeoResizeHandles();
-        layer.elements.forEach(el => {
-            cleanupElementDecorations(el, layer);
-            layer.group.removeLayer(el);
-            const histIdx = actionHistory.findIndex(a => a.type === 'add' && a.element === el);
-            if (histIdx >= 0) actionHistory.splice(histIdx, 1);
-        });
-        layer.elements.length = 0;
-        for (let i = actionHistory.length - 1; i >= 0; i--) {
-            const a = actionHistory[i];
-            if (a.type === 'polylineErase' && a.layer && a.layer.id === layer.id) actionHistory.splice(i, 1);
+        if (hasLayerElements) {
+            layer.elements.forEach(el => {
+                cleanupElementDecorations(el, layer);
+                layer.group.removeLayer(el);
+                const histIdx = actionHistory.findIndex(a => a.type === 'add' && a.element === el);
+                if (histIdx >= 0) actionHistory.splice(histIdx, 1);
+            });
+            layer.elements.length = 0;
+            for (let i = actionHistory.length - 1; i >= 0; i--) {
+                const a = actionHistory[i];
+                if (a.type === 'polylineErase' && a.layer && a.layer.id === layer.id) actionHistory.splice(i, 1);
+            }
         }
         redoHistory.length = 0;
         cancelLineDrawing();
         clearSelection();
         renderLayersList();
+        // Unplace every placed unit server-side and drop its marker.
+        if (hasPlacedUnits) window.AppUnitsMap?.clearAll?.();
     });
 
     const undoBtn = document.getElementById('undo-btn');
@@ -15869,6 +16455,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.AppChat.init();
         window.AppUnits?.init?.();
         window.AppUnitsMap?.init?.(map);
+        window.AppUnitsOrbatDock?.init?.(map);
 
         requestAnimationFrame(() => {
             requestAnimationFrame(syncMapSizeAndOverlays);

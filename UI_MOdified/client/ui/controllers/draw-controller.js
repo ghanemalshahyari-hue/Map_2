@@ -96,6 +96,14 @@ export function bindDrawPanelEvents() {
     syncTmgAffiliationButtons();
     watchPathAffiliationChanges();
 
+    // Position Unit — opens the ORBAT bottom dock so the user can drag units onto the map.
+    const positionBtn = document.getElementById('position-unit-btn');
+    if (positionBtn) {
+        positionBtn.addEventListener('click', () => {
+            window.AppUnitsOrbatDock?.toggle?.();
+        });
+    }
+
     // Apply initial mode
     applyDrawMode(drawState.mode);
 }

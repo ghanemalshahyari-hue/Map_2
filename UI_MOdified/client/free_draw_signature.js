@@ -431,6 +431,13 @@
             'add': 'Add',
             'enter-both-names': 'Please enter both English and Arabic names.',
             'add-formation-btn': '+ Add Formation',
+            'convert-line-title': 'Convert drawn line to TMG scalloped (front line border)',
+            'delete': 'Delete',
+            'orphan-title': 'Front Line Not Drawn',
+            'orphan-body-prefix': 'You have ',
+            'orphan-body-suffix': ' circle-X markers from a previous session without a front line. Would you like to continue drawing the front line?',
+            'orphan-yes': 'Yes, continue',
+            'orphan-no': 'No, start new',
         },
         ar: {
             'battalion': '\u0643\u062a\u064a\u0628\u0629', 'brigade': '\u0644\u0648\u0627\u0621',
@@ -458,6 +465,13 @@
             'add': '\u0625\u0636\u0627\u0641\u0629',
             'enter-both-names': '\u064a\u0631\u062c\u0649 \u0625\u062f\u062e\u0627\u0644 \u0627\u0644\u0627\u0633\u0645\u064a\u0646 \u0628\u0627\u0644\u0625\u0646\u062c\u0644\u064a\u0632\u064a\u0629 \u0648\u0627\u0644\u0639\u0631\u0628\u064a\u0629.',
             'add-formation-btn': '+ \u0625\u0636\u0627\u0641\u0629 \u062a\u0634\u0643\u064a\u0644',
+            'convert-line-title': '\u062a\u062d\u0648\u064a\u0644 \u0627\u0644\u062e\u0637 \u0627\u0644\u0645\u0631\u0633\u0648\u0645 \u0625\u0644\u0649 \u062e\u0637 \u062a\u0645\u0627\u0633 \u0645\u0633\u0646\u0651\u0646',
+            'delete': '\u062d\u0630\u0641',
+            'orphan-title': '\u0644\u0645 \u064a\u062a\u0645 \u0631\u0633\u0645 \u062e\u0637 \u0627\u0644\u062a\u0645\u0627\u0633',
+            'orphan-body-prefix': '\u0644\u062f\u064a\u0643 ',
+            'orphan-body-suffix': ' \u0639\u0644\u0627\u0645\u0629 \u0645\u0646 \u062c\u0644\u0633\u0629 \u0633\u0627\u0628\u0642\u0629 \u0628\u062f\u0648\u0646 \u062e\u0637 \u062a\u0645\u0627\u0633. \u0647\u0644 \u062a\u0631\u064a\u062f \u0645\u062a\u0627\u0628\u0639\u0629 \u0631\u0633\u0645 \u062e\u0637 \u0627\u0644\u062a\u0645\u0627\u0633\u061f',
+            'orphan-yes': '\u0646\u0639\u0645\u060c \u0645\u062a\u0627\u0628\u0639\u0629',
+            'orphan-no': '\u0644\u0627\u060c \u0628\u062f\u0627\u064a\u0629 \u062c\u062f\u064a\u062f\u0629',
         }
     };
 
@@ -814,7 +828,7 @@
         convertLineBtn = document.createElement('button');
         convertLineBtn.id = 'free-draw-convert-line-btn';
         convertLineBtn.textContent = fdT('convert-line');
-        convertLineBtn.title = 'Convert drawn line to TMG scalloped (front line border)';
+        convertLineBtn.title = fdT('convert-line-title');
         convertLineBtn.style.cssText = 'position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:9999;padding:8px 14px;border-radius:8px;border:none;background:#1d4ed8;color:white;font-size:0.9rem;cursor:pointer;box-shadow:0 4px 8px rgba(0,0,0,0.35);';
         function findPlainLinePolylines() {
             const lines = [];
@@ -1242,7 +1256,7 @@
                     <span class="fd-formation-title" style="font-size:0.8rem;font-weight:700;color:#22c55e;"></span>
                     <div style="display:flex;align-items:center;gap:4px;">
                         <button class="fd-default-star" data-default-tag="${engName}" title="${isDefault ? fdT('remove-default') : fdT('set-default')}">${isDefault ? '&#9733;' : '&#9734;'}</button>
-                        <button class="fd-delete-formation-btn" title="Delete" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:1.1em;padding:0 4px;opacity:0.7;">✕</button>
+                        <button class="fd-delete-formation-btn" title="${fdT('delete')}" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:1.1em;padding:0 4px;opacity:0.7;">✕</button>
                     </div>
                 </div>
                 <div style="${ROW}"><span style="${LBL}">${fdT('front-org')}</span><input class="fd-custom-front" type="number" min="1" max="999" value="${frontVal}" style="${INPUT}"/><span style="${LBL}">${fdT('km')}</span></div>
@@ -1347,7 +1361,7 @@
             affiliationPopup.querySelectorAll('.fd-col-custom-formation').forEach(c => {
                 c.style.border = CARD.match(/border:[^;]+;/)[0];
                 c.style.background = CARD.match(/background:[^;]+;/)[0];
-                c.querySelector('.fd-custom-select-btn').textContent = 'Select';
+                c.querySelector('.fd-custom-select-btn').textContent = fdT('select');
                 c.querySelector('.fd-custom-select-btn').style.background = '#1e293b';
                 c.querySelector('.fd-custom-select-btn').style.border = '1px solid #475569';
             });
@@ -1356,7 +1370,7 @@
             // Select this one
             card.style.border = '2px solid #22c55e';
             card.style.background = 'rgba(34,197,94,0.10)';
-            card.querySelector('.fd-custom-select-btn').textContent = '✓ Selected';
+            card.querySelector('.fd-custom-select-btn').textContent = fdT('selected');
             card.querySelector('.fd-custom-select-btn').style.background = '#166534';
             card.querySelector('.fd-custom-select-btn').style.border = '2px solid #4ade80';
             // Store selection
@@ -1527,6 +1541,17 @@
 
             chosenAffiliation = aff;
             window.freeDrawSignatureAffiliation = aff;
+            // Capture the parent unit selected in the hierarchy right now, so the
+            // polygons generated by this session can be stamped with parentUnitId
+            // and subordinate battalions auto-placed inside them after generation.
+            try {
+                window.freeDrawSignatureParentUnitId =
+                    (window.AppUnits && typeof window.AppUnits.getSelectedId === 'function')
+                        ? (window.AppUnits.getSelectedId() || null)
+                        : null;
+            } catch (_) {
+                window.freeDrawSignatureParentUnitId = null;
+            }
             setupComplete = true;  // Step 1 done — drawing is now allowed
             updateInstruction('Affiliation set to ' + (aff === 'enemy' ? 'Enemy' : 'Friendly') + '. Click map to place symbol.');
             removeAffiliationPopup();
@@ -1700,11 +1725,11 @@
         dialog.id = 'fd-continue-dialog';
         dialog.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10000;background:rgba(15,23,42,0.97);color:#f8fafc;border:1px solid #3b82f6;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.5);padding:24px;width:340px;text-align:center;font-size:0.95rem;';
         dialog.innerHTML =
-            '<div style="font-weight:700;font-size:1.1rem;margin-bottom:12px;color:#f59e0b;">Front Line Not Drawn</div>' +
-            '<div style="margin-bottom:18px;line-height:1.5;">You have <b>' + orphan.centers.length + '</b> circle-X markers from a previous session without a front line.<br>Would you like to continue drawing the front line?</div>' +
+            '<div style="font-weight:700;font-size:1.1rem;margin-bottom:12px;color:#f59e0b;">' + fdT('orphan-title') + '</div>' +
+            '<div style="margin-bottom:18px;line-height:1.5;">' + fdT('orphan-body-prefix') + '<b>' + orphan.centers.length + '</b>' + fdT('orphan-body-suffix') + '</div>' +
             '<div style="display:flex;gap:10px;justify-content:center;">' +
-                '<button id="fd-continue-yes" style="padding:10px 28px;border-radius:8px;border:none;background:#3b82f6;color:#fff;font-weight:700;cursor:pointer;font-size:0.95rem;">Yes, continue</button>' +
-                '<button id="fd-continue-no" style="padding:10px 28px;border-radius:8px;border:1px solid #6b7280;background:#374151;color:#f8fafc;font-weight:700;cursor:pointer;font-size:0.95rem;">No, start new</button>' +
+                '<button id="fd-continue-yes" style="padding:10px 28px;border-radius:8px;border:none;background:#3b82f6;color:#fff;font-weight:700;cursor:pointer;font-size:0.95rem;">' + fdT('orphan-yes') + '</button>' +
+                '<button id="fd-continue-no" style="padding:10px 28px;border-radius:8px;border:1px solid #6b7280;background:#374151;color:#f8fafc;font-weight:700;cursor:pointer;font-size:0.95rem;">' + fdT('orphan-no') + '</button>' +
             '</div>';
 
         document.body.appendChild(dialog);

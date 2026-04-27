@@ -1852,6 +1852,262 @@ details[open] > .details-summary {
 .units-modal-panel { width: min(1100px, calc(100vw - 32px)); height: min(760px, calc(100vh - 48px)); margin: 24px auto; }
 .units-modal-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1.35fr; }
 
+/* ── "Parked" state ───────────────────────────────────────────────────
+   When the user enters placement mode we visually hide the centred
+   Units modal but keep its DOM intact so every form field, the
+   selected tree row, and the edit panel survive untouched. Using a
+   class rather than the `.hidden` toggle keeps close/re-open logic
+   distinct from parking.  */
+.modal.units-modal-parked { display: none !important; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   STANDALONE PLACEMENT PANEL
+   Independent from the centred Units modal. Appears while the user
+   is placing a unit on the map; meanwhile the main modal is parked.
+   ═══════════════════════════════════════════════════════════════════ */
+.units-placement-panel {
+    position: fixed;
+    top: 16px; right: 16px; bottom: 16px;
+    width: min(320px, calc(100vw - 32px));
+    z-index: 5100; /* above the units modal's default z-index (5000) */
+    display: flex; flex-direction: column;
+    background: var(--panel);
+    border: 1px solid #3b82f6;
+    border-radius: var(--radius);
+    box-shadow: 0 0 0 1px #3b82f6, 0 0 28px rgba(59,130,246,0.45), 0 24px 80px rgba(0,0,0,0.5);
+    animation: units-pm-glow 2.2s ease-in-out infinite;
+    overflow: hidden;
+}
+.units-placement-panel[hidden] { display: none !important; }
+[data-theme="light"] .units-placement-panel { background: #fff; }
+@keyframes units-pm-glow {
+    0%, 100% { box-shadow: 0 0 0 1px #3b82f6, 0 0 18px rgba(59,130,246,0.35), 0 24px 80px rgba(0,0,0,0.5); }
+    50%      { box-shadow: 0 0 0 1px #60a5fa, 0 0 36px rgba(96,165,250,0.65), 0 24px 80px rgba(0,0,0,0.5); }
+}
+
+.units-placement-panel-header {
+    flex: 0 0 auto;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--panel-border);
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(59,130,246,0.08);
+}
+.units-placement-panel-title {
+    flex: 1; min-width: 0;
+    font-size: 0.82rem; font-weight: 700;
+    color: var(--text-main);
+    text-transform: uppercase; letter-spacing: 0.1em;
+}
+.units-placement-panel-body {
+    flex: 1; min-height: 0;
+    padding: 14px 14px 16px;
+    display: flex; flex-direction: column; gap: 12px;
+    overflow: hidden; /* inner queue handles its own scroll */
+}
+
+/* Status banner */
+.units-placement-panel-status {
+    font-size: 0.8rem; font-weight: 700; color: #fff;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    border: 1px solid #60a5fa;
+    padding: 10px 12px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; gap: 9px; line-height: 1.3;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+.units-placement-panel-status::before {
+    content: ''; width: 10px; height: 10px; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 0 0 rgba(255,255,255,0.8); flex: 0 0 auto;
+    animation: units-pm-pulse 1.3s ease-out infinite;
+}
+.units-placement-panel-status.is-placed {
+    background: linear-gradient(135deg, #15803d, #22c55e);
+    border-color: #86efac;
+}
+.units-placement-panel-status.is-placed::before { animation: none; }
+@keyframes units-pm-pulse {
+    70%  { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+
+/* Compact unit card */
+.units-placement-panel-card {
+    display: flex; flex-direction: column; gap: 10px; align-items: center;
+    padding: 14px 12px 12px;
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-sm);
+    background: rgba(59,130,246,0.06);
+}
+[data-theme="light"] .units-placement-panel-card { background: rgba(59,130,246,0.04); }
+.units-placement-panel-symbol {
+    flex: 0 0 auto; width: 88px; height: 88px;
+    display: flex; align-items: center; justify-content: center;
+    background: #f1f5f9;
+    border-radius: var(--radius-xs);
+    padding: 4px;
+    box-sizing: border-box;
+}
+[data-theme="light"] .units-placement-panel-symbol { background: #ffffff; border: 1px solid rgba(148,163,184,0.35); }
+.units-placement-panel-symbol svg { max-width: 100%; max-height: 100%; }
+.units-placement-panel-info {
+    width: 100%; min-width: 0;
+    display: flex; flex-direction: column; gap: 5px;
+    text-align: center; align-items: center;
+}
+.units-placement-panel-name {
+    font-size: 1.02rem; font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 100%;
+}
+.units-placement-panel-meta { display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.units-placement-panel-parent {
+    font-size: 0.72rem; color: var(--text-muted);
+    display: flex; align-items: center; gap: 5px; flex-wrap: wrap; justify-content: center;
+}
+.units-placement-panel-parent-label { text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; opacity: 0.8; }
+.units-placement-panel-parent-name  { color: var(--text-main); font-weight: 600; }
+
+.units-placement-panel-options {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.78rem; color: var(--text-muted);
+    user-select: none; padding: 2px 2px;
+}
+
+.units-placement-panel-actions { display: flex; gap: 6px; flex-wrap: wrap; flex: 0 0 auto; }
+.units-placement-panel-actions .glass-btn { flex: 1; min-width: 110px; font-size: 0.8rem; padding: 7px 10px; }
+
+/* ── Queue of other unplaced units ─────────────────────────────────
+   Fills the remaining panel height. Clicking a row re-arms placement
+   for that unit without leaving the panel. */
+.units-placement-panel-queue-wrap {
+    flex: 1; min-height: 0;
+    display: flex; flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--panel-border);
+}
+.units-placement-panel-queue-header {
+    flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2px;
+}
+.units-placement-panel-queue-label {
+    font-size: 0.72rem; font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+}
+.units-placement-panel-queue-count {
+    font-size: 0.68rem; font-weight: 600;
+    color: var(--text-muted);
+    padding: 1px 7px; border-radius: 10px;
+    border: 1px solid var(--panel-border);
+}
+.units-placement-panel-queue {
+    flex: 1; min-height: 0;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 2px 0;
+}
+.units-placement-panel-queue-empty {
+    flex: 0 0 auto;
+    font-size: 0.78rem; color: var(--text-muted);
+    text-align: center; padding: 12px 8px;
+    border: 1px dashed var(--panel-border);
+    border-radius: var(--radius-sm);
+    background: rgba(0,0,0,0.08);
+}
+[data-theme="light"] .units-placement-panel-queue-empty { background: rgba(0,0,0,0.03); }
+
+.units-placement-panel-queue-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px;
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-sm);
+    background: rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+    text-align: start;
+}
+[data-theme="light"] .units-placement-panel-queue-item { background: rgba(0,0,0,0.02); }
+.units-placement-panel-queue-item:hover {
+    background: rgba(59,130,246,0.12);
+    border-color: #3b82f6;
+}
+.units-placement-panel-queue-item-symbol {
+    flex: 0 0 auto; width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    background: #f1f5f9;
+    border-radius: 5px;
+    padding: 2px;
+    box-sizing: border-box;
+}
+[data-theme="light"] .units-placement-panel-queue-item-symbol { background: #ffffff; border: 1px solid rgba(148,163,184,0.35); }
+.units-placement-panel-queue-item-symbol svg { max-width: 100%; max-height: 100%; }
+.units-placement-panel-queue-item-text {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; gap: 2px;
+}
+.units-placement-panel-queue-item-name {
+    font-size: 0.82rem; font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.units-placement-panel-queue-item-meta {
+    display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+}
+.units-placement-panel-queue-item-meta .units-tree-level {
+    font-size: 0.6rem; min-width: 48px; padding: 1px 4px;
+}
+.units-placement-panel-queue-item-meta .units-side-dot {
+    width: 7px; height: 7px;
+}
+.units-placement-panel-queue-item-code {
+    font-size: 0.68rem; color: var(--text-muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ── Centered map cue while placement is armed ─────────────────────
+   Sits above the map so the user sees the hint even when their
+   attention is on the map rather than the side panel. */
+.units-map-placement-cue {
+    position: fixed;
+    top: 16px; left: 50%; transform: translateX(-50%);
+    z-index: 5050;
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff; font-weight: 700; font-size: 0.88rem;
+    border: 1px solid #60a5fa; border-radius: 999px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+    display: flex; align-items: center; gap: 10px;
+    pointer-events: none;
+    animation: units-map-cue-in 0.25s ease-out;
+}
+.units-map-placement-cue::before {
+    content: ''; width: 10px; height: 10px; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 0 0 rgba(255,255,255,0.8);
+    animation: units-pm-pulse 1.3s ease-out infinite;
+}
+.units-map-placement-cue kbd {
+    background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.3);
+    padding: 1px 6px; border-radius: 4px; font-size: 0.75rem;
+}
+@keyframes units-map-cue-in {
+    from { opacity: 0; transform: translate(-50%, -8px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Create & Place primary button styling */
+.units-create-place-btn {
+    width: 100%; padding: 10px; font-size: 0.9rem; font-weight: 700;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff; border: 1px solid #60a5fa;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 4px 14px rgba(59,130,246,0.28);
+}
+.units-create-place-btn:hover:not(:disabled) { filter: brightness(1.08); }
+.units-create-place-btn:disabled {
+    background: rgba(59,130,246,0.25); border-color: rgba(96,165,250,0.35);
+    color: rgba(255,255,255,0.7); box-shadow: none;
+}
+
 /* Left panel */
 .units-left { min-height: 0; display: flex; flex-direction: column; padding: 12px; gap: 10px; border-right: 1px solid var(--panel-border); }
 .units-search-row { display: flex; gap: 8px; align-items: center; flex: 0 0 auto; }
@@ -1980,9 +2236,11 @@ details[open] > .details-summary {
 .units-qs-opt input { cursor: pointer; }
 
 /* Create buttons */
-.units-create-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+/* Stack the three create buttons vertically so "Create & Place" gets its own
+   prominent primary row and the two secondary actions sit under it. */
+.units-create-row { display: flex; flex-direction: column; gap: 8px; }
 .units-create-btn { width: 100%; padding: 9px; font-size: 0.88rem; font-weight: 600; }
-.units-create-add-btn { width: 100%; padding: 9px; font-size: 0.84rem; font-weight: 600; }
+.units-create-add-btn { width: 100%; padding: 8px; font-size: 0.82rem; font-weight: 600; }
 .units-qa-hint { font-size: 0.72rem; color: var(--text-muted); text-align: center; }
 .units-qa-hint kbd { font-size: 0.72rem; border: 1px solid var(--panel-border); border-radius: 3px; padding: 1px 5px; background: rgba(255,255,255,0.06); }
 
@@ -1992,7 +2250,8 @@ details[open] > .details-summary {
 .units-symbol-picker-btn { font-size: 0.76rem; padding: 4px 9px; border-radius: var(--radius-xs); border: 1px solid var(--panel-border); background: transparent; color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: all 0.15s; }
 .units-symbol-picker-btn:hover { border-color: rgba(96,165,250,0.5); color: #93c5fd; background: rgba(59,130,246,0.1); }
 .units-symbol-body { display: flex; align-items: center; gap: 10px; }
-.units-symbol-preview { width: 48px; height: 48px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); border: 1px solid var(--panel-border); border-radius: var(--radius-xs); overflow: hidden; }
+.units-symbol-preview { width: 48px; height: 48px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; background: #f1f5f9; border: 1px solid var(--panel-border); border-radius: var(--radius-xs); overflow: hidden; padding: 2px; box-sizing: border-box; }
+[data-theme="light"] .units-symbol-preview { background: #ffffff; }
 .units-symbol-preview svg { max-width: 100%; max-height: 100%; }
 .units-symbol-preview-placeholder { font-size: 0.68rem; color: var(--text-muted); text-align: center; padding: 3px; }
 .units-symbol-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
@@ -2005,7 +2264,8 @@ details[open] > .details-summary {
 .units-symbol-chip { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 2px; border-radius: var(--radius-xs); border: 1px solid var(--panel-border); background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.15s; min-width: 0; }
 .units-symbol-chip:hover { border-color: rgba(96,165,250,0.5); background: rgba(59,130,246,0.1); color: #93c5fd; }
 .units-symbol-chip.active { border-color: #60a5fa; background: rgba(59,130,246,0.2); color: #bfdbfe; }
-.units-symbol-chip-thumb { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+.units-symbol-chip-thumb { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; border-radius: 5px; padding: 2px; box-sizing: border-box; }
+[data-theme="light"] .units-symbol-chip-thumb { background: #ffffff; border: 1px solid rgba(148,163,184,0.35); }
 .units-symbol-chip-thumb svg { max-width: 100%; max-height: 100%; }
 .units-symbol-chip-label { font-size: 0.66rem; line-height: 1; text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .units-symbol-advanced { border-top: 1px dashed var(--panel-border); padding-top: 5px; }
@@ -2921,3 +3181,653 @@ details[open] > .details-summary {
 .server-account-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .server-account-bar.hidden { display: none !important; }
 .server-plan-select { max-width: 160px; font: inherit; padding: 4px 8px; border-radius: var(--radius-xs); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   ORBAT TREE VIEW (units-orbat.js)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Tree-row launcher button — sits next to the delete button */
+.units-tree-orbat-btn {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px;
+    padding: 0; border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-muted);
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s;
+}
+.units-tree-row:hover .units-tree-orbat-btn,
+.units-tree-row.active .units-tree-orbat-btn { opacity: 1; }
+.units-tree-orbat-btn:hover {
+    color: var(--accent);
+    background: var(--accent-subtle);
+    border-color: rgba(59,130,246,0.45);
+    transform: scale(1.05);
+}
+.units-tree-orbat-btn:focus-visible {
+    outline: none; opacity: 1;
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.35);
+}
+.units-tree-orbat-btn svg { display: block; }
+
+/* Modal shell — near-fullscreen for maximum chart real-estate */
+.orbat-modal-panel {
+    width: calc(100vw - 16px);
+    height: calc(100vh - 16px);
+    margin: 8px auto;
+    max-width: none;
+}
+.orbat-header {
+    min-height: 52px;
+    height: auto;
+    padding: 8px 14px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.orbat-header-left {
+    display: flex; align-items: center; gap: 10px;
+    min-width: 0;
+}
+.orbat-header-icon { color: var(--accent); flex: 0 0 auto; }
+.orbat-subject {
+    font-size: 0.9rem; font-weight: 600; color: var(--text-main);
+    max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--accent-subtle);
+    border: 1px solid rgba(59,130,246,0.25);
+}
+.orbat-header-tools {
+    display: flex; align-items: center; gap: 6px;
+    flex-wrap: wrap;
+    margin-left: auto;
+}
+.orbat-toolgroup {
+    display: inline-flex; align-items: center;
+    border: 1px solid var(--panel-border);
+    border-radius: 7px;
+    overflow: hidden;
+    background: rgba(15,23,42,0.4);
+}
+.orbat-toolgroup .orbat-tool-btn {
+    border: none; border-radius: 0;
+    border-right: 1px solid var(--panel-border);
+    background: transparent;
+}
+.orbat-toolgroup .orbat-tool-btn:last-child { border-right: none; }
+.orbat-zoom-label {
+    font-size: 0.72rem; color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    min-width: 42px; text-align: center;
+    padding: 0 4px;
+    user-select: none;
+}
+.orbat-tool-btn {
+    height: 28px; padding: 0 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--panel-border);
+    background: rgba(15,23,42,0.4);
+    color: var(--text-muted);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.orbat-tool-btn:hover {
+    color: var(--text-main);
+    background: rgba(59,130,246,0.12);
+    border-color: rgba(59,130,246,0.4);
+}
+.orbat-tool-btn.orbat-tool-primary:hover {
+    color: var(--accent);
+    background: var(--accent-subtle);
+    border-color: var(--accent);
+}
+.orbat-divider {
+    width: 1px; height: 22px;
+    background: var(--panel-border);
+    margin: 0 4px;
+}
+
+/* Body / canvas */
+.orbat-body {
+    flex: 1; min-height: 0;
+    position: relative;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.06), transparent 60%),
+        linear-gradient(180deg, #0b1220 0%, #0f172a 100%);
+    overflow: hidden;
+}
+[data-theme="light"] .orbat-body {
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.08), transparent 60%),
+        linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+}
+.orbat-canvas {
+    position: absolute; inset: 0;
+    overflow: hidden;
+    cursor: grab;
+    background-image:
+        linear-gradient(rgba(148,163,184,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148,163,184,0.055) 1px, transparent 1px);
+    background-size: 32px 32px;
+    /* soften grid toward the edges so the chart feels centered */
+    -webkit-mask-image: radial-gradient(ellipse 110% 90% at 50% 50%, #000 55%, rgba(0,0,0,0.35) 100%);
+            mask-image: radial-gradient(ellipse 110% 90% at 50% 50%, #000 55%, rgba(0,0,0,0.35) 100%);
+}
+.orbat-canvas.dragging { cursor: grabbing; }
+.orbat-stage {
+    position: absolute; top: 0; left: 0;
+    transform-origin: 0 0;
+    will-change: transform;
+}
+/* Smooth transform only when we're explicitly animating (zoom / fit / keyboard pan). */
+.orbat-stage.animating {
+    transition: transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+/* Entrance animation — opacity only (safe for SVG `transform` attribute).
+   Suppressed on reflow (collapse/expand) so nodes don't re-fade each time. */
+.orbat-svg .orbat-node        { animation: orbat-fade-in 340ms ease-out both; }
+.orbat-svg .orbat-connectors  { animation: orbat-fade-in 460ms ease-out both; }
+.orbat-stage.no-node-enter .orbat-node { animation: none; }
+.orbat-stage.no-conn-enter .orbat-connectors { animation: none; }
+@keyframes orbat-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+/* Users with reduced-motion preference get no animation */
+@media (prefers-reduced-motion: reduce) {
+    .orbat-svg .orbat-node,
+    .orbat-svg .orbat-connectors line,
+    .orbat-stage.animating { animation: none; transition: none; }
+}
+
+/* SVG nodes */
+.orbat-svg { display: block; user-select: none; }
+.orbat-connectors line {
+    stroke: rgba(148,163,184,0.6);
+    stroke-width: 1.8;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}
+[data-theme="light"] .orbat-connectors line { stroke: rgba(71,85,105,0.5); }
+
+.orbat-node-card {
+    fill: #111827;
+    stroke: rgba(148,163,184,0.28);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+    transition: fill 0.15s, stroke 0.15s, filter 0.15s;
+}
+[data-theme="light"] .orbat-node-card {
+    fill: #ffffff; stroke: rgba(100,116,139,0.3);
+    filter: drop-shadow(0 2px 6px rgba(15,23,42,0.12));
+}
+
+.orbat-node { transition: transform 0.15s; }
+.orbat-node:hover .orbat-node-card {
+    stroke: var(--accent);
+    filter: drop-shadow(0 6px 18px rgba(59,130,246,0.35));
+}
+/* Keep the symbol itself crisp — no shadow on its paths */
+.orbat-node-sym { overflow: visible; }
+.orbat-node-side-friendly .orbat-node-card { stroke: rgba(59,130,246,0.45); }
+.orbat-node-side-hostile  .orbat-node-card { stroke: rgba(239,68,68,0.45); }
+.orbat-node-side-neutral  .orbat-node-card { stroke: rgba(234,179,8,0.45); }
+.orbat-node-side-unknown  .orbat-node-card { stroke: rgba(148,163,184,0.45); }
+
+.orbat-node.orbat-collapsed .orbat-node-card {
+    stroke-dasharray: 4 3;
+    fill: #0f1a2e;
+}
+[data-theme="light"] .orbat-node.orbat-collapsed .orbat-node-card { fill: #f1f5f9; }
+
+.orbat-node-name {
+    fill: var(--text-main);
+    font: 600 12px system-ui, -apple-system, "Segoe UI", sans-serif;
+    pointer-events: none;
+}
+.orbat-node-meta {
+    fill: var(--text-muted);
+    font: 500 10px ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+}
+.orbat-node-sym-panel {
+    fill: #f1f5f9;                /* soft paper white */
+    stroke: rgba(100,116,139,0.25);
+    stroke-width: 0.6;
+    pointer-events: none;
+}
+[data-theme="light"] .orbat-node-sym-panel {
+    fill: #ffffff;
+    stroke: rgba(148,163,184,0.35);
+}
+.orbat-node-sep {
+    stroke: rgba(15,23,42,0.35);
+    stroke-width: 1;
+    pointer-events: none;
+}
+[data-theme="light"] .orbat-node-sep {
+    stroke: rgba(148,163,184,0.5);
+}
+/* Legacy ••• indicator — no longer rendered, kept in case older saved SVGs reference it. */
+.orbat-collapsed-dots {
+    fill: var(--text-muted);
+    font: 700 14px system-ui;
+    letter-spacing: 2px;
+    pointer-events: none;
+}
+
+/* Expand/collapse pill below each parent card */
+.orbat-node-toggle-bg {
+    fill: rgba(30,41,59,0.92);
+    stroke: rgba(148,163,184,0.45);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    transition: fill 0.12s, stroke 0.12s;
+}
+[data-theme="light"] .orbat-node-toggle-bg {
+    fill: #f8fafc;
+    stroke: rgba(100,116,139,0.5);
+}
+.orbat-node-toggle-label {
+    fill: var(--text-main);
+    font: 600 11px ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Selected (focused) card — stronger border + glow, independent of side color */
+.orbat-node.orbat-selected .orbat-node-card {
+    stroke: var(--accent);
+    stroke-width: 2;
+    filter: drop-shadow(0 0 0 2px rgba(59,130,246,0.25)) drop-shadow(0 6px 18px rgba(59,130,246,0.5));
+}
+
+/* Exiting (collapsing) branch — JS drives opacity/transform; nothing extra here,
+   but the class is available for future styling hooks. */
+.orbat-node.orbat-exiting .orbat-node-toggle { pointer-events: none; }
+
+/* Bottom hint */
+.orbat-hint {
+    position: absolute;
+    bottom: 10px; left: 50%; transform: translateX(-50%);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    background: rgba(15,23,42,0.7);
+    border: 1px solid var(--panel-border);
+    padding: 4px 12px;
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+}
+[data-theme="light"] .orbat-hint { background: rgba(255,255,255,0.82); color: #475569; }
+
+/* Small-screen compaction */
+@media (max-width: 720px) {
+    .orbat-tool-btn { padding: 0 7px; font-size: 0.7rem; }
+    .orbat-subject { max-width: 140px; }
+    .orbat-hint { font-size: 0.68rem; padding: 3px 8px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ORBAT Dock — bottom panel with draggable unit symbols
+   ═══════════════════════════════════════════════════════════════════ */
+.orbat-dock {
+    /* Anchored to .map-workspace (which has position: relative) so the dock
+       always spans the full map area — no gap on either side regardless of
+       whether the sidebar is on the left (LTR) or right (RTL). */
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 220px;
+    min-height: 120px;
+    max-height: 85vh;
+    z-index: 900;
+    background: var(--panel-bg);
+    border-top: 1px solid var(--panel-border);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+    transform: translateY(0);
+    transition: transform 220ms ease, opacity 220ms ease;
+}
+.orbat-dock.hidden {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+}
+/* While the user is dragging the resize handle we disable transitions so
+   the height follows the pointer 1:1 without animation lag. */
+.orbat-dock.is-resizing {
+    transition: none;
+    user-select: none;
+}
+
+/* Top-edge resize handle */
+.orbat-dock-resize {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    right: 0;
+    height: 10px;
+    cursor: ns-resize;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+.orbat-dock-resize::before {
+    content: '';
+    width: 48px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(148, 163, 184, 0.45);
+    transition: background 120ms ease, width 120ms ease;
+}
+.orbat-dock-resize:hover::before,
+.orbat-dock.is-resizing .orbat-dock-resize::before {
+    background: var(--accent);
+    width: 72px;
+}
+.orbat-dock-resize:focus-visible { outline: none; }
+.orbat-dock-resize:focus-visible::before {
+    background: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-subtle);
+}
+
+.orbat-dock-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 14px;
+    border-bottom: 1px solid var(--panel-border);
+    background: linear-gradient(180deg, rgba(30,41,59,0.85), rgba(15,23,42,0.6));
+    flex: 0 0 auto;
+}
+[data-theme="light"] .orbat-dock-header {
+    background: linear-gradient(180deg, rgba(248,250,252,0.95), rgba(255,255,255,0.7));
+}
+.orbat-dock-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-main);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+.orbat-dock-icon { color: var(--accent); }
+.orbat-dock-hint {
+    font-weight: 400;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    letter-spacing: 0;
+}
+.orbat-dock-tools { display: flex; gap: 4px; }
+.orbat-dock-tool-btn {
+    background: transparent;
+    border: 1px solid var(--panel-border);
+    color: var(--text-main);
+    font-size: 0.95rem;
+    line-height: 1;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    padding: 0;
+    transition: background 120ms ease, border-color 120ms ease;
+}
+.orbat-dock-tool-btn:hover {
+    background: var(--accent-subtle);
+    border-color: var(--accent);
+}
+
+.orbat-dock-body {
+    flex: 1 1 auto;
+    overflow: auto;          /* both axes — tree expands horizontally */
+    padding: 14px 18px 36px; /* extra bottom pad so hanging +/− toggles clear the edge */
+    /* Reserve space around the target when scrollIntoView runs — otherwise
+       children are flush with the bottom and their hanging toggle gets clipped. */
+    scroll-padding-top: 12px;
+    scroll-padding-bottom: 40px;
+    scroll-padding-inline: 24px;
+}
+.orbat-dock-tree {
+    display: inline-block;   /* shrink-wrap content so overflow scrolls */
+    min-width: 100%;
+}
+.orbat-dock-empty {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    padding: 24px;
+    text-align: center;
+}
+
+/* Vertical (top → bottom) tree layout.
+   A .orbat-dock-node is a flex column of [card, children-row].
+   Multiple roots sit side-by-side inside .orbat-dock-roots, each growing its
+   own subtree downward. The dock body scrolls both axes. */
+.orbat-dock-roots {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+}
+.orbat-dock-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;     /* horizontally-center card over its children row */
+    gap: 28px;               /* vertical spacing parent ↔ children */
+    position: relative;
+}
+.orbat-dock-children {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 18px;
+    position: relative;
+}
+
+/* Connector lines (org-chart style):
+   - Horizontal bus at the top of the children row, between first/last child centers.
+   - Vertical stub from each child's top up to the bus.
+   - Vertical stub from parent card's bottom down to the bus.
+   Card width is 148px, so the bus starts/ends at 74px in from each edge. */
+.orbat-dock-children::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: 74px;
+    right: 74px;
+    height: 1px;
+    background: var(--panel-border);
+}
+/* Single-child case: no visible horizontal bus needed (the stubs align). */
+.orbat-dock-children > .orbat-dock-node:only-child ~ ::before,
+.orbat-dock-children:has(> .orbat-dock-node:only-child)::before {
+    display: none;
+}
+.orbat-dock-children > .orbat-dock-node::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    width: 1px;
+    height: 14px;
+    background: var(--panel-border);
+    transform: translateX(-50%);
+}
+.orbat-dock-node:has(> .orbat-dock-children) > .orbat-dock-card::after {
+    content: '';
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    width: 1px;
+    height: 14px;
+    background: var(--panel-border);
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+/* Unit card (draggable) */
+.orbat-dock-card {
+    position: relative;
+    flex: 0 0 auto;
+    width: 148px;
+    min-height: 96px;
+    padding: 8px 10px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-xs);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: grab;
+    user-select: none;
+    transition: background 120ms ease, border-color 120ms ease,
+                transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+}
+.orbat-dock-card:hover {
+    background: var(--accent-subtle);
+    border-color: rgba(59, 130, 246, 0.45);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.orbat-dock-card:active { cursor: grabbing; }
+.orbat-dock-card.dragging { opacity: 0.55; transform: none; }
+.orbat-dock-card.is-placed { opacity: 0.7; }
+.orbat-dock-card.is-placed .orbat-dock-placed-badge { display: inline-flex; }
+
+/* Side accent: a thin top strip colored per affiliation. */
+.orbat-dock-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-top-left-radius: var(--radius-xs);
+    border-top-right-radius: var(--radius-xs);
+    background: var(--accent);
+}
+.orbat-dock-card.side-friendly::before { background: #3b82f6; }
+.orbat-dock-card.side-hostile::before  { background: #ef4444; }
+.orbat-dock-card.side-neutral::before  { background: #eab308; }
+.orbat-dock-card.side-unknown::before  { background: #94a3b8; }
+
+.orbat-dock-card-sym {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: rgba(241,245,249,0.04);
+    border: 1px solid rgba(148,163,184,0.18);
+    border-radius: var(--radius-xs);
+    padding: 2px;
+    pointer-events: none;
+}
+[data-theme="light"] .orbat-dock-card-sym {
+    background: #f8fafc;
+    border-color: rgba(100,116,139,0.25);
+}
+.orbat-dock-card-sym svg { max-width: 100%; max-height: 100%; display: block; }
+
+.orbat-dock-card-name {
+    color: var(--text-main);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-align: center;
+    max-width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    pointer-events: none;
+}
+.orbat-dock-card-meta {
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    letter-spacing: 0.04em;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 100%;
+    pointer-events: none;
+}
+.orbat-dock-placed-badge {
+    display: none;
+    font-family: var(--font-family);
+    font-size: 0.58rem;
+    padding: 1px 5px;
+    border-radius: 8px;
+    background: rgba(34,197,94,0.18);
+    color: #22c55e;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* Expand/collapse button on the bottom edge of a card with children. */
+.orbat-dock-toggle {
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1.5px solid var(--panel-border);
+    background: var(--panel-2);
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    transition: background 120ms ease, color 120ms ease, border-color 120ms ease,
+                transform 120ms ease;
+}
+.orbat-dock-toggle:hover {
+    background: var(--accent-subtle);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateX(-50%) scale(1.08);
+}
+.orbat-dock-toggle.is-collapsed {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Map-wide drop hint (shown while user is dragging a unit over the map) */
+.map-dock-dragover {
+    outline: 2px dashed var(--accent);
+    outline-offset: -10px;
+}
+
+/* No RTL override needed — the dock lives inside .map-workspace which has
+   direction:ltr forced, so it always spans the map area cleanly. */

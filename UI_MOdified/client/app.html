@@ -29,7 +29,7 @@
                 <div id="server-account-bar" class="server-account-bar hidden" aria-label="Server plans">
                     <select id="server-plan-select" class="glass-select server-plan-select" title="Plans"></select>
                     <button type="button" id="server-new-plan-btn" class="header-btn" title="New plan">+ Plan</button>
-                    <button type="button" id="server-logout-btn" class="header-btn" title="Logout">Logout</button>
+                    <button type="button" id="server-logout-btn" class="header-btn" data-i18n-title="logout" data-i18n="logout" title="Logout">Logout</button>
                 </div>
                 <button id="theme-toggle-btn" class="header-btn" type="button" title="تبديل الوضع الفاتح/الداكن">☀</button>
                 <button id="settings-toggle-btn" class="header-btn" type="button" title="الإعدادات والأدوات">
@@ -85,9 +85,9 @@
 
                 <div class="tool-rail-spacer"></div>
 
-                <button class="tool-rail-btn" data-tool="layers" type="button" title="Layers">
+                <button class="tool-rail-btn" data-tool="layers" type="button" data-i18n-title="tool-layers" title="Layers">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                    <span>Layers</span>
+                    <span data-i18n="tool-layers">Layers</span>
                 </button>
             </nav>
 
@@ -96,8 +96,8 @@
 
                 <!-- Dynamic tool header -->
                 <div class="context-panel-header" id="context-panel-header">
-                    <h2 class="context-panel-title" id="context-panel-title">Select</h2>
-                    <p class="context-panel-hint" id="context-panel-hint">Click or drag on the map to select items</p>
+                    <h2 class="context-panel-title" id="context-panel-title" data-i18n="context-panel-default-title">Select</h2>
+                    <p class="context-panel-hint" id="context-panel-hint" data-i18n="context-panel-default-hint">Click or drag on the map to select items</p>
                 </div>
 
                 <!-- Hidden backward-compat: sidebar tabs + mode dropdown (JS reads these) -->
@@ -258,6 +258,11 @@
                             <div class="control-group" style="margin-top:4px;">
                                 <button id="free-draw-signature-btn" class="glass-btn secondary" type="button" data-i18n="auto-draw-btn" title="Free Draw Circle X workflow">Auto Draw</button>
                                 <p id="free-draw-critical" aria-live="polite" style="margin-top:8px;font-size:0.78rem;line-height:1.35;color:#fbbf24;min-height:1.2em;"></p>
+                            </div>
+
+                            <!-- Position Unit: opens ORBAT dock so the user can drag units onto the map -->
+                            <div class="control-group" style="margin-top:4px;">
+                                <button id="position-unit-btn" class="glass-btn secondary" type="button" data-i18n="position-unit-btn" title="Open ORBAT dock and drag units onto the map">Position Unit</button>
                             </div>
                         </div>
 
@@ -660,18 +665,18 @@
                             <div class="inline-hint" id="shapes-hint" data-i18n="shapes-panel-bottom-hint">Click two opposite corners to draw a rectangle.</div>
                         </div>
                         <details class="panel-section advanced-details" id="clip-tool-section">
-                            <summary class="details-summary">Clip polygons</summary>
+                            <summary class="details-summary" data-i18n="clip-section-title">Clip polygons</summary>
                             <div style="margin-top:8px;">
-                                <label class="field-label">Operation</label>
+                                <label class="field-label" data-i18n="clip-operation-label">Operation</label>
                                 <div style="display:flex; gap:12px; margin-bottom:8px;">
-                                    <label><input type="radio" name="clip-op" value="intersect" checked> Intersect</label>
-                                    <label><input type="radio" name="clip-op" value="difference"> Difference</label>
+                                    <label><input type="radio" name="clip-op" value="intersect" checked> <span data-i18n="clip-op-intersect">Intersect</span></label>
+                                    <label><input type="radio" name="clip-op" value="difference"> <span data-i18n="clip-op-difference">Difference</span></label>
                                 </div>
                                 <div style="display:flex; gap:8px;">
-                                    <button id="clip-start-btn" class="glass-btn secondary" type="button">Start clip</button>
-                                    <button id="clip-cancel-btn" class="glass-btn secondary" type="button" disabled>Cancel</button>
+                                    <button id="clip-start-btn" class="glass-btn secondary" type="button" data-i18n="clip-start">Start clip</button>
+                                    <button id="clip-cancel-btn" class="glass-btn secondary" type="button" disabled data-i18n="cancel">Cancel</button>
                                 </div>
-                                <div class="inline-hint" id="clip-status-hint" style="margin-top:8px;">Pick an operation and press Start.</div>
+                                <div class="inline-hint" id="clip-status-hint" style="margin-top:8px;" data-i18n="clip-status-hint">Pick an operation and press Start.</div>
                             </div>
                         </details>
                     </section>
@@ -700,7 +705,7 @@
 
                     <!-- Secondary actions (collapsible) -->
                     <details class="layers-secondary" id="layers-secondary-details">
-                        <summary class="layers-secondary-summary">Manage & Transfer</summary>
+                        <summary class="layers-secondary-summary" data-i18n="layers-manage-transfer">Manage & Transfer</summary>
                         <div class="layers-secondary-body">
                             <button id="layer-templates-btn" class="glass-btn secondary" type="button" data-i18n="layer-template-btn">Saved Sets</button>
                             <div class="layers-transfer-row">
@@ -805,6 +810,27 @@
                     <div id="popup-anchor" class="popup-anchor"></div>
                     <div id="selection-toolbar-floating" class="selection-toolbar-floating hidden"></div>
                 </div>
+
+                <!-- ORBAT dock — lives inside .map-workspace so it always spans
+                     the map area regardless of sidebar side (LTR/RTL). -->
+                <div id="orbat-dock" class="orbat-dock hidden" aria-hidden="true">
+                    <div id="orbat-dock-resize" class="orbat-dock-resize" role="separator" aria-orientation="horizontal" aria-label="Resize ORBAT dock" tabindex="0"></div>
+                    <div class="orbat-dock-header">
+                        <div class="orbat-dock-title-wrap">
+                            <svg class="orbat-dock-icon" viewBox="0 0 20 20" width="14" height="14" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="2" width="5" height="4" rx="1"/><rect x="1.5" y="13" width="5" height="4" rx="1"/><rect x="7.5" y="13" width="5" height="4" rx="1"/><rect x="13.5" y="13" width="5" height="4" rx="1"/><path d="M10 6v3M4 13v-2h12v2M10 11v2"/></g></svg>
+                            <span class="orbat-dock-title" data-i18n="orbat-dock-title">ORBAT</span>
+                            <span class="orbat-dock-hint" data-i18n="orbat-dock-hint">— drag a unit onto the map to position it</span>
+                        </div>
+                        <div class="orbat-dock-tools">
+                            <button type="button" id="orbat-dock-refresh" class="orbat-dock-tool-btn" title="Refresh" aria-label="Refresh">&#x21bb;</button>
+                            <button type="button" id="orbat-dock-close" class="orbat-dock-tool-btn" title="Close" aria-label="Close">&times;</button>
+                        </div>
+                    </div>
+                    <div id="orbat-dock-body" class="orbat-dock-body">
+                        <div id="orbat-dock-tree" class="orbat-dock-tree"></div>
+                        <div id="orbat-dock-empty" class="orbat-dock-empty" hidden data-i18n="orbat-dock-empty">No units yet — create some from the Units panel first.</div>
+                    </div>
+                </div>
             </main>
 
             <!-- ── CHAT SIDEBAR ── -->
@@ -812,12 +838,12 @@
                 <header class="chat-header">
                     <div class="chat-header-main">
                         <div class="chat-title-row">
-                            <span class="chat-title">Team Chat</span>
-                            <span class="chat-you">You: <span id="chat-user-name">Planner 1</span></span>
+                            <span class="chat-title" data-i18n="chat-title">Team Chat</span>
+                            <span class="chat-you"><span data-i18n="chat-you-label">You:</span> <span id="chat-user-name">Planner 1</span></span>
                             <button id="chat-set-name-btn" type="button" class="chat-set-name-btn" title="Change your display name">✎</button>
                             <button id="chat-notify-toggle" type="button" class="chat-set-name-btn" aria-pressed="true" title="Mute or unmute new-message sound">🔔</button>
                         </div>
-                        <div id="chat-status" class="chat-status">Initializing…</div>
+                        <div id="chat-status" class="chat-status" data-i18n="chat-initializing">Initializing…</div>
                     </div>
                     <button id="chat-close-btn" class="chat-close-btn" type="button" aria-label="Close chat">×</button>
                 </header>
@@ -922,10 +948,10 @@
         </div>
     </div>
 
-    <!-- Units modal -->
-    <div id="units-modal" class="modal hidden" aria-hidden="true">
+    <!-- Units modal (force LTR layout even when the page is set to Arabic) -->
+    <div id="units-modal" class="modal hidden" aria-hidden="true" dir="ltr">
         <div class="modal-backdrop" id="units-modal-backdrop"></div>
-        <div class="modal-panel units-modal-panel" role="dialog" aria-modal="true" aria-label="Units">
+        <div class="modal-panel units-modal-panel" role="dialog" aria-modal="true" aria-label="Units" dir="ltr">
             <div class="modal-header">
                 <div class="modal-title" data-i18n="units-title">Units</div>
                 <button type="button" class="modal-close" id="units-modal-close" data-i18n="close">Close</button>
@@ -935,19 +961,19 @@
                 <!-- LEFT: hierarchy tree -->
                 <div class="units-left">
                     <div class="units-search-row">
-                        <input id="units-search-input" type="text" class="glass-input" autocomplete="off" spellcheck="false" maxlength="200" placeholder="Search by name or code" />
-                        <button type="button" id="units-refresh-btn" class="glass-btn secondary">Refresh</button>
+                        <input id="units-search-input" type="text" class="glass-input" autocomplete="off" spellcheck="false" maxlength="200" data-i18n-placeholder="units-search-placeholder" placeholder="Search by name or code" />
+                        <button type="button" id="units-refresh-btn" class="glass-btn secondary" data-i18n="refresh">Refresh</button>
                     </div>
                     <div class="units-filter-row">
-                        <button type="button" class="units-filter-btn active" data-filter-side="all">All</button>
-                        <button type="button" class="units-filter-btn" data-filter-side="friendly">▶ Friendly</button>
-                        <button type="button" class="units-filter-btn" data-filter-side="hostile">■ Hostile</button>
-                        <button type="button" class="units-filter-btn" data-filter-side="neutral">◆ Neutral</button>
-                        <button type="button" class="units-filter-btn" data-filter-side="unknown">? Unknown</button>
+                        <button type="button" class="units-filter-btn active" data-filter-side="all" data-i18n="units-filter-all">All</button>
+                        <button type="button" class="units-filter-btn" data-filter-side="friendly" data-i18n="units-filter-friendly">▶ Friendly</button>
+                        <button type="button" class="units-filter-btn" data-filter-side="hostile" data-i18n="units-filter-hostile">■ Hostile</button>
+                        <button type="button" class="units-filter-btn" data-filter-side="neutral" data-i18n="units-filter-neutral">◆ Neutral</button>
+                        <button type="button" class="units-filter-btn" data-filter-side="unknown" data-i18n="units-filter-unknown">? Unknown</button>
                     </div>
                     <div class="units-tree-controls">
-                        <button type="button" id="units-toggle-all-btn" class="units-tree-ctrl-btn" title="Expand / collapse all">▼ Expand All</button>
-                        <button type="button" id="units-new-army-btn" class="units-tree-ctrl-btn units-new-army-btn" title="Create a new top-level Army">+ New Army</button>
+                        <button type="button" id="units-toggle-all-btn" class="units-tree-ctrl-btn" title="Expand / collapse all" data-i18n="units-toggle-expand-all">▼ Expand All</button>
+                        <button type="button" id="units-new-army-btn" class="units-tree-ctrl-btn units-new-army-btn" title="Create a new top-level Army" data-i18n="units-new-army">+ New Army</button>
                     </div>
                     <div class="units-tree-wrap">
                         <div id="units-tree" class="units-tree" role="tree" aria-label="Units tree"></div>
@@ -955,7 +981,7 @@
                     <div class="units-tree-footer">
                         <label class="units-show-deleted-label">
                             <input id="units-include-deleted" type="checkbox" />
-                            <span>Show deleted units</span>
+                            <span data-i18n="units-show-deleted">Show deleted units</span>
                         </label>
                     </div>
                 </div>
@@ -967,8 +993,8 @@
                     <div class="units-ctx-bar">
                         <div id="units-ctx-root" class="units-ctx-pane">
                             <div class="units-ctx-root-text">
-                                <div class="units-ctx-root-title">Unit Management</div>
-                                <div class="units-ctx-root-hint">Select a unit from the tree, or create a new Army below.</div>
+                                <div class="units-ctx-root-title" data-i18n="units-mgmt-title">Unit Management</div>
+                                <div class="units-ctx-root-hint" data-i18n="units-mgmt-hint">Select a unit from the tree, or create a new Army below.</div>
                             </div>
                         </div>
                         <div id="units-ctx-sel" class="units-ctx-pane" style="display:none">
@@ -983,8 +1009,8 @@
                                 </div>
                             </div>
                             <div class="units-ctx-actions">
-                                <button type="button" id="units-place-btn" class="units-place-btn" title="Click on the map to place this unit">&#128205;&nbsp;Place on map</button>
-                                <button type="button" id="units-edit-btn" class="units-edit-btn">&#9998;&nbsp;Edit</button>
+                                <button type="button" id="units-place-btn" class="units-place-btn">&#128205;&nbsp;Place on map</button>
+                                <button type="button" id="units-edit-btn" class="units-edit-btn" data-i18n="units-edit-btn">&#9998;&nbsp;Edit</button>
                             </div>
                         </div>
                     </div>
@@ -995,7 +1021,7 @@
                         <!-- What we are creating -->
                         <div id="units-creating-card" class="units-creating-card">
                             <div class="units-creating-row">
-                                <span class="units-creating-verb">Creating:</span>
+                                <span class="units-creating-verb" data-i18n="units-creating-verb">Creating:</span>
                                 <span id="units-creating-badge" class="units-tree-level units-tree-level-0">Army</span>
                                 <span id="units-creating-under" class="units-creating-under"></span>
                             </div>
@@ -1003,60 +1029,60 @@
 
                         <!-- Side selector (shown only when creating a root Army) -->
                         <div class="units-side-row" id="units-side-row">
-                            <div class="units-side-label">Side / Affiliation</div>
+                            <div class="units-side-label" data-i18n="units-side-title">Side / Affiliation</div>
                             <div class="units-side-btns" id="units-side-btns">
-                                <button type="button" class="units-side-btn active" data-side="friendly">&#9658; Friendly</button>
-                                <button type="button" class="units-side-btn" data-side="hostile">&#9632; Hostile</button>
-                                <button type="button" class="units-side-btn" data-side="neutral">&#9670; Neutral</button>
-                                <button type="button" class="units-side-btn" data-side="unknown">? Unknown</button>
+                                <button type="button" class="units-side-btn active" data-side="friendly" data-i18n="units-side-friendly">&#9658; Friendly</button>
+                                <button type="button" class="units-side-btn" data-side="hostile" data-i18n="units-side-hostile">&#9632; Hostile</button>
+                                <button type="button" class="units-side-btn" data-side="neutral" data-i18n="units-side-neutral">&#9670; Neutral</button>
+                                <button type="button" class="units-side-btn" data-side="unknown" data-i18n="units-side-unknown">? Unknown</button>
                             </div>
                         </div>
 
                         <!-- Inherited affiliation notice (shown when creating a child) -->
                         <div class="units-side-row" id="units-side-inherited" style="display:none">
-                            <div class="units-side-label">Side / Affiliation</div>
+                            <div class="units-side-label" data-i18n="units-side-title">Side / Affiliation</div>
                             <div class="units-side-inherited-info">
-                                Inherits from parent: <span id="units-side-inherited-badge" class="units-side-badge units-side-friendly">Friendly</span>
+                                <span data-i18n="units-side-inherited">Inherits from parent:</span> <span id="units-side-inherited-badge" class="units-side-badge units-side-friendly">Friendly</span>
                             </div>
                         </div>
 
                         <!-- Domain selector (Force+ level) -->
                         <div id="units-domain-row" class="units-domain-row" style="display:none">
-                            <div class="units-domain-label">Domain</div>
+                            <div class="units-domain-label" data-i18n="units-domain-title">Domain</div>
                             <div class="units-domain-btns" id="units-domain-btns">
-                                <button type="button" class="units-domain-btn" data-domain="Land">&#9878; Land</button>
-                                <button type="button" class="units-domain-btn" data-domain="Air">&#9992; Air</button>
-                                <button type="button" class="units-domain-btn" data-domain="Naval">&#9875; Naval</button>
-                                <button type="button" class="units-domain-btn" data-domain="Joint">&#9678; Joint</button>
-                                <button type="button" class="units-domain-btn" data-domain="Support">&#9671; Support</button>
+                                <button type="button" class="units-domain-btn" data-domain="Land"><span aria-hidden="true">&#9878;</span> <span data-i18n="units-domain-land">Land</span></button>
+                                <button type="button" class="units-domain-btn" data-domain="Air"><span aria-hidden="true">&#9992;</span> <span data-i18n="units-domain-air">Air</span></button>
+                                <button type="button" class="units-domain-btn" data-domain="Naval"><span aria-hidden="true">&#9875;</span> <span data-i18n="units-domain-naval">Naval</span></button>
+                                <button type="button" class="units-domain-btn" data-domain="Joint"><span aria-hidden="true">&#9678;</span> <span data-i18n="units-domain-joint">Joint</span></button>
+                                <button type="button" class="units-domain-btn" data-domain="Support"><span aria-hidden="true">&#9671;</span> <span data-i18n="units-domain-support">Support</span></button>
                             </div>
                         </div>
 
                         <!-- Branch selector (Brigade+ level, Land/Joint/Support domains) -->
                         <div id="units-branch-row" class="units-domain-row" style="display:none">
-                            <div class="units-domain-label">Branch / Function</div>
+                            <div class="units-domain-label" data-i18n="units-branch-title">Branch / Function</div>
                             <div class="units-domain-btns" id="units-branch-btns">
-                                <button type="button" class="units-domain-btn" data-branch="Infantry">Infantry</button>
-                                <button type="button" class="units-domain-btn" data-branch="Armor">Armor</button>
-                                <button type="button" class="units-domain-btn" data-branch="Artillery">Artillery</button>
-                                <button type="button" class="units-domain-btn" data-branch="AirDefense">Air Defense</button>
-                                <button type="button" class="units-domain-btn" data-branch="Engineers">Engineers</button>
-                                <button type="button" class="units-domain-btn" data-branch="Recon">Recon</button>
-                                <button type="button" class="units-domain-btn" data-branch="Signal">Signal</button>
-                                <button type="button" class="units-domain-btn" data-branch="Medical">Medical</button>
-                                <button type="button" class="units-domain-btn" data-branch="Logistics">Logistics</button>
-                                <button type="button" class="units-domain-btn" data-branch="HQ">HQ / C2</button>
+                                <button type="button" class="units-domain-btn" data-branch="Infantry" data-i18n="units-branch-infantry">Infantry</button>
+                                <button type="button" class="units-domain-btn" data-branch="Armor" data-i18n="units-branch-armor">Armor</button>
+                                <button type="button" class="units-domain-btn" data-branch="Artillery" data-i18n="units-branch-artillery">Artillery</button>
+                                <button type="button" class="units-domain-btn" data-branch="AirDefense" data-i18n="units-branch-airdefense">Air Defense</button>
+                                <button type="button" class="units-domain-btn" data-branch="Engineers" data-i18n="units-branch-engineers">Engineers</button>
+                                <button type="button" class="units-domain-btn" data-branch="Recon" data-i18n="units-branch-recon">Recon</button>
+                                <button type="button" class="units-domain-btn" data-branch="Signal" data-i18n="units-branch-signal">Signal</button>
+                                <button type="button" class="units-domain-btn" data-branch="Medical" data-i18n="units-branch-medical">Medical</button>
+                                <button type="button" class="units-domain-btn" data-branch="Logistics" data-i18n="units-branch-logistics">Logistics</button>
+                                <button type="button" class="units-domain-btn" data-branch="HQ" data-i18n="units-branch-hq">HQ / C2</button>
                             </div>
                         </div>
 
                         <!-- Name + Code -->
                         <div class="units-qa-fields">
                             <div class="field">
-                                <label class="field-label" for="units-qa-name">Unit Name</label>
-                                <input id="units-qa-name" type="text" class="glass-input" maxlength="200" autocomplete="off" placeholder="Unit name…" />
+                                <label class="field-label" for="units-qa-name" data-i18n="units-field-name">Unit Name</label>
+                                <input id="units-qa-name" type="text" class="glass-input" maxlength="200" autocomplete="off" data-i18n-placeholder="units-name-placeholder" placeholder="Unit name…" />
                             </div>
                             <div class="field">
-                                <label class="field-label" for="units-qa-code">Code <small class="field-hint">(auto)</small></label>
+                                <label class="field-label" for="units-qa-code"><span data-i18n="units-field-code-label">Code</span> <small class="field-hint" data-i18n="units-field-code-auto">(auto)</small></label>
                                 <input id="units-qa-code" type="text" class="glass-input" maxlength="80" autocomplete="off" spellcheck="false" />
                             </div>
                         </div>
@@ -1064,32 +1090,32 @@
                         <!-- Symbol Assignment -->
                         <div class="units-symbol-section" id="units-symbol-section">
                             <div class="units-symbol-header">
-                                <div class="units-domain-label">Symbol</div>
-                                <button type="button" id="units-symbol-picker-btn" class="units-symbol-picker-btn">&#128269; Browse full library</button>
+                                <div class="units-domain-label" data-i18n="units-symbol-title">Symbol</div>
+                                <button type="button" id="units-symbol-picker-btn" class="units-symbol-picker-btn" data-i18n="units-symbol-browse">&#128269; Browse full library</button>
                             </div>
                             <div class="units-symbol-body">
                                 <div class="units-symbol-preview" id="units-symbol-preview"></div>
                                 <div class="units-symbol-info">
                                     <div class="units-symbol-name" id="units-symbol-name">&mdash;</div>
                                     <div class="units-symbol-sidc" id="units-symbol-sidc">SIDC: (auto)</div>
-                                    <button type="button" id="units-symbol-clear-btn" class="units-symbol-clear-btn" style="display:none">Reset to auto</button>
+                                    <button type="button" id="units-symbol-clear-btn" class="units-symbol-clear-btn" style="display:none" data-i18n="units-symbol-reset">Reset to auto</button>
                                 </div>
                             </div>
-                            <div class="units-symbol-chips-label">Suggested for this unit:</div>
+                            <div class="units-symbol-chips-label" data-i18n="units-symbol-suggested">Suggested for this unit:</div>
                             <div class="units-symbol-chips" id="units-symbol-chips"></div>
                             <details class="units-symbol-advanced">
-                                <summary>Advanced &mdash; enter SIDC manually</summary>
-                                <input id="units-qa-sidc" type="text" class="glass-input" maxlength="60" autocomplete="off" spellcheck="false" placeholder="20-digit SIDC, e.g. 10031018121100000000" />
+                                <summary data-i18n="units-symbol-advanced">Advanced &mdash; enter SIDC manually</summary>
+                                <input id="units-qa-sidc" type="text" class="glass-input" maxlength="60" autocomplete="off" spellcheck="false" data-i18n-placeholder="units-symbol-sidc-placeholder" placeholder="20-digit SIDC, e.g. 10031018121100000000" />
                             </details>
                         </div>
 
                         <!-- Quick Setup (Army only) -->
                         <div id="units-quick-setup" class="units-quick-setup" style="display:none">
-                            <div class="units-qs-header">&#9889; Quick Setup — Auto-create standard forces after saving:</div>
+                            <div class="units-qs-header" data-i18n="units-qs-header">&#9889; Quick Setup — Auto-create standard forces after saving:</div>
                             <div class="units-qs-options">
-                                <label class="units-qs-opt"><input type="checkbox" id="qs-air"   checked> &#9992; Air Force</label>
-                                <label class="units-qs-opt"><input type="checkbox" id="qs-land"  checked> &#9878; Land Force</label>
-                                <label class="units-qs-opt"><input type="checkbox" id="qs-naval" checked> &#9875; Naval Force</label>
+                                <label class="units-qs-opt"><input type="checkbox" id="qs-air"   checked> <span data-i18n="units-qs-air">&#9992; Air Force</span></label>
+                                <label class="units-qs-opt"><input type="checkbox" id="qs-land"  checked> <span data-i18n="units-qs-land">&#9878; Land Force</span></label>
+                                <label class="units-qs-opt"><input type="checkbox" id="qs-naval" checked> <span data-i18n="units-qs-naval">&#9875; Naval Force</span></label>
                             </div>
                         </div>
 
@@ -1099,35 +1125,36 @@
                         <!-- Create buttons -->
                         <div class="units-create-row">
                             <button type="button" id="units-create-btn" class="glass-btn units-create-btn" disabled>+ Create Army</button>
-                            <button type="button" id="units-create-and-add-btn" class="glass-btn secondary units-create-add-btn" disabled title="Create and keep this parent selected so you can quickly add another sibling">+ Create &amp; Add Another</button>
+                            <button type="button" id="units-create-and-place-btn" class="glass-btn units-create-place-btn" disabled data-i18n="units-create-and-place" data-i18n-title="units-create-and-place-title" title="Create this unit and immediately arm placement — click the map to set its location">+ Create &amp; Place</button>
+                            <button type="button" id="units-create-and-add-btn" class="glass-btn secondary units-create-add-btn" disabled data-i18n="units-create-add-another" data-i18n-title="units-create-add-another-title" title="Create and keep this parent selected so you can quickly add another sibling">+ Create &amp; Add Another</button>
                         </div>
-                        <div class="units-qa-hint">Press <kbd>Enter</kbd> in the name field to create quickly.</div>
+                        <div class="units-qa-hint"><span data-i18n="units-create-hint-pre">Press</span> <kbd>Enter</kbd> <span data-i18n="units-create-hint-post">in the name field to create quickly.</span></div>
 
                         <!-- Generate Children (non-Company units that are selected) -->
                         <div id="units-generate-section" class="units-generate-section" style="display:none">
-                            <button type="button" class="units-gen-toggle" id="units-gen-toggle">&#8853; Generate multiple children at once</button>
+                            <button type="button" class="units-gen-toggle" id="units-gen-toggle" data-i18n="units-gen-toggle">&#8853; Generate multiple children at once</button>
                             <div class="units-gen-form" id="units-gen-form" style="display:none">
                                 <div class="units-qa-fields">
                                     <div class="field">
-                                        <label class="field-label" for="units-gen-count">How many?</label>
+                                        <label class="field-label" for="units-gen-count" data-i18n="units-gen-count">How many?</label>
                                         <input type="number" id="units-gen-count" class="glass-input" min="1" max="20" value="3" />
                                     </div>
                                     <div class="field">
-                                        <label class="field-label" for="units-gen-prefix">Name prefix</label>
+                                        <label class="field-label" for="units-gen-prefix" data-i18n="units-gen-prefix">Name prefix</label>
                                         <input type="text" id="units-gen-prefix" class="glass-input" placeholder="e.g. Brigade" />
                                     </div>
                                 </div>
                                 <div id="units-gen-error" class="units-error" style="display:none" role="alert"></div>
-                                <button type="button" id="units-gen-btn" class="glass-btn secondary">&#9881; Generate</button>
+                                <button type="button" id="units-gen-btn" class="glass-btn secondary" data-i18n="units-gen-btn">&#9881; Generate</button>
                             </div>
                         </div>
 
                         <!-- No children message (Company selected) -->
                         <div id="units-no-children" class="units-no-children" style="display:none" title="Click to start a new Army">
                             <div class="units-no-children-msg">
-                                Company is the lowest level — it cannot contain child units.<br>
-                                Click <strong>Edit</strong> to modify it, or select a higher-level unit to add under.
-                                <div class="units-no-children-hint">Click anywhere here to start a <strong>+ New Army</strong></div>
+                                <span data-i18n="units-no-children-msg-1">Company is the lowest level — it cannot contain child units.</span><br>
+                                <span id="units-no-children-msg-2-wrap"></span>
+                                <div class="units-no-children-hint" id="units-no-children-hint-wrap"></div>
                             </div>
                         </div>
 
@@ -1136,70 +1163,70 @@
                     <!-- EDIT PANEL -->
                     <div id="units-edit-panel" class="units-edit-panel" style="display:none">
                         <div class="units-edit-panel-hdr">
-                            <span class="units-edit-panel-hdr-title">Edit Unit</span>
-                            <button type="button" id="units-edit-back-btn" class="units-edit-back-btn">&#8592; Back</button>
+                            <span class="units-edit-panel-hdr-title" data-i18n="units-edit-title">Edit Unit</span>
+                            <button type="button" id="units-edit-back-btn" class="units-edit-back-btn" data-i18n="units-edit-back">&#8592; Back</button>
                         </div>
                         <div class="units-edit-scroll">
                             <div class="units-section">
-                                <div class="units-section-label">Identity</div>
+                                <div class="units-section-label" data-i18n="units-edit-section-identity">Identity</div>
                                 <div class="units-section-fields">
                                     <div class="field">
-                                        <label class="field-label" for="units-edit-name">Name</label>
+                                        <label class="field-label" for="units-edit-name" data-i18n="units-name">Name</label>
                                         <input id="units-edit-name" type="text" class="glass-input" maxlength="200" autocomplete="off" />
                                     </div>
                                     <div class="field">
-                                        <label class="field-label" for="units-edit-code">Code</label>
+                                        <label class="field-label" for="units-edit-code" data-i18n="units-code">Code</label>
                                         <input id="units-edit-code" type="text" class="glass-input" maxlength="80" autocomplete="off" spellcheck="false" />
                                     </div>
                                 </div>
                             </div>
                             <div class="units-section">
-                                <div class="units-section-label">Side / Affiliation</div>
+                                <div class="units-section-label" data-i18n="units-edit-section-side">Side / Affiliation</div>
                                 <div class="units-side-btns" id="units-edit-side-btns">
-                                    <button type="button" class="units-side-btn active" data-side="friendly">&#9658; Friendly</button>
-                                    <button type="button" class="units-side-btn" data-side="hostile">&#9632; Hostile</button>
-                                    <button type="button" class="units-side-btn" data-side="neutral">&#9670; Neutral</button>
-                                    <button type="button" class="units-side-btn" data-side="unknown">? Unknown</button>
+                                    <button type="button" class="units-side-btn active" data-side="friendly" data-i18n="units-side-friendly">&#9658; Friendly</button>
+                                    <button type="button" class="units-side-btn" data-side="hostile" data-i18n="units-side-hostile">&#9632; Hostile</button>
+                                    <button type="button" class="units-side-btn" data-side="neutral" data-i18n="units-side-neutral">&#9670; Neutral</button>
+                                    <button type="button" class="units-side-btn" data-side="unknown" data-i18n="units-side-unknown">? Unknown</button>
                                 </div>
                             </div>
                             <div class="units-section">
-                                <div class="units-section-label">Classification</div>
+                                <div class="units-section-label" data-i18n="units-edit-section-classification">Classification</div>
                                 <div class="units-section-fields">
                                     <div class="field">
-                                        <label class="field-label" for="units-edit-type">Domain / Branch</label>
-                                        <input id="units-edit-type" type="text" class="glass-input" maxlength="120" autocomplete="off" placeholder="Air, Land, Naval, Support…" />
+                                        <label class="field-label" for="units-edit-type" data-i18n="units-edit-type-label">Domain / Branch</label>
+                                        <input id="units-edit-type" type="text" class="glass-input" maxlength="120" autocomplete="off" data-i18n-placeholder="units-edit-type-placeholder" placeholder="Air, Land, Naval, Support…" />
                                     </div>
                                     <div class="field">
-                                        <label class="field-label" for="units-edit-sidc">SIDC</label>
+                                        <label class="field-label" for="units-edit-sidc" data-i18n="units-sidc">SIDC</label>
                                         <input id="units-edit-sidc" type="text" class="glass-input" maxlength="60" autocomplete="off" spellcheck="false" />
                                     </div>
                                 </div>
                             </div>
                             <div class="units-section">
-                                <div class="units-section-label">Position in Hierarchy</div>
+                                <div class="units-section-label" data-i18n="units-edit-section-hierarchy">Position in Hierarchy</div>
                                 <div class="units-section-fields">
                                     <div class="field">
-                                        <label class="field-label">Level</label>
+                                        <label class="field-label" data-i18n="units-edit-level-label">Level</label>
                                         <div id="units-edit-level-display" class="units-edit-level-display"></div>
                                     </div>
                                     <div class="field">
-                                        <label class="field-label" for="units-edit-parent">Move under</label>
+                                        <label class="field-label" for="units-edit-parent" data-i18n="units-edit-move-under">Move under</label>
                                         <select id="units-edit-parent" class="glass-select"></select>
                                     </div>
                                 </div>
                             </div>
                             <div id="units-edit-error" class="units-error" style="display:none" role="alert"></div>
-                            <button type="button" id="units-save-btn" class="glass-btn units-save-btn">&#10004; Save Changes</button>
+                            <button type="button" id="units-save-btn" class="glass-btn units-save-btn" data-i18n="units-edit-save">&#10004; Save Changes</button>
                             <div id="units-edit-placement-row" class="units-edit-placement-row" style="display:none">
-                                <span class="units-edit-placement-status">&#128205; Placed on map</span>
-                                <button type="button" id="units-edit-unplace-btn" class="glass-btn secondary">Remove from map</button>
+                                <span class="units-edit-placement-status" data-i18n="units-placed-status">&#128205; Placed on map</span>
+                                <button type="button" id="units-edit-unplace-btn" class="glass-btn secondary" data-i18n="units-placed-remove">Remove from map</button>
                             </div>
                             <div class="units-danger-zone">
                                 <div class="units-danger-divider"></div>
                                 <div class="units-danger-row">
-                                    <button type="button" id="units-restore-btn" class="glass-btn secondary">Restore</button>
+                                    <button type="button" id="units-restore-btn" class="glass-btn secondary" data-i18n="units-edit-restore">Restore</button>
                                     <div class="units-danger-spacer"></div>
-                                    <button type="button" id="units-delete-btn" class="glass-btn danger">Delete</button>
+                                    <button type="button" id="units-delete-btn" class="glass-btn danger" data-i18n="units-edit-delete">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -1207,6 +1234,52 @@
 
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         STANDALONE PLACEMENT PANEL
+         Independent from the centred Units modal. Shown while the user
+         is placing a unit on the map; meanwhile the main modal is
+         "parked" (hidden) without losing its form state.
+         ═══════════════════════════════════════════════════════════════ -->
+    <div id="units-placement-panel" class="units-placement-panel" role="dialog" aria-modal="false" aria-labelledby="units-placement-panel-title" dir="ltr" hidden>
+        <div class="units-placement-panel-header">
+            <span id="units-placement-panel-title" class="units-placement-panel-title" data-i18n="units-placement-panel-title">Placement mode</span>
+        </div>
+        <div class="units-placement-panel-body">
+            <div id="units-placement-panel-status" class="units-placement-panel-status" data-i18n="units-placement-active">Placement mode active — click the map to set the location</div>
+            <div class="units-placement-panel-card">
+                <div id="units-placement-panel-symbol" class="units-placement-panel-symbol"></div>
+                <div class="units-placement-panel-info">
+                    <div id="units-placement-panel-name" class="units-placement-panel-name">&mdash;</div>
+                    <div class="units-placement-panel-meta">
+                        <span id="units-placement-panel-lvl" class="units-tree-level units-tree-level-0">Army</span>
+                        <span id="units-placement-panel-side" class="units-side-badge units-side-friendly">Friendly</span>
+                        <span id="units-placement-panel-code" class="units-ctx-sel-code"></span>
+                    </div>
+                    <div id="units-placement-panel-parent" class="units-placement-panel-parent" style="display:none">
+                        <span class="units-placement-panel-parent-label" data-i18n="units-placement-parent-label">Under</span>
+                        <span id="units-placement-panel-parent-name" class="units-placement-panel-parent-name"></span>
+                    </div>
+                </div>
+            </div>
+            <label class="units-placement-panel-options">
+                <input type="checkbox" id="units-placement-continuous" />
+                <span data-i18n="units-placement-continuous">Continuous placement (keep placing)</span>
+            </label>
+            <div class="units-placement-panel-actions">
+                <button type="button" id="units-placement-cancel-btn" class="glass-btn danger" data-i18n="units-placement-cancel">Cancel placement</button>
+                <button type="button" id="units-placement-back-btn" class="glass-btn secondary" data-i18n="units-placement-back">Back to details</button>
+            </div>
+            <div class="units-placement-panel-queue-wrap">
+                <div class="units-placement-panel-queue-header">
+                    <span class="units-placement-panel-queue-label" data-i18n="units-placement-queue-label">Place another unit</span>
+                    <span id="units-placement-panel-queue-count" class="units-placement-panel-queue-count"></span>
+                </div>
+                <div id="units-placement-panel-queue" class="units-placement-panel-queue" role="list"></div>
+                <div id="units-placement-panel-queue-empty" class="units-placement-panel-queue-empty" data-i18n="units-placement-queue-empty" style="display:none">No other unplaced units.</div>
             </div>
         </div>
     </div>
@@ -1265,6 +1338,40 @@
         </div>
     </div>
 
+    <!-- ORBAT tree view modal (military hierarchy chart) -->
+    <div id="orbat-modal" class="modal hidden" aria-hidden="true" dir="ltr">
+        <div class="modal-backdrop" id="orbat-modal-backdrop"></div>
+        <div class="modal-panel orbat-modal-panel" role="dialog" aria-modal="true" aria-label="ORBAT tree" dir="ltr">
+            <div class="modal-header orbat-header">
+                <div class="orbat-header-left">
+                    <svg class="orbat-header-icon" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7.5" y="2" width="5" height="4" rx="1"/><rect x="1.5" y="13" width="5" height="4" rx="1"/><rect x="7.5" y="13" width="5" height="4" rx="1"/><rect x="13.5" y="13" width="5" height="4" rx="1"/><path d="M10 6v3M4 13v-2h12v2M10 11v2"/></g></svg>
+                    <span class="modal-title" data-i18n="orbat-title">ORBAT</span>
+                    <span class="orbat-subject" id="orbat-subject-name">—</span>
+                </div>
+                <div class="orbat-header-tools">
+                    <div class="orbat-toolgroup">
+                        <button type="button" id="orbat-zoom-out" class="orbat-tool-btn" title="Zoom out" aria-label="Zoom out">&#8722;</button>
+                        <span id="orbat-zoom-label" class="orbat-zoom-label">100%</span>
+                        <button type="button" id="orbat-zoom-in" class="orbat-tool-btn" title="Zoom in" aria-label="Zoom in">&#43;</button>
+                    </div>
+                    <button type="button" id="orbat-fit-btn" class="orbat-tool-btn" data-i18n="orbat-fit" title="Fit to screen">Fit</button>
+                    <button type="button" id="orbat-expand-btn" class="orbat-tool-btn" data-i18n="orbat-expand-all" title="Expand all">&#9660; All</button>
+                    <button type="button" id="orbat-collapse-btn" class="orbat-tool-btn" data-i18n="orbat-collapse-all" title="Collapse all">&#9654; L1</button>
+                    <div class="orbat-divider"></div>
+                    <button type="button" id="orbat-export-png" class="orbat-tool-btn orbat-tool-primary" data-i18n="orbat-export-png" title="Export PNG">PNG</button>
+                    <button type="button" id="orbat-export-svg" class="orbat-tool-btn orbat-tool-primary" data-i18n="orbat-export-svg" title="Export SVG">SVG</button>
+                    <button type="button" id="orbat-modal-close" class="modal-close" data-i18n="close">Close</button>
+                </div>
+            </div>
+            <div class="orbat-body">
+                <div id="orbat-canvas" class="orbat-canvas">
+                    <div id="orbat-stage" class="orbat-stage"></div>
+                </div>
+                <div class="orbat-hint" data-i18n="orbat-hint">Drag to pan · Scroll to zoom · Click a node to collapse / expand</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Full symbol picker modal -->
     <div id="sidc-picker-modal" class="modal hidden" aria-hidden="true">
         <div class="modal-backdrop" id="sidc-picker-close"></div>
@@ -1294,6 +1401,7 @@
     <script src="dialog.js"></script>
     <script src="chat.js"></script>
     <script src="units.js"></script>
+    <script src="units-orbat.js?v=1"></script>
     <script src="i18n.js"></script>
     <script src="../lib/leaflet.js"></script>
     <script src="../lib/mgrs.min.js"></script>
@@ -1305,6 +1413,7 @@
     <script src="map-engine.js"></script>
     <script src="app.js?v=27"></script>
     <script src="units-map.js"></script>
+    <script src="units-orbat-dock.js?v=1"></script>
     <script src="tool-rail.js"></script>
 
     <!-- New modular panel system (ES modules — run after app.js) -->

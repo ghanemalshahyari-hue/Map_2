@@ -10,13 +10,14 @@
 25. adding hide button to the side bar to use the map more [Ghanem] [done]
 26. offline enviroment [Lahej] [done]
 12. when zooming the units level change[Lahej]
+27. remove empty rectangle when postioning units[Lahej]
+15. user must be able to cancel placemnt[Lahej]
+16. unit postion must not overlap[Lahej]
 
 -----------------------------------------------------
-27. remove empty rectangle when postioning units[Lahej]
 
 14. if symbol is droped outside the AOI it is not command
-15. user must be able to cancel placemnt[Lahej]
-16. unit postion must not overlap
+
 ------------------------------------------------------------
 6. Troops location choose
 7. add critical areas
@@ -29,3 +30,5 @@
 22. RBAC for user aceess is  not present 
 23. Auto backup for database
 24. ![alt text](image-1.png)   to automate this image based on the unit type 
+28. tree hierachy possibality to edit the symbol 
+29.s

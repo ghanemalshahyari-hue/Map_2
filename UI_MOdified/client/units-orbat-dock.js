@@ -596,14 +596,21 @@
     }
 
     // Inner helper — POSTs the placement and reflects it in the map. Used by
-    // both the single-drop path (placeUnitAt) and the formation path.
+    // both the single-drop path (placeUnitAt) and the formation path. Both
+    // call paths run the candidate latlng through AppUnitsMap.nudgeAwayFromOthers
+    // first so the dropped unit always lands at least 1000 m from every
+    // already-placed unit. For brigade-formation drops the calls are
+    // sequential, so each subsequent battalion/company nudges around the
+    // ones placed before it.
     async function placeAndAddMarker(unitId, latlng) {
+        const nudge = window.AppUnitsMap && window.AppUnitsMap.nudgeAwayFromOthers;
+        const safe = (typeof nudge === 'function') ? nudge(latlng, unitId) : latlng;
         try {
             const res = await fetch(`/api/units/${encodeURIComponent(unitId)}/place`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ lat: latlng.lat, lng: latlng.lng }),
+                body: JSON.stringify({ lat: safe.lat, lng: safe.lng }),
             });
             if (!res.ok) return false;
             const updated = await res.json();

@@ -317,17 +317,85 @@ function createSchema(db) {
     try { db.exec(`ALTER TABLE units ADD COLUMN placed_at TEXT NULL`); } catch (_) {}
 }
 
+// Generate a URL-safe random password. 16 bytes of base64url ≈ 128 bits of
+// entropy. We strip + / = so the password copies cleanly out of a text file
+// without shell-escaping headaches.
+function generateBootstrapPassword() {
+    return crypto.randomBytes(16).toString('base64')
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// Write the one-time bootstrap password to DATA_DIR/BOOTSTRAP_PASSWORD.txt
+// with mode 0600 (owner-only on POSIX; on Windows ACLs from the parent dir
+// apply). We deliberately do NOT print the password to stdout — log capture
+// systems (systemd journal, Docker, Electron debug log) would otherwise
+// retain admin credentials in cleartext indefinitely.
+function writeBootstrapPasswordFile(password) {
+    const filePath = path.join(_dataDir, 'BOOTSTRAP_PASSWORD.txt');
+    const body =
+        '# rmooz first-time bootstrap administrator password\r\n' +
+        '#\r\n' +
+        '# Username: admin\r\n' +
+        '# Password: ' + password + '\r\n' +
+        '#\r\n' +
+        '# Log in once with these credentials, change the password from the\r\n' +
+        '# Users panel, then DELETE THIS FILE. To skip random generation on\r\n' +
+        '# the next first-run, set the RMOOZ_BOOTSTRAP_PASSWORD env var\r\n' +
+        '# before starting the server.\r\n';
+    // Two-step write: open with O_CREAT|O_EXCL|O_WRONLY at 0600 so the file is
+    // never world-readable even briefly. If something already wrote the file
+    // (e.g. previous failed bootstrap), refuse rather than overwrite.
+    const fd = fs.openSync(filePath, fs.constants.O_CREAT | fs.constants.O_EXCL | fs.constants.O_WRONLY, 0o600);
+    try {
+        fs.writeSync(fd, body);
+    } finally {
+        fs.closeSync(fd);
+    }
+    // Belt and braces — re-apply 0600 in case umask widened it on creation.
+    try { fs.chmodSync(filePath, 0o600); } catch (_) { /* Windows: no-op */ }
+    return filePath;
+}
+
 function ensureBootstrapUser(db) {
     const username = 'admin';
     const existing = db.prepare('SELECT id FROM users WHERE username=?').get(username);
     if (existing) return;
     const id = genId();
     const t = nowIso();
-    const password = process.env.RMOOZ_BOOTSTRAP_PASSWORD || 'admin';
+
+    // Source of truth for the password:
+    //   1. RMOOZ_BOOTSTRAP_PASSWORD env var (operator-supplied) — silent.
+    //   2. Otherwise, a freshly generated random password — written to a
+    //      0600 file so the operator can read it once, then delete it.
+    // The previous default ('admin') is removed: shipping a known credential
+    // means any LAN reachable copy of rmooz is one guess away from admin.
+    const envPassword = process.env.RMOOZ_BOOTSTRAP_PASSWORD;
+    const password = envPassword && String(envPassword).length > 0
+        ? String(envPassword)
+        : generateBootstrapPassword();
+
     db.prepare(
         'INSERT INTO users (id, username, password_hash, display_name, role, created_at, updated_at) VALUES (?,?,?,?,?,?,?)'
     ).run(id, username, hashPassword(password), 'Administrator', 'planner', t, t);
-    console.log('[app-data] Created bootstrap user "' + username + '" (set RMOOZ_BOOTSTRAP_PASSWORD to override default password).');
+
+    if (envPassword) {
+        console.log('[app-data] Created bootstrap user "' + username + '" using RMOOZ_BOOTSTRAP_PASSWORD env var.');
+        return;
+    }
+    try {
+        const filePath = writeBootstrapPasswordFile(password);
+        console.log('[app-data] Created bootstrap user "' + username + '". One-time password written to ' + filePath + ' (read it, change the password in the Users panel, then DELETE that file).');
+    } catch (err) {
+        // Last-resort fallback: if the file can't be written, the operator has
+        // no way to log in. Print to stderr (not stdout) with a clear warning,
+        // and DROP the bootstrap user we just created so the next start can
+        // try again — better than leaving an unknown-password admin account.
+        try {
+            db.prepare('DELETE FROM users WHERE id=?').run(id);
+        } catch (_) { /* ignore — we'll surface the original error */ }
+        console.error('[app-data] FAILED to write bootstrap password file at ' + path.join(_dataDir, 'BOOTSTRAP_PASSWORD.txt') + ': ' + (err && err.message ? err.message : err));
+        console.error('[app-data] Bootstrap user not created. Set RMOOZ_BOOTSTRAP_PASSWORD and restart, or fix the data dir permissions.');
+    }
 }
 
 /**
@@ -474,7 +542,7 @@ function writeAllMessagesDb(messages) {
             );
         }
     });
-    tx();
+    tx.immediate();
 }
 
 function appendMessageDb(msg) {
@@ -514,7 +582,7 @@ function writeChatUsersDb(data) {
             ins.run(k, JSON.stringify(data[k]));
         }
     });
-    tx();
+    tx.immediate();
 }
 
 function readChatPresenceDb() {
@@ -543,7 +611,7 @@ function writeChatPresenceDb(data) {
             }
         }
     });
-    tx();
+    tx.immediate();
 }
 
 function readChatGroupsStoreDb() {
@@ -567,7 +635,101 @@ function writeChatGroupsStoreDb(store) {
             ins.run(sk, JSON.stringify(store.groups[sk]));
         }
     });
-    tx();
+    tx.immediate();
+}
+
+// ── Atomic chat read-modify-write helpers ──────────────────────────────
+//
+// Why these exist: every route that mutates groups / users / presence
+// previously did `read → modify in JS → writeAll`. Even though Node is
+// single-threaded today and better-sqlite3 calls are synchronous (so the
+// read and the write run in the same microtask), there are two real ways
+// for that pattern to lose data:
+//
+//   1. Anyone adds an `await` between the read and the write — a future
+//      refactor, or moving to a different DB driver — and concurrent
+//      requests start interleaving.
+//   2. The server is run multi-process (cluster, multiple Electron
+//      windows sharing app.db, etc.) and two writers race at the OS
+//      level on the same SQLite file.
+//
+// The fix is to do the read AND the write inside one IMMEDIATE
+// transaction. BEGIN IMMEDIATE acquires the SQLite write lock up front,
+// so concurrent transactions serialize on it instead of overwriting
+// each other.
+
+// Run a read-modify-write of the full chat_groups store inside one
+// IMMEDIATE transaction. The mutator receives a fresh `{ groups }`
+// object read inside the transaction; whatever it leaves in `store`
+// is what gets persisted. The mutator's return value is forwarded to
+// the caller, so it can signal "not found" / "permission denied" /
+// the new group id, etc.
+function updateChatGroupsAtomic(mutator) {
+    const db = getDb();
+    if (!db) return null;
+    const tx = db.transaction(() => {
+        const rows = db.prepare('SELECT storage_key, payload_json FROM chat_groups').all();
+        const store = { groups: {} };
+        for (const r of rows) {
+            try { store.groups[r.storage_key] = JSON.parse(r.payload_json); } catch { /* skip corrupt */ }
+        }
+        const ret = mutator(store);
+        // Diff would be nicer, but the table is tiny and DELETE+INSERT
+        // inside the same transaction is still atomic to outside readers.
+        db.prepare('DELETE FROM chat_groups').run();
+        const ins = db.prepare('INSERT OR REPLACE INTO chat_groups (storage_key, payload_json) VALUES (?,?)');
+        for (const sk of Object.keys(store.groups || {})) {
+            ins.run(sk, JSON.stringify(store.groups[sk]));
+        }
+        return ret;
+    });
+    return tx.immediate();
+}
+
+// Record a presence ping for one client in one room. Optional maxAgeMs
+// triggers a stale-row prune in the same transaction so presence stays
+// bounded without a separate maintenance call.
+function recordPresenceDb(roomId, clientId, name, maxAgeMs) {
+    const db = getDb();
+    if (!db) return false;
+    const rid = String(roomId || '');
+    const cid = String(clientId || '');
+    if (!rid || !cid) return false;
+    const tx = db.transaction(() => {
+        if (Number.isFinite(maxAgeMs) && maxAgeMs > 0) {
+            const cutoff = new Date(Date.now() - maxAgeMs).toISOString();
+            db.prepare('DELETE FROM chat_presence_rows WHERE at < ?').run(cutoff);
+        }
+        db.prepare(
+            'INSERT OR REPLACE INTO chat_presence_rows (room_id, client_id, name, at) VALUES (?,?,?,?)'
+        ).run(rid, cid, String(name || ''), nowIso());
+    });
+    tx.immediate();
+    return true;
+}
+
+// Drop presence rows older than maxAgeMs. Single DELETE — atomic by
+// itself; expose it so the members endpoint can trim stale presence
+// without a read-modify-write.
+function prunePresenceDb(maxAgeMs) {
+    const db = getDb();
+    if (!db) return 0;
+    if (!Number.isFinite(maxAgeMs) || maxAgeMs <= 0) return 0;
+    const cutoff = new Date(Date.now() - maxAgeMs).toISOString();
+    const r = db.prepare('DELETE FROM chat_presence_rows WHERE at < ?').run(cutoff);
+    return r.changes || 0;
+}
+
+// Upsert one chat-user row. Single INSERT OR REPLACE — atomic.
+function upsertChatUserDb(clientId, userObj) {
+    const db = getDb();
+    if (!db) return false;
+    const cid = String(clientId || '');
+    if (!cid) return false;
+    db.prepare(
+        'INSERT OR REPLACE INTO chat_users_map (client_id, user_json) VALUES (?,?)'
+    ).run(cid, JSON.stringify(userObj || {}));
+    return true;
 }
 
 function handleAuthApi(req, res, pathname, method, sendJson, readJsonBody) {
@@ -822,6 +984,10 @@ module.exports = {
     writeChatPresenceDb,
     readChatGroupsStoreDb,
     writeChatGroupsStoreDb,
+    updateChatGroupsAtomic,
+    recordPresenceDb,
+    prunePresenceDb,
+    upsertChatUserDb,
     handleAuthApi,
     handlePlansApi,
     handlePrefsApi,

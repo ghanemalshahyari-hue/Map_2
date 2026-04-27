@@ -636,35 +636,89 @@
         if (ok) render();
     }
 
+    // Walk the subtree rooted at `rootId` (inclusive) and return every
+    // descendant id that is currently PLACED on the map. Used by the unplace
+    // flow so removing a Brigade also removes its battalions/companies, etc.
+    function collectPlacedSubtreeIds(rootId) {
+        const childrenByParent = new Map();
+        for (const u of unitsFlat) {
+            if (!u || u.deleted_at) continue;
+            const list = childrenByParent.get(u.parent_id) || [];
+            list.push(u);
+            childrenByParent.set(u.parent_id, list);
+        }
+        const out = [];
+        const stack = [rootId];
+        const seen = new Set();
+        while (stack.length) {
+            const id = stack.pop();
+            if (seen.has(id)) continue;
+            seen.add(id);
+            const u = unitsFlat.find(x => x.id === id && !x.deleted_at);
+            if (!u) continue;
+            if (u.lat != null && u.lng != null) out.push(id);
+            const kids = childrenByParent.get(id) || [];
+            for (const k of kids) stack.push(k.id);
+        }
+        return out;
+    }
+
     // Click handler for the green "placed" badge: drops the unit's map
     // marker and clears its coordinates server-side. Updates the local
     // cache optimistically so the badge disappears immediately, then
     // dispatches `units:removed` so the map (and any other listeners)
-    // sync up.
+    // sync up. Cascades to every placed descendant so unplacing a Brigade
+    // also pulls its battalions and companies off the map.
     async function unplaceUnit(unitId) {
-        const local = unitsFlat.find(u => u.id === unitId);
-        const prevLat = local ? local.lat : null;
-        const prevLng = local ? local.lng : null;
-        if (local) { local.lat = null; local.lng = null; }
-        patchNodeLatLng(roots, unitId, null, null);
+        const ids = collectPlacedSubtreeIds(unitId);
+        if (ids.length === 0) {
+            // Nothing actually placed — but the user clicked the badge, so
+            // still issue a server unplace for the unit itself (best-effort).
+            ids.push(unitId);
+        }
+
+        // Snapshot prior coords for rollback on per-unit failure.
+        const prev = new Map();
+        for (const id of ids) {
+            const u = unitsFlat.find(x => x.id === id);
+            prev.set(id, { lat: u ? u.lat : null, lng: u ? u.lng : null });
+        }
+
+        // Optimistic local clear + map marker removal.
+        for (const id of ids) {
+            const u = unitsFlat.find(x => x.id === id);
+            if (u) { u.lat = null; u.lng = null; }
+            patchNodeLatLng(roots, id, null, null);
+            try { window.AppUnitsMap?.removeMarker?.(id); } catch (_) { /* ignore */ }
+        }
         render();
-        try {
-            window.AppUnitsMap?.removeMarker?.(unitId);
-        } catch (_) { /* ignore */ }
-        try {
-            const res = await fetch(`/api/units/${encodeURIComponent(unitId)}/unplace`, {
+
+        // Fire all server unplace calls in parallel; roll back any that fail.
+        const results = await Promise.allSettled(ids.map(id =>
+            fetch(`/api/units/${encodeURIComponent(id)}/unplace`, {
                 method: 'POST',
                 credentials: 'include',
-            });
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            document.dispatchEvent(new CustomEvent('units:removed', { detail: { unitId } }));
-        } catch (err) {
-            console.warn('[orbat-dock] unplace failed for', unitId, err);
-            // Roll back the optimistic update so the badge comes back.
-            if (local) { local.lat = prevLat; local.lng = prevLng; }
-            patchNodeLatLng(roots, unitId, prevLat, prevLng);
-            render();
-        }
+            }).then(res => {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return id;
+            })
+        ));
+
+        let anyRollback = false;
+        results.forEach((r, i) => {
+            const id = ids[i];
+            if (r.status === 'fulfilled') {
+                document.dispatchEvent(new CustomEvent('units:removed', { detail: { unitId: id } }));
+            } else {
+                console.warn('[orbat-dock] unplace failed for', id, r.reason);
+                const p = prev.get(id);
+                const u = unitsFlat.find(x => x.id === id);
+                if (u && p) { u.lat = p.lat; u.lng = p.lng; }
+                patchNodeLatLng(roots, id, p?.lat ?? null, p?.lng ?? null);
+                anyRollback = true;
+            }
+        });
+        if (anyRollback) render();
     }
 
     function patchNodeLatLng(nodes, id, lat, lng) {

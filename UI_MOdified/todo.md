@@ -9,7 +9,7 @@
 18. snap to the cnter of the (x) point [Ghanem] [done]
 25. adding hide button to the side bar to use the map more [Ghanem] [done]
 26. offline enviroment [Lahej] [done]
-12. when zooming the units level change[Lahej]
+12. when zooming the units level change[Lahej] [done]
 
 -----------------------------------------------------
 27. remove empty rectangle when postioning units[Lahej]
@@ -29,3 +29,4 @@
 22. RBAC for user aceess is  not present 
 23. Auto backup for database
 24. ![alt text](image-1.png)   to automate this image based on the unit type 
+25. Modify the draw pannel to be more profitional and easy to use 

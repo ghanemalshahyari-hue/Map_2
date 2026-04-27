@@ -23,12 +23,12 @@
             <div class="header-right">
                 <button id="chat-toggle-btn" class="header-btn header-btn--chat" type="button" aria-expanded="false" aria-controls="chat-sidebar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    دردشة
+                    <span data-i18n="chat-btn">Chat</span>
                 </button>
                 <button id="lang-toggle-btn" class="header-btn" type="button" title="Switch language">عربي</button>
                 <div id="server-account-bar" class="server-account-bar hidden" aria-label="Server plans">
                     <select id="server-plan-select" class="glass-select server-plan-select" title="Plans"></select>
-                    <button type="button" id="server-new-plan-btn" class="header-btn" title="New plan">+ Plan</button>
+                    <button type="button" id="server-new-plan-btn" class="header-btn" data-i18n-title="new-plan-title" title="New plan"><span data-i18n="new-plan-btn">+ Plan</span></button>
                     <button type="button" id="server-logout-btn" class="header-btn" data-i18n-title="logout" data-i18n="logout" title="Logout">Logout</button>
                 </div>
                 <button id="theme-toggle-btn" class="header-btn" type="button" title="تبديل الوضع الفاتح/الداكن">☀</button>
@@ -305,20 +305,9 @@
                     <!-- Symbol tool panel -->
                     <section class="tools-section tool-panel symbol-panel" id="symbol-manager" style="display: none;">
 
-                        <!-- Step indicator -->
-                        <div class="step-indicator" id="symbol-step-indicator">
-                            <div class="step-dot active" data-step="1" title="Choose symbol"></div>
-                            <div class="step-connector"></div>
-                            <div class="step-dot" data-step="2" title="Set identity"></div>
-                            <div class="step-connector"></div>
-                            <div class="step-dot" data-step="3" title="Configure"></div>
-                            <div class="step-connector"></div>
-                            <div class="step-dot" data-step="4" title="Place"></div>
-                        </div>
-
                         <!-- Search bar -->
                         <div class="symbol-search-wrap">
-                            <input type="text" id="symbol-search-input" class="symbol-search-input" data-i18n-placeholder="symbol-search-placeholder" placeholder="Search symbols... (e.g. Infantry, HQ, Recon)" autocomplete="off" spellcheck="false" />
+                            <input type="text" id="symbol-search-input" class="symbol-search-input" data-i18n-placeholder="symbol-search-placeholder" placeholder="Filter saved symbols (press Enter to open Library)" autocomplete="off" spellcheck="false" />
                             <svg class="symbol-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         </div>
 
@@ -332,15 +321,43 @@
                             </div>
                             <div class="symbol-preview-meta">
                                 <div id="picked-sidc-display" class="sidc-selected-display" data-i18n="apply-symbol">No symbol selected</div>
-                                <div id="sidc-code-display" class="code-display muted"></div>
+                                <!-- Raw SIDC kept in DOM for the controller, but visually hidden from novice users.
+                                     A read-only mirror is shown inside the SIDC Code (Expert) disclosure below. -->
+                                <div id="sidc-code-display" class="code-display muted sr-only"></div>
                             </div>
                             <!-- Summary tags (populated by JS) -->
                             <div class="symbol-summary" id="symbol-summary"></div>
                         </div>
 
+                        <!-- Empty-state guidance (shown when no symbol picked) -->
+                        <div class="symbol-onboarding" id="symbol-onboarding">
+                            <div class="symbol-onboarding-step">
+                                <span class="symbol-onboarding-num">1</span>
+                                <span data-i18n="symbol-onboard-step1">Pick from Common symbols below, or browse the Library</span>
+                            </div>
+                            <div class="symbol-onboarding-step">
+                                <span class="symbol-onboarding-num">2</span>
+                                <span data-i18n="symbol-onboard-step2">Choose the side (Friend / Hostile / …)</span>
+                            </div>
+                            <div class="symbol-onboarding-step">
+                                <span class="symbol-onboarding-num">3</span>
+                                <span data-i18n="symbol-onboard-step3">Click the map to place it</span>
+                            </div>
+                        </div>
+
+                        <!-- Identity (Side / Affiliation) — kept right under the preview so users see the link -->
+                        <div class="panel-section symbol-identity-inline">
+                            <div class="segmented-control identity-swatch-group" id="symbol-affiliation-group">
+                                <button type="button" class="segment-btn active" data-affiliation="3" title="Friendly"><span class="identity-swatch swatch-friendly"></span><span data-i18n="symbol-side-friendly">Friendly</span></button>
+                                <button type="button" class="segment-btn" data-affiliation="6" title="Hostile"><span class="identity-swatch swatch-hostile"></span><span data-i18n="symbol-side-enemy">Hostile</span></button>
+                                <button type="button" class="segment-btn" data-affiliation="4" title="Neutral"><span class="identity-swatch swatch-neutral"></span><span data-i18n="symbol-side-neutral">Neutral</span></button>
+                                <button type="button" class="segment-btn" data-affiliation="1" title="Unknown"><span class="identity-swatch swatch-unknown"></span><span data-i18n="symbol-side-unknown">Unknown</span></button>
+                            </div>
+                        </div>
+
                         <!-- Browse & Saved Symbols row -->
                         <div class="panel-section">
-                            <button id="open-sidc-picker" class="glass-btn" type="button">
+                            <button id="open-sidc-picker" class="glass-btn secondary" type="button">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                                 <span data-i18n="open-picker">Browse Symbol Library</span>
                             </button>
@@ -370,18 +387,6 @@
                         </div>
 
                         <hr class="section-divider" />
-
-                        <!-- Who is it? (Side / Affiliation) -->
-                        <div class="panel-section">
-                            <label class="field-label" data-i18n="symbol-side-label">Who is it?</label>
-                            <span class="field-sublabel" data-i18n="symbol-identity-label">Standard identity</span>
-                            <div class="segmented-control" id="symbol-affiliation-group">
-                                <button type="button" class="segment-btn active" data-affiliation="3" title="Friendly" data-i18n="symbol-side-friendly">Friendly</button>
-                                <button type="button" class="segment-btn" data-affiliation="6" title="Hostile" data-i18n="symbol-side-enemy">Hostile</button>
-                                <button type="button" class="segment-btn" data-affiliation="4" title="Neutral" data-i18n="symbol-side-neutral">Neutral</button>
-                                <button type="button" class="segment-btn" data-affiliation="1" title="Unknown" data-i18n="symbol-side-unknown">Unknown</button>
-                            </div>
-                        </div>
 
                         <!-- Label & Notes card -->
                         <div class="builder-card">
@@ -425,6 +430,8 @@
                             <details class="panel-section advanced-details" style="margin-top:8px;">
                                 <summary class="details-summary">SIDC Code (Expert)</summary>
                                 <div class="advanced-fields">
+                                    <label class="field-label">Current SIDC</label>
+                                    <div id="sidc-code-mirror" class="code-display muted" style="font-family:monospace;font-size:0.78rem;letter-spacing:0.04em;word-break:break-all;padding:6px 0;"></div>
                                     <label for="sidc-manual" class="field-label">Raw SIDC</label>
                                     <div style="display:flex;gap:6px;align-items:center;">
                                         <input id="sidc-manual" class="glass-input" type="text" placeholder="e.g. 10031000001211000000" style="flex:1;" />
@@ -747,6 +754,9 @@
                 </section>
             </aside>
 
+            <!-- Peek tab — shown only while the context panel is minimized; click to restore. -->
+            <button type="button" id="context-panel-peek" class="context-panel-peek hidden" aria-label="Show panel" title="Show panel" data-i18n-title="sidebar-show">&#x25B8;</button>
+
             <!-- ── UTILITY PANEL (slide-out from right of context panel) ── -->
             <aside class="utility-panel hidden" id="utility-panel" aria-label="Settings & Utilities">
                 <div class="utility-panel-header">
@@ -781,6 +791,9 @@
 
             <!-- ── MAP WORKSPACE ── -->
             <main class="map-workspace">
+                <!-- Minimize button — anchored to the inner edge of the context panel
+                     (left edge of the map area in LTR; right edge in RTL).  -->
+                <button type="button" id="context-panel-minimize" class="context-panel-minimize" title="Minimize" aria-label="Minimize" data-i18n-title="sidebar-minimize">&#x25C2;</button>
                 <div class="map-statusbar" id="map-statusbar">
                     <div class="statusbar-tool" id="statusbar-tool-display">Select</div>
                     <div class="statusbar-divider">|</div>
@@ -822,6 +835,9 @@
                             <span class="orbat-dock-hint" data-i18n="orbat-dock-hint">— drag a unit onto the map to position it</span>
                         </div>
                         <div class="orbat-dock-tools">
+                            <button type="button" id="orbat-dock-collapse" class="orbat-dock-tool-btn orbat-dock-collapse-btn" data-i18n-title="orbat-dock-collapse" title="Collapse" aria-label="Collapse" aria-expanded="true">
+                                <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
                             <button type="button" id="orbat-dock-refresh" class="orbat-dock-tool-btn" title="Refresh" aria-label="Refresh">&#x21bb;</button>
                             <button type="button" id="orbat-dock-close" class="orbat-dock-tool-btn" title="Close" aria-label="Close">&times;</button>
                         </div>
@@ -1414,6 +1430,7 @@
     <script src="app.js?v=27"></script>
     <script src="units-map.js"></script>
     <script src="units-orbat-dock.js?v=1"></script>
+    <script src="sidebar-minimize.js?v=1"></script>
     <script src="tool-rail.js"></script>
 
     <!-- New modular panel system (ES modules — run after app.js) -->

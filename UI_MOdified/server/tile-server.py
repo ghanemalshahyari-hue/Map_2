@@ -11,6 +11,26 @@ PORT = 8080
 # maps/ folder lives at the project root (parent of server/)
 MAPS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'maps')
 
+_format_cache = {}
+
+def get_tile_format(tileset):
+    if tileset in _format_cache:
+        return _format_cache[tileset]
+    tile_path = os.path.join(MAPS_DIR, tileset + '.mbtiles')
+    fmt = 'png'
+    try:
+        conn = sqlite3.connect(tile_path)
+        cur = conn.cursor()
+        cur.execute("SELECT value FROM metadata WHERE name='format'")
+        row = cur.fetchone()
+        if row and row[0]:
+            fmt = str(row[0]).lower()
+        conn.close()
+    except Exception:
+        pass
+    _format_cache[tileset] = fmt
+    return fmt
+
 def get_tile(tileset, z, x, y):
     tile_path = os.path.join(MAPS_DIR, tileset + '.mbtiles')
     if not os.path.exists(tile_path):
@@ -39,8 +59,12 @@ class TileHandler(http.server.BaseHTTPRequestHandler):
             y = y_ext.rsplit('.', 1)[0] if '.' in y_ext else y_ext
             data = get_tile(tileset, z, x, y)
             if data:
+                fmt = get_tile_format(tileset)
+                ctype = 'image/jpeg' if fmt in ('jpg', 'jpeg') else (
+                    'image/webp' if fmt == 'webp' else 'image/png'
+                )
                 self.send_response(200)
-                self.send_header('Content-Type', 'image/png')
+                self.send_header('Content-Type', ctype)
                 self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 self.wfile.write(data)

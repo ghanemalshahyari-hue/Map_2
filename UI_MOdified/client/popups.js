@@ -36,7 +36,7 @@
             getFeatureDisplayNameInputHtml, getDrawingRotateControlsHtml, mapPopupCloseButtonHtml,
             getDistanceUnitPrimary,
         } = _ctx;
-        const { haversineDistance, kmToNauticalMiles } = window.AppUtils;
+        const { haversineDistance, kmToNauticalMiles, bearingDegrees } = window.AppUtils;
 
         const color = data.color || '#3b82f6';
         const fillStyle = data.fillStyle || DEFAULT_GEO_FILL_STYLE;
@@ -99,13 +99,7 @@
             </div>`;
         let geoCoordBlock = '';
         if (geoType === 'distance') {
-            const pts = data.points?.length ? data.points : (el?.getLatLngs?.() || []);
-            const flatPts = Array.isArray(pts[0]) ? pts.flat() : pts;
-            geoCoordBlock = flatPts.slice(0, 10).map((p, i) => {
-                const lat = p?.lat ?? p?.[0], lng = p?.lng ?? p?.[1];
-                if (lat == null || lng == null) return '';
-                return `<label style="display:block;margin:4px 0;font-size:0.7rem;color:#6b7280;text-align:left;">${i + 1}: ${coordInputHtml('geo-coord-input', lat, lng, `data-index="${i}"`, 'width:100%;max-width:200px;padding:4px 6px;font-size:0.75rem;border:1px solid #cbd5e1;border-radius:4px;')}</label>`;
-            }).filter(Boolean).join('');
+            // Distance routes render their coords inline inside the merged waypoint cards below.
         } else if ((geoType === 'range-circle' || geoType === 'circle-2pt' || geoType === 'range-sector' || geoType === 'semi-circle' || geoType === 'polygon') && data.center) {
             geoCoordBlock = `<label style="display:block;margin:4px 0;font-size:0.7rem;color:#6b7280;text-align:left;">Center: ${coordInputHtml('geo-coord-input geo-coord-center', data.center.lat, data.center.lng, '', 'width:100%;max-width:200px;padding:4px 6px;font-size:0.75rem;border:1px solid #cbd5e1;border-radius:4px;')}</label>`;
         } else if ((geoType === 'rectangle' || geoType === 'oval' || geoType === 'minefield') && data.corners) {
@@ -223,37 +217,51 @@
             const waypointLabel = typeof t === 'function' ? t('geo-waypoint') : 'Waypoint';
             const addPointLabel = typeof t === 'function' ? t('geo-add-waypoint') : 'Add point';
             const waypointsLabel = typeof t === 'function' ? t('geo-waypoints') : 'Waypoints';
-            distanceWaypointsHtml = `
-                <div style="margin:8px 0;text-align:left;border-top:1px solid #e5e7eb;padding-top:8px;">
-                    <div style="font-size:0.75rem;color:#6b7280;margin-bottom:6px;font-weight:600;">${waypointsLabel}</div>
-                    <div class="geo-distance-waypoints" style="max-height:120px;overflow-y:auto;">
-                        ${flatPts.map((_, i) => {
-                            const label = labels[i] || '';
-                            const row = `<div class="geo-waypoint-row" data-index="${i}" style="display:flex;align-items:center;gap:6px;margin:4px 0;">
-                                <span style="font-size:0.75rem;min-width:60px;">${waypointLabel} ${i + 1}:</span>
-                                <input type="text" class="geo-waypoint-name" data-index="${i}" value="${escapeHtml(label)}" placeholder="${waypointLabel} ${i + 1}" style="flex:1;padding:4px 6px;font-size:0.8rem;border:1px solid #cbd5e1;border-radius:4px;">
-                                <button type="button" class="geo-remove-waypoint-btn" data-index="${i}" style="font-size:0.75rem;color:#dc2626;cursor:pointer;padding:2px 6px;">−</button>
-                            </div>`;
-                            let legHtml = '';
-                            if (i < flatPts.length - 1) {
-                                const p0 = flatPts[i];
-                                const p1 = flatPts[i + 1];
-                                const lat0 = p0.lat ?? p0[0];
-                                const lng0 = p0.lng ?? p0[1];
-                                const lat1 = p1.lat ?? p1[1];
-                                const lng1 = p1.lng ?? p1[1];
-                                const segKm = haversineDistance(lat0, lng0, lat1, lng1) / 1000;
-                                const dec = segKm >= 100 ? 1 : 2;
-                                const segBetween = typeof t === 'function' ? t('geo-segment-between', String(i + 1), String(i + 2)) : `Leg ${i + 1}→${i + 2}:`;
-                                legHtml = `<div class="geo-waypoint-leg-distance" style="font-size:0.72rem;color:#64748b;margin:0 0 6px 2px;text-align:left;display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;">
-                                    <span>${escapeHtml(segBetween)}</span>
-                                    <span dir="ltr" style="unicode-bidi:isolate;font-weight:600;color:#475569;">${formatKmAndNm(segKm, dec)}</span>
-                                </div>`;
-                            }
-                            return row + legHtml;
-                        }).join('')}
+            const removeTitle = typeof t === 'function' ? t('remove') : 'Remove';
+            const cards = flatPts.map((p, i) => {
+                const lat = p?.lat ?? p?.[0];
+                const lng = p?.lng ?? p?.[1];
+                const label = labels[i] || '';
+                const placeholder = `${waypointLabel} ${i + 1}`;
+                const coordHtml = (lat != null && lng != null)
+                    ? coordInputHtml('geo-coord-input geo-waypoint-coord-input', lat, lng, `data-index="${i}"`, '')
+                    : '';
+                const card = `<div class="geo-waypoint-card" data-index="${i}">
+                    <div class="geo-waypoint-card-head">
+                        <span class="geo-waypoint-num">${i + 1}</span>
+                        <input type="text" class="geo-waypoint-name" data-index="${i}" value="${escapeHtml(label)}" placeholder="${escapeHtml(placeholder)}">
+                        <button type="button" class="geo-remove-waypoint-btn" data-index="${i}" title="${escapeHtml(removeTitle)}" aria-label="${escapeHtml(removeTitle)}">×</button>
                     </div>
-                    <button type="button" class="geo-add-waypoint-btn" style="margin-top:6px;padding:6px 12px;font-size:0.8rem;cursor:pointer;width:100%;">${addPointLabel}</button>
+                    <div class="geo-waypoint-card-coord">${coordHtml}</div>
+                </div>`;
+                let legHtml = '';
+                if (i < flatPts.length - 1) {
+                    const p1 = flatPts[i + 1];
+                    const lat1 = p1?.lat ?? p1?.[0];
+                    const lng1 = p1?.lng ?? p1?.[1];
+                    if (lat != null && lng != null && lat1 != null && lng1 != null) {
+                        const segKm = haversineDistance(lat, lng, lat1, lng1) / 1000;
+                        const dec = segKm >= 100 ? 1 : 2;
+                        const brg = bearingDegrees({ lat, lng }, { lat: lat1, lng: lng1 });
+                        const brgStr = brg.toFixed(0).padStart(3, '0') + '°';
+                        const legSrLabel = typeof t === 'function'
+                            ? t('geo-segment-between', String(i + 1), String(i + 2))
+                            : `Leg ${i + 1}→${i + 2}`;
+                        legHtml = `<div class="geo-waypoint-leg" aria-label="${escapeHtml(legSrLabel)}">
+                            <span class="geo-waypoint-leg-spine" aria-hidden="true">↓</span>
+                            <span class="geo-waypoint-leg-dist" dir="ltr">${formatKmAndNm(segKm, dec)}</span>
+                            <span class="geo-waypoint-leg-sep" aria-hidden="true">·</span>
+                            <span class="geo-waypoint-leg-bearing" dir="ltr">${brgStr}</span>
+                        </div>`;
+                    }
+                }
+                return card + legHtml;
+            }).join('');
+            distanceWaypointsHtml = `
+                <div class="geo-distance-waypoints-section">
+                    <div class="geo-distance-waypoints-title">${escapeHtml(waypointsLabel)}</div>
+                    <div class="geo-distance-waypoints">${cards}</div>
+                    <button type="button" class="geo-add-waypoint-btn">+ ${escapeHtml(addPointLabel)}</button>
                 </div>
             `;
         }

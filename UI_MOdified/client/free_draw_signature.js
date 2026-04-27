@@ -23,10 +23,29 @@
     let selectedFlankTag = 'battalion';
     let setupComplete = false;           // true only after Start is clicked with valid selections
     let changeSetupBtn = null;
-    let savedBatFront = 8;
-    let savedBatDeep = 20;
-    let savedBrigFront = 20;
-    let savedBrigDeep = 40;
+    // Defaults sourced from window.AppConfig.FLANK_DOCTRINE so doctrine can be
+    // changed without editing this file. Falls back to standard 8/20/20/40 if
+    // the config object is missing or malformed.
+    function _doctrineDefaults() {
+        try {
+            const fd = window.AppConfig && window.AppConfig.FLANK_DOCTRINE;
+            const p = fd && typeof fd.current === 'function' ? fd.current() : null;
+            if (p && p.battalion && p.brigade) {
+                return {
+                    batFront:  Number(p.battalion.front) || 8,
+                    batDeep:   Number(p.battalion.deep)  || 20,
+                    brigFront: Number(p.brigade.front)   || 20,
+                    brigDeep:  Number(p.brigade.deep)    || 40
+                };
+            }
+        } catch (_) { /* fall through */ }
+        return { batFront: 8, batDeep: 20, brigFront: 20, brigDeep: 40 };
+    }
+    const _fdDefaults = _doctrineDefaults();
+    let savedBatFront  = _fdDefaults.batFront;
+    let savedBatDeep   = _fdDefaults.batDeep;
+    let savedBrigFront = _fdDefaults.brigFront;
+    let savedBrigDeep  = _fdDefaults.brigDeep;
     let _initialized = false;
 
     // ── Default/favorite formation persistence ──

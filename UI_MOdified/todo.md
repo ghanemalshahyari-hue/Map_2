@@ -9,12 +9,13 @@
 18. snap to the cnter of the (x) point [Ghanem]
 25. adding hide button to the side bar to use the map more [Ghanem]
 26. offline enviroment [Lahej]
+12. when zooming the units level change[Lahej]
 
 -----------------------------------------------------
+27. remove empty rectangle when postioning units[Lahej]
 
-12. when zooming the units level change
 14. if symbol is droped outside the AOI it is not command
-15. user must be able to cancel placemnt
+15. user must be able to cancel placemnt[Lahej]
 16. unit postion must not overlap
 ------------------------------------------------------------
 6. Troops location choose

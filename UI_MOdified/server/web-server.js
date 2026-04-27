@@ -48,6 +48,24 @@ function initUnitsDb() {
     return appData.getDb();
 }
 
+// Auth gate for state-changing endpoints. Returns the authenticated user or
+// `null` (after writing a 401 to res). Use as:
+//
+//     const user = requireAuthenticatedUser(req, res);
+//     if (!user) return;
+//
+// We deliberately do NOT distinguish "no cookie" from "expired/invalid
+// cookie" in the response body — both surface the same 401 so the
+// response can't be used as an account-existence oracle.
+function requireAuthenticatedUser(req, res) {
+    const user = appData.getSessionUser(req);
+    if (!user) {
+        sendJson(res, 401, { error: 'Authentication required' });
+        return null;
+    }
+    return user;
+}
+
 function nowIso() {
     return new Date().toISOString();
 }
@@ -138,10 +156,13 @@ function readAllMessages() {
 
 function writeAllMessages(messages) {
     if (appData.getDb()) return appData.writeAllMessagesDb(messages);
+    // JSON fallback: write via temp+rename so a crash mid-write doesn't
+    // corrupt the file. Still racy across multiple processes, but safe
+    // for this single-process server.
     try {
-        fs.writeFileSync(CHAT_FILE, JSON.stringify(messages, null, 2), 'utf8');
-    } catch {
-        // ignore write errors in this minimal server
+        appData.atomicWriteFile(CHAT_FILE, JSON.stringify(messages, null, 2));
+    } catch (err) {
+        console.warn('[chat] failed to persist messages:', err && err.message ? err.message : err);
     }
 }
 
@@ -238,8 +259,10 @@ function readChatUsers() {
 function writeChatUsers(data) {
     if (appData.getDb()) return appData.writeChatUsersDb(data);
     try {
-        fs.writeFileSync(CHAT_USERS_FILE, JSON.stringify(data, null, 2), 'utf8');
-    } catch {}
+        appData.atomicWriteFile(CHAT_USERS_FILE, JSON.stringify(data, null, 2));
+    } catch (err) {
+        console.warn('[chat] failed to persist chat-users:', err && err.message ? err.message : err);
+    }
 }
 
 function readChatPresence() {
@@ -256,8 +279,10 @@ function readChatPresence() {
 function writeChatPresence(data) {
     if (appData.getDb()) return appData.writeChatPresenceDb(data);
     try {
-        fs.writeFileSync(CHAT_PRESENCE_FILE, JSON.stringify(data, null, 2), 'utf8');
-    } catch {}
+        appData.atomicWriteFile(CHAT_PRESENCE_FILE, JSON.stringify(data, null, 2));
+    } catch (err) {
+        console.warn('[chat] failed to persist presence:', err && err.message ? err.message : err);
+    }
 }
 
 function pruneStaleChatPresence(presence, maxAgeMs) {
@@ -291,8 +316,10 @@ function readChatGroupsStore() {
 function writeChatGroupsStore(store) {
     if (appData.getDb()) return appData.writeChatGroupsStoreDb(store);
     try {
-        fs.writeFileSync(CHAT_GROUPS_FILE, JSON.stringify(store, null, 2), 'utf8');
-    } catch {}
+        appData.atomicWriteFile(CHAT_GROUPS_FILE, JSON.stringify(store, null, 2));
+    } catch (err) {
+        console.warn('[chat] failed to persist groups:', err && err.message ? err.message : err);
+    }
 }
 
 function findGroupByRoomId(store, roomId) {
@@ -500,10 +527,9 @@ const server = http.createServer((req, res) => {
             let parsed;
             try { parsed = JSON.parse(body || '{}'); } catch { return sendJson(res, 400, { error: 'Invalid JSON' }); }
             const name = String(parsed.name || '').trim() || 'Private group';
-            const store = readChatGroupsStore();
             const groupId = 'grp-' + crypto.randomBytes(16).toString('hex');
             const inviteCode = generateInviteCode();
-            store.groups[groupId] = {
+            const created = {
                 id: groupId,
                 name,
                 inviteCode,
@@ -511,7 +537,17 @@ const server = http.createServer((req, res) => {
                 createdBy: cid,
                 createdAt: new Date().toISOString()
             };
-            writeChatGroupsStore(store);
+            // Atomic insert via SQLite transaction (DB path) or in-process
+            // synchronous read-modify-write of the JSON file (fallback).
+            if (appData.getDb()) {
+                appData.updateChatGroupsAtomic((store) => {
+                    store.groups[groupId] = created;
+                });
+            } else {
+                const store = readChatGroupsStore();
+                store.groups[groupId] = created;
+                writeChatGroupsStore(store);
+            }
             const h = { 'Content-Type': 'application/json; charset=utf-8' };
             if (isNew) h['Set-Cookie'] = setCookieHeader(cid);
             res.writeHead(201, h);
@@ -528,20 +564,33 @@ const server = http.createServer((req, res) => {
         req.on('end', () => {
             let parsed;
             try { parsed = JSON.parse(body || '{}'); } catch { return sendJson(res, 400, { error: 'Invalid JSON' }); }
-            const store = readChatGroupsStore();
-            const g = findGroupByInviteCode(store, parsed.inviteCode);
             const h = { 'Content-Type': 'application/json; charset=utf-8' };
             if (isNew) h['Set-Cookie'] = setCookieHeader(cid);
-            if (!g) {
+            // The mutator returns either { id, name } on success or null
+            // when the invite code didn't match — that signal flows back
+            // out so the route can pick the right HTTP status.
+            const apply = (store) => {
+                const g = findGroupByInviteCode(store, parsed.inviteCode);
+                if (!g) return null;
+                if (!Array.isArray(g.members)) g.members = [];
+                if (!membersIncludes(g.members, cid)) g.members.push(cid);
+                return { id: g.id, name: g.name };
+            };
+            let result;
+            if (appData.getDb()) {
+                result = appData.updateChatGroupsAtomic(apply);
+            } else {
+                const store = readChatGroupsStore();
+                result = apply(store);
+                if (result) writeChatGroupsStore(store);
+            }
+            if (!result) {
                 res.writeHead(404, h);
                 res.end(JSON.stringify({ error: 'Invalid invite code' }));
                 return;
             }
-            if (!Array.isArray(g.members)) g.members = [];
-            if (!membersIncludes(g.members, cid)) g.members.push(cid);
-            writeChatGroupsStore(store);
             res.writeHead(200, h);
-            res.end(JSON.stringify({ groupId: g.id, name: g.name }));
+            res.end(JSON.stringify({ groupId: result.id, name: result.name }));
         });
         return;
     }
@@ -578,36 +627,44 @@ const server = http.createServer((req, res) => {
             let parsed;
             try { parsed = JSON.parse(body || '{}'); } catch { return sendJson(res, 400, { error: 'Invalid JSON' }); }
             const groupId = String(parsed.groupId || '').trim();
-            const store = readChatGroupsStore();
-            const g = findGroupByRoomId(store, groupId);
             const h = { 'Content-Type': 'application/json; charset=utf-8' };
             if (isNew) h['Set-Cookie'] = setCookieHeader(cid);
-            if (!g || groupId === PUBLIC_CHAT_ROOM) {
-                res.writeHead(404, h);
-                res.end(JSON.stringify({ error: 'Group not found' }));
-                return;
-            }
-            if (!membersIncludes(g.members, cid)) {
-                res.writeHead(403, h);
-                res.end(JSON.stringify({ error: 'Not a member of this group' }));
-                return;
-            }
             const newCode = normalizeInviteCodeInput(parsed.inviteCode);
             if (!isValidCustomInviteCode(newCode)) {
                 res.writeHead(400, h);
                 res.end(JSON.stringify({ error: 'Invite code must be 3–40 characters (letters, numbers, _ or - only)' }));
                 return;
             }
-            const taken = findGroupByInviteCode(store, newCode);
-            if (taken && normalizeMemberId(taken.id) !== normalizeMemberId(g.id)) {
-                res.writeHead(409, h);
-                res.end(JSON.stringify({ error: 'That invite code is already used by another group' }));
+            // The validations (group exists, member, uniqueness) and the
+            // mutation must all happen inside the same transaction, otherwise
+            // two members can race the uniqueness check and end up with two
+            // groups holding the same custom code.
+            const apply = (store) => {
+                const g = findGroupByRoomId(store, groupId);
+                if (!g || groupId === PUBLIC_CHAT_ROOM) return { error: 'Group not found', status: 404 };
+                if (!membersIncludes(g.members, cid)) return { error: 'Not a member of this group', status: 403 };
+                const taken = findGroupByInviteCode(store, newCode);
+                if (taken && normalizeMemberId(taken.id) !== normalizeMemberId(g.id)) {
+                    return { error: 'That invite code is already used by another group', status: 409 };
+                }
+                g.inviteCode = newCode;
+                return { ok: true, id: g.id, inviteCode: g.inviteCode };
+            };
+            let result;
+            if (appData.getDb()) {
+                result = appData.updateChatGroupsAtomic(apply);
+            } else {
+                const store = readChatGroupsStore();
+                result = apply(store);
+                if (result && result.ok) writeChatGroupsStore(store);
+            }
+            if (result && result.error) {
+                res.writeHead(result.status, h);
+                res.end(JSON.stringify({ error: result.error }));
                 return;
             }
-            g.inviteCode = newCode;
-            writeChatGroupsStore(store);
             res.writeHead(200, h);
-            res.end(JSON.stringify({ groupId: g.id, inviteCode: g.inviteCode }));
+            res.end(JSON.stringify({ groupId: result.id, inviteCode: result.inviteCode }));
         });
         return;
     }
@@ -621,29 +678,35 @@ const server = http.createServer((req, res) => {
             let parsed;
             try { parsed = JSON.parse(body || '{}'); } catch { return sendJson(res, 400, { error: 'Invalid JSON' }); }
             const groupId = String(parsed.groupId || '').trim();
-            const store = readChatGroupsStore();
-            const g = findGroupByRoomId(store, groupId);
             const h = { 'Content-Type': 'application/json; charset=utf-8' };
             if (isNew) h['Set-Cookie'] = setCookieHeader(cid);
-            if (!g || groupId === PUBLIC_CHAT_ROOM) {
-                res.writeHead(404, h);
-                res.end(JSON.stringify({ error: 'Group not found' }));
+            const apply = (store) => {
+                const g = findGroupByRoomId(store, groupId);
+                if (!g || groupId === PUBLIC_CHAT_ROOM) return { error: 'Group not found', status: 404 };
+                if (!membersIncludes(g.members, cid)) return { error: 'Not a member of this group', status: 403 };
+                g.members = membersRemove(g.members, cid);
+                const groupDeleted = g.members.length === 0;
+                if (groupDeleted) {
+                    const sk = storageKeyForGroup(store, g) || groupId;
+                    delete store.groups[sk];
+                }
+                return { ok: true, groupDeleted };
+            };
+            let result;
+            if (appData.getDb()) {
+                result = appData.updateChatGroupsAtomic(apply);
+            } else {
+                const store = readChatGroupsStore();
+                result = apply(store);
+                if (result && result.ok) writeChatGroupsStore(store);
+            }
+            if (result && result.error) {
+                res.writeHead(result.status, h);
+                res.end(JSON.stringify({ error: result.error }));
                 return;
             }
-            if (!membersIncludes(g.members, cid)) {
-                res.writeHead(403, h);
-                res.end(JSON.stringify({ error: 'Not a member of this group' }));
-                return;
-            }
-            g.members = membersRemove(g.members, cid);
-            const groupDeleted = g.members.length === 0;
-            if (groupDeleted) {
-                const sk = storageKeyForGroup(store, g) || groupId;
-                delete store.groups[sk];
-            }
-            writeChatGroupsStore(store);
             res.writeHead(200, h);
-            res.end(JSON.stringify({ ok: true, groupDeleted }));
+            res.end(JSON.stringify({ ok: true, groupDeleted: !!result.groupDeleted }));
         });
         return;
     }
@@ -657,23 +720,31 @@ const server = http.createServer((req, res) => {
             let parsed;
             try { parsed = JSON.parse(body || '{}'); } catch { return sendJson(res, 400, { error: 'Invalid JSON' }); }
             const groupId = String(parsed.groupId || '').trim();
-            const store = readChatGroupsStore();
-            const g = findGroupByRoomId(store, groupId);
             const h = { 'Content-Type': 'application/json; charset=utf-8' };
             if (isNew) h['Set-Cookie'] = setCookieHeader(cid);
-            if (!g || groupId === PUBLIC_CHAT_ROOM) {
-                res.writeHead(404, h);
-                res.end(JSON.stringify({ error: 'Group not found' }));
+            const apply = (store) => {
+                const g = findGroupByRoomId(store, groupId);
+                if (!g || groupId === PUBLIC_CHAT_ROOM) return { error: 'Group not found', status: 404 };
+                if (g.createdBy && normalizeMemberId(g.createdBy) !== normalizeMemberId(cid)) {
+                    return { error: 'Only the group creator can delete it', status: 403 };
+                }
+                const delKey = storageKeyForGroup(store, g) || groupId;
+                delete store.groups[delKey];
+                return { ok: true };
+            };
+            let result;
+            if (appData.getDb()) {
+                result = appData.updateChatGroupsAtomic(apply);
+            } else {
+                const store = readChatGroupsStore();
+                result = apply(store);
+                if (result && result.ok) writeChatGroupsStore(store);
+            }
+            if (result && result.error) {
+                res.writeHead(result.status, h);
+                res.end(JSON.stringify({ error: result.error }));
                 return;
             }
-            if (g.createdBy && normalizeMemberId(g.createdBy) !== normalizeMemberId(cid)) {
-                res.writeHead(403, h);
-                res.end(JSON.stringify({ error: 'Only the group creator can delete it' }));
-                return;
-            }
-            const delKey = storageKeyForGroup(store, g) || groupId;
-            delete store.groups[delKey];
-            writeChatGroupsStore(store);
             res.writeHead(200, h);
             res.end(JSON.stringify({ ok: true }));
         });
@@ -700,11 +771,19 @@ const server = http.createServer((req, res) => {
             const users = readChatUsers();
             const u = users[cid] || {};
             const name = String(parsed.name || u.name || '').trim() || 'Unknown';
-            const presence = readChatPresence();
-            if (!presence[roomId] || typeof presence[roomId] !== 'object') presence[roomId] = {};
-            presence[roomId][cid] = { name, at: new Date().toISOString() };
-            pruneStaleChatPresence(presence, CHAT_PRESENCE_MAX_MS);
-            writeChatPresence(presence);
+            // DB path: one IMMEDIATE transaction prunes stale rows AND
+            // upserts the current ping. JSON fallback keeps the older
+            // read-modify-write but rides on the atomic temp+rename file
+            // write so it's at least crash-safe.
+            if (appData.getDb()) {
+                appData.recordPresenceDb(roomId, cid, name, CHAT_PRESENCE_MAX_MS);
+            } else {
+                const presence = readChatPresence();
+                if (!presence[roomId] || typeof presence[roomId] !== 'object') presence[roomId] = {};
+                presence[roomId][cid] = { name, at: new Date().toISOString() };
+                pruneStaleChatPresence(presence, CHAT_PRESENCE_MAX_MS);
+                writeChatPresence(presence);
+            }
             const h = { 'Content-Type': 'application/json; charset=utf-8' };
             if (isNew) h['Set-Cookie'] = setCookieHeader(cid);
             res.writeHead(200, h);
@@ -726,9 +805,16 @@ const server = http.createServer((req, res) => {
             return;
         }
         const users = readChatUsers();
+        // Prune stale rows directly (single SQL DELETE in DB mode), then
+        // re-read for display. No read-modify-write needed.
+        if (appData.getDb()) {
+            appData.prunePresenceDb(CHAT_PRESENCE_MAX_MS);
+        }
         const presence = readChatPresence();
-        pruneStaleChatPresence(presence, CHAT_PRESENCE_MAX_MS);
-        writeChatPresence(presence);
+        if (!appData.getDb()) {
+            pruneStaleChatPresence(presence, CHAT_PRESENCE_MAX_MS);
+            writeChatPresence(presence);
+        }
         const roomP = presence[roomId] || {};
         const g = findGroupByRoomId(store, roomId);
         const isPrivateGroup = !!(g && roomId.startsWith('grp-'));
@@ -840,15 +926,25 @@ const server = http.createServer((req, res) => {
                         } catch (_) {}
                     }
                 }
+                // Read existing entry only to preserve missing fields, then
+                // upsert THIS client's row. In DB mode that's a single
+                // INSERT OR REPLACE — no DELETE-then-reinsert-everyone, so
+                // a concurrent identity update from a different browser
+                // can't lose this one.
                 const users = readChatUsers();
-                users[cid] = {
+                const merged = {
                     id: parsed.id || users[cid]?.id || cid,
                     name: String(parsed.name || users[cid]?.name || 'Planner 1').trim() || 'Planner 1',
                     role: parsed.role || users[cid]?.role || 'planner'
                 };
-                writeChatUsers(users);
+                if (appData.getDb()) {
+                    appData.upsertChatUserDb(cid, merged);
+                } else {
+                    users[cid] = merged;
+                    writeChatUsers(users);
+                }
                 res.writeHead(200, meHeaders);
-                res.end(JSON.stringify(users[cid]));
+                res.end(JSON.stringify(merged));
             });
             return;
         }
@@ -960,6 +1056,7 @@ const server = http.createServer((req, res) => {
     }
 
     if (pathname === '/api/units' && req.method === 'POST') {
+        if (!requireAuthenticatedUser(req, res)) return;
         const db = initUnitsDb();
         if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
         readJsonBody(req).then(body => {
@@ -1012,6 +1109,7 @@ const server = http.createServer((req, res) => {
     }
 
     if (pathname.startsWith('/api/units/') && req.method === 'PATCH') {
+        if (!requireAuthenticatedUser(req, res)) return;
         const db = initUnitsDb();
         if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
         const parts = pathname.split('/').filter(Boolean); // api, units, :id
@@ -1079,6 +1177,7 @@ const server = http.createServer((req, res) => {
     }
 
     if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/move')) {
+        if (!requireAuthenticatedUser(req, res)) return;
         const db = initUnitsDb();
         if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
         const parts = pathname.split('/').filter(Boolean); // api, units, :id, move
@@ -1113,6 +1212,7 @@ const server = http.createServer((req, res) => {
     }
 
     if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/place')) {
+        if (!requireAuthenticatedUser(req, res)) return;
         const db = initUnitsDb();
         if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
         const parts = pathname.split('/').filter(Boolean); // api, units, :id, place
@@ -1135,6 +1235,7 @@ const server = http.createServer((req, res) => {
     }
 
     if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/unplace')) {
+        if (!requireAuthenticatedUser(req, res)) return;
         const db = initUnitsDb();
         if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
         const parts = pathname.split('/').filter(Boolean); // api, units, :id, unplace
@@ -1149,6 +1250,7 @@ const server = http.createServer((req, res) => {
     }
 
     if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/delete')) {
+        if (!requireAuthenticatedUser(req, res)) return;
         const db = initUnitsDb();
         if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
         const parts = pathname.split('/').filter(Boolean); // api, units, :id, delete
@@ -1181,6 +1283,7 @@ const server = http.createServer((req, res) => {
     }
 
     if (pathname.startsWith('/api/units/') && req.method === 'POST' && pathname.endsWith('/restore')) {
+        if (!requireAuthenticatedUser(req, res)) return;
         const db = initUnitsDb();
         if (!db) { sendJson(res, 500, { error: 'Units DB unavailable' }); return; }
         const parts = pathname.split('/').filter(Boolean); // api, units, :id, restore

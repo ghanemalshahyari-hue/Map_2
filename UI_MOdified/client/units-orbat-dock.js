@@ -225,14 +225,28 @@
         name.textContent = unit.name || '—';
         card.appendChild(name);
 
-        // Meta (level + code + placed badge)
+        // Meta (level + code + placed badge). The badge is a button so
+        // clicking it unplaces the unit (removes its map marker).
         const meta = document.createElement('div');
         meta.className = 'orbat-dock-card-meta';
         meta.innerHTML =
             `<span>${escapeHtml(levelLabel(unit.level))}</span>` +
             (unit.code ? `<span>· ${escapeHtml(unit.code)}</span>` : '') +
-            `<span class="orbat-dock-placed-badge">${escapeHtml(tr('orbat-dock-placed', 'placed'))}</span>`;
+            `<button type="button" class="orbat-dock-placed-badge" title="${escapeHtml(tr('orbat-dock-unplace-hint', 'click to remove from map'))}">${escapeHtml(tr('orbat-dock-placed', 'placed'))}</button>`;
         card.appendChild(meta);
+
+        const badgeBtn = meta.querySelector('.orbat-dock-placed-badge');
+        if (badgeBtn) {
+            badgeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                unplaceUnit(unit.id);
+            });
+            // Don't let a click on the badge start a card drag.
+            badgeBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+            badgeBtn.addEventListener('mousedown',   (e) => e.stopPropagation());
+            badgeBtn.addEventListener('dragstart',   (e) => e.preventDefault());
+        }
 
         // Expand/collapse toggle — only if the unit has descendants.
         if (liveChildren.length) {
@@ -620,6 +634,37 @@
     async function placeUnitAt(unitId, latlng) {
         const ok = await placeAndAddMarker(unitId, latlng);
         if (ok) render();
+    }
+
+    // Click handler for the green "placed" badge: drops the unit's map
+    // marker and clears its coordinates server-side. Updates the local
+    // cache optimistically so the badge disappears immediately, then
+    // dispatches `units:removed` so the map (and any other listeners)
+    // sync up.
+    async function unplaceUnit(unitId) {
+        const local = unitsFlat.find(u => u.id === unitId);
+        const prevLat = local ? local.lat : null;
+        const prevLng = local ? local.lng : null;
+        if (local) { local.lat = null; local.lng = null; }
+        patchNodeLatLng(roots, unitId, null, null);
+        render();
+        try {
+            window.AppUnitsMap?.removeMarker?.(unitId);
+        } catch (_) { /* ignore */ }
+        try {
+            const res = await fetch(`/api/units/${encodeURIComponent(unitId)}/unplace`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            document.dispatchEvent(new CustomEvent('units:removed', { detail: { unitId } }));
+        } catch (err) {
+            console.warn('[orbat-dock] unplace failed for', unitId, err);
+            // Roll back the optimistic update so the badge comes back.
+            if (local) { local.lat = prevLat; local.lng = prevLng; }
+            patchNodeLatLng(roots, unitId, prevLat, prevLng);
+            render();
+        }
     }
 
     function patchNodeLatLng(nodes, id, lat, lng) {

@@ -7,6 +7,8 @@
 13. old data must be deleted if click clear layer [Ghanem]
 17. message that apear in auto draw apears in english even if i change the language [Ghanem]
 18. snap to the cnter of the (x) point [Ghanem]
+25. adding hide button to the side bar to use the map more [Ghanem]
+26. offline enviroment [Lahej]
 
 -----------------------------------------------------
 
@@ -25,3 +27,4 @@
 21. Audit log not present
 22. RBAC for user aceess is  not present 
 23. Auto backup for database
+24. ![alt text](image-1.png)   to automate this image based on the unit type 

@@ -754,6 +754,9 @@
                 </section>
             </aside>
 
+            <!-- Peek tab — shown only while the context panel is minimized; click to restore. -->
+            <button type="button" id="context-panel-peek" class="context-panel-peek hidden" aria-label="Show panel" title="Show panel" data-i18n-title="sidebar-show">&#x25B8;</button>
+
             <!-- ── UTILITY PANEL (slide-out from right of context panel) ── -->
             <aside class="utility-panel hidden" id="utility-panel" aria-label="Settings & Utilities">
                 <div class="utility-panel-header">
@@ -788,6 +791,9 @@
 
             <!-- ── MAP WORKSPACE ── -->
             <main class="map-workspace">
+                <!-- Minimize button — anchored to the inner edge of the context panel
+                     (left edge of the map area in LTR; right edge in RTL).  -->
+                <button type="button" id="context-panel-minimize" class="context-panel-minimize" title="Minimize" aria-label="Minimize" data-i18n-title="sidebar-minimize">&#x25C2;</button>
                 <div class="map-statusbar" id="map-statusbar">
                     <div class="statusbar-tool" id="statusbar-tool-display">Select</div>
                     <div class="statusbar-divider">|</div>
@@ -1421,6 +1427,7 @@
     <script src="app.js?v=27"></script>
     <script src="units-map.js"></script>
     <script src="units-orbat-dock.js?v=1"></script>
+    <script src="sidebar-minimize.js?v=1"></script>
     <script src="tool-rail.js"></script>
 
     <!-- New modular panel system (ES modules — run after app.js) -->

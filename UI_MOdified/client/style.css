@@ -232,6 +232,99 @@ body, html {
     -webkit-overflow-scrolling: touch;
     z-index: 1040;
     padding: var(--space-3);
+    position: relative;
+    transition: width 220ms ease, padding 220ms ease, border-color 220ms ease;
+}
+/* Minimized: collapse the panel's footprint so the map gets the space.
+   Width and padding animate to 0; contents are clipped via overflow:hidden. */
+.context-panel.is-minimized {
+    width: 0 !important;
+    max-width: 0 !important;
+    padding-left: 0;
+    padding-right: 0;
+    border-color: transparent;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* Minimize button — drawer-pull tab on the inner edge of the panel
+   (i.e., the left edge of the map area in LTR, right edge in RTL).
+   Lives inside .map-workspace so it always hugs the panel/map seam,
+   regardless of how wide the panel is. */
+.context-panel-minimize {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    z-index: 950;
+    width: 22px;
+    height: 56px;
+    padding: 0;
+    border: 1px solid var(--panel-border);
+    border-left: none;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background: var(--panel);
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.25);
+    transition: background 120ms ease, color 120ms ease, transform 160ms ease, opacity 160ms ease;
+}
+.context-panel-minimize:hover {
+    background: var(--accent-subtle);
+    color: var(--accent);
+}
+.context-panel-minimize:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+/* Hide the minimize button while the panel is already minimized — the
+   peek tab takes over in that state. */
+.context-panel.is-minimized ~ .map-workspace .context-panel-minimize {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Peek tab — small chevron pill anchored at the inner edge of the rail
+   (where the panel used to start), only visible while minimized.
+   Always sits at the LEFT edge of the map area in this app — matching
+   the actual layout (rail-then-panel-then-map) regardless of language. */
+.context-panel-peek {
+    position: absolute;
+    left: var(--rail-w);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1041;
+    width: 22px;
+    height: 56px;
+    padding: 0;
+    border: 1px solid var(--panel-border);
+    border-left: none;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background: var(--panel-bg, var(--panel));
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
+    transition: background 120ms ease, color 120ms ease, transform 160ms ease, opacity 160ms ease;
+}
+.context-panel-peek:hover {
+    background: var(--accent-subtle);
+    color: var(--accent);
+}
+.context-panel-peek:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+.context-panel-peek.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-12px, -50%);
 }
 
 [dir="rtl"] .context-panel {
@@ -3915,6 +4008,19 @@ details[open] > .details-summary {
     color: #22c55e;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+    border: 1px solid transparent;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.orbat-dock-placed-badge:hover {
+    background: rgba(239, 68, 68, 0.18);
+    border-color: rgba(239, 68, 68, 0.55);
+    color: #ef4444;
+}
+.orbat-dock-placed-badge:focus-visible {
+    outline: 2px solid rgba(239, 68, 68, 0.7);
+    outline-offset: 1px;
 }
 
 /* Expand/collapse button on the bottom edge of a card with children. */

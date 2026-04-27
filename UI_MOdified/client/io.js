@@ -198,6 +198,16 @@
     function buildAppProps(el) {
         const { TEXT_LABEL_COLOR_DEFAULT, TEXT_LABEL_FONT_SIZE_DEFAULT, DEFAULT_GEO_FILL_STYLE } = _ctx;
 
+        // Unit markers (placed from the ORBAT dock) are owned by the server-side
+        // units store (/api/units/tree) — units-map.js rebuilds them on load with
+        // their real SIDC. They were also being captured here by the generic
+        // L.Marker branch below, which had no access to the unit's SIDC and so
+        // wrote them out as a placeholder "frame-only" symbol; on the next load
+        // io.js then resurrected those placeholders as separate empty-rectangle
+        // markers stacked on top of the real symboled ones. Skip them entirely:
+        // exportSingleElement() drops the feature when buildAppProps returns null.
+        if (el && el._unitId) return null;
+
         if (el._isTextLabel) {
             const o = {
                 kind: 'text',
@@ -995,6 +1005,15 @@
                         layer.group.addLayer(group);
                     }
                 } else if (elData.type === 'symbol') {
+                    // Legacy ghost-marker cleanup: older saves captured unit
+                    // markers as generic symbols with the all-zeros entity SIDC
+                    // (a frame with no branch — renders as just a blue
+                    // rectangle). Those entries are now produced by units-map.js
+                    // through /api/units/tree, so skip any imported symbol that
+                    // is bare-frame to avoid resurrecting the duplicates.
+                    const _sidcDigits = String(elData.sidc || '').replace(/\D/g, '');
+                    const _isBareFrame = _sidcDigits.length < 20 || _sidcDigits.substr(10, 6) === '000000';
+                    if (_isBareFrame) return;
                     const marker = createSymbolFromData(elData);
                     if (marker) {
                         marker._layerId = layer.id;

@@ -5162,12 +5162,16 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const { unit, poly } of assignments) {
             const anchor = polygonLatLngAnchor(poly);
             if (!anchor) continue;
+            // Enforce 1000 m minimum spacing — sequential placement means
+            // each unit nudges around the ones placed before it.
+            const nudge = window.AppUnitsMap && window.AppUnitsMap.nudgeAwayFromOthers;
+            const safe = (typeof nudge === 'function') ? nudge(anchor, unit.id) : anchor;
             try {
                 const res = await fetch(`/api/units/${encodeURIComponent(unit.id)}/place`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ lat: anchor.lat, lng: anchor.lng }),
+                    body: JSON.stringify({ lat: safe.lat, lng: safe.lng }),
                 });
                 if (!res.ok) continue;
                 const updated = await res.json();

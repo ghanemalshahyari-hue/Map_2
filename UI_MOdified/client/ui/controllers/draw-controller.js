@@ -97,10 +97,18 @@ export function bindDrawPanelEvents() {
     watchPathAffiliationChanges();
 
     // Position Unit — opens the ORBAT bottom dock so the user can drag units onto the map.
+    // We always OPEN (not toggle): the button is an action, not a panel toggle, and
+    // toggling caused the bar to disappear if the dock was already showing from an
+    // earlier session or had been hidden by map-hide-panels' click-on-map handler.
+    // Also lazy-init() the dock against the map so the drag-from-tree → drop-on-map
+    // path is wired up — without init(), the map never registers as a drop target.
     const positionBtn = document.getElementById('position-unit-btn');
     if (positionBtn) {
         positionBtn.addEventListener('click', () => {
-            window.AppUnitsOrbatDock?.toggle?.();
+            const dock = window.AppUnitsOrbatDock;
+            if (!dock) return;
+            try { if (window.map && typeof dock.init === 'function') dock.init(window.map); } catch (_) {}
+            dock.open?.();
         });
     }
 

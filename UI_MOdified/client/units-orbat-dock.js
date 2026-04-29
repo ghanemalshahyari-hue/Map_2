@@ -460,6 +460,28 @@
         return (a.code || '').localeCompare(b.code || '');
     }
 
+    // Find brigades (level 2) whose HQ marker is currently placed inside
+    // ANY polygon of the given auto-flank session. Used to enforce the
+    // "one brigade per AOI" rule: when a new brigade is dropped onto a
+    // session that already hosts a different brigade, the previous one
+    // must be evicted first. The brigade being dropped is excluded so
+    // re-dropping the same brigade in its own AOI just refreshes positions.
+    function findPlacedBrigadesInPolys(polys, excludeUnitId) {
+        if (!Array.isArray(polys) || !polys.length) return [];
+        const out = [];
+        for (const u of unitsFlat) {
+            if (!u || u.deleted_at) continue;
+            if (u.level !== 2) continue;
+            if (u.id === excludeUnitId) continue;
+            if (u.lat == null || u.lng == null) continue;
+            const ll = { lat: Number(u.lat), lng: Number(u.lng) };
+            for (const poly of polys) {
+                if (polygonContains(poly, ll)) { out.push(u.id); break; }
+            }
+        }
+        return out;
+    }
+
     // Distribute Brigade + descendants across the formation.
     //   Brigade HQ                     → brigade-rear centroid
     //   Battalion[0]                   → battalion-left   polygon
@@ -471,7 +493,18 @@
     // "Forward" for each battalion polygon is the vector from the rear
     // polygon's centroid to that polygon's centroid. "Right" is the 90° CCW
     // rotation of that, so companies spread sideways across the flank.
+    //
+    // One-brigade-per-AOI rule: before placing, evict any OTHER brigade
+    // already occupying this auto-flank session (along with its placed
+    // subtree). Re-dropping the same brigade is a no-op for eviction and
+    // simply refreshes the formation positions.
     async function placeBrigadeFormation(brigade, polys) {
+        // Evict any pre-existing brigade in this AOI session.
+        const evictees = findPlacedBrigadesInPolys(polys, brigade.id);
+        for (const otherId of evictees) {
+            try { await unplaceUnit(otherId); } catch (_) { /* best-effort */ }
+        }
+
         const byRole = {};
         for (const p of polys) {
             const role = p._tmgData && p._tmgData.areaRole;
@@ -935,4 +968,22 @@
     }
 
     window.AppUnitsOrbatDock = { init, open, close, toggle, refresh: loadTree };
+
+    // ── Position Unit button — global delegated handler ─────────────────
+    // The Draw panel's #position-unit-btn must always open the ORBAT bar.
+    // Wiring this in draw-panel.js (an ES module) was unreliable: if any
+    // sibling module errors out, the panel listener never binds and the
+    // button silently does nothing. Binding here — at the document level,
+    // inside this synchronous script — survives every DOM rebuild, every
+    // panel re-render, and runs the moment this file is parsed (well
+    // before any module). We also lazy-init() the dock against the map so
+    // the drag-to-map drop target is wired up on first click.
+    document.addEventListener('click', function (e) {
+        const t = e.target;
+        if (!t || typeof t.closest !== 'function') return;
+        const btn = t.closest('#position-unit-btn');
+        if (!btn) return;
+        try { if (window.map) init(window.map); } catch (_) { /* ignore */ }
+        open();
+    });
 })();

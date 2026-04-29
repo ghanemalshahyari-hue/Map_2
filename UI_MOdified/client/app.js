@@ -312,30 +312,113 @@ document.addEventListener('DOMContentLoaded', () => {
         localLocalLayer.addTo(map);
     }
 
+    // Floating banner used to surface tile-server connectivity problems so the
+    // user doesn't just stare at a blank/gray map wondering what's wrong.
+    function showTileServerBanner(message) {
+        let bar = document.getElementById('tile-server-error-bar');
+        if (!bar) {
+            bar = document.createElement('div');
+            bar.id = 'tile-server-error-bar';
+            bar.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:60px;z-index:1000;'
+                + 'background:rgba(127,29,29,0.92);color:#fee2e2;padding:8px 14px;border-radius:6px;'
+                + 'border:1px solid #ef4444;font:600 0.85rem system-ui,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,0.4);'
+                + 'max-width:80vw;text-align:center;cursor:pointer;';
+            bar.title = 'Click to dismiss';
+            bar.addEventListener('click', () => bar.remove());
+            document.body.appendChild(bar);
+        }
+        bar.textContent = message;
+    }
+
+    // Probe the tile server with a HEAD request. We accept ANY response
+    // (including 404) as proof the server is up — only network errors throw.
+    function probeTileServer(url) {
+        return fetch(url + '/', { method: 'HEAD', mode: 'no-cors', cache: 'no-store' })
+            .then(() => true)
+            .catch(() => false);
+    }
+
     // Load MBTiles: use tile server (for large files) or in-browser loading
-    fetch('maps/maps.json').then(r => r.ok ? r.json() : null).catch(() => null).then(config => {
-        if (!config) return;
+    fetch('maps/maps.json').then(r => r.ok ? r.json() : null).catch(() => null).then(async config => {
+        if (!config) {
+            showTileServerBanner('maps/maps.json is missing — satellite layer cannot load.');
+            return;
+        }
         const files = Array.isArray(config) ? config : (config.mbtiles) || [];
         const tileServer = config && config.tileServer ? config.tileServer.replace(/\/$/, '') : null;
 
         if (files.length === 0) return;
 
         if (tileServer) {
+            // Pre-flight: if the tile server isn't running, surface that
+            // immediately rather than letting the user wait for tiles that
+            // will never arrive. The probe falls through if reachable.
+            const reachable = await probeTileServer(tileServer);
+            if (!reachable) {
+                console.warn('Tile server not reachable at', tileServer, '— satellite tiles will not load.');
+                showTileServerBanner('Tile server not running at ' + tileServer
+                    + '. Start it via scripts\\start-all.bat (keep the "Tile Server" window open).');
+                return;
+            }
             // Scale-based layer switch (utpc/topo_100): utpc until 1:100,000, then topo_100
             const SCALE_THRESHOLD = 100000;
             let utpcLayer = null, topoLayer = null, firstLayer = null;
+
+            // Transparent 1x1 PNG used when an individual tile request fails —
+            // prevents Leaflet's default broken-image icon from showing.
+            const TRANSPARENT_TILE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+            // Track per-tileset error counts so we can warn if EVERY tile is
+            // failing (typical when the tileset name in maps.json doesn't
+            // match what the tile server has indexed).
+            const errorCountsByTileset = {};
+            const errorBannerShownFor = {};
 
             files.forEach(filename => {
                 if (!filename || !String(filename).endsWith('.mbtiles')) return;
                 const tileset = filename.replace(/\.mbtiles$/i, '');
                 const label = tileset.replace(/_/g, ' ');
                 const tileUrl = tileServer + '/services/' + encodeURIComponent(tileset) + '/{z}/{x}/{y}.png';
-                const layer = L.tileLayer(tileUrl, { attribution: 'Offline MBTiles', maxZoom: 17 });
+                const layer = L.tileLayer(tileUrl, {
+                    attribution: 'Offline MBTiles',
+                    maxZoom: 17,
+                    errorTileUrl: TRANSPARENT_TILE,
+                });
+                layer.on('tileerror', (ev) => {
+                    errorCountsByTileset[tileset] = (errorCountsByTileset[tileset] || 0) + 1;
+                    // After a handful of consecutive errors, surface a banner.
+                    if (errorCountsByTileset[tileset] === 6 && !errorBannerShownFor[tileset]) {
+                        errorBannerShownFor[tileset] = true;
+                        console.warn('Repeated tile errors for', tileset, '— check the tile server log and that the .mbtiles file is in maps/.');
+                        showTileServerBanner('Tiles for "' + label + '" are not loading. '
+                            + 'Check the tile server window for errors and confirm '
+                            + filename + ' is in the maps/ folder.');
+                    }
+                });
+                layer.on('tileload', () => {
+                    // First successful tile clears any error banner — useful
+                    // if the server starts late and tiles eventually arrive.
+                    if (errorBannerShownFor[tileset]) {
+                        const bar = document.getElementById('tile-server-error-bar');
+                        if (bar) bar.remove();
+                        errorBannerShownFor[tileset] = false;
+                    }
+                });
                 if (!firstLayer) firstLayer = layer;
                 if (tileset.toLowerCase().includes('utpc')) utpcLayer = layer;
                 if (tileset.toLowerCase().includes('topo_100')) topoLayer = layer;
                 layerControl.addBaseLayer(layer, 'MBTiles: ' + label);
             });
+
+            // When switching to an MBTiles base layer, remove ALL fallback
+            // bases (localLocalLayer AND osmLayer). The original code only
+            // removed localLocalLayer, but if navigator.onLine reported true
+            // at boot the OSM layer was added — and on a truly-offline machine
+            // OSM tile requests time out, pollute the network panel, and bleed
+            // through wherever satellite tiles haven't loaded yet.
+            const removeFallbackBases = () => {
+                if (map.hasLayer(localLocalLayer)) map.removeLayer(localLocalLayer);
+                if (map.hasLayer(osmLayer))        map.removeLayer(osmLayer);
+            };
 
             if (utpcLayer && topoLayer) {
                 function updateScaleLayer() {
@@ -349,11 +432,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (!map.hasLayer(utpcLayer)) map.addLayer(utpcLayer);
                     }
                 }
-                map.removeLayer(localLocalLayer);
+                removeFallbackBases();
                 map.on('zoomend moveend', updateScaleLayer);
                 updateScaleLayer();
             } else if (firstLayer) {
-                map.removeLayer(localLocalLayer);
+                removeFallbackBases();
                 firstLayer.addTo(map);
             }
         } else if (typeof L.tileLayer !== 'undefined' && typeof L.tileLayer.mbTiles === 'function') {
@@ -371,7 +454,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     layerControl.addBaseLayer(mbLayer, 'MBTiles: ' + label);
                     if (!firstMbAdded) {
                         firstMbAdded = true;
-                        map.removeLayer(localLocalLayer);
+                        // Same fix as above — clear BOTH fallback bases.
+                        if (map.hasLayer(localLocalLayer)) map.removeLayer(localLocalLayer);
+                        if (map.hasLayer(osmLayer))        map.removeLayer(osmLayer);
                         mbLayer.addTo(map);
                     }
                 });
@@ -5100,6 +5185,356 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * Stamp NATO-style boundary echelon labels at the midpoint of every
+     * auto-flank boundary line for the given session/tag.
+     *
+     *   Brigade AOI : outer perimeter = X  ,  inner dividers = II
+     *   Battalion AOI: outer perimeter = II ,  inner dividers = I
+     *
+     * Static, non-interactive markers (just visual labels). They live in the
+     * autoFlankAreaPane and are tagged with `_autoFlankLine` + `_tmgData.typeId
+     * === 'auto-flank-echelon'` so the existing cleanup paths can sweep them
+     * away when the layout is redrawn or the session is wiped.
+     *
+     * Edges that hug the scalloped front line are skipped — the front already
+     * has its own decoration (Circle X obstacles + scalloped line).
+     */
+    function addAutoFlankEchelonMarkers(mode, tag, sessionId, lineColor) {
+        if (!map) return;
+        const t = (tag || 'brigade').toLowerCase();
+        // Echelon mapping per formation. The seam is at the same echelon as the
+        // L/R divider — both are "inner" battalion-level boundaries inside the
+        // brigade AOI, so brigade gets II for both. The seam is then split at
+        // its intersection with the L/R divider so each half (left battalion
+        // bottom, right battalion bottom) gets its own midpoint marker.
+        //   Brigade   : outer = X  ,  divider = II,  seam = II (split in 2)
+        //   Battalion : outer = II ,  divider = I ,  seam = I  (split in 2)
+        let outerGlyph, dividerGlyph, seamGlyph;
+        if (t === 'battalion') {
+            outerGlyph = 'II'; dividerGlyph = 'I'; seamGlyph = 'I';
+        } else {
+            outerGlyph = 'X'; dividerGlyph = 'II'; seamGlyph = 'II';
+        }
+
+        const allEls = (typeof getAllElements === 'function' ? getAllElements() : (window.getAllLayerElements ? window.getAllLayerElements() : []));
+
+        // Collect this session's scalloped frontline path so we can skip outer
+        // edges that lie on top of it.
+        const frontPts = [];
+        allEls.forEach(el => {
+            if (el instanceof L.LayerGroup && el._tmgData?.typeId === 'scalloped' && Array.isArray(el._tmgData.segments)) {
+                const segs = el._tmgData.segments;
+                if (!segs.length) return;
+                if (sessionId && segs[0]?._tmgData?.sessionId && segs[0]._tmgData.sessionId !== sessionId) return;
+                segs.forEach(s => {
+                    const d = s._tmgData;
+                    if (d?.latlng1 && d?.latlng2) {
+                        frontPts.push(L.latLng(d.latlng1.lat, d.latlng1.lng));
+                        frontPts.push(L.latLng(d.latlng2.lat, d.latlng2.lng));
+                    }
+                });
+            } else if (el instanceof L.Marker && el._tmgData?.typeId === 'scalloped') {
+                if (sessionId && el._tmgData.sessionId && el._tmgData.sessionId !== sessionId) return;
+                const ll = el.getLatLng?.();
+                if (ll) frontPts.push(ll);
+            }
+        });
+
+        // Collect inner seam + L/R divider polylines for this session/tag so the
+        // outer-perimeter pass can skip edges that lie along them. Without this,
+        // a polygon edge that coincides with the seam (e.g. battalion polygon's
+        // bottom edge or brigade-rear's top edge) would get an extra outerGlyph
+        // stamp on top of the dedicated seam marker. The seam/divider pass
+        // produces ONE marker per inner line.
+        const innerSegs = []; // { a, b, typeId }
+        allEls.forEach(el => {
+            if (!(el instanceof L.Polyline) || el instanceof L.Polygon) return;
+            if (!el._autoFlankLine) return;
+            const tid = el._tmgData?.typeId;
+            if (tid !== 'auto-flank-area-seam' && tid !== 'auto-flank-area-divider') return;
+            if (sessionId && el._tmgData?.sessionId !== sessionId) return;
+            if (tag && el._tmgData?.tag !== tag) return;
+            let pts;
+            try { pts = el.getLatLngs(); } catch (_) { return; }
+            const flat = Array.isArray(pts) && Array.isArray(pts[0]) ? pts[0] : pts;
+            if (!Array.isArray(flat) || flat.length < 2) return;
+            innerSegs.push({ a: flat[0], b: flat[flat.length - 1], typeId: tid });
+        });
+
+        // Distance checks use METERS (via map.distance) instead of pixels.
+        // Pixel-space distances depend on the current zoom, which on initial
+        // page load is still settling — that caused side-edge markers to be
+        // wrongly skipped after refresh because at low zoom the whole AOI
+        // collapses and every edge falls within the pixel threshold.
+        const SKIP_THRESHOLD_M = 150; // ~150 m is much smaller than any flank edge
+        const distMetersToSegList = (ll, segs) => {
+            if (!segs || !segs.length) return Infinity;
+            let best = Infinity;
+            for (const seg of segs) {
+                const a = seg.a || seg[0];
+                const b = seg.b || seg[1];
+                if (!a || !b) continue;
+                // Project ll onto segment a→b in lat/lng space (good enough
+                // for short segments at AOI scale), then take the great-circle
+                // distance in meters from ll to the projection.
+                const ax = a.lng, ay = a.lat;
+                const bx = b.lng, by = b.lat;
+                const dx = bx - ax, dy = by - ay;
+                const len2 = dx * dx + dy * dy;
+                const tt = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((ll.lng - ax) * dx + (ll.lat - ay) * dy) / len2));
+                const cx = ax + tt * dx, cy = ay + tt * dy;
+                const proj = L.latLng(cy, cx);
+                const d = map.distance(ll, proj);
+                if (d < best) best = d;
+            }
+            return best;
+        };
+        const distMetersToFront = (ll) => {
+            if (!frontPts.length) return Infinity;
+            let best = Infinity;
+            for (let i = 0; i < frontPts.length - 1; i += 2) {
+                const a = frontPts[i];
+                const b = frontPts[i + 1];
+                if (!a || !b) continue;
+                const ax = a.lng, ay = a.lat;
+                const bx = b.lng, by = b.lat;
+                const dx = bx - ax, dy = by - ay;
+                const len2 = dx * dx + dy * dy;
+                const tt = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((ll.lng - ax) * dx + (ll.lat - ay) * dy) / len2));
+                const cx = ax + tt * dx, cy = ay + tt * dy;
+                const proj = L.latLng(cy, cx);
+                const d = map.distance(ll, proj);
+                if (d < best) best = d;
+            }
+            return best;
+        };
+        const distMetersToInner = (ll) => distMetersToSegList(ll, innerSegs);
+
+        const stamp = (a, b, glyph, opts) => {
+            if (!a || !b) return;
+            const skipNearInner = !!(opts && opts.skipNearInner);
+            const mid = L.latLng((a.lat + b.lat) / 2, (a.lng + b.lng) / 2);
+            // Skip if midpoint lies (near) on the front line. Meter-based so
+            // it's stable across zoom levels (important on page-refresh load).
+            if (distMetersToFront(mid) < SKIP_THRESHOLD_M) return;
+            // For outer perimeter stamps, skip edges whose midpoint is on a
+            // seam/divider line — those get their own dedicated marker.
+            if (skipNearInner && distMetersToInner(mid) < SKIP_THRESHOLD_M) return;
+            // Rotate the label to follow the line, but keep text upright.
+            const pa = map.latLngToLayerPoint(a);
+            const pb = map.latLngToLayerPoint(b);
+            let angle = Math.atan2(pb.y - pa.y, pb.x - pa.x) * 180 / Math.PI;
+            if (angle > 90) angle -= 180;
+            if (angle < -90) angle += 180;
+            // Box is sized generously so the rotated glyph never gets clipped.
+            // The visible glyph is the *text* — there is no background or border.
+            const w = (glyph === 'II') ? 34 : (glyph === 'X' ? 26 : 18);
+            const h = 22;
+            const stroke = lineColor || '#3b82f6';
+            // Color of the small rectangle painted *behind* the glyph. Its
+            // job is to mask the boundary line so it doesn't run through the
+            // letter. Tune this one value to match your basemap:
+            //   '#f5e9c8'     → sandy cream (matches the satellite imagery)
+            //   '#ffffff'     → plain white (works on most light basemaps)
+            //   'transparent' → disable the mask, line will pass through again
+            const LABEL_MASK_COLOR = '#f5e9c8';
+            const html =
+                '<div style="' +
+                'transform:rotate(' + angle.toFixed(1) + 'deg);' +
+                'transform-origin:center center;' +
+                'width:' + w + 'px;height:' + h + 'px;' +
+                'display:flex;align-items:center;justify-content:center;' +
+                'background:' + LABEL_MASK_COLOR + ';' +
+                'border:none;' +
+                'color:' + stroke + ';' +
+                'font:500 30px/1 system-ui,Segoe UI,Arial,sans-serif;' +
+                'letter-spacing:1px;' +
+                'pointer-events:none;' +
+                '">' + glyph + '</div>';
+            const icon = L.divIcon({
+                className: 'auto-flank-echelon-icon',
+                html,
+                iconSize: [w, h],
+                iconAnchor: [w / 2, h / 2]
+            });
+            const marker = L.marker(mid, {
+                icon,
+                interactive: false,
+                keyboard: false,
+                pane: 'autoFlankAreaPane'
+            });
+            marker._autoFlankLine = true;
+            marker._autoFlankEchelon = true;
+            marker._tmgData = { typeId: 'auto-flank-echelon', sessionId, tag, glyph };
+            addToActiveLayer(marker);
+        };
+
+        // 1. Outer perimeter glyphs — every edge of every auto-flank-area polygon
+        //    for this session/tag, skipping edges on the front line OR on the
+        //    inner seam/divider lines (those produce their own markers below).
+        allEls.forEach(el => {
+            if (!(el instanceof L.Polygon)) return;
+            if (!el._autoFlankLine) return;
+            if (el._tmgData?.typeId !== 'auto-flank-area') return;
+            if (sessionId && el._tmgData?.sessionId !== sessionId) return;
+            if (tag && el._tmgData?.tag !== tag) return;
+            let raw;
+            try { raw = el.getLatLngs(); } catch (_) { return; }
+            if (!raw) return;
+            const depth = Array.isArray(raw)
+                ? (Array.isArray(raw[0]) ? (Array.isArray(raw[0][0]) ? 3 : 2) : 1)
+                : 0;
+            const rings = (depth === 3) ? raw.map(r => r && r[0]).filter(Boolean)
+                       : (depth === 2) ? [raw[0]]
+                       : (depth === 1) ? [raw]
+                       : [];
+            for (const ring of rings) {
+                if (!Array.isArray(ring) || ring.length < 2) continue;
+                for (let i = 0, n = ring.length; i < n; i++) {
+                    stamp(ring[i], ring[(i + 1) % n], outerGlyph, { skipNearInner: true });
+                }
+            }
+        });
+
+        // 2. Inner dividers — seam (front/rear) gets seamGlyph, L/R divider
+        //    gets dividerGlyph. Seam polylines are split at their intersection
+        //    with any L/R divider so each half (left and right of the divider)
+        //    gets its own midpoint marker, instead of a single marker dead in
+        //    the center where the boundaries meet.
+        const seenMidKeys = new Set();
+        const keyForLatLng = (ll) => {
+            const p = map.latLngToLayerPoint(ll);
+            // 8-pixel bucket — anything closer counts as the same line.
+            return Math.round(p.x / 8) + ',' + Math.round(p.y / 8);
+        };
+        // Segment-vs-segment intersection in layer-point space. Returns the
+        // intersection point or null. Tolerance lets endpoints count as hits.
+        const findIntersectionLP = (a, b, c, d) => {
+            const rx = b.x - a.x, ry = b.y - a.y;
+            const sx = d.x - c.x, sy = d.y - c.y;
+            const rxs = rx * sy - ry * sx;
+            if (Math.abs(rxs) < 1e-6) return null;
+            const qmx = c.x - a.x, qmy = c.y - a.y;
+            const tt = (qmx * sy - qmy * sx) / rxs;
+            const uu = (qmx * ry - qmy * rx) / rxs;
+            if (tt < -0.02 || tt > 1.02 || uu < -0.02 || uu > 1.02) return null;
+            return L.point(a.x + tt * rx, a.y + tt * ry);
+        };
+
+        // Pre-collect divider segments in layer-point form so we can split
+        // each seam against them.
+        const dividerSegsLP = [];
+        innerSegs.forEach(s => {
+            if (s.typeId !== 'auto-flank-area-divider') return;
+            dividerSegsLP.push({
+                a: map.latLngToLayerPoint(s.a),
+                b: map.latLngToLayerPoint(s.b),
+            });
+        });
+
+        allEls.forEach(el => {
+            if (!(el instanceof L.Polyline) || el instanceof L.Polygon) return;
+            if (!el._autoFlankLine) return;
+            const tid = el._tmgData?.typeId;
+            if (tid !== 'auto-flank-area-seam' && tid !== 'auto-flank-area-divider') return;
+            if (sessionId && el._tmgData?.sessionId !== sessionId) return;
+            if (tag && el._tmgData?.tag !== tag) return;
+            let pts;
+            try { pts = el.getLatLngs(); } catch (_) { return; }
+            const flat = Array.isArray(pts) && Array.isArray(pts[0]) ? pts[0] : pts;
+            if (!Array.isArray(flat) || flat.length < 2) return;
+            const a = flat[0], b = flat[flat.length - 1];
+
+            if (tid === 'auto-flank-area-divider') {
+                // L/R divider — single midpoint marker, deduped across colinear chunks.
+                const mid = L.latLng((a.lat + b.lat) / 2, (a.lng + b.lng) / 2);
+                const key = 'divider|' + keyForLatLng(mid);
+                if (seenMidKeys.has(key)) return;
+                seenMidKeys.add(key);
+                stamp(a, b, dividerGlyph);
+                return;
+            }
+
+            // Seam — split at every divider intersection, then stamp each piece.
+            const aLP = map.latLngToLayerPoint(a);
+            const bLP = map.latLngToLayerPoint(b);
+            const cuts = [];
+            for (const div of dividerSegsLP) {
+                const ix = findIntersectionLP(aLP, bLP, div.a, div.b);
+                if (ix) cuts.push(ix);
+            }
+            // Sort cut points by their parameter along the seam so we can
+            // walk left-to-right.
+            const segLen2 = (bLP.x - aLP.x) ** 2 + (bLP.y - aLP.y) ** 2 || 1;
+            cuts.sort((p, q) => {
+                const tp = ((p.x - aLP.x) * (bLP.x - aLP.x) + (p.y - aLP.y) * (bLP.y - aLP.y)) / segLen2;
+                const tq = ((q.x - aLP.x) * (bLP.x - aLP.x) + (q.y - aLP.y) * (bLP.y - aLP.y)) / segLen2;
+                return tp - tq;
+            });
+
+            const points = [a];
+            for (const ix of cuts) points.push(map.layerPointToLatLng(L.point(ix.x, ix.y)));
+            points.push(b);
+
+            for (let i = 0; i < points.length - 1; i++) {
+                const segA = points[i], segB = points[i + 1];
+                // Skip very short sub-segments (degenerate when the divider
+                // hits the seam endpoint).
+                const segALP = map.latLngToLayerPoint(segA);
+                const segBLP = map.latLngToLayerPoint(segB);
+                if (Math.hypot(segBLP.x - segALP.x, segBLP.y - segALP.y) < 14) continue;
+                const segMid = L.latLng((segA.lat + segB.lat) / 2, (segA.lng + segB.lng) / 2);
+                const key = 'seam|' + keyForLatLng(segMid);
+                if (seenMidKeys.has(key)) continue;
+                seenMidKeys.add(key);
+                stamp(segA, segB, seamGlyph);
+            }
+        });
+    }
+
+    /**
+     * Walk all currently-loaded auto-flank-area polygons, group them by
+     * (sessionId, tag), and re-run addAutoFlankEchelonMarkers for each unique
+     * combo. Used after a page-refresh load — echelon markers are intentionally
+     * not persisted; they're re-derived from the polygons that DO persist.
+     */
+    function restampAutoFlankEchelonsForAllSessions() {
+        if (!map) return;
+        const allEls = (typeof getAllElements === 'function' ? getAllElements()
+                      : (window.getAllLayerElements ? window.getAllLayerElements() : []));
+        const seen = new Map(); // key = sessionId|tag, val = { sessionId, tag, color }
+        allEls.forEach(el => {
+            if (!(el instanceof L.Polygon)) return;
+            if (!el._autoFlankLine) return;
+            const d = el._tmgData || {};
+            if (d.typeId !== 'auto-flank-area') return;
+            const sid = d.sessionId || null;
+            const tg = d.tag || null;
+            if (!sid || !tg) return;
+            const key = sid + '|' + tg;
+            if (seen.has(key)) return;
+            const color = (el.options && el.options.color) || '#3b82f6';
+            seen.set(key, { sessionId: sid, tag: tg, color });
+        });
+        seen.forEach(({ sessionId, tag, color }) => {
+            try {
+                // First sweep any echelon markers already in the layer for this
+                // session/tag, just in case (defensive — should be none after
+                // io.js stops persisting them, but covers legacy save data).
+                getAllElements()
+                    .filter(el => el instanceof L.Marker && el._autoFlankEchelon &&
+                                  el._tmgData?.sessionId === sessionId &&
+                                  el._tmgData?.tag === tag)
+                    .forEach(el => removeFromLayer(el));
+                addAutoFlankEchelonMarkers(null, tag, sessionId, color);
+            } catch (e) {
+                console.warn('restampAutoFlankEchelons', e);
+            }
+        });
+    }
+    window.restampAutoFlankEchelonsForAllSessions = restampAutoFlankEchelonsForAllSessions;
+
+    /**
      * Read the already-generated auto-flank polygons and place subordinate
      * battalion symbols inside them. MVP assignment:
      *   battalion[0] → battalion-left
@@ -5269,8 +5704,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const refreshToken = (autoFlankObstacleRefreshTokenByKey[stateKey] || 0) + 1;
             autoFlankObstacleRefreshTokenByKey[stateKey] = refreshToken;
             // Only remove flank elements belonging to the CURRENT session AND tag — preserve other groups'.
+            // Include markers so echelon labels (X / II / I) get swept away with the polygons.
             const existing = getAllLayerElements().filter(el =>
-                (el instanceof L.Polyline || el instanceof L.Polygon) && el._autoFlankLine &&
+                (el instanceof L.Polyline || el instanceof L.Polygon || el instanceof L.Marker) &&
+                el._autoFlankLine &&
                 el._tmgData?.sessionId === sessionId && el._tmgData?.tag === tag
             );
             existing.forEach(el => removeFromLayer(el));
@@ -5311,15 +5748,19 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 const polys = renderClippedAutoFlankRings(zoneSpec.ringsMeta, borderOpt, sessionId, tag);
                 drawn = polys.length > 0 ? circleCenters.length : 0;
-                // After the initial render of an 8&20 layout, drop subordinate
-                // battalion symbols into the battalion-left / battalion-right /
-                // brigade-rear polygons we just produced. Fire-and-forget — the
-                // obstacle-refresh redraw below intentionally does NOT re-place.
-                if (drawn > 0 && mode === '8&20' && window.freeDrawSignatureParentUnitId) {
-                    placeSubordinatesInsideAutoFlank(polys).catch((e) => {
-                        console.warn('placeSubordinatesInsideAutoFlank', e);
-                    });
-                }
+                // Stamp NATO-style echelon labels (X / II / I) on the AOI
+                // boundary lines. Static, non-interactive — purely visual.
+                try { addAutoFlankEchelonMarkers(mode, tag, sessionId, lineColor); }
+                catch (e) { console.warn('addAutoFlankEchelonMarkers', e); }
+                // Auto-placement of subordinate battalion symbols inside the
+                // AOI polygons is intentionally DISABLED. Units must be placed
+                // by drag-and-drop from the ORBAT bar — never automatically.
+                // (Previously this called placeSubordinatesInsideAutoFlank(polys).)
+                // if (drawn > 0 && mode === '8&20' && window.freeDrawSignatureParentUnitId) {
+                //     placeSubordinatesInsideAutoFlank(polys).catch((e) => {
+                //         console.warn('placeSubordinatesInsideAutoFlank', e);
+                //     });
+                // }
             }
 
             // Async refresh once full obstacle set is loaded.
@@ -5333,7 +5774,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 rerouteScallopedFrontlineAroundObstacles();
 
                 const existing2 = getAllLayerElements().filter(el =>
-                    (el instanceof L.Polyline || el instanceof L.Polygon) && el._autoFlankLine &&
+                    (el instanceof L.Polyline || el instanceof L.Polygon || el instanceof L.Marker) &&
+                    el._autoFlankLine &&
                     el._tmgData?.sessionId === sessionId && el._tmgData?.tag === tag
                 );
                 existing2.forEach(el => removeFromLayer(el));
@@ -5346,6 +5788,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const zoneSpec2 = buildRectangleAutoFlankZoneRings(mode, flkL2, flkC2, flkR2, dist1, dist2);
                 if (!zoneSpec2 || !zoneSpec2.ringsMeta || !zoneSpec2.ringsMeta.length) return;
                 renderClippedAutoFlankRings(zoneSpec2.ringsMeta, borderOpt, sessionId, tag);
+                // Re-stamp echelon labels on the freshly redrawn polygons.
+                try { addAutoFlankEchelonMarkers(mode, tag, sessionId, lineColor); }
+                catch (e) { console.warn('addAutoFlankEchelonMarkers (refresh)', e); }
             }).catch(() => { /* ignore obstacle refresh errors */ });
 
             if (drawn === 0) {
@@ -5443,8 +5888,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Clear auto-flank elements (lines and polygons) that belong to a specific tag
     window.clearAutoFlankLinesByTag = function (tag) {
         const sessionId = window.freeDrawSignatureSessionId;
+        // Include markers so echelon labels (X / II / I) are removed alongside
+        // the polygons when switching between battalion/brigade tags.
         getAllElements().filter(el =>
-            (el instanceof L.Polyline || el instanceof L.Polygon) && el._autoFlankLine &&
+            (el instanceof L.Polyline || el instanceof L.Polygon || el instanceof L.Marker) &&
+            el._autoFlankLine &&
             el._tmgData?.sessionId === sessionId && el._tmgData?.tag === tag
         ).forEach(el => removeFromLayer(el));
         // Drop the stored opts for this tag so a later obstacle change does
@@ -5524,6 +5972,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (el._tmgData?.typeId === 'scalloped' && el._tmgData?.sessionId === sessionId) return true;
             // Auto-flank area and division lines
             if ((el instanceof L.Polyline || el instanceof L.Polygon) && el._autoFlankLine && el._tmgData?.sessionId === sessionId) return true;
+            // Auto-flank echelon labels (X / II / I) live as L.Marker — match those too.
+            if (el instanceof L.Marker && el._autoFlankLine && el._tmgData?.sessionId === sessionId) return true;
             return false;
         });
         toRemove.forEach(el => removeFromLayer(el));
@@ -16643,5 +17093,29 @@ document.addEventListener('DOMContentLoaded', () => {
         renderLayersList();
         updateLineDrawingControls();
         finishDeferredUiInit();
+        // Echelon markers (X / II / I on AOI boundary lines) are not persisted
+        // by io.js — re-derive them from the auto-flank polygons + seam/divider
+        // polylines that DID load. The map's CRS / pixel origin is set up
+        // asynchronously, so latLngToLayerPoint can return unstable values
+        // immediately after import. Distance checks (distPxToFront /
+        // distPxToInner) then misfire and skip edges they shouldn't. We retry
+        // the restamp at a few points in the load lifecycle; each call sweeps
+        // the previous batch first, so calling it more than once is safe.
+        const safeRestamp = () => {
+            try { restampAutoFlankEchelonsForAllSessions(); }
+            catch (e) { console.warn('post-load echelon restamp', e); }
+        };
+        // Immediate (handles cached / already-rendered map)
+        setTimeout(safeRestamp, 0);
+        // After two animation frames so Leaflet has finished its first paint.
+        requestAnimationFrame(() => requestAnimationFrame(safeRestamp));
+        // After the map's first move/zoom settles (definitive sign that
+        // pixel-space math is stable).
+        if (map) {
+            map.whenReady(() => setTimeout(safeRestamp, 50));
+            map.once('moveend', safeRestamp);
+        }
+        // Final safety net.
+        setTimeout(safeRestamp, 600);
     });
 });

@@ -442,6 +442,13 @@
                 strokeWidth: el._tmgData.strokeWidth ?? 4,
             };
         }
+        // Auto-flank echelon labels (X / II / I on AOI boundary lines) are
+        // pure visual artifacts derived from the polygons + seam/divider
+        // polylines. Don't persist them — re-stamp them on load instead so
+        // we never have stale labels for changed geometry.
+        if (el instanceof L.Marker && el._autoFlankEchelon) {
+            return null;
+        }
         if (el instanceof L.Marker && el._tmgData) {
             const d = el._tmgData;
             return {

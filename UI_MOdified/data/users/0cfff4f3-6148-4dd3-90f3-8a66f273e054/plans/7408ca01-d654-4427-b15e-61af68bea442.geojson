@@ -544,6 +544,625 @@
         },
         "layerId": "layer-1"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.07470703125001,
+          21.672743540437224
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.07470703125001,
+            21.672743540437224
+          ],
+          "sidc": "10037000001200000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            54.015655517578125,
+            23.767750549280972
+          ],
+          [
+            54.015655517578125,
+            23.767750549280972
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            54.015655517578125,
+            23.767750549280972
+          ],
+          "latlng2": [
+            54.015655517578125,
+            23.767750549280972
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5,
+          "sessionId": "free-draw-1777469711253-1165"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            54.23115768836421,
+            23.855114156924724
+          ],
+          [
+            54.23115768836421,
+            23.855114156924724
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            54.23115768836421,
+            23.855114156924724
+          ],
+          "latlng2": [
+            54.23115768836421,
+            23.855114156924724
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5,
+          "sessionId": "free-draw-1777469711253-1165"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            54.12852837909278,
+            23.807962494353514
+          ],
+          [
+            54.12852837909278,
+            23.807962494353514
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            54.12852837909278,
+            23.807962494353514
+          ],
+          "latlng2": [
+            54.12852837909278,
+            23.807962494353514
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5,
+          "sessionId": "free-draw-1777469711253-1165"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            54.015655517578125,
+            23.767750549280972
+          ],
+          [
+            54.015655517578125,
+            23.767750549280972
+          ],
+          [
+            54.12852837909278,
+            23.807962494353514
+          ],
+          [
+            54.12852837909278,
+            23.807962494353514
+          ],
+          [
+            54.23115768836421,
+            23.855114156924724
+          ],
+          [
+            54.23115768836421,
+            23.855114156924724
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-group",
+          "points": [
+            [
+              54.015655517578125,
+              23.767750549280972
+            ],
+            [
+              54.015655517578125,
+              23.767750549280972
+            ],
+            [
+              54.12852837909278,
+              23.807962494353514
+            ],
+            [
+              54.12852837909278,
+              23.807962494353514
+            ],
+            [
+              54.23115768836421,
+              23.855114156924724
+            ],
+            [
+              54.23115768836421,
+              23.855114156924724
+            ]
+          ],
+          "typeId": "scalloped",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                54.09511145730961,
+                23.60403456664539
+              ],
+              [
+                54.174957275390625,
+                23.439309076076434
+              ],
+              [
+                54.39056396484376,
+                23.5262183622166
+              ],
+              [
+                54.310853053143695,
+                23.691186269122824
+              ],
+              [
+                54.09511145730961,
+                23.60403456664539
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "multipolygon",
+          "polygons": [
+            [
+              [
+                [
+                  54.09511145730961,
+                  23.60403456664539
+                ],
+                [
+                  54.174957275390625,
+                  23.439309076076434
+                ],
+                [
+                  54.39056396484376,
+                  23.5262183622166
+                ],
+                [
+                  54.310853053143695,
+                  23.691186269122824
+                ]
+              ]
+            ]
+          ],
+          "color": "#3b82f6",
+          "weight": 3,
+          "fillColor": "#3b82f6",
+          "fillOpacity": 0.08,
+          "dashArray": null,
+          "autoFlank": {
+            "area": true,
+            "typeId": "auto-flank-area",
+            "sessionId": "free-draw-1777469711253-1165",
+            "tag": "brigade",
+            "lengthKm": 40,
+            "parentUnitId": null,
+            "areaRole": "brigade-rear",
+            "className": "auto-flank-area",
+            "stroke": true
+          }
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                54.12876303296851,
+                23.80819318135411
+              ],
+              [
+                54.12826538085938,
+                23.807962494353514
+              ],
+              [
+                54.12551879882813,
+                23.80670605941206
+              ],
+              [
+                54.015655517578125,
+                23.767750549280972
+              ],
+              [
+                54.09530639648438,
+                23.60426184707018
+              ],
+              [
+                54.20602651423617,
+                23.648843420602326
+              ],
+              [
+                54.12876303296851,
+                23.80819318135411
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "multipolygon",
+          "polygons": [
+            [
+              [
+                [
+                  54.12876303296851,
+                  23.80819318135411
+                ],
+                [
+                  54.12826538085938,
+                  23.807962494353514
+                ],
+                [
+                  54.12551879882813,
+                  23.80670605941206
+                ],
+                [
+                  54.015655517578125,
+                  23.767750549280972
+                ],
+                [
+                  54.09530639648438,
+                  23.60426184707018
+                ],
+                [
+                  54.20602651423617,
+                  23.648843420602326
+                ]
+              ]
+            ]
+          ],
+          "color": "#3b82f6",
+          "weight": 3,
+          "fillColor": "#3b82f6",
+          "fillOpacity": 0.08,
+          "dashArray": null,
+          "autoFlank": {
+            "area": true,
+            "typeId": "auto-flank-area",
+            "sessionId": "free-draw-1777469711253-1165",
+            "tag": "brigade",
+            "lengthKm": 20,
+            "parentUnitId": null,
+            "areaRole": "battalion-left",
+            "className": "auto-flank-area",
+            "stroke": false
+          }
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            54.015655517578125,
+            23.767750549280972
+          ],
+          [
+            54.09530639648438,
+            23.60426184707018
+          ],
+          [
+            54.20602651423617,
+            23.648843420602326
+          ],
+          [
+            54.12876303296851,
+            23.80819318135411
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 3,
+          "dashArray": null,
+          "autoFlank": {
+            "area": true,
+            "typeId": "auto-flank-area-outline",
+            "sessionId": "free-draw-1777469711253-1165",
+            "tag": "brigade",
+            "lengthKm": 20,
+            "parentUnitId": null,
+            "areaRole": null,
+            "className": "auto-flank-area-outline"
+          }
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                54.20602651423617,
+                23.648843420602326
+              ],
+              [
+                54.31091308593751,
+                23.691062104790806
+              ],
+              [
+                54.31091308593751,
+                23.691062104790806
+              ],
+              [
+                54.23126220703126,
+                23.85569800975124
+              ],
+              [
+                54.12876303296851,
+                23.80819318135411
+              ],
+              [
+                54.20602651423617,
+                23.648843420602326
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "multipolygon",
+          "polygons": [
+            [
+              [
+                [
+                  54.20602651423617,
+                  23.648843420602326
+                ],
+                [
+                  54.31091308593751,
+                  23.691062104790806
+                ],
+                [
+                  54.31091308593751,
+                  23.691062104790806
+                ],
+                [
+                  54.23126220703126,
+                  23.85569800975124
+                ],
+                [
+                  54.12876303296851,
+                  23.80819318135411
+                ]
+              ]
+            ]
+          ],
+          "color": "#3b82f6",
+          "weight": 3,
+          "fillColor": "#3b82f6",
+          "fillOpacity": 0.08,
+          "dashArray": null,
+          "autoFlank": {
+            "area": true,
+            "typeId": "auto-flank-area",
+            "sessionId": "free-draw-1777469711253-1165",
+            "tag": "brigade",
+            "lengthKm": 20,
+            "parentUnitId": null,
+            "areaRole": "battalion-right",
+            "className": "auto-flank-area",
+            "stroke": false
+          }
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            54.12876303296851,
+            23.80819318135411
+          ],
+          [
+            54.20602651423617,
+            23.648843420602326
+          ],
+          [
+            54.20602651423617,
+            23.648843420602326
+          ],
+          [
+            54.31091308593751,
+            23.691062104790806
+          ],
+          [
+            54.31091308593751,
+            23.691062104790806
+          ],
+          [
+            54.23126220703126,
+            23.85569800975124
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 3,
+          "dashArray": null,
+          "autoFlank": {
+            "area": true,
+            "typeId": "auto-flank-area-outline",
+            "sessionId": "free-draw-1777469711253-1165",
+            "tag": "brigade",
+            "lengthKm": 20,
+            "parentUnitId": null,
+            "areaRole": null,
+            "className": "auto-flank-area-outline"
+          }
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            54.09511145730961,
+            23.60403456664539
+          ],
+          [
+            54.310853053143695,
+            23.691186269122824
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 3,
+          "dashArray": null,
+          "autoFlank": {
+            "area": true,
+            "typeId": "auto-flank-area-seam",
+            "sessionId": "free-draw-1777469711253-1165",
+            "tag": "brigade",
+            "lengthKm": 20,
+            "parentUnitId": null,
+            "areaRole": null,
+            "className": "auto-flank-area-seam"
+          }
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            54.12876303296851,
+            23.80819318135411
+          ],
+          [
+            54.20602651423617,
+            23.648843420602326
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 3,
+          "dashArray": null,
+          "autoFlank": {
+            "area": true,
+            "typeId": "auto-flank-area-divider",
+            "sessionId": "free-draw-1777469711253-1165",
+            "tag": "brigade",
+            "lengthKm": 20,
+            "parentUnitId": null,
+            "areaRole": null,
+            "className": "auto-flank-area-divider"
+          }
+        },
+        "layerId": "layer-1"
+      }
     }
   ]
 }

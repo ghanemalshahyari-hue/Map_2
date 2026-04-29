@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RMOOZ — Design alternatives</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#0a0a0a;color:#e5e7eb;font:14px 'Inter','Segoe UI',system-ui,sans-serif;overflow:hidden}
+  .topbar{
+    height:54px;background:#111;border-bottom:1px solid #262626;
+    display:flex;align-items:center;padding:0 18px;gap:12px;
+  }
+  .topbar h1{font:600 14px sans-serif;letter-spacing:0.06em;color:#fff}
+  .topbar h1 span{color:#888;font-weight:400}
+  .picker{display:flex;gap:6px;margin-left:24px}
+  .pick{
+    padding:7px 14px;background:transparent;border:1px solid #2a2a2a;color:#aaa;
+    cursor:pointer;font:600 12px sans-serif;border-radius:4px;letter-spacing:0.04em;
+  }
+  .pick:hover{border-color:#4dabf7;color:#4dabf7}
+  .pick.active{background:#0d2030;border-color:#4dabf7;color:#4dabf7}
+  .pick small{display:block;font:400 10px sans-serif;color:#666;margin-top:2px;letter-spacing:0}
+  .pick.active small{color:#4dabf7;opacity:0.8}
+  .mode-btns{margin-left:auto;display:flex;gap:6px}
+  .mode-btn{
+    padding:7px 12px;background:transparent;border:1px solid #2a2a2a;color:#aaa;
+    cursor:pointer;font:500 12px sans-serif;border-radius:4px;
+  }
+  .mode-btn:hover{border-color:#666;color:#fff}
+  .mode-btn.active{background:#222;color:#fff;border-color:#444}
+
+  .stage{position:relative;height:calc(100% - 54px);background:#000}
+  .stage.single iframe{position:absolute;inset:0;width:100%;height:100%}
+  .stage.single iframe:not(.show){display:none}
+
+  .stage.compare{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:#262626}
+  .stage.compare .cell{background:#000;display:flex;flex-direction:column;min-width:0}
+  .stage.compare .cell-hdr{
+    height:30px;background:#0f0f0f;border-bottom:1px solid #262626;
+    display:flex;align-items:center;padding:0 12px;font:600 11px sans-serif;
+    color:#fff;letter-spacing:0.08em;flex-shrink:0;
+  }
+  .stage.compare .cell-hdr small{color:#888;margin-left:8px;font-weight:400}
+  .stage.compare iframe{flex:1;width:100%;border:none;background:#000}
+
+  .notes{
+    position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.85);
+    backdrop-filter:blur(10px);border-top:1px solid #262626;
+    padding:12px 18px;font:12px sans-serif;color:#ccc;line-height:1.5;
+    transform:translateY(100%);transition:transform 0.2s;
+  }
+  .notes.show{transform:translateY(0)}
+  .notes b{color:#fff}
+  .notes .row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+  .notes .row > div{padding:0 6px}
+  .notes h3{font-size:12px;color:#4dabf7;margin-bottom:4px;letter-spacing:0.08em;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>RMOOZ <span>· Design alternatives</span></h1>
+
+  <div class="picker">
+    <button class="pick active" data-alt="1">
+      Alt 1 — Tactical
+      <small>ATAK / military-brutalist</small>
+    </button>
+    <button class="pick" data-alt="2">
+      Alt 2 — Defense-Tech
+      <small>Lattice / Anduril</small>
+    </button>
+    <button class="pick" data-alt="3">
+      Alt 3 — Operations Console
+      <small>Palantir Gotham</small>
+    </button>
+  </div>
+
+  <div class="mode-btns">
+    <button class="mode-btn active" data-mode="single">Single</button>
+    <button class="mode-btn" data-mode="compare">Compare all 3</button>
+    <button class="mode-btn" data-mode="notes">Show notes</button>
+  </div>
+</div>
+
+<div class="stage single" id="stage">
+  <iframe class="show" data-alt="1" src="alt-1-tactical.html"></iframe>
+  <iframe data-alt="2" src="alt-2-lattice.html"></iframe>
+  <iframe data-alt="3" src="alt-3-gotham.html"></iframe>
+</div>
+
+<div class="notes" id="notes">
+  <div class="row">
+    <div>
+      <h3>Alt 1 — Tactical</h3>
+      <b>Vibe:</b> ATAK / WinTAK. Pure black, monospace numerics, square corners.<br>
+      <b>Strong points:</b> Classification banner top + bottom; reads as military immediately; high contrast for daylight tablets and gloves.<br>
+      <b>Trade-off:</b> Less "premium" feeling than alt 2.
+    </div>
+    <div>
+      <h3>Alt 2 — Defense-Tech</h3>
+      <b>Vibe:</b> Anduril Lattice. Floating glass panels, command bar, soft shadows.<br>
+      <b>Strong points:</b> Looks 2026-modern; command palette (Ctrl+K) front and center; map gets the most pixels because rail and panel float.<br>
+      <b>Trade-off:</b> Glass + blur is pretty but heavier on weak GPUs / low-end tablets.
+    </div>
+    <div>
+      <h3>Alt 3 — Operations Console</h3>
+      <b>Vibe:</b> Palantir Gotham. Dense, dual side panels, amber accent, alerts and live activity.<br>
+      <b>Strong points:</b> Built for analysts and TOC operators; selected feature + layers + activity are always visible; status bar top &amp; bottom.<br>
+      <b>Trade-off:</b> Map area is smallest of the 3; not ideal for tablets.
+    </div>
+  </div>
+</div>
+
+<script>
+  const stage = document.getElementById('stage');
+  const notes = document.getElementById('notes');
+  const picks = document.querySelectorAll('.pick');
+  const modes = document.querySelectorAll('.mode-btn');
+
+  picks.forEach(b => b.addEventListener('click', () => {
+    picks.forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    const alt = b.dataset.alt;
+    stage.querySelectorAll('iframe').forEach(f => {
+      f.classList.toggle('show', f.dataset.alt === alt);
+    });
+  }));
+
+  modes.forEach(b => b.addEventListener('click', () => {
+    const mode = b.dataset.mode;
+    if (mode === 'notes') {
+      notes.classList.toggle('show');
+      b.classList.toggle('active', notes.classList.contains('show'));
+      return;
+    }
+    modes.forEach(x => { if (x.dataset.mode !== 'notes') x.classList.remove('active'); });
+    b.classList.add('active');
+    if (mode === 'compare') {
+      stage.classList.remove('single');
+      stage.classList.add('compare');
+      stage.innerHTML = `
+        <div class="cell"><div class="cell-hdr">Alt 1 — Tactical <small>ATAK</small></div><iframe src="alt-1-tactical.html"></iframe></div>
+        <div class="cell"><div class="cell-hdr">Alt 2 — Defense-Tech <small>Lattice</small></div><iframe src="alt-2-lattice.html"></iframe></div>
+        <div class="cell"><div class="cell-hdr">Alt 3 — Ops Console <small>Gotham</small></div><iframe src="alt-3-gotham.html"></iframe></div>
+      `;
+    } else {
+      stage.classList.remove('compare');
+      stage.classList.add('single');
+      stage.innerHTML = `
+        <iframe class="show" data-alt="1" src="alt-1-tactical.html"></iframe>
+        <iframe data-alt="2" src="alt-2-lattice.html"></iframe>
+        <iframe data-alt="3" src="alt-3-gotham.html"></iframe>
+      `;
+      const active = document.querySelector('.pick.active');
+      if (active) {
+        const alt = active.dataset.alt;
+        stage.querySelectorAll('iframe').forEach(f => f.classList.toggle('show', f.dataset.alt === alt));
+      }
+    }
+  }));
+</script>
+</body>
+</html>

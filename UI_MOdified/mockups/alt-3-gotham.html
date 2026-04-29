@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RMOOZ — Alt 3: Operations Console (Gotham-style)</title>
+<style>
+  :root{
+    --bg:#161a23;
+    --bg-2:#1c212d;
+    --bg-3:#232936;
+    --line:#2d3445;
+    --line-strong:#3a4358;
+    --text:#dde3ee;
+    --text-dim:#8a93a8;
+    --text-faint:#5a6378;
+    --amber:#f0a838;
+    --amber-dim:#9c6e22;
+    --friendly:#5fa8e8;
+    --hostile:#e85d6b;
+    --neutral:#7dd49b;
+    --unknown:#e8c45d;
+    --critical:#e85d6b;
+    --ok:#7dd49b;
+    --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+    --sans:'Inter','Segoe UI',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--text);font:13px var(--sans);overflow:hidden}
+
+  /* ─── Top utility strip ─── */
+  .utilbar{
+    height:24px;background:var(--bg-2);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;padding:0 12px;gap:14px;font:11px var(--mono);color:var(--text-dim);
+  }
+  .utilbar .grp{display:flex;gap:14px;align-items:center}
+  .utilbar .key{color:var(--text-faint);text-transform:uppercase;letter-spacing:0.1em;font-size:10px}
+  .utilbar .val{color:var(--text)}
+  .utilbar .val.ok{color:var(--ok)}
+  .utilbar .val.amber{color:var(--amber)}
+  .utilbar .right{margin-left:auto}
+  .utilbar .pill{padding:1px 8px;border:1px solid var(--line-strong);border-radius:3px;background:var(--bg-3)}
+
+  /* ─── Header ─── */
+  .header{
+    height:48px;background:var(--bg-2);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;padding:0 14px;gap:18px;
+  }
+  .brand{display:flex;align-items:center;gap:8px;font:600 13px var(--sans);letter-spacing:0.06em}
+  .brand .mark{
+    width:24px;height:24px;background:var(--amber);color:#000;
+    display:grid;place-items:center;font:700 13px var(--sans);
+    clip-path:polygon(20% 0,80% 0,100% 50%,80% 100%,20% 100%,0 50%);
+  }
+  .header .crumb{display:flex;align-items:center;gap:8px;color:var(--text-dim);font:12px var(--sans)}
+  .header .crumb b{color:var(--text)}
+  .header .crumb svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2}
+  .header .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .header .opt{
+    padding:5px 10px;background:var(--bg-3);border:1px solid var(--line-strong);
+    border-radius:3px;font:11px var(--mono);color:var(--text-dim);cursor:pointer;
+    text-transform:uppercase;letter-spacing:0.08em;
+  }
+  .header .opt:hover{border-color:var(--amber);color:var(--amber)}
+  .header .opt.active{background:rgba(240,168,56,0.12);color:var(--amber);border-color:var(--amber-dim)}
+
+  /* ─── Workspace ─── */
+  .workspace{display:flex;height:calc(100% - 24px - 48px - 22px)}
+
+  /* ─── Tool rail (with sub-labels) ─── */
+  .rail{
+    width:62px;background:var(--bg-2);border-right:1px solid var(--line);
+    display:flex;flex-direction:column;align-items:center;padding:6px 0;gap:1px;
+  }
+  .tool{
+    width:54px;height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    cursor:pointer;background:transparent;border:none;color:var(--text-dim);position:relative;gap:2px;
+  }
+  .tool:hover{color:var(--text);background:var(--bg-3)}
+  .tool.active{color:var(--amber);background:var(--bg-3)}
+  .tool.active::before{
+    content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--amber);
+  }
+  .tool svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6}
+  .tool .lbl{font:600 9px var(--sans);text-transform:uppercase;letter-spacing:0.08em}
+  .rail .grp{width:36px;height:1px;background:var(--line);margin:4px 0}
+
+  /* ─── Context panel ─── */
+  .ctx{
+    width:300px;background:var(--bg-2);border-right:1px solid var(--line);
+    display:flex;flex-direction:column;
+  }
+  .ctx-head{padding:10px 14px;border-bottom:1px solid var(--line);background:var(--bg-3)}
+  .ctx-eyebrow{font:600 9px var(--mono);text-transform:uppercase;letter-spacing:0.18em;color:var(--amber)}
+  .ctx-title{font:600 14px var(--sans);margin-top:2px}
+  .ctx-body{flex:1;overflow:auto}
+
+  .panel-card{
+    border-bottom:1px solid var(--line);padding:12px 14px;
+  }
+  .panel-card .hdr{
+    font:600 10px var(--sans);color:var(--text-dim);text-transform:uppercase;
+    letter-spacing:0.16em;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;
+  }
+  .panel-card .hdr .count{
+    background:var(--bg-3);border:1px solid var(--line-strong);
+    padding:1px 6px;border-radius:3px;font:600 9px var(--mono);color:var(--text);
+  }
+
+  .seg{display:flex;border:1px solid var(--line-strong);border-radius:3px;overflow:hidden}
+  .seg button{
+    flex:1;padding:7px;background:var(--bg-3);border:none;color:var(--text-dim);
+    font:600 10px var(--mono);letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;
+    border-right:1px solid var(--line);
+  }
+  .seg button:last-child{border-right:none}
+  .seg button.active{background:rgba(240,168,56,0.18);color:var(--amber)}
+
+  .recents{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .recent{
+    aspect-ratio:1;border:1px solid var(--line-strong);background:var(--bg-3);
+    display:grid;place-items:center;color:var(--friendly);cursor:pointer;
+    font:700 11px var(--mono);
+  }
+  .recent:hover{border-color:var(--amber)}
+  .recent.host{color:var(--hostile)}
+  .recent.add{color:var(--text-faint);border-style:dashed}
+
+  .field{margin-top:8px}
+  .field label{display:block;font:500 10px var(--mono);color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+  .field input{
+    width:100%;padding:7px 10px;background:var(--bg-3);border:1px solid var(--line-strong);
+    color:var(--text);font:13px var(--mono);outline:none;border-radius:3px;
+  }
+  .field input:focus{border-color:var(--amber)}
+
+  .row{display:flex;gap:8px;align-items:center;justify-content:space-between;font:12px var(--sans);padding:5px 0;border-bottom:1px dotted var(--line)}
+  .row:last-child{border-bottom:none}
+  .row .k{color:var(--text-dim);font:11px var(--mono);text-transform:uppercase;letter-spacing:0.06em}
+  .row .v{color:var(--text);font:600 12px var(--mono)}
+
+  .cta{
+    margin-top:10px;width:100%;padding:10px;background:var(--amber);color:#000;
+    font:700 11px var(--sans);letter-spacing:0.12em;border:none;cursor:pointer;
+    text-transform:uppercase;border-radius:3px;
+  }
+  .cta.ghost{background:var(--bg-3);color:var(--text);border:1px solid var(--line-strong);margin-top:6px}
+
+  /* ─── Map ─── */
+  .map-wrap{flex:1;position:relative;background:#0f1623;overflow:hidden}
+  .map{position:absolute;inset:0}
+
+  /* Right side data column */
+  .rightcol{
+    width:280px;background:var(--bg-2);border-left:1px solid var(--line);
+    display:flex;flex-direction:column;overflow:auto;
+  }
+  .rightcol .panel-card{background:var(--bg-2)}
+  .rightcol .alert{
+    padding:8px 14px;background:rgba(232,93,107,0.08);border-left:2px solid var(--critical);
+    font:11px var(--sans);color:var(--text);
+  }
+  .rightcol .alert .t{font:600 10px var(--mono);color:var(--critical);text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:2px}
+
+  .layers .layer{
+    display:flex;align-items:center;gap:8px;padding:5px 0;font:12px var(--sans);color:var(--text);border-bottom:1px dotted var(--line);
+  }
+  .layers .layer:last-child{border-bottom:none}
+  .layers .layer .swatch{width:9px;height:9px;border-radius:50%}
+  .layers .layer .nm{flex:1}
+  .layers .layer .ct{font:600 10px var(--mono);color:var(--text-dim)}
+  .layers .layer.off{color:var(--text-faint)}
+  .layers .layer.off .swatch{opacity:0.3}
+
+  /* Map chrome cards */
+  .chrome{
+    position:absolute;background:rgba(28,33,45,0.92);border:1px solid var(--line-strong);
+    color:var(--text);font:11px var(--mono);padding:6px 9px;border-radius:3px;
+  }
+  .chrome.tl{top:8px;left:8px}
+  .chrome.tr{top:8px;right:8px}
+  .chrome.bl{bottom:8px;left:8px}
+  .chrome.br{bottom:8px;right:8px;display:flex;flex-direction:column;padding:0;overflow:hidden}
+  .chrome .label{color:var(--text-faint);font-size:9px;text-transform:uppercase;letter-spacing:0.14em;display:block}
+  .chrome .val{color:var(--text);font-size:12px;display:block;margin-top:1px}
+  .chrome.tr{display:flex;flex-direction:column;gap:6px}
+
+  .basemap-row{display:flex}
+  .bm{
+    padding:4px 8px;border-right:1px solid var(--line);cursor:pointer;color:var(--text-dim);
+    font:600 10px var(--mono);text-transform:uppercase;letter-spacing:0.1em;
+  }
+  .bm:last-child{border-right:none}
+  .bm.active{color:var(--amber)}
+
+  .zb{
+    width:28px;height:28px;display:grid;place-items:center;cursor:pointer;color:var(--text);
+    border-bottom:1px solid var(--line);font:600 14px var(--mono);
+  }
+  .zb:last-child{border-bottom:none}
+  .zb:hover{color:var(--amber)}
+
+  .scalebar{
+    position:absolute;bottom:50px;right:12px;color:var(--text);font:10px var(--mono);text-align:right;
+  }
+  .scalebar .bar{display:flex;height:4px;border:1px solid #fff;margin-bottom:2px;width:100px;margin-left:auto}
+  .scalebar .bar div{flex:1;background:#fff}
+  .scalebar .bar div:nth-child(even){background:#000}
+
+  /* Mission step strip on map */
+  .mission{
+    position:absolute;top:8px;left:50%;transform:translateX(-50%);
+    background:rgba(28,33,45,0.95);border:1px solid var(--amber-dim);
+    padding:6px 12px;display:flex;gap:12px;align-items:center;
+    font:11px var(--mono);border-radius:3px;
+  }
+  .mission .step{display:flex;align-items:center;gap:5px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;font-size:10px}
+  .mission .step.done{color:var(--ok)}
+  .mission .step.curr{color:var(--amber)}
+  .mission .step .num{
+    width:16px;height:16px;border:1px solid currentColor;display:grid;place-items:center;
+    font:600 9px var(--mono);
+  }
+
+  /* Bottom status bar */
+  .botbar{
+    height:22px;background:var(--bg-2);border-top:1px solid var(--line);
+    display:flex;align-items:center;padding:0 14px;gap:18px;
+    font:10px var(--mono);color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;
+  }
+  .botbar .grp{display:flex;gap:18px;align-items:center}
+  .botbar .right{margin-left:auto}
+  .botbar .ok{color:var(--ok)}
+  .botbar .amber{color:var(--amber)}
+
+  kbd{
+    background:var(--bg-3);border:1px solid var(--line-strong);
+    padding:1px 5px;border-radius:2px;font:600 9px var(--mono);color:var(--text-dim);
+  }
+
+  /* Selected feature highlighter */
+  .selected-card{
+    background:var(--bg-3);border:1px solid var(--amber-dim);border-radius:3px;
+    padding:10px;margin-top:6px;
+  }
+  .selected-card .ttl{
+    display:flex;align-items:center;justify-content:space-between;
+    font:600 12px var(--sans);
+  }
+  .selected-card .sub{font:10px var(--mono);color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-top:2px}
+</style>
+</head>
+<body>
+
+<!-- Top utility bar (operations console signature) -->
+<div class="utilbar">
+  <div class="grp">
+    <span class="key">CLASSIFICATION</span><span class="val pill amber">UNCLASSIFIED</span>
+  </div>
+  <div class="grp">
+    <span class="key">PLAN</span><span class="val">OPLAN-LAHEJ-04</span>
+    <span class="key">REV</span><span class="val">v0.27</span>
+  </div>
+  <div class="right grp">
+    <span class="key">SERVER</span><span class="val ok">●  CONNECTED</span>
+    <span class="key">GPS</span><span class="val ok">8 SATS</span>
+    <span class="key">DTG</span><span class="val">271745ZAPR26</span>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="brand"><div class="mark">R</div><span>RMOOZ // C2</span></div>
+  <div class="crumb">
+    <span>OPLAN-Lahej-04</span>
+    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    <b>AOI North · Bayda</b>
+  </div>
+  <div class="right">
+    <button class="opt active">Plan</button>
+    <button class="opt">Recon</button>
+    <button class="opt">Brief</button>
+    <button class="opt">Replay</button>
+    <span style="width:14px"></span>
+    <button class="opt">⌘ K  Search</button>
+    <button class="opt">Chat<span style="color:var(--critical);margin-left:6px">●3</span></button>
+    <button class="opt">⋮</button>
+  </div>
+</div>
+
+<!-- Workspace -->
+<div class="workspace">
+
+  <!-- Tool rail with sub-labels -->
+  <nav class="rail">
+    <button class="tool" title="Select  M"><svg viewBox="0 0 24 24"><path d="M3 3l7 17 2.5-7.4L20 10z"/></svg><span class="lbl">Select</span></button>
+    <button class="tool active" title="Symbol  S"><svg viewBox="0 0 24 24"><path d="M12 3l9 9-9 9-9-9z"/></svg><span class="lbl">Symbol</span></button>
+    <button class="tool" title="Draw  D"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg><span class="lbl">Draw</span></button>
+    <button class="tool" title="Text  T"><svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="12" y1="4" x2="12" y2="20"/></svg><span class="lbl">Text</span></button>
+    <div class="grp"></div>
+    <button class="tool" title="Measure  R"><svg viewBox="0 0 24 24"><path d="M21 15a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0z"/></svg><span class="lbl">Measure</span></button>
+    <button class="tool" title="Shapes"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg><span class="lbl">Shape</span></button>
+    <div class="grp"></div>
+    <button class="tool" title="Units"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/></svg><span class="lbl">Units</span></button>
+    <button class="tool" title="Layers"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg><span class="lbl">Layers</span></button>
+    <button class="tool" title="Erase"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/></svg><span class="lbl">Erase</span></button>
+  </nav>
+
+  <!-- Context panel -->
+  <aside class="ctx">
+    <div class="ctx-head">
+      <div class="ctx-eyebrow">// Tool · Symbol</div>
+      <div class="ctx-title">Place unit symbol</div>
+    </div>
+    <div class="ctx-body">
+
+      <div class="panel-card">
+        <div class="hdr"><span>Affiliation</span></div>
+        <div class="seg">
+          <button class="active">FR</button>
+          <button>HO</button>
+          <button>NE</button>
+          <button>UN</button>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="hdr"><span>Recents</span><span class="count">8</span></div>
+        <div class="recents">
+          <div class="recent">C2</div>
+          <div class="recent">INF</div>
+          <div class="recent">ARM</div>
+          <div class="recent">ART</div>
+          <div class="recent host">C2</div>
+          <div class="recent">SEAL</div>
+          <div class="recent">HQ</div>
+          <div class="recent add">+</div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="hdr"><span>Symbol meta</span></div>
+        <div class="row"><span class="k">SIDC</span><span class="v">100315.0000.121</span></div>
+        <div class="row"><span class="k">Side</span><span class="v" style="color:var(--friendly)">Friendly</span></div>
+        <div class="row"><span class="k">Echelon</span><span class="v">Battalion</span></div>
+        <div class="row"><span class="k">Status</span><span class="v" style="color:var(--ok)">Operational</span></div>
+      </div>
+
+      <div class="panel-card">
+        <div class="hdr"><span>Label</span></div>
+        <div class="field"><label>Unit name</label><input value="C2 ALPHA"/></div>
+        <div class="field"><label>Notes</label><input placeholder="optional"/></div>
+        <button class="cta">PLACE ON MAP  ↵</button>
+        <button class="cta ghost">Cancel  Esc</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Map area -->
+  <div class="map-wrap">
+    <svg class="map" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="800" height="160" fill="#142233"/>
+      <path d="M0,160 Q200,140 400,170 T800,150 L800,600 L0,600 Z" fill="#1c2533"/>
+      <!-- subtle grid -->
+      <g stroke="#243044" stroke-width="0.5" opacity="0.5">
+        <line x1="100" y1="0" x2="100" y2="600"/><line x1="200" y1="0" x2="200" y2="600"/>
+        <line x1="300" y1="0" x2="300" y2="600"/><line x1="400" y1="0" x2="400" y2="600"/>
+        <line x1="500" y1="0" x2="500" y2="600"/><line x1="600" y1="0" x2="600" y2="600"/>
+        <line x1="700" y1="0" x2="700" y2="600"/>
+        <line x1="0" y1="100" x2="800" y2="100"/><line x1="0" y1="200" x2="800" y2="200"/>
+        <line x1="0" y1="300" x2="800" y2="300"/><line x1="0" y1="400" x2="800" y2="400"/>
+        <line x1="0" y1="500" x2="800" y2="500"/>
+      </g>
+      <path d="M0,300 Q200,280 400,310 T800,295" stroke="#5d4733" stroke-width="1.5" fill="none"/>
+      <path d="M120,160 L160,600" stroke="#3f4458" stroke-width="1.2" fill="none"/>
+
+      <!-- AOI -->
+      <rect x="120" y="180" width="500" height="280" stroke="#5fa8e8" stroke-width="2" fill="none"/>
+      <rect x="350" y="180" width="270" height="190" stroke="#5fa8e8" stroke-width="2" fill="rgba(95,168,232,0.04)"/>
+      <g stroke="#e85d6b" stroke-width="3" stroke-linecap="round">
+        <line x1="115" y1="175" x2="125" y2="185"/><line x1="125" y1="175" x2="115" y2="185"/>
+        <line x1="615" y1="175" x2="625" y2="185"/><line x1="625" y1="175" x2="615" y2="185"/>
+        <line x1="615" y1="455" x2="625" y2="465"/><line x1="625" y1="455" x2="615" y2="465"/>
+        <line x1="115" y1="455" x2="125" y2="465"/><line x1="125" y1="455" x2="115" y2="465"/>
+        <line x1="345" y1="365" x2="355" y2="375"/><line x1="355" y1="365" x2="345" y2="375"/>
+      </g>
+
+      <g font-family="JetBrains Mono, monospace" font-weight="700">
+        <g><rect x="160" y="220" width="44" height="32" fill="#5fa8e8" stroke="#fff"/><text x="182" y="240" text-anchor="middle" fill="#0f1623" font-size="13">C2</text></g>
+        <g><rect x="430" y="200" width="44" height="32" fill="#5fa8e8" stroke="#fff"/><text x="452" y="220" text-anchor="middle" fill="#0f1623" font-size="13">C2</text></g>
+        <g><rect x="500" y="200" width="44" height="32" fill="#5fa8e8" stroke="#fff"/><text x="522" y="220" text-anchor="middle" fill="#0f1623" font-size="13">C2</text></g>
+        <g><rect x="200" y="320" width="44" height="32" fill="#5fa8e8" stroke="#fff"/><text x="222" y="340" text-anchor="middle" fill="#0f1623" font-size="11">SEAL</text></g>
+        <g><rect x="220" y="380" width="44" height="32" fill="#5fa8e8" stroke="#fff"/><text x="242" y="400" text-anchor="middle" fill="#0f1623" font-size="11">●</text></g>
+      </g>
+
+      <!-- Selection halo -->
+      <g><rect x="156" y="216" width="52" height="40" stroke="#f0a838" stroke-width="1.5" fill="none" stroke-dasharray="3 2"/></g>
+
+      <g opacity="0.5" stroke="#5fa8e8" stroke-width="1.5" stroke-dasharray="3 3" fill="none">
+        <rect x="380" y="290" width="44" height="32"/>
+      </g>
+    </svg>
+
+    <div class="mission">
+      <span class="step done"><span class="num">✓</span><span>Pick</span></span>
+      <span class="step curr"><span class="num">2</span><span>Place</span></span>
+      <span class="step"><span class="num">3</span><span>Confirm</span></span>
+      <kbd>Esc</kbd>
+    </div>
+
+    <div class="chrome tl">
+      <span class="label">CURSOR · MGRS</span>
+      <span class="val">33S UC 12345 67890</span>
+      <span class="label" style="margin-top:4px">LL · WGS84</span>
+      <span class="val">32°51'18"N  13°10'42"E</span>
+      <span class="label" style="margin-top:4px">ELEV / BRG / RNG</span>
+      <span class="val">42 m  ·  087°  ·  4.2 km</span>
+    </div>
+
+    <div class="chrome tr">
+      <div class="basemap-row">
+        <div class="bm">SAT</div>
+        <div class="bm active">TOPO</div>
+        <div class="bm">STR</div>
+        <div class="bm">OFF</div>
+      </div>
+    </div>
+
+    <div class="chrome bl">
+      <span class="label">ZOOM · LEVEL 14</span>
+      <span class="val">1 : 35,000</span>
+    </div>
+
+    <div class="scalebar">
+      <div class="bar"><div></div><div></div><div></div><div></div></div>
+      <span>2 KM</span>
+    </div>
+
+    <div class="chrome br">
+      <div class="zb">+</div>
+      <div class="zb">−</div>
+      <div class="zb">⊕</div>
+      <div class="zb">N</div>
+    </div>
+  </div>
+
+  <!-- Right column: live data -->
+  <aside class="rightcol">
+    <div class="alert">
+      <span class="t">⚠ Alert · 1 min ago</span>
+      Hostile movement detected near AOI North-East boundary.
+    </div>
+
+    <div class="panel-card">
+      <div class="hdr"><span>Selected feature</span></div>
+      <div class="selected-card">
+        <div class="ttl"><span>C2 ALPHA</span><span style="color:var(--friendly);font:600 11px var(--mono)">FRIEND</span></div>
+        <div class="sub">BATTALION · INFANTRY · OPERATIONAL</div>
+      </div>
+      <div class="row" style="margin-top:8px"><span class="k">MGRS</span><span class="v">33S UC 12450 68210</span></div>
+      <div class="row"><span class="k">Range to AOI</span><span class="v">1.4 km</span></div>
+      <div class="row"><span class="k">Bearing</span><span class="v">087° T</span></div>
+      <div class="row"><span class="k">Last update</span><span class="v">271744Z</span></div>
+    </div>
+
+    <div class="panel-card">
+      <div class="hdr"><span>Layers</span><span class="count">5/7</span></div>
+      <div class="layers">
+        <div class="layer"><span class="swatch" style="background:var(--friendly)"></span><span class="nm">Friendly forces</span><span class="ct">12</span></div>
+        <div class="layer"><span class="swatch" style="background:var(--hostile)"></span><span class="nm">Hostile contacts</span><span class="ct">3</span></div>
+        <div class="layer"><span class="swatch" style="background:var(--neutral)"></span><span class="nm">Neutral / civilian</span><span class="ct">7</span></div>
+        <div class="layer"><span class="swatch" style="background:var(--amber)"></span><span class="nm">Tactical graphics</span><span class="ct">9</span></div>
+        <div class="layer"><span class="swatch" style="background:#888"></span><span class="nm">AOI boundaries</span><span class="ct">2</span></div>
+        <div class="layer off"><span class="swatch" style="background:#888"></span><span class="nm">Terrain analysis</span><span class="ct">—</span></div>
+        <div class="layer off"><span class="swatch" style="background:#888"></span><span class="nm">Weather overlay</span><span class="ct">—</span></div>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <div class="hdr"><span>Recent activity</span></div>
+      <div class="row"><span class="k">17:44Z</span><span class="v" style="font:11px var(--sans);color:var(--text)">C2 Alpha placed</span></div>
+      <div class="row"><span class="k">17:42Z</span><span class="v" style="font:11px var(--sans);color:var(--text)">AOI updated</span></div>
+      <div class="row"><span class="k">17:39Z</span><span class="v" style="font:11px var(--sans);color:var(--text)">SEAL relocated</span></div>
+      <div class="row"><span class="k">17:33Z</span><span class="v" style="font:11px var(--sans);color:var(--text)">Plan opened</span></div>
+    </div>
+  </aside>
+</div>
+
+<!-- Bottom status bar -->
+<div class="botbar">
+  <div class="grp">
+    <span>● <span class="ok">SYNC OK</span></span>
+    <span>WGS84 · MGRS</span>
+    <span>KM</span>
+  </div>
+  <div class="right grp">
+    <span>UNDO <kbd>Z</kbd></span>
+    <span>REDO <kbd>Y</kbd></span>
+    <span>SEARCH <kbd>⌘K</kbd></span>
+    <span class="amber">EDIT MODE</span>
+  </div>
+</div>
+
+</body>
+</html>

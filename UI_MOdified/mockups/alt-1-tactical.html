@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RMOOZ — Alt 1: Tactical (ATAK-style)</title>
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --bg-2:#121212;
+    --line:#262626;
+    --line-2:#1a1a1a;
+    --text:#d4d4d4;
+    --text-dim:#888;
+    --text-faint:#555;
+    --friendly:#4dabf7;
+    --friendly-dim:#1c4f7c;
+    --hostile:#ff5252;
+    --neutral:#86d472;
+    --unknown:#f4c842;
+    --warn:#ffb84d;
+    --classified:#3bb273;
+    --classified-bg:#143020;
+    --mono:'Consolas','SF Mono',Monaco,'Courier New',monospace;
+    --sans:'Segoe UI',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden}
+
+  /* ─── Classification banners ─── */
+  .classif{
+    height:18px;background:var(--classified-bg);color:var(--classified);
+    font:600 10px/18px var(--mono);text-align:center;letter-spacing:0.3em;
+    border-top:1px solid #1f4a32;border-bottom:1px solid #1f4a32;
+    text-transform:uppercase;
+  }
+  .classif.bottom{border-top:1px solid #1f4a32;border-bottom:none}
+
+  /* ─── Header / status bar ─── */
+  .header{
+    height:44px;background:var(--bg-2);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;padding:0 14px;gap:18px;
+  }
+  .brand{display:flex;align-items:center;gap:8px;font:700 13px var(--sans);letter-spacing:0.18em}
+  .brand .mark{
+    width:22px;height:22px;border:1.5px solid var(--friendly);
+    display:grid;place-items:center;color:var(--friendly);
+    font:700 11px var(--mono);
+  }
+  .header .sep{width:1px;height:18px;background:var(--line)}
+  .header .status{display:flex;align-items:center;gap:14px;font:500 11px var(--mono);color:var(--text-dim)}
+  .header .status .item{display:flex;align-items:center;gap:6px}
+  .header .status .dot{width:7px;height:7px;border-radius:50%;background:var(--classified)}
+  .header .status .dot.off{background:#444}
+  .header .status .key{color:var(--text-faint);font-size:10px;text-transform:uppercase}
+  .header .status .val{color:var(--text)}
+  .header .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .ico-btn{
+    width:30px;height:30px;display:grid;place-items:center;
+    background:transparent;border:1px solid transparent;color:var(--text-dim);
+    cursor:pointer;border-radius:2px;
+  }
+  .ico-btn:hover{border-color:var(--line);color:var(--text)}
+  .badge{
+    background:var(--hostile);color:#fff;font:700 9px var(--mono);
+    padding:1px 5px;border-radius:2px;letter-spacing:0.05em;
+  }
+
+  /* ─── Workspace ─── */
+  .workspace{display:flex;height:calc(100% - 18px - 18px - 44px)}
+
+  /* ─── Tool rail ─── */
+  .rail{
+    width:54px;background:var(--bg-2);border-right:1px solid var(--line);
+    display:flex;flex-direction:column;align-items:center;padding:6px 0;gap:2px;
+  }
+  .rail .grp{width:26px;height:1px;background:var(--line);margin:6px 0}
+  .tool{
+    width:46px;height:46px;display:grid;place-items:center;cursor:pointer;
+    background:transparent;border:none;color:var(--text-dim);position:relative;
+    border-radius:2px;
+  }
+  .tool:hover{color:var(--text);background:#161616}
+  .tool.active{color:var(--friendly)}
+  .tool.active::before{
+    content:'';position:absolute;left:0;top:8px;bottom:8px;width:2px;background:var(--friendly);
+  }
+  .tool svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6}
+
+  /* ─── Context panel ─── */
+  .ctx{
+    width:280px;background:var(--bg-2);border-right:1px solid var(--line);
+    display:flex;flex-direction:column;
+  }
+  .ctx-head{
+    padding:12px 14px;border-bottom:1px solid var(--line);
+  }
+  .ctx-title{font:700 11px var(--mono);letter-spacing:0.18em;color:var(--text);text-transform:uppercase}
+  .ctx-hint{font:11px var(--sans);color:var(--text-dim);margin-top:4px;line-height:1.45}
+  .ctx-body{flex:1;overflow:auto;padding:12px}
+  .sec-label{
+    font:600 9px var(--mono);color:var(--text-faint);text-transform:uppercase;
+    letter-spacing:0.2em;margin:14px 0 8px;
+  }
+  .sec-label:first-child{margin-top:0}
+  .seg{display:flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+  .seg button{
+    flex:1;padding:8px;background:transparent;border:none;color:var(--text-dim);
+    font:600 10px var(--mono);letter-spacing:0.1em;cursor:pointer;text-transform:uppercase;
+    border-right:1px solid var(--line);
+  }
+  .seg button:last-child{border-right:none}
+  .seg button.active{background:#0d2030;color:var(--friendly)}
+  .seg button[data-side="hostile"].active{background:#3a1313;color:var(--hostile)}
+  .recents{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .recent{
+    aspect-ratio:1;border:1px solid var(--line);background:var(--bg);
+    display:grid;place-items:center;color:var(--friendly);cursor:pointer;
+    font:700 11px var(--mono);
+  }
+  .recent:hover{border-color:var(--friendly)}
+  .recent.host{color:var(--hostile)}
+  .field{display:block;margin-top:8px}
+  .field label{display:block;font:600 10px var(--mono);color:var(--text-faint);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:4px}
+  .field input{
+    width:100%;padding:8px 10px;background:var(--bg);border:1px solid var(--line);
+    color:var(--text);font:13px var(--mono);outline:none;border-radius:2px;
+  }
+  .field input:focus{border-color:var(--friendly)}
+  .cta{
+    margin-top:12px;width:100%;padding:11px;background:var(--friendly);color:#000;
+    font:700 11px var(--mono);letter-spacing:0.15em;border:none;cursor:pointer;
+    text-transform:uppercase;border-radius:2px;
+  }
+
+  /* ─── Map ─── */
+  .map-wrap{flex:1;position:relative;background:#1d2a35;overflow:hidden}
+  .map{position:absolute;inset:0}
+
+  /* Floating map chrome */
+  .chrome{
+    position:absolute;background:rgba(10,10,10,0.85);border:1px solid var(--line);
+    color:var(--text);font:11px var(--mono);padding:8px 10px;border-radius:2px;
+    backdrop-filter:blur(6px);
+  }
+  .chrome.tl{top:12px;left:12px}
+  .chrome.tr{top:12px;right:12px;display:flex;gap:6px;align-items:center}
+  .chrome.bl{bottom:12px;left:12px}
+  .chrome.br{bottom:12px;right:12px;display:flex;flex-direction:column;gap:0;padding:0;overflow:hidden}
+  .chrome .label{color:var(--text-faint);font-size:9px;text-transform:uppercase;letter-spacing:0.18em;display:block}
+  .chrome .val{color:var(--text);font-size:13px;display:block;margin-top:2px}
+  .basemap{padding:6px 10px;border-right:1px solid var(--line);cursor:pointer;color:var(--text-dim)}
+  .basemap.active{color:var(--friendly)}
+  .basemap:last-child{border-right:none}
+  .zoombtn{
+    width:32px;height:32px;display:grid;place-items:center;cursor:pointer;
+    background:rgba(10,10,10,0.85);color:var(--text);border-bottom:1px solid var(--line);
+  }
+  .zoombtn:last-child{border-bottom:none}
+  .zoombtn:hover{color:var(--friendly)}
+  .scalebar{
+    position:absolute;bottom:42px;right:12px;
+    color:var(--text);font:11px var(--mono);text-align:center;
+  }
+  .scalebar .bar{display:flex;height:5px;border:1px solid var(--text);margin-bottom:3px}
+  .scalebar .bar div{flex:1;background:var(--text)}
+  .scalebar .bar div:nth-child(even){background:#000}
+
+  /* mission step chip */
+  .mission{
+    position:absolute;top:12px;left:50%;transform:translateX(-50%);
+    background:rgba(10,10,10,0.9);border:1px solid var(--line);
+    padding:8px 14px;border-radius:2px;display:flex;gap:14px;align-items:center;
+    font:11px var(--mono);
+  }
+  .mission .dot{width:8px;height:8px;border-radius:50%;background:#333}
+  .mission .dot.done{background:var(--classified)}
+  .mission .dot.curr{background:var(--friendly);box-shadow:0 0 0 3px rgba(77,171,247,0.25)}
+
+  .legend{
+    margin-top:6px;font:10px var(--mono);color:var(--text-dim);line-height:1.7;
+  }
+  .legend span{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:middle}
+  kbd{
+    display:inline-block;background:var(--bg);border:1px solid var(--line);
+    border-bottom-width:2px;border-radius:2px;padding:1px 5px;
+    font:600 10px var(--mono);color:var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<!-- Top classification banner -->
+<div class="classif">// UNCLASSIFIED //</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="brand"><div class="mark">R</div><span>RMOOZ</span></div>
+  <div class="sep"></div>
+  <div class="status">
+    <div class="item"><span class="key">CALLSIGN</span><span class="val">PLANNER-1</span></div>
+    <div class="item"><span class="key">ROLE</span><span class="val">S3</span></div>
+    <div class="item"><span class="key">PLAN</span><span class="val">OPLAN-LAHEJ-04</span></div>
+    <div class="item"><span class="dot"></span><span class="val">SERVER</span></div>
+    <div class="item"><span class="dot"></span><span class="val">GPS 8</span></div>
+    <div class="item"><span class="key">DTG</span><span class="val">271745ZAPR26</span></div>
+  </div>
+  <div class="right">
+    <button class="ico-btn" title="Chat (C)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="badge" style="margin-left:-2px">3</span></button>
+    <button class="ico-btn" title="NVG mode">🌙</button>
+    <button class="ico-btn" title="More">⋮</button>
+  </div>
+</div>
+
+<!-- Workspace -->
+<div class="workspace">
+  <!-- Tool rail (icon-only) -->
+  <nav class="rail">
+    <button class="tool" title="Select  M"><svg viewBox="0 0 24 24"><path d="M3 3l7 17 2.5-7.4L20 10z"/></svg></button>
+    <button class="tool active" title="Symbol  S"><svg viewBox="0 0 24 24"><path d="M12 3l9 9-9 9-9-9z"/></svg></button>
+    <button class="tool" title="Draw  D"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>
+    <button class="tool" title="Text  T"><svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="12" y1="4" x2="12" y2="20"/></svg></button>
+    <div class="grp"></div>
+    <button class="tool" title="Measure  R"><svg viewBox="0 0 24 24"><path d="M21 15a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0z"/></svg></button>
+    <button class="tool" title="Shapes  H"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg></button>
+    <div class="grp"></div>
+    <button class="tool" title="Units  U"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/></svg></button>
+    <button class="tool" title="Layers  L"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg></button>
+    <button class="tool" title="Erase  E"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/></svg></button>
+    <div style="flex:1"></div>
+    <button class="tool" title="Undo  Ctrl+Z"><svg viewBox="0 0 24 24"><path d="M3 7v6h6M3 13a9 9 0 1 0 3-7"/></svg></button>
+    <button class="tool" title="Help  ?"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 4"/><circle cx="12" cy="17" r=".7" fill="currentColor"/></svg></button>
+  </nav>
+
+  <!-- Context panel -->
+  <aside class="ctx">
+    <div class="ctx-head">
+      <div class="ctx-title">Symbol</div>
+      <div class="ctx-hint">Pick a symbol or press <kbd>/</kbd> to open library, then click the map.</div>
+    </div>
+    <div class="ctx-body">
+      <div class="sec-label">Side</div>
+      <div class="seg">
+        <button class="active" data-side="friendly">Friendly</button>
+        <button data-side="hostile">Hostile</button>
+        <button data-side="neutral">Neutral</button>
+        <button data-side="unknown">UNK</button>
+      </div>
+
+      <div class="sec-label">Recently used</div>
+      <div class="recents">
+        <div class="recent">C2</div>
+        <div class="recent">INF</div>
+        <div class="recent">ARM</div>
+        <div class="recent">ART</div>
+        <div class="recent host">C2</div>
+        <div class="recent">SEAL</div>
+        <div class="recent">HQ</div>
+        <div class="recent" style="color:var(--text-faint)">+</div>
+      </div>
+
+      <div class="sec-label">Label &amp; notes</div>
+      <div class="field">
+        <label>Unit name</label>
+        <input value="C2 Alpha"/>
+      </div>
+      <div class="field">
+        <label>Notes</label>
+        <input placeholder="optional"/>
+      </div>
+
+      <button class="cta">Place on map  ↵</button>
+
+      <div class="sec-label" style="margin-top:18px">Legend</div>
+      <div class="legend">
+        <div><span style="background:var(--friendly)"></span>Friendly</div>
+        <div><span style="background:var(--hostile)"></span>Hostile</div>
+        <div><span style="background:var(--neutral)"></span>Neutral</div>
+        <div><span style="background:var(--unknown)"></span>Unknown</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Map area -->
+  <div class="map-wrap">
+    <svg class="map" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <!-- Sea -->
+      <rect x="0" y="0" width="800" height="160" fill="#0e2a3d"/>
+      <!-- Land -->
+      <path d="M0,160 Q200,140 400,170 T800,150 L800,600 L0,600 Z" fill="#243d2e"/>
+      <!-- Roads -->
+      <path d="M0,300 Q200,280 400,310 T800,295" stroke="#a87045" stroke-width="2" fill="none" opacity="0.7"/>
+      <path d="M120,160 L160,600" stroke="#7a6048" stroke-width="1.5" fill="none" opacity="0.5"/>
+      <!-- AOI rectangle (matches user's screenshot) -->
+      <rect x="120" y="180" width="500" height="280" stroke="#4dabf7" stroke-width="2.5" fill="rgba(77,171,247,0.04)"/>
+      <rect x="350" y="180" width="270" height="190" stroke="#4dabf7" stroke-width="2.5" fill="rgba(77,171,247,0.04)"/>
+      <!-- X waypoints -->
+      <g stroke="#ff5252" stroke-width="3" stroke-linecap="round">
+        <line x1="115" y1="175" x2="125" y2="185"/><line x1="125" y1="175" x2="115" y2="185"/>
+        <line x1="615" y1="175" x2="625" y2="185"/><line x1="625" y1="175" x2="615" y2="185"/>
+        <line x1="615" y1="455" x2="625" y2="465"/><line x1="625" y1="455" x2="615" y2="465"/>
+        <line x1="115" y1="455" x2="125" y2="465"/><line x1="125" y1="455" x2="115" y2="465"/>
+        <line x1="345" y1="365" x2="355" y2="375"/><line x1="355" y1="365" x2="345" y2="375"/>
+      </g>
+      <!-- C2 boxes -->
+      <g font-family="Consolas, monospace" font-weight="700">
+        <g><rect x="160" y="220" width="44" height="32" fill="#4dabf7" stroke="#fff" stroke-width="1"/><text x="182" y="240" text-anchor="middle" fill="#000" font-size="13">C2</text></g>
+        <g><rect x="430" y="200" width="44" height="32" fill="#4dabf7" stroke="#fff" stroke-width="1"/><text x="452" y="220" text-anchor="middle" fill="#000" font-size="13">C2</text></g>
+        <g><rect x="500" y="200" width="44" height="32" fill="#4dabf7" stroke="#fff" stroke-width="1"/><text x="522" y="220" text-anchor="middle" fill="#000" font-size="13">C2</text></g>
+        <g><rect x="200" y="320" width="44" height="32" fill="#4dabf7" stroke="#fff" stroke-width="1"/><text x="222" y="340" text-anchor="middle" fill="#000" font-size="13">SEAL</text></g>
+        <g><rect x="220" y="380" width="44" height="32" fill="#4dabf7" stroke="#fff" stroke-width="1"/><text x="242" y="400" text-anchor="middle" fill="#000" font-size="11">●</text></g>
+      </g>
+      <!-- Place arrow ghost -->
+      <g opacity="0.5" stroke="#4dabf7" stroke-width="1.5" stroke-dasharray="3 3" fill="none">
+        <rect x="380" y="290" width="44" height="32"/>
+      </g>
+    </svg>
+
+    <!-- Mission progress chip -->
+    <div class="mission">
+      <span style="color:var(--text-dim);font-weight:600">PLACE SYMBOL</span>
+      <span class="dot done"></span>
+      <span class="dot curr"></span>
+      <span class="dot"></span>
+      <span style="color:var(--text-dim)">Step 2 of 3 · Click map</span>
+      <kbd>Esc</kbd>
+    </div>
+
+    <!-- Top-left: cursor readout -->
+    <div class="chrome tl">
+      <span class="label">MGRS</span>
+      <span class="val">33S UC 12345 67890</span>
+      <span class="label" style="margin-top:6px">Lat / Lon</span>
+      <span class="val">32°51'18"N  13°10'42"E</span>
+      <span class="label" style="margin-top:6px">Elev</span>
+      <span class="val">42 m</span>
+    </div>
+
+    <!-- Top-right: basemap switcher -->
+    <div class="chrome tr" style="padding:0">
+      <div class="basemap">SAT</div>
+      <div class="basemap active">TOPO</div>
+      <div class="basemap">STREET</div>
+      <div class="basemap">OFFLINE</div>
+    </div>
+
+    <!-- Bottom-left: measurement chip -->
+    <div class="chrome bl">
+      <span class="label">Selected · C2 Alpha</span>
+      <span class="val">Range 4.2 km · Bearing 087°</span>
+    </div>
+
+    <!-- Scalebar -->
+    <div class="scalebar">
+      <div class="bar">
+        <div></div><div></div><div></div><div></div>
+      </div>
+      <span>2 km</span>
+    </div>
+
+    <!-- Bottom-right: zoom + locate -->
+    <div class="chrome br">
+      <div class="zoombtn" title="Zoom in">+</div>
+      <div class="zoombtn" title="Zoom out">−</div>
+      <div class="zoombtn" title="Locate me">⊕</div>
+      <div class="zoombtn" title="Lock north">N</div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom classification banner -->
+<div class="classif bottom">// UNCLASSIFIED //</div>
+
+</body>
+</html>

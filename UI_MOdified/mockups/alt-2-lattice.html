@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RMOOZ — Alt 2: Defense-Tech (Lattice / Anduril-style)</title>
+<style>
+  :root{
+    --bg:#0a1020;
+    --bg-2:#0f1830;
+    --bg-glass:rgba(15,24,48,0.72);
+    --line:rgba(120,150,200,0.14);
+    --line-strong:rgba(120,150,200,0.28);
+    --text:#e8edf5;
+    --text-dim:#94a3c0;
+    --text-faint:#5e6c85;
+    --accent:#4ea0ff;
+    --accent-2:#7c5cff;
+    --accent-glow:rgba(78,160,255,0.18);
+    --friendly:#4ea0ff;
+    --hostile:#ff5e7a;
+    --neutral:#7eea9c;
+    --unknown:#ffd166;
+    --classif:#7eea9c;
+    --sans:'Inter','Segoe UI',system-ui,sans-serif;
+    --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;overflow:hidden}
+
+  body{
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(78,160,255,0.06), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 100% 100%, rgba(124,92,255,0.05), transparent 60%),
+      var(--bg);
+  }
+
+  /* ─── Classification (subtle) ─── */
+  .classif{
+    height:14px;background:rgba(126,234,156,0.06);color:var(--classif);
+    font:600 9px var(--mono);text-align:center;letter-spacing:0.4em;line-height:14px;
+    border-bottom:1px solid rgba(126,234,156,0.15);
+  }
+
+  /* ─── Header ─── */
+  .header{
+    height:52px;display:flex;align-items:center;padding:0 18px;gap:18px;
+    background:var(--bg-glass);backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font:600 14px var(--sans);letter-spacing:-0.01em}
+  .brand .mark{
+    width:26px;height:26px;border-radius:7px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:grid;place-items:center;color:#fff;font:700 12px var(--sans);
+    box-shadow:0 4px 14px var(--accent-glow);
+  }
+  .header .pill{
+    display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:8px;
+    background:rgba(255,255,255,0.04);border:1px solid var(--line);
+    font:500 12px var(--sans);color:var(--text-dim);cursor:pointer;
+  }
+  .header .pill:hover{border-color:var(--line-strong);color:var(--text)}
+  .header .pill .key{color:var(--text-faint);font-size:10px;text-transform:uppercase;letter-spacing:0.1em}
+  .header .pill .val{color:var(--text);font-weight:500}
+  .header .pill .dot{width:6px;height:6px;border-radius:50%;background:var(--neutral);box-shadow:0 0 8px var(--neutral)}
+  .header .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+
+  /* Command bar */
+  .cmdbar{
+    flex:0 1 320px;display:flex;align-items:center;gap:8px;
+    padding:8px 12px;border-radius:9px;
+    background:rgba(255,255,255,0.03);border:1px solid var(--line);
+    color:var(--text-faint);font:13px var(--sans);
+  }
+  .cmdbar:hover{border-color:var(--line-strong)}
+  .cmdbar svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0}
+  .cmdbar .hint{margin-left:auto;font-size:11px;color:var(--text-faint)}
+  kbd{
+    background:rgba(255,255,255,0.06);border:1px solid var(--line);
+    padding:1px 6px;border-radius:4px;font:600 10px var(--mono);color:var(--text-dim);
+  }
+
+  .ico-btn{
+    width:34px;height:34px;display:grid;place-items:center;border-radius:8px;
+    background:transparent;border:1px solid transparent;color:var(--text-dim);cursor:pointer;
+    transition:all 0.15s;
+  }
+  .ico-btn:hover{background:rgba(255,255,255,0.04);color:var(--text)}
+  .ico-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8}
+  .badge{
+    background:var(--hostile);color:#fff;font:700 9px var(--sans);padding:2px 6px;border-radius:99px;
+    margin-left:-8px;margin-top:-12px;
+  }
+
+  /* ─── Workspace ─── */
+  .workspace{display:flex;height:calc(100% - 14px - 52px);position:relative}
+
+  /* ─── Floating tool rail ─── */
+  .rail{
+    position:absolute;left:14px;top:14px;bottom:14px;width:52px;z-index:5;
+    display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;
+    background:var(--bg-glass);backdrop-filter:blur(20px);
+    border:1px solid var(--line);border-radius:14px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  }
+  .tool{
+    width:40px;height:40px;display:grid;place-items:center;cursor:pointer;
+    background:transparent;border:none;color:var(--text-dim);border-radius:9px;
+    transition:all 0.15s;
+  }
+  .tool:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+  .tool.active{
+    background:linear-gradient(135deg,rgba(78,160,255,0.16),rgba(124,92,255,0.12));
+    color:var(--accent);box-shadow:inset 0 0 0 1px rgba(78,160,255,0.3),0 0 18px var(--accent-glow);
+  }
+  .tool svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7}
+  .rail .grp{width:24px;height:1px;background:var(--line);margin:4px 0}
+
+  /* ─── Context panel (floating drawer) ─── */
+  .ctx{
+    position:absolute;left:80px;top:14px;bottom:14px;width:300px;z-index:4;
+    background:var(--bg-glass);backdrop-filter:blur(20px);
+    border:1px solid var(--line);border-radius:14px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .ctx-head{
+    padding:16px 18px 12px;border-bottom:1px solid var(--line);
+  }
+  .ctx-eyebrow{font:600 10px var(--sans);text-transform:uppercase;letter-spacing:0.18em;color:var(--accent)}
+  .ctx-title{font:600 17px var(--sans);margin-top:4px;letter-spacing:-0.01em}
+  .ctx-hint{font:12px var(--sans);color:var(--text-dim);margin-top:6px;line-height:1.5}
+  .ctx-body{flex:1;overflow:auto;padding:16px 18px}
+
+  .sec-label{
+    font:600 10px var(--sans);color:var(--text-faint);text-transform:uppercase;
+    letter-spacing:0.16em;margin:18px 0 10px;
+  }
+  .sec-label:first-child{margin-top:0}
+
+  .seg{display:flex;background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:9px;padding:3px;gap:2px}
+  .seg button{
+    flex:1;padding:8px;background:transparent;border:none;color:var(--text-dim);
+    font:500 12px var(--sans);cursor:pointer;border-radius:6px;
+  }
+  .seg button:hover{color:var(--text)}
+  .seg button.active{background:rgba(78,160,255,0.12);color:var(--friendly);box-shadow:inset 0 0 0 1px rgba(78,160,255,0.3)}
+
+  .recents{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .recent{
+    aspect-ratio:1;border-radius:9px;background:rgba(255,255,255,0.03);
+    border:1px solid var(--line);display:grid;place-items:center;
+    color:var(--friendly);cursor:pointer;font:600 12px var(--mono);
+    transition:all 0.15s;
+  }
+  .recent:hover{border-color:rgba(78,160,255,0.4);background:rgba(78,160,255,0.06)}
+  .recent.host{color:var(--hostile)}
+  .recent.add{color:var(--text-faint);border-style:dashed}
+
+  .field{margin-top:10px}
+  .field label{display:block;font:500 11px var(--sans);color:var(--text-dim);margin-bottom:5px}
+  .field input{
+    width:100%;padding:9px 12px;background:rgba(255,255,255,0.03);
+    border:1px solid var(--line);color:var(--text);font:13px var(--sans);
+    outline:none;border-radius:8px;
+  }
+  .field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+
+  .cta{
+    margin-top:14px;width:100%;padding:11px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;
+    font:600 13px var(--sans);border:none;cursor:pointer;border-radius:9px;
+    box-shadow:0 4px 18px var(--accent-glow);
+  }
+  .cta:hover{transform:translateY(-1px)}
+
+  /* ─── Map ─── */
+  .map-wrap{flex:1;position:relative;overflow:hidden;margin-left:0}
+  .map{position:absolute;inset:0}
+
+  /* Floating chrome cards */
+  .chrome{
+    position:absolute;background:var(--bg-glass);backdrop-filter:blur(16px);
+    border:1px solid var(--line);border-radius:11px;color:var(--text);
+    font:12px var(--sans);padding:10px 14px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  }
+  .chrome.tl{top:14px;right:14px;width:auto;left:auto}
+  .chrome.bl{bottom:14px;left:400px}
+  .chrome.br{bottom:14px;right:14px;display:flex;flex-direction:column;padding:4px;gap:2px}
+  .chrome .label{color:var(--text-faint);font-size:10px;text-transform:uppercase;letter-spacing:0.14em;display:block}
+  .chrome .val{color:var(--text);font:500 13px var(--mono);display:block;margin-top:2px}
+
+  .basemap-row{display:flex;gap:4px}
+  .bm{
+    padding:6px 12px;border-radius:7px;cursor:pointer;color:var(--text-dim);
+    font:500 11px var(--sans);
+  }
+  .bm:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+  .bm.active{color:var(--accent);background:rgba(78,160,255,0.12)}
+
+  .zb{
+    width:34px;height:34px;display:grid;place-items:center;cursor:pointer;
+    color:var(--text-dim);border-radius:7px;
+  }
+  .zb:hover{color:var(--accent);background:rgba(78,160,255,0.1)}
+
+  /* Floating mission step pill */
+  .mission{
+    position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    background:var(--bg-glass);backdrop-filter:blur(16px);
+    border:1px solid var(--line);border-radius:99px;
+    padding:8px 16px;display:flex;gap:14px;align-items:center;
+    font:12px var(--sans);box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  }
+  .mission .step{display:flex;align-items:center;gap:6px;color:var(--text-dim)}
+  .mission .step.done{color:var(--neutral)}
+  .mission .step.curr{color:var(--accent)}
+  .mission .step .num{
+    width:18px;height:18px;border-radius:50%;display:grid;place-items:center;
+    background:rgba(255,255,255,0.06);font:600 10px var(--mono);
+  }
+  .mission .step.done .num{background:rgba(126,234,156,0.18)}
+  .mission .step.curr .num{background:rgba(78,160,255,0.2);box-shadow:0 0 0 3px rgba(78,160,255,0.18)}
+
+  .scalebar{
+    position:absolute;bottom:60px;right:14px;
+    color:var(--text);font:11px var(--mono);text-align:center;
+  }
+  .scalebar .bar{display:flex;height:4px;border-radius:2px;overflow:hidden;border:1px solid rgba(255,255,255,0.4);margin-bottom:4px;width:120px;margin-left:auto}
+  .scalebar .bar div{flex:1;background:#fff}
+  .scalebar .bar div:nth-child(even){background:rgba(0,0,0,0.6)}
+
+  .legend-row{display:flex;gap:12px;margin-top:6px;font:11px var(--sans);color:var(--text-dim)}
+  .legend-row span{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<!-- Subtle classification -->
+<div class="classif">UNCLASSIFIED</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="brand"><div class="mark">R</div><span>RMOOZ</span></div>
+
+  <div class="pill">
+    <span class="key">Plan</span>
+    <span class="val">OPLAN-Lahej-04</span>
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+
+  <div class="cmdbar">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span>Search symbols, units, places…</span>
+    <span class="hint"><kbd>Ctrl</kbd> <kbd>K</kbd></span>
+  </div>
+
+  <div class="right">
+    <div class="pill"><span class="dot"></span><span class="val">Online</span></div>
+    <div class="pill"><span class="key">DTG</span><span class="val" style="font-family:var(--mono)">271745Z</span></div>
+    <div class="pill"><span class="key">PLANNER-1</span><span class="val">S3</span></div>
+    <button class="ico-btn" title="Chat"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="badge">3</span></button>
+    <button class="ico-btn" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+  </div>
+</div>
+
+<!-- Workspace -->
+<div class="workspace">
+
+  <!-- Floating tool rail -->
+  <nav class="rail">
+    <button class="tool" title="Select  M"><svg viewBox="0 0 24 24"><path d="M3 3l7 17 2.5-7.4L20 10z"/></svg></button>
+    <button class="tool active" title="Symbol  S"><svg viewBox="0 0 24 24"><path d="M12 3l9 9-9 9-9-9z"/></svg></button>
+    <button class="tool" title="Draw  D"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg></button>
+    <button class="tool" title="Text  T"><svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="12" y1="4" x2="12" y2="20"/></svg></button>
+    <div class="grp"></div>
+    <button class="tool" title="Measure  R"><svg viewBox="0 0 24 24"><path d="M21 15a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0z"/></svg></button>
+    <button class="tool" title="Shapes  H"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg></button>
+    <div class="grp"></div>
+    <button class="tool" title="Units  U"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/></svg></button>
+    <button class="tool" title="Layers  L"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></svg></button>
+    <button class="tool" title="Erase  E"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/></svg></button>
+    <div style="flex:1"></div>
+    <button class="tool" title="NVG mode"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    <button class="tool" title="Help  ?"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2.5 2-2.5 4"/><circle cx="12" cy="17" r=".7" fill="currentColor"/></svg></button>
+  </nav>
+
+  <!-- Floating context panel -->
+  <aside class="ctx">
+    <div class="ctx-head">
+      <div class="ctx-eyebrow">Tool · Symbol</div>
+      <div class="ctx-title">Place a unit symbol</div>
+      <div class="ctx-hint">Pick from recents or press <kbd>/</kbd> to open the full library, then click the map.</div>
+    </div>
+    <div class="ctx-body">
+      <div class="sec-label">Side</div>
+      <div class="seg">
+        <button class="active">Friendly</button>
+        <button>Hostile</button>
+        <button>Neutral</button>
+        <button>Unk</button>
+      </div>
+
+      <div class="sec-label">Recently used</div>
+      <div class="recents">
+        <div class="recent">C2</div>
+        <div class="recent">INF</div>
+        <div class="recent">ARM</div>
+        <div class="recent">ART</div>
+        <div class="recent host">C2</div>
+        <div class="recent">SEAL</div>
+        <div class="recent">HQ</div>
+        <div class="recent add">+</div>
+      </div>
+
+      <div class="sec-label">Label &amp; notes</div>
+      <div class="field">
+        <label>Unit name</label>
+        <input value="C2 Alpha"/>
+      </div>
+      <div class="field">
+        <label>Notes</label>
+        <input placeholder="Optional"/>
+      </div>
+
+      <button class="cta">Place on map  →</button>
+
+      <div class="sec-label">Legend</div>
+      <div class="legend-row">
+        <div><span style="background:var(--friendly)"></span>Friendly</div>
+        <div><span style="background:var(--hostile)"></span>Hostile</div>
+        <div><span style="background:var(--neutral)"></span>Neutral</div>
+        <div><span style="background:var(--unknown)"></span>Unknown</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Map area -->
+  <div class="map-wrap">
+    <svg class="map" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0c2540"/><stop offset="100%" stop-color="#0a1830"/>
+        </linearGradient>
+        <linearGradient id="land" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1d2842"/><stop offset="100%" stop-color="#141d33"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="800" height="160" fill="url(#sea)"/>
+      <path d="M0,160 Q200,140 400,170 T800,150 L800,600 L0,600 Z" fill="url(#land)"/>
+      <path d="M0,300 Q200,280 400,310 T800,295" stroke="#3a5f8a" stroke-width="1.5" fill="none" opacity="0.6"/>
+      <path d="M120,160 L160,600" stroke="#2c4670" stroke-width="1.2" fill="none" opacity="0.5"/>
+
+      <!-- AOI rectangle -->
+      <rect x="120" y="180" width="500" height="280" stroke="#4ea0ff" stroke-width="2" fill="rgba(78,160,255,0.05)" rx="2"/>
+      <rect x="350" y="180" width="270" height="190" stroke="#4ea0ff" stroke-width="2" fill="rgba(78,160,255,0.05)" rx="2"/>
+      <!-- X waypoints -->
+      <g stroke="#ff5e7a" stroke-width="3" stroke-linecap="round">
+        <line x1="115" y1="175" x2="125" y2="185"/><line x1="125" y1="175" x2="115" y2="185"/>
+        <line x1="615" y1="175" x2="625" y2="185"/><line x1="625" y1="175" x2="615" y2="185"/>
+        <line x1="615" y1="455" x2="625" y2="465"/><line x1="625" y1="455" x2="615" y2="465"/>
+        <line x1="115" y1="455" x2="125" y2="465"/><line x1="125" y1="455" x2="115" y2="465"/>
+        <line x1="345" y1="365" x2="355" y2="375"/><line x1="355" y1="365" x2="345" y2="375"/>
+      </g>
+
+      <!-- C2 boxes -->
+      <g font-family="Inter, sans-serif" font-weight="700">
+        <g><rect x="160" y="220" width="44" height="32" fill="#4ea0ff" rx="3" stroke="rgba(255,255,255,0.4)"/><text x="182" y="240" text-anchor="middle" fill="#0a1020" font-size="13">C2</text></g>
+        <g><rect x="430" y="200" width="44" height="32" fill="#4ea0ff" rx="3" stroke="rgba(255,255,255,0.4)"/><text x="452" y="220" text-anchor="middle" fill="#0a1020" font-size="13">C2</text></g>
+        <g><rect x="500" y="200" width="44" height="32" fill="#4ea0ff" rx="3" stroke="rgba(255,255,255,0.4)"/><text x="522" y="220" text-anchor="middle" fill="#0a1020" font-size="13">C2</text></g>
+        <g><rect x="200" y="320" width="44" height="32" fill="#4ea0ff" rx="3" stroke="rgba(255,255,255,0.4)"/><text x="222" y="340" text-anchor="middle" fill="#0a1020" font-size="11">SEAL</text></g>
+        <g><rect x="220" y="380" width="44" height="32" fill="#4ea0ff" rx="3" stroke="rgba(255,255,255,0.4)"/><text x="242" y="400" text-anchor="middle" fill="#0a1020" font-size="11">●</text></g>
+      </g>
+
+      <!-- Ghost placement -->
+      <g opacity="0.5" stroke="#4ea0ff" stroke-width="1.5" stroke-dasharray="3 3" fill="rgba(78,160,255,0.08)">
+        <rect x="380" y="290" width="44" height="32" rx="3"/>
+      </g>
+    </svg>
+
+    <!-- Mission step pill -->
+    <div class="mission">
+      <span class="step done"><span class="num">✓</span><span>Pick symbol</span></span>
+      <span class="step curr"><span class="num">2</span><span>Click map</span></span>
+      <span class="step"><span class="num">3</span><span>Confirm</span></span>
+      <span style="color:var(--text-faint);font-size:11px">·</span>
+      <kbd>Esc</kbd>
+    </div>
+
+    <!-- Top-right: cursor + basemap -->
+    <div class="chrome tl" style="top:14px;right:14px;left:auto">
+      <span class="label">Cursor MGRS</span>
+      <span class="val">33S UC 12345 67890</span>
+      <div class="basemap-row" style="margin-top:8px">
+        <span class="bm">Sat</span>
+        <span class="bm active">Topo</span>
+        <span class="bm">Street</span>
+        <span class="bm">Offline</span>
+      </div>
+    </div>
+
+    <!-- Bottom-left: selection chip -->
+    <div class="chrome bl">
+      <span class="label">Selected · C2 Alpha</span>
+      <span class="val">Range 4.2 km · Bearing 087°</span>
+    </div>
+
+    <!-- Scalebar -->
+    <div class="scalebar">
+      <div class="bar"><div></div><div></div><div></div><div></div></div>
+      <span>2 km</span>
+    </div>
+
+    <!-- Bottom-right: zoom -->
+    <div class="chrome br">
+      <div class="zb" title="Zoom in">+</div>
+      <div class="zb" title="Zoom out">−</div>
+      <div class="zb" title="Locate me">⊕</div>
+      <div class="zb" title="Lock north">N</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -15,6 +15,7 @@ import { setStatusBar } from '../utils/statusbar.js';
 
 /* ── DOM references ───────────────────────────────────────────────── */
 const sidcCodeDisplay   = document.getElementById('sidc-code-display');
+const sidcCodeMirror    = document.getElementById('sidc-code-mirror');
 const pickedSidcDisplay = document.getElementById('picked-sidc-display');
 const placementHint     = document.getElementById('symbol-placement-hint');
 const affiliationGroup  = document.getElementById('symbol-affiliation-group');
@@ -115,6 +116,13 @@ function updatePlacementHint() {
     const hasSidc = pickedSidcDisplay &&
         pickedSidcDisplay.classList.contains('active');
 
+    // Onboarding visibility is gated on whether the user *actually* picked a
+    // symbol (from picker/quick-start/favorites), not on whether the SIDC
+    // display happens to be active — toggling affiliation also activates the
+    // display, which would prematurely hide the onboarding.
+    const panel = document.querySelector('.symbol-panel');
+    if (panel) panel.classList.toggle('no-selection', !symbolState.userPickedSymbol);
+
     const hintSpan = placementHint.querySelector('span') || placementHint;
 
     if (hasSidc) {
@@ -133,7 +141,10 @@ function updatePlacementHint() {
         setStatusBar('Symbol', text);
     }
     updateStepIndicator();
-    updateSymbolSummary();
+    // NOTE: do NOT call updateSymbolSummary() here. The summary is driven by
+    // the sidc-code-display observer, and updateSymbolSummary writes back to
+    // pickedSidcDisplay — which would re-fire this observer and create an
+    // infinite loop (browser freeze).
 }
 
 /* ── Step indicator ──────────────────────────────────────────────── */
@@ -161,6 +172,11 @@ function updateSymbolSummary() {
     symbolSummary.innerHTML = '';
 
     const raw = sidcCodeDisplay?.textContent?.replace(/^SIDC:\s*/i, '').trim();
+
+    // Mirror the raw SIDC into the expert disclosure so power users still see it
+    // even though it's hidden from the main preview card.
+    if (sidcCodeMirror) sidcCodeMirror.textContent = raw || '—';
+
     if (!raw || raw.length < 20) return;
 
     const digit = raw.charAt(3);
@@ -168,19 +184,26 @@ function updateSymbolSummary() {
     const affiliationMapAr = { '3': 'صديق', '6': 'عدو', '4': 'محايد', '1': 'مجهول' };
     const locale = getLocale();
     const affLabel = locale === 'ar' ? (affiliationMapAr[digit] || '') : (affiliationMap[digit] || '');
+
+    // Affiliation pill is always rendered — it reflects the current side
+    // (Friendly by default), regardless of whether a symbol was picked.
     if (affLabel) {
         const tag = document.createElement('span');
-        tag.className = 'symbol-tag';
+        tag.className = 'symbol-tag symbol-tag-affiliation aff-' + digit;
         tag.textContent = affLabel;
         symbolSummary.appendChild(tag);
     }
 
+    // Friendly name in the heading is gated on a real pick — toggling
+    // affiliation alone shouldn't claim a symbol has been chosen.
+    if (!symbolState.userPickedSymbol) return;
+
     const info = resolveSidcInfo(raw);
-    if (info.full) {
-        const tag = document.createElement('span');
-        tag.className = 'symbol-tag';
-        tag.textContent = info.full;
-        symbolSummary.appendChild(tag);
+    if (pickedSidcDisplay) {
+        const friendly = info.full || (locale === 'ar' ? 'رمز محدد' : 'Symbol selected');
+        if (pickedSidcDisplay.textContent !== friendly) {
+            pickedSidcDisplay.textContent = friendly;
+        }
     }
 }
 
@@ -194,18 +217,27 @@ function createQuickStartButton(sidc, shortLabel, fullLabel) {
     btn.dataset.searchText = ((fullLabel || '') + ' ' + (shortLabel || '')).toLowerCase();
     btn.dataset.sidc = sidc;
 
-    try {
-        const sym = new ms.Symbol(sidc, { size: 34, simpleStatusModifier: true });
-        if (sym.isValid()) {
-            const thumb = document.createElement('div');
-            thumb.className = 'qs-symbol-thumb';
-            const svgEl = sym.asDOM();
-            svgEl.style.maxWidth = '28px';
-            svgEl.style.maxHeight = '28px';
-            thumb.appendChild(svgEl);
-            btn.appendChild(thumb);
+    if (typeof window.ms === 'undefined' || !window.ms.Symbol) {
+        // milsymbol library not loaded — log once so this doesn't ship as a silent failure.
+        console.warn('[symbol-panel] milsymbol library not available; Quick Start tile rendered without icon', { sidc });
+    } else {
+        try {
+            const sym = new ms.Symbol(sidc, { size: 34, simpleStatusModifier: true });
+            if (sym.isValid()) {
+                const thumb = document.createElement('div');
+                thumb.className = 'qs-symbol-thumb';
+                const svgEl = sym.asDOM();
+                svgEl.style.maxWidth = '28px';
+                svgEl.style.maxHeight = '28px';
+                thumb.appendChild(svgEl);
+                btn.appendChild(thumb);
+            } else {
+                console.warn('[symbol-panel] milsymbol reports invalid SIDC for Quick Start tile', { sidc, label: fullLabel });
+            }
+        } catch (err) {
+            console.warn('[symbol-panel] milsymbol render threw for Quick Start tile', { sidc, err });
         }
-    } catch (_) { /* milsymbol not loaded yet */ }
+    }
 
     // Short label may contain \n for two-line display
     const lines = (shortLabel || '').split('\n');
@@ -218,11 +250,29 @@ function createQuickStartButton(sidc, shortLabel, fullLabel) {
     btn.appendChild(labelWrap);
 
     btn.addEventListener('click', () => {
+        symbolState.userPickedSymbol = true;
         if (typeof window.__APP_SIDC_PICKER_SET === 'function') {
             window.__APP_SIDC_PICKER_SET(sidc);
         }
+        updatePlacementHint();
     });
     return btn;
+}
+
+// Translations for the small set of default seeded fallback labels.
+// `resolveSidcInfo` is the primary source of localized labels (via the SIDC
+// standard data); this map only kicks in when that data hasn't loaded yet
+// and we'd otherwise fall back to the English label baked into seeds.
+const SEEDED_LABEL_AR = {
+    'Friendly Infantry': 'مشاة صديقة',
+    'Hostile Infantry':  'مشاة معادية',
+    'Unknown Infantry':  'مشاة غير محددة',
+};
+
+function localizeSeededLabel(label) {
+    if (!label) return label;
+    if (getLocale() !== 'ar') return label;
+    return SEEDED_LABEL_AR[label] || label;
 }
 
 function populateQuickStartGrid() {
@@ -242,7 +292,8 @@ function populateQuickStartGrid() {
 
     favs.forEach(fav => {
         const info = resolveSidcInfo(fav.sidc);
-        const shortLabel = info.short || (fav.label || fav.sidc.substring(0, 10) + '…');
+        const seededLocalized = localizeSeededLabel(fav.label);
+        const shortLabel = info.short || (seededLocalized || fav.sidc.substring(0, 10) + '…');
         const fullLabel  = info.full  || shortLabel;
         const btn = createQuickStartButton(fav.sidc, shortLabel, fullLabel);
         quickStartGrid.appendChild(btn);
@@ -256,15 +307,37 @@ function handleSearch(query) {
     const q = (query || '').trim().toLowerCase();
 
     const buttons = quickStartGrid.querySelectorAll('.quick-start-btn');
+    // Always strip any prior CTA before re-evaluating.
+    const oldCta = quickStartGrid.querySelector('.quick-start-search-cta');
+    if (oldCta) oldCta.remove();
+
     if (!q) {
         buttons.forEach(btn => { btn.style.display = ''; });
         return;
     }
 
+    let visible = 0;
     buttons.forEach(btn => {
         const searchText = btn.dataset.searchText || '';
-        btn.style.display = searchText.includes(q) ? '' : 'none';
+        const match = searchText.includes(q);
+        btn.style.display = match ? '' : 'none';
+        if (match) visible++;
     });
+
+    if (visible === 0) {
+        const cta = document.createElement('button');
+        cta.type = 'button';
+        cta.className = 'quick-start-search-cta';
+        const locale = getLocale();
+        const tpl = locale === 'ar'
+            ? 'لا توجد نتائج لـ "%s" في المحفوظة. افتح المكتبة ←'
+            : 'No match for "%s" in saved. Open Library →';
+        cta.textContent = tpl.replace('%s', query.trim());
+        cta.addEventListener('click', () => {
+            if (openPickerBtn) openPickerBtn.click();
+        });
+        quickStartGrid.appendChild(cta);
+    }
 }
 
 /* ── More options toggle ─────────────────────────────────────────── */
@@ -350,7 +423,19 @@ export function bindSymbolPanelEvents() {
         });
         favObserver.observe(topFavoritesList, { childList: true });
     }
+
+    // Initial pass: makes sure the no-selection / onboarding state is correct
+    // on first open, before the user has interacted with anything.
+    updatePlacementHint();
 }
+
+// Exposed so app.js can mark a real symbol-pick action (favorites, picker
+// modal, manual SIDC) — distinct from affiliation toggling, which also
+// updates the SIDC but should not count as "user picked a symbol".
+window.__SYMBOL_MARK_PICKED = function () {
+    symbolState.userPickedSymbol = true;
+    updatePlacementHint();
+};
 
 /**
  * When app.js sets a new SIDC (e.g. from picker), read the affiliation

@@ -232,11 +232,140 @@ body, html {
     -webkit-overflow-scrolling: touch;
     z-index: 1040;
     padding: var(--space-3);
+    position: relative;
+    transition: width 220ms ease, padding 220ms ease, border-color 220ms ease;
+}
+/* Minimized: collapse the panel's footprint so the map gets the space.
+   Width and padding animate to 0; contents are clipped via overflow:hidden. */
+.context-panel.is-minimized {
+    width: 0 !important;
+    max-width: 0 !important;
+    padding-left: 0;
+    padding-right: 0;
+    border-color: transparent;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* Minimize button — drawer-pull tab on the inner edge of the panel
+   (i.e., the left edge of the map area in LTR, right edge in RTL).
+   Lives inside .map-workspace so it always hugs the panel/map seam,
+   regardless of how wide the panel is. */
+.context-panel-minimize {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    z-index: 950;
+    width: 22px;
+    height: 56px;
+    padding: 0;
+    border: 1px solid var(--panel-border);
+    border-left: none;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background: var(--panel);
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.25);
+    transition: background 120ms ease, color 120ms ease, transform 160ms ease, opacity 160ms ease;
+}
+.context-panel-minimize:hover {
+    background: var(--accent-subtle);
+    color: var(--accent);
+}
+.context-panel-minimize:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+/* Hide the minimize button while the panel is already minimized — the
+   peek tab takes over in that state. */
+.context-panel.is-minimized ~ .map-workspace .context-panel-minimize {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Peek tab — small chevron pill anchored at the inner edge of the rail
+   (where the panel used to start), only visible while minimized.
+   Always sits at the LEFT edge of the map area in this app — matching
+   the actual layout (rail-then-panel-then-map) regardless of language. */
+.context-panel-peek {
+    position: absolute;
+    left: var(--rail-w);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1041;
+    width: 22px;
+    height: 56px;
+    padding: 0;
+    border: 1px solid var(--panel-border);
+    border-left: none;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background: var(--panel-bg, var(--panel));
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
+    transition: background 120ms ease, color 120ms ease, transform 160ms ease, opacity 160ms ease;
+}
+.context-panel-peek:hover {
+    background: var(--accent-subtle);
+    color: var(--accent);
+}
+.context-panel-peek:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+.context-panel-peek.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-12px, -50%);
 }
 
 [dir="rtl"] .context-panel {
     border-right: none;
     border-left: 1px solid var(--panel-border);
+}
+
+/* Thin themed scrollbar for the side panel — replaces the chunky OS default
+   that looked out of place (especially on the left in RTL).
+   `scrollbar-gutter: stable` reserves the scrollbar's space even when no
+   scrollbar is shown, so the panel width never shifts when content height
+   changes (e.g. picking a symbol that adds/removes a row). */
+.context-panel {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+    scrollbar-gutter: stable;
+}
+.context-panel::-webkit-scrollbar {
+    width: 8px;
+}
+.context-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+.context-panel::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.25);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+.context-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.5);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+}
+[data-theme="light"] .context-panel {
+    scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
+}
+[data-theme="light"] .context-panel::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.25);
+    background-clip: padding-box;
+    border: 2px solid transparent;
 }
 
 .context-panel-header {
@@ -883,6 +1012,38 @@ details[open] > .details-summary {
     opacity: 0.7;
 }
 
+.quick-start-search-cta {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 12px 10px;
+    background: rgba(64, 145, 220, 0.10);
+    border: 1px dashed rgba(64, 145, 220, 0.55);
+    border-radius: 8px;
+    color: #6cb0e6;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.quick-start-search-cta:hover {
+    background: rgba(64, 145, 220, 0.18);
+    border-color: rgba(64, 145, 220, 0.85);
+}
+
+/* Visually hidden but retained in the DOM (and accessibility tree). */
+.sr-only {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .quick-start-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -977,6 +1138,69 @@ details[open] > .details-summary {
     background: var(--accent-subtle);
     color: var(--accent);
     border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+/* Affiliation-tinted summary tags (Friendly=blue, Hostile=red, Neutral=green, Unknown=amber) */
+.symbol-tag-affiliation.aff-3 { background: rgba(37, 99, 235, 0.12); color: #2563eb; border-color: rgba(37, 99, 235, 0.3); }
+.symbol-tag-affiliation.aff-6 { background: rgba(239, 68, 68, 0.12); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); }
+.symbol-tag-affiliation.aff-4 { background: rgba(34, 197, 94, 0.12); color: #22c55e; border-color: rgba(34, 197, 94, 0.3); }
+.symbol-tag-affiliation.aff-1 { background: rgba(245, 158, 11, 0.12); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); }
+
+/* Identity swatch dots inside the segmented control */
+.identity-swatch {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-inline-end: 6px;
+    vertical-align: middle;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.swatch-friendly { background: #2563eb; }
+.swatch-hostile  { background: #ef4444; }
+.swatch-neutral  { background: #22c55e; }
+.swatch-unknown  { background: #f59e0b; }
+
+.symbol-identity-inline { margin-top: 8px; }
+.symbol-identity-inline .segmented-control { justify-content: space-between; }
+
+/* Onboarding / empty-state guidance — always visible as a permanent helper. */
+.symbol-onboarding {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0 0 8px;
+    padding: 8px 4px 0;
+    border: none;
+    background: none;
+}
+.symbol-preview-card { margin-bottom: 0; }
+
+.symbol-onboarding-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.35;
+}
+.symbol-onboarding-num {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--accent-subtle);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+/* Inline error state for the manual SIDC field (replaces the panel-wide red error) */
+.glass-input.input-error {
+    border-color: var(--danger, #ef4444) !important;
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.25);
 }
 
 /* ── More options toggle ─────────────────────────────────────────── */
@@ -2556,6 +2780,32 @@ details[open] > .details-summary {
 .leaflet-overlay-pane svg path.geo-preview-shadow,
 .leaflet-overlay-pane .leaflet-interactive.geo-preview-shadow { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
 
+/* ── Radius guide line + label (circle/sector placement) ──────────── */
+.leaflet-overlay-pane path.geo-radius-guide { filter: drop-shadow(0 1px 2px rgba(0,0,0,0.45)); }
+.geo-radius-guide-label {
+    background: transparent !important;
+    border: none !important;
+    pointer-events: none;
+    white-space: nowrap;
+    width: auto !important;
+    height: auto !important;
+}
+.geo-radius-guide-label > span {
+    display: inline-block;
+    transform: translate(8px, -50%);
+    padding: 2px 6px;
+    background: rgba(15, 23, 42, 0.85);
+    color: #fff;
+    border: 1px solid #ef4444;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+
 /* ── Geo handles ───────────────────────────────────────────────────── */
 .geo-resize-handle { background: transparent !important; border: none !important; }
 .geo-resize-handle-inner { width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 2px solid var(--accent); cursor: grab; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
@@ -2594,6 +2844,153 @@ details[open] > .details-summary {
 .leaflet-popup-content .tmg-color-btn.active { box-shadow: 0 0 0 2px #fff; }
 .leaflet-popup-content .line-popup-color-btn.active, .leaflet-popup-content .line-popup-style-btn.active { background: var(--accent-subtle); border-color: var(--accent); }
 .leaflet-popup-content .geo-popup-color-btn[data-color="#1f2937"], .leaflet-popup-content .symbol-range-color-btn[data-color="#1f2937"] { background: #1f2937 !important; }
+
+/* Distance / route popup — merged waypoint cards */
+.leaflet-popup-content .geo-distance-waypoints-section {
+    margin: 8px 0;
+    padding-top: 8px;
+    border-top: 1px solid #e5e7eb;
+    text-align: left;
+}
+.leaflet-popup-content .geo-distance-waypoints-title {
+    font-size: 0.7rem;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+.leaflet-popup-content .geo-distance-waypoints {
+    max-height: 240px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 2px;
+}
+.leaflet-popup-content .geo-waypoint-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 4px 0;
+    padding: 6px 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+.leaflet-popup-content .geo-waypoint-card-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.leaflet-popup-content .geo-waypoint-num {
+    flex: 0 0 auto;
+    width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--accent, #3b82f6);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    direction: ltr;
+}
+.leaflet-popup-content .geo-waypoint-card .geo-waypoint-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 4px 6px;
+    font-size: 0.8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #fff;
+}
+.leaflet-popup-content .geo-waypoint-card .geo-waypoint-name:focus {
+    outline: none;
+    border-color: var(--accent, #3b82f6);
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.18);
+}
+.leaflet-popup-content .geo-remove-waypoint-btn {
+    flex: 0 0 auto;
+    width: 22px; height: 22px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.leaflet-popup-content .geo-remove-waypoint-btn:hover {
+    background: #fee2e2;
+    color: #dc2626;
+    border-color: #fca5a5;
+}
+.leaflet-popup-content .geo-waypoint-card-coord {
+    padding-left: 28px;
+    font-variant-numeric: tabular-nums;
+}
+[dir="rtl"] .leaflet-popup-content .geo-waypoint-card-coord {
+    padding-left: 0;
+    padding-right: 28px;
+}
+.leaflet-popup-content .geo-waypoint-card-coord .geo-coord-input {
+    width: 100%;
+    max-width: none;
+    padding: 4px 6px;
+    font-size: 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-variant-numeric: tabular-nums;
+}
+.leaflet-popup-content .geo-waypoint-leg {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 2px 0;
+    padding: 0 8px 0 30px;
+    font-size: 0.7rem;
+    color: #64748b;
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+[dir="rtl"] .leaflet-popup-content .geo-waypoint-leg {
+    padding: 0 30px 0 8px;
+}
+.leaflet-popup-content .geo-waypoint-leg-spine {
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    line-height: 1;
+}
+.leaflet-popup-content .geo-waypoint-leg-dist,
+.leaflet-popup-content .geo-waypoint-leg-bearing {
+    font-weight: 600;
+    color: #475569;
+    font-variant-numeric: tabular-nums;
+}
+.leaflet-popup-content .geo-waypoint-leg-sep {
+    color: #cbd5e1;
+}
+.leaflet-popup-content .geo-add-waypoint-btn {
+    margin-top: 8px;
+    padding: 6px 12px;
+    width: 100%;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    background: transparent;
+    border: 1px dashed #94a3b8;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.leaflet-popup-content .geo-add-waypoint-btn:hover {
+    background: #f1f5f9;
+    border-style: solid;
+    border-color: var(--accent, #3b82f6);
+    color: var(--accent, #3b82f6);
+}
 
 /* TMG handles */
 .tmg-selection-border { pointer-events: none; }
@@ -3519,6 +3916,21 @@ details[open] > .details-summary {
     user-select: none;
 }
 
+/* The zoom/scale/basemap controls in the bottom-right corner of the map
+   ride above the ORBAT dock so they always sit just above its top edge
+   instead of being overlapped or floating awkwardly. The CSS variable
+   `--orbat-dock-h` is published by units-orbat-dock.js whenever the dock
+   height changes (and reset to 0 when the dock is hidden). */
+.map-workspace .leaflet-bottom {
+    bottom: calc(var(--orbat-dock-h, 0px) + 8px);
+    transition: bottom 220ms ease;
+}
+/* During an active resize drag the dock has `is-resizing`; kill the
+   transition so the controls track the pointer 1:1 without lag. */
+body.orbat-dock-resizing .map-workspace .leaflet-bottom {
+    transition: none;
+}
+
 /* Top-edge resize handle */
 .orbat-dock-resize {
     position: absolute;
@@ -3581,6 +3993,64 @@ details[open] > .details-summary {
     letter-spacing: 0;
 }
 .orbat-dock-tools { display: flex; gap: 4px; }
+
+.orbat-dock-collapse-btn svg {
+    display: block;
+    margin: auto;
+    transition: transform 180ms ease;
+}
+.orbat-dock.is-collapsed .orbat-dock-collapse-btn svg {
+    transform: rotate(180deg);
+}
+/* Collapsed state: hide the whole dock visually and shrink it to just the
+   chevron button floating in the corner, so the map underneath is fully
+   visible. The chevron stays clickable to expand the dock again. */
+.orbat-dock.is-collapsed {
+    height: auto !important;
+    min-height: 0;
+    background: transparent;
+    border-top: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    pointer-events: none;
+}
+.orbat-dock.is-collapsed .orbat-dock-resize,
+.orbat-dock.is-collapsed .orbat-dock-body,
+.orbat-dock.is-collapsed .orbat-dock-title-wrap,
+.orbat-dock.is-collapsed #orbat-dock-refresh,
+.orbat-dock.is-collapsed #orbat-dock-close {
+    display: none;
+}
+.orbat-dock.is-collapsed .orbat-dock-header {
+    background: transparent;
+    border-bottom: none;
+    padding: 8px 0;
+    justify-content: center;
+}
+.orbat-dock.is-collapsed .orbat-dock-tools {
+    pointer-events: auto;
+}
+.orbat-dock.is-collapsed .orbat-dock-collapse-btn {
+    width: 56px;
+    height: 28px;
+    border-radius: 14px 14px 4px 4px;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    color: var(--accent);
+    transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+}
+.orbat-dock.is-collapsed .orbat-dock-collapse-btn:hover {
+    transform: translateY(-2px);
+    background: var(--accent-subtle);
+    color: var(--accent);
+}
+.orbat-dock.is-collapsed .orbat-dock-collapse-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.5;
+}
+
 .orbat-dock-tool-btn {
     background: transparent;
     border: 1px solid var(--panel-border);
@@ -3784,6 +4254,19 @@ details[open] > .details-summary {
     color: #22c55e;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+    border: 1px solid transparent;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.orbat-dock-placed-badge:hover {
+    background: rgba(239, 68, 68, 0.18);
+    border-color: rgba(239, 68, 68, 0.55);
+    color: #ef4444;
+}
+.orbat-dock-placed-badge:focus-visible {
+    outline: 2px solid rgba(239, 68, 68, 0.7);
+    outline-offset: 1px;
 }
 
 /* Expand/collapse button on the bottom edge of a card with children. */

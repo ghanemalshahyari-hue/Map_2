@@ -128,18 +128,38 @@
         });
     }
 
+    let cachedPlans = [];
+
+    function displayPlanName(name) {
+        if (!name) return name;
+        const t = window.t;
+        if (typeof t !== 'function') return name;
+        if (name === 'My plan') return t('default-plan-name');
+        if (name === 'New plan') return t('new-plan-default-name');
+        return name;
+    }
+
     function updatePlanSelect(plans) {
         const sel = el('server-plan-select');
         if (!sel) return;
+        if (plans) cachedPlans = plans;
         sel.innerHTML = '';
-        (plans || []).forEach((p) => {
+        (cachedPlans || []).forEach((p) => {
             const o = document.createElement('option');
             o.value = p.id;
-            o.textContent = p.name || p.id;
+            o.textContent = displayPlanName(p.name) || p.id;
             if (p.id === activePlanId) o.selected = true;
             sel.appendChild(o);
         });
     }
+
+    (function chainLangChange() {
+        const prev = window.onLanguageChange;
+        window.onLanguageChange = function (lang) {
+            try { updatePlanSelect(); } catch (_) {}
+            if (typeof prev === 'function') prev(lang);
+        };
+    })();
 
     async function loadPlanById(planId, importLayersData) {
         const r = await fetch(apiUrl('/api/plans/' + encodeURIComponent(planId)), { credentials: 'include' });
@@ -215,7 +235,10 @@
             }
         });
         el('server-new-plan-btn')?.addEventListener('click', async () => {
-            const name = prompt('New plan name', 'New plan');
+            const t = window.t;
+            const promptLabel = (typeof t === 'function') ? t('new-plan-prompt') : 'New plan name';
+            const promptDefault = (typeof t === 'function') ? t('new-plan-default-name') : 'New plan';
+            const name = prompt(promptLabel, promptDefault);
             if (name == null) return;
             const r = await fetch(apiUrl('/api/plans'), {
                 method: 'POST',
@@ -249,12 +272,19 @@
 
     function savePlanPayload(jsonStr) {
         if (!isHttpOrigin || !activePlanId) return Promise.resolve();
-        return fetch(apiUrl('/api/plans/' + encodeURIComponent(activePlanId)), {
+        const init = {
             method: 'PUT',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: jsonStr
-        }).then((r) => {
+        };
+        // keepalive lets the request finish even if the page is unloading
+        // (e.g. user hits DELETE then F5). Browsers cap keepalive bodies at
+        // ~64KB; fall back to a normal fetch for larger plans.
+        if (typeof jsonStr === 'string' && jsonStr.length <= 60 * 1024) {
+            init.keepalive = true;
+        }
+        return fetch(apiUrl('/api/plans/' + encodeURIComponent(activePlanId)), init).then((r) => {
             if (!r.ok) console.warn('Plan save failed', r.status);
         });
     }

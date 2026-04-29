@@ -48,6 +48,167 @@
     const markers = new Map();   // unitId → L.marker
     let placement = null;        // active placement state
 
+    // ── Echelon-based scale visibility ───────────────────────────────────
+    // A unit is shown when the current map scale DENOMINATOR is below its
+    // cap. Smaller denominator = zoomed in (larger scale). The user-facing
+    // rule is phrased as "scale less than 1:N", i.e. denom < N.
+    //
+    //   level 0 Army       → all scales  (cap = Infinity)
+    //   level 1 Force      → all scales  (cap = Infinity)
+    //   level 2 Brigade    → all scales  (cap = Infinity)
+    //   level 3 Battalion  → denom < 500,000
+    //   level 4 Company    → denom < 250,000
+    const SCALE_CAP_BY_LEVEL = [Infinity, Infinity, Infinity, 500000, 250000];
+
+    function currentScaleDenominator() {
+        if (!map) return null;
+        try {
+            const fn = window.AppUtils && window.AppUtils.getMapScaleDenominatorAtZoom;
+            if (typeof fn !== 'function') return null;
+            const d = fn(map.getZoom(), map.getCenter().lat);
+            return (typeof d === 'number' && isFinite(d) && d > 0) ? d : null;
+        } catch (_) { return null; }
+    }
+
+    // True only when the SIDC is missing or its 6-digit entity field is all
+    // zeros — i.e. the user never picked a branch / entity, so milsymbol has
+    // nothing to draw inside the frame. We deliberately do NOT try to infer
+    // "frame only" from the rendered SVG: real branches like Infantry render
+    // with very few paths and would be falsely classified as empty.
+    function unitHasNoEntity(sidc) {
+        const s = String(sidc || '').replace(/\D/g, '');
+        if (s.length < 20) return true;
+        return s.substr(10, 6) === '000000';
+    }
+
+    function isVisibleAtCurrentScale(unit) {
+        // Bare-frame units (no entity in their SIDC) are always hidden — there
+        // is nothing meaningful to draw and the empty rectangle just clutters
+        // the map.
+        if (unitHasNoEntity(unit?.sidc)) return false;
+        const cap = SCALE_CAP_BY_LEVEL[Number(unit?.level)];
+        if (cap === undefined) return true;   // unknown echelon → always show
+        if (!isFinite(cap)) return true;      // Brigade and above
+        const denom = currentScaleDenominator();
+        if (denom == null) return true;       // map not ready yet
+        return denom < cap;
+    }
+
+    function setMarkerHidden(m, hidden) {
+        const el = (typeof m.getElement === 'function') ? m.getElement() : m._icon;
+        if (!el) return false;
+        // Belt-and-braces: display:none alone is normally enough, but some
+        // marker pipelines (HQ rewrites, layer panel re-attachments) can
+        // re-render the icon DOM and lose styles, so apply opacity + pointer
+        // events too. setOpacity also covers the marker's shadow if any.
+        el.style.display       = hidden ? 'none'   : '';
+        el.style.opacity       = hidden ? '0'      : '';
+        el.style.pointerEvents = hidden ? 'none'   : '';
+        if (typeof m.setOpacity === 'function') m.setOpacity(hidden ? 0 : 1);
+        // Make sure any open popup for a hidden marker closes itself.
+        if (hidden && typeof m.closePopup === 'function') m.closePopup();
+        return true;
+    }
+
+    function applyVisibilityToMarker(m) {
+        if (!m || !m._unitData) return;
+        const visible = isVisibleAtCurrentScale(m._unitData);
+        m._unitsScaleHidden = !visible;
+        // First try synchronously (icon DOM is usually live right after
+        // addLayer). If the marker hasn't been rendered yet (active-layer
+        // path can defer), retry on the next animation frame.
+        if (setMarkerHidden(m, !visible)) return;
+        requestAnimationFrame(() => setMarkerHidden(m, !visible));
+    }
+
+    function updateAllVisibility() {
+        markers.forEach(applyVisibilityToMarker);
+    }
+
+    // ── Minimum spacing between units ────────────────────────────────────
+    // Two unit markers must never sit closer than this on the ground.
+    // Drop / drag / click-to-place all push the candidate latlng away from
+    // any existing marker within this radius until the constraint holds.
+    const MIN_UNIT_SPACING_METERS = 1000;
+    const EARTH_RADIUS_M = 6378137;
+
+    // Initial bearing in degrees from `a` to `b` on the great-circle path.
+    // Returns NaN-safe value (0 if a and b coincide).
+    function bearingFromTo(a, b) {
+        const lat1 = a.lat * Math.PI / 180;
+        const lat2 = b.lat * Math.PI / 180;
+        const dLng = (b.lng - a.lng) * Math.PI / 180;
+        const y = Math.sin(dLng) * Math.cos(lat2);
+        const x = Math.cos(lat1) * Math.sin(lat2)
+                - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+        const brng = Math.atan2(y, x);
+        if (!isFinite(brng)) return 0;
+        return ((brng * 180 / Math.PI) + 360) % 360;
+    }
+
+    // Move a latlng `meters` along `bearingDeg`. Spherical earth — good to
+    // a few cm at brigade scales, well inside our 1000 m tolerance.
+    function movePointMeters(latlng, bearingDeg, meters) {
+        const angDist = meters / EARTH_RADIUS_M;
+        const brng = bearingDeg * Math.PI / 180;
+        const lat1 = latlng.lat * Math.PI / 180;
+        const lng1 = latlng.lng * Math.PI / 180;
+        const lat2 = Math.asin(
+            Math.sin(lat1) * Math.cos(angDist) +
+            Math.cos(lat1) * Math.sin(angDist) * Math.cos(brng)
+        );
+        const lng2 = lng1 + Math.atan2(
+            Math.sin(brng) * Math.sin(angDist) * Math.cos(lat1),
+            Math.cos(angDist) - Math.sin(lat1) * Math.sin(lat2)
+        );
+        return L.latLng(lat2 * 180 / Math.PI, lng2 * 180 / Math.PI);
+    }
+
+    // Iteratively nudge `latlng` away from any other placed unit marker
+    // until every pairwise distance ≥ MIN_UNIT_SPACING_METERS. Excludes
+    // the unit being placed (so dragging an existing marker doesn't push
+    // it away from itself). Falls back to a golden-angle spread when the
+    // candidate is stacked exactly on top of another marker.
+    function nudgeAwayFromOthers(latlng, excludeUnitId) {
+        if (!latlng || !Number.isFinite(latlng.lat) || !Number.isFinite(latlng.lng)) {
+            return latlng;
+        }
+        const others = [];
+        markers.forEach((m, id) => {
+            if (excludeUnitId && id === excludeUnitId) return;
+            const ll = m && typeof m.getLatLng === 'function' ? m.getLatLng() : null;
+            if (ll && Number.isFinite(ll.lat) && Number.isFinite(ll.lng)) others.push(ll);
+        });
+        if (!others.length) return latlng;
+
+        let candidate = L.latLng(latlng.lat, latlng.lng);
+        const MAX_ITER = 30;
+        const BUFFER_M = 25;     // small extra so we land just outside the ring
+        for (let i = 0; i < MAX_ITER; i++) {
+            let nearest = null;
+            let nearestDist = Infinity;
+            for (const o of others) {
+                const d = candidate.distanceTo(o);
+                if (d < nearestDist) { nearestDist = d; nearest = o; }
+            }
+            if (nearestDist >= MIN_UNIT_SPACING_METERS) return candidate;
+
+            const need = (MIN_UNIT_SPACING_METERS - nearestDist) + BUFFER_M;
+            let bearing;
+            if (nearestDist < 1) {
+                // Stacked exactly on another marker — bearing is undefined.
+                // Use the golden angle so successive iterations spread
+                // evenly instead of oscillating along one axis.
+                bearing = (i * 137.50776) % 360;
+            } else {
+                bearing = bearingFromTo(nearest, candidate);
+            }
+            candidate = movePointMeters(candidate, bearing, need);
+        }
+        // Best effort — return whatever we've reached after MAX_ITER.
+        return candidate;
+    }
+
     function escapeHtml(s) {
         return String(s ?? '').replace(/[&<>"']/g, c =>
             ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c]));
@@ -173,6 +334,15 @@
         m._unitData = unit;
         m.bindPopup(() => buildPopupContent(m._unitData));
         m.on('dragend', async () => {
+            const dropped = m.getLatLng();
+            // Enforce the 1000 m minimum spacing rule. We exclude this
+            // unit's own id so we don't push the marker away from its
+            // previous position. If the rule moved the marker, snap the
+            // visible icon to the corrected coords too.
+            const safe = nudgeAwayFromOthers(dropped, unit.id);
+            if (safe && (safe.lat !== dropped.lat || safe.lng !== dropped.lng)) {
+                m.setLatLng(safe);
+            }
             const ll = m.getLatLng();
             try {
                 const res = await fetch(`/api/units/${encodeURIComponent(unit.id)}/place`, {
@@ -190,6 +360,7 @@
         });
         attachMarkerToActiveLayer(m);
         markers.set(unit.id, m);
+        applyVisibilityToMarker(m);
     }
 
     function removeMarker(unitId) {
@@ -313,11 +484,15 @@
         window.__APP_UNITS_PLACING = {
             unitId: unit.id,
             async onClick(latlng) {
+                // Enforce 1000 m minimum spacing — pushes the click point
+                // outside any existing unit's exclusion ring before we
+                // commit the placement to the server.
+                const safe = nudgeAwayFromOthers(latlng, unit.id);
                 try {
                     const res = await fetch(`/api/units/${encodeURIComponent(unit.id)}/place`, {
                         method: 'POST', credentials: 'include',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ lat: latlng.lat, lng: latlng.lng }),
+                        body: JSON.stringify({ lat: safe.lat, lng: safe.lng }),
                     });
                     if (!res.ok) throw new Error(await res.text());
                     const updated = await res.json();
@@ -382,7 +557,10 @@
             if (id) removeMarker(id);
         });
 
-        loadAllPlaced();
+        // Echelon-based scale filter: re-evaluate every marker on zoom.
+        map.on('zoomend', updateAllVisibility);
+
+        loadAllPlaced().then(updateAllVisibility);
     }
 
     window.AppUnitsMap = {
@@ -394,5 +572,8 @@
         hasPlacedUnits,
         clearAll,
         reload: loadAllPlaced,
+        refreshScaleVisibility: updateAllVisibility,
+        nudgeAwayFromOthers,
+        MIN_UNIT_SPACING_METERS,
     };
 })();

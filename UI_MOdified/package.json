@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server/tile-server.js",
     "serve": "node server/web-server.js",
+    "seed": "node scripts/seed-units.js",
     "web": "node server/web-server.js",
     "app": "concurrently \"npm run start\" \"npm run serve\"",
     "electron": "set ELECTRON_RUN_AS_NODE=&& electron .",

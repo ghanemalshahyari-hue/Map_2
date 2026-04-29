@@ -18,7 +18,7 @@
     const MIN_H = 120;  // kept in sync with CSS min-height
     const MAX_H_FRAC = 0.85; // fraction of viewport (matches CSS max-height: 85vh)
 
-    let dockEl, treeEl, emptyEl, closeBtn, refreshBtn, resizeEl;
+    let dockEl, treeEl, emptyEl, closeBtn, refreshBtn, resizeEl, collapseBtn;
     let map = null;
     let bound = false;
     let roots = [];
@@ -225,14 +225,28 @@
         name.textContent = unit.name || '—';
         card.appendChild(name);
 
-        // Meta (level + code + placed badge)
+        // Meta (level + code + placed badge). The badge is a button so
+        // clicking it unplaces the unit (removes its map marker).
         const meta = document.createElement('div');
         meta.className = 'orbat-dock-card-meta';
         meta.innerHTML =
             `<span>${escapeHtml(levelLabel(unit.level))}</span>` +
             (unit.code ? `<span>· ${escapeHtml(unit.code)}</span>` : '') +
-            `<span class="orbat-dock-placed-badge">${escapeHtml(tr('orbat-dock-placed', 'placed'))}</span>`;
+            `<button type="button" class="orbat-dock-placed-badge" title="${escapeHtml(tr('orbat-dock-unplace-hint', 'click to remove from map'))}">${escapeHtml(tr('orbat-dock-placed', 'placed'))}</button>`;
         card.appendChild(meta);
+
+        const badgeBtn = meta.querySelector('.orbat-dock-placed-badge');
+        if (badgeBtn) {
+            badgeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                unplaceUnit(unit.id);
+            });
+            // Don't let a click on the badge start a card drag.
+            badgeBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+            badgeBtn.addEventListener('mousedown',   (e) => e.stopPropagation());
+            badgeBtn.addEventListener('dragstart',   (e) => e.preventDefault());
+        }
 
         // Expand/collapse toggle — only if the unit has descendants.
         if (liveChildren.length) {
@@ -582,14 +596,21 @@
     }
 
     // Inner helper — POSTs the placement and reflects it in the map. Used by
-    // both the single-drop path (placeUnitAt) and the formation path.
+    // both the single-drop path (placeUnitAt) and the formation path. Both
+    // call paths run the candidate latlng through AppUnitsMap.nudgeAwayFromOthers
+    // first so the dropped unit always lands at least 1000 m from every
+    // already-placed unit. For brigade-formation drops the calls are
+    // sequential, so each subsequent battalion/company nudges around the
+    // ones placed before it.
     async function placeAndAddMarker(unitId, latlng) {
+        const nudge = window.AppUnitsMap && window.AppUnitsMap.nudgeAwayFromOthers;
+        const safe = (typeof nudge === 'function') ? nudge(latlng, unitId) : latlng;
         try {
             const res = await fetch(`/api/units/${encodeURIComponent(unitId)}/place`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ lat: latlng.lat, lng: latlng.lng }),
+                body: JSON.stringify({ lat: safe.lat, lng: safe.lng }),
             });
             if (!res.ok) return false;
             const updated = await res.json();
@@ -622,6 +643,91 @@
         if (ok) render();
     }
 
+    // Walk the subtree rooted at `rootId` (inclusive) and return every
+    // descendant id that is currently PLACED on the map. Used by the unplace
+    // flow so removing a Brigade also removes its battalions/companies, etc.
+    function collectPlacedSubtreeIds(rootId) {
+        const childrenByParent = new Map();
+        for (const u of unitsFlat) {
+            if (!u || u.deleted_at) continue;
+            const list = childrenByParent.get(u.parent_id) || [];
+            list.push(u);
+            childrenByParent.set(u.parent_id, list);
+        }
+        const out = [];
+        const stack = [rootId];
+        const seen = new Set();
+        while (stack.length) {
+            const id = stack.pop();
+            if (seen.has(id)) continue;
+            seen.add(id);
+            const u = unitsFlat.find(x => x.id === id && !x.deleted_at);
+            if (!u) continue;
+            if (u.lat != null && u.lng != null) out.push(id);
+            const kids = childrenByParent.get(id) || [];
+            for (const k of kids) stack.push(k.id);
+        }
+        return out;
+    }
+
+    // Click handler for the green "placed" badge: drops the unit's map
+    // marker and clears its coordinates server-side. Updates the local
+    // cache optimistically so the badge disappears immediately, then
+    // dispatches `units:removed` so the map (and any other listeners)
+    // sync up. Cascades to every placed descendant so unplacing a Brigade
+    // also pulls its battalions and companies off the map.
+    async function unplaceUnit(unitId) {
+        const ids = collectPlacedSubtreeIds(unitId);
+        if (ids.length === 0) {
+            // Nothing actually placed — but the user clicked the badge, so
+            // still issue a server unplace for the unit itself (best-effort).
+            ids.push(unitId);
+        }
+
+        // Snapshot prior coords for rollback on per-unit failure.
+        const prev = new Map();
+        for (const id of ids) {
+            const u = unitsFlat.find(x => x.id === id);
+            prev.set(id, { lat: u ? u.lat : null, lng: u ? u.lng : null });
+        }
+
+        // Optimistic local clear + map marker removal.
+        for (const id of ids) {
+            const u = unitsFlat.find(x => x.id === id);
+            if (u) { u.lat = null; u.lng = null; }
+            patchNodeLatLng(roots, id, null, null);
+            try { window.AppUnitsMap?.removeMarker?.(id); } catch (_) { /* ignore */ }
+        }
+        render();
+
+        // Fire all server unplace calls in parallel; roll back any that fail.
+        const results = await Promise.allSettled(ids.map(id =>
+            fetch(`/api/units/${encodeURIComponent(id)}/unplace`, {
+                method: 'POST',
+                credentials: 'include',
+            }).then(res => {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return id;
+            })
+        ));
+
+        let anyRollback = false;
+        results.forEach((r, i) => {
+            const id = ids[i];
+            if (r.status === 'fulfilled') {
+                document.dispatchEvent(new CustomEvent('units:removed', { detail: { unitId: id } }));
+            } else {
+                console.warn('[orbat-dock] unplace failed for', id, r.reason);
+                const p = prev.get(id);
+                const u = unitsFlat.find(x => x.id === id);
+                if (u && p) { u.lat = p.lat; u.lng = p.lng; }
+                patchNodeLatLng(roots, id, p?.lat ?? null, p?.lng ?? null);
+                anyRollback = true;
+            }
+        });
+        if (anyRollback) render();
+    }
+
     function patchNodeLatLng(nodes, id, lat, lng) {
         for (const n of nodes || []) {
             if (n.id === id) { n.lat = lat; n.lng = lng; return true; }
@@ -631,64 +737,29 @@
     }
 
     // ── Open / close ────────────────────────────────────────────────────
-    // The dock is a fixed-position overlay, so opening it doesn't change
-    // the Leaflet container size — it just covers the bottom of the map.
-    // Without adjustment, part of the geographic area the user was seeing
-    // is now hidden behind the dock. To preserve the visible extent we
-    // re-fit the saved bounds into the area ABOVE the dock (paddingBottomRight).
-
-    function computeVisibleMapBounds() {
-        if (!map || !dockEl) return null;
-        const dockHidden = dockEl.classList.contains('hidden');
-        const dockH = dockHidden ? 0 : (dockEl.getBoundingClientRect().height || 0);
-        const size = map.getSize();
-        const topLeft     = map.containerPointToLatLng(L.point(0, 0));
-        const bottomRight = map.containerPointToLatLng(L.point(size.x, Math.max(0, size.y - dockH)));
-        return L.latLngBounds(topLeft, bottomRight);
+    // After any visibility/collapse change we re-publish `--orbat-dock-h` so
+    // the bottom-right Leaflet controls (zoom / scale / basemap) ride above
+    // the dock — otherwise they stay pinned to the bottom and end up sitting
+    // inside the dock card. We also invalidate the Leaflet size so the map
+    // viewport tracks the new visible area.
+    function syncLayout() {
+        publishDockHeightVar();
+        try { map?.invalidateSize?.(); } catch (_) {}
     }
 
     function open() {
         if (!ensureBound()) return;
-        // Capture what the user is currently seeing BEFORE the dock covers
-        // anything. (Dock is still hidden here, so map.getBounds() equals the
-        // user's visible extent.)
-        const savedBounds = map ? map.getBounds() : null;
         dockEl.classList.remove('hidden');
         dockEl.setAttribute('aria-hidden', 'false');
         loadTree();
-        if (savedBounds && map) {
-            // Wait one frame so the dock's height can be measured now that
-            // it's no longer display:none-equivalent.
-            requestAnimationFrame(() => {
-                const dockH = dockEl.getBoundingClientRect().height || 220;
-                try {
-                    map.fitBounds(savedBounds, {
-                        paddingBottomRight: [0, dockH],
-                        animate: true,
-                        duration: 0.3,
-                        maxZoom: map.getZoom(), // never zoom IN — only out if needed
-                    });
-                } catch (_) { /* leaflet older version — skip */ }
-            });
-        }
-        setTimeout(() => { try { map?.invalidateSize?.(); } catch (_) {} }, 260);
+        syncLayout();
     }
 
     function close() {
         if (!dockEl) return;
-        // Capture what the user sees right now (above the dock). After the
-        // dock slides away we zoom the map so they continue to see the same
-        // area, rather than a suddenly-larger reveal.
-        const savedBounds = map ? computeVisibleMapBounds() : null;
         dockEl.classList.add('hidden');
         dockEl.setAttribute('aria-hidden', 'true');
-        if (savedBounds && map) {
-            setTimeout(() => {
-                try { map.fitBounds(savedBounds, { animate: true, duration: 0.3 }); }
-                catch (_) { /* ignore */ }
-            }, 40);
-        }
-        setTimeout(() => { try { map?.invalidateSize?.(); } catch (_) {} }, 260);
+        syncLayout();
     }
 
     function toggle() {
@@ -697,16 +768,40 @@
         else close();
     }
 
+    function toggleCollapsed() {
+        if (!dockEl) return;
+        const collapsed = dockEl.classList.toggle('is-collapsed');
+        if (collapseBtn) collapseBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        syncLayout();
+    }
+
     // ── Resize handle ───────────────────────────────────────────────────
     function clampHeight(h) {
         const maxH = Math.max(MIN_H, Math.round(window.innerHeight * MAX_H_FRAC));
         return Math.max(MIN_H, Math.min(maxH, Math.round(h)));
     }
 
+    // Publishes the dock's *visible* height as a CSS custom property
+    // (`--orbat-dock-h`) on <html>, so floating widgets — Leaflet's
+    // zoom/scale/basemap controls in the bottom-right corner — can sit
+    // just above the dock and follow its top edge as it resizes,
+    // collapses, or hides. Style rule lives in style.css beside the
+    // .orbat-dock block.
+    function publishDockHeightVar() {
+        try {
+            const root = document.documentElement;
+            if (!root) return;
+            const hidden = !dockEl || dockEl.classList.contains('hidden');
+            const h = hidden ? 0 : Math.round((dockEl.getBoundingClientRect().height) || 0);
+            root.style.setProperty('--orbat-dock-h', h + 'px');
+        } catch (_) { /* ignore */ }
+    }
+
     function applyHeight(h, { persist = true } = {}) {
         if (!dockEl) return;
         const clamped = clampHeight(h);
         dockEl.style.height = clamped + 'px';
+        publishDockHeightVar();
         // Keep the map viewport accurate to the new panel size.
         try { map?.invalidateSize?.(); } catch (_) {}
         if (persist) {
@@ -741,6 +836,7 @@
             try { resizeEl.releasePointerCapture(pointerId); } catch (_) {}
             pointerId = null;
             dockEl.classList.remove('is-resizing');
+            document.body.classList.remove('orbat-dock-resizing');
             window.removeEventListener('pointermove', onMove);
             window.removeEventListener('pointerup', onUp);
             window.removeEventListener('pointercancel', onUp);
@@ -754,6 +850,7 @@
             startY = e.clientY;
             startH = dockEl.getBoundingClientRect().height;
             dockEl.classList.add('is-resizing');
+            document.body.classList.add('orbat-dock-resizing');
             try { resizeEl.setPointerCapture(pointerId); } catch (_) {}
             window.addEventListener('pointermove', onMove);
             window.addEventListener('pointerup', onUp);
@@ -793,12 +890,32 @@
         closeBtn   = document.getElementById('orbat-dock-close');
         refreshBtn = document.getElementById('orbat-dock-refresh');
         resizeEl   = document.getElementById('orbat-dock-resize');
+        collapseBtn = document.getElementById('orbat-dock-collapse');
         if (!dockEl || !treeEl) return false;
 
         closeBtn?.addEventListener('click', close);
         refreshBtn?.addEventListener('click', () => loadTree());
+        collapseBtn?.addEventListener('click', () => {
+            toggleCollapsed();
+            // is-collapsed shrinks the dock via CSS without going through
+            // applyHeight; publish synchronously so floating controls
+            // (Leaflet zoom/scale/basemap) snap to the new top edge.
+            publishDockHeightVar();
+        });
         bindResize();
         restoreSavedHeight();
+
+        // Catch any other size change — CSS collapse/expand transitions,
+        // browser zoom, font-size changes — and keep --orbat-dock-h in sync
+        // so floating controls always sit just above the dock.
+        try {
+            if (typeof ResizeObserver === 'function') {
+                const ro = new ResizeObserver(() => publishDockHeightVar());
+                ro.observe(dockEl);
+            }
+        } catch (_) { /* observer unavailable — applyHeight/open/close still cover the common cases */ }
+        // Initial publish so the variable exists from the very first frame.
+        publishDockHeightVar();
 
         // Any change to unit state should refresh the tree. We listen for the
         // events units-map.js and units.js already dispatch.

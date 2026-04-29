@@ -12,9 +12,17 @@ export const symbolState = {
     affiliation: '3',
     /** Whether a symbol has been selected and the user can click the map */
     isPlacementActive: false,
+    /**
+     * True only after the user has actually chosen a symbol from the picker /
+     * library / quick-start / favorites. Flipping the affiliation on the
+     * default fallback symbol does NOT count — used to gate the onboarding
+     * empty-state guidance so it doesn't disappear from a stray click.
+     */
+    userPickedSymbol: false,
 };
 
 export function resetSymbolState() {
     symbolState.affiliation = '3';
     symbolState.isPlacementActive = false;
+    symbolState.userPickedSymbol = false;
 }

@@ -1844,6 +1844,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const GEO_FREEHAND_MIN_PX = 3;
     let geoCircle2ptPoints = [];
     let geoCircle2ptPreview = null;
+    let geoRangeCirclePoints = [];
+    let geoRangeCirclePreview = null;
+    let geoRangeSectorPoints = [];
+    let geoRangeSectorPreview = null;
+    let geoSemiCirclePoints = [];
+    let geoSemiCirclePreview = null;
     let geoRectanglePoints = [];
     let geoRectanglePreview = null;
     let geoOvalPoints = [];
@@ -5156,12 +5162,16 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const { unit, poly } of assignments) {
             const anchor = polygonLatLngAnchor(poly);
             if (!anchor) continue;
+            // Enforce 1000 m minimum spacing — sequential placement means
+            // each unit nudges around the ones placed before it.
+            const nudge = window.AppUnitsMap && window.AppUnitsMap.nudgeAwayFromOthers;
+            const safe = (typeof nudge === 'function') ? nudge(anchor, unit.id) : anchor;
             try {
                 const res = await fetch(`/api/units/${encodeURIComponent(unit.id)}/place`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ lat: anchor.lat, lng: anchor.lng }),
+                    body: JSON.stringify({ lat: safe.lat, lng: safe.lng }),
                 });
                 if (!res.ok) continue;
                 const updated = await res.json();
@@ -5822,16 +5832,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateSymbolPreview() {
         const sidc = generateSIDC();
-        sidcDisplay.innerText = `SIDC: ${sidc}`;
-
         const opts = getTextModifiers();
-        const sym = new ms.Symbol(sidc, opts);
+        let sym = new ms.Symbol(sidc, opts);
+        let renderedSidc = sidc;
+
+        // If user-entered SIDC won't render, silently fall back to the default
+        // (Friend infantry) so the preview stays useful instead of showing a
+        // red error to first-time users.
+        if (!sym.isValid()) {
+            renderedSidc = '10031000001200000000';
+            sym = new ms.Symbol(renderedSidc, opts);
+        }
+
+        sidcDisplay.innerText = `SIDC: ${renderedSidc}`;
 
         previewBox.innerHTML = '';
-        if (sym.isValid()) {
-            previewBox.appendChild(sym.asDOM());
-        } else {
-            previewBox.innerHTML = '<span style="color:var(--danger)">Invalid SIDC Code</span>';
+        if (sym.isValid()) previewBox.appendChild(sym.asDOM());
+
+        // Surface SIDC validity inline next to the manual input (expert area)
+        // so power users still see the failure without scaring beginners.
+        if (sidcManualInput) {
+            const userTried = sidcManualInput.value && sidcManualInput.value.replace(/\s+/g, '').length >= 18;
+            const ok = renderedSidc === normalizeSidcInput(sidcManualInput.value);
+            sidcManualInput.classList.toggle('input-error', userTried && !ok);
         }
     }
 
@@ -6033,6 +6056,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const n = normalizeSidcInput(sidc);
         if (!n) return;
         setSidcOverride(n);
+        if (typeof window.__SYMBOL_MARK_PICKED === 'function') window.__SYMBOL_MARK_PICKED();
         if (modeSelect) {
             modeSelect.value = 'symbol';
             modeSelect.dispatchEvent(new Event('change', { bubbles: true }));
@@ -12138,6 +12162,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function cancelGeoDrawing() {
         geoCircle2ptPoints = [];
+        geoRangeCirclePoints = [];
+        geoRangeSectorPoints = [];
+        geoSemiCirclePoints = [];
         geoRectanglePoints = [];
         geoOvalPoints = [];
         geoMinefieldPoints = [];
@@ -12146,12 +12173,16 @@ document.addEventListener('DOMContentLoaded', () => {
         geoFreehandPoints = [];
         isFreehandDrawing = false;
         if (geoCircle2ptPreview) { previewLayer.removeLayer(geoCircle2ptPreview); geoCircle2ptPreview = null; }
+        if (geoRangeCirclePreview) { previewLayer.removeLayer(geoRangeCirclePreview); geoRangeCirclePreview = null; }
+        if (geoRangeSectorPreview) { previewLayer.removeLayer(geoRangeSectorPreview); geoRangeSectorPreview = null; }
+        if (geoSemiCirclePreview) { previewLayer.removeLayer(geoSemiCirclePreview); geoSemiCirclePreview = null; }
         if (geoRectanglePreview) { previewLayer.removeLayer(geoRectanglePreview); geoRectanglePreview = null; }
         if (geoOvalPreview) { previewLayer.removeLayer(geoOvalPreview); geoOvalPreview = null; }
         if (geoMinefieldPreview) { previewLayer.removeLayer(geoMinefieldPreview); geoMinefieldPreview = null; }
         if (geoFreeformPreview) { previewLayer.removeLayer(geoFreeformPreview); geoFreeformPreview = null; }
         if (geoDistancePolyline) { previewLayer.removeLayer(geoDistancePolyline); geoDistancePolyline = null; }
         if (geoFreehandPreview) { previewLayer.removeLayer(geoFreehandPreview); geoFreehandPreview = null; }
+        if (typeof clearGeoRadiusGuide === 'function') clearGeoRadiusGuide();
         if (geoDrawingControls) geoDrawingControls.classList.add('hidden');
     }
 
@@ -12261,6 +12292,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sidc = normalizeSidcInput(data.sidc);
         if (!sidc) return;
         setSidcOverride(sidc);
+        if (typeof window.__SYMBOL_MARK_PICKED === 'function') window.__SYMBOL_MARK_PICKED();
         updateSymbolPreview();
     });
 
@@ -12295,10 +12327,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const sidc = normalizeSidcInput(data.sidc);
         if (!sidc) return;
         setSidcOverride(sidc);
+        if (typeof window.__SYMBOL_MARK_PICKED === 'function') window.__SYMBOL_MARK_PICKED();
         updateSymbolPreview();
     });
 
-    syncSidcBtn?.addEventListener('click', pullSidcFromManualInput);
+    syncSidcBtn?.addEventListener('click', () => {
+        pullSidcFromManualInput();
+        if (typeof window.__SYMBOL_MARK_PICKED === 'function') window.__SYMBOL_MARK_PICKED();
+    });
 
 
 
@@ -12981,47 +13017,69 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (tool === 'range-circle') {
                 clearGeoPlacementPreview();
-                const geoColor = getGeoColor();
-                const fillStyle = getGeoFillStyle();
-                const radiusKm = parseFloat(geoRadiusInput?.value || 5) || 5;
-                const circle = L.circle(e.latlng, { radius: radiusKm * 1000, ...getGeoShapeStyle(geoColor, fillStyle) });
-                circle._geoType = 'range-circle';
-                circle._geoData = { center: e.latlng, radiusKm, color: geoColor, fillStyle };
-                circle.bindPopup(buildGeoPopupContent(circle, 'range-circle', circle._geoData), GEO_POPUP_OPTIONS);
-                circle.on('popupopen', () => {
-                    removeGeoResizeHandles();
-                    const d = circle._geoData;
-                    const handleLat = latLngAtBearing(d.center, d.radiusKm, 0);
-                    createGeoResizeHandle(handleLat, (newLat, isFinal) => {
-                        const distM = haversineDistance(d.center.lat, d.center.lng, newLat.lat, newLat.lng);
-                        d.radiusKm = parseFloat((distM / 1000).toFixed(2));
-                        circle.setRadius(d.radiusKm * 1000);
-                        circle.setPopupContent(buildGeoPopupContent(circle, 'range-circle', d));
+                geoRangeCirclePoints.push(e.latlng);
+                if (geoRangeCirclePoints.length === 1) {
+                    geoRangeCirclePreview = L.circle(geoRangeCirclePoints[0], { radius: 1, color: getGeoColor(), weight: 2, fillColor: getGeoColor(), fillOpacity: 0.15, dashArray: '5,5', className: 'geo-preview-shadow' });
+                    geoRangeCirclePreview.addTo(previewLayer);
+                } else if (geoRangeCirclePoints.length === 2) {
+                    const center = geoRangeCirclePoints[0];
+                    const distM = haversineDistance(center.lat, center.lng, geoRangeCirclePoints[1].lat, geoRangeCirclePoints[1].lng);
+                    const radiusKm = Math.max(0.01, distM / 1000);
+                    const geoColor = getGeoColor();
+                    const fillStyle = getGeoFillStyle();
+                    if (geoRangeCirclePreview) { previewLayer.removeLayer(geoRangeCirclePreview); geoRangeCirclePreview = null; }
+                    const circle = L.circle(center, { radius: radiusKm * 1000, ...getGeoShapeStyle(geoColor, fillStyle) });
+                    circle._geoType = 'range-circle';
+                    circle._geoData = { center, radiusKm, color: geoColor, fillStyle };
+                    circle.bindPopup(buildGeoPopupContent(circle, 'range-circle', circle._geoData), GEO_POPUP_OPTIONS);
+                    circle.on('popupopen', () => {
+                        removeGeoResizeHandles();
+                        const d = circle._geoData;
+                        const handleLat = latLngAtBearing(d.center, d.radiusKm, 0);
+                        createGeoResizeHandle(handleLat, (newLat, isFinal) => {
+                            const distM2 = haversineDistance(d.center.lat, d.center.lng, newLat.lat, newLat.lng);
+                            d.radiusKm = parseFloat((distM2 / 1000).toFixed(2));
+                            circle.setRadius(d.radiusKm * 1000);
+                            circle.setPopupContent(buildGeoPopupContent(circle, 'range-circle', d));
+                            bindGeoPopupHandlers(circle, 'range-circle');
+                            syncGeoShapeHandlesToGeometry(circle, 'range-circle');
+                            if (isFinal && activeGeoResizeHandles.length >= 1) {
+                                activeGeoResizeHandles[0].setLatLng(latLngAtBearing(d.center, d.radiusKm, 0));
+                            }
+                            if (isFinal) scheduleSaveToStorage();
+                        }, circle._layerId);
+                        bindGeoCenterMoveHandle(circle, 'range-circle');
                         bindGeoPopupHandlers(circle, 'range-circle');
-                        syncGeoShapeHandlesToGeometry(circle, 'range-circle');
-                        if (isFinal && activeGeoResizeHandles.length >= 1) {
-                            activeGeoResizeHandles[0].setLatLng(latLngAtBearing(d.center, d.radiusKm, 0));
-                        }
-                        if (isFinal) scheduleSaveToStorage();
-                    }, circle._layerId);
-                    bindGeoCenterMoveHandle(circle, 'range-circle');
-                    bindGeoPopupHandlers(circle, 'range-circle');
-                });
-                circle.on('popupclose', removeGeoResizeHandles);
-                addToActiveLayer(circle);
+                    });
+                    circle.on('popupclose', removeGeoResizeHandles);
+                    addToActiveLayer(circle);
+                    clearGeoRadiusGuide();
+                    geoRangeCirclePoints = [];
+                }
                 return;
             }
             if (tool === 'range-sector') {
                 clearGeoPlacementPreview();
+                geoRangeSectorPoints.push(e.latlng);
+                const aperture = parseFloat(geoApertureInput?.value || 90) || 90;
+                if (geoRangeSectorPoints.length === 1) {
+                    const previewPts = createSectorPolygon(geoRangeSectorPoints[0], 0.05, 0, aperture);
+                    geoRangeSectorPreview = L.polygon(previewPts, { color: getGeoColor(), weight: 2, fillColor: getGeoColor(), fillOpacity: 0.15, dashArray: '5,5', className: 'geo-preview-shadow' });
+                    geoRangeSectorPreview.addTo(previewLayer);
+                    return;
+                }
+                // second click → finalize
+                const center = geoRangeSectorPoints[0];
+                const distM = haversineDistance(center.lat, center.lng, e.latlng.lat, e.latlng.lng);
+                const radiusKm = Math.max(0.01, distM / 1000);
+                const bearing = bearingDegrees(center, e.latlng);
                 const geoColor = getGeoColor();
                 const fillStyle = getGeoFillStyle();
-                const radiusKm = parseFloat(geoSectorRadiusInput?.value || 5) || 5;
-                const bearing = parseFloat(geoBearingInput?.value || 0) || 0;
-                const aperture = parseFloat(geoApertureInput?.value || 90) || 90;
-                const points = createSectorPolygon(e.latlng, radiusKm, bearing, aperture);
+                if (geoRangeSectorPreview) { previewLayer.removeLayer(geoRangeSectorPreview); geoRangeSectorPreview = null; }
+                const points = createSectorPolygon(center, radiusKm, bearing, aperture);
                 const sector = L.polygon(points, { ...getGeoShapeStyle(geoColor, fillStyle) });
                 sector._geoType = 'range-sector';
-                sector._geoData = { center: e.latlng, radiusKm, bearing, aperture, color: geoColor, fillStyle };
+                sector._geoData = { center, radiusKm, bearing, aperture, color: geoColor, fillStyle };
                 sector.bindPopup(buildGeoPopupContent(sector, 'range-sector', sector._geoData), GEO_POPUP_OPTIONS);
                 sector.on('remove', () => removeSectorWedgeOverlays(sector));
                 sector.on('popupopen', () => {
@@ -13047,6 +13105,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 sector.on('popupclose', removeGeoResizeHandles);
                 addToActiveLayer(sector);
+                clearGeoRadiusGuide();
+                geoRangeSectorPoints = [];
                 return;
             }
             if (tool === 'circle-2pt') {
@@ -13085,20 +13145,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     circle.on('popupclose', removeGeoResizeHandles);
                     addToActiveLayer(circle);
+                    clearGeoRadiusGuide();
                     geoCircle2ptPoints = [];
                 }
                 return;
             }
             if (tool === 'semi-circle') {
                 clearGeoPlacementPreview();
+                geoSemiCirclePoints.push(e.latlng);
+                if (geoSemiCirclePoints.length === 1) {
+                    const previewPts = createSectorPolygon(geoSemiCirclePoints[0], 0.05, 0, 180);
+                    geoSemiCirclePreview = L.polygon(previewPts, { color: getGeoColor(), weight: 2, fillColor: getGeoColor(), fillOpacity: 0.15, dashArray: '5,5', className: 'geo-preview-shadow' });
+                    geoSemiCirclePreview.addTo(previewLayer);
+                    return;
+                }
+                // second click → finalize
+                const center = geoSemiCirclePoints[0];
+                const distM = haversineDistance(center.lat, center.lng, e.latlng.lat, e.latlng.lng);
+                const radiusKm = Math.max(0.01, distM / 1000);
+                const bearing = bearingDegrees(center, e.latlng);
                 const geoColor = getGeoColor();
                 const fillStyle = getGeoFillStyle();
-                const radiusKm = parseFloat(geoSemiRadiusInput?.value || 5) || 5;
-                const bearing = parseFloat(geoSemiBearingInput?.value || 0) || 0;
-                const points = createSectorPolygon(e.latlng, radiusKm, bearing, 180);
+                if (geoSemiCirclePreview) { previewLayer.removeLayer(geoSemiCirclePreview); geoSemiCirclePreview = null; }
+                const points = createSectorPolygon(center, radiusKm, bearing, 180);
                 const sector = L.polygon(points, { ...getGeoShapeStyle(geoColor, fillStyle) });
                 sector._geoType = 'semi-circle';
-                sector._geoData = { center: e.latlng, radiusKm, bearing, aperture: 180, color: geoColor, fillStyle };
+                sector._geoData = { center, radiusKm, bearing, aperture: 180, color: geoColor, fillStyle };
                 sector.bindPopup(buildGeoPopupContent(sector, 'semi-circle', sector._geoData), GEO_POPUP_OPTIONS);
                 sector.on('remove', () => removeSectorWedgeOverlays(sector));
                 sector.on('popupopen', () => {
@@ -13122,6 +13194,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 sector.on('popupclose', removeGeoResizeHandles);
                 addToActiveLayer(sector);
+                clearGeoRadiusGuide();
+                geoSemiCirclePoints = [];
                 return;
             }
             if (tool === 'rectangle') {
@@ -13450,8 +13524,35 @@ document.addEventListener('DOMContentLoaded', () => {
     let geoPreviewSemiCircle = null;
     let geoPreviewPolygon = null;
     let geoPreviewPolyline = null;
+    let geoRadiusGuide = null;
+    let geoRadiusGuideLabel = null;
 
     const GEO_PREVIEW_STYLE = { fillOpacity: 0.2, dashArray: '6,6', weight: 2, className: 'geo-preview-shadow' };
+
+    function updateGeoRadiusGuide(center, cursor) {
+        const dkm = haversineDistance(center.lat, center.lng, cursor.lat, cursor.lng) / 1000;
+        if (!geoRadiusGuide) {
+            geoRadiusGuide = L.polyline([center, cursor], { color: '#ef4444', weight: 3, opacity: 0.95, interactive: false, className: 'geo-radius-guide' });
+            geoRadiusGuide.addTo(previewLayer);
+        } else {
+            geoRadiusGuide.setLatLngs([center, cursor]);
+        }
+        const mid = L.latLng((center.lat + cursor.lat) / 2, (center.lng + cursor.lng) / 2);
+        const html = `<span>${formatKmAndNm(dkm)}</span>`;
+        const icon = L.divIcon({ className: 'geo-radius-guide-label', html, iconSize: null, iconAnchor: [0, 0] });
+        if (!geoRadiusGuideLabel) {
+            geoRadiusGuideLabel = L.marker(mid, { icon, interactive: false, keyboard: false });
+            geoRadiusGuideLabel.addTo(previewLayer);
+        } else {
+            geoRadiusGuideLabel.setLatLng(mid);
+            geoRadiusGuideLabel.setIcon(icon);
+        }
+    }
+
+    function clearGeoRadiusGuide() {
+        if (geoRadiusGuide) { previewLayer.removeLayer(geoRadiusGuide); geoRadiusGuide = null; }
+        if (geoRadiusGuideLabel) { previewLayer.removeLayer(geoRadiusGuideLabel); geoRadiusGuideLabel = null; }
+    }
 
     function updateGeoPlacementPreview(latlng) {
         if (!isGeoPanelActive() || !latlng) return;
@@ -13468,6 +13569,33 @@ document.addEventListener('DOMContentLoaded', () => {
             geoCircle2ptPreview.setLatLng(geoCircle2ptPoints[0]);
             geoCircle2ptPreview.setRadius(Math.max(100, distM));
             geoCircle2ptPreview.setStyle({ color: getGeoColor(), fillColor: getGeoColor() });
+            updateGeoRadiusGuide(geoCircle2ptPoints[0], latlng);
+        } else if (tool === 'range-circle' && geoRangeCirclePoints.length === 1 && geoRangeCirclePreview) {
+            if (geoPreviewCircle) { previewLayer.removeLayer(geoPreviewCircle); geoPreviewCircle = null; }
+            const distM = haversineDistance(geoRangeCirclePoints[0].lat, geoRangeCirclePoints[0].lng, latlng.lat, latlng.lng);
+            geoRangeCirclePreview.setLatLng(geoRangeCirclePoints[0]);
+            geoRangeCirclePreview.setRadius(Math.max(1, distM));
+            geoRangeCirclePreview.setStyle({ color: getGeoColor(), fillColor: getGeoColor() });
+            updateGeoRadiusGuide(geoRangeCirclePoints[0], latlng);
+        } else if (tool === 'range-sector' && geoRangeSectorPoints.length === 1 && geoRangeSectorPreview) {
+            if (geoPreviewSector) { previewLayer.removeLayer(geoPreviewSector); geoPreviewSector = null; }
+            const center = geoRangeSectorPoints[0];
+            const distM = haversineDistance(center.lat, center.lng, latlng.lat, latlng.lng);
+            const radiusKm = Math.max(0.01, distM / 1000);
+            const bearing = bearingDegrees(center, latlng);
+            const aperture = parseFloat(geoApertureInput?.value || 90) || 90;
+            geoRangeSectorPreview.setLatLngs(createSectorPolygon(center, radiusKm, bearing, aperture));
+            geoRangeSectorPreview.setStyle({ color: getGeoColor(), fillColor: getGeoColor() });
+            updateGeoRadiusGuide(center, latlng);
+        } else if (tool === 'semi-circle' && geoSemiCirclePoints.length === 1 && geoSemiCirclePreview) {
+            if (geoPreviewSemiCircle) { previewLayer.removeLayer(geoPreviewSemiCircle); geoPreviewSemiCircle = null; }
+            const center = geoSemiCirclePoints[0];
+            const distM = haversineDistance(center.lat, center.lng, latlng.lat, latlng.lng);
+            const radiusKm = Math.max(0.01, distM / 1000);
+            const bearing = bearingDegrees(center, latlng);
+            geoSemiCirclePreview.setLatLngs(createSectorPolygon(center, radiusKm, bearing, 180));
+            geoSemiCirclePreview.setStyle({ color: getGeoColor(), fillColor: getGeoColor() });
+            updateGeoRadiusGuide(center, latlng);
         } else if (tool === 'rectangle' && geoRectanglePoints.length === 1 && geoRectanglePreview) {
             if (geoPreviewPolygon) { previewLayer.removeLayer(geoPreviewPolygon); geoPreviewPolygon = null; }
             const corners = createRectangleCorners(geoRectanglePoints[0], latlng);
@@ -13500,7 +13628,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 geoPreviewPolygon.setLatLngs(pts);
                 geoPreviewPolygon.setStyle({ color: geoColor, fillColor: geoColor });
             }
-        } else if (tool === 'range-circle') {
+        } else if (tool === 'range-circle' && geoRangeCirclePoints.length === 0) {
             const radiusKm = parseFloat(geoRadiusInput?.value || 5) || 5;
             const geoColor = getGeoColor();
             if (!geoPreviewCircle) {
@@ -13511,7 +13639,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 geoPreviewCircle.setRadius(radiusKm * 1000);
                 geoPreviewCircle.setStyle({ color: geoColor, fillColor: geoColor });
             }
-        } else if (tool === 'range-sector') {
+        } else if (tool === 'range-sector' && geoRangeSectorPoints.length === 0) {
             const radiusKm = parseFloat(geoSectorRadiusInput?.value || 5) || 5;
             const bearing = parseFloat(geoBearingInput?.value || 0) || 0;
             const aperture = parseFloat(geoApertureInput?.value || 90) || 90;
@@ -13524,7 +13652,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 geoPreviewSector.setLatLngs(points);
                 geoPreviewSector.setStyle({ color: geoColor, fillColor: geoColor });
             }
-        } else if (tool === 'semi-circle') {
+        } else if (tool === 'semi-circle' && geoSemiCirclePoints.length === 0) {
             const radiusKm = parseFloat(geoSemiRadiusInput?.value || 5) || 5;
             const bearing = parseFloat(geoSemiBearingInput?.value || 0) || 0;
             const geoColor = getGeoColor();
@@ -13723,6 +13851,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pts = [...geoDistancePoints, e.latlng];
                 const dkm = totalDistanceKm(pts);
                 if (dkm > 0) tipText += ' · ' + formatKmAndNm(dkm);
+            } else if (isGeoPanelActive() && getGeoSelectedTool() === 'range-circle' && geoRangeCirclePoints.length === 1) {
+                const c = geoRangeCirclePoints[0];
+                const dkm = haversineDistance(c.lat, c.lng, e.latlng.lat, e.latlng.lng) / 1000;
+                if (dkm > 0) tipText += ' · R: ' + formatKmAndNm(dkm);
+            } else if (isGeoPanelActive() && getGeoSelectedTool() === 'circle-2pt' && geoCircle2ptPoints.length === 1) {
+                const c = geoCircle2ptPoints[0];
+                const dkm = haversineDistance(c.lat, c.lng, e.latlng.lat, e.latlng.lng) / 1000;
+                if (dkm > 0) tipText += ' · R: ' + formatKmAndNm(dkm);
+            } else if (isGeoPanelActive() && getGeoSelectedTool() === 'range-sector' && geoRangeSectorPoints.length === 1) {
+                const c = geoRangeSectorPoints[0];
+                const dkm = haversineDistance(c.lat, c.lng, e.latlng.lat, e.latlng.lng) / 1000;
+                const brg = bearingDegrees(c, e.latlng);
+                if (dkm > 0) tipText += ' · R: ' + formatKmAndNm(dkm) + ' · ' + brg.toFixed(0).padStart(3, '0') + '°';
+            } else if (isGeoPanelActive() && getGeoSelectedTool() === 'semi-circle' && geoSemiCirclePoints.length === 1) {
+                const c = geoSemiCirclePoints[0];
+                const dkm = haversineDistance(c.lat, c.lng, e.latlng.lat, e.latlng.lng) / 1000;
+                const brg = bearingDegrees(c, e.latlng);
+                if (dkm > 0) tipText += ' · R: ' + formatKmAndNm(dkm) + ' · ' + brg.toFixed(0).padStart(3, '0') + '°';
             } else if (currentMode === 'line' && !selectedTmgType && drawLineCoords.length >= 1) {
                 const pts = [...drawLineCoords, snapLatLngForLinePlacement(e.latlng)];
                 const dkm = totalDistanceKm(pts);
@@ -15317,7 +15463,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         clearSelection();
         renderLayersList();
-        scheduleSaveToStorage();
+        flushSaveToStorage();
     });
     selectionClearBtn?.addEventListener('click', () => {
         clearSelection();
@@ -15782,22 +15928,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const STORAGE_KEY = 'nato-map-planner-data';
     let saveToStorageTimeout = null;
+    function doSaveToStorage() {
+        try {
+            const payload = exportLayersData();
+            const sync = window.rmoozServerSync;
+            if (sync && sync.isHttpOrigin) {
+                if (sync.activePlanId) {
+                    sync.savePlanPayload(payload).catch(() => {});
+                }
+            } else {
+                localStorage.setItem(STORAGE_KEY, payload);
+            }
+        } catch (e) { /* quota or disabled */ }
+    }
     function scheduleSaveToStorage() {
         clearTimeout(saveToStorageTimeout);
         saveToStorageTimeout = setTimeout(() => {
-            try {
-                const payload = exportLayersData();
-                const sync = window.rmoozServerSync;
-                if (sync && sync.isHttpOrigin) {
-                    if (sync.activePlanId) {
-                        sync.savePlanPayload(payload).catch(() => {});
-                    }
-                } else {
-                    localStorage.setItem(STORAGE_KEY, payload);
-                }
-            } catch (e) { /* quota or disabled */ }
+            saveToStorageTimeout = null;
+            doSaveToStorage();
         }, 400);
     }
+    function flushSaveToStorage() {
+        if (saveToStorageTimeout) {
+            clearTimeout(saveToStorageTimeout);
+            saveToStorageTimeout = null;
+        }
+        doSaveToStorage();
+    }
+    window.addEventListener('pagehide', flushSaveToStorage);
+    window.addEventListener('beforeunload', flushSaveToStorage);
 
     function createSymbolFromData(d) {
         const latlng = fromLatLngArr(d.latlng);
@@ -16243,7 +16402,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (addingPointTmgGroup || reorientingTmgMarker || !!catkPlacementState || drawLineCoords.length >= 2 || tmgPoints.length >= 2) {
                 e.preventDefault();
                 cancelLineDrawing();
-            } else if (isGeoPanelActive() && (geoDistancePoints.length >= 1 || geoFreeformPoints.length >= 1 || geoFreehandPoints.length >= 1 || isFreehandDrawing || isTrimmerDragging)) {
+            } else if (isGeoPanelActive() && (geoDistancePoints.length >= 1 || geoFreeformPoints.length >= 1 || geoFreehandPoints.length >= 1 || geoCircle2ptPoints.length >= 1 || geoRangeCirclePoints.length >= 1 || geoRangeSectorPoints.length >= 1 || geoSemiCirclePoints.length >= 1 || isFreehandDrawing || isTrimmerDragging)) {
                 e.preventDefault();
                 if (isTrimmerDragging) {
                     isTrimmerDragging = false;

@@ -2009,7 +2009,7 @@ details[open] > .details-summary {
    MODALS
    ═══════════════════════════════════════════════════════════════════ */
 .modal.hidden { display: none; }
-.modal { position: fixed; inset: 0; z-index: 5000; }
+.modal { position: fixed; inset: 0; z-index: 5000; display: flex; align-items: center; justify-content: center; }
 .modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.6); }
 
 .modal-panel {
@@ -2073,8 +2073,33 @@ details[open] > .details-summary {
 .export-select-actions-bar { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* Units modal */
-.units-modal-panel { width: min(1100px, calc(100vw - 32px)); height: min(760px, calc(100vh - 48px)); margin: 24px auto; }
-.units-modal-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1.35fr; }
+.units-modal-panel { width: min(1500px, calc(100vw - 32px)); height: min(820px, calc(100vh - 48px)); margin: 24px auto; }
+/* Wide viewport with a unit selected: 3 columns (tree | form | card). */
+.units-modal-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(280px, 1fr) minmax(440px, 1.7fr) minmax(320px, 360px); }
+/* No selection: collapse to 2 columns so the form/welcome gets full width. */
+.units-modal-panel:not(.has-selection) .units-modal-body { grid-template-columns: minmax(280px, 1fr) minmax(440px, 1.7fr); }
+/* Narrow viewport with a unit selected: card moves above the form column so
+   it stays visible without crowding three columns into a small width. */
+@media (max-width: 1179px) {
+    .units-modal-panel.has-selection .units-modal-body { grid-template-columns: minmax(280px, 1fr) minmax(440px, 1.7fr); grid-template-rows: auto 1fr; grid-template-areas: "tree right" "tree middle"; }
+    .units-modal-panel.has-selection .units-left { grid-area: tree; }
+    .units-modal-panel.has-selection .units-middle { grid-area: middle; }
+    .units-modal-panel.has-selection .units-right { grid-area: right; }
+}
+
+/* Welcome state — shown in the right pane on first open so the user is
+   greeted with one clear primary action instead of a packed form. */
+.units-welcome-panel { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 56px 32px; gap: 14px; flex: 1; min-height: 0; }
+.units-modal-panel.welcome-mode .units-welcome-panel { display: flex; }
+.units-modal-panel.welcome-mode #units-main-panel,
+.units-modal-panel.welcome-mode #units-edit-panel { display: none !important; }
+.units-welcome-emoji { font-size: 56px; line-height: 1; opacity: 0.55; color: var(--accent); }
+.units-welcome-title { font-size: 1.35rem; font-weight: 600; color: var(--text); }
+.units-welcome-sub { font-size: 0.95rem; color: var(--text-muted); max-width: 460px; line-height: 1.5; }
+.units-welcome-btn { margin-top: 14px; padding: 14px 32px; background: var(--accent); color: #fff; border: 0; border-radius: var(--radius-xs); font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,0.25); transition: filter 0.15s ease, transform 0.15s ease; }
+.units-welcome-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.units-welcome-btn:active { transform: translateY(0); }
+.units-welcome-tip { font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; max-width: 420px; line-height: 1.4; }
 
 /* ── "Parked" state ───────────────────────────────────────────────────
    When the user enters placement mode we visually hide the centred
@@ -2422,23 +2447,18 @@ details[open] > .details-summary {
 .units-side-row-neutral  { border-inline-start: 3px solid #eab30866; }
 .units-side-row-unknown  { border-inline-start: 3px solid #94a3b866; }
 
-/* Right panel */
-.units-right { min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+/* Middle panel — context-driven form area (welcome / create / edit) */
+.units-middle { min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 
-/* Context bar */
-.units-ctx-bar { flex: 0 0 auto; padding: 12px 16px; border-bottom: 1px solid var(--panel-border); background: rgba(0,0,0,0.08); min-height: 62px; display: flex; align-items: center; }
-[data-theme="light"] .units-ctx-bar { background: rgba(0,0,0,0.03); }
-.units-ctx-pane { display: flex; align-items: center; gap: 12px; width: 100%; }
-.units-ctx-root-title { font-size: 0.95rem; font-weight: 650; }
-.units-ctx-root-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 3px; line-height: 1.4; }
-.units-ctx-sel-info { flex: 1; min-width: 0; }
-.units-ctx-sel-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
-.units-ctx-sel-name { font-size: 0.95rem; font-weight: 650; }
-.units-ctx-sel-code { font-size: 0.75rem; color: var(--text-muted); }
-.units-ctx-child-count { font-size: 0.72rem; color: var(--text-muted); padding: 1px 6px; border: 1px solid var(--panel-border); border-radius: 10px; }
-.units-edit-btn { flex: 0 0 auto; font-size: 0.78rem; padding: 5px 12px; border-radius: var(--radius-xs); border: 1px solid var(--panel-border); background: transparent; color: var(--text-muted); cursor: pointer; white-space: nowrap; }
-.units-edit-btn:hover { background: rgba(59,130,246,0.15); color: #93c5fd; border-color: rgba(59,130,246,0.4); }
+/* Right panel — dedicated "selected unit" card column. Hidden when nothing
+   is selected so the welcome / create-root form gets the full middle width. */
+.units-right { min-height: 0; min-width: 0; display: flex; flex-direction: column; padding: 16px; border-left: 1px solid var(--panel-border); background: rgba(0,0,0,0.04); overflow: hidden; }
+[data-theme="light"] .units-right { background: rgba(0,0,0,0.02); }
+.units-modal-panel:not(.has-selection) .units-right { display: none; }
 
+/* Identity badges (relocated into the edit-panel symbol banner) */
+.units-ctx-sel-code { font-size: 0.78rem; color: var(--text-muted); padding: 1px 8px; border: 1px solid var(--panel-border); border-radius: 4px; }
+.units-ctx-child-count { font-size: 0.72rem; color: var(--text-muted); padding: 1px 8px; border: 1px solid var(--panel-border); border-radius: 10px; }
 /* Breadcrumb */
 .units-breadcrumb { display: flex; flex-wrap: nowrap; align-items: center; overflow: hidden; margin-bottom: 2px; }
 .units-bc-item { font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
@@ -2577,6 +2597,70 @@ details[open] > .details-summary {
 .units-save-btn { width: 100%; padding: 11px; font-size: 0.92rem; font-weight: 600; background: rgba(16,185,129,0.18); border-color: rgba(16,185,129,0.4); color: #6ee7b7; }
 [data-theme="light"] .units-save-btn { background: rgba(16,185,129,0.08); color: #059669; border-color: rgba(16,185,129,0.3); }
 .units-save-btn:hover:not(:disabled) { background: rgba(16,185,129,0.28); }
+
+/* Selected-unit card — lives in its own dedicated right column. Vertical
+   layout (symbol on top, meta below, actions at bottom) so it can fill the
+   tall narrow column gracefully. Combines symbol preview, name, badges,
+   SIDC, and the place / change-symbol actions. */
+.units-edit-symbol-banner { flex: 0 0 auto; display: flex; flex-direction: column; align-items: stretch; gap: 14px; padding: 18px; border: 1px solid rgba(59,130,246,0.35); border-radius: var(--radius-sm); background: linear-gradient(rgba(59,130,246,0.10), rgba(59,130,246,0.10)), var(--panel); box-shadow: 0 4px 18px rgba(0,0,0,0.25), 0 2px 12px rgba(59,130,246,0.10); }
+[data-theme="light"] .units-edit-symbol-banner { background: linear-gradient(rgba(59,130,246,0.06), rgba(59,130,246,0.06)), var(--panel); border-color: rgba(59,130,246,0.25); box-shadow: 0 4px 14px rgba(15,23,42,0.08), 0 2px 8px rgba(59,130,246,0.06); }
+.units-edit-symbol-preview { width: 100%; aspect-ratio: 1 / 1; max-height: 200px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; padding: 12px; border-radius: var(--radius-xs); background: rgba(255,255,255,0.06); border: 1px solid var(--panel-border); }
+[data-theme="light"] .units-edit-symbol-preview { background: rgba(255,255,255,0.5); }
+.units-edit-symbol-preview svg { max-width: 100%; max-height: 100%; }
+.units-edit-symbol-empty { font-size: 1.6rem; color: var(--text-muted); }
+.units-edit-symbol-meta { flex: 0 0 auto; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.units-edit-symbol-meta-name { font-size: 1.15rem; font-weight: 700; color: var(--text); line-height: 1.25; word-break: break-word; }
+.units-edit-symbol-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.units-edit-symbol-meta-sub { font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; word-break: break-all; }
+.units-edit-symbol-meta-sub code { font-family: var(--font-mono, monospace); font-size: 0.72rem; }
+.units-edit-symbol-actions { flex: 0 0 auto; display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+.units-edit-symbol-actions .units-place-btn { width: 100%; padding: 9px 12px; font-size: 0.85rem; }
+.units-edit-symbol-pick-btn { width: 100%; padding: 9px 12px; font-size: 0.85rem; border-radius: var(--radius-xs); border: 1px solid var(--panel-border); background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
+.units-edit-symbol-pick-btn:hover { background: rgba(59,130,246,0.15); color: #93c5fd; border-color: rgba(59,130,246,0.5); }
+[data-theme="light"] .units-edit-symbol-pick-btn:hover { color: #1d4ed8; }
+/* When the card collapses back into the form (narrow viewport via media
+   query above), restore the original horizontal layout so it doesn't
+   dominate the form column. */
+@media (max-width: 1179px) {
+    .units-edit-symbol-banner { flex-direction: row; align-items: stretch; padding: 14px; gap: 14px; }
+    .units-edit-symbol-preview { width: 88px; height: 88px; max-height: none; aspect-ratio: auto; padding: 6px; }
+    .units-edit-symbol-meta { flex: 1; gap: 6px; justify-content: center; }
+    .units-edit-symbol-actions { flex: 0 0 auto; min-width: 150px; margin-top: 0; justify-content: center; gap: 6px; }
+}
+
+/* Inline save confirmation — listed-changes prompt that replaces Save when
+   the user hits Save while there are unsaved edits. */
+.units-edit-confirm { flex: 0 0 auto; padding: 12px 14px; border: 1px solid rgba(245,158,11,0.45); border-radius: var(--radius-sm); background: rgba(245,158,11,0.1); display: flex; flex-direction: column; gap: 10px; }
+[data-theme="light"] .units-edit-confirm { background: rgba(245,158,11,0.06); }
+.units-edit-confirm-hdr { font-size: 0.85rem; font-weight: 700; color: #fbbf24; }
+[data-theme="light"] .units-edit-confirm-hdr { color: #b45309; }
+.units-edit-confirm-list { margin: 0; padding: 0 0 0 18px; display: flex; flex-direction: column; gap: 4px; font-size: 0.82rem; color: var(--text); }
+.units-edit-confirm-field { color: var(--text-muted); margin-right: 4px; }
+.units-edit-confirm-from { color: var(--text-muted); text-decoration: line-through; }
+.units-edit-confirm-arrow { color: var(--text-muted); margin: 0 4px; }
+.units-edit-confirm-to { color: #6ee7b7; font-weight: 600; }
+[data-theme="light"] .units-edit-confirm-to { color: #047857; }
+.units-edit-confirm-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.units-edit-confirm-yes { background: rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.5); color: #6ee7b7; font-weight: 600; }
+.units-edit-confirm-yes:hover { background: rgba(16,185,129,0.3); }
+[data-theme="light"] .units-edit-confirm-yes { background: rgba(16,185,129,0.1); color: #059669; border-color: rgba(16,185,129,0.4); }
+
+/* "+ Add child" section on the edit panel — kept distinct so the user
+   understands this is a separate action from editing the current unit. */
+.units-edit-add-child-section { flex: 0 0 auto; padding: 14px; border: 1px dashed var(--panel-border); border-radius: var(--radius-sm); display: flex; flex-direction: column; gap: 8px; align-items: stretch; background: rgba(255,255,255,0.02); }
+[data-theme="light"] .units-edit-add-child-section { background: rgba(0,0,0,0.02); }
+.units-edit-add-child-hdr { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+.units-edit-add-child-btn { padding: 10px 14px; font-size: 0.9rem; font-weight: 600; border-radius: var(--radius-xs); border: 1px solid rgba(59,130,246,0.45); background: rgba(59,130,246,0.12); color: #bfdbfe; cursor: pointer; transition: all 0.15s; }
+.units-edit-add-child-btn:hover { background: rgba(59,130,246,0.22); border-color: #60a5fa; color: #dbeafe; }
+[data-theme="light"] .units-edit-add-child-btn { color: #1d4ed8; background: rgba(59,130,246,0.08); border-color: rgba(59,130,246,0.4); }
+[data-theme="light"] .units-edit-add-child-btn:hover { background: rgba(59,130,246,0.16); color: #1e40af; }
+.units-edit-add-child-hint { font-size: 0.72rem; color: var(--text-muted); line-height: 1.4; }
+
+/* Back row at the top of the create-child form so the user can return to
+   the parent's edit view without losing context. */
+.units-create-back-row { flex: 0 0 auto; }
+.units-create-back-btn { font-size: 0.78rem; padding: 5px 12px; border-radius: var(--radius-xs); border: 1px solid var(--panel-border); background: transparent; color: var(--text-muted); cursor: pointer; }
+.units-create-back-btn:hover { background: rgba(59,130,246,0.12); color: #93c5fd; border-color: rgba(59,130,246,0.4); }
 
 /* Danger zone */
 .units-danger-zone { flex: 0 0 auto; }

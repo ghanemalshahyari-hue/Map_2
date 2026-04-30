@@ -1013,37 +1013,28 @@
                     </div>
                 </div>
 
-                <!-- RIGHT: context-driven form -->
-                <div class="units-right">
+                <!-- MIDDLE: context-driven form (welcome / create / edit) -->
+                <div class="units-middle">
 
-                    <!-- Context bar: selected unit -->
-                    <div class="units-ctx-bar">
-                        <div id="units-ctx-root" class="units-ctx-pane">
-                            <div class="units-ctx-root-text">
-                                <div class="units-ctx-root-title" data-i18n="units-mgmt-title">Unit Management</div>
-                                <div class="units-ctx-root-hint" data-i18n="units-mgmt-hint">Select a unit from the tree, or create a new Army below.</div>
-                            </div>
-                        </div>
-                        <div id="units-ctx-sel" class="units-ctx-pane" style="display:none">
-                            <div class="units-ctx-sel-info">
-                                <div id="units-ctx-breadcrumb" class="units-breadcrumb"></div>
-                                <div class="units-ctx-sel-row">
-                                    <span id="units-ctx-lvl-badge" class="units-tree-level units-tree-level-0">Army</span>
-                                    <span id="units-ctx-side-badge" class="units-side-badge units-side-friendly">Friendly</span>
-                                    <span id="units-ctx-sel-name" class="units-ctx-sel-name">—</span>
-                                    <span id="units-ctx-sel-code" class="units-ctx-sel-code"></span>
-                                    <span id="units-ctx-child-count" class="units-ctx-child-count"></span>
-                                </div>
-                            </div>
-                            <div class="units-ctx-actions">
-                                <button type="button" id="units-place-btn" class="units-place-btn">&#128205;&nbsp;Place on map</button>
-                                <button type="button" id="units-edit-btn" class="units-edit-btn" data-i18n="units-edit-btn">&#9998;&nbsp;Edit</button>
-                            </div>
-                        </div>
+                    <!-- WELCOME: shown when the modal first opens, before the
+                         user picks a tree row or starts a new Army. Keeps the
+                         right side calm and points to the two real next steps. -->
+                    <div id="units-welcome-panel" class="units-welcome-panel">
+                        <div class="units-welcome-emoji" aria-hidden="true">&#9873;</div>
+                        <div class="units-welcome-title" data-i18n="units-welcome-title">Get started with Units</div>
+                        <div class="units-welcome-sub" data-i18n="units-welcome-sub">Build your order of battle by creating an Army, then add subordinate units beneath it.</div>
+                        <button type="button" id="units-welcome-new-btn" class="units-welcome-btn" data-i18n="units-welcome-new">+ Create a new Army</button>
+                        <div class="units-welcome-tip" data-i18n="units-welcome-tip">Or pick an existing unit from the tree on the left to view or edit it.</div>
                     </div>
 
                     <!-- MAIN PANEL: create child unit -->
                     <div id="units-main-panel" class="units-main-panel">
+
+                        <!-- Back to parent's edit view (only shown when a
+                             parent is selected; hidden for root Army create) -->
+                        <div id="units-create-back-row" class="units-create-back-row" style="display:none">
+                            <button type="button" id="units-create-back-btn" class="units-create-back-btn">&#8592; <span data-i18n="units-back-to">Back to</span> <span id="units-create-back-name">parent</span></button>
+                        </div>
 
                         <!-- What we are creating -->
                         <div id="units-creating-card" class="units-creating-card">
@@ -1245,9 +1236,28 @@
                             </div>
                             <div id="units-edit-error" class="units-error" style="display:none" role="alert"></div>
                             <button type="button" id="units-save-btn" class="glass-btn units-save-btn" data-i18n="units-edit-save">&#10004; Save Changes</button>
+                            <!-- Inline confirmation: replaces the Save button when
+                                 the user has unsaved edits and clicks Save. Lists
+                                 each changed field and asks for explicit Yes. -->
+                            <div id="units-edit-confirm" class="units-edit-confirm" style="display:none">
+                                <div class="units-edit-confirm-hdr"><span aria-hidden="true">&#9888;&#65039;</span> <span data-i18n="units-edit-confirm-title">Confirm changes</span></div>
+                                <ul id="units-edit-confirm-list" class="units-edit-confirm-list"></ul>
+                                <div class="units-edit-confirm-actions">
+                                    <button type="button" id="units-edit-confirm-cancel" class="glass-btn secondary" data-i18n="units-edit-confirm-cancel">Cancel</button>
+                                    <button type="button" id="units-edit-confirm-yes" class="glass-btn units-edit-confirm-yes" data-i18n="units-edit-confirm-yes">Yes, save changes</button>
+                                </div>
+                            </div>
                             <div id="units-edit-placement-row" class="units-edit-placement-row" style="display:none">
                                 <span class="units-edit-placement-status" data-i18n="units-placed-status">&#128205; Placed on map</span>
                                 <button type="button" id="units-edit-unplace-btn" class="glass-btn secondary" data-i18n="units-placed-remove">Remove from map</button>
+                            </div>
+                            <!-- Add a subordinate unit under the one being edited.
+                                 Separated visually so the user understands this
+                                 is a different action from editing the unit. -->
+                            <div id="units-edit-add-child-section" class="units-edit-add-child-section">
+                                <div class="units-edit-add-child-hdr" data-i18n="units-edit-add-child-hdr">Need to add subordinate units?</div>
+                                <button type="button" id="units-edit-add-child-btn" class="units-edit-add-child-btn">+ <span data-i18n="units-edit-add-child-label">Add child unit</span></button>
+                                <div class="units-edit-add-child-hint" data-i18n="units-edit-add-child-hint">Creates a new unit one level below this one.</div>
                             </div>
                             <div class="units-danger-zone">
                                 <div class="units-danger-divider"></div>
@@ -1260,6 +1270,31 @@
                         </div>
                     </div>
 
+                </div>
+
+                <!-- RIGHT: dedicated "selected unit" card column. Always
+                     visible while a unit is selected (edit OR create-child),
+                     hidden when nothing is selected. Lives outside the form
+                     scroll so it stays in view as the user works. -->
+                <div class="units-right">
+                    <div class="units-edit-symbol-banner">
+                        <div id="units-edit-symbol-preview" class="units-edit-symbol-preview"></div>
+                        <div class="units-edit-symbol-meta">
+                            <div id="units-ctx-breadcrumb" class="units-breadcrumb"></div>
+                            <div id="units-edit-symbol-meta-name" class="units-edit-symbol-meta-name">&mdash;</div>
+                            <div class="units-edit-symbol-badges">
+                                <span id="units-ctx-lvl-badge" class="units-tree-level units-tree-level-0">Army</span>
+                                <span id="units-ctx-side-badge" class="units-side-badge units-side-friendly">Friendly</span>
+                                <span id="units-ctx-sel-code" class="units-ctx-sel-code"></span>
+                                <span id="units-ctx-child-count" class="units-ctx-child-count"></span>
+                            </div>
+                            <div class="units-edit-symbol-meta-sub"><span data-i18n="units-edit-sidc-label">SIDC:</span> <code id="units-edit-symbol-meta-sidc">&mdash;</code></div>
+                        </div>
+                        <div class="units-edit-symbol-actions">
+                            <button type="button" id="units-place-btn" class="units-place-btn">&#128205;&nbsp;Place on map</button>
+                            <button type="button" id="units-edit-symbol-pick-btn" class="units-edit-symbol-pick-btn" data-i18n="units-edit-symbol-change">&#128269; Change symbol</button>
+                        </div>
+                    </div>
                 </div>
 
             </div>

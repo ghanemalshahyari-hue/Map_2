@@ -213,15 +213,14 @@
         if (!modal || !treeEl || !railBtn) return;
 
         // Context bar
-        const ctxRoot      = byId('units-ctx-root');
-        const ctxSel       = byId('units-ctx-sel');
+        // Identity elements — these now live inside the edit panel's symbol
+        // banner (the single, prominent "selected unit card"). The IDs are
+        // preserved so updateCtxBar() keeps populating them in place.
         const ctxBreadcrumb= byId('units-ctx-breadcrumb');
         const ctxLvlBadge  = byId('units-ctx-lvl-badge');
-        const ctxSelName   = byId('units-ctx-sel-name');
         const ctxSelCode   = byId('units-ctx-sel-code');
         const ctxChildCount  = byId('units-ctx-child-count');
         const ctxSideBadge   = byId('units-ctx-side-badge');
-        const editBtn        = byId('units-edit-btn');
         const placeBtn       = byId('units-place-btn');
 
         // Side selectors
@@ -294,6 +293,22 @@
         const restoreBtn     = byId('units-restore-btn');
         const placementRow   = byId('units-edit-placement-row');
         const unplaceBtn     = byId('units-edit-unplace-btn');
+        // Symbol banner at the top of the edit panel
+        const editSymbolPreviewEl = byId('units-edit-symbol-preview');
+        const editSymbolMetaName  = byId('units-edit-symbol-meta-name');
+        const editSymbolMetaSidc  = byId('units-edit-symbol-meta-sidc');
+        const editSymbolPickBtn   = byId('units-edit-symbol-pick-btn');
+        // Inline save confirmation
+        const editConfirmEl       = byId('units-edit-confirm');
+        const editConfirmListEl   = byId('units-edit-confirm-list');
+        const editConfirmYesBtn   = byId('units-edit-confirm-yes');
+        const editConfirmNoBtn    = byId('units-edit-confirm-cancel');
+        // "Add child" action on the edit panel + back button on create panel
+        const editAddChildBtn     = byId('units-edit-add-child-btn');
+        const editAddChildLabel   = editAddChildBtn?.querySelector('[data-i18n="units-edit-add-child-label"]');
+        const createBackRow       = byId('units-create-back-row');
+        const createBackBtn       = byId('units-create-back-btn');
+        const createBackName      = byId('units-create-back-name');
 
         const SIDES = [
             { value: 'friendly', label: 'Friendly' },
@@ -363,14 +378,16 @@
         }
 
         function updateCtxBar() {
+            // Identity targets are inside the edit panel's symbol banner —
+            // they only matter when a unit is selected (and therefore the
+            // edit panel is visible). When nothing is selected the welcome
+            // panel is showing instead, so there's nothing to update.
             const u = getSelected();
-            if (u) { hide(ctxRoot); showFlex(ctxSel); } else { show(ctxRoot); hide(ctxSel); }
             if (!u) return;
             const lbl = levelLabel(u.level);
             if (ctxLvlBadge) { ctxLvlBadge.textContent = lbl; ctxLvlBadge.className = `units-tree-level units-tree-level-${u.level}`; }
             const side = u.side || 'friendly';
             if (ctxSideBadge) { ctxSideBadge.textContent = sideLabelShort(side); ctxSideBadge.className = `units-side-badge units-side-${side}`; }
-            if (ctxSelName)   ctxSelName.textContent  = u.name || '—';
             if (ctxSelCode)   ctxSelCode.textContent  = u.code || '';
             const childCount = state.roots ? countDirectChildren(u.id) : 0;
             if (ctxChildCount) {
@@ -607,6 +624,42 @@
                 side, domain: set, echelon: ech, entity: ent,
             });
             window.__APP_UNITS_CAPTURING_SIDC = true;
+            window.__APP_UNITS_CAPTURING_TARGET = 'create';
+            pickerFrame.src = `../vendor/sidc-picker/simple.html?${params.toString()}`;
+            pickerModal.classList.remove('hidden');
+            pickerModal.setAttribute('aria-hidden', 'false');
+        }
+
+        // Same as openSymbolPicker but for the edit panel — pre-fills the
+        // picker with the unit's current SIDC and routes the chosen result
+        // back into the edit form's SIDC field instead of the create form.
+        function openEditSymbolPicker() {
+            const u = getSelected();
+            if (!u) return;
+            const pickerModal = byId('sidc-picker-modal');
+            const pickerFrame = byId('sidc-picker-frame');
+            if (!pickerModal || !pickerFrame) return;
+            const cur = (editSidcEl?.value || '').trim();
+            const side = IDENTITY_BY_SIDE[editSelectedSide || 'friendly'] || '3';
+            let set = '10', ent = '000000';
+            const ech = ECHELON_BY_LEVEL[u.level] ?? '00';
+            if (cur.length >= 20) {
+                set = cur.substr(4, 2);
+                ent = cur.substr(10, 6);
+            }
+            let lang = 'en';
+            try {
+                if (typeof window.getCurrentLang === 'function') {
+                    const l = window.getCurrentLang();
+                    if (l === 'ar' || l === 'en') lang = l;
+                }
+            } catch (_) { /* ignore */ }
+            const params = new URLSearchParams({
+                lang, target: 'units',
+                side, domain: set, echelon: ech, entity: ent,
+            });
+            window.__APP_UNITS_CAPTURING_SIDC = true;
+            window.__APP_UNITS_CAPTURING_TARGET = 'edit';
             pickerFrame.src = `../vendor/sidc-picker/simple.html?${params.toString()}`;
             pickerModal.classList.remove('hidden');
             pickerModal.setAttribute('aria-hidden', 'false');
@@ -641,6 +694,17 @@
             if (!window.__APP_UNITS_CAPTURING_SIDC) return;
             const raw = String(d.sidc || '').replace(/\D/g, '');
             if (raw.length < 20) return;
+            const target = window.__APP_UNITS_CAPTURING_TARGET || 'create';
+            // Edit-panel pick: drop the chosen SIDC straight into the edit
+            // form's SIDC field and refresh the symbol preview. We don't
+            // touch the create-form state vars at all.
+            if (target === 'edit') {
+                if (editSidcEl) editSidcEl.value = raw.slice(0, 20);
+                updateEditSymbolBanner();
+                setEditEnabled();
+                closeSymbolPicker();
+                return;
+            }
             selectedSidc = raw.slice(0, 20);
             // Reflect entity back into the branch selector if it's a recognized land branch
             const setCode = selectedSidc.substr(4, 2);
@@ -702,6 +766,7 @@
         function openEditPanel() {
             const u = getSelected();
             if (!u) return;
+            setHasSelection(true);
             hide(mainPanel);
             if (editPanel) { editPanel.style.display = 'flex'; editPanel.style.flexDirection = 'column'; }
             if (editNameEl)  editNameEl.value  = u.name || '';
@@ -716,12 +781,97 @@
             showEditError('');
             editCodeAvailable = true;
             if (placementRow) placementRow.style.display = isPlaced(u) ? '' : 'none';
+            updateEditSymbolBanner();
+            updateAddChildButton(u);
+            hideSaveConfirm();
             setEditEnabled();
+        }
+
+        // Render the symbol preview at the top of the edit panel using whatever
+        // SIDC is currently in the editor (so manual SIDC edits update live).
+        function updateEditSymbolBanner() {
+            const sidc = (editSidcEl?.value || '').trim();
+            if (editSymbolPreviewEl) {
+                if (sidc) renderSymbolInto(editSymbolPreviewEl, sidc, 76);
+                else editSymbolPreviewEl.innerHTML = '<span class="units-edit-symbol-empty">&mdash;</span>';
+            }
+            if (editSymbolMetaName) editSymbolMetaName.textContent = (editNameEl?.value || '').trim() || '—';
+            if (editSymbolMetaSidc) editSymbolMetaSidc.textContent = sidc || '—';
+        }
+
+        // The "+ Add child" button on the edit panel labels itself with the
+        // child level — "Add Force", "Add Brigade", etc. Hidden for Companies
+        // (level 4) which can't have children.
+        function updateAddChildButton(u) {
+            if (!editAddChildBtn) return;
+            const section = byId('units-edit-add-child-section');
+            if (u.level >= 4) { if (section) section.style.display = 'none'; return; }
+            if (section) section.style.display = '';
+            const childLabel = levelLabel(u.level + 1);
+            if (editAddChildLabel) editAddChildLabel.textContent = `${tr('units-edit-add-child-label-prefix', 'Add')} ${childLabel}`;
+        }
+
+        // Show the create-child form below the selected parent, with a back
+        // button at the top so the user can return to the edit view.
+        function openCreateChildPanel() {
+            const u = getSelected();
+            if (!u) return;
+            hide(editPanel);
+            show(mainPanel);
+            resetMainForm();
+            if (createBackRow) createBackRow.style.display = '';
+            if (createBackName) createBackName.textContent = u.name || '';
+            qaNameEl?.focus();
         }
 
         function closeEditPanel() {
             hide(editPanel);
             show(mainPanel);
+        }
+
+        // ── Save confirmation ─────────────────────────────────────────────────
+        // Compare what's in the edit form to the original unit and return a
+        // human-readable list of changes. Used to ask "are you sure?" before
+        // committing edits — protects against accidental name/SIDC edits.
+        function computeEditChanges(u) {
+            const out = [];
+            const newName = (editNameEl?.value || '').trim();
+            const newCode = (editCodeEl?.value || '').trim();
+            const newSidc = (editSidcEl?.value || '').trim();
+            const newType = (editTypeEl?.value || '').trim();
+            const newSide = editSelectedSide || 'friendly';
+            const newParent = (editParentEl?.value || '').trim() || null;
+            const oldSide = u.side || 'friendly';
+            const oldParent = u.parent_id || null;
+            if (newName !== (u.name || '')) out.push({ label: tr('units-name', 'Name'), from: u.name || '—', to: newName || '—' });
+            if (newCode !== (u.code || '')) out.push({ label: tr('units-code', 'Code'), from: u.code || '—', to: newCode || '—' });
+            if (newSidc !== (u.sidc || '')) out.push({ label: tr('units-sidc', 'SIDC'), from: u.sidc || '—', to: newSidc || '—' });
+            if (newType !== (u.unit_type || '')) out.push({ label: tr('units-edit-type-label', 'Domain / Branch'), from: u.unit_type || '—', to: newType || '—' });
+            if (newSide !== oldSide) out.push({ label: tr('units-edit-section-side', 'Side / Affiliation'), from: sideLabelShort(oldSide), to: sideLabelShort(newSide) });
+            if (newParent !== oldParent) {
+                const parentName = (id) => id ? (state.units.find(x => x.id === id)?.name || id) : tr('units-edit-no-parent', '(top level)');
+                out.push({ label: tr('units-edit-move-under', 'Move under'), from: parentName(oldParent), to: parentName(newParent) });
+            }
+            return out;
+        }
+
+        function showSaveConfirm(changes) {
+            if (!editConfirmEl || !editConfirmListEl) return;
+            editConfirmListEl.innerHTML = changes.map(c =>
+                `<li><span class="units-edit-confirm-field">${escapeHtml(c.label)}:</span> <span class="units-edit-confirm-from">${escapeHtml(String(c.from))}</span> <span class="units-edit-confirm-arrow">&rarr;</span> <span class="units-edit-confirm-to">${escapeHtml(String(c.to))}</span></li>`
+            ).join('');
+            editConfirmEl.style.display = '';
+            if (saveBtn) saveBtn.style.display = 'none';
+            // Bring the confirmation into view so the user actually sees what
+            // they're being asked to confirm — important if they clicked Save
+            // from a scrolled position where the card would otherwise be off
+            // screen, hidden behind the sticky banner.
+            try { editConfirmEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) { /* older browsers */ }
+        }
+
+        function hideSaveConfirm() {
+            if (editConfirmEl) editConfirmEl.style.display = 'none';
+            if (saveBtn) saveBtn.style.display = '';
         }
 
         // ── Standalone placement panel ────────────────────────────────────────
@@ -942,8 +1092,29 @@
             if (msg) show(genErrorEl); else hide(genErrorEl);
         }
 
+        // ── Welcome mode ───────────────────────────────────────────────────────
+        // On first open, show a calm "Get started" panel on the right instead
+        // of dropping the user straight into the multi-section creation form.
+        // Clicking the welcome button OR any unit in the tree exits this mode.
+        const modalPanelEl = modal.querySelector('.units-modal-panel');
+        function enterWelcomeMode() {
+            state.selectedId = null;
+            modalPanelEl?.classList.add('welcome-mode');
+            modalPanelEl?.classList.remove('has-selection');
+        }
+        function exitWelcomeMode() {
+            modalPanelEl?.classList.remove('welcome-mode');
+        }
+        // Toggle the right-column visibility based on whether a unit is
+        // currently selected. The CSS uses .has-selection on the modal panel
+        // to show/hide the dedicated card column.
+        function setHasSelection(yes) {
+            if (!modalPanelEl) return;
+            modalPanelEl.classList.toggle('has-selection', !!yes);
+        }
+
         // ── Open / Close ───────────────────────────────────────────────────────
-        function open() { modal.classList.remove('hidden'); modal.setAttribute('aria-hidden', 'false'); refresh({ collapseAll: true }); }
+        function open() { modal.classList.remove('hidden'); modal.setAttribute('aria-hidden', 'false'); enterWelcomeMode(); refresh({ collapseAll: true }); }
         function close() {
             // Tear down any dangling placement hook before the whole UI disappears.
             exitPlacementMode({ cancel: true });
@@ -956,12 +1127,23 @@
         function getSelected() { return state.units.find(u => u.id === state.selectedId) || null; }
 
         function selectUnit(id) {
+            exitWelcomeMode();
             state.selectedId = id;
-            closeEditPanel();
+            setHasSelection(!!id);
             updateCtxBar();
-            resetMainForm();
             renderTree();
-            qaNameEl?.focus();
+            if (id) {
+                // Selecting an existing unit → show its details for editing.
+                // The user no longer has to hunt for the Edit button.
+                if (createBackRow) createBackRow.style.display = 'none';
+                openEditPanel();
+            } else {
+                // No selection → user wants to create a new top-level Army.
+                closeEditPanel();
+                if (createBackRow) createBackRow.style.display = 'none';
+                resetMainForm();
+                qaNameEl?.focus();
+            }
         }
 
         // ── Tree ───────────────────────────────────────────────────────────────
@@ -1197,8 +1379,11 @@
                 const row = await apiJson(`/api/units/${encodeURIComponent(u.id)}`, { method: 'PATCH', body: JSON.stringify(payload) });
                 if (parentChanged) await apiJson(`/api/units/${encodeURIComponent(u.id)}/move`, { method: 'POST', body: JSON.stringify({ newParentId }) });
                 state.selectedId = row.id;
-                closeEditPanel();
                 await refresh();
+                // Stay on the edit view of the just-saved unit so the user
+                // sees their changes reflected (and can keep editing).
+                openEditPanel();
+                updateCtxBar();
                 // Refresh the map marker (name/side/sidc may have changed)
                 if (isPlaced(row)) {
                     document.dispatchEvent(new CustomEvent('units:updated', { detail: {
@@ -1218,7 +1403,9 @@
                 await apiJson(`/api/units/${encodeURIComponent(u.id)}/delete`, { method: 'POST', body: '{}' });
                 document.dispatchEvent(new CustomEvent('units:removed', { detail: { unitId: u.id } }));
                 state.selectedId = null;
-                closeEditPanel();
+                hide(editPanel);
+                show(mainPanel);
+                enterWelcomeMode();
                 await refresh();
             } catch (e) { showEditError(e.message || tr('units-err-delete', 'Delete failed')); }
         }
@@ -1266,6 +1453,7 @@
             renderTree();
         });
         byId('units-new-army-btn')?.addEventListener('click', () => selectUnit(null));
+        byId('units-welcome-new-btn')?.addEventListener('click', () => selectUnit(null));
 
         // Click dead-end "Company selected" card → start a new Army
         noChildrenEl?.addEventListener('click', () => selectUnit(null));
@@ -1296,7 +1484,12 @@
                 if (!confirm(tr('units-confirm-delete', 'Delete "{0}"?').replace('{0}', u.name))) return;
                 try {
                     await apiJson(`/api/units/${encodeURIComponent(id)}/delete`, { method: 'POST', body: '{}' });
-                    if (state.selectedId === id) { state.selectedId = null; closeEditPanel(); }
+                    if (state.selectedId === id) {
+                        state.selectedId = null;
+                        hide(editPanel);
+                        show(mainPanel);
+                        enterWelcomeMode();
+                    }
                     await refresh();
                 } catch (err) { alert(err.message || tr('units-err-delete', 'Delete failed')); }
                 return;
@@ -1330,16 +1523,48 @@
         searchInput?.addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(doSearch, 250); });
 
         // Edit panel
-        editBtn?.addEventListener('click', openEditPanel);
-        editBackBtn?.addEventListener('click', closeEditPanel);
-        editNameEl?.addEventListener('input', setEditEnabled);
+        // Edit-panel "Back" clears the selection and returns to the welcome
+        // state — there's no longer a hidden create form to fall back into.
+        editBackBtn?.addEventListener('click', () => {
+            state.selectedId = null;
+            hide(editPanel);
+            show(mainPanel);
+            enterWelcomeMode();
+            renderTree();
+        });
+        editNameEl?.addEventListener('input', () => { setEditEnabled(); updateEditSymbolBanner(); });
         editCodeEl?.addEventListener('input', () => {
             editCodeAvailable = true;
             clearTimeout(editCodeCheckTimer);
             editCodeCheckTimer = setTimeout(checkEditCode, 300);
             setEditEnabled();
         });
-        saveBtn?.addEventListener('click',    saveUnit);
+        // Live symbol preview: typing a SIDC updates the banner immediately so
+        // the user can see what the symbol will look like before saving.
+        editSidcEl?.addEventListener('input', updateEditSymbolBanner);
+        // Save now goes through a confirmation step that lists each change.
+        saveBtn?.addEventListener('click', () => {
+            const u = getSelected();
+            if (!u) return;
+            showEditError('');
+            const changes = computeEditChanges(u);
+            if (changes.length === 0) {
+                showEditError(tr('units-edit-no-changes', 'Nothing to save — no changes detected.'));
+                return;
+            }
+            showSaveConfirm(changes);
+        });
+        editConfirmYesBtn?.addEventListener('click', () => { hideSaveConfirm(); saveUnit(); });
+        editConfirmNoBtn?.addEventListener('click', hideSaveConfirm);
+        // "+ Add child" jumps from edit view to the create-child form, scoped
+        // to the currently selected parent.
+        editAddChildBtn?.addEventListener('click', openCreateChildPanel);
+        // Back button on the create-child form returns to the parent's edit view.
+        createBackBtn?.addEventListener('click', () => {
+            if (createBackRow) createBackRow.style.display = 'none';
+            const u = getSelected();
+            if (u) openEditPanel(); else enterWelcomeMode();
+        });
         deleteBtn?.addEventListener('click',  deleteUnit);
         restoreBtn?.addEventListener('click', restoreUnit);
 
@@ -1430,7 +1655,21 @@
             if (!btn) return;
             editSelectedSide = btn.getAttribute('data-side') || 'friendly';
             setSideUI(editSideBtnsEl, editSelectedSide);
+            // Rewrite the identity digit (position 3) of the current SIDC so
+            // the symbol preview reflects the new affiliation immediately.
+            const cur = (editSidcEl?.value || '').trim();
+            if (cur.length >= 20 && editSidcEl) {
+                const newIdentity = IDENTITY_BY_SIDE[editSelectedSide] || '3';
+                editSidcEl.value = cur.slice(0, 3) + newIdentity + cur.slice(4);
+            }
+            updateEditSymbolBanner();
+            setEditEnabled();
         });
+
+        // "Change symbol" — opens the full SIDC picker pre-filtered to the
+        // unit being edited; the picker's result lands directly in the edit
+        // form's SIDC field via the message listener target='edit' branch.
+        editSymbolPickBtn?.addEventListener('click', openEditSymbolPicker);
 
         // Domain buttons
         domainBtns?.addEventListener('click', (e) => {

@@ -1213,7 +1213,14 @@
                                 <div class="units-section-fields">
                                     <div class="field">
                                         <label class="field-label" for="units-edit-type" data-i18n="units-edit-type-label">Domain / Branch</label>
-                                        <input id="units-edit-type" type="text" class="glass-input" maxlength="120" autocomplete="off" data-i18n-placeholder="units-edit-type-placeholder" placeholder="Air, Land, Naval, Support…" />
+                                        <select id="units-edit-type" class="glass-select">
+                                            <option value=""        data-i18n="units-edit-type-none">— None —</option>
+                                            <option value="Land"    data-i18n="units-domain-land">Land</option>
+                                            <option value="Air"     data-i18n="units-domain-air">Air</option>
+                                            <option value="Naval"   data-i18n="units-domain-naval">Naval</option>
+                                            <option value="Joint"   data-i18n="units-domain-joint">Joint</option>
+                                            <option value="Support" data-i18n="units-domain-support">Support</option>
+                                        </select>
                                     </div>
                                     <div class="field">
                                         <label class="field-label" for="units-edit-sidc" data-i18n="units-sidc">SIDC</label>

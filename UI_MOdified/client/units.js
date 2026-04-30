@@ -771,7 +771,21 @@
             if (editPanel) { editPanel.style.display = 'flex'; editPanel.style.flexDirection = 'column'; }
             if (editNameEl)  editNameEl.value  = u.name || '';
             if (editCodeEl)  editCodeEl.value  = u.code || '';
-            if (editTypeEl)  editTypeEl.value  = u.unit_type || '';
+            if (editTypeEl) {
+                // The dropdown lists known Force Types and Specialties. If the
+                // unit was created with a legacy free-text value (e.g. older
+                // data), inject it as a one-off option so the select still
+                // round-trips that value cleanly instead of dropping to "None".
+                const t = u.unit_type || '';
+                editTypeEl.value = t;
+                if (t && editTypeEl.value !== t) {
+                    const opt = document.createElement('option');
+                    opt.value = t;
+                    opt.textContent = t + ' (legacy)';
+                    editTypeEl.appendChild(opt);
+                    editTypeEl.value = t;
+                }
+            }
             if (editSidcEl)  editSidcEl.value  = u.sidc || '';
             editSelectedSide = u.side || 'friendly';
             setSideUI(editSideBtnsEl, editSelectedSide);
@@ -1542,6 +1556,32 @@
         // Live symbol preview: typing a SIDC updates the banner immediately so
         // the user can see what the symbol will look like before saving.
         editSidcEl?.addEventListener('input', updateEditSymbolBanner);
+        // Force Type dropdown live-rebuilds the SIDC so the preview updates
+        // immediately. Reuses the existing buildSidcFromFields() helper, then
+        // updates the SIDC input (which Save reads from) and re-renders the
+        // banner. We pick the domain's first canonical entity rather than an
+        // empty 000000 so the rendered NATO symbol is visually distinct per
+        // domain (an empty entity often renders as the same neutral square
+        // across domains, which makes the change look like nothing happened).
+        editTypeEl?.addEventListener('change', () => {
+            const u = getSelected();
+            if (!u) return;
+            const domain = (editTypeEl.value || '').trim();
+            if (!domain) {
+                if (editSidcEl) editSidcEl.value = '';
+                updateEditSymbolBanner();
+                return;
+            }
+            const entity = (ENTITIES_BY_DOMAIN[domain] || ENTITIES_BY_DOMAIN.Land)[0];
+            const newSidc = buildSidcFromFields({
+                side:   editSelectedSide || u.side || 'friendly',
+                domain,
+                level:  u.level,
+                entity,
+            });
+            if (editSidcEl) editSidcEl.value = newSidc;
+            updateEditSymbolBanner();
+        });
         // Save now goes through a confirmation step that lists each change.
         saveBtn?.addEventListener('click', () => {
             const u = getSelected();

@@ -616,6 +616,7 @@
             'units-edit-section-hierarchy': 'Position in Hierarchy',
             'units-edit-type-label': 'Domain / Branch',
             'units-edit-type-placeholder': 'Air, Land, Naval, Support…',
+            'units-edit-type-none': '— None —',
             'units-edit-level-label': 'Level',
             'units-edit-move-under': 'Move under',
             'units-edit-select-parent': '— Select {0} —',
@@ -1479,6 +1480,7 @@
             'units-edit-section-hierarchy': 'الموقع في التسلسل',
             'units-edit-type-label': 'المجال / الصنف',
             'units-edit-type-placeholder': 'جوي، بري، بحري، إسناد…',
+            'units-edit-type-none': '— بدون —',
             'units-edit-level-label': 'المستوى',
             'units-edit-move-under': 'نقل تحت',
             'units-edit-select-parent': '— اختر {0} —',
@@ -1731,6 +1733,12 @@
             const key = el.getAttribute('data-i18n-option');
             const text = window.t(key);
             if (text) el.textContent = text;
+        });
+        // Translate <optgroup label="..."> via data-i18n-label.
+        document.querySelectorAll('[data-i18n-label]').forEach(el => {
+            const key = el.getAttribute('data-i18n-label');
+            const text = window.t(key);
+            if (text) el.label = text;
         });
 
         const langBtn = document.getElementById('lang-toggle-btn');

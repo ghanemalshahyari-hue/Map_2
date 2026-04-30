@@ -994,6 +994,17 @@
                     <div class="units-tree-wrap">
                         <div id="units-tree" class="units-tree" role="tree" aria-label="Units tree"></div>
                     </div>
+                    <!-- Legend: visible reminder of what the tree icons mean.
+                         Recognition over recall (NN/g #6, W3C cognitive accessibility). -->
+                    <div class="units-tree-legend" aria-label="Tree legend">
+                        <span class="units-tree-legend-item"><span class="units-side-dot units-side-dot-friendly"></span><span data-i18n="units-legend-friendly">Friendly</span></span>
+                        <span class="units-tree-legend-item"><span class="units-side-dot units-side-dot-hostile"></span><span data-i18n="units-legend-hostile">Hostile</span></span>
+                        <span class="units-tree-legend-item"><span class="units-side-dot units-side-dot-neutral"></span><span data-i18n="units-legend-neutral">Neutral</span></span>
+                        <span class="units-tree-legend-item"><span class="units-side-dot units-side-dot-unknown"></span><span data-i18n="units-legend-unknown">Unknown</span></span>
+                        <span class="units-tree-legend-sep"></span>
+                        <span class="units-tree-legend-item"><span class="units-tree-count units-tree-legend-count">N</span><span data-i18n="units-legend-count">subordinates</span></span>
+                        <span class="units-tree-legend-item">&#128205;<span data-i18n="units-legend-placed">on map</span></span>
+                    </div>
                     <div class="units-tree-footer">
                         <label class="units-show-deleted-label">
                             <input id="units-include-deleted" type="checkbox" />
@@ -1045,7 +1056,7 @@
 
                         <!-- Side selector (shown only when creating a root Army) -->
                         <div class="units-side-row" id="units-side-row">
-                            <div class="units-side-label" data-i18n="units-side-title">Side / Affiliation</div>
+                            <div class="units-side-label" data-i18n="units-side-title">Side</div>
                             <div class="units-side-btns" id="units-side-btns">
                                 <button type="button" class="units-side-btn active" data-side="friendly" data-i18n="units-side-friendly">&#9658; Friendly</button>
                                 <button type="button" class="units-side-btn" data-side="hostile" data-i18n="units-side-hostile">&#9632; Hostile</button>
@@ -1056,7 +1067,7 @@
 
                         <!-- Inherited affiliation notice (shown when creating a child) -->
                         <div class="units-side-row" id="units-side-inherited" style="display:none">
-                            <div class="units-side-label" data-i18n="units-side-title">Side / Affiliation</div>
+                            <div class="units-side-label" data-i18n="units-side-title">Side</div>
                             <div class="units-side-inherited-info">
                                 <span data-i18n="units-side-inherited">Inherits from parent:</span> <span id="units-side-inherited-badge" class="units-side-badge units-side-friendly">Friendly</span>
                             </div>
@@ -1064,7 +1075,7 @@
 
                         <!-- Domain selector (Force+ level) -->
                         <div id="units-domain-row" class="units-domain-row" style="display:none">
-                            <div class="units-domain-label" data-i18n="units-domain-title">Domain</div>
+                            <div class="units-domain-label" data-i18n="units-domain-title">Force Type</div>
                             <div class="units-domain-btns" id="units-domain-btns">
                                 <button type="button" class="units-domain-btn" data-domain="Land"><span aria-hidden="true">&#9878;</span> <span data-i18n="units-domain-land">Land</span></button>
                                 <button type="button" class="units-domain-btn" data-domain="Air"><span aria-hidden="true">&#9992;</span> <span data-i18n="units-domain-air">Air</span></button>
@@ -1076,7 +1087,7 @@
 
                         <!-- Branch selector (Brigade+ level, Land/Joint/Support domains) -->
                         <div id="units-branch-row" class="units-domain-row" style="display:none">
-                            <div class="units-domain-label" data-i18n="units-branch-title">Branch / Function</div>
+                            <div class="units-domain-label" data-i18n="units-branch-title">Specialty</div>
                             <div class="units-domain-btns" id="units-branch-btns">
                                 <button type="button" class="units-domain-btn" data-branch="Infantry" data-i18n="units-branch-infantry">Infantry</button>
                                 <button type="button" class="units-domain-btn" data-branch="Armor" data-i18n="units-branch-armor">Armor</button>
@@ -1113,7 +1124,6 @@
                                 <div class="units-symbol-preview" id="units-symbol-preview"></div>
                                 <div class="units-symbol-info">
                                     <div class="units-symbol-name" id="units-symbol-name">&mdash;</div>
-                                    <div class="units-symbol-sidc" id="units-symbol-sidc">SIDC: (auto)</div>
                                     <button type="button" id="units-symbol-clear-btn" class="units-symbol-clear-btn" style="display:none" data-i18n="units-symbol-reset">Reset to auto</button>
                                 </div>
                             </div>
@@ -1121,6 +1131,7 @@
                             <div class="units-symbol-chips" id="units-symbol-chips"></div>
                             <details class="units-symbol-advanced">
                                 <summary data-i18n="units-symbol-advanced">Advanced &mdash; enter SIDC manually</summary>
+                                <div class="units-symbol-sidc" id="units-symbol-sidc" title="NATO Symbol ID Code — the 20-digit identifier that defines this unit's NATO symbol. Most users do not need to edit this.">SIDC: (auto)</div>
                                 <input id="units-qa-sidc" type="text" class="glass-input" maxlength="60" autocomplete="off" spellcheck="false" data-i18n-placeholder="units-symbol-sidc-placeholder" placeholder="20-digit SIDC, e.g. 10031018121100000000" />
                             </details>
                         </div>
@@ -1129,19 +1140,20 @@
                         <div id="units-quick-setup" class="units-quick-setup" style="display:none">
                             <div class="units-qs-header" data-i18n="units-qs-header">&#9889; Quick Setup — Auto-create standard forces after saving:</div>
                             <div class="units-qs-options">
-                                <label class="units-qs-opt"><input type="checkbox" id="qs-air"   checked> <span data-i18n="units-qs-air">&#9992; Air Force</span></label>
+                                <label class="units-qs-opt"><input type="checkbox" id="qs-air"> <span data-i18n="units-qs-air">&#9992; Air Force</span></label>
                                 <label class="units-qs-opt"><input type="checkbox" id="qs-land"  checked> <span data-i18n="units-qs-land">&#9878; Land Force</span></label>
-                                <label class="units-qs-opt"><input type="checkbox" id="qs-naval" checked> <span data-i18n="units-qs-naval">&#9875; Naval Force</span></label>
+                                <label class="units-qs-opt"><input type="checkbox" id="qs-naval"> <span data-i18n="units-qs-naval">&#9875; Naval Force</span></label>
                             </div>
                         </div>
 
                         <!-- Error -->
                         <div id="units-qa-error" class="units-error" style="display:none" role="alert"></div>
 
-                        <!-- Create buttons -->
+                        <!-- Create buttons (primary = "Create & Place" — most useful action for a commander
+                             building an ORBAT directly on the map. Other two are alternative flows.) -->
                         <div class="units-create-row">
-                            <button type="button" id="units-create-btn" class="glass-btn units-create-btn" disabled>+ Create Army</button>
-                            <button type="button" id="units-create-and-place-btn" class="glass-btn units-create-place-btn" disabled data-i18n="units-create-and-place" data-i18n-title="units-create-and-place-title" title="Create this unit and immediately arm placement — click the map to set its location">+ Create &amp; Place</button>
+                            <button type="button" id="units-create-and-place-btn" class="glass-btn units-create-place-btn" disabled data-i18n="units-create-and-place" data-i18n-title="units-create-and-place-title" title="Create this unit and immediately place it on the map">+ Create &amp; Place</button>
+                            <button type="button" id="units-create-btn" class="glass-btn secondary units-create-btn" disabled>+ Create Army</button>
                             <button type="button" id="units-create-and-add-btn" class="glass-btn secondary units-create-add-btn" disabled data-i18n="units-create-add-another" data-i18n-title="units-create-add-another-title" title="Create and keep this parent selected so you can quickly add another sibling">+ Create &amp; Add Another</button>
                         </div>
                         <div class="units-qa-hint"><span data-i18n="units-create-hint-pre">Press</span> <kbd>Enter</kbd> <span data-i18n="units-create-hint-post">in the name field to create quickly.</span></div>
@@ -1432,6 +1444,7 @@
     <script src="units-orbat-dock.js?v=1"></script>
     <script src="sidebar-minimize.js?v=1"></script>
     <script src="tool-rail.js"></script>
+    <script src="map-hide-panels.js?v=1"></script>
 
     <!-- New modular panel system (ES modules — run after app.js) -->
     <script type="module" src="ui/utils/app-bridge.js"></script>

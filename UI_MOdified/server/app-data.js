@@ -733,6 +733,7 @@ function upsertChatUserDb(clientId, userObj) {
 }
 
 function handleAuthApi(req, res, pathname, method, sendJson, readJsonBody) {
+    if (!pathname.startsWith('/api/auth/')) return false;
     const db = getDb();
     if (!db) { sendJson(res, 500, { error: 'Database unavailable' }); return true; }
 

@@ -436,6 +436,7 @@
             'change-setup': '\u2190 Change Setup',
             'convert-line': 'Convert line to frontline',
             'start-over': '\u21ba Start Over',
+            'new-area': '+ New Area',
             'start-btn': 'Start \u2192',
             'need-formation': 'Select a formation first',
             'need-affiliation': 'Choose an affiliation first',
@@ -470,6 +471,7 @@
             'change-setup': '\u2190 \u062a\u063a\u064a\u064a\u0631 \u0627\u0644\u0625\u0639\u062f\u0627\u062f',
             'convert-line': '\u062a\u062d\u0648\u064a\u0644 \u0627\u0644\u062e\u0637 \u0625\u0644\u0649 \u062e\u0637 \u062a\u0645\u0627\u0633',
             'start-over': '\u21ba \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u0628\u062f\u0621',
+            'new-area': '+ \u0645\u0646\u0637\u0642\u0629 \u062c\u062f\u064a\u062f\u0629',
             'start-btn': '\u2190 \u0627\u0628\u062f\u0623',
             'need-formation': '\u0627\u062e\u062a\u0631 \u062a\u0634\u0643\u064a\u0644\u0627\u064b \u0623\u0648\u0644\u0627\u064b',
             'need-affiliation': '\u0627\u062e\u062a\u0631 \u0627\u0644\u0627\u0646\u062a\u0645\u0627\u0621 \u0623\u0648\u0644\u0627\u064b',
@@ -509,6 +511,8 @@
         if (convertBtn) convertBtn.textContent = fdT('convert-line');
         const startOverBtn = document.getElementById('fd-start-over-btn');
         if (startOverBtn) startOverBtn.textContent = fdT('start-over');
+        const newAreaBtn = document.getElementById('fd-new-area-btn');
+        if (newAreaBtn) newAreaBtn.textContent = fdT('new-area');
         const panel = document.getElementById('auto-flank-controls');
         if (panel) panel.dir = isArabic() ? 'rtl' : 'ltr';
         const popup = document.getElementById('free-draw-affiliation-popup');
@@ -1128,20 +1132,24 @@
             inp.style.cursor = 'not-allowed';
         });
 
-        // Add a "Start Over" button if not already present
-        if (!controls.querySelector('#fd-start-over-btn')) {
-            const restartBtn = document.createElement('button');
-            restartBtn.id = 'fd-start-over-btn';
-            restartBtn.textContent = fdT('start-over');
-            restartBtn.style.cssText = 'width:100%;margin-top:4px;padding:6px;border-radius:6px;border:1px solid #f59e0b;background:rgba(245,158,11,0.15);color:#fbbf24;font-size:0.8rem;font-weight:700;cursor:pointer;';
-            restartBtn.addEventListener('click', () => {
+        // Add a "New Area" button if not already present.
+        // Unlike the old "Start Over", this preserves the previously drawn
+        // frontline + auto-flank polygons so the user can draw a new area
+        // alongside the existing one without wiping it.
+        if (!controls.querySelector('#fd-new-area-btn')) {
+            const newAreaBtn = document.createElement('button');
+            newAreaBtn.id = 'fd-new-area-btn';
+            newAreaBtn.textContent = fdT('new-area');
+            newAreaBtn.style.cssText = 'width:100%;margin-top:4px;padding:6px;border-radius:6px;border:1px solid #22c55e;background:rgba(34,197,94,0.15);color:#86efac;font-size:0.8rem;font-weight:700;cursor:pointer;';
+            newAreaBtn.addEventListener('click', () => {
                 hideAutoFlankControls();
                 // Destroy the panel so it's fully rebuilt next time
                 const existing = document.getElementById('auto-flank-controls');
                 if (existing) existing.remove();
-                startNewFreeDrawSession();
+                // keepPrevious=true → previous area stays on the map
+                startNewFreeDrawSession({ keepPrevious: true });
             });
-            controls.appendChild(restartBtn);
+            controls.appendChild(newAreaBtn);
         }
 
         controls.style.display = 'flex';
@@ -1781,9 +1789,13 @@
         });
     }
 
-    function startNewFreeDrawSession() {
+    function startNewFreeDrawSession(opts) {
+        const keepPrevious = !!(opts && opts.keepPrevious);
         const prevSessionId = window.freeDrawSignatureSessionId;
-        if (prevSessionId && typeof window.removeFrontlineSessionElements === 'function') {
+        // "New Area" path: keep previously drawn frontline + auto-flank polygons
+        // intact so the user can layer a new area next to the old one. Default
+        // path still wipes the old session (used by orphan-recovery / cancel).
+        if (!keepPrevious && prevSessionId && typeof window.removeFrontlineSessionElements === 'function') {
             window.removeFrontlineSessionElements(prevSessionId);
         }
         window.freeDrawSignatureSessionId = 'free-draw-' + Date.now() + '-' + Math.floor(Math.random() * 10000);

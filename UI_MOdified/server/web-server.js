@@ -39,7 +39,14 @@ try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch {}
 
 const appData = require('./app-data');
 if (Database) {
-    appData.initAppData({ Database, dataDir: DATA_DIR, legacyUnitsFile: process.env.RMOOZ_UNITS_DB_FILE || path.join(DATA_DIR, 'units.db') });
+    try {
+        appData.initAppData({ Database, dataDir: DATA_DIR, legacyUnitsFile: process.env.RMOOZ_UNITS_DB_FILE || path.join(DATA_DIR, 'units.db') });
+    } catch (e) {
+        console.error('\n  WARNING: better-sqlite3 native binding failed to load.');
+        console.error('  Auth/units/plans features will be disabled (static pages still work).');
+        console.error('  Fix:  rmdir /s /q node_modules && npm install --ignore-scripts');
+        console.error('  Underlying error:', e && e.message ? e.message : e, '\n');
+    }
 }
 
 // -------------------- Unified app DB (units + auth + chat + plans meta) --------------------

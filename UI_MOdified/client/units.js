@@ -303,6 +303,29 @@
         ];
 
         let state     = { roots: [], units: [], selectedId: null };
+
+        // Sequential, meaningful auto-codes (e.g. ARMY-01, BDE-03) instead of
+        // random gibberish like ARMY-RYJ2. `extra` is for batch creates that
+        // pre-allocate codes before state.units refreshes (loop index).
+        function nextCode(level, extra = 0) {
+            const prefix = PREFIXES[level] ?? 'U';
+            try {
+                const re = new RegExp('^' + prefix + '-(\\d+)$');
+                let max = 0;
+                for (const u of state.units || []) {
+                    const m = re.exec(u.code || '');
+                    if (m) {
+                        const n = parseInt(m[1], 10);
+                        if (Number.isFinite(n) && n > max) max = n;
+                    }
+                }
+                const next = max + 1 + extra;
+                const padded = next < 100 ? String(next).padStart(2, '0') : String(next);
+                return `${prefix}-${padded}`;
+            } catch (_) {
+                return randCode(level);
+            }
+        }
         let collapsed = new Set();
         // True while the standalone placement panel is visible and the main
         // modal is parked. Used to gate ESC/backdrop/close so they act on the
@@ -403,10 +426,22 @@
             if (createAddBtn) createAddBtn.style.display = '';
             show(symbolSection);
 
-            // Creating indicator
+            // Creating indicator — show full parent chain so the commander
+            // sees exactly where in the hierarchy they're inserting (Recognition
+            // over recall: NN/g heuristic #6).
             const lbl = levelLabel(lvl);
             if (creatingBadge) { creatingBadge.textContent = lbl; creatingBadge.className = `units-tree-level units-tree-level-${lvl}`; }
-            if (creatingUnder) creatingUnder.textContent = u ? tr('units-creating-under', 'under {0}').replace('{0}', u.name) : '';
+            if (creatingUnder) {
+                if (u) {
+                    const path = computeBreadcrumb(state.units, u.id);
+                    const sep  = ` <span class="units-bc-sep">›</span> `;
+                    const chain = path.map(p => `<span class="units-bc-item">${escapeHtml(p.name)}</span>`).join(sep);
+                    const underWord = tr('units-creating-under-word', 'under');
+                    creatingUnder.innerHTML = `<span class="units-creating-under-word">${escapeHtml(underWord)}</span> ${chain}`;
+                } else {
+                    creatingUnder.innerHTML = '';
+                }
+            }
             if (createBtn)     createBtn.textContent    = tr('units-create-label', '+ Create {0}').replace('{0}', lbl);
 
             // Show creating card
@@ -450,7 +485,7 @@
             }
 
             // Fresh code
-            if (qaCodeEl && !(qaCodeEl.value || '').trim()) qaCodeEl.value = randCode(lvl);
+            if (qaCodeEl && !(qaCodeEl.value || '').trim()) qaCodeEl.value = nextCode(lvl);
 
             // Refresh symbol preview + chips whenever the form context changes
             updateSymbolPreview();
@@ -943,7 +978,10 @@
                 const toggleEl   = n._hasChildren
                     ? `<button class="units-toggle-btn${isCol ? ' collapsed' : ''}" data-toggle-id="${escapeHtml(n.id)}">${isCol ? '▶' : '▼'}</button>`
                     : `<span class="units-toggle-spacer"></span>`;
-                const countBadge = n._childCount > 0 ? `<span class="units-tree-count">${n._childCount}</span>` : '';
+                const countTitle = n._childCount > 0
+                    ? tr('units-tree-count-title', `${n._childCount} subordinate unit${n._childCount === 1 ? '' : 's'}`).replace('{n}', String(n._childCount))
+                    : '';
+                const countBadge = n._childCount > 0 ? `<span class="units-tree-count" title="${escapeHtml(countTitle)}">${n._childCount}</span>` : '';
                 const delBtn = deleted
                     ? `<button class="units-tree-restore-btn" data-restore-id="${escapeHtml(n.id)}" title="${escapeHtml(tr('units-tree-restore-title', 'Restore'))}">↩</button>`
                     : `<button class="units-tree-del-btn" data-del-id="${escapeHtml(n.id)}" title="${escapeHtml(tr('units-tree-delete-title', 'Delete'))}">×</button>`;
@@ -955,6 +993,10 @@
                 const placedBadge = isPlaced(n)
                     ? `<span class="units-tree-placed" title="${escapeHtml(tr('units-tree-placed-title', 'Placed on map'))}">&#128205;</span>`
                     : '';
+                const sideDotTitle = tr(
+                    `units-side-dot-${nodeSide}-title`,
+                    `${sideLabelShort(nodeSide)} affiliation`
+                );
                 return `<div class="units-tree-row ${isSel ? 'active' : ''} ${deleted ? 'deleted' : ''} units-side-row-${nodeSide}" data-id="${escapeHtml(n.id)}" style="padding-inline-start:${pad}px">
                   ${toggleEl}
                   <span class="units-tree-level units-tree-level-${n.level}">${escapeHtml(lbl)}</span>
@@ -962,7 +1004,7 @@
                   ${countBadge}
                   <span class="units-tree-spacer"></span>
                   ${placedBadge}
-                  <span class="units-side-dot units-side-dot-${nodeSide}" title="${escapeHtml(sideLabelShort(nodeSide))}"></span>
+                  <span class="units-side-dot units-side-dot-${nodeSide}" title="${escapeHtml(sideDotTitle)}"></span>
                   ${orbatBtn}
                   ${delBtn}
                 </div>`;
@@ -1077,7 +1119,8 @@
                     if (byId('qs-air')?.checked)   forces.push({ name: 'Air Force',   unitType: 'Air',   domain: 'Air'   });
                     if (byId('qs-land')?.checked)  forces.push({ name: 'Land Force',  unitType: 'Land',  domain: 'Land'  });
                     if (byId('qs-naval')?.checked) forces.push({ name: 'Naval Force', unitType: 'Naval', domain: 'Naval' });
-                    for (const f of forces) {
+                    for (let i = 0; i < forces.length; i++) {
+                        const f = forces[i];
                         const forceSidc = buildSidcFromFields({
                             side: row.side || 'friendly',
                             domain: f.domain,
@@ -1085,7 +1128,7 @@
                             entity: (ENTITIES_BY_DOMAIN[f.domain] || ENTITIES_BY_DOMAIN.Land)[0],
                         });
                         await apiJson('/api/units', { method: 'POST', body: JSON.stringify({
-                            code: randCode(1), name: f.name, level: 1,
+                            code: nextCode(1, i), name: f.name, level: 1,
                             parentId: row.id, sidc: forceSidc, unitType: f.unitType,
                         })}).catch(() => {});
                     }
@@ -1120,7 +1163,7 @@
             try {
                 for (let i = 1; i <= count; i++) {
                     await apiJson('/api/units', { method: 'POST', body: JSON.stringify({
-                        code: randCode(childLvl),
+                        code: nextCode(childLvl, i - 1),
                         name: `${prefix} ${i}`,
                         level: childLvl,
                         parentId: u.id,

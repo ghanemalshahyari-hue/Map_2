@@ -2342,6 +2342,20 @@ details[open] > .details-summary {
 .units-tree-empty { padding: 10px 12px; color: var(--text-muted); font-size: 0.85rem; }
 .units-tree-footer { flex: 0 0 auto; padding-top: 4px; }
 .units-show-deleted-label { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--text-muted); cursor: pointer; user-select: none; }
+/* Tree legend — explains colored dots, count badge, and placed icon
+   (NN/g #6 Recognition over recall). Subtle so it doesn't compete
+   with the actual tree content. */
+.units-tree-legend {
+    flex: 0 0 auto;
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 4px 10px;
+    padding: 6px 8px 0;
+    font-size: 0.68rem; line-height: 1.2;
+    color: var(--text-muted);
+}
+.units-tree-legend-item { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.units-tree-legend-sep { width: 1px; height: 10px; background: var(--panel-border); margin: 0 2px; }
+.units-tree-legend-count { font-size: 0.6rem; padding: 0 4px; min-width: 14px; text-align: center; }
 
 /* Tree rows */
 .units-tree-row { display: flex; gap: 8px; align-items: center; padding: 7px 8px 7px 0; cursor: pointer; user-select: none; border-top: 1px solid rgba(255,255,255,0.03); }

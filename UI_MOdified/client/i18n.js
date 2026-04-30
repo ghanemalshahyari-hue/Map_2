@@ -530,7 +530,7 @@
             'units-show-deleted': 'Show deleted units',
             'units-search-nores': 'No results',
             // Side / Affiliation
-            'units-side-title': 'Side / Affiliation',
+            'units-side-title': 'Side',
             'units-side-friendly': '▶ Friendly',
             'units-side-hostile': '■ Hostile',
             'units-side-neutral': '◆ Neutral',
@@ -541,14 +541,14 @@
             'units-side-neutral-short': 'Neutral',
             'units-side-unknown-short': 'Unknown',
             // Domain
-            'units-domain-title': 'Domain',
+            'units-domain-title': 'Force Type',
             'units-domain-land': 'Land',
             'units-domain-air': 'Air',
             'units-domain-naval': 'Naval',
             'units-domain-joint': 'Joint',
             'units-domain-support': 'Support',
             // Branch
-            'units-branch-title': 'Branch / Function',
+            'units-branch-title': 'Specialty',
             'units-branch-infantry': 'Infantry',
             'units-branch-armor': 'Armor',
             'units-branch-artillery': 'Artillery',
@@ -627,6 +627,19 @@
             'units-tree-delete-title': 'Delete',
             'units-tree-restore-title': 'Restore',
             'units-tree-orbat-title': 'View ORBAT tree',
+            'units-side-dot-friendly-title': 'Friendly affiliation',
+            'units-side-dot-hostile-title': 'Hostile affiliation',
+            'units-side-dot-neutral-title': 'Neutral affiliation',
+            'units-side-dot-unknown-title': 'Unknown affiliation',
+            // Tree legend (under the tree)
+            'units-legend-friendly': 'Friendly',
+            'units-legend-hostile': 'Hostile',
+            'units-legend-neutral': 'Neutral',
+            'units-legend-unknown': 'Unknown',
+            'units-legend-count': 'subordinates',
+            'units-legend-placed': 'on map',
+            // Creating-card breadcrumb
+            'units-creating-under-word': 'under',
             // ORBAT tree modal
             'orbat-title': 'ORBAT',
             'orbat-fit': 'Fit',
@@ -1364,7 +1377,7 @@
             'units-show-deleted': 'إظهار الوحدات المحذوفة',
             'units-search-nores': 'لا نتائج',
             // Side / Affiliation
-            'units-side-title': 'الجهة / الانتماء',
+            'units-side-title': 'الجهة',
             'units-side-friendly': '▶ صديق',
             'units-side-hostile': '■ عدو',
             'units-side-neutral': '◆ محايد',
@@ -1375,14 +1388,14 @@
             'units-side-neutral-short': 'محايد',
             'units-side-unknown-short': 'مجهول',
             // Domain
-            'units-domain-title': 'المجال',
+            'units-domain-title': 'نوع القوة',
             'units-domain-land': 'بري',
             'units-domain-air': 'جوي',
             'units-domain-naval': 'بحري',
             'units-domain-joint': 'مشترك',
             'units-domain-support': 'إسناد',
             // Branch (NATO Arabic military standard)
-            'units-branch-title': 'الصنف / الوظيفة',
+            'units-branch-title': 'التخصص',
             'units-branch-infantry': 'مشاة',
             'units-branch-armor': 'مدرعات',
             'units-branch-artillery': 'مدفعية',
@@ -1461,6 +1474,20 @@
             'units-tree-delete-title': 'حذف',
             'units-tree-restore-title': 'استعادة',
             'units-tree-orbat-title': 'عرض شجرة التنظيم',
+            'units-tree-count-title': '{n} وحدة تابعة',
+            'units-side-dot-friendly-title': 'انتماء صديق',
+            'units-side-dot-hostile-title': 'انتماء معادٍ',
+            'units-side-dot-neutral-title': 'انتماء محايد',
+            'units-side-dot-unknown-title': 'انتماء غير معروف',
+            // Tree legend (under the tree)
+            'units-legend-friendly': 'صديق',
+            'units-legend-hostile': 'معادٍ',
+            'units-legend-neutral': 'محايد',
+            'units-legend-unknown': 'غير معروف',
+            'units-legend-count': 'وحدات تابعة',
+            'units-legend-placed': 'على الخريطة',
+            // Creating-card breadcrumb
+            'units-creating-under-word': 'تحت',
             // ORBAT tree modal
             'orbat-title': 'شجرة التنظيم',
             'orbat-fit': 'ملاءمة',

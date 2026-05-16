@@ -24,6 +24,14 @@
 (function () {
     'use strict';
 
+    // ── Small HTML-escape helper for file names in the modal ──────────────
+    function escapeHtml(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
     // ── Extract units (existing path) ─────────────────────────────────────
     function extractUnits(geojson) {
         const units = [], skipped = [];
@@ -143,8 +151,8 @@
         return parts.join(' + ');
     }
 
-    // ── Layer-choice modal (now accepts a found-counts object) ────────────
-    function chooseLayerTarget(counts, fileNameHint) {
+    // ── Layer-choice modal (accepts counts + an array of file names) ──────
+    function chooseLayerTarget(counts, fileNames) {
         return new Promise((resolve) => {
             const overlay = document.createElement('div');
             overlay.style.cssText = [
@@ -154,20 +162,31 @@
                 'font-family:Tajawal,Segoe UI,sans-serif', 'direction:rtl'
             ].join(';');
 
-            const defaultName = ('استيراد · ' + (fileNameHint || '').replace(/\.(geo)?json$/i, ''))
-                .replace(/·\s*$/, '').trim();
+            const names = Array.isArray(fileNames) ? fileNames : (fileNames ? [fileNames] : []);
+            const defaultName = names.length === 1
+                ? ('استيراد · ' + names[0].replace(/\.(geo)?json$/i, '')).replace(/·\s*$/, '').trim()
+                : ('استيراد · ' + names.length + ' ملفات');
             const summary = summariseFound(counts);
+            const filesBlock = names.length > 1
+                ? `<div style="margin:0 0 12px; padding:8px 10px; background:#0f172a;
+                        border:1px solid #1f2937; border-radius:6px;
+                        font-size:12px; color:#94a3b8;">
+                        <div style="margin-bottom:4px; color:#60a5fa;">📂 ${names.length} ملفات:</div>
+                        ${names.map(n => `<div style="font-family:Consolas,monospace; direction:ltr; text-align:right;">• ${escapeHtml(n)}</div>`).join('')}
+                    </div>`
+                : '';
 
             overlay.innerHTML = `
                 <div style="
                     background:#111827; color:#e5e7eb; border:1px solid #1f2937;
-                    border-radius:12px; padding:22px 26px; min-width:340px; max-width:520px;
+                    border-radius:12px; padding:22px 26px; min-width:340px; max-width:560px;
                     box-shadow:0 12px 48px rgba(0,0,0,0.5); text-align:right;
                 ">
                     <h3 style="margin:0 0 8px; font-size:18px; color:#60a5fa;">أين تريد وضع المحتوى؟</h3>
-                    <p style="margin:0 0 16px; font-size:14px; color:#cbd5e1;">
-                        تم العثور على ${summary} في الملف. اختر الطبقة:
+                    <p style="margin:0 0 12px; font-size:14px; color:#cbd5e1;">
+                        تم العثور على ${summary}. اختر الطبقة:
                     </p>
+                    ${filesBlock}
 
                     <label style="display:block; margin:10px 0 4px; font-size:12px; color:#94a3b8;">اسم الطبقة الجديدة (اختياري)</label>
                     <input type="text" id="import-layer-name"
@@ -235,30 +254,59 @@
             ? { newLayer: true, layerName: name || null }
             : {};
 
-        let addedUnits = 0, addedLines = 0, layerName = null;
+        // Split lines by side: front → scalloped TMG + obstacles, other → plain polyline
+        const frontLines = lines.filter(l => l.side === 'front');
+        const otherLines = lines.filter(l => l.side === 'other');
 
-        // 1) Units first — if we're creating a new layer, this call creates it.
+        let addedUnits = 0, addedFront = 0, addedOther = 0, addedObstacles = 0;
+        let layerName = null;
+        let layerCreated = false;
+
+        // Helper: only the first call that actually adds something should
+        // create the new layer. Subsequent calls inherit the active layer.
+        const optsFor = () => (layerCreated ? {} : baseOpts);
+
+        // 1) Units
         if (units.length > 0 && typeof window.AppImport.addSymbolUnits === 'function') {
-            const r1 = window.AppImport.addSymbolUnits(units, baseOpts);
-            addedUnits = r1.added || 0;
-            layerName = r1.layerName;
+            const r = window.AppImport.addSymbolUnits(units, optsFor());
+            addedUnits = r.added || 0;
+            if (addedUnits > 0) {
+                layerName = r.layerName;
+                if (baseOpts.newLayer) layerCreated = true;
+            }
         }
 
-        // 2) Lines next — if a new layer was already created, do NOT create
-        //    another one; the second call inherits the active layer.
-        if (lines.length > 0 && typeof window.AppImport.addPolylineFeatures === 'function') {
-            const secondOpts = (addedUnits > 0) ? {} : baseOpts;
-            const r2 = window.AppImport.addPolylineFeatures(lines, secondOpts);
-            addedLines = r2.added || 0;
-            if (!layerName) layerName = r2.layerName;
-        } else if (lines.length > 0) {
+        // 2) Front lines → scalloped TMG + circle-X obstacles
+        if (frontLines.length > 0 && typeof window.AppImport.addFrontLines === 'function') {
+            const r = window.AppImport.addFrontLines(frontLines, optsFor());
+            addedFront     = r.addedLines     || 0;
+            addedObstacles = r.addedObstacles || 0;
+            if (addedFront > 0) {
+                if (!layerName) layerName = r.layerName;
+                if (baseOpts.newLayer) layerCreated = true;
+            }
+        } else if (frontLines.length > 0) {
+            showToast('AppImport.addFrontLines غير متوفر — حدّث app.js', 'warn');
+        }
+
+        // 3) Other lines → plain polylines (unchanged)
+        if (otherLines.length > 0 && typeof window.AppImport.addPolylineFeatures === 'function') {
+            const r = window.AppImport.addPolylineFeatures(otherLines, optsFor());
+            addedOther = r.added || 0;
+            if (addedOther > 0) {
+                if (!layerName) layerName = r.layerName;
+                if (baseOpts.newLayer) layerCreated = true;
+            }
+        } else if (otherLines.length > 0) {
             showToast('AppImport.addPolylineFeatures غير متوفر — حدّث app.js', 'warn');
         }
 
-        // Toast
+        // Toast — show whichever counts apply
         const parts = [];
-        if (addedUnits) parts.push(`${addedUnits} وحدة`);
-        if (addedLines) parts.push(`${addedLines} خط`);
+        if (addedUnits)     parts.push(`${addedUnits} وحدة`);
+        if (addedFront)     parts.push(`${addedFront} خط أمامي`);
+        if (addedOther)     parts.push(`${addedOther} حافة`);
+        if (addedObstacles) parts.push(`${addedObstacles} عقبة`);
         if (parts.length === 0) {
             showToast(`لم يتم استيراد أي شيء من ${counts.total} معلم`, 'warn');
         } else {
@@ -266,51 +314,88 @@
             if (layerName) msg += ' · ' + layerName;
             showToast(msg, 'info');
         }
-        console.log('[Import] result:', { addedUnits, addedLines, layerName, counts });
+        console.log('[Import] result:', {
+            addedUnits, addedFront, addedOther, addedObstacles, layerName, counts
+        });
     }
 
-    // ── Read a File → classify → ask layer → import ───────────────────────
-    function readAndImport(file) {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            let geojson;
-            try {
-                geojson = JSON.parse(e.target.result);
-            } catch (err) {
-                showToast('خطأ في قراءة JSON: ' + err.message, 'error');
-                return;
-            }
-            const counts = classifyFile(geojson);
-
-            if (counts.units === 0 && counts.frontLines === 0 && counts.otherLines === 0) {
-                showToast(`لم يُعثر على وحدات أو حواف في الملف (${counts.total} معلم)`, 'warn');
-                return;
-            }
-
-            // Extract whichever paths apply
-            const { units }  = (counts.units > 0)                                  ? extractUnits(geojson)     : { units: [] };
-            const { lines } = (counts.frontLines + counts.otherLines > 0)           ? extractPolylines(geojson) : { lines: [] };
-
-            const pick = await chooseLayerTarget(counts, file.name);
-            if (pick.choice === 'cancel') {
-                showToast('تم إلغاء الاستيراد', 'warn');
-                return;
-            }
-            runImport(units, lines, counts, pick.choice, pick.name);
-        };
-        reader.onerror = () => showToast('فشل في قراءة الملف', 'error');
-        reader.readAsText(file);
+    // ── Read a single File as parsed JSON, in a Promise ───────────────────
+    function readFileAsJson(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try { resolve({ file, geojson: JSON.parse(e.target.result), error: null }); }
+                catch (err) { resolve({ file, geojson: null, error: err.message }); }
+            };
+            reader.onerror = () => resolve({ file, geojson: null, error: 'read failed' });
+            reader.readAsText(file);
+        });
     }
 
-    // ── Open a hidden file picker on demand ───────────────────────────────
+    // ── Read N files → classify each → aggregate → ask layer → import ──────
+    async function processFiles(files) {
+        if (!files || !files.length) return;
+        const arr = Array.from(files);
+        const results = await Promise.all(arr.map(readFileAsJson));
+
+        // Aggregate across all files
+        const totals = { units: 0, frontLines: 0, otherLines: 0, otherFeatures: 0, total: 0 };
+        const allUnits = [];
+        const allLines = [];
+        const fileNames = [];
+        const errors = [];
+
+        for (const r of results) {
+            if (r.error || !r.geojson) {
+                errors.push(`${r.file.name}: ${r.error || 'invalid JSON'}`);
+                continue;
+            }
+            fileNames.push(r.file.name);
+            const counts = classifyFile(r.geojson);
+            totals.units         += counts.units;
+            totals.frontLines    += counts.frontLines;
+            totals.otherLines    += counts.otherLines;
+            totals.otherFeatures += counts.otherFeatures;
+            totals.total         += counts.total;
+
+            if (counts.units > 0) {
+                const { units } = extractUnits(r.geojson);
+                allUnits.push(...units);
+            }
+            if (counts.frontLines + counts.otherLines > 0) {
+                const { lines } = extractPolylines(r.geojson);
+                allLines.push(...lines);
+            }
+        }
+
+        if (errors.length) {
+            showToast('خطأ في قراءة بعض الملفات: ' + errors.join(' · '), 'error');
+            if (allUnits.length === 0 && allLines.length === 0) return;
+        }
+
+        if (allUnits.length === 0 && allLines.length === 0) {
+            showToast(`لم يُعثر على وحدات أو حواف في ${arr.length} ملف`, 'warn');
+            return;
+        }
+
+        const pick = await chooseLayerTarget(totals, fileNames);
+        if (pick.choice === 'cancel') {
+            showToast('تم إلغاء الاستيراد', 'warn');
+            return;
+        }
+        runImport(allUnits, allLines, totals, pick.choice, pick.name);
+    }
+
+    // ── Open a hidden multi-file picker on demand ─────────────────────────
     function openFilePicker() {
         const input = document.createElement('input');
         input.type = 'file';
+        input.multiple = true; // ← allow picking multiple files at once
         input.accept = '.geojson,.json,application/json,application/geo+json';
         input.style.display = 'none';
         input.addEventListener('change', () => {
-            const file = input.files && input.files[0];
-            if (file) readAndImport(file);
+            const files = input.files;
+            if (files && files.length > 0) processFiles(files);
             setTimeout(() => input.remove(), 0);
         });
         document.body.appendChild(input);

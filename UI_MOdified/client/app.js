@@ -17254,6 +17254,203 @@ document.addEventListener('DOMContentLoaded', () => {
                 layerId:   finalLayer ? finalLayer.id   : null,
                 layerName: finalLayer ? finalLayer.name : null,
             };
+        },
+
+        /**
+         * Add `side: "front"` lines as the app's native "Front Line Border"
+         * (kind:tmg-group + typeId:scalloped), and place Circle-X obstacle
+         * markers (kind:tmg-single + typeId:circle-x) at the deduplicated
+         * endpoints of all imported front lines.
+         *
+         * Rule: every front line's first & last vertex contributes one
+         * endpoint; endpoints within ~10 m of each other are merged. So a
+         * single front line gives 2 obstacles; N front lines that share
+         * endpoints give N+1; N disjoint front lines give 2N.
+         *
+         * Injection goes through window.AppIO.importLayersData with
+         * merge=true so the new features are appended to the active layer
+         * alongside anything already there.
+         */
+        addFrontLines(lines, options) {
+            if (!Array.isArray(lines) || lines.length === 0) {
+                return { addedLines: 0, addedObstacles: 0, layerId: null, layerName: null };
+            }
+            options = options || {};
+
+            // ── Uniform-spacing resampler so every scallop renders the same width.
+            // The scalloped TMG stretches one wave pattern across each input
+            // segment; with the raw 93 unevenly-spaced vertices we got mixed
+            // tooth sizes. Default 2.5 km per segment — gives bold, readable
+            // scallops at theatre zoom while still hugging the coastline.
+            const SCALLOP_SPACING_KM = (typeof options.scallopSpacingKm === 'number' && options.scallopSpacingKm > 0)
+                ? options.scallopSpacingKm
+                : 2.5;
+            const SCALLOP_STROKE = (typeof options.scallopStrokeWidth === 'number' && options.scallopStrokeWidth > 0)
+                ? options.scallopStrokeWidth
+                : 1.5;
+            function haversineKm(a, b) {
+                const R = 6371; // km
+                const lat1 = a[1] * Math.PI / 180;
+                const lat2 = b[1] * Math.PI / 180;
+                const dLat = lat2 - lat1;
+                const dLng = (b[0] - a[0]) * Math.PI / 180;
+                const x = Math.sin(dLat / 2) ** 2 +
+                          Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+                return 2 * R * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+            }
+            function resampleLineKm(coords, targetKm) {
+                if (!Array.isArray(coords) || coords.length < 2 || !(targetKm > 0)) return coords;
+                const cum = [0];
+                for (let i = 1; i < coords.length; i++) {
+                    cum.push(cum[i - 1] + haversineKm(coords[i - 1], coords[i]));
+                }
+                const total = cum[cum.length - 1];
+                if (!(total > 0)) return coords;
+                const N = Math.max(2, Math.round(total / targetKm));
+                const step = total / N;
+                const out = [coords[0]];
+                let j = 0;
+                for (let i = 1; i < N; i++) {
+                    const target = i * step;
+                    while (j < cum.length - 2 && cum[j + 1] < target) j++;
+                    const segLen = cum[j + 1] - cum[j];
+                    const t = segLen > 0 ? (target - cum[j]) / segLen : 0;
+                    const lng = coords[j][0] + t * (coords[j + 1][0] - coords[j][0]);
+                    const lat = coords[j][1] + t * (coords[j + 1][1] - coords[j][1]);
+                    out.push([lng, lat]);
+                }
+                out.push(coords[coords.length - 1]);
+                return out;
+            }
+
+            // Optional new-layer creation + activation (same pattern as addSymbolUnits)
+            if (options.newLayer) {
+                const name = (options.layerName && String(options.layerName).trim())
+                    || ('استيراد ' + (layers.length + 1));
+                const newLayer = createLayer(name);
+                layers.forEach(l => { l.active = (l === newLayer); });
+                if (typeof renderLayersList === 'function') renderLayersList();
+            }
+
+            const activeLayer = getActiveLayer();
+            if (!activeLayer) {
+                return { addedLines: 0, addedObstacles: 0, layerId: null, layerName: null };
+            }
+            const layerId = activeLayer.id;
+
+            // ── Deduplicate endpoints across all front lines (≈10 m tolerance) ──
+            // Endpoint dedup uses the ORIGINAL first/last vertex of each input
+            // line (preserved by resampleLineKm), so circle-X positions stay
+            // exactly where the source file said.
+            const TOL = 1e-4; // degrees, roughly 11 m at the equator
+            const endpoints = [];
+            const addIfNew = (pt) => {
+                for (const ex of endpoints) {
+                    if (Math.abs(ex[0] - pt[0]) < TOL && Math.abs(ex[1] - pt[1]) < TOL) return;
+                }
+                endpoints.push(pt);
+            };
+            let firstFrontPoint = null;
+            const validLines = [];
+            for (const ln of lines) {
+                if (!Array.isArray(ln.coords) || ln.coords.length < 2) continue;
+                validLines.push(ln);
+                if (!firstFrontPoint) firstFrontPoint = ln.coords[0];
+                addIfNew(ln.coords[0]);
+                addIfNew(ln.coords[ln.coords.length - 1]);
+            }
+
+            // ── Build the synthetic v3 FeatureCollection ──
+            const features = [];
+
+            // Scalloped tmg-group per front line. The raw vertices are resampled
+            // to ~SCALLOP_SPACING_KM intervals so every wave looks the same width.
+            // Coords kept in [lng,lat] GeoJSON order — io.js's
+            // featureToLegacyElData flips them to [lat,lng] internally.
+            for (const ln of validLines) {
+                const resampled = resampleLineKm(ln.coords, SCALLOP_SPACING_KM);
+                const lngLat = resampled.map(c => [c[0], c[1]]);
+                features.push({
+                    type: 'Feature',
+                    geometry: { type: 'LineString', coordinates: lngLat },
+                    properties: {
+                        layerId,
+                        app: {
+                            kind:        'tmg-group',
+                            points:      lngLat,
+                            typeId:      'scalloped',
+                            color:       '#3b82f6',
+                            filled:      false,
+                            dashed:      false,
+                            strokeWidth: SCALLOP_STROKE,
+                        }
+                    }
+                });
+            }
+
+            // Circle-X tmg-single per deduplicated endpoint. latlng1 === latlng2
+            // (degenerate line) as seen in saved plan files.
+            for (const pt of endpoints) {
+                const coord = [pt[0], pt[1]];
+                features.push({
+                    type: 'Feature',
+                    geometry: { type: 'LineString', coordinates: [coord, coord] },
+                    properties: {
+                        layerId,
+                        app: {
+                            kind:        'tmg-single',
+                            latlng1:     coord,
+                            latlng2:     coord,
+                            typeId:      'circle-x',
+                            color:       '#3b82f6',
+                            filled:      false,
+                            dashed:      false,
+                            strokeWidth: 1.5,
+                        }
+                    }
+                });
+            }
+
+            const fc = {
+                type: 'FeatureCollection',
+                app: { version: 3, appName: 'tactical-map' },
+                __layers: layers.map(l => ({
+                    id:      l.id,
+                    name:    l.name,
+                    visible: l.visible !== false,
+                    active:  !!l.active,
+                })),
+                __folders: [],
+                features
+            };
+
+            try {
+                if (window.AppIO && typeof window.AppIO.importLayersData === 'function') {
+                    window.AppIO.importLayersData(JSON.stringify(fc), /*silent*/ true, /*merge*/ true);
+                } else {
+                    console.warn('AppImport.addFrontLines: window.AppIO.importLayersData unavailable');
+                }
+            } catch (e) {
+                console.warn('AppImport.addFrontLines: importLayersData failed', e);
+            }
+
+            scheduleSaveToStorage();
+
+            // Fly to the start of the first front line (coords in [lng,lat])
+            try {
+                if (map && firstFrontPoint && typeof map.flyTo === 'function') {
+                    map.flyTo([firstFrontPoint[1], firstFrontPoint[0]],
+                              Math.max(map.getZoom(), 10),
+                              { duration: 0.8 });
+                }
+            } catch (e) { /* ignore */ }
+
+            return {
+                addedLines:     validLines.length,
+                addedObstacles: endpoints.length,
+                layerId,
+                layerName: activeLayer.name,
+            };
         }
     };
 

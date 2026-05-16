@@ -17192,6 +17192,93 @@ document.addEventListener('DOMContentLoaded', () => {
                 layerId:   finalLayer ? finalLayer.id   : null,
                 layerName: finalLayer ? finalLayer.name : null,
             };
+        },
+
+        /**
+         * Add boundary / edge polylines (e.g. from blue_edges.geojson).
+         * Each `lines[i]` shape: { side: 'front'|'other', coords: [[lng,lat], …] }.
+         * Uses the app's native polyline kind so round-trip serialization via
+         * exportLayersData/importLayersData is identical to user-drawn lines.
+         */
+        addPolylineFeatures(lines, options) {
+            if (!Array.isArray(lines)) return { added: 0, layerId: null, layerName: null };
+            options = options || {};
+
+            if (options.newLayer) {
+                const name = (options.layerName && String(options.layerName).trim())
+                    || ('استيراد ' + (layers.length + 1));
+                const newLayer = createLayer(name);
+                layers.forEach(l => { l.active = (l === newLayer); });
+                if (typeof renderLayersList === 'function') renderLayersList();
+            }
+
+            let added = 0;
+            let firstLatLng = null;
+            for (const ln of lines) {
+                try {
+                    if (!Array.isArray(ln.coords) || ln.coords.length < 2) continue;
+                    const latlngs = ln.coords
+                        .filter(c => Array.isArray(c) && typeof c[0] === 'number' && typeof c[1] === 'number')
+                        .map(c => L.latLng(c[1], c[0])); // GeoJSON [lng,lat] → Leaflet (lat,lng)
+                    if (latlngs.length < 2) continue;
+
+                    const polyline = L.polyline(latlngs, {
+                        color:     '#3b82f6',
+                        weight:    4,
+                        dashArray: null,
+                    });
+                    polyline._baseLineWeight = 4;
+                    polyline._importSide = ln.side;
+                    if (typeof wireTacticalLinePolyline === 'function') {
+                        wireTacticalLinePolyline(polyline);
+                    }
+                    addToActiveLayer(polyline);
+                    if (!firstLatLng) firstLatLng = latlngs[0];
+                    added++;
+                } catch (e) {
+                    console.warn('AppImport: failed to add polyline', ln, e);
+                }
+            }
+
+            const finalLayer = getActiveLayer();
+            if (added > 0) {
+                scheduleSaveToStorage();
+                try {
+                    if (map && firstLatLng && typeof map.flyTo === 'function') {
+                        map.flyTo(firstLatLng, Math.max(map.getZoom(), 10), { duration: 0.8 });
+                    }
+                } catch (e) { /* ignore */ }
+            }
+            return {
+                added,
+                layerId:   finalLayer ? finalLayer.id   : null,
+                layerName: finalLayer ? finalLayer.name : null,
+            };
+        }
+    };
+
+    // ── War-Game snapshot facade ───────────────────────────────────────
+    // Exposes read access to the current plan state so turn-engine.js can
+    // freeze a snapshot at the end of every phase. Keeps `layers` private
+    // and reuses io.js's existing serializer.
+    window.AppWarGame = {
+        /** Capture the current plan as a GeoJSON FeatureCollection. */
+        captureSnapshot() {
+            try {
+                return exportLayersData(layers);
+            } catch (e) {
+                console.warn('AppWarGame.captureSnapshot failed', e);
+                return null;
+            }
+        },
+        /** Read-only access to a summary of the current plan state. */
+        getStats() {
+            const totalEls = layers.reduce((n, l) => n + (l.elements ? l.elements.length : 0), 0);
+            return {
+                layers: layers.length,
+                elements: totalEls,
+                activeLayerId: (getActiveLayer() || {}).id || null,
+            };
         }
     };
 });

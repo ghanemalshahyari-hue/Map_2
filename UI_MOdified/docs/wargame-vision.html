@@ -42,13 +42,13 @@
   /* ── HERO ───────────────────────────────────────── */
   .hero {
     text-align: center;
-    padding: 56px 20px 36px;
+    padding: 56px 20px 40px;
     border-radius: var(--radius);
     background:
       radial-gradient(ellipse at center, rgba(59,130,246,0.12), transparent 60%),
       linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
     border: 1px solid var(--panel-border);
-    margin-bottom: 28px;
+    margin-bottom: 32px;
   }
   .brand-mark { display: block; margin: 0 auto 18px; width: 96px; height: 96px; }
   .hero h1 {
@@ -60,15 +60,17 @@
   .hero .tagline   { color: var(--muted); font-size: 15px; margin: 14px 0 0; max-width: 720px; margin-inline: auto; }
 
   /* ── SECTIONS ───────────────────────────────────── */
-  section { margin: 36px 0; }
+  section { margin: 32px 0; }
+  section:first-of-type { margin-top: 0; }
   h2 {
-    font-size: 22px; margin: 0 0 14px;
+    font-size: 22px; margin: 0 0 16px;
     display: flex; align-items: center; gap: 10px;
-    flex-direction: row;
+    flex-wrap: wrap;
   }
   h2::before {
     content:""; display:inline-block; width: 6px; height: 22px;
     background: var(--accent); border-radius: 3px;
+    flex-shrink: 0;
   }
   h2 .en { color: var(--muted); font-size: 14px; font-weight: 400; margin-inline-start: 8px; }
 
@@ -107,6 +109,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
     gap: 18px;
+    align-items: stretch;
   }
   .chunk {
     background: var(--panel);
@@ -114,6 +117,7 @@
     border-radius: var(--radius);
     padding: 16px;
     display: flex; flex-direction: column;
+    height: 100%;
     transition: transform 0.15s ease, border-color 0.15s ease;
   }
   .chunk:hover { transform: translateY(-2px); border-color: var(--accent); }
@@ -122,8 +126,13 @@
     content:""; display:block; height: 3px; margin: -16px -16px 12px;
     background: linear-gradient(270deg, var(--accent), transparent);
     border-radius: var(--radius) var(--radius) 0 0;
+    flex-shrink: 0;
   }
-  .chunk-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+  .chunk-head {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 10px;
+    min-height: 40px;
+  }
   .chunk-num {
     flex: 0 0 40px; width: 40px; height: 40px;
     border-radius: 10px;
@@ -134,9 +143,15 @@
   }
   .mvp .chunk-num { background: rgba(59,130,246,0.18); color: #fff; border-color: var(--accent); }
   .chunk-title { flex: 1; min-width: 0; text-align: right; }
-  .chunk-title h3 { margin: 0; font-size: 16px; }
+  .chunk-title h3 {
+    margin: 0; font-size: 16px; line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
   .chunk-title .en { color: var(--muted); font-size: 12px; font-family: var(--font-mono); direction: ltr; display: block; margin-top: 2px; text-align: right; }
-  .chunk-badges { display: flex; gap: 6px; align-items: center; }
+  .chunk-badges {
+    display: flex; gap: 6px; align-items: center;
+    flex-shrink: 0; align-self: flex-start;
+  }
   .badge {
     font-family: var(--font-mono); font-size: 11px; padding: 3px 8px;
     border-radius: 999px; border: 1px solid var(--panel-border); color: var(--muted);
@@ -146,31 +161,65 @@
   .badge.l   { color: var(--danger); border-color: rgba(239,68,68,0.45); }
   .badge.mvp-tag { color: #fff; background: var(--accent); border-color: var(--accent); }
 
-  .chunk-goal { color: var(--text-soft); font-size: 13.5px; margin: 8px 0 12px; text-align: right; }
+  .chunk-goal {
+    color: var(--text-soft); font-size: 13.5px;
+    margin: 8px 0 12px; text-align: right;
+    line-height: 1.6;
+  }
 
   .chunk-svg {
     background: var(--bg-2); border-radius: var(--radius-sm);
     padding: 8px; margin: 4px 0 12px;
     border: 1px solid var(--panel-border);
   }
-  .chunk-svg svg { display: block; width: 100%; height: auto; }
+  .chunk-svg svg { display: block; width: 100%; height: auto; max-width: 100%; }
 
-  .meta { font-size: 12.5px; color: var(--text-soft); text-align: right; }
+  /* Push `.meta` to the bottom of every chunk card so the four metadata
+     blocks line up across rows regardless of how long the goal text or
+     the inline SVG is. Requires `.chunk` to be `display: flex; column`. */
+  .meta {
+    font-size: 12.5px; color: var(--text-soft); text-align: right;
+    margin-top: auto;
+    padding-top: 4px;
+  }
   .meta dt { color: var(--muted); font-weight: 600; margin-top: 6px; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .meta dd { margin: 2px 0 0; }
+  .meta dd { margin: 2px 0 0; line-height: 1.7; }
   .meta code, .meta .codey {
     font-family: var(--font-mono); font-size: 11.5px; direction: ltr;
     color: var(--accent-2); background: rgba(59,130,246,0.08);
-    padding: 1px 6px; border-radius: 4px; display: inline-block; margin: 2px 4px 2px 0;
+    padding: 1px 6px; border-radius: 4px;
+    display: inline-block;
+    margin-inline-end: 4px;
+    margin-block: 2px;
     unicode-bidi: embed;
   }
 
   /* ── GLOSSARY ──────────────────────────────────── */
-  .glossary { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 12px; }
-  .gterm { background: var(--panel); border: 1px solid var(--panel-border); border-radius: var(--radius-sm); padding: 12px; text-align: right; }
-  .gterm dt { font-weight: 700; font-size: 14px; color: var(--accent-2); }
-  .gterm dt .en { font-family: var(--font-mono); color: var(--muted); font-weight: 400; font-size: 11.5px; margin-inline-start: 6px; direction: ltr; unicode-bidi: embed; }
-  .gterm dd { margin: 4px 0 0; color: var(--text-soft); font-size: 13px; }
+  .glossary {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
+    gap: 12px;
+    align-items: stretch;
+  }
+  .gterm {
+    background: var(--panel); border: 1px solid var(--panel-border);
+    border-radius: var(--radius-sm); padding: 12px; text-align: right;
+    margin: 0;  /* reset default <dl> margin so grid spacing is honored */
+    height: 100%;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .gterm dt {
+    font-weight: 700; font-size: 14px; color: var(--accent-2);
+    line-height: 1.4;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px;
+  }
+  .gterm dt .en {
+    font-family: var(--font-mono); color: var(--muted);
+    font-weight: 400; font-size: 11.5px;
+    margin-inline-start: 0;  /* gap handles spacing now */
+    direction: ltr; unicode-bidi: embed;
+  }
+  .gterm dd { margin: 0; color: var(--text-soft); font-size: 13px; line-height: 1.6; }
 
   /* ── FOOTER ────────────────────────────────────── */
   footer { color: var(--muted); font-size: 12px; text-align: center; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--panel-border); }

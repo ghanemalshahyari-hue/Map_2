@@ -66,10 +66,25 @@
         return { units, skipped };
     }
 
-    // ── Extract boundary polylines (new path) ─────────────────────────────
+    // ── Extract boundary polylines + demote interior fronts ───────────────
+    // Two-pass:
+    //   Pass 1 — collect every LineString with side ∈ {front,other}, tally
+    //            endpoint-frequency across all of them.
+    //   Pass 2 — for each "front" line, if BOTH endpoints appear ≥3 times in
+    //            the frequency map, the line is an interior divider between
+    //            adjacent AOs. Demote it to "other" so it renders as a plain
+    //            polyline rather than a scalloped FLOT, and no circle-X
+    //            obstacles are placed for it.
     function extractPolylines(geojson) {
         const lines = [], skipped = [];
-        if (!Array.isArray(geojson?.features)) return { lines, skipped };
+        let demoted = 0;
+        if (!Array.isArray(geojson?.features)) return { lines, skipped, demoted };
+
+        const raw = [];
+        const freq = new Map();
+        // Round to 6 decimals (~10 cm) so floating-point near-duplicates merge.
+        const keyOf = (pt) => pt[0].toFixed(6) + ',' + pt[1].toFixed(6);
+        const bump  = (pt) => freq.set(keyOf(pt), (freq.get(keyOf(pt)) || 0) + 1);
 
         for (const feat of geojson.features) {
             const geom = feat?.geometry;
@@ -86,16 +101,50 @@
                 skipped.push({ reason: 'less than 2 valid points', side });
                 continue;
             }
-            lines.push({ side, coords });
+            raw.push({ side, coords });
+            bump(coords[0]);
+            bump(coords[coords.length - 1]);
         }
-        return { lines, skipped };
+
+        const INTERIOR_THRESHOLD = 3;
+        for (const ln of raw) {
+            let effective = ln.side;
+            if (ln.side === 'front') {
+                const a = freq.get(keyOf(ln.coords[0]))                          || 0;
+                const b = freq.get(keyOf(ln.coords[ln.coords.length - 1])) || 0;
+                if (a >= INTERIOR_THRESHOLD && b >= INTERIOR_THRESHOLD) {
+                    effective = 'other';
+                    demoted++;
+                }
+            }
+            lines.push({ side: effective, coords: ln.coords, originalSide: ln.side });
+        }
+        return { lines, skipped, demoted };
     }
 
     // ── Classify the file so the modal can show what was found ────────────
+    // Also pre-computes how many of the front lines will be demoted to plain
+    // polylines (interior dividers between adjacent AOs) so the modal can
+    // honestly preview the rendering before the user confirms.
     function classifyFile(geojson) {
-        let units = 0, frontLines = 0, otherLines = 0, otherFeatures = 0;
+        let units = 0, frontLines = 0, otherLines = 0, otherFeatures = 0, interiorFronts = 0;
         const total = Array.isArray(geojson?.features) ? geojson.features.length : 0;
-        if (!total) return { units, frontLines, otherLines, otherFeatures, total };
+        if (!total) return { units, frontLines, otherLines, otherFeatures, interiorFronts, total };
+
+        // Tally endpoint frequencies once for the demotion preview.
+        const freq = new Map();
+        const keyOf = (pt) => pt[0].toFixed(6) + ',' + pt[1].toFixed(6);
+        for (const feat of geojson.features) {
+            const geom = feat?.geometry;
+            const side = feat?.properties?.side;
+            if (geom?.type === 'LineString' && (side === 'front' || side === 'other')) {
+                const c = geom.coordinates;
+                if (Array.isArray(c) && c.length >= 2 && Array.isArray(c[0]) && Array.isArray(c[c.length - 1])) {
+                    const k1 = keyOf(c[0]); freq.set(k1, (freq.get(k1) || 0) + 1);
+                    const k2 = keyOf(c[c.length - 1]); freq.set(k2, (freq.get(k2) || 0) + 1);
+                }
+            }
+        }
 
         for (const feat of geojson.features) {
             const app = feat?.properties?.app;
@@ -103,11 +152,17 @@
             const geomType = feat?.geometry?.type;
             if (app?.kind === 'unit') units++;
             else if (geomType === 'LineString' && (side === 'front' || side === 'other')) {
-                if (side === 'front') frontLines++; else otherLines++;
+                if (side === 'front') {
+                    frontLines++;
+                    const c = feat.geometry.coordinates;
+                    const a = freq.get(keyOf(c[0]))                  || 0;
+                    const b = freq.get(keyOf(c[c.length - 1])) || 0;
+                    if (a >= 3 && b >= 3) interiorFronts++;
+                } else otherLines++;
             }
             else otherFeatures++;
         }
-        return { units, frontLines, otherLines, otherFeatures, total };
+        return { units, frontLines, otherLines, otherFeatures, interiorFronts, total };
     }
 
     // ── Brief toast at the top-center ─────────────────────────────────────
@@ -144,9 +199,20 @@
         const lines = c.frontLines + c.otherLines;
         if (lines > 0) {
             const breakdown = [];
-            if (c.frontLines) breakdown.push(`${c.frontLines} أمامي`);
+            if (c.frontLines) {
+                const interior = c.interiorFronts || 0;
+                if (interior > 0) {
+                    const realFronts = c.frontLines - interior;
+                    breakdown.push(`${realFronts} أمامي + ${interior} داخلي`);
+                } else {
+                    breakdown.push(`${c.frontLines} أمامي`);
+                }
+            }
             if (c.otherLines) breakdown.push(`${c.otherLines} حواف`);
             parts.push(`<strong style="color:#60a5fa;">${lines}</strong> خط (${breakdown.join(' + ')})`);
+        }
+        if (c.interiorFronts > 0) {
+            parts.push(`<span style="color:#94a3b8; font-size:12px;">(الخطوط الداخلية ستُرسم كخطوط عادية)</span>`);
         }
         return parts.join(' + ');
     }

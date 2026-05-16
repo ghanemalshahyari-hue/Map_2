@@ -6,16 +6,16 @@
   },
   "__layers": [
     {
-      "id": "layer-17",
+      "id": "layer-1",
       "name": "استيراد · 2 ملفات",
       "visible": true,
-      "active": true
+      "active": false
     },
     {
-      "id": "layer-18",
+      "id": "layer-2",
       "name": "استيراد · 2 ملفات (imported)",
       "visible": true,
-      "active": false
+      "active": true
     }
   ],
   "__folders": [],
@@ -43,7 +43,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
+        "layerId": "layer-1"
       }
     },
     {
@@ -69,7 +69,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
+        "layerId": "layer-1"
       }
     },
     {
@@ -95,7 +95,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
+        "layerId": "layer-1"
       }
     },
     {
@@ -121,7 +121,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
+        "layerId": "layer-1"
       }
     },
     {
@@ -147,7 +147,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
+        "layerId": "layer-1"
       }
     },
     {
@@ -173,7 +173,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
+        "layerId": "layer-1"
       }
     },
     {
@@ -199,7 +199,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
+        "layerId": "layer-1"
       }
     },
     {
@@ -225,7 +225,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
+        "layerId": "layer-1"
       }
     },
     {
@@ -251,7 +251,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
+        "layerId": "layer-1"
       }
     },
     {
@@ -277,7 +277,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
+        "layerId": "layer-1"
       }
     },
     {
@@ -303,7 +303,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
+        "layerId": "layer-1"
       }
     },
     {
@@ -329,7 +329,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
+        "layerId": "layer-1"
       }
     },
     {
@@ -355,172 +355,7 @@
           },
           "statusKey": "status-operational"
         },
-        "layerId": "layer-17"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            52.3730842,
-            23.8073611
-          ],
-          [
-            52.393293005882356,
-            23.81918575882353
-          ],
-          [
-            52.413501811764704,
-            23.83101041764706
-          ],
-          [
-            52.43371061764706,
-            23.84283507647059
-          ],
-          [
-            52.45391942352941,
-            23.854659735294117
-          ],
-          [
-            52.47412822941177,
-            23.86648439411765
-          ],
-          [
-            52.494337035294116,
-            23.878309052941177
-          ],
-          [
-            52.51454584117647,
-            23.890133711764705
-          ],
-          [
-            52.534754647058826,
-            23.901958370588236
-          ],
-          [
-            52.55496345294117,
-            23.913783029411764
-          ],
-          [
-            52.57517225882353,
-            23.925607688235296
-          ],
-          [
-            52.59538106470588,
-            23.937432347058824
-          ],
-          [
-            52.61558987058823,
-            23.94925700588235
-          ],
-          [
-            52.635798676470586,
-            23.961081664705883
-          ],
-          [
-            52.65600748235294,
-            23.97290632352941
-          ],
-          [
-            52.676216288235295,
-            23.98473098235294
-          ],
-          [
-            52.69642509411764,
-            23.99655564117647
-          ],
-          [
-            52.7166339,
-            24.0083803
-          ]
-        ]
-      },
-      "properties": {
-        "app": {
-          "kind": "tmg-group",
-          "points": [
-            [
-              52.3730842,
-              23.8073611
-            ],
-            [
-              52.393293005882356,
-              23.81918575882353
-            ],
-            [
-              52.413501811764704,
-              23.83101041764706
-            ],
-            [
-              52.43371061764706,
-              23.84283507647059
-            ],
-            [
-              52.45391942352941,
-              23.854659735294117
-            ],
-            [
-              52.47412822941177,
-              23.86648439411765
-            ],
-            [
-              52.494337035294116,
-              23.878309052941177
-            ],
-            [
-              52.51454584117647,
-              23.890133711764705
-            ],
-            [
-              52.534754647058826,
-              23.901958370588236
-            ],
-            [
-              52.55496345294117,
-              23.913783029411764
-            ],
-            [
-              52.57517225882353,
-              23.925607688235296
-            ],
-            [
-              52.59538106470588,
-              23.937432347058824
-            ],
-            [
-              52.61558987058823,
-              23.94925700588235
-            ],
-            [
-              52.635798676470586,
-              23.961081664705883
-            ],
-            [
-              52.65600748235294,
-              23.97290632352941
-            ],
-            [
-              52.676216288235295,
-              23.98473098235294
-            ],
-            [
-              52.69642509411764,
-              23.99655564117647
-            ],
-            [
-              52.7166339,
-              24.0083803
-            ]
-          ],
-          "typeId": "scalloped",
-          "color": "#3b82f6",
-          "filled": false,
-          "dashed": false,
-          "strokeWidth": 2.5
-        },
-        "layerId": "layer-18"
+        "layerId": "layer-1"
       }
     },
     {
@@ -627,9 +462,9 @@
           "color": "#3b82f6",
           "filled": false,
           "dashed": false,
-          "strokeWidth": 2.5
+          "strokeWidth": 1.5
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     },
     {
@@ -728,79 +563,9 @@
           "color": "#3b82f6",
           "filled": false,
           "dashed": false,
-          "strokeWidth": 2.5
-        },
-        "layerId": "layer-18"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            52.3730842,
-            23.8073611
-          ],
-          [
-            52.3730842,
-            23.8073611
-          ]
-        ]
-      },
-      "properties": {
-        "app": {
-          "kind": "tmg-single",
-          "latlng1": [
-            52.3730842,
-            23.8073611
-          ],
-          "latlng2": [
-            52.3730842,
-            23.8073611
-          ],
-          "typeId": "circle-x",
-          "color": "#3b82f6",
-          "filled": false,
-          "dashed": false,
           "strokeWidth": 1.5
         },
-        "layerId": "layer-18"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            52.7166339,
-            24.0083803
-          ],
-          [
-            52.7166339,
-            24.0083803
-          ]
-        ]
-      },
-      "properties": {
-        "app": {
-          "kind": "tmg-single",
-          "latlng1": [
-            52.7166339,
-            24.0083803
-          ],
-          "latlng2": [
-            52.7166339,
-            24.0083803
-          ],
-          "typeId": "circle-x",
-          "color": "#3b82f6",
-          "filled": false,
-          "dashed": false,
-          "strokeWidth": 1.5
-        },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     },
     {
@@ -835,7 +600,7 @@
           "dashed": false,
           "strokeWidth": 1.5
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     },
     {
@@ -870,7 +635,7 @@
           "dashed": false,
           "strokeWidth": 1.5
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     },
     {
@@ -905,7 +670,32 @@
           "dashed": false,
           "strokeWidth": 1.5
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.3730842,
+            23.8073611
+          ],
+          [
+            52.7166339,
+            24.0083803
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 4,
+          "dashArray": null
+        },
+        "layerId": "layer-2"
       }
     },
     {
@@ -930,7 +720,7 @@
           "weight": 4,
           "dashArray": null
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     },
     {
@@ -955,7 +745,7 @@
           "weight": 4,
           "dashArray": null
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     },
     {
@@ -980,7 +770,7 @@
           "weight": 4,
           "dashArray": null
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     },
     {
@@ -1005,7 +795,7 @@
           "weight": 4,
           "dashArray": null
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     },
     {
@@ -1030,7 +820,7 @@
           "weight": 4,
           "dashArray": null
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     },
     {
@@ -1055,7 +845,7 @@
           "weight": 4,
           "dashArray": null
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     },
     {
@@ -1080,7 +870,7 @@
           "weight": 4,
           "dashArray": null
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     },
     {
@@ -1105,7 +895,7 @@
           "weight": 4,
           "dashArray": null
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     },
     {
@@ -1130,7 +920,7 @@
           "weight": 4,
           "dashArray": null
         },
-        "layerId": "layer-18"
+        "layerId": "layer-2"
       }
     }
   ]

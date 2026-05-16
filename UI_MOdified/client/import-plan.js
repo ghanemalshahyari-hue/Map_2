@@ -66,6 +66,44 @@
         return { units, skipped };
     }
 
+    // ── Extract deployment slots (units.geojson style: flat props, Point) ──
+    // A slot is a Point feature whose properties carry sidc + unit (and
+    // optionally area + score), with NO `properties.app` envelope. The unit
+    // code (cXYZ / pXYc / bXc / lc) encodes the intended echelon — the
+    // facade later derives the right SIDC echelon digit from this prefix.
+    function extractSlots(geojson) {
+        const slots = [], skipped = [];
+        if (!Array.isArray(geojson?.features)) return { slots, skipped };
+
+        for (const feat of geojson.features) {
+            const geom  = feat?.geometry;
+            const props = feat?.properties;
+            if (!geom || geom.type !== 'Point')          continue;
+            if (!props || !props.sidc || !props.unit)    continue;
+            if (props.app)                                continue; // unit-style file → handled by extractUnits
+
+            const coords = geom.coordinates;
+            if (!Array.isArray(coords) || coords.length < 2 ||
+                typeof coords[0] !== 'number' || typeof coords[1] !== 'number') {
+                skipped.push({ reason: 'invalid coords', unit: props.unit });
+                continue;
+            }
+            const lng = coords[0], lat = coords[1];
+            if (lng < -180 || lng > 180 || lat < -90 || lat > 90) {
+                skipped.push({ reason: 'coords out of range', unit: props.unit });
+                continue;
+            }
+            slots.push({
+                unit:  String(props.unit),
+                area:  props.area || null,
+                sidc:  String(props.sidc),
+                score: typeof props.score === 'number' ? props.score : null,
+                lng, lat,
+            });
+        }
+        return { slots, skipped };
+    }
+
     // ── Extract boundary polylines + demote interior fronts ───────────────
     // Two-pass:
     //   Pass 1 — collect every LineString with side ∈ {front,other}, tally
@@ -127,9 +165,9 @@
     // polylines (interior dividers between adjacent AOs) so the modal can
     // honestly preview the rendering before the user confirms.
     function classifyFile(geojson) {
-        let units = 0, frontLines = 0, otherLines = 0, otherFeatures = 0, interiorFronts = 0;
+        let units = 0, slots = 0, frontLines = 0, otherLines = 0, otherFeatures = 0, interiorFronts = 0;
         const total = Array.isArray(geojson?.features) ? geojson.features.length : 0;
-        if (!total) return { units, frontLines, otherLines, otherFeatures, interiorFronts, total };
+        if (!total) return { units, slots, frontLines, otherLines, otherFeatures, interiorFronts, total };
 
         // Tally endpoint frequencies once for the demotion preview.
         const freq = new Map();
@@ -149,8 +187,13 @@
         for (const feat of geojson.features) {
             const app = feat?.properties?.app;
             const side = feat?.properties?.side;
+            const props = feat?.properties;
             const geomType = feat?.geometry?.type;
             if (app?.kind === 'unit') units++;
+            else if (geomType === 'Point' && !app && props && props.sidc && props.unit) {
+                // Slot file shape: flat sidc + unit, no `app` envelope.
+                slots++;
+            }
             else if (geomType === 'LineString' && (side === 'front' || side === 'other')) {
                 if (side === 'front') {
                     frontLines++;
@@ -162,7 +205,7 @@
             }
             else otherFeatures++;
         }
-        return { units, frontLines, otherLines, otherFeatures, interiorFronts, total };
+        return { units, slots, frontLines, otherLines, otherFeatures, interiorFronts, total };
     }
 
     // ── Brief toast at the top-center ─────────────────────────────────────
@@ -196,6 +239,7 @@
     function summariseFound(c) {
         const parts = [];
         if (c.units > 0) parts.push(`<strong style="color:#22c55e;">${c.units}</strong> وحدة`);
+        if (c.slots > 0) parts.push(`<strong style="color:#fbbf24;">${c.slots}</strong> موقع نشر`);
         const lines = c.frontLines + c.otherLines;
         if (lines > 0) {
             const breakdown = [];
@@ -311,7 +355,7 @@
     }
 
     // ── Run the actual import via AppImport ──────────────────────────────
-    function runImport(units, lines, counts, choice, name) {
+    function runImport(units, slots, lines, counts, choice, name) {
         if (!window.AppImport) {
             showToast('فشل: AppImport غير متوفر (تحقق من تحميل app.js)', 'error');
             return;
@@ -324,7 +368,7 @@
         const frontLines = lines.filter(l => l.side === 'front');
         const otherLines = lines.filter(l => l.side === 'other');
 
-        let addedUnits = 0, addedFront = 0, addedOther = 0, addedObstacles = 0;
+        let addedUnits = 0, addedSlots = 0, addedFront = 0, addedOther = 0, addedObstacles = 0;
         let layerName = null;
         let layerCreated = false;
 
@@ -332,7 +376,7 @@
         // create the new layer. Subsequent calls inherit the active layer.
         const optsFor = () => (layerCreated ? {} : baseOpts);
 
-        // 1) Units
+        // 1) Units (map_template.geojson-style)
         if (units.length > 0 && typeof window.AppImport.addSymbolUnits === 'function') {
             const r = window.AppImport.addSymbolUnits(units, optsFor());
             addedUnits = r.added || 0;
@@ -342,7 +386,19 @@
             }
         }
 
-        // 2) Front lines → scalloped TMG + circle-X obstacles
+        // 2) Slots (units.geojson-style — deployment positions with unit codes)
+        if (slots.length > 0 && typeof window.AppImport.addSlots === 'function') {
+            const r = window.AppImport.addSlots(slots, optsFor());
+            addedSlots = r.added || 0;
+            if (addedSlots > 0) {
+                if (!layerName) layerName = r.layerName;
+                if (baseOpts.newLayer) layerCreated = true;
+            }
+        } else if (slots.length > 0) {
+            showToast('AppImport.addSlots غير متوفر — حدّث app.js', 'warn');
+        }
+
+        // 3) Front lines → scalloped TMG + circle-X obstacles
         if (frontLines.length > 0 && typeof window.AppImport.addFrontLines === 'function') {
             const r = window.AppImport.addFrontLines(frontLines, optsFor());
             addedFront     = r.addedLines     || 0;
@@ -355,7 +411,7 @@
             showToast('AppImport.addFrontLines غير متوفر — حدّث app.js', 'warn');
         }
 
-        // 3) Other lines → plain polylines (unchanged)
+        // 4) Other lines → plain polylines (unchanged)
         if (otherLines.length > 0 && typeof window.AppImport.addPolylineFeatures === 'function') {
             const r = window.AppImport.addPolylineFeatures(otherLines, optsFor());
             addedOther = r.added || 0;
@@ -370,6 +426,7 @@
         // Toast — show whichever counts apply
         const parts = [];
         if (addedUnits)     parts.push(`${addedUnits} وحدة`);
+        if (addedSlots)     parts.push(`${addedSlots} موقع نشر`);
         if (addedFront)     parts.push(`${addedFront} خط أمامي`);
         if (addedOther)     parts.push(`${addedOther} حافة`);
         if (addedObstacles) parts.push(`${addedObstacles} عقبة`);
@@ -381,7 +438,7 @@
             showToast(msg, 'info');
         }
         console.log('[Import] result:', {
-            addedUnits, addedFront, addedOther, addedObstacles, layerName, counts
+            addedUnits, addedSlots, addedFront, addedOther, addedObstacles, layerName, counts
         });
     }
 
@@ -405,8 +462,9 @@
         const results = await Promise.all(arr.map(readFileAsJson));
 
         // Aggregate across all files
-        const totals = { units: 0, frontLines: 0, otherLines: 0, otherFeatures: 0, total: 0 };
+        const totals = { units: 0, slots: 0, frontLines: 0, otherLines: 0, otherFeatures: 0, interiorFronts: 0, total: 0 };
         const allUnits = [];
+        const allSlots = [];
         const allLines = [];
         const fileNames = [];
         const errors = [];
@@ -418,15 +476,21 @@
             }
             fileNames.push(r.file.name);
             const counts = classifyFile(r.geojson);
-            totals.units         += counts.units;
-            totals.frontLines    += counts.frontLines;
-            totals.otherLines    += counts.otherLines;
-            totals.otherFeatures += counts.otherFeatures;
-            totals.total         += counts.total;
+            totals.units          += counts.units;
+            totals.slots          += counts.slots;
+            totals.frontLines     += counts.frontLines;
+            totals.otherLines     += counts.otherLines;
+            totals.otherFeatures  += counts.otherFeatures;
+            totals.interiorFronts += counts.interiorFronts || 0;
+            totals.total          += counts.total;
 
             if (counts.units > 0) {
                 const { units } = extractUnits(r.geojson);
                 allUnits.push(...units);
+            }
+            if (counts.slots > 0) {
+                const { slots } = extractSlots(r.geojson);
+                allSlots.push(...slots);
             }
             if (counts.frontLines + counts.otherLines > 0) {
                 const { lines } = extractPolylines(r.geojson);
@@ -436,11 +500,11 @@
 
         if (errors.length) {
             showToast('خطأ في قراءة بعض الملفات: ' + errors.join(' · '), 'error');
-            if (allUnits.length === 0 && allLines.length === 0) return;
+            if (allUnits.length === 0 && allSlots.length === 0 && allLines.length === 0) return;
         }
 
-        if (allUnits.length === 0 && allLines.length === 0) {
-            showToast(`لم يُعثر على وحدات أو حواف في ${arr.length} ملف`, 'warn');
+        if (allUnits.length === 0 && allSlots.length === 0 && allLines.length === 0) {
+            showToast(`لم يُعثر على أي محتوى قابل للاستيراد في ${arr.length} ملف`, 'warn');
             return;
         }
 
@@ -449,7 +513,7 @@
             showToast('تم إلغاء الاستيراد', 'warn');
             return;
         }
-        runImport(allUnits, allLines, totals, pick.choice, pick.name);
+        runImport(allUnits, allSlots, allLines, totals, pick.choice, pick.name);
     }
 
     // ── Open a hidden multi-file picker on demand ─────────────────────────
@@ -482,7 +546,8 @@
 
         // Expose for console debugging
         window.AppImportPlan = {
-            extractUnits, extractPolylines, classifyFile, openFilePicker, chooseLayerTarget
+            extractUnits, extractSlots, extractPolylines,
+            classifyFile, openFilePicker, chooseLayerTarget
         };
     }
 

@@ -17451,6 +17451,100 @@ document.addEventListener('DOMContentLoaded', () => {
                 layerId,
                 layerName: activeLayer.name,
             };
+        },
+
+        /**
+         * Add deployment-slot markers from a units.geojson-style file.
+         *
+         * Each slot has { unit, area, sidc, score, lng, lat }. Visualization:
+         * a friendly NATO symbol whose **echelon is derived from the unit
+         * code prefix** so the slot's intended hierarchy reads at a glance:
+         *
+         *   c…   → Company       (echelon 15)
+         *   p…   → Platoon CP    (echelon 13)
+         *   b…   → Brigade CP    (echelon 18)
+         *   l…   → HQ / Logistics (echelon 14)
+         *
+         * The slot's domain (Land) and identity (Friendly) are preserved
+         * from the file's SIDC. The unit code is set as the symbol's
+         * `uniqueDesignation` so it appears as a label next to the symbol.
+         *
+         * Slot-specific metadata (unit code, area tag, score) is stamped on
+         * the marker via `_slot*` properties for a future "deploy real
+         * units to slots" pass.
+         */
+        addSlots(slots, options) {
+            if (!Array.isArray(slots) || slots.length === 0) {
+                return { added: 0, layerId: null, layerName: null };
+            }
+            options = options || {};
+
+            // The file's SIDC is authoritative — it already encodes
+            // echelon (pos 9-10), HQ flag (pos 8), and entity (pos 11-16).
+            // The unit-code (c331, p33c, b3c, lc) is just a label and is
+            // surfaced as the symbol's uniqueDesignation. Don't derive
+            // SIDC fields from it.
+            function normalizeSidc(originalSidc) {
+                return (typeof originalSidc === 'string' && originalSidc.length === 20)
+                    ? originalSidc
+                    : '10031000000000000000';
+            }
+
+            // Optional new-layer creation + activation (same pattern as addSymbolUnits)
+            if (options.newLayer) {
+                const name = (options.layerName && String(options.layerName).trim())
+                    || ('استيراد ' + (layers.length + 1));
+                const newLayer = createLayer(name);
+                layers.forEach(l => { l.active = (l === newLayer); });
+                if (typeof renderLayersList === 'function') renderLayersList();
+            }
+
+            let added = 0;
+            let firstLatLng = null;
+            for (const s of slots) {
+                try {
+                    const sidc = normalizeSidc(s.sidc);
+                    const data = {
+                        latlng: [s.lat, s.lng], // io.js fromLatLngArr → L.latLng(arr[0], arr[1])
+                        sidc,
+                        textModifiers: {
+                            size: 25,
+                            simpleStatusModifier: true,
+                            uniqueDesignation: s.unit, // shown as label by milsymbol
+                        },
+                        statusKey: 'status-operational',
+                    };
+                    const marker = createSymbolFromData(data);
+                    if (marker) {
+                        // Stamp slot metadata so a future "deploy to slot" pass
+                        // can read it back even though it's not serialized
+                        // through io.js (yet).
+                        marker._slotUnitCode = s.unit;
+                        marker._slotArea     = s.area;
+                        marker._slotScore    = s.score;
+                        addToActiveLayer(marker);
+                        if (!firstLatLng) firstLatLng = [s.lat, s.lng];
+                        added++;
+                    }
+                } catch (e) {
+                    console.warn('AppImport.addSlots: failed', s, e);
+                }
+            }
+
+            const finalLayer = getActiveLayer();
+            if (added > 0) {
+                scheduleSaveToStorage();
+                try {
+                    if (map && firstLatLng && typeof map.flyTo === 'function') {
+                        map.flyTo(firstLatLng, Math.max(map.getZoom(), 11), { duration: 0.8 });
+                    }
+                } catch (e) { /* ignore */ }
+            }
+            return {
+                added,
+                layerId:   finalLayer ? finalLayer.id   : null,
+                layerName: finalLayer ? finalLayer.name : null,
+            };
         }
     };
 

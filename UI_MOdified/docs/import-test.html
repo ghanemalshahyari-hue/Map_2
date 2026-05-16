@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اختبار استيراد الخطة · Plan Import Test</title>
+<link rel="stylesheet" href="../lib/leaflet.css">
+<style>
+  :root {
+    --bg: #0f172a;
+    --bg-2: #0b1220;
+    --panel: #111827;
+    --panel-2: #1a2434;
+    --panel-border: #1f2937;
+    --accent: #3b82f6;
+    --accent-2: #60a5fa;
+    --danger: #ef4444;
+    --warn: #eab308;
+    --ok: #22c55e;
+    --text-main: #e5e7eb;
+    --text-soft: #cbd5e1;
+    --muted: #94a3b8;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --font-ar: "Tajawal","Segoe UI",system-ui,sans-serif;
+    --font-mono: "JetBrains Mono","Cascadia Code",Consolas,"Courier New",monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--text-main);
+    font-family: var(--font-ar);
+    line-height: 1.5;
+  }
+  .app { display: flex; height: 100vh; flex-direction: row; }
+
+  /* ── SIDEBAR (right in RTL) ───────────────── */
+  .sidebar {
+    width: 360px;
+    background: var(--panel);
+    border-inline-start: 1px solid var(--panel-border);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .sidebar header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  .sidebar header h1 { margin: 0; font-size: 17px; color: var(--accent-2); }
+  .sidebar header .sub {
+    margin: 3px 0 0; color: var(--muted); font-size: 12px;
+    font-family: var(--font-mono); direction: ltr; text-align: right;
+  }
+
+  .drop-zone {
+    margin: 14px;
+    padding: 22px 14px;
+    border: 2px dashed var(--panel-border);
+    border-radius: var(--radius);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    background: rgba(59,130,246,0.04);
+    display: block;
+  }
+  .drop-zone:hover { border-color: var(--accent-2); }
+  .drop-zone.hover { border-color: var(--accent); background: rgba(59,130,246,0.12); }
+  .drop-zone .icon { font-size: 32px; }
+  .drop-zone .label { margin-top: 6px; font-weight: 600; color: var(--text-main); }
+  .drop-zone .hint  { margin-top: 4px; font-size: 12px; color: var(--muted); }
+  .drop-zone input[type=file] { display: none; }
+
+  .stats {
+    margin: 0 14px 12px;
+    padding: 10px 12px;
+    background: var(--bg-2);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-sm);
+  }
+  .stats h3 {
+    margin: 0 0 6px; font-size: 12px; color: var(--muted);
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .stats .row {
+    display: flex; justify-content: space-between;
+    padding: 3px 0; font-size: 13px;
+  }
+  .stats .row .lbl { color: var(--text-soft); }
+  .stats .row .val {
+    font-family: var(--font-mono); color: var(--accent-2); direction: ltr;
+  }
+  .stats .row.warn .val { color: var(--warn); }
+  .stats .row.err  .val { color: var(--danger); }
+  .stats .row.ok   .val { color: var(--ok); }
+
+  .units-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 14px 14px;
+  }
+  .units-list h3 {
+    margin: 8px 0 8px; font-size: 12px; color: var(--muted);
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .unit-item {
+    background: var(--bg-2);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: border-color 0.1s, background 0.1s;
+  }
+  .unit-item:hover { border-color: var(--accent); background: rgba(59,130,246,0.08); }
+  .unit-item .name   { font-weight: 600; font-size: 13px; }
+  .unit-item .sidc {
+    font-family: var(--font-mono); font-size: 10.5px;
+    color: var(--accent-2); direction: ltr; text-align: right;
+    margin-top: 2px; word-break: break-all;
+  }
+  .unit-item .coords {
+    font-family: var(--font-mono); font-size: 10.5px;
+    color: var(--muted); direction: ltr; text-align: right; margin-top: 1px;
+  }
+  .unit-item.skipped { opacity: 0.55; }
+  .unit-item.skipped .sidc { color: var(--danger); direction: rtl; text-align: right; font-family: var(--font-ar); }
+
+  .footer {
+    padding: 10px 14px;
+    font-size: 11px;
+    color: var(--muted);
+    border-top: 1px solid var(--panel-border);
+    background: var(--bg-2);
+  }
+  .footer code {
+    font-family: var(--font-mono); color: var(--text-soft);
+    direction: ltr; unicode-bidi: embed;
+  }
+
+  /* ── MAP ──────────────────────────────────── */
+  .map-host { flex: 1; position: relative; }
+  #map {
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        #0d1626,
+        #0d1626 12px,
+        #0f172a 12px,
+        #0f172a 24px
+      );
+  }
+  .leaflet-container { background: transparent; font-family: var(--font-ar); }
+  .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background: var(--panel); color: var(--text-main);
+    border: 1px solid var(--panel-border);
+  }
+  .leaflet-popup-content { margin: 8px 12px; font-size: 12px; direction: rtl; }
+  .leaflet-popup-content code {
+    font-family: var(--font-mono); color: var(--accent-2);
+    direction: ltr; unicode-bidi: embed; font-size: 11px;
+  }
+  .leaflet-control-zoom a {
+    background: var(--panel); color: var(--text-main); border-color: var(--panel-border);
+  }
+  .leaflet-control-zoom a:hover { background: var(--panel-2); }
+  .leaflet-control-attribution {
+    background: rgba(15,23,42,0.7); color: var(--muted);
+  }
+
+  .map-overlay {
+    position: absolute;
+    top: 12px; left: 12px;
+    background: rgba(15,23,42,0.85);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--text-soft);
+    z-index: 1000;
+    pointer-events: none;
+    direction: rtl;
+  }
+  .map-overlay .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    background: var(--accent); color: #fff; font-weight: 700;
+    margin-inline-end: 6px; font-family: var(--font-mono); direction: ltr;
+  }
+
+  .milsym-marker { background: transparent !important; border: none !important; }
+  .milsym-marker svg { overflow: visible; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ─── MAP (fills remaining space, appears on the LEFT in RTL) ──── -->
+  <main class="map-host">
+    <div id="map"></div>
+    <div class="map-overlay" id="mapOverlay">
+      <span class="badge">جاهز</span>
+      <span>اختر ملفاً لرؤية الرموز على الخريطة</span>
+    </div>
+  </main>
+
+  <!-- ─── SIDEBAR (RIGHT in RTL) ──────────────────────────────────── -->
+  <aside class="sidebar">
+
+    <header>
+      <h1>اختبار استيراد الخطة</h1>
+      <p class="sub">Plan Import Test · reads only <code>sidc</code> + <code>coords</code></p>
+    </header>
+
+    <label class="drop-zone" id="dropZone">
+      <div class="icon">📥</div>
+      <div class="label">اختر ملف GeoJSON أو اسحبه هنا</div>
+      <div class="hint">Choose or drop a <code>.geojson</code> file</div>
+      <input type="file" id="fileInput" accept=".geojson,.json,application/json,application/geo+json">
+    </label>
+
+    <div class="stats" id="stats" style="display:none">
+      <h3>الإحصائيات · Stats</h3>
+      <div class="row"><span class="lbl">عدد المعالم الكلي</span><span class="val" id="statTotal">0</span></div>
+      <div class="row"><span class="lbl">وحدات (kind=unit)</span><span class="val" id="statUnits">0</span></div>
+      <div class="row ok"><span class="lbl">SIDC صالح</span><span class="val" id="statValidSidc">0</span></div>
+      <div class="row ok"><span class="lbl">إحداثيات صالحة</span><span class="val" id="statValidCoords">0</span></div>
+      <div class="row warn"><span class="lbl">متجاهَل</span><span class="val" id="statSkipped">0</span></div>
+      <div class="row ok"><span class="lbl">مرسوم على الخريطة</span><span class="val" id="statPlotted">0</span></div>
+    </div>
+
+    <div class="units-list" id="unitsList"></div>
+
+    <div class="footer">
+      <div>الإطار: <code>UI_MOdified/docs/import-test.html</code></div>
+      <div>المكتبات: <code>lib/leaflet.js</code> · <code>lib/milsymbol.js</code></div>
+    </div>
+
+  </aside>
+
+</div>
+
+<!-- Vendor libs from sibling lib/ — fully offline -->
+<script src="../lib/leaflet.js"></script>
+<script src="../lib/milsymbol.js"></script>
+
+<script>
+(() => {
+  'use strict';
+
+  // ── Resolve milsymbol global (the library exports as `ms` or `milsymbol`) ──
+  const ms = window.ms || window.milsymbol;
+  if (!ms || !ms.Symbol) {
+    console.error('milsymbol library not loaded — check ../lib/milsymbol.js');
+  }
+
+  // ── Initialize Leaflet map (no required tile layer) ──
+  const map = L.map('map', {
+    center: [23.67, 54.45],   // Center of the sample file (Abu Dhabi region)
+    zoom: 11,
+    zoomControl: true,
+    attributionControl: false
+  });
+
+  // Optional: best-effort OSM tile layer if internet is available
+  try {
+    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap',
+      crossOrigin: true
+    });
+    osm.on('tileerror', () => { /* silently ignore — page still works */ });
+    osm.addTo(map);
+  } catch (e) {
+    /* offline — styled gray background remains */
+  }
+
+  // ── State ──
+  const markerLayer = L.layerGroup().addTo(map);
+  let lastResult = null;
+
+  // ────────────────────────────────────────────────────────────────────
+  // CORE EXTRACTION — read ONLY sidc + coords from each unit feature
+  // This same function will port verbatim into the main app's Chunk 02.
+  // ────────────────────────────────────────────────────────────────────
+  function extractUnits(geojson) {
+    const result = { total: 0, units: [], skipped: [] };
+    if (!geojson || !Array.isArray(geojson.features)) return result;
+    result.total = geojson.features.length;
+
+    for (const feat of geojson.features) {
+      const app = feat && feat.properties && feat.properties.app;
+      if (!app || app.kind !== 'unit') continue;        // strict: kind=="unit" only
+
+      // ── FIELD 1: SIDC ──
+      const sidc = app.sidc;
+      // ── FIELD 2: coordinates (latlng preferred, geometry as fallback) ──
+      let coords = app.latlng;
+      if (!coords && feat.geometry && feat.geometry.type === 'Point') {
+        coords = feat.geometry.coordinates;
+      }
+
+      // Validate SIDC
+      if (!sidc || typeof sidc !== 'string' || sidc.length !== 20) {
+        result.skipped.push({
+          reason: `SIDC غير صالح: "${sidc}"`,
+          name: app.name
+        });
+        continue;
+      }
+      // Validate coords
+      if (!Array.isArray(coords) || coords.length < 2 ||
+          typeof coords[0] !== 'number' || typeof coords[1] !== 'number') {
+        result.skipped.push({
+          reason: 'إحداثيات مفقودة',
+          name: app.name, sidc
+        });
+        continue;
+      }
+      const lng = coords[0], lat = coords[1];
+      if (lng < -180 || lng > 180 || lat < -90 || lat > 90) {
+        result.skipped.push({
+          reason: 'إحداثيات خارج المدى',
+          name: app.name, sidc
+        });
+        continue;
+      }
+
+      result.units.push({
+        name: app.name || '(بلا اسم)',
+        sidc,
+        lng,
+        lat
+      });
+    }
+    return result;
+  }
+
+  // ── Render units on the map ──
+  function plotUnits(units) {
+    markerLayer.clearLayers();
+    if (!units.length) return 0;
+    let plotted = 0;
+    const bounds = L.latLngBounds([]);
+
+    units.forEach(u => {
+      try {
+        const symbol = new ms.Symbol(u.sidc, { size: 30, infoFields: false });
+        const svg = symbol.asSVG();
+        const sz  = symbol.getSize();
+        const anc = symbol.getAnchor();
+
+        const icon = L.divIcon({
+          html: svg,
+          className: 'milsym-marker',
+          iconSize: [sz.width, sz.height],
+          iconAnchor: [anc.x, anc.y]
+        });
+
+        const marker = L.marker([u.lat, u.lng], { icon });
+        marker.bindPopup(
+          `<b>${escapeHtml(u.name)}</b><br>` +
+          `<code>${u.sidc}</code><br>` +
+          `<code>${u.lat.toFixed(6)}, ${u.lng.toFixed(6)}</code>`
+        );
+        marker.addTo(markerLayer);
+        bounds.extend([u.lat, u.lng]);
+        plotted++;
+      } catch (err) {
+        console.warn('Failed to render unit', u, err);
+      }
+    });
+
+    if (plotted > 0 && bounds.isValid()) {
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
+    }
+    return plotted;
+  }
+
+  // ── Update sidebar stats + list ──
+  function renderResult(result, plotted) {
+    document.getElementById('stats').style.display = 'block';
+    document.getElementById('statTotal').textContent       = result.total;
+    document.getElementById('statUnits').textContent       = result.units.length + result.skipped.length;
+    document.getElementById('statValidSidc').textContent   = result.units.length;
+    document.getElementById('statValidCoords').textContent = result.units.length;
+    document.getElementById('statSkipped').textContent     = result.skipped.length;
+    document.getElementById('statPlotted').textContent     = plotted;
+
+    const list = document.getElementById('unitsList');
+    list.innerHTML = '';
+
+    if (result.units.length > 0) {
+      const h = document.createElement('h3');
+      h.textContent = `الوحدات المستوردة (${result.units.length})`;
+      list.appendChild(h);
+      result.units.forEach(u => {
+        const div = document.createElement('div');
+        div.className = 'unit-item';
+        div.innerHTML =
+          `<div class="name">${escapeHtml(u.name)}</div>` +
+          `<div class="sidc">${u.sidc}</div>` +
+          `<div class="coords">${u.lat.toFixed(6)}, ${u.lng.toFixed(6)}</div>`;
+        div.addEventListener('click', () => {
+          map.setView([u.lat, u.lng], 14, { animate: true });
+        });
+        list.appendChild(div);
+      });
+    }
+
+    if (result.skipped.length > 0) {
+      const h = document.createElement('h3');
+      h.textContent = `تم تجاهلها (${result.skipped.length})`;
+      list.appendChild(h);
+      result.skipped.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'unit-item skipped';
+        div.innerHTML =
+          `<div class="name">${escapeHtml(s.name || '(?)')}</div>` +
+          `<div class="sidc">${escapeHtml(s.reason)}</div>`;
+        list.appendChild(div);
+      });
+    }
+
+    // Map overlay
+    const overlay = document.getElementById('mapOverlay');
+    overlay.innerHTML =
+      `<span class="badge">${plotted}</span>` +
+      `<span>وحدة مرسومة من ${result.total} معلم في الملف</span>`;
+  }
+
+  // ── File handling ──
+  function handleFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      let geojson;
+      try {
+        geojson = JSON.parse(e.target.result);
+      } catch (err) {
+        alert('خطأ في قراءة JSON: ' + err.message);
+        return;
+      }
+      const result = extractUnits(geojson);
+      lastResult = result;
+      const plotted = plotUnits(result.units);
+      renderResult(result, plotted);
+      console.log('Import result:', result);
+    };
+    reader.onerror = () => alert('فشل في قراءة الملف');
+    reader.readAsText(file);
+  }
+
+  // ── Wire up file input + drag-and-drop ──
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
+  });
+
+  ['dragenter', 'dragover'].forEach(evt =>
+    dropZone.addEventListener(evt, (e) => {
+      e.preventDefault(); e.stopPropagation();
+      dropZone.classList.add('hover');
+    })
+  );
+  ['dragleave', 'drop'].forEach(evt =>
+    dropZone.addEventListener(evt, (e) => {
+      e.preventDefault(); e.stopPropagation();
+      dropZone.classList.remove('hover');
+    })
+  );
+  dropZone.addEventListener('drop', (e) => {
+    const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+
+  // ── Utility ──
+  function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // Expose for console debugging / negative tests
+  window.__test = {
+    extractUnits, plotUnits,
+    get last() { return lastResult; },
+    map
+  };
+
+})();
+</script>
+
+</body>
+</html>

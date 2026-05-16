@@ -83,6 +83,15 @@
                     <span data-i18n="tool-units">Units</span>
                 </button>
 
+                <button class="tool-rail-btn" data-tool="import" type="button" title="استيراد خطة · Import Plan (reads sidc + coords only)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span>Import</span>
+                </button>
+
                 <div class="tool-rail-spacer"></div>
 
                 <button class="tool-rail-btn" data-tool="layers" type="button" data-i18n-title="tool-layers" title="Layers">
@@ -1481,11 +1490,12 @@
     <script src="free_draw_signature.js?v=3"></script>
     <script src="../lib/milsymbol.js"></script>
     <script src="map-engine.js"></script>
-    <script src="app.js?v=27"></script>
+    <script src="app.js?v=29"></script>
     <script src="units-map.js"></script>
     <script src="units-orbat-dock.js?v=1"></script>
     <script src="sidebar-minimize.js?v=1"></script>
     <script src="tool-rail.js"></script>
+    <script src="import-plan.js?v=3"></script>
     <script src="map-hide-panels.js?v=1"></script>
 
     <!-- New modular panel system (ES modules — run after app.js) -->

@@ -17118,4 +17118,80 @@ document.addEventListener('DOMContentLoaded', () => {
         // Final safety net.
         setTimeout(safeRestamp, 600);
     });
+
+    // ── External import facade ─────────────────────────────────────────
+    // Exposes a minimal entry point so `import-plan.js` can add symbol
+    // features into the active plan without touching internals.
+    //
+    // Args:
+    //   units   — array of { sidc, lng, lat }
+    //   options — optional { newLayer: bool, layerName: string }
+    //             If newLayer is true, a new layer is created and activated
+    //             before the markers are placed.
+    //
+    // Returns: { added, layerId, layerName }
+    //
+    // NOTE: io.js's fromLatLngArr() expects [lat, lng] order — see
+    // io.js:1389-1390 (toLatLngArr stores [ll.lat, ll.lng] and the read
+    // side mirrors that). Pass coords in that order so symbols land at the
+    // right place on the map and round-trip through scheduleSaveToStorage()
+    // → exportLayersData() correctly.
+    window.AppImport = {
+        addSymbolUnits(units, options) {
+            if (!Array.isArray(units)) return { added: 0, layerId: null, layerName: null };
+            options = options || {};
+
+            // Optionally create a new layer and activate it BEFORE adding markers
+            let targetLayer = null;
+            if (options.newLayer) {
+                const name = (options.layerName && String(options.layerName).trim())
+                    || ('استيراد ' + (layers.length + 1));
+                targetLayer = createLayer(name);
+                // createLayer() deactivates all existing layers but only
+                // marks the new one active when it is the first ever. Force
+                // the activation here so addToActiveLayer() places markers
+                // into the new layer.
+                layers.forEach(l => { l.active = (l === targetLayer); });
+                if (typeof renderLayersList === 'function') renderLayersList();
+            }
+
+            let added = 0;
+            for (const u of units) {
+                try {
+                    const data = {
+                        latlng: [u.lat, u.lng],
+                        sidc: u.sidc,
+                        textModifiers: { size: 25, simpleStatusModifier: true },
+                        statusKey: 'status-operational',
+                    };
+                    const marker = createSymbolFromData(data);
+                    if (marker) {
+                        addToActiveLayer(marker);
+                        added++;
+                    }
+                } catch (e) {
+                    console.warn('AppImport: failed to add unit', u, e);
+                }
+            }
+
+            const finalLayer = getActiveLayer();
+            if (added > 0) {
+                scheduleSaveToStorage();
+                // Fly the map to the first imported unit so the user sees
+                // the new symbols immediately. Without this, units imported
+                // far from the current view stay invisible until the user
+                // pans manually.
+                try {
+                    if (map && typeof map.flyTo === 'function') {
+                        map.flyTo([units[0].lat, units[0].lng], Math.max(map.getZoom(), 11), { duration: 0.8 });
+                    }
+                } catch (e) { /* ignore */ }
+            }
+            return {
+                added,
+                layerId:   finalLayer ? finalLayer.id   : null,
+                layerName: finalLayer ? finalLayer.name : null,
+            };
+        }
+    };
 });

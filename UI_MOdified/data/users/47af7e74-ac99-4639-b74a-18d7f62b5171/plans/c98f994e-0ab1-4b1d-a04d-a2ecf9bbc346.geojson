@@ -19,18 +19,330 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          55.2777099609375,
-          24.632038149596895
+          54.4744273354102,
+          23.460615033219057
         ]
       },
       "properties": {
         "app": {
           "kind": "symbol",
           "latlng": [
-            55.2777099609375,
-            24.632038149596895
+            54.4744273354102,
+            23.460615033219057
           ],
-          "sidc": "10031000001200000000",
+          "sidc": "10031000181100000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.394032185749566,
+          23.609518651082
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.394032185749566,
+            23.609518651082
+          ],
+          "sidc": "10031000161205000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.51098154665956,
+          23.609161093800587
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.51098154665956,
+            23.609161093800587
+          ],
+          "sidc": "10031000161303000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.4744273354102,
+          23.502341306338955
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.4744273354102,
+            23.502341306338955
+          ],
+          "sidc": "10031000161303000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.34965663176139,
+          23.710587244180108
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.34965663176139,
+            23.710587244180108
+          ],
+          "sidc": "10031000151213000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.464485562647276,
+          23.726053705661442
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.464485562647276,
+            23.726053705661442
+          ],
+          "sidc": "10031000151211000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.512344711930425,
+          23.425843138952473
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.512344711930425,
+            23.425843138952473
+          ],
+          "sidc": "10031000151100000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.419849182274746,
+          23.729662142214853
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.419849182274746,
+            23.729662142214853
+          ],
+          "sidc": "10031000151211000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.52839081828188,
+          23.72816980906078
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.52839081828188,
+            23.72816980906078
+          ],
+          "sidc": "10031000151303000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.43650995888997,
+          23.425843138952473
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.43650995888997,
+            23.425843138952473
+          ],
+          "sidc": "10031000151213000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.35982138576145,
+          23.62693146261944
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.35982138576145,
+            23.62693146261944
+          ],
+          "sidc": "10031000151100000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.47178522820699,
+          23.62911113144123
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.47178522820699,
+            23.62911113144123
+          ],
+          "sidc": "10031000151214000000",
+          "textModifiers": {
+            "size": 25,
+            "simpleStatusModifier": true
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.4744273354102,
+          23.51154903800118
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.4744273354102,
+            23.51154903800118
+          ],
+          "sidc": "10031000151210000000",
           "textModifiers": {
             "size": 25,
             "simpleStatusModifier": true

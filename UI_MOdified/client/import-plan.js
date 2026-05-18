@@ -104,6 +104,41 @@
         return { slots, skipped };
     }
 
+    // ── Extract attack arrows (enemy.geojson style) ───────────────────────
+    // A feature is an attack arrow iff its geometry is a LineString and
+    // `properties.kind` is one of the app's CATK-family typeIds. Affiliation
+    // (`hostile` | `friendly`) is read from `properties.side`; the role
+    // (`main` | `supporting` | `feint`) is preserved as metadata.
+    const ATTACK_KINDS = new Set(['attack', 'main-attack', 'counterattack', 'counterattack-by-fire']);
+    function extractAttackArrows(geojson) {
+        const arrows = [], skipped = [];
+        if (!Array.isArray(geojson?.features)) return { arrows, skipped };
+
+        for (const feat of geojson.features) {
+            const geom = feat?.geometry;
+            const props = feat?.properties;
+            if (!geom || geom.type !== 'LineString') continue;
+            if (!props || !ATTACK_KINDS.has(props.kind)) continue;
+
+            const rawCoords = Array.isArray(geom.coordinates) ? geom.coordinates : [];
+            const coords = rawCoords
+                .filter(c => Array.isArray(c) && c.length >= 2 &&
+                             typeof c[0] === 'number' && typeof c[1] === 'number')
+                .map(c => [c[0], c[1]]); // drop optional z
+            if (coords.length < 2) {
+                skipped.push({ reason: 'less than 2 valid points', kind: props.kind });
+                continue;
+            }
+            arrows.push({
+                kind: props.kind,
+                side: props.side || 'hostile',
+                role: props.role || 'main',
+                coords,
+            });
+        }
+        return { arrows, skipped };
+    }
+
     // ── Extract boundary polylines + demote interior fronts ───────────────
     // Two-pass:
     //   Pass 1 — collect every LineString with side ∈ {front,other}, tally
@@ -166,8 +201,9 @@
     // honestly preview the rendering before the user confirms.
     function classifyFile(geojson) {
         let units = 0, slots = 0, frontLines = 0, otherLines = 0, otherFeatures = 0, interiorFronts = 0;
+        let attackArrows = 0, hostileSlots = 0;
         const total = Array.isArray(geojson?.features) ? geojson.features.length : 0;
-        if (!total) return { units, slots, frontLines, otherLines, otherFeatures, interiorFronts, total };
+        if (!total) return { units, slots, hostileSlots, frontLines, otherLines, otherFeatures, interiorFronts, attackArrows, total };
 
         // Tally endpoint frequencies once for the demotion preview.
         const freq = new Map();
@@ -190,9 +226,18 @@
             const props = feat?.properties;
             const geomType = feat?.geometry?.type;
             if (app?.kind === 'unit') units++;
+            else if (geomType === 'LineString' && props && ATTACK_KINDS.has(props.kind)) {
+                // Attack arrow: kind ∈ CATK family on a LineString
+                attackArrows++;
+            }
             else if (geomType === 'Point' && !app && props && props.sidc && props.unit) {
                 // Slot file shape: flat sidc + unit, no `app` envelope.
                 slots++;
+                // Detect hostile slots so the modal shows the right wording.
+                // SIDC position 3 = affiliation: '6' = Hostile.
+                if (typeof props.sidc === 'string' && props.sidc.charAt(3) === '6') {
+                    hostileSlots++;
+                }
             }
             else if (geomType === 'LineString' && (side === 'front' || side === 'other')) {
                 if (side === 'front') {
@@ -205,7 +250,7 @@
             }
             else otherFeatures++;
         }
-        return { units, slots, frontLines, otherLines, otherFeatures, interiorFronts, total };
+        return { units, slots, hostileSlots, frontLines, otherLines, otherFeatures, interiorFronts, attackArrows, total };
     }
 
     // ── Brief toast at the top-center ─────────────────────────────────────
@@ -239,7 +284,17 @@
     function summariseFound(c) {
         const parts = [];
         if (c.units > 0) parts.push(`<strong style="color:#22c55e;">${c.units}</strong> وحدة`);
-        if (c.slots > 0) parts.push(`<strong style="color:#fbbf24;">${c.slots}</strong> موقع نشر`);
+        if (c.attackArrows > 0) parts.push(`<strong style="color:#ef4444;">${c.attackArrows}</strong> سهم هجوم`);
+        if (c.slots > 0) {
+            const hostile = c.hostileSlots || 0;
+            if (hostile > 0 && hostile === c.slots) {
+                parts.push(`<strong style="color:#ef4444;">${c.slots}</strong> موقع نشر معادٍ`);
+            } else if (hostile > 0) {
+                parts.push(`<strong style="color:#fbbf24;">${c.slots}</strong> موقع نشر (${c.slots - hostile} صديق + ${hostile} معادٍ)`);
+            } else {
+                parts.push(`<strong style="color:#fbbf24;">${c.slots}</strong> موقع نشر`);
+            }
+        }
         const lines = c.frontLines + c.otherLines;
         if (lines > 0) {
             const breakdown = [];
@@ -355,7 +410,7 @@
     }
 
     // ── Run the actual import via AppImport ──────────────────────────────
-    function runImport(units, slots, lines, counts, choice, name) {
+    function runImport(units, slots, arrows, lines, counts, choice, name) {
         if (!window.AppImport) {
             showToast('فشل: AppImport غير متوفر (تحقق من تحميل app.js)', 'error');
             return;
@@ -368,7 +423,8 @@
         const frontLines = lines.filter(l => l.side === 'front');
         const otherLines = lines.filter(l => l.side === 'other');
 
-        let addedUnits = 0, addedSlots = 0, addedFront = 0, addedOther = 0, addedObstacles = 0;
+        let addedUnits = 0, addedSlots = 0, addedArrows = 0,
+            addedFront = 0, addedOther = 0, addedObstacles = 0;
         let layerName = null;
         let layerCreated = false;
 
@@ -398,7 +454,19 @@
             showToast('AppImport.addSlots غير متوفر — حدّث app.js', 'warn');
         }
 
-        // 3) Front lines → scalloped TMG + circle-X obstacles
+        // 3) Attack arrows → CATK-family parametric arrow (tmg-group + typeId)
+        if (arrows.length > 0 && typeof window.AppImport.addAttackArrows === 'function') {
+            const r = window.AppImport.addAttackArrows(arrows, optsFor());
+            addedArrows = r.added || 0;
+            if (addedArrows > 0) {
+                if (!layerName) layerName = r.layerName;
+                if (baseOpts.newLayer) layerCreated = true;
+            }
+        } else if (arrows.length > 0) {
+            showToast('AppImport.addAttackArrows غير متوفر — حدّث app.js', 'warn');
+        }
+
+        // 4) Front lines → scalloped TMG + circle-X obstacles
         if (frontLines.length > 0 && typeof window.AppImport.addFrontLines === 'function') {
             const r = window.AppImport.addFrontLines(frontLines, optsFor());
             addedFront     = r.addedLines     || 0;
@@ -426,7 +494,12 @@
         // Toast — show whichever counts apply
         const parts = [];
         if (addedUnits)     parts.push(`${addedUnits} وحدة`);
-        if (addedSlots)     parts.push(`${addedSlots} موقع نشر`);
+        if (addedSlots) {
+            const hostile = counts.hostileSlots || 0;
+            if (hostile > 0 && hostile === addedSlots) parts.push(`${addedSlots} موقع نشر معادٍ`);
+            else                                       parts.push(`${addedSlots} موقع نشر`);
+        }
+        if (addedArrows)    parts.push(`${addedArrows} سهم هجوم`);
         if (addedFront)     parts.push(`${addedFront} خط أمامي`);
         if (addedOther)     parts.push(`${addedOther} حافة`);
         if (addedObstacles) parts.push(`${addedObstacles} عقبة`);
@@ -438,7 +511,7 @@
             showToast(msg, 'info');
         }
         console.log('[Import] result:', {
-            addedUnits, addedSlots, addedFront, addedOther, addedObstacles, layerName, counts
+            addedUnits, addedSlots, addedArrows, addedFront, addedOther, addedObstacles, layerName, counts
         });
     }
 
@@ -462,13 +535,20 @@
         const results = await Promise.all(arr.map(readFileAsJson));
 
         // Aggregate across all files
-        const totals = { units: 0, slots: 0, frontLines: 0, otherLines: 0, otherFeatures: 0, interiorFronts: 0, total: 0 };
-        const allUnits = [];
-        const allSlots = [];
-        const allLines = [];
+        const totals = {
+            units: 0, slots: 0, hostileSlots: 0,
+            attackArrows: 0,
+            frontLines: 0, otherLines: 0,
+            otherFeatures: 0, interiorFronts: 0, total: 0,
+        };
+        const allUnits  = [];
+        const allSlots  = [];
+        const allArrows = [];
+        const allLines  = [];
         const fileNames = [];
-        const errors = [];
+        const errors    = [];
 
+        let fileIdx = 0;
         for (const r of results) {
             if (r.error || !r.geojson) {
                 errors.push(`${r.file.name}: ${r.error || 'invalid JSON'}`);
@@ -478,11 +558,21 @@
             const counts = classifyFile(r.geojson);
             totals.units          += counts.units;
             totals.slots          += counts.slots;
+            totals.hostileSlots   += counts.hostileSlots   || 0;
+            totals.attackArrows   += counts.attackArrows   || 0;
             totals.frontLines     += counts.frontLines;
             totals.otherLines     += counts.otherLines;
             totals.otherFeatures  += counts.otherFeatures;
             totals.interiorFronts += counts.interiorFronts || 0;
             totals.total          += counts.total;
+
+            // One formationId per FILE — but only if the file contains an
+            // attack arrow, since a "formation" implies an attack vector +
+            // the units that move along it. Friendly slot-only files stay
+            // untagged so they don't get accidentally grouped with arrows.
+            const fileFormationId = (counts.attackArrows > 0)
+                ? ('formation-' + Date.now().toString(36) + '-' + (fileIdx++))
+                : null;
 
             if (counts.units > 0) {
                 const { units } = extractUnits(r.geojson);
@@ -490,7 +580,15 @@
             }
             if (counts.slots > 0) {
                 const { slots } = extractSlots(r.geojson);
+                if (fileFormationId) {
+                    for (const s of slots) s._formationId = fileFormationId;
+                }
                 allSlots.push(...slots);
+            }
+            if (counts.attackArrows > 0) {
+                const { arrows } = extractAttackArrows(r.geojson);
+                for (const a of arrows) a._formationId = fileFormationId;
+                allArrows.push(...arrows);
             }
             if (counts.frontLines + counts.otherLines > 0) {
                 const { lines } = extractPolylines(r.geojson);
@@ -500,10 +598,10 @@
 
         if (errors.length) {
             showToast('خطأ في قراءة بعض الملفات: ' + errors.join(' · '), 'error');
-            if (allUnits.length === 0 && allSlots.length === 0 && allLines.length === 0) return;
+            if (allUnits.length === 0 && allSlots.length === 0 && allArrows.length === 0 && allLines.length === 0) return;
         }
 
-        if (allUnits.length === 0 && allSlots.length === 0 && allLines.length === 0) {
+        if (allUnits.length === 0 && allSlots.length === 0 && allArrows.length === 0 && allLines.length === 0) {
             showToast(`لم يُعثر على أي محتوى قابل للاستيراد في ${arr.length} ملف`, 'warn');
             return;
         }
@@ -513,7 +611,7 @@
             showToast('تم إلغاء الاستيراد', 'warn');
             return;
         }
-        runImport(allUnits, allSlots, allLines, totals, pick.choice, pick.name);
+        runImport(allUnits, allSlots, allArrows, allLines, totals, pick.choice, pick.name);
     }
 
     // ── Open a hidden multi-file picker on demand ─────────────────────────
@@ -546,7 +644,7 @@
 
         // Expose for console debugging
         window.AppImportPlan = {
-            extractUnits, extractSlots, extractPolylines,
+            extractUnits, extractSlots, extractAttackArrows, extractPolylines,
             classifyFile, openFilePicker, chooseLayerTarget
         };
     }

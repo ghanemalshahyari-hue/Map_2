@@ -3115,6 +3115,18 @@ details[open] > .details-summary {
 .leaflet-div-icon.catk-unified-tmg { background: transparent !important; border: none !important; }
 .leaflet-div-icon.catk-unified-tmg.placement-preview { pointer-events: none !important; }
 
+/* The CATK arrow's divIcon bounding box can be hundreds of pixels wide at
+   theatre zoom; without this rule the wrapper <div> swallows every click
+   in that rectangle and the map can't pan. Make the container/SVG ignore
+   pointer events, re-enable them only on the stroke of arrow rails/heads
+   and the visible area of the inner label. Drag still fires because the
+   mousedown bubbles from the path up to the divIcon, where Leaflet's
+   marker-drag listener is attached. */
+.leaflet-div-icon.catk-unified-tmg,
+.leaflet-div-icon.catk-unified-tmg > svg { pointer-events: none; }
+.leaflet-div-icon.catk-unified-tmg svg path { pointer-events: stroke; }
+.leaflet-div-icon.catk-unified-tmg svg text { pointer-events: visiblePainted; }
+
 /* Map text labels */
 .map-text-label { background: transparent !important; border: none !important; }
 .map-text-label-frame { background: transparent; }

@@ -1,0 +1,43 @@
+{
+  "type": "FeatureCollection",
+  "name": "falklands_enemy",
+  "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+  "features": [
+
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [ -58.95, -51.40 ],
+          [ -59.10, -51.20 ],
+          [ -59.30, -51.05 ]
+        ]
+      },
+      "properties": {
+        "kind":    "attack",
+        "side":    "hostile",
+        "echelon": "battalion",
+        "role":    "main"
+      }
+    },
+
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -59.0108, -51.3396 ] }, "properties": { "unit": "p11c", "area": "area-0-0-0", "sidc": "10061002161211020000", "score": 5.0 } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -58.9758, -51.3577 ] }, "properties": { "unit": "c111", "area": "area-0-0-0", "sidc": "10061000151211020000", "score": 5.0 } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -59.0230, -51.3443 ] }, "properties": { "unit": "c112", "area": "area-0-0-1", "sidc": "10061000151211020000", "score": 5.0 } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -59.0337, -51.3167 ] }, "properties": { "unit": "c113", "area": "area-0-0-2", "sidc": "10061000151211020000", "score": 5.0 } },
+
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -59.1021, -51.2481 ] }, "properties": { "unit": "p12c", "area": "area-0-1-0", "sidc": "10061002161211020000", "score": 5.0 } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -59.0747, -51.2586 ] }, "properties": { "unit": "c121", "area": "area-0-1-0", "sidc": "10061000151211020000", "score": 5.0 } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -59.1143, -51.2529 ] }, "properties": { "unit": "c122", "area": "area-0-1-1", "sidc": "10061000151211020000", "score": 5.0 } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -59.1250, -51.2253 ] }, "properties": { "unit": "c123", "area": "area-0-1-2", "sidc": "10061000151211020000", "score": 5.0 } },
+
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -59.2011, -51.1491 ] }, "properties": { "unit": "p13c", "area": "area-0-2-0", "sidc": "10061002161211020000", "score": 5.0 } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -59.1737, -51.1595 ] }, "properties": { "unit": "c131", "area": "area-0-2-0", "sidc": "10061000151211020000", "score": 5.0 } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -59.2133, -51.1538 ] }, "properties": { "unit": "c132", "area": "area-0-2-1", "sidc": "10061000151211020000", "score": 5.0 } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -59.2239, -51.1262 ] }, "properties": { "unit": "c133", "area": "area-0-2-2", "sidc": "10061000151211020000", "score": 5.0 } },
+
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [ -59.2772, -51.0729 ] }, "properties": { "unit": "b1c",  "area": "area-0-0-0", "sidc": "10061002161211020000", "score": 5.0 } }
+
+  ]
+}

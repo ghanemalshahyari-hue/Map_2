@@ -17411,22 +17411,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
+            // Single __layers entry pointing at the active layer's id.
+            // importLayersData(merge=true, { mergeIntoLayerId }) funnels
+            // every feature straight into that existing layer instead of
+            // creating a fresh "(imported)" clone.
             const fc = {
                 type: 'FeatureCollection',
                 app: { version: 3, appName: 'tactical-map' },
-                __layers: layers.map(l => ({
-                    id:      l.id,
-                    name:    l.name,
-                    visible: l.visible !== false,
-                    active:  !!l.active,
-                })),
+                __layers: [{
+                    id:      layerId,
+                    name:    activeLayer.name,
+                    visible: activeLayer.visible !== false,
+                    active:  true,
+                }],
                 __folders: [],
                 features
             };
 
             try {
                 if (window.AppIO && typeof window.AppIO.importLayersData === 'function') {
-                    window.AppIO.importLayersData(JSON.stringify(fc), /*silent*/ true, /*merge*/ true);
+                    window.AppIO.importLayersData(
+                        JSON.stringify(fc),
+                        /*silent*/ true,
+                        /*merge*/  true,
+                        { mergeIntoLayerId: layerId }
+                    );
                 } else {
                     console.warn('AppImport.addFrontLines: window.AppIO.importLayersData unavailable');
                 }
@@ -17448,6 +17457,129 @@ document.addEventListener('DOMContentLoaded', () => {
             return {
                 addedLines:     validLines.length,
                 addedObstacles: endpoints.length,
+                layerId,
+                layerName: activeLayer.name,
+            };
+        },
+
+        /**
+         * Add an "attack" / "main-attack" / "counterattack" parametric arrow
+         * (CATK family) per input record. Each arrow becomes a tmg-group
+         * with catkMultiPoint:true so io.js auto-derives the head geometry
+         * from the polyline vertices via catkDeriveArrowParamsFromLegacyPoints.
+         *
+         * `arrows[i]` shape: { kind, side, role, coords:[[lng,lat],…] }
+         * - kind  ∈ {attack, main-attack, counterattack, counterattack-by-fire}
+         * - side  ∈ {hostile, friendly}     → drives color (red vs blue)
+         * - role  ∈ {main, supporting, feint} → preserved as metadata
+         * - coords: first vertex = arrowhead/tip, last vertex = tail/origin
+         */
+        addAttackArrows(arrows, options) {
+            if (!Array.isArray(arrows) || arrows.length === 0) {
+                return { added: 0, layerId: null, layerName: null };
+            }
+            options = options || {};
+
+            // Optional new-layer creation + activation
+            if (options.newLayer) {
+                const name = (options.layerName && String(options.layerName).trim())
+                    || ('استيراد ' + (layers.length + 1));
+                const newLayer = createLayer(name);
+                layers.forEach(l => { l.active = (l === newLayer); });
+                if (typeof renderLayersList === 'function') renderLayersList();
+            }
+
+            const activeLayer = getActiveLayer();
+            if (!activeLayer) {
+                return { added: 0, layerId: null, layerName: null };
+            }
+            const layerId = activeLayer.id;
+
+            const features = [];
+            let firstTip = null;
+            let added = 0;
+
+            for (const arr of arrows) {
+                if (!Array.isArray(arr.coords) || arr.coords.length < 2) continue;
+                const lngLat = arr.coords
+                    .filter(c => Array.isArray(c) && typeof c[0] === 'number' && typeof c[1] === 'number')
+                    .map(c => [c[0], c[1]]);
+                if (lngLat.length < 2) continue;
+
+                // Color from affiliation. Hostile = red, friendly = blue.
+                const color = (arr.side === 'friendly') ? '#3b82f6' : '#ef4444';
+
+                const appProps = {
+                    kind:           'tmg-group',
+                    points:         lngLat,
+                    typeId:         arr.kind, // 'attack' | 'main-attack' | 'counterattack' | …
+                    catkMultiPoint: true,     // tell io.js to use parametric arrow renderer
+                    color,
+                    filled:         false,
+                    dashed:         (arr.kind && arr.kind.indexOf('counterattack') === 0), // counterattack is doctrinally dashed
+                    strokeWidth:    1.5,
+                    // Preserve the import metadata for later AI / AAR reads.
+                    importSide: arr.side || 'hostile',
+                    importRole: arr.role || 'main',
+                };
+                // Formation id ties this arrow to the slot markers imported
+                // from the same file so AppFormation.translate / war-game can
+                // move them as one tactical entity.
+                if (arr._formationId) appProps.formationId = arr._formationId;
+                features.push({
+                    type: 'Feature',
+                    geometry: { type: 'LineString', coordinates: lngLat },
+                    properties: { layerId, app: appProps }
+                });
+                if (!firstTip) firstTip = lngLat[0]; // tip = first vertex (CATK convention)
+                added++;
+            }
+
+            if (features.length === 0) {
+                return { added: 0, layerId, layerName: activeLayer.name };
+            }
+
+            // Single __layers entry pointing at the active layer's id, and
+            // tell importLayersData to merge straight into it instead of
+            // creating an "(imported)" clone.
+            const fc = {
+                type: 'FeatureCollection',
+                app: { version: 3, appName: 'tactical-map' },
+                __layers: [{
+                    id:      layerId,
+                    name:    activeLayer.name,
+                    visible: activeLayer.visible !== false,
+                    active:  true,
+                }],
+                __folders: [],
+                features
+            };
+
+            try {
+                if (window.AppIO && typeof window.AppIO.importLayersData === 'function') {
+                    window.AppIO.importLayersData(
+                        JSON.stringify(fc),
+                        /*silent*/ true,
+                        /*merge*/  true,
+                        { mergeIntoLayerId: layerId }
+                    );
+                } else {
+                    console.warn('AppImport.addAttackArrows: window.AppIO.importLayersData unavailable');
+                }
+            } catch (e) {
+                console.warn('AppImport.addAttackArrows: importLayersData failed', e);
+            }
+
+            scheduleSaveToStorage();
+
+            try {
+                if (map && firstTip && typeof map.flyTo === 'function') {
+                    map.flyTo([firstTip[1], firstTip[0]], Math.max(map.getZoom(), 9), { duration: 0.8 });
+                }
+            } catch (e) { /* ignore */ }
+
+            return {
+                added,
                 layerId,
                 layerName: activeLayer.name,
             };
@@ -17508,7 +17640,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         latlng: [s.lat, s.lng], // io.js fromLatLngArr → L.latLng(arr[0], arr[1])
                         sidc,
                         textModifiers: {
-                            size: 25,
+                            size: 13,
                             simpleStatusModifier: true,
                             uniqueDesignation: s.unit, // shown as label by milsymbol
                         },
@@ -17522,6 +17654,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         marker._slotUnitCode = s.unit;
                         marker._slotArea     = s.area;
                         marker._slotScore    = s.score;
+                        // Formation id (set when the source file also has an
+                        // attack arrow). Persisted through io.js so it
+                        // survives save/load.
+                        if (s._formationId) marker._formationId = s._formationId;
                         addToActiveLayer(marker);
                         if (!firstLatLng) firstLatLng = [s.lat, s.lng];
                         added++;
@@ -17546,6 +17682,111 @@ document.addEventListener('DOMContentLoaded', () => {
                 layerName: finalLayer ? finalLayer.name : null,
             };
         }
+    };
+
+    // ── Formation facade ───────────────────────────────────────────────
+    // A "formation" is the set of elements imported from one enemy.geojson-
+    // style file: the attack arrow plus the slot markers that march along
+    // it. They share a formationId (stamped by import-plan.js → addSlots /
+    // addAttackArrows), persisted through io.js.
+    //
+    // The translate() method moves every member by the same lat/lng delta —
+    // the building block for shift-drag group move (UI work, next pass) and
+    // the war-game animation engine (which will call translate() each frame
+    // along the arrow's path).
+    function formationIdOf(el) {
+        if (!el) return null;
+        if (el._formationId) return el._formationId;
+        if (el._tmgData && el._tmgData.formationId) return el._tmgData.formationId;
+        return null;
+    }
+    window.AppFormation = {
+        /** Return every formation id present in the plan with its member count. */
+        listFormations() {
+            const counts = new Map();
+            for (const layer of layers) {
+                for (const el of layer.elements) {
+                    const fid = formationIdOf(el);
+                    if (!fid) continue;
+                    counts.set(fid, (counts.get(fid) || 0) + 1);
+                }
+            }
+            return Array.from(counts, ([id, memberCount]) => ({ id, memberCount }));
+        },
+        /** All elements belonging to a given formation, across all layers. */
+        getMembers(formationId) {
+            const out = [];
+            if (!formationId) return out;
+            for (const layer of layers) {
+                for (const el of layer.elements) {
+                    if (formationIdOf(el) === formationId) out.push(el);
+                }
+            }
+            return out;
+        },
+        /** Lat/lng centroid of a formation, or null if it has no positioned members. */
+        centroid(formationId) {
+            const members = this.getMembers(formationId);
+            if (!members.length) return null;
+            let sumLat = 0, sumLng = 0, n = 0;
+            for (const m of members) {
+                let ll = null;
+                if (m instanceof L.Marker && typeof m.getLatLng === 'function') {
+                    ll = m.getLatLng();
+                } else if (m instanceof L.LayerGroup && m._tmgData) {
+                    if (m._tmgData.arrowParams && m._tmgData.arrowParams.tip) {
+                        ll = m._tmgData.arrowParams.tip;
+                    } else if (Array.isArray(m._tmgData.points) && m._tmgData.points[0]) {
+                        ll = m._tmgData.points[0];
+                    }
+                }
+                if (ll && typeof ll.lat === 'number' && typeof ll.lng === 'number') {
+                    sumLat += ll.lat;
+                    sumLng += ll.lng;
+                    n++;
+                }
+            }
+            return n ? L.latLng(sumLat / n, sumLng / n) : null;
+        },
+        /**
+         * Translate every member of a formation by a fixed lat/lng delta.
+         * Markers move via setLatLng; CATK arrows shift their arrowParams.tip
+         * (which catkApplyArrowParamsToData re-derives points + visuals from).
+         * Returns the count of elements moved.
+         */
+        translate(formationId, dLat, dLng) {
+            if (!formationId || !isFinite(dLat) || !isFinite(dLng)) return 0;
+            const members = this.getMembers(formationId);
+            let moved = 0;
+            for (const m of members) {
+                try {
+                    if (m instanceof L.Marker && typeof m.setLatLng === 'function' && typeof m.getLatLng === 'function') {
+                        const ll = m.getLatLng();
+                        m.setLatLng(L.latLng(ll.lat + dLat, ll.lng + dLng));
+                        moved++;
+                    } else if (m instanceof L.LayerGroup && m._tmgData && m._tmgData.isCatkMultiPoint) {
+                        const data = m._tmgData;
+                        if (data.arrowParams && data.arrowParams.tip) {
+                            data.arrowParams = normalizeCatkArrowParams({
+                                ...data.arrowParams,
+                                tip: L.latLng(data.arrowParams.tip.lat + dLat, data.arrowParams.tip.lng + dLng)
+                            });
+                            catkApplyArrowParamsToData(data);
+                        } else if (Array.isArray(data.points)) {
+                            data.points = data.points.map(p => L.latLng(p.lat + dLat, p.lng + dLng));
+                        }
+                        if (data.headMarker) syncCatkHeadMarkerToPoints(data.headMarker, data);
+                        moved++;
+                    }
+                } catch (e) {
+                    console.warn('AppFormation.translate: member failed', m, e);
+                }
+            }
+            if (moved > 0 && typeof scheduleSaveToStorage === 'function') {
+                scheduleSaveToStorage();
+            }
+            return moved;
+        },
     };
 
     // ── War-Game snapshot facade ───────────────────────────────────────

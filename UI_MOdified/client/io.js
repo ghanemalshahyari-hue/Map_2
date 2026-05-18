@@ -428,6 +428,7 @@
                 catkOut.arrowParams = toAppArrowParams(el._tmgData.arrowParams);
                 catkOut.parametricArrow = true;
             }
+            if (el._tmgData.formationId) catkOut.formationId = el._tmgData.formationId;
             return catkOut;
         }
         if (el instanceof L.LayerGroup && el._tmgData?.segments) {
@@ -469,6 +470,7 @@
                 statusKey: el._statusKey,
             };
             if (el._symbolRotationDeg) out.symbolRotationDeg = el._symbolRotationDeg;
+            if (el._formationId) out.formationId = el._formationId;
             const circles = el._rangeCircles || [];
             if (circles.length) out.rangeCircles = circles.map(c => ({ ...c._rangeData }));
             const sectors = el._rangeSectors || [];
@@ -626,12 +628,12 @@
                 ) : []
             );
         }
-        if (app.arrowParams && app.arrowParams.tip) {
-            el.arrowParams = { ...app.arrowParams, tip: flipPair(app.arrowParams.tip) };
-        }
-        if (app.lockedArrowParams && app.lockedArrowParams.tip) {
-            el.lockedArrowParams = { ...app.lockedArrowParams, tip: flipPair(app.lockedArrowParams.tip) };
-        }
+        // Leave arrowParams.tip in [lng,lat] order — fromAppArrowParams() at
+        // the consumer site converts it to L.latLng via geoCoordToLatLng,
+        // which already expects [lng,lat]. Flipping here causes a double
+        // conversion that renders the arrow at (lat≈52, lng≈24) → off-map.
+        if (app.arrowParams)       el.arrowParams       = { ...app.arrowParams };
+        if (app.lockedArrowParams) el.lockedArrowParams = { ...app.lockedArrowParams };
 
         // For free-shape kinds, properties.app drops the coord array; rebuild it
         // from the feature's geometry (which is the source of truth for these).
@@ -687,7 +689,7 @@
      * Accepts either v3 (extended GeoJSON FeatureCollection) or legacy v2 plans;
      * v2 is migrated in-memory via window.AppPlanMigrate before the v3 load path.
      */
-    function importLayersData(jsonStr, silent, merge) {
+    function importLayersData(jsonStr, silent, merge, opts) {
         const {
             getLayers, getFolders, getActionHistory, getRedoHistory,
             getMap, getInstructionText, resetIdCounters,
@@ -782,14 +784,31 @@
             resetIdCounters();
         }
 
+        // Optional: merge into an existing layer by id instead of creating
+        // a new "(imported)" layer per __layers entry. Used by callers that
+        // want to inject features into the user's current selection (e.g.
+        // AppImport.addFrontLines). Only meaningful with merge=true.
+        const mergeIntoId = (merge && opts && typeof opts.mergeIntoLayerId === 'string')
+            ? opts.mergeIntoLayerId
+            : null;
+        const reusedLayer = mergeIntoId ? layers.find(l => l.id === mergeIntoId) : null;
+
         const layerIdMap = {};
         data.layers.forEach((layerData, idx) => {
-            const baseName = layerData.name || t('layer-name-default', String(idx + 1));
-            const layer = createLayer(merge ? baseName + (typeof t === 'function' ? t('layer-imported-suffix') : ' (imported)') : baseName);
+            let layer;
+            if (reusedLayer) {
+                // Merge mode with explicit target — funnel every feature into
+                // the user's chosen layer. Don't touch visibility/active flags
+                // of the existing layer.
+                layer = reusedLayer;
+            } else {
+                const baseName = layerData.name || t('layer-name-default', String(idx + 1));
+                layer = createLayer(merge ? baseName + (typeof t === 'function' ? t('layer-imported-suffix') : ' (imported)') : baseName);
+                layer.visible = layerData.visible !== false;
+                layer.active = !!layerData.active;
+                if (!layer.visible) map.removeLayer(layer.group);
+            }
             if (layerData.id) layerIdMap[layerData.id] = layer.id;
-            layer.visible = layerData.visible !== false;
-            layer.active = !!layerData.active;
-            if (!layer.visible) map.removeLayer(layer.group);
 
             (layerData.elements || []).forEach(elData => {
                 if (elData.type === 'text') {
@@ -963,6 +982,7 @@
                             );
                         if (group) {
                             group._layerId = layer.id;
+                            if (elData.formationId) group._tmgData.formationId = elData.formationId;
                             layer.elements.push(group);
                             layer.group.addLayer(group);
                         }
@@ -973,6 +993,7 @@
                             const group = createParametricCatkGroup(typeId, arrowParams, elData);
                             if (group) {
                                 group._layerId = layer.id;
+                                if (elData.formationId) group._tmgData.formationId = elData.formationId;
                                 layer.elements.push(group);
                                 layer.group.addLayer(group);
                             }
@@ -1024,6 +1045,7 @@
                     const marker = createSymbolFromData(elData);
                     if (marker) {
                         marker._layerId = layer.id;
+                        if (elData.formationId) marker._formationId = elData.formationId;
                         layer.elements.push(marker);
                         layer.group.addLayer(marker);
                         if (marker._pendingRangeCircles?.length) {

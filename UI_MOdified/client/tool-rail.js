@@ -20,6 +20,7 @@
         measure: { mode: 'pan',    tab: 'geo',     title: 'Measure', hint: 'Click points on the map to measure distance' },
         shapes:  { mode: 'pan',    tab: 'geo',     title: 'Shapes',  hint: 'Choose a shape, then click the map' },
         layers:  { mode: null,     tab: null,       title: 'Layers',  hint: 'Organize your map items' },
+        wargame: { mode: null,     tab: null,       title: 'War Game', hint: 'Run turn-based movement and contact checks' },
     };
 
     /* ── DOM references ───────────────────────────────────────────────── */
@@ -146,6 +147,22 @@
         }
     }
 
+    let warGameLoadPromise = null;
+    function loadWarGameEngine() {
+        if (window.AppTurnEngine && typeof window.AppTurnEngine.showHud === 'function') {
+            return Promise.resolve(window.AppTurnEngine);
+        }
+        if (warGameLoadPromise) return warGameLoadPromise;
+        warGameLoadPromise = new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'turn-engine.js?v=' + Date.now();
+            script.onload = () => resolve(window.AppTurnEngine || null);
+            script.onerror = () => reject(new Error('Could not load turn-engine.js'));
+            document.body.appendChild(script);
+        });
+        return warGameLoadPromise;
+    }
+
     /* ── Rail button state ────────────────────────────────────────────── */
     function updateRailButtons(tool) {
         document.querySelectorAll('.tool-rail-btn').forEach(btn => {
@@ -169,6 +186,22 @@
         // 1. Update visual state immediately
         updateRailButtons(tool);
         updateHeaders(tool);
+
+        if (tool === 'wargame') {
+            const showWarGameHud = () => {
+                if (window.AppTurnEngine && typeof window.AppTurnEngine.showHud === 'function') {
+                    window.AppTurnEngine.showHud();
+                }
+            };
+            showWarGameHud();
+            loadWarGameEngine()
+                .then(engine => {
+                    if (engine && typeof engine.showHud === 'function') engine.showHud();
+                })
+                .catch(err => console.warn('War Game engine load failed', err));
+            setTimeout(showWarGameHud, 250);
+            return;
+        }
 
         // 2. Drive existing mode/tab system (may change panel visibility)
         //    This must happen BEFORE our visibility overrides.
@@ -207,6 +240,8 @@
             switchTool(btn.dataset.tool);
         });
     });
+
+    window.AppToolRail = { switchTool };
 
     /* ── Keyboard shortcut integration ────────────────────────────────── *
      * When the existing keyboard shortcuts (M, T, F, E) change the mode,

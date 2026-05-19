@@ -49,6 +49,23 @@
     const affiliationDigit = (sidc) =>
         (sidc && typeof sidc === 'string' && sidc.length >= 4) ? sidc[3] : '';
 
+    // Localized string helper: falls back to the English literal so the HUD
+    // still reads cleanly if i18n.js hasn't loaded yet.
+    function wt(key, fallback, ...params) {
+        let str;
+        try {
+            if (typeof window.t === 'function') {
+                const v = window.t(key, ...params);
+                if (v && v !== key) str = v;
+            }
+        } catch (_) { /* ignore */ }
+        if (!str) {
+            str = fallback;
+            params.forEach((p, i) => { str = str.replace('{' + i + '}', p); });
+        }
+        return str;
+    }
+
     let state    = null;
     let hud      = null;
     let animState = null;   // { startTime, duration, targets, arrowMoveKm, arrowApplied, pendingTurn }
@@ -217,12 +234,12 @@ let activeCombats = [];
 function init() {
         const formation = findEnemyFormation();
         if (!formation) {
-            showToast('No hostile formation found — import enemy.geojson first.', 'warn');
+            showToast(wt('wg-toast-no-formation', 'No hostile formation found — import enemy.geojson first.'), 'warn');
             return { error: 'no-formation' };
         }
         const axis = extractAxisFromArrow(formation.arrow);
         if (!axis) {
-            showToast('Arrow has no usable axis.', 'warn');
+            showToast(wt('wg-toast-no-axis', 'Arrow has no usable axis.'), 'warn');
             return { error: 'no-axis' };
         }
         const unitPaths = formation.markers.map(m => {
@@ -478,6 +495,8 @@ function init() {
     // ── HUD ────────────────────────────────────────────────────────────
     function ensureHud() {
         if (hud && document.body.contains(hud)) return hud;
+        hud = document.getElementById('wargame-hud');
+        if (!hud) {
         hud = document.createElement('div');
         hud.id = 'wargame-hud';
         hud.style.cssText = [
@@ -488,29 +507,40 @@ function init() {
             'box-shadow:0 4px 12px rgba(0,0,0,0.3)', 'min-width:240px', 'max-width:calc(100vw - 32px)',
             'direction:ltr', 'text-align:left',
         ].join(';');
+        const titleTxt   = wt('wg-title', 'War Game');
+        const notStarted = wt('wg-status-not-started', 'Not started');
+        const startTxt   = wt('wg-btn-start', 'Start');
+        const nextTxt    = wt('wg-btn-next', 'Next Turn');
+        const resetTxt   = wt('wg-btn-reset', 'Reset');
+        const footerTxt  = wt('wg-footer', 'Step {0} km · slide {1} ms · contact ≤ {2} km',
+                              STEP_KM_DEFAULT, ANIMATION_MS, CONTACT_KM);
         hud.innerHTML = `
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                <span style="font-weight:700;color:#f87171;">War Game</span>
+                <span style="font-weight:700;color:#f87171;">${titleTxt}</span>
                 <span id="wg-min" style="cursor:pointer;color:#94a3b8;font-size:11px;user-select:none;">[ – ]</span>
             </div>
             <div id="wg-body">
-                <div id="wg-status" style="font-size:12px;margin-bottom:8px;color:#cbd5e1;">Not started</div>
+                <div id="wg-status" style="font-size:12px;margin-bottom:8px;color:#cbd5e1;">${notStarted}</div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                    <button id="wg-init"  style="flex:1;padding:6px 8px;background:#3b82f6;border:none;border-radius:4px;color:white;cursor:pointer;font-size:12px;">Start</button>
-                    <button id="wg-next"  style="flex:1;padding:6px 8px;background:#10b981;border:none;border-radius:4px;color:white;cursor:pointer;font-size:12px;">Next Turn</button>
-                    <button id="wg-reset" style="flex:1;padding:6px 8px;background:#64748b;border:none;border-radius:4px;color:white;cursor:pointer;font-size:12px;">Reset</button>
+                    <button id="wg-init"  style="flex:1;padding:6px 8px;background:#3b82f6;border:none;border-radius:4px;color:white;cursor:pointer;font-size:12px;">${startTxt}</button>
+                    <button id="wg-next"  style="flex:1;padding:6px 8px;background:#10b981;border:none;border-radius:4px;color:white;cursor:pointer;font-size:12px;">${nextTxt}</button>
+                    <button id="wg-reset" style="flex:1;padding:6px 8px;background:#64748b;border:none;border-radius:4px;color:white;cursor:pointer;font-size:12px;">${resetTxt}</button>
                 </div>
-                <div style="margin-top:6px;font-size:11px;color:#94a3b8;">Step ${STEP_KM_DEFAULT} km · slide ${ANIMATION_MS} ms · contact ≤ ${CONTACT_KM} km</div>
+                <div style="margin-top:6px;font-size:11px;color:#94a3b8;">${footerTxt}</div>
             </div>
         `;
         document.body.appendChild(hud);
+        }
 
+        if (!hud._wgBound) {
         hud.querySelector('#wg-init').addEventListener('click', () => {
             cancelAnimation();
             state = null;
             const r = init();
             if (r && r.ok) {
-                showToast(`Initialized: ${r.units} enemy, ${r.friendlies} friendly, arrow ${r.lengthKm} km`, 'info');
+                showToast(wt('wg-toast-initialized',
+                    'Initialized: {0} enemy, {1} friendly, arrow {2} km',
+                    r.units, r.friendlies, r.lengthKm), 'info');
             }
         });
         hud.querySelector('#wg-next').addEventListener('click', () => nextTurn());
@@ -520,9 +550,11 @@ function init() {
         const body   = hud.querySelector('#wg-body');
         minBtn.addEventListener('click', () => {
             const hidden = body.style.display === 'none';
-            body.style.display = hidden ? 'block' : 'none';
-            minBtn.textContent = hidden ? '[ – ]' : '[ + ]';
+            body.style.display = hidden ? '' : 'none';
+            minBtn.textContent = hidden ? '-' : '+';
         });
+        hud._wgBound = true;
+        }
 
         return hud;
     }
@@ -534,22 +566,98 @@ function init() {
         return el;
     }
 
+    function setUiText(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    }
+
+    function setBattleState(kind, label) {
+        const pill = document.getElementById('wg-state-pill');
+        if (!pill) return;
+        pill.className = 'wargame-state-pill is-' + kind;
+        pill.textContent = label;
+    }
+
+    function setActivePhase(name) {
+        ['setup', 'orders', 'resolve', 'aar'].forEach(phase => {
+            const el = document.getElementById('wg-phase-' + phase);
+            if (el) el.classList.toggle('active', phase === name);
+        });
+    }
+
+    function escapeHtml(value) {
+        return String(value == null ? '' : value).replace(/[&<>"']/g, ch => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[ch]));
+    }
+
+    function renderCombatFeed() {
+        const feed = document.getElementById('wg-combat-feed');
+        const count = document.getElementById('wg-feed-count');
+        if (count) count.textContent = String(activeCombats.length);
+        if (!feed) return;
+        if (!activeCombats.length) {
+            feed.className = 'wargame-feed-empty';
+            feed.textContent = wt('wg-feed-empty', 'No contacts yet.');
+            return;
+        }
+        const recent = activeCombats.slice(-4).reverse();
+        feed.className = 'wargame-feed-list';
+        feed.innerHTML = recent.map(c => {
+            const outcome = c.outcome === 'attacker_win' ? 'attacker wins'
+                : c.outcome === 'defender_win' ? 'defender holds'
+                : 'stalemate';
+            return `<div class="wargame-feed-item">${escapeHtml(c.attacker)} -> ${escapeHtml(c.defender)}: ${escapeHtml(outcome)}</div>`;
+        }).join('');
+    }
+
     function renderHud() {
         const el = ensureHud();
         const status = el.querySelector('#wg-status');
-        if (!state) { status.textContent = 'Not started'; return; }
+        if (!state) {
+            if (status) status.textContent = wt('wg-status-not-started', 'Not started');
+            setUiText('wg-turn-value', '0');
+            setUiText('wg-advance-value', '0 km');
+            setUiText('wg-enemy-value', '-');
+            setUiText('wg-friendly-value', '-');
+            setUiText('battle-turn-chip', 'TURN 0');
+            setBattleState('idle', 'Idle');
+            setActivePhase('setup');
+            renderCombatFeed();
+            return;
+        }
+        setUiText('wg-turn-value', String(state.turn));
+        setUiText('wg-advance-value', state.advancedKm.toFixed(1) + ' km');
+        setUiText('wg-enemy-value', String(state.unitPaths.length));
+        setUiText('wg-friendly-value', String(state.friendlyMarkers.length));
+        setUiText('battle-turn-chip', 'TURN ' + state.turn);
+        setUiText('wg-footer', 'Step ' + STEP_KM_DEFAULT + ' km - slide ' + ANIMATION_MS + ' ms - contact <= ' + CONTACT_KM + ' km');
         const lines = [
-            `Turn: <b>${state.turn}</b> · Advanced: <b>${state.advancedKm.toFixed(1)} km</b>`,
-            `Arrow: ${state.axis.lengthKm.toFixed(1)} km · ${state.unitPaths.length} units · ${state.friendlyMarkers.length} friendly`,
+            wt('wg-turn-line', 'Turn: <b>{0}</b> · Advanced: <b>{1} km</b>',
+                state.turn, state.advancedKm.toFixed(1)),
+            wt('wg-arrow-line', 'Arrow: {0} km · {1} units · {2} friendly',
+                state.axis.lengthKm.toFixed(1), state.unitPaths.length, state.friendlyMarkers.length),
         ];
         if (animState) {
-            lines.push(`<span style="color:#60a5fa;">Animating turn ${animState.pendingTurn}…</span>`);
+            setBattleState('animating', 'Moving');
+            setActivePhase('resolve');
+            lines.push(`<span style="color:#60a5fa;">${wt('wg-animating', 'Animating turn {0}…', animState.pendingTurn)}</span>`);
         } else if (state.contact) {
-            lines.push(`<span style="color:#f87171;font-weight:700;">⚠ Contact: ${state.contact.enemy} → ${state.contact.friendly} (${state.contact.km} km)</span>`);
+            setBattleState('contact', 'Contact');
+            setActivePhase('resolve');
+            lines.push(`<span style="color:#f87171;font-weight:700;">${wt('wg-contact', '⚠ Contact: {0} → {1} ({2} km)', state.contact.enemy, state.contact.friendly, state.contact.km)}</span>`);
         } else if (state.stopped) {
-            lines.push(`<span style="color:#fbbf24;">Stopped — reached tip</span>`);
+            setBattleState('stopped', 'Stopped');
+            setActivePhase('aar');
+            lines.push(`<span style="color:#fbbf24;">${wt('wg-stopped-tip', 'Stopped — reached tip')}</span>`);
         } else {
-            lines.push(`<span style="color:#10b981;">Ready</span>`);
+            setBattleState('ready', 'Ready');
+            setActivePhase(state.turn > 0 ? 'orders' : 'setup');
+            lines.push(`<span style="color:#10b981;">${wt('wg-ready', 'Ready')}</span>`);
         }
         
         // Show recent combat results — the inbound shot first, then a return-fire summary
@@ -564,25 +672,26 @@ function init() {
             const returns = activeCombats.slice(inboundIdx + 1).filter(c => c.kind === 'return');
             let combatText = '';
             if (inbound.outcome === 'attacker_win') {
-                combatText = `⚔️ ${inbound.attacker} defeats ${inbound.defender}`;
+                combatText = wt('wg-combat-defeats', '⚔️ {0} defeats {1}', inbound.attacker, inbound.defender);
             } else if (inbound.outcome === 'defender_win') {
-                combatText = `⚔️ ${inbound.defender} repels ${inbound.attacker}`;
+                combatText = wt('wg-combat-repels', '⚔️ {0} repels {1}', inbound.defender, inbound.attacker);
             } else if (inbound.outcome === 'stalemate') {
-                combatText = `⚔️ ${inbound.attacker} and ${inbound.defender} stalemate`;
+                combatText = wt('wg-combat-stalemate', '⚔️ {0} and {1} stalemate', inbound.attacker, inbound.defender);
             }
-            
-            if (inbound.defenderDestroyed) combatText += ` (${inbound.defender} destroyed)`;
-            if (inbound.attackerDestroyed) combatText += ` (${inbound.attacker} destroyed)`;
+
+            if (inbound.defenderDestroyed) combatText += ' ' + wt('wg-combat-destroyed', '({0} destroyed)', inbound.defender);
+            if (inbound.attackerDestroyed) combatText += ' ' + wt('wg-combat-destroyed', '({0} destroyed)', inbound.attacker);
             lines.push(`<span style="color:#fbbf24;">${combatText}</span>`);
 
             if (returns.length > 0) {
                 const kills = returns.filter(r => r.defenderDestroyed).length;
-                const tail  = kills ? `, ${kills} kill${kills > 1 ? 's' : ''}` : '';
-                lines.push(`<span style="color:#a78bfa;">↩ return fire: ${returns.length} shot${returns.length > 1 ? 's' : ''}${tail}</span>`);
+                const tail  = kills ? wt('wg-kills-suffix', ', {0} kill(s)', kills) : '';
+                lines.push(`<span style="color:#a78bfa;">${wt('wg-return-fire', '↩ return fire: {0} shot(s){1}', returns.length, tail)}</span>`);
             }
         }
         
-        status.innerHTML = lines.join('<br>');
+        if (status) status.innerHTML = lines.join('<br>');
+        renderCombatFeed();
     }
 
     function showToast(msg, level) {
@@ -603,11 +712,10 @@ function init() {
     }
 
     function flashContact(c) {
-        showToast(`⚠ Contact: enemy ${c.enemy} is ${c.km} km from friendly ${c.friendly}`, 'warn');
+        showToast(wt('wg-toast-contact', '⚠ Contact: enemy {0} is {1} km from friendly {2}', c.enemy, c.km, c.friendly), 'warn');
         const el = ensureHud();
-        el.style.transition = 'box-shadow 0.3s';
-        el.style.boxShadow  = '0 0 24px rgba(239,68,68,0.95)';
-        setTimeout(() => { el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)'; }, 1500);
+        el.classList.add('is-contact-flash');
+        setTimeout(() => { el.classList.remove('is-contact-flash'); }, 1500);
     }
 
     // ── COMBAT RESOLUTION ─────────────────────────────────────────────────────

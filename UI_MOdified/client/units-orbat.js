@@ -908,7 +908,9 @@
         };
         img.onerror = () => {
             URL.revokeObjectURL(url);
-            alert(tr('orbat-export-failed', 'Export failed'));
+            const msg = tr('orbat-export-failed', 'Export failed');
+            if (window.rmoozToast) window.rmoozToast(msg, 'error');
+            else alert(msg);
         };
         img.src = url;
     }

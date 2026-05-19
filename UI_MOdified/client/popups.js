@@ -492,7 +492,9 @@
             return `<label style="display:block;margin:4px 0;font-size:0.7rem;color:#6b7280;text-align:left;">${i + 1}: ${coordInputHtml('group-tmg-coord-input', p.lat, p.lng, `data-index="${i}"`, 'width:100%;max-width:200px;padding:4px 6px;font-size:0.75rem;border:1px solid #cbd5e1;border-radius:4px;')}</label>`;
         }).join('');
         const coordBlock = coordLines ? `<div style="margin:6px 0;padding:6px;background:#f8fafc;border-radius:4px;text-align:left;max-height:80px;overflow-y:auto;">${coordLines}</div>` : '';
-        const groupDefaultTitle = `${def ? getTmgLabel(def) : 'Graphic'} ${typeof t === 'function' ? t('tmg-points', String(ptCount)) : `(${ptCount} points)`}`;
+        const tx = (key, fallback) => (typeof t === 'function' ? t(key) : null) || fallback;
+        const graphicLabel = tx('tmg-default-name', 'Graphic');
+        const groupDefaultTitle = `${def ? getTmgLabel(def) : graphicLabel} ${typeof t === 'function' ? t('tmg-points', String(ptCount)) : `(${ptCount} points)`}`;
         return `
             <div style="text-align:center;">
                 <div class="map-popup-header-bar">${mapPopupCloseButtonHtml()}</div>
@@ -500,13 +502,13 @@
                 ${coordBlock}
                 ${getTmgSelectTypeHtml(data)}
                 ${getDrawingRotateControlsHtml()}
-                <button class="turn-tmg-btn" style="margin-top: 5px; margin-right: 4px; cursor: pointer;">Turn last</button>
-                <button class="add-point-tmg-btn" style="margin-right: 4px; cursor: pointer;">Add point</button>
-                <button class="tmg-size-btn" data-size="smaller" style="cursor: pointer;" title="Smaller">−</button>
-                <button class="tmg-size-btn" data-size="bigger" style="cursor: pointer; margin-left: 2px;" title="Bigger">+</button>
+                <button class="turn-tmg-btn" style="margin-top: 5px; margin-right: 4px; cursor: pointer;">${tx('tmg-turn-last', 'Turn last')}</button>
+                <button class="add-point-tmg-btn" style="margin-right: 4px; cursor: pointer;">${tx('tmg-add-point', 'Add point')}</button>
+                <button class="tmg-size-btn" data-size="smaller" style="cursor: pointer;" title="${tx('tmg-size-smaller', 'Smaller')}">−</button>
+                <button class="tmg-size-btn" data-size="bigger" style="cursor: pointer; margin-left: 2px;" title="${tx('tmg-size-bigger', 'Bigger')}">+</button>
                 <br>
-                <button class="duplicate-tmg-btn" style="margin-right: 4px; cursor: pointer;">${typeof t === 'function' ? t('duplicate') : 'Duplicate'}</button>
-                <button class="remove-tmg-btn" style="margin-top: 5px; color: red; cursor: pointer;">${typeof t === 'function' ? t('remove-graphic') : 'Remove Graphic'}</button>
+                <button class="duplicate-tmg-btn" style="margin-right: 4px; cursor: pointer;">${tx('duplicate', 'Duplicate')}</button>
+                <button class="remove-tmg-btn" style="margin-top: 5px; color: red; cursor: pointer;">${tx('remove-graphic', 'Remove Graphic')}</button>
                 </div>
         `;
     }

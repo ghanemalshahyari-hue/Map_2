@@ -440,6 +440,44 @@ body, html {
     text-overflow: ellipsis;
 }
 
+.statusbar-spacer {
+    flex: 1;
+    min-width: var(--space-2);
+}
+
+.battle-readiness-strip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    direction: ltr;
+    white-space: nowrap;
+}
+
+.battle-readiness-strip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 20px;
+    padding: 2px 8px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 3px;
+    background: rgba(2, 6, 23, 0.42);
+    color: #cbd5e1;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.battle-readiness-strip #battle-side-chip {
+    color: #60a5fa;
+    border-color: rgba(96, 165, 250, 0.4);
+}
+
+.battle-readiness-strip #battle-turn-chip {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.45);
+}
+
 .map-canvas-wrap {
     flex: 1;
     position: relative;
@@ -3621,6 +3659,330 @@ details[open] > .details-summary {
 .sidebar-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 .sidebar-panel.hidden { display: none; }
 
+/* War Game command panel */
+.wargame-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    direction: ltr;
+}
+
+.wargame-panel.hidden {
+    display: none;
+}
+
+.wargame-panel-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+}
+
+.wargame-classification,
+.wargame-mode-chip,
+.wargame-state-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.wargame-classification {
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.45);
+    background: rgba(20, 83, 45, 0.24);
+}
+
+.wargame-mode-chip {
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.42);
+    background: rgba(120, 53, 15, 0.24);
+}
+
+.wargame-brief-card,
+.wargame-control-card,
+.wargame-feed-card,
+.wargame-quick-card {
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: var(--radius-xs);
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.92));
+}
+
+.wargame-brief-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 12px;
+}
+
+.wargame-brief-card strong,
+.wargame-card-head strong {
+    display: block;
+    color: #f8fafc;
+    font-size: 0.96rem;
+    line-height: 1.25;
+}
+
+.wargame-eyebrow {
+    display: block;
+    color: #64748b;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+.wargame-state-pill {
+    min-width: 68px;
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.wargame-state-pill.is-ready {
+    color: #86efac;
+    border-color: rgba(34, 197, 94, 0.55);
+    background: rgba(20, 83, 45, 0.28);
+}
+
+.wargame-state-pill.is-contact,
+.wargame-state-pill.is-stopped {
+    color: #fecaca;
+    border-color: rgba(239, 68, 68, 0.58);
+    background: rgba(127, 29, 29, 0.35);
+}
+
+.wargame-state-pill.is-animating {
+    color: #bfdbfe;
+    border-color: rgba(96, 165, 250, 0.55);
+    background: rgba(30, 64, 175, 0.3);
+}
+
+.wargame-phase-track {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: var(--radius-xs);
+    overflow: hidden;
+    background: rgba(2, 6, 23, 0.64);
+}
+
+.wargame-phase-track span {
+    min-width: 0;
+    padding: 8px 6px;
+    border-inline-end: 1px solid rgba(148, 163, 184, 0.14);
+    color: #94a3b8;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.wargame-phase-track span:last-child {
+    border-inline-end: 0;
+}
+
+.wargame-phase-track span.active {
+    color: #0f172a;
+    background: #fbbf24;
+}
+
+.wargame-control-card {
+    padding: 12px;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+}
+
+.wargame-control-card.is-contact-flash {
+    box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.9), 0 0 26px rgba(239, 68, 68, 0.45);
+}
+
+.wargame-card-head,
+.wargame-feed-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+}
+
+.wargame-icon-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 3px;
+    background: rgba(15, 23, 42, 0.9);
+    color: #cbd5e1;
+    cursor: pointer;
+}
+
+.wargame-icon-btn:hover {
+    border-color: rgba(96, 165, 250, 0.7);
+    color: #60a5fa;
+}
+
+.wargame-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.wargame-kpi-grid div {
+    min-width: 0;
+    padding: 9px 10px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 4px;
+    background: rgba(15, 23, 42, 0.72);
+}
+
+.wargame-kpi-grid span {
+    display: block;
+    color: #64748b;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.wargame-kpi-grid strong {
+    display: block;
+    margin-top: 3px;
+    color: #e2e8f0;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.92rem;
+    line-height: 1.15;
+}
+
+.wargame-status-block {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 4px;
+    background: rgba(2, 6, 23, 0.5);
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.wargame-action-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.wargame-action-btn {
+    min-height: 42px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.wargame-action-btn.primary { background: #2563eb; }
+.wargame-action-btn.success { background: #059669; }
+.wargame-action-btn.secondary { background: #475569; }
+
+.wargame-action-btn:hover {
+    filter: brightness(1.08);
+}
+
+.wargame-action-btn:disabled {
+    cursor: not-allowed;
+    filter: grayscale(0.4);
+    opacity: 0.55;
+}
+
+.wargame-control-footer {
+    margin-top: 8px;
+    color: #64748b;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.66rem;
+}
+
+.wargame-feed-card {
+    padding: 12px;
+}
+
+.wargame-feed-head span:first-child {
+    color: #e2e8f0;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.wargame-feed-head span:last-child {
+    min-width: 24px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: rgba(96, 165, 250, 0.14);
+    color: #93c5fd;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.66rem;
+    font-weight: 800;
+    text-align: center;
+}
+
+.wargame-feed-empty,
+.wargame-feed-list {
+    margin-top: 10px;
+    color: #94a3b8;
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+.wargame-feed-list {
+    display: grid;
+    gap: 6px;
+}
+
+.wargame-feed-item {
+    padding: 7px 8px;
+    border-inline-start: 3px solid #fbbf24;
+    background: rgba(15, 23, 42, 0.72);
+    color: #cbd5e1;
+}
+
+.wargame-quick-grid {
+    display: grid;
+    gap: 8px;
+}
+
+.wargame-quick-card {
+    padding: 11px;
+    color: #cbd5e1;
+    text-align: left;
+}
+
+.wargame-quick-card strong {
+    display: block;
+    color: #f8fafc;
+    font-size: 0.82rem;
+}
+
+.wargame-quick-card span {
+    display: block;
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 0.72rem;
+    line-height: 1.4;
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════════════════════ */
@@ -3660,6 +4022,7 @@ details[open] > .details-summary {
     .layer-visibility-btn, .layer-delete-btn { min-width: 44px; min-height: 44px; }
     .chat-close-btn { min-width: 44px; min-height: 44px; }
     .header-btn { min-height: 44px; padding: 8px 14px; }
+    .battle-readiness-strip { display: none; }
 }
 
 @media (max-width: 600px) {
@@ -3678,6 +4041,8 @@ details[open] > .details-summary {
     .brand-logo { max-width: min(100px, 30vw); height: clamp(28px, 5vh, 38px); }
     .layers-list { max-height: min(200px, 38vh); }
     .folder-body-scroll { max-height: min(160px, 28vh); }
+    .wargame-action-row { grid-template-columns: 1fr; }
+    .wargame-kpi-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 360px) {
@@ -3688,6 +4053,34 @@ details[open] > .details-summary {
 .server-account-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .server-account-bar.hidden { display: none !important; }
 .server-plan-select { max-width: 160px; font: inherit; padding: 4px 8px; border-radius: var(--radius-xs); }
+
+/* Inline plan-save state indicator next to the plan picker.
+   Empty by default; populated by server-sync.js when a save runs. */
+.plan-save-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    line-height: 1;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.12);
+    color: var(--text-muted, #94a3b8);
+    transition: opacity 200ms ease-out, color 200ms ease-out;
+    white-space: nowrap;
+    user-select: none;
+}
+.plan-save-status::before {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: 0 0 7px;
+}
+.plan-save-status--saving { color: #38bdf8; }
+.plan-save-status--saved  { color: #22c55e; }
+.plan-save-status--error  { color: #f87171; }
+.plan-save-status--hidden { opacity: 0; pointer-events: none; }
 
 /* ═══════════════════════════════════════════════════════════════════
    ORBAT TREE VIEW (units-orbat.js)

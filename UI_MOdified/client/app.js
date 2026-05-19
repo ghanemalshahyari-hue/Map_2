@@ -11304,7 +11304,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 bindSymbolPopupHandlers(marker);
                 scheduleSaveToStorage();
             } else {
-                alert(typeof t === 'function' ? t('invalid-coords') : 'Invalid coordinates. Lat: -90 to 90, Lng: -180 to 180.');
+                const msg = typeof t === 'function' ? t('invalid-coords') : 'Invalid coordinates. Lat: -90 to 90, Lng: -180 to 180.';
+                if (window.rmoozToast) window.rmoozToast(msg, 'error');
+                else alert(msg);
             }
         });
         content.querySelector('.symbol-popup-lat, .symbol-popup-coord')?.addEventListener('keydown', (e) => {
@@ -13325,6 +13327,31 @@ document.addEventListener('DOMContentLoaded', () => {
         return !!(pu._map && map && pu._map === map);
     }
 
+    // Same-spot, fast-repeat click suppressor used by symbol/text placement.
+    // Returns true when the click looks like the second half of a double-click
+    // (and remembers it so it can't suppress a third real click).
+    const PLACEMENT_DEDUPE_MS = 350;
+    const PLACEMENT_DEDUPE_PX = 6;
+    let lastPlacementClick = { t: 0, lat: NaN, lng: NaN };
+    function isDuplicatePlacementClick(latlng, originalEvent) {
+        if (!latlng) return false;
+        const now = (originalEvent && Number.isFinite(originalEvent.timeStamp))
+            ? originalEvent.timeStamp
+            : performance.now();
+        const dt = now - lastPlacementClick.t;
+        let duplicate = false;
+        if (dt > 0 && dt < PLACEMENT_DEDUPE_MS &&
+            Number.isFinite(lastPlacementClick.lat) && Number.isFinite(lastPlacementClick.lng)) {
+            try {
+                const a = map.latLngToLayerPoint(L.latLng(lastPlacementClick.lat, lastPlacementClick.lng));
+                const b = map.latLngToLayerPoint(latlng);
+                if (Math.hypot(a.x - b.x, a.y - b.y) <= PLACEMENT_DEDUPE_PX) duplicate = true;
+            } catch (_) { /* projection unavailable — fall through */ }
+        }
+        lastPlacementClick = { t: now, lat: latlng.lat, lng: latlng.lng };
+        return duplicate;
+    }
+
     /** Plain/freehand/distance line popup open: Line-tool map clicks must not add drawLineCoords (was forking the line). */
     function shouldBlockTacticalLinePlacementClick() {
         if (activePlainLineEndpointHandles) return true;
@@ -13796,6 +13823,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         if (currentMode === 'text') {
+            // Suppress the second click of an accidental double-click so we
+            // don't open the placement modal twice (or place two labels in
+            // a row when the inline text panel has a value).
+            if (isDuplicatePlacementClick(e.latlng, e.originalEvent)) return;
             showTextLabelModal(e.latlng);
             return;
         }
@@ -13852,6 +13883,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         if (currentMode === 'symbol') {
+            // Drop the second click of an accidental double-click — a real
+            // user click rarely lands within ~10m of the prior one inside
+            // ~350ms, but Leaflet fires click twice during a dblclick which
+            // otherwise stacks two identical symbols at the same spot.
+            if (isDuplicatePlacementClick(e.latlng, e.originalEvent)) return;
             const sidc = generateSIDC();
             const opts = { ...getTextModifiers(), size: 25, simpleStatusModifier: true };
 
@@ -16022,11 +16058,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!overwrite) return false;
             const out2 = upsertLayerTemplateFavorite(entry, { overwrite: true });
             if (!out2.ok) {
-                alert(t('layer-template-save-error'));
+                if (window.rmoozToast) window.rmoozToast(t('layer-template-save-error'), 'error');
+                else alert(t('layer-template-save-error'));
                 return false;
             }
         } else if (!out.ok) {
-            alert(t('layer-template-save-error'));
+            if (window.rmoozToast) window.rmoozToast(t('layer-template-save-error'), 'error');
+            else alert(t('layer-template-save-error'));
             return false;
         }
         if (instructionText) instructionText.innerText = t('layer-template-saved', finalName);
@@ -16097,8 +16135,23 @@ document.addEventListener('DOMContentLoaded', () => {
             else map.removeLayer(layer.group);
             renderLayersList();
         });
-        row.querySelector('.layer-delete-btn').addEventListener('click', () => {
-            if (layer.elements.length > 0 && !confirm(`Delete "${displayName}" and all ${layer.elements.length} elements?`)) return;
+        row.querySelector('.layer-delete-btn').addEventListener('click', async () => {
+            // Styled, localized confirm — replaces the previous bare browser
+            // confirm() with a red "Delete" action button. Empty layers skip
+            // the prompt entirely (nothing's at risk).
+            if (layer.elements.length > 0) {
+                const msg = typeof t === 'function'
+                    ? t('layer-delete-confirm', displayName, layer.elements.length)
+                    : `Delete "${displayName}" and all ${layer.elements.length} elements?`;
+                const ok = (typeof window.customConfirm === 'function')
+                    ? await window.customConfirm(msg, {
+                        okText: typeof t === 'function' ? t('dialog-delete') : 'Delete',
+                        cancelText: typeof t === 'function' ? t('dialog-cancel') : 'Cancel',
+                        danger: true,
+                    })
+                    : confirm(msg);
+                if (!ok) return;
+            }
             removeLayer(layer);
             renderLayersList();
         });
@@ -16492,11 +16545,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button type="button" class="glass-btn secondary layer-template-overwrite-btn">${t('layer-template-overwrite')}</button>
                 <button type="button" class="glass-btn danger layer-template-delete-btn">${t('layer-template-delete')}</button>
             `;
+            // Non-blocking toasts for failure paths; styled confirm for destructive ops.
+            const tplToast = (key) => (window.rmoozToast ? window.rmoozToast(t(key), 'error') : alert(t(key)));
+            const tplConfirm = (msg, danger = false) => (typeof window.customConfirm === 'function')
+                ? window.customConfirm(msg, {
+                    okText: t(danger ? 'dialog-delete' : 'dialog-ok'),
+                    cancelText: t('dialog-cancel'),
+                    danger,
+                  })
+                : Promise.resolve(confirm(msg));
+
             actions.querySelector('.layer-template-apply-btn')?.addEventListener('click', () => {
                 if (applyLayerTemplate(tpl)) {
                     renderLayerTemplatesModal();
                 } else {
-                    alert(t('layer-template-apply-error'));
+                    tplToast('layer-template-apply-error');
                 }
             });
             actions.querySelector('.layer-template-rename-btn')?.addEventListener('click', async () => {
@@ -16504,28 +16567,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (next == null) return;
                 tpl.name = normalizeLayerTemplateName(next, tpl.name);
                 if (!saveLayerTemplateFavorites(list)) {
-                    alert(t('layer-template-save-error'));
+                    tplToast('layer-template-save-error');
                     return;
                 }
                 renderLayerTemplatesModal();
             });
-            actions.querySelector('.layer-template-overwrite-btn')?.addEventListener('click', () => {
+            actions.querySelector('.layer-template-overwrite-btn')?.addEventListener('click', async () => {
                 const active = getActiveLayer();
                 if (!active) return;
-                const ok = confirm(t('layer-template-overwrite-confirm', tpl.name));
+                const ok = await tplConfirm(t('layer-template-overwrite-confirm', tpl.name));
                 if (!ok) return;
                 if (!saveLayerAsTemplate(active, { name: tpl.name, overwrite: true, existingId: tpl.id })) {
-                    alert(t('layer-template-save-error'));
+                    tplToast('layer-template-save-error');
                     return;
                 }
                 renderLayerTemplatesModal();
             });
-            actions.querySelector('.layer-template-delete-btn')?.addEventListener('click', () => {
-                const ok = confirm(t('layer-template-delete-confirm', tpl.name));
+            actions.querySelector('.layer-template-delete-btn')?.addEventListener('click', async () => {
+                const ok = await tplConfirm(t('layer-template-delete-confirm', tpl.name), true);
                 if (!ok) return;
                 const next = loadLayerTemplateFavorites().filter((x) => x.id !== tpl.id);
                 if (!saveLayerTemplateFavorites(next)) {
-                    alert(t('layer-template-save-error'));
+                    tplToast('layer-template-save-error');
                     return;
                 }
                 renderLayerTemplatesModal();
@@ -16708,7 +16771,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cb.dataset.layerId) ids.push(cb.dataset.layerId);
         });
         if (ids.length === 0) {
-            alert(t('export-select-none-checked'));
+            const msg = t('export-select-none-checked');
+            if (window.rmoozToast) window.rmoozToast(msg, 'warn');
+            else alert(msg);
             return;
         }
         const json = exportLayersDataFromSelection(ids);
@@ -16849,7 +16914,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 syncPlacementLayerInteractivity();
                 map.getContainer().style.cursor = '';
                 if (instructionText) instructionText.innerText = typeof t === 'function' ? t('instruction-default') : '';
-            } else if (addingPointTmgGroup || reorientingTmgMarker || !!catkPlacementState || drawLineCoords.length >= 2 || tmgPoints.length >= 2) {
+            } else if (selectionPendingAction && selectedElements.length > 0) {
+                // A user clicked Copy/Move on a selection and was waiting to click
+                // a target point — let Escape back out without forcing them to either
+                // click somewhere arbitrary or switch tools.
+                e.preventDefault();
+                selectionPendingAction = null;
+                clearSelection();
+                if (instructionText) instructionText.innerText = typeof t === 'function' ? t('instruction-default') : '';
+            } else if (addingPointTmgGroup || reorientingTmgMarker || !!catkPlacementState || drawLineCoords.length >= 1 || tmgPoints.length >= 1) {
+                // Was >= 2, which left a single placed point dangling with no way to
+                // cancel except picking another tool. Allow Escape from the first click.
                 e.preventDefault();
                 cancelLineDrawing();
             } else if (isGeoPanelActive() && (geoDistancePoints.length >= 1 || geoFreeformPoints.length >= 1 || geoFreehandPoints.length >= 1 || geoCircle2ptPoints.length >= 1 || geoRangeCirclePoints.length >= 1 || geoRangeSectorPoints.length >= 1 || geoSemiCirclePoints.length >= 1 || isFreehandDrawing || isTrimmerDragging)) {
@@ -16868,6 +16943,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 cancelGeoDrawing();
                 updateGeoInstruction();
+            } else if (currentPopupSource) {
+                // No drawing or placement in flight — Escape closes the open
+                // map popup. Matches standard modal UX; map.closePopup() is a
+                // no-op if nothing's open so this stays safe under races.
+                try {
+                    if (typeof map.closePopup === 'function') {
+                        map.closePopup();
+                        e.preventDefault();
+                    }
+                } catch (_) { /* ignore */ }
             }
         }
     });

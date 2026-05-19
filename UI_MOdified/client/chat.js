@@ -389,11 +389,16 @@
             loadEl.className = 'chat-members-loading';
             loadEl.textContent = chatMembersT('chat-members-loading');
             chatMembersList.appendChild(loadEl);
+            // AbortController prevents a hung server from leaving the modal
+            // stuck on "Loading…" indefinitely — after 15 s we abort and show
+            // a timeout error the user can react to.
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => { try { ctrl.abort(); } catch (_) {} }, 15000);
             try {
                 const base = CHAT_CONFIG.apiBaseUrl || '';
                 const url = new URL(`${base}/api/chat/rooms/members`, window.location.origin);
                 url.searchParams.set('roomId', CHAT_CONFIG.roomId || CHAT_PUBLIC_ROOM);
-                const res = await fetch(url.toString(), { credentials: 'include' });
+                const res = await fetch(url.toString(), { credentials: 'include', signal: ctrl.signal });
                 if (res.status === 403) { chatMembersList.textContent = chatMembersT('chat-members-error-403'); return; }
                 if (res.status === 404) { chatMembersList.textContent = chatMembersT('chat-members-error-404'); return; }
                 if (!res.ok) { chatMembersList.textContent = chatMembersT('chat-members-error'); return; }
@@ -401,7 +406,13 @@
                 try { data = await res.json(); } catch { chatMembersList.textContent = chatMembersT('chat-members-error'); return; }
                 renderChatMembersList(data);
             } catch (e) {
-                chatMembersList.textContent = chatMembersT('chat-members-error-network');
+                if (e && (e.name === 'AbortError' || e.code === 20)) {
+                    chatMembersList.textContent = chatMembersT('chat-members-timeout');
+                } else {
+                    chatMembersList.textContent = chatMembersT('chat-members-error-network');
+                }
+            } finally {
+                clearTimeout(timer);
             }
         }
 
@@ -502,11 +513,11 @@
                 }
                 chatState.messages = incoming;
                 renderChatMessages();
-                setChatStatus('Connected', null);
+                setChatStatus(chatMembersT('chat-status-connected'), null);
                 pingChatPresence();
                 if (chatMembersModal && !chatMembersModal.classList.contains('hidden')) void loadChatMembersIntoModal();
             } catch (e) {
-                setChatStatus('Chat error', 'chat-status--error');
+                setChatStatus(typeof window.t === 'function' ? window.t('chat-status-error') : 'Chat error', 'chat-status--error');
             }
         }
 
@@ -544,9 +555,9 @@
                     chatState.messages = chatState.messages.slice(-CHAT_CONFIG.maxMessages);
                 }
                 renderChatMessages();
-                setChatStatus('Connected', null);
+                setChatStatus(chatMembersT('chat-status-connected'), null);
             } catch (e) {
-                setChatStatus('Chat error', 'chat-status--error');
+                setChatStatus(typeof window.t === 'function' ? window.t('chat-status-error') : 'Chat error', 'chat-status--error');
             }
         }
 
@@ -557,23 +568,33 @@
             const url = new URL(`${base}/api/chat/upload`, window.location.origin);
             url.searchParams.set('roomId', CHAT_CONFIG.roomId || CHAT_PUBLIC_ROOM);
             url.searchParams.set('filename', safeName);
+            // Hard 60-second ceiling — without it the chat status pill is stuck
+            // on "Uploading file…" forever if the server stalls mid-stream.
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => { try { ctrl.abort(); } catch (_) {} }, 60000);
             try {
-                const res = await fetch(url.toString(), { method: 'POST', credentials: 'include', body: file });
+                const res = await fetch(url.toString(), { method: 'POST', credentials: 'include', body: file, signal: ctrl.signal });
                 if (!res.ok) throw new Error(`Upload failed (${res.status})`);
                 const data = await res.json();
                 return data.url || null;
             } catch (e) {
-                setChatStatus('File upload error', 'chat-status--error');
+                if (e && (e.name === 'AbortError' || e.code === 20)) {
+                    setChatStatus(chatMembersT('chat-status-upload-timeout'), 'chat-status--error');
+                } else {
+                    setChatStatus(chatMembersT('chat-status-upload-error'), 'chat-status--error');
+                }
                 return null;
+            } finally {
+                clearTimeout(timer);
             }
         }
 
         function startChatPolling() {
             if (chatState.pollingTimer || !isChatGloballyEnabled()) return;
-            setChatStatus(isChatOnline() ? 'Connecting…' : 'Offline', isChatOnline() ? null : 'chat-status--offline');
+            setChatStatus(chatMembersT(isChatOnline() ? 'chat-status-connecting' : 'chat-status-offline'), isChatOnline() ? null : 'chat-status--offline');
             fetchChatMessages();
             chatState.pollingTimer = setInterval(() => {
-                if (!isChatOnline()) { setChatStatus('Offline', 'chat-status--offline'); return; }
+                if (!isChatOnline()) { setChatStatus(chatMembersT('chat-status-offline'), 'chat-status--offline'); return; }
                 fetchChatMessages();
             }, CHAT_CONFIG.pollIntervalMs || 4000);
         }
@@ -585,13 +606,13 @@
             const role = getCurrentUserRole();
             const perms = CHAT_CONFIG.allowedRoles?.[role];
             if (!perms || !perms.canRead) {
-                setChatStatus('Chat not available for this role', 'chat-status--role-blocked');
+                setChatStatus(chatMembersT('chat-status-role-blocked'), 'chat-status--role-blocked');
             } else if (!isChatGloballyEnabled()) {
-                setChatStatus('Chat not configured', 'chat-status--error');
+                setChatStatus(chatMembersT('chat-status-not-configured'), 'chat-status--error');
             } else if (!isChatOnline()) {
-                setChatStatus('Offline', 'chat-status--offline');
+                setChatStatus(chatMembersT('chat-status-offline'), 'chat-status--offline');
             } else {
-                setChatStatus('Connecting…', null);
+                setChatStatus(chatMembersT('chat-status-connecting'), null);
             }
             chatSidebar.classList.remove('collapsed');
             if (chatToggleBtn) chatToggleBtn.setAttribute('aria-expanded', 'true');
@@ -645,9 +666,9 @@
                 url.searchParams.set('groupId', gid);
                 const res = await fetch(url.toString(), { credentials: 'include' });
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok) { setChatStatus(data.error || 'Could not load code', 'chat-status--error'); return; }
+                if (!res.ok) { setChatStatus(data.error || chatMembersT('chat-status-could-not-load-code'), 'chat-status--error'); return; }
                 openChatInviteModal(gid, data.inviteCode || '');
-            } catch (e) { console.warn(e); setChatStatus('Chat error', 'chat-status--error'); }
+            } catch (e) { console.warn(e); setChatStatus(typeof window.t === 'function' ? window.t('chat-status-error') : 'Chat error', 'chat-status--error'); }
         });
 
         chatInviteBackdrop?.addEventListener('click', closeChatInviteModal);
@@ -659,7 +680,7 @@
             try {
                 await navigator.clipboard.writeText(text);
                 setChatStatus(chatMembersT('chat-invite-copied'), null);
-            } catch { setChatStatus('Could not copy', 'chat-status--error'); }
+            } catch { setChatStatus(typeof window.t === 'function' ? window.t('chat-status-could-not-copy') : 'Could not copy', 'chat-status--error'); }
         });
 
         async function saveChatInviteCodeFromModal() {
@@ -698,12 +719,19 @@
             const gid = CHAT_CONFIG.roomId;
             if (!gid || !gid.startsWith('grp-')) return;
             const msg = typeof window.t === 'function' ? window.t('chat-leave-confirm') : 'Leave this group?';
-            if (!confirm(msg)) return;
+            const confirmFn = (typeof window.customConfirm === 'function')
+                ? () => window.customConfirm(msg, {
+                    okText: typeof window.t === 'function' ? window.t('dialog-leave') : 'Leave',
+                    cancelText: typeof window.t === 'function' ? window.t('dialog-cancel') : 'Cancel',
+                    danger: true,
+                  })
+                : () => Promise.resolve(confirm(msg));
+            if (!(await confirmFn())) return;
             try {
                 const base = CHAT_CONFIG.apiBaseUrl || '';
                 const res = await fetch(`${base}/api/chat/groups/leave`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ groupId: gid }) });
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok) { setChatStatus(data.error || 'Could not leave group', 'chat-status--error'); return; }
+                if (!res.ok) { setChatStatus(data.error || (typeof window.t === 'function' ? window.t('chat-status-could-not-leave') : 'Could not leave group'), 'chat-status--error'); return; }
                 CHAT_CONFIG.roomId = CHAT_PUBLIC_ROOM;
                 try { localStorage.setItem(CHAT_ROOM_STORAGE_KEY, CHAT_PUBLIC_ROOM); } catch {}
                 if (chatRoomSelect) chatRoomSelect.value = CHAT_PUBLIC_ROOM;
@@ -713,19 +741,26 @@
                 renderChatMessages();
                 await refreshChatRoomOptions();
                 void fetchChatMessages();
-            } catch (e) { console.warn(e); setChatStatus('Chat error', 'chat-status--error'); }
+            } catch (e) { console.warn(e); setChatStatus(typeof window.t === 'function' ? window.t('chat-status-error') : 'Chat error', 'chat-status--error'); }
         });
 
         chatDeleteGroupBtn?.addEventListener('click', async () => {
             const gid = CHAT_CONFIG.roomId;
             if (!gid || !gid.startsWith('grp-')) return;
             const msg = typeof window.t === 'function' ? window.t('chat-delete-confirm') : 'Delete this group for everyone?';
-            if (!confirm(msg)) return;
+            const confirmFn = (typeof window.customConfirm === 'function')
+                ? () => window.customConfirm(msg, {
+                    okText: typeof window.t === 'function' ? window.t('dialog-delete') : 'Delete',
+                    cancelText: typeof window.t === 'function' ? window.t('dialog-cancel') : 'Cancel',
+                    danger: true,
+                  })
+                : () => Promise.resolve(confirm(msg));
+            if (!(await confirmFn())) return;
             try {
                 const base = CHAT_CONFIG.apiBaseUrl || '';
                 const res = await fetch(`${base}/api/chat/groups/delete`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ groupId: gid }) });
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok) { setChatStatus(data.error || 'Could not delete group', 'chat-status--error'); return; }
+                if (!res.ok) { setChatStatus(data.error || (typeof window.t === 'function' ? window.t('chat-status-could-not-delete') : 'Could not delete group'), 'chat-status--error'); return; }
                 CHAT_CONFIG.roomId = CHAT_PUBLIC_ROOM;
                 try { localStorage.setItem(CHAT_ROOM_STORAGE_KEY, CHAT_PUBLIC_ROOM); } catch {}
                 if (chatRoomSelect) chatRoomSelect.value = CHAT_PUBLIC_ROOM;
@@ -735,7 +770,7 @@
                 renderChatMessages();
                 await refreshChatRoomOptions();
                 void fetchChatMessages();
-            } catch (e) { console.warn(e); setChatStatus('Chat error', 'chat-status--error'); }
+            } catch (e) { console.warn(e); setChatStatus(typeof window.t === 'function' ? window.t('chat-status-error') : 'Chat error', 'chat-status--error'); }
         });
 
         chatNewGroupBtn?.addEventListener('click', async () => {
@@ -746,7 +781,7 @@
                 const base = CHAT_CONFIG.apiBaseUrl || '';
                 const res = await fetch(`${base}/api/chat/groups/create`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) });
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok) { setChatStatus(data.error || 'Could not create group', 'chat-status--error'); return; }
+                if (!res.ok) { setChatStatus(data.error || (typeof window.t === 'function' ? window.t('chat-status-could-not-create') : 'Could not create group'), 'chat-status--error'); return; }
                 const inviteMsg = typeof window.t === 'function' ? window.t('chat-invite-copy') : 'Invite code (share with others on LAN):';
                 alert(inviteMsg + '\n\n' + (data.inviteCode || ''));
                 await refreshChatRoomOptions();
@@ -760,7 +795,7 @@
                     renderChatMessages();
                     void fetchChatMessages();
                 }
-            } catch (e) { console.warn(e); setChatStatus('Chat error', 'chat-status--error'); }
+            } catch (e) { console.warn(e); setChatStatus(typeof window.t === 'function' ? window.t('chat-status-error') : 'Chat error', 'chat-status--error'); }
         });
 
         chatJoinCodeBtn?.addEventListener('click', async () => {
@@ -771,7 +806,7 @@
                 const base = CHAT_CONFIG.apiBaseUrl || '';
                 const res = await fetch(`${base}/api/chat/groups/join`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ inviteCode: code }) });
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok) { setChatStatus(data.error || 'Invalid invite code', 'chat-status--error'); return; }
+                if (!res.ok) { setChatStatus(data.error || chatMembersT('chat-status-invalid-invite'), 'chat-status--error'); return; }
                 await refreshChatRoomOptions();
                 if (chatRoomSelect && data.groupId) {
                     chatRoomSelect.value = data.groupId;
@@ -783,7 +818,7 @@
                     renderChatMessages();
                     void fetchChatMessages();
                 }
-            } catch (e) { console.warn(e); setChatStatus('Chat error', 'chat-status--error'); }
+            } catch (e) { console.warn(e); setChatStatus(typeof window.t === 'function' ? window.t('chat-status-error') : 'Chat error', 'chat-status--error'); }
         });
 
         if (chatFormEl && chatInputEl) {
@@ -802,11 +837,11 @@
                 const file = e.target.files?.[0];
                 if (!file) return;
                 if (!isChatGloballyEnabled() || !isChatOnline()) {
-                    setChatStatus('Offline or chat not configured', 'chat-status--offline');
+                    setChatStatus(chatMembersT('chat-status-offline-config'), 'chat-status--offline');
                     chatFileInputEl.value = '';
                     return;
                 }
-                setChatStatus('Uploading file…', null);
+                setChatStatus(chatMembersT('chat-status-upload-progress'), null);
                 const url = await uploadChatFile(file);
                 if (url) {
                     const baseText = chatInputEl?.value?.trim?.() || '';
@@ -819,7 +854,7 @@
         }
 
         window.addEventListener('online', () => {
-            if (chatSidebar && !chatSidebar.classList.contains('collapsed')) setChatStatus('Connecting…', null);
+            if (chatSidebar && !chatSidebar.classList.contains('collapsed')) setChatStatus(chatMembersT('chat-status-connecting'), null);
             if (isChatGloballyEnabled()) {
                 const role = getCurrentUserRole();
                 if (CHAT_CONFIG.allowedRoles?.[role]?.canRead && !chatState.pollingTimer) {
@@ -828,7 +863,7 @@
             }
         });
         window.addEventListener('offline', () => {
-            if (chatSidebar && !chatSidebar.classList.contains('collapsed')) setChatStatus('Offline', 'chat-status--offline');
+            if (chatSidebar && !chatSidebar.classList.contains('collapsed')) setChatStatus(chatMembersT('chat-status-offline'), 'chat-status--offline');
         });
 
         syncChatNotifyToggleButton();

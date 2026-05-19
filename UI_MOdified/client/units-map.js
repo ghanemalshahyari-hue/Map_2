@@ -277,13 +277,25 @@
             const act = btn.getAttribute('data-act');
             if (act === 'unplace') {
                 try {
-                    await fetch(`/api/units/${encodeURIComponent(unit.id)}/unplace`, {
+                    const r = await fetch(`/api/units/${encodeURIComponent(unit.id)}/unplace`, {
                         method: 'POST', credentials: 'include',
                     });
+                    if (!r.ok) {
+                        if (r.status === 401) window.rmoozServerSync?.notifySessionExpired?.();
+                        else window.rmoozToast?.(
+                            (typeof window.t === 'function' ? window.t('units-toast-unplace-failed') : 'Could not unplace unit'),
+                            'error'
+                        );
+                        return;
+                    }
                     removeMarker(unit.id);
                     map.closePopup();
                 } catch (err) {
                     console.warn('[units-map] unplace failed', err);
+                    window.rmoozToast?.(
+                        (typeof window.t === 'function' ? window.t('units-toast-network') : 'Network error — please try again'),
+                        'error'
+                    );
                 }
             } else if (act === 'edit') {
                 map.closePopup();
@@ -494,7 +506,12 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ lat: safe.lat, lng: safe.lng }),
                     });
-                    if (!res.ok) throw new Error(await res.text());
+                    if (!res.ok) {
+                        if (res.status === 401) {
+                            window.rmoozServerSync?.notifySessionExpired?.();
+                        }
+                        throw new Error(await res.text());
+                    }
                     const updated = await res.json();
                     // Silent teardown — a successful placement is not a cancel,
                     // so listeners tracking real user cancellations shouldn't fire.
@@ -514,6 +531,10 @@
                     document.dispatchEvent(new CustomEvent('units:placed', { detail: { unitId: unit.id } }));
                 } catch (err) {
                     console.warn('[units-map] place failed', err);
+                    window.rmoozToast?.(
+                        (typeof window.t === 'function' ? window.t('units-toast-place-failed') : 'Could not place unit — please try again'),
+                        'error'
+                    );
                     cancelPlacement();
                 }
             },

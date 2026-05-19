@@ -1,14 +1,9 @@
 /**
- * Custom prompt + confirm dialogs (Electron's window.prompt/confirm returns null silently)
- * plus a tiny toast helper used to surface previously silent failures.
- *
+ * Custom prompt + confirm dialogs (Electron's window.prompt/confirm returns null silently).
  * Exposes:
  *   window.customPrompt(message, defaultValue)            → Promise<string|null>
  *   window.customConfirm(message, opts?)                  → Promise<boolean>
  *     opts: { okText, cancelText, danger: true|false, detail: string }
- *   window.rmoozToast(message, kind?, opts?)              → void
- *     kind: 'info' (default) | 'success' | 'warn' | 'error'
- *     opts: { durationMs?: number }
  */
 (function () {
   // Inject styles once
@@ -91,89 +86,6 @@
     }
   `;
   document.head.appendChild(style);
-
-  // ── Toast helper ──────────────────────────────────────────────────
-  // Lightweight non-blocking notification. Stacks toasts in a fixed-position
-  // container; auto-dismisses after durationMs (default 4000). The toast
-  // shows the message and a small × button so users can dismiss early.
-  const toastStyle = document.createElement('style');
-  toastStyle.textContent = `
-    .rmooz-toast-stack {
-      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-      z-index: 100002;
-      display: flex; flex-direction: column; gap: 8px;
-      pointer-events: none;
-      max-width: 90vw;
-    }
-    .rmooz-toast {
-      pointer-events: auto;
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; min-width: 220px; max-width: 520px;
-      border-radius: 6px;
-      font: 13px/1.4 system-ui, -apple-system, sans-serif;
-      color: #fff; background: #475569;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-      opacity: 0; transform: translateY(-6px);
-      transition: opacity 160ms ease-out, transform 160ms ease-out;
-    }
-    .rmooz-toast.visible { opacity: 1; transform: translateY(0); }
-    .rmooz-toast--success { background: #16a34a; }
-    .rmooz-toast--warn    { background: #d97706; }
-    .rmooz-toast--error   { background: #dc2626; }
-    .rmooz-toast--info    { background: #0ea5e9; }
-    .rmooz-toast-msg  { flex: 1; white-space: pre-wrap; }
-    .rmooz-toast-close {
-      background: transparent; border: none; color: rgba(255,255,255,0.85);
-      cursor: pointer; font-size: 16px; line-height: 1; padding: 0 4px;
-    }
-    .rmooz-toast-close:hover { color: #fff; }
-  `;
-  document.head.appendChild(toastStyle);
-
-  function ensureToastStack() {
-    let stack = document.getElementById('rmooz-toast-stack');
-    if (!stack) {
-      stack = document.createElement('div');
-      stack.id = 'rmooz-toast-stack';
-      stack.className = 'rmooz-toast-stack';
-      stack.setAttribute('aria-live', 'polite');
-      stack.setAttribute('aria-atomic', 'true');
-      document.body.appendChild(stack);
-    }
-    return stack;
-  }
-
-  window.rmoozToast = function (message, kind, opts) {
-    if (!message) return;
-    const stack = ensureToastStack();
-    const k = (kind === 'success' || kind === 'warn' || kind === 'error' || kind === 'info') ? kind : 'info';
-    const dur = (opts && Number.isFinite(opts.durationMs)) ? opts.durationMs : 4000;
-    const el = document.createElement('div');
-    el.className = 'rmooz-toast rmooz-toast--' + k;
-    el.setAttribute('role', k === 'error' || k === 'warn' ? 'alert' : 'status');
-    const msg = document.createElement('span');
-    msg.className = 'rmooz-toast-msg';
-    msg.textContent = String(message);
-    const closer = document.createElement('button');
-    closer.type = 'button';
-    closer.className = 'rmooz-toast-close';
-    closer.setAttribute('aria-label', 'Dismiss');
-    closer.textContent = '×';
-    el.appendChild(msg);
-    el.appendChild(closer);
-    stack.appendChild(el);
-    // Trigger transition on next frame
-    requestAnimationFrame(() => el.classList.add('visible'));
-    let timer;
-    function dismiss() {
-      if (!el.parentNode) return;
-      el.classList.remove('visible');
-      clearTimeout(timer);
-      setTimeout(() => { try { el.remove(); } catch (_) {} }, 200);
-    }
-    closer.addEventListener('click', dismiss);
-    if (dur > 0) timer = setTimeout(dismiss, dur);
-  };
 
   // Look up an i18n key if available, otherwise use the provided fallback.
   function tr(key, fallback) {

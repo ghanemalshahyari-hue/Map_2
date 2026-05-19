@@ -726,11 +726,20 @@
         const { isCounterattackStyleMultiPointType } = window.AppGraphics;
         const { trimmedDisplayNameFrom, totalDistanceKm, haversineDistance } = window.AppUtils;
 
+        // Localized error helper — toast if available (non-blocking),
+        // otherwise alert. Looks up i18n if i18n.js loaded.
+        const importErr = (key, fallback) => {
+            if (silent) return;
+            const msg = (typeof window.t === 'function' && window.t(key) !== key) ? window.t(key) : fallback;
+            if (window.rmoozToast) window.rmoozToast(msg, 'error');
+            else alert(msg);
+        };
+
         let parsed;
         try {
             parsed = JSON.parse(jsonStr);
         } catch (e) {
-            if (!silent) alert('Invalid JSON file.');
+            importErr('import-invalid-json', 'Invalid JSON file.');
             return;
         }
 
@@ -744,7 +753,7 @@
             catch { fc = null; }
         }
         if (!fc) {
-            if (!silent) alert('Invalid format: not a recognised plan file.');
+            importErr('import-invalid-format', 'Invalid format: not a recognised plan file.');
             return;
         }
 

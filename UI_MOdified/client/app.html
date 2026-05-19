@@ -25,14 +25,15 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     <span data-i18n="chat-btn">Chat</span>
                 </button>
-                <button id="lang-toggle-btn" class="header-btn" type="button" title="Switch language">عربي</button>
+                <button id="lang-toggle-btn" class="header-btn" type="button" data-i18n-title="lang-toggle-title" title="Switch language">عربي</button>
                 <div id="server-account-bar" class="server-account-bar hidden" aria-label="Server plans">
                     <select id="server-plan-select" class="glass-select server-plan-select" title="Plans"></select>
+                    <span id="plan-save-status" class="plan-save-status plan-save-status--hidden" aria-live="polite" role="status"></span>
                     <button type="button" id="server-new-plan-btn" class="header-btn" data-i18n-title="new-plan-title" title="New plan"><span data-i18n="new-plan-btn">+ Plan</span></button>
                     <button type="button" id="server-logout-btn" class="header-btn" data-i18n-title="logout" data-i18n="logout" title="Logout">Logout</button>
                 </div>
-                <button id="theme-toggle-btn" class="header-btn" type="button" title="تبديل الوضع الفاتح/الداكن">☀</button>
-                <button id="settings-toggle-btn" class="header-btn" type="button" title="الإعدادات والأدوات">
+                <button id="theme-toggle-btn" class="header-btn" type="button" data-i18n-title="theme-toggle-title" title="Toggle light/dark theme">☀</button>
+                <button id="settings-toggle-btn" class="header-btn" type="button" data-i18n-title="settings-toggle-title" title="Settings & tools">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
                 </button>
                 <!-- Hidden backward-compat: distance unit toggle (still used by app.js) -->
@@ -742,6 +743,75 @@
                 </section>
 
                 <!-- ▸ SETTINGS PANEL (backward-compat shell — selects moved to utility panel) -->
+                <!-- War Game command panel -->
+                <section class="tools-section tool-panel wargame-panel context-section hidden" id="wargame-panel" aria-label="War Game battle control">
+                    <div class="wargame-panel-topline">
+                        <span class="wargame-classification">Training</span>
+                        <span class="wargame-mode-chip">Turn-based</span>
+                    </div>
+
+                    <div class="wargame-brief-card">
+                        <div>
+                            <span class="wargame-eyebrow">Current mission</span>
+                            <strong>Advance to contact</strong>
+                        </div>
+                        <span id="wg-state-pill" class="wargame-state-pill is-idle">Idle</span>
+                    </div>
+
+                    <div class="wargame-phase-track" aria-label="War game phases">
+                        <span id="wg-phase-setup" class="active">Setup</span>
+                        <span id="wg-phase-orders">Orders</span>
+                        <span id="wg-phase-resolve">Resolve</span>
+                        <span id="wg-phase-aar">AAR</span>
+                    </div>
+
+                    <div id="wargame-hud" class="wargame-control-card" aria-live="polite">
+                        <div class="wargame-card-head">
+                            <div>
+                                <span class="wargame-eyebrow">Battle control</span>
+                                <strong>War Game</strong>
+                            </div>
+                            <button type="button" id="wg-min" class="wargame-icon-btn" aria-label="Collapse battle control">-</button>
+                        </div>
+                        <div id="wg-body">
+                            <div class="wargame-kpi-grid">
+                                <div><span>Turn</span><strong id="wg-turn-value">0</strong></div>
+                                <div><span>Advance</span><strong id="wg-advance-value">0 km</strong></div>
+                                <div><span>Enemy</span><strong id="wg-enemy-value">-</strong></div>
+                                <div><span>Friendly</span><strong id="wg-friendly-value">-</strong></div>
+                            </div>
+                            <div id="wg-status" class="wargame-status-block">Not started</div>
+                            <div class="wargame-action-row">
+                                <button id="wg-init" class="wargame-action-btn primary" type="button">Start</button>
+                                <button id="wg-next" class="wargame-action-btn success" type="button">Next Turn</button>
+                                <button id="wg-reset" class="wargame-action-btn secondary" type="button">Reset</button>
+                            </div>
+                            <div class="wargame-control-footer">
+                                <span id="wg-footer">Step 5 km - slide 800 ms - contact &lt;= 5 km</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wargame-feed-card">
+                        <div class="wargame-feed-head">
+                            <span>Combat feed</span>
+                            <span id="wg-feed-count">0</span>
+                        </div>
+                        <div id="wg-combat-feed" class="wargame-feed-empty">No contacts yet.</div>
+                    </div>
+
+                    <div class="wargame-quick-grid">
+                        <button type="button" class="wargame-quick-card" data-wg-note="forces">
+                            <strong>Forces</strong>
+                            <span>Import or place friendly and hostile units first.</span>
+                        </button>
+                        <button type="button" class="wargame-quick-card" data-wg-note="contact">
+                            <strong>Contact rule</strong>
+                            <span>Simulation pauses when opposing units close to contact range.</span>
+                        </button>
+                    </div>
+                </section>
+
                 <div id="settings-panel" class="context-section hidden" style="display:none!important"></div>
 
                 <!-- ▸ ACTION AREA (always visible at bottom) -->
@@ -815,6 +885,12 @@
                     <div class="statusbar-tool" id="statusbar-tool-display">Select</div>
                     <div class="statusbar-divider">|</div>
                     <div class="statusbar-hint" id="statusbar-hint-display">Click or drag on the map to select items</div>
+                    <div class="statusbar-spacer"></div>
+                    <div class="battle-readiness-strip" aria-label="Battle readiness">
+                        <span id="battle-plan-chip">PLAN OPLAN-LAHEJ-04</span>
+                        <span id="battle-side-chip">SIDE BLUE</span>
+                        <span id="battle-turn-chip">TURN 0</span>
+                    </div>
                 </div>
                 <div class="map-canvas-wrap">
                     <div id="map"></div>

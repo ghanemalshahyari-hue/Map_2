@@ -10,18 +10,29 @@
 (function () {
     'use strict';
 
-    /* ── Tool definitions ─────────────────────────────────────────────── */
+    /* ── Tool definitions ─────────────────────────────────────────────── *
+     * title/hint hold the English fallback. titleKey/hintKey resolve through
+     * window.t() so the panel header and status bar update when the user
+     * toggles language — they previously stayed in English regardless. */
     const TOOL_CONFIG = {
-        select:  { mode: 'pan',    tab: 'drawing', title: 'Select',  hint: 'Click or drag on the map to select items' },
-        symbol:  { mode: 'symbol', tab: 'drawing', title: 'Symbol',  hint: 'Choose a symbol, then click the map to place it' },
-        draw:    { mode: 'line',   tab: 'drawing', title: 'Draw',    hint: 'Click to add points. Double-click to finish' },
-        text:    { mode: 'text',   tab: 'drawing', title: 'Text',    hint: 'Enter text, then click the map to place it' },
-        erase:   { mode: 'eraser', tab: 'drawing', title: 'Erase',   hint: 'Click items to erase them' },
-        measure: { mode: 'pan',    tab: 'geo',     title: 'Measure', hint: 'Click points on the map to measure distance' },
-        shapes:  { mode: 'pan',    tab: 'geo',     title: 'Shapes',  hint: 'Choose a shape, then click the map' },
-        layers:  { mode: null,     tab: null,       title: 'Layers',  hint: 'Organize your map items' },
-        wargame: { mode: null,     tab: null,       title: 'War Game', hint: 'Run turn-based movement and contact checks' },
+        select:  { mode: 'pan',    tab: 'drawing', title: 'Select',  titleKey: 'tool-select',  hint: 'Click or drag on the map to select items',           hintKey: 'tool-hint-select' },
+        symbol:  { mode: 'symbol', tab: 'drawing', title: 'Symbol',  titleKey: 'tool-symbol',  hint: 'Choose a symbol, then click the map to place it',    hintKey: 'tool-hint-symbol' },
+        draw:    { mode: 'line',   tab: 'drawing', title: 'Draw',    titleKey: 'tool-draw',    hint: 'Click to add points. Double-click to finish',         hintKey: 'tool-hint-draw' },
+        text:    { mode: 'text',   tab: 'drawing', title: 'Text',    titleKey: 'tool-text',    hint: 'Enter text, then click the map to place it',          hintKey: 'tool-hint-text' },
+        erase:   { mode: 'eraser', tab: 'drawing', title: 'Erase',   titleKey: 'tool-erase',   hint: 'Click items to erase them',                           hintKey: 'tool-hint-erase' },
+        measure: { mode: 'pan',    tab: 'geo',     title: 'Measure', titleKey: 'tool-measure', hint: 'Click points on the map to measure distance',         hintKey: 'tool-hint-measure' },
+        shapes:  { mode: 'pan',    tab: 'geo',     title: 'Shapes',  titleKey: 'tool-shapes',  hint: 'Choose a shape, then click the map',                  hintKey: 'tool-hint-shapes' },
+        layers:  { mode: null,     tab: null,      title: 'Layers',  titleKey: 'tool-layers',  hint: 'Organize your map items',                             hintKey: 'tool-hint-layers' },
+        wargame: { mode: null,     tab: null,      title: 'War Game',titleKey: 'tool-wargame', hint: 'Run turn-based movement and contact checks',          hintKey: 'tool-hint-wargame' },
     };
+
+    function tx(key, fallback) {
+        if (typeof window.t === 'function') {
+            const v = window.t(key);
+            if (v && v !== key) return v;
+        }
+        return fallback;
+    }
 
     /* ── DOM references ───────────────────────────────────────────────── */
     const modeSelect       = document.getElementById('tool-mode');
@@ -32,6 +43,7 @@
     const measurePanel     = document.getElementById('measure-panel');
     const shapesPanel      = document.getElementById('shapes-panel');
     const layersSection    = document.getElementById('layers-section');
+    const wargamePanel     = document.getElementById('wargame-panel');
     const panelTitle       = document.getElementById('context-panel-title');
     const panelHint        = document.getElementById('context-panel-hint');
     const statusbarTool    = document.getElementById('statusbar-tool-display');
@@ -55,7 +67,7 @@
      * Note: geoPanel stays in the DOM (hidden) as a bridge for app.js's
      * geo tool handlers. Shapes/Measure panels are the new visible panels.
      */
-    const contextSections = [drawingPanel, geoPanel, measurePanel, shapesPanel, layersSection];
+    const contextSections = [drawingPanel, geoPanel, measurePanel, shapesPanel, layersSection, wargamePanel];
 
     function setVisibleSections(tool) {
         const show = {
@@ -67,6 +79,7 @@
             measure: [measurePanel],
             shapes:  [shapesPanel],
             layers:  [layersSection],
+            wargame: [wargamePanel],
         };
 
         const visible = show[tool] || [];
@@ -117,11 +130,24 @@
     function updateHeaders(tool) {
         const cfg = TOOL_CONFIG[tool];
         if (!cfg) return;
-        if (panelTitle)    panelTitle.textContent = cfg.title;
-        if (panelHint)     panelHint.textContent = cfg.hint;
-        if (statusbarTool) statusbarTool.textContent = cfg.title;
-        if (statusbarHint) statusbarHint.textContent = cfg.hint;
+        const title = tx(cfg.titleKey, cfg.title);
+        const hint  = tx(cfg.hintKey,  cfg.hint);
+        if (panelTitle)    panelTitle.textContent = title;
+        if (panelHint)     panelHint.textContent = hint;
+        if (statusbarTool) statusbarTool.textContent = title;
+        if (statusbarHint) statusbarHint.textContent = hint;
     }
+
+    // Re-paint the active tool's header strings when the user toggles
+    // language — without this they'd stay in whatever language was active
+    // at first render.
+    (function chainToolLang() {
+        const prev = window.onLanguageChange;
+        window.onLanguageChange = function (lang) {
+            try { updateHeaders(currentTool); } catch (_) {}
+            if (typeof prev === 'function') prev(lang);
+        };
+    })();
 
     /* ── Sidebar tab helper (triggers existing tab click handlers) ──── */
     function clickSidebarTab(tabName) {
@@ -188,6 +214,14 @@
         updateHeaders(tool);
 
         if (tool === 'wargame') {
+            setVisibleSections(tool);
+            if (contextPanel) {
+                contextPanel.style.display = '';
+                contextPanel.classList.remove('is-minimized');
+            }
+            const peek = document.getElementById('context-panel-peek');
+            if (peek) peek.classList.add('hidden');
+
             const showWarGameHud = () => {
                 if (window.AppTurnEngine && typeof window.AppTurnEngine.showHud === 'function') {
                     window.AppTurnEngine.showHud();

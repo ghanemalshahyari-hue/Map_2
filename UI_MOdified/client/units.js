@@ -1495,7 +1495,15 @@
                 const id = delBtn.getAttribute('data-del-id');
                 const u  = state.units.find(x => x.id === id);
                 if (!u) return;
-                if (!confirm(tr('units-confirm-delete', 'Delete "{0}"?').replace('{0}', u.name))) return;
+                const confirmMsg = tr('units-confirm-delete', 'Delete "{0}"?').replace('{0}', u.name);
+                const ok = (typeof window.customConfirm === 'function')
+                    ? await window.customConfirm(confirmMsg, {
+                        okText: tr('dialog-delete', 'Delete'),
+                        cancelText: tr('dialog-cancel', 'Cancel'),
+                        danger: true,
+                      })
+                    : confirm(confirmMsg);
+                if (!ok) return;
                 try {
                     await apiJson(`/api/units/${encodeURIComponent(id)}/delete`, { method: 'POST', body: '{}' });
                     if (state.selectedId === id) {
@@ -1505,7 +1513,11 @@
                         enterWelcomeMode();
                     }
                     await refresh();
-                } catch (err) { alert(err.message || tr('units-err-delete', 'Delete failed')); }
+                } catch (err) {
+                    const msg = err.message || tr('units-err-delete', 'Delete failed');
+                    if (window.rmoozToast) window.rmoozToast(msg, 'error');
+                    else alert(msg);
+                }
                 return;
             }
             const restoreBtn = e.target?.closest?.('.units-tree-restore-btn');
@@ -1515,7 +1527,11 @@
                 try {
                     await apiJson(`/api/units/${encodeURIComponent(id)}/restore`, { method: 'POST', body: '{}' });
                     await refresh();
-                } catch (err) { alert(err.message || tr('units-err-restore', 'Restore failed')); }
+                } catch (err) {
+                    const msg = err.message || tr('units-err-restore', 'Restore failed');
+                    if (window.rmoozToast) window.rmoozToast(msg, 'error');
+                    else alert(msg);
+                }
                 return;
             }
             const row = e.target?.closest?.('.units-tree-row');

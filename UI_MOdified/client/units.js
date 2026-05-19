@@ -234,15 +234,24 @@
         const domainRow       = byId('units-domain-row');
         const domainBtns      = byId('units-domain-btns');
         const branchRow       = byId('units-branch-row');
-        const branchBtns      = byId('units-branch-btns');
+        const branchSelect    = byId('units-branch-select');
         const qaNameEl        = byId('units-qa-name');
         const qaCodeEl        = byId('units-qa-code');
+        const qaCodeDisplayEl = byId('units-qa-code-display');
+        const qaCodeLineEl    = byId('units-qa-code-line');
+        const qaCodeEditWrap  = byId('units-qa-code-edit-wrap');
+        const qaCodeEditBtn   = byId('units-qa-code-edit-btn');
         const qaSidcEl        = byId('units-qa-sidc');
         const quickSetupEl    = byId('units-quick-setup');
         const qaErrorEl       = byId('units-qa-error');
         const createBtn       = byId('units-create-btn');
         const createAddBtn    = byId('units-create-and-add-btn');
         const createPlaceBtn  = byId('units-create-and-place-btn');
+        const createMoreToggle = byId('units-create-more-toggle');
+        const createMoreEl    = byId('units-create-more');
+        const treeOverflowBtn = byId('units-tree-overflow-btn');
+        const treeOverflowMenu= byId('units-tree-overflow-menu');
+        const chipsLabelEl    = byId('units-symbol-chips-label');
 
         // Standalone placement panel (sibling of the units modal)
         const placementPanelEl       = byId('units-placement-panel');
@@ -503,6 +512,10 @@
 
             // Fresh code
             if (qaCodeEl && !(qaCodeEl.value || '').trim()) qaCodeEl.value = nextCode(lvl);
+            // Mirror the auto-generated code into the read-only display line.
+            // The Edit drawer remains hidden by default so the auto value never
+            // demands the user's attention.
+            if (qaCodeDisplayEl) qaCodeDisplayEl.textContent = qaCodeEl?.value || '—';
 
             // Refresh symbol preview + chips whenever the form context changes
             updateSymbolPreview();
@@ -558,7 +571,7 @@
             if (symbolNameEl) symbolNameEl.textContent = label || fallback;
             if (symbolSidcEl) {
                 const autoTag = tr('units-symbol-auto', '(auto)');
-                symbolSidcEl.textContent = selectedSidc ? `SIDC: ${sidc}` : `SIDC: ${sidc} ${autoTag}`;
+                symbolSidcEl.textContent = selectedSidc ? sidc : `${sidc} ${autoTag}`;
             }
             if (symbolClearBtn) symbolClearBtn.style.display = selectedSidc ? '' : 'none';
             if (qaSidcEl) qaSidcEl.value = selectedSidc || '';
@@ -568,6 +581,16 @@
         function renderSuggestedChips() {
             if (!symbolChipsEl) return;
             const ctx = getFormContext();
+            // At Army level there is no meaningful domain yet — six branch
+            // chips would just be noise. Hide the chips strip entirely.
+            if (ctx.lvl === 0) {
+                symbolChipsEl.innerHTML = '';
+                if (symbolChipsEl) symbolChipsEl.style.display = 'none';
+                if (chipsLabelEl)  chipsLabelEl.style.display  = 'none';
+                return;
+            }
+            if (symbolChipsEl) symbolChipsEl.style.display = '';
+            if (chipsLabelEl)  chipsLabelEl.style.display  = '';
             const domain = ctx.domain || 'Land';
 
             const entities = [];
@@ -738,15 +761,20 @@
             });
         }
         function setBranchUI(branch) {
-            branchBtns?.querySelectorAll('.units-domain-btn').forEach(b => {
-                b.classList.toggle('active', b.getAttribute('data-branch') === branch);
-            });
+            if (branchSelect) branchSelect.value = branch || '';
         }
 
         function resetMainForm() {
             if (qaNameEl) qaNameEl.value = '';
             if (qaCodeEl) qaCodeEl.value = '';
             if (qaSidcEl) qaSidcEl.value = '';
+            // Re-collapse the auto-code editor so the next unit creation also
+            // starts with the code hidden behind a small "Edit" link.
+            if (qaCodeLineEl)   qaCodeLineEl.hidden   = false;
+            if (qaCodeEditWrap) qaCodeEditWrap.hidden = true;
+            // Re-collapse the "More options" drawer for the same reason.
+            if (createMoreEl) createMoreEl.setAttribute('hidden', '');
+            if (createMoreToggle) createMoreToggle.setAttribute('aria-expanded', 'false');
             selectedDomain = null;
             selectedBranch = null;
             selectedSidc   = null;
@@ -1177,7 +1205,13 @@
                 const countTitle = n._childCount > 0
                     ? tr('units-tree-count-title', `${n._childCount} subordinate unit${n._childCount === 1 ? '' : 's'}`).replace('{n}', String(n._childCount))
                     : '';
-                const countBadge = n._childCount > 0 ? `<span class="units-tree-count" title="${escapeHtml(countTitle)}">${n._childCount}</span>` : '';
+                // Self-documenting label so the user knows "what" the number
+                // is counting at a glance (e.g. "4 Forces" under an Army).
+                const childLvl = n.level + 1;
+                const childTypeLbl = n._childCount === 1 ? levelLabel(childLvl) : levelLabelPlural(childLvl);
+                const countBadge = n._childCount > 0
+                    ? `<span class="units-tree-count" title="${escapeHtml(countTitle)}">${n._childCount} ${escapeHtml(childTypeLbl)}</span>`
+                    : '';
                 const delBtn = deleted
                     ? `<button class="units-tree-restore-btn" data-restore-id="${escapeHtml(n.id)}" title="${escapeHtml(tr('units-tree-restore-title', 'Restore'))}">↩</button>`
                     : `<button class="units-tree-del-btn" data-del-id="${escapeHtml(n.id)}" title="${escapeHtml(tr('units-tree-delete-title', 'Delete'))}">×</button>`;
@@ -1745,17 +1779,10 @@
             updateMainPanel();
         });
 
-        // Branch buttons
-        branchBtns?.addEventListener('click', (e) => {
-            const btn = e.target?.closest?.('.units-domain-btn');
-            if (!btn) return;
-            const branch = btn.getAttribute('data-branch');
-            if (selectedBranch === branch) {
-                selectedBranch = null;
-            } else {
-                selectedBranch = branch;
-            }
-            setBranchUI(selectedBranch);
+        // Branch dropdown
+        branchSelect?.addEventListener('change', () => {
+            const v = branchSelect.value || null;
+            selectedBranch = v;
             selectedSidc = null; // branch change → re-auto-suggest
             updateSymbolPreview();
         });
@@ -1819,6 +1846,8 @@
             codeAvailable = true;
             clearTimeout(codeCheckTimer);
             codeCheckTimer = setTimeout(checkQaCode, 300);
+            // Keep the small read-only display in sync while the user types.
+            if (qaCodeDisplayEl) qaCodeDisplayEl.textContent = qaCodeEl.value || '—';
             setCreateEnabled();
         });
         qaNameEl?.addEventListener('keydown', (e) => {
@@ -1830,6 +1859,50 @@
         createBtn?.addEventListener('click',      () => createUnit());
         createAddBtn?.addEventListener('click',   () => createUnit({ keepParent: true }));
         createPlaceBtn?.addEventListener('click', () => createUnit({ placeAfter: true }));
+
+        // ── Drawer toggles ─────────────────────────────────────────────────
+        // Code edit drawer: the auto-generated code stays read-only by default.
+        // Clicking "Edit" hides the display line and reveals the input so the
+        // user can override it. Once revealed, it stays open for the rest of
+        // the session unless the form is reset.
+        qaCodeEditBtn?.addEventListener('click', () => {
+            if (qaCodeLineEl) qaCodeLineEl.hidden = true;
+            if (qaCodeEditWrap) {
+                qaCodeEditWrap.hidden = false;
+                qaCodeEl?.focus();
+                try { qaCodeEl?.select(); } catch (_) {}
+            }
+        });
+
+        // "More options" on the Create row reveals "Create & Place" and
+        // "Create & Add Another". Only one click → both power buttons appear.
+        createMoreToggle?.addEventListener('click', () => {
+            if (!createMoreEl) return;
+            const isHidden = createMoreEl.hasAttribute('hidden');
+            if (isHidden) {
+                createMoreEl.removeAttribute('hidden');
+                createMoreToggle.setAttribute('aria-expanded', 'true');
+            } else {
+                createMoreEl.setAttribute('hidden', '');
+                createMoreToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Tree-controls "⋯" overflow menu: holds the affiliation filter and
+        // the "Show deleted units" toggle. Closing happens by clicking the
+        // button again — these are settings, not transient menus.
+        treeOverflowBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!treeOverflowMenu) return;
+            const isHidden = treeOverflowMenu.hasAttribute('hidden');
+            if (isHidden) {
+                treeOverflowMenu.removeAttribute('hidden');
+                treeOverflowBtn.setAttribute('aria-expanded', 'true');
+            } else {
+                treeOverflowMenu.setAttribute('hidden', '');
+                treeOverflowBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
 
         // The Company dead-end message contains bold HTML — applyLanguage only sets textContent,
         // so we populate innerHTML manually here and on every language change.

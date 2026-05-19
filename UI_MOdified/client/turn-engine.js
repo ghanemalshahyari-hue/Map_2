@@ -447,6 +447,13 @@ function init() {
             state.stopped = true;
         }
         renderHud();
+        // Signal end of the Blue phase so the Red-team AI can react. We dispatch
+        // unconditionally (even on contact/stop) — listeners decide what to do.
+        try {
+            document.dispatchEvent(new CustomEvent('wargame:turn-ended', { detail: {
+                turn: state.turn, contact, stopped: state.stopped, advancedKm: state.advancedKm,
+            }}));
+        } catch (_) { /* ignore */ }
         return { turn: state.turn, stopped: state.stopped, contact, advancedKm: state.advancedKm };
     }
 

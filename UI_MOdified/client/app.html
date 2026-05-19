@@ -800,6 +800,45 @@
                         <div id="wg-combat-feed" class="wargame-feed-empty">No contacts yet.</div>
                     </div>
 
+                    <!-- Red-team AI gateway: smoke-test card. Confirms a local
+                         Ollama instance is reachable before the engine tries
+                         to consult it for Red-side reactions. -->
+                    <div class="wargame-feed-card" id="wg-ai-card">
+                        <div class="wargame-feed-head">
+                            <span>&#129302; Red-team AI</span>
+                            <span id="wg-ai-status-pill" class="wargame-state-pill is-idle">Unchecked</span>
+                        </div>
+                        <div id="wg-ai-status" class="wargame-status-block">No connection test yet. Click below to verify Ollama is reachable.</div>
+                        <div id="wg-ai-models" class="wargame-status-block" style="display:none"></div>
+                        <div class="wargame-action-row">
+                            <button id="wg-ai-test-btn" class="wargame-action-btn primary" type="button">Test AI connection</button>
+                            <button id="wg-ai-ping-btn" class="wargame-action-btn secondary" type="button">Send test prompt</button>
+                        </div>
+                        <div class="wargame-control-footer">
+                            <span>Local Ollama @ :11434 &middot; default model gpt-oss:20b &middot; nothing leaves this machine.</span>
+                        </div>
+
+                        <!-- Action / Reaction (الفعل ورد الفعل): Red reacts to
+                             Blue's moves, then Blue can counter-react to Red.
+                             Same agent, opposite perspective — the operator
+                             drives the cycle by clicking either button. -->
+                        <div class="wargame-action-row" style="margin-top:8px;">
+                            <button id="wg-ai-propose-btn" class="wargame-action-btn success" type="button">&#129302; Request Red moves</button>
+                            <button id="wg-ai-propose-blue-btn" class="wargame-action-btn primary" type="button">&#128737;&#65039; Request Blue counter-moves</button>
+                        </div>
+                        <div class="wg-ai-options">
+                            <label class="wg-ai-toggle">
+                                <input type="checkbox" id="wg-ai-auto-after-turn" />
+                                <span>Auto-request after each Blue turn</span>
+                            </label>
+                            <label class="wg-ai-toggle">
+                                <input type="checkbox" id="wg-ai-auto-execute" />
+                                <span>Auto-execute valid actions (skip approval)</span>
+                            </label>
+                        </div>
+                        <div id="wg-ai-proposals" class="wg-ai-proposals"></div>
+                    </div>
+
                     <div class="wargame-quick-grid">
                         <button type="button" class="wargame-quick-card" data-wg-note="forces">
                             <strong>Forces</strong>
@@ -1581,6 +1620,7 @@
     <script src="tool-rail.js?v=3"></script>
     <script src="import-plan.js?v=9"></script>
     <script src="turn-engine.js?v=5"></script>
+    <script src="wargame/red-team-controller.js?v=1"></script>
     <script src="map-hide-panels.js?v=1"></script>
 
     <!-- New modular panel system (ES modules — run after app.js) -->

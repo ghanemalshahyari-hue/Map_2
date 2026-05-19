@@ -38,6 +38,8 @@ try { fs.mkdirSync(DATA_DIR,   { recursive: true }); } catch {}
 try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch {}
 
 const appData = require('./app-data');
+const ollama  = require('./ai/ollama-client');
+const redTeam = require('./ai/red-team-agent');
 if (Database) {
     try {
         appData.initAppData({ Database, dataDir: DATA_DIR, legacyUnitsFile: process.env.RMOOZ_UNITS_DB_FILE || path.join(DATA_DIR, 'units.db') });
@@ -408,6 +410,53 @@ const server = http.createServer((req, res) => {
     if (appData.handleAuthApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
     if (appData.handlePlansApi(req, res, url, pathname, req.method, sendJson, readJsonBody)) return;
     if (appData.handlePrefsApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
+
+    // --- Local Ollama gateway (Chunk 08): browser never talks to Ollama
+    // directly — it goes through these endpoints so we keep one bottleneck
+    // for auth, validation, prompt-shaping, and audit logging. ---
+    if (pathname === '/api/ai/health' && req.method === 'GET') {
+        ollama.ping()
+            .then(r => sendJson(res, r.ok ? 200 : 503, r))
+            .catch(e => sendJson(res, 500, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+    if (pathname === '/api/ai/generate' && req.method === 'POST') {
+        readJsonBody(req).then(body => {
+            return ollama.generate(body || {});
+        }).then(r => {
+            sendJson(res, r.ok ? 200 : 502, r);
+        }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+    if (pathname === '/api/ai/chat' && req.method === 'POST') {
+        readJsonBody(req).then(body => {
+            return ollama.chat(body || {});
+        }).then(r => {
+            sendJson(res, r.ok ? 200 : 502, r);
+        }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+    // Chunk 09: red-team proposal endpoint. Body: { snapshot, turn, model? }.
+    // Snapshot can be either the stringified GeoJSON from captureSnapshot()
+    // or the parsed object — the agent handles both.
+    if (pathname === '/api/ai/red-team/propose' && req.method === 'POST') {
+        readJsonBody(req, { maxBytes: 2_000_000 }).then(body => {
+            return redTeam.propose({ ...(body || {}), side: 'red' });
+        }).then(r => {
+            sendJson(res, r.ok ? 200 : 502, r);
+        }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+    // Blue counter-reaction — same agent, opposite perspective. Used for
+    // الفعل ورد الفعل: after Red moves, Blue commander reacts.
+    if (pathname === '/api/ai/blue-team/propose' && req.method === 'POST') {
+        readJsonBody(req, { maxBytes: 2_000_000 }).then(body => {
+            return redTeam.propose({ ...(body || {}), side: 'blue' });
+        }).then(r => {
+            sendJson(res, r.ok ? 200 : 502, r);
+        }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
 
     // --- Chat API: messages (private group rooms require membership) ---
     if (pathname === '/api/chat/messages') {

@@ -70,22 +70,27 @@
         } catch (_) { return null; }
     }
 
-    // True only when the SIDC is missing or its 6-digit entity field is all
-    // zeros — i.e. the user never picked a branch / entity, so milsymbol has
-    // nothing to draw inside the frame. We deliberately do NOT try to infer
-    // "frame only" from the rendered SVG: real branches like Infantry render
-    // with very few paths and would be falsely classified as empty.
+    // True only when the SIDC is a fully-formed 20-digit string whose 6-digit
+    // entity field is explicitly all zeros — i.e. the user picked a frame-only
+    // symbol with no entity. A missing/short SIDC is NOT treated as "no
+    // entity" here, because the marker render falls back to DEFAULT_SIDC
+    // (which carries a real entity code) — hiding it would mean a placed
+    // unit never appears on the map just because its SIDC was left blank.
+    // We deliberately do NOT try to infer "frame only" from the rendered
+    // SVG: real branches like Infantry render with very few paths and would
+    // be falsely classified as empty.
     function unitHasNoEntity(sidc) {
         const s = String(sidc || '').replace(/\D/g, '');
-        if (s.length < 20) return true;
+        if (s.length < 20) return false;
         return s.substr(10, 6) === '000000';
     }
 
     function isVisibleAtCurrentScale(unit) {
-        // Bare-frame units (no entity in their SIDC) are always hidden — there
-        // is nothing meaningful to draw and the empty rectangle just clutters
-        // the map.
-        if (unitHasNoEntity(unit?.sidc)) return false;
+        // Check the EFFECTIVE SIDC (same fallback path the marker render uses)
+        // so a placed unit that was saved without a SIDC still shows up using
+        // the default symbol rather than being silently filtered out.
+        const effectiveSidc = unit?.sidc || DEFAULT_SIDC;
+        if (unitHasNoEntity(effectiveSidc)) return false;
         const cap = SCALE_CAP_BY_LEVEL[Number(unit?.level)];
         if (cap === undefined) return true;   // unknown echelon → always show
         if (!isFinite(cap)) return true;      // Brigade and above
@@ -584,6 +589,30 @@
         loadAllPlaced().then(updateAllVisibility);
     }
 
+    // Snapshot every placed marker into a plain JSON list so other
+    // subsystems (e.g. the Red-team AI) can reason over the current
+    // battlefield without poking at Leaflet internals. The shape matches
+    // what the server-side red-team agent expects in its `units` field.
+    function listPlacedUnits() {
+        const out = [];
+        markers.forEach((m, id) => {
+            const d  = m._unitData || {};
+            const ll = m.getLatLng ? m.getLatLng() : null;
+            if (!ll) return;
+            out.push({
+                id:    id,
+                name:  d.name || d.code || id,
+                code:  d.code || '',
+                level: d.level,
+                side:  d.side || null,
+                sidc:  d.sidc || null,
+                lat:   ll.lat,
+                lng:   ll.lng,
+            });
+        });
+        return out;
+    }
+
     window.AppUnitsMap = {
         init,
         beginPlacement,
@@ -591,6 +620,7 @@
         addOrUpdateMarker,
         removeMarker,
         hasPlacedUnits,
+        listPlacedUnits,
         clearAll,
         reload: loadAllPlaced,
         refreshScaleVisibility: updateAllVisibility,

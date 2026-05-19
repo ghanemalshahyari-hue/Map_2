@@ -230,10 +230,11 @@ function centroid(units) {
 }
 
 // ── Public entry point ─────────────────────────────────────────────────
-// Per-side cap on units sent to the LLM. Beyond this the prompt eats the
-// model's reasoning budget and Ollama times out. 12 + 12 plus the system
-// prompt fits comfortably under 6000 num_predict on gpt-oss:20b.
-const MAX_UNITS_PER_SIDE = 12;
+// Per-side cap on units sent to the LLM. Measured: gpt-oss:20b runs at
+// ~24 tok/s locally. To keep responses under ~120 s we cap num_predict to
+// ~2500 and the prompt stays tight. 8 + 8 is the sweet spot for the
+// token/time budget on this hardware.
+const MAX_UNITS_PER_SIDE = 8;
 
 async function propose({ snapshot, units, turn, model, timeoutMs, side }) {
     // Normalise side: default red (legacy callers). Blue path is the new
@@ -280,9 +281,10 @@ async function propose({ snapshot, units, turn, model, timeoutMs, side }) {
         // "thinking" channel and the `response` field comes back empty.
         // The system prompt already commits the model to raw JSON; we
         // strip code-fence noise defensively below.
-        // 6000 fits dense battlefields (40+40) — most reasoning + JSON reply.
-        options: { num_predict: 6000, temperature: 0.3 },
-        timeoutMs: timeoutMs || 180_000,
+        // Budget: gpt-oss:20b at ~24 tok/s × 2500 ≈ 100 s. Leaves room under
+        // the 150 s timeout. Lower temp = less rambling reasoning.
+        options: { num_predict: 2500, temperature: 0.2 },
+        timeoutMs: timeoutMs || 150_000,
     });
 
     if (!llm.ok) {

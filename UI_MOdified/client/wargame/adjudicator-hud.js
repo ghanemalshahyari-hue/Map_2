@@ -69,65 +69,74 @@
                 Loading scenarios…
             </div>
 
-            <div class="wargame-action-row" style="flex-wrap:wrap; gap:6px;">
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;">
-                    Scenario
-                    <select id="wg-adj-scenario" style="font-size:12px;padding:2px 4px;"></select>
-                </label>
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;">
-                    Model
-                    <input id="wg-adj-model" type="text" placeholder="(default)" style="font-size:12px;padding:2px 4px;width:120px;" />
-                </label>
-                <label class="wg-ai-toggle" style="font-size:12px;">
+            <!-- ── Setup: scenario + model + mock toggle ── -->
+            <div class="wg-adj-section">
+                <div class="wg-adj-section-title">Setup</div>
+                <div class="wg-adj-form-grid">
+                    <label for="wg-adj-scenario" class="wg-adj-label">Scenario</label>
+                    <select id="wg-adj-scenario" class="wg-adj-input"></select>
+
+                    <label for="wg-adj-model" class="wg-adj-label">Model</label>
+                    <input id="wg-adj-model" class="wg-adj-input" type="text" placeholder="(default)" />
+
+                    <label for="wg-adj-coa-reserve" class="wg-adj-label">Reserve&nbsp;hr</label>
+                    <input id="wg-adj-coa-reserve" class="wg-adj-input" type="number" value="72" min="0" max="144" step="1" />
+
+                    <label for="wg-adj-coa-posture" class="wg-adj-label">Posture</label>
+                    <select id="wg-adj-coa-posture" class="wg-adj-input">
+                        <option value="deliberate">deliberate</option>
+                        <option value="hasty">hasty</option>
+                    </select>
+
+                    <label for="wg-adj-seed" class="wg-adj-label">Trial&nbsp;seed</label>
+                    <input id="wg-adj-seed" class="wg-adj-input" type="text" value="manual" />
+                </div>
+                <label class="wg-adj-toggle">
                     <input type="checkbox" id="wg-adj-mock" checked />
                     <span>Mock mode (no Ollama)</span>
                 </label>
             </div>
 
-            <div class="wargame-action-row" style="flex-wrap:wrap; gap:6px; margin-top:6px;">
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;">
-                    Reserve hr
-                    <input id="wg-adj-coa-reserve" type="number" value="72" min="0" max="144" step="1" style="font-size:12px;padding:2px 4px;width:60px;" />
-                </label>
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;">
-                    Posture
-                    <select id="wg-adj-coa-posture" style="font-size:12px;padding:2px 4px;">
-                        <option value="deliberate">deliberate</option>
-                        <option value="hasty">hasty</option>
-                    </select>
-                </label>
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;">
-                    Trial seed
-                    <input id="wg-adj-seed" type="text" value="manual" style="font-size:12px;padding:2px 4px;width:80px;" />
-                </label>
+            <!-- ── Map overlay buttons ── -->
+            <div class="wg-adj-section">
+                <div class="wg-adj-section-title">Scenario overlay</div>
+                <div class="wg-adj-btn-row wg-adj-btn-row--2">
+                    <button id="wg-adj-map-btn"   class="wargame-action-btn secondary" type="button">Show on map</button>
+                    <button id="wg-adj-map-clear" class="wargame-action-btn secondary" type="button">Hide</button>
+                </div>
             </div>
 
-            <div class="wargame-action-row" style="margin-top:8px;">
-                <button id="wg-adj-map-btn"    class="wargame-action-btn secondary" type="button">Show scenario on map</button>
-                <button id="wg-adj-map-clear"  class="wargame-action-btn secondary" type="button">Hide</button>
-            </div>
-            <div class="wargame-action-row" style="margin-top:6px;">
-                <button id="wg-adj-step-btn"   class="wargame-action-btn primary" type="button">Adjudicate next step</button>
-                <button id="wg-adj-trial-btn"  class="wargame-action-btn success" type="button">Run 1 trial (12 steps)</button>
-                <button id="wg-adj-reset-btn"  class="wargame-action-btn secondary" type="button">Reset trial</button>
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;">
-                    Step pace
-                    <input id="wg-adj-pace-ms" type="number" value="1200" min="0" max="10000" step="100" style="font-size:12px;padding:2px 4px;width:70px;" />
-                    <span style="font-size:11px;color:#888;">ms</span>
-                </label>
+            <!-- ── Step-by-step adjudication ── -->
+            <div class="wg-adj-section">
+                <div class="wg-adj-section-title">Adjudicate</div>
+                <div class="wg-adj-btn-row wg-adj-btn-row--3">
+                    <button id="wg-adj-step-btn"  class="wargame-action-btn primary"   type="button">Next step</button>
+                    <button id="wg-adj-trial-btn" class="wargame-action-btn success"   type="button">Run trial (12)</button>
+                    <button id="wg-adj-reset-btn" class="wargame-action-btn secondary" type="button">Reset</button>
+                </div>
+                <div class="wg-adj-form-grid">
+                    <label for="wg-adj-pace-ms" class="wg-adj-label">Step&nbsp;pace</label>
+                    <div class="wg-adj-input-suffix">
+                        <input id="wg-adj-pace-ms" class="wg-adj-input" type="number" value="1200" min="0" max="10000" step="100" />
+                        <span class="wg-adj-unit">ms</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="wargame-action-row" style="margin-top:6px;">
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;">
-                    MC trials
-                    <input id="wg-adj-mc-trials" type="number" value="3" min="1" max="100" step="1" style="font-size:12px;padding:2px 4px;width:60px;" />
-                </label>
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;">
-                    Parallel
-                    <input id="wg-adj-mc-par" type="number" value="2" min="1" max="8" step="1" style="font-size:12px;padding:2px 4px;width:50px;" />
-                </label>
-                <button id="wg-adj-mc-btn"     class="wargame-action-btn primary" type="button">Run Monte Carlo</button>
-                <button id="wg-adj-mc-cancel"  class="wargame-action-btn secondary" type="button" disabled>Cancel</button>
+            <!-- ── Monte Carlo ── -->
+            <div class="wg-adj-section">
+                <div class="wg-adj-section-title">Monte Carlo</div>
+                <div class="wg-adj-form-grid wg-adj-form-grid--tight">
+                    <label for="wg-adj-mc-trials" class="wg-adj-label">MC trials</label>
+                    <input id="wg-adj-mc-trials" class="wg-adj-input" type="number" value="3" min="1" max="100" step="1" />
+
+                    <label for="wg-adj-mc-par" class="wg-adj-label">Parallel</label>
+                    <input id="wg-adj-mc-par" class="wg-adj-input" type="number" value="2" min="1" max="8" step="1" />
+                </div>
+                <div class="wg-adj-btn-row wg-adj-btn-row--2">
+                    <button id="wg-adj-mc-btn"     class="wargame-action-btn primary"   type="button">Run Monte Carlo</button>
+                    <button id="wg-adj-mc-cancel"  class="wargame-action-btn secondary" type="button" disabled>Cancel</button>
+                </div>
             </div>
 
             <div id="wg-adj-timeline" class="wargame-status-block" style="margin-top:8px; padding:6px 4px; display:none;">

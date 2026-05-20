@@ -804,27 +804,34 @@
     }
 
     // Map objective_status → visual treatment for the salient + advance
-    // arrows. Operator-reported bug: a red salient expanding while
-    // Blue is actually winning made the map look like Red was winning.
-    // Fix: keep the geographic SHAPE (how far Red reached) but vary
-    // color + opacity + dash style by outcome so DENIED reads as
-    // "Red tried but didn't hold" rather than "Red is dominating".
+    // arrows. Operator-reported bug: the salient and arrows extended all
+    // the way to OBJ NASSER when PL crossed depth, even when Blue was
+    // winning — the visual said "Red is dominating" no matter what.
+    //
+    // Fix has two layers:
+    //   (a) color / opacity / dash style by outcome (CAPTURED bold,
+    //       DENIED faded gray-red dashed, etc.)
+    //   (b) reachFactor: the arrow tip + salient deep-front retract for
+    //       non-CAPTURED outcomes so DENIED visibly stops short of OBJ
+    //       even at PL=95. The dashed yellow AOR phase line still shows
+    //       the geographic PL; the arrows now show CONTROL.
     function outcomeAccent(state) {
         const status = state && state.objective_status;
         switch (status) {
             case 'CAPTURED':
-                return { color: '#b21414', fillColor: '#c41e1e', fillOpacity: 0.22, opacity: 0.90, mainWeight: 10, secWeight: 6, dashArray: null,    label: 'Red holds' };
+                return { color: '#b21414', fillColor: '#c41e1e', fillOpacity: 0.22, opacity: 0.90, mainWeight: 10, secWeight: 6, dashArray: null,    reachFactor: 1.00, label: 'Red holds' };
             case 'CONTESTED':
-                return { color: '#c44e1e', fillColor: '#d2682a', fillOpacity: 0.15, opacity: 0.75, mainWeight: 9,  secWeight: 6, dashArray: null,    label: 'Contested at OBJ' };
+                return { color: '#c44e1e', fillColor: '#d2682a', fillOpacity: 0.15, opacity: 0.75, mainWeight: 9,  secWeight: 6, dashArray: null,    reachFactor: 0.85, label: 'Contested at OBJ' };
             case 'THREATENED':
-                return { color: '#c98a2a', fillColor: '#e8a23a', fillOpacity: 0.12, opacity: 0.65, mainWeight: 7,  secWeight: 5, dashArray: null,    label: 'OBJ threatened' };
+                return { color: '#c98a2a', fillColor: '#e8a23a', fillOpacity: 0.12, opacity: 0.65, mainWeight: 7,  secWeight: 5, dashArray: null,    reachFactor: 0.75, label: 'OBJ threatened' };
             case 'DENIED':
-                // Faded, dashed — Red got here geographically but was pushed back.
-                return { color: '#7d6a6a', fillColor: '#a08a8a', fillOpacity: 0.08, opacity: 0.55, mainWeight: 5,  secWeight: 3, dashArray: '8 6',   label: 'Red denied' };
+                // Faded, dashed, AND retracted — Red was pushed back well
+                // short of OBJ. reachFactor 0.55 keeps the arrow tip ~45%
+                // short of where geographic PL would otherwise put it.
+                return { color: '#7d6a6a', fillColor: '#a08a8a', fillOpacity: 0.08, opacity: 0.55, mainWeight: 5,  secWeight: 3, dashArray: '8 6',   reachFactor: 0.55, label: 'Red denied' };
             case 'DORMANT':
             default:
-                // Pre-H or no decision yet — render very faintly.
-                return { color: '#88555f', fillColor: '#a07070', fillOpacity: 0.10, opacity: 0.40, mainWeight: 6,  secWeight: 4, dashArray: null,    label: 'pre-decision' };
+                return { color: '#88555f', fillColor: '#a07070', fillOpacity: 0.10, opacity: 0.40, mainWeight: 6,  secWeight: 4, dashArray: null,    reachFactor: 0.25, label: 'pre-decision' };
         }
     }
 
@@ -849,13 +856,20 @@
         const objLL = obj.coord;
 
         const accent = outcomeAccent(state);
+        // Effective reach for the salient + arrow tips. Geographic PL
+        // (progress) stays visible on the dashed yellow AOR phase line;
+        // these layers now show CONTROL, retracting for non-CAPTURED
+        // outcomes. clampedProgress also caps at 0.92 for the salient
+        // ring (preserves the lerp-back shape) and 1.0 for arrow tips.
+        const reach = Math.min(progress, 1.0) * (accent.reachFactor != null ? accent.reachFactor : 1.0);
+        const salientReach = Math.min(reach, 0.92);
 
         // Salient polygon: from every BLS in template back through the
-        // current deep-front lerp points. Color + opacity track outcome
-        // so DENIED reads as "Red was here but doesn't control it".
+        // current deep-front lerp points. Depth retracts for DENIED so
+        // the polygon doesn't reach OBJ even at PL=95.
         const bls = (scenario.bls_template || []).filter(b => b && Array.isArray(b.coord));
         if (bls.length >= 2) {
-            const deep = bls.map(b => lerpLonLat(b.coord, objLL, Math.min(progress, 0.92)));
+            const deep = bls.map(b => lerpLonLat(b.coord, objLL, salientReach));
             const ring = bls.map(b => [b.coord[1], b.coord[0]])
                 .concat(deep.slice().reverse().map(p => [p[1], p[0]]));
             salientLayer = window.L.polygon(ring, {
@@ -866,16 +880,19 @@
                 fillOpacity: accent.fillOpacity,
                 dashArray:   accent.dashArray,
                 interactive: false,
-            }).bindTooltip(`Salient — ${accent.label} (progress ${(progress * 100).toFixed(0)}%)`,
-                           { sticky: true });
+            }).bindTooltip(
+                `Salient — ${accent.label}  (PL ${(progress * 100).toFixed(0)}% · control ${(reach * 100).toFixed(0)}%)`,
+                { sticky: true },
+            );
             salientLayer.addTo(layerGroup);
         }
 
-        // Main effort: BLS-3 → lerp(BLS-3, OBJ, progress). Chunky.
+        // Main effort arrow: BLS-3 → lerp(BLS-3, OBJ, reach). Tip
+        // position now reflects control, not just geographic PL.
         const main = scenario.bls_template && scenario.bls_template.find(b => b && b.name === 'BLS-3');
         if (main && Array.isArray(main.coord)) {
             const start = [main.coord[1], main.coord[0]];
-            const endLL = lerpLonLat(main.coord, objLL, Math.min(progress, 1.0));
+            const endLL = lerpLonLat(main.coord, objLL, reach);
             const end   = [endLL[1], endLL[0]];
             const line = window.L.polyline([start, end], {
                 color:     accent.color,
@@ -884,19 +901,21 @@
                 dashArray: accent.dashArray,
                 lineCap:   'round',
                 interactive: false,
-            }).bindTooltip(`Main effort: BLS-3 → OBJ — ${accent.label} (progress ${(progress * 100).toFixed(0)}%)`);
+            }).bindTooltip(
+                `Main effort: BLS-3 → ${accent.label}  (PL ${(progress * 100).toFixed(0)}% · control ${(reach * 100).toFixed(0)}%)`,
+            );
             line.addTo(layerGroup);
             advanceArrows.push(line);
             const head = makeArrowhead(start, end, accent.color, 14);
             if (head) { head.addTo(layerGroup); advanceArrows.push(head); }
         }
 
-        // Secondary envelopment: BLS-4 → lerp(BLS-4, OBJ, progress*0.92).
-        // Only appears once the lodgement has any depth (progress > 0.15).
+        // Secondary envelopment: BLS-4 → lerp(BLS-4, OBJ, reach*0.92).
+        // Only appears once the lodgement has any control depth (>0.15).
         const sec = scenario.bls_template && scenario.bls_template.find(b => b && b.name === 'BLS-4');
-        if (progress > 0.15 && sec && Array.isArray(sec.coord)) {
+        if (reach > 0.15 && sec && Array.isArray(sec.coord)) {
             const start = [sec.coord[1], sec.coord[0]];
-            const endLL = lerpLonLat(sec.coord, objLL, Math.min(progress, 0.92));
+            const endLL = lerpLonLat(sec.coord, objLL, Math.min(reach, 0.92));
             const end   = [endLL[1], endLL[0]];
             const line = window.L.polyline([start, end], {
                 color:     accent.color,
@@ -905,7 +924,9 @@
                 dashArray: accent.dashArray,
                 lineCap:   'round',
                 interactive: false,
-            }).bindTooltip(`Envelopment: BLS-4 → OBJ — ${accent.label} (progress ${(Math.min(progress, 0.92) * 100).toFixed(0)}%)`);
+            }).bindTooltip(
+                `Envelopment: BLS-4 → ${accent.label}  (PL ${(progress * 100).toFixed(0)}% · control ${(Math.min(reach, 0.92) * 100).toFixed(0)}%)`,
+            );
             line.addTo(layerGroup);
             advanceArrows.push(line);
             const head = makeArrowhead(start, end, accent.color, 10);

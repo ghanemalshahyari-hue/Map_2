@@ -39,10 +39,12 @@ try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch {}
 
 const appData = require('./app-data');
 const ollama       = require('./ai/ollama-client');
+const aiProvider   = require('./ai/ai-provider');
 const redTeam      = require('./ai/red-team-agent');
 const adjudicator  = require('./ai/adjudicator-agent');
 const scenarios    = require('./ai/scenario-loader');
 const mcRunner     = require('./ai/monte-carlo-runner');
+const feedbackStore = require('./ai/feedback-store');
 if (Database) {
     try {
         appData.initAppData({ Database, dataDir: DATA_DIR, legacyUnitsFile: process.env.RMOOZ_UNITS_DB_FILE || path.join(DATA_DIR, 'units.db') });
@@ -423,6 +425,16 @@ const server = http.createServer((req, res) => {
             .catch(e => sendJson(res, 500, { ok: false, error: e.message || String(e) }));
         return;
     }
+    // Combined provider status (Ollama + Claude). Lets the HUD show a
+    // provider pill (available / default / errors) so the operator knows
+    // which backend will handle a request. Returns 200 even when one
+    // provider is down — `available` lists what's currently usable.
+    if (pathname === '/api/ai/provider/status' && req.method === 'GET') {
+        aiProvider.getStatus()
+            .then(r => sendJson(res, 200, { ok: true, ...r }))
+            .catch(e => sendJson(res, 500, { ok: false, error: e.message || String(e) }));
+        return;
+    }
     if (pathname === '/api/ai/generate' && req.method === 'POST') {
         readJsonBody(req).then(body => {
             return ollama.generate(body || {});
@@ -506,6 +518,7 @@ const server = http.createServer((req, res) => {
                 timeoutMs:    body.timeoutMs   || null,
                 mockMode:     body.mockMode === true,
                 approvedActions: body.approvedActions || null,
+                provider:     body.provider    || null,
             });
         }).then(r => {
             // Even on fallback we return 200 — the client always gets a
@@ -513,6 +526,37 @@ const server = http.createServer((req, res) => {
             // tell the UI whether to badge the step.
             sendJson(res, 200, r);
         }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+
+    // Operator feedback on an adjudicated step (item #9). Append-only.
+    // Body: { scenarioName, stepIndex, decision: 'accept'|'reject'|'note',
+    //         trialId?, coaParams?, provider?, model?, note? }.
+    if (pathname === '/api/ai/feedback' && req.method === 'POST') {
+        readJsonBody(req, { maxBytes: 32_000 }).then(body => {
+            const r = feedbackStore.append(body || {});
+            sendJson(res, r.ok ? 200 : 400, r);
+        }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+
+    // Read aggregated feedback counts for the priors / HUD. Optional
+    // querystring filter: ?scenario=NAME&posture=X&reserve_hr=N&ageMs=...
+    if (pathname === '/api/ai/feedback/summary' && req.method === 'GET') {
+        try {
+            const url = new URL('http://x' + req.url);
+            const scenarioName = url.searchParams.get('scenario') || scenarios.DEFAULT_NAME;
+            const posture      = url.searchParams.get('posture');
+            const reserveHr    = url.searchParams.get('reserve_hr');
+            const ageMs        = Number(url.searchParams.get('ageMs')) || 0;
+            const coaParams = (posture || reserveHr)
+                ? { posture: posture || undefined, reserve_commit_hour: reserveHr != null ? Number(reserveHr) : undefined }
+                : null;
+            const counts = feedbackStore.countByScenarioCoa({ scenarioName, coaParams, ageMs });
+            sendJson(res, 200, { ok: true, scenarioName, coaParams, counts });
+        } catch (e) {
+            sendJson(res, 400, { ok: false, error: e.message || String(e) });
+        }
         return;
     }
 
@@ -529,6 +573,7 @@ const server = http.createServer((req, res) => {
                 model:        body.model,
                 timeoutMs:    body.timeoutMs,
                 mockMode:     body.mockMode === true,
+                provider:     body.provider || null,
             });
             sendJson(res, 200, { ok: true, runId, dir });
         }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));

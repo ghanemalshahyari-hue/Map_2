@@ -26,6 +26,7 @@ const crypto = require('crypto');
 
 const ollama       = require('./ollama-client');   // kept for DEFAULT_MODEL reference
 const aiProvider   = require('./ai-provider');
+const aiCfg        = require('./ai-config');         // per-provider default model lookup
 const loader       = require('./scenario-loader');
 const schema       = require('./adjudicator-schema');
 const validator    = require('./adjudicator-validator');
@@ -195,33 +196,61 @@ function formatApprovedActionsBlock(approvedActions) {
 // clean). Format intentionally terse: tabular, no prose, so the
 // model reads the numbers and not opinionated narration.
 function formatLearnedPriorsBlock(priors) {
-    if (!priors || !priors.trialsSampled) return '';
-    const outcome = Object.entries(priors.outcomePct || {})
-        .filter(([, v]) => v > 0)
-        .sort((a, b) => b[1] - a[1])
-        .map(([k, v]) => `${k} ${v}%`)
-        .join(', ');
-    const fmtStat = (s, unit) => {
-        if (!s) return '(n/a)';
-        const u = unit ? ` ${unit}` : '';
-        return `median ${s.median.toFixed(1)}${u} (p25 ${s.p25.toFixed(1)}, p75 ${s.p75.toFixed(1)}, n ${s.n})`;
-    };
-    const reasons = (priors.fallbackReasonsTop || [])
-        .map(r => `${r.count}×${r.reason}`)
-        .join(', ');
+    // Either past trials OR operator feedback can populate the block —
+    // returning empty only when we truly have nothing.
+    if (!priors) return '';
+    const hasTrials = priors.trialsSampled > 0;
+    const hasFb     = priors.operatorFeedback && priors.operatorFeedback.total > 0;
+    if (!hasTrials && !hasFb) return '';
+
     const filt = priors.coaFilter
         ? `posture=${priors.coaFilter.posture}, reserve_hr=${priors.coaFilter.reserve_commit_hour}`
         : 'any';
-    return [
-        `Across ${priors.trialsSampled} past trial(s) on this scenario (filter: ${filt}, ${priors.runsSampled} run(s)):`,
-        `  Outcomes:           ${outcome || '(none)'}`,
-        `  Final phase line:   ${fmtStat(priors.finalPhaseLineKm, 'km')}`,
-        `  Blue destroyed:     ${fmtStat(priors.finalBlueDestroyed, 'of 39')}`,
-        `  Red coy-eq losses:  ${fmtStat(priors.finalRedCoyEqLosses)}`,
-        `  Model reliability:  ${priors.schemaOkRate}% schema_ok across ${priors.trialsSampled * 11} resolved steps`,
-        reasons ? `  Top failure modes:  ${reasons}` : '  Top failure modes:  (none recorded)',
+
+    const lines = [];
+    if (hasTrials) {
+        const outcome = Object.entries(priors.outcomePct || {})
+            .filter(([, v]) => v > 0)
+            .sort((a, b) => b[1] - a[1])
+            .map(([k, v]) => `${k} ${v}%`)
+            .join(', ');
+        const fmtStat = (s, unit) => {
+            if (!s) return '(n/a)';
+            const u = unit ? ` ${unit}` : '';
+            return `median ${s.median.toFixed(1)}${u} (p25 ${s.p25.toFixed(1)}, p75 ${s.p75.toFixed(1)}, n ${s.n})`;
+        };
+        const reasons = (priors.fallbackReasonsTop || [])
+            .map(r => `${r.count}×${r.reason}`)
+            .join(', ');
+        lines.push(
+            `Across ${priors.trialsSampled} past trial(s) on this scenario (filter: ${filt}, ${priors.runsSampled} run(s)):`,
+            `  Outcomes:           ${outcome || '(none)'}`,
+            `  Final phase line:   ${fmtStat(priors.finalPhaseLineKm, 'km')}`,
+            `  Blue destroyed:     ${fmtStat(priors.finalBlueDestroyed, 'of 39')}`,
+            `  Red coy-eq losses:  ${fmtStat(priors.finalRedCoyEqLosses)}`,
+            `  Model reliability:  ${priors.schemaOkRate}% schema_ok across ${priors.trialsSampled * 11} resolved steps`,
+            reasons ? `  Top failure modes:  ${reasons}` : '  Top failure modes:  (none recorded)',
+        );
+    } else {
+        lines.push(`No past trials yet on this scenario (filter: ${filt}).`);
+    }
+
+    // Operator feedback (item #9). The percentage is computed from
+    // accept+reject only — 'note'-only events are commentary without an
+    // up/down signal, so they don't bias the rate but do count toward
+    // engagement (rendered as a separate count).
+    if (hasFb) {
+        const f = priors.operatorFeedback;
+        const accRej = f.accept + f.reject;
+        const pctText = (accRej > 0) ? `${f.operatorAcceptPct}% accept` : 'commentary only';
+        const noteText = f.note ? `, ${f.note} note(s)` : '';
+        lines.push(`  Operator feedback:  ${pctText} of ${accRej} graded step(s)${noteText}`);
+    }
+
+    lines.push(
         `  These are observed priors from past trials — they describe what tends to happen, not what MUST happen for this run.`,
-    ].join('\n');
+    );
+    return lines.join('\n');
 }
 
 function buildUserPrompt(scenario, stepIndex, prevState, trialId, trialSeed, hint, coaParams, approvedActions, priors) {
@@ -411,7 +440,11 @@ async function adjudicateStep(args) {
     const baseMeta = {
         durationMs:   0,
         provider:     providerName,
-        model:        model || (providerName === 'claude' ? 'claude-default' : ollama.DEFAULT_MODEL),
+        model:        model || (
+                          providerName === 'claude' ? (aiCfg.claude && aiCfg.claude.defaultModel) || 'claude-default' :
+                          providerName === 'zen'    ? (aiCfg.zen    && aiCfg.zen.defaultModel)    || 'zen-default'    :
+                          ollama.DEFAULT_MODEL
+                      ),
         trialId,
         trialSeed,
         trialHintId,

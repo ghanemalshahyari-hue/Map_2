@@ -26,6 +26,17 @@
     let aiHealth = null;       // last /api/ai/health probe: { ok, url, defaultModel, models?, error? }
     let lastRunMode = null;    // 'mock' | 'live' | 'fallback' — last adjudicate response's actual run mode
 
+    // item #9 — feedback button state. Tracks the step the buttons currently
+    // refer to and which steps already have feedback this session so the
+    // same step can't be double-posted (server is idempotent but the UX
+    // should still reflect already-recorded).
+    let currentFeedbackStep = null;
+    const feedbackSentThisSession = new Set();   // key: `${scenarioName}#${stepIndex}`
+    function feedbackKey(stepIndex) {
+        const sc = $('wg-adj-scenario') && $('wg-adj-scenario').value || SCENARIO_DEFAULT;
+        return `${sc}#${stepIndex}`;
+    }
+
     // ── Boot ─────────────────────────────────────────────────────────
     function boot() {
         const root = document.getElementById('wg-adjudicator-card');
@@ -237,6 +248,26 @@
                 </div>
 
                 <div id="wg-adj-validation" style="margin-top:6px; font-size:11px; color:#a87;"></div>
+
+                <!-- Operator feedback row (item #9). Three buttons + a
+                     status line. Disabled once feedback has been recorded
+                     for the current step so the operator can't double-post. -->
+                <div id="wg-adj-feedback-row" style="margin-top:8px;padding-top:8px;border-top:1px solid #2a3140;
+                    display:none;align-items:center;gap:6px;font-size:11px;">
+                    <span style="color:#9ab;letter-spacing:.04em;text-transform:uppercase;font-size:10px;">
+                        Was this step right?
+                    </span>
+                    <button id="wg-adj-fb-accept" type="button"
+                        class="wargame-action-btn success"
+                        style="padding:2px 8px;font-size:11px;">&#10003; Accept</button>
+                    <button id="wg-adj-fb-reject" type="button"
+                        class="wargame-action-btn secondary"
+                        style="padding:2px 8px;font-size:11px;background:#7a2a2a;">&#10007; Reject</button>
+                    <button id="wg-adj-fb-note" type="button"
+                        class="wargame-action-btn secondary"
+                        style="padding:2px 8px;font-size:11px;" title="Add a free-text note about this step">&#9998; Note</button>
+                    <span id="wg-adj-fb-status" style="color:#9ab;margin-left:6px;"></span>
+                </div>
             </div>
 
             <div id="wg-adj-mc-panel" style="display:none; margin-top:8px;">
@@ -514,6 +545,8 @@
         if (trial && trial.history && trial.history.length) {
             renderCharts(trial.history);
         }
+        // item #9 — scrubber should let the operator grade older steps too.
+        showFeedbackRow(state.step_index);
     }
 
     // ── Render one step's state into the display block + map ─────────
@@ -561,6 +594,9 @@
         if (trial && trial.history && trial.history.length) {
             renderCharts(trial.history);
         }
+
+        // item #9 — make the feedback row visible/refreshed for this step.
+        showFeedbackRow(state.step_index);
     }
 
     function escapeHtml(s) {
@@ -581,6 +617,86 @@
             },
             trialSeed: ($('wg-adj-seed').value || 'manual').trim() || 'manual',
         };
+    }
+
+    // ── Operator feedback row (todo item #9) ────────────────────────
+    // Shown after a step has been adjudicated. Click → POST to the server.
+    // Re-clicks on already-graded steps short-circuit on the client.
+    function showFeedbackRow(stepIndex) {
+        const row = $('wg-adj-feedback-row');
+        if (!row) return;
+        // Step 0 is the seed — no LLM call, nothing for the operator to
+        // grade. Hide the row so we don't pretend otherwise.
+        if (stepIndex === 0) { hideFeedbackRow(); return; }
+        currentFeedbackStep = stepIndex;
+        row.style.display = 'flex';
+        const sent = feedbackSentThisSession.has(feedbackKey(stepIndex));
+        const setBtn = (id, disabled) => {
+            const b = $(id);
+            if (!b) return;
+            b.disabled = !!disabled;
+            b.style.opacity = disabled ? '0.5' : '1';
+            b.style.cursor  = disabled ? 'not-allowed' : 'pointer';
+        };
+        setBtn('wg-adj-fb-accept', sent);
+        setBtn('wg-adj-fb-reject', sent);
+        setBtn('wg-adj-fb-note',   false);   // notes are stackable
+        const st = $('wg-adj-fb-status');
+        if (st) st.textContent = sent ? `Recorded for step ${stepIndex}.` : '';
+    }
+    function hideFeedbackRow() {
+        const row = $('wg-adj-feedback-row');
+        if (row) row.style.display = 'none';
+        currentFeedbackStep = null;
+    }
+    async function postFeedback(decision) {
+        if (currentFeedbackStep == null) return;
+        const stepIndex = currentFeedbackStep;
+        const key = feedbackKey(stepIndex);
+        // Only block a SECOND accept/reject — a stacked note is fine.
+        if (decision !== 'note' && feedbackSentThisSession.has(key)) return;
+        let note = null;
+        if (decision === 'note' || decision === 'reject') {
+            const msg = decision === 'reject'
+                ? `Why is step ${stepIndex} wrong? (optional, max 500 chars)`
+                : `Add a note about step ${stepIndex} (optional, max 500 chars)`;
+            const v = window.prompt(msg, '');
+            if (v == null) return;  // operator cancelled
+            note = v.trim().slice(0, 500) || null;
+        }
+        const req = currentRequest();
+        const body = {
+            scenarioName: req.scenarioName,
+            stepIndex,
+            decision,
+            trialId:   (trial && trial.scenarioName) ? `manual-${trial.startedAt || ''}` : 'manual',
+            coaParams: req.coaParams,
+            provider:  (aiHealth && aiHealth.apiStyle) || null,
+            model:     req.model || (aiHealth && aiHealth.defaultModel) || null,
+            note,
+        };
+        const st = $('wg-adj-fb-status');
+        if (st) st.textContent = 'sending…';
+        try {
+            const res = await fetch('/api/ai/feedback', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify(body),
+            });
+            const r = await res.json().catch(() => ({ ok: false }));
+            if (r.ok) {
+                if (decision !== 'note') feedbackSentThisSession.add(key);
+                if (st) st.textContent = decision === 'note'
+                    ? `Note recorded for step ${stepIndex}.`
+                    : `${decision === 'accept' ? 'Accepted' : 'Rejected'} step ${stepIndex}.`;
+                // Refresh the accept/reject button state.
+                showFeedbackRow(stepIndex);
+            } else {
+                if (st) st.textContent = `Failed: ${(r && r.error) || 'unknown'}`;
+            }
+        } catch (e) {
+            if (st) st.textContent = `Failed: ${(e && e.message) || 'network'}`;
+        }
     }
 
     // ── Approved actions preview (todo item #7) ─────────────────────
@@ -737,6 +853,10 @@
         // trial starts with a clean COA.
         if (window.AppApprovedActions) window.AppApprovedActions.clearAll();
         renderApprovedPreview();
+        // Feedback already on disk stays put — only clear the per-session
+        // "already-clicked" set so the buttons re-enable for the next pass.
+        feedbackSentThisSession.clear();
+        hideFeedbackRow();
         setStatus('Trial reset. Step 0 (D-3h). Map markers restored.', 'idle');
     }
 
@@ -838,6 +958,13 @@
             if (text) text.textContent = 'Re-probing backend…';
             probeAiHealth();
         });
+        // Feedback buttons (item #9).
+        const fbA = root.querySelector('#wg-adj-fb-accept');
+        const fbR = root.querySelector('#wg-adj-fb-reject');
+        const fbN = root.querySelector('#wg-adj-fb-note');
+        if (fbA) fbA.addEventListener('click', () => postFeedback('accept'));
+        if (fbR) fbR.addEventListener('click', () => postFeedback('reject'));
+        if (fbN) fbN.addEventListener('click', () => postFeedback('note'));
     }
 
     // ── Boot ─────────────────────────────────────────────────────────

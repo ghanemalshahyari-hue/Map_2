@@ -32,6 +32,7 @@
 
 const fs   = require('fs');
 const path = require('path');
+const feedbackStore = require('./feedback-store');
 
 const ROOT     = path.join(__dirname, '..', '..');
 const DATA_DIR = process.env.RMOOZ_DATA_DIR || path.join(ROOT, 'data');
@@ -133,7 +134,47 @@ function computePriors({ scenarioName, coaParams, ageMs } = {}) {
 
     const all = listSummaries();
     const matched = all.filter(r => matches(r.summary, scenarioName, coaParams, ageCutoff));
-    if (matched.length === 0) return null;
+
+    // Even with zero MC runs, operator feedback alone is useful — early
+    // single-step iteration generates accept/reject signal before anyone
+    // runs a Monte Carlo. We fall through to a minimal priors object in
+    // that case (handled below; formatLearnedPriorsBlock copes).
+    let earlyFeedback = null;
+    if (matched.length === 0) {
+        try {
+            earlyFeedback = feedbackStore.countByScenarioCoa({ scenarioName, coaParams, ageMs: ageMs != null ? ageMs : DEFAULT_AGE_MS });
+        } catch (_) { /* ignore */ }
+        if (!earlyFeedback || earlyFeedback.total === 0) return null;
+        return {
+            scenarioName,
+            coaFilter: coaParams ? {
+                posture:             coaParams.posture || null,
+                reserve_commit_hour: coaParams.reserve_commit_hour != null ? Number(coaParams.reserve_commit_hour) : null,
+            } : null,
+            runsSampled:        0,
+            trialsSampled:      0,
+            outcomeCounts:      {},
+            outcomePct:         {},
+            finalPhaseLineKm:   null,
+            finalBlueDestroyed: null,
+            finalRedCoyEqLosses:null,
+            fallbackRate:       0,
+            fallbackReasonsTop: [],
+            schemaOkRate:       0,
+            operatorFeedback: {
+                accept: earlyFeedback.accept,
+                reject: earlyFeedback.reject,
+                note:   earlyFeedback.note,
+                total:  earlyFeedback.total,
+                operatorAcceptPct: (earlyFeedback.accept + earlyFeedback.reject) > 0
+                    ? pct(earlyFeedback.accept, earlyFeedback.accept + earlyFeedback.reject)
+                    : null,
+                latest: earlyFeedback.latest,
+            },
+            runIds:      [],
+            latestRunAt: null,
+        };
+    }
 
     // Per-bucket totals across matched runs.
     const outcomeTotals = {};
@@ -176,6 +217,18 @@ function computePriors({ scenarioName, coaParams, ageMs } = {}) {
     const outcomePct = {};
     for (const [k, v] of Object.entries(outcomeTotals)) outcomePct[k] = pct(v, trialsCompleted);
 
+    // Operator feedback fold-in (item #9). Same scenario+COA filter so a
+    // priors object only reports feedback that's actually about this kind
+    // of run. Defensive against an unwritable / corrupt feedback dir.
+    let feedback = null;
+    try {
+        feedback = feedbackStore.countByScenarioCoa({ scenarioName, coaParams, ageMs: ageMs != null ? ageMs : DEFAULT_AGE_MS });
+    } catch (_) {
+        feedback = null;
+    }
+    const feedbackTotal = feedback ? (feedback.accept + feedback.reject) : 0;
+    const operatorAcceptPct = feedbackTotal > 0 ? pct(feedback.accept, feedbackTotal) : null;
+
     return {
         scenarioName,
         coaFilter: coaParams ? {
@@ -191,9 +244,20 @@ function computePriors({ scenarioName, coaParams, ageMs } = {}) {
         finalRedCoyEqLosses:mergeNumeric(finalRedStats),
         fallbackRate:       totalSteps ? pct(fallbackSteps, totalSteps) : 0,
         fallbackReasonsTop: topReasons(fallbackReasonCounts, 4),
-        // Crude model reliability proxy: 100 - fallbackRate. Refines naturally
-        // once items #9/#10 add operator feedback (accepted/rejected counts).
+        // Crude model reliability proxy: 100 - fallbackRate. Refines once
+        // we have enough feedback to compute operatorAcceptPct (which is
+        // the truer signal — schema_ok says nothing about whether the
+        // adjudication was *correct*).
         schemaOkRate:       totalSteps ? Math.round((1 - fallbackSteps / totalSteps) * 1000) / 10 : 0,
+        // Operator-feedback rollup. null when no feedback at all in scope.
+        operatorFeedback:   (feedback && feedback.total > 0) ? {
+            accept:           feedback.accept,
+            reject:           feedback.reject,
+            note:             feedback.note,
+            total:            feedback.total,
+            operatorAcceptPct,
+            latest:           feedback.latest,
+        } : null,
         runIds,
         // Most-recent matched run's startedAt, useful for "as of …" framing.
         latestRunAt:        startedAts.sort().pop() || null,

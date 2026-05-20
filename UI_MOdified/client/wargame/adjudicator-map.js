@@ -597,6 +597,20 @@
                 { icon, title: unit.uid + ' — ' + unit.role + ' (' + unit.label + ')' },
             ).bindTooltip(`${unit.uid} (${unit.label}) — ${unit.role} — STAGED`, { permanent: false });
             m._wgRedMeta = meta;
+            // Expose the same hooks the Units feature attaches to drag-placed
+            // markers, so red-team-controller.scanMapForUnits() can discover
+            // these scenario markers and the headless propose+execute loop
+            // gets a real unit list to plan against. Without these the COA
+            // loop sees an empty battlefield (counts.hostile = 0) and the
+            // adjudicator falls straight through to the scripted baseline.
+            m._sidc     = sidc;
+            m._unitId   = unit.uid;
+            m._unitData = {
+                id:   unit.uid,
+                name: unit.label || unit.uid,
+                code: unit.label || '',
+                sidc: sidc,
+            };
             m.addTo(layerGroup);
             redMarkers[unit.uid] = m;
         }
@@ -618,6 +632,17 @@
                 baseId:    unit.base_id,
                 baseCoord: unit.coord.slice(),
                 echelon:   unit.echelon,
+            };
+            // Same Units-feature hooks as the Red side — see comment above.
+            // unit.unit_uid is e.g. "BLUE_lc"; SIDC's affiliation digit is
+            // '3' (friendly), which scanMapForUnits classifies as friendly.
+            m._sidc     = unit.sidc || null;
+            m._unitId   = unit.unit_uid;
+            m._unitData = {
+                id:   unit.unit_uid,
+                name: unit.echelon || unit.base_id || unit.unit_uid,
+                code: unit.base_id || '',
+                sidc: unit.sidc || null,
             };
             m.addTo(layerGroup);
             blueMarkers[unit.unit_uid] = m;
@@ -778,11 +803,37 @@
         ewHalo.addTo(layerGroup);
     }
 
+    // Map objective_status → visual treatment for the salient + advance
+    // arrows. Operator-reported bug: a red salient expanding while
+    // Blue is actually winning made the map look like Red was winning.
+    // Fix: keep the geographic SHAPE (how far Red reached) but vary
+    // color + opacity + dash style by outcome so DENIED reads as
+    // "Red tried but didn't hold" rather than "Red is dominating".
+    function outcomeAccent(state) {
+        const status = state && state.objective_status;
+        switch (status) {
+            case 'CAPTURED':
+                return { color: '#b21414', fillColor: '#c41e1e', fillOpacity: 0.22, opacity: 0.90, mainWeight: 10, secWeight: 6, dashArray: null,    label: 'Red holds' };
+            case 'CONTESTED':
+                return { color: '#c44e1e', fillColor: '#d2682a', fillOpacity: 0.15, opacity: 0.75, mainWeight: 9,  secWeight: 6, dashArray: null,    label: 'Contested at OBJ' };
+            case 'THREATENED':
+                return { color: '#c98a2a', fillColor: '#e8a23a', fillOpacity: 0.12, opacity: 0.65, mainWeight: 7,  secWeight: 5, dashArray: null,    label: 'OBJ threatened' };
+            case 'DENIED':
+                // Faded, dashed — Red got here geographically but was pushed back.
+                return { color: '#7d6a6a', fillColor: '#a08a8a', fillOpacity: 0.08, opacity: 0.55, mainWeight: 5,  secWeight: 3, dashArray: '8 6',   label: 'Red denied' };
+            case 'DORMANT':
+            default:
+                // Pre-H or no decision yet — render very faintly.
+                return { color: '#88555f', fillColor: '#a07070', fillOpacity: 0.10, opacity: 0.40, mainWeight: 6,  secWeight: 4, dashArray: null,    label: 'pre-decision' };
+        }
+    }
+
     // ── Red advance arrows (BLS → lerp(BLS, OBJ, progress)) ───────────
     // Mirrors wargame.py draw_phase_and_red_area(): one chunky main arrow
     // from BLS-3 to lerp(BLS-3, OBJ, progress), plus a thinner secondary
     // from BLS-4 once progress > 0.15. The arrow lengthens each step as
-    // the operation deepens, instead of tracing the pipeline curve.
+    // the operation deepens, but its COLOR/OPACITY/DASH now reflect
+    // objective_status so the visual matches the operational reality.
     function updateAdvanceArrows(state, scenario) {
         for (const a of advanceArrows) {
             if (a && layerGroup) layerGroup.removeLayer(a);
@@ -797,22 +848,26 @@
         if (!obj || !Array.isArray(obj.coord)) return;
         const objLL = obj.coord;
 
+        const accent = outcomeAccent(state);
+
         // Salient polygon: from every BLS in template back through the
-        // current deep-front lerp points, tinted red. Same visual idea as
-        // wargame.py's red AOR fill — shows the penetration shape.
+        // current deep-front lerp points. Color + opacity track outcome
+        // so DENIED reads as "Red was here but doesn't control it".
         const bls = (scenario.bls_template || []).filter(b => b && Array.isArray(b.coord));
         if (bls.length >= 2) {
             const deep = bls.map(b => lerpLonLat(b.coord, objLL, Math.min(progress, 0.92)));
             const ring = bls.map(b => [b.coord[1], b.coord[0]])
                 .concat(deep.slice().reverse().map(p => [p[1], p[0]]));
             salientLayer = window.L.polygon(ring, {
-                color: '#b21414',
-                weight: 1.5,
-                opacity: 0.5,
-                fillColor: '#c41e1e',
-                fillOpacity: 0.18,
+                color:       accent.color,
+                weight:      1.5,
+                opacity:     accent.opacity * 0.6,
+                fillColor:   accent.fillColor,
+                fillOpacity: accent.fillOpacity,
+                dashArray:   accent.dashArray,
                 interactive: false,
-            });
+            }).bindTooltip(`Salient — ${accent.label} (progress ${(progress * 100).toFixed(0)}%)`,
+                           { sticky: true });
             salientLayer.addTo(layerGroup);
         }
 
@@ -822,13 +877,17 @@
             const start = [main.coord[1], main.coord[0]];
             const endLL = lerpLonLat(main.coord, objLL, Math.min(progress, 1.0));
             const end   = [endLL[1], endLL[0]];
-            const color = '#b21414';
             const line = window.L.polyline([start, end], {
-                color, weight: 10, opacity: 0.85, lineCap: 'round', interactive: false,
-            }).bindTooltip(`Main effort: BLS-3 → OBJ (progress ${(progress * 100).toFixed(0)}%)`);
+                color:     accent.color,
+                weight:    accent.mainWeight,
+                opacity:   accent.opacity,
+                dashArray: accent.dashArray,
+                lineCap:   'round',
+                interactive: false,
+            }).bindTooltip(`Main effort: BLS-3 → OBJ — ${accent.label} (progress ${(progress * 100).toFixed(0)}%)`);
             line.addTo(layerGroup);
             advanceArrows.push(line);
-            const head = makeArrowhead(start, end, color, 14);
+            const head = makeArrowhead(start, end, accent.color, 14);
             if (head) { head.addTo(layerGroup); advanceArrows.push(head); }
         }
 
@@ -839,13 +898,17 @@
             const start = [sec.coord[1], sec.coord[0]];
             const endLL = lerpLonLat(sec.coord, objLL, Math.min(progress, 0.92));
             const end   = [endLL[1], endLL[0]];
-            const color = '#b21414';
             const line = window.L.polyline([start, end], {
-                color, weight: 6, opacity: 0.6, lineCap: 'round', interactive: false,
-            }).bindTooltip(`Envelopment: BLS-4 → OBJ (progress ${(Math.min(progress, 0.92) * 100).toFixed(0)}%)`);
+                color:     accent.color,
+                weight:    accent.secWeight,
+                opacity:   accent.opacity * 0.75,
+                dashArray: accent.dashArray,
+                lineCap:   'round',
+                interactive: false,
+            }).bindTooltip(`Envelopment: BLS-4 → OBJ — ${accent.label} (progress ${(Math.min(progress, 0.92) * 100).toFixed(0)}%)`);
             line.addTo(layerGroup);
             advanceArrows.push(line);
-            const head = makeArrowhead(start, end, color, 10);
+            const head = makeArrowhead(start, end, accent.color, 10);
             if (head) { head.addTo(layerGroup); advanceArrows.push(head); }
         }
     }
@@ -1069,8 +1132,9 @@
     }
 
     // ── Apply a per-step state to the map ────────────────────────────
-    function applyState(state, scenario) {
+    function applyState(state, scenario, opts) {
         if (!hasMap() || !state) return { found: 0, missed: [] };
+        opts = opts || {};
         if (scenario && scenario !== scenarioRef) {
             // Defensive: keep the per-step movement model in sync with whatever
             // scenario the caller is replaying (matters when MC trials reuse
@@ -1088,7 +1152,17 @@
 
         // -1. Move every Red and Blue marker first — downstream halos (EW,
         // contact) re-center themselves off the unit's current position.
-        updateUnitPositions(state);
+        //
+        // When `opts.skipUnitPositioning` is true the caller is using the
+        // COA-driven dynamic execution loop: the per-unit AI has already
+        // moved the markers to its chosen destinations, and re-running the
+        // deterministic lerp here would snap them back to the scripted
+        // positions (causing the "move forward then jump back" jitter the
+        // operator reported when both systems were fighting). Skipping this
+        // call hands position authority to the AI for this step.
+        if (!opts.skipUnitPositioning) {
+            updateUnitPositions(state);
+        }
 
         // 0. SITREP banner + EW halo + contact halo + advance arrows + AOR PL
         updateSitrep(state);

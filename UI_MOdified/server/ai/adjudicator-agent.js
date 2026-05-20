@@ -24,11 +24,12 @@ const fs     = require('fs');
 const path   = require('path');
 const crypto = require('crypto');
 
-const ollama     = require('./ollama-client');   // kept for DEFAULT_MODEL reference
-const aiProvider = require('./ai-provider');
-const loader     = require('./scenario-loader');
-const schema     = require('./adjudicator-schema');
-const validator  = require('./adjudicator-validator');
+const ollama       = require('./ollama-client');   // kept for DEFAULT_MODEL reference
+const aiProvider   = require('./ai-provider');
+const loader       = require('./scenario-loader');
+const schema       = require('./adjudicator-schema');
+const validator    = require('./adjudicator-validator');
+const learningStore = require('./learning-store');
 const { extractJson } = require('./red-team-agent');
 
 // 12-char fingerprint of a system prompt — small enough to log into every
@@ -188,12 +189,48 @@ function formatApprovedActionsBlock(approvedActions) {
     return lines.join('\n');
 }
 
-function buildUserPrompt(scenario, stepIndex, prevState, trialId, trialSeed, hint, coaParams, approvedActions) {
+// Render the priors aggregate as a compact prompt block. Returns the
+// empty string when no past matching runs exist — the caller then
+// omits the LEARNED PRIORS section entirely (cold-start prompt stays
+// clean). Format intentionally terse: tabular, no prose, so the
+// model reads the numbers and not opinionated narration.
+function formatLearnedPriorsBlock(priors) {
+    if (!priors || !priors.trialsSampled) return '';
+    const outcome = Object.entries(priors.outcomePct || {})
+        .filter(([, v]) => v > 0)
+        .sort((a, b) => b[1] - a[1])
+        .map(([k, v]) => `${k} ${v}%`)
+        .join(', ');
+    const fmtStat = (s, unit) => {
+        if (!s) return '(n/a)';
+        const u = unit ? ` ${unit}` : '';
+        return `median ${s.median.toFixed(1)}${u} (p25 ${s.p25.toFixed(1)}, p75 ${s.p75.toFixed(1)}, n ${s.n})`;
+    };
+    const reasons = (priors.fallbackReasonsTop || [])
+        .map(r => `${r.count}×${r.reason}`)
+        .join(', ');
+    const filt = priors.coaFilter
+        ? `posture=${priors.coaFilter.posture}, reserve_hr=${priors.coaFilter.reserve_commit_hour}`
+        : 'any';
+    return [
+        `Across ${priors.trialsSampled} past trial(s) on this scenario (filter: ${filt}, ${priors.runsSampled} run(s)):`,
+        `  Outcomes:           ${outcome || '(none)'}`,
+        `  Final phase line:   ${fmtStat(priors.finalPhaseLineKm, 'km')}`,
+        `  Blue destroyed:     ${fmtStat(priors.finalBlueDestroyed, 'of 39')}`,
+        `  Red coy-eq losses:  ${fmtStat(priors.finalRedCoyEqLosses)}`,
+        `  Model reliability:  ${priors.schemaOkRate}% schema_ok across ${priors.trialsSampled * 11} resolved steps`,
+        reasons ? `  Top failure modes:  ${reasons}` : '  Top failure modes:  (none recorded)',
+        `  These are observed priors from past trials — they describe what tends to happen, not what MUST happen for this run.`,
+    ].join('\n');
+}
+
+function buildUserPrompt(scenario, stepIndex, prevState, trialId, trialSeed, hint, coaParams, approvedActions, priors) {
     const constants = buildScenarioConstantsBlock(scenario, coaParams);
     const phaseRow  = scenario.phase_table[stepIndex];
     const proposed  = formatApprovedActionsBlock(approvedActions);
+    const priorsBlock = formatLearnedPriorsBlock(priors);
 
-    return [
+    const parts = [
         '=== SCENARIO CONSTANTS ===',
         constants,
         '',
@@ -211,9 +248,12 @@ function buildUserPrompt(scenario, stepIndex, prevState, trialId, trialSeed, hin
         '',
         '=== PROPOSED ACTIONS ===',
         proposed,
-        '',
-        `Resolve step ${stepIndex}. Respond with the JSON object only.`,
-    ].join('\n');
+    ];
+    if (priorsBlock) {
+        parts.push('', '=== LEARNED PRIORS ===', priorsBlock);
+    }
+    parts.push('', `Resolve step ${stepIndex}. Respond with the JSON object only.`);
+    return parts.join('\n');
 }
 
 function buildCorrectivePrompt(prevPrompt, errors) {
@@ -356,7 +396,15 @@ async function adjudicateStep(args) {
     // ── Live Ollama path ──────────────────────────────────────────────
     const seed = deriveSeed(trialSeed, stepIndex);
     const hint = TRIAL_HINTS[trialHintId % TRIAL_HINTS.length];
-    const userPrompt = buildUserPrompt(scenario, stepIndex, prevState, trialId, seed, hint, coaParams, approvedActions);
+    // Item #6 — learned priors. Computed once per step; failures (corrupt
+    // mc-runs/ dir, etc.) degrade silently so adjudication still runs.
+    let priors = null;
+    try {
+        priors = learningStore.computePriors({ scenarioName: scenario.name, coaParams });
+    } catch (e) {
+        priors = null;
+    }
+    const userPrompt = buildUserPrompt(scenario, stepIndex, prevState, trialId, seed, hint, coaParams, approvedActions, priors);
 
     const callOpts = { ...DEFAULT_OLLAMA_OPTIONS, seed };
 
@@ -378,6 +426,10 @@ async function adjudicateStep(args) {
         retries:      0,
         cacheReadTokens:     0,
         cacheCreationTokens: 0,
+        // Snapshot of the learned-priors that shaped this step's prompt
+        // (item #6). Null on cold start. Persists into the trial log so
+        // we can ask later: "what priors did the model see at step N?"
+        priorsApplied: priors,
     };
 
     let resp = await aiProvider.generate({
@@ -473,11 +525,15 @@ module.exports = {
     buildScenarioConstantsBlock,
     buildUserPrompt,
     formatApprovedActionsBlock,
+    formatLearnedPriorsBlock,
     compressPrevState,
     deriveSeed,
     DEFAULT_COA,
     DEFAULT_OLLAMA_OPTIONS,
     DEFAULT_TIMEOUT_MS,
     TRIAL_HINTS,
-    SYSTEM_PROMPT_TEXT: SYSTEM_PROMPT,
+    SYSTEM_PROMPT_TEXT:        SYSTEM_PROMPT,
+    SYSTEM_PROMPT_HASH,
+    SYSTEM_PROMPT_CLAUDE_TEXT: SYSTEM_PROMPT_CLAUDE,
+    SYSTEM_PROMPT_CLAUDE_HASH,
 };

@@ -100,6 +100,9 @@ async function runOneTrial(run, trialIdx, sem) {
     writeLine({ kind: 'state', stepIndex: 0, state: prev, validation: { schema_ok: true, seeded: true } });
 
     let fallbackCount = 0;
+    // Per-reason tally so the run summary can answer "which failure modes
+    // dominate this COA?" — feeds the learning-store priors (items #5/#6).
+    const fallbackReasons = {};
 
     for (let i = 1; i < 12; i++) {
         if (run.cancelled) {
@@ -132,7 +135,11 @@ async function runOneTrial(run, trialIdx, sem) {
         }
         sem.release();
 
-        if (!result.ok) fallbackCount++;
+        if (!result.ok) {
+            fallbackCount++;
+            const why = (result.validation && result.validation.fallback) || 'unknown';
+            fallbackReasons[why] = (fallbackReasons[why] || 0) + 1;
+        }
         prev = result.state;
 
         // item #4 — persist the full prompt the model saw + the raw text
@@ -189,6 +196,7 @@ async function runOneTrial(run, trialIdx, sem) {
         final_blue_destroyed:   prev.losses_cumulative.blue_destroyed,
         final_red_coy_eq_losses:prev.losses_cumulative.red_company_equivalent,
         fallback_step_count:    fallbackCount,
+        fallback_reasons:       fallbackReasons,
     };
 
     writeLine({ kind: 'done', ...outcome, endedAt: new Date().toISOString() });
@@ -215,6 +223,10 @@ function emptyAggregate(scenarioName, model, trials, parallelism) {
         finalBlueDestroyed: [],
         finalRedCoyEqLosses: [],
         fallbackStepCounts: [],
+        // run-wide per-reason fallback rollup (items #5/#6). Each reason
+        // ('ollama_error', 'parse_failed', 'validation_failed', ...) maps
+        // to the total step-occurrences across all trials in the run.
+        fallbackReasonCounts: {},
         startedAt:        null,
         endedAt:          null,
         durationMs:       0,
@@ -336,6 +348,10 @@ function startBatch(args) {
                     agg.finalBlueDestroyed.push(outcome.final_blue_destroyed);
                     agg.finalRedCoyEqLosses.push(outcome.final_red_coy_eq_losses);
                     agg.fallbackStepCounts.push(outcome.fallback_step_count);
+                    // Roll per-trial reason dict into the run-wide rollup.
+                    for (const [reason, count] of Object.entries(outcome.fallback_reasons || {})) {
+                        agg.fallbackReasonCounts[reason] = (agg.fallbackReasonCounts[reason] || 0) + count;
+                    }
                 }
             })
             .catch(err => {
@@ -347,6 +363,12 @@ function startBatch(args) {
     run.promise = Promise.all(promises).then(() => {
         agg.endedAt    = new Date().toISOString();
         agg.durationMs = Date.now() - run.startedAt;
+        // Stash COA + provider directly in the summary so the learning
+        // store can filter past runs by `(scenarioName, posture,
+        // reserve_commit_hour)` without joining against run.json.
+        agg.coaParams  = run.coaParams;
+        agg.provider   = run.provider || null;
+        agg.mockMode   = run.mockMode === true;
         const summary  = finalizeAggregate(agg);
         fs.writeFileSync(path.join(dir, 'summary.json'), JSON.stringify(summary, null, 2), 'utf8');
         run.emitter.emit('done', summary);

@@ -505,6 +505,7 @@ const server = http.createServer((req, res) => {
                 model:        body.model       || null,
                 timeoutMs:    body.timeoutMs   || null,
                 mockMode:     body.mockMode === true,
+                approvedActions: body.approvedActions || null,
             });
         }).then(r => {
             // Even on fallback we return 200 — the client always gets a

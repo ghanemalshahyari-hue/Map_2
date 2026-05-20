@@ -127,9 +127,40 @@ function compressPrevState(prev) {
     };
 }
 
-function buildUserPrompt(scenario, stepIndex, prevState, trialId, trialSeed, hint, coaParams) {
+// Render the per-side approved-action list as a compact, prompt-friendly
+// block. Each line is one MOVE/ENGAGE/HOLD with target coords or unit id
+// plus a short rationale when the operator supplied one. Empty lists
+// render as "(none)" so the model always sees BOTH side headers.
+function formatApprovedActionsBlock(approvedActions) {
+    const red  = (approvedActions && Array.isArray(approvedActions.red))  ? approvedActions.red  : [];
+    const blue = (approvedActions && Array.isArray(approvedActions.blue)) ? approvedActions.blue : [];
+    if (red.length === 0 && blue.length === 0) {
+        return '(none — resolve from posture and prior state)';
+    }
+    const fmt = (a) => {
+        const type = String(a && a.type || '').toUpperCase();
+        const unit = a && a.unitId ? a.unitId : '?';
+        let detail = '';
+        if (type === 'MOVE' && Array.isArray(a.to) && a.to.length === 2) {
+            detail = ` → [${Number(a.to[0]).toFixed(4)}, ${Number(a.to[1]).toFixed(4)}]`;
+        } else if (type === 'ENGAGE' && a.target) {
+            detail = ` → ${a.target}`;
+        }
+        const why = (a && a.reason) ? ` (${String(a.reason).slice(0, 100)})` : '';
+        return `  - ${type} ${unit}${detail}${why}`;
+    };
+    const lines = [];
+    lines.push('Red side — operator-approved this step:');
+    lines.push(red.length ? red.map(fmt).join('\n')  : '  (none)');
+    lines.push('Blue side — operator-approved this step:');
+    lines.push(blue.length ? blue.map(fmt).join('\n') : '  (none)');
+    return lines.join('\n');
+}
+
+function buildUserPrompt(scenario, stepIndex, prevState, trialId, trialSeed, hint, coaParams, approvedActions) {
     const constants = buildScenarioConstantsBlock(scenario, coaParams);
     const phaseRow  = scenario.phase_table[stepIndex];
+    const proposed  = formatApprovedActionsBlock(approvedActions);
 
     return [
         '=== SCENARIO CONSTANTS ===',
@@ -148,7 +179,7 @@ function buildUserPrompt(scenario, stepIndex, prevState, trialId, trialSeed, hin
         `trial_hint:    ${hint || '(none)'}`,
         '',
         '=== PROPOSED ACTIONS ===',
-        '(none — resolve from posture and prior state)',
+        proposed,
         '',
         `Resolve step ${stepIndex}. Respond with the JSON object only.`,
     ].join('\n');
@@ -246,6 +277,7 @@ async function adjudicateStep(args) {
     const model       = args.model || undefined;
     const timeoutMs   = args.timeoutMs || DEFAULT_TIMEOUT_MS;
     const mockMode    = args.mockMode === true;
+    const approvedActions = args.approvedActions || null;
 
     const start = Date.now();
 
@@ -277,7 +309,7 @@ async function adjudicateStep(args) {
     // ── Live Ollama path ──────────────────────────────────────────────
     const seed = deriveSeed(trialSeed, stepIndex);
     const hint = TRIAL_HINTS[trialHintId % TRIAL_HINTS.length];
-    const userPrompt = buildUserPrompt(scenario, stepIndex, prevState, trialId, seed, hint, coaParams);
+    const userPrompt = buildUserPrompt(scenario, stepIndex, prevState, trialId, seed, hint, coaParams, approvedActions);
 
     const callOpts = { ...DEFAULT_OLLAMA_OPTIONS, seed };
 
@@ -362,6 +394,7 @@ module.exports = {
     adjudicateStep,
     buildScenarioConstantsBlock,
     buildUserPrompt,
+    formatApprovedActionsBlock,
     compressPrevState,
     deriveSeed,
     DEFAULT_COA,

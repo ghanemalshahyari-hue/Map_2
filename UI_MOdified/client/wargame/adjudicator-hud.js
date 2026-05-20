@@ -36,11 +36,21 @@
             trial = window.AppScenarioState.create({ scenarioName: SCENARIO_DEFAULT });
         }
         setStatus('Idle. Click "Adjudicate next step" to begin.', 'idle');
+        // Publish the next-step accessor so red-team-controller.js can
+        // record approved actions against the right step (todo item #7).
+        if (window.AppAdjudicator) {
+            window.AppAdjudicator.getCurrentStepIndex = () => (trial && trial.stepIndex) || 0;
+            window.AppAdjudicator.getNextStepIndex    = () => Math.min(11, ((trial && trial.stepIndex) || 0) + 1);
+        }
         loadScenarios().then(autoDrawWhenReady);
         // Probe the AI backend so the Mock toggle and status row reflect
         // reality at boot — and the user knows up-front whether trials will
         // actually use the LLM or fall back to baseline.
         probeAiHealth();
+        // Initial preview render — empty unless approvals are already cached.
+        renderApprovedPreview();
+        // Auto-refresh the preview when approvals change anywhere in the page.
+        document.addEventListener('wargame:approved-actions-changed', renderApprovedPreview);
     }
 
     // ── AI backend health probe (items 1+2+3) ────────────────────────
@@ -180,6 +190,19 @@
                     <button id="wg-adj-mc-btn"     class="wargame-action-btn primary"   type="button">Run Monte Carlo</button>
                     <button id="wg-adj-mc-cancel"  class="wargame-action-btn secondary" type="button" disabled>Cancel</button>
                 </div>
+            </div>
+
+            <!-- Pending approved actions for the next adjudicate step.
+                 Populated by red-team-controller.js's Execute clicks via
+                 AppApprovedActions; consumed and cleared inside
+                 adjudicateNext() once shipped to the server. (todo #7) -->
+            <div id="wg-adj-approved-preview" style="display:none;margin-top:6px;padding:6px 8px;
+                background:#0e1623;border-left:3px solid #ffc94a;border-radius:3px;
+                font-size:11px;color:#cdd;">
+                <div style="font-size:10px;color:#9ab;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;">
+                    Approved actions for next step
+                </div>
+                <div id="wg-adj-approved-list"></div>
             </div>
 
             <div id="wg-adj-timeline" class="wargame-status-block" style="margin-top:8px; padding:6px 4px; display:none;">
@@ -560,6 +583,40 @@
         };
     }
 
+    // ── Approved actions preview (todo item #7) ─────────────────────
+    // Reads from AppApprovedActions and shows what's pending for the
+    // next step. Called at boot, before each adjudicateNext(), and
+    // after each consumption.
+    function renderApprovedPreview() {
+        const wrap = $('wg-adj-approved-preview');
+        const list = $('wg-adj-approved-list');
+        if (!wrap || !list) return;
+        const store = window.AppApprovedActions;
+        if (!store) { wrap.style.display = 'none'; return; }
+        const nextIdx = (trial && trial.stepIndex || 0) + 1;
+        const bucket = store.getForStep(nextIdx);
+        const total = bucket.red.length + bucket.blue.length;
+        if (total === 0) { wrap.style.display = 'none'; return; }
+        const fmt = a => {
+            let detail = '';
+            if (a.type === 'MOVE' && Array.isArray(a.to)) {
+                detail = ` → [${a.to[0].toFixed(3)}, ${a.to[1].toFixed(3)}]`;
+            } else if (a.type === 'ENGAGE' && a.target) {
+                detail = ` → ${escapeHtml(a.target)}`;
+            }
+            return `<div>• <strong>${escapeHtml(a.type)}</strong> ${escapeHtml(a.unitId)}${detail}` +
+                (a.reason ? ` <span style="color:#9ab;">— ${escapeHtml(a.reason)}</span>` : '') + '</div>';
+        };
+        const redHtml = bucket.red.length
+            ? `<div style="margin-top:2px;color:#e8a23a;">Red (${bucket.red.length}):</div>${bucket.red.map(fmt).join('')}`
+            : '';
+        const blueHtml = bucket.blue.length
+            ? `<div style="margin-top:2px;color:#5da9e8;">Blue (${bucket.blue.length}):</div>${bucket.blue.map(fmt).join('')}`
+            : '';
+        list.innerHTML = `<div style="color:#9ab;margin-bottom:3px;">Step ${nextIdx} · ${total} action${total === 1 ? '' : 's'}</div>${redHtml}${blueHtml}`;
+        wrap.style.display = '';
+    }
+
     // ── Single-step ──────────────────────────────────────────────────
     async function adjudicateNext() {
         if (!trial) trial = window.AppScenarioState.create({ scenarioName: SCENARIO_DEFAULT });
@@ -570,16 +627,22 @@
             return;
         }
         setStatus(`Adjudicating step ${nextIndex}…`, 'active');
+        // Pull any approved Red/Blue actions the operator executed since
+        // the last step — these go into the PROPOSED ACTIONS prompt block.
+        const approved = window.AppApprovedActions
+            ? window.AppApprovedActions.getForStep(nextIndex)
+            : { red: [], blue: [] };
         const body = {
-            scenarioName: req.scenarioName,
-            stepIndex:    nextIndex,
-            prevState:    trial.currentState,
-            trialId:      'manual',
-            trialSeed:    req.trialSeed,
-            trialHintId:  0,
-            coaParams:    req.coaParams,
-            model:        req.model,
-            mockMode:     req.mockMode,
+            scenarioName:   req.scenarioName,
+            stepIndex:      nextIndex,
+            prevState:      trial.currentState,
+            trialId:        'manual',
+            trialSeed:      req.trialSeed,
+            trialHintId:    0,
+            coaParams:      req.coaParams,
+            model:          req.model,
+            mockMode:       req.mockMode,
+            approvedActions:approved,
         };
         const t0 = Date.now();
         const r = await window.AppAdjudicator.adjudicateStep(body);
@@ -588,9 +651,12 @@
             setStatus(`Step ${nextIndex} failed: ${r && r.error}`, 'error');
             return;
         }
+        // Consume the approved actions — the adjudicator has them now.
+        if (window.AppApprovedActions) window.AppApprovedActions.clearForStep(nextIndex);
         window.AppScenarioState.applyDelta(trial, r);
         renderStep(r.state, r.validation, { ...r.meta, durationMs: r.meta && r.meta.durationMs || wall });
         setLastMode(r);
+        renderApprovedPreview();
         const tag = r.ok ? '' : ` [fallback: ${r.validation && r.validation.fallback}]`;
         setStatus(`Step ${nextIndex} resolved in ${wall} ms${tag}.`, r.ok ? 'ok' : 'error');
     }
@@ -610,25 +676,31 @@
         const fallbackReasons = {};
         for (let i = 1; i <= 11; i++) {
             setStatus(`Trial step ${i}/11…`, 'active');
+            const approved = window.AppApprovedActions
+                ? window.AppApprovedActions.getForStep(i)
+                : { red: [], blue: [] };
             const body = {
-                scenarioName: req.scenarioName,
-                stepIndex:    i,
-                prevState:    trial.currentState,
-                trialId:      'trial-' + req.trialSeed,
-                trialSeed:    req.trialSeed + ':t0',
-                trialHintId:  0,
-                coaParams:    req.coaParams,
-                model:        req.model,
-                mockMode:     req.mockMode,
+                scenarioName:   req.scenarioName,
+                stepIndex:      i,
+                prevState:      trial.currentState,
+                trialId:        'trial-' + req.trialSeed,
+                trialSeed:      req.trialSeed + ':t0',
+                trialHintId:    0,
+                coaParams:      req.coaParams,
+                model:          req.model,
+                mockMode:       req.mockMode,
+                approvedActions:approved,
             };
             const r = await window.AppAdjudicator.adjudicateStep(body);
             if (!r || !r.state) {
                 setStatus(`Trial aborted at step ${i}: ${r && r.error}`, 'error');
                 return;
             }
+            if (window.AppApprovedActions) window.AppApprovedActions.clearForStep(i);
             window.AppScenarioState.applyDelta(trial, r);
             renderStep(r.state, r.validation, r.meta);
             setLastMode(r);
+            renderApprovedPreview();
             const cls = classifyRun(r);
             modeCounts[cls.mode] = (modeCounts[cls.mode] || 0) + 1;
             if (cls.mode === 'fallback') {
@@ -661,6 +733,10 @@
         const ch = $('wg-adj-charts');
         if (ch) ch.style.display = 'none';
         if (window.AppAdjudicatorMap) window.AppAdjudicatorMap.resetMap();
+        // Drop any approved actions queued for past/future steps — a fresh
+        // trial starts with a clean COA.
+        if (window.AppApprovedActions) window.AppApprovedActions.clearAll();
+        renderApprovedPreview();
         setStatus('Trial reset. Step 0 (D-3h). Map markers restored.', 'idle');
     }
 

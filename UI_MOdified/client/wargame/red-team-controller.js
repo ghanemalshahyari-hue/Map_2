@@ -206,6 +206,10 @@
     // Cache: last full result so Execute can find the action by index even
     // after re-render. Keys: action.idx → action object.
     const actionByIdx = new Map();
+    // Side of the most recent proposal request — captured here so
+    // executeAction() can stamp the right side onto AppApprovedActions
+    // without re-reading the DOM card class. Set inside runPropose().
+    let lastProposalSide = 'red';
 
     // Scan the live Leaflet map for every unit-bearing marker. We do this
     // the same way turn-engine.js does — that's the source of truth for
@@ -328,6 +332,23 @@
         });
     }
 
+    // Record an executed action under the next adjudicate step so the
+    // adjudicator prompt sees it as a PROPOSED ACTION (todo item #7).
+    // adjudicator-hud.js publishes getNextStepIndex() on AppAdjudicator
+    // so we don't have to peek at its module-private trial.
+    function recordApproved(action, side) {
+        if (!window.AppApprovedActions) return;
+        let nextStep = 1;
+        try {
+            const fn = window.AppAdjudicator && window.AppAdjudicator.getNextStepIndex;
+            if (typeof fn === 'function') {
+                const n = fn();
+                if (Number.isInteger(n) && n >= 1 && n <= 11) nextStep = n;
+            }
+        } catch (_) { /* ignore */ }
+        window.AppApprovedActions.add(nextStep, side, action);
+    }
+
     async function executeAction(action) {
         if (!action) return false;
         const marker = markerById.get(action.unitId);
@@ -341,6 +362,7 @@
             flashMarker(marker, 'mover');
             await animateMarker(marker, lat, lng);
             logFeed(`MOVE ${action.unitId} → [${lng.toFixed(4)}, ${lat.toFixed(4)}]`, 'move');
+            recordApproved(action, lastProposalSide);
             return true;
         }
         if (type === 'ENGAGE') {
@@ -364,11 +386,13 @@
             } else {
                 logFeed(`ENGAGE ${action.unitId} → ${action.target}: MISS at ${km.toFixed(1)} km (p=${pHit.toFixed(2)})`, 'engage');
             }
+            recordApproved(action, lastProposalSide);
             return true;
         }
         if (type === 'HOLD') {
             flashMarker(marker, 'mover');
             logFeed(`HOLD ${action.unitId}`, 'hold');
+            recordApproved(action, lastProposalSide);
             return true;
         }
         logFeed(`UNKNOWN action type "${action.type}"`, 'error');
@@ -387,6 +411,7 @@
 
     async function runPropose(side) {
         const which = side === 'blue' ? 'blue' : 'red';
+        lastProposalSide = which;
         setStatus(which === 'blue' ? 'Asking Blue AI for counter-moves…' : 'Asking Red AI for reactive moves…', 'busy');
         // Scan the live map: covers AppUnitsMap-placed, formation members,
         // and imported markers in one pass. AppUnitsMap.listPlacedUnits()

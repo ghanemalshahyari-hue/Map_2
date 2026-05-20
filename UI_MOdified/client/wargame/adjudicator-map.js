@@ -59,6 +59,141 @@
     let aoLayers = [];           // dashed blue polygons for AO boundaries
     let advanceArrows = [];      // L.polylines with arrow tips, BLS → tip
     let aorPhaseLine = null;     // dashed yellow line across AOR at current PL
+    let salientLayer = null;     // red-tinted penetration polygon
+
+    // Scenario-derived context, populated in drawScenario so applyState can
+    // recompute unit positions per step (mirrors wargame.py red_position()).
+    let scenarioRef    = null;
+    let blsCoordByName = {};     // { 'BLS-1': [lon,lat] }
+    let objCoord       = null;   // [lon, lat]
+    let objDepthKm     = 95;     // OBJ NASSER nominal depth from coast
+
+    // ── km / lon-lat helpers (mirror wargame.py offset_lonlat / lerp) ─
+    // We work in [lon, lat] inside this block so it ports 1:1 from the
+    // Python reference. Final hand-off to Leaflet is [lat, lng].
+    const KM_PER_DEG_LAT = 110.57;
+    function kmPerDegLng(lat) { return 111.32 * Math.cos(lat * Math.PI / 180); }
+    function offsetLonLat(coord, eastKm, northKm) {
+        const lon = coord[0], lat = coord[1];
+        return [
+            lon + (eastKm  || 0) / kmPerDegLng(lat),
+            lat + (northKm || 0) / KM_PER_DEG_LAT,
+        ];
+    }
+    function lerpLonLat(a, b, t) {
+        return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    }
+    function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+
+    // Sea offsets per BLS (from wargame.py red_position / sea_offsets).
+    // Each value is [eastKm, northKm] from the BLS centroid; positive north
+    // = further offshore. Units staged here before their appear-step.
+    const BLS_SEA_OFFSETS = {
+        'BLS-1': [-2, 12],
+        'BLS-2': [ 0, 11],
+        'BLS-3': [ 2,  9],
+        'BLS-4': [ 3,  6],
+    };
+
+    // Per-unit spread offsets (in km) applied to the post-step-3 lerp
+    // position so a stack of brigades at the same BLS fans out instead of
+    // sitting on top of each other. Mirrors wargame.py `spread` dict.
+    const RED_UNIT_SPREAD = {
+        RED_401RECON: [ 5.0, -4.5],
+        RED_41MECH:   [-6.0,  1.0],
+        RED_42MECH:   [-2.2, -1.8],
+        RED_43MECH:   [ 2.2,  1.0],
+        RED_44ARMD:   [ 9.0,  8.0],
+        RED_9MID:     [-8.0, -6.0],
+        RED_1AD:      [-8.0,  2.0],
+    };
+
+    // Per-step Blue actions (deterministic mirror of wargame.py make_steps
+    // second branch — the Wargame2 baseline). Keys are step_index → { base_id
+    // → 'COUNTERATTACK' | 'WITHDRAW' }. The reservoir of counter-attacking
+    // units widens as the operation deepens.
+    const BLUE_ACTIONS_BY_STEP = {
+        4:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK' },
+        5:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK' },
+        6:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK' },
+        7:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK' },
+        8:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK' },
+        9:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK',
+              p31c: 'COUNTERATTACK', p32c: 'COUNTERATTACK', p33c: 'COUNTERATTACK' },
+        10: { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK',
+              p31c: 'COUNTERATTACK', p32c: 'COUNTERATTACK', p33c: 'COUNTERATTACK' },
+        11: { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK',
+              p31c: 'COUNTERATTACK', p32c: 'COUNTERATTACK', p33c: 'COUNTERATTACK' },
+    };
+    const BLUE_COUNTERATTACK_KM_NORTH = 5.0;   // +N km push during the riposte
+    const BLUE_WITHDRAW_KM_NORTH      = -5.0;  // -N km fallback (south)
+
+    // Compute progress 0..1 from the per-step state. We use phase_line_km /
+    // objDepthKm — same idiom as wargame.py (step.progress drives every
+    // unit position). Falls back to step_index/11 when PL is missing.
+    function progressFromState(state) {
+        if (!state) return 0;
+        if (Number.isFinite(state.progress)) return clamp01(state.progress);
+        if (Number.isFinite(state.phase_line_km) && objDepthKm > 0) {
+            return clamp01(state.phase_line_km / objDepthKm);
+        }
+        if (Number.isFinite(state.step_index)) return clamp01(state.step_index / 11);
+        return 0;
+    }
+
+    // Port of wargame.py red_position(). Returns [lon, lat]. Roles drive
+    // both the appear-time offshore staging and the per-step progress cap
+    // (Fixing 0.35, Support 0.55, Follow-on idle until step 6, etc.).
+    function redPositionLonLat(meta, stepIndex, progress) {
+        const blsCoord = blsCoordByName[meta.bls];
+        if (!blsCoord || !objCoord) return meta.baseCoord;
+        const role = String(meta.role || '');
+
+        // Static-role support: never advance toward OBJ.
+        if (role === 'EW')              return offsetLonLat(blsCoord,  4, 3);
+        if (role === 'Fire support')    return offsetLonLat(blsCoord, -5, 3);
+        if (role === 'Explosive USVs')  return offsetLonLat(blsCoord,  0, 4);
+        if (role === 'CBRN defense')    return offsetLonLat(blsCoord,  0, 3);
+
+        const seaOffset = BLS_SEA_OFFSETS[meta.bls] || [0, 10];
+        const sea = offsetLonLat(blsCoord, seaOffset[0], seaOffset[1]);
+
+        // Pre-appear: unit still at offshore staging.
+        if (stepIndex < (meta.appear || 0)) return sea;
+
+        // Steps 0..2: lerp from sea to the coastal foothold (-1.2 km N of BLS).
+        if (stepIndex <= 2) {
+            const t = Math.min(1, progress / 0.02);
+            return lerpLonLat(sea, offsetLonLat(blsCoord, 0, -1.2), t);
+        }
+
+        // Role-based progress cap.
+        let unitProgress = progress;
+        if (role === 'Fixing')                                 unitProgress = Math.min(progress, 0.35);
+        else if (role === 'Support')                           unitProgress = Math.min(progress, 0.55);
+        else if (role === 'Recon')                             unitProgress = Math.min(1.0, progress + 0.08);
+        else if (role === 'Follow-on'    && stepIndex < 6)     unitProgress = 0;
+        else if (role === 'Exploitation' && stepIndex < 8)     unitProgress = 0;
+
+        let pos = lerpLonLat(blsCoord, objCoord, unitProgress);
+        const spread = RED_UNIT_SPREAD[meta.uid];
+        if (stepIndex >= 3 && spread) {
+            pos = offsetLonLat(pos, spread[0], spread[1]);
+        }
+        return pos;
+    }
+
+    // Port of wargame.py blue_position(). COUNTERATTACK shifts +5 km N for
+    // the duration of the step, WITHDRAW shifts -5 km N. All other Blue
+    // units hold their base coord (AREA_DEFENSE).
+    function bluePositionLonLat(meta, stepIndex) {
+        if (!meta || !meta.baseCoord) return meta && meta.baseCoord;
+        const actions = BLUE_ACTIONS_BY_STEP[stepIndex] || null;
+        const action = actions ? actions[meta.baseId] : null;
+        if (action === 'COUNTERATTACK') return offsetLonLat(meta.baseCoord, 0, BLUE_COUNTERATTACK_KM_NORTH);
+        if (action === 'WITHDRAW')      return offsetLonLat(meta.baseCoord, 0, BLUE_WITHDRAW_KM_NORTH);
+        return meta.baseCoord;
+    }
 
     // Map of "destroyed" effects on existing user-placed Blue markers,
     // keyed by their Leaflet marker._leaflet_id so we can restore on reset.
@@ -321,6 +456,16 @@
         if (!hasMap() || !scenario) return false;
         clearScenario();
 
+        // Capture scenario-level references the per-step movement model needs.
+        scenarioRef    = scenario;
+        blsCoordByName = {};
+        for (const b of (scenario.bls_template || [])) {
+            if (b && b.name && Array.isArray(b.coord)) blsCoordByName[b.name] = b.coord;
+        }
+        objCoord   = (scenario.obj && Array.isArray(scenario.obj.coord)) ? scenario.obj.coord : null;
+        objDepthKm = (scenario.obj && Number.isFinite(scenario.obj.target_depth_km))
+                     ? scenario.obj.target_depth_km : 95;
+
         layerGroup = window.L.layerGroup().addTo(window.map);
 
         // AO boundaries — dashed blue trapezoidal polygons showing the
@@ -397,26 +542,48 @@
             unitsByBls[unit.bls].push(unit);
         }
         for (const unit of scenario.red_units || []) {
-            let lat, lng;
-            if (Array.isArray(unit.coord) && unit.coord.length === 2) {
-                lng = unit.coord[0];
-                lat = unit.coord[1];
-            } else {
-                const bls = (scenario.bls_template || []).find(b => b.name === unit.bls);
-                if (!bls || !bls.coord) continue;
-                const peers = unitsByBls[unit.bls] || [unit];
-                const idx = peers.indexOf(unit);
-                const n = peers.length;
-                lng = bls.coord[0] + (idx - (n - 1) / 2) * 0.014;
-                lat = bls.coord[1] - 0.020 - 0.001 * idx;
+            // Stash unit metadata so per-step applyState can recompute the
+            // role-based position (lerp BLS → OBJ capped by role).
+            const baseCoord = (Array.isArray(unit.coord) && unit.coord.length === 2) ? unit.coord.slice() : null;
+            const meta = {
+                uid:       unit.uid,
+                role:      unit.role,
+                bls:       unit.bls,
+                appear:    Number.isFinite(unit.appear) ? unit.appear : 0,
+                label:     unit.label,
+                echelon:   unit.echelon,
+                baseCoord,
+            };
+
+            // Initial placement = step-0 role-based position. For units with
+            // appear > 0 this puts them at the offshore sea-offset; recon /
+            // EW / fire-support already-ashore units land near their BLS.
+            let initialLonLat = redPositionLonLat(meta, 0, 0);
+            if (!initialLonLat) {
+                // Fallback: scenario coord, or fan south of BLS for stacks.
+                if (baseCoord) {
+                    initialLonLat = baseCoord;
+                } else {
+                    const bls = (scenario.bls_template || []).find(b => b.name === unit.bls);
+                    if (!bls || !bls.coord) continue;
+                    const peers = unitsByBls[unit.bls] || [unit];
+                    const idx = peers.indexOf(unit);
+                    const n = peers.length;
+                    initialLonLat = [
+                        bls.coord[0] + (idx - (n - 1) / 2) * 0.014,
+                        bls.coord[1] - 0.020 - 0.001 * idx,
+                    ];
+                }
             }
+
             const sidc = redSidcFor(unit);
             const size = redIconSize(unit.echelon);
             const icon = sidcIcon(sidc, size) || diamondIcon(COLORS.RED_UNIT, unit.label);
             const m = window.L.marker(
-                [lat, lng],
+                [initialLonLat[1], initialLonLat[0]],
                 { icon, title: unit.uid + ' — ' + unit.role + ' (' + unit.label + ')' },
             ).bindTooltip(`${unit.uid} (${unit.label}) — ${unit.role} — STAGED`, { permanent: false });
+            m._wgRedMeta = meta;
             m.addTo(layerGroup);
             redMarkers[unit.uid] = m;
         }
@@ -433,6 +600,12 @@
                 [unit.coord[1], unit.coord[0]],
                 { icon, title: unit.unit_uid + ' — ' + (unit.echelon || 'unit') },
             ).bindTooltip(`${unit.unit_uid} (${unit.echelon || 'unit'}) — ACTIVE`, { permanent: false });
+            m._wgBlueMeta = {
+                uid:       unit.unit_uid,
+                baseId:    unit.base_id,
+                baseCoord: unit.coord.slice(),
+                echelon:   unit.echelon,
+            };
             m.addTo(layerGroup);
             blueMarkers[unit.unit_uid] = m;
         }
@@ -592,53 +765,101 @@
         ewHalo.addTo(layerGroup);
     }
 
-    // ── Red advance arrows (BLS → current advance tip) ────────────────
-    // One tapered red arrow per "active" BLS (status SECURE or LIMITED).
-    // Length proportional to current phase_line_km. Matches the prominent
-    // attack arrows in the Python wargame renders (step03/step08).
+    // ── Red advance arrows (BLS → lerp(BLS, OBJ, progress)) ───────────
+    // Mirrors wargame.py draw_phase_and_red_area(): one chunky main arrow
+    // from BLS-3 to lerp(BLS-3, OBJ, progress), plus a thinner secondary
+    // from BLS-4 once progress > 0.15. The arrow lengthens each step as
+    // the operation deepens, instead of tracing the pipeline curve.
     function updateAdvanceArrows(state, scenario) {
         for (const a of advanceArrows) {
             if (a && layerGroup) layerGroup.removeLayer(a);
         }
         advanceArrows = [];
+        if (salientLayer && layerGroup) { layerGroup.removeLayer(salientLayer); salientLayer = null; }
         if (!layerGroup || !scenario) return;
-        if (!state || !state.phase_line_km || state.phase_line_km < 1) return;
-
-        const tipLatLng = pointAlongPipeline(state.phase_line_km);
-        if (!tipLatLng) return;
+        const progress = progressFromState(state);
+        if (progress <= 0) return;
 
         const obj = scenario.obj;
-        const objLatLng = obj && obj.coord ? [obj.coord[1], obj.coord[0]] : null;
+        if (!obj || !Array.isArray(obj.coord)) return;
+        const objLL = obj.coord;
 
-        for (const bls of scenario.bls_template || []) {
-            const status = (state.bls_status || {})[bls.name];
-            if (status !== 'SECURE' && status !== 'LIMITED') continue;
-            const start = [bls.coord[1], bls.coord[0]];
-            // Each arrow ends at a point slightly offset from the pipeline tip
-            // so multiple arrows don't overlap exactly.
-            const idx = (scenario.bls_template || []).indexOf(bls);
-            const jitterLat = (idx - 1.5) * 0.01;
-            const jitterLng = (idx - 1.5) * 0.012;
-            const end = [tipLatLng[0] + jitterLat, tipLatLng[1] + jitterLng];
-
-            const opacity = status === 'SECURE' ? 0.85 : 0.55;
-            const weight  = status === 'SECURE' ? 5 : 3;
-            const color   = '#d23a3a';
-
-            const line = window.L.polyline([start, end], {
-                color, weight, opacity,
-                lineCap: 'round',
+        // Salient polygon: from every BLS in template back through the
+        // current deep-front lerp points, tinted red. Same visual idea as
+        // wargame.py's red AOR fill — shows the penetration shape.
+        const bls = (scenario.bls_template || []).filter(b => b && Array.isArray(b.coord));
+        if (bls.length >= 2) {
+            const deep = bls.map(b => lerpLonLat(b.coord, objLL, Math.min(progress, 0.92)));
+            const ring = bls.map(b => [b.coord[1], b.coord[0]])
+                .concat(deep.slice().reverse().map(p => [p[1], p[0]]));
+            salientLayer = window.L.polygon(ring, {
+                color: '#b21414',
+                weight: 1.5,
+                opacity: 0.5,
+                fillColor: '#c41e1e',
+                fillOpacity: 0.18,
                 interactive: false,
-            }).bindTooltip(`Red advance from ${bls.name} → ${state.phase_line_km} km`);
+            });
+            salientLayer.addTo(layerGroup);
+        }
+
+        // Main effort: BLS-3 → lerp(BLS-3, OBJ, progress). Chunky.
+        const main = scenario.bls_template && scenario.bls_template.find(b => b && b.name === 'BLS-3');
+        if (main && Array.isArray(main.coord)) {
+            const start = [main.coord[1], main.coord[0]];
+            const endLL = lerpLonLat(main.coord, objLL, Math.min(progress, 1.0));
+            const end   = [endLL[1], endLL[0]];
+            const color = '#b21414';
+            const line = window.L.polyline([start, end], {
+                color, weight: 10, opacity: 0.85, lineCap: 'round', interactive: false,
+            }).bindTooltip(`Main effort: BLS-3 → OBJ (progress ${(progress * 100).toFixed(0)}%)`);
             line.addTo(layerGroup);
             advanceArrows.push(line);
+            const head = makeArrowhead(start, end, color, 14);
+            if (head) { head.addTo(layerGroup); advanceArrows.push(head); }
+        }
 
-            // Arrowhead — a small filled triangle at the end point.
-            const head = makeArrowhead(start, end, color, weight + 4);
-            if (head) {
-                head.addTo(layerGroup);
-                advanceArrows.push(head);
-            }
+        // Secondary envelopment: BLS-4 → lerp(BLS-4, OBJ, progress*0.92).
+        // Only appears once the lodgement has any depth (progress > 0.15).
+        const sec = scenario.bls_template && scenario.bls_template.find(b => b && b.name === 'BLS-4');
+        if (progress > 0.15 && sec && Array.isArray(sec.coord)) {
+            const start = [sec.coord[1], sec.coord[0]];
+            const endLL = lerpLonLat(sec.coord, objLL, Math.min(progress, 0.92));
+            const end   = [endLL[1], endLL[0]];
+            const color = '#b21414';
+            const line = window.L.polyline([start, end], {
+                color, weight: 6, opacity: 0.6, lineCap: 'round', interactive: false,
+            }).bindTooltip(`Envelopment: BLS-4 → OBJ (progress ${(Math.min(progress, 0.92) * 100).toFixed(0)}%)`);
+            line.addTo(layerGroup);
+            advanceArrows.push(line);
+            const head = makeArrowhead(start, end, color, 10);
+            if (head) { head.addTo(layerGroup); advanceArrows.push(head); }
+        }
+    }
+
+    // ── Per-step unit movement ────────────────────────────────────────
+    // Walks every Red and Blue marker the scenario placed, recomputes its
+    // position from role + step index + progress (red) or per-step action
+    // (blue), and slides the marker via setLatLng. Mirrors the wargame.py
+    // red_position / blue_position behavior so the on-map view matches
+    // the reference step PNGs.
+    function updateUnitPositions(state) {
+        const stepIndex = Number.isFinite(state && state.step_index) ? state.step_index : 0;
+        const progress  = progressFromState(state);
+
+        for (const m of Object.values(redMarkers)) {
+            const meta = m && m._wgRedMeta;
+            if (!meta) continue;
+            const lonLat = redPositionLonLat(meta, stepIndex, progress);
+            if (!lonLat) continue;
+            try { m.setLatLng([lonLat[1], lonLat[0]]); } catch (_) { /* ignore */ }
+        }
+        for (const m of Object.values(blueMarkers)) {
+            const meta = m && m._wgBlueMeta;
+            if (!meta) continue;
+            const lonLat = bluePositionLonLat(meta, stepIndex);
+            if (!lonLat) continue;
+            try { m.setLatLng([lonLat[1], lonLat[0]]); } catch (_) { /* ignore */ }
         }
     }
 
@@ -777,6 +998,10 @@
         aoLayers = [];
         advanceArrows = [];
         aorPhaseLine = null;
+        salientLayer = null;
+        scenarioRef = null;
+        blsCoordByName = {};
+        objCoord = null;
     }
 
     // ── Find existing user-placed Blue marker by base id ─────────────
@@ -833,13 +1058,31 @@
     // ── Apply a per-step state to the map ────────────────────────────
     function applyState(state, scenario) {
         if (!hasMap() || !state) return { found: 0, missed: [] };
+        if (scenario && scenario !== scenarioRef) {
+            // Defensive: keep the per-step movement model in sync with whatever
+            // scenario the caller is replaying (matters when MC trials reuse
+            // the same overlay but advance through different scenarios).
+            scenarioRef = scenario;
+            if (Array.isArray(scenario.bls_template)) {
+                blsCoordByName = {};
+                for (const b of scenario.bls_template) {
+                    if (b && b.name && Array.isArray(b.coord)) blsCoordByName[b.name] = b.coord;
+                }
+            }
+            if (scenario.obj && Array.isArray(scenario.obj.coord)) objCoord = scenario.obj.coord;
+            if (scenario.obj && Number.isFinite(scenario.obj.target_depth_km)) objDepthKm = scenario.obj.target_depth_km;
+        }
+
+        // -1. Move every Red and Blue marker first — downstream halos (EW,
+        // contact) re-center themselves off the unit's current position.
+        updateUnitPositions(state);
 
         // 0. SITREP banner + EW halo + contact halo + advance arrows + AOR PL
         updateSitrep(state);
         updateEwHalo(state);
         updateContactHalo(state);
-        updateAdvanceArrows(state, scenario);
-        updateAorPhaseLine(state, scenario);
+        updateAdvanceArrows(state, scenario || scenarioRef);
+        updateAorPhaseLine(state, scenario || scenarioRef);
 
         // 1. Update BLS semicircle colors
         if (state.bls_status) {
@@ -950,9 +1193,24 @@
         }
         for (const m of Object.values(redMarkers)) {
             try { const el = m.getElement(); if (el) el.style.opacity = ''; } catch (_) {}
+            // Slide Red unit back to its step-0 offshore / role position.
+            const meta = m && m._wgRedMeta;
+            if (meta) {
+                const ll = redPositionLonLat(meta, 0, 0);
+                if (ll) { try { m.setLatLng([ll[1], ll[0]]); } catch (_) {} }
+            }
         }
         for (const m of Object.values(blueMarkers)) {
             try { const el = m.getElement(); if (el) { el.style.opacity = ''; el.style.filter = ''; el.classList.remove('wg-destroyed'); } } catch (_) {}
+            // Slide Blue unit back to its base coord (cancels any COUNTERATTACK shift).
+            const meta = m && m._wgBlueMeta;
+            if (meta && meta.baseCoord) {
+                try { m.setLatLng([meta.baseCoord[1], meta.baseCoord[0]]); } catch (_) {}
+            }
+        }
+        if (salientLayer && layerGroup) {
+            layerGroup.removeLayer(salientLayer);
+            salientLayer = null;
         }
         if (pipelineAdvanced && layerGroup) {
             layerGroup.removeLayer(pipelineAdvanced);

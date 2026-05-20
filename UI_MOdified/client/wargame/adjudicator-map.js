@@ -739,12 +739,22 @@
         if (!sitrepControl) return;
         const div = sitrepControl.getContainer();
         if (!div || !state) return;
-        const objColor = COLORS.OBJ[state.objective_status] || '#888';
+        // Derive the display outcome from the full evidence (FR + losses
+        // + objective_status). If the LLM said CAPTURED but evidence
+        // says Blue won, this returns DENIED — the SITREP shows what's
+        // actually happening even before the server validator clamps.
+        const displayStatus = deriveDisplayOutcome(state);
+        const objColor = COLORS.OBJ[displayStatus] || '#888';
         const blueDead = state.losses_cumulative && state.losses_cumulative.blue_destroyed || 0;
         const blueTotal = (state.losses_cumulative && state.losses_cumulative.blue_total) || 39;
         const redCoy = state.losses_cumulative && state.losses_cumulative.red_company_equivalent || 0;
         const phasePill = `<span style="background:#22293a;color:#cdd;padding:1px 6px;border-radius:8px;font-size:10px;">${esc(state.phase)}</span>`;
-        const objPill   = `<span style="background:${objColor};color:#fff;padding:1px 8px;border-radius:8px;font-size:10px;font-weight:700;float:right;">${esc(state.objective_status)}</span>`;
+        // Show the derived status and, if it differs from what the LLM
+        // emitted, flag the override so the operator sees the call:
+        const overrideMark = (displayStatus !== state.objective_status)
+            ? `<span style="font-size:9px;opacity:0.75;margin-right:4px;" title="LLM said ${esc(state.objective_status)} but evidence overrules">⚠</span>`
+            : '';
+        const objPill   = `<span style="background:${objColor};color:#fff;padding:1px 8px;border-radius:8px;font-size:10px;font-weight:700;float:right;">${overrideMark}${esc(displayStatus)}</span>`;
         div.innerHTML = `
             <div style="margin-bottom:4px;">
                 <strong style="color:#fff;letter-spacing:.05em;">STEP ${state.step_index} · ${esc(state.time_label)}</strong>
@@ -803,20 +813,58 @@
         ewHalo.addTo(layerGroup);
     }
 
+    // Operator follow-up: even with color + reach-factor fixes, the map
+    // still trusted state.objective_status verbatim. If the LLM emitted
+    // CAPTURED while everything else (FR, blue intact, red attrited)
+    // said Blue won, the map dutifully drew the bold-red treatment.
+    // The system has to "walk with the AI decision" — meaning consult
+    // the FULL evidence and downgrade an incoherent verdict on the
+    // client side too, not just on the server validator. This is
+    // belt-and-braces with the server's clamp from ff692b7: the
+    // validator catches it at the data layer; this catches it at the
+    // visual layer even if the server hasn't restarted yet.
+    function parseFrNumber(s) {
+        if (typeof s !== 'string') return null;
+        const m = s.match(/^(\d{1,2}(?:\.\d)?):1/);
+        return m ? Number(m[1]) : null;
+    }
+    function deriveDisplayOutcome(state) {
+        if (!state) return 'DORMANT';
+        const status = state.objective_status || 'DORMANT';
+        // Only re-litigate CAPTURED — the others (DENIED, THREATENED,
+        // CONTESTED, DORMANT) describe Red NOT dominating, and the
+        // server validator already blocks regressions.
+        if (status !== 'CAPTURED') return status;
+
+        const fr = String(state.force_ratio || '');
+        const lc = state.losses_cumulative || {};
+        const blueLost  = Number(lc.blue_destroyed) || 0;
+        const blueTotal = Number(lc.blue_total) || 39;
+        const redCoyEq  = Number(lc.red_company_equivalent) || 0;
+
+        const frBlocks    = /\b(below\s+decisive|not\s+engaged|N\/A)\b/i.test(fr);
+        const frNum       = parseFrNumber(fr);
+        const frNumBlocks = (frNum !== null && frNum < 2);
+        const blueIntact  = (blueLost / blueTotal) < 0.25;
+        const redSpent    = redCoyEq > 6;
+
+        // Any single strong contradiction → display as DENIED. The
+        // OBJ marker, salient, arrows, and PL line all read off this
+        // derived value, so the WHOLE map flips at once.
+        if (frBlocks || frNumBlocks || blueIntact || redSpent) {
+            return 'DENIED';
+        }
+        return status;
+    }
+
     // Map objective_status → visual treatment for the salient + advance
-    // arrows. Operator-reported bug: the salient and arrows extended all
-    // the way to OBJ NASSER when PL crossed depth, even when Blue was
-    // winning — the visual said "Red is dominating" no matter what.
-    //
-    // Fix has two layers:
-    //   (a) color / opacity / dash style by outcome (CAPTURED bold,
-    //       DENIED faded gray-red dashed, etc.)
-    //   (b) reachFactor: the arrow tip + salient deep-front retract for
-    //       non-CAPTURED outcomes so DENIED visibly stops short of OBJ
-    //       even at PL=95. The dashed yellow AOR phase line still shows
-    //       the geographic PL; the arrows now show CONTROL.
+    // arrows. CAPTURED-bold, DENIED-faded-dashed, with reachFactor that
+    // retracts the salient + arrow tips for non-CAPTURED outcomes so
+    // they visually stop short of OBJ NASSER. Reads from
+    // deriveDisplayOutcome so the visual layer is honest even when the
+    // server hasn't clamped an incoherent CAPTURED yet.
     function outcomeAccent(state) {
-        const status = state && state.objective_status;
+        const status = deriveDisplayOutcome(state);
         switch (status) {
             case 'CAPTURED':
                 return { color: '#b21414', fillColor: '#c41e1e', fillOpacity: 0.22, opacity: 0.90, mainWeight: 10, secWeight: 6, dashArray: null,    reachFactor: 1.00, label: 'Red holds' };
@@ -1003,11 +1051,12 @@
         const coastLat = latN - 0.06;
         const lat = coastLat - (state.phase_line_km / 110);
         if (lat <= scenario.map_bbox[1]) return; // off the southern edge
-        const dashColor = COLORS.OBJ[state.objective_status] || '#e8a23a';
+        const displayStatus = deriveDisplayOutcome(state);
+        const dashColor = COLORS.OBJ[displayStatus] || '#e8a23a';
         aorPhaseLine = window.L.polyline(
             [[lat, scenario.map_bbox[0]], [lat, scenario.map_bbox[2]]],
             { color: dashColor, weight: 1.5, opacity: 0.55, dashArray: '8 6', interactive: false },
-        ).bindTooltip(`Phase line: ${state.phase_line_km} km — ${state.objective_status}`);
+        ).bindTooltip(`Phase line: ${state.phase_line_km} km — ${displayStatus}`);
         aorPhaseLine.addTo(layerGroup);
     }
 
@@ -1202,12 +1251,18 @@
             }
         }
 
-        // 2. Update OBJ color by status
+        // 2. Update OBJ color by DERIVED status — same evidence check
+        // the salient/arrows use, so the whole map flips together if the
+        // LLM's CAPTURED is contradicted by FR + losses.
         if (objMarker && state.objective_status) {
-            const c = COLORS.OBJ[state.objective_status] || '#888';
+            const displayStatus = deriveDisplayOutcome(state);
+            const c = COLORS.OBJ[displayStatus] || '#888';
             const objName = (scenario && scenario.obj && scenario.obj.name) || 'OBJ NASSER';
             objMarker.setIcon(targetIcon(c, objName));
-            objMarker.setTooltipContent(`${objName} — ${state.objective_status}`);
+            const overrideTag = (displayStatus !== state.objective_status)
+                ? ` (LLM said ${state.objective_status}; evidence overrules)`
+                : '';
+            objMarker.setTooltipContent(`${objName} — ${displayStatus}${overrideTag}`);
         }
 
         // 3. Mark Red degraded units (opacity fade — they're not destroyed,
@@ -1241,17 +1296,19 @@
         }
 
         // 5. Pipeline fill: draw the section Red has already advanced over
-        // as a solid red line (replaces the dashed purple in that range).
-        // A small arrow marker sits at the tip showing the current advance.
+        // as a solid colored line. Color uses the DERIVED outcome — when
+        // the LLM's CAPTURED is contradicted, this turns blue (DENIED)
+        // along with the rest of the map.
+        const displayStatus5 = deriveDisplayOutcome(state);
         if (layerGroup && pipelineLatLngs && state.phase_line_km != null) {
             const advancedLatLngs = pipelineUpTo(state.phase_line_km);
             if (pipelineAdvanced) layerGroup.removeLayer(pipelineAdvanced);
             if (advancedLatLngs.length >= 2) {
                 pipelineAdvanced = window.L.polyline(advancedLatLngs, {
-                    color: COLORS.OBJ[state.objective_status] || '#d23a3a',
+                    color: COLORS.OBJ[displayStatus5] || '#d23a3a',
                     weight: 4,
                     opacity: 0.85,
-                }).bindTooltip(`Red advance: ${state.phase_line_km} km — ${state.objective_status}`);
+                }).bindTooltip(`Red advance: ${state.phase_line_km} km — ${displayStatus5}`);
                 pipelineAdvanced.addTo(layerGroup);
             } else {
                 pipelineAdvanced = null;
@@ -1264,7 +1321,7 @@
                     icon: window.L.divIcon({
                         html: `<div style="
                             width:14px;height:14px;border-radius:50%;
-                            background:${COLORS.OBJ[state.objective_status] || '#d23a3a'};
+                            background:${COLORS.OBJ[displayStatus5] || '#d23a3a'};
                             border:2px solid #fff;
                             box-shadow:0 0 6px rgba(0,0,0,.5);
                         "></div><div style="

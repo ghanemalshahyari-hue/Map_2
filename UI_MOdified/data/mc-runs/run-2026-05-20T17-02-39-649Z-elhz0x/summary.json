@@ -1,0 +1,30 @@
+{
+  "runId": "run-2026-05-20T17-02-39-649Z-elhz0x",
+  "scenarioName": "wargame2-brega",
+  "model": null,
+  "trialsRequested": 3,
+  "trialsCompleted": 0,
+  "trialsFailed": 0,
+  "parallelism": 2,
+  "outcomeCounts": {
+    "CAPTURED": 0,
+    "DENIED": 0,
+    "THREATENED_terminal": 0,
+    "DORMANT_terminal": 0,
+    "other": 0
+  },
+  "finalPhaseLineKm": null,
+  "finalBlueDestroyed": null,
+  "finalRedCoyEqLosses": null,
+  "fallbackStepCounts": null,
+  "startedAt": "2026-05-20T17:02:39.649Z",
+  "endedAt": "2026-05-20T17:04:20.952Z",
+  "durationMs": 101303,
+  "outcomePct": {
+    "CAPTURED": 0,
+    "DENIED": 0,
+    "THREATENED_terminal": 0,
+    "DORMANT_terminal": 0,
+    "other": 0
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "runId": "run-2026-05-20T17-14-34-195Z-4a6om8",
+  "scenarioName": "wargame1-brega",
+  "trials": 3,
+  "parallelism": 5,
+  "coaParams": {
+    "reserve_commit_hour": 72,
+    "posture": "deliberate",
+    "main_effort_axis": "BLS-3"
+  },
+  "model": null,
+  "mockMode": false,
+  "provider": null,
+  "startedAt": "2026-05-20T17:14:34.195Z"
+}

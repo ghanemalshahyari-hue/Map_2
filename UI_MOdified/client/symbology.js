@@ -33,6 +33,16 @@
             path: 'M2,32 L2,24 L20,11 L52,11 L52,7 L68,18 L52,29 L52,23 L34,23 L16,35 L16,32',
             previewPath: 'M2,32 L2,24 L20,11 L52,11 L52,7 L68,18 L52,29 L52,23 L34,23 L16,35 L16,32'
         },
+        // Maneuver Arrow — smooth bezier with auto-generated dual flanks, animated.
+        // Click two points; bend with drag handles. Owned by maneuver-arrow.js,
+        // routed past the CATK placement flow by a selectedTmgType check.
+        {
+            id: 'maneuver-arrow',
+            label: 'Maneuver Arrow',
+            typeOf: 'maneuver-arrow',
+            previewPath: ['M6,32 C25,32 30,8 50,8 C70,8 75,32 88,18 L80,12 M88,18 L80,24', 'M2,34 C24,36 30,16 52,16', 'M10,30 C30,28 36,4 56,4'],
+            strokeWidth: 2
+        },
         // Main Attack: same as Attack but with a V chevron beyond the arrowhead tip.
         {
             id: 'main-attack',

@@ -1,0 +1,70 @@
+{
+  "runId": "run-2026-05-20T08-33-19-021Z-wgvemu",
+  "scenarioName": "wargame2-brega",
+  "model": null,
+  "trialsRequested": 3,
+  "trialsCompleted": 3,
+  "trialsFailed": 0,
+  "parallelism": 2,
+  "outcomeCounts": {
+    "CAPTURED": 0,
+    "DENIED": 3,
+    "THREATENED_terminal": 0,
+    "DORMANT_terminal": 0,
+    "other": 0
+  },
+  "finalPhaseLineKm": {
+    "n": 3,
+    "min": 84,
+    "p10": 84,
+    "p25": 84,
+    "p50": 84,
+    "p75": 84,
+    "p90": 84,
+    "max": 84,
+    "mean": 84
+  },
+  "finalBlueDestroyed": {
+    "n": 3,
+    "min": 21,
+    "p10": 21,
+    "p25": 21,
+    "p50": 21,
+    "p75": 21,
+    "p90": 21,
+    "max": 21,
+    "mean": 21
+  },
+  "finalRedCoyEqLosses": {
+    "n": 3,
+    "min": 6,
+    "p10": 6,
+    "p25": 6,
+    "p50": 6,
+    "p75": 6,
+    "p90": 6,
+    "max": 6,
+    "mean": 6
+  },
+  "fallbackStepCounts": {
+    "n": 3,
+    "min": 0,
+    "p10": 0,
+    "p25": 0,
+    "p50": 0,
+    "p75": 0,
+    "p90": 0,
+    "max": 0,
+    "mean": 0
+  },
+  "startedAt": "2026-05-20T08:33:19.022Z",
+  "endedAt": "2026-05-20T08:33:19.041Z",
+  "durationMs": 19,
+  "outcomePct": {
+    "CAPTURED": 0,
+    "DENIED": 1,
+    "THREATENED_terminal": 0,
+    "DORMANT_terminal": 0,
+    "other": 0
+  }
+}

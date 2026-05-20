@@ -331,4 +331,15 @@ async function propose({ snapshot, units, turn, model, timeoutMs, side }) {
     };
 }
 
-module.exports = { propose, extractUnits, MAX_MOVE_KM, MAX_ENGAGE_KM };
+module.exports = {
+    propose,
+    extractUnits,
+    extractJson,
+    unitsFromList,
+    pickRelevant,
+    centroid,
+    affiliationOf,
+    haversineKm,
+    MAX_MOVE_KM,
+    MAX_ENGAGE_KM,
+};

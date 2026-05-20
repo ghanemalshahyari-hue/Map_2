@@ -839,6 +839,11 @@
                         <div id="wg-ai-proposals" class="wg-ai-proposals"></div>
                     </div>
 
+                    <!-- AI Adjudicator: computes the full per-step dynamic
+                         state (losses, force_ratio, EW, BLS, Arabic+English
+                         narrative). Mounted by adjudicator-hud.js at boot. -->
+                    <div class="wargame-feed-card" id="wg-adjudicator-card"></div>
+
                     <div class="wargame-quick-grid">
                         <button type="button" class="wargame-quick-card" data-wg-note="forces">
                             <strong>Forces</strong>
@@ -982,6 +987,60 @@
             </main>
 
             <!-- ── CHAT SIDEBAR ── -->
+            <!-- Operations / intelligence panel -->
+            <aside id="ops-intel-panel" class="ops-intel-panel" aria-label="Operations intelligence panel">
+                <div class="ops-panel-header">
+                    <div>
+                        <span class="ops-panel-kicker">Operations</span>
+                        <h2>Command Intel</h2>
+                    </div>
+                    <span id="ops-sync-state" class="ops-sync-state">SYNC</span>
+                </div>
+
+                <section class="ops-alert-card" id="ops-alert-card">
+                    <span class="ops-alert-label">Alert</span>
+                    <strong id="ops-alert-title">No active contact</strong>
+                    <p id="ops-alert-body">War-game events and unit changes will appear here.</p>
+                </section>
+
+                <section class="ops-feature-card">
+                    <div class="ops-card-title-row">
+                        <span>Selected feature</span>
+                        <span id="ops-selection-count">0</span>
+                    </div>
+                    <div class="ops-feature-name" id="ops-feature-name">No selection</div>
+                    <div class="ops-feature-meta">
+                        <span id="ops-feature-kind">Map idle</span>
+                        <span id="ops-feature-side">Unknown</span>
+                    </div>
+                    <dl class="ops-metric-list">
+                        <div><dt>Map center</dt><dd id="ops-map-center">--</dd></div>
+                        <div><dt>Zoom</dt><dd id="ops-map-zoom">--</dd></div>
+                        <div><dt>Elements</dt><dd id="ops-element-count">--</dd></div>
+                    </dl>
+                </section>
+
+                <section class="ops-layer-card">
+                    <div class="ops-card-title-row">
+                        <span>Layer posture</span>
+                        <span id="ops-layer-count">--</span>
+                    </div>
+                    <div class="ops-layer-row"><span class="dot friendly"></span><span>Friendly / planned</span><strong id="ops-friendly-count">--</strong></div>
+                    <div class="ops-layer-row"><span class="dot hostile"></span><span>Hostile / contact</span><strong id="ops-hostile-count">--</strong></div>
+                    <div class="ops-layer-row"><span class="dot neutral"></span><span>Other graphics</span><strong id="ops-other-count">--</strong></div>
+                </section>
+
+                <section class="ops-activity-card">
+                    <div class="ops-card-title-row">
+                        <span>Recent activity</span>
+                        <span id="ops-activity-count">0</span>
+                    </div>
+                    <div id="ops-activity-list" class="ops-activity-list">
+                        <div class="ops-activity-empty">Waiting for activity.</div>
+                    </div>
+                </section>
+            </aside>
+
             <aside id="chat-sidebar" class="chat-sidebar collapsed" aria-label="Team chat panel">
                 <header class="chat-header">
                     <div class="chat-header-main">
@@ -1613,6 +1672,8 @@
     <script src="free_draw_signature.js?v=3"></script>
     <script src="../lib/milsymbol.js"></script>
     <script src="map-engine.js"></script>
+    <script src="arrow-animation.js?v=1"></script>
+    <script src="maneuver-arrow.js?v=1"></script>
     <script src="app.js?v=39"></script>
     <script src="units-map.js"></script>
     <script src="units-orbat-dock.js?v=1"></script>
@@ -1621,6 +1682,11 @@
     <script src="import-plan.js?v=9"></script>
     <script src="turn-engine.js?v=5"></script>
     <script src="wargame/red-team-controller.js?v=1"></script>
+    <script src="wargame/scenario-state.js?v=1"></script>
+    <script src="wargame/adjudicator-client.js?v=3"></script>
+    <script src="wargame/adjudicator-map.js?v=8"></script>
+    <script src="wargame/adjudicator-hud.js?v=8"></script>
+    <script src="ops-panel.js?v=1"></script>
     <script src="map-hide-panels.js?v=1"></script>
 
     <!-- New modular panel system (ES modules — run after app.js) -->

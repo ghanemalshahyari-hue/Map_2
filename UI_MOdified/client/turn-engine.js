@@ -71,13 +71,17 @@
     let animState = null;   // { startTime, duration, targets, arrowMoveKm, arrowApplied, pendingTurn }
 
     // ── Discovery ──────────────────────────────────────────────────────
+    function isWargameArrow(m) {
+        return m instanceof L.LayerGroup
+            && m._tmgData
+            && (m._tmgData.isCatkMultiPoint || m._tmgData.isManeuverArrow);
+    }
     function findEnemyFormation() {
         if (!window.AppFormation) return null;
         const formations = window.AppFormation.listFormations();
         for (const f of formations) {
             const members = window.AppFormation.getMembers(f.id);
-            const arrow = members.find(m =>
-                m instanceof L.LayerGroup && m._tmgData && m._tmgData.isCatkMultiPoint);
+            const arrow = members.find(isWargameArrow);
             if (!arrow) continue;
             const markers = members.filter(m => m instanceof L.Marker);
             const anyHostile = markers.some(m => affiliationDigit(m._sidc) === '6');
@@ -97,10 +101,99 @@
         return out;
     }
 
+    // ── Curved-axis helpers (Maneuver Arrow) ──────────────────────────
+    // Build a dense arc-length sampling of a cubic bezier in km space. The
+    // war-game's projectToAxis / positionAtAxis read these samples instead of
+    // doing a straight-line projection, so units glide along the curve.
+    function bezierPointKm(t, p0, p1, p2, p3) {
+        const u = 1 - t, uu = u * u, uuu = uu * u, tt = t * t, ttt = tt * t;
+        return {
+            x: uuu * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + ttt * p3.x,
+            y: uuu * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + ttt * p3.y,
+        };
+    }
+    function bezierTangentKm(t, p0, p1, p2, p3) {
+        const u = 1 - t;
+        return {
+            x: 3 * u * u * (p1.x - p0.x) + 6 * u * t * (p2.x - p1.x) + 3 * t * t * (p3.x - p2.x),
+            y: 3 * u * u * (p1.y - p0.y) + 6 * u * t * (p2.y - p1.y) + 3 * t * t * (p3.y - p2.y),
+        };
+    }
+    function buildCurvedAxis(spine) {
+        // spine: { p0, c1, c2, p3 } in latlng. Tail = p0 — units flow into the
+        // bend from the tail and emerge at the tip.
+        const tail = L.latLng(spine.p0.lat, spine.p0.lng);
+        const tip  = L.latLng(spine.p3.lat, spine.p3.lng);
+        const origin = tail;
+        const q0 = latLngToKm(spine.p0, origin);
+        const q1 = latLngToKm(spine.c1, origin);
+        const q2 = latLngToKm(spine.c2, origin);
+        const q3 = latLngToKm(spine.p3, origin);
+        const P0 = { x: q0.kmE, y: q0.kmN };
+        const P1 = { x: q1.kmE, y: q1.kmN };
+        const P2 = { x: q2.kmE, y: q2.kmN };
+        const P3 = { x: q3.kmE, y: q3.kmN };
+        const SAMPLES = 64;
+        const samples = [];
+        let total = 0;
+        let prev = bezierPointKm(0, P0, P1, P2, P3);
+        samples.push({ s: 0, t: 0, x: prev.x, y: prev.y });
+        for (let i = 1; i <= SAMPLES; i++) {
+            const t = i / SAMPLES;
+            const cur = bezierPointKm(t, P0, P1, P2, P3);
+            total += Math.hypot(cur.x - prev.x, cur.y - prev.y);
+            samples.push({ s: total, t, x: cur.x, y: cur.y });
+            prev = cur;
+        }
+        // The "directionDeg" of the tail tangent is used by translateArrowLayer
+        // to shift the whole curve along the local direction on each turn.
+        const tan0 = bezierTangentKm(0, P0, P1, P2, P3);
+        const tanLen = Math.hypot(tan0.x, tan0.y) || 1;
+        const directionDeg = (Math.atan2(tan0.x / tanLen, tan0.y / tanLen) * 180 / Math.PI + 360) % 360;
+        return {
+            kind: 'curve',
+            tail, tip,
+            origin,
+            spine,
+            controls: { P0, P1, P2, P3 },
+            samples,
+            lengthKm: total,
+            directionDeg,
+        };
+    }
+    function curveSampleAt(axis, sKm) {
+        const samples = axis.samples;
+        const total = axis.lengthKm;
+        if (sKm <= 0) return samples[0];
+        if (sKm >= total) return samples[samples.length - 1];
+        // Binary search the cumulative arc length
+        let lo = 0, hi = samples.length - 1;
+        while (hi - lo > 1) {
+            const mid = (lo + hi) >> 1;
+            if (samples[mid].s <= sKm) lo = mid; else hi = mid;
+        }
+        const a = samples[lo], b = samples[hi];
+        const span = b.s - a.s || 1e-9;
+        const k = (sKm - a.s) / span;
+        return { s: sKm, t: a.t + (b.t - a.t) * k,
+                 x: a.x + (b.x - a.x) * k,
+                 y: a.y + (b.y - a.y) * k };
+    }
+    function curveTangentAt(axis, sKm) {
+        const sample = curveSampleAt(axis, sKm);
+        const t = sample.t;
+        const v = bezierTangentKm(t, axis.controls.P0, axis.controls.P1, axis.controls.P2, axis.controls.P3);
+        const len = Math.hypot(v.x, v.y) || 1;
+        return { x: v.x / len, y: v.y / len };
+    }
+
     // ── Axis extraction ────────────────────────────────────────────────
     function extractAxisFromArrow(arrow) {
         const data = arrow && arrow._tmgData;
         if (!data) return null;
+        if (data.isManeuverArrow && data.spine) {
+            return buildCurvedAxis(data.spine);
+        }
         const params = data.arrowParams;
         if (params && params.tip
             && Number.isFinite(params.tailLengthKm)
@@ -129,6 +222,7 @@
     // ── Slot projection / reconstruction ───────────────────────────────
     // Axis unit (east, north) = (sinθ, cosθ); perp unit (90° CCW) = (-cosθ, sinθ).
     function projectToAxis(ll, axis) {
+        if (axis && axis.kind === 'curve') return projectToCurvedAxis(ll, axis);
         const th = axis.directionDeg * Math.PI / 180;
         const sinTh = Math.sin(th), cosTh = Math.cos(th);
         const loc = latLngToKm(ll, axis.tail);
@@ -138,11 +232,40 @@
         };
     }
     function positionAtAxis(s, offset, axis) {
+        if (axis && axis.kind === 'curve') return positionAtCurvedAxis(s, offset, axis);
         const th = axis.directionDeg * Math.PI / 180;
         const sinTh = Math.sin(th), cosTh = Math.cos(th);
         const kmE = s * sinTh - offset * cosTh;
         const kmN = s * cosTh + offset * sinTh;
         return kmToLatLng(kmE, kmN, axis.tail);
+    }
+    // Curved-axis projection: walk every sample and pick the nearest s. We use
+    // a coarse linear scan because the sample count (64) is small; for finer
+    // accuracy we could iterate Newton's method on the bezier, but the linear
+    // scan already lands within ~lengthKm/64 of the true arc-nearest.
+    function projectToCurvedAxis(ll, axis) {
+        const p = latLngToKm(ll, axis.origin);
+        const px = p.kmE, py = p.kmN;
+        let best = { s: 0, t: 0, x: axis.samples[0].x, y: axis.samples[0].y, d2: Infinity };
+        for (const s of axis.samples) {
+            const dx = px - s.x, dy = py - s.y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < best.d2) best = { s: s.s, t: s.t, x: s.x, y: s.y, d2 };
+        }
+        // Signed perpendicular distance: positive offset is to the LEFT of the
+        // tangent direction (perpVec rule used in maneuver-arrow.js).
+        const tan = curveTangentAt(axis, best.s);
+        const nx = -tan.y, ny = tan.x;   // 90° CCW
+        const offset = (px - best.x) * nx + (py - best.y) * ny;
+        return { s: best.s, offset };
+    }
+    function positionAtCurvedAxis(sKm, offset, axis) {
+        const sample = curveSampleAt(axis, sKm);
+        const tan = curveTangentAt(axis, sample.s);
+        const nx = -tan.y, ny = tan.x;
+        const kmE = sample.x + nx * offset;
+        const kmN = sample.y + ny * offset;
+        return kmToLatLng(kmE, kmN, axis.origin);
     }
 
     function shiftLatLng(ll, dLat, dLng) {
@@ -162,9 +285,32 @@
         return { ...params, tip: shiftLatLng(params.tip, dLat, dLng) };
     }
 
+    function shiftManeuverSpine(spine, dLat, dLng) {
+        if (!spine) return spine;
+        const shift = (p) => p ? L.latLng(p.lat + dLat, p.lng + dLng) : p;
+        return { p0: shift(spine.p0), c1: shift(spine.c1), c2: shift(spine.c2), p3: shift(spine.p3) };
+    }
+
     function translateArrowLayer(arrow, dLat, dLng) {
         if (!arrow || !Number.isFinite(dLat) || !Number.isFinite(dLng)) return false;
         if (Math.abs(dLat) < 1e-14 && Math.abs(dLng) < 1e-14) return false;
+
+        // Maneuver Arrow: shift the spine and ask the layer to re-render.
+        const ma = arrow._maneuverArrow || (arrow._tmgData && arrow._tmgData.isManeuverArrow ? arrow : null);
+        if (arrow._maneuverArrow) {
+            arrow._maneuverArrow.spine = shiftManeuverSpine(arrow._maneuverArrow.spine, dLat, dLng);
+            arrow._maneuverArrow._syncTmgData();
+            arrow._maneuverArrow._redraw();
+            // Trigger a head pulse on each war-game turn to make the advance feel cinematic.
+            if (arrow._maneuverArrow.anim && arrow._maneuverArrow.anim.playOnTurn) {
+                try { arrow._maneuverArrow.playHeadPulse(700); } catch (_) {}
+            }
+            return true;
+        }
+        if (ma && arrow._tmgData) {
+            arrow._tmgData.spine = shiftManeuverSpine(arrow._tmgData.spine, dLat, dLng);
+            return true;
+        }
 
         const shifted = new Set();
         const shiftMarker = (marker) => {

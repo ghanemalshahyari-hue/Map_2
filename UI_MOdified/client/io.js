@@ -113,6 +113,22 @@
                 }
                 return null;
             }
+            case 'tmg-maneuver-arrow': {
+                const sp = app.spine || {};
+                if (!sp.p0 || !sp.c1 || !sp.c2 || !sp.p3) return null;
+                // Sample the cubic bezier at 32 points so external GIS tools
+                // see a real LineString that roughly traces the spine.
+                const SAMPLES = 32;
+                const coords = [];
+                for (let i = 0; i <= SAMPLES; i++) {
+                    const t = i / SAMPLES;
+                    const u = 1 - t, uu = u * u, uuu = uu * u, tt = t * t, ttt = tt * t;
+                    const lng = uuu * sp.p0[0] + 3 * uu * t * sp.c1[0] + 3 * u * tt * sp.c2[0] + ttt * sp.p3[0];
+                    const lat = uuu * sp.p0[1] + 3 * uu * t * sp.c1[1] + 3 * u * tt * sp.c2[1] + ttt * sp.p3[1];
+                    coords.push([lng, lat]);
+                }
+                return { type: 'LineString', coordinates: coords };
+            }
             case 'tmg-single': {
                 const a = app.latlng1, b = app.latlng2;
                 if (!a || !b) return null;
@@ -408,6 +424,28 @@
                 };
             }
             return out;
+        }
+        // Animated Maneuver Arrow — owns its own geometry (cubic-bezier spine
+        // in latlng) plus a style + animation payload. We export the spine as
+        // [lng,lat] coords per GeoJSON convention; buildGeometry samples the
+        // bezier so external tools still see a sensible LineString.
+        if (el instanceof L.LayerGroup && el._tmgData?.isManeuverArrow) {
+            const sp = el._tmgData.spine || {};
+            const toCoord = (p) => p ? latLngToGeoCoord(p) : null;
+            return {
+                kind: 'tmg-maneuver-arrow',
+                typeId: 'maneuver-arrow',
+                spine: {
+                    p0: toCoord(sp.p0),
+                    c1: toCoord(sp.c1),
+                    c2: toCoord(sp.c2),
+                    p3: toCoord(sp.p3),
+                },
+                style: el._tmgData.style || null,
+                animation: el._tmgData.animation || null,
+                color: el._tmgData.color || (el._tmgData.style && el._tmgData.style.color) || '#22c55e',
+                formationId: el._tmgData.formationId || undefined,
+            };
         }
         if (el instanceof L.LayerGroup && el._tmgData?.isCatkMultiPoint) {
             const pts = (el._tmgData.points || []).map(latLngToGeoCoord).filter(Boolean);
@@ -942,6 +980,29 @@
                     polyline._layerId = layer.id;
                     layer.elements.push(polyline);
                     layer.group.addLayer(polyline);
+                } else if (elData.type === 'tmg-maneuver-arrow') {
+                    // Animated Maneuver Arrow — reconstruct from the 4-point bezier
+                    // spine in properties.app. Ignore the sampled LineString geometry.
+                    if (!window.ManeuverArrow || !window.map) return;
+                    const sp = elData.spine || {};
+                    const toLL = (c) => Array.isArray(c) ? L.latLng(c[1], c[0]) : null;
+                    const spine = {
+                        p0: toLL(sp.p0), c1: toLL(sp.c1), c2: toLL(sp.c2), p3: toLL(sp.p3),
+                    };
+                    if (!spine.p0 || !spine.c1 || !spine.c2 || !spine.p3) return;
+                    const arrow = window.ManeuverArrow.createFromSpine(
+                        window.map, spine, elData.style || null, elData.animation || null,
+                        {
+                            onChange: () => { if (typeof window.scheduleSaveToStorage === 'function') window.scheduleSaveToStorage(); },
+                            onDelete: (a) => { if (typeof window.removeFromLayer === 'function') window.removeFromLayer(a.group); }
+                        }
+                    );
+                    if (!arrow) return;
+                    arrow.group._layerId = layer.id;
+                    if (elData.formationId) arrow.group._tmgData.formationId = elData.formationId;
+                    layer.elements.push(arrow.group);
+                    layer.group.addLayer(arrow.group);
+                    arrow.start();
                 } else if (elData.type === 'tmg-single') {
                     const latlng1 = elData.latlng1 ? L.latLng(elData.latlng1[0], elData.latlng1[1]) : null;
                     const latlng2 = elData.latlng2 ? L.latLng(elData.latlng2[0], elData.latlng2[1]) : null;

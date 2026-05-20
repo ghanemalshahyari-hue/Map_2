@@ -28,6 +28,11 @@ Desktop.ini
 .env
 .env.*
 
+# AI gateway local secrets (api keys, etc.) — never commit.
+# `ai-config.js` is the committed defaults; this overlay file (if present)
+# is loaded on top and is gitignored so secrets stay on the machine.
+UI_MOdified/server/ai/ai-secrets.local.js
+
 # SQLite databases (runtime data)
 *.sqlite
 *.db

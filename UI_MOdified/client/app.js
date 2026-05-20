@@ -793,6 +793,15 @@ document.addEventListener('DOMContentLoaded', () => {
     map.createPane('autoFlankAreaPane');
     map.getPane('autoFlankAreaPane').style.zIndex = 395;
     map.getPane('autoFlankAreaPane').style.pointerEvents = 'none';
+    // Animated Maneuver Arrow lives between overlayPane (400) and markerPane
+    // (600). pointer-events stay enabled on the pane so spine + handles can
+    // capture clicks; the per-shape SVG sets pointer-events:auto explicitly.
+    if (window.ManeuverArrow && typeof window.ManeuverArrow.ensurePane === 'function') {
+        window.ManeuverArrow.ensurePane(map);
+    } else {
+        map.createPane('maneuverArrowPane');
+        map.getPane('maneuverArrowPane').style.zIndex = 410;
+    }
     const previewLayer = L.layerGroup().addTo(map);
     let previewMarker = null;
     let previewPolyline = null;
@@ -8787,6 +8796,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // units-map.js needs this so that placed unit markers become first-class
     // members of the active layer (visibility, Layers-panel membership).
     window.addToActiveLayer = (el) => addToActiveLayer(el);
+    // io.js (Maneuver Arrow import) needs this for handle-drag → save.
+    window.scheduleSaveToStorage = () => { try { scheduleSaveToStorage(); } catch (_) {} };
 
     // Bridge for Clip controller (ui/controllers/clip-controller.js). Replaces
     // `oldEl` in its owning layer with a plain polygon built from a GeoJSON
@@ -12366,6 +12377,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 tmgGrid.querySelectorAll('.tmg-btn').forEach(b => b.classList.remove('active'));
                 const arrowShapeTypes = new Set(['attack', 'main-attack', 'counterattack', 'counterattack-by-fire']);
                 const arrowShapeControls = document.getElementById('arrow-shape-controls');
+                // Always abort any in-progress Maneuver Arrow placement when the
+                // user picks a different TMG tile (or toggles this one off).
+                if (window.ManeuverArrow && window.ManeuverArrow.isPlacing()) {
+                    window.ManeuverArrow.cancelPlacement();
+                }
                 if (selectedTmgType === def.id) {
                     selectedTmgType = null;
                     tmgPoints = [];
@@ -13911,6 +13927,25 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (currentMode === 'line') {
             if (selectedTmgType) {
                 const latlng = snapLatLngForTmgPlacement(e.latlng);
+                // Animated Maneuver Arrow: two-click placement, owned by maneuver-arrow.js.
+                if (selectedTmgType === 'maneuver-arrow' && window.ManeuverArrow) {
+                    if (!window.ManeuverArrow.isPlacing()) {
+                        window.ManeuverArrow.startPlacement(map, {
+                            style: { color: getLineColor() },
+                            onCreate: (arrow) => {
+                                addToActiveLayer(arrow.group);
+                            },
+                            onChange: () => {
+                                if (typeof scheduleSaveToStorage === 'function') scheduleSaveToStorage();
+                            },
+                            onDelete: (arrow) => {
+                                removeFromLayer(arrow.group);
+                            },
+                        });
+                    }
+                    window.ManeuverArrow.handleMapClick(latlng);
+                    return;
+                }
                 if (isParametricCatkPlacementType(selectedTmgType)) {
                     if (isRecentlyHandledParametricCatkDomClick(e.originalEvent)) return;
                     rememberHandledParametricCatkDomClick(e.originalEvent);
@@ -14289,6 +14324,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const latlng = e.latlng;
             requestAnimationFrame(() => {
                 _mousemoveRafPending = false;
+                // Animated Maneuver Arrow preview update — runs only between the two
+                // placement clicks so the tip follows the cursor with a live curve.
+                if (currentMode === 'line' && selectedTmgType === 'maneuver-arrow'
+                    && window.ManeuverArrow && window.ManeuverArrow.isPlacing()) {
+                    window.ManeuverArrow.handleMapMove(latlng);
+                    return;
+                }
                 // Transfer scalloped start point: when only 1 point placed and the cursor
                 // is directly on top of a different circle-X, move the start to that circle.
                 if (currentMode === 'line' && selectedTmgType === 'scalloped' && tmgPoints.length === 1) {
@@ -16908,6 +16950,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         if (e.code === 'Escape' || e.key === 'Escape') {
+            if (window.ManeuverArrow && window.ManeuverArrow.isPlacing()) {
+                e.preventDefault();
+                window.ManeuverArrow.cancelPlacement();
+                return;
+            }
             if (pendingGeoMove) {
                 e.preventDefault();
                 pendingGeoMove = null;

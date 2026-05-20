@@ -38,8 +38,11 @@ try { fs.mkdirSync(DATA_DIR,   { recursive: true }); } catch {}
 try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch {}
 
 const appData = require('./app-data');
-const ollama  = require('./ai/ollama-client');
-const redTeam = require('./ai/red-team-agent');
+const ollama       = require('./ai/ollama-client');
+const redTeam      = require('./ai/red-team-agent');
+const adjudicator  = require('./ai/adjudicator-agent');
+const scenarios    = require('./ai/scenario-loader');
+const mcRunner     = require('./ai/monte-carlo-runner');
 if (Database) {
     try {
         appData.initAppData({ Database, dataDir: DATA_DIR, legacyUnitsFile: process.env.RMOOZ_UNITS_DB_FILE || path.join(DATA_DIR, 'units.db') });
@@ -455,6 +458,124 @@ const server = http.createServer((req, res) => {
         }).then(r => {
             sendJson(res, r.ok ? 200 : 502, r);
         }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+
+    // List available wargame scenarios. The HUD model/scenario picker uses
+    // this to populate its dropdown.
+    if (pathname === '/api/ai/scenarios' && req.method === 'GET') {
+        try {
+            sendJson(res, 200, { ok: true, scenarios: scenarios.listScenarios(), default: scenarios.DEFAULT_NAME });
+        } catch (e) {
+            sendJson(res, 500, { ok: false, error: e.message || String(e) });
+        }
+        return;
+    }
+
+    // Load a single scenario JSON (BLS coords, OBJ, pipeline, Red OOB, etc.)
+    // The HUD's map-overlay uses this to draw the scenario on the Leaflet map.
+    if (pathname.startsWith('/api/ai/scenario/') && req.method === 'GET') {
+        const name = pathname.slice('/api/ai/scenario/'.length);
+        try {
+            const data = scenarios.loadScenario(name);
+            sendJson(res, 200, { ok: true, scenario: data });
+        } catch (e) {
+            sendJson(res, 404, { ok: false, error: e.message || String(e) });
+        }
+        return;
+    }
+
+    // Single-step AI adjudication. Computes the full dynamic state for one
+    // step of the 12-step wargame template. The client passes the loaded
+    // scenario name and the previous step's state; we return the next state
+    // (LLM-computed on success, scenario baseline on fallback).
+    if (pathname === '/api/ai/adjudicate' && req.method === 'POST') {
+        readJsonBody(req, { maxBytes: 2_000_000 }).then(async (body) => {
+            body = body || {};
+            const scenarioName = body.scenarioName || scenarios.DEFAULT_NAME;
+            const scenario = scenarios.loadScenario(scenarioName);
+            return adjudicator.adjudicateStep({
+                scenario,
+                stepIndex:    body.stepIndex,
+                prevState:    body.prevState   || null,
+                trialId:      body.trialId     || 'manual',
+                trialSeed:    body.trialSeed   != null ? body.trialSeed : null,
+                trialHintId:  Number.isInteger(body.trialHintId) ? body.trialHintId : 0,
+                coaParams:    body.coaParams   || null,
+                model:        body.model       || null,
+                timeoutMs:    body.timeoutMs   || null,
+                mockMode:     body.mockMode === true,
+            });
+        }).then(r => {
+            // Even on fallback we return 200 — the client always gets a
+            // playable `state`. The `ok` flag and `validation.fallback`
+            // tell the UI whether to badge the step.
+            sendJson(res, 200, r);
+        }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+
+    // Monte Carlo: start a batch. Returns immediately with a runId; the
+    // runner walks N trials in the background. Subscribe to events via SSE.
+    if (pathname === '/api/ai/mc/start' && req.method === 'POST') {
+        readJsonBody(req, { maxBytes: 100_000 }).then(body => {
+            body = body || {};
+            const { runId, dir } = mcRunner.startBatch({
+                scenarioName: body.scenarioName,
+                trials:       body.trials,
+                parallelism:  body.parallelism,
+                coaParams:    body.coaParams,
+                model:        body.model,
+                timeoutMs:    body.timeoutMs,
+                mockMode:     body.mockMode === true,
+            });
+            sendJson(res, 200, { ok: true, runId, dir });
+        }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+
+    // Monte Carlo: subscribe to a run's progress events via SSE.
+    if (pathname.startsWith('/api/ai/mc/') && pathname.endsWith('/events') && req.method === 'GET') {
+        const runId = pathname.slice('/api/ai/mc/'.length, -('/events'.length));
+        res.writeHead(200, {
+            'Content-Type':    'text/event-stream',
+            'Cache-Control':   'no-cache',
+            'Connection':      'keep-alive',
+            'X-Accel-Buffering':'no',
+        });
+        res.write(`event: open\ndata: ${JSON.stringify({ runId })}\n\n`);
+
+        const unsubscribe = mcRunner.subscribe(runId, (evt, data) => {
+            try {
+                res.write(`event: ${evt}\ndata: ${JSON.stringify(data)}\n\n`);
+                if (evt === 'done') {
+                    // Server-side close after final event so the client knows.
+                    setTimeout(() => res.end(), 50);
+                }
+            } catch (_) { /* socket may have closed */ }
+        });
+        if (!unsubscribe) {
+            res.write(`event: error\ndata: ${JSON.stringify({ msg: 'unknown runId', runId })}\n\n`);
+            res.end();
+            return;
+        }
+        req.on('close', () => { unsubscribe(); });
+        return;
+    }
+
+    // Monte Carlo: cancel an in-flight run.
+    if (pathname.startsWith('/api/ai/mc/') && pathname.endsWith('/cancel') && req.method === 'POST') {
+        const runId = pathname.slice('/api/ai/mc/'.length, -('/cancel'.length));
+        sendJson(res, 200, mcRunner.cancel(runId));
+        return;
+    }
+
+    // Monte Carlo: read the in-memory or on-disk aggregate.
+    if (pathname.startsWith('/api/ai/mc/') && pathname.endsWith('/aggregate') && req.method === 'GET') {
+        const runId = pathname.slice('/api/ai/mc/'.length, -('/aggregate'.length));
+        const summary = mcRunner.getRunSummary(runId);
+        if (!summary) { sendJson(res, 404, { ok: false, error: 'unknown runId' }); return; }
+        sendJson(res, 200, { ok: true, summary });
         return;
     }
 

@@ -34,4 +34,20 @@
 25. Modify the draw pannel to be more profitional and easy to use 14. if symbol is droped outside the AOI it is not command
  .lines symbol, for AOI
 
+------------------------------------------------------------
+AI Wargame / Learned AI todo - work from home
+
+1. Turn off default Mock mode in the AI Adjudicator, or show a clear "baseline replay / mock" warning in the UI.
+2. Fix the live AI backend config so adjudicator calls reach a real model instead of falling back to Wargame2 baseline.
+3. Add clear run status in the UI: Live AI, Mock, Fallback, model error, validation error.
+4. Save raw LLM output, fallback reason, validation warnings, seed, model name, and COA parameters in every Monte Carlo trial log.
+5. Add a learning store for all trials, outcomes, user corrections, and AAR lessons.
+6. Add learned priors before each adjudication: previous capture rate, average phase line, losses, common failure reasons, and model reliability.
+7. Connect approved Red and Blue proposed moves into the adjudicator prompt; current prompt says no proposed actions.
+8. Replace fixed result tables with parameterized simulation logic for beach throughput, logistics, EW, reserve timing, detection, weather, and attrition.
+9. Add user feedback buttons for AI decisions so accepted/rejected/corrected actions improve future runs.
+10. Convert Wargame1 and Wargame2 into scenario test cases for comparing aggressive Red victory vs terrain-limited Blue denial.
+11. Strengthen validator rules, especially BLS-4 must never become a clean SECURE heavy-throughput beach.
+12. Add summary reports that compare baseline, live AI result, learned-prior result, and Monte Carlo probability.
+
 

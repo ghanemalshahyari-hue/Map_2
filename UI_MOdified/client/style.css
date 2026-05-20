@@ -3173,6 +3173,258 @@ details[open] > .details-summary {
 /* ═══════════════════════════════════════════════════════════════════
    CHAT SIDEBAR
    ═══════════════════════════════════════════════════════════════════ */
+/* Operations / intelligence panel */
+.ops-intel-panel {
+    flex-shrink: 0;
+    width: clamp(270px, 20vw, 330px);
+    max-width: calc(100vw - 240px);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: var(--space-3);
+    background: #111827;
+    border-left: 1px solid var(--panel-border);
+    color: var(--text-main);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    z-index: 1045;
+    direction: ltr;
+}
+
+[dir="rtl"] .ops-intel-panel {
+    border-left: none;
+    border-right: 1px solid var(--panel-border);
+}
+
+.ops-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.ops-panel-header h2 {
+    margin: 2px 0 0;
+    color: #f8fafc;
+    font-size: 0.98rem;
+    letter-spacing: 0;
+}
+
+.ops-panel-kicker,
+.ops-card-title-row,
+.ops-alert-label,
+.ops-sync-state,
+.ops-metric-list dt {
+    font-family: "Cascadia Code", Consolas, monospace;
+    text-transform: uppercase;
+}
+
+.ops-panel-kicker {
+    color: #64748b;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+}
+
+.ops-sync-state {
+    display: inline-flex;
+    align-items: center;
+    min-height: 22px;
+    padding: 2px 7px;
+    border: 1px solid rgba(34, 197, 94, 0.45);
+    border-radius: 3px;
+    background: rgba(20, 83, 45, 0.22);
+    color: #86efac;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.ops-alert-card,
+.ops-feature-card,
+.ops-layer-card,
+.ops-activity-card {
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: var(--radius-xs);
+    background: rgba(15, 23, 42, 0.78);
+    padding: 12px;
+}
+
+.ops-alert-card {
+    border-left: 3px solid #22c55e;
+}
+
+.ops-alert-card.is-warning {
+    border-left-color: #f59e0b;
+    background: rgba(120, 53, 15, 0.2);
+}
+
+.ops-alert-card.is-contact {
+    border-left-color: #ef4444;
+    background: rgba(127, 29, 29, 0.26);
+}
+
+.ops-alert-label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+.ops-alert-card strong {
+    display: block;
+    margin-top: 4px;
+    color: #f8fafc;
+    font-size: 0.9rem;
+}
+
+.ops-alert-card p {
+    margin: 5px 0 0;
+    color: #94a3b8;
+    font-size: 0.74rem;
+    line-height: 1.45;
+}
+
+.ops-card-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: #94a3b8;
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+.ops-card-title-row span:last-child {
+    min-width: 24px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.14);
+    color: #93c5fd;
+    text-align: center;
+}
+
+.ops-feature-name {
+    margin-top: 10px;
+    color: #f8fafc;
+    font-size: 0.94rem;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.ops-feature-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.ops-feature-meta span {
+    display: inline-flex;
+    padding: 3px 7px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 3px;
+    background: rgba(2, 6, 23, 0.45);
+    color: #cbd5e1;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.ops-metric-list {
+    display: grid;
+    gap: 7px;
+    margin: 12px 0 0;
+}
+
+.ops-metric-list div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 7px;
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.ops-metric-list dt {
+    color: #64748b;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.ops-metric-list dd {
+    margin: 0;
+    color: #e2e8f0;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-align: right;
+}
+
+.ops-layer-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+    color: #cbd5e1;
+    font-size: 0.74rem;
+}
+
+.ops-layer-row:first-of-type {
+    margin-top: 8px;
+}
+
+.ops-layer-row strong {
+    color: #f8fafc;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.74rem;
+}
+
+.ops-layer-row .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+.ops-layer-row .dot.friendly { background: #3b82f6; }
+.ops-layer-row .dot.hostile { background: #ef4444; }
+.ops-layer-row .dot.neutral { background: #22c55e; }
+
+.ops-activity-list {
+    display: grid;
+    gap: 7px;
+    margin-top: 10px;
+}
+
+.ops-activity-empty,
+.ops-activity-item {
+    color: #94a3b8;
+    font-size: 0.72rem;
+    line-height: 1.45;
+}
+
+.ops-activity-item {
+    padding: 7px 8px;
+    border-left: 2px solid rgba(96, 165, 250, 0.65);
+    background: rgba(2, 6, 23, 0.45);
+}
+
+.ops-activity-time {
+    display: block;
+    color: #64748b;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.62rem;
+    font-weight: 800;
+}
+
 .chat-sidebar {
     flex-shrink: 0;
     width: clamp(260px, 22vw, 360px);
@@ -4022,6 +4274,120 @@ details[open] > .details-summary {
     line-height: 1.45;
 }
 
+/* ─── AI Adjudicator card layout ─────────────────────────────────────
+   Scoped to #wg-adjudicator-card so it doesn't fight the global
+   .wargame-action-row 3-col grid used by the simpler wargame cards. */
+#wg-adjudicator-card .wg-adj-section {
+    margin-top: 14px;
+    padding: 10px 10px 12px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 6px;
+    background: rgba(15, 23, 42, 0.35);
+}
+#wg-adjudicator-card .wg-adj-section-title {
+    margin-bottom: 10px;
+    color: #94a3b8;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* Two-column form grid: label on the left, input filling the rest.
+   --tight variant tightens row gap when the section only has 2 fields. */
+#wg-adjudicator-card .wg-adj-form-grid {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 8px 10px;
+    align-items: center;
+}
+#wg-adjudicator-card .wg-adj-form-grid--tight { gap: 6px 10px; }
+#wg-adjudicator-card .wg-adj-label {
+    color: #cbd5e1;
+    font-size: 0.78rem;
+    line-height: 1.2;
+    text-align: end;
+}
+#wg-adjudicator-card .wg-adj-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px 8px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 4px;
+    background: rgba(2, 6, 23, 0.6);
+    color: #e2e8f0;
+    font: inherit;
+    font-size: 0.8rem;
+}
+#wg-adjudicator-card .wg-adj-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.22);
+}
+
+/* Input + unit suffix (e.g. "1200 ms") — keeps the unit out of the
+   form grid so the input's right edge still aligns with siblings. */
+#wg-adjudicator-card .wg-adj-input-suffix {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+#wg-adjudicator-card .wg-adj-input-suffix .wg-adj-input { flex: 1 1 auto; }
+#wg-adjudicator-card .wg-adj-unit {
+    color: #64748b;
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+/* Mock-mode style toggle: full-width row, separated from the form grid. */
+#wg-adjudicator-card .wg-adj-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    color: #cbd5e1;
+    font-size: 0.78rem;
+    cursor: pointer;
+    user-select: none;
+}
+#wg-adjudicator-card .wg-adj-toggle input[type="checkbox"] {
+    flex: 0 0 auto;
+    margin: 0;
+    accent-color: #3b82f6;
+}
+
+/* Button rows — explicit n-column grids so the buttons all share width
+   and don't wrap. Override the outer .wargame-action-row default. */
+#wg-adjudicator-card .wg-adj-btn-row {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+}
+#wg-adjudicator-card .wg-adj-btn-row--2 { grid-template-columns: 1fr 1fr; }
+#wg-adjudicator-card .wg-adj-btn-row--3 { grid-template-columns: 1fr 1fr 1fr; }
+#wg-adjudicator-card .wg-adj-btn-row + .wg-adj-form-grid { margin-top: 10px; }
+
+/* The pace input is the only form field in its section — let it
+   share a row with its label without stretching to full width. */
+#wg-adjudicator-card .wg-adj-form-grid:has(.wg-adj-input-suffix) {
+    grid-template-columns: 96px max-content;
+}
+
+/* Narrow panels (or low-width sidebars) — drop the label column. */
+@media (max-width: 360px) {
+    #wg-adjudicator-card .wg-adj-form-grid,
+    #wg-adjudicator-card .wg-adj-form-grid:has(.wg-adj-input-suffix) {
+        grid-template-columns: 1fr;
+    }
+    #wg-adjudicator-card .wg-adj-label {
+        text-align: start;
+        margin-bottom: -4px;
+    }
+    #wg-adjudicator-card .wg-adj-btn-row--3 {
+        grid-template-columns: 1fr;
+    }
+}
+
 .wargame-feed-list {
     display: grid;
     gap: 6px;
@@ -4065,6 +4431,7 @@ details[open] > .details-summary {
 @media (max-width: 1200px) {
     :root { --panel-w: 300px; }
     .tmg-grid { max-height: min(280px, 38vh); }
+    .ops-intel-panel { display: none; }
 }
 
 @media (max-width: 900px) {
@@ -4893,3 +5260,70 @@ body.orbat-dock-resizing .map-workspace .leaflet-bottom {
 
 /* No RTL override needed — the dock lives inside .map-workspace which has
    direction:ltr forced, so it always spans the map area cleanly. */
+
+/* ── Animated Maneuver Arrow ──────────────────────────────────────────
+   The spine + flank + head are raw SVG paths in maneuverArrowPane (z-index
+   410). The host SVG itself has pointer-events:none so it never eats clicks
+   the map needs; per-shape pointer-events:auto re-enables hit-testing on
+   the curve where we want context-menu / select behaviour. */
+.maneuver-arrow-host { pointer-events: none; }
+.maneuver-arrow-spine,
+.maneuver-arrow-flank,
+.maneuver-arrow-head { pointer-events: auto; cursor: pointer; }
+
+.maneuver-arrow-spine { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.maneuver-arrow-flank { fill: none; }
+.maneuver-arrow-head  { stroke-linejoin: round; }
+
+/* Soft outer glow so the arrow reads on satellite imagery without being a
+   harsh outline. drop-shadow stacks because all three paths share the class. */
+.maneuver-arrow-glow {
+    filter: drop-shadow(0 0 4px rgba(0,0,0,0.55))
+            drop-shadow(0 0 1px rgba(0,0,0,0.85));
+}
+
+/* Bright tracer that rides the spine on each war-game turn. */
+.maneuver-arrow-head-pulse {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 8;
+    stroke-linecap: round;
+    pointer-events: none;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.85));
+}
+
+/* Bezier control + spread handles — circle markers re-styled. */
+.leaflet-pane .maneuver-arrow-handle path,
+.leaflet-pane .maneuver-arrow-handle { cursor: grab; }
+.leaflet-pane .maneuver-arrow-handle:active { cursor: grabbing; }
+.leaflet-pane .maneuver-arrow-handle.handle-spread path { stroke: #f97316; }
+
+/* Compact context-menu popup (replay / spread slider / converge / delete). */
+.maneuver-arrow-popup .leaflet-popup-content-wrapper {
+    background: rgba(15,23,42,0.96);
+    color: #f8fafc;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.maneuver-arrow-popup .leaflet-popup-tip { background: rgba(15,23,42,0.96); }
+.maneuver-popup-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 200px;
+    padding: 4px;
+}
+.maneuver-popup-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #e2e8f0;
+}
+.maneuver-popup-row span { flex: 1; }
+.maneuver-popup-row input[type="range"] { flex: 2; accent-color: #22c55e; }
+.maneuver-popup-body .glass-btn--danger {
+    background: rgba(239,68,68,0.18);
+    color: #fecaca;
+    border: 1px solid rgba(239,68,68,0.5);
+}

@@ -276,6 +276,20 @@ function monotonicityClamp(delta, prevState, scenario, stepIndex) {
     }
 
     // objective_status: terminal only at step >= 10
+    if (stepIndex < 7 && delta.objective_status !== 'DORMANT') {
+        delta.objective_status = 'DORMANT';
+        clamped.push('objective_status');
+        warns.push({ path: 'objective_status', msg: `too early at step ${stepIndex}; reverted to DORMANT` });
+    }
+
+    // The objective can be threatened on the deep push, but the close fight
+    // at OBJ NASSER itself should not appear before the late decision window.
+    if (stepIndex < 10 && delta.objective_status === 'CONTESTED') {
+        delta.objective_status = 'THREATENED';
+        clamped.push('objective_status');
+        warns.push({ path: 'objective_status', msg: `CONTESTED too early at step ${stepIndex}; reverted to THREATENED` });
+    }
+
     if (schema.TERMINAL_OBJECTIVE_STATUS.has(delta.objective_status) && stepIndex < 10) {
         delta.objective_status = 'THREATENED';
         clamped.push('objective_status');
@@ -288,6 +302,52 @@ function monotonicityClamp(delta, prevState, scenario, stepIndex) {
         delta.objective_status = prevState.objective_status;
         clamped.push('objective_status');
         warns.push({ path: 'objective_status', msg: `regressed from terminal; restored` });
+    }
+
+    // ── objective_status COHERENCE (operator-reported bug) ──────────────
+    // The LLM occasionally emits CAPTURED when PL crosses OBJ depth even
+    // though the rest of the state contradicts it — e.g., FR="Below
+    // decisive at objective", zero Blue losses, narrative explicitly
+    // describing Red being overwhelmed. CAPTURED means Red holds the
+    // objective decisively; if the force ratio is qualitatively low OR
+    // Blue is largely intact OR Red is heavily attrited, that's not
+    // CAPTURED — it's DENIED (Blue prevailed) at the resolution step
+    // and THREATENED everywhere else. Catches the LLM treating
+    // "PL >= depth" as a synonym for "Red wins" when it isn't.
+    if (delta.objective_status === 'CAPTURED') {
+        const fr      = String(delta.force_ratio || '');
+        const blueLost = (delta.losses_cumulative && delta.losses_cumulative.blue_destroyed) || 0;
+        const blueTotal = scenario.blue_units_base_ids.length || 39;
+        const redCoyEq = (delta.losses_cumulative && delta.losses_cumulative.red_company_equivalent) || 0;
+
+        // Qualitative FR strings that doctrinally exclude CAPTURED.
+        const frBlocksCapture = /\b(below\s+decisive|not\s+engaged|N\/A)\b/i.test(fr);
+        // Numerical FR: anything < 2:1 at OBJ can't capture against an intact reserve.
+        const frNum = schema.parseForceRatio(fr);
+        const frNumBlocks = (frNum !== null && frNum < 2);
+
+        // CAPTURE doctrinally needs substantial Blue attrition AND Red still
+        // able to fight. < 25% Blue losses is too low; > 6 Red coy-eq lost
+        // means Red can't decisively hold the objective.
+        const blueIntact = (blueLost / blueTotal) < 0.25;
+        const redSpent   = redCoyEq > 6;
+
+        if (frBlocksCapture || frNumBlocks || blueIntact || redSpent) {
+            const reasons = [];
+            if (frBlocksCapture) reasons.push(`FR "${fr}" excludes decisive engagement`);
+            if (frNumBlocks)     reasons.push(`FR numeric ${frNum}:1 below decisive`);
+            if (blueIntact)      reasons.push(`only ${blueLost}/${blueTotal} Blue casualties`);
+            if (redSpent)        reasons.push(`Red coy-eq losses ${redCoyEq} too high`);
+            // At the resolution step (>= 10) the call is DENIED; earlier we
+            // dial back to THREATENED so a later step can still escalate.
+            const clampTo = stepIndex >= 10 ? 'DENIED' : 'THREATENED';
+            delta.objective_status = clampTo;
+            clamped.push('objective_status');
+            warns.push({
+                path: 'objective_status',
+                msg:  `CAPTURED contradicts the rest of the state (${reasons.join('; ')}); clamped to ${clampTo}`,
+            });
+        }
     }
 
     // Red strength_current can only decrease.

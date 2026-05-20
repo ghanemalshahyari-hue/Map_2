@@ -49,12 +49,38 @@ function ewBandIndex(s) {
     return schema.EW_DECAY_ORDER.indexOf(s);
 }
 
-function blsTransitionAllowed(prev, next, scenario) {
-    if (prev === next) return true;
+// Returns the bls_template entry for `name`, or null if the scenario
+// doesn't list it. Used by the never-SECURE rule below.
+function blsEntry(scenario, name) {
+    if (!scenario || !Array.isArray(scenario.bls_template)) return null;
+    return scenario.bls_template.find(b => b && b.name === name) || null;
+}
+
+function blsTransitionAllowed(prev, next, scenario, blsName) {
+    if (prev === next) {
+        // Even no-op transitions need the never-SECURE doctrine — a BLS
+        // marked permanently_limited that arrives at the validator already
+        // SECURE (e.g., LLM emitted SECURE on the very first step) must be
+        // rejected so it gets clamped instead of silently staying SECURE.
+        if (next === 'SECURE') {
+            const e = blsEntry(scenario, blsName);
+            if (e && e.permanently_limited) return false;
+        }
+        return true;
+    }
     // STAGED → CONTESTED is allowed.
     if (prev === 'STAGED' && next === 'CONTESTED') return true;
     // CONTESTED → {SECURE, LIMITED, DENIED}.
-    if (prev === 'CONTESTED' && (next === 'SECURE' || next === 'LIMITED' || next === 'DENIED')) return true;
+    if (prev === 'CONTESTED' && (next === 'SECURE' || next === 'LIMITED' || next === 'DENIED')) {
+        // Doctrinal block (item #11): a permanently-limited BLS (e.g.,
+        // BLS-4 with its narrow inlet + 0.35 throughput) cannot become a
+        // clean SECURE heavy-throughput beach. Force LIMITED instead.
+        if (next === 'SECURE') {
+            const e = blsEntry(scenario, blsName);
+            if (e && e.permanently_limited) return false;
+        }
+        return true;
+    }
     // SECURE → LIMITED (throughput constrained) allowed.
     if (prev === 'SECURE' && next === 'LIMITED') return true;
     // SECURE → CONTESTED only under blue counterattack (callers approve elsewhere).
@@ -235,10 +261,17 @@ function monotonicityClamp(delta, prevState, scenario, stepIndex) {
     for (const name of schema.blsNames(scenario)) {
         const prev = prevState.bls_status[name];
         const next = delta.bls_status[name];
-        if (!blsTransitionAllowed(prev, next, scenario)) {
+        if (!blsTransitionAllowed(prev, next, scenario, name)) {
             delta.bls_status[name] = prev;
             clamped.push(`bls_status.${name}`);
-            warns.push({ path: `bls_status.${name}`, msg: `illegal transition ${prev}→${next}; reverted` });
+            // Specific doctrinal callout when a permanently-limited BLS
+            // tried to go SECURE — easier to spot in trial logs and the
+            // HUD's validation strip.
+            const entry = scenario.bls_template && scenario.bls_template.find(b => b && b.name === name);
+            const why = (next === 'SECURE' && entry && entry.permanently_limited)
+                ? `${name} is permanently limited; SECURE not allowed (reverted to ${prev})`
+                : `illegal transition ${prev}→${next}; reverted`;
+            warns.push({ path: `bls_status.${name}`, msg: why });
         }
     }
 

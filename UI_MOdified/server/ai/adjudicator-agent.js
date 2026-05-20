@@ -69,7 +69,11 @@ function buildScenarioConstantsBlock(scenario, coaParams) {
 
     const blsLines = scenario.bls_template.map((b) => (
         `  ${b.name} (${b.role}, nominal ${b.throughput} coy-eq/24h, terrain_friction ${b.terrain_friction}` +
-        (b.name === 'BLS-4' ? ', PERMANENTLY LIMITED' : '') +
+        // Doctrine flag (item #11): scenario JSON marks BLSes that can
+        // never become a clean SECURE heavy-throughput beach. Prompt
+        // wording stays "PERMANENTLY LIMITED" for back-compat with the
+        // existing system prompt's vocabulary; validator also enforces.
+        (b.permanently_limited ? ', PERMANENTLY LIMITED' : '') +
         ')'
     )).join('\n');
 

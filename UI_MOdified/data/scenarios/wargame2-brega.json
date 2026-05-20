@@ -859,6 +859,7 @@
       ],
       "role": "Eastern fixing / envelopment",
       "capacity": "Limited",
+      "permanently_limited": true,
       "throughput": 0.35,
       "nominal_throughput": 0.5,
       "terrain_friction": 0.92,

@@ -278,7 +278,9 @@ function baselineStateForStep(scenario, stepIndex, prevState, coaParams) {
         state.notes = 'baseline-fallback (parametric: ' +
             `pl${deltas.plDelta >= 0 ? '+' : ''}${deltas.plDelta}, ` +
             `blue${deltas.blueLossDelta >= 0 ? '+' : ''}${deltas.blueLossDelta}, ` +
-            `red${deltas.redLossDelta >= 0 ? '+' : ''}${deltas.redLossDelta})`;
+            `red${deltas.redLossDelta >= 0 ? '+' : ''}${deltas.redLossDelta}, ` +
+            `ew${deltas.ewShift >= 0 ? '+' : ''}${deltas.ewShift}, ` +
+            `logi${deltas.logiShift >= 0 ? '+' : ''}${deltas.logiShift})`;
     }
 
     return state;

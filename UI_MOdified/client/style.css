@@ -3179,7 +3179,7 @@ details[open] > .details-summary {
     width: clamp(270px, 20vw, 330px);
     max-width: calc(100vw - 240px);
     height: 100%;
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: 12px;
     padding: var(--space-3);
@@ -3191,6 +3191,10 @@ details[open] > .details-summary {
     overscroll-behavior: contain;
     z-index: 1045;
     direction: ltr;
+}
+
+.ops-intel-panel.is-visible {
+    display: flex;
 }
 
 [dir="rtl"] .ops-intel-panel {
@@ -4030,6 +4034,11 @@ details[open] > .details-summary {
     color: #fecaca;
     border-color: rgba(239, 68, 68, 0.58);
     background: rgba(127, 29, 29, 0.35);
+}
+.wargame-state-pill.is-warning {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.55);
+    background: rgba(120, 53, 15, 0.28);
 }
 
 /* Red-team AI proposal cards (Chunk 09). One card per AI-proposed action;

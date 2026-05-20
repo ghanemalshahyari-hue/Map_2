@@ -6199,7 +6199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.warn('buildSidcPickerIframeSrc: lang read failed', e);
         }
-        return `../vendor/sidc-picker/simple.html?lang=${lang}`;
+        return `../vendor/sidc-picker/simple.html?lang=${lang}&v=${Date.now()}`;
     }
     function syncSidcPickerLocaleToFrame() {
         if (!pickerFrame || !pickerFrame.contentWindow) return;
@@ -7711,7 +7711,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         if (syncTailAnchor && data.points?.[1] && map) {
-            locked = catkArrowParamsWithTailFromCursor(locked, L.latLng(data.points[1].lat, data.points[1].lng));
+            const tailAnchor = catkSelectHeadSafeTailAnchor(data.points, locked) || L.latLng(data.points[1].lat, data.points[1].lng);
+            locked = catkArrowParamsWithTailFromCursor(locked, tailAnchor);
         }
         data.lockedArrowParams = locked;
         data.legacyBodyWidthKm = locked.bodyWidthKm;
@@ -7741,6 +7742,21 @@ document.addEventListener('DOMContentLoaded', () => {
             neckOffset: p.neckOffsetKm * catkPxPerKmAtLatLng(pts[0], normalizeBearingDeg(p.directionDeg + 180)),
             tailLength: p.tailLengthKm * catkPxPerKmAtLatLng(pts[1], normalizeBearingDeg(p.directionDeg + 180))
         });
+    }
+
+    function catkSelectHeadSafeTailAnchor(points, lockedParams) {
+        if (!points?.[1]) return null;
+        const fallback = L.latLng(points[1].lat, points[1].lng);
+        const g = catkArrowGeometryPx(lockedParams);
+        if (!g || !map) return fallback;
+        const minBackFromNeck = Math.max(8, g.bodyHalf * 0.75);
+        for (let i = 1; i < points.length; i++) {
+            const ll = L.latLng(points[i].lat, points[i].lng);
+            const px = map.latLngToLayerPoint(ll);
+            const alongTowardTip = (px.x - g.neckCenter.x) * g.dir.x + (px.y - g.neckCenter.y) * g.dir.y;
+            if (alongTowardTip <= -minBackFromNeck) return ll;
+        }
+        return fallback;
     }
 
     function catkArrowOverlayLatLngs(params) {
@@ -8290,9 +8306,11 @@ document.addEventListener('DOMContentLoaded', () => {
         /** Minimum layer px from neck to main stepped apex so 90°/45° head + by-fire barb fit */
         const minNeckToMainApex = sw * 6.2;
         let ahClamped = Math.min(ahTarget, Math.max(0, d01 - sw * 0.35));
+        let lockedGeometryPx = null;
         if (lockedArrowParams) {
             const lg = catkArrowGeometryPx(lockedArrowParams);
             if (lg) {
+                lockedGeometryPx = lg;
                 tipWorld = { x: lg.tip.x, y: lg.tip.y };
                 neckWorld = { x: lg.neckCenter.x, y: lg.neckCenter.y };
                 d01 = Math.hypot(tipWorld.x - neckWorld.x, tipWorld.y - neckWorld.y) || 1;
@@ -8372,9 +8390,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const fontPx = Math.max(11, Math.min(24, ahClamped * 0.15 + sw * 1.35));
 
+        const tailSpineAbs = [];
+        for (let i = 1; i < points.length; i++) {
+            const p = absPts[i];
+            if (lockedArrowParams && neckWorld) {
+                const fromNeckX = p.x - neckWorld.x;
+                const fromNeckY = p.y - neckWorld.y;
+                const alongTowardTip = fromNeckX * ux + fromNeckY * uy;
+                const distFromNeck = Math.hypot(fromNeckX, fromNeckY);
+                const minBackFromNeck = Math.max(8, sw * 2.2, ribbonHalf * 0.75);
+                const minSeparation = Math.max(10, sw * 2.4, ribbonHalf);
+                if (alongTowardTip > -minBackFromNeck || distFromNeck < minSeparation) {
+                    continue;
+                }
+            }
+            const prev = tailSpineAbs[tailSpineAbs.length - 1];
+            if (!prev || Math.hypot(p.x - prev.x, p.y - prev.y) > 0.8) {
+                tailSpineAbs.push({ x: p.x, y: p.y });
+            }
+        }
+        if (!tailSpineAbs.length && lockedGeometryPx?.tailCenter) {
+            tailSpineAbs.push({ x: lockedGeometryPx.tailCenter.x, y: lockedGeometryPx.tailCenter.y });
+        }
         const spineAbs = [];
-        for (let i = points.length - 1; i >= 1; i--) spineAbs.push({ x: absPts[i].x, y: absPts[i].y });
-        if (Math.hypot(p1a.x - neckWorld.x, p1a.y - neckWorld.y) > 0.8) spineAbs.push({ x: neckWorld.x, y: neckWorld.y });
+        for (let i = tailSpineAbs.length - 1; i >= 0; i--) spineAbs.push(tailSpineAbs[i]);
+        const lastSpineAbs = spineAbs[spineAbs.length - 1];
+        if (!lastSpineAbs || Math.hypot(lastSpineAbs.x - neckWorld.x, lastSpineAbs.y - neckWorld.y) > 0.8) {
+            spineAbs.push({ x: neckWorld.x, y: neckWorld.y });
+        }
 
         const pad = 20 + sw * 2;
         const dashUnit = sw * 2;
@@ -9497,7 +9540,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pointIndex === 0 && data.lockedArrowParams) {
                 const lockedParams = normalizeCatkArrowParams(data.lockedArrowParams);
                 if (lockedParams && pts.length >= 2) {
-                    const anchorPoint = L.latLng(pts[1].lat, pts[1].lng);
+                    const anchorPoint = catkSelectHeadSafeTailAnchor(pts, lockedParams) || L.latLng(pts[1].lat, pts[1].lng);
                     const newDirection = bearingDegrees(anchorPoint, newLatlng);
                     pts[0] = L.latLng(newLatlng.lat, newLatlng.lng);
                     data.lockedArrowParams = normalizeCatkArrowParams({
@@ -13001,8 +13044,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // First click duplicate: avoid accidentally promoting tail placement into
         // direction-confirm because multiple event paths fired for one physical click.
         if (phaseNow === 'tailPlaced' && prev.phaseAfter === 'tailPlaced') return true;
-        // Second click duplicate: we already entered body-drawing mode and stored
-        // the first body point, so do not add another at the same position.
+        // Second click duplicate: we already entered body-drawing mode, so do not
+        // turn the same physical click into the first real bend.
         if (phaseNow === 'bodyDrawing'
             && (catkPlacementState?.bodyPoints?.length || 0) <= 1
             && prev.phaseBefore === 'tailPlaced'
@@ -13023,12 +13066,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 liveCursor: null
             };
         } else if (catkPlacementState.phase === 'tailPlaced') {
-            // 2nd click: lock direction + size AND store as first body point.
+            // 2nd click: lock direction + size only. Real body bends begin with
+            // later clicks; otherwise this control point can sit inside the head
+            // and make the tip fold over itself when the user finishes placement.
             const lockPts = [latlng, catkPlacementState.tail];
             catkPlacementState.lockedParams = catkDeriveArrowParamsFromLegacyPoints(
                 lockPts, getTmgStrokeWidth(), getTmgArrowHeadScale());
             catkPlacementState.phase = 'bodyDrawing';
-            catkPlacementState.bodyPoints = [latlng];
+            catkPlacementState.bodyPoints = [];
+            catkPlacementState.shapeLockPoint = latlng;
             catkPlacementState.liveCursor = latlng;
         } else if (catkPlacementState.phase === 'bodyDrawing') {
             // Subsequent single clicks: add body bend points.

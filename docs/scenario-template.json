@@ -1,0 +1,113 @@
+{
+  "name": "template-minimal",
+  "scenario_label": "Template — minimal example scenario for new producers",
+  "model_version": "template-v1.0",
+
+  "map_bbox": [19.5, 29.8, 20.2, 30.6],
+
+  "obj": {
+    "name": "OBJ TEMPLATE",
+    "coord": [19.85, 30.1],
+    "target_depth_km": 40,
+    "radius_km": 4,
+    "carver": 30
+  },
+
+  "pipeline": [
+    [19.62, 30.55],
+    [19.70, 30.40],
+    [19.78, 30.25],
+    [19.85, 30.10]
+  ],
+
+  "bls_template": [
+    {
+      "name": "BLS-A",
+      "coord": [19.60, 30.55],
+      "role": "shallow",
+      "throughput": 0.8,
+      "terrain_friction": 0.5,
+      "permanently_limited": false
+    },
+    {
+      "name": "BLS-B",
+      "coord": [19.95, 30.50],
+      "role": "deep",
+      "throughput": 1.2,
+      "terrain_friction": 0.3,
+      "permanently_limited": false
+    }
+  ],
+
+  "red_units": [
+    { "uid": "RED_ARMD1", "label": "1 ARMD",  "echelon": "BN", "bls": "BLS-A", "appear": 1, "role": "armor",    "coord": [19.62, 30.52] },
+    { "uid": "RED_INF1",  "label": "1 INF",   "echelon": "BN", "bls": "BLS-A", "appear": 2, "role": "infantry", "coord": [19.65, 30.50] },
+    { "uid": "RED_EW1",   "label": "EW BN",   "echelon": "BN", "bls": "BLS-B", "appear": 1, "role": "ew",       "coord": [19.93, 30.48] },
+    { "uid": "RED_ARMD2", "label": "2 ARMD",  "echelon": "BN", "bls": "BLS-B", "appear": 3, "role": "armor",    "coord": [19.97, 30.45] }
+  ],
+
+  "blue_units_base_ids": [
+    "lc", "b1c", "p11c", "c101", "c102", "c103", "c104", "c105"
+  ],
+
+  "blue_units_initial": [
+    { "unit_uid": "BLUE_lc",   "base_id": "lc",   "echelon": "div", "coord": [19.85, 30.10], "posture": "deliberate" },
+    { "unit_uid": "BLUE_b1c",  "base_id": "b1c",  "echelon": "bde", "coord": [19.83, 30.12], "posture": "deliberate" },
+    { "unit_uid": "BLUE_p11c", "base_id": "p11c", "echelon": "bn",  "coord": [19.80, 30.15], "posture": "deliberate" },
+    { "unit_uid": "BLUE_c101", "base_id": "c101", "echelon": "coy", "coord": [19.78, 30.17], "posture": "deliberate" },
+    { "unit_uid": "BLUE_c102", "base_id": "c102", "echelon": "coy", "coord": [19.76, 30.19], "posture": "deliberate" },
+    { "unit_uid": "BLUE_c103", "base_id": "c103", "echelon": "coy", "coord": [19.74, 30.21], "posture": "deliberate" },
+    { "unit_uid": "BLUE_c104", "base_id": "c104", "echelon": "coy", "coord": [19.72, 30.23], "posture": "deliberate" },
+    { "unit_uid": "BLUE_c105", "base_id": "c105", "echelon": "coy", "coord": [19.70, 30.25], "posture": "deliberate" }
+  ],
+
+  "phase_table": [
+    { "index": 0, "time_label": "D-2h", "elapsed_hours": -2, "phase": "PRE-H"    },
+    { "index": 1, "time_label": "H",    "elapsed_hours":  0, "phase": "PHASE 1"  },
+    { "index": 2, "time_label": "H+12", "elapsed_hours": 12, "phase": "PHASE 2A" },
+    { "index": 3, "time_label": "H+24", "elapsed_hours": 24, "phase": "PHASE 2B" },
+    { "index": 4, "time_label": "H+48", "elapsed_hours": 48, "phase": "PHASE 3"  },
+    { "index": 5, "time_label": "H+72", "elapsed_hours": 72, "phase": "RESOLUTION" }
+  ],
+
+  "throughput_ceilings_km": {
+    "H24": 10,
+    "H48": 25,
+    "H72": 40
+  },
+
+  "terrain_note": "Template scenario — flat coastal terrain, BLS-A is shallow with sabkha behind it.",
+
+  "steps": [
+    { "index": 0, "time_label": "D-2h", "elapsed_hours": -2, "phase": "PRE-H",
+      "phase_line_km_baseline": 0, "objective_status_baseline": "DORMANT",
+      "bls_status_baseline": { "BLS-A": "STAGED", "BLS-B": "STAGED" },
+      "blue_destroyed_baseline": [], "blue_destroyed_count_baseline": 0,
+      "red_degraded_baseline": [], "ew_effect_baseline": "Idle" },
+    { "index": 1, "time_label": "H",    "elapsed_hours":  0, "phase": "PHASE 1",
+      "phase_line_km_baseline": 2, "objective_status_baseline": "DORMANT",
+      "bls_status_baseline": { "BLS-A": "CONTESTED", "BLS-B": "CONTESTED" },
+      "blue_destroyed_baseline": [], "blue_destroyed_count_baseline": 0,
+      "red_degraded_baseline": [], "ew_effect_baseline": "Active" },
+    { "index": 2, "time_label": "H+12", "elapsed_hours": 12, "phase": "PHASE 2A",
+      "phase_line_km_baseline": 6, "objective_status_baseline": "DORMANT",
+      "bls_status_baseline": { "BLS-A": "CONTESTED", "BLS-B": "SECURE" },
+      "blue_destroyed_baseline": ["BLUE_c105"], "blue_destroyed_count_baseline": 1,
+      "red_degraded_baseline": [], "ew_effect_baseline": "Heavy" },
+    { "index": 3, "time_label": "H+24", "elapsed_hours": 24, "phase": "PHASE 2B",
+      "phase_line_km_baseline": 10, "objective_status_baseline": "THREATENED",
+      "bls_status_baseline": { "BLS-A": "CONTESTED", "BLS-B": "SECURE" },
+      "blue_destroyed_baseline": ["BLUE_c105", "BLUE_c104"], "blue_destroyed_count_baseline": 2,
+      "red_degraded_baseline": ["RED_ARMD1"], "ew_effect_baseline": "Moderate" },
+    { "index": 4, "time_label": "H+48", "elapsed_hours": 48, "phase": "PHASE 3",
+      "phase_line_km_baseline": 22, "objective_status_baseline": "THREATENED",
+      "bls_status_baseline": { "BLS-A": "SECURE", "BLS-B": "SECURE" },
+      "blue_destroyed_baseline": ["BLUE_c105", "BLUE_c104", "BLUE_c103"], "blue_destroyed_count_baseline": 3,
+      "red_degraded_baseline": ["RED_ARMD1", "RED_INF1"], "ew_effect_baseline": "Low" },
+    { "index": 5, "time_label": "H+72", "elapsed_hours": 72, "phase": "RESOLUTION",
+      "phase_line_km_baseline": 38, "objective_status_baseline": "DENIED",
+      "bls_status_baseline": { "BLS-A": "SECURE", "BLS-B": "SECURE" },
+      "blue_destroyed_baseline": ["BLUE_c105", "BLUE_c104", "BLUE_c103", "BLUE_c102"], "blue_destroyed_count_baseline": 4,
+      "red_degraded_baseline": ["RED_ARMD1", "RED_INF1"], "ew_effect_baseline": "Low" }
+  ]
+}

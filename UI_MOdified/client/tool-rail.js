@@ -44,6 +44,7 @@
     const shapesPanel      = document.getElementById('shapes-panel');
     const layersSection    = document.getElementById('layers-section');
     const wargamePanel     = document.getElementById('wargame-panel');
+    const opsIntelPanel    = document.getElementById('ops-intel-panel');
     const panelTitle       = document.getElementById('context-panel-title');
     const panelHint        = document.getElementById('context-panel-hint');
     const statusbarTool    = document.getElementById('statusbar-tool-display');
@@ -69,6 +70,12 @@
      */
     const contextSections = [drawingPanel, geoPanel, measurePanel, shapesPanel, layersSection, wargamePanel];
 
+    function setOpsIntelVisible(visible) {
+        if (!opsIntelPanel) return;
+        opsIntelPanel.classList.toggle('is-visible', !!visible);
+        opsIntelPanel.setAttribute('aria-hidden', visible ? 'false' : 'true');
+    }
+
     function setVisibleSections(tool) {
         const show = {
             select:  [drawingPanel],
@@ -84,6 +91,7 @@
 
         const visible = show[tool] || [];
         const geoToolActive = (tool === 'shapes' || tool === 'measure');
+        setOpsIntelVisible(tool === 'wargame');
 
         contextSections.forEach(sec => {
             if (!sec) return;

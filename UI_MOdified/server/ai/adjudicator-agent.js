@@ -83,10 +83,12 @@ const DEFAULT_COA = Object.freeze({
 });
 
 const DEFAULT_OLLAMA_OPTIONS = Object.freeze({
-    temperature:    0.85,
-    top_p:          0.92,
-    repeat_penalty: 1.05,
-    num_predict:    2500,
+    // Keep this contract-style task deterministic. Higher sampling made
+    // small local models repeat nested JSON until the response was cut off.
+    temperature:    0.15,
+    top_p:          0.85,
+    repeat_penalty: 1.12,
+    num_predict:    2200,
     keep_alive:     '30m',
 });
 
@@ -119,8 +121,14 @@ function buildScenarioConstantsBlock(scenario, coaParams) {
         `  step ${String(p.index).padStart(2,' ')} ${p.time_label.padEnd(6)} ${p.phase}`
     )).join('\n');
 
+    // Parametric SCENARIO header — derives step count and start/end labels
+    // from the scenario itself so non-wargame2 operations (e.g. 6-step
+    // template, 18-step long-campaign) describe themselves correctly.
+    const stepCount  = Array.isArray(scenario.steps) ? scenario.steps.length : 0;
+    const firstLabel = scenario.phase_table && scenario.phase_table[0]              && scenario.phase_table[0].time_label              || 'start';
+    const lastLabel  = scenario.phase_table && scenario.phase_table[stepCount - 1] && scenario.phase_table[stepCount - 1].time_label || 'end';
     return [
-        `SCENARIO: ${scenario.scenario_label}, 12 steps D-3h..H+144.`,
+        `SCENARIO: ${scenario.scenario_label}, ${stepCount} steps ${firstLabel}..${lastLabel}.`,
         `OBJ ${scenario.obj.name}: coord ~[${scenario.obj.coord[0].toFixed(3)}, ${scenario.obj.coord[1].toFixed(3)}], CARVER ${scenario.obj.carver}/60, depth ${scenario.obj.target_depth_km} km.`,
         `BLS:\n${blsLines}`,
         `RED OOB (${scenario.red_units.length} markers, strength in [0,1]):\n${redLines}`,
@@ -134,6 +142,7 @@ function buildScenarioConstantsBlock(scenario, coaParams) {
         `  blue_reserve_commit_hour: ${coa.reserve_commit_hour}`,
         `  blue_posture:             ${coa.posture}`,
         `  blue_main_effort_axis:    ${coa.main_effort_axis}`,
+        `  weather:                 ${coa.weather || 'clear'}`,
         scenario.terrain_note ? `TERRAIN NOTE: ${scenario.terrain_note}` : '',
     ].filter(Boolean).join('\n\n');
 }
@@ -196,12 +205,12 @@ function formatApprovedActionsBlock(approvedActions) {
 // clean). Format intentionally terse: tabular, no prose, so the
 // model reads the numbers and not opinionated narration.
 function formatLearnedPriorsBlock(priors) {
-    // Either past trials OR operator feedback can populate the block —
-    // returning empty only when we truly have nothing.
+    // Past trials, operator feedback, OR AAR lessons can populate the block.
     if (!priors) return '';
     const hasTrials = priors.trialsSampled > 0;
     const hasFb     = priors.operatorFeedback && priors.operatorFeedback.total > 0;
-    if (!hasTrials && !hasFb) return '';
+    const hasLessons = Array.isArray(priors.lessons) && priors.lessons.length > 0;
+    if (!hasTrials && !hasFb && !hasLessons) return '';
 
     const filt = priors.coaFilter
         ? `posture=${priors.coaFilter.posture}, reserve_hr=${priors.coaFilter.reserve_commit_hour}`
@@ -235,10 +244,7 @@ function formatLearnedPriorsBlock(priors) {
         lines.push(`No past trials yet on this scenario (filter: ${filt}).`);
     }
 
-    // Operator feedback (item #9). The percentage is computed from
-    // accept+reject only — 'note'-only events are commentary without an
-    // up/down signal, so they don't bias the rate but do count toward
-    // engagement (rendered as a separate count).
+    // Operator feedback (item #9).
     if (hasFb) {
         const f = priors.operatorFeedback;
         const accRej = f.accept + f.reject;
@@ -247,10 +253,35 @@ function formatLearnedPriorsBlock(priors) {
         lines.push(`  Operator feedback:  ${pctText} of ${accRej} graded step(s)${noteText}`);
     }
 
+    // AAR lessons (item #5) — operator-written after-action lessons.
+    if (hasLessons) {
+        for (const l of priors.lessons.slice(0, 3)) {
+            const cat = l.category ? `[${l.category}]` : '';
+            const nar = l.narrative ? `: ${l.narrative.slice(0, 200)}` : '';
+            lines.push(`  AAR ${cat} ${l.title}${nar}`);
+        }
+        if (priors.lessons.length > 3) {
+            lines.push(`  AAR — ${priors.lessons.length - 3} more lesson(s) not shown.`);
+        }
+    }
+
     lines.push(
         `  These are observed priors from past trials — they describe what tends to happen, not what MUST happen for this run.`,
     );
     return lines.join('\n');
+}
+
+function buildJsonGuardrailsBlock(scenario) {
+    const blsKeys = scenario.bls_template.map(b => `"${b.name}"`).join(', ');
+    return [
+        'Return exactly one complete JSON object.',
+        'Do not include markdown, comments, copied prompt text, or a second JSON object.',
+        'Do not repeat or nest the output object inside confidence_per_field.',
+        'Use only the output keys from the contract; do not emit blue_destroyed_uids or red_unit_strengths.',
+        `bls_status must include exactly these keys: ${blsKeys}.`,
+        'per_unit_deltas must be { "blue_destroyed": [], "red_degraded": [] } when there are no losses.',
+        'confidence_per_field values must be only "high", "medium", or "low".',
+    ].join('\n');
 }
 
 function buildUserPrompt(scenario, stepIndex, prevState, trialId, trialSeed, hint, coaParams, approvedActions, priors) {
@@ -277,6 +308,9 @@ function buildUserPrompt(scenario, stepIndex, prevState, trialId, trialSeed, hin
         '',
         '=== PROPOSED ACTIONS ===',
         proposed,
+        '',
+        '=== JSON GUARDRAILS ===',
+        buildJsonGuardrailsBlock(scenario),
     ];
     if (priorsBlock) {
         parts.push('', '=== LEARNED PRIORS ===', priorsBlock);
@@ -293,7 +327,10 @@ function buildCorrectivePrompt(prevPrompt, errors) {
         '=== PREVIOUS RESPONSE FAILED VALIDATION ===',
         errText,
         '',
-        'Re-emit the JSON object, fixing only the listed fields. Keep the narrative and other valid fields. Respond with JSON only.',
+        'Re-emit one complete JSON object from scratch. Do not copy the previous response structure if it repeated fields.',
+        'Do not include blue_destroyed_uids, red_unit_strengths, markdown, comments, or prose outside JSON.',
+        'Keep confidence_per_field as a flat object of confidence labels only.',
+        'Respond with JSON only.',
     ].join('\n');
 }
 
@@ -317,8 +354,8 @@ function deriveSeed(trialSeed, stepIndex) {
 }
 
 // ── Result helpers ───────────────────────────────────────────────────
-function fallbackResult(scenario, stepIndex, prevState, meta, why, extra, userPrompt) {
-    const baseline = schema.baselineStateForStep(scenario, stepIndex, prevState);
+function fallbackResult(scenario, stepIndex, prevState, meta, why, extra, userPrompt, coaParams) {
+    const baseline = schema.baselineStateForStep(scenario, stepIndex, prevState, coaParams);
     return {
         ok: false,
         stepIndex,
@@ -341,6 +378,224 @@ function tryParse(responseText) {
     const extracted = extractJson(responseText);
     if (!extracted) return null;
     try { return JSON.parse(extracted); } catch (e) { return null; }
+}
+
+function isObj(v) {
+    return v && typeof v === 'object' && !Array.isArray(v);
+}
+
+function toFiniteNumber(v) {
+    if (typeof v === 'number' && Number.isFinite(v)) return v;
+    if (typeof v === 'string' && v.trim() !== '') {
+        const n = Number(v);
+        if (Number.isFinite(n)) return n;
+    }
+    return null;
+}
+
+function isNonEmptyString(v) {
+    return typeof v === 'string' && v.trim() !== '';
+}
+
+function clampInt(n, lo, hi) {
+    return Math.max(lo, Math.min(hi, Math.round(n)));
+}
+
+function normalizeConfidence(value, fallback, fields) {
+    const allowed = new Set(['high', 'medium', 'low']);
+    const keys = ['phase_line_km', 'force_ratio', 'objective_status', 'ew_effect', 'bls_status', 'per_unit_deltas'];
+    const out = {};
+    const src = isObj(value) ? value : {};
+    for (const key of keys) {
+        if (allowed.has(src[key])) out[key] = src[key];
+        else {
+            out[key] = fallback[key] || 'medium';
+            if (value !== undefined) fields.push(`confidence_per_field.${key}`);
+        }
+    }
+    return out;
+}
+
+function normalizeBlueUid(raw, blueValid, blueBaseIds) {
+    if (!isNonEmptyString(raw)) return null;
+    const s = raw.trim();
+    if (blueValid.has(s)) return s;
+    if (blueBaseIds.has(s)) return 'BLUE_' + s;
+    return null;
+}
+
+function normalizeRedDeltaEntry(entry, prevStrength, redValid) {
+    if (!isObj(entry)) return null;
+    const uid = isNonEmptyString(entry.unit_uid) ? entry.unit_uid.trim() : '';
+    if (!redValid.has(uid)) return null;
+    const prev = toFiniteNumber(prevStrength[uid]);
+    const strength = toFiniteNumber(entry.strength_current);
+    const safeStrength = strength == null
+        ? (prev == null ? 0.7 : Math.min(prev, 0.7))
+        : Math.max(0, Math.min(1, strength));
+    const status = schema.RED_UNIT_STATUS.includes(entry.status) ? entry.status : 'DEGRADED';
+    return { unit_uid: uid, strength_current: safeStrength, status };
+}
+
+function normalizeModelDelta(delta, prevState, scenario, stepIndex, coaParams) {
+    if (!isObj(delta)) return { delta, fields: [] };
+
+    const fields = [];
+    const baseline = schema.baselineStateForStep(scenario, stepIndex, prevState, coaParams);
+    const out = {
+        ...baseline,
+        bls_status: { ...baseline.bls_status },
+        losses_step: { ...baseline.losses_step },
+        losses_cumulative: { ...baseline.losses_cumulative },
+        per_unit_deltas: {
+            blue_destroyed: baseline.per_unit_deltas.blue_destroyed.slice(),
+            red_degraded: baseline.per_unit_deltas.red_degraded.map(e => ({ ...e })),
+        },
+        blue_actions: { ...(baseline.blue_actions || {}) },
+        confidence_per_field: { ...baseline.confidence_per_field },
+        red_strength_current: { ...(baseline.red_strength_current || {}) },
+        blue_destroyed_cumulative: baseline.blue_destroyed_cumulative.slice(),
+    };
+
+    out.step_index = stepIndex;
+    out.time_label = schema.TIME_LABELS[stepIndex];
+    out.elapsed_hours = schema.ELAPSED_HOURS_BY_INDEX[stepIndex];
+    out.phase = schema.PHASE_BY_INDEX[stepIndex];
+
+    const phaseLine = toFiniteNumber(delta.phase_line_km);
+    if (phaseLine != null) out.phase_line_km = phaseLine;
+    else if (delta.phase_line_km !== undefined) fields.push('phase_line_km');
+
+    if (schema.OBJECTIVE_STATUS.includes(delta.objective_status)) out.objective_status = delta.objective_status;
+    else if (delta.objective_status !== undefined) fields.push('objective_status');
+
+    if (isNonEmptyString(delta.force_ratio)) out.force_ratio = delta.force_ratio.trim().slice(0, 100);
+    else if (delta.force_ratio !== undefined) fields.push('force_ratio');
+
+    if (schema.EW_BANDS.includes(delta.ew_effect)) out.ew_effect = delta.ew_effect;
+    else if (delta.ew_effect !== undefined) fields.push('ew_effect');
+
+    if (isNonEmptyString(delta.logistics_state)) out.logistics_state = delta.logistics_state.trim().slice(0, 120);
+    else if (delta.logistics_state !== undefined) fields.push('logistics_state');
+
+    if (isNonEmptyString(delta.decision_point)) out.decision_point = delta.decision_point.trim().slice(0, 80);
+    else if (delta.decision_point !== undefined) fields.push('decision_point');
+
+    if (isNonEmptyString(delta.narrative_ar) && /[\u0600-\u06FF]/.test(delta.narrative_ar)) {
+        out.narrative_ar = delta.narrative_ar.trim();
+    } else if (delta.narrative_ar !== undefined) {
+        fields.push('narrative_ar');
+    }
+
+    if (isNonEmptyString(delta.narrative_en)) out.narrative_en = delta.narrative_en.trim();
+    else if (delta.narrative_en !== undefined) fields.push('narrative_en');
+
+    if (isObj(delta.bls_status)) {
+        for (const name of schema.blsNames(scenario)) {
+            if (schema.BLS_STATUS.includes(delta.bls_status[name])) out.bls_status[name] = delta.bls_status[name];
+            else fields.push(`bls_status.${name}`);
+        }
+    } else if (delta.bls_status !== undefined) {
+        fields.push('bls_status');
+    }
+
+    const blueValid = schema.blueUidSet(scenario);
+    const blueBaseIds = new Set(scenario.blue_units_base_ids);
+    const prevDestroyed = new Set((prevState && prevState.blue_destroyed_cumulative) || []);
+    const rawBlue = isObj(delta.per_unit_deltas) && Array.isArray(delta.per_unit_deltas.blue_destroyed)
+        ? delta.per_unit_deltas.blue_destroyed
+        : (Array.isArray(delta.blue_destroyed_uids) ? delta.blue_destroyed_uids : null);
+    if (rawBlue) {
+        const next = [];
+        for (const raw of rawBlue) {
+            const uid = normalizeBlueUid(raw, blueValid, blueBaseIds);
+            if (uid && !prevDestroyed.has(uid) && !next.includes(uid)) next.push(uid);
+            else fields.push('per_unit_deltas.blue_destroyed');
+        }
+        out.per_unit_deltas.blue_destroyed = next;
+    } else if (delta.blue_destroyed_uids !== undefined || (isObj(delta.per_unit_deltas) && delta.per_unit_deltas.blue_destroyed !== undefined)) {
+        fields.push('per_unit_deltas.blue_destroyed');
+    }
+
+    const redValid = schema.redUidSet(scenario);
+    const prevStrength = (prevState && prevState.red_strength_current) || schema.blankRedStrengths(scenario);
+    const rawRed = isObj(delta.per_unit_deltas) && Array.isArray(delta.per_unit_deltas.red_degraded)
+        ? delta.per_unit_deltas.red_degraded
+        : null;
+    if (rawRed) {
+        const next = [];
+        const seen = new Set();
+        for (const entry of rawRed) {
+            const normalized = normalizeRedDeltaEntry(entry, prevStrength, redValid);
+            if (normalized && !seen.has(normalized.unit_uid)) {
+                next.push(normalized);
+                seen.add(normalized.unit_uid);
+            } else {
+                fields.push('per_unit_deltas.red_degraded');
+            }
+        }
+        out.per_unit_deltas.red_degraded = next;
+    } else if (isObj(delta.red_unit_strengths)) {
+        const next = [];
+        for (const uid of redValid) {
+            const strength = toFiniteNumber(delta.red_unit_strengths[uid]);
+            const prev = toFiniteNumber(prevStrength[uid]);
+            if (strength != null && prev != null && strength < prev) {
+                next.push({ unit_uid: uid, strength_current: Math.max(0, Math.min(1, strength)), status: 'DEGRADED' });
+            }
+        }
+        out.per_unit_deltas.red_degraded = next;
+        fields.push('per_unit_deltas.red_degraded');
+    } else if (isObj(delta.per_unit_deltas) && delta.per_unit_deltas.red_degraded !== undefined) {
+        fields.push('per_unit_deltas.red_degraded');
+    }
+
+    const blueStep = out.per_unit_deltas.blue_destroyed.length;
+    const prevBlueDestroyed = prevState && prevState.losses_cumulative
+        ? prevState.losses_cumulative.blue_destroyed
+        : 0;
+    out.losses_step.blue = blueStep;
+    out.losses_cumulative.blue_destroyed = prevBlueDestroyed + blueStep;
+    out.losses_cumulative.blue_total = scenario.blue_units_base_ids.length;
+    out.losses_cumulative.red_aggregate_markers = scenario.red_units.length;
+
+    const prevRedLoss = prevState && prevState.losses_cumulative
+        ? toFiniteNumber(prevState.losses_cumulative.red_company_equivalent) || 0
+        : 0;
+    const redLoss = isObj(delta.losses_cumulative)
+        ? toFiniteNumber(delta.losses_cumulative.red_company_equivalent)
+        : null;
+    const redLossFromStep = isObj(delta.losses_step)
+        ? toFiniteNumber(delta.losses_step.red_company_equivalent_cumulative)
+        : null;
+    const safeRedLoss = Math.max(
+        prevRedLoss,
+        redLoss != null ? redLoss : (redLossFromStep != null ? redLossFromStep : out.losses_cumulative.red_company_equivalent),
+    );
+    out.losses_step.red_company_equivalent_cumulative = safeRedLoss;
+    out.losses_cumulative.red_company_equivalent = safeRedLoss;
+
+    const active = toFiniteNumber(delta.red_active_markers);
+    if (active != null) out.red_active_markers = clampInt(active, 0, scenario.red_units.length);
+    else if (delta.red_active_markers !== undefined) fields.push('red_active_markers');
+
+    if (isObj(delta.blue_actions)) out.blue_actions = { ...delta.blue_actions };
+
+    out.confidence_per_field = normalizeConfidence(delta.confidence_per_field, out.confidence_per_field, fields);
+    if (isNonEmptyString(delta.notes)) out.notes = delta.notes.trim().slice(0, 200);
+
+    return { delta: out, fields: Array.from(new Set(fields)) };
+}
+
+function prepareDeltaForValidation(parsed, prevState, scenario, stepIndex, meta, coaParams) {
+    const prepared = normalizeModelDelta(parsed, prevState, scenario, stepIndex, coaParams);
+    if (prepared.fields.length) {
+        meta.normalizedFields = Array.from(new Set([
+            ...(meta.normalizedFields || []),
+            ...prepared.fields,
+        ])).slice(0, 50);
+    }
+    return prepared.delta;
 }
 
 // ── Main entry ───────────────────────────────────────────────────────
@@ -368,8 +623,11 @@ async function adjudicateStep(args) {
     args = args || {};
     const scenario   = args.scenario || loader.getDefaultScenario();
     const stepIndex  = args.stepIndex;
-    if (!Number.isInteger(stepIndex) || stepIndex < 0 || stepIndex > 11) {
-        throw new Error(`adjudicateStep: stepIndex must be 0..11, got ${stepIndex}`);
+    // Parametric step range: each scenario decides how many steps it has.
+    // wargame1/wargame2 → 12 steps (0..11); template → 6 steps (0..5).
+    const maxStepIndex = Math.max(0, (Array.isArray(scenario.steps) ? scenario.steps.length : 12) - 1);
+    if (!Number.isInteger(stepIndex) || stepIndex < 0 || stepIndex > maxStepIndex) {
+        throw new Error(`adjudicateStep: stepIndex must be 0..${maxStepIndex} for this scenario, got ${stepIndex}`);
     }
 
     const prevState   = args.prevState || schema.freshState(scenario);
@@ -399,7 +657,9 @@ async function adjudicateStep(args) {
 
     // ── Mock mode ─────────────────────────────────────────────────────
     if (mockMode) {
-        const repaired = schema.baselineStateForStep(scenario, stepIndex, prevState);
+        // Item #8 — coaParams threads into baselineStateForStep so mock
+        // replays vary with posture / reserve_commit_hour / axis.
+        const repaired = schema.baselineStateForStep(scenario, stepIndex, prevState, coaParams);
         return {
             ok: true,
             stepIndex,
@@ -482,7 +742,7 @@ async function adjudicateStep(args) {
 
     if (!resp.ok) {
         baseMeta.durationMs = Date.now() - start;
-        return fallbackResult(scenario, stepIndex, prevState, baseMeta, `${baseMeta.provider}_error`, { error: resp.error }, userPrompt);
+        return fallbackResult(scenario, stepIndex, prevState, baseMeta, `${baseMeta.provider}_error`, { error: resp.error }, userPrompt, coaParams);
     }
 
     baseMeta.responseChars = (resp.response || '').length;
@@ -492,7 +752,8 @@ async function adjudicateStep(args) {
     let lastRawText = resp.response || '';
 
     let parsed = tryParse(resp.response);
-    let val    = parsed ? validator.validateStateDelta(parsed, prevState, scenario, stepIndex) : null;
+    let preparedDelta = parsed ? prepareDeltaForValidation(parsed, prevState, scenario, stepIndex, baseMeta, coaParams) : null;
+    let val    = preparedDelta ? validator.validateStateDelta(preparedDelta, prevState, scenario, stepIndex) : null;
 
     // Retry once with corrective prompt if structural failure
     if ((!parsed || !val.ok) && (val == null || val.schema_errors.length > 0)) {
@@ -515,12 +776,13 @@ async function adjudicateStep(args) {
         }
         if (!resp.ok) {
             baseMeta.durationMs = Date.now() - start;
-            return fallbackResult(scenario, stepIndex, prevState, baseMeta, `${baseMeta.provider}_error_on_retry`, { error: resp.error }, userPrompt);
+            return fallbackResult(scenario, stepIndex, prevState, baseMeta, `${baseMeta.provider}_error_on_retry`, { error: resp.error }, userPrompt, coaParams);
         }
         baseMeta.responseChars += (resp.response || '').length;
         lastRawText = resp.response || lastRawText;
         parsed = tryParse(resp.response);
-        val    = parsed ? validator.validateStateDelta(parsed, prevState, scenario, stepIndex) : null;
+        preparedDelta = parsed ? prepareDeltaForValidation(parsed, prevState, scenario, stepIndex, baseMeta, coaParams) : null;
+        val    = preparedDelta ? validator.validateStateDelta(preparedDelta, prevState, scenario, stepIndex) : null;
     }
 
     baseMeta.durationMs = Date.now() - start;
@@ -528,12 +790,12 @@ async function adjudicateStep(args) {
     if (!parsed) {
         return fallbackResult(scenario, stepIndex, prevState, baseMeta, 'parse_failed',
             { rawHead: lastRawText.slice(0, 200), rawText: lastRawText },
-            userPrompt);
+            userPrompt, coaParams);
     }
     if (!val.ok) {
         return fallbackResult(scenario, stepIndex, prevState, baseMeta, 'validation_failed',
             { schema_errors: val.schema_errors },
-            userPrompt);
+            userPrompt, coaParams);
     }
 
     return {
@@ -543,6 +805,7 @@ async function adjudicateStep(args) {
         validation: {
             schema_ok:             true,
             clamped_fields:        val.clamped_fields,
+            normalized_fields:     baseMeta.normalizedFields || [],
             doctrinal_warnings:    val.doctrinal_warnings,
             plausibility_warnings: val.plausibility_warnings,
         },
@@ -561,6 +824,7 @@ module.exports = {
     formatLearnedPriorsBlock,
     compressPrevState,
     deriveSeed,
+    normalizeModelDelta,
     DEFAULT_COA,
     DEFAULT_OLLAMA_OPTIONS,
     DEFAULT_TIMEOUT_MS,

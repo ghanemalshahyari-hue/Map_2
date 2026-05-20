@@ -33,6 +33,7 @@
 const fs   = require('fs');
 const path = require('path');
 const feedbackStore = require('./feedback-store');
+const lessonStore   = require('./lesson-store');
 
 const ROOT     = path.join(__dirname, '..', '..');
 const DATA_DIR = process.env.RMOOZ_DATA_DIR || path.join(ROOT, 'data');
@@ -145,6 +146,7 @@ function computePriors({ scenarioName, coaParams, ageMs } = {}) {
             earlyFeedback = feedbackStore.countByScenarioCoa({ scenarioName, coaParams, ageMs: ageMs != null ? ageMs : DEFAULT_AGE_MS });
         } catch (_) { /* ignore */ }
         if (!earlyFeedback || earlyFeedback.total === 0) return null;
+        const lessons = lessonStore.listByScenario(scenarioName, 5);
         return {
             scenarioName,
             coaFilter: coaParams ? {
@@ -171,6 +173,7 @@ function computePriors({ scenarioName, coaParams, ageMs } = {}) {
                     : null,
                 latest: earlyFeedback.latest,
             },
+            lessons: lessons.length ? lessons : null,
             runIds:      [],
             latestRunAt: null,
         };
@@ -229,6 +232,9 @@ function computePriors({ scenarioName, coaParams, ageMs } = {}) {
     const feedbackTotal = feedback ? (feedback.accept + feedback.reject) : 0;
     const operatorAcceptPct = feedbackTotal > 0 ? pct(feedback.accept, feedbackTotal) : null;
 
+    // AAR lessons for this scenario, most recent first (item #5).
+    const lessons = lessonStore.listByScenario(scenarioName, 5);
+
     return {
         scenarioName,
         coaFilter: coaParams ? {
@@ -244,12 +250,7 @@ function computePriors({ scenarioName, coaParams, ageMs } = {}) {
         finalRedCoyEqLosses:mergeNumeric(finalRedStats),
         fallbackRate:       totalSteps ? pct(fallbackSteps, totalSteps) : 0,
         fallbackReasonsTop: topReasons(fallbackReasonCounts, 4),
-        // Crude model reliability proxy: 100 - fallbackRate. Refines once
-        // we have enough feedback to compute operatorAcceptPct (which is
-        // the truer signal — schema_ok says nothing about whether the
-        // adjudication was *correct*).
         schemaOkRate:       totalSteps ? Math.round((1 - fallbackSteps / totalSteps) * 1000) / 10 : 0,
-        // Operator-feedback rollup. null when no feedback at all in scope.
         operatorFeedback:   (feedback && feedback.total > 0) ? {
             accept:           feedback.accept,
             reject:           feedback.reject,
@@ -258,8 +259,8 @@ function computePriors({ scenarioName, coaParams, ageMs } = {}) {
             operatorAcceptPct,
             latest:           feedback.latest,
         } : null,
+        lessons: lessons.length ? lessons : null,
         runIds,
-        // Most-recent matched run's startedAt, useful for "as of …" framing.
         latestRunAt:        startedAts.sort().pop() || null,
     };
 }

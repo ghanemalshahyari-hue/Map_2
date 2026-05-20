@@ -22,6 +22,12 @@
     let trial = null;       // current per-trial state from AppScenarioState
     let mcRunSubscription = null;
     let activeRunId = null;
+    // Active COA — when set, every adjudicate step is preceded by a
+    // headless Blue + Red AI proposal (Blue's prompt sees the plan, Red's
+    // doesn't) and the proposed actions animate the real markers on the
+    // map BEFORE the adjudicator resolves outcomes. This is what makes
+    // "Use this plan" actually drive the wargame instead of being decorative.
+    let activeCoa = null;
     let scenarioCache = null;  // full scenario JSON, fetched on demand for map overlay
     let aiHealth = null;       // last /api/ai/health probe: { ok, url, defaultModel, models?, error? }
     let lastRunMode = null;    // 'mock' | 'live' | 'fallback' — last adjudicate response's actual run mode
@@ -58,6 +64,9 @@
         // reality at boot — and the user knows up-front whether trials will
         // actually use the LLM or fall back to baseline.
         probeAiHealth();
+        // Multi-provider status — populates the AI-provider dropdown with
+        // Ollama / Claude / Zen, disabling whichever aren't configured.
+        probeProviders();
         // Initial preview render — empty unless approvals are already cached.
         renderApprovedPreview();
         // Auto-refresh the preview when approvals change anywhere in the page.
@@ -90,6 +99,41 @@
                 mockEl.disabled = true;
             }
         }
+    }
+
+    // ── Multi-provider status probe (Ollama + Claude + Zen) ──────────
+    // Calls /api/ai/provider/status and populates the AI-provider <select>.
+    // Each option's enabled state reflects whether that provider's health
+    // probe returned ok. 'Auto' is always selectable and resolves on the
+    // server to the first available of (claude > zen > ollama).
+    async function probeProviders() {
+        const sel = $('wg-adj-provider');
+        if (!sel) return;
+        let status;
+        try {
+            const res = await fetch('/api/ai/provider/status');
+            status = await res.json();
+        } catch (e) {
+            // Leave the select with just 'Auto' if the endpoint is unreachable.
+            return;
+        }
+        const available = (status && status.available) || [];
+        const def       = (status && status.defaultResolved) || null;
+
+        // Rebuild options preserving the current selection if still valid.
+        const prev = sel.value;
+        sel.innerHTML = '';
+        const autoLabel = def ? `Auto → ${def}` : 'Auto (no providers up)';
+        sel.appendChild(new Option(autoLabel, 'auto'));
+        ['ollama', 'claude', 'zen'].forEach((p) => {
+            const ok = available.includes(p);
+            const opt = new Option(p + (ok ? '' : ' (unavailable)'), p);
+            if (!ok) opt.disabled = true;
+            sel.appendChild(opt);
+        });
+        sel.value = (prev && Array.from(sel.options).some(o => o.value === prev && !o.disabled))
+            ? prev
+            : 'auto';
     }
 
     // Try to draw the scenario on the map as soon as both the scenario JSON
@@ -152,11 +196,24 @@
                         <option value="hasty">hasty</option>
                     </select>
 
+                    <label for="wg-adj-coa-weather" class="wg-adj-label">Weather</label>
+                    <select id="wg-adj-coa-weather" class="wg-adj-input">
+                        <option value="clear">clear</option>
+                        <option value="overcast">overcast</option>
+                        <option value="storm">storm</option>
+                        <option value="night">night</option>
+                    </select>
+
                     <label for="wg-adj-seed" class="wg-adj-label">Trial&nbsp;seed</label>
                     <input id="wg-adj-seed" class="wg-adj-input" type="text" value="manual" />
+
+                    <label for="wg-adj-provider" class="wg-adj-label">AI&nbsp;provider</label>
+                    <select id="wg-adj-provider" class="wg-adj-input">
+                        <option value="auto">Auto (detect)</option>
+                    </select>
                 </div>
                 <label class="wg-adj-toggle">
-                    <input type="checkbox" id="wg-adj-mock" checked />
+                    <input type="checkbox" id="wg-adj-mock" />
                     <span id="wg-adj-mock-label">Mock mode (no Ollama) — replays scenario baseline</span>
                 </label>
             </div>
@@ -185,6 +242,41 @@
                         <span class="wg-adj-unit">ms</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- ── Plan options (COA generator — AI co-pilot) ── -->
+            <div class="wg-adj-section">
+                <div class="wg-adj-section-title">Plan options &mdash; AI co-pilot</div>
+                <div class="wg-adj-form-grid">
+                    <label for="wg-adj-coa-intent" class="wg-adj-label">Intent</label>
+                    <textarea id="wg-adj-coa-intent" class="wg-adj-input" rows="2"
+                        style="font-family:inherit;resize:vertical;min-height:38px;"
+                        placeholder="Seize OBJ NASSER by H+96 with <20 Blue casualties; preserve reserve."></textarea>
+                </div>
+                <div class="wg-adj-btn-row wg-adj-btn-row--2">
+                    <button id="wg-adj-coa-btn"   class="wargame-action-btn primary"   type="button">Generate COA</button>
+                    <button id="wg-adj-coa-clear" class="wargame-action-btn secondary" type="button">Clear</button>
+                </div>
+                <div id="wg-adj-coa-status" style="margin-top:6px;font-size:11px;color:#9ab;min-height:1em;"></div>
+
+                <!-- Active-plan banner. Hidden until the operator clicks "Use this plan"
+                     on a COA card. When visible, every subsequent adjudicate step runs
+                     the headless Blue/Red propose+execute loop FIRST so the AI actually
+                     moves the markers on the map according to the chosen plan.
+                     IMPORTANT: keep display:none as the SOLE display rule on this
+                     element so setActiveCoa()s flip to display:flex actually shows it. -->
+                <div id="wg-adj-coa-active-banner" style="display:none;margin-top:8px;padding:8px 10px;
+                    background:rgba(58,154,58,.10);border:1px solid #3aaa3a;border-left-width:3px;
+                    border-radius:4px;font-size:12px;color:#cfeacf;
+                    align-items:center;gap:8px;">
+                    <span style="color:#3aaa3a;font-weight:bold;">&#9679; ACTIVE</span>
+                    <span id="wg-adj-coa-active-name" style="color:#e6e6e6;font-weight:600;flex:1;"></span>
+                    <span id="wg-adj-coa-active-risk" style="font-size:10px;text-transform:uppercase;letter-spacing:.05em;padding:1px 6px;border-radius:3px;"></span>
+                    <button id="wg-adj-coa-deactivate" class="wargame-action-btn secondary"
+                        type="button" style="padding:2px 8px;font-size:10px;">Deactivate</button>
+                </div>
+
+                <div id="wg-adj-coa-cards"  style="margin-top:8px;display:flex;flex-direction:column;gap:8px;"></div>
             </div>
 
             <!-- ── Monte Carlo ── -->
@@ -268,6 +360,54 @@
                         style="padding:2px 8px;font-size:11px;" title="Add a free-text note about this step">&#9998; Note</button>
                     <span id="wg-adj-fb-status" style="color:#9ab;margin-left:6px;"></span>
                 </div>
+
+                <!-- AAR lessons (item #5). Shows recent operator-written lessons
+                     for the active scenario. Click to expand. -->
+                <div id="wg-adj-lessons-area" style="margin-top:6px;display:none;">
+                    <div style="display:flex;gap:4px;">
+                        <button id="wg-adj-lessons-toggle" type="button"
+                            class="wargame-action-btn secondary"
+                            style="padding:2px 6px;font-size:10px;flex:1;text-align:left;">
+                            &#128214; AAR lessons <span id="wg-adj-lessons-count" style="color:#9ab;"></span>
+                        </button>
+                        <button id="wg-adj-lessons-write" type="button"
+                            class="wargame-action-btn success"
+                            style="padding:2px 6px;font-size:10px;">&#9998; Write</button>
+                    </div>
+                    <div id="wg-adj-lessons-list" style="margin-top:4px;display:none;font-size:11px;"></div>
+                    <!-- Inline compose form, hidden by default -->
+                    <div id="wg-adj-lessons-form" style="margin-top:4px;display:none;font-size:11px;
+                        border:1px solid #2a3140;padding:6px;background:#191e29;">
+                        <div style="margin-bottom:4px;">
+                            <input id="wg-adj-les-title" type="text" placeholder="Lesson title (required, max 120)"
+                                style="width:100%;box-sizing:border-box;background:#12161e;border:1px solid #2a3140;color:#ddd;padding:3px 5px;font-size:11px;">
+                        </div>
+                        <div style="margin-bottom:4px;display:flex;gap:4px;">
+                            <select id="wg-adj-les-category"
+                                style="background:#12161e;border:1px solid #2a3140;color:#ddd;padding:3px 5px;font-size:11px;">
+                                <option value="general">general</option>
+                                <option value="tactics">tactics</option>
+                                <option value="logistics">logistics</option>
+                                <option value="intel">intel</option>
+                                <option value="fires">fires</option>
+                                <option value="maneuver">maneuver</option>
+                            </select>
+                            <input id="wg-adj-les-author" type="text" placeholder="Author"
+                                style="flex:1;background:#12161e;border:1px solid #2a3140;color:#ddd;padding:3px 5px;font-size:11px;">
+                        </div>
+                        <div style="margin-bottom:4px;">
+                            <textarea id="wg-adj-les-narrative" rows="2" placeholder="Narrative (optional, max 2000)"
+                                style="width:100%;box-sizing:border-box;background:#12161e;border:1px solid #2a3140;color:#ddd;padding:3px 5px;font-size:11px;resize:vertical;"></textarea>
+                        </div>
+                        <div style="display:flex;gap:4px;justify-content:flex-end;">
+                            <button id="wg-adj-les-cancel" type="button" class="wargame-action-btn secondary"
+                                style="padding:2px 8px;font-size:10px;">Cancel</button>
+                            <button id="wg-adj-les-submit" type="button" class="wargame-action-btn success"
+                                style="padding:2px 8px;font-size:10px;">Save lesson</button>
+                            <span id="wg-adj-les-status" style="color:#9ab;font-size:10px;align-self:center;"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="wg-adj-mc-panel" style="display:none; margin-top:8px;">
@@ -277,6 +417,16 @@
                 </div>
                 <div id="wg-adj-mc-progress" class="wargame-status-block" style="font-size:12px;"></div>
                 <div id="wg-adj-mc-outcome" style="margin-top:6px; font-size:12px;"></div>
+            </div>
+
+            <!-- Item #12 — comparison report. Always visible; the link opens
+                 a printable HTML page comparing baseline / live AI / MC for
+                 the currently selected scenario (latest completed run). -->
+            <div style="margin-top:10px;font-size:12px;color:#cdd;">
+                <a id="wg-adj-report-link" href="/api/ai/report.html?scenario=wargame2-brega"
+                   target="_blank" rel="noopener"
+                   style="color:#5da9e8;text-decoration:none;">&#128202; Open comparison report</a>
+                <span style="color:#888;margin-left:6px;">(baseline vs live AI vs MC)</span>
             </div>
 
             <div class="wargame-control-footer">
@@ -289,16 +439,17 @@
     // ── DOM helpers ──────────────────────────────────────────────────
     function $(id) { return document.getElementById(id); }
     function setPill(el, kind, text) {
-        el.classList.remove('is-idle', 'is-active', 'is-error', 'is-ok');
+        el.classList.remove('is-idle', 'is-active', 'is-error', 'is-warning', 'is-ok');
         el.classList.add('is-' + kind);
         el.textContent = text;
     }
     function setStatus(msg, kind) {
         const pill = $('wg-adj-pill');
-        if (pill) setPill(pill, kind || 'idle', text => kind === 'ok' ? 'Ready' : kind === 'active' ? 'Working…' : kind === 'error' ? 'Error' : 'Idle');
+        if (pill) setPill(pill, kind || 'idle', text => kind === 'ok' ? 'Ready' : kind === 'active' ? 'Working…' : kind === 'error' ? 'Error' : kind === 'warning' ? 'Warning' : 'Idle');
         if (kind === 'ok')      setPill(pill, 'ok', 'Ready');
         if (kind === 'active')  setPill(pill, 'active', 'Working…');
         if (kind === 'error')   setPill(pill, 'error', 'Error');
+        if (kind === 'warning') setPill(pill, 'warning', 'Warning');
         if (kind === 'idle')    setPill(pill, 'idle', 'Idle');
         const box = $('wg-adj-status');
         if (box) box.textContent = msg;
@@ -329,16 +480,24 @@
     }
 
     // Classify one adjudicate response into a mode label + pill kind.
-    //   - validation.mocked === true                → 'mock'
-    //   - r.ok && !mocked                           → 'live'
-    //   - !r.ok or validation.fallback present      → 'fallback'
+    //   - validation.mocked === true                    → 'mock'
+    //   - r.ok && !mocked                               → 'live'
+    //   - !r.ok or validation.fallback present          → 'model_error' / 'validation_error' / 'parse_error' / 'fallback'
     function classifyRun(r) {
         const mocked   = !!(r && r.validation && r.validation.mocked);
-        const fallback = (r && r.validation && r.validation.fallback) || (r && r.meta && r.meta.fallback);
-        if (mocked)      return { mode: 'mock',     label: 'Mock', kind: 'idle' };
-        if (fallback)    return { mode: 'fallback', label: 'Fallback · ' + fallback, kind: 'error' };
-        if (r && r.ok)   return { mode: 'live',     label: 'Live · ' + ((r.meta && r.meta.model) || '(model)'), kind: 'ok' };
-        return { mode: 'idle', label: '—', kind: 'idle' };
+        const fallback = String((r && r.validation && r.validation.fallback) || (r && r.meta && r.meta.fallback) || '');
+        if (mocked)          return { mode: 'mock',             label: 'Mock',                                        kind: 'idle' };
+        if (fallback) {
+            if (fallback.endsWith('_error') || fallback.endsWith('_error_on_retry'))
+                return { mode: 'model_error',      label: 'Model error \xb7 ' + fallback,                         kind: 'error' };
+            if (fallback === 'validation_failed')
+                return { mode: 'validation_error',  label: 'Validation error',                                      kind: 'warning' };
+            if (fallback === 'parse_failed')
+                return { mode: 'parse_error',       label: 'Parse error',                                           kind: 'warning' };
+            return { mode: 'fallback',       label: 'Fallback \xb7 ' + fallback,                              kind: 'warning' };
+        }
+        if (r && r.ok)       return { mode: 'live',             label: 'Live \xb7 ' + ((r.meta && r.meta.model) || '(model)'), kind: 'ok' };
+        return { mode: 'idle', label: '\u2014', kind: 'idle' };
     }
 
     function setLastMode(r) {
@@ -346,12 +505,22 @@
         if (!chip) return;
         const c = classifyRun(r);
         lastRunMode = c.mode;
-        chip.classList.remove('is-idle', 'is-active', 'is-error', 'is-ok');
+        chip.classList.remove('is-idle', 'is-active', 'is-error', 'is-warning', 'is-ok');
         chip.classList.add('is-' + c.kind);
         chip.textContent = 'Mode: ' + c.label;
     }
 
     // ── Scenario list ────────────────────────────────────────────────
+    // Keep the comparison-report link in sync with the active scenario so
+    // clicking it always opens the right one (item #12).
+    function updateReportLink() {
+        const link = $('wg-adj-report-link');
+        const sel  = $('wg-adj-scenario');
+        if (!link || !sel) return;
+        const name = sel.value || SCENARIO_DEFAULT;
+        link.href = '/api/ai/report.html?scenario=' + encodeURIComponent(name);
+    }
+
     async function loadScenarios() {
         const result = await window.AppAdjudicator.scenarios();
         const sel = $('wg-adj-scenario');
@@ -366,6 +535,8 @@
             if (name === result.default) opt.selected = true;
             sel.appendChild(opt);
         }
+        sel.addEventListener('change', updateReportLink);
+        updateReportLink();
         setStatus('Ready. Mock mode is on — toggle off to use live Ollama.', 'idle');
     }
 
@@ -539,6 +710,9 @@
         $('wg-adj-narrative-en').textContent = state.narrative_en || '';
         $('wg-adj-narrative-ar').textContent = state.narrative_ar || '';
         const warns = [];
+        if (validation && validation.normalized_fields && validation.normalized_fields.length) {
+            warns.push(`normalized: ${validation.normalized_fields.slice(0, 3).join(', ')}${validation.normalized_fields.length > 3 ? '...' : ''}`);
+        }
         if (meta && meta.durationMs != null) warns.push(`${Math.round(meta.durationMs)} ms`);
         if (meta && meta.model) warns.push(meta.model);
         $('wg-adj-validation').textContent = warns.join(' · ');
@@ -547,6 +721,8 @@
         }
         // item #9 — scrubber should let the operator grade older steps too.
         showFeedbackRow(state.step_index);
+        // item #5 — refresh AAR lessons after each adjudication.
+        loadLessons(trial && trial.scenarioName);
     }
 
     // ── Render one step's state into the display block + map ─────────
@@ -569,6 +745,9 @@
         if (validation && validation.clamped_fields && validation.clamped_fields.length) {
             warns.push(`clamped: ${validation.clamped_fields.join(', ')}`);
         }
+        if (validation && validation.normalized_fields && validation.normalized_fields.length) {
+            warns.push(`normalized: ${validation.normalized_fields.slice(0, 3).join(', ')}${validation.normalized_fields.length > 3 ? '...' : ''}`);
+        }
         if (validation && validation.doctrinal_warnings && validation.doctrinal_warnings.length) {
             warns.push(`${validation.doctrinal_warnings.length} doctrinal warning(s)`);
         }
@@ -577,11 +756,16 @@
 
         // Push the state into the map overlay. If the scenario hasn't been
         // drawn yet, draw it first so the overlays exist for applyState.
+        // When a COA is active, the per-unit AI moves have already animated
+        // the markers; skip the deterministic re-positioning to avoid the
+        // "snap back to scripted lerp" jitter. All other state updates
+        // (BLS colors, SITREP, destroyed units, arrows) still run.
         if (window.AppAdjudicatorMap && scenarioCache) {
             if (!document.querySelector('.leaflet-marker-icon.wg-adj-obj')) {
                 window.AppAdjudicatorMap.drawScenario(scenarioCache);
             }
-            const r = window.AppAdjudicatorMap.applyState(state, scenarioCache);
+            const applyOpts = { skipUnitPositioning: !!activeCoa };
+            const r = window.AppAdjudicatorMap.applyState(state, scenarioCache, applyOpts);
             if (r && r.missed && r.missed.length) {
                 warns.push(`unmatched on map: ${r.missed.join(', ')}`);
             }
@@ -606,17 +790,219 @@
 
     // ── Read the current COA + scenario from the form ────────────────
     function currentRequest() {
+        const providerEl = $('wg-adj-provider');
         return {
             scenarioName: $('wg-adj-scenario').value || SCENARIO_DEFAULT,
             model:        ($('wg-adj-model').value || '').trim() || null,
             mockMode:     $('wg-adj-mock').checked,
+            // 'auto' / 'ollama' / 'claude' / 'zen' — null means server picks
+            // its configured default. The HUD pill is populated by
+            // probeProviders() against /api/ai/provider/status.
+            provider:     (providerEl && providerEl.value) || null,
             coaParams: {
                 reserve_commit_hour: Number($('wg-adj-coa-reserve').value || 72),
                 posture:             $('wg-adj-coa-posture').value,
                 main_effort_axis:    'BLS-3',
+                weather:             ($('wg-adj-coa-weather') && $('wg-adj-coa-weather').value) || 'clear',
             },
             trialSeed: ($('wg-adj-seed').value || 'manual').trim() || 'manual',
         };
+    }
+
+    // ── COA generator (AI co-pilot) ─────────────────────────────────
+    // Calls POST /api/ai/coa with the current scenario + commander intent +
+    // selected provider. Renders the returned plans as a card stack the
+    // commander can scan and click. Each card has a "Use this plan" button
+    // that populates the existing Reserve hr + Posture inputs so the next
+    // adjudicate-step uses the chosen plan's parameters.
+    //
+    // Empty intent is allowed — the server prompt has a sensible default.
+    async function handleCoaGenerate() {
+        const req           = currentRequest();
+        const intent        = ($('wg-adj-coa-intent').value || '').trim();
+        const cards         = $('wg-adj-coa-cards');
+        const statusEl      = $('wg-adj-coa-status');
+        const btn           = $('wg-adj-coa-btn');
+        cards.innerHTML     = '';
+        statusEl.textContent = 'Generating 3-5 candidate plans…';
+        btn.disabled        = true;
+        const t0 = Date.now();
+        try {
+            const r = await window.AppAdjudicator.coa({
+                scenarioName:    req.scenarioName,
+                commanderIntent: intent || null,
+                constraints:     { min_options: 3, max_options: 5 },
+                provider:        req.provider,
+                model:           req.model || null,
+            });
+            const ms = Date.now() - t0;
+            const plans = (r && r.plans) || [];
+            const provLabel = (r && r.meta && r.meta.provider) || '(unknown)';
+            const iter = (r && r.meta && r.meta.iterativeAttempts) || 0;
+            const iterTxt = iter > 0 ? ` · backfill iterations: ${iter}` : '';
+            if (!plans.length) {
+                const err = (r && r.error) || 'unknown';
+                statusEl.textContent = `Failed (${err}) — ${ms} ms`;
+                return;
+            }
+            statusEl.textContent = `${plans.length} plans · ${ms} ms · provider: ${provLabel}${iterTxt}`;
+            plans.forEach((p, i) => cards.appendChild(renderCoaCard(p, i)));
+        } catch (e) {
+            statusEl.textContent = 'Error: ' + ((e && e.message) || String(e));
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    function clearCoaCards() {
+        const cards    = $('wg-adj-coa-cards');
+        const statusEl = $('wg-adj-coa-status');
+        if (cards)    cards.innerHTML    = '';
+        if (statusEl) statusEl.textContent = '';
+    }
+
+    // Render one plan card. Inline styles keep this self-contained — no
+    // CSS changes needed elsewhere. Risk tier color-codes the badge.
+    function renderCoaCard(plan, idx) {
+        const riskColors = { low: '#3aaa3a', medium: '#e8a23a', high: '#e85c2a', extreme: '#d23a3a' };
+        const riskColor  = riskColors[plan.risk_tier] || '#888';
+        const partialBadge = plan._partial
+            ? '<span style="font-size:9px;color:#e8a23a;letter-spacing:.05em;text-transform:uppercase;padding:1px 5px;border-radius:3px;border:1px dashed #e8a23a;margin-left:4px;">partial</span>'
+            : '';
+        const card = document.createElement('div');
+        card.className = 'wg-coa-card';
+        card.style.cssText = [
+            'border:1px solid #2a3140',
+            'border-left:3px solid ' + riskColor,
+            'border-radius:5px',
+            'background:rgba(15,22,35,.65)',
+            'padding:10px 12px',
+            'font-size:12px',
+            'line-height:1.45',
+            'color:#ddd',
+        ].join(';');
+
+        const head = document.createElement('div');
+        head.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:4px;';
+        head.innerHTML = `
+            <strong style="font-size:14px;color:#e6e6e6;">${escapeHtml(plan.name || '(unnamed)')}</strong>
+            <span style="font-size:9px;color:${riskColor};text-transform:uppercase;letter-spacing:.05em;padding:1px 6px;border-radius:3px;border:1px solid ${riskColor};">${escapeHtml(plan.risk_tier || '?')}</span>
+            ${partialBadge}
+            <span style="margin-left:auto;font-size:11px;color:#9ab;">ETA ${plan.eta_hours != null ? plan.eta_hours : '?'}h</span>
+        `;
+        card.appendChild(head);
+
+        const stats = document.createElement('div');
+        stats.style.cssText = 'font-size:11px;color:#9ab;margin-bottom:5px;';
+        stats.innerHTML = `Blue casualties: <strong style="color:#e6e6e6;">${plan.blue_casualty_p50 != null ? plan.blue_casualty_p50 : '?'}</strong> / ${plan.blue_casualty_p90 != null ? plan.blue_casualty_p90 : '?'} <span style="color:#777;">(p50 / p90)</span>`;
+        card.appendChild(stats);
+
+        if (plan.rationale) {
+            const rat = document.createElement('div');
+            rat.style.cssText = 'font-size:12px;color:#bbb;font-style:italic;margin-bottom:6px;';
+            rat.textContent = plan.rationale;
+            card.appendChild(rat);
+        }
+
+        if (Array.isArray(plan.plan) && plan.plan.length) {
+            const steps = document.createElement('div');
+            steps.style.cssText = 'font-size:11px;color:#bbb;margin-bottom:6px;';
+            steps.innerHTML = plan.plan.map(s => `<div style="padding-left:14px;text-indent:-14px;">&#9656; ${escapeHtml(s)}</div>`).join('');
+            card.appendChild(steps);
+        }
+
+        if (Array.isArray(plan.key_assumptions) && plan.key_assumptions.length) {
+            const asmp = document.createElement('div');
+            asmp.style.cssText = 'font-size:10px;color:#789;margin-bottom:6px;';
+            asmp.innerHTML = '<span style="text-transform:uppercase;letter-spacing:.05em;">Assumptions:</span> ' + plan.key_assumptions.map(escapeHtml).join(' · ');
+            card.appendChild(asmp);
+        }
+
+        const useBtn = document.createElement('button');
+        useBtn.type = 'button';
+        useBtn.className = 'wargame-action-btn primary';
+        useBtn.style.cssText = 'margin-top:4px;font-size:11px;padding:4px 10px;';
+        useBtn.textContent = 'Use this plan';
+        useBtn.addEventListener('click', (ev) => { ev.stopPropagation(); usePlanInCoa(plan); });
+        card.appendChild(useBtn);
+
+        return card;
+    }
+
+    // Activate a chosen plan as the wargame's "live" COA. Subsequent
+    // adjudicate steps run the headless Blue+Red propose+execute loop
+    // first, animating real unit markers based on the AI's per-step
+    // decisions that advance THIS plan.
+    function setActiveCoa(plan) {
+        activeCoa = plan || null;
+        console.log('[setActiveCoa] activeCoa is now:', activeCoa ? activeCoa.name : '(null)');
+        const banner = $('wg-adj-coa-active-banner');
+        const nameEl = $('wg-adj-coa-active-name');
+        const riskEl = $('wg-adj-coa-active-risk');
+        if (!banner) { console.warn('[setActiveCoa] banner element missing'); return; }
+        if (!plan) {
+            banner.style.display = 'none';
+            return;
+        }
+        // Render the banner. flex display matches the css set in renderShell.
+        banner.style.display = 'flex';
+        if (nameEl) nameEl.textContent = plan.name || '(unnamed plan)';
+        const riskColors = { low: '#3aaa3a', medium: '#e8a23a', high: '#e85c2a', extreme: '#d23a3a' };
+        const color = riskColors[plan.risk_tier] || '#888';
+        if (riskEl) {
+            riskEl.textContent     = plan.risk_tier || '?';
+            riskEl.style.color     = color;
+            riskEl.style.border    = '1px solid ' + color;
+        }
+    }
+
+    function clearActiveCoa() {
+        if (!activeCoa) return;
+        const name = activeCoa.name || '(plan)';
+        activeCoa = null;
+        const banner = $('wg-adj-coa-active-banner');
+        if (banner) banner.style.display = 'none';
+        setStatus(`Plan "${name}" deactivated. Adjudicator runs without per-step AI proposals.`, 'idle');
+    }
+
+    // Heuristic mapping from a chosen plan → the existing Reserve hr +
+    // Posture form inputs. Parses "H+N" from plan steps for reserve timing
+    // and risk_tier for posture. Operator can always override after.
+    function usePlanInCoa(plan) {
+        const reserveEl = $('wg-adj-coa-reserve');
+        const postureEl = $('wg-adj-coa-posture');
+        const weatherEl = $('wg-adj-coa-weather');
+        const seedEl    = $('wg-adj-seed');
+
+        // posture: hasty for high/extreme risk, deliberate otherwise.
+        const posture = (plan.risk_tier === 'high' || plan.risk_tier === 'extreme') ? 'hasty' : 'deliberate';
+
+        // reserve hour: prefer an explicit "commit reserve at H+N" mention
+        // in plan steps; fall back to plan.eta_hours / 2 (rough half-life heuristic).
+        let reserveHr = null;
+        const planText = (plan.plan || []).join(' ');
+        const m = planText.match(/commit\s+(?:1\s*AD\s+)?reserve.*?H\+(\d+)/i)
+              || planText.match(/reserve\s+at\s+H\+(\d+)/i);
+        if (m) reserveHr = parseInt(m[1], 10);
+        else if (plan.eta_hours) reserveHr = Math.round(plan.eta_hours / 2);
+
+        // weather: parse from plan text, default to clear.
+        const wxMatch = planText.match(/weather[=:\s]+(clear|overcast|storm|night)/i);
+        const weather = wxMatch ? wxMatch[1].toLowerCase() : 'clear';
+
+        if (postureEl)             postureEl.value = posture;
+        if (reserveEl && reserveHr != null) reserveEl.value = String(reserveHr);
+        if (weatherEl)             weatherEl.value = weather;
+        // Trial seed gets the plan name so MC runs are identifiable.
+        if (seedEl) seedEl.value = (plan.name || 'manual').replace(/\s+/g, '-').toLowerCase();
+
+        // Activate the plan: every subsequent adjudicate step will pre-roll
+        // a headless Blue+Red AI proposal that animates real markers BEFORE
+        // the scenario adjudicator resolves outcomes. This is the moment
+        // the wargame starts being driven by the AI's tactical thinking.
+        setActiveCoa(plan);
+
+        setStatus(`Plan "${plan.name}" applied (posture=${posture}, reserve=H+${reserveHr || '?'}). AI will execute this plan on the map each step.`, 'ok');
     }
 
     // ── Operator feedback row (todo item #9) ────────────────────────
@@ -699,6 +1085,86 @@
         }
     }
 
+    // ── AAR lessons (item #5) ───────────────────────────────────────
+    // Fetches recent lessons for the active scenario and populates the
+    // collapsible area in the HUD. Called after each adjudication so the
+    // list stays fresh if the operator wrote a lesson on the server.
+    async function loadLessons(scenarioName) {
+        const area = $('wg-adj-lessons-area');
+        const list = $('wg-adj-lessons-list');
+        const cnt  = $('wg-adj-lessons-count');
+        if (!area || !list || !cnt) return;
+        if (!scenarioName) { area.style.display = 'none'; return; }
+        try {
+            const res = await fetch(`/api/ai/lessons?scenario=${encodeURIComponent(scenarioName)}&limit=5`);
+            if (!res.ok) { area.style.display = 'none'; return; }
+            const data = await res.json().catch(() => null);
+            const lessons = (data && Array.isArray(data.lessons)) ? data.lessons : [];
+            area.style.display = 'block';
+            cnt.textContent = lessons.length ? `(${lessons.length})` : '(none)';
+            list.innerHTML = '';
+            for (const l of lessons) {
+                const cat = l.category ? `<span style="color:#b87;">[${escapeHtml(l.category)}]</span> ` : '';
+                const nar = l.narrative ? ` — ${escapeHtml(l.narrative.slice(0, 250))}` : '';
+                const div = document.createElement('div');
+                div.style.cssText = 'padding:3px 4px;border-bottom:1px solid #2a3140;line-height:1.4;';
+                div.innerHTML = `${cat}<strong>${escapeHtml(l.title)}</strong>${nar}`;
+                list.appendChild(div);
+            }
+        } catch (_) { /* silently ignore */ }
+    }
+    function toggleLessons() {
+        const list = $('wg-adj-lessons-list');
+        if (!list) return;
+        list.style.display = list.style.display === 'none' ? 'block' : 'none';
+    }
+    function toggleLessonForm(show) {
+        const f = $('wg-adj-lessons-form');
+        if (!f) return;
+        f.style.display = show ? 'block' : 'none';
+        if (!show) {
+            $('wg-adj-les-title').value = '';
+            $('wg-adj-les-narrative').value = '';
+            $('wg-adj-les-author').value = '';
+            $('wg-adj-les-category').value = 'general';
+        }
+    }
+    async function postLesson() {
+        const title     = $('wg-adj-les-title');
+        const narrative = $('wg-adj-les-narrative');
+        const category  = $('wg-adj-les-category');
+        const author    = $('wg-adj-les-author');
+        const status    = $('wg-adj-les-status');
+        if (!title || !narrative || !category || !author || !status) return;
+        const t = title.value.trim();
+        if (!t) { status.textContent = 'Title required.'; return; }
+        status.textContent = 'saving…';
+        const body = {
+            scenarioName: trial && trial.scenarioName || 'default',
+            title: t,
+            category: category.value || 'general',
+            narrative: narrative.value.trim().slice(0, 2000) || '',
+            author: author.value.trim() || 'operator',
+        };
+        try {
+            const res = await fetch('/api/ai/lessons', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+            const r = await res.json().catch(() => ({ ok: false }));
+            if (r.ok) {
+                status.textContent = 'Saved.';
+                toggleLessonForm(false);
+                loadLessons(trial && trial.scenarioName);
+            } else {
+                status.textContent = `Error: ${(r && r.error) || 'unknown'}`;
+            }
+        } catch (e) {
+            status.textContent = `Failed: ${(e && e.message) || 'network'}`;
+        }
+    }
+
     // ── Approved actions preview (todo item #7) ─────────────────────
     // Reads from AppApprovedActions and shows what's pending for the
     // next step. Called at boot, before each adjudicateNext(), and
@@ -742,9 +1208,52 @@
             setStatus('Trial complete at step 11. Click Reset to start a new trial.', 'idle');
             return;
         }
-        setStatus(`Adjudicating step ${nextIndex}…`, 'active');
-        // Pull any approved Red/Blue actions the operator executed since
-        // the last step — these go into the PROPOSED ACTIONS prompt block.
+
+        // ── COA-driven dynamic execution ─────────────────────────────
+        // When a plan is active, BEFORE adjudicating the step we ask the
+        // AI to propose Blue moves (informed by the chosen plan) and Red
+        // moves (its own reaction), then animate the real markers on the
+        // map. The proposed actions are auto-recorded into AppApprovedActions
+        // for this step so the adjudicator that follows sees them as the
+        // PROPOSED ACTIONS block — fusing tactical AI with strategic AI.
+        console.log('[adj-next] activeCoa =', activeCoa ? activeCoa.name : '(none)',
+                    '| AppRedTeam.proposeAndExecuteHeadless =',
+                    !!(window.AppRedTeam && window.AppRedTeam.proposeAndExecuteHeadless));
+        if (activeCoa && window.AppRedTeam && typeof window.AppRedTeam.proposeAndExecuteHeadless === 'function') {
+            console.log('[adj-next] entering COA-driven loop for', activeCoa.name);
+            setStatus(`Step ${nextIndex} · "${activeCoa.name}" — AI planning Blue moves…`, 'active');
+            try {
+                const blueResult = await window.AppRedTeam.proposeAndExecuteHeadless({
+                    side: 'blue',
+                    coaContext: activeCoa,
+                    turn: nextIndex,
+                });
+                console.log('[adj-next] Blue propose result:', blueResult);
+                const blueCount = blueResult && blueResult.actions
+                    ? blueResult.actions.filter(a => a.validation && a.validation.ok).length : 0;
+                setStatus(`Step ${nextIndex} · ${blueCount} Blue moves executed — AI planning Red counter…`, 'active');
+
+                const redResult = await window.AppRedTeam.proposeAndExecuteHeadless({
+                    side: 'red',
+                    turn: nextIndex,
+                });
+                console.log('[adj-next] Red propose result:', redResult);
+                const redCount = redResult && redResult.actions
+                    ? redResult.actions.filter(a => a.validation && a.validation.ok).length : 0;
+                setStatus(`Step ${nextIndex} · ${blueCount} Blue, ${redCount} Red moves executed. Adjudicating outcomes…`, 'active');
+            } catch (e) {
+                // Don't block adjudication on a propose failure; the operator
+                // sees a warning but the step still resolves on the scenario
+                // baseline / previous state.
+                setStatus(`Step ${nextIndex} · AI propose failed (${e && e.message || 'unknown'}), adjudicating anyway…`, 'active');
+            }
+        } else {
+            setStatus(`Adjudicating step ${nextIndex}…`, 'active');
+        }
+
+        // Pull any approved Red/Blue actions — either from the manual flow
+        // (operator clicked Execute on red-team panel) or from the COA loop
+        // above (proposeAndExecuteHeadless calls recordApproved internally).
         const approved = window.AppApprovedActions
             ? window.AppApprovedActions.getForStep(nextIndex)
             : { red: [], blue: [] };
@@ -759,6 +1268,7 @@
             model:          req.model,
             mockMode:       req.mockMode,
             approvedActions:approved,
+            provider:       req.provider,
         };
         const t0 = Date.now();
         const r = await window.AppAdjudicator.adjudicateStep(body);
@@ -773,8 +1283,9 @@
         renderStep(r.state, r.validation, { ...r.meta, durationMs: r.meta && r.meta.durationMs || wall });
         setLastMode(r);
         renderApprovedPreview();
-        const tag = r.ok ? '' : ` [fallback: ${r.validation && r.validation.fallback}]`;
-        setStatus(`Step ${nextIndex} resolved in ${wall} ms${tag}.`, r.ok ? 'ok' : 'error');
+        const tag = r.ok ? '' : ` [${r.validation && r.validation.fallback}]`;
+        const cls = classifyRun(r);
+        setStatus(`Step ${nextIndex} resolved in ${wall} ms${tag}.`, cls.kind);
     }
 
     function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -788,7 +1299,7 @@
         const paceMs = Math.max(0, Number(($('wg-adj-pace-ms') && $('wg-adj-pace-ms').value) || 1200));
         // Per-trial mode tally so the closing line tells the truth about
         // what actually ran instead of just "N fallback step(s)".
-        const modeCounts = { live: 0, mock: 0, fallback: 0 };
+        const modeCounts = { live: 0, mock: 0, fallback: 0, model_error: 0, validation_error: 0, parse_error: 0 };
         const fallbackReasons = {};
         for (let i = 1; i <= 11; i++) {
             setStatus(`Trial step ${i}/11…`, 'active');
@@ -806,6 +1317,7 @@
                 model:          req.model,
                 mockMode:       req.mockMode,
                 approvedActions:approved,
+                provider:       req.provider,
             };
             const r = await window.AppAdjudicator.adjudicateStep(body);
             if (!r || !r.state) {
@@ -819,10 +1331,8 @@
             renderApprovedPreview();
             const cls = classifyRun(r);
             modeCounts[cls.mode] = (modeCounts[cls.mode] || 0) + 1;
-            if (cls.mode === 'fallback') {
-                const why = (r.validation && r.validation.fallback) || 'unknown';
-                fallbackReasons[why] = (fallbackReasons[why] || 0) + 1;
-            }
+            const fb = (r.validation && r.validation.fallback) || '';
+            if (fb) fallbackReasons[fb] = (fallbackReasons[fb] || 0) + 1;
             // Pace the playback so map effects (BLS color shifts, Blue
             // squares fading, phase-line creep) are visible step by step.
             // In mock mode each call is ~5 ms; without this delay you'd
@@ -831,14 +1341,19 @@
             if (i < 11 && paceMs > 0) await sleep(paceMs);
         }
         const parts = [];
-        if (modeCounts.live)     parts.push(`Live ${modeCounts.live}`);
-        if (modeCounts.mock)     parts.push(`Mock ${modeCounts.mock}`);
-        if (modeCounts.fallback) {
+        if (modeCounts.live)             parts.push(`Live ${modeCounts.live}`);
+        if (modeCounts.mock)             parts.push(`Mock ${modeCounts.mock}`);
+        const errorCount = modeCounts.model_error + modeCounts.validation_error + modeCounts.parse_error + modeCounts.fallback;
+        if (modeCounts.model_error)      parts.push(`Model err ${modeCounts.model_error}`);
+        if (modeCounts.validation_error) parts.push(`Validation err ${modeCounts.validation_error}`);
+        if (modeCounts.parse_error)      parts.push(`Parse err ${modeCounts.parse_error}`);
+        if (modeCounts.fallback)         parts.push(`Fallback ${modeCounts.fallback}`);
+        if (errorCount) {
             const detail = Object.entries(fallbackReasons).map(([k, v]) => `${v}×${k}`).join(', ');
-            parts.push(`Fallback ${modeCounts.fallback} (${detail})`);
+            parts.push(`(${detail})`);
         }
-        const ok = modeCounts.fallback === 0;
-        setStatus(`Trial complete — ${parts.join(' · ')}.`, ok ? 'ok' : 'error');
+        const ok = errorCount === 0;
+        setStatus(`Trial complete \u2014 ${parts.join(' \xb7 ')}.`, ok ? 'ok' : (modeCounts.model_error ? 'error' : 'warning'));
     }
 
     function resetTrial() {
@@ -870,6 +1385,7 @@
             coaParams:    req.coaParams,
             model:        req.model,
             mockMode:     req.mockMode,
+            provider:     req.provider,
         };
         setStatus(`Starting Monte Carlo (${body.trials} trials, parallelism ${body.parallelism})…`, 'active');
         const r = await window.AppAdjudicator.mcStart(body);
@@ -952,6 +1468,18 @@
         root.querySelector('#wg-adj-reset-btn').addEventListener('click', resetTrial);
         root.querySelector('#wg-adj-mc-btn').addEventListener('click', startMc);
         root.querySelector('#wg-adj-mc-cancel').addEventListener('click', cancelMc);
+        // COA generator buttons (AI co-pilot). Provider pill change triggers
+        // a no-op handler so the selection persists across renders without
+        // a page reload.
+        const coaBtn = root.querySelector('#wg-adj-coa-btn');
+        if (coaBtn) coaBtn.addEventListener('click', handleCoaGenerate);
+        const coaClear = root.querySelector('#wg-adj-coa-clear');
+        if (coaClear) coaClear.addEventListener('click', clearCoaCards);
+        // Deactivate the active plan — adjudicate steps return to baseline
+        // behaviour (no headless AI propose loop). The Use-this-plan button
+        // on any COA card re-activates a plan.
+        const coaDeact = root.querySelector('#wg-adj-coa-deactivate');
+        if (coaDeact) coaDeact.addEventListener('click', clearActiveCoa);
         const refresh = root.querySelector('#wg-adj-backend-refresh');
         if (refresh) refresh.addEventListener('click', () => {
             const text = $('wg-adj-backend-text');
@@ -965,6 +1493,15 @@
         if (fbA) fbA.addEventListener('click', () => postFeedback('accept'));
         if (fbR) fbR.addEventListener('click', () => postFeedback('reject'));
         if (fbN) fbN.addEventListener('click', () => postFeedback('note'));
+        // AAR lessons toggle (item #5).
+        const lt = root.querySelector('#wg-adj-lessons-toggle');
+        if (lt) lt.addEventListener('click', toggleLessons);
+        const lw = root.querySelector('#wg-adj-lessons-write');
+        if (lw) lw.addEventListener('click', () => toggleLessonForm(true));
+        const lc = root.querySelector('#wg-adj-les-cancel');
+        if (lc) lc.addEventListener('click', () => toggleLessonForm(false));
+        const ls = root.querySelector('#wg-adj-les-submit');
+        if (ls) ls.addEventListener('click', postLesson);
     }
 
     // ── Boot ─────────────────────────────────────────────────────────

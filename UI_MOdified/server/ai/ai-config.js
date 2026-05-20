@@ -111,6 +111,48 @@ const defaults = {
         temperature: 0.2,
         numPredict:  2500,    // upper bound on output tokens
     },
+
+    // ── Claude (Anthropic) — optional cloud backend ────────────────────
+    // The Claude path is enabled when ANTHROPIC_API_KEY is set in the
+    // environment OR `{ claude: { apiKey: 'sk-ant-...' } }` is present
+    // in ai-secrets.local.js. Leaving apiKey empty disables the Claude
+    // backend entirely; the Ollama path above remains the default.
+    //
+    // claude-client.js reads from cfg.claude.* (this nested block).
+    claude: {
+        apiKey:           '',
+        defaultModel:     'claude-opus-4-7',
+        requestTimeoutMs: 90_000,
+        maxTokens:        4000,
+    },
+
+    // ── Zen (opencode.ai) — optional OpenAI-compatible gateway ─────────
+    // Zen proxies Claude (and other providers) via OpenAI Chat Completions
+    // API. Use this when you don't have direct Anthropic API access but do
+    // have a Zen account. Prompt caching is NOT preserved through Zen, so
+    // expect higher per-step cost than the direct Claude path.
+    //
+    // zen-client.js reads from cfg.zen.* (this nested block).
+    zen: {
+        url:              'https://opencode.ai/zen/v1',
+        apiKey:           '',
+        // Confirmed against the live Zen catalog (41 models): plain IDs,
+        // no provider prefix. Opus 4.7 is the strongest available; swap
+        // to claude-sonnet-4-6 for higher-throughput MC runs at lower cost.
+        defaultModel:     'claude-opus-4-7',
+        requestTimeoutMs: 90_000,
+        maxTokens:        4000,
+    },
+
+    // ── Default AI provider ────────────────────────────────────────────
+    // Which backend the adjudicator uses by default.
+    //   'ollama' = always local Ollama (sovereign / air-gap)
+    //   'claude' = always cloud Claude direct (requires ANTHROPIC_API_KEY)
+    //   'zen'    = opencode.ai Zen gateway (requires OPENCODE_ZEN_API_KEY)
+    //   'auto'   = first configured of (claude > zen > ollama)
+    // Per-call override is supported via the `provider` arg in
+    // adjudicator-agent.js / monte-carlo-runner.js / web-server.js routes.
+    aiProvider: 'auto',
 };
 
 // ── Optional gitignored overlay (secrets) ───────────────────────────
@@ -157,6 +199,45 @@ const merged = {
     pingTimeoutMs:    asInt(envOverride(overlay.pingTimeoutMs    ?? defaults.pingTimeoutMs,    'RMOOZ_OLLAMA_PING_TIMEOUT_MS'), defaults.pingTimeoutMs),
     requestTimeoutMs: asInt(envOverride(overlay.requestTimeoutMs ?? defaults.requestTimeoutMs, 'RMOOZ_OLLAMA_TIMEOUT_MS'),      defaults.requestTimeoutMs),
     options:          { ...defaults.options, ...(overlay.options || {}) },
+
+    // Claude block — env vars: ANTHROPIC_API_KEY, RMOOZ_CLAUDE_MODEL,
+    // RMOOZ_CLAUDE_TIMEOUT_MS, RMOOZ_CLAUDE_MAX_TOKENS.
+    claude: {
+        apiKey:           envOverride(
+                              (overlay.claude && overlay.claude.apiKey)           ?? defaults.claude.apiKey,
+                              'ANTHROPIC_API_KEY', 'RMOOZ_CLAUDE_API_KEY'),
+        defaultModel:     envOverride(
+                              (overlay.claude && overlay.claude.defaultModel)     ?? defaults.claude.defaultModel,
+                              'RMOOZ_CLAUDE_MODEL'),
+        requestTimeoutMs: asInt(envOverride(
+                              (overlay.claude && overlay.claude.requestTimeoutMs) ?? defaults.claude.requestTimeoutMs,
+                              'RMOOZ_CLAUDE_TIMEOUT_MS'), defaults.claude.requestTimeoutMs),
+        maxTokens:        asInt(envOverride(
+                              (overlay.claude && overlay.claude.maxTokens)        ?? defaults.claude.maxTokens,
+                              'RMOOZ_CLAUDE_MAX_TOKENS'), defaults.claude.maxTokens),
+    },
+
+    // Zen block — env vars: OPENCODE_ZEN_API_KEY, OPENCODE_ZEN_URL,
+    // RMOOZ_ZEN_MODEL, RMOOZ_ZEN_TIMEOUT_MS, RMOOZ_ZEN_MAX_TOKENS.
+    zen: {
+        url:              envOverride(
+                              (overlay.zen && overlay.zen.url)              ?? defaults.zen.url,
+                              'OPENCODE_ZEN_URL', 'RMOOZ_ZEN_URL'),
+        apiKey:           envOverride(
+                              (overlay.zen && overlay.zen.apiKey)           ?? defaults.zen.apiKey,
+                              'OPENCODE_ZEN_API_KEY', 'RMOOZ_ZEN_API_KEY'),
+        defaultModel:     envOverride(
+                              (overlay.zen && overlay.zen.defaultModel)     ?? defaults.zen.defaultModel,
+                              'RMOOZ_ZEN_MODEL', 'OPENCODE_ZEN_MODEL'),
+        requestTimeoutMs: asInt(envOverride(
+                              (overlay.zen && overlay.zen.requestTimeoutMs) ?? defaults.zen.requestTimeoutMs,
+                              'RMOOZ_ZEN_TIMEOUT_MS'), defaults.zen.requestTimeoutMs),
+        maxTokens:        asInt(envOverride(
+                              (overlay.zen && overlay.zen.maxTokens)        ?? defaults.zen.maxTokens,
+                              'RMOOZ_ZEN_MAX_TOKENS'), defaults.zen.maxTokens),
+    },
+
+    aiProvider:       envOverride(overlay.aiProvider ?? defaults.aiProvider, 'RMOOZ_AI_PROVIDER'),
 };
 
 module.exports = merged;

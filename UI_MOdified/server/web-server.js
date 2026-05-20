@@ -45,6 +45,7 @@ const adjudicator  = require('./ai/adjudicator-agent');
 const scenarios    = require('./ai/scenario-loader');
 const mcRunner     = require('./ai/monte-carlo-runner');
 const feedbackStore = require('./ai/feedback-store');
+const lessonStore   = require('./ai/lesson-store');
 const reportBuilder = require('./ai/report-builder');
 const { renderReportHtml } = require('./ai/report-render');
 const coaAgent     = require('./ai/coa-agent');
@@ -585,6 +586,29 @@ const server = http.createServer((req, res) => {
                 : null;
             const counts = feedbackStore.countByScenarioCoa({ scenarioName, coaParams, ageMs });
             sendJson(res, 200, { ok: true, scenarioName, coaParams, counts });
+        } catch (e) {
+            sendJson(res, 400, { ok: false, error: e.message || String(e) });
+        }
+        return;
+    }
+
+    // AAR lessons (item #5). POST to create, GET to list.
+    if (pathname === '/api/ai/lessons' && req.method === 'POST') {
+        readJsonBody(req, { maxBytes: 32_000 }).then(body => {
+            const r = lessonStore.append(body || {});
+            sendJson(res, r.ok ? 200 : 400, r);
+        }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+    if (pathname === '/api/ai/lessons' && req.method === 'GET') {
+        try {
+            const url = new URL('http://x' + req.url);
+            const scenarioName = url.searchParams.get('scenario') || '';
+            const limit = Number(url.searchParams.get('limit')) || 20;
+            const lessons = scenarioName
+                ? lessonStore.listByScenario(scenarioName, limit)
+                : lessonStore.listRecent(limit);
+            sendJson(res, 200, { ok: true, lessons });
         } catch (e) {
             sendJson(res, 400, { ok: false, error: e.message || String(e) });
         }

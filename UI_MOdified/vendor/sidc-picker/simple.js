@@ -10,6 +10,7 @@
       "sp-advanced": "Advanced mode",
       "sp-step-side": "Side", "sp-step-domain": "Domain", "sp-step-type": "Type",
       "sp-step-size": "Size", "sp-step-extras": "Extras", "sp-step-review": "Review",
+      "sp-step-basics": "Basics",
       "sp-q-side": "Who is it?",
       "sp-help-side": "Choose whether the symbol represents your force, opposing force, or unknown.",
       "sp-side-friend": "Friendly", "sp-side-hostile": "Enemy",
@@ -46,6 +47,7 @@
       "sp-advanced": "الوضع المتقدم",
       "sp-step-side": "الجهة", "sp-step-domain": "المجال", "sp-step-type": "النوع",
       "sp-step-size": "الحجم", "sp-step-extras": "إضافات", "sp-step-review": "مراجعة",
+      "sp-step-basics": "الأساسيات",
       "sp-q-side": "من هو؟",
       "sp-help-side": "اختر ما إذا كان الرمز يمثل قواتك أو القوات المعادية أو غير معروف.",
       "sp-side-friend": "صديق", "sp-side-hostile": "عدو",
@@ -130,7 +132,7 @@
     role: "0"         // None
   };
 
-  const STEP_TO_FIELD = { 1: "side", 2: "domain", 3: "type", 4: "size", 5: null };
+  const STEP_TO_FIELD = { 1: "side", 2: "type", 3: null };
 
   const DOMAIN_LABELS = {
     "10": { en: "land unit", ar: "بري" },
@@ -327,14 +329,17 @@
       li.classList.toggle("done", step < n);
     });
     backBtn.disabled = (n === 1);
-    const onReview = (n === 6);
+    const onReview = (n === 3);
     nextBtn.hidden = onReview;
     applyBtn.hidden = !onReview;
-    if (n === 2) renderDomainStep();
-    if (n === 3) renderTypeStep();
-    if (n === 4) renderSizeStep();
-    if (n === 5) renderExtrasStep();
-    if (n === 6) renderReview();
+    if (n === 1) {
+      // Combined Basics page: render Domain icons, Size pills, Extras pills.
+      renderDomainStep();
+      renderSizeStep();
+      renderExtrasStep();
+    }
+    if (n === 2) renderTypeStep();
+    if (n === 3) renderReview();
     // Ensure stage scrolled to top for long lists
     stageEl.scrollTop = 0;
   }
@@ -533,9 +538,9 @@
   }
 
   function renderExtrasStep() {
-    document.querySelectorAll('.sp-step[data-step="5"] [data-field="status"]')
+    document.querySelectorAll('[data-field="status"]')
       .forEach(p => enhanceExtrasPill(p, "status"));
-    document.querySelectorAll('.sp-step[data-step="5"] [data-field="role"]')
+    document.querySelectorAll('[data-field="role"]')
       .forEach(p => enhanceExtrasPill(p, "role"));
   }
 
@@ -657,7 +662,7 @@
         searchEl.value = "";
         reflectSelections();
         updatePreview();
-        showStep(6);
+        showStep(3);
       });
       searchResEl.appendChild(row);
     });
@@ -689,8 +694,8 @@
     if (q.entity && /^\d{6}$/.test(q.entity)) state.type = q.entity;
     // Prefer starting on Type step when caller supplied side+domain but left entity at default.
     if (q.target === "units") {
-      if (q.entity && q.entity !== "000000") return 6;  // jump to Review
-      if (q.side && q.domain) return 3;                 // jump to Type
+      if (q.entity && q.entity !== "000000") return 3;  // jump to Review
+      if (q.side && q.domain) return 2;                 // jump to Type
     }
     return 1;
   }
@@ -725,17 +730,29 @@
       if (n <= state.step || li.classList.contains("done")) showStep(n);
     });
 
-    // Card pickers — selection only; advance via Next button
-    bindCardClick("side",   () => { /* wait for Next */ });
+    // Card pickers — selection only; advance via Next button.
+    // On the Basics page, Side/Domain/Size/Extras live together, so changes
+    // that affect other sections' icons must re-render those sections in place.
+    bindCardClick("side",   () => {
+      if (state.step === 1) {
+        renderDomainStep();
+        renderSizeStep();
+        renderExtrasStep();
+      }
+    });
     bindCardClick("domain", () => {
       // Reset dependent selections when domain changes
       state.type = "000000";
       state.size = "00";
+      if (state.step === 1) {
+        renderSizeStep();
+        renderExtrasStep();
+      }
     });
     bindCardClick("type",   () => { /* wait for Next */ });
-    bindCardClick("size",   () => { /* wait for Next */ });
-    bindCardClick("status", () => { if (state.step === 5) renderExtrasStep(); });
-    bindCardClick("role",   () => { if (state.step === 5) renderExtrasStep(); });
+    bindCardClick("size",   () => { if (state.step === 1) renderExtrasStep(); });
+    bindCardClick("status", () => { if (state.step === 1) renderExtrasStep(); });
+    bindCardClick("role",   () => { if (state.step === 1) renderExtrasStep(); });
 
     // More-types toggle
     typeMoreBtn.addEventListener("click", () => {
@@ -748,7 +765,7 @@
 
     // Footer nav
     backBtn.addEventListener("click", () => { if (state.step > 1) showStep(state.step - 1); });
-    nextBtn.addEventListener("click", () => { if (state.step < 6) showStep(state.step + 1); });
+    nextBtn.addEventListener("click", () => { if (state.step < 3) showStep(state.step + 1); });
     resetBtn.addEventListener("click", () => {
       Object.assign(state, { side: "3", domain: "10", type: "000000", size: "00", status: "0", role: "0" });
       reflectSelections();
@@ -774,8 +791,8 @@
       applyI18n();
       renderTypeStep();
       renderSizeStep();
-      if (state.step === 5) renderExtrasStep();
-      if (state.step === 6) renderReview();
+      if (state.step === 1) renderExtrasStep();
+      if (state.step === 3) renderReview();
       updatePreview();
     });
 

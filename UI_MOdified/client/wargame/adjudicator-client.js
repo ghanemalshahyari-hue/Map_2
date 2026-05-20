@@ -50,6 +50,20 @@
         return postJson('/api/ai/adjudicate', opts);
     }
 
+    // Provider status — returns { available: [...], defaultResolved, providers: {...} }.
+    // Used by the HUD to populate the AI-provider dropdown and show health
+    // dots for Ollama / Claude / Zen.
+    function providerStatus() {
+        return jsonFetch('/api/ai/provider/status');
+    }
+
+    // COA generator — POST /api/ai/coa. Returns { ok, plans:[...], meta }.
+    // Iterative fallback on the server backfills weak-model 1-plan responses
+    // to the requested 3-5 plan minimum.
+    function coa(opts) {
+        return postJson('/api/ai/coa', opts);
+    }
+
     function mcStart(opts) {
         return postJson('/api/ai/mc/start', opts);
     }
@@ -84,6 +98,8 @@
         scenarios,
         scenario,
         adjudicateStep,
+        providerStatus,
+        coa,
         mcStart,
         mcSubscribe,
         mcCancel,

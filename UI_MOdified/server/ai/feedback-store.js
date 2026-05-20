@@ -61,7 +61,10 @@ function normalize(event) {
     const decision = String(e.decision || '').toLowerCase();
     if (!VALID_DECISIONS.has(decision)) return null;
     const stepIndex = Number(e.stepIndex);
-    if (!Number.isInteger(stepIndex) || stepIndex < 0 || stepIndex > 11) return null;
+    // Parametric upper bound — scenarios can have up to 20 steps per
+    // scenario-schema-spec.COUNT_BOUNDS.steps.max. The strict per-scenario
+    // bound is enforced upstream by the adjudicator agent.
+    if (!Number.isInteger(stepIndex) || stepIndex < 0 || stepIndex > 19) return null;
     if (!e.scenarioName || typeof e.scenarioName !== 'string') return null;
     return {
         ts:           new Date().toISOString(),

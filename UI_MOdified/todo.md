@@ -10,8 +10,8 @@
 10. adding hide button to the side bar to use the map more [Ghanem] [done]
 11. offline enviroment [Lahej] [done]
 12. when zooming the units level change[Lahej] [done]
-13. remove "Start over button" replace it with "Add new AOI"[Lahej]
-14. when click on screen all extRA bars GO AWAY
+13. remove "Start over button" replace it with "Add new AOI" [done]
+14. when click on screen all extRA bars GO AWAY [done]
 
 -----------------------------------------------------
 . place unit button not working
@@ -59,8 +59,8 @@ Wargame1/2 reference parity — adjudicator map (2026-05-20)
 16. [done] Blue COUNTERATTACK shifts marker +5 km N (and WITHDRAW -5 km N) during the step, returns to base after — deterministic table for Wargame2 baseline (lc + p21c..p33c).
 17. [done] Reference-style red advance arrow: chunky BLS-3 -> lerp(BLS-3, OBJ, progress), secondary BLS-4 -> OBJ once progress > 0.15, plus a red-tinted salient polygon showing the penetration shape.
 18. [done] resetMap slides every unit back to its step-0 position and drops the salient.
-19. Wire blue_actions through the AI adjudicator response so the COUNTERATTACK schedule is data-driven instead of the static table.
-20. Mirror the same role/appear/spread movement model in turn-engine.js when a scenario is active, so the planner-mode HUD ("Next Turn") behaves consistently with the adjudicator HUD.
+19. Wire blue_actions through the AI adjudicator response so the COUNTERATTACK schedule is data-driven instead of the static table. [done]
+20. Mirror the same role/appear/spread movement model in turn-engine.js when a scenario is active, so the planner-mode HUD ("Next Turn") behaves consistently with the adjudicator HUD. [done]
 
 
 we are in 2026 and the the look of the appas and the user interface are now beeing more easy to use so go through all theapp through everthing from a to z from scratch to the build of the app 

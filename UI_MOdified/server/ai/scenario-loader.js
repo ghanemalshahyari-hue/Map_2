@@ -10,6 +10,8 @@
 const fs   = require('fs');
 const path = require('path');
 
+const scenarioValidator = require('./scenario-validator');
+
 const ROOT = path.join(__dirname, '..', '..');
 const DATA_DIR = process.env.RMOOZ_DATA_DIR || path.join(ROOT, 'data');
 const SCENARIOS_DIR = path.join(DATA_DIR, 'scenarios');
@@ -34,9 +36,30 @@ function loadScenario(name) {
     if (cached && cached.__mtimeMs === mtimeMs) return cached.data;
 
     const data = JSON.parse(fs.readFileSync(file, 'utf8'));
-    if (!Array.isArray(data.steps) || data.steps.length !== 12) {
-        throw new Error(`scenario ${key}: expected steps[12], got ${data.steps && data.steps.length}`);
+
+    // Full schema validation — replaces the old hardcoded `steps.length === 12`
+    // check with parametric range enforcement (4-20 steps) plus shape checks on
+    // every required field. Bad scenarios fail fast here with a structured
+    // error path instead of crashing later in the adjudicator/map/validator.
+    const result = scenarioValidator.validateScenario(data);
+    if (!result.ok) {
+        const err = new Error(
+            `scenario "${key}" failed validation (${result.errors.length} error(s)):\n` +
+            scenarioValidator.formatErrors(result.errors)
+        );
+        err.scenarioName       = key;
+        err.scenarioErrors     = result.errors;
+        err.scenarioWarnings   = result.warnings;
+        err.scenarioSummary    = result.summary;
+        throw err;
     }
+    if (result.warnings.length) {
+        console.warn(
+            `[scenario-loader] "${key}" loaded with ${result.warnings.length} warning(s):\n` +
+            scenarioValidator.formatErrors(result.warnings)
+        );
+    }
+
     cache.set(key, { __mtimeMs: mtimeMs, data });
     return data;
 }

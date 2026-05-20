@@ -90,7 +90,38 @@ function extractUnits(snapshot) {
 // `side` controls which side the AI commands: 'red' = adversary (default),
 // 'blue' = friendly counter-react. The other side is the opponent we react
 // against. Action counts scale with the commanding side's force size.
-function buildUserPrompt({ turn, friendly, hostile, trimmedFriendly, trimmedHostile, side }) {
+// Render the active COA (Course of Action) as a prompt block so Blue's
+// per-step actions advance the commander's chosen plan. Red sees nothing
+// here — Red doesn't know Blue's plan. Empty coaContext → empty string.
+function formatCoaContext(coaContext) {
+    if (!coaContext || typeof coaContext !== 'object') return '';
+    const c = coaContext;
+    const phases = Array.isArray(c.plan) ? c.plan : [];
+    const phasesBlock = phases.length
+        ? phases.map((p, i) => `  ${i + 1}. ${p}`).join('\n')
+        : '  (no explicit phases)';
+    const assumptions = Array.isArray(c.key_assumptions) && c.key_assumptions.length
+        ? `Key assumptions: ${c.key_assumptions.join(' · ')}\n`
+        : '';
+    return [
+        '',
+        '=== ACTIVE COMMANDER\'S PLAN (Blue side) ===',
+        `Plan name: ${c.name || '(unnamed)'}`,
+        `Risk: ${c.risk_tier || '?'}    ETA: ${c.eta_hours != null ? c.eta_hours + 'h' : '?'}    Blue p50 casualties: ${c.blue_casualty_p50 != null ? c.blue_casualty_p50 : '?'}`,
+        c.rationale ? `Rationale: ${c.rationale}` : '',
+        '',
+        'Plan phases (execute in order across the 11-turn engagement):',
+        phasesBlock,
+        '',
+        assumptions,
+        'Choose Blue actions THIS TURN that advance the current phase of this plan.',
+        'Pick whichever plan phase best matches the current turn number and battlefield state.',
+        '=== END PLAN ===',
+        '',
+    ].filter(Boolean).join('\n');
+}
+
+function buildUserPrompt({ turn, friendly, hostile, trimmedFriendly, trimmedHostile, side, coaContext }) {
     const fmtUnit = u => `  - ${u.id}  (${u.name})  at [${u.lng.toFixed(4)}, ${u.lat.toFixed(4)}]`;
     const blueBlock = friendly.length ? friendly.map(fmtUnit).join('\n') : '  (none)';
     const redBlock  = hostile.length  ? hostile.map(fmtUnit).join('\n')  : '  (none)';
@@ -105,6 +136,8 @@ function buildUserPrompt({ turn, friendly, hostile, trimmedFriendly, trimmedHost
     const commanded = isBlue ? friendly : hostile;
     const want = commanded.length <= 3 ? '1' : commanded.length <= 8 ? '2-4' : '4-7';
     const sideLabel = isBlue ? 'Blue' : 'Red';
+    // Only Blue sees the COA — Red is the opposing force, plans aren't shared.
+    const coaBlock = isBlue ? formatCoaContext(coaContext) : '';
     return [
         `Current turn: ${turn || 0}`,
         trimNote,
@@ -114,7 +147,7 @@ function buildUserPrompt({ turn, friendly, hostile, trimmedFriendly, trimmedHost
         '',
         isBlue ? 'Hostile (Red) units:' : 'Hostile (Red) units — you command these:',
         redBlock,
-        '',
+        coaBlock,
         `Propose ${want} reactive actions for the ${sideLabel} units. Respond with the JSON schema only.`,
     ].join('\n');
 }
@@ -236,9 +269,11 @@ function centroid(units) {
 // token/time budget on this hardware.
 const MAX_UNITS_PER_SIDE = 8;
 
-async function propose({ snapshot, units, turn, model, timeoutMs, side }) {
+async function propose({ snapshot, units, turn, model, timeoutMs, side, coaContext }) {
     // Normalise side: default red (legacy callers). Blue path is the new
     // counter-react direction the operator invokes after a Red move.
+    // coaContext is honoured only on the Blue side (the side that chose
+    // the plan). Red AI ignores it — Red doesn't know Blue's plan.
     const playSide = side === 'blue' ? 'blue' : 'red';
     // Prefer a pre-built units list (what the browser actually sends);
     // fall back to extracting from a GeoJSON snapshot for API users
@@ -271,7 +306,7 @@ async function propose({ snapshot, units, turn, model, timeoutMs, side }) {
         };
     }
 
-    const userPrompt = buildUserPrompt({ turn, friendly, hostile, trimmedFriendly, trimmedHostile, side: playSide });
+    const userPrompt = buildUserPrompt({ turn, friendly, hostile, trimmedFriendly, trimmedHostile, side: playSide, coaContext });
     const llm = await ollama.generate({
         model,
         system:  PROMPTS[playSide],

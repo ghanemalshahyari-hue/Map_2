@@ -43,12 +43,13 @@
         });
     }
 
-    async function propose({ snapshot, units, turn, model, timeoutMs, side } = {}) {
+    async function propose({ snapshot, units, turn, model, timeoutMs, side, coaContext } = {}) {
         const route = side === 'blue' ? '/api/ai/blue-team/propose' : '/api/ai/red-team/propose';
         return jsonFetch(route, {
             method:  'POST',
             headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({ snapshot, units, turn, model, timeoutMs }),
+            // coaContext flows through; the server honours it only on Blue.
+            body:    JSON.stringify({ snapshot, units, turn, model, timeoutMs, coaContext }),
         });
     }
 
@@ -484,5 +485,37 @@
         bind();
     }
 
-    window.AppRedTeam = { health, generate, chat, propose, runHealthCheck, runTestPrompt, runPropose };
+    // Headless propose + auto-execute for the COA-driven trial loop.
+    // Unlike runPropose() this does NOT render the proposal cards into the
+    // red-team panel; it just captures a snapshot, asks the AI for moves,
+    // animates valid ones to the map, and returns the raw result so the
+    // adjudicator-hud caller can log it. Use during a COA-active trial
+    // where the operator has delegated decision-making to the AI.
+    async function proposeAndExecuteHeadless({ side, coaContext, turn } = {}) {
+        const which = side === 'blue' ? 'blue' : 'red';
+        lastProposalSide = which;
+        let units = scanMapForUnits();
+        if (!units.length && window.AppUnitsMap && typeof window.AppUnitsMap.listPlacedUnits === 'function') {
+            try { units = window.AppUnitsMap.listPlacedUnits() || []; }
+            catch (_) { /* ignore */ }
+        }
+        let snapshot = null;
+        if (window.AppWarGame && typeof window.AppWarGame.captureSnapshot === 'function') {
+            try { snapshot = window.AppWarGame.captureSnapshot(); }
+            catch (_) { /* ignore */ }
+        }
+        const turnNum = (turn != null)
+            ? turn
+            : ((window.AppTurnEngine && window.AppTurnEngine.state && window.AppTurnEngine.state.turn) || 0);
+
+        const r = await propose({ snapshot, units, turn: turnNum, side: which, coaContext });
+        // Animate valid actions immediately. Invalid ones are ignored here
+        // (the headless caller doesn't surface a review UI by design).
+        if (r && r.ok && Array.isArray(r.actions)) {
+            await executeAllValid(r);
+        }
+        return r;
+    }
+
+    window.AppRedTeam = { health, generate, chat, propose, runHealthCheck, runTestPrompt, runPropose, proposeAndExecuteHeadless };
 })();

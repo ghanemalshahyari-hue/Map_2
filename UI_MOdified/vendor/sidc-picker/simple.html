@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Create Military Symbol</title>
-  <link rel="stylesheet" href="simple.css" />
+  <link rel="stylesheet" href="simple.css?v=20260520e" />
 </head>
 <body>
   <div class="picker-app">
@@ -24,12 +24,9 @@
 
     <nav class="picker-stepper" aria-label="Build progress">
       <ol id="sp-steps">
-        <li data-step="1"><span class="sp-step-num">1</span><span class="sp-step-label" data-i18n="sp-step-side">Side</span></li>
-        <li data-step="2"><span class="sp-step-num">2</span><span class="sp-step-label" data-i18n="sp-step-domain">Domain</span></li>
-        <li data-step="3"><span class="sp-step-num">3</span><span class="sp-step-label" data-i18n="sp-step-type">Type</span></li>
-        <li data-step="4"><span class="sp-step-num">4</span><span class="sp-step-label" data-i18n="sp-step-size">Size</span></li>
-        <li data-step="5"><span class="sp-step-num">5</span><span class="sp-step-label" data-i18n="sp-step-extras">Extras</span></li>
-        <li data-step="6"><span class="sp-step-num">6</span><span class="sp-step-label" data-i18n="sp-step-review">Review</span></li>
+        <li data-step="1"><span class="sp-step-num">1</span><span class="sp-step-label" data-i18n="sp-step-basics">Basics</span></li>
+        <li data-step="2"><span class="sp-step-num">2</span><span class="sp-step-label" data-i18n="sp-step-type">Type</span></li>
+        <li data-step="3"><span class="sp-step-num">3</span><span class="sp-step-label" data-i18n="sp-step-review">Review</span></li>
       </ol>
     </nav>
 
@@ -60,8 +57,8 @@
           </div>
         </div>
 
-        <!-- Step 2: Domain -->
-        <div class="sp-step" data-step="2" hidden>
+        <!-- Step 1: Domain -->
+        <div class="sp-step" data-step="1">
           <h2 class="sp-step-title" data-i18n="sp-q-domain">Where does it operate?</h2>
           <p class="sp-step-help" data-i18n="sp-help-domain">Pick the environment. You can add mobility and equipment later.</p>
           <div class="sp-card-grid sp-grid-4">
@@ -100,8 +97,8 @@
           </div>
         </div>
 
-        <!-- Step 3: Type -->
-        <div class="sp-step" data-step="3" hidden>
+        <!-- Step 2: Type -->
+        <div class="sp-step" data-step="2" hidden>
           <h2 class="sp-step-title" data-i18n="sp-q-type">What kind of unit or activity?</h2>
           <p class="sp-step-help" data-i18n="sp-help-type">Common choices appear first. Tap <em>More</em> for the full list.</p>
           <div class="sp-card-grid sp-grid-3" id="sp-type-common"></div>
@@ -109,15 +106,15 @@
           <div class="sp-secondary-grid sp-scroll" id="sp-type-all" hidden></div>
         </div>
 
-        <!-- Step 4: Size -->
-        <div class="sp-step" data-step="4" hidden>
+        <!-- Step 1: Size -->
+        <div class="sp-step" data-step="1">
           <h2 class="sp-step-title" data-i18n="sp-q-size">How big is it?</h2>
           <p class="sp-step-help" data-i18n="sp-help-size">Unit level — you can leave this as <em>Unspecified</em>.</p>
           <div class="sp-pill-grid" id="sp-size-grid"></div>
         </div>
 
-        <!-- Step 5: Extras -->
-        <div class="sp-step" data-step="5" hidden>
+        <!-- Step 1: Extras -->
+        <div class="sp-step" data-step="1">
           <h2 class="sp-step-title" data-i18n="sp-q-extras">Any special details?</h2>
           <p class="sp-step-help" data-i18n="sp-help-extras">Optional. Leave the defaults if unsure.</p>
           <div class="sp-extras-section">
@@ -139,8 +136,8 @@
           </div>
         </div>
 
-        <!-- Step 6: Review -->
-        <div class="sp-step" data-step="6" hidden>
+        <!-- Step 3: Review -->
+        <div class="sp-step" data-step="3" hidden>
           <h2 class="sp-step-title" data-i18n="sp-q-review">Review and apply</h2>
           <p class="sp-step-help sp-sentence" id="sp-sentence"></p>
           <details class="sp-advanced-block">
@@ -170,6 +167,6 @@
 
   <script src="../../client/sidc-data.js"></script>
   <script src="../../lib/milsymbol.js"></script>
-  <script src="simple.js"></script>
+  <script src="simple.js?v=20260520e"></script>
 </body>
 </html>

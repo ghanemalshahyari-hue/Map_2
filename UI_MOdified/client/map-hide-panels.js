@@ -7,6 +7,8 @@
  *   - Left context panel  → peek chevron (#context-panel-peek)
  *   - Right chat sidebar  → header chat toggle  (#chat-toggle-btn)
  *   - Bottom ORBAT dock   → tool-rail "Units" button / dock open API
+ *   - Ops/Intel panel     → tool-rail wargame button
+ *   - Auto-draw controls  → Auto Draw button
  */
 (function () {
     'use strict';
@@ -29,8 +31,6 @@
     function hideChatSidebar() {
         const chat = document.getElementById('chat-sidebar');
         if (!chat || chat.classList.contains('collapsed')) return;
-        // Prefer the existing close button — it carries any ancillary
-        // state-cleanup logic registered in chat.js.
         const closeBtn = document.getElementById('chat-close-btn');
         if (closeBtn) {
             closeBtn.click();
@@ -53,10 +53,25 @@
         }
     }
 
+    function hideOpsIntelPanel() {
+        const panel = document.getElementById('ops-intel-panel');
+        if (!panel || !panel.classList.contains('is-visible')) return;
+        panel.classList.remove('is-visible');
+        panel.setAttribute('aria-hidden', 'true');
+    }
+
+    function hideAutoFlankControls() {
+        const controls = document.getElementById('auto-flank-controls');
+        if (!controls || controls.style.display === 'none') return;
+        controls.style.display = 'none';
+    }
+
     function hideAllPanels() {
         hideContextPanel();
         hideChatSidebar();
         hideOrbatDock();
+        hideOpsIntelPanel();
+        hideAutoFlankControls();
     }
 
     // Wait for Leaflet's map instance to exist (set up by app.js as window.map),

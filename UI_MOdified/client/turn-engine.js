@@ -399,11 +399,13 @@ let activeCombats = [];
             showToast(wt('wg-toast-no-scenario-units', 'Scenario drawn but no Red units found.'), 'warn');
             return { error: 'no-scenario-units' };
         }
+        // Snap markers to step-0 positions FIRST, then capture initial
+        // positions so resetScenario() doesn't override with stale coords.
+        window.AppAdjudicatorMap.applyStepProgress(0, 0);
         const unitPaths = red.map(m => ({
             marker:        m,
             unitCode:      (m._wgRedMeta && m._wgRedMeta.uid) || '?',
             initialLatLng: L.latLng(m.getLatLng().lat, m.getLatLng().lng),
-            scenarioMeta:  m._wgRedMeta || null,
         }));
         // Friendlies for contact = scenario Blue markers + any user-placed
         // friendly markers (affiliation digit '3'). Dedup by reference so
@@ -415,23 +417,17 @@ let activeCombats = [];
 
         state = {
             scenarioMode:   true,
-            scenarioStep:   0,
+            turn:           0,
             arrow:          null,
-            // Synthetic axis so the existing HUD code can keep reading
-            // axis.lengthKm. Length = OBJ NASSER nominal depth (95 km).
             axis:           { kind: 'scenario', lengthKm: 95 },
             unitPaths,
             friendlyMarkers,
-            turn:           0,
             advancedKm:     0,
             stopped:        false,
             contact:        null,
             snapshots:      [],
             arrowOffsetKm:  0,
         };
-        // Snap markers to step-0 positions so the planner HUD starts from a
-        // clean state regardless of where the adjudicator left them.
-        window.AppAdjudicatorMap.applyStepProgress(0, 0);
         renderHud();
         return {
             ok:         true,
@@ -450,8 +446,8 @@ let activeCombats = [];
         if (state.stopped) {
             return { error: 'stopped', reason: state.contact ? 'contact' : 'end-of-scenario' };
         }
-        const nextStep = Math.min(SCENARIO_TOTAL_STEPS, state.scenarioStep + 1);
-        if (nextStep === state.scenarioStep) {
+        const nextStep = Math.min(SCENARIO_TOTAL_STEPS, state.turn + 1);
+        if (nextStep === state.turn) {
             state.stopped = true;
             renderHud();
             return { error: 'stopped', reason: 'end-of-scenario' };
@@ -459,9 +455,8 @@ let activeCombats = [];
         const progress = nextStep / SCENARIO_TOTAL_STEPS;
         window.AppAdjudicatorMap.applyStepProgress(nextStep, progress);
 
-        state.scenarioStep = nextStep;
-        state.turn         = nextStep;
-        state.advancedKm   = +(state.axis.lengthKm * progress).toFixed(1);
+        state.turn       = nextStep;
+        state.advancedKm = +(state.axis.lengthKm * progress).toFixed(1);
 
         // Contact detection — same model as slot mode. Reuses the marker
         // positions the shared movement model just wrote.
@@ -483,6 +478,10 @@ let activeCombats = [];
                 }
             }
         }
+        // Capture snapshot for analytics (parity with arrow mode).
+        if (typeof window.AppWarGame?.captureSnapshot === 'function') {
+            state.snapshots.push(window.AppWarGame.captureSnapshot());
+        }
         if (contact) {
             state.contact = contact;
             state.stopped = true;
@@ -494,7 +493,7 @@ let activeCombats = [];
         try {
             document.dispatchEvent(new CustomEvent('wargame:turn-ended', { detail: {
                 turn: state.turn, contact, stopped: state.stopped, advancedKm: state.advancedKm,
-                scenarioMode: true, scenarioStep: state.scenarioStep,
+                scenarioMode: true,
             }}));
         } catch (_) { /* ignore */ }
         return { turn: state.turn, stopped: state.stopped, contact, advancedKm: state.advancedKm };
@@ -503,13 +502,11 @@ let activeCombats = [];
     function resetScenario() {
         if (!state || !state.scenarioMode) return;
         window.AppAdjudicatorMap.applyStepProgress(0, 0);
-        for (const up of state.unitPaths) up.marker.setLatLng(up.initialLatLng);
-        state.scenarioStep = 0;
-        state.turn         = 0;
-        state.advancedKm   = 0;
-        state.stopped      = false;
-        state.contact      = null;
-        state.snapshots    = [];
+        state.turn       = 0;
+        state.advancedKm = 0;
+        state.stopped    = false;
+        state.contact    = null;
+        state.snapshots  = [];
         activeCombats = [];
         renderHud();
     }

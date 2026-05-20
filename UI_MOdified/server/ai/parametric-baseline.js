@@ -8,7 +8,7 @@
  *
  * This module lets baselineStateForStep nudge the NUMERICAL fields
  * (phase_line_km, losses_step.blue, per_unit_deltas.blue_destroyed,
- * red_losses_cumulative) by COA — three knobs:
+ * red_losses_cumulative) by COA — four knobs:
  *
  *   posture ∈ {deliberate, hasty}
  *     hasty trades early speed for friction: +20% PL on steps 1..5,
@@ -26,17 +26,20 @@
  *     Anything other than BLS-3 (the unconstrained exit corridor per
  *     scenario.terrain_note) throttles PL by 15%.
  *
- * Strings (objective_status, bls_status, narrative_*, force_ratio,
- * logistics_state) stay on the curated baseline — those are doctrinal
- * narrative, not numerical state.
+ *   weather ∈ {clear, overcast, storm, night}
+ *     Affects EW effect decay (storm/night accelerate), logistics strain,
+ *     and phase line speed.
  *
- * Contract: when coaParams equals DEFAULT_COA (deliberate / 72 / BLS-3)
- * every adjustment is zero, so applyParametric is a no-op. That keeps
- * the item-10 regression tests (W1→CAPTURED, W2→DENIED) passing.
+ * Strings (objective_status, narrative_*, force_ratio) stay on the
+ * curated baseline — those are doctrinal narrative, not numerical state.
+ *
+ * Contract: when coaParams equals DEFAULT_COA (deliberate / 72 / BLS-3 /
+ * clear) every adjustment is zero, so applyParametric is a no-op. That
+ * keeps the item-10 regression tests (W1→CAPTURED, W2→DENIED) passing.
  *
  * Public surface:
  *   parametricAdjustments(stepIndex, baselineStep, coaParams)
- *     → { plDelta, blueLossDelta, redLossDelta, ... }
+ *     → { plDelta, blueLossDelta, redLossDelta, ewShift, logiShift }
  *   applyParametric(state, deltas, scenario, prevState)
  *     → mutated state
  *   isDefaultCoa(coaParams) → boolean
@@ -47,21 +50,85 @@
 const DEFAULT_POSTURE   = 'deliberate';
 const DEFAULT_RESERVE   = 72;
 const DEFAULT_AXIS      = 'BLS-3';
+const DEFAULT_WEATHER   = 'clear';
+
+// EW progression order (increasing index = more intense EW operations).
+const EW_ORDER = ['Idle', 'Active', 'Heavy', 'Moderate', 'Low'];
+const EW_IDX  = Object.fromEntries(EW_ORDER.map((v, i) => [v, i]));
+
+// Logistics progression (increasing index = deeper strain).
+// Values match the scenario step baselines in campaign order.
+const LOGI_ORDER = [
+    'Beachhead support area forming',
+    'Single-corridor constrained',
+    'Culminating',
+];
+const LOGI_IDX  = Object.fromEntries(LOGI_ORDER.map((v, i) => [v, i]));
 
 function isDefaultCoa(coa) {
     if (!coa) return true;
     const posture = coa.posture || DEFAULT_POSTURE;
     const reserveHr = Number(coa.reserve_commit_hour);
     const axis = coa.main_effort_axis || DEFAULT_AXIS;
+    const weather = coa.weather || DEFAULT_WEATHER;
     return posture === DEFAULT_POSTURE
         && (!Number.isFinite(reserveHr) || reserveHr === DEFAULT_RESERVE)
-        && axis === DEFAULT_AXIS;
+        && axis === DEFAULT_AXIS
+        && weather === DEFAULT_WEATHER;
 }
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
+// ── EW helpers ────────────────────────────────────────────────────────
+function ewIndex(baselineEw) {
+    return EW_IDX[baselineEw] != null ? EW_IDX[baselineEw] : 2; // fallback to Heavy
+}
+
+function ewBandForIndex(i) {
+    const idx = clamp(Math.round(i), 0, EW_ORDER.length - 1);
+    return EW_ORDER[idx];
+}
+
+// The EW band at each step follows the baseline progression shifted by
+// `ewShift` steps (positive = decays faster, negative = sustained longer).
+function parametricEw(baselineEw, stepIndex, ewShift) {
+    const baseIdx = ewIndex(baselineEw);
+    // Before H-Hour (step 0) EW builds up; parametric shift is attenuated.
+    const shift = stepIndex === 0 ? Math.round(ewShift * 0.3) : ewShift;
+    return ewBandForIndex(baseIdx + shift);
+}
+
+// ── Logistics helpers ─────────────────────────────────────────────────
+function logiIndex(baselineLogi) {
+    return LOGI_IDX[baselineLogi] != null ? LOGI_IDX[baselineLogi] : 1; // fallback to constrained
+}
+
+function logiBandForIndex(i) {
+    const idx = clamp(Math.round(i), 0, LOGI_ORDER.length - 1);
+    return LOGI_ORDER[idx];
+}
+
+// Logistics strain shifts the index forward (higher = more strained).
+function parametricLogi(baselineLogi, stepIndex, logiShift) {
+    const baseIdx = logiIndex(baselineLogi);
+    return logiBandForIndex(baseIdx + logiShift);
+}
+
+// ── Weather tables ────────────────────────────────────────────────────
+// Each weather condition maps to { ewDecay, plPenalty, logiStrain, blueLossBonus }.
+// ewDecay: extra EW decay steps (positive = decays faster, negative = sustained longer)
+// plPenalty: percentage of base PL to subtract
+// logiStrain: extra logistics strain index shift
+// blueLossBonus: extra Blue casualties per step from P2A onward
+const WEATHER_TABLE = {
+    clear:    { ewDecay: 0,  plPenalty: 0,    logiStrain: 0, blueLossBonus: 0 },
+    overcast: { ewDecay: 1,  plPenalty: 0.05, logiStrain: 1, blueLossBonus: 0 },
+    storm:    { ewDecay: 2,  plPenalty: 0.20, logiStrain: 2, blueLossBonus: 1 },
+    night:    { ewDecay: 1,  plPenalty: 0,    logiStrain: 0, blueLossBonus: 1 },  // limited visibility
+};
+
 function parametricAdjustments(stepIndex, baselineStep, coaParams) {
-    const zero = { plDelta: 0, blueLossDelta: 0, redLossDelta: 0 };
+    const zero = { plDelta: 0, blueLossDelta: 0, redLossDelta: 0, ewShift: 0, logiShift: 0 };
     if (isDefaultCoa(coaParams)) return zero;
 
     const posture   = coaParams.posture || DEFAULT_POSTURE;
@@ -69,6 +136,8 @@ function parametricAdjustments(stepIndex, baselineStep, coaParams) {
                         ? Number(coaParams.reserve_commit_hour)
                         : DEFAULT_RESERVE;
     const axis      = coaParams.main_effort_axis || DEFAULT_AXIS;
+    const weather   = coaParams.weather || DEFAULT_WEATHER;
+    const wx        = WEATHER_TABLE[weather] || WEATHER_TABLE.clear;
 
     const basePl = Number.isFinite(baselineStep.phase_line_km_baseline)
                       ? baselineStep.phase_line_km_baseline
@@ -77,33 +146,34 @@ function parametricAdjustments(stepIndex, baselineStep, coaParams) {
     let plDelta = 0;
     let blueLossDelta = 0;
     let redLossDelta = 0;
+    let ewShift = 0;      // positive = EW decays faster (less effective)
+    let logiShift = 0;    // positive = logistics more strained
 
     // ── posture
     if (posture === 'hasty') {
         if (stepIndex >= 1 && stepIndex <= 5) plDelta += Math.round(basePl * 0.20);
         if (stepIndex >= 4) blueLossDelta += 1;
         if (stepIndex >= 6) redLossDelta  += 1;  // friction accumulates
+        // Hasty ops degrade EW prep and strain logistics.
+        if (stepIndex >= 2) { ewShift += 1; logiShift += 1; }
     }
 
     // ── reserve_commit_hour
-    // The triggering step is roughly reserveHr / 6 (each step ≈ 6h of
-    // elapsed campaign time on average through P2A). Earlier commit → Red
-    // runs into Blue's counterattack sooner.
     if (reserveHr < DEFAULT_RESERVE) {
         const triggerStep = Math.max(1, Math.floor(reserveHr / 6));
         if (stepIndex >= triggerStep) {
             plDelta -= Math.round((DEFAULT_RESERVE - reserveHr) / 8);
-            // Counterattacking earlier means Red also takes more losses.
             if (stepIndex >= triggerStep + 1) redLossDelta += 1;
         }
+        // Early reserves relieve logistics strain slightly.
+        if (stepIndex >= triggerStep) logiShift -= 1;
     } else if (reserveHr > DEFAULT_RESERVE) {
-        // Apply through step 11 so terminal PL also reflects the late-commit
-        // bonus — Red has more time to push toward OBJ before reserves bite.
         if (stepIndex >= 1 && stepIndex <= 11) {
             plDelta += Math.round((reserveHr - DEFAULT_RESERVE) / 12);
         }
-        // Defenders exposed longer when reserves arrive late.
         if (stepIndex >= 8) blueLossDelta += 1;
+        // Late reserves strain logistics further.
+        if (stepIndex >= 6) logiShift += 1;
     }
 
     // ── main_effort_axis — only BLS-3 has the unconstrained corridor.
@@ -111,7 +181,13 @@ function parametricAdjustments(stepIndex, baselineStep, coaParams) {
         plDelta -= Math.round(basePl * 0.15);
     }
 
-    return { plDelta, blueLossDelta, redLossDelta };
+    // ── weather — applied multiplicatively with existing deltas.
+    ewShift     += wx.ewDecay;
+    logiShift   += wx.logiStrain;
+    plDelta     -= Math.round(basePl * wx.plPenalty);
+    blueLossDelta += wx.blueLossBonus;
+
+    return { plDelta, blueLossDelta, redLossDelta, ewShift, logiShift };
 }
 
 // Pick alive Blue uids to mark destroyed (or revive baseline-destroyed ones)
@@ -142,7 +218,8 @@ function adjustBlueDestroyed(scenario, baselineDestroyedUids, prevDestroyedCum, 
 
 function applyParametric(state, deltas, scenario, prevState) {
     if (!state || !deltas) return state;
-    if (deltas.plDelta === 0 && deltas.blueLossDelta === 0 && deltas.redLossDelta === 0) {
+    if (deltas.plDelta === 0 && deltas.blueLossDelta === 0 && deltas.redLossDelta === 0
+        && deltas.ewShift === 0 && deltas.logiShift === 0) {
         return state;
     }
 
@@ -182,6 +259,16 @@ function applyParametric(state, deltas, scenario, prevState) {
         }
     }
 
+    // EW effect — shift the band by ewShift (positive = faster decay).
+    if (deltas.ewShift !== 0 && state.ew_effect) {
+        state.ew_effect = parametricEw(state.ew_effect, state.step_index, deltas.ewShift);
+    }
+
+    // Logistics state — shift the band by logiShift (positive = more strain).
+    if (deltas.logiShift !== 0 && state.logistics_state) {
+        state.logistics_state = parametricLogi(state.logistics_state, state.step_index, deltas.logiShift);
+    }
+
     return state;
 }
 
@@ -190,7 +277,13 @@ module.exports = {
     applyParametric,
     adjustBlueDestroyed,
     isDefaultCoa,
+    parametricEw,
+    parametricLogi,
+    EW_ORDER,
+    LOGI_ORDER,
+    WEATHER_TABLE,
     DEFAULT_POSTURE,
     DEFAULT_RESERVE,
     DEFAULT_AXIS,
+    DEFAULT_WEATHER,
 };

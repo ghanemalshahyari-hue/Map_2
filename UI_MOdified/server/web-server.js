@@ -45,6 +45,9 @@ const adjudicator  = require('./ai/adjudicator-agent');
 const scenarios    = require('./ai/scenario-loader');
 const mcRunner     = require('./ai/monte-carlo-runner');
 const feedbackStore = require('./ai/feedback-store');
+const reportBuilder = require('./ai/report-builder');
+const { renderReportHtml } = require('./ai/report-render');
+const coaAgent     = require('./ai/coa-agent');
 if (Database) {
     try {
         appData.initAppData({ Database, dataDir: DATA_DIR, legacyUnitsFile: process.env.RMOOZ_UNITS_DB_FILE || path.join(DATA_DIR, 'units.db') });
@@ -435,6 +438,34 @@ const server = http.createServer((req, res) => {
             .catch(e => sendJson(res, 500, { ok: false, error: e.message || String(e) }));
         return;
     }
+    // COA generator — produces 3-5 candidate Courses of Action for the
+    // commander given a scenario, current state, and a short intent.
+    // Body: { scenarioName, currentState?, commanderIntent?, constraints?,
+    //         provider?, model?, timeoutMs? }
+    // Returns: { ok, plans: [...], meta }
+    if (pathname === '/api/ai/coa' && req.method === 'POST') {
+        readJsonBody(req, { maxBytes: 1_000_000 }).then(async (body) => {
+            body = body || {};
+            const scenarioName = body.scenarioName || scenarios.DEFAULT_NAME;
+            const scenario = scenarios.loadScenario(scenarioName);
+            return coaAgent.generateCoaSet({
+                scenario,
+                currentState:    body.currentState    || null,
+                commanderIntent: body.commanderIntent || null,
+                constraints:     body.constraints     || null,
+                provider:        body.provider        || null,
+                model:           body.model           || null,
+                timeoutMs:       body.timeoutMs       || null,
+            });
+        }).then(r => {
+            // 200 on partial success (plans present even if some dropped);
+            // 502 only when no plans at all could be extracted. Caller can
+            // inspect meta.errors / meta.validationDropped for soft issues.
+            const status = (r.ok || (r.plans && r.plans.length)) ? 200 : 502;
+            sendJson(res, status, r);
+        }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
     if (pathname === '/api/ai/generate' && req.method === 'POST') {
         readJsonBody(req).then(body => {
             return ollama.generate(body || {});
@@ -556,6 +587,36 @@ const server = http.createServer((req, res) => {
             sendJson(res, 200, { ok: true, scenarioName, coaParams, counts });
         } catch (e) {
             sendJson(res, 400, { ok: false, error: e.message || String(e) });
+        }
+        return;
+    }
+
+    // Comparison report (item #12). Three-column comparison of a scenario:
+    // baseline / live AI (trial-000 of an MC run) / MC distribution. Default
+    // run is the most-recent completed MC for the named scenario.
+    //   GET /api/ai/report.html?scenario=NAME[&runId=RUNID]   (rendered HTML)
+    //   GET /api/ai/report.json?scenario=NAME[&runId=RUNID]   (raw data)
+    if ((pathname === '/api/ai/report.html' || pathname === '/api/ai/report.json') && req.method === 'GET') {
+        try {
+            const url = new URL('http://x' + req.url);
+            const scenarioName = url.searchParams.get('scenario') || scenarios.DEFAULT_NAME;
+            const runId        = url.searchParams.get('runId') || null;
+            const report = reportBuilder.buildReport({ scenarioName, runId });
+            if (pathname === '/api/ai/report.json') {
+                sendJson(res, 200, { ok: true, report });
+            } else {
+                const html = renderReportHtml(report);
+                res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+                res.end(html);
+            }
+        } catch (e) {
+            const msg = e && e.message || String(e);
+            if (pathname === '/api/ai/report.json') {
+                sendJson(res, 400, { ok: false, error: msg });
+            } else {
+                res.writeHead(400, { 'Content-Type': 'text/html; charset=utf-8' });
+                res.end(`<!doctype html><meta charset=utf-8><title>Report error</title><pre style="color:#b22;padding:20px;">Report error: ${msg.replace(/</g,'&lt;')}</pre>`);
+            }
         }
         return;
     }

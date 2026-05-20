@@ -23,6 +23,8 @@
     let mcRunSubscription = null;
     let activeRunId = null;
     let scenarioCache = null;  // full scenario JSON, fetched on demand for map overlay
+    let aiHealth = null;       // last /api/ai/health probe: { ok, url, defaultModel, models?, error? }
+    let lastRunMode = null;    // 'mock' | 'live' | 'fallback' — last adjudicate response's actual run mode
 
     // ── Boot ─────────────────────────────────────────────────────────
     function boot() {
@@ -35,6 +37,38 @@
         }
         setStatus('Idle. Click "Adjudicate next step" to begin.', 'idle');
         loadScenarios().then(autoDrawWhenReady);
+        // Probe the AI backend so the Mock toggle and status row reflect
+        // reality at boot — and the user knows up-front whether trials will
+        // actually use the LLM or fall back to baseline.
+        probeAiHealth();
+    }
+
+    // ── AI backend health probe (items 1+2+3) ────────────────────────
+    // Calls /api/ai/health, updates the setup row, and chooses the Mock
+    // toggle default. The probe is fire-and-forget: an unreachable backend
+    // just degrades the UI to "Mock required" without breaking the rest.
+    async function probeAiHealth() {
+        try {
+            const res = await fetch('/api/ai/health');
+            const body = await res.json().catch(() => null);
+            aiHealth = body || { ok: false, error: 'no body' };
+        } catch (e) {
+            aiHealth = { ok: false, error: (e && e.message) || String(e) };
+        }
+        renderBackendRow();
+        // Default Mock OFF when backend is up (so trials actually exercise
+        // the LLM); ON + disabled when backend is down (so trials still run
+        // but no surprise ECONNREFUSED at every step).
+        const mockEl = $('wg-adj-mock');
+        if (mockEl) {
+            if (aiHealth.ok) {
+                mockEl.checked  = false;
+                mockEl.disabled = false;
+            } else {
+                mockEl.checked  = true;
+                mockEl.disabled = true;
+            }
+        }
     }
 
     // Try to draw the scenario on the map as soon as both the scenario JSON
@@ -69,6 +103,15 @@
                 Loading scenarios…
             </div>
 
+            <!-- ── AI backend health + last-run mode ── -->
+            <div id="wg-adj-backend-row" style="display:flex;align-items:center;gap:8px;font-size:11px;color:#cdd;margin:4px 2px 2px;">
+                <span id="wg-adj-backend-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#888;"></span>
+                <span id="wg-adj-backend-text" style="flex:1;">Checking backend…</span>
+                <button id="wg-adj-backend-refresh" type="button" title="Re-probe AI backend"
+                    style="background:transparent;border:none;color:#9ab;cursor:pointer;font-size:12px;padding:0 4px;">&#8635;</button>
+                <span id="wg-adj-mode-chip" class="wargame-state-pill is-idle" style="font-size:10px;padding:1px 8px;">Mode: —</span>
+            </div>
+
             <!-- ── Setup: scenario + model + mock toggle ── -->
             <div class="wg-adj-section">
                 <div class="wg-adj-section-title">Setup</div>
@@ -93,7 +136,7 @@
                 </div>
                 <label class="wg-adj-toggle">
                     <input type="checkbox" id="wg-adj-mock" checked />
-                    <span>Mock mode (no Ollama)</span>
+                    <span id="wg-adj-mock-label">Mock mode (no Ollama) — replays scenario baseline</span>
                 </label>
             </div>
 
@@ -205,6 +248,53 @@
         if (kind === 'idle')    setPill(pill, 'idle', 'Idle');
         const box = $('wg-adj-status');
         if (box) box.textContent = msg;
+    }
+
+    // ── Backend row + mode chip rendering (items 1+2+3) ──────────────
+    function renderBackendRow() {
+        const dot   = $('wg-adj-backend-dot');
+        const text  = $('wg-adj-backend-text');
+        const label = $('wg-adj-mock-label');
+        if (!dot || !text) return;
+        if (!aiHealth) {
+            dot.style.background = '#888';
+            text.textContent     = 'Checking backend…';
+            return;
+        }
+        if (aiHealth.ok) {
+            dot.style.background = '#4caf50';
+            const style = aiHealth.apiStyle ? aiHealth.apiStyle + ' · ' : '';
+            text.innerHTML = `Live AI ready · ${style}${escapeHtml(aiHealth.defaultModel || '(default)')} @ ${escapeHtml(aiHealth.url || '?')}`;
+            if (label) label.textContent = 'Mock mode (skip LLM, replay scenario baseline)';
+        } else {
+            dot.style.background = '#d23a3a';
+            const err = aiHealth.error || 'unreachable';
+            text.innerHTML = `Backend offline · ${escapeHtml(aiHealth.url || '?')} — <span style="color:#e8a23a;">${escapeHtml(err)}</span>`;
+            if (label) label.textContent = 'Mock mode (backend offline — required for trials)';
+        }
+    }
+
+    // Classify one adjudicate response into a mode label + pill kind.
+    //   - validation.mocked === true                → 'mock'
+    //   - r.ok && !mocked                           → 'live'
+    //   - !r.ok or validation.fallback present      → 'fallback'
+    function classifyRun(r) {
+        const mocked   = !!(r && r.validation && r.validation.mocked);
+        const fallback = (r && r.validation && r.validation.fallback) || (r && r.meta && r.meta.fallback);
+        if (mocked)      return { mode: 'mock',     label: 'Mock', kind: 'idle' };
+        if (fallback)    return { mode: 'fallback', label: 'Fallback · ' + fallback, kind: 'error' };
+        if (r && r.ok)   return { mode: 'live',     label: 'Live · ' + ((r.meta && r.meta.model) || '(model)'), kind: 'ok' };
+        return { mode: 'idle', label: '—', kind: 'idle' };
+    }
+
+    function setLastMode(r) {
+        const chip = $('wg-adj-mode-chip');
+        if (!chip) return;
+        const c = classifyRun(r);
+        lastRunMode = c.mode;
+        chip.classList.remove('is-idle', 'is-active', 'is-error', 'is-ok');
+        chip.classList.add('is-' + c.kind);
+        chip.textContent = 'Mode: ' + c.label;
     }
 
     // ── Scenario list ────────────────────────────────────────────────
@@ -500,6 +590,7 @@
         }
         window.AppScenarioState.applyDelta(trial, r);
         renderStep(r.state, r.validation, { ...r.meta, durationMs: r.meta && r.meta.durationMs || wall });
+        setLastMode(r);
         const tag = r.ok ? '' : ` [fallback: ${r.validation && r.validation.fallback}]`;
         setStatus(`Step ${nextIndex} resolved in ${wall} ms${tag}.`, r.ok ? 'ok' : 'error');
     }
@@ -513,6 +604,10 @@
         if (window.AppAdjudicatorMap) window.AppAdjudicatorMap.resetMap();
         const req = currentRequest();
         const paceMs = Math.max(0, Number(($('wg-adj-pace-ms') && $('wg-adj-pace-ms').value) || 1200));
+        // Per-trial mode tally so the closing line tells the truth about
+        // what actually ran instead of just "N fallback step(s)".
+        const modeCounts = { live: 0, mock: 0, fallback: 0 };
+        const fallbackReasons = {};
         for (let i = 1; i <= 11; i++) {
             setStatus(`Trial step ${i}/11…`, 'active');
             const body = {
@@ -533,6 +628,13 @@
             }
             window.AppScenarioState.applyDelta(trial, r);
             renderStep(r.state, r.validation, r.meta);
+            setLastMode(r);
+            const cls = classifyRun(r);
+            modeCounts[cls.mode] = (modeCounts[cls.mode] || 0) + 1;
+            if (cls.mode === 'fallback') {
+                const why = (r.validation && r.validation.fallback) || 'unknown';
+                fallbackReasons[why] = (fallbackReasons[why] || 0) + 1;
+            }
             // Pace the playback so map effects (BLS color shifts, Blue
             // squares fading, phase-line creep) are visible step by step.
             // In mock mode each call is ~5 ms; without this delay you'd
@@ -540,8 +642,15 @@
             // already ~100 s so paceMs adds little.
             if (i < 11 && paceMs > 0) await sleep(paceMs);
         }
-        const fallbacks = window.AppScenarioState.fallbackCount(trial);
-        setStatus(`Trial complete — ${fallbacks} fallback step(s).`, 'ok');
+        const parts = [];
+        if (modeCounts.live)     parts.push(`Live ${modeCounts.live}`);
+        if (modeCounts.mock)     parts.push(`Mock ${modeCounts.mock}`);
+        if (modeCounts.fallback) {
+            const detail = Object.entries(fallbackReasons).map(([k, v]) => `${v}×${k}`).join(', ');
+            parts.push(`Fallback ${modeCounts.fallback} (${detail})`);
+        }
+        const ok = modeCounts.fallback === 0;
+        setStatus(`Trial complete — ${parts.join(' · ')}.`, ok ? 'ok' : 'error');
     }
 
     function resetTrial() {
@@ -647,6 +756,12 @@
         root.querySelector('#wg-adj-reset-btn').addEventListener('click', resetTrial);
         root.querySelector('#wg-adj-mc-btn').addEventListener('click', startMc);
         root.querySelector('#wg-adj-mc-cancel').addEventListener('click', cancelMc);
+        const refresh = root.querySelector('#wg-adj-backend-refresh');
+        if (refresh) refresh.addEventListener('click', () => {
+            const text = $('wg-adj-backend-text');
+            if (text) text.textContent = 'Re-probing backend…';
+            probeAiHealth();
+        });
     }
 
     // ── Boot ─────────────────────────────────────────────────────────

@@ -20,19 +20,46 @@
 
 'use strict';
 
-const fs   = require('fs');
-const path = require('path');
+const fs     = require('fs');
+const path   = require('path');
+const crypto = require('crypto');
 
-const ollama    = require('./ollama-client');
-const loader    = require('./scenario-loader');
-const schema    = require('./adjudicator-schema');
-const validator = require('./adjudicator-validator');
+const ollama     = require('./ollama-client');   // kept for DEFAULT_MODEL reference
+const aiProvider = require('./ai-provider');
+const loader     = require('./scenario-loader');
+const schema     = require('./adjudicator-schema');
+const validator  = require('./adjudicator-validator');
 const { extractJson } = require('./red-team-agent');
+
+// 12-char fingerprint of a system prompt — small enough to log into every
+// step row, long enough to detect drift if the file is edited (item #4).
+function shortHash(s) {
+    return crypto.createHash('sha256').update(String(s || ''), 'utf8').digest('hex').slice(0, 12);
+}
 
 const SYSTEM_PROMPT = fs.readFileSync(
     path.join(__dirname, 'prompts', 'adjudicator-system.txt'),
     'utf8',
 ).trim();
+const SYSTEM_PROMPT_HASH = shortHash(SYSTEM_PROMPT);
+
+// Claude-specific variant with XML tags for better adherence and to
+// structure the cached prefix cleanly. Same doctrine + output contract
+// as adjudicator-system.txt; the wrapping helps Claude parse the rules
+// and lets us mark this whole block as prompt-cached on every call.
+const SYSTEM_PROMPT_CLAUDE = (function loadClaudePrompt() {
+    try {
+        return fs.readFileSync(
+            path.join(__dirname, 'prompts', 'adjudicator-system-claude.txt'),
+            'utf8',
+        ).trim();
+    } catch (e) {
+        // If the Claude prompt file is missing, fall back to the original.
+        // Better degraded operation than a load-time crash.
+        return SYSTEM_PROMPT;
+    }
+})();
+const SYSTEM_PROMPT_CLAUDE_HASH = shortHash(SYSTEM_PROMPT_CLAUDE);
 
 // 8 paraphrase hints rotated across trials. (trialHintId mod 8)
 // Hint 0 is empty so the canonical run with hintId=0 has no extra signal.
@@ -221,7 +248,7 @@ function deriveSeed(trialSeed, stepIndex) {
 }
 
 // ── Result helpers ───────────────────────────────────────────────────
-function fallbackResult(scenario, stepIndex, prevState, meta, why, extra) {
+function fallbackResult(scenario, stepIndex, prevState, meta, why, extra, userPrompt) {
     const baseline = schema.baselineStateForStep(scenario, stepIndex, prevState);
     return {
         ok: false,
@@ -233,6 +260,9 @@ function fallbackResult(scenario, stepIndex, prevState, meta, why, extra) {
             ...(extra || {}),
         },
         meta: { ...meta, fallback: why },
+        // userPrompt preserved on fallback too so trial logs capture what
+        // we *asked* even when the model failed (item #4 debug pipeline).
+        userPrompt: userPrompt || null,
     };
 }
 
@@ -282,6 +312,19 @@ async function adjudicateStep(args) {
     const timeoutMs   = args.timeoutMs || DEFAULT_TIMEOUT_MS;
     const mockMode    = args.mockMode === true;
     const approvedActions = args.approvedActions || null;
+    const requestedProvider = args.provider || null;
+
+    // Resolve provider once so the retry path uses the same backend (we
+    // don't want half-Claude / half-Ollama trial logs). On 'claude' requested
+    // without an API key we fall back to Ollama transparently.
+    let providerName;
+    try {
+        providerName = aiProvider.resolveProvider(requestedProvider);
+    } catch (e) {
+        providerName = 'ollama';
+    }
+    const systemPrompt     = providerName === 'claude' ? SYSTEM_PROMPT_CLAUDE      : SYSTEM_PROMPT;
+    const systemPromptHash = providerName === 'claude' ? SYSTEM_PROMPT_CLAUDE_HASH : SYSTEM_PROMPT_HASH;
 
     const start = Date.now();
 
@@ -319,31 +362,49 @@ async function adjudicateStep(args) {
 
     const baseMeta = {
         durationMs:   0,
-        model:        model || ollama.DEFAULT_MODEL,
+        provider:     providerName,
+        model:        model || (providerName === 'claude' ? 'claude-default' : ollama.DEFAULT_MODEL),
         trialId,
         trialSeed,
         trialHintId,
         seed,
+        // System prompt fingerprint — detects drift if the prompt file is
+        // edited between runs (item #4 — every trial log should carry the
+        // version of the prompt that produced it).
+        systemPromptHash:  systemPromptHash,
+        systemPromptChars: systemPrompt.length,
         promptChars:  userPrompt.length,
         responseChars:0,
         retries:      0,
+        cacheReadTokens:     0,
+        cacheCreationTokens: 0,
     };
 
-    let resp = await ollama.generate({
+    let resp = await aiProvider.generate({
+        provider: providerName,
         model,
-        system:  SYSTEM_PROMPT,
+        system:  systemPrompt,
         prompt:  userPrompt,
         format:  'json',
         options: callOpts,
         timeoutMs,
     });
+    if (resp && resp.providerUsed) baseMeta.provider = resp.providerUsed;
+    if (resp && resp.usage) {
+        baseMeta.cacheReadTokens     += resp.usage.cache_read_input_tokens     || 0;
+        baseMeta.cacheCreationTokens += resp.usage.cache_creation_input_tokens || 0;
+    }
 
     if (!resp.ok) {
         baseMeta.durationMs = Date.now() - start;
-        return fallbackResult(scenario, stepIndex, prevState, baseMeta, 'ollama_error', { error: resp.error });
+        return fallbackResult(scenario, stepIndex, prevState, baseMeta, `${baseMeta.provider}_error`, { error: resp.error }, userPrompt);
     }
 
     baseMeta.responseChars = (resp.response || '').length;
+    // Hold on to the raw LLM text across the retry loop so we can persist
+    // even malformed responses to the trial log (item #4 — invaluable for
+    // debugging why a prompt change broke parsing weeks later).
+    let lastRawText = resp.response || '';
 
     let parsed = tryParse(resp.response);
     let val    = parsed ? validator.validateStateDelta(parsed, prevState, scenario, stepIndex) : null;
@@ -353,19 +414,26 @@ async function adjudicateStep(args) {
         baseMeta.retries = 1;
         const errors = val ? val.schema_errors : [{ path: 'root', msg: 'JSON parse failed' }];
         const corrective = buildCorrectivePrompt(userPrompt, errors);
-        resp = await ollama.generate({
+        resp = await aiProvider.generate({
+            provider: providerName,
             model,
-            system:  SYSTEM_PROMPT,
+            system:  systemPrompt,
             prompt:  corrective,
             format:  'json',
             options: callOpts,
             timeoutMs,
         });
+        if (resp && resp.providerUsed) baseMeta.provider = resp.providerUsed;
+        if (resp && resp.usage) {
+            baseMeta.cacheReadTokens     += resp.usage.cache_read_input_tokens     || 0;
+            baseMeta.cacheCreationTokens += resp.usage.cache_creation_input_tokens || 0;
+        }
         if (!resp.ok) {
             baseMeta.durationMs = Date.now() - start;
-            return fallbackResult(scenario, stepIndex, prevState, baseMeta, 'ollama_error_on_retry', { error: resp.error });
+            return fallbackResult(scenario, stepIndex, prevState, baseMeta, `${baseMeta.provider}_error_on_retry`, { error: resp.error }, userPrompt);
         }
         baseMeta.responseChars += (resp.response || '').length;
+        lastRawText = resp.response || lastRawText;
         parsed = tryParse(resp.response);
         val    = parsed ? validator.validateStateDelta(parsed, prevState, scenario, stepIndex) : null;
     }
@@ -373,10 +441,14 @@ async function adjudicateStep(args) {
     baseMeta.durationMs = Date.now() - start;
 
     if (!parsed) {
-        return fallbackResult(scenario, stepIndex, prevState, baseMeta, 'parse_failed', { rawHead: (resp.response || '').slice(0, 200) });
+        return fallbackResult(scenario, stepIndex, prevState, baseMeta, 'parse_failed',
+            { rawHead: lastRawText.slice(0, 200), rawText: lastRawText },
+            userPrompt);
     }
     if (!val.ok) {
-        return fallbackResult(scenario, stepIndex, prevState, baseMeta, 'validation_failed', { schema_errors: val.schema_errors });
+        return fallbackResult(scenario, stepIndex, prevState, baseMeta, 'validation_failed',
+            { schema_errors: val.schema_errors },
+            userPrompt);
     }
 
     return {
@@ -390,7 +462,9 @@ async function adjudicateStep(args) {
             plausibility_warnings: val.plausibility_warnings,
         },
         meta: baseMeta,
-        rawLlm: parsed, // useful for trial logs; runner may strip before sending to client
+        rawLlm:     parsed,      // parsed JSON the model emitted (item #4 trial logs)
+        rawText:    lastRawText, // raw text — captures even pre-parse garbage
+        userPrompt: userPrompt,  // exact user prompt this step was resolved with
     };
 }
 

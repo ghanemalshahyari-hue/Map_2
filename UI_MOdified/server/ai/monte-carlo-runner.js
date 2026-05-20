@@ -86,7 +86,14 @@ async function runOneTrial(run, trialIdx, sem) {
         seedBase, hintId,
         coa: run.coaParams,
         scenario: scenario.name,
-        startedAt: new Date().toISOString(),
+        // Run-level context useful when learning from past trials (item #4).
+        // The system-prompt hash + provider + model snapshot let us spot
+        // drift; if the prompt is edited between two runs, replays here
+        // and now will differ from replays after the edit.
+        provider:    run.provider || null,
+        model:       run.model || null,
+        mockMode:    run.mockMode === true,
+        startedAt:   new Date().toISOString(),
     });
 
     let prev = schema.freshState(scenario);
@@ -115,6 +122,7 @@ async function runOneTrial(run, trialIdx, sem) {
                 model:     run.model || null,
                 timeoutMs: run.timeoutMs || null,
                 mockMode:  run.mockMode === true,
+                provider:  run.provider || null,
             });
         } catch (err) {
             sem.release();
@@ -126,6 +134,32 @@ async function runOneTrial(run, trialIdx, sem) {
 
         if (!result.ok) fallbackCount++;
         prev = result.state;
+
+        // item #4 — persist the full prompt the model saw + the raw text
+        // it returned. Skipped in mock mode (no LLM call, nothing to log).
+        // Written BEFORE the state row so the JSONL reads in causal order:
+        // prompt → raw → state. Each event carries stepIndex so a reader
+        // can stream or filter without reconstructing context.
+        const isMockResult = !!(result.validation && result.validation.mocked);
+        if (!isMockResult) {
+            if (result.userPrompt) {
+                writeLine({
+                    kind: 'prompt',
+                    stepIndex: i,
+                    systemPromptHash:  result.meta && result.meta.systemPromptHash || null,
+                    systemPromptChars: result.meta && result.meta.systemPromptChars || null,
+                    userPrompt: result.userPrompt,
+                });
+            }
+            if (result.rawLlm || result.rawText) {
+                writeLine({
+                    kind: 'raw',
+                    stepIndex: i,
+                    rawLlm:  result.rawLlm  || null,   // parsed JSON, when parse succeeded
+                    rawText: result.rawText || null,   // raw model text, even on parse failure
+                });
+            }
+        }
 
         writeLine({
             kind: 'state',
@@ -242,6 +276,7 @@ function startBatch(args) {
     const model        = args.model     || null;
     const timeoutMs    = args.timeoutMs || null;
     const mockMode     = args.mockMode === true;
+    const provider     = args.provider  || null;
 
     const scenario = loader.loadScenario(scenarioName);
 
@@ -263,6 +298,7 @@ function startBatch(args) {
         model,
         timeoutMs,
         mockMode,
+        provider,
         parallelism,
         trials,
         dir,
@@ -279,6 +315,7 @@ function startBatch(args) {
     // Persist run-config alongside trial logs for replay.
     fs.writeFileSync(path.join(dir, 'run.json'), JSON.stringify({
         runId, scenarioName, trials, parallelism, coaParams, model, mockMode,
+        provider,
         startedAt: agg.startedAt,
     }, null, 2), 'utf8');
 

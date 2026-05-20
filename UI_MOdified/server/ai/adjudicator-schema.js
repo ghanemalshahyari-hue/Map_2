@@ -207,8 +207,13 @@ function freshState(scenario) {
  * Build the state the validator will fall back to when the LLM call fails
  * or produces unrecoverable garbage at `stepIndex`. Uses the scenario's
  * *_baseline fields — this is the "reproduce W2" path.
+ *
+ * `coaParams` (item #8) optionally biases the numerical fields by COA
+ * (phase_line_km, blue/red losses, per_unit_deltas). When coaParams is
+ * null/undefined or matches the default COA the output is unchanged,
+ * preserving the regression-test contract.
  */
-function baselineStateForStep(scenario, stepIndex, prevState) {
+function baselineStateForStep(scenario, stepIndex, prevState, coaParams) {
     const s = scenario.steps[stepIndex];
     const blueDestroyed = s.blue_destroyed_baseline || [];
     const prevBlue = (prevState && prevState.blue_destroyed_cumulative) || [];
@@ -220,7 +225,7 @@ function baselineStateForStep(scenario, stepIndex, prevState) {
         redStrength[uid] = 0.7;
     }
 
-    return {
+    const state = {
         step_index: stepIndex,
         time_label: s.time_label,
         elapsed_hours: s.elapsed_hours,
@@ -261,6 +266,22 @@ function baselineStateForStep(scenario, stepIndex, prevState) {
         red_strength_current: redStrength,
         blue_destroyed_cumulative: blueDestroyed.slice(),
     };
+
+    // Item #8 — apply COA-driven adjustments after the state is built.
+    // Default COA → adjustments are zero → state is unchanged (regression
+    // contract preserved). Required lazily to avoid a circular load.
+    const parametric = require('./parametric-baseline');
+    if (!parametric.isDefaultCoa(coaParams)) {
+        const deltas = parametric.parametricAdjustments(stepIndex, s, coaParams);
+        parametric.applyParametric(state, deltas, scenario, prevState);
+        // Annotate so trial logs make the variation visible.
+        state.notes = 'baseline-fallback (parametric: ' +
+            `pl${deltas.plDelta >= 0 ? '+' : ''}${deltas.plDelta}, ` +
+            `blue${deltas.blueLossDelta >= 0 ? '+' : ''}${deltas.blueLossDelta}, ` +
+            `red${deltas.redLossDelta >= 0 ? '+' : ''}${deltas.redLossDelta})`;
+    }
+
+    return state;
 }
 
 module.exports = {

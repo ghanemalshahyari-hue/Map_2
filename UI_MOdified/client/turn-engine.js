@@ -24,6 +24,12 @@
     const KM_PER_DEG_LAT  = 110.574;
     const kmPerDegLng = (lat) => 111.32 * Math.cos(lat * Math.PI / 180);
 
+    // Scenario-mode constants (todo item #20). When AppAdjudicatorMap has a
+    // scenario drawn but no user-drawn maneuver arrow exists, "Next Turn"
+    // steps the scenario forward using the shared role/appear/spread model
+    // from adjudicator-map.js. 11 steps total (D-3h..H+144 minus the seed).
+    const SCENARIO_TOTAL_STEPS = 11;
+
     function distKm(a, b) {
         const refLat = (a.lat + b.lat) / 2;
         const kmN = (b.lat - a.lat) * KM_PER_DEG_LAT;
@@ -376,8 +382,144 @@ const COMBAT_CONFIG = {
 // Track ongoing combats
 let activeCombats = [];
 
+// ── Scenario-mode helpers (todo item #20) ─────────────────────────
+    // Scenario mode kicks in when the AI adjudicator has drawn its overlay
+    // (BLS, OBJ NASSER, pipeline, scenario red/blue markers). The planner
+    // HUD then uses the same role/appear/spread movement model so its
+    // "Next Turn" matches the adjudicator HUD's per-step view.
+    function isScenarioMode() {
+        return !!(window.AppAdjudicatorMap
+            && typeof window.AppAdjudicatorMap.isScenarioDrawn === 'function'
+            && window.AppAdjudicatorMap.isScenarioDrawn());
+    }
+
+    function initScenarioMode() {
+        const { red, blue } = window.AppAdjudicatorMap.getScenarioMarkers();
+        if (!red.length) {
+            showToast(wt('wg-toast-no-scenario-units', 'Scenario drawn but no Red units found.'), 'warn');
+            return { error: 'no-scenario-units' };
+        }
+        const unitPaths = red.map(m => ({
+            marker:        m,
+            unitCode:      (m._wgRedMeta && m._wgRedMeta.uid) || '?',
+            initialLatLng: L.latLng(m.getLatLng().lat, m.getLatLng().lng),
+            scenarioMeta:  m._wgRedMeta || null,
+        }));
+        // Friendlies for contact = scenario Blue markers + any user-placed
+        // friendly markers (affiliation digit '3'). Dedup by reference so
+        // user-placed scenario duplicates don't get double-counted.
+        const userFriendlies = findFriendlyMarkers();
+        const seen = new Set(blue);
+        for (const m of userFriendlies) seen.add(m);
+        const friendlyMarkers = [...seen];
+
+        state = {
+            scenarioMode:   true,
+            scenarioStep:   0,
+            arrow:          null,
+            // Synthetic axis so the existing HUD code can keep reading
+            // axis.lengthKm. Length = OBJ NASSER nominal depth (95 km).
+            axis:           { kind: 'scenario', lengthKm: 95 },
+            unitPaths,
+            friendlyMarkers,
+            turn:           0,
+            advancedKm:     0,
+            stopped:        false,
+            contact:        null,
+            snapshots:      [],
+            arrowOffsetKm:  0,
+        };
+        // Snap markers to step-0 positions so the planner HUD starts from a
+        // clean state regardless of where the adjudicator left them.
+        window.AppAdjudicatorMap.applyStepProgress(0, 0);
+        renderHud();
+        return {
+            ok:         true,
+            units:      unitPaths.length,
+            friendlies: friendlyMarkers.length,
+            lengthKm:   95,
+            scenarioMode: true,
+        };
+    }
+
+    function nextTurnScenario() {
+        if (!state) {
+            const r = initScenarioMode();
+            if (r.error) return r;
+        }
+        if (state.stopped) {
+            return { error: 'stopped', reason: state.contact ? 'contact' : 'end-of-scenario' };
+        }
+        const nextStep = Math.min(SCENARIO_TOTAL_STEPS, state.scenarioStep + 1);
+        if (nextStep === state.scenarioStep) {
+            state.stopped = true;
+            renderHud();
+            return { error: 'stopped', reason: 'end-of-scenario' };
+        }
+        const progress = nextStep / SCENARIO_TOTAL_STEPS;
+        window.AppAdjudicatorMap.applyStepProgress(nextStep, progress);
+
+        state.scenarioStep = nextStep;
+        state.turn         = nextStep;
+        state.advancedKm   = +(state.axis.lengthKm * progress).toFixed(1);
+
+        // Contact detection — same model as slot mode. Reuses the marker
+        // positions the shared movement model just wrote.
+        let contact = null;
+        outer: for (const up of state.unitPaths) {
+            const eLL = up.marker.getLatLng();
+            for (const fm of state.friendlyMarkers) {
+                const d = distKm(eLL, fm.getLatLng());
+                if (d <= CONTACT_KM) {
+                    contact = {
+                        enemy:    up.unitCode,
+                        friendly: fm._slotUnitCode
+                                  || (fm._wgBlueMeta && fm._wgBlueMeta.baseId)
+                                  || (fm._tmgData?.textModifiers?.uniqueDesignation)
+                                  || '?',
+                        km: +d.toFixed(2),
+                    };
+                    break outer;
+                }
+            }
+        }
+        if (contact) {
+            state.contact = contact;
+            state.stopped = true;
+            flashContact(contact);
+        } else if (nextStep >= SCENARIO_TOTAL_STEPS) {
+            state.stopped = true;
+        }
+        renderHud();
+        try {
+            document.dispatchEvent(new CustomEvent('wargame:turn-ended', { detail: {
+                turn: state.turn, contact, stopped: state.stopped, advancedKm: state.advancedKm,
+                scenarioMode: true, scenarioStep: state.scenarioStep,
+            }}));
+        } catch (_) { /* ignore */ }
+        return { turn: state.turn, stopped: state.stopped, contact, advancedKm: state.advancedKm };
+    }
+
+    function resetScenario() {
+        if (!state || !state.scenarioMode) return;
+        window.AppAdjudicatorMap.applyStepProgress(0, 0);
+        for (const up of state.unitPaths) up.marker.setLatLng(up.initialLatLng);
+        state.scenarioStep = 0;
+        state.turn         = 0;
+        state.advancedKm   = 0;
+        state.stopped      = false;
+        state.contact      = null;
+        state.snapshots    = [];
+        activeCombats = [];
+        renderHud();
+    }
+
 // ── Public API ─────────────────────────────────────────────────────
 function init() {
+        // Scenario mode: AI adjudicator has drawn the scenario, no user
+        // arrow needed. Movement model lives in adjudicator-map.js.
+        if (isScenarioMode()) return initScenarioMode();
+
         const formation = findEnemyFormation();
         if (!formation) {
             showToast(wt('wg-toast-no-formation', 'No hostile formation found — import enemy.geojson first.'), 'warn');
@@ -425,6 +567,12 @@ function init() {
 
     function nextTurn(stepKm) {
         if (animState) return { error: 'animating' };
+        // Scenario mode: jump to the shared movement model. No arrow axis,
+        // no per-frame animation — markers snap to their step-resolved
+        // positions, identical to the adjudicator HUD's applyState path.
+        if (isScenarioMode() || (state && state.scenarioMode)) {
+            return nextTurnScenario();
+        }
         if (!state) {
             const r = init();
             if (r.error) return r;
@@ -628,6 +776,11 @@ function init() {
     function reset() {
         cancelAnimation();
         if (!state) return;
+        // Scenario mode owns its own marker-snapping reset.
+        if (state.scenarioMode) {
+            resetScenario();
+            return;
+        }
         if (state.arrowOffsetKm) {
             moveArrowAlongAxis(-state.arrowOffsetKm);
             state.arrowOffsetKm = 0;

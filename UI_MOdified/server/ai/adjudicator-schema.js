@@ -31,6 +31,33 @@ const EW_DECAY_ORDER = ['Heavy', 'Active', 'Moderate', 'Low'];
 
 const RED_UNIT_STATUS = ['STAGED', 'ACTIVE', 'DEGRADED', 'DISPLACED'];
 
+// Per-step Blue actions enum. Drives the COUNTERATTACK / WITHDRAW movement
+// shifts the client renders in `bluePositionLonLat`. `HOLD` is the implicit
+// default for any base_id not present in the map.
+const BLUE_ACTION_VALUES = ['HOLD', 'COUNTERATTACK', 'WITHDRAW'];
+
+// Deterministic Blue action schedule mirroring wargame.py make_steps (Wargame2
+// baseline). Keys are step_index → { base_id → action }. The reservoir of
+// counter-attacking units widens as the operation deepens. Source of truth —
+// the client falls back to the same table when state.blue_actions is missing.
+const BLUE_ACTIONS_BY_STEP_BASELINE = {
+    4:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK' },
+    5:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK' },
+    6:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK' },
+    7:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK' },
+    8:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK' },
+    9:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK',
+          p31c: 'COUNTERATTACK', p32c: 'COUNTERATTACK', p33c: 'COUNTERATTACK' },
+    10: { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK',
+          p31c: 'COUNTERATTACK', p32c: 'COUNTERATTACK', p33c: 'COUNTERATTACK' },
+    11: { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK',
+          p31c: 'COUNTERATTACK', p32c: 'COUNTERATTACK', p33c: 'COUNTERATTACK' },
+};
+
+function baselineBlueActionsForStep(stepIndex) {
+    return { ...(BLUE_ACTIONS_BY_STEP_BASELINE[stepIndex] || {}) };
+}
+
 const TIME_LABELS = [
     'D-3h', 'H-Hour', 'H+2', 'H+6', 'H+12', 'H+24',
     'H+36', 'H+48', 'H+72', 'H+96', 'H+120', 'H+144',
@@ -111,6 +138,10 @@ const RESPONSE_KEYS = [
     'losses_step', 'losses_cumulative',
     'red_active_markers',
     'per_unit_deltas',
+    // Optional: per-step Blue actions keyed by base_id (e.g. { lc: 'COUNTERATTACK' }).
+    // When present, the client renders the corresponding +N km / -N km shift;
+    // when absent, the client falls back to its local Wargame2 schedule.
+    'blue_actions',
     'confidence_per_field',
     'notes',
 ];
@@ -157,6 +188,7 @@ function freshState(scenario) {
         },
         red_active_markers: scenario.red_units.length,
         per_unit_deltas: { blue_destroyed: [], red_degraded: [] },
+        blue_actions: baselineBlueActionsForStep(0),
         confidence_per_field: {
             phase_line_km:    'high',
             force_ratio:      'high',
@@ -216,6 +248,7 @@ function baselineStateForStep(scenario, stepIndex, prevState) {
                 unit_uid: uid, strength_current: 0.7, status: 'DEGRADED',
             })),
         },
+        blue_actions: baselineBlueActionsForStep(stepIndex),
         confidence_per_field: {
             phase_line_km:    'medium',
             force_ratio:      'medium',
@@ -244,6 +277,8 @@ module.exports = {
     RESPONSE_KEYS,
     BLUE_UID_RE,
     FORCE_RATIO_NUM_RE,
+    BLUE_ACTION_VALUES,
+    BLUE_ACTIONS_BY_STEP_BASELINE,
 
     throughputCeilingKm,
     isBlueUidShape,
@@ -251,6 +286,7 @@ module.exports = {
     blueUidSet,
     blsNames,
     parseForceRatio,
+    baselineBlueActionsForStep,
 
     freshState,
     baselineStateForStep,

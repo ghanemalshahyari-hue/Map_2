@@ -108,10 +108,12 @@
         RED_1AD:      [-8.0,  2.0],
     };
 
-    // Per-step Blue actions (deterministic mirror of wargame.py make_steps
-    // second branch — the Wargame2 baseline). Keys are step_index → { base_id
-    // → 'COUNTERATTACK' | 'WITHDRAW' }. The reservoir of counter-attacking
-    // units widens as the operation deepens.
+    // Per-step Blue actions — fallback only. The server now emits
+    // state.blue_actions per step (see adjudicator-schema.js
+    // BLUE_ACTIONS_BY_STEP_BASELINE). This local table is consulted when
+    // state.blue_actions is missing (older trial replays, partial LLM
+    // responses, offline replay of a cached scenario). Mirror of wargame.py
+    // make_steps second branch — the Wargame2 baseline.
     const BLUE_ACTIONS_BY_STEP = {
         4:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK' },
         5:  { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK' },
@@ -183,12 +185,23 @@
         return pos;
     }
 
+    // Resolve the per-step Blue action map. Prefer the server's
+    // state.blue_actions (data-driven, may reflect live AI / posture varied
+    // schedules); fall back to the local BLUE_ACTIONS_BY_STEP table for
+    // back-compat with older trials and offline replays.
+    function blueActionsFor(stepIndex, state) {
+        if (state && state.blue_actions && typeof state.blue_actions === 'object') {
+            return state.blue_actions;
+        }
+        return BLUE_ACTIONS_BY_STEP[stepIndex] || null;
+    }
+
     // Port of wargame.py blue_position(). COUNTERATTACK shifts +5 km N for
     // the duration of the step, WITHDRAW shifts -5 km N. All other Blue
     // units hold their base coord (AREA_DEFENSE).
-    function bluePositionLonLat(meta, stepIndex) {
+    function bluePositionLonLat(meta, stepIndex, state) {
         if (!meta || !meta.baseCoord) return meta && meta.baseCoord;
-        const actions = BLUE_ACTIONS_BY_STEP[stepIndex] || null;
+        const actions = blueActionsFor(stepIndex, state);
         const action = actions ? actions[meta.baseId] : null;
         if (action === 'COUNTERATTACK') return offsetLonLat(meta.baseCoord, 0, BLUE_COUNTERATTACK_KM_NORTH);
         if (action === 'WITHDRAW')      return offsetLonLat(meta.baseCoord, 0, BLUE_WITHDRAW_KM_NORTH);
@@ -857,7 +870,7 @@
         for (const m of Object.values(blueMarkers)) {
             const meta = m && m._wgBlueMeta;
             if (!meta) continue;
-            const lonLat = bluePositionLonLat(meta, stepIndex);
+            const lonLat = bluePositionLonLat(meta, stepIndex, state);
             if (!lonLat) continue;
             try { m.setLatLng([lonLat[1], lonLat[0]]); } catch (_) { /* ignore */ }
         }
@@ -1243,11 +1256,50 @@
         }
     }
 
+    // ── Scenario-mode helpers for external callers ───────────────────
+    // turn-engine.js consumes these when a scenario is drawn but no
+    // maneuver-arrow formation is present — pressing "Next Turn" in the
+    // planner HUD then steps the scenario forward using the same role /
+    // appear / spread model as the adjudicator HUD (todo item #20).
+    function isScenarioDrawn() {
+        return scenarioRef != null && layerGroup != null;
+    }
+
+    function getScenarioMarkers() {
+        return {
+            red:  Object.values(redMarkers),
+            blue: Object.values(blueMarkers),
+        };
+    }
+
+    // Slide every Red/Blue marker to the position it should occupy at
+    // (stepIndex, progress) — same model applyState() uses, but driven by a
+    // synthetic state so the planner HUD doesn't need a server response.
+    function applyStepProgress(stepIndex, progress) {
+        if (!isScenarioDrawn()) return false;
+        const syntheticState = {
+            step_index:    stepIndex,
+            progress:      Math.max(0, Math.min(1, progress || 0)),
+            phase_line_km: (objDepthKm || 95) * Math.max(0, Math.min(1, progress || 0)),
+            blue_actions:  null,   // fall back to the local schedule
+        };
+        updateUnitPositions(syntheticState);
+        return true;
+    }
+
     window.AppAdjudicatorMap = {
         drawScenario,
         clearScenario,
         applyState,
         resetMap,
+        // Scenario-mode integration with the planner-mode War Game HUD
+        isScenarioDrawn,
+        getScenarioMarkers,
+        applyStepProgress,
+        // Position primitives (so external callers can build their own
+        // step-resolved state without re-implementing the movement model)
+        computeRedPosition:  (meta, stepIndex, progress) => redPositionLonLat(meta, stepIndex, progress),
+        computeBluePosition: (meta, stepIndex, state)    => bluePositionLonLat(meta, stepIndex, state),
         // for diagnostics
         _findBlueMarkerByBaseId: findBlueMarkerByBaseId,
     };

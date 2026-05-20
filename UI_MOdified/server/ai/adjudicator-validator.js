@@ -268,6 +268,30 @@ function monotonicityClamp(delta, prevState, scenario, stepIndex) {
         }
     }
 
+    // Optional blue_actions: drop unknown base_ids and invalid action values.
+    // Missing field stays missing (client falls back to its baseline table).
+    if (delta.blue_actions !== undefined) {
+        if (!isObj(delta.blue_actions)) {
+            delta.blue_actions = schema.baselineBlueActionsForStep(stepIndex);
+            clamped.push('blue_actions');
+            warns.push({ path: 'blue_actions', msg: 'not an object; replaced with baseline schedule' });
+        } else {
+            const validBase = new Set(scenario.blue_units_base_ids);
+            const validAction = new Set(schema.BLUE_ACTION_VALUES);
+            for (const [base, action] of Object.entries(delta.blue_actions)) {
+                if (!validBase.has(base)) {
+                    delete delta.blue_actions[base];
+                    clamped.push(`blue_actions.${base}`);
+                    warns.push({ path: `blue_actions.${base}`, msg: 'unknown base_id; dropped' });
+                } else if (!validAction.has(action)) {
+                    delete delta.blue_actions[base];
+                    clamped.push(`blue_actions.${base}`);
+                    warns.push({ path: `blue_actions.${base}`, msg: `invalid action ${action}; dropped` });
+                }
+            }
+        }
+    }
+
     return { warns, clamped };
 }
 

@@ -464,6 +464,26 @@ function normalizeModelDelta(delta, prevState, scenario, stepIndex, coaParams) {
     out.time_label = expectedMeta.time_label;
     out.elapsed_hours = expectedMeta.elapsed_hours;
     out.phase = expectedMeta.phase;
+    // Pass through the W3-rich producer's native phase label so the HUD
+    // can display "PHASE 1 (h_hour_strike)" without polluting the legacy
+    // `phase` field.
+    if (expectedMeta.kind_native) out.kind_native = expectedMeta.kind_native;
+    // Pass through the W3-rich per-step baselines so the renderer can read
+    // them off `state` directly. These are ground-truth source data — the
+    // LLM is not allowed to invent them, only the deltas it returns. See
+    // docs/wargame3-schema.md for the full W3 per-step contract.
+    const stepRow = Array.isArray(scenario && scenario.steps) ? scenario.steps[stepIndex] : null;
+    if (stepRow) {
+        if (Array.isArray(stepRow.affected))        out.affected        = stepRow.affected;
+        if (Array.isArray(stepRow.actors))          out.actors          = stepRow.actors;
+        if (Array.isArray(stepRow.engagement_arcs)) out.engagement_arcs = stepRow.engagement_arcs;
+        if (stepRow.unit_state && typeof stepRow.unit_state === 'object') out.unit_state = stepRow.unit_state;
+        if (stepRow.combined_effect)                out.combined_effect         = stepRow.combined_effect;
+        if (Number.isFinite(stepRow.force_ratio_local))       out.force_ratio_local       = stepRow.force_ratio_local;
+        if (Number.isFinite(stepRow.force_ratio_operational)) out.force_ratio_operational = stepRow.force_ratio_operational;
+        if (stepRow.step_advantage)                 out.step_advantage          = stepRow.step_advantage;
+        if (stepRow.phase_name_ar)                  out.phase_name_ar           = stepRow.phase_name_ar;
+    }
 
     const phaseLine = toFiniteNumber(delta.phase_line_km);
     if (phaseLine != null) out.phase_line_km = phaseLine;

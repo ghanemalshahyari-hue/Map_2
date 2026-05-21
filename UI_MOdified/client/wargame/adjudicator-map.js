@@ -91,6 +91,7 @@
     let aorPhaseLine = null;     // dashed yellow line across AOR at current PL
     let aorPhaseLineLabel = null;// "PL XX km" pill marker at the line's left end
     let salientLayer = null;     // red-tinted penetration polygon
+    let offMapMarkerLayers = []; // small dim icons for W3 off-map bases/SSMs
 
     // Running cumulative set of destroyed Blue uids. Source of truth is
     // state.blue_destroyed_cumulative when present; otherwise we accumulate
@@ -163,6 +164,112 @@
         RED_1AD:      [-8.0,  2.0],
     };
 
+    // ── W3-rich render-time helpers ───────────────────────────────────
+    // The W3 producer places every red unit on a single phase_line latitude
+    // (only longitude varies per unit). Without a spread offset, 70 markers
+    // collapse to a horizontal stripe at every phase. We deal the units into
+    // role-keyed offsets so each echelon/role gets its own band relative to
+    // the source coord; this matches the W1/W2 wargame.py spread idiom but
+    // keys off role/echelon since W3 uids are opaque ("R-d3-12-008").
+    //
+    // Offsets are [eastKm, northKm] from the source coord. Always applied
+    // AFTER the offshore-staging gate (only for stepIndex >= unit.appear).
+    const RED_W3_SPREAD_KM = {
+        // recon / ISR / EW push forward (south, more negative northKm) and
+        // east of the main effort
+        recon:                [  6,  -3],
+        isr:                  [  6,  -3],
+        scout:                [  6,  -3],
+        ew:                   [ -8,   3],
+        signal:               [ -8,   3],
+        // armor and mech bunch around the main axis with east/west splay
+        armored_brigade:      [  3,   0.5],
+        armored_division:     [ -3,   1],
+        armor:                [  3,   0.5],
+        tank:                 [  3,   0.5],
+        mech_brigade:         [ -1.5, 0.5],
+        mech_inf_div:         [ -3,  -0.5],
+        // fires sit behind (north, positive northKm)
+        artillery:            [ -5,   3],
+        fire_support:         [ -5,   3],
+        rocket_artillery:     [ -7,   4],
+        // air assets sit further offshore north
+        strike:               [  4,   6],
+        fighter:              [ -4,   6],
+        fighter_ad:           [ -4,   6],
+        bomber:               [  0,   8],
+        // naval offshore north + east
+        destroyer:            [  6,   8],
+        frigate:              [  4,   7],
+        landing_ship:         [  0,   5],
+        amphib:               [  0,   5],
+        // SOF/UAV ahead of the line
+        sof:                  [  2,  -5],
+        kamikaze_uav:         [  4,  -4],
+        usv:                  [  6,  -2],
+        // defaults
+        unknown:              [  0,   0],
+    };
+
+    // Hash a uid to a deterministic small jitter (so two units in the same
+    // role don't perfectly overlap). Range ±1.5 km on each axis.
+    function uidJitterKm(uid) {
+        let h = 0;
+        const s = String(uid || '');
+        for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+        const e = ((h % 1000) / 1000) * 3 - 1.5;        // -1.5..+1.5
+        const n = ((((h >> 10) % 1000) / 1000) * 3) - 1.5;
+        return [e, n];
+    }
+
+    // Echelon-based vertical (north-south) offset in km used during the
+    // pre-D-H offshore-staging phase: rough peace-time amphibious task
+    // organisation has the heavy units (divisions) near the lift, brigades
+    // arrayed in front, and squadrons/SOF screening forward. This is
+    // cosmetic — gives the staging blob 3–4 visible rows so brigades stop
+    // collapsing into a single tile of overlapping icons.
+    const STAGING_ECHELON_ROW_KM = {
+        division:  +2.0,  // heaviest, slightly north (further from coast)
+        brigade:   +0.5,
+        battalion: -1.0,
+        squadron:  -2.5,  // air assets forward
+        company:   -1.5,
+        unit:       0,
+    };
+    // Side nudge applied AFTER landing so red and blue don't perfectly
+    // collide on the same lat. Red gets +0 (its phase_line lat) and blue
+    // gets a small southward bias so the defensive line reads as
+    // "behind" the assault.
+    const SIDE_NUDGE_KM = { RED: { e: 0, n: 0 }, BLUE: { e: 0, n: -2.0 } };
+
+    // Apply a SMALL visual jitter to a source coord. The W3 source already
+    // encodes meaningful per-domain banding (air at lat 30.3, naval at
+    // 30.9, ground at the phase_line, strategic at base). We don't
+    // override those positions — we just nudge units a tiny bit so a
+    // pile-up of 10 destroyers at the same source coord doesn't render
+    // as one icon. Range: ±1.5 km on each axis, deterministic per uid.
+    function applyW3Spread(meta, lonLat, stepIndex) {
+        if (!lonLat) return lonLat;
+        const [je, jn] = uidJitterKm(meta.uid);
+        return offsetLonLat(lonLat, je, jn);
+    }
+
+    // Engagement-arc colors (per Wargame3/schema/README.md "Status → color recipe").
+    const STATUS_COLORS = {
+        destroyed:       '#b00020',  // red — full kill
+        damaged_partial: '#d97706',  // orange — partial; intensity by damage_pct
+        suppressed:      '#ca8a04',  // yellow — combat-effective but pinned
+        delayed:         '#7c3aed',  // purple — arrival/movement slowed
+        expended:        '#2563eb',  // blue — munitions consumed (SSMs, USVs)
+        unchanged:       '#4b5563',  // gray — engagement happened, no effect
+    };
+
+    // Per-step engagement-arc layers (W3-rich). Cleared at the top of every
+    // applyState call, mirroring the attackArrows lifecycle. Each arc is a
+    // dashed L.polyline per the W3 schema (Wargame3/schema/README.md §5).
+    let engagementArcs = [];
+    let engagementArcTimers = [];
+
     // Per-step Blue actions — fallback only. The server now emits
     // state.blue_actions per step (see adjudicator-schema.js
     // BLUE_ACTIONS_BY_STEP_BASELINE). This local table is consulted when
@@ -187,14 +294,20 @@
 
     // Compute progress 0..1 from the per-step state. We use phase_line_km /
     // objDepthKm — same idiom as wargame.py (step.progress drives every
-    // unit position). Falls back to step_index/11 when PL is missing.
+    // unit position). Falls back to step_index/(stepCount-1) when PL is missing,
+    // using the scenario's actual step count (W1/W2: 12, W3: 17) instead of a
+    // hardcoded /11 that would saturate early on 17-step scenarios.
     function progressFromState(state) {
         if (!state) return 0;
         if (Number.isFinite(state.progress)) return clamp01(state.progress);
         if (Number.isFinite(state.phase_line_km) && objDepthKm > 0) {
             return clamp01(state.phase_line_km / objDepthKm);
         }
-        if (Number.isFinite(state.step_index)) return clamp01(state.step_index / 11);
+        if (Number.isFinite(state.step_index)) {
+            const total = (scenarioRef && Array.isArray(scenarioRef.steps) && scenarioRef.steps.length)
+                ? scenarioRef.steps.length : 12;
+            return clamp01(state.step_index / Math.max(1, total - 1));
+        }
         return 0;
     }
 
@@ -238,6 +351,97 @@
             pos = offsetLonLat(pos, spread[0], spread[1]);
         }
         return pos;
+    }
+
+    // W3-rich position function. Mirrors W1's redPositionLonLat — same
+    // "sea staging → coastal foothold → BLS-anchored axis toward OBJ"
+    // pattern — but uses the W3 role vocabulary (armored_brigade,
+    // mech_inf_div, strike, fighter_ad, …) and three domain regimes:
+    //
+    //   • ground / SOF: lerp BLS-1 → OBJ with role-based progress cap.
+    //     Armor/mech main-effort runs to 100%, infantry to 90%, arty
+    //     stays at 50%, signal/EW way back at 20%, SOF runs ahead of
+    //     the front by +8% (capped at 1.0).
+    //
+    //   • air: helicopter sqns hover ~5 km behind the advancing front
+    //     (they're escorting ground); fixed-wing (fighters/strike/
+    //     transport) sit at offshore staging — they're conceptually
+    //     launching from the off-map air bases and only "appear" at
+    //     strike points (which we don't model per-strike).
+    //
+    //   • naval / submarine: stay offshore at staging, slight inland
+    //     creep at D-H to support the landing, then hold.
+    //
+    //   • strategic SSM / SAM / radar: stay at staging (these are
+    //     fixed-site assets in the source).
+    //
+    // Per-unit jitter + role-keyed spread fans the cluster out so 70
+    // units don't pile up on a single axis.
+    const W3_GROUND_ROLE_CAP = {
+        // Maneuver
+        armored_brigade:    1.00,
+        mech_brigade:       1.00,
+        mech_inf_div:       0.95,
+        mech_bn:            0.90,
+        inf_brigade:        0.85,
+        // Recon ahead of front
+        recon_bn:           1.08,
+        // Combat support
+        artillery_bn:       0.50,
+        engineer_bn:        0.85,
+        atgm_bn:            0.70,
+        // Combat service support (way back)
+        signal_bn:          0.25,
+        ew_bn:              0.20,
+        chem_bn:            0.35,
+        logistics:          0.40,
+        // Air defense (mobile but stays with formation, not at front)
+        manpads:            0.60,
+        // SOF ahead of regulars
+        sof_bn:             1.10,
+        // Armor / generic
+        armored_unit:       1.00,
+        unknown:            0.80,
+    };
+
+    // Roles that NEVER advance toward OBJ — they're fixed-site or
+    // sea-based assets. Return positions are absolute (relative to
+    // BLS-1 or a domain-specific anchor), not lerped progress.
+    function w3StaticPosition(meta, blsCoord, stagingLat) {
+        const role = String(meta.role || '').toLowerCase();
+        const domain = String(meta.domain || '').toLowerCase();
+        // Strategic SSM brigade / radar / SAM batteries: stay at staging.
+        if (/ssm_brigade|radar|sam_|sam$/i.test(role)) {
+            return [blsCoord[0], stagingLat];
+        }
+        // Naval / submarine: stay offshore. Naval units use a small
+        // east-of-coast offset so they're visibly distinct from ground.
+        if (domain === 'naval' || domain === 'subsurface' || /destroyer|frigate|corvette|landing_ship|missile_boat|hovercraft|mine_layer|mine_sweeper|submarine|naval_unit/i.test(role)) {
+            // Spread naval units along the offshore staging line by uid.
+            const [je] = uidJitterKm(meta.uid);
+            return offsetLonLat([blsCoord[0], stagingLat], je * 3, 0);
+        }
+        return null;   // not a static-role unit
+    }
+
+    function redPositionW3LonLat(meta, stepIndex, progress) {
+        // TRUST THE SOURCE. The W3 producer authored each unit's coord
+        // per phase deliberately — air at the operating zone, naval
+        // offshore, ground at the line of contact, SSM at base. Earlier
+        // we tried to override these with a BLS→OBJ lerp; that made
+        // every unit collapse onto a single axis and broke the natural
+        // domain-banded layout. Use the raw per-step coord and apply
+        // only a small visual spread to break up overlaps within the
+        // same band.
+        const arr  = scenarioRef && scenarioRef.red_unit_step_coords &&
+                     scenarioRef.red_unit_step_coords[meta.uid];
+        if (Array.isArray(arr) && arr.length) {
+            const c = arr[Math.min(stepIndex, arr.length - 1)];
+            if (c) return applyW3Spread(meta, c, stepIndex);
+        }
+        // No per-step array? Fall back to whatever baseCoord the porter
+        // seeded the marker with (still in source-coord space).
+        return meta.baseCoord || null;
     }
 
     // Resolve the per-step Blue action map. Prefer the server's
@@ -290,6 +494,19 @@
                              opacity   400ms ease-in-out,
                              filter    400ms ease-in-out;
                  will-change: transform;
+             }
+             /* W3 scenarios: the D-H staging→coast sweep is ~55 km. A
+              * 500ms transition reads as a teleport at that distance, so
+              * lengthen to 1500ms (matches the schema README's "2-3s per
+              * phase" interactive-viewer pacing). The body.wg-w3 class is
+              * toggled in drawScenario() per scenario.schema_variant. */
+             body.wg-w3 .wg-adj-sidc,
+             body.wg-w3 .wg-adj-diamond,
+             body.wg-w3 .wg-adj-square,
+             body.wg-w3 .wg-adj-dot {
+                 transition: transform 1500ms cubic-bezier(0.3, 0.7, 0.3, 1),
+                             opacity   600ms ease-in-out,
+                             filter    600ms ease-in-out;
              }
              /* Destroyed treatment — mirrors wargame.py draw_unit_box():
               * the icon (NATO/SIDC SVG or div) is desaturated to gray, but
@@ -500,6 +717,81 @@
         });
     }
 
+    // Off-map marker icon. Uses milsymbol's APP-6D installation icon
+    // (symbol set 20) so the operator sees the doctrinal symbol — naval
+    // ports, airfields, SSM sites, and logistics installations each get
+    // their proper NATO shape — colored by side affiliation. We wrap the
+    // milsymbol SVG in a div so we can add a small id label below it and
+    // dim the whole thing (off-map markers are context, not contestants).
+    // Falls back to a Unicode-glyph div when milsymbol isn't loaded or
+    // the SIDC isn't a recognized installation code.
+    function offMapMarkerIcon(om) {
+        const id   = om.id || '';
+        const sidc = om.sidc || null;
+        const size = 22;       // smaller than on-map unit icons (typ. 30-44)
+        if (sidc && window.ms && typeof window.ms.Symbol === 'function') {
+            try {
+                const sym = new window.ms.Symbol(sidc, {
+                    size,
+                    standardIdentity: String(om.side || '').toUpperCase() === 'RED' ? 'Hostile' : 'Friend',
+                    simpleStatusModifier: true,
+                });
+                const w = Math.max(size, sym.getSize().width);
+                const h = Math.max(size, sym.getSize().height);
+                const svg = sym.asSVG();
+                return window.L.divIcon({
+                    html: `<div style="
+                        position:relative;width:${w}px;height:${h + 14}px;
+                        opacity:0.78;pointer-events:auto;
+                      ">
+                        <div style="width:${w}px;height:${h}px;">${svg}</div>
+                        <div style="
+                            position:absolute;top:${h - 2}px;left:-10px;width:${w + 20}px;
+                            text-align:center;font-size:9px;color:#eee;font-weight:700;
+                            text-shadow:0 0 3px #000, 0 0 2px #000;letter-spacing:0.04em;
+                        ">${id}</div>
+                      </div>`,
+                    className: 'wg-adj-offmap',
+                    iconSize:   [w, h + 14],
+                    iconAnchor: [w / 2, h / 2],
+                });
+            } catch (_) { /* fall through to glyph */ }
+        }
+        // Fallback: side-colored glyph + id (no milsymbol available).
+        const isRed = String(om.side).toUpperCase() === 'RED';
+        const color = isRed ? '#a02020' : '#1f4d80';
+        const glyph = ({
+            naval_base:     '⚓',
+            air_base:       '✈',
+            ssm_brigade:    '⇪',
+            logistics_node: '◫',
+        })[om.type] || '◇';
+        const w = 26, h = 26;
+        return window.L.divIcon({
+            html: `<div style="
+                position:relative;width:${w}px;height:${h}px;
+                opacity:0.78;pointer-events:auto;
+              ">
+                <div style="
+                    width:${w}px;height:${h}px;border-radius:50%;
+                    background:${color};
+                    border:1.5px dashed rgba(255,255,255,0.65);
+                    box-shadow:0 0 3px rgba(0,0,0,.5);
+                    display:flex;align-items:center;justify-content:center;
+                    color:#fff;font-size:14px;line-height:1;
+                ">${glyph}</div>
+                <div style="
+                    position:absolute;top:${h - 2}px;left:-10px;width:${w + 20}px;
+                    text-align:center;font-size:9px;color:#eee;font-weight:700;
+                    text-shadow:0 0 3px #000, 0 0 2px #000;letter-spacing:0.04em;
+                ">${id}</div>
+              </div>`,
+            className: 'wg-adj-offmap',
+            iconSize:   [w, h + 12],
+            iconAnchor: [w / 2, h / 2],
+        });
+    }
+
     function diamondIcon(color, label) {
         return window.L.divIcon({
             html: `<div style="
@@ -668,6 +960,17 @@
         clearScenario();
         bindZoomHookOnce();
 
+        // Tag body with the schema variant so CSS can lengthen the marker
+        // transition on W3 (where the D-H staging→coast sweep is ~55 km
+        // and a 500ms transition reads as a teleport; 1500ms reads as
+        // motion). No-op on legacy W1/W2 scenarios.
+        try {
+            const cls = document.body.classList;
+            cls.remove('wg-w3', 'wg-w4');
+            if (scenario.schema_variant === 'w3-rich')  cls.add('wg-w3');
+            if (scenario.schema_variant === 'w4-strike') cls.add('wg-w4');
+        } catch (_) { /* ignore */ }
+
         // Capture scenario-level references the per-step movement model needs.
         scenarioRef    = scenario;
         blsCoordByName = {};
@@ -763,6 +1066,32 @@
             blsMarkers[bls.name] = m;
         }
 
+        // Off-map markers (W3-only). Naval bases, air bases, SSM brigades,
+        // logistics nodes that exist outside the AO but matter operationally.
+        // Phase-independent: same coords across all 17 steps so we draw them
+        // once in drawScenario, not on every applyState. Rendered smaller
+        // and dimmer than on-map units to read as context. Uses real APP-6D
+        // installation SIDCs (symbol set 20) baked in by the porter.
+        for (const om of (scenario.off_map_markers || [])) {
+            if (!om || !Array.isArray(om.coord) || om.coord.length !== 2) continue;
+            const m = window.L.marker(
+                [om.coord[1], om.coord[0]],
+                {
+                    icon:  offMapMarkerIcon(om),
+                    title: `${om.id} — ${om.side} ${om.type}`,
+                },
+            ).bindTooltip(
+                `<strong>${om.id}</strong> · ${om.side} ${om.type}` +
+                (om.name_ar ? `<br>${om.name_ar}` : '') +
+                (om.name_en ? `<br>${om.name_en}` : ''),
+                { sticky: true },
+            );
+            m._sidc    = om.sidc || null;
+            m._wgOffMap = om;
+            m.addTo(layerGroup);
+            offMapMarkerLayers.push(m);
+        }
+
         // OBJ NASSER + security ring. The ring uses obj.radius_km (a JSON
         // field that wasn't being drawn) so the operator can see at a
         // glance how big the objective area is relative to the red
@@ -832,6 +1161,7 @@
             const baseCoord = (Array.isArray(unit.coord) && unit.coord.length === 2) ? unit.coord.slice() : null;
             const meta = {
                 uid:       unit.uid,
+                side:      'RED',
                 role:      unit.role,
                 bls:       unit.bls,
                 appear:    Number.isFinite(unit.appear) ? unit.appear : 0,
@@ -866,7 +1196,12 @@
                 }
             }
 
-            const sidc = redSidcFor(unit);
+            // Prefer the porter-baked SIDC (W3-rich scenarios) since it
+            // encodes name_ar → APP-6 main icon properly (helicopter,
+            // submarine, destroyer, AEW, etc.). Fall back to the legacy
+            // derived SIDC from role+echelon for W1/W2 where unit.sidc is
+            // absent. Same pattern as the blue marker creation below.
+            const sidc = unit.sidc || redSidcFor(unit);
             const size = redIconSize(unit.echelon);
             const icon = sidcIcon(sidc, size) || diamondIcon(COLORS.RED_UNIT, unit.label);
             const m = window.L.marker(
@@ -913,9 +1248,12 @@
             ).bindTooltip(`${unit.unit_uid} (${unit.echelon || 'unit'}) — ACTIVE`, { permanent: false });
             m._wgBlueMeta = {
                 uid:       unit.unit_uid,
+                side:      'BLUE',
                 baseId:    unit.base_id,
                 baseCoord: unit.coord.slice(),
                 echelon:   unit.echelon,
+                role:      unit.role || null,
+                appear:    Number.isFinite(unit.appear) ? unit.appear : 0,
             };
             // Same Units-feature hooks as the Red side — see comment above.
             // unit.unit_uid is e.g. "BLUE_lc"; SIDC's affiliation digit is
@@ -1222,6 +1560,15 @@
             );
             salientLayer.addTo(layerGroup);
         }
+
+        // W3-rich scenarios: per-role attack graphics don't translate. W3
+        // uses role names like "armored_brigade" / "strike" / "mech_inf_div"
+        // that don't match ROLE_ATTACK_STYLE, and per-unit `red_unit_step_coords`
+        // already shows every unit's authentic position. The phase line
+        // (updateAorPhaseLine) shows the frontline and engagement_arcs show
+        // cause-effect, so the per-unit chevrons would just clutter.
+        // Bail out after the salient polygon is rendered.
+        if (scenario && scenario.schema_variant === 'w3-rich') return;
 
         // ── Per-red-unit NATO attack arrows ──
         // One axis-of-attack graphic for EACH attacking red unit, drawn
@@ -1768,6 +2115,15 @@
         if (!layerGroup || !state) return;
         const stepIndex = Number.isFinite(state && state.step_index) ? state.step_index : 0;
 
+        // W3-rich scenarios carry explicit `engagement_arc` features per
+        // phase, with the authentic attacker uid in `cause_actor`. We render
+        // those via renderEngagementArcs() instead of the heuristic
+        // "nearest-red" counterattack arrows below — the W3 data is the
+        // authority, not a Leaflet distance query.
+        const isW3 = (scenario || scenarioRef) &&
+                     (scenario || scenarioRef).schema_variant === 'w3-rich';
+        if (isW3) return;
+
         // Kill arrows (red → blue, NATO 'attack' graphic) are scheduled
         // alongside the explosion in scheduleStaggeredDeaths so each one
         // appears just before its blue dies, then fades out with the X.
@@ -1849,6 +2205,249 @@
         }
     }
 
+    // ── W3-rich: per-phase unit narrative tooltips ────────────────────
+    // Rebuild every unit marker's tooltip on each applyState so the
+    // operator can hover and read the phase-specific story:
+    //   • identity: uid, Arabic name, echelon + role, side
+    //   • live state: current/initial strength %, magazine / airframes /
+    //     hulls counters when populated
+    //   • actor: action_what, action_intended_effect, doctrine cited
+    //   • affected: status_change, damage_pct, cause_actor uid, cause_what
+    // Reads the full W3 step baseline (state.actors, state.affected,
+    // state.unit_state) which is already piped through by the porter +
+    // adjudicator. No-op on legacy W1/W2 scenarios.
+    function applyW3UnitNarrative(state) {
+        const sc = scenarioRef;
+        if (!sc || sc.schema_variant !== 'w3-rich' || !state) return;
+
+        const actorsByUid   = new Map();
+        for (const a of (Array.isArray(state.actors)   ? state.actors   : [])) {
+            if (a && a.uid) actorsByUid.set(a.uid, a);
+        }
+        const affectedByUid = new Map();
+        for (const a of (Array.isArray(state.affected) ? state.affected : [])) {
+            if (a && a.uid) affectedByUid.set(a.uid, a);
+        }
+        const unitState = (state.unit_state && typeof state.unit_state === 'object')
+            ? state.unit_state : {};
+
+        // Look up the static identity record (name_ar, role, echelon, side)
+        // from the scenario OOB so we don't have to re-derive it per call.
+        const redById  = new Map();
+        const blueById = new Map();
+        for (const u of (sc.red_units || []))         if (u && u.uid)      redById.set(u.uid, u);
+        for (const u of (sc.blue_units_initial || [])) if (u && u.unit_uid) blueById.set(u.unit_uid, u);
+
+        function tooltipFor(uid, side) {
+            const ident = side === 'BLUE' ? blueById.get(uid) : redById.get(uid);
+            if (!ident) return null;
+            const us = unitState[uid] || {};
+            const actor    = actorsByUid.get(uid);
+            const affected = affectedByUid.get(uid);
+            const lines = [];
+
+            // Identity header
+            lines.push(`<strong>${esc(uid)}</strong> · ${side}`);
+            if (ident.name_ar) lines.push(`<div dir="rtl" style="font-size:11px;color:#cce;">${esc(ident.name_ar)}</div>`);
+            const idLine2 = [ident.echelon || 'unit', ident.role || ident.domain || ''].filter(Boolean).join(' · ');
+            if (idLine2) lines.push(`<div style="font-size:10px;color:#9ab;">${esc(idLine2)}</div>`);
+
+            // Live state — show strength %, suppressed/delayed when active,
+            // and any domain-specific counter that's populated.
+            const stateBits = [];
+            if (Number.isFinite(us.current_strength) && Number.isFinite(us.initial_strength) && us.initial_strength > 0) {
+                const pct = Math.round((us.current_strength / us.initial_strength) * 100);
+                stateBits.push(`<span style="color:${pct >= 80 ? '#7fdc7f' : pct >= 50 ? '#e8c84c' : '#e87a4c'};">${pct}%</span>`);
+            }
+            if (us.suppressed_pct > 0) stateBits.push(`<span style="color:#ca8a04;">supp ${Math.round(us.suppressed_pct * 100)}%</span>`);
+            if (us.delayed_pct    > 0) stateBits.push(`<span style="color:#7c3aed;">delay ${Math.round(us.delayed_pct    * 100)}%</span>`);
+            if (Number.isFinite(us.magazine))        stateBits.push(`mag ${us.magazine}`);
+            if (Number.isFinite(us.airframes))       stateBits.push(`air ${us.airframes}`);
+            if (Number.isFinite(us.hulls_remaining)) stateBits.push(`hulls ${us.hulls_remaining}`);
+            if (us.destroyed)                        stateBits.push(`<span style="color:#b00020;font-weight:700;">DESTROYED</span>`);
+            if (stateBits.length) {
+                lines.push(`<div style="margin-top:3px;font-size:10px;">${stateBits.join(' · ')}</div>`);
+            }
+
+            // Actor narrative (what this unit DID this phase)
+            if (actor && actor.action_what) {
+                lines.push(`<div style="margin-top:6px;padding-top:4px;border-top:1px solid #345;font-size:11px;">
+                    <strong style="color:#9bd6a3;">▶ ${esc(actor.action_component || 'action')}:</strong> ${esc(actor.action_what)}
+                </div>`);
+                if (actor.action_intended_effect) {
+                    lines.push(`<div style="font-size:10px;color:#bcd;font-style:italic;">→ ${esc(actor.action_intended_effect)}</div>`);
+                }
+                if (Array.isArray(actor.action_doctrine_cited) && actor.action_doctrine_cited.length) {
+                    lines.push(`<div style="font-size:9px;color:#789;">[${esc(actor.action_doctrine_cited.join(', '))}]</div>`);
+                }
+            }
+
+            // Affected detail (what HIT this unit this phase)
+            if (affected && affected.status_change && affected.status_change !== 'unchanged') {
+                const sc = affected.status_change;
+                const color = ({
+                    destroyed: '#b00020', damaged_partial: '#d97706',
+                    suppressed: '#ca8a04', delayed: '#7c3aed',
+                    expended: '#2563eb',
+                })[sc] || '#888';
+                const dmg = Number.isFinite(affected.damage_pct) ? ` (${Math.round(affected.damage_pct * 100)}%)` : '';
+                lines.push(`<div style="margin-top:6px;padding-top:4px;border-top:1px solid #543;font-size:11px;">
+                    <strong style="color:${color};">◆ ${esc(sc)}${dmg}</strong>
+                </div>`);
+                if (affected.cause_what) {
+                    lines.push(`<div style="font-size:10px;color:#dcb;">${esc(affected.cause_what)}</div>`);
+                }
+                if (affected.cause_actor) {
+                    lines.push(`<div style="font-size:9px;color:#a98;">by ${esc(affected.cause_actor)}</div>`);
+                }
+                if (affected.cause_doctrine) {
+                    lines.push(`<div style="font-size:9px;color:#789;font-style:italic;">${esc(affected.cause_doctrine)}</div>`);
+                }
+            }
+
+            return lines.join('');
+        }
+
+        for (const [uid, m] of Object.entries(redMarkers)) {
+            const html = tooltipFor(uid, 'RED');
+            if (html) try { m.setTooltipContent(html); } catch (_) {}
+        }
+        for (const [uid, m] of Object.entries(blueMarkers)) {
+            const html = tooltipFor(uid, 'BLUE');
+            if (html) try { m.setTooltipContent(html); } catch (_) {}
+        }
+    }
+
+    // ── W3-rich: per-step damage tinting ──────────────────────────────
+    // For each affected unit listed in state.affected[], apply the NATO
+    // "damaged" SIDC status modifier (a single horizontal bar through the
+    // symbol). Cleared at the start of every step so non-destroyed damage
+    // is ephemeral, mirroring W3's per-phase status_change semantics.
+    // Destroyed units skip this layer entirely — their X overlay (via the
+    // blue_destroyed / red_degraded pipelines) is sticky and authoritative.
+    function applyW3PerStepDamage(state) {
+        const sc = scenarioRef;
+        if (!sc || sc.schema_variant !== 'w3-rich') return;
+        const affected = Array.isArray(state && state.affected) ? state.affected : [];
+        const affectedUids = new Set(affected.map(a => a && a.uid).filter(Boolean));
+
+        // Pass 1: clear damage tint from any marker NOT in this step's
+        // affected list. Destroyed markers are skipped — their X overlay
+        // is the authoritative visual and we don't want to fight it.
+        const all = [...Object.values(redMarkers), ...Object.values(blueMarkers)];
+        for (const m of all) {
+            const meta = (m && (m._wgRedMeta || m._wgBlueMeta));
+            const uid  = meta && meta.uid;
+            if (!uid) continue;
+            const reg = unitRegistry[uid];
+            if (reg && reg.status === UNIT_STATUS.DESTROYED) continue;
+            if (!affectedUids.has(uid)) {
+                try { unmarkUnitAsDamaged(m); } catch (_) {}
+            }
+        }
+        // Pass 2: apply the damaged modifier for every affected uid whose
+        // status_change is NOT 'destroyed' (destroyed gets the X via the
+        // cumulative pipeline; we'd double-mark otherwise).
+        for (const a of affected) {
+            if (!a || !a.uid) continue;
+            if (a.status_change === 'destroyed') continue;
+            const m = redMarkers[a.uid] || blueMarkers[a.uid];
+            if (!m) continue;
+            try { markUnitAsDamaged(m); } catch (_) {}
+        }
+    }
+
+    // ── W3-rich: explicit engagement arcs ─────────────────────────────
+    // Draw the per-step engagement_arc LineStrings the W3 producer emits.
+    // Each arc connects the attacker's coord to the target's coord and is
+    // color-coded by `status_change` (see STATUS_COLORS). Arcs fade out
+    // after a short lifetime so they read as "this engagement just
+    // happened" rather than persisting across phases.
+    function clearEngagementArcs() {
+        for (const t of engagementArcTimers) { try { clearTimeout(t); } catch (_) {} }
+        engagementArcTimers = [];
+        for (const a of engagementArcs) {
+            if (a && layerGroup) try { layerGroup.removeLayer(a); } catch (_) {}
+        }
+        engagementArcs = [];
+    }
+
+    // Render every engagement_arc this phase exactly as the W3 schema
+    // README specifies (Wargame3/schema/README.md §5):
+    //   "Render as: animated dashed line from source to target,
+    //    color-coded by status_change. Fade in/out over ~1.5s."
+    //
+    // That's the whole spec. No NATO tactical-graphic chevrons, no
+    // per-component visual signatures, no extra layers. The schema
+    // intentionally caps complexity at 8–14 arcs per phase; anything
+    // more becomes visual noise.
+    function renderEngagementArcs(state, scenario) {
+        clearEngagementArcs();
+        if (!layerGroup || !state || !window.L) return;
+        const sc = scenario || scenarioRef;
+        if (!sc || sc.schema_variant !== 'w3-rich') return;
+        const stepIndex = Number.isFinite(state && state.step_index) ? state.step_index : 0;
+        const stepRow = Array.isArray(sc.steps) ? sc.steps[stepIndex] : null;
+        const arcs = stepRow && Array.isArray(stepRow.engagement_arcs)
+                     ? stepRow.engagement_arcs : [];
+        if (!arcs.length) return;
+
+        for (const arc of arcs) {
+            const coords = arc && Array.isArray(arc.coordinates) ? arc.coordinates : null;
+            if (!coords || coords.length < 2) continue;
+            const [src, dst] = coords;
+            if (!Array.isArray(src) || !Array.isArray(dst)) continue;
+
+            const color = STATUS_COLORS[arc.status_change] || STATUS_COLORS.unchanged;
+            // Weight scales mildly with damage_pct so heavy strikes read
+            // as more decisive than glancing engagements (3–5 px).
+            const dmg    = Number.isFinite(arc.damage_pct) ? arc.damage_pct : 0.3;
+            const weight = Math.max(2, 2 + Math.round(dmg * 3));
+            const start  = [src[1], src[0]];
+            const end    = [dst[1], dst[0]];
+
+            const line = window.L.polyline([start, end], {
+                color,
+                weight,
+                opacity:   0.85,
+                dashArray: '6 4',
+                lineCap:   'round',
+                interactive: false,
+                className: 'wg-w3-engagement-arc wg-attack-pulse',
+            });
+
+            // Tooltip: actor → target · status + damage% · cause_what
+            const tooltip = [
+                arc.actor_uid && arc.target_uid ? `${arc.actor_uid} → ${arc.target_uid}` : null,
+                `${arc.status_change || '?'}${Number.isFinite(arc.damage_pct) ? ` ${Math.round(arc.damage_pct * 100)}%` : ''}`,
+                arc.cause_what,
+            ].filter(Boolean).join(' · ');
+            if (tooltip) line.bindTooltip(tooltip, { sticky: true });
+
+            line.addTo(layerGroup);
+            engagementArcs.push(line);
+
+            // Arrowhead at the target end so direction is unambiguous.
+            const head = makeArrowhead(start, end, color, weight * 4);
+            if (head) {
+                head.addTo(layerGroup);
+                engagementArcs.push(head);
+            }
+
+            // Per-schema fade after ~1.5s. The next applyState wipes
+            // everything anyway; the timer prevents stale arcs from
+            // piling up if the operator scrubs rapidly.
+            const captured = [line, head].filter(Boolean);
+            engagementArcTimers.push(setTimeout(() => {
+                for (const layer of captured) {
+                    try { if (layerGroup) layerGroup.removeLayer(layer); } catch (_) {}
+                    const i = engagementArcs.indexOf(layer);
+                    if (i >= 0) engagementArcs.splice(i, 1);
+                }
+            }, 1500));
+        }
+    }
+
     // ── Per-step unit movement ────────────────────────────────────────
     // Walks every Red and Blue marker the scenario placed, recomputes its
     // position from role + step index + progress (red) or per-step action
@@ -1858,18 +2457,39 @@
     function updateUnitPositions(state) {
         const stepIndex = Number.isFinite(state && state.step_index) ? state.step_index : 0;
         const progress  = progressFromState(state);
+        const isW3      = scenarioRef && scenarioRef.schema_variant === 'w3-rich';
+
+        // Sub-step interpolation factor (0..1). When the harness drives the
+        // step animation it may pass state.substep_t for cinematic playback;
+        // applyState normally calls with no substep (effectively t=1 → "snap
+        // to end", CSS transition handles the smoothing). When prev_* is
+        // available we honor a partial t so a future scrubber can drive
+        // mid-phase positions.
+        const t = (Number.isFinite(state && state.substep_t))
+                  ? clamp01(state.substep_t) : 1;
+
+        function lookupStep(table, uid, idx) {
+            const arr = scenarioRef && scenarioRef[table] && scenarioRef[table][uid];
+            return arr ? (arr[Math.min(idx, arr.length - 1)] || null) : null;
+        }
 
         for (const m of Object.values(redMarkers)) {
             const meta = m && m._wgRedMeta;
             if (!meta) continue;
-            // W3-rich: use per-unit per-step coordinates from the source GeoJSON
-            // (authentic battle positions) instead of the generic BLS→OBJ lerp.
             let lonLat;
-            const w3coords = scenarioRef && scenarioRef.red_unit_step_coords &&
-                             scenarioRef.red_unit_step_coords[meta.uid];
-            if (w3coords) {
-                lonLat = w3coords[Math.min(stepIndex, w3coords.length - 1)] || meta.baseCoord;
+            if (isW3) {
+                // W3-rich: use the W1-style BLS→OBJ lerp adapted to W3 role
+                // vocabulary. This produces the same visual story as W1/W2
+                // (armored brigades push to OBJ, arty hangs back, naval
+                // stays offshore, SOF runs ahead) instead of the raw source
+                // coords that put every unit on the same phase-line lat.
+                // The raw red_unit_step_coords arrays remain available on
+                // scenarioRef for analytics / replay, but the renderer uses
+                // the computed lerp for positioning.
+                lonLat = redPositionW3LonLat(meta, stepIndex, progress);
             } else {
+                // W1/W2: original BLS→OBJ lerp keyed on W1 role vocabulary
+                // (Main effort, Fixing, Recon, Follow-on, Exploitation, …).
                 lonLat = redPositionLonLat(meta, stepIndex, progress);
             }
             if (!lonLat) continue;
@@ -1885,7 +2505,20 @@
         for (const m of Object.values(blueMarkers)) {
             const meta = m && m._wgBlueMeta;
             if (!meta) continue;
-            const lonLat = bluePositionLonLat(meta, stepIndex, state);
+            let lonLat;
+            // W3-rich: blue also gets per-step coords. W1/W2 keeps the
+            // COUNTERATTACK/WITHDRAW base-offset logic.
+            const w3curr = lookupStep('blue_unit_step_coords', meta.uid, stepIndex);
+            if (w3curr) {
+                const w3prev = lookupStep('blue_unit_step_prev', meta.uid, stepIndex) || w3curr;
+                lonLat = (t >= 1) ? w3curr : lerpLonLat(w3prev, w3curr, t);
+                // Apply the side-nudge so blue defensive lines render
+                // visibly behind the red advance, not stacked at the same
+                // latitude. Echelon banding still helps spread the cluster.
+                if (isW3) lonLat = applyW3Spread(meta, lonLat, stepIndex);
+            } else {
+                lonLat = bluePositionLonLat(meta, stepIndex, state);
+            }
             if (!lonLat) continue;
             try {
                 m._wgLastLatLng = m.getLatLng();
@@ -2486,12 +3119,19 @@
         const startDelay     = 100;
         const xDelay         = 100;
         const arrowLifeMs    = 600;  // attack arrow lingers after the kill
+        const stepIndex      = Number.isFinite(state && state.step_index) ? state.step_index : 0;
+        // W3-rich scenarios get their kill arrows from renderEngagementArcs
+        // (authoritative cause_actor → target_uid). Suppress the inferred
+        // nearest-red arrow here to avoid drawing both — the explosion + X
+        // reveal below still fire so the kill is still visible.
+        const skipInferredArrows = scenarioRef && scenarioRef.schema_variant === 'w3-rich';
         const n = ordered.length;
         ordered.forEach((d, idx) => {
             const t = startDelay + (n > 1 ? (idx / (n - 1)) * STEP_WINDOW_MS : 0);
             // 1. Spawn the NATO 'attack' tactical graphic from nearest red
             //    to the dying blue, just slightly BEFORE the explosion so
             //    it reads as "shot fired → impact → wreckage".
+            if (skipInferredArrows) { /* W3: explicit arcs already drawn */ } else
             pendingDeathTimers.push(setTimeout(() => {
                 const blueLL = d.ll;
                 const redMarker = findNearestRedMarker(blueLL, stepIndex);
@@ -2629,6 +3269,11 @@
         aoLayers = [];
         advanceArrows = [];
         attackArrows = [];
+        // W3-rich engagement arcs: wipe list and timers.
+        for (const t of engagementArcTimers) { try { clearTimeout(t); } catch (_) {} }
+        engagementArcTimers = [];
+        engagementArcs = [];
+        offMapMarkerLayers = [];
         aorPhaseLine = null;
         aorPhaseLineLabel = null;
         salientLayer = null;
@@ -2812,6 +3457,16 @@
         updateContactHalo(state);
         updateAdvanceArrows(state, scenario || scenarioRef, { instant });
         updateAttackArrows(state, scenario || scenarioRef);
+        // W3-rich: explicit engagement arcs replace the nearest-red heuristics.
+        // updateAttackArrows() bails out early for W3, this fills the same slot
+        // with authoritative arcs keyed off cause_actor → target_uid.
+        renderEngagementArcs(state, scenario || scenarioRef);
+        // Note: we DO NOT draw separate "axis of advance" trails. The
+        // schema (Wargame3/schema/README.md) only specifies engagement_arc
+        // visuals. Unit movement is shown by the marker itself sliding
+        // smoothly between phases via the CSS transform transition; an
+        // extra arrow per moving unit would add 30+ extra layers and
+        // clutter the operator's read of the engagements.
         updateAorPhaseLine(state, scenario || scenarioRef);
 
         // 1. Update BLS semicircle colors + drop a NATO breach badge the
@@ -3002,6 +3657,19 @@
         // → parent never auto-promotes to destroyed.
         refreshAllMarkerStatuses();
 
+        // 4d-W3. Apply per-step damage tinting from state.affected[]. This
+        // is the W3 layer that shows "this unit was hit THIS phase" without
+        // pretending the unit is destroyed. Sits after refreshAllMarkerStatuses
+        // so it doesn't get clobbered by the registry pass. No-op on legacy
+        // W1/W2 scenarios.
+        applyW3PerStepDamage(state);
+
+        // 4e-W3. Refresh every unit's tooltip with the phase's narrative —
+        // action_what / cause_what / strength% / magazine counters. This
+        // is purely a UX layer; data is already on state.actors /
+        // state.affected / state.unit_state via the adjudicator.
+        applyW3UnitNarrative(state);
+
         // 4e. Schedule the staggered explosion + delayed X re-mark for the
         // new kills (no-op on rewind / when there are no new kills).
         scheduleStaggeredDeaths(state, { instant });
@@ -3154,6 +3822,8 @@
             if (a && layerGroup) layerGroup.removeLayer(a);
         }
         attackArrows = [];
+        // Wipe W3-rich engagement arcs + cancel pending fade timers.
+        clearEngagementArcs();
         if (aorPhaseLine && layerGroup) {
             layerGroup.removeLayer(aorPhaseLine);
             aorPhaseLine = null;

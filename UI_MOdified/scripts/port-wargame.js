@@ -630,26 +630,247 @@ const W3_ECHELON_MAP = {
     coy: 'company',  sqn: 'squadron', flot: 'unit', unit: 'unit',
 };
 
-function w3SidcFor(side, role, echelon) {
-    const affiliation = String(side || '').toUpperCase() === 'RED' ? '100610' : '100310';
-    const ech = String(echelon || '').toLowerCase();
-    const r   = String(role || '').toLowerCase();
+// ── MIL-STD-2525D / NATO APP-6D SIDC builder ──────────────────────
+//
+// A SIDC is 20 ASCII digits:
+//   pos 0-1   version       (always "10" for 2525D)
+//   pos 2     context       ("0" = real)
+//   pos 3     affiliation   ("3" = friend, "4" = neutral, "6" = hostile, "1" = unknown)
+//   pos 4-5   symbol set    ("01" air, "10" land unit, "15" land equipment,
+//                            "20" installation, "30" sea surface, "35" sea
+//                            subsurface, "40" mine warfare)
+//   pos 6     status        ("0" = present)
+//   pos 7     HQ/TF/Dummy   ("0" = none)
+//   pos 8-9   amplifier     (echelon code, "21" division, "18" brigade,
+//                            "16" battalion, "15" company/squadron, "00" unknown)
+//   pos 10-15 main icon     (6 digits identifying the symbol entity)
+//   pos 16-17 modifier 1
+//   pos 18-19 modifier 2
 
-    let hqEch;
-    if (ech === 'division')       hqEch = '0221';
-    else if (ech === 'brigade')   hqEch = '0218';
-    else if (ech === 'battalion') hqEch = '0216';
-    else                          hqEch = '0015';
+const SS_AIR          = '01';   // Symbol Set 01 — Air
+const SS_LAND_UNIT    = '10';   // Symbol Set 10 — Land Unit
+const SS_INSTALLATION = '20';   // Symbol Set 20 — Installations
+const SS_SEA_SURFACE  = '30';   // Symbol Set 30 — Sea Surface
+const SS_SEA_SUB      = '35';   // Symbol Set 35 — Sea Subsurface
 
-    let iconMod = '1211020000'; // mechanized infantry
-    if (/recon/.test(r))                        iconMod = '1211050000';
-    else if (/armored|armor|tank|armd/.test(r)) iconMod = '1211030000';
-    else if (/fire|arty|artillery/.test(r))     iconMod = '1303000000';
-    else if (/ew|signal|comm/.test(r))          iconMod = '1300000000';
-    else if (/cbrn|chem/.test(r))               iconMod = '1417000000';
-    else if (/naval|submarine|landing_ship|amphib/.test(r)) iconMod = '1211000000';
+const SI_BY_SIDE = { RED: '6', BLUE: '3', NEUTRAL: '4', UNKNOWN: '1' };
 
-    return affiliation + hqEch + iconMod;
+const AMP_BY_ECHELON = {
+    division:  '21',
+    brigade:   '18',
+    battalion: '16',
+    company:   '15',
+    squadron:  '15',
+    flotilla:  '14',
+    platoon:   '13',
+    section:   '12',
+    squad:     '11',
+    team:      '10',
+    unit:      '00',
+};
+
+// Pick the symbol set from a unit's domain + echelon + Arabic description.
+// W3 sources tag `domain` ∈ {strategic, naval, air, ground, sof} but the
+// Arabic name sometimes contradicts it. Rule: if the Arabic name STARTS
+// with a ship/aircraft noun, override the source domain; if the noun
+// appears only deep in the description (e.g. a ground brigade that
+// happens to mention having "12 unmanned boats"), trust the source.
+function pickSymbolSet(props) {
+    const dom  = String(props.domain || '').toLowerCase();
+    const name = stripArabicDiacritics(props.name_ar);
+    const role = String(props.type || props.role || '').toLowerCase();
+
+    // First-word vocabulary tells us what KIND of unit this primarily is.
+    // We strip leading numerics ("10 فرقاطات" → "فرقاطات") before checking.
+    const head = name.replace(/^\s*[(\d\s]+/, '').trim();
+
+    // Sea subsurface — submarines override everything regardless of dom.
+    if (dom === 'subsurface' || /غواصة/.test(head) || role === 'submarine') return SS_SEA_SUB;
+
+    // Arabic unit-prefix words that mark this as a LAND unit definitively.
+    // "كتيبة 85 مدفعية مضاد طائرات" = "85th AAA Battalion" — even though
+    // it's anti-aircraft, it's a ground-based artillery battery. We
+    // pin it to SS_LAND when the name STARTS with one of these prefixes,
+    // overriding any air/naval domain mistag in the source.
+    const landPrefix = /^(?:ال)?(?:كتيبة|كتائب|لواء|فرقة|سرية|سرايا|قيادة|احتياط|المرحلة|العمل|المكون|المدفع)/.test(head);
+
+    // Sea surface — first-word ship vocabulary OR explicit naval domain.
+    // "10 فرقاطات" (10 frigates) → ship at head; tag as SEA.
+    // "لواء المشاة 23 ... + 12 زورق" (infantry brigade with attached boats)
+    // → "لواء" (brigade) at head; KEEP as land unit.
+    const shipHead = /^(?:زورق|سفينة|سفن|مدمر|مدمرات|فرقاط|كورفيت|إبرار|هوفر|كاسحة|قانصة|قاعدة\s*[أب]?\s*البحري)/.test(head);
+    if (!landPrefix && (shipHead || dom === 'naval' || dom === 'subsurface')) return SS_SEA_SURFACE;
+
+    // Air — first-word aircraft vocabulary OR explicit air domain.
+    // "سرب طائرات" (squadron of aircraft) → air at head.
+    // "رف طائرات" (flight of aircraft) → air at head.
+    const airHead = /^(?:سرب|رف|طائرات?|عمودي)/.test(head);
+    if (!landPrefix && (airHead || dom === 'air')) return SS_AIR;
+
+    return SS_LAND_UNIT;
+}
+
+// Strip Arabic combining diacritics (shadda, fatha, kasra, damma, sukun,
+// tanwin, etc.) so regex matching doesn't depend on the source's specific
+// combining-mark ordering. The W3 producer stores "مسيَّر" with combining
+// marks in [shadda, fatha] order, but our regex literals use [fatha,
+// shadda]; both render identically but compare unequal byte-for-byte. The
+// safest fix is to remove all diacritics from both sides of the test.
+// Covers U+064B..U+0652 (tashkil), U+0670 (alef superscript), U+0653..065F.
+function stripArabicDiacritics(s) {
+    return String(s || '').replace(/[ً-ٰٟ]/g, '');
+}
+
+// Pick the 6-digit main icon code. Reads the Arabic name first (most
+// specific), falls back to the W3 `type` (role) when name parsing is
+// ambiguous. Codes are MIL-STD-2525D Table B-V (symbol set 10 = land
+// unit) / Table B-XII (symbol set 30 = sea surface) / Table B-IX
+// (symbol set 01 = air). Unknown codes degrade gracefully to a blank
+// frame in milsymbol.
+function pickMainIcon(props, ss) {
+    // Normalize the name: strip all Arabic diacritics so combining-mark
+    // ordering doesn't bypass our pattern matches.
+    const n    = stripArabicDiacritics(props.name_ar);
+    const role = String(props.type || props.role || '').toLowerCase();
+
+    if (ss === SS_AIR) {
+        // Rotary-wing first — "عمودي" disambiguates from fixed-wing.
+        if (/عمودي/.test(n)) {
+            if (/هجوم|attack|strike/i.test(n + role))      return '120100'; // attack helo
+            if (/نقل|cargo|transport/i.test(n + role))     return '120200'; // cargo helo
+            return '120300';                                                 // utility helo
+        }
+        // Unmanned aerial systems (n is diacritic-stripped: "مسيَّرة" → "مسيرة")
+        if (/مسير|uav|drone/i.test(n + role)) {
+            if (/استطلاع|مراقبة|isr|recon/i.test(n + role)) return '130100'; // ISR UAV
+            if (/متفجر|هجوم|kamikaze|loitering/i.test(n + role)) return '130200'; // attack UAV
+            return '130000';
+        }
+        // Fixed-wing
+        if (/إنذار مبكر|awacs|aew/i.test(n + role))           return '110600'; // surveillance / AEW
+        if (/نقل|سي\s*130|c-?130|transport|cargo/i.test(n + role)) return '110400';
+        if (/ميراج|سوخوي|sukhoi|mirage|هجوم\s*أرضي|attack|strike/i.test(n + role)) return '110200';
+        if (/ميج|mig|رافال|rafale|أف\s*16|f-?16|دفاع\s*جوي|fighter/i.test(n + role)) return '110100';
+        return '110000'; // generic fixed-wing
+    }
+
+    if (ss === SS_SEA_SUB) return '110000';
+
+    if (ss === SS_SEA_SURFACE) {
+        if (/مدمر|destroyer/i.test(n + role))                          return '120103';
+        if (/فرقاط|frigate/i.test(n + role))                            return '120104';
+        if (/كورفيت|corvette/i.test(n + role))                          return '120105';
+        if (/زورق\s*صواريخ|missile.boat|fast.attack/i.test(n + role))   return '120106';
+        // Mine warfare — "قانصة الغام" = mine hunter, "كاسحة ألغام" = sweeper
+        if (/كاسحة|قانصة|mine.?sweep|mine.?hunt/i.test(n + role))       return '120601';
+        if (/بث\s*ألغام|mine.?lay/i.test(n + role))                     return '120602';
+        if (/سفينة\s*إبرار|landing_ship/i.test(n + role))                return '120903';
+        if (/زورق\s*إبرار|زورق\s*انزال|landing.craft/i.test(n + role))   return '120902';
+        if (/هوفر|hover/i.test(n + role))                                return '120902'; // LCAC
+        if (/تجاري|merchant/i.test(n))                                  return '120201';
+        if (/قيادة|command/i.test(n + role))                             return '120200';
+        if (/مرور|تفتيش|patrol|coastal|اسناد\s*ساحلي/i.test(n + role))   return '120200';
+        if (/اخلاء\s*طبي|medical.evac/i.test(n + role))                  return '120203';
+        if (/إمداد|صيانة|auxiliary|supply/i.test(n + role))              return '120300';
+        // Coastal radar / sea-mine field — still in sea-surface set
+        if (/رادار\s*ساحلي|coastal.radar/i.test(n + role))               return '120200';
+        if (/لغم\s*بحري|sea.?mine/i.test(n + role))                      return '120601';
+        return '120100'; // generic surface combatant
+    }
+
+    // ── Land Unit (Symbol Set 10) ──
+    // Special operations
+    if (/(?:عمليات\s*خاصة)|sof|special.ops|special.forces/i.test(n + role)) return '161000';
+    // ATGM / anti-tank guided missile. Arabic encodes this as "م/د"
+    // (mudaad-dabbabat = anti-armor) with various separators: "م / د",
+    // "م/د", "م . د". The trailing context might be the digit "402" so
+    // we don't anchor on \b. Also catches "قاذف" (launcher) co-mentioned.
+    if (/م\s*[\/.]\s*د(?:\s|$|\d)|atgm|anti.?tank|antitank/i.test(n + role)) return '120401';
+    // Air defense / SAM / MANPADS / SSM / AAA. "م/د" above must be checked
+    // first because "كتيبة م / د" can look like AD otherwise. The Arabic
+    // "ال" definite article (e.g. "الدفاع الجوي" = "the air defense")
+    // is allowed: regex permits an optional "ال" + space between دفاع
+    // and جوي.
+    if (/(?:ال)?دفاع\s*(?:ال)?جوي|سام|hawk|هوك|اس\s*300|s-?300|sam|air.?defense/i.test(n + role)) return '130501';
+    if (/manpads|كتف\s*حرارية/i.test(n + role))                           return '130502';
+    if (/(?:مدفعية\s*مضاد|مدفعية\s*م\s*ضد|مضاد\s*طائرات|aaa)/i.test(n + role)) return '130502';
+    if (/(?:صواريخ.*أرض)|(?:صواريخ.*\d+\s*كم)|ssm_brigade|surface.?to.?surface/i.test(n + role)) return '130201';
+    if (/(?:صواريخ\s*متوسط|medium.?range)/i.test(n + role))               return '130201';
+    // Armor and infantry
+    if (/(?:دبابات|مدرع)|tank|armored/i.test(n + role))                   return '121300';
+    if (/(?:مشاة\s*الآلي|الآلية|الآلي)|mech_(?:inf|brigade|bn)|mechanized/i.test(n + role)) return '121102';
+    if (/استطلاع|recon|reconnaissance/i.test(n + role))                   return '121105';
+    if (/مشاة|infantry/i.test(n + role))                                  return '121100';
+    // Field artillery
+    if (/مدفعية|artillery|field_arty/i.test(n + role))                    return '130301';
+    // Sensor / radar
+    if (/رادار|radar|sensor/i.test(n + role))                             return '130901';
+    // Engineer / signal / CBRN / EW / medical / supply / maintenance / MP
+    if (/هندسة|engineer/i.test(n + role))                                 return '140700';
+    if (/(?:اشارة|إشارة)|signal|comm/i.test(n + role))                    return '140900';
+    if (/كيميائي|chem|cbrn/i.test(n + role))                              return '141700';
+    if (/(?:حرب\s*الكترونية|electronic.warfare|ew_bn)/i.test(n + role))   return '141400';
+    if (/(?:طبية|طبي)|medical/i.test(n + role))                           return '141100';
+    if (/(?:تزويد|إمداد|نقل|supply|logistics|transport)/i.test(n + role)) return '141500';
+    if (/صيانة|maintenance/i.test(n + role))                              return '141800';
+    if (/(?:شرطة\s*عسكرية)|military.police|\bmp\b/i.test(n + role))       return '161100';
+    // HQ / command nodes (Arabic "قيادة" = "command", "احتياط" = "reserve")
+    if (/قيادة|احتياط|hq|command|reserve/i.test(n + role))                return '121000';
+    // Fallback: friendly/hostile generic combat unit. milsymbol always
+    // renders the affiliation-tagged frame even when the entity icon
+    // code is just a parent category, so this guarantees visibility.
+    return '121100'; // generic infantry — universally rendered
+}
+
+// Off-map markers use the Installation symbol set (20). Pick a doctrinal
+// site code that maps cleanly to milsymbol's installation rendering.
+function pickInstallationIcon(om) {
+    const t = String(om.type || '').toLowerCase();
+    const n = String(om.name_ar || '');
+    if (t === 'air_base'       || /قاعدة.*جوي|airfield|airbase/i.test(n + t)) return '110203';
+    if (t === 'naval_base'     || /قاعدة.*بحري|naval.?base|port/i.test(n + t)) return '110204';
+    if (t === 'ssm_brigade'    || /صواريخ.*أرض|ssm/i.test(n + t))              return '110702';
+    if (t === 'logistics_node' || /إمداد|تزويد|نقل|logistic|supply/i.test(n + t)) return '110800';
+    return '110100'; // generic military installation
+}
+
+// Build a full 20-char SIDC from the assembled pieces.
+function buildSidc({ side, symbolSet, echelon, mainIcon, mod1 = '00', mod2 = '00' }) {
+    const aff  = SI_BY_SIDE[String(side || '').toUpperCase()] || '1';
+    const ss   = (symbolSet || SS_LAND_UNIT).slice(0, 2);
+    const amp  = AMP_BY_ECHELON[String(echelon || 'unit').toLowerCase()] || '00';
+    const icon = String(mainIcon || '000000').padEnd(6, '0').slice(0, 6);
+    const m1   = String(mod1 || '00').padEnd(2, '0').slice(0, 2);
+    const m2   = String(mod2 || '00').padEnd(2, '0').slice(0, 2);
+    // 10 (version) + 0 (context) + aff + ss + 0 (status) + 0 (HQ) + amp + icon + m1 + m2
+    return '10' + '0' + aff + ss + '0' + '0' + amp + icon + m1 + m2;
+}
+
+// W3-rich SIDC for a unit feature. Replaces the legacy w3SidcFor() which
+// used only role+echelon and assumed Land Unit symbol set. The new builder
+// reads name_ar to pick the correct symbol set + main icon so a helicopter
+// squadron renders as a helo, a destroyer as a destroyer, a base as a
+// base, etc.
+function w3SidcFor(props) {
+    // Back-compat shim: legacy callers passed (side, role, echelon) positionally.
+    // New callers pass a single props object containing the full feature properties.
+    if (typeof props === 'string') {
+        const [side, role, echelon] = arguments;
+        props = { side, type: role, echelon };
+    }
+    const ss   = pickSymbolSet(props);
+    const echelon = String(props.echelon || 'unit').toLowerCase();
+    const icon = pickMainIcon(props, ss);
+    return buildSidc({ side: props.side, symbolSet: ss, echelon, mainIcon: icon });
+}
+
+function w3SidcForOffMap(om) {
+    return buildSidc({
+        side:      om.side,
+        symbolSet: SS_INSTALLATION,
+        echelon:   'unit',
+        mainIcon:  pickInstallationIcon(om),
+    });
 }
 
 function isW3Shape(stepJsons) {
@@ -659,6 +880,51 @@ function isW3Shape(stepJsons) {
     const hasUnitKind = s0.features.some(f => f && f.properties && f.properties.kind === 'unit');
     return hasCollectionPhase && hasUnitKind;
 }
+
+// W3 source `kind` (per-phase narrative label, e.g. "shaping", "h_hour_strike")
+// → legacy `phase` enum used by the W1/W2 renderer + HUD switches. Anything
+// not in the table falls back to `w4PhaseLabel(stepIndex, stepCount)` so the
+// scenario still loads.
+// Mapping covers every `kind` value the W3 producer emits across the 17
+// canonical phases (D-7 → D+144h). New / unknown kinds fall back to
+// w4PhaseLabel(stepIndex, stepCount).
+const W3_PHASE_TO_LEGACY = {
+    // D-7 .. D-1: pre-H shaping operations
+    shaping:                 'PRE-H',
+    strategic_strike:        'PRE-H',
+    sead:                    'PRE-H',
+    naval_engagement:        'PRE-H',
+    mine_clearance:          'PRE-H',
+    mine_warfare:            'PRE-H',
+    isr_buildup:             'PRE-H',
+    counter_c2:              'PRE-H',
+    // D-H: the assault begins
+    h_hour_strike:           'PHASE 1',
+    amphibious_landing:      'PHASE 1',
+    // D+2h .. D+24h: assault and lodgement expansion
+    beach_assault:           'PHASE 2A',
+    main_wave:               'PHASE 2A',
+    beachhead_consolidation: 'PHASE 2A',
+    first_counterattack:     'PHASE 2A',
+    lodgement_expansion:     'PHASE 2A',
+    blue_counterattack:      'PHASE 2A',
+    // D+36h .. D+48h: follow-on force commit + push inland
+    '9mid_lands':            'PHASE 2B',
+    push_inland:             'PHASE 2B',
+    follow_on_force:         'PHASE 2B',
+    breakout:                'PHASE 2B',
+    // D+72h .. D+132h: armored exploitation, Blue counter-stroke, culmination
+    '1ad_lands':             'PHASE 3',
+    blue_op_reserve:         'PHASE 3',
+    culmination_check:       'PHASE 3',
+    final_red_push:          'PHASE 3',
+    exploitation:            'PHASE 3',
+    operational_pause:       'PHASE 3',
+    final_assault:           'PHASE 3',
+    // D+144h: end-state
+    final_resolution:        'RESOLUTION',
+    resolution:              'RESOLUTION',
+};
 
 function buildW3Scenario(stepJsons, folderName, meta) {
     const stepCount  = stepJsons.length;
@@ -689,6 +955,40 @@ function buildW3Scenario(stepJsons, folderName, meta) {
         pipeline.push(obj.coord);
     }
 
+    // Off-map markers: bases / SSM brigades / logistics nodes that exist
+    // outside the AO but matter operationally. Per the W3 schema README,
+    // these should render as smaller, dimmer Points colored by side and
+    // labeled with their id. They are PHASE-INDEPENDENT — the same set of
+    // ~11 markers appears in every step file at the same coords — so we
+    // de-duplicate by id and emit a single static array. Their lat/lon
+    // (32–33 for RED bases up north, 28.9–29.5 for BLUE bases down south)
+    // is real geography, NOT a placeholder; we keep them as-is.
+    const offMapMarkersById = new Map();
+    for (const stepJson of stepJsons) {
+        for (const f of stepJson.features) {
+            const p = f && f.properties;
+            if (!p || p.kind !== 'off_map_marker' || !p.id) continue;
+            if (offMapMarkersById.has(p.id)) continue;
+            const c = f.geometry && f.geometry.coordinates;
+            if (!Array.isArray(c) || c.length !== 2) continue;
+            const om = {
+                id:      p.id,
+                side:    p.side || 'NEUTRAL',
+                type:    p.type || 'logistics_node',     // naval_base | air_base | ssm_brigade | logistics_node
+                coord:   c,
+                name_ar: p.name_ar || null,
+                name_en: p.name_en || null,
+            };
+            // Encode the installation as an APP-6D SIDC (symbol set 20) so
+            // the renderer can use the same milsymbol pipeline as on-map
+            // units — airfields, naval ports, SSM sites, and logistics
+            // sites each get their doctrinal symbol.
+            om.sidc = w3SidcForOffMap(om);
+            offMapMarkersById.set(p.id, om);
+        }
+    }
+    const offMapMarkers = [...offMapMarkersById.values()];
+
     // BLS: place at the pipeline start (coastline / amphibious landing beach),
     // NOT at the objective.  redPositionLonLat() stages red units 10 km north
     // of this coord; with BLS at the coast they spawn at sea and advance toward
@@ -701,11 +1001,38 @@ function buildW3Scenario(stepJsons, folderName, meta) {
         permanently_limited: false,
     }];
 
-    // Build uid → firstRealCoord: scan all steps so we can replace the W3
-    // staging placeholders ([18,32], [18,33], [18.3,32.5], …) that the source
-    // GeoJSON uses for off-map units.  Any coord with lat > 31 is outside the
-    // operational area (Brega is ~30.4°N) and treated as a staging placeholder.
-    const isPlaceholder = (c) => c && (c[1] > 31 || (c[0] === 18 && c[1] === 32));
+    // Compute bbox up-front so we know where "offshore staging" should sit.
+    // Anchoring staging to bbox.maxLat is tempting but wrong here — the bbox
+    // is inflated by W3's off_map_marker bases (naval / air bases at 32–33°N)
+    // and the W3 source's own "off-map" placeholder coords. Using that as
+    // the staging lat puts units 280+ km north of the coast, so the D-H
+    // transition looks like a teleport across the entire map.
+    //
+    // Instead, anchor staging to the actual coastline: the pipeline's
+    // northernmost latitude is the phase_line lat at D-H (the line of
+    // departure, ≈ 30.54° N for Brega). +0.5° puts staging ~55 km offshore,
+    // which is a realistic amphibious task-force standoff distance and
+    // keeps the D-H sweep visible-but-not-jarring.
+    const bbox = deriveBbox(stepJsons);
+    const coastLat = pipeline.length
+        ? Math.max.apply(null, pipeline.map(p => p[1]))
+        : (bbox ? bbox[3] - 0.5 : 30.55);
+    const stagingLat = +(coastLat + 0.5).toFixed(4);
+
+    // PRESERVE SOURCE COORDINATES. The W3 producer authored each unit's
+    // position per phase deliberately — phase 0 has everyone at their
+    // home base ([18, 32] / [18, 33]), and later phases move units to
+    // their operating zones (air at 30.3, naval at 30.9, ground at the
+    // phase line, SSM at base). Previously we treated lat>31 as a
+    // placeholder and remapped to an offshore staging line; that broke
+    // the schema's intent — naval bases, SSM brigades, and air bases
+    // that are LEGITIMATELY at lat 32-33 got moved. Use the source
+    // coords as-is. The renderer's per-uid jitter (±1.5 km) breaks up
+    // any visual pile-up without distorting the source.
+    //
+    // `firstRealCoord` (kept for the engagement-arc endpoint remap) is
+    // now just "first non-null source coord we see for this uid". No
+    // placeholder filtering — every coord is treated as real.
     const firstRealCoord = new Map();
     for (const stepJson of stepJsons) {
         for (const f of stepJson.features) {
@@ -713,7 +1040,7 @@ function buildW3Scenario(stepJsons, folderName, meta) {
             if (!p || p.kind !== 'unit' || !p.uid) continue;
             if (firstRealCoord.has(p.uid)) continue;
             const c = f.geometry && f.geometry.coordinates;
-            if (c && !isPlaceholder(c)) firstRealCoord.set(p.uid, c);
+            if (Array.isArray(c) && c.length === 2) firstRealCoord.set(p.uid, c);
         }
     }
 
@@ -749,23 +1076,42 @@ function buildW3Scenario(stepJsons, folderName, meta) {
         if (!isW3CombatUnit(p)) continue;
         const echelon  = W3_ECHELON_MAP[p.echelon] || 'unit';
         const rawCoord = f.geometry && f.geometry.coordinates;
-        // Replace staging placeholder with first real on-map position; fall back to pipeline start.
-        const coord    = isPlaceholder(rawCoord)
-            ? (firstRealCoord.get(p.uid) || pipeline[0] || rawCoord)
-            : rawCoord;
+        // Seed coord = whatever the source put in phase 0. Unit might be
+        // at its home base (lat 32-33), an offshore staging point, or
+        // already in-theater depending on the W3 scenario design. We
+        // don't second-guess the source.
+        const coord    = Array.isArray(rawCoord) ? rawCoord : null;
         const role    = p.type || p.domain || 'unit';
         const label   = shortenLabel(p.name_ar || p.uid);
-        const sidc    = w3SidcFor(p.side, role, echelon);
+        // Build the SIDC from the full source props — name_ar drives the
+        // most specific icon (helo vs fixed-wing fighter, destroyer vs
+        // corvette, S-300 vs HAWK, etc). The new builder also flips
+        // symbol set per domain so naval units don't render as land.
+        const sidc    = w3SidcFor({
+            side:    p.side,
+            type:    p.type,
+            domain:  p.domain,
+            echelon,
+            name_ar: p.name_ar,
+        });
+        // Persist the source domain so the renderer can scale icons /
+        // choose nuances per domain (e.g. smaller for air assets, etc.).
+        const srcDomain = p.domain || null;
         if (p.side === 'RED') {
             redUnits.push({
                 uid:     p.uid,
                 label,
                 echelon: echelon,
                 role,
+                domain:  srcDomain,
                 bls:     'BLS-1',
                 sidc,
                 coord:   coord,
-                appear:  1,
+                name_ar: p.name_ar || null,
+                // `appear` is the first step where the unit transitions out of
+                // placeholder state. Renderer uses this to suppress the
+                // role-based spread offset during the offshore-staging phase.
+                appear:  null,    // filled in by the redUnitStepCoords loop below
             });
         } else {
             blueInitial.push({
@@ -773,52 +1119,97 @@ function buildW3Scenario(stepJsons, folderName, meta) {
                 base_id:  p.uid.replace(/[^\w-]/g, '_'),
                 label,
                 role,
-                domain:   p.domain || null,
+                domain:   srcDomain,
                 echelon:  echelon,
                 sidc,
                 coord:    coord,
                 posture:  null,
+                name_ar:  p.name_ar || null,
+                // Filled in by the per-step coords loop below — first step
+                // where the unit transitions out of placeholder state.
+                // W3 blue units are typically on-map from step 0 so this
+                // ends up as 0, but we wire the gate the same way as red
+                // for symmetry with applyW3Spread.
+                appear:   null,
             });
         }
     }
     if (!redUnits.length)   redUnits.push({ uid: 'RED_PH',  label: 'placeholder', echelon: 'unit', role: 'unknown', bls: 'BLS-1', coord: pipeline[0] || [0,0], appear: 1 });
     if (!blueInitial.length) blueInitial.push({ unit_uid: 'BLUE_PH', base_id: 'BLUE_PH', echelon: 'unit', sidc: null, coord: pipeline[pipeline.length-1] || [0,0], posture: null });
 
-    // Build authentic per-step positions for each red unit from the source GeoJSON.
+    // Build per-step `coord` and `prev_*` arrays for every unit, on both sides.
     // The map renderer uses these instead of the generic BLS→OBJ lerp so units
-    // move to their real battle positions at each phase rather than collapsing
-    // onto a single axis line.
-    const redUnitStepCoords = {};
-    for (const unit of redUnits) {
-        const stepCoords = [];
-        for (let i = 0; i < stepCount; i++) {
-            const feat = stepJsons[i].features.find(f => f.properties && f.properties.uid === unit.uid);
-            const c = feat && feat.geometry && feat.geometry.coordinates;
-            stepCoords.push((c && !isPlaceholder(c)) ? c : null);
+    // move to their authentic battle positions at each phase. `prev_*` enables
+    // mid-step interpolation per the W3 schema's animation hooks.
+    function buildPerStep(unitList, sideKey) {
+        const stepCoords = {};
+        const stepPrev   = {};
+        for (const unit of unitList) {
+            const uid = unit.uid || unit.unit_uid;
+            if (!uid) continue;
+            const coords = new Array(stepCount).fill(null);
+            const prev   = new Array(stepCount).fill(null);
+            const firstSeed = firstRealCoord.get(uid) || null;
+            for (let i = 0; i < stepCount; i++) {
+                const feat = stepJsons[i].features.find(f => f.properties && f.properties.uid === uid);
+                const p = feat && feat.properties;
+                const c = feat && feat.geometry && feat.geometry.coordinates;
+                // Use the source coord exactly as authored. If the unit
+                // doesn't appear in a given step (rare — most W3 units are
+                // in every step), fall back to the first coord we ever saw.
+                coords[i] = (Array.isArray(c) && c.length === 2) ? c : firstSeed;
+                // prev_lon / prev_lat are the W3 schema's explicit
+                // animation hooks. Use them verbatim when present; else
+                // fall back to the prior step's coord (or current for step 0).
+                if (p && Number.isFinite(p.prev_lon) && Number.isFinite(p.prev_lat)) {
+                    prev[i] = [p.prev_lon, p.prev_lat];
+                } else if (i === 0) {
+                    prev[i] = coords[i];
+                } else {
+                    prev[i] = coords[i - 1];
+                }
+            }
+            stepCoords[uid] = coords;
+            stepPrev[uid]   = prev;
+            // appear = 0 since every unit is in every W3 step file. The
+            // visual change comes from the source's per-phase coords.
+            unit.appear = 0;
         }
-        // Fill nulls: use the unit's initial coord (first real position) for
-        // any step where the source GeoJSON still has a staging placeholder.
-        const fallback = unit.coord;
-        for (let i = 0; i < stepCoords.length; i++) {
-            if (stepCoords[i] === null) stepCoords[i] = fallback;
-        }
-        redUnitStepCoords[unit.uid] = stepCoords;
+        return { stepCoords, stepPrev };
     }
+    const redPS  = buildPerStep(redUnits, 'red');
+    const bluePS = buildPerStep(blueInitial, 'blue');
+    const redUnitStepCoords   = redPS.stepCoords;
+    const redUnitStepPrev     = redPS.stepPrev;
+    const blueUnitStepCoords  = bluePS.stepCoords;
+    const blueUnitStepPrev    = bluePS.stepPrev;
 
     // Per-step baselines from FeatureCollection.properties (the rich block).
     const steps      = [];
     const phaseTable = [];
 
+    // Cumulative red losses counter (units that transitioned into a degraded
+    // status_change at least once). Used for the panel's "RED coy-eq" readout.
+    const redKilledOnce = new Set();
+
     for (let i = 0; i < stepCount; i++) {
         const cp          = stepJsons[i].properties || {};
         const time_label  = cp.time_label || `P${i}`;
         const elapsed_h   = parseElapsedHours(time_label, i);
-        const phaseKind   = cp.kind || w4PhaseLabel(i, stepCount);
+        const kindNative  = cp.kind || null;
+        const phaseLegacy = (kindNative && W3_PHASE_TO_LEGACY[kindNative])
+                            || w4PhaseLabel(i, stepCount);
         const plKm        = Number.isFinite(cp.phase_line_km) ? cp.phase_line_km : 0;
         const frLocal     = Number.isFinite(cp.force_ratio_local) ? cp.force_ratio_local : null;
         const advantage   = String(cp.step_advantage || '');
 
-        phaseTable.push({ index: i, time_label, elapsed_hours: elapsed_h, phase: phaseKind });
+        phaseTable.push({
+            index:         i,
+            time_label,
+            elapsed_hours: elapsed_h,
+            phase:         phaseLegacy,
+            kind_native:   kindNative,
+        });
 
         // Objective status: use step_advantage + phase progression.
         // All 17 W3 steps have BLUE_ADV → final result is DENIED.
@@ -828,38 +1219,149 @@ function buildW3Scenario(stepJsons, folderName, meta) {
         else if (i < stepCount - 1)        objStatus = 'CONTESTED';
         else                               objStatus = advantage === 'RED_ADV' ? 'CAPTURED' : 'DENIED';
 
-        // Per-step unit outcomes.
+        // Per-step unit outcomes + actor / affected detail.
+        //
+        // The W3 schema distinguishes 6 status_change values: destroyed,
+        // damaged_partial, suppressed, delayed, expended, unchanged. Only
+        // `destroyed` is sticky and should drive the kill-X overlay; the
+        // others are per-phase damage states that should colour-tint the
+        // marker but not retire it. We track them in two buckets:
+        //   - blue_destroyed_baseline / red_degraded_baseline:
+        //       uids that have transitioned to DESTROYED status (sticky)
+        //   - affected[]: per-step damage detail for ALL affected units
+        //       including the destroyed ones; the renderer reads this to
+        //       apply STATUS_COLORS tint and resets it each step.
         const blueDestroyed = [];
         const redDegraded   = [];
         const redStrength   = {};
+        const actors        = [];
+        const affected      = [];
+        // Per-step "live state" map for EVERY unit: keyed by uid, captures
+        // the source's full operational state — strengths, status flags,
+        // domain-specific counters (magazine, airframes, hulls). This is
+        // the W3 schema's `unit` live-state block (see schema/README.md).
+        // The renderer can read this to drive hover tooltips, panel detail
+        // tabs, and analytics without re-parsing source GeoJSON.
+        const unitState = {};
+
+        const isDamageStatus = (sc) => sc && sc !== 'unchanged' && sc !== 'ok';
 
         for (const f of stepJsons[i].features) {
             const p = f && f.properties;
             if (!p || p.kind !== 'unit' || !p.uid) continue;
+            const destroyed = (p.destroyed === true) || (p.status_change === 'destroyed');
             if (p.side === 'RED') {
                 const str = (Number.isFinite(p.current_strength) && Number.isFinite(p.initial_strength) && p.initial_strength > 0)
                     ? p.current_strength / p.initial_strength : 1.0;
                 redStrength[p.uid] = +(str.toFixed(3));
-                if (p.is_affected && p.status_change && p.status_change !== 'unchanged') redDegraded.push(p.uid);
+                if (destroyed) {
+                    redDegraded.push(p.uid);
+                    redKilledOnce.add(p.uid);
+                }
             } else if (p.side === 'BLUE') {
-                // W3 schema marks affected blue units via is_affected+status_change,
-                // not destroyed===true. Treat any damage (partial or heavy) as a
-                // degraded unit so per_unit_deltas drives map attack effects.
-                const isAffected = p.is_affected && p.status_change &&
-                                   p.status_change !== 'unchanged' && p.status_change !== 'ok';
-                const isDestroyed = p.destroyed === true || p.status_change === 'destroyed';
-                if (isAffected || isDestroyed) blueDestroyed.push(p.uid);
+                if (destroyed) blueDestroyed.push(p.uid);
+            }
+            // Capture the full per-unit live state for this phase. Every
+            // field that varies phase-to-phase ends up here so consumers
+            // can read e.g. "R-SSM magazine = 8 missiles remaining" or
+            // "B-d2-3-048 airframes = 11 of 12" without going back to
+            // the source GeoJSON. Sticky fields (destroyed) are still on
+            // top-level red_degraded / blue_destroyed for the legacy
+            // pipeline.
+            unitState[p.uid] = {
+                current_strength: Number.isFinite(p.current_strength) ? p.current_strength : null,
+                initial_strength: Number.isFinite(p.initial_strength) ? p.initial_strength : null,
+                destroyed:        p.destroyed === true,
+                suppressed_pct:   Number.isFinite(p.suppressed_pct)   ? p.suppressed_pct   : 0,
+                delayed_pct:      Number.isFinite(p.delayed_pct)      ? p.delayed_pct      : 0,
+                // Domain-specific counters — non-null only when applicable.
+                // The W3 schema uses these for "munitions remaining" type
+                // bookkeeping. Surfacing them lets the operator see e.g.
+                // an SSM brigade's magazine dropping or a sqdn's airframes
+                // being attrited.
+                magazine:         Number.isFinite(p.magazine)         ? p.magazine         : null,
+                airframes:        Number.isFinite(p.airframes)        ? p.airframes        : null,
+                hulls_remaining:  Number.isFinite(p.hulls_remaining)  ? p.hulls_remaining  : null,
+                is_actor:         p.is_actor    === true,
+                is_affected:      p.is_affected === true,
+            };
+            // Actor narrative: any side, any phase. The renderer can show a
+            // floating callout above the marker for the duration of the phase.
+            if (p.is_actor) {
+                actors.push({
+                    uid:                    p.uid,
+                    side:                   p.side,
+                    action_component:       p.action_component || null,
+                    action_what:            p.action_what || null,
+                    action_why:             p.action_why || null,
+                    action_intended_effect: p.action_intended_effect || null,
+                    action_doctrine_cited:  Array.isArray(p.action_doctrine_cited) ? p.action_doctrine_cited : null,
+                });
+            }
+            // Affected detail: cause-effect chain. Captures every damage
+            // event this step (including destroyed). The renderer tints
+            // markers per status_change and clears tints not in this list.
+            if (p.is_affected && isDamageStatus(p.status_change)) {
+                affected.push({
+                    uid:            p.uid,
+                    side:           p.side,
+                    status_change:  p.status_change,
+                    damage_pct:     Number.isFinite(p.damage_pct) ? p.damage_pct : null,
+                    cause_actor:    p.cause_actor || null,
+                    cause_what:     p.cause_what || null,
+                    cause_doctrine: p.cause_doctrine || null,
+                });
             }
         }
 
         // BLS status mirrors Red's momentum: LIMITED pre-H, THREATENED early assault, SECURE once inland.
         const blsStatus = i < 5 ? 'LIMITED' : i < 12 ? 'THREATENED' : 'SECURE';
 
-        // Collect engagement arc descriptions for a detailed narrative.
+        // Engagement arcs: one entry per `kind: "engagement_arc"` LineString
+        // in this step. The renderer draws these as dashed polylines colored
+        // by status_change, fading after ~1.5s. Per schema README.
+        //
+        // The W3 source emits arc coordinates using each unit's source
+        // position, which for staged off-map units is the literal
+        // placeholder coord ([18, 32], [18.3, 32.5], …) — that would draw
+        // arcs leaping ~280 km north of the AOR into the deep
+        // Mediterranean. We remap each arc endpoint through the ported
+        // per-step coords (offshore staging or on-map) so arcs always
+        // connect the ON-SCREEN positions of the actor and target.
+        function arcEndpointFor(uid, side, fallback) {
+            if (!uid) return fallback;
+            const arr = side === 'BLUE' ? blueUnitStepCoords[uid] : redUnitStepCoords[uid];
+            if (Array.isArray(arr) && arr[i]) return arr[i];
+            return fallback;
+        }
         const arcDescriptions = [];
+        const engagementArcs  = [];
         for (const f of stepJsons[i].features) {
             const p = f && f.properties;
             if (!p || p.kind !== 'engagement_arc') continue;
+            const raw = f.geometry && Array.isArray(f.geometry.coordinates)
+                          ? f.geometry.coordinates : null;
+            // Remap each endpoint to the ported on-map position by joining
+            // on cause_actor / target_uid → red/blue_unit_step_coords[step].
+            // Falls back to the raw arc coord if the uid isn't in the OOB
+            // (e.g. an arc referencing an off_map_marker we didn't extract).
+            let coords = raw;
+            if (raw && raw.length === 2) {
+                const a = arcEndpointFor(p.cause_actor, p.actor_side, raw[0]);
+                const t = arcEndpointFor(p.target_uid,  p.target_side, raw[1]);
+                coords = [a, t];
+            }
+            engagementArcs.push({
+                actor_uid:      p.cause_actor || null,
+                target_uid:     p.target_uid || null,
+                actor_side:     p.actor_side || null,
+                target_side:    p.target_side || null,
+                status_change:  p.status_change || 'unchanged',
+                damage_pct:     Number.isFinite(p.damage_pct) ? p.damage_pct : null,
+                cause_what:     p.cause_what || null,
+                cause_doctrine: p.cause_doctrine || null,
+                coordinates:    coords,
+            });
             if (p.cause_what) arcDescriptions.push(`[${p.actor_side}→${p.target_side}] ${p.cause_what}`);
         }
         const detailedNarEn = cp.combined_effect
@@ -870,27 +1372,57 @@ function buildW3Scenario(stepJsons, folderName, meta) {
             index:                          i,
             time_label,
             elapsed_hours:                  elapsed_h,
-            phase:                          phaseKind,
+            phase:                          phaseLegacy,
+            kind_native:                    kindNative,
+            phase_name_ar:                  cp.phase_name_ar   || null,
             phase_line_km_baseline:         plKm,
             objective_status_baseline:      objStatus,
             decision_point_baseline:        null,
             force_ratio_baseline:           frLocal,
-            ew_effect_baseline:             cp.step_advantage || null,
+            // The W3 source distinguishes LOCAL (close-fight) vs OPERATIONAL
+            // (theater-level) force ratios. Preserve both — the legacy
+            // `force_ratio_baseline` keeps the local number for the panel,
+            // and the new operational field is exposed for analytics.
+            force_ratio_local:              Number.isFinite(cp.force_ratio_local)       ? cp.force_ratio_local       : null,
+            force_ratio_operational:        Number.isFinite(cp.force_ratio_operational) ? cp.force_ratio_operational : null,
+            // step_advantage is the source's call on who won this phase
+            // (RED_ADV / BLUE_ADV). We preserve it as a first-class field
+            // and ALSO push it through ew_effect_baseline for back-compat
+            // with the legacy HUD that reads ew_effect.
+            step_advantage:                 cp.step_advantage  || null,
+            ew_effect_baseline:             cp.step_advantage  || null,
             mobility_state_baseline:        null,
             logistics_state_baseline:       null,
+            // Long-form English narrative summarizing the phase. The W3
+            // source pre-computes this in `combined_effect`; we keep the
+            // raw source string available alongside the engagement-appended
+            // version used by the legacy panel.
+            combined_effect:                cp.combined_effect || null,
             narrative_en_fallback:          detailedNarEn,
             narrative_ar_fallback:          cp.phase_name_ar   || '',
             bls_status_baseline:            { 'BLS-1': blsStatus },
             blue_destroyed_baseline:        unique(blueDestroyed),
             blue_destroyed_count_baseline:  unique(blueDestroyed).length,
-            red_losses_cumulative_baseline: 0,
+            red_losses_cumulative_baseline: redKilledOnce.size,
             red_degraded_baseline:          unique(redDegraded),
             red_strength_baseline:          redStrength,
             red_active_markers_baseline:    null,
+            // Source's own counts of feature presence this phase. Useful
+            // for sanity checks (n_actors should equal actors.length, etc.).
+            n_units:                        Number.isFinite(cp.n_units)            ? cp.n_units            : null,
+            n_actors:                       Number.isFinite(cp.n_actors)           ? cp.n_actors           : actors.length,
+            n_affected:                     Number.isFinite(cp.n_affected)         ? cp.n_affected         : affected.length,
+            n_engagement_arcs:              Number.isFinite(cp.n_engagement_arcs)  ? cp.n_engagement_arcs  : engagementArcs.length,
+            actors,
+            affected,
+            engagement_arcs:                engagementArcs,
+            // Per-unit live state map: uid → { current_strength, initial_strength,
+            // destroyed, suppressed_pct, delayed_pct, magazine, airframes,
+            // hulls_remaining, is_actor, is_affected }. The W3 schema's
+            // full per-phase unit block.
+            unit_state:                     unitState,
         });
     }
-
-    const bbox = deriveBbox(stepJsons);
 
     return {
         name:                meta.name     || defaultName,
@@ -901,9 +1433,17 @@ function buildW3Scenario(stepJsons, folderName, meta) {
         pipeline:            (meta.pipeline && meta.pipeline.length) ? meta.pipeline : pipeline,
         red_units:              redUnits,
         red_unit_step_coords:   redUnitStepCoords,
+        red_unit_step_prev:     redUnitStepPrev,
         blue_units_base_ids:    blueInitial.map(b => b.base_id),
         blue_units_initial:     blueInitial,
+        blue_unit_step_coords:  blueUnitStepCoords,
+        blue_unit_step_prev:    blueUnitStepPrev,
         blue_units_source:      'derived from W3 step00 unit features (173-unit full OOB)',
+        // Off-map markers: ~11 strategic-level bases / SSM brigades that
+        // exist outside the AOR. Phase-independent (same coords across
+        // all 17 steps). Renderer draws them as small dimmed points to
+        // contextualize "where Red's fighters launch from", etc.
+        off_map_markers:        offMapMarkers,
         ao_boundaries:       [],
         bls_template:        blsTemplate,
         nominal_throughput:  meta.nominal_throughput  || null,

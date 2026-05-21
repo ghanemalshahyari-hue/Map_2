@@ -2,10 +2,10 @@
 /**
  * Regression test for the wargame scenarios (item #10).
  *
- * Walks both wargame1-brega and wargame2-brega through 11 mock-mode
+ * Walks both wargame1 and wargame2 through 11 mock-mode
  * adjudicator steps and asserts the doctrinal contrast:
- *   - wargame1-brega: aggressive Red captures OBJ NASSER (CAPTURED, PL 100)
- *   - wargame2-brega: terrain + reserves deny Red (DENIED, PL ~84)
+ *   - wargame1: aggressive Red captures OBJ NASSER (CAPTURED, PL 100)
+ *   - wargame2: terrain + reserves deny Red (DENIED, PL ~84)
  *
  * Mock mode replays scenario *_baseline fields without calling Ollama,
  * so this test is deterministic and runs in a few hundred ms. It catches
@@ -30,8 +30,8 @@ const adjudicator = require(path.join('..', 'server', 'ai', 'adjudicator-agent')
 // the JSON carries it (wargame1 does); otherwise hard-coded from the
 // original Wargame2 baseline (final PL 84, blue destroyed 21, DENIED).
 const EXPECTATIONS = {
-    'wargame1-brega': null, // read from scenario.regression_expect
-    'wargame2-brega': {
+    'wargame1': null, // read from scenario.regression_expect
+    'wargame2': {
         final_objective_status: 'DENIED',
         final_phase_line_km:    84,
         final_blue_destroyed:   21,
@@ -107,7 +107,7 @@ async function runScenario(name) {
 }
 
 async function main() {
-    const names = ['wargame1-brega', 'wargame2-brega'];
+    const names = ['wargame1', 'wargame2'];
     const results = [];
     for (const n of names) {
         try { results.push(await runScenario(n)); }

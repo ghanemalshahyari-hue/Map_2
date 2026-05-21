@@ -824,6 +824,100 @@
         setStatus(`Scrubbed to step ${idx} (${target.state.time_label}).`, 'idle');
     }
 
+    // Format the phase string for the HUD step summary. W3-rich scenarios
+    // carry a `kind_native` (e.g. "h_hour_strike") alongside the legacy
+    // `phase` enum — show both so operators can read both the doctrinal
+    // bucket and the W3 producer's authentic phase label.
+    function phaseSummary(state) {
+        const phase = state && state.phase ? String(state.phase) : '';
+        const kind  = state && state.kind_native ? String(state.kind_native) : '';
+        if (!kind || kind === phase) return phase;
+        return `${phase} (${kind})`;
+    }
+
+    // Build an HTML block summarising the W3-rich per-step narrative —
+    // force ratios, step advantage, top actors with action_what, top
+    // affected with status_change + cause. Returns '' for legacy
+    // scenarios so the existing single-paragraph narrative_en panel is
+    // used unchanged.
+    function renderW3Narrative(state) {
+        if (!state || !state.kind_native) return '';     // legacy path
+        const actors   = Array.isArray(state.actors)   ? state.actors   : [];
+        const affected = Array.isArray(state.affected) ? state.affected : [];
+        const arcs     = Array.isArray(state.engagement_arcs) ? state.engagement_arcs : [];
+        const adv      = state.step_advantage || '';
+        const advColor = adv === 'RED_ADV' ? '#ef4444' : adv === 'BLUE_ADV' ? '#3b82f6' : '#aaa';
+        const frLoc    = state.force_ratio_local;
+        const frOp     = state.force_ratio_operational;
+
+        const out = [];
+        // Header strip: kind_native + force ratios + advantage call
+        const headerBits = [];
+        if (state.phase_name_ar) headerBits.push(`<span dir="rtl" style="color:#cce;">${escapeHtml(state.phase_name_ar)}</span>`);
+        if (adv)                 headerBits.push(`<span style="background:${advColor};color:#fff;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:700;">${escapeHtml(adv)}</span>`);
+        if (Number.isFinite(frLoc)) headerBits.push(`FR local <strong>${frLoc.toFixed(2)}</strong>`);
+        if (Number.isFinite(frOp))  headerBits.push(`FR op <strong>${frOp.toFixed(2)}</strong>`);
+        if (headerBits.length) out.push(`<div style="margin-top:6px;font-size:11px;">${headerBits.join(' &nbsp;·&nbsp; ')}</div>`);
+
+        // Top actors (capped at 6 to fit the panel)
+        if (actors.length) {
+            const items = actors.slice(0, 6).map(a => {
+                const comp = a.action_component ? `<span style="color:#9bd6a3;">[${escapeHtml(a.action_component)}]</span> ` : '';
+                return `<li style="margin:3px 0;"><strong>${escapeHtml(a.uid || '?')}</strong> ${comp}${escapeHtml(a.action_what || '')}</li>`;
+            }).join('');
+            const more = actors.length > 6 ? `<li style="opacity:0.6;">…and ${actors.length - 6} more</li>` : '';
+            out.push(`<div style="margin-top:6px;">
+                <div style="font-size:10px;color:#9ab;font-weight:700;letter-spacing:0.04em;">▶ ACTORS (${actors.length})</div>
+                <ul style="margin:2px 0 0 0;padding-left:16px;font-size:11px;line-height:1.3;">${items}${more}</ul>
+            </div>`);
+        }
+        // Top affected
+        if (affected.length) {
+            const items = affected.slice(0, 6).map(a => {
+                const color = ({
+                    destroyed: '#b00020', damaged_partial: '#d97706',
+                    suppressed: '#ca8a04', delayed: '#7c3aed',
+                    expended: '#2563eb',
+                })[a.status_change] || '#888';
+                const dmg = Number.isFinite(a.damage_pct) ? ` (${Math.round(a.damage_pct * 100)}%)` : '';
+                const cause = a.cause_actor ? `<span style="color:#a98;">by ${escapeHtml(a.cause_actor)}</span>` : '';
+                return `<li style="margin:3px 0;">
+                    <strong>${escapeHtml(a.uid || '?')}</strong>
+                    <span style="color:${color};">${escapeHtml(a.status_change || '?')}${dmg}</span>
+                    ${escapeHtml(a.cause_what || '')} ${cause}
+                </li>`;
+            }).join('');
+            const more = affected.length > 6 ? `<li style="opacity:0.6;">…and ${affected.length - 6} more</li>` : '';
+            out.push(`<div style="margin-top:6px;">
+                <div style="font-size:10px;color:#9ab;font-weight:700;letter-spacing:0.04em;">◆ AFFECTED (${affected.length})</div>
+                <ul style="margin:2px 0 0 0;padding-left:16px;font-size:11px;line-height:1.3;">${items}${more}</ul>
+            </div>`);
+        }
+        // Engagement-arc count
+        if (arcs.length) {
+            out.push(`<div style="margin-top:4px;font-size:10px;color:#9ab;">— ${arcs.length} engagement arc(s) drawn on map</div>`);
+        }
+        return out.join('');
+    }
+
+    // Append the W3 narrative block beneath the existing narrative paragraph.
+    // The narrative_en element is a <div> in the HUD, so we can inject HTML
+    // safely by appending a sibling node — but the simpler path is to
+    // overwrite innerHTML with [text, structured]. To keep the change
+    // surgical, we wrap the original narrative + the W3 detail together
+    // when the state carries W3 fields.
+    function paintNarrative(state) {
+        const baseEn = state.narrative_en || '';
+        const baseAr = state.narrative_ar || '';
+        const w3 = renderW3Narrative(state);
+        if (w3) {
+            $('wg-adj-narrative-en').innerHTML = (baseEn ? `<div>${escapeHtml(baseEn)}</div>` : '') + w3;
+        } else {
+            $('wg-adj-narrative-en').textContent = baseEn;
+        }
+        $('wg-adj-narrative-ar').textContent = baseAr;
+    }
+
     // Like renderStep() but without re-pushing to the map (the scrubber has
     // already walked the map state forward). Avoids double-applying.
     function renderSidePanelOnly(state, validation, meta) {
@@ -833,14 +927,13 @@
             .map(([k, v]) => `${k}·${v.slice(0, 3)}`).join(' ');
         const fallback = (validation && validation.fallback) ? ` [${validation.fallback}]` : '';
         $('wg-adj-step-summary').innerHTML = `
-            <strong>Step ${state.step_index} — ${state.time_label} — ${state.phase}${fallback}</strong><br>
+            <strong>Step ${state.step_index} — ${state.time_label} — ${phaseSummary(state)}${fallback}</strong><br>
             PL: ${state.phase_line_km} km · FR: ${escapeHtml(state.force_ratio)} · OBJ: ${state.objective_status}<br>
             EW: ${state.ew_effect} · Logistics: ${escapeHtml(state.logistics_state)} · Decision: ${escapeHtml(state.decision_point)}<br>
             Losses: Blue ${state.losses_cumulative.blue_destroyed}/${state.losses_cumulative.blue_total} · Red coy-eq ${state.losses_cumulative.red_company_equivalent}
         `;
         $('wg-adj-bls-line').textContent = blsLine;
-        $('wg-adj-narrative-en').textContent = state.narrative_en || '';
-        $('wg-adj-narrative-ar').textContent = state.narrative_ar || '';
+        paintNarrative(state);
         const warns = [];
         if (validation && validation.normalized_fields && validation.normalized_fields.length) {
             warns.push(`normalized: ${validation.normalized_fields.slice(0, 3).join(', ')}${validation.normalized_fields.length > 3 ? '...' : ''}`);
@@ -865,14 +958,13 @@
             .map(([k, v]) => `${k}·${v.slice(0, 3)}`).join(' ');
         const fallback = (validation && validation.fallback) ? ` [${validation.fallback}]` : '';
         $('wg-adj-step-summary').innerHTML = `
-            <strong>Step ${state.step_index} — ${state.time_label} — ${state.phase}${fallback}</strong><br>
+            <strong>Step ${state.step_index} — ${state.time_label} — ${phaseSummary(state)}${fallback}</strong><br>
             PL: ${state.phase_line_km} km · FR: ${escapeHtml(state.force_ratio)} · OBJ: ${state.objective_status}<br>
             EW: ${state.ew_effect} · Logistics: ${escapeHtml(state.logistics_state)} · Decision: ${escapeHtml(state.decision_point)}<br>
             Losses: Blue ${state.losses_cumulative.blue_destroyed}/${state.losses_cumulative.blue_total} · Red coy-eq ${state.losses_cumulative.red_company_equivalent}
         `;
         $('wg-adj-bls-line').textContent = blsLine;
-        $('wg-adj-narrative-en').textContent = state.narrative_en || '';
-        $('wg-adj-narrative-ar').textContent = state.narrative_ar || '';
+        paintNarrative(state);
         const warns = [];
         if (validation && validation.clamped_fields && validation.clamped_fields.length) {
             warns.push(`clamped: ${validation.clamped_fields.join(', ')}`);
@@ -1600,12 +1692,17 @@
         $('wg-adj-mc-outcome').textContent = '';
         const outcomes = { CAPTURED: 0, DENIED: 0, THREATENED_terminal: 0, DORMANT_terminal: 0, other: 0 };
         let progress = 0;
-        const expected = body.trials * 11;
+        // Per-trial step count = scenario.steps.length − 1 (number of step
+        // transitions). W1/W2 = 11; W3 = 16. Fall back to 11 if scenario
+        // wasn't loaded yet.
+        const stepsPerTrial = (scenarioCache && Array.isArray(scenarioCache.steps) && scenarioCache.steps.length)
+            ? scenarioCache.steps.length - 1 : 11;
+        const expected = body.trials * stepsPerTrial;
 
         mcRunSubscription = window.AppAdjudicator.mcSubscribe(r.runId, (evt, data) => {
             if (evt === 'progress') {
                 progress++;
-                $('wg-adj-mc-progress').textContent = `Trial ${data.trial} step ${data.step}/11 — PL ${data.phase_line_km} km, OBJ ${data.objective_status} (${progress}/${expected})`;
+                $('wg-adj-mc-progress').textContent = `Trial ${data.trial} step ${data.step}/${stepsPerTrial} — PL ${data.phase_line_km} km, OBJ ${data.objective_status} (${progress}/${expected})`;
             } else if (evt === 'trial-done') {
                 const cls = data.final_objective_status === 'CAPTURED' ? 'CAPTURED'
                           : data.final_objective_status === 'DENIED'    ? 'DENIED'

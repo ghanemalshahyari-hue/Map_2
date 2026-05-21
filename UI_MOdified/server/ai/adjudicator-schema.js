@@ -80,6 +80,12 @@ const PHASE_BY_INDEX = [
 function scenarioStepMeta(scenario, stepIndex) {
     const phaseRow = Array.isArray(scenario && scenario.phase_table) ? scenario.phase_table[stepIndex] : null;
     const stepRow  = Array.isArray(scenario && scenario.steps)       ? scenario.steps[stepIndex]       : null;
+    // W3-rich scenarios carry the producer's native phase name (e.g.
+    // "h_hour_strike") in `kind_native` alongside the legacy enum (`phase`).
+    // We surface both so the HUD can render "PHASE 1 (h_hour_strike)".
+    const kindNative = (phaseRow && typeof phaseRow.kind_native === 'string')
+        ? phaseRow.kind_native
+        : ((stepRow && typeof stepRow.kind_native === 'string') ? stepRow.kind_native : null);
     return {
         time_label: (phaseRow && typeof phaseRow.time_label === 'string')
             ? phaseRow.time_label
@@ -90,6 +96,7 @@ function scenarioStepMeta(scenario, stepIndex) {
         phase: (phaseRow && typeof phaseRow.phase === 'string')
             ? phaseRow.phase
             : ((stepRow && typeof stepRow.phase === 'string') ? stepRow.phase : PHASE_BY_INDEX[stepIndex]),
+        kind_native: kindNative,
     };
 }
 
@@ -257,6 +264,11 @@ function baselineLogisticsState(value, elapsedHours) {
 
 function baselineDecisionPoint(value, meta) {
     if (typeof value === 'string' && value.trim()) return value;
+    // W3-rich scenarios pass kind_native (e.g. "h_hour_strike") which is
+    // more informative than the legacy phase enum and — crucially — does
+    // NOT equal state.phase, so the SITREP banner won't duplicate the
+    // phase pill text on the next line.
+    if (meta.kind_native) return meta.kind_native;
     return meta.phase || meta.time_label || 'Step progression';
 }
 
@@ -272,6 +284,21 @@ function freshState(scenario) {
         time_label: meta.time_label,
         elapsed_hours: meta.elapsed_hours,
         phase: meta.phase,
+        kind_native: meta.kind_native || null,
+        // W3-rich per-step detail. Pass-through when present on the
+        // scenario; absent on W1/W2 so legacy code paths are unaffected.
+        // Schema reference: docs/wargame3-schema.md.
+        affected:                Array.isArray(s0.affected)        ? s0.affected        : null,
+        actors:                  Array.isArray(s0.actors)          ? s0.actors          : null,
+        engagement_arcs:         Array.isArray(s0.engagement_arcs) ? s0.engagement_arcs : null,
+        // Per-unit live state for this phase (uid → strength/status/counters).
+        unit_state:              (s0.unit_state && typeof s0.unit_state === 'object') ? s0.unit_state : null,
+        // Phase-level narrative + force ratios + step advantage call.
+        combined_effect:         s0.combined_effect      || null,
+        force_ratio_local:       Number.isFinite(s0.force_ratio_local)       ? s0.force_ratio_local       : null,
+        force_ratio_operational: Number.isFinite(s0.force_ratio_operational) ? s0.force_ratio_operational : null,
+        step_advantage:          s0.step_advantage       || null,
+        phase_name_ar:           s0.phase_name_ar        || null,
         phase_line_km: s0.phase_line_km_baseline,
         objective_status: s0.objective_status_baseline,
         force_ratio: baselineForceRatio(s0.force_ratio_baseline, meta.elapsed_hours),
@@ -337,6 +364,20 @@ function baselineStateForStep(scenario, stepIndex, prevState, coaParams) {
         time_label: meta.time_label,
         elapsed_hours: meta.elapsed_hours,
         phase: meta.phase,
+        kind_native: meta.kind_native || null,
+        // W3-rich per-step detail (pass-through; null on legacy scenarios).
+        // Schema reference: docs/wargame3-schema.md.
+        affected:                Array.isArray(s.affected)        ? s.affected        : null,
+        actors:                  Array.isArray(s.actors)          ? s.actors          : null,
+        engagement_arcs:         Array.isArray(s.engagement_arcs) ? s.engagement_arcs : null,
+        // Per-unit live state for this phase (uid → strength/status/counters).
+        unit_state:              (s.unit_state && typeof s.unit_state === 'object') ? s.unit_state : null,
+        // Phase-level narrative + force ratios + step advantage call.
+        combined_effect:         s.combined_effect       || null,
+        force_ratio_local:       Number.isFinite(s.force_ratio_local)       ? s.force_ratio_local       : null,
+        force_ratio_operational: Number.isFinite(s.force_ratio_operational) ? s.force_ratio_operational : null,
+        step_advantage:          s.step_advantage        || null,
+        phase_name_ar:           s.phase_name_ar         || null,
         phase_line_km: s.phase_line_km_baseline,
         objective_status: s.objective_status_baseline,
         force_ratio: baselineForceRatio(s.force_ratio_baseline, meta.elapsed_hours),

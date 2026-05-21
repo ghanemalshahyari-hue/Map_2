@@ -89,6 +89,23 @@ const TOP_LEVEL = Object.freeze({
     blue_units_source:  { required: false, type: 'string', desc: 'Source path for provenance.' },
     ported_at:          { required: false, type: 'string', desc: 'ISO timestamp of generation.' },
     ported_from:        { required: false, type: 'string', desc: 'Source folder/script identifier.' },
+    schema_variant:     { required: false, type: 'string', desc: 'Producer schema variant tag (e.g. "w3-rich", "w4-strike").' },
+
+    // ── W3-rich (Wargame3+) extensions ────────────────────────────
+    // These let the renderer animate units along authentic per-step
+    // positions instead of the legacy BLS→OBJ lerp, and surface the
+    // explicit engagement arcs / actor narratives the W3 producer
+    // emits. All optional; absent on legacy W1/W2 scenarios.
+    red_unit_step_coords: { required: false, type: 'object',
+        desc: 'W3: { uid: [coord_step0, coord_step1, …] } authoritative per-step positions for red.' },
+    red_unit_step_prev:   { required: false, type: 'object',
+        desc: 'W3: { uid: [prev_coord_step0, …] } — animation hooks (lerp start). Mirrors W3 prev_lon/prev_lat.' },
+    blue_unit_step_coords:{ required: false, type: 'object',
+        desc: 'W3: { uid: [coord_step0, …] } per-step positions for blue.' },
+    blue_unit_step_prev:  { required: false, type: 'object',
+        desc: 'W3: { uid: [prev_coord_step0, …] } animation start positions for blue.' },
+    off_map_markers:      { required: false, type: 'array',
+        desc: 'W3: strategic-level bases/SSMs outside the AO. Each: { id, side, type, coord, name_ar?, name_en? }. Phase-independent.' },
 });
 
 // ── Sub-shapes for nested keys ─────────────────────────────────────
@@ -114,7 +131,9 @@ const SHAPES = Object.freeze({
     },
     phase_table_item: {
         required: ['index', 'time_label', 'elapsed_hours', 'phase'],
-        optional: [],
+        // kind_native: optional W3-rich field carrying the source `kind`
+        // (e.g. "h_hour_strike") so the HUD can show "PHASE 1 (h_hour_strike)".
+        optional: ['kind_native'],
     },
     steps_item: {
         // The adjudicator falls back to scenario.steps[i] for baseline state
@@ -127,6 +146,11 @@ const SHAPES = Object.freeze({
             'red_strength_baseline', 'force_ratio_baseline',
             'ew_effect_baseline', 'logistics_state_baseline',
             'narrative_ar_baseline', 'narrative_en_baseline',
+            // W3-rich step extensions:
+            'kind_native',          // source `kind` (e.g. "beach_assault")
+            'actors',               // [{ uid, side, action_what, action_why, … }]
+            'affected',             // [{ uid, side, status_change, damage_pct, cause_actor, … }]
+            'engagement_arcs',      // [{ actor_uid, target_uid, status_change, coordinates, … }]
         ],
         enums: {
             objective_status_baseline: adjSchema.OBJECTIVE_STATUS,

@@ -66,6 +66,10 @@
         }
         restoreActiveCoa();
         loadScenarios().then(autoDrawWhenReady);
+        // Drop-zone for `all_phases.geojson` upload + SSE channel that
+        // auto-refreshes the active scenario when it changes on disk.
+        wireImportZone();
+        wireScenarioWatcher();
         // Probe the AI backend so the Mock toggle and status row reflect
         // reality at boot — and the user knows up-front whether trials will
         // actually use the LLM or fall back to baseline.
@@ -212,6 +216,17 @@
                 <div class="wg-adj-form-grid">
                     <label for="wg-adj-scenario" class="wg-adj-label">Scenario</label>
                     <select id="wg-adj-scenario" class="wg-adj-input"></select>
+
+                    <label class="wg-adj-label">Import</label>
+                    <div id="wg-adj-import" class="wg-adj-import-zone"
+                         style="border:1px dashed #4a6;border-radius:4px;padding:8px;
+                                background:rgba(74,170,102,0.06);font-size:11px;color:#9cb;
+                                cursor:pointer;text-align:center;line-height:1.4;">
+                        Drop <code>all_phases.geojson</code> here<br>
+                        <span style="font-size:10px;color:#7a9;">or click to choose a file</span>
+                        <input id="wg-adj-import-file" type="file" accept=".geojson,.json,application/json"
+                               style="display:none;" />
+                    </div>
 
                     <label for="wg-adj-model" class="wg-adj-label">Model</label>
                     <input id="wg-adj-model" class="wg-adj-input" type="text" placeholder="(default)" />
@@ -611,6 +626,125 @@
         sel.addEventListener('change', updateReportLink);
         updateReportLink();
         setStatus('Connecting to AI backend…', 'idle');
+    }
+
+    // ── Import zone ──────────────────────────────────────────────────
+    // Drop or pick an `all_phases.geojson` (or a step bundle). The file is
+    // streamed straight to /api/scenario/import which runs the porter and
+    // writes data/scenarios/<name>.json. We then refresh the scenario list
+    // and select the new one.
+    function wireImportZone() {
+        const zone  = $('wg-adj-import');
+        const input = $('wg-adj-import-file');
+        if (!zone || !input) return;
+
+        const setBusy = (msg, kind) => {
+            zone.style.background = kind === 'error' ? 'rgba(232,80,80,0.10)'
+                                : kind === 'ok'    ? 'rgba(74,200,120,0.12)'
+                                                   : 'rgba(74,170,102,0.06)';
+            zone.innerHTML = msg + (kind === 'busy'
+                ? '<br><span style="font-size:10px;color:#7a9;">Uploading…</span>'
+                : '<br><span style="font-size:10px;color:#7a9;">Drop another file to import again</span>');
+            // Re-attach the input so re-importing still works.
+            const reInput = document.createElement('input');
+            reInput.type = 'file';
+            reInput.id = 'wg-adj-import-file';
+            reInput.accept = '.geojson,.json,application/json';
+            reInput.style.display = 'none';
+            zone.appendChild(reInput);
+            reInput.addEventListener('change', onPick);
+        };
+
+        const importBlob = async (file) => {
+            if (!file) return;
+            const baseName = String(file.name || 'imported')
+                .replace(/\.(geo)?json$/i, '')
+                .replace(/^all_phases$/i, 'imported');
+            setBusy(`Importing <code>${file.name}</code>…`, 'busy');
+            try {
+                const text = await file.text();
+                let parsed;
+                try { parsed = JSON.parse(text); }
+                catch (e) { throw new Error('Not valid JSON: ' + (e.message || e)); }
+                const res = await fetch('/api/scenario/import?name=' + encodeURIComponent(baseName), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(parsed),
+                });
+                const body = await res.json().catch(() => ({}));
+                if (!res.ok || !body.ok) {
+                    throw new Error(body.error || ('HTTP ' + res.status));
+                }
+                setBusy(`Imported <strong>${body.name}</strong> · ${body.steps} steps · `
+                      + `${body.red_units} red / ${body.blue_units} blue`, 'ok');
+                // Refresh the scenario dropdown and select the freshly-imported one.
+                await loadScenarios();
+                const sel = $('wg-adj-scenario');
+                if (sel) {
+                    sel.value = body.name;
+                    sel.dispatchEvent(new Event('change'));
+                }
+                setStatus('Scenario "' + body.name + '" imported and selected.', 'ok');
+                // Auto-draw it on the map.
+                try { await showScenarioOnMap(); } catch (_) {}
+            } catch (e) {
+                setBusy(`Import failed: ${e.message || e}`, 'error');
+                setStatus('Import failed: ' + (e.message || e), 'error');
+            }
+        };
+
+        const onPick = (ev) => {
+            const f = ev && ev.target && ev.target.files && ev.target.files[0];
+            if (f) importBlob(f);
+        };
+
+        zone.addEventListener('click', () => {
+            const el = $('wg-adj-import-file');
+            if (el) el.click();
+        });
+        zone.addEventListener('dragover', (ev) => {
+            ev.preventDefault();
+            zone.style.background = 'rgba(74,200,120,0.18)';
+        });
+        zone.addEventListener('dragleave', () => {
+            zone.style.background = 'rgba(74,170,102,0.06)';
+        });
+        zone.addEventListener('drop', (ev) => {
+            ev.preventDefault();
+            const f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
+            if (f) importBlob(f);
+        });
+        input.addEventListener('change', onPick);
+    }
+
+    // ── Live reload: SSE channel ─────────────────────────────────────
+    // The server watches data/scenarios/ and emits `scenario-changed` events
+    // when files are written (either by the CLI porter or our import
+    // endpoint). On receipt we clear the local cache and, if the changed
+    // file matches the active scenario, re-draw it.
+    function wireScenarioWatcher() {
+        if (typeof EventSource === 'undefined') return;
+        try {
+            const es = new EventSource('/api/scenario/events');
+            es.addEventListener('scenario-changed', async (ev) => {
+                let payload = {};
+                try { payload = JSON.parse(ev.data || '{}'); } catch (_) {}
+                const sel = $('wg-adj-scenario');
+                const active = sel && sel.value;
+                // Refresh the list (catches added/removed scenarios).
+                try { await loadScenarios(); } catch (_) {}
+                if (sel && active) {
+                    sel.value = active;
+                    sel.dispatchEvent(new Event('change'));
+                }
+                if (payload.name && active && payload.name === active) {
+                    scenarioCache = null;
+                    setStatus('Scenario "' + payload.name + '" updated on disk — redrawing.', 'ok');
+                    try { await showScenarioOnMap(); } catch (_) {}
+                }
+            });
+            es.onerror = () => { /* let the browser auto-reconnect */ };
+        } catch (_) { /* SSE unavailable; the user can still click reload */ }
     }
 
     async function ensureScenarioLoaded() {

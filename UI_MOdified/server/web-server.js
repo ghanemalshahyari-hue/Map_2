@@ -14,7 +14,7 @@ try {
     Database = null;
 }
 
-const PORT = 8000;
+const PORT = Number.parseInt(process.env.PORT, 10) || 8000;
 /** Project root — env var (set by Electron) or parent of server/ */
 const ROOT       = process.env.RMOOZ_ROOT_DIR    || path.join(__dirname, '..');
 /** Client app directory */
@@ -59,6 +59,43 @@ if (Database) {
         console.error('  Underlying error:', e && e.message ? e.message : e, '\n');
     }
 }
+
+// -------------------- Scenario file-watcher + SSE bus --------------------
+// fs.watch fires multiple events per write (rename + change pairs, sometimes
+// duplicated by the editor's atomic-write dance). We coalesce by file name
+// with a short debounce so subscribers see one event per "settle".
+const scenarioSubscribers = new Set();
+function publishScenarioEvent(evt, data) {
+    const payload = JSON.stringify(data);
+    for (const sub of scenarioSubscribers) {
+        try { sub(evt, payload); } catch (_) { /* sub will clean itself up */ }
+    }
+}
+(function initScenarioWatcher() {
+    const dir = path.join(DATA_DIR, 'scenarios');
+    try { fs.mkdirSync(dir, { recursive: true }); } catch {}
+    const pending = new Map(); // name → timeout id
+    try {
+        fs.watch(dir, { persistent: false }, (evType, fname) => {
+            if (!fname || !/\.json$/i.test(fname)) return;
+            const name = String(fname).replace(/\.json$/i, '');
+            if (pending.has(name)) clearTimeout(pending.get(name));
+            pending.set(name, setTimeout(() => {
+                pending.delete(name);
+                // Drop the scenario-loader cache so the next GET re-reads from disk.
+                try { scenarios.clearCache(); } catch (_) {}
+                publishScenarioEvent('scenario-changed', {
+                    name,
+                    ts:   Date.now(),
+                    evt:  evType,
+                });
+            }, 200));
+        });
+        console.log(`[scenario-watcher] watching ${dir}`);
+    } catch (e) {
+        console.warn(`[scenario-watcher] could not watch ${dir}: ${e.message || e}`);
+    }
+})();
 
 // -------------------- Unified app DB (units + auth + chat + plans meta) --------------------
 const UNITS_DB_FILE = process.env.RMOOZ_UNITS_DB_FILE || path.join(DATA_DIR, 'units.db');
@@ -533,6 +570,90 @@ const server = http.createServer((req, res) => {
         } catch (e) {
             sendJson(res, 404, { ok: false, error: e.message || String(e) });
         }
+        return;
+    }
+
+    // Upload + ingest a raw GeoJSON wargame bundle (e.g. `all_phases.geojson`).
+    // The body is the raw GeoJSON FeatureCollection; the scenario name is
+    // taken from `?name=` (querystring) or the FC's `properties.operation_name`.
+    // Routes through the same porter as `node scripts/port-wargame.js` so the
+    // resulting `data/scenarios/<name>.json` is interchangeable with the CLI
+    // workflow. The watcher (T4) then re-invalidates the scenario cache and
+    // pushes a `scenario-changed` SSE event so open HUDs auto-reload.
+    if (pathname === '/api/scenario/import' && req.method === 'POST') {
+        // 25 MB cap — `all_phases.geojson` for Wargame3 is ≈ 1.6 MB, so this
+        // is several orders of magnitude of headroom but still bounded.
+        readJsonBody(req, { maxBytes: 25_000_000 }).then((body) => {
+            const queryName = (url.searchParams.get('name') || '').trim();
+            const fcName    = body && body.properties && typeof body.properties.operation_name === 'string'
+                ? body.properties.operation_name.trim() : '';
+            const rawName   = queryName || fcName || 'imported';
+            // Mirror the porter's filename sanitisation so the HTTP path and
+            // CLI path produce the same on-disk name.
+            const safeName  = rawName
+                .toLowerCase()
+                .replace(/[^a-z0-9._-]+/g, '_')
+                .replace(/^_+|_+$/g, '')
+                .slice(0, 64) || 'imported';
+
+            const porter = require('../scripts/port-wargame.js');
+            // Accept either a single FeatureCollection (all_phases bundle) or
+            // an array of per-step FeatureCollections (what a folder scan
+            // would yield) wrapped as `{ steps: [...] }`.
+            const input = Array.isArray(body && body.steps) ? body.steps : body;
+            const scenario = porter.buildScenarioFromGeoJson(input, { name: safeName });
+            // Honour the caller's name choice in the on-disk filename too.
+            scenario.name = safeName;
+            const outFile  = porter.writeScenario(scenario);
+
+            // Drop the cache so the very next GET re-validates from disk.
+            try { scenarios.clearCache(); } catch (_) {}
+
+            sendJson(res, 200, {
+                ok: true,
+                name: safeName,
+                file: outFile,
+                steps: (scenario.steps || []).length,
+                red_units: (scenario.red_units || []).length,
+                blue_units: (scenario.blue_units_initial || []).length,
+            });
+        }).catch((e) => {
+            const code = e && e.code === 'BODY_TOO_LARGE' ? 413
+                        : e && e.code === 'INVALID_JSON'   ? 400
+                        : 400;
+            sendJson(res, code, { ok: false, error: e.message || String(e) });
+        });
+        return;
+    }
+
+    // SSE channel for live scenario reload. The HUD subscribes on boot and
+    // re-fetches whenever a scenario JSON changes on disk (either via the
+    // import endpoint above or `node scripts/port-wargame.js` from the CLI).
+    if (pathname === '/api/scenario/events' && req.method === 'GET') {
+        res.writeHead(200, {
+            'Content-Type':     'text/event-stream',
+            'Cache-Control':    'no-cache',
+            'Connection':       'keep-alive',
+            'X-Accel-Buffering':'no',
+        });
+        res.write(`retry: 5000\n`);
+        res.write(`event: open\ndata: ${JSON.stringify({ ts: Date.now() })}\n\n`);
+        const heartbeat = setInterval(() => {
+            if (!res.writableEnded) {
+                try { res.write(`: ping ${Date.now()}\n\n`); } catch (_) {}
+            }
+        }, 15000);
+        const sub = (evt, payload) => {
+            if (res.writableEnded) return;
+            try { res.write(`event: ${evt}\ndata: ${payload}\n\n`); } catch (_) {}
+        };
+        scenarioSubscribers.add(sub);
+        const cleanup = () => {
+            scenarioSubscribers.delete(sub);
+            clearInterval(heartbeat);
+        };
+        req.on('close', cleanup);
+        req.on('error', cleanup);
         return;
     }
 

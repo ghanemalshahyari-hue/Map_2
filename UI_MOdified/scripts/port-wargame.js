@@ -84,6 +84,93 @@ function listStepFiles(folder) {
     return files.map(f => path.join(folder, f.file));
 }
 
+// Split a combined `all_phases.geojson` (one FeatureCollection containing
+// every feature for every phase, each tagged with properties.phase) back
+// into per-phase FeatureCollections — the format the rest of the porter
+// expects. Producers that prefer a single-file deliverable can ship this
+// instead of N separate step files.
+//
+// W3's all_phases.geojson does NOT carry per-phase FC.properties (only
+// per-feature `phase` tags). We synthesize phase_line_km / time_label
+// from the phase_line feature for each phase so the downstream port
+// has the metadata it needs. Fields the bundle doesn't carry
+// (combined_effect, step_advantage, force_ratios, kind) are left null —
+// those are optional in the W3 schema.
+//
+// Returns null if the input doesn't look like an all-phases bundle (no
+// properties.phase on the features, or no features at all).
+function splitAllPhasesIntoSteps(fc) {
+    if (!fc || fc.type !== 'FeatureCollection' || !Array.isArray(fc.features)) return null;
+    if (!fc.features.length) return null;
+    // Every (or nearly every) feature must carry a per-phase tag.
+    const tagged = fc.features.filter(f => f && f.properties && Number.isInteger(f.properties.phase));
+    if (tagged.length < fc.features.length * 0.5) return null;
+    // Group by phase.
+    const byPhase = new Map();
+    let maxPhase = -1;
+    for (const f of tagged) {
+        const p = f.properties.phase;
+        if (!byPhase.has(p)) byPhase.set(p, []);
+        byPhase.get(p).push(f);
+        if (p > maxPhase) maxPhase = p;
+    }
+    if (maxPhase < 0) return null;
+    // Some producers DO include per-phase FC metadata via a `phases` array
+    // at top level. Honor it when present.
+    const phaseProps = (fc.properties && Array.isArray(fc.properties.phases))
+        ? fc.properties.phases : null;
+    const steps = [];
+    for (let i = 0; i <= maxPhase; i++) {
+        const feats = byPhase.get(i) || [];
+        // Start from any explicit per-phase metadata.
+        const props = phaseProps && phaseProps[i] ? { ...phaseProps[i] } : {};
+        if (!Number.isInteger(props.phase)) props.phase = i;
+        // Synthesize phase_line_km + time_label from the phase_line feature
+        // (W3-rich's per-phase metadata pattern). Quietly skipped if no
+        // phase_line feature exists for this phase (the early shaping
+        // phases 0–4 have no phase_line — they're pre-advance).
+        const pl = feats.find(f => f && f.properties && f.properties.kind === 'phase_line');
+        if (pl && pl.properties) {
+            if (!Number.isFinite(props.phase_line_km) && Number.isFinite(pl.properties.phase_line_km)) {
+                props.phase_line_km = pl.properties.phase_line_km;
+            }
+            if (!props.time_label && pl.properties.time_label) {
+                props.time_label = pl.properties.time_label;
+            }
+        }
+        // Fall back: derive phase_line_km from the previous phase's value
+        // so cumulative progression doesn't drop to 0 between phases that
+        // lack a phase_line feature. This matches the W3 convention where
+        // PL is a high-water mark.
+        if (!Number.isFinite(props.phase_line_km) && i > 0) {
+            const prev = steps[i - 1];
+            if (prev && Number.isFinite(prev.properties.phase_line_km)) {
+                props.phase_line_km = prev.properties.phase_line_km;
+            } else {
+                props.phase_line_km = 0;
+            }
+        }
+        steps.push({
+            type:       'FeatureCollection',
+            name:       `step${String(i).padStart(2, '0')}`,
+            properties: props,
+            features:   feats,
+        });
+    }
+    return steps;
+}
+
+// Inspect a single file: if it looks like an all_phases bundle, split it
+// in memory and return the synthesized step JSONs. Returns null otherwise
+// (caller can then try treating the file as a folder / single step file).
+function tryLoadAllPhasesFile(filePath) {
+    if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) return null;
+    let parsed;
+    try { parsed = readJson(filePath); }
+    catch (_) { return null; }
+    return splitAllPhasesIntoSteps(parsed);
+}
+
 // ── Geometry extractors ─────────────────────────────────────────────
 
 function extractObj(step0) {
@@ -1458,21 +1545,51 @@ function buildW3Scenario(stepJsons, folderName, meta) {
     };
 }
 
-// ── Top-level: port one folder ──────────────────────────────────────
+// ── Top-level: port one folder or a single all_phases.geojson ──────
 
-function buildScenarioFromFolder(folder) {
-    if (!fs.existsSync(folder) || !fs.statSync(folder).isDirectory()) {
-        throw new Error(`folder not found: ${folder}`);
+// Build a scenario from either:
+//   • A folder containing step00.geojson … stepNN.geojson (legacy
+//     multi-file layout used by all three Wargame producers today), OR
+//   • A single .geojson file whose features carry properties.phase
+//     (the "all_phases" bundle the W3 producer also emits). The porter
+//     splits it back into per-phase FeatureCollections in memory.
+//
+// `folderName` is used as the scenario name when no wargame.meta.json
+// overrides it; for single-file input it's derived from the filename.
+function buildScenarioFromFolder(inputPath) {
+    if (!fs.existsSync(inputPath)) {
+        throw new Error(`input not found: ${inputPath}`);
+    }
+    const isDir = fs.statSync(inputPath).isDirectory();
+
+    let stepJsons;
+    let meta = {};
+    let blsSelection = null;
+    let folderName;
+
+    if (isDir) {
+        // Legacy multi-file layout: collect step*.geojson + sidecars.
+        const stepFiles = listStepFiles(inputPath);
+        stepJsons   = stepFiles.map(readJson);
+        meta        = readJsonOptional(path.join(inputPath, 'wargame.meta.json')) || {};
+        blsSelection = readJsonOptional(path.join(inputPath, 'bls_selection.geojson'));
+        folderName  = path.basename(inputPath);
+    } else {
+        // Single-file path: try all_phases bundle split.
+        const split = tryLoadAllPhasesFile(inputPath);
+        if (!split) {
+            throw new Error(`single-file input ${inputPath} doesn't look like an all_phases.geojson bundle (features missing properties.phase tags)`);
+        }
+        stepJsons  = split;
+        folderName = path.basename(inputPath).replace(/\.geojson$|\.json$/i, '')
+                         .replace(/^all_phases$/i, path.basename(path.dirname(inputPath)) || 'wargame');
+        // Look for sibling sidecars alongside the bundle, same dir.
+        const dir = path.dirname(inputPath);
+        meta        = readJsonOptional(path.join(dir, 'wargame.meta.json')) || {};
+        blsSelection = readJsonOptional(path.join(dir, 'bls_selection.geojson'));
     }
 
-    const stepFiles = listStepFiles(folder);
-    const stepJsons = stepFiles.map(readJson);
     const step0 = stepJsons[0];
-
-    const meta = readJsonOptional(path.join(folder, 'wargame.meta.json')) || {};
-    const blsSelection = readJsonOptional(path.join(folder, 'bls_selection.geojson'));
-
-    const folderName = path.basename(folder);
     const defaultName = folderName.toLowerCase();
 
     // Route W3-shape folders first (kind-based with FeatureCollection.properties.phase
@@ -1567,6 +1684,81 @@ function writeScenario(scenario) {
     return out;
 }
 
+// In-memory ingest: takes a parsed GeoJSON value (either an `all_phases`
+// FeatureCollection, or an array of step FeatureCollections — what a folder
+// scan would produce) and returns the same scenario shape that
+// `buildScenarioFromFolder` does. Used by the HTTP upload endpoint and the
+// file-watcher live-reload path so we don't have to write the raw bundle to
+// disk first.
+function buildScenarioFromGeoJson(input, opts = {}) {
+    const folderName = (opts.name || 'wargame').replace(/[^A-Za-z0-9._-]+/g, '_');
+    const meta       = opts.meta || {};
+    const blsSelection = opts.blsSelection || null;
+
+    let stepJsons;
+    if (Array.isArray(input)) {
+        // Caller already split the bundle (e.g. one FC per step).
+        stepJsons = input;
+    } else if (input && input.type === 'FeatureCollection') {
+        const split = splitAllPhasesIntoSteps(input);
+        if (!split) {
+            throw new Error('GeoJSON FeatureCollection has no per-feature `properties.phase` tags — cannot split into steps.');
+        }
+        stepJsons = split;
+    } else {
+        throw new Error('Unsupported input — pass an all_phases FeatureCollection or an array of per-step FeatureCollections.');
+    }
+
+    // Route W3-shape inputs first (W3 satisfies isW4Shape too).
+    if (isW3Shape(stepJsons)) {
+        return buildW3Scenario(stepJsons, folderName, meta);
+    }
+    if (isW4Shape(stepJsons)) {
+        return buildW4Scenario(stepJsons, folderName, meta);
+    }
+
+    // Legacy W1/W2 shape — fall through to the regular extractors. This
+    // mirrors the tail of buildScenarioFromFolder but operates on in-memory
+    // stepJsons directly.
+    const step0        = stepJsons[0];
+    const blsTemplate  = extractBlsTemplate(step0, blsSelection);
+    const aoBoundaries = extractAoBoundaries(step0);
+    const obj          = extractObj(step0);
+    const pipeline     = extractPipeline(step0);
+    const blueInitial  = extractBlueInitial(step0);
+    const blueBaseIds  = blueInitial.map(b => b.base_id);
+    const redUnits     = extractRedUnits(stepJsons);
+    const phaseTable   = buildPhaseTable(stepJsons);
+    const bbox         = deriveBbox(stepJsons);
+    const narrativeOverrides = Array.isArray(meta.narrative_ar_per_step) ? meta.narrative_ar_per_step : [];
+    const steps = stepJsons.map((sj, i) =>
+        extractStepBaseline(sj, i, narrativeOverrides[i] || ''));
+    enforcePermanentlyLimited(steps, blsTemplate);
+
+    return {
+        name:                meta.name || folderName.toLowerCase(),
+        model_version:       meta.model_version || `${folderName.toLowerCase()}-v1.0`,
+        scenario_label:      meta.scenario_label || folderName,
+        map_bbox:            meta.map_bbox || bbox,
+        obj:                 meta.obj || obj,
+        pipeline:            (meta.pipeline && meta.pipeline.length) ? meta.pipeline : pipeline,
+        red_units:           redUnits,
+        blue_units_base_ids: meta.blue_units_base_ids || blueBaseIds,
+        blue_units_initial:  blueInitial,
+        blue_units_source:   meta.blue_units_source || 'derived from step00 (in-memory ingest)',
+        ao_boundaries:       aoBoundaries,
+        bls_template:        blsTemplate,
+        nominal_throughput:  meta.nominal_throughput || null,
+        phase_table:         phaseTable,
+        throughput_ceilings_km: meta.throughput_ceilings_km || null,
+        terrain_note:        meta.terrain_note || '',
+        steps,
+        regression_expect:   meta.regression_expect || null,
+        ported_at:           new Date().toISOString(),
+        ported_from:         `in-memory:${folderName}`,
+    };
+}
+
 function summarize(scenario, outFile) {
     const last = scenario.steps[scenario.steps.length - 1];
     console.log(`  → ${outFile}`);
@@ -1588,6 +1780,10 @@ function findWargameFolders() {
 }
 
 function resolveFolderArg(arg) {
+    // Accept either a directory (legacy multi-file layout) OR a single
+    // .geojson / .json file (all_phases bundle). The caller passes the
+    // resolved path to buildScenarioFromFolder which branches on
+    // isDirectory().
     if (path.isAbsolute(arg) && fs.existsSync(arg)) return arg;
     const candidates = [
         path.resolve(arg),
@@ -1595,9 +1791,12 @@ function resolveFolderArg(arg) {
         path.join(process.cwd(), arg),
     ];
     for (const c of candidates) {
-        if (fs.existsSync(c) && fs.statSync(c).isDirectory()) return c;
+        if (!fs.existsSync(c)) continue;
+        const st = fs.statSync(c);
+        if (st.isDirectory()) return c;
+        if (st.isFile() && /\.(geo)?json$/i.test(c)) return c;
     }
-    throw new Error(`folder not found: ${arg}`);
+    throw new Error(`input not found: ${arg}`);
 }
 
 function main() {
@@ -1634,4 +1833,10 @@ if (require.main === module) {
     }
 }
 
-module.exports = { buildScenarioFromFolder, writeScenario, findWargameFolders };
+module.exports = {
+    buildScenarioFromFolder,
+    buildScenarioFromGeoJson,
+    splitAllPhasesIntoSteps,
+    writeScenario,
+    findWargameFolders,
+};

@@ -46,7 +46,7 @@ A **minimum-viable example** lives at `docs/scenario-template.json`. Fork it.
 |-------|-----|-----|-----------------|
 | `steps` | 4 | 20 | 12 |
 | `bls_template` | 1 | 8 | 4 |
-| `red_units` | 1 | 50 | 11 |
+| `red_units` | 1 | 200 | 11 |
 | `blue_units_initial` | 1 | 100 | 39 |
 | `pipeline` | 2 | 64 | ~15 |
 
@@ -155,7 +155,7 @@ Counts outside `[min..max]` produce **errors** (load blocked). Counts inside the
 | `index` | yes | 0-based row id (must equal array index) |
 | `time_label` | yes | e.g. `D-3h`, `H+24` |
 | `elapsed_hours` | yes | Negative for pre-H, 0 at H-Hour |
-| `phase` | yes | One of: `PRE-H`, `PHASE 1`, `PHASE 2A`, `PHASE 2B`, `PHASE 3`, `RESOLUTION` |
+| `phase` | yes | Scenario-defined string. Wargame 1/2 use `PRE-H`, `PHASE 1`, `PHASE 2A`, `PHASE 2B`, `PHASE 3`, `RESOLUTION`. |
 
 ### `steps[i]`
 
@@ -195,7 +195,7 @@ These are the legal values for `*_baseline` and runtime state fields. Producers 
 
 | Field | Allowed values |
 |-------|----------------|
-| `phase` (phase_table & steps) | `PRE-H`, `PHASE 1`, `PHASE 2A`, `PHASE 2B`, `PHASE 3`, `RESOLUTION` |
+| `phase` (phase_table & steps) | Scenario-defined string. Wargame 1/2 use `PRE-H`, `PHASE 1`, `PHASE 2A`, `PHASE 2B`, `PHASE 3`, `RESOLUTION`. |
 | `objective_status_baseline` | `DORMANT`, `THREATENED`, `CONTESTED`, `CAPTURED`, `DENIED` |
 | `bls_status_baseline[<bls>]` | `STAGED`, `CONTESTED`, `SECURE`, `LIMITED`, `DENIED` |
 | `ew_effect_baseline` | `Idle`, `Active`, `Heavy`, `Moderate`, `Low` (monotone decreasing post-H) |

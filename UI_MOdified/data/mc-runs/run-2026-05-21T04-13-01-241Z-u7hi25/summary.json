@@ -1,0 +1,78 @@
+{
+  "runId": "run-2026-05-21T04-13-01-241Z-u7hi25",
+  "scenarioName": "wargame2-brega",
+  "model": null,
+  "trialsRequested": 1,
+  "trialsCompleted": 1,
+  "trialsFailed": 0,
+  "parallelism": 1,
+  "outcomeCounts": {
+    "CAPTURED": 0,
+    "DENIED": 1,
+    "THREATENED_terminal": 0,
+    "DORMANT_terminal": 0,
+    "other": 0
+  },
+  "finalPhaseLineKm": {
+    "n": 1,
+    "min": 82,
+    "p10": 82,
+    "p25": 82,
+    "p50": 82,
+    "p75": 82,
+    "p90": 82,
+    "max": 82,
+    "mean": 82
+  },
+  "finalBlueDestroyed": {
+    "n": 1,
+    "min": 21,
+    "p10": 21,
+    "p25": 21,
+    "p50": 21,
+    "p75": 21,
+    "p90": 21,
+    "max": 21,
+    "mean": 21
+  },
+  "finalRedCoyEqLosses": {
+    "n": 1,
+    "min": 7,
+    "p10": 7,
+    "p25": 7,
+    "p50": 7,
+    "p75": 7,
+    "p90": 7,
+    "max": 7,
+    "mean": 7
+  },
+  "fallbackStepCounts": {
+    "n": 1,
+    "min": 0,
+    "p10": 0,
+    "p25": 0,
+    "p50": 0,
+    "p75": 0,
+    "p90": 0,
+    "max": 0,
+    "mean": 0
+  },
+  "fallbackReasonCounts": {},
+  "startedAt": "2026-05-21T04:13:01.242Z",
+  "endedAt": "2026-05-21T04:13:01.253Z",
+  "durationMs": 11,
+  "coaParams": {
+    "reserve_commit_hour": 60,
+    "posture": "deliberate",
+    "weather": "clear"
+  },
+  "provider": "auto",
+  "mockMode": true,
+  "outcomePct": {
+    "CAPTURED": 0,
+    "DENIED": 1,
+    "THREATENED_terminal": 0,
+    "DORMANT_terminal": 0,
+    "other": 0
+  }
+}

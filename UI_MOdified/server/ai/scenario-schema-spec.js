@@ -26,7 +26,7 @@ const adjSchema = require('./adjudicator-schema');
 const COUNT_BOUNDS = Object.freeze({
     steps:              { min: 4,  max: 20, normal: 12 },
     bls_template:       { min: 1,  max: 8,  normal: 4  },
-    red_units:          { min: 1,  max: 50, normal: 11 },
+    red_units:          { min: 1,  max: 200, normal: 11 },
     blue_units_initial: { min: 1,  max: 100, normal: 39 },
     pipeline:           { min: 2,  max: 64, normal: 15 },
 });
@@ -115,7 +115,6 @@ const SHAPES = Object.freeze({
     phase_table_item: {
         required: ['index', 'time_label', 'elapsed_hours', 'phase'],
         optional: [],
-        enums: { phase: adjSchema.PHASES },
     },
     steps_item: {
         // The adjudicator falls back to scenario.steps[i] for baseline state
@@ -130,7 +129,6 @@ const SHAPES = Object.freeze({
             'narrative_ar_baseline', 'narrative_en_baseline',
         ],
         enums: {
-            phase: adjSchema.PHASES,
             objective_status_baseline: adjSchema.OBJECTIVE_STATUS,
         },
     },

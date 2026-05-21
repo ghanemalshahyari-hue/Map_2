@@ -168,7 +168,9 @@ function parametricAdjustments(stepIndex, baselineStep, coaParams) {
         // Early reserves relieve logistics strain slightly.
         if (stepIndex >= triggerStep) logiShift -= 1;
     } else if (reserveHr > DEFAULT_RESERVE) {
-        if (stepIndex >= 1 && stepIndex <= 11) {
+        // Apply late-reserve PL bonus to every step past the seed. Caller
+        // bounds stepIndex to scenario.steps.length-1, so no upper clamp.
+        if (stepIndex >= 1) {
             plDelta += Math.round((reserveHr - DEFAULT_RESERVE) / 12);
         }
         if (stepIndex >= 8) blueLossDelta += 1;
@@ -199,7 +201,9 @@ function adjustBlueDestroyed(scenario, baselineDestroyedUids, prevDestroyedCum, 
     if (delta === 0) return ids;
 
     if (delta > 0) {
-        const all = (scenario.blue_units_base_ids || []).map(b => 'BLUE_' + b);
+        const all = (Array.isArray(scenario.blue_units_initial) && scenario.blue_units_initial.length)
+            ? scenario.blue_units_initial.map(u => u && u.unit_uid).filter(Boolean)
+            : (scenario.blue_units_base_ids || []).map(b => 'BLUE_' + b);
         const alreadyDead = new Set([...(prevDestroyedCum || []), ...ids]);
         const candidates = all.filter(uid => !alreadyDead.has(uid));
         // Deterministic order: scenario's listed order (which is hierarchical:

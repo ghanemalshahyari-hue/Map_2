@@ -424,8 +424,14 @@ const server = http.createServer((req, res) => {
     // directly — it goes through these endpoints so we keep one bottleneck
     // for auth, validation, prompt-shaping, and audit logging. ---
     if (pathname === '/api/ai/health' && req.method === 'GET') {
-        ollama.ping()
-            .then(r => sendJson(res, r.ok ? 200 : 503, r))
+        aiProvider.getStatus()
+            .then(r => sendJson(res, r.available && r.available.length ? 200 : 503, {
+                ok: r.available && r.available.length > 0,
+                available: r.available || [],
+                defaultResolved: r.defaultResolved || null,
+                providers: r.providers || {},
+                error: r.available && r.available.length ? null : 'no AI provider available',
+            }))
             .catch(e => sendJson(res, 500, { ok: false, error: e.message || String(e) }));
         return;
     }
@@ -522,6 +528,7 @@ const server = http.createServer((req, res) => {
         const name = pathname.slice('/api/ai/scenario/'.length);
         try {
             const data = scenarios.loadScenario(name);
+            res.setHeader('Cache-Control', 'no-store');
             sendJson(res, 200, { ok: true, scenario: data });
         } catch (e) {
             sendJson(res, 404, { ok: false, error: e.message || String(e) });
@@ -674,23 +681,41 @@ const server = http.createServer((req, res) => {
             'Connection':      'keep-alive',
             'X-Accel-Buffering':'no',
         });
+        res.write(`retry: 5000\n`);
         res.write(`event: open\ndata: ${JSON.stringify({ runId })}\n\n`);
+        const heartbeat = setInterval(() => {
+            if (!res.writableEnded) {
+                try { res.write(`: ping ${Date.now()}\n\n`); } catch (_) {}
+            }
+        }, 15000);
+        let unsubscribe = null;
+        let cleaned = false;
+        const cleanup = () => {
+            if (cleaned) return;
+            cleaned = true;
+            clearInterval(heartbeat);
+            if (unsubscribe) unsubscribe();
+        };
 
-        const unsubscribe = mcRunner.subscribe(runId, (evt, data) => {
+        unsubscribe = mcRunner.subscribe(runId, (evt, data) => {
             try {
                 res.write(`event: ${evt}\ndata: ${JSON.stringify(data)}\n\n`);
                 if (evt === 'done') {
                     // Server-side close after final event so the client knows.
-                    setTimeout(() => res.end(), 50);
+                    setTimeout(() => {
+                        cleanup();
+                        if (!res.writableEnded) res.end();
+                    }, 50);
                 }
             } catch (_) { /* socket may have closed */ }
         });
         if (!unsubscribe) {
             res.write(`event: error\ndata: ${JSON.stringify({ msg: 'unknown runId', runId })}\n\n`);
+            cleanup();
             res.end();
             return;
         }
-        req.on('close', () => { unsubscribe(); });
+        req.on('close', cleanup);
         return;
     }
 

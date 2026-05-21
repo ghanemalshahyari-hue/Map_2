@@ -104,7 +104,9 @@ async function runOneTrial(run, trialIdx, sem) {
     // dominate this COA?" — feeds the learning-store priors (items #5/#6).
     const fallbackReasons = {};
 
-    for (let i = 1; i < 12; i++) {
+    const stepCount = Array.isArray(scenario.steps) ? scenario.steps.length : 12;
+    const transitionCount = Math.max(0, stepCount - 1);
+    for (let i = 1; i < stepCount; i++) {
         if (run.cancelled) {
             writeLine({ kind: 'cancelled', stepIndex: i, at: new Date().toISOString() });
             trialStream.end();
@@ -180,7 +182,7 @@ async function runOneTrial(run, trialIdx, sem) {
             runId: run.id,
             trial: trialIdx,
             step:  i,
-            of:    11,
+            of:    transitionCount,
             time_label:        result.state.time_label,
             phase_line_km:     result.state.phase_line_km,
             objective_status:  result.state.objective_status,

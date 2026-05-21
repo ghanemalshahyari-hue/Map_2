@@ -123,7 +123,8 @@
         { value: '3', key: 'status-fully-capable' },
         { value: '3', key: 'status-partially-capable' },
         { value: '3', key: 'status-temporarily-incapable' },
-        { value: '4', key: 'status-not-capable' }
+        { value: '4', key: 'status-not-capable' },
+        { value: '4', key: 'status-destroyed' }
     ];
 
     /**

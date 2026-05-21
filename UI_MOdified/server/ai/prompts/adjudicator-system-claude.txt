@@ -84,7 +84,7 @@ JSON. The object MUST contain exactly these top-level keys:
   step_index             (int; valid range given by the SCENARIO step count)
   time_label             (e.g. "H+48"; see PHASE TABLE for this scenario's labels)
   elapsed_hours          (int)
-  phase                  (one of: PRE-H, PHASE 1, PHASE 2A, PHASE 2B, PHASE 3, RESOLUTION)
+  phase                  (must exactly match the current step's phase from the PHASE TABLE)
   phase_line_km          (int, non-decreasing across steps)
   objective_status       (one of: DORMANT, THREATENED, CONTESTED, CAPTURED, DENIED)
   force_ratio            (string, "<num>:1 <qualifier>" or qualitative)
@@ -125,14 +125,14 @@ JSON. The object MUST contain exactly these top-level keys:
 
 <sanity_checks>
 Run these mentally before emitting:
-- losses_step.blue <= (39 - previous losses_cumulative.blue_destroyed).
+- losses_step.blue <= (<total Blue in SCENARIO> - previous losses_cumulative.blue_destroyed).
 - losses_cumulative.blue_destroyed == previous + losses_step.blue.
 - losses_cumulative.red_company_equivalent >= previous value.
 - phase_line_km >= previous phase_line_km.
 - Every unit_uid in per_unit_deltas.blue_destroyed MUST exist in the
   scenario's Blue OOB and must NOT already be destroyed.
-- Every unit_uid in per_unit_deltas.red_degraded MUST be one of the 11
-  Red markers and strength_current <= previous.
+- Every unit_uid in per_unit_deltas.red_degraded MUST be one of the
+  scenario's Red markers and strength_current <= previous.
 - For each BLS, status transitions follow rule 6.
 - ew_effect band <= previous band (after H+0) per rule 2.
 - decision_point is a short label (<= 6 words).

@@ -196,16 +196,52 @@ async function ollamaPing() {
     return { models };
 }
 
-async function ollamaGenerate({ model, prompt, system, format, options, timeoutMs }) {
+function shouldGenerateViaChat(model) {
+    return /^gpt-oss(?::|$)/i.test(String(model || ''));
+}
+
+function applyOllamaOptions(body, options) {
+    const opts = { ...DEFAULT_OPTIONS, ...(options || {}) };
+    const keepAlive = opts.keep_alive || opts.keepAlive || cfg.keepAlive;
+    if (opts.numPredict != null && opts.num_predict == null) opts.num_predict = opts.numPredict;
+    delete opts.keep_alive;
+    delete opts.keepAlive;
+    delete opts.numPredict;
+    if (keepAlive) body.keep_alive = keepAlive;
+    if (Object.keys(opts).length) body.options = opts;
+}
+
+async function ollamaGenerateViaChat({ model, prompt, system, format, options, timeoutMs }) {
     const body = {
-        model:  model || DEFAULT_MODEL,
+        model:    model || DEFAULT_MODEL,
+        messages: [],
+        stream:   false,
+    };
+    if (system) body.messages.push({ role: 'system', content: system });
+    body.messages.push({ role: 'user', content: prompt });
+    if (format) body.format = format;
+    applyOllamaOptions(body, options);
+    const raw = await postJson('/api/chat', body, timeoutMs);
+    const text = raw && raw.message && typeof raw.message.content === 'string'
+        ? raw.message.content
+        : '';
+    return { response: text, raw };
+}
+
+async function ollamaGenerate({ model, prompt, system, format, options, timeoutMs }) {
+    const chosenModel = model || DEFAULT_MODEL;
+    if (shouldGenerateViaChat(chosenModel)) {
+        return ollamaGenerateViaChat({ model: chosenModel, prompt, system, format, options, timeoutMs });
+    }
+
+    const body = {
+        model:  chosenModel,
         prompt,
         stream: false,
     };
     if (system) body.system = system;
     if (format) body.format = format;
-    const opts = { ...DEFAULT_OPTIONS, ...(options || {}) };
-    if (Object.keys(opts).length) body.options = opts;
+    applyOllamaOptions(body, options);
     const raw = await postJson('/api/generate', body, timeoutMs);
     return { response: raw.response || '', raw };
 }
@@ -217,8 +253,7 @@ async function ollamaChat({ model, messages, format, options, timeoutMs }) {
         stream:   false,
     };
     if (format) body.format = format;
-    const opts = { ...DEFAULT_OPTIONS, ...(options || {}) };
-    if (Object.keys(opts).length) body.options = opts;
+    applyOllamaOptions(body, options);
     const raw = await postJson('/api/chat', body, timeoutMs);
     return { message: raw.message || null, raw };
 }

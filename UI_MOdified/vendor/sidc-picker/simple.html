@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Create Military Symbol</title>
-  <link rel="stylesheet" href="simple.css?v=20260520e" />
+  <link rel="stylesheet" href="simple.css?v=20260521a" />
 </head>
 <body>
   <div class="picker-app">
@@ -117,11 +117,24 @@
         <div class="sp-step" data-step="1">
           <h2 class="sp-step-title" data-i18n="sp-q-extras">Any special details?</h2>
           <p class="sp-step-help" data-i18n="sp-help-extras">Optional. Leave the defaults if unsure.</p>
-          <div class="sp-extras-section">
-            <div class="sp-extras-label" data-i18n="sp-extras-status">Availability</div>
-            <div class="sp-pill-grid">
-              <button class="sp-pill" data-field="status" data-value="0" data-i18n="sp-status-present">Present</button>
-              <button class="sp-pill" data-field="status" data-value="1" data-i18n="sp-status-planned">Planned</button>
+          <div class="sp-extras-columns">
+            <div class="sp-extras-section">
+              <div class="sp-extras-label" data-i18n="sp-extras-status">Availability</div>
+              <div class="sp-pill-grid">
+                <button class="sp-pill" data-field="status" data-value="0" data-i18n="sp-status-present">Present</button>
+                <button class="sp-pill" data-field="status" data-value="1" data-i18n="sp-status-planned">Planned</button>
+              </div>
+            </div>
+            <div class="sp-extras-section">
+              <div class="sp-extras-label" data-i18n="sp-extras-manual-status">Status</div>
+              <div class="sp-pill-grid">
+                <button class="sp-pill" data-field="status-key" data-value="status-operational" data-i18n="sp-status-operational">Operational</button>
+                <button class="sp-pill" data-field="status-key" data-value="status-fully-capable" data-i18n="sp-status-fully-capable">Fully capable</button>
+                <button class="sp-pill" data-field="status-key" data-value="status-partially-capable" data-i18n="sp-status-partially-capable">Partially capable</button>
+                <button class="sp-pill" data-field="status-key" data-value="status-temporarily-incapable" data-i18n="sp-status-temporarily-incapable">Temporarily incapable</button>
+                <button class="sp-pill" data-field="status-key" data-value="status-not-capable" data-i18n="sp-status-not-capable">Not capable</button>
+                <button class="sp-pill" data-field="status-key" data-value="status-destroyed" data-i18n="sp-status-destroyed">Destroyed</button>
+              </div>
             </div>
           </div>
           <div class="sp-extras-section">
@@ -167,6 +180,6 @@
 
   <script src="../../client/sidc-data.js"></script>
   <script src="../../lib/milsymbol.js"></script>
-  <script src="simple.js?v=20260520e"></script>
+  <script src="simple.js?v=20260521a"></script>
 </body>
 </html>

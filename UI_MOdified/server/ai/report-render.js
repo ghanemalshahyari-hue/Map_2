@@ -44,7 +44,8 @@ function renderReportHtml(report) {
 
     // Trajectory rows.
     const trajRows = [];
-    for (let i = 0; i <= 11; i++) {
+    const trajLen = Array.isArray(report.baselineRows) ? report.baselineRows.length : 0;
+    for (let i = 0; i < trajLen; i++) {
         const b = report.baselineRows[i] || {};
         const l = report.liveRows[i] || null;
         const time = escapeHtml(b.time_label || `step ${i}`);
@@ -146,7 +147,7 @@ function renderReportHtml(report) {
             <span class="pill ${escapeHtml(baseT.objective_status || '')}">${escapeHtml(baseT.objective_status || '—')}</span>
         </div>
         <div>PL ${baseT.phase_line_km != null ? baseT.phase_line_km + ' km' : '—'} · Blue ${baseT.blue_destroyed != null ? baseT.blue_destroyed : '—'}/39 · Red ${baseT.red_coy_eq_losses != null ? baseT.red_coy_eq_losses : '—'} coy-eq</div>
-        <small>Deterministic replay from scenario.steps[11].*_baseline.</small>
+        <small>Deterministic replay from the scenario's final step *_baseline fields.</small>
     </div>
     <div class="card">
         <h3>Live AI (trial 0)</h3>

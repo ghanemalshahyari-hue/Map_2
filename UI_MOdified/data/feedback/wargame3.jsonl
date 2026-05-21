@@ -1,0 +1,2 @@
+{"ts":"2026-05-21T11:57:32.841Z","scenarioName":"wargame3","stepIndex":16,"decision":"accept","trialId":"manual-2026-05-21T11:57:14.128Z","coaParams":{"reserve_commit_hour":72,"posture":"deliberate","main_effort_axis":"BLS-3","weather":"clear"},"provider":null,"model":null,"note":null}
+{"ts":"2026-05-21T12:48:34.913Z","scenarioName":"wargame3","stepIndex":16,"decision":"reject","trialId":"manual-2026-05-21T12:48:16.783Z","coaParams":{"reserve_commit_hour":72,"posture":"deliberate","main_effort_axis":"BLS-3","weather":"clear"},"provider":null,"model":null,"note":null}

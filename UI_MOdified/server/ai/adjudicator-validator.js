@@ -94,9 +94,16 @@ function blsTransitionAllowed(prev, next, scenario, blsName) {
 
 function pushErr(list, path, msg) { list.push({ path, msg }); }
 
+function firstStepWithObjectiveStatus(scenario, wanted, fallbackIndex) {
+    const steps = Array.isArray(scenario && scenario.steps) ? scenario.steps : [];
+    const idx = steps.findIndex((s) => s && s.objective_status_baseline === wanted);
+    return idx >= 0 ? idx : fallbackIndex;
+}
+
 // ── Layer 1 — structural / hard ───────────────────────────────────────
 function structuralCheck(delta, prevState, scenario, stepIndex) {
     const errs = [];
+    const expectedMeta = schema.scenarioStepMeta(scenario, stepIndex);
 
     if (!isObj(delta)) {
         pushErr(errs, 'root', 'response is not an object');
@@ -107,16 +114,16 @@ function structuralCheck(delta, prevState, scenario, stepIndex) {
         pushErr(errs, 'step_index', `expected ${stepIndex}, got ${delta.step_index}`);
     }
 
-    if (delta.time_label !== schema.TIME_LABELS[stepIndex]) {
-        pushErr(errs, 'time_label', `expected ${schema.TIME_LABELS[stepIndex]}, got ${delta.time_label}`);
+    if (delta.time_label !== expectedMeta.time_label) {
+        pushErr(errs, 'time_label', `expected ${expectedMeta.time_label}, got ${delta.time_label}`);
     }
 
-    if (delta.elapsed_hours !== schema.ELAPSED_HOURS_BY_INDEX[stepIndex]) {
-        pushErr(errs, 'elapsed_hours', `expected ${schema.ELAPSED_HOURS_BY_INDEX[stepIndex]}, got ${delta.elapsed_hours}`);
+    if (delta.elapsed_hours !== expectedMeta.elapsed_hours) {
+        pushErr(errs, 'elapsed_hours', `expected ${expectedMeta.elapsed_hours}, got ${delta.elapsed_hours}`);
     }
 
-    if (delta.phase !== schema.PHASE_BY_INDEX[stepIndex]) {
-        pushErr(errs, 'phase', `expected ${schema.PHASE_BY_INDEX[stepIndex]}, got ${delta.phase}`);
+    if (delta.phase !== expectedMeta.phase) {
+        pushErr(errs, 'phase', `expected ${expectedMeta.phase}, got ${delta.phase}`);
     }
 
     if (!isNum(delta.phase_line_km) || delta.phase_line_km < 0) {
@@ -186,11 +193,11 @@ function structuralCheck(delta, prevState, scenario, stepIndex) {
         const redValid = schema.redUidSet(scenario);
         const prevDestroyed = new Set(prevState ? prevState.blue_destroyed_cumulative || [] : []);
         for (const uid of delta.per_unit_deltas.blue_destroyed) {
-            if (!schema.isBlueUidShape(uid)) {
+            if (!isStr(uid) || !uid.trim()) {
                 pushErr(errs, 'per_unit_deltas.blue_destroyed', `bad shape: ${uid}`);
-            } else if (!blueValid.has(uid)) {
+            } else if (!blueValid.has(uid.trim())) {
                 pushErr(errs, 'per_unit_deltas.blue_destroyed', `unknown unit_uid: ${uid}`);
-            } else if (prevDestroyed.has(uid)) {
+            } else if (prevDestroyed.has(uid.trim())) {
                 pushErr(errs, 'per_unit_deltas.blue_destroyed', `already destroyed: ${uid}`);
             }
         }
@@ -228,6 +235,11 @@ function structuralCheck(delta, prevState, scenario, stepIndex) {
 function monotonicityClamp(delta, prevState, scenario, stepIndex) {
     const warns = [];
     const clamped = [];
+    const earliestThreat = firstStepWithObjectiveStatus(scenario, 'THREATENED', 7);
+    const earliestContested = firstStepWithObjectiveStatus(scenario, 'CONTESTED', 10);
+    const earliestCaptured = firstStepWithObjectiveStatus(scenario, 'CAPTURED', Number.POSITIVE_INFINITY);
+    const earliestDenied = firstStepWithObjectiveStatus(scenario, 'DENIED', Number.POSITIVE_INFINITY);
+    const earliestTerminal = Math.min(earliestCaptured, earliestDenied);
 
     if (!prevState) return { warns, clamped };
 
@@ -276,7 +288,7 @@ function monotonicityClamp(delta, prevState, scenario, stepIndex) {
     }
 
     // objective_status: terminal only at step >= 10
-    if (stepIndex < 7 && delta.objective_status !== 'DORMANT') {
+    if (stepIndex < earliestThreat && delta.objective_status !== 'DORMANT') {
         delta.objective_status = 'DORMANT';
         clamped.push('objective_status');
         warns.push({ path: 'objective_status', msg: `too early at step ${stepIndex}; reverted to DORMANT` });
@@ -284,16 +296,16 @@ function monotonicityClamp(delta, prevState, scenario, stepIndex) {
 
     // The objective can be threatened on the deep push, but the close fight
     // at OBJ NASSER itself should not appear before the late decision window.
-    if (stepIndex < 10 && delta.objective_status === 'CONTESTED') {
-        delta.objective_status = 'THREATENED';
+    if (stepIndex < earliestContested && delta.objective_status === 'CONTESTED') {
+        delta.objective_status = stepIndex >= earliestThreat ? 'THREATENED' : 'DORMANT';
         clamped.push('objective_status');
-        warns.push({ path: 'objective_status', msg: `CONTESTED too early at step ${stepIndex}; reverted to THREATENED` });
+        warns.push({ path: 'objective_status', msg: `CONTESTED too early at step ${stepIndex}; reverted` });
     }
 
-    if (schema.TERMINAL_OBJECTIVE_STATUS.has(delta.objective_status) && stepIndex < 10) {
-        delta.objective_status = 'THREATENED';
+    if (schema.TERMINAL_OBJECTIVE_STATUS.has(delta.objective_status) && stepIndex < earliestTerminal) {
+        delta.objective_status = stepIndex >= earliestThreat ? 'THREATENED' : 'DORMANT';
         clamped.push('objective_status');
-        warns.push({ path: 'objective_status', msg: `terminal at step ${stepIndex}; reverted to THREATENED` });
+        warns.push({ path: 'objective_status', msg: `terminal too early at step ${stepIndex}; reverted` });
     }
 
     // objective_status: can't regress from terminal

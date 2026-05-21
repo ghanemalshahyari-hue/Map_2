@@ -379,6 +379,7 @@
             'status-partially-capable': 'Partially Capable',
             'status-temporarily-incapable': 'Temporarily Incapable',
             'status-not-capable': 'Not Capable',
+            'status-destroyed': 'Destroyed',
 
             'add-range-circle': 'Add Range Circle',
             'remove-range-circle': 'Remove Range Circle',
@@ -1331,6 +1332,7 @@
             'status-partially-capable': 'عاملة بشكل جزئي',
             'status-temporarily-incapable': 'غير عامله مؤقتا',
             'status-not-capable': 'غير عاملة',
+            'status-destroyed': 'مدمر',
 
             'add-range-circle': 'إضافة دائرة المدى',
             'remove-range-circle': 'إزالة دائرة المدى',

@@ -113,16 +113,19 @@ function validateTopLevel(scenario, errors) {
 }
 
 // ── Count range check (errors when wildly out of bounds, warnings when off-norm) ──
-function validateCounts(scenario, errors, warnings) {
+function validateCounts(scenario, errors, warnings, isW3) {
     const summary = {};
+    // W3-rich carries a full 173-unit OOB; raise the red cap to accommodate it.
+    const W3_RED_MAX = 200;
     for (const [field, bounds] of Object.entries(spec.COUNT_BOUNDS)) {
         const value = scenario[field];
         if (!Array.isArray(value)) continue;     // missing required arrays caught by top-level
         const n = value.length;
         summary[field] = n;
-        if (n < bounds.min || n > bounds.max) {
+        const effectiveMax = (isW3 && field === 'red_units') ? W3_RED_MAX : bounds.max;
+        if (n < bounds.min || n > effectiveMax) {
             pushErr(errors, field,
-                `count ${n} out of allowed range [${bounds.min}..${bounds.max}]`);
+                `count ${n} out of allowed range [${bounds.min}..${effectiveMax}]`);
         } else if (n !== bounds.normal) {
             pushWarn(warnings, field,
                 `count ${n} deviates from wargame1/2 norm (${bounds.normal}); valid but off-pattern`);
@@ -186,7 +189,21 @@ function validateScenario(parsed) {
         return { ok: false, errors, warnings, summary: {} };
     }
 
-    const summary = validateCounts(parsed, errors, warnings);
+    // W3-rich scenarios carry a full 173-unit OOB and use their own phase kind
+    // labels ("shaping", "h_hour_strike", …) rather than the standard PHASES enum.
+    const isW3 = parsed.schema_variant === 'w3-rich';
+
+    const summary = validateCounts(parsed, errors, warnings, isW3);
+
+    // For W3, build phase-enum-free shape variants so the native W3 phase labels
+    // (shaping, h_hour_strike, beach_assault, …) don't trip the enum check.
+    const phaseTableShape = isW3
+        ? { required: spec.SHAPES.phase_table_item.required, optional: [], enums: {} }
+        : spec.SHAPES.phase_table_item;
+    const stepsShape = isW3
+        ? { required: spec.SHAPES.steps_item.required, optional: spec.SHAPES.steps_item.optional,
+            enums: { objective_status_baseline: adjSchema.OBJECTIVE_STATUS } }
+        : spec.SHAPES.steps_item;
 
     // Sub-shape validation only when the parent array is present + correct type.
     if (parsed.obj && typeof parsed.obj === 'object') {
@@ -209,10 +226,10 @@ function validateScenario(parsed) {
         validateArrayOfShape(parsed.blue_units_initial, spec.SHAPES.blue_units_initial_item, 'blue_units_initial', errors);
     }
     if (Array.isArray(parsed.phase_table)) {
-        validateArrayOfShape(parsed.phase_table, spec.SHAPES.phase_table_item, 'phase_table', errors);
+        validateArrayOfShape(parsed.phase_table, phaseTableShape, 'phase_table', errors);
     }
     if (Array.isArray(parsed.steps)) {
-        validateArrayOfShape(parsed.steps, spec.SHAPES.steps_item, 'steps', errors);
+        validateArrayOfShape(parsed.steps, stepsShape, 'steps', errors);
     }
 
     validateConsistency(parsed, errors, warnings);

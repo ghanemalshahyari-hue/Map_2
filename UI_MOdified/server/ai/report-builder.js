@@ -155,7 +155,8 @@ function buildReport({ scenarioName, runId } = {}) {
 
     const baselineRows = [];
     const liveRows     = [];
-    for (let i = 0; i <= 11; i++) {
+    const stepCount    = Array.isArray(scenario.steps) ? scenario.steps.length : 12;
+    for (let i = 0; i < stepCount; i++) {
         baselineRows.push(rowFromBaseline(scenario, i));
         const stateRow = trial0 && trial0.byStep && trial0.byStep[i];
         liveRows.push(stateRow ? rowFromState(stateRow.state) : null);
@@ -163,8 +164,9 @@ function buildReport({ scenarioName, runId } = {}) {
 
     // Terminal-outcome comparison. Baseline terminal is deterministic;
     // Live terminal is whatever trial 0 ended at; MC is the aggregate.
-    const baselineTerm = baselineRows[11] || {};
-    const liveTerm     = liveRows[11]     || {};
+    const lastIdx      = stepCount - 1;
+    const baselineTerm = baselineRows[lastIdx] || {};
+    const liveTerm     = liveRows[lastIdx]     || {};
     const mcTerm = runSummary ? {
         outcomeCounts: runSummary.outcomeCounts,
         outcomePct:    runSummary.outcomePct,

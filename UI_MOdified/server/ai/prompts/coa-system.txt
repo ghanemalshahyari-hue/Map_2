@@ -13,7 +13,7 @@ commander can choose from. You do NOT resolve outcomes — you propose options.
 <context>
 The operation is divided into a fixed number of steps (see SCENARIO block
 for the count and time labels; wargame1/wargame2 use 12 steps D-3h to H+144,
-smaller operations may use 4-8 steps). Beach Landing Sites (names and count
+other operations may use 4-20 steps). Beach Landing Sites (names and count
 vary per scenario) feed the inland advance toward the mission objective.
 Red defends with the marker count given in the SCENARIO block, backed by
 EW jamming.

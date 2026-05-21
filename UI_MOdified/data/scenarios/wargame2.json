@@ -1,12 +1,12 @@
 {
-  "name": "wargame1-brega",
-  "model_version": "brega-wargame1-gis-v1.0",
-  "scenario_label": "Brega-Ajdabiya GIS-informed amphibious assault (aggressive-Red baseline)",
+  "name": "wargame2",
+  "model_version": "wargame2-v1.0",
+  "scenario_label": "Wargame2",
   "map_bbox": [
-    19.12,
-    29.5,
-    20.02,
-    30.56
+    18.8977,
+    28.8662,
+    20.0032,
+    30.5732
   ],
   "obj": {
     "name": "OBJ NASSER-95",
@@ -16,7 +16,17 @@
     ],
     "target_depth_km": 95,
     "radius_km": 5,
-    "carver": 37
+    "carver": 37,
+    "carver_assessment": {
+      "criticality": 7,
+      "accessibility": 6,
+      "recuperability": 7,
+      "vulnerability": 6,
+      "effect": 6,
+      "recognizability": 5,
+      "total": 37,
+      "scale": "1-10 per factor, total /60"
+    }
   },
   "pipeline": [
     [
@@ -85,175 +95,186 @@
       "uid": "RED_401RECON",
       "label": "401 Recon",
       "echelon": "battalion",
-      "bls": "BLS-3",
-      "appear": 1,
       "role": "Recon",
-      "coord": [
-        19.470819422542657,
-        30.43139640047029
-      ]
-    },
-    {
-      "uid": "RED_41MECH",
-      "label": "41 Mech",
-      "echelon": "brigade",
-      "bls": "BLS-1",
-      "appear": 3,
-      "role": "Fixing",
-      "coord": [
-        19.261501249539073,
-        30.392124039632645
-      ]
-    },
-    {
-      "uid": "RED_42MECH",
-      "label": "42 Mech",
-      "echelon": "brigade",
-      "bls": "BLS-2",
-      "appear": 3,
-      "role": "Support",
-      "coord": [
-        19.364838720703126,
-        30.40787026953729
-      ]
-    },
-    {
-      "uid": "RED_43MECH",
-      "label": "43 Mech",
-      "echelon": "brigade",
       "bls": "BLS-3",
-      "appear": 3,
-      "role": "Main effort",
+      "sidc": null,
       "coord": [
-        19.470819422542657,
-        30.43139640047029
-      ]
-    },
-    {
-      "uid": "RED_44ARMD",
-      "label": "44 Armd",
-      "echelon": "brigade",
-      "bls": "BLS-4",
-      "appear": 3,
-      "role": "Eastern fixing",
-      "coord": [
-        19.70948488665984,
-        30.510744336664533
-      ]
-    },
-    {
-      "uid": "RED_9MID",
-      "label": "9 MID",
-      "echelon": "division",
-      "bls": "BLS-3",
-      "appear": 6,
-      "role": "Follow-on",
-      "coord": [
-        19.470819422542657,
-        30.43139640047029
-      ]
-    },
-    {
-      "uid": "RED_1AD",
-      "label": "1 AD",
-      "echelon": "division",
-      "bls": "BLS-3",
-      "appear": 8,
-      "role": "Exploitation",
-      "coord": [
-        19.70948488665984,
-        30.510744336664533
-      ]
-    },
-    {
-      "uid": "RED_45ARTY",
-      "label": "45 Arty",
-      "echelon": "support",
-      "bls": "BLS-2",
-      "appear": 3,
-      "role": "Fire support",
-      "coord": [
-        19.364838720703126,
-        30.40787026953729
-      ]
+        19.486658187295202,
+        30.4129075115814
+      ],
+      "appear": 1
     },
     {
       "uid": "RED_405EW",
       "label": "405 EW",
       "echelon": "support",
-      "bls": "BLS-2",
-      "appear": 1,
       "role": "EW",
-      "coord": [
-        19.364838720703126,
-        30.40787026953729
-      ]
-    },
-    {
-      "uid": "RED_406CHEM",
-      "label": "406 CBRN",
-      "echelon": "support",
       "bls": "BLS-2",
-      "appear": 6,
-      "role": "CBRN defense",
+      "sidc": null,
       "coord": [
         19.310112359550562,
         30.36582523020443
-      ]
+      ],
+      "appear": 1
     },
     {
       "uid": "RED_USV",
       "label": "USV x24",
       "echelon": "support",
-      "bls": "BLS-3",
-      "appear": 1,
       "role": "Explosive USVs",
+      "bls": "BLS-3",
+      "sidc": null,
       "coord": [
-        19.470819422542657,
-        30.43139640047029
-      ]
+        19.486658187295202,
+        30.4129075115814
+      ],
+      "appear": 1
+    },
+    {
+      "uid": "RED_41MECH",
+      "label": "41 Mech",
+      "echelon": "brigade",
+      "role": "Fixing",
+      "bls": "BLS-1",
+      "sidc": null,
+      "coord": [
+        19.23065868090221,
+        30.3764396450715
+      ],
+      "appear": 3
+    },
+    {
+      "uid": "RED_42MECH",
+      "label": "42 Mech",
+      "echelon": "brigade",
+      "role": "Support",
+      "bls": "BLS-2",
+      "sidc": null,
+      "coord": [
+        19.310112359550562,
+        30.36582523020443
+      ],
+      "appear": 3
+    },
+    {
+      "uid": "RED_43MECH",
+      "label": "43 Mech",
+      "echelon": "brigade",
+      "role": "Main effort",
+      "bls": "BLS-3",
+      "sidc": null,
+      "coord": [
+        19.486658187295202,
+        30.4129075115814
+      ],
+      "appear": 3
+    },
+    {
+      "uid": "RED_44ARMD",
+      "label": "44 Armd",
+      "echelon": "brigade",
+      "role": "Eastern fixing",
+      "bls": "BLS-4",
+      "sidc": null,
+      "coord": [
+        19.681154839569174,
+        30.52318278549871
+      ],
+      "appear": 3
+    },
+    {
+      "uid": "RED_45ARTY",
+      "label": "45 Arty",
+      "echelon": "support",
+      "role": "Fire support",
+      "bls": "BLS-2",
+      "sidc": null,
+      "coord": [
+        19.310112359550562,
+        30.36582523020443
+      ],
+      "appear": 3
+    },
+    {
+      "uid": "RED_406CHEM",
+      "label": "406 CBRN",
+      "echelon": "support",
+      "role": "CBRN defense",
+      "bls": "BLS-2",
+      "sidc": null,
+      "coord": [
+        19.310112359550562,
+        30.36582523020443
+      ],
+      "appear": 6
+    },
+    {
+      "uid": "RED_9MID",
+      "label": "9 MID",
+      "echelon": "division",
+      "role": "Follow-on",
+      "bls": "BLS-3",
+      "sidc": null,
+      "coord": [
+        19.486658187295202,
+        30.4129075115814
+      ],
+      "appear": 6
+    },
+    {
+      "uid": "RED_1AD",
+      "label": "1 AD",
+      "echelon": "division",
+      "role": "Exploitation",
+      "bls": "BLS-3",
+      "sidc": null,
+      "coord": [
+        19.486658187295202,
+        30.4129075115814
+      ],
+      "appear": 8
     }
   ],
   "blue_units_base_ids": [
-    "lc",
-    "b1c",
-    "b2c",
-    "b3c",
-    "p11c",
-    "p12c",
-    "p13c",
-    "p21c",
-    "p22c",
-    "p23c",
-    "p31c",
-    "p32c",
+    "c331",
     "p33c",
-    "c111",
-    "c112",
-    "c113",
-    "c121",
-    "c122",
-    "c123",
-    "c131",
-    "c132",
-    "c133",
-    "c211",
-    "c212",
-    "c213",
-    "c221",
-    "c222",
-    "c231",
-    "c232",
-    "c233",
-    "c311",
-    "c312",
-    "c313",
+    "b3c",
+    "lc",
+    "c332",
+    "c333",
     "c321",
+    "p32c",
     "c322",
     "c323",
-    "c331",
-    "c332",
-    "c333"
+    "c311",
+    "p31c",
+    "c312",
+    "c313",
+    "c231",
+    "p23c",
+    "b2c",
+    "c232",
+    "c233",
+    "c221",
+    "p22c",
+    "c222",
+    "c211",
+    "p21c",
+    "c212",
+    "c213",
+    "c131",
+    "p13c",
+    "b1c",
+    "c132",
+    "c133",
+    "c121",
+    "p12c",
+    "c122",
+    "c123",
+    "c111",
+    "p11c",
+    "c112",
+    "c113"
   ],
   "blue_units_initial": [
     {
@@ -537,8 +558,8 @@
       "echelon": "company",
       "sidc": "10031000151211020000",
       "coord": [
-        19.29405212402344,
-        30.27211440480969
+        19.293426966292134,
+        30.27105185185185
       ],
       "posture": "AREA_DEFENSE"
     },
@@ -625,8 +646,8 @@
       "echelon": "company",
       "sidc": "10031000151211020000",
       "coord": [
-        19.38369826373284,
-        30.309288710181026
+        19.418314606741575,
+        30.30245925925926
       ],
       "posture": "AREA_DEFENSE"
     },
@@ -636,8 +657,8 @@
       "echelon": "company",
       "sidc": "10031000151211020000",
       "coord": [
-        19.433457840521186,
-        30.327337624577986
+        19.456741573033707,
+        30.3268
       ],
       "posture": "AREA_DEFENSE"
     },
@@ -669,8 +690,8 @@
       "echelon": "company",
       "sidc": "10031000151211020000",
       "coord": [
-        19.48441535660198,
-        30.354207529095536
+        19.49112359550562,
+        30.353496296296296
       ],
       "posture": "AREA_DEFENSE"
     },
@@ -686,7 +707,7 @@
       "posture": "AREA_DEFENSE"
     }
   ],
-  "blue_units_source": "nato-map-layers.geojson",
+  "blue_units_source": "derived from step00.geojson",
   "ao_boundaries": [
     {
       "type": "MultiPolygon",
@@ -809,74 +830,65 @@
     {
       "name": "BLS-1",
       "coord": [
-        19.28230656738281,
-        30.283595505672256
+        19.251460674157304,
+        30.26791111111111
       ],
       "role": "West fixing landing",
       "capacity": "Limited",
-      "permanently_limited": false,
       "throughput": 0.72,
-      "nominal_throughput": 0.8,
       "terrain_friction": 0.92,
       "score": 71.2,
       "nearest_blue_uid": "c212",
-      "nearest_blue_km": 4
+      "nearest_blue_km": 4,
+      "permanently_limited": false
     },
     {
       "name": "BLS-2",
       "coord": [
-        19.364838720703126,
-        30.308385780073603
+        19.310112359550562,
+        30.26634074074074
       ],
       "role": "Supporting landing",
       "capacity": "Medium",
-      "permanently_limited": false,
       "throughput": 0.66,
-      "nominal_throughput": 0.6,
       "terrain_friction": 0.71,
       "score": 17.7,
       "nearest_blue_uid": "c213",
-      "nearest_blue_km": 1.7
+      "nearest_blue_km": 1.7,
+      "permanently_limited": false
     },
     {
       "name": "BLS-3",
       "coord": [
-        19.45,
-        30.35
+        19.465842696629213,
+        30.33151111111111
       ],
       "role": "Main effort",
       "capacity": "High",
-      "permanently_limited": false,
       "throughput": 1,
-      "nominal_throughput": 1.2,
       "terrain_friction": 0.8,
       "score": 75.4,
       "nearest_blue_uid": "c112",
-      "nearest_blue_km": 3.1
+      "nearest_blue_km": 3.1,
+      "permanently_limited": false
     },
     {
       "name": "BLS-4",
       "coord": [
-        19.678221679687503,
-        30.45648006968434
+        19.64988764044944,
+        30.468918518518517
       ],
-      "role": "External envelopment",
+      "role": "Eastern fixing / envelopment",
       "capacity": "Limited",
-      "permanently_limited": true,
       "throughput": 0.35,
-      "nominal_throughput": 0.5,
       "terrain_friction": 0.92,
       "score": 80.4,
       "nearest_blue_uid": "c113",
-      "nearest_blue_km": 11.4
+      "nearest_blue_km": 11.4,
+      "permanently_limited": false
     }
   ],
-  "nominal_throughput": {
-    "BLS-1": 0.8,
-    "BLS-2": 0.6,
-    "BLS-3": 1.2,
-    "BLS-4": 0.5
-  },
+  "nominal_throughput": null,
   "phase_table": [
     {
       "index": 0,
@@ -951,18 +963,8 @@
       "phase": "RESOLUTION"
     }
   ],
-  "throughput_ceilings_km": {
-    "H24": 12,
-    "H48": 25,
-    "H96": 60,
-    "H144": 100
-  },
-  "terrain_note": "BLS-4 permanently LIMITED (sabkha-bound). Only BLS-3 has an unconstrained exit corridor.",
-  "regression_expect": {
-    "final_objective_status": "CAPTURED",
-    "final_phase_line_km": 100,
-    "final_blue_destroyed": 30
-  },
+  "throughput_ceilings_km": null,
+  "terrain_note": "",
   "steps": [
     {
       "index": 0,
@@ -972,12 +974,12 @@
       "phase_line_km_baseline": 0,
       "objective_status_baseline": "DORMANT",
       "decision_point_baseline": "Red staging",
-      "force_ratio_baseline": "N/A",
+      "force_ratio_baseline": "Not engaged",
       "ew_effect_baseline": "Idle",
-      "mobility_state_baseline": null,
-      "logistics_state_baseline": "Building",
-      "narrative_en_fallback": "Blue routine readiness; Red amphibious force staged offshore.",
-      "narrative_ar_fallback": "الفريق الأحمر في وضع تجميع بحري، والفريق الأزرق في جاهزية دفاعية اعتيادية داخل منطقة العمليات.",
+      "mobility_state_baseline": "Routine",
+      "logistics_state_baseline": "Beachhead support area forming",
+      "narrative_en_fallback": "Blue coastal defense is set; Red amphibious force stages offshore outside direct observation.",
+      "narrative_ar_fallback": "",
       "bls_status_baseline": {
         "BLS-1": "STAGED",
         "BLS-2": "STAGED",
@@ -998,9 +1000,9 @@
         "RED_1AD": 1,
         "RED_45ARTY": 1,
         "RED_405EW": 1,
+        "RED_406CHEM": 1,
         "RED_USV": 1
-      },
-      "red_active_markers_baseline": 0
+      }
     },
     {
       "index": 1,
@@ -1010,12 +1012,12 @@
       "phase_line_km_baseline": 1,
       "objective_status_baseline": "DORMANT",
       "decision_point_baseline": "Recon lodgement",
-      "force_ratio_baseline": "1:1",
+      "force_ratio_baseline": "1:1 reconnaissance contact",
       "ew_effect_baseline": "Active",
-      "mobility_state_baseline": null,
-      "logistics_state_baseline": "Building",
-      "narrative_en_fallback": "401 Recon and advance teams form shallow lodgements.",
-      "narrative_ar_fallback": "تنزل عناصر الاستطلاع والتأمين لتأسيس موطئ قدم محدود على الشاطئ مع بدء تأثير الحرب الإلكترونية.",
+      "mobility_state_baseline": "Good",
+      "logistics_state_baseline": "Beachhead support area forming",
+      "narrative_en_fallback": "401 Recon probes the main beach while explosive USVs and EW disrupt the coastal picture.",
+      "narrative_ar_fallback": "",
       "bls_status_baseline": {
         "BLS-1": "CONTESTED",
         "BLS-2": "CONTESTED",
@@ -1036,9 +1038,9 @@
         "RED_1AD": 1,
         "RED_45ARTY": 1,
         "RED_405EW": 1,
+        "RED_406CHEM": 1,
         "RED_USV": 1
-      },
-      "red_active_markers_baseline": 3
+      }
     },
     {
       "index": 2,
@@ -1048,12 +1050,12 @@
       "phase_line_km_baseline": 2,
       "objective_status_baseline": "DORMANT",
       "decision_point_baseline": "Beach contested",
-      "force_ratio_baseline": "1:1",
+      "force_ratio_baseline": "1:1 contested security fight",
       "ew_effect_baseline": "Heavy",
-      "mobility_state_baseline": null,
-      "logistics_state_baseline": "Building",
-      "narrative_en_fallback": "Blue forward companies engage under degraded C2.",
-      "narrative_ar_fallback": "تبلغ الإعاقة الإلكترونية ذروتها، وتشتبك سرايا المقدمة الزرقاء مع مواضع الإبرار قبل وصول الموجة الثقيلة.",
+      "mobility_state_baseline": "Good",
+      "logistics_state_baseline": "Beachhead support area forming",
+      "narrative_en_fallback": "Recon confirms BLS-3 as the best exit; BLS-2 is slower because of wetland/sabkha proximity.",
+      "narrative_ar_fallback": "",
       "bls_status_baseline": {
         "BLS-1": "CONTESTED",
         "BLS-2": "CONTESTED",
@@ -1074,9 +1076,9 @@
         "RED_1AD": 1,
         "RED_45ARTY": 1,
         "RED_405EW": 1,
+        "RED_406CHEM": 1,
         "RED_USV": 1
-      },
-      "red_active_markers_baseline": 3
+      }
     },
     {
       "index": 3,
@@ -1085,13 +1087,13 @@
       "phase": "PHASE 2A",
       "phase_line_km_baseline": 5,
       "objective_status_baseline": "DORMANT",
-      "decision_point_baseline": "4th MID ashore",
-      "force_ratio_baseline": "3.2:1 local",
+      "decision_point_baseline": "4th MID landing",
+      "force_ratio_baseline": "2.5:1 at selected beach sectors",
       "ew_effect_baseline": "Heavy",
-      "mobility_state_baseline": null,
-      "logistics_state_baseline": "Building",
-      "narrative_en_fallback": "4th Mechanized Infantry Division assault groups land through four BLS.",
-      "narrative_ar_fallback": "تصل موجة فرقة المشاة الآلية الرابعة بدعم المدفعية والزوارق المسيّرة، وتبدأ خسائر الخط الساحلي الأزرق.",
+      "mobility_state_baseline": "Moderate",
+      "logistics_state_baseline": "Beachhead support area forming",
+      "narrative_en_fallback": "4th MID begins landing across the four validated beach sites; BLS-4 is physically usable but remains a limited external exit.",
+      "narrative_ar_fallback": "",
       "bls_status_baseline": {
         "BLS-1": "CONTESTED",
         "BLS-2": "CONTESTED",
@@ -1099,11 +1101,10 @@
         "BLS-4": "CONTESTED"
       },
       "blue_destroyed_baseline": [
-        "BLUE_c121",
         "BLUE_c112",
         "BLUE_c113"
       ],
-      "blue_destroyed_count_baseline": 3,
+      "blue_destroyed_count_baseline": 2,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [],
       "red_strength_baseline": {
@@ -1116,9 +1117,9 @@
         "RED_1AD": 1,
         "RED_45ARTY": 1,
         "RED_405EW": 1,
+        "RED_406CHEM": 1,
         "RED_USV": 1
-      },
-      "red_active_markers_baseline": 8
+      }
     },
     {
       "index": 4,
@@ -1127,13 +1128,13 @@
       "phase": "PHASE 2A",
       "phase_line_km_baseline": 8,
       "objective_status_baseline": "DORMANT",
-      "decision_point_baseline": "Beachhead expanding",
-      "force_ratio_baseline": "2.5:1",
+      "decision_point_baseline": "Beachhead expansion",
+      "force_ratio_baseline": "2:1, below decisive in the east",
       "ew_effect_baseline": "Heavy",
-      "mobility_state_baseline": null,
-      "logistics_state_baseline": "Building",
-      "narrative_en_fallback": "Red expands the lodgement and prepares the 9th MID follow-on.",
-      "narrative_ar_fallback": "يتسع رأس الشاطئ وتصبح BLS-3 محور الجهد الرئيسي، بينما يجري تثبيت الجناحين غرباً وشرقاً.",
+      "mobility_state_baseline": "Constrained",
+      "logistics_state_baseline": "Beachhead support area forming",
+      "narrative_en_fallback": "BLS-1 and BLS-3 become usable, while BLS-2 remains channelized and BLS-4 stays limited as a heavy exit.",
+      "narrative_ar_fallback": "",
       "bls_status_baseline": {
         "BLS-1": "SECURE",
         "BLS-2": "CONTESTED",
@@ -1141,413 +1142,387 @@
         "BLS-4": "LIMITED"
       },
       "blue_destroyed_baseline": [
-        "BLUE_c131",
         "BLUE_c121",
         "BLUE_c122",
         "BLUE_c123",
-        "BLUE_c111",
         "BLUE_c112",
         "BLUE_c113"
       ],
-      "blue_destroyed_count_baseline": 7,
-      "red_losses_cumulative_baseline": 0,
-      "red_degraded_baseline": [],
+      "blue_destroyed_count_baseline": 5,
+      "red_losses_cumulative_baseline": 1,
+      "red_degraded_baseline": [
+        "RED_44ARMD"
+      ],
       "red_strength_baseline": {
         "RED_401RECON": 1,
         "RED_41MECH": 1,
         "RED_42MECH": 1,
         "RED_43MECH": 1,
-        "RED_44ARMD": 1,
+        "RED_44ARMD": 0.7,
         "RED_9MID": 1,
         "RED_1AD": 1,
         "RED_45ARTY": 1,
         "RED_405EW": 1,
+        "RED_406CHEM": 1,
         "RED_USV": 1
-      },
-      "red_active_markers_baseline": 8
+      }
     },
     {
       "index": 5,
       "time_label": "H+24",
       "elapsed_hours": 24,
       "phase": "PHASE 2A",
-      "phase_line_km_baseline": 8,
+      "phase_line_km_baseline": 10,
       "objective_status_baseline": "DORMANT",
-      "decision_point_baseline": "Blue local counterattack",
-      "force_ratio_baseline": "2:1 contested",
+      "decision_point_baseline": "Local counterattack",
+      "force_ratio_baseline": "1.4:1 Blue local counterstroke",
       "ew_effect_baseline": "Heavy",
-      "mobility_state_baseline": null,
-      "logistics_state_baseline": "Building",
-      "narrative_en_fallback": "Blue local counterattack damages the eastern envelopment but does not seal the beachhead.",
-      "narrative_ar_fallback": "ينفذ الأزرق هجوماً مضاداً محلياً يضر باللواء المدرع 44، لكنه لا يغلق ممرات الإنزال.",
+      "mobility_state_baseline": "Constrained",
+      "logistics_state_baseline": "Beachhead support area forming",
+      "narrative_en_fallback": "Blue counterattacks before Red converts the beachhead into a clean combat-service support area.",
+      "narrative_ar_fallback": "",
       "bls_status_baseline": {
         "BLS-1": "SECURE",
         "BLS-2": "CONTESTED",
         "BLS-3": "SECURE",
-        "BLS-4": "CONTESTED"
+        "BLS-4": "LIMITED"
       },
       "blue_destroyed_baseline": [
-        "BLUE_c213",
-        "BLUE_c131",
+        "BLUE_c211",
+        "BLUE_c212",
         "BLUE_c121",
         "BLUE_c122",
         "BLUE_c123",
-        "BLUE_c111",
         "BLUE_c112",
         "BLUE_c113"
       ],
-      "blue_destroyed_count_baseline": 8,
-      "red_losses_cumulative_baseline": 1,
+      "blue_destroyed_count_baseline": 7,
+      "red_losses_cumulative_baseline": 2,
       "red_degraded_baseline": [
+        "RED_42MECH",
         "RED_44ARMD"
       ],
       "red_strength_baseline": {
         "RED_401RECON": 1,
         "RED_41MECH": 1,
-        "RED_42MECH": 1,
+        "RED_42MECH": 0.7,
         "RED_43MECH": 1,
         "RED_44ARMD": 0.7,
         "RED_9MID": 1,
         "RED_1AD": 1,
         "RED_45ARTY": 1,
         "RED_405EW": 1,
+        "RED_406CHEM": 1,
         "RED_USV": 1
-      },
-      "red_active_markers_baseline": 8
+      }
     },
     {
       "index": 6,
       "time_label": "H+36",
       "elapsed_hours": 36,
       "phase": "PHASE 2B",
-      "phase_line_km_baseline": 12,
+      "phase_line_km_baseline": 16,
       "objective_status_baseline": "DORMANT",
-      "decision_point_baseline": "9th MID committed",
-      "force_ratio_baseline": "3.4:1",
-      "ew_effect_baseline": "Heavy",
-      "mobility_state_baseline": null,
-      "logistics_state_baseline": "Building",
-      "narrative_en_fallback": "9th MID begins landing; Red consolidates a 10-12 km lodgement.",
-      "narrative_ar_fallback": "تبدأ فرقة المشاة الآلية التاسعة بالعبور عبر الشواطئ المؤمنة، ويتحول القتال إلى عمق 10-12 كم.",
+      "decision_point_baseline": "Follow-on commitment",
+      "force_ratio_baseline": "2:1 Red but logistics-limited",
+      "ew_effect_baseline": "Moderate",
+      "mobility_state_baseline": "Constrained",
+      "logistics_state_baseline": "Single-corridor constrained",
+      "narrative_en_fallback": "9th MID starts moving through BLS-3, but BLS-2 throughput and BLS-4's limited external capacity slow the handover.",
+      "narrative_ar_fallback": "",
       "bls_status_baseline": {
         "BLS-1": "SECURE",
-        "BLS-2": "SECURE",
+        "BLS-2": "LIMITED",
         "BLS-3": "SECURE",
         "BLS-4": "LIMITED"
       },
       "blue_destroyed_baseline": [
         "BLUE_c211",
         "BLUE_c212",
-        "BLUE_c213",
         "BLUE_c131",
         "BLUE_c132",
-        "BLUE_c133",
         "BLUE_c121",
         "BLUE_c122",
         "BLUE_c123",
-        "BLUE_c111",
         "BLUE_c112",
         "BLUE_c113"
       ],
-      "blue_destroyed_count_baseline": 12,
-      "red_losses_cumulative_baseline": 1,
+      "blue_destroyed_count_baseline": 9,
+      "red_losses_cumulative_baseline": 2,
       "red_degraded_baseline": [
+        "RED_42MECH",
         "RED_44ARMD"
       ],
       "red_strength_baseline": {
         "RED_401RECON": 1,
         "RED_41MECH": 1,
-        "RED_42MECH": 1,
+        "RED_42MECH": 0.7,
         "RED_43MECH": 1,
         "RED_44ARMD": 0.7,
         "RED_9MID": 1,
         "RED_1AD": 1,
         "RED_45ARTY": 1,
         "RED_405EW": 1,
+        "RED_406CHEM": 1,
         "RED_USV": 1
-      },
-      "red_active_markers_baseline": 9
+      }
     },
     {
       "index": 7,
       "time_label": "H+48",
       "elapsed_hours": 48,
       "phase": "PHASE 2B",
-      "phase_line_km_baseline": 45,
+      "phase_line_km_baseline": 34,
       "objective_status_baseline": "THREATENED",
-      "decision_point_baseline": "Deep push",
-      "force_ratio_baseline": "4:1 operational",
-      "ew_effect_baseline": "Heavy",
-      "mobility_state_baseline": null,
-      "logistics_state_baseline": "Building",
-      "narrative_en_fallback": "9th MID drives toward the 40-50 km phase line; Blue reserve is preparing.",
-      "narrative_ar_fallback": "يندفع الأحمر إلى خط 40-50 كم، وتصبح منطقة الهدف ناصر مهددة؛ الاحتياط الأزرق لا يزال في مرحلة التحضير.",
+      "decision_point_baseline": "Deep push begins",
+      "force_ratio_baseline": "2.4:1 after local consolidation",
+      "ew_effect_baseline": "Moderate",
+      "mobility_state_baseline": "Improving",
+      "logistics_state_baseline": "Single-corridor constrained",
+      "narrative_en_fallback": "Red reaches the open desert line, short of the 40-50 km objective because the beachhead is still sorting traffic.",
+      "narrative_ar_fallback": "",
       "bls_status_baseline": {
         "BLS-1": "SECURE",
-        "BLS-2": "SECURE",
+        "BLS-2": "LIMITED",
         "BLS-3": "SECURE",
         "BLS-4": "LIMITED"
       },
       "blue_destroyed_baseline": [
         "BLUE_c231",
-        "BLUE_c232",
-        "BLUE_c233",
         "BLUE_c221",
         "BLUE_c222",
         "BLUE_c211",
         "BLUE_c212",
-        "BLUE_c213",
         "BLUE_c131",
         "BLUE_c132",
-        "BLUE_c133",
         "BLUE_c121",
         "BLUE_c122",
         "BLUE_c123",
-        "BLUE_c111",
         "BLUE_c112",
         "BLUE_c113"
       ],
-      "blue_destroyed_count_baseline": 17,
-      "red_losses_cumulative_baseline": 1,
+      "blue_destroyed_count_baseline": 12,
+      "red_losses_cumulative_baseline": 3,
       "red_degraded_baseline": [
-        "RED_44ARMD"
+        "RED_42MECH",
+        "RED_44ARMD",
+        "RED_9MID"
       ],
       "red_strength_baseline": {
         "RED_401RECON": 1,
         "RED_41MECH": 1,
-        "RED_42MECH": 1,
+        "RED_42MECH": 0.7,
         "RED_43MECH": 1,
         "RED_44ARMD": 0.7,
-        "RED_9MID": 1,
+        "RED_9MID": 0.7,
         "RED_1AD": 1,
         "RED_45ARTY": 1,
         "RED_405EW": 1,
+        "RED_406CHEM": 1,
         "RED_USV": 1
-      },
-      "red_active_markers_baseline": 7
+      }
     },
     {
       "index": 8,
       "time_label": "H+72",
       "elapsed_hours": 72,
       "phase": "PHASE 3",
-      "phase_line_km_baseline": 65,
+      "phase_line_km_baseline": 52,
       "objective_status_baseline": "THREATENED",
-      "decision_point_baseline": "1st AD landing",
-      "force_ratio_baseline": "5:1 operational",
+      "decision_point_baseline": "Armored exploitation",
+      "force_ratio_baseline": "2.2:1 operational, mobility penalty",
       "ew_effect_baseline": "Moderate",
-      "mobility_state_baseline": null,
-      "logistics_state_baseline": "Secure but stretched",
-      "narrative_en_fallback": "1st Armored Division lands through secured BLS-3/BLS-4 and pushes south.",
-      "narrative_ar_fallback": "تنزل الفرقة المدرعة الأولى وتبدأ مرحلة الاستثمار باتجاه الجنوب الشرقي على محور خط الأنابيب.",
+      "mobility_state_baseline": "Stretched",
+      "logistics_state_baseline": "Single-corridor constrained",
+      "narrative_en_fallback": "1st Armored Division begins exploitation from BLS-3, but the armored column is tied to a single reliable exit corridor.",
+      "narrative_ar_fallback": "",
       "bls_status_baseline": {
         "BLS-1": "SECURE",
-        "BLS-2": "SECURE",
+        "BLS-2": "LIMITED",
         "BLS-3": "SECURE",
         "BLS-4": "LIMITED"
       },
       "blue_destroyed_baseline": [
         "BLUE_c311",
         "BLUE_c312",
-        "BLUE_c313",
         "BLUE_c231",
         "BLUE_c232",
-        "BLUE_c233",
         "BLUE_c221",
         "BLUE_c222",
         "BLUE_c211",
         "BLUE_c212",
-        "BLUE_c213",
         "BLUE_c131",
         "BLUE_c132",
-        "BLUE_c133",
         "BLUE_c121",
         "BLUE_c122",
         "BLUE_c123",
-        "BLUE_c111",
         "BLUE_c112",
         "BLUE_c113"
       ],
-      "blue_destroyed_count_baseline": 20,
-      "red_losses_cumulative_baseline": 1,
+      "blue_destroyed_count_baseline": 15,
+      "red_losses_cumulative_baseline": 4,
       "red_degraded_baseline": [
-        "RED_44ARMD"
+        "RED_42MECH",
+        "RED_44ARMD",
+        "RED_9MID"
       ],
       "red_strength_baseline": {
         "RED_401RECON": 1,
         "RED_41MECH": 1,
-        "RED_42MECH": 1,
+        "RED_42MECH": 0.7,
         "RED_43MECH": 1,
         "RED_44ARMD": 0.7,
-        "RED_9MID": 1,
+        "RED_9MID": 0.7,
         "RED_1AD": 1,
         "RED_45ARTY": 1,
         "RED_405EW": 1,
+        "RED_406CHEM": 1,
         "RED_USV": 1
-      },
-      "red_active_markers_baseline": 8
+      }
     },
     {
       "index": 9,
       "time_label": "H+96",
       "elapsed_hours": 96,
       "phase": "PHASE 3",
-      "phase_line_km_baseline": 75,
+      "phase_line_km_baseline": 66,
       "objective_status_baseline": "THREATENED",
-      "decision_point_baseline": "Blue reserve counterattack",
-      "force_ratio_baseline": "2.2:1 contested",
-      "ew_effect_baseline": "Moderate",
-      "mobility_state_baseline": null,
-      "logistics_state_baseline": "Secure but stretched",
-      "narrative_en_fallback": "Blue division reserve counterattacks; Red pauses and absorbs losses.",
-      "narrative_ar_fallback": "يلتزم الاحتياط العملياتي الأزرق بهجوم مضاد يؤخر الاندفاع الأحمر ويوقع خسائر، لكنه يأتي بعد تشكل رأس الجسر.",
+      "decision_point_baseline": "Reserve counterstroke",
+      "force_ratio_baseline": "1.5:1 contested corridor",
+      "ew_effect_baseline": "Low",
+      "mobility_state_baseline": "Stretched",
+      "logistics_state_baseline": "Single-corridor constrained",
+      "narrative_en_fallback": "Blue reserve strikes the exploitation corridor before Red reaches the 80-100 km decisive band.",
+      "narrative_ar_fallback": "",
       "bls_status_baseline": {
         "BLS-1": "SECURE",
-        "BLS-2": "SECURE",
-        "BLS-3": "SECURE",
+        "BLS-2": "LIMITED",
+        "BLS-3": "CONTESTED",
         "BLS-4": "LIMITED"
       },
       "blue_destroyed_baseline": [
-        "BLUE_c331",
-        "BLUE_c332",
         "BLUE_c321",
         "BLUE_c322",
         "BLUE_c311",
         "BLUE_c312",
-        "BLUE_c313",
         "BLUE_c231",
         "BLUE_c232",
-        "BLUE_c233",
         "BLUE_c221",
         "BLUE_c222",
         "BLUE_c211",
         "BLUE_c212",
-        "BLUE_c213",
         "BLUE_c131",
         "BLUE_c132",
-        "BLUE_c133",
         "BLUE_c121",
         "BLUE_c122",
         "BLUE_c123",
-        "BLUE_c111",
         "BLUE_c112",
         "BLUE_c113"
       ],
-      "blue_destroyed_count_baseline": 24,
-      "red_losses_cumulative_baseline": 3,
+      "blue_destroyed_count_baseline": 17,
+      "red_losses_cumulative_baseline": 5,
       "red_degraded_baseline": [
         "RED_43MECH",
-        "RED_44ARMD"
+        "RED_9MID",
+        "RED_1AD"
       ],
       "red_strength_baseline": {
         "RED_401RECON": 1,
         "RED_41MECH": 1,
         "RED_42MECH": 1,
         "RED_43MECH": 0.7,
-        "RED_44ARMD": 0.7,
-        "RED_9MID": 1,
-        "RED_1AD": 1,
+        "RED_44ARMD": 1,
+        "RED_9MID": 0.7,
+        "RED_1AD": 0.7,
         "RED_45ARTY": 1,
         "RED_405EW": 1,
+        "RED_406CHEM": 1,
         "RED_USV": 1
-      },
-      "red_active_markers_baseline": 8
+      }
     },
     {
       "index": 10,
       "time_label": "H+120",
       "elapsed_hours": 120,
       "phase": "PHASE 3",
-      "phase_line_km_baseline": 92,
-      "objective_status_baseline": "CONTESTED",
-      "decision_point_baseline": "Breakthrough",
-      "force_ratio_baseline": "3.5:1 at OBJ",
+      "phase_line_km_baseline": 78,
+      "objective_status_baseline": "THREATENED",
+      "decision_point_baseline": "Culmination short of OBJ",
+      "force_ratio_baseline": "Below 3:1 at OBJ approach",
       "ew_effect_baseline": "Low",
-      "mobility_state_baseline": null,
-      "logistics_state_baseline": "Secure but stretched",
-      "narrative_en_fallback": "Red armored exploitation resumes and reaches the OBJ NASSER security ring.",
-      "narrative_ar_fallback": "يعيد الأحمر تنظيم قواته ويدخل حلقة الهدف، وتصبح السيطرة على OBJ NASSER متنازعاً عليها.",
+      "mobility_state_baseline": "Culminating",
+      "logistics_state_baseline": "Culminating",
+      "narrative_en_fallback": "Red enters the lower edge of the doctrinal depth band but cannot mass combat power around the objective.",
+      "narrative_ar_fallback": "",
       "bls_status_baseline": {
         "BLS-1": "SECURE",
-        "BLS-2": "SECURE",
-        "BLS-3": "SECURE",
+        "BLS-2": "LIMITED",
+        "BLS-3": "LIMITED",
         "BLS-4": "LIMITED"
       },
       "blue_destroyed_baseline": [
-        "BLUE_c331",
-        "BLUE_c332",
-        "BLUE_c333",
         "BLUE_c321",
-        "BLUE_p32c",
         "BLUE_c322",
         "BLUE_c323",
         "BLUE_c311",
         "BLUE_p31c",
         "BLUE_c312",
-        "BLUE_c313",
         "BLUE_c231",
         "BLUE_c232",
-        "BLUE_c233",
         "BLUE_c221",
         "BLUE_c222",
         "BLUE_c211",
         "BLUE_c212",
-        "BLUE_c213",
         "BLUE_c131",
         "BLUE_c132",
-        "BLUE_c133",
         "BLUE_c121",
         "BLUE_c122",
         "BLUE_c123",
-        "BLUE_c111",
         "BLUE_c112",
         "BLUE_c113"
       ],
-      "blue_destroyed_count_baseline": 28,
-      "red_losses_cumulative_baseline": 3,
+      "blue_destroyed_count_baseline": 19,
+      "red_losses_cumulative_baseline": 6,
       "red_degraded_baseline": [
         "RED_43MECH",
-        "RED_44ARMD"
+        "RED_9MID",
+        "RED_1AD"
       ],
       "red_strength_baseline": {
         "RED_401RECON": 1,
         "RED_41MECH": 1,
         "RED_42MECH": 1,
         "RED_43MECH": 0.7,
-        "RED_44ARMD": 0.7,
-        "RED_9MID": 1,
-        "RED_1AD": 1,
+        "RED_44ARMD": 1,
+        "RED_9MID": 0.7,
+        "RED_1AD": 0.7,
         "RED_45ARTY": 1,
         "RED_405EW": 1,
+        "RED_406CHEM": 1,
         "RED_USV": 1
-      },
-      "red_active_markers_baseline": 8
+      }
     },
     {
       "index": 11,
       "time_label": "H+144",
       "elapsed_hours": 144,
       "phase": "RESOLUTION",
-      "phase_line_km_baseline": 100,
-      "objective_status_baseline": "CAPTURED",
-      "decision_point_baseline": "Red victory",
-      "force_ratio_baseline": "Decisive at OBJ",
+      "phase_line_km_baseline": 84,
+      "objective_status_baseline": "DENIED",
+      "decision_point_baseline": "Blue denies objective",
+      "force_ratio_baseline": "Below decisive at objective",
       "ew_effect_baseline": "Low",
-      "mobility_state_baseline": null,
-      "logistics_state_baseline": "Secure but stretched",
-      "narrative_en_fallback": "Red captures OBJ NASSER after Blue reserve culminates.",
-      "narrative_ar_fallback": "ينهار الدفاع المباشر حول الهدف بعد استنزاف الاحتياط، ويثبت الأحمر السيطرة على OBJ NASSER.",
+      "mobility_state_baseline": "Culminated",
+      "logistics_state_baseline": "Culminating",
+      "narrative_en_fallback": "Red holds a lodgement and threatens the pipeline axis, but Blue prevents seizure of OBJ NASSER inside the six-day window.",
+      "narrative_ar_fallback": "",
       "bls_status_baseline": {
         "BLS-1": "SECURE",
-        "BLS-2": "SECURE",
-        "BLS-3": "SECURE",
+        "BLS-2": "LIMITED",
+        "BLS-3": "LIMITED",
         "BLS-4": "LIMITED"
       },
       "blue_destroyed_baseline": [
-        "BLUE_c331",
-        "BLUE_p33c",
-        "BLUE_lc",
-        "BLUE_c332",
         "BLUE_c333",
         "BLUE_c321",
         "BLUE_p32c",
@@ -1556,46 +1531,43 @@
         "BLUE_c311",
         "BLUE_p31c",
         "BLUE_c312",
-        "BLUE_c313",
         "BLUE_c231",
         "BLUE_c232",
-        "BLUE_c233",
         "BLUE_c221",
         "BLUE_c222",
         "BLUE_c211",
         "BLUE_c212",
-        "BLUE_c213",
         "BLUE_c131",
         "BLUE_c132",
-        "BLUE_c133",
         "BLUE_c121",
         "BLUE_c122",
         "BLUE_c123",
-        "BLUE_c111",
         "BLUE_c112",
         "BLUE_c113"
       ],
-      "blue_destroyed_count_baseline": 30,
-      "red_losses_cumulative_baseline": 3,
+      "blue_destroyed_count_baseline": 21,
+      "red_losses_cumulative_baseline": 6,
       "red_degraded_baseline": [
         "RED_43MECH",
-        "RED_44ARMD"
+        "RED_9MID",
+        "RED_1AD"
       ],
       "red_strength_baseline": {
         "RED_401RECON": 1,
         "RED_41MECH": 1,
         "RED_42MECH": 1,
         "RED_43MECH": 0.7,
-        "RED_44ARMD": 0.7,
-        "RED_9MID": 1,
-        "RED_1AD": 1,
+        "RED_44ARMD": 1,
+        "RED_9MID": 0.7,
+        "RED_1AD": 0.7,
         "RED_45ARTY": 1,
         "RED_405EW": 1,
+        "RED_406CHEM": 1,
         "RED_USV": 1
-      },
-      "red_active_markers_baseline": 8
+      }
     }
   ],
-  "ported_at": "2026-05-20T16:28:30.179Z",
-  "ported_from": "UI_MOdified/Wargame1/{wargame.py, step00..11.geojson} + wargame2-brega.json structural fields"
+  "regression_expect": null,
+  "ported_at": "2026-05-21T13:40:56.314Z",
+  "ported_from": "UI_MOdified/Wargame2/{step00..11.geojson, bls_selection.geojson}"
 }

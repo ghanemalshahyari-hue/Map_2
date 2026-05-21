@@ -28,7 +28,14 @@
       "sp-q-extras": "Any special details?",
       "sp-help-extras": "Optional. Leave the defaults if unsure.",
       "sp-extras-status": "Availability",
+      "sp-extras-manual-status": "Status",
       "sp-status-present": "Present", "sp-status-planned": "Planned",
+      "sp-status-operational": "Operational",
+      "sp-status-fully-capable": "Fully capable",
+      "sp-status-partially-capable": "Partially capable",
+      "sp-status-temporarily-incapable": "Temporarily incapable",
+      "sp-status-not-capable": "Not capable",
+      "sp-status-destroyed": "Destroyed",
       "sp-extras-role": "Special role",
       "sp-role-none": "None", "sp-role-hq": "HQ", "sp-role-tf": "Task force",
       "sp-role-dummy": "Dummy", "sp-role-tfhq": "Task force HQ",
@@ -37,7 +44,7 @@
       "sp-preview-title": "Preview",
       "sp-back": "Back", "sp-reset": "Start over", "sp-next": "Next", "sp-apply": "Apply Symbol",
       "sp-applied": "Applied ✓",
-      "sp-sentence-tpl": "A {side} {domain} symbol: {type}{size}{status}{role}.",
+      "sp-sentence-tpl": "A {side} {domain} symbol: {type}{size}{availability}{status}{role}.",
       "sp-placeholder": "Choose options to preview your symbol."
     },
     ar: {
@@ -64,8 +71,15 @@
       "sp-help-size": "مستوى الوحدة — يمكنك تركه كـ غير محدد.",
       "sp-q-extras": "أي تفاصيل خاصة؟",
       "sp-help-extras": "اختياري. اترك الافتراضيات إذا لم تكن متأكداً.",
-      "sp-extras-status": "الحالة",
+      "sp-extras-status": "التوافر",
+      "sp-extras-manual-status": "الحالة",
       "sp-status-present": "حاضر", "sp-status-planned": "مخطط",
+      "sp-status-operational": "تشغيلي",
+      "sp-status-fully-capable": "قادر بالكامل",
+      "sp-status-partially-capable": "قادر جزئياً",
+      "sp-status-temporarily-incapable": "غير قادر مؤقتاً",
+      "sp-status-not-capable": "غير قادر",
+      "sp-status-destroyed": "مدمر",
       "sp-extras-role": "دور خاص",
       "sp-role-none": "بدون", "sp-role-hq": "قيادة", "sp-role-tf": "قوة مهام",
       "sp-role-dummy": "وهمي", "sp-role-tfhq": "قيادة قوة مهام",
@@ -74,7 +88,7 @@
       "sp-preview-title": "معاينة",
       "sp-back": "السابق", "sp-reset": "إعادة", "sp-next": "التالي", "sp-apply": "تطبيق الرمز",
       "sp-applied": "تم التطبيق ✓",
-      "sp-sentence-tpl": "رمز {side} في المجال {domain}: {type}{size}{status}{role}.",
+      "sp-sentence-tpl": "رمز {side} في المجال {domain}: {type}{size}{availability}{status}{role}.",
       "sp-placeholder": "اختر الخيارات لمعاينة الرمز."
     }
   };
@@ -129,6 +143,7 @@
     type: "000000",   // Unspecified
     size: "00",       // Unspecified echelon
     status: "0",      // Present
+    statusKey: "status-operational",
     role: "0"         // None
   };
 
@@ -170,6 +185,14 @@
   const STATUS_LABELS = {
     "0": { en: "", ar: "" },
     "1": { en: ", planned", ar: "، مخطط" }
+  };
+  const VISUAL_STATUS_LABELS = {
+    "status-operational": { en: ", operational", ar: "، تشغيلي" },
+    "status-fully-capable": { en: ", fully capable", ar: "، قادر بالكامل" },
+    "status-partially-capable": { en: ", partially capable", ar: "، قادر جزئياً" },
+    "status-temporarily-incapable": { en: ", temporarily incapable", ar: "، غير قادر مؤقتاً" },
+    "status-not-capable": { en: ", not capable", ar: "، غير قادر" },
+    "status-destroyed": { en: ", destroyed", ar: "، مدمر" }
   };
   const ROLE_LABELS = {
     "0": { en: "", ar: "" },
@@ -355,6 +378,7 @@
     setSelected("type", state.type);
     setSelected("size", state.size);
     setSelected("status", state.status);
+    setSelected("status-key", state.statusKey);
     setSelected("role", state.role);
   }
 
@@ -551,7 +575,8 @@
     const domain = domainLabel(state.domain);
     const typeLbl = entityLabel(state.domain, state.type) || (lang === "ar" ? "غير محدد" : "unspecified");
     const sizeLbl = state.size !== "00" ? (lang === "ar" ? `، ${echelonLabel(state.domain, state.size)}` : `, ${echelonLabel(state.domain, state.size)}`) : "";
-    const statusLbl = STATUS_LABELS[state.status][lang] || "";
+    const availabilityLbl = STATUS_LABELS[state.status][lang] || "";
+    const statusLbl = VISUAL_STATUS_LABELS[state.statusKey]?.[lang] || "";
     const roleLbl = ROLE_LABELS[state.role][lang] || "";
     const tpl = t("sp-sentence-tpl");
     const sentence = tpl
@@ -559,6 +584,7 @@
       .replace("{domain}", `<strong>${domain}</strong>`)
       .replace("{type}", `<strong>${typeLbl}</strong>`)
       .replace("{size}", sizeLbl)
+      .replace("{availability}", availabilityLbl)
       .replace("{status}", statusLbl)
       .replace("{role}", roleLbl);
     sentenceEl.innerHTML = sentence;
@@ -594,6 +620,16 @@
       if (s) tags.push({ text: s, cls: "sp-tag" });
     }
     if (state.status === "1") tags.push({ text: t("sp-status-planned"), cls: "sp-tag" });
+    if (state.statusKey !== "status-operational") {
+      const statusKey = {
+        "status-fully-capable": "sp-status-fully-capable",
+        "status-partially-capable": "sp-status-partially-capable",
+        "status-temporarily-incapable": "sp-status-temporarily-incapable",
+        "status-not-capable": "sp-status-not-capable",
+        "status-destroyed": "sp-status-destroyed"
+      }[state.statusKey];
+      if (statusKey) tags.push({ text: t(statusKey), cls: "sp-tag" });
+    }
     if (state.role !== "0") {
       const roleKey = { "2": "sp-role-hq", "4": "sp-role-tf", "1": "sp-role-dummy", "6": "sp-role-tfhq" }[state.role];
       if (roleKey) tags.push({ text: t(roleKey), cls: "sp-tag" });
@@ -752,6 +788,7 @@
     bindCardClick("type",   () => { /* wait for Next */ });
     bindCardClick("size",   () => { if (state.step === 1) renderExtrasStep(); });
     bindCardClick("status", () => { if (state.step === 1) renderExtrasStep(); });
+    bindCardClick("status-key", () => { /* preview only */ });
     bindCardClick("role",   () => { if (state.step === 1) renderExtrasStep(); });
 
     // More-types toggle
@@ -767,7 +804,7 @@
     backBtn.addEventListener("click", () => { if (state.step > 1) showStep(state.step - 1); });
     nextBtn.addEventListener("click", () => { if (state.step < 3) showStep(state.step + 1); });
     resetBtn.addEventListener("click", () => {
-      Object.assign(state, { side: "3", domain: "10", type: "000000", size: "00", status: "0", role: "0" });
+      Object.assign(state, { side: "3", domain: "10", type: "000000", size: "00", status: "0", statusKey: "status-operational", role: "0" });
       reflectSelections();
       updatePreview();
       showStep(1);
@@ -802,14 +839,15 @@
   }
 
   function publishSidc(sidc) {
+    const payload = { sidc: String(sidc), statusKey: state.statusKey };
     const inFrame = window.parent && window.parent !== window;
     try {
       if (window.parent && typeof window.parent.__APP_SIDC_PICKER_SET === "function") {
-        window.parent.__APP_SIDC_PICKER_SET(sidc);
+        window.parent.__APP_SIDC_PICKER_SET(payload);
       }
     } catch (_) { /* cross-origin: fall through to postMessage */ }
     if (inFrame) {
-      window.parent.postMessage({ type: "sidc-picker:sidc", sidc: String(sidc) }, "*");
+      window.parent.postMessage({ type: "sidc-picker:sidc", sidc: payload.sidc, statusKey: payload.statusKey }, "*");
     }
   }
 

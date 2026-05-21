@@ -2964,6 +2964,13 @@ details[open] > .details-summary {
 .custom-nato-marker { background: transparent; border: none; direction: ltr; unicode-bidi: isolate; }
 .custom-nato-marker svg { direction: ltr; unicode-bidi: isolate; }
 .custom-nato-marker.placement-preview { opacity: 0.5; pointer-events: none !important; }
+.custom-nato-marker--destroyed {
+    filter: grayscale(1) contrast(0.85) brightness(0.9);
+    opacity: 0.72;
+}
+.custom-nato-marker--destroyed svg {
+    filter: grayscale(1) contrast(0.85) brightness(0.9);
+}
 
 .symbol-popup-emblem-wrap { direction: ltr; unicode-bidi: isolate; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; min-height: 76px; padding: 8px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 8px; max-width: 100%; }
 .symbol-popup-emblem-wrap svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }

@@ -58,6 +58,13 @@ function baselineBlueActionsForStep(stepIndex) {
     return { ...(BLUE_ACTIONS_BY_STEP_BASELINE[stepIndex] || {}) };
 }
 
+function blueActionsForScenarioStep(stepIndex, scenario) {
+    const actions = baselineBlueActionsForStep(stepIndex);
+    if (!scenario || !Array.isArray(scenario.blue_units_base_ids)) return actions;
+    const valid = new Set(scenario.blue_units_base_ids);
+    return Object.fromEntries(Object.entries(actions).filter(([baseId]) => valid.has(baseId)));
+}
+
 const TIME_LABELS = [
     'D-3h', 'H-Hour', 'H+2', 'H+6', 'H+12', 'H+24',
     'H+36', 'H+48', 'H+72', 'H+96', 'H+120', 'H+144',
@@ -69,6 +76,22 @@ const PHASE_BY_INDEX = [
     'PRE-H', 'PHASE 1', 'PHASE 1', 'PHASE 2A', 'PHASE 2A', 'PHASE 2A',
     'PHASE 2B', 'PHASE 2B', 'PHASE 3', 'PHASE 3', 'PHASE 3', 'RESOLUTION',
 ];
+
+function scenarioStepMeta(scenario, stepIndex) {
+    const phaseRow = Array.isArray(scenario && scenario.phase_table) ? scenario.phase_table[stepIndex] : null;
+    const stepRow  = Array.isArray(scenario && scenario.steps)       ? scenario.steps[stepIndex]       : null;
+    return {
+        time_label: (phaseRow && typeof phaseRow.time_label === 'string')
+            ? phaseRow.time_label
+            : ((stepRow && typeof stepRow.time_label === 'string') ? stepRow.time_label : TIME_LABELS[stepIndex]),
+        elapsed_hours: Number.isFinite(phaseRow && phaseRow.elapsed_hours)
+            ? phaseRow.elapsed_hours
+            : (Number.isFinite(stepRow && stepRow.elapsed_hours) ? stepRow.elapsed_hours : ELAPSED_HOURS_BY_INDEX[stepIndex]),
+        phase: (phaseRow && typeof phaseRow.phase === 'string')
+            ? phaseRow.phase
+            : ((stepRow && typeof stepRow.phase === 'string') ? stepRow.phase : PHASE_BY_INDEX[stepIndex]),
+    };
+}
 
 // Hard throughput ceiling for Red's phase_line_km by elapsed_hours.
 // Tuned to W1 (CAPTURED) + 10% slack — W1 is the high-water mark we want
@@ -91,7 +114,7 @@ function throughputCeilingKm(elapsedHours) {
 }
 
 // ── Identifiers ───────────────────────────────────────────────────────
-// Blue unit_uid format: BLUE_<base>, where base matches one of:
+// Legacy Blue unit_uid format: BLUE_<base>, where base matches one of:
 //   c\d{3}    company (c111..c333)
 //   p\d{2}c   battalion (p11c..p33c)
 //   b\dc      brigade (b1c..b3c)
@@ -105,8 +128,47 @@ function redUidSet(scenario) {
     return new Set(scenario.red_units.map(u => u.uid));
 }
 
+function blueUnitUids(scenario) {
+    if (Array.isArray(scenario && scenario.blue_units_initial) && scenario.blue_units_initial.length) {
+        const fromInitial = scenario.blue_units_initial
+            .map(u => u && u.unit_uid)
+            .filter(s => typeof s === 'string' && s.trim());
+        if (fromInitial.length) return fromInitial;
+    }
+    return (scenario && Array.isArray(scenario.blue_units_base_ids))
+        ? scenario.blue_units_base_ids.map(id => 'BLUE_' + id)
+        : [];
+}
+
 function blueUidSet(scenario) {
-    return new Set(scenario.blue_units_base_ids.map(id => 'BLUE_' + id));
+    return new Set(blueUnitUids(scenario));
+}
+
+function blueUidAliasMap(scenario) {
+    const out = new Map();
+    if (Array.isArray(scenario && scenario.blue_units_initial) && scenario.blue_units_initial.length) {
+        for (const unit of scenario.blue_units_initial) {
+            const uid = unit && typeof unit.unit_uid === 'string' ? unit.unit_uid.trim() : '';
+            const baseId = unit && typeof unit.base_id === 'string' ? unit.base_id.trim() : '';
+            if (!uid) continue;
+            out.set(uid, uid);
+            if (baseId) {
+                out.set(baseId, uid);
+                out.set('BLUE_' + baseId, uid);
+            }
+            if (uid.startsWith('BLUE_')) out.set(uid.slice(5), uid);
+        }
+        if (out.size) return out;
+    }
+    if (Array.isArray(scenario && scenario.blue_units_base_ids)) {
+        for (const baseId of scenario.blue_units_base_ids) {
+            if (typeof baseId !== 'string' || !baseId.trim()) continue;
+            const uid = 'BLUE_' + baseId;
+            out.set(uid, uid);
+            out.set(baseId, uid);
+        }
+    }
+    return out;
 }
 
 function blsNames(scenario) {
@@ -153,10 +215,49 @@ function blankBlsStatus(scenario) {
     return out;
 }
 
+function normalizeBlsStatusValue(value) {
+    if (BLS_STATUS.includes(value)) return value;
+    if (String(value || '').toUpperCase() === 'THREATENED') return 'CONTESTED';
+    return null;
+}
+
+function baselineBlsStatus(scenario, rawStatus) {
+    const out = blankBlsStatus(scenario);
+    const src = rawStatus && typeof rawStatus === 'object' ? rawStatus : {};
+    for (const name of blsNames(scenario)) {
+        const normalized = normalizeBlsStatusValue(src[name]);
+        if (normalized) out[name] = normalized;
+    }
+    return out;
+}
+
 function blankRedStrengths(scenario) {
     const out = {};
     for (const u of scenario.red_units) out[u.uid] = 1.0;
     return out;
+}
+
+function baselineForceRatio(value, elapsedHours) {
+    if (typeof value === 'string' && value.trim()) return value;
+    if (typeof value === 'number' && Number.isFinite(value)) {
+        return `${Number(value.toFixed(2))}:1`;
+    }
+    return elapsedHours <= 0 ? 'Not engaged' : 'N/A';
+}
+
+function baselineEwEffect(value, elapsedHours) {
+    if (EW_BANDS.includes(value)) return value;
+    return elapsedHours <= 0 ? 'Idle' : 'Active';
+}
+
+function baselineLogisticsState(value, elapsedHours) {
+    if (typeof value === 'string' && value.trim()) return value;
+    return elapsedHours <= 0 ? 'Pre-assault staging' : 'Building';
+}
+
+function baselineDecisionPoint(value, meta) {
+    if (typeof value === 'string' && value.trim()) return value;
+    return meta.phase || meta.time_label || 'Step progression';
 }
 
 /**
@@ -165,20 +266,21 @@ function blankRedStrengths(scenario) {
  */
 function freshState(scenario) {
     const s0 = scenario.steps[0];
+    const meta = scenarioStepMeta(scenario, 0);
     return {
         step_index: 0,
-        time_label: s0.time_label,
-        elapsed_hours: s0.elapsed_hours,
-        phase: s0.phase,
+        time_label: meta.time_label,
+        elapsed_hours: meta.elapsed_hours,
+        phase: meta.phase,
         phase_line_km: s0.phase_line_km_baseline,
         objective_status: s0.objective_status_baseline,
-        force_ratio: s0.force_ratio_baseline,
-        ew_effect: s0.ew_effect_baseline,
-        logistics_state: s0.logistics_state_baseline,
-        decision_point: s0.decision_point_baseline,
+        force_ratio: baselineForceRatio(s0.force_ratio_baseline, meta.elapsed_hours),
+        ew_effect: baselineEwEffect(s0.ew_effect_baseline, meta.elapsed_hours),
+        logistics_state: baselineLogisticsState(s0.logistics_state_baseline, meta.elapsed_hours),
+        decision_point: baselineDecisionPoint(s0.decision_point_baseline, meta),
         narrative_ar: s0.narrative_ar_fallback,
         narrative_en: s0.narrative_en_fallback,
-        bls_status: { ...s0.bls_status_baseline },
+        bls_status: baselineBlsStatus(scenario, s0.bls_status_baseline),
         losses_step: { blue: 0, red_company_equivalent_cumulative: 0 },
         losses_cumulative: {
             blue_destroyed: 0,
@@ -188,7 +290,7 @@ function freshState(scenario) {
         },
         red_active_markers: scenario.red_units.length,
         per_unit_deltas: { blue_destroyed: [], red_degraded: [] },
-        blue_actions: baselineBlueActionsForStep(0),
+        blue_actions: blueActionsForScenarioStep(0, scenario),
         confidence_per_field: {
             phase_line_km:    'high',
             force_ratio:      'high',
@@ -215,30 +317,35 @@ function freshState(scenario) {
  */
 function baselineStateForStep(scenario, stepIndex, prevState, coaParams) {
     const s = scenario.steps[stepIndex];
+    const meta = scenarioStepMeta(scenario, stepIndex);
     const blueDestroyed = s.blue_destroyed_baseline || [];
     const prevBlue = (prevState && prevState.blue_destroyed_cumulative) || [];
     const prevStepBlue = prevBlue.length;
     const blueStep = Math.max(0, blueDestroyed.length - prevStepBlue);
 
     const redStrength = blankRedStrengths(scenario);
-    for (const uid of (s.red_degraded_baseline || [])) {
-        redStrength[uid] = 0.7;
+    const baselineStrengths = s.red_strength_baseline && typeof s.red_strength_baseline === 'object'
+        ? s.red_strength_baseline
+        : null;
+    for (const uid of Object.keys(redStrength)) {
+        const strength = baselineStrengths && Number.isFinite(baselineStrengths[uid]) ? baselineStrengths[uid] : null;
+        if (strength != null) redStrength[uid] = Math.max(0, Math.min(1, strength));
     }
 
     const state = {
         step_index: stepIndex,
-        time_label: s.time_label,
-        elapsed_hours: s.elapsed_hours,
-        phase: s.phase,
+        time_label: meta.time_label,
+        elapsed_hours: meta.elapsed_hours,
+        phase: meta.phase,
         phase_line_km: s.phase_line_km_baseline,
         objective_status: s.objective_status_baseline,
-        force_ratio: s.force_ratio_baseline,
-        ew_effect: s.ew_effect_baseline,
-        logistics_state: s.logistics_state_baseline,
-        decision_point: s.decision_point_baseline,
+        force_ratio: baselineForceRatio(s.force_ratio_baseline, meta.elapsed_hours),
+        ew_effect: baselineEwEffect(s.ew_effect_baseline, meta.elapsed_hours),
+        logistics_state: baselineLogisticsState(s.logistics_state_baseline, meta.elapsed_hours),
+        decision_point: baselineDecisionPoint(s.decision_point_baseline, meta),
         narrative_ar: s.narrative_ar_fallback,
         narrative_en: s.narrative_en_fallback,
-        bls_status: { ...s.bls_status_baseline },
+        bls_status: baselineBlsStatus(scenario, s.bls_status_baseline),
         losses_step: { blue: blueStep, red_company_equivalent_cumulative: s.red_losses_cumulative_baseline },
         losses_cumulative: {
             blue_destroyed: blueDestroyed.length,
@@ -250,10 +357,10 @@ function baselineStateForStep(scenario, stepIndex, prevState, coaParams) {
         per_unit_deltas: {
             blue_destroyed: blueDestroyed.filter(u => !prevBlue.includes(u)),
             red_degraded: (s.red_degraded_baseline || []).map(uid => ({
-                unit_uid: uid, strength_current: 0.7, status: 'DEGRADED',
+                unit_uid: uid, strength_current: redStrength[uid] != null ? redStrength[uid] : 0.7, status: 'DEGRADED',
             })),
         },
-        blue_actions: baselineBlueActionsForStep(stepIndex),
+        blue_actions: blueActionsForScenarioStep(stepIndex, scenario),
         confidence_per_field: {
             phase_line_km:    'medium',
             force_ratio:      'medium',
@@ -294,6 +401,7 @@ module.exports = {
     EW_BANDS,
     EW_DECAY_ORDER,
     RED_UNIT_STATUS,
+    scenarioStepMeta,
     TIME_LABELS,
     ELAPSED_HOURS_BY_INDEX,
     PHASE_BY_INDEX,
@@ -305,11 +413,14 @@ module.exports = {
 
     throughputCeilingKm,
     isBlueUidShape,
+    blueUnitUids,
     redUidSet,
     blueUidSet,
+    blueUidAliasMap,
     blsNames,
     parseForceRatio,
     baselineBlueActionsForStep,
+    blueActionsForScenarioStep,
 
     freshState,
     baselineStateForStep,

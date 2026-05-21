@@ -31,13 +31,21 @@ const SYSTEM_PROMPT = fs.readFileSync(
 ).trim();
 
 const DEFAULT_OPTIONS = Object.freeze({
-    temperature: 0.7,    // some variety across the 3-5 plans, but not chaotic
-    top_p:       0.92,
-    num_predict: 3000,
-    max_tokens:  3000,   // claude/zen surface
+    temperature: 0.45,   // enough variety for the seed plan, but easier to keep JSON-valid
+    top_p:       0.9,
+    num_predict: 1400,
+    max_tokens:  1400,   // claude/zen surface
 });
 
-const DEFAULT_TIMEOUT_MS = 120000;
+// Default LLM call ceiling. Prefer the central ai-config.js value
+// (RMOOZ_OLLAMA_TIMEOUT_MS / .requestTimeoutMs) so a 7B CPU model gets
+// the same 90 s budget as the rest of the gateway. Floor at 60 s — a 7B
+// on CPU often needs 40-50 s just for model load + a 1400-token plan,
+// and the old 30 s hard-coded ceiling was timing every request out.
+const DEFAULT_TIMEOUT_MS = Math.max(
+    Number(aiCfg && aiCfg.requestTimeoutMs) || 0,
+    60000
+);
 
 // ── Prompt assembly ──────────────────────────────────────────────────
 function buildUserPrompt({ scenario, currentState, commanderIntent, constraints }) {
@@ -104,6 +112,116 @@ function tryParse(responseText) {
     try { return JSON.parse(extracted); } catch (e) { return null; }
 }
 
+function requestedRange(constraints) {
+    const cons = constraints || {};
+    const minOptions = Math.max(3, Math.min(5, cons.min_options | 0 || 3));
+    const maxOptions = Math.max(minOptions, Math.min(5, cons.max_options | 0 || 5));
+    return { minOptions, maxOptions };
+}
+
+function scenarioBlsNames(scenario) {
+    const fromScenario = scenario && Array.isArray(scenario.bls_template)
+        ? scenario.bls_template.map(b => b && b.name).filter(Boolean)
+        : [];
+    return fromScenario.length ? fromScenario : ['BLS-1', 'BLS-2', 'BLS-3', 'BLS-4'];
+}
+
+function pickBls(scenario, preferred, fallbackIndex) {
+    const names = scenarioBlsNames(scenario);
+    if (preferred && names.includes(preferred)) return preferred;
+    return names[Math.min(fallbackIndex, names.length - 1)] || names[0] || 'BLS-1';
+}
+
+function bestMainBls(scenario) {
+    const entries = scenario && Array.isArray(scenario.bls_template) ? scenario.bls_template : [];
+    const ranked = entries
+        .filter(b => b && b.name && !b.permanently_limited)
+        .sort((a, b) => Number(b.throughput || b.nominal_throughput || 0) - Number(a.throughput || a.nominal_throughput || 0));
+    return (ranked[0] && ranked[0].name) || pickBls(scenario, 'BLS-3', 2);
+}
+
+function localCoaTemplates(scenario) {
+    const names = scenarioBlsNames(scenario);
+    const main = bestMainBls(scenario);
+    const supporting = names.find(n => n !== main) || pickBls(scenario, 'BLS-1', 0);
+    const third = names.find(n => n !== main && n !== supporting) || supporting;
+    const limitedEntry = scenario && Array.isArray(scenario.bls_template)
+        ? scenario.bls_template.find(b => b && b.permanently_limited)
+        : null;
+    const limited = (limitedEntry && limitedEntry.name) || names[names.length - 1] || third;
+    const obj = scenario && scenario.obj && scenario.obj.name ? scenario.obj.name : 'OBJ';
+
+    return [
+        {
+            name: 'Deliberate Bridge',
+            risk_tier: 'low',
+            eta_hours: 120,
+            blue_casualty_p50: 10,
+            blue_casualty_p90: 18,
+            rationale: 'Preserves combat power while building a secure beachhead before the decisive push. Best when Blue can trade tempo for lower downside risk.',
+            key_assumptions: [`${main} secure by H+24`, 'Red EW pressure declines after H+24', 'Reserve remains uncommitted until the beachhead is stable'],
+            plan: [`Land main effort through ${main}`, `Use ${supporting} as supporting entry and casualty evacuation lane`, 'Consolidate logistics and fires to H+48', `Commit reserve after beachhead is secure`, `Seize ${obj} by H+120`],
+            decision_points: [{ at_hour: 48, trigger: `${main} not secure`, branch_if_not: `Shift tempo to ${supporting} and delay reserve` }],
+        },
+        {
+            name: 'Hasty Thrust',
+            risk_tier: 'high',
+            eta_hours: 72,
+            blue_casualty_p50: 20,
+            blue_casualty_p90: 32,
+            rationale: 'Maximizes tempo and tries to outrun Red consolidation. Pick this when speed matters more than preserving the reserve.',
+            key_assumptions: [`${main} opens by H+8`, 'EW shock suppresses Red C2 through H+18', 'Reserve can move immediately without traffic collapse'],
+            plan: [`Mass landing at ${main}`, 'Push reconnaissance inland without waiting for full beach clearance', 'Commit reserve by H+24', `Drive directly on ${obj}`, 'Accept higher flank risk to preserve momentum'],
+            decision_points: [{ at_hour: 24, trigger: `${main} still contested`, branch_if_not: 'Abort thrust and transition to deliberate bridgehead' }],
+        },
+        {
+            name: 'Feint Hook',
+            risk_tier: 'medium',
+            eta_hours: 108,
+            blue_casualty_p50: 14,
+            blue_casualty_p90: 24,
+            rationale: 'Uses deception to split Red markers before the main effort commits. It balances tempo and protection better than a single-axis attack.',
+            key_assumptions: [`${supporting} demonstration fixes Red`, `${main} remains the reliable exit`, `${limited} used only for fixing or deception`],
+            plan: [`Demonstrate at ${supporting}`, `Land main combat power through ${main}`, `Screen ${limited} without relying on it for heavy throughput`, 'Commit reserve in the mid-window', `Approach ${obj} from the less defended flank`],
+            decision_points: [{ at_hour: 36, trigger: 'Red does not react to feint', branch_if_not: `Re-mass on ${main}` }],
+        },
+        {
+            name: 'EW Pulse',
+            risk_tier: 'medium',
+            eta_hours: 96,
+            blue_casualty_p50: 16,
+            blue_casualty_p90: 26,
+            rationale: 'Times the decisive ground move to the best electronic-warfare window. It is useful when Red sensors are the main obstacle.',
+            key_assumptions: ['Blue EW can mask the first heavy lift', `${main} can absorb priority traffic`, 'Red indirect fires are delayed by disrupted C2'],
+            plan: ['Open with EW and ISR suppression', `Land first wave at ${main} under jamming cover`, `Use ${third} for fires and sustainment support`, 'Commit reserve as EW effects peak', `Exploit toward ${obj} before Red C2 recovers`],
+        },
+        {
+            name: 'Fires Screen',
+            risk_tier: 'low',
+            eta_hours: 132,
+            blue_casualty_p50: 9,
+            blue_casualty_p90: 17,
+            rationale: 'Uses fires and ISR to reduce Red combat power before the reserve is exposed. Slowest option, but gives the commander the cleanest abort points.',
+            key_assumptions: ['Sufficient fires are available for shaping', `Sustainment through ${main} remains uninterrupted`, 'Red armor can be fixed short of the objective'],
+            plan: [`Secure ${main} and ${supporting} before deep movement`, 'Shape Red artillery and armor with fires', 'Advance by bounded phase lines', 'Commit reserve only after Red markers degrade', `Finish seizure of ${obj} after H+120`],
+        },
+    ];
+}
+
+function addLocalBackfill(plans, scenario, minOptions, maxOptions) {
+    const out = (plans || []).slice(0, maxOptions);
+    const seen = new Set(out.map(p => String(p.name || '').trim().toLowerCase()).filter(Boolean));
+    const validation = coaSchema.validateCoaArray(localCoaTemplates(scenario));
+    for (const plan of validation.plans) {
+        const key = String(plan.name || '').trim().toLowerCase();
+        if (!key || seen.has(key)) continue;
+        out.push(plan);
+        seen.add(key);
+        if (out.length >= Math.min(maxOptions, Math.max(minOptions, 3))) break;
+    }
+    return out.slice(0, maxOptions);
+}
+
 // ── Main entry ───────────────────────────────────────────────────────
 /**
  * Generate a COA set.
@@ -142,6 +260,7 @@ async function generateCoaSet(args) {
     const userPrompt = buildUserPrompt(args);
     const callOpts = { ...DEFAULT_OPTIONS };
     const timeoutMs = args.timeoutMs || DEFAULT_TIMEOUT_MS;
+    const { minOptions, maxOptions } = requestedRange(args.constraints);
 
     const start = Date.now();
     const meta = {
@@ -157,6 +276,31 @@ async function generateCoaSet(args) {
         errors:       [],
     };
 
+    // Previously: when providerName === 'ollama' and constraints.live_ai
+    // wasn't set, this returned canned `addLocalBackfill` plans without
+    // ever calling the LLM. That meant "Generate COA" on a local-Ollama
+    // setup never reached the model — users saw hardcoded plans every
+    // time. Removed: we always call the AI now; the existing `if (!resp.ok)`
+    // path below still falls back to local backfill when the LLM errors,
+    // times out, or is unreachable. Pass constraints.skip_ai: true if you
+    // need the old fast-bypass behavior for a specific request.
+    const skipAi = !!(args.constraints && args.constraints.skip_ai);
+    if (skipAi) {
+        const plans = addLocalBackfill([], args.scenario, minOptions, maxOptions);
+        meta.durationMs = Date.now() - start;
+        meta.fallback = 'skipped_ai';
+        meta.localBackfillAdded = plans.length;
+        meta.requestedMin = minOptions;
+        meta.requestedMax = maxOptions;
+        meta.iterativeAttempts = 0;
+        return {
+            ok: plans.length > 0,
+            plans,
+            meta,
+            raw: null,
+        };
+    }
+
     const resp = await aiProvider.generate({
         provider: providerName,
         model:    args.model,
@@ -170,9 +314,14 @@ async function generateCoaSet(args) {
     if (resp && resp.providerUsed) meta.provider = resp.providerUsed;
 
     if (!resp.ok) {
+        const fallbackPlans = addLocalBackfill([], args.scenario, minOptions, maxOptions);
+        meta.fallback = 'local_provider_error';
+        meta.localBackfillAdded = fallbackPlans.length;
+        meta.errors.push({ path: 'provider', msg: resp.error || 'unknown provider error' });
         return {
-            ok: false,
-            error: `${meta.provider}_error: ${resp.error || 'unknown'}`,
+            ok: fallbackPlans.length > 0,
+            plans: fallbackPlans,
+            error: fallbackPlans.length ? null : `${meta.provider}_error: ${resp.error || 'unknown'}`,
             meta,
         };
     }
@@ -180,8 +329,12 @@ async function generateCoaSet(args) {
     const parsed = tryParse(resp.response);
     if (parsed == null) {
         meta.parseFailed = true;
+        const fallbackPlans = addLocalBackfill([], args.scenario, minOptions, maxOptions);
+        meta.fallback = 'local_parse_failed';
+        meta.localBackfillAdded = fallbackPlans.length;
         return {
-            ok: false,
+            ok: fallbackPlans.length > 0,
+            plans: fallbackPlans,
             error: 'parse_failed',
             meta,
             rawHead: (resp.response || '').slice(0, 400),
@@ -192,92 +345,30 @@ async function generateCoaSet(args) {
     meta.validationDropped = validation.dropped.length;
     meta.errors = validation.errors.slice(0, 10);
 
-    const minOptions = Math.max(3, Math.min(5, (args.constraints && args.constraints.min_options) | 0 || 3));
-    const maxOptions = Math.max(minOptions, Math.min(5, (args.constraints && args.constraints.max_options) | 0 || 5));
-
     // Initial plans (whatever the first call produced — may be 1 from a weak
-    // model that ignored "generate 3-5"). We'll backfill iteratively below.
+    // model that ignored "generate 3-5"). We backfill locally below so the
+    // UI doesn't wait for serial follow-up model calls.
     let plans = (validation.plans || []).slice();
 
     if (!validation.ok && plans.length === 0) {
+        plans = addLocalBackfill([], args.scenario, minOptions, maxOptions);
+        meta.fallback = 'local_validation_failed';
+        meta.localBackfillAdded = plans.length;
         return {
-            ok: false,
-            error: 'validation_failed',
-            plans: [],
+            ok: plans.length > 0,
+            error: plans.length ? null : 'validation_failed',
+            plans,
             dropped: validation.dropped,
             meta,
             rawHead: (resp.response || '').slice(0, 400),
         };
     }
 
-    // ── Iterative backfill (the 7B-model fix) ────────────────────────
-    // qwen2.5:7b et al. tend to return ONE high-quality plan when asked
-    // for multiple. We fix that by making focused single-plan follow-ups
-    // with diversifying hints. Strong models (Claude, gpt-oss:20b) skip
-    // this loop entirely because the first call already gave us enough.
-    const diversifyHints = [
-        'HIGH-RISK FAST: speed over preservation. Single-axis assault. Early reserve commit (≤ H+48).',
-        'LOW-RISK DELIBERATE: maximum reserve preservation, multi-axis support, slow deliberate phasing.',
-        'MEDIUM FEINT-AND-FLANK: demonstration at one BLS, main effort at another, indirect approach to OBJ.',
-        'AIR-HEAVY: leverage CAS/ISR for stand-off; minimize ground commitment until objective.',
-        'EW-DOMINANT: time the assault to peak Red EW disruption (H+2 to H+24); aggressive during shock.',
-    ];
+    const beforeBackfill = plans.length;
+    plans = addLocalBackfill(plans, args.scenario, minOptions, maxOptions);
+    meta.localBackfillAdded = Math.max(0, plans.length - beforeBackfill);
 
-    const ITER_CAP = 6;  // hard cap on follow-up calls to prevent runaway
-    let iterations = 0;
-    while (plans.length < minOptions && iterations < ITER_CAP) {
-        const hint = diversifyHints[iterations % diversifyHints.length];
-        const existingNames = plans.map(p => p.name).join(', ') || '(none yet)';
-        const followupPrompt = [
-            '=== SCENARIO ===',
-            // Recap scenario block briefly so the LLM has context if the system prompt was evicted.
-            args.scenario.scenario_label || 'wargame2-brega',
-            '',
-            '=== FOLLOW-UP REQUEST ===',
-            `You previously returned ${plans.length} plan(s) with name(s): ${existingNames}.`,
-            'Generate ONE MORE plan, materially different from those listed above.',
-            '',
-            `Focus this plan on: ${hint}`,
-            '',
-            'Respond with a JSON ARRAY containing exactly ONE new plan object: [ { ... } ].',
-            'Do NOT repeat any of the names listed above. The shape must match the system schema exactly.',
-        ].join('\n');
-
-        const followup = await aiProvider.generate({
-            provider: providerName,
-            model:    args.model,
-            system:   SYSTEM_PROMPT,
-            prompt:   followupPrompt,
-            format:   'json',
-            options:  callOpts,
-            timeoutMs,
-        });
-
-        iterations++;
-        if (!followup.ok) {
-            // Soft-stop on call failure — return what we have.
-            meta.errors.push({ path: `iterative[${iterations}]`, msg: 'provider call failed: ' + (followup.error || 'unknown') });
-            break;
-        }
-
-        const followupParsed = tryParse(followup.response);
-        if (followupParsed == null) {
-            meta.errors.push({ path: `iterative[${iterations}]`, msg: 'parse failed' });
-            continue;
-        }
-
-        const followupVal = coaSchema.validateCoaArray(followupParsed);
-        const existingLc = new Set(plans.map(p => p.name.toLowerCase()));
-        for (const plan of followupVal.plans) {
-            if (!plan.name) continue;
-            if (existingLc.has(plan.name.toLowerCase())) continue;  // dedupe by name
-            plans.push(plan);
-            existingLc.add(plan.name.toLowerCase());
-            if (plans.length >= maxOptions) break;
-        }
-    }
-
-    meta.iterativeAttempts = iterations;
+    meta.iterativeAttempts = 0;
     meta.durationMs = Date.now() - start;
     meta.requestedMin = minOptions;
     meta.requestedMax = maxOptions;

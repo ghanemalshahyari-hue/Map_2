@@ -17,7 +17,7 @@
 (function () {
     'use strict';
 
-    const SCENARIO_DEFAULT = 'wargame2-brega';
+    const SCENARIO_DEFAULT = 'wargame3';
 
     let trial = null;       // current per-trial state from AppScenarioState
     let mcRunSubscription = null;
@@ -28,6 +28,8 @@
     // map BEFORE the adjudicator resolves outcomes. This is what makes
     // "Use this plan" actually drive the wargame instead of being decorative.
     let activeCoa = null;
+    let tacticalMovesAppliedThisStep = false;
+    const ACTIVE_COA_STORAGE_KEY = 'wg-adj-active-coa';
     let scenarioCache = null;  // full scenario JSON, fetched on demand for map overlay
     let aiHealth = null;       // last /api/ai/health probe: { ok, url, defaultModel, models?, error? }
     let lastRunMode = null;    // 'mock' | 'live' | 'fallback' — last adjudicate response's actual run mode
@@ -57,8 +59,12 @@
         // record approved actions against the right step (todo item #7).
         if (window.AppAdjudicator) {
             window.AppAdjudicator.getCurrentStepIndex = () => (trial && trial.stepIndex) || 0;
-            window.AppAdjudicator.getNextStepIndex    = () => Math.min(11, ((trial && trial.stepIndex) || 0) + 1);
+            window.AppAdjudicator.getNextStepIndex    = () => {
+                const maxStep = scenarioCache && Array.isArray(scenarioCache.steps) ? scenarioCache.steps.length - 1 : 11;
+                return Math.min(maxStep, ((trial && trial.stepIndex) || 0) + 1);
+            };
         }
+        restoreActiveCoa();
         loadScenarios().then(autoDrawWhenReady);
         // Probe the AI backend so the Mock toggle and status row reflect
         // reality at boot — and the user knows up-front whether trials will
@@ -74,16 +80,24 @@
     }
 
     // ── AI backend health probe (items 1+2+3) ────────────────────────
-    // Calls /api/ai/health, updates the setup row, and chooses the Mock
-    // toggle default. The probe is fire-and-forget: an unreachable backend
-    // just degrades the UI to "Mock required" without breaking the rest.
+    // Calls /api/ai/provider/status (multi-provider), updates the setup
+    // row, and chooses the Mock toggle default. The probe is fire-and-
+    // forget: an unreachable backend just degrades the UI to "Mock
+    // required" without breaking the rest.
     async function probeAiHealth() {
         try {
-            const res = await fetch('/api/ai/health');
+            const res = await fetch('/api/ai/provider/status');
             const body = await res.json().catch(() => null);
-            aiHealth = body || { ok: false, error: 'no body' };
+            const s = body || {};
+            aiHealth = {
+                ok:       !!(s.available && s.available.length > 0),
+                available: s.available || [],
+                defaultResolved: s.defaultResolved || null,
+                providers: s.providers || {},
+                error:     (!s.available || !s.available.length) ? 'no AI provider available' : null,
+            };
         } catch (e) {
-            aiHealth = { ok: false, error: (e && e.message) || String(e) };
+            aiHealth = { ok: false, available: [], defaultResolved: null, providers: {}, error: (e && e.message) || String(e) };
         }
         renderBackendRow();
         // Default Mock OFF when backend is up (so trials actually exercise
@@ -98,6 +112,21 @@
                 mockEl.checked  = true;
                 mockEl.disabled = true;
             }
+        }
+        // Update the status message now that we know the real mock state.
+        const statusEl = $('wg-adj-status');
+        if (statusEl && !aiHealth.probedAsking) {
+            aiHealth.probedAsking = true;
+            if (aiHealth.ok) {
+                statusEl.textContent = `AI backend ready (${aiHealth.available.join(', ')}). Mock mode is OFF — toggle on to replay scenario baseline.`;
+            } else {
+                statusEl.textContent = 'AI backend unavailable. Mock mode is ON (required for trials). Click ↻ to re-probe.';
+            }
+        }
+        // Show warning banner if mock is already checked.
+        const warnEl = $('wg-adj-mock-warning');
+        if (mockEl && warnEl) {
+            warnEl.style.display = mockEl.checked ? 'block' : 'none';
         }
     }
 
@@ -174,7 +203,7 @@
                 <span id="wg-adj-backend-text" style="flex:1;">Checking backend…</span>
                 <button id="wg-adj-backend-refresh" type="button" title="Re-probe AI backend"
                     style="background:transparent;border:none;color:#9ab;cursor:pointer;font-size:12px;padding:0 4px;">&#8635;</button>
-                <span id="wg-adj-mode-chip" class="wargame-state-pill is-idle" style="font-size:10px;padding:1px 8px;">Mode: —</span>
+                <span id="wg-adj-mode-chip" class="wargame-state-pill is-idle" style="font-size:10px;padding:1px 8px;">Last: —</span>
             </div>
 
             <!-- ── Setup: scenario + model + mock toggle ── -->
@@ -214,8 +243,14 @@
                 </div>
                 <label class="wg-adj-toggle">
                     <input type="checkbox" id="wg-adj-mock" />
-                    <span id="wg-adj-mock-label">Mock mode (no Ollama) — replays scenario baseline</span>
+                    <span id="wg-adj-mock-label">Mock mode — replays scenario baseline</span>
                 </label>
+                <div id="wg-adj-mock-warning" style="display:none;margin-top:6px;padding:6px 8px;
+                    background:rgba(232,162,58,0.12);border:1px solid #e8a23a;border-radius:4px;
+                    font-size:11px;color:#e8a23a;line-height:1.5;">
+                    &#9888; Mock mode active: AI model is NOT being called. Outcomes are scenario baselines (deterministic).
+                    Uncheck to run live AI trials.
+                </div>
             </div>
 
             <!-- ── Map overlay buttons ── -->
@@ -452,7 +487,7 @@
         if (kind === 'warning') setPill(pill, 'warning', 'Warning');
         if (kind === 'idle')    setPill(pill, 'idle', 'Idle');
         const box = $('wg-adj-status');
-        if (box) box.textContent = msg;
+        if (box) box.innerHTML = msg;
     }
 
     // ── Backend row + mode chip rendering (items 1+2+3) ──────────────
@@ -466,38 +501,63 @@
             text.textContent     = 'Checking backend…';
             return;
         }
+        const avail = (aiHealth.available && aiHealth.available.length) ? aiHealth.available : [];
         if (aiHealth.ok) {
             dot.style.background = '#4caf50';
-            const style = aiHealth.apiStyle ? aiHealth.apiStyle + ' · ' : '';
-            text.innerHTML = `Live AI ready · ${style}${escapeHtml(aiHealth.defaultModel || '(default)')} @ ${escapeHtml(aiHealth.url || '?')}`;
+            const resolved = aiHealth.defaultResolved ? `→ ${aiHealth.defaultResolved}` : '';
+            text.innerHTML = `Live AI ready · <strong>${escapeHtml(avail.join(', '))}</strong> ${resolved}`;
             if (label) label.textContent = 'Mock mode (skip LLM, replay scenario baseline)';
         } else {
             dot.style.background = '#d23a3a';
             const err = aiHealth.error || 'unreachable';
-            text.innerHTML = `Backend offline · ${escapeHtml(aiHealth.url || '?')} — <span style="color:#e8a23a;">${escapeHtml(err)}</span>`;
+            text.innerHTML = `AI backend offline — <span style="color:#e8a23a;">${escapeHtml(err)}</span>` +
+                ` · <span style="color:#888;">avail: ${avail.length ? escapeHtml(avail.join(', ')) : 'none'}</span>`;
             if (label) label.textContent = 'Mock mode (backend offline — required for trials)';
         }
     }
 
-    // Classify one adjudicate response into a mode label + pill kind.
+    // Classify one adjudicate response into a mode label + pill kind + pill color.
     //   - validation.mocked === true                    → 'mock'
     //   - r.ok && !mocked                               → 'live'
     //   - !r.ok or validation.fallback present          → 'model_error' / 'validation_error' / 'parse_error' / 'fallback'
+    // Returns { mode, label, kind, bg, fg } where bg/fg are CSS colors (item #3).
+    // Status pill kind drives the colored Ready/Working/Error pill at the
+    // top of the card. Mock-mode runs are SUCCESSFUL adjudications (just
+    // simulated), so they map to kind 'ok' (pill → "Ready") with the
+    // yellow chip below labelled "Mock" to distinguish from a live run.
+    // Using 'idle' here caused the pill to drop from "Ready" → "Idle" the
+    // moment a mock step completed, which was wrong.
+    const MODE_STYLES = {
+        mock:             { kind: 'ok',      bg: '#8a7520', fg: '#e8d88a' },
+        live:             { kind: 'ok',      bg: '#1a6b3a', fg: '#8ae8aa' },
+        model_error:      { kind: 'error',   bg: '#7a2a2a', fg: '#e88a8a' },
+        validation_error: { kind: 'warning', bg: '#7a4a2a', fg: '#e8b88a' },
+        parse_error:      { kind: 'warning', bg: '#6a4a2a', fg: '#d8b88a' },
+        fallback:         { kind: 'warning', bg: '#6a5a2a', fg: '#d8c88a' },
+        idle:             { kind: 'idle',    bg: '#333',    fg: '#888'    },
+    };
     function classifyRun(r) {
         const mocked   = !!(r && r.validation && r.validation.mocked);
         const fallback = String((r && r.validation && r.validation.fallback) || (r && r.meta && r.meta.fallback) || '');
-        if (mocked)          return { mode: 'mock',             label: 'Mock',                                        kind: 'idle' };
-        if (fallback) {
-            if (fallback.endsWith('_error') || fallback.endsWith('_error_on_retry'))
-                return { mode: 'model_error',      label: 'Model error \xb7 ' + fallback,                         kind: 'error' };
-            if (fallback === 'validation_failed')
-                return { mode: 'validation_error',  label: 'Validation error',                                      kind: 'warning' };
-            if (fallback === 'parse_failed')
-                return { mode: 'parse_error',       label: 'Parse error',                                           kind: 'warning' };
-            return { mode: 'fallback',       label: 'Fallback \xb7 ' + fallback,                              kind: 'warning' };
+        let mode = 'idle';
+        let label = '\u2014';
+        if (mocked) {
+            mode = 'mock'; label = 'Mock';
+        } else if (fallback) {
+            if (fallback.endsWith('_error') || fallback.endsWith('_error_on_retry')) {
+                mode = 'model_error'; label = 'Model error \xb7 ' + fallback;
+            } else if (fallback === 'validation_failed') {
+                mode = 'validation_error'; label = 'Validation error';
+            } else if (fallback === 'parse_failed') {
+                mode = 'parse_error'; label = 'Parse error';
+            } else {
+                mode = 'fallback'; label = 'Fallback \xb7 ' + fallback;
+            }
+        } else if (r && r.ok) {
+            mode = 'live'; label = 'Live \xb7 ' + ((r.meta && r.meta.model) || '(model)');
         }
-        if (r && r.ok)       return { mode: 'live',             label: 'Live \xb7 ' + ((r.meta && r.meta.model) || '(model)'), kind: 'ok' };
-        return { mode: 'idle', label: '\u2014', kind: 'idle' };
+        const style = MODE_STYLES[mode] || MODE_STYLES.idle;
+        return { mode, label, kind: style.kind, bg: style.bg, fg: style.fg };
     }
 
     function setLastMode(r) {
@@ -507,7 +567,20 @@
         lastRunMode = c.mode;
         chip.classList.remove('is-idle', 'is-active', 'is-error', 'is-warning', 'is-ok');
         chip.classList.add('is-' + c.kind);
-        chip.textContent = 'Mode: ' + c.label;
+        chip.textContent = 'Last: ' + c.label;
+        chip.style.background = c.bg || '';
+        chip.style.color      = c.fg || '';
+    }
+
+    function clearLastMode() {
+        const chip = $('wg-adj-mode-chip');
+        lastRunMode = null;
+        if (!chip) return;
+        chip.classList.remove('is-active', 'is-error', 'is-warning', 'is-ok');
+        chip.classList.add('is-idle');
+        chip.textContent = 'Last: —';
+        chip.style.background = '';
+        chip.style.color = '';
     }
 
     // ── Scenario list ────────────────────────────────────────────────
@@ -537,12 +610,13 @@
         }
         sel.addEventListener('change', updateReportLink);
         updateReportLink();
-        setStatus('Ready. Mock mode is on — toggle off to use live Ollama.', 'idle');
+        setStatus('Connecting to AI backend…', 'idle');
     }
 
     async function ensureScenarioLoaded() {
-        const name = $('wg-adj-scenario').value || SCENARIO_DEFAULT;
-        if (scenarioCache && scenarioCache.name === name) return scenarioCache;
+        const name = ($('wg-adj-scenario') && $('wg-adj-scenario').value) || SCENARIO_DEFAULT;
+        // Always re-fetch — never serve a stale cached copy that was built
+        // before a server restart added new fields (e.g. red_unit_step_coords).
         const r = await window.AppAdjudicator.scenario(name);
         if (!r.ok) { setStatus('Could not load scenario JSON: ' + (r.error || 'unknown'), 'error'); return null; }
         scenarioCache = r.scenario;
@@ -615,47 +689,105 @@
             + sparkline(plVals,   100, '#e8a23a', curIdx, 'Phase line',   ' km');
     }
 
-    // ── Timeline strip: 12 cells, one per step. Cells become clickable
+    // Like classifyRun() but for a historical step — determines mode from
+    // the step's history entry (validation + meta). Used to color timeline
+    // cells by run mode (item #3).
+    function classifyHistoricalStep(h) {
+        if (!h || !h.validation) return 'future';
+        if (h.validation.mocked)           return 'mock';
+        if (h.validation.fallback) {
+            const fb = h.validation.fallback;
+            if (fb.endsWith('_error') || fb.endsWith('_error_on_retry')) return 'model_error';
+            if (fb === 'validation_failed') return 'validation_error';
+            if (fb === 'parse_failed')      return 'parse_error';
+            return 'fallback';
+        }
+        if (h.state && h.state.step_index > 0) return 'live';
+        return 'seeded';
+    }
+
+    const MODE_COLORS = {
+        live:             '#1a6b3a',
+        mock:             '#8a7520',
+        fallback:         '#8a5e20',
+        model_error:      '#7a2a2a',
+        validation_error: '#7a4a2a',
+        parse_error:      '#6a4a2a',
+        seeded:           '#2a3a52',
+        future:           '#22293a',
+    };
+    const MODE_LABELS = {
+        live: 'live AI',
+        mock: 'mock',
+        fallback: 'fallback',
+        model_error: 'model error',
+        validation_error: 'validation error',
+        parse_error: 'parse error',
+        seeded: 'seeded',
+        future: 'future',
+    };
+
+    // ── Timeline strip: one cell per step. Cells become clickable
     // once their step has been resolved (i.e. is present in trial.history).
     // Clicking a past cell scrubs the side panel + map back to that step.
+    // Each cell is colored by its run mode (item #3) with a thin mode bar.
+    // Step count + labels come from scenarioCache.phase_table so non-W1/W2
+    // scenarios (4..20 steps) render correctly.
     function renderTimeline(currentStepIndex, currentObjStatus) {
         const wrap = $('wg-adj-timeline');
         const strip = $('wg-adj-timeline-strip');
         if (!wrap || !strip) return;
         wrap.style.display = '';
-        const labels = ['D-3h','H','H+2','H+6','H+12','H+24','H+36','H+48','H+72','H+96','H+120','H+144'];
-        const phases = ['PRE','P1','P1','P2A','P2A','P2A','P2B','P2B','P3','P3','P3','RES'];
+        const pt = scenarioCache && Array.isArray(scenarioCache.phase_table) ? scenarioCache.phase_table : null;
+        const labels = pt
+            ? pt.map(r => r.time_label || `step ${r.index}`)
+            : ['D-3h','H','H+2','H+6','H+12','H+24','H+36','H+48','H+72','H+96','H+120','H+144'];
+        const phases = pt
+            ? pt.map(r => (r.phase || '').replace(/^PHASE\s+/i, 'P').replace(/^PRE-H$/i, 'PRE').replace(/^RESOLUTION$/i, 'RES'))
+            : ['PRE','P1','P1','P2A','P2A','P2A','P2B','P2B','P3','P3','P3','RES'];
+        const cellCount = labels.length;
         const objColor = {
             DORMANT:'#445',     THREATENED:'#c9852e', CONTESTED:'#b07020',
             CAPTURED:'#b73a3a', DENIED:'#3a7fb7',     '__future':'#22293a',
         };
-        // Build a quick lookup of resolved steps -> their objective_status
+        // Build a quick lookup of resolved steps -> their objective_status + full entry
         const resolvedByIdx = {};
+        const historyByStep = {};
         const history = (trial && trial.history) || [];
         for (const h of history) {
-            if (h && h.state) resolvedByIdx[h.state.step_index] = h.state.objective_status;
+            if (h && h.state) {
+                resolvedByIdx[h.state.step_index] = h.state.objective_status;
+                historyByStep[h.state.step_index] = h;
+            }
         }
         const cells = [];
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < cellCount; i++) {
             const isResolved = (i in resolvedByIdx);
             const isCurrent  = i === currentStepIndex;
             const objAtI     = resolvedByIdx[i];
+            const stepEntry  = historyByStep[i];
+            const mode       = classifyHistoricalStep(stepEntry);
+            const modeColor  = MODE_COLORS[mode] || MODE_COLORS.future;
+            const modeLabel  = MODE_LABELS[mode] || '';
             const bg = isCurrent ? (objColor[currentObjStatus] || '#3a96d2')
-                     : isResolved ? (objColor[objAtI] || '#2a3a52')
+                     : isResolved ? modeColor
                                   : objColor.__future;
             const border = isCurrent ? '2px solid #fff' : '1px solid #1a2030';
             const cursor = isResolved ? 'pointer' : 'default';
             const hoverEffect = isResolved && !isCurrent ? 'opacity:.85;' : '';
+            const modeHint = isResolved ? ` \xb7 ${modeLabel}` : '';
             cells.push(`
-                <div data-step="${i}" title="Step ${i} — ${labels[i]} (${phases[i]})${isResolved ? ' — click to scrub' : ''}" style="
+                <div data-step="${i}" title="Step ${i} — ${labels[i]} (${phases[i]})${modeHint}${isResolved ? ' — click to scrub' : ''}" style="
                     flex:1;min-width:14px;height:30px;background:${bg};
                     border:${border};border-radius:2px;cursor:${cursor};${hoverEffect}
                     display:flex;flex-direction:column;align-items:center;justify-content:center;
                     font-size:8px;color:#cdd;font-weight:${isCurrent ? 700 : 400};
                     ${isCurrent ? 'box-shadow:0 0 4px rgba(58,150,210,.6);' : ''}
+                    position:relative;overflow:hidden;
                 ">
                     <div>${labels[i]}</div>
                     <div style="opacity:.6;">${phases[i]}</div>
+                    ${isResolved ? `<div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:${modeColor};opacity:0.7;"></div>` : ''}
                 </div>
             `);
         }
@@ -756,16 +888,16 @@
 
         // Push the state into the map overlay. If the scenario hasn't been
         // drawn yet, draw it first so the overlays exist for applyState.
-        // When a COA is active, the per-unit AI moves have already animated
-        // the markers; skip the deterministic re-positioning to avoid the
-        // "snap back to scripted lerp" jitter. All other state updates
-        // (BLS colors, SITREP, destroyed units, arrows) still run.
+        // Skip deterministic positioning only if this step already animated
+        // tactical actions. Fast COA mode intentionally lets scripted
+        // positions advance so the map still moves without live AI latency.
         if (window.AppAdjudicatorMap && scenarioCache) {
             if (!document.querySelector('.leaflet-marker-icon.wg-adj-obj')) {
                 window.AppAdjudicatorMap.drawScenario(scenarioCache);
             }
-            const applyOpts = { skipUnitPositioning: !!activeCoa };
+            const applyOpts = { skipUnitPositioning: !!tacticalMovesAppliedThisStep };
             const r = window.AppAdjudicatorMap.applyState(state, scenarioCache, applyOpts);
+            tacticalMovesAppliedThisStep = false;
             if (r && r.missed && r.missed.length) {
                 warns.push(`unmatched on map: ${r.missed.join(', ')}`);
             }
@@ -863,6 +995,30 @@
 
     // Render one plan card. Inline styles keep this self-contained — no
     // CSS changes needed elsewhere. Risk tier color-codes the badge.
+    // Keep the selected plan alive across refreshes so a stale tab reload
+    // does not silently drop the active COA.
+    function rememberActiveCoa(plan) {
+        try {
+            if (plan) sessionStorage.setItem(ACTIVE_COA_STORAGE_KEY, JSON.stringify(plan));
+            else sessionStorage.removeItem(ACTIVE_COA_STORAGE_KEY);
+        } catch (_) { /* storage can be disabled */ }
+    }
+
+    function restoreActiveCoa() {
+        try {
+            const raw = sessionStorage.getItem(ACTIVE_COA_STORAGE_KEY);
+            if (!raw) return;
+            const plan = JSON.parse(raw);
+            if (plan && typeof plan === 'object') {
+                setActiveCoa(plan, { persist: false });
+                setStatus(`Plan "${escapeHtml(plan.name || 'plan')}" restored. Mock off will use live Ollama; Mock on replays baseline.`, 'ok');
+            }
+        } catch (_) {
+            try { sessionStorage.removeItem(ACTIVE_COA_STORAGE_KEY); } catch (__) {}
+        }
+    }
+
+    // Render one plan card. Inline styles keep this self-contained.
     function renderCoaCard(plan, idx) {
         const riskColors = { low: '#3aaa3a', medium: '#e8a23a', high: '#e85c2a', extreme: '#d23a3a' };
         const riskColor  = riskColors[plan.risk_tier] || '#888';
@@ -933,8 +1089,9 @@
     // adjudicate steps run the headless Blue+Red propose+execute loop
     // first, animating real unit markers based on the AI's per-step
     // decisions that advance THIS plan.
-    function setActiveCoa(plan) {
+    function setActiveCoa(plan, opts = {}) {
         activeCoa = plan || null;
+        if (opts.persist !== false) rememberActiveCoa(activeCoa);
         console.log('[setActiveCoa] activeCoa is now:', activeCoa ? activeCoa.name : '(null)');
         const banner = $('wg-adj-coa-active-banner');
         const nameEl = $('wg-adj-coa-active-name');
@@ -960,6 +1117,7 @@
         if (!activeCoa) return;
         const name = activeCoa.name || '(plan)';
         activeCoa = null;
+        rememberActiveCoa(null);
         const banner = $('wg-adj-coa-active-banner');
         if (banner) banner.style.display = 'none';
         setStatus(`Plan "${name}" deactivated. Adjudicator runs without per-step AI proposals.`, 'idle');
@@ -996,13 +1154,12 @@
         // Trial seed gets the plan name so MC runs are identifiable.
         if (seedEl) seedEl.value = (plan.name || 'manual').replace(/\s+/g, '-').toLowerCase();
 
-        // Activate the plan: every subsequent adjudicate step will pre-roll
-        // a headless Blue+Red AI proposal that animates real markers BEFORE
-        // the scenario adjudicator resolves outcomes. This is the moment
-        // the wargame starts being driven by the AI's tactical thinking.
+        // Activate the plan. Fast mode uses the plan's posture/reserve
+        // settings during adjudication and lets the scenario map progression
+        // move markers immediately.
         setActiveCoa(plan);
 
-        setStatus(`Plan "${plan.name}" applied (posture=${posture}, reserve=H+${reserveHr || '?'}). AI will execute this plan on the map each step.`, 'ok');
+        setStatus(`Plan "${escapeHtml(plan.name || 'plan')}" applied (posture=${posture}, reserve=H+${reserveHr || '?'}). Mock off will use live Ollama; Mock on replays baseline.`, 'ok');
     }
 
     // ── Operator feedback row (todo item #9) ────────────────────────
@@ -1203,9 +1360,11 @@
     async function adjudicateNext() {
         if (!trial) trial = window.AppScenarioState.create({ scenarioName: SCENARIO_DEFAULT });
         const req = currentRequest();
+        if (!scenarioCache) await ensureScenarioLoaded();
         const nextIndex = (trial.stepIndex || 0) + 1;
-        if (nextIndex > 11) {
-            setStatus('Trial complete at step 11. Click Reset to start a new trial.', 'idle');
+        const maxStep = scenarioCache && Array.isArray(scenarioCache.steps) ? scenarioCache.steps.length - 1 : 11;
+        if (nextIndex > maxStep) {
+            setStatus(`Trial complete at step ${maxStep}. Click Reset to start a new trial.`, 'idle');
             return;
         }
 
@@ -1216,10 +1375,23 @@
         // map. The proposed actions are auto-recorded into AppApprovedActions
         // for this step so the adjudicator that follows sees them as the
         // PROPOSED ACTIONS block — fusing tactical AI with strategic AI.
+        tacticalMovesAppliedThisStep = false;
+        // Live tactical AI = Blue/Red propose-and-execute on this step.
+        // The old gate (`activeCoa.live_ai === true`) was dead — that flag
+        // is checked here but never set by the COA generator or any UI
+        // control, so the AI loop never fired. Tie it instead to the
+        // existing Mock-mode toggle (default OFF when AI backend is up):
+        //   mockMode OFF + AI loaded + COA active → run tactical AI
+        //   mockMode ON                            → fast path (no AI calls)
+        // Explicit per-plan opt-out still wins via `activeCoa.live_ai === false`.
+        const aiAvailable = !!(window.AppRedTeam && typeof window.AppRedTeam.proposeAndExecuteHeadless === 'function');
+        const planOptOut  = activeCoa && activeCoa.live_ai === false;
+        const liveTacticalCoa = !!activeCoa && !req.mockMode && aiAvailable && !planOptOut;
         console.log('[adj-next] activeCoa =', activeCoa ? activeCoa.name : '(none)',
-                    '| AppRedTeam.proposeAndExecuteHeadless =',
-                    !!(window.AppRedTeam && window.AppRedTeam.proposeAndExecuteHeadless));
-        if (activeCoa && window.AppRedTeam && typeof window.AppRedTeam.proposeAndExecuteHeadless === 'function') {
+                    '| mockMode =', !!req.mockMode,
+                    '| aiAvailable =', aiAvailable,
+                    '| live tactical AI =', liveTacticalCoa);
+        if (liveTacticalCoa) {
             console.log('[adj-next] entering COA-driven loop for', activeCoa.name);
             setStatus(`Step ${nextIndex} · "${activeCoa.name}" — AI planning Blue moves…`, 'active');
             try {
@@ -1227,26 +1399,43 @@
                     side: 'blue',
                     coaContext: activeCoa,
                     turn: nextIndex,
+                    provider: req.provider,
                 });
                 console.log('[adj-next] Blue propose result:', blueResult);
-                const blueCount = blueResult && blueResult.actions
-                    ? blueResult.actions.filter(a => a.validation && a.validation.ok).length : 0;
+                const blueExec = blueResult && blueResult.execution || {};
+                const blueCount = Number.isFinite(blueExec.executed) ? blueExec.executed : (blueResult && blueResult.actions
+                    ? blueResult.actions.filter(a => a.validation && a.validation.ok).length : 0);
+                const blueMoves = Number(blueExec.moved) || 0;
                 setStatus(`Step ${nextIndex} · ${blueCount} Blue moves executed — AI planning Red counter…`, 'active');
 
                 const redResult = await window.AppRedTeam.proposeAndExecuteHeadless({
                     side: 'red',
                     turn: nextIndex,
+                    provider: req.provider,
                 });
                 console.log('[adj-next] Red propose result:', redResult);
-                const redCount = redResult && redResult.actions
-                    ? redResult.actions.filter(a => a.validation && a.validation.ok).length : 0;
+                const redExec = redResult && redResult.execution || {};
+                const redCount = Number.isFinite(redExec.executed) ? redExec.executed : (redResult && redResult.actions
+                    ? redResult.actions.filter(a => a.validation && a.validation.ok).length : 0);
+                const redMoves = Number(redExec.moved) || 0;
+                const moveCount = blueMoves + redMoves;
+                const engageCount = (Number(blueExec.engaged) || 0) + (Number(redExec.engaged) || 0);
+                const heldCount = (Number(blueExec.held) || 0) + (Number(redExec.held) || 0);
+                tacticalMovesAppliedThisStep = moveCount > 0;
+                if ((blueCount + redCount) > 0) await sleep(800);
+                setStatus(`Step ${nextIndex} - ${blueCount} Blue, ${redCount} Red effects (${moveCount} move, ${engageCount} engage, ${heldCount} hold). Adjudicating outcomes...`, 'active');
                 setStatus(`Step ${nextIndex} · ${blueCount} Blue, ${redCount} Red moves executed. Adjudicating outcomes…`, 'active');
+                setStatus(`Step ${nextIndex} - ${blueCount} Blue, ${redCount} Red effects (${moveCount} move, ${engageCount} engage, ${heldCount} hold). Adjudicating outcomes...`, 'active');
             } catch (e) {
                 // Don't block adjudication on a propose failure; the operator
                 // sees a warning but the step still resolves on the scenario
                 // baseline / previous state.
                 setStatus(`Step ${nextIndex} · AI propose failed (${e && e.message || 'unknown'}), adjudicating anyway…`, 'active');
             }
+        } else if (activeCoa) {
+            console.log('[adj-next] fast COA path for', activeCoa.name);
+            const modeTxt = req.mockMode ? 'baseline' : 'live AI';
+            setStatus(`Step ${nextIndex} - "${escapeHtml(activeCoa.name || 'COA')}" ${modeTxt} adjudication...`, 'active');
         } else {
             setStatus(`Adjudicating step ${nextIndex}…`, 'active');
         }
@@ -1290,19 +1479,22 @@
 
     function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-    // ── Walk all 12 steps in sequence ────────────────────────────────
+    // ── Walk every step in sequence (count from scenario.steps.length) ───
     async function runOneTrial() {
         if (!trial) trial = window.AppScenarioState.create({ scenarioName: SCENARIO_DEFAULT });
         window.AppScenarioState.reset(trial);
         if (window.AppAdjudicatorMap) window.AppAdjudicatorMap.resetMap();
         const req = currentRequest();
+        const sc  = await ensureScenarioLoaded();
+        const stepCount = (sc && Array.isArray(sc.steps)) ? sc.steps.length : 12;
+        const lastStep  = stepCount - 1;
         const paceMs = Math.max(0, Number(($('wg-adj-pace-ms') && $('wg-adj-pace-ms').value) || 1200));
         // Per-trial mode tally so the closing line tells the truth about
         // what actually ran instead of just "N fallback step(s)".
         const modeCounts = { live: 0, mock: 0, fallback: 0, model_error: 0, validation_error: 0, parse_error: 0 };
         const fallbackReasons = {};
-        for (let i = 1; i <= 11; i++) {
-            setStatus(`Trial step ${i}/11…`, 'active');
+        for (let i = 1; i <= lastStep; i++) {
+            setStatus(`Trial step ${i}/${lastStep}…`, 'active');
             const approved = window.AppApprovedActions
                 ? window.AppApprovedActions.getForStep(i)
                 : { red: [], blue: [] };
@@ -1340,17 +1532,25 @@
             // already ~100 s so paceMs adds little.
             if (i < 11 && paceMs > 0) await sleep(paceMs);
         }
+        const modeLabels = {
+            live: 'Live', mock: 'Mock', model_error: 'Model err',
+            validation_error: 'Validation err', parse_error: 'Parse err', fallback: 'Fallback',
+        };
+        const modeColors = {
+            live: '#1a6b3a', mock: '#8a7520', model_error: '#7a2a2a',
+            validation_error: '#7a4a2a', parse_error: '#6a4a2a', fallback: '#6a5a2a',
+        };
         const parts = [];
-        if (modeCounts.live)             parts.push(`Live ${modeCounts.live}`);
-        if (modeCounts.mock)             parts.push(`Mock ${modeCounts.mock}`);
+        for (const [m, count] of Object.entries(modeCounts)) {
+            if (count > 0 && modeLabels[m]) {
+                const color = modeColors[m] || '#555';
+                parts.push(`<span style="color:${color};font-weight:600;">${modeLabels[m]} ${count}</span>`);
+            }
+        }
         const errorCount = modeCounts.model_error + modeCounts.validation_error + modeCounts.parse_error + modeCounts.fallback;
-        if (modeCounts.model_error)      parts.push(`Model err ${modeCounts.model_error}`);
-        if (modeCounts.validation_error) parts.push(`Validation err ${modeCounts.validation_error}`);
-        if (modeCounts.parse_error)      parts.push(`Parse err ${modeCounts.parse_error}`);
-        if (modeCounts.fallback)         parts.push(`Fallback ${modeCounts.fallback}`);
         if (errorCount) {
             const detail = Object.entries(fallbackReasons).map(([k, v]) => `${v}×${k}`).join(', ');
-            parts.push(`(${detail})`);
+            parts.push(`<span style="color:#888;">(${detail})</span>`);
         }
         const ok = errorCount === 0;
         setStatus(`Trial complete \u2014 ${parts.join(' \xb7 ')}.`, ok ? 'ok' : (modeCounts.model_error ? 'error' : 'warning'));
@@ -1372,6 +1572,7 @@
         // "already-clicked" set so the buttons re-enable for the next pass.
         feedbackSentThisSession.clear();
         hideFeedbackRow();
+        clearLastMode();
         setStatus('Trial reset. Step 0 (D-3h). Map markers restored.', 'idle');
     }
 
@@ -1423,6 +1624,10 @@
                 setStatus(`Monte Carlo complete: ${formatOutcomeSummary(data.outcomeCounts, data.trialsCompleted)}`, 'ok');
             } else if (evt === 'error') {
                 setStatus('MC error: ' + (data.msg || JSON.stringify(data)), 'error');
+            } else if (evt === 'connection-lost') {
+                if (window.AppAdjudicator.isMcRunning()) {
+                    setStatus('MC event stream disconnected; the run may still be finishing on the server.', 'warning');
+                }
             }
         });
     }
@@ -1486,6 +1691,14 @@
             if (text) text.textContent = 'Re-probing backend…';
             probeAiHealth();
         });
+        // Mock toggle warning (items 1+3).
+        const mockToggle = root.querySelector('#wg-adj-mock');
+        const mockWarn   = root.querySelector('#wg-adj-mock-warning');
+        if (mockToggle && mockWarn) {
+            mockToggle.addEventListener('change', () => {
+                mockWarn.style.display = mockToggle.checked ? 'block' : 'none';
+            });
+        }
         // Feedback buttons (item #9).
         const fbA = root.querySelector('#wg-adj-fb-accept');
         const fbR = root.querySelector('#wg-adj-fb-reject');

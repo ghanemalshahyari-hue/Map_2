@@ -16,7 +16,7 @@ const ROOT = path.join(__dirname, '..', '..');
 const DATA_DIR = process.env.RMOOZ_DATA_DIR || path.join(ROOT, 'data');
 const SCENARIOS_DIR = path.join(DATA_DIR, 'scenarios');
 
-const DEFAULT_NAME = 'wargame2-brega';
+const DEFAULT_NAME = 'wargame3';
 const cache = new Map();
 
 function scenarioFile(name) {

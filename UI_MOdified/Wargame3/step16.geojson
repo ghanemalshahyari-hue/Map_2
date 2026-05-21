@@ -1,0 +1,6216 @@
+{
+  "type": "FeatureCollection",
+  "name": "step16",
+  "properties": {
+    "version": 2,
+    "phase": 16,
+    "time_label": "D+144h",
+    "phase_name_ar": "الحسم النهائي عند الهدف X",
+    "kind": "final_resolution",
+    "phase_line_km": 95.0,
+    "combined_effect": "Red's final push towards Objective X was met with strong Blue resistance. Red's air strike on Blue's logistics was partially intercepted by Blue air patrols, resulting in moderate disruption. Red's kamikaze UAVs achieved limited success against Blue's forward defenses, with significant losses to Blue's counter-UAV operations. Red's SOF raids caused temporary disruption to Blue's C2, but Blue's mobile defense effectively countered Red's ground advance, forcing Red to culminate. EW operations were evenly matched, maintaining a degraded communication environment for both sides.",
+    "step_advantage": "BLUE_ADV",
+    "force_ratio_local": 0.97,
+    "force_ratio_operational": 1.37,
+    "n_units": 173,
+    "n_actors": 12,
+    "n_affected": 10,
+    "n_engagement_arcs": 10
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.55,
+          29.74
+        ]
+      },
+      "properties": {
+        "kind": "objective",
+        "id": "OBJ-X",
+        "name_ar": "الهدف X (نقطة الناصر-البريقة)",
+        "name_en": "Objective X (Nasser-Brega pipeline midpoint)",
+        "phase": 16,
+        "depth_km_from_coast": 90.1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            19.12,
+            29.69084685369074
+          ],
+          [
+            20.02,
+            29.69084685369074
+          ]
+        ]
+      },
+      "properties": {
+        "kind": "phase_line",
+        "phase": 16,
+        "phase_line_km": 95.0,
+        "time_label": "D+144h"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.3,
+          32.5
+        ]
+      },
+      "properties": {
+        "kind": "off_map_marker",
+        "id": "R-NAV-A",
+        "name_ar": "قاعدة أ البحرية الحمراء",
+        "side": "RED",
+        "type": "naval_base",
+        "phase": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.5,
+          32.0
+        ]
+      },
+      "properties": {
+        "kind": "off_map_marker",
+        "id": "R-NAV-B",
+        "name_ar": "قاعدة ب البحرية الحمراء",
+        "side": "RED",
+        "type": "naval_base",
+        "phase": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.0,
+          33.0
+        ]
+      },
+      "properties": {
+        "kind": "off_map_marker",
+        "id": "R-AB-A",
+        "name_ar": "القاعدة الجوية أ (أحمر)",
+        "side": "RED",
+        "type": "air_base",
+        "phase": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.8,
+          32.7
+        ]
+      },
+      "properties": {
+        "kind": "off_map_marker",
+        "id": "R-AB-B",
+        "name_ar": "القاعدة الجوية ب (أحمر)",
+        "side": "RED",
+        "type": "air_base",
+        "phase": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.2,
+          32.3
+        ]
+      },
+      "properties": {
+        "kind": "off_map_marker",
+        "id": "R-AB-C",
+        "name_ar": "القاعدة الجوية ج (أحمر)",
+        "side": "RED",
+        "type": "air_base",
+        "phase": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.0,
+          32.0
+        ]
+      },
+      "properties": {
+        "kind": "off_map_marker",
+        "id": "R-SSM",
+        "name_ar": "لواء صواريخ أرض/أرض (أحمر) 500-600 كم",
+        "side": "RED",
+        "type": "ssm_brigade",
+        "phase": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.4,
+          29.1
+        ]
+      },
+      "properties": {
+        "kind": "off_map_marker",
+        "id": "B-NAV",
+        "name_ar": "قاعدة بحرية زرقاء",
+        "side": "BLUE",
+        "type": "naval_base",
+        "phase": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.6,
+          29.3
+        ]
+      },
+      "properties": {
+        "kind": "off_map_marker",
+        "id": "B-AB-A",
+        "name_ar": "القاعدة الجوية أ (أزرق)",
+        "side": "BLUE",
+        "type": "air_base",
+        "phase": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.8,
+          29.2
+        ]
+      },
+      "properties": {
+        "kind": "off_map_marker",
+        "id": "B-AB-B",
+        "name_ar": "القاعدة الجوية ب (أزرق)",
+        "side": "BLUE",
+        "type": "air_base",
+        "phase": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.5,
+          28.9
+        ]
+      },
+      "properties": {
+        "kind": "off_map_marker",
+        "id": "B-AB-C",
+        "name_ar": "القاعدة الجوية ج (أزرق)",
+        "side": "BLUE",
+        "type": "air_base",
+        "phase": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.4,
+          29.5
+        ]
+      },
+      "properties": {
+        "kind": "off_map_marker",
+        "id": "B-SSM",
+        "name_ar": "لواء صواريخ أرض/أرض (أزرق) 800-1000 كم",
+        "side": "BLUE",
+        "type": "ssm_brigade",
+        "phase": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.512135500114443,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d0-قيادةا-000",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "قيادة المنطقة الجنوبية. (الفيلق الأول) وتشكل القيادة العملياتية",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.512135500114443,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.858196383611812,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d0-القوةا-001",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "القوة البرمائية (البحر). وتتألـف من التالي :",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.858196383611812,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.940155642023345,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d1-قيادةا-002",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "قيادة القوة البرمائية (البحر)",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.940155642023345,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.91376058594644,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d1-القوات-003",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "القوات البرية. مؤلف كالتالي :",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.91376058594644,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.429448386358434,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d2-4-004",
+        "side": "RED",
+        "domain": "ground",
+        "type": "mech_inf_div",
+        "name_ar": "فرقة المشاة الآلية  4. وتتألف من التالي :",
+        "echelon": "div",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 2.5,
+        "destroyed": false,
+        "suppressed_pct": 0.85,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.429448386358434,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.338576333257038,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-41-005",
+        "side": "RED",
+        "domain": "ground",
+        "type": "armored_brigade",
+        "name_ar": "لواء المشاة الآلي41. (3 كتائب مشاة + كتيبة دبابات)",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.3,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.338576333257038,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.173476768139164,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-42-006",
+        "side": "RED",
+        "domain": "ground",
+        "type": "armored_brigade",
+        "name_ar": "لواء المشاة الآلي42. (3 كتائب مشاة + كتيبة دبابات)",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.173476768139164,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.77792629892424,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-44-007",
+        "side": "RED",
+        "domain": "ground",
+        "type": "armored_brigade",
+        "name_ar": "اللواء المدرع 44.(2 كتيبة دبابات+كتيبة مشاة آلية)",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.77792629892424,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.398411535820554,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-12-008",
+        "side": "RED",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "سرب طائرات عمودية هجومية. (12) طائرة",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 1.08,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 3,
+        "hulls_remaining": null,
+        "prev_lon": 19.398411535820554,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.55381551842527,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-402-009",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "كتيبة م / د  402. (36) قاذفاً",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.55381551842527,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.22645914396887,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-45-010",
+        "side": "RED",
+        "domain": "ground",
+        "type": "artillery_bn",
+        "name_ar": "لواء المدفعية 45. (4) كتائب مدفعية متوسطة محمولة عيار 155 ملم + كتيبة مدفعية ثقيلة 175 ملم",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.22645914396887,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.87764248111696,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-46-011",
+        "side": "RED",
+        "domain": "ground",
+        "type": "manpads",
+        "name_ar": "لواء الدفاع الجوي 46.(1 كتيبة صواريخ سام 15+2 كتيبة مدفعية 35 ملم + كتيبة صواريخ كتف سام7)",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.87764248111696,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.23165026321813,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-403-012",
+        "side": "RED",
+        "domain": "ground",
+        "type": "mech_bn",
+        "name_ar": "كتيبة هندسة ميدان آلية 403. (5) سرايا هندسة ميدان",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.5,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.23165026321813,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.371288624399178,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-404-013",
+        "side": "RED",
+        "domain": "ground",
+        "type": "signal_bn",
+        "name_ar": "كتيبة الاشارة 404 . تتألف من 5 سرايا إشارة",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.5,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.371288624399178,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.624911879148545,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-405-014",
+        "side": "RED",
+        "domain": "ground",
+        "type": "ew_bn",
+        "name_ar": "كتيبة حرب الكترونية 405.  (4) سرايا",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.85,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.624911879148545,
+        "prev_lat": 29.75415287499774,
+        "is_actor": true,
+        "is_affected": true,
+        "action_component": "ew",
+        "action_what": "Continue persistent jamming of Blue's communications to degrade their situational awareness.",
+        "action_why": "Continuous EW operations aim to maintain pressure on Blue's C2 capabilities, reducing their ability to coordinate effectively.",
+        "action_intended_effect": "Maintain a degraded state of Blue's communications, supporting Red's overall operational maneuver.",
+        "action_doctrine_cited": [
+          "Doctrines.md",
+          "WarReferences.md"
+        ],
+        "status_change": "suppressed",
+        "damage_pct": 0.2,
+        "cause_actor": "B-d1-505-022",
+        "cause_what": "Counter-jamming operations",
+        "cause_doctrine": "Large-scale combat operations (LSCO) doctrine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.314982833600368,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-406-015",
+        "side": "RED",
+        "domain": "ground",
+        "type": "chem_bn",
+        "name_ar": "كتيبة دفاع كيميائي406. (5) سرايا",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.314982833600368,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.514991989013506,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-407-016",
+        "side": "RED",
+        "domain": "ground",
+        "type": "logistics",
+        "name_ar": "كتائب الخدمات. (التزويد والنقل407، الصيانة408، الطبية409)",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.514991989013506,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.15482719157702,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d2-9-017",
+        "side": "RED",
+        "domain": "ground",
+        "type": "mech_inf_div",
+        "name_ar": "فرقة المشاة الآلية 9",
+        "echelon": "div",
+        "phase": 16,
+        "current_strength": 2.5,
+        "initial_strength": 2.5,
+        "destroyed": false,
+        "suppressed_pct": 0.6,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.15482719157702,
+        "prev_lat": 29.75415287499774,
+        "is_actor": true,
+        "is_affected": true,
+        "action_component": "land",
+        "action_what": "Advance towards Objective X, focusing on exploiting gaps in Blue's defenses rather than reducing strongpoints.",
+        "action_why": "Maintaining operational tempo and exploiting gaps aligns with the doctrine of prioritizing speed and maneuver over methodical advance.",
+        "action_intended_effect": "Achieve a breakthrough towards Objective X, bypassing major Blue defensive positions.",
+        "action_doctrine_cited": [
+          "Doctrines.md",
+          "WarReferences.md"
+        ],
+        "status_change": "suppressed",
+        "damage_pct": 0.3,
+        "cause_actor": "B-d1-54-009",
+        "cause_what": "Countered by mobile defense",
+        "cause_doctrine": "FM 3-90 §5-23: 3:1 attacker required for decisive offense"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.429462119478142,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-91-018",
+        "side": "RED",
+        "domain": "ground",
+        "type": "armored_brigade",
+        "name_ar": "لواء المشاة الآلي 91. (3 كتائب مشاة + كتيبة دبابات)",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.429462119478142,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.267919432364387,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-92-019",
+        "side": "RED",
+        "domain": "ground",
+        "type": "armored_brigade",
+        "name_ar": "لواء المشاة الآلي 92. (3 كتائب مشاة + كتيبة دبابات)",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.267919432364387,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.544298466468298,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-94-020",
+        "side": "RED",
+        "domain": "ground",
+        "type": "armored_brigade",
+        "name_ar": "اللواء المدرع 94.(2 كتيبة دبابات+كتيبة مشاة آلية)",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.544298466468298,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.275761043717097,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-13-021",
+        "side": "RED",
+        "domain": "ground",
+        "type": "mech_brigade",
+        "name_ar": "لواء المشاة الآلي 13. (3 كتيبة مشاة آلية + كتيبة دبابـات)",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.275761043717097,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.553691920347905,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-11-022",
+        "side": "RED",
+        "domain": "ground",
+        "type": "armored_brigade",
+        "name_ar": "اللواء المدرع 11. (2 كتيبة دبابات + كتيبة مشاة آليـة)",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.553691920347905,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.992245365072097,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-4-023",
+        "side": "RED",
+        "domain": "ground",
+        "type": "mech_inf_div",
+        "name_ar": "اسلحة الاسناد والخدمات. كما في فرقة المشاة الآلية4",
+        "echelon": "div",
+        "phase": 16,
+        "current_strength": 2.5,
+        "initial_strength": 2.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.992245365072097,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.513701075761045,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d2-23-024",
+        "side": "RED",
+        "domain": "ground",
+        "type": "inf_brigade",
+        "name_ar": "لواء المشاة 23. مؤلف من   4 كتائب مشاة (233،232،231، 34) + 12 زورق مسيِّر متفجر",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.513701075761045,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.294863813229572,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d1-القوات-025",
+        "side": "RED",
+        "domain": "naval",
+        "type": "naval_unit",
+        "name_ar": "القوات البحرية. مؤلف كالتالي :",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.294863813229572,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.96433966582742,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d2-قاعدةأ-026",
+        "side": "RED",
+        "domain": "naval",
+        "type": "naval_unit",
+        "name_ar": "قاعدة أ البحرية",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.96433966582742,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.853815518425268,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-3-027",
+        "side": "RED",
+        "domain": "naval",
+        "type": "submarine",
+        "name_ar": "عدد (3) غواصة",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.853815518425268,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.318127718013276,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-60-028",
+        "side": "RED",
+        "domain": "naval",
+        "type": "landing_ship",
+        "name_ar": "60 سفينة إبرار متوسطة",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 0.47,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.6,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 28,
+        "prev_lon": 19.318127718013276,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.95446555275807,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-160-029",
+        "side": "RED",
+        "domain": "naval",
+        "type": "landing_ship",
+        "name_ar": "160 زورق إبرار",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 160,
+        "prev_lon": 19.95446555275807,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.796754406042574,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-10-030",
+        "side": "RED",
+        "domain": "naval",
+        "type": "destroyer",
+        "name_ar": "10 مدمرات",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 0.11,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 1,
+        "prev_lon": 19.796754406042574,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.142783245593957,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-10-031",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "10 فرقاطات",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.142783245593957,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.885799954222936,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-14-032",
+        "side": "RED",
+        "domain": "naval",
+        "type": "hovercraft",
+        "name_ar": "14 هوفر كرافت",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 14,
+        "prev_lon": 19.885799954222936,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.265255207141223,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-20-033",
+        "side": "RED",
+        "domain": "naval",
+        "type": "missile_boat",
+        "name_ar": "20 زورق صواريخ",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 10,
+        "prev_lon": 19.265255207141223,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.893243305104143,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-10-034",
+        "side": "RED",
+        "domain": "naval",
+        "type": "mine_layer",
+        "name_ar": "10 سفن بث ألغام",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.7,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 10,
+        "prev_lon": 19.893243305104143,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.3,
+          32.5
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-2-035",
+        "side": "RED",
+        "domain": "naval",
+        "type": "mine_sweeper",
+        "name_ar": "2 كاسحة ألغام",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 0.0,
+        "initial_strength": 1.0,
+        "destroyed": true,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 18.3,
+        "prev_lat": 32.5,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.63846646829938,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-2-036",
+        "side": "RED",
+        "domain": "air",
+        "type": "air_unit",
+        "name_ar": "2 رف طائرات اسناد بحري",
+        "echelon": "flot",
+        "phase": 16,
+        "current_strength": 5.0,
+        "initial_strength": 5.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.63846646829938,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.888697642481116,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d2-قاعدةب-037",
+        "side": "RED",
+        "domain": "naval",
+        "type": "naval_unit",
+        "name_ar": "قاعدة ب البحرية",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.888697642481116,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.68522774090181,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-55-038",
+        "side": "RED",
+        "domain": "naval",
+        "type": "landing_ship",
+        "name_ar": "55 سفينة إبرار متوسطة",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 55,
+        "prev_lon": 19.68522774090181,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.85731746395056,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-35-039",
+        "side": "RED",
+        "domain": "naval",
+        "type": "landing_ship",
+        "name_ar": "35 سفينة إبرار صغيرة",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 35,
+        "prev_lon": 19.85731746395056,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.274387731746394,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-9-040",
+        "side": "RED",
+        "domain": "naval",
+        "type": "naval_unit",
+        "name_ar": "9 سفن نقل تجارية",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 9,
+        "prev_lon": 19.274387731746394,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.99819180590524,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-9-041",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "9 فرقاطات",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.99819180590524,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.399166857404442,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-12-042",
+        "side": "RED",
+        "domain": "naval",
+        "type": "hovercraft",
+        "name_ar": "12 هوفر كرافت",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 12,
+        "prev_lon": 19.399166857404442,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.533669031815062,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-18-043",
+        "side": "RED",
+        "domain": "naval",
+        "type": "missile_boat",
+        "name_ar": "18 زورق صواريخ",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 18,
+        "prev_lon": 19.533669031815062,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.23265278095674,
+          30.900000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-9-044",
+        "side": "RED",
+        "domain": "naval",
+        "type": "mine_layer",
+        "name_ar": "9 سفن بث ألغام",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 9,
+        "prev_lon": 19.23265278095674,
+        "prev_lat": 30.900000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.3,
+          32.5
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-2-045",
+        "side": "RED",
+        "domain": "naval",
+        "type": "mine_sweeper",
+        "name_ar": "2 كاسحة ألغام",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 0.0,
+        "initial_strength": 1.0,
+        "destroyed": true,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 18.3,
+        "prev_lat": 32.5,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.202673380636302,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-1-046",
+        "side": "RED",
+        "domain": "air",
+        "type": "air_unit",
+        "name_ar": "1 رف طائرات اسناد بحري",
+        "echelon": "flot",
+        "phase": 16,
+        "current_strength": 5.0,
+        "initial_strength": 5.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.202673380636302,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.307621881437402,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d1-القوات-047",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "القوات الجوية والدفاع الجوي. مؤلف كالتالي :",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.307621881437402,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.470826276035705,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d2-قاعدةأ-048",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "قاعدة أ الجوية",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.470826276035705,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.698988326848248,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-11-049",
+        "side": "RED",
+        "domain": "air",
+        "type": "fighter_ad",
+        "name_ar": "السرب 11 ميج 29  دفاع جوي(12طائرة )",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 1.25,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 4,
+        "hulls_remaining": null,
+        "prev_lon": 19.698988326848248,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.69158617532616,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-12-050",
+        "side": "RED",
+        "domain": "air",
+        "type": "fighter_ad",
+        "name_ar": "السرب 12 ميج 29 دفاع جوي(12طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.69158617532616,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.407090867475397,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-14-051",
+        "side": "RED",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "السرب 14 ميراج هجوم أرضي(12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 1.64,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 5,
+        "hulls_remaining": null,
+        "prev_lon": 19.407090867475397,
+        "prev_lat": 30.3,
+        "is_actor": true,
+        "is_affected": true,
+        "action_component": "air",
+        "action_what": "Conduct a strike mission targeting Blue's rear logistics and C2 nodes to disrupt their operational capabilities.",
+        "action_why": "Targeting logistics and C2 nodes aligns with the principle of disrupting Blue's ability to sustain operations, leveraging air power for operational maneuver.",
+        "action_intended_effect": "Degrade Blue's logistics and C2 capabilities, reducing their operational effectiveness.",
+        "action_doctrine_cited": [
+          "Doctrines.md",
+          "WarReferences.md"
+        ],
+        "status_change": "damaged_partial",
+        "damage_pct": 0.2,
+        "cause_actor": "B-d2-3-048",
+        "cause_what": "Intercepted during strike mission on logistics",
+        "cause_doctrine": "Wild Weasel 10-15% AD attrition/wave"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.018956282902266,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-56-052",
+        "side": "RED",
+        "domain": "air",
+        "type": "transport",
+        "name_ar": "السرب 56 نقل جوي سي 130(12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 20.018956282902266,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.29034561684596,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-58-053",
+        "side": "RED",
+        "domain": "air",
+        "type": "transport",
+        "name_ar": "السرب 58 نقل جوي سي 130 (12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.29034561684596,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.580663767452506,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-4-054",
+        "side": "RED",
+        "domain": "air",
+        "type": "awacs",
+        "name_ar": "رف طائرات إنذار مبكر   (4 طائرات )",
+        "echelon": "flot",
+        "phase": 16,
+        "current_strength": 5.0,
+        "initial_strength": 5.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 4,
+        "hulls_remaining": null,
+        "prev_lon": 19.580663767452506,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.684142824444955,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-12-055",
+        "side": "RED",
+        "domain": "air",
+        "type": "uav_isr",
+        "name_ar": "سرب طائرات مسيَّرة  مراقبة واستطلاع     (12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 1.2,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 4,
+        "hulls_remaining": null,
+        "prev_lon": 19.684142824444955,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.64033417257954,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-16-056",
+        "side": "RED",
+        "domain": "air",
+        "type": "air_unit",
+        "name_ar": "سرب طائرات مسيَّرة  متفجرة        (16 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 2.8,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 4,
+        "hulls_remaining": null,
+        "prev_lon": 19.64033417257954,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.30881666285191,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d2-قاعدةب-057",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "قاعدة ب الجوية",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.30881666285191,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.15326161593042,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-23-058",
+        "side": "RED",
+        "domain": "air",
+        "type": "fighter_ad",
+        "name_ar": "السرب 23 ميج 29 دفاع جوي(12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.15326161593042,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.190780498970017,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-25-059",
+        "side": "RED",
+        "domain": "air",
+        "type": "fighter_ad",
+        "name_ar": "السرب 25 ميج 29 دفاع جوي(12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.190780498970017,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.160993362325478,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-36-060",
+        "side": "RED",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "السرب 36 سوخوي 24 هجوم أرضي(12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.160993362325478,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.25317006179904,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-26-061",
+        "side": "RED",
+        "domain": "air",
+        "type": "utility_helo",
+        "name_ar": "السرب 26 عمودية خدمة عامة(12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.25317006179904,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.60734721904326,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-12-062",
+        "side": "RED",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "سرب طائرات مسيَّرة  هجومية        (12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.60734721904326,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.525978484779127,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-16-063",
+        "side": "RED",
+        "domain": "air",
+        "type": "air_unit",
+        "name_ar": "سرب طائرات مسيَّرة  متفجرة         (16 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 8,
+        "hulls_remaining": null,
+        "prev_lon": 19.525978484779127,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.680077821011672,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-15-064",
+        "side": "RED",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "السرب 15 سوخوي 24 هجوم أرضي (12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.680077821011672,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.41880521858549,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-30-065",
+        "side": "RED",
+        "domain": "air",
+        "type": "fighter_ad",
+        "name_ar": "السرب 30 رافال دفاع جوي         (12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.41880521858549,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.688688487067978,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-45-066",
+        "side": "RED",
+        "domain": "air",
+        "type": "transport",
+        "name_ar": "السرب 45 نقل جوي (12طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.688688487067978,
+        "prev_lat": 30.3,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.195120164797437,
+          30.3
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-16-067",
+        "side": "RED",
+        "domain": "air",
+        "type": "air_unit",
+        "name_ar": "سرب طائرات مسيَّرة  متفجرة         (16 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 8,
+        "hulls_remaining": null,
+        "prev_lon": 19.195120164797437,
+        "prev_lat": 30.3,
+        "is_actor": true,
+        "is_affected": true,
+        "action_component": "usv_uav",
+        "action_what": "Deploy kamikaze UAVs in a saturation strike against Blue's forward defensive positions.",
+        "action_why": "Saturation strikes aim to overwhelm Blue's defenses, reducing their ability to intercept and respond effectively.",
+        "action_intended_effect": "Neutralize a significant portion of Blue's forward defenses, creating opportunities for Red ground forces.",
+        "action_doctrine_cited": [
+          "Doctrines.md",
+          "WarReferences.md"
+        ],
+        "status_change": "expended",
+        "damage_pct": 0.7,
+        "cause_actor": "B-d2-12-059",
+        "cause_what": "Kamikaze UAVs expended in saturation strike",
+        "cause_doctrine": "Black Sea 2024 USV survival 25-30%"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.940952162966354,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d2-2-068",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "لواء الدفاع الجوي 2 .ويتألف من:",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.940952162966354,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.621739528496224,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-300-069",
+        "side": "RED",
+        "domain": "ground",
+        "type": "sam_s300",
+        "name_ar": "كتيبة صواريخ اس 300 عدد (3 سرايا)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": 120,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.621739528496224,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.541263447013048,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-3-070",
+        "side": "RED",
+        "domain": "ground",
+        "type": "sam_hawk",
+        "name_ar": "كتيبة صواريخ هوك عدد (3 سرايا)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": 120,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.541263447013048,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.649810025177388,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-15-071",
+        "side": "RED",
+        "domain": "ground",
+        "type": "sam_other",
+        "name_ar": "كتيبة صواريخ سام 15",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": 120,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.649810025177388,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.47810482948043,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-رادارت-072",
+        "side": "RED",
+        "domain": "ground",
+        "type": "radar",
+        "name_ar": "رادارت الكشف العالي  والمنخفض",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.47810482948043,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.441972991531244,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d1-21-073",
+        "side": "RED",
+        "domain": "sof",
+        "type": "sof_bn",
+        "name_ar": "العمليات الخاصة. لواء عمليات خاصة 21 مؤلف كالتالي :",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.8,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.441972991531244,
+        "prev_lat": 29.75415287499774,
+        "is_actor": true,
+        "is_affected": true,
+        "action_component": "sof",
+        "action_what": "Conduct raids on Blue's rear-area C2 installations to disrupt command and control.",
+        "action_why": "Vertical envelopment through SOF operations aims to create chaos and disrupt Blue's coordination, exploiting gaps in their defenses.",
+        "action_intended_effect": "Disrupt Blue's command and control, reducing their operational effectiveness.",
+        "action_doctrine_cited": [
+          "Doctrines.md",
+          "WarReferences.md"
+        ],
+        "status_change": "suppressed",
+        "damage_pct": 0.4,
+        "cause_actor": "B-d1-504-021",
+        "cause_what": "SOF raids on C2 installations",
+        "cause_doctrine": "Cyprus 1974 5-8% loss when alerted"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.01011215381094,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d2-211-074",
+        "side": "RED",
+        "domain": "sof",
+        "type": "sof_bn",
+        "name_ar": "كتيبة العمليات الخاصة 211",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.6,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 20.01011215381094,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.91293659876402,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d2-212-075",
+        "side": "RED",
+        "domain": "sof",
+        "type": "sof_bn",
+        "name_ar": "كتيبة العمليات الخاصة 212",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.3,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.91293659876402,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.5268986037995,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d2-214-076",
+        "side": "RED",
+        "domain": "sof",
+        "type": "sof_bn",
+        "name_ar": "كتيبة العمليات الخاصة 214",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.3,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.5268986037995,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.0,
+          32.0
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d0-500-077",
+        "side": "RED",
+        "domain": "strategic",
+        "type": "ssm_brigade",
+        "name_ar": "لواء صواريخ أرض/أرض متوسط المدى (500 - 600) كيلومتر",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": 12,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 18.0,
+        "prev_lat": 32.0,
+        "is_actor": true,
+        "is_affected": false,
+        "action_component": "strategic",
+        "action_what": "Held in reserve — preserving SSM magazine for potential future saturation salvo per opening-day concentration doctrine",
+        "action_why": "Strategic missiles are held to ensure availability for critical future operations, aligning with the doctrine of preserving resources for decisive moments.",
+        "action_intended_effect": "Maintain strategic flexibility for future operations.",
+        "action_doctrine_cited": [
+          "Doctrines.md",
+          "WarReferences.md"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.34222934309911,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d0-الاحتي-078",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "الاحتياط",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.34222934309911,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.964779125658044,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d1-2-079",
+        "side": "RED",
+        "domain": "ground",
+        "type": "mech_inf_div",
+        "name_ar": "فرقة المشاة الآلية 2. تؤمن الحماية للقواعد والاهداف الحيوية",
+        "echelon": "div",
+        "phase": 16,
+        "current_strength": 2.5,
+        "initial_strength": 2.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.964779125658044,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.122348363469904,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d1-8-080",
+        "side": "RED",
+        "domain": "ground",
+        "type": "mech_inf_div",
+        "name_ar": "فرقة المشاة الآلية 8. احتياط الفيلق 1",
+        "echelon": "div",
+        "phase": 16,
+        "current_strength": 2.5,
+        "initial_strength": 2.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.122348363469904,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.268812085145342,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d2-1-081",
+        "side": "RED",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "العمل الممكن رقم 1. الهجوم على blue team لاحتلال الهدف X على ثلاث مراحل وكما يلي:",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.268812085145342,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.518727397573816,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-1-082",
+        "side": "RED",
+        "domain": "ground",
+        "type": "recon_bn",
+        "name_ar": "المرحلة الأولى. ابرار عناصر الاستطلاع والتأمين والمقدمة لتأمين نقاط الابرار وبعمق 1 – 2 كم",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.518727397573816,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.483570611123827,
+          29.69084685369074
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "R-d3-8-083",
+        "side": "RED",
+        "domain": "ground",
+        "type": "mech_inf_div",
+        "name_ar": "المرحلة الثانية. اقتحام الدفاعات الرئيسة والاستيلاء على مناطق الابرار وتوسيع رأس الشاطئ بفرقة المشاة الرابعة الى عمق (8 - 10) كم مع تطوير الهجوم بالقوة اللاحقة فرقة المشاة  الآلية 9  الى عمق العدو باتجاه الجنوب للاستيلاء على خط حيوي الى عمق (40 – 50) كم",
+        "echelon": "div",
+        "phase": 16,
+        "current_strength": 2.5,
+        "initial_strength": 2.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.483570611123827,
+        "prev_lat": 29.75415287499774,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.90166170748455,
+          29.92519340810254
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d0-99-000",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "المكون البري 99. يتألف من :",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.90166170748455,
+        "prev_lat": 29.92519340810254,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.59391622796979,
+          30.10533897917143
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-51-001",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_brigade",
+        "name_ar": "لواء المشاة الآلي 51",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 0.92,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.59391622796979,
+        "prev_lat": 30.10533897917143,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.78942092011902,
+          29.778678721293964
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-511-002",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_bn",
+        "name_ar": "كتيبة المشاة الآلية 511(3 سرايا مشاة آلية)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.78942092011902,
+        "prev_lat": 29.778678721293964,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.206546120393682,
+          29.958163271534293
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-512-003",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_bn",
+        "name_ar": "كتيبة المشاة الآلية 512(3 سرايا مشاة آلية)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.206546120393682,
+        "prev_lat": 29.958163271534293,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.150556191348137,
+          30.00189501792935
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-514-004",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "armored_unit",
+        "name_ar": "كتيبـة الـدبابات 514       (4 سـرايا دبابات)",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.2,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.150556191348137,
+        "prev_lat": 30.00189501792935,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.40216067750057,
+          29.86469260700389
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-52-005",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_brigade",
+        "name_ar": "لواء المشاة الآلي 52",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.32,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.40216067750057,
+        "prev_lat": 29.86469260700389,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.298970016021975,
+          30.000630960555426
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-521-006",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_bn",
+        "name_ar": "كتيبة المشاة الآلية 521(3 سرايا مشاة آلية)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.298970016021975,
+        "prev_lat": 30.000630960555426,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.337354085603113,
+          30.255495078965435
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-522-007",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_bn",
+        "name_ar": "كتيبة المشاة الآلية 522(3 سرايا مشاة آلية)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.337354085603113,
+        "prev_lat": 30.255495078965435,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.920984206912337,
+          30.35207370107576
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-524-008",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "armored_unit",
+        "name_ar": "كتيبـة الـدبابات 524 (ْ4 سـرايا دبابات)",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.920984206912337,
+        "prev_lat": 30.35207370107576,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.569086747539483,
+          30.1412196536202
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-54-009",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "armored_brigade",
+        "name_ar": "اللواء المدرع 54",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 0.86,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.2,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.569086747539483,
+        "prev_lat": 30.1412196536202,
+        "is_actor": true,
+        "is_affected": true,
+        "action_component": "land",
+        "action_what": "Conduct mobile defense to counter Red's advance towards Objective X.",
+        "action_why": "Engaging in mobile defense allows for shaping the battle and exploiting Red's culmination point.",
+        "action_intended_effect": "Halt Red's advance and force culmination, setting conditions for a counterattack.",
+        "action_doctrine_cited": [
+          "Doctrines.md — Defense types: area defense, mobile defense, retrograde."
+        ],
+        "status_change": "damaged_partial",
+        "damage_pct": 0.2,
+        "cause_actor": "R-d2-9-017",
+        "cause_what": "Engaged in mobile defense against Red advance",
+        "cause_doctrine": "FM 3-90 §5-23: 3:1 attacker required for decisive offense"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.220540169375145,
+          30.193915770199126
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-541-010",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_bn",
+        "name_ar": "كتيبة المشاة الآلية 541 (3 سرايا مشاة آلية)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.220540169375145,
+        "prev_lat": 30.193915770199126,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.533957427328907,
+          29.90762417029068
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-542-011",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "armored_unit",
+        "name_ar": "كتيبة الدبابات 542 (4 سرايا دبابات)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.533957427328907,
+        "prev_lat": 29.90762417029068,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.460663767452505,
+          29.76937804226749
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-كتيبةا-012",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "logistics",
+        "name_ar": "كتيبة اسناد اللواء (سرية قيادة + سرية تزويد ونقل+ سرية صيانة + سرية طبية)",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.460663767452505,
+        "prev_lat": 29.76937804226749,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.010606546120393,
+          30.343243305104142
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-2-013",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "2 سرية طائرات هجوم واستطلاع.(12طائرة)",
+        "echelon": "coy",
+        "phase": 16,
+        "current_strength": 0.7,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 8,
+        "hulls_remaining": null,
+        "prev_lon": 20.010606546120393,
+        "prev_lat": 30.343243305104142,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.703671320668345,
+          30.29567635614557
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-501-014",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "uav_isr",
+        "name_ar": "كتيبة الاستطلاع 501  (3 سرايا استطلاع) + (عدد 12 طائرة مسيّرة استطلاع)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.28,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 6,
+        "hulls_remaining": null,
+        "prev_lon": 19.703671320668345,
+        "prev_lat": 30.29567635614557,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.2005172808423,
+          30.073447623407336
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-502-015",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "atgm_bn",
+        "name_ar": "كتيبة م/د 502. (3 سرايا/ 36 قاذفاً)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.2005172808423,
+        "prev_lat": 30.073447623407336,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.916369878690777,
+          29.950242618448154
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-المدفع-016",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "المدفعيـة",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.916369878690777,
+        "prev_lat": 29.950242618448154,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.59204852368963,
+          29.808946517128252
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-551-017",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "artillery_bn",
+        "name_ar": "كتيبة المدفعية المتوسطة  551",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.59204852368963,
+        "prev_lat": 29.808946517128252,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.517257953765164,
+          30.22770901045243
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-552-018",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "artillery_bn",
+        "name_ar": "كتيبة المدفعية المتوسطة 552",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.517257953765164,
+        "prev_lat": 30.22770901045243,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.166994735637445,
+          29.88697016861219
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-555-019",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "artillery_bn",
+        "name_ar": "كتيبة المدفعية الثقيلة 555. (اسناد عام)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.3,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.166994735637445,
+        "prev_lat": 29.88697016861219,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.231938658731977,
+          30.301673762111847
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-503-020",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "engineer_bn",
+        "name_ar": "الهندسة. كتيبة هندسة الميدان 503 مؤلفة من 3 سـرايا هندسة ميدان + سرية معدات ثقيلة",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.3,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.231938658731977,
+        "prev_lat": 30.301673762111847,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.48628976882582,
+          30.36680170901045
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-504-021",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "signal_bn",
+        "name_ar": "الاتصالات .  كتيبة الاشارة 504  ( 3 ) سرايا إشارة)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.4,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.48628976882582,
+        "prev_lat": 30.36680170901045,
+        "is_actor": true,
+        "is_affected": true,
+        "action_component": "sof",
+        "action_what": "Held position — preserving signal capabilities for ongoing command and control.",
+        "action_why": "Maintaining signal capabilities is crucial for effective command and control, ensuring communication remains intact despite Red's SOF raids.",
+        "action_intended_effect": "Ensure continuous command and control, mitigating the impact of Red's SOF raids.",
+        "action_doctrine_cited": [
+          "Doctrines.md — Protection through hardening, dispersal, concealment, deception."
+        ],
+        "status_change": "suppressed",
+        "damage_pct": 0.2,
+        "cause_actor": "R-d1-21-073",
+        "cause_what": "Disrupted by SOF raids",
+        "cause_doctrine": "Cyprus 1974 5-8% loss when alerted"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.883863584344244,
+          30.08801327534905
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-505-022",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "الحرب الالكترونية. كتيبة الحرب الإلكترونية 505 وتتألف من :",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.85,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.883863584344244,
+        "prev_lat": 30.08801327534905,
+        "is_actor": true,
+        "is_affected": true,
+        "action_component": "ew",
+        "action_what": "Conduct counter-jamming operations to restore communications.",
+        "action_why": "Restoring communications is essential for maintaining situational awareness and operational effectiveness.",
+        "action_intended_effect": "Mitigate the impact of Red's jamming, ensuring effective communication.",
+        "action_doctrine_cited": [
+          "Doctrines.md — Large-scale combat operations (LSCO) doctrine — multi-domain, peer-or-near-peer."
+        ],
+        "status_change": "suppressed",
+        "damage_pct": 0.2,
+        "cause_actor": "R-d3-405-014",
+        "cause_what": "Persistent jamming of communications",
+        "cause_doctrine": "Large-scale combat operations (LSCO) doctrine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.83920347905699,
+          29.719581139848934
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-سريةال-023",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "recon_bn",
+        "name_ar": "سرية الاستطلاع والإعاقة الالكترونية المتحركة التعبوية",
+        "echelon": "coy",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.2,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.83920347905699,
+        "prev_lat": 29.719581139848934,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.992863355458915,
+          30.060528725108718
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-سريةال-024",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "recon_bn",
+        "name_ar": "سرية الاستطلاع الالكتروني الاستراتيجي",
+        "echelon": "coy",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.992863355458915,
+        "prev_lat": 30.060528725108718,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.587283131151292,
+          29.92498466468299
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-506-025",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "chem_bn",
+        "name_ar": "الدفاع الكيميائي. كتيبة الدفاع الكيميائي 506  (3 سرايا)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.587283131151292,
+        "prev_lat": 29.92498466468299,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.77837949187457,
+          30.239850919356066
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-507-026",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "الدفاع الجوي. وتتألف من كتيبة دفاع جوي 507 (+) وكما يلي:",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.77837949187457,
+        "prev_lat": 30.239850919356066,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.60296635385672,
+          30.075766994735634
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-561-027",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "الكتيبة 561 صواريخ متوسطة المدى(4 سرايا)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.60296635385672,
+        "prev_lat": 30.075766994735634,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.99025406271458,
+          30.01216983291371
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-4-028",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "السرية الأولى صواريخ كتف حرارية (4 فصائل)",
+        "echelon": "coy",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.99025406271458,
+        "prev_lat": 30.01216983291371,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.44901808194095,
+          29.763336079957273
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-5-029",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "الشرطة العسكرية. سرية الشرطة العسكرية 5 (3 فصائل)",
+        "echelon": "coy",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.44901808194095,
+        "prev_lat": 29.763336079957273,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.64383611810483,
+          30.650000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d0-المكون-030",
+        "side": "BLUE",
+        "domain": "naval",
+        "type": "naval_unit",
+        "name_ar": "المكون البحري . ويتألف من:",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.64383611810483,
+        "prev_lat": 30.650000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.920627145799955,
+          30.650000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-8-031",
+        "side": "BLUE",
+        "domain": "naval",
+        "type": "corvette",
+        "name_ar": "8 كورفيت",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 0.1,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.1,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.920627145799955,
+        "prev_lat": 30.650000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.357871366445412,
+          29.787561913481344
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-9-032",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "9 زوارق صواريخ",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.357871366445412,
+        "prev_lat": 29.787561913481344,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.57173723964294,
+          29.952504005493246
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-12-033",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "12 زورق انزال سريع",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.57173723964294,
+        "prev_lat": 29.952504005493246,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.914172579537652,
+          30.650000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-6-034",
+        "side": "BLUE",
+        "domain": "naval",
+        "type": "naval_unit",
+        "name_ar": "6 زورق اسناد ساحلي",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 0.8,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 5,
+        "prev_lon": 19.914172579537652,
+        "prev_lat": 30.650000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.604449530785075,
+          30.650000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-4-035",
+        "side": "BLUE",
+        "domain": "naval",
+        "type": "naval_unit",
+        "name_ar": "4 أجهزة رادار ساحلي",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 0.42,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.3,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.604449530785075,
+        "prev_lat": 30.650000000000002,
+        "is_actor": true,
+        "is_affected": false,
+        "action_component": "strategic",
+        "action_what": "Held position — preserving radar capabilities for ongoing sea denial and air defense.",
+        "action_why": "Maintaining radar capabilities is crucial for sea denial and air defense, ensuring Red's movements are tracked and countered effectively.",
+        "action_intended_effect": "Ensure continuous monitoring of Red's movements and preserve radar assets for future engagements.",
+        "action_doctrine_cited": [
+          "Doctrines.md — Sea control, sea denial, power projection, and maritime support."
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.16018310826276,
+          30.650000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-3-036",
+        "side": "BLUE",
+        "domain": "naval",
+        "type": "mine_layer",
+        "name_ar": "3 سفن بث ألغام بحرية",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": 3,
+        "prev_lon": 19.16018310826276,
+        "prev_lat": 30.650000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.147370107576105,
+          30.348571450370027
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-2-037",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "2 قانصة الغام",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.147370107576105,
+        "prev_lat": 30.348571450370027,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.179299610894944,
+          30.37032043945983
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-3-038",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "utility_helo",
+        "name_ar": "سرية طائرات عمودية بحرية ( 3  رف 8 طائرات)",
+        "echelon": "coy",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 8,
+        "hulls_remaining": null,
+        "prev_lon": 19.179299610894944,
+        "prev_lat": 30.37032043945983,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.32138246738384,
+          30.185733577477684
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-2-039",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "uav_isr",
+        "name_ar": "2 طائرة مسيرة",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 2,
+        "hulls_remaining": null,
+        "prev_lon": 19.32138246738384,
+        "prev_lat": 30.185733577477684,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.528107118333715,
+          29.976497901884485
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-2-040",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "2 زورق قيادة",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.528107118333715,
+        "prev_lat": 29.976497901884485,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.68927901121538,
+          29.67572182803082
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-2-041",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "2 زورق مرور 40 متر",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.68927901121538,
+        "prev_lat": 29.67572182803082,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.430505836575875,
+          30.26385641260395
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-20-042",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "20 زورق مطاردة وتفتيش",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.430505836575875,
+        "prev_lat": 30.26385641260395,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.148262760357063,
+          29.843447165636682
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-2-043",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "logistics",
+        "name_ar": "2 سفينة اخلاء طبية",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.148262760357063,
+        "prev_lat": 29.843447165636682,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.50194552529183,
+          30.015579308766306
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-2-044",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "logistics",
+        "name_ar": "2 سفينة ( إمداد ، صيانه)",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.50194552529183,
+        "prev_lat": 30.015579308766306,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.928194094758524,
+          30.650000000000002
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-400-045",
+        "side": "BLUE",
+        "domain": "naval",
+        "type": "sea_mines",
+        "name_ar": "(400) لغم بحري",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.928194094758524,
+        "prev_lat": 30.650000000000002,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.931325246051728,
+          29.737509880216678
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d0-المكون-046",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "المكون الجوي. على النحو التالي:",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.931325246051728,
+        "prev_lat": 29.737509880216678,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.99805447470817,
+          29.90762417029068
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-القاعد-047",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "القاعدة الجوية (أ)",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.99805447470817,
+        "prev_lat": 29.90762417029068,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.75662623025864,
+          30.301618219272143
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-3-048",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "fighter_ad",
+        "name_ar": "السرب 3 أف 16 دفاع جوي(12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 1.61,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 2,
+        "hulls_remaining": null,
+        "prev_lon": 19.75662623025864,
+        "prev_lat": 30.301618219272143,
+        "is_actor": true,
+        "is_affected": true,
+        "action_component": "air",
+        "action_what": "Conduct air patrols to intercept Red's strike mission targeting logistics and C2 nodes.",
+        "action_why": "Intercepting Red's air strike is crucial to protect logistics and C2 nodes, maintaining operational capabilities.",
+        "action_intended_effect": "Disrupt Red's air strike, preserving Blue's logistics and C2 integrity.",
+        "action_doctrine_cited": [
+          "Doctrines.md — Protection through hardening, dispersal, concealment, deception."
+        ],
+        "status_change": "damaged_partial",
+        "damage_pct": 0.1,
+        "cause_actor": "R-d3-14-051",
+        "cause_what": "Engaged in air-to-air combat during interception",
+        "cause_doctrine": "Wild Weasel 10-15% AD attrition/wave"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.849942778667888,
+          30.240638590066375
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-4-049",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "السرب 4 ميج هجوم أرضي(12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.849942778667888,
+        "prev_lat": 30.240638590066375,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.287791256580455,
+          30.15231174181735
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-12-050",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "سرب طائرات مسيَّرة  هجومية    (12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 10,
+        "hulls_remaining": null,
+        "prev_lon": 19.287791256580455,
+        "prev_lat": 30.15231174181735,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.821831082627604,
+          30.36149034866865
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-القاعد-051",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "القاعدة الجوية (ب)",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.821831082627604,
+        "prev_lat": 30.36149034866865,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.97362325474937,
+          30.406365300984206
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-1-052",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "fighter_ad",
+        "name_ar": "السرب 1  رافال دفاع جوي      (12 طائرة )",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 3.24,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 10,
+        "hulls_remaining": null,
+        "prev_lon": 19.97362325474937,
+        "prev_lat": 30.406365300984206,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.918635843442434,
+          30.293620965896086
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-2-053",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "السرب 2 ميج هجوم أرضي(12 طائرة )",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.918635843442434,
+        "prev_lat": 30.293620965896086,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.350043488212407,
+          30.155891508354316
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-4-054",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "awacs",
+        "name_ar": "رف طائرة إنذار مبكر(4  طائرات )",
+        "echelon": "flot",
+        "phase": 16,
+        "current_strength": 5.0,
+        "initial_strength": 5.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 4,
+        "hulls_remaining": null,
+        "prev_lon": 19.350043488212407,
+        "prev_lat": 30.155891508354316,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.905012588693065,
+          30.415717555504692
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-2-055",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "uav_isr",
+        "name_ar": "سرب طائرات غير مأهولة - استخبارات ومراقبة واستطلاع) عدد (2 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 2,
+        "hulls_remaining": null,
+        "prev_lon": 19.905012588693065,
+        "prev_lat": 30.415717555504692,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.45473105973907,
+          29.802347905699243
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-القاعد-056",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "القاعدة الجوية (ج)",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.45473105973907,
+        "prev_lat": 29.802347905699243,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.369530785076677,
+          30.309514763103685
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-5-057",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "fighter_ad",
+        "name_ar": "السرب 5 أف 16 دفاع جوي (12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 3.6,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 11,
+        "hulls_remaining": null,
+        "prev_lon": 19.369530785076677,
+        "prev_lat": 30.309514763103685,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.421730373083086,
+          30.200798809796293
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-6-058",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "السرب 6 ميج هجوم أرضي(12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 4.0,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.421730373083086,
+        "prev_lat": 30.200798809796293,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.699468986037996,
+          30.437470817120623
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-12-059",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "سرب طائرات مسيَّرة غير مأهولة هجومية   (12 طائرة)",
+        "echelon": "sqn",
+        "phase": 16,
+        "current_strength": 2.02,
+        "initial_strength": 4.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 6,
+        "hulls_remaining": null,
+        "prev_lon": 19.699468986037996,
+        "prev_lat": 30.437470817120623,
+        "is_actor": true,
+        "is_affected": true,
+        "action_component": "usv_uav",
+        "action_what": "Deploy UAVs to intercept and neutralize Red's kamikaze UAVs targeting forward positions.",
+        "action_why": "Countering Red's UAV saturation strike is essential to protect forward defensive positions and maintain combat effectiveness.",
+        "action_intended_effect": "Neutralize Red's UAV threat, preserving forward defensive positions.",
+        "action_doctrine_cited": [
+          "Doctrines.md — Large-scale combat operations (LSCO) doctrine — multi-domain, peer-or-near-peer."
+        ],
+        "status_change": "damaged_partial",
+        "damage_pct": 0.3,
+        "cause_actor": "R-d3-16-067",
+        "cause_what": "Countered Red's UAV saturation strike",
+        "cause_doctrine": "Black Sea 2024 USV survival 25-30%"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.822050812542916,
+          29.664287327382315
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-9-060",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "لواء الدفاع الجوي 9. لتوفير الحماية عن القواعد الجوية والأهداف الحيوية ويتألف من :",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.822050812542916,
+        "prev_lat": 29.664287327382315,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.756653696498056,
+          30.290900282291904
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-81-061",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "sam_hawk",
+        "name_ar": "الكتيبة 81 صواريخ هوك",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": 120,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.756653696498056,
+        "prev_lat": 30.290900282291904,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.8200595101854,
+          30.38698023956664
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-82-062",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "sam_hawk",
+        "name_ar": "الكتيبة 82 صواريخ هوك",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": 120,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.8200595101854,
+        "prev_lat": 30.38698023956664,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.49127489127947,
+          30.432668802929733
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-85-063",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "air_unit",
+        "name_ar": "الكتيبة 85 مدفعية مضاد طائرات عيار 35 ملم",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.49127489127947,
+        "prev_lat": 30.432668802929733,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.536690318150608,
+          30.057003280689706
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-1-064",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "radar",
+        "name_ar": "رادار كشف عالي عدد (1) مداه 250  كم",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.536690318150608,
+        "prev_lat": 30.057003280689706,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.896937514305332,
+          29.958859082932783
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-9-065",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "radar",
+        "name_ar": "رادارات كشف منخفض عدد (9) مداه 80 كم",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.896937514305332,
+        "prev_lat": 29.958859082932783,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.78193636987869,
+          30.305156786449988
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d0-80-066",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "transport",
+        "name_ar": "مكون العمليات الخاصة. كتيبة العمليات الخاصة 80 (مؤلفة من 3 سرايا عمليات خاصة + سرية طائرات اقتحام ونقل جوي عدد (6 طائرات) ملحقة على الكتيبة + سرية طائرات اقتحام ونقل جوي عدد (6 طائرات) ملحقة على الكتيبة",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 6,
+        "hulls_remaining": null,
+        "prev_lon": 19.78193636987869,
+        "prev_lat": 30.305156786449988,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.64354772259098,
+          29.909131761654077
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d0-مكونال-067",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "logistics",
+        "name_ar": "مكون الإمداد . كتيبة تزويد ونقل وكتيبة صيانة ومشغل متحرك وكتيبة طبية ومستشفى ميداني متحرك",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.64354772259098,
+        "prev_lat": 29.909131761654077,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.434447241931792,
+          29.70841336690318
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d0-احتياط-068",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "احتياط قائد قوة الواجب المشتركة",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.434447241931792,
+        "prev_lat": 29.70841336690318,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.84572671091783,
+          29.748202182040128
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-72-069",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "armored_brigade",
+        "name_ar": "اللواء المدرع 72 .  يتألف من:",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.84572671091783,
+        "prev_lat": 29.748202182040128,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.711293202105747,
+          30.288975204089414
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-721-070",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_bn",
+        "name_ar": "كتيبة المشاة الآلية 721 تتألف من ( 3 سرايا مشاة آلية)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.711293202105747,
+        "prev_lat": 30.288975204089414,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.511572442206454,
+          30.093834897383076
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-722-071",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "armored_unit",
+        "name_ar": "كتيبة الدبابات 722  تتألف من (4 سرايا دبابات)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.511572442206454,
+        "prev_lat": 30.093834897383076,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.935802243076218,
+          29.97895643549248
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d2-كتائبو-072",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "كتائب ووحدات الاسناد القتالي القياسية للواء",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.935802243076218,
+        "prev_lat": 29.97895643549248,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.467544060425727,
+          30.247981231403067
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-701-073",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "uav_isr",
+        "name_ar": "كتيبة استطلاع 701 تتألف من (3 سرايا استطلاع) + (عدد 6 طائرات مسيَّرة استطلاع)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 6,
+        "hulls_remaining": null,
+        "prev_lon": 19.467544060425727,
+        "prev_lat": 30.247981231403067,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.750102998397804,
+          30.39895399404898
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-6-074",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "سرية طائرات هجوم واستطلاع تتألف من (6 طائرة)",
+        "echelon": "coy",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 6,
+        "hulls_remaining": null,
+        "prev_lon": 19.750102998397804,
+        "prev_lat": 30.39895399404898,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.517257953765164,
+          30.17773815518425
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d0-71-075",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_brigade",
+        "name_ar": "لواء المشاة  الآلي 71",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.517257953765164,
+        "prev_lat": 30.17773815518425,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.955701533531702,
+          30.289357900358585
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-711-076",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_bn",
+        "name_ar": "كتيبة المشاة الآلية  711     (3 سرايا مشاة آلية)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.955701533531702,
+        "prev_lat": 30.289357900358585,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.81907072556649,
+          30.35424231326772
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-712-077",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_bn",
+        "name_ar": "كتيبة المشاة الآلية  712(3 سرايا مشاة آلية)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.81907072556649,
+        "prev_lat": 30.35424231326772,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.528010986495765,
+          29.74728603036545
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-713-078",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_bn",
+        "name_ar": "كتيبة المشاة الآلية 713(3 سرايا مشاة آلية)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.528010986495765,
+        "prev_lat": 29.74728603036545,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.629828336003662,
+          29.81665842679484
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-714-079",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "armored_unit",
+        "name_ar": "كتيبـة الـدبابات 714       (4 سرايا دبابات)",
+        "echelon": "unit",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.629828336003662,
+        "prev_lat": 29.81665842679484,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.53149919890135,
+          29.855322346837568
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-كتائبو-080",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "كتائب ووحدات الاسناد القتالي القياسية للواء",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.53149919890135,
+        "prev_lat": 29.855322346837568,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.826431677729456,
+          30.37956984817273
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-كتيبةا-081",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "logistics",
+        "name_ar": "كتيبة اسناد اللواء  (سرية قيادة + سرية تزويد ونقل + سرية صيانة + سرية طبية)",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.826431677729456,
+        "prev_lat": 30.37956984817273,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.905699244678416,
+          29.72110032806897
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d0-73-082",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "armored_brigade",
+        "name_ar": "اللواء المدرع 73 . يتألف من:",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.905699244678416,
+        "prev_lat": 29.72110032806897,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.32337376974136,
+          30.294762035553518
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-731-083",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "mech_bn",
+        "name_ar": "كتيبة المشاة الآلية 731 ( 3 سرايا مشاة آلية)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.32337376974136,
+        "prev_lat": 30.294762035553518,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.99625543602655,
+          29.900550087739376
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-732-084",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "armored_unit",
+        "name_ar": "كتيبة الدبابات 732 (4 سرايا دبابات)",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.99625543602655,
+        "prev_lat": 29.900550087739376,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.359807736324104,
+          29.923604638742656
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-733-085",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "armored_unit",
+        "name_ar": "كتيبة الدبابات 733 (4 سرايا دبابات )",
+        "echelon": "bn",
+        "phase": 16,
+        "current_strength": 0.5,
+        "initial_strength": 0.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.359807736324104,
+        "prev_lat": 29.923604638742656,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.294479285877777,
+          29.932650186923016
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-كتائبو-086",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "كتائب ووحدات الاسناد القتالي القياسية للواء",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 19.294479285877777,
+        "prev_lat": 29.932650186923016,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.014465552758068,
+          30.33582650492103
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d1-كتيبةا-087",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "logistics",
+        "name_ar": "كتيبة اسناد اللواء (سرية قيادة + سرية تزويد ونقل + سرية صيانة + سرية طبية)",
+        "echelon": "bde",
+        "phase": 16,
+        "current_strength": 1.5,
+        "initial_strength": 1.5,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": null,
+        "hulls_remaining": null,
+        "prev_lon": 20.014465552758068,
+        "prev_lat": 30.33582650492103,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.218493934538795,
+          30.165591668574045
+        ]
+      },
+      "properties": {
+        "kind": "unit",
+        "uid": "B-d0-2-088",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "strike",
+        "name_ar": "2 سرية طائرات هجوم واستطلاع عدد (12 طائرة)",
+        "echelon": "coy",
+        "phase": 16,
+        "current_strength": 1.0,
+        "initial_strength": 1.0,
+        "destroyed": false,
+        "suppressed_pct": 0.0,
+        "delayed_pct": 0.0,
+        "magazine": null,
+        "airframes": 12,
+        "hulls_remaining": null,
+        "prev_lon": 19.218493934538795,
+        "prev_lat": 30.165591668574045,
+        "is_actor": false,
+        "is_affected": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            19.75662623025864,
+            30.301618219272143
+          ],
+          [
+            19.407090867475397,
+            30.3
+          ]
+        ]
+      },
+      "properties": {
+        "kind": "engagement_arc",
+        "phase": 16,
+        "cause_actor": "B-d2-3-048",
+        "target_uid": "R-d3-14-051",
+        "status_change": "damaged_partial",
+        "damage_pct": 0.2,
+        "cause_what": "Intercepted during strike mission on logistics",
+        "cause_doctrine": "Wild Weasel 10-15% AD attrition/wave",
+        "actor_side": "BLUE",
+        "target_side": "RED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            19.407090867475397,
+            30.3
+          ],
+          [
+            19.75662623025864,
+            30.301618219272143
+          ]
+        ]
+      },
+      "properties": {
+        "kind": "engagement_arc",
+        "phase": 16,
+        "cause_actor": "R-d3-14-051",
+        "target_uid": "B-d2-3-048",
+        "status_change": "damaged_partial",
+        "damage_pct": 0.1,
+        "cause_what": "Engaged in air-to-air combat during interception",
+        "cause_doctrine": "Wild Weasel 10-15% AD attrition/wave",
+        "actor_side": "RED",
+        "target_side": "BLUE"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            19.699468986037996,
+            30.437470817120623
+          ],
+          [
+            19.195120164797437,
+            30.3
+          ]
+        ]
+      },
+      "properties": {
+        "kind": "engagement_arc",
+        "phase": 16,
+        "cause_actor": "B-d2-12-059",
+        "target_uid": "R-d3-16-067",
+        "status_change": "expended",
+        "damage_pct": 0.7,
+        "cause_what": "Kamikaze UAVs expended in saturation strike",
+        "cause_doctrine": "Black Sea 2024 USV survival 25-30%",
+        "actor_side": "BLUE",
+        "target_side": "RED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            19.195120164797437,
+            30.3
+          ],
+          [
+            19.699468986037996,
+            30.437470817120623
+          ]
+        ]
+      },
+      "properties": {
+        "kind": "engagement_arc",
+        "phase": 16,
+        "cause_actor": "R-d3-16-067",
+        "target_uid": "B-d2-12-059",
+        "status_change": "damaged_partial",
+        "damage_pct": 0.3,
+        "cause_what": "Countered Red's UAV saturation strike",
+        "cause_doctrine": "Black Sea 2024 USV survival 25-30%",
+        "actor_side": "RED",
+        "target_side": "BLUE"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            19.48628976882582,
+            30.36680170901045
+          ],
+          [
+            19.441972991531244,
+            29.69084685369074
+          ]
+        ]
+      },
+      "properties": {
+        "kind": "engagement_arc",
+        "phase": 16,
+        "cause_actor": "B-d1-504-021",
+        "target_uid": "R-d1-21-073",
+        "status_change": "suppressed",
+        "damage_pct": 0.4,
+        "cause_what": "SOF raids on C2 installations",
+        "cause_doctrine": "Cyprus 1974 5-8% loss when alerted",
+        "actor_side": "BLUE",
+        "target_side": "RED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            19.441972991531244,
+            29.69084685369074
+          ],
+          [
+            19.48628976882582,
+            30.36680170901045
+          ]
+        ]
+      },
+      "properties": {
+        "kind": "engagement_arc",
+        "phase": 16,
+        "cause_actor": "R-d1-21-073",
+        "target_uid": "B-d1-504-021",
+        "status_change": "suppressed",
+        "damage_pct": 0.2,
+        "cause_what": "Disrupted by SOF raids",
+        "cause_doctrine": "Cyprus 1974 5-8% loss when alerted",
+        "actor_side": "RED",
+        "target_side": "BLUE"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            19.569086747539483,
+            30.1412196536202
+          ],
+          [
+            19.15482719157702,
+            29.69084685369074
+          ]
+        ]
+      },
+      "properties": {
+        "kind": "engagement_arc",
+        "phase": 16,
+        "cause_actor": "B-d1-54-009",
+        "target_uid": "R-d2-9-017",
+        "status_change": "suppressed",
+        "damage_pct": 0.3,
+        "cause_what": "Countered by mobile defense",
+        "cause_doctrine": "FM 3-90 §5-23: 3:1 attacker required for decisive offense",
+        "actor_side": "BLUE",
+        "target_side": "RED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            19.15482719157702,
+            29.69084685369074
+          ],
+          [
+            19.569086747539483,
+            30.1412196536202
+          ]
+        ]
+      },
+      "properties": {
+        "kind": "engagement_arc",
+        "phase": 16,
+        "cause_actor": "R-d2-9-017",
+        "target_uid": "B-d1-54-009",
+        "status_change": "damaged_partial",
+        "damage_pct": 0.2,
+        "cause_what": "Engaged in mobile defense against Red advance",
+        "cause_doctrine": "FM 3-90 §5-23: 3:1 attacker required for decisive offense",
+        "actor_side": "RED",
+        "target_side": "BLUE"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            19.883863584344244,
+            30.08801327534905
+          ],
+          [
+            19.624911879148545,
+            29.69084685369074
+          ]
+        ]
+      },
+      "properties": {
+        "kind": "engagement_arc",
+        "phase": 16,
+        "cause_actor": "B-d1-505-022",
+        "target_uid": "R-d3-405-014",
+        "status_change": "suppressed",
+        "damage_pct": 0.2,
+        "cause_what": "Counter-jamming operations",
+        "cause_doctrine": "Large-scale combat operations (LSCO) doctrine",
+        "actor_side": "BLUE",
+        "target_side": "RED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            19.624911879148545,
+            29.69084685369074
+          ],
+          [
+            19.883863584344244,
+            30.08801327534905
+          ]
+        ]
+      },
+      "properties": {
+        "kind": "engagement_arc",
+        "phase": 16,
+        "cause_actor": "R-d3-405-014",
+        "target_uid": "B-d1-505-022",
+        "status_change": "suppressed",
+        "damage_pct": 0.2,
+        "cause_what": "Persistent jamming of communications",
+        "cause_doctrine": "Large-scale combat operations (LSCO) doctrine",
+        "actor_side": "RED",
+        "target_side": "BLUE"
+      }
+    }
+  ]
+}

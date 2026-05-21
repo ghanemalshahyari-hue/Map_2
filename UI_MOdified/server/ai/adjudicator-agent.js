@@ -24,9 +24,8 @@ const fs     = require('fs');
 const path   = require('path');
 const crypto = require('crypto');
 
-const ollama       = require('./ollama-client');   // kept for DEFAULT_MODEL reference
 const aiProvider   = require('./ai-provider');
-const aiCfg        = require('./ai-config');         // per-provider default model lookup
+const aiCfg        = require('./ai-config');
 const loader       = require('./scenario-loader');
 const schema       = require('./adjudicator-schema');
 const validator    = require('./adjudicator-validator');
@@ -88,7 +87,7 @@ const DEFAULT_OLLAMA_OPTIONS = Object.freeze({
     temperature:    0.15,
     top_p:          0.85,
     repeat_penalty: 1.12,
-    num_predict:    2200,
+    num_predict:    3000,
     keep_alive:     '30m',
 });
 
@@ -116,6 +115,10 @@ function buildScenarioConstantsBlock(scenario, coaParams) {
     const blueBde  = scenario.blue_units_base_ids.filter(id => /^b\dc$/.test(id));
     const blueBn   = scenario.blue_units_base_ids.filter(id => /^p\d{2}c$/.test(id));
     const blueCoy  = scenario.blue_units_base_ids.filter(id => /^c\d{3}$/.test(id));
+    const hasLegacyBlueHierarchy = blueDiv.length || blueBde.length || blueBn.length || blueCoy.length;
+    const blueGenericLines = (scenario.blue_units_initial || []).map((u) => (
+        `  ${(u.unit_uid || u.base_id || '?').padEnd(16)} (${u.echelon || 'unit'})`
+    )).join('\n');
 
     const phaseLines = scenario.phase_table.map((p) => (
         `  step ${String(p.index).padStart(2,' ')} ${p.time_label.padEnd(6)} ${p.phase}`
@@ -132,11 +135,13 @@ function buildScenarioConstantsBlock(scenario, coaParams) {
         `OBJ ${scenario.obj.name}: coord ~[${scenario.obj.coord[0].toFixed(3)}, ${scenario.obj.coord[1].toFixed(3)}], CARVER ${scenario.obj.carver}/60, depth ${scenario.obj.target_depth_km} km.`,
         `BLS:\n${blsLines}`,
         `RED OOB (${scenario.red_units.length} markers, strength in [0,1]):\n${redLines}`,
-        `BLUE OOB (${scenario.blue_units_base_ids.length} units, unit_uid = "BLUE_<base id>"):`,
-        `  div:        ${blueDiv.join(', ')}`,
-        `  brigades:   ${blueBde.join(', ')}`,
-        `  battalions: ${blueBn.join(', ')}`,
-        `  companies:  ${blueCoy.join(', ')}`,
+        hasLegacyBlueHierarchy
+            ? `BLUE OOB (${scenario.blue_units_base_ids.length} units, unit_uid = "BLUE_<base id>"):\n` +
+              `  div:        ${blueDiv.join(', ')}\n` +
+              `  brigades:   ${blueBde.join(', ')}\n` +
+              `  battalions: ${blueBn.join(', ')}\n` +
+              `  companies:  ${blueCoy.join(', ')}`
+            : `BLUE OOB (${scenario.blue_units_base_ids.length} units, unit_uid = scenario blue unit_uid):\n${blueGenericLines}`,
         `PHASE TABLE:\n${phaseLines}`,
         `BLUE COA PARAMS for this trial:`,
         `  blue_reserve_commit_hour: ${coa.reserve_commit_hour}`,
@@ -416,12 +421,9 @@ function normalizeConfidence(value, fallback, fields) {
     return out;
 }
 
-function normalizeBlueUid(raw, blueValid, blueBaseIds) {
+function normalizeBlueUid(raw, blueAliases) {
     if (!isNonEmptyString(raw)) return null;
-    const s = raw.trim();
-    if (blueValid.has(s)) return s;
-    if (blueBaseIds.has(s)) return 'BLUE_' + s;
-    return null;
+    return blueAliases.get(raw.trim()) || null;
 }
 
 function normalizeRedDeltaEntry(entry, prevStrength, redValid) {
@@ -457,10 +459,11 @@ function normalizeModelDelta(delta, prevState, scenario, stepIndex, coaParams) {
         blue_destroyed_cumulative: baseline.blue_destroyed_cumulative.slice(),
     };
 
+    const expectedMeta = schema.scenarioStepMeta(scenario, stepIndex);
     out.step_index = stepIndex;
-    out.time_label = schema.TIME_LABELS[stepIndex];
-    out.elapsed_hours = schema.ELAPSED_HOURS_BY_INDEX[stepIndex];
-    out.phase = schema.PHASE_BY_INDEX[stepIndex];
+    out.time_label = expectedMeta.time_label;
+    out.elapsed_hours = expectedMeta.elapsed_hours;
+    out.phase = expectedMeta.phase;
 
     const phaseLine = toFiniteNumber(delta.phase_line_km);
     if (phaseLine != null) out.phase_line_km = phaseLine;
@@ -499,8 +502,7 @@ function normalizeModelDelta(delta, prevState, scenario, stepIndex, coaParams) {
         fields.push('bls_status');
     }
 
-    const blueValid = schema.blueUidSet(scenario);
-    const blueBaseIds = new Set(scenario.blue_units_base_ids);
+    const blueAliases = schema.blueUidAliasMap(scenario);
     const prevDestroyed = new Set((prevState && prevState.blue_destroyed_cumulative) || []);
     const rawBlue = isObj(delta.per_unit_deltas) && Array.isArray(delta.per_unit_deltas.blue_destroyed)
         ? delta.per_unit_deltas.blue_destroyed
@@ -508,7 +510,7 @@ function normalizeModelDelta(delta, prevState, scenario, stepIndex, coaParams) {
     if (rawBlue) {
         const next = [];
         for (const raw of rawBlue) {
-            const uid = normalizeBlueUid(raw, blueValid, blueBaseIds);
+            const uid = normalizeBlueUid(raw, blueAliases);
             if (uid && !prevDestroyed.has(uid) && !next.includes(uid)) next.push(uid);
             else fields.push('per_unit_deltas.blue_destroyed');
         }
@@ -604,7 +606,7 @@ function prepareDeltaForValidation(parsed, prevState, scenario, stepIndex, meta,
  *
  * Arguments (object):
  *   scenario      — loaded scenario JSON; default: loader.getDefaultScenario()
- *   stepIndex     — 1..11 (step 0 has no transition; it is the seed)
+ *   stepIndex     — 1..(scenario.steps.length - 1); step 0 is the seed
  *   prevState     — output of the previous adjudicateStep, or freshState() for step 1
  *   trialId       — string trial identifier (e.g. "run-xyz:t42")
  *   trialSeed     — string or int; combined with stepIndex into the LLM seed
@@ -623,8 +625,9 @@ async function adjudicateStep(args) {
     args = args || {};
     const scenario   = args.scenario || loader.getDefaultScenario();
     const stepIndex  = args.stepIndex;
-    // Parametric step range: each scenario decides how many steps it has.
-    // wargame1/wargame2 → 12 steps (0..11); template → 6 steps (0..5).
+    // Parametric step range: each scenario decides how many steps it has
+    // (validator allows 4-20). The hardcoded fallback only fires when scenario
+    // is malformed; loader will have rejected it long before we get here.
     const maxStepIndex = Math.max(0, (Array.isArray(scenario.steps) ? scenario.steps.length : 12) - 1);
     if (!Number.isInteger(stepIndex) || stepIndex < 0 || stepIndex > maxStepIndex) {
         throw new Error(`adjudicateStep: stepIndex must be 0..${maxStepIndex} for this scenario, got ${stepIndex}`);
@@ -703,7 +706,7 @@ async function adjudicateStep(args) {
         model:        model || (
                           providerName === 'claude' ? (aiCfg.claude && aiCfg.claude.defaultModel) || 'claude-default' :
                           providerName === 'zen'    ? (aiCfg.zen    && aiCfg.zen.defaultModel)    || 'zen-default'    :
-                          ollama.DEFAULT_MODEL
+                          aiCfg.defaultModel || 'qwen2.5:7b'
                       ),
         trialId,
         trialSeed,

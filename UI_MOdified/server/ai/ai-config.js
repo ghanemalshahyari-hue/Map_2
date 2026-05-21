@@ -111,6 +111,7 @@ const defaults = {
         temperature: 0.2,
         numPredict:  2500,    // upper bound on output tokens
     },
+    keepAlive: '30m',
 
     // ── Claude (Anthropic) — optional cloud backend ────────────────────
     // The Claude path is enabled when ANTHROPIC_API_KEY is set in the
@@ -199,6 +200,7 @@ const merged = {
     pingTimeoutMs:    asInt(envOverride(overlay.pingTimeoutMs    ?? defaults.pingTimeoutMs,    'RMOOZ_OLLAMA_PING_TIMEOUT_MS'), defaults.pingTimeoutMs),
     requestTimeoutMs: asInt(envOverride(overlay.requestTimeoutMs ?? defaults.requestTimeoutMs, 'RMOOZ_OLLAMA_TIMEOUT_MS'),      defaults.requestTimeoutMs),
     options:          { ...defaults.options, ...(overlay.options || {}) },
+    keepAlive:        envOverride(overlay.keepAlive ?? overlay.keep_alive ?? defaults.keepAlive, 'RMOOZ_OLLAMA_KEEP_ALIVE'),
 
     // Claude block — env vars: ANTHROPIC_API_KEY, RMOOZ_CLAUDE_MODEL,
     // RMOOZ_CLAUDE_TIMEOUT_MS, RMOOZ_CLAUDE_MAX_TOKENS.

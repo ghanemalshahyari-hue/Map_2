@@ -1463,8 +1463,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return layers.flatMap(l => l.elements);
     }
 
+    function ensureActiveLayer() {
+        const existing = getActiveLayer();
+        if (existing) return existing;
+        const nextIndex = layers.length + 1;
+        const defaultName = typeof t === 'function'
+            ? t('layer-name-default', String(nextIndex))
+            : 'Layer ' + nextIndex;
+        const layer = createLayer(defaultName);
+        if (layersListEl) renderLayersList();
+        return layer;
+    }
+
     function addToActiveLayer(el) {
-        const layer = getActiveLayer();
+        const layer = ensureActiveLayer();
         if (!layer) return;
         el._layerId = layer.id;
         layer.elements.push(el);
@@ -6229,10 +6241,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- MILSMBOL LOGIC ---
     let sidcOverride = '';
+    let sidcOverrideStatusKey = 'status-operational';
     let editingSymbolMarker = null;
 
-    function setSidcOverride(sidc) {
+    function setSidcOverride(sidc, options = {}) {
         sidcOverride = sidc;
+        if (options.resetStatusKey) sidcOverrideStatusKey = 'status-operational';
+        if (options.statusKey) sidcOverrideStatusKey = options.statusKey;
         if (sidcManualInput) sidcManualInput.value = sidc;
 
         if (pickedSidcDisplay) {
@@ -6253,20 +6268,22 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSymbolPreview();
     }
 
-        window.__APP_SIDC_PICKER_SET = function (sidc) {
+        window.__APP_SIDC_PICKER_SET = function (selection) {
+        const sidc = typeof selection === 'string' ? selection : selection?.sidc;
         const normalized = normalizeSidcInput(sidc);
         if (!normalized) return;
-        setSidcOverride(normalized);
+        setSidcOverride(normalized, { statusKey: selection?.statusKey || 'status-operational' });
     };
 
 
 
 
     // Expose a global hook so the embedded picker can call us directly.
-    window.__APP_SIDC_PICKER_SET = function (sidc) {
+    window.__APP_SIDC_PICKER_SET = function (selection) {
+        const sidc = typeof selection === 'string' ? selection : selection?.sidc;
         const normalized = normalizeSidcInput(sidc);
         if (!normalized) return;
-        setSidcOverride(normalized);
+        setSidcOverride(normalized, { statusKey: selection?.statusKey || 'status-operational' });
     };
 
     function pullSidcFromManualInput() {
@@ -6279,7 +6296,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             return;
         }
-        setSidcOverride(sidc);
+        setSidcOverride(sidc, { resetStatusKey: true });
     }
 
     function generateSIDC() {
@@ -6323,7 +6340,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial Render
-    setSidcOverride('');
+    setSidcOverride('', { resetStatusKey: true });
     updateSymbolPreview();
 
     // --- SIDC Favorites (top bar: replaces status pills) ---
@@ -6514,7 +6531,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function applyFavoriteSidc(sidc) {
         const n = normalizeSidcInput(sidc);
         if (!n) return;
-        setSidcOverride(n);
+        setSidcOverride(n, { resetStatusKey: true });
         if (typeof window.__SYMBOL_MARK_PICKED === 'function') window.__SYMBOL_MARK_PICKED();
         if (modeSelect) {
             modeSelect.value = 'symbol';
@@ -8960,31 +8977,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Helper used by free_draw_sig workflow to place recognized tactical symbol on each map click
-    window.placeFreeDrawSignatureTmg = function (latlng, typeId, affiliation) {
+    function placePointSymbolTmg(latlng, typeId, color) {
         if (!latlng || !typeId) return;
         const def = TACTICAL_GRAPHICS.find(d => d.id === typeId);
-        if (!def) return;
+        if (!def || !def.pointSymbol) return;
 
         // Snap circle-X markers outside obstacles so they sit on the boundary
         if (typeId === 'circle-x') {
             latlng = snapPointOutsideObstacles(latlng);
         }
 
-        const color = (affiliation === 'enemy' || window.freeDrawSignatureAffiliation === 'enemy') ? '#ef4444' : '#3b82f6';
         const strokeWidth = getTmgStrokeWidth();
 
         // for a point symbol we can use start/end at same location (createTmgLayer handles pointSymbol)
         const symbolMarker = createTmgLayer(latlng, latlng, typeId, color, false, false, { strokeWidth });
-        if (symbolMarker) {
-            const sessionId = window.freeDrawSignatureSessionId;
-            if (sessionId) {
-                symbolMarker._tmgData = symbolMarker._tmgData || {};
-                symbolMarker._tmgData.sessionId = sessionId;
-            }
-            addToActiveLayer(symbolMarker);
+        if (!symbolMarker) return;
+        const sessionId = window.freeDrawSignatureSessionId;
+        if (sessionId) {
+            symbolMarker._tmgData = symbolMarker._tmgData || {};
+            symbolMarker._tmgData.sessionId = sessionId;
         }
+        addToActiveLayer(symbolMarker);
+    }
+
+    // Helper used by free_draw_sig workflow to place recognized tactical symbol on each map click
+    window.placeFreeDrawSignatureTmg = function (latlng, typeId, affiliation) {
+        const color = (affiliation === 'enemy' || window.freeDrawSignatureAffiliation === 'enemy') ? '#ef4444' : '#3b82f6';
+        placePointSymbolTmg(latlng, typeId, color);
     };
+
     function updateTmgLayer(marker) {
         const d = marker._tmgData;
         if (!d) return;
@@ -11119,12 +11140,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const w = sym.getSize().width;
         const h = sym.getSize().height;
         const rot = marker._symbolRotationDeg || 0;
+        const statusKey = marker._statusKey || 'status-operational';
+        const extraClass = statusKey === 'status-destroyed' ? ' custom-nato-marker--destroyed' : '';
         const svg = sym.asSVG();
         const html = rot
             ? `<div style="width:${w}px;height:${h}px;transform:rotate(${rot}deg);transform-origin:${anchorPoint.x}px ${anchorPoint.y}px;">${svg}</div>`
             : svg;
         marker.setIcon(L.divIcon({
-            className: 'custom-nato-marker',
+            className: 'custom-nato-marker' + extraClass,
             html,
             iconAnchor: [anchorPoint.x, anchorPoint.y],
             iconSize: [w, h]
@@ -12802,7 +12825,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.__APP_UNITS_CAPTURING_SIDC) return;
         const sidc = normalizeSidcInput(data.sidc);
         if (!sidc) return;
-        setSidcOverride(sidc);
+        setSidcOverride(sidc, { statusKey: data.statusKey || 'status-operational' });
         if (typeof window.__SYMBOL_MARK_PICKED === 'function') window.__SYMBOL_MARK_PICKED();
         updateSymbolPreview();
     });
@@ -12837,7 +12860,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.__APP_UNITS_CAPTURING_SIDC) return;
         const sidc = normalizeSidcInput(data.sidc);
         if (!sidc) return;
-        setSidcOverride(sidc);
+        setSidcOverride(sidc, { statusKey: data.statusKey || 'status-operational' });
         if (typeof window.__SYMBOL_MARK_PICKED === 'function') window.__SYMBOL_MARK_PICKED();
         updateSymbolPreview();
     });
@@ -13956,7 +13979,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const marker = L.marker(e.latlng, { icon: L.divIcon({ className: 'custom-nato-marker', html: '<div></div>', iconSize: [1, 1], iconAnchor: [0, 0] }), draggable: true });
             marker._sidc = sidc;
             marker._textModifiers = { ...opts };
-            marker._statusKey = 'status-operational';
+            marker._statusKey = sidcOverrideStatusKey || 'status-operational';
             marker._symbolRotationDeg = 0;
             refreshSymbolIcon(marker);
 
@@ -13973,6 +13996,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (currentMode === 'line') {
             if (selectedTmgType) {
                 const latlng = snapLatLngForTmgPlacement(e.latlng);
+                const selectedDef = TACTICAL_GRAPHICS.find(d => d.id === selectedTmgType);
+                if (selectedDef?.pointSymbol) {
+                    if (isDuplicatePlacementClick(latlng, e.originalEvent)) return;
+                    placePointSymbolTmg(latlng, selectedTmgType, getLineColor());
+                    return;
+                }
                 // Animated Maneuver Arrow: two-click placement, owned by maneuver-arrow.js.
                 if (selectedTmgType === 'maneuver-arrow' && window.ManeuverArrow) {
                     if (!window.ManeuverArrow.isPlacing()) {
@@ -14024,8 +14053,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     pushDedupedLatLng(tmgPoints, latlng, 3);
-
-                    tmgPoints.push(latlng);
 
 
                     // Auto-finish scalloped when ending at a different circle-X than the start
@@ -17965,6 +17992,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             return moved;
         },
+    };
+
+    // ── Tactical-graphics facade for other modules ────────────────────
+    // Exposes the unified CATK / attack / counterattack arrow renderer so
+    // the wargame adjudicator map (which lives in its own IIFE) can build
+    // NATO tactical graphics — solid rails for 'attack', dashed rails +
+    // 'CAT' / 'CATK' inner label for the counterattack variants — instead
+    // of plain polylines. Closes over the module-private `map` variable
+    // and existing geometry helpers, so callers just pass:
+    //   points    : array of L.latLng / {lat,lng} — at least 2; index 0 = TIP
+    //   color     : '#rrggbb'
+    //   strokeWidth: number
+    //   typeId    : 'attack' | 'main-attack' | 'counterattack' | 'counterattack-by-fire'
+    //   iconOpts  : optional { railsDashed, arrowHeadScale, ... }
+    // Returns the {html, iconSize, iconAnchor, centerLatLng} shape — the
+    // caller wraps that in an L.divIcon + L.marker.
+    window.AppTacticalGraphics = {
+        getCatkUnifiedDivIcon,
     };
 
     // ── War-Game snapshot facade ───────────────────────────────────────

@@ -7267,16 +7267,18 @@
       "objective_status_baseline": "DORMANT",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.22,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's attempts to shape the battlefield were largely thwarted by Blue's defensive measures. Red's UAV ISR efforts were intercepted by Blue's F-16s, resulting in significant losses. Red's mine-clearing operations faced heavy resistance from Blue's ATGM battalion, leading to high attrition among Red's minesweepers. Blue's counter-EW operations effectively neutralized Red's jamming attempts, maintaining Blue's C2 integrity.",
+      "narrative_en_fallback": "Red's attempts to shape the battlefield were largely thwarted by Blue's defensive measures. Red's UAV ISR efforts were intercepted by Blue's F-16s, resulting in significant losses. Red's mine-clearing operations faced heavy resistance from Blue's ATGM battalion, leading to high attrition among Red's minesweepers. Blue's counter-EW operations effectively neutralized Red's jamming attempts, maintaining Blue's C2 integrity.\n\nEngagements:\n[BLUE→RED] UAVs intercepted by F-16 squadron\n[RED→BLUE] Sorties flown to intercept Red UAVs\n[BLUE→RED] Mine sweepers engaged by ATGM battalion\n[RED→BLUE] Engaged Red mine sweepers\n[BLUE→RED] EW operations countered by Blue\n[RED→BLUE] Counter-EW operations against Red jamming\n[BLUE→RED] UAV strike on radar installations intercepted\n[RED→BLUE] Protected radar installations from UAV strike\n[BLUE→RED] Mine-laying operations disrupted by coastal support boats\n[RED→BLUE] Disrupted Red mine-laying operations\n[BLUE→RED] SOF reconnaissance disrupted by signal battalion\n[RED→BLUE] Countered Red SOF reconnaissance",
       "narrative_ar_fallback": "تمهيد - الوضع قبل العمليات",
       "bls_status_baseline": {
         "BLS-1": "LIMITED"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d2-3-048"
+      ],
+      "blue_destroyed_count_baseline": 1,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d3-405-014",
@@ -7383,10 +7385,10 @@
       "objective_status_baseline": "DORMANT",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.24,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's strategic strike with 12 SSMs targeted Blue's coastal naval installations, but hardened defenses absorbed the impact, resulting in minimal degradation. Blue's counter-EW operations effectively mitigated Red's jamming, maintaining C2 integrity. Red's EW pressure was persistent but matched by Blue's countermeasures, resulting in a stalemate in electronic warfare.",
+      "narrative_en_fallback": "Red's strategic strike with 12 SSMs targeted Blue's coastal naval installations, but hardened defenses absorbed the impact, resulting in minimal degradation. Blue's counter-EW operations effectively mitigated Red's jamming, maintaining C2 integrity. Red's EW pressure was persistent but matched by Blue's countermeasures, resulting in a stalemate in electronic warfare.\n\nEngagements:\n[RED→BLUE] SSM strike absorbed by hardened coastal installations\n[BLUE→RED] Persistent jamming met with effective counter-EW operations\n[RED→BLUE] Counter-EW operations mitigated Red's jamming efforts",
       "narrative_ar_fallback": "تبادل صواريخ استراتيجية",
       "bls_status_baseline": {
         "BLS-1": "LIMITED"
@@ -7494,16 +7496,20 @@
       "objective_status_baseline": "DORMANT",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.24,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's SEAD campaign using Su-24s with HARM missiles targeted Blue's 9th AD Bde, achieving a 12% degradation of Blue's Hawk and S-300 systems. Blue's air defense preserved its fighter AD, minimizing losses. Red's EW operations maintained pressure on Blue's C2, but Blue's systems remained functional. Red lost 5% of its strike aircraft during SEAD sorties, consistent with historical SEAD operations.",
+      "narrative_en_fallback": "Red's SEAD campaign using Su-24s with HARM missiles targeted Blue's 9th AD Bde, achieving a 12% degradation of Blue's Hawk and S-300 systems. Blue's air defense preserved its fighter AD, minimizing losses. Red's EW operations maintained pressure on Blue's C2, but Blue's systems remained functional. Red lost 5% of its strike aircraft during SEAD sorties, consistent with historical SEAD operations.\n\nEngagements:\n[BLUE→RED] SEAD sorties against Blue's 9th AD Bde\n[RED→BLUE] HARM missile strike on Hawk/S-300 systems\n[RED→BLUE] HARM missile strike on Hawk/S-300 systems\n[RED→BLUE] EW operations jamming Blue's C2 systems",
       "narrative_ar_fallback": "حملة قمع الدفاع الجوي SEAD",
       "bls_status_baseline": {
         "BLS-1": "LIMITED"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-51-001",
+        "B-d1-52-005",
+        "B-d1-505-022"
+      ],
+      "blue_destroyed_count_baseline": 3,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d3-14-051"
@@ -7605,16 +7611,22 @@
       "objective_status_baseline": "DORMANT",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.25,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's missile boats attempted to engage Blue's coastal support boats but were intercepted by Blue's corvettes, resulting in significant Red losses. Red's MiG-29s clashed with Blue's Rafales, with Blue maintaining air superiority. Red's UAV strike on Blue's radar installations was partially successful, but Blue's UAVs intercepted a portion of the strike. Red's minesweepers faced heavy resistance from Blue's coastal support boats, resulting in high attrition. Force ratio 0.25:1 < 1.5:1 per FM 3-90 — BLUE_ADV holds as Red approaches culmination.",
+      "narrative_en_fallback": "Red's missile boats attempted to engage Blue's coastal support boats but were intercepted by Blue's corvettes, resulting in significant Red losses. Red's MiG-29s clashed with Blue's Rafales, with Blue maintaining air superiority. Red's UAV strike on Blue's radar installations was partially successful, but Blue's UAVs intercepted a portion of the strike. Red's minesweepers faced heavy resistance from Blue's coastal support boats, resulting in high attrition. Force ratio 0.25:1 < 1.5:1 per FM 3-90 — BLUE_ADV holds as Red approaches culmination.\n\nEngagements:\n[BLUE→RED] Intercepted by Blue corvettes during missile boat engagement\n[RED→BLUE] Engaged by Red missile boats\n[BLUE→RED] Intercepted by Blue Rafales during air cover operation\n[RED→BLUE] Engaged by Red MiG-29s\n[BLUE→RED] Intercepted during UAV mass strike\n[RED→BLUE] Engaged by Red UAVs\n[BLUE→RED] Disrupted during mine clearance by Blue coastal support boats\n[RED→BLUE] Engaged by Red minesweepers\n[BLUE→RED] Counter-reconnaissance operations by Blue SOF\n[RED→BLUE] Engaged by Red SOF reconnaissance",
       "narrative_ar_fallback": "اشتباك بحري سطحي + ASW",
       "bls_status_baseline": {
         "BLS-1": "LIMITED"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-501-014",
+        "B-d2-سريةال-023",
+        "B-d1-8-031",
+        "B-d1-6-034",
+        "B-d2-1-052"
+      ],
+      "blue_destroyed_count_baseline": 5,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d3-20-033",
@@ -7720,16 +7732,19 @@
       "objective_status_baseline": "DORMANT",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.26,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's minesweeping operations faced significant attrition under Blue's coastal artillery fire, with two minesweepers lost. Blue's reinforcement of minefields further delayed Red's clearance efforts. Red's EW operations partially disrupted Blue's C2, but Blue's countermeasures maintained overall defensive coordination. The mine clearance rate was severely impacted, paralleling Wonsan 1950's high minesweeper attrition under fire.",
+      "narrative_en_fallback": "Red's minesweeping operations faced significant attrition under Blue's coastal artillery fire, with two minesweepers lost. Blue's reinforcement of minefields further delayed Red's clearance efforts. Red's EW operations partially disrupted Blue's C2, but Blue's countermeasures maintained overall defensive coordination. The mine clearance rate was severely impacted, paralleling Wonsan 1950's high minesweeper attrition under fire.\n\nEngagements:\n[BLUE→RED] Coastal artillery fire on Red minesweepers\n[BLUE→RED] Reinforced minefield impact on Red minesweepers\n[RED→BLUE] Red EW operations disrupting Blue C2\n[RED→BLUE] Red EW operations disrupting Blue C2\n[BLUE→RED] Blue ECM countering Red EW",
       "narrative_ar_fallback": "تطهير حقول الألغام البحرية",
       "bls_status_baseline": {
         "BLS-1": "LIMITED"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-505-022",
+        "B-d1-4-035"
+      ],
+      "blue_destroyed_count_baseline": 2,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d3-405-014",
@@ -7832,16 +7847,20 @@
       "objective_status_baseline": "THREATENED",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.24,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's multi-domain assault faced significant challenges. Blue's corvettes successfully interdicted Red's mine sweepers, maintaining the integrity of the minefield and delaying Red's landing. Blue's F-16s contested air superiority, resulting in the loss of several Red MiG-29s. Red's explosive UAVs and USVs were largely intercepted by Blue's UAVs, preserving Blue's defensive capabilities. Red's EW efforts were countered effectively, maintaining Blue's C2 integrity.",
+      "narrative_en_fallback": "Red's multi-domain assault faced significant challenges. Blue's corvettes successfully interdicted Red's mine sweepers, maintaining the integrity of the minefield and delaying Red's landing. Blue's F-16s contested air superiority, resulting in the loss of several Red MiG-29s. Red's explosive UAVs and USVs were largely intercepted by Blue's UAVs, preserving Blue's defensive capabilities. Red's EW efforts were countered effectively, maintaining Blue's C2 integrity.\n\nEngagements:\n[BLUE→RED] Corvettes interdicted mine sweepers, delaying landing ships\n[BLUE→RED] F-16s contested air superiority, damaging MiG-29s\n[BLUE→RED] UAVs intercepted explosive UAVs and USVs\n[BLUE→RED] Corvettes destroyed mine sweepers\n[RED→BLUE] Explosive UAVs damaged corvettes\n[RED→BLUE] MiG-29s engaged F-16s\n[RED→BLUE] Intercepted explosive UAVs and USVs\n[BLUE→RED] Counter-EW operations disrupted jamming",
       "narrative_ar_fallback": "الضربة المركزة متعددة الاتجاهات + الإنزال",
       "bls_status_baseline": {
         "BLS-1": "THREATENED"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-8-031",
+        "B-d2-3-048",
+        "B-d2-12-050"
+      ],
+      "blue_destroyed_count_baseline": 3,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d3-405-014",
@@ -7947,16 +7966,21 @@
       "objective_status_baseline": "THREATENED",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.25,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's initial beach assault faced significant resistance. Blue's mechanized infantry engaged Red's 4-MID, preventing a secure foothold. Red's MiG-29s were countered by Blue's F-16s, maintaining Blue's air superiority. Red's kamikaze UAVs were largely intercepted by Blue's UAVs, reducing their impact. Red's destroyers faced effective counteraction from Blue's corvettes, limiting naval gunfire support. The minefields remained a formidable obstacle, with Red's mine layers unable to establish effective defensive fields.",
+      "narrative_en_fallback": "Red's initial beach assault faced significant resistance. Blue's mechanized infantry engaged Red's 4-MID, preventing a secure foothold. Red's MiG-29s were countered by Blue's F-16s, maintaining Blue's air superiority. Red's kamikaze UAVs were largely intercepted by Blue's UAVs, reducing their impact. Red's destroyers faced effective counteraction from Blue's corvettes, limiting naval gunfire support. The minefields remained a formidable obstacle, with Red's mine layers unable to establish effective defensive fields.\n\nEngagements:\n[BLUE→RED] F-16 squadron countered MiG-29s, maintaining air superiority\n[BLUE→RED] Kamikaze UAVs intercepted by Blue UAVs\n[BLUE→RED] Destroyers engaged by Blue corvettes\n[BLUE→RED] Mechanized infantry engaged Red landing forces\n[BLUE→RED] Mine layers unable to establish defensive fields\n[RED→BLUE] MiG-29s engaged F-16s\n[RED→BLUE] Intercepted kamikaze UAVs\n[RED→BLUE] Corvettes engaged by Red destroyers\n[RED→BLUE] Engaged Red landing forces\n[RED→BLUE] Minefield integrity preserved",
       "narrative_ar_fallback": "اقتحام الشاطئ - المرحلة 1 (طلائع)",
       "bls_status_baseline": {
         "BLS-1": "THREATENED"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-51-001",
+        "B-d1-8-031",
+        "B-d2-3-048",
+        "B-d2-12-059"
+      ],
+      "blue_destroyed_count_baseline": 4,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d2-4-004",
@@ -8062,16 +8086,22 @@
       "objective_status_baseline": "THREATENED",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.26,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's main wave faced significant challenges as Blue's layered defenses held firm. Red's landing ships were heavily interdicted by Blue's corvettes, and minefields inflicted losses on Red's naval assets. Red's attack helicopters faced strong resistance from Blue's F-16s, limiting their effectiveness in providing close air support. Red's kamikaze UAVs were largely intercepted, preserving Blue's radar installations. Despite Red's efforts to disrupt Blue's C2 with SOF raids and jamming, Blue maintained operational coordination. Force ratio 0.26:1 < 1.5:1 per FM 3-90 — BLUE_ADV holds as Red approaches culmination.",
+      "narrative_en_fallback": "Red's main wave faced significant challenges as Blue's layered defenses held firm. Red's landing ships were heavily interdicted by Blue's corvettes, and minefields inflicted losses on Red's naval assets. Red's attack helicopters faced strong resistance from Blue's F-16s, limiting their effectiveness in providing close air support. Red's kamikaze UAVs were largely intercepted, preserving Blue's radar installations. Despite Red's efforts to disrupt Blue's C2 with SOF raids and jamming, Blue maintained operational coordination. Force ratio 0.26:1 < 1.5:1 per FM 3-90 — BLUE_ADV holds as Red approaches culmination.\n\nEngagements:\n[BLUE→RED] Corvette interdiction of landing ships\n[BLUE→RED] F-16 squadron countering attack helicopters\n[BLUE→RED] F-16s intercepting kamikaze UAVs\n[BLUE→RED] Enhanced security around C2 nodes\n[BLUE→RED] Counter-jamming operations\n[RED→BLUE] Landing ship engagement\n[RED→BLUE] Attack helicopter engagement\n[RED→BLUE] Kamikaze UAV engagement\n[RED→BLUE] SOF raid on C2 nodes\n[RED→BLUE] Persistent jamming",
       "narrative_ar_fallback": "المرحلة 2أ - الموجة الرئيسية للفرقة 4",
       "bls_status_baseline": {
         "BLS-1": "THREATENED"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-504-021",
+        "B-d1-505-022",
+        "B-d1-8-031",
+        "B-d2-3-048",
+        "B-d2-5-057"
+      ],
+      "blue_destroyed_count_baseline": 5,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d3-12-008",
@@ -8177,16 +8207,21 @@
       "objective_status_baseline": "THREATENED",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.26,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's attempt to consolidate the beachhead was met with strong Blue resistance. Red destroyers providing naval gunfire support were partially neutralized by Blue corvettes, while Red's attack helicopters faced significant losses from Blue fighter intercepts. Red's mine clearance efforts were severely hampered by Blue's reinforced minefields, and kamikaze UAVs targeting Blue's radar installations achieved limited success due to active Blue countermeasures. Overall, Red's operational momentum was blunted, with Blue maintaining a defensive advantage.",
+      "narrative_en_fallback": "Red's attempt to consolidate the beachhead was met with strong Blue resistance. Red destroyers providing naval gunfire support were partially neutralized by Blue corvettes, while Red's attack helicopters faced significant losses from Blue fighter intercepts. Red's mine clearance efforts were severely hampered by Blue's reinforced minefields, and kamikaze UAVs targeting Blue's radar installations achieved limited success due to active Blue countermeasures. Overall, Red's operational momentum was blunted, with Blue maintaining a defensive advantage.\n\nEngagements:\n[BLUE→RED] Corvette interdiction of destroyers providing naval gunfire support\n[BLUE→RED] Fighter aircraft intercept of attack helicopters\n[BLUE→RED] Reinforced minefields counter mine clearance\n[BLUE→RED] Kamikaze UAVs targeting coastal radar installations\n[RED→BLUE] Naval gunfire support from destroyers\n[RED→BLUE] Attack helicopters providing close air support\n[RED→BLUE] Mine clearance operations\n[RED→BLUE] Kamikaze UAV strike on radar installations",
       "narrative_ar_fallback": "تكوين رأس الجسر",
       "bls_status_baseline": {
         "BLS-1": "THREATENED"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-503-020",
+        "B-d1-8-031",
+        "B-d1-4-035",
+        "B-d2-3-048"
+      ],
+      "blue_destroyed_count_baseline": 4,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d3-12-008",
@@ -8291,16 +8326,21 @@
       "objective_status_baseline": "CONTESTED",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.26,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Blue's 72nd Armored Brigade executed a counterattack at the 9.5 km phase line, exploiting Red's culmination. Red's mechanized infantry was delayed, suffering significant attrition under Blue's prepared defense. Red's MiG-29s were intercepted by Blue's F-16s, resulting in airframe losses. Red's kamikaze UAVs were largely neutralized by Blue's UAVs, preserving Blue's radar installations. Red's naval gunfire support was ineffective against Blue's entrenched positions.",
+      "narrative_en_fallback": "Blue's 72nd Armored Brigade executed a counterattack at the 9.5 km phase line, exploiting Red's culmination. Red's mechanized infantry was delayed, suffering significant attrition under Blue's prepared defense. Red's MiG-29s were intercepted by Blue's F-16s, resulting in airframe losses. Red's kamikaze UAVs were largely neutralized by Blue's UAVs, preserving Blue's radar installations. Red's naval gunfire support was ineffective against Blue's entrenched positions.\n\nEngagements:\n[BLUE→RED] Engaged by Blue's 72nd Armored Brigade at prepared defense line\n[BLUE→RED] Intercepted by Blue's F-16 squadron\n[BLUE→RED] Neutralized by Blue's UAVs protecting radar installations\n[BLUE→RED] Ineffective naval gunfire support against entrenched positions\n[RED→BLUE] Engaged by Red's mechanized infantry\n[RED→BLUE] Sorties flown to intercept Red's MiG-29s\n[RED→BLUE] UAVs deployed to counter Red's kamikaze UAVs\n[RED→BLUE] Jamming operations against Blue's C2 networks",
       "narrative_ar_fallback": "الهجوم الأزرق المضاد الأول (لواء 72 المدرع)",
       "bls_status_baseline": {
         "BLS-1": "THREATENED"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d2-514-004",
+        "B-d1-501-014",
+        "B-d1-505-022",
+        "B-d2-3-048"
+      ],
+      "blue_destroyed_count_baseline": 4,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d2-4-004",
@@ -8404,16 +8444,18 @@
       "objective_status_baseline": "CONTESTED",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.99,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's attempt to reinforce the beachhead with the 9th Mechanized Infantry Division faced significant challenges. Blue's coastal defenses, supported by fighter aircraft, effectively intercepted Red's attack helicopters, reducing their impact. Red's kamikaze UAVs managed to degrade some of Blue's coastal radar capabilities, but Blue's ISR UAVs mitigated the damage. Red's electronic warfare efforts were countered by Blue's ECM, maintaining Blue's C2 integrity. The minefield continued to pose a threat, delaying Red's maritime operations.",
+      "narrative_en_fallback": "Red's attempt to reinforce the beachhead with the 9th Mechanized Infantry Division faced significant challenges. Blue's coastal defenses, supported by fighter aircraft, effectively intercepted Red's attack helicopters, reducing their impact. Red's kamikaze UAVs managed to degrade some of Blue's coastal radar capabilities, but Blue's ISR UAVs mitigated the damage. Red's electronic warfare efforts were countered by Blue's ECM, maintaining Blue's C2 integrity. The minefield continued to pose a threat, delaying Red's maritime operations.\n\nEngagements:\n[BLUE→RED] Fighter aircraft intercept attack helicopters\n[BLUE→RED] Kamikaze UAVs targeting coastal radar installations\n[RED→BLUE] Kamikaze UAVs degrade coastal radar\n[BLUE→RED] Coastal artillery and missile systems delay landing ships\n[BLUE→RED] Electronic countermeasures disrupt jamming efforts\n[RED→BLUE] 9-MID advance met with prepared defenses",
       "narrative_ar_fallback": "الفرقة 9 تلتحق - دفع 8-10 كم",
       "bls_status_baseline": {
         "BLS-1": "THREATENED"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-4-035"
+      ],
+      "blue_destroyed_count_baseline": 1,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d3-12-008",
@@ -8518,16 +8560,20 @@
       "objective_status_baseline": "CONTESTED",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.99,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's attempt to push inland was met with strong Blue resistance. Red's destroyers provided naval gunfire support but were countered by Blue corvettes, resulting in mutual attrition. Red's Mirage strike squadron faced interception by Blue's F-16s, leading to losses on both sides. Red's engineering battalion faced significant delays due to Blue's reinforced minefields, while Red's kamikaze UAVs were largely intercepted by Blue's UAVs, preserving Blue's radar capabilities.",
+      "narrative_en_fallback": "Red's attempt to push inland was met with strong Blue resistance. Red's destroyers provided naval gunfire support but were countered by Blue corvettes, resulting in mutual attrition. Red's Mirage strike squadron faced interception by Blue's F-16s, leading to losses on both sides. Red's engineering battalion faced significant delays due to Blue's reinforced minefields, while Red's kamikaze UAVs were largely intercepted by Blue's UAVs, preserving Blue's radar capabilities.\n\nEngagements:\n[BLUE→RED] Engaged by Blue corvettes during naval gunfire support\n[RED→BLUE] Engaged by Red destroyers providing naval gunfire support\n[BLUE→RED] Intercepted by Blue F-16 squadron\n[RED→BLUE] Engaged by Red Mirage strike squadron\n[BLUE→RED] Delayed by reinforced Blue minefields\n[BLUE→RED] Intercepted by Blue UAVs while targeting coastal radar\n[RED→BLUE] Engaged by Red kamikaze UAVs\n[BLUE→RED] Suppressed by Blue electronic countermeasures\n[BLUE→RED] Suppressed by Blue's defensive posture",
       "narrative_ar_fallback": "اندفاع نحو 40-50 كم",
       "bls_status_baseline": {
         "BLS-1": "THREATENED"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-8-031",
+        "B-d2-3-048",
+        "B-d2-12-059"
+      ],
+      "blue_destroyed_count_baseline": 3,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d2-4-004",
@@ -8634,10 +8680,10 @@
       "objective_status_baseline": "CONTESTED",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.98,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's attempt to land the 1st Armored Division faced significant challenges. Blue's reinforced minefields delayed Red's landing ships, with R-d3-60-028 losing 2 hulls to mines. Red's kamikaze UAVs targeted Blue's coastal radar, but Blue's ISR UAVs intercepted 3 of them. Red's attack helicopters faced Blue's air defense sorties, resulting in the loss of 1 airframe. Blue's electronic countermeasures effectively disrupted Red's jamming efforts, maintaining Blue's C2 integrity.",
+      "narrative_en_fallback": "Red's attempt to land the 1st Armored Division faced significant challenges. Blue's reinforced minefields delayed Red's landing ships, with R-d3-60-028 losing 2 hulls to mines. Red's kamikaze UAVs targeted Blue's coastal radar, but Blue's ISR UAVs intercepted 3 of them. Red's attack helicopters faced Blue's air defense sorties, resulting in the loss of 1 airframe. Blue's electronic countermeasures effectively disrupted Red's jamming efforts, maintaining Blue's C2 integrity.\n\nEngagements:\n[BLUE→RED] Minefield reinforcement delayed landing ships\n[BLUE→RED] ISR UAVs intercepted kamikaze UAVs\n[BLUE→RED] Air defense sorties countered attack helicopters\n[BLUE→RED] Electronic countermeasures disrupted jamming\n[RED→BLUE] Minefield reinforcement successful\n[RED→BLUE] Intercepted kamikaze UAVs\n[RED→BLUE] Air defense sorties successful\n[RED→BLUE] Countered electronic jamming",
       "narrative_ar_fallback": "المرحلة 3 - الفرقة المدرعة 1 تنزل",
       "bls_status_baseline": {
         "BLS-1": "SECURE"
@@ -8748,16 +8794,22 @@
       "objective_status_baseline": "CONTESTED",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.98,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's attempt to engage Blue's operational reserves was met with effective Blue countermeasures. Blue's F-16s intercepted Red ISR UAVs, reducing their effectiveness. Red's kamikaze UAVs faced strong Blue UAV defenses, resulting in limited impact on Blue's radar installations. Red's SOF raid was partially successful, but Blue maintained C2 integrity. Red's naval gunfire support was countered by Blue's corvettes, maintaining Blue's maritime defense. Red's inland advance was halted by Blue's mobile defense, exploiting Red's culmination.",
+      "narrative_en_fallback": "Red's attempt to engage Blue's operational reserves was met with effective Blue countermeasures. Blue's F-16s intercepted Red ISR UAVs, reducing their effectiveness. Red's kamikaze UAVs faced strong Blue UAV defenses, resulting in limited impact on Blue's radar installations. Red's SOF raid was partially successful, but Blue maintained C2 integrity. Red's naval gunfire support was countered by Blue's corvettes, maintaining Blue's maritime defense. Red's inland advance was halted by Blue's mobile defense, exploiting Red's culmination.\n\nEngagements:\n[BLUE→RED] F-16 squadron intercepts ISR UAVs\n[RED→BLUE] Sorties flown to intercept ISR UAVs\n[BLUE→RED] Kamikaze UAVs intercepted by Blue UAVs\n[RED→BLUE] UAVs deployed to intercept kamikaze UAVs\n[BLUE→RED] SOF raid partially disrupted by Blue C2 defense\n[RED→BLUE] SOF raid impact absorbed\n[BLUE→RED] Naval gunfire support countered by corvettes\n[RED→BLUE] Countering Red destroyers' naval gunfire\n[BLUE→RED] Red advance halted by Blue mobile defense\n[RED→BLUE] Engaging Red forces at phase line",
       "narrative_ar_fallback": "الاحتياطي الأزرق العملياتي (لواء 73)",
       "bls_status_baseline": {
         "BLS-1": "SECURE"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-54-009",
+        "B-d1-504-021",
+        "B-d1-8-031",
+        "B-d2-3-048",
+        "B-d2-12-059"
+      ],
+      "blue_destroyed_count_baseline": 5,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d3-41-005",
@@ -8863,16 +8915,22 @@
       "objective_status_baseline": "CONTESTED",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.97,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's multi-domain operations faced significant Blue resistance. Red's destroyers engaged Blue corvettes, but Blue's naval forces managed to disrupt Red's gunfire support. Red's Mirage strike was intercepted by Blue's F-16s, resulting in airframe losses. Red's kamikaze UAVs partially degraded Blue's coastal radar, but Blue's UAVs intercepted a significant portion. Red's mechanized infantry advance was halted by Blue's armored brigade, maintaining Blue's defensive line. Force ratio 0.97:1 indicates Red's culmination per ADP 3-0.",
+      "narrative_en_fallback": "Red's multi-domain operations faced significant Blue resistance. Red's destroyers engaged Blue corvettes, but Blue's naval forces managed to disrupt Red's gunfire support. Red's Mirage strike was intercepted by Blue's F-16s, resulting in airframe losses. Red's kamikaze UAVs partially degraded Blue's coastal radar, but Blue's UAVs intercepted a significant portion. Red's mechanized infantry advance was halted by Blue's armored brigade, maintaining Blue's defensive line. Force ratio 0.97:1 indicates Red's culmination per ADP 3-0.\n\nEngagements:\n[BLUE→RED] Corvette engagement disrupted naval gunfire support\n[RED→BLUE] Destroyer engagement with corvettes\n[BLUE→RED] F-16 interception of Mirage strike\n[RED→BLUE] Mirage strike engagement\n[BLUE→RED] Kamikaze UAVs intercepted by Blue UAVs\n[RED→BLUE] UAV engagement with kamikaze UAVs\n[BLUE→RED] SOF raids absorbed by hardened C2 nodes\n[BLUE→RED] Mechanized infantry advance halted by armored brigade\n[RED→BLUE] Engagement with mechanized infantry\n[BLUE→RED] Electronic countermeasures disrupted jamming operations\n[RED→BLUE] EW operations jamming communications",
       "narrative_ar_fallback": "اقتراب من نقطة الانهيار",
       "bls_status_baseline": {
         "BLS-1": "SECURE"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-54-009",
+        "B-d1-501-014",
+        "B-d1-505-022",
+        "B-d1-8-031",
+        "B-d2-3-048"
+      ],
+      "blue_destroyed_count_baseline": 5,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d2-4-004",
@@ -8979,16 +9037,22 @@
       "objective_status_baseline": "CONTESTED",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.97,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's final push involved a coordinated SSM strike, naval gunfire, and air assaults. Blue's defenses held firm, intercepting a significant portion of Red's air and missile threats. Red's mechanized forces faced strong resistance from Blue's armored brigade, preventing a breakthrough. EW operations were evenly matched, maintaining a stalemate in communications disruption.",
+      "narrative_en_fallback": "Red's final push involved a coordinated SSM strike, naval gunfire, and air assaults. Blue's defenses held firm, intercepting a significant portion of Red's air and missile threats. Red's mechanized forces faced strong resistance from Blue's armored brigade, preventing a breakthrough. EW operations were evenly matched, maintaining a stalemate in communications disruption.\n\nEngagements:\n[RED→BLUE] SSM strike suppression of artillery capabilities\n[BLUE→RED] Engagement by Blue corvettes\n[RED→BLUE] Naval gunfire support engagement\n[BLUE→RED] Intercepted by Rafale squadron\n[RED→BLUE] Engaged by Mirage squadron\n[RED→BLUE] UAV strike on radar installations\n[BLUE→RED] SOF raids countered by chemical defense battalion\n[RED→BLUE] SOF raids on logistics nodes\n[BLUE→RED] Mechanized push countered by armored brigade\n[RED→BLUE] Engagement with Red mechanized forces\n[BLUE→RED] EW operations stalemate\n[RED→BLUE] EW operations stalemate",
       "narrative_ar_fallback": "ضربة صواريخ أحمر نهائية + دفع أخير",
       "bls_status_baseline": {
         "BLS-1": "SECURE"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-54-009",
+        "B-d1-2-013",
+        "B-d2-555-019",
+        "B-d1-8-031",
+        "B-d2-1-052"
+      ],
+      "blue_destroyed_count_baseline": 5,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d2-9-017",
@@ -9095,16 +9159,22 @@
       "objective_status_baseline": "DENIED",
       "decision_point_baseline": null,
       "force_ratio_baseline": 0.97,
-      "ew_effect_baseline": null,
+      "ew_effect_baseline": "BLUE_ADV",
       "mobility_state_baseline": null,
       "logistics_state_baseline": null,
-      "narrative_en_fallback": "Red's final push towards Objective X was met with strong Blue resistance. Red's air strike on Blue's logistics was partially intercepted by Blue air patrols, resulting in moderate disruption. Red's kamikaze UAVs achieved limited success against Blue's forward defenses, with significant losses to Blue's counter-UAV operations. Red's SOF raids caused temporary disruption to Blue's C2, but Blue's mobile defense effectively countered Red's ground advance, forcing Red to culminate. EW operations were evenly matched, maintaining a degraded communication environment for both sides.",
+      "narrative_en_fallback": "Red's final push towards Objective X was met with strong Blue resistance. Red's air strike on Blue's logistics was partially intercepted by Blue air patrols, resulting in moderate disruption. Red's kamikaze UAVs achieved limited success against Blue's forward defenses, with significant losses to Blue's counter-UAV operations. Red's SOF raids caused temporary disruption to Blue's C2, but Blue's mobile defense effectively countered Red's ground advance, forcing Red to culminate. EW operations were evenly matched, maintaining a degraded communication environment for both sides.\n\nEngagements:\n[BLUE→RED] Intercepted during strike mission on logistics\n[RED→BLUE] Engaged in air-to-air combat during interception\n[BLUE→RED] Kamikaze UAVs expended in saturation strike\n[RED→BLUE] Countered Red's UAV saturation strike\n[BLUE→RED] SOF raids on C2 installations\n[RED→BLUE] Disrupted by SOF raids\n[BLUE→RED] Countered by mobile defense\n[RED→BLUE] Engaged in mobile defense against Red advance\n[BLUE→RED] Counter-jamming operations\n[RED→BLUE] Persistent jamming of communications",
       "narrative_ar_fallback": "الحسم النهائي عند الهدف X",
       "bls_status_baseline": {
         "BLS-1": "SECURE"
       },
-      "blue_destroyed_baseline": [],
-      "blue_destroyed_count_baseline": 0,
+      "blue_destroyed_baseline": [
+        "B-d1-54-009",
+        "B-d1-504-021",
+        "B-d1-505-022",
+        "B-d2-3-048",
+        "B-d2-12-059"
+      ],
+      "blue_destroyed_count_baseline": 5,
       "red_losses_cumulative_baseline": 0,
       "red_degraded_baseline": [
         "R-d3-405-014",
@@ -9204,6 +9274,6 @@
   ],
   "regression_expect": null,
   "schema_variant": "w3-rich",
-  "ported_at": "2026-05-21T13:40:56.337Z",
+  "ported_at": "2026-05-21T14:09:09.319Z",
   "ported_from": "UI_MOdified/Wargame3/{step00..16.geojson}"
 }

@@ -841,13 +841,30 @@ function buildW3Scenario(stepJsons, folderName, meta) {
                     ? p.current_strength / p.initial_strength : 1.0;
                 redStrength[p.uid] = +(str.toFixed(3));
                 if (p.is_affected && p.status_change && p.status_change !== 'unchanged') redDegraded.push(p.uid);
-            } else if (p.side === 'BLUE' && p.destroyed === true) {
-                blueDestroyed.push(p.uid);
+            } else if (p.side === 'BLUE') {
+                // W3 schema marks affected blue units via is_affected+status_change,
+                // not destroyed===true. Treat any damage (partial or heavy) as a
+                // degraded unit so per_unit_deltas drives map attack effects.
+                const isAffected = p.is_affected && p.status_change &&
+                                   p.status_change !== 'unchanged' && p.status_change !== 'ok';
+                const isDestroyed = p.destroyed === true || p.status_change === 'destroyed';
+                if (isAffected || isDestroyed) blueDestroyed.push(p.uid);
             }
         }
 
         // BLS status mirrors Red's momentum: LIMITED pre-H, THREATENED early assault, SECURE once inland.
         const blsStatus = i < 5 ? 'LIMITED' : i < 12 ? 'THREATENED' : 'SECURE';
+
+        // Collect engagement arc descriptions for a detailed narrative.
+        const arcDescriptions = [];
+        for (const f of stepJsons[i].features) {
+            const p = f && f.properties;
+            if (!p || p.kind !== 'engagement_arc') continue;
+            if (p.cause_what) arcDescriptions.push(`[${p.actor_side}→${p.target_side}] ${p.cause_what}`);
+        }
+        const detailedNarEn = cp.combined_effect
+            ? cp.combined_effect + (arcDescriptions.length ? '\n\nEngagements:\n' + arcDescriptions.join('\n') : '')
+            : arcDescriptions.join('\n');
 
         steps.push({
             index:                          i,
@@ -858,10 +875,10 @@ function buildW3Scenario(stepJsons, folderName, meta) {
             objective_status_baseline:      objStatus,
             decision_point_baseline:        null,
             force_ratio_baseline:           frLocal,
-            ew_effect_baseline:             null,
+            ew_effect_baseline:             cp.step_advantage || null,
             mobility_state_baseline:        null,
             logistics_state_baseline:       null,
-            narrative_en_fallback:          cp.combined_effect || '',
+            narrative_en_fallback:          detailedNarEn,
             narrative_ar_fallback:          cp.phase_name_ar   || '',
             bls_status_baseline:            { 'BLS-1': blsStatus },
             blue_destroyed_baseline:        unique(blueDestroyed),

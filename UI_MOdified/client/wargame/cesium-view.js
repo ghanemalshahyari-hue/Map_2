@@ -244,13 +244,26 @@
 
         // Units
         function placeUnit(unit, side) {
-            if (!unit || !unit.uid) return;
+            // Blue units use unit_uid; red units use uid
+            const uid = unit.uid || unit.unit_uid || unit.base_id;
+            if (!uid) return;
+
             const sidc = unit.sidc || (side === 'RED' ? 'SHG---------' : 'SFG---------');
             const img  = billboardFor(sidc, 42);
-            const coord = unit.coord || unit.appear_coord || [0, 0];
+
+            // Prefer step-0 position from the step-coord lookup table.
+            // Red unit.coord is a placeholder [18,32] for all reds; blue
+            // unit.coord is the initial position and is usually valid.
+            const stepTable = side === 'RED'
+                ? scenario.red_unit_step_coords
+                : scenario.blue_unit_step_coords;
+            const step0 = stepTable && stepTable[uid] && stepTable[uid][0];
+            const coord = step0 || unit.coord || unit.appear_coord;
+            if (!coord || !Number.isFinite(coord[0]) || !Number.isFinite(coord[1])) return;
+
             const [lon, lat] = coord;
             const alt  = altFor(unit);
-            const key  = side + '_' + unit.uid;
+            const key  = side + '_' + uid;
             _addEntity(key, Cesium.Cartesian3.fromDegrees(lon, lat, alt), {
                 billboard: {
                     image:           img,
@@ -260,7 +273,7 @@
                     color:           Cesium.Color.WHITE,
                 },
                 label: {
-                    text:            unit.label || unit.uid,
+                    text:            unit.label || uid,
                     font:            '10px sans-serif',
                     fillColor:       side === 'RED'
                                      ? Cesium.Color.fromCssColorString('#ff8a8a')
@@ -347,7 +360,7 @@
         }
 
         for (const u of (sc.red_units          || [])) syncUnit(u.uid, 'RED',  u);
-        for (const u of (sc.blue_units_initial || [])) syncUnit(u.uid, 'BLUE', u);
+        for (const u of (sc.blue_units_initial || [])) syncUnit(u.uid || u.unit_uid || u.base_id, 'BLUE', u);
 
         // ── Engagement arcs ──────────────────────────────────────────────
         const stepRow = Array.isArray(sc.steps) ? sc.steps[stepIndex] : null;

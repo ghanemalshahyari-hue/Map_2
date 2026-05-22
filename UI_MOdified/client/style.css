@@ -5343,3 +5343,336 @@ body.orbat-dock-resizing .map-workspace .leaflet-bottom {
     color: #fecaca;
     border: 1px solid rgba(239,68,68,0.5);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+ * PR-1 — Operational Shell Foundation
+ *
+ * Adds: top + bottom classification bars, footer status bar, header
+ * clock, side picker (BLUE/RED/GOD). All sharp-corner, dense,
+ * monospace where numeric, no decorative animation. RTL-safe via
+ * logical flex order. Foundation only — these surfaces do NOT
+ * filter the map or alter any existing behaviour.
+ *
+ * Layout note: .app-shell is already display:flex column with
+ * .workspace at flex:1. Adding fixed-height siblings (bars + footer)
+ * causes the workspace (and the map inside it) to shrink by the
+ * combined ~72 px. coord-readout.js calls map.invalidateSize() after
+ * binding so Leaflet recomputes its visible rect.
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Classification bars ───────────────────────────────────────────── */
+.classification-bar {
+    flex-shrink: 0;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    font-family: 'JetBrains Mono', 'Cascadia Mono', 'Consolas', ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #0f172a;
+    background: #cbd5e1;             /* neutral gray — unclassified marker; production deployments override per classification level */
+    border-bottom: 1px solid rgba(15, 23, 42, 0.25);
+    user-select: none;
+    z-index: 1200;
+}
+.classification-bar--bottom {
+    border-bottom: 0;
+    border-top: 1px solid rgba(15, 23, 42, 0.25);
+}
+[data-theme="light"] .classification-bar,
+.theme-light .classification-bar {
+    color: #1e293b;
+    background: #e2e8f0;
+}
+
+/* ── Status footer ─────────────────────────────────────────────────── */
+.app-statusbar {
+    flex-shrink: 0;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 0 14px;
+    background: var(--panel);
+    border-top: 1px solid var(--panel-border);
+    font-size: 11px;
+    color: var(--text-muted);
+    z-index: 1050;
+}
+.statusbar-section {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.statusbar-spacer { flex: 1; }
+.statusbar-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    opacity: 0.75;
+}
+.statusbar-value {
+    color: var(--text-main);
+    font-weight: 500;
+}
+.statusbar-value--mono {
+    font-family: 'JetBrains Mono', 'Cascadia Mono', 'Consolas', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+}
+.statusbar-value--side {
+    font-family: 'JetBrains Mono', 'Cascadia Mono', 'Consolas', ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 1px 6px;
+    border-radius: 2px;
+}
+.statusbar-value--side[data-side="blue"] { color: #93c5fd; background: rgba(59, 130, 246, 0.18); }
+.statusbar-value--side[data-side="red"]  { color: #fca5a5; background: rgba(239,  68,  68, 0.18); }
+.statusbar-value--side[data-side="god"]  { color: #fde68a; background: rgba(234, 179,   8, 0.18); }
+
+/* ── Header clock (DTG / Local) ────────────────────────────────────── */
+.header-clock {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 4px 8px;
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    line-height: 1.15;
+    background: rgba(15, 23, 42, 0.25);
+}
+.header-clock-line {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+.header-clock-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    min-width: 36px;
+}
+.header-clock-value {
+    font-family: 'JetBrains Mono', 'Cascadia Mono', 'Consolas', ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text-main);
+}
+
+/* ── Side picker (BLUE / RED / GOD) ────────────────────────────────── */
+.side-picker {
+    display: inline-flex;
+    align-items: stretch;
+    gap: 0;
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.side-picker-btn {
+    appearance: none;
+    background: transparent;
+    color: var(--text-muted);
+    border: 0;
+    border-inline-end: 1px solid var(--panel-border);
+    padding: 5px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    line-height: 1.2;
+    transition: color 0.12s, background 0.12s;
+}
+.side-picker-btn:last-child { border-inline-end: 0; }
+.side-picker-btn:hover { color: var(--text-main); background: rgba(148, 163, 184, 0.10); }
+.side-picker-btn--active {
+    color: var(--text-main);
+    background: rgba(148, 163, 184, 0.18);
+}
+.side-picker-btn[data-side-color="blue"].side-picker-btn--active {
+    color: #93c5fd;
+    background: rgba(59, 130, 246, 0.22);
+    box-shadow: inset 0 -2px 0 #3b82f6;
+}
+.side-picker-btn[data-side-color="red"].side-picker-btn--active {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.22);
+    box-shadow: inset 0 -2px 0 #ef4444;
+}
+.side-picker-btn[data-side-color="god"].side-picker-btn--active {
+    color: #fde68a;
+    background: rgba(234, 179, 8, 0.20);
+    box-shadow: inset 0 -2px 0 #ca8a04;
+}
+
+/* RTL: flex order already mirrors via [dir="rtl"]; ensure the inline
+   border between buttons reads correctly in RTL (border-inline-end
+   already adapts). No further overrides needed. */
+
+/* ═══════════════════════════════════════════════════════════════════
+ * PR-3 — Selected Unit Panel Foundation
+ *
+ * Right-edge overlay anchored inside .workspace. Always mounted;
+ * shows a quiet empty state until a unit is clicked on the map.
+ * Sharp, dense, monospace for SIDC/MGRS/DD. Uses existing tokens —
+ * no new design language. Foundation only: no fake fuel/ammo/damage.
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* Make .workspace a positioning container so the absolute panel inside
+   anchors to the workspace rect, not the viewport. .workspace was a plain
+   flex container; this is a safe additive change. */
+.workspace { position: relative; }
+
+.unit-panel {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: 320px;
+    background: var(--panel);
+    border-inline-start: 1px solid var(--panel-border);
+    display: flex;
+    flex-direction: column;
+    z-index: 900;          /* below chat-sidebar (which floats over)        */
+    color: var(--text-main);
+    font-size: 12px;
+    overflow: hidden;
+}
+
+.unit-panel-header {
+    flex-shrink: 0;
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid var(--panel-border);
+    background: var(--panel-2);
+}
+.unit-panel-eyebrow {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+.unit-panel-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.25;
+}
+.unit-panel--empty .unit-panel-title {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.unit-panel-chips {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    min-height: 18px;
+}
+.up-side-chip,
+.up-echelon-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 18px;
+    padding: 0 7px;
+    font-family: 'JetBrains Mono', 'Cascadia Mono', 'Consolas', ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    border-radius: 2px;
+    background: rgba(148, 163, 184, 0.18);
+    color: var(--text-main);
+}
+.up-side-chip[data-side="friendly"] { color: #93c5fd; background: rgba(59, 130, 246, 0.22); }
+.up-side-chip[data-side="hostile"]  { color: #fca5a5; background: rgba(239,  68,  68, 0.22); }
+.up-side-chip[data-side="neutral"]  { color: #86efac; background: rgba( 34, 197,  94, 0.22); }
+.up-side-chip[data-side="unknown"]  { color: #fde68a; background: rgba(234, 179,   8, 0.22); }
+
+.unit-panel-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 10px 14px 16px;
+}
+.unit-panel-empty-hint {
+    margin: 12px 0 0;
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.up-section {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--panel-border);
+}
+.up-section:first-of-type {
+    border-top: 0;
+    padding-top: 6px;
+}
+.up-section-title {
+    margin: 0 0 8px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.up-kv {
+    display: grid;
+    grid-template-columns: minmax(95px, 38%) 1fr;
+    column-gap: 10px;
+    row-gap: 5px;
+    margin: 0;
+}
+.up-kv dt {
+    color: var(--text-muted);
+    font-size: 11px;
+    line-height: 1.4;
+    padding: 1px 0;
+}
+.up-kv dd {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 1px 0;
+    word-break: break-word;
+}
+.up-mono {
+    font-family: 'JetBrains Mono', 'Cascadia Mono', 'Consolas', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+}
+.up-na {
+    color: var(--text-muted);
+    font-style: italic;
+    font-weight: 400;
+}
+
+.up-section--advisor .up-advisor-note {
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px dashed var(--panel-border);
+    border-radius: 4px;
+    background: rgba(148, 163, 184, 0.06);
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}

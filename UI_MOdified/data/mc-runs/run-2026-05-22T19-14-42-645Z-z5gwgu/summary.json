@@ -1,0 +1,79 @@
+{
+  "runId": "run-2026-05-22T19-14-42-645Z-z5gwgu",
+  "scenarioName": "wargame3",
+  "model": null,
+  "trialsRequested": 3,
+  "trialsCompleted": 3,
+  "trialsFailed": 0,
+  "parallelism": 2,
+  "outcomeCounts": {
+    "CAPTURED": 0,
+    "DENIED": 3,
+    "THREATENED_terminal": 0,
+    "DORMANT_terminal": 0,
+    "other": 0
+  },
+  "finalPhaseLineKm": {
+    "n": 3,
+    "min": 95,
+    "p10": 95,
+    "p25": 95,
+    "p50": 95,
+    "p75": 95,
+    "p90": 95,
+    "max": 95,
+    "mean": 95
+  },
+  "finalBlueDestroyed": {
+    "n": 3,
+    "min": 0,
+    "p10": 0,
+    "p25": 0,
+    "p50": 0,
+    "p75": 0,
+    "p90": 0,
+    "max": 0,
+    "mean": 0
+  },
+  "finalRedCoyEqLosses": {
+    "n": 3,
+    "min": 2,
+    "p10": 2,
+    "p25": 2,
+    "p50": 2,
+    "p75": 2,
+    "p90": 2,
+    "max": 2,
+    "mean": 2
+  },
+  "fallbackStepCounts": {
+    "n": 3,
+    "min": 0,
+    "p10": 0,
+    "p25": 0,
+    "p50": 0,
+    "p75": 0,
+    "p90": 0,
+    "max": 0,
+    "mean": 0
+  },
+  "fallbackReasonCounts": {},
+  "startedAt": "2026-05-22T19:14:42.645Z",
+  "endedAt": "2026-05-22T19:14:42.741Z",
+  "durationMs": 96,
+  "coaParams": {
+    "reserve_commit_hour": 72,
+    "posture": "deliberate",
+    "main_effort_axis": "BLS-3",
+    "weather": "clear"
+  },
+  "provider": "auto",
+  "mockMode": true,
+  "outcomePct": {
+    "CAPTURED": 0,
+    "DENIED": 1,
+    "THREATENED_terminal": 0,
+    "DORMANT_terminal": 0,
+    "other": 0
+  }
+}

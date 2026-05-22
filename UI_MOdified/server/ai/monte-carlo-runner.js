@@ -116,7 +116,12 @@ async function runOneTrial(run, trialIdx, sem) {
         await sem.acquire();
         let result;
         try {
-            result = await adjudicator.adjudicateStep({
+            // Boundary plan Step 1: MC routes through the headless
+            // propose+commit path so every per-trial state change is
+            // journalled with source='llm-narrator' and operator_id=
+            // 'system:mc-trial'. MC never reaches the operator-approval
+            // surface; structural separation, not opt-in bypass.
+            result = await adjudicator.adjudicateStepHeadless({
                 scenario,
                 stepIndex: i,
                 prevState: prev,
@@ -128,6 +133,8 @@ async function runOneTrial(run, trialIdx, sem) {
                 timeoutMs: run.timeoutMs || null,
                 mockMode:  run.mockMode === true,
                 provider:  run.provider || null,
+                runId:     run.id,
+                headless:  { reason: 'mc-trial' },
             });
         } catch (err) {
             sem.release();

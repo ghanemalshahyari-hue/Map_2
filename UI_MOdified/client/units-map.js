@@ -350,6 +350,17 @@
         m._unitId   = unit.id;
         m._unitData = unit;
         m.bindPopup(() => buildPopupContent(m._unitData));
+        // PR-3 (Selected Unit Panel Foundation): emit a namespaced selection
+        // event alongside Leaflet's bindPopup. Does not stop propagation —
+        // the popup still opens, drag still works, edit modal still opens.
+        // The new unit-panel module listens for this; no existing module does.
+        m.on('click', () => {
+            try {
+                document.dispatchEvent(new CustomEvent('rmooz:unit-selected', {
+                    detail: { unit: m._unitData, selectedAt: Date.now() },
+                }));
+            } catch (_) { /* never throw on selection */ }
+        });
         m.on('dragend', async () => {
             const dropped = m.getLatLng();
             // Enforce the 1000 m minimum spacing rule. We exclude this

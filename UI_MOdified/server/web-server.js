@@ -657,16 +657,23 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // Single-step AI adjudication. Computes the full dynamic state for one
-    // step of the 12-step wargame template. The client passes the loaded
-    // scenario name and the previous step's state; we return the next state
-    // (LLM-computed on success, scenario baseline on fallback).
+    // Legacy single-step AI adjudication (boundary plan: shim route).
+    //
+    // Originally this route returned the LLM-produced state directly,
+    // mutating combat state without any operator gate. After Step 1 of
+    // the AI/sim boundary plan, it routes through adjudicateStepHeadless
+    // which does propose + auto-commit in-process — same wire shape,
+    // but every state change now passes through the commit journal with
+    // source='legacy-shim' provenance. New clients should call
+    // /api/sim/propose + /api/sim/commit instead; this route is
+    // preserved unchanged-on-the-wire until Step 2 ships the approval UI.
     if (pathname === '/api/ai/adjudicate' && req.method === 'POST') {
         readJsonBody(req, { maxBytes: 2_000_000 }).then(async (body) => {
             body = body || {};
             const scenarioName = body.scenarioName || scenarios.DEFAULT_NAME;
             const scenario = scenarios.loadScenario(scenarioName);
-            return adjudicator.adjudicateStep({
+            const runId = body.runId || body.run_id || `legacy-shim-${scenarioName}`;
+            return adjudicator.adjudicateStepHeadless({
                 scenario,
                 stepIndex:    body.stepIndex,
                 prevState:    body.prevState   || null,
@@ -679,6 +686,8 @@ const server = http.createServer((req, res) => {
                 mockMode:     body.mockMode === true,
                 approvedActions: body.approvedActions || null,
                 provider:     body.provider    || null,
+                runId,
+                headless:     { reason: 'legacy-shim' },
             });
         }).then(r => {
             // Even on fallback we return 200 — the client always gets a
@@ -686,6 +695,66 @@ const server = http.createServer((req, res) => {
             // tell the UI whether to badge the step.
             sendJson(res, 200, r);
         }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+
+    // ── AI/Sim boundary contract — propose + commit (plan Step 1) ────
+    //
+    // POST /api/sim/propose
+    //   body:    { scenarioName, stepIndex, prevState?, runId?, trialId?,
+    //              trialSeed?, trialHintId?, coaParams?, model?, timeoutMs?,
+    //              mockMode?, approvedActions?, provider? }
+    //   returns: Proposal (proposal_id, projected_state, projected_validation,
+    //            proposed_actions[], rationale, narrative_*, source).
+    //            NO state is mutated; nothing is written to disk.
+    //
+    // POST /api/sim/commit
+    //   body:    { proposal_id, accepted_action_ids: string[] | 'ALL',
+    //              rejected_action_ids?, operator_id?, headless?, mods? }
+    //   returns: { ok, committed_state, journal_seq, post_state_hash }
+    //   Writes one journal row per action (accepted or rejected) to
+    //   data/journal/<runId>.jsonl. This is the ONLY durable state-
+    //   mutation path in the system.
+    if (pathname === '/api/sim/propose' && req.method === 'POST') {
+        readJsonBody(req, { maxBytes: 2_000_000 }).then(async (body) => {
+            body = body || {};
+            const scenarioName = body.scenarioName || scenarios.DEFAULT_NAME;
+            const scenario = scenarios.loadScenario(scenarioName);
+            const runId = body.runId || body.run_id || `manual-${scenarioName}`;
+            const proposal = await adjudicator.proposeStep({
+                scenario,
+                stepIndex:    body.stepIndex,
+                prevState:    body.prevState   || null,
+                trialId:      body.trialId     || 'manual',
+                trialSeed:    body.trialSeed   != null ? body.trialSeed : null,
+                trialHintId:  Number.isInteger(body.trialHintId) ? body.trialHintId : 0,
+                coaParams:    body.coaParams   || null,
+                model:        body.model       || null,
+                timeoutMs:    body.timeoutMs   || null,
+                mockMode:     body.mockMode === true,
+                approvedActions: body.approvedActions || null,
+                provider:     body.provider    || null,
+                runId,
+            });
+            // Strip the internal _producer field before sending over the
+            // wire — raw LLM I/O is server-side state, not part of the
+            // public Proposal contract.
+            const { _producer, ...wireProposal } = proposal;
+            return wireProposal;
+        }).then(p => sendJson(res, 200, p))
+          .catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+
+    if (pathname === '/api/sim/commit' && req.method === 'POST') {
+        readJsonBody(req, { maxBytes: 200_000 }).then(async (body) => {
+            body = body || {};
+            const r = adjudicator.commitStep(body);
+            // Don't ship producer artifacts on the commit response either.
+            const { _producer, ...wire } = r;
+            return wire;
+        }).then(r => sendJson(res, 200, r))
+          .catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
         return;
     }
 

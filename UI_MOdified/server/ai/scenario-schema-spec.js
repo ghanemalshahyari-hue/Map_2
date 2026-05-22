@@ -106,6 +106,15 @@ const TOP_LEVEL = Object.freeze({
         desc: 'W3: { uid: [prev_coord_step0, …] } animation start positions for blue.' },
     off_map_markers:      { required: false, type: 'array',
         desc: 'W3: strategic-level bases/SSMs outside the AO. Each: { id, side, type, coord, name_ar?, name_en? }. Phase-independent.' },
+
+    // ── PR-1 (Operational Shell Foundation): data foundation for per-side views.
+    // Both optional today. scenario-loader default-fills BLUE/RED/NEUTRAL +
+    // a HOSTILE/NEUTRAL/FRIENDLY posture matrix so legacy W1/W2/W3 scenarios
+    // load unchanged. Producers may also emit these explicitly.
+    sides: { required: false, type: 'array',
+        desc: 'Per-side identity. Each: { id, name_en?, name_ar?, color? }. Default: BLUE/RED/NEUTRAL.' },
+    postures: { required: false, type: 'object',
+        desc: 'Pairwise posture matrix postures[from][to] ∈ { FRIENDLY | NEUTRAL | UNFRIENDLY | HOSTILE }. Default: BLUE↔RED HOSTILE, both NEUTRAL to NEUTRAL.' },
 });
 
 // ── Sub-shapes for nested keys ─────────────────────────────────────

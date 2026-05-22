@@ -12,6 +12,14 @@
 <body>
     <div class="app-shell">
 
+        <!-- ═══════════ CLASSIFICATION BAR (TOP) — PR-1 ═══════════ -->
+        <!-- Operational shell foundation. Text resolved by i18n.js's
+             [data-i18n] DOM scan on every applyLanguage(); the static
+             content here is the early-boot fallback so the bar is never
+             blank. classification-bar.js still exposes apply() for
+             future per-config (per-scenario) overrides (Step 2+). -->
+        <div id="classification-top" class="classification-bar classification-bar--top" role="status" aria-live="off" data-i18n="classification-text">UNCLASSIFIED // TRAINING USE ONLY</div>
+
         <!-- ═══════════ HEADER ═══════════ -->
         <header class="app-header">
             <div class="header-left">
@@ -21,6 +29,29 @@
                 </div>
             </div>
             <div class="header-right">
+                <!-- PR-1: clock + side picker. Three small, isolated controls
+                     that surface DTG/Local/Side. The clock module updates
+                     #clock-zulu-dtg and #clock-local every second; the side
+                     picker is built into #side-picker-mount by side-picker.js.
+                     The picker fires rmooz:view-side-changed but does NOT
+                     filter the map yet (foundation only). -->
+                <div class="header-clock" aria-label="Mission clock">
+                    <div class="header-clock-line">
+                        <span class="header-clock-label" data-i18n="clock-zulu-label">ZULU</span>
+                        <!-- dir="ltr" so DTG (digits + Latin month) reads
+                             left-to-right even when the document is RTL.
+                             Pure ASCII renders OK either way, but this
+                             pins the layout against future format changes
+                             that may include mixed Arabic/Latin content. -->
+                        <span class="header-clock-value" id="clock-zulu-dtg" dir="ltr">---</span>
+                    </div>
+                    <div class="header-clock-line">
+                        <span class="header-clock-label" data-i18n="clock-local-label">LOCAL</span>
+                        <span class="header-clock-value" id="clock-local" dir="ltr">--:--:--</span>
+                    </div>
+                </div>
+                <div id="side-picker-mount" class="side-picker" role="group" aria-label="Operational view"></div>
+
                 <button id="chat-toggle-btn" class="header-btn header-btn--chat" type="button" aria-expanded="false" aria-controls="chat-sidebar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     <span data-i18n="chat-btn">Chat</span>
@@ -32,7 +63,21 @@
                     <button type="button" id="server-new-plan-btn" class="header-btn" data-i18n-title="new-plan-title" title="New plan"><span data-i18n="new-plan-btn">+ Plan</span></button>
                     <button type="button" id="server-logout-btn" class="header-btn" data-i18n-title="logout" data-i18n="logout" title="Logout">Logout</button>
                 </div>
-                <button id="theme-toggle-btn" class="header-btn" type="button" data-i18n-title="theme-toggle-title" title="Toggle light/dark theme">☀</button>
+                <button id="theme-toggle-btn" class="header-btn" type="button" data-i18n-title="theme-toggle-title" title="Toggle light/dark theme" aria-label="Toggle light/dark theme">
+                    <!-- Initial glyph = sun (default theme is dark; clicking goes light).
+                         app.js setTheme() swaps this for the moon SVG when light is active. -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2"/>
+                        <path d="M12 20v2"/>
+                        <path d="M4.93 4.93l1.41 1.41"/>
+                        <path d="M17.66 17.66l1.41 1.41"/>
+                        <path d="M2 12h2"/>
+                        <path d="M20 12h2"/>
+                        <path d="M4.93 19.07l1.41-1.41"/>
+                        <path d="M17.66 6.34l1.41-1.41"/>
+                    </svg>
+                </button>
                 <button id="settings-toggle-btn" class="header-btn" type="button" data-i18n-title="settings-toggle-title" title="Settings & tools">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
                 </button>
@@ -93,12 +138,18 @@
                     <span>Import</span>
                 </button>
 
-                <button class="tool-rail-btn" data-tool="wargame" type="button" title="لعبة الحرب · War Game (turn-based session)">
+                <button class="tool-rail-btn" data-tool="wargame" type="button" data-i18n-title="tool-hint-wargame" title="Run an operational scenario (turn-based)">
+                    <!-- "Operational scenario document" — a file outline with content
+                         lines. Replaces the prior shield+check glyph; reads as a
+                         structured operational document rather than a combat icon. -->
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14.5 2 L22 9.5 L9.5 22 L2 14.5 Z"/>
-                        <path d="M9 13l2 2 4-4"/>
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8"  y2="13"/>
+                        <line x1="16" y1="17" x2="8"  y2="17"/>
+                        <line x1="10" y1="9"  x2="8"  y2="9"/>
                     </svg>
-                    <span>War Game</span>
+                    <span data-i18n="tool-wargame">Operational Scenario</span>
                 </button>
 
                 <div class="tool-rail-spacer"></div>
@@ -743,8 +794,8 @@
                 </section>
 
                 <!-- ▸ SETTINGS PANEL (backward-compat shell — selects moved to utility panel) -->
-                <!-- War Game command panel -->
-                <section class="tools-section tool-panel wargame-panel context-section hidden" id="wargame-panel" aria-label="War Game battle control">
+                <!-- Operational Scenario command panel (engine still named "wargame" in code) -->
+                <section class="tools-section tool-panel wargame-panel context-section hidden" id="wargame-panel" aria-label="Operational scenario battle control">
                     <div class="wargame-panel-topline">
                         <span class="wargame-classification">Training</span>
                         <span class="wargame-mode-chip">Turn-based</span>
@@ -758,7 +809,7 @@
                         <span id="wg-state-pill" class="wargame-state-pill is-idle">Idle</span>
                     </div>
 
-                    <div class="wargame-phase-track" aria-label="War game phases">
+                    <div class="wargame-phase-track" aria-label="Operational scenario phases">
                         <span id="wg-phase-setup" class="active">Setup</span>
                         <span id="wg-phase-orders">Orders</span>
                         <span id="wg-phase-resolve">Resolve</span>
@@ -769,7 +820,7 @@
                         <div class="wargame-card-head">
                             <div>
                                 <span class="wargame-eyebrow">Battle control</span>
-                                <strong>War Game</strong>
+                                <strong data-i18n="wg-title">Operational Scenario</strong>
                             </div>
                             <button type="button" id="wg-min" class="wargame-icon-btn" aria-label="Collapse battle control">-</button>
                         </div>
@@ -1084,9 +1135,123 @@
                 </form>
             </aside>
 
+            <!-- ═══════════ SELECTED UNIT PANEL — PR-3 ═══════════ -->
+            <!-- Right-edge (inline-end) overlay inside .workspace. Always
+                 mounted; shows an empty state until a unit is selected on
+                 the map. Populated by client/shell/unit-panel.js in response
+                 to the rmooz:unit-selected event emitted by units-map.js.
+                 PR-3 is UI foundation only — every section that requires
+                 simulation data (fuel/ammo/damage/ROE/etc.) shows a
+                 localized "Not available" placeholder. -->
+            <aside class="unit-panel unit-panel--empty" id="unit-panel" aria-label="Selected unit details">
+                <header class="unit-panel-header">
+                    <span class="unit-panel-eyebrow" data-i18n="up-eyebrow">SELECTED UNIT</span>
+                    <h3 class="unit-panel-title" id="up-name" data-i18n="up-empty-title">No unit selected</h3>
+                    <div class="unit-panel-chips">
+                        <span class="up-side-chip" id="up-side-chip" data-side="" hidden></span>
+                        <span class="up-echelon-chip" id="up-echelon-chip" hidden></span>
+                    </div>
+                </header>
+
+                <div class="unit-panel-body">
+                    <p class="unit-panel-empty-hint" id="up-empty-hint" data-i18n="up-empty-hint">Click any unit on the map to inspect its identity, position, and operational status.</p>
+
+                    <!-- Section 1: Identity -->
+                    <section class="up-section" id="up-section-identity" hidden>
+                        <h4 class="up-section-title" data-i18n="up-section-identity">Unit Identity</h4>
+                        <dl class="up-kv">
+                            <dt data-i18n="up-field-callsign">Callsign</dt>           <dd id="up-callsign">-</dd>
+                            <dt data-i18n="up-field-side">Side</dt>                   <dd id="up-side">-</dd>
+                            <dt data-i18n="up-field-sidc">SIDC</dt>                   <dd id="up-sidc" class="up-mono" dir="ltr">-</dd>
+                            <dt data-i18n="up-field-echelon">Echelon</dt>             <dd id="up-echelon">-</dd>
+                            <dt data-i18n="up-field-code">Code</dt>                   <dd id="up-code" class="up-mono" dir="ltr">-</dd>
+                            <dt data-i18n="up-field-parent">Parent formation</dt>     <dd id="up-parent">-</dd>
+                        </dl>
+                    </section>
+
+                    <!-- Section 2: Position -->
+                    <section class="up-section" id="up-section-position" hidden>
+                        <h4 class="up-section-title" data-i18n="up-section-position">Position</h4>
+                        <dl class="up-kv">
+                            <dt data-i18n="up-field-latlng">Lat / Lng</dt>            <dd id="up-latlng"  class="up-mono" dir="ltr">-</dd>
+                            <dt data-i18n="up-field-mgrs">MGRS</dt>                   <dd id="up-mgrs"    class="up-mono" dir="ltr">-</dd>
+                            <dt data-i18n="up-field-selected-at">Selected at</dt>     <dd id="up-selat"   class="up-mono" dir="ltr">-</dd>
+                        </dl>
+                    </section>
+
+                    <!-- Section 3: Operational Status — placeholders only -->
+                    <section class="up-section" id="up-section-opstatus" hidden>
+                        <h4 class="up-section-title" data-i18n="up-section-opstatus">Operational Status</h4>
+                        <dl class="up-kv">
+                            <dt data-i18n="up-field-status">Status</dt>               <dd class="up-na" data-i18n="up-na">Not available</dd>
+                            <dt data-i18n="up-field-mission">Mission</dt>             <dd class="up-na" data-i18n="up-na">Not available</dd>
+                            <dt data-i18n="up-field-posture">Posture</dt>             <dd class="up-na" data-i18n="up-na">Not available</dd>
+                            <dt data-i18n="up-field-readiness">Readiness</dt>         <dd class="up-na" data-i18n="up-na">Not available</dd>
+                        </dl>
+                    </section>
+
+                    <!-- Section 4: Combat Readiness — placeholders only -->
+                    <section class="up-section" id="up-section-combat" hidden>
+                        <h4 class="up-section-title" data-i18n="up-section-combat">Combat Readiness</h4>
+                        <dl class="up-kv">
+                            <dt data-i18n="up-field-fuel">Fuel</dt>                   <dd class="up-na" data-i18n="up-na">Not available</dd>
+                            <dt data-i18n="up-field-ammo">Ammunition</dt>             <dd class="up-na" data-i18n="up-na">Not available</dd>
+                            <dt data-i18n="up-field-damage">Damage</dt>               <dd class="up-na" data-i18n="up-na">Not available</dd>
+                            <dt data-i18n="up-field-suppression">Suppression</dt>     <dd class="up-na" data-i18n="up-na">Not available</dd>
+                        </dl>
+                    </section>
+
+                    <!-- Section 5: Command & Control — placeholders only -->
+                    <section class="up-section" id="up-section-c2" hidden>
+                        <h4 class="up-section-title" data-i18n="up-section-c2">Command &amp; Control</h4>
+                        <dl class="up-kv">
+                            <dt data-i18n="up-field-roe">ROE</dt>                     <dd class="up-na" data-i18n="up-na">Not available</dd>
+                            <dt data-i18n="up-field-doctrine">Doctrine</dt>           <dd class="up-na" data-i18n="up-na">Not available</dd>
+                            <dt data-i18n="up-field-assigned-mission">Assigned mission</dt> <dd class="up-na" data-i18n="up-na">Not available</dd>
+                        </dl>
+                    </section>
+
+                    <!-- Section 6: Advisor — inactive placeholder -->
+                    <section class="up-section up-section--advisor" id="up-section-advisor" hidden>
+                        <h4 class="up-section-title" data-i18n="up-section-advisor">AI Advisor</h4>
+                        <p class="up-advisor-note" data-i18n="up-advisor-inactive">Advisor will analyze this unit after simulation journal is enabled.</p>
+                    </section>
+                </div>
+            </aside>
+
         </div><!-- /.workspace -->
 
+        <!-- ═══════════ STATUS BAR (FOOTER) — PR-1 ═══════════ -->
+        <!-- Populated at runtime by client/shell/coord-readout.js (cursor
+             + bearing/range from last anchor). Side label echoes the
+             current side-picker value via window.AppShellSidePicker. -->
+        <footer class="app-statusbar" aria-label="Status bar">
+            <span class="statusbar-section statusbar-section--coords">
+                <span class="statusbar-label" data-i18n="coord-cursor-label">CURSOR</span>
+                <!-- dir="ltr" — MGRS (digit + letter + digit groups) and DD
+                     coords always read left-to-right; this prevents the
+                     bidi algorithm from reordering parts if the value
+                     ever contains an Arabic localized hint string. -->
+                <span class="statusbar-value statusbar-value--mono" id="coord-cursor" dir="ltr">---</span>
+            </span>
+            <span class="statusbar-section statusbar-section--bearing">
+                <span class="statusbar-label" data-i18n="coord-bearing-range-label">B/R</span>
+                <!-- No dir attribute here: the placeholder may be the
+                     localized "click map to set anchor" hint (Arabic in
+                     ar mode) which must read RTL. Once an anchor is set,
+                     the value is "287° / 6.43 km" — pure ASCII renders
+                     LTR correctly under both directions. -->
+                <span class="statusbar-value statusbar-value--mono" id="coord-bearing-range">---</span>
+            </span>
+            <span class="statusbar-spacer"></span>
+            <span class="statusbar-section statusbar-section--side">
+                <span class="statusbar-label" data-i18n="side-picker-title">Operational view</span>
+                <span class="statusbar-value statusbar-value--side" id="statusbar-current-side" dir="ltr">BLUE</span>
+            </span>
+        </footer>
 
+        <!-- ═══════════ CLASSIFICATION BAR (BOTTOM) — PR-1 ═══════════ -->
+        <div id="classification-bottom" class="classification-bar classification-bar--bottom" role="status" aria-live="off" data-i18n="classification-text">UNCLASSIFIED // TRAINING USE ONLY</div>
 
     </div><!-- /.app-shell -->
 
@@ -1698,6 +1863,39 @@
     <script src="wargame/adjudicator-hud.js?v=20"></script>
     <script src="ops-panel.js?v=1"></script>
     <script src="map-hide-panels.js?v=1"></script>
+
+    <!-- PR-1: Operational shell foundation. Four small, isolated modules.
+         Each self-initializes on DOMContentLoaded and idempotently rebinds
+         on hot reload. No dependencies between them. Behavior restriction:
+         the side picker fires events but does NOT filter the map yet. -->
+    <script src="shell/clock.js?v=1"></script>
+    <script src="shell/classification-bar.js?v=1"></script>
+    <script src="shell/coord-readout.js?v=1"></script>
+    <script src="shell/side-picker.js?v=1"></script>
+    <script src="shell/unit-panel.js?v=1"></script>
+    <script>
+        // Mirror the chosen side into the footer status bar. Tiny inline
+        // bridge so the footer's `#statusbar-current-side` stays in sync
+        // without coupling side-picker.js to the footer DOM.
+        (function () {
+            'use strict';
+            function paint(side) {
+                const el = document.getElementById('statusbar-current-side');
+                if (!el) return;
+                el.textContent = side || 'BLUE';
+                el.setAttribute('data-side', (side || 'BLUE').toLowerCase());
+            }
+            document.addEventListener('rmooz:view-side-changed', (e) => {
+                paint(e && e.detail && e.detail.side);
+            });
+            document.addEventListener('DOMContentLoaded', () => {
+                const initial = window.AppShellSidePicker && window.AppShellSidePicker.getSide
+                    ? window.AppShellSidePicker.getSide()
+                    : 'BLUE';
+                paint(initial);
+            });
+        })();
+    </script>
 
     <!-- New modular panel system (ES modules — run after app.js) -->
     <script type="module" src="ui/utils/app-bridge.js"></script>

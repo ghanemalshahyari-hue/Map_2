@@ -32,6 +32,11 @@ const validator    = require('./adjudicator-validator');
 const learningStore = require('./learning-store');
 const { extractJson } = require('./red-team-agent');
 
+// Boundary plan Step 1: proposals and journal own the wire-level commit
+// contract. Loaded lazily from the new server/sim modules.
+const journal      = require('../sim/journal');
+const proposalStore = require('../sim/proposal-store');
+
 // 12-char fingerprint of a system prompt — small enough to log into every
 // step row, long enough to detect drift if the file is edited (item #4).
 function shortHash(s) {
@@ -839,8 +844,241 @@ async function adjudicateStep(args) {
     };
 }
 
+// ═════════════════════════════════════════════════════════════════════
+// AI/Sim boundary contract (plan Step 1)
+// ─────────────────────────────────────────────────────────────────────
+//
+// Three exports below — proposeStep, commitStep, adjudicateStepHeadless —
+// implement the propose/commit split that takes the LLM out of the state-
+// mutation path. The existing adjudicateStep above is preserved as the
+// internal *producer*: it still calls the LLM, runs the validator, and
+// returns the legacy { ok, state, validation, meta } shape. New callers
+// wrap that producer in a Proposal envelope and route every state change
+// through commitStep, which is the only path that writes to the journal.
+//
+// Rules from the plan:
+//   R1 (no state without commit) — commitStep is the single durable write.
+//   R2 (no commit without intent) — commitStep requires operator_id OR
+//     headless.reason; the validator rejects requests missing both.
+//   R3 (AI emits proposals, never state) — proposeStep returns Proposal;
+//     adjudicateStep's "state" field is rewritten as "projected_state" and
+//     never reaches storage until commit fires.
+
+// Default run id used by manual (single-step) callers that don't supply
+// one. Keeps the journal organized by scenario for the common case.
+function defaultRunId(args) {
+    const scenarioName = (args && args.scenario && args.scenario.name) || 'unknown';
+    return `manual-${scenarioName}`;
+}
+
+// Wrap a producer result (the legacy { ok, state, validation, meta } shape
+// from adjudicateStep) as a Proposal. State is renamed to projected_state
+// and labelled as projection — it is NOT durable until commit fires.
+function wrapAsProposal(producer, args) {
+    const isMock = !!(producer.validation && producer.validation.mocked);
+    const isFallback = !producer.ok;
+    const source = 'llm-narrator';  // Step 1: producer is always LLM/baseline; deterministic-sim arrives in Step 3
+    const projected_validation = {
+        schema_ok:             !!(producer.validation && producer.validation.schema_ok),
+        clamp_suggestions:     (producer.validation && producer.validation.clamped_fields) || [],
+        doctrinal_warnings:    (producer.validation && producer.validation.doctrinal_warnings) || [],
+        plausibility_warnings: (producer.validation && producer.validation.plausibility_warnings) || [],
+        errors:                [],
+        fallback:              (producer.validation && producer.validation.fallback) || null,
+        mocked:                !!isMock,
+    };
+
+    // proposed_actions is empty in Step 1 — the LLM today emits a whole
+    // state delta, not per-unit actions. We synthesize one STATE_DELTA
+    // action so commit() has something to record per row. Step 2 will
+    // populate this with real per-unit actions when the LLM/schema is
+    // updated to emit them.
+    const stateDeltaAction = {
+        id:         'state-delta',
+        kind:       'STATE_DELTA',
+        side:       null,
+        unit_id:    null,
+        payload:    null,
+        rationale:  isFallback ? 'producer fallback to scenario baseline' : 'whole-state projection from LLM-narrator',
+        cited_evidence: [],
+        confidence: isFallback ? 0.5 : 0.8,
+    };
+
+    const proposal = {
+        proposal_id:     null,   // assigned by proposalStore.put()
+        run_id:          args.runId || defaultRunId(args),
+        step_index:      producer.stepIndex,
+        prev_state_hash: journal.hashState(args.prevState || null),
+        proposed_actions:    [stateDeltaAction],
+        projected_state:     producer.state,
+        projected_validation,
+        rationale:           '',
+        cited_evidence:      [],
+        narrative_ar:        (producer.state && producer.state.narrative_ar) || '',
+        narrative_en:        (producer.state && producer.state.narrative_en) || '',
+        source,
+        expires_at:          null,   // set by proposalStore.put()
+        // Internal producer artifacts — preserved for MC trial logs +
+        // narration; stripped before going over the wire.
+        _producer: {
+            ok:        producer.ok,
+            meta:      producer.meta,
+            rawLlm:    producer.rawLlm    || null,
+            rawText:   producer.rawText   || null,
+            userPrompt: producer.userPrompt || null,
+        },
+    };
+    return proposalStore.put(proposal);
+}
+
+/**
+ * proposeStep(args) — call the producer (adjudicateStep), wrap the result
+ * as a Proposal, store it, return the Proposal. No state is mutated.
+ *
+ * Returns the Proposal object (proposal_id, projected_state,
+ * projected_validation, proposed_actions, _producer, …).
+ */
+async function proposeStep(args) {
+    const producer = await adjudicateStep(args || {});
+    return wrapAsProposal(producer, args || {});
+}
+
+/**
+ * commitStep({ proposal_id, accepted_action_ids, rejected_action_ids?,
+ *              operator_id?, headless?, mods? })
+ *
+ * Consumes the proposal, writes one journal row per accepted action
+ * (and one per rejected action, recording the reject), returns the
+ * committed_state plus journal_seq and post_state_hash.
+ *
+ * For Step 1, proposed_actions contains exactly one STATE_DELTA action;
+ * commit applies the proposal's projected_state as the new state when
+ * accepted, or returns the prev_state when rejected.
+ */
+function commitStep(body) {
+    const err = schema.validateCommitRequest(body);
+    if (err) throw new Error(`commitStep: ${err}`);
+
+    const proposal = proposalStore.consume(body.proposal_id);
+    if (!proposal) {
+        throw new Error(`commitStep: proposal ${body.proposal_id} not found or expired`);
+    }
+
+    const allIds = proposal.proposed_actions.map(a => a.id);
+    const acceptedIds = (body.accepted_action_ids === 'ALL')
+        ? allIds.slice()
+        : body.accepted_action_ids.filter(id => allIds.indexOf(id) >= 0);
+    const acceptedSet = new Set(acceptedIds);
+    const rejectedIds = Array.isArray(body.rejected_action_ids)
+        ? body.rejected_action_ids.filter(id => allIds.indexOf(id) >= 0 && !acceptedSet.has(id))
+        : allIds.filter(id => !acceptedSet.has(id));
+
+    // Step 1: the proposal carries a single STATE_DELTA. Accepting it
+    // applies projected_state; rejecting it leaves the prev_state in
+    // place. When Step 2 introduces per-unit actions, this branch
+    // becomes "sim resolver applies each accepted action against
+    // prev_state".
+    const hasStateDelta = proposal.proposed_actions.some(a => a.kind === 'STATE_DELTA');
+    const acceptingStateDelta = acceptedSet.has('state-delta') && hasStateDelta;
+    const committed_state = acceptingStateDelta
+        ? proposal.projected_state
+        : (proposal._producer && proposal._producer.meta && proposal._producer.meta.prevState) || proposal.projected_state;
+
+    const post_state_hash = journal.hashState(committed_state);
+    const operator_id = body.operator_id
+        ? `op:${body.operator_id}`
+        : `system:${body.headless.reason}`;
+    const source = body.source || proposal.source || 'llm-narrator';
+
+    // Journal one row per action — accepted and rejected alike. Step 2's
+    // AAR coach reads both to render decision history.
+    let lastSeq = null;
+    for (const action of proposal.proposed_actions) {
+        const decision = acceptedSet.has(action.id) ? (body.headless ? 'auto' : 'accept') : 'reject';
+        const r = journal.appendCommit({
+            run_id:          proposal.run_id,
+            step:            proposal.step_index,
+            prev_state_hash: proposal.prev_state_hash,
+            post_state_hash,
+            proposal_id:     proposal.proposal_id,
+            action_id:       action.id,
+            decision,
+            operator_id,
+            source,
+            mods:            body.mods || null,
+        });
+        lastSeq = r.seq;
+    }
+
+    return {
+        ok: true,
+        committed_state,
+        journal_seq: lastSeq,
+        post_state_hash,
+        proposal_id: proposal.proposal_id,
+        // Producer artifacts surface here so MC + the legacy shim can
+        // log raw LLM I/O exactly as before — keeps trial logs stable.
+        _producer: proposal._producer || null,
+    };
+}
+
+/**
+ * adjudicateStepHeadless(args) — propose + auto-commit in one in-process
+ * call. Used by Monte Carlo, the legacy HTTP shim, and scripted tests.
+ *
+ * Returns a legacy-shaped result so callers don't need to refactor:
+ *   { ok, stepIndex, state, validation, meta, rawLlm, rawText, userPrompt,
+ *     proposal_id, journal_seq, post_state_hash }
+ *
+ * args.headless = { reason: 'mc-trial' | 'legacy-shim' | 'manual-shim' } is
+ * required — it identifies who's bypassing the operator UI in the journal.
+ */
+async function adjudicateStepHeadless(args) {
+    args = args || {};
+    const reason = (args.headless && args.headless.reason) || args.headlessReason || 'unspecified';
+    const proposal = await proposeStep(args);
+    const commit = commitStep({
+        proposal_id:         proposal.proposal_id,
+        accepted_action_ids: 'ALL',
+        headless:            { reason },
+        source:              proposal.source,
+    });
+
+    const producer = proposal._producer || {};
+    // Reassemble the producer's validation block from the proposal's
+    // projected_validation so MC's existing trial-log writer keeps
+    // seeing the same fields (clamped_fields, doctrinal_warnings, etc.).
+    const validation = {
+        schema_ok:             proposal.projected_validation.schema_ok,
+        clamped_fields:        proposal.projected_validation.clamp_suggestions || [],
+        doctrinal_warnings:    proposal.projected_validation.doctrinal_warnings || [],
+        plausibility_warnings: proposal.projected_validation.plausibility_warnings || [],
+        fallback:              proposal.projected_validation.fallback || undefined,
+        mocked:                proposal.projected_validation.mocked || undefined,
+    };
+
+    return {
+        ok:           producer.ok !== false,
+        stepIndex:    proposal.step_index,
+        state:        commit.committed_state,
+        validation,
+        meta:         producer.meta || {},
+        rawLlm:       producer.rawLlm   || null,
+        rawText:      producer.rawText  || null,
+        userPrompt:   producer.userPrompt || null,
+        proposal_id:  proposal.proposal_id,
+        journal_seq:  commit.journal_seq,
+        post_state_hash: commit.post_state_hash,
+    };
+}
+
 module.exports = {
     adjudicateStep,
+    // Step-1 boundary contract
+    proposeStep,
+    commitStep,
+    adjudicateStepHeadless,
+
     buildScenarioConstantsBlock,
     buildUserPrompt,
     formatApprovedActionsBlock,

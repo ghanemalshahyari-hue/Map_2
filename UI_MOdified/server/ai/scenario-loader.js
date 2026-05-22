@@ -23,6 +23,36 @@ function scenarioFile(name) {
     return path.join(SCENARIOS_DIR, name + '.json');
 }
 
+// ── PR-1 (Operational Shell Foundation) ────────────────────────────
+// Default per-side identity + posture matrix. Mutates the scenario
+// in place when these keys are missing — disk JSON is NOT modified.
+// Producers (Wargame3 porter, future in-app editor) may emit explicit
+// `sides` / `postures` to override.
+const DEFAULT_SIDES = Object.freeze([
+    { id: 'BLUE',    name_en: 'Blue Force',  name_ar: 'القوات الزرقاء', color: '#3b82f6' },
+    { id: 'RED',     name_en: 'Red Force',   name_ar: 'القوات الحمراء', color: '#ef4444' },
+    { id: 'NEUTRAL', name_en: 'Neutral',     name_ar: 'محايد',           color: '#22c55e' },
+]);
+
+const DEFAULT_POSTURES = Object.freeze({
+    BLUE:    { BLUE: 'FRIENDLY', RED: 'HOSTILE',  NEUTRAL: 'NEUTRAL'  },
+    RED:     { BLUE: 'HOSTILE',  RED: 'FRIENDLY', NEUTRAL: 'NEUTRAL'  },
+    NEUTRAL: { BLUE: 'NEUTRAL',  RED: 'NEUTRAL',  NEUTRAL: 'FRIENDLY' },
+});
+
+function enrichWithSidePostureDefaults(data) {
+    if (!data || typeof data !== 'object') return data;
+    if (!Array.isArray(data.sides) || data.sides.length === 0) {
+        // Deep clone so a producer that later edits scenario.sides doesn't
+        // mutate the shared DEFAULT_SIDES constant.
+        data.sides = DEFAULT_SIDES.map(s => ({ ...s }));
+    }
+    if (!data.postures || typeof data.postures !== 'object' || Array.isArray(data.postures)) {
+        data.postures = JSON.parse(JSON.stringify(DEFAULT_POSTURES));
+    }
+    return data;
+}
+
 function loadScenario(name) {
     const key = name || DEFAULT_NAME;
     const file = scenarioFile(key);
@@ -60,6 +90,9 @@ function loadScenario(name) {
         );
     }
 
+    // PR-1: in-memory enrichment — every scenario downstream sees sides/postures.
+    enrichWithSidePostureDefaults(data);
+
     cache.set(key, { __mtimeMs: mtimeMs, data });
     return data;
 }
@@ -84,6 +117,9 @@ module.exports = {
     getDefaultScenario,
     listScenarios,
     clearCache,
+    enrichWithSidePostureDefaults,   // exported for unit tests
+    DEFAULT_SIDES,
+    DEFAULT_POSTURES,
     DEFAULT_NAME,
     SCENARIOS_DIR,
 };

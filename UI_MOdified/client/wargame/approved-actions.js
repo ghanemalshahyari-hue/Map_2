@@ -108,5 +108,53 @@
         return !!(b && (b.red.length || b.blue.length));
     }
 
-    window.AppApprovedActions = { add, getForStep, clearForStep, clearAll, hasAny };
+    // ── Proposal binding (AI/sim boundary plan, Step 1) ──────────────
+    //
+    // Step 1 lays the wire-level contract; the per-step approval UI
+    // arrives in Step 2. Until then we just need a place to remember
+    // which proposal_id is "live" for a step and which decisions the
+    // operator has recorded against its actions. The store stays in-
+    // memory and additive — the legacy add/getForStep/clearForStep
+    // surface above is untouched.
+    //
+    // Schema (in-memory only):
+    //   proposalsByStep: Map<stepIndex, {
+    //     proposal_id,
+    //     decisions: { [action_id]: 'accept' | 'reject' }   // empty until UI records
+    //   }>
+    const proposalsByStep = new Map();
+
+    function setProposal(stepIndex, proposalId) {
+        if (!Number.isInteger(stepIndex) || stepIndex < 0) return false;
+        if (typeof proposalId !== 'string' || !proposalId) return false;
+        proposalsByStep.set(stepIndex, { proposal_id: proposalId, decisions: {} });
+        emit();
+        return true;
+    }
+
+    function getProposal(stepIndex) {
+        const entry = proposalsByStep.get(stepIndex);
+        if (!entry) return null;
+        return { proposal_id: entry.proposal_id, decisions: { ...entry.decisions } };
+    }
+
+    function recordDecision(stepIndex, actionId, decision) {
+        const entry = proposalsByStep.get(stepIndex);
+        if (!entry) return false;
+        if (decision !== 'accept' && decision !== 'reject') return false;
+        if (typeof actionId !== 'string' || !actionId) return false;
+        entry.decisions[actionId] = decision;
+        emit();
+        return true;
+    }
+
+    function clearProposal(stepIndex) {
+        if (proposalsByStep.delete(stepIndex)) emit();
+    }
+
+    window.AppApprovedActions = {
+        add, getForStep, clearForStep, clearAll, hasAny,
+        // Step-1 proposal binding (used by Step-2 approval UI)
+        setProposal, getProposal, recordDecision, clearProposal,
+    };
 })();

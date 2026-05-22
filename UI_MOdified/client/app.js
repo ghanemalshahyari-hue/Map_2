@@ -17199,7 +17199,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem(THEME_KEY, theme);
         if (themeToggleBtn) {
-            themeToggleBtn.textContent = theme === 'dark' ? '☀' : '☾';
+            // PR: swap SVG icons in place of the previous ☀/☾ emoji glyphs.
+            // Sun when dark theme is active (clicking goes light); moon when
+            // light is active (clicking goes dark). Same one-line swap shape
+            // as before — just SVG strings instead of single-char emoji.
+            themeToggleBtn.innerHTML = theme === 'dark'
+                ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg>'
+                : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
             themeToggleBtn.title = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
         }
         if (window.rmoozServerSync?.isHttpOrigin && typeof window.rmoozServerSync.schedulePushPreferences === 'function') {

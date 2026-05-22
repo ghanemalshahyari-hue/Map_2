@@ -434,6 +434,82 @@ function baselineStateForStep(scenario, stepIndex, prevState, coaParams) {
     return state;
 }
 
+// ── Proposal / Commit contract (boundary plan Step 1) ─────────────────
+//
+// The AI agents (LLM-narrator today, deterministic-sim later) emit
+// Proposals. A Proposal is a *projection* — it describes what would
+// happen if accepted, but no state is mutated until /api/sim/commit
+// processes it. The legacy shim auto-accepts via headless commit; the
+// operator UI (Step 2) accepts/rejects per action.
+
+// Action.kind enum. Step 1 carries the legacy MOVE/ENGAGE/HOLD set
+// (matches client/wargame/approved-actions.js) plus 'STATE_DELTA',
+// which is the synthetic action emitted by the LLM-narrator when its
+// output is a whole-state projection rather than a per-unit order.
+const ACTION_KINDS = ['STATE_DELTA', 'MOVE', 'ENGAGE', 'HOLD'];
+
+// Decision enum for journal rows.
+const DECISIONS = ['accept', 'reject', 'auto'];
+
+// Producer source for a Proposal / journal row.
+const PROPOSAL_SOURCES = ['llm-narrator', 'deterministic-sim', 'legacy-shim'];
+
+function isActionKind(k) { return typeof k === 'string' && ACTION_KINDS.indexOf(k) >= 0; }
+function isDecision(d)   { return typeof d === 'string' && DECISIONS.indexOf(d) >= 0; }
+function isProposalSource(s) { return typeof s === 'string' && PROPOSAL_SOURCES.indexOf(s) >= 0; }
+
+// Lightweight shape check for an Action. Step 1: STATE_DELTA carries
+// empty payload; per-unit kinds carry { unit_id, payload }. Returns
+// the first problem found or null.
+function validateAction(action) {
+    if (!action || typeof action !== 'object') return 'action must be an object';
+    if (typeof action.id !== 'string' || !action.id) return 'action.id required (string)';
+    if (!isActionKind(action.kind)) return `action.kind must be one of ${ACTION_KINDS.join('/')}`;
+    if (action.kind !== 'STATE_DELTA') {
+        if (typeof action.unit_id !== 'string' || !action.unit_id) {
+            return `action.unit_id required for kind ${action.kind}`;
+        }
+    }
+    if (action.side != null && typeof action.side !== 'string') return 'action.side must be a string when present';
+    if (action.rationale != null && typeof action.rationale !== 'string') return 'action.rationale must be a string';
+    return null;
+}
+
+// Validate a Proposal envelope. Internal fields (projected_state,
+// validation, rawLlm, …) are not deeply checked here — they pass
+// through whatever the producer emitted.
+function validateProposal(p) {
+    if (!p || typeof p !== 'object') return 'proposal must be an object';
+    if (typeof p.proposal_id !== 'string' || !p.proposal_id) return 'proposal_id required';
+    if (!Number.isInteger(p.step_index) || p.step_index < 0) return 'step_index must be a non-negative integer';
+    if (!isProposalSource(p.source)) return `source must be one of ${PROPOSAL_SOURCES.join('/')}`;
+    if (!Array.isArray(p.proposed_actions)) return 'proposed_actions must be an array';
+    for (let i = 0; i < p.proposed_actions.length; i++) {
+        const err = validateAction(p.proposed_actions[i]);
+        if (err) return `proposed_actions[${i}]: ${err}`;
+    }
+    return null;
+}
+
+// Validate a /api/sim/commit request body.
+function validateCommitRequest(body) {
+    if (!body || typeof body !== 'object') return 'commit body must be an object';
+    if (typeof body.proposal_id !== 'string' || !body.proposal_id) return 'proposal_id required';
+    const ids = body.accepted_action_ids;
+    const isAll = ids === 'ALL';
+    if (!isAll && !Array.isArray(ids)) return "accepted_action_ids must be an array or the literal 'ALL'";
+    if (body.rejected_action_ids != null && !Array.isArray(body.rejected_action_ids)) {
+        return 'rejected_action_ids must be an array when present';
+    }
+    // operator_id OR headless.reason is required (R2 — no commit without intent)
+    const hasOp = typeof body.operator_id === 'string' && body.operator_id;
+    const hasHeadless = body.headless && typeof body.headless.reason === 'string' && body.headless.reason;
+    if (!hasOp && !hasHeadless) {
+        return 'either operator_id (UI commit) or headless.reason (in-process commit) is required';
+    }
+    return null;
+}
+
 module.exports = {
     PHASES,
     OBJECTIVE_STATUS,
@@ -467,4 +543,15 @@ module.exports = {
     baselineStateForStep,
     blankRedStrengths,
     blankBlsStatus,
+
+    // Proposal / commit contract (Step 1 of the AI/sim boundary plan)
+    ACTION_KINDS,
+    DECISIONS,
+    PROPOSAL_SOURCES,
+    isActionKind,
+    isDecision,
+    isProposalSource,
+    validateAction,
+    validateProposal,
+    validateCommitRequest,
 };

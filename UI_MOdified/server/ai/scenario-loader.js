@@ -16,7 +16,11 @@ const ROOT = path.join(__dirname, '..', '..');
 const DATA_DIR = process.env.RMOOZ_DATA_DIR || path.join(ROOT, 'data');
 const SCENARIOS_DIR = path.join(DATA_DIR, 'scenarios');
 
-const DEFAULT_NAME = 'wargame3';
+const DEFAULT_NAME  = 'wargame3';
+// _active.json records whichever scenario was last imported or manually
+// selected by the operator. Written on import; read on every list request
+// so the HUD always boots into the most recently used scenario.
+const ACTIVE_FILE   = path.join(SCENARIOS_DIR, '_active.json');
 const cache = new Map();
 
 function scenarioFile(name) {
@@ -71,8 +75,38 @@ function getDefaultScenario() {
 function listScenarios() {
     if (!fs.existsSync(SCENARIOS_DIR)) return [];
     return fs.readdirSync(SCENARIOS_DIR)
-        .filter(f => f.endsWith('.json'))
+        .filter(f => f.endsWith('.json') && !f.startsWith('_'))
         .map(f => f.replace(/\.json$/, ''));
+}
+
+// Returns the name of the active (last-used) scenario.
+// Falls back to the most-recently-modified scenario file, then DEFAULT_NAME.
+function getActiveName() {
+    try {
+        if (fs.existsSync(ACTIVE_FILE)) {
+            const d = JSON.parse(fs.readFileSync(ACTIVE_FILE, 'utf8'));
+            if (d && d.name && fs.existsSync(scenarioFile(d.name))) return d.name;
+        }
+    } catch (_) {}
+    // Fallback: pick the most recently touched scenario file.
+    try {
+        const candidates = fs.readdirSync(SCENARIOS_DIR)
+            .filter(f => f.endsWith('.json') && !f.startsWith('_'))
+            .map(f => ({ name: f.replace(/\.json$/, ''), mtime: fs.statSync(path.join(SCENARIOS_DIR, f)).mtimeMs }))
+            .sort((a, b) => b.mtime - a.mtime);
+        if (candidates.length) return candidates[0].name;
+    } catch (_) {}
+    return DEFAULT_NAME;
+}
+
+// Persists the active scenario name to _active.json.
+function setActiveName(name) {
+    try {
+        if (!fs.existsSync(SCENARIOS_DIR)) fs.mkdirSync(SCENARIOS_DIR, { recursive: true });
+        fs.writeFileSync(ACTIVE_FILE, JSON.stringify({ name, updatedAt: new Date().toISOString() }), 'utf8');
+    } catch (e) {
+        console.warn('[scenario-loader] could not write _active.json:', e.message);
+    }
 }
 
 function clearCache() {
@@ -83,6 +117,8 @@ module.exports = {
     loadScenario,
     getDefaultScenario,
     listScenarios,
+    getActiveName,
+    setActiveName,
     clearCache,
     DEFAULT_NAME,
     SCENARIOS_DIR,

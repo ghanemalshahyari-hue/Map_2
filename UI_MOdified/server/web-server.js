@@ -552,7 +552,7 @@ const server = http.createServer((req, res) => {
     // this to populate its dropdown.
     if (pathname === '/api/ai/scenarios' && req.method === 'GET') {
         try {
-            sendJson(res, 200, { ok: true, scenarios: scenarios.listScenarios(), default: scenarios.DEFAULT_NAME });
+            sendJson(res, 200, { ok: true, scenarios: scenarios.listScenarios(), active: scenarios.getActiveName(), default: scenarios.getActiveName() });
         } catch (e) {
             sendJson(res, 500, { ok: false, error: e.message || String(e) });
         }
@@ -608,6 +608,8 @@ const server = http.createServer((req, res) => {
 
             // Drop the cache so the very next GET re-validates from disk.
             try { scenarios.clearCache(); } catch (_) {}
+            // Record as active so the next HUD boot starts here automatically.
+            scenarios.setActiveName(safeName);
 
             sendJson(res, 200, {
                 ok: true,
@@ -623,6 +625,18 @@ const server = http.createServer((req, res) => {
                         : 400;
             sendJson(res, code, { ok: false, error: e.message || String(e) });
         });
+        return;
+    }
+
+    // Persist the operator's active-scenario selection so the HUD boots into
+    // the same scenario next time, even after a server restart.
+    if (pathname === '/api/scenario/active' && req.method === 'POST') {
+        readJsonBody(req).then((body) => {
+            const name = (body && typeof body.name === 'string') ? body.name.trim() : '';
+            if (!name) { sendJson(res, 400, { ok: false, error: 'name required' }); return; }
+            scenarios.setActiveName(name);
+            sendJson(res, 200, { ok: true, active: name });
+        }).catch((e) => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
         return;
     }
 

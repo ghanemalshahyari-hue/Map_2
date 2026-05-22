@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Adjudicator map overlay.
  *
  * Visualizes the scenario on the Leaflet map and applies per-step state to

@@ -269,6 +269,13 @@
     // dashed L.polyline per the W3 schema (Wargame3/schema/README.md §5).
     let engagementArcs = [];
     let engagementArcTimers = [];
+    // Salvo launch animation — generation counter stops in-flight rAF loops on clear.
+    let salvoGeneration = 0;
+    let salvoMarkers    = [];
+    // Suppression halos (L.circle per suppressed unit) — cleared each step.
+    let suppressionHalos = [];
+    // Hit-flash / smoke transient timers — cancelled on clearScenario.
+    let effectTimers     = [];
 
     // Per-step Blue actions — fallback only. The server now emits
     // state.blue_actions per step (see adjudicator-schema.js
@@ -562,6 +569,93 @@
                  0%, 100% { transform: scale(1);   opacity: 1; }
                  50%      { transform: scale(1.3); opacity: .7; }
              }
+             /* Salvo child icons — glowing dots flying actor → target */
+             .wg-salvo-child, .wg-salvo-impact { pointer-events: none !important; }
+             .wg-salvo-impact > div {
+                 animation: wg-salvo-ring 600ms ease-out forwards;
+             }
+             @keyframes wg-salvo-ring {
+                 0%   { opacity: 0.9; transform: scale(0.3); }
+                 60%  { opacity: 0.7; transform: scale(1.2); }
+                 100% { opacity: 0;   transform: scale(2.0); }
+             }
+             /* Lingering smoke after destruction */
+             .wg-adj-smoke { pointer-events: none; }
+             .wg-adj-smoke > div {
+                 animation: wg-smoke-drift 2200ms ease-out forwards;
+             }
+             @keyframes wg-smoke-drift {
+                 0%   { opacity: 0;   transform: scale(0.4); }
+                 15%  { opacity: 0.7; transform: scale(1.0); }
+                 60%  { opacity: 0.45; transform: scale(1.8); }
+                 100% { opacity: 0;   transform: scale(2.8); }
+             }
+             /* Hit flash on damaged / suppressed units */
+             .wg-adj-hit-flash { pointer-events: none; }
+             .wg-adj-hit-flash > div {
+                 animation: wg-hit-flash 500ms ease-out forwards;
+             }
+             @keyframes wg-hit-flash {
+                 0%   { opacity: 0;   transform: scale(0.2); }
+                 20%  { opacity: 1;   transform: scale(1.1); }
+                 100% { opacity: 0;   transform: scale(1.6); }
+             }
+             /* Suppression ring — pulsing yellow halo on cowering unit */
+             .wg-supp-ring {
+                 animation: wg-supp-pulse 1.2s ease-in-out infinite;
+             }
+             @keyframes wg-supp-pulse {
+                 0%, 100% { opacity: 0.75; }
+                 50%      { opacity: 0.25; }
+             }
+             /* Expended flash — blue strobe when unit fires last salvo */
+             .wg-adj-expended { pointer-events: none; }
+             .wg-adj-expended > div {
+                 animation: wg-expended-flash 700ms ease-out forwards;
+             }
+             @keyframes wg-expended-flash {
+                 0%   { opacity: 0;   transform: scale(0.3); }
+                 25%  { opacity: 0.9; transform: scale(1.0); }
+                 100% { opacity: 0;   transform: scale(1.8); }
+             }
+
+             /* ── W3 engagement-arc tracer animation ──────────────────────
+              * Two SVG layers per arc:
+              *   .wg-arc-trail   — full dim line that draws itself 0→end
+              *   .wg-arc-tracer  — short bright dot traveling end→end
+              * pathLength="100" is stamped on each <path> so dasharray
+              * values are percentages of the actual path length.
+              * Per-arc stagger is applied via style.animationDelay.        */
+             .wg-arc-trail {
+                 stroke-dasharray: 100 0;
+                 stroke-dashoffset: 100;
+                 animation: wg-arc-trail-draw 0.65s linear forwards;
+             }
+             @keyframes wg-arc-trail-draw {
+                 0%   { stroke-dashoffset: 100; opacity: 0.15; }
+                 20%  { opacity: 0.38; }
+                 100% { stroke-dashoffset: 0;   opacity: 0.38; }
+             }
+             .wg-arc-tracer {
+                 stroke-dasharray: 14 86;
+                 stroke-dashoffset: 114;
+                 animation: wg-arc-tracer-move 0.65s linear forwards;
+             }
+             @keyframes wg-arc-tracer-move {
+                 0%   { stroke-dashoffset: 114; opacity: 1; }
+                 88%  { stroke-dashoffset: -14; opacity: 1; }
+                 100% { stroke-dashoffset: -14; opacity: 0; }
+             }
+             /* Impact ring at the target: spawned as a CSS-animated div */
+             .wg-arc-impact-ring { pointer-events: none; }
+             .wg-arc-impact-ring > div {
+                 animation: wg-arc-impact-burst 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+             }
+             @keyframes wg-arc-impact-burst {
+                 0%   { opacity: 0.95; transform: scale(0.2); }
+                 40%  { opacity: 0.8;  transform: scale(1.1); }
+                 100% { opacity: 0;    transform: scale(2.2); }
+             }
          `;
          document.head.appendChild(style);
      })();
@@ -827,6 +921,19 @@
         });
     }
 
+    // milsymbol 2.x does not recognise entity *subtype* codes (SIDC positions
+    // 15-16 non-zero). Strip them progressively until the symbol validates.
+    function _resolveSidc(sidc) {
+        if (!sidc || sidc.length !== 20 || !window.ms) return sidc;
+        const test = s => { try { return new window.ms.Symbol(s, { size: 1 }).isValid(); } catch (_) { return false; } };
+        if (test(sidc)) return sidc;
+        const s1 = sidc.slice(0, 14) + '00' + sidc.slice(16); // strip entity subtype
+        if (test(s1)) return s1;
+        const s2 = sidc.slice(0, 12) + '0000' + sidc.slice(16); // strip entity type+subtype
+        if (test(s2)) return s2;
+        return sidc;
+    }
+
     // Render a real NATO APP-6 / SIDC icon via the milsymbol lib the app
     // already ships with. Used for Blue defender units so they look the
     // same as the operator's own placed markers. Returns null on failure
@@ -834,7 +941,7 @@
     function sidcIcon(sidc, size) {
         if (!sidc || !window.ms || typeof window.ms.Symbol !== 'function') return null;
         try {
-            const sym = new window.ms.Symbol(sidc, { size: size || 30, simpleStatusModifier: true });
+            const sym = new window.ms.Symbol(_resolveSidc(sidc), { size: size || 30, simpleStatusModifier: true });
             if (!sym.isValid()) return null;
             const anchor = sym.getAnchor();
             const dim    = sym.getSize();
@@ -875,12 +982,12 @@
         // Main icon (positions 11-16) + modifiers (17-20). Defaults to
         // mechanized infantry like the Blue templates; overrides by role:
         let iconMod = '1211020000'; // mech infantry
-        if (/recon/.test(role))                 iconMod = '1211050000'; // armored recon
-        else if (/armored|exploit/.test(role))  iconMod = '1211030000'; // armor
-        else if (/fire|arty|art/.test(role))    iconMod = '1303000000'; // field arty
-        else if (/ew/.test(role))               iconMod = '1300000000'; // generic comm/ew
-        else if (/cbrn|chem/.test(role))        iconMod = '1417000000'; // CBRN
-        else if (/usv/.test(role))              iconMod = '1211000000'; // generic (USVs)
+        if (/recon/i.test(role))                 iconMod = '1211050000'; // armored recon
+        else if (/armored|exploit/i.test(role))  iconMod = '1211030000'; // armor
+        else if (/fire|arty|art/i.test(role))    iconMod = '1303000000'; // field arty
+        else if (/ew/i.test(role))               iconMod = '1300000000'; // generic comm/ew
+        else if (/cbrn|chem/i.test(role))        iconMod = '1417000000'; // CBRN
+        else if (/usv/i.test(role))              iconMod = '1211000000'; // generic (USVs)
 
         // Positions 1-6: version + affiliation + land
         // Positions 7-10: hqEch     (HQ flag + echelon, e.g. '0218')
@@ -1308,6 +1415,9 @@
                 `<span style="display:inline-block;width:14px;height:8px;
                   background:${color};border:1px solid #fff;border-bottom:none;
                   border-radius:14px 14px 0 0;vertical-align:middle;margin-right:6px;"></span>${label}`;
+            const arcRow = (color, label) =>
+                `<span style="display:inline-block;width:18px;border-top:2.5px solid ${color};
+                  vertical-align:middle;margin-right:6px;opacity:0.85;"></span>${label}`;
             div.innerHTML = `
                 <div style="font-weight:700;margin-bottom:4px;color:#fff;">Wargame symbols</div>
                 <div>${blsRow(COLORS.BLS.STAGED,    'BLS&nbsp;staged')}</div>
@@ -1322,6 +1432,14 @@
                 <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
                 <div><span style="display:inline-block;width:18px;border-top:2px dashed ${COLORS.PIPELINE};vertical-align:middle;margin-right:6px;"></span>Pipeline (planned)</div>
                 <div><span style="display:inline-block;width:18px;border-top:3px solid ${COLORS.RED_UNIT};vertical-align:middle;margin-right:6px;"></span>Red advance</div>
+                <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
+                <div style="font-size:10px;color:#9ab;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px;">Engagement arcs</div>
+                <div>${arcRow(STATUS_COLORS.destroyed,       'Destroyed')}</div>
+                <div>${arcRow(STATUS_COLORS.damaged_partial, 'Damaged')}</div>
+                <div>${arcRow(STATUS_COLORS.suppressed,      'Suppressed')}</div>
+                <div>${arcRow(STATUS_COLORS.delayed,         'Delayed')}</div>
+                <div>${arcRow(STATUS_COLORS.expended,        'Expended')}</div>
+                <div>${arcRow(STATUS_COLORS.unchanged,       'No&nbsp;effect')}</div>
             `;
             window.L.DomEvent.disableClickPropagation(div);
             return div;
@@ -2370,6 +2488,7 @@
             if (a && layerGroup) try { layerGroup.removeLayer(a); } catch (_) {}
         }
         engagementArcs = [];
+        clearSalvoAnimations();
     }
 
     // Render every engagement_arc this phase exactly as the W3 schema
@@ -2379,9 +2498,195 @@
     //
     // That's the whole spec. No NATO tactical-graphic chevrons, no
     // per-component visual signatures, no extra layers. The schema
+    // ── Salvo launch animation ────────────────────────────────────────
+    // Clears all in-flight child markers and invalidates active rAF loops
+    // via generation counter (each tick checks it hasn't been superseded).
+    function clearSalvoAnimations() {
+        salvoGeneration++;
+        for (const m of salvoMarkers) {
+            if (m && layerGroup) try { layerGroup.removeLayer(m); } catch (_) {}
+        }
+        salvoMarkers = [];
+    }
+
+    // Extract vehicle/aircraft count from an Arabic unit label.
+    // Handles patterns like "(12 طائرة)", "(12)", "12 طائرة", "6 سرايا".
+    function parseSalvoCount(label) {
+        if (!label) return null;
+        const paren = label.match(/\((\d{1,3})\s*[^)]*\)/);
+        if (paren) return parseInt(paren[1], 10);
+        const bare = label.match(/\b([2-9]\d?)\b/);
+        if (bare) return parseInt(bare[1], 10);
+        return null;
+    }
+
+    // Quadratic Bezier at t∈[0,1] over [lat,lon] control points.
+    function _qBez(P0, Pc, P1, t) {
+        const u = 1 - t;
+        return [u*u*P0[0] + 2*u*t*Pc[0] + t*t*P1[0],
+                u*u*P0[1] + 2*u*t*Pc[1] + t*t*P1[1]];
+    }
+
+    // Spawn a brief ring-burst at the impact point.
+    function _spawnImpact(latLng, color, gen) {
+        if (!window.L || !layerGroup || salvoGeneration !== gen) return;
+        const icon = window.L.divIcon({
+            className: 'wg-salvo-impact',
+            html: `<div style="
+                width:14px;height:14px;border-radius:50%;
+                border:2px solid ${color};opacity:0.9;
+            "></div>`,
+            iconSize: [14, 14], iconAnchor: [7, 7],
+        });
+        const m = window.L.marker(latLng, { icon, interactive: false, zIndexOffset: 2001 });
+        m.addTo(layerGroup);
+        salvoMarkers.push(m);
+        setTimeout(() => {
+            if (layerGroup) try { layerGroup.removeLayer(m); } catch (_) {}
+            const i = salvoMarkers.indexOf(m);
+            if (i >= 0) salvoMarkers.splice(i, 1);
+        }, 700);
+    }
+
+    // Animate a single child icon along a slight arc from startLL to endLL.
+    function _flyChild(startLL, endLL, color, durationMs, gen) {
+        if (!window.L || !layerGroup) return;
+
+        // Bezier control point: perpendicular to midpoint for a natural arc.
+        const dLat = endLL[0] - startLL[0];
+        const dLon = endLL[1] - startLL[1];
+        const len  = Math.sqrt(dLat*dLat + dLon*dLon) || 0.01;
+        const ps   = len * 0.20; // arc height ~20% of distance
+        const ctrl = [(startLL[0]+endLL[0])/2 + (-dLon/len)*ps,
+                      (startLL[1]+endLL[1])/2 + ( dLat/len)*ps];
+
+        const icon = window.L.divIcon({
+            className: 'wg-salvo-child',
+            html: `<div style="
+                width:7px;height:7px;border-radius:50%;
+                background:${color};
+                box-shadow:0 0 5px 2px ${color}99;
+            "></div>`,
+            iconSize: [7, 7], iconAnchor: [3, 3],
+        });
+        const marker = window.L.marker(startLL, { icon, interactive: false, zIndexOffset: 2000 });
+        marker.addTo(layerGroup);
+        salvoMarkers.push(marker);
+
+        const t0 = performance.now();
+        function tick(now) {
+            if (salvoGeneration !== gen) return; // superseded — stop silently
+            const raw = (now - t0) / durationMs;
+            if (raw >= 1) {
+                try { if (layerGroup) layerGroup.removeLayer(marker); } catch (_) {}
+                const i = salvoMarkers.indexOf(marker);
+                if (i >= 0) salvoMarkers.splice(i, 1);
+                _spawnImpact(endLL, color, gen);
+                return;
+            }
+            // Ease-in-out cubic
+            const t = raw < 0.5 ? 2*raw*raw : -1+(4-2*raw)*raw;
+            try { marker.setLatLng(_qBez(startLL, ctrl, endLL, t)); } catch (_) {}
+            requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+    }
+
+    // Launch child icon animations for all engagement arcs in this step.
+    // Only runs on forward steps to avoid re-animating during scrub-back.
+    function animateSalvoLaunches(arcs, sc, isForward) {
+        clearSalvoAnimations();
+        if (!isForward || !arcs || !arcs.length || !window.L) return;
+
+        const gen = salvoGeneration; // captured; tick() checks it hasn't changed
+
+        // Build unit label registry from scenario for count parsing
+        const labels = new Map();
+        for (const u of (sc?.red_units || []))          if (u?.uid)      labels.set(u.uid,      u);
+        for (const u of (sc?.blue_units_initial || [])) if (u?.unit_uid) labels.set(u.unit_uid, u);
+
+        // Group arcs by actor so count distributes across all targets
+        const byActor = new Map();
+        for (const arc of arcs) {
+            if (!arc?.coordinates || arc.coordinates.length < 2) continue;
+            if (!byActor.has(arc.actor_uid)) byActor.set(arc.actor_uid, []);
+            byActor.get(arc.actor_uid).push(arc);
+        }
+
+        for (const [actorUid, actorArcs] of byActor) {
+            const unit  = labels.get(actorUid);
+            const label = unit?.label || unit?.name_ar || '';
+            const total = parseSalvoCount(label) || actorArcs.length * 2;
+            const color = actorArcs[0]?.actor_side === 'BLUE' ? '#3a96d2' : '#d23a3a';
+            // Children per target — cap at 5 to stay readable
+            const perTarget = Math.max(1, Math.min(5, Math.round(total / actorArcs.length)));
+
+            actorArcs.forEach((arc, arcIdx) => {
+                const [src, dst] = arc.coordinates;
+                const startLL = [src[1], src[0]];
+                const endLL   = [dst[1], dst[0]];
+                for (let i = 0; i < perTarget; i++) {
+                    const delay  = arcIdx * 260 + i * 140; // stagger launches
+                    const flight = 1700 + Math.random() * 500;
+                    setTimeout(() => _flyChild(startLL, endLL, color, flight, gen), delay);
+                }
+            });
+        }
+    }
+
     // intentionally caps complexity at 8–14 arcs per phase; anything
     // more becomes visual noise.
-    function renderEngagementArcs(state, scenario) {
+    // Build uid → name_ar lookup from a scenario step's unit_state /
+    // actors / affected arrays. Falls back to the uid string itself.
+    function buildUnitNameArLookup(sc, stepIndex) {
+        const lookup = {};
+        const stepRow = Array.isArray(sc && sc.steps) ? sc.steps[stepIndex] : null;
+        if (!stepRow) return lookup;
+        for (const arr of [stepRow.unit_state, stepRow.actors, stepRow.affected]) {
+            if (!Array.isArray(arr)) continue;
+            for (const u of arr) {
+                if (u && u.uid && u.name_ar) lookup[u.uid] = u.name_ar;
+            }
+        }
+        return lookup;
+    }
+
+    // Spawn a brief CSS-animated impact ring divIcon at a map position.
+    function addImpactRing(latLng, color, size) {
+        if (!window.L || !layerGroup) return;
+        const px = size === 'lg' ? 28 : size === 'md' ? 20 : 14;
+        const marker = window.L.marker(latLng, {
+            interactive: false,
+            icon: window.L.divIcon({
+                className: 'wg-arc-impact-ring',
+                html: `<div style="
+                    width:${px}px;height:${px}px;border-radius:50%;
+                    border:2.5px solid ${color};
+                    background:${color}22;
+                    box-shadow:0 0 8px ${color}99;
+                    transform-origin:center;
+                "></div>`,
+                iconSize:   [px, px],
+                iconAnchor: [px / 2, px / 2],
+            }),
+        });
+        marker.addTo(layerGroup);
+        engagementArcs.push(marker);
+        engagementArcTimers.push(setTimeout(() => {
+            try { if (layerGroup) layerGroup.removeLayer(marker); } catch (_) {}
+            const idx = engagementArcs.indexOf(marker);
+            if (idx >= 0) engagementArcs.splice(idx, 1);
+        }, 700));
+    }
+
+    // Render every engagement_arc this phase with a two-layer tracer effect:
+    //   1. Trail line  — full dim line that draws itself in ~0.65 s
+    //   2. Tracer line — short bright segment traveling source → target
+    //   3. Arrowhead   — appears when the tracer arrives, fades with trail
+    //   4. Impact ring — brief burst at target on arrival
+    // Arcs are staggered (150 ms apart) so a volley reads as a sequence.
+    // Arabic unit names are resolved from step unit_state / actors / affected.
+    function renderEngagementArcs(state, scenario, isForward) {
         clearEngagementArcs();
         if (!layerGroup || !state || !window.L) return;
         const sc = scenario || scenarioRef;
@@ -2392,60 +2697,120 @@
                      ? stepRow.engagement_arcs : [];
         if (!arcs.length) return;
 
-        for (const arc of arcs) {
+        const nameAr    = buildUnitNameArLookup(sc, stepIndex);
+        const STAGGER   = 150;   // ms between consecutive arcs
+        const TRAVEL    = 650;   // ms for tracer to traverse the line
+        const LINGER    = 700;   // ms trail stays after tracer lands
+        const FADE      = 350;   // ms fade-out duration
+
+        for (let i = 0; i < arcs.length; i++) {
+            const arc = arcs[i];
             const coords = arc && Array.isArray(arc.coordinates) ? arc.coordinates : null;
             if (!coords || coords.length < 2) continue;
             const [src, dst] = coords;
             if (!Array.isArray(src) || !Array.isArray(dst)) continue;
 
-            const color = STATUS_COLORS[arc.status_change] || STATUS_COLORS.unchanged;
-            // Weight scales mildly with damage_pct so heavy strikes read
-            // as more decisive than glancing engagements (3–5 px).
+            const color  = STATUS_COLORS[arc.status_change] || STATUS_COLORS.unchanged;
             const dmg    = Number.isFinite(arc.damage_pct) ? arc.damage_pct : 0.3;
             const weight = Math.max(2, 2 + Math.round(dmg * 3));
             const start  = [src[1], src[0]];
             const end    = [dst[1], dst[0]];
+            const delay  = i * STAGGER;
+            const status = arc.status_change || 'unchanged';
 
-            const line = window.L.polyline([start, end], {
+            // ── Trail (dim, draws in from start → end) ─────────────
+            const trail = window.L.polyline([start, end], {
                 color,
-                weight,
-                opacity:   0.85,
-                dashArray: '6 4',
-                lineCap:   'round',
+                weight: Math.max(1, weight - 1),
+                opacity: 1,
+                lineCap: 'round',
                 interactive: false,
-                className: 'wg-w3-engagement-arc wg-attack-pulse',
+                className: 'wg-arc-trail',
             });
+            trail.addTo(layerGroup);
+            engagementArcs.push(trail);
 
-            // Tooltip: actor → target · status + damage% · cause_what
-            const tooltip = [
-                arc.actor_uid && arc.target_uid ? `${arc.actor_uid} → ${arc.target_uid}` : null,
-                `${arc.status_change || '?'}${Number.isFinite(arc.damage_pct) ? ` ${Math.round(arc.damage_pct * 100)}%` : ''}`,
-                arc.cause_what,
-            ].filter(Boolean).join(' · ');
-            if (tooltip) line.bindTooltip(tooltip, { sticky: true });
+            // ── Tracer (bright, short segment traveling the line) ───
+            const tracer = window.L.polyline([start, end], {
+                color,
+                weight: weight + 1,
+                opacity: 1,
+                lineCap: 'round',
+                interactive: false,
+                className: 'wg-arc-tracer',
+            });
+            tracer.addTo(layerGroup);
+            engagementArcs.push(tracer);
 
-            line.addTo(layerGroup);
-            engagementArcs.push(line);
+            // Stamp pathLength so dasharray % is relative to path length.
+            // Done synchronously — elements are in the SVG DOM after addTo.
+            try {
+                if (trail._path)  { trail._path.setAttribute('pathLength', '100');  trail._path.style.animationDelay  = delay + 'ms'; }
+                if (tracer._path) { tracer._path.setAttribute('pathLength', '100'); tracer._path.style.animationDelay = delay + 'ms'; }
+            } catch (_) {}
 
-            // Arrowhead at the target end so direction is unambiguous.
+            // ── Arrowhead — hidden until tracer arrives ─────────────
             const head = makeArrowhead(start, end, color, weight * 4);
             if (head) {
                 head.addTo(layerGroup);
                 engagementArcs.push(head);
+                try {
+                    if (head._path) {
+                        head._path.style.opacity = '0';
+                        head._path.style.transition = `opacity 0.2s`;
+                        engagementArcTimers.push(setTimeout(() => {
+                            try { if (head._path) head._path.style.opacity = '0.88'; } catch (_) {}
+                        }, delay + TRAVEL + 20));
+                    }
+                } catch (_) {}
             }
 
-            // Per-schema fade after ~1.5s. The next applyState wipes
-            // everything anyway; the timer prevents stale arcs from
-            // piling up if the operator scrubs rapidly.
-            const captured = [line, head].filter(Boolean);
+            // ── Tooltip (Arabic names + status + cause) ─────────────
+            const actorLabel  = nameAr[arc.actor_uid]  || arc.actor_uid  || '?';
+            const targetLabel = nameAr[arc.target_uid] || arc.target_uid || '?';
+            const dmgPct = Number.isFinite(arc.damage_pct) ? ` ${Math.round(arc.damage_pct * 100)}%` : '';
+            const tipParts = [
+                `${actorLabel} → ${targetLabel}`,
+                `${status}${dmgPct}`,
+                arc.cause_what,
+            ].filter(Boolean);
+            trail.bindTooltip(tipParts.join(' · '), { sticky: true });
+
+            // ── Impact ring when tracer arrives ─────────────────────
+            const impactSize = status === 'destroyed' ? 'lg' :
+                               (status === 'damaged_partial' || status === 'suppressed') ? 'md' : 'sm';
+            engagementArcTimers.push(setTimeout(
+                () => addImpactRing(end, color, impactSize),
+                delay + TRAVEL,
+            ));
+
+            // ── Fade-out trail + arrowhead after linger ─────────────
+            const fadeAt = delay + TRAVEL + LINGER;
+            engagementArcTimers.push(setTimeout(() => {
+                for (const layer of [trail, head].filter(Boolean)) {
+                    try {
+                        if (layer._path) {
+                            layer._path.style.transition = `opacity ${FADE}ms ease-out`;
+                            layer._path.style.opacity = '0';
+                        }
+                    } catch (_) {}
+                }
+            }, fadeAt));
+
+            // ── Remove all layers after fade completes ───────────────
+            const removeAt = fadeAt + FADE + 80;
+            const captured = [trail, tracer, head].filter(Boolean);
             engagementArcTimers.push(setTimeout(() => {
                 for (const layer of captured) {
                     try { if (layerGroup) layerGroup.removeLayer(layer); } catch (_) {}
-                    const i = engagementArcs.indexOf(layer);
-                    if (i >= 0) engagementArcs.splice(i, 1);
+                    const idx = engagementArcs.indexOf(layer);
+                    if (idx >= 0) engagementArcs.splice(idx, 1);
                 }
-            }, 1500));
+            }, removeAt));
         }
+
+        // Launch animated child icons (aircraft/missiles) along each arc.
+        animateSalvoLaunches(arcs, sc, isForward);
     }
 
     // ── Per-step unit movement ────────────────────────────────────────
@@ -2996,35 +3361,167 @@
         } catch (_) { /* ignore */ }
     }
 
-    // ── Explosion burst (transient marker) ───────────────────────────
-    // Spawn a short-lived divIcon at latLng that plays the wg-adj-explosion
-    // CSS animation and removes itself when done. Used to mark each blue
-    // death as a visible "small action" before the X overlay settles.
-    // Kept compact (32×32) and short (~300ms) so multiple bursts inside a
-    // single step don't crowd the map or feel laggy.
-    function spawnExplosion(latLng, durationMs) {
+    // ── Transient visual effects ──────────────────────────────────────
+    function _transientMarker(latLng, className, html, sz, dur) {
         if (!hasMap() || !layerGroup || !latLng) return;
-        const dur = Number.isFinite(durationMs) ? durationMs : 300;
-        const icon = window.L.divIcon({
-            className: 'wg-adj-explosion',
-            html: `<svg viewBox="0 0 100 100" width="32" height="32"
-                        style="overflow:visible;display:block;">
-                      <circle cx="50" cy="50" r="28"
-                              fill="#ffb13a" opacity="0.85"/>
-                      <circle cx="50" cy="50" r="40"
-                              fill="none" stroke="#ff5c1a" stroke-width="6"
-                              opacity="0.9"/>
-                      <circle cx="50" cy="50" r="12"
-                              fill="#fff7d6" opacity="0.95"/>
-                   </svg>`,
-            iconSize:   [32, 32],
-            iconAnchor: [16, 16],
-        });
+        const icon = window.L.divIcon({ className, html, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] });
         const m = window.L.marker(latLng, { icon, interactive: false });
         m.addTo(layerGroup);
-        setTimeout(() => {
-            try { layerGroup.removeLayer(m); } catch (_) {}
-        }, dur + 50);
+        const tid = setTimeout(() => { try { layerGroup.removeLayer(m); } catch (_) {} }, dur + 60);
+        effectTimers.push(tid);
+    }
+
+    // Layered explosion — fireball + shockwave ring + central flash.
+    // magnitude 0-1 scales the overall size (0.3 = small, 1 = major kill).
+    function spawnExplosion(latLng, durationMs, magnitude) {
+        if (!hasMap() || !layerGroup || !latLng) return;
+        const dur = Number.isFinite(durationMs) ? durationMs : 500;
+        const mag = Number.isFinite(magnitude) ? Math.max(0.2, Math.min(1, magnitude)) : 0.6;
+        const sz  = Math.round(24 + mag * 40); // 24–64 px
+        const r1  = 45, r2 = 48, r3 = 14; // SVG radii (in 100-unit viewbox)
+        _transientMarker(latLng, 'wg-adj-explosion',
+            `<svg viewBox="0 0 100 100" width="${sz}" height="${sz}"
+                  style="overflow:visible;display:block;">
+               <circle cx="50" cy="50" r="${r2}"
+                       fill="none" stroke="#ff5c1a" stroke-width="8" opacity="0.85"/>
+               <circle cx="50" cy="50" r="${r1}"
+                       fill="#ffb13a" opacity="0.80"/>
+               <circle cx="50" cy="50" r="${r3}"
+                       fill="#fff7d6" opacity="0.95"/>
+             </svg>`, sz, dur);
+    }
+
+    // Dark smoke puff that lingers after destruction.
+    function spawnSmoke(latLng, durationMs) {
+        if (!hasMap() || !layerGroup || !latLng) return;
+        const dur = Number.isFinite(durationMs) ? durationMs : 2200;
+        const sz  = 44;
+        _transientMarker(latLng, 'wg-adj-smoke',
+            `<div style="
+                width:${sz}px;height:${sz}px;border-radius:50%;
+                background:radial-gradient(circle,#555 0%,#333 45%,transparent 70%);
+                opacity:0.65;
+             "></div>`, sz, dur);
+    }
+
+    // Brief colored flash when a unit takes a hit (not destroyed).
+    // status: 'damaged_partial'|'damaged_full'|'suppressed'|'expended'
+    function spawnHitFlash(latLng, status, dmgPct) {
+        if (!hasMap() || !layerGroup || !latLng) return;
+        const dmg = Number.isFinite(dmgPct) ? dmgPct : 0.3;
+        const cfg = {
+            damaged_partial: { color: '#e8a23a', bg: '#ff6b0044' },
+            damaged_full:    { color: '#d23a3a', bg: '#ff000044' },
+            suppressed:      { color: '#ca8a04', bg: '#ffd70033' },
+            expended:        { color: '#2563eb', bg: '#60a5fa44' },
+            destroyed:       { color: '#ff0000', bg: '#ff000055' },
+        };
+        const { color, bg } = cfg[status] || { color: '#fff', bg: '#ffffff33' };
+        const sz = Math.round(20 + dmg * 30);
+        _transientMarker(latLng, 'wg-adj-hit-flash',
+            `<div style="
+                width:${sz}px;height:${sz}px;border-radius:50%;
+                border:3px solid ${color};
+                background:${bg};
+             "></div>`, sz, 500);
+    }
+
+    // Blue flash + expanding ring when a unit is expended (magazines empty).
+    function spawnExpendedFlash(latLng) {
+        if (!hasMap() || !layerGroup || !latLng) return;
+        _transientMarker(latLng, 'wg-adj-expended',
+            `<div style="
+                width:32px;height:32px;border-radius:50%;
+                border:3px solid #60a5fa;
+                background:#1d4ed822;
+             "></div>`, 32, 700);
+    }
+
+    // Pulsing yellow rings around suppressed units — cleared each step.
+    function clearSuppressionHalos() {
+        for (const h of suppressionHalos) {
+            if (h && layerGroup) try { layerGroup.removeLayer(h); } catch (_) {}
+        }
+        suppressionHalos = [];
+    }
+
+    function applySuppressionHalos(state) {
+        clearSuppressionHalos();
+        if (!layerGroup || !window.L) return;
+        const affected = Array.isArray(state && state.affected) ? state.affected : [];
+        for (const a of affected) {
+            if (a.status_change !== 'suppressed') continue;
+            const marker = redMarkers[a.uid] || blueMarkers[a.uid];
+            if (!marker) continue;
+            let ll; try { ll = marker.getLatLng(); } catch (_) { continue; }
+            const ring = window.L.circle(ll, {
+                radius:      2200,
+                color:       '#ca8a04',
+                weight:      2,
+                opacity:     0.75,
+                fillColor:   '#ffd700',
+                fillOpacity: 0.08,
+                dashArray:   '5 3',
+                interactive: false,
+                className:   'wg-supp-ring',
+            });
+            ring.addTo(layerGroup);
+            suppressionHalos.push(ring);
+        }
+    }
+
+    // Choreograph destruction + smoke for RED units listed as destroyed in
+    // state.affected[]. Mirrors scheduleStaggeredDeaths for BLUE.
+    function scheduleRedDestructions(state, isForward) {
+        if (!isForward || !state) return;
+        const affected = Array.isArray(state.affected) ? state.affected : [];
+        const redDeaths = affected.filter(a => a && a.side === 'RED' && a.status_change === 'destroyed');
+        redDeaths.forEach((a, idx) => {
+            const marker = redMarkers[a.uid];
+            if (!marker) return;
+            let ll; try { ll = marker.getLatLng(); } catch (_) { return; }
+            const dmg = Number.isFinite(a.damage_pct) ? a.damage_pct : 1;
+            const t = 120 + idx * 220;
+            effectTimers.push(setTimeout(() => {
+                spawnExplosion(ll, 500, dmg);
+            }, t));
+            effectTimers.push(setTimeout(() => {
+                spawnSmoke(ll, 2000);
+                // Stamp X and dim the red marker
+                try {
+                    markUnitAsDestroyed(marker);
+                    const el = marker.getElement();
+                    if (el) {
+                        el.style.filter  = 'grayscale(100%) brightness(0.35)';
+                        el.style.opacity = '0.55';
+                    }
+                } catch (_) {}
+            }, t + 250));
+        });
+    }
+
+    // Choreograph hit flashes for non-destroyed affected units.
+    // Fires on forward steps only; gives each hit unit a brief impact pulse.
+    function scheduleHitEffects(state, isForward) {
+        if (!isForward || !state) return;
+        const affected = Array.isArray(state.affected) ? state.affected : [];
+        affected.forEach((a, idx) => {
+            if (!a || a.status_change === 'destroyed') return;
+            const marker = redMarkers[a.uid] || blueMarkers[a.uid];
+            if (!marker) return;
+            let ll; try { ll = marker.getLatLng(); } catch (_) { return; }
+            const dmg = Number.isFinite(a.damage_pct) ? a.damage_pct : 0.3;
+            const delay = 60 + idx * 80;
+            if (a.status_change === 'expended') {
+                effectTimers.push(setTimeout(() => spawnExpendedFlash(ll), delay));
+            } else {
+                effectTimers.push(setTimeout(() => spawnHitFlash(ll, a.status_change, dmg), delay));
+                // Heavier hits (damage_pct >= 0.5) get a small smoke puff too
+                if (dmg >= 0.5 && a.status_change !== 'suppressed') {
+                    effectTimers.push(setTimeout(() => spawnSmoke(ll, 1200), delay + 300));
+                }
+            }
+        });
     }
 
     // ── Breach badge (NATO-style coastal-defense breach marker) ──────
@@ -3151,10 +3648,18 @@
                     if (i >= 0) attackArrows.splice(i, 1);
                 }, arrowLifeMs));
             }, t));
-            // 2. Explosion at the blue's position.
+            // 2a. Explosion at the blue's position — magnitude from affected[].
+            const affectedEntry = (Array.isArray(state && state.affected) ? state.affected : [])
+                .find(a => a && a.uid === d.uid);
+            const mag = affectedEntry && Number.isFinite(affectedEntry.damage_pct)
+                ? affectedEntry.damage_pct : 0.8;
             pendingDeathTimers.push(setTimeout(() => {
-                spawnExplosion(d.ll, 300);
+                spawnExplosion(d.ll, 500, mag);
             }, t + 50));
+            // 2b. Lingering smoke ~250ms after the fireball peaks.
+            pendingDeathTimers.push(setTimeout(() => {
+                spawnSmoke(d.ll, 2200);
+            }, t + 300));
             // 3. X reveal — destroyed status + renderer refresh.
             pendingDeathTimers.push(setTimeout(() => {
                 const reg = unitRegistry[d.uid];
@@ -3285,6 +3790,10 @@
         lastAppliedStepIndex = -1;
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
+        clearSuppressionHalos();
+        clearSalvoAnimations();
+        for (const t of effectTimers) { try { clearTimeout(t); } catch (_) {} }
+        effectTimers = [];
     }
 
     // ── Find existing user-placed Blue marker by base id ─────────────
@@ -3460,7 +3969,7 @@
         // W3-rich: explicit engagement arcs replace the nearest-red heuristics.
         // updateAttackArrows() bails out early for W3, this fills the same slot
         // with authoritative arcs keyed off cause_actor → target_uid.
-        renderEngagementArcs(state, scenario || scenarioRef);
+        renderEngagementArcs(state, scenario || scenarioRef, isForward);
         // Note: we DO NOT draw separate "axis of advance" trails. The
         // schema (Wargame3/schema/README.md) only specifies engagement_arc
         // visuals. Unit movement is shown by the marker itself sliding
@@ -3674,6 +4183,17 @@
         // new kills (no-op on rewind / when there are no new kills).
         scheduleStaggeredDeaths(state, { instant });
 
+        // 4f. Red-unit destructions — explosion + X + gray for red units
+        // listed as destroyed in state.affected[]. Forward only.
+        scheduleRedDestructions(state, isForward);
+
+        // 4g. Hit-flash pulses for all non-destroyed affected units.
+        scheduleHitEffects(state, isForward);
+
+        // 4h. Suppression halos — pulsing yellow rings on suppressed units.
+        if (!instant) applySuppressionHalos(state);
+        else           clearSuppressionHalos();
+
         // 5. Pipeline fill: draw the section Red has already advanced over
         // as a solid colored line. Color uses the DERIVED outcome — when
         // the LLM's CAPTURED is contradicted, this turns blue (DENIED)
@@ -3751,6 +4271,9 @@
         breachBadges = {};
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
+        clearSuppressionHalos();
+        for (const t of effectTimers) { try { clearTimeout(t); } catch (_) {} }
+        effectTimers = [];
         // Restore any markers we faded
         destroyedMarkers.forEach((m) => restoreMarker(m));
         destroyedMarkers.clear();

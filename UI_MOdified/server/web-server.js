@@ -38,6 +38,7 @@ try { fs.mkdirSync(DATA_DIR,   { recursive: true }); } catch {}
 try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch {}
 
 const appData = require('./app-data');
+const demService   = require('./dem-service');
 const ollama       = require('./ai/ollama-client');
 const aiProvider   = require('./ai/ai-provider');
 const redTeam      = require('./ai/red-team-agent');
@@ -545,6 +546,40 @@ const server = http.createServer((req, res) => {
         }).then(r => {
             sendJson(res, r.ok ? 200 : 502, r);
         }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+
+    // ── DEM (Libya elevation) endpoints ─────────────────────────────────────
+    // GET /api/dem/info            → coverage + pixel scale metadata
+    // GET /api/dem/elevation?lon=&lat= → elevation in metres at a point
+    // GET /api/dem/tile/Z/X/Y.png → 256×256 hillshade+colormap tile
+    if (pathname === '/api/dem/info' && req.method === 'GET') {
+        sendJson(res, 200, { ...demService.getMeta(), available: demService.isAvailable() });
+        return;
+    }
+    if (pathname === '/api/dem/elevation' && req.method === 'GET') {
+        const lon = parseFloat(url.searchParams.get('lon'));
+        const lat = parseFloat(url.searchParams.get('lat'));
+        if (!isFinite(lon) || !isFinite(lat)) { sendJson(res, 400, { error: 'lon and lat required' }); return; }
+        const elev = demService.getElevation(lon, lat);
+        sendJson(res, 200, { lon, lat, elevation_m: elev, inCoverage: elev !== null });
+        return;
+    }
+    if (pathname.startsWith('/api/dem/tile/') && req.method === 'GET') {
+        const parts = pathname.split('/').slice(4); // ['Z','X','Y.png']
+        const z = parseInt(parts[0], 10);
+        const x = parseInt(parts[1], 10);
+        const y = parseInt((parts[2] || '').replace('.png', ''), 10);
+        if (!isFinite(z) || !isFinite(x) || !isFinite(y)) { res.writeHead(400); res.end(); return; }
+        try {
+            const png = demService.renderTile(z, x, y);
+            if (!png) { res.writeHead(204); res.end(); return; }
+            res.writeHead(200, { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=604800' });
+            res.end(png);
+        } catch (e) {
+            console.error('[dem] tile error:', e.message);
+            res.writeHead(500); res.end();
+        }
         return;
     }
 

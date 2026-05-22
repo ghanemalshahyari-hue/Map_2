@@ -278,6 +278,10 @@
                     <button id="wg-adj-map-clear" class="wargame-action-btn secondary" type="button">Hide</button>
                     <button id="wg-adj-3d-btn"    class="wargame-action-btn secondary" type="button">&#127760; 3D</button>
                 </div>
+                <div class="wg-adj-btn-row wg-adj-btn-row--2" style="margin-top:6px;">
+                    <button id="dem-toggle-btn" class="wargame-action-btn secondary" type="button" title="Toggle Libya DEM elevation overlay">&#9968; Terrain</button>
+                    <input id="dem-opacity-slider" type="range" min="10" max="100" value="60" style="flex:1;cursor:pointer;" title="DEM opacity">
+                </div>
             </div>
 
             <!-- ── Step-by-step adjudication ── -->
@@ -1952,6 +1956,12 @@
         root.querySelector('#wg-adj-map-btn').addEventListener('click', showScenarioOnMap);
         root.querySelector('#wg-adj-map-clear').addEventListener('click', hideScenarioFromMap);
         root.querySelector('#wg-adj-3d-btn').addEventListener('click', toggle3DGlobe);
+        root.querySelector('#dem-toggle-btn').addEventListener('click', () => {
+            if (window.DemLayer) window.DemLayer.toggle();
+        });
+        root.querySelector('#dem-opacity-slider').addEventListener('input', (e) => {
+            if (window.DemLayer) window.DemLayer.setOpacity(e.target.value / 100);
+        });
         root.querySelector('#wg-adj-step-btn').addEventListener('click', async () => { await ensureScenarioLoaded(); adjudicateNext(); });
         root.querySelector('#wg-adj-trial-btn').addEventListener('click', async () => { await ensureScenarioLoaded(); runOneTrial(); });
         root.querySelector('#wg-adj-reset-btn').addEventListener('click', resetTrial);

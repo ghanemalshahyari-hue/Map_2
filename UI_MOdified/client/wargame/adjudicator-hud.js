@@ -797,15 +797,31 @@
         }
         const btn = document.getElementById('wg-adj-3d-btn');
         const turningOn = !window.AppCesiumView.isVisible;
-        if (turningOn) setStatus('Loading 3D globe…', 'idle');
-        await window.AppCesiumView.toggle();
-        const on = window.AppCesiumView.isVisible;
-        if (btn) btn.classList.toggle('active', on);
-        if (on) {
-            setStatus('3D globe enabled.', 'ok');
-        } else {
+
+        if (!turningOn) {
+            await window.AppCesiumView.setVisible(false);
+            if (btn) btn.classList.remove('active');
             setStatus('3D globe hidden.', 'idle');
+            return;
         }
+
+        setStatus('Loading 3D globe…', 'idle');
+        const ok = await window.AppCesiumView.setVisible(true);
+        if (!ok) {
+            if (btn) btn.classList.remove('active');
+            setStatus('3D globe failed to load.', 'error');
+            return;
+        }
+        if (btn) btn.classList.add('active');
+
+        // Always draw the active scenario — don't rely on _lastScenario being set
+        const sc = await ensureScenarioLoaded();
+        if (sc) {
+            window.AppCesiumView.drawScenario(sc);
+            const lastState = window.AppAdjudicatorMap && window.AppAdjudicatorMap._lastState;
+            if (lastState) window.AppCesiumView.applyState(lastState, sc);
+        }
+        setStatus('3D globe enabled.', 'ok');
     }
 
     // ── Sparkline charts (Blue dead, Red coy-eq, Phase line) ─────────

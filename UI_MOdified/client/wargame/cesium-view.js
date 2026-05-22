@@ -406,19 +406,20 @@
     }
 
     // ── Visibility ───────────────────────────────────────────────────────
+    // Returns true when the view is ready (Cesium initialised), false on error.
     async function setVisible(show) {
         const cEl   = document.getElementById('cesium-container');
         const mapEl = document.getElementById('map');
-        if (!cEl) return;
+        if (!cEl) return false;
 
         if (!show) {
             isVisible = false;
-            cEl.style.display   = 'none';
+            cEl.style.cssText = 'display:none;position:absolute;inset:0;z-index:2;';
             if (mapEl) mapEl.style.display = '';
-            return;
+            return true;
         }
 
-        // Hide map immediately so there's no flicker while Cesium loads
+        // Hide map immediately; show loading state
         if (mapEl) mapEl.style.display = 'none';
         cEl.style.cssText = 'display:flex;align-items:center;justify-content:center;position:absolute;inset:0;z-index:2;background:#0a0e1a;';
         cEl.innerHTML = `<div style="color:#7aaecc;font-size:13px;text-align:center;">
@@ -428,35 +429,35 @@
         isVisible = true;
 
         const loaded = await loadCesiumAssets();
-        if (!loaded || !ensureInit()) {
+        if (!loaded) {
+            cEl.style.cssText = 'display:flex;align-items:center;justify-content:center;position:absolute;inset:0;z-index:2;background:#0a0e1a;';
             cEl.innerHTML = `<div style="color:#9ab;font-size:13px;text-align:center;padding:24px;max-width:360px;">
                 <div style="font-size:24px;margin-bottom:10px;">🌐</div>
                 <strong>Cesium not loaded</strong><br><br>
-                Requires an internet connection on first use (CDN).<br>
-                Or place a local copy in <code>lib/cesium/</code>.
-                <br><br><button onclick="AppCesiumView.setVisible(false)"
-                    style="margin-top:8px;padding:4px 12px;cursor:pointer;">
+                Requires an internet connection on first use (CDN).<br><br>
+                <button onclick="window.AppCesiumView.setVisible(false)"
+                    style="padding:4px 14px;cursor:pointer;border:1px solid #7aaecc;background:transparent;color:#7aaecc;border-radius:4px;">
                     Back to 2D</button>
             </div>`;
-            return;
+            return false;
         }
 
-        // Cesium is ready — hand the container back to the viewer
+        // ── Clear spinner FIRST, then create the Cesium viewer ──
+        // ensureInit() calls new Cesium.Viewer(el) which appends its own
+        // canvas. If we clear innerHTML after, we destroy that canvas.
         cEl.innerHTML = '';
         cEl.style.cssText = 'display:block;position:absolute;inset:0;z-index:2;';
 
-        // Sync scenario + last state from 2D map on first show
-        if (scenarioRef === null && window.AppAdjudicatorMap) {
-            try {
-                const lastScenario = window.AppAdjudicatorMap._lastScenario;
-                const lastState    = window.AppAdjudicatorMap._lastState;
-                if (lastScenario) drawScenario(lastScenario);
-                if (lastScenario && lastState) applyState(lastState, lastScenario);
-            } catch (_) {}
+        if (!ensureInit()) {
+            cEl.style.cssText = 'display:flex;align-items:center;justify-content:center;position:absolute;inset:0;z-index:2;background:#0a0e1a;';
+            cEl.innerHTML = `<div style="color:#f87;font-size:13px;padding:24px;">Cesium viewer failed to initialise.</div>`;
+            return false;
         }
+
+        return true;
     }
 
-    async function toggle() { await setVisible(!isVisible); }
+    async function toggle() { return await setVisible(!isVisible); }
 
     // ── Click-to-place ───────────────────────────────────────────────────
     function enterPlaceMode(callback) {

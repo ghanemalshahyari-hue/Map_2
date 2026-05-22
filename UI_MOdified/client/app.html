@@ -7,6 +7,7 @@
     <title>rmooz - رموز</title>
     <link rel="stylesheet" href="../lib/leaflet.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Widgets/widgets.css">
 </head>
 
 <body>
@@ -947,6 +948,7 @@
                 </div>
                 <div class="map-canvas-wrap">
                     <div id="map"></div>
+                    <div id="cesium-container" style="display:none; position:absolute; inset:0; z-index:2;"></div>
                     <div id="mission-graphic-assist" class="mission-graphic-assist hidden" aria-live="polite" aria-atomic="true">
                         <div id="mission-assist-title" class="mission-assist-title">Workflow</div>
                         <div class="mission-assist-steps">
@@ -1694,7 +1696,9 @@
     <script src="wargame/red-team-controller.js?v=4"></script>
     <script src="wargame/scenario-state.js?v=1"></script>
     <script src="wargame/adjudicator-client.js?v=4"></script>
-    <script src="wargame/adjudicator-map.js?v=19"></script>
+    <script src="wargame/adjudicator-map.js?v=26"></script>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Cesium.js"></script>
+    <script src="wargame/cesium-view.js?v=1"></script>
     <script src="wargame/adjudicator-hud.js?v=20"></script>
     <script src="ops-panel.js?v=1"></script>
     <script src="map-hide-panels.js?v=1"></script>

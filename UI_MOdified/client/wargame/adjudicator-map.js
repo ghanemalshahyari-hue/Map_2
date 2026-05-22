@@ -541,17 +541,17 @@
                  60%  { opacity: 1; transform: scale(0.92); }
                  100% { opacity: 1; transform: scale(1); }
              }
-             /* Explosion burst spawned at a blue's position right before the
-              * destroyed X pops in. Orange/yellow radial ring scales out and
-              * fades — reads as a "small action" / impact event. */
-             .wg-adj-explosion {
-                 pointer-events: none;
-                 animation: wg-adj-explosion 300ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+             /* Explosion burst — animates child div so Leaflet's positioning
+              * transform on the root element is not overridden. */
+             .wg-adj-explosion { pointer-events: none; }
+             .wg-adj-explosion > div {
+                 animation: wg-adj-explosion 600ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+                 transform-origin: center center;
              }
              @keyframes wg-adj-explosion {
                  0%   { opacity: 0;   transform: scale(0.2); }
-                 30%  { opacity: 1;   transform: scale(1.2); }
-                 100% { opacity: 0;   transform: scale(2.4); }
+                 25%  { opacity: 1;   transform: scale(1.3); }
+                 100% { opacity: 0;   transform: scale(2.6); }
              }
              /* Continuous pulse for counterattack arrows — gives a clear
               * "this unit is firing back" feel without any text label. */
@@ -617,6 +617,19 @@
                  0%   { opacity: 0;   transform: scale(0.3); }
                  25%  { opacity: 0.9; transform: scale(1.0); }
                  100% { opacity: 0;   transform: scale(1.8); }
+             }
+             /* Persistent death ring — bright orange halo stays 3.5 s so the
+              * operator can read which unit just died in a dense cluster. */
+             .wg-death-ring { pointer-events: none; }
+             .wg-death-ring > div {
+                 animation: wg-death-ring-fade 3500ms ease-out forwards;
+                 transform-origin: center center;
+             }
+             @keyframes wg-death-ring-fade {
+                 0%   { opacity: 0;   transform: scale(0.2); }
+                 12%  { opacity: 1;   transform: scale(1.0); }
+                 70%  { opacity: 0.85; transform: scale(1.05); }
+                 100% { opacity: 0;   transform: scale(1.15); }
              }
          `;
          document.head.appendChild(style);
@@ -3221,18 +3234,22 @@
         if (!hasMap() || !layerGroup || !latLng) return;
         const dur = Number.isFinite(durationMs) ? durationMs : 500;
         const mag = Number.isFinite(magnitude) ? Math.max(0.2, Math.min(1, magnitude)) : 0.6;
-        const sz  = Math.round(24 + mag * 40); // 24–64 px
+        const sz  = Math.round(44 + mag * 56); // 44–100 px
         const r1  = 45, r2 = 48, r3 = 14; // SVG radii (in 100-unit viewbox)
+        // Wrap in div so CSS animation targets > div, not the Leaflet root
+        // element (which already has transform:translate for positioning).
         _transientMarker(latLng, 'wg-adj-explosion',
-            `<svg viewBox="0 0 100 100" width="${sz}" height="${sz}"
-                  style="overflow:visible;display:block;">
-               <circle cx="50" cy="50" r="${r2}"
-                       fill="none" stroke="#ff5c1a" stroke-width="8" opacity="0.85"/>
-               <circle cx="50" cy="50" r="${r1}"
-                       fill="#ffb13a" opacity="0.80"/>
-               <circle cx="50" cy="50" r="${r3}"
-                       fill="#fff7d6" opacity="0.95"/>
-             </svg>`, sz, dur);
+            `<div style="width:${sz}px;height:${sz}px;overflow:visible;">
+               <svg viewBox="0 0 100 100" width="${sz}" height="${sz}"
+                    style="overflow:visible;display:block;">
+                 <circle cx="50" cy="50" r="${r2}"
+                         fill="none" stroke="#ff5c1a" stroke-width="8" opacity="0.85"/>
+                 <circle cx="50" cy="50" r="${r1}"
+                         fill="#ffb13a" opacity="0.80"/>
+                 <circle cx="50" cy="50" r="${r3}"
+                         fill="#fff7d6" opacity="0.95"/>
+               </svg>
+             </div>`, sz, dur);
     }
 
     // Dark smoke puff that lingers after destruction.
@@ -3270,15 +3287,32 @@
              "></div>`, sz, 500);
     }
 
-    // Blue flash + expanding ring when a unit is expended (magazines empty).
+    // Bright flash + label when a unit expends its magazines.
     function spawnExpendedFlash(latLng) {
         if (!hasMap() || !layerGroup || !latLng) return;
         _transientMarker(latLng, 'wg-adj-expended',
             `<div style="
-                width:32px;height:32px;border-radius:50%;
+                width:64px;height:64px;border-radius:50%;
                 border:3px solid #60a5fa;
+                box-shadow:0 0 10px 3px #60a5fa88;
                 background:#1d4ed822;
-             "></div>`, 32, 700);
+                display:flex;align-items:center;justify-content:center;
+                color:#93c5fd;font-size:10px;font-weight:700;
+             ">EXPD</div>`, 64, 1400);
+    }
+
+    // Persistent bright-orange ring that marks a newly destroyed unit for
+    // 3.5 s — much more readable than a brief explosion in a dense cluster.
+    function spawnDeathRing(latLng) {
+        if (!hasMap() || !layerGroup || !latLng) return;
+        const sz = 96;
+        _transientMarker(latLng, 'wg-death-ring',
+            `<div style="
+                width:${sz}px;height:${sz}px;border-radius:50%;
+                border:4px solid #ff4400;
+                box-shadow:0 0 14px 5px #ff440099,inset 0 0 10px 2px #ff220033;
+                background:#ff220009;
+             "></div>`, sz, 3600);
     }
 
     // Pulsing yellow rings around suppressed units — cleared each step.
@@ -3320,17 +3354,20 @@
         if (!isForward || !state) return;
         const affected = Array.isArray(state.affected) ? state.affected : [];
         const redDeaths = affected.filter(a => a && a.side === 'RED' && a.status_change === 'destroyed');
+        console.log('[DBG] redDestructions: isForward=', isForward, 'redDeaths=', redDeaths.length, redDeaths.map(a=>a.uid), 'redMarkerKeys sample:', Object.keys(redMarkers).slice(0,3));
         redDeaths.forEach((a, idx) => {
             const marker = redMarkers[a.uid];
+            console.log('[DBG] red uid', a.uid, '→ marker found?', !!marker);
             if (!marker) return;
             let ll; try { ll = marker.getLatLng(); } catch (_) { return; }
             const dmg = Number.isFinite(a.damage_pct) ? a.damage_pct : 1;
             const t = 120 + idx * 220;
             effectTimers.push(setTimeout(() => {
-                spawnExplosion(ll, 500, dmg);
+                spawnExplosion(ll, 600, dmg);
+                spawnDeathRing(ll);
             }, t));
             effectTimers.push(setTimeout(() => {
-                spawnSmoke(ll, 2000);
+                spawnSmoke(ll, 2200);
                 // Stamp X and dim the red marker
                 try {
                     markUnitAsDestroyed(marker);
@@ -3349,9 +3386,12 @@
     function scheduleHitEffects(state, isForward) {
         if (!isForward || !state) return;
         const affected = Array.isArray(state.affected) ? state.affected : [];
+        const nonDestroyed = affected.filter(a => a && a.status_change !== 'destroyed');
+        console.log('[DBG] hitEffects: affected=', affected.length, 'nonDestroyed=', nonDestroyed.length, nonDestroyed.map(a=>a.uid+'('+a.status_change+')'));
         affected.forEach((a, idx) => {
             if (!a || a.status_change === 'destroyed') return;
             const marker = redMarkers[a.uid] || blueMarkers[a.uid];
+            console.log('[DBG] hit uid', a.uid, a.status_change, '→ marker?', !!marker);
             if (!marker) return;
             let ll; try { ll = marker.getLatLng(); } catch (_) { return; }
             const dmg = Number.isFinite(a.damage_pct) ? a.damage_pct : 0.3;
@@ -3425,9 +3465,13 @@
         pendingDeathTimers = [];
 
         if (opts.instant) return;
-        const deaths = (state && state.per_unit_deltas && Array.isArray(state.per_unit_deltas.blue_destroyed))
-            ? state.per_unit_deltas.blue_destroyed
-            : [];
+        // opts.deaths carries the pre-computed delta (per_unit_deltas OR
+        // cumulative diff) from applyState; fall back to per_unit_deltas only.
+        const deaths = Array.isArray(opts.deaths) && opts.deaths.length
+            ? opts.deaths
+            : (state && state.per_unit_deltas && Array.isArray(state.per_unit_deltas.blue_destroyed))
+                ? state.per_unit_deltas.blue_destroyed : [];
+        console.log('[DBG] staggeredDeaths: deaths=', deaths.length, deaths, 'blueMarkerKeys sample:', Object.keys(blueMarkers).slice(0,3));
         if (!deaths.length) return;
 
         const mainRedMarker = Object.values(redMarkers).find(m =>
@@ -3498,7 +3542,8 @@
             const mag = affectedEntry && Number.isFinite(affectedEntry.damage_pct)
                 ? affectedEntry.damage_pct : 0.8;
             pendingDeathTimers.push(setTimeout(() => {
-                spawnExplosion(d.ll, 500, mag);
+                spawnExplosion(d.ll, 600, mag);
+                spawnDeathRing(d.ll);
             }, t + 50));
             // 2b. Lingering smoke ~250ms after the fireball peaks.
             pendingDeathTimers.push(setTimeout(() => {
@@ -3901,10 +3946,9 @@
         }
 
         // 4. Fold Blue destroyed uids into the running cumulative set.
-        // Every uid that EVER appears in a per-step delta gets remembered
-        // — this is the c133-safety-net: if a state arrives without
-        // blue_destroyed_cumulative (older trial JSONL, malformed LLM
-        // response) we still know what's dead.
+        // Snapshot BEFORE this step's update so we can compute the delta
+        // (units newly dead this step) even when per_unit_deltas is absent.
+        const prevDestroyedSet = new Set(runningDestroyedUids);
         const found = [];
         const missed = [];
         if (state.per_unit_deltas && Array.isArray(state.per_unit_deltas.blue_destroyed)) {
@@ -3922,6 +3966,23 @@
             }
         }
 
+        // 4a-W3. For w3-rich scenarios, blue deaths live in state.affected[]
+        // (side==='BLUE', status_change==='destroyed'). Neither per_unit_deltas
+        // nor blue_destroyed_cumulative is populated by the W3 adjudicator, so
+        // we fold these directly into runningDestroyedUids here.
+        if (Array.isArray(state.affected)) {
+            for (const a of state.affected) {
+                if (!a || a.side !== 'BLUE' || a.status_change !== 'destroyed') continue;
+                runningDestroyedUids.add(a.uid);
+                const baseId = String(a.uid).replace(/^BLUE_/, '');
+                const scenarioMarker = blueMarkers[a.uid];
+                if (scenarioMarker) found.push(baseId);
+                const userMarker = findBlueMarkerByBaseId(baseId);
+                if (userMarker && userMarker !== scenarioMarker) fadeMarker(userMarker);
+                if (!scenarioMarker && !userMarker) missed.push(baseId);
+            }
+        }
+
         // 4a. When the server emits state.blue_destroyed_cumulative we use it
         // as the step snapshot, but only REPLACE the running set on rewind /
         // scrub. On forward steps the client may have already added local
@@ -3929,7 +3990,7 @@
         // died earlier this run must not briefly revive just because the next
         // server state didn't include that local kill yet. Forward motion
         // therefore merges, rewind / jump-back still replaces exactly.
-        if (Array.isArray(state.blue_destroyed_cumulative)) {
+        if (Array.isArray(state.blue_destroyed_cumulative) && state.blue_destroyed_cumulative.length) {
             runningDestroyedUids = isForward
                 ? new Set([...runningDestroyedUids, ...state.blue_destroyed_cumulative])
                 : new Set(state.blue_destroyed_cumulative);
@@ -3978,17 +4039,32 @@
         propagateHqDamage();
 
         // 4c. Choreographed kill reveal on FORWARD steps. The cumulative
-        // sync in 4a/4b has already marked every blue in this step's
-        // per_unit_deltas.blue_destroyed as destroyed in the registry. For
-        // a forward advance we want each new kill to appear AS the red unit
-        // sweeps past it — so we un-mark the new kills here, run the
-        // renderer (drawing them as still alive), then let
-        // scheduleStaggeredDeaths re-mark them one-by-one over ~900ms with
-        // an explosion burst before each X reveal. On rewind / jumps we
-        // skip the un-mark and just snap to the final state.
-        const newDeadThisStep = (state.per_unit_deltas && Array.isArray(state.per_unit_deltas.blue_destroyed))
-            ? state.per_unit_deltas.blue_destroyed
+        // sync in 4a/4b has already marked every blue in this step's kills
+        // as destroyed in the registry. For a forward advance we want each
+        // new kill to appear AS the red unit sweeps past it — so we un-mark
+        // the new kills here, run the renderer (drawing them as still alive),
+        // then let scheduleStaggeredDeaths re-mark them one-by-one over ~900ms
+        // with an explosion burst before each X reveal.
+        //
+        // Primary source: per_unit_deltas.blue_destroyed (explicit per-step delta).
+        // Fallback: diff of blue_destroyed_cumulative vs the pre-step snapshot —
+        // the adjudicator often only emits the cumulative list, not the delta.
+        // Priority order for new blue kills this step:
+        // 1. per_unit_deltas.blue_destroyed (W1/W2 explicit delta)
+        // 2. diff of runningDestroyedUids vs prevDestroyedSet (cumulative growth)
+        // 3. state.affected[] BLUE destroyed (W3 — only source in mock mode)
+        const _deltaFromCumulative = isForward
+            ? [...runningDestroyedUids].filter(uid => !prevDestroyedSet.has(uid))
             : [];
+        const _w3BlueDeaths = isForward && Array.isArray(state.affected)
+            ? state.affected.filter(a => a && a.side === 'BLUE' && a.status_change === 'destroyed').map(a => a.uid)
+            : [];
+        const newDeadThisStep = (() => {
+            if (state.per_unit_deltas && Array.isArray(state.per_unit_deltas.blue_destroyed) && state.per_unit_deltas.blue_destroyed.length)
+                return state.per_unit_deltas.blue_destroyed;
+            if (_deltaFromCumulative.length) return _deltaFromCumulative;
+            return _w3BlueDeaths;
+        })();
         if (!instant && newDeadThisStep.length) {
             for (const uid of newDeadThisStep) {
                 const reg = unitRegistry[uid];
@@ -4025,7 +4101,7 @@
 
         // 4e. Schedule the staggered explosion + delayed X re-mark for the
         // new kills (no-op on rewind / when there are no new kills).
-        scheduleStaggeredDeaths(state, { instant });
+        scheduleStaggeredDeaths(state, { instant, deaths: newDeadThisStep });
 
         // 4f. Red-unit destructions — explosion + X + gray for red units
         // listed as destroyed in state.affected[]. Forward only.
@@ -4088,6 +4164,11 @@
             } else {
                 advanceTip = null;
             }
+        }
+
+        // Sync 3D globe if it's currently visible
+        if (window.AppCesiumView && window.AppCesiumView.isVisible) {
+            window.AppCesiumView.applyState(state, lastAppliedScenario || scenarioRef);
         }
 
         return { found, missed };
@@ -4262,5 +4343,8 @@
         // for diagnostics
         _findBlueMarkerByBaseId: findBlueMarkerByBaseId,
         _setDebug: (on) => { debugEnabled = !!on; },
+        // Cesium 3D sync — last state/scenario from applyState()
+        get _lastState()    { return lastAppliedState; },
+        get _lastScenario() { return lastAppliedScenario; },
     };
 })();

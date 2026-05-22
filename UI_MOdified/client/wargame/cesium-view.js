@@ -160,10 +160,25 @@
             creditContainer:       document.createElement('div'),
         });
 
-        // Dark military color scheme
+        // Add NaturalEarthII imagery — bundled with Cesium.js, works offline.
+        // baseLayerPicker:false removes the default Bing layer so we must
+        // add one explicitly or the globe renders as black space.
+        try {
+            viewer.imageryLayers.addImageryProvider(
+                new Cesium.TileMapServiceImageryProvider({
+                    url: Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII'),
+                })
+            );
+        } catch (_) {
+            viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString('#1b3a5c');
+        }
+
+        // Dark military tint
         viewer.scene.globe.enableLighting = false;
         viewer.scene.backgroundColor      = Cesium.Color.fromCssColorString('#0a0e1a');
         viewer.scene.globe.baseColor       = Cesium.Color.fromCssColorString('#1b2535');
+        const baseLayer = viewer.imageryLayers.get(0);
+        if (baseLayer) baseLayer.brightness = 0.72;
 
         // Click-to-place handler
         viewer.screenSpaceEventHandler.setInputAction((evt) => {

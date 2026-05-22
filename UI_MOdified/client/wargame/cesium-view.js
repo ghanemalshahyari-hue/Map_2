@@ -160,25 +160,30 @@
             creditContainer:       document.createElement('div'),
         });
 
-        // Add NaturalEarthII imagery — bundled with Cesium.js, works offline.
-        // baseLayerPicker:false removes the default Bing layer so we must
-        // add one explicitly or the globe renders as black space.
+        // OpenStreetMap imagery — CORS-safe (OSM serves Access-Control-Allow-Origin:*),
+        // no token required. baseLayerPicker:false removes the default Bing layer so
+        // we must add an explicit replacement or the globe renders as black space.
         try {
             viewer.imageryLayers.addImageryProvider(
-                new Cesium.TileMapServiceImageryProvider({
-                    url: Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII'),
+                new Cesium.UrlTemplateImageryProvider({
+                    url:    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    subdomains: ['a', 'b', 'c'],
+                    credit: '© OpenStreetMap contributors',
+                    minimumLevel: 0,
+                    maximumLevel: 19,
                 })
             );
         } catch (_) {
+            // Offline fallback: dark ocean colour only
             viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString('#1b3a5c');
         }
 
-        // Dark military tint
+        // Dark military tint — dim the OSM tiles so the symbols pop
         viewer.scene.globe.enableLighting = false;
         viewer.scene.backgroundColor      = Cesium.Color.fromCssColorString('#0a0e1a');
         viewer.scene.globe.baseColor       = Cesium.Color.fromCssColorString('#1b2535');
         const baseLayer = viewer.imageryLayers.get(0);
-        if (baseLayer) baseLayer.brightness = 0.72;
+        if (baseLayer) { baseLayer.brightness = 0.55; baseLayer.saturation = 0.4; }
 
         // Click-to-place handler
         viewer.screenSpaceEventHandler.setInputAction((evt) => {

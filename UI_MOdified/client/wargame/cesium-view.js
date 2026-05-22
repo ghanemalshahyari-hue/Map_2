@@ -19,6 +19,35 @@
 (function () {
     'use strict';
 
+    // ── CDN lazy-load config ─────────────────────────────────────────────
+    // Cesium is NOT loaded at page start (it's ~10 MB and its widgets.css
+    // injects global html/body resets that break the existing layout).
+    // Both assets are injected on first "🌐 3D" click instead.
+    const CESIUM_VERSION = '1.116';
+    const CESIUM_BASE    = `https://cesium.com/downloads/cesiumjs/releases/${CESIUM_VERSION}/Build/Cesium`;
+    let _cesiumLoadPromise = null;
+
+    function loadCesiumAssets() {
+        if (window.Cesium) return Promise.resolve(true);
+        if (_cesiumLoadPromise) return _cesiumLoadPromise;
+        _cesiumLoadPromise = new Promise((resolve) => {
+            // CSS — injected once; scoped after map is hidden so global resets don't bite
+            if (!document.querySelector('link[data-cesium]')) {
+                const link = document.createElement('link');
+                link.rel  = 'stylesheet';
+                link.href = `${CESIUM_BASE}/Widgets/widgets.css`;
+                link.setAttribute('data-cesium', '1');
+                document.head.appendChild(link);
+            }
+            const script  = document.createElement('script');
+            script.src    = `${CESIUM_BASE}/Cesium.js`;
+            script.onload = () => resolve(true);
+            script.onerror = () => { _cesiumLoadPromise = null; resolve(false); };
+            document.head.appendChild(script);
+        });
+        return _cesiumLoadPromise;
+    }
+
     // ── Module state ────────────────────────────────────────────────────
     let viewer      = null;   // Cesium.Viewer
     let isVisible   = false;
@@ -377,45 +406,57 @@
     }
 
     // ── Visibility ───────────────────────────────────────────────────────
-    function setVisible(show) {
+    async function setVisible(show) {
         const cEl   = document.getElementById('cesium-container');
         const mapEl = document.getElementById('map');
         if (!cEl) return;
 
-        if (show && !ensureInit()) {
-            // Cesium.js not available — show inline error
-            cEl.style.display         = 'flex';
-            cEl.style.alignItems      = 'center';
-            cEl.style.justifyContent  = 'center';
-            cEl.innerHTML = `<div style="color:#9ab;font-size:13px;text-align:center;padding:24px;max-width:360px;">
-                <div style="font-size:24px;margin-bottom:10px;">🌐</div>
-                <strong>Cesium not loaded</strong><br><br>
-                The 3D globe requires Cesium.js. Either:<br>
-                • Check your internet connection (CDN load), or<br>
-                • Download Cesium locally to <code>lib/cesium/</code>
-            </div>`;
-            isVisible = true;
-            if (mapEl) mapEl.style.display = 'none';
+        if (!show) {
+            isVisible = false;
+            cEl.style.display   = 'none';
+            if (mapEl) mapEl.style.display = '';
             return;
         }
 
-        isVisible = show;
-        if (cEl)   cEl.style.display   = show ? 'block' : 'none';
-        if (mapEl) mapEl.style.display = show ? 'none'  : '';
+        // Hide map immediately so there's no flicker while Cesium loads
+        if (mapEl) mapEl.style.display = 'none';
+        cEl.style.cssText = 'display:flex;align-items:center;justify-content:center;position:absolute;inset:0;z-index:2;background:#0a0e1a;';
+        cEl.innerHTML = `<div style="color:#7aaecc;font-size:13px;text-align:center;">
+            <div style="font-size:32px;margin-bottom:12px;">🌐</div>
+            Loading 3D globe…
+        </div>`;
+        isVisible = true;
 
-        // Sync current scenario + state on first show
-        if (show && scenarioRef === null && window.AppAdjudicatorMap) {
+        const loaded = await loadCesiumAssets();
+        if (!loaded || !ensureInit()) {
+            cEl.innerHTML = `<div style="color:#9ab;font-size:13px;text-align:center;padding:24px;max-width:360px;">
+                <div style="font-size:24px;margin-bottom:10px;">🌐</div>
+                <strong>Cesium not loaded</strong><br><br>
+                Requires an internet connection on first use (CDN).<br>
+                Or place a local copy in <code>lib/cesium/</code>.
+                <br><br><button onclick="AppCesiumView.setVisible(false)"
+                    style="margin-top:8px;padding:4px 12px;cursor:pointer;">
+                    Back to 2D</button>
+            </div>`;
+            return;
+        }
+
+        // Cesium is ready — hand the container back to the viewer
+        cEl.innerHTML = '';
+        cEl.style.cssText = 'display:block;position:absolute;inset:0;z-index:2;';
+
+        // Sync scenario + last state from 2D map on first show
+        if (scenarioRef === null && window.AppAdjudicatorMap) {
             try {
-                // Try to get the last drawn scenario from the 2D map
-                const lastState    = window.AppAdjudicatorMap._lastState;
                 const lastScenario = window.AppAdjudicatorMap._lastScenario;
-                if (lastScenario) { drawScenario(lastScenario); }
-                if (lastScenario && lastState) { applyState(lastState, lastScenario); }
+                const lastState    = window.AppAdjudicatorMap._lastState;
+                if (lastScenario) drawScenario(lastScenario);
+                if (lastScenario && lastState) applyState(lastState, lastScenario);
             } catch (_) {}
         }
     }
 
-    function toggle() { setVisible(!isVisible); }
+    async function toggle() { await setVisible(!isVisible); }
 
     // ── Click-to-place ───────────────────────────────────────────────────
     function enterPlaceMode(callback) {
@@ -454,6 +495,7 @@
         setVisible,
         toggle,
         enterPlaceMode,
+        loadCesiumAssets,
         get isVisible() { return isVisible; },
     };
 })();

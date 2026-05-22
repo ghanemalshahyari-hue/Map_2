@@ -796,18 +796,12 @@
             return;
         }
         const btn = document.getElementById('wg-adj-3d-btn');
-        window.AppCesiumView.toggle();
+        const turningOn = !window.AppCesiumView.isVisible;
+        if (turningOn) setStatus('Loading 3D globe…', 'idle');
+        await window.AppCesiumView.toggle();
         const on = window.AppCesiumView.isVisible;
         if (btn) btn.classList.toggle('active', on);
         if (on) {
-            // If no scenario drawn yet in 3D, draw now
-            const sc = await ensureScenarioLoaded();
-            if (sc && window.AppCesiumView) {
-                window.AppCesiumView.drawScenario(sc);
-                // Replay last known state if available
-                const last = window.AppAdjudicatorMap && window.AppAdjudicatorMap._lastState;
-                if (last) window.AppCesiumView.applyState(last, sc);
-            }
             setStatus('3D globe enabled.', 'ok');
         } else {
             setStatus('3D globe hidden.', 'idle');

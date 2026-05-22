@@ -17,7 +17,9 @@
 (function () {
     'use strict';
 
-    const SCENARIO_DEFAULT = 'wargame3';
+    // Resolved at boot from /api/ai/scenarios — whichever was last imported
+    // or selected. Falls back to 'wargame3' only if the server has no record.
+    let SCENARIO_DEFAULT = 'wargame3';
 
     let trial = null;       // current per-trial state from AppScenarioState
     let mcRunSubscription = null;
@@ -617,13 +619,28 @@
             setStatus('Could not load scenarios: ' + (result.error || 'unknown'), 'error');
             return;
         }
+        // Server tells us which scenario was last active. Update the module
+        // default so every subsequent reference to SCENARIO_DEFAULT is current.
+        const activeName = result.active || result.default || SCENARIO_DEFAULT;
+        SCENARIO_DEFAULT = activeName;
         for (const name of result.scenarios) {
             const opt = document.createElement('option');
             opt.value = name; opt.textContent = name;
-            if (name === result.default) opt.selected = true;
+            if (name === activeName) opt.selected = true;
             sel.appendChild(opt);
         }
-        sel.addEventListener('change', updateReportLink);
+        // Persist whenever the operator manually switches scenarios.
+        sel.addEventListener('change', () => {
+            updateReportLink();
+            const chosen = sel.value;
+            if (chosen) {
+                fetch('/api/scenario/active', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: chosen }),
+                }).catch(() => {});
+            }
+        });
         updateReportLink();
         setStatus('Connecting to AI backend…', 'idle');
     }

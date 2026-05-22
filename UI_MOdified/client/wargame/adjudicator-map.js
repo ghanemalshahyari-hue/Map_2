@@ -2690,7 +2690,10 @@
         clearEngagementArcs();
         if (!layerGroup || !state || !window.L) return;
         const sc = scenario || scenarioRef;
-        if (!sc || sc.schema_variant !== 'w3-rich') return;
+        if (!sc) return;
+        // No schema_variant gate — any scenario that includes engagement_arcs
+        // in its step data gets the tracer animation. Scenarios without arcs
+        // exit cleanly at the length check below.
         const stepIndex = Number.isFinite(state && state.step_index) ? state.step_index : 0;
         const stepRow = Array.isArray(sc.steps) ? sc.steps[stepIndex] : null;
         const arcs = stepRow && Array.isArray(stepRow.engagement_arcs)

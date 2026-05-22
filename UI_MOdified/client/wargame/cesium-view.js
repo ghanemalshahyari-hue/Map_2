@@ -431,6 +431,9 @@
             isVisible = false;
             cEl.style.cssText = 'display:none;position:absolute;inset:0;z-index:2;';
             if (mapEl) mapEl.style.display = '';
+            // Leaflet must recalculate its canvas size after being un-hidden;
+            // without this the map renders blank until the window is resized.
+            try { if (window.map) window.map.invalidateSize(); } catch (_) {}
             return true;
         }
 

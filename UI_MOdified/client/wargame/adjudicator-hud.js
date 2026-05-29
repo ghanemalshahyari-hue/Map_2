@@ -34,6 +34,24 @@
     let aiHealth = null;       // last /api/ai/health probe: { ok, url, defaultModel, models?, error? }
     let lastRunMode = null;    // 'mock' | 'live' | 'fallback' — last adjudicate response's actual run mode
 
+    // ── PR-50B: Read-only slot publisher for scenario-workspace.js ───────
+    // Mirrors already-loaded in-memory scenarioCache into window.RmoozScenario.
+    // No network call. No mutation of scenario/trial/adjudicator state.
+    // Offline-safe: scenarioCache is loaded from the local file server only.
+    // scenario-workspace.js READS window.RmoozScenario; nothing else does.
+    // AppShellScenarioWorkspace.refresh() is the only public call made here.
+    function publishRmoozScenario() {
+        if (!scenarioCache) return;
+        window.RmoozScenario = {
+            scenario:  scenarioCache,
+            stepIndex: (trial && typeof trial.stepIndex === 'number') ? trial.stepIndex : 0,
+        };
+        if (window.AppShellScenarioWorkspace &&
+            typeof window.AppShellScenarioWorkspace.refresh === 'function') {
+            window.AppShellScenarioWorkspace.refresh();
+        }
+    }
+
     // item #9 — feedback button state. Tracks the step the buttons currently
     // refer to and which steps already have feedback this session so the
     // same step can't be double-posted (server is idempotent but the UX
@@ -65,7 +83,7 @@
             };
         }
         restoreActiveCoa();
-        loadScenarios().then(autoDrawWhenReady);
+        loadScenarios().then(ensureScenarioLoaded);
         // Drop-zone for `all_phases.geojson` upload + SSE channel that
         // auto-refreshes the active scenario when it changes on disk.
         wireImportZone();
@@ -754,6 +772,7 @@
         const r = await window.AppAdjudicator.scenario(name);
         if (!r.ok) { setStatus('Could not load scenario JSON: ' + (r.error || 'unknown'), 'error'); return null; }
         scenarioCache = r.scenario;
+        publishRmoozScenario();   // PR-50B: mirror to scenario-workspace.js slot
         return scenarioCache;
     }
 
@@ -1695,6 +1714,7 @@
         // Consume the approved actions — the adjudicator has them now.
         if (window.AppApprovedActions) window.AppApprovedActions.clearForStep(nextIndex);
         window.AppScenarioState.applyDelta(trial, r);
+        publishRmoozScenario();   // PR-50B: update slot with new stepIndex
         renderStep(r.state, r.validation, { ...r.meta, durationMs: r.meta && r.meta.durationMs || wall });
         setLastMode(r);
         renderApprovedPreview();
@@ -1744,6 +1764,7 @@
             }
             if (window.AppApprovedActions) window.AppApprovedActions.clearForStep(i);
             window.AppScenarioState.applyDelta(trial, r);
+            publishRmoozScenario();   // PR-50B: update slot with new stepIndex
             renderStep(r.state, r.validation, r.meta);
             setLastMode(r);
             renderApprovedPreview();
@@ -1784,6 +1805,7 @@
 
     function resetTrial() {
         if (trial) window.AppScenarioState.reset(trial);
+        publishRmoozScenario();   // PR-50B: restore slot to step 0 after reset
         $('wg-adj-step-display').style.display = 'none';
         const tl = $('wg-adj-timeline');
         if (tl) tl.style.display = 'none';

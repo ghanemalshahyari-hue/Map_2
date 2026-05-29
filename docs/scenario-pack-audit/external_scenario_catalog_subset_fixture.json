@@ -1,0 +1,60 @@
+{
+  "fixtureType": "external_scenario_catalog_subset_fixture",
+  "generatedFrom": "external_scenario_source_manifest",
+  "sourceName": "CommunityScenarioPack51",
+  "sourceKind": "command_modern_operations_pack",
+  "purpose": "PR-280C test \u2014 subset catalog examples",
+  "readOnly": true,
+  "dryRunOnly": true,
+  "subsets": {
+    "default_10_high_no_lua": {
+      "description": "First 10 high-confidence, no-Lua, xlsx-matched scenarios",
+      "count": 10,
+      "scenarioIds": [
+        "scenario_0001",
+        "scenario_0002",
+        "scenario_0005",
+        "scenario_0006",
+        "scenario_0007",
+        "scenario_0009",
+        "scenario_0010",
+        "scenario_0012",
+        "scenario_0013",
+        "scenario_0014"
+      ]
+    },
+    "html_briefing_subset": {
+      "description": "All non-Lua HTML-briefing scenarios",
+      "count": 2,
+      "titles": [
+        "Iran Strike, 2025",
+        "Operation Ghost Rider, 1985"
+      ]
+    },
+    "lua_blocked_case": {
+      "description": "The one Lua scenario for includeLuaBlocked tests",
+      "scenarioId": "scenario_0176",
+      "title": "Gulf of Sidra Incident, 1981",
+      "luaScriptCount": 8
+    },
+    "baltap_campaign": {
+      "description": "BALTAP Campaign series",
+      "count": 5,
+      "titles": [
+        "BALTAP - Break through The Sound, 1963",
+        "BALTAP - Close down Mukran, 1987",
+        "BALTAP - Hunting in Skagerrak, 1983",
+        "BALTAP - Minesweeping Kiel Bight, 1983",
+        "BALTAP - Mining Fehmarn Belt, 1983"
+      ]
+    }
+  },
+  "keyStats": {
+    "totalScenarios": 630,
+    "luaScenarioCount": 1,
+    "htmlBriefingNoLuaCount": 2,
+    "xlsxMatchedCount": 512,
+    "highConfidenceCount": 509,
+    "baltapCount": 5
+  }
+}

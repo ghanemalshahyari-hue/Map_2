@@ -1,7 +1,22 @@
 {
   "name": "wargame3",
+  "scenario_id": "wargame3",
   "model_version": "wargame3-v1.0",
   "scenario_label": "Wargame 3 — Brega Amphibious Assault (173-unit OOB, 17 phases)",
+  "purpose_en": "Wargame 3 models a contested amphibious assault in the Brega coastal region. Red Force aims to seize the Nasser-Brega pipeline midpoint (OBJ-X) at 90 km inland. Blue Force holds area defense along the coastline and must prevent Red from reaching OBJ-X for 144 hours across six phases: PRE-H, PHASE 1, PHASE 2A, PHASE 2B, PHASE 3, and RESOLUTION.",
+  "purpose_ar": "يُحاكي التمرين الحربي الثالث اقتحاماً برمائياً متنازعاً عليه في منطقة سواحل بريقة. يسعى الفريق الأحمر إلى الاستيلاء على منتصف خط أنابيب ناصر-بريقة (الهدف X) على عمق 90 كم في الداخل. يتولى الفريق الأزرق الدفاع عن المنطقة على طول الساحل ويجب عليه منع الفريق الأحمر من الوصول إلى الهدف X خلال 144 ساعة عبر ست مراحل.",
+  "end_state_en": "Red secures OBJ-X and establishes a sustainable bridgehead inland. Blue prevents Red from reaching OBJ-X. Outcome determined in RESOLUTION phase.",
+  "end_state_ar": "يؤمّن الفريق الأحمر الهدف X ويُرسّخ رأس جسر مستدام في العمق. يمنع الفريق الأزرق الفريق الأحمر من الوصول إلى الهدف X. تُحدّد مرحلة الحل النتيجة النهائية.",
+  "constraints": [
+    "Blue force must not abandon the pipeline corridor",
+    "No offensive air operations beyond AO boundary",
+    "BLS sites must be contested before amphibious lodgement is declared"
+  ],
+  "assumptions": [
+    "Red amphibious force has naval fire superiority offshore",
+    "Blue logistics line remains intact through Phase 2A",
+    "EW environment is contested throughout all phases"
+  ],
   "map_bbox": [
     17.45,
     28.85,
@@ -12333,6 +12348,54 @@
       ],
       "posture": null,
       "name_ar": "2 سرية طائرات هجوم واستطلاع عدد (12 طائرة)",
+      "appear": 0
+    },
+    {
+      "unit_uid": "B-d0-99-000",
+      "base_id": "B-d0-99-000",
+      "label": "المكون البري 99. يتألف من :",
+      "role": "unknown",
+      "domain": "ground",
+      "echelon": "unit",
+      "sidc": "10031000001211000000",
+      "coord": [
+        19.90166170748455,
+        29.92519340810254
+      ],
+      "posture": null,
+      "name_ar": "المكون البري 99. يتألف من :",
+      "appear": 0
+    },
+    {
+      "unit_uid": "B-d0-المكون-030",
+      "base_id": "B-d0-المكون-030",
+      "label": "المكون البحري . ويتألف من:",
+      "role": "naval_unit",
+      "domain": "naval",
+      "echelon": "unit",
+      "sidc": "10033000001202000000",
+      "coord": [
+        20.4,
+        29.1
+      ],
+      "posture": null,
+      "name_ar": "المكون البحري . ويتألف من:",
+      "appear": 0
+    },
+    {
+      "unit_uid": "B-d1-400-045",
+      "base_id": "B-d1-400-045",
+      "label": "(400) لغم بحري",
+      "role": "mine_layer",
+      "domain": "naval",
+      "echelon": "unit",
+      "sidc": "10033000001206020000",
+      "coord": [
+        20.4,
+        29.1
+      ],
+      "posture": null,
+      "name_ar": "(400) لغم بحري",
       "appear": 0
     }
   ],

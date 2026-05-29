@@ -8,5 +8,8 @@
     "start": "npm run start --prefix UI_MOdified",
     "serve": "npm run serve --prefix UI_MOdified",
     "web": "npm run web --prefix UI_MOdified"
+  },
+  "dependencies": {
+    "playwright": "^1.60.0"
   }
 }

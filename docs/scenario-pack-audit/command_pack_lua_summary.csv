@@ -1,0 +1,9 @@
+lua_path,function_names,apparent_purpose,related_scenario_guess,import_risk,notes
+Lua/GulfofSidra1981/BusterNorthFunction.lua,BusterNorth,state-tracking; unit-control; rtb-control,GulfofSidra1981,HIGH: MUTATES_UNIT_STATE,Subfolder: GulfofSidra1981; API calls: 3; Lines: 21
+Lua/GulfofSidra1981/DeEscalate.lua,none,state-tracking; posture-escalation; player-messages,GulfofSidra1981,HIGH: MUTATES_POSTURE,Subfolder: GulfofSidra1981; API calls: 3; Lines: 7
+Lua/GulfofSidra1981/LibyanAircraftAttack.lua,none,state-tracking; posture-escalation; player-messages; contact-detection; ai-attack-trigger; rtb-control,GulfofSidra1981,HIGH: MUTATES_POSTURE; FIRES_ATTACK_EVENTS,Subfolder: GulfofSidra1981; API calls: 10; Lines: 72
+Lua/GulfofSidra1981/LibyanAircraftDestroyedConsequences.lua,releaseScrambleFighters,state-tracking; posture-escalation; scoring; player-messages; loadout-setup; condition-check,GulfofSidra1981,HIGH: MUTATES_POSTURE; MUTATES_SCORE; MUTATES_LOADOUT,Subfolder: GulfofSidra1981; API calls: 9; Lines: 52
+Lua/GulfofSidra1981/LibyanAircraftRTB.lua,none,contact-detection; unit-control; rtb-control,GulfofSidra1981,HIGH: MUTATES_UNIT_STATE,Subfolder: GulfofSidra1981; API calls: 4; Lines: 44
+Lua/GulfofSidra1981/NoMissilesInFlight.lua,none,player-messages; condition-check,GulfofSidra1981,LOW: read-only/condition-check,Subfolder: GulfofSidra1981; API calls: 3; Lines: 18
+Lua/GulfofSidra1981/ScenarioEndMessages.lua,none,scoring; player-messages,GulfofSidra1981,HIGH: MUTATES_SCORE,Subfolder: GulfofSidra1981; API calls: 4; Lines: 47
+Lua/GulfofSidra1981/Setup.lua,none,state-tracking; player-messages,GulfofSidra1981,LOW: read-only/condition-check,Subfolder: GulfofSidra1981; API calls: 3; Lines: 17

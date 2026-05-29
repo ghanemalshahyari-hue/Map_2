@@ -83,6 +83,7 @@
     let pipelineSegmentKm = null;// cached cumulative km along pipeline per vertex
     let legendControl = null;    // Leaflet control (top-right legend panel)
     let sitrepControl = null;    // Leaflet control (top-left SITREP banner)
+    let displayOffsetNotice = null; // Leaflet control (bottom-left display-offset info chip — PR-106)
     let ewHalo = null;           // circle around RED_405EW sized by EW band
     let contactHalo = null;      // circle around most recent destroyed Blue
     let aoLayers = [];           // dashed blue polygons for AO boundaries
@@ -141,28 +142,192 @@
     }
     function clamp01(x) { return Math.max(0, Math.min(1, x)); }
 
-    // Sea offsets per BLS (from wargame.py red_position / sea_offsets).
-    // Each value is [eastKm, northKm] from the BLS centroid; positive north
-    // = further offshore. Units staged here before their appear-step.
-    const BLS_SEA_OFFSETS = {
-        'BLS-1': [-2, 12],
-        'BLS-2': [ 0, 11],
-        'BLS-3': [ 2,  9],
-        'BLS-4': [ 3,  6],
-    };
+    // ── Layout configuration ──────────────────────────────────────────
+    // All placement / layout constants in one place.  Values are preserved
+    // exactly from their previous standalone declarations — PR-95 is a
+    // zero-behaviour refactor.  Unused entries (redW3SpreadKm,
+    // stagingEchelonRowKm, sideNudgeKm, w3GroundRoleCap) are carried here
+    // for completeness; activation belongs to a later display-layout PR.
+    const LAYOUT_CONFIG = {
 
-    // Per-unit spread offsets (in km) applied to the post-step-3 lerp
-    // position so a stack of brigades at the same BLS fans out instead of
-    // sitting on top of each other. Mirrors wargame.py `spread` dict.
-    const RED_UNIT_SPREAD = {
-        RED_401RECON: [ 5.0, -4.5],
-        RED_41MECH:   [-6.0,  1.0],
-        RED_42MECH:   [-2.2, -1.8],
-        RED_43MECH:   [ 2.2,  1.0],
-        RED_44ARMD:   [ 9.0,  8.0],
-        RED_9MID:     [-8.0, -6.0],
-        RED_1AD:      [-8.0,  2.0],
-    };
+        // Sea offsets per BLS (from wargame.py red_position / sea_offsets).
+        // Each value is [eastKm, northKm] from the BLS centroid; positive
+        // north = further offshore. Units staged here before their appear-step.
+        blsSeaOffsets: {
+            'BLS-1': [-2, 12],
+            'BLS-2': [ 0, 11],
+            'BLS-3': [ 2,  9],
+            'BLS-4': [ 3,  6],
+        },
+
+        // Per-unit spread offsets (in km) applied to the post-step-3 lerp
+        // position so a stack of brigades at the same BLS fans out instead
+        // of sitting on top of each other.  Mirrors wargame.py `spread`.
+        redUnitSpread: {
+            RED_401RECON: [ 5.0, -4.5],
+            RED_41MECH:   [-6.0,  1.0],
+            RED_42MECH:   [-2.2, -1.8],
+            RED_43MECH:   [ 2.2,  1.0],
+            RED_44ARMD:   [ 9.0,  8.0],
+            RED_9MID:     [-8.0, -6.0],
+            RED_1AD:      [-8.0,  2.0],
+        },
+
+        // W3-rich render-time role spread (unused in PR-95).
+        // Offsets are [eastKm, northKm] from the source coord.
+        redW3SpreadKm: {
+            // recon / ISR / EW push forward (south, more negative northKm)
+            recon:                [  6,  -3],
+            isr:                  [  6,  -3],
+            scout:                [  6,  -3],
+            ew:                   [ -8,   3],
+            signal:               [ -8,   3],
+            // armor and mech bunch around the main axis with east/west splay
+            armored_brigade:      [  3,   0.5],
+            armored_division:     [ -3,   1],
+            armor:                [  3,   0.5],
+            tank:                 [  3,   0.5],
+            mech_brigade:         [ -1.5, 0.5],
+            mech_inf_div:         [ -3,  -0.5],
+            // fires sit behind (north, positive northKm)
+            artillery:            [ -5,   3],
+            fire_support:         [ -5,   3],
+            rocket_artillery:     [ -7,   4],
+            // air assets sit further offshore north
+            strike:               [  4,   6],
+            fighter:              [ -4,   6],
+            fighter_ad:           [ -4,   6],
+            bomber:               [  0,   8],
+            // naval offshore north + east
+            destroyer:            [  6,   8],
+            frigate:              [  4,   7],
+            landing_ship:         [  0,   5],
+            amphib:               [  0,   5],
+            // SOF/UAV ahead of the line
+            sof:                  [  2,  -5],
+            kamikaze_uav:         [  4,  -4],
+            usv:                  [  6,  -2],
+            // defaults
+            unknown:              [  0,   0],
+        },
+
+        // Echelon-based north-south offset (km) during the pre-D-H
+        // offshore-staging phase (unused in PR-95).
+        stagingEchelonRowKm: {
+            division:  +2.0,
+            brigade:   +0.5,
+            battalion: -1.0,
+            squadron:  -2.5,
+            company:   -1.5,
+            unit:       0,
+        },
+
+        // Side nudge applied AFTER landing (unused in PR-95).
+        sideNudgeKm: { RED: { e: 0, n: 0 }, BLUE: { e: 0, n: -2.0 } },
+
+        // +N km north push applied to Blue units during a COUNTERATTACK step.
+        blueCounterattackKmNorth:  5.0,
+
+        // −N km fallback (south) applied to Blue units during a WITHDRAW step.
+        blueWithdrawKmNorth:      -5.0,
+
+        // Display-only Blue cluster fan-out (PR-102).
+        // Geographic bucket size (km): units whose raw step-coord falls in the
+        // same ~10 km cell are treated as a co-located cluster and fanned out
+        // on a regular polygon ring. Isolated units get fallback hash ring.
+        blueClusterBucketKm: 8.0,
+
+        // Target fan-out radius in pixels per echelon, scaled by the live
+        // zoom's km-per-pixel. PR-104: increased for non-division echelons so
+        // that co-located clusters (sz 2–4) produce ≥ 36 px separation at
+        // zoom 7–9. Formula: r = min(targetPx × kmPerPixel, maxKm).
+        // At zoom 7–9 the targetPx term drives the radius (26–30 px) which
+        // keeps clusters readable without distorting the tactical picture.
+        blueDisplayStaggerTargetPx: {
+            division:  6,
+            brigade:   20,
+            battalion: 30,
+            company:   30,
+            squadron:  30,
+            unit:      30,
+        },
+
+        // Hard cap (km) on the fan-out radius regardless of zoom level.
+        // PR-104: zoom-adaptive radius uses targetPx × kmPerPixel; this cap
+        // only binds when the zoom-derived radius would exceed the echelon max.
+        // At zoom 7 (1.06 km/px): brigade r = min(20px×1.06, 20) = 20 km.
+        // At zoom 8 (0.53 km/px): brigade r = min(20px×0.53, 20) = 10.6 km.
+        // At zoom 9 (0.265 km/px): brigade r = min(20px×0.265, 20) = 5.3 km.
+        // Battalion/company/squadron/unit targetPx=30 → z9 r=7.95 km (cap=28).
+        blueDisplayStaggerMaxKm: {
+            division:  3.0,
+            brigade:   20.0,
+            battalion: 28.0,
+            company:   28.0,
+            squadron:  28.0,
+            unit:      28.0,
+        },
+
+        // Fallback ring radius (km) for isolated Blue units that have no
+        // geo-bucket cluster neighbour. A small uid-hash ring prevents tight
+        // raw-coord stacking at natural zoom levels (zoom 9, ~9.5 km threshold)
+        // without distorting the unit's geographic position significantly.
+        // Values match the PR-100 hash-ring radii so zoom-9 behaviour for
+        // isolated units is preserved.
+        blueDisplayStaggerFallbackKm: {
+            division:  0.5,
+            brigade:   1.5,
+            battalion: 2.5,
+            company:   3.5,
+            squadron:  2.0,
+            unit:      2.0,
+        },
+
+        // PR-104: outer-ring radius cap (km) for large cluster multi-ring
+        // fan-out (clusterSize > 6). Inner rings use fractional proportions of
+        // this value (35 %, 60 %, 80 %). Single-ring clusters (≤ 6) use
+        // blueDisplayStaggerMaxKm above.
+        blueDisplayStaggerMultiRingMaxKm: {
+            division:  1.0,
+            brigade:   3.0,
+            battalion: 6.0,
+            company:   8.0,
+            squadron:  5.0,
+            unit:      5.0,
+        },
+
+        // W3 ground-unit progress cap by role (unused in PR-95).
+        // Maps W3-rich role strings to a 0–1+ progress cap along the
+        // BLS → OBJ axis.  Values > 1.0 (recon_bn, sof_bn) push those
+        // units ahead of the nominal objective line.
+        w3GroundRoleCap: {
+            // Maneuver
+            armored_brigade:    1.00,
+            mech_brigade:       1.00,
+            mech_inf_div:       0.95,
+            mech_bn:            0.90,
+            inf_brigade:        0.85,
+            // Recon ahead of front
+            recon_bn:           1.08,
+            // Combat support
+            artillery_bn:       0.50,
+            engineer_bn:        0.85,
+            atgm_bn:            0.70,
+            // Combat service support (way back)
+            signal_bn:          0.25,
+            ew_bn:              0.20,
+            chem_bn:            0.35,
+            logistics:          0.40,
+            // Air defense (mobile but stays with formation, not at front)
+            manpads:            0.60,
+            // SOF ahead of regulars
+            sof_bn:             1.10,
+            // Armor / generic
+            armored_unit:       1.00,
+            unknown:            0.80,
+        },
+
+    }; // end LAYOUT_CONFIG
 
     // ── W3-rich render-time helpers ───────────────────────────────────
     // The W3 producer places every red unit on a single phase_line latitude
@@ -171,45 +336,6 @@
     // role-keyed offsets so each echelon/role gets its own band relative to
     // the source coord; this matches the W1/W2 wargame.py spread idiom but
     // keys off role/echelon since W3 uids are opaque ("R-d3-12-008").
-    //
-    // Offsets are [eastKm, northKm] from the source coord. Always applied
-    // AFTER the offshore-staging gate (only for stepIndex >= unit.appear).
-    const RED_W3_SPREAD_KM = {
-        // recon / ISR / EW push forward (south, more negative northKm) and
-        // east of the main effort
-        recon:                [  6,  -3],
-        isr:                  [  6,  -3],
-        scout:                [  6,  -3],
-        ew:                   [ -8,   3],
-        signal:               [ -8,   3],
-        // armor and mech bunch around the main axis with east/west splay
-        armored_brigade:      [  3,   0.5],
-        armored_division:     [ -3,   1],
-        armor:                [  3,   0.5],
-        tank:                 [  3,   0.5],
-        mech_brigade:         [ -1.5, 0.5],
-        mech_inf_div:         [ -3,  -0.5],
-        // fires sit behind (north, positive northKm)
-        artillery:            [ -5,   3],
-        fire_support:         [ -5,   3],
-        rocket_artillery:     [ -7,   4],
-        // air assets sit further offshore north
-        strike:               [  4,   6],
-        fighter:              [ -4,   6],
-        fighter_ad:           [ -4,   6],
-        bomber:               [  0,   8],
-        // naval offshore north + east
-        destroyer:            [  6,   8],
-        frigate:              [  4,   7],
-        landing_ship:         [  0,   5],
-        amphib:               [  0,   5],
-        // SOF/UAV ahead of the line
-        sof:                  [  2,  -5],
-        kamikaze_uav:         [  4,  -4],
-        usv:                  [  6,  -2],
-        // defaults
-        unknown:              [  0,   0],
-    };
 
     // Hash a uid to a deterministic small jitter (so two units in the same
     // role don't perfectly overlap). Range ±1.5 km on each axis.
@@ -222,25 +348,124 @@
         return [e, n];
     }
 
-    // Echelon-based vertical (north-south) offset in km used during the
-    // pre-D-H offshore-staging phase: rough peace-time amphibious task
-    // organisation has the heavy units (divisions) near the lift, brigades
-    // arrayed in front, and squadrons/SOF screening forward. This is
-    // cosmetic — gives the staging blob 3–4 visible rows so brigades stop
-    // collapsing into a single tile of overlapping icons.
-    const STAGING_ECHELON_ROW_KM = {
-        division:  +2.0,  // heaviest, slightly north (further from coast)
-        brigade:   +0.5,
-        battalion: -1.0,
-        squadron:  -2.5,  // air assets forward
-        company:   -1.5,
-        unit:       0,
-    };
-    // Side nudge applied AFTER landing so red and blue don't perfectly
-    // collide on the same lat. Red gets +0 (its phase_line lat) and blue
-    // gets a small southward bias so the defensive line reads as
-    // "behind" the assault.
-    const SIDE_NUDGE_KM = { RED: { e: 0, n: 0 }, BLUE: { e: 0, n: -2.0 } };
+    // Returns km per pixel at a given Leaflet integer zoom level and reference
+    // latitude. Leaflet uses 256-px tiles; at zoom z, 2^z tiles span 360°.
+    // Used by 'blue-display-stagger' to scale the fan-out ring in real-world
+    // km proportionally to screen pixels at the current zoom level.
+    function kmPerPixelAtZoom(zoom, refLat) {
+        const lat        = (typeof refLat === 'number') ? refLat : 30;
+        const degPerTile = 360 / Math.pow(2, zoom);       // degrees lng per tile
+        const kmPerTile  = degPerTile * kmPerDegLng(lat); // km per 256-px tile
+        return kmPerTile / 256;                            // km per pixel
+    }
+
+    // ── computeDisplayOffset — pure display-offset helper ────────────
+    // Returns the {eastKm, northKm} display-only offset that should be
+    // added to a unit's authoritative coordinate, or null when no offset
+    // applies (caller uses the source coord as-is).
+    //
+    // This function is PURE: no side effects, no marker/map reads, no
+    // scenario mutation, same inputs always produce the same output.
+    //
+    // Modes (PR-96 + PR-100 + PR-102):
+    //   'w3-jitter'            — deterministic uid-hash jitter for W3-rich markers.
+    //   'red-spread'           — per-uid W1/W2 fan-out spread from LAYOUT_CONFIG.
+    //   'blue-action'          — tactical north shift for COUNTERATTACK / WITHDRAW.
+    //   'blue-display-stagger' — geographic-index regular polygon fan-out (PR-102).
+    //                            clusterIndex/clusterSize from geo-bucket map;
+    //                            zoom for km-per-pixel scaling. Isolated units
+    //                            get a small uid-hash ring fallback.
+    //
+    // @param  {{ mode: string, uid?: string, action?: string, echelon?: string,
+    //            clusterIndex?: number, clusterSize?: number, zoom?: number }} opts
+    // @returns {{ eastKm: number, northKm: number } | null}
+    function computeDisplayOffset({ mode, uid, action, echelon, clusterIndex, clusterSize, zoom }) {
+        switch (mode) {
+            case 'w3-jitter': {
+                const [e, n] = uidJitterKm(uid);
+                return { eastKm: e, northKm: n };
+            }
+            case 'red-spread': {
+                const spread = LAYOUT_CONFIG.redUnitSpread[uid];
+                if (!spread) return null;
+                return { eastKm: spread[0], northKm: spread[1] };
+            }
+            case 'blue-action': {
+                if (action === 'COUNTERATTACK')
+                    return { eastKm: 0, northKm: LAYOUT_CONFIG.blueCounterattackKmNorth };
+                if (action === 'WITHDRAW')
+                    return { eastKm: 0, northKm: LAYOUT_CONFIG.blueWithdrawKmNorth };
+                return null;  // HOLD / null action → no offset; caller uses baseCoord as-is
+            }
+            case 'blue-display-stagger': {
+                // PR-104: multi-ring fan-out for large Blue clusters; single ring
+                // for small clusters (≤ 6 units, covers all actual wargame3
+                // clusters); uid-hash ring fallback for isolated units.
+                //
+                // Pure function — same inputs always yield the same output.
+                // Raw scenario coordinates are never read or written here.
+                // Red markers, engagement logic, and damage paths are unaffected.
+                const ech = String(echelon || '').toLowerCase();
+                if (!clusterSize || clusterSize <= 1) {
+                    // Isolated unit — uid-hash ring at small fallback radius.
+                    // Behaviour preserved from PR-100/102 unchanged.
+                    const fbkm = LAYOUT_CONFIG.blueDisplayStaggerFallbackKm;
+                    const r = (fbkm && fbkm[ech] !== undefined) ? fbkm[ech] : 1.5;
+                    let h = 0;
+                    const s = String(uid || '');
+                    for (let i = 0; i < s.length; i++)
+                        h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+                    const angle = ((h >>> 0) % 10000) / 10000 * 2 * Math.PI;
+                    return { eastKm: r * Math.cos(angle), northKm: r * Math.sin(angle) };
+                }
+                const tpx      = LAYOUT_CONFIG.blueDisplayStaggerTargetPx;
+                const targetPx = (tpx && tpx[ech] !== undefined) ? tpx[ech] : 8;
+                const kmPx     = kmPerPixelAtZoom(zoom || 7, 30);
+                const idx      = clusterIndex || 0;
+                const sz       = clusterSize;
+                if (sz <= 6) {
+                    // Small cluster — single polygon ring at full radius (PR-104).
+                    // PR-104 increased targetPx/maxKm so pairs/triples/quads
+                    // (the actual max in wargame3) achieve ≥ 36 px separation at
+                    // zoom 7–9 and are clearly readable.
+                    const mxkm  = LAYOUT_CONFIG.blueDisplayStaggerMaxKm;
+                    const maxKm = (mxkm && mxkm[ech] !== undefined) ? mxkm[ech] : 4.0;
+                    const r     = Math.min(targetPx * kmPx, maxKm);
+                    const angle = (2 * Math.PI * idx) / sz;
+                    return { eastKm: r * Math.cos(angle), northKm: r * Math.sin(angle) };
+                }
+                // Large cluster (sz > 6) — deterministic multi-ring layout (PR-104).
+                //   Ring 0 (inner):  up to  6 units  at 35 % of outer radius
+                //   Ring 1:          up to 12 units  at 60 %
+                //   Ring 2:          up to 20 units  at 80 %
+                //   Ring 3 (outer):  remaining units at 100 %
+                // Units are sorted by uid inside the cluster (done in
+                // buildBlueClusterMap), so clusterIndex is stable across redraws.
+                const RING_CAP  = [6, 12, 20];               // capacity rings 0,1,2
+                const RING_FRAC = [0.35, 0.60, 0.80, 1.00];  // radial fraction per ring
+                const mxkm2     = LAYOUT_CONFIG.blueDisplayStaggerMultiRingMaxKm ||
+                                  LAYOUT_CONFIG.blueDisplayStaggerMaxKm;
+                const outerMaxKm = (mxkm2 && mxkm2[ech] !== undefined) ? mxkm2[ech] : 5.0;
+                const outerR    = Math.min(targetPx * kmPx, outerMaxKm);
+                // Walk rings to find which ring this unit belongs to
+                let ring = RING_CAP.length;  // default: outermost ring (index 3)
+                let cumBase = 0;
+                for (let ri = 0; ri < RING_CAP.length; ri++) {
+                    if (idx < cumBase + RING_CAP[ri]) { ring = ri; break; }
+                    cumBase += RING_CAP[ri];
+                }
+                // cumBase is now the start index of this ring
+                const slot        = idx - cumBase;
+                const ringCap     = ring < RING_CAP.length ? RING_CAP[ring] : (sz - cumBase);
+                const slotsInRing = Math.min(ringCap, sz - cumBase);
+                const r           = RING_FRAC[Math.min(ring, RING_FRAC.length - 1)] * outerR;
+                const angle       = (2 * Math.PI * slot) / slotsInRing;
+                return { eastKm: r * Math.cos(angle), northKm: r * Math.sin(angle) };
+            }
+            default:
+                return null;
+        }
+    }
 
     // Apply a SMALL visual jitter to a source coord. The W3 source already
     // encodes meaningful per-domain banding (air at lat 30.3, naval at
@@ -250,8 +475,8 @@
     // as one icon. Range: ±1.5 km on each axis, deterministic per uid.
     function applyW3Spread(meta, lonLat, stepIndex) {
         if (!lonLat) return lonLat;
-        const [je, jn] = uidJitterKm(meta.uid);
-        return offsetLonLat(lonLat, je, jn);
+        const { eastKm, northKm } = computeDisplayOffset({ mode: 'w3-jitter', uid: meta.uid });
+        return offsetLonLat(lonLat, eastKm, northKm);
     }
 
     // Engagement-arc colors (per Wargame3/schema/README.md "Status → color recipe").
@@ -289,9 +514,6 @@
         11: { lc: 'COUNTERATTACK', p21c: 'COUNTERATTACK', p22c: 'COUNTERATTACK', p23c: 'COUNTERATTACK',
               p31c: 'COUNTERATTACK', p32c: 'COUNTERATTACK', p33c: 'COUNTERATTACK' },
     };
-    const BLUE_COUNTERATTACK_KM_NORTH = 5.0;   // +N km push during the riposte
-    const BLUE_WITHDRAW_KM_NORTH      = -5.0;  // -N km fallback (south)
-
     // Compute progress 0..1 from the per-step state. We use phase_line_km /
     // objDepthKm — same idiom as wargame.py (step.progress drives every
     // unit position). Falls back to step_index/(stepCount-1) when PL is missing,
@@ -325,7 +547,7 @@
         if (role === 'Explosive USVs')  return offsetLonLat(blsCoord,  0, 4);
         if (role === 'CBRN defense')    return offsetLonLat(blsCoord,  0, 3);
 
-        const seaOffset = BLS_SEA_OFFSETS[meta.bls] || [0, 10];
+        const seaOffset = LAYOUT_CONFIG.blsSeaOffsets[meta.bls] || [0, 10];
         const sea = offsetLonLat(blsCoord, seaOffset[0], seaOffset[1]);
 
         // Pre-appear: unit still at offshore staging.
@@ -346,9 +568,9 @@
         else if (role === 'Exploitation' && stepIndex < 8)     unitProgress = 0;
 
         let pos = lerpLonLat(blsCoord, objCoord, unitProgress);
-        const spread = RED_UNIT_SPREAD[meta.uid];
-        if (stepIndex >= 3 && spread) {
-            pos = offsetLonLat(pos, spread[0], spread[1]);
+        const redOff = computeDisplayOffset({ mode: 'red-spread', uid: meta.uid });
+        if (stepIndex >= 3 && redOff) {
+            pos = offsetLonLat(pos, redOff.eastKm, redOff.northKm);
         }
         return pos;
     }
@@ -377,33 +599,6 @@
     //
     // Per-unit jitter + role-keyed spread fans the cluster out so 70
     // units don't pile up on a single axis.
-    const W3_GROUND_ROLE_CAP = {
-        // Maneuver
-        armored_brigade:    1.00,
-        mech_brigade:       1.00,
-        mech_inf_div:       0.95,
-        mech_bn:            0.90,
-        inf_brigade:        0.85,
-        // Recon ahead of front
-        recon_bn:           1.08,
-        // Combat support
-        artillery_bn:       0.50,
-        engineer_bn:        0.85,
-        atgm_bn:            0.70,
-        // Combat service support (way back)
-        signal_bn:          0.25,
-        ew_bn:              0.20,
-        chem_bn:            0.35,
-        logistics:          0.40,
-        // Air defense (mobile but stays with formation, not at front)
-        manpads:            0.60,
-        // SOF ahead of regulars
-        sof_bn:             1.10,
-        // Armor / generic
-        armored_unit:       1.00,
-        unknown:            0.80,
-    };
-
     // Roles that NEVER advance toward OBJ — they're fixed-site or
     // sea-based assets. Return positions are absolute (relative to
     // BLS-1 or a domain-specific anchor), not lerped progress.
@@ -462,8 +657,8 @@
         if (!meta || !meta.baseCoord) return meta && meta.baseCoord;
         const actions = blueActionsFor(stepIndex, state);
         const action = actions ? actions[meta.baseId] : null;
-        if (action === 'COUNTERATTACK') return offsetLonLat(meta.baseCoord, 0, BLUE_COUNTERATTACK_KM_NORTH);
-        if (action === 'WITHDRAW')      return offsetLonLat(meta.baseCoord, 0, BLUE_WITHDRAW_KM_NORTH);
+        const blueOff = computeDisplayOffset({ mode: 'blue-action', action });
+        if (blueOff) return offsetLonLat(meta.baseCoord, blueOff.eastKm, blueOff.northKm);
         return meta.baseCoord;
     }
 
@@ -480,33 +675,31 @@
          const style = document.createElement('style');
          style.id = 'wg-adj-styles';
          style.textContent = `
-             /* Smooth marker movement between steps. Leaflet sets a marker's
-              * position via inline style.transform = translate3d(...). A CSS
-              * transition on transform makes setLatLng animate over the
-              * specified duration. During map pan/zoom Leaflet moves the
-              * whole layer container (not individual marker transforms), so
-              * this transition only fires on actual setLatLng calls. */
+             /* PR-102C: transform transition removed so markers snap to their
+              * Leaflet-assigned position immediately on load, refresh, and
+              * zoom, preventing the cinematic "entering the frame" effect.
+              * opacity/filter transitions are kept so destroyed/damaged state
+              * changes still crossfade visually. */
              .wg-adj-sidc,
              .wg-adj-diamond,
              .wg-adj-square,
-             .wg-adj-dot {
-                 transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1),
-                             opacity   400ms ease-in-out,
-                             filter    400ms ease-in-out;
-                 will-change: transform;
+             .wg-adj-dot,
+             .wg-adj-bls,
+             .wg-adj-obj,
+             .wg-adj-offmap,
+             .wg-adj-breach {
+                 transition: opacity 400ms ease-in-out,
+                             filter  400ms ease-in-out;
              }
-             /* W3 scenarios: the D-H staging→coast sweep is ~55 km. A
-              * 500ms transition reads as a teleport at that distance, so
-              * lengthen to 1500ms (matches the schema README's "2-3s per
-              * phase" interactive-viewer pacing). The body.wg-w3 class is
-              * toggled in drawScenario() per scenario.schema_variant. */
+             /* W3 scenarios: opacity/filter extended to 600ms for longer
+              * phase pacing (schema README "2-3s per phase"). Transform
+              * animation removed — PR-102C. */
              body.wg-w3 .wg-adj-sidc,
              body.wg-w3 .wg-adj-diamond,
              body.wg-w3 .wg-adj-square,
              body.wg-w3 .wg-adj-dot {
-                 transition: transform 1500ms cubic-bezier(0.3, 0.7, 0.3, 1),
-                             opacity   600ms ease-in-out,
-                             filter    600ms ease-in-out;
+                 transition: opacity 600ms ease-in-out,
+                             filter  600ms ease-in-out;
              }
              /* Destroyed treatment — mirrors wargame.py draw_unit_box():
               * the icon (NATO/SIDC SVG or div) is desaturated to gray, but
@@ -955,8 +1148,24 @@
         _zoomHookBound = true;
     }
 
+    // ── Scenario graphics pane ───────────────────────────────────────
+    // Creates a named Leaflet pane for all scenario tactical overlays
+    // (advance/kill/counterattack arrows, engagement arcs, AO polygons,
+    // pipeline, phase line). z-index 520 places scenario graphics above
+    // the user ManeuverArrow pane (410) but below unit marker icons (600).
+    // Idempotent — safe to call from both drawScenario and applyState.
+    const SCENARIO_GRAPHICS_PANE = 'rmoozScenarioGraphicsPane';
+    function ensureScenarioGraphicsPane() {
+        const m = window.map;
+        if (!m || typeof m.createPane !== 'function') return;
+        if (!m.getPane(SCENARIO_GRAPHICS_PANE)) {
+            m.createPane(SCENARIO_GRAPHICS_PANE).style.zIndex = '520';
+        }
+    }
+
     function drawScenario(scenario) {
         if (!hasMap() || !scenario) return false;
+        ensureScenarioGraphicsPane();
         clearScenario();
         bindZoomHookOnce();
 
@@ -988,7 +1197,7 @@
         // the Python renders (nato-map-layers.geojson, autoFlank metadata).
         for (const ao of (scenario.ao_boundaries || [])) {
             const polys = ao.type === 'MultiPolygon' ? ao.coordinates : [ao.coordinates];
-            const roleLabel = ao.role ? String(ao.role).replace(/[-_]/g, ' ') : '';
+            const roleLabel = ao.role ? displayRole(ao.role) : '';
             const lengthTxt = Number.isFinite(ao.lengthKm) ? `${ao.lengthKm} km` : '';
             const pillHtml = (roleLabel || lengthTxt)
                 ? `${esc(roleLabel)}${lengthTxt ? ' · ' + lengthTxt : ''}`
@@ -1004,7 +1213,8 @@
                         fillColor: '#3a96d2',
                         fillOpacity: 0.05,
                         interactive: false,
-                    }).bindTooltip(`AO: ${esc(ao.role || '')}${lengthTxt ? ' (' + lengthTxt + ')' : ''}`, { sticky: true });
+                        pane: SCENARIO_GRAPHICS_PANE,
+                    }).bindTooltip(`AO: ${esc(displayRole(ao.role || ''))}${lengthTxt ? ' (' + lengthTxt + ')' : ''}`, { sticky: true });
                     line.addTo(layerGroup);
                     aoLayers.push(line);
 
@@ -1017,6 +1227,7 @@
                         const center = [sumLat / n, sumLng / n];
                         const label = window.L.marker(center, {
                             interactive: false,
+                            pane: SCENARIO_GRAPHICS_PANE,
                             icon: window.L.divIcon({
                                 className: 'wg-adj-ao-label',
                                 html: `<div style="
@@ -1141,6 +1352,7 @@
                 opacity: 0.55,
                 dashArray: '4 6',
                 interactive: false,
+                pane: SCENARIO_GRAPHICS_PANE,
             }).bindTooltip('Nasser–Brega pipeline route', { sticky: true });
             pipelineLine.addTo(layerGroup);
         }
@@ -1206,8 +1418,16 @@
             const icon = sidcIcon(sidc, size) || diamondIcon(COLORS.RED_UNIT, unit.label);
             const m = window.L.marker(
                 [initialLonLat[1], initialLonLat[0]],
-                { icon, title: unit.uid + ' — ' + unit.role + ' (' + unit.label + ')' },
-            ).bindTooltip(`${unit.uid} (${unit.label}) — ${unit.role} — STAGED`, { permanent: false });
+                { icon, title: (unit.label || displayRedId(unit.uid)) + ' — ' + displayRole(unit.role) },
+            ).bindTooltip(
+                `${unit.label || displayRedId(unit.uid)} — ${displayRole(unit.role)} — STAGED` +
+                // PR-109: Red staging-cluster transparency note.
+                // Informs the operator that co-located Red markers are intentional
+                // staging-area groupings, not a display error.
+                // No raw coords exposed, no Event Log entries, no storage writes.
+                `<div style="margin-top:4px;padding-top:3px;border-top:1px solid #3a2a2a;font-size:9px;color:#8a6a6a;font-style:italic;">${esc((window.t && window.t('tooltip-red-staging-note')) || 'Multiple Red units may be intentionally staged at this assembly area.')}</div>`,
+                { permanent: false }
+            );
             m._wgRedMeta = meta;
             // Expose the same hooks the Units feature attaches to drag-placed
             // markers, so red-team-controller.scanMapForUnits() can discover
@@ -1244,8 +1464,15 @@
             const icon = sidcIcon(sidc, size) || squareIcon(COLORS.BLUE_UNIT, unit.base_id, Math.max(10, Math.round(size / 2)));
             const m = window.L.marker(
                 [unit.coord[1], unit.coord[0]],
-                { icon, title: unit.unit_uid + ' — ' + (unit.echelon || 'unit') },
-            ).bindTooltip(`${unit.unit_uid} (${unit.echelon || 'unit'}) — ACTIVE`, { permanent: false });
+                { icon, title: displayBlueId(unit.base_id) + (unit.role ? ' · ' + displayRole(unit.role) : '') + (unit.echelon ? ' (' + unit.echelon + ')' : '') },
+            ).bindTooltip(
+                `${displayBlueId(unit.base_id)}${unit.echelon ? ' (' + unit.echelon + ')' : ''} — ACTIVE` +
+                // PR-107: display-offset transparency footer (Blue units only).
+                // textContent-equivalent: esc() encodes the i18n string before
+                // inserting into the template. No raw coords, no event log, no storage.
+                `<div style="margin-top:4px;padding-top:3px;border-top:1px solid #2a3a4a;font-size:9px;color:#6a7a8a;font-style:italic;">${esc((window.t && window.t('tooltip-display-offset-notice')) || 'Displayed position is offset for readability.')}</div>`,
+                { permanent: false }
+            );
             m._wgBlueMeta = {
                 uid:       unit.unit_uid,
                 side:      'BLUE',
@@ -1354,6 +1581,42 @@
             return div;
         };
         sitrepControl.addTo(window.map);
+
+        // PR-106: bottom-left display-offset info chip — visual-only notice.
+        // Informs the operator that unit icon positions may be display-offset
+        // for readability; raw tactical coordinates and adjudication logic are
+        // always authoritative and never altered by the fan-out.
+        // Purely static markup: textContent only, no innerHTML, no event log
+        // entries, no storage, no backend calls. Auto-updates on lang switch
+        // via data-i18n (processed by applyLanguage() in i18n.js).
+        if (!displayOffsetNotice && window.L) {
+            displayOffsetNotice = window.L.control({ position: 'bottomleft' });
+            displayOffsetNotice.onAdd = function () {
+                const div = window.L.DomUtil.create('div', 'wg-adj-display-offset-notice');
+                div.style.cssText = [
+                    'background:rgba(15,22,35,.78)',
+                    'color:#8a9ab0',
+                    'font-family:sans-serif',
+                    'font-size:10px',
+                    'line-height:1.45',
+                    'padding:4px 9px',
+                    'border-radius:3px',
+                    'border:1px solid rgba(60,80,110,.38)',
+                    'max-width:290px',
+                    'margin-bottom:6px',
+                    'pointer-events:none',
+                    'user-select:none',
+                ].join(';');
+                const span = document.createElement('span');
+                span.setAttribute('data-i18n', 'map-display-offset-notice');
+                span.textContent = (window.t && window.t('map-display-offset-notice')) ||
+                    'Display offsets are visual only. Raw coordinates and adjudication logic remain unchanged.';
+                div.appendChild(span);
+                window.L.DomEvent.disableClickPropagation(div);
+                return div;
+            };
+            displayOffsetNotice.addTo(window.map);
+        }
     }
 
     function removeSitrep() {
@@ -1361,6 +1624,10 @@
             try { window.map.removeControl(sitrepControl); } catch (_) {}
         }
         sitrepControl = null;
+        if (displayOffsetNotice && window.map) {
+            try { window.map.removeControl(displayOffsetNotice); } catch (_) {}
+        }
+        displayOffsetNotice = null;
     }
 
     function updateSitrep(state) {
@@ -1406,6 +1673,50 @@
             </div>
         `;
     }
+
+    // ── Display-only name helpers ─────────────────────────────────────
+    // Pure functions: map raw scenario codes to operator-readable strings.
+    // Do NOT change scenario data, registry keys, SIDC logic, or placement.
+    const _ROLE_DISPLAY = {
+        main_effort:          'Main Effort',
+        main_attack:          'Main Attack',
+        fixing:               'Fixing Force',
+        support:              'Support',
+        support_by_fire:      'Support by Fire',
+        recon:                'Reconnaissance',
+        reserve:              'Reserve',
+        hq:                   'Headquarters',
+        armored_brigade:      'Armored Brigade',
+        mechanized_brigade:   'Mechanized Brigade',
+        infantry_brigade:     'Infantry Brigade',
+        armored_battalion:    'Armored Battalion',
+        mechanized_battalion: 'Mechanized Battalion',
+        infantry_battalion:   'Infantry Battalion',
+        fighter_ad:           'Fighter / Air Defense',
+        strike:               'Strike',
+        logistics:            'Logistics',
+        artillery:            'Artillery',
+        engineering:          'Engineering',
+    };
+    function displayRole(role) {
+        if (!role) return '';
+        return _ROLE_DISPLAY[String(role).toLowerCase()] ||
+            String(role).replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+    function displayBlueId(id) {
+        if (!id) return '';
+        const s = String(id).replace(/^BLUE_/, '');
+        if (s === 'lc') return 'Div HQ';
+        const b = s.match(/^b([1-9])c$/);             if (b) return `Bde ${b[1]}`;
+        const p = s.match(/^p([1-9])([1-9])c$/);      if (p) return `Bn ${p[1]}-${p[2]}`;
+        const c = s.match(/^c([1-9])([1-9])([1-9])$/);if (c) return `Coy ${c[1]}-${c[2]}-${c[3]}`;
+        return s;
+    }
+    function displayRedId(uid) {
+        if (!uid) return '';
+        return String(uid).replace(/^RED_/, '').replace(/[-_]/g, ' ');
+    }
+    // ─────────────────────────────────────────────────────────────────
 
     function esc(s) {
         if (s == null) return '';
@@ -1810,7 +2121,7 @@
             const headHalfPx = Math.round(bodyHalfPx * 2.2);
             const headLenPx = Math.round(bodyHalfPx * 2.9);
             const label = cluster.count > 1 ? 'Main attack' : (cluster.hasMain ? 'Main effort' : cluster.lanes[0].style.label);
-            const members = cluster.lanes.map(l => `${l.unit.label} (${l.unit.uid})`).join(', ');
+            const members = cluster.lanes.map(l => `${l.unit.label} (${displayRedId(l.unit.uid)})`).join(', ');
             const centerline = [
                 { lat: tailLat, lng: tailLng },
                 { lat: ctrlLat, lng: ctrlLng },
@@ -1823,6 +2134,7 @@
                 outline: '#5b0c0c',
                 outlineWidthPx: 2,
                 opacity: cluster.count > 1 ? 0.58 : 0.5,
+                pane: SCENARIO_GRAPHICS_PANE,
             });
             if (arrow) {
                 arrow.addTo(layerGroup);
@@ -1838,10 +2150,11 @@
                     opacity: cluster.count > 1 ? 0.58 : 0.5,
                     lineCap: 'round',
                     interactive: false,
+                    pane: SCENARIO_GRAPHICS_PANE,
                 }).bindTooltip(`${label}: ${members}`, { sticky: true });
                 line.addTo(layerGroup);
                 advanceArrows.push(line);
-                const ah = makeArrowhead(start, end, cluster.color, 14);
+                const ah = makeArrowhead(start, end, cluster.color, 14, SCENARIO_GRAPHICS_PANE);
                 if (ah) { ah.addTo(layerGroup); advanceArrows.push(ah); }
                 if (!opts.instant) animateLineDraw(line, 200);
             }
@@ -1927,7 +2240,9 @@
             iconSize:   uni.iconSize,
             iconAnchor: uni.iconAnchor,
         });
-        return window.L.marker(uni.centerLatLng, { icon, interactive: false });
+        const mOpts = { icon, interactive: false };
+        if (opts && opts.pane) mOpts.pane = opts.pane;
+        return window.L.marker(uni.centerLatLng, mOpts);
     }
 
     // ── Filled tactical maneuver-arrow renderer (L.polygon based) ─────
@@ -2095,7 +2410,7 @@
         const outlineColor = opts.outline || '#5b0c0c';
         const outlineWidth = Number.isFinite(opts.outlineWidthPx) ? opts.outlineWidthPx : 2;
         const fillOpacity  = Number.isFinite(opts.opacity) ? opts.opacity : 0.85;
-        return window.L.polygon(ring, {
+        const polyOpts = {
             color:       outlineColor,
             weight:      outlineWidth,
             opacity:     1.0,
@@ -2104,7 +2419,9 @@
             lineJoin:    'miter',
             lineCap:     'butt',
             interactive: false,
-        });
+        };
+        if (opts && opts.pane) polyOpts.pane = opts.pane;
+        return window.L.polygon(ring, polyOpts);
     }
 
     function updateAttackArrows(state, scenario) {
@@ -2168,14 +2485,14 @@
                 // counterattack), tail at the blue (the responder).
                 const tactical = createTacticalArrow(
                     redLL, blueLL, '#3a96d2', 'counterattack', 3,
-                    { className: 'wg-attack-pulse' },
+                    { className: 'wg-attack-pulse', pane: SCENARIO_GRAPHICS_PANE },
                 );
                 if (tactical) {
                     tactical.addTo(layerGroup);
                     attackArrows.push(tactical);
                     if (tactical.bindTooltip) {
                         tactical.bindTooltip(
-                            `Counterattack: ${meta.baseId} → ${redMarker._wgRedMeta && redMarker._wgRedMeta.uid}`,
+                            `Counterattack: ${displayBlueId(meta.baseId)} → ${(redMarker._wgRedMeta && (redMarker._wgRedMeta.label || displayRedId(redMarker._wgRedMeta.uid))) || ''}`,
                             { sticky: true },
                         );
                     }
@@ -2191,10 +2508,11 @@
                         lineCap:   'round',
                         interactive: false,
                         className: 'wg-attack-pulse',
-                    }).bindTooltip(`Counterattack: ${meta.baseId} → ${redMarker._wgRedMeta && redMarker._wgRedMeta.uid}`, { sticky: true });
+                        pane: SCENARIO_GRAPHICS_PANE,
+                    }).bindTooltip(`Counterattack: ${displayBlueId(meta.baseId)} → ${(redMarker._wgRedMeta && (redMarker._wgRedMeta.label || displayRedId(redMarker._wgRedMeta.uid))) || ''}`, { sticky: true });
                     line.addTo(layerGroup);
                     attackArrows.push(line);
-                    const head = makeArrowhead(start, end, '#3a96d2', 9);
+                    const head = makeArrowhead(start, end, '#3a96d2', 9, SCENARIO_GRAPHICS_PANE);
                     if (head) {
                         head.addTo(layerGroup);
                         attackArrows.push(head);
@@ -2247,9 +2565,12 @@
             const lines = [];
 
             // Identity header
-            lines.push(`<strong>${esc(uid)}</strong> · ${side}`);
+            const _dName = side === 'BLUE'
+                ? displayBlueId(ident.base_id || uid)
+                : (ident.label || displayRedId(uid));
+            lines.push(`<strong>${esc(_dName)}</strong> · ${side}`);
             if (ident.name_ar) lines.push(`<div dir="rtl" style="font-size:11px;color:#cce;">${esc(ident.name_ar)}</div>`);
-            const idLine2 = [ident.echelon || 'unit', ident.role || ident.domain || ''].filter(Boolean).join(' · ');
+            const idLine2 = [ident.echelon || 'unit', displayRole(ident.role || ident.domain || '')].filter(Boolean).join(' · ');
             if (idLine2) lines.push(`<div style="font-size:10px;color:#9ab;">${esc(idLine2)}</div>`);
 
             // Live state — show strength %, suppressed/delayed when active,
@@ -2305,6 +2626,34 @@
                 }
             }
 
+            // PR-107: display-offset transparency footer — Blue units only.
+            // Appended after all live-state and narrative content so it
+            // sits as a compact note at the bottom of the tooltip.
+            // Red markers are unaffected (no display stagger applied to Red).
+            // No raw coordinates exposed, no Event Log entries, no storage.
+            if (side === 'BLUE') {
+                const _offsetNote = esc(
+                    (window.t && window.t('tooltip-display-offset-notice')) ||
+                    'Displayed position is offset for readability.'
+                );
+                lines.push(
+                    `<div style="margin-top:6px;padding-top:4px;border-top:1px solid #2a3a4a;font-size:9px;color:#6a7a8a;font-style:italic;">${_offsetNote}</div>`
+                );
+            }
+
+            // PR-109: Red staging-cluster transparency note — Red units only.
+            // Informs the operator that co-located Red markers are intentional
+            // staging-area groupings (PR-108 audit: step-0 land/air/naval clusters).
+            // Blue markers are unaffected. No raw coordinates, no Event Log, no storage.
+            if (side === 'RED') {
+                const _stagingNote = esc(
+                    (window.t && window.t('tooltip-red-staging-note')) ||
+                    'Multiple Red units may be intentionally staged at this assembly area.'
+                );
+                lines.push(
+                    `<div style="margin-top:6px;padding-top:4px;border-top:1px solid #3a2a2a;font-size:9px;color:#8a6a6a;font-style:italic;">${_stagingNote}</div>`
+                );
+            }
             return lines.join('');
         }
 
@@ -2392,28 +2741,45 @@
                      ? stepRow.engagement_arcs : [];
         if (!arcs.length) return;
 
-        for (const arc of arcs) {
+        // Declutter dense phases: if more than 3 arcs, the first arc from
+        // each shooter is "primary" (full opacity/weight); additional arcs
+        // from the same shooter become secondary (thinner + dimmer). Phases
+        // with ≤3 arcs are left fully prominent — behavior is unchanged.
+        const dense = arcs.length > 3;
+        const seenActors = new Set();
+
+        arcs.forEach((arc, idx) => {
             const coords = arc && Array.isArray(arc.coordinates) ? arc.coordinates : null;
-            if (!coords || coords.length < 2) continue;
+            if (!coords || coords.length < 2) return;
             const [src, dst] = coords;
-            if (!Array.isArray(src) || !Array.isArray(dst)) continue;
+            if (!Array.isArray(src) || !Array.isArray(dst)) return;
 
             const color = STATUS_COLORS[arc.status_change] || STATUS_COLORS.unchanged;
-            // Weight scales mildly with damage_pct so heavy strikes read
+            // Base weight scales mildly with damage_pct so heavy strikes read
             // as more decisive than glancing engagements (3–5 px).
-            const dmg    = Number.isFinite(arc.damage_pct) ? arc.damage_pct : 0.3;
-            const weight = Math.max(2, 2 + Math.round(dmg * 3));
-            const start  = [src[1], src[0]];
-            const end    = [dst[1], dst[0]];
+            const dmg        = Number.isFinite(arc.damage_pct) ? arc.damage_pct : 0.3;
+            const baseWeight = Math.max(2, 2 + Math.round(dmg * 3));
+            const start      = [src[1], src[0]];
+            const end        = [dst[1], dst[0]];
+
+            // First arc per shooter = primary; additional arcs from the same
+            // shooter = secondary. Falls back to index < 3 when actor_uid absent.
+            const actor     = arc.actor_uid || null;
+            const isPrimary = dense ? (actor ? !seenActors.has(actor) : idx < 3) : true;
+            if (actor) seenActors.add(actor);
+
+            const weight  = dense && !isPrimary ? Math.max(1, Math.floor(baseWeight * 0.6)) : baseWeight;
+            const opacity = dense && !isPrimary ? 0.30 : 0.85;
 
             const line = window.L.polyline([start, end], {
                 color,
                 weight,
-                opacity:   0.85,
+                opacity,
                 dashArray: '6 4',
                 lineCap:   'round',
                 interactive: false,
                 className: 'wg-w3-engagement-arc wg-attack-pulse',
+                pane: SCENARIO_GRAPHICS_PANE,
             });
 
             // Tooltip: actor → target · status + damage% · cause_what
@@ -2428,7 +2794,7 @@
             engagementArcs.push(line);
 
             // Arrowhead at the target end so direction is unambiguous.
-            const head = makeArrowhead(start, end, color, weight * 4);
+            const head = makeArrowhead(start, end, color, weight * 4, SCENARIO_GRAPHICS_PANE);
             if (head) {
                 head.addTo(layerGroup);
                 engagementArcs.push(head);
@@ -2445,7 +2811,7 @@
                     if (i >= 0) engagementArcs.splice(i, 1);
                 }
             }, 1500));
-        }
+        });
     }
 
     // ── Per-step unit movement ────────────────────────────────────────
@@ -2502,6 +2868,49 @@
                 m.setLatLng([lonLat[1], lonLat[0]]);
             } catch (_) { /* ignore */ }
         }
+        // PR-102: build a geo-bucket cluster map for all Blue units once per
+        // applyState call. Units whose raw step-coord (or baseCoord) falls in
+        // the same ~8 km geographic grid cell form a cluster; each gets a
+        // deterministic { clusterIndex, clusterSize } entry used by
+        // computeDisplayOffset to place it at a regular-polygon vertex.
+        // Units alone in their cell receive no entry → zero displacement.
+        // Only raw authoritative coords are read here — marker LatLng is
+        // never consulted, so red markers and engagement logic are untouched.
+        const _blueClusterMap = (function buildBlueClusterMap() {
+            const result  = new Map();
+            const cellKm  = LAYOUT_CONFIG.blueClusterBucketKm || 8.0;
+            const cells   = Object.create(null);
+            for (const m of Object.values(blueMarkers)) {
+                const meta = m && m._wgBlueMeta;
+                if (!meta) continue;
+                const uid = meta.uid;
+                const arr = scenarioRef && scenarioRef.blue_unit_step_coords &&
+                            scenarioRef.blue_unit_step_coords[uid];
+                const raw = (Array.isArray(arr) && arr.length)
+                            ? arr[Math.min(stepIndex, arr.length - 1)]
+                            : meta.baseCoord;
+                if (!raw) continue;
+                const lon = raw[0], lat = raw[1];
+                const gx  = Math.round(lon * kmPerDegLng(lat) / cellKm);
+                const gy  = Math.round(lat * KM_PER_DEG_LAT  / cellKm);
+                const key = gx + '_' + gy;
+                if (!cells[key]) cells[key] = [];
+                cells[key].push(uid);
+            }
+            for (const uids of Object.values(cells)) {
+                if (uids.length < 2) continue;   // isolated → no entry
+                uids.sort();                       // deterministic, uid-stable order
+                const sz = uids.length;
+                uids.forEach((uid, idx) =>
+                    result.set(uid, { clusterIndex: idx, clusterSize: sz }));
+            }
+            return result;
+        })();
+        const _blueZoom = (() => {
+            try { return (window.map && window.map.getZoom) ? window.map.getZoom() : 7; }
+            catch (_) { return 7; }
+        })();
+
         for (const m of Object.values(blueMarkers)) {
             const meta = m && m._wgBlueMeta;
             if (!meta) continue;
@@ -2512,12 +2921,26 @@
             if (w3curr) {
                 const w3prev = lookupStep('blue_unit_step_prev', meta.uid, stepIndex) || w3curr;
                 lonLat = (t >= 1) ? w3curr : lerpLonLat(w3prev, w3curr, t);
-                // Apply the side-nudge so blue defensive lines render
-                // visibly behind the red advance, not stacked at the same
-                // latitude. Echelon banding still helps spread the cluster.
-                if (isW3) lonLat = applyW3Spread(meta, lonLat, stepIndex);
             } else {
                 lonLat = bluePositionLonLat(meta, stepIndex, state);
+            }
+            // PR-102: display-only Blue cluster fan-out. Co-located units are
+            // spread on a regular polygon ring (geographic-index angle, zoom-
+            // adaptive radius). Isolated units get zero displacement (null stagger).
+            // Raw scenario coords (meta.baseCoord, blue_unit_step_coords) are
+            // never mutated. Red markers, engagement logic, damage/kill paths,
+            // arrows, BLS/OBJ, and phase line are completely unaffected.
+            if (lonLat) {
+                const cluster = _blueClusterMap.get(meta.uid);
+                const stagger = computeDisplayOffset({
+                    mode:         'blue-display-stagger',
+                    uid:          meta.uid,
+                    echelon:      meta.echelon,
+                    clusterIndex: cluster ? cluster.clusterIndex : 0,
+                    clusterSize:  cluster ? cluster.clusterSize  : 1,
+                    zoom:         _blueZoom,
+                });
+                if (stagger) lonLat = offsetLonLat(lonLat, stagger.eastKm, stagger.northKm);
             }
             if (!lonLat) continue;
             try {
@@ -2529,7 +2952,7 @@
 
     // Build a small triangle polygon at `end` pointing in the direction of
     // motion from `start`. Returns an L.polygon.
-    function makeArrowhead(start, end, color, size) {
+    function makeArrowhead(start, end, color, size, pane) {
         if (!window.L) return null;
         const dLat = end[0] - start[0];
         const dLng = end[1] - start[1];
@@ -2547,14 +2970,16 @@
         const halfBase = headLen * 0.6;
         const left  = [baseCx + px * halfBase, baseCy + py * halfBase];
         const right = [baseCx - px * halfBase, baseCy - py * halfBase];
-        return window.L.polygon([[tipLat, tipLng], left, right], {
+        const polyOpts = {
             color,
             weight: 1,
             opacity: 0.9,
             fillColor: color,
             fillOpacity: 0.9,
             interactive: false,
-        });
+        };
+        if (pane) polyOpts.pane = pane;
+        return window.L.polygon([[tipLat, tipLng], left, right], polyOpts);
     }
 
     // ── AOR phase line ────────────────────────────────────────────────
@@ -2574,19 +2999,27 @@
         if (lat <= scenario.map_bbox[1]) return; // off the southern edge
         const displayStatus = deriveDisplayOutcome(state);
         const dashColor = COLORS.OBJ[displayStatus] || '#e8a23a';
+        const isAr    = document.documentElement.lang === 'ar';
+        const plLabel = isAr
+            ? `خط المرحلة — ${state.phase_line_km} كم`
+            : `Phase Line — ${state.phase_line_km} km`;
         aorPhaseLine = window.L.polyline(
             [[lat, scenario.map_bbox[0]], [lat, scenario.map_bbox[2]]],
-            { color: dashColor, weight: 1.5, opacity: 0.55, dashArray: '8 6', interactive: false },
-        ).bindTooltip(`Phase line: ${state.phase_line_km} km — ${displayStatus}`);
+            { color: dashColor, weight: 1.5, opacity: 0.55, dashArray: '8 6', interactive: false,
+              pane: SCENARIO_GRAPHICS_PANE },
+        );
         aorPhaseLine.addTo(layerGroup);
 
-        // "PL XX km" pill at the line's western end — gives the dashed
-        // line a numeric anchor without forcing the operator to hover.
+        // Full-text pill at the line's western end — always-visible label;
+        // permanent Leaflet tooltips on non-interactive layers cannot be cleaned
+        // up reliably across step changes (Leaflet skips removal for permanent
+        // tooltips), so the pill marker is the sole label for this line.
         aorPhaseLineLabel = window.L.marker([lat, scenario.map_bbox[0]], {
             interactive: false,
+            pane: SCENARIO_GRAPHICS_PANE,
             icon: window.L.divIcon({
                 className: 'wg-adj-pl-label',
-                html: `<div style="
+                html: `<div dir="auto" style="
                     background:${dashColor};
                     color:#fff;font-size:10px;font-weight:700;
                     letter-spacing:0.04em;
@@ -2596,7 +3029,7 @@
                     text-shadow:0 0 2px #000;
                     box-shadow:0 0 3px rgba(0,0,0,.5);
                     transform:translate(4px, -50%);
-                ">PL ${state.phase_line_km} km</div>`,
+                ">${plLabel}</div>`,
                 iconSize:   null,
                 iconAnchor: [0, 0],
             }),
@@ -3138,9 +3571,10 @@
                 if (!redMarker) return;
                 let redLL = null; try { redLL = redMarker.getLatLng(); } catch (_) {}
                 if (!redLL) return;
-                const arrow = createTacticalArrow(blueLL, redLL, '#c41e1e', 'attack', 4, {});
+                const arrow = createTacticalArrow(blueLL, redLL, '#c41e1e', 'attack', idx < 3 ? 4 : 2, { pane: SCENARIO_GRAPHICS_PANE });
                 if (!arrow) return;
                 arrow.addTo(layerGroup);
+                if (idx >= 3) arrow.setOpacity(0.38);
                 attackArrows.push(arrow);
                 // Auto-remove after the lifespan; if the next applyState
                 // runs first, the start-of-call attackArrows wipe will
@@ -3346,6 +3780,7 @@
     // ── Apply a per-step state to the map ────────────────────────────
     function applyState(state, scenario, opts) {
         if (!hasMap() || !state) return { found: 0, missed: [] };
+        ensureScenarioGraphicsPane();
         opts = opts || {};
 
         // Forward step vs rewind/jump. Forward (newIdx > last) plays the
@@ -3397,11 +3832,22 @@
         // the scenario authoritative). The mutated state flows through the
         // section-4 pipeline so SITREP counts, the staggered explosion
         // choreography, and the cumulative destroyed set all stay consistent.
+        //
+        // PR-100 safety guard: Blue markers now carry a small display-only
+        // stagger (blue-display-stagger mode). This function MUST use the
+        // authoritative raw scenario coordinates — NOT blueMarker.getLatLng()
+        // — so that a display offset never inflates or deflates kill counts.
+        // Red markers are unaffected by PR-100; their getLatLng() positions
+        // already encode the tactical spread (applyW3Spread / red-spread).
+        //
+        // INVARIANT: When WARGAME_OVERRUN_KM=0 (the default) the early
+        // return at line "if (OVERRUN_KM <= 0) return" fires before any
+        // coordinate read, so no behavior difference exists at runtime.
         (function applyProximityOverrun() {
             if (!state || !state.per_unit_deltas) return;
             const OVERRUN_KM = Number.isFinite(window.WARGAME_OVERRUN_KM)
                 ? Number(window.WARGAME_OVERRUN_KM) : 0;
-            if (OVERRUN_KM <= 0) return;
+            if (OVERRUN_KM <= 0) return;  // ← disabled by default; guard above holds
 
             const known = new Set(runningDestroyedUids);
             for (const u of (state.per_unit_deltas.blue_destroyed || [])) known.add(u);
@@ -3418,7 +3864,29 @@
                 if (!redLL) continue;
                 for (const [blueUid, blueMarker] of Object.entries(blueMarkers)) {
                     if (!blueMarker || known.has(blueUid)) continue;
-                    let blueLL; try { blueLL = blueMarker.getLatLng(); } catch (_) { continue; }
+                    // PR-100: use raw authoritative Blue coordinates, not the
+                    // display-staggered marker position. The blue-display-stagger
+                    // offset (0.5–3.5 km) is visual-only and must not bias the
+                    // tactical proximity calculation when OVERRUN_KM is active.
+                    let blueLL = null;
+                    const blueMeta = blueMarker._wgBlueMeta;
+                    if (blueMeta) {
+                        // W3-rich: per-step raw coord is the authoritative position.
+                        const w3Arr = scenarioRef && scenarioRef.blue_unit_step_coords &&
+                                      scenarioRef.blue_unit_step_coords[blueUid];
+                        if (Array.isArray(w3Arr) && w3Arr.length) {
+                            const c = w3Arr[Math.min(stepIdx, w3Arr.length - 1)];
+                            if (c) blueLL = { lat: c[1], lng: c[0] };
+                        }
+                        // W1/W2 fallback: use the scenario baseCoord (no stagger in base).
+                        if (!blueLL && blueMeta.baseCoord) {
+                            blueLL = { lat: blueMeta.baseCoord[1], lng: blueMeta.baseCoord[0] };
+                        }
+                    }
+                    // Ultimate fallback: read display position (legacy — only reached
+                    // if neither W3 coords nor baseCoord are available, which should
+                    // never occur for a properly initialised scenario).
+                    if (!blueLL) { try { blueLL = blueMarker.getLatLng(); } catch (_) { continue; } }
                     if (!blueLL) continue;
                     const km = haversineKm([redLL.lat, redLL.lng], [blueLL.lat, blueLL.lng]);
                     if (km < OVERRUN_KM) {
@@ -3542,7 +4010,8 @@
                 reg.canMove  = status !== UNIT_STATUS.DESTROYED;
                 const m = redMarkers[entry.unit_uid];
                 if (m) {
-                    try { m.setTooltipContent(`${entry.unit_uid} — ${entry.status} (${Math.round((strength || 0) * 100)}%)`); } catch (_) {}
+                    const _dn = (m._wgRedMeta && m._wgRedMeta.label) || displayRedId(entry.unit_uid);
+                    try { m.setTooltipContent(`${_dn} — ${entry.status} (${Math.round((strength || 0) * 100)}%)`); } catch (_) {}
                 }
             }
         }
@@ -3694,6 +4163,7 @@
                     opacity: 0.5,
                     dashArray: '5 4',
                     interactive: false,
+                    pane: SCENARIO_GRAPHICS_PANE,
                 }).bindTooltip(`Red advance along pipeline: ${state.phase_line_km} km — ${displayStatus5}`);
                 pipelineAdvanced.addTo(layerGroup);
             } else {
@@ -3704,6 +4174,7 @@
             const tip = pointAlongPipeline(state.phase_line_km);
             if (tip && state.phase_line_km > 0) {
                 advanceTip = window.L.marker(tip, {
+                    pane: SCENARIO_GRAPHICS_PANE,
                     icon: window.L.divIcon({
                         html: `<div style="
                             width:14px;height:14px;border-radius:50%;
@@ -3870,6 +4341,220 @@
         return true;
     }
 
+    // ── computeUnitLayoutDiagnostics ─────────────────────────────────
+    // READ-ONLY diagnostic helper.  Reads current marker pixel positions
+    // via map.latLngToLayerPoint(), measures pairwise distances, and
+    // returns a plain serialisable clutter summary for the current step.
+    //
+    // Guarantees:
+    //   • Never calls marker.setLatLng() or any mutating method.
+    //   • Never writes to redMarkers, blueMarkers, unitRegistry, or map.
+    //   • Never calls applyState() or updateUnitPositions().
+    //   • Return value is JSON-serialisable (no Leaflet objects).
+    //   • Safe to call at any time; returns { error } when map is unready.
+    //
+    // @param {{ minPixelGap?: number }} [opts]
+    //   minPixelGap — overlap threshold in CSS pixels (default: 36).
+    //                 36 px ≈ one medium NATO icon width at zoom 7.
+    //
+    // @returns {{
+    //   totalUnits:    number,
+    //   checkedPairs:  number,
+    //   threshold:     number,
+    //   overlapPairs:  number,
+    //   closestPair:   { uidA: string, uidB: string, distPx: number } | null,
+    //   clusters:      number,
+    //   maxClusterSize: number,
+    //   warnings:      string[],
+    //   breakdown: {
+    //     bySidePair:   { 'RED-RED': n, 'BLUE-BLUE': n, 'RED-BLUE': n },
+    //     byStatusPair: { [key: string]: n },
+    //     bySide: {
+    //       RED:  { units: n, overlapPairs: n, maxClusterSize: n },
+    //       BLUE: { units: n, overlapPairs: n, maxClusterSize: n },
+    //     },
+    //     topClusters: [{ size, sideMix, statusMix, sampleUids }]  // max 3
+    //   }
+    // }}
+    function computeUnitLayoutDiagnostics(opts) {
+        const m = window.map;
+        if (!m || typeof m.latLngToLayerPoint !== 'function') {
+            return { error: 'map not ready', totalUnits: 0, checkedPairs: 0,
+                     threshold: 36, overlapPairs: 0, closestPair: null,
+                     clusters: 0, maxClusterSize: 0, warnings: ['map not ready'],
+                     breakdown: null };
+        }
+
+        const threshold = (opts && Number.isFinite(opts.minPixelGap))
+            ? opts.minPixelGap : 36;
+
+        // ── 1. Collect placed markers — read side + status, NO mutation ─
+        const entries = [];
+        const sides = [
+            { dict: redMarkers,  side: 'red'  },
+            { dict: blueMarkers, side: 'blue' },
+        ];
+        for (const { dict, side } of sides) {
+            for (const uid of Object.keys(dict)) {
+                const marker = dict[uid];
+                if (!marker || typeof marker.getLatLng !== 'function') continue;
+                try {
+                    const ll     = marker.getLatLng();
+                    const pt     = m.latLngToLayerPoint(ll);
+                    // Read status from unitRegistry (read-only).
+                    const reg    = unitRegistry[uid];
+                    const status = reg ? (reg.status || UNIT_STATUS.ACTIVE)
+                                       : UNIT_STATUS.ACTIVE;
+                    entries.push({ uid, side, status, x: pt.x, y: pt.y });
+                } catch (_) {
+                    // marker not yet added to map — skip silently
+                }
+            }
+        }
+
+        const n            = entries.length;
+        const checkedPairs = Math.floor(n * (n - 1) / 2);
+
+        // ── 2. Union-find for cluster detection ────────────────────────
+        const parent = Array.from({ length: n }, (_, i) => i);
+        function find(i) {
+            while (parent[i] !== i) { parent[i] = parent[parent[i]]; i = parent[i]; }
+            return i;
+        }
+        function unite(i, j) {
+            const ri = find(i), rj = find(j);
+            if (ri !== rj) parent[ri] = rj;
+        }
+
+        // ── 3. Pairwise distance scan (O n²) — tally breakdowns ───────
+        // All tally variables are local; no external state is written.
+        let overlapPairs = 0;
+        let closestDist  = Infinity;
+        let closestPair  = null;
+
+        const bySidePair   = { 'RED-RED': 0, 'BLUE-BLUE': 0, 'RED-BLUE': 0 };
+        const byStatusPair = {};
+
+        // Pure helpers — no closures over mutable external state.
+        function sidePairKey(a, b) {
+            const u = a.toUpperCase(), v = b.toUpperCase();
+            if (u === v) return u + '-' + u;
+            return 'RED-BLUE'; // only possible mixed case
+        }
+        function statusPairKey(a, b) {
+            const ORDER = { active: 0, degraded: 1, destroyed: 2 };
+            const oa = ORDER[a] !== undefined ? ORDER[a] : 3;
+            const ob = ORDER[b] !== undefined ? ORDER[b] : 3;
+            const [lo, hi] = oa <= ob ? [a, b] : [b, a];
+            return lo.toUpperCase() + '-' + hi.toUpperCase();
+        }
+
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+                const dx   = entries[i].x - entries[j].x;
+                const dy   = entries[i].y - entries[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < threshold) {
+                    overlapPairs++;
+                    unite(i, j);
+                    bySidePair[sidePairKey(entries[i].side, entries[j].side)]++;
+                    const stk = statusPairKey(entries[i].status, entries[j].status);
+                    byStatusPair[stk] = (byStatusPair[stk] || 0) + 1;
+                }
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closestPair = {
+                        uidA:   entries[i].uid,
+                        uidB:   entries[j].uid,
+                        distPx: +dist.toFixed(1),
+                    };
+                }
+            }
+        }
+
+        // ── 4. Build cluster membership map ───────────────────────────
+        const clusterMemberMap = {};
+        for (let i = 0; i < n; i++) {
+            const r = find(i);
+            if (!clusterMemberMap[r]) clusterMemberMap[r] = [];
+            clusterMemberMap[r].push(i);
+        }
+        const allClusters   = Object.values(clusterMemberMap);
+        const sizes         = allClusters.map(a => a.length);
+        const clusters      = sizes.filter(s => s > 1).length;
+        const maxClusterSize = sizes.length ? Math.max(...sizes) : 0;
+
+        // ── 5. topClusters — max 3, sampleUids max 5 ──────────────────
+        const topClusters = allClusters
+            .filter(idxArr => idxArr.length > 1)
+            .sort((a, b) => b.length - a.length)
+            .slice(0, 3)
+            .map(idxArr => {
+                const sideMix   = { RED: 0, BLUE: 0 };
+                const statusMix = {};
+                const sampleUids = [];
+                for (const idx of idxArr) {
+                    const e = entries[idx];
+                    sideMix[e.side.toUpperCase()]++;
+                    statusMix[e.status] = (statusMix[e.status] || 0) + 1;
+                    if (sampleUids.length < 5) sampleUids.push(e.uid);
+                }
+                return { size: idxArr.length, sideMix, statusMix, sampleUids };
+            });
+
+        // ── 6. bySide stats ────────────────────────────────────────────
+        let redUnits = 0, blueUnits = 0;
+        for (const e of entries) {
+            if (e.side === 'red') redUnits++; else blueUnits++;
+        }
+        let redMaxCluster = 0, blueMaxCluster = 0;
+        for (const idxArr of allClusters) {
+            let rc = 0, bc = 0;
+            for (const idx of idxArr) {
+                if (entries[idx].side === 'red') rc++; else bc++;
+            }
+            if (rc > redMaxCluster)  redMaxCluster  = rc;
+            if (bc > blueMaxCluster) blueMaxCluster = bc;
+        }
+
+        const breakdown = {
+            bySidePair,
+            byStatusPair,
+            bySide: {
+                RED:  { units: redUnits,  overlapPairs: bySidePair['RED-RED'],
+                        maxClusterSize: redMaxCluster  },
+                BLUE: { units: blueUnits, overlapPairs: bySidePair['BLUE-BLUE'],
+                        maxClusterSize: blueMaxCluster },
+            },
+            topClusters,
+        };
+
+        // ── 7. Human-readable warnings ─────────────────────────────────
+        const warnings = [];
+        if (overlapPairs > 0) {
+            warnings.push(overlapPairs + ' pair(s) within ' + threshold + 'px');
+        }
+        if (maxClusterSize >= 5) {
+            warnings.push('dense cluster: ' + maxClusterSize + ' units in one group');
+        }
+        if (overlapPairs === 0) {
+            warnings.push('no overlaps detected at threshold=' + threshold + 'px');
+        }
+
+        return {
+            totalUnits:     n,
+            checkedPairs,
+            threshold,
+            overlapPairs,
+            closestPair,
+            clusters,
+            maxClusterSize,
+            warnings,
+            breakdown,
+        };
+    }
+
     window.AppAdjudicatorMap = {
         drawScenario,
         clearScenario,
@@ -3892,7 +4577,8 @@
         canUnitAct,
         getUnit: (uid) => unitRegistry[uid] || null,
         listUnits: () => Object.values(unitRegistry).slice(),
-        // for diagnostics
+        // Diagnostics — read-only; never mutates markers, map, or scenario
+        getUnitLayoutDiagnostics: (opts) => computeUnitLayoutDiagnostics(opts || {}),
         _findBlueMarkerByBaseId: findBlueMarkerByBaseId,
         _setDebug: (on) => { debugEnabled = !!on; },
     };

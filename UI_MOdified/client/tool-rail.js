@@ -22,8 +22,10 @@
         erase:   { mode: 'eraser', tab: 'drawing', title: 'Erase',   titleKey: 'tool-erase',   hint: 'Click items to erase them',                           hintKey: 'tool-hint-erase' },
         measure: { mode: 'pan',    tab: 'geo',     title: 'Measure', titleKey: 'tool-measure', hint: 'Click points on the map to measure distance',         hintKey: 'tool-hint-measure' },
         shapes:  { mode: 'pan',    tab: 'geo',     title: 'Shapes',  titleKey: 'tool-shapes',  hint: 'Choose a shape, then click the map',                  hintKey: 'tool-hint-shapes' },
-        layers:  { mode: null,     tab: null,      title: 'Layers',  titleKey: 'tool-layers',  hint: 'Organize your map items',                             hintKey: 'tool-hint-layers' },
-        wargame: { mode: null,     tab: null,      title: 'Scenario',titleKey: 'tool-wargame', hint: 'Run an operational scenario (turn-based)',           hintKey: 'tool-hint-wargame' },
+        layers:  { mode: null,     tab: null,      title: 'Layers',   titleKey: 'tool-layers',  hint: 'Organize your map items',                            hintKey: 'tool-hint-layers' },
+        wargame: { mode: null,     tab: null,      title: 'Scenario', titleKey: 'tool-wargame', hint: 'Run an operational scenario (turn-based)',          hintKey: 'tool-hint-wargame' },
+        // PR-42: Scenario Workspace Shell — read-only scenario overview
+        'scenario-workspace': { mode: null, tab: null, title: 'Scenario', titleKey: 'sw-tool-label', hint: 'Scenario overview — read-only workspace', hintKey: 'sw-tool-hint' },
     };
 
     function tx(key, fallback) {
@@ -37,14 +39,15 @@
     /* ── DOM references ───────────────────────────────────────────────── */
     const modeSelect       = document.getElementById('tool-mode');
     const geoToolSelect    = document.getElementById('geo-tool-select');
-    const contextPanel     = document.getElementById('context-panel');
-    const drawingPanel     = document.getElementById('drawing-panel');
-    const geoPanel         = document.getElementById('geo-panel');
-    const measurePanel     = document.getElementById('measure-panel');
-    const shapesPanel      = document.getElementById('shapes-panel');
-    const layersSection    = document.getElementById('layers-section');
-    const wargamePanel     = document.getElementById('wargame-panel');
-    const opsIntelPanel    = document.getElementById('ops-intel-panel');
+    const contextPanel          = document.getElementById('context-panel');
+    const drawingPanel          = document.getElementById('drawing-panel');
+    const geoPanel              = document.getElementById('geo-panel');
+    const measurePanel          = document.getElementById('measure-panel');
+    const shapesPanel           = document.getElementById('shapes-panel');
+    const layersSection         = document.getElementById('layers-section');
+    const wargamePanel          = document.getElementById('wargame-panel');
+    const scenarioWorkspacePanel = document.getElementById('scenario-workspace-panel');
+    const opsIntelPanel         = document.getElementById('ops-intel-panel');
     const panelTitle       = document.getElementById('context-panel-title');
     const panelHint        = document.getElementById('context-panel-hint');
     const statusbarTool    = document.getElementById('statusbar-tool-display');
@@ -68,7 +71,7 @@
      * Note: geoPanel stays in the DOM (hidden) as a bridge for app.js's
      * geo tool handlers. Shapes/Measure panels are the new visible panels.
      */
-    const contextSections = [drawingPanel, geoPanel, measurePanel, shapesPanel, layersSection, wargamePanel];
+    const contextSections = [drawingPanel, geoPanel, measurePanel, shapesPanel, layersSection, wargamePanel, scenarioWorkspacePanel];
 
     function setOpsIntelVisible(visible) {
         if (!opsIntelPanel) return;
@@ -78,15 +81,16 @@
 
     function setVisibleSections(tool) {
         const show = {
-            select:  [drawingPanel],
-            symbol:  [drawingPanel],
-            draw:    [drawingPanel],
-            text:    [drawingPanel],
-            erase:   [drawingPanel],
-            measure: [measurePanel],
-            shapes:  [shapesPanel],
-            layers:  [layersSection],
-            wargame: [wargamePanel],
+            select:               [drawingPanel],
+            symbol:               [drawingPanel],
+            draw:                 [drawingPanel],
+            text:                 [drawingPanel],
+            erase:                [drawingPanel],
+            measure:              [measurePanel],
+            shapes:               [shapesPanel],
+            layers:               [layersSection],
+            wargame:              [wargamePanel],
+            'scenario-workspace': [scenarioWorkspacePanel],
         };
 
         const visible = show[tool] || [];

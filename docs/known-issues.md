@@ -70,3 +70,116 @@ $ git stash && node UI_MOdified/scripts/test-scenarios.js && git stash pop
 The failure reproduces with all PR-1 / boundary changes stashed away.
 
 ---
+
+## KI-2 — Scenario markers do not emit `rmooz:unit-selected`
+
+**Status:** Open. Deferred — do not fix in isolation.
+
+**Symptom**
+
+Scenario markers rendered by `adjudicator-map.js` do not emit the
+`rmooz:unit-selected` event when clicked. As a result, the PR-3
+selected-unit panel reacts to ORBAT-placed units only; selecting a
+scenario-rendered unit on the map does not populate the panel.
+
+**Why this is deferred**
+
+Three parallel unit representations currently coexist:
+
+- scenario units (rendered by `adjudicator-map.js`)
+- ORBAT-placed units (the path that currently drives the selected-unit panel)
+- simulation units
+
+Wiring `rmooz:unit-selected` emission into `adjudicator-map.js` alone
+would entrench three independent selection paths. The correct fix is
+to unify scenario units, ORBAT units, and simulation units under a
+single selection/event model, and then emit `rmooz:unit-selected` from
+one place that covers all three.
+
+**Action**
+
+Do not patch this opportunistically. Revisit when the unified
+selection/event model lands.
+
+---
+
+## KI-3 — RTL mode: `context-panel` mostly covered by `unit-panel`
+
+**Status:** Open. Deferred — do not fix in isolation.
+
+**Symptom**
+
+In RTL mode, `unit-panel` now remains visible and `tool-rail` remains
+usable, but `context-panel` is still mostly covered by `unit-panel`.
+Content in `context-panel` is therefore largely inaccessible while a
+unit is selected in RTL.
+
+**Why this is deferred**
+
+A targeted z-index, offset, or width tweak would paper over a broader
+RTL layout problem. The correct fix is a full RTL layout refinement
+pass that re-examines panel stacking order, mirroring, and sizing
+across `unit-panel`, `context-panel`, and `tool-rail` together, rather
+than patching one overlap in isolation.
+
+**Action**
+
+Do not spot-fix the overlap. Revisit during the full RTL layout
+refinement.
+
+---
+
+## KI-4 — `oid-value-phase` / `apc-value-linked-intent` show hardcoded "Briefing" mock values
+
+**Status:** Open. Deferred — do not fix until scenario data display
+is approved.
+
+**Symptom**
+
+Two fields in the operator-intent and proposal cards render static
+"Briefing" placeholder text instead of reflecting the active phase.
+
+**Current hardcoded mock values (in `i18n.js`)**
+
+- `oid-value-phase` → `"Briefing"` / `"الإحاطة"`
+- `apc-value-linked-intent` → `"Operator Intent Draft (Briefing phase)"` /
+  `"مسودة نية المشغّل (مرحلة الإحاطة)"`
+
+**Current render path**
+
+- `paintIntentCard()` reads `OID_FIELDS` → `oid-value-phase` → `tx()`
+- `paintProposalCard()` reads `APC_FIELDS` → `apc-value-linked-intent` → `tx()`
+
+**Future fix**
+
+When safe scenario display data is introduced, replace these static
+i18n values with dynamic reads using the following mapping:
+
+- `PHASES[currentPhase]` → `oid-value-phase`
+- `activeProposal.linkedIntent` → `apc-value-linked-intent`
+
+The data sources (`PHASES` + `currentPhase`, `activeProposal`) come
+from whichever safe scenario display surface gets approved — likely
+the `PHASES` array, a read-only scenario state object, or a future
+display-only `loadScenario(data)` method. Both elements should
+resolve from the same scenario state so the OID phase value and the
+APC linked-intent stay consistent with the live scenario.
+
+**Action**
+
+Do not swap these to dynamic reads opportunistically. The surrounding
+wiring isn't there yet; a partial read would replace mock text with
+empty / undefined values in the UI. Wait for scenario data display to
+be approved (Wargame 1/2/3). If a task touches either element,
+`paintIntentCard()`, `paintProposalCard()`, `OID_FIELDS`, `APC_FIELDS`,
+or the i18n keys above, surface this dependency rather than spot-fixing.
+
+**PR-48 scope rule**
+
+In PR-48, leave `oid-value-phase` and `apc-value-linked-intent`
+unchanged. The only exception is if the Decision Preview Summary work
+directly requires touching them — and even then, do not convert them
+to dynamic phase reads as part of PR-48. The dynamic-phase change
+belongs to the later Wargame scenario-display PR.
+
+---

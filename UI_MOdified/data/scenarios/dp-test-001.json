@@ -1,0 +1,550 @@
+{
+  "name": "dp-test-001",
+  "scenario_id": "dp-test-001",
+  "scenario_label": "Fictional Coastal Corridor",
+  "purpose_en": "Fictional Coastal Corridor",
+  "purpose_ar": "ممر ساحلي تدريبي وهمي",
+  "map_bbox": [
+    45,
+    16,
+    46.2,
+    17
+  ],
+  "obj": {
+    "name": "OBJ ALPHA",
+    "coord": [
+      45.92,
+      16.46
+    ],
+    "target_depth_km": 86.1,
+    "carver": 30,
+    "radius_km": 5
+  },
+  "sides": [
+    {
+      "id": "BLUE",
+      "name_en": "Blue Force",
+      "name_ar": "القوة الزرقاء",
+      "role": "defender"
+    },
+    {
+      "id": "RED",
+      "name_en": "Red Force",
+      "name_ar": "القوة الحمراء",
+      "role": "opposing_force"
+    }
+  ],
+  "pipeline": [
+    [
+      45.18,
+      16.77
+    ],
+    [
+      45.92,
+      16.46
+    ]
+  ],
+  "red_units": [
+    {
+      "uid": "RED-REC-01",
+      "label": "Red reconnaissance element",
+      "role": "recon",
+      "domain": "ground",
+      "echelon": "unit",
+      "sidc": "10061000000000000000",
+      "coord": [
+        45.18,
+        16.77
+      ],
+      "name_ar": "Red reconnaissance element",
+      "appear": 0,
+      "bls": "BLS-1"
+    },
+    {
+      "uid": "RED-MECH-01",
+      "label": "Red mechanized group",
+      "role": "main_effort",
+      "domain": "ground",
+      "echelon": "unit",
+      "sidc": "10061000000000000000",
+      "coord": [
+        45.1,
+        16.2
+      ],
+      "name_ar": "Red mechanized group",
+      "appear": 0,
+      "bls": "BLS-1"
+    }
+  ],
+  "red_unit_step_coords": {
+    "RED-REC-01": [
+      [
+        45.18,
+        16.77
+      ],
+      [
+        45.3,
+        16.73
+      ],
+      [
+        45.42,
+        16.69
+      ],
+      [
+        45.54,
+        16.65
+      ],
+      [
+        45.66,
+        16.61
+      ]
+    ],
+    "RED-MECH-01": [
+      [
+        45.1,
+        16.2
+      ],
+      [
+        45.26,
+        16.24
+      ],
+      [
+        45.42,
+        16.279999999999998
+      ],
+      [
+        45.58,
+        16.32
+      ],
+      [
+        45.74,
+        16.36
+      ]
+    ]
+  },
+  "blue_units_base_ids": [
+    "BLUE-COY-01",
+    "BLUE-ADA-01",
+    "BLUE-RES-01"
+  ],
+  "blue_units_initial": [
+    {
+      "unit_uid": "BLUE-COY-01",
+      "base_id": "BLUE-COY-01",
+      "label": "Blue coastal company 01",
+      "role": "defense",
+      "domain": "ground",
+      "echelon": "unit",
+      "sidc": "10031000000000000000",
+      "coord": [
+        45.8,
+        16.5
+      ],
+      "posture": null,
+      "name_ar": "Blue coastal company 01",
+      "appear": 0
+    },
+    {
+      "unit_uid": "BLUE-ADA-01",
+      "base_id": "BLUE-ADA-01",
+      "label": "Blue air-defense section",
+      "role": "air_defense",
+      "domain": "ground",
+      "echelon": "unit",
+      "sidc": "10031000000000000000",
+      "coord": [
+        45.7,
+        16.66
+      ],
+      "posture": null,
+      "name_ar": "Blue air-defense section",
+      "appear": 0
+    },
+    {
+      "unit_uid": "BLUE-RES-01",
+      "base_id": "BLUE-RES-01",
+      "label": "Blue reserve platoon",
+      "role": "reserve",
+      "domain": "ground",
+      "echelon": "unit",
+      "sidc": "10031000000000000000",
+      "coord": [
+        45.6,
+        16.3
+      ],
+      "posture": null,
+      "name_ar": "Blue reserve platoon",
+      "appear": 0
+    }
+  ],
+  "blue_unit_step_coords": {
+    "BLUE-COY-01": [
+      [
+        45.8,
+        16.5
+      ],
+      [
+        45.8,
+        16.5
+      ],
+      [
+        45.8,
+        16.5
+      ],
+      [
+        45.8,
+        16.5
+      ],
+      [
+        45.8,
+        16.5
+      ]
+    ],
+    "BLUE-ADA-01": [
+      [
+        45.7,
+        16.66
+      ],
+      [
+        45.7,
+        16.66
+      ],
+      [
+        45.7,
+        16.66
+      ],
+      [
+        45.7,
+        16.66
+      ],
+      [
+        45.7,
+        16.66
+      ]
+    ],
+    "BLUE-RES-01": [
+      [
+        45.6,
+        16.3
+      ],
+      [
+        45.63,
+        16.32
+      ],
+      [
+        45.660000000000004,
+        16.34
+      ],
+      [
+        45.690000000000005,
+        16.36
+      ],
+      [
+        45.72,
+        16.38
+      ]
+    ]
+  },
+  "blue_units_source": "derived from Decision Package per-step units[]",
+  "off_map_markers": [],
+  "ao_boundaries": [],
+  "bls_template": [
+    {
+      "name": "BLS-1",
+      "coord": [
+        45.8,
+        16.5
+      ],
+      "role": "Synthesized support site (Decision Package carries no BLS)",
+      "capacity": "Medium",
+      "throughput": 1,
+      "terrain_friction": 1,
+      "permanently_limited": false
+    }
+  ],
+  "nominal_throughput": null,
+  "phase_table": [
+    {
+      "index": 0,
+      "phase": "PRE-H",
+      "time_label": "D-2h",
+      "elapsed_hours": -2
+    },
+    {
+      "index": 1,
+      "phase": "PHASE 1",
+      "time_label": "H-Hour",
+      "elapsed_hours": 1
+    },
+    {
+      "index": 2,
+      "phase": "PHASE 1",
+      "time_label": "H+2",
+      "elapsed_hours": 2
+    },
+    {
+      "index": 3,
+      "phase": "PHASE 2",
+      "time_label": "H+6",
+      "elapsed_hours": 6
+    },
+    {
+      "index": 4,
+      "phase": "PHASE 2",
+      "time_label": "H+12",
+      "elapsed_hours": 12
+    }
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "step_id": "step00",
+      "time_label": "D-2h",
+      "elapsed_hours": -2,
+      "phase": "PRE-H",
+      "narrative_en": "Dummy step 0: situation develops along a fictional coastal corridor.",
+      "narrative_ar": "خطوة تدريبية وهمية رقم 0: تطور الموقف على محور ساحلي.",
+      "narrative_en_fallback": "Dummy step 0: situation develops along a fictional coastal corridor.",
+      "narrative_ar_fallback": "خطوة تدريبية وهمية رقم 0: تطور الموقف على محور ساحلي.",
+      "situation": {
+        "summary_en": "Dummy step 0: situation develops along a fictional coastal corridor.",
+        "summary_ar": "خطوة تدريبية وهمية رقم 0: تطور الموقف على محور ساحلي."
+      },
+      "objective_status_baseline": "DORMANT",
+      "objective_status_source": "DORMANT",
+      "decision_point_baseline": "Hold defense or move reserve?",
+      "decision_point_ar_baseline": "هل يتم تثبيت الدفاع أو تحريك الاحتياط؟",
+      "decisionOptions": [
+        {
+          "id": "A",
+          "label": "Hold defense",
+          "description": "تثبيت الدفاع",
+          "intent": "Risk: LOW",
+          "source": "source_json"
+        },
+        {
+          "id": "B",
+          "label": "Move reserve",
+          "description": "تحريك الاحتياط",
+          "intent": "Risk: MEDIUM",
+          "source": "source_json"
+        }
+      ],
+      "source_trace": {
+        "source_file": "steps/step00.json",
+        "source_geojson": "geojson/step00.geojson",
+        "source_image": "images/step00.png",
+        "confidence": "HIGH",
+        "note": "Dummy synthetic package for RMOOZ import preview testing."
+      },
+      "image_ref": "images/step00.png",
+      "friendly_forces_summary": "Blue holds defensive positions around OBJ ALPHA.",
+      "enemy_forces_summary": "Red probes the coastal corridor with limited forces.",
+      "result_en": "No real combat result; display only.",
+      "result_ar": "لا توجد نتيجة قتالية حقيقية؛ عرض فقط.",
+      "n_units": 5
+    },
+    {
+      "index": 1,
+      "step_id": "step01",
+      "time_label": "H-Hour",
+      "elapsed_hours": 1,
+      "phase": "PHASE 1",
+      "narrative_en": "Dummy step 1: situation develops along a fictional coastal corridor.",
+      "narrative_ar": "خطوة تدريبية وهمية رقم 1: تطور الموقف على محور ساحلي.",
+      "narrative_en_fallback": "Dummy step 1: situation develops along a fictional coastal corridor.",
+      "narrative_ar_fallback": "خطوة تدريبية وهمية رقم 1: تطور الموقف على محور ساحلي.",
+      "situation": {
+        "summary_en": "Dummy step 1: situation develops along a fictional coastal corridor.",
+        "summary_ar": "خطوة تدريبية وهمية رقم 1: تطور الموقف على محور ساحلي."
+      },
+      "objective_status_baseline": "THREATENED",
+      "objective_status_source": "THREATENED",
+      "decision_point_baseline": "Hold defense or move reserve?",
+      "decision_point_ar_baseline": "هل يتم تثبيت الدفاع أو تحريك الاحتياط؟",
+      "decisionOptions": [
+        {
+          "id": "A",
+          "label": "Hold defense",
+          "description": "تثبيت الدفاع",
+          "intent": "Risk: LOW",
+          "source": "source_json"
+        },
+        {
+          "id": "B",
+          "label": "Move reserve",
+          "description": "تحريك الاحتياط",
+          "intent": "Risk: MEDIUM",
+          "source": "source_json"
+        }
+      ],
+      "source_trace": {
+        "source_file": "steps/step01.json",
+        "source_geojson": "geojson/step01.geojson",
+        "source_image": "images/step01.png",
+        "confidence": "HIGH",
+        "note": "Dummy synthetic package for RMOOZ import preview testing."
+      },
+      "image_ref": "images/step01.png",
+      "friendly_forces_summary": "Blue holds defensive positions around OBJ ALPHA.",
+      "enemy_forces_summary": "Red probes the coastal corridor with limited forces.",
+      "result_en": "No real combat result; display only.",
+      "result_ar": "لا توجد نتيجة قتالية حقيقية؛ عرض فقط.",
+      "n_units": 5
+    },
+    {
+      "index": 2,
+      "step_id": "step02",
+      "time_label": "H+2",
+      "elapsed_hours": 2,
+      "phase": "PHASE 1",
+      "narrative_en": "Dummy step 2: situation develops along a fictional coastal corridor.",
+      "narrative_ar": "خطوة تدريبية وهمية رقم 2: تطور الموقف على محور ساحلي.",
+      "narrative_en_fallback": "Dummy step 2: situation develops along a fictional coastal corridor.",
+      "narrative_ar_fallback": "خطوة تدريبية وهمية رقم 2: تطور الموقف على محور ساحلي.",
+      "situation": {
+        "summary_en": "Dummy step 2: situation develops along a fictional coastal corridor.",
+        "summary_ar": "خطوة تدريبية وهمية رقم 2: تطور الموقف على محور ساحلي."
+      },
+      "objective_status_baseline": "CONTESTED",
+      "objective_status_source": "CONTESTED",
+      "decision_point_baseline": "Hold defense or move reserve?",
+      "decision_point_ar_baseline": "هل يتم تثبيت الدفاع أو تحريك الاحتياط؟",
+      "decisionOptions": [
+        {
+          "id": "A",
+          "label": "Hold defense",
+          "description": "تثبيت الدفاع",
+          "intent": "Risk: LOW",
+          "source": "source_json"
+        },
+        {
+          "id": "B",
+          "label": "Move reserve",
+          "description": "تحريك الاحتياط",
+          "intent": "Risk: MEDIUM",
+          "source": "source_json"
+        }
+      ],
+      "source_trace": {
+        "source_file": "steps/step02.json",
+        "source_geojson": "geojson/step02.geojson",
+        "source_image": "images/step02.png",
+        "confidence": "HIGH",
+        "note": "Dummy synthetic package for RMOOZ import preview testing."
+      },
+      "image_ref": "images/step02.png",
+      "friendly_forces_summary": "Blue holds defensive positions around OBJ ALPHA.",
+      "enemy_forces_summary": "Red probes the coastal corridor with limited forces.",
+      "result_en": "No real combat result; display only.",
+      "result_ar": "لا توجد نتيجة قتالية حقيقية؛ عرض فقط.",
+      "n_units": 5
+    },
+    {
+      "index": 3,
+      "step_id": "step03",
+      "time_label": "H+6",
+      "elapsed_hours": 6,
+      "phase": "PHASE 2",
+      "narrative_en": "Dummy step 3: situation develops along a fictional coastal corridor.",
+      "narrative_ar": "خطوة تدريبية وهمية رقم 3: تطور الموقف على محور ساحلي.",
+      "narrative_en_fallback": "Dummy step 3: situation develops along a fictional coastal corridor.",
+      "narrative_ar_fallback": "خطوة تدريبية وهمية رقم 3: تطور الموقف على محور ساحلي.",
+      "situation": {
+        "summary_en": "Dummy step 3: situation develops along a fictional coastal corridor.",
+        "summary_ar": "خطوة تدريبية وهمية رقم 3: تطور الموقف على محور ساحلي."
+      },
+      "objective_status_baseline": "CONTESTED",
+      "objective_status_source": "CONTESTED",
+      "decision_point_baseline": "Hold defense or move reserve?",
+      "decision_point_ar_baseline": "هل يتم تثبيت الدفاع أو تحريك الاحتياط؟",
+      "decisionOptions": [
+        {
+          "id": "A",
+          "label": "Hold defense",
+          "description": "تثبيت الدفاع",
+          "intent": "Risk: LOW",
+          "source": "source_json"
+        },
+        {
+          "id": "B",
+          "label": "Move reserve",
+          "description": "تحريك الاحتياط",
+          "intent": "Risk: MEDIUM",
+          "source": "source_json"
+        }
+      ],
+      "source_trace": {
+        "source_file": "steps/step03.json",
+        "source_geojson": "geojson/step03.geojson",
+        "source_image": "images/step03.png",
+        "confidence": "HIGH",
+        "note": "Dummy synthetic package for RMOOZ import preview testing."
+      },
+      "image_ref": "images/step03.png",
+      "friendly_forces_summary": "Blue holds defensive positions around OBJ ALPHA.",
+      "enemy_forces_summary": "Red probes the coastal corridor with limited forces.",
+      "result_en": "No real combat result; display only.",
+      "result_ar": "لا توجد نتيجة قتالية حقيقية؛ عرض فقط.",
+      "n_units": 5
+    },
+    {
+      "index": 4,
+      "step_id": "step04",
+      "time_label": "H+12",
+      "elapsed_hours": 12,
+      "phase": "PHASE 2",
+      "narrative_en": "Dummy step 4: situation develops along a fictional coastal corridor.",
+      "narrative_ar": "خطوة تدريبية وهمية رقم 4: تطور الموقف على محور ساحلي.",
+      "narrative_en_fallback": "Dummy step 4: situation develops along a fictional coastal corridor.",
+      "narrative_ar_fallback": "خطوة تدريبية وهمية رقم 4: تطور الموقف على محور ساحلي.",
+      "situation": {
+        "summary_en": "Dummy step 4: situation develops along a fictional coastal corridor.",
+        "summary_ar": "خطوة تدريبية وهمية رقم 4: تطور الموقف على محور ساحلي."
+      },
+      "objective_status_baseline": "DENIED",
+      "objective_status_source": "HELD",
+      "decision_point_baseline": "Hold defense or move reserve?",
+      "decision_point_ar_baseline": "هل يتم تثبيت الدفاع أو تحريك الاحتياط؟",
+      "decisionOptions": [
+        {
+          "id": "A",
+          "label": "Hold defense",
+          "description": "تثبيت الدفاع",
+          "intent": "Risk: LOW",
+          "source": "source_json"
+        },
+        {
+          "id": "B",
+          "label": "Move reserve",
+          "description": "تحريك الاحتياط",
+          "intent": "Risk: MEDIUM",
+          "source": "source_json"
+        }
+      ],
+      "source_trace": {
+        "source_file": "steps/step04.json",
+        "source_geojson": "geojson/step04.geojson",
+        "source_image": "images/step04.png",
+        "confidence": "HIGH",
+        "note": "Dummy synthetic package for RMOOZ import preview testing."
+      },
+      "image_ref": "images/step04.png",
+      "friendly_forces_summary": "Blue holds defensive positions around OBJ ALPHA.",
+      "enemy_forces_summary": "Red probes the coastal corridor with limited forces.",
+      "result_en": "No real combat result; display only.",
+      "result_ar": "لا توجد نتيجة قتالية حقيقية؛ عرض فقط.",
+      "n_units": 5
+    }
+  ],
+  "schema_variant": "decision-package-v1",
+  "converted_from": {
+    "type": "decision_package",
+    "scenario_id": "DP-TEST-001",
+    "title_en": "Fictional Coastal Corridor",
+    "title_ar": "ممر ساحلي تدريبي وهمي",
+    "source_dir": "DP_01_Fictional_Coastal_Corridor",
+    "total_steps": 5
+  },
+  "converted_at": null
+}

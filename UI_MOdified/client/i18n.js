@@ -1563,6 +1563,15 @@
             'sw-attr-strength':          'Strength index',
             'sw-attr-full':              'Full-strength units',
             'sw-attr-empty':             'Load a scenario to see red attrition.',
+            // PR-287G: Engagement Tempo Card (step-aware)
+            'sw-tempo-title':            'Engagement Tempo',
+            'sw-tempo-badge':            'Read-only',
+            'sw-tempo-hdr-kicker':       'ENGAGEMENT TEMPO',
+            'sw-tempo-hdr-sub':          'Activity volume for the current step.',
+            'sw-tempo-actors':           'Actors engaged',
+            'sw-tempo-affected':         'Units affected',
+            'sw-tempo-arcs':             'Engagement arcs',
+            'sw-tempo-empty':            'Load a scenario to see engagement tempo.',
             // PR-64: Red Force Snapshot Card
             'sw-rf-title':               'Red Force Snapshot',
             'sw-rf-empty':               'No red force data',
@@ -3870,6 +3879,15 @@
             'sw-attr-strength':          'مؤشر القوة',
             'sw-attr-full':              'وحدات كاملة القوة',
             'sw-attr-empty':             'حمِّل سيناريو لعرض استنزاف القوات الحمراء.',
+            // PR-287G: Engagement Tempo Card (step-aware)
+            'sw-tempo-title':            'وتيرة الاشتباك',
+            'sw-tempo-badge':            'قراءة فقط',
+            'sw-tempo-hdr-kicker':       'وتيرة الاشتباك',
+            'sw-tempo-hdr-sub':          'حجم النشاط في الخطوة الحالية.',
+            'sw-tempo-actors':           'الفاعلون المشتبكون',
+            'sw-tempo-affected':         'الوحدات المتأثرة',
+            'sw-tempo-arcs':             'أقواس الاشتباك',
+            'sw-tempo-empty':            'حمِّل سيناريو لعرض وتيرة الاشتباك.',
             // PR-64: Red Force Snapshot Card
             'sw-rf-title':               'لقطة القوة الحمراء',
             'sw-rf-empty':               'لا بيانات للقوة الحمراء',

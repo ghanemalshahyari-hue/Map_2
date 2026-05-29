@@ -2083,6 +2083,28 @@
                         </dl>
                     </div>
 
+                    <!-- PR-287G: Engagement Tempo Subheader -->
+                    <div class="sw-sd-hdr" role="heading" aria-level="4">
+                        <span class="sw-sd-hdr-title" data-i18n="sw-tempo-hdr-kicker">ENGAGEMENT TEMPO</span>
+                        <span class="sw-sd-hdr-sub" data-i18n="sw-tempo-hdr-sub">Activity volume for the current step.</span>
+                    </div>
+
+                    <!-- PR-287G: Engagement Tempo Card — read-only, step-aware, local data only.
+                         Rendered by shell/scenario-workspace.js paintStepActivity() from
+                         computeStepActivity(getActiveStep()). Reads the active step's
+                         n_actors / n_affected / n_engagement_arcs (count fields, with
+                         actors/affected/engagement_arcs array-length fallback).
+                         No map, no window.units, no backend, no mutation. -->
+                    <div class="builder-card sw-card" id="sw-tempo-card">
+                        <div class="builder-card-header">
+                            <span class="builder-card-title" data-i18n="sw-tempo-title">Engagement Tempo</span>
+                            <span class="uild-badge" data-i18n="sw-tempo-badge">Read-only</span>
+                        </div>
+                        <dl class="sw-kv" id="sw-tempo-list" aria-live="polite">
+                            <!-- Rendered by shell/scenario-workspace.js paintStepActivity() — read-only, step-aware, no backend -->
+                        </dl>
+                    </div>
+
                     </section><!-- /#sw-live-workspace (PR-287L2) -->
 
                     <!-- PR-287C: Operator State card was moved inside #sw-live-workspace (above). -->

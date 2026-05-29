@@ -516,6 +516,62 @@
                ? (String(a.strengthFull) + ' / ' + String(a.strengthTotal)) : dash);
     }
 
+    // PR-287G: pure read of one step object — engagement tempo counts.
+    // Prefer the precomputed n_* count; fall back to array length; never assume a key.
+    function computeStepActivity(step) {
+        var st = step || null;
+        function cnt(numKey, arrKey) {
+            if (st && typeof st[numKey] === 'number') return st[numKey];
+            if (st && Array.isArray(st[arrKey])) return st[arrKey].length;
+            return null;
+        }
+        return {
+            actors:   cnt('n_actors',          'actors'),
+            affected: cnt('n_affected',        'affected'),
+            arcs:     cnt('n_engagement_arcs', 'engagement_arcs')
+        };
+    }
+
+    // Read-only render of engagement tempo into #sw-tempo-list. textContent only.
+    // Fixed labels carry data-i18n. Empty state when no scenario / no step.
+    function paintStepActivity() {
+        var list = document.getElementById('sw-tempo-list');
+        if (!list) return;
+        list.innerHTML = '';
+        var dash = tx('sw-value-none', '—');
+
+        function addRow(labelKey, labelText, valueText) {
+            var row = document.createElement('div');
+            row.className = 'sw-kv-row';
+            var dt = document.createElement('dt');
+            dt.setAttribute('data-i18n', labelKey);
+            dt.textContent = tx(labelKey, labelText);
+            var dd = document.createElement('dd');
+            dd.textContent = valueText;
+            row.appendChild(dt); row.appendChild(dd);
+            list.appendChild(row);
+        }
+
+        var sc   = getScenario();
+        var step = getActiveStep();
+        if (!sc || !step) {
+            var er = document.createElement('div');
+            er.className = 'sw-kv-row uild-comp--empty';
+            var ed = document.createElement('dd');
+            ed.className = 'uild-empty-msg';
+            ed.setAttribute('data-i18n', 'sw-tempo-empty');
+            ed.textContent = tx('sw-tempo-empty', 'Load a scenario to see engagement tempo.');
+            er.appendChild(ed);
+            list.appendChild(er);
+            return;
+        }
+
+        var a = computeStepActivity(step);
+        addRow('sw-tempo-actors',   'Actors engaged',  a.actors   !== null ? String(a.actors)   : dash);
+        addRow('sw-tempo-affected', 'Units affected',  a.affected !== null ? String(a.affected) : dash);
+        addRow('sw-tempo-arcs',     'Engagement arcs', a.arcs      !== null ? String(a.arcs)     : dash);
+    }
+
     // ── PR-45: Operator Intent Draft Card ────────────────────────────────
     // In-memory placeholder fields — no backend, no mutation, no persistence.
     // PR-49: liveKey drives resolveLiveValue(). Dot-paths ('obj.name') resolve
@@ -953,6 +1009,7 @@
         // PR-287F: step-aware red attrition + per-step BLS status.
         paintStepAttrition();
         paintBlsCard();
+        paintStepActivity();          // PR-287G: step-aware engagement tempo
         // PR-287L2: keep the live scenario header + live decision card coherent on step nav.
         if (typeof paintLiveScenarioHeader === 'function')   { paintLiveScenarioHeader(); }
         if (typeof paintLiveDecisionActionCard === 'function'){ paintLiveDecisionActionCard(); }
@@ -8376,6 +8433,7 @@
         paintRedForceCard();         // PR-64
         paintUnitComposition();      // PR-287E: Scenario Unit Composition readout
         paintStepAttrition();        // PR-287F: step-aware Red Attrition readout
+        paintStepActivity();         // PR-287G: step-aware Engagement Tempo readout
         paintWalkthroughCard();
         paintBriefingCard();         // PR-132
         paintStepNavigator();        // PR-132
@@ -17073,6 +17131,7 @@
             paintRedForceCard();       // PR-64: Red Force Snapshot Card
             paintUnitComposition();    // PR-287E: Scenario Unit Composition readout
             paintStepAttrition();      // PR-287F: step-aware Red Attrition readout
+            paintStepActivity();       // PR-287G: step-aware Engagement Tempo readout
             previewStepIndex = null;   // PR-53 Option A: live step advanced → reset preview
             paintWalkthroughCard();
             paintBriefingCard();           // PR-132
@@ -17857,6 +17916,7 @@
         // PR-287F: pure read of one step → { losses, degraded, strengthSum,
         //   strengthFull, strengthTotal }. No DOM / map / mutation.
         computeStepAttrition:           computeStepAttrition,
+        computeStepActivity:            computeStepActivity,
         initLiveScenarioImport:         initLiveScenarioImport,
         // PR-286L1: Scenario Folder Import Intake.
         // classifyScenarioFolderFile(file) — pure, classify by extension only.

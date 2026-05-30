@@ -2595,6 +2595,27 @@ details[open] > .details-summary {
 }
 .units-map-marker svg { overflow: visible; }
 
+/* Echelon roll-up (CMO-style): when the map container carries .wg-rolled-up
+   (wide zoom), hide the individual unit symbols; the division aggregate markers
+   (.wg-adj-aggregate) stay visible. Reversible visibility only — markers,
+   movement, attrition styling, arcs, and the salient keep running underneath. */
+.leaflet-container.wg-rolled-up .wg-adj-sidc,
+.leaflet-container.wg-rolled-up .wg-adj-diamond { display: none !important; }
+.wg-adj-aggregate { cursor: pointer; }
+.wg-adj-aggregate-inner { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55)); }
+.wg-adj-aggregate-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    min-width: 16px;
+    padding: 0 3px;
+    color: #fff;
+    font: 700 10px/1.5 system-ui, -apple-system, sans-serif;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+}
+
 /* Generate section */
 .units-generate-section { border: 1px solid var(--panel-border); border-radius: var(--radius-sm); overflow: hidden; }
 .units-gen-toggle { width: 100%; text-align: left; padding: 8px 12px; font-size: 0.8rem; color: var(--text-muted); background: transparent; border: none; cursor: pointer; }

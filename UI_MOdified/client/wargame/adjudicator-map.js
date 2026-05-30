@@ -704,6 +704,128 @@
         return false;
     }
 
+    // ── Echelon roll-up (CMO-style zoom-responsive aggregation) ──────────
+    // At wide zoom, ~150 overlapping unit symbols read as featureless colored
+    // frames ("it doesn't know the unit type"). This rolls units up to their
+    // DIVISION formation (uid SIDE-dDIV) so the operator sees a handful of
+    // clean formation symbols, then expands to individual units when zoomed
+    // in past ECHELON_EXPAND_ZOOM (or on clicking a formation).
+    //
+    // Additive + reversible: units are hidden via ONE CSS class on the map
+    // container (.wg-rolled-up .wg-adj-sidc{display:none}). Their markers, the
+    // movement model, AN1 attrition styling, engagement arcs, and the salient
+    // all keep running underneath — only visibility changes. Aggregates are
+    // separate markers (class wg-adj-aggregate, not hidden). No-op for
+    // scenarios that don't yield >=2 division groups (e.g. non-W3 imports).
+    const ECHELON_EXPAND_ZOOM = 12;   // zoom >= this → show individual units
+    let echelonAggregates = [];       // L.markers for rolled-up formation symbols
+    let echelonRollupEnabled = true;  // master toggle (public API: setEchelonRollup)
+
+    // Parse SIDE-dDIV-... tolerant of Arabic FORM text (e.g. "R-d3-رادارت-072").
+    // Returns null when the uid carries no division (that unit is never rolled).
+    function parseUnitDivision(uid) {
+        const m = String(uid || '').match(/^([A-Za-z])-d(\d+)-/);
+        return m ? { side: m[1].toUpperCase(), div: m[2], key: m[1].toUpperCase() + '-d' + m[2] } : null;
+    }
+
+    // Group placed markers by division. Built from the live marker dicts so the
+    // aggregate position tracks per-step movement. → [{ key, friendly, memberUids }].
+    function buildEchelonDivisionGroups() {
+        const groups = new Map();
+        const add = (uid, friendly) => {
+            const p = parseUnitDivision(uid);
+            if (!p) return;
+            if (!groups.has(p.key)) groups.set(p.key, { key: p.key, friendly: friendly, memberUids: [] });
+            groups.get(p.key).memberUids.push(uid);
+        };
+        Object.keys(blueMarkers).forEach((uid) => add(uid, true));
+        Object.keys(redMarkers).forEach((uid) => add(uid, false));
+        return Array.from(groups.values());
+    }
+
+    // Mean lat/lng of a group's CURRENT marker positions (tracks movement).
+    function groupCentroid(group) {
+        let sumLat = 0, sumLng = 0, n = 0;
+        group.memberUids.forEach((uid) => {
+            const m = blueMarkers[uid] || redMarkers[uid];
+            if (!m || typeof m.getLatLng !== 'function') return;
+            try { const ll = m.getLatLng(); sumLat += ll.lat; sumLng += ll.lng; n++; } catch (_) {}
+        });
+        return n ? [sumLat / n, sumLng / n] : null;
+    }
+
+    function clearEchelonAggregates() {
+        for (const m of echelonAggregates) { if (m && layerGroup) { try { layerGroup.removeLayer(m); } catch (_) {} } }
+        echelonAggregates = [];
+    }
+
+    // Division aggregate icon: side-framed milsymbol at division echelon (XX)
+    // + a member-count badge. Falls back to a plain framed box if milsymbol is
+    // unavailable. SIDC digits 9-10 = "21" = division echelon; entity 000000.
+    function buildAggregateIcon(group) {
+        const count = group.memberUids.length;
+        const color = group.friendly ? COLORS.BLUE_UNIT : COLORS.RED_UNIT;
+        const sidc  = group.friendly ? '10031000210000000000' : '10061000210000000000';
+        let svg = '';
+        try {
+            if (window.ms && typeof window.ms.Symbol === 'function') {
+                const sym = new window.ms.Symbol(sidc, { size: 34 });
+                if (sym.isValid && sym.isValid()) svg = sym.asSVG();
+            }
+        } catch (_) { /* fall back below */ }
+        const inner = svg || ('<div style="width:34px;height:24px;border:2px solid ' + color + ';background:rgba(0,0,0,0.05);"></div>');
+        const html = '<div class="wg-adj-aggregate-inner" style="position:relative;display:inline-block;">' + inner +
+            '<span class="wg-adj-aggregate-badge" style="background:' + color + ';">' + count + '</span></div>';
+        return window.L.divIcon({ className: 'wg-adj-aggregate', html: html, iconSize: [42, 42], iconAnchor: [21, 21] });
+    }
+
+    // Render the roll-up for the current zoom. Idempotent: clears + rebuilds
+    // aggregates and toggles the container class. Safe to call on zoomend,
+    // after each step, and after drawScenario.
+    function renderEchelonRollup() {
+        if (!hasMap() || !layerGroup || !window.L) return;
+        const container = (window.map.getContainer && window.map.getContainer()) || null;
+        const groups = echelonRollupEnabled ? buildEchelonDivisionGroups() : [];
+        const canRoll = groups.length >= 2;
+        const zoom = (window.map.getZoom && window.map.getZoom()) || 0;
+        const rolledUp = canRoll && zoom < ECHELON_EXPAND_ZOOM;
+
+        clearEchelonAggregates();
+        if (rolledUp) {
+            groups.forEach((g) => {
+                const c = groupCentroid(g);
+                if (!c) return;
+                const mk = window.L.marker(c, { icon: buildAggregateIcon(g), interactive: true, zIndexOffset: 1000 });
+                mk._aggGroup = g;
+                mk.on('click', () => {
+                    const pts = g.memberUids.map((uid) => {
+                        const mm = blueMarkers[uid] || redMarkers[uid];
+                        if (!mm || typeof mm.getLatLng !== 'function') return null;
+                        try { const ll = mm.getLatLng(); return [ll.lat, ll.lng]; } catch (_) { return null; }
+                    }).filter(Boolean);
+                    if (pts.length) {
+                        try {
+                            // Drill IN: center on the formation and zoom to at least the
+                            // expand threshold so its units actually appear (a wide division
+                            // would otherwise fitBounds to a low, still-rolled-up zoom).
+                            const b = window.L.latLngBounds(pts);
+                            const fitZ = window.map.getBoundsZoom(b, false);
+                            const targetZ = Math.min(Math.max(fitZ, ECHELON_EXPAND_ZOOM), 14);
+                            window.map.setView(b.getCenter(), targetZ, { animate: true });
+                        } catch (_) {}
+                    }
+                });
+                try { mk.bindTooltip(g.key + ' — ' + g.memberUids.length + ' units · click to expand', { direction: 'top', offset: [0, -16] }); } catch (_) {}
+                mk.addTo(layerGroup);
+                echelonAggregates.push(mk);
+            });
+        }
+        if (container && container.classList) {
+            if (rolledUp) container.classList.add('wg-rolled-up');
+            else container.classList.remove('wg-rolled-up');
+        }
+    }
+
      // Inject a single <style> tag so destroyed-marker fades animate smoothly
      // instead of jumping. Runs once per page load.
      (function injectStyles() {
@@ -1181,6 +1303,7 @@
     function bindZoomHookOnce() {
         if (_zoomHookBound || !hasMap()) return;
         window.map.on('zoomend', rerenderTacticalArrowsForZoom);
+        window.map.on('zoomend', renderEchelonRollup); // echelon roll-up: switch level on zoom
         _zoomHookBound = true;
     }
 
@@ -1578,6 +1701,11 @@
         // amphibious AO fills the view instead of the whole region. Red staging
         // advances into view as the operation steps forward. (Reusable for P3.)
         fitScenarioAO();
+        // Echelon roll-up: open at the formation (division) level so the laydown
+        // reads cleanly instead of as ~150 overlapping frames. fitBounds(animate)
+        // also fires zoomend → renderEchelonRollup, but call once now in case the
+        // fit doesn't change zoom (no zoomend then).
+        try { renderEchelonRollup(); } catch (_) { /* ignore */ }
 
         // Add the legend control (top-right corner of the map).
         addLegend();
@@ -3907,6 +4035,8 @@
         runningDestroyedUids = new Set();
         lastAppliedStepIndex = -1;
         playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
+        try { clearEchelonAggregates(); } catch (_) {} // echelon roll-up: drop aggregates
+        try { const _c = hasMap() && window.map.getContainer && window.map.getContainer(); if (_c && _c.classList) _c.classList.remove('wg-rolled-up'); } catch (_) {}
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
     }
@@ -4405,6 +4535,8 @@
         runningDestroyedUids = new Set();
         lastAppliedStepIndex = -1;
         playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
+        try { clearEchelonAggregates(); } catch (_) {} // echelon roll-up: drop aggregates
+        try { const _c = hasMap() && window.map.getContainer && window.map.getContainer(); if (_c && _c.classList) _c.classList.remove('wg-rolled-up'); } catch (_) {}
         // Remove all breach badges — they're re-stamped from per-step deltas
         // on the next forward applyState.
         for (const b of Object.values(breachBadges)) {
@@ -4536,6 +4668,9 @@
         // treatment applied here survives subsequent intra-step progress calls.
         if (stepIndex !== playbackAttritionStep) {
             try { applyStepAttrition(stepIndex); } catch (_) { /* ignore */ }
+            // Reposition echelon aggregates to follow the moved units (only when
+            // the step index actually changes — not on every progress frame).
+            try { renderEchelonRollup(); } catch (_) { /* ignore */ }
         }
         return true;
     }
@@ -4765,6 +4900,10 @@
         applyStepProgress,
         applyStepAttrition,
         fitScenarioAO,
+        renderEchelonRollup,
+        setEchelonRollup: (on) => { echelonRollupEnabled = (on !== false); try { renderEchelonRollup(); } catch (_) {} return echelonRollupEnabled; },
+        _getEchelonGroups: () => buildEchelonDivisionGroups().map((g) => ({ key: g.key, friendly: g.friendly, count: g.memberUids.length })),
+        _echelonExpandZoom: ECHELON_EXPAND_ZOOM,
         // Position primitives (so external callers can build their own
         // step-resolved state without re-implementing the movement model)
         computeRedPosition:  (meta, stepIndex, progress) => redPositionLonLat(meta, stepIndex, progress),

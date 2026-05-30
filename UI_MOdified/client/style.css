@@ -2616,6 +2616,24 @@ details[open] > .details-summary {
     border: 1px solid rgba(255, 255, 255, 0.85);
 }
 
+/* AN2: read-only event pins + provenance. Compact severity-coloured dots at
+   each engagement/affected location; click for a read-only provenance popup.
+   Hidden when the map is rolled up to the formation level. */
+.wg-adj-event-pin { cursor: pointer; }
+.wg-adj-event-pin-dot {
+    display: block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+.leaflet-container.wg-rolled-up .wg-adj-event-pin { display: none !important; }
+.wg-adj-event-popup .wg-ep-hdr { font-weight: 700; font-size: 0.72rem; opacity: 0.7; margin-bottom: 4px; }
+.wg-adj-event-popup .wg-ep-row { display: flex; gap: 8px; font-size: 0.72rem; line-height: 1.5; }
+.wg-adj-event-popup .wg-ep-k { min-width: 64px; opacity: 0.6; }
+.wg-adj-event-popup .wg-ep-v { flex: 1; }
+
 /* Generate section */
 .units-generate-section { border: 1px solid var(--panel-border); border-radius: var(--radius-sm); overflow: hidden; }
 .units-gen-toggle { width: 100%; text-align: left; padding: 8px 12px; font-size: 0.8rem; color: var(--text-muted); background: transparent; border: none; cursor: pointer; }

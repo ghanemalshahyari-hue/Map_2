@@ -826,6 +826,132 @@
         }
     }
 
+    // ── AN2: read-only event pins + provenance (Wargame 3 playback) ──────
+    // For the current step, drop a compact READ-ONLY pin at each engagement /
+    // affected location so the viewer sees WHAT happened, WHERE, and the
+    // scenario data that supports it (actor, target, status, damage, cause,
+    // doctrine, step/phase/time). Rendering/wiring only — reads scenario data,
+    // invents nothing, mutates nothing. Pins rebuild per step and clear on step
+    // change / scenario reset. No-op for scenarios without engagement data.
+    // Pin colour matches the engagement-arc palette (STATUS_COLORS) so a pin and
+    // its arc read as the same event. Hidden when rolled up to the formation
+    // level (CSS: .wg-rolled-up .wg-adj-event-pin).
+    const EVENT_PIN_CAP = 14;          // declutter: max pins per step
+    const EVENT_SEVERITY_COLOR = { 3: '#b00020', 2: '#d97706', 1: '#ca8a04' };
+    let eventPins = [];
+    let eventPinsStep = -1;
+
+    function clearEventPins() {
+        for (const m of eventPins) { if (m && layerGroup) { try { layerGroup.removeLayer(m); } catch (_) {} } }
+        eventPins = [];
+        eventPinsStep = -1;
+    }
+
+    function eventMarkerLatLng(uid) {
+        const m = blueMarkers[uid] || redMarkers[uid];
+        if (!m || typeof m.getLatLng !== 'function') return null;
+        try { const ll = m.getLatLng(); return [ll.lat, ll.lng]; } catch (_) { return null; }
+    }
+
+    // Severity → declutter priority + colour fallback. destroyed > damaged > rest.
+    function eventSeverity(statusChange) {
+        const s = (statusChange || '').toLowerCase();
+        if (s.indexOf('destroy') !== -1) return 3;
+        if (s.indexOf('damaged') !== -1) return 2;
+        return 1; // suppressed / expended / delayed / unchanged / unknown
+    }
+
+    // Build the read-only event list for a step: engagement_arcs[] (richest —
+    // actor + target + coordinates) plus affected[] entries not already covered
+    // by an arc target. Location = arc target coord, else the unit's marker.
+    function buildStepEvents(scenario, stepIndex) {
+        const steps = scenario && Array.isArray(scenario.steps) ? scenario.steps : [];
+        const row = steps[stepIndex] || {};
+        const events = [];
+        const seen = new Set();
+        (Array.isArray(row.engagement_arcs) ? row.engagement_arcs : []).forEach((arc) => {
+            if (!arc) return;
+            const coords = Array.isArray(arc.coordinates) ? arc.coordinates : null;
+            let latlng = null;
+            if (coords && coords.length >= 2 && Array.isArray(coords[1]) && coords[1].length >= 2) {
+                latlng = [coords[1][1], coords[1][0]]; // dst (target) [lon,lat] → [lat,lng]
+            }
+            if (!latlng) latlng = eventMarkerLatLng(arc.target_uid);
+            if (!latlng) return;
+            events.push({
+                type: 'engagement', actor_uid: arc.actor_uid || null, target_uid: arc.target_uid || null,
+                status_change: arc.status_change || null,
+                damage_pct: Number.isFinite(arc.damage_pct) ? arc.damage_pct : null,
+                cause_what: arc.cause_what || null, cause_doctrine: arc.cause_doctrine || null, latlng: latlng,
+            });
+            if (arc.target_uid) seen.add(arc.target_uid);
+        });
+        (Array.isArray(row.affected) ? row.affected : []).forEach((a) => {
+            if (!a || !a.uid || seen.has(a.uid)) return;
+            const latlng = eventMarkerLatLng(a.uid);
+            if (!latlng) return;
+            events.push({
+                type: 'affected', actor_uid: a.cause_actor || null, target_uid: a.uid,
+                status_change: a.status_change || null,
+                damage_pct: Number.isFinite(a.damage_pct) ? a.damage_pct : null,
+                cause_what: a.cause_what || null, cause_doctrine: a.cause_doctrine || null, latlng: latlng,
+            });
+            seen.add(a.uid);
+        });
+        return events;
+    }
+
+    function eventPinIcon(ev) {
+        const color = STATUS_COLORS[ev.status_change] || EVENT_SEVERITY_COLOR[eventSeverity(ev.status_change)] || '#4b5563';
+        return window.L.divIcon({
+            className: 'wg-adj-event-pin',
+            html: '<span class="wg-adj-event-pin-dot" style="background:' + color + ';"></span>',
+            iconSize: [14, 14], iconAnchor: [7, 7],
+        });
+    }
+
+    // Read-only provenance popup. Omits fields the data lacks; shows "unknown"
+    // only for the core who/what fields. Never fabricates values.
+    function eventPinPopupHtml(ev, scenario, stepIndex) {
+        const row = (scenario.steps || [])[stepIndex] || {};
+        const rows = [];
+        const line = (k, v) => rows.push('<div class="wg-ep-row"><span class="wg-ep-k">' + esc(k) + '</span><span class="wg-ep-v">' + esc(v) + '</span></div>');
+        line('Event', ev.type === 'engagement' ? 'Engagement' : 'Affected');
+        line('Actor', ev.actor_uid || 'unknown');
+        line('Affected', ev.target_uid || 'unknown');
+        line('Status', ev.status_change || 'unknown');
+        if (ev.damage_pct != null) line('Damage', Math.round(ev.damage_pct * 100) + '%');
+        if (ev.cause_what) line('Cause', ev.cause_what);
+        if (ev.cause_doctrine) line('Doctrine', ev.cause_doctrine);
+        const ctx = 'Step ' + (stepIndex + 1) + (row.phase ? ' · ' + row.phase : '') + (row.time_label ? ' · ' + row.time_label : '');
+        return '<div class="wg-adj-event-popup"><div class="wg-ep-hdr">' + esc(ctx) + '</div>' + rows.join('') + '</div>';
+    }
+
+    // Render read-only event pins for the step. Idempotent (clears first);
+    // capped + decluttered by severity then damage. No-op for non-W3 scenarios.
+    function renderEventPins(stepIndex) {
+        clearEventPins();
+        const sc = scenarioRef;
+        if (!sc || !layerGroup || !window.L || !scenarioHasAttritionData(sc)) return false;
+        const idx = Number.isFinite(stepIndex) ? stepIndex : 0;
+        let events = buildStepEvents(sc, idx);
+        events.sort((a, b) => (eventSeverity(b.status_change) - eventSeverity(a.status_change)) || ((b.damage_pct || 0) - (a.damage_pct || 0)));
+        const total = events.length;
+        if (events.length > EVENT_PIN_CAP) {
+            dbg('event pins capped', { shown: EVENT_PIN_CAP, dropped: events.length - EVENT_PIN_CAP, step: idx });
+            events = events.slice(0, EVENT_PIN_CAP);
+        }
+        events.forEach((ev) => {
+            const mk = window.L.marker(ev.latlng, { icon: eventPinIcon(ev), interactive: true, zIndexOffset: 800, keyboard: false });
+            try { mk.bindPopup(eventPinPopupHtml(ev, sc, idx), { className: 'wg-adj-event-popup-wrap', maxWidth: 280 }); } catch (_) {}
+            try { mk.bindTooltip((ev.status_change || 'event') + (ev.target_uid ? ' · ' + ev.target_uid : ''), { direction: 'top', offset: [0, -8] }); } catch (_) {}
+            mk.addTo(layerGroup);
+            eventPins.push(mk);
+        });
+        eventPinsStep = idx;
+        return total;
+    }
+
      // Inject a single <style> tag so destroyed-marker fades animate smoothly
      // instead of jumping. Runs once per page load.
      (function injectStyles() {
@@ -4037,6 +4163,7 @@
         playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
         try { clearEchelonAggregates(); } catch (_) {} // echelon roll-up: drop aggregates
         try { const _c = hasMap() && window.map.getContainer && window.map.getContainer(); if (_c && _c.classList) _c.classList.remove('wg-rolled-up'); } catch (_) {}
+        try { clearEventPins(); } catch (_) {} // AN2: clear read-only event pins
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
     }
@@ -4537,6 +4664,7 @@
         playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
         try { clearEchelonAggregates(); } catch (_) {} // echelon roll-up: drop aggregates
         try { const _c = hasMap() && window.map.getContainer && window.map.getContainer(); if (_c && _c.classList) _c.classList.remove('wg-rolled-up'); } catch (_) {}
+        try { clearEventPins(); } catch (_) {} // AN2: clear read-only event pins
         // Remove all breach badges — they're re-stamped from per-step deltas
         // on the next forward applyState.
         for (const b of Object.values(breachBadges)) {
@@ -4671,6 +4799,8 @@
             // Reposition echelon aggregates to follow the moved units (only when
             // the step index actually changes — not on every progress frame).
             try { renderEchelonRollup(); } catch (_) { /* ignore */ }
+            // AN2: refresh read-only event pins for the new step.
+            try { renderEventPins(stepIndex); } catch (_) { /* ignore */ }
         }
         return true;
     }
@@ -4904,6 +5034,9 @@
         setEchelonRollup: (on) => { echelonRollupEnabled = (on !== false); try { renderEchelonRollup(); } catch (_) {} return echelonRollupEnabled; },
         _getEchelonGroups: () => buildEchelonDivisionGroups().map((g) => ({ key: g.key, friendly: g.friendly, count: g.memberUids.length })),
         _echelonExpandZoom: ECHELON_EXPAND_ZOOM,
+        renderEventPins,
+        clearEventPins,
+        _getStepEventCount: (idx) => buildStepEvents(scenarioRef || {}, Number.isFinite(idx) ? idx : 0).length,
         // Position primitives (so external callers can build their own
         // step-resolved state without re-implementing the movement model)
         computeRedPosition:  (meta, stepIndex, progress) => redPositionLonLat(meta, stepIndex, progress),

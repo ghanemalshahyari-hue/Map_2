@@ -1,4 +1,4 @@
-<!-- AUDIT_SHA: 7307b16697d54441180bb057744d5a93362c5c84 -->
+<!-- AUDIT_SHA: 1d4fa64f39bb6979d0b29f8d53612478456893e9 -->
 # APP_INVENTORY — RMOOZ / CMO feature map
 
 > **The single map of what this app has, what it doesn't, and what's drifting.**
@@ -6,7 +6,7 @@
 > Refresh with `/audit-app` (see `.claude/skills/audit-app/`). The freshness check at session
 > start reads the `AUDIT_SHA` marker on line 1 to tell you how stale this is.
 
-**Last audited:** `7307b16` · 2026-05-30 · by initial deep-dig (5 parallel Explore passes across all subsystems).
+**Last audited:** `1d4fa64` · 2026-05-30 · initial deep-dig (5 parallel Explore passes) + same-day reconcile (D1/D2 resolved, ORBAT toggle/HUD-rebuild folded in).
 **Branch at audit:** `pr-241a-import-path-labels`.
 
 ### Legend
@@ -115,7 +115,7 @@ All ✅ done & wired unless noted. Persistence/endpoint in Notes.
 | Measure tool | ✅ | `ui/controllers/measure-controller.js`, `ui/state/measure-state.js` | Distance / range-circle / range-sector. |
 | Units core registry | ✅ | `units.js` | Hierarchy + SIDC building; modal create/edit; init `AppUnits.init()`. |
 | Units ORBAT treeview | 🟡♻️ | `units-orbat.js` | Tidy-tree SVG modal, read-only (no in-modal editing). ♻️ duplicates symbol/tree render vs the dock. |
-| Units ORBAT dock | ✅♻️ | `units-orbat-dock.js` | Flat tree + drag-to-place → `/api/units/:id/place`. ♻️ second render path for same unit data. |
+| Units ORBAT dock | ✅♻️ | `units-orbat-dock.js` | Flat tree + drag-to-place → `/api/units/:id/place`. Tool-rail "Forces/ORBAT" toggle (`#orbat-toggle-btn` in `app.html`) (re)opens it after P3 clean-view hides it; rebuilds on wargame-HUD scenario change via `AppUnitsOrbatDock.refresh()` (commits `9498932`, `b6356d5`, 2026-05-30). ♻️ second render path for same unit data. |
 | Units map markers | ✅ | `units-map.js` | Echelon-scaled markers; cursor-follow placement; `__APP_UNITS_PLACING` flag. |
 | i18n + language toggle | ✅ | `i18n.js` (~4.7k L) | EN/AR; `window.t()`/`setLanguage()`; applies `dir="rtl"`; syncs to server. |
 | RTL layout | ⏸️ | `style.css` | Context-panel covered by unit-panel in AR; LTR-only assumptions, no logical props. Deferred — `[[project_rtl_context_panel_overlap_deferred]]`. |

@@ -8830,6 +8830,13 @@ body.orbat-dock-resizing .map-workspace .leaflet-bottom {
 .sw-briefing-hdr-sub { display: block; font-size: 0.64rem; opacity: 0.45; margin-top: 0.12rem; }
 [data-theme="light"] .sw-briefing-hdr { border-bottom-color: rgba(0,0,0,0.12); }
 
+/* PR-B: CMO-style group banners (Scenario Workspace visual grouping — no behavior change) */
+.sw-group { display: block; margin: 0 0 6px; }
+.sw-group > .sw-group-banner { padding: 0.45rem 0 0.3rem; margin: 0.15rem 0 0.4rem; border-bottom: 2px solid rgba(128,128,128,0.20); }
+.sw-group-banner-title { display: block; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.85; }
+.sw-group-banner-sub { display: block; font-size: 0.62rem; opacity: 0.45; margin-top: 0.1rem; }
+[data-theme="light"] .sw-group > .sw-group-banner { border-bottom-color: rgba(0,0,0,0.14); }
+
 /* PR-132: Scenario Briefing Panel Card ─────────────────────────────────── */
 /* Long-text rows for purpose / end-state — allow wrapping, dd below dt */
 .sw-brfg-row--text { flex-direction: column; gap: 2px; }

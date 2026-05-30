@@ -15430,6 +15430,67 @@
                  blockedReasons: [], warnings: warnings };
     }
 
+    // PR-288M: bridge the live scenario-load path to the existing adjudicator
+    // map. READ-ONLY wiring — delegates entirely to the already-shipped
+    // window.AppAdjudicatorMap.drawScenario() (wargame/adjudicator-map.js),
+    // which clears-then-redraws BLS / AO / unit markers from scenario data.
+    // This helper invents no geometry, duplicates no drawing logic, and mutates
+    // no scenario / unit / line data — it only decides whether it is SAFE to
+    // call drawScenario and reports the outcome. options is reserved for future
+    // callers and intentionally unused for now.
+    // Returns { painted:boolean, reason:string, warnings:string[] }.
+    function maybeDrawLiveScenarioOnMap(scenario, options) {
+        options = options || {};
+        var result = { painted: false, reason: '', warnings: [] };
+
+        if (!scenario || typeof scenario !== 'object') {
+            result.reason = 'no-scenario';
+            return result;
+        }
+        if (typeof window === 'undefined' || !window.AppAdjudicatorMap) {
+            result.reason = 'map-api-unavailable';
+            return result;
+        }
+        var api = window.AppAdjudicatorMap;
+        if (typeof api.drawScenario !== 'function') {
+            result.reason = 'draw-unavailable';
+            return result;
+        }
+
+        // BLS markers are the headline payload for this PR; note (don't block)
+        // when a scenario carries none so a sparse map is explained.
+        if (!Array.isArray(scenario.bls_template) || scenario.bls_template.length === 0) {
+            result.warnings.push('no-bls-template');
+        }
+
+        var drew;
+        try {
+            drew = api.drawScenario(scenario);
+        } catch (err) {
+            result.reason = 'draw-threw';
+            result.warnings.push(String((err && err.message) || err));
+            return result;
+        }
+
+        // drawScenario() returns false when the Leaflet map isn't ready
+        // (operator not on the map view yet). Expected, non-error state.
+        if (drew === false) {
+            result.reason = 'map-not-ready';
+            return result;
+        }
+
+        // Confirm via the map's own predicate when available.
+        if (typeof api.isScenarioDrawn === 'function' && !api.isScenarioDrawn()) {
+            result.reason = 'draw-unconfirmed';
+            result.warnings.push('isScenarioDrawn-false-after-draw');
+            return result;
+        }
+
+        result.painted = true;
+        result.reason = 'painted';
+        return result;
+    }
+
     function loadLiveScenarioFromJson(json, options) {
         options = options || {};
         var v = validateLiveScenarioJson(json);
@@ -15472,13 +15533,20 @@
             if (typeof paintScenarioOverlay         === 'function') paintScenarioOverlay();
         }
 
+        // PR-288M: also draw the freshly-loaded scenario on the adjudicator map
+        // (BLS / AO / unit markers) through the existing map subsystem. Guarded
+        // + safe: a no-op when the map isn't present or not ready, and never
+        // throws back into the load path. Outcome surfaced on result.mapDraw.
+        var mapDraw = maybeDrawLiveScenarioOnMap(s, options);
+
         return {
             passed:         true,
             scenarioId:     s.scenario_id || null,
             scenarioLabel:  s.scenario_label || null,
             stepCount:      Array.isArray(s.steps) ? s.steps.length : 0,
             blockedReasons: [],
-            warnings:       v.warnings
+            warnings:       v.warnings,
+            mapDraw:        mapDraw
         };
     }
 
@@ -17909,6 +17977,11 @@
         //   FileReader.readAsText only. Idempotent.
         validateLiveScenarioJson:       validateLiveScenarioJson,
         loadLiveScenarioFromJson:       loadLiveScenarioFromJson,
+        // PR-288M: guarded bridge from the live load path to the adjudicator map.
+        //   maybeDrawLiveScenarioOnMap(scenario, options?) → delegates to
+        //   window.AppAdjudicatorMap.drawScenario(); returns { painted, reason,
+        //   warnings }. No geometry, no duplicate draw logic, no data mutation.
+        maybeDrawLiveScenarioOnMap:     maybeDrawLiveScenarioOnMap,
         getCurrentLiveScenarioSummary:  getCurrentLiveScenarioSummary,
         // PR-287E: pure read of scenario unit arrays → { total, blue, red,
         //   byDomain, byEchelon, missingCoord }. No DOM / map / mutation.

@@ -992,6 +992,35 @@
         window.RmoozScenario.stepIndex = newIdx;
         // Clear preview mode so walkthrough card shows live mode
         previewStepIndex = null;
+        // P4 (Wargame3 live): advance the map unit markers to the new step using the
+        // scenario's step-aware coordinates (red_unit_step_coords / blue_unit_step_coords
+        // via updateUnitPositions). Makes manual nav AND play/pause visibly move the
+        // laydown through the phases. Read-only: marker positions only — no scenario
+        // mutation, no combat sim. Safe no-op when the scenario isn't drawn on the map.
+        try {
+            if (window.AppAdjudicatorMap && typeof window.AppAdjudicatorMap.applyStepProgress === 'function') {
+                window.AppAdjudicatorMap.applyStepProgress(newIdx);
+            }
+        } catch (_) { /* no-op */ }
+        // P4: keep the VISIBLE bottom transport bar coherent with the active step.
+        // timeline.js is UI-only (its scenario-time stays at H+00:00), so sync the
+        // time readout + phase chip here from the step's own time_label / phase.
+        try {
+            var _curStep = steps[newIdx] || {};
+            var _tlTime = document.getElementById('tl-scenario-time');
+            var _lbl = _curStep.time_label || _curStep.timeLabel;
+            if (_tlTime && _lbl) _tlTime.textContent = String(_lbl);
+            var _tlPhaseGroup = document.getElementById('tl-phase-group');
+            var _phase = _curStep.phase;
+            if (_tlPhaseGroup && _phase) {
+                var _btns = _tlPhaseGroup.querySelectorAll('button');
+                for (var _i = 0; _i < _btns.length; _i++) {
+                    var _match = (_btns[_i].textContent || '').trim().toUpperCase() === String(_phase).trim().toUpperCase();
+                    _btns[_i].classList.toggle('is-active', _match);
+                    _btns[_i].setAttribute('aria-pressed', _match ? 'true' : 'false');
+                }
+            }
+        } catch (_) { /* no-op */ }
         // Repaint all step-aware cards
         paintStepNavigator();
         paintScenarioOverview();
@@ -1014,6 +1043,56 @@
         if (typeof paintLiveScenarioHeader === 'function')   { paintLiveScenarioHeader(); }
         if (typeof paintLiveDecisionActionCard === 'function'){ paintLiveDecisionActionCard(); }
     }
+
+    // ── P4 (Wargame3 live): bottom transport bar → step playback bridge ──────────
+    // shell/timeline.js is UI-only — it dispatches rmooz:timeline-ui-action but
+    // nothing advanced the live scenario. Wire play / pause / step / speed to
+    // goToStep so the visible transport bar moves the laydown through the 17
+    // phases. Read-only: only stepIndex + marker positions change (via goToStep).
+    // No combat sim, no AI, no decision options, no scenario mutation, no storage.
+    var _swPlayTimer = null;
+    var _swPlaySpeed = 1;
+    function _swStepCount() { var sc = getScenario(); return (sc && Array.isArray(sc.steps)) ? sc.steps.length : 0; }
+    function _swPlayIntervalMs() { return Math.max(60, Math.round(2000 / Math.max(1, _swPlaySpeed))); }
+    function _swStopPlay() { if (_swPlayTimer) { clearInterval(_swPlayTimer); _swPlayTimer = null; } }
+    function _swStartPlay() {
+        _swStopPlay();
+        if (!window.RmoozScenario || !_swStepCount()) return;
+        _swPlayTimer = setInterval(function () {
+            var total = _swStepCount();
+            var cur = getActiveStepIndex();
+            if (cur >= total - 1) {
+                _swStopPlay();
+                var pauseBtn = document.getElementById('tl-pause'); // reset transport visuals at end
+                if (pauseBtn) { try { pauseBtn.click(); } catch (_) { /* no-op */ } }
+                return;
+            }
+            goToStep(cur + 1);
+        }, _swPlayIntervalMs());
+    }
+    function _bindTimelineTransport() {
+        if (window.__swTimelineBridgeBound) return;
+        window.__swTimelineBridgeBound = true;
+        document.addEventListener('rmooz:timeline-ui-action', function (e) {
+            var action = e && e.detail && e.detail.action;
+            var value  = e && e.detail && e.detail.value;
+            if (!window.RmoozScenario || !_swStepCount()) return; // only drive a loaded live scenario
+            switch (action) {
+                case 'play':          _swStartPlay(); break;
+                case 'pause':         _swStopPlay();  break;
+                case 'step-forward':  _swStopPlay(); goToStep(getActiveStepIndex() + 1); break;
+                case 'step-back':     _swStopPlay(); goToStep(getActiveStepIndex() - 1); break;
+                case 'speed-changed': {
+                    var sp = parseFloat(value);
+                    if (isFinite(sp) && sp > 0) _swPlaySpeed = sp;
+                    if (_swPlayTimer) _swStartPlay(); // restart at the new cadence
+                    break;
+                }
+                default: break;
+            }
+        });
+    }
+    if (typeof document !== 'undefined') { _bindTimelineTransport(); }
 
     // ── PR-132/134/136: Step Navigator ───────────────────────────────────────
     function paintStepNavigator() {

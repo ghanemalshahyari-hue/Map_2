@@ -99,6 +99,12 @@
     // from per_unit_deltas. Cleared on clearScenario / resetMap.
     let runningDestroyedUids = new Set();
 
+    // AN1: last step index whose per-unit attrition we rendered onto the unit
+    // markers. applyStepProgress may be called repeatedly with fractional
+    // progress WITHIN one step; we only recompute attrition when the step
+    // index actually changes. Reset to -1 on clearScenario / resetMap.
+    let playbackAttritionStep = -1;
+
     // Last step index that applyState processed. Drives the FORWARD-vs-REWIND
     // decision in applyState — forward (newIdx > last) plays the full
     // explosion-and-arrow choreography, backward/equal snaps silently.
@@ -3301,6 +3307,127 @@
         }
     }
 
+    // ── AN1: per-step per-unit attrition visuals ─────────────────────
+    // Wire the scenario's OWN per-step engagement record (step.affected[] +
+    // step.engagement_arcs[]) onto the unit markers so the viewer sees WHICH
+    // units were degraded or destroyed at the current step. Rendering/wiring
+    // only: reads scenario data, mutates NO scenario object, invents NO damage.
+    //
+    // Honest status mapping — the scenario's real status_change vocabulary is
+    // {destroyed, damaged_partial, suppressed, expended, delayed, unchanged}.
+    // The marker renderer (renderMarkerByStatus) has exactly two affected
+    // treatments plus reset, so we map to those and DO NOT fabricate finer
+    // states the data/renderer don't support. The granular status_change is
+    // preserved verbatim on marker._attrition for tooltips/panels (no loss).
+    //   destroyed / killed / sunk            → DESTROYED (gray + X overlay)
+    //   anything else explicitly flagged     → DEGRADED  (conservative "affected")
+    //   unchanged / missing                  → no change (active)
+    function attritionStatusOf(statusChange) {
+        if (!statusChange || typeof statusChange !== 'string') return null;
+        const s = statusChange.toLowerCase();
+        if (s === 'unchanged') return null;
+        if (s.indexOf('destroy') !== -1 || s === 'killed' || s === 'sunk') {
+            return UNIT_STATUS.DESTROYED;
+        }
+        // Explicitly flagged but not a kill → conservative "affected"/degraded.
+        return UNIT_STATUS.DEGRADED;
+    }
+
+    // Does this scenario carry per-step engagement data we can render? Non-W3
+    // scenarios without affected[]/engagement_arcs[] are left completely
+    // untouched (applyStepAttrition becomes a no-op for them).
+    function scenarioHasAttritionData(scenario) {
+        const steps = scenario && Array.isArray(scenario.steps) ? scenario.steps : [];
+        return steps.some(s => s && (
+            (Array.isArray(s.affected) && s.affected.length) ||
+            (Array.isArray(s.engagement_arcs) && s.engagement_arcs.length)
+        ));
+    }
+
+    // Build CUMULATIVE attrition up to and including stepIndex from scenario
+    // data. Cumulative by design: a unit that took damage or was destroyed
+    // stays in that state on later steps — units don't un-take damage. Because
+    // we recompute from step 0 every time, stepping BACKWARD correctly restores
+    // the earlier picture (nothing gets stuck). DESTROYED is terminal and wins
+    // over DEGRADED. affected[] is authoritative for a unit's own status;
+    // engagement_arcs[] supplements via the TARGET that took the effect.
+    // Returns { status: Map<uid, UNIT_STATUS>, info: Map<uid, {...}> }.
+    function computeStepAttrition(scenario, stepIndex) {
+        const status = new Map();
+        const info   = new Map();
+        const steps = scenario && Array.isArray(scenario.steps) ? scenario.steps : [];
+        const upTo = Math.min(Number.isFinite(stepIndex) ? stepIndex : 0, steps.length - 1);
+        const consume = (uid, statusChange, stepNo, rec) => {
+            if (!uid) return;
+            const mapped = attritionStatusOf(statusChange);
+            if (!mapped) return;
+            const prev = status.get(uid);
+            if (prev === UNIT_STATUS.DESTROYED) {
+                // terminal — never downgrade a destroyed unit
+            } else if (mapped === UNIT_STATUS.DESTROYED) {
+                status.set(uid, UNIT_STATUS.DESTROYED);
+            } else {
+                status.set(uid, UNIT_STATUS.DEGRADED);
+            }
+            info.set(uid, Object.assign({ step: stepNo, status_change: statusChange }, rec || {}));
+        };
+        for (let i = 0; i <= upTo; i++) {
+            const row = steps[i] || {};
+            (Array.isArray(row.affected) ? row.affected : []).forEach(a => {
+                if (!a) return;
+                consume(a.uid, a.status_change, i, {
+                    damage_pct:    Number.isFinite(a.damage_pct) ? a.damage_pct : null,
+                    cause_actor:   a.cause_actor || null,
+                    cause_what:    a.cause_what || null,
+                    cause_doctrine: a.cause_doctrine || null,
+                });
+            });
+            (Array.isArray(row.engagement_arcs) ? row.engagement_arcs : []).forEach(arc => {
+                if (!arc) return;
+                consume(arc.target_uid, arc.status_change, i, {
+                    damage_pct:    Number.isFinite(arc.damage_pct) ? arc.damage_pct : null,
+                    cause_actor:   arc.actor_uid || null,
+                    cause_what:    arc.cause_what || null,
+                    cause_doctrine: arc.cause_doctrine || null,
+                });
+            });
+        }
+        return { status, info };
+    }
+
+    // Apply per-step attrition visuals to ALL unit markers. Idempotent:
+    // recomputes the full cumulative picture for stepIndex and restyles every
+    // unit (affected → degraded/destroyed, everyone else → active/reset), so
+    // forward AND backward stepping both land correctly and units no longer in
+    // the cumulative set are reset. Restyling unaffected units is cheap — the
+    // mark/unmark helpers early-return when a marker isn't currently marked.
+    // No-op for scenarios without engagement data. Reuses renderMarkerByStatus
+    // (the same treatment the live HUD uses) so playback and HUD look identical.
+    function applyStepAttrition(stepIndex) {
+        const sc = scenarioRef;
+        if (!sc || !scenarioHasAttritionData(sc)) { playbackAttritionStep = -1; return false; }
+        const idx = Number.isFinite(stepIndex) ? stepIndex : 0;
+        const { status, info } = computeStepAttrition(sc, idx);
+        const restyle = (dict) => {
+            for (const uid of Object.keys(dict || {})) {
+                const m = dict[uid];
+                if (!m) continue;
+                const st = status.get(uid) || UNIT_STATUS.ACTIVE;
+                // Render-state ONLY (not scenario data): the latest engagement
+                // record for this unit at/under the current step, for future
+                // tooltip/panel surfacing. Cleared when the unit is unaffected.
+                m._attrition = (st === UNIT_STATUS.ACTIVE)
+                    ? null
+                    : Object.assign({ effective: st }, info.get(uid) || { status_change: 'affected', step: idx });
+                try { renderMarkerByStatus(m, st); } catch (_) { /* ignore */ }
+            }
+        };
+        restyle(redMarkers);
+        restyle(blueMarkers);
+        playbackAttritionStep = idx;
+        return true;
+    }
+
     // ── HQ-damage propagation ─────────────────────────────────────────
     // Operator feedback: a battalion/brigade sitting alive on the map while
     // half its companies are gray-X around it doesn't reflect reality —
@@ -3779,6 +3906,7 @@
         unitRegistry = {};
         runningDestroyedUids = new Set();
         lastAppliedStepIndex = -1;
+        playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
     }
@@ -4276,6 +4404,7 @@
         }
         runningDestroyedUids = new Set();
         lastAppliedStepIndex = -1;
+        playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
         // Remove all breach badges — they're re-stamped from per-step deltas
         // on the next forward applyState.
         for (const b of Object.values(breachBadges)) {
@@ -4400,6 +4529,14 @@
             blue_actions:  null,   // fall back to the local schedule
         };
         updateUnitPositions(syntheticState);
+        // AN1: refresh per-unit attrition visuals, but only when the step
+        // index actually changes (this is called repeatedly with fractional
+        // progress within a single step). updateUnitPositions moves markers
+        // via setLatLng only — it does not setIcon — so the attrition icon
+        // treatment applied here survives subsequent intra-step progress calls.
+        if (stepIndex !== playbackAttritionStep) {
+            try { applyStepAttrition(stepIndex); } catch (_) { /* ignore */ }
+        }
         return true;
     }
 
@@ -4626,6 +4763,7 @@
         isScenarioDrawn,
         getScenarioMarkers,
         applyStepProgress,
+        applyStepAttrition,
         fitScenarioAO,
         // Position primitives (so external callers can build their own
         // step-resolved state without re-implementing the movement model)

@@ -15596,6 +15596,33 @@
         // Replace window.RmoozScenario. ONLY two fields written: scenario + stepIndex.
         window.RmoozScenario = { scenario: s, stepIndex: 0 };
 
+        // P2 (Wargame3 live): mirror the loaded scenario's OOB into the ORBAT dock
+        // (read-only scenario ORBAT — no server, no mutation). Safe no-op when the
+        // dock isn't present/bound yet.
+        try {
+            if (window.AppUnitsOrbatDock && typeof window.AppUnitsOrbatDock.refresh === 'function') {
+                window.AppUnitsOrbatDock.refresh();
+            }
+        } catch (_) { /* no-op */ }
+
+        // P3 (Wargame3 live): present a clean, map-forward demo view — collapse the
+        // side tool panels (all re-openable via their existing controls) and re-frame
+        // the AO once the panel-collapse transition settles. View state only: no
+        // scenario/unit/ORBAT mutation, no server, no storage.
+        try {
+            if (window.AppMapHidePanels && typeof window.AppMapHidePanels.hideAll === 'function') {
+                window.AppMapHidePanels.hideAll();
+            }
+            setTimeout(function () {
+                try {
+                    if (window.map && typeof window.map.invalidateSize === 'function') window.map.invalidateSize();
+                    if (window.AppAdjudicatorMap && typeof window.AppAdjudicatorMap.fitScenarioAO === 'function') {
+                        window.AppAdjudicatorMap.fitScenarioAO();
+                    }
+                } catch (_) { /* no-op */ }
+            }, 360);
+        } catch (_) { /* no-op */ }
+
         // Repaint live workspace via the existing full refresh path.
         // refresh() never calls paintDryRunPreview, never paints AMBER, never touches
         // any preview/dry-run state — verified by PR-287L0.

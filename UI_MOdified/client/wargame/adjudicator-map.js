@@ -668,6 +668,36 @@
 
     function hasMap() { return typeof window !== 'undefined' && window.L && window.map; }
 
+    // Fit the map to the friendly operational area (objective + landing sites +
+    // Blue laydown), with map_bbox as fallback. Extracted so the clean-view
+    // "present scenario" path (P3) can re-frame after side panels collapse and
+    // the map viewport width changes. Read-only: no scenario/marker mutation.
+    function fitScenarioAO() {
+        if (!hasMap()) return false;
+        try {
+            const aoPts = [];
+            if (Array.isArray(objCoord) && objCoord.length === 2) aoPts.push([objCoord[1], objCoord[0]]);
+            Object.keys(blsCoordByName).forEach((k) => {
+                const c = blsCoordByName[k];
+                if (Array.isArray(c) && c.length === 2) aoPts.push([c[1], c[0]]);
+            });
+            Object.keys(blueMarkers).forEach((uid) => {
+                const m = blueMarkers[uid];
+                if (m && typeof m.getLatLng === 'function') { const ll = m.getLatLng(); aoPts.push([ll.lat, ll.lng]); }
+            });
+            const bb = scenarioRef && scenarioRef.map_bbox;
+            if (aoPts.length >= 2) {
+                window.map.fitBounds(aoPts, { padding: [44, 44], maxZoom: 11, animate: true });
+                return true;
+            }
+            if (Array.isArray(bb) && bb.length === 4) {
+                window.map.fitBounds([[bb[1], bb[0]], [bb[3], bb[2]]], { padding: [30, 30], maxZoom: 10, animate: true });
+                return true;
+            }
+        } catch (_) { /* ignore */ }
+        return false;
+    }
+
      // Inject a single <style> tag so destroyed-marker fades animate smoothly
      // instead of jumping. Runs once per page load.
      (function injectStyles() {
@@ -1503,13 +1533,10 @@
             blueMarkers[unit.unit_uid] = m;
         }
 
-        // Fit the map view so the whole AOR is visible the first time.
-        try {
-            const bb = scenario.map_bbox;
-            if (Array.isArray(bb) && bb.length === 4) {
-                window.map.fitBounds([[bb[1], bb[0]], [bb[3], bb[2]]], { padding: [30, 30], maxZoom: 10, animate: true });
-            }
-        } catch (_) { /* ignore */ }
+        // Fit the map view to the friendly operational area the first time, so the
+        // amphibious AO fills the view instead of the whole region. Red staging
+        // advances into view as the operation steps forward. (Reusable for P3.)
+        fitScenarioAO();
 
         // Add the legend control (top-right corner of the map).
         addLegend();
@@ -4564,6 +4591,7 @@
         isScenarioDrawn,
         getScenarioMarkers,
         applyStepProgress,
+        fitScenarioAO,
         // Position primitives (so external callers can build their own
         // step-resolved state without re-implementing the movement model)
         computeRedPosition:  (meta, stepIndex, progress) => redPositionLonLat(meta, stepIndex, progress),

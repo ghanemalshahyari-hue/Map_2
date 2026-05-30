@@ -39,7 +39,8 @@
     // No network call. No mutation of scenario/trial/adjudicator state.
     // Offline-safe: scenarioCache is loaded from the local file server only.
     // scenario-workspace.js READS window.RmoozScenario; nothing else does.
-    // AppShellScenarioWorkspace.refresh() is the only public call made here.
+    // AppShellScenarioWorkspace.refresh() + AppUnitsOrbatDock.refresh() are the
+    // only public calls made here.
     function publishRmoozScenario() {
         if (!scenarioCache) return;
         window.RmoozScenario = {
@@ -49,6 +50,13 @@
         if (window.AppShellScenarioWorkspace &&
             typeof window.AppShellScenarioWorkspace.refresh === 'function') {
             window.AppShellScenarioWorkspace.refresh();
+        }
+        // ORBAT discoverability fix: a scenario change via the wargame HUD (scenario
+        // selector / disk watcher) must also rebuild the ORBAT dock from the NEW OOB,
+        // otherwise the dock stays on the previously loaded scenario. Mirrors the
+        // live-import path. Read-only; safe no-op if the dock isn't present/bound.
+        if (window.AppUnitsOrbatDock && typeof window.AppUnitsOrbatDock.refresh === 'function') {
+            try { window.AppUnitsOrbatDock.refresh(); } catch (_) { /* no-op */ }
         }
     }
 

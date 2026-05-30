@@ -43,6 +43,12 @@
     }
 
     function levelLabel(level) {
+        // Scenario ORBAT passes echelon strings (brigade/battalion/division/
+        // company/squadron/force/unit); the server unit-library passes a numeric
+        // level index. Handle both.
+        if (typeof level === 'string' && level) {
+            return tr('units-level-' + level.toLowerCase(), level.charAt(0).toUpperCase() + level.slice(1));
+        }
         const keys = ['units-level-army', 'units-level-force', 'units-level-brigade', 'units-level-battalion', 'units-level-company'];
         const fall = ['Army', 'Force', 'Brigade', 'Battalion', 'Company'];
         return tr(keys[level], fall[level] ?? `L${level}`);
@@ -87,7 +93,86 @@
     }
 
     // ── Data load ───────────────────────────────────────────────────────
+    // ── Scenario ORBAT (read-only) ───────────────────────────────────────
+    // Build an ORBAT tree directly from a loaded live scenario's order of
+    // battle (blue_units_initial + red_units). Read-only: no server, no
+    // mutation, no persistence. Hierarchy is inferred from the numeric token
+    // in each uid ("B-d1-51-001" → 51; battalion "511" nests under brigade
+    // "51"), grouped under synthetic BLUE/RED force roots. Used by loadTree()
+    // whenever window.RmoozScenario is present, so the dock mirrors the
+    // scenario OOB instead of the (empty) server unit-library.
+    function scenarioUidNumber(uid) {
+        const parts = String(uid || '').split('-');
+        return parts.length >= 3 ? String(parts[2]) : '';
+    }
+    function scenarioUidSide(uid) {
+        return /^r/i.test(String(uid || '')) ? 'hostile' : 'friendly';
+    }
+    function buildScenarioOrbatTree(scenario) {
+        const blue = Array.isArray(scenario.blue_units_initial) ? scenario.blue_units_initial : [];
+        const red  = Array.isArray(scenario.red_units) ? scenario.red_units : [];
+        const SIDE_ROOTS = {
+            friendly: { id: 'SCN-BLUE-ROOT', name: tr('orbat-scn-blue-force', 'BLUE FORCE'), sidc: '10031000001211000000', side: 'friendly', level: 'force', code: 'BLUE', children: [], parent_id: null, deleted_at: null },
+            hostile:  { id: 'SCN-RED-ROOT',  name: tr('orbat-scn-red-force',  'RED FORCE'),  sidc: '10061000001211000000', side: 'hostile',  level: 'force', code: 'RED',  children: [], parent_id: null, deleted_at: null },
+        };
+        const byNum = { friendly: {}, hostile: {} };
+        const mk = (u) => {
+            const uid = u.unit_uid || u.uid || '';
+            const side = scenarioUidSide(uid);
+            return {
+                id: uid, name: u.label || u.name_ar || uid, sidc: u.sidc || null,
+                side: side, level: u.echelon || 'unit', code: uid,
+                num: scenarioUidNumber(uid), children: [], parent_id: null, deleted_at: null,
+            };
+        };
+        const all = blue.concat(red).map(mk).filter(n => n.id);
+        for (const n of all) { if (n.num) byNum[n.side][n.num] = n; }
+        const findParent = (n) => {
+            if (n.num) {
+                for (let len = n.num.length - 1; len >= 1; len--) {
+                    const cand = byNum[n.side][n.num.slice(0, len)];
+                    if (cand && cand !== n) return cand;
+                }
+            }
+            return SIDE_ROOTS[n.side];
+        };
+        for (const n of all) { const p = findParent(n); n.parent_id = p.id; p.children.push(n); }
+        const sortRec = (node) => {
+            node.children.sort((a, b) =>
+                String(a.num || '').localeCompare(String(b.num || ''), undefined, { numeric: true }) ||
+                String(a.name).localeCompare(String(b.name)));
+            node.children.forEach(sortRec);
+        };
+        const roots = [];
+        [SIDE_ROOTS.friendly, SIDE_ROOTS.hostile].forEach((rt) => { if (rt.children.length) { sortRec(rt); roots.push(rt); } });
+        const flat = [];
+        const flatten = (node) => { flat.push(node); node.children.forEach(flatten); };
+        roots.forEach(flatten);
+        return { roots, units: flat };
+    }
+
     async function loadTree() {
+        // Scenario ORBAT (read-only): when a live scenario is loaded, mirror its
+        // OOB instead of fetching the server unit-library. No server, no mutation.
+        try {
+            const scn = (typeof window !== 'undefined' && window.RmoozScenario && window.RmoozScenario.scenario) || null;
+            if (scn && (Array.isArray(scn.blue_units_initial) || Array.isArray(scn.red_units))) {
+                const built = buildScenarioOrbatTree(scn);
+                roots = built.roots;
+                unitsFlat = built.units;
+                for (const u of unitsFlat) {
+                    if (u.deleted_at) continue;
+                    if (!seenIds.has(u.id)) {
+                        seenIds.add(u.id);
+                        if ((u.children || []).some(c => !c.deleted_at)) collapsed.add(u.id);
+                    }
+                }
+                render();
+                return;
+            }
+        } catch (errScn) {
+            console.warn('[orbat-dock] scenario tree build failed', errScn);
+        }
         try {
             const res = await fetch('/api/units/tree', { credentials: 'include' });
             if (!res.ok) throw new Error(String(res.status));

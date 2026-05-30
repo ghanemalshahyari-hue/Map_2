@@ -36,6 +36,16 @@
         4: 'up-echelon-4',  // Company
     };
 
+    // Echelon label for either a numeric level (server units, 0–4) or an echelon
+    // string (scenario ORBAT units: division/brigade/battalion/company/…).
+    function echelonLabel(level) {
+        if (typeof level === 'string' && level) {
+            return tr('up-echelon-' + level.toLowerCase(), level.charAt(0).toUpperCase() + level.slice(1));
+        }
+        if (Number.isInteger(level)) return tr(ECHELON_LABEL_KEY[level], 'L' + level);
+        return null;
+    }
+
     let currentUnit = null;
     let currentSelectedAt = null;
 
@@ -142,8 +152,7 @@
 
         const echChip = $('up-echelon-chip');
         if (echChip) {
-            const lvl = Number.isInteger(unit.level) ? unit.level : null;
-            const label = lvl != null ? tr(ECHELON_LABEL_KEY[lvl], 'L'+lvl) : null;
+            const label = echelonLabel(unit.level);
             if (label) {
                 echChip.textContent = label;
                 echChip.removeAttribute('hidden');
@@ -162,8 +171,7 @@
         const side = (unit.side || '').toLowerCase();
         setText('up-side', side ? tr(SIDE_LABEL_KEY[side] || 'up-side-unknown', side) : null);
         setText('up-sidc', (unit.sidc && String(unit.sidc).trim()) || null);
-        const lvl = Number.isInteger(unit.level) ? unit.level : null;
-        setText('up-echelon', lvl != null ? tr(ECHELON_LABEL_KEY[lvl], 'L'+lvl) : null);
+        setText('up-echelon', echelonLabel(unit.level));
         setText('up-code', (unit.code && String(unit.code).trim()) || null);
         // Parent: short tag from parent_id (full lookup is out of scope for PR-3).
         const parentRaw = unit.parent_id || unit.parentId || null;

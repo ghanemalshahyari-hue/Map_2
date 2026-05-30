@@ -1469,11 +1469,29 @@
             m._iconSize = size;
             m._unitId   = unit.uid;
             m._unitData = {
-                id:   unit.uid,
-                name: unit.label || unit.uid,
-                code: unit.label || '',
-                sidc: sidc,
+                id:    unit.uid,
+                name:  unit.label || unit.name_ar || unit.uid,
+                code:  unit.uid,
+                sidc:  sidc,
+                side:  'hostile',
+                level: unit.echelon || null,
+                role:  unit.role || null,
+                domain: unit.domain || null,
+                bls:   unit.bls || null,
+                _scenario: true,
             };
+            // P5 (Wargame3 live): clicking a scenario unit selects it and feeds the
+            // read-only Selected Unit panel. Uses the marker's live displayed
+            // position (Red's raw coord is a stacked staging point).
+            m.on('click', () => {
+                try {
+                    const ll = m.getLatLng && m.getLatLng();
+                    const detailUnit = ll ? Object.assign({}, m._unitData, { lat: ll.lat, lng: ll.lng }) : m._unitData;
+                    document.dispatchEvent(new CustomEvent('rmooz:unit-selected', {
+                        detail: { unit: detailUnit, selectedAt: Date.now() },
+                    }));
+                } catch (_) { /* never throw on selection */ }
+            });
             // Register in the unit lifecycle (active/degraded/destroyed) and
             // expose the registry entry on the marker so the renderer can
             // walk parent/root without re-deriving each frame.
@@ -1519,11 +1537,28 @@
             m._iconSize = size; // needed so the damaged/active SIDC rebuild keeps the same scale
             m._unitId   = unit.unit_uid;
             m._unitData = {
-                id:   unit.unit_uid,
-                name: unit.echelon || unit.base_id || unit.unit_uid,
-                code: unit.base_id || '',
-                sidc: sidc || null,
+                id:    unit.unit_uid,
+                name:  unit.label || unit.name_ar || unit.base_id || unit.unit_uid,
+                code:  unit.base_id || unit.unit_uid,
+                sidc:  sidc || null,
+                side:  'friendly',
+                level: unit.echelon || null,
+                role:  unit.role || null,
+                domain: unit.domain || null,
+                lat:   unit.coord[1],
+                lng:   unit.coord[0],
+                _scenario: true,
             };
+            // P5 (Wargame3 live): clicking a scenario unit selects it and feeds the
+            // read-only Selected Unit panel. Same event the placed-units layer uses
+            // (unit-panel.js renders detail.unit); additive — does not block tooltip.
+            m.on('click', () => {
+                try {
+                    document.dispatchEvent(new CustomEvent('rmooz:unit-selected', {
+                        detail: { unit: m._unitData, selectedAt: Date.now() },
+                    }));
+                } catch (_) { /* never throw on selection */ }
+            });
             // Register in the unit lifecycle and expose the registry entry
             // so the renderer can walk parent/root (lc → b<X>c → p<X><Y>c
             // → c<X><Y><Z>) without re-deriving the chain each step.

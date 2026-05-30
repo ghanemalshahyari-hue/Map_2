@@ -96,6 +96,11 @@
         tick();
     }
 
+    // P3: expose a small API so the scenario "present" flow can trigger the same
+    // clean map view a map click produces. Every panel stays re-openable via its
+    // existing control (context peek chevron, Units button, chat toggle, etc.).
+    window.AppMapHidePanels = { hideAll: hideAllPanels, hideContext: hideContextPanel };
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', attachWhenMapReady);
     } else {

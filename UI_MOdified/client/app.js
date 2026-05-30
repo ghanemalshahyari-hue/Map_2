@@ -341,7 +341,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load MBTiles: use tile server (for large files) or in-browser loading
     fetch('maps/maps.json').then(r => r.ok ? r.json() : null).catch(() => null).then(async config => {
         if (!config) {
-            showTileServerBanner('maps/maps.json is missing — satellite layer cannot load.');
+            // P3: maps.json (satellite / MBTiles overlay) is OPTIONAL — the OpenStreetMap
+            // base layer always loads independently. Downgraded from a red banner to a
+            // console note so a missing overlay config doesn't alarm operators when the
+            // base map is working fine.
+            console.info('[basemap] maps/maps.json not present — using OpenStreetMap base layer; satellite/MBTiles overlay disabled.');
             return;
         }
         const files = Array.isArray(config) ? config : (config.mbtiles) || [];

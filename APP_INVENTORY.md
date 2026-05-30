@@ -166,7 +166,6 @@ All endpoints below are ✅ wired with real handlers. Grouped; see web-server.js
 3. **Popup binding** — `popups.js` exports builders, but ~40 `bindPopup` calls remain inline in `app.js`.
 4. **Workspace cards** — see `docs/scenario-workspace-consolidation-map.md` for the catalogued **9× duplication patterns + 3 dead fields** across ~150 DOM surfaces (authoritative; do not re-audit).
 5. **Tile/basemap logic** — embedded inline in `app.js` rather than a module (monolith, not duplication, but a refactor candidate).
-6. **Stray duplicate directory ♻️** — `UI_MOdified/client/wargame 5/` is a **git-tracked** copy of `wargame/` (6 files incl. a 159KB `adjudicator-map.js`, dated May 23). Looks like an accidental Finder duplicate; not referenced from `app.html`. **Cleanup candidate** — confirm it's unreferenced, then delete. (Found 2026-05-30.)
 
 ---
 

@@ -1925,8 +1925,8 @@
         };
 
         // Initial state
-        hide(ctxSel); hide(editPanel); hide(noChildrenEl); hide(domainRow); hide(branchRow); hide(quickSetupEl); hide(generateSection);
-        show(ctxRoot); show(mainPanel);
+        hide(editPanel); hide(noChildrenEl); hide(domainRow); hide(branchRow); hide(quickSetupEl); hide(generateSection);
+        show(mainPanel);
         updateMainPanel();
         setCreateEnabled();
 

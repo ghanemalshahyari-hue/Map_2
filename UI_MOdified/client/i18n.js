@@ -2231,9 +2231,13 @@
             'sw-mock-badge-mock':              'Mock / Placeholder',
             'sw-mock-badge-dev-only':          'Developer only',
             'sw-mock-badge-not-live':          'Not part of live workflow',
-            // PR-286L0: Live Scenario Import
-            'sw-live-scenario-import-title':    'Live Scenario Import',
-            'sw-live-scenario-import-subtitle': 'Load one RMOOZ-compatible scenario JSON as the active live scenario.',
+            // PR-241A: HUD GeoJSON import labels (Operational Scenario drop-zone)
+            'wg-adj-import-label':              'Import GeoJSON to Live Map Scenario',
+            'wg-adj-import-helper':             'Use this to load operational GeoJSON and draw units/scenario markers on the map.',
+            'wg-adj-import-hint':               'Drop all_phases.geojson here, or click to choose a file',
+            // PR-286L0: Live Scenario Import (PR-241A: clarified — in-memory, draws on map, no disk write)
+            'sw-live-scenario-import-title':    'Preview Live Scenario JSON — Read-only Cards Only',
+            'sw-live-scenario-import-subtitle': 'This preview updates Scenario Workspace cards only. Use the Operational Scenario HUD import to draw units on the map.',
             'sw-live-scenario-import-file-label':'Scenario JSON',
             'sw-live-scenario-import-btn':      'Import as Live Scenario',
             'sw-live-scenario-import-note':     'This replaces the current live workspace state in memory only.',
@@ -4558,9 +4562,13 @@
             'sw-mock-badge-mock':              'مؤقت / غير نهائي',
             'sw-mock-badge-dev-only':          'للمطور فقط',
             'sw-mock-badge-not-live':          'ليس جزءًا من سير العمل الحي',
-            // PR-286L0: Live Scenario Import
-            'sw-live-scenario-import-title':    'استيراد السيناريو الحي',
-            'sw-live-scenario-import-subtitle': 'حمّل ملف سيناريو JSON متوافقًا مع RMOOZ ليصبح السيناريو الحي النشط.',
+            // PR-241A: HUD GeoJSON import labels (Operational Scenario drop-zone)
+            'wg-adj-import-label':              'استيراد GeoJSON إلى سيناريو حي على الخريطة',
+            'wg-adj-import-helper':             'استخدم هذا لتحميل ملفات GeoJSON العملياتية ورسم الوحدات/علامات السيناريو على الخريطة.',
+            'wg-adj-import-hint':               'أفلت all_phases.geojson هنا، أو انقر لاختيار ملف',
+            // PR-286L0: Live Scenario Import (PR-241A: clarified — in-memory, draws on map, no disk write)
+            'sw-live-scenario-import-title':    'معاينة JSON السيناريو الحي — البطاقات للقراءة فقط',
+            'sw-live-scenario-import-subtitle': 'تحدّث هذه المعاينة بطاقات مساحة عمل السيناريو فقط. استخدم استيراد السيناريو العملياتي (HUD) لرسم الوحدات على الخريطة.',
             'sw-live-scenario-import-file-label':'ملف سيناريو JSON',
             'sw-live-scenario-import-btn':      'استيراد كسيناريو حي',
             'sw-live-scenario-import-note':     'يستبدل هذا الإجراء حالة مساحة العمل الحية الحالية في الذاكرة فقط.',

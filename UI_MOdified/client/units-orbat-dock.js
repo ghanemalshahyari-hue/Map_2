@@ -1071,4 +1071,22 @@
         try { if (window.map) init(window.map); } catch (_) { /* ignore */ }
         open();
     });
+
+    // ── Forces / ORBAT toggle button — global delegated handler ─────────
+    // The tool-rail "Forces / ORBAT" button (#orbat-toggle-btn, app.html) toggles
+    // the scenario ORBAT bottom dock. P3's clean-view hides the dock on scenario
+    // load, so this is the visible way to (re)open it. data-tool="orbat" has no
+    // TOOL_CONFIG entry, so tool-rail.js switchTool() no-ops on it and this
+    // handler does the work — kept distinct from the unit-builder "Units" button.
+    document.addEventListener('click', function (e) {
+        const t = e.target;
+        if (!t || typeof t.closest !== 'function') return;
+        const btn = t.closest('#orbat-toggle-btn');
+        if (!btn) return;
+        try { if (window.map) init(window.map); } catch (_) { /* ignore */ }
+        toggle();
+        try {
+            btn.setAttribute('aria-pressed', (dockEl && !dockEl.classList.contains('hidden')) ? 'true' : 'false');
+        } catch (_) { /* ignore */ }
+    });
 })();

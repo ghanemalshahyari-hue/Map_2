@@ -129,6 +129,20 @@
                     <span data-i18n="tool-units">Units</span>
                 </button>
 
+                <!-- ORBAT discoverability: toggles the scenario ORBAT bottom dock (BLUE/RED FORCE
+                     from the loaded scenario). data-tool="orbat" has no TOOL_CONFIG entry, so
+                     tool-rail.js switchTool() no-ops; units-orbat-dock.js handles #orbat-toggle-btn.
+                     Separate from the unit-builder "Units" button above. -->
+                <button class="tool-rail-btn" data-tool="orbat" id="orbat-toggle-btn" type="button" aria-pressed="false" title="القوات · Forces / ORBAT — show the scenario order of battle">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="2" width="6" height="5" rx="1"/>
+                        <rect x="3" y="17" width="6" height="5" rx="1"/>
+                        <rect x="15" y="17" width="6" height="5" rx="1"/>
+                        <path d="M12 7v5M6 17v-2.5h12V17"/>
+                    </svg>
+                    <span>Forces</span>
+                </button>
+
                 <button class="tool-rail-btn" data-tool="import" type="button" title="استيراد خطة · Import Plan (units + boundary lines)">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>

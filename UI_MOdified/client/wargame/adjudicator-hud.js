@@ -235,13 +235,13 @@
                     <label for="wg-adj-scenario" class="wg-adj-label">Scenario</label>
                     <select id="wg-adj-scenario" class="wg-adj-input"></select>
 
-                    <label class="wg-adj-label">Import</label>
+                    <label class="wg-adj-label" data-i18n="wg-adj-import-label">${window.t ? window.t('wg-adj-import-label') : 'Import GeoJSON to Live Map Scenario'}</label>
                     <div id="wg-adj-import" class="wg-adj-import-zone"
                          style="border:1px dashed #4a6;border-radius:4px;padding:8px;
                                 background:rgba(74,170,102,0.06);font-size:11px;color:#9cb;
                                 cursor:pointer;text-align:center;line-height:1.4;">
-                        Drop <code>all_phases.geojson</code> here<br>
-                        <span style="font-size:10px;color:#7a9;">or click to choose a file</span>
+                        <span data-i18n="wg-adj-import-helper">${window.t ? window.t('wg-adj-import-helper') : 'Use this to load operational GeoJSON and draw units/scenario markers on the map.'}</span><br>
+                        <span style="font-size:10px;color:#7a9;" data-i18n="wg-adj-import-hint">${window.t ? window.t('wg-adj-import-hint') : 'Drop all_phases.geojson here, or click to choose a file'}</span>
                         <input id="wg-adj-import-file" type="file" accept=".geojson,.json,application/json"
                                style="display:none;" />
                     </div>

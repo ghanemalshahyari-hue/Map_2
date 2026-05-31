@@ -1,4 +1,4 @@
-<!-- AUDIT_SHA: 1d4fa64f39bb6979d0b29f8d53612478456893e9 -->
+<!-- AUDIT_SHA: 22d576e096a171c8ff790ec3bdefe35658ff89cb -->
 # APP_INVENTORY — RMOOZ / CMO feature map
 
 > **The single map of what this app has, what it doesn't, and what's drifting.**
@@ -6,8 +6,8 @@
 > Refresh with `/audit-app` (see `.claude/skills/audit-app/`). The freshness check at session
 > start reads the `AUDIT_SHA` marker on line 1 to tell you how stale this is.
 
-**Last audited:** `1d4fa64` · 2026-05-30 · initial deep-dig (5 parallel Explore passes) + same-day reconcile (D1/D2 resolved, ORBAT toggle/HUD-rebuild folded in).
-**Branch at audit:** `pr-241a-import-path-labels`.
+**Last audited:** `22d576e` · 2026-05-31 · two same-day delta refreshes over the `1d4fa64` deep-dig (+14 commits, audited during an active parallel coding session). **Wave 1** (`f31548c`): AN1 attrition visuals, P0 authoring foundation, animation-readiness audit, stray-`wargame 5/` cleanup. **Wave 2** (`11e17b1`→`22d576e`, +9 commits): the **W3 presentation suite** — echelon roll-up, event pins, movement trails, engagement legend, symbol scaling + formation hover-peek, SIDC family-symbol resolver (SYM2), selected-unit operational readout (P5b), and engagement **mission graphics** (MG1). Drift D1/D2/D3 re-verified, line refs refreshed. Scoped to the commit delta (unchanged subsystems not re-fanned). At audit time the working tree held only data/doc WIP (no uncommitted code).
+**Branch at audit:** `chore/remove-stray-wargame5-dir` (cleanup branch off `pr-241a-import-path-labels`).
 
 ### Legend
 | Icon | Meaning |
@@ -26,11 +26,12 @@
 These were found during the 2026-05-30 deep-dig. The memory notes were true when written but the code has moved. **Do not silently "fix" either side — confirm with the owner which is now correct.**
 
 > **Update 2026-05-30:** D1 & D2 **reconciled** — verified against code, memory notes updated to RESOLVED. **D3 remains OPEN** pending an owner ruling (it's a locked rule).
+> **Re-verified `11e17b1` 2026-05-31:** D1/D2 still wired (line refs refreshed below); **D3 unchanged — still OPEN**. The P0 authoring foundation (`aec386a`) and the entire Wave-2 W3 presentation suite are client-side render/data only — they stay *inside* the locked boundary and do not touch D3.
 
 | # | Topic | Memory says | Code now does | Where | Action |
 |---|---|---|---|---|---|
-| D1 | Scenario marker selection | markers **don't** emit `rmooz:unit-selected` (deferred until unified selection model) — `[[project_scenario_marker_selection_deferred]]` | Red & Blue markers **do** dispatch `rmooz:unit-selected` on click | `wargame/adjudicator-map.js:1490` (Red), `:1557` (Blue) | ✅ **RECONCILED 2026-05-30** — confirmed wired (consumed by `unit-panel.js:211`); memory updated to RESOLVED. |
-| D2 | BLS drawn on map | per-step `applyState` on step nav still **deferred** (only load half wired in PR-288M) — `[[project_bls_not_drawn_on_map_deferred]]` | per-step `applyState` **fully wired**: `bls_status` colors semicircles + breach badge on STAGED→contested; blue-destroyed choreography; red-degraded updates | `wargame/adjudicator-map.js` `applyState()` ~`:4006–4115` | ✅ **RECONCILED 2026-05-30** — load (PR-288M) + per-step (`goToStep`→`applyStepProgress`, P4 `5f0b272`) both wired; memory updated to RESOLVED. |
+| D1 | Scenario marker selection | markers **don't** emit `rmooz:unit-selected` (deferred until unified selection model) — `[[project_scenario_marker_selection_deferred]]` | Red & Blue markers **do** dispatch `rmooz:unit-selected` on click | `wargame/adjudicator-map.js:1937` (Red), `:2006` (Blue) | ✅ **RECONCILED 2026-05-30** — confirmed wired (consumed by `unit-panel.js:408`); memory updated to RESOLVED. |
+| D2 | BLS drawn on map | per-step `applyState` on step nav still **deferred** (only load half wired in PR-288M) — `[[project_bls_not_drawn_on_map_deferred]]` | per-step `applyState` **fully wired**: `bls_status` colors semicircles + breach badge on STAGED→contested; blue-destroyed choreography; red-degraded updates | `wargame/adjudicator-map.js` `applyState()` `bls_status` loop ~`:4608` | ✅ **RECONCILED 2026-05-30** — load (PR-288M) + per-step (`goToStep`→`applyStepProgress`, P4 `5f0b272`) both wired; memory updated to RESOLVED. |
 | D3 | AI/sim commit boundary (**locked rule**) | "commit bridge dry-run only; **no `/api/sim/commit`**, no state mutation, **no journal file**" — `[[feedback_ai_sim_boundary_rules]]` | **Client** commit bridge is still dry-run only (`committed:false`). **Server** has a real `POST /api/sim/commit` that mutates state and appends to `data/journal/<runId>.jsonl` (used by Monte Carlo + the `/api/ai/adjudicate` legacy shim). | client `shell/ai-proposal-commit-bridge.js`; server `web-server.js:749`, `sim/journal.js:146` | **Highest priority.** Is the server commit/journal sanctioned (scoped to headless/MC sim, distinct from the operator UI boundary), or a boundary violation? This is a locked feedback rule — needs explicit owner ruling before any work leans on it. |
 
 ---
@@ -56,12 +57,13 @@ These were found during the 2026-05-30 deep-dig. The memory notes were true when
 | Safety Regression Badge | 🟡 | `shell/safety-regression-badge.js` | Read-only mirror of safety summary + popover; never runs tests. |
 | Scenario Dry-Run Fixtures | 🟡 | `shell/scenario-dry-run-fixtures.js` | Static data only ("AMBER RIDGE"); consumed by a builder not yet implemented. |
 | Timeline / Transport | ⏸️ | `shell/timeline.js` | UI scaffolding; buttons flip local CSS only. No event dispatch / sim hook / map mutation. |
-| Unit Panel (selected unit) | ✅ | `shell/unit-panel.js` | Reads `rmooz:unit-selected`; shows MGRS/echelon/side. Operational/Combat/C2 sections are placeholders (sim data deferred). |
+| Unit Panel (selected unit) | ✅ | `shell/unit-panel.js` | Reads `rmooz:unit-selected`; shows MGRS/echelon/side. **P5b** adds marker-derived readouts — symbol profile, current-step status, capability (`:182`/`:369`; tests 19/19, `test-p5b-selected-unit-readout.js`, `11e17b1`). Combat/C2 sim sections still placeholders pending a sim-data feed. |
 | Side Picker (BLUE/RED/GOD) | ✅ | `shell/side-picker.js` | Persists to localStorage; broadcasts `rmooz:view-side-changed`. |
 | Classification Bar | ✅ | `shell/classification-bar.js` | i18n text into top/bottom bars. |
 | Clock (Zulu DTG + local) | ✅ | `shell/clock.js` | `AppShellClock.formatZuluDtg()` reused by 7+ modules. |
 | Coordinate Readout | ✅ | `shell/coord-readout.js` | Cursor MGRS + bearing/range in footer; degrades if MGRS absent. |
 | Scenario Catalog Contract | 🔴 | `shell/scen-catalog-contract.js` | Parses CMO `.scen` wrappers (10 safe fields) but **not loaded in app.html** — drafted, unwired. Deferred — `[[project_external_scenario_catalog_deferred]]`. |
+| Scenario Authoring Schema (P0) | 🔴 | `shell/scenario-authoring-schema.js` | Pure data/schema foundation for a future **Authoring Mode**: standard template + gap-fill (on copies) + diagnostics + draft-safety guard. NO DOM/fetch/storage/mutation; respects the locked boundary (`liveMutationAllowed`/`aiCommitAllowed=false`). **Not loaded in app.html** — Node-testable via `window.AppScenarioAuthoring` (33/33). Roadmap P0→P4 — `[[project_scenario_authoring_foundation]]`, `docs/rmooz-authoring-foundation.md`. (`aec386a`) |
 
 ---
 
@@ -69,12 +71,20 @@ These were found during the 2026-05-30 deep-dig. The memory notes were true when
 
 | Module / Feature | Status | Key file | Notes |
 |---|---|---|---|
-| Adjudicator Map | ✅ | `wargame/adjudicator-map.js` (~4.6k L) | Leaflet renderer: 4 BLS semicircles, OBJ target, Red units, pipeline route, Blue destruction choreography, breach badges. |
+| Adjudicator Map | ✅ | `wargame/adjudicator-map.js` (~5.3k L) | Leaflet renderer: 4 BLS semicircles, OBJ target, Red units, pipeline route, Blue destruction choreography, breach badges. **Now also hosts the W3 presentation suite** (rows below): attrition, echelon roll-up, event pins, movement trails, legend, symbol scaling/resolver. |
 | `drawScenario()` | ✅ | same | Builds overlay; caches bls_template + objCoord; registers units. Markers emit selection (see **D1**). |
-| `applyState()` per-step | ✅ | same `~:4006–4115` | Full per-step wiring: bls_status colors, breach badge, blue-destroyed fade/stagger, red-degraded updates, forward-merge/rewind-replace. See **D2**. |
+| `applyState()` per-step | ✅ | same (`bls_status` loop ~`:4608`) | Full per-step wiring: bls_status colors, breach badge, blue-destroyed fade/stagger, red-degraded updates, forward-merge/rewind-replace. See **D2**. |
 | Adjudicator HUD | ✅ | `wargame/adjudicator-hud.js` (~2k L) | `renderStep()` → `applyState`; timeline scrubber re-walks history. |
 | Contact halo | 🟡 | `wargame/adjudicator-map.js` (`updateContactHalo`) | Wired into applyState but implementation minimal/placeholder. |
 | AOR phase line | 🟡 | `wargame/adjudicator-map.js` (`updateAorPhaseLine`) | W3-rich only; plumbing intact, not fully verified. |
+| Per-step attrition visuals (AN1) | ✅ | same (`computeStepAttrition` :3825, `applyStepAttrition` :3876) | Maps the scenario's OWN per-step `affected[]`/`engagement_arcs[]` `status_change` → DESTROYED/DEGRADED marker treatment (reuses `renderMarkerByStatus`, same as the live HUD); cumulative + reversible; wired into `applyStepProgress`. No scenario mutation, no fabricated combat fields; no-op for non-W3. Tests 26/26 (`test-an1-attrition-visuals.js`). Implements problem #2 of the P0B animation-readiness audit. (`244cc39`) |
+| Echelon roll-up | ✅ | same (`buildEchelonDivisionGroups` :742, `renderEchelonRollup` :794, `buildAggregateIcon` :774) | CMO-style division↔units aggregation: at wide zoom a division's units collapse to one aggregate icon, expanding on zoom-in. Toggle `setEchelonRollup`; wired into draw (:2028), `applyStepProgress` (:5019), and zoom. Additive/reversible (hides via CSS class, no marker-pipeline mutation); no-op for non-W3. Tests 20/20 (`test-an-echelon-rollup.js`). (`4d0d463`) |
+| Event pins (AN2) | ✅ | same (`renderEventPins` :975) | Per-step on-map event pins with provenance (actor / intended effect / doctrine) from the scenario's own step data. Wired into `applyStepProgress` (:5021). No mutation. Tests 25/25 (`test-an2-event-pins.js`). (`7c7cfb7`) |
+| Movement trails (AN4) | ✅ | same (`renderMovementTrails` :1026) | Per-step movement-trail polylines from `*_unit_step_prev`/`_coords`; seeded at step 0 (:2030), updated on step change (:5024) and zoom (:1622, hide/show by roll-up). Tests 18/18 (`test-an4-movement-trails.js`). Closes a P0B gap. (`d7f7b72`) |
+| Engagement legend + formation guide | ✅ | same | On-map legend for engagement-arc colors/arrowheads + a formation guide overlay. Test `test-an3-arrowheads-legend.js` (⚠️ committed but has uncommitted edits in the working tree). (`7f36574`) |
+| Symbol scaling + formation hover-peek | ✅ | same (`setFormationPeek` :862) | Echelon-scaled unit symbols + hover to "peek" (temporarily expand) a rolled-up formation. Tests 18/18 (`test-unit-scaling-hover.js`). (`4da9a41`) |
+| SIDC family-symbol resolver (SYM2) | ✅ | same | Remaps the 36 W3 units whose specific child SIDC entity codes milsymbol 2.0.0 rejects → their canonical parent family symbol (naval / air-defense / etc.), so they render a proper glyph instead of a generic diamond/square. Honest category-level only. Tests 21/21 (`test-sym2-unit-symbol-resolver.js`); root-cause audit `docs/unit-symbol-fidelity-audit.md` (SYM1, 13/13). (`bc0e861`) |
+| Engagement mission graphics (MG1) | ✅ | same (`renderEngagementMissionGraphics` :3309) | Renders each step's `engagement_arcs` as proper APP-6 tactical **mission graphics** (Attack / Counter-attack chevrons, side-coloured) in place of plain arc lines. Wired into `applyState` (:4629), `applyStepProgress` (:5063), and a zoomend re-render (:1637, pixel-sized icons). **Reuses the operator's TMG icon builder** (`getTmgIconOptions`, app.js) — shared graphics, *not* a second renderer; `#mission-graphic-assist` panel in app.js. Tests 27/27 (`test-mg1-mission-graphics.js`). (`22d576e`) |
 
 ---
 
@@ -157,6 +167,8 @@ All endpoints below are ✅ wired with real handlers. Grouped; see web-server.js
 
 **No unified test runner / npm script / CI** — each file is standalone. Highest PR number present ≈ **289**.
 
+Newer feature work uses **`test-p0*` / `test-an*` / `test-sym*` / `test-unit-*`** naming (authoring / animation / symbology) alongside `test-pr-*`, same standalone static-check style. **Wave 1:** `test-p0-authoring-foundation.js` (33/33), `test-an1-attrition-visuals.js` (26/26), `test-p0b-animation-readiness.js` (audit-inventory). **Wave 2** (committed, all green): `test-an-echelon-rollup.js` (20/20), `test-an2-event-pins.js` (25/25), `test-an4-movement-trails.js` (18/18), `test-p5b-selected-unit-readout.js` (19/19), `test-sym1-unit-symbol-fidelity.js` (13/13), `test-sym2-unit-symbol-resolver.js` (21/21), `test-unit-scaling-hover.js` (18/18), `test-an3-arrowheads-legend.js` (legend), and `test-mg1-mission-graphics.js` (27/27, mission graphics) — all committed and green.
+
 ---
 
 ## Known duplications & cleanup candidates ♻️
@@ -173,12 +185,14 @@ All endpoints below are ✅ wired with real handlers. Grouped; see web-server.js
 
 - **Real journal/export/download chain (client):** contract + draft-preview + export-preview all read-only; no persistence or download (by design, deferred).
 - **Timeline → sim wiring:** transport bar is scaffolding; no playback dispatch beyond the adjudicator HUD's own scrubber.
-- **Unit Panel sim sections:** Operational/Combat/C2 are placeholders pending a unit sim-data feed.
+- **Unit Panel sim sections:** P5b added marker-derived **operational** readouts (symbol / current-step status / capability); **Combat/C2** sections are still placeholders pending a unit sim-data feed.
 - **Scenario Catalog (external CMO/CSP51):** drafted contract unwired; UI reverted — `[[project_external_scenario_catalog_deferred]]`.
 - **Briefing values:** some workspace briefing fields are mock pending a real feed — `[[project_briefing_mock_values_deferred]]`.
 - **Known issue KI-1:** wargame1 baseline violates the BLS-4 never-SECURE invariant (pre-existing; see `docs/known-issues.md`).
 - **No unified test runner** (see §F).
 - **Decision Package import:** internal + external "خطوات صنع القرار" contracts — already wired in `scenario-workspace.js` + `web-server.js` — `[[project_decision_package_import]]`.
+- **Scenario Authoring Mode (P1–P4):** the P0 data foundation shipped but is **unwired** (`shell/scenario-authoring-schema.js`); the editor UI — Sides/Posture (P1), Doctrine/ROE (P2), Missions/Events (P3), Save/Export + "New from template" (P4) — is not built. `[[project_scenario_authoring_foundation]]`.
+- **CMO-style animation coverage (P0B audit):** the W3 presentation suite landed — per-unit attrition (AN1), movement trails (AN4), event pins (AN2), echelon roll-up, engagement legend, symbol scaling/hover, the SIDC family resolver (SYM2), and engagement **mission graphics** (MG1, reusing the operator TMG builder). **Wave 2 closed most of P0B problems #1–#2 for W3.** Still open: on-map **phase label**, **timeline event ticks**, **before/after step compare**, and the core **coverage gap** — all the rich animation is still gated on `schema_variant === "w3-rich"`, so non-W3 imports (Decision Packages, CSP51) get markers + movement only. `docs/scenario-animation-presentation-readiness-audit.md`.
 
 ---
 
@@ -188,6 +202,9 @@ All endpoints below are ✅ wired with real handlers. Grouped; see web-server.js
 - `docs/read-only-surface-audit.md` — A=safety-by-design / B=not-wired / C=production classification.
 - `docs/rmooz-roadmap.html` — visual program roadmap (done/build/blocked/plan).
 - `docs/scenario-schema.md`, `docs/wargame3-schema.md`, `docs/scenario-template.json` — scenario JSON contracts.
+- `docs/rmooz-authoring-foundation.md` — P0 Scenario Authoring foundation (schema / template / gap-fill / diagnostics / draft-safety guard; P0→P4 roadmap). Module unwired by design.
+- `docs/scenario-animation-presentation-readiness-audit.md` — P0B audit: what animates per step (W3-rich), coverage gaps (non-W3 = markers+movement only), per-unit fidelity, static-units gap. Re-runnable via `node test-p0b-animation-readiness.js`.
+- `docs/unit-symbol-fidelity-audit.md` — SYM1 audit: 117/153 W3 units render proper milsymbol glyphs, 36 fall back (milsymbol 2.0.0 rejects specific child SIDC entity codes); fix = role/domain→canonical-family remap (SYM2). Re-runnable via `node test-sym1-unit-symbol-fidelity.js`.
 - `docs/pr-166-external-scenario-pack-audit.md` + `docs/scenario-pack-audit/` — CSP51 audit (630 scenarios; don't re-run).
 - `docs/cmo-scenario-editor-application.md` — CMO→RMOOZ workflow mapping.
 - Cross-session "why" lives in the memory dir (`MEMORY.md` index) — this file is the "what", memory is the "why".

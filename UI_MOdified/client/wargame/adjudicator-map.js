@@ -1358,6 +1358,92 @@
         } catch (_) { return null; }
     }
 
+    // ── SYM2: unit symbol resolver ───────────────────────────────────────
+    // Some W3 units carry clean 20-digit APP-6D SIDCs whose *specific child
+    // entity codes* milsymbol 2.0.0 rejects (destroyer 120103, minesweeper
+    // 120601, MANPADS 130501, …) → sidcIcon returns null → generic diamond.
+    // milsymbol DOES support the canonical family parents (verified). This
+    // resolver remaps an unsupported entity to the supported family parent of
+    // the SAME affiliation + symbol set + echelon, so the unit renders an
+    // honest CATEGORY symbol (ship / sub / AD / sensor) instead of a bare
+    // diamond. Read-only: invents no platform-specific identity, mutates
+    // nothing. Family/category correction only.
+    //
+    // role → canonical milsymbol-supported entity (all verified v2.0.0, draw an icon):
+    const SYMBOL_FAMILY_ENTITY = {
+        destroyer:'120100', corvette:'120100', missile_boat:'120100', naval_unit:'120100',
+        mine_sweeper:'120600', mine_layer:'120600',
+        landing_ship:'120900', hovercraft:'120900',
+        submarine:'110100',
+        manpads:'130500', sam_s300:'130500', sam_hawk:'130500', sam_other:'130500', air_defense:'130500',
+        ssm_brigade:'130600',
+        radar:'130700',
+        air_unit:'110100', fighter_ad:'110100', awacs:'110100', uav_isr:'110100', transport:'110100', utility_helo:'110100',
+    };
+    // when role isn't mapped, fall back by symbol set (digits 5-6). Land (10)
+    // has no safe generic entity → frame-only (correct land frame, no fake icon).
+    const SET_DEFAULT_ENTITY = { '30':'120100', '35':'110100', '01':'110100' };
+
+    function _msSidcValid(sidc) {
+        try { return !!(window.ms && typeof window.ms.Symbol === 'function' && sidc && new window.ms.Symbol(sidc).isValid()); }
+        catch (_) { return false; }
+    }
+
+    function resolveUnitSymbolProfile(unit, options) {
+        options = options || {};
+        const orig   = unit && unit.sidc ? String(unit.sidc) : null;
+        const role   = (unit && unit.role) || null;
+        const domain = (unit && unit.domain) || null;
+        const ech    = (unit && unit.echelon) || null;
+        const set    = (orig && orig.length >= 6) ? orig.slice(4, 6) : null;
+        const family = set === '30' ? 'naval' : set === '35' ? 'subsurface'
+                     : set === '01' ? 'air'   : set === '10' ? 'land' : (domain || 'unknown');
+        const base = {
+            original_sidc: orig, resolved_sidc: orig, symbol_family: family,
+            domain: domain, role: role, echelon: ech,
+            confidence: 'authoritative', source: 'scenario_sidc', fallback_reason: null,
+            operator_editable: true,
+        };
+        if (!orig) return Object.assign(base, { resolved_sidc: null, confidence: 'unknown', source: 'unknown', fallback_reason: 'insufficient_data' });
+        // Tier 1 — original SIDC already valid in milsymbol → unchanged.
+        if (_msSidcValid(orig)) return base;
+        // Tier 2 — remap entity to the canonical family parent (re-validate).
+        if (orig.length === 20) {
+            const ent = (role && SYMBOL_FAMILY_ENTITY[role]) || (set && SET_DEFAULT_ENTITY[set]) || null;
+            if (ent) {
+                const remapped = orig.slice(0, 10) + ent + orig.slice(16);
+                if (_msSidcValid(remapped)) {
+                    return Object.assign(base, { resolved_sidc: remapped, confidence: 'template', source: 'role_domain_template', fallback_reason: 'unsupported_sidc_entity' });
+                }
+            }
+            // Tier 3 — frame-only with the correct symbol set (honest family frame).
+            const frame = orig.slice(0, 10) + '000000' + orig.slice(16);
+            if (_msSidcValid(frame)) {
+                return Object.assign(base, { resolved_sidc: frame, confidence: 'frame_only', source: 'symbol_set_frame', fallback_reason: 'remap_unsupported' });
+            }
+        }
+        // Tier 4 — honest unknown (caller draws the generic diamond/square).
+        return Object.assign(base, { resolved_sidc: null, confidence: 'unknown', source: 'unknown', fallback_reason: 'insufficient_data' });
+    }
+
+    // Read-only diagnostic: run the resolver over a scenario and tally tiers.
+    function auditResolvedUnitSymbols(scenario) {
+        const sc = scenario || scenarioRef || {};
+        const units = [].concat(
+            (sc.red_units || []).map((u) => ({ uid: u.uid, sidc: u.sidc, role: u.role, domain: u.domain, echelon: u.echelon })),
+            (sc.blue_units_initial || []).map((u) => ({ uid: u.unit_uid || u.uid, sidc: u.sidc, role: u.role, domain: u.domain, echelon: u.echelon }))
+        );
+        const out = { total: units.length, tier1_unchanged: 0, tier2_remapped: 0, tier3_frame: 0, tier4_fallback: 0, remappedExamples: [], fallbackExamples: [] };
+        units.forEach((u) => {
+            const p = resolveUnitSymbolProfile(u);
+            if (p.source === 'scenario_sidc') out.tier1_unchanged++;
+            else if (p.source === 'role_domain_template') { out.tier2_remapped++; if (out.remappedExamples.length < 10) out.remappedExamples.push({ uid: u.uid, role: u.role, from: String(u.sidc).slice(10, 16), to: p.resolved_sidc.slice(10, 16), family: p.symbol_family }); }
+            else if (p.source === 'symbol_set_frame') { out.tier3_frame++; if (out.fallbackExamples.length < 10) out.fallbackExamples.push({ uid: u.uid, role: u.role, tier: 'frame_only' }); }
+            else { out.tier4_fallback++; if (out.fallbackExamples.length < 10) out.fallbackExamples.push({ uid: u.uid, role: u.role, tier: 'fallback' }); }
+        });
+        return out;
+    }
+
     // Icon size by Blue echelon — division biggest, company smallest.
     function blueIconSize(echelon) {
         switch (echelon) {
@@ -1735,7 +1821,8 @@
             // absent. Same pattern as the blue marker creation below.
             const sidc = unit.sidc || redSidcFor(unit);
             const size = redIconSize(unit.echelon);
-            const icon = sidcIcon(sidc, size) || diamondIcon(COLORS.RED_UNIT, unit.label);
+            const _sym = resolveUnitSymbolProfile(unit); // SYM2: remap unsupported SIDCs to family symbols
+            const icon = sidcIcon(_sym.resolved_sidc, size) || diamondIcon(COLORS.RED_UNIT, unit.label);
             const m = window.L.marker(
                 [initialLonLat[1], initialLonLat[0]],
                 { icon, title: (unit.label || displayRedId(unit.uid)) + ' — ' + displayRole(unit.role) },
@@ -1755,7 +1842,8 @@
             // gets a real unit list to plan against. Without these the COA
             // loop sees an empty battlefield (counts.hostile = 0) and the
             // adjudicator falls straight through to the scripted baseline.
-            m._sidc     = sidc;
+            m._sidc          = _sym.resolved_sidc || sidc; // SYM2: render+attrition use the resolved SIDC
+            m._symbolProfile = _sym;
             m._iconSize = size;
             m._unitId   = unit.uid;
             m._unitData = {
@@ -1799,7 +1887,8 @@
             if (!unit.coord || unit.coord.length !== 2) continue;
             const size = blueIconSize(unit.echelon);
             const sidc = unit.sidc || blueSidcFor(unit);
-            const icon = sidcIcon(sidc, size) || squareIcon(COLORS.BLUE_UNIT, unit.base_id, Math.max(10, Math.round(size / 2)));
+            const _symB = resolveUnitSymbolProfile(unit); // SYM2: remap unsupported SIDCs to family symbols
+            const icon = sidcIcon(_symB.resolved_sidc, size) || squareIcon(COLORS.BLUE_UNIT, unit.base_id, Math.max(10, Math.round(size / 2)));
             const m = window.L.marker(
                 [unit.coord[1], unit.coord[0]],
                 { icon, title: displayBlueId(unit.base_id) + (unit.role ? ' · ' + displayRole(unit.role) : '') + (unit.echelon ? ' (' + unit.echelon + ')' : '') },
@@ -1823,7 +1912,8 @@
             // Same Units-feature hooks as the Red side — see comment above.
             // unit.unit_uid is e.g. "BLUE_lc"; SIDC's affiliation digit is
             // '3' (friendly), which scanMapForUnits classifies as friendly.
-            m._sidc     = sidc || null;
+            m._sidc          = _symB.resolved_sidc || sidc || null; // SYM2: resolved SIDC
+            m._symbolProfile = _symB;
             m._iconSize = size; // needed so the damaged/active SIDC rebuild keeps the same scale
             m._unitId   = unit.unit_uid;
             m._unitData = {
@@ -5092,6 +5182,8 @@
         renderEventPins,
         clearEventPins,
         _getStepEventCount: (idx) => buildStepEvents(scenarioRef || {}, Number.isFinite(idx) ? idx : 0).length,
+        resolveUnitSymbolProfile,
+        auditResolvedUnitSymbols,
         // Position primitives (so external callers can build their own
         // step-resolved state without re-implementing the movement model)
         computeRedPosition:  (meta, stepIndex, progress) => redPositionLonLat(meta, stepIndex, progress),

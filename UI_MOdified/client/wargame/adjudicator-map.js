@@ -1146,15 +1146,6 @@
                  0%, 100% { transform: scale(1);   opacity: 1; }
                  50%      { transform: scale(1.3); opacity: .7; }
              }
-             /* MG1: engagement mission graphics (Attack / Counter-attack) render
-                with a thin, FIXED-width stroke. The chevron paths use
-                vector-effect:non-scaling-stroke, so this value is in screen
-                pixels and stays constant at every zoom / viewport — reduce or
-                raise it to taste. Scoped to the scenario pane, so operator-drawn
-                graphics are unaffected. */
-             .leaflet-rmoozScenarioGraphics-pane .tmg-icon path {
-                 stroke-width: 1.5px !important;
-             }
          `;
          document.head.appendChild(style);
      })();
@@ -3300,12 +3291,6 @@
     // back to the legacy status-coloured dashed arc + arrowhead so it still reads.
     const ENGAGEMENT_RED  = '#c41e1e';
     const ENGAGEMENT_BLUE = '#3a96d2';
-    // Engagement graphics are drawn SMALL — in ratio with the unit symbols
-    // (~34px) — and slim, like a hand-placed attack arrow, rather than spanning
-    // the whole actor→target distance. Fixed screen px, so they stay a constant
-    // size at every zoom / viewport. Anchored at the actor, pointing at target.
-    const ENGAGEMENT_LEN_PX = 58; // arrow length (~1.6× a unit symbol)
-    const ENGAGEMENT_H_PX   = 17; // narrow body (slim ~3.4:1 chevron)
     function renderEngagementMissionGraphics(state, scenario) {
         clearEngagementArcs();
         if (!layerGroup || !state || !window.L) return;
@@ -3353,10 +3338,9 @@
                 arc.cause_what,
             ].filter(Boolean).join(' · ');
 
-            // Primary path: reuse the operator's mission-graphic renderer. Drawn
-            // small + slim (ratio to the unit symbol), anchored at the actor and
-            // pointing at the target; line thickness from the scenario-pane CSS.
-            let layer = buildTmg ? buildTmg(start, end, typeId, color, SCENARIO_GRAPHICS_PANE, { lengthPx: ENGAGEMENT_LEN_PX, heightPx: ENGAGEMENT_H_PX }) : null;
+            // Primary path: reuse the operator's mission-graphic renderer. The
+            // arrow head sits at the TARGET end (start = actor, end = target).
+            let layer = buildTmg ? buildTmg(start, end, typeId, color, SCENARIO_GRAPHICS_PANE) : null;
             if (layer) {
                 if (!isPrimary && typeof layer.setOpacity === 'function') layer.setOpacity(0.45);
                 if (tooltip) { try { layer.bindTooltip(tooltip, { sticky: true }); } catch (_) {} }

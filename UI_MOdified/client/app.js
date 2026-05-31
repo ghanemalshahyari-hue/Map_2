@@ -8859,41 +8859,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // L.marker the caller manages (add/remove) on its own read-only pane. This
     // is what lets the Wargame-3 scenario engine DISPLAY its engagements using
     // the same mission graphics the operator draws — one app, shared graphics.
-    // Optional styleOverrides for the scenario engagement renderer (operator
-    // graphics omit them, so operator behaviour is unchanged):
-    //   • lengthPx — render at a FIXED screen length anchored at latlng1 (the
-    //     actor), pointing toward latlng2 (the target). Keeps a long-range
-    //     engagement a small symbol sized to the units, not a theatre streak.
-    //   • heightPx — FIXED body breadth (narrows the chevron). With lengthPx this
-    //     gives a small, slim arrow in ratio with the unit symbol. Both are
-    //     screen pixels, so the size is constant at every zoom / viewport.
     function buildReadonlyTmgMarker(latlng1, latlng2, typeId, color, paneName, styleOverrides) {
         try {
             if (!map || !window.L) return null;
             const def = TACTICAL_GRAPHICS.find(d => d.id === typeId);
             if (!def) return null;
             const ll1 = L.latLng(latlng1);
-            let   ll2 = L.latLng(latlng2 || latlng1);
+            const ll2 = L.latLng(latlng2 || latlng1);
             const p1 = map.latLngToLayerPoint(ll1);
-            let   p2 = map.latLngToLayerPoint(ll2);
-            const fixedLen = styleOverrides && styleOverrides.lengthPx;
-            if (fixedLen && !def.pointSymbol) {
-                const dx = p2.x - p1.x, dy = p2.y - p1.y;
-                const len = Math.sqrt(dx * dx + dy * dy) || 1;
-                p2 = L.point(p1.x + (dx / len) * fixedLen, p1.y + (dy / len) * fixedLen);
-                ll2 = map.layerPointToLatLng(p2);
-            }
+            const p2 = map.latLngToLayerPoint(ll2);
             const mid = def.pointSymbol ? ll1 : map.layerPointToLatLng(L.point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2));
             const sw = (styleOverrides && styleOverrides.strokeWidth) || def.strokeWidth || 4;
             const opts = getTmgIconOptions(ll1, ll2, typeId, color, false, Object.assign({ strokeWidth: sw }, styleOverrides || {}));
             if (!opts) return null;
-            const fixedH = styleOverrides && styleOverrides.heightPx;
-            if (fixedH && Array.isArray(opts.iconSize)) {
-                const L0 = opts.iconSize[0];
-                opts.html = opts.html.replace(/height:[\d.]+px/, 'height:' + fixedH + 'px');
-                opts.iconSize = [L0, fixedH];
-                opts.iconAnchor = [L0 / 2, fixedH / 2];
-            }
             const mopts = { icon: L.divIcon(opts), interactive: false, keyboard: false };
             if (paneName) mopts.pane = paneName;
             return L.marker(mid, mopts);

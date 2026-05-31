@@ -90,6 +90,18 @@ The handling decision is already made **and built** (PR-280A → PR-284, PR-286L
 
 ## Reviewed Videos
 
+Full playlist inventory and caption-read status lives in [cmo-pgatcomb-playlist-inventory.md](cmo-pgatcomb-playlist-inventory.md).
+
+Playlist pass status:
+
+- Playlist inventory found 287 videos.
+- Caption fetching successfully read 39 videos before YouTube/API throttling blocked the batch.
+- 225 distinct videos were attempted across the interrupted transcript/API passes.
+- 186 attempted videos failed after throttling/blocking started.
+- 62 videos remain pending for a later slower/batched pass.
+- Continuation attempt on 2026-05-31 resumed at playlist item 35 ("C: MO Tutorial - Refueling"). YouTube returned transcript API `IpBlocked`, and the lower-level timed-text endpoint returned HTTP 429, so caption fetching should pause until the block cools down or a sanctioned caption-access method is available.
+- The 39 read videos cover the core scenario-builder topics: basics, layers/map settings, movement/attack, loadouts, scenario editor, event editor, CAS, naval/air, ASW, EW, submarine operations, mines, cargo, coordinated ASM strike, SEAD, IADS/SAMs, stealth, workflow, recon, bombing, disabling airfields, support missions, doctrine, WRA, proficiency, waypoint weapons, database reading, radar, grouping/formations, CAP/AAW patrols, quick battles, land cover, PGMs, torpedoes, point defense, and airfield construction.
+
 | Topic | Video |
 | --- | --- |
 | Scenario editor foundations | <https://www.youtube.com/watch?v=vy5glbQ1G6k> |
@@ -351,6 +363,26 @@ Proposed shape (not present today):
   ]
 }
 ```
+
+---
+
+## Additional Caption-Read Topics
+
+The expanded 39-video caption pass adds these planning themes beyond the initial scenario-builder subset:
+
+1. Basics, layers, and map settings: the app needs clear layer posture, map readability controls, and a distinction between operational data layers and decorative map layers.
+2. Moving and attacking: unit movement and attack actions should be explicit planned actions with previewable consequences, not drag-only map gestures.
+3. Aircraft/ship loadouts: loadout choice belongs in mission planning and validation because range, role, and target compatibility depend on it.
+4. CAS, bombing, PGMs, waypoint weapons, and coordinated ASM strikes: strike planning needs target selection, release geometry, weapon type, timing, and deconfliction.
+5. Naval/air, ASW, submarine, torpedoes, mines, and point defense: maritime scenarios need separate modeling for detection, search patterns, self-defense, mine threats, and subsurface uncertainty.
+6. EW, radar, stealth, recon, and land cover: the app should treat detection as scenario state, affected by sensors, terrain, emissions, stealth, altitude, and line of sight.
+7. Cargo and support missions: logistics movement is a first-class mission type; cargo, unloading, support tasking, and targets of opportunity need their own validation.
+8. Database reading: producers need a way to inspect source platform metadata and understand what unit capabilities mean before placing units.
+9. Grouping and formations: formations need leader, spacing, relative bearing, orientation, and group membership semantics.
+10. CAP/AAW patrols and prosecution areas: patrol missions need reference areas, prosecution zones, target filters, and doctrine/WRA alignment.
+11. Quick battles and quick-battle locations: the builder can eventually support templates that prefill geography, sides, units, and objectives, then let the operator customize.
+
+Rmooz implication: the app should evolve cautiously from scenario import/review toward explicit setup, mission, detection, logistics, and validation surfaces only where those tactical-air/naval concepts fit the operational model.
 
 ---
 

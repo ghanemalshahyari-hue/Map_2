@@ -1852,11 +1852,17 @@
                 padding:8px 10px;border-radius:4px;border:1px solid #2a3140;
                 box-shadow:0 0 6px rgba(0,0,0,.4);line-height:1.5;
                 font-family:sans-serif;min-width:170px;max-width:200px;
+                margin-right:340px;max-height:78vh;overflow:auto;
             `;
             const blsRow = (color, label) =>
                 `<span style="display:inline-block;width:14px;height:8px;
                   background:${color};border:1px solid #fff;border-bottom:none;
                   border-radius:14px 14px 0 0;vertical-align:middle;margin-right:6px;"></span>${label}`;
+            // AN3: engagement key — a dashed segment + directional arrowhead glyph,
+            // colour-matched to the arc/event-pin palette (STATUS_COLORS).
+            const arcRow = (color, label) =>
+                `<span style="display:inline-block;width:16px;border-top:2px dashed ${color};vertical-align:middle;margin-right:3px;"></span>` +
+                `<span style="color:${color};vertical-align:middle;margin-right:6px;">&#9654;</span>${label}`;
             div.innerHTML = `
                 <div style="font-weight:700;margin-bottom:4px;color:#fff;">Wargame symbols</div>
                 <div>${blsRow(COLORS.BLS.STAGED,    'BLS&nbsp;staged')}</div>
@@ -1871,6 +1877,19 @@
                 <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
                 <div><span style="display:inline-block;width:18px;border-top:2px dashed ${COLORS.PIPELINE};vertical-align:middle;margin-right:6px;"></span>Pipeline (planned)</div>
                 <div><span style="display:inline-block;width:18px;border-top:3px solid ${COLORS.RED_UNIT};vertical-align:middle;margin-right:6px;"></span>Red advance</div>
+                <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
+                <div style="font-weight:700;margin-bottom:4px;color:#fff;">Engagements (current step)</div>
+                <div>${arcRow(STATUS_COLORS.destroyed,       'Destroyed')}</div>
+                <div>${arcRow(STATUS_COLORS.damaged_partial, 'Damaged')}</div>
+                <div>${arcRow(STATUS_COLORS.suppressed,      'Suppressed')}</div>
+                <div>${arcRow(STATUS_COLORS.delayed,         'Delayed')}</div>
+                <div>${arcRow(STATUS_COLORS.expended,        'Expended')}</div>
+                <div>${arcRow(STATUS_COLORS.unchanged,       'No&nbsp;effect')}</div>
+                <div style="opacity:.65;font-size:10px;margin-top:2px;">&#9654;&nbsp;points attacker&nbsp;&rarr;&nbsp;target &middot; &#9679;&nbsp;event pin (click)</div>
+                <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
+                <div style="font-weight:700;margin-bottom:4px;color:#fff;">Unit state &amp; formations</div>
+                <div><span style="opacity:.5;font-weight:700;">&#9646;</span>&nbsp;Degraded (faded)&nbsp;&middot;&nbsp;<span style="filter:grayscale(1);opacity:.7;">&#10006;</span>&nbsp;Destroyed</div>
+                <div><span style="display:inline-block;min-width:14px;padding:0 3px;background:${COLORS.BLUE_UNIT};color:#fff;border-radius:8px;font-size:9px;text-align:center;vertical-align:middle;">N</span>&nbsp;Formation badge (zoom in to expand)</div>
             `;
             window.L.DomEvent.disableClickPropagation(div);
             return div;

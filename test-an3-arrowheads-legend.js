@@ -1,0 +1,47 @@
+'use strict';
+// test-an3-arrowheads-legend.js — AN3: engagement arrowheads + legend.
+// Arrowheads already existed (makeArrowhead, part of the base W3 renderer); AN3
+// adds the legend colour key so arcs + AN2 event pins + AN1 attrition are
+// legible. adjudicator-map.js is a browser IIFE → static source checks + a
+// palette-consistency check.
+const fs = require('fs');
+const path = require('path');
+const SRC = path.join(__dirname, 'UI_MOdified/client/wargame/adjudicator-map.js');
+const src = fs.readFileSync(SRC, 'utf8');
+
+let pass = 0, fail = 0;
+function ok(name, cond, extra) {
+    if (cond) { pass++; console.log('  PASS  ' + name); }
+    else { fail++; console.log('  FAIL  ' + name + (extra != null ? '  — ' + extra : '')); }
+}
+
+console.log('\n─── A. engagement arrowheads (pre-existing — verified present) ───');
+ok('A1 makeArrowhead() defined (filled directional triangle polygon)',
+   /function makeArrowhead\s*\(start, end, color/.test(src) && /window\.L\.polygon\(\[\[tipLat, tipLng\]/.test(src));
+ok('A2 engagement arcs draw an arrowhead at the TARGET end',
+   /Arrowhead at the target end[\s\S]{0,120}makeArrowhead\(start, end, color/.test(src));
+ok('A3 arrowhead colour matches the arc (same status colour)', /const head = makeArrowhead\(start, end, color/.test(src));
+
+console.log('\n─── B. legend extension (AN3) ───');
+const legend = src.slice(src.indexOf('function addLegend'), src.indexOf('function removeLegend'));
+ok('B1 arcRow helper (dashed segment + arrowhead glyph)', /const arcRow = \(color, label\)/.test(legend) && /9654/.test(legend));
+ok('B2 "Engagements (current step)" section header', /Engagements \(current step\)/.test(legend));
+const STATUS_KEYS = ['destroyed', 'damaged_partial', 'suppressed', 'delayed', 'expended', 'unchanged'];
+ok('B3 all 6 status colours keyed (matches arc + event-pin palette)',
+   STATUS_KEYS.every(k => new RegExp('STATUS_COLORS\\.' + k).test(legend)),
+   'missing: ' + STATUS_KEYS.filter(k => !new RegExp('STATUS_COLORS\\.' + k).test(legend)).join(','));
+ok('B4 arrowhead-direction note (attacker → target) + event-pin note', /points attacker/.test(legend) && /event pin/.test(legend));
+ok('B5 unit state + formation key (degraded / destroyed / formation badge)',
+   /Degraded/.test(legend) && /Destroyed/.test(legend) && /Formation badge/.test(legend));
+ok('B6 reuses STATUS_COLORS (consistent with arcs + AN2 pins; no new palette)', /arcRow\(STATUS_COLORS\./.test(legend));
+
+console.log('\n─── C. safe / read-only ───');
+ok('C1 legend builds DOM only (no scenario mutation)', !/\.steps\s*\[[^\]]*\]\s*=/.test(legend) && !/scenarioRef\s*=/.test(legend));
+ok('C2 no setLatLng / no coordinate change in legend', !/setLatLng/.test(legend));
+ok('C3 legend wired in drawScenario (addLegend called) + removed on clear', /addLegend\(\);/.test(src) && /removeLegend\(\)/.test(src));
+ok('C4 no new fabricated combat fields in legend', !/(\bammo\b|\bfuel\b|\bcasualt|\bcombat_power\b)/i.test(legend));
+
+console.log('\n═══════════════════════════════════════════════');
+console.log('  AN3 Arrowheads + Legend — ' + (fail === 0 ? 'PASS' : 'FAIL') + '  (' + pass + ' passed, ' + fail + ' failed)');
+console.log('═══════════════════════════════════════════════');
+process.exit(fail === 0 ? 0 : 1);

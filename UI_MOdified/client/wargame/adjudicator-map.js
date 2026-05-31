@@ -105,6 +105,15 @@
     // index actually changes. Reset to -1 on clearScenario / resetMap.
     let playbackAttritionStep = -1;
 
+    // AN4: movement trails. unitStepPos records each unit's DISPLAYED position
+    // per step it has been rendered at (uid → { stepIdx: [lat,lng] }), so a
+    // trail can connect the unit's prior-step position to its current position
+    // in the SAME (display-offset) coordinate space the markers use. Reset on
+    // clearScenario / resetMap.
+    let movementTrails   = [];   // L.polylines for the current step's trails
+    let unitStepPos      = {};   // uid → { [stepIdx]: [lat,lng] } (recorded display positions)
+    let movementTrailStep = 0;   // step the trails were last rendered for (for zoomend re-render)
+
     // Last step index that applyState processed. Drives the FORWARD-vs-REWIND
     // decision in applyState — forward (newIdx > last) plays the full
     // explosion-and-arrow choreography, backward/equal snaps silently.
@@ -986,6 +995,65 @@
         return total;
     }
 
+    // ── AN4: movement trails / axis of advance ───────────────────────────
+    // Read-only trails showing where each unit moved THIS step (prior-step
+    // displayed position → current displayed position) so command can read the
+    // maneuver / axis of advance. Endpoints come from the unit's ACTUAL marker
+    // positions (recorded per step in unitStepPos), so trails align exactly
+    // with the symbols in the same display-offset space. Invents no movement:
+    // a trail is drawn only when both prior and current positions are known and
+    // the displacement exceeds a small threshold. Hidden at command (rolled-up)
+    // zoom; shown unit-level when expanded. No-op without per-step movement data.
+    const TRAIL_MIN_KM = 2.0;
+
+    function scenarioHasMovementData(sc) {
+        return !!(sc && (sc.red_unit_step_coords || sc.blue_unit_step_coords || sc.red_unit_step_prev || sc.blue_unit_step_prev));
+    }
+
+    function clearMovementTrails() {
+        for (const t of movementTrails) { if (t && layerGroup) { try { layerGroup.removeLayer(t); } catch (_) {} } }
+        movementTrails = [];
+    }
+
+    function _trailKm(a, b) {
+        const dLat = (a[0] - b[0]) * KM_PER_DEG_LAT;
+        const dLng = (a[1] - b[1]) * kmPerDegLng((a[0] + b[0]) / 2);
+        return Math.sqrt(dLat * dLat + dLng * dLng);
+    }
+
+    // Record current displayed positions for `stepIndex` and (when expanded)
+    // draw a subtle side-coloured trail from each unit's prior-step position.
+    function renderMovementTrails(stepIndex) {
+        clearMovementTrails();
+        const sc = scenarioRef;
+        if (!sc || !layerGroup || !window.L || !scenarioHasMovementData(sc)) return false;
+        const idx = Number.isFinite(stepIndex) ? stepIndex : 0;
+        movementTrailStep = idx;
+        const rolledUp = hasMap() && window.map.getContainer && window.map.getContainer().classList.contains('wg-rolled-up');
+        const dicts = [{ d: redMarkers, color: COLORS.RED_UNIT }, { d: blueMarkers, color: COLORS.BLUE_UNIT }];
+        let drawn = 0;
+        dicts.forEach(({ d, color }) => {
+            for (const uid of Object.keys(d || {})) {
+                const m = d[uid];
+                if (!m || typeof m.getLatLng !== 'function') continue;
+                let cur; try { const ll = m.getLatLng(); cur = [ll.lat, ll.lng]; } catch (_) { continue; }
+                if (!unitStepPos[uid]) unitStepPos[uid] = {};
+                unitStepPos[uid][idx] = cur;            // always record (history), even when rolled up
+                if (rolledUp) continue;                 // command zoom: hide unit-level trails
+                const prev = unitStepPos[uid][idx - 1];
+                if (!prev || _trailKm(prev, cur) < TRAIL_MIN_KM) continue;
+                const line = window.L.polyline([prev, cur], {
+                    color, weight: 2, opacity: 0.5, dashArray: '1 6', lineCap: 'round',
+                    interactive: false, className: 'wg-adj-trail', pane: SCENARIO_GRAPHICS_PANE,
+                });
+                line.addTo(layerGroup);
+                movementTrails.push(line);
+                drawn++;
+            }
+        });
+        return drawn;
+    }
+
      // Inject a single <style> tag so destroyed-marker fades animate smoothly
      // instead of jumping. Runs once per page load.
      (function injectStyles() {
@@ -1551,6 +1619,7 @@
         window.map.on('zoomend', rerenderTacticalArrowsForZoom);
         window.map.on('zoomend', renderEchelonRollup); // echelon roll-up: switch level on zoom
         window.map.on('zoomend', updateUnitScale);     // CMO-style zoom-responsive symbol sizing
+        window.map.on('zoomend', () => { try { renderMovementTrails(movementTrailStep); } catch (_) {} }); // AN4: hide/show trails by roll-up
         _zoomHookBound = true;
     }
 
@@ -1958,6 +2027,7 @@
         // fit doesn't change zoom (no zoomend then).
         try { renderEchelonRollup(); } catch (_) { /* ignore */ }
         try { updateUnitScale(); } catch (_) { /* ignore */ } // initial zoom-responsive symbol size
+        try { renderMovementTrails(0); } catch (_) { /* ignore */ } // AN4: record step-0 positions (no trail yet)
 
         // Add the legend control (top-right corner of the map).
         addLegend();
@@ -2012,6 +2082,7 @@
                 <div>${arcRow(STATUS_COLORS.expended,        'Expended')}</div>
                 <div>${arcRow(STATUS_COLORS.unchanged,       'No&nbsp;effect')}</div>
                 <div style="opacity:.65;font-size:10px;margin-top:2px;">&#9654;&nbsp;points attacker&nbsp;&rarr;&nbsp;target &middot; &#9679;&nbsp;event pin (click)</div>
+                <div style="margin-top:3px;"><span style="display:inline-block;width:18px;border-top:2px dotted #cdd;vertical-align:middle;margin-right:6px;"></span>Movement this step (&rarr; current pos)</div>
                 <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
                 <div style="font-weight:700;margin-bottom:4px;color:#fff;">Unit state &amp; formations</div>
                 <div><span style="opacity:.5;font-weight:700;">&#9646;</span>&nbsp;Degraded (faded)&nbsp;&middot;&nbsp;<span style="filter:grayscale(1);opacity:.7;">&#10006;</span>&nbsp;Destroyed</div>
@@ -4309,6 +4380,7 @@
         try { clearEchelonAggregates(); } catch (_) {} // echelon roll-up: drop aggregates
         try { const _c = hasMap() && window.map.getContainer && window.map.getContainer(); if (_c && _c.classList) _c.classList.remove('wg-rolled-up'); } catch (_) {}
         try { clearEventPins(); } catch (_) {} // AN2: clear read-only event pins
+        try { clearMovementTrails(); } catch (_) {} unitStepPos = {}; movementTrailStep = 0; // AN4: clear trails + history
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
     }
@@ -4810,6 +4882,7 @@
         try { clearEchelonAggregates(); } catch (_) {} // echelon roll-up: drop aggregates
         try { const _c = hasMap() && window.map.getContainer && window.map.getContainer(); if (_c && _c.classList) _c.classList.remove('wg-rolled-up'); } catch (_) {}
         try { clearEventPins(); } catch (_) {} // AN2: clear read-only event pins
+        try { clearMovementTrails(); } catch (_) {} unitStepPos = {}; movementTrailStep = 0; // AN4: clear trails + history
         // Remove all breach badges — they're re-stamped from per-step deltas
         // on the next forward applyState.
         for (const b of Object.values(breachBadges)) {
@@ -4946,6 +5019,9 @@
             try { renderEchelonRollup(); } catch (_) { /* ignore */ }
             // AN2: refresh read-only event pins for the new step.
             try { renderEventPins(stepIndex); } catch (_) { /* ignore */ }
+            // AN4: draw movement trails for the new step (records the step's
+            // displayed positions; trail = prior-step pos → current pos).
+            try { renderMovementTrails(stepIndex); } catch (_) { /* ignore */ }
         }
         return true;
     }
@@ -5184,6 +5260,7 @@
         _getStepEventCount: (idx) => buildStepEvents(scenarioRef || {}, Number.isFinite(idx) ? idx : 0).length,
         resolveUnitSymbolProfile,
         auditResolvedUnitSymbols,
+        renderMovementTrails,
         // Position primitives (so external callers can build their own
         // step-resolved state without re-implementing the movement model)
         computeRedPosition:  (meta, stepIndex, progress) => redPositionLonLat(meta, stepIndex, progress),

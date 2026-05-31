@@ -113,6 +113,7 @@
     let movementTrails   = [];   // L.polylines for the current step's trails
     let unitStepPos      = {};   // uid → { [stepIdx]: [lat,lng] } (recorded display positions)
     let movementTrailStep = 0;   // step the trails were last rendered for (for zoomend re-render)
+    let engagementGraphicsStep = 0; // MG1: step the engagement mission graphics were last drawn for (zoomend re-render)
 
     // Last step index that applyState processed. Drives the FORWARD-vs-REWIND
     // decision in applyState — forward (newIdx > last) plays the full
@@ -728,7 +729,11 @@
     // scenarios that don't yield >=2 division groups (e.g. non-W3 imports).
     const ECHELON_EXPAND_ZOOM = 12;   // zoom >= this → show individual units
     let echelonAggregates = [];       // L.markers for rolled-up formation symbols
-    let echelonRollupEnabled = true;  // master toggle (public API: setEchelonRollup)
+    // Formation roll-up DISABLED (operator request): units always render
+    // individually (zoom-scaled), no formation aggregates / auto-hide. The
+    // roll-up code is parked behind this flag pending a redesigned formation
+    // display. Flip to true (or call setEchelonRollup(true)) to revive it.
+    let echelonRollupEnabled = false; // master toggle (public API: setEchelonRollup)
 
     // Parse SIDE-dDIV-... tolerant of Arabic FORM text (e.g. "R-d3-رادارت-072").
     // Returns null when the uid carries no division (that unit is never rolled).
@@ -1140,6 +1145,15 @@
              @keyframes wg-adj-pulse {
                  0%, 100% { transform: scale(1);   opacity: 1; }
                  50%      { transform: scale(1.3); opacity: .7; }
+             }
+             /* MG1: engagement mission graphics (Attack / Counter-attack) render
+                with a thin, FIXED-width stroke. The chevron paths use
+                vector-effect:non-scaling-stroke, so this value is in screen
+                pixels and stays constant at every zoom / viewport — reduce or
+                raise it to taste. Scoped to the scenario pane, so operator-drawn
+                graphics are unaffected. */
+             .leaflet-rmoozScenarioGraphics-pane .tmg-icon path {
+                 stroke-width: 1.5px !important;
              }
          `;
          document.head.appendChild(style);
@@ -1620,6 +1634,7 @@
         window.map.on('zoomend', renderEchelonRollup); // echelon roll-up: switch level on zoom
         window.map.on('zoomend', updateUnitScale);     // CMO-style zoom-responsive symbol sizing
         window.map.on('zoomend', () => { try { renderMovementTrails(movementTrailStep); } catch (_) {} }); // AN4: hide/show trails by roll-up
+        window.map.on('zoomend', () => { try { renderEngagementMissionGraphics({ step_index: engagementGraphicsStep }, scenarioRef); } catch (_) {} }); // MG1: rebuild TMG at new zoom (pixel-sized icons)
         _zoomHookBound = true;
     }
 
@@ -2054,11 +2069,16 @@
                 `<span style="display:inline-block;width:14px;height:8px;
                   background:${color};border:1px solid #fff;border-bottom:none;
                   border-radius:14px 14px 0 0;vertical-align:middle;margin-right:6px;"></span>${label}`;
-            // AN3: engagement key — a dashed segment + directional arrowhead glyph,
-            // colour-matched to the arc/event-pin palette (STATUS_COLORS).
-            const arcRow = (color, label) =>
-                `<span style="display:inline-block;width:16px;border-top:2px dashed ${color};vertical-align:middle;margin-right:3px;"></span>` +
-                `<span style="color:${color};vertical-align:middle;margin-right:6px;">&#9654;</span>${label}`;
+            // MG1: engagement key — the mission graphic (chevron, side colour)
+            // for the MANEUVER (Attack / Counter-attack).
+            const tmgRow = (color, label) =>
+                `<span style="display:inline-block;width:16px;border-top:2px solid ${color};vertical-align:middle;margin-right:3px;"></span>` +
+                `<span style="color:${color};font-weight:700;vertical-align:middle;margin-right:6px;">&#9654;</span>${label}`;
+            // Effect key — a filled dot in the status palette (STATUS_COLORS),
+            // matching the event pins + unit-state colours (the OUTCOME, kept
+            // separate from the maneuver graphic above).
+            const pinRow = (color, label) =>
+                `<span style="color:${color};vertical-align:middle;margin-right:6px;">&#9679;</span>${label}`;
             div.innerHTML = `
                 <div style="font-weight:700;margin-bottom:4px;color:#fff;">Wargame symbols</div>
                 <div>${blsRow(COLORS.BLS.STAGED,    'BLS&nbsp;staged')}</div>
@@ -2075,18 +2095,22 @@
                 <div><span style="display:inline-block;width:18px;border-top:3px solid ${COLORS.RED_UNIT};vertical-align:middle;margin-right:6px;"></span>Red advance</div>
                 <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
                 <div style="font-weight:700;margin-bottom:4px;color:#fff;">Engagements (current step)</div>
-                <div>${arcRow(STATUS_COLORS.destroyed,       'Destroyed')}</div>
-                <div>${arcRow(STATUS_COLORS.damaged_partial, 'Damaged')}</div>
-                <div>${arcRow(STATUS_COLORS.suppressed,      'Suppressed')}</div>
-                <div>${arcRow(STATUS_COLORS.delayed,         'Delayed')}</div>
-                <div>${arcRow(STATUS_COLORS.expended,        'Expended')}</div>
-                <div>${arcRow(STATUS_COLORS.unchanged,       'No&nbsp;effect')}</div>
-                <div style="opacity:.65;font-size:10px;margin-top:2px;">&#9654;&nbsp;points attacker&nbsp;&rarr;&nbsp;target &middot; &#9679;&nbsp;event pin (click)</div>
+                <div>${tmgRow(ENGAGEMENT_RED,  'Attack&nbsp;(Red&nbsp;acts)')}</div>
+                <div>${tmgRow(ENGAGEMENT_BLUE, 'Counter-attack&nbsp;(Blue&nbsp;acts)')}</div>
+                <div style="opacity:.65;font-size:10px;margin-top:2px;">Mission&nbsp;graphic&nbsp;points&nbsp;actor&nbsp;&rarr;&nbsp;target</div>
+                <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
+                <div style="font-weight:700;margin-bottom:4px;color:#fff;">Effect this step</div>
+                <div>${pinRow(STATUS_COLORS.destroyed,       'Destroyed')}</div>
+                <div>${pinRow(STATUS_COLORS.damaged_partial, 'Damaged')}</div>
+                <div>${pinRow(STATUS_COLORS.suppressed,      'Suppressed')}</div>
+                <div>${pinRow(STATUS_COLORS.delayed,         'Delayed')}</div>
+                <div>${pinRow(STATUS_COLORS.expended,        'Expended')}</div>
+                <div>${pinRow(STATUS_COLORS.unchanged,       'No&nbsp;effect')}</div>
+                <div style="opacity:.65;font-size:10px;margin-top:2px;">&#9679;&nbsp;event pin (click) &middot; colour&nbsp;=&nbsp;effect</div>
                 <div style="margin-top:3px;"><span style="display:inline-block;width:18px;border-top:2px dotted #cdd;vertical-align:middle;margin-right:6px;"></span>Movement this step (&rarr; current pos)</div>
                 <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
-                <div style="font-weight:700;margin-bottom:4px;color:#fff;">Unit state &amp; formations</div>
+                <div style="font-weight:700;margin-bottom:4px;color:#fff;">Unit state</div>
                 <div><span style="opacity:.5;font-weight:700;">&#9646;</span>&nbsp;Degraded (faded)&nbsp;&middot;&nbsp;<span style="filter:grayscale(1);opacity:.7;">&#10006;</span>&nbsp;Destroyed</div>
-                <div><span style="display:inline-block;min-width:14px;padding:0 3px;background:${COLORS.BLUE_UNIT};color:#fff;border-radius:8px;font-size:9px;text-align:center;vertical-align:middle;">N</span>&nbsp;Formation badge (zoom in to expand)</div>
             `;
             window.L.DomEvent.disableClickPropagation(div);
             return div;
@@ -3259,30 +3283,49 @@
         engagementArcs = [];
     }
 
-    // Render every engagement_arc this phase exactly as the W3 schema
-    // README specifies (Wargame3/schema/README.md §5):
-    //   "Render as: animated dashed line from source to target,
-    //    color-coded by status_change. Fade in/out over ~1.5s."
+    // MG1 — Engagement mission graphics. Each engagement_arc in the step is
+    // drawn with the SAME tactical mission graphic the operator draws by hand
+    // (Attack / Counterattack), via the read-only window.AppGraphics bridge.
+    // This is the "one app" wiring: the scenario engine and the operator's
+    // drawing tools now speak the same symbology.
     //
-    // That's the whole spec. No NATO tactical-graphic chevrons, no
-    // per-component visual signatures, no extra layers. The schema
-    // intentionally caps complexity at 8–14 arcs per phase; anything
-    // more becomes visual noise.
-    function renderEngagementArcs(state, scenario) {
+    //   • RED actor  → ATTACK         (assaulting force pressing the objective)
+    //   • BLUE actor → COUNTERATTACK  (defender striking back)
+    //
+    // Colour = the ACTOR's affiliation (APP-6: graphics are drawn in the owning
+    // side's colour). The OUTCOME (who was hit / destroyed) is shown separately
+    // by the unit state (AN1) and the event pins (AN2) — so the graphic is free
+    // to read purely as the MANEUVER. Read-only: no popup / drag / persistence.
+    // If the bridge is unavailable (e.g. app.js not yet loaded) each arc falls
+    // back to the legacy status-coloured dashed arc + arrowhead so it still reads.
+    const ENGAGEMENT_RED  = '#c41e1e';
+    const ENGAGEMENT_BLUE = '#3a96d2';
+    // Engagement graphics are drawn SMALL — in ratio with the unit symbols
+    // (~34px) — and slim, like a hand-placed attack arrow, rather than spanning
+    // the whole actor→target distance. Fixed screen px, so they stay a constant
+    // size at every zoom / viewport. Anchored at the actor, pointing at target.
+    const ENGAGEMENT_LEN_PX = 58; // arrow length (~1.6× a unit symbol)
+    const ENGAGEMENT_H_PX   = 17; // narrow body (slim ~3.4:1 chevron)
+    function renderEngagementMissionGraphics(state, scenario) {
         clearEngagementArcs();
         if (!layerGroup || !state || !window.L) return;
         const sc = scenario || scenarioRef;
         if (!sc || sc.schema_variant !== 'w3-rich') return;
         const stepIndex = Number.isFinite(state && state.step_index) ? state.step_index : 0;
+        engagementGraphicsStep = stepIndex; // remember for zoomend re-render
         const stepRow = Array.isArray(sc.steps) ? sc.steps[stepIndex] : null;
         const arcs = stepRow && Array.isArray(stepRow.engagement_arcs)
                      ? stepRow.engagement_arcs : [];
         if (!arcs.length) return;
 
-        // Declutter dense phases: if more than 3 arcs, the first arc from
-        // each shooter is "primary" (full opacity/weight); additional arcs
-        // from the same shooter become secondary (thinner + dimmer). Phases
-        // with ≤3 arcs are left fully prominent — behavior is unchanged.
+        // Mission-graphic bridge (app.js). Read-only TMG builder; null when the
+        // operator app layer hasn't loaded — we degrade to the legacy arc then.
+        const buildTmg = (window.AppGraphics && typeof window.AppGraphics.buildReadonlyTmgMarker === 'function')
+                         ? window.AppGraphics.buildReadonlyTmgMarker : null;
+
+        // Declutter dense phases: first arc from each shooter is "primary"
+        // (full opacity); additional arcs from the same shooter dim back so the
+        // operator can still read who the main effort is. ≤3 arcs stay prominent.
         const dense = arcs.length > 3;
         const seenActors = new Set();
 
@@ -3291,64 +3334,53 @@
             if (!coords || coords.length < 2) return;
             const [src, dst] = coords;
             if (!Array.isArray(src) || !Array.isArray(dst)) return;
+            const start = [src[1], src[0]]; // actor  [lat,lng]
+            const end   = [dst[1], dst[0]]; // target [lat,lng]
 
-            const color = STATUS_COLORS[arc.status_change] || STATUS_COLORS.unchanged;
-            // Base weight scales mildly with damage_pct so heavy strikes read
-            // as more decisive than glancing engagements (3–5 px).
-            const dmg        = Number.isFinite(arc.damage_pct) ? arc.damage_pct : 0.3;
-            const baseWeight = Math.max(2, 2 + Math.round(dmg * 3));
-            const start      = [src[1], src[0]];
-            const end        = [dst[1], dst[0]];
+            const sideRaw = (arc.actor_side || '').toString().toUpperCase();
+            const isBlue  = sideRaw === 'BLUE' || sideRaw === 'B' || sideRaw === 'FRIEND';
+            const typeId  = isBlue ? 'counterattack' : 'attack';
+            const color   = isBlue ? ENGAGEMENT_BLUE : ENGAGEMENT_RED;
 
-            // First arc per shooter = primary; additional arcs from the same
-            // shooter = secondary. Falls back to index < 3 when actor_uid absent.
             const actor     = arc.actor_uid || null;
             const isPrimary = dense ? (actor ? !seenActors.has(actor) : idx < 3) : true;
             if (actor) seenActors.add(actor);
 
-            const weight  = dense && !isPrimary ? Math.max(1, Math.floor(baseWeight * 0.6)) : baseWeight;
-            const opacity = dense && !isPrimary ? 0.30 : 0.85;
-
-            const line = window.L.polyline([start, end], {
-                color,
-                weight,
-                opacity,
-                dashArray: '6 4',
-                lineCap:   'round',
-                interactive: false,
-                className: 'wg-w3-engagement-arc wg-attack-pulse',
-                pane: SCENARIO_GRAPHICS_PANE,
-            });
-
-            // Tooltip: actor → target · status + damage% · cause_what
+            // Tooltip: actor → target · maneuver · status + damage% · cause_what.
             const tooltip = [
                 arc.actor_uid && arc.target_uid ? `${arc.actor_uid} → ${arc.target_uid}` : null,
-                `${arc.status_change || '?'}${Number.isFinite(arc.damage_pct) ? ` ${Math.round(arc.damage_pct * 100)}%` : ''}`,
+                `${isBlue ? 'counter-attack' : 'attack'}${arc.status_change ? ` · ${arc.status_change}` : ''}${Number.isFinite(arc.damage_pct) ? ` ${Math.round(arc.damage_pct * 100)}%` : ''}`,
                 arc.cause_what,
             ].filter(Boolean).join(' · ');
-            if (tooltip) line.bindTooltip(tooltip, { sticky: true });
 
-            line.addTo(layerGroup);
-            engagementArcs.push(line);
-
-            // Arrowhead at the target end so direction is unambiguous.
-            const head = makeArrowhead(start, end, color, weight * 4, SCENARIO_GRAPHICS_PANE);
-            if (head) {
-                head.addTo(layerGroup);
-                engagementArcs.push(head);
+            // Primary path: reuse the operator's mission-graphic renderer. Drawn
+            // small + slim (ratio to the unit symbol), anchored at the actor and
+            // pointing at the target; line thickness from the scenario-pane CSS.
+            let layer = buildTmg ? buildTmg(start, end, typeId, color, SCENARIO_GRAPHICS_PANE, { lengthPx: ENGAGEMENT_LEN_PX, heightPx: ENGAGEMENT_H_PX }) : null;
+            if (layer) {
+                if (!isPrimary && typeof layer.setOpacity === 'function') layer.setOpacity(0.45);
+                if (tooltip) { try { layer.bindTooltip(tooltip, { sticky: true }); } catch (_) {} }
+                layer.addTo(layerGroup);
+                engagementArcs.push(layer);
+                return;
             }
 
-            // Per-schema fade after ~1.5s. The next applyState wipes
-            // everything anyway; the timer prevents stale arcs from
-            // piling up if the operator scrubs rapidly.
-            const captured = [line, head].filter(Boolean);
-            engagementArcTimers.push(setTimeout(() => {
-                for (const layer of captured) {
-                    try { if (layerGroup) layerGroup.removeLayer(layer); } catch (_) {}
-                    const i = engagementArcs.indexOf(layer);
-                    if (i >= 0) engagementArcs.splice(i, 1);
-                }
-            }, 1500));
+            // Fallback: legacy status-coloured dashed arc + arrowhead.
+            const fbColor    = STATUS_COLORS[arc.status_change] || STATUS_COLORS.unchanged;
+            const dmg        = Number.isFinite(arc.damage_pct) ? arc.damage_pct : 0.3;
+            const baseWeight = Math.max(2, 2 + Math.round(dmg * 3));
+            const weight     = dense && !isPrimary ? Math.max(1, Math.floor(baseWeight * 0.6)) : baseWeight;
+            const opacity    = dense && !isPrimary ? 0.30 : 0.85;
+            const line = window.L.polyline([start, end], {
+                color: fbColor, weight, opacity, dashArray: '6 4', lineCap: 'round',
+                interactive: false, className: 'wg-w3-engagement-arc wg-attack-pulse',
+                pane: SCENARIO_GRAPHICS_PANE,
+            });
+            if (tooltip) line.bindTooltip(tooltip, { sticky: true });
+            line.addTo(layerGroup);
+            engagementArcs.push(line);
+            const head = makeArrowhead(start, end, fbColor, weight * 4, SCENARIO_GRAPHICS_PANE);
+            if (head) { head.addTo(layerGroup); engagementArcs.push(head); }
         });
     }
 
@@ -4381,6 +4413,7 @@
         try { const _c = hasMap() && window.map.getContainer && window.map.getContainer(); if (_c && _c.classList) _c.classList.remove('wg-rolled-up'); } catch (_) {}
         try { clearEventPins(); } catch (_) {} // AN2: clear read-only event pins
         try { clearMovementTrails(); } catch (_) {} unitStepPos = {}; movementTrailStep = 0; // AN4: clear trails + history
+        engagementGraphicsStep = 0; // MG1: reset engagement mission-graphic step tracker
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
     }
@@ -4589,10 +4622,11 @@
         updateContactHalo(state);
         updateAdvanceArrows(state, scenario || scenarioRef, { instant });
         updateAttackArrows(state, scenario || scenarioRef);
-        // W3-rich: explicit engagement arcs replace the nearest-red heuristics.
-        // updateAttackArrows() bails out early for W3, this fills the same slot
-        // with authoritative arcs keyed off cause_actor → target_uid.
-        renderEngagementArcs(state, scenario || scenarioRef);
+        // W3-rich: explicit engagement mission graphics replace the nearest-red
+        // heuristics. updateAttackArrows() bails out early for W3; this fills the
+        // same slot with authoritative Attack/Counterattack graphics keyed off
+        // actor_side + actor_uid → target_uid.
+        renderEngagementMissionGraphics(state, scenario || scenarioRef);
         // Note: we DO NOT draw separate "axis of advance" trails. The
         // schema (Wargame3/schema/README.md) only specifies engagement_arc
         // visuals. Unit movement is shown by the marker itself sliding
@@ -4883,6 +4917,7 @@
         try { const _c = hasMap() && window.map.getContainer && window.map.getContainer(); if (_c && _c.classList) _c.classList.remove('wg-rolled-up'); } catch (_) {}
         try { clearEventPins(); } catch (_) {} // AN2: clear read-only event pins
         try { clearMovementTrails(); } catch (_) {} unitStepPos = {}; movementTrailStep = 0; // AN4: clear trails + history
+        engagementGraphicsStep = 0; // MG1: reset engagement mission-graphic step tracker
         // Remove all breach badges — they're re-stamped from per-step deltas
         // on the next forward applyState.
         for (const b of Object.values(breachBadges)) {
@@ -5022,6 +5057,10 @@
             // AN4: draw movement trails for the new step (records the step's
             // displayed positions; trail = prior-step pos → current pos).
             try { renderMovementTrails(stepIndex); } catch (_) { /* ignore */ }
+            // MG1: draw the step's engagement mission graphics (Attack /
+            // Counterattack) — applyState() handles the harness-driven path; this
+            // covers operator step playback (goToStep → applyStepProgress).
+            try { renderEngagementMissionGraphics({ step_index: stepIndex }, scenarioRef); } catch (_) { /* ignore */ }
         }
         return true;
     }
@@ -5261,6 +5300,7 @@
         resolveUnitSymbolProfile,
         auditResolvedUnitSymbols,
         renderMovementTrails,
+        renderEngagementMissionGraphics, // MG1: Attack/Counterattack mission graphics for the step's engagement_arcs
         // Position primitives (so external callers can build their own
         // step-resolved state without re-implementing the movement model)
         computeRedPosition:  (meta, stepIndex, progress) => redPositionLonLat(meta, stepIndex, progress),

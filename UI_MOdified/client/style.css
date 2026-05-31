@@ -2634,6 +2634,22 @@ details[open] > .details-summary {
 .wg-adj-event-popup .wg-ep-k { min-width: 64px; opacity: 0.6; }
 .wg-adj-event-popup .wg-ep-v { flex: 1; }
 
+/* CMO-style zoom-responsive unit sizing: scale the symbol SVG (NOT the marker
+   wrapper — Leaflet uses the wrapper's transform for positioning) by a per-zoom
+   CSS variable set on the map container. Symbols shrink at wide zoom so the
+   laydown fits the map, and grow toward full size when zoomed in. Additive +
+   reversible; default scale 1 when the var is unset. */
+.wg-adj-sidc svg,
+.wg-adj-diamond svg {
+    transform: scale(var(--wg-unit-scale, 1));
+    transform-origin: 50% 50%;
+    transition: transform 120ms ease-out;
+}
+/* Hover-peek: reveal a single formation's units (added via .wg-peek on mouseover)
+   while the map is rolled up, without un-rolling the rest. */
+.leaflet-container.wg-rolled-up .wg-adj-sidc.wg-peek,
+.leaflet-container.wg-rolled-up .wg-adj-diamond.wg-peek { display: block !important; }
+
 /* Generate section */
 .units-generate-section { border: 1px solid var(--panel-border); border-radius: var(--radius-sm); overflow: hidden; }
 .units-gen-toggle { width: 100%; text-align: left; padding: 8px 12px; font-size: 0.8rem; color: var(--text-muted); background: transparent; border: none; cursor: pointer; }

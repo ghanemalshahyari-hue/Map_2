@@ -815,7 +815,9 @@
                         } catch (_) {}
                     }
                 });
-                try { mk.bindTooltip(g.key + ' — ' + g.memberUids.length + ' units · click to expand', { direction: 'top', offset: [0, -16] }); } catch (_) {}
+                mk.on('mouseover', () => { try { setFormationPeek(g, true); } catch (_) {} });
+                mk.on('mouseout',  () => { try { setFormationPeek(g, false); } catch (_) {} });
+                try { mk.bindTooltip(g.key + ' — ' + g.memberUids.length + ' units · hover to peek · click to zoom', { direction: 'top', offset: [0, -16] }); } catch (_) {}
                 mk.addTo(layerGroup);
                 echelonAggregates.push(mk);
             });
@@ -824,6 +826,38 @@
             if (rolledUp) container.classList.add('wg-rolled-up');
             else container.classList.remove('wg-rolled-up');
         }
+    }
+
+    // ── CMO-style zoom-responsive unit sizing ───────────────────────────
+    // Unit symbols were a fixed px size at every zoom, so they dominated the map
+    // when zoomed out and stayed huge. Scale them with zoom via a CSS variable on
+    // the map container (the CSS scales the inner symbol SVG only — see
+    // style.css; the marker wrapper keeps Leaflet's positioning transform). Cheap:
+    // one var update per zoom, no icon rebuilds; reversible (default scale = 1).
+    function unitScaleForZoom(zoom) {
+        const z = Number.isFinite(zoom) ? zoom : 9;
+        const s = 0.42 + (z - 8) * 0.06;   // ~0.42x at wide AO-fit (~z8) → ~0.78x zoomed in
+        return Math.max(0.4, Math.min(0.8, s));
+    }
+    function updateUnitScale() {
+        if (!hasMap() || !window.map.getContainer) return;
+        const el = window.map.getContainer();
+        if (el && el.style) {
+            const z = (window.map.getZoom && window.map.getZoom()) || 9;
+            el.style.setProperty('--wg-unit-scale', unitScaleForZoom(z).toFixed(3));
+        }
+    }
+
+    // Hover-peek: temporarily reveal ONE formation's member units while the map is
+    // rolled up (toggles .wg-peek; see style.css). Read-only / reversible.
+    function setFormationPeek(group, on) {
+        if (!group || !Array.isArray(group.memberUids)) return;
+        group.memberUids.forEach((uid) => {
+            const mm = blueMarkers[uid] || redMarkers[uid];
+            if (!mm) return;
+            let el; try { el = mm.getElement(); } catch (_) { el = null; }
+            if (el && el.classList) el.classList[on ? 'add' : 'remove']('wg-peek');
+        });
     }
 
     // ── AN2: read-only event pins + provenance (Wargame 3 playback) ──────
@@ -1430,6 +1464,7 @@
         if (_zoomHookBound || !hasMap()) return;
         window.map.on('zoomend', rerenderTacticalArrowsForZoom);
         window.map.on('zoomend', renderEchelonRollup); // echelon roll-up: switch level on zoom
+        window.map.on('zoomend', updateUnitScale);     // CMO-style zoom-responsive symbol sizing
         _zoomHookBound = true;
     }
 
@@ -1832,6 +1867,7 @@
         // also fires zoomend → renderEchelonRollup, but call once now in case the
         // fit doesn't change zoom (no zoomend then).
         try { renderEchelonRollup(); } catch (_) { /* ignore */ }
+        try { updateUnitScale(); } catch (_) { /* ignore */ } // initial zoom-responsive symbol size
 
         // Add the legend control (top-right corner of the map).
         addLegend();

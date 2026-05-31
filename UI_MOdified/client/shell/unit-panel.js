@@ -110,6 +110,191 @@
         else el.setAttribute('hidden', '');
     }
 
+    // ── P5b: scenario-unit enrichment (real data only — no fabricated sim values) ──
+    // Scenario ORBAT units carry richer metadata than the base PR-3 panel shows.
+    // Surface what we actually have (role / domain / composition / landing-site) in
+    // a "Composition & Role" section injected after Identity, shown only for scenario
+    // units (unit._scenario). textContent-only; no weapons/sensors/fuel are invented.
+    const ROLE_WORDS = {
+        mech: 'Mechanized', inf: 'Infantry', bn: 'Battalion', bde: 'Brigade',
+        div: 'Division', coy: 'Company', recon: 'Reconnaissance', arty: 'Artillery',
+        armor: 'Armored', armored: 'Armored', ada: 'Air Defense', sam: 'SAM',
+        ssm: 'SSM', ew: 'EW', hq: 'HQ', cmd: 'Command', nav: 'Naval', air: 'Air',
+        def: 'Defense', sup: 'Support', log: 'Logistics', amph: 'Amphibious', uav: 'UAV'
+    };
+    function formatRole(role) {
+        if (!role || typeof role !== 'string') return null;
+        return role.split(/[_\s-]+/).filter(Boolean)
+            .map(w => ROLE_WORDS[w.toLowerCase()] || (w.charAt(0).toUpperCase() + w.slice(1)))
+            .join(' ');
+    }
+    function parseComposition(name) {
+        if (!name || typeof name !== 'string') return null;
+        // First parenthetical group (Arabic or Latin parens), e.g. "(3 سرايا…)" / "(T-64 x 4)".
+        const m = name.match(/[（(]\s*([^（）()]+?)\s*[）)]/);
+        return (m && m[1] && m[1].trim()) ? m[1].trim() : null;
+    }
+    function renderScenarioDetails(unit) {
+        const identity = $('up-section-identity');
+        let sec = $('up-section-scn-details');
+        if (!sec && identity && unit && unit._scenario) {
+            sec = document.createElement('section');
+            sec.className = 'up-section';
+            sec.id = 'up-section-scn-details';
+            const h = document.createElement('h4');
+            h.className = 'up-section-title';
+            h.textContent = tr('up-section-scn-details', 'Composition & Role');
+            const dl = document.createElement('dl');
+            dl.className = 'up-kv';
+            const addRow = (ddId, label) => {
+                const dt = document.createElement('dt'); dt.textContent = label;
+                const dd = document.createElement('dd'); dd.id = ddId; dd.textContent = '-';
+                dl.appendChild(dt); dl.appendChild(dd);
+            };
+            addRow('up-scn-role', tr('up-field-role', 'Role'));
+            addRow('up-scn-domain', tr('up-field-domain', 'Domain'));
+            addRow('up-scn-comp', tr('up-field-composition', 'Composition'));
+            addRow('up-scn-bls', tr('up-field-bls', 'Landing site'));
+            sec.appendChild(h); sec.appendChild(dl);
+            identity.insertAdjacentElement('afterend', sec);
+        }
+        if (!sec) return;
+        if (!unit || !unit._scenario) { sec.setAttribute('hidden', ''); return; }
+        const setRow = (ddId, value) => {
+            const dd = $(ddId); if (!dd) return;
+            const dt = dd.previousElementSibling;
+            const has = !(value == null || value === '');
+            if (dt) { if (has) dt.removeAttribute('hidden'); else dt.setAttribute('hidden', ''); }
+            if (has) { dd.textContent = value; dd.removeAttribute('hidden'); } else { dd.setAttribute('hidden', ''); }
+        };
+        const roleTxt = formatRole(unit.role);
+        const domainTxt = unit.domain ? (String(unit.domain).charAt(0).toUpperCase() + String(unit.domain).slice(1)) : null;
+        const compTxt = parseComposition(unit.name);
+        const blsTxt = (unit.bls && String(unit.bls).trim()) || null;
+        setRow('up-scn-role', roleTxt);
+        setRow('up-scn-domain', domainTxt);
+        setRow('up-scn-comp', compTxt);
+        setRow('up-scn-bls', blsTxt);
+        if (roleTxt || domainTxt || compTxt || blsTxt) sec.removeAttribute('hidden');
+        else sec.setAttribute('hidden', '');
+    }
+
+    // ── P5b: marker-derived readouts (symbol profile, current-step status,
+    // capability placeholders). REAL data only, read from the live unit marker's
+    // debug fields via AppAdjudicatorMap.getScenarioMarkers(). Never fabricates
+    // platform / weapons / sensors / fuel / ammo / readiness / combat power.
+    function findSelectedMarker(unit) {
+        if (!unit || !window.AppAdjudicatorMap || typeof window.AppAdjudicatorMap.getScenarioMarkers !== 'function') return null;
+        let ms; try { ms = window.AppAdjudicatorMap.getScenarioMarkers(); } catch (_) { return null; }
+        if (!ms) return null;
+        const want = String(unit.id || unit.code || '');
+        const all = [].concat(ms.red || [], ms.blue || []);
+        for (const m of all) {
+            const uid = m && (m._unitId || (m._unitData && m._unitData.id));
+            if (uid && String(uid) === want) return m;
+        }
+        return null;
+    }
+    const SYM_SOURCE_LABEL = {
+        scenario_sidc: 'Scenario SIDC (authoritative)', role_domain_template: 'Remapped to family symbol',
+        symbol_set_frame: 'Family frame only', unknown: 'Unknown / fallback',
+    };
+    const SYM_FAMILY_LABEL = { naval: 'Naval', subsurface: 'Subsurface', air: 'Air', land: 'Land', unknown: 'Unknown' };
+
+    // Ensure an injected section (h4 + dl) exists after `afterEl`; returns it.
+    function ensureSection(id, title, afterEl) {
+        let sec = $(id);
+        if (!sec && afterEl) {
+            sec = document.createElement('section');
+            sec.className = 'up-section'; sec.id = id;
+            const h = document.createElement('h4'); h.className = 'up-section-title'; h.textContent = title;
+            const dl = document.createElement('dl'); dl.className = 'up-kv'; dl.id = id + '-dl';
+            sec.appendChild(h); sec.appendChild(dl);
+            afterEl.insertAdjacentElement('afterend', sec);
+        }
+        return sec;
+    }
+    // Rebuild a <dl> from [label, value|null, opts] rows (idempotent, textContent-only).
+    function setKv(dl, rows) {
+        if (!dl) return false;
+        dl.textContent = '';
+        rows.forEach((row) => {
+            const label = row[0], value = row[1], opts = row[2] || {};
+            const show = !(value == null || value === '');
+            if (!show && opts.omitIfEmpty) return;
+            const dt = document.createElement('dt'); dt.textContent = label;
+            const dd = document.createElement('dd');
+            let cls = '';
+            if (opts.mono) { cls = 'up-mono'; dd.setAttribute('dir', 'ltr'); }
+            if (opts.na) cls = (cls ? cls + ' ' : '') + 'up-na';
+            if (cls) dd.className = cls;
+            dd.textContent = show ? value : naText();
+            dl.appendChild(dt); dl.appendChild(dd);
+        });
+        return true;
+    }
+
+    // Section: Symbol Profile (SYM2 resolver output — honest family/category, not platform).
+    function renderSymbolProfile(unit, marker) {
+        const after = $('up-section-scn-details') || $('up-section-identity');
+        const sec = ensureSection('up-section-symprofile', tr('up-section-symprofile', 'Symbol Profile'), after);
+        if (!sec) return;
+        const prof = marker && marker._symbolProfile;
+        if (!unit || !unit._scenario || !prof) { sec.setAttribute('hidden', ''); return; }
+        const remapped = prof.source && prof.source !== 'scenario_sidc';
+        const typeLabel = !remapped ? tr('up-sym-original', 'Original scenario symbol (unchanged)')
+            : (prof.source === 'symbol_set_frame' ? tr('up-sym-frame', 'Family frame only (category)')
+               : tr('up-sym-remapped', 'Family / category symbol (not exact platform)'));
+        const rows = [
+            ['Symbol', typeLabel],
+            ['Family', SYM_FAMILY_LABEL[prof.symbol_family] || prof.symbol_family || null, { omitIfEmpty: true }],
+            ['Original SIDC', prof.original_sidc || null, { mono: true, omitIfEmpty: true }],
+        ];
+        if (remapped && prof.resolved_sidc && prof.resolved_sidc !== prof.original_sidc) rows.push(['Rendered SIDC', prof.resolved_sidc, { mono: true }]);
+        rows.push(['Resolver', SYM_SOURCE_LABEL[prof.source] || prof.source || null, { omitIfEmpty: true }]);
+        rows.push(['Confidence', prof.confidence || null, { omitIfEmpty: true }]);
+        if (prof.fallback_reason) rows.push(['Fallback reason', String(prof.fallback_reason).replace(/_/g, ' ')]);
+        rows.push(['Operator editable', prof.operator_editable ? tr('up-yes', 'Yes') : tr('up-no', 'No')]);
+        setKv($('up-section-symprofile-dl'), rows);
+        sec.removeAttribute('hidden');
+    }
+
+    // Section: Current Step Status (AN1/AN2 per-step engagement record — real only).
+    function renderStepStatus(unit, marker) {
+        const after = $('up-section-symprofile') || $('up-section-scn-details') || $('up-section-identity');
+        const sec = ensureSection('up-section-stepstatus', tr('up-section-stepstatus', 'Current Step Status'), after);
+        if (!sec) return;
+        if (!unit || !unit._scenario) { sec.setAttribute('hidden', ''); return; }
+        const a = marker && marker._attrition;
+        let rows;
+        if (!a) {
+            rows = [['Status this step', tr('up-step-nochange', 'No change this step')]];
+        } else {
+            rows = [['Status', a.status_change ? String(a.status_change).replace(/_/g, ' ') : tr('up-unknown', 'unknown')]];
+            if (Number.isFinite(a.damage_pct)) rows.push(['Damage', Math.round(a.damage_pct * 100) + '%']);
+            if (a.cause_what) rows.push(['Cause', a.cause_what]);
+            if (a.cause_doctrine) rows.push(['Doctrine cited', a.cause_doctrine]);
+            if (Number.isFinite(a.step)) rows.push(['Source', tr('up-step', 'Step') + ' ' + (a.step + 1)]);
+        }
+        setKv($('up-section-stepstatus-dl'), rows);
+        sec.removeAttribute('hidden');
+    }
+
+    // Section: Capability Profile — only the honest placeholders not already shown
+    // in Operational Status / Combat Readiness / C2 below. No fabricated values.
+    function renderCapability(unit) {
+        const after = $('up-section-stepstatus') || $('up-section-symprofile') || $('up-section-scn-details') || $('up-section-identity');
+        const sec = ensureSection('up-section-capability', tr('up-section-capability', 'Capability Profile'), after);
+        if (!sec) return;
+        if (!unit || !unit._scenario) { sec.setAttribute('hidden', ''); return; }
+        setKv($('up-section-capability-dl'), [
+            ['Weapons', tr('up-not-assigned', 'Not assigned'), { na: true }],
+            ['Sensors', tr('up-not-assigned', 'Not assigned'), { na: true }],
+            ['Damage model', tr('up-cap-damage', 'Scenario step data only'), { na: true }],
+        ]);
+        sec.removeAttribute('hidden');
+    }
+
     function renderEmpty() {
         const p = panel();
         if (!p) return;
@@ -125,7 +310,7 @@
         // Show empty hint, hide all sections
         const hint = $('up-empty-hint');
         if (hint) hint.removeAttribute('hidden');
-        for (const sid of ['up-section-identity','up-section-position','up-section-opstatus','up-section-combat','up-section-c2','up-section-advisor']) {
+        for (const sid of ['up-section-identity','up-section-scn-details','up-section-symprofile','up-section-stepstatus','up-section-capability','up-section-position','up-section-opstatus','up-section-combat','up-section-c2','up-section-advisor']) {
             showSection(sid, false);
         }
     }
@@ -178,9 +363,21 @@
         const parentShort = parentRaw ? '#' + String(parentRaw).slice(0, 8) : null;
         setText('up-parent', parentShort);
 
-        // Section 2 — Position
+        // P5b — scenario unit enrichment (role / domain / composition / landing-site)
+        renderScenarioDetails(unit);
+
+        // P5b — marker-derived readouts (symbol profile, current-step status, capability)
+        const _marker = findSelectedMarker(unit);
+        renderSymbolProfile(unit, _marker);
+        renderStepStatus(unit, _marker);
+        renderCapability(unit);
+
+        // Section 2 — Position (prefer the LIVE marker position so it tracks step changes)
         showSection('up-section-position', true);
-        const lat = Number(unit.lat), lng = Number(unit.lng);
+        let lat = Number(unit.lat), lng = Number(unit.lng);
+        if (_marker && typeof _marker.getLatLng === 'function') {
+            try { const ll = _marker.getLatLng(); if (ll) { lat = ll.lat; lng = ll.lng; } } catch (_) { /* keep event coords */ }
+        }
         if (Number.isFinite(lat) && Number.isFinite(lng)) {
             setText('up-latlng', `${fmtLat(lat)} ${fmtLng(lng)}`);
             setText('up-mgrs',   fmtMgrs(lat, lng));
@@ -216,6 +413,26 @@
         });
         document.addEventListener('rmooz:unit-deselected', () => {
             try { renderEmpty(); } catch (_) { /* ignore */ }
+        });
+        // P5b — when the scenario steps while a unit is selected, re-read the
+        // unit's LIVE marker (current position + per-step status) so the panel
+        // stays current. Covers BOTH the bottom timeline transport (fires
+        // rmooz:timeline-ui-action) and the workspace step-nav buttons
+        // (#sw-nav-*, which call goToStep directly). Debounced; small delay lets
+        // the step's move / attrition settle before re-reading the marker.
+        let _stepRerenderTimer = null;
+        function scheduleSelectedRerender() {
+            if (!currentUnit) return;
+            if (_stepRerenderTimer) clearTimeout(_stepRerenderTimer);
+            _stepRerenderTimer = setTimeout(() => {
+                _stepRerenderTimer = null;
+                try { if (currentUnit) renderUnit(currentUnit, currentSelectedAt); } catch (_) { /* ignore */ }
+            }, 180);
+        }
+        document.addEventListener('rmooz:timeline-ui-action', scheduleSelectedRerender);
+        document.addEventListener('click', (e) => {
+            const t = e && e.target;
+            if (t && typeof t.closest === 'function' && t.closest('[id^="sw-nav-"]')) scheduleSelectedRerender();
         });
 
         // Language chain — same pattern as the other shell modules.

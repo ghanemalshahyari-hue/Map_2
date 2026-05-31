@@ -1,4 +1,4 @@
-<!-- AUDIT_SHA: 22d576e096a171c8ff790ec3bdefe35658ff89cb -->
+<!-- AUDIT_SHA: e75ff6524c4cfd2fd3dc46fd42114190c1e19dab -->
 # APP_INVENTORY — RMOOZ / CMO feature map
 
 > **The single map of what this app has, what it doesn't, and what's drifting.**
@@ -6,7 +6,7 @@
 > Refresh with `/audit-app` (see `.claude/skills/audit-app/`). The freshness check at session
 > start reads the `AUDIT_SHA` marker on line 1 to tell you how stale this is.
 
-**Last audited:** `22d576e` · 2026-05-31 · two same-day delta refreshes over the `1d4fa64` deep-dig (+14 commits, audited during an active parallel coding session). **Wave 1** (`f31548c`): AN1 attrition visuals, P0 authoring foundation, animation-readiness audit, stray-`wargame 5/` cleanup. **Wave 2** (`11e17b1`→`22d576e`, +9 commits): the **W3 presentation suite** — echelon roll-up, event pins, movement trails, engagement legend, symbol scaling + formation hover-peek, SIDC family-symbol resolver (SYM2), selected-unit operational readout (P5b), and engagement **mission graphics** (MG1). Drift D1/D2/D3 re-verified, line refs refreshed. Scoped to the commit delta (unchanged subsystems not re-fanned). At audit time the working tree held only data/doc WIP (no uncommitted code).
+**Last audited:** `e75ff65` · 2026-05-31 · two same-day delta refreshes over the `1d4fa64` deep-dig (+16 commits, audited during an active parallel coding session). **Wave 1** (`f31548c`): AN1 attrition visuals, P0 authoring foundation, animation-readiness audit, stray-`wargame 5/` cleanup. **Wave 2** (`11e17b1`→`22d576e`, +9 commits): the **W3 presentation suite** — echelon roll-up, event pins, movement trails, engagement legend, symbol scaling + formation hover-peek, SIDC family-symbol resolver (SYM2), selected-unit operational readout (P5b), and engagement **mission graphics** (MG1). Code audited at `22d576e`; `855301c`+`e75ff65` on top are docs-only (this inventory + CMO docs) with no code drift. Drift D1/D2/D3 re-verified, line refs refreshed. ⚠️ Working tree has active uncommitted code WIP (`app.js`, `adjudicator-map.js`) — re-audit when it lands.
 **Branch at audit:** `chore/remove-stray-wargame5-dir` (cleanup branch off `pr-241a-import-path-labels`).
 
 ### Legend
@@ -207,4 +207,5 @@ Newer feature work uses **`test-p0*` / `test-an*` / `test-sym*` / `test-unit-*`*
 - `docs/unit-symbol-fidelity-audit.md` — SYM1 audit: 117/153 W3 units render proper milsymbol glyphs, 36 fall back (milsymbol 2.0.0 rejects specific child SIDC entity codes); fix = role/domain→canonical-family remap (SYM2). Re-runnable via `node test-sym1-unit-symbol-fidelity.js`.
 - `docs/pr-166-external-scenario-pack-audit.md` + `docs/scenario-pack-audit/` — CSP51 audit (630 scenarios; don't re-run).
 - `docs/cmo-scenario-editor-application.md` — CMO→RMOOZ workflow mapping.
+- `docs/cmo-pgatcomb-playlist-inventory.md` — CMO tutorial playlist caption-read inventory (research/reference; `e75ff65`).
 - Cross-session "why" lives in the memory dir (`MEMORY.md` index) — this file is the "what", memory is the "why".

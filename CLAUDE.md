@@ -59,6 +59,9 @@ When you finish a feature or change status:
 ## Map of the knowledge base
 - `APP_INVENTORY.md` — **what exists**: per-module status, duplications, gaps, drift. Your first stop.
 - memory dir (`MEMORY.md` index) — **why**: locked decisions, feedback, deferred items.
+  On a machine without the local memory dir (`~/.claude/.../memory/` — it's git-ignored and
+  machine-local), read the committed mirror at **`docs/session-memory/`** (its `README.md`
+  shows how to rehydrate it into `~/.claude`).
 - `docs/` — deep dives: `scenario-workspace-consolidation-map.md` (duplication authority),
   `read-only-surface-audit.md`, `rmooz-roadmap.html`, `scenario-schema.md`, `wargame3-schema.md`.
 - `.claude/skills/audit-app/` — the refresh procedure.

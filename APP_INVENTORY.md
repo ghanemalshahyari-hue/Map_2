@@ -219,7 +219,7 @@ Newer feature work uses **`test-p0*` / `test-an*` / `test-sym*` / `test-unit-*`*
 | **WS4** | Migrate remaining renderer reads (units/BLS/balance) onto World State. | WS2+WS3 | M | infra |
 | **DB1** | **RMOOZ DB-Lite — component schema + 3 seed platforms** (DDG, SAM site, air unit) in `sensors[]`/`weapons[]`/`magazines[]` shape, our class values. Structure-first, not size. | WS1 | M | enables |
 | **DB2** | Class tables: `sensor_class` / `rcs_class` / `weapon_class` / `doctrine_tags` (small, data-driven). | DB1 | S | enables |
-| **DET1** | **Detection rule module** (public formulas, our values): radar-horizon `1.23(√h₁+√h₂)`, RCS range `R_ref·(σ/σ_ref)^¼`, EMCON, LOS → `contacts[]`. Per-sensor. | DB1+DB2+WS3 | M–L | ✅✅✅ |
+| **DET1** *(done)* | **Detection rule module** — `client/shell/detection.js` (`window.AppDetection.computeContacts`). Public formulas, our values: radar-horizon `1.23(√h₁+√h₂)`, RCS range `R_ref·(σ/σ_ref)^¼`, EMCON gating, ESM passive (1.5× emitter range), LOS hook (DET2). Carries a seeded **DB-Lite** (`DEFAULT_DB`: `sensor_class`/`rcs_class`/domain alt+RCS defaults) — partially satisfies DB1/DB2. Pure, Node-testable, **unwired** (contacts→renderer is a later PR). 15/15 in `test-det1-detection.js`; W3 units (no sensors) → 0 contacts (no fabrication). | WS1 (+ seeded DB-Lite) | M | ✅✅✅ |
 | **ENG1** | **Engagement rule**: search→fire-control (channels)→WRA→magazine decrement → engagement outcome. | DET1 | M–L | ✅✅ |
 | **DOC1** | **Doctrine/ROE layer** — visible & auditable data; AI decisions **cite** doctrine/ROE. | WS3 | M | ✅ |
 | **TASK1** | **Tasking/Mission layer** — structured mission objects + tasking view. | WS3+DOC1 | M | ✅ |

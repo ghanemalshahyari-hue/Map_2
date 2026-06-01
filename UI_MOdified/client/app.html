@@ -3644,12 +3644,12 @@
                             <button type="button" id="ap-hold"   class="ap-btn ap-btn--hold"   data-i18n="ap-hold">Hold</button>
                         </div>
 
-                        <!-- Safety note — always visible. PR-7 invariant: nothing
-                             on this panel is wired to simulation; making that
-                             explicit prevents the operator from acting on the
-                             wrong mental model. -->
+                        <!-- Operator note — always visible. UNLOCKED 2026-06-01:
+                             Accept/Reject now commit to the durable server journal;
+                             Hold defers. Kept explicit so the operator knows a
+                             decision mutates state. -->
                         <p class="ap-safety-note" data-i18n="ap-not-connected">
-                            Proposal decisions are not connected to simulation yet
+                            Accept/Reject commit to the durable journal; Hold defers
                         </p>
 
                         <!-- ═══════════ DECISION RECORDS — PR-13 ═══════════ -->
@@ -3665,13 +3665,13 @@
                                 <button type="button" id="dr-clear-btn" class="dr-clear-btn" data-i18n="dr-clear">Clear records</button>
                             </header>
                             <p class="dr-not-saved" data-i18n="dr-not-saved">Not saved after reload</p>
-                            <!-- PR-14: optional surface message — declares the
-                                 draft contract is in place but the real journal
-                                 is not. No file write happens from this line; it
-                                 is purely informational. -->
+                            <!-- UNLOCKED 2026-06-01: the real journal is enabled —
+                                 commits write durable rows server-side at
+                                 data/journal/<run>.jsonl. This in-memory list mirrors
+                                 those decisions; it is not itself the durable store. -->
                             <p class="dr-real-journal-note">
-                                <span data-i18n="dr-real-journal-disabled">Real journal not enabled</span>
-                                <span class="dr-draft-badge" data-i18n="dr-draft-contract-ready">Draft contract ready</span>
+                                <span data-i18n="dr-real-journal-disabled">Real journal enabled (server)</span>
+                                <span class="dr-draft-badge" data-i18n="dr-draft-contract-ready">Commit active</span>
                             </p>
                             <div id="dr-list" class="dr-list">
                                 <p id="dr-empty" class="dr-empty" data-i18n="dr-empty">No local decision records</p>
@@ -4797,6 +4797,7 @@
     <!-- PR-5: Timeline / Transport placeholder. UI foundation only —
          buttons flip local CSS state; no journal, no sim, no AI hookup. -->
     <script src="shell/timeline.js?v=1"></script>
+    <script src="shell/timeline-event-ticks.js?v=1"></script>
     <!-- PR-8: AI Proposal data contract. Pure frontend validation +
          normalization. Loads BEFORE ai-proposal-panel.js so the panel
          can call AppShellAIProposalContract.normalizeProposal() on

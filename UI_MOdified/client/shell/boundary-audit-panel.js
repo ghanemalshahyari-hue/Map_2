@@ -1,10 +1,13 @@
 /**
  * Operational shell — Boundary Audit Panel (read-only).
  *
- * PR-22. Single-purpose, surface-only module that renders the
- * current state of every safety boundary in this build as a row
- * of status chips. The panel is a MIRROR — it reads from the
- * existing bridges and never writes to any of them.
+ * PR-22, RE-POINTED 2026-06-01 after the owner ruling that opened the
+ * operator commit boundary (full unlock — UI mutates). The panel is
+ * still a read-only MIRROR; it now reports the OPEN boundary truthfully
+ * (commit bridge LIVE, backend commit CONNECTED, real journal ENABLED)
+ * instead of the former dry-run/blocked posture. Surfaces still closed
+ * (export preview, download lock, client scenario mutation) read as
+ * before. The self-test + violation harness assert the NEW invariants.
  *
  * Strict invariants:
  *   1. NEVER mutates any audited module's state. The bridge
@@ -100,10 +103,12 @@
         if (!b || typeof b.getState !== 'function') {
             return { statusKey: STATUS_KEYS.unknown, tone: 'grey' };
         }
-        // Just calling getState() proves the module is loaded; the
-        // dry-run posture is static in this build.
-        try { b.getState(); } catch (_) { return { statusKey: STATUS_KEYS.unknown, tone: 'grey' }; }
-        return { statusKey: STATUS_KEYS.dryRunOnly, tone: 'yellow' };
+        // UNLOCKED 2026-06-01: the bridge performs a real commit. Report
+        // 'connected' when it reports mode:'live', else fall back.
+        let s; try { s = b.getState(); } catch (_) { return { statusKey: STATUS_KEYS.unknown, tone: 'grey' }; }
+        return (s && s.mode === 'live')
+            ? { statusKey: STATUS_KEYS.connected,  tone: 'green'  }
+            : { statusKey: STATUS_KEYS.dryRunOnly, tone: 'yellow' };
     }
 
     function deriveDecisionRecords() {
@@ -125,11 +130,12 @@
         if (!b || !b.ALLOWED_MODES || typeof b.ALLOWED_MODES.has !== 'function') {
             return { statusKey: STATUS_KEYS.unknown, tone: 'grey' };
         }
-        // Real journal would require a mode like 'REAL'; in PR-14
-        // ALLOWED_MODES = new Set(['DRY_RUN']) so real is rejected.
+        // UNLOCKED 2026-06-01: REAL is now allowed, so a real journal is
+        // enabled (the durable write lives server-side at
+        // data/journal/<run>.jsonl).
         const realAllowed = b.ALLOWED_MODES.has('REAL');
         return realAllowed
-            ? { statusKey: STATUS_KEYS.unknown,    tone: 'grey' }     // would indicate a future PR opened the gate
+            ? { statusKey: STATUS_KEYS.connected,  tone: 'green' }
             : { statusKey: STATUS_KEYS.notEnabled, tone: 'red'  };
     }
 
@@ -167,9 +173,10 @@
     }
 
     function deriveBackendCommit() {
-        // Static boundary — there is no code path that ever POSTs
-        // /api/sim/commit; the commit bridge dry-runs only.
-        return { statusKey: STATUS_KEYS.blocked, tone: 'red' };
+        // UNLOCKED 2026-06-01: the commit bridge now POSTs /api/sim/commit
+        // for ACCEPT/REJECT (operator intent + journal write). Report
+        // connected (was a static 'blocked' boundary).
+        return { statusKey: STATUS_KEYS.connected, tone: 'green' };
     }
 
     function deriveScenarioMutation() {
@@ -372,28 +379,28 @@
 
     // ── Individual check functions ───────────────────────────────
     function checkProposalServiceDisabled() {
+        // UNLOCKED 2026-06-01: enabling the proposal service is now a
+        // normal operator action, not a violation. Pass when the bridge
+        // is present (service availability is operator-controlled).
         const b = window.AppShellAIProposalBridge;
         if (!b || typeof b.getState !== 'function') {
             return { pass: false, reasonKey: 'ba-reason-bridge-missing' };
         }
-        const s = b.getState();
-        if (!s || s.serviceEnabled === false) return { pass: true, reasonKey: 'ba-reason-service-disabled' };
-        return { pass: false, reasonKey: 'ba-reason-service-enabled' };
+        try { b.getState(); } catch (_) { return { pass: false, reasonKey: 'ba-reason-bridge-missing' }; }
+        return { pass: true, reasonKey: 'ba-reason-service-wired' };
     }
 
     function checkCommitBridgeDryRun() {
+        // UNLOCKED 2026-06-01: the commit bridge is LIVE. Pass when it
+        // reports mode:'live' (was: pass only while it stayed dry-run).
         const b = window.AppShellAIProposalCommitBridge;
         if (!b || typeof b.getState !== 'function') {
             return { pass: false, reasonKey: 'ba-reason-bridge-missing' };
         }
-        const s = b.getState();
-        // The state object must not report committed:true on any
-        // recursively-shallow key. We don't go deep — `lastResult`
-        // is the documented place to look.
-        const reported = (s && s.lastResult && s.lastResult.committed === true);
-        return reported
-            ? { pass: false, reasonKey: 'ba-reason-commit-reported' }
-            : { pass: true,  reasonKey: 'ba-reason-commit-dryrun'   };
+        let s; try { s = b.getState(); } catch (_) { return { pass: false, reasonKey: 'ba-reason-bridge-missing' }; }
+        return (s && s.mode === 'live')
+            ? { pass: true,  reasonKey: 'ba-reason-commit-live'   }
+            : { pass: false, reasonKey: 'ba-reason-commit-dryrun' };
     }
 
     function checkDecisionRecordsInMemory() {
@@ -423,28 +430,30 @@
         if (!c || typeof c.validateJournalEntry !== 'function') {
             return { pass: false, reasonKey: 'ba-reason-contract-missing' };
         }
-        // Confirm ALLOWED_MODES still excludes REAL.
-        if (c.ALLOWED_MODES && typeof c.ALLOWED_MODES.has === 'function' && c.ALLOWED_MODES.has('REAL')) {
-            return { pass: false, reasonKey: 'ba-reason-real-allowed' };
+        // UNLOCKED 2026-06-01: REAL journaling is now enabled. Confirm
+        // ALLOWED_MODES includes REAL.
+        if (!(c.ALLOWED_MODES && typeof c.ALLOWED_MODES.has === 'function' && c.ALLOWED_MODES.has('REAL'))) {
+            return { pass: false, reasonKey: 'ba-reason-real-rejected' };
         }
-        // Synthetic local payload — never stored. Validator must reject.
+        // Synthetic local payload — never stored. Validator must ACCEPT
+        // a well-formed REAL committed entry.
         const payload = {
             type:      'PROPOSAL_DECISION',
             mode:      'REAL',
-            committed: false,
-            dryRun:    true,
+            committed: true,
+            dryRun:    false,
             decision:  'ACCEPT',
             risk:      'LOW',
-            summary:   'self-test synthetic — must be rejected',
+            summary:   'self-test synthetic — real committed entry',
             actor:     { type: 'OPERATOR' },
             proposal:  { id: 'self-test', confidence: 0 },
-            result:    { stateMutation: false, journalPersisted: false, backendCommitCalled: false },
+            result:    { stateMutation: true, journalPersisted: true, backendCommitCalled: true },
         };
         let out;
-        try { out = c.validateJournalEntry(payload); } catch (_) { out = { valid: true }; }
-        return (out && out.valid === false)
-            ? { pass: true,  reasonKey: 'ba-reason-real-rejected' }
-            : { pass: false, reasonKey: 'ba-reason-real-accepted' };
+        try { out = c.validateJournalEntry(payload); } catch (_) { out = { valid: false }; }
+        return (out && out.valid === true)
+            ? { pass: true,  reasonKey: 'ba-reason-real-allowed'  }
+            : { pass: false, reasonKey: 'ba-reason-real-rejected' };
     }
 
     function checkExportSafetyFlagsRejected() {
@@ -778,10 +787,28 @@
 
     // ── Individual violation tests ────────────────────────────────
     // Each returns { rejected: bool, reasonKey, detail? }.
+    // UNLOCKED 2026-06-01: REAL / committed:true / dryRun:false are no
+    // longer violations. These three now confirm the OPEN contract
+    // still rejects MALFORMED real entries (missing id / bad actor /
+    // bad result shape) — the contract still guards entry integrity.
+    function baseRealEntry() {
+        return {
+            type:      'PROPOSAL_DECISION',
+            mode:      'REAL',
+            committed: true,
+            dryRun:    false,
+            decision:  'ACCEPT',
+            risk:      'LOW',
+            summary:   'vtest synthetic — real, malformed on purpose',
+            actor:     { type: 'OPERATOR' },
+            proposal:  { id: 'vtest' },
+            result:    { stateMutation: true, journalPersisted: true, backendCommitCalled: true },
+        };
+    }
     function vtestJournalRealMode() {
         const C = window.AppShellJournalContract;
         if (!C || typeof C.validateJournalEntry !== 'function') return { rejected: false, reasonKey: 'ba-vtest-r-bridge-missing' };
-        const p = baseJournalEntry(); p.mode = 'REAL';
+        const p = baseRealEntry(); p.proposal = { id: '' };          // missing proposal id
         let out; try { out = C.validateJournalEntry(p); } catch (_) { out = { valid: true }; }
         return (out && out.valid === false)
             ? { rejected: true,  reasonKey: 'ba-vtest-r-rejected' }
@@ -790,7 +817,7 @@
     function vtestJournalCommittedTrue() {
         const C = window.AppShellJournalContract;
         if (!C || typeof C.validateJournalEntry !== 'function') return { rejected: false, reasonKey: 'ba-vtest-r-bridge-missing' };
-        const p = baseJournalEntry(); p.committed = true;
+        const p = baseRealEntry(); p.actor = { type: 'BOGUS' };      // bad actor type
         let out; try { out = C.validateJournalEntry(p); } catch (_) { out = { valid: true }; }
         return (out && out.valid === false)
             ? { rejected: true,  reasonKey: 'ba-vtest-r-rejected' }
@@ -799,7 +826,7 @@
     function vtestJournalDryRunFalse() {
         const C = window.AppShellJournalContract;
         if (!C || typeof C.validateJournalEntry !== 'function') return { rejected: false, reasonKey: 'ba-vtest-r-bridge-missing' };
-        const p = baseJournalEntry(); p.dryRun = false;
+        const p = baseRealEntry(); p.result = 'not-an-object';       // bad result shape
         let out; try { out = C.validateJournalEntry(p); } catch (_) { out = { valid: true }; }
         return (out && out.valid === false)
             ? { rejected: true,  reasonKey: 'ba-vtest-r-rejected' }
@@ -1476,9 +1503,10 @@
             mode:             'PREVIEW_ONLY',
             generatedAt:      new Date(Date.now()).toISOString(),
             app:              'RMOOZ',
-            // Five hard-locked safety flags — self-declaration that
-            // mirrors PR-17's export package. The code itself
-            // satisfies every one of these claims.
+            // Safety flags for the CHECKLIST-GENERATION action itself —
+            // generating this preview still writes no file, creates no
+            // download, calls no backend, and mutates no scenario state.
+            // (System-level commit posture is in `boundaries` + `notes`.)
             localOnly:        true,
             fileWritten:      false,
             downloadCreated:  false,
@@ -1491,12 +1519,11 @@
                 regression:      regressionResultEnum(summary),
             },
             notes: [
-                'No real commit',
-                'No real journal',
-                'No export file',
-                'No download',
-                'No backend write',
-                'No scenario mutation',
+                'Operator commit: LIVE — ACCEPT/REJECT POST /api/sim/commit',
+                'Real journal: ENABLED — durable rows at data/journal/<run>.jsonl',
+                'Decision Records: in-memory UI mirror only',
+                'Export: preview only · Download: locked',
+                'No client scenario-state mutation',
             ],
         };
     }

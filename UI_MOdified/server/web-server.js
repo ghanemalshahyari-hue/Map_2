@@ -758,6 +758,35 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    // POST /api/sim/decide — DIRECT WS3 decision commit (deterministic engine).
+    //   body:    { scenarioName?, stepIndex?, decisions:[{type,...}] | decision,
+    //              operator_id? | headless:{reason}, runId?, mods? }
+    //   returns: { ok, committed_state (World State), effects, journal_seq,
+    //              prev_state_hash, post_state_hash, run_id }
+    //   Derives World State (WS1+DB1+DET1), applies the operator's WS3
+    //   decision(s) via WS3, and writes durable journal row(s) — the
+    //   deterministic-sim commit path (distinct from the LLM /commit above).
+    if (pathname === '/api/sim/decide' && req.method === 'POST') {
+        readJsonBody(req, { maxBytes: 200_000 }).then(async (body) => {
+            body = body || {};
+            const scenarioName = body.scenarioName || scenarios.DEFAULT_NAME;
+            const scenario = scenarios.loadScenario(scenarioName);
+            return adjudicator.commitDecisions({
+                scenario,
+                scenarioName,
+                stepIndex:   body.stepIndex,
+                decisions:   body.decisions || (body.decision ? [body.decision] : []),
+                operator_id: body.operator_id || null,
+                headless:    body.headless || null,
+                runId:       body.runId || null,
+                mods:        body.mods || null,
+                engineOpts:  body.engineOpts || null,
+            });
+        }).then(r => sendJson(res, 200, r))
+          .catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+
     // Operator feedback on an adjudicated step (item #9). Append-only.
     // Body: { scenarioName, stepIndex, decision: 'accept'|'reject'|'note',
     //         trialId?, coaParams?, provider?, model?, note? }.

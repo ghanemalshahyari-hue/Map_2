@@ -9954,3 +9954,37 @@ body.orbat-dock-resizing .map-workspace .leaflet-bottom {
 [data-theme="light"] .sw-live-map-status[data-state="on"]          { background: rgba(40,140,60,.18); color: rgba(20,100,40,.92); }
 [data-theme="light"] .sw-live-map-status[data-state="off"]         { background: rgba(100,100,100,.14); color: rgba(80,80,80,.85); }
 [data-theme="light"] .sw-live-map-status[data-state="unavailable"] { background: rgba(160,110,20,.14); color: rgba(140,90,10,.88); }
+
+/* ── VIS1: Timeline event ticks (read-only per-step event track) ───────── */
+.tl-event-ticks {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    height: 12px;
+    padding: 2px 8px;
+    background: rgba(15, 22, 35, 0.6);
+    border-top: 1px solid #2a3140;
+}
+.tl-event-ticks.is-empty { display: none; }
+.tl-event-ticks .tl-tick {
+    flex: 1 1 0;
+    min-width: 2px;
+    border-radius: 2px;
+    background: #2a3550;                /* step with no events */
+    transition: background-color .12s, box-shadow .12s, transform .12s;
+}
+.tl-event-ticks .tl-tick.has-events { background: #d2862f; }              /* events present (amber) */
+.tl-event-ticks .tl-tick.has-events[data-count="1"] { opacity: .72; }
+.tl-event-ticks .tl-tick.is-current {                                     /* current step (blue) */
+    background: #3a96d2;
+    box-shadow: 0 0 0 1px #cfe6ff inset, 0 0 4px rgba(58,150,210,.6);
+    transform: scaleY(1.4);
+}
+.tl-event-ticks .tl-tick.has-events.is-current {                          /* current + events */
+    background: #e0a84a;
+    box-shadow: 0 0 0 1px #fff3d6 inset, 0 0 5px rgba(210,134,47,.7);
+}
+[data-theme="light"] .tl-event-ticks { background: rgba(225,230,240,0.7); border-top-color: #c4ccd8; }
+[data-theme="light"] .tl-event-ticks .tl-tick { background: #c2cad8; }
+[data-theme="light"] .tl-event-ticks .tl-tick.has-events { background: #d2862f; }
+[data-theme="light"] .tl-event-ticks .tl-tick.is-current { background: #2f7fc0; }

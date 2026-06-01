@@ -986,7 +986,7 @@
             'elog-evt-tl-phase':           'Timeline phase: {0}',
             'elog-evt-elog-collapsed':     'Event Log collapsed',
             'elog-evt-elog-expanded':      'Event Log expanded',
-            'elog-evt-ap-decision':        'Proposal decision recorded locally only',
+            'elog-evt-ap-decision':        'Operator decision recorded',
 
             // PR-7: AI Proposal Review (foundation only — no sim hookup)
             'ap-title':                    'AI Proposal Review',
@@ -1006,7 +1006,7 @@
             'ap-status-accepted':          'Accepted',
             'ap-status-rejected':          'Rejected',
             'ap-status-onhold':            'On Hold',
-            'ap-not-connected':            'Proposal decisions are not connected to simulation yet',
+            'ap-not-connected':            'Accept/Reject commit to the durable journal; Hold defers',
             'ap-sample-badge':             'SAMPLE / NOT CONNECTED',
 
             // PR-8: AI Proposal data contract
@@ -1058,6 +1058,11 @@
             'elog-evt-commit-dryrun':              'Commit bridge dry-run decision prepared',
             'elog-evt-commit-bad-decision':        'Commit bridge rejected invalid decision',
             'elog-evt-commit-bad-proposal':        'Commit bridge rejected invalid proposal',
+            'elog-evt-commit-sent':                'Commit request sent',
+            'elog-evt-commit-applied':             'Decision committed to journal',
+            'elog-evt-commit-rejected':            'Rejection committed to journal',
+            'elog-evt-commit-held':                'Decision held — no commit',
+            'elog-evt-commit-failed':              'Commit request failed',
             'commit-not-connected':                'Commit bridge is not connected to simulation yet',
 
             // PR-13: Local Decision Records (in-memory only)
@@ -1067,13 +1072,15 @@
             'dr-empty':                            'No local decision records',
             'dr-clear':                            'Clear records',
             'dr-dryrun':                           'Dry-run',
+            'dr-live':                             'Live',
             'dr-committed-no':                     'Committed: No',
+            'dr-committed-yes':                    'Committed: Yes',
             'elog-evt-dr-stored':                  'Local decision record stored',
             'elog-evt-dr-rejected':                'Local decision record rejected',
 
             // PR-14: Real Journal Contract Draft (validator only)
-            'dr-real-journal-disabled':            'Real journal not enabled',
-            'dr-draft-contract-ready':             'Draft contract ready',
+            'dr-real-journal-disabled':            'Real journal enabled (server)',
+            'dr-draft-contract-ready':             'Commit active',
             'elog-evt-journal-draft-validated':    'Journal draft contract validated',
             'elog-evt-journal-draft-rejected':     'Journal draft contract rejected',
 
@@ -1164,11 +1171,11 @@
             'ba-selftest-failed':                            'Self-test failed',
             'ba-selftest-not-run':                           'Not run',
             'ba-selftest-last-checked':                      'Last checked',
-            'ba-selftest-all-closed':                        'All boundaries closed',
-            'ba-check-proposal-service':                     'Proposal Service disabled',
-            'ba-check-commit-bridge':                        'Commit Bridge dry-run only',
+            'ba-selftest-all-closed':                        'Operator commit boundary open',
+            'ba-check-proposal-service':                     'Proposal service wired',
+            'ba-check-commit-bridge':                        'Commit bridge live',
             'ba-check-decision-records':                     'Decision Records in-memory only',
-            'ba-check-real-journal':                         'Real Journal mode rejected',
+            'ba-check-real-journal':                         'Real journal enabled',
             'ba-check-export-package':                       'Export safety flags rejected',
             'ba-check-download-guard':                       'Download Guard locked',
             'ba-check-backend-commit':                       'No forbidden methods exposed',
@@ -1185,6 +1192,8 @@
             'ba-reason-real-rejected':                       'validateJournalEntry({mode:REAL}) rejected',
             'ba-reason-real-allowed':                        'ALLOWED_MODES includes REAL',
             'ba-reason-real-accepted':                       'validator accepted REAL mode payload',
+            'ba-reason-service-wired':                       'proposal service bridge present',
+            'ba-reason-commit-live':                         'commit bridge mode = live',
             'ba-reason-export-rejected':                     'export safety flag + wrong TYPE/MODE both rejected',
             'ba-reason-export-accepted':                     'export validator accepted tampered payload',
             'ba-reason-guard-locked':                        'locked:true and isAllowed():false',
@@ -1211,9 +1220,9 @@
             'ba-vtest-all-rejected':                         'All synthetic violations rejected',
             'ba-vtest-rejected':                             'Rejected as expected',
             'ba-vtest-accepted':                             'Unexpectedly accepted',
-            'ba-vtest-journal-real':                         'Journal REAL mode',
-            'ba-vtest-journal-committed':                    'Journal committed:true',
-            'ba-vtest-journal-dryrun-false':                 'Journal dryRun:false',
+            'ba-vtest-journal-real':                         'Journal rejects missing id',
+            'ba-vtest-journal-committed':                    'Journal rejects bad actor',
+            'ba-vtest-journal-dryrun-false':                 'Journal rejects bad result',
             'ba-vtest-export-mode':                          'Export non-PREVIEW mode',
             'ba-vtest-export-file-written':                  'Export fileWritten:true',
             'ba-vtest-export-download-created':              'Export downloadCreated:true',
@@ -1327,6 +1336,9 @@
             'tl-phase-2':                  'Phase 2',
             'tl-phase-end':                'End',
             'tl-status-inactive':          'Simulation not connected',
+            'tl-ticks-aria':               'Timeline events by step',
+            'tl-ticks-step-events':        'Step {n}: {c} event(s)',
+            'tl-ticks-step-none':          'Step {n}: no events',
 
             // PR-42: Scenario Workspace Shell (read-only)
             'sw-tool-label':             'Scenario',
@@ -3317,7 +3329,7 @@
             'elog-evt-tl-phase':           'مرحلة خط الزمن: {0}',
             'elog-evt-elog-collapsed':     'تم طي سجل الأحداث',
             'elog-evt-elog-expanded':      'تم توسيع سجل الأحداث',
-            'elog-evt-ap-decision':        'تم تسجيل قرار المقترح محلياً فقط',
+            'elog-evt-ap-decision':        'تم تسجيل قرار المُشغِّل',
 
             // PR-7: مراجعة مقترحات الذكاء الاصطناعي — واجهة أساسية فقط
             'ap-title':                    'مراجعة مقترحات الذكاء الاصطناعي',
@@ -3337,7 +3349,7 @@
             'ap-status-accepted':          'مقبول',
             'ap-status-rejected':          'مرفوض',
             'ap-status-onhold':            'معلّق',
-            'ap-not-connected':            'قرارات المقترحات غير متصلة بالمحاكاة حتى الآن',
+            'ap-not-connected':            '«اعتماد/رفض» يعتمدان في السجل الدائم؛ «تعليق» يؤجّل',
             'ap-sample-badge':             'عينة / غير متصل',
 
             // PR-8: عقد بيانات مقترحات الذكاء الاصطناعي
@@ -3389,6 +3401,11 @@
             'elog-evt-commit-dryrun':              'تم تجهيز قرار تجريبي عبر جسر الاعتماد',
             'elog-evt-commit-bad-decision':        'رفض جسر الاعتماد قراراً غير صالح',
             'elog-evt-commit-bad-proposal':        'رفض جسر الاعتماد مقترحاً غير صالح',
+            'elog-evt-commit-sent':                'تم إرسال طلب الاعتماد',
+            'elog-evt-commit-applied':             'تم اعتماد القرار في السجل',
+            'elog-evt-commit-rejected':            'تم تسجيل الرفض في السجل',
+            'elog-evt-commit-held':                'تم تعليق القرار — دون اعتماد',
+            'elog-evt-commit-failed':              'فشل طلب الاعتماد',
             'commit-not-connected':                'جسر الاعتماد غير متصل بالمحاكاة حتى الآن',
 
             // PR-13: سجلات القرارات المحلية (في الذاكرة فقط)
@@ -3398,13 +3415,15 @@
             'dr-empty':                            'لا توجد سجلات قرارات محلية',
             'dr-clear':                            'مسح السجلات',
             'dr-dryrun':                           'تجريبي',
+            'dr-live':                             'مباشر',
             'dr-committed-no':                     'تم الاعتماد: لا',
+            'dr-committed-yes':                    'تم الاعتماد: نعم',
             'elog-evt-dr-stored':                  'تم حفظ سجل قرار محلي',
             'elog-evt-dr-rejected':                'تم رفض سجل القرار المحلي',
 
             // PR-14: مسودة عقد السجل الحقيقي (تحقق فقط)
-            'dr-real-journal-disabled':            'السجل الحقيقي غير مفعل',
-            'dr-draft-contract-ready':             'عقد المسودة جاهز',
+            'dr-real-journal-disabled':            'السجل الحقيقي مُفعّل (الخادم)',
+            'dr-draft-contract-ready':             'الاعتماد مُفعّل',
             'elog-evt-journal-draft-validated':    'تم التحقق من عقد مسودة السجل',
             'elog-evt-journal-draft-rejected':     'تم رفض عقد مسودة السجل',
 
@@ -3495,11 +3514,11 @@
             'ba-selftest-failed':                            'فشل الفحص الذاتي',
             'ba-selftest-not-run':                           'لم يُشغّل',
             'ba-selftest-last-checked':                      'آخر فحص',
-            'ba-selftest-all-closed':                        'جميع الحدود مغلقة',
-            'ba-check-proposal-service':                     'خدمة المقترحات معطّلة',
-            'ba-check-commit-bridge':                        'جسر الاعتماد تجريبي فقط',
+            'ba-selftest-all-closed':                        'حدّ اعتماد المُشغِّل مفتوح',
+            'ba-check-proposal-service':                     'خدمة المقترحات موصولة',
+            'ba-check-commit-bridge':                        'جسر الاعتماد مُفعّل (مباشر)',
             'ba-check-decision-records':                     'سجلات القرارات في الذاكرة فقط',
-            'ba-check-real-journal':                         'رفض وضع السجل الحقيقي',
+            'ba-check-real-journal':                         'السجل الحقيقي مُفعّل',
             'ba-check-export-package':                       'رفض رايات أمان التصدير',
             'ba-check-download-guard':                       'حارس التنزيل مقفل',
             'ba-check-backend-commit':                       'لا توجد طرق محظورة معروضة',
@@ -3516,6 +3535,8 @@
             'ba-reason-real-rejected':                       'تم رفض validateJournalEntry({mode:REAL})',
             'ba-reason-real-allowed':                        'ALLOWED_MODES تتضمن REAL',
             'ba-reason-real-accepted':                       'قَبِل المُتحقق حمولة وضع REAL',
+            'ba-reason-service-wired':                       'جسر خدمة المقترحات موجود',
+            'ba-reason-commit-live':                         'وضع جسر الاعتماد = مباشر',
             'ba-reason-export-rejected':                     'تم رفض راية الأمان والـ TYPE/MODE الخاطئَين',
             'ba-reason-export-accepted':                     'قَبِل مُتحقق التصدير حمولة مُلاعَب بها',
             'ba-reason-guard-locked':                        'locked:true و isAllowed():false',
@@ -3542,9 +3563,9 @@
             'ba-vtest-all-rejected':                         'تم رفض جميع المخالفات الاصطناعية',
             'ba-vtest-rejected':                             'تم الرفض كما هو متوقع',
             'ba-vtest-accepted':                             'تم القبول بشكل غير متوقع',
-            'ba-vtest-journal-real':                         'وضع السجل REAL',
-            'ba-vtest-journal-committed':                    'السجل committed:true',
-            'ba-vtest-journal-dryrun-false':                 'السجل dryRun:false',
+            'ba-vtest-journal-real':                         'السجل يرفض مُعرّفاً مفقوداً',
+            'ba-vtest-journal-committed':                    'السجل يرفض فاعلاً غير صالح',
+            'ba-vtest-journal-dryrun-false':                 'السجل يرفض نتيجة غير صالحة',
             'ba-vtest-export-mode':                          'وضع تصدير غير PREVIEW',
             'ba-vtest-export-file-written':                  'تصدير fileWritten:true',
             'ba-vtest-export-download-created':              'تصدير downloadCreated:true',
@@ -3658,6 +3679,9 @@
             'tl-phase-2':                  'المرحلة 2',
             'tl-phase-end':                'النهاية',
             'tl-status-inactive':          'المحاكاة غير متصلة',
+            'tl-ticks-aria':               'أحداث الخط الزمني حسب الخطوة',
+            'tl-ticks-step-events':        'الخطوة {n}: {c} حدث',
+            'tl-ticks-step-none':          'الخطوة {n}: لا أحداث',
 
             // PR-42: مساحة عمل السيناريو (للقراءة فقط)
             'sw-tool-label':             'السيناريو',

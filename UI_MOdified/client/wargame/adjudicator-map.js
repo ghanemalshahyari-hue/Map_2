@@ -81,7 +81,8 @@
     let blueMarkers = {};        // { 'BLUE_xxx': L.marker }
     let pipelineLatLngs = null;  // cached lat/lng array for split computation
     let pipelineSegmentKm = null;// cached cumulative km along pipeline per vertex
-    let legendControl = null;    // Leaflet control (top-right legend panel)
+    let legendControl = null;    // Leaflet control (map legend panel)
+    let legendVisible = true;
     let sitrepControl = null;    // Leaflet control (top-left SITREP banner)
     let displayOffsetNotice = null; // Leaflet control (bottom-left display-offset info chip — PR-106)
     let ewHalo = null;           // circle around RED_405EW sized by EW band
@@ -2035,8 +2036,9 @@
         try { updateUnitScale(); } catch (_) { /* ignore */ } // initial zoom-responsive symbol size
         try { renderMovementTrails(0); } catch (_) { /* ignore */ } // AN4: record step-0 positions (no trail yet)
 
-        // Add the legend control (top-right corner of the map).
-        addLegend();
+        // Add the legend control near the lower-left edge so it stays out of
+        // the densest unit laydown and can be toggled from the app header.
+        showLegend();
         // Add the SITREP banner (top-left corner of the map). Initial state
         // is a placeholder; applyState() fills it as the trial progresses.
         addSitrep();
@@ -2046,7 +2048,7 @@
 
     function addLegend() {
         if (legendControl || !window.L) return;
-        legendControl = window.L.control({ position: 'topright' });
+        legendControl = window.L.control({ position: 'bottomleft' });
         legendControl.onAdd = function () {
             const div = window.L.DomUtil.create('div', 'wg-adj-legend');
             div.style.cssText = `
@@ -2054,7 +2056,7 @@
                 padding:8px 10px;border-radius:4px;border:1px solid #2a3140;
                 box-shadow:0 0 6px rgba(0,0,0,.4);line-height:1.5;
                 font-family:sans-serif;min-width:170px;max-width:200px;
-                margin-right:340px;max-height:78vh;overflow:auto;
+                margin-left:10px;margin-bottom:56px;max-height:52vh;overflow:auto;
             `;
             const blsRow = (color, label) =>
                 `<span style="display:inline-block;width:14px;height:8px;
@@ -2109,11 +2111,32 @@
         legendControl.addTo(window.map);
     }
 
+    function showLegend() {
+        legendVisible = true;
+        addLegend();
+        return legendVisible;
+    }
+
     function removeLegend() {
         if (legendControl && window.map) {
             try { window.map.removeControl(legendControl); } catch (_) {}
         }
         legendControl = null;
+    }
+
+    function hideLegend() {
+        legendVisible = false;
+        removeLegend();
+        return legendVisible;
+    }
+
+    function toggleLegend(forceVisible) {
+        const nextVisible = typeof forceVisible === 'boolean' ? forceVisible : !legendVisible;
+        return nextVisible ? showLegend() : hideLegend();
+    }
+
+    function isLegendVisible() {
+        return legendVisible;
     }
 
     // ── SITREP banner (top-left of the map) ───────────────────────────
@@ -3409,12 +3432,12 @@
 
             const members = arcs.map(a => `${a.actor_uid || '?'} → ${a.target_uid || '?'}`).join(', ');
             const arrow = createManeuverArrowPolygon(centerline, color, {
-                bodyHalfPx:    5,
-                headHalfPx:    12,
-                headLenPx:     18,
+                bodyHalfPx:    3,
+                headHalfPx:    9,
+                headLenPx:     14,
                 outline:       outlineColor,
-                outlineWidthPx: 1.0,
-                opacity:       0.70,
+                outlineWidthPx: 0.8,
+                opacity:       0.75,
                 pane:          SCENARIO_GRAPHICS_PANE,
             });
             if (arrow) {
@@ -3424,7 +3447,7 @@
             } else {
                 // Fallback: thin polyline + arrowhead when polygon builder is unavailable.
                 const fb = window.L.polyline([[aLat, aLng], [tip.lat, tip.lng]], {
-                    color, weight: 3, opacity: 0.70, interactive: false,
+                    color, weight: 2, opacity: 0.75, interactive: false,
                     pane: SCENARIO_GRAPHICS_PANE,
                 }).bindTooltip(`${label}: ${members}`, { sticky: true });
                 fb.addTo(layerGroup);
@@ -5355,6 +5378,10 @@
         auditResolvedUnitSymbols,
         renderMovementTrails,
         renderEngagementMissionGraphics, // MG1: Attack/Counterattack mission graphics for the step's engagement_arcs
+        showLegend,
+        hideLegend,
+        toggleLegend,
+        isLegendVisible,
         // Position primitives (so external callers can build their own
         // step-resolved state without re-implementing the movement model)
         computeRedPosition:  (meta, stepIndex, progress) => redPositionLonLat(meta, stepIndex, progress),

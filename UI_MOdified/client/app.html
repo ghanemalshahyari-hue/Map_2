@@ -4774,6 +4774,11 @@
     <script src="wargame/adjudicator-client.js?v=4"></script>
     <script src="wargame/adjudicator-map.js?v=37"></script>
     <script src="wargame/adjudicator-hud.js?v=20"></script>
+    <!-- PR-MOVE1: continuous movement + playback clock. Drives the existing
+         AppAdjudicatorMap.applyStepProgress over wall-clock time and wires the
+         transport bar (#tl-play/#tl-pause/#tl-speed). Additive — does not touch
+         the W3 render path. -->
+    <script src="wargame/movement-playback.js?v=1"></script>
     <script src="ops-panel.js?v=1"></script>
     <script src="map-hide-panels.js?v=1"></script>
 

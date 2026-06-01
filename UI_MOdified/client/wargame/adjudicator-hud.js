@@ -308,6 +308,11 @@
                     <button id="dem-toggle-btn" class="wargame-action-btn secondary" type="button" title="Toggle Libya DEM elevation overlay">&#9968; Terrain</button>
                     <input id="dem-opacity-slider" type="range" min="10" max="100" value="60" style="flex:1;cursor:pointer;" title="DEM opacity">
                 </div>
+                <div class="wg-adj-btn-row wg-adj-btn-row--3" style="margin-top:6px;">
+                    <button id="wg-adj-rings-btn"    class="wargame-action-btn secondary" type="button" title="Toggle indicative sensor/threat coverage rings (estimated)">&#9678; Coverage rings</button>
+                    <button id="wg-adj-contacts-btn" class="wargame-action-btn secondary" type="button" title="Toggle live sensor contacts (detection.js) — read-only">&#128225; Contacts</button>
+                    <button id="wg-adj-eng-btn"      class="wargame-action-btn secondary" type="button" title="Toggle live firing solutions (engagement.js) — read-only">&#127919; Firing solutions</button>
+                </div>
             </div>
 
             <!-- ── Step-by-step adjudication ── -->
@@ -2001,6 +2006,26 @@
         });
         root.querySelector('#dem-opacity-slider').addEventListener('input', (e) => {
             if (window.DemLayer) window.DemLayer.setOpacity(e.target.value / 100);
+        });
+        root.querySelector('#wg-adj-rings-btn').addEventListener('click', (e) => {
+            const map = window.AppAdjudicatorMap;
+            if (!map || typeof map.toggleCoverageRings !== 'function') return;
+            const on = map.toggleCoverageRings();
+            e.currentTarget.classList.toggle('active', !!on);
+        });
+        const contactsBtn = root.querySelector('#wg-adj-contacts-btn');
+        if (contactsBtn) contactsBtn.addEventListener('click', (e) => {
+            const map = window.AppAdjudicatorMap;
+            if (!map || typeof map.toggleDetectionContacts !== 'function') return;
+            const on = map.toggleDetectionContacts();
+            e.currentTarget.classList.toggle('active', !!on);
+        });
+        const engBtn = root.querySelector('#wg-adj-eng-btn');
+        if (engBtn) engBtn.addEventListener('click', (e) => {
+            const map = window.AppAdjudicatorMap;
+            if (!map || typeof map.toggleEngagements !== 'function') return;
+            const on = map.toggleEngagements();
+            e.currentTarget.classList.toggle('active', !!on);
         });
         root.querySelector('#wg-adj-step-btn').addEventListener('click', async () => { await ensureScenarioLoaded(); adjudicateNext(); });
         root.querySelector('#wg-adj-trial-btn').addEventListener('click', async () => { await ensureScenarioLoaded(); runOneTrial(); });

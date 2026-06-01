@@ -255,9 +255,33 @@ function renderTile(z, x, y, size = 256) {
     return png;
 }
 
+// ── Heightmap tile (for 3D terrain) ─────────────────────────────────────────
+// Returns a `size`×`size` Float32Array of REAL-metre elevations for the
+// web-mercator tile (z,x,y), row-major from the NW corner (north→south,
+// west→east) — the order Cesium's HeightmapTerrainData expects. Returns null
+// when the tile is fully outside DEM coverage (caller then renders it flat).
+function renderHeights(z, x, y, size = 65) {
+    z = +z; x = +x; y = +y; size = +size || 65;
+    const b = tileBounds(z, x, y);
+    if (b.east < WEST || b.west > EAST || b.north < SOUTH || b.south > NORTH) return null;
+
+    const raw = readRegion(b.west, b.north, b.east, b.south, size, size);
+    if (!raw) return null;
+
+    const out = new Float32Array(size * size);
+    for (let i = 0; i < out.length; i++) {
+        const v = raw[i] / ELEV_SCALE;
+        // Bilinear blending can drag NODATA (-1e30) into neighbours; treat any
+        // out-of-range result as sea level so the mesh stays sane.
+        out[i] = (Number.isFinite(v) && v > -500 && v < 9000) ? v : 0;
+    }
+    return out;
+}
+
 module.exports = {
     getElevation,
     renderTile,
+    renderHeights,
     tileBounds,
     getMeta: () => ({
         west: WEST, east: EAST, north: NORTH, south: SOUTH,

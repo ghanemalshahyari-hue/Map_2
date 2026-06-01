@@ -4776,10 +4776,16 @@
     <script src="wargame/red-team-controller.js?v=4"></script>
     <script src="wargame/scenario-state.js?v=1"></script>
     <script src="wargame/adjudicator-client.js?v=4"></script>
-    <script src="wargame/adjudicator-map.js?v=37"></script>
-    <script src="wargame/cesium-view.js?v=1"></script>
+    <!-- RMOOZ DB-Lite range model (sensor/weapon ranges) + role→capability
+         catalog — single source of truth for the coverage/threat rings in
+         adjudicator-map.js (and the detection/engagement engines). -->
+    <script src="shell/detection.js?v=1"></script>
+    <script src="shell/engagement.js?v=1"></script>
+    <script src="shell/world-state-db.js?v=1"></script>
+    <script src="wargame/adjudicator-map.js?v=41"></script>
+    <script src="wargame/cesium-view.js?v=3"></script>
     <script src="dem-layer.js?v=1"></script>
-    <script src="wargame/adjudicator-hud.js?v=20"></script>
+    <script src="wargame/adjudicator-hud.js?v=22"></script>
     <!-- PR-MOVE1: continuous movement + playback clock. Drives the existing
          AppAdjudicatorMap.applyStepProgress over wall-clock time and wires the
          transport bar (#tl-play/#tl-pause/#tl-speed). Additive — does not touch

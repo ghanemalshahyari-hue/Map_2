@@ -85,8 +85,14 @@
     let legendVisible = true;
     let sitrepControl = null;    // Leaflet control (top-left SITREP banner)
     let displayOffsetNotice = null; // Leaflet control (bottom-left display-offset info chip — PR-106)
-    let ewHalo = null;           // circle around RED_405EW sized by EW band
+    let ewHalo = null;           // circle around EW-capable unit(s) sized by EW band
     let contactHalo = null;      // circle around most recent destroyed Blue
+    let coverageRings = [];      // CMO-style per-unit sensor/threat coverage rings (L.circle)
+    let coverageRingsEnabled = false; // off by default — operator overlay, toggled from the HUD
+    let detectionContacts = [];  // DET1: per-step sensor-contact markers (L.circleMarker)
+    let detectionContactsEnabled = false; // off by default — read-only overlay, toggled from the HUD
+    let engagementLines = [];    // ENG1: per-step firing-solution lines (L.polyline)
+    let engagementsEnabled = false; // off by default — read-only overlay, toggled from the HUD
     let aoLayers = [];           // dashed blue polygons for AO boundaries
     let advanceArrows = [];      // L.polylines with arrow tips, BLS → tip
     let attackArrows = [];       // per-step engagement arrows (red kill + blue counterattack pulse)
@@ -1023,6 +1029,14 @@
         return !!(sc && (sc.red_unit_step_coords || sc.blue_unit_step_coords || sc.red_unit_step_prev || sc.blue_unit_step_prev));
     }
 
+    // True if any step carries explicit engagement_arcs[]. The animated
+    // engagement path (mission graphics + salvo) is gated on DATA, not on the
+    // `w3-rich` tag — any scenario that ships arcs gets the animation.
+    function scenarioHasEngagementArcs(sc) {
+        const steps = sc && Array.isArray(sc.steps) ? sc.steps : [];
+        return steps.some(s => s && Array.isArray(s.engagement_arcs) && s.engagement_arcs.length);
+    }
+
     function clearMovementTrails() {
         for (const t of movementTrails) { if (t && layerGroup) { try { layerGroup.removeLayer(t); } catch (_) {} } }
         movementTrails = [];
@@ -1719,11 +1733,35 @@
     // the user ManeuverArrow pane (410) but below unit marker icons (600).
     // Idempotent — safe to call from both drawScenario and applyState.
     const SCENARIO_GRAPHICS_PANE = 'rmoozScenarioGraphicsPane';
+    // Coverage rings sit BELOW scenario graphics (520) and unit markers (600)
+    // so they read as background envelopes and never intercept marker clicks.
+    const COVERAGE_RINGS_PANE = 'rmoozCoverageRingsPane';
+    // Detection contacts sit ABOVE the coverage rings (415) but BELOW scenario
+    // graphics (520) and unit markers (600) — they annotate units, never occlude.
+    const CONTACTS_PANE = 'rmoozContactsPane';
+    const ENGAGEMENTS_PANE = 'rmoozEngagementsPane';
     function ensureScenarioGraphicsPane() {
         const m = window.map;
         if (!m || typeof m.createPane !== 'function') return;
         if (!m.getPane(SCENARIO_GRAPHICS_PANE)) {
             m.createPane(SCENARIO_GRAPHICS_PANE).style.zIndex = '520';
+        }
+        if (!m.getPane(COVERAGE_RINGS_PANE)) {
+            const p = m.createPane(COVERAGE_RINGS_PANE);
+            p.style.zIndex = '415';
+            p.style.pointerEvents = 'none'; // never block marker/popup interaction
+        }
+        if (!m.getPane(CONTACTS_PANE)) {
+            const p = m.createPane(CONTACTS_PANE);
+            p.style.zIndex = '430';
+            p.style.pointerEvents = 'none'; // read-only annotation, never intercepts clicks
+        }
+        // Engagement firing-solution lines sit BELOW the contact dots (430) so the
+        // detection picture reads on top, but ABOVE the coverage rings (415).
+        if (!m.getPane(ENGAGEMENTS_PANE)) {
+            const p = m.createPane(ENGAGEMENTS_PANE);
+            p.style.zIndex = '425';
+            p.style.pointerEvents = 'none'; // read-only annotation, never intercepts clicks
         }
     }
 
@@ -2383,10 +2421,32 @@
 
     // ── EW halo around RED_405EW ──────────────────────────────────────
     // Radius (km) and color reflect the current EW band.
+    // Find EW-capable Red emitters by role/domain rather than a hardcoded UID,
+    // so any scenario's EW units light up. Falls back to the legacy RED_405EW
+    // marker if nothing matches (keeps the original wargame3 behavior intact).
+    function findEwEmitters() {
+        const out = [];
+        for (const uid in redMarkers) {
+            const m = redMarkers[uid];
+            if (!m || typeof m.getLatLng !== 'function') continue;
+            const ud = m._unitData || {};
+            const role   = String(ud.role || '').toLowerCase();
+            const domain = String(ud.domain || '').toLowerCase();
+            if (/ew|electronic|jam|sigint/.test(role) || /ew|electronic|cyber/.test(domain)) out.push(m);
+        }
+        if (!out.length && redMarkers['RED_405EW']) out.push(redMarkers['RED_405EW']);
+        return out;
+    }
+
+    function clearEwHalo() {
+        const halos = Array.isArray(ewHalo) ? ewHalo : (ewHalo ? [ewHalo] : []);
+        for (const h of halos) { if (h && layerGroup) { try { layerGroup.removeLayer(h); } catch (_) {} } }
+        ewHalo = null;
+    }
+
     function updateEwHalo(state) {
-        const ewUnit = redMarkers['RED_405EW'];
-        if (!ewUnit || !layerGroup) return;
-        if (ewHalo) { layerGroup.removeLayer(ewHalo); ewHalo = null; }
+        clearEwHalo();
+        if (!layerGroup || !state) return;
 
         const band = state.ew_effect;
         if (!band || band === 'Idle') return;
@@ -2396,18 +2456,25 @@
         })[band] || 0;
         if (!radiusKm) return;
 
-        const center = ewUnit.getLatLng();
-        ewHalo = window.L.circle(center, {
-            radius:    radiusKm * 1000,
-            color:     '#c08aff',
-            weight:    1,
-            opacity:   0.7,
-            fillColor: '#9b6fff',
-            fillOpacity: band === 'Heavy' ? 0.18 : band === 'Moderate' ? 0.12 : 0.07,
-            dashArray: '6 4',
-            interactive: false,
-        }).bindTooltip(`EW effect: ${band} (~${radiusKm} km)`, { sticky: false });
-        ewHalo.addTo(layerGroup);
+        const emitters = findEwEmitters();
+        if (!emitters.length) return;
+
+        const halos = [];
+        for (const ewUnit of emitters) {
+            const halo = window.L.circle(ewUnit.getLatLng(), {
+                radius:    radiusKm * 1000,
+                color:     '#c08aff',
+                weight:    1,
+                opacity:   0.7,
+                fillColor: '#9b6fff',
+                fillOpacity: band === 'Heavy' ? 0.18 : band === 'Moderate' ? 0.12 : 0.07,
+                dashArray: '6 4',
+                interactive: false,
+            }).bindTooltip(`EW effect: ${band} (~${radiusKm} km)`, { sticky: false });
+            halo.addTo(layerGroup);
+            halos.push(halo);
+        }
+        ewHalo = halos;
     }
 
     // Operator follow-up: even with color + reach-factor fixes, the map
@@ -2530,14 +2597,15 @@
             salientLayer.addTo(layerGroup);
         }
 
-        // W3-rich scenarios: per-role attack graphics don't translate. W3
-        // uses role names like "armored_brigade" / "strike" / "mech_inf_div"
-        // that don't match ROLE_ATTACK_STYLE, and per-unit `red_unit_step_coords`
-        // already shows every unit's authentic position. The phase line
-        // (updateAorPhaseLine) shows the frontline and engagement_arcs show
-        // cause-effect, so the per-unit chevrons would just clutter.
+        // If the scenario carries explicit engagement_arcs[], the animated
+        // mission-graphics + salvo path owns the engagement visual — drawing
+        // these per-role chevrons on top would double up and clutter. This is
+        // data-based (not tag-based): any scenario with arc data defers here,
+        // not just `w3-rich`. Scenarios without arcs keep the chevrons.
+        // (Per-role role names like "armored_brigade"/"strike" also don't match
+        // ROLE_ATTACK_STYLE, and per-unit step coords already show positions.)
         // Bail out after the salient polygon is rendered.
-        if (scenario && scenario.schema_variant === 'w3-rich') return;
+        if (scenarioHasEngagementArcs(scenario || scenarioRef)) return;
 
         // ── Per-red-unit NATO attack arrows ──
         // One axis-of-attack graphic for EACH attacking red unit, drawn
@@ -3609,7 +3677,10 @@
         clearEngagementArcs();
         if (!layerGroup || !state || !window.L) return;
         const sc = scenario || scenarioRef;
-        if (!sc || sc.schema_variant !== 'w3-rich') return;
+        // Global (not tag-gated): any scenario carrying engagement_arcs[] gets the
+        // animated mission graphics. The empty-arcs guard below makes this a safe
+        // no-op for scenarios without arc data.
+        if (!sc) return;
         const stepIndex = Number.isFinite(state && state.step_index) ? state.step_index : 0;
         engagementGraphicsStep = stepIndex;
         const stepRow = Array.isArray(sc.steps) ? sc.steps[stepIndex] : null;
@@ -4839,6 +4910,290 @@
         contactHalo.addTo(layerGroup);
     }
 
+    // ── CMO-style coverage / threat rings ─────────────────────────────
+    // Sensor-detection and weapon-engagement envelopes per unit, sourced from
+    // the SAME range model the sim engine uses — the RMOOZ DB-Lite in
+    // shell/detection.js (sensor_class[].ref_range_nm) and shell/engagement.js
+    // (weapon_class[].max_range_nm), read live off window.AppDetection /
+    // window.AppEngagement. Resolution order:
+    //   1. explicit km on the unit (sensor_range_km / weapon_range_km|threat_range_km),
+    //   2. the unit's own declared components (sensors[] / weapons[] → DB by class),
+    //   3. the DB-Lite capability catalog (shell/world-state-db.js → AppWorldStateDB
+    //      .enrichUnit) classifies role/domain → a sensors[]/weapons[] profile, then
+    //      step 2's DB lookup applies. The km value is always the DB's, not invented
+    //      here, and the catalog is the SAME one the detection/engagement engines use.
+    // No echelon fudge, no parallel role table. OFF by default; read-only overlay;
+    // no scenario mutation; no fabricated combat-state fields.
+    const NM_TO_KM = 1.852;
+    // In-sync mirror of the DB-Lite class tables — used only when the live
+    // modules aren't on the page (e.g. Node tests). Keep aligned with
+    // detection.js DEFAULT_DB.sensor_class + engagement.js DEFAULT_WPN_DB.weapon_class.
+    const RING_SENSOR_DB_FALLBACK = {
+        long_range_3d: { ref_range_nm: 200 }, multifunction: { ref_range_nm: 150 },
+        air_search: { ref_range_nm: 160 }, surface_search: { ref_range_nm: 60 },
+        fire_control: { ref_range_nm: 90 }, esm_intercept: { ref_range_nm: 0 },
+    };
+    const RING_WEAPON_DB_FALLBACK = {
+        long_range_sam: { max_range_nm: 80 }, medium_sam: { max_range_nm: 30 },
+        point_defense: { max_range_nm: 5 }, anti_ship: { max_range_nm: 75 },
+        gun: { max_range_nm: 12 },
+    };
+    function ringSensorDb() {
+        return (window.AppDetection && window.AppDetection.DEFAULT_DB && window.AppDetection.DEFAULT_DB.sensor_class)
+            || RING_SENSOR_DB_FALLBACK;
+    }
+    function ringWeaponDb() {
+        return (window.AppEngagement && window.AppEngagement.DEFAULT_WPN_DB && window.AppEngagement.DEFAULT_WPN_DB.weapon_class)
+            || RING_WEAPON_DB_FALLBACK;
+    }
+    // Capability resolution comes from the committed DB-Lite catalog
+    // (shell/world-state-db.js → AppWorldStateDB), the SAME classifier the
+    // detection/engagement engines use — not a parallel role table here. It maps
+    // role/domain → a sensors[]/weapons[] profile whose `class` values align with
+    // the detection.js / engagement.js DB-Lite. enrichUnit never overwrites
+    // authored components, so a unit's own sensors[]/weapons[] still win.
+    function ringEnrich(ud) {
+        if (window.AppWorldStateDB && typeof window.AppWorldStateDB.enrichUnit === 'function') {
+            try { return window.AppWorldStateDB.enrichUnit(ud) || ud; } catch (_) { return ud; }
+        }
+        return ud;   // catalog not on the page → only explicit km + declared components resolve
+    }
+    // Returns DB-sourced { sensorKm, threatKm, sensorClass, weaponClass } for a
+    // unit's _unitData. Zero radius ⇒ no ring of that kind.
+    function coverageRingRadiiKm(ud) {
+        ud = ud || {};
+        let sensorKm = Number.isFinite(ud.sensor_range_km) ? ud.sensor_range_km : null;
+        let weaponKm = Number.isFinite(ud.weapon_range_km) ? ud.weapon_range_km
+                     : (Number.isFinite(ud.threat_range_km) ? ud.threat_range_km : null);
+        let sensorClass = null, weaponClass = null;
+        const sdb = ringSensorDb(), wdb = ringWeaponDb();
+
+        // Resolve components: explicit km on the unit wins; otherwise the DB-Lite
+        // capability catalog classifies role/domain → sensors[]/weapons[] (and
+        // keeps any the unit already declared). The km still comes from the DB.
+        const eu = (sensorKm === null || weaponKm === null) ? ringEnrich(ud) : ud;
+
+        if (sensorKm === null && Array.isArray(eu.sensors) && eu.sensors.length) {
+            let best = 0, bestCls = null;
+            for (const s of eu.sensors) {
+                const cls = s && s.class;
+                const nm = (s && Number.isFinite(s.ref_range_nm) && s.ref_range_nm)
+                        || (cls && sdb[cls] && sdb[cls].ref_range_nm) || 0;
+                if (nm > best) { best = nm; bestCls = cls || bestCls; }
+            }
+            if (best > 0) { sensorKm = best * NM_TO_KM; sensorClass = bestCls; }
+        }
+        if (weaponKm === null && Array.isArray(eu.weapons) && eu.weapons.length) {
+            let best = 0, bestCls = null;
+            for (const w of eu.weapons) {
+                const cls = w && w.class;
+                const nm = (cls && wdb[cls] && wdb[cls].max_range_nm) || 0;
+                if (nm > best) { best = nm; bestCls = cls; }
+            }
+            if (best > 0) { weaponKm = best * NM_TO_KM; weaponClass = bestCls; }
+        }
+
+        const r = (v) => (v == null ? 0 : Math.max(0, Math.round(v)));
+        return { sensorKm: r(sensorKm), threatKm: r(weaponKm), sensorClass, weaponClass };
+    }
+
+    function clearCoverageRings() {
+        for (const r of coverageRings) {
+            if (r && layerGroup) { try { layerGroup.removeLayer(r); } catch (_) {} }
+        }
+        coverageRings = [];
+    }
+
+    // Draw indicative coverage/threat rings for every appeared, non-destroyed
+    // unit. Global + data-based (no w3-rich gate). No-op when the toggle is off.
+    // Must run AFTER updateUnitPositions so rings sit on each unit's CURRENT
+    // displayed position.
+    function renderCoverageRings(state) {
+        clearCoverageRings();
+        if (!coverageRingsEnabled || !layerGroup || !window.L) return;
+        const stepIndex = Number.isFinite(state && state.step_index) ? state.step_index : 0;
+        const drawSide = (markers, isBlue) => {
+            const sensorColor = isBlue ? '#3a96d2' : '#c41e1e';
+            const threatColor = isBlue ? '#1f6fb0' : '#7a1010';
+            for (const uid in markers) {
+                const m = markers[uid];
+                if (!m || typeof m.getLatLng !== 'function') continue;
+                const meta = m._wgRedMeta || m._wgBlueMeta || {};
+                if (stepIndex < (meta.appear || 0)) continue; // not on the board yet
+                let destroyed = false;
+                try { destroyed = getEffectiveUnitStatus(uid) === UNIT_STATUS.DESTROYED; } catch (_) {}
+                if (destroyed) continue;
+                const { sensorKm, threatKm, sensorClass, weaponClass } = coverageRingRadiiKm(m._unitData);
+                const center = m.getLatLng();
+                const name = (m._unitData && m._unitData.name) || uid;
+                if (threatKm > 0) {
+                    const tag = weaponClass ? ` [${weaponClass}]` : '';
+                    const ring = window.L.circle(center, {
+                        radius: threatKm * 1000, color: threatColor, weight: 1.2,
+                        opacity: 0.6, fillColor: threatColor, fillOpacity: 0.05,
+                        interactive: false, pane: COVERAGE_RINGS_PANE,
+                    }).bindTooltip(`${name} — weapon envelope ~${threatKm} km${tag}`, { sticky: true });
+                    ring.addTo(layerGroup); coverageRings.push(ring);
+                }
+                if (sensorKm > 0) {
+                    const tag = sensorClass ? ` [${sensorClass}]` : '';
+                    const ring = window.L.circle(center, {
+                        radius: sensorKm * 1000, color: sensorColor, weight: 1,
+                        opacity: 0.5, fill: false, dashArray: '5 5',
+                        interactive: false, pane: COVERAGE_RINGS_PANE,
+                    }).bindTooltip(`${name} — sensor coverage ~${sensorKm} km${tag}`, { sticky: true });
+                    ring.addTo(layerGroup); coverageRings.push(ring);
+                }
+            }
+        };
+        drawSide(redMarkers, false);
+        drawSide(blueMarkers, true);
+    }
+
+    // ── DET1: live sensor contacts ────────────────────────────────────────
+    // Wire the orphaned detection.js engine (computeContacts) into the live map
+    // so each side's sensor picture appears/fades as units move, change EMCON,
+    // or are destroyed — the core CMO "feel alive" behaviour. Read-only overlay;
+    // no scenario mutation; OFF by default. The unit capabilities (sensors[]/
+    // rcs_class) come from the SAME DB-Lite catalog the rings use (AppWorldStateDB
+    // → detection.js DEFAULT_DB), never invented here. Returns nothing when the
+    // engine or DB isn't on the page (e.g. before scripts load).
+    //
+    // Builds pseudo-units from the live markers (current displayed positions),
+    // enriches each via the catalog, runs computeContacts, then draws a small
+    // marker on each DETECTED target coloured by the DETECTING side (firm = solid,
+    // tentative = dashed/hollow). A unit detected by both sides gets both colours.
+    function buildDetectionUnits(state) {
+        const units = [];
+        const posByUid = {};
+        const src = state || lastAppliedState;
+        const stepIndex = Number.isFinite(src && src.step_index) ? src.step_index : 0;
+        const collect = (markers, side) => {
+            for (const uid in markers) {
+                const m = markers[uid];
+                if (!m || typeof m.getLatLng !== 'function') continue;
+                const meta = m._wgRedMeta || m._wgBlueMeta || {};
+                if (stepIndex < (meta.appear || 0)) continue;          // not on the board yet
+                let destroyed = false;
+                try { destroyed = getEffectiveUnitStatus(uid) === UNIT_STATUS.DESTROYED; } catch (_) {}
+                if (destroyed) continue;                               // dead units neither see nor are seen
+                const ll = m.getLatLng();
+                posByUid[uid] = ll;
+                const ud = m._unitData || {};
+                let u = {
+                    uid,
+                    side,
+                    role: ud.role,
+                    domain: ud.domain,
+                    position: [ll.lng, ll.lat],   // detection.js expects [lon, lat]
+                    sensors: ud.sensors, weapons: ud.weapons, rcs_class: ud.rcs_class,
+                    sensor_range_km: ud.sensor_range_km, altitude_ft: ud.altitude_ft,
+                };
+                if (window.AppWorldStateDB && typeof window.AppWorldStateDB.enrichUnit === 'function') {
+                    try { u = window.AppWorldStateDB.enrichUnit(u) || u; } catch (_) {}
+                }
+                units.push(u);
+            }
+        };
+        collect(redMarkers, 'red');
+        collect(blueMarkers, 'blue');
+        return { units, posByUid };
+    }
+
+    function clearDetectionContacts() {
+        for (const c of detectionContacts) {
+            if (c && layerGroup) { try { layerGroup.removeLayer(c); } catch (_) {} }
+        }
+        detectionContacts = [];
+    }
+
+    function renderDetectionContacts(state) {
+        clearDetectionContacts();
+        if (!detectionContactsEnabled || !layerGroup || !window.L) return;
+        if (!window.AppDetection || typeof window.AppDetection.computeContacts !== 'function') return;
+        const { units, posByUid } = buildDetectionUnits(state);
+        if (!units.length) return;
+        let contacts = [];
+        try { contacts = window.AppDetection.computeContacts({ units }) || []; } catch (_) { return; }
+        for (const c of contacts) {
+            const ll = posByUid[c.target_uid];
+            if (!ll) continue;
+            const firm = c.confidence === 'firm';
+            // colour by the side HOLDING the contact (blue sees red, red sees blue)
+            const color = c.detected_by_side === 'blue' ? '#3a96d2' : '#c41e1e';
+            const method = (c.method || 'radar').toUpperCase();
+            const sideLbl = c.detected_by_side === 'blue' ? 'Blue' : 'Red';
+            const dot = window.L.circleMarker(ll, {
+                radius: firm ? 9 : 11,
+                color, weight: firm ? 2 : 1.4,
+                opacity: firm ? 0.95 : 0.8,
+                fillColor: color, fillOpacity: firm ? 0.28 : 0,
+                dashArray: firm ? null : '4 4',
+                interactive: false, pane: CONTACTS_PANE,
+            }).bindTooltip(
+                `${sideLbl} contact · ${method} · ${c.confidence} · ${c.range_nm} nm — ${c.classification || 'unknown'}`,
+                { sticky: true }
+            );
+            dot.addTo(layerGroup);
+            detectionContacts.push(dot);
+        }
+    }
+
+    // ── ENG1: live firing solutions ───────────────────────────────────────
+    // Wire the orphaned engagement.js engine (computeEngagements) into the live
+    // map so the operator sees WHO CURRENTLY HAS A VALID SHOT at whom — a
+    // detection-gated, WRA/range/magazine/fire-control-gated firing picture that
+    // shifts as units move. Read-only overlay; no scenario mutation; OFF by
+    // default. Reuses the SAME enriched units + contacts the DET1 overlay uses
+    // (AppWorldStateDB → AppDetection), then runs AppEngagement.computeEngagements.
+    // Draws a shooter→target line for each `engaged` candidate only; the full
+    // record set (incl. blocked + reason) is available via getEngagements().
+    // These are COMPUTED firing solutions — distinct from the scenario's authored
+    // engagement_arcs (adjudicated kill outcomes) drawn elsewhere.
+    function computeEngagementRecords(state) {
+        if (!window.AppDetection || typeof window.AppDetection.computeContacts !== 'function') return null;
+        if (!window.AppEngagement || typeof window.AppEngagement.computeEngagements !== 'function') return null;
+        const { units, posByUid } = buildDetectionUnits(state);
+        if (!units.length) return null;
+        let contacts = [], recs = [];
+        try { contacts = window.AppDetection.computeContacts({ units }) || []; } catch (_) { return null; }
+        try { recs = window.AppEngagement.computeEngagements({ units }, contacts) || []; } catch (_) { return null; }
+        return { recs, posByUid };
+    }
+
+    function clearEngagements() {
+        for (const e of engagementLines) {
+            if (e && layerGroup) { try { layerGroup.removeLayer(e); } catch (_) {} }
+        }
+        engagementLines = [];
+    }
+
+    function renderEngagements(state) {
+        clearEngagements();
+        if (!engagementsEnabled || !layerGroup || !window.L) return;
+        const computed = computeEngagementRecords(state);
+        if (!computed) return;
+        const { recs, posByUid } = computed;
+        for (const r of recs) {
+            if (r.status !== 'engaged') continue;
+            const a = posByUid[r.shooter], b = posByUid[r.target];
+            if (!a || !b) continue;
+            const color = r.side === 'blue' ? '#3a96d2' : '#c41e1e';
+            const pkPct = Math.round((r.pk_kill || 0) * 100);
+            const sideLbl = r.side === 'blue' ? 'Blue' : 'Red';
+            const line = window.L.polyline([[a.lat, a.lng], [b.lat, b.lng]], {
+                color, weight: 1.5 + (r.pk_kill || 0) * 2.5, opacity: 0.85,
+                dashArray: '1 5', lineCap: 'round',
+                interactive: false, pane: ENGAGEMENTS_PANE,
+            }).bindTooltip(
+                `${sideLbl} firing solution · ${r.weapon} · Pk ${pkPct}% · salvo ${r.salvo} · ${r.range_nm} nm`,
+                { sticky: true }
+            );
+            line.addTo(layerGroup);
+            engagementLines.push(line);
+        }
+    }
+
     function clearScenario() {
         if (layerGroup && window.map) {
             window.map.removeLayer(layerGroup);
@@ -4858,6 +5213,9 @@
         redMarkers = {};
         blueMarkers = {};
         ewHalo = null;
+        coverageRings = [];
+        detectionContacts = [];
+        engagementLines = [];
         contactHalo = null;
         aoLayers = [];
         advanceArrows = [];
@@ -5092,6 +5450,9 @@
         updateSitrep(state);
         updateEwHalo(state);
         updateContactHalo(state);
+        renderCoverageRings(state); // CMO rings: after unit positions update (~:5150), no-op when toggle off
+        renderDetectionContacts(state); // DET1 contacts: after positions update, no-op when toggle off
+        renderEngagements(state); // ENG1 firing solutions: after contacts, no-op when toggle off
         updateAdvanceArrows(state, scenario || scenarioRef, { instant });
         updateAttackArrows(state, scenario || scenarioRef);
         // W3-rich: explicit engagement mission graphics replace the nearest-red
@@ -5456,6 +5817,7 @@
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
         clearSuppressionHalos();
+        try { clearCoverageRings(); } catch (_) {} // CMO rings: drop stale rings on rewind
         for (const t of effectTimers) { try { clearTimeout(t); } catch (_) {} }
         effectTimers = [];
         // Restore any markers we faded
@@ -5833,6 +6195,90 @@
         auditResolvedUnitSymbols,
         renderMovementTrails,
         renderEngagementMissionGraphics, // MG1: Attack/Counterattack mission graphics for the step's engagement_arcs
+        // CMO-style indicative sensor/threat coverage rings (estimated radii from
+        // domain/role/echelon; off by default; schema-overridable). Toggling on
+        // re-renders against the last applied state so rings appear immediately.
+        renderCoverageRings,
+        clearCoverageRings,
+        coverageRingRadiiKm,
+        setCoverageRings: (on) => {
+            coverageRingsEnabled = (on !== false);
+            try { coverageRingsEnabled ? renderCoverageRings(lastAppliedState) : clearCoverageRings(); } catch (_) {}
+            try { if (window.AppCesiumView) window.AppCesiumView.renderCoverageRings(lastAppliedState); } catch (_) {}
+            return coverageRingsEnabled;
+        },
+        toggleCoverageRings: () => {
+            coverageRingsEnabled = !coverageRingsEnabled;
+            try { coverageRingsEnabled ? renderCoverageRings(lastAppliedState) : clearCoverageRings(); } catch (_) {}
+            try { if (window.AppCesiumView) window.AppCesiumView.renderCoverageRings(lastAppliedState); } catch (_) {}
+            return coverageRingsEnabled;
+        },
+        isCoverageRingsVisible: () => !!coverageRingsEnabled,
+        // DET1: live sensor contacts from detection.js computeContacts. Off by
+        // default; read-only. Toggling re-renders against the last applied state
+        // so the picture appears immediately, and keeps Cesium 3D in sync.
+        renderDetectionContacts,
+        clearDetectionContacts,
+        setDetectionContacts: (on) => {
+            detectionContactsEnabled = (on !== false);
+            try { detectionContactsEnabled ? renderDetectionContacts(lastAppliedState) : clearDetectionContacts(); } catch (_) {}
+            try { if (window.AppCesiumView && window.AppCesiumView.renderDetectionContacts) window.AppCesiumView.renderDetectionContacts(lastAppliedState); } catch (_) {}
+            return detectionContactsEnabled;
+        },
+        toggleDetectionContacts: () => {
+            detectionContactsEnabled = !detectionContactsEnabled;
+            try { detectionContactsEnabled ? renderDetectionContacts(lastAppliedState) : clearDetectionContacts(); } catch (_) {}
+            try { if (window.AppCesiumView && window.AppCesiumView.renderDetectionContacts) window.AppCesiumView.renderDetectionContacts(lastAppliedState); } catch (_) {}
+            return detectionContactsEnabled;
+        },
+        isDetectionContactsVisible: () => !!detectionContactsEnabled,
+        // Diagnostics / 3D parity: computed contacts for `state` with each
+        // target's CURRENT lon/lat, so callers (Cesium, tests) reuse the same
+        // detection.js engine + DB-Lite rather than re-deriving the picture.
+        getDetectionContacts: (state) => {
+            if (!window.AppDetection || typeof window.AppDetection.computeContacts !== 'function') return [];
+            const { units, posByUid } = buildDetectionUnits(state || lastAppliedState);
+            if (!units.length) return [];
+            let contacts = [];
+            try { contacts = window.AppDetection.computeContacts({ units }) || []; } catch (_) { return []; }
+            return contacts.map((c) => {
+                const ll = posByUid[c.target_uid];
+                return Object.assign({}, c, { lon: ll ? ll.lng : null, lat: ll ? ll.lat : null });
+            }).filter((c) => Number.isFinite(c.lon) && Number.isFinite(c.lat));
+        },
+        // ENG1: live firing solutions from engagement.js computeEngagements
+        // (detection-gated). Off by default; read-only. Toggling re-renders
+        // against the last applied state and keeps Cesium 3D in sync.
+        renderEngagements,
+        clearEngagements,
+        setEngagements: (on) => {
+            engagementsEnabled = (on !== false);
+            try { engagementsEnabled ? renderEngagements(lastAppliedState) : clearEngagements(); } catch (_) {}
+            try { if (window.AppCesiumView && window.AppCesiumView.renderEngagements) window.AppCesiumView.renderEngagements(lastAppliedState); } catch (_) {}
+            return engagementsEnabled;
+        },
+        toggleEngagements: () => {
+            engagementsEnabled = !engagementsEnabled;
+            try { engagementsEnabled ? renderEngagements(lastAppliedState) : clearEngagements(); } catch (_) {}
+            try { if (window.AppCesiumView && window.AppCesiumView.renderEngagements) window.AppCesiumView.renderEngagements(lastAppliedState); } catch (_) {}
+            return engagementsEnabled;
+        },
+        isEngagementsVisible: () => !!engagementsEnabled,
+        // Diagnostics / 3D parity: computed engagement records for `state`, each
+        // augmented with shooter + target lon/lat, so callers (Cesium, tests)
+        // reuse the same engine rather than re-deriving the firing picture.
+        getEngagements: (state) => {
+            const computed = computeEngagementRecords(state || lastAppliedState);
+            if (!computed) return [];
+            const { recs, posByUid } = computed;
+            return recs.map((r) => {
+                const a = posByUid[r.shooter], b = posByUid[r.target];
+                return Object.assign({}, r, {
+                    shooter_lon: a ? a.lng : null, shooter_lat: a ? a.lat : null,
+                    target_lon: b ? b.lng : null, target_lat: b ? b.lat : null,
+                });
+            });
+        },
         showLegend,
         hideLegend,
         toggleLegend,

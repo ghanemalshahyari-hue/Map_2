@@ -59,6 +59,12 @@
     const unitEntities = {};
     // Engagement-arc entities — removed on every applyState call
     const arcEntities  = [];
+    // CMO coverage/threat ring entities — redrawn on every applyState call
+    const coverageRingEntities = [];
+    // DET1 sensor-contact entities — redrawn on every applyState call
+    const detectionContactEntities = [];
+    // ENG1 firing-solution entities — redrawn on every applyState call
+    const engagementEntities = [];
 
     // Billboard image cache: sidc_size → dataURL
     const _imgCache = {};
@@ -132,6 +138,37 @@
         return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
     }
 
+    // ── Terrain provider ─────────────────────────────────────────────────
+    // Real 3D relief from the local Libya DEM (/api/dem/heights), so the globe
+    // shows actual coastal terrain instead of a flat ellipsoid. Degrades safely:
+    // if the CustomHeightmapTerrainProvider API is missing, or the DEM endpoint
+    // returns 204 (outside Libya coverage) / errors (no .tif, offline), the
+    // affected tiles fall back to flat — same as the previous behaviour.
+    const DEM_TILE_SAMPLES = 65;   // 64 posts + 1; matches Cesium heightmap convention
+
+    function makeTerrainProvider() {
+        if (typeof Cesium.CustomHeightmapTerrainProvider !== 'function') {
+            return new Cesium.EllipsoidTerrainProvider();
+        }
+        return new Cesium.CustomHeightmapTerrainProvider({
+            width:        DEM_TILE_SAMPLES,
+            height:       DEM_TILE_SAMPLES,
+            tilingScheme: new Cesium.WebMercatorTilingScheme(),   // matches /api/dem tileBounds + OSM imagery
+            callback: async (x, y, level) => {
+                const N = DEM_TILE_SAMPLES * DEM_TILE_SAMPLES;
+                try {
+                    const r = await fetch(`/api/dem/heights/${level}/${x}/${y}?size=${DEM_TILE_SAMPLES}`);
+                    if (!r.ok || r.status === 204) return new Float32Array(N);
+                    const buf = await r.arrayBuffer();
+                    if (!buf || buf.byteLength < N * 4) return new Float32Array(N);
+                    return new Float32Array(buf, 0, N);
+                } catch (_) {
+                    return new Float32Array(N);   // offline / no DEM → flat tile
+                }
+            },
+        });
+    }
+
     // ── Cesium init ──────────────────────────────────────────────────────
     function ensureInit() {
         if (viewer) return true;
@@ -139,14 +176,12 @@
         const el = document.getElementById('cesium-container');
         if (!el) return false;
 
-        // No Ion token — uses basic ellipsoid terrain (offline-safe).
-        // To enable photorealistic terrain: set Cesium.Ion.defaultAccessToken
-        // to your token and replace EllipsoidTerrainProvider with
-        // Cesium.createWorldTerrain().
+        // No Ion token needed — terrain comes from the local Libya DEM via
+        // makeTerrainProvider() (offline-safe; flat fallback outside coverage).
         Cesium.Ion.defaultAccessToken = '';
 
         viewer = new Cesium.Viewer('cesium-container', {
-            terrainProvider:       new Cesium.EllipsoidTerrainProvider(),
+            terrainProvider:       makeTerrainProvider(),
             baseLayerPicker:       false,
             navigationHelpButton:  false,
             sceneModePicker:       false,
@@ -184,6 +219,10 @@
         viewer.scene.globe.baseColor       = Cesium.Color.fromCssColorString('#1b2535');
         const baseLayer = viewer.imageryLayers.get(0);
         if (baseLayer) { baseLayer.brightness = 0.55; baseLayer.saturation = 0.4; }
+
+        // Vertical exaggeration so the DEM relief reads at operational zoom
+        // (Cesium ≥ 1.116). Guarded — older builds ignore the property.
+        try { viewer.scene.verticalExaggeration = 1.6; } catch (_) {}
 
         // Click-to-place handler
         viewer.screenSpaceEventHandler.setInputAction((evt) => {
@@ -362,6 +401,13 @@
         for (const u of (sc.red_units          || [])) syncUnit(u.uid, 'RED',  u);
         for (const u of (sc.blue_units_initial || [])) syncUnit(u.uid || u.unit_uid || u.base_id, 'BLUE', u);
 
+        // ── CMO coverage / threat rings ──────────────────────────────────
+        // After unit sync so rings sit on each unit's current position; no-op
+        // when the 2D toggle is off.
+        try { renderCoverageRings(state); } catch (_) {}
+        try { renderDetectionContacts(state); } catch (_) {}
+        try { renderEngagements(state); } catch (_) {}
+
         // ── Engagement arcs ──────────────────────────────────────────────
         const stepRow = Array.isArray(sc.steps) ? sc.steps[stepIndex] : null;
         const arcs    = (stepRow && Array.isArray(stepRow.engagement_arcs))
@@ -430,11 +476,171 @@
         arcEntities.length = 0;
     }
 
+    // ── CMO coverage / threat rings (3D parity with the 2D map) ──────────
+    // Mirrors AppAdjudicatorMap.renderCoverageRings: indicative sensor/threat
+    // envelopes per appeared, non-destroyed unit. The toggle + radius model
+    // live in the 2D map (single source of truth); here we just draw flat,
+    // ground-clamped ellipses at each unit's CURRENT position. No-op when the
+    // 2D toggle is off, so 2D and 3D stay in lock-step.
+    function clearCoverageRings() {
+        for (const e of coverageRingEntities) {
+            try { if (viewer) viewer.entities.remove(e); } catch (_) {}
+        }
+        coverageRingEntities.length = 0;
+    }
+
+    function _ringEntity(lon, lat, radiusKm, cssColor, filled) {
+        const color = Cesium.Color.fromCssColorString(cssColor);
+        const ax    = radiusKm * 1000;
+        return viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(lon, lat, 0),
+            ellipse: {
+                semiMajorAxis:   ax,
+                semiMinorAxis:   ax,
+                material:        filled ? color.withAlpha(0.06)
+                                        : Cesium.Color.TRANSPARENT,
+                fill:            !!filled,
+                outline:         true,
+                outlineColor:    color.withAlpha(filled ? 0.6 : 0.5),
+                outlineWidth:    2,
+                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+            },
+        });
+    }
+
+    function renderCoverageRings(state) {
+        if (!viewer || !isVisible) return;
+        clearCoverageRings();
+        const map2d = window.AppAdjudicatorMap;
+        if (!map2d || typeof map2d.isCoverageRingsVisible !== 'function') return;
+        if (!map2d.isCoverageRingsVisible()) return;
+        if (typeof map2d.coverageRingRadiiKm !== 'function') return;
+
+        const sc = scenarioRef;
+        const stepIndex = Number.isFinite(state && state.step_index) ? state.step_index : 0;
+        let markers = null;
+        try { markers = map2d.getScenarioMarkers && map2d.getScenarioMarkers(); } catch (_) {}
+
+        const drawUnit = (uid, side, unit) => {
+            // Position + unit-data: prefer the live 2D marker so radii + place
+            // match the 2D overlay exactly; fall back to scenario step-coords.
+            let lon = null, lat = null, ud = unit;
+            const m = markers && (markers[uid] || markers[side + '_' + uid]);
+            if (m && m.getLatLng) {
+                const ll = m.getLatLng(); lon = ll.lng; lat = ll.lat;
+                if (m._unitData) ud = m._unitData;
+            }
+            if (lon === null && sc) {
+                const table = side === 'RED' ? sc.red_unit_step_coords : sc.blue_unit_step_coords;
+                const steps = table && table[uid];
+                const coord = steps && steps[Math.min(stepIndex, steps.length - 1)];
+                if (coord && coord.length >= 2) { lon = coord[0]; lat = coord[1]; }
+            }
+            if (lon === null || !Number.isFinite(lon) || !Number.isFinite(lat)) return;
+
+            const isBlue = side === 'BLUE';
+            const sensorColor = isBlue ? '#3a96d2' : '#c41e1e';
+            const threatColor = isBlue ? '#1f6fb0' : '#7a1010';
+            const { sensorKm, threatKm } = map2d.coverageRingRadiiKm(ud);
+            if (threatKm > 0) coverageRingEntities.push(_ringEntity(lon, lat, threatKm, threatColor, true));
+            if (sensorKm > 0) coverageRingEntities.push(_ringEntity(lon, lat, sensorKm, sensorColor, false));
+        };
+
+        for (const u of (sc && sc.red_units          || [])) drawUnit(u.uid, 'RED', u);
+        for (const u of (sc && sc.blue_units_initial || [])) drawUnit(u.uid || u.unit_uid || u.base_id, 'BLUE', u);
+    }
+
+    // ── DET1 sensor contacts (3D parity with the 2D map) ─────────────────
+    // The detection engine + toggle live in the 2D map (single source of
+    // truth); we ask it for the computed contacts (with each target's current
+    // lon/lat) and drop a flat ground-clamped point per contact, coloured by
+    // the holding side. No-op when the 2D toggle is off, so 2D/3D stay locked.
+    function clearDetectionContacts() {
+        for (const e of detectionContactEntities) {
+            try { if (viewer) viewer.entities.remove(e); } catch (_) {}
+        }
+        detectionContactEntities.length = 0;
+    }
+
+    function renderDetectionContacts(state) {
+        if (!viewer || !isVisible) return;
+        clearDetectionContacts();
+        const map2d = window.AppAdjudicatorMap;
+        if (!map2d || typeof map2d.isDetectionContactsVisible !== 'function') return;
+        if (!map2d.isDetectionContactsVisible()) return;
+        if (typeof map2d.getDetectionContacts !== 'function') return;
+
+        let contacts = [];
+        try { contacts = map2d.getDetectionContacts(state) || []; } catch (_) { return; }
+        for (const c of contacts) {
+            const firm = c.confidence === 'firm';
+            const cssColor = c.detected_by_side === 'blue' ? '#3a96d2' : '#c41e1e';
+            const color = Cesium.Color.fromCssColorString(cssColor);
+            const e = viewer.entities.add({
+                position: Cesium.Cartesian3.fromDegrees(c.lon, c.lat, 0),
+                point: {
+                    pixelSize:       firm ? 12 : 14,
+                    color:           firm ? color.withAlpha(0.55) : Cesium.Color.TRANSPARENT,
+                    outlineColor:    color.withAlpha(firm ? 0.95 : 0.8),
+                    outlineWidth:    firm ? 2 : 1.5,
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                },
+            });
+            detectionContactEntities.push(e);
+        }
+    }
+
+    // ── ENG1 firing solutions (3D parity with the 2D map) ────────────────
+    // The engagement engine + toggle live in the 2D map (single source of
+    // truth); we ask it for the computed records (with shooter + target lon/lat)
+    // and draw a ground-clamped line per `engaged` record, coloured by the
+    // shooting side. No-op when the 2D toggle is off, so 2D/3D stay locked.
+    function clearEngagements() {
+        for (const e of engagementEntities) {
+            try { if (viewer) viewer.entities.remove(e); } catch (_) {}
+        }
+        engagementEntities.length = 0;
+    }
+
+    function renderEngagements(state) {
+        if (!viewer || !isVisible) return;
+        clearEngagements();
+        const map2d = window.AppAdjudicatorMap;
+        if (!map2d || typeof map2d.isEngagementsVisible !== 'function') return;
+        if (!map2d.isEngagementsVisible()) return;
+        if (typeof map2d.getEngagements !== 'function') return;
+
+        let recs = [];
+        try { recs = map2d.getEngagements(state) || []; } catch (_) { return; }
+        for (const r of recs) {
+            if (r.status !== 'engaged') continue;
+            if (![r.shooter_lon, r.shooter_lat, r.target_lon, r.target_lat].every(Number.isFinite)) continue;
+            const cssColor = r.side === 'blue' ? '#3a96d2' : '#c41e1e';
+            const e = viewer.entities.add({
+                polyline: {
+                    positions: Cesium.Cartesian3.fromDegreesArray([
+                        r.shooter_lon, r.shooter_lat, r.target_lon, r.target_lat,
+                    ]),
+                    width:    1.5 + (r.pk_kill || 0) * 2.5,
+                    material: new Cesium.PolylineDashMaterialProperty({
+                        color: Cesium.Color.fromCssColorString(cssColor).withAlpha(0.85),
+                    }),
+                    clampToGround: true,
+                },
+            });
+            engagementEntities.push(e);
+        }
+    }
+
     function clearScenario() {
         if (!viewer) return;
         viewer.entities.removeAll();
         Object.keys(unitEntities).forEach(k => delete unitEntities[k]);
         clearArcs();
+        clearCoverageRings();
+        clearDetectionContacts();
+        clearEngagements();
         scenarioRef = null;
     }
 
@@ -529,6 +735,12 @@
         drawScenario,
         applyState,
         clearScenario,
+        renderCoverageRings,   // CMO ring parity — driven by the 2D toggle state
+        clearCoverageRings,
+        renderDetectionContacts, // DET1 contact parity — driven by the 2D toggle state
+        clearDetectionContacts,
+        renderEngagements,     // ENG1 firing-solution parity — driven by the 2D toggle state
+        clearEngagements,
         setVisible,
         toggle,
         enterPlaceMode,

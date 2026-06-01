@@ -582,6 +582,29 @@ const server = http.createServer((req, res) => {
         }
         return;
     }
+    // GET /api/dem/heights/Z/X/Y → Float32LE heightmap grid (real metres) for
+    // the 3D Cesium terrain provider. 204 when outside coverage (client → flat).
+    if (pathname.startsWith('/api/dem/heights/') && req.method === 'GET') {
+        const parts = pathname.split('/').slice(4); // ['Z','X','Y']
+        const z = parseInt(parts[0], 10);
+        const x = parseInt(parts[1], 10);
+        const y = parseInt(parts[2], 10);
+        const size = parseInt(url.searchParams.get('size'), 10) || 65;
+        if (!isFinite(z) || !isFinite(x) || !isFinite(y)) { res.writeHead(400); res.end(); return; }
+        try {
+            const heights = demService.renderHeights(z, x, y, size);
+            if (!heights) { res.writeHead(204); res.end(); return; }
+            res.writeHead(200, {
+                'Content-Type':  'application/octet-stream',
+                'Cache-Control': 'public, max-age=604800',
+            });
+            res.end(Buffer.from(heights.buffer, heights.byteOffset, heights.byteLength));
+        } catch (e) {
+            console.error('[dem] heights error:', e.message);
+            res.writeHead(500); res.end();
+        }
+        return;
+    }
 
     // List available wargame scenarios. The HUD model/scenario picker uses
     // this to populate its dropdown.

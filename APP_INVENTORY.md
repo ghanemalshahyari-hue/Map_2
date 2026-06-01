@@ -196,6 +196,26 @@ Newer feature work uses **`test-p0*` / `test-an*` / `test-sym*` / `test-unit-*`*
 
 ---
 
+## TODO — CMO→RMOOZ capability roadmap (from `docs/cmo-vs-rmooz-capability-comparison.md`)
+
+Ordered by value÷effort, filtered through RMOOZ's read-only / ground-amphibious / AI-adjudication thesis. Full
+rationale + per-function gap tables in the doc. **Buckets:** CORE = central to RMOOZ, ADJ = adjacent/clear value.
+
+- [ ] **1. Surface Sides + Posture cards** — CORE, XS. `sides`/`postures` are schema-ready + loader-defaulted but discarded at load; add two read-only cards.
+- [ ] **2. Consolidate 3 clock surfaces → 1 + add explicit `scenario_clock` (start_utc/duration_hours)** — CORE, S. Closes a PARTIAL gap *and* a known 3× duplication.
+- [ ] **3. Wire the P0 authoring schema into a guided "scenario readiness" mode** (CMO build-order) — CORE, M. Foundation shipped (`shell/scenario-authoring-schema.js`), just unwired.
+- [ ] **4. Doctrine/ROE/WRA as read-only *data* the adjudicator cites** — CORE, M. Makes AI proposals auditable (core safety story).
+- [ ] **5. Structured read-only "Missions/Tasking" view synthesized from step actors** — CORE, M. ATO-like rollup, not a planning engine.
+- [ ] **6. Minimal unit "capability + readiness/supply" descriptors** — ADJ, S–M. Fills Unit Panel's empty Combat/C2 sections; feeds adjudicator.
+- [ ] **7. Optional per-zone `environment` (weather/sea-state) overrides** — ADJ, M. Weather without a global physics model.
+- [ ] **8. "Why did the adjudicator allow/deny this?" explainer panel** — ADJ, M. Borrows CMO's "why won't it fire" UX for AI-proposal review.
+- [ ] **9. IADS/SAM coverage-envelope overlay (visual only)** — ADJ, M. The one in-domain idea from the sensors engine; no detection sim.
+- [ ] **10. Declarative `events[]` rule object (data, previewable, no code)** — ADJ, M. In-bounds analogue of CMO's Event Editor; never Lua.
+
+**Deliberately NOT building** (out-of-thesis, catalogued in the doc): detection/EW/IADS *simulation*, weapons/engagement firing math, naval/subsurface mechanics, airfield component model, mission-planning engine, Lua execution.
+
+---
+
 ## Pointers to deep docs (don't restate — link)
 
 - `docs/scenario-workspace-consolidation-map.md` — authoritative card/duplication inventory (~150 surfaces).
@@ -206,6 +226,7 @@ Newer feature work uses **`test-p0*` / `test-an*` / `test-sym*` / `test-unit-*`*
 - `docs/scenario-animation-presentation-readiness-audit.md` — P0B audit: what animates per step (W3-rich), coverage gaps (non-W3 = markers+movement only), per-unit fidelity, static-units gap. Re-runnable via `node test-p0b-animation-readiness.js`.
 - `docs/unit-symbol-fidelity-audit.md` — SYM1 audit: 117/153 W3 units render proper milsymbol glyphs, 36 fall back (milsymbol 2.0.0 rejects specific child SIDC entity codes); fix = role/domain→canonical-family remap (SYM2). Re-runnable via `node test-sym1-unit-symbol-fidelity.js`.
 - `docs/pr-166-external-scenario-pack-audit.md` + `docs/scenario-pack-audit/` — CSP51 audit (630 scenarios; don't re-run).
-- `docs/cmo-scenario-editor-application.md` — CMO→RMOOZ workflow mapping.
+- `docs/cmo-scenario-editor-application.md` — CMO→RMOOZ workflow mapping (general concept→status).
+- `docs/cmo-vs-rmooz-capability-comparison.md` — **deep** function-by-function CMO→RMOOZ comparison (mined from 245 tutorial transcripts); source of the CMO→RMOOZ TODO roadmap above.
 - `docs/cmo-pgatcomb-playlist-inventory.md` — CMO tutorial playlist caption-read inventory (research/reference; `e75ff65`).
 - Cross-session "why" lives in the memory dir (`MEMORY.md` index) — this file is the "what", memory is the "why".

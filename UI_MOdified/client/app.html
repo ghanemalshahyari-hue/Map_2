@@ -4919,6 +4919,33 @@
          available when paintDryRunPreview() runs during workspace init. -->
     <script src="shell/scenario-dry-run-fixtures.js?v=1"></script>
     <script src="shell/scenario-workspace.js?v=1"></script>
+    <!-- Owner ruling 2026-06-01: editable scenario workspace (slice 1: metadata/sides/posture).
+         P0 authoring schema (draft/working-copy engine) must load before edit-mode.
+         Edits stay in-memory; commit/journal boundary untouched. -->
+    <script src="shell/scenario-authoring-schema.js?v=1"></script>
+    <script src="shell/scenario-edit-mode.js?v=1"></script>
+    <style>
+        .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; }
+        .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
+            color:#e8eaed; border-radius:5px; padding:4px 10px; }
+        .sw-edit-btn:hover { background:#343a44; }
+        .sw-edit-btn-primary { background:#2f6fed; border-color:#2f6fed; color:#fff; }
+        .sw-edit-btn-primary:hover { background:#3b78f0; }
+        .sw-editmode-editor[hidden] { display:none; }
+        .sw-edit-row dd { width:100%; }
+        .sw-edit-input { width:100%; box-sizing:border-box; font:inherit; padding:3px 6px;
+            border:1px solid #5a6270; border-radius:4px; background:#1f242b; color:#e8eaed; }
+        .sw-edit-actions { display:flex; gap:8px; align-items:center; padding:8px; flex-wrap:wrap; }
+        .sw-edit-status { font-size:12px; }
+    </style>
+    <script>
+        // Mount Edit Mode once the DOM (workspace panel) is ready.
+        (function () {
+            function go() { try { window.AppEditMode && window.AppEditMode.init(); } catch (e) {} }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
+            else go();
+        })();
+    </script>
     <script>
         // Mirror the chosen side into the footer status bar. Tiny inline
         // bridge so the footer's `#statusbar-current-side` stays in sync

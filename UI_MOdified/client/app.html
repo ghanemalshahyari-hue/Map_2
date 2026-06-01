@@ -129,6 +129,20 @@
                     <span data-i18n="tool-units">Units</span>
                 </button>
 
+                <!-- ORBAT discoverability: toggles the scenario ORBAT bottom dock (BLUE/RED FORCE
+                     from the loaded scenario). data-tool="orbat" has no TOOL_CONFIG entry, so
+                     tool-rail.js switchTool() no-ops; units-orbat-dock.js handles #orbat-toggle-btn.
+                     Separate from the unit-builder "Units" button above. -->
+                <button class="tool-rail-btn" data-tool="orbat" id="orbat-toggle-btn" type="button" aria-pressed="false" title="القوات · Forces / ORBAT — show the scenario order of battle">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="2" width="6" height="5" rx="1"/>
+                        <rect x="3" y="17" width="6" height="5" rx="1"/>
+                        <rect x="15" y="17" width="6" height="5" rx="1"/>
+                        <path d="M12 7v5M6 17v-2.5h12V17"/>
+                    </svg>
+                    <span>Forces</span>
+                </button>
+
                 <button class="tool-rail-btn" data-tool="import" type="button" title="استيراد خطة · Import Plan (units + boundary lines)">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -1297,8 +1311,9 @@
                     <!-- PR-287C: Legacy Scenario Summary — collapsed by default.
                          Older compact summary demoted from primary position.
                          Primary scenario information is now in #sw-live-workspace.
-                         IDs (sw-name, sw-status, sw-phase, sw-blue-force, sw-red-force,
-                         sw-terrain) preserved so paintScenarioOverview() works on hidden DOM.
+                         IDs sw-name, sw-status, sw-phase are written by paintScenarioOverview()
+                         on hidden DOM. (PR-B: the blue-force/red-force/terrain rows were removed —
+                         they had zero JS readers; paintScenarioOverview never wrote to them.)
                          Toggle wired by initLegacySummaryToggle() in scenario-workspace.js. -->
                     <section id="sw-legacy-summary-section" class="sw-legacy-summary-section"
                              role="region" aria-label="Legacy Scenario Summary">
@@ -1331,18 +1346,6 @@
                                     <div class="sw-kv-row">
                                         <dt data-i18n="sw-field-phase">Current phase</dt>
                                         <dd id="sw-phase" data-i18n="sw-value-none">—</dd>
-                                    </div>
-                                    <div class="sw-kv-row">
-                                        <dt data-i18n="sw-field-blue-force">Blue force</dt>
-                                        <dd id="sw-blue-force" data-i18n="sw-value-none">—</dd>
-                                    </div>
-                                    <div class="sw-kv-row">
-                                        <dt data-i18n="sw-field-red-force">Red force</dt>
-                                        <dd id="sw-red-force" data-i18n="sw-value-none">—</dd>
-                                    </div>
-                                    <div class="sw-kv-row">
-                                        <dt data-i18n="sw-field-terrain">Terrain / area</dt>
-                                        <dd id="sw-terrain" data-i18n="sw-value-none">—</dd>
                                     </div>
                                 </dl>
                             </div>
@@ -1400,6 +1403,11 @@
                              from getScenario().phase_table (distinct phases grouped from the rows);
                              current/complete/upcoming derived read-only from
                              window.RmoozScenario.stepIndex. No mutation, no backend, no commit. -->
+                        <section class="sw-group" data-sw-group="clock" role="group" aria-label="Clock and Phases">
+                            <div class="sw-group-banner" role="heading" aria-level="2">
+                                <span class="sw-group-banner-title" data-i18n="swg-clock-title">Clock &amp; Phases</span>
+                                <span class="sw-group-banner-sub" data-i18n="swg-clock-sub">Scenario clock, phases, and live step navigation.</span>
+                            </div>
                         <div class="builder-card sw-card sw-live-phase-timeline-card" id="spt-card">
                             <div class="builder-card-header">
                                 <span class="builder-card-title" data-i18n="spt-title">Scenario Phase Timeline</span>
@@ -1462,6 +1470,8 @@
                                         disabled data-i18n="sw-nav-overlay-show">Show unit overlay</button>
                             </div>
                         </div>
+
+                        </section><!-- /sw-group clock -->
 
                         <!-- PR-286L/287L2: Live Decision Action card — moved up directly under navigator. -->
                         <div class="builder-card sw-card sw-live-decision-card" id="sw-live-decision-card">
@@ -1642,6 +1652,11 @@
 
                     <!-- PR-132: Scenario Briefing Panel — read-only, window.RmoozScenario only,
                          no backend, no mutation. textContent only. Painted by paintBriefingCard(). -->
+                    <section class="sw-group" data-sw-group="narrative" role="group" aria-label="Narrative and Brief">
+                        <div class="sw-group-banner" role="heading" aria-level="2">
+                            <span class="sw-group-banner-title" data-i18n="swg-narrative-title">Narrative &amp; Brief</span>
+                            <span class="sw-group-banner-sub" data-i18n="swg-narrative-sub">Scenario brief, walkthrough, and per-step narrative.</span>
+                        </div>
                     <div class="builder-card sw-card sw-brfg-card" id="sw-brfg-card">
                         <div class="builder-card-header">
                             <span class="builder-card-title" data-i18n="sw-brfg-title">Scenario Brief</span>
@@ -1946,7 +1961,14 @@
 
                     <!-- PR-287L2: Live Decision Action card was moved up directly under the Step Navigator. -->
 
+                        </section><!-- /sw-group narrative -->
+
                     <!-- PR-69: Objective/BLS Section Header — static, data-i18n only, no JS -->
+                    <section class="sw-group" data-sw-group="geography" role="group" aria-label="Geography and Objective">
+                        <div class="sw-group-banner" role="heading" aria-level="2">
+                            <span class="sw-group-banner-title" data-i18n="swg-geo-title">Geography &amp; Objective</span>
+                            <span class="sw-group-banner-sub" data-i18n="swg-geo-sub">Objective and landing-site geography.</span>
+                        </div>
                     <div class="sw-obj-hdr" role="heading" aria-level="3">
                         <span class="sw-obj-hdr-title" data-i18n="sw-obj-hdr-title">Objective &amp; Landing Sites</span>
                         <span class="sw-obj-hdr-sub" data-i18n="sw-obj-hdr-sub">Read-only objective and BLS information from loaded scenario data.</span>
@@ -1995,7 +2017,14 @@
                         <ul class="sw-bls-list" id="sw-bls-list" aria-label="BLS entries"></ul>
                     </div>
 
+                        </section><!-- /sw-group geography -->
+
                     <!-- PR-66: Force Snapshot Section Header — static, data-i18n only, no JS -->
+                    <section class="sw-group" data-sw-group="forces" role="group" aria-label="Forces and Readiness">
+                        <div class="sw-group-banner" role="heading" aria-level="2">
+                            <span class="sw-group-banner-title" data-i18n="swg-forces-title">Forces &amp; Readiness</span>
+                            <span class="sw-group-banner-sub" data-i18n="swg-forces-sub">Force balance, rosters, attrition, and tempo.</span>
+                        </div>
                     <div class="sw-force-hdr" role="heading" aria-level="3">
                         <span class="sw-force-hdr-title" data-i18n="sw-force-hdr-title">Force Overview</span>
                         <span class="sw-force-hdr-sub" data-i18n="sw-force-hdr-sub">Read-only summary from loaded scenario data.</span>
@@ -2082,6 +2111,30 @@
                             <!-- Rendered by shell/scenario-workspace.js paintStepAttrition() — read-only, step-aware, no backend -->
                         </dl>
                     </div>
+
+                    <!-- PR-287G: Engagement Tempo Subheader -->
+                    <div class="sw-sd-hdr" role="heading" aria-level="4">
+                        <span class="sw-sd-hdr-title" data-i18n="sw-tempo-hdr-kicker">ENGAGEMENT TEMPO</span>
+                        <span class="sw-sd-hdr-sub" data-i18n="sw-tempo-hdr-sub">Activity volume for the current step.</span>
+                    </div>
+
+                    <!-- PR-287G: Engagement Tempo Card — read-only, step-aware, local data only.
+                         Rendered by shell/scenario-workspace.js paintStepActivity() from
+                         computeStepActivity(getActiveStep()). Reads the active step's
+                         n_actors / n_affected / n_engagement_arcs (count fields, with
+                         actors/affected/engagement_arcs array-length fallback).
+                         No map, no window.units, no backend, no mutation. -->
+                    <div class="builder-card sw-card" id="sw-tempo-card">
+                        <div class="builder-card-header">
+                            <span class="builder-card-title" data-i18n="sw-tempo-title">Engagement Tempo</span>
+                            <span class="uild-badge" data-i18n="sw-tempo-badge">Read-only</span>
+                        </div>
+                        <dl class="sw-kv" id="sw-tempo-list" aria-live="polite">
+                            <!-- Rendered by shell/scenario-workspace.js paintStepActivity() — read-only, step-aware, no backend -->
+                        </dl>
+                    </div>
+
+                        </section><!-- /sw-group forces -->
 
                     </section><!-- /#sw-live-workspace (PR-287L2) -->
 
@@ -2852,7 +2905,11 @@
                          Safety: No apply. No run. No commit. No live scenario. No .scen. No Lua.
                          #sw-ext-preview-section is injected into #sw-external-catalog-source-card
                          by _initExtPreviewSection() in scenario-workspace.js. -->
-                    <div id="sw-scenario-source-section" class="sw-scenario-source-section">
+                    <div id="sw-scenario-source-section" class="sw-scenario-source-section sw-group" data-sw-group="source">
+                        <div class="sw-group-banner" role="heading" aria-level="2">
+                            <span class="sw-group-banner-title" data-i18n="swg-source-title">Source &amp; Provenance</span>
+                            <span class="sw-group-banner-sub" data-i18n="swg-source-sub">Scenario source, import, and provenance.</span>
+                        </div>
                         <div class="sw-w3-section-hdr" role="heading" aria-level="3">
                             <span class="sw-w3-section-hdr-title"
                                   id="sw-src-panel-title"
@@ -2885,10 +2942,10 @@
                             <div class="sw-src-subcard-hdr">
                                 <span class="sw-src-subcard-title"
                                       id="sw-live-scenario-import-title"
-                                      data-i18n="sw-live-scenario-import-title">Live Scenario Import</span>
+                                      data-i18n="sw-live-scenario-import-title">Preview Live Scenario JSON — Read-only Cards Only</span>
                                 <span class="sw-src-subcard-sub"
                                       id="sw-live-scenario-import-subtitle"
-                                      data-i18n="sw-live-scenario-import-subtitle">Load one RMOOZ-compatible scenario JSON as the active live scenario.</span>
+                                      data-i18n="sw-live-scenario-import-subtitle">This preview updates Scenario Workspace cards only. Use the Operational Scenario HUD import to draw units on the map.</span>
                             </div>
                             <div class="sw-live-scenario-import-row">
                                 <label class="sw-live-scenario-import-label"
@@ -3587,12 +3644,12 @@
                             <button type="button" id="ap-hold"   class="ap-btn ap-btn--hold"   data-i18n="ap-hold">Hold</button>
                         </div>
 
-                        <!-- Safety note — always visible. PR-7 invariant: nothing
-                             on this panel is wired to simulation; making that
-                             explicit prevents the operator from acting on the
-                             wrong mental model. -->
+                        <!-- Operator note — always visible. UNLOCKED 2026-06-01:
+                             Accept/Reject now commit to the durable server journal;
+                             Hold defers. Kept explicit so the operator knows a
+                             decision mutates state. -->
                         <p class="ap-safety-note" data-i18n="ap-not-connected">
-                            Proposal decisions are not connected to simulation yet
+                            Accept/Reject commit to the durable journal; Hold defers
                         </p>
 
                         <!-- ═══════════ DECISION RECORDS — PR-13 ═══════════ -->
@@ -3608,13 +3665,13 @@
                                 <button type="button" id="dr-clear-btn" class="dr-clear-btn" data-i18n="dr-clear">Clear records</button>
                             </header>
                             <p class="dr-not-saved" data-i18n="dr-not-saved">Not saved after reload</p>
-                            <!-- PR-14: optional surface message — declares the
-                                 draft contract is in place but the real journal
-                                 is not. No file write happens from this line; it
-                                 is purely informational. -->
+                            <!-- UNLOCKED 2026-06-01: the real journal is enabled —
+                                 commits write durable rows server-side at
+                                 data/journal/<run>.jsonl. This in-memory list mirrors
+                                 those decisions; it is not itself the durable store. -->
                             <p class="dr-real-journal-note">
-                                <span data-i18n="dr-real-journal-disabled">Real journal not enabled</span>
-                                <span class="dr-draft-badge" data-i18n="dr-draft-contract-ready">Draft contract ready</span>
+                                <span data-i18n="dr-real-journal-disabled">Real journal enabled (server)</span>
+                                <span class="dr-draft-badge" data-i18n="dr-draft-contract-ready">Commit active</span>
                             </p>
                             <div id="dr-list" class="dr-list">
                                 <p id="dr-empty" class="dr-empty" data-i18n="dr-empty">No local decision records</p>
@@ -4717,6 +4774,11 @@
     <script src="wargame/adjudicator-client.js?v=4"></script>
     <script src="wargame/adjudicator-map.js?v=37"></script>
     <script src="wargame/adjudicator-hud.js?v=20"></script>
+    <!-- PR-MOVE1: continuous movement + playback clock. Drives the existing
+         AppAdjudicatorMap.applyStepProgress over wall-clock time and wires the
+         transport bar (#tl-play/#tl-pause/#tl-speed). Additive — does not touch
+         the W3 render path. -->
+    <script src="wargame/movement-playback.js?v=1"></script>
     <script src="ops-panel.js?v=1"></script>
     <script src="map-hide-panels.js?v=1"></script>
 
@@ -4735,6 +4797,7 @@
     <!-- PR-5: Timeline / Transport placeholder. UI foundation only —
          buttons flip local CSS state; no journal, no sim, no AI hookup. -->
     <script src="shell/timeline.js?v=1"></script>
+    <script src="shell/timeline-event-ticks.js?v=1"></script>
     <!-- PR-8: AI Proposal data contract. Pure frontend validation +
          normalization. Loads BEFORE ai-proposal-panel.js so the panel
          can call AppShellAIProposalContract.normalizeProposal() on
@@ -4862,6 +4925,33 @@
          available when paintDryRunPreview() runs during workspace init. -->
     <script src="shell/scenario-dry-run-fixtures.js?v=1"></script>
     <script src="shell/scenario-workspace.js?v=1"></script>
+    <!-- Owner ruling 2026-06-01: editable scenario workspace (slice 1: metadata/sides/posture).
+         P0 authoring schema (draft/working-copy engine) must load before edit-mode.
+         Edits stay in-memory; commit/journal boundary untouched. -->
+    <script src="shell/scenario-authoring-schema.js?v=1"></script>
+    <script src="shell/scenario-edit-mode.js?v=1"></script>
+    <style>
+        .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; }
+        .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
+            color:#e8eaed; border-radius:5px; padding:4px 10px; }
+        .sw-edit-btn:hover { background:#343a44; }
+        .sw-edit-btn-primary { background:#2f6fed; border-color:#2f6fed; color:#fff; }
+        .sw-edit-btn-primary:hover { background:#3b78f0; }
+        .sw-editmode-editor[hidden] { display:none; }
+        .sw-edit-row dd { width:100%; }
+        .sw-edit-input { width:100%; box-sizing:border-box; font:inherit; padding:3px 6px;
+            border:1px solid #5a6270; border-radius:4px; background:#1f242b; color:#e8eaed; }
+        .sw-edit-actions { display:flex; gap:8px; align-items:center; padding:8px; flex-wrap:wrap; }
+        .sw-edit-status { font-size:12px; }
+    </style>
+    <script>
+        // Mount Edit Mode once the DOM (workspace panel) is ready.
+        (function () {
+            function go() { try { window.AppEditMode && window.AppEditMode.init(); } catch (e) {} }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
+            else go();
+        })();
+    </script>
     <script>
         // Mirror the chosen side into the footer status bar. Tiny inline
         // bridge so the footer's `#statusbar-current-side` stays in sync

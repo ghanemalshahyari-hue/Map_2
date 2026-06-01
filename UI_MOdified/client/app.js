@@ -341,7 +341,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load MBTiles: use tile server (for large files) or in-browser loading
     fetch('maps/maps.json').then(r => r.ok ? r.json() : null).catch(() => null).then(async config => {
         if (!config) {
-            showTileServerBanner('maps/maps.json is missing — satellite layer cannot load.');
+            // P3: maps.json (satellite / MBTiles overlay) is OPTIONAL — the OpenStreetMap
+            // base layer always loads independently. Downgraded from a red banner to a
+            // console note so a missing overlay config doesn't alarm operators when the
+            // base map is working fine.
+            console.info('[basemap] maps/maps.json not present — using OpenStreetMap base layer; satellite/MBTiles overlay disabled.');
             return;
         }
         const files = Array.isArray(config) ? config : (config.mbtiles) || [];
@@ -8847,6 +8851,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return marker;
     }
+
+    // ── Read-only TMG marker for the scenario renderer (adjudicator-map.js) ──
+    // Reuses the operator mission-graphic icon builder (getTmgIconOptions →
+    // getCatkUnifiedDivIcon for attack/counterattack) but with NO popup, drag,
+    // resize, or operator-layer registration. Returns a plain non-interactive
+    // L.marker the caller manages (add/remove) on its own read-only pane. This
+    // is what lets the Wargame-3 scenario engine DISPLAY its engagements using
+    // the same mission graphics the operator draws — one app, shared graphics.
+    function buildReadonlyTmgMarker(latlng1, latlng2, typeId, color, paneName, styleOverrides) {
+        try {
+            if (!map || !window.L) return null;
+            const def = TACTICAL_GRAPHICS.find(d => d.id === typeId);
+            if (!def) return null;
+            const ll1 = L.latLng(latlng1);
+            const ll2 = L.latLng(latlng2 || latlng1);
+            const p1 = map.latLngToLayerPoint(ll1);
+            const p2 = map.latLngToLayerPoint(ll2);
+            const mid = def.pointSymbol ? ll1 : map.layerPointToLatLng(L.point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2));
+            const sw = (styleOverrides && styleOverrides.strokeWidth) || def.strokeWidth || 4;
+            const opts = getTmgIconOptions(ll1, ll2, typeId, color, false, Object.assign({ strokeWidth: sw }, styleOverrides || {}));
+            if (!opts) return null;
+            const mopts = { icon: L.divIcon(opts), interactive: false, keyboard: false };
+            if (paneName) mopts.pane = paneName;
+            return L.marker(mid, mopts);
+        } catch (_) { return null; }
+    }
+    if (window.AppGraphics) window.AppGraphics.buildReadonlyTmgMarker = buildReadonlyTmgMarker;
+
     // Expose helpers needed by free_draw_signature.js
     window.getActiveLayer = getActiveLayer;
     window.createLayer = createLayer;

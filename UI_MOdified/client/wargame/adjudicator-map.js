@@ -81,7 +81,8 @@
     let blueMarkers = {};        // { 'BLUE_xxx': L.marker }
     let pipelineLatLngs = null;  // cached lat/lng array for split computation
     let pipelineSegmentKm = null;// cached cumulative km along pipeline per vertex
-    let legendControl = null;    // Leaflet control (top-right legend panel)
+    let legendControl = null;    // Leaflet control (map legend panel)
+    let legendVisible = true;
     let sitrepControl = null;    // Leaflet control (top-left SITREP banner)
     let displayOffsetNotice = null; // Leaflet control (bottom-left display-offset info chip — PR-106)
     let ewHalo = null;           // circle around RED_405EW sized by EW band
@@ -98,6 +99,22 @@
     // state.blue_destroyed_cumulative when present; otherwise we accumulate
     // from per_unit_deltas. Cleared on clearScenario / resetMap.
     let runningDestroyedUids = new Set();
+
+    // AN1: last step index whose per-unit attrition we rendered onto the unit
+    // markers. applyStepProgress may be called repeatedly with fractional
+    // progress WITHIN one step; we only recompute attrition when the step
+    // index actually changes. Reset to -1 on clearScenario / resetMap.
+    let playbackAttritionStep = -1;
+
+    // AN4: movement trails. unitStepPos records each unit's DISPLAYED position
+    // per step it has been rendered at (uid → { stepIdx: [lat,lng] }), so a
+    // trail can connect the unit's prior-step position to its current position
+    // in the SAME (display-offset) coordinate space the markers use. Reset on
+    // clearScenario / resetMap.
+    let movementTrails   = [];   // L.polylines for the current step's trails
+    let unitStepPos      = {};   // uid → { [stepIdx]: [lat,lng] } (recorded display positions)
+    let movementTrailStep = 0;   // step the trails were last rendered for (for zoomend re-render)
+    let engagementGraphicsStep = 0; // MG1: step the engagement mission graphics were last drawn for (zoomend re-render)
 
     // Last step index that applyState processed. Drives the FORWARD-vs-REWIND
     // decision in applyState — forward (newIdx > last) plays the full
@@ -668,6 +685,381 @@
 
     function hasMap() { return typeof window !== 'undefined' && window.L && window.map; }
 
+    // Fit the map to the friendly operational area (objective + landing sites +
+    // Blue laydown), with map_bbox as fallback. Extracted so the clean-view
+    // "present scenario" path (P3) can re-frame after side panels collapse and
+    // the map viewport width changes. Read-only: no scenario/marker mutation.
+    function fitScenarioAO() {
+        if (!hasMap()) return false;
+        try {
+            const aoPts = [];
+            if (Array.isArray(objCoord) && objCoord.length === 2) aoPts.push([objCoord[1], objCoord[0]]);
+            Object.keys(blsCoordByName).forEach((k) => {
+                const c = blsCoordByName[k];
+                if (Array.isArray(c) && c.length === 2) aoPts.push([c[1], c[0]]);
+            });
+            Object.keys(blueMarkers).forEach((uid) => {
+                const m = blueMarkers[uid];
+                if (m && typeof m.getLatLng === 'function') { const ll = m.getLatLng(); aoPts.push([ll.lat, ll.lng]); }
+            });
+            const bb = scenarioRef && scenarioRef.map_bbox;
+            if (aoPts.length >= 2) {
+                window.map.fitBounds(aoPts, { padding: [44, 44], maxZoom: 11, animate: true });
+                return true;
+            }
+            if (Array.isArray(bb) && bb.length === 4) {
+                window.map.fitBounds([[bb[1], bb[0]], [bb[3], bb[2]]], { padding: [30, 30], maxZoom: 10, animate: true });
+                return true;
+            }
+        } catch (_) { /* ignore */ }
+        return false;
+    }
+
+    // ── Echelon roll-up (CMO-style zoom-responsive aggregation) ──────────
+    // At wide zoom, ~150 overlapping unit symbols read as featureless colored
+    // frames ("it doesn't know the unit type"). This rolls units up to their
+    // DIVISION formation (uid SIDE-dDIV) so the operator sees a handful of
+    // clean formation symbols, then expands to individual units when zoomed
+    // in past ECHELON_EXPAND_ZOOM (or on clicking a formation).
+    //
+    // Additive + reversible: units are hidden via ONE CSS class on the map
+    // container (.wg-rolled-up .wg-adj-sidc{display:none}). Their markers, the
+    // movement model, AN1 attrition styling, engagement arcs, and the salient
+    // all keep running underneath — only visibility changes. Aggregates are
+    // separate markers (class wg-adj-aggregate, not hidden). No-op for
+    // scenarios that don't yield >=2 division groups (e.g. non-W3 imports).
+    const ECHELON_EXPAND_ZOOM = 12;   // zoom >= this → show individual units
+    let echelonAggregates = [];       // L.markers for rolled-up formation symbols
+    // Formation roll-up DISABLED (operator request): units always render
+    // individually (zoom-scaled), no formation aggregates / auto-hide. The
+    // roll-up code is parked behind this flag pending a redesigned formation
+    // display. Flip to true (or call setEchelonRollup(true)) to revive it.
+    let echelonRollupEnabled = false; // master toggle (public API: setEchelonRollup)
+
+    // Parse SIDE-dDIV-... tolerant of Arabic FORM text (e.g. "R-d3-رادارت-072").
+    // Returns null when the uid carries no division (that unit is never rolled).
+    function parseUnitDivision(uid) {
+        const m = String(uid || '').match(/^([A-Za-z])-d(\d+)-/);
+        return m ? { side: m[1].toUpperCase(), div: m[2], key: m[1].toUpperCase() + '-d' + m[2] } : null;
+    }
+
+    // Group placed markers by division. Built from the live marker dicts so the
+    // aggregate position tracks per-step movement. → [{ key, friendly, memberUids }].
+    function buildEchelonDivisionGroups() {
+        const groups = new Map();
+        const add = (uid, friendly) => {
+            const p = parseUnitDivision(uid);
+            if (!p) return;
+            if (!groups.has(p.key)) groups.set(p.key, { key: p.key, friendly: friendly, memberUids: [] });
+            groups.get(p.key).memberUids.push(uid);
+        };
+        Object.keys(blueMarkers).forEach((uid) => add(uid, true));
+        Object.keys(redMarkers).forEach((uid) => add(uid, false));
+        return Array.from(groups.values());
+    }
+
+    // Mean lat/lng of a group's CURRENT marker positions (tracks movement).
+    function groupCentroid(group) {
+        let sumLat = 0, sumLng = 0, n = 0;
+        group.memberUids.forEach((uid) => {
+            const m = blueMarkers[uid] || redMarkers[uid];
+            if (!m || typeof m.getLatLng !== 'function') return;
+            try { const ll = m.getLatLng(); sumLat += ll.lat; sumLng += ll.lng; n++; } catch (_) {}
+        });
+        return n ? [sumLat / n, sumLng / n] : null;
+    }
+
+    function clearEchelonAggregates() {
+        for (const m of echelonAggregates) { if (m && layerGroup) { try { layerGroup.removeLayer(m); } catch (_) {} } }
+        echelonAggregates = [];
+    }
+
+    // Division aggregate icon: side-framed milsymbol at division echelon (XX)
+    // + a member-count badge. Falls back to a plain framed box if milsymbol is
+    // unavailable. SIDC digits 9-10 = "21" = division echelon; entity 000000.
+    function buildAggregateIcon(group) {
+        const count = group.memberUids.length;
+        const color = group.friendly ? COLORS.BLUE_UNIT : COLORS.RED_UNIT;
+        const sidc  = group.friendly ? '10031000210000000000' : '10061000210000000000';
+        let svg = '';
+        try {
+            if (window.ms && typeof window.ms.Symbol === 'function') {
+                const sym = new window.ms.Symbol(sidc, { size: 34 });
+                if (sym.isValid && sym.isValid()) svg = sym.asSVG();
+            }
+        } catch (_) { /* fall back below */ }
+        const inner = svg || ('<div style="width:34px;height:24px;border:2px solid ' + color + ';background:rgba(0,0,0,0.05);"></div>');
+        const html = '<div class="wg-adj-aggregate-inner" style="position:relative;display:inline-block;">' + inner +
+            '<span class="wg-adj-aggregate-badge" style="background:' + color + ';">' + count + '</span></div>';
+        return window.L.divIcon({ className: 'wg-adj-aggregate', html: html, iconSize: [42, 42], iconAnchor: [21, 21] });
+    }
+
+    // Render the roll-up for the current zoom. Idempotent: clears + rebuilds
+    // aggregates and toggles the container class. Safe to call on zoomend,
+    // after each step, and after drawScenario.
+    function renderEchelonRollup() {
+        if (!hasMap() || !layerGroup || !window.L) return;
+        const container = (window.map.getContainer && window.map.getContainer()) || null;
+        const groups = echelonRollupEnabled ? buildEchelonDivisionGroups() : [];
+        const canRoll = groups.length >= 2;
+        const zoom = (window.map.getZoom && window.map.getZoom()) || 0;
+        const rolledUp = canRoll && zoom < ECHELON_EXPAND_ZOOM;
+
+        clearEchelonAggregates();
+        if (rolledUp) {
+            groups.forEach((g) => {
+                const c = groupCentroid(g);
+                if (!c) return;
+                const mk = window.L.marker(c, { icon: buildAggregateIcon(g), interactive: true, zIndexOffset: 1000 });
+                mk._aggGroup = g;
+                mk.on('click', () => {
+                    const pts = g.memberUids.map((uid) => {
+                        const mm = blueMarkers[uid] || redMarkers[uid];
+                        if (!mm || typeof mm.getLatLng !== 'function') return null;
+                        try { const ll = mm.getLatLng(); return [ll.lat, ll.lng]; } catch (_) { return null; }
+                    }).filter(Boolean);
+                    if (pts.length) {
+                        try {
+                            // Drill IN: center on the formation and zoom to at least the
+                            // expand threshold so its units actually appear (a wide division
+                            // would otherwise fitBounds to a low, still-rolled-up zoom).
+                            const b = window.L.latLngBounds(pts);
+                            const fitZ = window.map.getBoundsZoom(b, false);
+                            const targetZ = Math.min(Math.max(fitZ, ECHELON_EXPAND_ZOOM), 14);
+                            window.map.setView(b.getCenter(), targetZ, { animate: true });
+                        } catch (_) {}
+                    }
+                });
+                mk.on('mouseover', () => { try { setFormationPeek(g, true); } catch (_) {} });
+                mk.on('mouseout',  () => { try { setFormationPeek(g, false); } catch (_) {} });
+                try { mk.bindTooltip(g.key + ' — ' + g.memberUids.length + ' units · hover to peek · click to zoom', { direction: 'top', offset: [0, -16] }); } catch (_) {}
+                mk.addTo(layerGroup);
+                echelonAggregates.push(mk);
+            });
+        }
+        if (container && container.classList) {
+            if (rolledUp) container.classList.add('wg-rolled-up');
+            else container.classList.remove('wg-rolled-up');
+        }
+    }
+
+    // ── CMO-style zoom-responsive unit sizing ───────────────────────────
+    // Unit symbols were a fixed px size at every zoom, so they dominated the map
+    // when zoomed out and stayed huge. Scale them with zoom via a CSS variable on
+    // the map container (the CSS scales the inner symbol SVG only — see
+    // style.css; the marker wrapper keeps Leaflet's positioning transform). Cheap:
+    // one var update per zoom, no icon rebuilds; reversible (default scale = 1).
+    function unitScaleForZoom(zoom) {
+        const z = Number.isFinite(zoom) ? zoom : 9;
+        const s = 0.42 + (z - 8) * 0.06;   // ~0.42x at wide AO-fit (~z8) → ~0.78x zoomed in
+        return Math.max(0.4, Math.min(0.8, s));
+    }
+    function updateUnitScale() {
+        if (!hasMap() || !window.map.getContainer) return;
+        const el = window.map.getContainer();
+        if (el && el.style) {
+            const z = (window.map.getZoom && window.map.getZoom()) || 9;
+            el.style.setProperty('--wg-unit-scale', unitScaleForZoom(z).toFixed(3));
+        }
+    }
+
+    // Hover-peek: temporarily reveal ONE formation's member units while the map is
+    // rolled up (toggles .wg-peek; see style.css). Read-only / reversible.
+    function setFormationPeek(group, on) {
+        if (!group || !Array.isArray(group.memberUids)) return;
+        group.memberUids.forEach((uid) => {
+            const mm = blueMarkers[uid] || redMarkers[uid];
+            if (!mm) return;
+            let el; try { el = mm.getElement(); } catch (_) { el = null; }
+            if (el && el.classList) el.classList[on ? 'add' : 'remove']('wg-peek');
+        });
+    }
+
+    // ── AN2: read-only event pins + provenance (Wargame 3 playback) ──────
+    // For the current step, drop a compact READ-ONLY pin at each engagement /
+    // affected location so the viewer sees WHAT happened, WHERE, and the
+    // scenario data that supports it (actor, target, status, damage, cause,
+    // doctrine, step/phase/time). Rendering/wiring only — reads scenario data,
+    // invents nothing, mutates nothing. Pins rebuild per step and clear on step
+    // change / scenario reset. No-op for scenarios without engagement data.
+    // Pin colour matches the engagement-arc palette (STATUS_COLORS) so a pin and
+    // its arc read as the same event. Hidden when rolled up to the formation
+    // level (CSS: .wg-rolled-up .wg-adj-event-pin).
+    const EVENT_PIN_CAP = 14;          // declutter: max pins per step
+    const EVENT_SEVERITY_COLOR = { 3: '#b00020', 2: '#d97706', 1: '#ca8a04' };
+    let eventPins = [];
+    let eventPinsStep = -1;
+
+    function clearEventPins() {
+        for (const m of eventPins) { if (m && layerGroup) { try { layerGroup.removeLayer(m); } catch (_) {} } }
+        eventPins = [];
+        eventPinsStep = -1;
+    }
+
+    function eventMarkerLatLng(uid) {
+        const m = blueMarkers[uid] || redMarkers[uid];
+        if (!m || typeof m.getLatLng !== 'function') return null;
+        try { const ll = m.getLatLng(); return [ll.lat, ll.lng]; } catch (_) { return null; }
+    }
+
+    // Severity → declutter priority + colour fallback. destroyed > damaged > rest.
+    function eventSeverity(statusChange) {
+        const s = (statusChange || '').toLowerCase();
+        if (s.indexOf('destroy') !== -1) return 3;
+        if (s.indexOf('damaged') !== -1) return 2;
+        return 1; // suppressed / expended / delayed / unchanged / unknown
+    }
+
+    // Build the read-only event list for a step: engagement_arcs[] (richest —
+    // actor + target + coordinates) plus affected[] entries not already covered
+    // by an arc target. Location = arc target coord, else the unit's marker.
+    function buildStepEvents(scenario, stepIndex) {
+        const steps = scenario && Array.isArray(scenario.steps) ? scenario.steps : [];
+        const row = steps[stepIndex] || {};
+        const events = [];
+        const seen = new Set();
+        (Array.isArray(row.engagement_arcs) ? row.engagement_arcs : []).forEach((arc) => {
+            if (!arc) return;
+            const coords = Array.isArray(arc.coordinates) ? arc.coordinates : null;
+            let latlng = null;
+            if (coords && coords.length >= 2 && Array.isArray(coords[1]) && coords[1].length >= 2) {
+                latlng = [coords[1][1], coords[1][0]]; // dst (target) [lon,lat] → [lat,lng]
+            }
+            if (!latlng) latlng = eventMarkerLatLng(arc.target_uid);
+            if (!latlng) return;
+            events.push({
+                type: 'engagement', actor_uid: arc.actor_uid || null, target_uid: arc.target_uid || null,
+                status_change: arc.status_change || null,
+                damage_pct: Number.isFinite(arc.damage_pct) ? arc.damage_pct : null,
+                cause_what: arc.cause_what || null, cause_doctrine: arc.cause_doctrine || null, latlng: latlng,
+            });
+            if (arc.target_uid) seen.add(arc.target_uid);
+        });
+        (Array.isArray(row.affected) ? row.affected : []).forEach((a) => {
+            if (!a || !a.uid || seen.has(a.uid)) return;
+            const latlng = eventMarkerLatLng(a.uid);
+            if (!latlng) return;
+            events.push({
+                type: 'affected', actor_uid: a.cause_actor || null, target_uid: a.uid,
+                status_change: a.status_change || null,
+                damage_pct: Number.isFinite(a.damage_pct) ? a.damage_pct : null,
+                cause_what: a.cause_what || null, cause_doctrine: a.cause_doctrine || null, latlng: latlng,
+            });
+            seen.add(a.uid);
+        });
+        return events;
+    }
+
+    function eventPinIcon(ev) {
+        const color = STATUS_COLORS[ev.status_change] || EVENT_SEVERITY_COLOR[eventSeverity(ev.status_change)] || '#4b5563';
+        return window.L.divIcon({
+            className: 'wg-adj-event-pin',
+            html: '<span class="wg-adj-event-pin-dot" style="background:' + color + ';"></span>',
+            iconSize: [14, 14], iconAnchor: [7, 7],
+        });
+    }
+
+    // Read-only provenance popup. Omits fields the data lacks; shows "unknown"
+    // only for the core who/what fields. Never fabricates values.
+    function eventPinPopupHtml(ev, scenario, stepIndex) {
+        const row = (scenario.steps || [])[stepIndex] || {};
+        const rows = [];
+        const line = (k, v) => rows.push('<div class="wg-ep-row"><span class="wg-ep-k">' + esc(k) + '</span><span class="wg-ep-v">' + esc(v) + '</span></div>');
+        line('Event', ev.type === 'engagement' ? 'Engagement' : 'Affected');
+        line('Actor', ev.actor_uid || 'unknown');
+        line('Affected', ev.target_uid || 'unknown');
+        line('Status', ev.status_change || 'unknown');
+        if (ev.damage_pct != null) line('Damage', Math.round(ev.damage_pct * 100) + '%');
+        if (ev.cause_what) line('Cause', ev.cause_what);
+        if (ev.cause_doctrine) line('Doctrine', ev.cause_doctrine);
+        const ctx = 'Step ' + (stepIndex + 1) + (row.phase ? ' · ' + row.phase : '') + (row.time_label ? ' · ' + row.time_label : '');
+        return '<div class="wg-adj-event-popup"><div class="wg-ep-hdr">' + esc(ctx) + '</div>' + rows.join('') + '</div>';
+    }
+
+    // Render read-only event pins for the step. Idempotent (clears first);
+    // capped + decluttered by severity then damage. No-op for non-W3 scenarios.
+    function renderEventPins(stepIndex) {
+        clearEventPins();
+        const sc = scenarioRef;
+        if (!sc || !layerGroup || !window.L || !scenarioHasAttritionData(sc)) return false;
+        const idx = Number.isFinite(stepIndex) ? stepIndex : 0;
+        let events = buildStepEvents(sc, idx);
+        events.sort((a, b) => (eventSeverity(b.status_change) - eventSeverity(a.status_change)) || ((b.damage_pct || 0) - (a.damage_pct || 0)));
+        const total = events.length;
+        if (events.length > EVENT_PIN_CAP) {
+            dbg('event pins capped', { shown: EVENT_PIN_CAP, dropped: events.length - EVENT_PIN_CAP, step: idx });
+            events = events.slice(0, EVENT_PIN_CAP);
+        }
+        events.forEach((ev) => {
+            const mk = window.L.marker(ev.latlng, { icon: eventPinIcon(ev), interactive: true, zIndexOffset: 800, keyboard: false });
+            try { mk.bindPopup(eventPinPopupHtml(ev, sc, idx), { className: 'wg-adj-event-popup-wrap', maxWidth: 280 }); } catch (_) {}
+            try { mk.bindTooltip((ev.status_change || 'event') + (ev.target_uid ? ' · ' + ev.target_uid : ''), { direction: 'top', offset: [0, -8] }); } catch (_) {}
+            mk.addTo(layerGroup);
+            eventPins.push(mk);
+        });
+        eventPinsStep = idx;
+        return total;
+    }
+
+    // ── AN4: movement trails / axis of advance ───────────────────────────
+    // Read-only trails showing where each unit moved THIS step (prior-step
+    // displayed position → current displayed position) so command can read the
+    // maneuver / axis of advance. Endpoints come from the unit's ACTUAL marker
+    // positions (recorded per step in unitStepPos), so trails align exactly
+    // with the symbols in the same display-offset space. Invents no movement:
+    // a trail is drawn only when both prior and current positions are known and
+    // the displacement exceeds a small threshold. Hidden at command (rolled-up)
+    // zoom; shown unit-level when expanded. No-op without per-step movement data.
+    const TRAIL_MIN_KM = 2.0;
+
+    function scenarioHasMovementData(sc) {
+        return !!(sc && (sc.red_unit_step_coords || sc.blue_unit_step_coords || sc.red_unit_step_prev || sc.blue_unit_step_prev));
+    }
+
+    function clearMovementTrails() {
+        for (const t of movementTrails) { if (t && layerGroup) { try { layerGroup.removeLayer(t); } catch (_) {} } }
+        movementTrails = [];
+    }
+
+    function _trailKm(a, b) {
+        const dLat = (a[0] - b[0]) * KM_PER_DEG_LAT;
+        const dLng = (a[1] - b[1]) * kmPerDegLng((a[0] + b[0]) / 2);
+        return Math.sqrt(dLat * dLat + dLng * dLng);
+    }
+
+    // Record current displayed positions for `stepIndex` and (when expanded)
+    // draw a subtle side-coloured trail from each unit's prior-step position.
+    function renderMovementTrails(stepIndex) {
+        clearMovementTrails();
+        const sc = scenarioRef;
+        if (!sc || !layerGroup || !window.L || !scenarioHasMovementData(sc)) return false;
+        const idx = Number.isFinite(stepIndex) ? stepIndex : 0;
+        movementTrailStep = idx;
+        const rolledUp = hasMap() && window.map.getContainer && window.map.getContainer().classList.contains('wg-rolled-up');
+        const dicts = [{ d: redMarkers, color: COLORS.RED_UNIT }, { d: blueMarkers, color: COLORS.BLUE_UNIT }];
+        let drawn = 0;
+        dicts.forEach(({ d, color }) => {
+            for (const uid of Object.keys(d || {})) {
+                const m = d[uid];
+                if (!m || typeof m.getLatLng !== 'function') continue;
+                let cur; try { const ll = m.getLatLng(); cur = [ll.lat, ll.lng]; } catch (_) { continue; }
+                if (!unitStepPos[uid]) unitStepPos[uid] = {};
+                unitStepPos[uid][idx] = cur;            // always record (history), even when rolled up
+                if (rolledUp) continue;                 // command zoom: hide unit-level trails
+                const prev = unitStepPos[uid][idx - 1];
+                if (!prev || _trailKm(prev, cur) < TRAIL_MIN_KM) continue;
+                const line = window.L.polyline([prev, cur], {
+                    color, weight: 2, opacity: 0.5, dashArray: '1 6', lineCap: 'round',
+                    interactive: false, className: 'wg-adj-trail', pane: SCENARIO_GRAPHICS_PANE,
+                });
+                line.addTo(layerGroup);
+                movementTrails.push(line);
+                drawn++;
+            }
+        });
+        return drawn;
+    }
+
      // Inject a single <style> tag so destroyed-marker fades animate smoothly
      // instead of jumping. Runs once per page load.
      (function injectStyles() {
@@ -1040,6 +1432,92 @@
         } catch (_) { return null; }
     }
 
+    // ── SYM2: unit symbol resolver ───────────────────────────────────────
+    // Some W3 units carry clean 20-digit APP-6D SIDCs whose *specific child
+    // entity codes* milsymbol 2.0.0 rejects (destroyer 120103, minesweeper
+    // 120601, MANPADS 130501, …) → sidcIcon returns null → generic diamond.
+    // milsymbol DOES support the canonical family parents (verified). This
+    // resolver remaps an unsupported entity to the supported family parent of
+    // the SAME affiliation + symbol set + echelon, so the unit renders an
+    // honest CATEGORY symbol (ship / sub / AD / sensor) instead of a bare
+    // diamond. Read-only: invents no platform-specific identity, mutates
+    // nothing. Family/category correction only.
+    //
+    // role → canonical milsymbol-supported entity (all verified v2.0.0, draw an icon):
+    const SYMBOL_FAMILY_ENTITY = {
+        destroyer:'120100', corvette:'120100', missile_boat:'120100', naval_unit:'120100',
+        mine_sweeper:'120600', mine_layer:'120600',
+        landing_ship:'120900', hovercraft:'120900',
+        submarine:'110100',
+        manpads:'130500', sam_s300:'130500', sam_hawk:'130500', sam_other:'130500', air_defense:'130500',
+        ssm_brigade:'130600',
+        radar:'130700',
+        air_unit:'110100', fighter_ad:'110100', awacs:'110100', uav_isr:'110100', transport:'110100', utility_helo:'110100',
+    };
+    // when role isn't mapped, fall back by symbol set (digits 5-6). Land (10)
+    // has no safe generic entity → frame-only (correct land frame, no fake icon).
+    const SET_DEFAULT_ENTITY = { '30':'120100', '35':'110100', '01':'110100' };
+
+    function _msSidcValid(sidc) {
+        try { return !!(window.ms && typeof window.ms.Symbol === 'function' && sidc && new window.ms.Symbol(sidc).isValid()); }
+        catch (_) { return false; }
+    }
+
+    function resolveUnitSymbolProfile(unit, options) {
+        options = options || {};
+        const orig   = unit && unit.sidc ? String(unit.sidc) : null;
+        const role   = (unit && unit.role) || null;
+        const domain = (unit && unit.domain) || null;
+        const ech    = (unit && unit.echelon) || null;
+        const set    = (orig && orig.length >= 6) ? orig.slice(4, 6) : null;
+        const family = set === '30' ? 'naval' : set === '35' ? 'subsurface'
+                     : set === '01' ? 'air'   : set === '10' ? 'land' : (domain || 'unknown');
+        const base = {
+            original_sidc: orig, resolved_sidc: orig, symbol_family: family,
+            domain: domain, role: role, echelon: ech,
+            confidence: 'authoritative', source: 'scenario_sidc', fallback_reason: null,
+            operator_editable: true,
+        };
+        if (!orig) return Object.assign(base, { resolved_sidc: null, confidence: 'unknown', source: 'unknown', fallback_reason: 'insufficient_data' });
+        // Tier 1 — original SIDC already valid in milsymbol → unchanged.
+        if (_msSidcValid(orig)) return base;
+        // Tier 2 — remap entity to the canonical family parent (re-validate).
+        if (orig.length === 20) {
+            const ent = (role && SYMBOL_FAMILY_ENTITY[role]) || (set && SET_DEFAULT_ENTITY[set]) || null;
+            if (ent) {
+                const remapped = orig.slice(0, 10) + ent + orig.slice(16);
+                if (_msSidcValid(remapped)) {
+                    return Object.assign(base, { resolved_sidc: remapped, confidence: 'template', source: 'role_domain_template', fallback_reason: 'unsupported_sidc_entity' });
+                }
+            }
+            // Tier 3 — frame-only with the correct symbol set (honest family frame).
+            const frame = orig.slice(0, 10) + '000000' + orig.slice(16);
+            if (_msSidcValid(frame)) {
+                return Object.assign(base, { resolved_sidc: frame, confidence: 'frame_only', source: 'symbol_set_frame', fallback_reason: 'remap_unsupported' });
+            }
+        }
+        // Tier 4 — honest unknown (caller draws the generic diamond/square).
+        return Object.assign(base, { resolved_sidc: null, confidence: 'unknown', source: 'unknown', fallback_reason: 'insufficient_data' });
+    }
+
+    // Read-only diagnostic: run the resolver over a scenario and tally tiers.
+    function auditResolvedUnitSymbols(scenario) {
+        const sc = scenario || scenarioRef || {};
+        const units = [].concat(
+            (sc.red_units || []).map((u) => ({ uid: u.uid, sidc: u.sidc, role: u.role, domain: u.domain, echelon: u.echelon })),
+            (sc.blue_units_initial || []).map((u) => ({ uid: u.unit_uid || u.uid, sidc: u.sidc, role: u.role, domain: u.domain, echelon: u.echelon }))
+        );
+        const out = { total: units.length, tier1_unchanged: 0, tier2_remapped: 0, tier3_frame: 0, tier4_fallback: 0, remappedExamples: [], fallbackExamples: [] };
+        units.forEach((u) => {
+            const p = resolveUnitSymbolProfile(u);
+            if (p.source === 'scenario_sidc') out.tier1_unchanged++;
+            else if (p.source === 'role_domain_template') { out.tier2_remapped++; if (out.remappedExamples.length < 10) out.remappedExamples.push({ uid: u.uid, role: u.role, from: String(u.sidc).slice(10, 16), to: p.resolved_sidc.slice(10, 16), family: p.symbol_family }); }
+            else if (p.source === 'symbol_set_frame') { out.tier3_frame++; if (out.fallbackExamples.length < 10) out.fallbackExamples.push({ uid: u.uid, role: u.role, tier: 'frame_only' }); }
+            else { out.tier4_fallback++; if (out.fallbackExamples.length < 10) out.fallbackExamples.push({ uid: u.uid, role: u.role, tier: 'fallback' }); }
+        });
+        return out;
+    }
+
     // Icon size by Blue echelon — division biggest, company smallest.
     function blueIconSize(echelon) {
         switch (echelon) {
@@ -1145,6 +1623,10 @@
     function bindZoomHookOnce() {
         if (_zoomHookBound || !hasMap()) return;
         window.map.on('zoomend', rerenderTacticalArrowsForZoom);
+        window.map.on('zoomend', renderEchelonRollup); // echelon roll-up: switch level on zoom
+        window.map.on('zoomend', updateUnitScale);     // CMO-style zoom-responsive symbol sizing
+        window.map.on('zoomend', () => { try { renderMovementTrails(movementTrailStep); } catch (_) {} }); // AN4: hide/show trails by roll-up
+        window.map.on('zoomend', () => { try { renderEngagementMissionGraphics({ step_index: engagementGraphicsStep }, scenarioRef); } catch (_) {} }); // MG1: rebuild TMG at new zoom (pixel-sized icons)
         _zoomHookBound = true;
     }
 
@@ -1415,7 +1897,8 @@
             // absent. Same pattern as the blue marker creation below.
             const sidc = unit.sidc || redSidcFor(unit);
             const size = redIconSize(unit.echelon);
-            const icon = sidcIcon(sidc, size) || diamondIcon(COLORS.RED_UNIT, unit.label);
+            const _sym = resolveUnitSymbolProfile(unit); // SYM2: remap unsupported SIDCs to family symbols
+            const icon = sidcIcon(_sym.resolved_sidc, size) || diamondIcon(COLORS.RED_UNIT, unit.label);
             const m = window.L.marker(
                 [initialLonLat[1], initialLonLat[0]],
                 { icon, title: (unit.label || displayRedId(unit.uid)) + ' — ' + displayRole(unit.role) },
@@ -1435,15 +1918,34 @@
             // gets a real unit list to plan against. Without these the COA
             // loop sees an empty battlefield (counts.hostile = 0) and the
             // adjudicator falls straight through to the scripted baseline.
-            m._sidc     = sidc;
+            m._sidc          = _sym.resolved_sidc || sidc; // SYM2: render+attrition use the resolved SIDC
+            m._symbolProfile = _sym;
             m._iconSize = size;
             m._unitId   = unit.uid;
             m._unitData = {
-                id:   unit.uid,
-                name: unit.label || unit.uid,
-                code: unit.label || '',
-                sidc: sidc,
+                id:    unit.uid,
+                name:  unit.label || unit.name_ar || unit.uid,
+                code:  unit.uid,
+                sidc:  sidc,
+                side:  'hostile',
+                level: unit.echelon || null,
+                role:  unit.role || null,
+                domain: unit.domain || null,
+                bls:   unit.bls || null,
+                _scenario: true,
             };
+            // P5 (Wargame3 live): clicking a scenario unit selects it and feeds the
+            // read-only Selected Unit panel. Uses the marker's live displayed
+            // position (Red's raw coord is a stacked staging point).
+            m.on('click', () => {
+                try {
+                    const ll = m.getLatLng && m.getLatLng();
+                    const detailUnit = ll ? Object.assign({}, m._unitData, { lat: ll.lat, lng: ll.lng }) : m._unitData;
+                    document.dispatchEvent(new CustomEvent('rmooz:unit-selected', {
+                        detail: { unit: detailUnit, selectedAt: Date.now() },
+                    }));
+                } catch (_) { /* never throw on selection */ }
+            });
             // Register in the unit lifecycle (active/degraded/destroyed) and
             // expose the registry entry on the marker so the renderer can
             // walk parent/root without re-deriving each frame.
@@ -1461,7 +1963,8 @@
             if (!unit.coord || unit.coord.length !== 2) continue;
             const size = blueIconSize(unit.echelon);
             const sidc = unit.sidc || blueSidcFor(unit);
-            const icon = sidcIcon(sidc, size) || squareIcon(COLORS.BLUE_UNIT, unit.base_id, Math.max(10, Math.round(size / 2)));
+            const _symB = resolveUnitSymbolProfile(unit); // SYM2: remap unsupported SIDCs to family symbols
+            const icon = sidcIcon(_symB.resolved_sidc, size) || squareIcon(COLORS.BLUE_UNIT, unit.base_id, Math.max(10, Math.round(size / 2)));
             const m = window.L.marker(
                 [unit.coord[1], unit.coord[0]],
                 { icon, title: displayBlueId(unit.base_id) + (unit.role ? ' · ' + displayRole(unit.role) : '') + (unit.echelon ? ' (' + unit.echelon + ')' : '') },
@@ -1485,15 +1988,33 @@
             // Same Units-feature hooks as the Red side — see comment above.
             // unit.unit_uid is e.g. "BLUE_lc"; SIDC's affiliation digit is
             // '3' (friendly), which scanMapForUnits classifies as friendly.
-            m._sidc     = sidc || null;
+            m._sidc          = _symB.resolved_sidc || sidc || null; // SYM2: resolved SIDC
+            m._symbolProfile = _symB;
             m._iconSize = size; // needed so the damaged/active SIDC rebuild keeps the same scale
             m._unitId   = unit.unit_uid;
             m._unitData = {
-                id:   unit.unit_uid,
-                name: unit.echelon || unit.base_id || unit.unit_uid,
-                code: unit.base_id || '',
-                sidc: sidc || null,
+                id:    unit.unit_uid,
+                name:  unit.label || unit.name_ar || unit.base_id || unit.unit_uid,
+                code:  unit.base_id || unit.unit_uid,
+                sidc:  sidc || null,
+                side:  'friendly',
+                level: unit.echelon || null,
+                role:  unit.role || null,
+                domain: unit.domain || null,
+                lat:   unit.coord[1],
+                lng:   unit.coord[0],
+                _scenario: true,
             };
+            // P5 (Wargame3 live): clicking a scenario unit selects it and feeds the
+            // read-only Selected Unit panel. Same event the placed-units layer uses
+            // (unit-panel.js renders detail.unit); additive — does not block tooltip.
+            m.on('click', () => {
+                try {
+                    document.dispatchEvent(new CustomEvent('rmooz:unit-selected', {
+                        detail: { unit: m._unitData, selectedAt: Date.now() },
+                    }));
+                } catch (_) { /* never throw on selection */ }
+            });
             // Register in the unit lifecycle and expose the registry entry
             // so the renderer can walk parent/root (lc → b<X>c → p<X><Y>c
             // → c<X><Y><Z>) without re-deriving the chain each step.
@@ -1503,16 +2024,21 @@
             blueMarkers[unit.unit_uid] = m;
         }
 
-        // Fit the map view so the whole AOR is visible the first time.
-        try {
-            const bb = scenario.map_bbox;
-            if (Array.isArray(bb) && bb.length === 4) {
-                window.map.fitBounds([[bb[1], bb[0]], [bb[3], bb[2]]], { padding: [30, 30], maxZoom: 10, animate: true });
-            }
-        } catch (_) { /* ignore */ }
+        // Fit the map view to the friendly operational area the first time, so the
+        // amphibious AO fills the view instead of the whole region. Red staging
+        // advances into view as the operation steps forward. (Reusable for P3.)
+        fitScenarioAO();
+        // Echelon roll-up: open at the formation (division) level so the laydown
+        // reads cleanly instead of as ~150 overlapping frames. fitBounds(animate)
+        // also fires zoomend → renderEchelonRollup, but call once now in case the
+        // fit doesn't change zoom (no zoomend then).
+        try { renderEchelonRollup(); } catch (_) { /* ignore */ }
+        try { updateUnitScale(); } catch (_) { /* ignore */ } // initial zoom-responsive symbol size
+        try { renderMovementTrails(0); } catch (_) { /* ignore */ } // AN4: record step-0 positions (no trail yet)
 
-        // Add the legend control (top-right corner of the map).
-        addLegend();
+        // Add the legend control near the lower-left edge so it stays out of
+        // the densest unit laydown and can be toggled from the app header.
+        showLegend();
         // Add the SITREP banner (top-left corner of the map). Initial state
         // is a placeholder; applyState() fills it as the trial progresses.
         addSitrep();
@@ -1522,7 +2048,7 @@
 
     function addLegend() {
         if (legendControl || !window.L) return;
-        legendControl = window.L.control({ position: 'topright' });
+        legendControl = window.L.control({ position: 'bottomleft' });
         legendControl.onAdd = function () {
             const div = window.L.DomUtil.create('div', 'wg-adj-legend');
             div.style.cssText = `
@@ -1530,11 +2056,22 @@
                 padding:8px 10px;border-radius:4px;border:1px solid #2a3140;
                 box-shadow:0 0 6px rgba(0,0,0,.4);line-height:1.5;
                 font-family:sans-serif;min-width:170px;max-width:200px;
+                margin-left:10px;margin-bottom:56px;max-height:52vh;overflow:auto;
             `;
             const blsRow = (color, label) =>
                 `<span style="display:inline-block;width:14px;height:8px;
                   background:${color};border:1px solid #fff;border-bottom:none;
                   border-radius:14px 14px 0 0;vertical-align:middle;margin-right:6px;"></span>${label}`;
+            // MG1: engagement key — the mission graphic (chevron, side colour)
+            // for the MANEUVER (Attack / Counter-attack).
+            const tmgRow = (color, label) =>
+                `<span style="display:inline-block;width:16px;border-top:2px solid ${color};vertical-align:middle;margin-right:3px;"></span>` +
+                `<span style="color:${color};font-weight:700;vertical-align:middle;margin-right:6px;">&#9654;</span>${label}`;
+            // Effect key — a filled dot in the status palette (STATUS_COLORS),
+            // matching the event pins + unit-state colours (the OUTCOME, kept
+            // separate from the maneuver graphic above).
+            const pinRow = (color, label) =>
+                `<span style="color:${color};vertical-align:middle;margin-right:6px;">&#9679;</span>${label}`;
             div.innerHTML = `
                 <div style="font-weight:700;margin-bottom:4px;color:#fff;">Wargame symbols</div>
                 <div>${blsRow(COLORS.BLS.STAGED,    'BLS&nbsp;staged')}</div>
@@ -1549,6 +2086,24 @@
                 <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
                 <div><span style="display:inline-block;width:18px;border-top:2px dashed ${COLORS.PIPELINE};vertical-align:middle;margin-right:6px;"></span>Pipeline (planned)</div>
                 <div><span style="display:inline-block;width:18px;border-top:3px solid ${COLORS.RED_UNIT};vertical-align:middle;margin-right:6px;"></span>Red advance</div>
+                <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
+                <div style="font-weight:700;margin-bottom:4px;color:#fff;">Engagements (current step)</div>
+                <div>${tmgRow(ENGAGEMENT_RED,  'Attack&nbsp;(Red&nbsp;acts)')}</div>
+                <div>${tmgRow(ENGAGEMENT_BLUE, 'Counter-attack&nbsp;(Blue&nbsp;acts)')}</div>
+                <div style="opacity:.65;font-size:10px;margin-top:2px;">Mission&nbsp;graphic&nbsp;points&nbsp;actor&nbsp;&rarr;&nbsp;target</div>
+                <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
+                <div style="font-weight:700;margin-bottom:4px;color:#fff;">Effect this step</div>
+                <div>${pinRow(STATUS_COLORS.destroyed,       'Destroyed')}</div>
+                <div>${pinRow(STATUS_COLORS.damaged_partial, 'Damaged')}</div>
+                <div>${pinRow(STATUS_COLORS.suppressed,      'Suppressed')}</div>
+                <div>${pinRow(STATUS_COLORS.delayed,         'Delayed')}</div>
+                <div>${pinRow(STATUS_COLORS.expended,        'Expended')}</div>
+                <div>${pinRow(STATUS_COLORS.unchanged,       'No&nbsp;effect')}</div>
+                <div style="opacity:.65;font-size:10px;margin-top:2px;">&#9679;&nbsp;event pin (click) &middot; colour&nbsp;=&nbsp;effect</div>
+                <div style="margin-top:3px;"><span style="display:inline-block;width:18px;border-top:2px dotted #cdd;vertical-align:middle;margin-right:6px;"></span>Movement this step (&rarr; current pos)</div>
+                <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
+                <div style="font-weight:700;margin-bottom:4px;color:#fff;">Unit state</div>
+                <div><span style="opacity:.5;font-weight:700;">&#9646;</span>&nbsp;Degraded (faded)&nbsp;&middot;&nbsp;<span style="filter:grayscale(1);opacity:.7;">&#10006;</span>&nbsp;Destroyed</div>
             `;
             window.L.DomEvent.disableClickPropagation(div);
             return div;
@@ -1556,11 +2111,32 @@
         legendControl.addTo(window.map);
     }
 
+    function showLegend() {
+        legendVisible = true;
+        addLegend();
+        return legendVisible;
+    }
+
     function removeLegend() {
         if (legendControl && window.map) {
             try { window.map.removeControl(legendControl); } catch (_) {}
         }
         legendControl = null;
+    }
+
+    function hideLegend() {
+        legendVisible = false;
+        removeLegend();
+        return legendVisible;
+    }
+
+    function toggleLegend(forceVisible) {
+        const nextVisible = typeof forceVisible === 'boolean' ? forceVisible : !legendVisible;
+        return nextVisible ? showLegend() : hideLegend();
+    }
+
+    function isLegendVisible() {
+        return legendVisible;
     }
 
     // ── SITREP banner (top-left of the map) ───────────────────────────
@@ -2721,97 +3297,168 @@
         engagementArcs = [];
     }
 
-    // Render every engagement_arc this phase exactly as the W3 schema
-    // README specifies (Wargame3/schema/README.md §5):
-    //   "Render as: animated dashed line from source to target,
-    //    color-coded by status_change. Fade in/out over ~1.5s."
+    // MG1 — Engagement mission graphics (CMO operational arrow style).
     //
-    // That's the whole spec. No NATO tactical-graphic chevrons, no
-    // per-component visual signatures, no extra layers. The schema
-    // intentionally caps complexity at 8–14 arcs per phase; anything
-    // more becomes visual noise.
-    function renderEngagementArcs(state, scenario) {
+    // Problem solved: one full-span arrow per engagement_arc creates spaghetti
+    // when 6+ units all target the same coastal cluster. Instead we:
+    //   1. Split arcs by actor side (RED=attack, BLUE=counterattack).
+    //   2. Cluster arcs whose TARGETS fall within TARGET_CLUSTER_KM of each other
+    //      → one grouped operational arrow per cluster.
+    //   3. Classify clusters by rank: largest = main effort, rest = support / local.
+    //   4. Draw CMO-style filled maneuver arrows with visual hierarchy:
+    //        main effort  → thickest body, full opacity
+    //        support      → medium body, reduced opacity
+    //        local/single → thin, only rendered at zoom ≥ threshold
+    //   5. Offset parallel same-side arrows by a small perpendicular lane so they
+    //      don't stack. Arrowhead stops short of the dense cluster.
+    //   6. Zoom adaptive: low zoom = grouped only; high zoom = adds individual
+    //      local TMG ticks for single-arc groups.
+    //
+    // Read-only path: no scenario mutation, no server calls.
+    const ENGAGEMENT_RED  = '#c41e1e';
+    const ENGAGEMENT_BLUE = '#3a96d2';
+    const ENGAGEMENT_ZOOM_THRESHOLD  = 11;  // below = 1 grouped axis only; above = also local ticks
+    const ENGAGEMENT_TARGET_CLUSTER_KM = 80; // large radius merges most arcs into 1–2 clusters
+    const ENGAGEMENT_STOP_SHORT_KM   = 4;   // pull arrowhead back from dense target cluster
+    const ENGAGEMENT_MAX_GROUPED     = 2;   // max 2 arrows per side (1 main + 1 support)
+
+    // Group arcs whose target positions are within clusterKm of each other.
+    // Returns array of cluster objects sorted by arc count descending.
+    function groupArcsByTargetCluster(arcs, clusterKm) {
+        const clusters = [];
+        for (const arc of arcs) {
+            const coords = arc && Array.isArray(arc.coordinates) ? arc.coordinates : null;
+            if (!coords || coords.length < 2) continue;
+            const [src, dst] = coords;
+            if (!Array.isArray(src) || !Array.isArray(dst)) continue;
+            const actorLL = { lat: src[1], lng: src[0] };
+            const tgtLL   = { lat: dst[1], lng: dst[0] };
+            let best = null, bestKm = Infinity;
+            for (const cl of clusters) {
+                const n = cl.arcs.length;
+                const km = haversineKm(
+                    [tgtLL.lat, tgtLL.lng],
+                    [cl.tgtSumLat / n, cl.tgtSumLng / n],
+                );
+                if (km < clusterKm && km < bestKm) { best = cl; bestKm = km; }
+            }
+            if (!best) {
+                clusters.push({
+                    arcs:        [arc],
+                    actorSumLat: actorLL.lat,
+                    actorSumLng: actorLL.lng,
+                    tgtSumLat:   tgtLL.lat,
+                    tgtSumLng:   tgtLL.lng,
+                });
+            } else {
+                best.arcs.push(arc);
+                best.actorSumLat += actorLL.lat;
+                best.actorSumLng += actorLL.lng;
+                best.tgtSumLat   += tgtLL.lat;
+                best.tgtSumLng   += tgtLL.lng;
+            }
+        }
+        clusters.sort((a, b) => b.arcs.length - a.arcs.length);
+        return clusters;
+    }
+
+    // Pull arrowhead endpoint back shortKm from target so head stops before
+    // the unit cluster. Returns target LatLng when the segment is too short to clip.
+    function engStopShort(actorLat, actorLng, tgtLat, tgtLng, shortKm) {
+        const distKm = haversineKm([actorLat, actorLng], [tgtLat, tgtLng]);
+        if (distKm <= shortKm * 2) return { lat: tgtLat, lng: tgtLng };
+        const ratio = (distKm - shortKm) / distKm;
+        return { lat: actorLat + (tgtLat - actorLat) * ratio,
+                 lng: actorLng + (tgtLng - actorLng) * ratio };
+    }
+
+    // Shift both endpoints of a segment by offsetKm in the perpendicular direction
+    // so parallel same-side arrows get distinct lanes instead of stacking.
+    function engLaneOffset(tailLat, tailLng, headLat, headLng, offsetKm) {
+        const midLat   = (tailLat + headLat) / 2;
+        const dLatKm   = (headLat - tailLat) * KM_PER_DEG_LAT;
+        const dLngKm   = (headLng - tailLng) * kmPerDegLng(midLat);
+        const segLen   = Math.hypot(dLatKm, dLngKm) || 1;
+        // 90° CCW perpendicular in (north, east) km-space: (-eastKm, northKm) / len
+        const offLat   = (-dLngKm / segLen) * offsetKm / KM_PER_DEG_LAT;
+        const offLng   = ( dLatKm / segLen) * offsetKm / kmPerDegLng(midLat);
+        return { tailLat: tailLat + offLat, tailLng: tailLng + offLng,
+                 headLat: headLat + offLat, headLng: headLng + offLng };
+    }
+
+    function renderEngagementMissionGraphics(state, scenario) {
         clearEngagementArcs();
         if (!layerGroup || !state || !window.L) return;
         const sc = scenario || scenarioRef;
         if (!sc || sc.schema_variant !== 'w3-rich') return;
         const stepIndex = Number.isFinite(state && state.step_index) ? state.step_index : 0;
+        engagementGraphicsStep = stepIndex;
         const stepRow = Array.isArray(sc.steps) ? sc.steps[stepIndex] : null;
-        const arcs = stepRow && Array.isArray(stepRow.engagement_arcs)
-                     ? stepRow.engagement_arcs : [];
-        if (!arcs.length) return;
+        const allArcs = stepRow && Array.isArray(stepRow.engagement_arcs)
+                        ? stepRow.engagement_arcs : [];
+        if (!allArcs.length) return;
 
-        // Declutter dense phases: if more than 3 arcs, the first arc from
-        // each shooter is "primary" (full opacity/weight); additional arcs
-        // from the same shooter become secondary (thinner + dimmer). Phases
-        // with ≤3 arcs are left fully prominent — behavior is unchanged.
-        const dense = arcs.length > 3;
-        const seenActors = new Set();
+        const isBlueArc = a => { const s = (a.actor_side || '').toUpperCase(); return s === 'BLUE' || s === 'B' || s === 'FRIEND'; };
+        const redArcs  = allArcs.filter(a => !isBlueArc(a) && Array.isArray(a.coordinates) && a.coordinates.length >= 2);
+        const blueArcs = allArcs.filter(a =>  isBlueArc(a) && Array.isArray(a.coordinates) && a.coordinates.length >= 2);
 
-        arcs.forEach((arc, idx) => {
-            const coords = arc && Array.isArray(arc.coordinates) ? arc.coordinates : null;
-            if (!coords || coords.length < 2) return;
-            const [src, dst] = coords;
-            if (!Array.isArray(src) || !Array.isArray(dst)) return;
-
-            const color = STATUS_COLORS[arc.status_change] || STATUS_COLORS.unchanged;
-            // Base weight scales mildly with damage_pct so heavy strikes read
-            // as more decisive than glancing engagements (3–5 px).
-            const dmg        = Number.isFinite(arc.damage_pct) ? arc.damage_pct : 0.3;
-            const baseWeight = Math.max(2, 2 + Math.round(dmg * 3));
-            const start      = [src[1], src[0]];
-            const end        = [dst[1], dst[0]];
-
-            // First arc per shooter = primary; additional arcs from the same
-            // shooter = secondary. Falls back to index < 3 when actor_uid absent.
-            const actor     = arc.actor_uid || null;
-            const isPrimary = dense ? (actor ? !seenActors.has(actor) : idx < 3) : true;
-            if (actor) seenActors.add(actor);
-
-            const weight  = dense && !isPrimary ? Math.max(1, Math.floor(baseWeight * 0.6)) : baseWeight;
-            const opacity = dense && !isPrimary ? 0.30 : 0.85;
-
-            const line = window.L.polyline([start, end], {
-                color,
-                weight,
-                opacity,
-                dashArray: '6 4',
-                lineCap:   'round',
-                interactive: false,
-                className: 'wg-w3-engagement-arc wg-attack-pulse',
-                pane: SCENARIO_GRAPHICS_PANE,
-            });
-
-            // Tooltip: actor → target · status + damage% · cause_what
-            const tooltip = [
-                arc.actor_uid && arc.target_uid ? `${arc.actor_uid} → ${arc.target_uid}` : null,
-                `${arc.status_change || '?'}${Number.isFinite(arc.damage_pct) ? ` ${Math.round(arc.damage_pct * 100)}%` : ''}`,
-                arc.cause_what,
-            ].filter(Boolean).join(' · ');
-            if (tooltip) line.bindTooltip(tooltip, { sticky: true });
-
-            line.addTo(layerGroup);
-            engagementArcs.push(line);
-
-            // Arrowhead at the target end so direction is unambiguous.
-            const head = makeArrowhead(start, end, color, weight * 4, SCENARIO_GRAPHICS_PANE);
-            if (head) {
-                head.addTo(layerGroup);
-                engagementArcs.push(head);
+        // ONE arrow per side: centroid of all actor positions → centroid of all
+        // target positions. Multiple units attacking the same general area are one
+        // operational axis — drawing individual lines just produces spaghetti.
+        function drawAxisArrow(arcs, color, outlineColor, label) {
+            if (!arcs.length) return;
+            let aLat = 0, aLng = 0, tLat = 0, tLng = 0;
+            for (const arc of arcs) {
+                const [src, dst] = arc.coordinates;
+                aLat += src[1]; aLng += src[0];
+                tLat += dst[1]; tLng += dst[0];
             }
+            const n = arcs.length;
+            aLat /= n; aLng /= n; tLat /= n; tLng /= n;
 
-            // Per-schema fade after ~1.5s. The next applyState wipes
-            // everything anyway; the timer prevents stale arcs from
-            // piling up if the operator scrubs rapidly.
-            const captured = [line, head].filter(Boolean);
-            engagementArcTimers.push(setTimeout(() => {
-                for (const layer of captured) {
-                    try { if (layerGroup) layerGroup.removeLayer(layer); } catch (_) {}
-                    const i = engagementArcs.indexOf(layer);
-                    if (i >= 0) engagementArcs.splice(i, 1);
-                }
-            }, 1500));
-        });
+            // Pull tip back so arrowhead stops before the target cluster.
+            const tip = engStopShort(aLat, aLng, tLat, tLng, ENGAGEMENT_STOP_SHORT_KM);
+
+            // Gentle bow: curves the line so it reads as motion.
+            const midLat = (aLat + tip.lat) / 2;
+            const midLng = (aLng + tip.lng) / 2;
+            const bowLat = midLat - (tip.lng - aLng) * 0.06;
+            const bowLng = midLng + (tip.lat - aLat) * 0.06;
+            const centerline = [
+                { lat: aLat,    lng: aLng    },
+                { lat: bowLat,  lng: bowLng  },
+                { lat: tip.lat, lng: tip.lng },
+            ];
+
+            const members = arcs.map(a => `${a.actor_uid || '?'} → ${a.target_uid || '?'}`).join(', ');
+            const arrow = createManeuverArrowPolygon(centerline, color, {
+                bodyHalfPx:    3,
+                headHalfPx:    9,
+                headLenPx:     14,
+                outline:       outlineColor,
+                outlineWidthPx: 0.8,
+                opacity:       0.75,
+                pane:          SCENARIO_GRAPHICS_PANE,
+            });
+            if (arrow) {
+                arrow.bindTooltip(`${label} (${n}): ${members}`, { sticky: true });
+                arrow.addTo(layerGroup);
+                engagementArcs.push(arrow);
+            } else {
+                // Fallback: thin polyline + arrowhead when polygon builder is unavailable.
+                const fb = window.L.polyline([[aLat, aLng], [tip.lat, tip.lng]], {
+                    color, weight: 2, opacity: 0.75, interactive: false,
+                    pane: SCENARIO_GRAPHICS_PANE,
+                }).bindTooltip(`${label}: ${members}`, { sticky: true });
+                fb.addTo(layerGroup);
+                engagementArcs.push(fb);
+                const ah = makeArrowhead([aLat, aLng], [tip.lat, tip.lng], color, 12, SCENARIO_GRAPHICS_PANE);
+                if (ah) { ah.addTo(layerGroup); engagementArcs.push(ah); }
+            }
+        }
+
+        drawAxisArrow(redArcs,  ENGAGEMENT_RED,  '#5b0c0c', 'Axis of attack');
+        drawAxisArrow(blueArcs, ENGAGEMENT_BLUE, '#7eb8e0', 'Counterattack axis');
     }
 
     // ── Per-step unit movement ────────────────────────────────────────
@@ -3237,6 +3884,127 @@
                 color:    sideColor,
             });
         }
+    }
+
+    // ── AN1: per-step per-unit attrition visuals ─────────────────────
+    // Wire the scenario's OWN per-step engagement record (step.affected[] +
+    // step.engagement_arcs[]) onto the unit markers so the viewer sees WHICH
+    // units were degraded or destroyed at the current step. Rendering/wiring
+    // only: reads scenario data, mutates NO scenario object, invents NO damage.
+    //
+    // Honest status mapping — the scenario's real status_change vocabulary is
+    // {destroyed, damaged_partial, suppressed, expended, delayed, unchanged}.
+    // The marker renderer (renderMarkerByStatus) has exactly two affected
+    // treatments plus reset, so we map to those and DO NOT fabricate finer
+    // states the data/renderer don't support. The granular status_change is
+    // preserved verbatim on marker._attrition for tooltips/panels (no loss).
+    //   destroyed / killed / sunk            → DESTROYED (gray + X overlay)
+    //   anything else explicitly flagged     → DEGRADED  (conservative "affected")
+    //   unchanged / missing                  → no change (active)
+    function attritionStatusOf(statusChange) {
+        if (!statusChange || typeof statusChange !== 'string') return null;
+        const s = statusChange.toLowerCase();
+        if (s === 'unchanged') return null;
+        if (s.indexOf('destroy') !== -1 || s === 'killed' || s === 'sunk') {
+            return UNIT_STATUS.DESTROYED;
+        }
+        // Explicitly flagged but not a kill → conservative "affected"/degraded.
+        return UNIT_STATUS.DEGRADED;
+    }
+
+    // Does this scenario carry per-step engagement data we can render? Non-W3
+    // scenarios without affected[]/engagement_arcs[] are left completely
+    // untouched (applyStepAttrition becomes a no-op for them).
+    function scenarioHasAttritionData(scenario) {
+        const steps = scenario && Array.isArray(scenario.steps) ? scenario.steps : [];
+        return steps.some(s => s && (
+            (Array.isArray(s.affected) && s.affected.length) ||
+            (Array.isArray(s.engagement_arcs) && s.engagement_arcs.length)
+        ));
+    }
+
+    // Build CUMULATIVE attrition up to and including stepIndex from scenario
+    // data. Cumulative by design: a unit that took damage or was destroyed
+    // stays in that state on later steps — units don't un-take damage. Because
+    // we recompute from step 0 every time, stepping BACKWARD correctly restores
+    // the earlier picture (nothing gets stuck). DESTROYED is terminal and wins
+    // over DEGRADED. affected[] is authoritative for a unit's own status;
+    // engagement_arcs[] supplements via the TARGET that took the effect.
+    // Returns { status: Map<uid, UNIT_STATUS>, info: Map<uid, {...}> }.
+    function computeStepAttrition(scenario, stepIndex) {
+        const status = new Map();
+        const info   = new Map();
+        const steps = scenario && Array.isArray(scenario.steps) ? scenario.steps : [];
+        const upTo = Math.min(Number.isFinite(stepIndex) ? stepIndex : 0, steps.length - 1);
+        const consume = (uid, statusChange, stepNo, rec) => {
+            if (!uid) return;
+            const mapped = attritionStatusOf(statusChange);
+            if (!mapped) return;
+            const prev = status.get(uid);
+            if (prev === UNIT_STATUS.DESTROYED) {
+                // terminal — never downgrade a destroyed unit
+            } else if (mapped === UNIT_STATUS.DESTROYED) {
+                status.set(uid, UNIT_STATUS.DESTROYED);
+            } else {
+                status.set(uid, UNIT_STATUS.DEGRADED);
+            }
+            info.set(uid, Object.assign({ step: stepNo, status_change: statusChange }, rec || {}));
+        };
+        for (let i = 0; i <= upTo; i++) {
+            const row = steps[i] || {};
+            (Array.isArray(row.affected) ? row.affected : []).forEach(a => {
+                if (!a) return;
+                consume(a.uid, a.status_change, i, {
+                    damage_pct:    Number.isFinite(a.damage_pct) ? a.damage_pct : null,
+                    cause_actor:   a.cause_actor || null,
+                    cause_what:    a.cause_what || null,
+                    cause_doctrine: a.cause_doctrine || null,
+                });
+            });
+            (Array.isArray(row.engagement_arcs) ? row.engagement_arcs : []).forEach(arc => {
+                if (!arc) return;
+                consume(arc.target_uid, arc.status_change, i, {
+                    damage_pct:    Number.isFinite(arc.damage_pct) ? arc.damage_pct : null,
+                    cause_actor:   arc.actor_uid || null,
+                    cause_what:    arc.cause_what || null,
+                    cause_doctrine: arc.cause_doctrine || null,
+                });
+            });
+        }
+        return { status, info };
+    }
+
+    // Apply per-step attrition visuals to ALL unit markers. Idempotent:
+    // recomputes the full cumulative picture for stepIndex and restyles every
+    // unit (affected → degraded/destroyed, everyone else → active/reset), so
+    // forward AND backward stepping both land correctly and units no longer in
+    // the cumulative set are reset. Restyling unaffected units is cheap — the
+    // mark/unmark helpers early-return when a marker isn't currently marked.
+    // No-op for scenarios without engagement data. Reuses renderMarkerByStatus
+    // (the same treatment the live HUD uses) so playback and HUD look identical.
+    function applyStepAttrition(stepIndex) {
+        const sc = scenarioRef;
+        if (!sc || !scenarioHasAttritionData(sc)) { playbackAttritionStep = -1; return false; }
+        const idx = Number.isFinite(stepIndex) ? stepIndex : 0;
+        const { status, info } = computeStepAttrition(sc, idx);
+        const restyle = (dict) => {
+            for (const uid of Object.keys(dict || {})) {
+                const m = dict[uid];
+                if (!m) continue;
+                const st = status.get(uid) || UNIT_STATUS.ACTIVE;
+                // Render-state ONLY (not scenario data): the latest engagement
+                // record for this unit at/under the current step, for future
+                // tooltip/panel surfacing. Cleared when the unit is unaffected.
+                m._attrition = (st === UNIT_STATUS.ACTIVE)
+                    ? null
+                    : Object.assign({ effective: st }, info.get(uid) || { status_change: 'affected', step: idx });
+                try { renderMarkerByStatus(m, st); } catch (_) { /* ignore */ }
+            }
+        };
+        restyle(redMarkers);
+        restyle(blueMarkers);
+        playbackAttritionStep = idx;
+        return true;
     }
 
     // ── HQ-damage propagation ─────────────────────────────────────────
@@ -3717,6 +4485,12 @@
         unitRegistry = {};
         runningDestroyedUids = new Set();
         lastAppliedStepIndex = -1;
+        playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
+        try { clearEchelonAggregates(); } catch (_) {} // echelon roll-up: drop aggregates
+        try { const _c = hasMap() && window.map.getContainer && window.map.getContainer(); if (_c && _c.classList) _c.classList.remove('wg-rolled-up'); } catch (_) {}
+        try { clearEventPins(); } catch (_) {} // AN2: clear read-only event pins
+        try { clearMovementTrails(); } catch (_) {} unitStepPos = {}; movementTrailStep = 0; // AN4: clear trails + history
+        engagementGraphicsStep = 0; // MG1: reset engagement mission-graphic step tracker
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
     }
@@ -3925,10 +4699,11 @@
         updateContactHalo(state);
         updateAdvanceArrows(state, scenario || scenarioRef, { instant });
         updateAttackArrows(state, scenario || scenarioRef);
-        // W3-rich: explicit engagement arcs replace the nearest-red heuristics.
-        // updateAttackArrows() bails out early for W3, this fills the same slot
-        // with authoritative arcs keyed off cause_actor → target_uid.
-        renderEngagementArcs(state, scenario || scenarioRef);
+        // W3-rich: explicit engagement mission graphics replace the nearest-red
+        // heuristics. updateAttackArrows() bails out early for W3; this fills the
+        // same slot with authoritative Attack/Counterattack graphics keyed off
+        // actor_side + actor_uid → target_uid.
+        renderEngagementMissionGraphics(state, scenario || scenarioRef);
         // Note: we DO NOT draw separate "axis of advance" trails. The
         // schema (Wargame3/schema/README.md) only specifies engagement_arc
         // visuals. Unit movement is shown by the marker itself sliding
@@ -4214,6 +4989,12 @@
         }
         runningDestroyedUids = new Set();
         lastAppliedStepIndex = -1;
+        playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
+        try { clearEchelonAggregates(); } catch (_) {} // echelon roll-up: drop aggregates
+        try { const _c = hasMap() && window.map.getContainer && window.map.getContainer(); if (_c && _c.classList) _c.classList.remove('wg-rolled-up'); } catch (_) {}
+        try { clearEventPins(); } catch (_) {} // AN2: clear read-only event pins
+        try { clearMovementTrails(); } catch (_) {} unitStepPos = {}; movementTrailStep = 0; // AN4: clear trails + history
+        engagementGraphicsStep = 0; // MG1: reset engagement mission-graphic step tracker
         // Remove all breach badges — they're re-stamped from per-step deltas
         // on the next forward applyState.
         for (const b of Object.values(breachBadges)) {
@@ -4338,6 +5119,26 @@
             blue_actions:  null,   // fall back to the local schedule
         };
         updateUnitPositions(syntheticState);
+        // AN1: refresh per-unit attrition visuals, but only when the step
+        // index actually changes (this is called repeatedly with fractional
+        // progress within a single step). updateUnitPositions moves markers
+        // via setLatLng only — it does not setIcon — so the attrition icon
+        // treatment applied here survives subsequent intra-step progress calls.
+        if (stepIndex !== playbackAttritionStep) {
+            try { applyStepAttrition(stepIndex); } catch (_) { /* ignore */ }
+            // Reposition echelon aggregates to follow the moved units (only when
+            // the step index actually changes — not on every progress frame).
+            try { renderEchelonRollup(); } catch (_) { /* ignore */ }
+            // AN2: refresh read-only event pins for the new step.
+            try { renderEventPins(stepIndex); } catch (_) { /* ignore */ }
+            // AN4: draw movement trails for the new step (records the step's
+            // displayed positions; trail = prior-step pos → current pos).
+            try { renderMovementTrails(stepIndex); } catch (_) { /* ignore */ }
+            // MG1: draw the step's engagement mission graphics (Attack /
+            // Counterattack) — applyState() handles the harness-driven path; this
+            // covers operator step playback (goToStep → applyStepProgress).
+            try { renderEngagementMissionGraphics({ step_index: stepIndex }, scenarioRef); } catch (_) { /* ignore */ }
+        }
         return true;
     }
 
@@ -4564,6 +5365,23 @@
         isScenarioDrawn,
         getScenarioMarkers,
         applyStepProgress,
+        applyStepAttrition,
+        fitScenarioAO,
+        renderEchelonRollup,
+        setEchelonRollup: (on) => { echelonRollupEnabled = (on !== false); try { renderEchelonRollup(); } catch (_) {} return echelonRollupEnabled; },
+        _getEchelonGroups: () => buildEchelonDivisionGroups().map((g) => ({ key: g.key, friendly: g.friendly, count: g.memberUids.length })),
+        _echelonExpandZoom: ECHELON_EXPAND_ZOOM,
+        renderEventPins,
+        clearEventPins,
+        _getStepEventCount: (idx) => buildStepEvents(scenarioRef || {}, Number.isFinite(idx) ? idx : 0).length,
+        resolveUnitSymbolProfile,
+        auditResolvedUnitSymbols,
+        renderMovementTrails,
+        renderEngagementMissionGraphics, // MG1: Attack/Counterattack mission graphics for the step's engagement_arcs
+        showLegend,
+        hideLegend,
+        toggleLegend,
+        isLegendVisible,
         // Position primitives (so external callers can build their own
         // step-resolved state without re-implementing the movement model)
         computeRedPosition:  (meta, stepIndex, progress) => redPositionLonLat(meta, stepIndex, progress),

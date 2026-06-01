@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RMOOZ — Program Roadmap &amp; Capability Timeline</title>
+<style>
+  :root{
+    --bg:#0a0e14; --panel:#121821; --panel-2:#0f141c; --border:#1f2a37;
+    --ink:#d7e0ea; --muted:#8b97a7; --faint:#5c6878;
+    --done:#3fb950; --done-bg:rgba(63,185,80,.12);
+    --build:#d29922; --build-bg:rgba(210,153,34,.12);
+    --current:#39d0d8; --current-bg:rgba(57,208,216,.12);
+    --paused:#7d8aa0; --paused-bg:rgba(125,138,160,.12);
+    --blocked:#f85149; --blocked-bg:rgba(248,81,73,.12);
+    --remove:#db6d28; --remove-bg:rgba(219,109,40,.10);
+    --plan:#58a6ff; --plan-bg:rgba(88,166,255,.12);
+    --mono:"SF Mono",ui-monospace,"Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 80% -10%,rgba(57,208,216,.06),transparent 60%),
+      radial-gradient(900px 500px at -10% 110%,rgba(88,166,255,.05),transparent 60%),
+      var(--bg);
+    color:var(--ink); font-family:var(--sans); line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* classification banner */
+  .classif{
+    background:#1c5d2e; color:#eafff0; text-align:center;
+    font-family:var(--mono); font-size:12px; letter-spacing:.18em; font-weight:700;
+    padding:6px 8px; text-transform:uppercase; border-bottom:1px solid rgba(0,0,0,.4);
+    position:sticky; top:0; z-index:50;
+  }
+  .wrap{max-width:1240px; margin:0 auto; padding:28px 22px 60px}
+
+  /* header */
+  header.hero{margin:8px 0 26px}
+  .eyebrow{font-family:var(--mono); color:var(--current); letter-spacing:.22em;
+    font-size:11px; text-transform:uppercase; margin:0 0 8px}
+  h1{font-size:30px; margin:0 0 6px; letter-spacing:-.01em}
+  h1 .accent{color:var(--current)}
+  .sub{color:var(--muted); max-width:760px; margin:0 0 16px}
+  .meta{display:flex; flex-wrap:wrap; gap:10px}
+  .stat{font-family:var(--mono); font-size:12px; color:var(--muted);
+    background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:8px 12px}
+  .stat b{color:var(--ink)}
+  .stat .dot{display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; vertical-align:1px}
+
+  /* section scaffolding */
+  section{margin:34px 0}
+  .sec-head{display:flex; align-items:baseline; gap:12px; margin:0 0 16px; flex-wrap:wrap}
+  .sec-head h2{font-size:13px; font-family:var(--mono); letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink); margin:0}
+  .sec-head .hint{color:var(--faint); font-size:12px}
+  .rule{height:1px; background:linear-gradient(90deg,var(--border),transparent); flex:1; align-self:center}
+
+  /* legend */
+  .legend{display:flex; flex-wrap:wrap; gap:14px; margin:0 0 6px}
+  .legend .li{display:flex; align-items:center; gap:7px; font-size:12px; color:var(--muted)}
+  .sw{width:12px; height:12px; border-radius:3px; border:1px solid rgba(255,255,255,.14)}
+
+  /* phase timeline */
+  .timeline{display:flex; gap:0; align-items:stretch; overflow-x:auto; padding:4px 2px 10px}
+  .phase{
+    position:relative; flex:1 1 0; min-width:178px; cursor:pointer;
+    background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    padding:14px 14px 16px; margin:0 7px; transition:.18s ease; outline:none;
+  }
+  .phase:first-child{margin-left:0}.phase:last-child{margin-right:0}
+  .phase:hover{transform:translateY(-3px); border-color:var(--accent,#2f3e4f)}
+  .phase.sel{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent),0 8px 26px rgba(0,0,0,.35)}
+  .phase .pnum{font-family:var(--mono); font-size:11px; color:var(--faint); letter-spacing:.1em}
+  .phase .ptitle{font-weight:650; font-size:14.5px; margin:6px 0 8px; line-height:1.25}
+  .phase .pprs{font-family:var(--mono); font-size:11px; color:var(--muted); margin-bottom:10px}
+  .phase .pbar{height:4px; border-radius:3px; background:var(--accent); opacity:.9}
+  .pill{display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.06em;
+    text-transform:uppercase; padding:3px 8px; border-radius:999px; border:1px solid var(--accent);
+    color:var(--accent); background:var(--accent-bg)}
+  .phase .youhere{position:absolute; top:-11px; right:10px; font-family:var(--mono);
+    font-size:9.5px; letter-spacing:.12em; background:var(--current); color:#04181a;
+    font-weight:800; padding:3px 8px; border-radius:999px; text-transform:uppercase;
+    box-shadow:0 0 0 4px var(--current-bg); animation:pulse 2.2s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px var(--current-bg)}50%{box-shadow:0 0 0 8px rgba(57,208,216,.05)}}
+  .conn{align-self:center; color:var(--faint); flex:0 0 14px; text-align:center; font-size:18px; user-select:none}
+
+  /* detail drawer */
+  .detail{margin-top:14px; background:var(--panel-2); border:1px solid var(--border);
+    border-left:3px solid var(--accent,#2f3e4f); border-radius:10px; padding:16px 18px}
+  .detail h3{margin:0 0 4px; font-size:16px}
+  .detail .d-prs{font-family:var(--mono); font-size:12px; color:var(--muted); margin-bottom:10px}
+  .detail ul{margin:8px 0 0; padding-left:18px}
+  .detail li{margin:6px 0; color:var(--ink)}
+  .detail li code{font-family:var(--mono); font-size:12px; background:rgba(255,255,255,.05);
+    padding:1px 5px; border-radius:4px; color:#cdd9e6}
+
+  /* gate chain */
+  .gates{display:flex; flex-wrap:wrap; gap:8px; align-items:stretch}
+  .gate{flex:1 1 130px; min-width:128px; cursor:pointer; background:var(--panel);
+    border:1px solid var(--border); border-radius:10px; padding:11px 11px 12px; transition:.16s; outline:none}
+  .gate:hover{transform:translateY(-2px)}
+  .gate.sel{box-shadow:0 0 0 1px var(--accent)}
+  .gate .gn{font-family:var(--mono); font-size:10px; color:var(--faint); letter-spacing:.1em}
+  .gate .gt{font-size:12.5px; font-weight:600; margin-top:5px; line-height:1.25}
+  .gate .gtag{margin-top:9px; font-family:var(--mono); font-size:9.5px; letter-spacing:.05em;
+    text-transform:uppercase; color:var(--accent)}
+  .gate.locked{border-style:dashed; border-color:var(--blocked)}
+  .gate .lock{float:right; font-size:13px}
+
+  /* capability board */
+  .board{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  .col{background:var(--panel); border:1px solid var(--border); border-radius:12px; overflow:hidden}
+  .col .col-h{padding:12px 14px; font-family:var(--mono); font-size:12px; letter-spacing:.12em;
+    text-transform:uppercase; font-weight:700; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between}
+  .col .col-h .ct{font-size:11px; opacity:.7}
+  .col ul{list-style:none; margin:0; padding:10px 12px 14px}
+  .col li{font-size:13px; padding:8px 10px; margin:7px 0; border-radius:8px;
+    background:var(--panel-2); border:1px solid var(--border)}
+  .col li .why{display:block; font-size:11.5px; color:var(--muted); margin-top:3px; font-family:var(--mono)}
+  .col.now .col-h{color:var(--done); background:var(--done-bg)}
+  .col.build .col-h{color:var(--build); background:var(--build-bg)}
+  .col.plan .col-h{color:var(--plan); background:var(--plan-bg)}
+  .col.remove .col-h{color:var(--remove); background:var(--remove-bg)}
+  .col.remove li{border-style:dashed; border-color:rgba(219,109,40,.4)}
+  .col.remove li .nm{text-decoration:line-through; text-decoration-color:rgba(219,109,40,.7); color:var(--muted)}
+
+  /* known issues */
+  table{width:100%; border-collapse:collapse; font-size:13px; background:var(--panel);
+    border:1px solid var(--border); border-radius:12px; overflow:hidden}
+  th,td{text-align:left; padding:11px 14px; border-bottom:1px solid var(--border); vertical-align:top}
+  th{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+  tr:last-child td{border-bottom:none}
+  td .ki{font-family:var(--mono); color:var(--build); font-weight:700}
+  .tag{font-family:var(--mono); font-size:10.5px; padding:2px 7px; border-radius:6px;
+    background:var(--paused-bg); color:var(--paused); border:1px solid rgba(125,138,160,.4)}
+
+  footer{margin-top:36px; padding-top:18px; border-top:1px solid var(--border);
+    color:var(--faint); font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px}
+
+  @media (max-width:900px){
+    .board{grid-template-columns:repeat(2,1fr)}
+    h1{font-size:24px}
+  }
+  @media (max-width:560px){.board{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="classif">Unclassified // Training Use Only</div>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Program Roadmap · Generated 2026-05-29</p>
+    <h1>RMOOZ — <span class="accent">Capability Timeline</span> &amp; Build Status</h1>
+    <p class="sub">Where the wargame/sim app is today, what we're building toward, and what's
+      being retired. The forward motion is the <b>controlled staging pipeline</b> — six phases that
+      end at a single, heavily-gated live-apply point. Click any phase or gate for detail.</p>
+    <div class="meta" id="stats"></div>
+  </header>
+
+  <!-- LEGEND -->
+  <div class="legend" id="legend"></div>
+
+  <!-- SECTION A: PHASE TIMELINE -->
+  <section>
+    <div class="sec-head">
+      <h2>A · Pipeline Phases</h2>
+      <span class="hint">PR-166 → PR-288+ · left = done, right = future</span>
+      <span class="rule"></span>
+    </div>
+    <div class="timeline" id="timeline"></div>
+    <div class="detail" id="phaseDetail"></div>
+  </section>
+
+  <!-- SECTION B: 7-GATE SAFETY CHAIN -->
+  <section>
+    <div class="sec-head">
+      <h2>B · The 7-Gate Safety Chain</h2>
+      <span class="hint">every gate is read-only — only Gate 7 could ever change live state</span>
+      <span class="rule"></span>
+    </div>
+    <div class="gates" id="gates"></div>
+    <div class="detail" id="gateDetail"></div>
+  </section>
+
+  <!-- SECTION C: CAPABILITY BOARD -->
+  <section>
+    <div class="sec-head">
+      <h2>C · Capability Status Board</h2>
+      <span class="hint">the whole app at a glance</span>
+      <span class="rule"></span>
+    </div>
+    <div class="board" id="board"></div>
+  </section>
+
+  <!-- SECTION D: KNOWN ISSUES -->
+  <section>
+    <div class="sec-head">
+      <h2>D · Known Issues &amp; Deferred</h2>
+      <span class="rule"></span>
+    </div>
+    <table id="ki"></table>
+  </section>
+
+  <footer>
+    <span>RMOOZ operational shell · UI/Sim boundary enforced · no live mutation outside Gate 7.</span>
+    <span>Reflects plan as of PR-288; refresh as new PRs land.</span>
+  </footer>
+</div>
+
+<script>
+/* ---------- DATA ---------- */
+const STATUS = {
+  done:   {label:"Done",          c:"--done",    b:"--done-bg"},
+  build:  {label:"Building",      c:"--build",   b:"--build-bg"},
+  current:{label:"Current focus", c:"--current", b:"--current-bg"},
+  paused: {label:"Paused",        c:"--paused",  b:"--paused-bg"},
+  blocked:{label:"Blocked/Locked",c:"--blocked", b:"--blocked-bg"},
+  remove: {label:"Removing",      c:"--remove",  b:"--remove-bg"},
+};
+
+const phases = [
+  {n:1,title:"Import & Read-Only Preview",prs:"PR 166–169",status:"done",statusLabel:"Done",
+   summary:"Audit external scenario packs and display them read-only.",
+   details:[
+     "Audited 554 <code>.scen</code> files (Community Scenario Pack v51): 10 outer-wrapper fields readable.",
+     "Compressed <code>CompressVersion=5</code> blob is proprietary/locked — import gated until an export path exists.",
+     "Established read-only catalog preview of the outer wrapper only. No mutation, no storage."
+   ]},
+  {n:2,title:"Proposal & Safety Contracts",prs:"PR 171–182",status:"done",statusLabel:"Done (design)",
+   summary:"Define the full staging pipeline as written, binding contracts.",
+   details:[
+     "Staging-proposal shape + the four gate contracts (validation, operator review, dry-run, commit auth).",
+     "Operator review = a human decision (<code>approve_dry_run / reject / hold</code>), never an apply action.",
+     "Copy hardening: approved labels (“Approve dry-run”, “No live changes”) vs forbidden (“Apply”, “Commit”, “Run live”).",
+     "Dry-run confirmation + UID reconciliation contracts locked."
+   ]},
+  {n:3,title:"Diagnostics-Only Preview Chain",prs:"PR 183–204",status:"build",statusLabel:"Mostly built",
+   summary:"Implement every guard/builder as pure functions; surface them in a collapsed diagnostics panel.",
+   details:[
+     "All type guards + builders implemented (<code>isStagingProposalSafe</code>, <code>buildApplyCandidate</code>, <code>reconcileUidReferences</code>…).",
+     "Collapsed “Import Diagnostics” panel, hidden by default. No apply controls exist.",
+     "No stored objects anywhere; <code>committed</code> / <code>liveMutationAllowed</code> / <code>operatorConfirmed</code> all hard-locked <code>false</code>.",
+     "Remaining: wire live-units snapshot + operator identity so the apply-candidate can read <code>passed:true</code>."
+   ]},
+  {n:4,title:"Operator Identity & Staging State",prs:"PR 205–207",status:"paused",statusLabel:"Proposed / paused",
+   summary:"Identity sourcing + an in-memory staging-state design.",
+   details:[
+     "Operator-identity contract: allowed sources + validation; no AI-generated, random, or storage-derived identity.",
+     "In-memory staging-state shape + <code>isStagingStateSafe()</code> guard (19 forbidden “unsafe” fields).",
+     "Implementation explicitly <b>PAUSED</b> — needs written approval before any builder PR."
+   ]},
+  {n:5,title:"Scenario Understanding (Dry-Run)",prs:"PR 208–213+",status:"current",statusLabel:"Current focus",
+   summary:"Prove RMOOZ can read, parse and display a controlled scenario package with zero mutation.",
+   details:[
+     "Read-only, step-by-step scenario playback preview; importer + schema gaps shown as warnings, never guesses.",
+     "Sequence: PR-209 playback contract → PR-210 fixture shape → PR-211 step-preview builder → PR-212 display-only UI → PR-213 test one real package.",
+     "Hard boundary: no <code>window.units</code>/<code>lines</code>/map/<code>stepIndex</code> mutation, no <code>/api/sim/*</code>, no storage, no apply."
+   ]},
+  {n:6,title:"Controlled Live Apply",prs:"PR 185+",status:"blocked",statusLabel:"Blocked",
+   summary:"Gate-7 two-click confirmation — the ONLY point where live state could ever change.",
+   details:[
+     "Two-step human confirmation: approve the dry-run preview, then confirm controlled apply in a separate modal.",
+     "Forbidden until: staging state approved, real operator identity, real final checklist, and a visible rollback plan.",
+     "Requires a separate security review + explicit human sign-off. Earliest realistic window: Q3 2026 or later."
+   ]},
+];
+
+const gates = [
+  {n:1,title:"Validation",state:"Diagnostics-only",desc:"<code>validateStagingCandidate()</code> — all six checks pass: UID reconciliation, coordinate validation, safety-flag enforcement, selected-decision resolution, action-geometry validation, source-trace presence."},
+  {n:2,title:"Proposal safety",state:"Diagnostics-only",desc:"<code>isStagingProposalSafe()</code> — enforces <code>dryRun:true</code>, <code>committed:false</code>, <code>liveMutationAllowed:false</code> on the proposal object."},
+  {n:3,title:"Operator review",state:"Diagnostics-only",desc:"Human decision point: <code>approve_dry_run / reject / hold</code>. Review may NEVER set <code>committed</code> or <code>liveMutationAllowed</code>."},
+  {n:4,title:"Dry-run confirmation",state:"Diagnostics-only",desc:"Read-only effects preview. <code>liveScenarioChanged:false</code> and <code>committed:false</code> are hard-locked; nothing in <code>window.units</code> is touched."},
+  {n:5,title:"UID reconciliation",state:"Diagnostics-only",desc:"Maps imported package UIDs → live RMOOZ unit UIDs with confidence levels. Hard-blocks on side/faction mismatch or ambiguous conflicts."},
+  {n:6,title:"Apply candidate",state:"Diagnostics-only",desc:"<code>buildApplyCandidate()</code> — assembled only if all prior gates pass; <code>operatorConfirmed:false</code> and <code>liveMutationPlanned:false</code> at construction."},
+  {n:7,title:"Two-click operator confirmation",state:"NOT BUILT — locked",locked:true,desc:"The single live-mutation point of the entire pipeline. <b>Not implemented.</b> Gated behind staging state, real identity, final checklist, rollback plan, security review, and explicit sign-off."},
+];
+
+const board = {
+  now:{title:"Have Now",items:[
+    "Tactical map tools — draw, symbols, layers, measure, undo/redo, offline basemaps",
+    "Units & ORBAT — markers, selection, drag-to-place, echelon visibility",
+    "Scenario adjudication — single-step + Monte-Carlo runner (SSE progress)",
+    "AI Proposal panel — Accept / Reject / Hold, boundary-enforced, mock-mode",
+    "Event Log — UI-category only (no AI/Sim events leak in)",
+    "LAN chat & presence — polling, file upload, groups",
+    "i18n — English + Arabic RTL",
+    "Classification bar · clock · coord readout · side picker",
+    "Scenario auto-import + live reload (drag-drop GeoJSON, fs.watch, SSE)",
+    "Learning store · parametric baselines · comparison report",
+  ]},
+  build:{title:"Building",items:[
+    "Diagnostics-only preview chain (guards + builders)",
+    "Safety-audit panel — 9 rows visible, regression tests not wired",
+    "Timeline / transport — UI buttons present, no backend tick yet",
+    "Journal draft & export — DRY_RUN only",
+    "Operator identity + live-units snapshot support",
+    "Scenario dry-run preview (PR 208–213)",
+  ]},
+  plan:{title:"Planned",items:[
+    "In-memory staging state (paused — needs approval)",
+    "Gate-7 controlled live apply (two-click)",
+    "Real journal write + real commit endpoint",
+    "Phase → scenario-data linkage",
+  ]},
+  remove:{title:"Removing",items:[
+    {nm:"wargame1.json & wargame2.json",why:"consolidated into wargame3.json (legacy .jsonl shims kept)"},
+    {nm:"Adjudicator-HUD-only interface",why:"replaced by the modular operational shell"},
+    {nm:"Implicit fallback behavior",why:"replaced by explicit proposal/journal contracts"},
+    {nm:"External scenario catalog UI",why:"PR-167 reverted; scen-catalog-contract.js stays unlinked"},
+  ]},
+};
+
+const issues = [
+  {ki:"KI-1",txt:"<code>wargame1</code> violates the BLS-4 never-SECURE invariant.",st:"expected_fail",wk:"Treated as expected-fail in the regression harness; wargame2/3 clean."},
+  {ki:"KI-2",txt:"Scenario markers don't emit <code>rmooz:unit-selected</code>.",st:"deferred",wk:"Selected-unit panel only works for ORBAT units; needs a unified selection model."},
+  {ki:"KI-3",txt:"RTL mode: context-panel is mostly covered by the unit-panel.",st:"deferred",wk:"Awaits a full RTL layout-refinement pass."},
+  {ki:"KI-4",txt:"<code>oid-value-phase</code> / <code>apc-value-linked-intent</code> show hardcoded “Briefing”.",st:"deferred",wk:"Mock values; awaits scenario-data display approval."},
+];
+
+/* ---------- HELPERS ---------- */
+const cssv = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const el = (tag,cls,html) => {const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e;};
+
+/* ---------- STATS ---------- */
+(function(){
+  const counts = phases.reduce((m,p)=>{m[p.status]=(m[p.status]||0)+1;return m;},{});
+  const wrap = document.getElementById('stats');
+  const mk = (label,val,statusKey)=>{
+    const s=el('div','stat');
+    const dot = statusKey?`<span class="dot" style="background:${cssv(STATUS[statusKey].c)}"></span>`:'';
+    s.innerHTML = `${dot}${label}: <b>${val}</b>`;
+    return s;
+  };
+  wrap.append(
+    mk('Phases',phases.length),
+    mk('Done',(counts.done||0),'done'),
+    mk('Building',(counts.build||0),'build'),
+    mk('Current','Phase 5','current'),
+    mk('Blocked',(counts.blocked||0),'blocked'),
+    mk('Gates built','6 / 7','done'),
+  );
+})();
+
+/* ---------- LEGEND ---------- */
+(function(){
+  const wrap=document.getElementById('legend');
+  Object.keys(STATUS).forEach(k=>{
+    const li=el('div','li');
+    li.innerHTML=`<span class="sw" style="background:${cssv(STATUS[k].c)}"></span>${STATUS[k].label}`;
+    wrap.append(li);
+  });
+})();
+
+/* ---------- PHASE TIMELINE ---------- */
+(function(){
+  const tl=document.getElementById('timeline');
+  phases.forEach((p,i)=>{
+    const s=STATUS[p.status];
+    const card=el('div','phase');
+    card.tabIndex=0;
+    card.style.setProperty('--accent',cssv(s.c));
+    card.style.setProperty('--accent-bg',cssv(s.b));
+    card.dataset.idx=i;
+    card.innerHTML = `
+      ${p.status==='current'?'<span class="youhere">You are here</span>':''}
+      <div class="pnum">PHASE ${p.n}</div>
+      <div class="ptitle">${p.title}</div>
+      <div class="pprs">${p.prs}</div>
+      <span class="pill">${p.statusLabel}</span>
+      <div class="pbar" style="margin-top:12px"></div>`;
+    card.addEventListener('click',()=>selectPhase(i));
+    card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectPhase(i);}});
+    tl.append(card);
+    if(i<phases.length-1) tl.append(el('div','conn','›'));
+  });
+  selectPhase(4); // default: Phase 5 (current)
+})();
+
+function selectPhase(i){
+  document.querySelectorAll('.phase').forEach(c=>c.classList.toggle('sel',+c.dataset.idx===i));
+  const p=phases[i], s=STATUS[p.status];
+  const d=document.getElementById('phaseDetail');
+  d.style.setProperty('--accent',cssv(s.c));
+  d.innerHTML = `
+    <h3>Phase ${p.n} — ${p.title} &nbsp;<span class="pill" style="--accent:${cssv(s.c)};--accent-bg:${cssv(s.b)}">${p.statusLabel}</span></h3>
+    <div class="d-prs">${p.prs}</div>
+    <div>${p.summary}</div>
+    <ul>${p.details.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+}
+
+/* ---------- GATE CHAIN ---------- */
+(function(){
+  const g=document.getElementById('gates');
+  gates.forEach((gate,i)=>{
+    const c=el('div','gate'+(gate.locked?' locked':''));
+    c.tabIndex=0; c.dataset.idx=i;
+    const accent = gate.locked?cssv('--blocked'):cssv('--done');
+    c.style.setProperty('--accent',accent);
+    c.innerHTML = `
+      <div class="gn">GATE ${gate.n}${gate.locked?'<span class="lock">🔒</span>':''}</div>
+      <div class="gt">${gate.title}</div>
+      <div class="gtag" style="color:${accent}">${gate.state}</div>`;
+    c.addEventListener('click',()=>selectGate(i));
+    c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectGate(i);}});
+    g.append(c);
+    if(i<gates.length-1) g.append(el('div','conn','›'));
+  });
+  selectGate(6); // default: Gate 7 (locked)
+})();
+
+function selectGate(i){
+  document.querySelectorAll('.gate').forEach(c=>c.classList.toggle('sel',+c.dataset.idx===i));
+  const gate=gates[i];
+  const accent = gate.locked?cssv('--blocked'):cssv('--done');
+  const d=document.getElementById('gateDetail');
+  d.style.setProperty('--accent',accent);
+  d.innerHTML = `
+    <h3>Gate ${gate.n} — ${gate.title} ${gate.locked?'🔒':''}</h3>
+    <div class="d-prs" style="color:${accent}">${gate.state}</div>
+    <div>${gate.desc}</div>`;
+}
+
+/* ---------- CAPABILITY BOARD ---------- */
+(function(){
+  const b=document.getElementById('board');
+  const order=[['now','now'],['build','build'],['plan','plan'],['remove','remove']];
+  order.forEach(([key,cls])=>{
+    const data=board[key];
+    const col=el('div','col '+cls);
+    const items = data.items.map(it=>{
+      if(typeof it==='string') return `<li>${it}</li>`;
+      return `<li><span class="nm">${it.nm}</span><span class="why">${it.why}</span></li>`;
+    }).join('');
+    col.innerHTML = `<div class="col-h"><span>${data.title}</span><span class="ct">${data.items.length}</span></div><ul>${items}</ul>`;
+    b.append(col);
+  });
+})();
+
+/* ---------- KNOWN ISSUES ---------- */
+(function(){
+  const t=document.getElementById('ki');
+  t.innerHTML = `<thead><tr><th>ID</th><th>Issue</th><th>Status</th><th>Workaround</th></tr></thead>
+    <tbody>${issues.map(r=>`<tr>
+      <td><span class="ki">${r.ki}</span></td>
+      <td>${r.txt}</td>
+      <td><span class="tag">${r.st}</span></td>
+      <td style="color:var(--muted)">${r.wk}</td></tr>`).join('')}</tbody>`;
+})();
+</script>
+</body>
+</html>

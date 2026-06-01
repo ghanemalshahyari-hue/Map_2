@@ -309,7 +309,7 @@
                     category:   'OPERATOR',
                     source:     'ai-proposal-panel',
                     messageKey: 'elog-evt-ap-decision',
-                    message:    'Proposal decision recorded locally only',
+                    message:    'Operator decision recorded',
                     // payload is shallow + primitives-only via PR-6's
                     // safePayload (defensive copy). Never persisted.
                     payload: {
@@ -321,13 +321,13 @@
             }
         } catch (_) { /* never throw out of a click handler */ }
 
-        // PR-12: route the decision through the dry-run commit bridge.
-        // Bridge is surface-only — it validates + logs a UI/NOTICE row
-        // but does NOT call /api/sim/commit. Result is discarded; the
-        // panel's visual state (buttons locked, status pill set) was
-        // already established above and is independent of the bridge.
-        // Lazy lookup so the panel keeps working if the bridge module
-        // failed to load for any reason.
+        // UNLOCKED 2026-06-01: route the decision through the commit
+        // bridge, which now performs a REAL commit (ACCEPT/REJECT POST
+        // /api/sim/commit + durable journal write; HOLD defers). The
+        // return is fire-and-forget — the panel's visual state was set
+        // above; the bridge updates the Event Log + Decision Records as
+        // the server responds. Lazy lookup so the panel keeps working
+        // if the bridge module failed to load for any reason.
         try {
             if (window.AppShellAIProposalCommitBridge && typeof window.AppShellAIProposalCommitBridge.commitDecision === 'function') {
                 const UPPER = { accept: 'ACCEPT', reject: 'REJECT', hold: 'HOLD' }[decision];

@@ -516,6 +516,62 @@
                ? (String(a.strengthFull) + ' / ' + String(a.strengthTotal)) : dash);
     }
 
+    // PR-287G: pure read of one step object — engagement tempo counts.
+    // Prefer the precomputed n_* count; fall back to array length; never assume a key.
+    function computeStepActivity(step) {
+        var st = step || null;
+        function cnt(numKey, arrKey) {
+            if (st && typeof st[numKey] === 'number') return st[numKey];
+            if (st && Array.isArray(st[arrKey])) return st[arrKey].length;
+            return null;
+        }
+        return {
+            actors:   cnt('n_actors',          'actors'),
+            affected: cnt('n_affected',        'affected'),
+            arcs:     cnt('n_engagement_arcs', 'engagement_arcs')
+        };
+    }
+
+    // Read-only render of engagement tempo into #sw-tempo-list. textContent only.
+    // Fixed labels carry data-i18n. Empty state when no scenario / no step.
+    function paintStepActivity() {
+        var list = document.getElementById('sw-tempo-list');
+        if (!list) return;
+        list.innerHTML = '';
+        var dash = tx('sw-value-none', '—');
+
+        function addRow(labelKey, labelText, valueText) {
+            var row = document.createElement('div');
+            row.className = 'sw-kv-row';
+            var dt = document.createElement('dt');
+            dt.setAttribute('data-i18n', labelKey);
+            dt.textContent = tx(labelKey, labelText);
+            var dd = document.createElement('dd');
+            dd.textContent = valueText;
+            row.appendChild(dt); row.appendChild(dd);
+            list.appendChild(row);
+        }
+
+        var sc   = getScenario();
+        var step = getActiveStep();
+        if (!sc || !step) {
+            var er = document.createElement('div');
+            er.className = 'sw-kv-row uild-comp--empty';
+            var ed = document.createElement('dd');
+            ed.className = 'uild-empty-msg';
+            ed.setAttribute('data-i18n', 'sw-tempo-empty');
+            ed.textContent = tx('sw-tempo-empty', 'Load a scenario to see engagement tempo.');
+            er.appendChild(ed);
+            list.appendChild(er);
+            return;
+        }
+
+        var a = computeStepActivity(step);
+        addRow('sw-tempo-actors',   'Actors engaged',  a.actors   !== null ? String(a.actors)   : dash);
+        addRow('sw-tempo-affected', 'Units affected',  a.affected !== null ? String(a.affected) : dash);
+        addRow('sw-tempo-arcs',     'Engagement arcs', a.arcs      !== null ? String(a.arcs)     : dash);
+    }
+
     // ── PR-45: Operator Intent Draft Card ────────────────────────────────
     // In-memory placeholder fields — no backend, no mutation, no persistence.
     // PR-49: liveKey drives resolveLiveValue(). Dot-paths ('obj.name') resolve
@@ -936,6 +992,35 @@
         window.RmoozScenario.stepIndex = newIdx;
         // Clear preview mode so walkthrough card shows live mode
         previewStepIndex = null;
+        // P4 (Wargame3 live): advance the map unit markers to the new step using the
+        // scenario's step-aware coordinates (red_unit_step_coords / blue_unit_step_coords
+        // via updateUnitPositions). Makes manual nav AND play/pause visibly move the
+        // laydown through the phases. Read-only: marker positions only — no scenario
+        // mutation, no combat sim. Safe no-op when the scenario isn't drawn on the map.
+        try {
+            if (window.AppAdjudicatorMap && typeof window.AppAdjudicatorMap.applyStepProgress === 'function') {
+                window.AppAdjudicatorMap.applyStepProgress(newIdx);
+            }
+        } catch (_) { /* no-op */ }
+        // P4: keep the VISIBLE bottom transport bar coherent with the active step.
+        // timeline.js is UI-only (its scenario-time stays at H+00:00), so sync the
+        // time readout + phase chip here from the step's own time_label / phase.
+        try {
+            var _curStep = steps[newIdx] || {};
+            var _tlTime = document.getElementById('tl-scenario-time');
+            var _lbl = _curStep.time_label || _curStep.timeLabel;
+            if (_tlTime && _lbl) _tlTime.textContent = String(_lbl);
+            var _tlPhaseGroup = document.getElementById('tl-phase-group');
+            var _phase = _curStep.phase;
+            if (_tlPhaseGroup && _phase) {
+                var _btns = _tlPhaseGroup.querySelectorAll('button');
+                for (var _i = 0; _i < _btns.length; _i++) {
+                    var _match = (_btns[_i].textContent || '').trim().toUpperCase() === String(_phase).trim().toUpperCase();
+                    _btns[_i].classList.toggle('is-active', _match);
+                    _btns[_i].setAttribute('aria-pressed', _match ? 'true' : 'false');
+                }
+            }
+        } catch (_) { /* no-op */ }
         // Repaint all step-aware cards
         paintStepNavigator();
         paintScenarioOverview();
@@ -953,10 +1038,61 @@
         // PR-287F: step-aware red attrition + per-step BLS status.
         paintStepAttrition();
         paintBlsCard();
+        paintStepActivity();          // PR-287G: step-aware engagement tempo
         // PR-287L2: keep the live scenario header + live decision card coherent on step nav.
         if (typeof paintLiveScenarioHeader === 'function')   { paintLiveScenarioHeader(); }
         if (typeof paintLiveDecisionActionCard === 'function'){ paintLiveDecisionActionCard(); }
     }
+
+    // ── P4 (Wargame3 live): bottom transport bar → step playback bridge ──────────
+    // shell/timeline.js is UI-only — it dispatches rmooz:timeline-ui-action but
+    // nothing advanced the live scenario. Wire play / pause / step / speed to
+    // goToStep so the visible transport bar moves the laydown through the 17
+    // phases. Read-only: only stepIndex + marker positions change (via goToStep).
+    // No combat sim, no AI, no decision options, no scenario mutation, no storage.
+    var _swPlayTimer = null;
+    var _swPlaySpeed = 1;
+    function _swStepCount() { var sc = getScenario(); return (sc && Array.isArray(sc.steps)) ? sc.steps.length : 0; }
+    function _swPlayIntervalMs() { return Math.max(60, Math.round(2000 / Math.max(1, _swPlaySpeed))); }
+    function _swStopPlay() { if (_swPlayTimer) { clearInterval(_swPlayTimer); _swPlayTimer = null; } }
+    function _swStartPlay() {
+        _swStopPlay();
+        if (!window.RmoozScenario || !_swStepCount()) return;
+        _swPlayTimer = setInterval(function () {
+            var total = _swStepCount();
+            var cur = getActiveStepIndex();
+            if (cur >= total - 1) {
+                _swStopPlay();
+                var pauseBtn = document.getElementById('tl-pause'); // reset transport visuals at end
+                if (pauseBtn) { try { pauseBtn.click(); } catch (_) { /* no-op */ } }
+                return;
+            }
+            goToStep(cur + 1);
+        }, _swPlayIntervalMs());
+    }
+    function _bindTimelineTransport() {
+        if (window.__swTimelineBridgeBound) return;
+        window.__swTimelineBridgeBound = true;
+        document.addEventListener('rmooz:timeline-ui-action', function (e) {
+            var action = e && e.detail && e.detail.action;
+            var value  = e && e.detail && e.detail.value;
+            if (!window.RmoozScenario || !_swStepCount()) return; // only drive a loaded live scenario
+            switch (action) {
+                case 'play':          _swStartPlay(); break;
+                case 'pause':         _swStopPlay();  break;
+                case 'step-forward':  _swStopPlay(); goToStep(getActiveStepIndex() + 1); break;
+                case 'step-back':     _swStopPlay(); goToStep(getActiveStepIndex() - 1); break;
+                case 'speed-changed': {
+                    var sp = parseFloat(value);
+                    if (isFinite(sp) && sp > 0) _swPlaySpeed = sp;
+                    if (_swPlayTimer) _swStartPlay(); // restart at the new cadence
+                    break;
+                }
+                default: break;
+            }
+        });
+    }
+    if (typeof document !== 'undefined') { _bindTimelineTransport(); }
 
     // ── PR-132/134/136: Step Navigator ───────────────────────────────────────
     function paintStepNavigator() {
@@ -8376,6 +8512,7 @@
         paintRedForceCard();         // PR-64
         paintUnitComposition();      // PR-287E: Scenario Unit Composition readout
         paintStepAttrition();        // PR-287F: step-aware Red Attrition readout
+        paintStepActivity();         // PR-287G: step-aware Engagement Tempo readout
         paintWalkthroughCard();
         paintBriefingCard();         // PR-132
         paintStepNavigator();        // PR-132
@@ -15372,6 +15509,67 @@
                  blockedReasons: [], warnings: warnings };
     }
 
+    // PR-288M: bridge the live scenario-load path to the existing adjudicator
+    // map. READ-ONLY wiring — delegates entirely to the already-shipped
+    // window.AppAdjudicatorMap.drawScenario() (wargame/adjudicator-map.js),
+    // which clears-then-redraws BLS / AO / unit markers from scenario data.
+    // This helper invents no geometry, duplicates no drawing logic, and mutates
+    // no scenario / unit / line data — it only decides whether it is SAFE to
+    // call drawScenario and reports the outcome. options is reserved for future
+    // callers and intentionally unused for now.
+    // Returns { painted:boolean, reason:string, warnings:string[] }.
+    function maybeDrawLiveScenarioOnMap(scenario, options) {
+        options = options || {};
+        var result = { painted: false, reason: '', warnings: [] };
+
+        if (!scenario || typeof scenario !== 'object') {
+            result.reason = 'no-scenario';
+            return result;
+        }
+        if (typeof window === 'undefined' || !window.AppAdjudicatorMap) {
+            result.reason = 'map-api-unavailable';
+            return result;
+        }
+        var api = window.AppAdjudicatorMap;
+        if (typeof api.drawScenario !== 'function') {
+            result.reason = 'draw-unavailable';
+            return result;
+        }
+
+        // BLS markers are the headline payload for this PR; note (don't block)
+        // when a scenario carries none so a sparse map is explained.
+        if (!Array.isArray(scenario.bls_template) || scenario.bls_template.length === 0) {
+            result.warnings.push('no-bls-template');
+        }
+
+        var drew;
+        try {
+            drew = api.drawScenario(scenario);
+        } catch (err) {
+            result.reason = 'draw-threw';
+            result.warnings.push(String((err && err.message) || err));
+            return result;
+        }
+
+        // drawScenario() returns false when the Leaflet map isn't ready
+        // (operator not on the map view yet). Expected, non-error state.
+        if (drew === false) {
+            result.reason = 'map-not-ready';
+            return result;
+        }
+
+        // Confirm via the map's own predicate when available.
+        if (typeof api.isScenarioDrawn === 'function' && !api.isScenarioDrawn()) {
+            result.reason = 'draw-unconfirmed';
+            result.warnings.push('isScenarioDrawn-false-after-draw');
+            return result;
+        }
+
+        result.painted = true;
+        result.reason = 'painted';
+        return result;
+    }
+
     function loadLiveScenarioFromJson(json, options) {
         options = options || {};
         var v = validateLiveScenarioJson(json);
@@ -15398,6 +15596,33 @@
         // Replace window.RmoozScenario. ONLY two fields written: scenario + stepIndex.
         window.RmoozScenario = { scenario: s, stepIndex: 0 };
 
+        // P2 (Wargame3 live): mirror the loaded scenario's OOB into the ORBAT dock
+        // (read-only scenario ORBAT — no server, no mutation). Safe no-op when the
+        // dock isn't present/bound yet.
+        try {
+            if (window.AppUnitsOrbatDock && typeof window.AppUnitsOrbatDock.refresh === 'function') {
+                window.AppUnitsOrbatDock.refresh();
+            }
+        } catch (_) { /* no-op */ }
+
+        // P3 (Wargame3 live): present a clean, map-forward demo view — collapse the
+        // side tool panels (all re-openable via their existing controls) and re-frame
+        // the AO once the panel-collapse transition settles. View state only: no
+        // scenario/unit/ORBAT mutation, no server, no storage.
+        try {
+            if (window.AppMapHidePanels && typeof window.AppMapHidePanels.hideAll === 'function') {
+                window.AppMapHidePanels.hideAll();
+            }
+            setTimeout(function () {
+                try {
+                    if (window.map && typeof window.map.invalidateSize === 'function') window.map.invalidateSize();
+                    if (window.AppAdjudicatorMap && typeof window.AppAdjudicatorMap.fitScenarioAO === 'function') {
+                        window.AppAdjudicatorMap.fitScenarioAO();
+                    }
+                } catch (_) { /* no-op */ }
+            }, 360);
+        } catch (_) { /* no-op */ }
+
         // Repaint live workspace via the existing full refresh path.
         // refresh() never calls paintDryRunPreview, never paints AMBER, never touches
         // any preview/dry-run state — verified by PR-287L0.
@@ -15414,13 +15639,20 @@
             if (typeof paintScenarioOverlay         === 'function') paintScenarioOverlay();
         }
 
+        // PR-288M: also draw the freshly-loaded scenario on the adjudicator map
+        // (BLS / AO / unit markers) through the existing map subsystem. Guarded
+        // + safe: a no-op when the map isn't present or not ready, and never
+        // throws back into the load path. Outcome surfaced on result.mapDraw.
+        var mapDraw = maybeDrawLiveScenarioOnMap(s, options);
+
         return {
             passed:         true,
             scenarioId:     s.scenario_id || null,
             scenarioLabel:  s.scenario_label || null,
             stepCount:      Array.isArray(s.steps) ? s.steps.length : 0,
             blockedReasons: [],
-            warnings:       v.warnings
+            warnings:       v.warnings,
+            mapDraw:        mapDraw
         };
     }
 
@@ -17073,6 +17305,7 @@
             paintRedForceCard();       // PR-64: Red Force Snapshot Card
             paintUnitComposition();    // PR-287E: Scenario Unit Composition readout
             paintStepAttrition();      // PR-287F: step-aware Red Attrition readout
+            paintStepActivity();       // PR-287G: step-aware Engagement Tempo readout
             previewStepIndex = null;   // PR-53 Option A: live step advanced → reset preview
             paintWalkthroughCard();
             paintBriefingCard();           // PR-132
@@ -17850,6 +18083,11 @@
         //   FileReader.readAsText only. Idempotent.
         validateLiveScenarioJson:       validateLiveScenarioJson,
         loadLiveScenarioFromJson:       loadLiveScenarioFromJson,
+        // PR-288M: guarded bridge from the live load path to the adjudicator map.
+        //   maybeDrawLiveScenarioOnMap(scenario, options?) → delegates to
+        //   window.AppAdjudicatorMap.drawScenario(); returns { painted, reason,
+        //   warnings }. No geometry, no duplicate draw logic, no data mutation.
+        maybeDrawLiveScenarioOnMap:     maybeDrawLiveScenarioOnMap,
         getCurrentLiveScenarioSummary:  getCurrentLiveScenarioSummary,
         // PR-287E: pure read of scenario unit arrays → { total, blue, red,
         //   byDomain, byEchelon, missingCoord }. No DOM / map / mutation.
@@ -17857,6 +18095,7 @@
         // PR-287F: pure read of one step → { losses, degraded, strengthSum,
         //   strengthFull, strengthTotal }. No DOM / map / mutation.
         computeStepAttrition:           computeStepAttrition,
+        computeStepActivity:            computeStepActivity,
         initLiveScenarioImport:         initLiveScenarioImport,
         // PR-286L1: Scenario Folder Import Intake.
         // classifyScenarioFolderFile(file) — pure, classify by extension only.

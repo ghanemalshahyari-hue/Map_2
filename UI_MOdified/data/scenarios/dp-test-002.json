@@ -1,0 +1,624 @@
+{
+  "name": "dp-test-002",
+  "scenario_id": "dp-test-002",
+  "scenario_label": "Desert Logistics Route",
+  "purpose_en": "Desert Logistics Route",
+  "purpose_ar": "مسار لوجستي صحراوي وهمي",
+  "map_bbox": [
+    53,
+    23,
+    54.3,
+    24.1
+  ],
+  "obj": {
+    "name": "LOG NODE BRAVO",
+    "coord": [
+      53.92,
+      23.62
+    ],
+    "target_depth_km": 77.4,
+    "carver": 30,
+    "radius_km": 5
+  },
+  "sides": [
+    {
+      "id": "BLUE",
+      "name_en": "Blue Force",
+      "name_ar": "القوة الزرقاء",
+      "role": "defender"
+    },
+    {
+      "id": "RED",
+      "name_en": "Red Force",
+      "name_ar": "القوة الحمراء",
+      "role": "opposing_force"
+    }
+  ],
+  "pipeline": [
+    [
+      53.25,
+      23.95
+    ],
+    [
+      53.92,
+      23.62
+    ]
+  ],
+  "red_units": [
+    {
+      "uid": "RED-UAV-01",
+      "label": "Red UAV observation cell",
+      "role": "uav",
+      "domain": "ground",
+      "echelon": "unit",
+      "sidc": "10061000000000000000",
+      "coord": [
+        53.25,
+        23.95
+      ],
+      "name_ar": "Red UAV observation cell",
+      "appear": 0,
+      "bls": "BLS-1"
+    },
+    {
+      "uid": "RED-RAID-01",
+      "label": "Red raid team",
+      "role": "raid",
+      "domain": "ground",
+      "echelon": "unit",
+      "sidc": "10061000000000000000",
+      "coord": [
+        53.18,
+        23.2
+      ],
+      "name_ar": "Red raid team",
+      "appear": 0,
+      "bls": "BLS-1"
+    }
+  ],
+  "red_unit_step_coords": {
+    "RED-UAV-01": [
+      [
+        53.25,
+        23.95
+      ],
+      [
+        53.38,
+        23.89
+      ],
+      [
+        53.51,
+        23.83
+      ],
+      [
+        53.64,
+        23.77
+      ],
+      [
+        53.77,
+        23.71
+      ],
+      [
+        53.9,
+        23.65
+      ]
+    ],
+    "RED-RAID-01": [
+      [
+        53.18,
+        23.2
+      ],
+      [
+        53.27,
+        23.259999999999998
+      ],
+      [
+        53.36,
+        23.32
+      ],
+      [
+        53.45,
+        23.38
+      ],
+      [
+        53.54,
+        23.439999999999998
+      ],
+      [
+        53.63,
+        23.5
+      ]
+    ]
+  },
+  "blue_units_base_ids": [
+    "BLUE-LOG-01",
+    "BLUE-SEC-01",
+    "BLUE-QRF-01"
+  ],
+  "blue_units_initial": [
+    {
+      "unit_uid": "BLUE-LOG-01",
+      "base_id": "BLUE-LOG-01",
+      "label": "Blue logistics node",
+      "role": "logistics",
+      "domain": "ground",
+      "echelon": "unit",
+      "sidc": "10031000000000000000",
+      "coord": [
+        53.92,
+        23.62
+      ],
+      "posture": null,
+      "name_ar": "Blue logistics node",
+      "appear": 0
+    },
+    {
+      "unit_uid": "BLUE-SEC-01",
+      "base_id": "BLUE-SEC-01",
+      "label": "Blue security team",
+      "role": "security",
+      "domain": "ground",
+      "echelon": "unit",
+      "sidc": "10031000000000000000",
+      "coord": [
+        53.82,
+        23.7
+      ],
+      "posture": null,
+      "name_ar": "Blue security team",
+      "appear": 0
+    },
+    {
+      "unit_uid": "BLUE-QRF-01",
+      "base_id": "BLUE-QRF-01",
+      "label": "Blue quick reaction force",
+      "role": "reserve",
+      "domain": "ground",
+      "echelon": "unit",
+      "sidc": "10031000000000000000",
+      "coord": [
+        53.45,
+        23.35
+      ],
+      "posture": null,
+      "name_ar": "Blue quick reaction force",
+      "appear": 0
+    }
+  ],
+  "blue_unit_step_coords": {
+    "BLUE-LOG-01": [
+      [
+        53.92,
+        23.62
+      ],
+      [
+        53.92,
+        23.62
+      ],
+      [
+        53.92,
+        23.62
+      ],
+      [
+        53.92,
+        23.62
+      ],
+      [
+        53.92,
+        23.62
+      ],
+      [
+        53.92,
+        23.62
+      ]
+    ],
+    "BLUE-SEC-01": [
+      [
+        53.82,
+        23.7
+      ],
+      [
+        53.835,
+        23.689999999999998
+      ],
+      [
+        53.85,
+        23.68
+      ],
+      [
+        53.865,
+        23.669999999999998
+      ],
+      [
+        53.88,
+        23.66
+      ],
+      [
+        53.895,
+        23.65
+      ]
+    ],
+    "BLUE-QRF-01": [
+      [
+        53.45,
+        23.35
+      ],
+      [
+        53.52,
+        23.375
+      ],
+      [
+        53.59,
+        23.400000000000002
+      ],
+      [
+        53.660000000000004,
+        23.425
+      ],
+      [
+        53.730000000000004,
+        23.450000000000003
+      ],
+      [
+        53.800000000000004,
+        23.475
+      ]
+    ]
+  },
+  "blue_units_source": "derived from Decision Package per-step units[]",
+  "off_map_markers": [],
+  "ao_boundaries": [],
+  "bls_template": [
+    {
+      "name": "BLS-1",
+      "coord": [
+        53.92,
+        23.62
+      ],
+      "role": "Synthesized support site (Decision Package carries no BLS)",
+      "capacity": "Medium",
+      "throughput": 1,
+      "terrain_friction": 1,
+      "permanently_limited": false
+    }
+  ],
+  "nominal_throughput": null,
+  "phase_table": [
+    {
+      "index": 0,
+      "phase": "OBSERVE",
+      "time_label": "T+0m",
+      "elapsed_hours": 0
+    },
+    {
+      "index": 1,
+      "phase": "OBSERVE",
+      "time_label": "T+30m",
+      "elapsed_hours": 30
+    },
+    {
+      "index": 2,
+      "phase": "CONTACT",
+      "time_label": "T+60m",
+      "elapsed_hours": 60
+    },
+    {
+      "index": 3,
+      "phase": "DECISION",
+      "time_label": "T+90m",
+      "elapsed_hours": 90
+    },
+    {
+      "index": 4,
+      "phase": "REPOSITION",
+      "time_label": "T+120m",
+      "elapsed_hours": 120
+    },
+    {
+      "index": 5,
+      "phase": "STABILIZE",
+      "time_label": "T+150m",
+      "elapsed_hours": 150
+    }
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "step_id": "step00",
+      "time_label": "T+0m",
+      "elapsed_hours": 0,
+      "phase": "OBSERVE",
+      "narrative_en": "Dummy desert logistics route test, step 0.",
+      "narrative_ar": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 0.",
+      "narrative_en_fallback": "Dummy desert logistics route test, step 0.",
+      "narrative_ar_fallback": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 0.",
+      "situation": {
+        "summary_en": "Dummy desert logistics route test, step 0.",
+        "summary_ar": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 0."
+      },
+      "objective_status_baseline": "DENIED",
+      "objective_status_source": "SECURE",
+      "decision_point_baseline": "Reroute or continue?",
+      "decision_point_ar_baseline": "هل يتم تغيير المسار أو الاستمرار؟",
+      "decisionOptions": [
+        {
+          "id": "A",
+          "label": "Continue with monitoring",
+          "description": "الاستمرار مع مراقبة",
+          "intent": "Risk: MEDIUM",
+          "source": "source_json"
+        },
+        {
+          "id": "B",
+          "label": "Reroute",
+          "description": "تغيير المسار",
+          "intent": "Risk: LOW",
+          "source": "source_json"
+        }
+      ],
+      "source_trace": {
+        "source_file": "steps/step00.json",
+        "source_geojson": "geojson/step00.geojson",
+        "source_image": "images/step00.png",
+        "confidence": "MEDIUM",
+        "note": "Dummy synthetic package for RMOOZ import preview testing."
+      },
+      "image_ref": "images/step00.png",
+      "friendly_forces_summary": "Blue secures a logistics node and route.",
+      "enemy_forces_summary": "Red attempts observation and limited disruption.",
+      "result_en": "Reroute decision tested as display-only.",
+      "result_ar": "تم اختبار قرار تغيير المسار كعرض فقط.",
+      "n_units": 5
+    },
+    {
+      "index": 1,
+      "step_id": "step01",
+      "time_label": "T+30m",
+      "elapsed_hours": 30,
+      "phase": "OBSERVE",
+      "narrative_en": "Dummy desert logistics route test, step 1.",
+      "narrative_ar": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 1.",
+      "narrative_en_fallback": "Dummy desert logistics route test, step 1.",
+      "narrative_ar_fallback": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 1.",
+      "situation": {
+        "summary_en": "Dummy desert logistics route test, step 1.",
+        "summary_ar": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 1."
+      },
+      "objective_status_baseline": "DENIED",
+      "objective_status_source": "SECURE",
+      "decision_point_baseline": "Reroute or continue?",
+      "decision_point_ar_baseline": "هل يتم تغيير المسار أو الاستمرار؟",
+      "decisionOptions": [
+        {
+          "id": "A",
+          "label": "Continue with monitoring",
+          "description": "الاستمرار مع مراقبة",
+          "intent": "Risk: MEDIUM",
+          "source": "source_json"
+        },
+        {
+          "id": "B",
+          "label": "Reroute",
+          "description": "تغيير المسار",
+          "intent": "Risk: LOW",
+          "source": "source_json"
+        }
+      ],
+      "source_trace": {
+        "source_file": "steps/step01.json",
+        "source_geojson": "geojson/step01.geojson",
+        "source_image": "images/step01.png",
+        "confidence": "MEDIUM",
+        "note": "Dummy synthetic package for RMOOZ import preview testing."
+      },
+      "image_ref": "images/step01.png",
+      "friendly_forces_summary": "Blue secures a logistics node and route.",
+      "enemy_forces_summary": "Red attempts observation and limited disruption.",
+      "result_en": "Reroute decision tested as display-only.",
+      "result_ar": "تم اختبار قرار تغيير المسار كعرض فقط.",
+      "n_units": 5
+    },
+    {
+      "index": 2,
+      "step_id": "step02",
+      "time_label": "T+60m",
+      "elapsed_hours": 60,
+      "phase": "CONTACT",
+      "narrative_en": "Dummy desert logistics route test, step 2.",
+      "narrative_ar": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 2.",
+      "narrative_en_fallback": "Dummy desert logistics route test, step 2.",
+      "narrative_ar_fallback": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 2.",
+      "situation": {
+        "summary_en": "Dummy desert logistics route test, step 2.",
+        "summary_ar": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 2."
+      },
+      "objective_status_baseline": "DORMANT",
+      "objective_status_source": "WATCHED",
+      "decision_point_baseline": "Reroute or continue?",
+      "decision_point_ar_baseline": "هل يتم تغيير المسار أو الاستمرار؟",
+      "decisionOptions": [
+        {
+          "id": "A",
+          "label": "Continue with monitoring",
+          "description": "الاستمرار مع مراقبة",
+          "intent": "Risk: MEDIUM",
+          "source": "source_json"
+        },
+        {
+          "id": "B",
+          "label": "Reroute",
+          "description": "تغيير المسار",
+          "intent": "Risk: LOW",
+          "source": "source_json"
+        }
+      ],
+      "source_trace": {
+        "source_file": "steps/step02.json",
+        "source_geojson": "geojson/step02.geojson",
+        "source_image": "images/step02.png",
+        "confidence": "MEDIUM",
+        "note": "Dummy synthetic package for RMOOZ import preview testing."
+      },
+      "image_ref": "images/step02.png",
+      "friendly_forces_summary": "Blue secures a logistics node and route.",
+      "enemy_forces_summary": "Red attempts observation and limited disruption.",
+      "result_en": "Reroute decision tested as display-only.",
+      "result_ar": "تم اختبار قرار تغيير المسار كعرض فقط.",
+      "n_units": 5
+    },
+    {
+      "index": 3,
+      "step_id": "step03",
+      "time_label": "T+90m",
+      "elapsed_hours": 90,
+      "phase": "DECISION",
+      "narrative_en": "Dummy desert logistics route test, step 3.",
+      "narrative_ar": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 3.",
+      "narrative_en_fallback": "Dummy desert logistics route test, step 3.",
+      "narrative_ar_fallback": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 3.",
+      "situation": {
+        "summary_en": "Dummy desert logistics route test, step 3.",
+        "summary_ar": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 3."
+      },
+      "objective_status_baseline": "THREATENED",
+      "objective_status_source": "AT_RISK",
+      "decision_point_baseline": "Reroute or continue?",
+      "decision_point_ar_baseline": "هل يتم تغيير المسار أو الاستمرار؟",
+      "decisionOptions": [
+        {
+          "id": "A",
+          "label": "Continue with monitoring",
+          "description": "الاستمرار مع مراقبة",
+          "intent": "Risk: MEDIUM",
+          "source": "source_json"
+        },
+        {
+          "id": "B",
+          "label": "Reroute",
+          "description": "تغيير المسار",
+          "intent": "Risk: LOW",
+          "source": "source_json"
+        }
+      ],
+      "source_trace": {
+        "source_file": "steps/step03.json",
+        "source_geojson": "geojson/step03.geojson",
+        "source_image": "images/step03.png",
+        "confidence": "MEDIUM",
+        "note": "Dummy synthetic package for RMOOZ import preview testing."
+      },
+      "image_ref": "images/step03.png",
+      "friendly_forces_summary": "Blue secures a logistics node and route.",
+      "enemy_forces_summary": "Red attempts observation and limited disruption.",
+      "result_en": "Reroute decision tested as display-only.",
+      "result_ar": "تم اختبار قرار تغيير المسار كعرض فقط.",
+      "n_units": 5
+    },
+    {
+      "index": 4,
+      "step_id": "step04",
+      "time_label": "T+120m",
+      "elapsed_hours": 120,
+      "phase": "REPOSITION",
+      "narrative_en": "Dummy desert logistics route test, step 4.",
+      "narrative_ar": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 4.",
+      "narrative_en_fallback": "Dummy desert logistics route test, step 4.",
+      "narrative_ar_fallback": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 4.",
+      "situation": {
+        "summary_en": "Dummy desert logistics route test, step 4.",
+        "summary_ar": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 4."
+      },
+      "objective_status_baseline": "DENIED",
+      "objective_status_source": "SECURE",
+      "decision_point_baseline": "Reroute or continue?",
+      "decision_point_ar_baseline": "هل يتم تغيير المسار أو الاستمرار؟",
+      "decisionOptions": [
+        {
+          "id": "A",
+          "label": "Continue with monitoring",
+          "description": "الاستمرار مع مراقبة",
+          "intent": "Risk: MEDIUM",
+          "source": "source_json"
+        },
+        {
+          "id": "B",
+          "label": "Reroute",
+          "description": "تغيير المسار",
+          "intent": "Risk: LOW",
+          "source": "source_json"
+        }
+      ],
+      "source_trace": {
+        "source_file": "steps/step04.json",
+        "source_geojson": "geojson/step04.geojson",
+        "source_image": "images/step04.png",
+        "confidence": "MEDIUM",
+        "note": "Dummy synthetic package for RMOOZ import preview testing."
+      },
+      "image_ref": "images/step04.png",
+      "friendly_forces_summary": "Blue secures a logistics node and route.",
+      "enemy_forces_summary": "Red attempts observation and limited disruption.",
+      "result_en": "Reroute decision tested as display-only.",
+      "result_ar": "تم اختبار قرار تغيير المسار كعرض فقط.",
+      "n_units": 5
+    },
+    {
+      "index": 5,
+      "step_id": "step05",
+      "time_label": "T+150m",
+      "elapsed_hours": 150,
+      "phase": "STABILIZE",
+      "narrative_en": "Dummy desert logistics route test, step 5.",
+      "narrative_ar": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 5.",
+      "narrative_en_fallback": "Dummy desert logistics route test, step 5.",
+      "narrative_ar_fallback": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 5.",
+      "situation": {
+        "summary_en": "Dummy desert logistics route test, step 5.",
+        "summary_ar": "اختبار مسار لوجستي وهمي في بيئة صحراوية، خطوة 5."
+      },
+      "objective_status_baseline": "DENIED",
+      "objective_status_source": "SECURE",
+      "decision_point_baseline": "Reroute or continue?",
+      "decision_point_ar_baseline": "هل يتم تغيير المسار أو الاستمرار؟",
+      "decisionOptions": [
+        {
+          "id": "A",
+          "label": "Continue with monitoring",
+          "description": "الاستمرار مع مراقبة",
+          "intent": "Risk: MEDIUM",
+          "source": "source_json"
+        },
+        {
+          "id": "B",
+          "label": "Reroute",
+          "description": "تغيير المسار",
+          "intent": "Risk: LOW",
+          "source": "source_json"
+        }
+      ],
+      "source_trace": {
+        "source_file": "steps/step05.json",
+        "source_geojson": "geojson/step05.geojson",
+        "source_image": "images/step05.png",
+        "confidence": "MEDIUM",
+        "note": "Dummy synthetic package for RMOOZ import preview testing."
+      },
+      "image_ref": "images/step05.png",
+      "friendly_forces_summary": "Blue secures a logistics node and route.",
+      "enemy_forces_summary": "Red attempts observation and limited disruption.",
+      "result_en": "Reroute decision tested as display-only.",
+      "result_ar": "تم اختبار قرار تغيير المسار كعرض فقط.",
+      "n_units": 5
+    }
+  ],
+  "schema_variant": "decision-package-v1",
+  "converted_from": {
+    "type": "decision_package",
+    "scenario_id": "DP-TEST-002",
+    "title_en": "Desert Logistics Route",
+    "title_ar": "مسار لوجستي صحراوي وهمي",
+    "source_dir": "DP_02_Desert_Logistics_Route",
+    "total_steps": 6
+  },
+  "converted_at": null
+}

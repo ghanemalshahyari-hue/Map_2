@@ -39,7 +39,8 @@
     // No network call. No mutation of scenario/trial/adjudicator state.
     // Offline-safe: scenarioCache is loaded from the local file server only.
     // scenario-workspace.js READS window.RmoozScenario; nothing else does.
-    // AppShellScenarioWorkspace.refresh() is the only public call made here.
+    // AppShellScenarioWorkspace.refresh() + AppUnitsOrbatDock.refresh() are the
+    // only public calls made here.
     function publishRmoozScenario() {
         if (!scenarioCache) return;
         window.RmoozScenario = {
@@ -49,6 +50,13 @@
         if (window.AppShellScenarioWorkspace &&
             typeof window.AppShellScenarioWorkspace.refresh === 'function') {
             window.AppShellScenarioWorkspace.refresh();
+        }
+        // ORBAT discoverability fix: a scenario change via the wargame HUD (scenario
+        // selector / disk watcher) must also rebuild the ORBAT dock from the NEW OOB,
+        // otherwise the dock stays on the previously loaded scenario. Mirrors the
+        // live-import path. Read-only; safe no-op if the dock isn't present/bound.
+        if (window.AppUnitsOrbatDock && typeof window.AppUnitsOrbatDock.refresh === 'function') {
+            try { window.AppUnitsOrbatDock.refresh(); } catch (_) { /* no-op */ }
         }
     }
 
@@ -235,13 +243,13 @@
                     <label for="wg-adj-scenario" class="wg-adj-label">Scenario</label>
                     <select id="wg-adj-scenario" class="wg-adj-input"></select>
 
-                    <label class="wg-adj-label">Import</label>
+                    <label class="wg-adj-label" data-i18n="wg-adj-import-label">${window.t ? window.t('wg-adj-import-label') : 'Import GeoJSON to Live Map Scenario'}</label>
                     <div id="wg-adj-import" class="wg-adj-import-zone"
                          style="border:1px dashed #4a6;border-radius:4px;padding:8px;
                                 background:rgba(74,170,102,0.06);font-size:11px;color:#9cb;
                                 cursor:pointer;text-align:center;line-height:1.4;">
-                        Drop <code>all_phases.geojson</code> here<br>
-                        <span style="font-size:10px;color:#7a9;">or click to choose a file</span>
+                        <span data-i18n="wg-adj-import-helper">${window.t ? window.t('wg-adj-import-helper') : 'Use this to load operational GeoJSON and draw units/scenario markers on the map.'}</span><br>
+                        <span style="font-size:10px;color:#7a9;" data-i18n="wg-adj-import-hint">${window.t ? window.t('wg-adj-import-hint') : 'Drop all_phases.geojson here, or click to choose a file'}</span>
                         <input id="wg-adj-import-file" type="file" accept=".geojson,.json,application/json"
                                style="display:none;" />
                     </div>
@@ -1705,8 +1713,18 @@
             provider:       req.provider,
         };
         const t0 = Date.now();
-        const r = await window.AppAdjudicator.adjudicateStep(body);
-        const wall = Date.now() - t0;
+        let r = await window.AppAdjudicator.adjudicateStep(body);
+        let wall = Date.now() - t0;
+        // Robust step advance: if LIVE adjudication is unavailable (provider down,
+        // timeout, parse error) the step must still resolve on the scenario
+        // BASELINE rather than silently no-op. Retry once forcing mockMode so
+        // "Next" always advances (and the map animates / trails accrue).
+        if ((!r || !r.state) && !body.mockMode) {
+            setStatus(`Step ${nextIndex}: live adjudication unavailable — resolving on baseline…`, 'active');
+            const tb = Date.now();
+            r = await window.AppAdjudicator.adjudicateStep({ ...body, mockMode: true });
+            wall = Date.now() - tb;
+        }
         if (!r || !r.state) {
             setStatus(`Step ${nextIndex} failed: ${r && r.error}`, 'error');
             return;

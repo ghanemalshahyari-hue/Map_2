@@ -3276,6 +3276,7 @@
                 </div>
                 <div class="map-canvas-wrap">
                     <div id="map"></div>
+                    <div id="cesium-container" style="display:none; position:absolute; inset:0; z-index:2;"></div>
                     <div id="mission-graphic-assist" class="mission-graphic-assist hidden" aria-live="polite" aria-atomic="true">
                         <div id="mission-assist-title" class="mission-assist-title">Workflow</div>
                         <div class="mission-assist-steps">
@@ -4776,6 +4777,8 @@
     <script src="wargame/scenario-state.js?v=1"></script>
     <script src="wargame/adjudicator-client.js?v=4"></script>
     <script src="wargame/adjudicator-map.js?v=37"></script>
+    <script src="wargame/cesium-view.js?v=1"></script>
+    <script src="dem-layer.js?v=1"></script>
     <script src="wargame/adjudicator-hud.js?v=20"></script>
     <!-- PR-MOVE1: continuous movement + playback clock. Drives the existing
          AppAdjudicatorMap.applyStepProgress over wall-clock time and wires the

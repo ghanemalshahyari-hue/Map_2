@@ -17,7 +17,9 @@
 (function () {
     'use strict';
 
-    const SCENARIO_DEFAULT = 'wargame3';
+    // Resolved at boot from /api/ai/scenarios — whichever was last imported
+    // or selected. Falls back to 'wargame3' only if the server has no record.
+    let SCENARIO_DEFAULT = 'wargame3';
 
     let trial = null;       // current per-trial state from AppScenarioState
     let mcRunSubscription = null;
@@ -297,9 +299,14 @@
             <!-- ── Map overlay buttons ── -->
             <div class="wg-adj-section">
                 <div class="wg-adj-section-title">Scenario overlay</div>
-                <div class="wg-adj-btn-row wg-adj-btn-row--2">
+                <div class="wg-adj-btn-row wg-adj-btn-row--3">
                     <button id="wg-adj-map-btn"   class="wargame-action-btn secondary" type="button">Show on map</button>
                     <button id="wg-adj-map-clear" class="wargame-action-btn secondary" type="button">Hide</button>
+                    <button id="wg-adj-3d-btn"    class="wargame-action-btn secondary" type="button">&#127760; 3D</button>
+                </div>
+                <div class="wg-adj-btn-row wg-adj-btn-row--2" style="margin-top:6px;">
+                    <button id="dem-toggle-btn" class="wargame-action-btn secondary" type="button" title="Toggle Libya DEM elevation overlay">&#9968; Terrain</button>
+                    <input id="dem-opacity-slider" type="range" min="10" max="100" value="60" style="flex:1;cursor:pointer;" title="DEM opacity">
                 </div>
             </div>
 
@@ -643,13 +650,28 @@
             setStatus('Could not load scenarios: ' + (result.error || 'unknown'), 'error');
             return;
         }
+        // Server tells us which scenario was last active. Update the module
+        // default so every subsequent reference to SCENARIO_DEFAULT is current.
+        const activeName = result.active || result.default || SCENARIO_DEFAULT;
+        SCENARIO_DEFAULT = activeName;
         for (const name of result.scenarios) {
             const opt = document.createElement('option');
             opt.value = name; opt.textContent = name;
-            if (name === result.default) opt.selected = true;
+            if (name === activeName) opt.selected = true;
             sel.appendChild(opt);
         }
-        sel.addEventListener('change', updateReportLink);
+        // Persist whenever the operator manually switches scenarios.
+        sel.addEventListener('change', () => {
+            updateReportLink();
+            const chosen = sel.value;
+            if (chosen) {
+                fetch('/api/scenario/active', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: chosen }),
+                }).catch(() => {});
+            }
+        });
         updateReportLink();
         setStatus('Connecting to AI backend…', 'idle');
     }
@@ -797,6 +819,40 @@
     function hideScenarioFromMap() {
         if (window.AppAdjudicatorMap) window.AppAdjudicatorMap.clearScenario();
         setStatus('Scenario hidden from map.', 'idle');
+    }
+
+    async function toggle3DGlobe() {
+        if (!window.AppCesiumView) {
+            setStatus('Cesium 3D module not loaded.', 'error');
+            return;
+        }
+        const btn = document.getElementById('wg-adj-3d-btn');
+        const turningOn = !window.AppCesiumView.isVisible;
+
+        if (!turningOn) {
+            await window.AppCesiumView.setVisible(false);
+            if (btn) btn.classList.remove('active');
+            setStatus('3D globe hidden.', 'idle');
+            return;
+        }
+
+        setStatus('Loading 3D globe…', 'idle');
+        const ok = await window.AppCesiumView.setVisible(true);
+        if (!ok) {
+            if (btn) btn.classList.remove('active');
+            setStatus('3D globe failed to load.', 'error');
+            return;
+        }
+        if (btn) btn.classList.add('active');
+
+        // Always draw the active scenario — don't rely on _lastScenario being set
+        const sc = await ensureScenarioLoaded();
+        if (sc) {
+            window.AppCesiumView.drawScenario(sc);
+            const lastState = window.AppAdjudicatorMap && window.AppAdjudicatorMap._lastState;
+            if (lastState) window.AppCesiumView.applyState(lastState, sc);
+        }
+        setStatus('3D globe enabled.', 'ok');
     }
 
     // ── Sparkline charts (Blue dead, Red coy-eq, Phase line) ─────────
@@ -1939,6 +1995,13 @@
     function bindHandlers(root) {
         root.querySelector('#wg-adj-map-btn').addEventListener('click', showScenarioOnMap);
         root.querySelector('#wg-adj-map-clear').addEventListener('click', hideScenarioFromMap);
+        root.querySelector('#wg-adj-3d-btn').addEventListener('click', toggle3DGlobe);
+        root.querySelector('#dem-toggle-btn').addEventListener('click', () => {
+            if (window.DemLayer) window.DemLayer.toggle();
+        });
+        root.querySelector('#dem-opacity-slider').addEventListener('input', (e) => {
+            if (window.DemLayer) window.DemLayer.setOpacity(e.target.value / 100);
+        });
         root.querySelector('#wg-adj-step-btn').addEventListener('click', async () => { await ensureScenarioLoaded(); adjudicateNext(); });
         root.querySelector('#wg-adj-trial-btn').addEventListener('click', async () => { await ensureScenarioLoaded(); runOneTrial(); });
         root.querySelector('#wg-adj-reset-btn').addEventListener('click', resetTrial);

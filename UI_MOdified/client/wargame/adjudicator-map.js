@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Adjudicator map overlay.
  *
  * Visualizes the scenario on the Leaflet map and applies per-step state to
@@ -511,6 +511,13 @@
     // dashed L.polyline per the W3 schema (Wargame3/schema/README.md §5).
     let engagementArcs = [];
     let engagementArcTimers = [];
+    // Salvo launch animation — generation counter stops in-flight rAF loops on clear.
+    let salvoGeneration = 0;
+    let salvoMarkers    = [];
+    // Suppression halos (L.circle per suppressed unit) — cleared each step.
+    let suppressionHalos = [];
+    // Hit-flash / smoke transient timers — cancelled on clearScenario.
+    let effectTimers     = [];
 
     // Per-step Blue actions — fallback only. The server now emits
     // state.blue_actions per step (see adjudicator-schema.js
@@ -1119,17 +1126,17 @@
                  60%  { opacity: 1; transform: scale(0.92); }
                  100% { opacity: 1; transform: scale(1); }
              }
-             /* Explosion burst spawned at a blue's position right before the
-              * destroyed X pops in. Orange/yellow radial ring scales out and
-              * fades — reads as a "small action" / impact event. */
-             .wg-adj-explosion {
-                 pointer-events: none;
-                 animation: wg-adj-explosion 300ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+             /* Explosion burst — animates child div so Leaflet's positioning
+              * transform on the root element is not overridden. */
+             .wg-adj-explosion { pointer-events: none; }
+             .wg-adj-explosion > div {
+                 animation: wg-adj-explosion 600ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+                 transform-origin: center center;
              }
              @keyframes wg-adj-explosion {
                  0%   { opacity: 0;   transform: scale(0.2); }
-                 30%  { opacity: 1;   transform: scale(1.2); }
-                 100% { opacity: 0;   transform: scale(2.4); }
+                 25%  { opacity: 1;   transform: scale(1.3); }
+                 100% { opacity: 0;   transform: scale(2.6); }
              }
              /* Continuous pulse for counterattack arrows — gives a clear
               * "this unit is firing back" feel without any text label. */
@@ -1146,6 +1153,68 @@
              @keyframes wg-adj-pulse {
                  0%, 100% { transform: scale(1);   opacity: 1; }
                  50%      { transform: scale(1.3); opacity: .7; }
+             }
+             /* Salvo child icons — glowing dots flying actor → target */
+             .wg-salvo-child, .wg-salvo-impact { pointer-events: none !important; }
+             .wg-salvo-impact > div {
+                 animation: wg-salvo-ring 600ms ease-out forwards;
+             }
+             @keyframes wg-salvo-ring {
+                 0%   { opacity: 0.9; transform: scale(0.3); }
+                 60%  { opacity: 0.7; transform: scale(1.2); }
+                 100% { opacity: 0;   transform: scale(2.0); }
+             }
+             /* Lingering smoke after destruction */
+             .wg-adj-smoke { pointer-events: none; }
+             .wg-adj-smoke > div {
+                 animation: wg-smoke-drift 2200ms ease-out forwards;
+             }
+             @keyframes wg-smoke-drift {
+                 0%   { opacity: 0;   transform: scale(0.4); }
+                 15%  { opacity: 0.7; transform: scale(1.0); }
+                 60%  { opacity: 0.45; transform: scale(1.8); }
+                 100% { opacity: 0;   transform: scale(2.8); }
+             }
+             /* Hit flash on damaged / suppressed units */
+             .wg-adj-hit-flash { pointer-events: none; }
+             .wg-adj-hit-flash > div {
+                 animation: wg-hit-flash 500ms ease-out forwards;
+             }
+             @keyframes wg-hit-flash {
+                 0%   { opacity: 0;   transform: scale(0.2); }
+                 20%  { opacity: 1;   transform: scale(1.1); }
+                 100% { opacity: 0;   transform: scale(1.6); }
+             }
+             /* Suppression ring — pulsing yellow halo on cowering unit */
+             .wg-supp-ring {
+                 animation: wg-supp-pulse 1.2s ease-in-out infinite;
+             }
+             @keyframes wg-supp-pulse {
+                 0%, 100% { opacity: 0.75; }
+                 50%      { opacity: 0.25; }
+             }
+             /* Expended flash — blue strobe when unit fires last salvo */
+             .wg-adj-expended { pointer-events: none; }
+             .wg-adj-expended > div {
+                 animation: wg-expended-flash 700ms ease-out forwards;
+             }
+             @keyframes wg-expended-flash {
+                 0%   { opacity: 0;   transform: scale(0.3); }
+                 25%  { opacity: 0.9; transform: scale(1.0); }
+                 100% { opacity: 0;   transform: scale(1.8); }
+             }
+             /* Persistent death ring — bright orange halo stays 3.5 s so the
+              * operator can read which unit just died in a dense cluster. */
+             .wg-death-ring { pointer-events: none; }
+             .wg-death-ring > div {
+                 animation: wg-death-ring-fade 3500ms ease-out forwards;
+                 transform-origin: center center;
+             }
+             @keyframes wg-death-ring-fade {
+                 0%   { opacity: 0;   transform: scale(0.2); }
+                 12%  { opacity: 1;   transform: scale(1.0); }
+                 70%  { opacity: 0.85; transform: scale(1.05); }
+                 100% { opacity: 0;   transform: scale(1.15); }
              }
          `;
          document.head.appendChild(style);
@@ -1412,6 +1481,19 @@
         });
     }
 
+    // milsymbol 2.x does not recognise entity *subtype* codes (SIDC positions
+    // 15-16 non-zero). Strip them progressively until the symbol validates.
+    function _resolveSidc(sidc) {
+        if (!sidc || sidc.length !== 20 || !window.ms) return sidc;
+        const test = s => { try { return new window.ms.Symbol(s, { size: 1 }).isValid(); } catch (_) { return false; } };
+        if (test(sidc)) return sidc;
+        const s1 = sidc.slice(0, 14) + '00' + sidc.slice(16); // strip entity subtype
+        if (test(s1)) return s1;
+        const s2 = sidc.slice(0, 12) + '0000' + sidc.slice(16); // strip entity type+subtype
+        if (test(s2)) return s2;
+        return sidc;
+    }
+
     // Render a real NATO APP-6 / SIDC icon via the milsymbol lib the app
     // already ships with. Used for Blue defender units so they look the
     // same as the operator's own placed markers. Returns null on failure
@@ -1419,7 +1501,7 @@
     function sidcIcon(sidc, size) {
         if (!sidc || !window.ms || typeof window.ms.Symbol !== 'function') return null;
         try {
-            const sym = new window.ms.Symbol(sidc, { size: size || 30, simpleStatusModifier: true });
+            const sym = new window.ms.Symbol(_resolveSidc(sidc), { size: size || 30, simpleStatusModifier: true });
             if (!sym.isValid()) return null;
             const anchor = sym.getAnchor();
             const dim    = sym.getSize();
@@ -1546,12 +1628,12 @@
         // Main icon (positions 11-16) + modifiers (17-20). Defaults to
         // mechanized infantry like the Blue templates; overrides by role:
         let iconMod = '1211020000'; // mech infantry
-        if (/recon/.test(role))                 iconMod = '1211050000'; // armored recon
-        else if (/armored|exploit/.test(role))  iconMod = '1211030000'; // armor
-        else if (/fire|arty|art/.test(role))    iconMod = '1303000000'; // field arty
-        else if (/ew/.test(role))               iconMod = '1300000000'; // generic comm/ew
-        else if (/cbrn|chem/.test(role))        iconMod = '1417000000'; // CBRN
-        else if (/usv/.test(role))              iconMod = '1211000000'; // generic (USVs)
+        if (/recon/i.test(role))                 iconMod = '1211050000'; // armored recon
+        else if (/armored|exploit/i.test(role))  iconMod = '1211030000'; // armor
+        else if (/fire|arty|art/i.test(role))    iconMod = '1303000000'; // field arty
+        else if (/ew/i.test(role))               iconMod = '1300000000'; // generic comm/ew
+        else if (/cbrn|chem/i.test(role))        iconMod = '1417000000'; // CBRN
+        else if (/usv/i.test(role))              iconMod = '1211000000'; // generic (USVs)
 
         // Positions 1-6: version + affiliation + land
         // Positions 7-10: hqEch     (HQ flag + echelon, e.g. '0218')
@@ -3295,6 +3377,7 @@
             if (a && layerGroup) try { layerGroup.removeLayer(a); } catch (_) {}
         }
         engagementArcs = [];
+        clearSalvoAnimations();
     }
 
     // MG1 — Engagement mission graphics (CMO operational arrow style).
@@ -3321,6 +3404,142 @@
     const ENGAGEMENT_TARGET_CLUSTER_KM = 80; // large radius merges most arcs into 1–2 clusters
     const ENGAGEMENT_STOP_SHORT_KM   = 4;   // pull arrowhead back from dense target cluster
     const ENGAGEMENT_MAX_GROUPED     = 2;   // max 2 arrows per side (1 main + 1 support)
+
+    // ── Salvo launch animation (tender-noether) ──────────────────────────
+    // Clears all in-flight child markers and invalidates active rAF loops
+    // via generation counter (each tick checks it hasn't been superseded).
+    function clearSalvoAnimations() {
+        salvoGeneration++;
+        for (const m of salvoMarkers) {
+            if (m && layerGroup) try { layerGroup.removeLayer(m); } catch (_) {}
+        }
+        salvoMarkers = [];
+    }
+
+    // Extract vehicle/aircraft count from an Arabic unit label.
+    // Handles patterns like "(12 طائرة)", "(12)", "12 طائرة", "6 سرايا".
+    function parseSalvoCount(label) {
+        if (!label) return null;
+        const paren = label.match(/\((\d{1,3})\s*[^)]*\)/);
+        if (paren) return parseInt(paren[1], 10);
+        const bare = label.match(/\b([2-9]\d?)\b/);
+        if (bare) return parseInt(bare[1], 10);
+        return null;
+    }
+
+    // Quadratic Bezier at t∈[0,1] over [lat,lon] control points.
+    function _qBez(P0, Pc, P1, t) {
+        const u = 1 - t;
+        return [u*u*P0[0] + 2*u*t*Pc[0] + t*t*P1[0],
+                u*u*P0[1] + 2*u*t*Pc[1] + t*t*P1[1]];
+    }
+
+    // Spawn a brief ring-burst at the impact point.
+    function _spawnImpact(latLng, color, gen) {
+        if (!window.L || !layerGroup || salvoGeneration !== gen) return;
+        const icon = window.L.divIcon({
+            className: 'wg-salvo-impact',
+            html: `<div style="
+                width:14px;height:14px;border-radius:50%;
+                border:2px solid ${color};opacity:0.9;
+            "></div>`,
+            iconSize: [14, 14], iconAnchor: [7, 7],
+        });
+        const m = window.L.marker(latLng, { icon, interactive: false, zIndexOffset: 2001 });
+        m.addTo(layerGroup);
+        salvoMarkers.push(m);
+        setTimeout(() => {
+            if (layerGroup) try { layerGroup.removeLayer(m); } catch (_) {}
+            const i = salvoMarkers.indexOf(m);
+            if (i >= 0) salvoMarkers.splice(i, 1);
+        }, 700);
+    }
+
+    // Animate a single child icon along a slight arc from startLL to endLL.
+    function _flyChild(startLL, endLL, color, durationMs, gen) {
+        if (!window.L || !layerGroup) return;
+
+        // Bezier control point: perpendicular to midpoint for a natural arc.
+        const dLat = endLL[0] - startLL[0];
+        const dLon = endLL[1] - startLL[1];
+        const len  = Math.sqrt(dLat*dLat + dLon*dLon) || 0.01;
+        const ps   = len * 0.20; // arc height ~20% of distance
+        const ctrl = [(startLL[0]+endLL[0])/2 + (-dLon/len)*ps,
+                      (startLL[1]+endLL[1])/2 + ( dLat/len)*ps];
+
+        const icon = window.L.divIcon({
+            className: 'wg-salvo-child',
+            html: `<div style="
+                width:7px;height:7px;border-radius:50%;
+                background:${color};
+                box-shadow:0 0 5px 2px ${color}99;
+            "></div>`,
+            iconSize: [7, 7], iconAnchor: [3, 3],
+        });
+        const marker = window.L.marker(startLL, { icon, interactive: false, zIndexOffset: 2000 });
+        marker.addTo(layerGroup);
+        salvoMarkers.push(marker);
+
+        const t0 = performance.now();
+        function tick(now) {
+            if (salvoGeneration !== gen) return; // superseded — stop silently
+            const raw = (now - t0) / durationMs;
+            if (raw >= 1) {
+                try { if (layerGroup) layerGroup.removeLayer(marker); } catch (_) {}
+                const i = salvoMarkers.indexOf(marker);
+                if (i >= 0) salvoMarkers.splice(i, 1);
+                _spawnImpact(endLL, color, gen);
+                return;
+            }
+            // Ease-in-out cubic
+            const t = raw < 0.5 ? 2*raw*raw : -1+(4-2*raw)*raw;
+            try { marker.setLatLng(_qBez(startLL, ctrl, endLL, t)); } catch (_) {}
+            requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+    }
+
+    // Launch child icon animations for all engagement arcs in this step.
+    // Only runs on forward steps to avoid re-animating during scrub-back.
+    function animateSalvoLaunches(arcs, sc, isForward) {
+        clearSalvoAnimations();
+        if (!isForward || !arcs || !arcs.length || !window.L) return;
+
+        const gen = salvoGeneration; // captured; tick() checks it hasn't changed
+
+        // Build unit label registry from scenario for count parsing
+        const labels = new Map();
+        for (const u of (sc?.red_units || []))          if (u?.uid)      labels.set(u.uid,      u);
+        for (const u of (sc?.blue_units_initial || [])) if (u?.unit_uid) labels.set(u.unit_uid, u);
+
+        // Group arcs by actor so count distributes across all targets
+        const byActor = new Map();
+        for (const arc of arcs) {
+            if (!arc?.coordinates || arc.coordinates.length < 2) continue;
+            if (!byActor.has(arc.actor_uid)) byActor.set(arc.actor_uid, []);
+            byActor.get(arc.actor_uid).push(arc);
+        }
+
+        for (const [actorUid, actorArcs] of byActor) {
+            const unit  = labels.get(actorUid);
+            const label = unit?.label || unit?.name_ar || '';
+            const total = parseSalvoCount(label) || actorArcs.length * 2;
+            const color = actorArcs[0]?.actor_side === 'BLUE' ? '#3a96d2' : '#d23a3a';
+            // Children per target — cap at 5 to stay readable
+            const perTarget = Math.max(1, Math.min(5, Math.round(total / actorArcs.length)));
+
+            actorArcs.forEach((arc, arcIdx) => {
+                const [src, dst] = arc.coordinates;
+                const startLL = [src[1], src[0]];
+                const endLL   = [dst[1], dst[0]];
+                for (let i = 0; i < perTarget; i++) {
+                    const delay  = arcIdx * 260 + i * 140; // stagger launches
+                    const flight = 1700 + Math.random() * 500;
+                    setTimeout(() => _flyChild(startLL, endLL, color, flight, gen), delay);
+                }
+            });
+        }
+    }
 
     // Group arcs whose target positions are within clusterKm of each other.
     // Returns array of cluster objects sorted by arc count descending.
@@ -4197,35 +4416,194 @@
         } catch (_) { /* ignore */ }
     }
 
-    // ── Explosion burst (transient marker) ───────────────────────────
-    // Spawn a short-lived divIcon at latLng that plays the wg-adj-explosion
-    // CSS animation and removes itself when done. Used to mark each blue
-    // death as a visible "small action" before the X overlay settles.
-    // Kept compact (32×32) and short (~300ms) so multiple bursts inside a
-    // single step don't crowd the map or feel laggy.
-    function spawnExplosion(latLng, durationMs) {
+    // ── Transient visual effects ──────────────────────────────────────
+    function _transientMarker(latLng, className, html, sz, dur) {
         if (!hasMap() || !layerGroup || !latLng) return;
-        const dur = Number.isFinite(durationMs) ? durationMs : 300;
-        const icon = window.L.divIcon({
-            className: 'wg-adj-explosion',
-            html: `<svg viewBox="0 0 100 100" width="32" height="32"
-                        style="overflow:visible;display:block;">
-                      <circle cx="50" cy="50" r="28"
-                              fill="#ffb13a" opacity="0.85"/>
-                      <circle cx="50" cy="50" r="40"
-                              fill="none" stroke="#ff5c1a" stroke-width="6"
-                              opacity="0.9"/>
-                      <circle cx="50" cy="50" r="12"
-                              fill="#fff7d6" opacity="0.95"/>
-                   </svg>`,
-            iconSize:   [32, 32],
-            iconAnchor: [16, 16],
-        });
+        const icon = window.L.divIcon({ className, html, iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] });
         const m = window.L.marker(latLng, { icon, interactive: false });
         m.addTo(layerGroup);
-        setTimeout(() => {
-            try { layerGroup.removeLayer(m); } catch (_) {}
-        }, dur + 50);
+        const tid = setTimeout(() => { try { layerGroup.removeLayer(m); } catch (_) {} }, dur + 60);
+        effectTimers.push(tid);
+    }
+
+    // Layered explosion — fireball + shockwave ring + central flash.
+    // magnitude 0-1 scales the overall size (0.3 = small, 1 = major kill).
+    function spawnExplosion(latLng, durationMs, magnitude) {
+        if (!hasMap() || !layerGroup || !latLng) return;
+        const dur = Number.isFinite(durationMs) ? durationMs : 500;
+        const mag = Number.isFinite(magnitude) ? Math.max(0.2, Math.min(1, magnitude)) : 0.6;
+        const sz  = Math.round(44 + mag * 56); // 44–100 px
+        const r1  = 45, r2 = 48, r3 = 14; // SVG radii (in 100-unit viewbox)
+        // Wrap in div so CSS animation targets > div, not the Leaflet root
+        // element (which already has transform:translate for positioning).
+        _transientMarker(latLng, 'wg-adj-explosion',
+            `<div style="width:${sz}px;height:${sz}px;overflow:visible;">
+               <svg viewBox="0 0 100 100" width="${sz}" height="${sz}"
+                    style="overflow:visible;display:block;">
+                 <circle cx="50" cy="50" r="${r2}"
+                         fill="none" stroke="#ff5c1a" stroke-width="8" opacity="0.85"/>
+                 <circle cx="50" cy="50" r="${r1}"
+                         fill="#ffb13a" opacity="0.80"/>
+                 <circle cx="50" cy="50" r="${r3}"
+                         fill="#fff7d6" opacity="0.95"/>
+               </svg>
+             </div>`, sz, dur);
+    }
+
+    // Dark smoke puff that lingers after destruction.
+    function spawnSmoke(latLng, durationMs) {
+        if (!hasMap() || !layerGroup || !latLng) return;
+        const dur = Number.isFinite(durationMs) ? durationMs : 2200;
+        const sz  = 44;
+        _transientMarker(latLng, 'wg-adj-smoke',
+            `<div style="
+                width:${sz}px;height:${sz}px;border-radius:50%;
+                background:radial-gradient(circle,#555 0%,#333 45%,transparent 70%);
+                opacity:0.65;
+             "></div>`, sz, dur);
+    }
+
+    // Brief colored flash when a unit takes a hit (not destroyed).
+    // status: 'damaged_partial'|'damaged_full'|'suppressed'|'expended'
+    function spawnHitFlash(latLng, status, dmgPct) {
+        if (!hasMap() || !layerGroup || !latLng) return;
+        const dmg = Number.isFinite(dmgPct) ? dmgPct : 0.3;
+        const cfg = {
+            damaged_partial: { color: '#e8a23a', bg: '#ff6b0044' },
+            damaged_full:    { color: '#d23a3a', bg: '#ff000044' },
+            suppressed:      { color: '#ca8a04', bg: '#ffd70033' },
+            expended:        { color: '#2563eb', bg: '#60a5fa44' },
+            destroyed:       { color: '#ff0000', bg: '#ff000055' },
+        };
+        const { color, bg } = cfg[status] || { color: '#fff', bg: '#ffffff33' };
+        const sz = Math.round(20 + dmg * 30);
+        _transientMarker(latLng, 'wg-adj-hit-flash',
+            `<div style="
+                width:${sz}px;height:${sz}px;border-radius:50%;
+                border:3px solid ${color};
+                background:${bg};
+             "></div>`, sz, 500);
+    }
+
+    // Bright flash + label when a unit expends its magazines.
+    function spawnExpendedFlash(latLng) {
+        if (!hasMap() || !layerGroup || !latLng) return;
+        _transientMarker(latLng, 'wg-adj-expended',
+            `<div style="
+                width:64px;height:64px;border-radius:50%;
+                border:3px solid #60a5fa;
+                box-shadow:0 0 10px 3px #60a5fa88;
+                background:#1d4ed822;
+                display:flex;align-items:center;justify-content:center;
+                color:#93c5fd;font-size:10px;font-weight:700;
+             ">EXPD</div>`, 64, 1400);
+    }
+
+    // Persistent bright-orange ring that marks a newly destroyed unit for
+    // 3.5 s — much more readable than a brief explosion in a dense cluster.
+    function spawnDeathRing(latLng) {
+        if (!hasMap() || !layerGroup || !latLng) return;
+        const sz = 96;
+        _transientMarker(latLng, 'wg-death-ring',
+            `<div style="
+                width:${sz}px;height:${sz}px;border-radius:50%;
+                border:4px solid #ff4400;
+                box-shadow:0 0 14px 5px #ff440099,inset 0 0 10px 2px #ff220033;
+                background:#ff220009;
+             "></div>`, sz, 3600);
+    }
+
+    // Pulsing yellow rings around suppressed units — cleared each step.
+    function clearSuppressionHalos() {
+        for (const h of suppressionHalos) {
+            if (h && layerGroup) try { layerGroup.removeLayer(h); } catch (_) {}
+        }
+        suppressionHalos = [];
+    }
+
+    function applySuppressionHalos(state) {
+        clearSuppressionHalos();
+        if (!layerGroup || !window.L) return;
+        const affected = Array.isArray(state && state.affected) ? state.affected : [];
+        for (const a of affected) {
+            if (a.status_change !== 'suppressed') continue;
+            const marker = redMarkers[a.uid] || blueMarkers[a.uid];
+            if (!marker) continue;
+            let ll; try { ll = marker.getLatLng(); } catch (_) { continue; }
+            const ring = window.L.circle(ll, {
+                radius:      2200,
+                color:       '#ca8a04',
+                weight:      2,
+                opacity:     0.75,
+                fillColor:   '#ffd700',
+                fillOpacity: 0.08,
+                dashArray:   '5 3',
+                interactive: false,
+                className:   'wg-supp-ring',
+            });
+            ring.addTo(layerGroup);
+            suppressionHalos.push(ring);
+        }
+    }
+
+    // Choreograph destruction + smoke for RED units listed as destroyed in
+    // state.affected[]. Mirrors scheduleStaggeredDeaths for BLUE.
+    function scheduleRedDestructions(state, isForward) {
+        if (!isForward || !state) return;
+        const affected = Array.isArray(state.affected) ? state.affected : [];
+        const redDeaths = affected.filter(a => a && a.side === 'RED' && a.status_change === 'destroyed');
+        console.log('[DBG] redDestructions: isForward=', isForward, 'redDeaths=', redDeaths.length, redDeaths.map(a=>a.uid), 'redMarkerKeys sample:', Object.keys(redMarkers).slice(0,3));
+        redDeaths.forEach((a, idx) => {
+            const marker = redMarkers[a.uid];
+            console.log('[DBG] red uid', a.uid, '→ marker found?', !!marker);
+            if (!marker) return;
+            let ll; try { ll = marker.getLatLng(); } catch (_) { return; }
+            const dmg = Number.isFinite(a.damage_pct) ? a.damage_pct : 1;
+            const t = 120 + idx * 220;
+            effectTimers.push(setTimeout(() => {
+                spawnExplosion(ll, 600, dmg);
+                spawnDeathRing(ll);
+            }, t));
+            effectTimers.push(setTimeout(() => {
+                spawnSmoke(ll, 2200);
+                // Stamp X and dim the red marker
+                try {
+                    markUnitAsDestroyed(marker);
+                    const el = marker.getElement();
+                    if (el) {
+                        el.style.filter  = 'grayscale(100%) brightness(0.35)';
+                        el.style.opacity = '0.55';
+                    }
+                } catch (_) {}
+            }, t + 250));
+        });
+    }
+
+    // Choreograph hit flashes for non-destroyed affected units.
+    // Fires on forward steps only; gives each hit unit a brief impact pulse.
+    function scheduleHitEffects(state, isForward) {
+        if (!isForward || !state) return;
+        const affected = Array.isArray(state.affected) ? state.affected : [];
+        const nonDestroyed = affected.filter(a => a && a.status_change !== 'destroyed');
+        console.log('[DBG] hitEffects: affected=', affected.length, 'nonDestroyed=', nonDestroyed.length, nonDestroyed.map(a=>a.uid+'('+a.status_change+')'));
+        affected.forEach((a, idx) => {
+            if (!a || a.status_change === 'destroyed') return;
+            const marker = redMarkers[a.uid] || blueMarkers[a.uid];
+            console.log('[DBG] hit uid', a.uid, a.status_change, '→ marker?', !!marker);
+            if (!marker) return;
+            let ll; try { ll = marker.getLatLng(); } catch (_) { return; }
+            const dmg = Number.isFinite(a.damage_pct) ? a.damage_pct : 0.3;
+            const delay = 60 + idx * 80;
+            if (a.status_change === 'expended') {
+                effectTimers.push(setTimeout(() => spawnExpendedFlash(ll), delay));
+            } else {
+                effectTimers.push(setTimeout(() => spawnHitFlash(ll, a.status_change, dmg), delay));
+                // Heavier hits (damage_pct >= 0.5) get a small smoke puff too
+                if (dmg >= 0.5 && a.status_change !== 'suppressed') {
+                    effectTimers.push(setTimeout(() => spawnSmoke(ll, 1200), delay + 300));
+                }
+            }
+        });
     }
 
     // ── Breach badge (NATO-style coastal-defense breach marker) ──────
@@ -4285,9 +4663,13 @@
         pendingDeathTimers = [];
 
         if (opts.instant) return;
-        const deaths = (state && state.per_unit_deltas && Array.isArray(state.per_unit_deltas.blue_destroyed))
-            ? state.per_unit_deltas.blue_destroyed
-            : [];
+        // opts.deaths carries the pre-computed delta (per_unit_deltas OR
+        // cumulative diff) from applyState; fall back to per_unit_deltas only.
+        const deaths = Array.isArray(opts.deaths) && opts.deaths.length
+            ? opts.deaths
+            : (state && state.per_unit_deltas && Array.isArray(state.per_unit_deltas.blue_destroyed))
+                ? state.per_unit_deltas.blue_destroyed : [];
+        console.log('[DBG] staggeredDeaths: deaths=', deaths.length, deaths, 'blueMarkerKeys sample:', Object.keys(blueMarkers).slice(0,3));
         if (!deaths.length) return;
 
         const mainRedMarker = Object.values(redMarkers).find(m =>
@@ -4353,10 +4735,19 @@
                     if (i >= 0) attackArrows.splice(i, 1);
                 }, arrowLifeMs));
             }, t));
-            // 2. Explosion at the blue's position.
+            // 2a. Explosion at the blue's position — magnitude from affected[].
+            const affectedEntry = (Array.isArray(state && state.affected) ? state.affected : [])
+                .find(a => a && a.uid === d.uid);
+            const mag = affectedEntry && Number.isFinite(affectedEntry.damage_pct)
+                ? affectedEntry.damage_pct : 0.8;
             pendingDeathTimers.push(setTimeout(() => {
-                spawnExplosion(d.ll, 300);
+                spawnExplosion(d.ll, 600, mag);
+                spawnDeathRing(d.ll);
             }, t + 50));
+            // 2b. Lingering smoke ~250ms after the fireball peaks.
+            pendingDeathTimers.push(setTimeout(() => {
+                spawnSmoke(d.ll, 2200);
+            }, t + 300));
             // 3. X reveal — destroyed status + renderer refresh.
             pendingDeathTimers.push(setTimeout(() => {
                 const reg = unitRegistry[d.uid];
@@ -4493,6 +4884,10 @@
         engagementGraphicsStep = 0; // MG1: reset engagement mission-graphic step tracker
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
+        clearSuppressionHalos();
+        clearSalvoAnimations();
+        for (const t of effectTimers) { try { clearTimeout(t); } catch (_) {} }
+        effectTimers = [];
     }
 
     // ── Find existing user-placed Blue marker by base id ─────────────
@@ -4704,6 +5099,16 @@
         // same slot with authoritative Attack/Counterattack graphics keyed off
         // actor_side + actor_uid → target_uid.
         renderEngagementMissionGraphics(state, scenario || scenarioRef);
+        // Salvo projectile animation along this step's engagement arcs.
+        // animateSalvoLaunches clears only its own child markers, so the MG1
+        // axis arrows drawn above stay intact.
+        try {
+            const _sc = scenario || scenarioRef;
+            const _si = Number.isFinite(state && state.step_index) ? state.step_index : 0;
+            const _row = _sc && Array.isArray(_sc.steps) ? _sc.steps[_si] : null;
+            const _arcs = _row && Array.isArray(_row.engagement_arcs) ? _row.engagement_arcs : [];
+            if (_arcs.length) animateSalvoLaunches(_arcs, _sc, isForward);
+        } catch (_) {}
         // Note: we DO NOT draw separate "axis of advance" trails. The
         // schema (Wargame3/schema/README.md) only specifies engagement_arc
         // visuals. Unit movement is shown by the marker itself sliding
@@ -4792,10 +5197,9 @@
         }
 
         // 4. Fold Blue destroyed uids into the running cumulative set.
-        // Every uid that EVER appears in a per-step delta gets remembered
-        // — this is the c133-safety-net: if a state arrives without
-        // blue_destroyed_cumulative (older trial JSONL, malformed LLM
-        // response) we still know what's dead.
+        // Snapshot BEFORE this step's update so we can compute the delta
+        // (units newly dead this step) even when per_unit_deltas is absent.
+        const prevDestroyedSet = new Set(runningDestroyedUids);
         const found = [];
         const missed = [];
         if (state.per_unit_deltas && Array.isArray(state.per_unit_deltas.blue_destroyed)) {
@@ -4813,6 +5217,23 @@
             }
         }
 
+        // 4a-W3. For w3-rich scenarios, blue deaths live in state.affected[]
+        // (side==='BLUE', status_change==='destroyed'). Neither per_unit_deltas
+        // nor blue_destroyed_cumulative is populated by the W3 adjudicator, so
+        // we fold these directly into runningDestroyedUids here.
+        if (Array.isArray(state.affected)) {
+            for (const a of state.affected) {
+                if (!a || a.side !== 'BLUE' || a.status_change !== 'destroyed') continue;
+                runningDestroyedUids.add(a.uid);
+                const baseId = String(a.uid).replace(/^BLUE_/, '');
+                const scenarioMarker = blueMarkers[a.uid];
+                if (scenarioMarker) found.push(baseId);
+                const userMarker = findBlueMarkerByBaseId(baseId);
+                if (userMarker && userMarker !== scenarioMarker) fadeMarker(userMarker);
+                if (!scenarioMarker && !userMarker) missed.push(baseId);
+            }
+        }
+
         // 4a. When the server emits state.blue_destroyed_cumulative we use it
         // as the step snapshot, but only REPLACE the running set on rewind /
         // scrub. On forward steps the client may have already added local
@@ -4820,7 +5241,7 @@
         // died earlier this run must not briefly revive just because the next
         // server state didn't include that local kill yet. Forward motion
         // therefore merges, rewind / jump-back still replaces exactly.
-        if (Array.isArray(state.blue_destroyed_cumulative)) {
+        if (Array.isArray(state.blue_destroyed_cumulative) && state.blue_destroyed_cumulative.length) {
             runningDestroyedUids = isForward
                 ? new Set([...runningDestroyedUids, ...state.blue_destroyed_cumulative])
                 : new Set(state.blue_destroyed_cumulative);
@@ -4869,17 +5290,32 @@
         propagateHqDamage();
 
         // 4c. Choreographed kill reveal on FORWARD steps. The cumulative
-        // sync in 4a/4b has already marked every blue in this step's
-        // per_unit_deltas.blue_destroyed as destroyed in the registry. For
-        // a forward advance we want each new kill to appear AS the red unit
-        // sweeps past it — so we un-mark the new kills here, run the
-        // renderer (drawing them as still alive), then let
-        // scheduleStaggeredDeaths re-mark them one-by-one over ~900ms with
-        // an explosion burst before each X reveal. On rewind / jumps we
-        // skip the un-mark and just snap to the final state.
-        const newDeadThisStep = (state.per_unit_deltas && Array.isArray(state.per_unit_deltas.blue_destroyed))
-            ? state.per_unit_deltas.blue_destroyed
+        // sync in 4a/4b has already marked every blue in this step's kills
+        // as destroyed in the registry. For a forward advance we want each
+        // new kill to appear AS the red unit sweeps past it — so we un-mark
+        // the new kills here, run the renderer (drawing them as still alive),
+        // then let scheduleStaggeredDeaths re-mark them one-by-one over ~900ms
+        // with an explosion burst before each X reveal.
+        //
+        // Primary source: per_unit_deltas.blue_destroyed (explicit per-step delta).
+        // Fallback: diff of blue_destroyed_cumulative vs the pre-step snapshot —
+        // the adjudicator often only emits the cumulative list, not the delta.
+        // Priority order for new blue kills this step:
+        // 1. per_unit_deltas.blue_destroyed (W1/W2 explicit delta)
+        // 2. diff of runningDestroyedUids vs prevDestroyedSet (cumulative growth)
+        // 3. state.affected[] BLUE destroyed (W3 — only source in mock mode)
+        const _deltaFromCumulative = isForward
+            ? [...runningDestroyedUids].filter(uid => !prevDestroyedSet.has(uid))
             : [];
+        const _w3BlueDeaths = isForward && Array.isArray(state.affected)
+            ? state.affected.filter(a => a && a.side === 'BLUE' && a.status_change === 'destroyed').map(a => a.uid)
+            : [];
+        const newDeadThisStep = (() => {
+            if (state.per_unit_deltas && Array.isArray(state.per_unit_deltas.blue_destroyed) && state.per_unit_deltas.blue_destroyed.length)
+                return state.per_unit_deltas.blue_destroyed;
+            if (_deltaFromCumulative.length) return _deltaFromCumulative;
+            return _w3BlueDeaths;
+        })();
         if (!instant && newDeadThisStep.length) {
             for (const uid of newDeadThisStep) {
                 const reg = unitRegistry[uid];
@@ -4916,7 +5352,18 @@
 
         // 4e. Schedule the staggered explosion + delayed X re-mark for the
         // new kills (no-op on rewind / when there are no new kills).
-        scheduleStaggeredDeaths(state, { instant });
+        scheduleStaggeredDeaths(state, { instant, deaths: newDeadThisStep });
+
+        // 4f. Red-unit destructions — explosion + X + gray for red units
+        // listed as destroyed in state.affected[]. Forward only.
+        scheduleRedDestructions(state, isForward);
+
+        // 4g. Hit-flash pulses for all non-destroyed affected units.
+        scheduleHitEffects(state, isForward);
+
+        // 4h. Suppression halos — pulsing yellow rings on suppressed units.
+        if (!instant) applySuppressionHalos(state);
+        else           clearSuppressionHalos();
 
         // 5. Pipeline fill: draw the section Red has already advanced over
         // as a solid colored line. Color uses the DERIVED outcome — when
@@ -4972,6 +5419,11 @@
             }
         }
 
+        // Sync 3D globe if it's currently visible
+        if (window.AppCesiumView && window.AppCesiumView.isVisible) {
+            window.AppCesiumView.applyState(state, lastAppliedScenario || scenarioRef);
+        }
+
         return { found, missed };
     }
 
@@ -5003,6 +5455,9 @@
         breachBadges = {};
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
+        clearSuppressionHalos();
+        for (const t of effectTimers) { try { clearTimeout(t); } catch (_) {} }
+        effectTimers = [];
         // Restore any markers we faded
         destroyedMarkers.forEach((m) => restoreMarker(m));
         destroyedMarkers.clear();
@@ -5399,5 +5854,8 @@
         getUnitLayoutDiagnostics: (opts) => computeUnitLayoutDiagnostics(opts || {}),
         _findBlueMarkerByBaseId: findBlueMarkerByBaseId,
         _setDebug: (on) => { debugEnabled = !!on; },
+        // Cesium 3D sync — last state/scenario from applyState()
+        get _lastState()    { return lastAppliedState; },
+        get _lastScenario() { return lastAppliedScenario; },
     };
 })();

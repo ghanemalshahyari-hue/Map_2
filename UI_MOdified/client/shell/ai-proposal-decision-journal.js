@@ -1,12 +1,13 @@
 /**
  * Operational shell — Local Decision Records (in-memory only).
  *
- * PR-13. Captures the operator's Accept / Reject / Hold decisions as
- * structured records *after* they pass through the PR-12 dry-run
- * commit bridge. Pure frontend, in-memory, dies on reload. This is
- * NOT a real journal — it is deliberately named "Decision Records"
- * everywhere in the UI so the operator cannot mistake the store for
- * the future durable journal.
+ * PR-13, UNLOCKED 2026-06-01. Captures the operator's Accept / Reject
+ * / Hold decisions as structured records *after* they pass through
+ * the PR-12 commit bridge. Pure frontend, in-memory, dies on reload.
+ * It MIRRORS the real commit (committed:true on Accept) but is itself
+ * non-durable — the DURABLE record is the server journal
+ * (data/journal/<run>.jsonl). Named "Decision Records" in the UI so
+ * the operator distinguishes this in-memory mirror from that journal.
  *
  * Strict invariants:
  *   1. NEVER persists. No localStorage, no IndexedDB, no fetch, no
@@ -125,11 +126,11 @@
         if (typeof input.proposalId !== 'string' || !input.proposalId.trim()) return 'proposalId required';
         const decision = String(input.decision || '').toUpperCase();
         if (!DECISION_SET.has(decision)) return 'decision must be ACCEPT | REJECT | HOLD';
-        // dryRun MUST be true; committed MUST be false. This is the
-        // structural defense against a future bug smuggling a
-        // "committed:true" record into the local store.
-        if (input.dryRun !== true)   return 'dryRun must be true';
-        if (input.committed !== false) return 'committed must be false';
+        // UNLOCKED 2026-06-01: dryRun/committed must be booleans, but
+        // committed:true is now allowed — the store mirrors real
+        // commits. (Was: dryRun MUST be true, committed MUST be false.)
+        if (typeof input.dryRun !== 'boolean')    return 'dryRun must be a boolean';
+        if (typeof input.committed !== 'boolean') return 'committed must be a boolean';
         if (typeof input.summary !== 'string') return 'summary required (string)';
         const risk = String(input.risk || '').toUpperCase();
         if (!RISK_SET.has(risk)) return 'risk must be LOW | MEDIUM | HIGH | UNKNOWN';
@@ -150,8 +151,9 @@
             id:         generateId(),
             proposalId: String(input.proposalId).slice(0, 80),
             decision:   String(input.decision).toUpperCase(),
-            dryRun:     true,
-            committed:  false,
+            dryRun:     input.dryRun === true,
+            committed:  input.committed === true,
+            journalSeq: (typeof input.journalSeq === 'number' && isFinite(input.journalSeq)) ? input.journalSeq : null,
             timestamp:  (typeof input.timestamp === 'string' && input.timestamp) ? input.timestamp : formatDtg(new Date()),
             source:     EXPECTED_SOURCE,
             summary:    String(input.summary).slice(0, 240),
@@ -225,19 +227,28 @@
             p.textContent = r.proposalId;
             row.appendChild(p);
 
-            // Dry-run badge
+            // Mode badge — Live (real commit) vs Dry-run (held/legacy)
             const dr = document.createElement('span');
-            dr.className = 'dr-dryrun-badge';
-            dr.setAttribute('data-i18n', 'dr-dryrun');
-            dr.textContent = tr('dr-dryrun', 'Dry-run');
+            dr.className = r.dryRun ? 'dr-dryrun-badge' : 'dr-live-badge';
+            dr.setAttribute('data-i18n', r.dryRun ? 'dr-dryrun' : 'dr-live');
+            dr.textContent = r.dryRun ? tr('dr-dryrun', 'Dry-run') : tr('dr-live', 'Live');
             row.appendChild(dr);
 
-            // Committed: No pill
+            // Committed pill — reflects the real commit outcome
             const c = document.createElement('span');
-            c.className = 'dr-committed';
-            c.setAttribute('data-i18n', 'dr-committed-no');
-            c.textContent = tr('dr-committed-no', 'Committed: No');
+            c.className = 'dr-committed' + (r.committed ? ' dr-committed--yes' : '');
+            c.setAttribute('data-i18n', r.committed ? 'dr-committed-yes' : 'dr-committed-no');
+            c.textContent = r.committed ? tr('dr-committed-yes', 'Committed: Yes') : tr('dr-committed-no', 'Committed: No');
             row.appendChild(c);
+
+            // Journal sequence (mono, LTR) when the server assigned one
+            if (r.journalSeq != null) {
+                const seq = document.createElement('span');
+                seq.className = 'dr-journal-seq';
+                seq.setAttribute('dir', 'ltr');
+                seq.textContent = '#' + r.journalSeq;
+                row.appendChild(seq);
+            }
 
             frag.appendChild(row);
         }

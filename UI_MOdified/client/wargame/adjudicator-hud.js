@@ -1713,8 +1713,18 @@
             provider:       req.provider,
         };
         const t0 = Date.now();
-        const r = await window.AppAdjudicator.adjudicateStep(body);
-        const wall = Date.now() - t0;
+        let r = await window.AppAdjudicator.adjudicateStep(body);
+        let wall = Date.now() - t0;
+        // Robust step advance: if LIVE adjudication is unavailable (provider down,
+        // timeout, parse error) the step must still resolve on the scenario
+        // BASELINE rather than silently no-op. Retry once forcing mockMode so
+        // "Next" always advances (and the map animates / trails accrue).
+        if ((!r || !r.state) && !body.mockMode) {
+            setStatus(`Step ${nextIndex}: live adjudication unavailable — resolving on baseline…`, 'active');
+            const tb = Date.now();
+            r = await window.AppAdjudicator.adjudicateStep({ ...body, mockMode: true });
+            wall = Date.now() - tb;
+        }
         if (!r || !r.state) {
             setStatus(`Step ${nextIndex} failed: ${r && r.error}`, 'error');
             return;

@@ -3274,98 +3274,168 @@
         engagementArcs = [];
     }
 
-    // MG1 — Engagement mission graphics. Each engagement_arc in the step is
-    // drawn with the SAME tactical mission graphic the operator draws by hand
-    // (Attack / Counterattack), via the read-only window.AppGraphics bridge.
-    // This is the "one app" wiring: the scenario engine and the operator's
-    // drawing tools now speak the same symbology.
+    // MG1 — Engagement mission graphics (CMO operational arrow style).
     //
-    //   • RED actor  → ATTACK         (assaulting force pressing the objective)
-    //   • BLUE actor → COUNTERATTACK  (defender striking back)
+    // Problem solved: one full-span arrow per engagement_arc creates spaghetti
+    // when 6+ units all target the same coastal cluster. Instead we:
+    //   1. Split arcs by actor side (RED=attack, BLUE=counterattack).
+    //   2. Cluster arcs whose TARGETS fall within TARGET_CLUSTER_KM of each other
+    //      → one grouped operational arrow per cluster.
+    //   3. Classify clusters by rank: largest = main effort, rest = support / local.
+    //   4. Draw CMO-style filled maneuver arrows with visual hierarchy:
+    //        main effort  → thickest body, full opacity
+    //        support      → medium body, reduced opacity
+    //        local/single → thin, only rendered at zoom ≥ threshold
+    //   5. Offset parallel same-side arrows by a small perpendicular lane so they
+    //      don't stack. Arrowhead stops short of the dense cluster.
+    //   6. Zoom adaptive: low zoom = grouped only; high zoom = adds individual
+    //      local TMG ticks for single-arc groups.
     //
-    // Colour = the ACTOR's affiliation (APP-6: graphics are drawn in the owning
-    // side's colour). The OUTCOME (who was hit / destroyed) is shown separately
-    // by the unit state (AN1) and the event pins (AN2) — so the graphic is free
-    // to read purely as the MANEUVER. Read-only: no popup / drag / persistence.
-    // If the bridge is unavailable (e.g. app.js not yet loaded) each arc falls
-    // back to the legacy status-coloured dashed arc + arrowhead so it still reads.
+    // Read-only path: no scenario mutation, no server calls.
     const ENGAGEMENT_RED  = '#c41e1e';
     const ENGAGEMENT_BLUE = '#3a96d2';
+    const ENGAGEMENT_ZOOM_THRESHOLD  = 11;  // below = 1 grouped axis only; above = also local ticks
+    const ENGAGEMENT_TARGET_CLUSTER_KM = 80; // large radius merges most arcs into 1–2 clusters
+    const ENGAGEMENT_STOP_SHORT_KM   = 4;   // pull arrowhead back from dense target cluster
+    const ENGAGEMENT_MAX_GROUPED     = 2;   // max 2 arrows per side (1 main + 1 support)
+
+    // Group arcs whose target positions are within clusterKm of each other.
+    // Returns array of cluster objects sorted by arc count descending.
+    function groupArcsByTargetCluster(arcs, clusterKm) {
+        const clusters = [];
+        for (const arc of arcs) {
+            const coords = arc && Array.isArray(arc.coordinates) ? arc.coordinates : null;
+            if (!coords || coords.length < 2) continue;
+            const [src, dst] = coords;
+            if (!Array.isArray(src) || !Array.isArray(dst)) continue;
+            const actorLL = { lat: src[1], lng: src[0] };
+            const tgtLL   = { lat: dst[1], lng: dst[0] };
+            let best = null, bestKm = Infinity;
+            for (const cl of clusters) {
+                const n = cl.arcs.length;
+                const km = haversineKm(
+                    [tgtLL.lat, tgtLL.lng],
+                    [cl.tgtSumLat / n, cl.tgtSumLng / n],
+                );
+                if (km < clusterKm && km < bestKm) { best = cl; bestKm = km; }
+            }
+            if (!best) {
+                clusters.push({
+                    arcs:        [arc],
+                    actorSumLat: actorLL.lat,
+                    actorSumLng: actorLL.lng,
+                    tgtSumLat:   tgtLL.lat,
+                    tgtSumLng:   tgtLL.lng,
+                });
+            } else {
+                best.arcs.push(arc);
+                best.actorSumLat += actorLL.lat;
+                best.actorSumLng += actorLL.lng;
+                best.tgtSumLat   += tgtLL.lat;
+                best.tgtSumLng   += tgtLL.lng;
+            }
+        }
+        clusters.sort((a, b) => b.arcs.length - a.arcs.length);
+        return clusters;
+    }
+
+    // Pull arrowhead endpoint back shortKm from target so head stops before
+    // the unit cluster. Returns target LatLng when the segment is too short to clip.
+    function engStopShort(actorLat, actorLng, tgtLat, tgtLng, shortKm) {
+        const distKm = haversineKm([actorLat, actorLng], [tgtLat, tgtLng]);
+        if (distKm <= shortKm * 2) return { lat: tgtLat, lng: tgtLng };
+        const ratio = (distKm - shortKm) / distKm;
+        return { lat: actorLat + (tgtLat - actorLat) * ratio,
+                 lng: actorLng + (tgtLng - actorLng) * ratio };
+    }
+
+    // Shift both endpoints of a segment by offsetKm in the perpendicular direction
+    // so parallel same-side arrows get distinct lanes instead of stacking.
+    function engLaneOffset(tailLat, tailLng, headLat, headLng, offsetKm) {
+        const midLat   = (tailLat + headLat) / 2;
+        const dLatKm   = (headLat - tailLat) * KM_PER_DEG_LAT;
+        const dLngKm   = (headLng - tailLng) * kmPerDegLng(midLat);
+        const segLen   = Math.hypot(dLatKm, dLngKm) || 1;
+        // 90° CCW perpendicular in (north, east) km-space: (-eastKm, northKm) / len
+        const offLat   = (-dLngKm / segLen) * offsetKm / KM_PER_DEG_LAT;
+        const offLng   = ( dLatKm / segLen) * offsetKm / kmPerDegLng(midLat);
+        return { tailLat: tailLat + offLat, tailLng: tailLng + offLng,
+                 headLat: headLat + offLat, headLng: headLng + offLng };
+    }
+
     function renderEngagementMissionGraphics(state, scenario) {
         clearEngagementArcs();
         if (!layerGroup || !state || !window.L) return;
         const sc = scenario || scenarioRef;
         if (!sc || sc.schema_variant !== 'w3-rich') return;
         const stepIndex = Number.isFinite(state && state.step_index) ? state.step_index : 0;
-        engagementGraphicsStep = stepIndex; // remember for zoomend re-render
+        engagementGraphicsStep = stepIndex;
         const stepRow = Array.isArray(sc.steps) ? sc.steps[stepIndex] : null;
-        const arcs = stepRow && Array.isArray(stepRow.engagement_arcs)
-                     ? stepRow.engagement_arcs : [];
-        if (!arcs.length) return;
+        const allArcs = stepRow && Array.isArray(stepRow.engagement_arcs)
+                        ? stepRow.engagement_arcs : [];
+        if (!allArcs.length) return;
 
-        // Mission-graphic bridge (app.js). Read-only TMG builder; null when the
-        // operator app layer hasn't loaded — we degrade to the legacy arc then.
-        const buildTmg = (window.AppGraphics && typeof window.AppGraphics.buildReadonlyTmgMarker === 'function')
-                         ? window.AppGraphics.buildReadonlyTmgMarker : null;
+        const isBlueArc = a => { const s = (a.actor_side || '').toUpperCase(); return s === 'BLUE' || s === 'B' || s === 'FRIEND'; };
+        const redArcs  = allArcs.filter(a => !isBlueArc(a) && Array.isArray(a.coordinates) && a.coordinates.length >= 2);
+        const blueArcs = allArcs.filter(a =>  isBlueArc(a) && Array.isArray(a.coordinates) && a.coordinates.length >= 2);
 
-        // Declutter dense phases: first arc from each shooter is "primary"
-        // (full opacity); additional arcs from the same shooter dim back so the
-        // operator can still read who the main effort is. ≤3 arcs stay prominent.
-        const dense = arcs.length > 3;
-        const seenActors = new Set();
-
-        arcs.forEach((arc, idx) => {
-            const coords = arc && Array.isArray(arc.coordinates) ? arc.coordinates : null;
-            if (!coords || coords.length < 2) return;
-            const [src, dst] = coords;
-            if (!Array.isArray(src) || !Array.isArray(dst)) return;
-            const start = [src[1], src[0]]; // actor  [lat,lng]
-            const end   = [dst[1], dst[0]]; // target [lat,lng]
-
-            const sideRaw = (arc.actor_side || '').toString().toUpperCase();
-            const isBlue  = sideRaw === 'BLUE' || sideRaw === 'B' || sideRaw === 'FRIEND';
-            const typeId  = isBlue ? 'counterattack' : 'attack';
-            const color   = isBlue ? ENGAGEMENT_BLUE : ENGAGEMENT_RED;
-
-            const actor     = arc.actor_uid || null;
-            const isPrimary = dense ? (actor ? !seenActors.has(actor) : idx < 3) : true;
-            if (actor) seenActors.add(actor);
-
-            // Tooltip: actor → target · maneuver · status + damage% · cause_what.
-            const tooltip = [
-                arc.actor_uid && arc.target_uid ? `${arc.actor_uid} → ${arc.target_uid}` : null,
-                `${isBlue ? 'counter-attack' : 'attack'}${arc.status_change ? ` · ${arc.status_change}` : ''}${Number.isFinite(arc.damage_pct) ? ` ${Math.round(arc.damage_pct * 100)}%` : ''}`,
-                arc.cause_what,
-            ].filter(Boolean).join(' · ');
-
-            // Primary path: reuse the operator's mission-graphic renderer. The
-            // arrow head sits at the TARGET end (start = actor, end = target).
-            let layer = buildTmg ? buildTmg(start, end, typeId, color, SCENARIO_GRAPHICS_PANE) : null;
-            if (layer) {
-                if (!isPrimary && typeof layer.setOpacity === 'function') layer.setOpacity(0.45);
-                if (tooltip) { try { layer.bindTooltip(tooltip, { sticky: true }); } catch (_) {} }
-                layer.addTo(layerGroup);
-                engagementArcs.push(layer);
-                return;
+        // ONE arrow per side: centroid of all actor positions → centroid of all
+        // target positions. Multiple units attacking the same general area are one
+        // operational axis — drawing individual lines just produces spaghetti.
+        function drawAxisArrow(arcs, color, outlineColor, label) {
+            if (!arcs.length) return;
+            let aLat = 0, aLng = 0, tLat = 0, tLng = 0;
+            for (const arc of arcs) {
+                const [src, dst] = arc.coordinates;
+                aLat += src[1]; aLng += src[0];
+                tLat += dst[1]; tLng += dst[0];
             }
+            const n = arcs.length;
+            aLat /= n; aLng /= n; tLat /= n; tLng /= n;
 
-            // Fallback: legacy status-coloured dashed arc + arrowhead.
-            const fbColor    = STATUS_COLORS[arc.status_change] || STATUS_COLORS.unchanged;
-            const dmg        = Number.isFinite(arc.damage_pct) ? arc.damage_pct : 0.3;
-            const baseWeight = Math.max(2, 2 + Math.round(dmg * 3));
-            const weight     = dense && !isPrimary ? Math.max(1, Math.floor(baseWeight * 0.6)) : baseWeight;
-            const opacity    = dense && !isPrimary ? 0.30 : 0.85;
-            const line = window.L.polyline([start, end], {
-                color: fbColor, weight, opacity, dashArray: '6 4', lineCap: 'round',
-                interactive: false, className: 'wg-w3-engagement-arc wg-attack-pulse',
-                pane: SCENARIO_GRAPHICS_PANE,
+            // Pull tip back so arrowhead stops before the target cluster.
+            const tip = engStopShort(aLat, aLng, tLat, tLng, ENGAGEMENT_STOP_SHORT_KM);
+
+            // Gentle bow: curves the line so it reads as motion.
+            const midLat = (aLat + tip.lat) / 2;
+            const midLng = (aLng + tip.lng) / 2;
+            const bowLat = midLat - (tip.lng - aLng) * 0.06;
+            const bowLng = midLng + (tip.lat - aLat) * 0.06;
+            const centerline = [
+                { lat: aLat,    lng: aLng    },
+                { lat: bowLat,  lng: bowLng  },
+                { lat: tip.lat, lng: tip.lng },
+            ];
+
+            const members = arcs.map(a => `${a.actor_uid || '?'} → ${a.target_uid || '?'}`).join(', ');
+            const arrow = createManeuverArrowPolygon(centerline, color, {
+                bodyHalfPx:    5,
+                headHalfPx:    12,
+                headLenPx:     18,
+                outline:       outlineColor,
+                outlineWidthPx: 1.0,
+                opacity:       0.70,
+                pane:          SCENARIO_GRAPHICS_PANE,
             });
-            if (tooltip) line.bindTooltip(tooltip, { sticky: true });
-            line.addTo(layerGroup);
-            engagementArcs.push(line);
-            const head = makeArrowhead(start, end, fbColor, weight * 4, SCENARIO_GRAPHICS_PANE);
-            if (head) { head.addTo(layerGroup); engagementArcs.push(head); }
-        });
+            if (arrow) {
+                arrow.bindTooltip(`${label} (${n}): ${members}`, { sticky: true });
+                arrow.addTo(layerGroup);
+                engagementArcs.push(arrow);
+            } else {
+                // Fallback: thin polyline + arrowhead when polygon builder is unavailable.
+                const fb = window.L.polyline([[aLat, aLng], [tip.lat, tip.lng]], {
+                    color, weight: 3, opacity: 0.70, interactive: false,
+                    pane: SCENARIO_GRAPHICS_PANE,
+                }).bindTooltip(`${label}: ${members}`, { sticky: true });
+                fb.addTo(layerGroup);
+                engagementArcs.push(fb);
+                const ah = makeArrowhead([aLat, aLng], [tip.lat, tip.lng], color, 12, SCENARIO_GRAPHICS_PANE);
+                if (ah) { ah.addTo(layerGroup); engagementArcs.push(ah); }
+            }
+        }
+
+        drawAxisArrow(redArcs,  ENGAGEMENT_RED,  '#5b0c0c', 'Axis of attack');
+        drawAxisArrow(blueArcs, ENGAGEMENT_BLUE, '#7eb8e0', 'Counterattack axis');
     }
 
     // ── Per-step unit movement ────────────────────────────────────────

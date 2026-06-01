@@ -196,6 +196,56 @@ Newer feature work uses **`test-p0*` / `test-an*` / `test-sym*` / `test-unit-*`*
 
 ---
 
+## 🎯 ACTIVE BUILD ROADMAP — RMOOZ Direction Reset (2026-06-01)
+
+> **Charter:** Build RMOOZ as a **2D regional operational command-decision simulator** =
+> *World State + AI Decision Support + Operator Review + Operational Visualization.*
+> **Mimic CMO structurally & behaviorally, NOT by data** — composite platforms (multi-radar /
+> multi-weapon / magazines), continuous movement, detection/engagement rules — using **our own
+> regional, class-based, data-driven values**. No CMO DB copy · no global sim · no DB-size-first ·
+> 2D only · structure-first. See memory [[project_rmooz_direction_reset]].
+> **Every PR must answer:** *"Does this make the scenario feel more alive & responsive to operator
+> decisions?"* and **must not break Wargame 3.**
+
+**Build order (each PR is small, additive, Node-testable; "Follows" = hard dependency):**
+
+| PR | What it contains | Follows | Effort | Alive? |
+|---|---|---|---|---|
+| **WS1** *(in progress)* | **World State projection + component platform model.** `client/shell/world-state.js` (`window.AppWorldState`): `deriveWorldState(scenario,step)` → normalized snapshot (meta/region/objectives/units/contacts/lines/balance/decisions). Units carry component slots `sensors[]`/`weapons[]`/`magazines[]` (empty for W3) + kinematics (`course`/`heading`/`speed_kn`). `applyDecision()` transition seed. Pure, **unwired** — W3 untouched. `test-ws1-world-state.js`. | — (foundation) | M | substrate |
+| **MOVE1** | **Realistic continuous movement.** Replace per-step teleport with kinematic interpolation along each unit's `course` at a derived speed, driven by a **playback sim-clock** (wires the scaffolded transport bar). Reads WS course/speed; falls back to step coords. **Fixes "movement not like CMO."** | WS1 | M | ✅✅ high |
+| **VIS1** | Map polish: on-map **phase label**, timeline **event ticks**, before/after **step compare**. | WS1 | S–M | ✅ |
+| **WS2** | Wire **one** renderer element (objective status) to read from World State — parity proof before migrating the rest. | WS1 | S | infra |
+| **WS3** | **State transition/reducer**: `applyDecision(state,decision)→nextState` for real (decision recorded + readiness/supply/position transitions). | WS1 | M | ✅✅ |
+| **WS4** | Migrate remaining renderer reads (units/BLS/balance) onto World State. | WS2+WS3 | M | infra |
+| **DB1** | **RMOOZ DB-Lite — component schema + 3 seed platforms** (DDG, SAM site, air unit) in `sensors[]`/`weapons[]`/`magazines[]` shape, our class values. Structure-first, not size. | WS1 | M | enables |
+| **DB2** | Class tables: `sensor_class` / `rcs_class` / `weapon_class` / `doctrine_tags` (small, data-driven). | DB1 | S | enables |
+| **DET1** | **Detection rule module** (public formulas, our values): radar-horizon `1.23(√h₁+√h₂)`, RCS range `R_ref·(σ/σ_ref)^¼`, EMCON, LOS → `contacts[]`. Per-sensor. | DB1+DB2+WS3 | M–L | ✅✅✅ |
+| **ENG1** | **Engagement rule**: search→fire-control (channels)→WRA→magazine decrement → engagement outcome. | DET1 | M–L | ✅✅ |
+| **DOC1** | **Doctrine/ROE layer** — visible & auditable data; AI decisions **cite** doctrine/ROE. | WS3 | M | ✅ |
+| **TASK1** | **Tasking/Mission layer** — structured mission objects + tasking view. | WS3+DOC1 | M | ✅ |
+
+**🌟 North-star loop (the demo we're driving toward):** *start app → choose side → place units →
+draw their paths → place enemy → hit play → watch it unfold on its own* — for a scenario the operator
+**builds in-app**, not just Wargame 3. This works **only** because every rule engine reads from the
+shared World State substrate, and the AUTHOR track below **must emit the same scenario shape WS1
+projects** (units with `kinematics.course`, sides, objectives, components). That contract is what makes
+one engine serve both W3 and hand-built scenarios.
+
+**AUTHOR track (build-your-own; converges with the rule engines for "watch it on its own"):**
+
+| PR | What it contains | Follows | Effort |
+|---|---|---|---|
+| **AUTH1** | Place units on map for a chosen side (reuse Side Picker + ORBAT place) → writes into the working-copy scenario in WS1 shape. | WS1 + edit-mode slice-1 | M |
+| **AUTH2** | **Draw a unit's path** (click waypoints) → `unit.kinematics.course`; MOVE1 then animates it. | WS1 + MOVE1 + AUTH1 | M |
+| **AUTH3** | Place enemy + **Run**: hand the authored scenario to the playback clock so MOVE1/DET1/ENG1 advance it autonomously. | AUTH2 + MOVE1 + DET1 + ENG1 | M |
+
+**Phasing:** WS1→MOVE1→VIS1 finish presentation/movement (priority #1) on the new substrate · WS2–WS4
+build the World State Engine (priority #2) · DB1–DB2 DB-Lite (#3) · DET1/ENG1 the CMO-style mechanics ·
+DOC1 doctrine (#4) · TASK1 tasking (#5). Editable-workspace work ([[project_workspace_editable_owner_ruling]])
+is parked. Each PR ships its own `test-*.js` and a re-verified W3 render.
+
+---
+
 ## TODO — CMO→RMOOZ capability roadmap (from `docs/cmo-vs-rmooz-capability-comparison.md`)
 
 Ordered by value÷effort, filtered through RMOOZ's read-only / ground-amphibious / AI-adjudication thesis. Full

@@ -1,0 +1,444 @@
+0.0	hello everyone today's command tutorial
+2.4	we're gonna be taking a look at parasite
+4.4	operations and loadouts now this is
+7.0	something that it probably should have
+8.0	made as a video way way way back when I
+9.8	was making the absolute basic videos but
+11.8	finally gotten a chance to go over to
+13.0	round 2 it and I remembered to do it
+14.8	more importantly so what is a parasite
+16.7	unit basically that's going to be a unit
+18.7	that it shares another base or naval
+21.2	vessel or something along those lines in
+23.1	command there are two basic types of
+25.2	parasite units the first being the
+27.3	aircraft type which you're probably very
+28.8	familiar with anything that can carry
+30.3	aircraft it's going to have this little
+31.8	symbol up in the bottom right corner to
+33.6	indicate that it is the second type of
+35.7	parasite will be any type of ship now
+38.5	this is where it gets actually a little
+39.8	bit interesting you have ports in
+42.1	command you know if you just select the
+44.2	generic port and you see the little icon
+45.8	in the corner that simply says that this
+47.4	particular port has ships at it but what
+50.0	you're also going to notice is certain
+51.4	ships have the ability to carry other
+53.2	ships it's kind of like a ship deception
+55.2	sort of thing
+55.9	each one of these menus is going to be
+57.6	accessed in a slightly different way if
+59.3	you're dealing with just ships simply
+61.6	select the unit such as a port or a ship
+63.8	that has naval units inside of it and
+66.4	you can come up here and you can click
+67.8	on the boats option right there the
+69.6	other option of course is you can press
+71.1	f7 or for those who are inclined you can
+73.5	go up to boat operations when you open
+76.3	this window you're going to get a list
+77.6	of all the different ships that are
+79.3	located at that particular location but
+81.3	these are at port so in the event that
+83.1	an enemy shows up with some bombers and
+84.7	starts attacking this particular port
+86.2	these ships will be damaged as a result
+88.4	couple eat things to kind of keep an eye
+90.4	out for our first thing you're going to
+91.7	notice is it's going to tell you if it's
+92.8	damaged it's going to tell you weapons
+94.4	you can actually click on it get details
+95.9	and remember a ship in port is being
+98.0	constantly reloaded so the key thing you
+100.3	want to know about this particular
+101.2	screen is that if you select the unit
+102.8	and click Launch individually it'll
+104.8	automatically start deploying from this
+106.9	port and then start going out to see
+108.4	just a little bit keep in mind when you
+110.4	do this it takes about 15 minutes
+111.9	between the moment you say go and the
+113.8	moment the ship actually can get out of
+115.3	port the option that you can do as well
+117.8	is if you shift-click more than one unit
+120.2	at a time you can actually launch them
+122.4	as a group or if you prefer you can
+124.7	launch them all individually as well
+125.9	this is a pretty slick trick because you
+128.0	can use this to group ships in
+129.3	two things that you would normally group
+130.7	them into it's also worth noting there's
+132.5	an abort button once they start
+134.0	launching if you click abort they stay
+135.4	in the ground there's a doctrine option
+137.3	in the event that you want to basically
+138.4	dial them into any of the ships that I'm
+140.4	launching I don't want to launch Samms
+142.2	from and of course you can come down
+143.8	here and you can also assign them to
+145.3	missions as well keep in mind any ship
+147.6	that is that a dock is automatically
+148.8	gonna be refueled and rearmed unless if
+151.9	you were to take a look at the doctrine
+153.1	page and go to withdraw and redeploy you
+156.0	couldn't go ahead and dial this in a
+157.6	little bit more specifically should you
+159.3	need to so that's it for ships keep in
+162.4	mind if you have something like this LH
+163.9	a the taro why over here if you were to
+165.8	bring up that same menu the only big
+167.4	difference here is you're gonna have a
+168.6	little bit less because again these are
+170.4	little tiny lc/ms or nothing too too
+172.2	fancy and again if you're in a cargo
+174.2	mission you actually have this option
+175.6	down here to load and unload cargo into
+177.9	these ships individually I actually
+179.5	recommend that you do that with a
+180.9	mission because it's gonna be a little
+182.1	less micro mandatory especially when
+183.9	have like 600 when you're doing its high
+185.4	and fibia slanting or something crazy
+186.9	like that so that's it for ships
+189.0	relatively straightforward again it's
+190.8	not going to be too complicated let's
+192.7	take a look at aircraft all right this
+194.5	is where it's got to get a little more
+195.4	fun so I have Honolulu International
+197.0	here when I left click on it you'll
+199.2	notice that this is not a single unit
+201.4	airfield that it's actually made up of
+202.9	tons and tons of little pieces all going
+205.0	around here so do you notice that it has
+207.4	this little icon here that tells me I'm
+209.2	carrying aircraft keep in mind you can
+210.9	have a combination port Airport if you
+212.4	really want to make yourself crazy you
+214.1	will also notice that when I select it
+216.3	it'll actually mark where the individual
+219.7	aircraft are located throughout the base
+222.4	this is actually really cool because
+224.2	when you order an aircraft to move you
+226.2	can actually see it move along these
+227.9	different items to get to the main
+229.2	runway that it's going to be using to
+230.9	takeoff from it's a really slick trick
+233.1	and um there's one extra thing you can
+234.9	do here too for those of you who are
+236.2	mission designers you can actually
+237.8	switch to individual mode select one of
+240.9	the units that you'd like to put an
+242.2	aircraft into for example let's say I
+243.9	want to put something here and then go
+245.4	into the editor and you could actually
+246.8	sit in here and do something like this I
+249.2	think we're a little too early for the
+250.8	Cessna will do a 337 then do CC 3 why
+255.0	not and you can see I've actually added
+257.5	that aircraft not only to the airport
+259.0	but to that specific location in the
+261.2	airport it's just
+262.2	slick little trick if you are trying to
+263.8	do some map editing but anyway in the
+265.9	event that you do need to do some
+267.0	parasite ops with an airfield you simply
+269.0	select click on it and you can click on
+270.9	this aircraft button or if you prefer
+273.4	you can actually go up to aircraft
+274.8	operations or if you prefer you can
+277.0	actually tap the f6 key it's worth
+278.9	noting that if you're not in the mission
+280.2	editor you're not gonna have this edit
+281.4	hosted aircraft button so you want to
+283.5	kind of watch out for that particular
+284.7	one anyway I'm gonna go ahead and click
+286.2	this real quickly so when you select the
+288.7	aircraft page you're gonna be listed
+290.4	with all the aircraft that are located
+291.8	at this base something you really gotta
+293.5	be careful for is you don't accidentally
+295.2	select two different airports at the
+297.1	same time this kind of lead to a very
+299.1	confusing thing basically the top option
+301.6	is going to give you a general thing
+302.8	about the aircraft if you left click on
+304.3	it it's going to bring up specific
+305.6	information about that airplane great
+307.3	tip and of course if you select on one
+309.4	of those like that you can get some
+310.5	details of the b-29 and then of course
+312.4	you have a dc-3 which just for today's
+314.1	purposes I'm actually going to remove
+315.5	you saw kind of the trick already so if
+317.8	I left click on this little plus here
+319.3	it's going to bring me to a collection
+320.7	of all the different aircraft as well as
+322.5	what their loadout is with the route
+324.3	already time is with a quick turnaround
+325.9	everything along those lines if I want
+328.1	to select the loadout for an aircraft
+329.9	I simply left-click on it or
+331.2	alternatively left-click on it and then
+333.3	shift and then left-click on the last
+335.7	one you want to load out so you can load
+337.0	up more than one at a time and then you
+338.9	come down to here where it says ready
+340.2	slash arm you can also actually
+341.8	right-click this and say ready slash arm
+343.7	if you prefer so this brings out all the
+346.4	possible load outs that this particular
+348.1	aircraft is capable of carrying keep in
+350.2	mind depending on which generation of
+351.4	the aircraft what service aircraft is
+353.0	this is going to change there's another
+355.0	thing I want to point out as well these
+356.4	two buttons by the way do not exist
+358.0	normally and that's the fact that some
+360.7	of these load outs are going to be set
+362.8	up like this where they are not night
+364.4	Alex some of them are going to be in
+366.3	italics if they are in italics it means
+368.6	that this particular Air Bases magazine
+370.4	does not have enough ammunition as you
+371.9	can see very clearly down here to
+373.9	support that loadout as a matter of fact
+375.7	if you take a look at these columns here
+377.1	it'll actually tell you how many load
+379.0	outs of this particular style this
+380.7	particular airport can support at this
+382.2	time now fortunately or unfortunately
+383.9	our magazines are only capable of
+385.9	sending us with 40 groups of four
+388.5	Sidewinders during the map real crash to
+390.6	say 50 groups of four Sidewinders do the
+392.8	math very quickly you realize there's
+394.5	200 Sidewinders at this base another
+396.8	really slick trick is you click this
+398.2	little button at the top it will only
+399.6	list your usable loadout so in this
+401.6	particular case I can see I've loadouts
+402.9	or I have mark 117 general purpose bombs
+404.9	as you move to the right of your loadout
+407.9	there's a couple extra details you're
+409.1	gonna notice you'll notice one for quick
+410.6	turnaround as well as things like what
+412.6	time today you can use it what kind of
+413.9	weather you can use it what type of
+415.8	Winchester shotgun status and it also
+417.8	gives you general profiles this is not a
+419.9	guarantee profile but it will let you
+421.6	know what kind of calculations are going
+423.8	to limit you to using this particular
+425.4	weapon just kind of keep that in the
+426.8	back of your head but again I've gone
+427.9	over this and a little bit these in on
+429.1	previous videos as well so anyway let's
+431.7	say we're happy with the sidewinder
+433.0	loadout I can just come down here and I
+434.9	have two cool options I'm ok ready which
+436.8	simply loads up with everything seen
+438.3	here and okay ready exclude optional
+440.4	weapons
+440.8	none of these two groups of weapons are
+442.9	considered optional for this loadout so
+444.7	I won't be able to click this once I
+446.0	couldn't do anything some aircraft will
+447.8	have it set up where your primary
+449.0	loadout is bombs and your optional
+450.8	Sidewinders or something along those
+452.2	lines you can click this button to skip
+454.1	that it doesn't make it load faster it
+456.6	just saves you some weapons I'm gonna
+459.1	click on ok ready so now these four
+461.1	aircraft have gone to the yellow status
+462.6	to say that they're being readied now
+464.5	it's worth noting that it's going to
+465.6	take three hours to get that so loadout
+467.8	ready to use that it can actually launch
+469.4	the reason this time is so long is for
+471.7	anybody who's ever trying to service an
+473.0	airplane in military
+474.0	you'll say this is quick another thing
+476.1	worth noting at this point is this
+477.4	option down here this is enable quick
+479.1	what this does is this allows you to set
+481.4	the aircraft up so that your ground
+483.0	crews are ready to quickly rearm and
+485.1	refuel that particular aircraft so I'm
+486.9	going to grab the ones that selected
+488.1	click enable quick and of course you can
+489.9	select the status here something worth
+491.9	noting though when you're doing quick
+494.1	turnaround options and you want to kind
+496.0	of be very careful with this there is it
+497.6	limit to how many sorties you can fly
+499.4	with a quick one and there's also gonna
+501.0	be limits how many hours so you can't
+502.7	fly for 3 hours and 59 minutes lands
+504.7	quickly reload and do it again
+506.7	you only have a 4 hour limit and you
+508.4	only have a total of two stories which
+510.6	you have to watch out for as soon as it
+512.3	takes off that's one of its sorties
+513.8	whether or not even went anywhere so
+515.8	kind of keep that in the back of your
+516.9	mind so I'm gonna go ahead and scroll
+518.6	down here and we're gonna take a look at
+519.8	my b-29s you'll notice these b-29s have
+522.6	already been fully loaded and they're
+524.5	ready to rock
+525.4	there
+526.0	Green meaning we can launch them at any
+527.5	given time now the cool thing here is
+529.5	this is handled the same way as ships
+531.1	you simply select the units you want to
+532.8	launch again I'm Luke click so I can
+534.8	pick a bunch of them at one time you can
+536.5	actually do the control click method if
+538.2	you want to do something like this as
+539.4	well it's completely up to you how you
+541.2	want to launch your aircraft you can
+542.9	also of course grab a chunk of them and
+544.6	then we have the choice to lunch
+545.8	individually or launches groups you can
+547.7	also assign them submissions but you
+549.4	don't have control of this if you're not
+550.6	a scenario editor and of course we can
+552.2	abort the launch as well so for example
+554.9	if I click launch this group go ahead
+557.0	zoom in a little bit this is kind of
+558.1	neat I'm gonna time a little bit here I
+560.1	don't want to go too fast because if I
+561.5	go too fast I'm accidentally gonna go is
+563.0	stepping by so now the b-29s are started
+565.4	up and you can actually see that they're
+567.1	making their way to the runway itself so
+569.1	I'm actually got a pause here open the
+571.0	back up and say oh I didn't mean to do
+572.4	that select them all again and click on
+574.1	abort launch so now they're gonna go
+576.0	ahead and return back to the taxi point
+577.6	now when you do missions in command this
+580.4	is kind of a fun trick you'll notice
+582.3	that if I were to create a fake mission
+583.4	here think mission you'll notice now
+587.8	when you do flight size you're limited
+589.4	to 6 aircraft per flight size so let me
+592.7	show you a fun trick you can actually go
+594.5	back to that Airport let's go grab a
+596.2	b-29 s again I'm just like all of them
+598.4	assign them to that mission and then you
+603.4	can launch the entire group of 24
+605.5	aircraft at the same time or if you
+608.6	click this button you're gonna make
+609.5	yourself insane so all these aircraft as
+611.7	soon as they get in the air will go on
+613.0	the mission obviously keep in mind this
+614.2	is a fake mission as a massive group of
+616.8	24 airplanes which is an awesome trick
+619.9	if you try to concentrate firepower for
+622.1	some of those earlier engagements you
+623.7	know you've read about alpha strikes
+624.9	where it's like 14 a force or something
+626.8	like that you can do that and basically
+629.3	bypass that restriction one thing you
+631.4	want to watch out for though is this
+632.5	button down here and force flight size
+633.9	by base aircraft type and loadout
+635.9	otherwise is going to give you some
+637.9	trouble with that so that's the basics
+640.7	one thing you want to watch out for too
+642.4	is some missions have what they call a
+644.1	sustained Air Operations tempo that was
+646.9	going to drastically slow down how long
+649.4	it's going to take the arm something so
+651.8	let me actually go over to my LH a real
+653.3	quickly so for example I have my little
+655.2	group of a h1 J's here if I ready armed
+657.7	and I scoot it down so let's say
+659.7	load these toes and these FRS as well
+662.0	okay ready
+663.1	uh-oh oh no I didn't have enough
+666.3	ammunition for all of them that's okay
+667.9	though it's gonna load the ones they can
+669.2	you noticed the time to ready is 20
+672.2	hours which again that ready time is
+675.2	also including refilling the plane
+676.6	repairing the plane to a maintenance on
+678.4	the plane there's a lot to it keep in
+680.6	mind in a normal mission you're not
+682.1	gonna have control over whether or not
+683.5	you're sustained or your surge so you
+685.7	want to plan carefully it is worth
+687.3	noting though that regardless of all
+689.2	that if I go back to my f100 is real
+690.8	fast you'll see they still have a time
+692.7	to ready of what they were before we
+694.8	switched modes there's actually some
+696.7	missions I played where you get a surge
+698.2	in the morning and then a sustain for
+699.8	the rest of the campaign so you want to
+701.5	watch out for that obviously these
+703.4	buttons set time didn't ready and
+704.8	renamed remove or not available alright
+707.7	one last thing I want to point out
+709.1	before I let you guys go here now that
+710.8	you have a general idea how to use that
+712.2	and that's if you go up to editor this
+714.9	were in the editor scenario features
+716.7	there's actually this neat option called
+718.1	unlimited magazines at air naval bases
+719.9	if this is checked watch what happens
+723.5	when I go to arm this group of f1
+726.0	hundreds I have everything and you'll
+729.4	also notice that my number available is
+731.5	also unlimited so if I wanted to do
+733.7	something really silly I could go back
+735.1	to my b-29s I could do ready arm and he
+737.3	said nuclear bombs for everybody of
+740.0	course like I said you won't have that
+741.1	so now we have an unlimited supply of
+742.9	anything scenario designers take note
+745.7	that could be very very dangerous
+747.0	because people will load up on J dams
+748.9	you know ruin all the fun that you would
+751.0	have had otherwise alright hopefully
+752.8	this video is helpful like I said I
+754.2	meant to do this one a little while ago
+755.4	to basically provide everybody with that
+757.7	little piece that they're gonna need to
+759.1	know as far as you know how to use ships
+761.1	and how to use airplanes and launch them
+762.4	for bases it's worth noting that the
+764.3	moment that aircraft leaves the ground
+766.1	that sortie is considered activated
+768.5	which means it can't just land in two
+770.5	seconds and be ready to go it's going to
+772.6	take the full 20 hours of the full six
+774.4	or the full three hours in order to
+776.4	rearm that particular aircraft even
+778.6	though all you're doing is basically
+780.4	putting five dollars worth of gas into a
+782.4	kind of a thing so you got to be careful
+784.0	with that if you don't need to launch
+785.3	don't launch or if you do launch have
+787.6	refueling assets in place to keep those
+789.2	aircraft basically stuck on this guy
+790.9	forever one other thing now that
+793.3	about it watch out for this where it
+795.2	says fuel state and also watch out for
+797.6	this where it says loadout setting
+798.9	because what will happen is you get an
+800.4	intercept mission they'll fire one
+801.7	missile and then return to base and then
+803.1	take six hours to rearm you could
+805.0	disable that by basically selecting
+806.6	something like this or manually
+808.3	controlling them at the ABS as usual if
+810.1	you have any questions feel free to toss
+811.4	them into the comment again I was trying
+813.1	to keep this relatively simple as a
+814.5	follow-up to that initial set of
+816.0	tutorial videos enjoy

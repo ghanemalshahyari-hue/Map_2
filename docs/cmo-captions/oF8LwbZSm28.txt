@@ -1,0 +1,774 @@
+0.4	hello everyone in today's video we're
+1.9	going to be taking a look at electronic
+3.7	support measures basically the tools so
+6.6	that we can detect electronic emissions
+8.2	and identify where they are
+9.6	without actually having to actively emit
+11.5	ourselves so this will be a pretty neat
+13.4	little video because i'll be showing you
+14.5	kind of the different generations of the
+15.8	technology
+16.5	as well as some of the limitations and
+17.8	comes some of the i almost call it
+19.3	detective work that you can do
+20.6	with it but uh first things first let's
+22.8	go ahead and take a look
+23.7	at our scenario so what we have here is
+26.7	uh it's about
+27.5	1990 or so in 1989 december
+31.1	those of you who are familiar with this
+32.7	particular generation probably recall
+34.5	that this is right around the time of
+36.2	panama
+37.0	and what we'd like to do in this
+38.2	particular scenario is we'd like to
+39.4	identify all the electronic assets
+41.4	existing in this particular side of east
+44.2	panama
+44.8	those who know the falcon 3 campaign
+46.6	dedicated to panama probably remember
+48.6	this being one of the scenarios involved
+50.6	i'm still playing with it as a concept
+52.1	and maybe i'll go with it a little bit
+53.2	more in the future
+54.9	so first things first let's go ahead and
+56.3	take a look at our esm options
+58.7	so when i think of esm the typical
+60.5	platform i usually think of is going to
+62.2	be
+62.6	this particular one right here this is
+64.6	an rc-135
+66.5	this is literally a gigantic airplane
+68.9	loaded with electronic sensors you can
+70.8	see all the different panels on the side
+72.4	you can see this weird little chin piece
+73.9	you can see it's got a funky little nose
+75.6	it's got a funky little back this thing
+77.4	is absolutely loaded to the brim with
+79.3	different types of sensors on board for
+80.8	the purposes of detecting electron
+82.5	emissions
+83.4	so what i'm going to do is i'm going to
+84.5	start by grabbing on one from the 1950s
+87.2	what i actually did here is i went into
+88.6	sensors and i custom built this version
+90.7	of this aircraft
+91.7	so i could prove my point let's go ahead
+94.2	and move it down here
+95.3	and we're going to have it just fly
+96.8	towards the panama coast do a little bit
+98.9	of ferreting by kind of scooting along
+100.6	the actual edge of things here
+103.6	and let's go ahead and pause okay so
+106.7	what did we just detect
+108.3	we just detected any electronic
+110.1	emissions that we could now there's no
+111.7	active radar on this so we're only
+113.4	picking up things based on the intensity
+115.4	and the angle from the airplane
+117.0	for example we notice over here we've
+118.5	got a bogey this particular one is a 231
+121.1	we can detect that it has an air search
+122.9	2d radar we can actually go up to
+124.2	contact report and read about it right
+125.6	now
+126.2	we can also detect that we have a
+127.5	different one this is a sam site right
+129.1	here it's an sa2f
+130.7	incredibly we were able to identify this
+132.6	perfectly if you look at its contact
+134.2	reports you can see that it has this 2d
+136.2	medium range radar okay
+138.2	we picked up something else here this is
+139.7	a skunk obviously skunk means that it's
+141.8	going to be a surface vessel
+143.2	we know for a fact that it cannot
+144.8	logically exist on land
+146.4	so it has to be somewhere in a line
+148.7	along this direction
+150.2	coming down this way we picked up two
+151.9	other radars as well we
+153.2	identify them as being mobile style
+155.4	radars we've also identified them being
+157.6	somewhere inside this gigantic region
+159.8	here so you can see that in the early
+161.8	1950s the best technology we had
+164.1	was the ability to come up with the
+165.5	general direction of the actual target
+167.6	as well as a little bit of details of
+170.0	the actual radar itself
+171.5	you know in these early days you didn't
+173.0	have miniature electronics so as a
+174.7	result
+175.2	a lot of this kind of detective work
+176.8	you'd have to do manually which was very
+178.8	very difficult to do
+180.2	i mean you're looking at things like
+181.3	oscilloscopes and stuff like that to try
+183.0	to identify it
+184.0	so we'll go ahead and move on a little
+185.1	bit here we'll then speed up some time
+187.2	we'll let it complete its little run
+188.8	notice as we get physically closer to
+190.4	some of these electronic sources such as
+192.0	this skunk right here
+193.1	we're able to identify it as yeah it was
+195.0	probably in this bay somewhere and you
+197.0	can see we have a pretty small region of
+198.8	uncertainty at this particular time
+200.5	we've been able to very accurately
+202.2	identify where the sa2 is because of it
+205.6	now we'll go ahead and scoot along the
+206.7	coast of panama a little bit here see if
+208.5	there's anything else we can detect
+210.2	first thing i notice is all these aired
+211.9	warm radars that we're picking up
+213.4	several of them actually have dropped
+215.0	off because they're probably not facing
+216.8	us
+217.0	anymore an important thing to know about
+218.7	esm is you must
+220.2	face the target you must be able to see
+221.9	the emissions with a couple exceptions
+223.8	and we'll take a look at that a little
+224.8	later on
+225.5	let's finish a little sweep here and now
+227.8	we're looking pretty good i'm actually
+229.4	going to pause it right here
+231.0	okay so what can we figure out with this
+233.2	basic set of electronic information
+235.1	well the first thing we can do is we can
+236.5	identify what every single one of these
+238.2	units is
+239.3	you're sitting there going but how do
+240.7	you know you just click on one and it
+241.9	just says it's an unknown type
+243.4	well if you do a little bit of detective
+245.1	work if we go to browse scenario
+246.4	platforms
+247.0	set it to the other guy and take a look
+248.3	at their aircraft we know there's only
+250.1	four different types of aircraft in this
+251.8	game
+252.5	now for example this scenario i should
+254.2	say so if i click on this one right here
+255.8	i notice that head
+256.8	has a 3d long range radar
+260.9	which one of these four platforms most
+263.4	likely has a 3d long range radar
+265.4	uh let's see it's definitely not going
+266.6	to be the mirage 2000. this particular
+268.6	rbsh version of the
+270.2	mig-25 actually has a side-looking radar
+273.1	so that can't be it
+274.2	the mig-31 is definitely a solid guess
+276.7	but it has a fire control radar not a
+279.7	long-range search radar
+281.2	which means the only possibility this
+283.0	aircraft can be because of the scenario
+285.1	is definitely going to be our a50
+287.0	mainstay now the other reason we know
+289.0	that it's the a50
+290.3	is the distance at which we're detecting
+292.5	it if you notice here this is about 93
+294.9	nautical miles away
+296.3	the particular system here that
+297.6	long-range radar has a spectacular range
+300.1	generally esm has the ability to detect
+302.2	something out to
+303.7	about 1.5 times its actual detecting
+306.3	range
+307.0	so if this particular system had 100
+308.6	nautical mile range we could probably
+310.8	reliably detect it out to about 150
+313.3	nautical miles
+314.2	so it's an interesting way to kind of
+315.6	look at it so with all these things kind
+318.1	of look at let's
+318.9	go ahead and reset everything real
+320.1	quickly and see how technology kind of
+322.4	improved with time
+323.8	and then we'll start looking at some of
+325.0	the strategies so let's fast forward to
+327.5	our 1960s platform here
+330.0	now 1960s you know it's about 15 20
+332.2	years later suddenly we're starting to
+333.5	get miniaturization
+334.8	we're starting to get more reliable
+336.3	electronics it's a huge piece
+338.1	we're also starting to get electronic
+339.9	antennas that are considerably more
+342.0	sensitive so let's go ahead and recreate
+344.3	our scenario and see what is different
+346.3	now go ahead and pause
+349.7	perfect so the first thing you'll notice
+352.2	with this slightly better technology is
+353.9	we've detected a
+355.0	far greater quantity of signals at a
+357.4	significantly expanded range
+359.7	of course we're able to pick up our
+361.0	handy-dandy sa2f almost instantaneously
+363.4	as a very distinctive pattern
+365.0	we're also able to identify the ship and
+366.8	be able to narrow it down
+368.2	to the specific class of ship which is
+370.6	something different
+371.6	all radar electronics you know if i had
+373.4	a little bit more time we could go ahead
+374.7	and take a look at what the actual radar
+376.2	signal looks like
+377.2	basically you have different pulses with
+378.9	different intensities with different
+380.2	frequencies with different pulse dwell
+382.0	times
+382.5	and by comparing those two known
+384.0	frequencies you can actually identify
+385.4	the frequency
+386.2	so in this particular case we've
+387.3	identified it immediately as an osa
+389.0	we've got another one this is a dog ear
+390.6	this is a very short range radar
+392.2	you can actually see here that it's
+393.5	estimated position plus its estimated
+395.5	range
+396.1	we're picking up at about double its
+398.6	effective range which is actually pretty
+400.2	impressive given that that's such a long
+401.8	distance away
+402.8	we're also picking up a brand new radar
+404.6	this is a foxtrot radar
+406.2	generally these things are very very low
+407.9	altitude radars and difficult to detect
+409.9	and of course we've come over here and
+411.7	we've gotten ourselves a new set of
+413.0	problems
+413.8	we identified that there's an sa-6b and
+416.1	over here we've identified it as a sam
+418.6	well what possibilities are the same if
+420.6	i open up contact reports you need to
+422.6	notice it could be an a
+423.6	or it can be a b now this is where your
+425.8	detective work
+426.6	has to get a little tricky if i take a
+429.0	look at what we have in our actual
+430.4	scenario as far as platforms goes
+432.2	flip over to red four and go to
+433.6	facilities you'll notice that both the
+435.8	sa 6a
+437.0	and b exist in the scenario so how do we
+440.1	know that this is a b
+441.2	and how do we know if this is an a or a
+443.0	b the reality is
+444.4	we don't know you're immediately going
+446.4	to sit there going well obviously if
+448.2	this guy's got everything turned on and
+449.6	this guy's got everything turned on
+451.1	if it doesn't have two different radar
+453.4	sets it must
+454.2	logically be the one radar set let me
+456.2	show you what i mean if you take a look
+457.7	at the sa-6a
+458.9	you'll notice here that it has one
+460.9	straight flush radar
+462.3	if you use the sa-6b you'll notice it
+464.3	actually has two sets of radar it has a
+466.0	fire dome radar
+467.3	as well as a straight flush radar so as
+470.0	a result
+470.6	if we were sneaky scenario people we
+473.4	could set it up so that this sa-6b
+475.6	in order to conceal it as an sa-6a we
+478.2	could tell it to
+479.0	only turn on its regular fire control
+481.8	radar
+482.4	in which case that fire dome would not
+484.2	be emitting in which case we wouldn't be
+485.7	able to identify it
+486.9	based on the two different sensors it
+488.5	had present so that's something you kind
+490.5	of want to think about from a detective
+491.8	perspective
+492.6	but other than that this slightly better
+494.2	technology is not only giving us more
+496.0	resolution
+496.8	it's also giving us the ability to
+498.2	identify specifically what individual
+500.2	units are
+501.4	so that's going to be kind of the basics
+503.2	of having a single one of these
+504.7	particular units
+505.7	now naturally if you want to get really
+507.1	sophisticated we can go get something
+508.6	from the 2010s
+510.3	and i'll go ahead and bring this let's
+511.7	move it down first move
+513.4	go ahead and put this in position the
+514.8	reason they're so far away is they're so
+516.2	incredibly sensitive
+517.8	all right let's see what modern
+519.0	technology does notice
+521.4	how tight of an area of certainty we
+523.8	actually have now
+525.1	but also notice the fact that it still
+527.4	has the same basic limitation in that it
+529.2	can't detect exactly where the target is
+532.2	now i'll just have it kind of swing this
+533.3	way a little bit we were able to very
+535.2	very accurately place where that os is
+536.9	of course we entered into its effective
+538.5	range which would have been bad
+539.9	we've also been able to identify very
+542.0	accurately where these very very strong
+543.8	search radars were
+545.1	now our two buddies down here we still
+546.9	can't identify them apart
+548.2	because of the reason they use the same
+549.8	exact frequency
+551.3	okay let's go ahead and take a look at
+552.6	some of the tactics and strategy here
+554.5	so i'll reset my scenario one more time
+557.4	now what are some of the best ways in
+558.8	order to figure things out
+560.2	well let's go ahead and grab somebody
+561.7	from uh let's say the 1990s
+564.0	i'm going to bring them down put them
+565.2	right here in the middle and i'm just
+566.5	going to fly kind of like this
+569.0	let's go ahead and let it just detect a
+570.3	little bit i'll show you some cool
+571.4	little tricks here
+572.4	and let's get a little bit of
+573.8	information pause
+576.3	okay let's break these down one by one
+578.6	so the first one here is an oza
+580.2	this one is a basically a naval craft as
+582.4	i mentioned before which means it can
+583.8	only exist
+584.8	somewhere in this particular region so
+586.9	one of the cool tricks that i actually
+588.2	like to do to try to figure this out is
+590.1	i'll actually
+590.7	place two sets of rp's which are
+593.4	basically any reference points
+595.0	and i'll leave them here for a little
+596.9	while and then take a new bearing and
+599.1	see what the rp's have done
+600.8	keep in mind if this guy is moving
+602.2	you're basically doing tma
+604.0	of course with this one over here this
+605.4	aircraft you can actually right click
+606.6	and hit mark position
+607.8	and come up with the general gist of
+609.5	what its trail is a lot of times as this
+611.9	travels you'll get a general idea of
+613.7	where it is
+614.5	this one's a little bit more tricky we
+616.0	have a little bit too much uncertainty
+617.4	here but again i could do the exact same
+619.4	technique
+620.0	i could go ahead and give myself an rp
+621.5	here i could go ahead and give myself an
+623.1	rp here so now i have kind of a range
+625.2	that i'm working from
+626.5	this one down here it's the same way go
+628.6	ahead and speed up time a little bit
+630.0	so now what i'm going to do is i'm going
+631.3	to beam all these particular targets
+633.7	because what i'm trying to do is
+635.0	triangulate
+636.0	go down here's pause okay so now i can
+638.8	go ahead and do the exact same process
+640.8	again
+641.2	so this time i'm going to come all the
+642.5	way over here go ahead and place my
+644.9	first rp
+645.7	right here then i'm going to go ahead
+649.0	and draw a line through it i'm going to
+650.1	go ahead and place my second rp here
+652.3	now if i triangulate between my first
+654.7	reading which is right here
+656.5	as well as my second reading which was
+658.5	right here i can actually come up with
+660.3	really really closely almost exactly
+662.0	where i expect it to be
+663.4	which is going to be right here now how
+665.9	do i know that by drawing that first
+667.8	line where i got that first reading
+669.4	against the second line you can see it
+671.7	starts to triangulate its actual
+673.0	position let's assume this is where the
+674.7	actual target is
+675.8	now if i actually switch on guide view
+677.4	mode where's our target
+679.2	it's not too too far off i'm about 2.3
+682.2	nautical miles away
+683.5	which is actually very good considering
+685.8	my particular aircraft
+687.2	never got within a hundred nautical
+689.6	miles
+690.2	of that target region so you can see
+692.5	immediately how incredibly effective
+694.5	this is
+695.0	now how about this guy up here let's go
+697.0	ahead and read it like this
+698.2	i notice that if i put that line through
+699.8	him we've already been able to identify
+701.2	its position because it's a
+702.7	fixed target and again you can see how
+705.1	incredibly effective this
+706.6	strategy is now there's a better way to
+709.1	do this
+711.2	let's go ahead and get ourselves a
+712.9	couple different of these platforms
+715.0	look at myself in 1990s and now let's go
+717.0	ahead and get myself a 2000s why not
+720.0	and now this is going to work even
+721.9	better because now
+723.2	two aircraft can do that math together
+725.7	at the same exact
+727.4	time so now what you're essentially
+730.5	doing is shut off god view
+732.1	now essentially what you're doing is
+733.6	you're triangulating using two sets of
+736.1	aircraft simultaneously
+737.8	you can see by doing so let's give it a
+739.5	second to update
+741.0	bam we are able to very very precisely
+744.4	place where this aircraft is
+745.8	very precisely place the ship place the
+748.1	sub place the two sams we've got an
+750.0	aircraft he's a little ambiguous right
+751.4	now we're not quite sure yet
+752.6	but we're able to do this now as we give
+755.0	ourselves a little bit more time to
+756.4	actually more accurately triangulate and
+758.0	get a stronger signal
+759.9	we become progressively more confident
+762.2	as to where the position of that
+763.5	particular object
+764.5	is so that these two kind of spread
+766.3	themselves out a little bit
+767.8	ideally you want to get about a 90
+769.7	degree angle between these two in order
+771.4	to get the most reliable reading doing
+773.4	this particular technique
+774.8	so i'll just let them kind of cruise
+776.0	along for a moment here just kind of
+777.4	scanning
+778.3	again you can see almost instantaneously
+779.9	i'm actually able to pinpoint precisely
+782.1	where an aircraft is
+783.3	which is very very very difficult to do
+785.5	we have these two targets here i can
+787.2	actually zoom in you can see
+788.5	this is how close they are and how
+790.0	effective that triangulation method
+791.8	actually is
+792.7	now if we want to go too far with this
+794.4	which of course we always want to go too
+795.9	far
+796.4	the only thing worth going far enough
+798.7	let's go ahead and get ourselves a 2010.
+800.7	let's go ahead and get ourselves the two
+802.2	thousands actually i didn't want to do
+804.3	that
+804.9	that would have been a disaster give
+807.1	myself a 2010 get myself a 2
+809.1	000 let me go ahead and get myself one
+810.9	of these handy-dandy uh 1980s that
+812.8	sounds pretty good
+813.8	now if you can get a three-way
+815.8	triangulation
+817.0	this is even better so i'm gonna have
+819.0	this guy fly zigzags basically acting as
+821.2	my reference point
+822.2	i have this one fly this pattern then
+823.9	i'm gonna go ahead and have this one fly
+825.3	this pattern
+826.1	if i let them run not only can we
+829.9	identify
+830.6	what they are but within less than one
+833.7	minute game time i've been able to
+835.8	identify almost exactly where every
+837.8	single one of these objects is
+839.8	instantly without exposing myself to
+842.6	enemy fire
+843.8	now there's a couple other things that
+845.3	we can take a look at now now this is
+847.3	obviously
+847.8	tremendously effective but remember if
+850.1	the other guy does not emit
+851.8	the radar signals you will not be able
+853.9	to reliably detect where they are
+856.1	which is actually kind of annoying but
+857.6	it's actually very realistic and in this
+859.0	particular scenario
+860.2	this is a great way to kind of test some
+861.9	of these theories out
+863.3	so what else we got that we can use for
+865.9	this purpose well we're going to go
+867.2	ahead and pull out
+868.1	one of my favorites of all time of
+869.5	course which are satellites
+871.5	now satellites believe it or not are
+873.4	really really really effective platforms
+875.5	for this particular purpose for a lot of
+877.1	different reasons
+877.8	the main one is it's so high up usually
+879.9	it cannot be easily engaged
+881.7	we'll go ahead and grab ourselves some
+882.9	of these nice nos satellites
+884.7	these are basically naval observation
+886.6	satellites let's go ahead and see where
+888.1	our closest one is looks like he's going
+889.4	to be right about there
+890.5	i've got an unpause and i'll just let
+892.3	time kind of fly for just a moment here
+895.4	here comes our satellite these are
+898.6	always kind of fun
+899.6	notice the nos web nos website what's
+902.1	that notice the nos
+903.4	satellites are typically deployed in
+905.1	groups of three if actually click here
+906.8	you can see there's three of them on top
+908.2	of each other
+909.0	the reason they do that is it allows
+910.8	them to triangulate the signal
+912.6	on their own now watch this
+915.7	you can see when i got within a distance
+917.8	of what is this
+919.0	1500 nautical miles i'm already able to
+922.1	electrically identify where all these
+924.2	particular platforms are in existence
+926.3	obviously there's some things that make
+927.5	no sense for example you can take a look
+929.4	at my sam he can't be existing in the
+931.0	middle of the ocean he's got to be
+932.2	existing somewhere on the land mass
+933.8	same thing with this radar so we can
+935.5	actually project this sam
+937.7	like this and we could actually guess
+939.8	roughly where it would be but i'll go
+941.2	ahead and fast forward time a little bit
+942.5	here
+943.0	and i'll let kind of my electronics do
+944.9	what they do best
+946.1	notice as we are less at a slant we
+948.6	become progressively more confident
+951.0	in exactly where all this information is
+953.8	you can see now that we're within let's
+955.6	take a look here
+956.4	about 300 nautical miles remember we're
+958.6	also 300 nautical miles vertical
+962.0	we'll go ahead and take a look at that
+963.0	real quick as we did at the very very
+964.5	beginning
+965.2	but grab one of these aircraft go take a
+966.7	look at one of these satellites
+968.4	that's literally how high off the ground
+970.8	we're sitting right now but we actually
+972.5	have a fairly confident idea where a
+974.6	tremendous amount of this equipment is
+976.7	even though we're this far away from it
+979.7	now if we want to make this even better
+981.4	of course we could go get ourselves one
+983.0	of these nice aircraft
+985.4	park it right here and then these two
+987.2	sets of devices could actually
+988.6	triangulate for you
+989.9	so you don't have to go through the
+991.0	process of drawing bearings so you can
+993.0	see now i've got kind of at a 90 degree
+994.8	angle it's actually a little bit greater
+996.0	than that but i'm very very able to
+997.7	precisely locate where all these
+999.4	different sensors actually
+1000.7	are okay so now we're going to take a
+1002.9	look at one more thing with esm and
+1004.9	that's going to be
+1005.9	over the horizon esm now when i first
+1008.8	started this scenario everything i used
+1010.7	required line of sight in order to
+1012.4	detect a signal
+1013.8	some systems such as the one existing
+1015.7	under sea wolf actually open up the data
+1017.4	page real quick
+1018.3	you'll notice have the ability to detect
+1020.5	things over the horizon
+1023.2	this means we actually have the ability
+1025.6	to sense things
+1026.8	that we can't directly see so in this
+1029.3	case i've got my submarine i'll bring it
+1030.7	up to
+1031.2	surface which is usually a very
+1032.9	dangerous thing to do of course with a
+1034.3	submarine these things are very
+1035.5	expensive you don't really want to be
+1036.9	surfacing
+1038.2	and i'll let him see what he does i'm
+1039.9	going to close and resume
+1041.6	i'm actually going to order him to go
+1043.4	ahead and ignore that i don't want him
+1045.0	to avoid
+1046.2	contact i want him to stay on the
+1047.4	surface nothing bad will happen to him
+1049.2	you could also use periscope depth but
+1050.9	by going on the surface i've
+1052.2	increased the distance i can detect
+1054.0	things so the first thing i'm picking up
+1055.7	is this target indicator radar
+1057.7	this particular radar i believe is going
+1059.4	to be the dog ear and this one over here
+1061.0	is
+1061.4	probably yeah that's exactly what i
+1063.6	expected let's take a look
+1065.3	3d long-range radar again electronically
+1068.0	you'd know that it's a long-range radar
+1069.5	because of the fact it's pulse
+1071.0	repetition frequency would be so darn
+1073.0	low so we'll just let the submarine
+1074.7	which again
+1075.4	has line of sight with airplanes but it
+1077.0	doesn't have line of sight with this
+1078.8	radar
+1080.0	has the ability to detect all these
+1081.8	different objects now we'll go ahead and
+1083.4	order him to get a little bit closer
+1085.0	let's go right here
+1088.8	again we'll see what else we can detect
+1093.3	pause there it is now remember this guy
+1096.5	a long time ago
+1097.5	this was our osa this osa can't see this
+1100.8	sub over the horizon
+1102.3	however because of that over the horizon
+1105.3	scattering
+1105.9	this sub can actually electronically see
+1108.6	this particular ship
+1109.8	before it can even begin to see the
+1111.9	actual sub so even though i'm being dumb
+1113.8	and being on the surface
+1114.8	we wouldn't be able to see it from this
+1116.6	ship even though we have a surface
+1118.2	search
+1118.6	radar because of like i said we can
+1120.8	actually detect it remotely
+1122.6	all right hopefully that's helpful as
+1123.9	far as a different waste us esm
+1126.2	there's one other type of esm that
+1127.9	you've probably seen quite a few
+1129.3	different times already and you're
+1130.5	probably wondering if there's a
+1131.7	difference
+1132.2	there really isn't and that would be the
+1134.4	rwr
+1135.4	it's a radar warning receiver and the
+1137.4	hts which is just the harm targeting
+1139.5	system
+1140.4	these two while you think they have some
+1142.2	kind of special properties
+1143.6	are exactly the same as everything else
+1145.5	we've seen before as a matter of fact
+1147.4	even though this one's an rwr
+1149.0	and this one is a harm targeting system
+1151.0	if i just sort of let them loose on this
+1152.4	country here
+1153.2	you'll notice that it picks up the exact
+1155.0	type of information as we saw with the
+1156.7	other one
+1157.3	it's just a heck of a lot less accurate
+1160.0	it's another thing worth noting too and
+1161.6	this is kind of a big deal and i
+1162.8	probably should have mentioned this a
+1163.7	little while ago
+1164.8	but your sensors have to be sensitive to
+1167.9	a specific type of frequency
+1169.8	like certain ones for example this early
+1171.8	80s technology
+1172.8	has the ability to track air targets and
+1175.3	surface targets
+1176.4	and it has the ability to detect them
+1177.8	electronically not every different type
+1180.3	of aircraft could do that
+1181.5	like if i get an f-16 let's grab a cc i
+1183.8	am
+1185.4	you can see my an apg here i'm sorry the
+1187.8	analr 56
+1189.4	can do air search and surface search
+1191.4	some of these especially
+1192.7	1960s aircraft and 50s when they first
+1195.2	added rwrs to the aircraft
+1197.3	did not have the ability to identify
+1199.5	things outside of a certain frequency
+1201.5	as a matter of fact the very very early
+1203.4	radar warning receivers were actually
+1204.7	designed to only sense
+1206.2	specific sam systems anybody familiar
+1208.6	with some of the six day war for example
+1210.2	when the sa-6 was introduced
+1212.0	how devastating it was that the israeli
+1214.6	radar warning receivers
+1215.8	didn't know the frequency of the sa-6
+1218.1	missile system
+1218.9	so next thing you know you gotta hope
+1220.0	the missile even though you didn't know
+1221.2	it was launched
+1222.1	this was also an issue in vietnam when
+1223.8	different systems and different
+1224.7	generations of the sa2 were
+1226.2	introduced because it suddenly provided
+1228.2	you with different frequencies and you
+1229.5	didn't have them pre-programmed
+1232.0	okay now we're in a good spot to pause
+1234.1	all right so as usual the big thing here
+1235.8	that you need to know is triangulation
+1237.2	is going to be the way to go if you
+1238.3	don't have triangulation
+1239.8	use reference points as a way to
+1241.4	basically generate a little line
+1243.2	apply a little bit of common sense like
+1244.8	i said like we have this one right here
+1246.4	unknown air contact but we know it's an
+1248.2	air to air radar long range
+1249.9	so obviously the only possibility in
+1251.8	this particular scenario would have been
+1253.3	that a wax platform
+1254.6	because it's the only aircraft that
+1256.2	actually has that particular radar
+1259.0	other than that just keep in mind that
+1260.6	our radar warning receivers only work i
+1262.7	should say
+1263.2	same thing with esm only works if the
+1265.2	other guy is emitting
+1266.5	if they don't emit you can't actually
+1268.3	detect them i know that sounds like
+1270.2	something that's obvious but you'd be
+1271.4	amazed
+1272.2	now really really clever players will
+1274.0	actually shut down radars they'll take a
+1275.9	quick scan
+1276.8	get an idea where everything is and
+1278.4	immediately shut their radar off
+1280.2	which means that your esm platforms get
+1282.5	a little taste of where the target is
+1284.2	but they're not
+1284.9	actually aware of where that particular
+1286.7	target is another interesting thing too
+1288.8	that's a little different in this
+1289.8	compared to the real world
+1291.0	is not all radars give all their energy
+1293.2	in a straight line
+1294.2	a lot of it actually radiates sideways
+1296.0	which would give you new opportunities
+1297.5	to actually detect them
+1298.7	even though the radar is not necessarily
+1300.2	facing at that time all right hopefully
+1302.0	that helps a little bit and
+1303.0	like i said it's an interesting topic
+1304.5	and obviously using combination
+1306.2	platforms is
+1307.0	in a spectacular way if you really don't
+1309.0	have a lot of dedicated platforms you
+1310.7	can just use a bunch of aircraft
+1312.2	rwrs and kind of triangulate those
+1314.4	targets before you're in danger
+1316.2	enjoy

@@ -1,0 +1,1039 @@
+0.3	hello everyone in today's video we're
+1.8	going to take a look at a nice complex
+3.3	strike tutorial using a pretty standard
+5.1	carrier battle group
+6.3	so the reason i created this scenario is
+8.1	some folks were asking for some more
+9.4	detailed kind of missions so i thought
+11.0	i'd show something like this off
+12.5	there is a copy of this actual mission
+14.5	available in the description below for
+16.4	those of you who want to kind of play
+17.4	with it yourself
+18.5	so let's go ahead and take a look at our
+19.6	scenario today basically we're sitting
+21.5	here in a handy dandy basically just
+23.5	south of egypt you know you got yourself
+25.0	a pretty good sized body of water here
+26.7	obviously this is a very very scary
+28.3	place for a lot of civilian shipping to
+30.6	be operating from
+31.6	because of piracy and all that other
+33.0	good stuff of course
+34.6	things communication between a country
+36.7	blue and country red have
+38.2	broken down significantly and country
+40.1	blue has decided to send a warning
+41.6	strike to a noon
+42.7	fortification set inside of the red
+45.3	country's country
+46.5	so basically what we're going to do
+47.6	today is we're going to go ahead and
+48.6	walk you through the process of kind of
+50.1	getting a strike together
+51.4	with the goal basically trying to
+53.0	prevent any sort of casualties on our
+55.4	side
+56.0	so you're going to see a little bit of
+57.0	seed work you're going to see a little
+58.2	bit of strike work you're going to see a
+59.3	little bit of reconnaissance work
+60.7	all to kind of come through obviously in
+62.6	the real world you're limited by what
+63.9	you have at your disposal you know if we
+65.6	had a bunch of
+66.4	russian aircraft for example let's say
+68.2	just a platoon what's a platoon
+69.9	say we have a couple flights of mig-21s
+71.8	oh this is going to look a little
+73.0	different
+73.4	but today we have a fairly modern
+75.0	carrier battle group at our disposal
+76.8	so uh first things first let's go ahead
+78.2	and take a look at our things we have at
+79.7	our disposal
+80.5	we have ourselves a pretty standard
+81.6	group we have f-18es which are at the
+83.5	big f-18s you can see we've got some gbu
+85.4	16s
+86.2	those are pretty handy we've also got
+87.6	ourselves some m-rams and this
+89.2	incredibly incredibly useful thing that
+92.0	we have right here we're going to need
+93.0	that a little later on
+94.2	coming over the f-14ds it looks like we
+96.1	have the bombcat version the f-14d some
+97.9	more gpus
+98.9	obviously we could do this with mark 84s
+100.7	coming over to the f18cs we have a good
+102.7	mix of things here we have some cbu59s
+105.3	these are apams
+106.3	we also have some harms which are
+107.8	absolutely going to need looking at this
+109.7	setup right here i can tell you that
+111.0	this is a deed
+112.1	setup as opposed to a seed setup because
+114.1	of the fact you have the missile to kill
+115.4	the radar then you have the cb used to
+117.0	blow up the site
+117.9	this is going to be tremendously useful
+119.8	coming down here we have some jdams we
+121.4	really don't have a lot of these today
+123.1	which is actually kind of a bummer
+124.3	because using jhams would make this
+125.8	whole operation
+126.7	a lot simpler so let's go ahead and take
+128.6	a look down here we've got some ea 6bs
+130.9	more arms you're going to absolutely
+132.6	need these but more importantly an ea 6b
+135.4	has this thing which is an incredibly
+138.3	effective jamming pod system it's
+140.4	absolutely spectacular and it's really
+141.8	going to save a lot of lives today
+143.8	of course if you're on the other side
+145.0	i'm not really saving lives am i coming
+147.0	over we have two hawkeyes which of
+148.4	course we always need to make sure we
+149.4	have them on deck
+150.1	ready to go and of course we have a
+151.8	group of harriers now you're looking at
+153.6	this harry's is actually on an lhd
+155.3	nearby
+156.0	and you're probably wondering why
+157.0	they're packing maverick lasers
+159.4	you'll actually see why in a second
+161.4	let's go ahead and take a look at how
+162.8	things are looking overall in this place
+164.9	so basically our objective is going to
+166.4	be to try to attack this kind of hub of
+168.2	buildings down here
+169.4	looking really quickly it looks like
+170.6	we've got ourselves a desert fort we've
+172.6	got a little comms by the way that's the
+173.9	asterisk key on your keyboard in case
+175.2	you're wondering
+175.9	oh we have a communication hub very very
+177.6	valuable target we have a truck depot
+179.2	and we have coastal fort which is
+180.5	probably nothing too
+181.4	too concerning again looks like we have
+182.9	an ammo bunker it's going to take quite
+184.0	a bit of damage
+184.8	and we have this desert fort take a look
+186.5	at this desert fort real quick i'm just
+187.8	going to go scroll down
+189.0	whoa boy that's that's quite a few hit
+191.2	points there so
+192.6	this is going to require some very
+194.2	concerted effort in order to destroy it
+196.0	i like the picture they got it's kind of
+197.2	cute
+197.8	all right let's go ahead and put that
+198.6	away so we don't need to look at those
+200.3	uh details anymore except for the one
+201.7	we've clicked on all right looks good
+203.3	and of course what else do we know we
+205.0	know that there's some observation posts
+206.7	set up around
+207.6	we notice there's some kind of electron
+209.8	early warning site
+211.0	this is a pretty well placed early
+212.2	warning sight they have some buildings
+213.7	which basically probably some do with a
+215.1	pair of night vision goggles ready to go
+217.1	uh weather for today of course taking a
+218.6	look we have clouds between 10 and 16
+220.6	000 feet
+221.4	which sucks that means we're not going
+223.6	to be able to go plinking from high
+224.9	altitude we're actually going to have to
+226.0	get dirty
+226.9	which is a little unfortunate but we'll
+228.6	make we'll make do
+229.9	taking a look at the terrain uh this
+231.2	whole place seems to be in a very very
+232.6	large valley there's significant rocky
+234.6	outcroppings kind of surrounding it
+236.0	you've got kind of this in a reverse sea
+237.7	kind of shape here
+238.9	thinking about things real quickly the
+240.3	observation posts seem to be kind of
+241.7	around these logical approaches
+243.6	but i notice there's a gap in the
+245.4	observation post along this really
+247.3	really nice valley here
+249.0	now anybody who's done any experience
+251.1	stuff without reading history is no
+252.6	whenever you have valleys that seem to
+253.9	be awfully conveniently placed
+255.9	99 of the time there's something awful
+257.8	inside the valley that's going to ruin
+259.2	your day
+259.8	so we're gonna have to make sure that we
+261.2	recce this valley in the event that we
+262.6	actually want to take it
+263.8	now this is again platform mission
+265.6	design and clever real world tactics
+267.3	here
+267.7	now if we were to come ripping along
+268.9	this valley as soon as we pop out of the
+270.3	valley it's a relatively short drive you
+272.3	can see it's only about 10 nautical
+273.8	miles
+274.3	to get to the target zone now the cool
+276.6	thing there is 10 nautical miles is more
+278.4	than enough again if we're doing
+279.6	afterburner
+280.3	it's going to be 45 seconds that's not a
+282.9	long time
+283.6	however we know there's an essay 2 site
+285.8	here which is ready to rock and i
+287.4	guarantee you there's going to be
+288.4	something else that's better at short
+289.8	range
+290.4	somewhere in here literally waiting to
+292.4	cut us into
+293.4	so we're going to need to make sure we
+294.4	do reconnaissance now if we come around
+296.1	this way around the back and we try to
+297.4	zip around this little mountain peak
+298.6	here
+299.1	this mountain peak is going to be the
+300.1	most logical place to put any sort of
+302.1	warning sight because again
+303.5	it can see this entire valley it can
+305.0	actually see down into this valley
+306.6	so we want to be very very cautious here
+308.7	now on the flip side look what happens
+310.2	if we come down the south we have this
+311.7	huge flat zone where the sam batteries
+313.7	will be able to tear us a new one
+315.1	and have plenty plenty plenty of warning
+318.2	so this is messy and the first thing
+319.9	we're gonna have to do here is we're
+321.0	gonna have to do some reconnaissance
+322.5	so to do some reconnaissance the first
+323.9	thing i'm going to do is i'm going to go
+325.0	back to my carrier group
+326.1	i'm going to go ahead and get myself
+327.4	this f-18 here and i'm going to go ahead
+329.4	and launch them individually now this is
+331.3	a very
+332.0	very very very sophisticated
+334.2	reconnaissance platform
+335.7	and while they're getting going of
+336.8	course i'm going to go get my support
+338.0	units i'm going to get my hawkeyes
+339.2	airborne
+340.0	get everything nice and ready here we're
+341.4	going to make sure his radar is turned
+342.6	on looks good to me
+343.9	and we'll go see what we can see
+347.0	all right f18 is on his way let's go
+348.8	ahead and scoop on actually the e2 my
+350.6	apologies let's grab the f-18
+352.2	and we're going to go ahead and send
+353.1	them over in this direction now i
+354.8	noticed
+355.3	the moment we got airborne we
+356.7	instantaneously identified some kind of
+359.1	mobile something
+360.2	the other thing i noticed is we've been
+361.5	able to pinpoint where this ew site is a
+363.7	little bit more accurately
+364.9	we're still not sure what this is yet
+366.8	though now hopefully our ea8 here will
+368.7	be able to get a little bit closer
+370.1	let's go ahead and speed up some time
+372.1	let's see here we're still getting all
+373.1	sorts of nastiness coming out of that
+374.6	bar lock there
+375.4	looking over on this side we're still
+377.0	not sure what that is
+378.6	okay while that f-18 is on his way i'm
+380.9	gonna go ahead and get our initial group
+382.6	of
+383.0	seed indeed aircraft airborne now i have
+385.4	a pretty wide
+386.1	selection of aircraft to pick from from
+387.8	this i've got guys with lgbs which are
+389.7	okay
+390.4	i've also got these f-14s more lgbs not
+392.8	the greatest ah
+394.2	here we go let's take a look here we
+396.3	have some apms which are beautiful cbu
+398.6	weapons
+399.3	we also have some harms which are also
+401.1	beautiful weapons for this purpose we
+402.6	can you can see we can carry a few of
+403.8	these so i'm actually going to grab this
+405.4	group of aircraft and go ahead and
+406.5	launch them
+407.0	these guys are going to be my deed
+408.2	planes but more importantly
+411.4	i want these airplanes
+414.9	now these are harriers which means they
+417.0	can go very very very very slow
+419.9	and they also have standoff weapons
+423.0	now you're probably sitting and going
+424.6	okay where are you going with this
+426.8	well the reality is one of the problems
+428.3	we're going to have is we're going to
+429.4	get to the target
+430.3	release any one of our weapons and we're
+431.9	going to fly over it and basically get
+433.7	ripped the new one by any sort of
+435.3	aaa with the harriers we actually have
+437.4	the ability to basically pretend we're
+438.9	helicopters
+439.8	launch all of our weapons at extreme
+441.5	ranges and then just turn around and go
+442.9	home
+443.5	that's an amazing amazing advantage that
+445.7	you don't have with most
+447.1	aircraft and again we're going to take
+448.6	advantage of that and again we're
+449.7	working on some assumptions here
+451.2	all right let's go ahead and grab our
+452.2	f18 here this is again remember he's
+453.8	using the sharp pod
+454.9	the sharp pod is neat it's a combination
+457.5	camera combination synthetic aperture
+459.4	radar
+460.1	basically the moment i turn this radar
+461.8	on it's going to be like night vision
+463.3	it's like click
+464.2	and all of a sudden you're going to
+465.2	start seeing contacts up here ever
+467.5	done that was amazing talk about
+470.6	reconnaissance all right let's see what
+472.2	we got here
+473.2	so we have a bunch of unknown targets
+475.0	all mobile which means there's some kind
+476.7	of vehicle now it could be a truck
+478.5	it could be some dude's lada it could be
+480.2	a little uav you know a toyota helix or
+482.5	something like that
+483.4	it could also be triple a battery it
+484.9	could be an sa-6 oh we have absolutely
+486.7	no idea what it could be
+488.5	so i'm unfortunately gonna have to get a
+489.8	little bit closer to be able to start to
+491.4	identify
+492.2	these targets now in the old days if we
+494.2	wanted to go ahead and identify these
+495.6	targets we had to do some really sketchy
+497.6	stuff
+498.2	let me go ahead and grab an aircraft and
+499.8	kind of demonstrate what i mean here
+501.4	let's get a mig 21r here let's go ahead
+504.5	and uh we'll grab one from koopa from
+506.0	today
+506.7	make sure he's got eo let me show you
+508.7	basically what you would have to have
+510.1	done in the old days it's not pretty
+511.5	terrifying
+512.5	go ahead and drop this guy basically in
+513.8	minimum altitude and get a speed going
+516.0	what you would have to do is you'd have
+517.6	to take a reconnaissance platform
+519.3	equipped with
+520.1	a camera and you'd basically have to
+522.0	skirt around as close as you can
+524.4	desperately trying to get a photograph
+526.1	while not getting yourself
+527.7	shot down so basically what you would do
+530.1	is you get something like i said like a
+531.4	mig-21r
+532.2	like you get an f-16 with like a flare
+534.3	or something like that
+535.4	and basically you go popping over here
+537.3	ripping along as fast as you possibly
+539.5	can at low altitude trying to do
+541.2	anything you can
+542.2	to try to desperately get that picture
+544.4	and basically what you have to do is
+545.8	basically turn
+546.6	out of the way at the last possible
+548.2	second so that you'd have the ability to
+550.0	basically see this thing you can see
+551.1	plenty of good frame cameras here and it
+553.9	did the trick get out of here run run
+555.2	run run run run run run run run run run
+557.0	run turn around run run run run run run
+558.9	low altitude go go go go go go go go go
+560.7	and this is why nobody wanted to do
+561.8	reconnaissance back in the day
+563.2	but the good news is we were able to
+565.0	identify all the different targets and
+567.3	the different kinds
+568.2	we also got an essay too to take a pot
+570.0	shot at us which means we can identify
+571.4	what that is
+572.2	you can see he's beaming it rather than
+573.8	running from it this is a huge
+575.5	difference between what you should be
+576.9	doing
+577.4	versus what he chose to do and he's dead
+581.8	ah that was stupid so the problem here
+584.5	was and again this is the danger of
+585.8	doing the old school method of
+586.9	reconnaissance is you basically would
+588.4	have to zigzag
+589.4	through all this as fast and
+590.6	aggressively as you can and hope that
+592.6	something doesn't catch you the safer
+593.9	thing would have been to go right over
+595.0	the valley
+595.6	ducked and the radar would have lost
+597.1	lock but again you can see
+598.7	just how sketchy that is and why this
+601.1	handy-dandy little f-18 with its little
+602.9	fancy pot here was a superior option for
+605.0	this particular mission
+606.1	again you got to work with what you got
+607.4	here okay i'm going to use this aircraft
+609.4	now basically as an early warning
+611.0	platform for the purposes of keeping an
+612.7	eye on things
+613.6	meanwhile if you remember a minute ago i
+615.6	went and got ourselves a couple little
+617.0	aircraft here i'm gonna go ahead and
+618.5	grab myself my harriers i'm gonna kind
+620.2	of get them set up over there
+621.7	and i'm gonna go ahead and grab my f-18s
+623.2	i'm gonna go ahead and set them kind of
+624.2	in the general direction here
+625.8	now your instant instinct is gonna go
+627.8	ahead and use those aircraft to target
+630.1	their handy-dandy ew weapon a radar i
+632.9	should say not weapons not a weapon
+634.8	the problem with this is is we waste a
+637.1	perfectly
+637.9	good missile doing something like that i
+640.4	think he's actually gotten close enough
+641.8	because if it is an sa2 yeah he's gonna
+643.4	be right on the edge of the range might
+644.7	as well annoy him a little bit
+647.0	so basically what's going to happen is
+648.6	if we go and blow up the early warning
+650.0	side with a harm missile
+651.4	we're wasting ammunition it's much much
+653.8	safer to use one of those nice cbus
+655.9	or remember a minute ago when i
+657.3	mentioned i had harriers with laser
+659.4	mavericks that's also a great system but
+662.2	i'm not going to be using
+663.4	either one of these weapons for that
+665.1	purposes because remember it's just a
+667.0	radar all you have to do is hit it with
+668.6	a gun
+669.7	but before we do that we're going to
+670.9	have to deal with the longest range
+672.7	sam system which is our angry sa2 right
+675.1	here and it's doing a pretty good job of
+677.2	just irritating us right here so what
+679.0	i'm going to do is i'm going to take my
+680.3	f-18s i'm actually going to drop them
+682.4	down to low altitude
+684.0	remember there's a very large mountain
+685.9	range right here
+687.1	and what i'm going to do with that is
+688.4	i'm going to have them kind of come down
+689.8	like this
+690.9	drop down to the altitude trick the sa2
+693.2	into firing
+694.1	fire a couple harms in its general
+695.5	direction and then immediately get out
+697.3	of there as fast as you can
+698.6	now there's a lot of really really fun
+700.1	methods you can use for this i've seen
+702.2	that some people actually do it where
+703.9	they'll have
+704.6	two sets of airplanes basically to trick
+706.6	you just basically ferret out the sam
+708.3	while the other two immediately fire the
+709.8	harms that's an amazing strategy but
+712.0	there's a little bit of micromanagement
+713.8	involved with that so what i'm going to
+715.7	do is i'm going to intentionally fly
+717.2	over here where their ew
+718.5	site is to get my aircraft identified
+721.7	now you're probably going why are you
+722.7	trying to get your aircraft identified
+724.1	well they're not going to fire a sam at
+725.7	me until they know
+727.2	exactly what kind of aircraft that i am
+729.4	if we don't do anything then i can do
+730.8	anything with it so we got to kind of
+732.0	keep that in the back of our heads as
+733.2	well
+733.8	our arms are ready to go you can
+735.0	actually pre-select this target for
+736.4	harms if you wanted to
+737.5	but again since it's not actually
+738.9	radiating we can't do anything with it
+740.3	just yet
+741.4	so we're just going to go right over to
+742.8	the sam site we're going to drop down to
+744.2	minimum altitude real quick
+745.8	keep in mind my harriers are getting
+747.3	position i'm going to need them in a
+748.5	minute i'm actually going to tell them
+749.4	to slow down
+750.6	and they're going to come down really
+751.8	really really really really low
+753.9	now this is going to be extremely rude
+755.8	to this radar site but it's one of the
+757.3	cheapest and easiest ways to solve these
+759.1	problems
+759.7	i'm going to let everybody take a pass
+761.0	at it with their guns and without even
+762.9	wasting the expensive missile which
+764.5	we're going to need in a minute against
+765.6	that pesky sa2
+766.9	because remote ah that's what i was
+768.2	hoping he'd do
+777.0	you fools you shouldn't have done that
+780.9	and now i've gone ahead and sent two
+782.4	heart missiles their way
+783.9	off they go
+787.9	that was silly so now we're gonna go
+789.5	ahead and finish our little attack
+790.7	strike here against our little
+792.0	handy-dandy ew
+793.0	site remember these guys have already
+794.7	got it queued up
+796.1	whoop we went a little high with those
+797.4	missiles but that happens sometimes
+799.1	all right everybody's going to go ahead
+800.2	and take their shot at the radar site
+801.8	using their guns in just a moment
+804.3	i'm going to go ahead and order them to
+805.4	attack manually kind of not fan of them
+807.9	using cpus but
+809.0	oh that'll do the trick and now their
+811.0	radar site is out of commission
+812.6	and we know that this sa2 is probably a
+814.9	little annoyed at us
+816.0	which is desirable now since we're in
+817.8	the range of that essay too i'm actually
+819.4	going to get these guys ready i'm going
+820.3	to need them in a minute
+821.5	now that i know that this sa2 is kind of
+823.3	mad at us i'm going to pop up to medium
+825.0	altitude real quick and slow down
+827.1	what we need to do is trick that sa2
+829.0	into taking a pot shot at
+830.6	us because if we can get it to do so we
+832.5	can go ahead and just rip it with a harm
+833.8	there it goes
+835.4	you can see it's already fired but for
+836.9	some reason my arms do not want to lock
+838.9	onto that battery for the life of us
+840.5	which is actually a little irritating
+841.7	but it's all right
+843.8	go ahead now go down back down again we
+845.5	can always run out of missiles too i
+846.9	don't know why you guys are insisting on
+848.2	climbing here
+849.4	the sa2 is arcing but it's going to get
+851.3	lost in the mountain range
+853.7	yep bye-bye mr missile nice try though
+856.8	all right come back around again pop
+858.6	back up to medium altitude i think
+859.9	that's
+860.3	two i'm just going to confirm real
+861.5	quickly how many mills i might should be
+863.0	three
+863.7	how many s8 they fired three they've
+865.4	only got three left in the battery oh
+867.0	here comes the next one
+868.7	everybody get down everybody get down
+872.4	here comes the next one that was two
+876.8	oh you're wasting those sams those
+878.2	things are expensive you know
+880.1	oh we got something new too looks like a
+881.8	straight flush decided to start shooting
+883.3	at us
+883.8	so now we've got an sa-6 that doesn't
+885.2	like us very much which is awesome
+886.7	because now i can deal with that sa-62
+889.0	and stay in a safe area here
+893.3	i love those all of the shoulder shots
+895.0	with the arms you guys have to get low
+897.7	get low here comes the sa6 is the sa6
+901.3	got line of sight no it does not
+903.5	so not only is that sa2 go about to get
+905.6	hammered because he's going to run out
+906.6	of ammo but i just got a freebie on that
+908.6	sa6 too so this is actually really good
+911.0	when it comes to seed you almost always
+912.5	have to do it by hand oh we got another
+914.2	one out of the sa2 but that was bad
+916.0	timing
+917.1	oh and that's the end of that sa-6 and
+919.3	that sa2 that is his last
+921.1	two weapons so now it's time to move on
+924.3	to our next phase
+926.6	i'm still getting oh nope it's disabled
+928.7	uh why are you folks turning towards the
+931.4	danger zone you want to turn away
+934.1	okay so this sa2 battery is out of
+935.9	missiles so we don't even have to engage
+937.6	it if we don't want to this sa-6
+939.6	just took two arms to the face but we
+941.9	still know that we have a couple
+943.2	different targets
+944.2	left here we have these two aaa
+945.9	batteries and we have whatever this is
+947.2	ah it's an sa-9
+948.3	okay so our handy dandy guys up here
+950.6	they're in great shape right now
+952.2	i still have four harms left and i
+953.8	haven't even done anything with them
+955.4	so what i'm actually gonna do is i'm
+956.4	gonna have to come around and i'm gonna
+958.1	have them disable the last couple
+959.7	targets that i have left here
+961.3	anybody have a harm left oh you do i'll
+963.2	give one for you
+965.6	i'll go ahead and lock on to this guy
+967.0	i'll give one for you it's not gonna let
+968.4	me do it is it
+969.4	and we'll go grab this guy over here and
+971.0	we'll give him one too
+973.0	and where's that jammer that was
+974.2	irritating us a second ago yeah you can
+975.9	have one too because i don't like you
+977.5	okay so what we're gonna do here is
+979.4	we're gonna go ahead and fire a bunch of
+980.7	these sam or these harms and our goal
+982.6	here is to try to trick
+984.0	those gun batteries into turning on
+986.3	their fire control radar so we can get a
+988.2	freebie shot with the harm on them
+990.3	if we don't do that we're gonna have to
+991.6	do this the hard way which i'm not
+992.8	really looking forward to
+994.3	and we're about to get the jammer ah
+996.1	they didn't take a shot what a bummer
+998.6	all right someone put these guys right
+999.9	up here at medium altitude out of the
+1001.8	range
+1002.2	remember how we disabled everybody these
+1004.1	guys can now pop up to medium range and
+1005.9	actually just sit there because none of
+1007.4	the missile batteries that were
+1008.5	endangered to them
+1009.4	are a danger to them anymore so now it's
+1012.1	just a matter of leaving them up there
+1013.8	now it's time to go get our harriers so
+1016.9	what are we going to use these harriers
+1018.3	for
+1018.6	well what we're going to do is we're
+1019.9	going to go ahead and clean house
+1021.7	now we know that the weather here is
+1023.4	clouds to 10 000 feet
+1025.1	so the first thing i'm going to do is
+1026.5	i'm going to set their altitude to be
+1029.0	9500 feet
+1030.6	that means we're going to be just below
+1032.5	the cloud layer
+1033.7	next what i'm going to do is i'm just
+1035.1	going to basically set myself up on a
+1036.6	little course
+1037.4	to destroy everybody
+1040.5	now that i've done that i'm going to
+1041.5	switch to manual mode uh let's be polite
+1043.5	here you get to
+1045.0	uh this fellow over here i know you've
+1046.5	been very irritating today i'm going to
+1048.3	give you two
+1049.4	uh we're going to take our shilkas we're
+1050.9	going gonna go ahead now hey rather the
+1052.0	zeus i should say i'll give you two
+1053.7	again i don't want you to feel left out
+1055.0	bad guys i'm gonna go over here and make
+1057.0	sure that you have a pair of them as
+1058.3	well
+1058.7	and last but not least i'm gonna grab
+1060.0	the last one i'm gonna give him a couple
+1062.1	two
+1063.4	and now watch this my hair is just going
+1067.1	to come ripping across the countryside
+1068.7	here
+1069.2	nice leisurely pace remember the sa2 is
+1071.3	out of missiles
+1072.3	they're just going to be sitting here
+1073.7	they're going to come spin around oh
+1075.0	there comes my first couple lasers
+1077.0	and they're coming down they're coming
+1078.2	down remember because i'm traveling so
+1079.8	slow
+1080.3	the missiles get there before they get
+1082.1	in range
+1083.4	and goodbye sa2 thank you for playing
+1086.5	i'm actually not happy with that i think
+1087.8	that he needs a few more because he's
+1089.4	just feeling left out
+1091.7	i'll give him a couple more oh notice my
+1093.4	ah there's the gun dish do you see the
+1095.0	gun dish
+1096.6	i told you i told you now these are the
+1099.4	harms
+1099.9	that i was waiting with look at this
+1102.4	look at this
+1103.4	oh ow and now watch these harriers just
+1106.4	rain
+1107.0	laser death down on everybody
+1110.1	so you can see very clearly that uh this
+1112.2	is not a very fair engagement
+1113.6	whoop looks like uh they got a couple
+1115.8	shots off but that's okay
+1117.4	you guys have to turn back around
+1118.7	otherwise my lasers are not going to
+1120.2	work
+1121.5	this happens a lot turn back around turn
+1123.8	back around
+1124.6	at least the zeus is wasting a bunch of
+1126.2	ammo there
+1127.8	ah they got them all shucks okay so
+1130.8	we're gonna go ahead and send these guys
+1132.0	home because they're not gonna be of
+1133.1	much use to us anymore
+1134.4	oh of course i've got our f-18 still
+1136.5	left we had these two guys who did a
+1138.2	really really nice job of annoying them
+1140.0	we still have two sets of cbu's left and
+1142.6	i feel bad if we don't use them
+1144.2	the problem is i'm not going to risk my
+1146.7	f-18s at 2
+1147.9	000 feet in order to uh try to do
+1149.9	something with these two zeuses here
+1151.6	and now by the way we uh still have an
+1153.4	sa-9 here so unfortunately we were not
+1156.0	as successful as i was hoping
+1157.5	but again a zeus is a very very tricky
+1159.4	platform to deal with
+1160.7	okay let's grab these guys we're going
+1162.4	to make a pass really really quickly on
+1164.0	their sa2 one more time just because i'm
+1165.8	feeling rude today
+1167.0	let's go ahead and select my apams looks
+1168.8	pretty good of course we could use our
+1169.9	canon
+1170.5	but if we use our canon you know exactly
+1172.1	how that's going to end up going we're
+1173.4	going to stay up at altitude until we
+1174.6	get a little bit closer
+1176.2	again remember that zeus can't do
+1177.4	anything to us this high we're going to
+1178.8	drop down to our attack altitude
+1182.2	and we're just going to come right up on
+1183.4	top of the sa2 and uh remind it that we
+1185.6	still don't like it
+1187.5	now we're going to be too high for that
+1188.7	attack let me back us up just a little
+1190.1	bit
+1190.7	all right coming around coming around
+1193.8	again we have to get down to 2000 feet
+1195.4	and there they go
+1197.2	boom see y'all later
+1200.6	okay now it's time to actually do our
+1202.3	attack notice by the way our handy dandy
+1204.6	little a wax platform still
+1206.0	happily doing his little donut out here
+1207.7	giving us great up-to-date intelligence
+1209.7	so here's what we know this sa-6 is dead
+1212.5	it's radar's toast
+1214.1	this zeus is still working fine this
+1216.2	zeus down here is also working fine he's
+1218.1	hurting
+1218.6	and then of course we have the sa-9 in
+1220.2	the middle who is perfectly capable of
+1221.9	ruining everybody's day
+1223.7	so it's like so what do we do now hmm
+1226.4	well the first things first is we know
+1227.8	the zeus has a range of about a mile
+1229.3	which you can see clearly here
+1230.6	so if we were to do something like this
+1232.4	we're going to get hammered if we did
+1234.3	something like this we could probably be
+1236.2	fairly successful at minimizing the time
+1238.8	that we'd be in the basically the death
+1240.5	zone here as far as with these two guys
+1242.6	they probably don't even have working
+1243.7	radars anymore but it doesn't stop them
+1245.3	from shooting at us even though it's 12
+1246.7	o'clock at night
+1247.8	so we really need to do is do something
+1249.6	about these this sa-9 can be very very
+1252.4	dangerous
+1253.1	so we'll have to take a look what we
+1254.3	have left to go ahead and finish up this
+1255.9	battle
+1256.6	okay coming back over here we have
+1258.0	plenty of gbus which is what we're going
+1259.8	to need we can use those from altitude
+1261.5	except for the fact there's weather
+1262.9	that's blocking us from using them from
+1264.2	altitude
+1265.0	we have the bomb cats same problem we
+1267.2	have these guys who
+1268.9	j dams oh it is our lucky day
+1272.4	so we can use these f-18s basically as a
+1274.7	way to deal with those last
+1276.0	couple targets the problem with these j
+1277.8	dams is they're very very easy targets
+1279.9	for those zeuses so basically you'd have
+1282.0	to attack in two different wings
+1283.6	the first one would basically have to
+1285.0	concentrate on distracting the radar gun
+1287.2	and then meanwhile these would have come
+1288.8	out of nowhere and basically cbu it so
+1290.8	he wouldn't have a chance to shoot back
+1292.5	at him
+1293.2	other option of course is oh you can see
+1294.9	we have some harms left but there's no
+1296.8	radar left on this map
+1298.3	so these aircraft unfortunately are not
+1300.2	really going to be too helpful for us
+1301.7	going back to our areas we're out of
+1303.0	those f-18s we've got plenty of those
+1305.6	okay so it looks to me like we're going
+1307.2	to have to send in two different waves
+1308.6	of attack so let's go ahead and set that
+1310.1	up now
+1310.7	so i'm gonna grab this one this one this
+1313.3	one
+1314.1	and i'm gonna go ahead and create a
+1315.1	special attack get
+1317.4	the ack call it a land strike
+1320.5	again you work with what you got i'm
+1321.8	gonna go to f-18s these guys look like
+1323.7	they're going to be very very capable at
+1325.3	this
+1326.3	go ahead and put them all in there like
+1327.7	that i'm actually this is going to seem
+1328.9	a little weird
+1329.7	i'm going to mark these as escorts i
+1332.2	know that sounds a little strange but
+1333.8	what's going to happen is these guys are
+1335.4	going to drop the bombs and these guys
+1336.7	are going to protect them as they drop
+1338.0	the bombs
+1338.9	seems a little weird i'm going to wait a
+1340.1	couple seconds for that mission to
+1341.3	register
+1342.0	and then we're going to go ahead and
+1343.0	launch our main strike now our main
+1345.2	strike i pretty much got everything set
+1346.6	up earlier so i don't have to worry
+1347.7	about this too too much
+1349.0	go ahead and pause i'm going to grab all
+1350.6	my arms my ea6 is here i'm going to mark
+1352.8	them as escorts they're not really going
+1354.2	to
+1354.5	do much for us except i am going to have
+1357.7	them turn on their jammers
+1359.6	just to make things a little interesting
+1360.8	for us all right go to math 14s you guys
+1363.2	are going to be my primary strikers i'll
+1364.6	let you do that
+1365.7	grab my f-18es you're going to be the
+1367.8	rest of my strikers and you're going to
+1369.1	be my
+1369.6	air escorts um press okay i always make
+1372.0	that mistake but that's okay
+1373.4	go back to f-18es we're gonna mark all
+1375.7	you focuses escorts as well you never
+1377.4	know
+1377.6	you never know so i got my bomb cats i
+1379.7	got my hornets
+1380.9	and i've got you guys are all set up
+1382.6	everybody ran out of ammo a long time
+1384.2	ago
+1384.9	so that's looking good that's looking
+1386.1	good my primary target naturally is
+1387.8	going to be
+1388.6	as you know okay it looks good looks
+1390.3	good looks good check check check
+1392.2	chickadee check before you
+1393.3	erect i'm looking good looking good okay
+1395.5	that's it my tacks ready to roll i'm
+1397.0	just going to let them go on their own
+1398.7	meanwhile that other group that we're
+1400.2	going to need i'm going to do a little
+1401.5	bit of micromanaging of them because i
+1403.0	want to make sure they're
+1403.8	going to be careful enough here one of
+1405.5	the great advantages of splitting your
+1406.8	seed deed from your main group is you
+1408.3	have so much more control but again i
+1410.0	hate micromanaging i really don't like
+1411.8	to do that if i don't have to
+1413.5	so these guys are on the strike well
+1415.0	mission these two guys i believe this is
+1416.6	their bomb cats they're all my strike
+1417.7	well types
+1418.9	let's go ahead and see if i can track
+1420.1	down my other crew if this ever happens
+1421.8	in a problem we have a tough time
+1423.0	finding something
+1423.8	you can always press the o key to bring
+1425.3	up your order of battle and you can
+1426.6	locate the exact aircraft that you're
+1428.2	looking for
+1429.2	so let's see here dagger these are my
+1431.2	super hornets i'm looking for my c's ah
+1433.0	yeah they are
+1434.6	hey folks i'll go ahead and fast forward
+1436.9	them a little tiny bit
+1438.0	so these if you remember are going to be
+1439.6	my jdam types these are going to be the
+1441.4	ones that we're going to be using
+1442.9	for trying to hit there's a follow-up
+1445.0	group behind them i believe i
+1446.7	accidentally separated them in my
+1448.0	efforts to speed things up a little bit
+1449.5	ah there they are
+1450.5	i'm going to go ahead and boop speed
+1451.7	these guys up a little bit grab another
+1453.4	go boop
+1453.9	speed them up a little bit so what we're
+1455.6	going to try to do is strike them very
+1457.1	very quickly and very very aggressively
+1459.4	just outside of their effective range
+1461.6	now the stupid thing to do would be to
+1463.3	let your weapons drop here
+1464.7	if you do that you're basically going to
+1466.2	give these sams i should say the
+1467.8	aaa the zeus a lot more time to launch
+1470.0	them so what i'm actually going to do is
+1471.5	i'm going to go back to that mission
+1473.1	again this is our get the ack we're
+1475.0	going to go over to get the axe get it
+1476.8	we're going to go over to wra we're
+1478.3	actually going to reduce
+1479.8	the range we're going to fire at i don't
+1481.9	want to be firing at a range that far
+1484.1	if we do that like i said they're going
+1485.6	to get all that extra time to go ahead
+1487.1	and lock onto those weapons and they're
+1488.6	probably going to get shot down
+1490.1	that being said if in my luck i usually
+1492.4	lose every single jtam i fire at these
+1494.4	darn things
+1495.3	and keep in mind how many times have we
+1496.9	hit them already in this entire mission
+1498.9	but we haven't lost anybody except for
+1500.4	that mig-21 demonstration model
+1503.7	all right i'm going to get a little
+1504.6	closer here keep in mind our altitude's
+1506.5	extremely high here
+1510.5	that's going to be problematic because
+1512.0	they're actually they're jdam so it
+1513.5	doesn't matter what else it do we drop
+1514.8	them at
+1515.4	so realistically if we were smart people
+1517.0	we dropped them vertically
+1518.4	so i'm actually going to pause the game
+1520.0	one more time i forgot their j dams i
+1521.8	thought they were gpus
+1523.0	go back over here to get the ack and i'm
+1525.0	actually going to adjust their range
+1526.7	even more so they drop the weapons
+1529.0	vertically basically
+1530.3	right on top of them now the neat thing
+1532.3	is since we're basically dropping it
+1533.6	vertically now they're going to have
+1534.9	no time in which to react depending on
+1537.8	what kind of comes down with that
+1539.3	all right let's go ahead and pause so
+1541.5	normally they'd be firing the weapons
+1542.8	there but remember i changed their
+1544.4	doctrine
+1545.0	so what they're going to do is they're
+1546.1	going to drive right up and they're
+1547.2	going to knock
+1548.6	drop their altitude down a little bit
+1550.8	again we want
+1551.8	minimum flight time for these jdams
+1554.2	otherwise these stupid things are going
+1556.0	to tear us a new one so we're going to
+1557.8	get a little bit closer get
+1559.2	a little bit closer just think about how
+1560.5	much fun these poor shulkas have had
+1562.0	this entire battle so far
+1564.2	one quick trick that i've learned that
+1565.5	works extremely well is to go ahead and
+1567.4	kick everybody up to afterburner during
+1568.9	their attack run
+1569.7	for some reason they don't do this
+1571.3	automatically you can actually adjust
+1572.7	their flight plan directly if you need
+1574.0	to
+1574.4	this is just a great way to minimize the
+1576.9	tim there goes the j
+1577.8	dams everybody get out of here come on
+1580.6	get the zeus get the zeus
+1586.1	ah
+1590.8	yes and by the way here comes the rest
+1592.3	of our strikers right on time
+1596.6	oh that was not fair okay folks uh let's
+1599.9	let's let's do it by the numbers let's
+1601.5	uh clean house here
+1602.5	okay okay you get a bomb and you get a
+1604.2	bomb and you get about and you get a
+1605.6	bomb
+1606.5	you get a bomb too all right here comes
+1608.2	our next round oh no
+1610.0	i feel like we should drop a couple
+1611.1	things in the sa-6 just to make him not
+1612.7	feel so left out
+1614.5	and you get about and you get about and
+1616.3	you get a bomb and keep in mind you
+1617.6	could be doing this with conventional
+1618.6	weapons but i'm just
+1619.7	really enjoying the fireworks and you
+1621.3	could've
+1625.7	all done let's take a look at our end
+1627.0	results here so this battle started
+1629.0	remember at about 12 30. it's now an
+1630.8	hour and 15 minutes later
+1632.5	and we lost our example aircraft and we
+1636.2	got
+1637.2	everything so hopefully this was a
+1640.6	valuable tutorial as far as a video goes
+1642.7	so that you can kind of see
+1643.9	what it looks like trying to get these
+1645.2	things all planned out i tried to go
+1646.8	over as many of the different tactical
+1648.1	considerations as i could kind of played
+1649.8	it
+1650.2	some things didn't work but again
+1652.2	nothing ever survives first contact with
+1653.9	the enemy as we all know
+1655.4	going back i think i should have been a
+1656.7	little more aggressive with my harriers
+1658.1	but they did such a beautiful
+1659.9	job of absolutely ruining everybody's
+1662.2	day and again i had plenty of harms left
+1664.4	that i didn't even end up needing to use
+1667.0	now when i played with this kind of a
+1668.1	scenario before i've done it with all
+1669.3	air force units i've done it with all
+1670.6	russian units you know stuff like all
+1672.0	british units
+1672.9	just to kind of experiment and basically
+1674.7	the strategies end up being about the
+1676.3	same
+1676.8	the goal there is you kind of get rid of
+1678.2	the long range stuff then you get the
+1679.4	short range stuff make sure you do
+1681.0	reconnaissance and then once the place
+1682.6	is cleaned up
+1683.4	feel free to go nuts other than that
+1686.2	hopefully this has been fun
+1687.4	enjoy

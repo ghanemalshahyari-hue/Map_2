@@ -1,0 +1,472 @@
+0.5	hello everyone in today's video we're
+2.0	going to be taking a look at emp
+3.9	weapons both kind of what they do how to
+6.2	avoid them and
+7.0	kind of how to use them fortunately for
+8.8	us there's not a lot of emp
+10.4	like devices so it shouldn't be too too
+12.2	bad as far as what we're going to be
+13.8	looking at today
+14.6	let's go ahead and get started so first
+16.3	things first what i've done is i've set
+17.8	up a pretty simple scenario where i'm in
+19.3	the middle of the desert here relatively
+20.8	high altitude
+21.9	i set up this little set of different
+24.0	sam sites to kind of demonstrate the
+25.6	different effects of emp
+27.4	one type of samsung is a simple sa2 this
+29.7	is going to be the b model
+31.0	the radars are turned off we also have a
+34.0	modern set such as an s300 pt1 this is
+36.6	an sa10a
+37.7	with its radar turned on we have the
+39.5	same system with its radar turned off
+41.5	and of course we have the legacy system
+43.2	the sa2b with its radar turned on as
+45.3	well
+45.9	they are marked at half mile one mile
+48.6	two mile and three nautical miles so
+50.4	that you can see the combined impact of
+52.1	using these different weapons
+53.6	at different distances now you're
+55.3	probably wondering why i'm using both
+56.9	legacy systems as well as modern systems
+59.0	and why i have some of them with the
+60.5	radars turned on and some of the radars
+62.2	turned off
+63.0	as you're going to see in a minute that
+64.1	has a massive impact on how effective an
+66.6	emp weapon is
+68.6	so let's go ahead and try it out so what
+70.5	i have here is i have myself a basic
+71.9	little bunker and now what i attached is
+73.6	one of the different
+74.7	emp weapons we actually have built into
+76.7	command unfortunately for us because we
+79.0	do not have the fancy pants a
+80.9	professional edition
+81.9	we are only going to be benefiting from
+83.6	using what they call the omnidirectional
+85.7	emp
+86.3	as opposed to the directional emp the
+88.0	only real difference between these two
+89.1	weapons is the directional emp
+90.5	is basically if you want to think about
+91.7	like a tight blast of a shotgun why
+93.6	an omnidirectional emp basically spreads
+95.7	it out everywhere
+96.7	again if you want to imagine in another
+98.2	another way you could use a directional
+99.8	emp to hit a particular system in a
+101.4	concentrated cone
+102.6	you'd have to use an omnidirectional
+103.9	which is going to waste a lot of energy
+105.4	blasting in the wrong direction
+106.8	to try to get a bigger area there are
+108.8	other amp weapons that are available
+110.3	inside the
+111.0	command of course is if you go up to the
+113.0	database you type in
+114.0	weapon and you go ahead and type an emp
+116.3	as you can see we don't have a lot of
+117.7	choice here we have basically the
+119.2	agm-158 if you want to imagine this is
+121.2	the stealth cruise missile version
+122.6	we also of course have the gbu-31s which
+124.7	are the jdam versions
+126.0	i know everybody's sitting there going
+127.2	ah bummer we don't have any anti-ship
+128.9	emp weapons
+129.8	i really wish they were because if we
+131.2	didn't want to do anything with
+132.4	anti-ship with emp
+133.6	weapons things are going to get a little
+135.0	bit more difficult for us and of course
+136.7	we have nuclear weapons but oh we'll get
+138.3	to that in a minute
+139.3	so let's go ahead and test a base little
+140.8	system here and i'll see what happens
+142.2	and see if there's any observations we
+143.6	can make
+144.2	so i'm going to go ahead and launch a
+145.2	single one of these agm-158bs
+147.9	again this is basically your jasm cruise
+149.8	missile you're going to be traveling a
+151.3	very very low off the ground it's going
+152.7	to be lining yourselves up don't mind
+153.9	the youtube plane just kind of keeping
+155.2	an eye on things
+156.2	now the first thing that's going to be
+157.7	interesting here when this weapon
+159.0	actually does hit the ground
+160.2	is the fact that they always always
+162.2	always fall short
+163.7	i don't know if this is an in-game
+164.9	limitation this is just something kind
+166.4	of that's sort of
+167.4	realistic not actually sure here so if
+169.5	you actually watch
+170.5	even though i'm aiming for this point
+172.2	here watch where the weapon actually
+173.8	chooses to detonate
+179.7	drum roll please
+183.6	now remember half a mile mile two miles
+186.0	three miles boom
+187.3	so you can see that the weapon actually
+188.8	detonated short an entire
+191.1	nautical mile you also noticed when the
+193.5	weapon detonated that you saw that
+194.7	little lightning bolt icon appear on
+196.4	several of these different
+197.6	vehicles now the reason that happened is
+199.6	that tells them that they were under the
+201.0	effect of the electromagnetic pulse
+203.0	that weapon created now let's go ahead
+204.8	and take a look at the actual damage we
+206.2	did here
+206.7	i noticed none of the emp reached this
+208.7	far you need a directional emp device to
+210.6	try to hit that far
+211.7	so first we have our little legacy
+213.3	system here he's sitting here he's got
+215.0	his radar on the off position
+216.6	he was within a half a mile of the
+218.7	actual aim point of course as you saw
+220.4	where the weapon actually landed over
+221.6	here
+222.0	it ended up being closer to a mile and a
+223.8	half so big difference there
+225.4	you can take a look if i just pop up his
+226.9	damage control real fast but the only
+228.7	thing that
+229.2	got damaged was his fire control radar
+231.0	basically got nipped not too bad here
+233.3	of course i will go to them one mile
+235.0	away no damage in the slightest even
+237.7	though you can see exactly good line of
+239.1	sight
+239.6	let's go ahead and take a look at the
+240.6	modern radar system oh this is a little
+242.3	different
+243.0	we can see that in half a mile his
+245.1	flaplit a which is his fire control
+246.9	radar was
+247.7	annihilated you can also see that his
+249.4	command data link which he needs to talk
+251.0	to the missiles was badly damaged
+253.0	now if i go to the same thing about a
+254.5	mile away you'll see that the damage is
+256.8	basically the same again it's going to
+258.3	be a little random each time
+259.6	but you can see in this case even though
+261.4	he was a mile away
+262.7	he also got significant damage to both
+264.9	the search radar as well as his fire
+266.4	control radar
+267.2	now his buddy two miles away of course
+268.9	took no damage at all
+270.2	now notice this modern system had his
+272.1	radar turned on and it got wrecked
+274.4	going over to our radar turned off look
+276.7	at the difference
+278.1	you can see with his radar being in the
+279.5	off position that his data link got
+281.3	basically
+281.8	nipped a little bit and coming over here
+283.5	you can see that this one who's mile
+285.0	away with the radar off
+286.2	took no damage compared to his buddy
+288.2	over here at the same distance who took
+290.2	significant damage
+291.8	now this is where it's going to get
+292.9	interesting go ahead and take a look at
+294.6	our sa2 here who had his radar turned on
+297.4	who was in the line of sight of the
+298.6	blast no damage
+300.6	at all matter of fact if i click on his
+302.5	buddy over here it was a mile away
+304.2	you can see that the damage is actually
+305.8	very minor actually
+307.4	basically the equivalent of what the
+308.8	damage of the radar turned off version
+310.6	of the sa-2 was of course this one was
+312.5	basically immune
+314.2	so that raises the first two important
+315.9	points first of all emp
+317.7	weapons work better on modern
+319.8	electronics
+320.7	it doesn't matter if you're a missile
+321.9	warhead it doesn't matter if you're an
+323.0	airplane it doesn't matter if you're a
+324.2	radio
+324.7	the more modern electronic the more
+326.6	effective it will be
+327.8	the second really really important point
+329.6	is if your electronics are
+331.3	turned on this is especially true with
+333.0	radars you're going to be suffering
+334.9	far more damage than if you had it
+336.5	actually turned off now let's go ahead
+338.5	and demonstrate this to a little bit
+339.7	more of an extreme here so you can see
+341.3	what
+341.7	basically an alpha strike with emp
+343.4	weapons would look like and you can even
+345.1	see this even more clearly
+346.7	so i'm going to go ahead and grab my emp
+348.2	source one more time give my u2 a moment
+350.5	to go ahead and spot everybody
+351.8	thanks youtube you've been very helpful
+353.3	today go ahead and select everybody i'm
+355.4	gonna just double check to make sure i
+356.4	didn't accidentally grab the thing i
+357.8	always get
+358.7	looks good to me let's go ahead and
+361.0	allocate one weapon each
+363.4	go down here we can grab all these
+365.0	allocate one weapon each and we'll get
+366.8	the two sa2s and allocate one weapon
+368.5	each
+368.9	that should get us a total of 16 cruise
+371.0	missiles this is actually very
+371.9	entertaining to watch because
+374.9	this kind of fires out like that okay so
+377.5	the weapons are now arriving
+378.9	fortunately these weapons do not have
+381.1	electronics on board that could be
+382.5	scrambled
+383.1	by their own electromagnetic pulse now
+385.5	if that were the case things would go
+387.0	pretty bad
+387.7	notice our weapons that hit in the
+388.9	center actually damaged the entire group
+392.0	even though they didn't necessarily aim
+394.2	at the individual again that's the
+395.3	advantage of an omnidirectional system
+397.1	so be very careful when you're using
+398.7	these that you go ahead and take the
+399.9	time
+400.5	to try to set it up so that weapon hits
+402.6	a little bit up beyond where you're
+403.9	actually aiming
+404.8	okay let's look at the damage so
+406.4	physically these structures look like
+408.0	they're in pretty darn good shape
+409.4	uh taking a look at our legacy radar off
+411.5	looks a little bit damaged this one got
+413.1	hit
+413.7	barely even got nipped let's take a look
+415.5	at this sa2 yeah probably was pretty bad
+417.3	damage let's take a look yeah pretty bad
+418.8	damage to the radar
+420.0	coming over here of course taking a
+421.4	quick look uh pretty bad damage to the
+422.8	radar again but nothing critical
+424.6	let's take a look at the sa2 the classic
+426.3	system with the radars turned on
+427.9	destroyed coming down to this one let's
+430.1	go ahead and take a look uh
+431.4	badly damaged but not destroyed take a
+433.4	look at this one destroyed
+435.3	and then of course we'll take a look at
+436.4	this one here who probably received
+437.7	multiple hits
+438.8	badly damaged now to really illustrate
+441.8	my point
+442.4	take a look at the modern systems so
+444.0	this one had his radar turned on
+446.0	he lost everything his command datalink
+448.4	was even badly damaged taking a look at
+450.2	his buddy same distance remember each
+451.9	one of these got their own weapon
+453.1	delivered
+453.9	badly damaged cruising up to this one
+456.1	again radar's turned off
+457.8	wrecked this one over here radar turned
+460.1	on destroyed
+461.9	coming up here of course i'll take a
+463.3	look at this one remember each one got
+464.5	their own hit
+465.3	basically wrecked taking a look at this
+467.0	one especially badly damaged and again
+470.0	remember each one of these receive their
+471.3	own weapon
+472.2	so looking really quickly you can see
+473.7	that the classic system actually did a
+475.6	better job
+476.6	surviving the impact of these weapons
+478.8	especially when their radars were turned
+480.3	off just like the point i was making a
+481.7	moment ago
+482.3	and the other thing you noticed like i
+483.7	said was trying to land the weapon here
+485.8	by basically overshooting this target to
+488.2	try to hit it
+489.1	that works best with omnidirectional if
+490.6	we had the directional emp again you get
+492.5	that shotgun effect that
+493.8	we don't have here so you don't have to
+495.1	worry about kind of landing short like
+497.0	you would otherwise
+498.2	so what about other sources of emp well
+501.3	there are some very very very nasty
+503.1	sources of emp
+504.2	and that comes in the shape of what we
+505.7	call nuclear weapons so there are two
+508.0	basic
+508.5	ways you want to think about this the
+510.2	first one is if you have a little
+511.3	nuclear weapon your emp blast will be
+513.4	present
+513.9	however it will be so short because the
+515.9	blast of the weapon will actually
+517.3	overtake the range of the emp
+519.3	which simply means that if you use a
+520.6	very very small nuclear weapon you don't
+522.3	need emp to kill the target because the
+524.6	explosion is going to do itself that's
+526.8	different however
+527.9	from large nuclear weapons large nuclear
+530.9	weapons actually have the ability to emp
+532.8	things at extremely long ranges
+535.0	from the actual center of the blast to
+537.0	prove my point here i'm going to go
+538.0	ahead and fire up my little lua script
+539.4	console
+540.1	and i have a couple different explosions
+541.8	which we're going to simulate real quick
+543.5	first of all we're going to start with a
+544.8	1.5 kiloton warhead
+547.0	this is going to be pretty simple we're
+548.4	going to detonate it right here at this
+550.2	little poor little house that says
+551.5	aimpoint
+552.2	let's see what happens i love doing this
+555.6	boop okay pause so the first thing you
+559.3	notice is these guys who are very very
+561.3	significantly far away from the target
+563.4	were hit by the emp blast emp blasts
+565.8	move at the speed of light
+567.0	the next thing you're going to notice is
+568.5	even though they were nipped by the emp
+570.0	blast
+570.6	moments later the explosion is going to
+572.6	just and basically swallow them up
+575.5	and you can see it evaporated everybody
+577.7	now if i take a look at my legacy system
+579.3	with the radar on
+580.5	notice the damage nothing notice this
+582.9	one over here with this radar turned off
+584.5	also in the mp range
+585.9	no damage in the slightest our two
+588.1	buddies up this way
+589.1	who had a significant distance from the
+590.6	blast also did not struggle at all with
+593.0	the actual explosion
+594.2	or with the emp effect so you can see
+596.2	that in this case our regular oemp
+598.5	actually did a better job
+600.3	now that's going to be a little
+601.7	different and let me go ahead and show
+602.8	you why in a moment
+605.0	let's do the exact same thing but let's
+606.8	pull out a nuclear weapon which i know
+608.3	is going to be able to do the job
+610.0	so i'm going to get myself uh let's
+611.5	let's use a 9
+613.2	megaton weapon so this time i'm not even
+616.1	going to detonate it anywhere
+617.4	close to these targets i'm going to
+618.8	detonate it significantly far away
+621.0	watch this notice everybody
+625.4	instantly got cooked by electromagnetic
+628.0	pulse
+628.6	i'm going to let this a gigantic
+630.7	mushroom look at the size of this thing
+632.9	this is one of the largest weapons that
+634.6	was ever detonated of course
+636.5	this is our bomb if you really want to
+638.2	see a big bang but this one does a
+640.1	pretty darn good job now if my math is
+641.9	correct this should not collide
+646.5	nice nice
+649.8	i guarantee you everybody inside here
+651.4	just died of radiation okay let's see
+653.2	the emp effect with that
+655.1	whoops switch the wrong team there i
+656.6	heard it was on the right team okay
+658.3	close my screen here that's a fun effect
+659.8	by the way because you can create flack
+661.1	with it
+661.7	so my legacy radar system on you know
+664.3	damaged
+665.6	damaged damn oh not even hurt yeah
+668.5	mildly damaged
+669.6	oh we had our legacy raider off not
+671.7	damaged not damaged
+673.2	not damaged not damaged big difference
+675.8	let's go ahead and take a look at our
+676.8	modern radar
+677.7	destroyed destroyed destroyed
+681.4	badly damaged he was a little farther
+682.8	away though and of course if we have our
+685.4	radar turned off
+686.6	lightly damaged not damaged lightly
+689.8	damaged
+690.7	lightly damaged so you can see that the
+693.0	effect holds true whether or not you're
+694.6	using a directed emp weapon like such as
+696.6	one from a cruise missile
+697.8	or you're using a traditional emp blast
+700.6	now one thing that you want to know
+701.8	about emp weapons is they are generally
+703.6	line of sight
+704.7	so if you hide on the opposite side of a
+706.2	mountain you're not going to be as
+707.4	affected as if you were on the
+708.8	other side as well so kind of keep that
+710.6	in mind with things like air bursts
+712.2	one of the fun uses for emps of course
+714.1	is trying to hit aircraft and ships with
+715.9	them
+716.2	but in order to do so you have to be
+717.8	able to get close enough with the weapon
+719.4	itself
+720.0	to actually do the deed remember emp
+722.1	doesn't just destroy radars it also
+723.9	destroys communication
+725.3	so for those of you who like to play
+727.0	using the communication disruption
+729.0	option here you can actually knock
+730.8	everybody in an entire formation's
+733.0	communications completely out so that
+734.8	they can't talk to each other
+736.4	using that particular strategy that's
+738.2	sort of a fun method to kind of
+739.6	mix things up a little bit all right
+741.1	hopefully this video was helpful again
+742.4	i'm just trying to answer some questions
+743.8	that people are asking about emp weapons
+745.8	they're definitely unique and it's
+747.0	definitely a field that is continuing to
+748.9	grow
+749.4	constantly we're also starting to see
+751.2	some basically want to call them man
+753.3	portable emp weapons which is kind of
+755.4	scary if you think about it they used
+757.1	more of a tactical rather than a
+758.2	strategic level for those of you who are
+760.2	trying to attack an s 300 site
+762.2	with an emp weapon one of the tricks is
+764.4	to try to detonate it on something
+765.8	nearby
+766.6	rather than trying to hit the site
+767.7	itself especially if you're using
+768.8	something that's stealth
+769.8	because as always whenever you use
+771.1	things that are stealth they're going to
+772.3	be picked up anyway once they get within
+773.8	a certain distance
+774.9	and they'll still be successfully
+776.1	engaged other than that enjoy

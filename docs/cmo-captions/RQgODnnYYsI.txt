@@ -1,0 +1,390 @@
+0.0	hello everyone until his command
+2.0	tutorial we're gonna be going all the
+3.6	way back to basics by back to basics I
+5.8	mean all the way back to the main menu
+8.1	as well as the whole point of command
+9.9	modern operations something I was
+11.6	realizing when I was looking at some of
+13.1	the videos that I had produced over the
+14.6	last few weeks was that some of those
+16.4	topics are a little on the tough side
+17.7	and not everybody comes with the same
+19.4	skill set so the hope with these next
+21.2	videos
+21.6	other than being shorter thumbs up is
+23.4	that you also get an opportunity to kind
+25.5	of get some of the rationale maybe some
+27.0	of the basics you might have forgotten
+28.0	so our joining me to help me out today
+30.0	is none of the one of the devs of lucan
+32.5	hey guys I'm Luke and I'm here to walk
+35.6	you through the very basics of command
+37.0	and helped you guys get up to speed and
+39.4	we're gonna have some fun with a
+41.2	sonority that Philip brought together
+42.9	awesome thanks so starting at the main
+45.7	menu when you first load up command
+47.2	quick pro tip by the way don't start alt
+49.0	tabbing when you're waiting for the
+50.0	command menu to load things happen but
+52.3	basically you're provided with a couple
+53.8	different options you have you start new
+55.4	game this would be selecting an existing
+57.0	scenario you've got the quick battle
+58.5	feature which we're not gonna cover
+59.7	today but basically it enables you to
+61.5	create a quick ASW scenario quick
+63.9	air-to-air scenario you've got campaigns
+66.4	which were basically linked scenarios
+68.2	and then of course you have your good
+69.7	old fashioned saved games as well as
+71.4	auto saves one thing I will say about
+73.3	auto saves is you have to enable auto
+75.1	saves in order for you to resume from an
+77.2	autosave this is one of those silly kind
+79.3	of video editor mistakes that people
+80.5	forget down here things get a little bit
+82.9	more advanced you have got the option to
+84.5	create your very own scenario using any
+86.9	item from either one of the databases
+88.6	and the entire planet Earth or pretty
+90.2	much anytime in the last 75 years you
+92.9	have the edit button of course you have
+94.5	the exit button below again what can you
+96.5	tell us else on this menu sure so it's
+99.9	very important to keep in mind that
+101.1	there's one very important difference
+103.3	between two modes that command can run
+106.9	in one is the scenario editor mode and
+109.1	one is the gameplay mode when you choose
+110.9	the top five options from start new game
+113.0	quick battle campaigns load save game
+114.8	resume from auto save those fire up the
+117.0	game in a gameplay mode where you don't
+120.6	have the ability to add new units or
+122.5	view things through God's idea often
+125.6	when you play a scenario I sometimes
+127.7	even find it fun to play it in game
+129.7	editor mode which is these bottom two
+132.3	buttons create new scenario and
+133.7	edit scenario that gives you full
+135.4	control over everything and so if you
+137.1	want to give yourself another carrier
+139.2	battle group you can and so that's
+141.9	that's an important distinction in
+144.0	command is the difference between game
+145.6	play mode where you're restricted and
+147.3	what you can do
+148.0	well you're restricted by realism and
+149.9	the scenario editor mode where you're
+152.1	only restricted by the extent of your
+154.2	own imagination
+155.3	sky's the limit so to speak under the
+159.7	water as well so we're today is we're
+162.0	gonna start a new game we have a neat
+163.6	little scenario very very basic scenario
+166.0	basically you have an American carrier
+167.6	battle group there we're going to be
+168.9	using to dent up some pirate ships
+170.9	scrolling down here my missions call it
+173.1	YouTube base notice up in the top right
+175.5	corner it gives you a name if there's a
+177.2	description who'd be located down here
+178.9	so for example if I wanted to locate one
+180.8	of these kind of situations it'll give
+182.7	you a general gist I unfortunately am
+184.7	not that creative also it usually gives
+187.2	you a difficulty in a complexity a word
+189.2	of warning here this does not
+191.0	necessarily be an absolute scale just
+194.2	because something is listed as one
+195.4	doesn't mean everybody's 1 is a 1
+198.0	difficulty
+198.9	likewise complexity should be a rating
+200.9	on how many units you should be
+202.2	controlling at a particular mission
+203.3	different people feel that that's a good
+205.2	number
+205.6	so for us we only have a single carry
+207.8	about a group of submarine in an airbase
+209.4	some people might find that 3 complexity
+211.6	where as a single unit would be one
+213.5	complexity any comments yes you've
+218.0	pretty much covered it difficulty and
+219.8	complexity are set by the scenario
+221.3	author they're not some objective
+223.7	measurement they're just they're just
+226.0	the number to give you a rough feeling
+227.8	of what a scenario might entail
+230.0	yikes that's gonna take some time you're
+233.5	also of course gonna get to know what
+234.8	yes so I'm gonna go ahead and load
+236.5	selected yeah after you do this you're
+239.1	going to have the side selection screen
+241.0	as well as a briefing for that side some
+244.1	Cerio designers spend a really really
+245.9	long time typing these up making this
+247.7	look like a look on an actual NATO piece
+249.6	of paper that came ripping off the wire
+251.3	kind of a thing some people have much
+253.1	general and then of course there are
+254.3	folks who just have a description on the
+256.1	previous page what to do usually these
+258.2	briefings they're gonna be giving you
+259.4	things about your situation kind of
+260.9	explaining where there's key elements in
+262.7	this case it looks like we have some
+264.1	kind of a submarine civilian
+266.1	shipping being attacked we have some
+267.9	items where there's an enemy base it
+269.4	gives you an idea of your rules of
+270.8	engagement a lot of times they give you
+272.6	a mission which will be specifying
+274.2	certain areas that you can operate in as
+275.9	well as different types of rules as far
+277.5	as which you should not be doing and
+279.6	then usually somewhere at the bottom it
+280.8	gives you a general idea in this
+282.4	particular case we're supposed to be
+283.5	killing some pirate vessels we're not
+285.0	supposed to be engaging land targets at
+286.5	all except for the one in the target
+287.8	islands we're supposed to be protecting
+289.2	any neutral shipping interesting and of
+291.4	course we're not supposed to engage
+292.2	enemy aircraft over land which is an
+294.7	interesting request I'm actually kind of
+296.3	curious any other comments um no aside
+301.1	from up top you can choose the slide
+303.7	that you decide that you want to be up
+305.2	playing and often in almost every
+307.8	scenario it's gonna be just one side it
+310.1	takes a lot of work to make multiple
+311.8	sides usable in a scenario but some
+313.9	scenario developers actually do go
+316.5	through all those all those steps to get
+318.1	those multiple sides especially the live
+319.6	scenarios the live scenarios often have
+322.2	multiple sides able to be selected
+325.2	almost like so we're gonna go ahead and
+327.2	click inter scenario what's gonna happen
+329.4	now is it's gonna load up our map which
+331.2	is the first time you see it it gets a
+333.1	little intimidating but it's actually
+334.7	pretty straightforward once we break it
+336.1	apart you're gonna get this little
+337.5	screen that's going to tell you what the
+338.7	features and realism options are for
+340.6	this particular scenario keep in mind as
+342.5	new features are added and subtracted
+343.8	actually you don't guys subtract the
+345.7	features do you usually as the add new
+347.5	features they're gonna throw in little
+348.8	things in here to kind of help us out
+350.2	yeah I want to go over the these north
+352.7	features in this scenario absolutely gun
+359.5	control but the good thing is there's a
+360.7	little description down here to actually
+362.0	give you a clue as to what that means in
+364.0	this case it simply means that you have
+365.8	to take the time to have the proper
+367.4	weapons director you're pointing out
+368.8	their target you have to make sure
+370.2	you've got line of sight you got to make
+371.7	sure that you have strong enough
+372.6	emission in order to safely engage you
+374.7	can't just fire just because something
+376.6	is in range this also means that
+379.0	electronic warfare will affect gunfire
+381.1	that's correct especially you know we're
+385.4	two you know b-29 it's got really really
+387.2	good at jamming something as simple as a
+388.8	searchlights radar in order to make it
+390.6	much more difficult to work effectively
+392.0	but that's for another day down here we
+394.6	have an option that basically gives us
+395.8	infinite ammo for bases keep in mind
+397.8	most scenario at
+398.8	will limit the munitions available to
+400.9	the person in the mission obviously we
+402.9	don't want to be taking some are in 48
+404.4	or something like that and leveling the
+406.3	place but it's just kind of neat how
+408.1	that works
+408.9	aircraft damage is a really neat feature
+410.6	it simply means that aircraft don't go
+412.2	down I think it looked at funny I mean I
+414.1	should say they get hit once but a big
+416.5	large aircraft getting hit with very
+418.1	very old-style less-lethal weapons can
+420.3	actually take a lot of punishment and
+422.3	the neat thing is the damage they will
+423.9	take can basically spread and cause
+425.9	other secondary effects for example in
+427.9	aircraft that loses an engine can't
+429.5	travel as fast if it loses its radio it
+431.7	can drop out of communication now one of
+434.5	the reasons why we developed this
+435.8	feature was air-to-air lasers you don't
+437.9	want a single hit of a laser to destroy
+440.4	an aircraft also it gives the a-10 its
+443.3	much vaunted survivability absolutely
+447.9	the Sukhoi 25 would be another one to
+449.9	check out for as far as the durability
+451.3	and I think the 27:23 had a modification
+455.0	that gave it some extra armor during the
+456.6	Afghanistan conflict back in the
+458.0	eighties also yeah I think so but either
+461.2	way if without this feature turned on a
+463.2	single 7.62 millimeter round would take
+465.6	down the biggest airplane to one hit so
+467.4	it's kind of nice to have this one's a
+469.9	little tricky this is a relatively new
+471.2	one this simply says that in order to
+473.0	talk to a submarine we have to actually
+475.4	call them up shallow enough in order to
+477.3	get radio link to them to give them
+479.4	orders how can you speak on that sure
+482.3	yeah so submarines can go when they're
+485.4	when they're deep in the ocean they
+487.0	can't communicate via radio there's
+489.7	special facilities situated around the
+492.4	world especially there's one in
+494.2	Australia there's a couple in the US or
+497.1	they have these gigantic antennas
+498.9	antennas with just extremely low
+503.6	frequency I have a feeling the waves are
+505.6	hundreds to like 500 metres long
+508.6	basically it's a way for some Admiral at
+513.1	a base in the US to tell a specific
+516.3	submarine we need to talk to you and
+519.4	then they'll come to the surface slowly
+521.1	and you know raise a wire so that they
+524.7	can they can talk by via radio but the
+528.0	the main reason for this for this
+531.4	realism setting
+532.7	is it puts submarines into an isolated
+536.6	state when they're under the ocean
+538.2	surface they can still develop their own
+540.6	contacts and track contacts but they
+543.2	can't say if there's an f-35 circling
+546.4	above the submarine the submarine and
+548.4	the f-35 can't collaborate on locating
+551.5	targets and so the submarines stuck in
+553.7	its own little world
+554.5	this happens with things like missiles
+556.4	and torpedoes as well is there just
+559.1	automatically not sharing information
+562.3	unless they have that capability like
+563.7	for example a tomahawk with a camera on
+565.7	it that's in community which has a data
+567.4	link to a ship that's launched it it can
+569.8	actually radio back battle damage
+573.9	assessment before that one tomahawk hits
+576.2	the ground so there's quite a quite a
+577.8	bit of depth of that we could almost do
+579.6	a whole video on that really absolutely
+581.5	you can definitely go crazy with it the
+583.1	whole data link thinkit's that's amazing
+585.3	technology communications jamming that
+588.1	is which is a bummer for us down here
+592.2	peatland the next setting here is
+594.9	effects of terrain type this is also
+596.3	another brand new feature which is
+598.0	absolutely amazing basically it says
+599.9	that depending on where you are on the
+601.5	ground it can affect accuracy weapons it
+603.9	can affect sighting it can also affect
+606.1	how quickly you can move which is I
+608.4	really really need from a sort of ground
+610.2	for you know kind of a perspective for
+612.4	me obviously if you're in the middle of
+614.0	Vietnam trying to drop conventional
+615.7	bombs on things you're gonna have a heck
+617.2	of a time doing the same damage you
+618.7	would is if you use something that's got
+620.3	a little bit wider of an area to it so
+622.5	that's that's a pretty cool feature and
+624.0	then this one basically it's right as it
+626.8	says on the tin okay so we're gonna come
+629.6	down here we're gonna hit begin scenario
+631.5	all right what can you tell us that the
+633.3	whole goal of command is so command is a
+638.1	piece of software kind of like Sim City
+640.4	in a sense that it's a software toy you
+642.7	can get what you want out of it you can
+645.7	play it as a video game you can play it
+647.3	as a list of scenarios to beat using
+650.3	your your intellect and guile you can
+653.5	also use it as a way to explore things
+657.6	that happen in the news like the recent
+660.0	strike by Iran on US air base in Iraq
+662.7	you can bring those units and those
+665.1	missiles
+665.8	that airbase that specific airbase in
+667.5	and see what happens in our in our
+670.0	simulation you can look at just about
+673.6	anything in command that has to do with
+675.4	with modern warfare and so there's many
+679.3	different ways to play command often
+681.3	I'll when I'm playing Command I'll just
+683.6	play around in the scenario editor
+684.9	looking at concepts that interest me
+688.5	like Iran versus the US Israel versus
+693.3	any of the neighbors they're just any
+695.6	conflict that could happen like Taiwan
+697.3	going off against China like this is
+699.9	this is a tool used by real world people
+702.9	like military professionals who use it
+706.5	to have a first draft analysis of of a
+710.1	conflict and that's what I like to use
+713.6	it for too and but there is also the the
+716.7	option to just play pre-built scenarios
+718.9	which is which is a great way to play
+721.1	command there's also when you kind of
+725.9	mix those two worlds you become a
+727.4	scenario developer you make scenarios
+729.2	for other people to play and that's
+731.4	really the the crown I would think is
+733.9	people who makes a noise for other
+737.0	people's enjoyment there's a couple of
+739.8	techno thriller books like that old Tom
+742.2	Clancy book the hunt for the Red October
+744.3	and Red Storm rising which were
+746.7	developed using the old harpoon
+751.2	pen-and-paper rules for for engage rate
+753.4	yeah I think it was called yeah yeah and
+759.1	there's a there's a new book northern
+762.2	fury where some some authors I should
+766.7	know their names and and Twitter handles
+768.3	offhand but I don't who have written a
+770.9	book about like the techno-thriller
+773.4	situation like Russia versus USSR versus
+776.4	the the West and there's a bunch of
+779.4	bunch of interesting things that happen
+781.8	and they played out the the engagements
+783.9	in command and you can play those
+785.4	engagements those scenarios are free to
+787.1	play for anyone who owns command or
+788.8	command one or command two and so
+791.4	there's there's just so many different
+792.6	choices when it comes to what to play
+795.0	with command and how to play with
+796.9	commander there's no rules you can do
+799.2	what you want you can what one thing I
+801.0	really like doing is taking someone
+802.3	else's scenario and editing it after the
+805.1	scenario becomes a lot easier if you
+806.6	give yourself a few nuclear weapons and
+808.8	a few carrier groups and becomes a lot
+811.9	easier to handle one if twenty two okay
+817.4	so that's gonna be about it for this
+819.4	video in the next video we're gonna get
+821.1	into what the different layers are what
+822.8	all these crazy circles and rings you
+824.6	see are with these buttons appearance
+826.5	and in later videos we'll actually
+827.8	explore how to attack how to move and
+829.6	how to manage parasite aircraft any
+831.5	closing comments oh no I think we've
+834.0	just about covered it I enjoy

@@ -1,0 +1,335 @@
+0.0	hello everyone in today's command
+1.9	tutorial we're going to be taking a look
+3.2	at the effects that land-cover has on
+5.4	spotting in attacking ground units now
+8.5	land cover in general is a relatively
+10.2	new feature to the command universe it's
+12.0	an awesome feature because it really
+13.9	adds a neat little dimension to ground
+15.8	combat especially air-to-ground combat
+17.8	one thing I want to say is in my video
+19.9	today I'm not going to be going into
+21.3	what happens if the enemy unit is moving
+23.1	because that's just going to increase
+24.6	the probability of detection I'm also
+26.3	going to be leaving out the radar aspect
+28.1	although trust me trying to use a radar
+29.8	beam into a jungle is a tricky thing to
+31.5	do so let's go ahead and take a look at
+33.1	it first things first you want to make
+34.7	sure that the scenario that you're
+35.8	running has land cover activated so in
+38.7	this case I'm the scenario editor front
+40.1	what the scenario features it options
+41.9	you want to double check to make affects
+43.6	of terrain type enabled second thing is
+46.0	how do we take a look at commit and land
+47.5	cover it's pretty simple if you go to
+48.9	the view option and click on land cover
+50.4	and then the other thing I like to do -
+52.3	lets go to map settings I like to go to
+53.9	terrain type legend I'll pull this off
+55.5	to the side real quickly and last but
+57.3	not least if you actually look at your
+58.6	mouse it tells you exactly what kind of
+60.0	land is covered that's your mouse a
+61.5	pointing at this time so the good news
+63.4	is there's not like a thousand different
+64.7	varieties of land and not bad news is
+67.2	there are some varieties and they do
+68.7	make some difference in general and
+71.5	again somebody's probably gonna say in
+73.1	comments in about two minutes saying
+74.4	well yeah this was a ten minute video
+75.8	explaining something we already know
+77.0	well son says it helps to see in general
+79.3	you have your forests which are going to
+81.2	be very difficult to spot unison but not
+82.8	impossible
+83.5	you're gonna have your open kind of
+85.2	barren terrain like I was like to go
+86.7	over Africa which I think there's got a
+87.9	beautiful collection of different
+89.1	terrain types in it you can also of
+90.8	course you know go to the Middle East in
+92.3	all places in Asia and then of course
+94.4	you have the weird ones are weird ones I
+96.8	should say it's not that weird is that
+98.4	gonna be urban built up I suppose your
+100.1	crop lands and of course you have your
+101.3	snow and ice and barren although for the
+103.0	life of me I have a real tough time
+104.5	finding this particular one but I
+105.9	believe there's a little bit over here
+107.3	so anyway now that you know the
+108.9	different types and what the color
+110.0	coordination knows I want to point out
+111.9	something really really quickly if you
+113.8	were to zoo way way way way way way way
+116.6	way in on a section of map you'll
+120.2	probably observe that as the land cover
+122.9	starts to update obviously it's taking a
+124.7	minute to do this it will actually give
+126.8	you different lane covers within each
+128.5	one of these little pixels of land
+130.1	covers and will deal with some
+132.0	complications for that in
+133.3	so no but let's take a look at what I've
+134.9	done with my scenario now that you've
+136.3	kind of seen how everything is I've
+137.8	taken a bunch of f/16 so these are girl
+140.1	fashion cm block fifty twos and I place
+142.7	them all around basically you can see
+145.4	South America here what I've done is I
+147.4	put them at a constant distance to an
+149.2	identical unit on the ground I've given
+151.3	them a standard order for climbing
+152.9	standard order for descent as well as
+154.8	how fast and a high everything is
+156.6	basically been built in to make this as
+158.1	even a scenario as possible so what I
+160.7	wanted to demonstrate first is just how
+162.8	land cover affects the ability to spot
+165.9	targets I'm actually gonna shut this off
+167.2	for a second I'm gonna go and hit play
+168.7	right speed time up a little bit
+170.6	then just start here and dinging in a
+172.1	second and let that go for just a few
+176.1	more moments all they have 16s are
+178.4	turning pause okay
+180.0	so let's see what everybody found I'm
+182.8	gonna go ahead and close this out also
+184.3	because this is just gonna get in the
+185.5	way real quick open this up and I'm
+187.3	gonna go ahead and say new ground
+188.3	contact so the first thing we detected
+190.4	which is probably not a surprise again
+192.2	you're interested in distances at the
+193.7	time is this particular unit here I'm
+195.7	actually gonna flip this to god i mode
+197.3	this is the unit who is in the woodies
+199.7	event I'm sorry in the grasslands and
+201.6	when you think about it immediately
+202.7	you're gonna go while grasslands is I am
+204.5	pretty obvious second unit you'll notice
+206.6	it was detected almost simultaneously at
+208.4	the same level of detection as our
+210.5	grasslands was the wind snow and ice
+212.5	next level detection if you take a look
+214.8	no surprise it's going to be croplands
+216.7	which again it's going to be a little
+217.9	different than mosaic the next one which
+219.9	was detected again this is all virtually
+221.8	at the same time was wetlands and then
+223.9	finally of that group the last one that
+226.2	was detected was our barren so you're
+228.6	gonna notice all of these land types all
+230.9	have about equal as far as how easily
+233.3	they are detected if we were actually to
+235.2	flip up the distances real quick you'll
+237.3	notice that most of them were somewhere
+238.8	in the 4.4 to 3.3 nautical mile range
+241.8	but again you can see pretty clearly
+243.3	that as you started getting a little bit
+245.0	greener and a little bit more wooded it
+246.7	took a longer time to spot the target
+248.5	whereas if you had something way way out
+250.3	in the open like in the grasslands here
+251.7	if this would affect it keep in mind
+253.7	spotting is affected by line-of-sight so
+256.5	in a couple cases you might have run
+257.7	into a situation where we just could not
+259.3	see the target that we were looking at
+260.7	so that brings us to the three weird
+262.7	ones yes I said three I didn't say two
+264.9	you're sitting there going okay what do
+267.0	do you notice this one took a little
+268.8	longer to detect that particular one was
+270.6	to the woody savanna and you probably
+272.0	think if you had to guess this is going
+274.0	to be our one out in the woods here this
+276.8	is going to be cropland vegetation
+278.6	mosaic so this is where if you want
+280.8	imagine you're flying over especially
+282.0	this part of the world where you have
+283.6	enormous amount of crop lands and
+285.2	basically trees kind of dotting inside
+286.8	of it that's exactly what this is which
+288.9	brings us to this one this one no
+292.1	surprise is your forested one and
+294.1	there's different kinds of forests and
+295.3	they have kind of a slightly different
+296.6	change you'll notice that when we were
+298.6	looking in the cropland we took us 3.2
+300.5	nautical miles to detect the target
+301.8	you'll notice when we were looking
+303.3	through the forest it was half of that
+305.8	distance to detect the target so that's
+308.2	a tremendous difference especially if
+310.4	you're doing reconnaissance runs so I
+312.6	mentioned three and I only showed off
+314.4	two you're probably going well what do
+316.0	you mean well let me show you something
+317.6	real quick did you notice that there was
+319.4	a unit right here that nobody actually
+321.2	detected surprise it's your urban one
+324.2	this urban object whenever you have an
+327.2	urban environment trying to hide a
+328.4	vehicle or a person inside of it is an
+330.1	easy job my f-16 was never able to
+332.8	acquire this one even though they flew
+334.9	directly over the top of it at
+336.4	relatively low altitude so I'm actually
+338.5	gonna do real quickly to kind of finish
+340.0	up this thought so I'm gonna grab my
+341.6	have 16 I'm gonna tell them to fly
+343.0	directly to him basically at minimum
+345.3	altitude and see whether or not we can
+347.1	actually acquire it never ever acquires
+350.5	it even at minimum amount actually that
+352.9	has clearly not been about to do that or
+354.7	is it I got to check the altitude local
+356.1	it's 417 feet go down there we go let's
+359.4	see if you can acquire him now there it
+361.5	goes
+362.1	check this out distance 1.2 nautical
+365.6	miles so you have to be tremendously
+367.5	close to spot an object in an urban
+369.3	environment so what else does land cover
+371.6	effects well another one is going to be
+373.4	how fast a unit can move I'm not going
+375.2	to demonstrate this but just know that
+377.0	the more dense the terrain the slower a
+378.7	unit will climb through it also if you
+380.9	have something like a slope a slope will
+382.6	also slow a unit down which brings me to
+385.1	my final point with this video today and
+387.0	that's the impact that terrain is going
+389.0	to have on attacks so let me go down
+391.4	here real quickly so what I've done is
+392.9	have set up a group of a10 sees they're
+394.9	all basically equipped exactly the same
+396.5	way they're carrying CPU
+398.3	and they're gonna try to dent up these
+400.0	different units one of these units is a
+401.9	group of twelve m113s that are hiding in
+404.1	the woods there's another one hiding in
+405.5	the savanna which you remember was kind
+406.9	of open and of course we have one hiding
+408.9	in town somebody go ahead and just speed
+410.7	this up real quickly so you can get a
+412.0	general feel for what this is gonna look
+413.5	like here we go oh no I hate it when I
+418.7	do that you have to actually tell them
+420.4	to attack or they don't attack very well
+422.1	who knew right let's go ahead and grab
+424.1	these guys oh there we go oh we haven't
+426.8	acquired them there we go
+427.7	bingo tech that one check that one check
+431.1	that one all right let's try that again
+432.3	sorry about that
+433.6	all right zeroing in here we go
+436.7	CPUs away unpause all right check it out
+443.6	you can see that our unit who was hiding
+445.8	in the woods lost a lot of vehicles it's
+449.5	all the way down to two out of twelve
+451.2	the one hiding up here in the Savannah
+452.8	same situation the one hiding in the
+455.0	urban environment actually did pretty
+456.7	well so we'll take this one step too far
+459.6	just to kind of give you an idea I'm
+463.4	gonna go ahead and I'll grab my eight
+464.8	tens here I'm actually going to replace
+466.4	them with eight tens that are carrying
+469.0	mark 84 is because I want to show you
+471.5	what happens if you use bombs as opposed
+473.6	to using CPUs just so you can see what
+477.2	the effect difference is here again this
+479.1	is kind of interesting stuff I'm gonna
+481.4	grab that perhaps mark 84
+483.1	oh it's the last time we've used so mark
+485.9	84 and an 8/10 I don't know everything's
+488.5	precision-guided these days all right
+491.1	it's gonna pause okay so we're gonna
+493.3	have to go here attack go here attack
+496.8	and go here and attack all right let's
+500.1	see what happens when we use
+500.9	conventional bombs versus CB used for
+503.5	this particular purpose all right
+505.5	they're dropping down to low altitude
+506.5	here we go that was amazing you observe
+513.7	that when we use conventional bombs they
+516.2	had a better time of doing damage only
+518.3	the one got lucky over here hiding in
+520.1	the savanna both of those other units
+521.9	were basically plastered so it's really
+524.3	important that you select the correct
+525.6	weapon when dealing with dense
+527.4	environments not only to be dealing with
+529.6	the difficulty in detecting
+531.2	and engaging them so again I thought
+533.1	that was pretty straightforward little
+534.5	thing there let's go actually see your
+535.7	total losses I'm always kind of curious
+537.1	you know let's take a look here twelve
+539.1	mark 84 's and we got 35 AP C's man that
+543.2	is uh that's a good day that's a good
+545.0	day
+545.4	all right so FLE that helps you realize
+547.1	a little bit how land-cover can help you
+548.5	actually one more thing one more thing
+549.6	I'm sorry yeah usually I don't edit cuz
+551.9	it just saves a little bit of time let
+553.6	me show you one more quick thing I'm
+554.7	sorry what really thing I really really
+557.0	like to take advantage of when I design
+558.5	scenarios with land-cover
+560.0	is to take advantage of the fact that I
+561.9	can use the land cover at such a small
+563.5	scale it gives me the ability to place
+565.7	units in places that make them extra
+567.5	irritating to attempt to engage I'm
+569.8	gonna go ahead and clean that out let
+570.8	sue mount for just a second as that kind
+572.2	of reach Rawls real quickly anytime
+574.8	there it goes okay cool so for example
+577.3	if I had an engagement that was going on
+579.1	in here I know that I could do something
+580.9	like coming over here and placing let's
+582.7	say let's grab a facility real quick
+584.4	something I want to protect very very
+586.2	carefully I could say let's say I'm
+587.9	hiding a bunch of B and P twos for
+589.8	example and then I've noted like for
+592.1	example over here in this part of the
+593.7	town you know I'd sneak in something
+595.2	that's extra irritating as es u23 for
+597.9	example do from the DDR and then if I
+600.6	want like the trapping target I could
+602.2	come out here to the crap lands and go
+603.7	like this and I could put something nice
+605.3	and obvious that seems like an easy
+606.7	thing for them to engage T - 55 put that
+611.6	right there and then of course right
+612.9	next to the t-55 in the hard to detect
+615.5	location I'll put in an s a 15 for
+618.6	example and then of course you could set
+620.7	the range to this F to a 15 to like this
+623.2	wide so the moment that the enemy is
+625.1	like oh a freebie on this tank
+626.5	it'll never see that s a 15 before it's
+628.9	able to shoot up and to basically knock
+630.6	them right out of the sky and then get
+632.3	chewed up and spit out by the zsu 23 for
+635.3	which is sitting right over here in the
+636.7	dense part of town all right hopefully
+638.5	this video is helpful again land covers
+640.4	a great way to add an extra little
+641.8	dimension to engagements obviously when
+643.9	you're dealing with things like oceans
+644.9	land cover is a slightly different issue
+646.8	because it's not really there but
+648.5	believe it or not radars are impacted by
+650.5	weather and sea height so basically you
+652.4	create the terrain when the weather is
+654.1	not as good enjoy

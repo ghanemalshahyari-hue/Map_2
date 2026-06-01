@@ -1,0 +1,208 @@
+0.2	hello everyone in today's command
+1.6	tutorial we're going to take a look at
+2.9	the lua function called
+4.2	messagebox now this sounds like it's not
+6.4	going to be the most exciting thing in
+7.4	the world but it's actually really
+9.0	really good as far as coming up with
+11.0	neat ways to allow the user to customize
+12.7	their scenarios after the scenario has
+14.4	already been built
+15.3	so let's go and take a look at this
+16.2	function so i'm going to go up to the
+17.4	editor bring down lua script console
+19.3	and here it is so the message box
+21.5	function is accessed pretty
+22.8	straightforward
+23.7	we're simply going to type in send edit
+25.4	underscore msgbox
+27.8	left parenthesis so there's two pieces
+29.7	to the message box the first one is the
+31.4	string that we display
+33.3	saying are you there and the second half
+36.6	is going to be the actual
+38.3	type of message box so if i do it as a
+40.5	version one and i quickly hit run
+42.6	you're going to notice that it's going
+43.8	to give me ok or cancel
+45.8	now if i come here and say type 2
+47.9	instead of ok and cancel
+49.4	i get abort retry and ignore now if i
+52.4	want to get a little bit crazier and i
+53.7	want to go ahead and use a type 3
+55.8	i would get a yes no cancel button now
+58.7	you can kind of see where this is going
+60.1	if i do a type 4 i get a yes and no
+63.0	and of course if i do a type 5 i get a
+66.3	retry and cancel
+67.8	now you're probably sitting and going
+69.0	well that's kind of nice because you
+70.4	could you know print what
+71.7	item somebody has selected for example
+73.8	let me go ahead and get myself an
+74.9	aircraft real quick
+76.2	i am always a fan of the f16 cm
+81.1	2008 is the version i always pick let's
+83.0	go ahead and do that
+84.2	pretty good i could do something like
+85.5	this i could say uh
+87.9	selected local selected
+91.9	equals we could go ahead and get the
+93.5	function for get selected
+96.2	would get selected selected unit
+98.4	selected unit you got to be careful
+99.8	because
+100.0	i always get that one backwards for
+101.8	whatever particular reason
+103.4	sel selected
+107.2	uh get selected selected i always get
+110.7	this one yeah there it is
+112.7	we're gonna do send edit selected
+116.2	units dot units of one
+119.8	so then i could come in here and i could
+121.3	say dot dot dot
+124.6	change out my string and just do
+126.8	selected
+128.9	oop let's see here uh selected is the
+130.9	name of this let me just double check to
+132.3	make sure that's working properly before
+134.0	i get too carried away here
+136.3	all right let's go ahead and print let's
+137.9	make sure it actually got something
+142.2	ah see that work correctly
+145.4	and just double check that selected type
+147.8	five
+149.6	ah because basically we're trying to
+151.2	pass a table onto it
+152.6	so if i wanted to do dot name
+155.8	there we go and you can see now it
+157.7	actually can show you exactly what
+159.2	you've selected just
+160.4	like that so let's go ahead and see why
+163.2	this is so cool
+164.5	so let's go ahead and change this and
+166.6	say uh
+167.6	let's maybe change proficiency
+171.1	change prof and now we're going to go
+173.4	ahead and use a yes or no
+175.4	style box so let's go over to message
+178.1	box one more time again about yes or no
+179.9	version is going to be a type
+181.4	4. let's go ahead and check it real fast
+184.8	make sure everything's working good now
+188.0	let's get the response from the user and
+190.6	do something with it
+191.6	so i'm going to say local let's say
+193.4	response equals
+194.8	and then i'll go ahead and print the
+196.0	response so that you can all see exactly
+197.7	what it looks like when you do it
+199.0	so if i hit run again press yes notice
+201.2	it prints yes
+202.2	run it again press no so that means we
+204.7	can now say
+205.6	if response equals yes then
+209.4	ah there's a python oopsie we could do
+212.5	something like
+213.4	uh send edit
+216.7	set unit and we could say something like
+219.4	name
+219.9	equals selected side
+223.0	equals test and then we could say
+224.8	something like proficiency equals
+227.2	four let's make sure you get your symbol
+230.5	is correct
+233.2	got it all right let's go ahead and test
+234.8	it real fast change prof
+236.7	no obviously nothing's going to happen
+238.3	because we said no run it again press
+240.5	yes
+241.5	and i've goofed up with my proficiency
+244.0	uh 9 out of 10 times
+245.5	trying to call a new value that's going
+247.7	to be the correct name
+249.2	selected selected.name i actually have
+252.2	to go double check this real quick
+254.4	let's see here i think i always make
+256.0	that mistake i always have a handy dandy
+257.8	little guide real quick that i keep kind
+259.0	of handy in case i need it
+260.6	uh let's go get that up real quickly
+264.7	oop i don't want that one that's a good
+266.1	script too but it's not exactly the
+267.4	script that i'm looking for hey there we
+268.9	go
+270.2	set unit uh just double check to see
+273.1	where i messed up here i see where i
+274.9	messed up
+280.4	let's go ahead and double check that
+281.4	again real quick i think i see what i
+283.7	did
+285.4	let's come down here change my
+286.7	proficiency
+289.4	helps if you spell the word correctly
+293.9	hmm that's a little unusual i see it
+299.8	you guys are supposed to shout louder so
+301.2	that i can hear it got it
+304.2	and now if i actually come back to this
+305.8	aircraft let's go ahead and create
+306.9	another aircraft real fast
+311.5	see that this one is a regular this one
+313.1	over here is now an ace
+315.0	so you can see that that is a
+316.0	spectacular way to go ahead and use that
+318.5	as a way to go ahead and change things
+320.4	in a scenario you know you could have it
+322.0	basically say shall i add sam's
+324.1	if you pray press yes you could run
+325.7	through a loop and add a bunch of sams
+327.0	you could say do i want to change
+328.0	proficiency do i want to change name
+329.8	and you could use this message box
+331.2	function to go ahead and kind of zip
+332.7	through
+333.2	and set all those items literally at the
+335.1	beginning of the scenario
+336.4	now if you wanted this to appear when
+338.5	your scenario actually started
+340.2	which you'd have to do is go up to
+341.4	scenario we're going to do event editor
+343.6	i'm going to do events
+344.9	create new event i can say scenario
+348.3	has started and then you can come down
+351.1	here make sure repeatable is off
+353.2	then you could edit triggers we could
+354.7	add a new trigger down here
+356.2	we could set it to be a specific time we
+357.9	could also do scenario is loaded
+360.2	so we could add that one there's nothing
+361.5	special to that one we'll go ahead and
+363.1	add this one in
+363.9	just like this and then what you want to
+366.0	do is you want to go ahead and make sure
+367.8	that your action now
+369.2	is a lua script so in this case we'll go
+372.0	ahead and create a new one
+373.1	we'll say send start message
+378.2	box perfect because then we could come
+380.2	down here and we could go ahead and just
+381.8	call the script
+382.6	basically the same way we wanted to
+384.6	before
+385.7	[Applause]
+388.7	all right go ahead and come down here
+390.0	paste that in and of course you put all
+391.6	your code down here for whatever you
+393.0	want
+393.4	you press ok and as soon as we start the
+396.3	scenario now
+397.2	moments later as soon as you fire
+399.0	everything you're going to go ahead and
+400.7	get yourself that particular message box
+402.6	that's going to pop up
+403.5	and allow you to pick what you'd like to
+405.3	do in that particular scenario
+406.9	it's just a really slick method and it's
+408.6	like i said relatively simple to play
+410.2	with
+410.7	other than that enjoy

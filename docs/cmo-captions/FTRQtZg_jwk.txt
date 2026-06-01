@@ -1,0 +1,981 @@
+0.0	hello everyone today's command tutorial
+2.5	we're gonna be continuing the series
+3.5	after our layers video as well as basic
+5.6	overview video with you know how to
+7.5	control units manually on this scenario
+10.1	I should say this little video we are
+11.6	not going to be looking to try to give
+13.2	you the ins and outs of how to do
+14.5	parasite operations such as aircraft and
+16.7	ships and tactics and all that other
+18.7	stuff that is for complete of the day
+20.4	this is just the absolute basics of
+22.1	basically moving your aircraft around
+23.6	and you know how different operations
+25.2	work any quick comments before we get
+27.4	rolling blue ghen hey guys I'm Luke and
+29.9	I'm here with Phil on this this video
+32.0	covering just the basics you've got it
+34.4	we're just gonna look at the very basics
+36.5	of unit movement throttle and altitude
+39.9	and a little bit of em come and attack
+43.0	you all right absolutely so first things
+45.8	first when you click on a unit if it's
+47.7	in a group you're gonna get this little
+48.9	group view here if you click on a single
+50.4	unit you're gonna get that if you ever
+51.9	need to check what unit you've got
+53.1	selected just always look up here in the
+54.7	top left corner it does a really really
+56.1	nice job of kind of breaking it down
+57.5	piece by piece plus the quantity keep in
+59.8	mind you don't wanna have like 900 units
+61.4	you know do something like this in order
+62.8	everybody to move at the same time
+64.2	because then everybody's gonna try to
+66.0	move at the same time and of course I
+67.8	could get things things a little bit on
+69.2	the more complicated side now one thing
+71.1	you're probably sitting here going is um
+72.6	can you tell me more about this unit
+74.4	other than you know the fact is to the
+75.9	Boeing fighter attack model 1920 it
+79.0	tells you which direction it's facing
+80.2	tells you it's speed and its altitude
+81.9	now a new feature which is really really
+83.8	cool in this version of command is if
+85.9	you hold down the control key over a
+87.5	unit it gives you this little pop-up
+89.2	where it'll actually give you
+90.5	information such as what weapons we have
+92.5	now you seal that crazy air surf land
+95.1	sub stuff and it says to mr2s r6r and
+98.8	all that other stuff it tells you how
+100.3	many of each particular weapon system
+102.1	that you're actually carrying it also
+103.7	tells you if the sensor status is turned
+105.3	on it also gives you a neat little
+106.8	picture of the under the f-18 up there
+108.4	now of course if we want a little more
+109.8	details we can come over here and click
+111.5	this one what can you tell us about the
+113.8	unit status window so yeah this is
+116.6	called the the right column the year the
+118.3	first panel in the right column is the
+120.5	unit status that pretty much is all the
+122.2	information about that one specific unit
+124.1	that you've selected you've got the the
+126.9	name up top the proficiency a picture of
+130.0	it a link to the database which is that
+132.2	a
+133.0	Sehorn up there yeah there you go brings
+135.4	up the database which has a whole pile
+137.6	of more information that's almost a
+138.7	whole separate thing this is definitely
+140.5	for another day there's quite a bit to
+142.1	this database know that you can access
+143.8	this at any time and any of the blue
+145.5	text or hyperlinks so for those of you
+147.6	who are not sure what a jace hours for
+149.1	example you can actually click on it and
+150.6	a lot of times they'll give you
+151.8	information on it plus its capabilities
+153.8	but anyway yeah you've got individual
+157.3	unit message log which is just a button
+159.3	that shows any information that's
+161.0	happened to that unit you don't really
+163.4	have to keep a keep an eye on this when
+165.4	you're when you're playing it's just
+166.8	there if you're if you're really
+168.2	interested in it
+169.4	next is its load oak aircraft have a
+172.2	load up which is the configuration of
+174.2	weapons and munitions and bombs and pods
+176.3	underneath the aircraft that's one of
+178.0	the big reasons why aircraft are so
+179.3	flexible is that they can be
+180.6	reconfigured within a few hours
+183.3	you've got the side you've got the
+185.2	course you've got the speed you've got
+187.0	all this other information damage blah
+190.0	blah blah basically everything about an
+192.6	aircraft it's available here on the
+194.8	right column absolutely so that's gonna
+197.2	give you it now if I click on a ship
+198.5	it's gonna be the same general
+199.7	information some ships and some targets
+202.0	may actually have parasite things such
+203.9	as boats and aircraft but that's gonna
+205.4	be for another day I'm not gonna worry
+206.7	about that too much
+207.3	notice of course moving to altitude
+209.0	control because we're on a ship now of
+211.2	course if we have something here if you
+213.5	go back and select that group this is
+215.3	actually selecting a group you can see
+216.8	the group composition in the top up
+218.4	right underneath surface group in the
+220.6	top right on the right column yes you
+222.4	can see the four ships that make up the
+224.1	group because a group this is four ships
+226.8	and in command it you can group them and
+229.5	that makes it fun easier to handle they
+231.8	move in a formation they they move at
+235.7	the same speed they're trying to
+236.7	information with each other but it's
+238.6	important to note that the group is not
+239.9	a real thing it's just a metaphor on top
+243.1	of these four real ships absolutely you
+246.2	know one thing I will say too is of you
+247.9	probably notice these extremely
+249.3	obnoxious name for this aircraft that I
+251.0	put here you can actually click on a
+252.5	unit and know you can right-click I
+254.8	believe it said on this version the
+256.8	other one actually I'm just gonna do
+258.1	what I always do I just press the R key
+259.6	and you can actually come in here and go
+261.4	ahead
+261.7	type in exactly what the name is what
+263.7	are these days they're gonna bring in
+264.8	the shortcut key ctrl a for select all
+266.8	but I can dream so I can call cool plane
+269.7	for example now from a programming
+271.6	perspective that's not a terribly
+273.1	specific name for something but again if
+275.9	you needed to do something nice and
+277.6	logical like red leader for example you
+280.1	could go ahead and names any unit at any
+282.1	time that you control with those
+283.6	particular items another really you can
+285.4	also name contacts we may say that
+289.9	absolutely so if you take a look here
+291.7	I've got this unknown skunk right here
+293.5	skunk number 45 you can actually name
+295.9	this thing if you do something nice and
+297.5	logical like unknown ship spotted at
+302.5	11:04 or something like that to make it
+305.1	really really specific however I think
+307.1	when you rename these contacts and if
+309.5	say you sent a helicopter to go take a
+311.2	look at the name on the side of the ship
+312.7	it'll overwrite that with the real name
+315.3	I think I'm not 100% sure it's ahead of
+321.5	ourselves but that's okay he's gonna go
+324.4	take a peek this particular aircraft has
+326.4	a look there we go pause tada
+328.9	now notice yeah it overrode our name
+331.8	with this commercial tanker because
+333.0	that's exactly what it is and notice as
+334.6	soon as we knew more about that condone
+336.1	contact it was able to give us
+337.4	information and the database entry which
+342.8	is an important thing is so we didn't
+344.5	know like it's just a blip on a radar
+346.2	until you get close enough to take a
+348.3	look at it with a camera and then you
+349.5	can make an assessment as to the status
+351.6	absolutely you're not gonna be counting
+354.2	individual bullets sitting on you know
+355.6	twenty millimeter cannon or anything
+356.9	like that but it will give you some good
+359.1	details which is actually kind of cool
+360.6	so actually let me go ahead reset arson
+363.3	they're really really quickly there
+365.5	alright so that's the basic gist as far
+368.4	as actually looking at units and knowing
+370.3	a little bit about what you detail again
+371.8	this is for another day one other thing
+373.6	I will point out about aircraft and
+375.0	ships and anything that has limited fuel
+376.7	is down here it's going to tell you what
+378.5	the current fuel status is it'll give
+380.1	you how many kilograms of fuel each
+381.4	carrying how much is mission fuel
+383.2	mission fuel I believe it again blue can
+385.2	don't correct me if I'm off here is
+386.4	basically how much fuel I have before I
+388.2	have to turn around ahead home it gives
+389.9	you a reserve as well
+391.0	tells you how much you're burning at
+392.1	this time 37 kilograms a minute that's
+394.3	actually quite it's about
+395.6	for USD that's probably about $80 or the
+398.1	gas per minute there's quite a bit it
+400.0	tells you how much you have but more
+401.3	importantly do you see how much time you
+402.4	have before bingo fuel as well as its
+404.2	range now if you have the map setting
+406.6	turned on for aircraft range it gives
+409.1	you this groovy little blue ring which
+410.6	will actually provide you a visual for
+412.3	what that actually looks like and that's
+414.6	just based on your current consumption
+415.8	that's based on your altitude and your
+418.2	throttle and also the damaged state if
+421.3	you have a damaged engine for example on
+424.3	an aircraft if you have a b-52 and half
+426.9	your engines are damaged your range is
+428.6	significantly reduced
+429.7	absolutely and also if you're carrying
+431.3	munitions on your wings that will
+432.6	definitely as well yeah now other night
+435.5	feature here is it tells us for about 80
+437.0	nautical miles away from our home base
+438.6	the cvn if it's armed Carl Vincent I
+440.9	should say down here now keep in mind if
+442.8	you have in flight refilling capability
+444.7	you would actually be told how close you
+446.8	are to something like an aerial
+448.1	refuelers as well which is a super cool
+450.3	way to go ahead and kind of plan out
+451.6	missions as you do things any other
+454.4	comments on the unit status I think
+456.1	that's pretty good I'm sure we go into
+458.1	much more detail but that's a good
+459.4	overview all right so now you probably
+461.6	notice you have these doodle boxes here
+463.7	this is your unit altitude and speed
+465.2	menu and there's actually a
+466.9	corresponding version of this up here
+468.7	called throttle and altitude now in
+471.0	order to tell a unit if you of course if
+473.1	you'da has no course it actually just
+475.1	sits there and basically does air donuts
+477.1	if a ship has no course I believe it
+479.5	basically keeps going in at same speed
+480.7	until you tell it otherwise correct yeah
+483.0	so now if we want this aircraft actually
+485.3	goes somewhere we can click on it now
+487.8	this is very different than other
+489.0	real-time strategy games instead of
+490.7	right-clicking on the map because it
+492.0	just moves our map
+492.8	or left clicking on the map you're
+494.4	actually going to click on the plot
+495.4	course button or if you prefer you can
+498.0	press f3 which enables you to get this
+500.4	cool little arrow that lets you plot
+501.8	your course now one thing I really love
+503.7	about this is it tells you how far away
+505.4	your course is plus the degrees so if
+508.0	you were one of those people who like to
+509.5	get a little bit artistic with things
+511.0	you could sit here and not do 135
+513.3	degrees then from that particular
+515.0	position you could come around 225
+517.5	degrees and from that position you come
+519.5	up this way and you can swing back oh
+521.3	I'm so close and you could do things
+523.2	like perfect boring squares like that
+524.7	just because you can that's basically
+527.4	how you're going
+528.1	order up a course we could also drag and
+530.5	drop those little waypoints yes so now
+533.1	if you take a look after I plan in my
+534.6	course let's say I want to create a new
+535.9	one well there's a couple different ways
+536.8	we could do that if I go back to
+538.1	movement it will delete my original
+540.4	course so let me go ahead and replace it
+542.0	and you did that by pressing f3 the unit
+545.2	after me just kind of overrides the
+546.9	course it allows you to plot a new
+548.5	course absolutely now what I can
+550.5	actually do is click on this Waypoint I
+552.1	can drag this like for example I want
+553.7	him to go buzz the airfield on his way
+555.3	back over to this combat Air Patrol you
+557.4	will actually follow that now are there
+559.2	any scenarios where a aircraft would not
+561.6	or a unit I should say would not follow
+563.3	its platted course it'll basically it'll
+569.2	try to evade any missiles that are
+570.4	coming in if it is involved in a
+572.3	dogfight of course it'll you know turn
+574.2	around it'll undo a whole bunch of turns
+576.2	trying to get into the best position in
+578.2	the dogfight if it's going to head to a
+580.5	tanker it'll head to a tanker it'll not
+583.0	follow its course but it'll go to the
+584.7	nearest acre or whatever tanker is
+586.7	assigned to it if it gets damaged and it
+590.1	has the dock basically there's a bunch
+592.2	of reasons why the aircraft might not
+593.6	follow its course but whenever it can
+597.0	it'll try and follow that course yeah
+599.0	something to watch out for too is
+600.5	sometimes you'll order to make an attack
+602.2	but it will follow the course that never
+603.9	actually get arranged in the attack but
+605.8	again that's a special case and that can
+607.9	be avoided based on what you set your
+609.4	doctrine to but in general it's just a
+611.4	good way to set it now of course if
+613.0	you're a clever player and you watched
+614.2	our other video you're probably sitting
+615.6	here going well let's get a little more
+617.2	serious here and you know let's plan a
+618.9	nice sneaky scenario here well the great
+621.4	thing with all these great map layers is
+623.1	now we can actually use these courses to
+625.1	go ahead and plot a very very precise
+627.0	method to get through another thing just
+629.9	just before we can we we lose the topic
+631.7	is if you plot a course like let's say
+634.2	this this valley attack and then you
+635.8	hold down ctrl and left click on one of
+637.8	the waypoints and hold down ctrl and
+641.7	drag it's a new weight point so you can
+644.5	edit away you can edit your course using
+646.8	back so hold down ctrl and left click
+649.8	drag off on an existing Waypoint and you
+652.6	can create new white points that way and
+654.3	that's called learning something you
+667.1	want to think about is if we were
+669.4	planning to say sneaking through this
+670.9	valley here let me reset that real
+672.5	quickly we wouldn't want to be doing it
+675.2	at 36,000 feet we'd probably want to
+677.5	change route higher speed in a lot of
+679.4	cases we'd probably want to change the
+681.0	speed that we're trying I'm gonna try
+682.2	that control thing again we'd want to be
+686.4	changing the speed and altitude of the
+687.9	aircraft now there's a couple different
+689.2	ways to do that the first and simple
+691.3	ways if I have just the aircraft not the
+693.4	Waypoint selected I can go up here and
+695.5	go to throttle and altitude and this
+697.4	gives us this handy-dandy little menu
+698.9	where I can actually click and drag to
+700.8	change the speed that the aircraft is
+702.4	traveling at or I can pick through these
+704.4	basic presets
+705.4	loiter is basically I'm just pulling
+707.3	around cruises I'm trying to get the
+709.1	best range I can for the amount of fuel
+710.6	military is I'm in a hurry afterburners
+713.1	I'm really in a hurry yes so the motor
+716.1	is you're trying to maximize the amount
+717.8	of time in the air cruises you're trying
+720.0	to maximize the amount of distance you
+722.5	cover so that's that's the important
+724.6	difference between boiler and cruise
+726.4	loiter is you're in the air for the
+727.7	longest cruise your problem the most
+729.7	distance absolutely and there's some
+731.3	times when you're going to be setting up
+732.5	missions again for another video where
+734.4	you're gonna want to use either one of
+735.9	these depending on what your point is
+737.6	with the particular mission so I want to
+739.2	be hanging around for a long time order
+740.8	I want to cover the most distance in my
+742.5	patrol zone but that's for another day
+744.3	so after we do that we have our altitude
+746.9	and depth
+747.7	obviously for submarine we'd start at
+749.4	zero feet and go down if we're an
+750.9	aircraft we start at zero feet go up one
+753.0	great feature is it'll actually mark
+754.8	where the different cloud layers are on
+756.7	a given scenario so that if you hours
+758.6	for example saying I want to say just
+760.3	inside the cloud layer I can actually
+762.5	drag this and put myself in there and it
+764.5	would tell me basically where that
+765.8	middle of the cloud layer is in this
+767.4	case would be about medium altitude
+769.0	about 12,000 feet so for this particular
+771.4	situation we know that the local
+773.1	altitude is about 3500 feet now you're
+776.4	sitting there going I'm gonna set it to
+777.6	100 feet but um this isn't actually 100
+780.3	feet this would be 100 feet above sea
+782.1	level correct mm-hmm
+783.6	but the game is smart enough to know
+785.4	that I don't intend to make this into a
+787.5	mining aircraft
+788.6	so as a result it will actually fly
+790.6	whatever its minimum altitude is over
+792.6	this area and only adapt a thousand feet
+794.7	when it can get a thousand feet so what
+797.4	is the minimum altitude option yeah so
+800.4	that basically says to the aircraft
+802.1	travel at the minimum altitude that you
+804.7	can possibly go this is different with
+806.9	different levels of Technology some
+809.2	aircraft have special radars that are
+811.1	designed to fly an aircraft extremely
+813.8	low I've heard that it's very stressful
+815.1	from pilots who who use this option is
+818.2	that you're basically trusting your life
+820.0	to to the computer yeah do it 600 miles
+823.6	an hour I'm sure yeah it's terrifying
+826.0	and obviously of course we can set these
+827.6	to be relative to ground level as well
+829.3	so for example if we always want to
+831.1	travel a thousand feet off the ground
+832.4	which is personally it's a pretty safe
+834.1	altitude again we can make these
+835.9	simulator pilots do whatever we want
+837.4	there's no competency issues whatsoever
+839.2	there no see fit but I think there
+841.9	actually is a difference in the minimum
+843.8	altitude when you don't have like a
+845.1	little radar thing that tells you that
+846.5	flies the aircraft for you the minimum
+848.9	altitude is actually governed by the
+850.3	proficiency of the pilot yes five-four
+853.5	yeah we talked about that one also in
+856.0	another video but again it's a honey but
+858.4	you don't have to worry about people
+859.3	smacking into mountains or anything like
+860.8	that they'll automatically avoid which
+862.2	is actually kind of nice so no let's go
+864.8	ahead and send him to minimum altitude
+866.1	which is gonna be kind of terrifying 20
+868.0	feet well crank come up to afterburner
+869.6	now I'm gonna go ahead and let him
+871.2	approach you can he's losing a bunch of
+873.1	altitude me now now we spent a thousand
+875.1	feet above sea level now what a neat
+877.1	feature the command here is we could
+878.7	actually set this from over here so for
+881.0	example if I want him to pop up to 2,000
+883.0	feet he'll actually jump up if I click
+884.8	on minimum altitude you'll dip himself
+886.8	down all the way down 200 feet now
+889.4	notice now that he's starting to go
+890.8	across the land here that shows that his
+892.9	above ground level is about a thousand
+894.5	but it's above sea level it's about
+896.0	2,400 feet that's an important
+898.1	distinction because I believe Sam sites
+900.6	whatever altitude they're operating at
+902.4	adds to the maximum ceiling correct oh
+904.8	yeah absolutely it's really important
+909.4	like it's one of the more important
+911.0	things about land was to see combat is
+912.7	like the land is actually getting away
+914.9	unlike the sea absolutely
+917.4	definitely something to consider so in
+919.0	our scenario here we're cruising around
+920.4	doing 660 knots and we're flying 300
+923.7	feet above ground level this rate I
+925.6	would have no chance at seeing us until
+927.4	pretty much we pop out here now another
+930.4	neat feature is you can actually tell
+931.9	the aircraft at what times you want to
+934.1	change your speed in your altitude doing
+936.5	that is simply a matter of clicking in
+937.8	the Waypoint that you're interested in
+939.2	and then pressing f2 and it would allow
+941.7	you to actually not only name the
+943.9	Waypoint which is pretty cool but it
+945.8	would also give you the ability to set
+947.4	the speed at that particular Waypoint
+949.6	yeah you can always tell what way put
+952.5	your you're working on because it says a
+954.4	top Waypoint number one it's this is a
+956.7	pretty easy thing to get run with this
+958.3	is actually pretty advanced to set speed
+960.7	and altitude for waypoints I for someone
+964.5	who's just learning the game I'd
+965.5	recommend just not worrying about this
+968.0	feature that much yeah yeah it is there
+972.6	but it's kind of neat cuz when the
+973.9	aircraft hits those new points you'll
+975.6	actually start to adjust a speed as you
+977.4	can see that he did right there when he
+978.7	hits this point he'll actually just this
+980.4	altitude as well so it's really really
+982.5	cool how much control you can have over
+985.0	that which I think now brings us to
+987.4	attack so can you give us a general
+989.7	overview of the requirements for an
+991.4	attack yes so there's a few different
+995.4	types of attack an automatic attack a
+997.9	manual attack and a bearing attack and
+1002.1	most weapons can't use that a bearing
+1004.5	attack mode that basically means you're
+1006.5	blind firing a missile at something this
+1009.2	is only really useful in anti-surface
+1012.4	warfare missiles like a harpoon for
+1014.6	example that can automatically detect
+1017.2	and lock on to a target also torpedos
+1020.6	torpedoes can be blind fired at targets
+1024.3	you like for example if you see a
+1025.8	missile appear out of the water of 50
+1028.4	nautical miles away from your base
+1030.2	I'm not your base but you're your
+1032.7	carrier you can kind of assume that
+1034.4	there's probably a enemy submarine there
+1037.6	and you can fire torpedoes just down
+1039.1	that Barry basically give the submarine
+1040.8	something to think about because if the
+1042.8	submarine starts to run because there's
+1044.5	a torpedo that means you can hear the
+1046.8	submarine and so that means you can fire
+1048.7	a better aimed torpedo after
+1050.6	rapido so yeah there's there's a then
+1054.4	after very only attack which is
+1056.2	basically be the dumbest form of attack
+1059.3	you've got sensational and you've also
+1062.7	got manual and automatic attacks and
+1065.0	automatic attack just basically tells
+1067.3	the units AI to handle just please
+1071.0	destroy this unit and they've tried to
+1073.2	destroy the unit in the best way it can
+1075.1	and so for example if you have a ship
+1079.5	with a lot of harpoons on it and you're
+1082.1	facing off against a civilian ship it
+1084.3	might launch two harpoons but if you're
+1087.1	facing off against like an enemy
+1089.0	destroyer with you know an aegis
+1090.9	capability it might want to fire off 40
+1093.2	harpoons but see a guy tries to guess
+1095.5	the best possible attack yeah so in this
+1098.8	little scenario that we have set up here
+1100.3	we have our nice Boeing here go ahead
+1102.9	and call it a more appropriate name all
+1105.7	right so this particular aircraft is
+1107.6	approaching an unknown enemy aircraft
+1109.6	that we've already pre identified we
+1110.9	actually cheated to identify this don't
+1112.5	worry about it too too much so we're
+1113.9	gonna do is we're gonna order it to do
+1115.2	an automatic attack so simply gonna
+1117.3	select the unit I can either click Auto
+1119.4	engage target I can right-click and do
+1121.7	attack options engage target auto which
+1123.8	is interesting that that's reversed or I
+1125.6	can press the f1 key it simply click on
+1128.1	the target that I'm not too thrilled
+1129.6	with seeing today so now this aircraft
+1132.0	is going to do is is going to move into
+1133.6	its engagement range then launch a
+1135.6	weapon automatically once it does that
+1137.5	and it's gonna launch the correct number
+1138.8	of weapons just like Beluga was
+1140.2	mentioning now one quick thing without
+1142.1	getting too complicated here is I can
+1143.9	actually shut his radar off and he won't
+1146.5	turn his radar on until he knows that he
+1149.3	needs to use it for his given attack
+1150.9	just kind of a neat little trick there
+1152.8	of course what is he doing to me there
+1154.6	is in range automatic attack and I think
+1159.8	just a moment probably should've thought
+1164.3	by now you're probably sitting here
+1168.1	going why is he not attacking the reason
+1170.0	he's not attacking it's actually a
+1171.1	little subtle here this particular
+1172.6	aircraft is a civilian aircraft so he
+1176.6	might be having set up it might not want
+1178.7	to fire an errand like the civilian
+1180.7	oppressor exactly actually as a matter
+1183.0	of fact you know
+1184.1	this is getting a little off task here
+1185.4	but I'm just actually very curious here
+1187.2	is there every situation where you would
+1189.0	not actually fire an AMRAP
+1190.5	now automatic fires enables one which is
+1194.8	the manual attack like if you're seeing
+1196.2	an attack that isn't happening
+1197.8	you can press shift that one and see why
+1200.0	must obtain let's see here oh okay so
+1204.8	tell me why we're having an issue with a
+1206.3	high quality track uh I think it
+1209.7	probably should have a high quality
+1211.4	track on this it might be a side effect
+1213.8	of it being said that aircraft being set
+1215.9	as Auto detectable there is so that's
+1219.4	probably a side wonder if I have to
+1220.5	guess that's exactly guys I think the
+1223.3	issue here actually was the fact that
+1224.7	our goose here was at forty five
+1226.1	thousand feet and our Cessna buddy was
+1227.6	at 22,000 feet okay it could have been a
+1230.1	situation where because of ground
+1231.4	reflections from the radar he might not
+1232.9	have been able to get a good enough lock
+1234.1	so he ended up firing as um I am 9 X
+1236.8	here and which of course is going to end
+1238.5	that poor Cessna pretty darn quickly
+1239.9	yeah exactly so let's take a look at
+1244.9	what a manual attack looks like now
+1246.6	manual attacks are pretty cool because
+1249.0	they give you the ability to select
+1250.2	exactly what weapon plus how many of
+1253.2	that particular weapon stacked on the on
+1256.8	the Cessna so we can see the radar
+1259.2	detected I was gonna say we could
+1260.6	probably just get that other Cessna that
+1262.0	hang on got it
+1263.2	alright we're actually gonna grab this
+1264.8	guy scoot scoot over here turn this
+1266.5	radar on as well job we should be able
+1268.7	to get him down here somewhere
+1270.2	there is right there am i right I knew
+1274.1	I'd find him so this particular track
+1276.7	here we've actually detected because of
+1278.7	these ships radars we'll get into that
+1280.5	in a different video but we can detect
+1282.7	that it's a thousand feet above sea
+1284.4	level and we're up here at 36,000 feet
+1286.5	that's gonna be very difficult to get a
+1288.4	reliable radar track we can actually
+1290.7	shut off the ship's radars and see just
+1292.9	how well our f-18 f-18 it's doing a
+1295.4	pretty good job of nope if you take a
+1297.2	look we've actually lost that radar
+1299.0	track now why have we lost that radar
+1301.0	track I mean it should be a pretty
+1302.1	obvious target right that's just I think
+1306.0	mostly the the aircraft's so high up and
+1311.1	we shouldn't weaken that practice as
+1314.0	soon as we had a little closer and a
+1315.2	little lower just say he's be able to
+1317.2	spare
+1318.1	and there goes a SAM from the surface
+1321.7	group I think yes I believe you're
+1323.2	correct there so now what happened here
+1324.7	is now that we positively identify this
+1326.4	target our surface group actually said
+1328.1	no I want the kill and of course fired
+1330.0	immediately
+1330.7	now let's say we want to do a manual
+1332.5	attack you know it's kill stealing is
+1333.9	what it is on a naval scale now let's
+1336.2	say we wanted with that let's say for
+1337.9	example that this was an f-22 we just
+1339.9	got lucky and spotted it now I'm not
+1342.0	just gonna fire one missile I'm gonna
+1343.8	fire a few so I'm gonna click a manual
+1346.0	engage target click on the target I want
+1348.0	to attack now on this side you pick the
+1350.2	unit that's firing on this side you get
+1352.2	to pick what you're attacking this is a
+1354.0	pretty complicated dialogue here worth
+1356.8	taking a minute or two on it so on the
+1359.1	top left hand side is your ships that
+1361.3	are going to be firing weapons so these
+1363.3	are your ships your aircraft your land
+1365.1	units it could be anything nuclear
+1367.5	missile silo and in the bottom left-hand
+1371.2	panel those are the targets that you've
+1374.0	selected often you might select a you
+1376.5	might ban select by pressing shift F 1
+1379.7	and then ban selecting or like multiple
+1382.2	units also when you're attacking an
+1384.6	airbase sometimes like if there's a
+1386.8	group an enemy unit that's grouped like
+1389.0	for example an airbase and you click on
+1390.4	that to do a manual attack you'll have a
+1391.9	whole bunch of different possible
+1393.3	targets so each target there is
+1396.3	represented and then in the middle panel
+1399.1	you have your weapons on your selected
+1401.8	ship and the this is important for your
+1404.2	selected target and you're attacking
+1406.4	unit it's very like for example weapons
+1410.5	like if you have an aircraft you can
+1413.0	only hit it with Sam you can't hit it
+1414.3	with our poon if you have a ship or a
+1419.3	landed one that's actually the easiest
+1422.5	way to kill an aircraft is to hit the
+1424.2	ground get it on the ground yeah they're
+1426.1	really fragile on the ground they're
+1427.7	really dangerous in the air but so when
+1430.5	you've got one ship and one target
+1432.4	selected you have there's all these
+1436.0	different weapons so for example going
+1437.9	from the top to the bottom
+1438.9	you've got your your 50 Cal so basically
+1442.8	a lot of warships just have 50 Cal
+1444.8	sitting off the side they're not very
+1446.5	useful really in modern warfare but
+1448.5	maybe if there's a lady in fog hammers
+1450.3	you can just
+1451.6	get them away from you you've got your
+1453.3	cannon your fight I think it's five inch
+1455.4	on the taiko yeah you try to screw with
+1457.1	them and you've got different shells
+1460.3	you've got high-explosive high-explosive
+1462.5	armor piercing really Pete yeah
+1465.1	then you've got your thirty millimeter
+1467.1	this is the see Wiz on the kit on the
+1469.8	taiko that automatically will fire it
+1471.3	incoming missiles but you can also order
+1472.7	to engage things manually if you want
+1475.9	come in against aircraft it really is
+1478.9	and then you've got your harpoons you
+1482.2	get your eight harpoons and you've got
+1483.8	these SM to Sam's whoa you've got the
+1487.7	whole VLS loaded out with SM two that's
+1489.6	one that's one Sam site they're
+1492.3	absolutely well you never know
+1494.1	pirates are known to uh yeah anyway so
+1497.4	one thing that's important to just note
+1500.4	about naval warfare in general is that
+1502.2	Sam's that can hit aircraft they can
+1504.4	also hit land ships as well like they're
+1506.7	often used in that role absolutely and
+1509.4	that would be something set by your
+1510.7	doctrine which again is something to
+1512.2	save for another day
+1513.2	what they will say is when you're
+1514.8	picking suitable weapons the ones that
+1516.2	are green could be fired now just
+1518.4	because a weapon is not green doesn't
+1519.8	mean you can't cue up an attack cueing
+1521.6	up an attack of course for example if I
+1523.1	wanted to hit it with the 5-inch gun I
+1525.0	could just keep sitting here
+1526.0	double-clicking it would actually tell
+1527.5	you that I've got five of these
+1528.7	allocated so when he does enter into a
+1530.8	situation when he has a fire control
+1532.2	solution he will actually engage that
+1534.5	target automatically unless you've got
+1537.6	this little box sit down here and as you
+1539.7	can see from this very long tooltip it
+1541.5	basically means after a certain amount
+1542.9	of time it cancels that attack because
+1545.1	it just didn't happen in that particular
+1546.7	case now if a unit is destroyed it
+1548.8	cancels all attacks against it correct
+1550.8	yeah absolutely
+1553.3	now I'm not gonna get into the crazy
+1555.0	tomahawk sense for another day because
+1556.5	you can actually dictate its path pretty
+1558.3	cool but I just want to get something
+1564.1	worth playing with so if for example if
+1565.9	I did a shift-click and grabbed all
+1567.3	these skunks I happen to know these guys
+1568.9	I like fishing ships and stuff like that
+1570.5	I can actually go over it here for the
+1572.6	target the missile I should say the
+1574.4	weapon system I'm selecting and you can
+1576.3	tell it to go ahead and allocate a
+1578.2	certain number of weapons to the
+1579.3	selected targets so if I set this to one
+1581.6	select everybody and I have enough of
+1583.5	them if I hit this button
+1585.0	means I'm going to get one missile for
+1587.1	each one of these now it's pretty
+1588.6	embarrassing because these ships are not
+1590.2	exactly what I considered to be a
+1591.7	harpoon targets but um it's pretty good
+1594.8	for a demonstration at least so now
+1596.5	you'll notice this aircraft I should say
+1598.3	this ship has the ability to launch
+1599.9	quite a few of these missiles
+1601.1	simultaneously which is really really
+1603.7	really cool of course there's the ASM
+1605.4	from before and you watch these missiles
+1607.4	are actually pre-programmed with a
+1608.7	little leg to make them come in at
+1610.2	different angles it's really really cool
+1612.2	stuff oh there goes so what's up line
+1616.6	there what's this about yeah so the
+1621.0	harpoon itself has a little surface
+1623.2	search radar that it turns on after when
+1625.9	it gets near to the it's when it gets to
+1628.1	its activation Waypoint where it turns
+1629.9	on its radar and it'll basically try and
+1632.0	kill anything that Inditex this can
+1635.6	result in like there was during the
+1638.3	Falklands War there was a ship that had
+1641.8	a XO set which is a French built harpoon
+1645.5	basically that was launched from an
+1647.9	aircraft that locked on to a frigate and
+1650.6	the frigate launched chaff to make the
+1654.0	missile lose its lock which it did and
+1656.6	the missile the Exocet reacquired a ship
+1661.6	called the Atlantic conveyor Oh No and
+1664.0	so these frigate which like it's a
+1667.8	warship it's filled with guys who could
+1670.3	probably do damage control with the
+1671.6	exercise actually hit they decoy the
+1673.9	missile to hit their VIP target the the
+1676.7	VIP ship that they were trying to escort
+1678.6	and yeah that was I think they lost the
+1681.2	ship and it had all the helicopters on
+1683.0	board for the Falklands War and so the
+1685.8	the Royal Marines and the commandos had
+1688.0	to walk everywhere oh that's rough I
+1691.2	actually remember reading about that
+1692.4	it's just very interesting and uh one
+1694.7	neat example I was making kind of a
+1696.4	sarcastic comment earlier about you know
+1698.1	trying to use a surface weapon against
+1700.2	aircraft during some of the arab-israeli
+1703.6	Wars they actually were able to use
+1705.5	helicopters is a way to decoy the p15
+1708.2	anti-ship missile keep in mind the P 15
+1710.4	is not what I consider a very
+1711.5	sophisticated missile it's basically a
+1713.5	big 15 with nobody inside of it just a
+1715.6	radar but it was incredible how because
+1717.9	the helicopter
+1718.6	would fly solo it would actually chase
+1720.6	that target and all the helicopter had
+1722.4	to do is fly up a couple feet the
+1723.8	missiles like huh I could swear a solar
+1730.7	ship so if you're ever interested in are
+1732.3	recreating that I don't think commands
+1734.3	got something quite this sophisticated
+1736.5	not sure if II do model uh like chalk
+1742.0	being a decoy we actually do bottle um
+1745.0	chaff windows like during Vietnam
+1747.9	there'd be b-52s that would drop a
+1750.6	humongous piles of basically just trash
+1753.2	but basically like little tiny like
+1755.6	filings of aluminum which would create
+1758.4	channels where they like big chunks big
+1762.0	curtains of chaff that would block the
+1765.2	radars from being able to see aircraft
+1767.6	behind them or within those clouds and
+1770.9	so command does model that we do model
+1774.3	things like ships shooting up big decoys
+1777.8	like this is actually a bunch of fit
+1779.3	decoys nowadays there's something called
+1781.4	the oh I've met the one of the guys on
+1784.6	the team for this but I'm gonna get beat
+1787.4	up because I don't remember the name of
+1789.0	it I want to say like Dixie but that's
+1791.3	that's the wrong term but they see
+1793.0	simply the Nick see I think see you're
+1795.4	right yeah okay yeah yeah yeah so this
+1799.6	is a this is a torpedo decoyed there's
+1803.1	also I'm thinking sorry I got I got the
+1805.4	name wrong there's also a decoy that
+1807.0	looks like a gigantic telephone pole
+1810.9	with rockets on it that gets launched
+1813.2	off of burke-class ships as a gigantic
+1815.9	chaff like it's like a deep or radar
+1817.8	decoy basically kind of like your
+1819.0	helicopter example if you bring up Berk
+1821.1	if you bring up the the brick shipping
+1823.0	yeah for my I don't know yeah oh geez it
+1830.5	would be under mounts I think looking it
+1834.0	is the sir Bock that's gonna be section
+1836.9	as well it's just chaff maybe a more
+1839.9	modern Berk like a later one let's get
+1842.2	so oh look at this with aegis I'll do it
+1846.0	[Music]
+1848.7	that's the see okay
+1852.6	the sir buck I think you can you know
+1859.7	cut right there
+1862.0	yeah so this is a decoy of the noka look
+1865.4	maybe old quickly google this so sorry
+1868.2	about this this aside here I'm just it's
+1871.7	just awesome sorry guys it's awesome
+1873.5	yeah military technology especially
+1875.4	naval military technology yeah this
+1878.5	thing yeah look at that look at that
+1879.9	it's like a telephone pole that gets
+1882.0	launched from a Berk and that it'll fly
+1884.4	around for a little bit on its rocket
+1886.0	motors and then it spins and has radar
+1888.0	and it basically looks like a ship do
+1891.1	any incoming missiles and it's it's
+1893.3	quite a gigantic like it's a big thing
+1895.2	it's not a it's not a small thing
+1898.1	there's only a few there's only a few
+1900.4	entrepreneurship so like a Berk might be
+1902.3	able to decoy a couple of leaking
+1905.2	anti-ship missiles and this is very much
+1908.0	like the a Le 50 on the f-35 and on
+1911.8	modern Hornets and like modern f-15s
+1914.8	which are basically the little towed
+1916.8	decoys they are little UAVs that fly
+1919.5	that are towed behind an aircraft as
+1922.4	these fancy fancy chaff yeah I think
+1926.8	yeah I was thinking only 50 but I think
+1928.8	this is the same idea only 70 yeah yeah
+1931.1	so these things are basically little
+1933.3	drones that are towed behind an f15 or
+1938.6	the pretend to be the aircraft because
+1941.3	modern missiles will they've got this
+1943.4	continuous rod warhead and if you can
+1945.5	kind of fake them out where your
+1947.3	aircraft is they'll detonate the
+1949.8	continuous rod warhead which doesn't
+1952.0	it's basically your head won't won't hit
+1955.0	your aircraft and
+1955.8	they'll hit the drone instead and all
+1957.5	that but yes sorry about this aside here
+1960.5	I just love decoys like there's just
+1963.3	there's just so much deception in
+1965.4	warfare and these are the like the last
+1968.2	second like the last thousand
+1970.2	milliseconds of an engagement of a
+1972.4	missile to an aircraft or a missile to a
+1974.5	ship there's these like you know hundred
+1977.1	thousand dollar toys that are launched
+1979.6	to to prevent that missile from hitting
+1981.8	your big toy
+1984.3	exactly exactly yeah no there's a viper
+1987.7	autobiography kicking around out here
+1989.4	who actually talks about him and calls
+1990.8	up little buddies but you going to
+1992.8	basically you get shot up by half of the
+1994.3	Iraqi Air Force and you're like oh my
+1996.7	little buddies are missing you just have
+1998.2	like basically dangling wires trailing
+2000.0	from behind you're saying oh I guess it
+2001.3	did what it was designed to do because
+2003.2	you're so swept away with the moment of
+2005.1	just evasive action it's very
+2007.1	interesting technology definitely it's
+2009.3	kind of a get-out-of-jail-free card you
+2011.6	say for now until you write and you
+2014.1	maybe only have three or so or something
+2016.6	like that exactly and then your pen
+2018.1	you're screwed yeah some of the stuff
+2020.2	they're doing with that drone technology
+2021.3	that I've been reading about are using
+2023.2	artificial intelligence to basically
+2024.5	make smart countermeasures it's just
+2026.9	that's terrifying stuff yeah that we're
+2029.5	gonna see a lot of that in the next
+2030.5	couple years that'll be command 3 I'm
+2031.9	sure ok so if we've digested quite a bit
+2034.7	here but basically we've covered the
+2036.7	idea of controlling units getting a
+2038.3	little bit of information about units
+2039.6	doing automatic attacks doing manual
+2041.6	attacks we did skip bearing only attacks
+2043.5	if you do want to do a bearing only
+2045.0	launch again the skin a little fancy you
+2046.7	go to attack options do bearing along
+2048.1	the land all you have to do is click on
+2049.5	the direction you want to attack not
+2051.0	every weapon can be used this way so in
+2054.2	our case our Putin can and a lot of
+2055.9	torpedoes can but you're not gonna be
+2057.8	firing like an Amram or something like
+2059.5	that with a bearing only attack which is
+2061.2	actually kind of a bummer but it does
+2063.2	work pretty well you'll actually see now
+2064.6	that the ship the missile the harpoon
+2066.3	went out and immediately turned to
+2068.0	attack that position I clicked on so
+2070.6	that's gonna keep going there
+2071.8	unfortunately I don't think it's gonna
+2073.1	hit a building I think that's about it
+2080.5	alright so next time we'll go ahead and
+2082.7	take a look at it getting a little bit
+2083.8	more depth we'll deal with these pesky
+2085.3	things called aircraft carriers that
+2087.0	both carry aircraft as well as these a
+2088.8	little rigid Raider boats which are kind
+2090.7	of exciting and we'll also be talking
+2092.1	about how to deal with actual aircraft
+2093.8	picking out loadouts and things along
+2095.5	those lines
+2096.1	enjoy

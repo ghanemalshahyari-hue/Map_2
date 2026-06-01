@@ -1,0 +1,491 @@
+0.0	hello everyone today's command modern
+2.3	operations tutorial we're going to be
+3.8	taking a look at the effects of unit
+5.6	proficiency now unit proficiency is sort
+8.2	of a catch-all term for basically how
+10.6	good a particular nation or individual
+12.6	units ability with their weapon systems
+14.7	are in game sense there's really only a
+17.2	couple different things that are
+18.2	actually affected by this but before we
+21.3	do that let's go ahead and take a look
+22.4	at where you can actually set you in
+23.6	proficiency for mission designers now if
+25.6	you were to go to the editor then go to
+26.9	add edit sides you probably notice when
+29.2	you click on the side it would give you
+30.7	a proficiency level obviously we can go
+33.5	all the way up to ACE we can go all the
+34.7	way down to novice clicking this switch
+36.8	only affects units set to inherit the
+39.8	sides proficiency what does that mean
+42.3	well that means if you were to go to
+44.0	your sides order battle say I click this
+46.1	guy right here you would notice that you
+48.1	could manually set inherited from side
+50.4	or you could specify precisely which
+53.0	particular unit you want to have so what
+55.3	differences do the proficiencies have
+58.0	let's start by showing you what it does
+60.2	affect and then we'll go ahead and show
+61.6	you things that you would think it would
+62.9	affect but not the first one probably
+65.2	the most important aspect of this is
+67.1	going to be what they call the OODA loop
+68.8	what's the ODA loop it's the observe
+71.2	orient decide and act it is the reaction
+74.5	time for a given unit that basically
+76.7	says that if I'm a regular unit this
+78.6	particular essay for I should say 9 to K
+81.4	11 is going to take 30 seconds from the
+84.0	moment it spots a target that's
+85.4	identified as hostile to engaging the
+87.8	target keep in mind if it knows there's
+89.5	a hostile target way way over here and
+91.3	it takes 25 minutes to get into firing
+93.6	range it doesn't really make that much
+94.9	of a difference I'll be able to meet
+96.2	this time now notice that ace level it
+98.4	takes 24 seconds from the moment that
+100.6	target as a hostile and in range to get
+103.2	a shot off notice of targeting if we do
+105.8	it at novice it'll take a minute so what
+108.3	does this actually look like in game
+110.4	well let's take a look so what I have is
+112.4	Mike a 2k 11 right here I'm gonna go
+114.5	ahead and set its proficiency to be
+116.1	novice I'm gonna go ahead unpause it
+120.2	turns his radar on he immediately spots
+122.3	a unit I'm gonna say that unit is
+123.6	hostile observe what time it is I'll
+126.7	speed up time a little bit pause so it
+130.7	took them exactly one minute between
+132.7	knowing that the target is
+134.0	range identifying seeing the target and
+136.1	then firing his missiles at the target
+138.4	go ahead and let those I missile let's
+140.1	do their thing there nicely done
+142.0	now let's recreate the exact same
+144.0	situation but this time let's set him to
+146.5	an ace quality so I'll go ahead and
+148.8	right-click on him and set it to maximum
+150.6	proficiency here which would be ace
+152.2	now same exact thing happens now watch
+157.1	the difference in timing to get that
+158.9	first set of missiles off that was
+160.9	exactly about 30 seconds or so which is
+163.5	incredible if you think about it that
+165.8	means that by the time this unit had
+167.8	even started traveling on a direction
+169.4	we've already got two missiles enroute
+171.8	which also means since we fired sooner
+174.1	we'll be able to reattach sooner as well
+176.6	and obviously new targets appear we'll
+178.5	be able to switch targets quicker this
+180.6	is insanely valuable so let's take a
+183.4	look at what it does not affect so I'm
+185.7	gonna go ahead and quickly reload this
+187.0	motion here and this was a bit of a
+189.7	surprise to me when I was first playing
+191.1	around with this because I figured
+192.3	proficiency should be in everything you
+194.2	do let's go to centrally and go ahead
+195.5	and get rid of that aircraft so I'm
+197.2	gonna go all the way up here to the
+198.5	middle of the Pacific Ocean
+199.5	go ahead take a look at her situation go
+203.0	ahead and switch to blue for now here's
+204.9	what we have we have a group of frigates
+207.4	each one of these frigates this one is a
+209.0	novice all the way through ace frigate
+211.2	we have a group of enemy aircraft as
+213.4	well as enemy submarines that are going
+215.0	to be flying directly towards the
+216.4	frigate now what you're going to observe
+218.5	might kind of surprise you pause all the
+222.6	aircraft were detected simultaneously as
+226.0	a matter of fact if I go to a weapon
+227.9	game here let's go ahead contact change
+229.9	you can see that they all detected them
+231.9	at about the same distance interesting
+235.6	actually we can open this up and kind of
+236.8	prove my point here eight nautical miles
+238.7	now what gets interesting is watch what
+240.9	happens when we set a subsurface target
+242.9	notice we acquired every single one of
+245.9	the subsurface targets just about
+247.9	simultaneously I'll go ahead and pause
+249.5	just to demonstrate to prove my point
+251.1	here you would think that a unit that is
+253.5	more proficient would be better able to
+255.4	use their sensors in order to spot
+257.1	contacts but that's simply not what
+259.5	happens in this game and as far as want
+261.7	to click this you can see they all
+262.7	detected them pretty much the same the
+264.3	little tiny date variances here have to
+266.5	do with the round
+267.4	plus the actual orientation of the ship
+269.4	versus the submarine so there's no
+271.9	impact whatsoever on detection when it
+274.7	comes to unit proficiency which brings
+277.3	us to the next and very very important
+279.4	part of your proficiency which is going
+281.4	to be related to how well a unit avoids
+284.3	and I'll go ahead and show you this one
+286.1	more time
+286.7	go ahead delete him he's not important
+288.2	so we're gonna go back to our continent
+289.7	of Centralia so what I've done is I've
+292.1	set up a relatively straightforward
+293.5	strike package if I actually opened up
+295.4	before to take a look
+296.2	I've got everything broke it down by
+297.5	section I've got everything broken down
+299.3	to attack the targets I've got some
+301.3	combat operations everything ready to go
+303.2	and what I'm going to do is I'm gonna
+305.4	set the entire side to be at a novice
+309.3	proficiency so now what I'm expecting to
+312.1	see is basically it'll cook what amount
+314.6	of damage however I expect to see high
+316.9	losses the reason I expect to see the
+319.1	high losses is because of the fact that
+320.9	one these aircraft are on their way they
+323.0	will not have a bonus to evasion when
+325.7	things are launched at them by the way
+328.2	weapon attacks are not affected by
+330.3	proficiency so a crew that has a very
+332.9	very very good shot is exactly the same
+335.0	thing as a crew that has a very very bad
+336.4	shot as far as the game is concerned so
+338.9	you've got to kind of watch out for that
+340.1	also alright here comes my giant wave of
+342.1	aircraft remember these guys are set to
+345.8	minimum I'm just gonna kind of let it
+347.2	take its course here and then we're
+351.4	gonna let it take its course again but
+353.1	next time as an ace of course who
+355.0	finally gets to the picture those guys
+357.5	and I doing some cap doing the little
+360.1	thing alright that should be enough
+361.2	let's take a look at how things wet
+362.8	remember these guys are set to novice
+365.1	their opponents are set naturally to
+367.8	regulars so if you take a look here we
+370.4	lost three intruders and we lost two
+372.3	phantoms look at the damage though we
+374.9	actually killed a lot and I mean a lot
+378.1	of different targets on the ground you
+380.0	can see the expenditures as well they
+381.8	went through 408 rounds of
+383.0	100-millimeter now watch what happens
+386.6	when I flip which side let's go ahead
+389.9	and delete that sa4 and it's just gonna
+391.4	victimized their target there watch what
+394.1	happens if I set the other side to be
+397.2	novice remember the only thing that's
+399.0	going to be affecting
+400.3	is their ability to dodge weapons and
+402.4	their ability to quickly engage targets
+404.9	my expectation would be that those KS
+407.2	19's would not be able to get nearly as
+409.4	many shots off casualty wise it's
+412.9	probably gonna be fairly similar we'll
+414.4	see it's kind of fun to watch in fast
+421.5	motion it's like a bunch of angry bees
+426.1	alright that looks pretty good
+428.0	ready go notice we lost a little less
+431.7	aircraft doesn't surprise me however and
+434.6	notice that the enemy only got off eight
+438.1	rounds of 100 millimeter this time the
+441.7	reason being is those guns took so much
+443.8	longer to bring their things to bear the
+446.1	reason my casualties are less is if you
+448.1	actually take a look here it's going to
+449.9	open this up real fast will do weapon
+452.3	and game here you'll notice that the
+455.4	actually that's not good we need to
+456.8	actually shoot it there we go
+458.0	you will notice here that because of his
+461.5	proficiency it adjusts his ability to
+464.5	get hit now we can take this to the next
+466.7	extreme by the way you probably observe
+468.5	the fact we did about the same amount of
+469.8	damage on the ground both times that's
+471.9	because the weapons are such a short
+473.3	range let's go ahead and do this one
+474.7	more time and this time go scoot back we
+480.6	all need our 2k11 there go away nobody
+482.6	likes you screwed up - Centralia again
+485.0	this time let's go ahead and set it up
+488.0	so that blue force has maximum
+490.3	proficiency and Centralia has minimum
+493.4	proficiency now this might surprise you
+496.5	we're still going to lose aircraft
+498.2	because those guided weapons are still
+500.3	going to succeed and actually engaging
+502.4	us yes I see my mistake like I said it
+506.3	has no impact on the accuracy of the
+509.0	weapons it only has an impact on the
+511.1	person trying to get out of the way of
+512.4	said weapon so we'll make this an
+514.3	extreme difference alright let's try it
+517.1	now watch this if they go notice they
+522.0	were able to get everybody lined up
+523.5	everybody's in formation and away we go
+536.1	it's mesmerizing
+539.4	all right it's quite pause watch no
+544.6	losses the other thing to observe the
+547.5	only got off eight rounds of chaos 19
+549.1	and they got a very very few rounds of
+551.8	sa-2 bees very few of the SA threes
+554.8	well actually the central losses I'm
+555.9	sorry expenditures they got 344 rounds
+558.5	off
+558.8	I actually misspoke before but keep in
+560.4	mind this is still significantly less
+562.0	than with the more experienced crews and
+564.1	you can see as far as missiles go we got
+565.9	very few this off actually I quite a fit
+567.5	me or those ready to go so is there
+570.0	anything else that the proficiency
+573.5	affects answer is yes this is one of the
+575.8	weirder ones and I actually kind of like
+577.4	this one and that has to do with how far
+581.0	an aircraft can fly off the ground so
+583.7	make up myself in a 4e real quick get
+585.8	myself the gbu-12 go ahead and get a
+587.6	heavy one I'm gonna set his proficiency
+589.9	to novice okay so a novice is minimum
+602.7	altitude because this is actually a very
+604.3	very nice version at the f4 I believe he
+606.4	may have some capabilities to do low
+608.0	level on navigation let me confirm that
+610.0	real quickly
+610.6	no it's not so his minimum altitude is
+613.6	basically 150 feet which isn't too bad
+616.0	let's go ahead and get a copy but this
+618.3	time let's go ahead and set his
+619.4	proficiency to maximum and let's go
+623.8	ahead and order how let's make him come
+625.0	up a little bit unless order him to go
+627.2	down to minimum altitude I feel bad for
+630.7	the pilot he just got the roller-coaster
+631.9	look at this tada
+635.4	his minimum altitude is 80 feet which is
+639.6	actually a significant improvement now
+641.7	if I did this with a b-52 as opposed to
+643.9	a phantom that's a massive difference in
+646.1	altitude that should be attacking which
+647.9	brings me to the final thing that you're
+650.3	going to see affected by unit
+651.4	proficiency and that comes in g-force
+655.0	tolerance let's go ahead and open this
+656.8	up one more time we'll get rid of our
+659.2	2k11 scoot back up here just
+661.6	we want to stay relatively close to the
+662.9	action here just a case so let's say I
+665.0	go down here and I grab myself an f-86
+667.2	get ourselves an F model because I'm a
+669.3	nice guy
+669.9	good looks pretty good right there no
+672.5	Sidewinders I just want internal guts
+673.9	and now let's go ahead and on the other
+676.8	side
+677.9	I'll see we'll send out a pretty short
+680.0	distance here we'll make it a pretty
+681.4	standard merge here about five ads
+683.1	that's not really fair let's make it
+684.4	about ten nautical miles away let's get
+686.2	ourselves a mig-21 actually I mean we'll
+688.8	do a mig-15 we'll keep it realistic here
+693.0	all right looks pretty good looks pretty
+695.9	good all right I'm gonna order the
+697.4	mig-15 to come right at them and I'm
+700.4	gonna set his unit proficiency to novice
+703.6	now what I'm gonna do is go over to this
+706.0	buddy right here grab him order him to
+708.1	go in the same direction and I'm gonna
+710.0	leave his unit proficiency alone because
+712.7	I want you to see what this does there's
+714.7	one little tiny actually you know I'll
+716.3	leave that out for now so I'm gonna go
+718.1	ahead and shut off upwards our guide
+719.8	boat here all right you should be seeing
+722.6	him in just a minute
+723.7	fortunately because of the way this
+725.3	works it's very difficult I'm actually
+727.4	gonna move him right here he's gonna
+728.9	finish turning and we're gonna get
+730.1	ourselves a nice merge now g-force
+732.7	tolerance is a relatively new thing in
+734.4	the command universe we did not have it
+736.4	in the earlier versions of command it's
+738.1	not necessarily a bad thing
+739.1	there we got pause so I'm gonna go ahead
+741.1	and order the f-86 to go ahead and
+742.7	attack that guy I'm gonna delete his
+744.2	plight of course that does not interfere
+745.6	with anything switch over to the mig-15
+748.6	he sees this guy as well I'm gonna order
+751.0	him to begin attacking let's grab that
+753.7	delete that course so that he only
+755.2	attacks the target notice is taking him
+757.2	a longer time to actually start to line
+758.8	up his attack all right switch to God's
+762.4	mode so you can go ahead and see what
+763.6	happens here now what's gonna happen is
+765.5	these two are gonna merge they're not
+767.2	gonna get that cheap front shot you know
+769.0	that war words too special kind of a
+770.6	thing with a p38 with no good deflection
+772.4	instead what they're gonna do is they're
+774.1	gonna in turn to its height series of
+775.9	basically scissors with each other so
+777.7	he's gonna pass by happens so of that
+784.0	sort of a bummer but we can always just
+786.1	get another one
+786.9	let's grab ourselves another one good
+789.3	job good job you get you could have
+790.7	called start usually you don't get away
+792.2	with those cheap deflection
+793.5	so I'm actually slightly impressed but
+795.1	like I said these things don't always go
+796.9	according to plan as you can probably
+798.2	imagine grab bone from the Soviet Union
+800.4	grab internal guns real quickly and
+802.5	we're go ahead and order them over here
+803.9	I don't think you can actually see that
+805.5	guy order him to attack let's go ahead
+808.3	switch to the other side real quick our
+810.3	buddy here is not gonna be able to see
+811.7	him so I'm gonna do one of these things
+813.0	so that he can just to acquire him I get
+815.6	I'm cheating a little here but if you
+816.9	can't see him you can't really do
+818.0	anything about it let's go ahead and
+820.1	switch of course our buddy here to be
+821.6	back to novice proficiency proficiency
+825.1	it's a good way to simulate lack of
+826.5	g-suits by the way maybe I need to do a
+830.6	side-by-side merge or something like
+832.2	that come on guys you're right next to
+834.1	each other there we go all right so now
+837.9	I can order him to do that delete that
+839.4	one switch to the other side hopefully
+841.4	you don't get that cheap shot again go
+844.2	ahead and give him a second even though
+845.6	it's right behind him all you got to get
+847.9	a little closer I see this year he's
+849.8	right there on your rights of course we
+851.6	can't do that come on man seriously he's
+856.8	right there first of all problems I
+860.6	guess you have to be able to see him
+864.7	okay
+865.9	fine be that way so I remember I'm
+869.8	playing il 1946 which was a really
+872.0	really cool game if you've got not had a
+873.6	chance to do it there's a more modern
+875.2	version which is also very very cool and
+877.1	one of the fun problems we always seem
+878.9	to have what that one is basically
+880.7	finding the other guy there we go
+882.5	so now I can move them backwards and I
+884.4	can order him to attack finally let's
+886.8	hope this is gonna be a fair enough
+887.9	scenario now though all right go ahead
+890.7	and engage okay so he's gonna start
+893.0	turning and you're gonna notice this
+894.1	little GU tolerance bar start to spike
+896.3	up now if we switch quickly over to our
+899.0	buddy here actually can we do it from
+901.6	here oh we can't see it from here let's
+903.6	switch back to him real quickly this I
+905.7	feel so bad now he starts to do his turn
+908.1	he's gonna have to do the exact same
+909.9	thing well come on there he goes
+916.7	so now he starts turning but because his
+919.5	g-force tolerance is not as good as the
+921.4	f-86s he's gonna end up taking a much
+923.9	wider turn in order to get around and
+926.4	try to get on a six this might be a good
+928.3	demonstration to actually show let's go
+930.0	ahead get that other radar only be fair
+931.9	here you know try to give a
+933.3	demonstration these guys are being
+934.6	difficult probably should have done it
+936.0	with like an f100 mig-21 or something
+938.1	like that
+938.5	alright so now this guy's going for that
+940.8	side deflection shot which is very
+942.5	challenging by the way for anybody who's
+944.1	played any flight simulators now when he
+946.7	misses
+947.2	fingers crossed he's gonna have to turn
+949.2	very sharply in order to keep up with
+951.4	him which is what he's gonna do right
+952.9	now there he goes I was starting to
+956.4	build up that g-force tolerance
+957.8	meanwhile our buddy from Centralia since
+960.7	he does not have the same level of
+962.0	g-force tolerance is basically going
+963.6	altra wide so what I'm actually gonna do
+965.8	is tell him to go to a lower altitude
+968.5	assuming he can't keep in mind he is
+970.5	engaging other guys at the same time
+972.0	yeah so the other guy look at that he's
+974.3	finished his turn completely and he's
+976.1	getting completely on the inside of this
+977.8	mig-15 just go and see him in a little
+980.0	bit here yeah he's reeling him in and
+982.1	that made 15 no matter how the fence if
+984.4	he tries to be will never be able to
+986.4	turn inside of that other one because of
+988.0	his lack of proficiency now if this were
+989.8	a mig-29
+990.7	that proficiency wait look an airport
+992.5	that proficiency would not be nearly as
+994.7	important in this particular scenario
+996.2	because it would just have better
+997.8	performance yeah this is gonna in
+999.9	relatively quickly here yeah look at
+1003.3	that this be kind of fun to see in 3d
+1005.6	assuming everything's working properly
+1006.8	today erm oh there we go look at that
+1016.8	that's a tight turn
+1018.3	oh that f-86 is like right next to him
+1020.2	oh no oh jeez he's gonna be reading the
+1025.6	serial numbers off his engine in a
+1027.0	second there he goes he's got a hit
+1030.2	already now the reason this changed is
+1033.3	because you went to a lower altitude of
+1036.5	course the f-86 is 50 caliber machine
+1039.0	guns it's not going to do nearly as much
+1040.3	damage as those giant cannons by the way
+1042.4	if you're ever curious in command to see
+1044.9	which one is the better fighter you've
+1046.4	ever looked at to make 15 the percent of
+1048.5	kill for the
+1049.8	regular canons let me see if I can find
+1051.2	that real quickly is actually it's 65%
+1054.5	versus this is kind of disappointing if
+1057.0	you look at the f-86 is guns you'll
+1059.3	notice the percent of chance to hit is
+1060.8	only 50 also you'll notice this does
+1063.0	point to damage the ones on the mig-15
+1067.6	do one damage which is more than enough
+1070.8	to blow up in a 56 in a single hit okay
+1072.9	hopefully you found this sort of
+1074.2	interesting like I said this is slightly
+1075.5	different kind of a video just try to
+1076.9	provide you guys with the general idea
+1078.3	of what proficiency does again it
+1080.0	affects the OODA loop obviously if
+1081.8	you're more proficient you could use
+1082.8	your weapons more soon it's going to
+1084.7	improve your evasion if somebody
+1086.1	launches a missile at you it's going to
+1088.0	also improve your ability to fly at low
+1089.4	altitude and then finally it's also
+1091.3	going to increase your G tolerance enjoy

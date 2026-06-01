@@ -1,0 +1,1057 @@
+0.6	Hello everyone. Uh today we're going to
+2.3	be continuing our short series of
+4.3	basically the absolute basics of command
+6.8	modern operations and we're going to be
+8.6	talking about both your views with your
+10.5	map layers as well as your map settings.
+12.7	Now when you first jump into command
+15.0	there is an intimidating number of
+17.0	circles and red areas and shaded areas.
+19.8	And now I go like this and I zoom in and
+21.7	all of a sudden half the world looks
+22.9	nice and the other half it's just
+24.2	because the rest of the world hasn't
+25.2	adapted high definition obviously. But
+27.4	um again what is this all about? So, uh,
+29.6	Belugan, could you tell us a little bit
+31.0	about kind of what we have all going on
+33.0	on your screen here?
+34.6	Hey guys, I'm Belugan. I'm here to, uh,
+36.6	with Philip to take a look at the the
+38.0	view and map settings, uh, menus of
+40.3	command, but also just to kind of
+41.9	explain what the hell are you looking at
+43.7	here with all these, uh, lines and
+45.8	circles and icons on the screen. Let's,
+48.5	uh, let's tackle that today. So, at the
+50.6	base, we've got uh the Sentinel 2
+54.0	imagery data set, which uh provides a
+56.1	pretty high definition, nice looking
+58.3	terrain. You can always turn that off.
+60.2	One thing about command is that you can
+61.6	change just about anything uh with the
+64.2	way uh command looks. Like we're zooming
+66.8	in here on Egypt, and I think that's the
+69.5	Nile, I would assume.
+71.6	Is that the Suez? Yeah.
+73.5	Yeah, I think so.
+74.4	Yeah, absolutely.
+74.9	Oh, no. No, that's not the Suez. The
+76.7	Suez. Sorry. Sorry. the uh the nozzles
+78.8	to the left.
+79.8	Say we got a little left.
+80.9	What we can do, what we can do is uh
+82.6	turn off this layer if we wanted to and
+85.3	just have the uh So yeah, if you turn
+87.7	off that layer, we went into the view
+89.6	menu. You might want to just show the uh
+91.4	the guys a little bit uh slower there.
+93.8	Uh view
+95.9	and then down there. So that turns off
+97.8	the Sentinel 2 satellite map layer. We
+100.2	still have something called the BMG
+102.7	layer, which I actually don't know what
+103.8	that stands for. But if you turn that
+105.4	off
+107.2	and uh give it a second to load up.
+109.1	Oh no, what happened to my world?
+110.6	Now you just get this outline of all the
+113.8	different borders, which is a pretty
+115.4	neat way to play. I sometimes like
+116.6	playing with this because uh it creates
+118.9	such a great contrast between the uh the
+121.2	icons and the uh uh the rest of the
+124.6	world. You can actually see what's going
+125.9	on. And so I guess just starting from
+128.7	this view, we can take a look at the
+130.2	icons. Uh so that group that you've
+132.9	selected there is a group of four ships.
+136.7	Uh one's a carrier. I'm not sure what
+138.8	the rest of the comp group composition
+140.2	is, but in the top left of the screen,
+142.5	if you select the uh the group again, uh
+145.4	you can see in the top left there's this
+147.4	selected list right below where it says
+149.4	the time.
+152.2	Of course,
+153.5	it's all right.
+155.7	You can see uh
+157.5	Oh, no, no. On on the top left side of
+159.3	the screen.
+159.8	Oh, gotcha.
+160.6	There we go. Yeah. Yeah. Yeah. So, CVN70
+163.8	uh a Tao
+165.8	uh an FFG and a supply ship. And so,
+169.7	over you can always see what you've
+171.4	selected over on the top left, which uh
+173.9	which is really quite helpful,
+175.5	especially since uh it's very easy for a
+177.6	command scenario to get very cluttered.
+179.4	And so, it's important to know what
+181.0	ships you're giving in order to. And
+182.6	you're you're left clicking right now in
+184.1	all these units. And that is how command
+186.4	does selection. It's leftclick selection
+188.8	and then leftclick drag. And we're right
+191.4	now in group view, which means that this
+193.8	group, for example, when you select on
+196.2	say that uh hornet to the north of the
+198.2	group, the group collapses into that one
+201.2	icon, that double circle icon. And when
+204.2	you click on that, because of the map
+205.8	settings where we've got it set up so
+208.5	that when you select a group, it shows
+210.2	you its contents. uh we can see the
+213.3	other ships nearby in the group.
+217.4	Yeah. So that's kind of that we're going
+219.3	to go into a lot more detail as far as
+221.0	unit selection and movement and plotting
+222.6	and stuff like that. But what where
+224.2	we're going to take a look now is at
+225.5	some of the other layers that we have.
+228.1	So as uh Blucen mentioned wonderfully a
+230.2	second ago that the Sentinel 2 is this
+232.3	gorgeous satellite map. Sometimes it
+234.2	could take a little bit of time to load
+235.4	and sometimes we don't need that level
+236.9	of detail or maybe there's a different
+238.3	kind of level of detail. If you just
+240.5	turn on borders and coastline, you get
+242.0	what I like to call Larry Bond vision,
+243.6	just like Luka was saying just a minute
+245.5	ago.
+245.9	Try uh try the uh the lat long grid as
+248.5	well. I like that view, too.
+250.2	Oh, there we go.
+252.0	Yeah. Now that's traditional.
+254.2	Oh, yeah. Now we're getting extreme.
+255.8	This is the wrong color, but um I do
+257.3	appreciate the latitude and longitude.
+259.0	Obviously, as you can zoom in, you can
+260.7	get the specific ones. And of course,
+262.5	holding your mouse over any location
+264.1	anywhere in the world will also give you
+265.8	quite a bit of information. We'll talk
+267.4	about that a little bit later on. So,
+269.0	I'm going to go ahead and click that off
+270.1	because it gets a little cluttered. And
+271.4	uh now we're going to go ahead and take
+272.3	a look at relief layer. Now, when I
+274.8	think of relief, I think of uh nice and
+276.6	relaxing. I don't know about you guys. I
+278.2	don't know. Oh, no. What has happened
+279.8	here? Well, so much for
+282.2	So, Blue, can you tell us what we're
+283.8	looking at right here?
+285.5	So, this is a map layer that shows the
+287.7	uh this the lay of the land, shows the
+290.2	terrain height, and so green uh it
+292.9	starts off black, which is just any
+294.3	water is black in this uh terrain. Uh
+297.9	then you can see the uh the kind of the
+300.2	brownish green there that denotes low
+302.7	altitude. And then as you go up higher
+304.8	and higher you see more and more uh kind
+307.8	of brownish tones that indicates just
+309.8	higher and higher terrain values. Uh
+312.1	this terrain information this is the
+314.5	information that is used in command to
+317.0	uh figure out line of sight for radars
+319.8	and visual cameras. You can you can use
+322.0	these valleys to hide to mask your
+324.2	aircraft when you're attacking a site or
+327.5	when you have a SAM site. You might want
+329.8	to be aware of these valleys and these
+332.3	uh hills and put your SAM site on a on
+334.4	the top of a hill so you have the best
+336.5	line of sight. So you can see these two
+339.3	SAM sites and and so if if you click on
+341.4	one of those things uh you can see where
+343.6	it says nine that indicates that. So, so
+346.5	first off, the icon that's just the icon
+349.2	for a SAM site. That's just uh that
+353.6	means a guided missile SAM site. Uh
+357.4	that's just they decided that's what it
+359.0	would look like and that's what uh we in
+361.0	command uh use that icon for. Uh and the
+364.7	nine indicates that there's nine
+366.6	separate vehicles or nine separate
+369.7	things as a part of this SAM site. And
+372.2	so, for example, you might need nine
+374.0	missiles to really destroy this
+376.3	entirely.
+378.5	Uh, and some sites that don't have
+380.2	multiple vehicles, uh, like for example,
+382.2	a tank platoon is like four tanks
+386.4	would have four separate vehicles. And
+388.8	so it would have a little tiny four
+390.1	there that indicates the number of
+391.4	vehicles there, which would mean that it
+393.0	would need four Mavericks or four
+394.9	hellfires to destroy. You can't just uh
+397.5	drop one bomb to kill four vehicles
+400.2	unless it's a really big bomb. And we
+402.2	command does model that. Uh so that's
+404.4	the that's the reasoning behind little
+405.9	nine there.
+407.5	These are contacts. Oh, sorry. Go ahead.
+409.5	No, no. I was just going to say on the
+411.6	layers themselves.
+413.7	Yeah.
+415.0	So, yeah. Yeah. So, basically, taking a
+417.8	look around the relief layer, just
+419.0	adding on to what Blue Goon said a
+420.4	second ago, it does block line of sight,
+422.3	but keep in mind, you have to be behind
+424.1	the thing that you're actually blocking
+425.4	line of sight. If you're at 36,000 ft,
+427.7	none of these mountains are going to
+428.9	block line of sight to you, unless it's
+430.7	like stuck inside of a little valley or
+432.2	something like that. But again, as you
+433.8	mentioned, that could be taken into for
+435.4	more of a tactical perspective.
+437.4	So, the relief layer, um, for me
+439.2	personally, I love doing it for planning
+440.9	tomahawk strikes. A tomahawk is
+442.7	basically a cruise missile that you can
+444.4	basically launch and actually tell it
+445.9	what path to follow. You can also, of
+447.8	course, use it for low-flying
+448.9	helicopters, low flying aircraft, and
+450.5	things like that. Smart map designers
+452.6	try to find the tallest mountain they
+454.1	can get and plop the radar site on the
+456.0	top of it, preventing you from having
+457.7	cool places to hide.
+459.4	Also, smart uh smart countries put their
+461.4	SAM sites on the top uh mountains like
+463.4	that, too.
+464.2	Absolutely. And it's kind of a fun
+465.4	strategy, too. A sort of a meta
+467.0	strategy. You could put your SAM site on
+468.7	the top of the hill to trick the player
+470.3	into going through like a valley where
+472.1	you put a much nastier SAM system
+474.1	basically waiting to trap the player.
+476.2	But that's modern warfare
+478.0	or AAA like you might have SAM to bring
+480.3	everyone down into these valleys and
+481.9	then you fill the valleys with AAA. A
+483.9	lot of Vietnam scenarios could uh could
+485.5	use something like that.
+486.6	Absolutely. So uh speaking of layers, uh
+488.6	that's the relief layer. We go ahead and
+489.9	shut that off and uh we're going to
+491.0	swing down to the stamon terrain layer.
+494.2	So uh what is this one about?
+497.0	Uh it's I think it uses open street map
+499.7	to uh just create something that kind of
+502.6	looks like Google Earth.
+504.5	Yep. Now, one thing I will add that I
+506.6	really really enjoy about this is for
+508.2	those of you who like to do ground unit
+510.5	scenarios, this is a great way to kind
+512.9	of zoom way way in and you know place
+514.9	your individual units on like individual
+516.8	streets and people who want to do like
+518.4	airports or maybe regarding this
+520.2	particular bridge. It's just a
+521.6	spectacular way to kind of get in and
+523.2	see what things are. Now, one thing I
+525.5	will ask is what's the difference
+526.6	between terrain and then the one that
+528.1	has roads and cities. Do I need to turn
+529.8	both those on at the same time? Because
+531.4	it looks like I have roads and cities
+532.8	here.
+533.6	Yeah. So, the roads and cities uh layer
+535.6	is just the roads and cities. So, if you
+537.8	turn off the terrain and give it a
+540.1	second to load
+544.0	exactly there it goes.
+545.7	There we go. So, it's a terrain. It's
+547.3	kind of like a spiderweb of the uh the
+550.2	roads and uh basically it's just an
+553.8	infrastructure layer and you can always
+555.4	put another terrain layer underneath
+557.2	this like the the relief layer of it's
+559.6	kind of hard to see sometimes because uh
+561.4	it's it's light gray on a light
+563.4	background. It's sometimes hard to see
+564.8	but uh this puts the infrastructure
+567.5	layer be on top of whatever layer that
+571.0	you want. So, if you don't want the
+572.4	terrain to be just completely blown away
+574.1	or you want to put on a relief layer or
+575.9	something like that, but still see the
+577.4	logistic links, uh, this is this is the
+580.5	way to go.
+581.4	Yeah, absolutely. And I do like the the
+583.4	nice thing about sustain and terrain is
+584.9	it will actually give you the terrain as
+586.4	well. So, if you actually zoom in and
+588.0	off, you can see some like the
+589.3	topographical relief of different
+590.8	mountains and stuff like that. Really
+592.6	handy. And it's almost sometimes easier
+594.1	than relief, but relief is going to give
+595.8	you a better idea of what's kind of
+597.0	around you.
+597.9	So, um, this is a a new layer. This is
+600.6	kind of an interesting one called land
+602.2	cover. Uh would you like to speak about
+603.7	that one?
+605.0	Sure. So, uh command modern operations
+607.7	or cano2 has uh we've built in this new
+611.7	terrain layer where we the terrain type
+616.1	the underlying terrain type like desert
+618.2	versus builtup city versus crop land. Uh
+621.7	these have actual differences on how
+623.6	they behave for uh things like unit
+625.4	sighting, uh unit damage, uh unit speed
+629.5	for land units. Uh it's pro like we
+633.0	we've spent a lot of time making the uh
+634.9	the hydrographics, the uh uh the
+637.4	oceanography of command really work well
+639.4	with all the different uh water layers
+641.9	and all that. And we're bringing some of
+643.4	that to the land, to the terrain system.
+647.0	And so uh
+649.7	we just uh model the different types of
+651.7	terrain. The big one is cities. Cities
+654.2	slow things down and can speed things up
+656.7	and can make units a lot harder to see.
+660.3	But uh like for example, desert is a lot
+663.3	easier to see units in than uh uh than
+666.6	cities are. And it just gives you a
+668.7	little bit more of a tactical layer, a
+671.4	thing to deal with while you're uh while
+673.0	you're playing with command.
+674.2	Yeah. No, I think it's absolutely great.
+676.2	This is a neat way. I like this a lot
+678.6	for planning scenarios almost more so
+680.6	than I actually find myself using it in
+682.2	a game. Although it's can be a good kind
+684.2	of strategic SAM detector because just
+686.5	looking at the little splashes of red
+687.8	where the people live. You know, I'd
+689.1	imagine I could guess where my, you
+690.4	know, S200 is probably going to be
+692.2	located. But again, it's getting a
+693.8	little metagamy. This little screen, by
+695.4	the way, is a little uh handy dandy
+697.3	thing that you can turn on this terrain
+698.6	type legend. It's under the map settings
+700.2	if you need to have an idea of what the
+701.6	different terrain. You can also hold
+702.9	your mouse over anything on the map and
+704.3	it'll actually read you the type of
+705.8	terrain as well. In this case, in the
+707.4	middle of Saudi Arabia here, you can see
+709.0	that we're sitting here in bar and s
+710.8	sparsely vegetated. Not so great. Okay,
+713.9	so um what are these custom layers
+716.0	about? I don't see any here.
+718.1	Yeah. So, uh there's a a couple of tools
+720.6	that can generate uh custom layers which
+722.8	give you custom imagery over a certain
+725.3	position. Uh this was especially useful
+728.0	before in Sim Seano 1 where we didn't
+731.2	have the Sentinel 2 layer uh available
+733.8	at the time and so uh people would
+737.1	basically when you zoomed in it would
+738.6	just be this blurry mess but nowadays
+740.5	with Sentinel 2 uh we don't need this
+743.9	layer manager this layer system as much
+746.5	but it allows you to bring in your own
+747.8	custom imagery. I've seen this used for
+750.2	first off bringing in satellite imagery
+751.9	of a certain location, but also when you
+755.0	when you're bringing in your own PNG
+756.8	into the command world, it needs to be a
+759.0	PNG, but also has this uh world uh file
+762.6	that tells command where to place it
+764.4	exactly geographical coordinates. Uh
+767.1	there's a couple of tools that can again
+769.2	that can make these files for you, but
+771.4	this you can also draw on this layer.
+775.4	So, for example, if you wanted to draw
+777.9	uh like uh battle lines or or even
+781.1	orders right onto the map, you can do
+783.1	that via this custom layer system.
+785.1	Yeah, you'll see this a lot more in
+786.6	Commando. As he was just saying a second
+788.5	ago a moment ago, I just turned on the
+790.7	place names to kind of give you guys an
+792.2	idea. These place names will be
+793.9	redundant if you're using the stamon um
+797.0	basically map layer here, but sometimes
+798.8	it's kind of nice to know the names of
+800.2	things. A neat feature too as well, when
+802.1	you do zoom in, it'll actually give you
+803.8	specific names to specific areas.
+806.0	And um I think that's kind of nice
+807.4	because they tend to give you the
+808.5	angllicized version of these. So you
+810.2	don't have to worry so much about the
+811.4	language barrier, especially when you
+813.0	start heading over into this general
+814.6	direction. But it's a really really cool
+816.4	localization feature. Now, one feature
+818.7	I've never used personally is the
+820.5	dayight lighting.
+822.2	And uh you can see this one's relatively
+823.8	self-explanatory. It allows you to
+825.4	roughly see when the different parts of
+827.7	the planet is being lit up or it's at
+829.4	night time. You can see right now the
+831.2	way our scenario is set up since it's uh
+832.8	roughly 11 o'clock in the morning local
+834.5	time. It's fairly lit up. By the time we
+836.3	scoot scoot over here into the Chinese
+838.4	region, you can notice about 6:00 at
+840.2	night. Obviously, it's in October. It's
+841.9	going to be pretty much night time. I
+844.2	don't think there's anything else beyond
+845.5	that.
+846.3	Yeah. Well, it's important to the uh to
+847.8	the engine model for uh you know,
+850.6	spotting and weapons and all that, but
+853.4	uh like day and night doesn't matter to
+855.5	radar. It doesn't matter to sonar, but
+858.0	it does matter to visual sensors or IR
+860.6	sensors. Uh they uh like uh cameras or
+863.2	pods or anything like that that can
+864.7	detect units from far away uh using
+866.6	cameras. At night time, that's
+868.2	significantly degraded. During the day,
+871.0	it's great. During the night, you can't
+872.9	see
+875.7	Yeah, exactly. So, um the one last
+877.9	feature we have under the view page is
+879.8	we have the 3D view. Assuming you've
+881.5	bought TAC view and set it up correctly.
+883.5	The uh 3D view basically is going to
+885.4	give you literally a 3D view basically
+887.7	rendered by this external application to
+889.5	let you see what's kind of going on
+891.0	inside the world. Just kind of a neat
+893.0	little feature. It also gives you an
+894.2	idea of things like terrain as well
+895.6	depending on how much time you spent in
+897.8	generating this. But you can see very
+899.1	clearly it's kind of a rough area.
+901.0	Obviously if we're sitting over here
+902.6	well well above the ground it's going to
+903.8	look like this. My favorite of all,
+905.4	which I didn't put any in the scenario,
+906.9	is when you have satellites, everything
+908.3	is pitch black because you're up so so
+910.2	so high. But this is a neat relatively
+912.9	new feature that command has as well. So
+915.4	that's basically all your views. Again,
+917.2	my personal favorite view. I almost
+918.6	always find myself living in Sentinel
+920.3	land, although from time to time I'll
+922.0	shut everything off just to make it a
+923.4	little easier. From a map design
+924.8	perspective, I really like the relief
+926.5	layer and I really, really like land
+927.8	cover to know where to put my units. Uh,
+929.8	any other comments on the view page? Uh
+933.0	there's one tool on this uh this menu
+935.3	called the the range and bearing tool. I
+936.9	use that all the time. I almost always
+939.0	never get it through the menu. I use the
+940.8	the shortcut control D.
+942.8	Yeah. And it just shows you a distance
+944.9	and a bearing for any uh any vector on
+948.1	the on the globe.
+949.0	Now is this magnetic or is this true?
+951.6	Uh everything's true in command. Got
+953.8	by that we mean like magnetic north
+955.3	versus true north. command. We assume
+958.6	all the compasses are set to accommodate
+961.7	uh true north. It's actually pretty far
+963.3	off for uh where I live uh in uh in
+965.4	rural Canada. Uh uh magnetic north and
+968.0	true north I think are like 20 some
+969.8	degrees off. So it's quite
+971.2	incredible.
+971.8	Yeah. Quite a quite a difference, but we
+973.6	we just assume in command everything's
+975.3	true north.
+976.4	Gotcha. And that also affects the
+977.8	rotation of the map,
+979.2	you know. So, if I click and hold my
+980.5	right mouse button and go like this and
+982.2	drag it this way, notice there's no
+984.1	rotation Google Earth style when that
+986.5	happens. All right. Awesome. So, control
+988.3	D, by the way, is your shortcut. Click
+990.2	and drag. Wonderful tool. If you click
+992.1	on something and actually move your
+993.2	mouse away from it, it will also tell
+995.1	you the distance, but it won't give you
+996.6	that pesky bearing. So, if you need that
+998.6	bearing, you're going to be looking for
+999.8	that tool as well. So, let's go ahead
+1001.5	and take a look at map settings, also
+1003.1	known as why are there so many crazy
+1004.8	shaped circles all over my screen. Now,
+1007.4	um, basically your map settings are
+1008.9	going to be dictating the different
+1010.6	ranges of your sensors and weapon
+1012.6	systems. And a relatively new feature is
+1014.8	how far your aircraft can continue
+1016.5	flying in the air, which is actually,
+1018.2	again, we didn't have this in commando,
+1019.7	we have this now. One thing I will do
+1021.8	before we start playing with these
+1022.7	individual settings is just to point out
+1024.3	that you can actually dictate what
+1026.1	symbols you're actually watching on the
+1027.9	screen. Right now, I have it set to all
+1029.6	units. So, I'm also seeing enemy
+1031.8	platforms ranges. If I just wanted to
+1034.3	see the range of the unit I'm clicked
+1035.8	on, you can set it to selected unit. Or
+1038.2	for those of you who really don't want
+1039.4	to see anything, you can set it to do
+1040.9	not show. And now you're going to be
+1042.3	relying on basically your eye to know
+1043.8	whether or not you're in range for
+1045.1	something.
+1045.8	Great way to declutter the screen.
+1047.9	Absolutely. And I totally agree with
+1049.3	that. Personally, I don't think I ever
+1050.6	use this unless I'm building a mission.
+1051.9	I always use selected unit. But again,
+1053.8	do what works for you. So basically,
+1055.4	your top half are going to be for your
+1056.6	sensors. Your bottom half are going to
+1057.8	be for your weapons. So uh clicking on
+1059.8	our Boeing fighter attack model 18 2008
+1062.2	lightning edition serial number 3.548285
+1065.4	you can see that it has two different
+1067.2	separate circles here. It has basically
+1068.8	a very very close range. I believe this
+1070.7	is going to be for its gun. It's going
+1071.8	to be air to ground as well as air to
+1073.3	air. And then you have this longer range
+1075.0	circle which is going to be representing
+1076.6	just by taking a look here by the color
+1078.6	that it represents surface weapons.
+1080.4	Although I believe for this one this
+1081.4	would be air weapons as well. Yeah, it's
+1082.7	Maverick arms so it's got to be its air
+1084.2	weapons. So, if I shut this off, you'll
+1086.4	notice that I no longer see what the
+1088.4	maximum range of the air-to-air weapons
+1090.0	of the F-18 are. That would also include
+1092.3	if I clicked on this carrier battle
+1093.8	group here, which you can see I can no
+1095.5	longer see their air-to-air weapons as
+1097.4	well, unless I flip that back on, in
+1099.3	which case you can see their range of
+1101.4	basically their surfaceto-air missiles.
+1103.2	This is a great tool for making general
+1105.3	judgments. Um, one thing I will warn and
+1108.0	we'll expand in a second is just because
+1109.9	something is in range does not
+1111.4	necessarily mean you can hit it. With
+1113.4	some older radar systems, um you will
+1115.3	not have a good enough or reliable
+1116.9	enough track at long distances. So even
+1118.9	though you have say 150 mile range, you
+1121.0	won't necessarily be able to it. The
+1122.6	other problem you get, especially at
+1123.9	very long distances, is the Earth is
+1125.7	curved. You can actually have a unit
+1127.5	that's so low that it's hiding behind
+1129.4	the curvature of the Earth or these
+1131.4	beautiful mountain ranges over here in
+1132.8	Saudi Arabia. Um any comments on that?
+1135.9	Yeah, it's not just the uh the masking
+1137.8	effects of terrain, but it's also the
+1139.4	the motion of the unit. This is uh most
+1142.1	obvious with torpedoes.
+1144.3	So a submarine that launches a torpedo
+1146.7	that is going after a ship, the
+1149.0	submarine has to assume that the ship is
+1150.9	going to run away from the torpedo. And
+1153.1	so a torpedo might have a 60 nautical
+1156.0	mile range on paper, but really that
+1158.5	means like a 15 nautical mile range from
+1161.2	the submarine's perspective as to the
+1163.4	range that it can shoot at because uh
+1165.9	the torpedo assumes that it has to chase
+1168.3	the ship. Absolutely.
+1170.9	And that the ship's going to run away as
+1172.3	fast as possible.
+1173.4	Yeah. And this also could be modified by
+1175.2	weapon release authorization, which is
+1177.0	something for a brand new video. So, uh,
+1179.0	don't worry about that yet.
+1180.5	So, that's got to be your ranges.
+1181.8	Another new feature right here is
+1183.0	aircraft range. This basically
+1184.5	you'll probably have to zoom out to see
+1185.7	that.
+1186.2	Say it's an F-18, so it's got to have a
+1187.8	pretty good reach here. And you can see
+1189.4	it actually projects based on its
+1191.2	current fuel consumption as well as
+1193.0	capacity of what the range of this
+1194.5	particular aircraft is. Now, just
+1196.2	without getting too too ahead of
+1197.4	ourselves, if we alerted him to go say
+1199.5	after burner, you'll notice that ring
+1201.4	changes shape pretty darn quick because
+1203.0	now he's burning more fuel. If I set him
+1204.3	to loiter, that ring will of course
+1206.3	expand as he changes speed. It's a very,
+1208.8	very cool. It's a very, very new
+1210.2	feature, which I think is absolutely
+1211.6	great. You know, I like that stuff.
+1213.6	Coming on next, we have what they call a
+1215.0	non-friendly range symbols. This is
+1216.9	handy, but of course, because we told
+1219.0	all of the range symbols to turn
+1220.6	themselves off, you don't see most of
+1222.1	these. We flip them back on. Now you can
+1224.0	see that you have these dashed lines
+1226.2	around certain enemy units. Now the
+1228.0	colors for these correspond the same as
+1230.0	the colors up here. So for example, this
+1232.1	white dashed line that would be the air
+1233.9	sensor distance. Getting a little bit
+1235.6	closer to our big angry SAMs here. I
+1237.3	think these are SA3s. Yeah, they're the
+1238.7	bees. You can see that this would be the
+1240.7	surfacetoair missile range. Again, like
+1243.3	I said, just because you're in range
+1244.7	doesn't mean it will fire. You have to
+1246.0	be within the dynamic launch zone, which
+1248.1	is a video for another day. Uh any
+1250.2	comments on that?
+1252.3	Uh nope. I think you covered it. Uh, so
+1254.3	dash lines are enemy circles.
+1256.7	Absolutely.
+1257.3	So this is a neat feature too. This one
+1259.0	basically takes like if you have a
+1261.0	pretty good amount of sensors in this
+1262.2	carrier group right now and what this
+1264.0	feature does is it actually links them
+1265.6	together to give you one full circle of
+1267.5	coverage. Sometimes that's handy as far
+1269.8	as a rendering the map without lacking
+1271.4	your computer handy. But other times it
+1273.8	also uh kind of masks some of the
+1275.9	information you could be getting from
+1277.0	that unit. If I shut this off real
+1278.6	quick. Oh no, the clutter's back. But at
+1281.3	least I can see that there's multiple
+1283.1	units looking at different ranges at a
+1285.4	particular target. Now, if I zoom in,
+1287.0	look at how many crazy shapes there are
+1288.8	here. But the moment, of course, if I
+1290.2	flipped up to merge, now I know that
+1292.2	there are weapons that are in range at
+1294.2	this distance, but I don't necessarily
+1295.8	know which one of the platforms unless
+1297.3	you do a little bit of deduction here.
+1299.0	So, it's a really really neat strategy,
+1300.6	but at the same time is it kind of
+1301.9	declutters things really effectively.
+1303.9	Um, what about sonoboies?
+1306.7	So yeah, soda buoys are little uh
+1309.0	basically uh uh immobile UVs, like
+1312.3	little drones that are dropped by
+1314.6	helicopters and aircraft that fall into
+1316.7	the ocean and deploy a special sonar and
+1319.6	a radio so they can talk to the aircraft
+1321.8	that dropped them and let that aircraft
+1323.9	know if they hear any subs. And so
+1327.6	they get very cluttered. They cost uh
+1330.2	you know they're pretty expensive but
+1332.3	they're dropped in the hundreds by
+1334.5	modern naval uh uh formations and so
+1338.1	they can really command uh models every
+1341.0	single one individually including the
+1342.9	data link and the channel exhaustion of
+1344.8	each sonoy. By that I mean if you have a
+1347.6	a field of hundreds and hundreds of sons
+1349.8	you can only listen to a certain subset
+1351.4	of them at at one time but basically
+1353.9	they jam up the screen. they completely
+1356.9	cover like the entire world uh in a a
+1360.4	real ASW scenario. And so we have
+1362.6	different options for turning them off,
+1364.2	for making them ghosted or making them
+1366.6	just invisible. And often the only
+1368.9	option is to make them invisible because
+1370.9	there's just so many
+1371.8	chaotic pretty quickly. But again,
+1373.3	that'll be something for another day.
+1374.7	Reference points are basically these
+1376.5	little dots that you can place. Uh you
+1378.1	can insert one by hitting control insert
+1379.8	becomes an X. If you click on it, it'll
+1381.5	actually have a name little name
+1383.4	attached to it. Now, this one down here
+1384.9	is a little different because it's
+1385.9	locked. We're going to cover reference
+1387.4	points in great detail when we talk
+1388.9	about missions, but just know that this
+1390.9	feature up here basically enables you to
+1392.9	make them big. You can make them teeny
+1394.9	tiny, or of course, you can shut them
+1396.6	off because, uh, they can get a little
+1397.9	crazy once you assign 30 40 missions at
+1400.0	a time. So, now we're going to take a
+1401.8	look at the more confusing items under
+1403.5	the map setting, and that's these
+1404.9	vectors down here. Um, illumination is
+1407.8	basically a fancy way of saying that I'm
+1409.7	pointing my active sensor at you. So,
+1412.6	for example, if I were to take this F-18
+1415.0	and I were That doesn't make much sense.
+1416.7	If I were to take a SAM unit and try to
+1418.6	attack an F-18 with it, it would show a
+1421.0	line to it to indicate that he's
+1422.8	basically illuminating him with his fire
+1424.2	control radar. I believe that's fairly
+1425.7	accurate. Correct.
+1427.1	Yeah. Yeah, that that is accurate. Uh
+1429.3	certain ships and certain SAM sites have
+1431.3	a limited number of these illumination
+1433.4	uh channels and that is a main a big
+1436.6	reason how SAM sites can be penetrated.
+1438.7	Like for example, Aegis, I think uh you
+1441.3	can track up to 64 like uh you can track
+1444.3	a number of uh incoming missiles, but
+1446.4	you can only like a Burke class ship
+1448.5	only has three illumination radars,
+1451.6	which means it can only shoot missiles
+1453.1	at three targets at a time. And so that
+1455.6	becomes pretty stressful when you have
+1457.2	20 missiles coming in. You have to
+1458.8	allocate uh the uh the missiles to the
+1462.5	radars and your radars can be damaged.
+1464.1	Your illumination channels can be
+1465.3	damaged and that can uh that can really
+1467.4	screw you up. Yeah, absolutely. Now, one
+1470.4	thing I was saying is the only three
+1472.1	options you have here is you can turn on
+1473.4	for the selected unit. All the units are
+1475.0	none. If you've got a very complicated
+1477.2	scenario with a lot of missiles and
+1478.6	aircraft coming at like an Egyp cruiser
+1480.7	for example, this can get extremely
+1482.5	cluttered very quickly. That also is
+1485.1	very similar to targeting vectors. The
+1486.9	difference being with targeting vectors,
+1488.6	it's basically going to show a line
+1490.4	between the person attacking and the
+1491.9	thing attacking. So, for example, if I
+1493.8	grab my F-18 and I did a automatic
+1496.6	attack, again, we'll talk about that in
+1497.8	another minute. You can see now that
+1499.4	we've got this little green line saying
+1500.7	that we're attacking this. Now, of
+1502.2	course, if I use that to attack
+1503.5	everybody and then I went over here and
+1505.0	used that to attack everybody, you can
+1507.0	see how that starts to get very, very
+1508.6	cluttered very quickly. So, the trick
+1510.2	there is you can go to targeting
+1511.5	vectors, set it either to selected unit
+1513.6	or personally, I just set it to none,
+1515.4	but it can be
+1516.0	I do that too.
+1517.0	Absolutely. Uh, data blocks. Uh, data
+1519.4	blocks are basically these little chunks
+1521.0	of text and speeds and things like that.
+1523.2	You can set whether or not we get it
+1524.9	from just the thing I'm clicking on. Uh,
+1526.9	you can also set it, of course, so that
+1528.3	everybody has their data blocks on at
+1529.8	once, which again, it can get very
+1531.7	cluttered very quickly, which is one of
+1533.2	the reasons why this menu is your best
+1534.6	friend, by the way,
+1535.8	or of course you can set it to none. The
+1537.8	shortcut key, by the way, is you can hit
+1539.2	the aster key on your numpad and you can
+1541.1	actually surf between it. Now, one thing
+1543.0	I always hate with these is uh when you
+1544.6	have groups of units, when you turn
+1545.9	those on, it starts getting very
+1547.3	cluttered very, very quickly. So, you
+1549.4	want to be very careful with that.
+1551.5	Uh just take a look here. Contact
+1553.0	emissions. Uh why don't you tell us a
+1554.4	little about what that is?
+1556.2	Sure. Yeah. So, command uh models every
+1558.6	single sensor individually and many
+1562.9	something that was discovered in World
+1564.2	War II is that you can actually listen
+1565.8	to where a sensor is coming from and and
+1568.8	detect that sensor's emissions and
+1570.6	classify, oh, this radar sounds like a
+1573.0	civilian ship. Oh, this radar sounds
+1574.7	like a civilian aircraft. Oh, this
+1576.8	sounds like the radar from a battleship.
+1579.4	And you can classify different sensors
+1581.3	based off of that just based on what uh
+1583.6	electromagnetic radiation that they're
+1585.2	putting off. It's kind of like passive
+1587.7	sonar but for radars
+1589.8	in a sense.
+1590.8	Yeah. So in this case, just a quick
+1592.6	example, um you'll notice above this
+1594.3	skunk 45, there's a little thing that
+1596.3	says radar common navigation. If I click
+1598.6	on the contact report, you can actually
+1600.0	get information as well as possible
+1601.9	types of contacts this particular ship
+1604.0	can be. Now, keep in mind this is
+1605.8	getting a little fancy, but there's
+1607.1	different types of ESM with different
+1608.6	sensitivities and qualities, but again,
+1611.2	that's for another day. Just know that
+1613.1	basically with this setting that you can
+1614.6	select if you want it selected contact
+1616.6	you can also dictate whether or not you
+1618.0	want. Now one really cool feature is if
+1619.9	you come down here you can tell it to
+1621.8	give you all emissions just fire control
+1623.7	emissions or I love this one all
+1625.8	emissions for the contact I'm clicking
+1627.4	on and fire control only for the rest.
+1630.3	Now when there's a fire control radar
+1632.1	turned on it will actually turn bright
+1633.6	red to let you know something's trying
+1635.3	to lock and fire a missile. Fire control
+1638.1	by the way is going to differ from
+1639.1	surge. is kind of different from some of
+1640.4	the other types of radar as well. And
+1642.6	obviously there's going to be no warning
+1644.2	of emissions if it is a passive sensor
+1646.4	such as a camera.
+1647.8	Yep.
+1648.5	All right. So the next one, again, just
+1650.0	moving really quickly down that list
+1651.4	here, is we have plotted courses, which
+1653.1	basically allows you to click on a unit
+1655.0	and then see where it intends to go. So
+1657.0	in this case, it's plotted to be this
+1658.6	way. Again, we'll talk about this in a
+1659.9	different.
+1660.2	So that gray line with those little dots
+1661.7	on it, that's where the aircraft is
+1663.4	intending to go.
+1665.8	It'll follow those legs of the uh of its
+1667.9	course. It'll get to a point and then
+1669.5	it'll go to the next point.
+1670.9	Absolutely. The key thing to watch out
+1672.6	here is if this aircraft has some kind
+1674.6	of evasion turned on for it, it there's
+1676.5	a pretty good chance that it might not
+1677.8	necessarily fall on this if it gets
+1679.5	attacked. So sometimes that does really
+1681.6	annoying things like jump off. Speaking
+1683.5	of get attacked, um what is this?
+1686.9	Yeah. So that red area often indicates
+1689.1	that that's a uh a no-fly zone, which
+1691.8	means that your aircraft, your units are
+1693.9	not allowed to go in there. They'll uh
+1697.0	they'll pathfind around it. They'll try
+1698.6	and find a way around it, but they're
+1700.3	just not allowed to go in there. Like
+1701.5	for example, now that aircraft, since
+1703.0	you told it to cross that zone, it's
+1705.0	decided, oh, we'll figure out a way to
+1706.7	do that, and it'll go around through the
+1708.8	north. This is often used to denote
+1711.0	countries that you don't want to have
+1712.4	involved in a fight. Uh so, for example,
+1715.2	uh you might want to have a Iranian
+1717.4	scenario, but you're not allowed to fly
+1718.9	over Saudi Arabia
+1720.5	or you're not allowed to fly over Iraq.
+1722.3	And that uh uh that just tells units,
+1725.5	both your units and AI units, that uh
+1728.2	you're just not allowed to go there.
+1729.7	It's it's really helpful for uh you can
+1733.4	create your own and you can set them
+1734.6	around uh SAM sites if you want. You
+1736.6	just uh you can set up no-fly zones
+1740.3	around SAM sites if you don't want your
+1741.8	aircraft to fly over them.
+1743.4	Yeah, absolutely. And that's a really
+1744.9	effective way to do it. Keep in mind,
+1746.4	these zones are set by type of unit
+1748.3	also. So you could have a no swimming
+1750.6	zone, but you can have a flying zone and
+1752.3	vice versa. Now, one thing I will say,
+1754.2	the opposite of this is also true. It's
+1755.8	kind of like a Unix permission, but
+1757.4	basically you're in a situation where
+1759.0	this whole world I can fly around it. So
+1761.2	if I wanted to somehow take the very
+1762.9	very very very long way to get around
+1765.0	somebody who built one of these, you
+1766.6	technically can, but that's a poo poo on
+1769.3	the designer not thinking that through.
+1771.4	Just because you cross into another
+1772.8	country doesn't necessarily mean
+1773.9	anything bad, unless of course they're
+1775.4	willing to defend themselves based on
+1777.0	that scenario. It's kind of neat. Uh,
+1779.5	scrolling down, we have mission area and
+1781.1	course. Basically, this is going to tell
+1782.8	you what the area is that is in a
+1785.4	mission. We're going to talk about this
+1786.6	in more detail in a different video.
+1788.6	Coming down here, we have this feature,
+1790.1	which I don't think I've ever done
+1791.4	intentionally, but uh, some people kind
+1793.0	of like it, and that is track fe. So,
+1795.8	basically, when you turn this on,
+1796.9	anybody you've selected, you will
+1798.4	follow. So, if I were to speed up time
+1800.1	here, you'll notice the map kind of goes
+1801.6	wee and kind of follows along with them.
+1803.5	Uh, do you ever find yourself using
+1805.0	that?
+1806.1	Uh, no, not really. Uh the only time
+1808.0	I've ever really used it is um uh when I
+1811.3	when I was doing uh live streams a long
+1813.1	time ago, years ago, uh I would before
+1815.5	this live stream started, I would set up
+1817.2	command and I'd have it track a
+1818.8	satellite going over the Earth
+1820.3	just as a kind of a thing to have on the
+1822.2	screen. It's it's not very useful in
+1824.7	practice.
+1826.3	It just looks cool. Again, we have a 3D
+1828.4	view now, so it's not bad. Which brings
+1830.2	us to our last three items here finally.
+1833.0	Uh, first is our line of sight tool,
+1834.6	also called lag.
+1837.2	That's right. It's a lag operating
+1840.6	system. Yeah, the lag operating system
+1842.7	tool. So, what this does is this is
+1844.4	basically allows you to click any unit
+1846.0	in the game and tell it what its uh
+1849.0	maximum radius is, what the target's
+1851.0	altitude is, and it will highlight the
+1853.0	map to tell you where that's visible.
+1855.2	So, in this case, my uh little TPS 43G
+1858.0	here, just kind of chilling in this
+1859.5	valley. if there's a target that's only
+1861.0	30 ft off the ground, 10 mters, that
+1863.2	you're not going to be able to see it
+1864.4	unless it's in this highlighted zone.
+1866.2	Now, if the target, of course, was
+1867.5	coming in at, let's say, 100 meters,
+1869.0	make sure you click refresh, by the way.
+1871.6	Notice how many more places that radar
+1874.1	now has the ability to spot that unit.
+1876.6	You can set the max distance here. So,
+1878.5	of course, if we had a target that was,
+1880.2	let's say, 1500 meters,
+1883.7	look at all the possibilities of
+1886.2	engagement, I should say, detection.
+1888.0	Now, of course, that also means for you
+1889.8	as the player, um, if you knew that this
+1892.1	radar site was here, you could use this
+1893.7	tool almost in reverse as a way to
+1895.4	predict where you would need to send in
+1897.3	your units in order to basically safely
+1899.1	get around this. So, if I'm launching
+1900.7	tomahawks at this site, I'm promising
+1902.7	you it's coming from back here. I would
+1904.3	not send it here because it would just
+1905.4	be too visible. Of course, the good news
+1907.4	is if you close the screen, ah,
+1910.9	get your control right back. Uh, any
+1912.9	comments on that?
+1915.4	No, I think you just about covered it.
+1917.0	Awesome. So, that's a cool tool, but
+1918.6	it's one of those that I find myself
+1919.9	using more as a scenario designer. A lot
+1921.8	of times I just use the relief and kind
+1923.2	of feel it out. Which brings us to the
+1925.3	mini maps. Now, this is again kind of a
+1927.1	new feature. I kind of like this a lot.
+1928.7	Uh why don't you tell us a little about
+1929.9	the mini maps here? Sure. They're just
+1932.6	uh tiny little maps that you can have on
+1934.3	your uh on your main map. Uh you can
+1936.2	right click on them to uh to zoom to a
+1938.6	new location. Uh one of them is global.
+1941.8	One of them one of them fits itself to
+1943.8	the uh to the size of the scenario. So I
+1946.7	think the one that you don't have is the
+1948.3	probably one of the more useful ones is
+1951.2	this one. It fits itself to the scenario
+1953.4	region. Uh so you can see what's in the
+1956.6	region and just uh have a focused little
+1959.2	mini map on uh being able to jump to
+1962.0	different uh different spots. Uh yeah,
+1964.7	it's just a kind of like a little uh
+1968.0	little helper window there.
+1969.2	Yeah, put it up in uh the command and
+1970.7	conquer slot up there. But these are
+1972.8	absolutely great, especially scenario.
+1974.4	And again, the other one, of course, if
+1975.9	you zoom in, it will zoom in with it.
+1977.7	Um, it seems to be a little bit of an
+1979.1	update delay on this, but um, I think
+1980.9	it's pretty effective for giving you a
+1982.4	general idea of what's going on. You
+1983.5	know, if you suddenly see something red
+1984.8	and then get a warning down in your
+1986.1	message log, it's going to be pretty
+1987.8	easy to just go like this to immediately
+1989.6	identify where that new contact is. So,
+1991.8	I think that's a pretty it's a handy
+1993.3	tool. And then, which brings us to the
+1994.9	final item, and that's the terrain type
+1996.7	legend. But, we talked about that
+1998.0	already. That's basically if you have
+1999.7	the land cover option turned on, this
+2002.0	will correspond with what the individual
+2003.8	colors are. Of course, this part of the
+2005.2	world isn't going to be nearly as
+2006.4	exciting as try to go to this part of
+2007.7	the world when it comes to terrain
+2009.1	cover. Shut off the BMG. Oh, yeah. Look
+2011.4	at that.
+2012.5	Now, that's what I call variety. All
+2014.3	right. Any uh last comments?
+2016.6	Uh no, I think uh I think we've got it.
+2018.8	Okay. So, that's basically all your map
+2020.6	editor settings. In general, uh when I
+2022.5	pick things, I really like the sentinel
+2024.2	layer and I really like the stamman
+2025.5	terray level. But again, when you're
+2027.0	doing maps, I use those. For map
+2028.6	settings, I really like the selected
+2030.3	range option, but everybody's going to
+2031.8	be a little different. And when it comes
+2033.1	to sonoboies, don't click that option,
+2035.4	please. That means if you're in the
+2037.3	world map and you drag a box like this,
+2038.9	you're going to end up grabbing every
+2040.4	single one of them. And there could be a
+2042.2	thousand of these things operating
+2043.6	simultaneously. All right, hopefully you
+2045.5	found this enjoyable. Uh, next time
+2047.0	we'll take a look at how to control
+2048.6	units. Enjoy.
+2049.7	Yeah, cheers, guys. I

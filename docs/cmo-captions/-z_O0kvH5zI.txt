@@ -1,0 +1,1195 @@
+0.0	hello on today's command tutorial we're
+2.6	gonna be taking a look at how to destroy
+4.1	and disable air fields in command modern
+6.4	operations so air fields obviously it's
+9.2	you know kind of in the name if you look
+10.5	at the old command you probably notice
+12.2	that it was command modern air naval
+14.0	operations air being one of the major
+15.8	components of this game now of course we
+18.5	know that we have basically two
+19.5	different kinds of air we have kind of
+21.3	the sea base which would be your
+22.4	carriers and helicarriers and things
+23.9	like that and then you have your land
+25.4	base which are gonna be your typical air
+26.7	fields heliports farms things along
+28.6	those lines so one of the big things
+30.7	you're always going to be dealing with
+31.6	especially in modern offensive scenarios
+34.0	is coming up with ways to prevent the
+35.8	enemy from employing their aircraft you
+37.8	know one of the common tenets of modern
+39.8	history I should say tactics is the full
+42.6	spectrum approach not only do you need
+44.6	to deny the enemy assets by preventing
+46.7	them from going into the air but you
+48.5	must deny them the ability to supply for
+50.3	the air you must deny them the need to
+52.4	go to the air and things like that in
+54.1	order to completely the enemy's
+55.6	ability to employ aircraft so enough of
+57.5	that so basically we're gonna go into
+59.2	take a look at how things are simulated
+61.2	at this time I want to say this really
+62.7	quickly though we're dealing with build
+64.4	one one five point eight point one this
+66.8	can change as time goes on so now let's
+69.9	go ahead take a look at a structure of
+70.9	an airport real fast so we kind of know
+72.4	what we're going up against so basically
+74.4	an airport is made up of a major runway
+77.2	sometimes it is a taxiway has some
+79.1	access points and then it has some type
+80.8	of aircraft storage some types of
+82.9	aircraft storage such as a tarmac space
+84.7	or open parking even Revit mints
+86.2	basically can be seen down into so you
+89.0	can identify if there's aircrafts at
+90.5	them as well as the type of aircraft
+92.0	assuming your reconnaissance is good
+93.6	other structures at a typical airfield a
+95.8	lot of times you'll have these little
+97.0	control towers alright so this was kind
+98.8	of interesting because in the real world
+100.3	telling the control tower was usually a
+101.8	pretty good way to disrupt operations
+103.5	but in command it doesn't make that much
+106.0	of a difference I always like kind of
+107.5	save this target for last kind of a
+109.3	thing because it's like I don't know
+111.2	it's it that just makes you feel good by
+112.7	blowing it up it doesn't really do
+113.7	anything to the airport in this build
+115.3	the other elements that we need to watch
+117.1	out for at a typical airport are the
+119.1	ammo dumps as well as the fuel dumps now
+122.7	like I said for the third time now in
+124.4	this version of command fuel dumps don't
+127.5	matter so if you were to blow up every
+129.5	one of these fuel dumps they would still
+131.0	be able to refuel and use aircraft
+132.6	the remainder of the game this is kind
+135.1	of a bummer because in the real world
+136.5	look at how close these things are
+138.4	together they're like 100 meters apart
+140.3	yes 80 meters apart it would only take a
+142.5	couple of GPUs 10s or maybe even a
+144.8	couple of mark 80 forest in the middle
+146.1	even CPUs to their entire
+148.3	Airport just by killing their fuel
+149.8	supply and then again we have the ammo
+152.5	bunkers this is modeled correctly what I
+156.1	mean by that is if you have not
+158.1	unlimited ammunition all unlimited ammo
+160.2	I should say anything inside those
+162.0	bunkers is vulnerable so if I pick up
+164.2	one of these bunkers I believe this is
+165.4	the one I actually set up let me take a
+167.0	look real quick now it would've been too
+168.6	easy if I remember which one I actually
+170.0	used here but basically a map designer
+172.4	who's using non unlimited ammunition
+173.9	will actually set up a magazine at an
+176.2	airport with the weapons the intend the
+178.3	people to be using if this has been set
+180.5	up and this bunker gets destroyed that
+183.0	would mean that this Airport can no long
+184.6	rearm in really could still refuel but
+187.4	it could no longer rearm with the
+189.3	weapons listed here of course if there's
+191.4	any aircraft already here that have
+193.0	those weapons on board that's not an
+195.2	issue however if we kill this thing as
+197.4	well as all the ammo in it they can't do
+199.2	that again so how do we go about
+201.4	crippling in Airport well it always
+203.7	comes down to the weakest link so in
+205.5	this particular situation this
+206.7	particular Airport has a really really
+208.2	really really long runway and you're
+210.2	gonna have to go on okay so that's 3200
+212.3	meters it's pretty honkin take a look
+214.0	here it's damage points is 1200 so
+218.0	you're like that's not bad a forged mark
+220.2	84 is no problem with heavy armor that
+223.1	means the only way you can damage this
+225.0	surface is with penetrators or something
+227.1	that's got some serious serious serious
+228.8	capability now when usually when people
+230.9	think how do I kill a runway they think
+232.5	about things like actually we don't not
+234.2	a fab will do it to Randall this weapon
+238.1	was designed specifically for the
+239.4	purpose of it and is a penetrator the
+241.2	problem is is you need a whole lot of
+243.6	these in order to do any damage
+245.1	of course the Soviets also should say
+247.6	the Russians also have this capability
+249.0	with their I bet 500 SP which again it's
+251.6	just a lot of damage but at the end of
+253.1	the day you need a lot of these to
+255.2	actually destroy a runway so killing the
+257.2	runway is usually not the easiest way to
+259.0	disable the airport by the way if you do
+260.9	kill the runway we have a taxiway down
+263.0	here which is still useable as
+265.4	a runway if you actually click on it you
+267.3	notice it's also 1,200 hit points
+269.0	however its armor is less but that's
+272.5	still going to require a significant
+274.8	amount of ordnance to completely destroy
+276.5	in command with this version if you do
+278.9	destroy a runway it's not actually quote
+281.7	destroyed unless you drop a nuclear
+283.0	weapon on it that means that over time
+285.3	it will actually repair itself depending
+286.9	on how much damage you did to it keep in
+288.7	mind the repair time is like 24 hours
+290.7	it's not 20 minutes so if you do want to
+292.5	keep a runway out of commission you
+294.1	basically have to constantly reattach it
+295.8	allow you know the Serbian campaigns of
+297.9	the 1990s so that leaves us with how
+300.6	else are we gonna this thing
+301.7	well there is a weakest link if we can't
+304.3	kill these stupid ammo bunkers by the
+305.7	way ammo bunkers check this out look at
+308.3	the armor on this thing that is going to
+310.0	take a stupid amount of ordnance to
+311.6	destroy not to mention look at its
+313.1	damage points you're never gonna be able
+314.6	to kill this thing unless you have 50 GB
+316.4	used it's not not 50 it's like 12 but
+318.9	still you're gonna have to do that which
+320.5	brings us to our weakest link and
+322.5	everybody loves this the access point
+324.4	check this out
+325.6	access points thousand hit points it's
+327.6	3gb three mark 80 force no armor haha we
+332.7	found the weakness so the way we could
+334.9	do this now is we could simply blow up
+336.4	each one of these four access points now
+338.8	access points are a little weird you're
+341.1	looking at this Airport going well
+342.3	there's a taxiway right here if I was
+343.7	leaving here I could just go and fly
+345.1	yeah but the way command simulates it is
+348.2	in the sense that to get to either the
+349.9	runway or the taxiway requires an access
+352.4	point so really these access points are
+354.5	simulating like this little connector
+356.3	here this teeny tiny little connector
+358.2	here so if you can all four of
+360.3	these this Airport is out of commission
+362.6	for about a day so of course you're
+364.9	sitting there going well that sounds
+365.9	pretty effective that's not bad I mean
+367.2	you only need to hit four targets
+368.6	individually there are some
+369.7	complications and we'll see that when we
+371.5	go try this out in a minute finally and
+374.0	this is my favorite solution is just
+375.5	blow up the airplanes you notice that
+377.7	there's this tight pack a very very
+379.3	large aircraft all nice and exposed on
+381.4	this tarmac space if you use CPUs
+384.4	cluster bomb units you could literally
+386.1	just come through a Baba Baba Baba and
+387.8	clean out the entire enemy Air Force in
+390.2	one shot now keep in mind over here we
+392.6	have some hangers hangers you're tricky
+394.3	because you can't actually see what's
+395.4	inside of them which is kind of a bummer
+396.9	but at the same token as
+398.9	it's not actually that tough of an
+400.5	object they'll have these protected
+402.7	shells and things like that
+404.2	it's the underground obviously could
+406.5	have underground aircraft shelters look
+408.0	at this special armor 1600 damage points
+412.0	you can have all sorts of shelters and
+414.1	protected hangars and stuff like that
+416.0	let me see if they have a big scary one
+417.2	now I'll get that a little later but
+419.1	these are actually not hard to kill
+420.8	don't use the CPU against them mind you
+422.6	you want something a little bit more
+423.8	precise they're also pretty close to
+425.3	each other so a lot of times you get one
+426.6	to get them all remember you can't know
+428.8	what's inside of one of these hangars
+430.2	when you're doing reconnaissance unless
+431.6	you see somebody leaving the hangars
+433.4	speaking of which I want to show you
+434.9	something really really cool real fast
+436.7	if I take an airport and they go ahead
+439.3	and let's go ahead and get a couple
+440.1	planes here oh go ahead grab us these
+443.6	guys I'm of course cheating a little bit
+445.2	here just to speed things up I'm gonna
+446.9	order them to launch as a group wait
+449.0	this is really cool when an aircraft is
+452.3	told to leave they will actually come
+454.6	out of their hangars then occupy the
+457.2	access points and then occupy the runway
+460.3	itself before takeoff once they've
+462.7	gotten onto the runway like those
+464.1	suddenly see this disappear and suddenly
+465.8	these guys will disappear and the
+467.0	aircraft will come repping out at the
+468.3	top just like that did you see it that
+470.6	means that aircraft actually physically
+473.0	move around this base or at least they
+474.7	simulate something along those lines
+476.1	which means if you're spying you can
+478.4	actually see them moving across this and
+480.4	actually be able to identify them using
+482.1	that technique it's just kind of a neat
+483.9	little twist there that it's kind of
+485.5	worth checking out so anyway enough of
+487.4	the general stuff let's blow this thing
+488.9	up I'm gonna go ahead and rearm our
+490.4	scenario here just in case and let's see
+493.3	how we're gonna do this so basically
+494.7	what I've done is I've gotten us some
+495.9	Chinese assets some European assets and
+498.0	some Soviet Russian assets I'm ignoring
+500.2	the American assets this time because
+502.0	you're probably pretty familiar with
+503.2	them at this point so we need to decide
+505.2	what exactly we want to do to this
+506.6	airport do we want to prevent them from
+508.1	using it as an airport do you want to
+510.0	prevent them from rearming do we want to
+511.7	destroy the aircraft that our audit do
+513.8	we want to embarrass them do we want to
+515.9	do a precision strike do we want to do a
+517.4	long-range strike those are all tactical
+519.3	considerations you're gonna have to make
+520.7	before we do it I'm kind of a fan of
+522.7	sort of like the general do as much
+524.1	damage as possible kind of a degrading
+526.2	strike at the same time as disabling
+528.2	this access point
+528.9	so how do we do that well it's pretty
+531.4	easy and I like to use missions let's go
+534.2	ahead and zoom in on a little targets
+535.5	opportunity here you can tap the astra
+537.1	key a couple times actually see who
+538.5	everybody is the first thing i want to
+540.2	go after in this thing is going to be
+541.5	this access points remember these access
+543.4	points only have a thousand damage
+544.8	points with no armor they're like free
+547.1	targets yes you can't completely destroy
+549.0	them unless you use the blue gun method
+550.4	but you're still able to put this err
+552.6	point out of commission for a long time
+554.3	however if you don't get all four of
+557.8	these nothing it's not gonna have been
+560.4	worth it you'll just do great operations
+562.1	it'll slow them down a little bit so how
+563.9	do you do this
+564.5	pretty simple let's go ahead and get
+565.8	ourselves a strike mission when you're
+567.7	working with conventional forces that is
+570.7	you know unguided bombs do not take all
+573.5	four of these targets and put them into
+576.5	one mission you're sitting there going
+578.0	why well what's gonna happen is they're
+580.4	gonna come running in they're gonna jump
+582.4	a bunch of bombs they're gonna go around
+584.1	going we didn't kill it riah TAC we
+585.9	attack Oh rata bombs just go home
+587.6	meaning only one of the access points is
+589.8	actually going to be properly damaged
+591.2	leaving the others alone this is all see
+593.0	the equivalent by the way I'm selecting
+594.1	the whole airport and hit add all units
+595.8	if you do that you're only going to
+597.5	attack the units that are closest to the
+599.0	airport from your launching so that's
+601.2	useless so you have to separate when
+603.6	using conventional weapons let me
+605.4	clarify access points into individual
+608.1	missions sometimes you can get away with
+609.5	doing two but at the end of the day
+610.9	you're just gonna screw yourself
+612.3	so let's go ahead and take a look at
+613.6	what we have as far as assets that we
+615.5	could deploy for this purpose so Chinese
+617.8	assets again I'm just being sort of
+619.5	generic here to give you guys an idea
+621.0	we have flounders which are if I recall
+622.8	correctly that's a really big plate kind
+625.0	of my super tornado to be honest scoot
+627.2	down scoot scoot what do we have as far
+629.0	as special equipment anything fancy
+631.6	bummer
+632.8	okay so it's going to take a lot of
+634.2	those guys to do it each c-5s are
+636.8	actually reconnaissance we're going to
+638.0	deploy them in a minute
+638.7	we have Badgers let's see here Badgers
+641.8	just a tuple of sixteen take a look what
+644.4	do we got free calculator ballistic
+645.6	computing yuck so you're going to need
+647.8	to drop a lot of bombs from these what
+649.5	do we got we got the a 8 d the finback
+651.9	that's nice like that
+653.2	scoot down the bottom what do we have as
+655.1	far a list of computing again ah yuck
+657.7	we have the hyd I believe this Air
+659.9	Refueling and of course we have
+661.7	surveillance so how many bombers are we
+665.3	gonna need so it's got a thousand hit
+668.0	points it has no armor and it's a big
+670.6	target so that tells me that you're
+672.5	gonna probably be able to get away with
+673.7	maybe four aircraft fairly low altitude
+677.3	lots of ordnance if we actually take a
+679.3	look at the Ordnance a 500 kg and it's a
+681.2	pretty big bomb we got four damaged 220
+683.4	so a thousand divided by 220 he's gotta
+685.8	take five direct hits five how many do
+688.7	we get we get four so that's gonna be
+690.3	about 20 bombs worth if a quarter of
+692.4	them yeah that works well so we used
+693.9	four aircraft for that purpose and of
+695.9	course we'll go ahead and stick to the
+697.2	jh7 now one thing that I'm doing this
+700.1	you probably go and wait a minute
+701.4	shouldn't you've done that first you're
+702.9	absolutely correct we need to make sure
+704.8	we're actually attacking something
+706.1	worthwhile now the way we usually do
+708.7	this is we get a reconnaissance aircraft
+710.1	we take a look at the airport determine
+712.2	who's where and then plan things
+714.4	however the neat thing about this
+715.8	particular airport that we selected is
+717.4	that all of the tarmac spaces are
+719.5	concentrated in one area which means
+721.8	collateral damage we almost don't need
+724.3	to know if there's any aircraft here of
+726.3	course if we get there and find that
+727.3	there's no aircraft
+728.2	you're wasting munitions so to simulate
+730.2	that real quick I'm gonna go ahead and
+731.8	get myself up quick little
+733.2	reconnaissance plane I will use a well
+735.6	get will cheat a little bit we'll use an
+737.1	RB T for this RB T again we're just
+741.2	cheating a little bit but I want to show
+742.5	you kind of what this is and I'm not
+743.5	gonna make you go through the whole
+744.4	process of kind of sitting around thank
+746.6	you for your patience mmm go and get
+750.1	that down you're gonna take it a little
+751.1	bit lower altitude I need you to
+752.3	identify individual aircraft at this
+753.7	Airport keep in mind we've done this
+755.1	with the mission a long time ago did you
+757.1	identify anybody no oh we got down
+760.1	altitude yet keep in mind today we do
+762.0	have a little bit of cloud so that makes
+763.1	things a little bit trickier we're gonna
+765.2	scoot scoot come on identify remind me
+769.9	to ask this guy why he can't see out the
+771.5	side of his cockpit because it said make
+772.9	$0.25 him even lower
+778.5	come on as soon as he gets there then
+781.5	he's gonna go down a thousand feet come
+782.9	on get back here spot the air we go
+786.1	thank you
+787.1	okay now that we did things correctly we
+790.1	actually have a fairly good idea you
+791.6	look at that sure enough we are able to
+793.6	identify all the parking spots
+795.5	occupied probably by something like a
+797.2	c-130 it's probably a big open space
+798.9	indeed a very large aircraft male medium
+801.1	so could be enough 111 or something like
+802.8	that alright back to what I was doing
+804.2	originally back to the mission
+805.4	okay let's reactivate that mission and
+807.2	let's go ahead and get ourselves some
+809.2	aircraft I believe we're gonna go with J
+811.1	eights because it really is not gonna
+812.6	make that much of a difference here so
+814.8	like I said we're gonna go with four
+816.0	bombers
+816.5	let's go find j8j there we go one two
+819.6	three four keep in mind we're ignoring
+821.5	the fact that opponents usually shoot
+823.4	back when you attempt this so I'm gonna
+825.0	neglect that for now but that could be
+826.7	part of another thing do we need to use
+828.4	radar we probably don't because the
+830.3	clouds are kind of high and these guys
+831.6	are have a very very low altitude how do
+833.9	I know that if you actually take a look
+835.4	it tells you they're going to be
+836.5	attacking at 200 feet above ground level
+838.2	which again if there were triple-a this
+839.8	would be a disaster one more thing I
+841.9	want to take a look at that's the weapon
+842.9	release authorization they're going to
+844.9	be dropping all of their bombs which is
+847.1	exactly what I want them to do okay so
+849.8	that's okay it's all set let's go ahead
+851.2	and take care of the other access points
+852.8	keep in mind if you miss a single one of
+855.1	these access points this Airport will
+857.2	still work so we grab the one at the top
+860.2	left
+860.7	actually I don't trust myself there let
+862.5	me make sure I did I'm gonna start at
+863.6	the bottom left there we go all set so
+865.7	let's go ahead and set this one up as
+866.9	well just call it a p2 this time strike
+870.2	don't accidentally click air intercept
+872.2	by the way I've done that a million
+873.2	times in this program you have no idea
+875.1	let's go ahead and grab the next four
+877.0	again remember I don't need to change
+878.5	anything here because this is actually
+879.6	pretty well set up we're gonna ignore
+881.5	that taxiway we're gonna ignore the
+882.9	runway like I told you it takes a lot of
+884.4	effort to do that we're gonna go ahead
+886.0	and target the next access point a p3
+888.8	land strike okey doke
+890.9	let's go ahead and get our next let's
+894.8	see whether there one two three four ad
+899.9	this is good this is good this is good
+901.9	all set all set all set sweet let's go
+903.9	ahead and get the last one as well keep
+905.7	in mind you miss one this was a waste of
+907.7	effort strike a p4 okay land strike okay
+912.2	so let's go ahead and grab our lasso we
+915.2	need those go ahead and grab our last
+917.1	these toss them in looks good looks good
+919.0	looks oh it's good okay so that will
+921.1	that Airport assuming the
+922.6	mission is accomplished now one thing I
+924.7	highly recommend doing is
+926.8	having these two guys in creating a
+928.7	support mission not too far from the
+931.4	attack area in the event that we do not
+933.9	succeed as everybody knows in baseball
+936.1	as well as in cricket entire games are
+937.8	won and lost on a bad catch so if we
+939.9	miss it and are unable to that
+941.8	thing it's game we've wasted our time
+943.6	and keep in mind you might not get a
+945.4	reattach depending on what happens in
+947.2	this case of the scenario so in the
+949.4	event that that happens I'm actually
+950.8	going to create a quick little support
+952.3	mission that allows these two aircraft
+954.3	to hang out for Rhea tacking purposes
+956.5	think of it as a reserve set this is
+960.6	support press okay obviously we want
+962.6	them to be cruising around at high
+964.0	altitude I'm gonna set this to two
+966.0	aircraft because remember we'll have two
+967.5	left and toss them in there okay we
+970.1	can't forget those guys because I
+971.4	knowing me I will forget them later on
+973.0	so they're gonna fly here and sort of
+975.1	kind of hang out so after the attack is
+977.0	done I can have them jump in in the
+978.4	event that one of the access points
+980.0	survived my onslaught which if you do
+981.8	math you realize there's probably about
+983.8	15 to 20 percent chance of okay so that
+986.4	takes care of disabling the airport's
+988.0	runways so now you can't take off now
+989.9	you can't land safely at this Airport
+991.7	well you could land but you'd just be
+993.1	hanging out on the runway for a while
+994.3	not going very far so let's go ahead and
+996.8	take a look at the next aspect and
+998.3	that's destroying the aircraft keep in
+1000.1	mind you don't have to the
+1001.1	airport if you've already destroyed the
+1002.6	aircraft my favorite tool for destroying
+1004.5	aircraft of course is going to be
+1005.6	cluster bombs they are amazing and
+1008.1	especially when you get some of the
+1009.5	later ones like those joint standoff
+1011.5	weapons that have the cluster warheads
+1013.5	it's like cheating but unfortunately we
+1016.1	do not have this assets we just have
+1017.6	basically five fab 500s which we're
+1019.6	gonna have to work with so I'm gonna go
+1021.1	ahead and grab all of these units here
+1023.9	let's go ahead and destroy this is for
+1027.4	the taxiway remember we've identified
+1028.9	these guys as already carrying aircraft
+1030.9	so we're not wasting ammunition here we
+1032.8	do a land strike press okay actually
+1034.5	something that is at all tarmac that's
+1036.3	what I meant to say so who do we use for
+1038.9	this
+1040.4	[Music]
+1041.9	what's gonna be the best thing that we
+1043.8	don't care about accuracy but we want to
+1045.5	have as much splash dam aha I think I
+1048.2	know what to use here let's go grab our
+1049.9	Badgers now the Badgers themselves carry
+1052.5	fab 1 thousands these usually lend
+1055.7	themselves better to strikes against
+1057.7	things like the ammo bunkers which
+1059.9	you're noticing I'm ignoring because I
+1061.8	know I won't be able to kill them if I
+1063.3	threw every airplane I had in the
+1065.2	Chinese assets Airport you just won't be
+1067.0	able to hit or do enough damage to
+1068.8	completely destroy them and again if you
+1070.3	miss one that's more Sidewinders to get
+1072.5	launched at you later on the other thing
+1074.2	is why don't I use those aircraft to
+1076.1	attack the hangars that's a great
+1077.6	question as well and as a matter of fact
+1079.2	I'm actually going to add these other
+1080.1	two parking spaces over here too just in
+1082.1	case we get the opportunity to reattach
+1083.5	what can't do that in this game let's go
+1086.9	ahead move that down what did I just say
+1090.2	go down maybe if I had this one up hey
+1092.5	there we go yeah whatever I'm not gonna
+1094.7	mess with it it's gonna be fine just
+1095.9	actually no this is not gonna work I
+1097.6	should be more careful so there's one
+1099.7	thing I'm going to do differently you'll
+1101.1	notice I've one two three four or five
+1102.5	six seven eight nine ten targets and I
+1104.8	have 12 bombers I'm gonna go to weapon
+1107.0	really thought cessation I'm gonna go to
+1109.0	weapon really sorceress Asian again and
+1110.6	I'm gonna open up the release options
+1113.1	here now here's something that's going
+1115.0	to go wrong these aircraft are all going
+1117.0	to show up in a really big Posse and
+1118.7	they're gonna drop a thousand bombs
+1119.9	basically on these two targets to stop
+1122.2	them from doing that you have to tell
+1124.5	them to only do one unit attacking per
+1127.5	target if you skip this step you'll find
+1130.3	like I said that all the things up here
+1132.1	got killed but nothing below will have
+1133.8	been killed so kind of keep that in the
+1135.8	back of your head we do want them to
+1137.4	drop all their bombs remember they're
+1138.6	using ballistic computers they're not
+1139.8	terribly accurate and of course we have
+1142.0	a heart in Targa and we've set that to
+1143.2	one this has got to get really tricky
+1144.7	with GPUs later on as you'll see but
+1146.2	that's okay alright so last but not
+1148.1	least uh how many do we want to attack
+1149.8	at a time six I don't want to do this
+1153.0	piecemeal I want them to show up and
+1154.8	they're gonna go all over the target cuz
+1157.3	remember each bomber is going to be
+1158.8	attacking their own tarmac space that's
+1161.3	gonna work great
+1162.4	go ahead see if I can lower this now no
+1164.3	just does not want to do that that is
+1166.4	such a bummer oh well it'll be fine
+1168.5	we'll show up with something else do I
+1170.0	destroy those guys a little later on
+1171.2	remember my Riyas hat guys which leaves
+1173.5	me with let's see what else I have
+1175.3	left here I have the jh7 switch are
+1177.5	pretty good and I think that's about it
+1180.3	so what do I do with the change sevens
+1181.9	now it's time to go after the hangers so
+1185.2	we have no idea the ghin is like a shell
+1187.2	game which one of these hangers is an
+1188.8	aircraft if we saw an aircraft leave a
+1190.8	hanger we can identify it as carrying an
+1193.3	aircraft
+1193.9	what's this I think that's an ammo
+1195.1	bunker again we are not precise enough
+1197.0	to kill those things don't waste your
+1198.5	time we're gonna win this because we got
+1200.3	the access points trust me this group of
+1202.7	hangars looks pretty good keep in mind
+1204.6	because of our computer 10 targets for
+1206.8	18 airplanes I'd be lucky if I get three
+1209.7	or four of them so let's go ahead and
+1212.0	take a shot at that anyway hangars we're
+1214.7	gonna try we're gonna try now a hangar
+1216.8	itself if you've actually clicked on one
+1218.4	and taking a look we saw this a minute
+1220.1	ago 602 and which points no armor so it
+1222.5	actually doesn't take that much to kill
+1224.0	the hangar and whatever's inside of it
+1225.4	so let's go ahead and grab all of my jh7
+1229.1	keep in mind I've already pre-calculated
+1230.9	the ranges here so I know that my
+1232.7	munitions will get to the target the
+1234.7	reason I had these refueling aircraft is
+1236.5	because earlier we had a little bit of
+1237.7	trouble with that but we fixed it
+1239.1	speaking of refueling aircraft these two
+1241.8	our reconnaissance aircraft I'm going to
+1243.5	add them in as escorts you're like wait
+1247.7	why would you escort somebody with
+1248.9	somebody with a camera you want to do
+1250.9	battle damage assessment and these guys
+1252.2	do a really really good job of it I'm
+1254.0	actually gonna split them up into two
+1255.5	smaller sections here so they kind of
+1257.3	follow it in okay so how many bombers
+1260.1	should we do at a time so if you take a
+1262.7	look right now it's set to 4 4 doesn't
+1264.7	go into 18 evenly so we can't use 4 we
+1266.9	can use 6 we can use 3 we can use 1 we
+1269.0	can use 2 so if we increase the number
+1271.7	of bombers per flight what that's going
+1274.7	to do is it's going to basically spread
+1276.6	out the damage in that location if we
+1278.5	decrease it we have the ability to
+1280.8	reattach quicker and more easily however
+1284.0	you also tend to get that kind of long
+1286.4	string end up not doing as much spread
+1288.8	out damage so in this case I want to
+1290.7	spread out and hit as many hangers as I
+1292.1	can so I'm gonna go with a larger group
+1294.2	and set my mission I should say my WRA
+1297.7	to only do a single unit attacking so
+1301.1	we'd spread our attacks out then the
+1303.2	following two groups are two flights I
+1305.2	should say will have the ability to
+1306.6	reattach anything that survives this
+1308.5	first wave attack this is got to get a
+1310.6	little more complicated when we start
+1312.1	using the LGBs and things like that okay
+1314.4	that's everything so be the for access
+1317.2	points being attacked we're going after
+1319.0	this Bombers again I wish I had CPUs
+1320.6	this would be much simpler and of course
+1322.4	we have these two guys Andrea tack duty
+1324.3	and owner hangers we have a couple guys
+1327.4	that are actually going to help give us
+1329.1	some photo reconnaissance battle damage
+1330.7	assessment okay let's see what happens
+1334.2	enough chat more kill right something
+1337.1	like that there you go that did it and
+1341.6	did it dad okay
+1348.5	let's see what awfulness I am doing this
+1350.3	afternoon okay so this group right here
+1352.5	notice a p2 has gotten here first you
+1355.4	can't have a lot of control over that so
+1357.3	what they're gonna do is they're gonna
+1358.1	go down to the deck basically at this
+1359.6	point rush over here and try to attack
+1361.8	that access point so we'll let them do
+1364.7	that let's see that I believe this is
+1365.7	another group of J eights yep and then
+1367.5	obviously this group's gonna arrive in a
+1368.8	minute they're gonna start doing their
+1369.8	thing you have fun uh-huh and you have
+1372.2	fun okay possible let's see how we're
+1374.4	doing so far so one of these access
+1376.7	points we can confirm was damaged
+1378.6	another one was damaged and we're still
+1380.5	waiting on those two look at how spread
+1382.5	out these unguided bombs are anyway okay
+1386.4	pause meanwhile our reattach aircraft
+1390.3	are sitting here ready to go cuz I knew
+1392.5	this would come up the real question is
+1394.3	why are they at such low altitude I must
+1396.3	have told them something wrong but
+1397.4	that's okay so let's actually have them
+1399.2	fly over here I'm gonna slow down time
+1400.8	here so it's not such a blur yeah I want
+1405.6	them to be kind of medium altitude it
+1407.2	actually sounds pretty safe for these
+1408.5	guys we're gonna go zip in and let's see
+1412.6	what we've achieved I have a feeling we
+1415.7	didn't succeed and that is the nature of
+1419.3	battle of course oh I forgot we're not
+1423.1	done yet
+1423.5	hey get back here sorry about that oh
+1427.0	they were here all along okay so let's
+1429.9	see what we got here so believe these
+1431.6	yeah these must be the tupolev yeah
+1433.4	those are the h6s alright let's get some
+1436.1	PDA here
+1437.5	let's see here do we have any damn you
+1439.4	know there's light damage on it we know
+1441.6	we're about to spam all of their c-130s
+1444.0	or f-111s and I think that's the last
+1446.0	attack group yes indeed so now we've got
+1448.6	unfortunately these two aircraft with
+1450.3	the task of doing our RIA tack here
+1453.0	we've basically failed our mission I
+1455.4	mean in a second we're about to get
+1456.8	quite the hit once this tarmac gets
+1458.5	ma'am notice by the way that each stack
+1460.8	of bombs was targeted independently
+1463.2	Bicol my gosh look at that oh that's
+1468.4	gone keep in mind each one of those
+1471.1	groups of bombs was attacked targeted
+1473.7	individually so as a result we got that
+1475.3	beautiful spread of damage that was nice
+1477.6	alright let's go ahead and find our
+1479.5	group that sorry attackers again unless
+1481.2	they've run out of fuel here I'm
+1482.6	actually gonna unassign them send them
+1484.6	back here drop them down to medium
+1486.5	altitude and I might as well just have
+1488.6	them do this if I was a smarter person
+1490.6	and again when I tested this scenario
+1492.2	earlier I was actually able to succeed
+1493.8	with this with hitting them with just
+1495.2	one attack but we just didn't do well
+1497.1	with it today that happens and again
+1499.4	this the nature of warfare okay so
+1501.5	that's it as far as stuff that I have to
+1503.6	drop bombs conventionally this is a
+1505.6	really great example of a runway attack
+1507.1	during the iran-iraq war right at the
+1508.8	beginning when basically Iran sent tons
+1511.8	of basically F fives to make an amazing
+1514.7	raid and was actually really really
+1516.1	impressive
+1516.6	alright let's switch sides and see what
+1518.1	we actually achieved so first of all
+1520.3	these access points are fine that sucks
+1523.9	that means this aircraft this Airport is
+1526.0	perfectly functional notice we did
+1527.6	barely any damage to the runway itself
+1529.4	you can't hurt a runway and if you also
+1531.4	come over here look at the taxiway you
+1532.6	can see that it's in perfectly good
+1533.8	shape as well however look at how much
+1537.3	damage we did to their Air Force this is
+1540.1	the best part let's see here we want to
+1543.6	do sorry about that
+1544.3	losses in expenditures check it out went
+1547.0	through about 200 bombs they lost all
+1549.6	the c-130s half their f-18s most of
+1552.2	their are for no lemons so that was
+1554.1	still fairly successful this would have
+1555.8	been a pretty successful attack so as
+1558.1	you can see we did not succeed here it
+1560.6	was very difficult if I had a little bit
+1562.6	more patience what I would do is
+1564.0	actually have two separate waves
+1565.1	basically one attack the access point
+1567.1	see what happens
+1567.8	then the next one taxi access point see
+1569.2	what happens however we also
+1571.2	crippled most of their air force so I'm
+1572.9	not complaining too too much all right
+1574.5	let's go ahead and do this with some
+1576.8	precision weapons things get different
+1579.3	when you do precision guided weapons and
+1581.5	I'll show you what I mean so I'm gonna
+1583.1	go ahead and order up and attack the
+1584.9	whole entire airport
+1585.7	watch this so target AP land strike okay
+1591.5	so what I'm gonna do now is I'm gonna
+1593.2	take a look at some of the European
+1594.3	assets I have at my disposal here so I
+1596.3	have these beautiful mirage f1c TS these
+1599.1	are great because they have LGBs
+1600.8	we have tornado IDS's with cluster bombs
+1603.5	we have some reconnaissance aircraft
+1605.8	we'd kind of saw how to do that earlier
+1607.4	we have f-18 so GPU tens these are big
+1610.0	bombs and of course we have Jaguars gr3
+1613.2	A's and these also have also very large
+1616.1	LGBTQ these are the modern LG B's so now
+1619.2	that we have precision guided weapons do
+1620.7	we change their philosophy no so what
+1623.4	I'm gonna do first is I'm gonna go ahead
+1624.8	and clean out all this stuff except for
+1628.0	the access points now remember these are
+1630.3	a thousand hit points a piece a GPU I'm
+1632.9	sorry yeah a GPU 24 and LGB any of these
+1635.7	weapons usually have about 300 damage if
+1637.5	I recall correctly yeah about 250 so
+1640.5	it's gonna take four successful hits per
+1643.0	thing so four times two would be eight
+1645.1	but you want to round up to twelve so
+1647.3	let's go ahead and get ourselves some
+1649.2	aircraft that we know can do the job
+1650.5	that's 12 bombs not 12 aircraft so let's
+1653.9	see here what shall we do here we've got
+1656.0	so many good choices let's use the
+1658.5	mirages why not but we'll be stingy
+1660.2	because we don't have to waste
+1661.2	ammunition let's see how much these guys
+1663.3	have believe carry a total of two each
+1665.2	two three four five six that's it that's
+1668.6	all we need alright let's set this to
+1672.0	attack as a group next what we're gonna
+1675.4	do is we're gonna go to weapons release
+1677.0	authorization here let me do my math
+1679.4	real quick that's six bomb hold on I
+1681.4	think I did my math wrong that's 12
+1683.3	bombs total and I need a total of eight
+1685.2	bombs no I need four bombs each yep this
+1688.2	ain't gonna work
+1688.7	good thing I thought that math out real
+1690.8	quickly okay let's go ahead and take a
+1694.1	look oh now I've broken the thing no no
+1695.7	there we go we're gonna need something
+1698.2	it's got a little bit more carrying
+1699.3	capacity that's not gonna work
+1701.3	um I can't you see these obviously the
+1703.4	f-18s how many these can you carry two
+1705.5	oh what a bummer
+1706.9	I'll put the Jaguars also two and we're
+1709.9	gonna have to deal so each one of these
+1711.4	are gonna take four of those mark 84 so
+1713.5	I'm gonna need a total of one two three
+1715.9	four five six seven eight times 216
+1718.7	bummer
+1719.8	all right we'll go get those mirages
+1721.4	again again I always said my math wrong
+1723.5	that would have been pretty bad so we're
+1725.5	gonna need a total let's see - that's
+1727.3	gonna be eight bombs there we go that's
+1730.0	going to be sixteen bombs but keep in
+1731.9	mind an LGB may miss and it may fail so
+1734.6	this might not be enough aircraft for
+1736.3	this purpose so I'm actually going to
+1737.9	add an extra two so that gets us ten
+1740.0	mirages all right now we're in good
+1741.3	shape let's go ahead and set these guys
+1743.1	down to sections which is going to be
+1745.0	groups of two and then here's the danger
+1747.8	if we send them as sections what's going
+1751.2	to happen is they're going to keep re
+1753.1	attacking this same exact target that is
+1756.3	such a pain but that is the nature of
+1757.9	this program unfortunately so I'm going
+1759.9	to do something really naughty and set
+1761.5	it to 6 and then disable enforce flight
+1764.6	size this is going to make it much safer
+1766.8	let's go ahead and do weapons release
+1768.5	authorization now we're gonna have to
+1770.7	get a little complicated let's see we
+1773.2	have flame contact two rounds that's
+1775.3	actually what we want
+1776.3	notice it preset it as one unit I'm
+1778.8	actually going to make sure this is set
+1780.0	for everybody because they don't want
+1781.6	them wasting these weapons you're gonna
+1783.3	have to come in probably by hand and
+1785.0	clean this up if they had 4gb use this
+1787.0	would be a little different but
+1787.9	unfortunately this is what we got that
+1790.4	looks good looks good it's good
+1791.4	okay I'm happy with that now let's see
+1793.5	what else we can wreck here so now we
+1795.5	have the ability to actually engage in
+1797.4	destroy the ammo storage by the way you
+1799.8	notice I'm skipping fuel because fuel
+1801.8	doesn't matter in this build if it did
+1803.3	it would be the easiest target in the
+1805.1	entire airport to wreck look at this
+1808.2	forty foot points
+1809.8	nope light armor you could do that with
+1811.6	a cannon but unfortunately it doesn't
+1813.6	matter so don't worry about that and
+1815.4	don't target it okay which brings us to
+1817.2	our next set of targets so let's see
+1819.6	here I have a tornado IDs that's got
+1821.3	CBO's how I know what I'm using those
+1823.0	for I'm actually going to include this
+1824.9	one as well this time
+1826.5	yeah be really nice if you could just
+1828.1	kind of I was creating a mission here
+1829.7	let's call seafood let's go ahead do a
+1833.0	land strike press okay let's grab all my
+1835.9	tornadoes with CPUs I'm actually gonna
+1838.0	add these two targets also and it looks
+1840.4	like I picked up a hanger by accident
+1841.6	beautiful so now you want to be very
+1843.9	careful here and you want to make sure
+1845.2	that they don't waste shots all in the
+1847.9	same target it's so frustrating when
+1849.6	they do that so you're going to want to
+1851.1	come in here again and make sure it's
+1852.8	only one unit per attack this is really
+1854.8	important we have about 12 total targets
+1858.0	and I have 12 total airplanes so if our
+1859.9	math is correct that's basically one
+1861.9	group of CPUs per target a tornado is
+1864.3	also a very accurate aircraft so let's
+1866.9	go ahead and crank this up to six again
+1868.5	I want to do that so they drop them all
+1870.0	at the same time if you do a piecemeal
+1871.8	they're just going to keep reacting the
+1873.5	same target too much micromanagement
+1875.5	don't mess with it
+1876.5	all right now it's time to deal with the
+1879.8	hangars hmm how do we deal with hangars
+1882.7	well first of all let's create a mission
+1884.1	for it actually I got a better way to do
+1885.8	this I'm gonna click on this create new
+1888.2	mission I'm gonna do a hangar as now I
+1891.4	spell that but that's alright
+1893.1	laying strikes okeydoke let's go ahead
+1896.2	and get ourselves um we need a
+1898.2	precision-guided platform BAM Thank You
+1900.3	Spain f-18s first things first I'm gonna
+1904.6	get rid of that stupid one at the top
+1905.9	scrolling down here I got some Parkin
+1908.1	space already engaging that the ammo
+1910.0	bunkers are so tempting those targets
+1912.3	but I know I'm not going to be able to
+1913.9	destroy them completely so why waste
+1916.1	Utah now I've done it
+1918.1	whoops whoa sorry about that
+1922.7	why am I not wasting my ammunition on
+1925.3	those bunkers it's because I know I'm
+1928.2	not gonna be able to kill them that
+1929.5	hangars on the flip side one GPU is
+1932.0	going to anything inside of the
+1934.0	hangar meaning victory as far as I'm
+1936.3	concerned that looks pretty good uh
+1937.8	there's about 18 of us there's about
+1939.9	probably about 15 of those go to your
+1942.1	WRA again actually I think I might be
+1944.7	able to get away with being even more
+1945.9	efficient than that is it GPU tend to as
+1948.4	much damage as I think it does let's
+1949.8	take a look
+1952.6	643 damage oh that's cool let's see is
+1956.0	that going to be enough to kill the
+1957.1	hangar in one shot because if it is I'm
+1959.0	to succeed damage guess oh that means I
+1964.9	could put one GPU per hanger that's
+1968.4	awesome so I'm actually gonna go to
+1970.2	weapons release office organization if I
+1972.0	was being very stingy I would go ahead
+1973.7	and set this to only do a single round
+1975.6	each and again that would save me half
+1978.4	which means I could attack twice as many
+1980.2	hangars now as a matter of fact I think
+1982.3	I've got them well yeah I got them all
+1983.2	but in this particular case the only
+1984.8	thing I'm gonna change it's just like I
+1986.2	said before make sure you set it to one
+1988.5	unit otherwise they're all gonna attack
+1990.0	the same stupid target I hate it when
+1992.1	they do that this happens with tomahawks
+1995.0	as well all the time just be careful
+1996.7	with that okay this is gonna be fun to
+1999.7	watch I have a little bit of overkill
+2002.5	here but that's okay because each one
+2004.3	only holds two and that should do it
+2007.2	let's see am I missing anything
+2008.9	important I'm destroying everybody on
+2011.0	the tarmac I'm destroying all their
+2012.6	hangars and I'm crippling the airport at
+2014.7	the same time however I have saved
+2016.9	myself eight mirage f1s
+2019.4	hmm what do we do with the mirage f1s
+2022.5	originally I would say go blow up the
+2024.3	gas you know this is a good feel good
+2026.1	target but the important thing here is
+2028.3	is that even gonna matter I'm just
+2029.9	looking around looking around I got a
+2031.7	control I can put a round through the
+2033.1	control tower I'm sure that would annoy
+2034.4	them a little bit so you got a couple of
+2036.3	parking spots a bunker is okay
+2038.2	intelligence suggests that there is a
+2040.8	group of bunkers that carry more
+2042.4	ammunition than the other let's engage
+2044.1	those but this is also going to be a
+2045.8	good demonstration on just how hard it
+2047.9	is to kill a bunker if those are Revit
+2050.0	mints or something like that it would be
+2051.3	pretty effortless let's go and grab my
+2053.2	mirage f1s we're going to do two
+2054.7	sections like that I'm gonna let them
+2057.1	attack the way they normally attack
+2058.5	because it's it's gonna take a few
+2059.8	rounds by the way look at the weather
+2061.5	it is cloudy at 20,000 feet which means
+2063.7	we're going to have to dip down in order
+2065.3	to engage but anyway enough talk
+2067.6	destruction
+2078.3	okay let's see who got here first today
+2080.5	cool watch this they will distribute
+2083.6	their bombs at the same time against
+2087.0	different targets this is dynamite also
+2089.9	for the morale effect I just I would
+2091.5	never want to be there when this happens
+2092.9	but watch this
+2095.2	keep in mind there's six behind them
+2096.7	that will do the same thing the reason
+2098.5	they turn away by the way is basically
+2100.2	to get themselves a little bit more room
+2101.7	and two of the access points are already
+2103.8	offline
+2105.0	these guys are kind of zipping around
+2107.0	real quickly I don't want to make sure
+2110.7	that they're not attacking the same
+2111.8	access point over and over and over
+2113.2	again by the way a little warning if you
+2116.1	have if you go to your eMCON and all
+2118.4	this other good stuff double check
+2119.7	loadout setting sometimes they'll attack
+2121.4	with a single attack and leave with
+2123.0	ordnance still hanging off the bottom of
+2124.7	their aircraft if this happens to you
+2127.2	you just have wasted the attack so I'm
+2129.4	gonna let them kind of do this one more
+2130.7	time and pause watch we've destroyed
+2134.4	these two access points but these two
+2136.2	access points are completely untouched
+2139.7	so one thing that you're probably going
+2141.9	to notice is they're just kind of keep
+2143.0	reacting over and over and over and over
+2144.5	again this thing will never completely
+2146.2	get destroyed and you'll run out of LGBs
+2148.3	we've got to actually jump in and
+2150.3	interfere before we waste ammunition in
+2152.3	time a couple different ways to do that
+2155.3	of course I've got this I um I grabbed
+2157.1	that you're in a real quickly all you
+2158.8	guys are already out of ammunition note
+2160.1	we have five left one thing we could do
+2162.0	of course actually this hardy one LGB on
+2163.6	the way that makes me feel a little bit
+2164.7	better let's wait until that one hits
+2165.6	pause now we need to absolutely make
+2168.8	sure we get that last one so we should
+2171.1	probably do is manually order the next
+2173.1	attack to do that's pretty easy I could
+2174.9	do one of these things I can go ahead
+2177.1	and select these two targets and then
+2179.3	whoever's got bombs left I can go ahead
+2181.0	and decide keep it that's okay though
+2182.4	let's give him two there okay the other
+2186.0	access point let's give him one of those
+2188.0	and give him one of those and then we'll
+2190.9	say that last one for a reattach if we
+2192.5	need to see what happens here oh by the
+2196.4	way watch these guys that's our ammo
+2198.9	bunker attack I don't think it's going
+2200.3	to do anything
+2201.5	nice nice you hit it I'd hate to be
+2204.8	under this Airport watch this
+2207.5	alright these guys for the access points
+2209.9	are coming back there comes some more if
+2214.6	you did not manually order that attack
+2216.8	they will end up wasting their ammo I
+2218.9	can't say that enough you can always
+2221.6	split the attack up like we did with the
+2223.1	unguided bombs also that works very
+2224.5	effectively probably gonna need to
+2227.9	reattach air this is satisfying to watch
+2230.8	everybody just sort of queues up at the
+2232.3	airport in their own designated time
+2234.3	delivers their munitions with no
+2236.3	interference between two airports or
+2238.6	anything like that pause I don't know if
+2241.7	we got yeah we got it we got it we got
+2242.9	you're good you do you guys yeah we did
+2246.7	it this Airport is now crippled notice
+2251.0	these aircraft have really really
+2252.2	sensitive targeting pods so they have
+2254.2	the ability to actually identify what
+2256.7	they've damaged already so the reott a
+2258.9	caption becomes much more plausible here
+2261.8	comes the next group by the way if you
+2265.2	want them to attack simultaneously you
+2266.9	can but I'm gonna kind of say that for
+2269.0	its own video a little later on speed
+2271.0	things up a little bit here you're
+2274.7	probably saying why don't those guys
+2275.9	leave the reason they're not leaving is
+2278.2	because they've exhausted all their
+2279.4	targets they're too effective when this
+2282.0	happens there's nothing stopping us from
+2283.5	you know doing something like this let's
+2285.9	grab everybody okay go back
+2288.4	Oh Oh again why waste the bomb we were a
+2294.4	little too efficient at attacking the
+2295.9	hangars by the way this finances come up
+2297.4	might as well not waste them right
+2301.2	sometimes when you do something like
+2302.9	that you have to kind of do one of these
+2304.0	sort of dailies so you can kind of line
+2305.6	the back up for the attack but I want to
+2308.3	show you just how ineffective this is
+2309.7	going to be against those ammo bunkers
+2314.6	it still hasn't killed one of the got
+2317.2	one we got one all right let's go ahead
+2320.7	no we didn't oh it's depressing
+2324.5	all right I'm actually guy said you guys
+2327.0	home good job everybody
+2328.0	you guys go home go home alright let's
+2331.6	see how we did this time now this is
+2334.1	again all precision-guided
+2335.1	we got every access point no we didn't
+2339.4	one survived this Airport is still
+2342.0	completely viable completely useful and
+2344.1	completely able to a launch aircraft
+2345.8	shoot it's important to have good
+2348.1	reconnaissance but again I want you to
+2349.6	see that however there's another hidden
+2351.4	piece that you probably missed we got
+2355.4	every single one of their aircraft
+2356.8	except for one c-130 which means this
+2359.9	Airport as far as anybody's concerned is
+2361.7	useless as far as providing for the war
+2365.0	effort because it no longer has any
+2366.3	aircraft on it okay so hopefully that
+2368.9	makes things a little bit more clear as
+2370.1	far as how to attack airports again you
+2372.0	won't have some kind of reconnaissance
+2373.1	unit confirm you want to make sure you
+2374.9	have something available for re attack
+2376.4	in the event that you don't get it the
+2377.9	first time and now one thing I won't
+2379.9	point out really really quickly though
+2381.2	is under Russian assets they have a lot
+2384.3	of the same kind of things they have the
+2386.0	AR BK's of their equivalent of cluster
+2387.7	bombs the a s fork edge is basically a
+2390.5	really really effective standoff missile
+2392.6	the key thing with the qej as opposed to
+2394.5	some of the other ones is this gigantic
+2396.2	it's also armor-piercing so we could use
+2398.3	it against the bunkers fencers of course
+2400.4	you can carry these great five fab five
+2402.2	hundreds but the great thing with a
+2403.6	fencer is you're probably familiar with
+2405.1	is the fact that it's a little bit more
+2406.9	accurate with those weapons you can
+2408.8	actually see here it's kind of an it's
+2409.9	computing site which means you're gonna
+2411.1	get more bang for your buck but of
+2413.1	course you know backfires these guys
+2414.6	have cruise missiles cruise missiles are
+2416.2	very effective as well a warning on
+2417.8	cruise missiles by the way look at their
+2421.4	reliability you're saying 85 is pretty
+2423.7	good yeah but if you launch 23 of them
+2425.5	don't work so again if we were counting
+2427.9	on disabling this access points we would
+2430.0	not have succeeded statistically with
+2431.8	that many cruise missiles interesting
+2433.5	obviously reconnaissance and of course
+2435.5	refueling all right hopefully that helps
+2437.7	out a little bit as far as that key
+2439.0	thing is at the end of the day kill the
+2440.5	access points find a way to do it and
+2442.3	then you can deal with the aircraft at
+2443.9	the airport itself enjoy

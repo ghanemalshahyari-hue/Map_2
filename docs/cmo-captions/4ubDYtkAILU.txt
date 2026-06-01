@@ -1,0 +1,878 @@
+0.0	hello everyone today's command video
+2.1	tutorial we're gonna be taking a look at
+3.4	combat Air Patrol slash a 8 MP patrol
+5.8	missions now before I get too too
+8.3	carried away here I do want to say that
+10.0	compañera Patrol is one of those
+11.2	subjects that is very very very
+12.9	complicated and dependent on a lot of
+15.2	different factors there's no one way to
+17.6	do it well there's always going to be
+19.3	some kind of compromise that you're
+20.5	gonna be making throughout the entire
+21.7	engagement so first things first as far
+23.8	as combat air patrol goes there's the
+25.7	most important fact that you must know
+27.3	is the fact you can't protect everything
+29.0	at once modern aircraft that can travel
+30.9	at extremely high speeds and the ability
+32.5	to cover very very large areas
+34.2	I think of aircraft such as they make 21
+36.3	or maybe 20 the big 31 I should say as
+39.2	well as the big 25 have amazing ranges
+41.7	and you also have aircraft such as the
+43.3	f-104 but then it's got a little bit
+44.8	shorter legs so it's not gonna be as
+46.2	effective as covering really really
+47.8	really long distances so that first of
+50.0	all with combat air patrol and it really
+51.3	really early days before you had
+52.6	reliable long-range radar you basically
+54.5	use them as an early warning system
+56.5	basically the combat air patrol would
+58.4	have a very very wide ring that would
+59.9	basically circulate an area of
+61.2	high-value targets and then you'd have
+62.9	it much much closer one or you just have
+64.7	aircraft ready to intercept now over to
+66.9	of course you had the added complication
+68.5	of having to climb up to 36,000 feet or
+71.0	whatever altitude incoming bombers rat
+72.8	which was a substantially long time it
+75.5	took a very serious effort so it wasn't
+77.5	unusual to keep aircraft in the air
+78.8	pretty much all the time
+80.0	just because of how long that could take
+81.8	so let's go ahead and see the scenario
+83.4	so we're sitting over here over in
+84.9	Israel we're in the eastern
+85.9	Mediterranean here I've got myself my
+87.4	early warning radar batteries here and
+89.1	I've shut them off because I want to
+91.3	demonstrate one of the methods you can
+92.7	use for setting up a combat air patrol
+94.3	now we happen to know that our opponents
+96.6	up here in Syria have bought themselves
+98.2	some b-29s and they're probably gonna be
+100.2	trying to strike us down here at our
+101.6	airfields now taking a look at the
+103.7	geometry real quickly what are the
+105.1	possible ways that could come at us so
+106.9	assuming their neighbours don't let them
+108.2	go through they can either come out
+109.6	across the ocean and swing back around
+110.9	or if they can take the direct route
+113.1	which is going to be moving through here
+114.3	given that the total distance between
+116.0	their border and us is only about 75
+118.9	nautical miles that's probably gonna be
+120.9	the more likely option simply because
+122.6	they know they're going to get spotted
+123.9	at some point so they're gonna want to
+126.1	shorten their strike as much as possible
+128.0	this is different with modern aircraft
+130.1	so we're just going to make that
+131.2	assumption
+131.9	so let's go ahead and set up our combat
+134.0	air patrol we're gonna be using legacy F
+135.6	50 ones for this purpose again we have
+138.5	to make sure our combat air patrol is
+139.7	going to cover enough area at the same
+141.8	time as be able to bring enough airborne
+144.0	assets to engage anything that it
+146.3	doesn't detect so let's go ahead and
+148.4	come up with a basic size here we'll go
+150.0	ahead and create some areas here and
+151.8	we're basically gonna try to catch them
+153.6	right on the border and then try to
+154.8	engage them pretty much right away now
+156.9	the interesting thing here is there's no
+158.3	no navigation zone here so we don't have
+160.2	to worry about that complication now a
+162.6	word to be said here about how large
+164.5	this area can be now if you want to
+167.3	think of it another way this particular
+169.0	area that I'm asking these aircraft to
+170.8	cover is this basically 50 nautical
+173.4	miles by let's see about 30 nautical
+175.6	miles in that area which means that if I
+178.0	assign let's say one airplane this is a
+179.8	massive area for it to be looking around
+181.7	especially for using non radar detection
+183.9	another more mathematical way to
+185.6	approach it is with something like a
+187.2	spreadsheet like what I have right here
+188.5	so this spreadsheet actually does is it
+190.8	lets me define how large the area is
+193.0	identify how many aircraft I have flying
+195.3	and then the flight size and this will
+197.4	give me some really really useful
+198.3	information it'll basically tell me how
+200.9	many square nautical miles I have per
+202.5	aircraft and then how many square
+204.1	nautical miles I have per flight so can
+206.1	you imagine a single p-51 having to be
+208.4	responsible for 400 nautical miles of
+211.3	area that's insane now if I reduced my
+213.9	flight size to 1 that would mean each
+216.1	one is responsible for 200 nautical
+218.0	miles but keep in mind as you reduce the
+220.6	size of the flight you're also going to
+222.3	be decreasing the amount of firepower
+223.9	that that flight can bring to bear when
+226.0	it does get to the target that is
+228.1	without some very serious coordination
+229.6	on your part so for example if I had 24
+232.8	aircraft and my flight size was 4 that
+235.1	would give me a tremendous amount of
+236.9	firepower again the lower number it's
+238.6	gonna be better and that would also mean
+240.2	I'd have amazing coverage because
+241.8	there'd be so many air in the air at the
+244.4	same many aircraft in the air at the
+245.9	same time now you probably noticed some
+247.8	other features down here that I also put
+249.5	into the spreadsheet one is my patrol
+251.3	speed which I believe is about 160 and
+253.3	of course my max speed which is about
+254.9	427 for p-51 it's about how much fuel
+257.8	about how much per minute gives me a
+259.5	staggering six hours of cover
+261.9	on station which is awesome now what is
+265.1	this number really mean well if you go
+267.2	back to the game real quick let's go
+268.9	back to a Tel Aviv Airport here you'll
+270.7	notice that it takes three hours to
+272.1	prepare one of these aircraft which
+273.8	means if we can hold them up for at
+275.6	least three hours we can double the
+277.8	amount of aircraft that we have airborne
+279.3	at a given time that also means that if
+281.9	we use less than three hours of
+283.4	endurance that we're going to run out of
+285.0	aircraft very quickly if we deploy all
+286.8	this at the same time keep in mind with
+288.5	modern aircraft that have limited
+289.6	missiles you're going to run out of
+290.9	missiles very very quickly and actually
+292.9	be sending people home a lot sooner than
+294.5	you probably expected so let's go ahead
+297.0	and take a look at my mission now
+298.3	control f11 patrol north I'll go ahead
+301.3	and give this a good old-fashioned
+302.5	patrol aww seems to be pretty solid here
+304.7	looks good to me let's grab our f50 ones
+307.9	shove them all in there now let's think
+310.0	about this how many aircraft do we need
+312.3	airborne at a time well if you remember
+314.2	a minute ago if we had a total of eight
+316.6	four aircraft in the air and the flight
+317.9	size was one that would mean each
+320.0	aircraft is gonna be responsible for 400
+322.5	square nautical miles
+323.6	now given that p-51s don't have the
+326.3	ability to pack radar and they're
+327.6	looking everything visually by the way
+329.3	there's clouds this is going to mean
+332.1	that's it's not really gonna be a lot of
+333.5	coverage but the good news is I know
+335.7	that in six three hours I'm gonna have
+337.7	another eight p-51s ready to go at fifty
+340.0	ones so that tells me it's probably not
+342.0	a bad idea to put all eight aircraft at
+343.7	the same time so I'm gonna leave my
+345.9	flight sizes one only on account of the
+347.9	fact that these are early warning
+349.4	aircraft more so than they are
+350.6	interceptors we can group them up and
+352.5	engage once we know that something is
+354.4	coming again if I have radar against
+356.5	propeller aircraft this is almost moot
+358.5	because we can just pick them up on
+359.7	radar and deal with them of that the
+361.7	next concern I need to consider is my
+363.3	altitude that I'm going to be operating
+364.9	at now one thing that you'll notice is
+366.8	that on enemy bombers would have an
+368.6	amazing time basically using terrain
+370.9	here to mask their approach very clever
+373.0	players of course would be doing all
+374.3	this exacting and going through valleys
+375.7	and stuff like that meaning my beautiful
+377.9	patrol aircraft at 36,000 feet are never
+380.2	going to detect those enemy bombers so
+383.4	if this is a situation that you find
+384.8	yourself in you're going to want to
+386.1	split this into two separate missions
+387.7	which will actually do right now but I
+389.7	call this patrol though and again the
+391.9	idea here is yes I'm technically
+393.5	spreading out my coverage
+394.7	a little bit but if something gets
+396.0	through or something goes over it's
+397.9	gonna be an issue the other thing you
+399.0	want to think about too is bombers
+400.4	tended to create a lot of contrails back
+402.4	in the day so if they're traveling at
+403.8	high altitude I need less aircraft at
+405.8	high altitude looking for them in more
+407.5	aircraft at low altitude now if there's
+409.5	no clouds today
+410.6	this wouldn't be a point we could send
+412.0	everybody a medium altitude and be
+413.5	perfectly fine either direction again
+416.1	you have to be very very careful how you
+417.5	manage this so let's go ahead and I'm
+420.0	actually gonna sign everybody real quick
+421.5	because it's just gonna cause all sorts
+422.6	of issues
+423.8	all right so scoot back to my fifty ones
+427.4	one through four is gonna take care of
+429.9	the north they're gonna be transiting
+432.3	their station altitude is basically
+433.7	gonna be high I'll put about 28,000 feet
+435.6	my low altitude guys are gonna keep
+437.8	themselves somewhere around 8,000 feet
+439.7	again if you know your opponent well
+441.7	you'll be able to predict exactly what
+443.3	altitude that she needs to put them at
+444.7	so let's go ahead and get ourselves
+446.0	again we're spreading ourselves a little
+447.6	bit thinner than we need to here but at
+449.7	the same token as this is guaranteeing
+451.3	that we don't have any leakers because
+452.6	remember these guys are our radar
+454.5	essentially so we're gonna need to make
+456.3	sure there's a lot of coverage set their
+458.2	size of course to single aircraft so
+459.8	they spread themselves out and we're
+461.3	gonna have to manually get them to
+462.6	engage in there during that time now
+464.7	you're probably sitting there going why
+466.0	don't we just set up a prosecution zone
+467.5	we're going to get to that a little
+469.0	later on today so I'm gonna make sure
+470.5	that it's all set actually I'm gonna
+472.6	make sure this four aircraft in the air
+473.9	at a time when we shut that off and now
+476.0	we're in great shape that's basically
+478.1	all there was to it one thing worth
+479.9	noting by the way is that propeller
+481.5	aircraft cruise fairly efficiently so if
+484.9	we could actually sit there and do the
+486.2	math but if I recall correctly even if
+488.2	we told this aircraft to travel at
+489.5	military power at all times it would
+491.5	still be able to cruise around
+493.0	successfully and stay in the air for a
+494.8	significantly long period of time not so
+497.0	true with jet aircraft you got to watch
+498.4	out for that so I'm gonna tell this
+500.0	aircraft to cruise which means I'm going
+501.5	to be covering more ground faster I
+503.6	could even sit them all the way up to
+504.9	military to cut even more ground even
+507.1	quicker but again there's not really a
+508.7	big difference here especially if they
+510.1	need that extra insurance so we're going
+512.0	to tell these guys also to cruise 8,000
+514.3	feet everything looks good I am ready to
+516.1	go somebodyís down pause I'm actually a
+518.2	speed up imma let everybody get go in
+519.7	there now these aircraft are principally
+523.4	responsible for early warnings so that I
+525.0	can use other aircrafts to basically
+526.5	grab them
+527.5	quick tip - is when they initially go to
+529.8	an area they're gonna spread themselves
+531.0	pretty significantly I usually like to
+533.0	actually manually kind of tell them
+534.5	where to go in the beginning so that
+536.7	they spread themselves out alley even
+538.3	thinner remember these guys are gonna be
+539.6	operating at different altitudes as well
+541.6	and the idea would be here that we'd
+543.4	spot them basically group together
+545.6	engage and then send more aircraft
+547.5	basically to back us out again depending
+549.6	on the scenario something worth noting
+551.3	by the way is if you go to your doctrine
+553.2	settings double check to make sure your
+555.0	interceptors have a setting that makes
+556.9	sense
+557.5	so if you were to go for example where
+559.1	it says weapon state real quickly you'll
+561.7	notice that my favorite one up here
+563.2	Winchester says they run out of ammo and
+565.3	they can use air-to-air guns
+566.8	this one is I've run out of ammo but I
+568.8	still varied are guns punch out take a
+571.0	look at this one this one is one
+573.1	engagement with a beyond visual range
+574.6	weapon and stand off in the decision
+576.4	gauge immediately another way to think
+577.9	about this is a hit and run because what
+579.6	I could do is I could select that grab
+582.0	my office education here and set it so
+585.3	that it's attack throttle is afterburner
+587.5	which would mean that this aircraft
+589.6	would zoom up attack with one engagement
+592.2	and then turn around and run before the
+594.0	other team would be able to go ahead and
+595.7	intercept it again that's the hit and
+597.5	run style tactic it's actually pretty
+599.3	effective so I'm actually I set this
+600.6	right back to that because we're gonna
+601.6	need other things later
+602.7	go ahead speed up time so definitely be
+604.8	cautious with that that was interesting
+608.0	got to be careful when you change
+610.1	mission so it's go ahead you guys are
+612.0	gonna be patrolling though you guys are
+615.5	gonna be patrolling north let's go ahead
+617.5	Oh still sped up time here be careful I
+621.3	don't know why they considered that they
+622.9	had already done one engagement but
+624.2	things like that can happen in command
+625.6	so watch out for that picture although
+627.8	go ahead and grab this guy side mission
+630.1	patrol north grab that one the side to
+633.0	mission patrol though grab that one as
+635.3	well
+635.5	patrol north I think one got through
+638.6	they always do what a bummer good thing
+642.4	I caught that so be careful setting your
+643.9	doctor and while people are still in the
+645.2	air the reason they all retreated by the
+646.7	way they don't have anything other than
+649.3	air-to-air guns and that's why they
+650.6	freaked out so anyway we sped up time
+652.9	and we know that any point we're going
+654.2	to be engaged from that general
+655.6	direction again if this were a wider
+657.8	area that we had to protect we'd have to
+659.6	be a little more creative here
+661.0	she's gonna order this one to that
+662.0	corner there just to keep them nice and
+663.5	spread out now the lucky thing for us is
+665.6	groups of bombers are kind of big so
+667.7	they're kind of easy to spot again at
+669.9	any point I couldn't flip my radar on
+671.1	and spotted these guys right away but
+672.6	I'm trying to demonstrate the way that
+674.7	you basically have to do this now this
+676.2	is where I carry your situation we can
+678.2	use the exact same technique let's see
+680.1	how our enemy bombers are doing by the
+681.5	way we immediately can identify their
+684.9	way way way way the heck up here we
+687.1	don't know what altitude they are
+688.1	because we want to see if this technique
+689.4	actually works by the time to get there
+691.0	they're all b-29 A's they're not exactly
+693.2	known for their high speed or you know
+694.9	high performance or anything along those
+696.2	lines
+696.7	the cool thing though is check this out
+698.3	we have three hours and 41 minutes of
+700.3	airtime here we could even speed them up
+702.0	if we wanted to cover our coverage
+703.4	quicker it's a technical term covering
+705.3	your coverage but anyway we're gonna go
+707.0	ahead and let things kind of patrol as
+708.5	they do here apparently there's an enemy
+712.6	ship group out there we're gonna do with
+713.7	them next I have my own way of dealing
+715.5	with them but you'll see in a moment so
+718.4	again this is without radar if we had
+719.7	radar we basically could pick them up
+721.3	three hours in advance and send a really
+723.1	really clever intercept party in an
+725.2	ambush format to basically take them
+726.9	right out away and honestly that
+728.6	strategy works great at sea where
+729.9	there's not a lot of radar places to
+731.7	hide other than the standard prize and
+733.6	of course that sea of anti-ship missiles
+735.1	but we're gonna do with that problem a
+736.7	little later on so keep in mind if we
+739.2	had ESM assets we could actually detect
+740.9	these aircraft based on the fact that
+742.7	they are emitting right now I'm gonna go
+744.8	ahead and shut that off real quick and
+746.8	let's see if we patrol got them nice
+751.1	let's see what altitude guy this one was
+753.4	one of our low altitude aircraft
+755.3	immediately picked them up now one thing
+757.8	worth noting here I'm gonna go ahead and
+758.9	unpause real quick I'll leave it at 2x
+760.5	is you can dictate how many aircraft
+762.6	engage at a time so one thing I like to
+765.2	actually do is spread my flights out so
+767.6	each aircraft grabs its own target this
+769.8	might not be a preferred depending on
+771.8	the kind of target so kind of keep that
+773.0	in the back of your head really durable
+774.5	targets you're gonna need to tack with
+776.2	more flights at a time but the key
+778.0	element here is there's enough targets
+779.8	here for everybody to get their own
+781.1	taste of everything so now they're all
+782.9	gonna come rushing in man that worked
+784.5	effectively Wow
+786.2	what's the altitude of these guys anyway
+788.9	4,000 feet Wow
+791.3	that meant our high altitude guys are
+792.8	gonna have to drop out of the sky
+794.1	in order to engage all these I'm
+798.0	probably gonna lose every single one of
+799.5	these p-51s
+802.7	yeah that's how that's gonna end now one
+805.9	cool thing worth noting here is at any
+807.9	time I could have come over here gone
+810.0	into the screen grab some aircraft that
+812.4	weren't related to this mission say for
+814.3	example these f-4s actually asked at the
+815.7	f-89 so this are more fun to play with I
+817.4	could grab these aircraft and assign
+819.3	them to the mission immediately and in
+822.3	doing so they would instantly launch and
+824.7	actually engage the targets that we are
+827.2	missing at this particular time oh that
+831.5	was rough here comes some f-89 now the
+835.7	f-89 they do have some radar something
+838.5	greatest radar but the very least notice
+841.2	they're engaging targets yeah here they
+843.0	go
+843.5	now this is actually kind of fun because
+845.6	f-89 is used to actually mount missiles
+848.0	in the nose which i thought was crazy it
+850.1	is a two seater and it's not the highest
+851.8	performance thing but again it's just
+854.0	kind of neat to watch how we're able to
+855.3	basically hand that intercept off and I
+857.7	have no doubt that many b-29s are gonna
+860.0	get through to their target okay so
+862.8	fillet that makes sense as far as how to
+864.3	use them as kind of a early warning
+866.6	system again mind the clouds let's take
+869.2	a look at how to use them is a barrier
+871.4	so this scenario it's exactly the same
+876.0	as we just saw a minute ago the only
+877.5	thing different though is I'm actually
+878.9	gonna tell that neat little carry over
+880.9	there to kind of do its thing for us so
+883.4	let's go ahead and grab ourselves some
+885.0	yak-38 everything else is in good shape
+887.3	I'm happy with that I'm go ahead and
+888.9	close the screen let's go back to blue
+890.0	for now let's say we've got some
+891.6	intelligence that says that there's an
+893.5	enemy carrier group somewhere out here
+895.3	that is going to be using weapons that
+897.4	have a range of about 25 nautical miles
+899.8	to try to attack our you know airfields
+902.0	here well if we do it that way we can
+904.4	basically predict roughly where they're
+906.5	going to have to strike from you know
+908.2	they got to be coming in here it's safe
+909.6	to say that in real Israel as well as in
+911.9	this scenario if there's a lot of SAM
+913.3	sites along here so they're not gonna be
+914.6	in that big of a rush I again I'm going
+916.6	to shut off that early warning radar
+918.1	just to make things interesting for us
+919.9	because again because of this radars
+921.5	efficiency we can actually see them
+923.2	coming and
+924.1	except that we don't even need a patrol
+925.4	but the SAMS are still nice to have
+927.2	anyway so we know they're gonna be
+929.2	coming somewhere in this direction so
+931.1	what I'm gonna do is I'm gonna set up
+932.5	basically a barrier cap there's a couple
+934.1	different ways to do this but I'll show
+935.5	you the way that I like to do it I'm
+937.1	gonna go ahead and create myself two
+938.3	points here I'm gonna call this bar cap
+942.4	this of course when people who played
+944.4	Falcon they're familiar with this
+945.4	strategy as well I'm gonna go ahead and
+947.5	scroll here I'm gonna get myself some
+949.1	I'm actually pause real quickly I'm
+951.3	gonna get myself some F fours I believe
+953.7	have some F for ease ah perfect next
+956.9	what I'm gonna do is I'm gonna set them
+958.7	instead of movement style rated with an
+960.2	area I'm gonna set them to a repeatable
+962.1	loop now here's where the magic happens
+964.8	actually I will leave those selected
+965.9	you'll see why I'm gonna build myself a
+968.3	prosecution area now a prosecution area
+971.3	is basically where this particular group
+973.6	of aircraft are allowed to engage
+975.2	targets so I'm gonna set that
+977.3	prosecution area basically from here to
+979.9	here I think that BarCamp is actually a
+983.2	little too far away if you ask me now 50
+984.8	nautical miles just about right so what
+988.2	this does is this establishes a zone
+990.5	that these aircraft will engage in so
+995.1	that means any aircraft that is detected
+998.0	is going to be checked out in this zone
+999.5	but if there are no enemy aircraft to be
+1002.1	engaged and no enemy aircraft have been
+1003.9	detected my aircraft are going to be
+1006.0	going on this repeatable barrier cap now
+1008.8	keep in mind the total distance here is
+1010.2	about 33 nautical miles
+1011.6	that's plenty within the range of an f4
+1013.8	phantom now I happen to know this is
+1015.7	gonna be a seaborne strike which is
+1017.2	usually a safe bet they're going to use
+1018.7	some kind of low altitude aircraft now
+1020.9	in the old days aircraft did not have
+1022.8	the ability to basically pick targets
+1024.9	out below them from any ground clutter
+1027.0	the f4 phantom has a pasta pulse-doppler
+1029.6	filtering mouthful that has the ability
+1032.3	to basically look down shoot down that
+1034.4	is to say to engage targets that are
+1036.3	below it because it can see down below
+1039.0	it some radar systems can't which means
+1041.4	you're going to have to find some way to
+1042.6	trade off what altitude you're going to
+1044.3	patrol that against being able to see
+1046.4	targets that'll blow you this is a real
+1048.2	problem with especially Soviet aircraft
+1050.4	especially in the first half of the Cold
+1052.1	War so anyway let's go ahead and pause
+1054.1	let's check our F Force real quick to
+1056.2	make sure
+1056.9	he's happy hey there's my mig-25s I
+1060.6	should just send them out there just for
+1061.6	fun right that fifty ones we're gonna
+1063.8	put that force are there they are let's
+1067.1	double check to make sure everything set
+1068.3	correctly looks good by the way in order
+1070.2	for this technique to work with the
+1071.5	prosecution zone you need to make sure
+1073.2	you have this enabled right here so they
+1074.9	actually leave the patrol zone and stay
+1077.6	in the prosecution zone
+1078.9	another thing I'm going to do is I'm
+1080.1	going to turn active emissions in the
+1081.5	prosecution zone and I'm gonna double
+1084.0	check to make sure they're allowed to
+1084.9	use air-to-air guns because they don't
+1086.5	want them wasting time if they don't
+1087.9	have to and that should do it
+1090.0	the other thing worth checking out
+1091.2	though is your weapons through these
+1092.3	authorization you want to make sure
+1093.8	these old-school aircraft I had the
+1095.7	ability to engage properly one thing it
+1098.7	did not change was the size of the
+1100.3	flight that I was using here looks like
+1101.9	I'm using sections of two which is
+1104.7	actually not that bad but what I am
+1106.3	gonna do is I'm gonna grab some of these
+1107.7	sections of - and I'm gonna sprint them
+1110.2	out along that cap so I have continuous
+1113.2	coverage all the way down that line and
+1115.8	all that look at how beautiful that is
+1117.5	what we've already acquired some targets
+1119.7	let's go back here double check to make
+1122.7	sure that you're not engaging with too
+1124.6	many aircraft at a time because last
+1126.5	thing you want to do is bunch up on
+1127.8	these decoys why everybody else shows up
+1130.1	from the side that's a really common
+1131.9	human tactic
+1133.0	it's basically kiting all right you guys
+1136.3	are investigating awfully slowly here
+1139.9	just take a look from pretty quickly I
+1142.2	should say all right oh we're getting
+1145.9	some jamming oh we got them now the
+1152.5	reason we lost them is because it was
+1154.2	such a difficult time seeing below us at
+1156.1	distances that close so what I'm
+1158.1	actually gonna do is modify my mission
+1159.8	so that my station altitude is a little
+1161.8	bit lower so I'm less likely to lose
+1163.6	altitude are less likely to amiss that
+1166.0	for coming up in the future let's go
+1168.4	ahead and we got another group coming in
+1169.7	of course if I wanted to be a little
+1171.7	more aggressive I could do one of these
+1173.0	things but it's very difficult to do in
+1175.2	certain scenarios again this is without
+1177.8	early warning radar one's got to get
+1181.1	through yeah that one would have got
+1184.4	through keep in mind the reason aircraft
+1187.9	are so limited in speed is because we're
+1190.5	with low altitudes if we were operating
+1192.2	at high altitudes we have a much much
+1194.2	easier time of engaging these aircraft
+1196.2	some sense what you can do is you can
+1197.7	actually grab an aircraft order it up to
+1199.7	max altitude max speed build up enough
+1202.1	speed that you can actually climb over
+1203.8	the target and then you can come back
+1205.2	over them again that's a good intercept
+1207.7	strategy if you need it you can see a
+1209.5	group did sneak throws who are too busy
+1211.3	engaging these other guys fortunately
+1213.2	there is one group of phantoms that seem
+1215.1	to be doing a decent job of it get him
+1217.7	get him get him nice come on you can do
+1223.3	it that guy's toast toast OOP there's
+1226.6	some more watch out range only radars oh
+1230.4	that's still lame that these guys have
+1233.4	their fun and nobody got through and now
+1235.9	when they're all done check this out
+1237.1	they're gonna go over to this barrier
+1238.3	they're gonna start going back and forth
+1239.5	again I'm actually gonna order that one
+1241.1	guy to go to the opposite side of the
+1242.5	barrier hope there's one on the run so
+1245.5	that way every time they turn they have
+1246.8	a good look you can by the way make this
+1248.9	line absolutely nutty which is an
+1250.9	awesome way to do anti-submarine patrols
+1253.2	and stuff like that so hopefully this
+1255.3	has been helpful to you of course the
+1257.0	last question which I'm probably most
+1258.7	people have is what if I have a carrier
+1260.5	action group well it's the same
+1262.6	principle as you saw back there with one
+1264.5	added little benefit if you define an
+1267.1	area let me go ahead deselect everybody
+1268.4	real quick let's say I define this is my
+1270.3	like area or something like that you can
+1272.5	actually program these little points
+1274.5	here in the air these reference points
+1276.1	that I'm using for missions to be moving
+1278.3	relative or fixed to the carrier action
+1281.8	group itself so check this out so now if
+1283.8	I learn my carry action group to go that
+1285.4	way watch what happens
+1287.6	notice this points in these mission
+1290.3	areas now we'll stay over in that
+1291.7	direction
+1292.4	alright so Felice has been kind of
+1294.2	helpful again it's all about how you set
+1296.0	up those missions and weighing how many
+1297.9	aircraft I have it given time versus how
+1299.8	long they can stay in the air versus
+1301.4	what kind of weapons do they have
+1302.5	obviously these phantoms have had a
+1304.2	lovely day today look at this BAM got
+1308.5	the entire decks worth of them which is
+1310.4	very impressive except for the couple
+1311.9	that did sneak away but I don't think
+1313.4	any more than that actually got through
+1315.0	oh not bad so just to leave you off
+1317.3	we're gonna have a quick little
+1318.3	fireworks here which is always kind of
+1319.8	fun to do so load up two
+1321.4	one more time and this time we'll switch
+1326.3	to the bad guys or whatever the
+1328.1	equivalent is we don't know if the bad
+1329.1	or not and let's grab everybody oh boy
+1334.9	so uh what are you supposed to do in
+1337.3	this sort of a situation well you'll see
+1341.8	go ahead and pause that real quickly
+1343.8	this time I've left on my air defense
+1346.4	radars to make my left a little bit
+1347.7	simpler so when this kind of a situation
+1349.3	comes and you do have some good
+1351.4	interception capabilities it's a lot of
+1354.0	times worthwhile like you can see that
+1355.8	these guys are clearly decoying out you
+1358.1	can it's a good idea to intercept things
+1360.3	manually and actually do it by group if
+1362.8	I know these are all attack planes
+1364.0	because of their missions or something
+1365.5	like that I can of course launch them
+1367.2	another technique you can use and I'm
+1369.1	not really a fan of this technique but
+1370.9	it works fairly well is you can
+1372.6	basically create two different air
+1374.5	defense zone so you could have kind of
+1375.9	the outer ring and you could have an
+1377.1	inner ring so I'm going to call this my
+1378.9	inner ring go ahead set this to patrol
+1382.1	will give it as a aw patrol I'm gonna
+1384.0	need maximum firepower in my inner ring
+1386.1	so I'm gonna increase the section size a
+1387.7	little bit I'm gonna grab all of my fm
+1390.5	actually with my F 89 s alone those are
+1392.2	pretty useful I'm gonna grab my F 50
+1394.8	ones though and of course we're gonna
+1397.5	get everybody airborne because you know
+1398.8	how this game has got to be played and
+1400.3	I'm gonna shut these two off because
+1401.7	they don't need them so then once you
+1403.2	have your inner ring you can of course
+1404.3	define an outer ring so what I usually
+1407.8	like to do with the inner versus outer
+1409.1	technique is I use my inner ring as the
+1411.5	patrol zone for my outer ring and then
+1413.0	use my outer ring as the prosecution
+1414.5	zone so let's do outer ring here do
+1419.7	patrol aw sounds good
+1421.7	let's grab everybody else obviously this
+1425.8	Tomcats are somewhere else right now
+1427.2	that looks good grab it just send
+1429.5	everybody in the air double-check your
+1431.7	doctrine by the way yep you want this
+1433.2	you want this to be set I went firepower
+1435.5	so with large groups like this so that
+1437.8	is going to be actually my prosecution
+1440.2	area my patrol area is going to be that
+1443.2	area in the middle let's go ahead and
+1444.8	remove all these points just like we did
+1446.1	a second ago and we'll add all those
+1448.1	points bingo so this is where we're
+1450.1	going to engage if we see them this is
+1451.7	where we're gonna hang out and basically
+1453.3	return
+1454.1	every single time keep in mind we do
+1455.9	have our air defense radars working so
+1457.5	this is going to be a little bit simpler
+1458.8	of an engagement this time I just want
+1460.8	to check one more time real quickly what
+1462.2	my size and my groups are that looks
+1464.0	good go ahead on pause I'm gonna go to
+1466.4	my weapons release double check to make
+1468.8	sure they're programmed to use guns cuz
+1470.6	you're gonna need everything during this
+1473.0	particular engagement that looks good to
+1475.1	me that looks good to me
+1476.2	oh this is gonna get nutty pretty quick
+1478.7	alright watch this I'm probably not
+1483.3	gonna let this get all the way to the
+1484.7	end because I have a feeling commands
+1485.8	gonna start slowing down in about 30
+1487.4	seconds you guys are you can take off
+1491.6	any time now hopefully you didn't just
+1495.4	GI or we go now notice our prosecution
+1498.8	guys immediately turn towards their zone
+1501.4	while everybody else is kind of hanging
+1503.3	out the moment of course they touch the
+1505.0	tip of this they're going to freak out
+1506.9	and I'll basically start engaging very
+1508.7	aggressively oh we got some people
+1510.2	coming towards the north also oh this is
+1514.7	kind of getting messy very quickly and
+1518.8	the fireworks have already begun I'm
+1520.2	just gonna declare you guys hostile I'm
+1521.7	declare you guys still because obviously
+1523.6	they are not necessarily and now I get
+1526.6	to use Sam's that actually helped me out
+1528.2	for once I feel like you never get to be
+1530.2	on the team that uses the Sam's I feel
+1531.8	like you're always on the killing Sam's
+1533.0	team but they're actually fairly
+1534.8	effective of course the real problems
+1536.7	gonna be coming out of Egypt here and
+1538.1	that's this where I'm getting a little
+1538.9	nervous turn that down a little bit
+1541.5	you'll need to hear that that loud no oh
+1544.6	boy this is gonna go bad it'd be kind of
+1548.3	entertaining if it's gonna go bad pretty
+1549.7	quick oh jeez of course our Hawk
+1551.9	batteries up in northern Israel they're
+1553.6	having a hell of a time of it all right
+1557.4	looking pretty good looking pretty good
+1559.1	Wow look at that spam yep notice they're
+1562.0	cleverly beaming the old school pulse
+1563.9	doppler radar in order to get into that
+1565.4	notch filter it is an effective
+1567.2	technique nasty I've got even more
+1570.9	coming out of that no notice these are
+1572.5	f50 ones they're basically just kind of
+1574.3	tooling around our central zone well
+1576.0	these got to kind of do it all the real
+1577.4	work probably not a bad idea is to start
+1579.7	to playing a couple them looks like ya
+1581.5	know it's gonna be an even mix I'm
+1583.3	actually gonna order that one
+1584.3	right to that side I'm gonna order these
+1585.9	guys immediately to go over there oh boy
+1588.6	the real funs coming hey you guys break
+1591.5	it up break it up all right
+1594.3	everybody hit their afterburners and go
+1596.8	here please yeah that's exactly what
+1599.2	they're doing oh I have new twenty-fives
+1601.0	you're gonna pick up the mig-25 by the
+1602.9	fact they're gonna get here like a line
+1604.3	like my Mouse's it's amazing how fast
+1606.0	they are notice they prioritize the
+1607.7	closest target first which is actually
+1609.5	really really handy but you probably
+1611.2	want to do though is grab this group
+1612.6	here and you want to order them to
+1614.2	engage the target that's over here
+1615.7	versus the one that they're engaging
+1616.8	there because otherwise they're gonna
+1618.4	get a little carried away all right
+1621.8	spread them out just a little bit
+1623.1	I still see an enormous amount of angry
+1625.3	aircraft coming in that direction so I'm
+1626.6	gonna grab my two groups of f50 ones not
+1628.5	that they're gonna get there in time but
+1630.0	we're gonna ask them nicely oh man this
+1633.6	would be a nightmare if this occurred in
+1635.1	the real world no these guys are doing
+1637.6	hanging out so much it probably looking
+1638.8	for a better target meanwhile their Sam
+1641.1	batteries are they get paid this week
+1643.5	they're gonna make their Christmas bonus
+1645.2	there goes our f50 ones desperately
+1648.0	trying to do something I don't think
+1649.6	they're gonna be terribly successful
+1650.7	this is one you really wish you had more
+1653.1	aircraft to help us out with but this is
+1655.2	this is what we got and there's poor f50
+1658.2	ones they can't even get high enough in
+1659.6	order to actually engage the target but
+1661.1	they're machine guns man they really
+1663.3	don't like us they said hey everybody oh
+1666.0	here comes their bombs
+1667.7	oh I never won their receiving end it
+1669.5	feels so weird alright hopefully this
+1672.1	video has been helpful to everybody I'm
+1673.8	sure you guys want to see what our
+1674.8	losses and expenditures look like after
+1676.6	that initial little fireworks there I'm
+1678.4	loss anything but I managed to get like
+1680.3	30 aircraft already so I'm having a
+1682.4	pretty good day alright if you have any
+1684.0	questions usual I'll throw them down
+1685.3	there like I said I will provide you
+1687.3	guys with this little sheet if you want
+1688.6	to play with it it's really not much but
+1690.3	sometimes it helps you to kind of
+1691.3	visualize sort of what you're trying to
+1692.8	achieve but at the end of the day if you
+1694.5	have a very very fast missile and radar
+1696.3	armed aircraft you can spread that cap
+1698.2	out really far if you're dealing with a
+1700.1	scenario where you know that this
+1701.3	Russian say look very very large a
+1703.4	bomber force it's gonna be engaging your
+1704.9	carriers you've really got to get that
+1706.6	cap basically to supplement your regular
+1709.4	radar in order to be effective at all
+1711.5	also don't forget that if you're a craft
+1713.5	fly lower they're gonna have an easier
+1715.1	time to tech
+1715.6	targets with radar they fly higher
+1717.5	they're gonna be able to stay in the air
+1718.8	longer so if you ever need to figure
+1720.8	that calculation out it's just a matter
+1722.3	of taking up with feeling they have
+1723.2	divided by how much fear they're going
+1724.7	to be using enjoy

@@ -1,0 +1,1190 @@
+0.1	we were some around Barstow on the edge
+1.9	of the desert when the drugs began to
+3.6	take hold hello everyone today's taking
+7.4	a look at bombing both unguided as well
+9.6	as guided plus the usual strategies as
+11.8	well as kind of how many aircraft you
+13.4	need to use what types of bomb you
+14.9	should use for certain targets as well
+16.5	as just kind of general tactical advice
+18.1	plus a little bit that could gain me
+19.7	goodness that you know you get because
+21.4	this is not the real world and I'll try
+23.8	to of course bring up some things with
+25.1	the differences between this and flight
+26.5	Sims we're bombing is amazing
+28.6	it's a little harder than that in the
+29.6	real world this you'll see so let's go
+31.1	ahead take a look at it outline all we
+32.3	have today we'll be talking about yield
+33.9	we'll be talking about the
+34.8	armor-piercing quality of the weapons
+36.3	we'll talk about air break bombs also
+38.2	known as retarder bombs these are pretty
+39.7	cool we'll talk about CB use cluster
+41.7	bombs I'm not gonna go crazy this could
+43.4	be its own video so I'm gonna leave it
+45.1	out as far as to much of the detail
+46.6	we'll talk about guidance of course we
+48.3	got John Qaeda bomb so you got your
+49.6	command passive GPS class Nass as well
+51.9	as mixed types and then of course we
+53.8	have employment as well as some solid
+55.5	examples so let's go ahead and jump
+58.0	right in shall we so what do you think
+59.8	about bombs usually you're thinking
+61.3	about doing some sort of damage
+62.5	generally to a fixed target some modern
+65.2	bombs especially laser-guided bombs have
+66.9	the ability to actually track a target
+68.4	that is moving bombs are great against
+71.7	ships when the ships aren't moving as
+73.4	soon as the ship starts picking up any
+74.8	sort of speed unless you're using some
+76.3	sort of laser-guided bomb it is going to
+78.4	be a project to try to properly saddle a
+81.2	bomb now bombs in command are fairly
+83.4	well simulated if you've probably gone
+85.0	up to the database view over at some
+86.4	point set this thing over to munition
+88.5	modes is something like emkay100 like
+90.5	that I didn't realize just just so many
+92.4	GPUs out there worried did something
+94.4	funny like you did fab and then you want
+96.2	up here whoa look at all those there's a
+98.3	lot of different bombs so basically
+100.2	we're gonna be looking at what matter
+101.9	does it make let's take a look
+103.8	so under scenario here we have our
+105.7	Hunter Thompson Air Force Base and of
+107.6	course we have a little Depot here the
+109.0	depot itself pretty straightforward kind
+111.4	of a target area we've got a couple ammo
+113.2	pads we have a railway station we've a
+115.2	railway yard we have a nano pad over
+116.9	here we also have a nice large
+118.2	government building into the North
+119.8	everybody's favorite target to try to
+121.4	hit effectively and that is a good
+123.1	old-fashioned two-lane bridge so first
+125.5	things first when you're delivering
+126.9	unguided bombs which is bold like I said
+129.3	we'll look at first being redundant it's
+131.2	been a long day give me a break you're
+132.9	going to need
+134.0	take a look at the type of aircraft
+135.4	you're using in the quality of the bomb
+137.9	site on that aircraft to determine how
+140.1	effective your strike is going to be the
+142.4	inside of command we basically have a
+144.4	few different types of guidance there's
+147.3	bomb sizes what they call it in game
+149.4	terms we have bomb sights that are not
+151.9	quite as good which are going to be your
+153.3	basic you could have your ballistic bomb
+155.0	sites which for those who were looking
+156.6	for an equivalent think about the bomb
+158.8	site under make 21 you have an advanced
+160.9	bomb site which would be like your CCIP
+162.7	think about a 16 CJ then of course you
+165.9	have your advanced /i NS sort of systems
+168.2	like you'd see on an f-18 see the f-35
+170.9	and on some later on bombers the Sukhoi
+173.0	34 I know has this system this makes a
+175.6	massive difference as far as how well
+178.6	you're going to be able to hit a target
+179.9	with an unguided bomb demonstrate that
+182.4	let's go and take a look what happens
+183.5	here so what I have here is I have some
+186.8	reshef ones if you actually were to
+188.4	click on the Mirage f1 scrolling down
+190.6	you get to this little section at the
+192.7	bottom which tells you what type of bomb
+195.0	site this platform has this is a
+197.2	ballistic computing a bomb site that's
+199.3	like I said about the equivalent of it
+200.8	make 21 the other option like I said you
+203.1	could have taking the s3 be here you
+205.6	could have something like a basic bomb
+207.4	site this thing is not great but at the
+210.6	same time as you don't really use an s3
+212.0	be as a bomber b-52 most people actually
+214.6	really surprised about this but believe
+216.2	it or not it's bomb site at least rating
+218.6	in this game is advanced computing and
+220.9	of course like I said just a minute ago
+222.3	borrowing my f-18 see here scrolling all
+225.4	the way down it's always important you
+226.9	take a look at this stuff you could take
+228.9	a look down here that it has bomb site
+230.8	advanced navigation which basically
+232.4	means the best you could ever do short
+234.6	of getting out of the plane and pushing
+235.9	the bottom with your hand as it falls
+237.1	down towards the ground it's good stuff
+238.8	so let's take a look at how this looks
+240.2	in action so what I'm gonna do is I'm
+241.7	gonna go ahead and set up a quick little
+242.9	mission here strike basic we'll go ahead
+247.1	do a basic strike so our basic aircraft
+249.4	is you know is going to be rs3 B so when
+251.7	you're setting up a mission to you
+252.8	bombing there's something you really
+253.9	want to watch out for if I were to click
+255.6	on one of these guys and it ready select
+256.9	that aircraft you're gonna notice it's
+258.9	going to tell you what the default
+260.2	attack altitude is if I do not manually
+262.9	override this it will attack a 2,000
+265.3	feet above ground level
+267.0	I don't know about you but as a flight
+268.5	simulator guy I know there's this thing
+269.8	called is ESU 23 also knows this shook
+271.9	up which would tear us into if we were
+274.2	at an altitude that low so kind of keep
+276.3	that back your head before you click
+277.7	that ok button now if you compare that
+279.7	of course to our b-52 buddy check this
+282.6	out
+283.0	this is default altitude for his attack
+285.0	is 36,000 feet which means it's gotta be
+288.9	well out of the range of course you're
+290.4	also dropping 45 mark 80 tubes and on
+293.3	top of that you're gonna be way out of
+295.2	range but we'll deal with that in a
+296.6	second so basically we have a basic kind
+299.7	bomb site this is probably just a little
+301.2	circle maybe it's got the little thing
+302.6	you can rotate on the side to kind of
+304.1	depress the side a little bit coming
+305.9	down here what's this flight sighs this
+307.8	is a huge impact on successfully bombing
+310.3	a target if you set these to very very
+313.0	small flight sizes the enemies tend to
+315.7	come in a row kind of like ants when you
+318.4	do this it enables you to hit a pinpoint
+321.3	target more accurately because the
+323.4	individual aircraft and the flight don't
+325.2	have to fly around and come around to
+327.1	hit their other sign targets so that's
+329.5	something to think about the opposite is
+331.0	also true by the way if you set this to
+332.4	six aircraft and you're attacking a
+333.9	target that is a lot of area you need to
+336.1	set your WRA appropriately otherwise
+338.6	you're going to be wasting your time now
+340.3	what do I mean by that let's take a look
+341.7	real quick
+342.3	so what WRA weapon be these
+344.1	authorization the default for just about
+346.5	every bomb in this game except for
+347.9	guided bombs is going to be all weapons
+349.5	which basically means this s3 is gonna
+351.7	drop it's a tire stack on the first
+353.5	target it sees interesting now you're
+355.6	sitting there going okay that's usually
+357.3	a good thing right maybe if you have the
+359.9	ability to come around Andrea tak that
+361.7	means if your first attack was
+362.9	successful then cool we'd saved our
+364.9	bombs if it wasn't successful we can
+366.6	always reattach so that's something you
+368.8	want to kind of keep the back of your
+369.7	head it's more important with the bigger
+371.4	bombs and it is with the little bombs
+372.8	but we'll take a look at a little while
+374.7	so basically they're gonna trap every
+377.0	single bomb they possibly have so if I
+378.9	were to use this in this sort of a form
+380.7	that would mean each aircraft in that
+382.5	section would preferably try to attack a
+384.9	single target as you can see far enough
+387.0	weapons to fill the salvo requirement
+388.4	meaning it will only be dropping its
+390.5	eighth mark ad twos per target if that's
+394.2	too many bombs per target which honestly
+397.2	for basic on sight you're not going to
+398.8	have that issue
+399.5	you're gonna want to set this to a
+400.9	smaller number to force the aircraft to
+403.3	Rhea tack now if you're creative which
+405.6	will actually do is come in here do
+407.0	something like this where it launches
+408.6	half of its bombs and then you order a
+411.1	second person to shoot it as well so two
+414.2	separate targets drop the rounds on the
+417.2	actual target aside this is a neat and
+419.6	it again I've come up with a couple
+421.4	tactical reasons for this but generally
+423.0	I don't need it I'm gonna go ahead and
+424.5	leave it alone for today all right let's
+427.1	see what happens if you take a basic
+428.3	bomb site with mark 82 s at 200 feet
+431.0	keep in mind these guys are regulars
+432.4	here we go remember these are big groups
+435.6	bombs away
+436.5	pause let's see how we did so we dropped
+439.9	120 500-pound low-drag I general purpose
+444.2	bombs total losses a single ammo had
+447.9	that was horrible let's go ahead and
+451.3	open this up again and take a look at
+452.9	this with a slightly more modern site
+454.7	keep in mind a basic site you're just as
+457.0	effective as World War 1 bombers we're
+458.4	alright so let's try this exact same
+460.4	scenario again I'm just gonna whatever
+465.2	I'm typing no strike let's go ahead and
+467.6	do this a little differently now we're
+468.8	gonna use an aircraft that has a
+470.2	ballistic computing sight now this would
+472.2	be a site that basically when you look
+473.7	down it would tell you where the bombs
+475.0	are gonna land based on the motion of
+476.8	the aircraft so we're gonna be using a
+478.0	mirage f1 this is a more accurate sort
+481.1	of attack but warning take a look at
+483.4	what the altitude it's gonna tack is 200
+486.9	feet watch this that that uh that was
+493.9	nice alright cross your fingers so this
+496.3	would be the next generation think 1960s
+498.6	bomb site ready we went through 168 250
+501.8	kilogram bombs and we got three this
+504.9	time so already that's a significant
+507.8	increase in by the way people keeping
+509.2	track up my total bombs used remember
+511.9	this number as opposed to this number
+514.8	keep this ratio in mind it's kind of
+516.9	come back up later on so I'm going to go
+518.5	ahead and I'll load this up again again
+520.7	this demonstration is worthwhile so that
+522.8	you can see the difference that
+524.1	different aircraft can make so let's go
+525.8	ahead and do this again
+527.4	go ahead set it to land strike press ok
+530.1	this time we're gonna get b-52s yes
+533.3	b-52s these aircraft are great because
+535.8	they don't just carry one mark 82 they
+538.7	carry 45 Marchetti tubes now one thing I
+541.8	want to point out is the fact they're
+543.0	going to be striking from 36,000 feet
+546.2	that means if there's any wind which
+548.2	there is by the way that means the bomb
+550.3	is going to deviate significantly so the
+552.8	hope here is that we're increasing the
+554.6	number of bombs we drop hopefully
+556.4	increase your overall accuracy there is
+558.5	a way around this by the way if you
+560.0	actually go down to the actual loadout
+561.5	itself you can sell the b-52s to attack
+564.2	at low altitude that's 200 feet above
+566.8	ground level with a b-52 be smart people
+571.2	you know how this ends I'm gonna leave
+572.5	them at high altitude by the way the
+574.0	b-52s are equipped with the advanced
+576.5	computing sight in case you're curious
+577.9	one other thing I want to say about the
+579.4	b-52s they can do radar bombing you're
+582.1	saying there what's the difference
+583.1	optical bombing I have to have a
+584.5	physical line of sight to the target
+585.9	radar bombing I can actually look
+587.2	through cloud and still attack the
+589.1	target assuming I can detect that target
+591.1	just kind of keep that in mind that's
+592.5	SuperDuper handy especially in certain
+593.9	scenarios as you'll see so anyway I'm
+595.8	gonna leave these guys they're big
+596.9	little sections here I'm gonna play
+599.7	speed time up a little bit watch this
+602.1	keep in mind they're at 36,000 feet ok
+606.1	Advanced Computing site 36,000 feet
+608.6	ready we used five hundred and forty
+612.9	bombs for this ready we did a little
+617.0	better again that ratio is start to you
+621.2	should start to see numbers here one two
+622.8	three four five six six two one it takes
+625.5	a hundred bombs for every single target
+628.0	keep that in the back of your head so
+630.6	I'm gonna go ahead and do this one more
+631.8	time and this time I'm gonna be mean I'm
+634.1	gonna get myself some f-18s f-18s have
+636.5	an advanced GPS /i NS style site and
+639.7	this is like dynamite I'm gonna call
+642.6	this one yep go ahead do it land strike
+644.9	let's go ahead get our f-18 C's keep in
+647.2	mind these guys have that advanced one
+648.6	they have mark 82 they're also
+650.4	programmed to attack at 200 feet let's
+654.2	go ahead and play and watch what happens
+655.2	go
+659.1	what do you think better worse
+661.9	let's take a look they went through less
+663.5	than hundred bombs and they killed three
+665.9	so it only costs them thirty three bombs
+667.9	per target so just because we did a
+670.5	better job at actually hitting the
+672.0	target we didn't quite have the same
+673.7	number of munitions speaking of which
+676.0	that brings us to our next item and
+678.0	that's the fact that the yield of the
+680.1	bomb has a big impact and what you're
+682.1	going to be attacking with it if you're
+683.6	attacking a very large target there's
+685.2	nothing wrong with using less big bombs
+687.2	because you're gonna hit it the problem
+689.6	is just like we say here the bigger your
+691.6	yield the less need for accuracy the
+693.6	larger yield obviously have your bottom
+695.3	you can't carry as many of them smaller
+696.9	yield is going to be always a little bit
+698.4	more pinpoint however is a lighter bomb
+701.3	so kind of keep this in sort of the back
+703.4	of your head here if we switch these
+705.0	bombs out with a thousand pounds instead
+706.6	of 500 we need half the bombs right
+708.7	which brings us to our next point when
+711.7	you are attacking target so let me go
+713.1	ahead and reset our scenario one more
+714.4	timer awesome when you're attacking
+717.6	targets we're gonna go to one my
+718.7	favorite Sciences everybody knows Rao
+720.9	scenario platforms let's set it to tar
+722.5	four let's go ahead and grab a building
+725.4	real quick now if you take a look at
+727.2	this real quickly you'll notice that the
+729.0	building itself has a couple details in
+730.6	its database first and that's 450 damage
+733.4	points second it has light armor now if
+737.1	we were to quickly run over to munitions
+738.8	and type in MK 82 let's going to get
+741.4	ourselves a regular one not one of those
+742.5	silly ones there we go you observe that
+745.2	this bomb can do a hundred and thirty
+747.2	damage and that it is a high-explosive
+748.9	bomb what does that mean well check this
+751.9	out if something has 450 hit points with
+754.7	light armor
+755.3	let's grab my calculator and we divide
+758.0	by one thirty point five that would mean
+760.4	we'd have to get four basically four
+762.6	direct hits to kill that point by target
+765.0	rather the problem is is if you take a
+767.8	look here this is a high-explosive round
+769.8	against an armored target whenever high
+771.7	explosives hit targets you have an 80%
+774.0	reduction ish in the amount of damage
+775.9	you caused keep in mind very hard
+777.2	targets such as like a t-80 tank it's
+779.8	extremely heavy armored bunkers have
+781.5	even more armor they require special
+782.8	weapons so as a result my 130 is
+785.6	probably going to be closer to 104
+787.8	hey that's a pretty good math so now if
+790.2	I do the division real quick you'll see
+792.1	that I need five direct hits with mark
+794.4	82's in order to damage and destroy this
+797.1	building now that's okay it's okay see
+800.5	where you going with this I see we going
+801.9	with this so uh so so what do we do do
+804.3	we get a bigger bomb let's find out let
+807.0	me go get that again let's go ahead and
+810.0	grab this one right here you're looking
+811.2	pretty lucky today let's go ahead and
+812.5	ready armed you guys never cheating a
+813.9	little bit to make this quicker for you
+815.4	let's take a look at what happens when
+817.3	we get the mark 83 so we can carry a
+819.3	total of four of these notices high
+822.7	explosive
+823.5	again it's 303 damage 303 times four
+828.2	that's times and remember zero point
+829.9	eight that's about a thousand damage
+832.1	that means a single of these aircraft
+834.4	could completely destroy that building
+837.2	and to prove my point and now let's hope
+839.1	we get to okay today of course you could
+840.6	set it to short range and now look at
+841.9	how many I'm carrying 8,000 pounds of
+844.1	bombs I'm gonna go ahead and launch a
+846.1	single one of these to make my point
+847.8	here keep in mind this aircraft is
+849.5	equipped with the best bomb site for
+850.8	this process all right let me go ahead
+853.1	and line you up at the target region I'm
+854.6	gonna go ahead and shift f1 I'm gonna
+856.3	select my large car building how many do
+858.5	we need three right so we'll do four
+860.4	because I'm a nice guy okay watch this
+864.1	hey let me go ahead and bring him down
+866.1	to a normal people's altitude do that
+868.2	thousand feet above ground level sounds
+869.8	pretty safe to me not really I wouldn't
+872.0	want to be that low okay going back to
+873.6	my example with the short-range missile
+875.1	system so I'm doing a manual attack here
+877.0	just to kind of make my point I believe
+878.4	this is the government building yes so
+880.2	he is going to fly over and he's going
+881.7	to deploy those weapons by the way if
+883.4	you ever need to tell an aircraft what
+885.3	altitude to do the attack at you have to
+887.8	do it using the whip manual attack
+889.3	essentially because if you did an auto
+890.8	attack and you didn't set the altitude
+892.6	it would dive down to 200 feet above
+894.4	ground level and to it's think one more
+895.7	time so watch this you seem to be very
+899.1	low sir you're 3,300 feet I told you low
+902.0	altitude above ground level okay fine P
+904.1	that way I see how it is let's watch
+906.2	this what happened where's my bombs
+911.4	didn't they go on put you drop the bombs
+913.7	to shoot no I didn't drop the bombs the
+915.9	problem was there was a mountain right
+917.8	here and he was too high they actually
+920.0	was too low in this case you
+921.1	successfully deploy his weapons so now
+923.2	I'm gonna drag him up to a little bit
+924.6	higher altitude ah still too low dude
+930.2	you need to get a little bit more else
+931.7	to do what is her local altitude here
+933.1	this is another issue you're gonna face
+935.0	from time to time
+935.8	except my sense of 5,000 feet that seems
+937.6	pretty safe and you're gonna go over
+940.1	here put you back go again if you set it
+943.1	to automatic mode you wouldn't have this
+944.8	issue now we should be able to strike it
+946.6	no problem assuming of there goes thank
+949.2	you and bye bye
+952.1	got it so that's just demonstrating how
+955.5	with the superior assist computing
+957.5	system selecting the right sized bombs
+959.5	we've absolutely been able to minimize
+961.4	our attack here as a matter of fact you
+962.6	could probably come back and finish the
+963.6	rest of these targets he's also at a
+965.2	safer altitude and again the older the
+967.7	bomb site system the lower altitude
+969.6	you're gonna have to be to be effective
+970.7	so that's actually a pretty cool example
+972.6	I'm glad you got to see that now if we
+975.1	were using older aircraft with mark 84
+976.8	there's a pretty good chance we would
+978.4	have wasted most of that stack although
+980.6	we probably would have caused some
+982.1	damage so just kind of keep that in the
+984.0	back yard calculators at Microsoft Excel
+986.1	are always your best friend okay let's
+988.1	take a look some bombs have what they
+990.3	call semi armor-piercing warheads the
+992.3	s14 is a one that comes to mind what
+994.4	does that mean let's go ahead take a
+996.1	look real quick
+996.7	yes fourteen grab the catch hey there it
+999.2	is scroll down real quickly it says s AP
+1003.8	that semi armor-piercing that means that
+1006.9	this particular bomb has the ability to
+1008.5	ignore light armor to still deliver its
+1012.0	full damage to its target that is
+1014.7	awesome because it means that basically
+1016.2	if you hit a building with it you're
+1017.8	gonna do all 250 obviously we're hitting
+1019.5	a bunker be considerably less there's
+1021.9	another kind of the armor piercing of
+1023.3	course that you probably familiar with
+1024.3	regular armor piercing for this one I'm
+1026.4	gonna have to kind of cheat a little I
+1027.8	don't really know any modern aircraft
+1031.1	that have true armor piercing words
+1032.8	there are some high-explosive anti-tank
+1034.1	warheads but we'll get to that later and
+1036.2	you can see this one this is an
+1037.8	armor-piercing round however look at the
+1040.1	damage that makes sense it punches a
+1042.7	hole in the front of the building and
+1043.8	the building the hole goes out the other
+1045.4	side or should say the projectile rather
+1047.7	so not much damage but it can penetrate
+1050.6	anything and then last but not least of
+1053.0	course we have ten
+1054.5	penetrator what does that mean well
+1057.0	let's go ahead and get a look at a bill
+1058.3	you 109 real quick these particular
+1060.7	aircraft have the ability to go through
+1063.1	extremely hardened targets so we shall
+1066.7	see is the word penetrator
+1068.4	now when I say hardened targets I'm
+1070.2	talking things that are like 100 meters
+1072.4	of Earth before exploding on a bunker
+1074.5	underground so that means this damage is
+1076.9	going to 100% hit whatever you damage so
+1081.2	hopefully they're starting to make a
+1082.2	little bit more sense so let's go ahead
+1084.3	take a look at some other things here
+1085.5	now there's these other funky bombs
+1087.0	called retarted bombs which are
+1088.6	basically I call them air brake bombs
+1089.9	because it just sounds more fun it's
+1091.2	slightly more PC basically they're bombs
+1093.7	that you can drop over the target as you
+1095.9	fly over the target in the real world we
+1098.0	love these things because it gives you
+1099.4	the ability to basically not get caught
+1100.9	in the blast of your own bomb now
+1102.9	there's a couple different variations on
+1104.3	that particular weapon depending on what
+1106.0	country you're playing as the most
+1107.4	common one that I always think of is I
+1109.1	always think of the blue that's a mark
+1110.7	82 and of course everybody ever
+1112.3	remembers the snake eyes as well which
+1114.1	are absolutely awesome now if we load up
+1116.3	our f-18s with snake eyes this is gonna
+1118.5	be like cheating so anyway let's go
+1120.7	ahead and get our target area one more
+1122.1	time to easy watch this as a matter of
+1127.5	fact I'm so confident in my f-18s
+1129.5	ability to do this I'm gonna change my
+1131.7	weapon release authorization to force
+1133.8	them not to drop all their bombs on one
+1135.7	target so what I'm actually gonna say is
+1137.4	how many did we get to remember I think
+1138.5	it was eight total so I'm gonna order
+1140.2	them to drop only four so watch what
+1143.0	happens this time you always talk about
+1145.5	the morale effect of all the bombs
+1147.0	arriving at the exact same time wait
+1149.5	until you see what this can do I just
+1152.0	thinking of those poor guys on the
+1153.3	ground right now who are about to just
+1154.7	get splattered by so many different
+1156.1	bombs now bomb said the ability in this
+1158.2	game to be launched kind of like off
+1159.9	bore and you're gonna want to watch this
+1163.0	possible oh I'm so slow but as they fly
+1166.7	over notice that each guy is attacking a
+1169.9	separate target and then they're turning
+1172.0	around again three attack targets that
+1174.9	have already been hit once ah these
+1177.5	f-18s are like cheating where do you
+1179.3	think you're going
+1180.2	hey hey you get back here
+1184.1	oh excuse me um excuse me excuse me turn
+1188.3	around we still missed one
+1190.3	oh because I'm in that mode whatever on
+1194.2	a sign and I'm gonna reorder sign you to
+1196.1	that mission so that you can finish the
+1197.7	job here all right set it back - too
+1199.3	easy - I shouldn't allow pre-attack like
+1201.4	oh that's a bummer oh we won already
+1203.6	everybody so as you can see you let's go
+1205.8	take a look at the bosses here we went
+1207.7	through about 70 of these things and we
+1209.7	cleaned house by the way if it is a
+1213.4	windy day these air brake bombs are
+1215.6	virtually useless so be very very
+1217.6	careful with them and obviously if
+1219.1	you're gonna be flying 200 feet off the
+1220.4	ground I think you can actually fly even
+1221.7	lower if I recall correctly let me see
+1223.8	what the actual attack constituted on
+1225.0	these things are it's a recall it's
+1226.2	actually stupidly low 80 feet above the
+1229.1	ground obviously anything that's low and
+1231.1	anti-aircraft artillery is going to cut
+1232.8	you in two so kind of keep that in mind
+1234.3	okay so let's go ahead and talk about
+1236.5	CPUs briefly I'm not gonna go to crazy
+1238.8	detail here because if I do we're gonna
+1240.6	be here all night
+1241.1	basically a cluster bomb is a bomb that
+1243.1	after it's dropped it's gonna split into
+1244.7	a bunch of small bombs there's a lot of
+1246.9	different variations of this inside of
+1249.3	this program CPUs are the ultimate if I
+1252.0	get close to I still count kind of
+1254.8	weapons and they do a really really good
+1256.4	job there's tons of different variations
+1258.5	of CPUs the modern I call it a 100
+1260.6	series all have the ability to correct
+1262.2	for wind which is like cheating some of
+1264.1	the older series the kind of ones that
+1265.6	you probably saw during the Vietnam War
+1267.5	for example and all you're gonna see all
+1269.7	these different variations of it what
+1271.6	are you looking for as a player of this
+1273.5	game
+1273.8	well you're interested in what kind of
+1275.4	bombs and how many they drop this one
+1277.8	for example the CPU 49 has the ability
+1280.3	to spam 670 bomblets per drop
+1284.8	remember the more bomblets the more
+1286.8	coverage however the less individual
+1288.5	damage you're not gonna drop these on a
+1290.1	house it's I mean it's got a wreck your
+1292.3	roof but it's not gonna do much to the
+1293.9	rest obviously I'm being facetious here
+1296.3	but you know what I mean then there's
+1297.8	other types of bombs I kind of go the
+1299.0	other direction where basically instead
+1301.2	of having a million little bombs you
+1302.7	have quite a few less bombs such as the
+1305.1	78 the gaiter
+1306.1	this thing is an anti-aircraft or should
+1308.9	say an anti-tank what am I saying
+1310.2	type of a CPU so basically the more
+1313.0	bombs you put on the CPU the less damage
+1315.2	they'll cause but the better
+1316.5	or penetration and again you can come
+1318.3	down here to double-check that really
+1319.8	really quickly oh look at this thing it
+1321.7	looks like oh that looks mean what is
+1323.6	this one oh that's not cool at all look
+1325.9	at this one it only drops 10 however
+1327.7	anybody who's seen videos of the CBU 97
+1330.1	I suggest you go on YouTube pause me
+1331.7	right now go type in CB u 97 and watch
+1335.1	that and you'll understand exactly how
+1336.8	effective it is anyway by the way CB use
+1339.2	are not very useful in urban or jungle
+1341.7	slash forest environments kind of keep
+1343.5	that in mind I love using CB use against
+1345.6	SAM sites because SAM sites are spread
+1347.1	out I also like to use them against
+1348.6	aircraft sitting on the tarmac because
+1350.2	again you don't have to hurt an airplane
+1351.4	a lot to [ __ ] it okay now let's go
+1354.5	ahead and get to the guidance side of
+1356.1	things this software's provides you with
+1358.4	different types of guidance we have
+1359.9	unguided which I think we think we're
+1361.6	good I think we're good we have command
+1364.6	guided which our remote control bombs
+1366.2	which oh no I don't even want to imagine
+1368.5	how much patience that would take you
+1370.4	have weapons such as the walleye which
+1371.8	actually can be fire-and-forget
+1373.5	depending if I use it or the RB oh five
+1375.6	which is a Swedish bomb you literally
+1377.7	drive it with a miniature joystick and
+1379.2	you can see a little flare on the tail I
+1380.4	mean this is like if you want to think
+1381.7	about some of the late German weapons of
+1383.3	war - they actually had those kind of a
+1385.8	bombs you have passive guidance such as
+1387.9	infrared laser yo you got sure Hellfire
+1390.0	of course the cab 500 a lot of these
+1392.3	basically they're fire and forget some
+1394.4	of them you have to actually steer kind
+1396.3	of like the walleye so again I'm not a
+1397.9	hundred percent sure where you want to
+1399.1	put those but in general you need to
+1400.8	have something that the target is giving
+1402.4	off or being illuminated by in order to
+1404.6	track you have GPS bombs these things
+1406.7	are awesome they literally fly to the
+1408.4	coordinate that you tell them to we'll
+1409.5	look at that a second advantage to these
+1411.4	obviously is talk about safe launch
+1413.6	altitude you could be sixty thousand
+1415.3	feet and drop one of these and just go
+1416.9	home before the things even gotten
+1418.5	halfway there it's incredible
+1420.0	can't hit a moving target and then of
+1422.0	course you have these funky new ones
+1423.2	called laser J dams which basically have
+1425.1	the ability to use a laser or a GPS so
+1428.5	it's kind of like the best and worst of
+1429.7	all worlds so let's go ahead and take a
+1431.2	look at those now right so first things
+1435.9	first I will take a look at everybody's
+1437.3	favorite which is the GPUs so when it
+1440.1	comes to GPUs there's a lot of different
+1441.7	ways to deploy them we're gonna go bar
+1442.9	father f18 here we're gonna take a look
+1445.1	at it so when you look at a weapon entry
+1447.3	what are you looking for the first thing
+1449.0	is these
+1449.5	letters afterwards if it says LGB that
+1451.9	means this laser-guided that means that
+1454.0	it needs a laser to be able to see and
+1456.4	hit the target at all times in order to
+1458.8	direct the palm safely to its target
+1460.9	these things are stupidly accurate now
+1462.9	where'd you get that laser from well it
+1464.8	depends on what generation of aircraft
+1466.6	you are because in the old days when you
+1468.4	had things like this let me actually go
+1469.8	call my 810 real fast this is one of my
+1472.0	favorite examples let's go get a C model
+1474.8	let's go to the newer old ones they had
+1477.7	a late laser spot tracker but at one
+1479.7	point they actually didn't carry their
+1481.3	own pause let me see real quick I don't
+1485.0	wanna make a liar myself to effectively
+1486.7	here but I'm gonna try it let's go get
+1488.0	in a model nope they do have lightening
+1491.9	pods but of course I could always go get
+1495.5	myself like innovators at 5 or something
+1497.5	like that that would do it too yeah here
+1499.0	he goes you notice these eight tens
+1500.8	requires somebody else's laser in order
+1503.8	to it's hack now that laser is going to
+1506.7	be a big limitation and the fact of the
+1508.8	matter is all the laser-guided bombs can
+1510.8	only see laser from about two miles
+1512.4	which means about 10,000 feet so that
+1514.7	means you're gonna have to put yourself
+1515.6	in the line of fire in order to safely
+1517.4	drop these weapons now fortunately some
+1520.2	more modernist systems and I'll go back
+1521.7	to the f-18 real quickly you actually
+1523.8	have the ability to carry these little
+1525.0	targeting pods this one is good to
+1527.4	40,000 feet that's incredible if you
+1530.3	think about how much of a laser beam you
+1531.9	must need in order to guide these so
+1533.9	that's the first thing I'm looking for
+1534.9	next thing you're looking for is is a
+1537.0	JDAM or something along those or just
+1538.4	say GLONASS does it say GPS that simply
+1541.4	means you're gonna fire the bomb it's
+1542.7	just gonna travel on some coordinates
+1544.4	and then hit the last thing you might
+1546.0	see of course is we get the laser JDAM
+1547.7	spy dome we actually have two old of our
+1549.4	version of the aircraft to do this so to
+1551.0	do this attack I'm gonna go ahead and
+1552.2	get myself some of these mark 84 is
+1553.8	these Beale you 109s by the way or
+1555.7	penetrators we don't need them
+1557.1	notice how few of these we carry by the
+1559.5	way not gonna matter let's go ahead and
+1561.9	demonstrate LGB go ahead duel and strike
+1568.2	press okay get myself my f-18s ah let's
+1571.8	let me check with my WRA real quick I'm
+1574.3	gonna make sure we're not wasting these
+1575.5	um that looks good to me
+1577.5	that looks good to me I'm just gonna say
+1578.9	- of course do we really need to let's
+1582.3	check that I feel bad about wasting
+1584.1	these things they're like half a million
+1585.6	dollars a piece if that on the low-end
+1587.5	I'm not gonna guess gbu ten let's go
+1590.8	ahead and grab one of these damage
+1593.4	damage damage 643 uh yeah we're gonna
+1597.8	use one each of course in the real world
+1599.7	you'd never just drop one of these
+1601.2	because anybody who's tried to fly a
+1602.6	plane with a missing wing can tell you
+1604.2	wow that's really kind of annoying let's
+1607.6	go ahead and set that let's go ahead and
+1608.9	set this screw down and screw it down
+1610.8	we're gonna go I'd say just need one
+1612.6	scoot down scoot down we're at my
+1614.8	facility we're not attacking any of
+1616.2	those but whatever soft target I feel
+1618.2	real bad if you use a soft target
+1619.5	against this and that should do it
+1622.6	as far as size I'm gonna do it for
+1624.2	maximum strike value I'm going to go
+1625.9	ahead and use six aircraft in this
+1627.5	attack I should say per group oh here we
+1630.2	go
+1631.6	so now these aircraft are way way way
+1634.9	way up high or are they why are they
+1638.0	only at 11,000 feet well if you take a
+1641.1	look at the weapon itself if you go back
+1643.4	to what I said about two minutes ago you
+1645.4	have to be careful and make sure you're
+1646.7	in the launch envelope to employ the
+1648.5	weapon so anyway I'll let these guys go
+1650.2	ahead and do their thing we spotted
+1651.5	something new I'm gonna go ahead and
+1653.3	check this out they fired their laser
+1654.9	bombs and they immediately turn to the
+1656.7	left so that they can light up the
+1658.4	targets that they're attacking so watch
+1660.2	this yeah that's what we get for not
+1665.5	wasting weapons by the way you can
+1667.4	reattach with laser-guided bombs watch
+1669.0	this
+1670.1	I feel so wasteful
+1674.9	apparently we did not damage that one
+1677.5	it's all right I think one of her bombs
+1681.4	malfunctioned always a problem by the
+1683.2	way and there's one left and they're
+1688.3	having trouble with line-of-sight you
+1689.3	guys are flying too low go higher go
+1691.1	higher all right let's see what happened
+1694.2	this dub losses and expenditures so we
+1697.3	use 16 and got everybody so obviously
+1701.0	it's a guy two bumps work very very very
+1702.9	very effective so you're saying there
+1705.2	why don't we just use that for
+1706.0	everything well first of all like I said
+1707.5	a minute ago I have to be kind of low to
+1709.0	use the laser-guided bomb safely the
+1711.6	second point - and let's go ahead and
+1713.6	introduce something that everybody loves
+1715.0	doo doo doo it's go ahead turn that on
+1719.1	but there we are now that's what I call
+1724.4	weather so now your laser-guided bombs
+1727.0	are worthless so how do we fix that well
+1729.5	that's when the other kinds of bombs
+1730.7	come in handy we have of course our
+1732.0	command guided I don't think I can
+1733.9	command guy to bomb through a cloud just
+1736.3	call that a hunch we passive guided not
+1739.3	possible because like I said sort of
+1741.1	like with our laser we're not gonna be
+1742.4	able to see the return laser aha let's
+1744.6	use one of those so there's a couple
+1746.3	different flavors of these particular
+1748.1	weapons in this case I'm actually gonna
+1749.8	borrow a different countries aircraft
+1751.4	this time so I can show you that
+1753.0	everybody has this capability now which
+1754.6	is actually pretty cool if you ask me
+1755.7	scoot scoot scoot let's see here we need
+1758.6	the glare it as the cab 500's this is
+1762.0	actually pretty cool
+1762.9	so this bomb has the ability to lock on
+1765.0	to a target based on its coordinate an
+1766.8	attack if you don't know where the
+1768.2	target is you can't attack so I'm gonna
+1770.2	go ahead and grab you know it should be
+1773.3	enough all right let's go ahead and
+1774.8	create that mission again obviously the
+1779.3	Soviets have been gone for quite a while
+1780.6	but that's perfectly fine I'm gonna go
+1782.6	ahead and get a group of these guys
+1783.9	there they are
+1785.0	ah that looks pretty good to me weapon
+1788.0	release authorization don't you dare
+1790.2	waste these things these things are huge
+1792.0	and they're very expensive so I'm gonna
+1794.1	go ahead and not just say use one each I
+1796.1	think that should be enough for the job
+1797.2	to be honest if we need to do a reattach
+1799.2	we will do a reattach by the way did you
+1801.3	notice there's no ships
+1803.0	it won't even allow you to attack
+1805.9	something in the water
+1807.2	because it assumes it's not going to hit
+1808.7	it that's kind of depressing if you ask
+1810.5	me anyway let's see what we got here
+1812.1	flying to the target zone
+1813.9	watch this let's check my distance
+1816.1	that's 12 nautical miles away these guys
+1818.4	are probably well above the cloud layer
+1820.1	indeed all right speed things up a
+1823.8	little bit here now these bombs are
+1828.0	fire-and-forget
+1828.7	as soon as they did what they just did
+1830.6	they can just wait for the attack to be
+1832.7	successful or not detect successful and
+1834.5	then come back around again now check
+1836.2	this out
+1836.7	my fog level is still completely thick
+1839.7	look at these bottoms ouch
+1842.7	nice swinging around for a second pass
+1845.5	this is Yuri attack keep in mind I don't
+1847.9	think that the cab has that big of a
+1849.7	warhead let me check real quick yeah
+1850.9	it's only 319 that's why I didn't kill
+1852.5	everybody off they go again they're
+1857.6	pretty slow moving if you ask me by the
+1858.9	way the J saw is a same thing as this
+1860.9	but it has like a 50-mile nautical mile
+1862.8	radius which is even better and rata
+1864.9	bombs bummer I think our bombs are just
+1867.4	a little on the small side but we
+1868.9	attacked through fog so imagine for a
+1872.1	second you're sitting there enjoying
+1873.2	your coke or whatever in 1.8 tons of
+1876.8	bombs suddenly shows up what goes kaboom
+1878.2	within 10 feet of where you're just
+1880.1	fired
+1880.7	that's an incredible weapon okay I think
+1883.4	we've got that covered think we got that
+1884.8	covered I'll see passive guided I almost
+1887.6	don't count Hellfire as this but again
+1889.8	we've looked at the laser so I think
+1891.0	we're good
+1891.4	good good good good okay time to think
+1894.1	about some range and line-of-sight
+1896.0	consistence for employment first of all
+1898.3	you have to be in range to drop a bomb I
+1899.8	should actually put in here a bearing in
+1903.5	bore sight you have to be able to point
+1906.1	at the target to drop a bomb there's no
+1907.5	over-the-shoulder bombing which is make
+1909.6	sense you have to have line of sight so
+1912.1	if there's heavy clouds you cannot shoot
+1914.1	through that cloud by the way that was
+1916.3	why our f-18s earlier went down because
+1919.0	we could get under the clouds to deploy
+1920.7	their laser-guided bombs in case you
+1922.0	were curious of course obviously if we
+1924.0	were radar bomber capable we can use our
+1926.0	radar we don't care about things like
+1927.5	clouds unless we're trying to hit
+1928.6	something like a guy standing out there
+1929.9	in the woods or something accuracy
+1931.7	depends on two skill the pilot obviously
+1933.3	veteran crews are going to shoot better
+1934.6	drop better weather obviously
+1936.5	if it's windy it becomes extremely
+1937.8	difficult even with LG bees especially
+1939.9	when the weather gets really bad
+1941.3	visibility if it's the middle of the
+1943.2	night and I'm trying to bomb something
+1944.3	that's in a biggie was target you're not
+1945.7	gonna hit it the quality of the munition
+1947.6	all these munitions have a rating based
+1949.6	on CEP which is accuracy plus their
+1952.9	actual accuracy as far as reliability
+1954.5	goes what else is to to drop the lower
+1957.2	the better obviously if you're worried
+1958.9	about getting shot at from the ground
+1960.1	your pommy accuracy goes down there's
+1962.0	nothing you can do about that be very
+1963.8	careful with missions that you don't
+1965.2	accidentally let you guys go into the
+1967.0	kill zone of some anti-aircraft
+1968.4	artillery especially there especially in
+1971.0	Iraq bombing site technology is a huge
+1973.8	piece in general the accuracy is about
+1976.0	the same until you get to advanced in
+1978.2	advanced AI NS once you start getting
+1979.8	into this category you could start
+1981.2	dropping for very high altitudes
+1982.5	unguided weapons without being nervous
+1984.3	about it an orientation to attack that's
+1987.1	hard get ok this is everybody's favorite
+1990.2	least favourite target and that is a
+1992.0	bridge for those folks who are a flight
+1994.1	simulator fans I you probably can speak
+1996.0	to me how many times you've missed a
+1997.8	bridge why well the first thing is you
+2000.0	do something silly and try to attack
+2001.4	perpendicular to the bridge you can't do
+2003.6	that unless you have an LGB so what we
+2005.7	could do is we could attack with the
+2007.1	direction of the bridge that's cool
+2008.7	except you know the enemy's gonna put
+2010.3	their defense on both sides expecting
+2011.8	that so the way we kind of did it this
+2013.7	is goes back to Vietnam strategy is we'd
+2015.8	actually attack the bomb with a stack at
+2018.0	an angle kind of like an oblique angle
+2020.2	like this kind of out of the way of
+2021.6	anti-aircraft but not quite
+2023.3	perpendicular so we'll explore that real
+2025.8	quickly right now so first thing I'm
+2027.6	gonna do is I'm gonna get myself a
+2028.8	couple aircraft I am a big fan of the
+2030.9	f16 so we're gonna go get ourselves a
+2033.1	block 15 with a ninety nine version I'm
+2035.5	gonna get some of these marking we're
+2037.3	gonna do mark 84 is bridges are heavy
+2039.3	targets you're going to need to hit them
+2040.9	hard
+2041.2	grab these f-16s I'm gonna go ahead and
+2043.4	order them to attack this two-lane
+2045.1	bridge and we're gonna be attacking it
+2046.7	perpendicular all right place your bets
+2049.4	place your bets alright so down notice
+2053.3	these guys are attacking from 36,000
+2055.2	feet oh yeah oh yeah that that's not
+2059.2	gonna work that's not gonna work good
+2060.6	shot though good shot remember we could
+2062.5	have come over here and set them to
+2063.4	lower we probably have to do ready go
+2068.1	okay those tough 16s are pretty good
+2070.3	what's your secret
+2071.5	sometimes you get lucky by the way just
+2073.4	like the real world what's your secret
+2075.2	aha they had the fancy gun sight that
+2078.9	was the difference so unfortunately that
+2080.8	was a non-example disregard let's try
+2083.7	that again with something that actually
+2084.6	can't hit that target I know what to do
+2088.2	make 27 that'll do the trick okay let's
+2092.4	go get ourselves some fab 500 high low
+2096.0	high but I want there we go that's what
+2097.6	I want six to the trick alright alright
+2100.9	alright alright try that again guys this
+2104.2	time of course we'll do the right thing
+2105.5	and set them to the correct altitude
+2108.7	alright let's try this remember we're
+2110.6	shooting perpendicular to this bridge
+2111.8	pause by the way this is the optimum
+2114.1	arrangement of these aircraft because
+2115.6	they're behind each other they attack
+2117.1	all at the same point of the bridge
+2118.3	that's very helpful
+2119.8	watch this alright okay he's a little
+2123.6	early he seems like he's a little early
+2125.1	too all right folks in the back let's
+2127.3	see how he does and drop place your bets
+2133.5	how the heck did you miss that bad okay
+2139.6	so as you can see by employing a more
+2141.9	traditional this is a ballistic
+2143.4	computing site by the way we did not
+2145.3	even come close to hitting that bridge
+2146.6	so let's do the exact same thing but
+2149.1	this time let's go ahead and attack
+2150.8	facing this way with the direction of
+2153.5	the bridge so let's go ahead and get the
+2155.2	same arrangement by the way high low
+2156.8	high this sounds good to me
+2157.9	go ahead and duplicate everybody real
+2159.9	quick go ahead and do one of these drop
+2162.2	these guys down to medium altitude was
+2163.7	our agreed altitude by the way we could
+2165.9	tell these guys to attack a low altitude
+2167.1	we'd be more successful notice how they
+2169.2	line themselves up now they're perfectly
+2171.0	in line with the direction of the bridge
+2172.7	let's see what happens this time alright
+2177.8	here they come get twelve thousand feet
+2180.6	that that's still pretty high everybody
+2185.3	says here we go I think that last one
+2188.2	was I think that's gonna be our winner
+2190.2	of course here comes his up buddy you
+2192.3	bring it I think that one's gonna go a
+2193.7	little wide
+2194.4	of course you're sitting the guy with it
+2198.3	we hit the bridge
+2200.2	nice that is a hundred percent more
+2202.5	damage to that bridge than we did the
+2203.9	last time when we tack perpendicular so
+2205.9	again consider the orientation that's
+2207.8	what I mean by that oh here comes the
+2209.0	last guy I don't think you're gonna do
+2210.8	any better than your buddies oh that's
+2213.2	looking pretty looking pretty sweet
+2214.4	there yes we're gonna miss now this
+2219.2	little line of bombs going this way you
+2221.4	have to hope that the bridge isn't in
+2222.7	this gap so hopefully that makes sense
+2224.4	as far as what I mean by orientation
+2225.9	okay let's see here orientation that's
+2227.7	important laser-guided bombs obviously
+2230.2	the altitude dependent you can't shoot
+2231.7	through clouds nighttime is fine by the
+2233.8	way
+2234.1	continuous elimination if the guy
+2235.8	illuminating the target dies the bomb
+2237.8	kind of goes huh and crash sat-nav bombs
+2240.4	that's your gps and glonass basically
+2243.2	you're gonna have to know where the
+2243.9	target is and you're gonna have to be in
+2245.1	range and then last but not least I
+2247.3	would say this is the bottom using a
+2248.9	bombs to do the job remember warmer too
+2250.7	it wasn't unusual to attack with say 40
+2253.2	or 50 aircraft on a single target like a
+2256.1	point target like a train station and
+2257.8	even then that would not be guaranteed
+2259.6	of putting it out of action
+2261.2	so the last thing I want to do is I want
+2264.0	to approach this mathematical so that
+2265.7	you can kind of see sort of how I plan
+2267.3	to strikes in this game now the weird
+2268.9	thing about approaching things
+2269.8	mathematically by the way is my
+2271.3	understanding is they do quite a bit of
+2272.7	this in the military so I don't feel too
+2274.8	too bad trying to be a scientist once in
+2276.6	a while so here's my situation I want to
+2278.6	hit the stupid bridge I don't know I got
+2280.4	an issue with that bridge it looks funny
+2281.7	honestly that is it down now it's
+2283.5	probably fine so basically we're
+2285.2	attacking a bridge it's two lanes we
+2286.9	know by clicking on that bridge that it
+2288.9	is a total of 150 damage points and it
+2291.8	has light armor okay let's take a look
+2293.3	here so that would mean that it's light
+2295.4	armor so if I attack with the mark 82
+2297.1	that does that much damage no
+2298.7	penetration which means 104 all the two
+2301.4	solid hits
+2302.8	now if armors attacking with a basic
+2304.4	bomb sight I probably need about 50
+2306.1	aircraft keep in mind this is that
+2307.4	altitude if I attack at low altitude I
+2309.0	probably need a quarter that ballistic
+2310.8	probably about that many advanced about
+2312.8	four NS - okay okay okay alright let's
+2317.8	see if I'm right about that then so I
+2319.6	need two aircraft basically and I'm
+2321.6	probably gonna need about four bombs so
+2323.9	let's go get ourselves our handy dandy
+2325.8	f-18 again and again I like to pick on
+2328.2	this aircraft because it's just just
+2329.5	such a good job Greg grab this one right
+2332.2	here
+2333.0	go ahead and get myself some mark eighty
+2334.3	twos we don't stay guys we want
+2336.7	conventional denied someone to go ahead
+2340.1	and set him to medium altitude because I
+2342.1	want to give him I want to get the
+2343.1	bridge a chance and we said that we're
+2344.8	going to need to use for bomb so I just
+2347.9	I think three bombs basic technically to
+2350.1	sell it hits but I'll use for bombs cuz
+2351.7	I'm being polite let's go ahead and set
+2353.8	that to that and let's go see what
+2355.4	happens here you go go ahead down a
+2356.8	medium altitude I'm actually flick his
+2358.7	radar on so we can get an early lock on
+2360.5	that target he does have a surface
+2362.3	search radar alright our orientation is
+2366.4	correct we're employing the correct
+2367.9	number bombs we're using an aircraft
+2369.7	that is capable of dropping very very
+2372.1	advanced very very carefully placed
+2373.7	bombs we're tacking at medium altitude
+2376.5	so the idea here would be that we'd be
+2379.5	able to go ahead and hit the target
+2380.9	pretty much with two out of the four
+2383.0	bombs fingers crossed
+2385.5	drum roll don't make me look bad it
+2389.5	looks pretty good it looks pretty good I
+2391.3	don't know it's drifting right drifting
+2392.7	right thank you
+2398.1	the next performance will be at nine
+2399.8	perfectly done so again this aircraft
+2402.7	was the right height use the right size
+2404.2	bomb use the best computing that we
+2406.4	could possibly have decent pilot correct
+2408.2	for the weather
+2408.8	so hopefully that kind of shows you how
+2411.2	you can approach problems like this by
+2412.9	the way I've tried it from the other
+2413.9	angle usually you still hit cuz it's
+2416.1	just a good bombing system okay
+2418.8	hopefully you found this video pretty
+2420.3	solid I just gotta double check widows
+2421.7	real quickly I don't want to miss
+2422.6	anything that's really really important
+2424.0	again one thing I will say actually
+2426.2	before I disappear
+2427.1	using the bigger bombs as opposed to the
+2429.3	smaller bombs some says you have to
+2431.0	because there's only way to damage your
+2432.1	target so kind of keep that in the back
+2433.5	of your head and also there's a reason
+2435.6	why everybody packs thirty mark 82 s I
+2437.7	just need to get one decent hit okay
+2440.5	hopefully you found this video kind of
+2441.7	enlightening if you have any questions
+2442.8	feel free to ask like I said I breezed
+2444.9	over CPUs generally the more bomblets
+2447.1	the less damage but the wider the spread
+2448.8	enjoy

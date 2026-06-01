@@ -1,0 +1,289 @@
+0.0	hello everyone on today's command modern
+2.3	operations tutorial we're going to take
+3.9	a look at how to edit quick battles now
+6.4	quick battles for those of you who
+7.6	haven't played this feature before in
+8.9	command basically give you the ability
+10.7	to quickly generate a quick little fight
+12.4	such as an errand surface anti-submarine
+14.3	warfare you can do air-to-air you can do
+16.0	a submarine tool you can do a surface
+17.4	duel and it gives you the ability to
+19.1	change each one of these options now
+21.1	which you may not realize is it's
+22.6	actually very simple to edit these
+24.8	because they're HTML files and there's
+27.8	actually a Lua script that backs this up
+29.8	I'm not gonna go into too much detail
+31.9	there I'm just gonna show you how to
+33.3	make basically quick changes so we go
+35.4	ahead and close this out I'm gonna
+36.5	minimize command here what I'm gonna do
+38.5	is make my way into File Explorer and
+40.6	then I'm going to go to where I keep my
+43.0	command files now I have the Steam
+45.4	version of commands so I'm gonna go to
+46.7	common steam steamapps comment I'm going
+49.1	to command modern operations I'm gonna
+50.7	go to this folder called quick battle
+52.0	let's go ahead and open a can look at
+53.8	one of these each quick battle option on
+56.3	that screen is broken into an HTML file
+58.5	a Lua file in a stylesheet the good news
+61.9	is we don't have to know a lot about Lua
+64.3	HTML to do some really awesome changes
+66.8	to these projects which we're going to
+68.8	do the first thing I would like to do
+70.6	before I start editing these like crazy
+72.4	is I want to make a copy of this so what
+75.1	I'm gonna do is I'm gonna ctrl click
+76.4	that onto my desktop we'll go ahead and
+78.2	call it up piss real quick and then I'm
+80.0	gonna drag it right back into that
+81.4	folder you'll notice now if I go back to
+83.9	command go back to my main Start menu
+86.0	here and click on quick battle that you
+88.0	see my folder name is what dictates the
+91.2	battle name you can't see the air quotes
+93.0	but I'm pretty sure you get the right
+94.3	idea now notice these are identical
+95.9	because we've made no changes to them
+98.4	let's go ahead and close that out so how
+101.2	do we edit them first of all what I'm
+103.0	going to do is I'm gonna open up that
+104.1	folder and I'm gonna look at the HTML
+106.4	file first
+107.5	don't double click it if you double
+109.6	click it surprise you're gonna get
+111.4	something that looks like this this
+112.4	doesn't really help us very much
+113.8	instead what I'm gonna do is I'm going
+115.7	to right click press open with and then
+118.2	select notepad the other methods you can
+120.2	use of course is you can go to the Start
+121.7	menu and type in notepad and then you
+123.1	can drag it over or if you have a really
+125.2	really solid way of editing HTML files
+127.1	that are not notepad feel free to use
+129.1	that as well so if you remember when we
+131.1	were on that screen I can actually call
+132.8	out by double-click
+133.5	look at that you can see that it gives
+135.6	us this little drop-down box this
+137.9	drop-down box believe it or not is
+140.0	linked directly to this code here so for
+143.7	example you notice if I select the top
+145.9	option the ends that class frigate
+147.5	surprise it's the top option right here
+150.4	the only difference you'll probably
+151.6	notice is the fact that you have these
+153.7	two numbers here now you're looking at
+156.4	those numbers going what are these two
+158.2	numbers well for command veterans you
+160.7	probably know this right away but for
+162.5	those of you who are not these two
+164.6	numbers refer to the database entry of
+167.9	that particular unit so you'll notice
+170.2	that this particular unit the ffh on
+172.5	this a helicopter frigate 150 anzac is
+174.8	number nine five nine surprise there's
+178.1	are nine five nine right there now
+180.7	you're probably asking what is this
+182.0	little underscore doing that's just
+183.7	telling us we're basically splitting our
+185.3	entry here the second entry here this
+187.3	tree two zero two is basically the
+190.2	database entry for I think you can guess
+192.5	what it's going to be the helicopter
+194.8	that is associated with it so in this
+196.9	case it's going to be an mh-60 I'm not
+199.1	let's see if I dot three two zero two
+200.8	three two zero two awesome
+204.0	which means if we wanted to we can
+205.9	actually change this from tree to zero
+207.6	two let's say for example I want to put
+209.6	a helix on the back of the helicopter
+211.0	let's go and get myself a two 7m and we
+214.7	got it four three two seven which means
+216.9	I could come in here and change this to
+218.6	four three two seven but then we get
+221.4	this number
+222.6	oh boy so if this is the ship this is
+226.0	the helicopter what number do you think
+228.0	this is this is the load out of the
+230.9	helicopter and this is where your skill
+233.1	food might break down a little bit
+234.9	every loadout believe it or not has a
+236.9	database ID associated with it so if I
+239.5	go to my helix real quickly scroll down
+241.6	here I can see that there's this a SW
+243.8	patrol outlet which has the number two
+245.9	two zero six zero so that means if I
+248.9	come in here and go to two zero six zero
+251.9	let's always confirm that two two zero
+254.7	six zero check and we might as well
+257.2	update this to with a good old helix
+259.3	helicopter now when we're done making
+263.2	our quick a little edit here I can just
+265.2	go file
+266.6	say if to close this out now if I go
+269.0	back to command I can go start menu
+271.0	quick battle air-to-air service look at
+274.6	this
+275.1	tada you can see my edit right away but
+278.0	did it work well I'm relieved all this
+279.5	off just default I'm gonna click how to
+280.7	start button click on my ship tada
+285.9	and you can see I've made an extremely
+288.9	quick and easy change to that with
+291.7	basically no effort at all which is
+293.7	really really cool like I said you don't
+295.4	need to know the underlying code in
+296.8	order to make a quick change so you're
+298.7	sitting there going hey that's actually
+299.9	pretty cool what else can I do with it
+301.7	well let me just crack open that HTML
+304.9	file again real fast let's go ahead and
+307.0	grab it with notepad make sure that's
+308.7	closed now looks good I can actually
+310.6	copy paste these to make a second set so
+313.6	for example let's say I wanted to edit
+315.1	with the enemy adverse areas in this
+317.2	case I've got all these cool submarines
+318.8	by the way we're using the modern
+321.4	database not the classic database for
+323.5	this so you want to watch out for that
+324.7	so what I can do here is I can say well
+326.8	let's add a neat submarine here let's go
+329.7	to the my database real quick let's go
+331.6	ahead and type in submarine I'm a big
+335.1	fan of pump jet technology if you are
+337.0	this kind of mind so you like a Red
+338.1	October kind of thing here and there is
+340.3	our database ID number so what I'm gonna
+342.8	do is I'm gonna copy and then go ahead
+346.7	and paste this right here but I'm gonna
+348.6	change this number to match the 5:07 of
+352.1	my neat little aircraft are my own
+354.4	submarine I should say that I have right
+356.0	here so I can now say pl8 77v kilo with
+360.4	secrets
+361.3	propulsion I'll shine comrade and now I
+365.8	can go file save close this out close
+369.9	this out now if I go back up to Start
+372.1	menu click on battle make sure you're
+374.6	using the one that you created I can go
+377.1	up to here I'm gonna leave my helix on
+378.4	here but this time I'm gonna scroll down
+379.9	here and surprise I can now do a kilo
+382.7	with secret propulsion comrades just
+385.0	like that and that is how simple it is
+387.6	to edit it now one thing you're probably
+389.5	wondering and again we're getting a
+390.9	little advanced by doing something like
+392.4	this is what if we wanted to make it so
+395.0	that that was included in the random
+397.1	options that's gotta be getting over
+400.3	little bit more complicated in order for
+402.8	us to do that we'd have to actually open
+404.6	up the Lua script that you have right
+406.2	here so I'm actually gonna go get myself
+407.8	a copy of notepad again who knew this
+409.4	would be so useful
+410.4	I don't like WordPad by the way drag
+412.3	that in here and now you can see what's
+414.2	actually going up under the hood you're
+416.7	gonna notice down here that this is a
+418.6	random table this random table of values
+421.0	is generated off the Lua script not the
+423.9	HTML script which means if we really
+426.8	really wanted to keep our secret
+428.2	propulsion comrade we'd have to actually
+430.6	go in here and tell it that we intend to
+433.3	use that particular submarine again
+435.7	don't worry about catching all these
+437.5	little details here it's not as bad as
+439.6	it looks
+440.3	likewise if we wanted to tweak this all
+442.4	we'd have to do is go back to original
+444.3	form
+445.2	let's go ahead and grab that real
+447.1	quickly what is her secret propulsion
+449.6	come read 507 comma 507 and just like
+453.5	that we can include that new submarine
+456.0	in our set just make sure you press file
+458.7	save otherwise you're gonna lose all the
+460.2	hard work that you did the great thing
+462.4	about command is it will tell you if you
+464.2	goofed up somewhere remember you can
+465.7	always go back to a backup you can also
+467.8	do silly things like come up here and
+469.3	change what side everybody is but you
+471.3	want to be very careful with this
+472.5	because if you goof that up you can
+474.2	accidentally break something down here
+476.0	so I recommend when you're first
+477.4	starting to mess with this only mess
+479.7	with the values that you're comfortable
+480.9	with again keeping it simple now you're
+483.4	probably saying well that was pretty
+484.8	cool what if I want to do it for an
+486.2	airplane well the good news is it's the
+488.2	same technique let's go ahead and now go
+490.2	back real quickly if I were to make a
+492.0	copy I'm not gonna edit and save this
+493.7	time simple air-to-air engagement notice
+495.9	of course we have our two pieces there
+497.4	like we did before I can drag that
+499.3	sucker in and you can do the exact same
+501.6	method remember it's going to be the
+503.1	database ID followed by the loadout
+506.1	you've got to have a loadout or it's
+507.7	gonna freak out just a little bit as you
+509.3	do these things but like I said if you
+511.2	do want to make sure you have a random
+512.8	aircraft you're gonna have to go in and
+515.0	add the database ID and loadout ID to
+518.1	that Lua like I said when you're first
+519.6	messing with this feature you can do
+521.0	that now what if you want to go too far
+523.5	I love going too far with certain things
+525.8	so if you really really really really
+527.7	want it to go tu-tu-tu-tu-tu too far you
+530.1	could actually build your own Lua script
+533.0	editing off of
+534.5	we had from before and make your own
+536.5	private awesome super awesome battle
+539.5	imagine for a second that you wanted to
+541.9	design a mission where you're doing some
+544.0	seed work you could actually build an
+546.2	entire mission using Lua which is way
+548.4	beyond the scope of this tutorial and
+549.9	then just use the HTML to feed values
+552.7	into it so that you can generate those
+554.7	battles dynamically it's really really
+557.0	slick and again there's some really
+558.3	awesome stuff in here we can crank up
+559.7	the rain we can crank up the temperature
+561.1	we can have a lot of fun with this we
+563.1	can even change where these two aircraft
+564.6	are located to each other and again the
+567.0	nice thing is the developers of this
+568.4	spend a lot of time give you all these
+569.9	details and tools literally in your hand
+572.5	that you can play with all right
+574.4	hopefully this tutorial is pretty
+575.6	helpful if you have any questions I just
+577.5	toss it down in the comments I can't
+579.2	emphasize this enough if you're going to
+581.0	play with this I recommend making a
+582.7	backup of that folder and naming it your
+584.5	own thing one thing you're probably also
+586.7	gonna want to know is how to edit the
+588.0	HTML itself in order to add new fields
+590.2	for example if you want to add an enemy
+591.9	you let's say a p3 Orion that's kind of
+594.4	get a little advanced if that's
+595.6	something you'd like to see just kind of
+597.0	let me know and I'll show you how to
+598.1	build that enjoy

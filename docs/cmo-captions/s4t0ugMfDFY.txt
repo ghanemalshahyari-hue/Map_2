@@ -1,0 +1,974 @@
+0.0	hello everyone on today's command
+1.8	tutorial we're going to be looking at
+3.0	electronic warfare now electronic
+5.2	warfare is one of those subjects that's
+7.1	very very complicated and I'm not going
+9.9	to pretend to be an expert on it and the
+12.0	good news is the people who developed
+13.5	come in realize how complicated of a
+15.4	topic it was and were able to kind of
+17.1	simplify things so that we can still get
+18.9	the benefits of electronic warfare plus
+20.6	some of the tactics of strategy without
+22.6	having to deal with the minutiae which
+24.4	gets pretty intense so quick background
+26.8	on electronic warfare basically the goal
+28.9	of electronic warfare or electronic
+30.6	attack is basically to deny the other
+32.6	guy the ability to use their electronic
+34.4	assets so in the old days that would
+36.5	basically be making so much noise that
+38.1	the other guy can't see through the
+39.6	noise to know where you were in modern
+41.2	times we have things like directed EMP
+43.0	so we can actually electronically
+45.1	destroy things now but we're not going
+47.2	to deal with EMP in this particular
+48.5	tutorial you've ever welcome to play
+50.1	with that on your own so anyway the
+52.1	scenario have here is pretty
+53.2	straightforward we're sitting here in
+54.3	the Al Falklands basically I'm sure you
+56.0	remember what happened here it's modern
+57.6	time so this is obviously gonna be a
+59.3	neat little scenario what I've done is
+61.0	I've set up a group of different types
+63.0	of jammers all kind of over here and a
+65.5	little loop here and I'm gonna actually
+66.8	use them to sort of demonstrate how the
+69.0	different types of jamming works talking
+71.0	about different types of jamming we have
+72.7	two big families of jamming and again
+75.6	jamming is electronic attack there's
+77.2	also electronic support measures but I'm
+79.4	not gonna get into that because that's a
+80.8	whole I'm not even like I said I'm not
+82.7	even gonna go there there's also
+84.1	communication jamming something that we
+85.7	can't do well in our version of command
+88.4	they actually accidentally patched it so
+90.5	that you could play with communication
+91.9	disruption at one point I'm talking
+93.5	communications jamming not just clicking
+95.1	a button to disable the communications
+96.5	it was terrifying what you can do with
+98.4	that technology so I'm another day as
+100.2	they say another day so anyway basically
+102.5	we have two different types of jamming
+103.9	we have offensive jamming where
+105.1	basically you're trying to create so
+106.3	much noise the other guy can't see
+107.9	through the noise to get a reliable hit
+109.5	on you and then you have defensive
+111.2	jamming which also in my mind I like to
+113.2	consider it as deception jamming that's
+115.2	basically instead of making a lot of
+117.0	noise you're trying to present the
+118.6	person locking on to you with something
+120.4	that is difficult to lock on to so for
+123.4	example one of the classic methods is
+125.0	what they call range gate pull off what
+126.9	would happen is they lock on to you
+128.3	they'd set a range gate on you and then
+130.3	you'd create a false echo of yourself
+132.7	basically if you don't imagine you get
+134.3	something looks kind of like this off of
+136.4	yourself ending up on the other guy's
+137.9	radar screen so if he was locked on to
+140.2	you his locking tool would actually
+141.6	follow the different beams that you are
+144.3	creating defensively again that's a
+146.5	really really cool technology you could
+148.1	also use defensive jamming as well to do
+150.3	something looks like this on the other
+151.5	guy's radar even though this is the only
+153.0	one over here and of course you have the
+155.0	funky jamming like I like to say like
+156.9	your angle jamming and stuff like that
+158.5	where basically he's gonna lock onto the
+160.4	center view and then you're going to
+161.6	create a false little echo off the side
+163.4	of you that will cause his missiles to
+165.3	basically always turn away from you as
+167.2	they approach
+169.3	so basically we don't have to worry
+171.7	about those individual types of jamming
+173.5	because in this game there's only
+174.8	offensive and defensive so no we're
+176.6	gonna go ahead and start without taking
+178.3	a look at database entries as usual
+180.2	research is very very critical so like I
+182.3	said we have two different kinds of
+183.3	jamming how do they impact things the
+185.3	offensive is going to be basically
+187.2	taking radars offline it's going to
+189.0	prevent them from getting range things
+190.1	like that defensive is simplified
+192.6	significantly because basically all it's
+194.7	going to do is apk reduction we'll take
+197.0	a look at that in a minute
+197.8	so no go ahead and grab a pretty
+199.5	standard aircraft here 1980s we have an
+201.8	ef-111 raven this is an amazing aircraft
+204.0	if I click on it and scroll down to its
+206.4	sensors in e/w you notice it's got these
+209.0	apq ones tens and an AP q1 60s as you
+212.7	know the PE basically isn't radars
+214.5	that's not we're interesting ah here we
+215.9	go we have some listening and airborne
+218.3	listening electronic scooting down here
+221.2	we finally have our a nal q 99 e this is
+224.4	oacm in this of course the dec M is
+227.2	going to be the AL Q 137 here so this
+230.5	doesn't really tell us much it does tell
+234.1	us one thing though if you actually
+235.1	scoot all the way over here it tells you
+237.0	what generation the technology is and it
+239.1	also tells you what electronic bands
+240.6	you're working on you have to jam the
+243.2	other guy with the bands that your
+245.8	jammer supports so for example this one
+248.2	only works on the EFG H and I J bands if
+250.8	somebody was down here in the B in the a
+252.2	or even past the J you wouldn't be able
+254.6	to janan at all so that would be
+256.3	essentially worthless so kind of keep
+258.1	that in the back of your head now this
+259.9	is doesn't really help us though like
+261.9	what are we supposed to do how does how
+263.6	does this tell us what we can defeat
+264.8	here well it turns out if you look at an
+267.1	enemy aircraft or any enemy electronic
+270.1	unit it'll tell you what technology the
+273.3	have that they have I should say for
+275.5	their particular radars that's not a
+276.8	great example there well go ahead and
+278.8	get an e to there we go so you notice
+282.3	here this particular radar is early
+283.6	eighties technology and it also gives
+285.1	you of course what generation is I'm
+287.0	sorry that's electronic intelligence
+288.5	that's what it's looking for yeah so you
+290.8	can see this isn't the Beeb and if we
+292.2	went back to the f-117 you realize you
+294.4	wouldn't actually be able to jam him on
+296.1	the same band so there's another
+297.9	important thing here that you can't
+299.8	really see with chambers which is really
+302.1	kind of
+302.5	shame in this database viewer and that
+306.0	is how many bands you can jam at a time
+309.1	so that basically says if I have a radar
+312.0	looking at you that's one band if I have
+314.3	19 radars looking at you that's 19 bands
+316.9	you can't Jam them all if they're on
+319.6	different frequencies so that's a common
+321.9	mistake is people like oh I'm all set I
+323.5	got it but then the enemy will flip on a
+325.1	couple of the radars say they're your
+326.5	battery radar or something like that and
+328.0	suddenly you're no good so kind of keep
+330.2	that in the back your head as well
+332.5	if you're looking to get even more
+334.6	information about a particular jamming
+336.6	set you could actually come over here
+338.5	go to the website blue and wiki and you
+340.8	can actually go to specific jamming
+343.2	units so for example I don't think we
+345.5	have the f-111 but we do have enough
+347.0	16cm let's go ahead and grab that real
+349.3	quick this is a great resource by the
+351.9	way it's almost a better database when
+353.7	it works I might add that then what you
+355.7	already get inside the game but if I
+357.8	remember example to go look up this
+358.9	block 52 I could scoot down here and
+361.4	actually see the different types of
+362.6	technology I have on board I believe we
+365.1	have an Al cue on this one me see if I
+367.8	couldn't find us there it is so now if I
+371.4	were to actually click on the pod and
+373.0	then click on the actual al cue it would
+375.9	give you these specific details of that
+378.3	particular jamming unit in this case all
+380.8	this would do is reduce the percentage
+382.7	of being hit by radar missile by 20%
+384.7	which is actually fairly substantial now
+387.3	of course if I were to go get something
+388.8	that had Offensive ECM such as a b-52
+392.0	let's go ahead and get the H model there
+396.0	now if we scroll on down here let's go
+398.3	get just some offensive this is an alt
+400.1	28 scrolling down now you get this
+402.5	information we get the gain we get the
+404.2	power we get the bandwidth and here is
+406.0	that all-important number of channels it
+408.2	can block at a time this is important
+410.1	some aircraft actually because of the
+412.1	geometry of the antenna can only block
+414.2	in specific directions they can only
+416.0	block in specific directions at specific
+417.6	times so it's really important to
+419.3	understand this here so there are five
+421.2	enemy radars working on different
+423.0	frequencies they would have a very very
+425.4	tough time jamming them at once okay
+427.1	enough of the theory stuff let's go
+428.7	ahead and take a look at it so the first
+430.1	thing we're interested is going to be
+431.1	offensive jamming so I'm actually gonna
+432.8	switch sides here real quickly radar
+435.1	force and I have this little building
+436.6	here this is kind of neat if I go to
+438.6	sensors page you'll notice that there is
+440.5	a ton of radar dishes at this particular
+442.9	location what's the deal this is a 1950s
+446.1	radar set this is an extremely ultra
+448.4	super ultra modern modern set basically
+451.3	from the 2030s essentially is what is
+453.4	going to be in everything pretty much in
+454.9	between so what I'm going to do is
+456.2	something to flip this radar on real
+457.3	quick so the first thing I notice is
+459.1	that has a tremendously short range
+460.9	because it is a classic radar set go
+463.3	ahead and turn things on quite swish she
+465.6	is
+465.9	real quick
+470.1	now notice okay has automatic detection
+473.3	these guys are just kind of doing a
+475.5	little air donuts here don't pick up
+476.9	that radar set whenever you turn a radar
+479.2	on you can detect it with e sm out to
+482.0	about double to triple the range
+483.2	depending how sophisticated your
+484.5	equipment is now if I were to take my
+486.2	1980 jammer and I'm gonna put it right
+487.9	here real quick so which is the other
+490.1	team real quick let's see if we can
+491.4	actually acquire I don't think these
+492.4	quit no bees and rain cheese in range
+493.7	it's just not a very good radar set
+496.3	unfortunately well there is got him no
+499.2	notice with this 1950s radar tech were
+501.6	able to spot this target we have roughly
+503.9	a bearing on them you know roughly how
+506.0	fast he's gonna have no idea how high is
+507.7	because again these are all 2d radars
+509.3	now watch what happens if I were to
+513.0	click on this target notice by the way
+515.2	and this is really important that we're
+516.7	able to acquire that target even though
+518.0	he has defensive ECM now notice what
+520.2	happens if I come down here and click on
+521.8	this button here
+522.8	his little Jam light goes on let's go
+525.7	ahead and switch back to our radar
+527.1	notice it now says the word jammed if
+530.1	you use offensive countermeasures the
+533.3	other team will know you're jamming them
+535.3	it's not like Star Wars where they
+537.0	couldn't figure out what these that the
+538.5	shield was not up on the Death Star
+539.8	because they got quote jammed you would
+541.9	know you were being jammed now notice
+544.0	this target has vanished early radar
+547.5	technology however they call it really
+548.7	lousy sight lobes
+549.9	so you basically could blind the radars
+552.1	complete display just by jamming it a
+555.0	little bit because as the radar rotated
+556.8	you could basically get electronic
+558.0	signals in from the side so in this case
+560.0	he's gone we cannot see that target at
+563.5	all as a matter of fact if I were to
+565.7	grab a non jamming target let's just
+568.2	grab ourselves something nice and
+569.4	classic here I want to make sure we set
+572.9	that the aircraft my apologies let's go
+575.7	ahead and get ourselves 2014 month I
+577.9	don't care what it's caring now if I put
+579.9	him here watch this
+586.9	check it out I can't see him even though
+590.4	the jamming offensive jamming is coming
+592.1	from here I can't even see the f16 over
+594.4	here because this guy's display is toast
+596.9	so that's again an immediate and very
+599.4	very amazing use of using very very
+601.3	modern jammers against very classic
+603.1	jammers now I'll watch this we're going
+605.3	to go over to sensors and I'm going to
+607.2	go ahead and shut this one off and I'm
+609.6	going to go ahead and get a 1960s pretty
+611.7	much an early 1960s radar I'm gonna go
+613.4	ahead and flick that sucker on so watch
+615.5	what happens at this time interesting so
+621.2	the first thing you notice is because it
+623.6	has a better focus of a radar it is able
+626.2	to actually see my little f-16 buddy
+628.0	over here and it can even acquire these
+630.1	other aircraft over here obviously it
+632.6	can't see this airplane because it's a
+634.3	line-of-sight issue whenever you're
+635.5	doing offensive jamming here but this
+637.3	target that's doing the jamming is still
+639.4	completely invisible because it's
+641.0	basically levelling the view of this guy
+642.9	right here very interesting so let's go
+645.5	ahead and get a slightly more modern
+646.8	radar let's go ahead and estimate eerily
+650.0	80s now notice we have perfect acquiring
+654.4	of all these targets basically through
+656.7	the jamming that we see but we still
+659.4	cannot get a shot on the jammer itself
+661.8	areas notice because the technology of
+664.8	the radar is roughly as good as the
+666.6	jammer we're still able to acquire the
+669.7	target keep in mind on the left 16 buddy
+671.6	here is completely visible
+672.8	so this jamming Offensive Jam again
+675.1	remember you're trying to blast him with
+676.1	noise so we can't figure how far away
+677.5	you are he's basically worthless against
+679.6	that particular radar set now of course
+681.8	if we got a very modern radar let's go
+684.0	ahead and get a a P y9 is like cheating
+686.7	watch this I believe that might be a
+689.9	surface search is it no it's here in
+691.4	search I'm sorry tada
+696.9	not only is the jamming completely
+699.3	useless but we can actually basically
+701.2	read the serial numbers off the side of
+702.6	those aircraft so it's very very
+704.5	interesting to see how generation
+705.8	affects jamming all right let me go
+707.7	ahead and shut the back off for a second
+709.1	here okay so how do we how do we work
+715.2	with this how do we manipulate this and
+716.9	things as long as I'm keep in mind when
+718.4	you're using offensive
+719.1	jamming your basically flooding the
+720.6	other guy with noise which means if you
+722.9	fled him with noise from over here
+724.3	anything between you and him are
+726.0	potentially invisible until you get
+727.7	close enough for the radar to actually
+729.2	burn through and see the targets so
+731.8	again you have to be very very careful
+733.1	about how you employ it like that also
+735.3	remember there are weapons that can
+736.4	actually home in automatically on
+738.2	aircraft that jam you so kind of keep
+740.6	that mind of course if you're homing in
+741.9	something that's jamming it's gonna be
+743.1	an imprecise target so anyway let's go
+745.7	ahead and take a look at what happens if
+747.8	you use more than one jammer at a time
+749.4	so I'm gonna go ahead and turn this on
+751.1	I'm gonna crank the actually I'm gonna
+752.7	go back to the sensors window we'll go
+754.7	ahead and get the let's get something
+756.4	semi modern not too too modern let's go
+758.9	ahead and turn on the FBS 117 that's a
+761.0	pretty moderate radar notice he's still
+764.3	jamming I'm going to get that f-16 I'm
+765.8	gonna put it right here this will make
+767.4	sense in just a second I'm gonna go
+768.9	ahead and borrow this 1970s jammer I'm
+771.0	gonna put him right there go ahead and
+772.7	flip on his offensive ECM by the way de
+775.2	cm is always on let's go I'm not gonna
+778.7	borrow the 2020s jammer that's cheating
+781.0	okay so now we have two jammers
+784.3	basically trying to blanket this area
+786.5	simultaneously if you scoot back to this
+788.4	side observe we are easily able to
+791.5	acquire that f-16 that's in front of us
+793.4	but we're having its Huffer time
+794.8	acquiring that newer jammer basically if
+797.6	you take two sets of jammers next to
+799.1	each other they're going to kind of add
+800.5	to each other then I'm really gonna
+801.3	multiply if I put my f16 on the other
+803.6	side of these jammers watch what happens
+805.9	so in this case I expect yeah that's
+808.2	kind of what I expected
+809.0	that is a really really good radar so
+811.4	maybe we want to take it down and not
+812.9	just kind of so to speak will do it's
+814.1	EPS 43 hopefully that'll do the trick
+816.3	and demonstrate things pretty clearly
+817.8	here
+818.5	not really so the only way we could make
+821.6	this jamming more effective is we'd have
+823.4	to actually physically move everybody
+825.0	farther away so you can see look at the
+826.9	range on this thing so if I were to do
+828.5	something like this let's see if that
+831.8	makes it a little bit better so you can
+833.1	see it in effect because remember the
+839.5	reason by the way it takes time for we
+841.0	do to reacquire the targets is we have
+843.3	to swing that radar in a big circle yeah
+845.1	that worked perfectly so now notice
+846.9	we're no longer able to actually acquire
+849.6	these particular targets because these
+851.8	guys are basically
+852.9	including this one here when you're
+855.2	jamming you're basically creating a wall
+856.9	of noise almost like a sector of noise
+858.9	so this f-16 that is not jamming is
+861.0	actually completely invisible right now
+862.5	which is kind of cool so if I were to do
+864.3	something like this let me actually move
+865.8	him like that and just order him to fly
+868.0	directly towards the radar station we'll
+869.8	go ahead switch to radar for real quick
+871.5	go ahead and speed up time real quick
+873.5	observe
+875.9	we still can't identify the guys jamming
+878.5	it we know we're jamming but this
+879.9	particular target right here the speed
+881.1	of time is completely invisible to us
+883.7	because that jamming wall is basically
+885.9	blanking out a sector we won't be able
+888.2	to see this aircraft until it's just
+889.7	about right on top of hope did you see
+891.5	it we caught it for a second there and
+893.4	then we lost it again but we've
+894.6	completely lost the actual source of the
+896.5	jamming it's a very interesting speed up
+898.4	time one more time now notice this f-16
+901.3	oh we got him again yeah okay let me go
+904.1	ahead and Paul okay
+905.0	so at this point now if the jamming is
+907.0	not strong enough to hide our non
+908.7	jamming target okay by the way there are
+911.6	offensive ECM drones out there I think
+914.7	the MA LD if you look it up you could
+916.8	actually launch jammers that fly ok
+919.1	let's talk about defensive Jam you know
+921.0	so that's the basic gist of the
+922.4	offensive jamming it's pretty effective
+923.8	of course if I were to go back over here
+925.4	and order all these guys to turn the
+927.1	jamming on together because I'm like
+928.3	that I still don't think I'll be able to
+930.6	completely block them out try we'll try
+932.2	just as you know as an experiment okay
+935.4	he's active let's turn him on active
+937.9	also your Adi ECM example so it doesn't
+941.1	matter so we turn everybody's jammer on
+942.8	let's see what that does for our poor
+944.6	buddy here now notice the older jammer
+949.1	is still visible the newer jammers are
+951.8	not of course if we flew these jammers
+954.2	right up to this guy things would change
+955.5	pretty quickly these aircrafts naturally
+957.6	are not going to show up very well okay
+960.1	by the way when you are jamming with
+962.6	offensive jamming you have to keep in
+964.0	mind the geometry the situation as this
+966.2	aircraft gets closer at the same
+967.6	altitude it's actually going to fly
+969.1	above the corridor of jamming so just
+971.6	kind of heat that the back your head I'm
+972.9	actually going to tell him to go over
+973.7	here real quick okay let's talk about
+975.3	defensive jamming now defensive jamming
+977.9	de si mi should basically say is
+979.7	basically AG like I said earlier it's
+981.8	deception you're trying to trick the
+983.4	enemy and
+984.1	not hitting the correct target or you're
+986.5	trying to mess with this electronic set
+988.0	a little bit to make it a little less
+989.3	precise of the target as I showed you a
+991.3	minute ago you can always go over here
+993.2	to this wonderful blue in campaign wiki
+995.7	and you can of course take a look at the
+997.5	percent of kill reduction when you're
+999.6	looking at the ECM now this particular
+1001.6	one mounted on the b-52 is it's one to
+1004.2	five percent chance reduction of being
+1007.1	hit by an enemy guided weapon that's
+1009.8	incredible that means if you know you're
+1012.0	dealing with an S 400 or something like
+1013.4	that and it hits you at 50% at really
+1015.5	long range there's only 25% chance yeah
+1017.5	that's nice so let's go ahead and
+1019.2	demonstrate that in action so I got
+1021.2	myself a Sukhoi 27 s and I'm going to
+1023.9	ask it very nicely to go ahead and fly
+1025.5	over I'm actually gonna move it up a
+1026.8	little bit so we don't have to watch do
+1027.8	too much of this fun I'm gonna set these
+1030.0	guys off for a second here because
+1031.3	though we're doing the other one though
+1034.9	yeah sure these guys off you guys don't
+1037.4	need to be making so much noise shut you
+1040.8	off I'm gonna come shoot you off okay
+1043.9	we're good okay so we're basically gonna
+1047.5	zip it I happen to know that there is an
+1049.7	enemy Sam battery somewhere down here
+1051.5	believe it's right there yeah it's an
+1053.0	sa-11 that's a pretty nasty Sam battery
+1056.1	so we're just gonna gonna scoot on in
+1058.2	I'll fast forward time a little bit
+1060.3	yikes we're gonna be entering into his
+1062.6	effective range very shortly let's go
+1066.2	ahead and switch to the other team real
+1067.3	quick I'm gonna declare this guy hostile
+1070.6	which means he's gonna flip on his
+1072.1	weapon and there's a missile on the way
+1073.5	already okay let's watch what happens
+1076.0	let's switch back to these guys so I'm
+1078.8	gonna go ahead and pop this up because
+1079.9	I'm very interested in see what happens
+1082.0	we've just picked up a new kind of radar
+1084.1	it doesn't surprise me
+1085.1	there's the missile now watch this so
+1091.5	the missile is zooming in basically he's
+1093.1	got a missile warning system that's
+1094.2	giving him a heads up he's diving for
+1095.8	the ground as fast as he can keep in
+1098.0	mind an sa-11 is a pretty lethal missile
+1101.0	system see how he's diving he's diving
+1104.1	if only he had some offensive electronic
+1106.7	countermeasures then he wouldn't be able
+1108.2	to fire because it wouldn't be precise
+1109.5	enough target by the way ships have
+1111.1	jammers also because they're much much
+1113.1	much bigger targets they require much
+1114.9	much bigger jammers
+1116.2	I can't promise anything with those
+1117.5	unfortunately and let's see what happens
+1121.3	pause okay now check this out
+1126.0	watch what happens so the first thing
+1128.9	that happened is our target fired a
+1131.4	bunch of chaff so he attempted to block
+1133.9	him again this is really technology
+1135.0	completely factually the chaff foam has
+1137.1	worked cool
+1138.1	next what happened is we turned our
+1140.7	defensive jammer on attempting to block
+1142.7	the enemy missile to do that we needed a
+1145.9	15% chance of blocking that missile
+1148.1	that's @pk reduction this case we rolled
+1150.2	another dice we fail that one too and
+1151.7	then finally the missile itself arrived
+1155.1	with a 75% chance to hit reduced for
+1158.7	distance keep in mind the longer the
+1160.1	shot the harder is to hit we have some
+1162.8	agility modifiers he's a pretty decent
+1164.5	pilot we have an empty weight fraction
+1166.9	it's a bad shot so the final percent
+1169.1	chance to hit miss of 53 the result was
+1170.8	at 66 now if we had succeeded with this
+1174.8	role here getting a 15 or less so to
+1177.0	speak this missile never would have even
+1179.0	gotten to make an attack to be honest
+1181.5	it's going to be kind of rough so again
+1183.4	you can see very clearly how that impact
+1185.3	had made things a little bit better
+1186.5	you've been very helpful Sukhoi 27 you
+1189.2	may return to base of course in about
+1191.8	half a second there's gonna be another
+1193.3	missile on the way you know how these
+1195.2	things go now if I were using offensive
+1197.3	jammers here it would have made this
+1198.8	shot much trickier because again it
+1201.1	would be partially blind so that's
+1202.9	basically all there is to offensive and
+1204.7	defensive let's go ahead and put
+1206.2	together strike package to show you kind
+1208.0	of how to use that an application here
+1210.2	so if you're going to be using offensive
+1212.4	jamming remember it's a standoff jammer
+1214.5	you're trying to jam the path you're
+1216.7	taking to get to the target so in this
+1219.0	case I know that the path I'm going to
+1220.6	be taking to the target it's gonna look
+1221.9	like this of course if you are a smart
+1223.9	commander you'd come out here and then
+1225.7	you scoot in here this way but we're
+1227.3	gonna be a stupid commander just for
+1228.7	demonstration purposes so I know I'm
+1230.9	going to have to jam basically aligned
+1232.9	this way in order to prevent these
+1235.6	radars from detecting and this obnoxious
+1237.1	sa-11 from attacking as well so to do
+1239.8	that I'm going to use a support mission
+1241.3	I know that his maximum range puts him
+1243.6	right about here so I'm go ahead and
+1245.8	create two separate waypoints I'm gonna
+1248.6	put it right in the edge because it
+1249.9	and the jammer is going to be much more
+1251.6	effective if it's closer I'm gonna go
+1254.1	ahead and do jamming support I'm gonna
+1257.5	go ahead and set this up to support
+1259.6	press okeydoke
+1261.2	I'm gonna go ahead and grab get two
+1262.9	single aircrafts fine for me I have two
+1264.6	ei 6s ready to go set them in and this
+1267.5	is important you want to make sure they
+1269.6	are allowed to use their offensive
+1271.7	jamming remember when you turn this on
+1273.1	everybody's gonna know you're their poor
+1275.7	sort of because again it's going to be
+1277.0	difficult for them to say I'm gonna go
+1278.5	ahead and tell them to turn the active
+1280.0	emissions on as soon as they take off to
+1281.6	basically miss make it difficult
+1282.7	continuous loop so they're gonna fly in
+1285.0	and they're gonna start driving back and
+1286.1	forth here jamming everything along this
+1288.3	corridor because this is where my f-16s
+1290.2	are going to be arriving from let's go
+1292.5	ahead and grab my targets I'm gonna call
+1295.6	it a strike it now you're probably
+1296.7	saying why don't I have one of the
+1299.3	jammers stay with the attack group I
+1301.5	completely agree with that particular
+1304.0	idea the danger though is it's going to
+1306.8	get itself shot down because any smart
+1308.5	enemy will go for the expensive jammer
+1309.9	first also you're always going to have
+1311.8	geometry issues like if the jammers
+1313.4	flying too high and your strikers are
+1315.2	flying too low it's not going to achieve
+1316.8	the correct effect speaking of which
+1319.1	that's going to be a problem as you'll
+1320.3	see in a minute so I'm going to go ahead
+1321.8	and press ok I'm gonna go ahead and grab
+1323.3	all may have 16s I'm gonna go ahead and
+1325.2	grab a few of them I'm actually carrying
+1326.7	harms cuz I'm not silly
+1328.4	I'm gonna go mark them as escorts that
+1331.3	looks pretty good that looks pretty good
+1332.5	I'll keep the escort group together that
+1334.8	looks pretty good that looks pretty good
+1335.9	I am ready to go now watch this my
+1338.6	jamming support is going to be flying at
+1340.5	an altitude 36,000 feet my strikers on
+1343.9	the flip side watch this this is where
+1345.7	everybody gets in trouble are going to
+1348.2	be arriving at 36,000 feet we're good to
+1350.5	go
+1350.7	that was handy if these were traditional
+1353.6	mark 84s they'd be attacking it like say
+1356.5	a thousand feet which would mean they'd
+1358.0	be flying under my defense on my
+1359.6	offensive jamming giving every Sam site
+1361.9	basically a free shot so kind of keep
+1363.7	that in your mind as well another one go
+1366.6	ahead and pause things and let things
+1367.7	kind of proceed another warning here
+1369.3	this happens a lot is you'll put up your
+1371.2	offensive jammers over here they'll do a
+1373.3	great job of blocking enemy missiles
+1375.4	from engaging your aircraft and then
+1377.4	what's going to happen is your aircraft
+1378.7	are gonna pass over the heads of the
+1380.4	enemy Sam's in all of the sudden this is
+1383.6	rotating you're gonna get shot at
+1385.0	because you're offensive jamming is on
+1387.2	the wrong side of the game if you were
+1389.6	very very clever which you guys are you
+1391.9	put jamming on both sides of this island
+1394.5	which would mean that you can't get hit
+1396.9	from the tail and you can't get from the
+1398.5	front keep in mind if you have standoff
+1400.3	weapons jamming is awesome because
+1402.4	basically you can block them from seeing
+1404.5	your standoff weapons until they get too
+1406.3	close to the ground another thing I want
+1408.0	to have with jamming is one of the best
+1409.5	uses of it it's with stealth technology
+1411.1	the stealth should not be doing the
+1413.3	jamming however you can use stealth Jam
+1416.6	or you can use a jammer behind a stealth
+1418.3	aircraft in order to make it more
+1420.0	effective let's go see what's going on
+1422.6	here let's go ahead and launch you guys
+1424.3	lunch for you guys oh I said one to one
+1428.5	third rule I'm actually gonna launch him
+1429.8	individually okay now we're gonna go get
+1432.0	up there thank you alright check this
+1435.1	out
+1437.9	so our first jammer is arriving on
+1440.5	station now I'm actually going to tell
+1442.3	that other jammer to join my group you
+1443.9	know why not let's go ahead and assign
+1446.0	to mission Oh notice he got passed by
+1447.8	the f-16s because he's so slow I feel
+1450.5	bad for him
+1451.2	you'd never be able to catch up but you
+1453.6	okay there we go let's see here so he's
+1457.4	on station he's doing his jamming thing
+1459.1	let's take a look at things from the
+1460.2	perspective the enemy at this point Oh
+1462.5	make sure our radars turned on right we
+1465.2	did do that yeah yeah we left it on
+1466.6	we're good at this point we've just got
+1468.8	a jam warning those modern ei sixes have
+1472.5	spectacular jamming we don't even know
+1474.7	that there's a strike package in route
+1476.3	even though it's right there keep in
+1478.4	mind some enemies have low-light
+1479.8	television they have forward-looking
+1481.1	infra-red that would be able to detect
+1482.8	that target even though it's being
+1483.9	jammed keep that in the back of your
+1485.2	head so basically these guys are
+1486.9	clueless they're about to get rekt which
+1488.9	is very very cool go ahead and switch
+1492.1	back to our attackers here speed up time
+1496.6	a little bit they're doing a little
+1498.0	loopy loop remember we're using
+1499.7	offensive jamming here let's switch back
+1501.5	to the other side real quickly now
+1504.0	notice we know there's an attack group
+1506.8	out here somewhere there's just a very
+1508.6	ambiguous target because of the fact
+1511.3	that this is jamming which if you take a
+1513.0	look we're actually slightly off-center
+1515.0	and let me fix that real quick you guys
+1517.3	get real get over here
+1518.9	there we got much better they are
+1521.5	slightly off-center so as a result we
+1524.1	were able to detect them through the
+1525.5	jammers which we can't even detect
+1527.1	because they're doing such a good job at
+1528.5	their job now of course if I did this
+1530.1	and click this button we'd know exactly
+1532.3	where they are but I'm not going to do
+1534.0	that because that's mean this mean all
+1536.3	right so let's go ahead and see what
+1537.6	happens here go ahead and switch on guy
+1539.2	a little of God view here so those
+1541.2	jammers are still doing the standoff
+1543.1	thing our f-16 buddies are now crossing
+1546.0	we have a good idea of roughly where
+1547.4	they are they're just not a very precise
+1548.8	target because of that jamming now of
+1550.9	course I'm gonna do one of these things
+1552.3	and declare these guys obviously hostile
+1554.9	they're coming for us so now with this
+1556.8	targets going to do is as soon as they
+1558.5	get in the effective range they're going
+1560.6	to start raining sa-11 s but remember
+1563.6	there's a surprise but you knew that
+1565.1	already
+1565.7	so keep in mind there now the jammers
+1568.5	need to be behind them in order for them
+1570.2	to be effectively protected and again
+1572.2	this is only minor protection oh it's
+1573.8	starting to kick in again this sa-11 is
+1577.6	going to be locking onto these guys and
+1579.3	the missiles away now notice as soon as
+1583.1	he flipped his attack radar on his
+1584.9	attack radar also got jammed which means
+1588.1	that these annoying harms which I
+1589.8	guarantee you that's what those are he's
+1591.7	not going to be able to get a precise
+1593.0	hit on everybody's of course breaking up
+1594.8	I don't think these are home unjam let
+1598.7	me see are they let's find out let's see
+1601.4	here are they home on Jim some of these
+1602.8	guys are no they are not weapons like I
+1609.4	think the are 27 I believe I think
+1611.6	that's the a-10 that a 11 does have home
+1614.2	own jam capability same thing with an M
+1615.6	Ram so unfortunately this stupid radar
+1618.2	lit himself up got himself blinded fired
+1620.9	a couple missiles which aren't going to
+1622.4	do a thing let's go ahead and take a
+1623.7	look at the endgame calculations there
+1625.8	yeah that was never gonna happen
+1628.5	it actually spoofed off game over
+1631.9	hahahaha
+1633.4	sorry thank you for playing that was
+1636.5	awesome and that's a great great
+1638.4	strategy so unfortunately he's doing it
+1640.6	again because remember in essay 11 is a
+1642.5	battery it's not just one essay 11 it's
+1644.8	multiple essay 11s when I'm really
+1646.5	concerned with is are one of our buddies
+1648.0	probably right
+1648.8	no harms at this point yeah they have J
+1651.2	dams left so um this is gonna this might
+1653.7	be a little annoying but um we'll make
+1655.7	two of what we got look at it go ha has
+1660.4	no idea where to go look at these guys
+1663.4	these guys are just gonna duck by the
+1664.5	way mountains provide the best platform
+1666.1	of jamming ok escorts you have to get a
+1670.7	little bit closer oh that's not good get
+1674.0	behind them out get behind them out ok
+1675.6	this is bad
+1676.7	these aircraft over here now are
+1679.1	completely vulnerable to this sa-11
+1681.5	because they're no longer in the path of
+1683.4	the offensive jammers so like I said be
+1685.5	careful but the good news is they're in
+1687.3	the path of this beautiful mountain here
+1688.7	which is going to make it very difficult
+1689.9	for them to engage what are these these
+1692.3	are J Tim's know you guys are going to
+1694.8	get rained on aren't you you did not
+1697.0	just turn around go back to base did you
+1699.3	uh-oh sigh by the way the J dam is a
+1704.5	very small target there great goodbye
+1706.5	it's bush alright let's continue with
+1709.3	our attack unfortunately our helpful
+1711.4	escorts are no longer helpful so now our
+1714.1	offensive jammers are now providing us
+1716.0	with this corridor of jamming if we were
+1717.7	smart which we are since we know that
+1719.6	that Sam battery is out of operation
+1721.1	will actually move our jamming closer in
+1723.5	case there's any enemy SAM sites here
+1725.7	alright let's go ahead speed up time
+1727.3	real quickly
+1728.2	everybody is depositing their weapons on
+1730.9	to the target region keep in mind these
+1732.9	are standoff weapons switch to the other
+1735.5	guys real quick and they had an si8 who
+1738.0	has a pretty good idea of the location
+1740.1	of these other aircraft why can we see
+1742.2	them so well well we're on the other
+1743.8	side now of the radar since the jamming
+1746.8	is over here we can see perfectly in
+1748.5	this direction older radars can't do
+1750.9	that so for example if I went flipped on
+1752.6	the old radar and shut off the new one
+1753.9	that's not even a good example let's
+1755.6	grab this one but flip this one on we'd
+1758.0	actually have difficulty seeing these
+1759.6	guys because we're getting jams so
+1761.2	effectively by the way we can see these
+1763.1	two aircraft now because of the fact
+1765.0	that they're so physically close we're
+1766.6	just using our eyes and we did a nice
+1769.2	job and of course this si 8 is blind to
+1771.5	those incoming missiles so if I were to
+1773.0	flip on his radar real quick there we go
+1775.8	oh there they are
+1776.6	now we can see them but notice he is
+1779.2	also jammed so even if he attempts to
+1781.5	engage
+1782.1	like for example if I did something like
+1783.3	this I don't know that he'll actually be
+1786.0	able to engage that weapon because it's
+1787.7	going to be too much of a deflection
+1789.0	shot it's up there goes he's trying I
+1792.4	don't think it's gonna go well
+1794.5	Oh No look at that we missed one of them
+1796.6	let's find out why we missed one of them
+1798.0	though let's see here yeah unfortunately
+1800.4	those J dams are not being are not
+1803.4	benefiting from our jammers because of
+1805.1	the geometry now we'd have to have moved
+1807.2	those jammers basically to here because
+1808.9	remember if you want to imagine this is
+1810.1	up and down for jammers here and our
+1811.8	target is here and her bomb is here we
+1813.4	can't actually damn it but it's good to
+1815.4	see this si it's putting their hardwork
+1817.6	in here
+1818.1	of course it's probably just gone
+1819.8	through half of this battery and that's
+1822.2	it so as far as a successful mission
+1824.6	goes let's see how we did so we blew up
+1828.2	a barracks we wasted a lot of those they
+1831.4	fired plenty of quit stuff at us
+1833.1	these are expenditures not bad okay so
+1836.5	I'll just quick conclusions I'm actually
+1837.9	before I do conclusions there's one more
+1839.5	piece sorry I know you guys are tired um
+1841.3	some aircraft have the ability to lay
+1843.7	what they call a chaff corridor so if I
+1846.0	were actually go like this and it's
+1847.1	happening the word chaff not every
+1848.7	aircraft can do this let's go ahead and
+1850.9	get na there we go but this particular
+1853.3	aircraft has the ability to do it which
+1855.1	you can do is you can tell it to drop
+1856.9	little pieces of metal in the air and a
+1858.7	giant path to basically confuse older
+1861.4	radars this is great if it's like 1964
+1863.5	not so grating ass modern aircraft that
+1865.9	have Doppler filtering but watch this I
+1867.8	can press this button and what he'll do
+1870.9	is so basically just dump chaff behind
+1873.8	him like this and you can see each one
+1875.8	of these chunks of chaff has a specific
+1878.1	altitude to it so now if I were a
+1880.3	aircraft let's say a friendly aircraft
+1881.8	let's go and put him right here let's
+1884.2	call this I like my f-16 seems whoa nice
+1886.6	what can I say if I were to stick him in
+1889.0	here just give him a Sidewinder you can
+1891.2	fly through this without damaging this
+1892.5	engines I don't know how that works
+1894.0	but here's the element this chaff is
+1896.5	between 35 and 36,000 feet high you have
+1899.5	to stay in the chaff for it to have a
+1901.1	benefit let's go ahead and turn them
+1902.1	around a little bit stick it right there
+1903.7	okay good so I'm actually going to set
+1905.6	his altitude to 35 550 I mean override
+1909.8	now if I switch back to the other team
+1911.8	real quick you can see exactly what this
+1913.7	looks like
+1914.3	so notice
+1916.0	my radar is blasting away but I can't
+1918.5	see that f-16 oh wait a minute wait a
+1920.6	minute wait a minute let's make sure
+1922.1	we're doing this evenly hope you guys
+1923.7	got deleted okay now notice okay there
+1929.5	he is
+1929.8	now if I were to try to engage that
+1932.5	target inside of that chaff corridor I'd
+1934.7	have a heck of a time doing it
+1936.0	let me actually use an older sensor for
+1938.0	this because again like it wasn't even
+1940.2	gonna work great that's the problem
+1942.2	all the modern sensors are basically
+1943.7	immune to this shenanigans is that
+1946.6	working okay yeah that seems to be being
+1951.2	affected pretty bad again it depends on
+1952.7	the radar set there we go now notice
+1955.7	this f-16 is completely invisible while
+1958.3	it's flying through this wall of
+1959.5	basically little small pieces of metal
+1961.5	that's a decent strategy in the 60s not
+1964.3	the greater strategy all right
+1965.8	conclusions so first things first
+1967.5	basically you have offensive defensive
+1969.5	electronic countermeasures your
+1971.0	defensive are basically always turned on
+1972.8	when a missile a guided missile smells
+1974.5	to hitch aircraft not infrared guide
+1975.9	it's gotta be radar guided it's gonna
+1977.6	roll a dice if it's less than that
+1979.3	little magic number it will
+1980.8	automatically succeed at blocking the
+1982.1	missile from hitting the target
+1983.1	offensive countermeasures you're
+1984.6	basically making a lot of noise to
+1986.5	basically blanket the enemy target with
+1988.3	net noise you're going to be denying
+1989.9	your opponent range information but
+1991.7	you're also going to be letting
+1993.2	everybody know where you are to be
+1994.7	effective with jamming you need to get
+1996.1	as close to the radars as you can
+1997.6	keeping in mind if your jammer is above
+1999.8	the people you're trying to jam it's not
+2001.5	going to do anything and also you need
+2003.3	to keep in mind that the jammer is only
+2005.0	effective in the direction it's jamming
+2006.7	from with that in mind you should be
+2008.7	pretty successful with it and enjoy

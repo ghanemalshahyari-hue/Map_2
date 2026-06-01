@@ -1,0 +1,353 @@
+0.0	hello everyone today in command modern
+2.5	operations we're gonna be taking a look
+4.0	at how to use these scenarios event
+6.5	editor now the event editor is pretty
+9.8	potent as far as what it's capable of
+11.8	but it is not the same thing as using
+13.7	Lua or SBR or anything along those lines
+16.0	so no way are we set a basic scenario up
+18.7	we have a good old fashioned India we've
+20.7	got some good Pakistan right here we've
+22.8	received some intelligence that a convoy
+24.8	is going to be leaving a Pakistani port
+26.7	we've set all this stuff up already and
+28.6	have it nice and hidden and basically
+30.4	we're gonna want to build in some events
+32.4	to keep track of what our score is
+33.8	during the mission so to do that it's
+35.9	pretty straightforward I'm just going to
+37.1	go to editor I'm gonna go ahead down
+38.7	here to event editor I'm gonna click on
+40.6	events now when you create a new event
+43.0	the first thing you want to do is give
+44.4	it a name so for this one is I'm just
+47.1	gonna call it and destroys merchants
+49.2	something nice and simple like that I'm
+51.2	gonna make sure it's a repeatable event
+52.7	you can even set it to a specific
+53.9	probability and you can have a lot of
+55.4	fun with this if you're clever so
+57.7	there's three pieces to each event you
+59.3	start with your trigger which actually
+60.6	activates the event you've your
+62.0	condition which is basically a catch if
+64.0	you wanna think about it another way and
+65.2	then you have what you want to happen
+66.4	when the event is triggered so let's
+68.4	start at the tippy-top I'm going to add
+70.6	myself edit triggers I'm gonna create a
+72.2	new trigger
+72.9	we'll set unit is destroyed create new
+75.3	trigger India it's he destroys I'll just
+78.8	call it merchants destroyed merchants
+80.5	destroyed just like that so I'm going to
+82.9	set the target side to Pakistan I'm
+84.6	gonna set the target type to surface
+86.0	ship I can set its merchants and I can
+88.1	even set it to specific class and even
+89.8	specific unit you can get very very
+92.6	specific if you need to but in this case
+95.0	I'm just interested did I sink a surface
+96.8	ship I'm gonna go ahead and set that
+98.1	just like that truck check press okay go
+100.9	ahead and make sure that selected good
+102.3	click here click here and then click
+104.6	right here now we're good to go you can
+106.6	add multiple triggers by the way Mercia
+108.1	destroyed and airplane destroyed or
+109.9	something along those lines so scrolling
+111.7	down here now we have to add a condition
+113.2	there's not many conditions you
+114.9	literally have three you have is it
+117.5	hostile friendly you have it to the
+119.1	scenario start and I have a special
+120.9	script I'm gonna do scenario has started
+123.2	create new event scenario woo started
+128.4	nice and simple
+130.2	close that you're going to be using this
+132.7	condition
+133.4	add condition so now from Bertrand is
+135.8	destroyed and the scenario started let's
+138.1	do something let's go ahead and add some
+140.6	points some click create new action add
+143.6	15 points to India so now I just said
+147.9	it's India go ahead and add 15 points
+149.8	press ok close the screen and now I am
+153.2	good to go
+154.0	so for merchant gets destroyed in this
+156.2	scenario has started add 15 points to
+158.4	India not bad
+160.1	make sure this is repeatable by the way
+161.7	let's go ahead and create another event
+163.0	do the same thing as it just did a
+164.7	second ago
+165.4	and it triggers I'm going to add a new
+167.2	trigger this gotta be unit is destroyed
+169.0	in this one India loses airplane
+172.9	obviously if they lose a plane it's
+174.3	going to be a problem site India type
+176.6	aircraft any any any any ok close that
+181.3	screen India loses airplane
+183.5	go ahead edit actions will do a points
+185.9	action and lose 10 points India let's
+191.2	sit the sides India and let's set the
+192.9	points to minus 0 1 0 set it to minus 10
+199.2	perfect
+200.5	press ok close that screen make sure you
+203.5	actually add this action so now if I
+206.2	lose an airplane and the scenario
+207.5	started I lose 10 points let's add one
+210.2	mole by the way we forgot to give this
+211.9	thing a name India loses plane and we
+216.3	forgot to send it to repeatable so watch
+218.0	out for that press ok good good good and
+220.7	let's add one more event this time the
+223.5	events max points good score and it
+228.3	triggers we're going to go ahead and
+229.9	create a new trigger and this time I'm
+231.1	going to do side points get 30 points so
+237.7	I'm simply going to select my side
+239.1	succeeds 29 points because 30 points
+242.0	would be anything greater than 29 but
+244.3	press ok close the screen add my trigger
+247.5	as always set my condition as always and
+250.4	then I'm going to create a new action
+251.9	called n scenario good press ok close
+258.1	the screen in the scenario and that's it
+262.3	this does not need to be repeatable by
+264.6	the way because of India gets 30 points
+266.3	the scenario
+266.9	immediately over a press okay so now
+269.1	we're going to go and that's basically
+270.9	all you're going to be using the events
+272.6	for now which you can use let me go
+274.8	ahead and edit this one real quickly you
+276.3	could actually set an action let me go
+278.6	ahead actions real quick to do a couple
+280.5	more things for one thing you could do
+282.1	teleports a area you can do a message
+284.4	you can change the status of mission say
+286.6	flip it's active or inactive you can
+288.7	also just planes and again you can do
+290.3	Lua scripts which is not in the context
+292.4	this particular quick scenario scenario
+294.5	slash tutorial so one thing you might
+296.8	want to do is let's go back to our
+298.4	pencil let's go to destroy some
+301.4	merchants and it selected let's actually
+303.2	add an extra action here to let us know
+305.5	that ad merchant was destroyed set the
+312.2	side to the side rich analyst destroyed
+316.6	keep up the good work so now I can go
+322.1	ahead and create I'll create one more
+324.5	while I'm at it right create new action
+330.4	set it to any again
+336.9	okay close it out now we can go ahead
+340.2	and make this little message here merger
+342.5	destroyed add action so now we get 15
+344.9	points and it will let us know down here
+346.7	in the message log that a merchant was
+348.7	destroyed now if we go over here we can
+351.0	go and add our selves that we lost in
+352.6	action aircraft as well and that's it
+354.7	that's basically the gist of using the
+356.9	event editor it's a really really
+358.1	powerful tool now because we have a
+360.3	little bit of time let's have a little
+361.5	bit of fun with this scenario I'm gonna
+363.2	go ahead and create an area
+364.4	go ahead define it in here let me go
+366.9	ahead and create a free mission real
+368.9	fast
+369.6	we'll do some MPA with you navel press
+373.4	okay go ahead and get herself some pairs
+375.4	that's fine we'll do weapon range I was
+378.9	like to do that make sure radars enabled
+381.1	for this purpose yep looks good let's go
+383.7	ahead and unpause time here comes all
+388.4	the tuple of 142 s once they get into
+391.2	this area they should start searching
+392.7	for those aircrafts I should say those
+394.7	ships there you go now they're going to
+401.2	start the search process zoom in a
+406.2	little bit bingo
+409.1	gotcha so we know that the enemy convoy
+413.5	is somewhere in here we can't identify
+415.6	the individual ships however let's go
+418.2	ahead and speed up time a little more
+419.4	see we've got a little bit more
+420.6	information for some reason this guy
+421.8	just duck down to a thousand feet looks
+424.0	like there's a total of five ships
+426.9	already get a little closer because we
+429.8	need to be put identify them alright I
+436.3	got a bad feeling about this because
+438.0	they have a we have no way to identify
+439.9	which ship is which so we're gonna get
+442.5	pretty darn close let me bring my Ulta
+444.4	too to about medium here though so I
+446.6	want to be so low that I accidentally
+448.7	get surprised we still cannot identify
+452.3	these ships although knowing this
+454.4	scenario pretty confident that the ones
+457.3	were looking for of course if this guy
+458.9	gets too close to if there's an escort
+460.9	it's gonna in very badly for the tupolev
+463.3	142
+465.2	okay and he'd get close enough without
+467.4	getting shut down keep in mind this guy
+469.3	or one of these wise down here's looking
+471.0	up at him going what is that airplane
+472.8	this flying over us right now I don't
+475.9	think we're gonna be able to get a solid
+477.1	ID at least not safely I'm feeling my
+481.4	tuple of 142 is about to get shut down
+483.1	oh no looks like we're gonna get clean
+486.3	all right I'm gonna go ahead and send it
+490.8	back to auto let's set it right over
+492.6	here actually I'm gonna do something
+493.9	like this all right let's prepare our
+497.1	attack say strike ships let's go grab
+508.6	all my do sections two three so I'll
+511.2	grab all of those ships they're good to
+512.9	go they're good to go I don't need any
+514.6	that off-axis stuff I'd rather they just
+516.7	literally just queue up and wreck the
+518.5	thing all right we'll leave all those
+520.6	other details to other detail either
+523.9	coming out of a higher yeah they go
+529.6	make 27s I believe and we just got
+534.1	something launched at us so we're
+535.2	actually able to identify them anyway
+536.7	and I work great so one of the problems
+540.0	are gonna have here is I have a feeling
+541.5	we're gonna lose some of these big
+542.6	twenty sevens
+544.7	that always ends up happening
+546.7	I don't either coming down speed up time
+548.5	a little bit here getting into range
+550.8	fingers crossed that the employee the
+553.0	appropriate amount of weaponry here one
+556.1	of the problems of the tacking large
+557.3	ships with tiny laser-guided missiles is
+559.6	they don't very much damage sped up time
+562.8	a little bit too aggressively there we
+563.9	go
+564.2	5x looks like we hit one of them pretty
+565.8	good I'm sure this one of these is
+568.3	probable we've identified them ah so we
+572.6	were able to identify oh he's launched a
+574.7	missile comes the next round of MIG 27s
+577.9	oop jammers on alright swinging around
+584.3	it comes the next group of mig-27
+586.7	loop that ships probably not doing so
+591.1	good if any of these oil tankers are
+592.7	really going to be miserable
+597.4	I wonder if this guy's even launched a
+607.1	missile yeah keep in mind this is a
+608.1	night operation so it's gonna be very
+609.6	very difficult I mean you'll see the
+611.0	bright white light from the motor from
+612.7	the missile but we have no other
+613.9	guarantees there all right next groups
+617.4	swinging in probably gonna take their
+619.6	shots now we do that one's synching
+624.7	notice they're completely ignoring these
+626.7	other two ships they're probably just
+628.2	too large to do any real damage to check
+631.3	our message log real quick and it looks
+633.1	like we haven't gotten any new ones nope
+636.2	what just happened hey a merchant must
+638.6	destroy keep up the good work
+639.6	Hey look at that so unfortunately I
+644.7	think we only got one that is quite the
+647.6	bar but that was to be expected I don't
+650.4	think we're going to manage to us think
+651.8	another one over time like we did enough
+653.1	flooding damage fast forward time just
+655.5	in case here I don't think that's gonna
+659.3	happen no I don't think so let me grab
+662.4	one of those two blows real quick if
+664.8	you'd be so kind as to fly over there
+666.3	and get them back on radar again we're
+669.4	gonna at least identify which ones
+670.6	hurtin pretty bad you know safe to say
+676.9	that one's certain pretty bad but we
+678.0	don't without looking at it we're not
+679.7	gonna be able to confirm its actual
+680.7	damage all right so let's go take a look
+682.6	at our scoring to make sure everything
+683.8	worked correctly now it looks like our
+686.0	current score is 15 if we go under
+688.0	losses we went through 30 of the a s
+689.7	tens and we managed to sink one
+692.0	container vessel which makes me feel
+693.5	better
+693.7	Oh looks like they actually did take a
+694.8	shot at us does it surprise me going to
+697.0	the scoring log you'll notice this was
+698.5	automatically changed if we go to the
+700.4	scoring graph you can see our graph
+701.9	score improved now how we lost an
+703.7	airplane this would have gone probably
+705.0	ziggy-zag all over the place but um we
+707.1	actually did a pretty good job
+708.6	we certainly scared them to say the
+711.1	least I actually got to quickly switch
+712.8	to Pakistan and we'll take a look to see
+715.5	how we're doing here no I think that
+717.4	one's certain pretty bad now I'm
+718.5	actually going to detach you from the
+719.6	group and send you back home because
+721.3	clearly you're hurting pretty bad here
+722.7	and it's much better to preserve the
+724.2	ship now if we attacked this tanker
+726.3	attacked the LPG tanker we probably
+728.7	a little more successful here but let's
+730.9	see are you actually in fire you're
+732.2	flooding its the flooding getting worse
+734.3	or better over time mmm let's stand
+736.7	about the same oh this might
+739.1	actually sink it just has to get here
+741.0	okay now we got to see what happens here
+742.7	we've identified something that flooding
+746.4	damage is getting worse oh I think India
+752.1	actually may have sunk to here the poor
+754.1	damage control crew is working as hard
+755.9	as they can to preserve that ship oh
+757.5	look at that flood oh they just made
+759.8	some headway here just have to get to
+763.0	the port meanwhile those other ships
+766.9	I'll keep in mind we are rearming those
+769.0	make 27s right now so they might show
+771.4	back up again no this is not looking
+772.7	good 72% damage oh boy is this ship
+777.5	gonna make it
+778.4	it made it wow that was close
+782.2	so our ship is all the way down to three
+784.2	knots but incredibly it was able to
+786.7	actually stop the flooding so I'm
+788.9	guessing this guys feeling pretty
+790.6	confident right now after taking that
+793.7	much abuse we're actually gonna cheat a
+795.6	little here I'm gonna go ahead and move
+796.8	this ship a little bit closer because I
+800.3	want to see what the restore time of
+801.6	this particular ship is going to be
+802.7	after that much damage might as well
+805.1	right so everybody says almost there
+811.5	shook alright a single look
+818.1	twelve-minute no it's not 12 minutes
+820.4	skip 12 minutes ahead though all right
+827.0	25 minutes I don't think that's gonna
+829.9	take 25 minutes but anyway that's beyond
+831.9	the scope of the scenario all right
+833.0	hopefully this helped you out again the
+834.5	scenario editor is pretty
+835.3	straightforward that teleporting option
+836.9	is kind of neat because you can have a
+838.0	button where when it randomly decides it
+840.1	could teleport everybody on one side of
+841.3	the screen you have any questions pop
+842.8	them in the comments otherwise see you
+844.3	later

@@ -1,0 +1,974 @@
+0.3	hello everyone in today's video we're
+1.8	going to be taking a look at the s-400
+4.2	uh one of the most dreaded
+5.3	surface-to-air missile systems
+6.8	that i know of i mean like i always
+8.5	thought that the patriot was a pretty
+9.7	good missile system
+10.8	this thing just takes the cake so let's
+13.3	go and take a look at some of the
+14.2	details for it and i'll discuss some
+15.8	kind of the problems that we're going to
+17.0	face with engaging it
+18.3	as well as how to successfully engage it
+20.5	so first problem we have with this
+21.8	particular system is it has a
+23.3	terrifyingly long range radar on board
+25.9	not only is the radar tremendously long
+27.7	range but it has a mast height of
+30.0	over 100 feet which means it can stick
+33.4	its neck basically out of the
+34.8	terrain to be able to see wherever you
+36.4	are next problem we have is its
+38.2	targeting cycle is only
+39.7	six seconds that means it takes six
+42.4	seconds between when it's identified a
+44.0	target and when it hits it
+45.2	that's actually a good thing and a bad
+46.6	thing for us it's a bad thing because of
+48.2	course that's quick
+49.1	but it's a good thing because it's not
+50.5	zero which means we can trick it
+52.4	and you'll see what i mean when we get
+53.6	there later on of course we have a
+55.4	cheese board which is a tremendously
+57.4	long range search radar again this thing
+59.7	can pick up stealth aircraft like no
+61.2	problem
+61.8	of course it also has the gravestone
+63.4	which is the 92n2
+65.0	fire control radar this thing is a
+66.6	little unique because um in this version
+68.6	of command unfortunately it can target
+70.5	in all directions simultaneously
+72.2	those of you who know the patriot know
+73.6	that you can only point the patriot
+75.0	missile radar in one direction at a time
+77.3	this system does not have that
+78.9	limitation in the real world it does and
+80.7	unfortunately that eliminates one of my
+82.2	most favorite ways to kill sam systems
+84.1	which is basically to surprise her from
+85.6	behind we can't do that which is just
+87.7	what makes things more fun really
+89.2	it's also protected by a couple sa16s
+91.2	you want to imagine a couple guys you
+92.5	know
+92.7	kind of a little uniform pack just hold
+94.2	that little thing on their shoulder
+95.1	ready to go at moments notice
+96.7	and of course we have 12 sa-21
+99.9	launcher systems 12 which means they can
+102.8	put up 48 missiles in here if they had
+104.6	to
+105.0	and of course taking a look down here i
+106.6	can take a look that uh we have a
+107.8	magazine of 32 backups it's going to
+109.4	take 720 seconds to reload though
+111.4	so if we do manage to deplete the
+112.9	battery we're gonna have to work pretty
+114.2	quickly
+115.5	next thing i notice coming down this
+116.7	list here i can see that it has a
+118.2	command data link with 20 channels
+120.3	that means it can guide up to 20
+121.8	missiles at a time that's wonderful news
+124.1	for us because i know it's a lot of
+125.5	missiles
+126.2	but that means there's an upper limit in
+127.9	that upper limit we can take advantage
+129.4	of if we want to use saturation tactics
+131.4	okay let's take a look at the missile
+132.6	itself ah there it is the sa-21b
+134.6	you have no idea how big this missile is
+137.0	i mean you're looking at this picture
+138.0	going oh okay that
+139.0	looks pretty serious but you know how
+140.3	long is it it's 7.5
+142.7	meters long this is a gigantic gigantic
+145.8	missile
+146.5	it's a ballistic missile it basically
+147.8	travels at 150 000 feet
+149.8	um its range is 215 nautical miles it
+153.2	has a 90
+154.2	chance of hit which is like not even
+156.3	fair it can hit everything from 30 feet
+158.7	up through look at this 150 000 feet
+162.1	so you can actually hit ballistic
+163.5	missiles with this thing which i think
+164.9	is excessive
+165.8	but my least favorite thing about
+167.1	attacking this of course is this
+168.9	it has an active radar seeker and it's
+170.9	very very good quality which means that
+173.0	this thing gets a missile off at any
+174.5	target
+175.0	even if you duck behind a mountain it's
+176.6	still going to rip you a new one
+178.1	every single time it also is home on jam
+180.4	it's all air spec
+181.2	and of course it's amazing against the
+182.7	sea skimmer now
+184.6	here's the part that i think is really
+185.9	amusing if you take a look right here
+187.4	this thing has 123 damage points i
+189.8	almost feel like this is a typo
+191.2	because this seems tremendous for a
+192.4	missile but the fact is anything it
+193.8	touches it will obliterate
+196.2	now look at how confident this weapon is
+197.9	the only thing that fires two missiles
+199.6	at are things like you know f-22s
+201.8	or some fourth generations like mig-29s
+203.7	things like that
+205.4	the other thing i notice and this is
+206.6	actually good news is i can see that
+208.2	against a supersonic weapon it fires two
+210.2	against a ballistic weapon it fires two
+212.6	hmm
+213.8	that's actually an interesting piece of
+215.0	information look at his speed oh my god
+217.4	that's
+218.1	what a weapon what a weapon okay let's
+220.2	go ahead and close that sucker out now
+221.4	we know what we're dealing with
+222.6	let's actually see the thing in action
+224.5	so what i have is a handy dandy squadron
+226.5	of mig-21s here
+227.9	and they're all equipped with 250 pound
+229.8	uh 250 kilogram bombs rather
+231.8	so we're going to try to uh use these
+233.4	guys to try to attack
+235.3	the s400 on its own well there it is
+237.3	let's go ahead and order the attack here
+239.1	i'm going to zoom in just a little bit
+240.9	click on it oh
+242.4	boy i have 96 250 kilogram bombs let's
+245.6	see what happens
+246.6	so the first thing we're noticing is the
+248.1	fact the s 400 is not
+249.9	firing the reason it's not firing is is
+252.2	not visually identified the targets that
+254.3	are coming down to bomb on it right now
+256.2	this is usually the fault of the person
+257.8	who designs the scenario in which case
+259.4	is my scenario
+260.6	so if i switch back to the scene real
+262.1	quick you can see that there have not
+263.8	identified any of them
+265.1	but if i were to identify them watch the
+267.3	turnaround time between i've identified
+269.5	and i've obliterated
+271.2	[Music]
+275.0	that's just not fair look at it
+279.4	and that that that that that's that's
+281.4	not cool one of the
+282.8	systems that one of the downsides of the
+284.5	s400 is its default fire control radar
+287.1	does not have non-cooperative target
+289.4	recognition in it
+290.5	that's excellent that means the this
+293.3	first weakness is the fact that it takes
+294.9	a while to identify
+296.2	targets so if you can ever set up a
+297.8	situation where you can basically deny
+300.0	the ability to see the target
+301.5	immediately it will basically be forced
+303.4	to rely on somebody else to identify
+305.0	things for it
+305.9	so in this case had i not switched them
+308.0	over to hostile here
+309.3	these guys would have actually been able
+310.7	to get close but the whole purpose of
+312.4	this demonstration
+313.2	was to show you that we just shot down
+315.1	an entire squadron of aircraft
+317.8	effortlessly almost within less than a
+320.1	minute's time
+321.4	and you can see these guys are running
+323.0	for the lives here hoping that they're
+324.1	gonna be able to get out of the way of
+325.1	that
+325.7	honestly they're not gonna succeed oh no
+327.8	this is gonna be messy
+329.4	oh man i'm sorry guys i'm sorry but i
+331.5	had to demonstrate
+332.6	oh i'm so sorry i'm so sorry game over
+336.1	oh man that's just not fair right
+339.8	so that's the first thing you want to
+341.1	think about when you're dealing with
+342.2	this particular aircraft let me go ahead
+343.8	and reopen my scenario here
+345.2	again you saw imagine if we had a little
+347.2	bit more range it would be more
+348.2	effective
+348.9	so let's go ahead and delete my mic 21
+350.4	squadron so the first thing we're going
+352.2	to have as far as a problem with this
+353.4	thing is identifying where the heck it
+354.8	is
+356.0	there are really a lot of different ways
+357.5	we can identify it so in this particular
+359.4	scenario i know it's a water-based
+360.7	scenario so what i did is i actually set
+362.6	up myself a little submarine
+364.1	what he's going to do is he's going to
+365.1	pop up stick all his antennas out of the
+366.9	water he's going to be able to identify
+368.2	pretty quickly and pretty easily where
+369.8	it is
+370.6	so now we have a pretty solid target now
+373.2	if we're going to try to use the naval
+374.6	method to do this
+375.8	let's let's try to do it so i'm going to
+377.8	go ahead and call up some tomahawk
+379.2	weapons because you know i can
+380.7	so let's see here tomahawks i got 56 of
+382.8	them and against again we're looking
+384.3	here at
+384.9	this pretty serious thing s 400 um i
+387.3	don't know let's allocate
+388.9	oh what do you think let's do 24. all
+391.7	right 24 again this is um i don't even
+393.7	imagine what the cost of this is the
+395.4	missiles fire and
+397.4	they're about to get obliterated at a
+399.3	range of 215 nautical miles
+401.8	oh and
+404.9	well ah yuck well
+408.0	that did not work and um now i'm down a
+410.6	heck of a lot of missiles and i have
+412.2	nothing to show for it
+413.7	so you're sitting there going well can
+415.0	you just fire some more yeah i guess i
+416.6	could fire some more let's go get
+417.8	another round of them we'll do all
+419.4	we'll do all 56 tomahawks this should
+422.3	work
+424.4	yeah it'll work unfortunately that s 400
+426.6	ran out of missiles
+427.6	and it's obliterated okay so you're
+430.6	sitting there here you're
+431.6	being a u.s taxpayer going uh dude that
+433.8	was not cool man that was a lot of
+435.7	weapons
+436.2	uh uh uh well i want to use the tomahawk
+438.4	thing but uh isn't there something else
+439.8	you could do
+440.6	uh the answer is yes there is something
+442.4	we can do
+444.1	now let me go ahead and uh go ahead and
+445.8	unpause real quickly and go ahead and
+447.1	get everybody back here
+448.2	he's gotta do his little surfacing thing
+449.5	he's going to identify it life is good
+451.3	i'm actually going to delete these
+452.2	mig-21s we don't need them again
+453.9	and there he is again ready to be
+455.6	annihilated now
+457.3	if you remember what i was saying before
+459.1	that these weapons are extremely
+460.4	effective they have to basically go
+462.1	ahead and lock on
+463.0	they had active terminal radar wait a
+465.1	minute they have to be active terminal
+467.1	radar guidance
+468.2	well what if we jam that guidance well
+470.1	the reality is it's not going to matter
+471.7	because there's no jamming in existence
+473.4	right now powerful enough to actually do
+475.0	anything real
+475.7	so that's not going to work stealth
+477.3	isn't going to work um what about
+478.9	geometry
+480.2	now watch this so i'm going to go ahead
+481.9	and get my brook here i'm going to go
+483.4	ahead and order him to fire
+484.8	let's be let's be stingy i'm going to
+486.8	use 20
+488.3	we'll use we'll use all 24 again this
+490.2	time however
+492.6	i'm going to plot a course let's see
+495.8	here going to come up this way i'm going
+497.2	to go this way
+498.5	i'm going to go this way i'm going to go
+500.4	this way and that's what i'm going to do
+503.0	you're sitting there going okay that
+505.4	seems like an awful lot of wasted time
+507.0	don't you realize that that missile
+508.3	battery is just going to take pot shots
+509.9	it has
+510.4	half an hour worth of targeting time i
+512.6	am aware of that
+513.8	however i understand how geometry works
+517.0	now what i just did is i set the
+519.3	missiles so that they
+520.5	traveled at about a 90 degree i'm
+523.1	actually going to i wish i could edit
+524.4	this waypoint because they did a sloppy
+525.7	job
+526.3	i've set this up now so these missiles
+528.8	that are coming into attack
+530.2	have to strike at about a 90 degree
+532.5	angle now i don't know about
+534.0	you but if you've ever tried to throw a
+535.8	ball of some kind to somebody who's
+537.0	running at a
+537.8	perpendicular angle to you it's a fairly
+539.9	challenging thing to do
+541.4	well that is the same inside of our game
+544.2	here
+544.6	so what's going to happen is these
+545.9	missiles are going to come rushing down
+547.4	onto our little handy-dandy tomahawks
+549.0	here
+549.5	however they're going to be taking a
+551.3	deflection shot
+556.2	now watch this
+557.9	[Music]
+560.6	now notice as soon as they turn and they
+562.0	weren't deflecting anymore and the
+563.4	battle is already over
+565.1	did you see it let's go speed up time
+566.9	here i win
+570.6	now you're sitting there going okay what
+571.9	did you do well if you know about how
+573.8	command works you'll know this trick
+575.3	here so if i actually go down to end
+577.1	game and i take a look at
+578.2	how many of these missiles missed look
+580.0	at this you observe that not only did
+582.3	they fire at extreme range which hurt
+584.0	their
+584.4	intercept their intercept angle was a
+586.6	staggering 103 degrees
+588.6	which dropped the probability to hit
+591.8	to 50 percent so even though the weapon
+594.2	is a 90
+595.0	chance of hitting we dropped it down to
+597.0	a 50 and it's a 90
+598.7	chance of actually doing damage so if
+600.7	you actually do the math here so if we
+602.2	do 48 times
+603.6	50 we said it's about to hit round
+605.2	probably 0.9
+607.4	theoretically it would only need 22
+610.2	missiles
+610.7	in order to do the d remember a minute
+612.2	ago we needed nearly 48 missiles to do
+614.2	the exact same thing
+615.5	so that's the first trick i'm going to
+617.1	kind of pass on to everybody obviously i
+618.7	love that trick i think it's like
+619.8	cheating to be honest
+621.0	so let's try a different strategy we'll
+624.1	show the next mistake everybody makes
+625.8	let's go ahead and
+626.5	grab our setup here we're going to
+627.5	delete our migs we don't need them
+628.6	anymore save my scenario
+630.6	okay so um what about those folks who
+632.4	are like well couldn't you uh just use
+634.0	like an f-35 or an f-22 or something
+636.0	like that
+636.7	okay we'll try that we'll try that let's
+638.2	go get ourselves a handy-dandy f-35
+640.3	we'll do
+641.0	classic weapon for this we're gonna get
+642.7	the j saud the sdb which is a really
+644.6	really good weapon
+645.6	j styles are super tempting but they're
+647.0	a waste of your time so let's go down to
+649.4	the sdb
+650.1	this thing is a really unique weapon
+651.5	because it's super duper duper duper
+653.4	thin
+653.9	i'm actually going to move my f-35 back
+655.6	a little bit here now the cool thing
+656.8	about an f-35 is it's got that really
+658.6	really really sophisticated vision
+660.2	system built into it
+661.3	so i can actually get really really low
+663.0	with this thing and basically stick my
+664.5	head
+664.8	just over the horizon spot the thing and
+667.0	then come back down
+668.1	the other great thing about an f-35 of
+669.7	course is everybody knows its radar
+671.6	is absolutely staggeringly good so let's
+674.3	see what we have for an outside today
+675.5	we're still pretty high
+676.4	of course this guy is a busy targeting
+678.1	my f-35 right here so as soon as he
+679.9	identifies never gets within rain there
+681.7	it is
+682.3	let's go ahead and shut off my radar and
+684.2	let's go ahead and deliver my j
+685.8	uh sdbs here boop fire now this is a
+689.3	waste of your time
+691.6	and i'm about to get shot down
+695.0	all right now did i mention a second ago
+697.0	that was a waste of your time
+701.6	and it was a waste your time like i said
+704.1	you can't do that
+705.3	guided weapons actually are terrible for
+707.5	this purpose
+708.5	so let's try a different strategy okay
+710.0	so that strategy clearly didn't work
+712.0	um what if we had a squadron of 16. can
+714.8	we do something with that
+716.1	oh yeah we could do something with that
+717.4	too so let's go ahead and get ourselves
+719.0	a squadron of f-16s
+720.6	ah looks good to me it looks good to me
+722.6	and let's show you how to do this the
+724.0	stupid way
+724.7	so i'd come like this i'd say control f1
+727.4	i
+727.8	say r-e-k-t i do a land strike like this
+732.1	i'd be very clever i'd set this up like
+734.2	that i'd have them all ready to go
+735.9	i put them in big nasty bunches in order
+737.7	to make them more efficient i do an
+739.2	off-axis attack
+740.5	i'd go ahead and now make sure they're
+741.8	all set i go ahead and release the thing
+743.2	i let them go ahead and strike
+745.5	there they all go so the first thing
+748.1	that's going to happen is our f-16s are
+749.7	going to fire are
+750.7	all their arms and you can see these
+752.6	harms all get slapped out of the sky
+754.4	pretty effortlessly except for that one
+756.1	which managed to get through we fire
+757.8	another group of arms like this
+760.5	and those all get through and meanwhile
+762.3	our last group of x-16s
+764.0	come rolling in they drop a bunch of
+765.9	guided munitions
+767.0	and the entire fight is over before they
+769.2	even know it hit them
+770.5	you can see my off access group did that
+772.2	and the battle is over
+773.9	so let's see how we did there let's see
+775.3	how we did losses and expenditures
+777.0	uh you can see that let's see here i
+778.9	lost nothing
+781.4	now you're probably going well that was
+783.4	because they didn't automatically
+784.6	identify as hostile and i'd say yeah
+786.8	you're right
+787.6	so let me show you what happens now if
+789.4	we take advantage of the fact that some
+791.2	enemies
+791.8	will have non-cooperative target
+793.4	recognition so i'm actually going to
+795.0	switch back over to the other side real
+796.4	fast
+797.0	i'm going to change their thing here to
+798.8	simulate as if they had better
+800.3	intelligences do things that were going
+801.8	on
+802.3	i'd say free fire now let's do the exact
+804.7	same thing with my massive squadron of
+806.4	f-16s
+807.5	now um i guarantee you this isn't going
+809.4	to go so well
+811.4	alright we've identified them let's go
+813.3	ahead and call them up
+816.1	let's call it rect 2. this is on rec 2.
+819.1	this is called getting wasted
+820.7	let's go ahead and ask this entire
+821.9	squadron we'll grab groups of 6. that's
+823.8	always a good suggestion whenever you're
+825.1	attacking something you want to do it
+826.2	simultaneously
+827.2	go ahead and run the scenario again
+829.3	f-16s launch and they all got shut down
+831.0	before they even got
+831.9	into position
+836.1	okay let's see what happened there let's
+837.8	see what happened
+839.4	oh boy woohoo
+845.4	so that was the biggest waste of f-16s
+847.8	i've ever seen in my life
+849.4	so that didn't work and you can see
+851.3	immediately taking advantage of that
+853.6	basically it's an ability to identify
+855.7	and target things quickly
+856.9	that gave you that edge that allowed you
+858.4	to be successful the first time
+860.0	so um okay so i want to use this
+862.6	strategy i like that strategy i like my
+864.2	f-16s i want to actually be able to
+865.5	succeed this so
+866.5	what are we going to do so first things
+867.8	first i'm going to make sure they have
+868.8	free fire i want to be fair
+870.0	i want to be fair again my f-35 would
+872.3	have been shot down by the way if i left
+873.8	free fire on because it would have seen
+875.1	him pretty much earlier
+876.2	so this time what i'm going to do is i'm
+877.7	actually going to create what they call
+878.8	a marshalling point
+880.2	so i'm going to grab these two points
+881.5	here i'm going to go ahead and create a
+882.7	support mission called marshall
+885.3	now you're probably wondering okay what
+887.1	do you what are you about what are you
+888.2	about right about
+889.0	so i'm going to create a spot on the
+890.7	ground where i can basically
+892.2	let out all of my aircraft park
+895.0	themselves
+896.2	so let me go ahead and say minimum
+897.9	altitude i'll say one foot
+899.4	and i'll say one foot again they're
+900.7	going to go down to 80 feet or so that's
+902.1	about as low as we can go
+903.6	and what i'm going to do is i'm just
+904.6	going to go ahead and run the scenario
+905.8	now
+907.1	what's going to happen is my f-16s are
+908.8	all going to take off but this time
+910.4	they're going to do the right thing and
+911.6	they're going to stay at low
+912.9	altitude so now notice none of these
+915.8	guys got engaged this entire time
+918.2	so now they're going to go to my
+919.4	marshalling spot and they're going to
+920.8	slow themselves down
+922.6	now again these guys are marshalling
+924.3	probably about 80 feet yeah about 80
+926.1	feet
+926.5	i'm gonna give them a minute to marshall
+927.7	okay everybody's nice and marshalled
+929.0	right
+929.7	so now what i'm going to do is i'm going
+931.3	to order my strike
+933.4	now the smart thing to actually do here
+935.0	is actually manually order these guys to
+936.7	do the strike at once
+938.0	but i'll show you exactly what i want to
+939.5	do so now my guys here these are the
+941.8	laser j dams
+942.7	have a maximum range in the j dams of 13
+945.0	nautical miles
+946.1	which means they need to get here in
+948.3	order to use that weapon
+949.8	the other problem they have it's
+951.0	actually safer to come up this side no
+952.6	probably
+953.9	yeah probably that side it's going to be
+955.1	the safest side because you got them out
+956.2	in there so the other problem is our
+958.2	folks with the harms believe it or not
+959.8	are completely in range right now
+962.1	the thing is you don't want the harm
+964.3	guys to launch
+965.3	until the jdam guys launch sitting there
+967.3	going wait why
+968.6	well remember we can only fire 20
+970.2	missiles at a time
+972.0	that means that if my arms remember i
+974.6	have a total of 24 harms here
+976.3	if i can fire 24 harms have them be
+978.8	engaged
+979.5	in the time it takes my other folks to
+981.4	get a position in launch
+983.0	i've already won the fight so basically
+985.1	what you want to do is use your harms
+986.9	basically to distract it while you let
+988.5	your j damn cruise get as close as
+990.2	possible
+990.9	now the big thing with the j dam is
+992.2	anybody will tell you is the fact you
+993.6	have to be at 10 000 feet to use it
+995.1	safely so i'm basically going to set up
+997.2	a little mission along the edge here
+998.6	staying
+999.1	absolutely minimum altitude cruise speed
+1002.7	and once they get in range of course
+1004.1	they're going to unload everything
+1006.2	again you're going to need every single
+1007.9	jdam you can possibly get your hands on
+1009.7	here
+1010.5	we're gonna do one of these okay now
+1015.0	allocate all let's go over to this one
+1017.0	over here it looks good looks good
+1018.3	allocate all and that looks pretty good
+1020.4	to me let's go get our harm guys
+1022.3	our harm guys are not going to i'm going
+1023.5	to keep this group as a backup in case i
+1025.4	need it
+1026.0	my arms i'm going to get just a teeny
+1027.6	tiny bit closer
+1029.3	let's grab my other harm crew arm crew
+1031.0	again we're going to be using the harms
+1032.3	as a way to distract
+1034.2	while everybody else gets into position
+1036.0	so remember we can't be seen because the
+1037.8	island is doing a really nice job up
+1039.3	too late
+1043.3	and that mission was failed
+1046.8	i'll go ahead and dump all the harms we
+1048.3	have in the entire inventory remember
+1049.7	these weapons are 750 thousand dollars
+1051.8	u.s
+1052.3	each so let's go grab the other harm
+1054.4	group uh where's
+1055.4	the home group that's the jdam group
+1057.0	that's the other harm group yeah they're
+1058.2	the ones unfortunately who just got shot
+1059.6	at
+1061.4	fire everything so i'm about to lose
+1062.8	this entire squadron but it also shows
+1064.6	you
+1064.9	just how dynamite this system is
+1067.9	go ahead and fire it's going to be very
+1069.3	very very very very very messy and very
+1071.1	very awful i really wish they didn't go
+1072.4	so wide when they did this
+1074.1	but now everybody's firing let's grab my
+1076.2	last group of j
+1077.1	dams they're going to come right up
+1078.1	along the side here you're going to do
+1079.7	afterburner speed
+1082.4	now sometimes the active raider will
+1083.8	actually accidentally go after the arms
+1087.8	all right where's my other crew this is
+1089.2	my other jdam crew
+1091.0	no these are my other harm crew actually
+1092.4	on the way home
+1095.0	unfortunately when they go home they go
+1096.4	up to maximum altitude which is a total
+1098.1	waste of time
+1099.0	because when they do that they get
+1099.9	themselves shot down like that
+1101.6	[Music]
+1104.5	now notice everybody's too busy being
+1106.0	defensive to actually be doing anything
+1107.6	useful
+1108.5	[Music]
+1111.6	here comes the next set of missiles and
+1113.8	that entire crew is about to get wasted
+1118.2	just kidding so unfortunately that was
+1121.0	literally
+1121.6	just as messy as if we did it the other
+1123.7	way we really needed to take advantage
+1125.8	of this axis of the island
+1127.2	coming out here this wide because he's
+1128.6	on a mountain he was able to look down
+1130.1	over the island
+1131.0	and basically spam this guy out of
+1132.3	existence so we'll still be able to kill
+1133.8	it at the end of the day but look at how
+1135.4	messy this was
+1136.7	oh yuck eight's better than 20 right
+1140.0	okay so let's go ahead and take a look
+1142.1	at another method so again we're having
+1143.8	some fun here we're having some fun
+1145.5	um can i do this with one f-16 hmm
+1149.1	you're sitting there going like this i
+1150.8	like this like where are we going with
+1151.8	this
+1152.3	let's get one f-16 i call this the dcf
+1155.1	method
+1156.6	look at a da-da-da 2008 model i don't
+1159.0	want anything fancy
+1160.1	but what i do really really really
+1161.8	really really really want is i want to
+1163.4	make sure that i'm carrying something
+1165.1	that
+1165.4	is cbu-like uh that looks good to me
+1168.6	and i'm gonna put him right here i'm
+1170.3	gonna have him kind of come up this side
+1171.4	of the island kind of do one of those
+1172.9	minimum altitude military go
+1176.7	keep in mind i would launch them from
+1177.8	the base all right here we go
+1179.9	so is it possible to use a single f16 to
+1182.4	do the same exact job
+1183.6	the answer is yes but the trick is you
+1186.0	want to take advantage of as much as the
+1187.6	geography of the island as you possibly
+1189.4	can
+1189.8	in this case all this nasty rough stuff
+1191.6	this is going to be the most dangerous
+1192.7	moment for the f-16 right here
+1194.4	and then what i'm going to do is i'm
+1195.4	actually going to pop up right on top of
+1196.9	him and i'm going to dump the entire
+1198.4	inventory that i possess
+1199.6	on him all at once delightful so
+1202.6	here's the trick so one of these things
+1204.7	is when you do choose to use this kind
+1206.2	of like terrain masking here and try to
+1207.8	keep yourself as low as possibly
+1209.6	possible possible possible
+1211.4	one of the tricks is the faster you go
+1213.4	the wider your turns become
+1215.0	so when i actually go to take this turn
+1217.2	right here if i try to take it the way
+1219.0	it is i'm actually going to come all the
+1220.2	way out here and he's going to get a
+1221.4	free
+1221.8	shot on me so one of the tactics to kind
+1223.9	of get around that is to actually make
+1225.6	the turn a little bit tighter
+1227.6	so when you do finish the turn you'll
+1229.5	already be in a position to kind of zip
+1231.2	through
+1231.8	i'm actually going to try to get through
+1232.9	this valley right here
+1235.0	next trick you want to do is you want to
+1236.2	get yourself up to as maximum throttle
+1238.4	as you possibly can
+1239.4	all right here we go this is the dcs
+1241.7	method
+1243.3	he's looking at us but he can't get a
+1244.6	hit on us remember we're tracking him
+1246.7	right now based on the submarine
+1248.8	so we're going to go ahead and take our
+1249.8	first turn here
+1252.0	oh don't do that see how he does a
+1253.8	really really really really wide turn
+1255.4	there
+1255.8	you can actually slow him down to
+1257.0	nothing so you can take that turn a lot
+1258.7	tighter
+1260.0	come on down this way yep now i'm gonna
+1261.8	slow him down a little bit speed him
+1263.3	back up
+1265.0	okay this is so dangerous this is so
+1266.6	dangerous
+1268.3	okay this is gonna be the death mode
+1269.8	okay he's trying to slow down a little
+1271.0	bit here
+1271.6	trying to slow down again i'm just
+1272.7	trying to make that turn a little bit
+1273.8	tighter he's still concealed by the side
+1275.5	of the mountain
+1276.1	can he do it because remember when we
+1278.2	come out of this turn we have to book it
+1281.6	and coming out of the turn now this is
+1283.5	the most dangerous part
+1284.9	go all right so remember it takes him
+1289.0	six seconds between identifying the f-16
+1292.1	and actually doing the deed so he's
+1293.8	ripping he's about 272 feet
+1296.5	i believe the s-300 crew is about to
+1298.7	fire but guess what
+1299.9	[Music]
+1302.8	bam
+1304.2	nice we actually got them using a single
+1307.5	f-16
+1308.6	yes i think you just realized that cost
+1310.4	me an f-16 to do
+1311.8	sometimes when i do that i get lucky and
+1313.3	i kept them like right around the corner
+1314.7	and it actually works well
+1316.0	but again a single f16 that's all i
+1318.6	needed if i tried to do this with gbus
+1320.3	it would have been a waste of our time
+1322.2	now if i wanted to be more thorough you
+1323.8	probably would have wanted to bring
+1325.2	two f-16s with you as opposed to one and
+1327.5	actually hit
+1328.2	like i said simultaneously so if they
+1329.8	got one the other one will not get hit
+1331.4	as well
+1332.3	okay so now i'm going to show you two
+1333.7	more techniques that we can use to
+1335.3	actually defeat this thing
+1336.6	let's go ahead and take a look at the
+1338.1	easy way so the first thing i always
+1340.2	like to do
+1340.8	when i'm evaluating scenarios ask you
+1342.4	know is there a really really really
+1343.4	really really easy way to do things
+1345.0	and sometimes you get super duper lucky
+1346.8	now i'm actually going to grab this real
+1348.2	quick
+1348.6	120 millimeter mortar let's go ahead and
+1350.7	grab a generic one that's plenty fine
+1352.2	for me
+1353.3	and sometimes you get the ability to
+1354.8	actually land troops and uh when you
+1356.4	land troops you know if you want to save
+1357.8	some time
+1358.6	we can just use troops to do the deed
+1360.2	here
+1362.7	let that fire
+1366.7	now i'm sure this crew is sitting here
+1368.6	being a little bit depressed
+1369.9	oh by the way um this s400 cannot engage
+1373.7	a bombs so if you drop conventional
+1375.7	bombs it actually works really really
+1377.0	well same thing with artillery
+1378.4	you could use machine guns you could use
+1379.9	the cannon on an f18
+1381.5	you could use absolutely anything and
+1383.1	everything possible to go ahead and do
+1384.8	the deed here
+1385.7	in this case i've actually used naval
+1387.1	artillery for this purpose but again if
+1388.8	you can manage to land a 120 millimeter
+1391.3	crew and just kind of let them go to
+1392.3	town
+1392.8	you could just sit here all afternoon
+1394.0	and uh about 600 rounds later we ran out
+1396.2	of ammo
+1397.0	we've absolutely plastered that battery
+1398.8	so that was pretty easy
+1400.1	okay one last technique we're going to
+1401.9	take a look at today
+1404.9	this technique is fun so one thing i've
+1407.6	had kind of hidden over this entire time
+1409.4	is i've had this
+1410.6	over here it's a b-52 so the b-52
+1413.7	carries something called a j-a-s-s-m
+1416.1	which is also known as basically it's
+1418.1	the joint uh
+1419.1	it's basically a specialized missile if
+1421.0	you want to type super modern cruise
+1422.8	it's also
+1423.3	a stealth missile so the reason this is
+1425.9	so cool
+1426.9	is because not only do we get the
+1428.2	benefit of using cruise missiles but we
+1430.4	also get the benefit of using a stealth
+1432.4	cruise missile
+1433.4	so we'll use them all we don't need this
+1435.0	many but um whatever
+1437.2	hey they're free it's a game all right
+1438.8	missiles get launched
+1445.4	and i win that's it
+1448.4	so let's see what we had for losses and
+1449.8	expenditures uh let's see here oh yep
+1452.1	splattered uh did it get a missile off
+1455.0	no
+1455.7	didn't even get a missile off and that's
+1457.2	why the jasm is dynamite
+1459.4	it's again a super duper ultra cruise
+1461.0	missile and again you can use that
+1462.2	strategy i showed you
+1463.1	earlier to make it even more effective
+1465.4	so um let's have a little bit more fun
+1466.7	now
+1467.3	so what else can we use against one of
+1468.8	those pesky s400s that's like a cheese
+1470.7	tactic
+1471.5	ah here we are the ironic method i like
+1473.8	to call it also known as the iskander
+1475.7	which is
+1476.2	basically it's a ballistic missile now
+1478.1	the reason ballistic missiles are so
+1479.4	dynamite is because of their speed
+1481.4	so i'm going to go ahead and fire all
+1482.6	the ballistic missiles just like that go
+1484.6	ahead and unpause
+1485.4	all the missiles go up and now notice
+1489.3	what happens here
+1490.3	the s400 immediately fired early and
+1492.8	basically completely whiffed the
+1494.2	ballistic missiles during their climb
+1495.7	phase because remember the ballistic
+1496.9	missiles have to accelerate
+1498.2	next thing you know they actually spread
+1499.7	into these re-entry vehicles which by
+1501.7	the way
+1502.3	are super duper unique because they
+1504.2	actually have some
+1505.5	built-in jamming which i think is
+1506.7	actually really really cool they're also
+1508.2	huge weapons so it makes them very very
+1510.2	very effective
+1511.3	all right let's continue watching here
+1515.1	all right so far my ballistic missiles
+1516.7	are dropping out of the orbit here
+1518.3	and let's see what happens this time
+1521.7	boom
+1525.0	and now that's another s 400 absolutely
+1527.5	positively splattered
+1529.6	okay so now you're sitting there going
+1531.4	okay so so far you've
+1532.7	you've showed me a bunch of different
+1533.7	ways to deal with this thing and you
+1535.1	know i'm appreciating what you're doing
+1536.5	here but
+1537.0	you know sometimes people set up
+1538.1	scenarios where you don't have some
+1539.7	terrain to hide behind now is there some
+1541.1	kind of jamming or something that we
+1542.4	could take advantage of
+1543.6	actually there is and i'm one of the
+1545.4	neat the platforms actually for this
+1547.2	i'll go ahead and share this with you
+1548.3	really quick as we're on our way out
+1550.2	there is actually a decoy and i'm gonna
+1553.1	go get my one i have to remember which
+1554.3	one it is
+1557.0	that's not a decoy it's a um yeah that's
+1559.8	fine it's a decoy
+1561.4	let's see here i'm just trying to
+1562.7	remember exactly which one this is
+1565.0	ah okay here we go so there's a bunch of
+1567.0	really really fun jammer decoys such as
+1569.0	stuff like this
+1570.1	which you can actually launch and
+1571.4	because they're jammer decoys
+1573.5	it basically annoys the heck out of the
+1575.4	s400 and causes it not only to be
+1577.1	attacked
+1577.8	but it also jams anything that you're
+1579.4	going to be sneaking in with it so it's
+1581.3	actually a very very very effective way
+1583.0	to kind of get around those kind of
+1584.1	problems
+1584.9	one thing you want to watch out for by
+1586.2	the way is don't be the guy who sends a
+1587.8	bunch of those really old school ones
+1589.1	off of an f14
+1590.2	if you do that they're not even going to
+1591.7	be engaged they're kind of a waste of
+1593.0	your time
+1593.6	so kind of just keep that in the back of
+1594.8	your head as well and then of course
+1596.4	last but not least like i said um an
+1598.2	s400 is only as deadly as when it has
+1600.4	ammunition
+1601.0	you can always hit it with everybody's
+1602.3	favorite cheese strategy of basically
+1604.0	sitting there at long range and
+1605.1	zigzagging out of it
+1606.2	so that it basically wastes all of its
+1607.9	missiles and then you strike it from a
+1609.3	different side
+1610.1	but again i just want to show you how
+1611.5	you can kind of take a look at some of
+1612.6	the different strategies
+1614.4	in conclusion the s400 is a dynamite
+1616.2	system but at the end of the day
+1617.7	consider the wra considers weapon
+1619.8	limitation uh always set up shots that
+1621.9	are going to be beaming which will waste
+1623.3	its energy so that it makes it an easier
+1625.0	shot that works for airplanes too by the
+1626.4	way
+1626.7	because if you put airplanes at a 90
+1628.2	degree angle to it it has a much less
+1630.1	chance of hitting that airplane
+1631.4	you could even send a whole squadron if
+1632.8	you're out extremely brave and go them
+1634.7	zigzag and 90 degrees and basically
+1636.6	waste the entire battery
+1638.2	the other problem you're always going to
+1639.1	face of course is trying to locate where
+1640.6	the battery is
+1641.4	a lot of modern scenarios have
+1642.6	satellites which makes this whole
+1643.9	process a whole lot easier to do
+1645.8	but other than that hopefully this has
+1647.1	been helpful enjoy

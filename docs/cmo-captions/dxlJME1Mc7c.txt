@@ -1,0 +1,681 @@
+0.0	hello everyone in today's command
+2.3	tutorial we're gonna look at how to
+3.4	coordinate anti-ship missile strikes
+5.7	with vehicles that have different speeds
+8.0	distances ranges so this particular
+10.5	scenario set up a pretty standard Cold
+12.6	War deal that's a 1977 we're dealing
+15.0	with the Cold War database though not
+16.5	the modern database or Aegis destroyers
+19.7	and cruisers make things much much much
+21.8	much more difficult to try to pull this
+23.8	kind of an operation off that being said
+25.9	I have a feeling we're gonna be pretty
+27.1	successful here so as usual let's go
+28.9	ahead and take a look what we're dealing
+29.8	with here we know that there is an
+31.1	unknown enemy surface action group here
+33.4	we're gonna hit it with everything so
+36.8	what do we have at our disposal first of
+38.9	all we've tupolev 95 on our t he's
+40.8	basically keeping an eye on these guys
+42.2	with this long-range radar we have a
+44.7	whiskey ii i'm sorry this is a charlie
+47.0	one has a very limited range anti-ship
+50.2	missile we have a charlie two which is a
+52.0	slightly better range anti-ship missile
+54.0	we have these echo ones which had this
+56.0	awesome anti-ship missile this is the p6
+58.2	this thing's actually very capable
+60.0	little slow of course we have a rocket
+62.1	Cruiser we have the kindda we don't have
+64.3	the Kirov yet which is kind of
+65.6	disappointing but this also possesses a
+67.4	very very deadly weapon the P 35 which
+70.1	is almost like an upgraded version of
+71.6	this particular type missile and of
+73.3	course we have these standard anti-ship
+75.4	platforms we have everybody's favorite
+77.9	we have the tupolev 22 the M model we
+79.7	have half a regiment and of course we
+81.6	have the Tupolev sixteens which are
+83.2	carrying both KS r 2ms as well as KS r
+86.0	5m anti-ship missiles now you're sitting
+89.3	there going well that's a lot of
+90.5	different kinds of missiles so we just
+91.9	order everybody to attack at once right
+93.6	that doesn't work if you try to launch
+96.3	piecemeal one missile at a time you're
+98.6	never ever going to be able to get
+100.2	through the anti-missile protection that
+102.8	a typical US Navy group has we've got to
+106.2	make it so the missiles arrive in a very
+107.9	short order with each other now this is
+110.2	one of those things that's easier said
+111.5	than especially in the real world but
+113.7	the good news is we can use a little bit
+115.5	of math to take our lives a little bit
+116.8	simpler so what I have right here is an
+119.4	Excel spreadsheet this spreadsheet
+121.3	basically shows me all that for weapons
+123.1	I have at my disposal in this scenario
+124.5	as far as weapons obviously the cage 22
+126.9	if I had enough of these I wouldn't need
+128.6	to do anything else because I could just
+130.3	use these days
+131.0	rain-damaged down on the enemy ships of
+133.8	course I have the KSR sue em like I was
+135.7	saying the five the P 35 70 to 120 and
+138.7	of course the SEC's so how do we
+141.4	coordinate this you can see each one of
+143.4	these is a drastically different range
+145.1	obviously the air-launched ones didn't
+147.1	have much longer range than the
+148.4	especially submarine-launched ones which
+150.6	god-awful range and they also have
+152.7	totally different cruise speeds you can
+154.2	see I've only got three supersonic
+156.6	weapons here which means that how are
+159.4	you going to launch these and then
+161.0	launch the other ones so that everybody
+162.7	gets there at the same time there's a
+164.6	couple different ways to do this the
+166.9	first thing I would recommend to do if
+168.7	you're interested in getting a little
+170.3	too fancy is if you go onto google real
+172.6	quick and you type in commando strike
+175.2	planner keep in mind you can open this
+177.9	up in Google sheets there's this excel
+179.8	strike planner that does a spectacular
+182.5	job of calculating these kind of items
+185.7	just like I have here it actually does a
+187.5	better job than I'm going to do but for
+188.8	my purposes I'm gonna make things
+190.3	simpler so anyway how do we how do we
+192.8	coordinate these guys I mean we can
+194.5	launch them all at once but that's not
+196.0	gonna work
+196.7	so we're gonna use the game to help us
+198.6	out and we're also gonna use a little
+199.7	bit of math so for one thing I notice is
+202.7	if I use the 302nd since five minutes as
+205.7	my standard how far can each one of
+208.4	these missiles go in five minutes well
+210.4	we see this one can go this far this far
+211.9	we're in trouble
+213.0	check it out the P 70 can't travel 50
+216.2	nautical miles because it would have run
+217.8	out of fuel already this is obviously
+220.5	not going to work as a method so that
+223.0	means we're actually going to have to
+224.6	launch these missiles at a different
+227.2	time so the first thing I like to do is
+230.0	I like to go ahead and realize that not
+232.6	every missile should be fired at its
+234.6	maximum range ideally you want to shoot
+236.8	it to about half maximum range so it has
+238.5	some fuels to start a nicer fire when it
+240.3	gets to the target we're not going to do
+241.9	that because it's kind of put especially
+243.2	submarines at an extreme risk to this
+245.3	carrier group so what I did is I took
+247.5	all the times that we can travel at
+249.6	multiply them by 0.9 so this will be my
+252.1	new time that I can fire it which also
+254.0	means my modified range because
+257.0	obviously time and range are going to be
+258.5	the same because they travel at a
+259.6	constant speed thankfully which
+262.1	means that I can engage my targets at
+264.5	these ranges safely and still have just
+268.5	a little bit of fuel left over in case
+269.8	we need to turn at the last minute this
+271.6	is getting a little easier now so let's
+273.9	go to the next level in order to travel
+276.8	this range we would need this amount of
+279.7	time in this case look at this one
+281.6	17 minutes that would mean that we'd
+285.2	need to launch the missiles so that they
+288.4	all have this amount of time and they
+290.4	all arrive at the same time at the
+292.7	target this is actually pretty easy to
+294.6	do because all we have to do is take
+296.5	what time we want the target to be
+297.8	struck subtract the amount of time it's
+300.2	gonna take to get there and that gives
+302.2	us a launch time of when we have to
+304.8	launch the missiles keep in mind
+306.6	professional would be within 30 seconds
+309.0	of each other we will be lucky if we can
+310.9	get it within 2 minutes even within this
+312.9	particular program only on account of
+314.8	the fact in the real world what you do
+316.3	is say all right everybody turn around
+318.0	in exactly 2 minutes everybody fire at
+319.7	the same time in command it's gonna be a
+322.4	little bit more spread out
+323.7	but at the same time is I don't think
+325.6	this carrier group is going to survive
+328.2	so what do we do first now that we go
+330.8	over to command well it's pretty
+332.0	straightforward all we have to do is set
+334.2	up a waypoint at the distance that we
+337.0	want to launch at for each respective
+339.2	weapon so for example let's go ahead and
+341.7	start at the bottom here 225 now to come
+344.2	on for the p6 for the echo 1 & 2 so I'm
+346.6	gonna go ahead and grab this group and
+348.6	I'm gonna go ahead and create a waypoint
+352.6	225 nautical miles away I'm gonna Park
+355.3	it right here and this is going to be
+358.7	for my echo 1 & 2 so I'm gonna call this
+361.1	echo 1 & 2 so now what I'm gonna do is
+365.3	I'm going to set that Waypoint to be
+367.3	referencing the carrier group so I'm
+370.6	going to set it to a fixed bearing not
+371.9	rotating Barrett right here so now I
+373.8	have to do is assign my two echos to go
+376.2	to this point I'm just confirming that
+377.9	real quick looks good so grab my mission
+381.2	creator I'm gonna create call echo 1 to
+384.9	just make my life a little bit simpler
+387.0	my said this is just support press okay
+389.3	then I'm gonna grab my echo 1 & 2 as
+395.0	to this mission now one thing I'm gonna
+396.8	change though is I'm gonna tell them to
+398.4	go full-speed these guys are nuclear I
+400.6	don't care if they make noise they're
+402.1	too far away from the enemy group to be
+403.4	spotted anyway so they're gonna chew to
+405.3	as fast as they can to get into their
+407.7	firing position so all we have to do now
+411.1	is go ahead and do this for the other of
+413.1	craft so the echo 1 & 2 is all set go
+416.7	ahead and I'll let's take a look now
+417.7	this is going to be the p1 20 this is
+419.1	going to be the charlie - where's my
+420.4	charlie - he needs to be under range of
+422.2	72 nautical miles let's go find 72
+426.1	nautical miles nice actually pretty
+427.3	close I'll set it right about and we
+430.5	want to aim down a little bit to make it
+431.9	a little bit more interesting there we
+433.7	go we're gonna set this this is going to
+436.0	be my charlie - that's my charlie - yep
+441.1	I'm gonna set this Waypoint fixed to the
+445.1	enemy group keep in mind if we lose
+446.7	sight of the group our waypoints gonna
+448.3	get a little confused now I'm gonna grab
+449.8	my charlie - who happens to be sitting
+451.2	right here we should be always specific
+455.9	with our missions set this support for
+458.5	us okay keep in mind with support watch
+460.7	your WR A&M Conte you know what these
+462.8	guys broadcasting with radar or
+464.3	something just stupid like that when
+465.4	they get there so I'm gonna do that I'm
+467.1	gonna order him to go full speed to get
+468.5	in position I'm gonna order him to
+469.7	cruise once he gets there
+470.9	that's all looking pretty good close
+472.6	that all right moving on our way so now
+476.3	I feel so bad for this guy he's probably
+478.4	going to get sunk so he needs to be 36
+480.8	nautical miles away from the main group
+482.8	oh I'm sorry man this sucks okay we'll
+486.0	do the best we can though we'll set this
+487.9	136 nautical miles oh what a bummer
+490.2	so this is our poor Charlie one here you
+493.5	know some of the early ships submarines
+496.0	that launched anti-ship missiles
+498.8	actually required to basically surface
+502.3	in order to fire you know we really take
+504.3	it for granted how easy this technology
+506.6	is now so I'm gonna go ahead and create
+508.6	a mission for him this is Charlie one
+510.9	Charl one set this to support again
+513.9	press ok again this is just a mission to
+516.0	get them in position that's all set
+519.0	we're going to order him to get over
+520.7	there as fast as you can we're going to
+522.1	of course order him to cruise once he
+523.4	gets in position
+524.0	that's an enormous distance so I'm not
+526.1	too concerned with it now it's time to
+528.0	deal with
+528.8	I believe the kinder comes next yes the
+531.2	Pinda the kinder has to be 198 nautical
+533.9	miles away that's pretty easy
+535.5	198 would be about right here are we
+540.5	gonna be able to get there in time no
+541.9	we're gonna try we're gonna try so this
+544.5	particular point right here this is
+545.8	gonna be for the Kenda this again is a
+548.5	rocket Cruiser it's a very very very
+550.3	capable rocket Cruiser it just it shoots
+553.4	a lot they don't go very fast so set
+556.7	this to support press okay in the real
+559.6	world by the way you won't have ships
+560.7	over here you might have subs down here
+562.2	you want of airplanes over here you're
+563.6	gonna make it as difficult as possible
+564.9	for the enemies to intercept you so
+567.9	let's set it's a ship we want him to get
+569.2	there as fast as he can and obviously we
+571.4	want him to cruise once he gets into
+572.8	position that's all set that's all set
+574.7	that's all set make sure it's set to the
+576.7	correct bearing type excellent so we're
+581.3	done with the Kenda now we're gonna go
+582.5	ahead and take a look at the KSR v 162
+585.2	nautical miles
+586.1	so now I'd love to shoot them from up
+588.2	here but the realities have issued them
+590.0	from up here they're gonna take forever
+591.0	to get into position they might run out
+592.6	of fuel so that could be problematic so
+595.4	what do we need 162 162 if I select this
+598.8	one we'll put him in the middle here
+600.0	again this is a scenario just for
+601.9	testing here 162 would be right here
+606.6	perfect so this is for the KSR this is
+610.5	for the KSR 5 chief 16 okay okay
+614.7	so I'm going to go ahead again remember
+616.5	to set these guys relative unless of
+618.4	course they're parked or something
+619.5	stupid like that if they're park then it
+621.6	you know that's not so bad if you ask me
+623.2	so now we're gonna go ahead and assign
+625.1	some tuple of 16s to get into position
+626.9	as well 216 K sr5 we're gonna use the
+630.7	support mission again support missions
+632.6	are great ways to get everybody in
+634.5	position let's go get myself the KSR
+637.0	fives
+637.7	again this is why it's always nice if
+639.0	you have notes go ahead and dump all
+640.9	those guys into this mission
+642.1	no airplane at sea for aircraft we're
+646.0	gonna want the deloitte or when they get
+647.3	there single aircraft it's a little
+649.1	awkward but it's gonna work actually
+650.2	pretty well for us okay that one's all
+652.6	set let's go to the next one now we need
+654.5	the KSR too we need to be 108 nautical
+657.4	miles away
+658.6	oh I don't like that very much all right
+661.6	we'll deal we'll put these guys down
+663.1	here but again the Swedish would be
+664.8	pretty annoyed at us for doing this but
+666.6	this is just a scenario we're gonna say
+670.9	KSR what are those twos those are kids
+672.8	are - okay that's art to em - you
+675.4	sixteen again we're just going to go
+678.3	ahead and set this if you forget this
+679.9	step by the way when you're doing
+681.0	something this ridiculous you're going
+682.7	to get very grumpy - chaos are what is
+686.5	this - em again set this to support
+689.1	mission press okay let's get the rest of
+691.6	our badgers don't need them on one third
+693.8	mode that would be nice and frustrating
+695.5	everybody else yeah that's set it's all
+697.4	we needed to do there and then last but
+699.4	not least the KH 22s
+701.8	these are awesome these things haven't
+704.3	it's stupidly long range and they are
+706.2	extremely fast which makes them very
+708.7	deadly so our range here in these is
+711.6	gonna be 194 nautical miles 194 I'm
+714.2	actually gonna put them here I like to
+715.5	put them over here a lot of times if I
+717.1	have the time to do so but for this
+719.1	particular scenario I don't want to
+720.6	waste too much time and have them all
+721.8	run out of fuel before I can actually
+722.9	use them for something keep in mind in
+724.5	the real world we have to do something
+725.7	like that but again this is just a
+727.9	demonstration and it will be a very
+729.6	effective demonstration I promise you
+731.5	alright 194 nautical miles away right
+734.9	there we'll set these guys also to be a
+739.2	fixed bearing again if I didn't rotating
+740.8	bearing they do one of these things when
+742.0	they rotate and this is gonna be for my
+744.1	cage 22s might see 22s
+747.2	all right let's go ahead and set this to
+748.6	support press okay
+751.0	grab my big old group of tupolev 22s
+754.2	my back fires shut that off shut that
+757.1	off of course we had in-flight refueling
+760.6	we can keep them near a long time that's
+762.8	it so now we're ready to go ahead and
+765.9	relax for a minute as everybody gets
+767.5	into position
+771.8	all right let's watch what happens here
+776.8	so I'm gonna update my attack time when
+780.4	I have a better idea of when I actually
+782.5	have to strike
+783.5	like I said 4:30 is probably a pretty
+785.6	good time but it will modify that once I
+787.5	know that everybody's in position no I
+794.3	feel so sorry for this group they're
+796.0	about to get hammer it's so hard
+799.6	alright looks like our airplanes are
+801.6	almost completely in position remember
+803.9	these points move over time which means
+805.8	our airplanes move over time also okay
+808.4	that's one of the great things about
+809.3	command is you can get away with stuff
+810.8	like this and you can see the Allies
+814.7	obviously we've got plenty of aircraft
+816.6	keeping an eye on things and possible
+818.3	nice we did it so now everybody is now
+822.0	in position actually I take that back
+824.6	for some reason or two echoes or being
+826.3	lazy oh look at that now they're in
+828.2	position it was okay it wouldn't have
+831.5	been too bad it looks like our Charlie
+832.9	of course is desperately trying to get
+834.4	in position and obviously our other
+835.9	Charlie hopefully he does not get nailed
+838.3	by one of these US threes or whatever
+840.4	else I can already see some enemies sent
+842.0	over oh he's sitting in the water so
+843.7	that could be bad news for us all right
+845.6	we're ready for the fun part everybody's
+848.2	in position so how do you do this well
+852.1	let's see what time it was 356 we want
+855.5	these missiles to get there as soon as
+857.0	possible
+857.9	so what I'm going to do is I'm gonna go
+859.1	ahead and see our time on target is 430
+860.9	but we know we can probably start
+862.5	launching at 4 o'clock so 4 o'clock
+865.2	let's see 17:44 would be about let's say
+869.5	it's gonna be about 10 after 4:00 I
+871.4	think something like that which gives us
+874.4	a first launch time of 352 no good can
+877.5	we do 15 after 4 does that do what does
+880.7	that do for us so that gets us our first
+882.4	launch time it's going to be at 401
+884.7	let's do 14 and let's go ahead and we're
+889.2	good to go good which means at 4 o'clock
+891.7	of 356 and 16 seconds my apologies nope
+894.8	that's too early I was right the first
+896.7	time there we go so that means at 357
+900.8	and 16 seconds we're gonna have to order
+903.0	the rocket Cruiser kinnda
+904.3	start firing then afterwards our next
+907.2	launcher is going to be this one which
+908.9	is going to be our echos then it is
+910.8	going to be this group this group this
+912.3	group and then last but not least we're
+914.1	going to be firing the piece seventies
+915.6	last so 357 we're gonna go ahead and
+918.9	unpause and oh sorry 357 216 seconds
+922.0	you've got to be precise here we go let
+930.0	the fireworks begin now so I'm gonna
+933.4	grab my Kenda notice by the way the kid
+935.6	is in range all right here we go
+940.3	so how do we arrange we have 16 of these
+943.1	very very very very big missiles very
+945.8	slow missiles to use and plenty of
+947.3	targets I'm just gonna be polite and
+949.0	assign one to each just to make the
+951.4	enemies fire-control have a tougher time
+953.0	I apologize this section of the video
+955.1	will take a minute because there's a
+956.4	quite a bit of missiles I have to
+957.8	allocate here I have no idea what any of
+959.9	these missiles are going towards target
+962.0	wise but again our intelligence is who
+964.1	just that they're all dangerous so hit a
+966.0	bunch of what you got got it
+968.7	okay so skunk four and up that's going
+970.6	to be my next one jack so I'm going to
+972.8	go ahead and unbolt this one our next
+974.7	attack launch is going to be at 401 and
+977.1	it's going to be my echo one and sail so
+979.1	let's go find my echo one and so where's
+980.8	my echo one it so hopefully these guys
+982.0	are up here somewhere
+982.8	oh yeah there's my echo wanted to okay
+985.1	check the time one more time 401 and
+986.7	three seconds pause all right your turn
+999.7	so these guys by the way my problem is
+1002.0	release authorization will not allow
+1004.1	them to attack surface targets
+1005.1	willy-nilly so I think we left somewhere
+1007.1	here so I'm actually going to use two to
+1009.7	each target all right you get two
+1012.3	missiles you get two missiles you get
+1018.2	four missiles why not
+1019.4	again without knowing exactly what I'm
+1021.2	shooting at here I don't mind to too
+1022.8	much check all right now they're gonna
+1024.7	launch their missiles on both this one
+1026.5	our next launch time is going to be four
+1028.7	minutes and six seconds and it's going
+1030.4	to be the KSR - all right who's got
+1033.1	chaos Artoo's that's P sixes you guys
+1036.9	hope that's our chaos our
+1037.9	five these guys must be carrying KSR
+1039.8	twos good so this is going to be the
+1042.1	next group to fire and they're gonna
+1043.4	fire at 4:06 here we go it's gonna be
+1048.7	some fireworks in a second by the way
+1050.8	what do we say four six and twenty two
+1053.6	seconds we got to be precise 406 and 22
+1059.2	okay check it out
+1060.0	these missiles are actually about to
+1061.3	overtake these missiles but we're just
+1062.8	getting started so now we're gonna check
+1065.1	one more time KS r 2m KS r 2m good
+1067.9	manual attack okay I have 18 of these
+1071.2	and basically that many it's gonna be
+1072.8	three it's well it's two missiles each
+1074.7	all right you guys launch you guys
+1078.4	launch you guys launch whoa whatever
+1082.3	sorry about that let's make sure I'm
+1086.5	launching all my weapons here all right
+1091.2	let's go ahead do that let's go ahead
+1092.7	there there okay I apologize already
+1094.9	just kind of take a second to kind of
+1097.0	sip through but when you do this in the
+1098.5	real world you have to actually
+1099.7	coordinate regular troops for this this
+1101.8	could take a very very serious amount of
+1103.6	coordination on your part to do so I'm
+1105.8	gonna be assigning two groups there each
+1107.7	let's go ahead and go to this one of
+1109.3	course we don't want to miss anything
+1110.6	let's go to the next guy let's go ahead
+1112.5	and give him two more missiles go ahead
+1114.1	and grab this one grab this one give me
+1116.0	two of those give me two of those again
+1118.4	it helps if you know what you're
+1119.3	shooting at so you know what you're
+1120.4	wasting your missiles on obviously it
+1122.3	was an Aegis destroyer or something like
+1124.1	that I probably want to put most of
+1126.0	these missiles into the side of that
+1127.1	target first let's go ahead and just
+1129.6	allocate the rest like that check nice
+1133.4	so for our 16 22 our next launch is
+1136.2	going to be 408 and 27 and it's going to
+1138.8	be the Charlie - let's go find the
+1141.3	Charlie - there is 408 and woe for 8 and
+1145.6	27 seconds go
+1151.3	got it 408 27 seconds now the trolley
+1154.9	fires notice these missiles are arriving
+1157.4	as the charlie is firing up he's in
+1160.0	position I told you to sit position
+1160.9	contraption our Lee all right I've got
+1163.0	eight missiles will do a groups of two
+1164.9	here and you're gonna ask yourself later
+1172.1	on what was the most effective weapon of
+1174.3	this group all right so that is all set
+1176.5	our next launch is going to be 409 in 57
+1179.1	seconds and that is going to be our
+1180.7	backfires backfires I said there's our
+1185.1	backfires check the time one more time
+1186.8	409 fifty-seven these are the fun
+1192.7	missiles by the way pause all right
+1195.9	backfires do the deed Wow
+1198.9	okay grab the next skunk now keep in
+1210.1	mind some of these missiles are going to
+1211.9	take a nun straight path towards the
+1214.6	target and as a result it's going to
+1216.3	throw off all this wonderful work that
+1218.0	I'm doing here to try to time this
+1219.8	attack as precisely as possible it's
+1222.9	kind of a pain in the butt but what are
+1224.3	you supposed to do right all right all
+1227.2	those guys go ahead and grab this one
+1229.3	grab this one grab this one go to the
+1233.2	next one grab this one again without
+1236.3	knowing what I'm shooting at I'm just
+1237.5	kind of spreading the wealth so to speak
+1239.3	it looks like I have four targets and
+1241.1	four Badgers left or backfires it should
+1243.3	say the Beck fire Bulmer all right nice
+1248.5	excellent well done well done well done
+1250.5	all right our next attack is at four
+1252.7	minutes ten at four o'clock ten second
+1254.8	ten minutes five seconds there we go
+1256.5	pause pause check so this is going to be
+1260.6	our tuple of sixteen these are the chaos
+1262.4	start 200 I don't mess that no no no I'm
+1265.0	good I'm good this is the KSR fives my
+1266.8	bed I believe these are the KSR fives
+1268.9	indeed all right let's do it again hey
+1273.1	we've been able to identify people now
+1276.0	of course now I'm just wasting missiles
+1278.2	and things I don't need to waste
+1279.1	missiles on but this is just a
+1281.1	demonstration what are you supposed to
+1282.4	do anyway obviously a modern time
+1285.0	this is slightly trickier to pull off
+1286.7	and by the way good luck with the Aegis
+1289.3	cruisers because if they have a pair of
+1290.6	those you're never going to get a
+1292.2	missile in obviously if we did something
+1294.3	like this the it's not gonna be very
+1296.7	much fun for anybody so we're gonna grab
+1299.3	the badgers kind of grab the Farragut
+1301.4	now this poor guy is about to get hit so
+1303.5	hard he's not gonna know what to do with
+1304.9	himself
+1305.3	that being said don't underestimate
+1306.5	enemy air defense Americans are pretty
+1309.0	good at that
+1310.3	grab all right grab this grab the baddie
+1313.7	now imagine in the real world having to
+1315.1	work this out on a piece of paper that's
+1318.9	good set this up go ahead and grab skunk
+1321.1	ribbon I have no idea what that is but
+1322.7	we'll find out and though just a moment
+1324.2	close that takes care of our kiss our
+1327.8	fives and last but not least is our
+1329.4	Charlie one with the P 70s where is that
+1331.9	where's Charlie one did Charlie want to
+1334.0	get sunk no but there's about a thousand
+1337.1	people about to sink him anyway
+1338.4	so he's got to get sunk like I promised
+1340.3	and he's going to be sunk a 411 is when
+1342.8	we need to launch is what 411 and 24
+1345.5	seconds for 11-inch 24 seconds she did
+1351.5	the sound effects for 11
+1360.0	Plus oh it's a second late all right
+1363.1	lock under those guys now I have a
+1364.7	couple weapons left and you get a
+1368.1	missile and you get a missile and you
+1369.9	get a missile and you get a missile well
+1377.5	apparently I just fired away comer Adam
+1379.0	oh well and that's it so all of our
+1381.6	missile carriers have a check one person
+1383.0	I have launched and theoretically all
+1385.8	these missiles despite the fact they're
+1387.9	coming from 20 different sources you
+1389.6	know five different sources should
+1391.3	arrive at the same time let's see how
+1393.0	things look like for an Americans
+1394.3	perspective look at that notice some of
+1400.8	these missiles look at how fast they're
+1403.1	overtaking these missiles now these were
+1406.0	the cruise missiles these were actually
+1407.4	missiles that we launched earlier and
+1409.3	these are the ones that came from the
+1410.9	rocket Cruiser the kinnda so look at how
+1413.1	long it took them to get over here even
+1415.2	though everybody else is arriving at
+1416.5	about the same time now as you probably
+1418.4	recall our time on target was supposed
+1420.5	to be 4:15 that's three minutes from now
+1424.5	here we go
+1425.8	oh man look at how well time do these
+1429.1	missiles were actually we did a really
+1431.6	nice job this time you can see the f4
+1436.0	phantom desperately trying to shoot down
+1437.6	as much as again here they come
+1445.5	[Laughter]
+1452.2	and here we go of course if I were an
+1458.1	ice developer a nice youtuber type I'd
+1461.5	probably put the 3d view on so you could
+1463.4	really watch what this looks like from
+1465.2	the perspective of the poor Americans at
+1466.8	the moment zoom out a little bit so you
+1469.6	can appreciate how many missiles are
+1471.2	arriving at the same time 30 seconds is
+1473.3	considered pretty much the standard as
+1475.0	far as you did a good job let's go ahead
+1478.7	and grab the sinking u.s.c van
+1480.8	Enterprise here just see what it looks
+1483.5	like uh it's terrifying
+1487.0	so yes man listen to those sounds and
+1491.8	that is the end of that carry about a
+1493.5	group I believe he's doing okay the
+1495.1	Sacramento still lives and apparently
+1497.5	this guy does still resist them a hand
+1499.9	speed up time just a little bit here
+1502.2	close that Oh trashed
+1507.9	I bet he's feeling pretty lucky right
+1510.8	now his 5-inch guns are gonna start
+1513.3	firing at about half a second oh no he's
+1514.9	got some sea sparrows it's not gonna
+1517.1	protect them there's just so much
+1519.2	saturation and that's it Wow okay
+1528.2	let's go ahead and pause for a second
+1530.0	here guys we'll let the rest of those
+1531.7	missiles go choo-choo and go zipping by
+1534.7	there's nothing left to sync guys we did
+1539.2	a pretty good job there within a couple
+1540.3	minutes of each other so that's the
+1542.0	basic gist of how you're going to
+1544.0	coordinate an attack like that I noticed
+1545.8	some of your immediately gonna say can I
+1546.9	get a copy of this honestly go earlier
+1549.1	in the video and go take a look at that
+1550.5	really really neat setup that that other
+1552.1	guy did he did a better job
+1553.4	so we basically launched a bow or I
+1555.7	don't even want to know that's gonna be
+1556.8	about 130 anti-ship missiles what do
+1559.4	they lose everything
+1562.0	what do they expend check this out
+1563.6	there's always one number that's huge
+1565.6	yeah there it is right there
+1567.4	and that is the end of the American
+1569.1	fleet all right hopefully you enjoyed
+1570.8	that scenario scenario I should say a
+1572.5	tutorial it's a neat strategy but keep
+1574.9	in mind in the real world no player
+1576.4	would be stupid enough to just sort of
+1577.8	hang around and let people just line up
+1580.4	and fire you're gonna have to come up
+1581.9	with creative ways to sort of time
+1583.8	everything cuz I'm old
+1584.7	Dainius li to be able to affect an
+1586.7	attack that coordinated enjoy

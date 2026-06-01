@@ -1,0 +1,950 @@
+0.0	hello everyone in today's command
+2.0	tutorial we're going to be taking a look
+3.4	at weapon release authorization and some
+6.2	of the consequences as well as the
+8.1	benefits as well as how you need to mix
+10.3	it with your doctrine settings in order
+11.7	to effectively employ your units so our
+14.2	Center here today is a relatively
+15.5	straightforward no we're sitting here in
+16.9	lovely New Zealand I've actually got to
+19.4	travel to Australia someday I hope to
+21.3	get all the way out to New Zealand we
+22.8	were right down here on Melbourne which
+24.4	was really really cool
+25.4	awesome people by the way but that being
+27.4	said so in today's exercise we're going
+29.5	to be exploring kind of the right way in
+31.0	the wrong way to approach WRA so let's
+34.0	go ahead and take a look so when you
+35.8	first bring up your doctrine page at at
+37.9	WRA you're going to get a menu that
+39.4	looks like this we've talked quite a bit
+41.0	about this already so we're going to
+42.4	scoot over to here so the weapon release
+45.0	authorization is combined with your
+48.0	general doctrine setting in order to
+49.7	decide when a target can fire a weapon
+52.3	how many weapons it needs to fire and at
+55.0	what types of targets it can launch that
+57.0	weapon at now you can just think about
+58.7	that for second realize this can have a
+60.3	massive massive impact on how
+62.7	effectively you can ploy weapons now one
+65.1	thing that you probably heard a million
+66.4	times is the fact that you know masters
+68.1	always study logistics versus tactics
+70.5	logistics is a huge piece of this
+72.9	because if you do this well you'll never
+75.2	run into a situation where you can run
+76.9	out of ammunition and still have nice
+78.6	juicy targets you know there's no kill
+80.4	like overkill I get that but in a lot of
+82.4	scenarios you simply just don't have the
+83.8	time to go back get new guns and come
+86.1	back as opposed to having longer like a
+87.9	30-day campaign we keep going back and
+89.9	forth back and forth constantly
+90.9	reloading so anyway let's go ahead take
+92.8	a look at this so I'm gonna grab myself
+94.6	a classic example of an air-to-air
+96.4	weapon so what are we looking at right
+98.1	here the stuff on the left tells us the
+100.3	types of targets from engaging this is
+102.6	how many weapons were gonna fire per
+104.5	attack now you'll notice here if we're
+107.2	using an r60 em we're going to use one
+109.5	round against each one of these
+111.6	different types of aircraft now you're
+113.8	sitting there going one round
+115.4	seriously well there are 60 is not a
+118.7	terrible weapon as a matter of fact if
+121.1	you scoot scoot over to the database
+122.7	real quick and you're to type in the AR
+124.6	60m you probably notice that it's
+127.0	percent of kill is 80 percent that is an
+130.8	extremely big number as far as
+133.3	it's actually doing damage if you fire
+135.3	it within its normal launch parameters
+137.4	now that's cool except how much damage
+141.6	does this thing do
+143.1	1.2 damage so the default wor a already
+147.8	has a limitation even though there's a
+149.4	good probability of actually hitting the
+150.9	target we might not have a good
+152.7	probability of destroying a target which
+155.6	brings us to our first major point here
+157.4	you want to make sure that your weapons
+159.0	per salvo is going to line up with both
+161.5	the percent of chance to kill as well as
+163.7	the actual damage that that particular
+165.0	weapon can cause so in this particular
+167.6	case you can see like I said if it's an
+169.6	unknown contact to shoot whatever you
+171.0	got however if you come down here to
+173.0	bombers and things like that you'll
+174.5	notice by default it's only launching a
+176.6	single weapon at them now if we want to
+179.1	get ourselves a fairly typical bomber
+180.6	let's go get at each one of these
+182.7	backfire B's here you'll notice that
+184.9	they have let's see here 20 damage
+188.4	points which meant if you were to fire
+191.1	this using this WRA after the first
+193.5	missile hit the aircraft would have to
+195.6	reattach meanwhile other people are
+198.0	shooting back at the launching aircraft
+199.4	now if this were a little bit earlier
+201.6	and you're launching things like the r
+203.1	3s you're talking very low P OK's now
+207.1	this also applies to Sam units so kind
+208.8	of keep that in the back of your head so
+210.3	if you're designing a mission or if
+211.9	you're planning think about how much
+213.5	damage you have to cause first then
+215.8	start thinking about how difficult like
+217.2	I said it is to actually hit the target
+218.6	so for example if I were setting this up
+220.8	right now I'd probably come in here and
+222.6	set these all to two rounds keep in mind
+224.7	you don't need to do this if you're not
+226.2	doing this for specific missions that
+228.3	involve you having to shoot down a
+229.7	bombers for example obviously if it's a
+231.8	reconnaissance aircraft you know we can
+233.4	set it to one or not configured now one
+235.6	thing you want to watch out for is
+236.8	helicopters and guided weapons guided
+239.2	weapons are cool because they come in
+240.5	different flavors as you know you have
+242.2	the kind set attack ships you have very
+244.1	slow missiles you have very very fast
+245.7	missiles and of course you're the most
+247.1	terrifying of all which are the
+248.5	ballistic missiles
+249.8	we're gonna see a little bit of that
+250.9	little later on so that is the weapons
+253.1	per salvo we'll do a practical example
+254.9	of this in a minute second item is
+257.4	called shooters per salvo this basically
+259.6	says how many people should try to
+261.2	attack the target at a time now this is
+263.3	something that backfires a lot and
+265.5	you'll see that a little later on
+267.1	basically this says that if an air
+269.1	target is engaged with an aircraft
+270.8	carrying in our 60m it will launch a
+273.2	single round at it but only a single
+275.2	aircraft will attack it can you see the
+277.4	problem with that already let's take a
+279.3	look at the options the first one is
+280.8	firing up weapons from enough units to
+282.6	fill the Salvos require me this is
+284.7	actually pretty cool if you have three
+286.2	ese two batteries all attacking the same
+288.1	target you can set it so that let's say
+290.5	we're firing three missiles that you get
+292.1	one missile launched per battery by
+295.1	setting this to this option now if you
+297.7	set it to one unit that means only one
+299.7	aircraft is going to fire one missile
+301.3	now if you wanna have a little bit of
+302.7	fun you can do something like this so
+305.1	now two units are gonna fire one missile
+307.5	which is gonna be a little bit more
+309.2	effective especially if you have that
+311.0	many of course you could set this to
+312.6	four units which is really really fun to
+314.5	play with if you're using laser-guided
+316.4	bombs and you want to kind of pepper
+318.2	something that's is very difficult to
+319.8	kill keep in mind I can always do fire
+322.1	enough weapons and set this to two
+324.0	meaning either this aircraft will fire
+326.6	both missiles or he and his buddy will
+330.0	fire a missile in order to make sure
+331.9	that those weapon quantities are met so
+334.1	this is a column we're gonna take a look
+335.3	at a little later on just be careful
+337.0	because these two items feed each other
+338.7	by the way a salvo is an engagement
+342.0	which means if you come back here to the
+343.9	weapon state you need to think about
+345.9	that so for example if I'm carrying for
+348.1	our 60s and I'm only programmed to fire
+350.1	one of them if I were set to shotgun
+352.5	that would simply mean that that's it I
+355.0	only get that one attack even though I
+356.6	have three missiles still hanging off my
+358.1	wingtips so you have to be careful with
+360.2	that that's kind of a common little
+361.5	whoopsie I've done it a million times
+363.0	especially with strike aircraft all
+365.4	right
+365.7	automatic firing range if the aircraft
+367.7	is going to attack with this weapon this
+369.5	is basically the I'm going to fire at it
+371.6	weight range keep in mind if you're
+373.4	doing a manual attack you can always
+374.9	attack at max distance it will ignore
+377.1	this when you do a manual attack so keep
+379.0	that in mind so what does this look like
+380.9	well for this particular weapon you can
+383.1	see we have a couple options here we
+384.2	have the system default which is max
+385.7	range keep in mind this takes into
+387.7	account the dynamic launch zone of a
+389.6	weapon so if the enemy target is flying
+391.6	away even though they're in range the
+393.9	aircraft launching is smart enough to
+395.3	know not to fire unless he's actually
+397.3	going to get the missile to the target
+399.1	kind of keep that in mind here obviously
+401.3	if you don't like that watch out for the
+402.9	maintain standoff option over here also
+404.9	those will feed each other and then
+406.8	finally that's what this commas final
+409.1	nation saying over here in self defense
+411.0	says ignore all this junk in attack at
+413.9	this distance no matter what so for
+416.1	example if I were attacking somebody and
+418.0	somebody came out of nowhere this
+419.0	usually applies to Sam's more than
+420.3	anything this would be the range to go
+422.4	ahead and engage in other targets that
+425.3	are immediately threatening it
+426.3	regardless of what my regular mission is
+428.8	set to think of it as an attack of
+430.7	opportunity so how does this all play
+433.8	out in the game well let's go ahead and
+435.4	take a look at things from a new
+436.8	zealand's perspective or real quick so
+438.9	it makes a little bit more sense so I
+440.7	have myself a beautiful hawk battery
+442.6	which by the way is going to be an
+443.8	awesome example of how to do this right
+445.4	now to do this wrong you'll notice that
+447.6	we have a pretty decent firing area the
+450.6	goal of this hawk battery is to protect
+452.5	this air place right here so taking a
+455.6	look real quickly where's the attack
+458.0	gonna come from in this case obviously
+459.8	you've already spotted attack aircraft
+461.0	so it's kind of obvious but if you were
+463.7	to flip over to the relief layer excuse
+466.9	me you will notice there's this
+468.5	beautiful mountain range for enemy
+470.4	aircraft to hide behind which means if
+473.1	we were to use this weapon at its
+474.6	maximum range any bad guy with any sense
+477.3	would basically porpoise behind this or
+479.3	even hide in these really really tight
+480.8	channels using helicopters making the
+482.9	attack at his Hawk better useless now
+485.1	imagine for example that our Hawk
+486.7	battery was allocated here obviously you
+488.7	can't put the hawk better here this is
+490.0	water I imagine if we parked him in the
+492.6	middle let's actually do that real quick
+493.8	look at his range there would be a
+496.0	million places for enemy aircraft to
+498.0	hide and he would be wasting ammunition
+499.9	trying to fire at them so one of the
+502.1	quickest and easiest ways to get around
+503.7	this is to go to your WRA
+506.2	go to your Hawks and simply tell it in
+509.0	this automatic firing range to set it to
+511.5	arrange less than that mountain range
+513.6	that's already there obviously bombers
+515.9	aren't as maneuverable but there's
+517.3	nothing stopping me from having a b-52
+518.8	here so in this case I can actually
+520.8	measure that real quick that's 15
+522.4	nautical miles if I intended to use this
+524.5	Sam in this valley obviously it's in the
+526.7	middle of water but this is an example
+528.2	we could come here and tell it to go
+530.6	ahead and only attack targets
+532.4	fifteen nautical miles away which means
+534.5	the enemy would be well within the kill
+536.4	zone before we fire that's really really
+539.7	important another point I want to say
+541.8	too is one of the cool techniques here
+543.6	is you can actually if you have a system
+545.3	let me go borrow something really really
+546.9	scary let's get an S 400 let's say we
+549.4	have an S 400 we'll get the big one that
+553.2	looks pretty good to me
+554.0	look at the range of this keep in mind
+556.4	the curvature the horizon kicks in right
+558.4	here which means half of this range
+560.2	would be wasted even though they're
+561.5	active guided weapons a smart player can
+563.6	actually do one of these kind of things
+564.8	and waste the entire battery's
+566.8	ammunition with no danger so what you
+569.0	can do is you can set the doctrine
+570.6	settings with the WRA like I was just
+572.4	saying to a significantly shorter
+575.1	distance actually we don't want the a we
+576.8	want the B there we go instead of doing
+579.5	all 200 miles we could set it to 50
+581.5	nautical miles which would now mean that
+584.1	any aircraft that is within range is has
+586.8	nowhere to go even if it was a very very
+589.1	fast aircraft that attempted duck behind
+591.1	the radar horizon so this is a great way
+593.5	to prevent you from wasting ammunition
+595.3	obviously in this scenario looking
+597.1	really quickly if I did have this system
+599.3	here I don't think it would have a lot
+600.9	of value ordering it to attack any
+602.8	targets probably pass this mountain
+604.6	range over here unless I knew I was
+606.4	dealing with ballistic missiles or
+607.6	something like that so kind of watch out
+609.7	for that as well that's a common mistake
+611.2	even in our little Valley down here it's
+613.6	probably it's probably worth leaving him
+616.1	alone now another point I want to throw
+618.4	out really really quickly one thinking
+620.0	about it is when you're doing your wor a
+622.0	make sure that the kinds of targets
+624.3	you're engaging makes sense so for
+626.4	example these are guided weapons how
+628.0	many missiles is it launching at a
+629.2	guided weapon
+629.8	the default is two okay how accurate is
+633.1	an eye hawk let's go take a look real
+634.7	quickly we need the weapon itself let me
+637.4	borrow that real fast and it's a 65%
+640.5	chance so let's see here
+643.0	small missiles have a size modifier of
+647.4	minus 25 I think and they also have a
+649.0	speed modifier of minus 15% so 65 minus
+652.7	25 what are you gonna end up with about
+654.5	40 minus 15 that's not cool that's a 25%
+657.8	chance hit per missile now I don't know
+660.7	about you but if I'm really determined
+662.4	to attack a guided missile with a hawk
+664.8	battery I'm
+665.9	never ever going to hit it with just two
+668.2	rounds you're gonna want to go ahead and
+669.7	change that as a matter of fact I'm
+671.1	gonna change that because it's gonna
+672.6	make things interesting
+673.7	keep in mind you need to balance the
+675.2	need of running out of ammunition with
+676.8	the need of protecting itself now a lot
+679.3	of classic legacy batteries once they
+681.2	get attacked by modern things like harm
+683.0	missiles for example you're gonna have
+685.2	to get as many shots off against the
+687.3	targets that are actually dangerous as a
+688.9	matter of fact what I will actually do
+690.4	in that situation is that will order the
+692.4	san battery not to fire at guided
+694.6	weapons and only attack targets that are
+697.1	valuable keep in mind in the Vietnam War
+698.8	it's towards the end the SI toos es 75 s
+701.8	order to only attack bombers and leave
+704.1	everybody else alone because those
+706.0	weapons were so valuable and they were
+707.5	running out of them so kind of keep that
+709.2	in the back of your head
+710.0	I'm actually gonna leave this at 3
+711.4	because it's gonna give us a good
+712.3	example in a little later on ok looking
+715.9	pretty good so now let's go ahead and
+717.7	click that layer off and we're gonna see
+719.9	what happens when we do this right and
+721.3	when we do this wrong so right now I've
+723.6	got myself a pretty good sized strike
+725.5	package on its way to this nice little
+727.8	airport here it's made up of Sukhoi 24
+730.3	m/s and they're escorted by Sukhoi 24
+732.8	m/s and they also have some I believe
+735.6	their Sukhoi 27 so yeah kind of bringing
+737.6	up the rear in case your attacks pretty
+739.7	standard strike package now the way I
+741.9	set this up is pretty standard I grouped
+743.7	them two missions I set it all up I made
+745.5	sure I'm only attacking stuff that's
+746.7	valuable set it off a line and I've left
+749.4	the WRA alone so these bombers are going
+753.1	to tack things the way that they want to
+755.1	basically do by default well let's watch
+758.0	what happens
+761.0	I'm loving this new x 15 by the way in
+764.9	case any of the devs are watching which
+766.7	they're probably not by the way whether
+768.3	it's on our side today because we can
+770.0	get above the clouds to make
+771.5	identification of us more difficult of
+774.7	course looking a bad timing this is ever
+779.0	being watched at oh boy one of you
+783.1	groups is supposed to have the
+784.4	anti-radiation missile what are you
+786.1	doing what are you doing so these guys
+787.6	only like 50 feet off the ground
+788.8	obviously an AI Hawk is not the greatest
+791.5	weapon um you guys gonna fire back at
+794.1	that are you just gonna sit here
+795.3	thinking about it
+798.5	Lawson well they got one of the bombs
+801.1	off oh geez
+802.6	finally why always suppress your enemy's
+804.5	targets with seed missions separately
+807.3	from using them as escorts otherwise you
+809.2	get this embarrassment who watch this
+810.4	watch this it'll launch three missiles
+813.0	at that oh maybe not haha shut his radar
+819.4	off haha hate it when that happens
+823.1	alright let's continue with the
+824.7	fireworks I think we got one of them
+828.9	yeah we're dropping some bombs uh drop
+831.2	it's a bomb strapped it's a bombs do it
+833.1	a little pass and I believe they're all
+834.3	heading back to refuel because the
+836.2	distance to Australia is a little bit
+837.8	longer than I remember it being by the
+839.9	way you're noticing that these guys are
+841.5	basically just kind of hanging out doing
+842.9	all right get out of here scoop scoop
+846.1	alright let's see how well we did well
+851.5	we got the hawk which is good and it
+853.5	looks like we got one two three four
+855.5	five six seven hits and total damage
+859.2	let's go ahead and take a look at losses
+860.8	in expenditures let's see here we got
+863.4	three and we didn't know we got a hangar
+866.3	we got a hangar and we also got quite a
+867.9	few aircraft it actually wasn't that bad
+869.5	of a run now if you think about it
+871.8	though how many Sukhoi 24s dropped how
+874.5	many sets of bombs which brings me to my
+876.7	next point
+877.4	the default WRA for all bombs is going
+880.6	to leave you attacking with every
+882.3	unguided bomb you have on the deck
+884.5	coupled with attacking as many as needs
+887.5	to salvo requirement which can leave you
+889.6	with the situation where bombers will
+891.1	come in and all attack the same target
+893.6	if the Bombers aren't tight enough
+895.1	groups what'll happen is they will
+896.6	spread out to individual targets but if
+898.8	you're interested in is spreading the
+900.1	wealth so to speak
+901.1	the default wor a simply does not work
+903.8	so I'm gonna go ahead and reload the
+905.3	mission real quick there we go and
+910.5	switch back to not Anzac looks good
+913.8	ah let's see aircraft are no longer
+916.1	enroute because that was just an example
+917.5	so let's go ahead and see what happens
+920.1	if we do a similar mission but this time
+922.1	we adjust the WRA somebody going to
+924.6	create a new mission I'm gonna call this
+926.1	strike it again
+927.4	strike it well
+929.4	I'll set this to land strike and I
+931.8	happen to have a big pack of these
+933.5	yak-38 forgers which is actually gonna
+936.0	be really helpful for me so what I'm
+937.9	gonna do is I'm gonna grab all these
+940.7	guys go ahead and throw them in groups
+943.4	like this and I'm gonna make them in
+945.1	sections of six you're sitting there
+947.2	going why you making them a sections of
+948.7	sex the reason I'm doing that is because
+950.8	I want to make sure that there's enough
+952.4	of them so that when they drop their
+954.2	bombs they do it simultaneously and this
+957.3	will make sense in a minute
+958.3	so actually what this really is is a
+960.2	strike at runway so let's go ahead and
+962.5	create a new mission we're gonna call
+964.7	this strike instead of runway we're
+966.8	gonna call this strike hair's go land
+969.6	strike I'll go ahead and grab my
+972.3	unguided weapons that looks pretty good
+976.1	right here and now here's where your
+978.2	trap starts if I set my sections to be
+980.9	single aircraft I'm gonna end up
+982.6	attacking the same hangar twelve times
+984.9	if I set this to sections I'm gonna end
+987.1	up attacking it six times why well if
+989.5	you take a look at the doctrine these
+991.1	aircraft are programmed to dump their
+992.7	entire stack on the first thing they see
+995.3	which means the first thing they see
+998.6	will be attacked not killed then the
+1000.8	next group will come in and attack the
+1002.3	exact same thing which is gonna get
+1004.6	frustrating fast so anyway let's
+1006.7	continue setting everything up that
+1007.8	looks pretty good to me
+1008.8	go ahead and create one way or mission
+1010.1	oh wait I never actually added anything
+1011.7	in the map let's go ahead add that to
+1013.8	the map real quickly all right we don't
+1015.2	need the runways obviously we've
+1016.6	selected let's go ahead and get rid of
+1018.5	all this obviously we wouldn't normally
+1020.7	be attacking things like this but again
+1023.8	this is just for an example it's good
+1025.5	get that that move you okay it looks
+1028.4	pretty good to me and then last but not
+1030.7	least let's create one more mission
+1033.4	strike
+1034.8	let's be tio2 land strike and now let's
+1039.8	get our precision guided munitions going
+1044.0	back to my strike at hangars so like I
+1046.2	was saying a minute ago if we just
+1047.4	attack we're gonna end up destroying
+1048.6	everything in the corner so what I'm
+1050.1	gonna do is I'm gonna go to Mission
+1051.3	Doctrine how much damage does your
+1053.7	average hangar actually take well if you
+1056.3	actually go to the database real quick
+1057.8	go to facilities let's say hangar medium
+1061.4	aircraft hangar
+1062.7	how much damage does this thing take 600
+1065.2	keep it in the back of your head for a
+1066.3	second
+1066.7	fat 500 woo it's a fab there we go how
+1072.4	much damage does this cause 319 so it
+1075.9	takes two bombs to kill a hanger keep in
+1078.0	mind accuracy is an issue here so we
+1079.5	need to keep that in mind however if we
+1081.6	just damage the hanger if there's
+1083.8	anything inside of it it's going to get
+1085.1	splattered which means that when I plan
+1087.4	this attack instead of dumping your
+1089.0	entire stack on each hanger I'm gonna
+1091.6	order it to drop four rounds now if I
+1095.1	just press this and walked away I'd only
+1097.1	be attacking a surface contact with four
+1098.8	rounds no good you want to make sure you
+1101.0	set the land type to the actual thing
+1102.8	you're trying to kill here so I'm gonna
+1104.4	set this to four rounds do doop do
+1107.7	remember a facility I guess it is
+1109.7	technically a row my facility it looks
+1111.3	good looks good looks good okay let's do
+1114.4	mobile target and I don't think we're
+1115.5	gonna talking about with targets now how
+1117.2	many shooters are you gonna want to use
+1118.8	if we do fire weapons to meet the
+1121.3	requirement there's a good chance
+1122.5	they're gonna come around again and
+1123.8	maybe attack the same target so what I'm
+1125.5	gonna do instead is come down here and
+1127.0	tell them to only attack with a single
+1129.0	unit at a time do you see what I just
+1130.8	did that means I've increased the number
+1133.9	of targets that are actually going to be
+1135.7	attacked
+1136.2	obviously yak-38 is not the most
+1138.2	precision guided platform for unguided
+1140.1	bombs but it'll demonstrate my purpose I
+1142.3	don't need to change my automatic firing
+1143.5	range jump it back to my runway folks I
+1145.9	want to make sure they're really really
+1146.8	big groups by the way how big of a group
+1148.7	should i attack then if I'm going to try
+1150.9	to spread everybody out in this case you
+1153.0	can shrink it down really really small
+1154.5	so I'm going to knock this down to
+1155.8	groups of three of course if we do
+1157.8	groups of three that means they're gonna
+1158.9	be as hacking in little splurts so I
+1161.1	guess I'm gonna go back up to four let's
+1163.5	see it strike it runway obviously you
+1165.2	need big groups attacking the runway
+1166.7	simultaneously and then the strike
+1168.6	targets of opportunity this particular
+1170.9	group I can put these guys in very small
+1172.7	groups actually I went up them up to
+1174.6	four just because I want to attack
+1176.0	simultaneously for maximum a Ralph X I
+1178.2	thought that matters
+1178.9	alright we're gonna be targeting all of
+1181.3	the ammo and all of the gas at this
+1183.1	particular Airport with these guys
+1184.5	alright looks good
+1185.5	so how since these are precision guided
+1189.0	munitions and a s tend to be precise how
+1191.8	many are we needing to use here so let's
+1194.2	go to s ten real fast
+1195.3	the default is too long
+1196.6	- if you go down to land structures the
+1198.7	default is also designed to long -
+1200.7	you're gonna notice something new here
+1202.5	though inherited targets missile defense
+1205.4	value what's the missile defense value
+1207.7	well this is where things get a little
+1209.5	complicated let's go get my Hawk real
+1211.5	quick you're gonna notice all our
+1214.3	facilities have something called a
+1216.4	missile defense value this refers to how
+1218.8	many missiles of this type it's expected
+1221.0	to take to target a building now since
+1223.8	we're attacking buildings that can't
+1225.4	shoot back if we allowed this to go as
+1228.4	it's set we'd end up firing a whopping
+1231.3	11 missiles into a hawk battery now if I
+1235.4	grab a hanger real quick
+1236.7	this one's program 2/4 which would mean
+1239.8	I'd be launching four of my issed ends
+1242.4	which are very expensive weapons by the
+1244.2	way and I don't have an unlimited supply
+1245.2	them which would be a complete overkill
+1247.5	of an attack so therefore this system is
+1251.4	really really good if I were attacking
+1252.9	like ships or ground targets like tanks
+1255.2	but it's always useless against these
+1257.0	fixed non defended targets I'll show you
+1259.3	another demonstration in just a second
+1261.0	so to me that means okay so how much is
+1263.5	it going to take for an average ammo
+1265.2	revetment to actually do damage here so
+1267.6	go back to the facility with a.m. oh I
+1269.6	think it's ammo revetment
+1271.3	- which is actually not bad what's the
+1274.4	damage points in this real quickly
+1275.8	damage points why can I not see it you
+1280.0	guys are all looking there's right in
+1281.2	your face you can't miss it
+1283.7	there is 300 how much does an AAS 10 - I
+1287.5	think this is one of the few times it
+1289.6	actually works the way it's supposed to
+1290.7	be let's take a look at a s 10 does 140
+1294.1	Oh so it's actually gonna take three
+1296.9	missiles to blow up a Roman ah they
+1299.4	caught me but at the same time it's
+1301.1	important that you approach things like
+1302.4	that especially if you're using LG bees
+1303.9	so let's go ahead and set this to three
+1305.9	and I'm gonna leave it to fire enough
+1308.5	weapons to meet the thing again this is
+1310.8	just having to get around this because
+1312.1	my targets are so darn durable all right
+1315.0	three three three we don't need to use
+1316.3	missile defense fire weapons yep looks
+1318.6	good from a facility notice this is
+1320.8	don't use it against this weapon site we
+1322.5	need to use three cuz that's how much
+1323.7	we're gonna need to kill the ammo again
+1325.4	it's not a runway facility I'm just
+1326.7	doing it because I'm lazy
+1330.4	now imagine for a second s10 did the
+1332.7	equivalent of a thousand damage if we
+1334.7	attacked it at its missile defense value
+1336.6	we'd be doubling the amount of damage we
+1338.4	actually need to cause then we could
+1340.4	scoot scoot through here and set these
+1341.8	to one unit at a time
+1343.2	meaning when this group attacks they're
+1345.2	going to be shooting out a blitz of
+1347.2	missiles all over the place and I'll
+1348.7	show you kind of a fun way to play with
+1349.8	that later on okay so I'm actually
+1351.6	pretty happy with that everything seems
+1353.2	to be pretty much all set by section
+1355.4	sizes of the size my targets of
+1357.1	opportunity I can actually up this to
+1358.5	six because remember they're going to be
+1360.1	launching and helping each other out
+1361.3	with the attack that's looking good
+1362.7	refueling supports looking good
+1364.0	everything is looking good I'm actually
+1365.4	gonna pause now let me bring you to
+1368.0	another issue you're gonna have with the
+1369.9	WRA so I'm gonna get myself a big 25 BM
+1373.0	real quick yeah that's the one I'm
+1376.1	looking for and I'm gonna get myself a
+1378.8	cage 58 this is a spectacularly
+1381.6	long-range anti-radiation missile I'm
+1384.1	talking a legend so if I order this
+1387.3	mig-25 actually gonna order him to go
+1389.2	over here he's probably like I need to
+1390.5	return to base not a you'll not enough
+1392.6	people that's okay don't worry about it
+1394.5	let's say I want him to attack the radar
+1397.1	station on the top of this hill keep in
+1399.0	mind he's got a long flight to get here
+1401.1	so I'm just gonna go ahead and do one of
+1402.3	these things so a search radar how many
+1405.5	missiles does it take to kill a search
+1407.0	radar well according to him it takes one
+1413.6	so if we were to click on the search
+1415.5	radar and check the missile defense
+1417.0	value you'll see it says one not bad
+1421.9	right so now that missile is on its way
+1423.8	it's gonna go caused some trouble I
+1425.1	might as well go have him engage
+1426.1	whatever this radar is over here why not
+1428.2	right
+1429.3	so one missile launched no problem now
+1432.1	what happens when he goes to attack this
+1433.8	radar take a look here - does it take -
+1438.0	extremely expensive high-tech
+1440.0	anti-radiation missiles to kill a single
+1442.6	search radar last I checked no no it
+1446.8	does not by the way good doctrine review
+1448.8	there notice it was not able to attack
+1450.4	that target because it was - off to the
+1452.3	side I had
+1453.8	so now watch what he does he fires one
+1455.4	he fires two at a search radar why are
+1460.0	you wasting these expensive missiles so
+1462.6	ways you can get around that you're on
+1464.6	the doctrine page and you had the cage
+1467.1	58 a point of your options let's see if
+1470.5	I can go find my cage 58 I hate it when
+1472.6	they do it by the NATO names that just
+1474.5	gets confusing ah there it is you've
+1476.8	noticed that it only has woman the
+1478.6	option for attack and that's the targets
+1480.7	missile defense value you can turn this
+1482.4	up you can turn this down you can say
+1483.7	only use one round less rounds you can
+1485.8	even do something weird like this where
+1487.5	you say one round but you have four
+1489.2	people fire missiles at the same time
+1490.8	it's just important that you consider
+1492.6	that otherwise and avoiding an awful lot
+1494.4	or not now one thing that we didn't
+1496.8	realize or I realize or you realized is
+1499.1	the fact that this area is actually
+1500.9	protected by a hawk battery and if you
+1503.0	remember how we set it up granted we
+1504.7	loaded our game it's going to shoot
+1506.8	these missiles down so in this
+1508.2	particular case it was actually worth it
+1510.0	to have a weapon to release the
+1511.2	authorisation to do it did it anyway
+1513.0	hahaha nice job okay thank you for your
+1517.3	help you can go home no oh we still got
+1519.6	one left
+1520.0	Wow I feel bad wasting it let's go find
+1522.3	someone you can do that it's trying to
+1530.9	get our lock on him there he goes thanks
+1534.9	for help ok let's see how things go this
+1538.6	time of course keep in mind we didn't do
+1543.2	any dedicated seeds so that might things
+1545.1	big things a little bit trickier than
+1546.7	you're supposed to be when you do
+1548.5	unguided bombs in very very large groups
+1551.1	like groups of six you're the advantage
+1553.1	that you're basically going to blitz the
+1554.7	target let me show you something really
+1556.5	cool and subtle why I'm just kind of
+1557.8	think of it if you click on a unit
+1559.4	believe it or not you can change this
+1561.0	formation if you were to go up to the
+1563.1	formation editor pull that all the way
+1565.6	you can actually set the location of
+1568.0	each one of the aircraft in this
+1569.7	particular group so that you can do
+1571.5	something like a trail formation as an
+1573.1	example so like I could do something
+1575.0	like this now this is super powerful if
+1578.9	you want to take the time to micromanage
+1580.2	every single unit at the same time it's
+1582.5	just worth noting that it's a neat
+1583.6	little detail that a lot of people miss
+1584.8	that's all Oh
+1586.6	let's see how we did this time keep in
+1589.8	mind that whether his obnoxious keep in
+1591.5	mind there's still a very angry Hawk
+1592.9	battery down there speaking of that
+1594.5	angry Hawk battery let's go get that Fox
+1596.6	back back again I need to borrow it for
+1598.2	something the hawk is a special case
+1600.9	because as you probably know American
+1603.2	systems designed for engaging enemy
+1605.7	aircraft tend to have six or seven
+1608.5	radars as opposed to the Russian method
+1610.4	of basically having a search radar
+1611.7	height finding radar in a fire-control
+1613.0	radar as a result the missile defense
+1615.4	value on the hawk is also very very very
+1617.7	high because it has so many individual
+1620.5	radars engaging simultaneously the
+1622.5	reason I'm sending this guy down here
+1623.8	right now is because he desperately
+1625.0	needs to help us out with any of the
+1627.6	missile batteries that are gonna try to
+1628.8	take a shot at us can I do a bearing
+1631.7	launch with that that's what's his
+1635.9	altitude why are you up so high now down
+1644.5	down on a sign go down all right now
+1653.5	notice these are all the guided weapons
+1656.6	and they're all firing simultaneously
+1659.3	and they're attacking separate targets
+1662.0	but they'll be exactly enough so that
+1664.3	each target engaged gets hit with the
+1666.5	requisite number of bombs oh yeah that
+1670.3	was nice
+1671.3	that's what is waiting for it shooting
+1676.0	at us
+1677.0	that one right there turn yourself
+1681.5	around an attack keep in mind I don't
+1684.9	have a good anti-radiation missile
+1686.5	protection here and I really wish she
+1688.8	would do his deed with his harm there
+1694.0	meanwhile our bombers are doing their
+1696.1	thing against individual targets doing
+1698.5	exactly as much damage as they need to
+1700.3	do in order to be effective and it's
+1703.7	gonna come tooling around here at low
+1704.8	altitude actually I need to bring them
+1706.1	up to moderate altitude otherwise he
+1708.5	would not be able to engage those
+1710.2	targets here comes the next round
+1713.7	where's that one had a cannon or
+1715.6	something that'd be super helpful so
+1717.4	these guys notice separate targets and
+1720.1	they dropped exactly enough bombs to do
+1722.5	the deed
+1723.6	now if these guys were to come around
+1725.6	Andrea TAC what they would do is attack
+1727.3	the same target over and over and over
+1728.5	and over again all right coming through
+1731.6	all right
+1732.2	unfortunately he's attacking the same
+1733.6	target because of the fact that this
+1735.3	target is not listed as destroyed yet it
+1739.2	comes the next round these guys are
+1743.7	extremely low on fuel here they go there
+1751.5	goes the runway notice they attacked
+1753.3	it's a big group and I don't think every
+1755.5	one of those aircrafts is gonna get back
+1757.0	to base safely oh boy that's not so good
+1760.1	and here comes to my next two rounds I'm
+1763.8	actually gonna manually drop the damaged
+1765.6	targets because we don't need to put any
+1766.9	more damage into them this is why you
+1768.8	want to tackle the big group
+1769.8	simultaneously here comes some index
+1771.9	attacks nicely done boys nicely
+1778.7	oops annex attacks on the runway nicely
+1782.4	done nicely done and here comes my next
+1785.5	large attack against ground targets of
+1787.7	course my big 25 keeps taking it back
+1789.2	and forth notice they all attacks
+1791.0	separate targets but they do enough
+1793.1	damage to the target who did engage and
+1795.0	they're all launching together launching
+1797.6	at the correct targets oh it's beautiful
+1799.7	this is almost unfair okay now I'm going
+1806.1	to show you the fun spam thing so
+1807.6	hopefully that makes sense as far as how
+1809.1	to address this issue so now let's say
+1811.9	for example that we wanted to take this
+1813.9	to the eighth degree which is exactly
+1815.9	what I intend to do all right you need
+1817.2	to go home because you don't even have
+1818.5	enough fuel to like walk all right get
+1820.7	out of here all right so let's switch
+1823.3	back to in Zack real quick I'm gonna
+1825.5	delete this one really really fast and
+1828.2	I'm gonna go ahead and switch back to
+1829.9	not in Zack I'm gonna add myself a b-52
+1833.4	you could probably see exactly what I'm
+1835.8	doing here looks pretty good and let's
+1838.8	do something nice and funny hmm let me
+1841.3	see here those RJ dams that's 12 of
+1844.4	those who's really hoping for more of
+1845.6	them Oh 45 nice so I'm gonna tell him to
+1852.2	attack with one bomb per target on his
+1856.8	way down to this area watch this
+1859.7	alright I want you to fire a single bomb
+1862.9	per target you can see exactly what's
+1866.9	gonna happen this works by the way very
+1869.7	well if you have cluster bomb units
+1872.5	alright looks good there it looks good
+1874.8	there it looks pretty good right there
+1876.3	all right looks good looks good I don't
+1879.0	think there's any submarines I'm not
+1880.2	concerned about that alright so I'm
+1881.8	gonna order this aircraft to drop down
+1883.1	to medium altitude and I'm gonna give
+1885.2	him a simple order attack that air base
+1889.3	let's go ahead and zoom in a little bit
+1891.2	switch to this view I could align myself
+1894.2	up as neatly as I can so what's gonna
+1898.5	happen is because he's only allowed to
+1900.6	drop one bomb per target as he makes his
+1902.9	pass he's gonna drop to all he
+1909.4	of course he wasn't able to drop a
+1911.0	hundred percent on account of the fact
+1912.8	that he can't dropped him that quickly
+1914.0	but look at this he's gonna do it again
+1918.7	is that cheating I love that alright you
+1923.3	can go back to base real quick we're
+1924.8	going to take a look what happens look
+1926.5	at how much damage we did to so many
+1929.5	individual targets with a single bomber
+1932.2	because who ordered him to only drop one
+1934.0	bomb per target alright hopefully this
+1936.9	was helpful again if you have questions
+1938.4	that throw it in the comments kind of
+1940.1	try to give you some general little tips
+1941.9	as far as kind of general rules again
+1944.2	remember to combine your doctrine
+1946.0	settings with your WRA settings the
+1949.0	other thing you've got to remember is
+1950.3	when you're doing missions they can have
+1951.9	a different doctrine in WRA then your
+1954.5	general forces can so it's really
+1956.8	critical that you get that right the
+1958.9	first time otherwise you're going to
+1960.4	have some issues I'm sure you're curious
+1962.1	about this so we'll take a look notice
+1964.1	they lost nothing except all these
+1966.7	beautiful buildings and aircrafts we of
+1968.4	course lost a bunch of yak-38 it's
+1970.9	probably most of those ran out of fuel
+1972.3	unfortunately and this is your total
+1974.1	expenditures pretty impressive if you
+1976.4	ask me so again that WRA has a huge
+1979.2	impact on it one thing I will say in
+1981.3	passing or slash leaving is don't forget
+1983.8	that when you're making your tax if your
+1986.4	settings for your doctrine under weapons
+1990.2	state is set to do a single attack
+1992.5	you're only going to get one missile
+1994.1	launch so kind of watch out for that and
+1996.0	also for those of you who are looking
+1997.3	for how many missiles should I fire at a
+1999.3	modern target one thing I always say to
+2001.4	do is if you go to the database we'll
+2003.5	get something really really bad just to
+2004.8	quickly show you guys this will do it s
+2007.7	75 M I'll take the F model what's the P
+2011.0	okay here I think it's decent if I
+2012.4	remember right what do we get for PK 35%
+2016.3	for those you guys who want to look for
+2017.8	another way to approach this you can
+2019.5	always do a probability calculator two
+2023.2	events and do Google I'll see you let's
+2026.6	see what this one's like real quickly ah
+2028.0	so we can say Oh point 35 and this whole
+2030.8	point 35 calculate this would mean that
+2033.8	if we fire both let's see or or is the
+2035.8	one we're looking for that's still only
+2037.3	a 58% chance to hit with only two
+2040.1	missiles so if you're saying they're
+2041.7	going well what if I
+2043.1	tried a little higher well you could do
+2045.4	this let's try it for three missiles now
+2048.2	you'll notice that the probability
+2049.8	becomes 72% so in those situations just
+2053.2	fire three missiles it's the only way
+2055.1	you're ever gonna be able to damage
+2056.1	anything all right hopefully this video
+2057.9	is entertaining enjoy

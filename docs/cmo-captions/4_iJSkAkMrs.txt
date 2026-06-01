@@ -1,0 +1,1140 @@
+0.0	hello everyone in today's command
+2.3	tutorial we're going to be taking a look
+3.4	at submarine warfare now a lot of the
+5.7	stuff that applies for anti-submarine
+7.1	warfare also applies for submarine
+9.6	warfare the same techniques you're using
+11.3	to find it destroy the submarine are
+12.8	basically the counter tactics that we
+15.0	need to use so what I've done for you
+16.8	today is I basically set up a quick
+18.5	little almost like a Mickey Mouse sort
+20.0	of demonstration of the effects of sound
+22.0	and I've also sent up a neat little
+23.3	convoy attack style mission to try to
+25.8	explore some of the concepts that we
+27.3	learned here so let me go ahead and grab
+29.0	my little cheat sheet here usually I
+30.6	don't do this but today I thought it
+32.2	would cuz it's really critical we get a
+33.6	couple things kind of down this might be
+35.7	something you copy/paste somewhere I
+37.0	think it's kind of helpful personally so
+38.9	on basically submarine warfare is all
+40.5	about not being seen a good submarine is
+43.5	one that you can use tomorrow it's not
+44.8	one that gets detected and hunted and
+46.4	destroyed
+47.0	remember aircraft will wreck you if they
+49.1	even have the slightest idea of where
+50.8	you are so keep that in mind so know
+52.5	it's all about emissions um if you poke
+54.2	your mast out of the ocean so I'm just
+56.0	going to see the masts they're gonna
+56.8	tack it if you're stupid enough to turn
+58.7	on a surface search radar on the surface
+60.8	they're gonna detect you in ESM and
+62.1	they're gonna destroy you if you use
+63.8	axis sonar they're gonna get an active
+65.7	sonar intercept and they're going to
+67.3	destroy you so a lot of what we do is
+69.7	going to be basically submerged with a
+71.5	few exceptions depending on kind of
+73.4	where we are so as far as noise is
+75.4	concerned there's basically a couple
+76.7	different elements that dictate noise
+78.5	the first one is can environmental
+80.5	conditions so let's actually take a look
+81.6	at our environmental conditions we see
+83.4	that it's nighttime generally at
+84.8	nighttime the waters a little bit cooler
+86.1	we noticed that there's some heavy
+88.0	clouds it does not impact us rain
+90.1	impacts us however if it is very rainy
+93.3	the pure sonar operators are never going
+96.8	to be able to hear a thing
+98.0	because again all that kind of coming
+100.4	down at the same time
+101.5	likewise if it's very windy the ocean
+103.4	gets churned up and you want people to
+104.8	hear a thing with sonar which is
+106.8	actually great for the submarine except
+109.0	if you're trying to find something to
+110.0	actually attack you're gonna have to
+111.1	rely on something data linked over to
+112.4	you so that's just a couple quick
+114.1	considerations also temperature matters
+115.7	because temperature is going to dictate
+117.1	along with the depth your convective
+119.6	zones now if you remember way way back
+121.4	in the day when we were talking about
+123.1	our sonar detection rings we talked
+124.8	about convective zones basically because
+127.1	of the layer when you make a sound it
+129.6	actually bounces into the layer bounces
+131.4	back up bounces down a little air
+132.9	bounces
+133.4	bounces bounces bounces bounces so what
+135.6	can happen is a surface ship over here
+137.6	listening in on these different depths
+139.6	can actually hear you at these little
+142.1	ring distances even though you're all
+144.2	the way over here now the reason that
+146.9	it's important for us is because if
+148.6	we're in shallow water check this out
+150.9	let's go find out right over here off
+153.1	the coast of Sri Lanka you'll notice
+154.8	there's no convective zone it's because
+156.3	the water is so shallow you don't get
+158.4	that effect which means us is a
+160.0	submarine it's much harder for them to
+162.1	pick us up the other element I want to
+164.1	point out as well is the fact that your
+166.3	ocean floor has a huge impact on the
+168.8	sound is it close to the submarine is it
+171.5	farther away remember if your submarine
+172.9	you can actually Park on the ocean floor
+174.7	and basically turn invisible if you shut
+176.5	everything down
+177.2	I'm obviously if you're doing something
+179.0	let's rock it's gonna reflect a lot
+180.6	harder than sand as far as sound goes
+182.5	keep in mind the deeper the ocean the
+184.7	easier it is to detect the submarine but
+186.3	obviously you're giving the submarine
+187.5	more room to hide it's also gonna matter
+189.8	how fast you're traveling we're gonna
+191.4	see that an example cavitating we'll see
+193.6	that an example what depth we're
+195.3	traveling at keep in mind if the waters
+197.2	shallow we can't actually travel at all
+199.2	this is -66 fit in this example that
+202.4	simply means that we wouldn't even be
+204.0	able to hide our sail which is this top
+205.7	part kind of hanging out of the top and
+207.2	of course what type of propulsion we'll
+208.6	use but we'll explore that all right
+210.2	let's look at our first little demo
+211.6	thing here so basically we have a set of
+213.9	good old-fashioned sturgeon you know SSN
+216.5	six three sevens and we know I'm gonna
+218.4	go ahead and turn on the bad guys for a
+219.6	second here we'll actually unfriendly in
+220.8	this case these are all Oliver Hazard
+222.3	Perry frigates this one's been assigned
+224.4	to travel a periscope depth
+225.6	shallow depth a little bit above that
+227.5	layer a little bit below the layer and
+229.2	of course as deep as possible so what
+231.3	I'm gonna do is I'm gonna switch to the
+232.4	other team one thing I'm gonna warn
+233.6	though is the fact that these Perry's
+235.9	have variable depth sonar they actually
+237.9	can tow a sonar array behind them
+240.2	they're also stopped because they're
+243.0	stopped they're not going to be making
+244.3	any noise so it's gonna make them much
+245.5	much easier to detect the incoming
+247.8	submarines so when I go ahead and zoom
+249.7	out just a little bit so all the summary
+251.6	is gonna be traveling at ten knots by
+252.8	the way in case you're curious going on
+254.4	pause speed up time go ahead and turn on
+257.8	a mega mode here I'll see this guy's
+260.7	probably look at them race downward it's
+263.1	looking all far down the bottom of the
+264.5	ocean is we're never going to pick them
+266.1	up
+266.9	is pause that this submarine traveling
+269.4	at ten knots you have a little sign this
+271.2	is the word calves calves means
+273.1	cavitating what it means when you
+275.1	capitate is basically you create this
+277.0	big thing of bubbles think about like if
+278.5	you take your hand whack the top of a
+280.4	pool you make all the bubbles all over
+281.6	your hand they're tremendously loud and
+284.2	because of that it can actually be
+285.5	louder than your ship itself and makes
+287.4	you much easier to detect on broadband
+289.4	scans so anyway go ahead and turn on our
+291.5	little view here you can see all these
+293.3	submarines are - chewing directly
+294.9	towards Oliver Hazard Perry who's just
+296.8	patiently waiting here in the ocean so
+298.9	what we're looking for is the moment he
+300.4	gets detected but now fast forward real
+303.4	quickly here stop okay so place your bat
+310.7	who got detected first I bet you it's
+312.3	this one surprise it was the one that
+315.9	was below the layer you're probably
+318.7	sitting there going what I thought it
+320.8	was going to be the ship that was
+321.7	cavitating up here ah you forgot
+324.5	something you forgot that this ship
+327.5	actually dips his sonar into the water
+330.4	down below the layer so unfortunately
+333.5	our buddy who's chilling just below the
+335.5	layer here is accidentally basically
+337.9	reflecting his sound off the ocean floor
+339.8	like this directly beautifully perfectly
+342.9	into his sonar isn't that interesting
+345.7	okay let's see what happens next year
+347.1	especially gonna get read that we don't
+348.3	need it what got another one
+349.7	so our next victim is our Deep Diver and
+354.4	again the reason we were able to detect
+356.2	them at this step is because of the
+357.9	towed sonar array so hmm let's see what
+361.2	happens next
+374.8	the suspense is killing me too sure this
+378.5	pause hahaha check this out this ship is
+384.0	travelling at a bow layer which means
+386.8	it's just above that little conductive
+388.5	layer he didn't get detected until it
+390.6	was a distance of three nautical miles
+393.7	but we picked these guys up almost 11
+396.5	like ah about eight or nine nautical
+397.9	miles away so keep in mind these
+399.3	distances are pretty big let's kind of
+400.7	boss kind of let them do their thing I
+405.9	have a feeling this one's got a pair
+407.1	next victim place your bets now if these
+410.5	guys only hi win if these ships only
+414.1	possessed sonar that was on the whole
+416.7	this entire scenario would have been
+418.9	reversed in which case we would have
+420.5	picked these ships up before we picked
+421.9	these ships up so we picked this one up
+423.6	look at this distance though it's a
+426.6	distance of three nautical miles and
+428.5	he's chillin at periscope depth
+430.4	yikes but look at who our winner is
+443.3	wait for the sound pause our winner was
+447.8	her shallow interesting interesting
+451.9	interesting so in this particular case
+453.6	they weren't detected in two also three
+455.4	nautical miles so in this particular
+457.5	situation when they were traveling at
+459.5	higher speed in deeper depths they were
+462.1	actually easier to detect because this
+464.4	platform was reading down into the water
+466.1	so no way that's our beginning little
+468.3	kind of like I said Mickey Mouse
+469.5	scenario so that gives you an idea of
+471.1	depth
+471.5	remember this scenario is completely
+473.9	reversed if the ship detecting you is
+476.1	using a hole mounted sonar to check that
+478.7	you can click on the ship if you scroll
+480.8	down a little bit you can actually see
+482.4	exactly what style of sonar they're
+485.4	actually using this is the tas there is
+488.1	it a whole sonar on here but it's not
+489.8	the greatest as you could probably
+490.9	imagine but this is going to be their
+492.8	winner
+493.2	incredible piece of technology alright
+495.3	let's look at our next situation so I'm
+497.6	gonna go up to the top again and this
+499.7	time we're going to explore speed so
+502.8	what I'm gonna do is I'm gonna take my
+504.2	nuclear submarine I'm gonna Park it
+506.6	right here what's that a distance of
+509.5	that's the distance that I go even
+511.4	closer why not right I'll put him 1 mile
+513.4	away all right here we go he's just kind
+517.9	of sitting right there and his brakes
+519.3	are gonna be on I'm gonna take this
+521.4	particular submarine again same exact
+523.5	model this is the sturgeon and I'm gonna
+525.3	row up to creep speed at a depth of
+527.6	shallow I'm gonna take this one go ahead
+531.3	and no cruise right there said it's a
+533.1	cruise speed and set a depth of shallow
+535.4	I'm gonna set this submarine go ahead
+538.6	and click right here set this one to
+541.1	full speed at shallow and then last but
+544.3	not least we're gonna set this one to
+545.9	flank speed at shallow watch this okay
+551.8	so place your bets if I had to guess you
+554.8	would assume that this one would be
+556.1	detected first I'm actually gonna check
+557.6	my WR a real quick I'm gonna make sure
+559.4	they're not accidentally doing stupid
+560.4	stuff yeah they're not set to avoid
+561.8	contact we're good
+562.7	switch back to this okay theoretically
+566.1	we should be picking this one up first
+568.2	let's find out what happens observe our
+571.2	first victim was the one that was
+573.4	located close by you're sitting there
+576.0	going but he was stopped
+577.3	she's not making any speed how was he
+579.0	detected a nuclear submarine makes noise
+582.6	all the time they can't be quiet because
+585.5	they have to keep their nuclear reactors
+587.2	cool an electric submarine like a diesel
+589.5	we'll see this in a minute or so will
+591.5	not have the same limitation so even
+593.7	though he's sitting here parked by
+596.3	making barely any noise still completely
+598.4	instantly detected by the Oliver Hazard
+601.0	Perry at a depth of shallow which we
+602.9	already discussed is actually very
+604.9	effective for these ships okay let's go
+607.3	ahead and undo things and let's let time
+609.0	kind of pass my next bet would be the
+611.3	guy in the bottom or is it let's find
+614.1	out haha told ya so check this out this
+623.0	one was detected at a distance of 4
+625.1	nautical miles by the way your torpedo
+627.0	range from the ship submarines is about
+628.7	10 nautical miles this Oliver Hazard
+630.9	Perry would be having a bad day so again
+633.5	notice how stealthy these subs really
+635.4	are so we'd expect this one to be the
+637.5	next one told you now this one's moving
+644.4	full speed it was detected at four and a
+646.4	half nautical miles we're expecting this
+649.1	one next keep in mind he's going a lot
+650.9	slower what what do we pick up did you
+654.1	hear it now we're fine just messing with
+656.6	you watch this pause ha ha check this
+661.5	out
+662.0	so this guy was detected also at four
+665.8	nautical miles interesting you might be
+668.6	seeing something similar here now this
+671.9	is where it's gonna get fun this marine
+674.2	are you expecting it to be detected at
+676.7	four nautical miles like all these other
+678.8	ones were or are you expecting it to be
+680.8	detected at last because remember this
+682.6	one was picked about one nautical mile
+683.9	let's find out keep in mind if this
+686.0	frigate we're moving we wouldn't have
+687.5	nearly as much luck detecting these subs
+691.0	all right place your bets we're already
+693.8	at a distance if said remember all the
+695.4	other ones got busted at 4 nautical
+696.9	miles which is right here all right here
+699.5	we go again this is an interesting way
+703.3	to look at it and hopefully you're
+704.4	realizing that speed only matters once
+706.7	you start getting closer to these
+708.0	Hargett but at the end of the day it's
+709.5	distances
+710.5	more important than how fast you're
+711.8	going of course if the Oliver Hazard
+713.3	Perry had its helicopter in the air this
+714.9	would be a very different discussion
+716.0	ready
+718.7	interesting observe pause notice the
+723.9	Crips creep speed only reduced his
+725.9	detection distance by one nautical mile
+730.1	obviously if you're traveling a little
+732.0	bit deeper things to be different okay
+733.6	I'm actually gonna reopen this scenario
+735.2	kind of reset everything real quick and
+737.0	we're going to take a look at the last
+738.4	but not least piece so down here before
+741.0	we do the actual tactic stuff we have
+742.9	ourselves a very modern SSN we have our
+746.1	a little older one it's a Victor 3 it's
+748.3	not a bad submarine we also have a
+750.2	classic diesel or Romeo and of course
+752.5	down here we have a very modern diesel
+754.0	with a IP so we're going to do the exact
+756.1	same scenarios we just did a minute ago
+758.3	I'm gonna go ahead and set these guys to
+760.3	shallow depth I'm gonna set them at a
+762.2	speed of 1-0 knots grab this one go
+766.7	ahead and order him to move here I'm
+768.0	gonna order him up to a speed of ones
+769.4	here or knots keep it nice and shallow
+770.8	to keep everything nice and even I'm
+772.8	gonna grab the classic diesel I'm gonna
+774.9	go ahead and go this way also order him
+776.5	to go once your knots which is actually
+777.9	a lot of work for a diesel as you'll see
+780.2	and of course we'll grab our extremely
+782.4	modern diesel go ahead and over here set
+785.0	it up to 1-0 knots as well shallow I'm
+787.8	gonna pause real quick Tunnel that ever
+789.2	better get lined up real fast I'm
+790.7	actually gonna delete this joke up here
+791.9	we don't need it right now like I said
+794.1	we don't need it right now
+794.8	okay I'll come back to that later okay
+797.2	so as I was saying earlier a nuclear
+800.8	submarine has incredible speed but as a
+803.7	result it is also fairly loud because of
+806.5	the reactor on board modern nukes are
+808.3	very quiet this particular one I believe
+810.4	maximum volume oh my look at this 95
+815.1	decibels that's insane
+817.9	our more classic one our Victor 3 here
+820.4	we actually scroll down real quick 110
+824.1	decibels which is still pretty loud now
+826.5	check this out look at the Romeo 115
+831.1	hundred 1617 that is a loud submarine
+834.6	remember when you're dealing with
+836.1	decibels 1 decibel is the equivalent of
+838.5	squaring so that's insane and of course
+841.5	we have an extremely modern diesel what
+843.7	do you
+843.9	back tear check this out 90 decibels so
+849.2	this particular diesel submarine has
+851.4	another neat little twist to it it has
+853.6	the ability to run on what they call
+855.3	air-independent propulsion that means we
+857.6	can use the diesel at diesel speeds
+859.6	without having to surface and get air
+862.0	now our classic diesel up here our Romeo
+864.7	we have to come up to periscope depth to
+867.0	sticker snorkel out of the into the
+868.3	ocean air in order to actually run the
+870.4	diesel engines
+871.1	remember I have limited battery on this
+873.3	thing right now I've only got two hours
+874.7	of battery in that set I'm out I got to
+876.5	recharge this particular craft I have 10
+879.3	hours of this air independent propulsion
+882.0	before I can completely out by the way
+884.3	once you're out of air-independent
+885.5	propulsion you can only get more if you
+887.3	return to port of course our nukes we
+889.5	don't care we can go as fast as we want
+891.4	all afternoon and nobody's gonna notice
+893.3	and nobody's gonna care of course coming
+895.5	back up to our SS and our 21 here he's
+898.0	got the same thing he's got basically
+899.3	unlimited endurance okay let's go ahead
+901.7	and switch back here now think about
+904.5	this really carefully our loudest
+906.4	submarine of this bunch right now is
+908.4	actually a good old-fashioned classic
+910.1	diesel this one right here the classic
+912.6	SS n is pretty quiet this one's very
+914.9	quiet this one's very very quiet so
+917.7	watch what happens here
+919.7	quit speed up time so place your bets
+928.0	you would expect the Romeo to get caught
+931.3	first let's see what happens look at how
+937.2	fast these two and remember you can't
+938.6	replace this quickly okay notice he's
+941.9	running a batter and a IP at the same
+943.9	time the reason being is we're going
+945.4	very quick keep in mind our Romeo here
+947.7	or diesel is only running off of battery
+950.6	and obviously these guys are news look
+955.1	at that
+958.7	pause alright here's our first victim so
+962.9	the air independent propulsion traveling
+964.7	at 10 knots was spotted at 3.4 nautical
+968.6	miles not bad
+970.1	so of course if I switched back to this
+972.0	subs I could actually say hey watch this
+974.9	let's go nice and deep bring us to creep
+977.9	speed and he'll be gone forever
+980.0	our next victim we expect our diesel to
+982.8	be however our diesel ran out of battery
+985.9	and was able to come in incapable of
+988.3	completing this exercise so what I'll
+992.0	have to do is order him up to periscope
+993.6	depth to actually recharge hopefully
+996.6	that is also a valuable lesson for UI
+998.7	diesel types all right we'll go back to
+1001.0	the surface were sweating on pause so
+1003.5	now does he's gonna have come to the
+1004.8	surface turn his diesel pause our next
+1007.4	victim is our classic SS n exactly what
+1010.8	we expected this is a very loud sub our
+1013.3	distance detected was about three
+1015.1	nautical miles also it's quite none
+1017.6	pause pause now our Sea Wolf has been
+1021.0	spotted notice our sea wolf got spotted
+1023.5	at a distance of 2.4 nanika miles
+1026.7	those extra few decibels make a huge
+1028.7	difference in case you haven't noticed
+1030.5	and of course this guy is I hit the deck
+1032.7	as fast again he's already actually all
+1034.0	the way down but I'm just not doing
+1035.7	anything cuz he's too close of course
+1037.4	our friendly little diesel buddy right
+1038.9	here isn't working so hot because it's
+1041.3	desperately trying to recharge its
+1043.3	batteries
+1043.8	look at that it's basically a full stop
+1046.3	because it can't proceed let's got creep
+1048.2	it ahead at least can at least creep no
+1050.5	it's completely have just about
+1051.9	everything so that's just embarrassing
+1054.9	so I'm we're creeping along at diesel
+1057.4	power now so at least you can kind of
+1059.3	see
+1059.6	scenario keep in mind this is running on
+1061.4	a diesel engine so you'd expect that any
+1063.4	second for the frigate here to spot him
+1065.9	which he did keep in mind the distance
+1067.8	he was detected at still four nautical
+1069.4	miles okay so hopefully that makes sense
+1072.3	as far as sound goes you've got to know
+1074.6	what kind of stuff you're being scanned
+1076.1	by again if you're being scammed by
+1077.5	something only see down to the layer
+1079.5	you're safe unless it's shallow water in
+1082.3	which case be very very careful all
+1084.8	right let's go ahead and our reset our
+1086.4	scenario one more time here and let's
+1089.4	get to the actual tactics so I'm going
+1091.9	to lead all these guys these guys here
+1093.1	whatever let's scoot up here so up in
+1095.5	the Strait of Hormuz we have a pair of
+1097.8	submarines working as a Wolfpack our
+1100.2	first one over here is a kilo class
+1101.7	that's an eight seven seven that's an M
+1103.5	model let's take a look at the stats on
+1105.2	that one real quick do you remember what
+1106.9	we just learned a minute ago let's take
+1109.1	a look here creep throttle is about 10
+1111.4	knots for the diesels the electric motor
+1113.4	can also take us up to 19 knots if I'm
+1115.7	fairly shallow but of course we're
+1117.5	shooting through battery like crazy how
+1119.5	much battery do we actually carry so
+1121.7	let's see here hmm weapon wise we have
+1124.7	no anti-ship missiles but we do have
+1127.1	these wait homing torpedoes hmm maximum
+1129.9	range is four nautical miles if you've
+1132.4	learned anything so far you'll realize
+1134.0	that three to four nautical miles it's
+1135.4	kind of the magic you're going to get
+1136.7	caught range so kind of keep that in
+1138.7	mind one thing we do have going for
+1140.3	ourselves though look at how fast this
+1142.0	torpedo is keep that in mind all right
+1144.4	our buddy over here is a los
+1145.4	angeles-class I mean you can't do better
+1147.0	than this is one of the best submarines
+1148.3	ever this particular one let's see we're
+1150.8	equipped with the Ariel I'll actually
+1152.0	first of all let's take a look how quiet
+1153.2	the thing is remember 90 was the sea
+1155.0	wolf II that's a lot louder
+1157.4	so four nautical miles is pretty much
+1159.6	gonna be our cutoff as far as how close
+1161.6	we're gonna be able to get before
+1162.8	they're able to spot us so we have to
+1165.0	kind of keep that in the back of our
+1165.9	head through the whole scenario weapon
+1167.6	wise this is awesome news for us
+1169.9	is um this is a classic Los Angeles
+1172.1	which means we get yes you guessed it
+1174.6	the TAS M tomahawk anti-ship missile
+1178.5	which actually is got to get shot down
+1179.6	but it's for the shot right okay so
+1182.4	let's go ahead and proceed so the first
+1184.1	thing I'm going to do is I know they
+1185.2	just left been their boss so they're
+1186.8	going to be somewhere in here on a
+1188.0	vector probably like this heading for
+1190.2	the ocean so that's why I set that
+1191.8	initial
+1192.5	exact course up like I said I'm feeling
+1194.8	they're gonna be about here hour kilo of
+1197.2	course is a much slower sub but remember
+1200.5	how quiet it was we basically had to
+1202.2	land on top of this thing in order to
+1203.8	actually hear it
+1204.6	so that means we can cruise pretty
+1206.2	effectively here getting up to the kind
+1208.3	of danger zone this is sort of the pinch
+1209.6	point
+1210.1	now this particular Strait is 30
+1212.0	nautical miles across and we know our
+1214.7	weapons for this ship are only four mile
+1217.0	range meanwhile the ASM I think those
+1219.7	are like 110 they're really really
+1221.6	long-range let me go take a look real
+1223.7	quick did it to do push the button what
+1226.9	do we got for range here what do we get
+1228.2	what do we got 250 nautical miles so if
+1230.2	we can identify the targets we can
+1232.3	destroy them so anyway I'm gonna go
+1234.0	ahead and order this ship to actually
+1235.2	chew chew as fast as you can I'm gonna
+1236.6	send it as deep as possible keep in mind
+1239.5	we're not terribly deep right here so as
+1241.0	deep as possible isn't that deep set it
+1243.3	up to a flank speed I'm gonna go ahead
+1245.2	and grab our kilo here I'm gonna keep
+1247.6	ourselves at periscope depth we're gonna
+1250.5	go up to a full speed because I don't
+1252.6	wanna use all my battery keep in mind
+1253.9	your fuse battery and Diesel's to go
+1255.2	fast so it's quite a non boss so the
+1259.1	first thing we want to do is come up to
+1261.0	periscope depth to get a listen with our
+1262.8	es m/s by the way if you're looking for
+1264.5	more insights actual submarine warfare
+1266.0	complete dangerous waters of Cylon
+1267.7	hunter this does a good job but it's not
+1269.8	perfect
+1270.3	weird of warning by the way your
+1271.7	scenario features and settings you want
+1273.7	to make sure you shut off realistic
+1275.0	submarine communications for this kind
+1276.7	of an activity so anyway we are now up
+1279.0	at a depth of 65 feet if we actually
+1281.5	searched over a 3d view real quick again
+1287.3	we're entering the target area we can't
+1288.8	afford to go pretty quick hey what was
+1290.6	that there we go so we have our
+1293.0	beautiful Los Angeles he's diving the
+1294.9	reason he's diving is he's trying to get
+1296.4	up to full speed here the only way we
+1297.9	can use his full speed is if we go deep
+1299.8	otherwise we cavitate swing it over to
+1302.0	the beautiful cat well model that is
+1303.6	gorgeous this is such a cool submarine
+1305.9	this one of course is sitting at
+1307.4	periscope depth which also means it's
+1309.2	ESM s are poking out of the water
+1311.2	listening very carefully to see if
+1313.2	there's anything out there electronic
+1314.8	fingers crossed that we do identify so
+1317.6	now if you remember a SW is awfully slow
+1319.4	we're fair you should see what submarine
+1321.0	warfare is like alright
+1325.8	slow down okay so now what I'm gonna do
+1330.0	is I'm going to go ahead and Rob we've
+1331.3	gone a pretty good distance here I'm
+1332.7	gonna bring my speed down to creep and
+1334.1	I'm gonna come up to periscope depth the
+1336.7	reason I'm doing it by the way notice
+1338.1	the water significantly shallower and
+1339.6	I've lost my C Z's
+1341.3	which just made us deadly because now
+1343.5	it's going to be much more difficult to
+1344.9	detect us at a long distance so I'm
+1346.8	gonna go ahead and bring ourselves up to
+1348.1	the surface here I'm just gonna slow
+1350.2	down really gently make sure you slow
+1351.6	down before you come close to the
+1353.1	surface did you see the cavitation yikes
+1355.5	let's hope that does not bite me in a
+1357.1	minute we should have slowed down and
+1358.5	then ordered periscope depth
+1359.8	all right we're taking a look around
+1361.3	with our periscope or taking a look
+1362.6	around with our periscope good enough
+1364.1	deep as possible take us back up to
+1365.7	cruise speed we just needed to take a
+1367.7	peek the idea here is that the enemy has
+1370.5	any form of electronic anything going
+1373.3	we'll be able to detect that whether
+1375.2	he's trying to jam us or whether he's
+1376.8	trouble that looks a little weird all
+1380.5	right we'll cruise along for a little
+1381.6	while here all right what time is it
+1386.1	we'll go ahead and do our next peekaboo
+1388.3	at 20 to slow down just a little bit
+1392.0	okay we're gonna go ahead and order it
+1394.2	to come to periscope depth one more
+1396.4	creep speed reduce speed to creep I'm
+1399.5	gonna take him shallow I'm gonna see if
+1400.7	it can take a listen all right we're
+1403.5	running off a battery now we've we've
+1405.3	chewed through quite a bit of battery
+1406.4	like I said we were going pretty fast
+1407.8	there for a long time all right so I'm
+1409.7	gonna go ahead and bring up the view Los
+1411.1	Angeles now we're done sonar baffles
+1413.4	you'll probably observe that this was a
+1415.1	little like kind of like a pacman shape
+1416.6	here the submarine cannot hear anything
+1419.3	behind itself if it had a tote array
+1421.9	like the big the Seawolf class I believe
+1424.3	has its own array you could actually
+1425.9	avoid this problem because you could
+1427.1	basically stow your microphone behind
+1428.9	you somewhere so it's just kind of
+1431.6	interesting how that kind of a thing
+1432.8	works out so we're gonna pop back up for
+1434.9	just a second remember if we detected
+1436.9	any form of radar we want to press this
+1439.1	dive button as fast as we can
+1442.0	meanwhile our key low I've slowed him
+1444.2	down significant all the way I want him
+1447.0	to go ahead and start charging those
+1448.2	batteries up if I can help it you never
+1450.1	know when you're gonna need battery all
+1453.0	right our Los Angeles is slowly creeping
+1455.4	upwards here all right in just a minute
+1459.3	we're just taking a listen to see if
+1460.8	there's any electronic anything like
+1462.5	that remember surface search on a ship
+1464.1	radar is not that great but it will give
+1466.9	you away
+1467.6	ready taking a listen taking a listen ok
+1472.1	back down that's enough ok go ahead and
+1476.3	check again in 15 minutes or so no pause
+1483.5	ok we are cavitating see one of the cool
+1487.5	this is bad
+1488.3	I should have been should not a
+1489.2	fast-forward that was bad bad bad bad
+1490.7	bad bad bad bad
+1491.5	we're cavitating we're going too fast so
+1493.9	remember how the water got shallower
+1495.2	which the shallower you are the lower
+1497.5	speed your cavitation starts so I'm
+1500.0	going to go ahead and order avoid
+1501.0	cavitation but if you remember I want to
+1502.6	come up and take another listen let us
+1504.3	hope that the enemy is not close by with
+1507.3	a helicopter otherwise this is going to
+1508.8	be a very short engagement in which case
+1510.9	we probably just lost that would also
+1513.1	mean the target would have to be within
+1514.3	4 nautical miles of us which it doesn't
+1516.5	seem very likely if you ask me all right
+1518.8	we're gonna go ahead and take them down
+1520.0	to shallow because speed make turns for
+1522.3	cruise please that's not very fast make
+1524.7	turns for fool please that's gonna get
+1526.3	us 4 hours endurance for hours at 10
+1529.1	knots is going to get us 40 miles that's
+1531.3	going to get us to this point we're
+1532.5	gonna be out of battery
+1533.6	oh all right back to periscope depth
+1538.0	meanwhile our Providence coming back up
+1540.8	here to take a quick little listen to
+1542.1	see if it detects anything get ready to
+1544.5	press the down button again we're just
+1548.6	seeing if there's any any mini anybody
+1551.1	any mini anissina nineveh down okay we
+1557.6	just took a quick little listen in to
+1558.8	top detect in the election by the way
+1560.7	this is one argument for fog of war here
+1563.3	it's pretty obvious or something coming
+1564.5	that's okay it's just fun to watch the
+1567.3	torpedoes in the water anyway moving on
+1568.9	so we are now if we did the math real
+1572.4	quick these guys are doing 10 knots and
+1574.2	they left from bend or boss 10 knots in
+1576.5	four hours gets them to here this would
+1578.7	be six hours we've been going for a few
+1581.3	hours now let's see we've gone for about
+1582.7	an hour and a half which would push them
+1583.9	somewhere either here or in here
+1585.7	depending on how quick they're actually
+1587.0	going which means I really wish some
+1588.9	strong tools by the way I would expect
+1590.7	that the engagement would start
+1591.8	somewhere
+1592.6	year gage Minh starts so I'm gonna go
+1595.7	ahead and eat myself a little note there
+1596.7	so as we start getting closer to that
+1598.8	point we're going to have to be
+1600.0	progressively slower in order to head
+1602.1	back up to full speed I'm gonna go ahead
+1603.6	and scan avoid cavitation and of course
+1606.4	the problem with this now is we're going
+1608.4	to not be able to get our kilo caught up
+1610.2	so I'm really hoping my Los Angeles here
+1613.1	is gonna be able to spot the target so
+1614.7	that we can basically get him in a
+1616.3	better position if that makes sense
+1617.7	alright let's see how we're doing and
+1621.9	stop let's go ahead and slow her szostak
+1625.2	down come back up to periscope depth
+1627.0	we're just taking a listen
+1629.5	keep in mind American submarines
+1631.5	especially modern ones like this it's
+1633.2	kind of tough to detect their periscope
+1635.0	so it's not to say it's impossible it's
+1636.8	just tough meanwhile this guy is doing
+1639.3	the best he can I'm gonna bring him back
+1640.5	up to cruise here alright bring us back
+1645.7	up to the surface just take a little all
+1647.3	we're trying to do is detect if there's
+1648.7	any electronic emissions anywhere out
+1650.8	there it could be anything it could be a
+1653.0	ship's navigation radar it could be
+1655.2	basically anything could even be an air
+1656.7	search radar if we can pick it up we can
+1659.0	engage it because remember we have
+1660.6	anti-ship missiles got it down down down
+1664.2	down down down down creep
+1666.5	take us down takes down we got something
+1670.4	unknown skunk what do we know about it
+1675.3	we've detected it with the a-10 wlr okay
+1678.7	let's see what the nwl are believe that
+1680.7	is a tool that we can use contact
+1683.4	emissions contact report low-frequency
+1686.4	sonar we've detected they're using sonar
+1688.7	oh no they're using active sonar that's
+1692.9	what we detected them by we didn't even
+1694.8	detect them by the fact that they were
+1697.3	out there visually or electronically
+1698.8	they're pinging us oh oh boy active
+1704.0	sonar okay this is gonna be problematic
+1706.7	all right so active sonar is tricky
+1708.5	because you're basically treating like a
+1709.9	radar that doesn't work great so I'm
+1712.7	gonna go ahead and take my Los Angeles
+1713.9	basically throw him back at the ocean
+1715.8	floor here okay
+1717.0	so we have no idea he's moving at 12
+1718.7	knots okay go 12 knots traveling at
+1722.0	sixteen point four nautical miles don't
+1723.5	get some here in about an hour and 15
+1726.1	minutes week an anti-ship missile him at
+1728.2	any time the problem is we need to
+1730.3	identify him before we put a missile
+1731.7	through the side of him
+1732.5	you could be friendly for all we know we
+1734.4	picked it up already his active sonar is
+1736.6	probably gonna have about a 10 nautical
+1737.9	mile range 10 nautical miles from us
+1739.8	it's gonna be about here
+1742.8	okay I'm gonna rename this point called
+1747.5	let him have it
+1750.4	that's gonna be the critical distance if
+1753.3	he gets any closer than that then the
+1755.0	possibility of us being detect keep in
+1756.5	mind we're not moving so we're gonna be
+1757.7	very very difficult to detect the other
+1759.9	thing about active sonar is it's just
+1761.8	like a radar if we give just this little
+1763.9	tiny teeny tiny nose he's never gonna be
+1765.8	able to see us if we give him our side
+1767.7	it's gonna be a much easier time for him
+1769.7	to engage us so if we were more clever
+1772.2	we'd actually turn around and try to get
+1774.5	our buddy kilo to kind of help us out
+1776.5	with us which is exactly what I'm going
+1778.5	to do take your mm-hmm thinking this
+1784.6	through real quick I really need to make
+1786.2	it he's got to go fast periscope depth
+1788.5	crank on it I'm actually gonna turn my
+1790.9	other ship here around try to get myself
+1793.3	a better angle in the situation deep as
+1796.6	possible go go go go go go go
+1798.9	very unlikely he's going to be detected
+1801.4	at that distance because keep in mind
+1803.0	yeah she's not gonna pick us up so I'm
+1805.4	gonna go ahead and step on it turn
+1806.7	around try to get my key low enough time
+1808.6	to get in his line of fire I'd rather
+1810.5	use a torpedo if this particular enemy
+1812.5	vessel is something with and Sam's it's
+1815.7	not going to work keep in mind we picked
+1817.6	this up 13 minutes ago and we also know
+1820.4	I named him let him have it whoops I was
+1822.3	supposed to name that let him have it
+1823.5	keep in mind this was thirteen minutes
+1825.2	ago he would have traveled to about this
+1827.0	point in that amount of time
+1828.5	so again distance over time distance
+1830.3	over time okay come on kilo get in a
+1831.9	position holy smokes slow down slow down
+1838.8	slow down
+1840.2	all stop all stop all stop
+1842.6	periscope no no I don't even like
+1844.6	periscope depth what did you detect slow
+1848.5	down slow down slow down put your nose
+1849.9	into him put your nose into him why am I
+1853.8	putting my nose into him I need to do
+1855.6	this so that if he's detecting me I'm
+1857.7	presenting the smallest profile possible
+1860.0	that is a lot closer than I expected him
+1862.3	to be assuming he's even there all right
+1864.5	come on spin around if he's at that
+1867.9	distance we can engage him with wake
+1869.3	homers what oh come around shallow
+1873.5	shallow shallow shallow downtown town
+1875.0	downtown this is an electronic emission
+1877.0	or is this what is this because if this
+1879.5	is an electronic emission I'm not as
+1880.9	paranoid what is it what is it what is
+1883.2	it okay that's an electronic emission
+1885.8	which means there is something this way
+1889.2	okay that puts them somewhere right here
+1892.6	so I'm gonna go ahead and mark my mark
+1894.1	real quickly I've slowed down my
+1896.2	Providence significantly I'm spinning it
+1898.5	around I want to come up to periscope
+1900.0	depth just a second again this is so
+1902.6	risky but I'm gonna try it again anyway
+1904.8	because I really need to triangulate the
+1907.2	position of whatever that signal is then
+1909.3	I can use anti-ship missiles against it
+1912.2	okay you stay quiet all right he's
+1917.4	coming up to the surface he'll be at
+1918.8	periscope depth in just a second stop
+1921.4	down down down down down down creep
+1923.9	creep shallow okay this is great news
+1926.6	because he was looking here and because
+1929.6	this guy was looking here I was exactly
+1931.7	correct it was able to place an enemy
+1933.6	skunk wall obviously we're treating a
+1934.9	little here I was able to identify an
+1936.8	enemy skunk at that distance right there
+1938.2	this is excellent so that's twelve point
+1940.6	three nautical miles it's thirteen point
+1942.3	five nautical miles we still have no
+1944.3	idea what we're dealing with I'm gonna
+1946.5	go ahead and put him in a position like
+1947.9	this I'm gonna bring his speed up to
+1949.2	full again this is gonna get nasty real
+1951.9	quick come with the full take yourself
+1954.7	nice and shallow
+1957.2	all right meanwhile we're gonna have to
+1959.2	put our nose back into the other guy
+1961.1	because he's gonna detect us if we
+1962.6	expose our side too much to him all
+1965.4	right spin us around okay nice and slow
+1968.2	nice and slow all right that was two
+1970.2	minutes in twenty-three seconds ago
+1971.7	which would put him right about here so
+1974.0	what we could do is we could use our
+1975.5	anti-ship missiles like a shotgun
+1977.2	now there's two advantages and
+1978.9	disadvantage to this if we do that if
+1980.9	he's in visual range which is about 1250
+1983.3	nautical miles away
+1984.3	he's going to see where they launched
+1985.9	from and I guarantee you a second later
+1988.0	we're going to be on the receiving end
+1989.7	of some really really nasty
+1991.5	so if we're gonna do that we have to be
+1993.1	very quick about it which we're gonna
+1995.0	take a shot at my prediction is the
+1996.8	target is right there all right I'm
+1999.3	gonna bring up to periscope depth for
+2000.7	one last sniff all right come on up to
+2006.2	periscope depth again I just wanna be
+2007.9	able to triangulate them for my
+2009.2	targeting solution we're gonna spam them
+2011.5	with anti-ship missiles and our fingers
+2013.8	are gonna be crossed so we hit something
+2014.9	expensive chances are none of them are
+2016.8	gonna get through but again I've got to
+2019.1	respect people's time here pause okay
+2023.2	back then to shallow
+2025.1	back down to shallow OOP shallow he's
+2028.1	probably already knows we're out here so
+2029.5	we're gonna have to work fast all right
+2031.9	they're gonna be in here somewhere
+2033.3	let's go ahead and do a couple tunnel
+2036.0	Hawks here couple tomahawks here a
+2039.5	couple tomahawks here couple tomahawks
+2043.8	here couple tomahawks here this is very
+2046.7	hazardous because if there's any
+2047.9	civilians and they neighborhood
+2048.9	unfortunately they're going to be
+2050.6	receiving about 40 Tomahawk missiles in
+2052.4	about two seconds Oh whoop I did not
+2056.5	mean to do that no another one here and
+2061.0	this is what I call a shotgun fire
+2068.8	now this poor guy off now that enemy is
+2078.3	going to be launching every single
+2081.1	anti-ship submarine everything at us
+2083.3	right now because they're gonna see
+2084.5	these missiles leaving the water but my
+2088.1	plan is to be out of here before that
+2090.3	happens
+2091.1	remember I'm setting my kilo up here
+2094.9	once I'm out of tomahawks I'm turning
+2097.2	around get the hell out of here
+2101.8	obviously you want to have a slightly
+2103.5	more confirmed target than what I'm
+2104.9	using but I'm not complaining too much
+2106.2	here okay let's get out here go remember
+2113.0	we're not cavitating all right I'm
+2114.7	turning around we're getting out of here
+2116.9	our Kela will do a pretty good job of
+2119.3	listening in case anything comes launch
+2120.9	and after us
+2122.8	get your yeah that is full-speed that's
+2125.7	as fast as we can go at this depth
+2126.9	bummer Oh
+2129.6	off they go these are always fun to
+2131.7	watch let's see how close actually was
+2134.2	there's some stuff out there we'll see
+2136.4	what happens we'll see what happens
+2137.7	remember we're going for the convoy
+2138.9	we're not going for the destroyer so
+2142.5	basically when we hit those spots
+2143.9	they're gonna automatically turn their
+2145.2	radars on and start looking for things
+2146.6	that are interesting one of the best
+2148.3	anti-ship strategy look at this oh I see
+2152.3	some jamming oh it's gonna happen let's
+2154.5	see here I do not need to see
+2156.1	illumination vectors I don't need to see
+2157.7	this either off they go
+2160.0	let's see what happens here looks like a
+2163.3	good number of them are kind of tacking
+2164.5	off to the side oh what a wasted
+2166.8	tomahawks but hey it's fun oh you know
+2173.7	somebody doesn't like him well they're
+2177.6	turning their going to somebody else now
+2179.1	hey this is fun to watch Oh got another
+2183.8	one looks like the ones off to the right
+2186.8	or going after somebody actually we're
+2188.2	doing a pretty good job I'm not
+2189.3	complaining this is a way more effective
+2191.5	than I had expected to be honest and
+2193.8	that is why you're not allowed to carry
+2196.1	anti-ship missiles inside submarines
+2197.6	anymore yes you can call me out of the
+2202.4	fact that these are supposed to be under
+2203.5	oh he's trying he's trying is he gonna
+2206.1	be in time though nope
+2211.0	nice okay now it's I'm gonna go ahead
+2215.6	and cheat for a second here I'm gonna go
+2216.9	ahead and move go ahead and order him to
+2218.4	move here I'm gonna move him right here
+2220.2	and then I'm gonna show you what his
+2221.3	weapons do okay set him to very slow
+2223.8	periscope I'm gonna shallow shallow
+2225.3	shallow okay so now this particular
+2229.0	submarine is equipped with a call way
+2230.6	corpsman horn what's up warming wake
+2232.8	homing torpedoes that is it torpedo that
+2234.9	follows the wake of the ship you've
+2236.0	engaged so you'll notice he's actually
+2238.0	picked up a ship based on the fact that
+2239.9	it's flooding and making all sorts of
+2241.4	crunchy noises he was also able to
+2243.2	identify the type of ship at that
+2244.8	distance all right
+2246.3	we're gonna go ahead and continue here
+2247.5	looks like we got we did a lot of damage
+2249.6	here I'm actually kind of impressed
+2251.1	usually I'm not quite that good again
+2253.1	we're cheating here to save some of that
+2254.4	our detection time we could be
+2256.3	zigzagging all afternoon and try and
+2257.9	identify these guys all right we've got
+2259.5	him identified we need a slightly better
+2261.2	firing solution than that and of course
+2263.5	we don't know that there's no destroyer
+2264.9	up there but I'm gonna bring him up to
+2265.9	periscope depth to take a peek anyway
+2267.4	and then we'll go check from the enemy's
+2269.0	perspective to see how effective they
+2270.5	would have been had they had helicopters
+2272.5	or something like that
+2273.0	stop back to shell out that works for me
+2275.6	Cruz okay let's go ahead and engage the
+2278.4	ship you can have two no need to waste
+2280.8	ammunition and we're gonna go after this
+2282.6	one over here bring ourselves up the
+2284.7	flank nice and deep
+2286.2	now the cool thing about this store Pido
+2288.1	is is it'll actually turn itself around
+2290.0	when it gets to the target area go ahead
+2291.6	speed up time here now notice it missed
+2294.0	the target right watch what happens
+2295.9	it'll actually turn around and lock on
+2297.3	to the wake of the target and then go
+2298.6	find it awesome it found the way can
+2304.1	actually follow the ship in it's a
+2305.5	pretty scary torpedo by the way it's
+2307.0	utterly worthless against submarines
+2309.0	because unless they're on the surface
+2310.7	there's no wake all right I'm actually
+2314.1	gonna give myself a slightly tighter
+2315.5	intercept course here I go feeling what
+2316.9	are we off by a little bit here again
+2319.2	I'm making a lot of noise but like I
+2320.8	said there's nothing left at the enemy
+2322.2	forces so I'm not too worried here sheet
+2324.5	for just a moment and we knock
+2326.4	somebody's propellers off
+2327.8	he's probably flooding right now yeah
+2329.5	he's not doing so hot all right
+2331.5	proceed again we never in the universe
+2334.1	send yourself up to periscope depth this
+2335.9	close to enemy activity but the reason
+2337.9	I'm doing is again just have some fun
+2339.3	here all right that works for me back to
+2340.7	shell oh all right we've identified a
+2342.4	new target right there
+2343.9	go ahead sneak up on it as well speed up
+2346.7	time all right let's let him have it you
+2351.0	may have to and since you're still
+2352.8	floating I'll give you one because I'm
+2354.3	polite and you over there I'm gonna give
+2356.1	you one to go ahead and reduce my speed
+2359.7	to creep let my way comers go my
+2363.5	pretties go you don't have to worry
+2366.5	about the wait comer by the way chasing
+2368.1	you down okay
+2369.4	I'm gonna delete this guy for just a
+2370.6	second and show you one more thing and
+2371.8	then I'm gonna go ahead and head out go
+2373.5	ahead and create this guy put him right
+2374.9	here
+2375.8	set him - no no shallow send to stop so
+2379.4	this particular ship has a special kind
+2381.8	of torpedo called a wired guided torpedo
+2383.6	now what that does is let me actually
+2385.5	activate the wire guide to torpedo it's
+2387.4	probably gonna take up a few minutes to
+2388.6	unload the other one and then load the
+2390.3	new one in he did so wire guided torpedo
+2392.7	after you fire you can actually steer it
+2394.9	so for example if I fire that torpedo at
+2397.3	him right now
+2397.9	weapons were loading it'll fire in a
+2399.8	second way to come around what's this do
+2406.4	that he's still trying to get revenge on
+2409.2	something from a while ago apparently
+2410.8	all right now wait till he's got that
+2413.1	all loaded up for us come on I need that
+2415.3	mark 48 please perfect
+2417.4	lock onto him what do you mean the
+2419.4	weapons still print loading obviously oh
+2421.8	it's gonna be another minute before it's
+2423.2	done reloading why aren't you helpful
+2428.0	now you're done reloading yeah how about
+2430.8	now
+2431.3	five seconds good to repeat on the watch
+2433.8	check it out if I click on this torpedo
+2435.4	because this is a wire guided torpedo I
+2438.0	can actually tell it to go places so you
+2440.4	can do some really really fun things
+2442.0	like this or the torpedo can do like a
+2444.2	little donut keep in mind it's gonna
+2446.0	start searching on its own as soon as it
+2447.8	gets to the end of its wire so you can
+2449.7	do really fun things where you fire like
+2451.0	two or three of these and you can just
+2452.3	sort of sit there and steer them around
+2453.7	if you like yeah that's kind of rude
+2455.8	I'll give them a little bit of a chance
+2457.2	here okay that should pretty much do it
+2460.1	for submarine warfare keep in mind some
+2461.6	submarines can be used to attack land
+2463.0	targets that's going to be using the
+2464.4	exact same procedures that you'd be
+2465.9	using using conventional ships as well
+2468.7	all right well watch this torpedo zip in
+2470.7	real quick switch the other side so you
+2473.5	have notice he switched to his automatic
+2474.7	control and
+2476.1	strike let's go ahead and switch the
+2478.6	other side see how likely it was they
+2480.1	detected us they knew we were here a
+2482.7	long time ago but they never detected us
+2485.4	there very interesting all right let's
+2487.8	look at our losses and expenditures
+2490.9	whoops
+2493.9	you can see they lost a lot today but
+2497.2	notice they never fired anything back at
+2498.6	us all right enjoy

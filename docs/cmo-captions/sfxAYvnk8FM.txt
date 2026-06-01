@@ -1,0 +1,1193 @@
+0.0	hello everyone on today's command modern
+2.0	operations tutorial we're gonna be
+3.6	concentrating on the map editor slash
+5.3	scenario editor side of things with a
+7.3	focus on iAds as well as Sams so in our
+11.6	little scenario here we're probably
+12.6	gonna have to do this particular video
+14.3	twice once with legacy systems and then
+16.8	again we're gonna have to do a problem
+18.2	with modern systems so our scenario is
+20.4	pretty straightforward here we have the
+21.9	nice British Isles the United Kingdom
+23.7	and we basically taken the entire island
+27.1	of Ireland here and now pretty much
+28.7	added a bunch of strategic and tactical
+30.4	targets to it meanwhile in about thirty
+33.2	minutes the entire United Kingdom Air
+36.0	Force is going to show up I should say
+37.2	the English Air Force the RAF
+38.9	we're going to show up and do the best
+40.4	damage they possibly can to it so our
+43.0	job as mission designers is to make a
+45.4	very very challenging
+46.6	iAds integrated air defense system that
+49.2	we can basically counter this keep in
+51.8	mind this is back in 1980 so while the
+54.3	harms are not nearly as deadly because
+56.0	they had been expended yet they still
+57.8	have quite a good amount of effect with
+60.0	the shrikes and stuff like that and
+61.4	we'll deal with that a little later on
+62.4	so anyway let's go ahead and take a look
+64.0	at our target region here this is
+66.2	Ireland of course obviously in the real
+67.7	world Ireland split into Ireland and
+69.2	North Ireland I'm not going to get too
+70.5	too crazy into that but what I am going
+72.2	to do is take a look at the different
+73.2	types of targets we have in the actual
+75.3	island itself that we set up we have
+77.7	some basically industry in the south we
+79.9	have a pretty good concentration of
+81.3	communication hubs government buildings
+83.2	here in the kind of the East coming up
+85.5	this way we have a bunch of bunkers for
+86.9	controls military installations as well
+88.7	as power plants and then we have
+90.3	military docks at pretty much all the
+92.0	major locations now remember the goal of
+94.3	Sam's is to shoot down enemy aircraft
+96.2	now the real purpose is basically to
+98.7	deny the enemy the ability to use their
+100.5	aircraft in a way that affects us so how
+104.1	are we gonna figure this out well first
+106.3	things first we need to know that the
+107.8	enemy planes are coming and as a mission
+109.6	designer usually we do that with some
+111.5	kind of combination of early warning
+113.0	radar as well as maybe visuals methods
+115.4	may be some ESM stuff along those lines
+117.4	so let's do that first I'm gonna
+119.4	actually shut this off so how do we
+121.6	design an early warning network for an
+124.0	island such as this well first things
+125.9	first you got a look at the terrain so
+128.4	I'm gonna go ahead and flip on that's
+129.4	rain level real quickly and everything
+131.4	that's going to make much more sense
+132.7	once you look at it from a terrain
+134.0	perspective ah there we go
+135.9	so the actual country here is not the
+138.1	highest country but what it is is is
+141.1	very varied in its type of land you can
+143.2	see that there's a very large Plains in
+144.7	the middle there's some really seriously
+146.4	large mountains in the south and I think
+148.0	2,300 feet something like that and then
+150.0	we have some mountains up at the top
+151.1	more importantly and this is the thing
+152.9	everybody misses the fact we're
+154.2	surrounded by water you can't hide
+156.2	behind water which means that if any
+158.7	enemy were to launch from England over
+160.5	here they'd have to fly over water in
+162.0	order to detect us that would mean that
+163.8	our early warning setup has to take that
+166.4	into account now if I wanted to be easy
+168.4	about this I could just go to the middle
+169.7	of map go ahead and get myself a pretty
+171.4	classic let's do like a p40 radar or
+173.5	something like that
+174.2	slap that in the middle and whoa ma'am
+175.9	haha right yeah now the problem is that
+181.6	there's mountains right here if I were
+182.8	actually to flip on this really amazing
+184.2	tool called the l OS tool where you
+186.1	could see that if I set this to a target
+188.2	that was let's say 3000 that's about
+190.7	10,000 feet refresh you could say can
+193.9	see everybody there but once I went out
+195.5	- oh this is a bad idea don't do that
+199.0	yeah that's probably killed it let me
+205.7	close that it has a maximum limitation
+212.8	so you can see at an altitude of 10,000
+214.8	feet I can't actually detect you past
+217.5	the mountains that go around the outside
+218.9	of this incredible country here so kind
+222.3	of keep that in the back of your head
+223.4	when you're designing these systems
+224.4	while it is tempting to park one in the
+226.5	middle that has amazing range you're
+228.0	never actually going to be perceived the
+229.3	exterior Island because of the terrain
+230.9	now one thing I will throw out as well
+233.4	is think about altitude for a second
+235.7	here the entire upper radar is the
+238.4	farther it can see over the horizon
+239.9	that's going to be a big limiting factor
+242.3	we talked about that in our scene video
+243.5	basically because the earth is curved if
+245.8	I put it on a flat ground the earth
+247.8	curves away and I can't see behind the
+249.9	curve of the earth so that would mean
+251.7	our nice little radar set right here if
+253.4	we were gonna set one radar in the
+254.8	middle of the island it'd probably be
+256.2	better to put it up high so I'm actually
+257.8	gonna go move it right over here let's
+259.9	see if that actually helped us real
+261.2	quickly though that's interesting
+264.9	apparently we didn't put it on the
+266.3	highest part of the mountain because you
+267.5	could actually see that we were
+268.5	completely blind to the south there
+270.7	we're gonna go ahead and move my mouse
+272.1	here ah that's why 761 feet let's go
+275.0	ahead and park that guy right there and
+276.1	try it again okay this is a good well
+278.8	place to radar nice I'm not gonna crank
+280.8	this thing up because I'm just gonna
+281.8	melt OBS again so that will be our first
+284.0	radar a long track by the way it's a
+285.7	semi mobile system it has a really
+287.7	really long range of 200 nautical miles
+290.1	that's uh yeah I think we're pretty good
+292.8	so now that we have our big kind of our
+295.4	a where's everybody kind of radar now we
+297.6	need to start filling in some of the
+298.9	gaps now as I mentioned before because
+301.2	we're surrounded by ocean we just need
+303.3	to set up radars in a way that they can
+305.0	see as far into the ocean as possible so
+307.4	what are we looking for peninsulas so
+309.9	poking our way down here this is
+311.3	actually a really tough spot to place a
+313.3	single radar our issue here is if I put
+315.8	it here in the middle I can't see that
+317.2	way if I put it here in the end I kind
+319.4	of restrict my vision this way because
+321.4	of the height of these mounts so we need
+323.1	to find basically the farthest west
+324.9	point that we can get ourselves on and
+326.8	it looks like it's gonna be this little
+328.7	tiny mountain right here it's 56 feet
+331.2	let's go ahead and throw on we'll throw
+332.7	on a P 18 this time we'll go ahead and
+335.6	grab the Air Defense version let me grab
+337.3	that let's see how we did this time I
+338.9	think this one's gonna be a little
+339.9	better yeah we did a nice job with that
+342.4	one good game good game good so now we
+344.9	have coverage again
+346.7	tene by the way I think it's a 2d but
+348.1	it's a long-range radar yet - in an
+349.7	article miles again so that gives us
+351.7	this entire arc completely covered for
+355.7	anybody coming in we even get a little
+357.6	bit of this direction which i think is
+359.2	kind of added bonus okay so we've
+361.3	covered this side of the island we've
+362.8	covered kind of our main part of the
+364.2	island let's take a look at the northern
+365.6	part of the islands now one of the
+367.3	bummer parts is if the Royal Air Force
+369.1	wanted to kind of sneak through these
+370.7	Scottish Isles they'd have about Oh with
+372.9	witnesses distance twelve nautical miles
+374.8	to cover so we're not gonna have a lot
+377.1	of warning that they're coming from that
+378.6	direction but the very least we can keep
+380.3	an eye on Scotland with a well-placed
+382.1	radar so again we're gonna play the same
+384.3	philosophy here so we could go ahead and
+386.2	position our radar okay we can't there's
+387.7	nothing there we could do that we'll go
+389.8	ahead and use a p15 this time a little
+391.5	bit more classic but it still works
+392.9	pretty well there we go got a squat I
+395.5	couldn't flip on the line of sight so
+397.6	we'll see how we did
+399.4	nicely done perfectly done now the squad
+402.9	eye does not have the range that the
+404.2	other radars do we only 110 nautical
+406.0	miles let me go ahead and drag out 110
+408.2	plenty okay which leaves us with this
+411.5	side of the island where we're gonna put
+413.0	our early warning writer actually up
+414.7	here we're gonna need something - so
+416.3	where do we put our early warning radar
+417.9	here now there's not really an obvious
+419.7	peninsula which means I just need to
+421.8	find the tallest mountain that I could
+423.1	finally put myself on here putting the
+425.3	radar here will be silly because then we
+426.7	can't see through these two mountains
+427.9	putting the radar up here a little
+429.6	better because we can see to these
+430.9	mountains but we won't really be able to
+432.3	see through here so it's very tempting
+434.1	to put something in the corner there
+435.3	it's very something to put something
+436.5	here so I'm gonna go ahead and take a
+438.0	look at these mountains with my mouse
+439.2	here and take a look at my elevations I
+440.6	saw two two four seven for a second
+442.3	there boy saw they've been higher yeah
+444.4	this is the bane of all map editors you
+446.9	wish you had a function that you could
+447.9	just automatically lock onto the tallest
+449.5	mountain there we go let's go ahead and
+451.2	put something really long-range up here
+452.8	I'll just put P 37 go and click that one
+455.6	let's go ahead see how we did with the
+457.0	line-of-sight nice not perfect but not
+461.8	bad either and like I said I was really
+463.6	worried about this corner being blind
+465.0	let's go up to 100 let's refresh that we
+469.8	got a little bit of a blind spot right
+471.1	there but again it's nothing I'm too
+472.7	worried about because the enemy's gonna
+473.9	have to be able to exploit that
+474.8	perfectly but I still don't like the
+476.4	fact that I don't have good visibility
+477.8	coming out of the southern party
+479.8	somebody go ahead and see if I can find
+481.0	something nice it's Hall that has a good
+482.5	line of sight that looks pretty good to
+483.7	me go ahead put a p40 on there grab that
+489.3	one I think we're good
+490.8	that should be about all we need at this
+492.3	point yeah not bad not bad not bad I
+495.7	don't miss would rather put him over
+496.9	here though yeah it's just gonna work
+499.8	better if I stick it right here this is
+502.9	the nice thing you can move it in with
+504.0	the line of sight so uh that did not
+505.4	improve things that's better
+508.1	there we go we found the spot so now we
+510.4	can see all of our signs all right so
+512.3	that's it for our early warning radar
+514.2	are you probably sitting there going how
+516.3	many were early ruining radars do you
+518.0	really need the reality is you need as
+520.1	many as it takes to make sure that
+521.4	you're protected so I'm gonna grab this
+522.9	one call this GW group no this is
+525.1	actually important you'll see why a
+526.3	little later on so now for the fun part
+528.0	we need to consider how we're going to
+529.7	place our surface-to-air missile
+530.8	batteries now for this scenario we're
+533.0	gonna be sticking only to pretty much
+535.4	legacy systems that means there are c-23
+537.6	pretty much the single digit systems if
+539.7	you want to think about it another way
+540.8	so in the other video I talked to them
+542.3	about the difference between area and
+543.9	kind of tactical and division level
+545.5	exams and things like that so the way
+547.5	I'm gonna do this is pretty much the
+548.8	same way I'm gonna do my early we're
+549.9	winning radars I'm gonna press the nine
+551.5	keys so I can see everybody I'm gonna go
+553.7	ahead and press the asterisk also so I
+555.4	can see what kind of targets I have now
+557.4	SI toos are fixed sights that means the
+560.8	Air Force are going to know where they
+562.6	are and they're probably going to make a
+563.7	definite effort to blow them up now one
+566.3	of the nice things about Ireland is
+567.5	there's a pretty good amount of forests
+568.9	in different places that we can kind of
+570.1	hide these things as a matter of fact
+572.0	check this out we can actually flip on
+574.3	the land cover mode if we wanted to get
+576.8	really scientific about this but again I
+578.7	know that limited time and a limited
+580.7	time span we could actually
+581.9	intentionally put our Sam's on mountains
+584.4	that have forest cover in them that
+587.2	would be like double points but again
+588.9	I'm not gonna worry about that too too
+590.2	much for the scenario but I definitely
+591.8	am interested in altitudes so where do
+593.7	we put our Sam's so first of all is how
+595.6	many Sam's do you have at your disposal
+596.5	because if I have 30 SI toos you can bet
+599.2	there's going to be 30 SI toos deployed
+601.0	somewhere down here in this environment
+602.3	to make things interesting for my
+603.8	opponents but on the flip side I'm gonna
+606.2	try to keep it to what I think is
+607.4	reasonable and again as a map editor a
+609.2	map designer a mission designer should
+611.1	you're gonna have to decide what is
+613.0	reasonable to you is it's taking a
+614.4	little while for some reason but that's
+615.5	okay
+616.0	so let's go ahead and see if we can spot
+617.6	clusters of targets that we need to
+619.5	protect now obviously we're very
+621.3	interested in protecting our capital so
+623.1	we're definitely gonna have an sa-2
+624.2	there so we go ahead and zoom it can we
+627.8	get an sa-2 in here in a way that's
+629.3	gonna cover everybody so first of all
+631.0	I'm a jananam a so if I come this way
+633.0	obviously I'm not gonna know they're
+634.3	coming they come through these mountains
+635.6	it's got to be kind of tough to spot
+637.0	them until it's too late
+638.5	so putting these like an sa-2 site that
+640.9	can see over this valley would be pretty
+642.7	effective because then I can kind of hit
+643.9	people over here and people down here so
+646.0	I'm liking putting them up here let's
+647.4	see here if I do it
+649.5	18:47 let's going to get ourselves a to
+651.9	F that's kind of a nice one of course is
+654.9	the DNA which I like a little better but
+656.4	that's alright alright what does that do
+657.8	for us for range not bad so I'm actually
+660.1	gonna set range mode to be all units and
+662.5	I'm also gonna shut off merge symbols so
+664.5	I can see so that's actually a pretty
+666.2	well placed essay too you can see that
+668.7	I've got all these buildings all covered
+670.7	pretty much all under the same umbrella
+672.0	right here let's see if there's another
+673.8	class definitely up here this is a very
+675.5	logical place for an essay to see if we
+677.4	can get a pretty good amount of coverage
+678.8	of everybody it looks pretty good umm
+681.5	how about up here I don't think I need
+684.4	an essay to here it's a single unit up
+686.4	here I mean we do have the power station
+688.4	that's kind of there so if I did want to
+689.7	put an essay to I could kind of put it
+691.2	here so I can kind of cover this whole
+693.0	valley actually it's not a bad idea I'm
+694.6	gonna do that as well
+695.5	I'm gonna move it just a little bit
+697.7	towards the military base so I can kind
+699.2	of get a free shot at anybody coming in
+700.7	this way up here I can't put an essay to
+703.3	look at how heavy the mountains in
+706.4	glaciation and canyons and all this
+708.0	stuff are you're never gonna be able to
+709.6	get a missile off in time there
+710.6	obviously you could put an sa-2 on the
+712.4	highest mountain up here but the enemy's
+714.9	gonna exploit these canyons it's not
+716.3	gonna work he's on his own I'm not gonna
+718.4	put an sa-2 there let's see what we have
+719.9	here okay so we have a military base in
+721.6	a TV station I don't really care about
+723.7	that very much but we need our
+726.4	propaganda so I'm gonna go ahead put one
+728.1	right there as well it also covers
+729.4	anybody coming across the center of the
+730.8	island screwing down here we've got a
+733.0	military base by his lonesome but he's
+734.5	really exposed so I'm well I guess we
+738.4	could cover both I don't know why I said
+739.9	pork rinds they come into a port
+741.1	but that's okay so let's go ahead and
+742.8	provide him with a little bit of
+744.0	protection I'm gonna go ahead and mount
+745.1	an sa-2 on the mountains up here
+746.6	scooting down here worth us coming over
+750.0	here there's an industrial plant in a
+751.6	valley I don't think so
+753.0	can't protect that okay this is good we
+755.1	can work with this so we have basically
+756.8	a little cluster of these different
+758.4	structures really really close to each
+759.7	other so I notice there's a very tall
+761.5	mountain peak right here that would
+762.9	actually get me coverage for all these
+764.6	there appears to be also a mountain peak
+766.8	over here I don't like that as much let
+769.8	me try this one right here hey there we
+771.1	go
+771.4	so now if the enemy is stupid enough to
+773.1	be flying high we get kind of a freebie
+775.0	the problem is that they fly low they're
+777.4	going to get us really easily like
+778.5	they're gonna be able hit this all day
+780.1	all afternoon but we'll come back to it
+781.5	a little later which leaves us with an
+783.4	arrangement that looks a little bit like
+784.7	this so that's not that bad that's kind
+788.4	of get us a little bit of protection
+789.2	it's again an sa-2
+790.5	think of it as an area salmon and when
+792.1	we do this video with modern Sam's and
+794.1	modern I adds by the way I keep saying
+795.8	the word I adds if you want to learn a
+797.0	little bit more about what that is it's
+798.3	just an integrated air defense system if
+800.0	you go online and search for Sam
+802.5	simulator form there's just really
+804.1	really neat little topic on I adds
+806.4	integrated air defense system and they
+808.1	talk to you a little bit about this
+809.2	especially this link which brings you to
+811.1	this handy dandy little PDF right here
+813.0	which is kind of fun I love this picture
+814.8	here where there don't have radar so
+816.3	they just use an headphones which is
+818.0	kind of cool anyway I'm going too far
+819.9	with that so now we're pretty well set
+821.5	up for the big stuff now we're gonna
+823.0	switch up to the little shorter range
+824.7	stuff the SI 3 now remember the SI 3 was
+827.3	designed to complement the SI 2 the idea
+829.5	here was that basically the SI 2 kind of
+831.7	gets the Bombers the este 3 kind of
+833.6	deals with the leakers we're gonna use
+835.3	that same philosophy here so let's go
+837.9	ahead and take a look can we get to
+839.1	these guys under an SI 3 window keep in
+841.4	mind also an SI 3 is a much faster more
+843.9	maneuverable missile so we can take
+845.9	advantage of it shorter range so taking
+848.3	a look here we have a military base our
+849.7	power station or enable dock we might
+851.6	actually be able to get them all under
+853.2	the branch of a single si 3 will helps
+856.4	if we actually type it in correctly
+857.6	there we go
+858.8	not quite I'm just debating if there's
+863.3	and I don't think there's gonna be a
+865.0	quick solution to do that but the very
+867.0	least our power station is completely
+868.3	protected and our dock as well-protected
+870.0	I'm actually going to unprotect we also
+872.3	have this situation
+874.2	right there bingo so this essay 3
+877.9	basically is going to sit here at this
+879.2	Inlet and if anybody's stupid enough to
+880.8	try to fly through the inlet they're
+882.3	gonna get a real surprise on either side
+883.9	and it'll also be able to provide a
+885.1	little bit protection over the military
+886.4	base coming down this way it looks like
+888.5	these two structures are pretty close to
+890.0	each other there's also this little
+891.4	sector control station all that good
+893.1	stuff down here I definitely want to
+895.2	give these a little bit of extra
+896.2	protection so I'm gonna throw in an
+897.3	essay 3 there I'd feel like I'm not
+900.1	protecting anything when I do that
+901.3	remember if you try to protect
+902.1	everything you protect nothing there's a
+904.2	valley in here though and I wanted
+905.6	people to take advantage of that let's
+907.5	put that no I don't like that either
+909.1	again there's no reason to protect
+910.9	anything that's over here maybe this is
+913.1	gonna require two we'll just go and play
+915.2	with it all right that was good same
+918.2	kind of problem here if I put the SI 3
+920.2	up here we're gonna have some issues
+921.8	shooting through these mountains
+923.3	obviously we have a couple bunkers we
+924.9	need to protect them so I'm actually
+926.6	gonna put the SI three this is gonna
+928.7	seem weird won't put it right here
+930.2	because that means I covered not only
+932.2	those two buildings but anybody who's
+933.9	silly enough to try to come in and get
+935.2	protected by this set here scrolling
+937.6	down here obviously this is the most
+938.9	critical stuff I'm gonna go ahead and
+940.2	drop an SI 3 pretty much in the middle
+942.0	of town the idea here is that there's
+944.4	any precision guided munitions I can use
+946.1	the SI 3 to protect them this stuff here
+949.0	it'd be really nice to get an SI 3 here
+951.3	because that will protect us from
+952.8	anybody trying to sneak up whoop I
+954.4	didn't mean to make too or just meant to
+955.8	make one that'll protect us from anybody
+958.1	kind of Scouten that way we have him
+960.5	sort of sitting by his lonesome he's
+961.9	sent by his lonesome I'm gonna leave
+963.6	those two alone we have a naval dock we
+965.5	have this stuff up here all right so
+966.9	that's it for the si threes now the SI
+969.5	fours I'm gonna skip an essay for is
+971.7	sort of unique weapon if I did have an
+974.1	SI forward to deploy I'd probably deploy
+976.5	it watching this side of the entire map
+978.5	it has an incredibly long range it just
+980.6	doesn't have a lot of missiles on board
+981.9	so as a result you're gonna running out
+983.8	of missiles very quickly with it even
+985.4	though it's a great system so it's it's
+989.1	tough to use but if I did have one and
+991.2	you know just for example purposes I'll
+992.9	kind of have it protect us on the ocean
+994.4	in the back side I'm gonna get the Krug
+996.4	there we go
+997.6	nice so he's basically gonna cover that
+1000.2	little Peninsula here and you can be
+1001.4	using his battalion radar too to help a
+1003.0	spot ok which brings us to the SI 5
+1007.0	you can't hear me but I'm rubbing my
+1008.4	hands together so the SI five as you
+1010.1	know is an amazingly long range area Sam
+1013.0	it is not the most deadly Sam in the
+1015.4	world but it is amazing how far it can
+1017.7	shoot now my initial instinct with that
+1019.9	would be to put it here and basically
+1021.4	kind of early warning with missiles but
+1024.3	I'd rather use it if I only had a single
+1026.2	one of those to play with I try to put
+1027.7	it in a position where it could provide
+1028.9	the most coverage to the most important
+1031.2	areas all the time so what I'm gonna do
+1033.5	is I'm actually gonna park it somewhere
+1034.5	in here let's see if I can get a decent
+1036.3	altitude here and I thought 48 I'm
+1039.9	actually gonna check this real quick
+1041.4	we're gonna do now say 5c grab the one
+1044.2	from the Soviet Union it looks pretty
+1045.7	good look at that range so that's got to
+1049.2	protect all of the pretty much core of
+1051.2	Ireland here and if they do come from
+1053.0	this direction which is the kind of
+1054.2	logical direction to come from they
+1056.1	would end up getting hammered by that so
+1057.7	that's kind of work well I'm the only
+1059.4	concern is it's gonna be probably too
+1061.1	close to the action actually that really
+1063.0	bothers me I'm gonna move it back I
+1065.3	don't want to get too close to the
+1066.5	action cuz it's got to get hit with a
+1067.7	harm and that's no good
+1068.6	or I should say that Martel I believe is
+1070.7	gonna be the British 8 RM of the times
+1073.1	okay so now we've taken care of that
+1075.4	let's talk about the SI six the si six
+1077.1	is a short-range amazingly high-speed
+1080.0	engagement system it is spectacular and
+1082.7	protecting point targets it is not great
+1085.0	at protecting area targets so now we
+1086.9	need to take a look is there anything
+1088.0	that we haven't protected yet ah I see
+1091.6	that very clearly so we have I believe
+1094.1	this is our port crane it goofed it up
+1096.3	and we have an oil refinery so what if
+1098.2	we were to place an SI 6 in a place that
+1100.5	we could snipe anybody who tries to come
+1102.1	ripping through here so where could we
+1104.4	put them the mountains are just so
+1105.5	strong here obviously we can stick it up
+1107.5	here to sort of see over let's go ahead
+1109.5	and try that real quick
+1110.7	well then si si right now we need the
+1113.9	extra vet where's the one I like ah
+1117.0	there it is so our problem here is this
+1121.0	stuff's problem no we can actually shoot
+1122.6	down into these um yeah we could shoot
+1124.4	into that Ford nice that's excellent
+1126.6	actually it's a perfect place I believe
+1127.9	right there you stay there
+1129.3	alright so that's a good good thing to
+1131.7	use in si64 let's see who else he's all
+1133.7	by his lonesome it's a naval dock that's
+1135.6	an important target I'm gonna go ahead
+1137.0	and
+1137.3	Mountain si6 on the nearby mountain also
+1139.2	let's see who else we're not protecting
+1141.4	very well here we've got you in the
+1143.3	middle of nowhere power station I have
+1145.0	something special for I'm gonna actually
+1146.2	wait on that these targets they're not
+1149.3	critical but I'm gonna leave them there
+1150.9	we have an industrial plant I got a
+1153.1	special thing for that industrial plant
+1154.7	might worry too much about that military
+1156.9	base industrial plant what do we got
+1159.1	here another military base yeah that's
+1161.3	more of a point target and he's not
+1162.8	being protected well it's probably a
+1164.8	priority targets I'm going to go ahead
+1166.1	and pull out and si64 these two as well
+1169.1	let's see here we have a cluster of
+1171.1	targets here and again there's really
+1173.0	important stuff here I believe this is
+1174.4	where we have our bunkers and things
+1175.5	like that whatever you have a bunker the
+1177.1	enemies can attack you at a lower
+1178.2	altitude so I highly recommend providing
+1180.3	a little bit extra security
+1181.7	I bet although most of our bunkers are
+1183.2	up this way let's go ahead and add
+1185.0	something like that here um kind of like
+1187.6	those three put that right there make
+1189.9	sure you got a move you don't need quite
+1191.6	that much covered there we go perfect
+1193.0	notice I'm putting it in the valley this
+1195.1	is a low altitude system use this to
+1197.4	trap the enemy rather than try to plink
+1199.6	at them flying up here I believe that's
+1202.1	a geothermal plant should military base
+1204.3	there's a power station I believe that's
+1206.5	a naval dock right there's probably just
+1209.6	trying to work this out real quickly we
+1212.2	have a couple bunkers it's probably
+1213.6	worthwhile to drop one in here as well
+1215.0	okay so that's si six si seven which
+1218.1	would be an infrared guided missile I'm
+1220.2	gonna skip it because all these
+1221.9	batteries have si sevens
+1223.1	SI e so this is a very short range are
+1226.4	you talking like five to ten miles short
+1228.0	range the system however it's extremely
+1230.7	accurate which means we can use it to
+1232.5	attack precision guided munitions so
+1234.5	this is what I'm going to go find my
+1236.3	power plants and protect them so I have
+1239.0	my power plant right here I'm actually
+1240.2	gonna park the SI e so that it can only
+1242.4	engage things attacking the power plant
+1244.3	directly go ahead and grab the OSHA
+1247.5	Park that one right there I believe we
+1250.3	had another one of these oh yeah right
+1254.3	down here he's gonna get his own Oso
+1255.8	protection keep in mind I'm not putting
+1257.8	about the hill I only want him to be
+1259.5	able to have line of sight on missiles
+1261.0	that are going to strike the power plant
+1262.6	I don't want him wasting his missiles on
+1265.0	everything that flies by now this is a
+1267.2	unique scenario because this power plant
+1269.3	is actually
+1270.1	in this valley so if I put the s8 up
+1272.6	here it would shoot at everything if I
+1274.1	put it in the valley he would only shoot
+1276.0	at things in the valley the problem is
+1277.7	if you do that
+1278.9	his engagement time is too slow to be
+1281.4	able to be too quick so this is the one
+1283.4	time I will actually put it up on the
+1284.7	hill next to the thing it's trying to
+1286.2	protect obviously you want to make sure
+1288.3	you protect your radar sites but in this
+1290.0	case I'm not going to we have another
+1291.8	industrial plane here we have another
+1293.1	industrial plane here I'm just trying to
+1295.8	take a look real quickly we got a
+1296.9	military base we've got an SI six up
+1298.6	there yeah we've got some pretty good
+1300.2	coverage all right si six seven eight si
+1304.0	nine SI nine is a very short range in
+1306.8	Fred guided missile system for us the
+1309.2	only thing we can use that for is
+1310.4	ambushes now if we're fighting against
+1312.4	players again we're designing this as a
+1314.2	mission designer's perspective we want
+1317.6	to think like the player does and put
+1319.4	these things in a place that they're
+1320.8	least likely to expect to see one of
+1323.1	them so just kind of take a look at this
+1325.2	for a second with my little circles do
+1327.2	you see any spots on the map where
+1329.6	clearly your opponent would try to come
+1332.0	in at a low altitude and attempt to kind
+1334.9	of sneak through now I can see several
+1337.3	just kind of sitting here for a second
+1339.0	first ones are up here second ones are
+1341.2	up here but do you see the tricky one
+1344.2	yeah you do see that tricky one don't
+1346.9	you they're going to do something
+1349.2	through here and you're sitting there
+1351.2	going why well let me zoom in a little
+1352.9	bit here this is an SI 3 and this is an
+1355.8	SI 2 coverage as an SI 3 you could
+1358.0	actually do one of these things like
+1359.7	this and completely dodge every single
+1362.1	one of those systems and now you
+1363.5	basically got free reign to come around
+1365.6	the back for a lot of these spots so if
+1368.2	I think the enemy is going to come in at
+1369.7	low altitude to try to be sneaky they're
+1371.7	going to try to get it right in here so
+1373.9	to dissuade them from doing that I'm
+1376.0	gonna add an SI 9 again an SI 9 is
+1379.0	simply a very very short-range
+1381.3	infrared guided missile it is not the
+1383.6	best system on earth but it's a great
+1385.4	surprise you'd be amazed what you can
+1387.5	hit with these things so let's go ahead
+1389.1	and see if there's any other spots like
+1390.4	this obviously like I set up on the top
+1391.9	let's see if they come ripping down this
+1394.1	valley here try to do okay would it be a
+1396.6	surprise that there's an SI 9 waiting
+1398.6	for you at the open to that aw jeez
+1400.3	that'd be such a pain in the butt looks
+1402.3	have the same thing in here because they
+1404.0	could kind of shield themselves at this
+1405.7	mountain here so let's put one right
+1407.4	here and of course like I said if they
+1409.6	come ripping in this way they're gonna
+1410.8	get a real big surprise from this
+1412.3	infrared guided missiles
+1413.5	let's see definitely down here in the
+1415.9	south if they try to fly in this valley
+1418.7	trying to dodge that as they eat it'd be
+1421.1	a shame if there was an SI 9 waiting for
+1423.6	them to hit them at low altitude as they
+1425.2	try to do that oh this works a triple a
+1427.5	two by the way coming up here I don't
+1429.4	really have these bases well defended or
+1431.1	anything like that but if the opponent
+1433.0	were to try to sneak through here it
+1434.4	would be a shame if there was an SI 9
+1435.9	waiting for them to try to catch them at
+1437.7	short altitude low altitude and I think
+1440.8	I want to put one up here I'm just
+1442.2	trying to figure out exactly I think
+1443.4	it's gonna be in here somewhere
+1444.5	yeah I mean if the enemy comes in this
+1446.3	way I'm just trying to kind of follow
+1448.1	with them the map isn't amazing we have
+1449.4	maps this accurate this is more accurate
+1451.3	than the bad guys probably get I'm
+1453.1	putting right here alright we are good
+1455.9	to go so that is my integrated air
+1458.6	defense system now one thing you're
+1460.4	probably saying is that's not really an
+1461.6	integrated air defense system you
+1463.1	basically have a bunch of Sam's relying
+1465.1	on aw radars to kind of pass on
+1467.0	information yeah that's exactly what an
+1470.1	integrated air defense system does I'm
+1472.1	going to zoom out real quickly so if you
+1473.9	want to imagine right now in our little
+1475.6	country this is a map of Ireland right
+1477.8	here and these are our early warning and
+1479.2	all these other site I believe this is
+1481.0	Alma's this is a Russian system yeah I
+1483.2	can tell by the lettering here this is
+1484.8	their version of NORAD for that sector
+1486.8	defense command it's actually pretty
+1488.0	cool how this works so if we wanted to
+1490.1	simulate that more accurately inside of
+1492.1	this program we basically have got that
+1494.2	all preset up because everybody can talk
+1495.8	to everybody if we wanted to simulate
+1497.4	Sam's that could not talk to each other
+1499.1	and we're not integrated you could
+1500.6	actually click on a SAM system right
+1502.4	click and actually set them out of
+1504.0	communication so that they can't talk to
+1506.2	everybody else here and pass on
+1508.0	targeting information which is so
+1509.8	critical for them to be able to be
+1511.8	efficient alright one last thing we need
+1513.5	to do before we get too carried away by
+1515.2	the way one thing you can do if you want
+1516.6	to go a little too far is you can
+1518.3	actually set it up so if you lose your
+1520.1	early warning radars you can
+1522.1	automatically turn on the radar so the
+1524.9	SAM sites using Lua it's a little bit
+1527.3	involved the actual command for it if
+1529.1	you in case you're really really curious
+1530.5	looks a little bit like this you just
+1532.9	have to link that to a trigger but
+1534.3	that's a little outside the scope of
+1535.3	everything we're doing today okay so the
+1537.5	last thing I want to do is I want to do
+1538.6	my wor a this is the part that everybody
+1540.7	groups up so first things first we have
+1543.4	these five Y a twenty three missiles for
+1545.8	the SI toos
+1546.6	so first off what do we shoot now do not
+1549.1	waste your missiles on something that
+1551.4	does not need to be shot down since
+1553.1	we're dealing with potentially enemy
+1554.4	bombers and some tactical aircraft I'm
+1556.4	not even going to bother launching at
+1559.5	missile targets I can't identify you're
+1561.6	sitting there going whoa whoa oh they're
+1562.7	going to get by no they're not we're
+1564.3	gonna be able to identify them somehow
+1565.5	unspecified three rounds
+1569.1	fifth-generation fighter
+1570.9	don't waste your time don't waste your
+1573.1	time don't waste your time don't waste
+1575.0	your time
+1575.6	high-performance bombers three you're
+1578.2	sitting there going whoa whoa whoa it's
+1579.7	a fifty five percent chance to hit every
+1581.3	time no bombers have defensive ECM and
+1585.1	they have chaff you're gonna need three
+1586.6	the other point is you're only going to
+1588.5	get a single salvo before your Sam site
+1591.0	is destroyed keep that in mind let's go
+1594.1	ahead and grab that that's great okay
+1595.8	it's doing three rounds three rounds
+1597.4	three rounds three rounds helicopter
+1599.3	please don't bother guide a weapon with
+1602.2	an sa-2
+1603.1	I don't think so you're wasting your
+1604.6	time engaging the guided weapon don't
+1606.8	bother doing it so then last but not
+1609.5	least let's look at our automatic firing
+1611.0	range we don't want to fire anything
+1612.4	greater than a probably the no escape
+1614.4	zone so I'm just going to set that to 20
+1616.0	set that to 20 at 20 again it'll be well
+1620.8	within a dlz so that's good all right we
+1623.2	don't have the F Mike we don't have the
+1625.0	other damn threes but we do have ese
+1626.6	threes same exact technique here we're
+1629.0	gonna go ahead and shut off unknown type
+1631.0	aircraft
+1631.5	don't waste your ammo against something
+1633.0	you don't know what it is because
+1634.0	otherwise you're just gonna get hammered
+1635.4	by anti-radiation missiles aircraft
+1637.3	unspecified three now here's where it
+1640.2	gets a little bit of fun do we want them
+1642.1	to attack fighters or do we not want
+1644.2	them to attack fighters here's the thing
+1646.2	if we attack fighters with these guys
+1648.3	what's gonna end up happening is we're
+1650.3	gonna run out of ammunition and then
+1651.7	we're gonna get armed we've got to use
+1653.6	these particular platforms against enemy
+1656.3	bombers so I'm going to crank it up to
+1658.0	three but I'm actually gonna disable it
+1659.6	for attacking these fighters because
+1661.2	you're just going to waste them we can
+1663.6	always come back and adjust this later
+1665.3	in the scenario if we know they've run
+1666.8	out of harm's
+1668.0	I should say not harms all right bombers
+1670.1	on the flip side spam use three cuz
+1673.5	remember you're only going to get a
+1674.7	single salvo before you are destroyed
+1677.1	reconnaissance platforms don't waste
+1679.4	your time oh cool hey waxy absolutely oh
+1683.4	I don't think so
+1684.7	helicopter please don't do that guided
+1686.5	weapon no you're sitting there going no
+1689.3	no no you have to defend yourself dude
+1690.8	it's not gonna work you're going to get
+1692.8	destroyed as soon as you launch you for
+1694.6	a salvo just keep that in mind the essay
+1696.7	for the essay for is on the other side
+1698.7	of the island if he does have to engage
+1700.3	anybody I'm actually gonna leave him at
+1702.1	the fault of course empathy for a B sa v
+1706.2	this is the one everybody gets wrong so
+1708.5	first off if we don't know the type of
+1710.0	target please don't waste your ammo on
+1712.1	it
+1712.5	second item if there's an unspecified
+1715.0	target we're gonna want to find three
+1716.9	this is the same thing as these guys up
+1719.4	here you sit there going you're gonna go
+1720.7	through a lot of ammunition I have 60
+1722.4	Rockets at NSA five site I will be okay
+1724.7	the next thing we want to do is we want
+1726.7	to set the range
+1727.8	don't you dare fire at max range if you
+1730.0	do that you lose line of sight on the
+1731.6	target before you get hit anything 100
+1733.4	nautical miles
+1734.1	that's like 15,000 feet keep that in
+1736.8	mind 40 miles is I think like 3,000 feet
+1739.1	so kind of keep that in the back of your
+1740.9	head obviously we can measure this
+1742.5	really carefully make sure we're only
+1743.8	getting you know Ireland with it
+1745.3	basically so that would be about 90
+1747.4	miles but I'm gonna leave it at 100 for
+1748.9	now so hundred okay let's see here
+1754.3	fifth-generation fighter please don't
+1756.7	waste ammo on fighters Christian is
+1760.1	sitting there going okay wait a minute
+1761.9	isn't the point of Oh actually bombers
+1763.8	yeah three three three three three three
+1766.2	reconnaissance don't waste your ammo on
+1768.7	them remember as soon as you fire you're
+1772.2	destroyed the sa5 he's got a little bit
+1774.5	more flexibility and again we can always
+1775.8	come back and change that later on too
+1777.5	so micro eight UAV I don't think so
+1780.3	let's see helicopter you don't bother
+1782.6	with a helicopter or a guided weapon
+1784.0	you're never gonna be able to hit it
+1785.4	don't waste your time alright so that's
+1787.4	it for this a5 the SI six I'm gonna
+1789.9	leave alone you probably sitting there
+1791.7	going what's up with that the only thing
+1793.2	I'm going to change on the si six here
+1795.0	is I'm going to disable guided weapon
+1796.3	also if you're going to get destroyed by
+1798.6	harm there's nothing you could do about
+1800.5	you
+1800.9	couldn't people to shoot it down same
+1802.6	thing with the sa 6b I'm actually gonna
+1804.5	allow these to fire their full shots now
+1807.2	you're probably saying why don't you go
+1808.5	with three rounds each well the reality
+1810.1	is you only have six so that least
+1812.0	that's three attacks if you got lucky
+1813.6	but again you're just gonna be wasting
+1816.0	ammo with those guided weapons
+1817.5	I say seven go nuts si eight this is
+1820.4	what gets a little more fun what do we
+1822.1	do here
+1822.7	I leave it alone the s8 does a really
+1825.0	really good job on its own and
+1826.2	protecting itself so I'm actually gonna
+1827.4	leave that and of course the sa9 go nuts
+1831.1	if you're gonna be able to hit a target
+1833.3	with an SI nine you might as well fire
+1835.1	two because the percent of kill and this
+1837.1	is so low and now we're good to go oh
+1840.6	sorry for all that but uh let's see what
+1843.8	happens so I'm gonna go ahead and
+1845.1	unpause now I'm gonna go ahead and merge
+1846.7	everything real quickly so you don't
+1847.9	have to go blind here merge range
+1850.2	simples and we're good so it shot for
+1852.6	relief layer go flip on the BM ng layer
+1855.2	we're gonna pause send in the British
+1858.3	Air Force there's just say the Royal Air
+1859.8	Force I apologize again let's go ahead
+1863.5	and double check to make sure early
+1865.0	warning radars are indeed warning just
+1872.4	check it make sure everything's working
+1874.1	oh I messed up I messed up I messed up
+1879.9	where are my early warning radars there
+1883.6	they're off the whole time how
+1886.1	embarrassing
+1886.9	by the way they don't work if you don't
+1888.0	turn them on alright good things are
+1891.5	working as planned
+1892.3	so we've immediately spotted a bunch of
+1894.8	targets you notice by the way they
+1896.2	appear to be appearing for a second then
+1897.6	they disappear then they appear then
+1898.7	they disappear you're probably wondering
+1900.4	why that is that's because the radar is
+1902.1	rotating like this so it sees them it
+1905.6	doesn't see them it sees them it doesn't
+1908.0	see I think you get the idea so it's
+1911.0	pretty safe to say this a group of
+1912.4	enemies coming towards us remember the
+1914.7	moment you light up your fire control
+1916.4	radar you will be destroyed so we need
+1918.7	to only attack the targets we know are
+1920.8	actually dangerous
+1921.7	so go ahead speed up time a little bit
+1922.9	here and it looks like they're going for
+1926.3	us in the north
+1928.0	I'm gonna go ahead and order these guys
+1929.5	to be hostile even though we don't have
+1931.1	a way to confirm now unless we have a
+1932.5	camera speaking of cameras so while
+1934.3	we're waiting for everybody to get into
+1935.3	position if you want to make your system
+1937.5	even more deadly in your missions you
+1939.3	can do something like this
+1940.7	you do a forward observer we can do uh
+1943.2	let's call it a watchtower
+1945.2	and a watchtower like this to it and
+1948.0	basically with this Watchtower toast if
+1950.0	I recall correctly it has a spotlight OS
+1952.0	not that useful so let's add a pair of
+1955.0	binoculars check it out
+1960.3	so now we have a group that has a little
+1962.5	pair of binoculars inside a little
+1963.7	watchtower the neat thing about this is
+1965.8	they'll actually be able to identify an
+1967.4	enemy that you can see visually so of
+1970.1	course if this were a night attack which
+1971.8	is what I've expected ativ to do you
+1973.7	probably want to get some night vision
+1975.3	goggles also night vision there we go
+1979.3	second generation detection so that way
+1982.5	they can kind of see stuff that's coming
+1984.6	at them keep in mind in our scenario
+1986.3	there's a lot of clouds which makes our
+1988.5	identification problem a little bit
+1990.0	tougher so keep in mind if this for a
+1992.6	normal scenario we'd probably have
+1994.2	missiles already starting to fire but
+1996.2	we're not going to fire until we can
+1998.0	identify the type of target that we're
+1999.7	doing so we need these air attack planes
+2001.2	leave them alone we need to get them a
+2003.3	little bit closer oK we've identified
+2004.8	them as Harriers which are actually
+2006.2	pretty dangerous and we've got one
+2009.0	unidentified guy has another Harrier
+2010.7	Harriers to carry bombs who these guys
+2015.5	are this are Buccaneers okay that's it's
+2017.9	nerve-racking a little bit I know the
+2021.1	folks at home are going aren't you going
+2022.5	to start firing no I need to get the
+2024.7	important targets not the unimportant
+2026.5	targets notice these guys who dropped a
+2028.2	low altitude we have our little sa9
+2030.7	sitting there looks like they're gonna
+2031.9	be going for what are they going for
+2034.1	here they're going for something up this
+2035.2	way
+2036.0	alright that's too close the Buccaneers
+2039.5	I think the Buccaneers kin the
+2041.1	Buccaneers actually carry bombs they
+2042.9	probably can Oh
+2046.4	though I think I know what the
+2048.4	Buccaneers are doing alright
+2050.7	unfortunately we have not identified or
+2052.5	bombers yet that's troublesome
+2055.7	so these Harriers of course are just
+2057.8	ripping along and they're not gonna be
+2059.4	quite and ranged actually engage keep in
+2061.4	mind the si9
+2062.4	launches without warning they're just
+2064.2	gonna suddenly get hit with a SAM which
+2065.6	is kind of nice actually screw that on a
+2067.9	sign Tech this group if soomi you can't
+2070.1	these guys might be up too high yeah
+2071.8	they're diving down
+2074.2	alright speed up time a little bit now
+2079.8	you notice missiles just got launched
+2082.9	what is that
+2084.4	that's an sa-7 those guys flew too low
+2087.0	but notice they did not attack - eh -
+2090.3	that's what I'm guessing the Buccaneers
+2092.4	are useful because I believe they're the
+2093.9	ones who carry the anti radiation
+2095.1	weapons
+2095.4	notice my si 5 has just started to fire
+2098.2	he must have spotted somebody did he
+2100.0	thing with an SI 5 is they have the
+2101.5	ability to identify as Hargett by its
+2103.4	radar we picked those Balkans gotcha
+2109.3	gotcha
+2111.0	there's a Harriers that's dangerous we
+2113.0	identified some of their heavy bombers
+2114.5	now it'd be a shame if you guys got too
+2116.6	close to this si 9 I think these guys
+2118.2	are up too high yeah Balkans that's
+2119.8	that's bad news that's bad news
+2121.5	now watch the SI toos now are going to
+2124.1	start engaging the Vulcan bombers only
+2126.5	as opposed to bothering everybody else
+2128.9	last thing in the world you want to do
+2130.8	is open fire on these guys because I
+2132.7	have a feeling these are anti-radiation
+2134.3	missile carriers again no the enemy
+2137.5	we've lost sight of that attack group
+2139.9	that was just passing through
+2141.2	don't we got him again alright this Sam
+2146.2	site you're gonna have to get to it in a
+2147.9	second
+2148.9	yeah I guess he was positioned on the
+2151.1	backside of a hill and he's having a
+2152.3	tough time but just turn to my vision
+2153.5	real quick or these guys are extremely
+2155.4	low just for a second no he just has no
+2161.9	line of sight meanwhile PSA 5 going to
+2166.7	town here he's having a fun time yeah
+2170.2	these guys must be ripping along in the
+2171.4	countryside very very low yep they're
+2174.6	there
+2178.4	meanwhile I'm an se5 is doing what I
+2180.4	decided yes a 5-4 and we finally
+2183.0	launched my SI toos notice it's three
+2186.4	and RSA five is doing a delightful job
+2189.4	here one two and three
+2192.6	notice the three missiles were not able
+2194.3	to attack meanwhile their escorts are
+2196.6	probably freaking out turning around ah
+2200.0	they ducked behind a mountain I should
+2202.2	have put in sa nine there I'm more
+2205.0	interested in whoever this is right here
+2206.4	personally unfortunately I think we're
+2209.7	out of weapons in the sa-2 that it I
+2212.3	think that's it that's a bummer we're
+2214.7	about to get bombed at about half a
+2215.8	second here yeah it's gonna take them
+2216.9	about 15 minutes to reload bummer
+2219.0	Oh splattered
+2224.5	all right looks like the bombers have
+2226.5	selected their next targets they're
+2230.0	rejoining there's mass 85 he's having a
+2231.8	great day today just go okay now we've
+2238.2	identified the enemy targets which means
+2240.9	now we can start picking them off
+2242.1	individual hope the jamming no surprise
+2244.4	there
+2244.8	this particular site this sa-2 is gonna
+2247.5	have a lifespan of about 30 seconds
+2249.4	because he's about to get hammered by
+2251.8	anti-radiation missiles yep there they
+2254.2	are oh no or the SAMS gonna get there
+2258.2	before the anti-radiation missiles get
+2259.9	there yes I think the Sam's are gonna
+2262.5	get there in time now had I only fired -
+2264.9	oh no ah well there goes that Sam so
+2272.6	he's out of commission but the good
+2274.5	thing is he at least got two missiles
+2276.6	that had the possibility of destroying a
+2278.1	target meanwhile mr. si fives having a
+2280.6	good day our si six which remember he
+2283.8	has an amazingly aggressive weapon here
+2286.5	extremely precise nicely done they flew
+2294.8	right into my trap
+2297.0	keep in mind every time he turns that
+2298.6	radar on he's gonna get HAMP if here
+2300.2	they come here they come
+2301.2	so those are the anti-radiation missiles
+2303.2	they're gonna be destroying my si6 next
+2305.8	oh that was lame good try good try good
+2310.8	try good try nope
+2314.5	meanwhile masse five with that amazingly
+2317.3	long-range it's just having a great day
+2319.5	keep in mind he's gonna run out of ammo
+2321.7	though now what are what's left now I
+2330.7	see some people starting to take off and
+2332.3	head back that direction no just that
+2337.3	group all right we have who's next we
+2341.1	have an essay that's going to say three
+2342.8	yep that porv Wolcott is about to get
+2345.0	hammered watch this if those don't do it
+2348.1	this will ya
+2350.6	who's over here this or buccaneers yeah
+2352.9	that's that's pretty nasty
+2356.2	they tried they tried and everybody goes
+2365.7	home okay
+2367.1	let's take a look at how effective my
+2368.3	defense was I lost nothing I fired a few
+2375.5	I did fire yeah let's see we lost a
+2377.7	couple SI toos couple SAT sixes nested
+2379.8	seven we lost the base bomber bomber we
+2382.4	went through plenty of these obviously
+2383.8	we went through a good amount of those
+2385.1	good amount of this they lost ten
+2387.2	carriers in 12 Vulcans all right
+2391.1	hopefully you thought this was an
+2392.3	interesting way to kind of look at
+2393.4	things and again at the end of the day
+2394.9	as soon as this battle happened I'd have
+2397.1	to tell everybody to pick themselves up
+2398.5	and move because they wouldn't be able
+2399.7	to again a smarter player would be able
+2402.1	to create a more tricky assault but you
+2404.4	actually saw just how many weapons they
+2407.7	launched at us unsuccessfully they
+2410.3	barely had the opportunity to deploy
+2412.1	their weapons and we still shot down
+2414.1	every single one of their Bombers
+2415.5	granted the SI 5 did the heavy lifting
+2417.2	I'll give you that so anyway hopefully
+2419.3	this was kind of interesting I'll take a
+2420.8	look at this again with modern aircraft
+2423.2	in modern surface-to-air missile systems
+2425.3	later enjoy

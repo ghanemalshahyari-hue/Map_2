@@ -1,0 +1,422 @@
+0.3	hello everyone in today's video we're
+1.8	going to be taking a look at a neat
+2.9	little trick
+3.7	to go ahead and automatically place sams
+6.6	based on local elevation
+8.4	so what we have here is that we have a
+9.8	pretty simple map right now it's quite
+11.6	empty
+12.2	and what we want to do is we want to
+13.5	come up with some sort of way to place
+15.4	sams in such a way that makes a little
+17.0	bit more
+17.6	sense obviously we could come in here
+19.2	and use a random placement algorithm or
+20.9	something along those lines
+22.2	but what i thought we'd do instead is i
+23.7	thought we'd analyze all of the terrain
+26.3	find the highest points in that terrain
+28.5	and then choose whether or not to place
+30.0	a sam there
+30.8	seems like a pretty cool process but it
+32.4	actually works fairly well
+33.9	so let's go ahead and get started so the
+35.8	first thing i'm going to do is i'm going
+36.8	to go ahead and make sure everything is
+37.8	a little easier to see here i'm going to
+39.1	zoom in just a little bit so it's simple
+41.0	and we're going to start from the
+41.8	beginning first thing we're going to
+43.2	want to do is we're going to establish
+44.7	what the lowest and
+46.2	highest both latitude and longitude are
+48.3	going to be so i'm going to start by
+49.8	saying local min
+50.9	lat and i already checked the latitude
+52.9	recently it looks like it's a 32 i
+54.6	believe
+55.3	then we'll go ahead and say local max
+57.0	latitude and we're going to set this to
+58.5	say
+58.9	35 which again is going to be the
+60.3	highest we're going to try to put most
+61.6	of these in syria if we can help it
+63.3	next what i'm going to do is i'm just
+64.4	going to come in here and set the
+65.3	minimum longitude which i've written
+66.8	myself a little note here is 36
+68.6	and then i'm going to go ahead and
+69.6	establish what the maximum longitude
+71.7	again
+72.0	we're just basically defining a gigantic
+74.0	box that we're going to be doing our
+75.8	search for the highest point in
+77.9	next what i'm going to do is i'm going
+79.0	to define what the local peak latitude
+81.4	is and again this is going to be the
+82.6	location
+83.4	x and y to where the highest altitude we
+86.0	were able to detect is in this case
+87.3	we're just going to set it to 1
+88.7	and i'm also going to do the same thing
+90.1	for longitude so that's going to get us
+92.2	pretty well set up for our base
+94.6	this is going to be our farthest left
+96.2	farthest right i should say farthest
+97.6	down farther stop
+98.6	farthest left farthest right now all i
+101.2	have to do is i'll go ahead and create a
+102.6	new variable for
+103.7	what our peak elevation is going to be
+106.0	now the way i want to do this is i want
+107.6	to create a
+108.3	table of points that are above a certain
+111.4	altitude if those
+112.5	points we'd like to use we can go ahead
+114.1	and randomly pick which one of those
+115.4	points we actually want to keep
+117.0	so to do that i'm going to have to
+118.0	create myself an empty table so i'm
+119.8	going to go ahead and do this and just
+120.6	make it nice and boring
+121.8	i'm just going to call it something like
+123.4	high points and then i'm also going to
+125.7	keep track of how
+126.8	large that table gets so i'm just going
+130.0	to say something like this
+131.1	nice and easy and obviously a table
+133.2	starts at a size of zero
+134.6	now some folks who are all kind of
+136.1	veterans of lua will point out the fact
+137.8	we can use ipairs for this as opposed to
+139.5	doing account
+140.4	but when i first learned computer
+141.5	science back in my day our tables had to
+143.9	be a certain size and everything had to
+145.5	have its own iterator and everything
+146.9	like that
+147.4	so there are other ways to do this so
+149.8	let's go ahead and set up our search
+151.3	routine now
+152.2	so what i'm going to do is i'm going to
+153.8	do a for loop within a for loop also
+156.5	known as a nested loop
+157.6	so i'm going to say for la let's just
+159.4	call that for latitude
+161.2	equals min lat which simply says start
+164.0	from our minimum latitude which is going
+165.7	to be the bottom of our screen
+167.1	comma go to our maximum latitude you can
+170.2	see what i'm doing here
+171.4	and then we have the most important
+173.0	contact this is going to be
+175.2	how often we're going to search you know
+177.7	are we going to search
+178.7	every 0.01 latitude we're going to
+180.6	search every 0.1 latitude this is going
+182.6	to have a massive impact
+184.0	in the performance of this so in this
+185.7	case i'm going to set it to 0.1
+187.7	i'm going to type in the word do i like
+190.0	to give myself a little bit of room i'm
+191.4	going to type in my end down there
+193.1	next we're going to create ourselves
+196.0	another for loop inside this one
+198.5	that is going to be responsible for
+199.9	going left to right
+201.5	at each one of these latitudes going
+204.2	around
+204.8	so the way i'm going to do this is i'm
+206.1	going to say for low why not right
+208.2	equals min low again you should probably
+210.4	see the pattern here
+211.3	to max low comma and we'll do the same
+214.2	thing with
+214.8	0.1 now if we wanted to we could go
+217.1	ahead and make this more granular by
+219.0	putting it to 0.01 but it's going to
+220.5	make the script take a very long time to
+222.7	execute
+223.6	so now that we have a point that we're
+226.1	iterating through every single point
+227.6	here actually by the way we should be
+228.8	more efficient
+230.0	we should go ahead and type in the word
+231.1	end as well we now have to check the
+233.4	elevation of each one of those new
+235.0	points
+235.6	doing that's pretty easy i'm just going
+236.8	to type in local elevation i'll
+238.8	swatch equals world
+243.0	get elevation and now we have to do is
+246.1	feed it the latitude and longitude that
+248.2	we're currently at
+249.5	so i'm going to say latitude
+254.2	equals la longitude equals
+257.2	low and now we're just going to get the
+260.2	latitude the elevation at that
+261.6	particular point as it runs that script
+264.1	so while now we just need to make a
+265.5	decision um we're going to say
+267.3	if elevation is bigger than
+270.6	peak elevation now you're probably
+273.0	sitting there going
+274.2	wait what so if you remember we set our
+276.3	peak elevation to 1.
+277.8	when we check the first item we're going
+280.3	to be determining
+281.4	whether or not that particular one is
+284.2	greater than a particular point
+285.9	so i'm going to do a lot greater than
+287.4	peak elevation then we're going to say
+289.5	then i actually say do then
+294.0	peak uh remember peak lat equals la
+298.2	peak lawn equals
+301.4	low now and this and now we have a neat
+304.9	function
+305.5	that can actually go in and determine
+307.8	and find the highest point in our entire
+310.2	place now if we wanted to we could just
+312.2	come down here
+313.3	and we could do something neat like the
+315.0	print peak
+317.5	lat comma peak long
+320.7	and now if i run the script assuming i
+322.6	didn't make any goofies which i do all
+324.0	the time
+325.4	online 23. ah that was silly
+328.9	somebody's been using a different
+330.2	programming language
+335.1	almost um i got excited sorry like i
+339.5	said different programming language
+340.6	there we go
+341.4	and now we've determined where the
+343.1	highest point is
+344.6	now if we wanted to of course we could
+345.9	come in here and do uh send edit
+349.4	and we could do add units let's go ahead
+351.8	and get some details here
+353.3	we can see type equals facility
+356.3	we could do side obviously we're using
+357.8	test as my side we could say
+359.8	name equals highest point
+363.4	sam and then of course we could come in
+366.7	here and we could say
+367.8	uh let's see dbid it's gonna equal one
+370.2	two three
+371.1	latitude of course since we already
+372.7	calculated it it's gonna be peak lat
+374.6	longitude is simply gonna be peak long
+379.1	and let me just tell you some common
+380.6	sense real quickly here uh what did i
+382.7	want to do did i want to
+384.2	no i'm not going to include that and now
+386.6	if i go ahead and run this again
+388.2	assuming i didn't make any boo-boos we
+390.1	now have a sam site at the highest point
+392.9	within this particular zone if i
+395.0	actually go check that real quick
+396.6	let's see exactly what the highest point
+398.2	is um 810 feet that does not sound
+401.0	correct
+401.8	so that means i'm just looking through
+403.8	my notes real quick
+405.0	ah i knew you guys were yelling at me i
+409.0	just couldn't hear you i'm sorry
+410.7	we forgot to actually reset the new
+413.6	highest point when we ran this function
+415.8	so i'm going to run that again minimize
+418.3	ah bingo it worked
+419.6	perfectly so now this is the highest
+422.0	point in the entire
+423.3	longitude and latitude region which
+425.4	actually is pretty cool if you think
+426.6	about it
+427.4	now i know you saw a minute ago when i
+429.1	was sitting there putting these little
+430.2	tables together
+431.0	and you're going so what are you going
+432.6	to do with all this well
+434.6	why don't we just make a group of high
+437.0	altitude sams rather than just the one
+439.2	so let's go ahead and i'll leave this in
+440.6	here for a second so what i'm going to
+442.6	do this time is i'm actually going to
+443.9	clean this stuff out
+445.6	and now what i'm going to do is i'm
+446.6	going to come back here and i'm going to
+447.5	ask a simple question
+449.0	if elevation is greater than uh
+452.5	what do you think 2000 meters i think
+454.1	that's fair then
+455.8	i'm simply going to insert that
+458.0	coordinate pair
+459.4	into a table remember how we created
+461.7	that table a little while ago there it
+463.3	is
+464.2	we're going to do um what do we call it
+465.5	high points high points
+468.2	and we're going to be inserting la comma
+470.8	low
+472.8	so we're inserting a pair into our table
+475.8	here
+476.6	and that's all there really is to it now
+478.2	of course i'm going to keep track of how
+479.8	many of these i have done so far
+483.8	and again this step is unnecessary if
+485.7	you want to use the ipairs feature
+487.1	this just comes from programming in the
+489.0	old days when things are a little bit
+490.6	different
+491.0	so don't worry about that too much so
+492.8	now what we've done is we've created a
+494.8	table of every point in this region that
+498.0	is over
+498.6	2 000 meters pretty cool huh
+501.9	now we have to do is come down here and
+503.9	create a new loop that will go ahead and
+505.9	zip through all that real quickly
+507.5	so let's get old school we'll say for x
+509.4	equals one
+510.6	stop when you hit over thousand remember
+512.5	over a thousand is just how many
+514.5	uh we're gonna increment by one do so
+517.4	let's see here the first thing we're
+518.6	going to have to do is we're just going
+519.6	to grab
+520.0	this grab here and hit end the only
+522.4	thing we have to do
+523.4	differently and this is where we have to
+525.5	be very cautious
+527.2	is we need to make sure our latitude
+531.0	is going to be the equivalent of our
+533.1	position
+534.4	in highest points
+538.0	at position one and then our longitude
+541.0	remember position one is latitude
+543.0	then our longitude is going to be
+544.9	highest points
+547.2	of x of position two
+551.2	so remember these are going to be
+552.7	position one position two and you're
+554.2	gonna have a huge
+555.2	list so what this is going to do now is
+557.4	it's going to place one of these units
+559.8	everywhere there is that point inside of
+561.7	that list now we have to cross our
+563.5	fingers there's not a lot of points in
+565.0	syria that are over 2000 meters
+567.0	otherwise this could lag quite a bit but
+569.0	that's part of the fun
+570.0	right so i'm the other thing i'm going
+571.6	to do is i'm actually going to come down
+572.9	here
+573.8	dot x i just want to clean this up a
+575.6	little bit run
+578.2	highest points that means i spelled
+579.7	something wrong high points high points
+582.1	high points
+582.7	sorry about that high points
+589.6	and now we have a group of sams placed
+592.2	at the highest points
+593.8	in this region pretty cool huh actually
+596.2	not the highest points anybody that's
+598.1	over 2000 meters
+599.7	so that's actually pretty darn cool if
+601.4	you ask me now you're probably sitting
+603.4	there going
+604.0	well that's pretty cool can you go too
+606.1	far uh we can always go too far so let's
+608.4	do that
+610.7	let's say we want to set this up so that
+613.0	every time we run the scenario
+614.4	this function gets fired so it randomly
+616.4	places some stamps at some high
+617.8	altitudes
+618.6	however we don't want it to put a sam at
+621.4	every high altitude because that would
+622.7	make things predictable
+624.0	so let's add some randomness to this so
+626.2	i'm going to come down here and i'm just
+627.3	going to create something nice and
+628.2	random
+629.8	dice that seems pretty easy we'll say
+631.5	math.random
+633.0	and we'll say between i don't know one
+635.5	and one thousand
+636.6	that's pretty fair then we're simply
+638.2	going to say if
+640.0	dice is less than or equal to
+643.0	15 let's say 15. then we'll place
+646.1	our sam site otherwise it won't place
+649.3	our sam site
+650.2	now if we run this function now there's
+652.0	a good chance no sam sites will be
+653.4	spawned
+654.1	no not at all because when we rolled the
+656.3	dice that 20 times
+657.8	none of them came up less than 15.
+659.5	remember our dice is a thousand wide
+661.8	so let's add some more points shall we
+665.7	there we go so now i randomly place
+668.0	these two if i run this function again
+669.6	it's going to place more sams at those
+671.7	high altitudes
+673.1	pretty cool huh so now what if you're
+675.7	like well this is pretty cool but
+677.9	uh can we go too far well there's a lot
+680.7	of different ways you could go too far
+682.5	remember these two little values here
+684.0	which determine how granular our search
+686.0	for high altitude is
+687.4	what happens if we added a zero
+692.2	[Laughter]
+694.2	that shouldn't surprise you because
+695.9	we've increased the granularity of this
+698.2	search
+698.6	we've caused it to find more points and
+700.5	therefore even though we need to roll 15
+702.2	or less on a 1000 sided dice
+704.6	we're going to hit it quite a bit more
+706.2	often this is also a fun way to
+708.2	topographically hey i landed it that you
+710.4	can go ahead and find all these high
+711.8	points in this particular environment
+713.5	notice by the way you can do this in
+715.0	reverse you could use this to lay mines
+717.0	in an ocean as well if you're so
+718.6	inclined
+720.2	hopefully this video has been relatively
+722.1	valuable i'll leave this
+723.4	script up here maybe i'll try to make
+724.6	the text up a little bit bigger and just
+726.5	so you can all kind of like see it
+727.8	again this was just a fun little project
+729.4	i thought i'd try to take a crack at
+730.8	myself to see if this would be possible
+732.6	and it could be used anywhere in the
+734.2	world the important thing here is you
+736.2	have to make sure you set this in meters
+738.2	and that it actually makes sense you
+740.2	know the last thing in the universe
+741.4	you'd want to do is to set this to
+743.1	one because if you did that you get
+745.0	basically every point in an entire
+746.8	country unless your country is death
+748.3	valley
+748.9	which is not a country i know it's a
+750.2	place basically in the western united
+752.0	states
+752.6	so it's worth noting and again earlier
+754.3	in the video you saw where we actually
+756.0	found the highest point in place radars
+758.2	one of the things i've actually used
+759.2	this for is to place early warning
+760.5	website or websites just regular sites i
+762.5	should say now websites
+763.8	and that works very very effectively
+765.4	also for that purpose all right
+766.8	hopefully this is helpful if you have
+767.8	any questions
+768.6	toss them down in the comments otherwise
+770.3	enjoy

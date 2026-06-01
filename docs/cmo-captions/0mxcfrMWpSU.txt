@@ -1,0 +1,410 @@
+0.6	hello everyone in today's command
+2.0	tutorial we're going to be taking a look
+3.3	at formations as well as grouping
+5.4	now grouping basically enables users to
+7.8	establish
+8.6	a group of units that are kind of
+10.2	collected that will move together and
+11.9	usually operate in different types of
+13.3	formations depending on the type of unit
+15.6	now the first group that we always see
+17.6	most scenarios is when you click on an
+19.4	airbase
+20.0	you'll notice that it's actually made up
+21.5	of multiple units if you wanted to check
+23.7	like
+24.2	who's inside of that group you can
+26.0	actually click this little arrow here
+27.4	and it will highlight it for you but it
+28.9	will also provide it for you up here
+31.1	now whenever you select a group you have
+32.4	the ability to go ahead and use your
+33.8	normal movement and attack commands and
+35.3	they will attack as
+36.2	a group based on whatever their
+37.7	particular doctrine and m con and all
+40.4	that other good stuff is
+41.8	now one thing i want to point out is
+43.1	when i did not select this group you
+44.8	probably observe the fact that this
+47.0	becomes a single icon but in reality is
+49.7	there's multiple units here
+51.4	when i click on this group you'll notice
+53.0	that it appears and shows me all the
+54.7	individual ones but i cannot actually
+56.6	select them
+57.4	you can control this behavior by going
+59.0	to game game options
+60.5	and of course under map display you can
+62.2	go ahead and set what the ghosted group
+64.6	members is done
+65.7	if you do all groups you're going to see
+66.9	an awful lot of units on the map at one
+68.3	time
+68.7	do not show of course would hide the
+70.2	individual group members while i'm here
+72.2	by the way i'm going to flip this over
+73.5	stylize and you'll see why in a minute
+75.5	so once we have our group selected
+77.5	you're going to notice we have one main
+79.1	lead unit that basically everybody is
+81.0	linked to
+81.8	now just because the units are linked
+83.3	does not mean they cannot act
+84.6	independently
+85.3	as a matter of fact when you're doing an
+86.6	airstrike with such as an element or
+88.3	flight or squadron or something along
+89.9	those lines they will actually engage
+91.5	the targets
+92.3	normally until you give them basically a
+93.8	movement command in which case they will
+95.5	come back together to go ahead and move
+97.2	in whatever situation they need to
+98.9	when you have something like an air base
+100.1	like this it's not in critical that we
+102.0	have individual to selectable units
+103.7	because of the way it's done
+105.0	so with that out of the way let's go
+106.1	ahead and take a look at how you
+107.0	actually group units
+108.3	pretty easy i'm going to zoom in i have
+110.0	my little squadron here of
+111.8	t55 tanks kind of hanging out here in
+113.9	pakistan
+114.8	all i have to do is select the tanks i
+116.9	can press the g key to group them
+119.0	i can select all of them i can right
+121.0	click and i can do group
+122.1	operations group selected units i can
+124.5	also of course select all the units go
+126.2	up to map settings i should say unit
+127.8	orders
+128.5	go to group and i can group them that
+130.1	way once they're in a group if i click
+132.0	on the lead element you can see all the
+133.4	individual groups that are kind of
+134.6	hanging out all the individual members i
+136.2	should say they're hanging out inside of
+137.7	that group
+138.7	so if i want to take this group apart
+141.0	all i have to do is click on the main
+142.3	group element
+143.2	press the delete key and it deletes the
+145.3	entire group in one go
+147.3	now i'm going to put these back together
+148.8	real quickly and i want to show you a
+150.2	neat trick
+151.0	if you have a numpad and you tap the 9
+152.8	key you can alternate between which
+155.2	mode these group members are displayed
+157.1	as it is set right now it's only going
+158.7	to be giving me my group lead if i press
+160.7	the 9 key i actually have the ability to
+162.6	select
+163.2	individual members inside of this group
+165.8	now that's going to be important and
+167.0	i'll show you why
+168.1	let's say i want to break off this tank
+169.5	element who's stuck on the other side of
+170.7	the river actually both of these guys
+172.2	are stuck on the other side of the river
+173.7	what i can do is i can go to that
+175.1	special mode select the tanks i want
+177.3	and press the d key basically detach to
+180.4	separate them from the rest of the group
+182.2	now if i press the 9 key again you'll
+183.8	notice i've actually got two separate
+185.4	groups here
+186.2	of course i can take this unit and i can
+187.8	group them together as well
+189.3	now if i wanted to bring them back
+190.6	together i'm actually going to get them
+191.8	on the correct side of the river here
+193.0	you can imagine the trouble that's going
+194.2	to cause
+194.7	my logistic guys i can actually select
+197.0	the whole group and press the g
+198.3	key and it'll actually link them back up
+200.5	together to the net initial unit
+202.4	one neat trick you can do here is you
+204.0	can actually delete the units out of the
+205.7	group by pressing d
+206.7	again and then if i go back to show
+208.9	regular group mode you'll actually see
+210.7	that you can see that by the way down
+212.1	here whoops accidentally deleted the
+213.6	group let me join them back together
+215.3	let me go ahead and switch to nine
+216.6	detach these elements switch back to
+218.5	group mode
+219.1	you notice that the single unit is still
+221.2	a group on its own so of course if i
+222.8	grabbed everybody put them all back
+224.2	together
+224.8	you can see that i would now have that
+226.2	group all snapped back that is a feature
+228.2	we did not have in the previous version
+229.8	of command and it's really really really
+231.3	awesome
+232.2	now that we know how to group and
+233.2	ungroup let's go ahead and take a look
+234.6	at some neat uses of formations
+236.6	so i basically have myself a little kind
+238.3	of surface action group i'm going to
+239.6	select them all go ahead and group them
+240.9	together by hitting the g
+241.8	key by the way you can name groups
+244.1	separate
+245.9	then which you name the individual units
+247.9	inside of the group
+249.0	one of the nice features of that is
+250.3	everybody go to my order of battle now
+252.6	you'll notice that this is now neatly
+254.7	labeled to make things much simpler
+257.0	that also means when i'm doing missions
+258.8	i can actually select that group
+260.7	as the group i'm attacking with which is
+262.9	really really really cool
+264.5	so basically now that that's been
+265.8	selected you can see the default
+267.0	positions of
+267.8	everybody inside this taxes formations
+270.2	you can tap f4 or if you prefer you can
+272.2	press formation editor
+273.6	now all formations are going to have a
+275.2	formation lead dictated by the unit that
+277.4	has the word lead next to it
+279.1	in this case it's going to be the ship
+280.6	the caliber which is going to be in the
+282.0	middle it's a destroyer
+283.4	each one of these ships is going to have
+285.0	its own station that it needs to keep
+287.4	now you observe that when i click on one
+288.8	of these units it kind of tells you
+290.1	where that particular station is located
+292.2	now stations have two different
+293.5	properties first of all they have their
+295.1	location and second of all they have
+297.0	what their bearing is going to be set to
+299.0	you're going to notice this one has a
+300.4	little letter r there that simply means
+302.6	that this formation moves
+304.3	this station rotates relative to the
+307.7	lead
+308.4	units so for example if i were to grab
+310.9	this entire unit real quickly
+312.4	order them on let's say a nice easterly
+314.3	course here let's get them a little bit
+315.5	of speed to get them rolling
+317.1	and to go ahead and pause time you'll
+318.7	notice all those ships will move almost
+320.5	radially
+321.2	to get into position in a formation that
+323.8	enables them to go ahead and move
+326.1	with that same bearing relative to that
+328.5	central unit
+329.6	this is a really really really slick
+331.3	trick if you're trying to make sure that
+332.9	units are basically in the same bearing
+335.0	now the other option other than a
+336.6	relative bearing is what they call a
+338.2	fixed bearing this is a little bit
+339.8	different so now if i go to this real
+341.8	quick i'll pause again
+343.0	i can actually tell the units to move
+345.2	and stay in a specific point regardless
+347.9	of where the lead unit is
+350.2	so for example i can grab this one i
+351.8	could set it to fixed bearing
+353.3	i could set this one up here i could
+354.8	grab this one set this one to fixed
+356.4	bearing put it right here
+357.8	i could grab this one over here go ahead
+359.4	and set that to fix bearing as well
+361.4	grab this one down here there's a little
+363.2	bit of a precision issue with formations
+365.0	but that's kind of the nature of the
+366.1	beast unfortunately
+367.3	so now if i send him south watch what
+369.1	happens the entire formation
+371.1	is all going to go up there and they're
+372.8	all going to line themselves up which
+374.2	allows you to basically put your most
+375.8	important vessels or your picket vessels
+378.0	all in the same area and keep it all
+380.2	relative so now if i move over this
+381.8	direction
+382.5	you notice that this entire squadron of
+384.4	ships is basically staying there
+386.2	now if i order them north for example
+388.2	they're all going to move ahead of that
+389.9	main ship because they're on a fixed
+391.4	bearing
+392.1	now one thing i really really enjoy
+393.5	doing for all those you guys are a
+394.8	little old school
+395.8	is you could do something like this
+397.2	where you set this unit to be the lead
+399.7	and now that he's the lead i can go
+401.2	ahead and take the individual loops
+402.6	ships i should say
+403.8	and i can actually set them to do the
+405.6	old-fashioned line of battle way of
+407.4	doing things i really wish there was a
+408.6	mode that would show you exactly where
+410.4	they
+410.7	are relative to each other because it's
+412.6	difficult to see exactly you have to
+414.1	kind of
+414.6	scoot through really really quickly to
+416.0	kind of figure out exactly where
+417.2	everybody is
+418.2	i think i did an okay job of that again
+420.6	i don't think it was perfect okay
+422.1	so now of course if i let these ships go
+424.3	notice that the center of the group has
+425.9	changed
+426.6	they're actually going to assume an
+427.7	old-school line of battle all right
+430.1	just like that now of course when we
+432.6	have a line of battle
+433.6	remember that you're rotating based on
+435.4	whatever the lead ship is
+436.7	so if i order him to come this way watch
+439.0	what happens
+440.7	everybody rushes to get behind him you
+442.6	don't get that nice turn
+444.1	where everybody turns first we just
+446.4	don't get that in command you'd have to
+447.9	do that manually oh
+449.1	you can see everybody's gone ahead and
+450.2	assume my new position in line
+452.2	so finally let's take a look at aircraft
+454.6	now keep in mind formations work with
+456.2	ground units as well
+457.4	so for example i could go grab this
+458.8	little group that i had here
+460.4	tap that button and of course i could
+461.8	set everybody if i wanted to set up like
+463.4	kind of like a little square formation
+464.8	around like a center unit or something
+466.4	like that
+467.1	i could quickly do that let's go ahead
+468.9	and do that that looks pretty good to me
+471.1	of course if i speed up time notices
+472.8	other tanks start scooting immediately
+474.4	to the new bearing positions which works
+476.2	really really really well
+477.4	very very quickly which is super handy
+479.7	what about aircraft
+481.0	yeah what about aircraft so i'm gonna go
+482.6	to this airbase tap f6 which brings up
+484.5	all the parasite units
+485.7	i can grab groups and i can launch them
+487.6	individually or i can launch them as a
+489.5	group
+490.2	typically when you launch aircraft as
+491.6	group you're going to do groups of four
+493.0	sometimes up to six
+494.4	but look at this you can actually launch
+496.9	all 12 of these airplanes
+498.5	simultaneously as one mega group which
+501.1	is actually kind of fun because if
+502.2	you're doing a world war ii esque
+503.3	scenario with bombers you can put them
+505.1	in massive cells and basically you know
+507.0	use them to all attack a target at the
+508.3	same time
+509.0	it's an awesome strategy if you know
+510.9	what you're doing keep in mind the
+512.9	admission editor that we normally use is
+514.8	limited to group sizes of six
+516.5	so this is kind of a fun way to kind of
+518.0	get around that problem if that's what
+519.5	you're looking to do
+520.5	so anyway i'm going to grab a group of
+521.7	aircraft real quick f86s sound pretty
+523.7	good to me
+525.5	get them nice and airborne eventually
+534.1	there we go awesome let's grab i'm gonna
+537.3	go switch back to regular group mode
+538.8	go ahead and do one of these things let
+540.0	me go ahead and pause real quickly and
+541.1	get them kind of facing north
+542.5	now aircraft unfortunately at this
+544.7	particular version this is build one one
+546.9	three 1134.3
+548.7	do not have the ability to adapt a
+550.6	specific formation
+551.9	so if i were to go to the formation
+553.3	editor and pause real quick and select
+554.9	one of these units
+555.8	you'll notice his station is over here
+557.7	you'll notice this station over here is
+559.2	over here
+559.8	but he's not able to actually keep that
+561.5	particular station so for example if i
+563.6	set this particular unit as the group
+565.3	lead and i did something like um
+567.4	we'll go ahead and have like kind of
+568.5	this trailing edge over here on the side
+570.0	we'll go ahead and set that and fix
+571.1	bearing we'll grab that one we'll assume
+572.8	he's the teammate set one of these
+574.5	unfortunately they will not adapt that
+576.6	formation they'll just keep
+577.9	right on flying like they normally did
+580.0	this is something i swear the earlier
+581.6	version had the ability to do so but you
+583.5	for what
+584.2	some reason or another you just can't do
+585.6	that right now there is one cool trick
+587.8	you can do though
+589.2	if you're an individual unit view which
+591.4	is by pressing again the numpad 9 if you
+593.3	need to do that
+594.0	you can click on a unit and you can
+595.6	actually set his altitude
+597.2	separate from everybody else in the
+598.6	group so i can actually select that one
+600.7	set that to that altitude set him to max
+602.7	altitude grab this one right here and
+604.8	set him to
+605.6	let's say medium altitude now if i
+607.7	unpause these aircraft will actually
+609.8	change altitudes even though they're
+611.4	still operating the same group
+612.9	you have to watch out for that because
+614.2	every once in a while you forget that
+615.4	you did it
+616.2	so you're going to end up with this
+617.0	funky stack that's going to be hitting a
+618.5	target at the wrong angle
+620.6	okay so that's about it as far as groups
+623.0	and formations go i'm not going to get
+625.1	into any details as far as
+626.9	how best to employ formations just know
+629.0	that generally you're going to have
+630.1	picket vessels in the event of a navy
+631.8	pretty much in the line of fire with the
+633.5	expected threat vector
+634.7	as well you've probably heard that
+635.9	expression before is going to be
+638.2	keep in mind if you have anything like
+639.4	an aircraft carrier you're going to want
+640.6	to probably center them in the middle of
+642.1	a group
+642.6	however there are times when you're
+643.8	going to want to split them up as well
+645.4	if we ever do a gunfire video going back
+647.4	to navigate fair i mean the 40s and 50s
+649.4	we're probably going to have to
+650.2	experiment with these formations just a
+652.0	little bit more
+652.8	just to make sure the big ships have a
+654.3	little bit of screening for us for those
+656.2	any torpedo carrying destroyers
+659.4	alright hopefully this is helpful if you
+660.6	have any questions just throw in the
+661.9	comments otherwise enjoy

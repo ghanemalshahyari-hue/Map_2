@@ -1,0 +1,559 @@
+0.0	hello everyone in this command tutorial
+2.2	we're going to be taking a look at cargo
+3.4	operations now cargo is kind of a neat
+6.2	feature that is a relative newcomer to
+8.2	the command series one of command modern
+10.4	naval operations first came out way way
+13.1	back in the day that's going back a few
+14.6	years now we didn't have cargo
+16.9	operations this is something that's kind
+18.4	of added a little later on so as a
+20.3	result there are some things that work
+21.6	really really well with it and some
+22.9	things that are and you know what I mean
+24.9	so we're gonna take a look at today is
+26.9	we're gonna take a look at how to set it
+28.1	up in the mission editor this is as far
+29.6	as editing missions as well as editing
+31.2	bases we're going to talk about doing
+32.8	cargo operations manually and of course
+34.4	we're going to talk about them doing
+35.5	semi-automatically with missions the
+37.6	reason I say semi-automatic is at this
+40.3	present version you can see my version
+42.0	it's one one one five eight one there's
+44.8	a couple little things that make it a
+46.6	little bit tricky to do completely
+48.3	automatic missions and we'll take a look
+49.7	at that so as far as cargo operations
+51.5	let's talk about the things we can do we
+53.4	can drop things from the air which is
+54.9	awesome we can do the little paratrooper
+56.7	thing we can also top off trucks and
+58.2	howitzers and we can also have things
+60.0	hanging off the bottom of helicopters if
+61.5	we want we can use ships this is a very
+63.5	popular method to drop off cargo we
+65.7	can't use trains sorry actually we
+68.6	probably could use trains but I'm not a
+70.3	her person try to set that up and then
+72.2	finally we can actually transfer cargo
+73.9	between buildings between units so let's
+76.0	go ahead and take a look at how we do
+76.8	that so first things first I'm in the
+78.8	mission editor like I usually am because
+81.0	you need to be in the mission editor in
+82.2	order to edit the cargo of a particular
+83.8	building so you edit cargo it's pretty
+85.5	straightforward I'm gonna do is I'm
+86.8	gonna create myself a unit real quick
+88.1	we'll go ahead and get ourselves a
+89.5	Chinook helps if you spell it correctly
+92.6	right we'll take a C Mon I'll press ok
+95.0	and you can see there's a couple
+96.8	different loadouts a loadout has to
+99.1	agree with what you're carrying in it so
+101.7	for example if I want to carry howitzer
+103.2	something like that I'd probably go with
+104.6	the 7 ton slug load if I know I was
+106.9	carrying a couple of infantry squads I'd
+108.2	set it to this option of course as the
+109.8	middle option as well you have to set
+111.7	this correctly you're gonna have issues
+113.0	ships do not have this limitation so I'm
+115.7	gonna press ok I'm gonna click on my
+117.0	unit notice if I right click there's
+118.8	nothing in here about editing the cargo
+121.6	directly its edit cargo you actually
+123.7	have to go up to unit actions and then
+125.5	press edit cargo so it's going to bring
+127.4	up this handy dandy little menu so let's
+129.2	take a look at what this menu is you
+130.4	won't get this menu if you're not
+132.2	in the math editor so let's take a look
+134.2	each piece of cargo is actually a weapon
+137.2	slash mount it's actually a mount with a
+139.4	weapon on board stored under this option
+141.7	for basically a artificial unit homeless
+144.7	in its own way
+145.4	you look at me like what are you talking
+146.9	about let me show you what I mean so if
+149.2	I go to the map and insert a unit let's
+151.3	go to facilities real quick I'm gonna
+153.1	type and watch this mech you see there's
+156.3	generic items called mechanized infantry
+158.8	there's another one I can type in the
+160.2	word armored and it will give me a
+161.7	generic piece like this I think this
+163.7	even one this is a landed attachment
+165.8	maybe yeah landed attachment let me
+167.6	press ok so this is actually what you're
+170.7	doing is when you drop off cargo you're
+173.7	essentially dropping out a blank labeled
+176.2	facility with mounts and weapons based
+179.2	on the cargo you're carrying so for
+181.2	example and this will make sense in a
+183.2	second I promise if I were to go over to
+185.4	here and click on add mount one of the
+188.4	mounts that could add as weird as this
+190.0	is gonna sound could be a BMP so I could
+193.3	go ahead and select this one set it like
+195.0	this and now you'll notice I've added a
+197.4	BMP of finger quotes you can't see them
+200.1	from here to this landed detachment of
+202.5	course if I want to add a few more now
+205.3	I've got an entire platoon of BMP ones
+208.6	in this particular case go ahead and
+210.5	close that so this is basically now a
+212.4	group is almost like a platoon if you
+214.3	want to think about it kind of a thing
+215.3	now of course a Chinook cannot lift the
+217.4	BMP one that's just obvious and likewise
+220.0	and this is one of our first limitations
+221.6	you're going to love you can't pick
+223.4	units back up with a ship once you put
+225.5	them off the ship they are off the ship
+227.6	so keep that in mind so any let's delete
+229.9	that and see why that makes sense now I
+231.7	want to go back to mission hook I'm
+234.3	gonna go to edit cargo now check this
+235.7	out did you start to look familiar don't
+237.8	they that's because they're the mounts
+239.7	that are considered quote cargo so for
+243.2	example you'll notice a lot of these are
+244.7	red they're just too heavy if I click
+247.0	right here to cargo carrier drop capable
+248.9	we can actually select units that are
+250.9	para droppable this will be more
+252.4	important and a little later on
+253.3	and likewise like I said we can grab
+255.4	ourselves one of our howitzers so I
+257.0	looks pretty good to me I'm going to add
+258.7	one of them by the way if you try to add
+260.4	more than you can you click OK it's
+262.1	gonna freak out at you and says you've
+263.8	extended to your limit
+265.4	here how do we know heavy something is
+267.3	well if you take a look here
+268.8	what didn't mean to do that you can see
+270.9	it takes two tons that is a 16 square
+273.2	meter cargo area and there's a crew of
+274.9	six something for us okay here now if I
+276.9	go to my Chinook scrolling down just a
+279.6	little bit you actually see and I don't
+282.0	think this one's gonna have it because
+283.4	it is a Chinon a ship you know I don't
+286.9	see it on this one but if we were a ship
+290.1	it would actually tell you right at the
+291.2	tippy top here let's go grab a ship real
+292.8	quick that'll do the trick
+297.0	yeah here you go you've noticed there's
+298.4	a cargo capacity item here which tells
+300.4	you exactly what size what mass what
+302.2	area and stuff like that so anyway our
+303.8	Chinook is now equipped with some cargo
+305.7	we're carrying a 105 millimeter howitzer
+307.5	so what I'm gonna do is aim him at the
+309.5	ground always smart and I'm gonna order
+311.7	it to unload cargo so watch what happens
+317.1	you're sitting there going oh what about
+319.8	my where's my howitzer aren't you
+321.5	supposed to drop that thing off yeah now
+323.7	that we don't have a plotted course we
+325.5	can ask him to drop this stuff off
+326.9	notice he parks and then he dumps off
+328.9	his cargo I'm gonna get him out of the
+329.9	way so now here is our particular 105
+333.3	millimeter howitzer now check this out
+334.6	you'll see up at the tippy top it is a
+336.5	generic unit and if I click mounts and
+338.1	weapons you will see that indeed it is a
+340.4	single mount for a generic item now if
+343.9	we wanted to pick them back up it's
+345.0	actually really easy we could just grab
+346.6	our helicopter I'm gonna go ahead and
+347.8	cancel that course real quick right
+349.4	click on him hit select units to pickup
+351.2	click on the air Tillery give him a
+353.7	second and we've reloaded that
+355.9	particular piece of cargo now let me
+358.6	show you where this gets a little tricky
+360.1	go ahead unload him again thank you get
+362.5	out of my wife just a second thank you
+363.9	let's say I go to his magazines and
+366.4	let's say I add a magazine of extra
+369.1	shells will do 105 millimeter oh I'm
+371.0	sorry this is 2p magazine my apologies
+374.0	we're gonna do it actually let me do
+376.3	generic I think it's gotta be the
+377.8	quickest and easiest way to do this
+378.9	that's what it's looking for at a
+380.7	magazine now if I were to add weapons to
+385.2	this magazine this is what I was talking
+386.4	about earlier let's say as some 105
+388.0	millimeter shells let's do let's do that
+390.6	one that's a lot of shells holy smokes
+392.4	go ahead and add that to it so now I'm
+394.9	carrying quite a few more shells and
+397.7	this was a ridge
+398.4	equipped to carry so watch what happens
+401.2	if I order him to pick him up let's go
+403.4	ahead and select some units pick him up
+406.1	no prompt it come on right let's fly
+408.3	over here all right and let's go ahead
+410.5	and order him to drop his cargo good go
+414.1	park over here thank you check this out
+415.9	it's gone apparently that was the price
+419.6	of having to go ahead and carry all that
+422.3	extra shells they must have just thrown
+424.1	them overboard when they were loading up
+425.5	the artillery piece originally by the
+427.4	way with cargo operations you're not
+429.1	going to get a lot of error messages if
+430.8	something doesn't work right so for
+432.8	example like it's good events real quick
+434.3	it'll give you a heads up this is cannot
+436.0	unload cargo that's weird cuz you had no
+438.2	problem doing it a second ago you're not
+439.9	gonna get a warning telling you I can't
+441.5	lift something because it's too heavy so
+444.0	anyway so that's how you do basically
+445.4	helicopter operation this is again
+447.1	manual let's go ahead and grab our L kak
+449.2	again to delete that than I did let's go
+452.0	ahead get ourselves an L kak go switch
+454.4	to surfer ship this is a great tool for
+458.6	this particular purpose go ahead and
+460.4	again we're gonna click on it we're
+461.4	gonna editor
+462.1	we're gonna go ahead and scoot up soon
+463.8	it actually so we're gonna miss over
+466.7	here go to edit cargo now look we can
+469.3	carry everything so now we're gonna
+471.1	scoot down to our bmp-1 again I'm not
+473.3	hover central why we're carrying a bmp-1
+475.4	we can actually I think we can carry too
+477.0	excellent so how do you deploy a cargo
+480.4	from a ship it's a little bit more
+482.0	exciting if I put the ship over here and
+484.2	I right-click on it alone cargo nothing
+487.2	happens you have to be within a specific
+489.0	distance of ground to do this so I'm
+491.6	actually going to do one of these things
+492.5	real quickly stop so we should be close
+496.1	enough to the ground now if I
+497.1	right-click on it unload cargo notice
+498.9	it's dumped off my two BMPs
+502.8	just like that so I got my little BMP
+504.6	section now one thing that's kind of a
+506.7	bummer is if I were to grab this one
+509.1	right click on him and set it load cargo
+511.2	and then click on my BMPs I just had a
+513.0	minute ago we hear a very long time but
+516.7	it will never ever do it so kind of keep
+519.2	that in the back of your head so anyway
+522.6	let's go ahead and take a look at some
+525.0	of our other options here so look it up
+527.3	at the top we have a port and we have an
+529.5	airbase now if you want to add
+531.9	units to a port or an airbase so that
+534.0	you can use ships to deliver them it's
+536.2	going to get a little bit more
+537.1	complicated so if I want to deliver from
+539.7	a port ports are the funky ones you've
+543.0	gone ahead I've got to generate this
+544.3	point very quickly you'll notice that I
+545.9	have a port structure here that has some
+548.0	cargo it's the actual pier holding the
+551.0	ship's that has the cargo and the old
+553.4	days what you did is you built like a
+554.6	little barracks over here like on the
+555.8	right or something loaded it up with
+557.5	cargo and then you would be able to do
+559.4	that you could do that with missions you
+561.3	can't do it manually so for example if I
+563.8	click on the port hit f7 pick one of my
+566.1	alligators or something like that click
+567.5	on load cargo you'll notice I have only
+570.8	those particular ones that I have so you
+573.5	notice I have a hundred infantry even
+575.0	though I have another hundred infantry
+576.8	stored in a separate building so anyway
+579.4	going back to what I was saying if you
+580.4	need to load anybody onto a ship
+581.9	manually we can just come up here load
+584.0	on load cargo select it and then you can
+586.1	select exactly how many you could load
+587.8	them all for example you could unload
+589.8	them all you can move them back and
+590.9	forth all afternoon all day likewise if
+594.1	we want to do something that is at a
+596.1	Airport scroll head down here really
+598.3	quickly we have a most dock it's the
+600.8	same scenario I have a barracks here
+602.7	that I've created that I've loaded up a
+604.4	bunch of infantry on - you can't just
+606.6	click on the airport
+608.0	and then edit cargo it won't work
+610.0	properly because it won't know where to
+611.9	place the cargo so kind of keep that in
+614.3	the back of your head ok so there's one
+617.0	more type of cargo that I want to show
+618.5	off real quickly and that's all the way
+620.3	over here sitting here in the middle of
+621.6	the ocean this is the LST one one seven
+623.5	nine or this is a new port this
+625.4	particular vessel carries aircraft boats
+627.6	and cargo so incredibly it actually does
+630.5	a pretty good job again you can see all
+631.9	that ready to go now let's go ahead and
+634.2	take a look at missions so there's a
+635.9	couple different types of missions we
+637.1	can use with cargo actually there's
+638.9	three types and I think about we can
+640.1	transfer cargo which would be simply the
+642.1	matter of loading up a bunch of cargo
+643.6	onto a vessel and then ordering them to
+644.9	land at a new base and then unloading
+647.0	them it's a pretty straightforward
+648.1	operation then there's para drop and
+650.3	then there's going to be ship operations
+652.0	so we're going to start with the tricky
+653.2	one which is the pair dropping so what
+655.1	I'm going to do is I'm gonna go ahead
+656.0	and create a new area let's say we're
+658.0	gonna go take this airport right here
+659.2	this is no pathari I'm gonna press
+661.0	control f11 as always I'm gonna do a
+663.3	para trop
+664.7	we're gonna do let's see here cargo
+667.7	press okay and I'm gonna go ahead and
+670.8	grab my candid B's these aircraft are
+675.0	located up here at Mo's dock remember
+677.3	I've already loaded infantry that our
+679.1	para drop capable into the barracks at
+682.0	this airport so I'm going to go ahead
+683.9	and dump all them so now watch what
+685.3	happens down here you'll notice we have
+687.1	this new thing called mothership this
+688.5	would be the airport we're launching
+690.5	from down here we have the type of cargo
+692.8	we want unload as it stands we're not
+694.9	ordering any cargo unloaded so it's
+697.5	really critical you go ahead and click
+698.9	that arrow down here you can set what
+700.9	transit speeds you want to come at what
+702.4	landing speed you can also set transit
+704.0	altitude you can set landing zone
+705.3	altitude you can go pretty nuts and
+706.8	that's all there is to it now watch this
+714.9	but go ahead and pause real quick if I
+717.3	go back up to the airport you'll notice
+718.9	the airport itself automatically
+722.0	selected the appropriate units to load
+724.7	up with infantry filled them up manually
+728.0	if I actually click here you'll see it's
+729.4	loading them up to their maximum
+731.2	capacity this is an awesome way to do
+733.3	this so now if I fast forward a little
+735.1	bit more I think we have to get to about
+736.2	7:30 before the launch because my
+737.9	buttocks is about a half an hour plus
+739.1	the two in F minutes off they go alright
+746.1	and I'm gonna pause when we get here
+748.3	good so now what you want these aircraft
+751.1	to do and ideally what you want them to
+752.7	do is to arrive in this area and
+754.1	randomly dump those paratroopers off I'm
+756.1	serve ha that was the idea the problem
+764.8	is these aircraft are never going to
+766.7	descend to the altitude that you told
+768.2	them to do for their station there's an
+770.1	enormous amount of trouble for them to
+772.1	find the exact sweet spot on the ground
+773.7	in which to drop these guys off and as a
+775.5	result they almost get almost in an
+776.8	infinite loop I'm sure this is just a
+778.4	bug at this time it'll fix it a little
+779.7	bit later so the way I get around this
+782.9	is I order them to basically use the
+786.5	cargo mission in order to get everybody
+788.8	in position and then I manually deploy
+791.5	the cargo myself so I'm gonna go ahead
+793.4	and grab the Stinger one here I'm gonna
+794.9	go ahead and have dump off those
+796.1	paratroopers by the way these type of
+797.7	aircraft can only drop things and our
+799.7	paratrooper is certified you can't just
+802.1	put a bunch of trucks in the back and
+803.5	push them out the back they're not going
+805.0	to appreciate that very much that being
+806.7	said the Russians have a bunch of really
+808.3	spectacular basically airborne vehicles
+810.5	that can do that so kind of keep that
+812.6	back yard so I'm going to right click
+813.6	and I'm gonna unceremoniously dumped the
+817.1	infantry right in the middle of the
+818.3	taxiway and send him home so there we go
+821.6	so now if I click on this one notice
+823.0	this is called in watch this look at how
+826.1	many sections we've got like it's
+828.3	basically two platoons is half a company
+829.9	right there which is pretty impressive
+831.5	so I'm gonna go ahead and grab this
+832.7	buddy we don't actually need to see that
+834.2	right now he's swinging around of course
+836.5	if I asked him to we could start
+837.9	shooting up the airport which I'll have
+840.3	him do in a second so these guys are all
+842.3	lining up for the drop zone man you wish
+844.1	you could draw a paratroopers keep in
+845.6	mind these guys are 36,000
+847.0	feet up thank you for your help gotta go
+853.1	alright let's drop him off right here
+856.9	drop them off right there and thank you
+859.5	guys for your assistance please return
+861.0	to base so now of course we can grab
+863.6	this big group that's particularly two
+865.0	companies worth and I could do something
+866.6	like that and they're gonna start making
+868.2	my ear ah and delete okay you have the
+872.5	idea okay so now last but not least
+875.1	let's take a look at Naval Operations
+876.1	now one of the cool things with the
+878.2	naval cargo drops is the fact that we
+880.5	have the ability to actually order our
+883.4	sub ships which could be LCD peas or elk
+886.9	ax to leave the mastership with the
+889.4	cargo on board to attack targets on the
+892.3	ground wow that's actually pretty cool
+895.0	so to do that it's a little pretty
+896.4	straightforward we're gonna go ahead and
+897.5	define an area that has both washer as
+900.1	well as land on it so go ahead and set
+903.5	these two points here our next point
+905.6	that says three feet that tells me that
+907.3	it's solid I'm gonna go ahead and set
+908.5	this guy right here and this is going to
+909.9	be my landing zone as you control f11
+911.7	again of a called beach landing strike I
+917.0	said it's a cargo boat and press ok I'm
+919.2	going to lead this mission those guys
+920.5	are already on the way home anyway so
+922.0	now what I'm gonna do is I'm gonna scoot
+923.4	down here grab lcvps add them here now
+928.4	notice these are lcvps the LST also has
+932.0	the ability to land troops and you could
+934.5	specifically do that if you want but I'm
+936.3	having fun here so I'm gonna have these
+937.6	guys do it for me so I'm going to select
+939.2	the mother ship I'm gonna select the
+940.4	type of cargo it's just a coincidence I
+941.9	used all infantry sections here you
+943.4	don't have to and then of course you can
+945.2	set the cruise speed and everything like
+946.4	that and that's all there is to it
+948.2	so it's gonna happen now is our nice new
+951.0	port over here it's going to go ahead
+953.0	and load infantry onto those Elvis EVPs
+956.2	and then they're going to deploy towards
+957.9	the beach remember it takes about a half
+959.3	an hour to do those infantry loading
+961.1	operations so if you're in a hurry you
+963.0	might need to use a helicopter or
+964.4	something like that
+965.2	now the captures by the way as I
+966.5	mentioned earlier can now lift people up
+968.0	and put them down at any time and off
+969.6	they go
+970.1	so these are the lcvps these are little
+972.6	tiny landing craft think d-day and
+974.3	they're rushing towards the shore after
+976.1	having been loaded with cargo off of the
+979.0	new port now it makes this really
+980.8	after they dumped their cargo off
+982.2	they'll actually return to base load
+983.9	more cargo and then come back if they
+985.9	weren't able to do put all their
+987.2	deployment at one time keep in mind he's
+989.1	also got a helicopter on board so I
+990.5	could ask him nicely to help the troops
+992.3	all right let's see what this problem
+994.9	again now if you remember when we did
+996.3	our parent dropping that the airplanes
+998.0	would show up and do a bunch of this is
+999.9	same thing that's gonna happen here
+1001.6	they're literally gonna ride up on the
+1003.6	shore and they're gonna start doing like
+1005.8	this soon that's interesting so to solve
+1008.8	this we have to do the same thing we're
+1010.3	gonna right-click we're gonna hit unload
+1011.6	cargo we're gonna right click hit unload
+1013.8	cargo and unload cargo now we're going
+1019.1	to spacebar now that they've succeeded
+1020.5	in dropping the cargo off they're gonna
+1022.3	all turn around actually I'll give them
+1024.7	a push they're all going to return back
+1026.5	to the new port to load up the next
+1028.3	group of infantry and then they're going
+1030.0	to repeat the process so like I was
+1031.8	saying it's a semi-automatic process so
+1034.1	of course if we grab one of those groups
+1035.4	could amount some weapons you'll see
+1037.1	that I'm a little bit closer to company
+1038.7	strength here instead of just being at
+1040.9	you know the half a company strength
+1042.2	that is done by the paratroopers so the
+1044.6	last thing we need to do is take a look
+1046.7	at our final mission which is our
+1048.8	alligators up at the tippy top so what I
+1050.8	can do now I'm gonna go back to this
+1052.7	mission remember how I had infantry
+1054.2	loaded up at the port check this out if
+1056.4	I grab these alligators I can actually
+1059.7	tell them at the port to load all the
+1062.9	infantry including the infantry in that
+1064.6	barracks that was assigned with the port
+1066.2	building and the infantry that was at
+1068.2	the pier itself so now what's gonna
+1070.3	happen is all these infantry at this
+1072.4	port are gonna be loaded into the
+1073.7	alligators and they're gonna be sent on
+1075.2	their way by the way an alligator is a
+1076.7	big boat so going fast forward another
+1079.5	half an hour
+1080.1	notice my LCVP is racing back to their
+1082.5	mothership to pick up some more infantry
+1084.1	if this were an actual d-day invasion
+1085.7	the war would have been over already
+1087.4	because again enemy artillery would make
+1089.0	this a much much shorter operation give
+1093.0	it just a moment here it's good so now
+1098.1	you can see my alligator let's go ahead
+1099.6	move him all the way down here you're
+1101.3	going here dude you can see my alligator
+1103.7	three days later would have gotten all
+1105.4	the way down here and then we can go
+1109.1	ahead and do our good old fashioned
+1110.6	cargo operation now this is a big ship
+1113.2	so as a result when you find
+1114.8	does arrive at the zone he needs to get
+1116.7	to as usual watch what happens
+1120.4	he does as little as it never actually
+1122.6	unloads the cargo to fix that just
+1124.7	right-click unload cargo I'm sure we
+1127.0	have to tell him to stop moving for a
+1128.2	second here
+1128.8	hey it's not that yeah he went it OOP
+1132.6	there we go
+1133.1	good job go back home so now we have an
+1137.0	infantry unit that is probably huge
+1140.2	about the same actually hahahaha
+1145.6	there we go so now we're at battalion
+1147.8	strength because this LST dumped
+1149.7	everybody off at the same time all right
+1151.5	that's about it for cargo operations
+1152.9	hopefully in the future some of those
+1154.3	little things get fixed up but in
+1156.1	general works pretty well
+1157.1	enjoy

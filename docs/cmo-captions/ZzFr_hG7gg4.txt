@@ -1,0 +1,537 @@
+0.0	hello everyone today we're gonna be
+1.9	taking a look at stealth aircraft as
+3.8	well as methods to detect and methods to
+6.0	employ them so in our particular
+7.4	scenario here it's pretty
+8.6	straightforward we're sitting here right
+10.3	in the middle of good old-fashioned
+11.6	Russia this is just to the east of the
+13.7	Ural Mountains we're way way way up in
+15.6	the latitudes you can see the curvature
+17.1	of the earth very clearly in the motion
+18.7	of the aircraft and what I've done is
+20.3	I've gone ahead and set up a bunch of
+21.9	different types of radars all basically
+23.9	lined up in a row here was well as some
+26.2	very very common very very effective /
+29.2	modern different types of aew aircraft
+32.7	so basically we want to show you today
+34.3	is how self kind of can be employed at
+37.3	the same time as what different
+38.4	techniques you can use to prevent
+39.9	stealth from being employed well so the
+42.6	first thing I'm gonna do is I'm gonna go
+43.8	ahead and show you kind of a little bit
+45.6	of a Mickey Mouse little demonstration
+46.7	here just to give you an idea of just
+48.9	how effective some stealth aircraft are
+51.1	or maybe not effective so what I'm gonna
+53.4	do is I'm gonna go ahead and a flip on
+54.9	under emissions control here I'm gonna
+56.8	turn on all of my radars now keep in
+59.3	mind I don't just have a couple radars
+61.8	here I have radars representing every
+64.3	single wavelength a search radar can
+66.4	have + modern plus ancient so anyway
+69.5	let's go ahead and unpause now the first
+72.0	thing you're gonna notice pause is the
+74.8	fact that we immediately detect a few
+76.4	targets let me go ahead and drag out so
+77.8	you can see this is 200 and almost 208
+80.4	nautical miles away which is a
+82.3	tremendously long distance I know your
+84.4	initial instinct is going to be like aha
+85.9	you've caught something here well let's
+88.0	see the other thing I want you to see as
+90.3	well is the fact that although we've
+91.7	acquired a target its position is very
+94.0	ambiguous we don't actually know where
+96.5	the target is within this this is gonna
+99.1	matter in a little while and you'll see
+100.5	why now what I've done in this scenario
+102.4	is I've made it so that if I can
+103.9	identify its Hargett quick enough I can
+105.6	actually identify what type of target it
+107.0	actually is someone go ahead and pause
+108.1	soon notice I have an f-16 good old cm
+110.8	we have an f-15 not exactly a stealthy
+113.2	target b-52 yeah right and this guy you
+117.5	probably recognize that as a JH won t
+119.6	that is a Chinese stealth aircraft it is
+122.5	a very very good stealth aircraft
+124.2	however for some reason we're picking it
+126.7	up at a distance of almost 200 nautical
+129.6	miles
+130.3	now you're probably sitting there going
+132.6	were supposed to be a stealth aircraft
+133.5	what's the deal we'll take a look at
+135.2	that in just a second notice what
+137.1	happens when the aircraft rotates it
+139.6	completely disappears for just that
+141.3	moment and now that it's pointing
+142.8	directly at us it vanishes nope there it
+147.1	is again we're to be tracking if I were
+148.7	actually tracking by the Nevo that
+150.1	doesn't surprise me at all now the
+151.6	reason why it's becoming harder to
+153.2	detect this aircraft is because all
+155.1	aircraft inside of command have
+158.0	different levels of detect ability at
+160.6	different angles to the detector if you
+163.4	actually were to click on something and
+164.9	scroll down here you can see that from
+167.6	certain angles it's easier or harder to
+170.2	detect it makes sense if you think about
+171.5	it so for example if I'm looking at the
+173.6	front of this aircraft I can see it at
+175.2	3.6 miles and a 2 nautical miles I can
+177.8	actually identify it
+178.6	now infrared obviously depending on the
+180.8	aircraft it's easier harder to see with
+182.4	infrared by the way this is always fun
+184.3	when you go to the rear look at how much
+186.1	easier it is to detect it makes perfect
+188.2	sense if you think about because you
+189.3	look on where the heat comes out of the
+190.4	engines now here's where it gets
+192.4	interesting this down here gives us a
+195.6	rating of how detectable it is by radar
+199.0	you'll notice this is split into two
+200.4	bands one is a 2d band this represents a
+202.8	very long wavelengths and the other one
+204.7	is radar EDM band which represents much
+206.8	much shorter wavelengths the j-20 is
+209.1	sort of unique aircraft because most of
+211.1	the time it is equally detectable in
+213.7	both sets of bands where some other
+215.4	aircraft we'll look at in a minute or
+216.8	less detectable in those bands now when
+220.4	our aircraft had turned to the left it
+222.0	exposed its side which actually had a
+224.2	bigger by the way the negative numbers
+226.5	the more negative you go the harder it
+227.8	is to detect the more positive if you go
+229.8	the easier to detect when it was
+231.5	actually facing to its side it was
+233.3	easier to detect in that situation now
+236.0	this is going to be a really big deal
+237.3	especially when we start dealing with F
+238.6	twenty-twos in a minute
+239.8	so anyway kind of go ahead put that away
+241.3	let's go ahead and fast-forward time
+242.6	here pause so now I've let a little bit
+246.5	of time go by the way how should I
+247.7	highlight these real quickly so you can
+249.1	see what the different ranges are so
+250.5	this is about 150 nautical miles we've
+252.1	just detected somebody new we detected a
+254.3	su 57 as a so kawaiii now you're sitting
+256.7	there going why did it write the word
+258.4	external the reason for this is that
+260.6	this particular Sukhoi 57 is carrying
+262.9	some of its munitions on external
+264.9	wingtips
+265.9	now keep in mind ammunition hanging off
+267.7	a wingtip even if it's a Sidewinder
+269.2	missile can have a greater emission than
+271.6	the rest of the aircraft combined
+273.4	so you'll notice both the j-20 and the
+275.6	Sukhoi 57 we've actually detected it by
+278.6	its munitions hanging off the wings and
+280.9	not by its physical structure I'm
+282.7	actually gonna scoot over here for a
+283.9	second you're going to notice my f-35 is
+285.9	also now detectable you're going to
+287.9	notice my f-22 is also detectable
+289.8	because it's carrying external munitions
+292.3	I'm gonna go in speed up time again
+293.9	pause so at a hundred and ten nautical
+297.3	miles we've acquired our next target
+299.0	we've picked up the f-117 Nighthawk now
+302.6	the f-117 as you probably remember was
+305.0	one of those stealth aircraft that was
+306.6	supposed to be stealthy but it got shut
+307.8	down by a system from the 1950s if you
+310.4	actually look at its emissions you
+312.2	noticed that from the front it's
+313.8	basically invisible to any radar that's
+316.4	a shorter wavelength however from the
+319.3	side against a long wavelength it's
+321.9	actually pretty detectable keep in mind
+323.9	this aircraft is 100% internal munitions
+327.3	let's go ahead speed up time again pause
+330.9	so our next offender is the f-35 we've
+335.1	detected him at a really spectacular
+336.8	distance of 90 nautical miles if I were
+339.6	an S 400 by the way I could engage this
+341.6	aircraft keep in mind those are internal
+343.8	munitions all right I did not quite
+347.7	catch that last one I'm gonna go ahead
+349.0	and check it real fast let me see I
+351.8	believe that was this aircraft ah so
+354.0	that's the f-22 detected at a range of
+356.3	76 nautical miles and I'm gonna go and
+361.0	pause we picked up one last one and I
+363.5	believe it was this one the b2 so let's
+367.8	go and take a look at the emissions of
+369.1	the b2 amazing the b-2 bomber is the
+375.3	most stealthy thing in the air I know
+377.2	you're sitting there going it's the b-2
+378.6	bomber kind of a big plane absolutely
+381.5	but it is because of its size that makes
+383.8	it stealthy ER because of the way that
+386.1	it basically resonates certain specific
+388.1	wavelengths so anyway that's basically
+390.4	giving you a rough idea of how easy to
+392.8	subject keep in mind I have a thousand
+394.4	different detectors down here the other
+396.0	thing I want to point out too is in case
+397.5	you missed it almost every single time
+399.5	these were detected the first detector
+401.4	was as a py9 the second detector was
+404.8	this haul rack these are very very
+406.8	modern radar systems so let's go ahead
+409.4	and reset her sir an area real quickly
+411.7	alright and now let's take a look at a
+413.8	strategy to make stealth better now a
+416.2	lot of people don't believe me when I
+417.3	say this but the best way to make
+418.7	stealth better is to jam you're sitting
+421.0	there going what why would you jam
+422.6	doesn't that make you more obvious not
+424.3	exactly what's gonna happen is you're
+426.1	not going to jam with this stealth
+427.6	aircraft instead you're going to be
+429.2	jamming with somebody else because
+431.6	remember in order to detect an object
+433.4	through jamming you have to overcome the
+435.8	jamming power so I have an EA 18 right
+438.4	here and I'm actually gonna flip on its
+439.8	oacm watch what happens this time keep
+443.3	in mind how many aircraft I have here
+444.9	right now in different radar systems go
+447.4	ahead on pause notice we instantaneously
+449.6	detect those three aircraft that we saw
+451.1	before but this is where it gets a
+452.9	little interesting pause notice my f-35
+460.6	was detected significantly later than
+463.9	the other one the other thing I want you
+465.2	to observe is my J 20 is still invisible
+467.4	you're probably sitting there going um
+469.6	wait what what well take a look that's
+472.5	why because my jamming is not covering
+474.7	the f-35 right now ah so so two new
+479.0	targets appear there's the j-20 the j-20
+481.1	now has gotten far enough away from my
+482.7	jammer that we've actually detected it
+484.2	even though it's incredibly stealthy by
+486.4	the way did you catch the fact the only
+488.4	thing able to detect through jamming was
+490.8	the anap why I hope you did boss we've
+494.5	now picked up the f-35 again the reason
+496.5	we picked him up is because he's not
+497.4	being jammed anymore scooting over here
+499.7	of course you can see that RJ 20 is also
+501.7	detectable alright wait two more stop
+505.7	looks like we picked up the j-20 we
+507.8	picked up the Sukhoi 57 aha who's this
+512.9	come on there it is notice the f-117 we
+516.5	didn't detect until we were 60 nautical
+518.6	miles away missing somebody
+521.9	aha bingo
+524.4	and there's our f-22 so instead of
+526.6	detecting him at a whopping 90 nautical
+528.9	miles the jamming allowed us to get
+530.8	within as
+531.7	c41 nautical miles now as we get closer
+535.4	of course you know what's gonna happen
+536.5	these guys are all gonna shoot missiles
+538.0	and blow these poor guys out of there
+539.3	but that's okay by the way notice that
+541.2	we're having a very difficult time
+542.4	acquiring the f-18 even though it's a
+544.2	non stealth aircraft interesting okay so
+547.9	let's go ahead and reset our scenario
+549.0	again in this time I'm gonna go ahead
+553.6	and delete the aircraft that are
+555.5	detecting alright let's get rid of those
+558.1	guys
+558.6	again notice the effectiveness of that
+561.1	APY on the Hawkeye so let's go ahead and
+564.4	I turn on we're gonna leave jamming off
+565.9	for a little demonstration here let's go
+568.2	ahead and turn our radars on and let's
+571.6	let it rip notice we still detect them
+581.0	with the NEB oh pause notice the
+586.5	ambiguity with the f-35 we could not
+588.8	engage this f-35 because of the fact
+592.0	that it's in such a big ewis situation
+595.0	so notice these targets even though
+598.3	we're able to detect them we're not able
+599.6	to detect them precisely and it is still
+602.5	the NEB oh that's doing all the work
+604.1	here picked up somebody else imagine
+607.1	this is the j-20 imagine this is the
+610.4	f-35 it's the internal versus the f-22
+615.2	interesting although I believe the f-22
+617.8	did come up so which you observed there
+619.7	is the fact that the NEB oh is a
+621.2	spectacular radar system you're sitting
+623.7	there going what makes it so great well
+625.3	let's take a look at it real quick oh
+626.5	whoa I faced at the wrong direction
+628.5	my apologies let's see here let's get
+630.6	her an mo here mm-hmm
+632.8	there's the NEB oh why is it so
+635.2	effective well the fact of the matter is
+636.8	look at how tall this is this is a
+638.6	little guy standing next to it look at
+640.2	the size of this the bigger your radar
+642.3	gets the more gain you get so you're
+645.3	talking something that's already
+646.3	probably a megawatt
+647.6	plus and doesn't give us what it is no
+650.6	not only is it that powerful but because
+652.8	of what wavelength its operating on
+654.8	which is the B wavelength we're able to
+657.5	put an enormous amount of megawatts on
+659.4	power making it easier to detect the
+661.4	smallest of small small small small
+663.3	items to make
+664.6	things even worse of course because it's
+666.7	so large it's actually relatively
+668.9	precise the other thing you've got going
+670.8	for yourself is it works in the B ray
+673.7	wavelength which means that it's gonna
+676.3	have an easier time detecting most
+677.9	stealth aircraft so hopefully this is
+680.0	making sense so far let's go ahead and a
+682.6	reset our scenario again and now let me
+685.7	show you the difference between
+686.5	detecting with the low wavelengths and
+688.6	the high wavelengths so what I'm gonna
+690.5	go ahead and uh scoot down here
+691.7	I'm just leet these aircraft I'm gonna
+694.0	go ahead and get rid of some of our
+695.0	second-generation stuff here because
+696.7	this is almost not fair
+698.3	notice the mpq 65 off the Patriot hasn't
+700.6	done anything yet and let's go ahead and
+703.1	grab all these guys and delete all those
+705.2	so we're gonna concentrate on the short
+707.9	wavelengths now when I say the long
+709.4	wavelengths rather now when I say that
+711.3	you're sitting there going what are you
+712.4	talking about
+713.1	well if you've ever looked at a
+714.6	wavelength radar chart you basically
+719.2	have two major zones simulated you have
+722.5	what I consider to be the long
+724.0	wavelengths which are things like the
+725.2	UHF VHF these are dynamite for detecting
+728.2	long-range targets as well as stealth
+730.4	targets at a cost of not being very
+733.5	range and bearing accurate and then you
+736.9	have all these radars which are usually
+738.7	your fire control and missile guidance
+740.2	these have much shorter wavelengths but
+742.2	they have a tougher time detecting
+744.1	stealth targets so we're going to do is
+746.2	we're gonna demonstrate the short
+747.5	wavelength I should say the long
+748.7	wavelengths and then we're going to
+750.0	demonstrate the short wavelengths just
+751.8	to see kind of what happens so what I've
+753.7	done here is very Mickey Mouse
+754.8	demonstration we have an a band b band
+756.5	to see band in a d band now in this
+759.2	program let's go ahead and grab the
+760.5	database real quickly let's I'll go
+762.8	ahead and type it I'll grab an f-117
+764.2	these are always fun yes I know that's
+767.0	the C version check it out from the aid
+769.6	of the deeb and this is how detectable
+771.5	it is from the e to the N band look at
+773.3	all detectable it is so let's try it
+775.0	just a 2d with our actual radars here so
+778.0	I'm gonna grab these guys group them
+780.7	together I'm gonna go ahead and say
+782.5	everybody turn your stuff on let's just
+785.6	double check to make sure that we're
+786.5	correctly yeah it worked good okay so
+790.6	now watch this
+792.9	stop notice we were able to acquire our
+796.5	f-16 RB 5215 almost immediately one
+800.4	thing I want to point out though is
+801.4	notice who acquired first of all our a
+804.3	band and looks like we have a p40 that's
+806.3	an E band but this long enough
+807.7	wavelength stop what just happened you
+812.3	notice now that some time has passed and
+815.3	we were able to acquire all the external
+818.0	Ordnance aircraft at a distance of 110
+820.8	nautical miles still with that ancient a
+823.6	band radar we've just detected the
+827.2	Sukhoi 57 and I believe we just picked
+830.4	up the f-117 yes an f-117 is detectable
+834.6	at a range of 60 nautical miles with a
+838.3	radar that's ancient just kind of keep
+840.7	that in mind actually it looks like the
+842.1	C band radar did the job here but that's
+843.8	okay and it looks like we've got
+847.1	everybody we do and that's at about 33
+849.8	nautical miles so let's do the exact
+851.9	same scenario but this time what I'm
+853.8	going to do is I'm going to only use
+855.8	these short wavelengths alright let's go
+860.1	ahead and get rid of our AWACS aircraft
+862.7	alright who is our short so f and G will
+866.6	do I J that'll work perfectly for me so
+870.5	these are kind of your shorter
+872.2	wavelengths radar on shorter wavelengths
+875.1	are usually associated with
+876.2	significantly less range like you'll
+878.6	notice in this scenario the longest we
+880.5	can see with their short wavelengths has
+882.2	about 40 nautical miles
+883.8	we can't even detect anybody all the way
+886.0	out there so it's kind of interesting
+887.3	how those kind of acts basically your
+889.8	long wavelengths are for detecting
+891.4	enemies at early and then your short
+893.7	wavelengths are for prosecuting now
+895.4	observe what happens when they get into
+897.1	range I'm actually gonna turn on god
+899.2	mode notice every single one of these
+902.0	aircraft is in range now but they're
+904.0	completely undetectable who's the first
+907.9	victim
+908.4	I expect the b-52 OSE have 15 figures
+913.2	the b-52 hasn't got here yet f-16 yep
+921.3	keep in mind look at this range that's
+923.6	22 nautical miles
+924.9	that's cruise missile range I can't use
+927.0	maverick though we still have not
+933.2	detected any of the stealth aircraft
+940.3	look at where they are I have no problem
+946.3	detecting these got got somebody who's
+947.9	this there's our f-22 notice the f-22
+952.6	got picked up early now if I actually go
+954.7	here and take a look at it or radars
+956.0	with short wavelengths you'll see that
+957.5	the f-22 is actually not the greatest
+960.2	for that there's another point I want to
+961.7	throw out and that's the fact that if
+963.9	you actually look at this from the side
+965.5	if you're only about let's say here 10
+968.4	nautical miles away and you're only 6
+970.3	nautical miles up if you want to imagine
+971.7	this is up and this is out your f-22 is
+973.9	actually here relative to our radar so
+976.1	we're looking at the bottom instead of
+978.0	the front so as a result if I wait two
+980.3	seconds here you'll see that all of our
+985.2	external guys start to get detected
+986.9	immediately did you notice by the way
+989.0	the b2 has still not been detected b2 is
+991.9	right there I think yep watch this
+995.0	our Sukhoi 57 notice the external Sukhoi
+999.7	57 and everybody else flew over the top
+1004.1	and it was never ever detected so
+1008.2	hopefully this is a really powerful
+1009.5	demonstration now the cool thing here is
+1011.8	even though I can detect these stealth
+1014.0	aircraft with my long-range radars I
+1015.8	can't engage them with my more accurate
+1018.3	shorter wavelength radars so that's
+1020.6	really critical that when you're
+1021.8	planning these kinds of operations you
+1023.2	keep these things in mind as you do them
+1025.4	alright one last demonstration again
+1028.0	this is more just to give you a kind of
+1029.4	a way to look at problems so I'm going
+1031.7	to go ahead in a grab our aircraft and
+1033.2	this time we're going to take a look at
+1034.5	some of our specialist radars so I'm
+1037.1	actually going to delete all these guys
+1038.3	because they don't need them let's
+1039.9	delete there so we've already talked
+1042.1	about the NEB oh this thing is epically
+1043.7	good at detecting stealth aircraft let's
+1046.2	take a look at some other options the
+1047.5	npq 65 as you probably know is the radar
+1050.2	that you see on Patriot batteries
+1052.3	this is a combination detection as well
+1054.2	as engagement radar we have the this guy
+1056.9	which you probably recognize that's the
+1058.6	big terrifying s400 Sam radar detector
+1061.4	it's the cheese board we have this one
+1063.3	right here this is a white LC 4 this is
+1065.8	an excellent anti stealth radar and
+1067.5	again take a look what wavelength that's
+1069.3	operating on surprise nice and long and
+1072.7	then last but not least we have an over
+1074.8	the horizon coastal defense radar which
+1078.3	unfortunately we don't need the other
+1079.7	half of this but on what I do want to do
+1081.5	real quickly is just to demonstrate how
+1082.9	this works
+1083.4	actually this won't even detect air
+1085.2	targets yes yes indeed it does so this
+1088.4	one has an ultra long wavelength it's
+1090.8	actually kind of cool so I'm going to go
+1092.5	ahead and it's just one of those that we
+1095.3	can do that with no I just have to trust
+1097.3	that I'm gonna do it correctly alright
+1099.3	it's gonna be about there I think let's
+1102.3	go ahead and turn himself on Oh close
+1105.4	enough close enough close enough check
+1106.7	this out look at the range of this radar
+1110.4	242 miles now keep in mind this radar as
+1114.5	you can see from this picture right here
+1115.7	is wrong one is huge look at how tiny
+1119.3	that little building is so it has the
+1120.9	ability so well that it can actually
+1122.9	look over the horizon to see targets but
+1125.1	now watch what happens against our
+1126.2	beautiful stealth targets here look at
+1128.2	how ambiguous they are because of the
+1131.1	fact that the wavelength is so big we
+1134.1	can't actually measure precisely
+1135.6	there's our stealth buddies notice we
+1138.4	pick up the external ones first and we
+1143.6	never ever ever detect the internal ones
+1146.7	so even though we have a super long
+1148.3	wavelength you have to have the
+1149.6	processing and the power behind it to
+1151.6	actually make it useful so let's go
+1153.9	ahead and take a look at airborne radar
+1156.6	as you guys probably know the airborne
+1158.3	radars are the champions of anti stealth
+1160.2	because they have so much range and they
+1162.0	also tend to have amazing processing
+1163.6	power and stuff along those lines
+1165.3	so what I'm gonna do really really
+1166.6	quickly here is I'm gonna go ahead and
+1168.5	delete everybody except for a handy
+1171.8	dandy mainstay a flip that on and we're
+1176.5	gonna watch the same demonstration again
+1182.4	notice as usual we picked up the j-20 at
+1185.1	a distance of about 110 picked up I
+1188.7	think this is all external still stop
+1191.0	and then we finally pick up the
+1194.3	dangerous ones like your f-22s and have
+1196.1	thirty fives and stuff like that so it's
+1197.7	10 F 35 yeah but that's an external of
+1199.3	35 haha now we pick up the f-117 but
+1203.7	notice the b2 is always the last to be
+1205.7	detected because it's so big it just
+1208.1	distributes the wavelength so
+1209.7	effectively okay hopefully that helps
+1211.7	you a little bit kind of understand how
+1213.0	stealth works and how to kind of
+1214.2	counteract it keep in mind an opponent
+1216.2	that has some sort of infrared detection
+1218.2	system will still be able to pick up
+1220.5	your stealth aircraft especially from
+1222.3	behind enjoy

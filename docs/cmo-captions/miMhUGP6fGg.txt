@@ -1,0 +1,938 @@
+0.4	hello everyone in today's video we're
+1.8	going to be taking a look at the ground
+3.0	units and facilities and kind of how to
+4.7	use them and everything along those
+6.2	lines
+6.8	so uh first things first uh what i've
+8.3	done here is i've got ourselves located
+10.1	in the beautiful southern coast of
+12.0	maine this is the united states i chose
+14.0	this little small spot just to make
+15.3	things a little bit simpler for me
+17.0	as well as kind of demonstrate some of
+18.5	the problems you might bump into with
+20.2	vehicles as well as kind of some of the
+21.7	quirks without terrain works and
+22.9	everything along those lines
+24.2	but anyway let's go ahead and get
+25.8	started so first thing of course i'm
+27.7	gonna go ahead and switch over to
+29.1	red force here real quickly and what is
+31.5	the task at hand
+32.9	basically we have ourselves a really
+35.1	nice little town here
+36.6	you're probably looking at this town
+37.8	with all these individual houses going
+39.2	whoa that must have taken you a long
+41.0	time to do
+41.8	it really did not because i simply used
+44.2	google maps and just used a kml thing to
+46.2	go ahead and drop each one of these
+47.4	units done individually
+48.6	i'm actually going to switch to terrain
+49.8	mode real quick so what is a ground
+52.6	unit in command basically command if
+55.8	it's a ground unit you
+57.2	have essentially imagine a facility
+59.8	that's made up of a magazine
+61.3	it's made up of weapon mounts and it's
+63.4	made up of sensors
+65.0	that's it so for example i'm just going
+66.9	to come up here real quick let's grab
+68.4	ourselves a bmp3
+70.0	just keep it nice and simple press ok
+72.4	now if i'm going to go ahead and click
+73.5	on this unit and bring up its database
+75.3	entry
+75.8	you can see that's basically what it's
+77.4	going to have first thing you want to
+78.9	look at at the top is mobile vehicle
+80.8	note there's nothing in here that tells
+82.8	you how fast this vehicle goes
+85.0	all vehicles travel at the same speeds
+87.5	there's no unique high-speed anything
+89.5	here so it's something you want to watch
+90.8	out for
+91.5	things you're going to be looking out
+92.5	for first one's going to be the
+93.8	component dispersal
+95.3	radius this is how far apart each
+98.0	vehicle
+98.6	is from itself if a unit has multiple
+101.9	vehicles
+102.6	now if i were to grab something such as
+104.4	a small building let's go ahead and do a
+106.3	building
+108.6	that's fine right here we'll grab the
+109.7	hospital you'll notice it does
+112.2	not have that feature because it is a
+114.2	single building
+116.0	so what do you mean by that well let's
+118.0	go back to our bmp real quick
+119.7	our bmp is technically made up of three
+122.5	vehicles because you know as an x3 over
+124.3	here
+124.7	but what are those vehicles those
+126.4	vehicles are actually
+127.8	weapon mounts if i were to open this up
+130.2	real quickly you can see each one of
+131.5	these bmp
+132.4	threes treat this as almost like a 76
+134.6	millimeter turret on a big ship
+136.5	and you can see it has all its
+137.6	individual components that has some
+139.0	different weapons on board
+140.4	this is a single unit and since they're
+143.1	an 80 milli
+144.2	meters dispersal that simply means that
+146.6	each one of these if we hit it with a
+148.0	cluster munition would be about 80
+149.6	meters apart when we hit it
+151.0	we can actually attack this entire group
+153.0	and affect these units
+154.8	individually again that's a really big
+157.0	difference
+157.6	between what you're probably used to
+159.3	with naval vessels and things like that
+161.1	it's also worth noting that this
+162.3	particular vehicle has no
+164.3	general armor but the mounts themselves
+166.9	may have general armor
+168.2	we can't see that from where we're
+169.7	sitting right now which is kind of a
+170.9	bummer
+171.6	so what does this mean for us well it
+174.1	means a lot well first things first if
+175.8	we have a mechanized infantry platoon
+177.3	like this bmp3 here
+178.6	let's say we wanted to bring this up to
+179.9	company strength well there's a couple
+181.2	ways we could do that
+182.2	we could copy a few of them i just hit c
+184.2	and left clicked a few times there
+186.0	now we're at company strength or what we
+188.2	could do is we could actually take this
+190.1	individual unit go to mounts and weapons
+192.8	and actually
+193.5	add bmp3s as a mount there we go right
+197.6	there
+198.1	so if i want to go up to company
+199.2	strength that'd be 4 5
+201.8	6 7 8 9
+205.0	10 11 12 beautiful now we're at company
+208.2	strength for my little bmp here
+210.2	so you can see each one of these
+211.6	vehicles is now independently
+213.4	again not targetable but these all can
+215.4	be attacked together and they can all
+217.0	fire together as
+218.2	one big group so now where this gets a
+220.8	little interesting is that's
+222.6	fairly intuitive as far as the way it
+224.2	goes if i wanted a single bmp3
+226.6	this is going to get a little bit
+227.7	trickier let's go ahead and grab this
+228.9	one real quick
+229.8	i would actually have to come in here
+231.3	and go to my mounts and weapons
+233.0	and then delete these mounts in order to
+235.2	simulate a single bmp3 just sitting
+237.8	there just like that
+239.0	so again this is a little different than
+240.9	probably what you expected
+242.4	now what happens when you're working
+243.4	with infantry well infantry kind of have
+245.2	their own little quirks here
+246.5	and let me go ahead and shut off the
+247.4	sentinel map and let that kind of load
+248.8	up it's been a little slow this morning
+250.3	but that happens sometimes
+251.8	so let's go ahead and grab an infantry
+253.6	platoon uh we'll go ahead and get just
+255.6	generic keep it simple here
+257.2	now if i click on my infantry platoon
+258.8	and go ahead and open up my mounts and
+260.2	weapons
+260.8	you'll see that a section rather than
+263.1	individual soldiers is represented
+265.5	here in each one of these in sections
+267.2	you know you won't imagine it's a squad
+268.7	again the uk versus the us way of
+270.3	describing these kind of things
+271.8	each one of these sections really
+273.3	represents a group of about five
+275.1	soldiers
+275.8	plus you know their generic rifles of
+277.3	course this would be a battle rifle as a
+278.6	gigantic round for a normal infantryman
+280.9	again you can get some details here like
+282.3	this now the cool thing here is with
+284.3	this infantry platoon if we want to add
+286.0	some organic support to it
+287.7	we could actually add them out and then
+289.3	just throw something in here for example
+291.0	if i wanted to add a stinger
+292.5	just as a quick little example
+296.2	so now my little infantry platoon has
+298.2	grown up a little bit because now they
+299.7	actually have their own anti-aircraft
+301.7	support
+302.2	built right in keep in mind they only
+303.8	have a single missile which is not going
+305.4	to work great
+306.3	so what you could actually do if you
+307.8	want to get even more sophisticated
+309.6	is you could go over to magazines you
+311.4	could add a magazine
+313.0	and then you could actually find that
+314.6	specific stinger and then
+316.2	add it in there like that so for example
+318.6	let's see here we're using the 92e model
+321.0	so we're going to have to find a 92e
+323.0	so looking through this real quickly
+324.4	you're like uh
+326.6	where is it well believe it or not
+328.3	you're not going to see it because the
+329.8	magazine is the container the weapon
+331.6	goes into the container
+332.7	so what i'm going to do is just add a
+334.0	generic munitions one for my magazine
+336.5	go to add weapons now we can add my
+339.6	stingers
+340.4	so let's go find my fim92es there they
+343.1	are
+343.5	let's say we're carrying a 12 of them
+346.2	and now just like that
+347.5	i now have the ability to reload my
+349.6	stingers so even though it says one i've
+351.5	actually got a few of these in my back
+353.0	pocket
+353.5	that i can later summon after i shoot
+355.6	through them so again you can have a
+357.3	tremendous amount of things to do with
+358.7	that
+359.0	one thing you want to watch out for is
+360.5	if i make a copy of this unit
+362.6	the new unit will not have my
+365.2	modifications in it
+367.0	if i were to clone the unit
+370.1	you'll notice it keeps those
+371.9	modification cloning is going to be
+373.8	shift c on the keyboard copying it's
+375.4	just going to be c
+376.6	so you want to kind of watch out for
+378.4	that again that's going to mess with you
+379.8	just a little bit when you're first
+380.9	experimenting
+381.8	now one neat thing here too is you
+383.3	actually have an infantry company
+385.2	coi i believe it is yeah the first one
+387.5	anything that says placeholder is not
+389.0	going to have anything in it
+390.2	so if we do infantry company here check
+391.9	this out if i actually click on this one
+393.6	whoop
+394.3	look at that not only is it a complete
+396.2	set with all individual squads
+398.1	but it also comes with its own 81
+400.0	millimeter mortar plus
+401.3	some anti-tank weapons on board and you
+403.9	can see how sophisticated that is
+405.7	now one thing worth noting that each one
+407.6	of those mounts has their own sensor set
+409.7	on them if we wanted to add some kind of
+411.7	company-wide something or other you'd
+413.7	have to actually go to sensors
+415.2	like you can see they've got plenty of
+416.2	binoculars and everything like that and
+418.1	actually
+418.5	add a sensor so for example let's say
+420.9	they got some i don't know a laser
+422.5	designator
+425.0	all right let's go grab a simple one
+426.4	that looks pretty good boop
+428.2	and now this whole company has access to
+430.8	that laser designator as long as
+433.0	they're still functioning as long as
+434.4	that particular sensor still works
+436.3	so that's kind of be kind of the basics
+438.2	as far as dealing with the unit side of
+439.9	things
+440.5	uh let's take a look at uh what we can
+442.0	actually do with them now
+443.8	so first things first hey there it goes
+446.0	i was wondering when it was going to
+447.0	finally kick in
+448.1	sometimes it gets a little grumpy
+449.3	something hey now we can actually see
+450.7	what i'm looking at hey i did a pretty
+452.1	good job with these buildings
+453.3	too bad the satellite detail is not good
+455.0	enough that you can see them normally
+456.7	now what if we want to reload infantry
+459.4	again
+459.8	warfare is about logistics as much as it
+461.7	is about tactics anybody can tell you
+463.3	that so let's go ahead and switch back
+465.1	to my blue four
+466.1	let's say that i want to maybe attack
+468.2	this little village here
+469.4	it's not really a village it's a town
+470.9	they're gonna call it a village it's a
+472.5	quaint little drinking village with a
+473.7	fishing problem i think is what their
+475.0	logo is it's just kind of fun
+476.7	so let's go ahead and add some artillery
+478.2	here let's go get ourselves some
+479.9	120s pretty small pretty easy to
+483.2	transport
+484.2	we'll do generic we'll make it uh we'll
+486.1	do battery size so we'll add three of
+487.6	these
+488.2	now let's say that we start firing some
+490.2	rounds into here and then we start
+491.6	chewing up our ammunition supply so i'm
+493.8	going to go into here
+494.7	let's go in here again we're just
+495.8	simulating this in order to save a
+497.3	little bit of time here
+498.2	let's say we're down to 20 mortar shells
+500.4	left now if we want to reload this unit
+502.6	we have a special unit called an
+504.3	ammo truck i've tried this with some of
+507.2	the other ammo
+508.0	options and they don't work well so now
+510.3	that i have an ammo truck
+511.7	i can actually right click on the unit
+513.9	go to replenish
+515.1	select provider and then left click on
+517.3	that ammo truck
+518.5	so what it's actually going to do now is
+520.2	it's going to sit there and if it's
+521.4	close enough to this truck
+522.6	it'll actually start loading those
+524.2	shells back up keep in mind the bigger
+526.3	the shell the longer it takes to reload
+528.6	it's also worth noting that since i have
+530.9	under scenario features and settings
+532.6	i've enabled unlimited magazines that
+534.6	means that i don't have to go into this
+536.2	truck's
+537.2	magazine itself and actually throw
+539.4	everything into each little bomb each
+541.0	little grenade
+541.8	otherwise that would just take forever
+543.1	this is a much more simplified logistics
+545.0	model
+545.6	but again this one unit will provide for
+547.6	anybody who needs ammo
+549.0	as long as they're still on this island
+550.4	this is a pretty deep channel here
+551.6	believe it or not
+552.5	so that's going to be kind of its own
+553.6	little problem okay so now that you kind
+555.7	of have an idea of how to reload as well
+557.2	as kind of how to set them up
+558.4	let's set up a little scenario and show
+559.8	you the next fun little quirk with these
+561.5	particular units
+562.6	so what i'm going to do now is i'm going
+563.8	to go ahead and grab myself the other
+565.2	team
+565.7	so we're protecting this little town
+567.6	slash village here so how we going to do
+569.4	it
+569.9	so first things first what do we have
+571.4	for terrain everything is mixed forest
+574.2	here
+574.6	there's basically no open spots and if
+576.9	we wanted to check that we could
+577.9	actually come and do land cover
+579.4	we could also just hold our mouse over
+580.6	everything here well first things first
+582.6	where's the enemy going to come from now
+584.1	if we actually look at our
+585.0	kind of regional zone this is a heck of
+587.0	a strategic peninsula here
+589.0	obviously it's also easy to cut off you
+590.6	just go like that problem solved right
+592.7	as long as people don't mind swimming
+594.1	then it's not really cut off but this
+595.5	water is a lot deeper than it looks
+597.5	so we're just going to pretend like
+599.0	they're going to concentrate just sort
+600.0	of in this area so first things first
+601.8	let's go ahead and get ourselves some
+603.0	lookouts here so let's do
+605.0	oh make it interesting
+608.0	we'll call them rebels why not right
+609.8	there we go
+611.1	so i'm gonna throw myself together a
+612.3	little infantry platoon of rebels on
+614.1	either side of my little cove here
+615.7	stopping marines from taking advantage
+617.1	of low tide and literally just waltzing
+618.8	in here you could probably walk across
+620.3	this the water gets so shallow
+621.9	so these guys are going to be kind of my
+623.1	little guardians here we're also going
+624.8	to want to throw a couple little squads
+626.2	in the town again they're going to be
+627.2	hiding in these individual buildings
+629.0	so let's say at the northern end again
+630.7	you always want to block roads because
+632.0	this is going to be heavy heavy trees
+633.9	oh let's say they got themselves t72 why
+636.4	not
+637.2	so let's see here looks pretty good
+639.0	right there good old-fashioned boring
+640.5	t-72 sounds pretty empty
+642.7	there we go we got a group of t-72
+644.4	remember this is three t-72s
+646.5	and i'm gonna go through another thing
+647.7	that t-72 is in the bottom lane here
+649.8	so what do we have left exposed we
+651.7	basically have this one thoroughfare
+653.4	into town
+654.3	so let's go into here too and let's just
+656.6	think what's going to be pretty easy
+658.0	here
+658.7	why don't we set up an at team uh let's
+661.6	see here
+663.4	this boundary is gonna work pretty well
+665.4	for us uh can i just do atgm or is that
+667.6	gonna be too easy
+669.7	uh okay sagar hey uh
+672.8	we'll just do bmp2 keep it nice and
+675.2	simple
+676.0	wildly exported beautiful so now we have
+678.9	our little layout here as far as the
+681.0	defense of the town
+681.9	we're gonna need some kind of fire
+683.4	support so in this little place here i
+685.2	believe there's a village green
+686.3	basically right down here it's either
+687.7	that or a swamp i don't actually
+688.9	remember
+689.5	i'd have to look at the satellite
+690.6	imagery again let's go ahead and throw a
+692.5	mortar there
+693.5	now let's say we'll do an 84 millimeter
+695.8	even though i prefer an 81 millimeter
+697.8	again we could always come in here click
+699.5	on it we could actually go to mounts and
+701.2	weapons and it's 81 millimeter mortars
+703.5	anyway
+704.2	so i guess i don't need to change that
+705.8	and then last but not least let's give
+707.2	us a little teeny tiny bit of
+709.0	some surface-to-air missile cruise we'll
+710.8	do an sa-7b
+712.1	keep it relatively simple that looks
+714.0	pretty good to me
+715.4	and we are good to go so now we have our
+717.8	defenders in place
+719.2	let's go ahead and switch to blue 4 real
+721.3	quick we already have our mortar battery
+723.1	ready to go
+723.8	again this is a pretty nice little
+725.0	island it sticks out of the water pretty
+726.7	good
+727.1	i would never want to swim this would be
+728.4	too cold speaking of weather by the way
+730.2	you probably noticed that we got a
+731.4	little bit of light rain and some pretty
+732.6	nasty clouds
+733.8	not unusual for maine this time of year
+735.6	but you know that happens
+737.0	let's go and put myself a little watch
+738.4	tower now one thing you got to watch out
+740.4	for this watch tower is it is auto
+742.0	detectable and it will be wrecked
+743.8	it's actually kind of annoying if you
+745.0	ask me so he's good to go he's going to
+747.0	kind of keep an eye
+747.7	anything you can see along the coast
+749.1	here again i think the total distance
+751.0	here let me measure that real fast it's
+752.3	about a nautical mile so it's actually
+753.7	pretty hard to see anything from that
+755.0	distance
+755.9	so that looks pretty good um we're
+757.9	attacking this place we've got basically
+759.7	two roads in
+761.4	i'm just trying to study sometimes
+762.6	there's an easy way when you look at
+763.9	things
+764.4	yeah it looks like we've got this little
+765.4	coastal road here chances are this
+767.2	coastal road
+768.2	this is probably difficult to go from
+770.1	this point to this point you're gonna be
+771.1	going through people's yards it looks
+772.2	like we have a pretty good ridgeline
+773.8	there
+774.4	so uh believe it or not i think i'm
+775.5	actually gonna come down the main road
+776.7	as terrible as that sounds
+778.7	but hey whatever works right we can
+780.2	always stop by the bristol diner and get
+781.5	lunch afterwards too
+783.0	so let's pretend this is a marine
+784.3	operation so i'll get myself some old
+786.0	school m60s
+788.2	oh grab that group there what do we got
+790.1	as far as sensors on board i'm actually
+791.9	very interested here because this could
+793.5	really affect us
+794.5	we have tv cameras and ll tvs i was
+797.0	really hoping for tts
+798.6	which is kind of a bummer um we have
+800.6	this version that has a tts
+802.7	let's see here pretty sure there's a
+805.2	version of this that we can use it does
+807.0	have regulated now that's kind of the
+808.6	regular one as well
+809.8	bummer so we'll go ahead and get
+811.4	ourselves some m1s as well
+814.0	united states army that looks pretty
+815.8	good that's going to make things a
+816.8	little bit easier for us as you'll see
+818.2	in a minute
+819.0	sensors lltv yeah it looks pretty good
+821.4	that looks pretty good okay
+822.8	and of course we'll want to go ahead and
+823.9	give ourselves some infantry component
+825.4	as well so we'll do lav25
+828.3	and we'll grab a couple groups of these
+830.7	and we're looking
+831.8	really really good for our little
+833.5	scenario here
+834.8	so now that you've seen how we set
+836.2	everything up how is the actual scenario
+838.2	going to go now
+839.9	well it's not going to go probably the
+841.4	way you expect it and i'll show you
+843.5	i want to show you the kind of the
+844.4	non-example before i show you the way to
+846.1	fix it
+846.7	so we've got our whole group ready to go
+848.3	obviously in the real world we'd order
+849.8	up a preparation if we could
+851.4	uh preparation is just a code name for
+853.3	you know leveling the place with
+854.6	artillery we're moving in grid reference
+856.2	so to speak
+856.9	unfortunately we can't do that we also
+859.1	have a problem with civilian structures
+860.5	but in this particular scenario we don't
+862.1	get penalized if we miss
+863.9	and i'll show you what that looks like a
+865.1	little later on so let's go ahead up
+867.0	here and
+867.5	go ahead and have these guys roll into
+868.9	town remember the faster they roll the
+871.0	easier they are going to be
+872.6	to detect now i know what you're
+874.8	thinking but
+875.8	you know you want to see this first
+877.8	before you understand exactly how this
+879.3	is going to go down
+880.4	all right so everybody's going to
+881.6	accelerate they're going to have to do
+882.6	the path finding thing first
+884.2	and they're just gonna get going down
+885.6	this road here
+888.8	now i'm gonna let it roll for just a
+890.4	moment longer just kind of totally
+892.2	ignoring the road there keep in mind
+893.6	this is a simplified model
+895.2	treat these as land ships hmm and we'll
+898.5	go ahead and pause right there
+899.8	now what does the other team see right
+901.6	now
+903.1	well they see that there's a bunch of
+904.6	vehicles coming down the road and you
+905.8	can also see that they're all neutral so
+907.3	let's say we're going to declare war
+908.6	here
+910.1	hostile oh no friendly red force
+913.6	hostile red force postures
+917.4	hostile okay let's go ahead and
+920.6	speed up time here now you're probably
+923.9	sitting here going
+925.0	why are they not firing
+928.6	why are they not firing as a matter of
+930.0	fact let's switch to the other team real
+931.2	quick
+932.2	yep they're just kind of cruising down
+933.5	the road you know relaxing
+935.5	enjoying the local basically a tree down
+937.6	every 10 feet little power poles little
+939.4	tiny signs on the side
+940.6	switch to god's eye view you can see
+941.8	just how incredibly close we are to that
+943.4	unit that's literally just sitting here
+944.9	keep in mind line of sight is modeled
+946.5	here so if we're on the top of this we'd
+948.1	have a better look at them
+950.0	we're literally driving along the other
+951.9	guys literally know where we are
+954.4	but they haven't fired yet as a matter
+956.2	of fact we're probably going to run
+957.7	drop there they are now if i just keep
+960.0	driving watch this
+964.5	and does that seem a little strange to
+967.3	you
+968.0	why are my vehicles not automatically
+970.0	engaging why are their vehicles not
+971.7	automatically engaging
+973.0	it's because those vehicles were not
+975.2	assigned the system that allows them to
+977.4	automatically
+978.1	engage oi that's annoying so what you
+981.4	actually have to do is you have to allow
+983.5	them to engage opportunity targets
+985.6	or create a mission for them in which
+988.0	case they can
+989.0	patrol and engage ground vehicles on
+991.4	their own never
+992.4	fire on their own you can see how
+994.6	annoying that is because i can actually
+995.8	grab
+996.0	this entire group target that guy on
+998.9	pause keep in mind we have an ooda loop
+1000.4	limitation here and they
+1001.7	evaporated him without a single shot
+1005.2	being fired so that's the first thing
+1006.9	you want to watch out for so let's fix
+1008.6	this
+1009.3	i'm going to go back to red force real
+1010.7	quick and i'm going to go to notice they
+1013.0	have perfect eyes on all those tanks as
+1015.0	they go rolling in
+1016.2	i'm going to change engage opportunity
+1018.5	targets to yes
+1020.4	so now when i engage all of a sudden
+1022.6	it's just going to light
+1024.1	them up now keep in mind we have the
+1026.2	ooda loop limitation here and some of
+1028.0	those tanks are out there goes
+1030.9	notice he's engaging uh we can see oh
+1033.2	look at this ah we're getting engaged
+1034.6	they're coming out of the walls
+1036.5	so first thing you want to do is you
+1037.8	want to accelerate up to maximum speed
+1039.6	and get to that target as fast as you
+1041.4	can
+1042.2	because you need to get close enough to
+1044.1	actually detect them otherwise you will
+1045.8	be destroyed
+1046.6	there's another one right there ah this
+1048.3	is going nuts this is always fun to do
+1050.4	lua too because then you can like create
+1051.8	a say oh my gosh there's another one
+1055.0	well now that they know we're here we've
+1056.1	got to speed up so we can see them
+1058.3	well they're going after my watchtower
+1060.4	oh well oh no you're going to blow up my
+1062.3	watchtower it's the end of the world
+1064.6	notice how difficult it is to spot
+1067.9	a non-moving target the assumption in
+1070.6	command is that we have it set up in
+1072.2	such a way
+1073.1	that they basically camouflage
+1074.5	themselves yeah i'm going to lose a lot
+1075.9	of tanks here
+1077.6	oh this is messy oh this is so messy
+1080.1	hope we found something
+1082.5	well say yes to engage as well let's
+1084.3	grab my mortar cruise
+1085.7	you guys can do that one
+1089.0	more to crew nope friendly
+1093.0	go for it oh we got another engagement
+1095.3	we're going to order them to attack
+1096.6	there
+1097.3	grab my other mortar crew here have them
+1099.2	fire here
+1100.7	and we have nothing else to shoot
+1102.1	there's another one mortar crew fire
+1103.5	over there
+1104.8	they're going to go ahead and position
+1105.8	themselves we're going to do the best we
+1107.0	can to engage i'll be spotting new ones
+1109.2	ah this is not going well at all of
+1110.7	course we're causing collateral damage
+1111.8	to the buildings by the way which is one
+1113.0	of my favorite not fun things
+1115.1	oh i'm down to i think my lav25s which
+1118.1	have no armor really so this is going to
+1119.5	end pretty bad
+1120.5	fortunately we spotted some of them so
+1122.2	my 120s are immediately starting to go
+1124.2	to town here
+1125.8	this is actually kind of fun to watch in
+1127.1	3d also
+1129.3	because you can actually see the
+1130.5	individual projectiles kind of taking
+1132.2	their very long upward arc
+1133.8	towards the target zoom in a little bit
+1136.1	there we go
+1138.9	it looks like they're just standing in
+1140.0	the middle of the ocean that's not quite
+1141.8	how that looks in the real world but you
+1143.3	know i'll take what i got i'll take what
+1144.6	i got
+1145.4	and they're just kind of firing over
+1147.0	obviously this went terribly for us
+1150.3	and you can see my mortar crews are
+1151.7	actually doing a really nice job of kind
+1153.4	of doing what they can with what they
+1154.7	have kind of a deal
+1155.9	and now they're shooting back at my
+1157.0	mortar cruise which is not unusual
+1159.5	that must mean they got spotted oh they
+1161.1	moved that's how they got spotted
+1163.0	ah no now my mortar crews are going to
+1165.6	get wrecked to
+1167.2	speed up time a little bit so we can
+1168.5	watch the rest of this engagement
+1170.3	keep in mind in the real world anybody
+1171.8	who plays strategy games would be like
+1173.0	hey i saw where that shell came from
+1174.5	fire at that
+1175.7	keep in mind the one mortar crew that
+1177.2	did not fire is perfectly safe
+1179.1	you're probably also wondering why
+1180.5	you're getting three bangs every time
+1182.1	this thing hits
+1183.2	and the reason for that is it's actually
+1184.7	three mortars firing and we're gonna go
+1186.4	through every one of our rounds here
+1188.4	so now you've probably seen the on
+1190.0	example you know how that we could
+1191.3	approach this and that it doesn't end
+1193.1	well for us now you're probably
+1194.9	wondering okay so
+1196.4	how would you have done this safer then
+1198.8	well the first thing is move infantry
+1200.5	really slowly into town
+1201.9	because they can basically act as scouts
+1203.9	the second thing is we can take
+1205.2	advantage of the
+1206.1	other modes of transportation so let's
+1208.4	go ahead and grab
+1209.6	my uh guys again obviously things are
+1211.4	still pretty aggressive over here
+1212.8	oh good to know good to know come over
+1215.1	here i'm gonna go ahead and get my
+1217.0	m1s again
+1220.5	yeah well just use them oh we don't want
+1222.4	the two because this is i think 1991
+1224.6	yeah go ahead and grab that one looks
+1226.6	pretty good we'll just grab two because
+1228.2	this would be more than enough to do
+1229.4	this scenario
+1230.4	and now let's go ahead and add ourselves
+1232.3	actually want to clean up the map a
+1233.3	little bit it's getting a little messy
+1234.7	well let's go add ourselves a uav so
+1237.0	what do we have
+1237.9	way back in the day that we could use
+1239.4	for this purpose i think we have one of
+1242.2	the old
+1242.9	mqs the really really really old school
+1245.1	ones let me see what it got here
+1247.5	now let's see here oh we could do the
+1249.6	shakar i
+1250.6	actually think that'll work pretty well
+1252.1	this isn't the big one right
+1254.2	yeah it's a target drone that is not the
+1255.5	big one that's the one we want there we
+1256.9	go let's go get ourselves a uav
+1259.6	we'll go ahead and do one of these
+1260.6	things speed up time a little bit so it
+1262.2	gets into position
+1263.3	and now notice my m1a2s are now
+1266.2	attacking
+1267.2	with no threat whatsoever
+1270.5	i actually have to reduce the altitude
+1271.8	on my uavs up way too high
+1273.7	just effortlessly firing because nobody
+1275.8	can see where those projectiles are
+1277.2	coming from
+1278.5	and look at this ah wrecked my uav is
+1281.8	still a little high here i need to get
+1283.1	him down low enough to actually spot the
+1284.6	infantry units
+1287.0	this is a great way to do this by the
+1288.4	way the other method to use is that take
+1290.1	advantage of what time of day it is
+1291.4	you know if it's the middle of the night
+1292.6	or something like that you can always
+1293.7	handle it
+1294.5	keep in mind infantry are always
+1295.9	basically impossible to spot
+1298.5	ah there we go we already have my mortar
+1301.0	crew i'll go ahead and task it oh nope
+1302.9	the m1a2s were already all over it good
+1305.8	job guys
+1306.7	and that group of tanks is basically
+1308.7	useless
+1310.3	and goodbye boom boom
+1313.4	boom ah my mortar crew didn't do the
+1315.2	deed toasts
+1317.3	now we just got to find those last
+1319.1	couple units here hiding out
+1322.1	really got to wait for that uav to get
+1323.6	low enough to spot those infantry you
+1325.0	can see them like that
+1326.2	ah there they are beautiful let's go
+1329.4	ahead and grab the mortar platoon i
+1330.5	noticed my m1a2 so they're super
+1332.9	ooda loop thanks to the nice fire
+1334.3	control just start working these
+1336.0	individual squads over
+1337.2	just like that and that
+1340.2	fight is over okay so now you're
+1343.0	probably going all right so it
+1345.0	you have some simulation here i mean
+1347.8	it's it's pretty cool
+1349.7	what else can you show me well there's
+1351.2	one more thing i'm going to show you
+1352.6	let's go ahead and switch to the red
+1354.1	forest real quick
+1355.1	let's go ahead and recreate my little
+1356.3	town now you probably noticed i created
+1358.5	some
+1359.0	all these buildings here because i
+1360.6	wanted to show you what collateral
+1361.8	damage can look like
+1363.3	so what i'm going to do is i'm going to
+1364.3	put a single actually i'm going to have
+1366.0	to delete those two m1s because they're
+1367.5	probably going to have a little bit too
+1368.4	much fun here
+1369.4	so i'm going to go ahead and get myself
+1371.0	oh we'll do an infantry infantry platoon
+1374.5	that looks pretty good generic press
+1376.2	okay and put them right in the middle of
+1378.1	this nice cluster of buildings that
+1379.4	looks pretty good now i'm gonna go ahead
+1381.2	and switch
+1381.9	to the other side real quick i'm
+1383.8	actually gonna delete these guys because
+1385.4	they don't need them
+1386.6	i'm gonna send this one over here and
+1388.8	i'm going to delete this one too
+1390.2	and in the meantime i'm going to get
+1391.5	myself a b52
+1394.8	b52h let's see here
+1399.2	looks pretty good we need a lot more
+1401.9	than that
+1402.6	what is this one 51 that sounds pretty
+1404.3	good to me all right
+1405.8	begin i'm actually going to reduce his
+1408.8	altitude a little bit here's up too high
+1410.2	for me
+1411.7	hey get over there
+1414.8	all right put that away so you can see
+1416.7	my town
+1417.9	and again scenario designers make note
+1419.8	here this is a great way to make things
+1421.8	a little bit more interesting for
+1423.1	yourself
+1424.2	all right my b-52 is going to get there
+1425.8	a little too soon move him back
+1427.6	send him down to loiter speed come on
+1430.4	you gotta spot that little infantry
+1431.9	platoon
+1433.7	put it right there again taking
+1434.9	advantage of that guy's eye view real
+1436.3	quickly
+1438.2	come on you can do it apparently ah
+1441.0	that's what i was hoping for
+1442.9	lovely so now i'm going to go ahead and
+1445.0	line my b52 up perfectly with him
+1448.2	allocate all people doing vietnam war
+1452.0	scenarios this should be a pretty
+1453.1	familiar experience
+1455.8	now what's gonna happen when we do this
+1459.2	i'm gonna delete that so this is 51
+1463.8	bombs that we just dropped each one of
+1465.5	these is 750 pounds
+1467.5	and they're lined up with this beautiful
+1469.4	little seaside town here
+1481.1	and that's called collateral damage and
+1484.0	unfortunately if you were making a
+1485.4	scenario here you could have a lot of
+1487.8	ways of making this not suggested you
+1490.2	know all this damage here again we
+1492.0	didn't blow anything up but you could
+1493.2	build a script that when a building is
+1494.8	damaged a civilian you knock off like 60
+1496.6	points or something like that
+1498.2	now of course um you know having a
+1499.5	little bit of fun with that now we could
+1500.7	have too much fun with it
+1501.8	let's go ahead and get ourselves uh i
+1504.2	and f
+1505.8	we'll go ahead and get ourselves again a
+1507.3	little generic group here
+1508.9	we'll have them go walk over here like
+1510.3	that quick switch to the other side
+1513.1	again infantry oh look at that damage
+1515.7	wow
+1517.4	yikes go ahead and fly over again we
+1521.8	need to get ourselves a target i'm gonna
+1523.2	go all the way down to uh
+1524.5	this peninsula here we'll go pin this
+1527.1	one and we'll get a smurch
+1530.3	uh i think this is the one i want right
+1532.6	uh yes
+1536.5	maybe i want the old one ah this is the
+1539.7	one i want
+1542.0	it looks pretty good
+1545.9	all right am i in range no no let's move
+1548.6	to the silent there we go
+1551.8	all right speed up time just a little
+1553.3	bit here
+1555.1	there he is now what happens when we do
+1557.6	this
+1561.2	now keep in mind a rocket weapon is not
+1563.4	artillery actually it is a rocket so
+1565.1	this can't actually be engaged with
+1566.4	point defense
+1567.2	so it's a spectacular way of softening
+1569.3	things up if you need to
+1570.9	prepare for leg ouch
+1574.4	ouch
+1577.4	wow all right so hopefully this is a
+1579.6	good way to look at ground units
+1581.0	that was actually really clean spread
+1583.5	notice that infantry platoon is
+1585.1	fine they got wounded a little bit but
+1587.4	that was not that bad of a spread
+1589.4	so hopefully you find this a little bit
+1590.7	helpful when you're planning infantry
+1591.9	missions now the big thing is
+1593.2	consider your wra consider your rules of
+1595.4	engagement always keep in mind you can
+1597.3	rearm things the ai is not smart enough
+1599.4	to rearm on the own when they run out
+1600.9	you have to actually tell them to do so
+1602.6	you can do that through lower or you can
+1603.9	do it manually and just in general keep
+1606.4	that terrain in mind if you're in the
+1607.8	middle of the desert you can see very
+1609.3	very far
+1610.2	making things like you know high
+1611.4	precision weapons way too effective
+1614.2	but other than that again it's a
+1615.5	slightly simplified model but there's
+1617.1	nothing stopping you from adding 800
+1619.4	abrams platoons
+1620.6	going at it with 800 t80 platoons that's
+1623.0	one of the nice things about this game
+1624.7	is that you can do that level of detail
+1627.0	enjoy

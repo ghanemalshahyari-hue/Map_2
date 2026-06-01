@@ -1,0 +1,1577 @@
+0.0	hello everyone today's come in we're
+2.3	going to be taking a look at 8sw also
+4.5	known as awfully slow warfare also known
+7.2	as anti-submarine warfare now
+9.3	anti-submarine warfare has been around
+11.0	pretty much as long as there have been
+12.3	submarines and its had an amazing
+14.2	evolution but a lot of the strategies
+15.9	and tactics and techniques that were
+17.8	used all the way back to war one still
+20.2	apply today that being said and I will
+23.3	say this a few times probably throughout
+25.1	this video it's tough stuff and it's um
+27.8	again you can't always win there's just
+30.1	so many variables and there are very few
+32.4	guarantees unless of course the enemy
+34.4	does something stupid in which case you
+36.4	know you have to be ready to catch that
+37.8	mistake
+38.3	so anyway let's go ahead take a look at
+39.8	our scenario today while we're sitting
+41.2	here of north of Murmansk which is a
+42.8	very very cold place I'm sure you've
+46.4	seen it on a Google Earth or you've
+47.8	heard about it read about it basically
+49.6	we have some intelligence to suggest
+51.1	that a NATO's trying to sneak in some
+52.9	submarines into this area to get into a
+55.0	striking range to attack the northern
+56.8	fleet we are playing as a Soviet Union
+59.0	today to mix things up just a little bit
+60.4	we know that the time right now is about
+62.5	five o'clock in the morning we know the
+63.9	time of year is May so I guarantee you
+65.7	it is pretty pretty dark even though it
+68.6	says that it is day weather-wise we know
+70.7	that there's some pretty high clouds we
+72.1	know that the sea state is three which
+73.8	is pretty chopping that's kind of messed
+75.4	things up we also notice the temperature
+77.1	is quite low so let's go ahead and do
+79.6	our usual kind of setup here and see
+81.2	what we have at our disposal and then
+82.8	we're going to take a look at something
+83.7	new today because we're going to be
+84.8	interesting in sea conditions in order
+86.8	to dictate what our tactics are going to
+88.3	be so I'm going to do the usual I'm
+89.9	going to go up here I'm going to check
+91.1	out Brau scenario platforms and let's
+93.2	see what we have at our disposal ship
+96.0	wise we have the tak our by the way um
+98.3	if you want to actually figure out what
+99.7	these individual symbols look at you can
+101.9	actually look up there's these neat
+103.1	charts that will actually tell you which
+104.2	each one is a general rule if you see
+107.3	something that's got an R in the front
+108.5	that usually means your rocket if you
+110.5	have something that's a bee that usually
+112.3	means your anti-submarine but there's no
+114.0	guarantee you're really looking for the
+115.2	peak a piece so you can see this one
+117.1	right here k and an R would be Cruiser
+119.0	so you have rocket cruiser Kirov so this
+121.5	is not really necessary in ship we have
+123.5	a B PK kara that's a very large Cruiser
+125.6	or we have a : maybe the Kony
+127.3	which are both you know it's not too too
+128.8	bad we have a score which is a very kind
+131.8	of old-school
+132.4	destroyer we have a noodle
+133.9	which is designed to be an
+136.1	anti-submarine ship we have a sofa tour
+137.9	mania which is a very new ship it's very
+140.1	appropriate we also have a commercial
+141.9	tanker when we have the America we have
+143.3	the Tarin tool for these submarines of
+145.6	course you have plenty of aircraft but
+146.8	we'll deal with that in just a little
+147.7	while we have a victor and we have a
+149.5	tango which is kind of neat because if
+151.7	you take a look over at the tango this
+153.7	is actually a diesel sub this would be
+155.5	the last thing I'd use for
+156.3	anti-submarine warfare at modern times
+158.0	but it's amazing and it's a surface
+160.0	warfare and over here of course we have
+161.8	the victor too so what are we looking
+163.8	for when we are selecting our platforms
+166.5	and our tactics there's a couple
+167.8	different things so I'm gonna go ahead
+169.0	and grab the tango real quick and I'll
+170.3	kind of show you let's go to the
+171.5	database scroll on down real fast first
+173.7	thing we're interested in is we are
+175.1	interested in how noisy it is scrolling
+177.8	down to the bottom it'll actually give
+180.0	you specific levels of signatures based
+182.8	on what's going on so in this particular
+184.5	case this is a quiet submarine even at
+187.6	full throttle it's only going to be
+189.1	producing 100 success levels which in
+191.3	this water condition is not going to
+192.8	travel very far so we know this thing is
+195.0	going to be pretty quiet relatively
+196.5	speaking we also very very interested in
+198.9	to see what it has as far as sonar does
+200.6	it have tipping sonar variable depth
+202.4	sonar and we have a total ray and in
+204.4	this particular case taking a quick look
+205.8	here we have a shark fin and it's late
+208.0	sixties technology and it has a whopping
+210.0	2 nautical mile range this submarine is
+213.4	basically worthless for the purposes
+215.2	that we're using unless of course
+216.3	somebody does something stupid but
+217.6	fingers crossed we also of course you
+220.2	want to take a look at um I should go
+221.6	right back there real fast you're also
+222.8	going to be interested in what kind of
+223.9	torpedoes and weapons it has in this
+225.6	particular case I noticed it carries 53
+227.4	65s which are way coming torpedoes you
+229.8	can't track a submarine by its wake if
+231.6	it's submerged we're gonna want to
+232.9	change those out immediately and I also
+234.8	see we have set 65 s which are just six
+236.8	hundred fifty millimeter they're pretty
+238.0	big torpedoes so I'm actually going to
+239.8	tell this submarine immediately to go
+242.0	ahead and let's go under weapons real
+244.4	quick I'm going to tell it's actually
+246.0	load those other torpedoes to do so you
+248.3	just want to come down here and click on
+249.6	reload priority I've actually already
+251.0	done this step to make my life a little
+252.4	bit simpler because otherwise you're
+254.2	going to be shooting these and they're
+255.2	not actually going to track let's go
+257.4	ahead and take a look at my Victor 2
+258.7	slightly more modern submarine keep in
+260.7	mind the reason I picked 1984 for this
+262.6	is we don't have the Akula
+263.8	which is you know the shark it's a very
+265.8	capable sub scroll and down here we have
+268.0	shark teeth which has an 8 nautical mile
+270.3	range that's not bad and we have a shark
+272.9	sail which of course is an acoustic
+274.4	intercept technique torpedo wise let's
+277.0	see we have on our pique we have a um GT
+280.3	oh nice
+281.7	sweet so this is a cruise missile that
+284.8	carries a torpedo which means if we can
+287.2	find a target we can hit it from 22
+289.9	nautical miles away this is a great
+292.1	weapon to have ready to go we also have
+294.1	50 365's which like I said are not going
+296.3	to do us much good something to go over
+298.1	here and go to weapons and mounts I know
+299.7	I'm hunting subs so I'm going to tell
+301.3	this ship immediately to start loading
+303.2	the good stuff I'm gonna go ahead and
+304.6	load these starfish because I know that
+306.4	they're going to do a really really good
+307.4	job because obviously like I said the
+309.4	way homers aren't going to do us much
+310.4	good unless we're taking a convoy or
+311.7	something which were not we're gonna
+313.9	leave this one actually I believe that
+315.4	is the e not will do the two cruise
+316.9	missiles on this tube the 650
+318.7	millimetres haha look at that that's a
+321.1	big torpedo but I camera not gonna use
+323.4	that no check it out we also have an SI
+324.9	+ 5 which is actually really useful but
+327.0	we're not worried about that too much
+327.9	okay let's see what else we have for
+329.6	disposal here scrolling down here go and
+331.6	flip this on this is a basically a
+334.0	carrier Action Group we have the Kiev in
+336.0	the middle which is basically a
+336.9	helicopter Cruiser the Kirov like I said
+338.8	it's a rocket Cruiser we have the Kara
+340.6	which is actually pretty capable on its
+342.3	own we have the coat Lynne of course we
+344.3	have the cony now you'll notice when I
+346.1	click these ships you're gonna see these
+347.8	little rings appear around them that's
+349.2	my ranges for example you'll notice when
+351.4	I click the : we have this little ring
+353.5	basically giving us a rough idea of
+355.1	where our underwater weapons can be
+357.4	engaged from this darker ray or lighter
+359.7	ring I should say tells us our sonar
+361.4	range on this particular ship which if
+363.2	you take a look is not exactly what I
+364.9	consider good click on this guy no sonar
+368.3	range click on to the cony I think it's
+370.2	about the same as the code yeah that's
+371.8	slightly better slightly better and of
+373.6	course we have the Kara in the back
+374.7	which has no actually it's kind of
+376.9	really really capable I take it back
+378.5	very very very capable sonar so we're
+380.9	gonna kind of keep that the back of her
+381.8	head
+382.1	that being said this group is primary
+384.8	asset it's going to be it's helicopters
+386.1	scrolling down here we also have
+387.9	Murmansk this is a pretty neat little
+389.9	place we have some tupolev 142 s we have
+392.8	some 95 Artie's and we have some 16 ours
+395.2	now these are basically two different
+397.2	type of airplanes the tupolev a 148 or
+400.3	two
+401.1	sorry are these gigantic
+402.4	propeller-driven aircraft that are
+404.0	designed for anti-submarine work so as a
+405.9	result their loadouts are typically
+407.6	sonobuoys for listening the water as
+409.5	well as air launch torpedoes the RT and
+411.8	the tupolev ours
+413.0	these are maritime surveillance aircraft
+415.0	these particular aircraft are for
+416.8	looking at anything on the water they
+418.4	don't carry Sona buoys so they have very
+420.7	little capability to detect a submerged
+422.4	sub that being said they're wonderful at
+424.9	keeping submarine crews heads down
+426.9	because you can operate their radar and
+428.8	basically cause them to panic when they
+430.5	pick up the ESM signal so we're gonna be
+432.4	using those as kind of generic just take
+434.9	a look around and then we're going to be
+436.4	using of course the O 142 is to actually
+438.9	prosecute to be honest when it comes to
+441.0	anti-submarine warfare helicopters and
+442.9	airplanes or how to do it using a ship
+444.9	or a sub I think the classic expression
+446.8	you probably heard is a knife fight in a
+448.4	telephone booth kind of a situation so
+449.8	we're gonna hope to avoid that there's
+451.1	one other scenario we have going on
+452.4	during this exercise too and if you
+453.8	could swing all the way over here I have
+455.1	a group of basically a convoy being
+457.1	Esqueda skated escorted by a Tarin tool
+460.0	as well as a miracle too both of these
+462.6	are basically small patrol craft as you
+464.9	can see for this picture it's not a big
+466.6	ship the great thing about these though
+468.7	is they're very modern and they actually
+470.1	have very very very very capable sonar
+473.5	gear on board this particular one has a
+475.0	neat set of sonar because if you
+476.4	actually click on it you'll realize that
+478.4	it has the ability to carry I believe it
+481.1	has yes
+482.5	variable depth sonar that's awesome
+484.9	that's going to give us the ability to
+486.5	listen underneath the layer which we'll
+488.1	talk about a minute okay so that's our
+490.8	assets let's go ahead and take a look at
+492.5	who we're dealing with here and it's
+493.6	probably gonna be kind of tricky brow
+495.4	scenario platforms let's see what sneaky
+497.2	NATO's got ok so they have an SSN 700 oh
+501.2	jeez that's gonna be fun an SS being a
+503.8	permit a narwhal Lafayette pretty much
+506.4	the entire library slash stable of
+508.9	American submarines here now one thing
+511.8	that might surprise you is that nuclear
+513.6	submarines are louder than diesel
+515.1	submarines which actually makes our work
+517.1	a little bit easier but not as easy as
+519.3	it could be ok enough background let's
+521.6	get to the fun part
+522.3	so intelligence has identified several
+524.4	possible locations for enemy submarines
+526.4	how do you know there's a submarine
+527.8	there let me give you a pro tip if you
+529.6	pick up the radio and you make an
+531.1	announcement anywhere on earth
+532.4	somebody's going to listen
+534.0	where that radio signal came from and
+535.6	there could be able to roughly
+536.4	triangulate you which is precisely how
+538.4	we know that there could be subs in
+539.9	these spots now these are randomly
+541.7	placed so you could be in this corner he
+543.4	could be in this corner and it could be
+544.4	over here again any of those things so
+546.2	we're gonna have to try to use different
+547.1	techniques for each one over on this
+549.3	side of things however we know that
+551.2	there is a submarine stalking this
+553.0	convoy now a fun fact if you try to
+555.5	chase a convoy with a submarine you're
+557.4	not going to succeed unless your nuke
+559.5	but if your nuke that means it's going
+561.3	to make it much simpler to detect you
+563.0	because you're going to be making so
+564.0	much noise so it's kind of like a little
+565.4	catch-22 we will deal with the convoys
+567.4	separately however because that's going
+568.9	to have its own set of tactics so let's
+570.8	go ahead and get to it so first things
+572.7	first let's talk about the geometry of
+574.1	our actual situation here we know from
+576.4	intelligence that these subs are making
+577.9	their waits for its Murmansk that's a
+579.7	good thing because that means we can sit
+581.8	here with our little measuring tool and
+583.3	it's next at what range are they going
+585.5	to be unable to employ let's say cruise
+587.9	missiles of course in modern times all
+590.0	of these ranges are good for cruise
+591.7	missiles and why are we wasting time
+593.0	we'd be firing from over here somewhere
+594.6	but again this is just a scenario so
+597.0	that means we know that we're not in
+598.8	trouble until they probably get within a
+601.1	hundred miles
+602.0	remember the goal of anti-submarine
+603.2	warfare is to deny the other guy the
+604.8	ability to employ a saw Marines blowing
+606.8	them up is a great way to do so but
+608.3	preventing them from getting close works
+610.1	pretty effectively that means that this
+612.2	is kind of our sphere of please don't
+613.7	get in here which means we're going to
+615.9	have to be able to take advantage of
+617.6	that when we plan our different missions
+619.4	but I'm not going to worry about that
+620.7	yet because here's why to get within a
+622.8	hundred miles let's go ahead and grab
+624.0	her at school real quick on your mouse
+625.1	over here let's click right here even if
+627.0	he was here that's a hundred and twenty
+628.8	nautical mile journey if he's traveling
+631.0	at 20 knots for a hundred and twenty
+634.4	miles that's going to take him six hours
+638.0	to cover that distance which is pretty
+640.4	good of course if he's traveling at 20
+642.0	knots we're going to hear him so he's
+643.8	probably traveling closer to ten which
+645.2	is gonna take them 12 hours to get this
+647.1	distance that means I don't have to get
+649.3	into panic mode until probably about
+652.0	eleven o'clock in the morning obviously
+654.0	these guys have a much much longer
+655.8	journey that's gonna take them about 19
+657.5	hours this one's up probably almost a
+659.5	day yeah that's gonna be about a day so
+661.7	I'm not that concerned except for
+663.9	whatever's inside here so he's almost my
+665.5	first priority feeling I think about
+667.1	you can fire first of course that this
+668.7	is just regular tax summary nobody cares
+670.7	all right on to the fun part so first
+672.5	things first let's deal with this corner
+674.1	so this little exercise is going to be
+676.4	using surface vessels to try to find the
+678.5	ship's surface vessels are not the best
+680.6	at this but they're decent so first
+683.3	thing I'm going to do is I'm actually
+684.1	gonna break this group up you're
+686.3	probably going don't you want them
+687.3	workers grope no you want to spread your
+689.5	anti-submarine warfare elements out the
+691.9	thing is if any of these guys can detect
+693.7	something in here we can just get a
+695.2	helicopter or an airplane to go blow it
+696.4	up for us we don't have to be alone in
+698.4	that fight so keep that in mind so I'm
+700.3	gonna go ahead and salaat go ahead first
+701.8	of all let's deselect that other group
+703.2	let's go ahead and select this group
+705.1	right here control f11 we'll do you call
+708.1	this a SW Southwest
+711.3	call that a Patrol we're gonna set it to
+713.6	8 SW today and we're gonna go ahead and
+717.0	grab let's see whose over here I believe
+719.4	a TM so Flaminia it's gonna be one who's
+723.0	this this is the score II I don't even
+724.8	think the score e has sonar but I'm one
+727.1	of the cool things is because he's there
+728.6	the submarine might panic and divers
+730.7	climb or anything along those lines and
+732.9	of course we have the little oil 1 which
+735.0	is the ship right here
+736.6	excellent so make sure you pause by the
+738.6	way because you notice they just flicked
+739.8	on all their electronic equipment you
+741.5	don't want them to do that because if
+743.5	you do that the summary is gonna know
+745.1	you're coming so I'm going to go to em
+746.6	con I'm actually gonna lock these all
+748.0	out real quickly
+748.7	now one thing you probably noticed when
+751.3	I selected they would lower one is you
+752.8	can see this weird little kind of hazy
+754.8	zone real quickly if I click over here
+756.9	on the sofa door menu you'll notice you
+758.8	do not have that these are what they
+761.0	call convergence zones without getting
+763.8	too crazy or technical basically when
+766.3	you make a sound if you want imagine
+767.6	this is the surface in the imagine this
+769.2	is the bottom when you make sound it
+770.9	actually kind of does one of these
+772.0	things over distance these bumps from
+776.0	the center point are basically
+777.3	represented by this we have the ability
+779.4	to hear things here but not hear things
+781.8	here and then reacquire them when we get
+783.5	closer because of the bounce of the
+785.1	sound now speaking of the balance of the
+787.7	sound know now we're going to get
+789.3	complicated there is this wonderful
+791.4	phenomenon in the ocean known as
+793.2	basically surface ducting you could talk
+795.3	about the layer things along those lines
+796.7	basically as you get deeper temperature
+799.5	of the ocean and pressure
+800.6	Changez there's actually a sweet spot
+802.4	where the temperature and the pressure
+803.8	kind of suddenly change or not evenly as
+807.1	opposed to the way it worked in the rest
+808.3	of the ocean if I actually hold my mouse
+809.8	right here you'll notice you'll see the
+811.2	convergent zone you'll also see the
+813.2	synthesis layer between minus 1 31 and
+815.7	to 17 feet the layer is basically where
+818.9	that transition between the nice even
+820.8	temperature decrease or increase and it
+823.5	doesn't starts to change rapidly
+825.0	basically if you want to read more about
+826.9	that and really really have too much fun
+829.0	with things along those lines I highly
+830.5	recommend going on a Google real quick
+832.2	snap on harp gamer and type in 8sw
+834.8	and there's this beautiful part 1 that's
+837.6	going to go into great great great
+839.9	detail about what that is and how it
+842.5	affects us you'll see how it affects us
+844.2	in a minute so basically what's gonna
+845.9	happen is submarines are going to be
+847.9	operating at different depths the if
+849.7	they operate underneath the layer it's
+851.9	difficult for them to hear out of that
+853.7	layer but it's difficult for people from
+855.3	the surface to hear down into it if
+857.0	you're operating above the layer the
+859.0	opposite is basically true it makes it
+860.6	easier for people on the surface to hear
+862.0	them and it makes it difficult for them
+865.0	to hear anything underneath or be heard
+866.6	by anything underneath that layer so for
+868.8	example if we actually click on our
+870.0	tango over here and I bring up f2 you
+872.1	notice there are actually presets for
+874.5	where the layer is positioned you could
+876.2	actually manually set this if you want
+877.8	okay so let's go ahead and send a little
+880.4	mission up here enough chat so we'll go
+882.9	ahead and weird you did that let's go to
+884.4	f11 ASW Southwest we're gonna go ahead
+886.9	and grab those three ships I'm not going
+889.6	to allow them to go beyond the patrol
+891.8	area because they might see a submarine
+893.1	over here go shooting I would sell them
+894.7	to do that personally so as far as ships
+897.0	goes I want them to cruise transit
+898.7	here's a big mistake you can make you
+900.2	could set this to flank to get them into
+901.8	the search zone sooner but if you do
+903.8	that they will be heard and probably
+905.7	engaged right now it's some sea state 3
+909.0	which is pretty choppy and pretty loud
+911.2	but it's not gonna cover up the sound of
+913.2	these ships
+913.8	I've actually click the allow for
+915.2	example you can see that noise wise 126
+918.9	decibels yeah you're going to hear that
+920.4	from a pretty long distance at least
+922.4	longer than before he'll be able to
+924.0	detect so let's make sure that set that
+926.2	looks good that looks good I'm gonna set
+927.4	it back to cruise take a longer to get
+929.0	into position but do what you got to do
+930.4	alright I'm happy with that alright
+933.4	let's go ahead deselect that
+934.4	let's go ahead and take a look at our
+936.1	tango up here now the problem with our
+937.7	tango is that we barely have sonar board
+940.5	I mean if you look at the range of this
+941.6	thing it is just embarrassing we're also
+943.4	a diesel sub which means we have
+945.3	batteries if we run out of batteries we
+947.1	have to surface and use the diesels to
+948.7	basically recharge the batteries that
+950.2	also means if we operate close to the
+951.8	surface we can use our snorkel in order
+953.5	to keep the charge going so we don't run
+955.4	out of things you usually don't use
+956.9	diesel subs for this purpose they're
+958.6	usually anti surface so unfortunately
+960.8	he's basically going to be on his own
+962.6	it's a very tempting to use active sonar
+964.3	by the way and again the difference
+965.6	between passive and active passive sonar
+967.5	basically you're listening for other
+968.9	sounds active you're creating a sound
+970.6	and listening for the return almost like
+971.9	radar but again you can detect extra
+974.0	sonar three times the distance of what
+976.5	you can detect people with it
+977.8	so it's just not worth it unless we need
+980.1	to work on a specific targeting solution
+982.1	so anyway let's go ahead and set up a
+984.6	mission for that as well and I'll show
+986.7	you how we're actually gonna do this
+987.6	we're gonna call this a SW I think this
+990.0	is uh I call us West SW West's keep in
+994.1	mind we can move these zones and it will
+995.7	cause the ships to move as well so let's
+998.3	go ahead and grab our lovely tango whoo
+1000.2	I promise you will not be able to detect
+1002.1	a thing so we're looking for the 641 be
+1004.9	tell him not to use active technology
+1007.4	please don't let them use the radar
+1009.7	please
+1010.9	unless it's an airplane that's a
+1012.2	different story and we'll go ahead and
+1013.9	set that all up for the submarine will
+1015.6	have them cruise and we'll have them
+1016.6	creep now you're probably saying why do
+1018.8	we need to creep when we get to the
+1020.5	destination because remember with subs
+1022.2	we're trying to listen for them so if
+1023.9	we're being noisy you're not going to be
+1026.0	able to hear the quiet noise that's
+1027.6	coming to you I think one of the
+1029.2	articles I just showed you actually
+1030.5	relates it to trying to figure out what
+1032.0	part of the house the refrigerators in
+1033.5	by listening to it in front of the house
+1035.4	obviously if you're running and there's
+1037.2	wind in your ears you're really not
+1038.6	going to be able to hear it so that's
+1040.0	kind of a good way to think about it I
+1041.4	don't mind him cruising as a matter of
+1042.7	fact he's pretty quiet I'm gonna order
+1044.3	him to go fool in order to get into
+1045.9	these search zones sooner by the way
+1047.9	when you create missions you can get
+1049.1	that initial Waypoint set yourself I can
+1051.4	just press f3 and I can go ahead and set
+1053.0	something up I don't know where he is in
+1054.7	here but it's safe to say if he's going
+1057.3	towards Murmansk he's probably gonna be
+1059.2	somewhere inside this curve here so what
+1061.6	I'm actually going to do so I'm going to
+1063.1	set something up that kind of looks like
+1064.2	this again I'll let the automatic
+1066.5	mission take over
+1067.7	we get a little bit closer okay so that
+1071.0	is all set let's go ahead and grab our
+1073.2	buddy over here this is the Victor - I'm
+1075.3	gonna do the exact same thing this is
+1076.8	going to be obviously a SW I'm gonna
+1079.0	make sure I do selected this at the
+1080.1	points before I did that
+1081.2	let's go ahead and grab this this is
+1083.2	going to be a SW east of course at these
+1086.6	high latitudes it's kind of interesting
+1088.3	if you ask me well I better check that
+1089.6	to make sure it did that correctly
+1090.8	whoops I hate it when I do that let's
+1094.1	make sure I did that correctly real
+1095.5	quick we can always go over here to map
+1097.0	setting this we can do on missionary and
+1098.8	we can do selected mission hey we did it
+1100.3	right eight even since the name of it
+1101.7	that's so convenient again
+1103.5	disable active radar on your submarines
+1106.7	and ships otherwise the enemy all I have
+1109.1	to do is listen with the SM and they
+1110.5	know where you are so this is all set
+1112.6	this is all set um mmm I kind of want to
+1117.5	get him to the action sooner so what I'm
+1119.6	going to do is I'm gonna take advantage
+1120.6	of the fact that the depth here is six
+1122.8	hundred fifty nine feet I'm gonna order
+1124.7	him to transit at six hundred and I'll
+1128.2	say six hundred feet and I'm also gonna
+1129.8	have him transit at full speed so that
+1132.1	will get him to the search zone sooner
+1134.4	then he can slow down to creep and
+1136.1	basically come up to the appropriate
+1137.2	depth keep in mind if he is under they
+1140.1	that layer I was talking about a minute
+1141.5	ago he's not really going to be here
+1143.2	things above the layer and vice versa so
+1145.8	if you were doing this as a single
+1147.5	submarine you'd want to manually control
+1149.0	it and constantly kind of go up and down
+1150.7	to take a listen every once in a while
+1152.5	but again it's not like we're gonna hear
+1154.2	anything anyway we're gonna try we're
+1155.8	gonna try okay I'm happy with that I'm
+1158.8	gonna go ahead and order him again
+1160.0	remember Murmansk is that way so I'm
+1161.9	gonna Stu one of these patterns do kind
+1164.5	of like a little zig zag kind of a thing
+1166.2	I don't know where he's gonna be in here
+1167.7	and again intelligence is really good at
+1169.7	being wrong at these things so we'll go
+1172.0	ahead and do that it's good to go now
+1174.3	what about this zone so I don't have any
+1176.3	submarines to check out the zone or
+1177.7	ships to check out the zone but I do
+1179.2	have helicopters so I'm gonna go ahead
+1181.7	and select this entire area here I'm
+1183.6	going to create another mission I call
+1185.0	this a SW center go ahead and get
+1187.2	ourselves patrol doing a SW Patrol and
+1189.3	now you're probably wondering why use
+1190.5	missions for everything two parts first
+1193.0	of all it's easier to let the AI figure
+1194.8	out where to tell people to go within a
+1196.0	random area honestly they're just as
+1197.3	good at it as I am and number two is in
+1200.2	the real world you can't
+1201.4	just tell the helicopter where you want
+1203.0	it to go all the time it just it's too
+1205.3	much micromanagement too much
+1206.4	communication so no let's go ahead and
+1208.3	press okay it's got mad at me again
+1209.8	again we can fix that by doing that I'll
+1211.5	fix let's go get some helicopters so
+1214.5	let's see here first of all we want to
+1216.6	allow them to do active radar and to do
+1220.1	active sonar member these are
+1221.4	helicopters are in the air they're not
+1223.9	obviously they're gonna get away the
+1224.9	position if they stick their little
+1226.0	dipping sonar in the water and start
+1227.4	beeping at people but they're gonna be
+1229.0	more likely to detect anything because
+1231.1	it's so much work again the sonobuoys
+1233.0	are going to be doing the work here I'm
+1234.4	gonna set the 1/3 rule on here because I
+1236.2	want to save a couple of my helicopters
+1237.5	I'll do the weapon range I'll make sure
+1239.6	they don't turn anything on until they
+1241.5	get into the patrol area so always a
+1243.3	good piece of advice let's go switch
+1245.0	over to aircraft
+1245.7	I want single aircraft you need as many
+1247.3	of these guys on station as possible so
+1250.0	that's gonna actually work pretty well
+1251.0	for me let's go get some helicopters now
+1254.1	I have these nice ka 25 hormones these
+1257.0	are pretty much the archetypical Russian
+1259.9	helicopter we're gonna go grab the
+1261.9	entire deck of the not what is this is
+1265.0	the Kiev that's going to get us let's
+1267.4	see a third of 12 obviously four
+1269.4	helicopters on station at a time that's
+1271.0	actually pretty good
+1271.7	we could also of course throw these
+1274.0	helicopters in the mix these are K 25t
+1276.4	asses they have over-the-horizon radar
+1278.2	which is cool we'll save them from
+1280.8	maritime surveillance and I believe we
+1282.8	have some PS also these are actually
+1284.8	search-and-rescue helicopters don't use
+1286.1	these you'll probably also notice I have
+1288.3	a couple of these extra helicopters just
+1289.8	kind of hanging around here these are
+1291.8	from the destroyers I'm actually gonna
+1293.2	leave them alone I'd like to use the
+1295.2	destroyer to find the sub and then use
+1296.8	the helicopter from the safety of the
+1298.8	air to attack the target that's a very
+1301.0	very useful piece of advice that's
+1303.4	pretty good active active active good go
+1306.0	and it uh that's what I want
+1308.1	obviously that looks good that looks
+1309.9	good looks good okay let's let them
+1311.5	these you'll take care of it by the way
+1314.1	this is a distance of 120 nautical miles
+1317.5	those poor helicopters as you probably
+1319.4	know the KA 25s again this is just like
+1321.6	our previous things our range is not
+1323.6	great so if we're gonna be doing
+1325.7	maritime surveillance that's going to be
+1327.3	giving me a hundred non-ohmic I'll range
+1329.0	but it just means I'm only chilling for
+1331.2	like I don't know like a half an hour so
+1333.5	there's constantly
+1334.7	my helicopters taking off and landing
+1335.8	and again if the weather was a little
+1337.5	worse we couldn't use helicopters at all
+1339.3	okay so now we need to go ahead and take
+1342.6	a look at our convoy situation again
+1344.7	everything will work I promise so now
+1346.6	our convoy here is gelling notice I have
+1348.2	no reference points this time so when
+1350.6	you're going to get attacked in a convoy
+1352.4	situation there's really two attacks
+1353.8	they could hit you with anti-ship
+1355.0	missiles in which case it comes anytime
+1356.5	anywhere all the time or they could try
+1359.2	to engage you with torpedoes the great
+1360.6	thing about throw pillows is they all
+1361.9	have about a 10 nautical mile range
+1363.4	which means for that sub to engage you
+1365.7	especially from the front he has to be
+1367.8	basically in it's 10 nautical mile arc
+1369.8	in front of you if you wants to take a
+1371.2	really really risky snapshot you're not
+1373.8	really going to get attacked from the
+1375.0	side unless you're dealing with a
+1376.3	nuclear sub because they can go fast
+1377.6	enough to kind of catch up to you if
+1378.9	it's anything else it's basically going
+1381.1	to be operating in an arc kind of like
+1382.8	this in front of you which means when we
+1384.6	go to search we really only need to
+1386.4	search the front arc and remember nobody
+1388.3	fires at max range with the torpedo
+1390.0	because you can just turn around and
+1391.0	drive away with it for a second and the
+1392.5	torpedo becomes useless also when you
+1394.5	fire the torpedo you basically given up
+1396.8	so kind of keep that in mind as well so
+1399.2	with those two facts in mind we can
+1400.8	design a zone for our little escorts
+1403.1	just kind of operate in to do that it's
+1405.2	actually pretty simple also I'm going to
+1406.7	deselect some to go ahead define an area
+1409.7	I'm gonna define an area like this
+1411.8	remember like I said it's ten nautical
+1413.1	miles kind of the max here and this is a
+1415.7	huge huge area I'd be amazed I mean
+1418.5	again there's nothing stopping this sub
+1419.8	from showing up right here just taking a
+1421.6	five nautical mile shot remember he's
+1423.4	not shooting this way he's actually
+1424.4	shooting this way he's arcing a little
+1426.1	bit so I'm actually gonna increase the
+1427.8	radius so that's just a teeny teeny tiny
+1429.4	bit and again I'd be really impressed if
+1431.8	they're going to be taking a shot like
+1433.3	that if I were a submarine captain of
+1434.8	course I'd be trying to get as far away
+1436.0	as possible because I know these things
+1437.7	can ruin my day so this is going to be
+1440.1	kind of my sub searching area if you had
+1443.2	more ships I could bring it down here
+1444.8	obviously if I had more and more ships I
+1446.5	could bring it all the way up here to
+1447.6	kind of have like in advance or some
+1449.2	people actually like to have multiple
+1450.8	layers of these go in at one time but
+1452.5	this works for me so what I'm gonna do
+1454.2	now is I'm going to set these waypoints
+1455.9	to be what they call rotating bearing
+1460.0	and now I'm gonna come down here and
+1461.4	click on the convoy if this convoy
+1463.8	rotates these points rotate with it
+1467.1	which means as
+1468.5	shirts and things like that the area
+1470.7	that is being searched for enemy subs
+1472.2	will actually change this is awesome so
+1475.8	now what we can do is we can create a
+1477.3	new mission hey what's new right is that
+1479.3	keep in mind you wouldn't be doing this
+1480.7	many ASW at a time it'll call its convoy
+1482.9	I'll set this to patrol look at this you
+1485.6	all do this W patrol okay we'll go ahead
+1488.7	and grab I actually labeled these
+1490.1	specifically for this purpose so I've no
+1491.8	shut their active stuff off are you
+1494.3	going to give yourself away ah eat that
+1498.3	and we'll go ahead and that looks
+1500.7	actually pretty good we're gonna go
+1502.3	ahead and no we do not want them wasting
+1504.1	time outside of any of the range the
+1506.5	prosecution area is also going to be the
+1508.9	same area we don't want them to waste
+1511.0	time cruising around now when they're
+1513.0	transiting I'm actually gonna order them
+1514.4	to go millet that's an airplane my bad
+1516.1	sorry about that
+1516.8	I'm actually gonna order them to go
+1518.3	full-speed because it what's gonna
+1519.8	happen is they're gonna kind of tool
+1521.0	around in here a little bit
+1522.2	then the convoy catches up to them and
+1523.8	then they have to shoot ahead so to do
+1525.7	that you want to transit it's called a
+1527.1	drift and sprint or a sprint and drift
+1528.7	when they're on station on the flipside
+1530.4	we want them basically tooling around
+1532.0	slowly constantly listening for those
+1534.6	enemy subs so that mission is now all
+1537.2	set as well so we all have one more
+1539.9	thing to do and that's get out our
+1542.7	secret weapon which is airplanes if
+1545.0	you're going to kill subs you're going
+1547.0	to do it with airplanes or helicopters I
+1549.3	should say I should be more specific so
+1551.1	what I've done is I've created this
+1552.3	massive massive area and this is going
+1554.5	to be my maritime patrol area remember
+1556.7	maritime patrol is looking for
+1557.9	everything not just subs so I'm gonna
+1560.2	call this MPA go ahead and set this to
+1562.6	patrol set this to I could set it to sea
+1565.8	control believe it or not I'll do that
+1567.7	that's fine well look at the size of
+1570.0	that area now keep in mind if I just let
+1571.4	all my airplanes loose in this area
+1572.7	trying to find those enemy subs I never
+1574.3	would find them so I'm gonna go grab all
+1576.6	my MPA aircraft so I have the tupolev 95
+1579.9	artis and I have the tupolev on 16 ARS
+1582.9	I'm gonna throw them in I will go yeah
+1585.2	I'll beat them to investigate we'll go
+1587.2	ahead and make sure actually it doesn't
+1588.4	matter we're going to say mission
+1589.6	doctrine we totally want them using
+1591.5	their active radar this will keep diesel
+1593.6	subs submerged or if somebody's stoop
+1596.1	enough to be on the surface they will
+1597.8	get removed from existence that leaves
+1600.2	us with all these beautiful
+1602.4	yak-38 so we could use for maritime
+1604.1	patrol we've also got a couple of these
+1606.1	from the Kirov and we also have the
+1607.8	tupolev 142 s I'm saving those for
+1610.2	something special so anyway let's go
+1612.7	ahead and I'm gonna go and disable that
+1615.2	view real quick for you
+1616.5	let's do doo doo doo doo we're gonna go
+1619.0	that's right there
+1620.5	do not show okay begin
+1624.9	aah let the awfully slow warfare begin
+1628.8	okay so these guys are gonna be busy for
+1632.2	launching helicopters these guys are
+1634.0	going to be busy entering the search
+1635.0	zone this convoy group this is actually
+1636.9	pretty cool I'm actually goes over so
+1638.2	you can see this is how clever this game
+1639.6	is these guys are now accelerating up to
+1641.7	full speed to get into my search zone to
+1643.7	start poking around now if I had
+1645.1	helicopters you bet
+1646.7	notice see how the reference points are
+1648.5	rotating that's because these convoy is
+1650.8	also rotating which means these poor
+1652.2	guys if they were going here they're
+1653.7	gonna have to go over here I'm actually
+1654.5	gonna kind of beat them to the chase in
+1656.5	order both of them to go over here look
+1659.0	at the sonar ring on to that guy Wow
+1661.9	keep in mind if the submarine you're
+1664.2	looking for is below the layer it
+1666.5	doesn't matter with the ship because we
+1668.3	have a submarine that could actually get
+1669.7	into that layer where he's hiding if
+1671.4	he's above the layer same thing we could
+1673.8	detect him conventionally the problem is
+1675.9	if that enemy sub is not making any
+1677.5	noise we're never ever ever going to be
+1679.9	able to detect him he's basically just
+1681.3	gonna dump a bunch of torpedoes on us so
+1683.5	fingers crossed
+1685.1	alright anyway that's doing that thing
+1686.5	those guys are doing that thing if we
+1688.3	could go let's go in fast forward time
+1694.1	all right I'm gonna stop and would I say
+1698.2	about 30 seconds we'll stop at about
+1700.7	5:32 keep in mind in the morning you're
+1702.3	not gonna see a lot in 5:30 beautiful so
+1707.4	far we haven't detected anything
+1708.4	remember
+1709.2	this is working on intelligence here so
+1710.9	we have no idea that there's any enemy
+1712.2	subs out there we just know that there's
+1714.0	a possibility
+1714.8	our convoy by the way like I said a
+1716.5	minute ago if successfully raced ahead
+1718.8	of our boys here because the convoy
+1720.8	seems to be going fast hmm that is much
+1724.0	too fast you guys are gonna get detected
+1725.3	too soon I'm actually gonna order my
+1727.1	convoy to slow down because I have the
+1729.4	feeling they're just gonna get hammered
+1730.5	going fast is great against diesel subs
+1733.2	it's dudu against everything else yes
+1735.6	that is a technical term alright let's
+1737.5	go ahead and slow those guys down keep
+1738.8	in mind in the real world this convoy
+1740.1	makes a lot of noise together and it's
+1741.7	like a herd so it becomes even more
+1743.5	difficult I grab these guys and I just
+1745.4	sort of manually tell them to go down
+1746.7	here they seem to be not following my
+1749.1	advice but that's okay alright they are
+1752.6	on their way
+1753.3	our little helicopters so cute they're
+1756.1	making their way this blue ring by the
+1757.5	way is their range
+1758.7	you can see by the time we actually get
+1760.3	into the search zone is and they're
+1762.1	basically out of range now you're
+1764.0	probably wondering why I'm holding on to
+1765.8	the tuple of 142 I have a reason for
+1768.5	that and now you'll see that in just a
+1770.2	few minutes here so let's keep looking
+1772.6	around at any point I expect these guys
+1774.3	to get with the torpedo it it's the
+1776.5	nature of the beast
+1777.3	you can't expect to protect an entire
+1778.6	convoy with only two ships you need a
+1780.6	lot of assistance okay looks pretty good
+1786.0	if anything I should get some MPA
+1787.2	aircraft out there I believe this is one
+1788.8	of those champions yeah
+1790.6	that's one of the artis so these guys
+1792.5	are traveling relatively low so I'm
+1795.0	saying
+1795.4	alright well fast forward some time here
+1796.6	like I said it's awfully slow warfare
+1799.8	pause got it oh it's quick so incredibly
+1812.5	we have identified a goblin goblin just
+1814.8	a fancy term for some bees underwater I
+1816.7	see how he identified him look at his
+1819.6	depth he's operating at periscope depth
+1821.8	that's a huge mistake so now how do we
+1825.1	engage this enemy lucky for us I
+1827.9	leave no we have our bu six thousands
+1831.5	these are basically hedgehogs and these
+1833.3	are depth charges this is bad let's see
+1836.0	the ax Terrence will has do you have
+1838.1	what I oh my god the Terrence will can't
+1839.8	even shoot them so unfortunately it's up
+1842.4	to the America to do the work here so I
+1844.3	don't think this is going to go well let
+1846.1	me see what we have as far as ranges
+1847.5	goes this is gonna end so poorly if
+1849.8	anything I should immediately order my
+1851.4	convoy to turn around and let the
+1853.5	actually I'm going to do that I'm
+1856.6	ordering my convoy to turn around as
+1858.0	fast as I can to get the hell out of
+1859.2	there because there's probably already
+1860.5	torpedoes on the way now how do I
+1862.2	identify him kind of curious we spotted
+1864.4	him by the mark one eyeball actually the
+1866.7	these guys identified him so pro tip if
+1869.8	you're going to be a submariner please
+1871.2	don't stick your mouths out of the water
+1872.5	it's kind of get you killed so I'm gonna
+1874.4	get these guys out here because there's
+1875.5	probably already torpedoes in the water
+1877.5	I'm gonna go too fast so meanwhile I'm
+1880.0	gonna get these guys to immediate I
+1881.9	don't know who it is but I'm gonna gauge
+1883.0	it by the way part of the fun of SW is
+1885.7	identifying the target this could be you
+1888.4	know a friendly sub could be a Chinese
+1890.1	sub or something like that but um I want
+1892.7	to skip to the chase and enjoy the
+1893.9	fireworks right
+1894.6	that's kind of the fun right so these
+1896.5	guys are going to be turning around as
+1898.0	fast as they can
+1899.9	meanwhile I'm actually gonna unassign
+1902.0	this ship and then assign him to attack
+1904.1	him said it's automatic get up to speed
+1906.4	get up to speed why are you slowing down
+1909.9	get that transport out of there keep in
+1913.0	mind this sub is oh there goes pause so
+1917.4	these ships have what they call our B
+1919.8	Ches which should these little Hedgehog
+1921.1	mortars on the front he has already
+1922.8	launched those at a range of 3 na oh my
+1925.7	god there's already torpedoes in the
+1926.7	water aren't there so place your bets as
+1929.6	to if it's gonna hit the sub the sub was
+1931.4	smart he'd be about 1,000 feet
+1933.0	underwater right now but this might end
+1934.5	up actually pretty successfully please
+1936.6	don't shoot torpedoes at us don't shoot
+1938.5	torpedoes at us this guy's about to get
+1943.0	blown up a couple misses looks like you
+1946.9	guys got a lead to the right a little
+1948.3	bit there these are b ches are actually
+1951.0	very deadly at short range I think we
+1953.9	did some damage but keep in mind you
+1955.6	kill a sub not with a direct hit but
+1957.1	with a lot of indirect hits
+1958.8	so how are we doing an ammo we only have
+1960.6	two
+1961.2	or sets left because of course if we run
+1963.1	out of ammo it's time to bust out the
+1964.6	tip charge this yeah that's not gonna go
+1967.4	so well boy I hope you hit him again
+1970.9	keep in mind if we hit him he might
+1972.8	flood and just sink but I'm chances are
+1975.0	he's launching torpedoes at us right now
+1976.2	which we can hear I don't know what he's
+1980.2	doing but I guarantee it's not good and
+1982.1	we're out of our bee case and keep in
+1984.3	mind this ship can only engage him if he
+1986.3	was on the surface which is just not the
+1988.0	case sometimes that happens okay that
+1990.9	means you are stuck with depth charge
+1992.7	duty my friend when will zoom out and
+1994.4	see how everything else is going so
+1996.2	these three ships are still hitting the
+1997.4	position remember ships are slow and
+1999.0	meanwhile our maritime patrol aircraft
+2001.1	are doing a nice job getting a little
+2002.9	bit of altitude and starting to poke
+2004.2	around just to see what they can kind of
+2005.6	find keep in mind the higher you fly the
+2007.1	easier it is to detect targets with that
+2009.4	thought I'm actually going to raise up
+2011.1	my MPA guys I feel like they're a little
+2012.6	too low um let's do station altitude of
+2015.7	10,000 feet I just want to be able to
+2017.0	get a little bit more reach with my
+2018.8	long-range surface trade ours notice
+2021.6	it's expanding to represent that there
+2024.1	we go I just heard something go squish
+2026.6	did you hear that oh I'm sorry I'm
+2029.7	missing all the fun
+2030.2	repeat on the water keep in mind a non
+2034.7	cruise missile torpedo is going to have
+2036.5	a fund okay that was a mistake you might
+2038.4	want to fire another one of those now if
+2043.3	you were smart he turn around and run
+2044.5	because if this were a human player
+2045.7	you'd have torpedoes inbound I know how
+2047.5	to person oh never mind
+2049.7	good job everyone we got one good job
+2053.5	everyone good job good job okay let's
+2055.9	assign him back to his mission there
+2057.2	could be more there could be more and
+2059.0	let's go ahead and get our convoy which
+2060.6	now I'll turn and run it's probably
+2061.9	running from torpedos we haven't
+2063.0	detected yet and take them back to
+2065.1	Murmansk crews all set okay let's go
+2067.9	back to the fun part so right now these
+2070.3	helicopters are getting on station so
+2072.0	how the copters are great tools because
+2073.8	they're difficult to shoot down modern
+2075.5	enemy aircraft a correction minor
+2077.1	submarines actually carry anti-aircraft
+2079.0	missiles on board but a lot of times you
+2080.8	can only deploy them if you're at you
+2082.4	know relatively shallow depths so anyway
+2084.6	let's continue
+2085.6	keep going to about 6:30 here yep
+2088.0	they're searching here let me stop for a
+2091.3	second now you'll notice these
+2093.6	helicopters are deploying with the cost
+2095.0	oh no boobies these are basically little
+2096.9	portable sonars and they're not the
+2098.8	greatest range notice they have a little
+2100.6	symbols on the top that tell you how
+2102.1	deep the deployment is this is a very
+2103.9	shallow one this is a very deep one
+2105.5	little piece simply means it's listening
+2107.5	and a means it's active we can tell
+2109.7	somebody to drop one of these if we
+2111.5	right-click on them and actually tell
+2112.8	him to do it
+2113.5	so for example if I suspect there's
+2115.0	somebody deep here I could go ahead and
+2117.0	Act him drop a submarine so no boat he
+2119.0	doesn't have any active so no voice for
+2120.8	that depth notice by the way he is
+2122.5	basically how to feel already and he's
+2124.5	having to run back which means it's time
+2127.1	to bring out my secret weapon so if you
+2130.9	remember we had a pack of tuple of 142 s
+2133.3	here these things are awesome they carry
+2136.0	over 100 sonobuoys they can be on
+2137.9	station for like nine hours they're very
+2140.0	fast they're also very loud but we don't
+2141.7	worry about that so let's go ahead and
+2143.4	put these guys to some use here so what
+2145.8	I'm gonna do is I'm gonna bring a baffle
+2146.9	out I'm gonna grab my little ASW and I'm
+2150.2	going to just give you a single tuple of
+2152.4	142 I'll give my convoy tuple of 142 you
+2156.4	get a tuple of 142 for some reason I
+2161.2	forgot to add the actual submarine to
+2163.2	that I apologize Southwest will go ahead
+2166.3	and give you a tuple of 142 also on my
+2168.9	West you get a tuple of 142 and you know
+2171.3	what Y naught will give you a tuple of
+2172.7	142 - so these aircraft are amazing
+2175.8	think of it like the Orion of the
+2177.2	Russian side of things
+2178.3	basically what they're going to do is
+2179.8	they're gonna fly it relatively low
+2180.9	altitude search radars they're gonna
+2182.7	drop sonobuoys all over the water they
+2185.4	have plenty of torpedoes on board
+2186.6	they're nice and quick this is going to
+2188.8	be over quickly
+2189.6	of course if anybody actually managed us
+2192.3	to get anywhere that'd be kind of nice -
+2193.7	OH
+2194.1	notice the mpa aircraft is dead there
+2196.5	they go so these are my two people of
+2198.7	142 now they're going to go into each
+2201.1	one of the stop what's whoa whoa whoa
+2206.4	whoa whoa whoa now notice I would have
+2209.1	missed that if I didn't see contact
+2210.5	change but that's okay so I'm gonna go
+2213.0	confirm what the heck this is goblin
+2214.8	it's a goblin 203 what did we detect
+2217.0	them with detect him with the rpb that
+2219.2	was the arty detected him so he must be
+2221.3	being stupid and poking his mast out of
+2223.2	the water or he's really silly in which
+2225.5	case is a much bigger problem for him
+2227.1	but that's okay
+2227.8	let's go ahead speed up time we're gonna
+2229.4	go check that out with the tupolev arty
+2232.2	remember it's not the best weather and
+2234.6	it's something o'clock in the morning
+2235.8	it's still pretty dark this time here
+2236.9	got it
+2238.0	that is not friendly get out of there
+2240.6	get out of there get out of there get
+2241.6	out of there he's on the surface you've
+2243.6	got to be kidding me
+2244.9	thank you for playing you are no longer
+2246.5	alive remember what I was saying earlier
+2250.2	you have to be ready for anything with
+2253.3	these particular scenarios so in this
+2255.0	particular case I would have missed that
+2256.5	opportunity if I didn't have something
+2258.0	in the air with active radar by the way
+2260.6	look at the range ha ha ha ha
+2262.3	anyway moving on so this should be short
+2266.3	and painful so what he's going to do is
+2268.6	he's gonna fly like 300 feet off the
+2270.0	ground and he's just gonna dump a
+2271.6	torpedo that searches in a circle once
+2273.8	it gets to him is it gonna be messy
+2275.9	thank you for playing tributo away whoa
+2279.2	notice he dropped the sound of a we
+2280.6	first and there's a torpedo tenten
+2283.3	tenten tenten pom-pom this guy I don't
+2287.0	what do you what are you doing what sigh
+2290.6	he's diving it's it's not gonna help it
+2294.1	this is gonna be over quick sorry
+2302.2	yep thank you for playing it was a good
+2304.6	effort that was a good effort sing taps
+2307.2	oh I missed oh by the way
+2314.2	Merson torpedoes are great but that's
+2316.1	besides the point I'll let him deal with
+2317.6	that he's probably gonna round out sarpy
+2318.7	toes in it
+2319.2	inconvenience knew this guy meanwhile
+2320.8	you'll observe that our tuple of 142 in
+2323.4	our lovely little helicopter buddies
+2325.4	have done a delightful job basically
+2327.8	making it so you can cross this part of
+2329.6	the ocean without getting your feet wet
+2330.7	because of all the SONA buoys in the
+2331.9	water serve Red October reference but
+2334.6	unfortunately we have not detected the
+2336.2	sub there again maybe intelligence was
+2338.9	bad but here's the thing I know it's
+2340.6	7:30 in the morning now this has been
+2342.2	about an hour and a half which means the
+2344.5	target has probably moved closer to my
+2346.3	mosque so what I'm gonna do is I'm
+2348.6	actually going to grab the search area
+2350.2	and I'm going to bring a little bit
+2352.5	closer to me I actually don't like the
+2354.3	fact that these ships are getting so
+2355.8	close if anything I'm gonna tell them to
+2357.7	slow down because they don't want them
+2360.4	to get too close because that they
+2361.6	accidentally bump into an SSN we might
+2363.9	loosen as hire carrier task group so I'm
+2366.4	gonna go ahead and actually move the
+2367.8	points a little bit closer to months
+2369.5	because I know that time has passed and
+2372.5	if they're heading in this direction
+2373.1	chances are they're closer in this
+2375.4	direction that looks pretty good then we
+2378.4	go ahead and drag this one a little bit
+2379.6	this way as well I have a feeling this
+2381.4	one's made the most progress but again
+2383.2	I'm not a hundred percent sure and this
+2384.3	is the thing I love about this game is
+2385.6	they're going to go ahead and update
+2386.5	that zone I don't have to do anything
+2388.1	for my convoy by the way because he's
+2389.9	just doing his thing there I mean while
+2391.7	my bare body has um yep sunk that's -
+2395.4	lets - after a good day we're having a
+2397.3	good day let's see here let's grab these
+2400.4	guys I actually ordered you guys it
+2402.0	creeps me okay you're slowing down
+2403.1	you're slowing down okay cool meanwhile
+2405.4	our MPs are up at high altitude if
+2407.4	anybody is stupid enough to stick their
+2409.2	periscope up we're gonna chop it right
+2410.8	off so now we go back to the ASW which
+2415.4	is like I said the awfully civil warfare
+2416.8	yeah I don't think yeah that's a lot of
+2419.1	sauna boys and here comes that extra
+2421.3	round a helicopter should check things
+2422.4	out
+2426.8	interesting now this is the killer
+2430.4	well look at this this is one of the two
+2432.7	pljevlja for you look at that line
+2433.7	that's incredible
+2435.0	I'm actually gonna shrink the search
+2436.3	zone a little bit here I get a funny
+2438.2	feeling that you're wasting time if you
+2440.0	go beyond this point cuz again we all
+2441.6	know where we're the heading Wow look at
+2444.0	how many he just dropped
+2445.5	so hopefully you catch this somebody
+2447.2	keep in mind if I let all six of this
+2448.8	tuple of 142 just to run around and try
+2451.2	to search for things they will probably
+2453.0	find him even though there's only six of
+2454.9	them much better than these ships
+2456.9	alright he's just kind of doing his he
+2459.0	just flew by the carrier group I'm sure
+2460.4	they said hello alright and like I said
+2463.5	this is this is where it comes down to
+2465.3	anybody's play dangerous waters knows
+2467.2	this experience in real time and we have
+2470.9	not detected a thing yet everybody's
+2475.1	kind of looking around I don't think
+2477.4	he's in here as a matter of fact I'm
+2478.9	gonna do one of these things because
+2480.8	there's no way that we wouldn't have to
+2483.0	say if we could detect him by Sonny Boy
+2484.9	we would have detected him by sound boy
+2486.9	that is so many of those I wonder how
+2489.9	much she sings cost each look at this
+2493.6	there's a tuple of 142 it's just from
+2497.0	him imagine how much is zigzagging we
+2498.9	could do with these keep in mind in the
+2500.5	real world I actually read a really cool
+2501.8	book by yefim Gordon about the tuple of
+2503.3	142 and they describe basically you had
+2505.8	this little display and it would blink
+2507.1	orange or something when a certain zone
+2508.7	would pick up one of these signals but
+2510.5	how difficult it is to actually keep
+2512.0	track of where these but he's the way
+2513.4	son of always have a limited lifespan
+2514.6	they'll actually self-destruct please
+2516.7	don't drop it there I'm actually gonna
+2518.2	order him to do this if he's cool with
+2519.6	that cuz but I don't why did you do that
+2522.7	Yuma can you can always right-click on
+2524.7	him and manually launch but again look
+2526.5	at this it's 9:30 in the morning and
+2528.4	there's apparently still some submarines
+2530.5	out there that we have not yet detected
+2534.7	obviously we could grab all of our
+2537.1	helicopters and concentrate them in one
+2538.7	area and then we'd have a higher
+2539.9	probability of detecting them but like I
+2541.8	said there's still no guarantees that's
+2544.8	what's so great about this so a lot of
+2547.7	times it's just about shrinking the area
+2549.4	down and concentrating more assets into
+2551.7	it as much as you can all right so our
+2554.6	tupolev 142 is doing a beautiful job of
+2556.9	polluting
+2558.1	there's about 10,000 feet okay this is
+2560.8	interesting so there's no way an enemy
+2563.0	submarine is going to be able to get by
+2564.4	there without something detecting him
+2566.6	unless of course he's deep and slow but
+2569.4	again like I said this is this is
+2570.8	interesting stuff meanwhile if you
+2572.5	remember we had our little order a tango
+2574.6	here who's just sort of chillin he's not
+2576.2	doing too well there we scoot over to
+2578.5	our Victor he's doing the best he can
+2580.2	with what he has but he's been
+2581.3	completely unable to detect anything so
+2583.8	I'm gonna go pay attention to the Victor
+2586.1	for just a minute here we're at about
+2589.1	711 feet which is very deep and we're
+2591.9	not detecting anything down here so what
+2594.1	I kind of want to do is I actually want
+2595.3	to order him to come up to a little bit
+2596.6	shallower depth let's just go over the
+2598.2	layer to see maybe the target were
+2600.6	trying to chase down is a little bit
+2601.9	shallower like I was saying earlier
+2603.5	you're gonna end up zigzagging back and
+2604.9	forth quite a bit we've just got nothing
+2607.7	nothing all right I'll let this go until
+2612.5	about eleven o'clock and then we'll go
+2615.2	ahead and pause and reformulate our
+2616.8	strategy here because obviously we're
+2618.9	not finding anything and that sometimes
+2620.7	happens because if you remember earlier
+2625.9	I said it's gonna take about six hours
+2627.2	to get into position so we're gonna need
+2628.7	to completely rebuild our strategy at
+2630.9	that point
+2633.2	let's take a look is anybody got
+2635.3	anything we got two of them so far
+2638.5	interesting very interesting I mean like
+2640.9	I said you can cross the ocean without
+2642.4	getting your feet wet here so
+2644.8	interesting I'm beginning to think
+2646.5	Murmansk is going to be hit by cruise
+2648.1	missiles any second now hmm
+2652.5	I'm actually gonna shrink the zone here
+2654.1	the good news is we haven't bumped into
+2655.4	another enemy ship check it out because
+2658.6	it's tupolev is helping us out he's
+2660.2	basically dropping sonobuoys on our path
+2662.5	that's incredibly helpful to prevent you
+2664.9	from getting engaged by enemy ships army
+2667.7	subs rather all right take a look around
+2670.7	take a look around
+2675.7	all right I said about 11 o'clock we're
+2678.4	gonna change our strategy again there's
+2683.5	no guarantee this is even a sub out
+2684.7	there which is why submarine warfare is
+2687.2	just so interesting at the same time
+2688.6	kind of boring all right 10:58 and what
+2692.3	I say at 11 o'clock and change my
+2694.9	strategy
+2695.5	nice job by the way okay so what I'm
+2697.9	gonna do is I'm actually going to leave
+2700.4	my convoy defense there I'm actually
+2701.7	gonna get rid of all of these missions
+2706.0	and I'm actually going to delete all
+2708.8	these points because obviously to me our
+2711.9	intelligence just wasn't good so I'm
+2714.1	gonna go ahead and delete those
+2715.3	reference points let's complete and
+2717.7	select everybody and I'm now going to
+2719.3	concentrate all of my anti-submarine
+2721.3	efforts to protect Murmansk so I'm gonna
+2724.0	go ahead and get myself 100 nautical
+2725.2	mile ring go ahead and create something
+2728.1	kind of looks like this I'm gonna do
+2734.2	something like that and I'm going to
+2736.3	commit it I think that's just a bonus
+2738.4	one I don't need that one and I'm going
+2740.0	to commit every asset that I possess
+2741.6	into that zone as some desperate effort
+2744.1	protects the port because obviously they
+2747.8	got through and like I said some since
+2750.0	you have to recognize that a SW patrol
+2751.9	get me everybody and I'll leave this
+2756.4	option in as well now I'll leave that in
+2758.0	that mode I'm gonna be those guys give
+2760.2	me those guys um yeah why not look at
+2764.3	those guys give me those guys let's see
+2767.3	what else we can throw out here um I
+2768.8	don't need those a circuit access group
+2771.2	let's go ahead and get these three you
+2772.9	guys are gonna come join us
+2774.3	let's go great Oh two submarines we're
+2776.0	gonna join them as well
+2777.9	transit is gonna be cruise submarine you
+2780.6	guys can definitely cruise whatever you
+2782.4	think is appropriate when you get on
+2783.5	station okay fingers crossed so now it's
+2789.6	gonna happen is everybody's going to
+2790.8	suddenly turn and they're gonna come
+2792.4	whipping over you're actually prefer
+2793.5	keeping them at a higher altitude though
+2794.8	that's a good point so let's go protect
+2797.0	the port aircraft settings set them up
+2799.3	to do 10,000 feet seems to be pretty
+2802.5	fair again I don't expect to find them
+2804.3	but I do want to keep those radars going
+2806.5	now everybody is now turning and racing
+2808.9	fast as they can let's grab the alloy
+2811.9	which is actually the best ship for this
+2814.0	purpose keep in mind if there's enemy
+2816.2	subs out there who don't like don't like
+2818.8	us they will be having some free shots
+2821.6	unless of course their job is to get
+2823.5	through quietly what's that oh never
+2825.7	mind we're good all right everybody's
+2828.1	turning around and heading back for the
+2829.6	pores we'll carry this out into about
+2831.9	12:30 and if we get nothing we'll say
+2833.9	you know what they got us let's grab our
+2836.7	fixer and let's order him back as well
+2838.6	no I want my tango order him back
+2841.4	everybody else's oh by the way my
+2843.2	convoys been doing fine this whole time
+2844.4	it makes me feel a little better keep in
+2847.7	mind we don't need to search this
+2848.8	massive area unless we know that we need
+2851.1	to search this massive area so kind of
+2852.8	keep that in mind when you're playing
+2853.7	other people's scenarios also so
+2855.6	everybody's coming back all of our
+2857.0	helicopters are coming back look at a
+2858.2	little range they have our surface
+2860.2	action group here we're gonna go ahead
+2861.3	of them over here to the corner turn
+2864.8	them to cruise routes send crews get
+2866.5	them going meanwhile there's enemy subs
+2868.8	out there threatening us and like I said
+2870.6	if by 12:30 we don't see anything we'll
+2872.5	go ahead and uh pause and see how bad we
+2874.7	did but again a lot of the strategy just
+2877.0	comes from how much can you concentrate
+2878.4	your assets in one area it's still a
+2880.9	crapshoot if your opponents traveling
+2882.6	slowly and deep you're not gonna find
+2884.7	them easily especially with 1984 Russian
+2887.5	technology so we have about an hour of
+2889.7	in-game time left and we'll cross our
+2891.9	fingers to see what happens oh boy I
+2894.8	keep in mind at any point one of our
+2896.7	surface vessels could been blown up by a
+2898.4	sub so likes now if we were clever we'd
+2902.5	actually manually control the speeds of
+2904.1	these speed up slow down speed up slow
+2905.7	down speed up slow down all the way
+2907.5	along the time constantly checking to
+2909.6	see if there's anything to here for
+2910.7	again that's sort of a dangerous waters
+2912.5	kind of a situation but the fact is this
+2914.6	place is going to be crowded in a second
+2917.1	with all the aircraft and they're going
+2918.7	to be able to pick up anything which got
+2920.1	into range meanwhile our convoy is
+2922.5	actually been doing fine this whole time
+2923.8	makes me feel a little better
+2926.0	alright so most 12 o'clock and then
+2929.1	we'll pause and see how bad we did kind
+2932.7	of interesting kind of interesting
+2934.3	these poor ships I'll see how our
+2936.4	diesels doing by the way I'm actually
+2937.5	kind of curious how you doing
+2939.6	anybody else think it's weird I can't
+2941.0	control a deep this guy goes I said that
+2943.0	he's cruising that is his cruise speed
+2946.3	poor guy what's the battery like and I
+2952.9	kinda want to bring him I'm not gonna
+2953.9	lie I'm gonna bring over to periscope
+2955.0	depth
+2955.6	I don't know why that's there but that's
+2958.4	okay we don't need Waypoint interesting
+2968.3	I wonder why does oh because it's way
+2969.8	whatever whatever no rights
+2974.0	these guys are poking around as best
+2975.6	they can we got a couple aircraft taking
+2979.9	off looks like a Ghost Rider one here
+2981.8	this is a recon tupolev alright keep an
+2985.4	eye on the clock about 15 minutes game
+2987.2	time and then we'll call it an episode I
+2988.7	think you guys have the idea by now at
+2990.6	the end of the day just use aircraft
+2992.4	everything else is just too dangerous
+2994.3	you don't want to be traveling too fast
+2996.4	keep in mind with that layer and again
+2998.4	again there's a lot of stuff you can do
+2999.8	but read that article
+3001.4	be logical use missions and only protect
+3004.6	the areas you only have to protect
+3006.2	that's kind of what it comes down to I'm
+3009.8	amazed we have not picked up another
+3011.3	submarine now I'm on was scared that
+3012.8	they're like all over here or something
+3013.6	like that I guess we'll find out
+3015.3	cuz I'm yeah you have fun getting
+3017.2	through that many son of boys but
+3018.6	anything could happen all right place
+3024.2	your bets I guarantee this one right
+3026.3	here I guarantee this one right here and
+3028.2	is probably one right here that's why
+3030.6	there's probably one right here too and
+3035.6	keep in mind you could do this for days
+3040.4	12:30 ready interesting so I was
+3048.8	completely right about this one and
+3050.1	again it makes sense if you think about
+3051.7	it
+3052.1	this one I'm actually kind of surprised
+3053.6	with he's done a really really really
+3055.6	good job of not getting caught by these
+3057.0	guys over here the one that we have up
+3059.2	here I'm kind of disappointed like I you
+3063.9	had the chance man keep in mind this
+3066.4	little you notice this weird little cone
+3068.1	cut out of here you can't hear anything
+3070.6	behind this little open cone here
+3073.1	because again his propeller makes a lot
+3074.3	of noise so this Victor could
+3076.1	potentially have slowed down and hurt
+3077.7	him but his sonar is so bad it wouldn't
+3080.0	have mattered anyway let's take a look
+3081.9	at this scenario this is interesting I'm
+3084.3	actually really surprised we were not
+3086.0	able to engage his target if you look at
+3088.1	his depth though it's about right in the
+3089.8	middle of that little nasty layer so
+3091.7	it's gonna be very warm asks for noise
+3093.4	and he's travelling extremely slowly not
+3096.7	likely to found that one this one on the
+3098.9	flipside is pretty deep I'm actually
+3100.8	really really this is the one that
+3102.2	surprises me the most like I cannot
+3104.1	believe that we did not detect him when
+3105.7	he passed past this buoy here I really
+3107.8	would have expected at that depth I
+3109.2	would fret him but then again if you
+3110.5	look at the depths of these buoys
+3111.5	they're all above the layer so as a
+3113.5	result we never would have heard him
+3114.8	even though he's doing 15 knots it's
+3116.8	kind of interesting and of course take a
+3119.2	look at this one we saw already he's
+3120.8	actually pretty shallow and he's moving
+3122.6	pretty quick I'm actually really
+3124.2	surprised we'd not pick him up except
+3125.7	for the fact that it's just not a good
+3126.8	sub all right hopefully found that video
+3128.6	kind of interesting again I wish we had
+3130.3	a little whoa hold on hold on how did we
+3134.7	miss that
+3135.5	oh it's a los angeles-class oh so what I
+3138.4	want you to observe here is look how
+3139.6	fast it's traveling look at how deep it
+3141.3	is
+3141.5	it went through all of this gauntlet and
+3144.1	almost got into range so I'll let that
+3147.3	be a very very powerful lesson as far as
+3149.8	how quiet these subs really are and how
+3151.8	difficult it is to detect them
+3153.7	that doesn't mean get cocky think about
+3155.1	the two subs we did get but at least
+3157.1	it'll show you that kind of thing all
+3158.3	right hopefully found this kind of
+3159.6	helpful I know it's kind of on the
+3160.9	longer side but like I said it's awfully
+3162.6	slow warfare for a reason again check
+3165.0	out that article that I showed you one
+3166.4	can just google harp gamer and then look
+3169.1	for ASW it gives you some really really
+3170.7	cool information if we wanted to do this
+3172.8	stuff manually we could grab people and
+3174.6	do box patterns and ladder patterns and
+3176.6	like control micromanage everything but
+3179.1	that's a lot of work unless the scenario
+3180.9	calls for it enjoy me

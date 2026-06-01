@@ -1,0 +1,1079 @@
+0.0	hello everyone in today's video we're
+2.0	gonna be taking a look at the map slash
+3.9	scenario editor in command moderate
+5.8	operations so the scenario editor is
+8.0	extremely extremely powerful as far as
+10.5	what you can do with it and because of
+12.5	all the new additions in command modern
+14.4	operations over command modern air naval
+16.6	operations we have a couple new toys to
+18.7	play with and we'll take a look at those
+19.9	today so anyway at the main menu we're
+21.9	going to start by clicking create new
+23.2	scenario
+25.3	and that's going to bring you to this
+26.9	nice little world model here you've got
+29.2	all the different countries I'll list it
+30.8	out and again you can use your right
+32.2	mouse and drag in order to kind of zip
+33.9	around you can go ahead and use your
+35.7	mouse wheel to zoom in and out as well
+37.5	now one of the big things that I like to
+39.8	do when I first start mission is before
+41.7	I even open up command is I'll actually
+43.4	have my ID all worked out and I'll have
+45.3	worked out what part of the world it
+46.6	takes place and sometimes when they do
+48.0	missions I'll actually go over to Google
+49.6	Earth or I'll use up flight simulator
+51.2	trying to get an idea of where these
+52.7	things are actually taking place
+55.5	but you can do that on your own way
+57.7	everybody has their own kind of
+59.0	inspiration and we're just gonna kind of
+60.8	just go with it so let's see what might
+63.0	be fun here today let's do something mmm
+66.0	let's do Ecuador why not well do
+67.8	Colombia Ecuador make things interesting
+69.7	go ahead and zoom in here make sure it's
+71.8	all set so when you're building a map
+73.2	the first thing you want to do is you
+74.5	want to go up to where it's this editor
+75.7	and you want to click on database this
+77.9	is really really really really really
+79.8	important set the database to the
+82.6	database you intend to be using for this
+84.4	particular operation notice the current
+86.3	database here is actually billed for 72
+88.3	notice the newest database is actually
+91.0	database for 8 0 is probably going to be
+92.9	different at the time of this video that
+94.2	when you watch it keep in mind if you're
+95.6	doing something in the Cold War we want
+96.9	to set something to back then as well so
+98.8	make sure you pick the database file
+100.4	before you do anything this is critical
+103.6	so I'm going to go ahead and do a modern
+105.0	scenario I'm gonna go ahead and now
+107.0	setup my sites so I'm gonna click on the
+109.2	Add button type in the name of my side
+111.2	so we said Ecuador and let's see here
+115.7	who should be our offenders here today
+118.7	[Music]
+120.0	let's see here
+123.0	could do Peru Colombia hold Oakland yeah
+126.3	go ahead click outside its go ahead and
+128.8	add the other side now when you're
+130.2	adding sides the name of the side does
+133.1	not matter you can actually change the
+134.9	name later on but what it does matter is
+136.9	all these cool little buttons over here
+138.4	on the right the first one we can take a
+140.2	look at we can add or move aside we can
+141.9	rename aside we can set up the side
+143.8	briefing so for example I can click on
+146.0	here and say ooh something really funny
+147.9	like get revenge for the loss at the
+152.5	football game keep in mind you can
+155.7	copy-paste you can put all sorts of
+157.0	really really good affects you but
+158.2	images you can go nuts with a side
+159.8	briefing you can even edit it as HTML if
+161.8	you really want to get sophisticated I'm
+163.8	not going to go into that now but feel
+165.4	free to explore it on your own the other
+167.1	option of course we have is posture its
+168.7	postures is very important when I click
+170.7	this it gives you the ability to click
+172.2	on another side and set the how you feel
+174.3	neutral is a friendly is going to share
+177.1	it intelligence information unfriendly
+178.7	is not gonna necessarily fire but
+180.4	they're certainly gonna follow you
+181.4	around and look really really mean at
+182.8	you and obviously a hostile will fire on
+184.9	will so go ahead and click set the
+187.4	hostile keep
+188.8	mind if you set one sides posture to
+190.8	hostile you haven't done that for the
+192.2	other side so if I click on Ecuador here
+194.3	and I click over here I can set them to
+196.1	unfriendly for example in which case
+197.8	when Colombia attacks the Ecuador it
+199.6	will automatically change that so just
+201.6	kind of keep that in mind when you set
+202.6	that up other options we have here so we
+204.9	have the doctrine and rules of
+205.8	engagement this is important in scenario
+207.9	design because of this little button
+209.9	right here this button allows you to
+212.3	turn on whether or not a player can edit
+214.5	a particular rules of engagement so for
+217.3	example if I don't want the player to be
+218.6	changing that they're using nuclear
+219.9	weapons I want to make sure that
+221.1	checkbox is off after setting this the
+223.2	way I want it to now there's a couple on
+225.2	here that we can get into going to great
+227.5	detail but there's basically a few that
+229.2	I want to point out first one is going
+230.7	to be the ignore plot of course when
+232.1	attacking if you're setting up an AI
+233.5	chances are you're gonna flick this to
+235.4	yes it just simplifies things if you
+237.4	want a very very aggressive AI you can
+238.8	set this and of course you have these
+240.4	should I fire it everybody should I fire
+242.0	it nobody keep in mind if you lock the
+243.8	AI is ability to engage it will fire in
+246.1	a self defense but it'll never attack so
+247.8	you can have some fun with those
+248.8	settings come be down here you have
+251.0	stuff for your tankers you have an
+252.6	important setting right here this is how
+254.5	quickly you can basically get airplanes
+256.2	in the air and not maintain them if it's
+258.3	set to surge there's going to be pretty
+259.5	quickly sustains gonna be a little bit
+260.8	longer keep in mind in the real world
+263.1	surge is only used for very short
+264.7	periods of time so remember that when
+267.0	you're designing your scenarios and
+268.1	again we can turn this on or off it
+269.8	doesn't really make sense give the user
+271.9	control over this but again have fun we
+274.8	have control of a quick turnaround again
+276.3	we can select this checkbox if we want
+277.8	them to be able to edit it there's
+279.1	really no reason to give them reason to
+280.4	edit it so keep that in mind if you'll
+282.3	stay we have our ground strafing we have
+284.4	jettison ordnance everything is in here
+286.2	and again if we said by doctrine it's
+288.3	okay to do this we can turn this on and
+290.4	click this little switch to now make it
+291.9	so the player can not edit this later on
+293.6	keep in mind a scenario edit mode you
+295.4	can go nuts with all this stuff all we
+297.5	have bvr engagement logic and again you
+299.5	can have a lot of fun with this kind of
+300.9	stuff but don't go too crazy changing
+303.2	this by the way is it going to really do
+304.4	much as a player can adjust it and you
+306.1	can't really lock any of these so kind
+307.8	of keep that in mind key element on the
+309.5	screen now is just remember if this
+310.8	checkbox is activated the player can
+312.6	edit it later so if you have for example
+314.9	an American carrier battle group and it
+316.9	has nuclear weapons on board if you
+318.7	didn't tell them not to use it don't be
+319.9	surprised that the players going to use
+321.1	them because there
+321.8	pretty powerful all right go ahead and
+323.6	close that next thing we know is we have
+325.4	these three options down here these are
+327.0	very important this one basically says
+329.1	that when the player signs into your
+331.2	scenario for the first time they don't
+332.9	get an option of selecting that side so
+335.8	this is sort of like if you want to make
+336.8	it like an AI or neutral something
+338.0	collective this is kind of neat so let's
+340.4	say Colombia is neutral to Ecuador but
+343.3	what happens is Colombia accidentally
+344.8	blows up one of Ecuador's ships as a
+347.1	result if you have the collective
+349.0	slicked on that's going to make it so
+351.5	that Ecuador now declares war on
+352.7	everything Colombia if this is off
+354.6	ecuador declares war on that single unit
+356.9	that attacked them so it's kind of watch
+359.1	out for this feature auto track is cool
+361.7	you're actually missing the other piece
+362.8	here this is Auto track civilians so
+365.4	this particular option enables you to
+367.1	basically automatically track anything
+368.8	that has commercial in it which is
+370.3	really really nice if you're trying not
+371.5	to blow up from the ships down here is
+374.1	about an awareness this is a tricky one
+376.0	you're blind which I highly recommend
+378.7	you use this setting for any civilian
+380.5	shipping whatsoever it eliminates the
+382.3	calculations you have normal which is
+384.2	pretty standard if I spot somebody's
+385.8	unknown until I kind of that if I'm Auto
+387.6	side ID this is kind of cool you can
+389.4	simulate iff with this basically what
+391.7	this would say is if I pick up any
+393.0	contact on the map I instantly know
+394.8	whose team it's on this is the same
+396.6	thing except I can also identify what
+398.9	unit it is and of course there's
+400.4	omniscient which is basically God mode I
+402.3	can see everything at any time we'll
+404.4	leave that at normal then last but not
+406.1	least we had the proficiency slider now
+408.2	the proficiency slider is cool because
+410.3	this sets the entire sides proficiency
+412.7	if I crank this all the way up to
+414.3	maximum and start placing units all
+417.1	those units are now aces if I crank it
+419.6	all the way to novice and units I place
+421.1	now our novices keep in mind I can crank
+423.1	this to ACE place a bunch of guys crank
+425.3	this back down and obviously in place a
+426.6	bunch of guys and now basically I've got
+428.2	two different proficiencies I'm not
+430.4	gonna get too crazy into what the
+431.7	proficiencies actually are basically
+433.7	this is what you got to know regular
+434.8	means I know what I'm doing with my
+436.4	weapon systems pretty well trained I
+438.4	might have a little bit of experience
+439.5	anything on this end usually means
+441.5	they've got no experience and obviously
+443.2	novices I which one fires again flip it
+446.3	over on this side you have veteran which
+447.7	basically says I'm a regular
+449.3	except I've got a little bit more
+450.3	practice than the regulars and obviously
+452.3	you have a switch
+453.3	is yeah pretty good it's tough to shoot
+456.1	down an ace as you know but keep in mind
+458.1	they're still destroyable throughout
+459.1	weapon some leave this at regular I'm
+460.7	gonna set Ecuador also to regular I'm
+462.5	gonna leave all that other stuff alone
+463.6	now here's a cool track if I
+465.1	double-click on somebody it
+466.4	automatically selects that side if I
+469.1	want to change that side later on I can
+470.6	go up to switch to and then I can just
+472.0	select the one that I want to do okay
+473.9	so we're in pretty good shape so far
+475.5	we're not quite ready to start popping
+477.4	units down yet so the next thing you
+479.0	want to do is you want to go up to
+479.9	editor and you want to go to scenario x
+481.8	and duration now this is a little tricky
+484.6	depending on what your localization
+485.7	settings are this might look different
+487.8	scenario time is not the same thing as
+490.5	scenario start time keep that in mind so
+493.3	for example if I set this to let's say
+495.3	1985 we'll do let's see here we'll set
+499.6	this to January I will set this to
+501.5	January first we'll set it to pretty
+503.9	early in the morning and now I press ok
+508.7	we're gonna have a problem because that
+510.6	means my current scenario time is 1985
+513.6	however if you remember the scenario
+517.4	starts actually it looks like it
+519.2	automatically copied it that worked
+520.3	really really well that got lucky you
+521.8	didn't used to do that in command but
+523.3	anyway you need to make sure your
+524.2	scenario start time is similar to your
+525.8	current time going down here this page
+528.5	you can set up daylight savings if you
+530.0	need to you can also come down here and
+531.9	set how long you want your scenario to
+533.2	go for so one day is pretty standard if
+535.6	you're only doing a single mission
+536.9	you're probably gonna have something
+537.8	looks a little bit like this if you're
+539.6	doing something that's extremely short
+541.4	you do something along those lines but
+543.7	again it's all depends on your
+544.8	particular scenario just make sure that
+546.7	this is a positive number number one and
+549.0	make sure number two that the current
+550.3	time does not exceed this time plus this
+552.4	time otherwise your scenarios gonna
+554.6	instantly end these two settings
+556.6	complexity and difficulty are your
+558.3	decisions you can make a scenario very
+559.7	complicated you can make it very very
+561.1	difficult and of course you get this
+562.8	neat little place here where you can go
+564.0	ahead and say where this particular
+565.9	situation takes place go ahead and press
+567.9	ok ok we're almost there I promise next
+571.7	what I like to do is I like to go up
+573.1	here I like to swing on down to the
+574.9	weather feature now the weather
+576.2	unfortunately is a little static you can
+579.4	use Lua which I'm not going to get into
+580.8	today to just this significantly if you
+583.5	want you can even have a change over
+584.6	time which is really really cool
+588.3	the key element on the weather page is
+591.1	gonna be average temperature your
+592.4	rainfall rate your sky in your sea state
+594.9	if I hold my mouse just like this you
+596.6	can see I've got a clear sky no rain 15
+598.5	winds see now what I like to do is
+600.5	actually look up the local weather of a
+602.5	specific area before just diving into it
+604.9	if you actually look at our digital map
+606.4	you can see the significant cloud cover
+608.5	now average temperature is easy this is
+610.6	going to be the average temperature this
+611.8	is modified by altitude by the way so if
+614.0	I hold my mouse over something right
+615.1	here you'll notice my average
+616.1	temperature is actually lower than if I
+617.7	hold my mouse down here so again this is
+619.7	average sea level temperature obviously
+621.5	if we increase this we may come
+623.4	heat-seeking weapons now this effective
+624.9	decreases we're going to make them more
+627.0	effective and so on and so forth so for
+629.3	example all this is this winter actually
+632.0	no this would be towards the beginning
+633.5	of the summer because remember when the
+634.7	southern hemisphere so I'm just gonna go
+636.4	ahead and crank that up to 20 Celsius
+637.8	rainfall rate I'm not going to touch
+639.6	today sky now this is tricky there's
+642.6	really three groups of settings inside
+645.4	of this setting if I just click it one
+647.6	notch I'm gonna go in close the screen
+649.3	you can see that we have some low clouds
+651.3	that are between five and seven thousand
+653.6	feet that's little tiny puffy things
+656.1	that you could probably expect to see
+657.6	pretty much on any day there's no clouds
+659.5	above that so now if I go up to weather
+662.1	again watch what happens if I crank at a
+664.1	single click notice those low clouds
+668.6	have just floated up to ten thousand
+671.0	sixteen thousand feet so then if I do
+673.1	that one more time you can expect to see
+676.8	high clouds which if you take a look we
+678.9	have light high clouds between twenty
+680.7	and twenty three thousand feet which is
+682.0	what we expect now here's where it gets
+683.9	tricky if I click this one notch over
+686.2	watch what happens
+687.5	my clouds shoot back down to the deck
+690.1	between two and seven thousand feet
+691.9	however they've gotten thicker so keep
+694.7	that in mind when you're planning
+695.8	operations so for example let me click
+698.1	this two more notches I expect to see
+699.6	some high clouds which we do moderate
+701.8	high clouds between twenty-five and
+702.9	twenty thousand feet that's pretty
+704.8	significant but it's no mention 50
+706.7	percent clouds obviously if I crank it
+708.5	all the way here watch what happens now
+710.6	you have thick fog between zero and two
+713.0	thousand feet solid cloud cover between
+715.1	seven and thirty six thousand feet so
+717.4	basically there's a wall of cloud going
+719.1	straight up thick fogs visibility
+721.6	is like measured in a couple feet in a
+723.5	couple yards so kind of keep that in
+725.0	mind when you're setting up a scenario a
+726.3	lot of aircraft are affected by bad
+729.1	weather so I'm gonna go ahead and drop
+730.4	this um let's do this that looks pretty
+732.5	good last but not least we have wind and
+734.4	sea state if you set this to zero this
+736.7	is basically no wind which personally I
+739.5	I fly a lot I don't remember seeing a
+742.0	day where there's no wind except maybe
+743.7	at night
+744.2	so anyway clicking this up one notch
+745.8	whoa hurricane if I hold my mouse now
+748.9	you'll see that our wind strength is now
+751.6	set to win / c1 so I'm not gonna go look
+755.8	at the Beaufort scale real quickly but
+757.4	that's that's not very much wind
+759.4	generally when you're dealing with the
+761.1	ocean you're gonna be talking sea state
+762.5	3 and sea state 4 which I cranked it up
+764.7	a little bit you can see now I'm a twin
+765.9	see three ships are affected by the wind
+769.5	state so if I crank this up for example
+771.2	all the way up to sea state 6 let's go
+774.2	ahead and get us out something kind of
+775.6	small let's go to ship let's go ahead
+777.9	and get a PC something teeny-tiny there
+780.4	we go we'll get a cyclone notice this
+782.4	maxi state is 5 so at sea state 6 you've
+785.8	effectively crippled that ship obviously
+788.2	you don't want to be driving around sea
+790.1	state 6 anyway it's kind of messy so
+791.7	anyway keep that in mind when you're
+792.9	working with the weather
+794.0	I personally usually leave it around 3
+795.5	this will affect accuracy of weapons if
+798.1	you crank this all the way to hurricane
+799.4	you could have a really tough time
+801.1	hitting with anything so kind of keep
+803.1	that in mind to do but like I don't know
+805.5	what you need that for usually so let's
+807.0	see what they got sea state 3 I like
+808.4	that okay now the last thing we're going
+810.7	to do in this page without getting too
+812.1	fancy and that's the scenario features
+813.8	and settings click this and you can set
+816.2	the realism settings keep in mind once
+817.8	you set these either set detail via
+820.2	control basically tells a particular
+822.0	platform that says I have to actually be
+823.6	able to see the target and lock onto the
+825.0	target to hit it as opposed to I can
+826.8	just move fire you can set unlimited
+829.0	ammunition a table and air bases this
+830.7	for users can be a bad thing because
+833.6	again users will load up on J dams and
+836.8	things like that when you really wanted
+838.1	them to use mark 82's
+839.2	so keep that in the back of your head
+840.5	realistic submarine communications this
+842.4	is a new one basically it means you have
+843.9	to be at shallow ish depth in order to
+846.1	communicate with a submarine if you turn
+847.7	this on it's going to get tricky and
+849.8	then of course you have effectors of
+851.4	terrain type which just means if we're
+852.7	in the mountains in the trees
+853.9	it's going
+854.5	difficult to hit targets and then we
+856.1	have communication disruption which
+857.4	basically means if I blow my radio up I
+859.8	can't talk to everybody which creates
+861.9	some interesting Friend or Foe /
+864.6	blue-on-blue incidents if you're not
+866.9	careful on the flip side there are a lot
+868.4	of fun to play with and now we're ready
+870.9	to actually start placing some units so
+873.3	right now I've got my time I'd a set I
+874.9	believe it's right at dusk yep right at
+876.7	dusk I don't know why I set that to 901
+878.8	and though it's just me being silly
+880.1	apparently copy curtains 8 in time let's
+883.3	hold my mouse here perfect so now we're
+885.6	7 o'clock this is a Zulu time obviously
+887.8	January 1st of 1985 let's go ahead and
+890.7	get some units so there's a lot of
+892.3	different ways to bring units into the
+894.3	game I'm actually gonna switch off the
+896.0	Sentinel layer real quick and I'm gonna
+898.2	flip on stamen real fast just to kind of
+900.2	get things a lot oh there we go much
+901.4	better
+903.9	now there's a couple different ways that
+905.6	you can import and add units into the
+907.8	world first of all again depends what
+910.0	the kind of battle that you're doing
+910.8	ever you're doing a naval battle or be
+911.9	doing an air battle are we doing a
+913.1	combination naval air battle you know
+915.0	you have to kind of decide that
+916.0	obviously we do ground news but that's
+917.3	going to get a little crazy as well so
+919.1	the standard way to add something to the
+921.0	world is you press the insert key on
+922.6	your keyboard and you simply click where
+924.8	you want that item to be inserted
+926.0	selecting up to be top you can select if
+928.2	you want an aircraft which also includes
+929.6	helicopters service ship which also
+931.3	includes platforms submarines
+933.4	self-explanatory in facilities which is
+935.9	everything so for example if I flip over
+938.1	to facility and I type in let's say I
+940.0	want a t-64 and you can go ahead and you
+942.6	can see all these t-64 so you can sort
+944.8	it by name you can set to what country
+946.6	you want to check it out you can shut
+948.1	off hypothetical platforms if you need
+950.0	to and there's also this great feature
+951.6	called custom GUI D which allows you to
+953.6	name items so for example if I wanted to
+956.3	get extremely crazy I could set there
+958.7	and say do something really nuts I'll
+962.2	say this is suppli tune 1-1 or something
+964.6	like that when you're ready to place
+966.2	your unit you just press the ok key and
+967.9	there it is it's just sitting there
+969.9	way way way down there just chill in the
+972.7	middle of the map naturally of course
+973.8	Ecuador is not probably going to be
+975.7	packing a t-64 p.m. but I don't say look
+978.7	at that so once you placed a unit in the
+980.5	map you can't just click and drag to
+982.2	move it if you want to move it you have
+983.7	to click on the unit you want to move
+985.0	press the M key and simply click on
+987.5	where you'd like that item to move now
+990.2	here's where it gets a little fun you'll
+992.0	notice that it's got this beautiful
+993.1	little red circle around it those
+994.8	circles correspond to the maximum range
+996.9	of a particular unit if I go to map
+998.5	units for a second you can actually see
+1000.5	what the different colors correspond to
+1002.5	on the map I also by the way I always
+1004.5	switch to selected unit so we're on our
+1006.6	route 10 apparently so I've got my
+1008.3	little tank so if I wanted to move it
+1009.7	again just press M click somewhere else
+1010.9	now a single group of tanks keep in mind
+1013.4	this is actually four tanks this is not
+1015.4	one tank we just screwed up here real
+1017.0	quick and click this and you can get all
+1018.2	the information about you generic again
+1020.4	the blue bets so I'm going to go ahead
+1022.3	and now make a copy now when you make a
+1024.5	copy there's really two different ways
+1026.4	to do this by the way you can also
+1028.5	right-click on somebody if you need to
+1029.9	go to scenario editor and then you can
+1031.8	go in here and edit some of those
+1032.8	details but I'm not going to change that
+1034.0	yet if I want to make a copy
+1036.2	I press the C key
+1037.1	and I simply click where I want the copy
+1038.8	to be I press the C key again press the
+1041.2	C key again now have an entire company
+1043.5	this is actually a very very large
+1045.0	reinforced company of armored vehicles
+1047.1	sitting here on the road now there's a
+1049.2	difference between copying and cloning
+1051.4	now if I make an airplane for example
+1054.3	what some actually and that's not gonna
+1056.6	be a good example
+1057.6	well actually I will do that we'll do
+1059.3	that let me grab myself a c-130h let's
+1062.2	say I have a c-130 which borrower one
+1063.8	from Elisha let's do some cargo we'll go
+1066.6	ahead and click on it and we'll go ahead
+1068.0	and edit cargo which is a little bit of
+1070.6	work again we're getting a little fancy
+1072.0	but that's fine
+1072.7	oh I had a couple howitzers why not okay
+1075.8	now if I take the c-130 now has cargo on
+1079.5	board if I click this button you can see
+1081.0	I'm carrying those two howitzers if I
+1082.8	make a copy with the C key and place it
+1085.1	notice the copy is not carrying the
+1088.7	cargo that the original version was
+1090.8	carrying if I want to copy the cargo
+1093.4	over - this is critical press shift C
+1096.7	then when I click check it out it's
+1099.2	gonna hold out of the cargo anyway I
+1100.8	just wanted to share that with you
+1101.8	because it's one of those things that I
+1102.8	always trinket about and it always makes
+1104.2	me absolutely crazy so anyway we've got
+1106.2	a little company on the road here if we
+1108.4	want to adjust the direction that the
+1110.1	platoon is facing we can click on
+1112.0	somebody right click under this applies
+1113.7	to everything by the way
+1114.7	scenario editor and we can set
+1116.2	orientation now lucky for us we're not
+1118.4	using radians these are decrees but
+1120.4	basically 180s going to be facing
+1122.4	straight down 90 degrees it's going to
+1123.9	be straight right 270 degree it's going
+1125.9	to be straight left and obviously 360 /
+1128.1	0 it's going to be straight up
+1129.5	personally I like to kind of play one of
+1131.5	these games from like oh no no let's get
+1133.1	the hit this you know that's that's
+1135.1	about thirty three point seven degrees
+1136.8	and you come in here and you do one of
+1138.1	these things and try to get it as close
+1139.8	as you can now here's something that's
+1141.9	going to make you insane if I go ahead
+1144.0	and do that and now I cloned the unit
+1148.1	his orientation goes back to zero
+1150.9	automatically
+1152.0	oh that's frustrating I really wish
+1154.4	they'd fix that no no so click him he's
+1156.4	still facing 35 degrees which is what I
+1158.5	told them to do okay so that's the basic
+1161.4	gist for placing those kind of Units now
+1163.7	for example if I want it to sound like a
+1165.4	little like desert fortress up over here
+1167.1	I can click here you could go back to
+1169.0	the facility it's
+1170.2	desert you know set up a little desert
+1172.0	for it or something like that
+1173.6	and let's say that there's a triple-a
+1175.2	platform here we want something nothing
+1177.3	too big nothing too big we're gonna buy
+1179.3	a 35-millimeter here again I'm not being
+1181.5	scientifically accurate about this
+1183.2	there's having some fun and of course
+1184.8	wherever there's an it's aircraft gun
+1186.2	there's always some dude with NSA
+1187.8	fourteen grab that one and we got a good
+1190.6	little setup right here this what kind
+1191.8	of reinforced little town sitting in the
+1193.3	middle of nowhere by the way one of the
+1195.1	neat features we have now in this
+1196.9	particular version is if you have to
+1198.4	have for you you can of course switch to
+1200.4	3d which is really cool because when you
+1202.5	go to place units now it'll actually
+1204.2	highlight them let me zoom in a little
+1205.3	bit it'll actually highlight them on the
+1206.9	map so you can get kind of a feel for
+1208.5	everything as apparently this guy is
+1210.4	decides to stand in the air but it
+1211.7	doesn't surprise me just taking a quick
+1213.2	peek around here you can see that the
+1214.8	terrain I have not gone to too crazy
+1216.8	with the terrain I got a little bit of a
+1218.8	hill I take it back a little bit of a
+1220.0	hill so it's a relatively flat you also
+1222.0	have you know it's engagement circle and
+1223.6	stuff like that and you can see our one
+1225.2	little tanked above yet basically facing
+1227.2	that direction which is kind of neat but
+1230.3	anyway don't worry about that okay
+1231.9	so the next thing I want to show you is
+1233.0	how to group units now grouping units is
+1235.3	pretty cool you simply select the units
+1236.8	you want press the G key now sometimes
+1238.9	when you group a unit you go shoot I
+1240.4	wanted to include these guys too well
+1242.0	good news you can grab them all at once
+1243.6	and press G when I do that you've
+1245.9	grouped the entire group together now if
+1249.0	I want to get rid of a group I simply
+1251.2	click on it and press the Delete key so
+1253.4	now it's going to get rid of the entire
+1254.6	group
+1254.9	now if you have a group and you want to
+1257.0	break a single member out of said group
+1259.0	you can click on the group press the 9
+1261.6	key on your numpad to switch to normal
+1263.5	select mode find the one you want to get
+1265.4	out of the group and press D so now if I
+1267.8	press 9 again to switch back to normal
+1269.4	mode you'll notice he's chillin over
+1270.8	here let's go ahead get rid of that
+1273.0	group and let's cause a problem I'm
+1275.0	gonna go ahead and wrap these two I'm
+1276.1	gonna grab these two now what happens
+1277.7	when you try to combine a group with a
+1279.1	group you're gonna get that so he tells
+1284.8	you how to fix the problem when that
+1286.9	happens which again come over here
+1288.5	delete him grab the two groups a group
+1289.7	now sometimes when you make a group you
+1291.5	get the wrong guy who's leading the show
+1293.6	well let's say I want this one back for
+1295.0	some reason now all you have to do to
+1296.7	fix that is you can click on the
+1297.7	formation editor and simply find the one
+1300.1	that you want to fix let's go get our
+1301.7	bull yet in the back
+1303.4	I'm probably pronouncing that horribly
+1304.7	wrong you're all making fun of me boo
+1306.2	lots o it's a bluff yeah so it's like a
+1308.5	bullet got it sorry
+1309.9	I'm gonna go ahead set Group lead and
+1311.8	we're now good to go now one of the cool
+1313.5	things you could do in this screen - if
+1314.7	you're one of those people is you can
+1316.2	actually set what his position is so for
+1319.9	example if I want to go ahead and set it
+1321.8	so that he sits right here and then I'm
+1324.8	gonna click on this one i'ma set his
+1326.7	relative bearing that simply means
+1328.2	rotate when everybody else rotates go
+1330.5	ahead and grab the one that used to be
+1331.9	our previous leader I'm gonna go ahead
+1333.2	set this one way way in the back like
+1334.5	this now if I tell these guys to start
+1336.7	rolling notice by the way when I
+1337.8	selected me to set I tell them just kind
+1339.9	of roll in that direction yet go quickly
+1341.5	please go quickly go ahead and unpause
+1343.0	time all right you're gonna notice
+1345.2	they're all gonna dot and they've cued
+1347.8	themselves up very very nicely now or it
+1349.9	gets kind of fun is if I tell them to go
+1351.1	in the other direction watch this well
+1354.5	we actually stay in a proper formation
+1356.9	now which is really really cool and it's
+1359.2	very very very realistic my favorite use
+1361.2	of groups by the way is when I do have a
+1362.9	situation kind of like this I can
+1364.8	highlight everybody group them and then
+1366.3	give them a nice logical name like route
+1369.5	10 of posts press okay okay so that
+1374.0	should be about all you need to know as
+1375.6	far by the way if you need to get rid of
+1376.6	a unit you simply click on it press
+1377.7	Delete click on it personally it's gone
+1380.1	so that's the basic gist of everything
+1382.4	now we're going to get a little more
+1383.8	complicated so let's say we want to do
+1386.5	something where we're using some kind of
+1389.0	airport now airports it's going to get
+1391.3	complicated we clean all this stuff up
+1392.6	real quick we don't need that let's go
+1394.4	ahead and add an airport here we'll do
+1396.2	the tamaco Oh get a little bit of
+1399.1	artifacts but nothing too too bad I'm
+1400.9	gonna press insert then I go ahead and
+1402.5	click the mouse and that's going to
+1403.9	bring the facility if you are going to
+1406.0	be using an airport that cannot be
+1407.3	attacked you can use these really really
+1409.6	cool units called single unit airfields
+1412.3	this also comes at a port format if
+1414.2	you're going to be designing an airport
+1416.6	that has like individual pieces in it
+1418.4	you're going to have to build it by
+1419.8	piece so for example if I said runway
+1421.7	you're gonna have to place each one of
+1423.3	those we'll do that in a minute
+1424.2	but for now let's go and get ourselves
+1427.3	an airport so when you do this you
+1429.5	basically can dictate how large the
+1431.3	airport by the way single unit airfields
+1432.8	cannot be attacked keep that in mind
+1435.9	you're gonna have to build them by hand
+1437.2	if you want to do that so let's go ahead
+1438.9	and get ourselves a pretty normal
+1440.1	airport we have two runways facing to
+1442.4	600 about this length pretty good price
+1444.7	okay let's go ahead give that a name and
+1446.8	just press star the are key by the way
+1448.2	to mark oh I'll call it a B and now
+1452.3	remember we want to set an orientation
+1454.2	so without knowing much about this
+1455.8	environment I guarantee the wind is
+1457.2	probably coming in like this or it's
+1459.1	coming in like this I'm gonna assume
+1460.2	it's this way so I'm going to set the
+1461.9	orientation to face roughly let's say
+1464.4	about 45 degrees
+1467.7	now something you want to keep in mind
+1469.8	when you're using airports is that
+1472.5	orientation is another direction the
+1474.0	airplanes are going to fly towards in
+1475.5	order to land at that particular place
+1477.9	so kind of keep that in mind you can
+1479.6	always run into a situation with this
+1480.7	like a big mountain here and you're
+1481.7	landing through the mountain but just
+1483.5	because I keep that in the back your
+1485.0	head is all I'm saying
+1486.0	so now we have tamaco air boys I'm
+1488.1	probably mispronouncing that horribly my
+1490.0	apologies to the people of Columbia okay
+1492.4	so when you set an airport that is a
+1494.8	single unit one it's super easy to add
+1496.7	airplanes you can just come over here
+1497.9	and hit edit hosted aircraft now will be
+1500.7	a little bit more careful here we'll
+1501.8	actually set the maps that guys want to
+1504.3	Columbia this time now let's say we're
+1506.6	making a scenario in 85 I can click the
+1508.4	from button it will actually highlight
+1510.0	what types of aircraft would be
+1511.9	available at that particular time so it
+1514.3	looks to me like we're got a couple
+1515.4	Mirage fives the Colombian version of
+1517.4	the mirage five even looks like they
+1518.7	have 27 of them so let's add a couple of
+1521.0	those we can go ahead and dictate the
+1522.5	callsign keep in mind if you have more
+1524.2	than one airplane we can use the
+1525.8	callsign basically to add more stuff to
+1528.1	it so I could say I don't know
+1531.3	Mirage ass cutie Mirage squad yes that's
+1535.6	pretty good
+1536.1	it says there's 27 squadron sizes in the
+1539.2	real world vary considerably depending
+1541.0	where you are the American full Air
+1542.9	Force squadron for example is 24 typical
+1545.7	Russian squadrons are usually between 12
+1547.4	and 18 15s kind of the magic number and
+1550.0	keeping my bomber squadron support
+1551.9	squadrons are going to be naturally
+1553.0	smaller this says that we have 27 of
+1555.0	them that kind of sounds like probably a
+1556.7	pair of squadrons plus reinforcements
+1558.6	ones but let's grab all 27 why not add
+1562.1	selected so now we've added these 27
+1564.8	aircraft to this air base now if i were
+1567.3	press f6 you can see that in the air
+1569.5	facilities it's actually spread them out
+1571.2	between the different hangers and the
+1572.8	different parking spaces and stuff like
+1574.1	that again this is why i love single
+1575.9	unit airports if they're not being
+1577.5	attacked let's go to aircraft status i'm
+1579.8	not going to go nuts here but because we
+1581.7	have the map editor we can grab a group
+1583.8	with them we can hit ready arm and we
+1585.3	can decide exactly we want let's see
+1587.4	here what seems to do what this is a
+1588.5	it's decent decent decent what we've got
+1590.7	for arranging these I'm actually curious
+1591.7	I've never used these likes yeah we're
+1594.2	gonna have to do something that's got a
+1595.1	little bit more reach let's see here
+1597.5	we'll grab this one go ahead and ready
+1599.4	those immediately
+1601.1	again this is just for an example
+1602.3	because we have these two buttons by the
+1604.4	way if you did not have unlimited ammo
+1606.2	on you would not have this option if you
+1608.1	did not add ammo to a base
+1610.8	keep that in mind we'll take a look at
+1612.2	how to do that in a second let's see
+1613.8	what kind of range over to 90 on these
+1615.2	two 510 I'll take it
+1616.9	grab those guys will come down here and
+1619.7	grab this group also I didn't do the
+1621.6	same thing and well down we'll just say
+1623.7	these guys are maintenance and we'll
+1625.6	grab the rest of the guys and we'll set
+1626.8	them up for reserve in case they need
+1628.1	them a little later on again that's all
+1630.0	standard commands stuff I'm not gonna go
+1631.5	to too crazy here you can come down here
+1633.2	and you can even set time to ready
+1634.5	because again war on map edited Road so
+1637.1	that's all set that's all set that's all
+1638.9	set we can launch those aircraft and go
+1640.2	nuts now a minute ago I mentioned that
+1641.8	you sometimes if we are not using under
+1644.2	this particular scenario feature if we
+1646.1	don't have unlimited ammo on we have to
+1648.0	give a base ammo so that you can load
+1650.5	airplanes with weapons to do that we
+1653.0	simply click on the magazines button
+1654.4	we're simply going to click on add
+1655.9	magazine and you can go pretty crazy
+1658.2	pretty fast with this particular stuff
+1660.4	so I believe I saw mark eighty twos
+1662.6	let's go ahead and say mark eighty two
+1664.5	uh actually these are by magazines so
+1667.7	we're gonna have to go ahead and find a
+1669.2	magazine that we can use I see some
+1671.4	carrier magazines let's see there's some
+1673.9	helicopter American magazines I really
+1675.8	wish there was just magazine number one
+1677.6	that would be wonderfully helpful let's
+1681.0	go ahead and type that in
+1684.5	let's see here let's see um let's just
+1687.1	pick one Oh we'll take United Kingdom
+1689.7	carrier magazine why not so when you
+1693.2	click on that nothing happens right well
+1695.0	it's it's actually there now if I click
+1696.9	here and open this up it's given us a
+1698.6	magazine with all these cool little
+1699.7	weapons now if you remember we can
+1701.7	delete we can click a group of these and
+1703.6	we can go like this and click remove
+1704.8	weapons and go nuts
+1706.1	so now the neat thing is if I click on
+1707.9	carry magazine and click on add weapons
+1709.4	now we can add the mark 82 and
+1711.8	everything like that I think is just MK
+1713.3	82 it's making a liar I mean what
+1715.9	happens over time in 82 we have plenty
+1718.9	of GPUs oh they do MK 82 make sure the
+1723.5	weapon you're adding equals the weapon
+1726.1	that you're actually gonna be having so
+1727.5	now we can scroll down here we can go
+1729.0	get ourselves an LG GB and that looks
+1731.8	pretty good
+1732.2	so I'm gonna add that so now if I scroll
+1734.5	down you can see I have 51 mark 82 s
+1737.3	here so now if I were to come over here
+1739.5	well if I were to come over here grab
+1742.5	these guys had a maintenance mmm arm
+1744.6	them with mark 82 so let's go ahead and
+1746.7	press a room ready immediately what will
+1749.2	have happened is I will have reduced the
+1751.9	amount of weapons I now have in that
+1754.0	magazine where's Mark it's okay so it's
+1757.3	making a liar to me because I collect
+1758.3	righty immediately but you get the idea
+1760.0	okay
+1761.3	so I'm now let's go ahead and take a
+1762.8	look at aircraft obviously you can set
+1764.4	of missions and stuff like that let's go
+1765.9	ahead and look at ships now ships are
+1768.4	pretty simple as well you simply come up
+1770.1	to the map press the insert key again
+1772.0	and then click where you'd like your
+1773.5	ship to be ships are super duper simple
+1775.5	you simply select the option that you
+1777.0	wanted to you can decide between this
+1778.9	class anything along those lines again
+1781.0	we're having some fun with Columbia
+1782.3	today so we'll go ahead and take a look
+1783.5	wow that's pretty cool
+1785.8	now what do we say 1985 so obviously a
+1788.8	1984 vessel we'd go ahead and click on
+1790.9	it we can rename it we can do anything
+1792.6	we need to do we'll go ahead add oh
+1794.6	that's not actually possible because
+1796.0	it'd be 96 what do we do what do we do
+1799.2	why don't other one I'm gonna call this
+1804.8	one
+1809.5	oops
+1810.8	not French there we go The Revenge of
+1813.4	tango and of course the MRNA so as usual
+1816.4	we can go ahead group these select both
+1818.2	of them press the G key we can always go
+1820.3	to formation option we can rename them
+1822.0	we can come in here and say say G keep
+1825.7	in mind these are facing north if we
+1828.0	want to rotate them you have to use the
+1829.7	same technique to rotate them you can
+1831.3	also set their initial speed and
+1832.6	everything over here on the right you
+1834.0	can give them an initial place like that
+1835.2	and now you are good to go so quick
+1838.6	little word of warning when you are
+1840.3	adding helicopters to surface action
+1843.0	groups you want to make sure that you
+1844.6	add it by ship not by group because if
+1847.5	you do it by group you're gonna end up
+1848.7	putting the helicopters and funky places
+1850.3	same thing with aircraft by the way
+1851.7	you're gonna end up with like a Harrier
+1852.7	in the back of a frigate which I'm sure
+1854.1	is possible but not very likely so the
+1857.3	last thing I want to show you today is
+1858.4	basically how to kind of set up that
+1860.1	initial enemy AI now let me go ahead
+1863.0	zoom out a little bit here to make
+1864.2	things a little bit simpler what G says
+1865.9	right on the border let's switch over to
+1867.8	Ecuador real quick let's go ahead and
+1871.1	add ourselves a single unit Airport by
+1874.2	the way one of the greatest tools in
+1876.0	this program is if you click on editor
+1877.6	and click on import export units you can
+1879.9	actually open up into higher groups of
+1882.8	different types of Units by default
+1884.7	coming down ecuador you can actually see
+1886.5	there's several pre-built airports might
+1888.6	as well grab them right load selected
+1891.0	installations close and check it out it
+1893.5	preloaded these beautiful airports for
+1895.3	me so now have a zoom way way way way
+1896.8	way in you'll actually see these
+1898.2	particular airports are the fancy
+1900.1	airports because they actually have each
+1901.9	individual piece built by the way if
+1904.0	you're going to build a fancy airport
+1905.4	make sure you do it in such a way that
+1907.8	you can actually we don't need that ship
+1909.2	you I need you all right you're gonna be
+1912.3	annoying that's okay yeah you can see
+1915.2	very clearly all the individual hangars
+1916.5	don't worry about the hangars facing the
+1918.3	wrong direction that doesn't actually
+1919.2	affect anything okay so like I was
+1922.2	saying because of those imports I don't
+1923.9	have to go through the trouble building
+1924.9	this all by hand you're not going to get
+1926.6	imports for everywhere on earth which is
+1927.9	kind of a bummer but like I said we want
+1930.0	to quickly set up some AI here so what
+1932.2	I'm gonna do is I'm going to set up a
+1933.3	pretty good old-fashioned barrier cap go
+1935.6	ahead give myself a couple different
+1936.9	points here when you're doing reference
+1939.0	points I was like to click
+1940.5	and rename them west points and make
+1945.3	sure you deselect the other one before
+1946.6	you try to do this one each point let's
+1950.1	go ahead and add some aircraft let's see
+1953.1	what we got for Ecuador do we have
+1957.2	anything from the eighties I can use
+1959.1	actually with a Kaffir
+1960.5	which is what f1 a beautiful oh it's
+1963.3	1990 though a Jaguar is not too too bad
+1967.0	now wet yeah that works we'll go with
+1971.3	the Mirage oh well uh we'll add 15
+1975.1	Gretton we'll arm these guys all up this
+1977.2	would never happen in the real world
+1978.2	there's just no such thing as having an
+1979.8	entire group keep in mind again if you
+1982.3	wanted to limit the availability of
+1984.3	munitions you'd have to set that setting
+1986.0	and add the everything manually so we'll
+1988.1	go ahead and grab those two points we're
+1989.6	going to press ctrl f11 we're gonna do
+1991.7	bar cap we're gonna do patrol aw it's
+1994.3	kind of freak out freak out to bed today
+1996.6	that's okay I'm gonna come down to
+1998.3	movement style I said it's a repeatable
+1999.9	loop we're gonna do this in groups of
+2001.3	four aircraft one third we don't want
+2003.5	them to go exploring we'll add all these
+2005.3	guys right here and now you're all set
+2008.2	so if I were to go ahead and run this oh
+2010.5	by the way let's go double check to see
+2012.1	what these guys are doing it's going to
+2014.2	be hit and run so we want them to do a
+2016.2	single attack and then run right there
+2019.5	that's the way I want it to be set up go
+2021.6	ahead and run the map real quick now
+2022.9	they should all be taking off it go
+2026.1	notice they immediately ran out of fuel
+2028.3	and I came back in for a landing we need
+2031.3	something with a little bit more reach
+2032.5	these countries are very very large okay
+2035.0	so that should be about it for the basic
+2036.9	mission editor stuff if you were looking
+2039.3	to go into scenario editor and stuff
+2041.2	like that event editors will do that at
+2043.2	another video again this should be more
+2046.1	than enough to be able to throw down a
+2047.5	couple airplanes you know if our being
+2049.1	kind of mean I guess switch to Columbia
+2050.5	and for some reason they've got a brand
+2052.4	new set of f-35b set this stuff 35 bees
+2057.3	will get the nice one over there 2025
+2059.5	load it up okay we're gonna like this
+2063.5	way through my these things I'm good
+2065.0	like this and and the f-35 is basically
+2067.6	gonna roast these guys well once you get
+2070.3	Center range I guess
+2072.8	on a side attack those disappoint me
+2081.7	did okay so that should be enough to get
+2087.4	you kind of started as far as map
+2089.2	editing goes at this program there are
+2090.7	other little details that you're
+2092.0	probably going to get kind of tricked by
+2093.5	over time one detail for example is
+2095.8	notice that this beautiful blue ring is
+2097.5	starting to shrink once this blue ring
+2099.1	hits where his base is is going to do it
+2100.6	if you need to change what base you're
+2102.1	working on it you can just right click
+2103.0	and you can hit select new base there's
+2105.0	only one base in Columbia right now so
+2106.8	that's the only one you could pick from
+2107.8	of course if you were a carrier version
+2110.2	of this aircraft and had it available
+2111.4	carrier I could set the carrier as the
+2113.2	base as well all right if you have any
+2114.9	questions just kind of let me know down
+2116.4	there in the little video later on will
+2118.2	get a little bit fancier but for now
+2119.6	that she could she started

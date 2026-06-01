@@ -239,6 +239,19 @@ one engine serve both W3 and hand-built scenarios.
 | **AUTH2** | **Draw a unit's path** (click waypoints) → `unit.kinematics.course`; MOVE1 then animates it. | WS1 + MOVE1 + AUTH1 | M |
 | **AUTH3** | Place enemy + **Run**: hand the authored scenario to the playback clock so MOVE1/DET1/ENG1 advance it autonomously. | AUTH2 + MOVE1 + DET1 + ENG1 | M |
 
+**📐 Realism rule (current build):** RMOOZ adds **mathematical rules** to feel as real as possible —
+kinematics (MOVE1 ✅), detection (radar-horizon + RCS, DET1), engagement geometry (ENG1). Unit
+class/state values feed these formulas. *"As real as possible"* is a standing goal for every rule PR.
+
+**🔮 FUTURE (deferred — do NOT build unless requested):** **Personnel / maintenance / reliability /
+controlled uncontrolled-events** — equipment can't operate by itself (crew availability, fatigue/shift,
+maintenance status, reliability, supply, optional explainable malfunctions). These become **gates &
+multipliers** on the math rules (reliability × Pd; crew gates firing; fatigue → +OODA; under-maintenance
+= not taskable) and **citable constraints** in AI COA proposals. Controlled/explainable/optional —
+never fake game randomness. Full schema + plug-in points: memory
+[[project_personnel_maintenance_reliability_future]]. Targets: World State · DB-Lite · Readiness/Supply ·
+Doctrine/ROE/AI-explanation.
+
 **Phasing:** WS1→MOVE1→VIS1 finish presentation/movement (priority #1) on the new substrate · WS2–WS4
 build the World State Engine (priority #2) · DB1–DB2 DB-Lite (#3) · DET1/ENG1 the CMO-style mechanics ·
 DOC1 doctrine (#4) · TASK1 tasking (#5). Editable-workspace work ([[project_workspace_editable_owner_ruling]])

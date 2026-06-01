@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'eraser-e-btn',
         'lang-toggle-btn',
         'chat-toggle-btn',
+        'legend-toggle-btn',
         'top-favorites-btn'
     ];
 
@@ -17224,6 +17225,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Light/Dark theme toggle (applied after server prefs pull when using http)
     const THEME_KEY = 'nato-map-planner-theme';
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const legendToggleBtn = document.getElementById('legend-toggle-btn');
     function getTheme() {
         return localStorage.getItem(THEME_KEY) || 'dark';
     }
@@ -17249,6 +17251,18 @@ document.addEventListener('DOMContentLoaded', () => {
         setTheme(getTheme());
         themeToggleBtn?.addEventListener('click', () => {
             setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+        });
+
+        function syncLegendToggleButton() {
+            if (!legendToggleBtn) return;
+            const visible = window.AppAdjudicatorMap?.isLegendVisible?.() !== false;
+            legendToggleBtn.setAttribute('aria-pressed', visible ? 'true' : 'false');
+            legendToggleBtn.classList.toggle('active', visible);
+        }
+        syncLegendToggleButton();
+        legendToggleBtn?.addEventListener('click', () => {
+            window.AppAdjudicatorMap?.toggleLegend?.();
+            syncLegendToggleButton();
         });
 
         syncDistanceUnitToggleButton();

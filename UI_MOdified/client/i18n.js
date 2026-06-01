@@ -131,6 +131,8 @@
                                                 'plan-status-error': 'Save failed',
                                                 'theme-toggle-title': 'Toggle light/dark theme',
                                                 'settings-toggle-title': 'Settings & tools',
+                                                'legend-toggle-btn': 'Legend',
+                                                'legend-toggle-title': 'Show or hide the map legend',
                                                 'lang-toggle-title': 'Switch language',
                                                 'import-invalid-json': 'Invalid JSON file.',
                                                 'import-invalid-format': 'Invalid format: not a recognised plan file.',
@@ -949,7 +951,7 @@
             // PR-4: Event Log placeholder (foundation only — no journal feed yet)
             'elog-eyebrow':              'LOG',
             'elog-title':                'Event Log',
-            'elog-status-inactive':      'Journal not enabled',
+            'elog-status-inactive':      'Journal recording disabled',
             'elog-toggle-title':         'Collapse / expand',
             'elog-empty':                'No events yet',
             'elog-col-time':             'Time',
@@ -1006,7 +1008,7 @@
             'ap-status-accepted':          'Accepted',
             'ap-status-rejected':          'Rejected',
             'ap-status-onhold':            'On Hold',
-            'ap-not-connected':            'Proposal decisions are not connected to simulation yet',
+            'ap-not-connected':            'External simulation disabled for demo (read-only)',
             'ap-sample-badge':             'SAMPLE / NOT CONNECTED',
 
             // PR-8: AI Proposal data contract
@@ -1034,7 +1036,7 @@
 
             // PR-11: Proposal service connection state
             'ap-service-label':                    'Proposal Service',
-            'ap-service-not-connected':            'Not connected',
+            'ap-service-not-connected':            'Disabled (demo)',
             'ap-service-connected':                'Connected',
             'ap-service-requesting':               'Requesting',
             'ap-service-failed':                   'Failed',
@@ -1072,7 +1074,7 @@
             'elog-evt-dr-rejected':                'Local decision record rejected',
 
             // PR-14: Real Journal Contract Draft (validator only)
-            'dr-real-journal-disabled':            'Real journal not enabled',
+            'dr-real-journal-disabled':            'Journal recording disabled',
             'dr-draft-contract-ready':             'Draft contract ready',
             'elog-evt-journal-draft-validated':    'Journal draft contract validated',
             'elog-evt-journal-draft-rejected':     'Journal draft contract rejected',
@@ -1129,7 +1131,7 @@
             'dl-status-ready':                               'Ready',
             'dl-status-locked':                              'Locked',
             'dl-status-failed':                              'Failed',
-            'dl-explainer':                                  'Download is locked by design in this build',
+            'dl-explainer':                                  'Export locked in demo mode',
             'elog-evt-download-guard-locked':                'Download guard refused attempt — locked by design',
             'elog-evt-download-guard-state-changed':         'Download guard state changed',
 
@@ -1326,7 +1328,7 @@
             'tl-phase-1':                  'Phase 1',
             'tl-phase-2':                  'Phase 2',
             'tl-phase-end':                'End',
-            'tl-status-inactive':          'Simulation not connected',
+            'tl-status-inactive':          'Read-only playback mode',
 
             // PR-42: Scenario Workspace Shell (read-only)
             'sw-tool-label':             'Scenario',
@@ -2525,6 +2527,8 @@
             'sidc-meta-echelon-region-theater': 'إقليم / مسرح عمليات',
             'sidc-meta-echelon-command': 'قيادة',
             'lang-btn': 'English',
+            'legend-toggle-btn': 'الدليل',
+            'legend-toggle-title': 'إظهار دليل الخريطة أو إخفاؤه',
 
             'sidebar-title': 'رموز',
             'sidebar-subtitle': 'خريطة تكتيكية غير متصلة',
@@ -3280,7 +3284,7 @@
             // PR-4: سجل الأحداث — واجهة أساسية فقط (دون تغذية سجل المحاكاة)
             'elog-eyebrow':              'السجل',
             'elog-title':                'سجل الأحداث',
-            'elog-status-inactive':      'سجل المحاكاة غير مفعل',
+            'elog-status-inactive':      'تسجيل السجل معطّل',
             'elog-toggle-title':         'طي / توسيع',
             'elog-empty':                'لا توجد أحداث بعد',
             'elog-col-time':             'الوقت',
@@ -3337,7 +3341,7 @@
             'ap-status-accepted':          'مقبول',
             'ap-status-rejected':          'مرفوض',
             'ap-status-onhold':            'معلّق',
-            'ap-not-connected':            'قرارات المقترحات غير متصلة بالمحاكاة حتى الآن',
+            'ap-not-connected':            'المحاكاة الخارجية معطّلة في وضع العرض (للقراءة فقط)',
             'ap-sample-badge':             'عينة / غير متصل',
 
             // PR-8: عقد بيانات مقترحات الذكاء الاصطناعي
@@ -3365,7 +3369,7 @@
 
             // PR-11: حالة اتصال خدمة المقترحات
             'ap-service-label':                    'خدمة المقترحات',
-            'ap-service-not-connected':            'غير متصلة',
+            'ap-service-not-connected':            'معطّلة (عرض)',
             'ap-service-connected':                'متصلة',
             'ap-service-requesting':               'جارٍ الطلب',
             'ap-service-failed':                   'فشلت',
@@ -3403,7 +3407,7 @@
             'elog-evt-dr-rejected':                'تم رفض سجل القرار المحلي',
 
             // PR-14: مسودة عقد السجل الحقيقي (تحقق فقط)
-            'dr-real-journal-disabled':            'السجل الحقيقي غير مفعل',
+            'dr-real-journal-disabled':            'تسجيل السجل معطّل',
             'dr-draft-contract-ready':             'عقد المسودة جاهز',
             'elog-evt-journal-draft-validated':    'تم التحقق من عقد مسودة السجل',
             'elog-evt-journal-draft-rejected':     'تم رفض عقد مسودة السجل',
@@ -3460,7 +3464,7 @@
             'dl-status-ready':                               'جاهز',
             'dl-status-locked':                              'مقفل',
             'dl-status-failed':                              'فشل',
-            'dl-explainer':                                  'التنزيل مقفل بالتصميم في هذا الإصدار',
+            'dl-explainer':                                  'التصدير مقفل في وضع العرض',
             'elog-evt-download-guard-locked':                'رفض حارس التنزيل المحاولة — مقفل بالتصميم',
             'elog-evt-download-guard-state-changed':         'تغيّرت حالة حارس التنزيل',
 
@@ -3657,7 +3661,7 @@
             'tl-phase-1':                  'المرحلة 1',
             'tl-phase-2':                  'المرحلة 2',
             'tl-phase-end':                'النهاية',
-            'tl-status-inactive':          'المحاكاة غير متصلة',
+            'tl-status-inactive':          'وضع تشغيل للقراءة فقط',
 
             // PR-42: مساحة عمل السيناريو (للقراءة فقط)
             'sw-tool-label':             'السيناريو',

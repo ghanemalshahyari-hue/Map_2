@@ -2152,7 +2152,7 @@
                 box-shadow:0 0 6px rgba(0,0,0,.4);
                 min-width:280px;max-width:380px;margin-top:8px;
             `;
-            div.innerHTML = `<div style="color:#888;font-style:italic;">SITREP — awaiting first step…</div>`;
+            div.innerHTML = `<div style="color:#888;font-style:italic;">Read-only playback — select a step to begin</div>`;
             window.L.DomEvent.disableClickPropagation(div);
             return div;
         };
@@ -5087,7 +5087,7 @@
         // Reset the SITREP banner contents
         if (sitrepControl) {
             const div = sitrepControl.getContainer();
-            if (div) div.innerHTML = `<div style="color:#888;font-style:italic;">SITREP — awaiting first step…</div>`;
+            if (div) div.innerHTML = `<div style="color:#888;font-style:italic;">Read-only playback — select a step to begin</div>`;
         }
     }
 

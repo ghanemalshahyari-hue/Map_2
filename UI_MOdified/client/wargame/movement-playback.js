@@ -144,10 +144,76 @@
         else if (d.action === 'speed-changed') setSpeed(d.value);
     });
 
+    /* ======================================================================
+     * Step-transition glide — the universal fix.
+     * The HUD renders EVERY step via AppAdjudicatorMap.applyState(); by default
+     * markers snap to the new step's coords. We wrap applyState so that on a
+     * normal +1 step advance (Next button / auto-adjudicate) the markers TWEEN
+     * from their previous positions to the new ones — gliding no matter which
+     * control triggered the step. Big jumps (scrub/reset) and transport playback
+     * snap as before. If rAF never runs, it simply rests at the new positions —
+     * i.e. it can never be worse than today's snap.
+     * ==================================================================== */
+    var STEP_GLIDE_MS = 700;
+    var lastAppliedStep = null, stepAnimRaf = null;
+
+    function muid(m) {
+        return (m && ((m._wgRedMeta && m._wgRedMeta.uid) || (m._wgBlueMeta && m._wgBlueMeta.uid))) || null;
+    }
+    function snapPos() {                                  // uid → [lat,lng], robust to marker recreation
+        var mk = MAP().getScenarioMarkers() || { red: [], blue: [] };
+        var out = {};
+        mk.red.concat(mk.blue).forEach(function (m) {
+            var id = muid(m); if (!id) return;
+            try { var p = m.getLatLng(); out[id] = [p.lat, p.lng]; } catch (_) {}
+        });
+        return out;
+    }
+    function glideBetween(before, after, dur) {
+        if (stepAnimRaf) { cancelAnimationFrame(stepAnimRaf); stepAnimRaf = null; }
+        var t0 = null;
+        function step(ts) {
+            if (t0 == null) t0 = ts;
+            var k = Math.min(1, (ts - t0) / dur);
+            var mk = MAP().getScenarioMarkers() || { red: [], blue: [] };
+            mk.red.concat(mk.blue).forEach(function (m) {
+                var id = muid(m); if (!id) return;
+                var a = before[id], b = after[id]; if (!a || !b) return;
+                try { m.setLatLng([a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]); } catch (_) {}
+            });
+            stepAnimRaf = (k < 1) ? requestAnimationFrame(step) : null;
+        }
+        stepAnimRaf = requestAnimationFrame(step);
+    }
+    function installStepGlide() {
+        var m = MAP();
+        if (!m || typeof m.applyState !== 'function' || m.__moveGlideWrapped) return;
+        var orig = m.applyState;
+        m.applyState = function (state) {
+            var newStep = (state && Number.isFinite(state.step_index)) ? state.step_index : null;
+            var doAnim = !playing && STEP_GLIDE_MS > 0 &&
+                         lastAppliedStep != null && newStep != null && newStep === lastAppliedStep + 1;
+            var before = doAnim ? snapPos() : null;
+            var r = orig.apply(this, arguments);          // original snaps markers + all visuals
+            if (doAnim) { try { glideBetween(before, snapPos(), STEP_GLIDE_MS); } catch (_) {} }
+            if (newStep != null) lastAppliedStep = newStep;
+            return r;
+        };
+        m.__moveGlideWrapped = true;
+    }
+    // Install as soon as the map module is present (and again on DOM ready as a safety net).
+    installStepGlide();
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', installStepGlide, { once: true });
+    }
+
     window.AppMovementPlayback = {
         play: play, pause: pause, toggle: function () { playing ? pause() : play(); },
         setStep: setStep, getStep: function () { return segStart; },
         setSpeed: setSpeed, isPlaying: function () { return playing; },
-        getProgress: function () { return frac; }
+        getProgress: function () { return frac; },
+        // expose for tuning / debugging the step-transition glide
+        setGlideMs: function (ms) { STEP_GLIDE_MS = Math.max(0, ms | 0); },
+        _installStepGlide: installStepGlide
     };
 })();

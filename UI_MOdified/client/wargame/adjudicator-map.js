@@ -136,6 +136,11 @@
     // px-per-km for the current view.
     let lastAppliedState    = null;
     let lastAppliedScenario = null;
+    // PR-WS2: live World State snapshot (AppWorldState.deriveWorldState) for the
+    // current step. Reconciled from `lastAppliedState` in applyState; objective
+    // status is read from it (the first render field sourced from World State).
+    // Null when WS1 is absent/throws → render falls back to the legacy `state.*`.
+    let lastWorldState      = null;
 
     // setTimeout handles for the in-flight staggered-death scheduler so a
     // step change can cancel anything still queued from the previous step.
@@ -2500,7 +2505,14 @@
     }
     function deriveDisplayOutcome(state) {
         if (!state) return 'DORMANT';
-        const status = state.objective_status || 'DORMANT';
+        // PR-WS2: objective status is the FIRST render field read from the live
+        // World State snapshot. Gated on `state === lastAppliedState` so the
+        // snapshot is only used for the state it was reconciled from (else fall
+        // back to `state.*`). Value is identical (reconciled in applyState), so
+        // this is a no-op today; WS4 makes World State the owner of this field.
+        const ws = (lastWorldState && state === lastAppliedState) ? lastWorldState : null;
+        const status = (ws && ws.derived && ws.derived.objective_status)
+            || state.objective_status || 'DORMANT';
         // Only re-litigate CAPTURED — the others (DENIED, THREATENED,
         // CONTESTED, DORMANT) describe Red NOT dominating, and the
         // server validator already blocks regressions.
@@ -5334,6 +5346,33 @@
         lastAppliedState     = state;
         lastAppliedScenario  = scenario || scenarioRef || null;
 
+        // PR-WS2: derive a live World State snapshot from the running scenario at
+        // this step, then route objective status through it (read in
+        // deriveDisplayOutcome). The snapshot MIRRORS the live `state` for now —
+        // ownership stays with `state`; WS4 inverts the fill direction so World
+        // State OWNS. Pure read-through, fully guarded: a missing/throwing engine
+        // → null → the renderer uses the legacy `state.*` path (zero regression).
+        lastWorldState = null;
+        if (window.AppWorldState && lastAppliedScenario) {
+            try {
+                const ws = window.AppWorldState.deriveWorldState(lastAppliedScenario, stepIdx);
+                if (ws) {
+                    // Reconciliation — the ONE transitional line (WS4 inverts it):
+                    // the snapshot reflects the LIVE step truth, not just the
+                    // scenario baseline. Value is identical to `state`, so reading
+                    // it back in deriveDisplayOutcome is a no-op until WS4.
+                    if (state.objective_status) {
+                        ws.derived = ws.derived || {};
+                        ws.derived.objective_status = state.objective_status;
+                        if (ws.objectives && ws.objectives[0]) {
+                            ws.objectives[0].status = state.objective_status;
+                        }
+                    }
+                    lastWorldState = ws;
+                }
+            } catch (_) { lastWorldState = null; }
+        }
+
         if (scenario && scenario !== scenarioRef) {
             // Defensive: keep the per-step movement model in sync with whatever
             // scenario the caller is replaying (matters when MC trials reuse
@@ -6326,5 +6365,9 @@
         // Cesium 3D sync — last state/scenario from applyState()
         get _lastState()    { return lastAppliedState; },
         get _lastScenario() { return lastAppliedScenario; },
+        // PR-WS2: live World State snapshot for the current step (read-only).
+        // The first live consumer of WS1 on the client; exposed for tests, 3D
+        // parity, and the future formula layer. Null until the first applyState.
+        getWorldState: () => lastWorldState,
     };
 })();

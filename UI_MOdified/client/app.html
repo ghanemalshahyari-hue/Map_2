@@ -4782,7 +4782,12 @@
     <script src="shell/detection.js?v=1"></script>
     <script src="shell/engagement.js?v=1"></script>
     <script src="shell/world-state-db.js?v=1"></script>
-    <script src="wargame/adjudicator-map.js?v=41"></script>
+    <!-- PR-WS2: World State projection (WS1). Loaded before the map so the
+         adjudicator can derive a live World State snapshot per step and route
+         objective status through it (parity-proof read seam — World State
+         mirrors `state` today; WS4 inverts ownership). -->
+    <script src="shell/world-state.js?v=1"></script>
+    <script src="wargame/adjudicator-map.js?v=42"></script>
     <script src="wargame/cesium-view.js?v=3"></script>
     <script src="dem-layer.js?v=1"></script>
     <script src="wargame/adjudicator-hud.js?v=22"></script>

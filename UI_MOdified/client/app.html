@@ -4941,7 +4941,7 @@
          P0 authoring schema (draft/working-copy engine) must load before edit-mode.
          Edits stay in-memory; commit/journal boundary untouched. -->
     <script src="shell/scenario-authoring-schema.js?v=1"></script>
-    <script src="shell/scenario-edit-mode.js?v=5"></script>
+    <script src="shell/scenario-edit-mode.js?v=6"></script>
     <style>
         .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
@@ -5028,24 +5028,40 @@
         .sw-forces-detail-empty { color:#8d949e; font-style:italic; padding:14px 8px; font-size:12px; }
         .sw-forces-pick-banner { background:#22324d; color:#cfd4dc; padding:4px 8px;
             border-radius:4px; font-size:11px; margin-top:6px; }
-        /* Slice 2D-1M — Wide editor when Edit Mode is ON.
-           The workspace panel normally inherits ~280px from the sidebar; the
-           stepped layout (rail + content) needs real horizontal space or the
-           card titles wrap 9 lines and the inputs get clipped (user feedback).
-           When Edit Mode is ON, the panel expands over the map to ~900px so
-           the two-pane editor has room. The map stays visible to the left for
-           Pick-on-map flow. */
+        /* Slice 2D-1M (revised) — Edit Mode opens a full-area OVERLAY.
+           Previous attempt (width: min(900px, 75vw)) was still constrained by
+           the parent sidebar AND by the viewport width — on a sub-1000px screen
+           the panel only reached ~615 px and the right edge was still clipped
+           (user screenshot 2026-06-02). Real fix: detach the panel from its
+           sidebar position when Edit Mode is ON and pin it as a fixed overlay
+           that spans from just past the tool rail to the right edge of the
+           viewport. Map sits underneath; Pick-on-map shrinks the overlay
+           temporarily so the operator can click the map. */
         #scenario-workspace-panel.sw-editmode-wide {
-            width: min(900px, 75vw) !important;
-            max-width: 75vw !important;
-            position: relative;
+            position: fixed !important;
+            left: var(--rail-w, 72px) !important;
+            top: var(--header-h, 52px) !important;
+            right: 8px !important;
+            bottom: 8px !important;
+            width: auto !important;
+            max-width: none !important;
+            height: auto !important;
+            max-height: none !important;
             z-index: 600;
+            background: var(--panel-bg, rgba(15, 23, 42, 0.98));
+            border: 1px solid var(--panel-border, rgba(148,163,184,0.2));
+            border-radius: var(--radius, 12px);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.55);
+            padding: 12px 14px;
+            overflow-y: auto;
         }
         #scenario-workspace-panel.sw-editmode-wide .sw-step-rail {
-            flex: 0 0 180px;
+            flex: 0 0 200px;
+            max-height: calc(100vh - var(--header-h, 52px) - 200px);
         }
         #scenario-workspace-panel.sw-editmode-wide .sw-step-content {
-            min-width: 0; /* allow inner flex children to shrink instead of overflow */
+            min-width: 0;       /* allow inner flex children to shrink instead of overflow */
+            max-height: calc(100vh - var(--header-h, 52px) - 200px);
         }
         #scenario-workspace-panel.sw-editmode-wide .sw-card,
         #scenario-workspace-panel.sw-editmode-wide .builder-card {
@@ -5056,9 +5072,15 @@
             word-break: keep-all;
             overflow-wrap: break-word;
         }
+        /* When Edit Mode is ON, hide the rest of the workspace panel's
+           read-only content (briefing, summary, etc.) so the operator sees
+           only the editor. They're back when Edit Mode is OFF. */
+        #scenario-workspace-panel.sw-editmode-wide > :not(#sw-editmode-bar):not(#sw-editmode-editor) {
+            display: none !important;
+        }
         /* The two-column field rows ("dt | dd") were laid out for a wide pane —
            when the panel is the default narrow width (Edit Mode OFF, read-only
-           strip), make the cards usable too. Stack each row's dt above dd. */
+           strip), stack each row's dt above dd. */
         #scenario-workspace-panel:not(.sw-editmode-wide) .sw-edit-row {
             display: flex; flex-direction: column; gap: 2px;
         }

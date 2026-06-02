@@ -47,6 +47,16 @@
     // for a 6-item static enum; if the server enum changes, update both.
     var PHASES_ENUM = ['PRE-H', 'PHASE 1', 'PHASE 2A', 'PHASE 2B', 'PHASE 3', 'RESOLUTION'];
 
+    // Slice 2D-1J: "Editing: {name}" indicator state machine. Tells the
+    // operator which scenario they're authoring and where it lives.
+    //   'unsaved'    — yellow: never saved (just created / loaded into Edit Mode)
+    //   'in-memory'  — blue:   Save draft pressed (window.RmoozScenario updated)
+    //   'on-disk'    — blue+:  Save As JSON downloaded
+    //   'on-server'  — green:  POST /api/scenarios returned 200
+    // ANY field edit drops us back to 'unsaved' (the on-screen state diverges
+    // from the saved snapshot).
+    var _savedState = 'unsaved';
+
     // Slice 2D: Forces step state (scale-aware tree + detail pane).
     // The old Slice 2B flat list rendered ~1198 inputs on wargame3 (153 units).
     // New: tree groups units by side → echelon; only ONE unit's full editor
@@ -272,7 +282,7 @@
     }
     function textInput(value, onInput) {
         var i = el('input', { type: 'text', class: 'sw-edit-input', value: value == null ? '' : String(value) });
-        i.addEventListener('input', function () { onInput(i.value); });
+        i.addEventListener('input', function () { onInput(i.value); _markDirty(); });
         return i;
     }
     function selectInput(options, value, onChange) {
@@ -282,7 +292,7 @@
             if (o === value) opt.setAttribute('selected', 'selected');
             s.appendChild(opt);
         });
-        s.addEventListener('change', function () { onChange(s.value); });
+        s.addEventListener('change', function () { onChange(s.value); _markDirty(); });
         return s;
     }
     function numberInput(value, onInput, opts) {
@@ -297,20 +307,21 @@
         if (opts.max != null) i.setAttribute('max', String(opts.max));
         i.addEventListener('input', function () {
             var raw = i.value;
-            if (raw === '' || raw == null) { onInput(null); return; }
+            if (raw === '' || raw == null) { onInput(null); _markDirty(); return; }
             var n = Number(raw);
-            if (!isFinite(n)) { onInput(null); return; }
+            if (!isFinite(n)) { onInput(null); _markDirty(); return; }
             if (opts.integer) n = Math.trunc(n);
             if (opts.min != null && n < opts.min) n = opts.min;
             if (opts.max != null && n > opts.max) n = opts.max;
             onInput(n);
+            _markDirty();
         });
         return i;
     }
     function textArea(value, rows, onChange) {
         var t = el('textarea', { class: 'sw-edit-input', rows: String(rows || 4) });
         t.value = value == null ? '' : String(value);
-        t.addEventListener('input', function () { onChange(t.value); });
+        t.addEventListener('input', function () { onChange(t.value); _markDirty(); });
         return t;
     }
 
@@ -954,6 +965,10 @@
 
     /* ---- Slice 2C: factored existing card renderers ---------------------- */
     function renderMetadataCard(host) {
+        // Slice 2D-1J: Name + Label edits must also live-refresh the indicator
+        // chip in the bar (the chip displays the current name + label as a title).
+        // _markDirty() is already called by textInput; we additionally renderIndicator
+        // so the visible chip text tracks keystrokes.
         var card = el('div', { class: 'builder-card sw-card' }, [
             el('div', { class: 'builder-card-header' }, [
                 el('span', { class: 'builder-card-title',
@@ -961,9 +976,9 @@
             ]),
             el('dl', { class: 'sw-kv' }, [
                 fieldRow('Name / الاسم (filename — must equal on-disk name)',
-                    textInput(_draft.name, function (v) { _draft.name = v; })),
+                    textInput(_draft.name, function (v) { _draft.name = v; renderIndicator(); })),
                 fieldRow('Label / التسمية',
-                    textInput(_draft.scenario_label, function (v) { _draft.scenario_label = v; })),
+                    textInput(_draft.scenario_label, function (v) { _draft.scenario_label = v; renderIndicator(); })),
                 fieldRow('Scenario ID',
                     textInput(_draft.scenario_id, function (v) { _draft.scenario_id = v; })),
                 // CMO Step 1: Database / version. RMOOZ has no unit DB, so this
@@ -1253,11 +1268,30 @@
         var nameInp  = el('input', { type: 'text', class: 'sw-edit-input', placeholder: 'e.g. my-scenario' });
         var labelInp = el('input', { type: 'text', class: 'sw-edit-input', placeholder: 'Human-readable title' });
         var labelAr  = el('input', { type: 'text', class: 'sw-edit-input', placeholder: 'العنوان بالعربية', dir: 'rtl' });
+        // Slice 2D-1K: base-template picker is now a live list. Defaults to
+        // '(empty)' so the form is usable even if the API call fails.
         var baseSel  = el('select', { class: 'sw-edit-input' });
-        ['empty', 'sahil-corridor-sample'].forEach(function (k) {
-            var o = el('option', { value: k, text: k });
-            baseSel.appendChild(o);
-        });
+        var emptyOpt = el('option', { value: '__empty__', text: '(empty)' });
+        baseSel.appendChild(emptyOpt);
+        var sahilOpt = el('option', { value: 'sahil-corridor-sample', text: 'sahil-corridor-sample (playbook example)' });
+        baseSel.appendChild(sahilOpt);
+        // Fetch the list of saved scenarios — appears as a group below.
+        // No blocking; if the fetch fails the form still works with (empty).
+        (function () {
+            try {
+                fetch('/api/ai/scenarios', { credentials: 'include' })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (j) {
+                        if (!j || !Array.isArray(j.scenarios) || !j.scenarios.length) return;
+                        var grp = el('optgroup', { label: 'Start from existing saved scenario:' });
+                        j.scenarios.forEach(function (name) {
+                            grp.appendChild(el('option', { value: 'saved:' + name, text: name }));
+                        });
+                        baseSel.appendChild(grp);
+                    })
+                    .catch(function () { /* silent — (empty) still works */ });
+            } catch (_) {}
+        })();
         var cancelBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Cancel' });
         var createBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary', text: 'Create' });
         var statusSpan = el('span', { class: 'sw-edit-status', text: '' });
@@ -1282,37 +1316,71 @@
                 .replace(/[^a-z0-9._-]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 64);
         }
         cancelBtn.addEventListener('click', close);
-        createBtn.addEventListener('click', function () {
-            var name = sanitiseName(nameInp.value);
-            if (!name) { statusSpan.textContent = 'Name required'; statusSpan.style.color = '#d6332e'; return; }
-            // Build a fresh draft. The base template option is informational
-            // for now — both produce an empty draft via the standard template
-            // (the "sahil-corridor-sample" option is hinted for a future
-            // template loader; not yet implemented to keep the slice small).
-            var fresh;
-            if (window.AppScenarioAuthoring &&
-                typeof window.AppScenarioAuthoring.buildStandardScenarioAuthoringTemplate === 'function') {
-                fresh = clone(window.AppScenarioAuthoring.buildStandardScenarioAuthoringTemplate());
-            } else {
-                fresh = { scenario_label: '', steps: [] };
-            }
+
+        function applyDraftAndOpen(name, fresh) {
             fresh.name = name;
-            fresh.scenario_label = labelInp.value || name;
+            fresh.scenario_label = labelInp.value || fresh.scenario_label || name;
             if (labelAr.value) fresh.scenario_label_ar = labelAr.value;
             if (!fresh.sides || !fresh.sides.length) fresh.sides = defaultSides();
             if (!fresh.postures) fresh.postures = defaultPostures();
             fillGeographyDefaults(fresh);
             fillForcesDefaults(fresh);
-            fresh.schema_variant = 'authored';
-            fresh.model_version  = 'authored-v1';
+            if (!fresh.schema_variant) fresh.schema_variant = 'authored';
+            if (!fresh.model_version)  fresh.model_version  = 'authored-v1';
             fresh.authoring_status = 'draft';
             _draft = fresh;
             _activeStep = 0;
+            _savedState = 'unsaved'; // a freshly-created/loaded draft is unsaved
             close();
-            // Re-render the editor with the fresh draft on Step 1.
             renderEditor();
+            renderIndicator();
             try { logOperator('New scenario draft created (in-memory only)', { name: name }); } catch (_) {}
+        }
+
+        createBtn.addEventListener('click', function () {
+            var name = sanitiseName(nameInp.value);
+            if (!name) { statusSpan.textContent = 'Name required'; statusSpan.style.color = '#d6332e'; return; }
+
+            var baseSelected = baseSel.value;
+            // 2D-1K: if the user picked "Start from existing saved scenario",
+            // fetch it and seed the draft from that. The new name is independent
+            // (so we don't accidentally overwrite the source). Operator must
+            // click Save to server to persist under the new name.
+            if (typeof baseSelected === 'string' && baseSelected.indexOf('saved:') === 0) {
+                var src = baseSelected.slice('saved:'.length);
+                statusSpan.textContent = 'Loading "' + src + '" …';
+                statusSpan.style.color = '#1a7f37';
+                fetch('/api/ai/scenario/' + encodeURIComponent(src), { credentials: 'include' })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (j) {
+                        if (!j || !j.scenario) {
+                            statusSpan.textContent = 'Could not load "' + src + '" — falling back to empty.';
+                            statusSpan.style.color = '#d6332e';
+                            applyDraftAndOpen(name, buildEmptyTemplate());
+                            return;
+                        }
+                        applyDraftAndOpen(name, clone(j.scenario));
+                    })
+                    .catch(function () {
+                        statusSpan.textContent = 'Network error — using empty template.';
+                        statusSpan.style.color = '#d6332e';
+                        applyDraftAndOpen(name, buildEmptyTemplate());
+                    });
+                return;
+            }
+            // (empty) or sahil-corridor-sample → standard template (the sample
+            // option is reserved for a future template loader and currently
+            // produces the same empty draft).
+            applyDraftAndOpen(name, buildEmptyTemplate());
         });
+
+        function buildEmptyTemplate() {
+            if (window.AppScenarioAuthoring &&
+                typeof window.AppScenarioAuthoring.buildStandardScenarioAuthoringTemplate === 'function') {
+                return clone(window.AppScenarioAuthoring.buildStandardScenarioAuthoringTemplate());
+            }
+            return { scenario_label: '', steps: [] };
+        }
 
         host.appendChild(form);
     }
@@ -1385,6 +1453,7 @@
             setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
             setStatus('Downloaded ' + a.download, false);
             logOperator('Scenario draft downloaded as JSON', { name: _draft.name || '' });
+            _setSavedState('on-disk');
         } catch (e) {
             setStatus('Download failed: ' + (e && e.message), true);
         }
@@ -1409,6 +1478,7 @@
             if (resp.ok) {
                 setStatus('Saved to server as "' + resp.body.name + '" (active).', false);
                 logOperator('Scenario saved to server', { name: resp.body.name });
+                _setSavedState('on-server');
                 return;
             }
             if (resp.status === 409) {
@@ -1422,6 +1492,7 @@
                           if (resp2.ok) {
                               setStatus('Overwritten on server as "' + resp2.body.name + '".', false);
                               logOperator('Scenario overwritten on server', { name: resp2.body.name });
+                              _setSavedState('on-server');
                           } else {
                               setStatus('Server rejected overwrite: ' + (resp2.body && resp2.body.error || resp2.status), true);
                           }
@@ -1539,6 +1610,7 @@
         logOperator('Scenario draft edited (metadata/sides/posture/geography) — in-memory only, not committed',
             { label: _draft.scenario_label || '' });
         setStatus('Saved to working copy (not committed). Commit stays gated.', false);
+        _setSavedState('in-memory');
     }
 
     function copyJson() {
@@ -1552,6 +1624,38 @@
         } catch (_) { console.log(txt); setStatus('See console for draft JSON.', true); }
     }
 
+    /* ---- Slice 2D-1J: indicator + saved-state badge ---------------------- */
+    function _setSavedState(state) {
+        // No-op when already in this state — avoids a DOM patch on every keystroke
+        // (input helpers call _setSavedState('unsaved') on every change).
+        if (_savedState === state) return;
+        _savedState = state;
+        renderIndicator();
+    }
+    // Lightweight hook input helpers call after each onInput to mark dirty.
+    // Cheap because _setSavedState short-circuits when already 'unsaved'.
+    function _markDirty() { _setSavedState('unsaved'); }
+    function renderIndicator() {
+        var ind = document.getElementById('sw-editmode-indicator');
+        if (!ind) return;
+        if (!_on || !_draft) { ind.style.display = 'none'; ind.innerHTML = ''; return; }
+        ind.style.display = '';
+        var name = _draft.name || '(unnamed)';
+        var label = _draft.scenario_label || '';
+        var badgeText, badgeClass;
+        switch (_savedState) {
+            case 'in-memory': badgeText = 'saved in-memory'; badgeClass = 'in-memory'; break;
+            case 'on-disk':   badgeText = 'saved on disk';   badgeClass = 'on-disk';   break;
+            case 'on-server': badgeText = 'saved on server'; badgeClass = 'on-server'; break;
+            default:          badgeText = 'unsaved';         badgeClass = 'unsaved';   break;
+        }
+        ind.innerHTML = '';
+        ind.appendChild(el('span', { class: 'sw-editmode-indicator-label', text: 'Editing:' }));
+        ind.appendChild(el('span', { class: 'sw-editmode-indicator-name', text: name,
+            title: label ? (name + ' — ' + label) : name }));
+        ind.appendChild(el('span', { class: 'sw-editmode-badge ' + badgeClass, text: badgeText }));
+    }
+
     /* ---- toggle / mount --------------------------------------------------- */
     function setMode(on) {
         _on = !!on;
@@ -1563,14 +1667,17 @@
 
         if (_on) {
             _draft = buildDraft();
+            _savedState = 'unsaved';  // 2D-1J: fresh draft starts unsaved
             if (strip)  strip.style.display = 'none';
             if (editor) { editor.hidden = false; renderEditor(); }
             if (btn) btn.textContent = 'Exit edit mode / إنهاء التحرير';
+            renderIndicator();
             logOperator('Edit mode ON');
         } else {
             if (strip)  strip.style.display = '';
             if (editor) editor.hidden = true;
             if (btn) btn.textContent = 'Edit mode / تحرير';
+            renderIndicator();
             logOperator('Edit mode OFF');
         }
     }
@@ -1599,7 +1706,12 @@
             renderNewScenarioForm(document.getElementById(BAR_ID));
         });
 
-        var bar = el('div', { id: BAR_ID, class: 'sw-editmode-bar' }, [btn, newBtn]);
+        // Slice 2D-1J: "Editing: {name}" indicator + saved-state badge.
+        // Mounted but empty until Edit Mode is ON.
+        var indicator = el('span', { id: 'sw-editmode-indicator', class: 'sw-editmode-indicator' });
+        indicator.style.display = 'none';
+
+        var bar = el('div', { id: BAR_ID, class: 'sw-editmode-bar' }, [btn, newBtn, indicator]);
 
         var editor = el('div', { id: EDITOR_ID, class: 'sw-editmode-editor', hidden: 'hidden' });
 

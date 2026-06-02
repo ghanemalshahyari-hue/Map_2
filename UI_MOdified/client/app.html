@@ -4941,7 +4941,7 @@
          P0 authoring schema (draft/working-copy engine) must load before edit-mode.
          Edits stay in-memory; commit/journal boundary untouched. -->
     <script src="shell/scenario-authoring-schema.js?v=1"></script>
-    <script src="shell/scenario-edit-mode.js?v=3"></script>
+    <script src="shell/scenario-edit-mode.js?v=4"></script>
     <style>
         .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
@@ -5028,6 +5028,20 @@
         .sw-forces-detail-empty { color:#8d949e; font-style:italic; padding:14px 8px; font-size:12px; }
         .sw-forces-pick-banner { background:#22324d; color:#cfd4dc; padding:4px 8px;
             border-radius:4px; font-size:11px; margin-top:6px; }
+        /* Slice 2D-1J — "Editing: {name}" indicator + saved-state badge */
+        .sw-editmode-indicator { display:inline-flex; align-items:center; gap:6px;
+            margin-left:8px; padding:3px 8px; border-radius:4px; background:#1c1f24;
+            border:1px solid #3a3f47; font-size:12px; color:#cfd4dc; }
+        .sw-editmode-indicator-label { color:#8d949e; font-size:11px; }
+        .sw-editmode-indicator-name { font-family:ui-monospace,Menlo,Consolas,monospace;
+            font-weight:600; color:#e8eaed; max-width:240px; overflow:hidden;
+            text-overflow:ellipsis; white-space:nowrap; }
+        .sw-editmode-badge { display:inline-block; padding:1px 6px; border-radius:3px;
+            font-size:10.5px; font-weight:600; letter-spacing:.02em; }
+        .sw-editmode-badge.unsaved   { background:#c9a227; color:#1c1f24; }
+        .sw-editmode-badge.in-memory { background:#3a76c2; color:#fff; }
+        .sw-editmode-badge.on-server { background:#1a7f37; color:#fff; }
+        .sw-editmode-badge.on-disk   { background:#2f6fed; color:#fff; }
     </style>
     <script>
         // Mount Edit Mode once the DOM (workspace panel) is ready.

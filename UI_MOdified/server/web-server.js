@@ -38,6 +38,7 @@ try { fs.mkdirSync(DATA_DIR,   { recursive: true }); } catch {}
 try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch {}
 
 const appData = require('./app-data');
+const demService   = require('./dem-service');
 const ollama       = require('./ai/ollama-client');
 const aiProvider   = require('./ai/ai-provider');
 const redTeam      = require('./ai/red-team-agent');
@@ -548,11 +549,68 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    // ── DEM (Libya elevation) endpoints ─────────────────────────────────────
+    // GET /api/dem/info            → coverage + pixel scale metadata
+    // GET /api/dem/elevation?lon=&lat= → elevation in metres at a point
+    // GET /api/dem/tile/Z/X/Y.png → 256×256 hillshade+colormap tile
+    if (pathname === '/api/dem/info' && req.method === 'GET') {
+        sendJson(res, 200, { ...demService.getMeta(), available: demService.isAvailable() });
+        return;
+    }
+    if (pathname === '/api/dem/elevation' && req.method === 'GET') {
+        const lon = parseFloat(url.searchParams.get('lon'));
+        const lat = parseFloat(url.searchParams.get('lat'));
+        if (!isFinite(lon) || !isFinite(lat)) { sendJson(res, 400, { error: 'lon and lat required' }); return; }
+        const elev = demService.getElevation(lon, lat);
+        sendJson(res, 200, { lon, lat, elevation_m: elev, inCoverage: elev !== null });
+        return;
+    }
+    if (pathname.startsWith('/api/dem/tile/') && req.method === 'GET') {
+        const parts = pathname.split('/').slice(4); // ['Z','X','Y.png']
+        const z = parseInt(parts[0], 10);
+        const x = parseInt(parts[1], 10);
+        const y = parseInt((parts[2] || '').replace('.png', ''), 10);
+        if (!isFinite(z) || !isFinite(x) || !isFinite(y)) { res.writeHead(400); res.end(); return; }
+        try {
+            const png = demService.renderTile(z, x, y);
+            if (!png) { res.writeHead(204); res.end(); return; }
+            res.writeHead(200, { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=604800' });
+            res.end(png);
+        } catch (e) {
+            console.error('[dem] tile error:', e.message);
+            res.writeHead(500); res.end();
+        }
+        return;
+    }
+    // GET /api/dem/heights/Z/X/Y → Float32LE heightmap grid (real metres) for
+    // the 3D Cesium terrain provider. 204 when outside coverage (client → flat).
+    if (pathname.startsWith('/api/dem/heights/') && req.method === 'GET') {
+        const parts = pathname.split('/').slice(4); // ['Z','X','Y']
+        const z = parseInt(parts[0], 10);
+        const x = parseInt(parts[1], 10);
+        const y = parseInt(parts[2], 10);
+        const size = parseInt(url.searchParams.get('size'), 10) || 65;
+        if (!isFinite(z) || !isFinite(x) || !isFinite(y)) { res.writeHead(400); res.end(); return; }
+        try {
+            const heights = demService.renderHeights(z, x, y, size);
+            if (!heights) { res.writeHead(204); res.end(); return; }
+            res.writeHead(200, {
+                'Content-Type':  'application/octet-stream',
+                'Cache-Control': 'public, max-age=604800',
+            });
+            res.end(Buffer.from(heights.buffer, heights.byteOffset, heights.byteLength));
+        } catch (e) {
+            console.error('[dem] heights error:', e.message);
+            res.writeHead(500); res.end();
+        }
+        return;
+    }
+
     // List available wargame scenarios. The HUD model/scenario picker uses
     // this to populate its dropdown.
     if (pathname === '/api/ai/scenarios' && req.method === 'GET') {
         try {
-            sendJson(res, 200, { ok: true, scenarios: scenarios.listScenarios(), default: scenarios.DEFAULT_NAME });
+            sendJson(res, 200, { ok: true, scenarios: scenarios.listScenarios(), active: scenarios.getActiveName(), default: scenarios.getActiveName() });
         } catch (e) {
             sendJson(res, 500, { ok: false, error: e.message || String(e) });
         }
@@ -608,6 +666,8 @@ const server = http.createServer((req, res) => {
 
             // Drop the cache so the very next GET re-validates from disk.
             try { scenarios.clearCache(); } catch (_) {}
+            // Record as active so the next HUD boot starts here automatically.
+            scenarios.setActiveName(safeName);
 
             sendJson(res, 200, {
                 ok: true,
@@ -623,6 +683,18 @@ const server = http.createServer((req, res) => {
                         : 400;
             sendJson(res, code, { ok: false, error: e.message || String(e) });
         });
+        return;
+    }
+
+    // Persist the operator's active-scenario selection so the HUD boots into
+    // the same scenario next time, even after a server restart.
+    if (pathname === '/api/scenario/active' && req.method === 'POST') {
+        readJsonBody(req).then((body) => {
+            const name = (body && typeof body.name === 'string') ? body.name.trim() : '';
+            if (!name) { sendJson(res, 400, { ok: false, error: 'name required' }); return; }
+            scenarios.setActiveName(name);
+            sendJson(res, 200, { ok: true, active: name });
+        }).catch((e) => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
         return;
     }
 
@@ -753,6 +825,35 @@ const server = http.createServer((req, res) => {
             // Don't ship producer artifacts on the commit response either.
             const { _producer, ...wire } = r;
             return wire;
+        }).then(r => sendJson(res, 200, r))
+          .catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+
+    // POST /api/sim/decide — DIRECT WS3 decision commit (deterministic engine).
+    //   body:    { scenarioName?, stepIndex?, decisions:[{type,...}] | decision,
+    //              operator_id? | headless:{reason}, runId?, mods? }
+    //   returns: { ok, committed_state (World State), effects, journal_seq,
+    //              prev_state_hash, post_state_hash, run_id }
+    //   Derives World State (WS1+DB1+DET1), applies the operator's WS3
+    //   decision(s) via WS3, and writes durable journal row(s) — the
+    //   deterministic-sim commit path (distinct from the LLM /commit above).
+    if (pathname === '/api/sim/decide' && req.method === 'POST') {
+        readJsonBody(req, { maxBytes: 200_000 }).then(async (body) => {
+            body = body || {};
+            const scenarioName = body.scenarioName || scenarios.DEFAULT_NAME;
+            const scenario = scenarios.loadScenario(scenarioName);
+            return adjudicator.commitDecisions({
+                scenario,
+                scenarioName,
+                stepIndex:   body.stepIndex,
+                decisions:   body.decisions || (body.decision ? [body.decision] : []),
+                operator_id: body.operator_id || null,
+                headless:    body.headless || null,
+                runId:       body.runId || null,
+                mods:        body.mods || null,
+                engineOpts:  body.engineOpts || null,
+            });
         }).then(r => sendJson(res, 200, r))
           .catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
         return;
@@ -1908,8 +2009,9 @@ server.on('error', (err) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-    const base = 'http://localhost:' + PORT;
+    const base = 'http://127.0.0.1:' + PORT;
     console.log('Web server running at ' + base + ' (LAN accessible)');
     console.log('  Open workspace: ' + base + '/app.html');
     console.log('  Landing page:   ' + base + '/');
+    console.log('  Note: if localhost is served by another process on this machine, prefer 127.0.0.1.');
 });

@@ -27,12 +27,13 @@ These were found during the 2026-05-30 deep-dig. The memory notes were true when
 
 > **Update 2026-05-30:** D1 & D2 **reconciled** — verified against code, memory notes updated to RESOLVED. **D3 remains OPEN** pending an owner ruling (it's a locked rule).
 > **Re-verified `11e17b1` 2026-05-31:** D1/D2 still wired (line refs refreshed below); **D3 unchanged — still OPEN**. The P0 authoring foundation (`aec386a`) and the entire Wave-2 W3 presentation suite are client-side render/data only — they stay *inside* the locked boundary and do not touch D3.
+> **D3 RESOLVED 2026-06-01 — owner ruling "full unlock — UI mutates" (minimal-coherent scope).** Operator commit path is now LIVE: `ai-proposal-commit-bridge.js` POSTs `/api/sim/commit` (ACCEPT/REJECT; Hold defers) → durable `data/journal/<run>.jsonl` with `operator_id`. `journal-contract.js` `ALLOWED_MODES` now includes REAL; `boundary-audit-panel.js` re-pointed to the open posture (self-test + violation harness green). Still closed: client scenario mutation, export/download guards, the **separate** `scenario-workspace` live-decision flow. Verified E2E in-browser. `[[feedback_ai_sim_boundary_rules]]`.
 
 | # | Topic | Memory says | Code now does | Where | Action |
 |---|---|---|---|---|---|
 | D1 | Scenario marker selection | markers **don't** emit `rmooz:unit-selected` (deferred until unified selection model) — `[[project_scenario_marker_selection_deferred]]` | Red & Blue markers **do** dispatch `rmooz:unit-selected` on click | `wargame/adjudicator-map.js:1937` (Red), `:2006` (Blue) | ✅ **RECONCILED 2026-05-30** — confirmed wired (consumed by `unit-panel.js:408`); memory updated to RESOLVED. |
 | D2 | BLS drawn on map | per-step `applyState` on step nav still **deferred** (only load half wired in PR-288M) — `[[project_bls_not_drawn_on_map_deferred]]` | per-step `applyState` **fully wired**: `bls_status` colors semicircles + breach badge on STAGED→contested; blue-destroyed choreography; red-degraded updates | `wargame/adjudicator-map.js` `applyState()` `bls_status` loop ~`:4608` | ✅ **RECONCILED 2026-05-30** — load (PR-288M) + per-step (`goToStep`→`applyStepProgress`, P4 `5f0b272`) both wired; memory updated to RESOLVED. |
-| D3 | AI/sim commit boundary (**locked rule**) | "commit bridge dry-run only; **no `/api/sim/commit`**, no state mutation, **no journal file**" — `[[feedback_ai_sim_boundary_rules]]` | **Client** commit bridge is still dry-run only (`committed:false`). **Server** has a real `POST /api/sim/commit` that mutates state and appends to `data/journal/<runId>.jsonl` (used by Monte Carlo + the `/api/ai/adjudicate` legacy shim). | client `shell/ai-proposal-commit-bridge.js`; server `web-server.js:749`, `sim/journal.js:146` | **Highest priority.** Is the server commit/journal sanctioned (scoped to headless/MC sim, distinct from the operator UI boundary), or a boundary violation? This is a locked feedback rule — needs explicit owner ruling before any work leans on it. |
+| D3 | AI/sim commit boundary (**was locked**) | _(history)_ "commit bridge dry-run only; no `/api/sim/commit`, no journal file" — `[[feedback_ai_sim_boundary_rules]]` | **Client commit bridge now POSTs `/api/sim/commit`** (ACCEPT/REJECT; Hold defers) → durable `data/journal/<run>.jsonl` with `operator_id`. Server path unchanged (also used by MC + legacy shim). | client `shell/ai-proposal-commit-bridge.js`; server `web-server.js:749`, `sim/journal.js:146` | ✅ **RESOLVED 2026-06-01 — owner ruling "full unlock — UI mutates"** (minimal-coherent). Verified E2E. Client scenario mutation + export/download + the separate `scenario-workspace` live flow stay closed. |
 
 ---
 
@@ -46,8 +47,8 @@ These were found during the 2026-05-30 deep-dig. The memory notes were true when
 | AI Proposal — Bridge | ✅ | `shell/ai-proposal-bridge.js` | Calls `/api/sim/propose` with `mockMode:true`; user opt-in toggle. |
 | AI Proposal — Contract | ✅ | `shell/ai-proposal-contract.js` | Pure validator/normalizer; closed-set enums; strips nested objects. |
 | AI Proposal — Inbox | ✅ | `shell/ai-proposal-inbox.js` | In-memory store (max 50); no persistence. |
-| AI Proposal — Commit Bridge | 🟡 | `shell/ai-proposal-commit-bridge.js` | **Dry-run only** (`dryRun:true, committed:false`). Real commit deferred. See drift **D3**. |
-| AI Proposal — Decision Journal | 🟡 | `shell/ai-proposal-decision-journal.js` | In-memory only (dies on reload); labelled "Decision Records"; max 100. |
+| AI Proposal — Commit Bridge | ✅ | `shell/ai-proposal-commit-bridge.js` | **LIVE commit** (UNLOCKED 2026-06-01): ACCEPT/REJECT → `POST /api/sim/commit` + durable journal w/ `operator_id`; HOLD defers. `getState().mode==='live'`. D3 **resolved**. |
+| AI Proposal — Decision Journal | ✅ | `shell/ai-proposal-decision-journal.js` | In-memory mirror (dies on reload); now records real commits (`committed:true` / `#seq` / "Live"); durable record is the server journal. Max 100. |
 | Boundary Audit Panel | ✅ | `shell/boundary-audit-panel.js` | Read-only mirror of 9 safety boundaries; reads 13 `AppShell*` bridges. Highest coupling by design. |
 | Journal Contract | 🟡 | `shell/journal-contract.js` | Pure per-entry validator; `DRY_RUN` mode only (REAL rejected). No persistence. |
 | Journal Draft Preview | 🟡 | `shell/journal-draft-preview.js` | Read-only render of what *would* be written. No file write. |
@@ -84,7 +85,13 @@ These were found during the 2026-05-30 deep-dig. The memory notes were true when
 | Engagement legend + formation guide | ✅ | same | On-map legend for engagement-arc colors/arrowheads + a formation guide overlay. Test `test-an3-arrowheads-legend.js` (⚠️ committed but has uncommitted edits in the working tree). (`7f36574`) |
 | Symbol scaling + formation hover-peek | ✅ | same (`setFormationPeek` :862) | Echelon-scaled unit symbols + hover to "peek" (temporarily expand) a rolled-up formation. Tests 18/18 (`test-unit-scaling-hover.js`). (`4da9a41`) |
 | SIDC family-symbol resolver (SYM2) | ✅ | same | Remaps the 36 W3 units whose specific child SIDC entity codes milsymbol 2.0.0 rejects → their canonical parent family symbol (naval / air-defense / etc.), so they render a proper glyph instead of a generic diamond/square. Honest category-level only. Tests 21/21 (`test-sym2-unit-symbol-resolver.js`); root-cause audit `docs/unit-symbol-fidelity-audit.md` (SYM1, 13/13). (`bc0e861`) |
-| Engagement mission graphics (MG1) | ✅ | same (`renderEngagementMissionGraphics` :3309) | Renders each step's `engagement_arcs` as proper APP-6 tactical **mission graphics** (Attack / Counter-attack chevrons, side-coloured) in place of plain arc lines. Wired into `applyState` (:4629), `applyStepProgress` (:5063), and a zoomend re-render (:1637, pixel-sized icons). **Reuses the operator's TMG icon builder** (`getTmgIconOptions`, app.js) — shared graphics, *not* a second renderer; `#mission-graphic-assist` panel in app.js. Tests 27/27 (`test-mg1-mission-graphics.js`). (`22d576e`) |
+| Engagement mission graphics (MG1) | ✅ | same (`renderEngagementMissionGraphics`) | Renders each step's `engagement_arcs` as APP-6-style **mission graphics**: **ONE side-coloured axis arrow per side** (centroid of all actor→target arcs — Red "Axis of attack", Blue "Counterattack axis"), built via the shared `createManeuverArrowPolygon` (polyline + `makeArrowhead` fallback). Wired into `applyState`, `applyStepProgress`, and a zoomend re-render. **2026-06-01: made GLOBAL** — the engagement animation (mission graphics + salvo launches) is now gated on **DATA** (`scenarioHasEngagementArcs`), not the `w3-rich` tag; any scenario carrying `engagement_arcs[]` animates, and `updateAttackArrows` defers its static chevrons to the animated path on a data basis. Owner ruling: animations are global (follow CMO model). Tests reconciled to this grouped renderer: `test-pr-mg1-grouped.js` (27/27) + `test-mg1-mission-graphics.js` (27/27). *(Note: tender-noether's old TMG-bridge variant — `buildReadonlyTmgMarker`/`getTmgIconOptions` — was dropped in the merge; that app.js bridge still exists but is no longer the MG1 renderer.)* |
+| Cesium 3D globe view | ✅ | `wargame/cesium-view.js` (~570 L) | Parallel 3D renderer to the 2D Leaflet map (CesiumJS 1.116, lazy-loaded from CDN on first toggle). `window.AppCesiumView` API: `drawScenario`/`applyState`/`clearScenario`/`setVisible`/`toggle`/`enterPlaceMode`/`loadCesiumAssets`/`isVisible`. Unit billboards (milsymbol SIDC), altitude-by-domain, parabolic engagement arcs + salvo animation, step-sync. Driven by `adjudicator-map.js` via `window.AppCesiumView.applyState(...)` (synced only when 3D visible, :5423) reading `_lastState`/`_lastScenario` getters (:5858). Toggled by `adjudicator-hud.js` `toggle3DGlobe()` (:824, `#wg-adj-3d-btn`). **Keep in sync with 2D map changes — `[[feedback_keep_cesium_3d_in_sync]]`.** From `claude/tender-noether-123cf0`, preserved in the 2026-06-01 consolidation. |
+| DEM-backed 3D terrain | ✅ | `wargame/cesium-view.js` (`makeTerrainProvider`) | `CustomHeightmapTerrainProvider` (WebMercator tiling) fetches real Libya relief from `/api/dem/heights/{z}/{x}/{y}`; `scene.verticalExaggeration = 1.6`. **Graceful flat fallback** if DEM/network absent (zero regression — degrades to prior ellipsoid globe). Visual verification still pending (needs `libya_demx5.tif` + Cesium CDN). |
+| DEM 2D overlay layer | ✅ | `client/dem-layer.js` (107 L) | 2D Leaflet hillshade overlay; `window.DemLayer` (`toggle`/`show`/`hide`/`setOpacity`/`queryElevation`/`fetchMeta`). Wired to `#dem-toggle-btn` ("Terrain") + `#dem-opacity-slider` in the adjudicator HUD overlay. |
+| Coverage / threat rings (P1, CMO-style) | ✅ | `wargame/adjudicator-map.js` (`coverageRingRadiiKm`, `renderCoverageRings`) + `cesium-view.js` (`renderCoverageRings`) | **2026-06-01.** Per-unit sensor-coverage (dashed, no fill) + weapon-threat (solid, faint fill) rings. **Radii come from the SAME range model the sim uses — the RMOOZ DB-Lite**: `shell/detection.js` `sensor_class[].ref_range_nm` + `shell/engagement.js` `weapon_class[].max_range_nm`, read live off `window.AppDetection`/`window.AppEngagement` (those two modules are now loaded in `app.html` before the map; small in-sync fallback mirror for Node tests). Resolution order: explicit km on the unit (`sensor_range_km`/`weapon_range_km`/`threat_range_km`) → declared `sensors[]`/`weapons[]` components (DB by class) → **the committed DB-Lite capability catalog** (`shell/world-state-db.js` → `AppWorldStateDB.enrichUnit`, now loaded in `app.html` before the map) classifies role/domain → a `sensors[]`/`weapons[]` profile (`classifyKind`: air_defense / naval_combatant / ground_maneuver / air_unit / ew_site / generic), then the DB lookup applies (km is the DB's, nm→km ×1.852, no invented numbers). `enrichUnit` **never overwrites authored components**, so a unit's own sensors/weapons still win. This is the SAME catalog the detection/engagement engines use — **no parallel `RING_ROLE_CLASS` table in the renderer** (deleted 2026-06-01). Tooltip tags the resolved DB class (e.g. `[long_range_sam]`). `generic`/unclassifiable units draw nothing (no fabrication). **OFF by default**, toggled via `#wg-adj-rings-btn` → `window.AppAdjudicatorMap.{toggle,set,isVisible}CoverageRings`; dedicated non-interactive pane (z 415); wired into `applyStepProgress`; skips not-appeared + destroyed units. **No scenario mutation, no fabricated combat-state fields** (read-only overlay). 3D parity in `cesium-view.js` (ground-clamped ellipses) driven by the 2D toggle + 2D DB lookup as the single source of truth (`[[feedback_keep_cesium_3d_in_sync]]`). Tests 41/41 (`test-coverage-rings.js`, requires the real DB1 catalog + a guard that the fallback range mirror equals the live DB). The old hardcoded `RED_405EW` EW halo was generalized to all EW/SIGINT emitters (`findEwEmitters`). *(Two earlier drafts retired: invented domain/role/echelon estimates → DB ranges via a renderer-local role table → the committed DB1 catalog, per owner: "from the DB, not by random" + "use the work already in the repo.")* |
+| Firing-solutions overlay (ENG1 live) | ✅ | `wargame/adjudicator-map.js` (`computeEngagementRecords`, `renderEngagements`, `getEngagements`) + `cesium-view.js` (`renderEngagements`) | **2026-06-01.** Wires the previously-orphaned **ENG1** engine (`shell/engagement.js` `computeEngagements`) into the live map so the operator sees **who currently has a valid shot at whom** — a detection-gated, WRA/range/magazine/fire-control-gated firing picture that shifts as units move. Reuses the SAME enriched units + contacts the DET1 overlay feeds (`AppWorldStateDB.enrichUnit` → `AppDetection.computeContacts`), then runs `AppEngagement.computeEngagements`. Draws a shooter→target dotted line per **`engaged`** candidate, coloured by the shooting side (blue/red), weight ∝ Pk; tooltip tags weapon class · Pk% · salvo · range. The full record set (incl. `blocked` + `reason`: out_of_range / weapons_hold / winchester / no_fire_control_channel) is available via `getEngagements(state)` for diagnostics/AI. **COMPUTED firing solutions — distinct from the scenario's authored `engagement_arcs`** (adjudicated kill outcomes drawn elsewhere). **OFF by default**, toggled via `#wg-adj-eng-btn` → `window.AppAdjudicatorMap.{toggle,set,isVisible,get}Engagements`; dedicated non-interactive pane `rmoozEngagementsPane` (z 425, below contacts/above rings); wired into `applyStepProgress` after the contacts. **No scenario mutation, no fabricated combat-state fields**; the engine clones magazine state and never mutates input (read-only overlay). 3D parity in `cesium-view.js` (ground-clamped dashed polylines) driven by the 2D toggle + `getEngagements(state)` as the single source of truth (`[[feedback_keep_cesium_3d_in_sync]]`). Tests 28/28 (`test-engagement-overlay.js`: real engine behaviour — in-range→engaged, far→blocked out_of_range, undetected→no record, hold→weapons_hold, own-side/weaponless→none — + read-only/off/no-fabrication source guards). |
+| Detection contacts overlay (DET1 live) | ✅ | `wargame/adjudicator-map.js` (`buildDetectionUnits`, `renderDetectionContacts`, `getDetectionContacts`) + `cesium-view.js` (`renderDetectionContacts`) | **2026-06-01.** Wires the previously-orphaned **DET1** engine (`shell/detection.js` `computeContacts`) into the live map so each side's sensor picture appears/fades as units move each step — the core CMO "feel alive" behaviour. Per step it builds pseudo-units from the live markers' CURRENT positions (`getLatLng` → `[lon,lat]`), enriches each via the **SAME DB1 catalog** the rings use (`AppWorldStateDB.enrichUnit` → `sensors[]`/`rcs_class`), runs `computeContacts`, and draws a small marker on each DETECTED target coloured by the HOLDING side (blue `#3a96d2` / red `#c41e1e`; **firm** = filled solid, **tentative** = dashed hollow); tooltip tags method (radar/esm)·confidence·range·classification. Detection physics (radar-horizon, RCS scaling, EMCON, ESM passive) and ranges are 100% the engine's — nothing invented in the overlay. Skips not-appeared + destroyed units (no ghost contacts); own-side never appears (engine-gated). **OFF by default**, toggled via `#wg-adj-contacts-btn` → `window.AppAdjudicatorMap.{toggle,set,isVisible,get}DetectionContacts`; dedicated non-interactive pane `rmoozContactsPane` (z 430, above rings); wired into `applyStepProgress` after the rings. **No scenario mutation, no fabricated combat-state fields** (read-only overlay). 3D parity in `cesium-view.js` (ground-clamped points) driven by the 2D toggle + `getDetectionContacts(state)` as the single source of truth — Cesium re-runs no detection of its own (`[[feedback_keep_cesium_3d_in_sync]]`). Tests 30/30 (`test-detection-contacts.js`: real engine behaviour + read-only/off-by-default/no-fabrication source guards). First consumer of the orphaned `shell/*` engine layer on the live UI. |
 
 ---
 
@@ -111,6 +118,7 @@ All ✅ done & wired unless noted. Persistence/endpoint in Notes.
 | Schemas/validators (`ai/adjudicator-schema.js`, `adjudicator-validator.js`, `coa-schema.js`, `parametric-baseline.js`) | — | Enums + monotonicity clamp + plausibility; baseline fallback when AI fails. |
 | **Journal (sim boundary)** (`sim/journal.js`) | internal only | **Append-only `data/journal/<runId>.jsonl`, writes to disk** (`fs.appendFileSync`, `:146`). Single durable mutation path. See **D3**. |
 | **Proposal Store** (`sim/proposal-store.js`) | internal only | In-memory, 15-min TTL, single-use `consume()`. Not durable. |
+| **World State Engine seam** (`sim/world-state-engine.js`) | `POST /api/sim/decide` | **NEW 2026-06-01.** Server seam composing WS1+DB1+DET1+ENG1+WS3; requires the framework-free `client/shell/*` engine modules (deliberate shared logic — flagged, not drift). `project`/`transition`/`run`; `adjudicator.commitDecisions()` journals the WS3 transition (`source='deterministic-sim'`). Test: `test-ws-server-engine.js` (10/10). Server-side WS3 wiring = `[[project_ws3_server_wiring]]`. |
 
 ---
 
@@ -146,13 +154,14 @@ All endpoints below are ✅ wired with real handlers. Grouped; see web-server.js
 - **AI generation:** `POST /api/ai/generate`, `/api/ai/chat`.
 - **COA / Red / Blue:** `POST /api/ai/coa`, `/api/ai/red-team/propose`, `/api/ai/blue-team/propose`.
 - **Scenarios:** `GET /api/ai/scenarios`, `/api/ai/scenario/:name`; `POST /api/scenario/import` (GeoJSON, ≤25MB); `GET /api/scenario/events` (SSE reload).
-- **Sim boundary:** `POST /api/sim/propose` (no mutation), `POST /api/sim/commit` (**mutates + journals — see D3**).
+- **Sim boundary:** `POST /api/sim/propose` (no mutation), `POST /api/sim/commit` (LLM-proposal commit — mutates + journals), `POST /api/sim/decide` (**WS3 deterministic decision commit** — derives World State, applies a WS3 decision, journals `source=deterministic-sim`). D3 unlocked 2026-06-01.
 - **Legacy:** `POST /api/ai/adjudicate` (routes through propose+commit; `source='legacy-shim'`).
 - **Feedback/lessons:** `POST /api/ai/feedback`, `GET /api/ai/feedback/summary`; `POST|GET /api/ai/lessons`.
 - **Reports:** `GET /api/ai/report.json`, `/api/ai/report.html`.
 - **Monte Carlo:** `POST /api/ai/mc/start`, `GET /:runId/events` (SSE), `POST /:runId/cancel`, `GET /:runId/aggregate`.
 - **Chat:** messages (`GET|POST /api/chat/messages`), upload, groups (create/join/invite/invite-code/leave/delete + `/mine`), presence, `rooms/members`, identity (`GET|POST /api/chat/me`).
 - **Units (SQLite):** `GET /api/units/tree`, `/:id/children`, `/search`, `/code-check`; `POST /api/units`, `PATCH /api/units/:id`, `POST /api/units/:id/{move,place,unplace,delete,restore}`. All writes require auth.
+- **DEM (Libya terrain):** `GET /api/dem/tile/:z/:x/:y.png` (hillshade+colormap PNG), `GET /api/dem/heights/:z/:x/:y` (octet-stream Float32LE real-metre height grid for Cesium `CustomHeightmapTerrainProvider`; 204 outside coverage, 400 on bad input), `GET /api/dem/info` (coverage + pixel-scale meta), `GET /api/dem/elevation?lon=&lat=` (point elevation) — all served by `server/dem-service.js` (`readRegion` bilinear resampler over `libya_demx5.tif`). Powers both the 2D `dem-layer.js` overlay and the DEM-backed 3D terrain.
 - **Static:** `/`, `/app`, `/app.html`, `*.html|js|css`, `/uploads/*`, `/maps/*`.
 - **Tile server (separate, port 8080, `server/tile-server.js`):** `GET /services/:tileset/:z/:x/:y.:fmt` (MBTiles → PNG/JPEG).
 
@@ -196,6 +205,89 @@ Newer feature work uses **`test-p0*` / `test-an*` / `test-sym*` / `test-unit-*`*
 
 ---
 
+## 🎯 ACTIVE BUILD ROADMAP — RMOOZ Direction Reset (2026-06-01)
+
+> **Charter:** Build RMOOZ as a **2D regional operational command-decision simulator** =
+> *World State + AI Decision Support + Operator Review + Operational Visualization.*
+> **Mimic CMO structurally & behaviorally, NOT by data** — composite platforms (multi-radar /
+> multi-weapon / magazines), continuous movement, detection/engagement rules — using **our own
+> regional, class-based, data-driven values**. No CMO DB copy · no global sim · no DB-size-first ·
+> 2D only · structure-first. See memory [[project_rmooz_direction_reset]].
+> **Every PR must answer:** *"Does this make the scenario feel more alive & responsive to operator
+> decisions?"* and **must not break Wargame 3.**
+
+**Build order (each PR is small, additive, Node-testable; "Follows" = hard dependency):**
+
+| PR | What it contains | Follows | Effort | Alive? |
+|---|---|---|---|---|
+| **WS1** *(in progress)* | **World State projection + component platform model.** `client/shell/world-state.js` (`window.AppWorldState`): `deriveWorldState(scenario,step)` → normalized snapshot (meta/region/objectives/units/contacts/lines/balance/decisions). Units carry component slots `sensors[]`/`weapons[]`/`magazines[]` (empty for W3) + kinematics (`course`/`heading`/`speed_kn`). `applyDecision()` transition seed. Pure, **unwired** — W3 untouched. `test-ws1-world-state.js`. | — (foundation) | M | substrate |
+| **MOVE1** *(done)* | **Realistic continuous movement.** `wargame/movement-playback.js` (`window.AppMovementPlayback`) tweens markers between the renderer's own integer-step positions over a wall-clock clock, wired to the transport bar (`#tl-play`/`#tl-pause`/`#tl-speed` via `rmooz:timeline-ui-action`). **NOTE:** `applyStepProgress` does *not* interpolate unit positions by fractional progress (verified — only integer-step snap), so MOVE1 snapshots step k & k+1 and lerps between them (no flicker, honors W3's computed advance). Additive, calls only public map API, W3 render unchanged. Verified: midpoint between endpoints, play/pause/seed work. **Fixes "movement not like CMO."** *(Follow-up: WS-driven per-unit speed; HUD step-sync.)* | WS1 | M | ✅✅ high |
+| **VIS1** *(done 2026-06-01)* | Map polish. **Ground-truth before building:** on-map **phase label** already lives in the SITREP banner (`adjudicator-map.js` phasePill); **before/after step-compare** already exists (scenario-workspace live→preview strip, `#sw-wt-cmp-strip`) — neither rebuilt. **Timeline event ticks** BUILT: read-only per-step track under `#timeline-strip` — `shell/timeline-event-ticks.js` (`window.AppShellTimelineEventTicks`), one segment/step from `RmoozScenario.scenario.steps` (events = `engagement_arcs`+`affected`), marks event-steps + highlights current step, reconciles via dirty-checked poll + `rmooz:playback-tick`. Visual-only (no scenario/step mutation). Verified in-browser (17 ticks on W3, current-step highlight, no console errors). EN/AR i18n. | WS1 | S–M | ✅ |
+| **WS2** | Wire **one** renderer element (objective status) to read from World State — parity proof before migrating the rest. | WS1 | S | infra |
+| **WS3** *(done)* | **State Transition Engine** — `client/shell/world-state-transition.js` (`window.AppWorldStateTransition.applyDecision`). Closes the loop *World State → decision → new World State → new options*. Decisions: MOVE · SET_EMCON · SET_READINESS · SET_WRA · RESUPPLY · ENGAGE. Composes DET1+ENG1 (ENGAGE is detection-gated, applies attrition + magazine decrement). **Recomputes contacts after every decision** (e.g. EMCON-on reveals contacts) and returns an explainable `effects[]` changelog (feeds DOC1/AI). Pure, Node-testable, **unwired**. 17→15/15 in `test-ws3-transition.js`; "my decision changed the battle" narrative verified. | WS1 (+DET1+ENG1) | M | ✅✅✅ |
+| **WS4** | Migrate remaining renderer reads (units/BLS/balance) onto World State. | WS2+WS3 | M | infra |
+| **DB1** *(done)* | **RMOOZ DB-Lite — role→capability catalog.** `client/shell/world-state-db.js` (`window.AppWorldStateDB`): `enrichWorldState(ws)` attaches `sensors[]`/`weapons[]`/`magazines[]` + `rcs_class`/readiness/supply/doctrine_tags to units **from role+domain** (generic `classifyKind`, data-driven `CAPABILITY_CATALOG` — extend by adding a row; authored components never overwritten). **Lights up the whole stack on real W3: raw=0 contacts → enriched=139**, ENGAGE resolves end-to-end, EMCON-silent drops contacts. Lightweight per direction (no size, no CMO data). Pure, Node-testable, **unwired**. 15/15 in `test-db1-capabilities.js`. | WS1 | M | enables |
+| **DB2** | Class tables: `sensor_class` / `rcs_class` / `weapon_class` / `doctrine_tags` (small, data-driven). | DB1 | S | enables |
+| **DET1** *(done)* | **Detection rule module** — `client/shell/detection.js` (`window.AppDetection.computeContacts`). Public formulas, our values: radar-horizon `1.23(√h₁+√h₂)`, RCS range `R_ref·(σ/σ_ref)^¼`, EMCON gating, ESM passive (1.5× emitter range), LOS hook (DET2). Carries a seeded **DB-Lite** (`DEFAULT_DB`: `sensor_class`/`rcs_class`/domain alt+RCS defaults) — partially satisfies DB1/DB2. Pure, Node-testable. **NOW WIRED into the live UI 2026-06-01** via the "Detection contacts overlay (DET1 live)" row above (`adjudicator-map.js` builds pseudo-units from live markers → enrich (DB1) → `computeContacts` → read-only contact markers; OFF by default, 3D parity). Also feeds the server seam (`sim/world-state-engine.js`). 15/15 in `test-det1-detection.js`; W3 units (no sensors) → 0 contacts (no fabrication). | WS1 (+ seeded DB-Lite) | M | ✅✅✅ |
+| **ENG1** *(done)* | **Engagement rule** — `client/shell/engagement.js` (`window.AppEngagement.computeEngagements`). Chain: detection-gated → WRA/ROE (hold + range mode max/75%/NEZ) → ammo → fire-control channels (point-defense autonomous) → salvo Pk `1−(1−pk)^n` → magazine decrement. Every non-shot has an explainable `reason` (out_of_range / winchester / no_fire_control_channel / weapons_hold) — feeds DOC1/AI. Seeded weapon DB-Lite. Pure, Node-testable. **NOW WIRED into the live UI 2026-06-01** via the "Firing-solutions overlay (ENG1 live)" row above (`adjudicator-map.js`: enriched units + DET1 contacts → `computeEngagements` → read-only shooter→target firing-solution lines; OFF by default, 3D parity). Also feeds the server seam (`sim/world-state-engine.js`). 17/17 in `test-eng1-engagement.js`; W3 (no weapons) → 0 engagements. | DET1 | M–L | ✅✅ |
+| **DOC1** | **Doctrine/ROE layer** — visible & auditable data; AI decisions **cite** doctrine/ROE. | WS3 | M | ✅ |
+| **TASK1** | **Tasking/Mission layer** — structured mission objects + tasking view. | WS3+DOC1 | M | ✅ |
+
+**🌟 North-star loop (the demo we're driving toward):** *start app → choose side → place units →
+draw their paths → place enemy → hit play → watch it unfold on its own* — for a scenario the operator
+**builds in-app**, not just Wargame 3. This works **only** because every rule engine reads from the
+shared World State substrate, and the AUTHOR track below **must emit the same scenario shape WS1
+projects** (units with `kinematics.course`, sides, objectives, components). That contract is what makes
+one engine serve both W3 and hand-built scenarios.
+
+**AUTHOR track (build-your-own; converges with the rule engines for "watch it on its own"):**
+
+| PR | What it contains | Follows | Effort |
+|---|---|---|---|
+| **AUTH1** | Place units on map for a chosen side (reuse Side Picker + ORBAT place) → writes into the working-copy scenario in WS1 shape. | WS1 + edit-mode slice-1 | M |
+| **AUTH2** | **Draw a unit's path** (click waypoints) → `unit.kinematics.course`; MOVE1 then animates it. | WS1 + MOVE1 + AUTH1 | M |
+| **AUTH3** | Place enemy + **Run**: hand the authored scenario to the playback clock so MOVE1/DET1/ENG1 advance it autonomously. | AUTH2 + MOVE1 + DET1 + ENG1 | M |
+
+**📐 Realism rule (current build):** RMOOZ adds **mathematical rules** to feel as real as possible —
+kinematics (MOVE1 ✅), detection (radar-horizon + RCS, DET1), engagement geometry (ENG1). Unit
+class/state values feed these formulas. *"As real as possible"* is a standing goal for every rule PR.
+
+**🔮 FUTURE (deferred — do NOT build unless requested):** **Personnel / maintenance / reliability /
+controlled uncontrolled-events** — equipment can't operate by itself (crew availability, fatigue/shift,
+maintenance status, reliability, supply, optional explainable malfunctions). These become **gates &
+multipliers** on the math rules (reliability × Pd; crew gates firing; fatigue → +OODA; under-maintenance
+= not taskable) and **citable constraints** in AI COA proposals. Controlled/explainable/optional —
+never fake game randomness. Full schema + plug-in points: memory
+[[project_personnel_maintenance_reliability_future]]. Targets: World State · DB-Lite · Readiness/Supply ·
+Doctrine/ROE/AI-explanation.
+
+**Phasing:** WS1→MOVE1→VIS1 finish presentation/movement (priority #1) on the new substrate · WS2–WS4
+build the World State Engine (priority #2) · DB1–DB2 DB-Lite (#3) · DET1/ENG1 the CMO-style mechanics ·
+DOC1 doctrine (#4) · TASK1 tasking (#5). Editable-workspace work ([[project_workspace_editable_owner_ruling]])
+is parked. Each PR ships its own `test-*.js` and a re-verified W3 render.
+
+---
+
+## TODO — CMO→RMOOZ capability roadmap (from `docs/cmo-vs-rmooz-capability-comparison.md`)
+
+Ordered by value÷effort, filtered through RMOOZ's read-only / ground-amphibious / AI-adjudication thesis. Full
+rationale + per-function gap tables in the doc. **Buckets:** CORE = central to RMOOZ, ADJ = adjacent/clear value.
+
+- [ ] **1. Surface Sides + Posture cards** — CORE, XS. `sides`/`postures` are schema-ready + loader-defaulted but discarded at load; add two read-only cards.
+- [ ] **2. Consolidate 3 clock surfaces → 1 + add explicit `scenario_clock` (start_utc/duration_hours)** — CORE, S. Closes a PARTIAL gap *and* a known 3× duplication.
+- [ ] **3. Wire the P0 authoring schema into a guided "scenario readiness" mode** (CMO build-order) — CORE, M. Foundation shipped (`shell/scenario-authoring-schema.js`), just unwired.
+- [ ] **4. Doctrine/ROE/WRA as read-only *data* the adjudicator cites** — CORE, M. Makes AI proposals auditable (core safety story).
+- [ ] **5. Structured read-only "Missions/Tasking" view synthesized from step actors** — CORE, M. ATO-like rollup, not a planning engine.
+- [ ] **6. Minimal unit "capability + readiness/supply" descriptors** — ADJ, S–M. Fills Unit Panel's empty Combat/C2 sections; feeds adjudicator.
+- [ ] **7. Optional per-zone `environment` (weather/sea-state) overrides** — ADJ, M. Weather without a global physics model.
+- [ ] **8. "Why did the adjudicator allow/deny this?" explainer panel** — ADJ, M. Borrows CMO's "why won't it fire" UX for AI-proposal review.
+- [ ] **9. IADS/SAM coverage-envelope overlay (visual only)** — ADJ, M. The one in-domain idea from the sensors engine; no detection sim.
+- [ ] **10. Declarative `events[]` rule object (data, previewable, no code)** — ADJ, M. In-bounds analogue of CMO's Event Editor; never Lua.
+
+**Deliberately NOT building** (out-of-thesis, catalogued in the doc): detection/EW/IADS *simulation*, weapons/engagement firing math, naval/subsurface mechanics, airfield component model, mission-planning engine, Lua execution.
+
+---
+
 ## Pointers to deep docs (don't restate — link)
 
 - `docs/scenario-workspace-consolidation-map.md` — authoritative card/duplication inventory (~150 surfaces).
@@ -206,6 +298,7 @@ Newer feature work uses **`test-p0*` / `test-an*` / `test-sym*` / `test-unit-*`*
 - `docs/scenario-animation-presentation-readiness-audit.md` — P0B audit: what animates per step (W3-rich), coverage gaps (non-W3 = markers+movement only), per-unit fidelity, static-units gap. Re-runnable via `node test-p0b-animation-readiness.js`.
 - `docs/unit-symbol-fidelity-audit.md` — SYM1 audit: 117/153 W3 units render proper milsymbol glyphs, 36 fall back (milsymbol 2.0.0 rejects specific child SIDC entity codes); fix = role/domain→canonical-family remap (SYM2). Re-runnable via `node test-sym1-unit-symbol-fidelity.js`.
 - `docs/pr-166-external-scenario-pack-audit.md` + `docs/scenario-pack-audit/` — CSP51 audit (630 scenarios; don't re-run).
-- `docs/cmo-scenario-editor-application.md` — CMO→RMOOZ workflow mapping.
+- `docs/cmo-scenario-editor-application.md` — CMO→RMOOZ workflow mapping (general concept→status).
+- `docs/cmo-vs-rmooz-capability-comparison.md` — **deep** function-by-function CMO→RMOOZ comparison (mined from 245 tutorial transcripts); source of the CMO→RMOOZ TODO roadmap above.
 - `docs/cmo-pgatcomb-playlist-inventory.md` — CMO tutorial playlist caption-read inventory (research/reference; `e75ff65`).
 - Cross-session "why" lives in the memory dir (`MEMORY.md` index) — this file is the "what", memory is the "why".

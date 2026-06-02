@@ -11,12 +11,13 @@
  *      no IndexedDB, no fetch / XHR.
  *   2. NEVER mutates scenario state. Reads only the closed enums
  *      defined in this file + AppShellEventLog (for logging).
- *   3. PR-14 accepts ONLY `mode: 'DRY_RUN'`. Anything else fails
- *      validation. A future PR that opens real journaling must
- *      expand `ALLOWED_MODES` (an explicit, auditable change).
- *   4. `committed`, `dryRun`, `result.stateMutation`,
- *      `result.journalPersisted`, `result.backendCommitCalled` are
- *      hard-locked: any non-conforming value rejects the entry.
+ *   3. UNLOCKED 2026-06-01: `ALLOWED_MODES` now includes REAL (was
+ *      DRY_RUN only). DRY_RUN entries must still be committed:false /
+ *      dryRun:true; REAL entries are dryRun:false (committed:true on
+ *      accept, false on reject).
+ *   4. `committed`, `dryRun`, and the three `result.*` flags must be
+ *      booleans coherent with `mode` (DRY_RUN ⇔ dryRun:true). A
+ *      non-boolean or a mode/dryRun mismatch rejects the entry.
  *   5. `metadata` is shallow primitives only. Anything else is
  *      dropped at normalization.
  *
@@ -37,9 +38,9 @@
     const TYPE_SET = new Set(Object.values(TYPE));
 
     const MODE = Object.freeze({ DRY_RUN: 'DRY_RUN', REAL: 'REAL' });
-    // PR-14: REAL is in the enum so future PRs can flip the gate by
-    // changing this Set. The validator uses ALLOWED_MODES, not MODE.
-    const ALLOWED_MODES = new Set([MODE.DRY_RUN]);
+    // UNLOCKED 2026-06-01 by owner ruling: REAL is now an allowed mode
+    // (was DRY_RUN only). The validator uses ALLOWED_MODES, not MODE.
+    const ALLOWED_MODES = new Set([MODE.DRY_RUN, MODE.REAL]);
 
     const DECISION = Object.freeze({ ACCEPT: 'ACCEPT', REJECT: 'REJECT', HOLD: 'HOLD' });
     const DECISION_SET = new Set(Object.values(DECISION));
@@ -146,9 +147,13 @@
             errors.push('mode must be DRY_RUN (REAL not allowed in this PR)');
         }
 
-        // committed / dryRun — hard-locked
-        if (input.committed !== false) errors.push('committed must be exactly false');
-        if (input.dryRun    !== true)  errors.push('dryRun must be exactly true');
+        // committed / dryRun — booleans, coherent with mode.
+        // UNLOCKED 2026-06-01 (was: committed:false / dryRun:true only).
+        if (typeof input.committed !== 'boolean') errors.push('committed must be a boolean');
+        if (typeof input.dryRun    !== 'boolean') errors.push('dryRun must be a boolean');
+        if (input.mode === MODE.DRY_RUN && input.dryRun !== true)     errors.push('DRY_RUN entries must have dryRun:true');
+        if (input.mode === MODE.REAL    && input.dryRun !== false)    errors.push('REAL entries must have dryRun:false');
+        if (input.mode === MODE.DRY_RUN && input.committed === true)  errors.push('DRY_RUN entries cannot be committed:true');
 
         // decision + risk — closed sets
         if (!DECISION_SET.has(input.decision)) errors.push('decision must be ACCEPT | REJECT | HOLD');
@@ -176,14 +181,15 @@
             if (proposal.source != null && !isString(proposal.source)) errors.push('proposal.source must be null or string');
         }
 
-        // result — all three flags hard-locked to false
+        // result — three booleans. UNLOCKED 2026-06-01: REAL commits
+        // may set these true (was: hard-locked to false).
         const result = input.result;
         if (!isPlainObject(result)) {
             errors.push('result required (object)');
         } else {
-            if (result.stateMutation       !== false) errors.push('result.stateMutation must be exactly false');
-            if (result.journalPersisted    !== false) errors.push('result.journalPersisted must be exactly false');
-            if (result.backendCommitCalled !== false) errors.push('result.backendCommitCalled must be exactly false');
+            if (typeof result.stateMutation       !== 'boolean') errors.push('result.stateMutation must be a boolean');
+            if (typeof result.journalPersisted    !== 'boolean') errors.push('result.journalPersisted must be a boolean');
+            if (typeof result.backendCommitCalled !== 'boolean') errors.push('result.backendCommitCalled must be a boolean');
         }
 
         // metadata — plain object if provided
@@ -224,14 +230,14 @@
             },
             decision:  input.decision,
             mode:      input.mode,
-            committed: false,
-            dryRun:    true,
+            committed: input.committed === true,
+            dryRun:    input.dryRun === true,
             summary:   clip(input.summary, MAX_SUMMARY_LEN),
             risk:      input.risk,
             result: {
-                stateMutation:       false,
-                journalPersisted:    false,
-                backendCommitCalled: false,
+                stateMutation:       !!(input.result && input.result.stateMutation),
+                journalPersisted:    !!(input.result && input.result.journalPersisted),
+                backendCommitCalled: !!(input.result && input.result.backendCommitCalled),
             },
             metadata: sanitizeMetadata(input.metadata),
         };
@@ -266,15 +272,17 @@
                 source: isString(record.source)     ? record.source     : null,
             },
             decision:  isString(record.decision) ? record.decision.toUpperCase() : '',
-            mode:      MODE.DRY_RUN,
-            committed: false,
-            dryRun:    true,
+            // UNLOCKED 2026-06-01: derive mode/flags from the record so a
+            // real committed decision yields a REAL draft (was DRY_RUN only).
+            mode:      (record.dryRun === false || record.committed === true) ? MODE.REAL : MODE.DRY_RUN,
+            committed: record.committed === true,
+            dryRun:    !(record.dryRun === false || record.committed === true),
             summary:   isString(record.summary) ? record.summary : '',
             risk:      isString(record.risk) ? record.risk.toUpperCase() : 'UNKNOWN',
             result: {
-                stateMutation:       false,
-                journalPersisted:    false,
-                backendCommitCalled: false,
+                stateMutation:       record.committed === true,
+                journalPersisted:    record.committed === true,
+                backendCommitCalled: record.committed === true,
             },
             metadata: { app: 'RMOOZ', schemaVersion: SCHEMA_VERSION, derivedFromRecord: true },
         };

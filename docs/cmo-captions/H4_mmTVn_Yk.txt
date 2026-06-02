@@ -1,0 +1,494 @@
+0.2	hello everyone in today's video we're
+2.0	going to be doing two different things
+3.4	today
+4.0	first of all you might notice that i
+5.7	sound a little different and the reason
+6.9	for that is i did get myself a
+8.3	microphone on a stick hopefully i sound
+9.9	a little better than you normally do
+11.3	yes some of those videos are going to be
+12.6	out of chronological order later on
+14.0	because of all this but that's all right
+15.6	the second thing is i wanted to
+16.6	demonstrate the relationship between wra
+19.5	as well as doctrine settings in order to
+21.8	simulate different types of tactics
+23.8	so let's take a look at our setup here
+25.5	basically what i have said nellis air
+27.1	force base and
+27.8	directly to the northeast of it i have a
+29.4	handy-dandy sports stadium
+30.9	as well as a single radar which is going
+32.3	to be acting as our early warning to the
+34.3	south i'm going to go ahead and turn on
+35.4	god mode real quick
+36.6	you can see that we have a b-52d strata
+38.8	fortress which has been tasked with
+40.2	blowing the stadium up
+41.7	good news though it's just a fake
+43.2	stadium it's been made out of basically
+44.9	plywood
+45.5	so you don't have to worry about anybody
+47.0	being there during that time so anyway
+48.9	we're going to go ahead and intercept
+50.1	this bomber a couple different ways
+51.5	using some different techniques and
+52.9	it'll show you off
+53.9	come to the different ways you can play
+55.1	with it so let's go ahead and get
+56.3	ourselves our interceptor i'm gonna go
+58.2	to aircraft real quick
+59.4	to mix 21 i'll use an mf m just means
+62.4	modernized f just means uprated for
+64.2	those of you guys who are curious as far
+66.1	as what those meetings mean
+67.4	i'll go ahead and grab myself a couple
+68.7	of these r3s missiles
+70.6	so by default let's go ahead and take a
+72.4	look at the doctrine window for this
+73.9	particular aircraft
+75.1	it is designed so that when it engages a
+77.3	particular mission
+78.5	it is going to use the loadout setting
+80.4	so uh what does that mean for us well if
+82.2	we took a look at the mf
+83.6	and we went down to the loadout setting
+86.1	it says return to base after one
+88.0	engagement with
+89.0	with within visual range weapons allow
+91.5	targets of opportunity with air to air
+93.4	guns
+94.2	what does that actually mean that simply
+96.9	says that is going to go ahead and fire
+98.5	off its missiles whatever its wra is set
+100.5	to
+100.8	and then immediately return to base so
+102.7	let's go and take a look at what the wra
+104.2	is actually set to
+105.2	so in this case if i go down to the aa2a
+107.2	it's designed to launch a single round
+109.8	which means for the duration of the
+111.4	engagement theoretically we should only
+113.3	launch a single
+114.0	missile and then we should be returning
+115.7	to base based on this particular thing
+117.8	now there's other things you want to
+119.1	look at too and that is the bvr
+121.0	engagement logic this simply says that
+123.7	if i launch a missile
+124.8	should i follow straight in should i
+127.2	pull to the side
+128.0	and keep my radar in view or should i
+129.5	pull to the side keep my radar view and
+131.0	then turn away from the missile
+132.5	this is only really relevant if you have
+133.8	something like an amram of course you
+135.4	can take crank if possible in this case
+137.0	i'm going to follow missile straight in
+138.7	for the purposes of this demonstration
+141.4	so anyway let's go ahead and give it a
+142.7	try
+143.5	this is going to be just a straight
+145.0	automatic engagement all right there's
+147.0	our b52
+148.6	actually one other thing i want to
+149.7	change real quickly is i'm going to go
+151.1	ahead and set it so that we are
+153.4	ignoring a flight of course looks good
+156.3	go ahead and ask it to engage the b52
+159.0	and off we go and zoom in a bit i'm
+161.2	actually having a real tough time seeing
+162.6	everything because
+163.3	sentinel here let me shut that down real
+164.7	fast ah much better
+166.3	so our mig 21 is going to come rushing
+168.6	towards this b52
+170.1	now remember it's programmed to make a
+171.8	single engagement and theoretically a
+173.6	single engagement
+174.6	should only involve a single missile
+176.9	based on what his wra is set to
+179.1	so there's the merge he's going to come
+180.9	ripping around pull a very very very
+183.0	aggressive turn there
+184.2	come up behind the b52 there's the
+186.0	single missile
+187.3	here's the second missile oh that one
+188.7	that one did not track at all
+190.8	and he's going to try to close within
+192.7	and he gets out of there as fast as he
+194.2	can
+194.9	so that is going to be basically his
+197.1	idea of an engagement
+198.7	yeah you can see right now his static is
+200.5	shotgun so now he's going to head home
+202.3	after almost getting shot down of course
+203.8	he doesn't use his cannon or anything
+205.2	like that
+205.8	and you have a fairly successful
+207.4	engagement overall
+208.9	again that entire engagement was one
+211.0	target being attacked with one group of
+213.0	missiles
+213.8	so let's actually reset the scenario
+215.4	real quickly
+218.1	and let's change things around a little
+219.8	bit so what i'm going to do this time is
+221.4	i'm going to get myself my mig 21 again
+225.1	looks good and i'm going to change his
+227.3	orders actually first thing i got to do
+228.7	is i got to tell everybody
+230.0	to please ignore the plotted course when
+231.5	attacking i'm actually going to say the
+232.6	scenario this way
+233.7	all right so let's go ahead and go back
+235.4	to his doctrine window
+236.7	so what i'm going to do is i'm going to
+237.9	tell him to follow the missile straight
+239.4	in
+240.2	and i'm also going to tell him to launch
+242.1	all missiles at the same time
+244.6	i believe we have an option use all
+246.0	weapons there it is i'm going to set
+247.4	that quickly
+248.5	come down here so that quickly obviously
+250.3	we are not going to engage
+251.8	cruise missiles with this aircraft but
+253.4	we'll do the best we can all right we'll
+255.2	go ahead and send them this way there's
+256.4	our b52 engage
+258.1	let's watch what happens this time
+260.4	remember the only thing we've really
+261.9	changed is how many missiles to
+263.5	fire at a given target so our make 21 is
+266.6	going to merge again
+268.3	gonna go nice and wide he's gonna go
+270.0	pull that really really high g
+271.7	turn staying well within the range of
+273.4	course you gotta watch out for the tail
+274.5	gun on a b52 i wouldn't be surprised if
+276.5	accidentally get shot down
+277.7	now watch what happens when we do our
+279.3	actual engagement
+284.1	a little closer got to get within the
+285.8	dlz
+289.3	oh that is like tailgun city
+292.4	make sure i've ordered him to attack
+297.6	and here comes the cannon as opposed to
+300.1	the missiles
+300.9	there's our missile so you're probably
+304.2	saying
+304.6	um that's that's not really what she
+306.1	intended there he basically only fired a
+307.8	single missile and used his gun first
+309.6	yeah that's because if you took a look
+311.5	at his actual doctrine
+313.0	it is programmed to allow let's go ahead
+315.4	and show you this one
+316.2	it is basically programmed to allow to
+318.2	use air to air guns
+319.8	that did not work either even though we
+321.7	made that teeny tiny change
+323.2	so let's go back and do that again go
+325.2	back to setting this a guy's doctrine
+327.0	real fast
+327.9	this time what we're going to do is
+329.8	we're going to tell him
+331.0	to go ahead and fire any of his weapons
+333.4	and then disengage
+334.6	immediately he's not going to be allowed
+337.1	to use his air-to-air weapons
+338.8	we'll follow missile straight in uh
+340.8	we've already have that all set well for
+342.3	us we're going to go ahead and tell them
+343.3	to use all rounds
+347.2	come down here set the twos all rounds
+349.0	as well looks pretty good looks pretty
+350.6	good
+351.3	uh one unit's firing makes sense uh that
+353.4	looks good that looks good
+355.2	we're going to be able to confirm his
+356.4	range okay that sounds pretty good let's
+358.2	try it out this time
+360.7	and i'll watch this
+364.8	notice he immediately returned to base
+367.7	so you're probably going
+369.3	wait what well think about it for a
+372.3	second
+373.1	his web his wra i should say let me
+375.7	actually call it up real fast so you can
+377.0	see it again
+377.9	is wra and again this is something that
+379.8	you'll probably do and probably get
+381.3	confused with at some point
+383.0	is basically going to be sets uh let's
+385.2	go ahead and go to doctrine
+387.5	that it uses beyond visual range
+390.7	weapons so ah got to be very very
+395.0	cautious of that otherwise you'll get
+397.4	behavior that looks like that and i'm
+398.9	sure everybody's done that at one point
+400.7	so let's go ahead and try that again
+402.3	again we're editing this one's doctrine
+404.1	individually here
+405.2	we're going to say one engagement with
+407.5	within visual or strike weapons
+409.4	disengage immediately by the way we can
+410.9	order it to only fire guns too which is
+412.3	always fun
+413.3	let's go ahead and uh use uh well we'll
+415.4	use two this time we'll be a little bit
+416.8	more conservative you never know if you
+418.2	need one of those on the right home or
+419.4	something like that
+420.6	come down here set that to two come down
+422.6	here set that to two
+424.0	we're going to go ahead and follow that
+425.3	weapon straight in everything looks good
+427.6	good good good good good all right watch
+429.7	this so now i've got my mig 21 again and
+432.3	again this is representing almost like a
+433.6	hit and run if you want to think about
+434.7	it another way i'm going to go ahead and
+436.3	there's my target go ahead and order an
+437.8	attack
+439.0	and let's see what happens this time so
+440.5	mc21 zips up
+442.1	he's going to be taking his super duper
+443.7	high g turn
+446.6	he's got to come ripping in here he's
+448.0	got to get within the dlz of that weapon
+449.9	keep in mind b52 is a very distributed
+452.0	target
+452.6	you know you're not talking a single
+453.8	tailpipe you're going after here
+455.6	that actually complicates this a little
+457.1	bit
+459.1	he's approaching him carefully the b-52
+461.4	of course this is super dangerous
+462.7	because his closing rate is very very
+464.3	low
+464.8	there's nothing stopping me from coming
+466.2	in here and doing that because that'll
+468.1	decrease the closing rate but now he's
+469.8	going to have
+470.3	less time to go ahead and complete his
+471.8	engagement but it's going to make it the
+473.4	gunners job on the tail have a much
+475.1	tougher time
+476.2	so there goes some cannon fire there
+477.8	goes a missile
+479.4	and he's gonna go ahead and finish up
+481.5	his thing
+483.4	and he's gonna spin around fires another
+485.4	couple missiles does no damage
+487.4	fires another couple missiles doesn't
+489.2	seem to do much damage there
+490.6	now he's to head back to base because
+491.8	he's out all the good stuff so you're
+493.5	probably sitting there going well i
+494.8	thought he's just going to fire two
+495.8	missiles and run home
+497.1	you're not wrong again again this is a
+499.1	great great demonstration of how tricky
+501.0	this can be
+502.4	so if you take a look back to that
+503.8	weapon state again
+505.7	you'll notice it's one engagement or
+507.4	strike weapons
+508.8	but it allows targets of opportunity
+511.9	with air-to-air guns
+514.1	so that's the bit that you've got to
+516.1	watch out for
+517.2	so one thing you could do too is you
+518.5	could order it to go ahead and only use
+520.4	25 percent of relevant weapons and then
+522.2	immediately disengage
+523.4	there's a bunch of different ways to do
+524.7	this as a matter of fact we'll try that
+525.9	out real quick
+527.0	let's go back to testa we'll go ahead
+528.4	and load this one up
+530.0	cover mig 21 let's go ahead edit it's
+532.2	doctrine again
+533.7	again this is a common kind of a problem
+535.6	and you'll see exactly how this happens
+537.9	it doesn't really matter because we're
+539.0	using those sort of weapons weapons
+540.4	state pre-planned
+541.6	we're going to order it to go ahead if
+543.0	you fire a quarter disengage immediately
+546.7	no targets of opportunity that's set to
+548.6	no wra
+550.3	of course if we're only going to be
+551.3	firing a quarter for weapons we'll do
+552.7	those two
+555.0	that looks pretty good to me that looks
+556.7	pretty good good good good good good
+559.1	good
+559.5	okay beautiful let's give it a try
+563.1	give him a second i'll start setting him
+564.4	down that way there's our b52 engage
+568.9	our high g turn comes up around he
+571.3	should fire a quarter of his weapons at
+573.1	that b-52
+574.6	notice he fired both just like we told
+577.7	him to
+578.5	but now notice he's gonna come kind of
+581.2	wide here
+582.5	still completing his engagement
+586.6	and now he's returning to base you're
+589.0	probably sitting there going
+590.6	wait what why did he choose to return to
+593.1	base at this point
+594.7	well a quarter of his weapons is a
+596.8	quarter of his
+597.9	total weapons five
+601.6	that would be nine that would be ten a
+603.5	quarter of that is going to be
+605.0	three which is precisely how many of his
+607.8	weapons he deployed in this particular
+609.5	scenario
+610.6	so you can see how that can be very
+612.4	tricky to go ahead and navigate you know
+614.1	there's nothing in the universe of
+615.1	course stopping me from doing this i can
+616.6	unassign him real quick
+618.1	and i can order to him attack but you're
+619.5	going to notice my status over here on
+621.0	the right
+621.5	is going to tell me that he's like no i
+623.2	can't do that notice i've aborted his
+625.8	rtb
+627.0	now he's going to do the best he can
+628.2	with what he has here
+630.6	swing try to get back on the guy 6 again
+632.5	hopefully he gets there before the b52
+634.3	gets to that sports stadium
+636.2	sneaking up on him picking up some speed
+638.2	of course we can always use manual too
+640.7	um we're going to give him everything
+642.4	and we're going to give him everything
+644.0	go ahead and let that happen and it's
+646.0	done notice he fired his cannon and the
+647.8	missile simultaneously
+649.1	so again manual control like that does
+651.0	come in heady now of course we can order
+652.6	it to rtb and now the mission is
+654.1	accomplished
+655.0	so hopefully that makes a little bit of
+656.3	sense as far as the wra
+658.1	related to those kind of things when
+660.3	you're going to be doing
+661.3	head-on engagements it's usually a
+662.8	really really good system to go ahead
+664.1	and try something like that
+665.3	as a matter of fact while we're at it we
+666.5	might as well do a quick head-on
+667.5	engagement just to kind of show you what
+668.8	i mean here
+669.6	so i'm going to trade out our mig-21
+671.4	we're going to go and swap that out for
+672.9	an f14 we're going to use one of the
+674.7	new ones f14 it looks pretty good to me
+677.1	of course is cheating a little
+678.6	we'll do heavy bar cap we'll go ahead
+681.0	and set your doctrine i'll modify real
+682.9	quickly wra we're going to be interested
+684.6	in the phoenix's here
+685.8	we're going to fire everything now
+688.1	remember this particular aircraft can
+689.7	guide multiple of these simultaneously
+692.0	so this is going to be kind of a cheap
+693.3	shot here we'll go over here
+695.0	we'll say weapon state rtb we want to go
+698.1	ahead and set it
+699.1	so that it basically does one engagement
+701.0	with beyond visual range weapons
+702.7	and gets out of there which is for
+704.6	whatever reason we need it in this
+706.1	particular scenario
+707.4	everything else is looking good i'll go
+708.6	ahead and allow it to use this radar
+710.0	because it's going to need it for this
+711.2	particular case
+712.2	we're going to be launching all weapons
+713.3	once you get into range that of course
+714.7	is going to be
+715.3	m54s and make things interesting we're
+717.4	going to crank and drag
+719.7	order him to go this way go ahead f14 do
+722.2	your thing here
+723.6	it's going to come swinging around oh
+725.6	boy that's a lot of airplane there's our
+727.4	target
+728.6	we do not want to engage right away as a
+730.5	matter of fact i'm going to cheat to get
+731.8	us a little bit closer
+733.4	is that you don't want to be firing
+734.6	those phoenix's at that kind of a
+735.9	distance you're never going to do any
+737.1	damage
+737.8	so now i'm going to go ahead and order
+738.9	the f-14 to fire i'm actually going to
+741.2	change his status here to speed up the
+742.8	firing just a teeny tiny bit
+745.1	so they're acquiring him on radar
+747.0	speeding up to acceleration
+749.6	notice he says right in his status that
+751.4	he's engaged offensive
+752.6	and he's fired notice he's gonna be
+754.6	launching all of his
+756.1	aim 54s just like we asked him to do a
+758.4	moment ago
+759.9	now the cool thing about an aim 54 is he
+762.3	can actually drag
+763.6	which is really cool as a matter of fact
+764.8	i'm going to delete this point here
+766.2	because i want to see if he's going to
+767.4	go ahead and do that
+768.7	is this the version of the am54 that
+770.9	actually has active radar on board let's
+772.9	check
+773.4	it does but it has to go within 10
+775.0	nautical miles in order to actually work
+777.4	all right speed up time a little bit
+778.7	here so now watch what rf14 is going to
+780.6	do in a second
+786.1	it looks pretty clean active radars go
+789.4	okay but the okay gotcha so this guy
+791.7	can't turn away
+792.9	until this last weapon is locked onto
+795.3	him in which case then he will pull
+797.0	himself away once the bvr attack is
+798.9	complete yet there it goes
+800.0	he's just gonna turn around and come
+801.3	right back home even though
+803.4	he still has aim sevens on board so you
+806.6	can see that is a really dynamite way to
+808.6	make your interest submissions a little
+809.9	bit more effective
+811.0	if you have ammo to waste all right so
+813.0	hopefully this was helpful and
+814.1	hopefully i sound a little bit better
+815.2	than i did before a little weird talking
+817.0	to a thing in front of me rather than a
+818.3	headphone but
+819.1	i'm sure you guys are forgiving me for
+820.4	that one a little bit later on so
+822.2	this should be pretty straightforward
+823.5	again this is very similar to the
+824.6	doctrine wra it's just really important
+826.5	that you can see
+827.5	why your missions aren't launching or
+829.1	why they're not behaving the way they
+830.5	are
+830.8	you really have to double check that
+832.5	every single time because you're going
+834.0	to find more often than not your wra is
+835.9	not
+836.2	set correctly or your doctrine is not
+838.2	set correctly and that's why they're not
+839.6	engaging
+840.2	there's just kind of a little heads up
+841.6	other than that enjoy

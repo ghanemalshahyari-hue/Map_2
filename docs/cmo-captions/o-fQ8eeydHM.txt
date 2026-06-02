@@ -1,0 +1,1104 @@
+0.0	hello everyone in today's tutorial we're
+2.0	gonna be taking a look at Naval Air /
+3.9	ship operations in command modern
+5.7	operations so basically when you're
+8.1	doing naval operations and air
+9.8	operations together you're doing pretty
+11.6	much what is in the original name of
+13.0	command which is command modern air
+14.8	naval operations so this is a huge part
+17.5	of what the game is all about so I'm not
+19.2	going to pretend then we're gonna be
+20.1	able to check every single box today
+21.7	keep in mind tactics will change as
+23.8	arrow changes speaking of eret we're
+25.5	gonna be dealing with nineteen ninety
+26.7	two today all the equipment that is in
+28.4	this world are in our little scenario
+30.4	here it's all 1992 equipment now
+33.0	depending on the scenario designer that
+34.8	you're working with and what kind of
+36.0	scenario this can change a lot so make
+38.8	sure you read briefings carefully make
+40.6	sure you take a look at what the actual
+41.5	intention of the scenario is make sure
+43.3	you're familiar with forces speaking of
+45.0	forces let's go and take a look what we
+46.2	have at our disposal first of all we
+47.9	have this little SS and Providence here
+49.7	let's see what it's equipped with and we
+51.3	also always nice to take a look let's
+53.2	see what we have for Los Angeles looks
+54.7	like we have some harpoon missiles
+56.2	that's gonna be handy
+57.6	I'm also down here at our carry action
+59.9	group I'll go ahead and zoom in a little
+60.9	bit so we can kind of take a look at
+62.2	what's going on here we have of course
+64.7	the CBN Abraham Lincoln we have an
+67.6	Underwood which is nice a little frigate
+69.2	we could actually separate this to keep
+70.4	an eye out for subs we have an Alec
+72.4	Burke we have a Bunker Hill it's a teiko
+74.5	and of course we have another one at
+76.3	Charles Adams this an older ship plus
+78.0	you always have to have your AOR ship as
+80.4	well this is a pretty standard kind of
+82.7	carrier action group that's all we have
+85.2	our objective today is apparently a
+87.5	Greek terrorists have decided to take
+89.2	over this a beautiful island over here
+90.8	ARMA 3 fans will probably recognize that
+93.2	Island pretty much right away but that's
+94.7	okay it's one of the reasons why I
+95.8	selected and our job is to basically
+97.6	them as quickly as possible we
+100.0	are aware that they probably have naval
+101.7	assets were aware that they probably
+103.1	have taken over at runway we know that
+105.5	they have surface-to-air missiles and we
+106.7	also are aware that they probably have
+108.1	airplane and helicopters at the disposal
+109.6	plus even a submarine so it's gotta be
+111.9	kind of a collective sort of operation
+113.7	so we don't wait let's go ahead and get
+115.2	going so the first thing I want to do is
+117.0	I'm gonna go ahead and take my
+117.8	Providence here and get him on surface
+120.0	duty now in this particular scenario we
+123.2	actually go up to scenario editor and
+125.1	you go up to features you will notice
+126.9	that realistic submarine communication
+128.9	is turned on that means that once we
+131.6	tell this submarine to dive we're not
+133.4	going
+133.6	be able to talk to him without giving
+134.6	him a call first which that can
+136.7	complicate things and it also means he's
+138.4	out of communication so if we spot
+140.3	something on the surface we have to tell
+142.0	him to come back up to the surface in
+143.2	order to do anything so I'm gonna go
+144.9	ahead and define this area right around
+146.5	here kind of as his operational zone so
+150.1	go ahead and create my first mission
+151.6	I'll do it see control go ahead and do
+155.1	patrol we'll go ahead and do it see
+156.4	control patrol yeah then we're gonna go
+159.1	ahead and grab our handy-dandy submarine
+161.2	Adam to this now here's where things are
+163.5	gonna get a little interesting on our
+164.6	thing we're gonna go ahead and make sure
+166.1	that the prosecution area is only this
+168.6	zone I don't want him firing missiles
+171.2	into things that don't need missiles as
+172.8	you'll see in a little while so I'm
+174.4	going to go ahead and shut that off I'm
+175.7	gonna go ahead and shut that off shut
+176.8	that off
+177.2	prosecution area and I'm actually going
+179.0	to add all this points as well now since
+181.0	we have submarines selected we're going
+182.4	to set the transit cruise throttle in
+184.7	for station throttle we're gonna leave
+186.2	it at Crete for transit depth we want to
+188.3	put this as deep as we possibly can get
+190.7	it so that he's able to go very very
+192.5	quick to get to the area he needs to
+194.1	then he can come up to the surface to
+195.5	start looking around so let's do nine
+197.2	hundred I think nine hundred feet will
+198.3	work pretty well huh yeah whatever
+199.6	basically he's gonna hug the bottom so
+202.1	that should work pretty good and that is
+203.6	good to go I'm gonna kind of leave him
+205.3	alone and let him kind of maintain his
+207.4	own trouble once he gets there we'll
+208.8	call him back up when we need to chat
+210.3	with him the other thing is once we've
+211.6	identified some enemy targets we can
+213.4	call him up as well to kind of let him
+215.0	know where they are so you can launch
+216.3	this harpoon missiles okay so that's all
+219.1	set next thing we want to do is since
+220.7	we're working with a carrier action
+222.1	group let's see we have as far as
+223.1	aircraft goes looks like we have some
+225.0	f-18s and C's we have some Tomcats we
+227.8	have some B Tomcats we have a couple of
+229.7	Vikings who hawkeye's aw nice we also
+232.0	have some message 60s is the older ones
+234.0	but they're gonna help us out as far as
+235.6	keeping an eye out for subs we have a
+237.2	Huey and bunch of sea sprites and things
+238.7	like that so we need to decide how we're
+240.8	going to deploy our forces first things
+242.5	first though we have to get these Hawk
+244.5	eyes airborne as fast as possible some
+247.1	people like to use the radars onboard
+248.8	the actual ships themselves if you
+250.5	wanted to do that you can come over here
+251.8	to the sensors window and at this and
+253.9	you can turn them on I don't necessarily
+255.4	recommend that because the moment you do
+257.4	that you're basically announcing to
+258.8	everybody around you and their submarine
+260.6	the hey Here I am because of your radar
+263.2	signals that being said if it's really
+265.1	really bad weather like right now the
+267.0	weather
+267.3	beautiful yeah it's just hot outside if
+269.7	the weather was really really bad you
+271.3	kind of have to use radar cuz there's no
+273.0	way you can see an anti-ship missile
+274.4	coming before it hits you so kind of
+276.5	keep that in mind and select your eMCON
+278.9	appropriate late again that's not for
+280.3	another day so anyway let's go ahead and
+282.6	set that up so I'm gonna go ahead and
+283.8	create a couple reference points here
+285.0	would you select those other ones we're
+286.7	gonna go ahead and create one here we're
+288.3	gonna go ahead and create one here I'll
+289.3	go ahead and select these so now I'm
+290.6	gonna do something a little different
+291.8	this time I'm going to link these
+294.1	reference points to my care of your
+295.8	action group probably sitting there
+297.3	going while you doing that that way they
+299.0	move with the carrier group so I'm
+301.7	actually gonna put these guys about
+303.3	right here looks pretty good to me okay
+305.6	so now I'm gonna go reference points I'm
+307.1	gonna say make it as fixed right to our
+310.2	friendly little carrier right here in
+311.8	the middle I think I did not click the
+313.2	button when I did that change bearing
+314.9	type to do to make fixed bearing click
+317.5	got it so now is this croup moves these
+320.6	will move with them which is gonna work
+322.9	wonderfully for us so I'm gonna go ahead
+324.9	and create the AWACS mission go ahead
+328.6	and send a patrol let's do actually not
+330.5	a patrol what am I saying this is
+331.6	actually considered a support mission
+332.7	process okay notice it's already
+334.8	selected those few points let's grab our
+336.6	AWACS I'm gonna actually shot one term
+339.4	I'm just going to set it to one on
+340.7	station at a time that is good to go
+343.3	let's make sure that they know to turn
+344.6	the radar when they get there otherwise
+346.1	they're pretty useless right and I think
+348.7	we are good to go I'm going to go ahead
+350.9	and wait for them to get on station
+352.2	before they turn their radars on kind of
+354.1	dangerous but it also means that I put
+355.6	their station over here just to confuse
+357.3	our opponents so I'm gonna make sure
+358.8	they get there quick go ahead and do
+360.1	that make sure it's Malik's attitude all
+361.7	right that looks pretty good alright so
+363.8	the next thing we want to do whenever
+365.0	we're doing a naval operation especially
+366.3	an american-style one we want to
+368.1	establish a carrier basically combat air
+370.1	patrol to keep any enemy aircraft away
+372.6	from us fortunately for us we have one
+374.8	of the best aircraft for this purpose
+376.9	and that's the f-14
+378.2	unfortunately for us we don't want to
+380.1	make our zone of patrol too large
+382.3	because we don't accidentally bump into
+384.1	any SAM sites they might have so I'm
+386.3	pretty much going to do something
+387.6	probably about that big if we go to game
+390.9	and we just scoot over to browse
+392.5	scenario platforms this is called
+394.2	treating let's see what they have for
+395.9	Sam's here I say twos siii so what's the
+398.7	maximum range of an sa-2
+400.1	quick let's go ahead and take a look and
+402.7	that doesn't matter let's see what we
+404.6	have here 30 nautical miles gotcha so if
+407.5	we assume that they have a SAM site
+409.5	anywhere in the south part we shouldn't
+411.2	be getting within 30 nautical miles
+412.4	which puts it right about there which is
+414.9	actually pretty darn close to what these
+416.3	two points are so I'm gonna go ahead and
+417.8	create another zone of course keep in
+419.9	mind enemies can come from any direction
+421.3	so it's important that your zones are
+423.4	properly appropriately I should say
+425.5	sized here I'm gonna kind of do
+427.2	something that's gonna kind of look like
+428.2	this I'm actually gonna grab the edges
+430.3	and pull it a little bit further out
+431.8	because I want to make sure we're
+432.9	covering over the land too in case
+434.0	something comes by and says hello keep
+436.0	in mind the bigger your zone the more
+438.0	aircraft you're going to need to
+439.3	actively safely patrol it so let's go
+442.0	ahead and create another mission we'll
+443.4	call this EAP go ahead to patrol to a aw
+447.2	patrol sounds pretty good press ok let's
+449.4	go ahead and take a look at my f-14
+450.8	buddies some f-14 buddies are not
+452.7	currently equipped with any weapons
+455.3	which is such a bummer because it means
+457.7	we can't use them until listen what we
+459.2	actually going to get them all we
+460.7	haven't actually ordered them up to have
+462.1	anything looks like we won't get them
+463.5	for a total of three hours which is this
+465.2	pretty significant chunk of time but
+467.8	unfortunately we just don't have a
+468.9	choice in the matter so I'm going to
+470.4	grab all those load them up with the
+472.1	heaviest bar cap I can with these
+473.8	beautiful Phoenix missiles order them to
+476.1	be ready and unfortunately we're not
+478.2	gonna be able to use them until they are
+479.9	done being ready let's go ahead and take
+482.4	a look at this group let's ready these
+483.6	guys too those are the bees of the A's
+485.1	we'll set that to that well let's set
+487.0	them to quick mode that doesn't mean
+488.7	they're going to load quick okay 814 a s
+490.9	alright those guys are loading up 14
+492.8	bees they're also loading up so I'm
+494.9	gonna grab these two groups of aircraft
+496.4	and I'm gonna kind of shove them in
+497.5	together keep in mind they're not going
+499.4	to be on station until let's see it's
+501.9	gonna be two o'clock in the afternoon so
+504.3	that could be dangerous so we're gonna
+506.6	have to rely on the surface-to-air
+508.4	missile capabilities of our ships if we
+510.9	get engaged during that time so it's
+512.5	gonna be pretty exciting we do not want
+514.8	them engaged going beyond the actual
+517.0	search area because if they do that you
+518.3	know exactly how that ends all right
+520.3	this is all set this is all set I'm
+521.7	liking the way that goes all right lots
+524.3	and lots of missions going on at once
+525.7	but this is kind of the beauty of all
+526.9	this let's deselect everybody now we
+529.1	need to start thinking about
+530.4	anti-submarine
+531.3	warfare we know because of intelligence
+533.3	that there's an enemy submarine active
+535.0	somewhere so we're gonna have to come up
+537.2	with a way to find that submarine and go
+539.4	ahead and destroy it
+540.7	the key thing with submarines though is
+542.3	if we actually go over this is why this
+543.7	is so handy browse enter your platforms
+545.5	I'll go to submarine I'll see what they
+547.7	have for a submarine here submarine
+550.4	they've got type 209 what do they have
+553.4	as far as weapons on a type 2 and I'm
+555.1	gonna be real careful looks like they
+556.7	have the harpoon 1 which is not bad 75
+559.9	nautical mile range so that means my
+562.1	ships can be engaged out to 75 nautical
+565.0	miles just check in the math and that
+566.7	one that basically puts it here which
+568.4	means my anti-submarine work has to be
+570.5	somewhere within 75 nautical miles
+572.6	preferably a little bit before we begin
+574.9	playing assuming that the enemy is not
+576.8	behind us or next to us or something
+578.4	along those lines but for this
+579.8	particular scenario I'm basically going
+581.2	to create a anti-submarine zone ahead of
+583.9	the main group and let the submarines I
+585.5	should say the how the copters do what
+587.4	they do best first of all make sure you
+589.1	deselect everything let's go ahead and
+590.8	create an area here I think it's going
+593.2	to be again like I said we need to keep
+594.8	it about 75 miles out keep in mind we're
+597.2	gonna make this zone move also that
+599.8	could be on the side we should keep an
+601.1	eye out that looks good I'm gonna go
+602.9	ahead and set this to a fixed bearing to
+604.6	the main carry group as well beautiful
+608.0	so that's good to go
+609.7	so we're gonna go ahead and create
+610.6	another mission nobody said this would
+612.3	be easy we're gonna call this a SW we're
+615.4	gonna set this to patrol we're gonna
+616.6	call this an a SW patrol now I'm gonna
+619.2	go ahead and get myself all these
+620.6	beautiful helicopters that we have our
+622.1	disposal we can stick the keyway in
+624.1	there if you want stick them in there
+625.7	they're gonna take care of business for
+627.6	me I'm going to tell them not to go
+629.3	beyond the patrol area other words
+630.8	they're gonna get destroyed and that's
+631.9	gonna be really really embarrassing so
+633.8	they're good to go all set let's go
+635.8	ahead and deselect all reference points
+637.1	again and now it's time to start
+638.7	thinking about what we're going to do
+639.7	the island itself so the island itself
+642.3	as you can probably see right here it
+644.6	looks like they have an airbase it looks
+646.2	like they have some shuf so it looks
+648.6	like they have I believe that support
+649.9	and they have an essay 3 the reason we
+652.3	know they're there is because those are
+653.6	fixed sights so chances are satellites
+655.6	spot of the months and months and months
+656.9	ago so we're going to do is we're going
+658.9	to order up some tam-tam hawks what's a
+660.9	tame hawk some tomahawks to do the deed
+662.9	I'm gonna go and click this guy
+664.9	I'm gonna haul it go to engage manual
+667.9	target you will not automatically engage
+670.1	a tomahawks thankfully because you will
+672.3	waste them so we're good to go
+674.5	let's see here what do we got here
+675.9	should we want to waste it on tarmac
+677.0	space yeah not if I know there's nobody
+678.7	there
+679.1	ammo bunkers tempting the fuel farm is
+681.4	very tempting you don't need to bother
+682.6	any of these structures the runways
+684.9	interesting but I'm actually gonna leave
+686.0	the runway alone and go right after the
+688.2	access points so this looks like a
+689.8	pretty good collection I'm actually
+691.0	going to remove the port I get the
+692.2	feeling it's not gonna do anything for
+693.4	me so let's go ahead and get one of our
+695.7	ships that has the tomahawks so there we
+698.7	go so we cannot engage front of the adze
+700.7	of the warrior okay so how many missiles
+702.8	is an ammo bunker going to take so to
+705.4	figure that out we could actually go
+706.7	over here into the facilities we could
+708.2	type a Tamil bunker yeah we can I assume
+711.2	it's a surface ammo bunker what do we
+713.1	got sixteen hundred damage points keep
+715.9	that in the back of your head for just a
+717.4	second cuz now we can go over to weapon
+719.6	and type in tomahawk
+722.2	we'll go get Addie model damage damage
+725.4	damage damage damage forty-five actually
+729.5	this is the wrong tomahawk you'd want to
+730.7	use this one you want to use a
+731.5	conventional tomahawk there we go 311 so
+735.2	if you have a calculator handy you can
+737.0	actually do the math it's gonna take six
+739.0	Tomahawk missiles to destroy that
+741.3	particular target so let's keep that in
+743.0	mind and use six why not so we're gonna
+745.5	go ahead and call up six go to this one
+749.7	as well I'm gonna go ahead and launch
+750.8	six at him as well we're gonna go attack
+754.4	this Oh matter how strong those Eevee
+756.3	there's a four even able to it
+758.2	again we're disabling their ability to
+759.5	service the aircraft not necessarily
+761.2	launch the aircraft at this particular
+762.5	time so let's go double check that as
+764.3	well let's see here facility this is
+766.7	being very scientific can keep in mind
+768.2	if any of these get shot down they're
+770.0	not going to be able to strike so it's
+771.7	very important that we do PDA afterwards
+773.7	so we have 40 by say 40 40 40 scroll
+778.0	down 40 by 150 yeah tiptoes see what we
+782.1	got for armor 280 so it only takes a
+783.7	single tomahawk for that one so we
+785.5	should really be sending two just in
+787.2	case if what I'm gonna shot down but um
+789.6	will be cheap will be cheap we'll do
+793.3	that nice the runway access point now
+795.6	this is gonna take some pepper to
+797.9	destroy
+799.1	accesspoint what we got to make sure we
+801.2	do I should just left this thing open to
+802.5	be honest access point I think they're
+804.9	very large aircraft how do we doing here
+806.6	a thousand so a thousand it's going to
+808.9	take four tomahawks to destroy that now
+811.3	you're probably going why am i
+812.5	destroying the access points instead of
+814.1	destroying the runway
+816.5	well the reason for that is the fact
+818.6	that the access points allow you to get
+820.5	to the runway if you destroy these
+821.8	you're never gonna have to deal with any
+823.3	enemies from that particular target
+824.8	they're very difficult to fix so I'm
+826.8	going to go ahead and allocate four of
+828.2	these suckers go to this one allocate
+830.8	another four allocated another four
+834.0	awesome so now we have the sa to F the
+837.2	sa 3c okay where do we launch it these
+839.6	guys this is gonna be a little trickier
+842.4	and I'll show you why in a second
+844.4	we can probably get the one from the
+846.4	Soviet Union
+847.0	there we go check it out so you're gonna
+849.7	notice now that there is a minimum
+852.0	number of missiles that it usually takes
+854.2	to destroy this particular target in
+856.6	this case it says it's going to take the
+858.0	equivalent of eight harpoon missiles now
+860.5	an SI 3 is going to do a better job of
+863.2	destroying an incoming missile than an
+864.5	sa-2 and sa-3 is a much faster and it's
+866.7	also a better radar for that kind of
+868.1	stuff so you're going to ask yourself
+869.4	what's a safe number that we're going to
+871.3	need obviously I'm not going to be
+873.0	shooting 8 tomahawks at this it's just a
+874.7	waste of ammunition so I would probably
+876.8	go with let's say we'll go with four
+879.1	each
+879.5	so I'm gonna go to sa three just real
+881.0	quickly now take a look at these guys
+882.5	seven equivalent the SI threes I feel
+885.2	are gonna do a much better job shooting
+886.5	that tomahawk tomahawk by the way fun
+888.4	fact
+888.8	it's not a hard target to shoot down
+890.6	anybody's played with Sam simulator is
+892.6	probably familiar with this
+893.9	let's go ahead and grab the sa-2 as well
+895.7	and I am all set I am actually ready to
+900.0	start the actual game now now that I've
+901.8	gotten everything kind of pre-built
+902.8	preset let's see what happens Oh
+910.7	no boy apparently we're off to a very
+913.9	good start here
+914.8	now the cool thing here is basically our
+917.9	crews are going to be looking at these
+918.9	ships and going what is this and they're
+920.8	going to be trying to compare the
+922.1	emissions from this particular ship to
+923.8	whatever they have inside of their
+925.1	actual libraries in order to determine
+927.0	what kind of contact it is so if you
+928.7	take a look at and click up at contact
+930.0	report after clicking on it generic
+932.0	navigation radar let's see it could be a
+933.8	cruise line or it could be a fishing
+934.9	boat or a trawler I think it's safe to
+936.9	say that's probably a neutral ship same
+939.2	thing with this civilian sailboat which
+940.6	is not too far from us so while I'm
+942.6	talking here you'll notice that all
+944.1	these tomahawks are not going in a
+946.0	straight line that's wonderful they're
+948.2	actually spreading themselves out and
+949.7	they're going to turn you can actually
+951.6	click on the later models you can
+952.8	actually designate with waypoints which
+955.2	you want them to do by the way the other
+956.8	thing you're probably confused too is
+958.2	why I have this random SSN just parks
+960.6	here we know he's up here the reason
+962.9	being is this is his last known position
+964.8	remember how we started pause I can
+966.8	actually right click on him and actually
+968.8	call him up to say hey come up to the
+970.5	surface we got a chat but I'm not going
+972.6	to do that this time as you'll see
+975.3	all right let's speed up time a little
+977.3	bit well it five minutes go by
+984.7	I'm gonna go ahead and pause okay so
+987.7	what happened in that incredibly short
+989.6	period of time so first of all our
+991.6	beautiful beautiful Hawkeye is got an
+994.1	airborne and he's done a spectacular job
+996.3	identifying aircraft everywhere we have
+999.0	commercial aircraft which probably makes
+1000.9	them neutral we have all sorts of
+1002.6	unidentified aircraft of course I could
+1004.2	click them and go through each and every
+1005.3	one of them to identify the radar but
+1007.1	more importantly look what else we found
+1009.3	we were able to identify several enemy
+1012.1	ships surrounding this island how do we
+1014.4	know the bad guys well they were stupid
+1016.4	enough to turn their radars on as soon
+1018.0	as they did that we were able to
+1019.3	identify the types of emissions and
+1021.2	guess what these emissions only come
+1023.2	from this type of ship that just made
+1025.8	our life 100% easier so what I'm
+1027.6	actually going to do is I'm going to
+1028.9	call up our buddy the submarine and have
+1031.0	them launch harpoons on those guys now
+1032.8	you're saying why can't we use the
+1033.8	harpoons for my carry action group
+1035.2	because they have a limited range it's
+1037.0	kind of a bummer if you ask me but
+1038.6	anyway let's go get our submarine on the
+1039.9	phone real quick hey get up here we need
+1042.1	to chat by the way submarines can only
+1045.0	launch submarine-launched missiles that
+1047.5	make sense from shallow depths or hire
+1050.5	some submarines actually have to surface
+1052.7	in order to launch those types of
+1054.2	weapons but meanwhile if you remember we
+1056.2	launched a huge Tomahawk strike I'm a
+1057.8	little annoyed that they separated like
+1059.5	this because that tells me that when
+1061.4	they do arrive at their destination
+1063.2	they're probably going to be shot down
+1064.7	because they're gonna come at bad
+1065.9	intervals but you never know and again
+1068.0	we're just trying to their
+1069.0	airfield by the way there's one access
+1070.8	point still working this battle this if
+1073.3	needed not work but we're gonna show up
+1075.5	a little later on with proper weapons
+1077.2	and pretty much clean house so I'm not
+1079.7	too too worried about that this time
+1080.8	meanwhile see what happened to our
+1082.7	submarine buddy I've called them up it's
+1084.0	gonna take them a little while to
+1084.7	surface I'm sure yep so we basically
+1089.3	make a really really low deep sonar
+1091.2	pinging say hey get up here keep in mind
+1093.4	he's probably right here or something
+1094.6	like that okay I'm on come up to the
+1098.1	surface and notice several these
+1100.9	missiles already got shot down like I
+1103.9	promised that's pretty impressive
+1107.9	actually
+1109.6	keep in mind this gate there is stopped
+1112.3	so now here's the cool thing this
+1114.8	submarine came all the way up to a -
+1117.2	under 31 feet he's basically just below
+1119.1	the surface he has the ability to engage
+1121.6	these guys that are already visible with
+1124.3	his harpoon missiles they will never
+1127.4	know what hit them now remember he's
+1129.2	still on a mission to patrol this zone
+1131.0	and do damage but there's nothing
+1132.8	stopping him from engaging these targets
+1134.8	at this time which is going to be great
+1136.8	because these guys will never know what
+1138.5	hit them because all the Sun you just go
+1140.3	see a sloop and a miss was gonna come
+1141.8	flying I the ocean how you doing buddy
+1144.8	yeah he's engaged offensive good so he's
+1147.2	basically working out the range right
+1148.8	now see this is his range limitation Oh
+1150.6	so our tomahawks arrived already
+1152.9	speaking of which you know what we
+1154.6	forgot to do we forgot to tell her ships
+1156.8	what we want our airplanes to be
+1158.6	carrying whoops that was sloppy so we're
+1161.3	gonna go ahead and arm these guys we're
+1162.5	gonna cheat just a little bit I'm gonna
+1163.8	use walleyes you've probably gone wild
+1165.8	instead of like you know laser-guided
+1167.7	bomb or something like that well if you
+1169.3	take a quick look the a models did not
+1171.2	carry those so I'm gonna go ahead and
+1173.6	say ready immediately I'm gonna cheat
+1174.9	but then I'm gonna set time to ready I'm
+1176.9	gonna do it for two hours because that's
+1178.3	a little that's basically what we said
+1179.7	it was gonna be anyway so then we're
+1181.3	gonna go over to our C models I'm gonna
+1183.0	arm half of these guys I'm going to arm
+1186.3	them with basically we'll go ahead and
+1190.4	do walleyes also go ahead and enable
+1193.5	that go ahead set time - right again I'm
+1195.1	cheating here just to demonstrate kind
+1196.9	of a thing all right and now we're gonna
+1199.4	arm the last group of these guys with
+1201.5	harm missiles because I have a feeling
+1203.3	there's no way we're gonna be able to
+1204.9	get all those enemy SAM sites it just
+1207.2	doesn't work that way all right let's go
+1209.7	ahead and check my Tomcats are good my
+1211.4	Vikings okay what are we arming the
+1213.0	Vikings with the Vikings are an
+1214.5	anti-submarine ship in my mind we can't
+1217.0	arm them with harpoons if we want to go
+1218.5	attack the enemy ships but honestly the
+1220.4	submarines gonna get them so I'm gonna
+1222.2	go ahead and armed these guys with
+1223.4	torpedoes and we're ready them
+1225.2	immediately set time to write it again
+1227.0	I'm cheating here but this would
+1228.1	normally take three hours we should have
+1229.3	done it an hour ago I think you got the
+1231.1	idea they're all set the Hawke guys are
+1233.3	good the Seahawks those guys are all
+1235.1	good and we are all set okay back to the
+1238.3	action almost like our tomahawks are
+1241.7	arriving again
+1243.0	fireworks you know as a neat sheet we
+1247.2	can use to see if we actually did any
+1248.7	real damage here ah notice check it out
+1252.1	our boy the submarine just launched his
+1254.3	first round of harpoons these earlier
+1256.2	versions of the los angeles-class could
+1259.1	only basically want stuff out of a tube
+1260.4	a little later on they actually got a
+1261.5	vertical launching system which of
+1263.0	course you couldn't reload in the ocean
+1264.3	which has some problems the other thing
+1266.4	I'm noticing is I'm kind of looking is I
+1268.2	keep picking up a signal from an enemy
+1270.1	helicopter so that's probably their
+1271.7	anti-submarine assets I also picked up
+1274.1	at sa 8b which we have not been able to
+1276.5	identify yet now a cool thing we could
+1278.5	do if we wanted to get a little
+1279.5	technical is we good park one of our e
+1282.2	to s here and then we can park our other
+1283.8	e to over here to actually triangulate
+1286.2	the position of where that particular
+1287.5	Sam site is I'm not gonna worry about
+1289.5	that too too much notice our Los Angeles
+1291.3	is just happily shooting away there he's
+1293.8	just kind of doing this thing so I'm
+1295.7	gonna let him uh snap those enemy pro
+1297.3	tool ships in half keep in mind if we
+1299.0	disable this patrol ships it's going to
+1300.6	be much simpler to sneak stuff in such
+1302.7	as this submarine we could switch him to
+1304.5	tomahawk mode
+1305.7	alright I'm very curious as to what the
+1307.8	deal with this aircraft do we know
+1308.8	anything about his reports nope so he's
+1312.0	not emitting which is going to make this
+1313.5	difficult for us my guest right now is
+1316.2	the reason we lost that first to the
+1317.9	tomahawks is wherever this particular sa
+1320.0	displaced it's probably right in the
+1321.9	line of fire to get those cheap shots up
+1323.6	this little you know kind of base sort
+1325.2	of a thing like that alright everything
+1327.6	looks pretty good so far
+1329.0	basically a whoa-oh-oh say goodbye to
+1332.6	that one nice so oh no that's dangerous
+1338.8	that's dangerous so whenever you let a
+1341.5	tomahawk go it's just going to keep
+1343.3	going it's gonna end up smacking into a
+1344.5	fishing boat
+1345.2	fingers crossed something bad happens to
+1347.6	that missile eh
+1348.7	whoa let's really hope that didn't it a
+1351.2	fishing boat that would have been bad
+1352.2	you had to be careful with any active
+1354.0	guided weapons and look at this look at
+1356.3	this and they've lost their second
+1358.0	patrol ship nicely done nicely done I'm
+1361.8	gonna go ahead and set his step the
+1363.3	periscope depth then i'ma set it to
+1364.5	automatic so that he's going to go ahead
+1366.1	and die back in the water and keep doing
+1367.6	what he's assigned to do let's go ahead
+1369.3	and reassign him to that mission C
+1370.8	control go for a swim we don't need to
+1372.8	talk to you for a while so meanwhile how
+1376.2	many harpoons
+1376.9	oh yeah actually it does have tomahawks
+1378.3	nice but we have six are Pune's left
+1380.2	which is pretty these in pretty decent
+1381.6	okay
+1382.5	so now we're gonna go ahead no let's see
+1384.5	here just trying to study everything we
+1385.9	have here no it looks pretty good so I'm
+1388.7	gonna cheat a little bit check this out
+1390.0	if you go to losses and expenditures you
+1392.1	can actually see how much damage you did
+1393.5	so it looks like we only blew up one of
+1395.9	those tank farms sigh we've got three
+1398.1	other patrol ships we did a number two
+1400.4	there Sam's but it don't see anything
+1401.8	about the Sam radar
+1403.4	oh no I take it back we've got a flat
+1405.0	face which is a search radar and we got
+1406.8	the oh nice this is the fire-control
+1409.8	radar on board of the SI 3 that means
+1412.3	that sa 2 is still active so that means
+1415.5	we're gonna have to do a follow-up
+1416.4	attack see in the real world we have
+1418.0	satellites and we have the UH PDA and
+1419.5	all that other kind of stuff so let's go
+1421.0	ahead and target this group again let's
+1425.1	see oh no no no let's go get our Alec
+1426.7	Burke I believe he's got the Tomahawks
+1428.1	keep in mind when you're doing classic
+1429.8	naval fights you don't have these fun
+1431.6	toys so I'm gonna go ahead and switch to
+1432.9	manual targeting we don't need these
+1434.7	guys remove them from the list we know
+1437.8	that that's you know all these items are
+1440.0	still existing go ahead get rid of this
+1441.8	and obviously we left him as well we
+1445.2	can't imagine these access points are
+1447.0	disabled there's no guarantee that they
+1448.8	are ok so apparently our attack on the
+1451.4	and these particular bunkers was not
+1453.4	successful but we did get one of the gas
+1455.9	tanks so go ahead and grab our buddy the
+1457.8	Alec Burke again we'll go ahead and
+1460.8	launch one grab this guy launch one our
+1466.9	tank farm I get grad and said to and RSA
+1471.6	to buddy we're gonna launch two also and
+1473.5	that should beef that's a pretty
+1475.2	conservative launch so in just a moment
+1477.6	you're gonna watch all these tomahawks
+1478.6	come ripping off over there again these
+1480.4	guys by the way the little ah SH 2s
+1482.5	they're gonna start deploying all sorts
+1484.4	of goods sonobuoys and things like that
+1485.9	desperately trying to locate where the
+1488.3	enemy submarine is once we've disabled
+1491.4	all the surface-to-air elements on this
+1493.1	island I'm gonna let my s threes kind of
+1495.0	do the rest of the work but in the
+1496.5	meantime we'll go ahead speed up time
+1499.0	and there goes the next round of
+1501.1	tomahawks off they go I'm picking up
+1506.1	some new airplanes
+1507.7	okay let's go ahead and reduce some
+1509.8	speed I got some airplanes Kamiya they
+1511.3	probably commercial how do we know
+1512.5	they're commercial probably from their
+1513.5	radar like everything yeah from the
+1515.5	radar they're probably air buses or
+1516.8	something like that alright taking a
+1518.9	look here we know there's an enemy
+1520.1	helicopter there's another enemy
+1521.8	helicopter right there and hopefully
+1524.0	yeah we did we got it so we got the sa-2
+1527.2	so that means there's only Sam's
+1529.3	remaining this island have to be
+1530.6	short-range Sam's because the fact wall
+1532.4	on the flipside if they're not emitting
+1534.1	we can't detect them but if they were
+1535.6	fixed we'd see them I think you get the
+1537.0	idea okay so let's go ahead and fast
+1540.9	forward time properly we get ready on
+1543.8	the space bar key if I see anything that
+1545.3	shouldn't be there notice our
+1548.6	helicopters are now spreading out and
+1550.2	dropping these little sound buoys to
+1551.8	basically listen in the water in the
+1553.4	event that anybody makes too much noise
+1554.7	the nice thing about these buoys too is
+1557.1	these ships can be identified by the
+1559.7	sound their propellers and entrance
+1560.9	makes it's kind of nice we can see that
+1563.1	this is an enemy vessel kind of making
+1564.3	their way here nope stop okay the
+1569.1	commercial all right I'm not worried
+1570.4	about commercial airplanes I just saw it
+1572.2	was a little weird that they just
+1573.0	started chew chewing towards me keep an
+1576.3	eye out keep in mind
+1577.6	none of my ships radars are on right now
+1581.5	none of the Sonos are on there's nothing
+1583.1	active about them the only thing we're
+1585.1	getting intelligence from is this poor
+1586.5	guy right here little blue Hawk number
+1589.1	two good work man Oh got another group
+1590.9	of ships our airplanes I should say nope
+1592.9	stupid commercial planes not every
+1595.7	designer of a scenario is going to go
+1598.2	crazy with elements like this some
+1600.6	actually keep it pretty simple
+1602.0	it looks like my next victim is gonna be
+1604.3	the ship right here I guess I was a
+1607.7	little too quick this poor guys about to
+1609.5	get nailed goodbye that was bad yeah
+1614.3	that was bad that was really bad you
+1615.7	shouldn't let the harpoon go wide
+1616.8	usually you have a self-destruct timer
+1618.8	notice as helicopters run out of buoys
+1621.2	they they run out of fuel they
+1622.1	automatically come back to the carrier
+1623.3	land rearm refuel and then return so I'm
+1626.5	about two o'clock in the afternoon is
+1628.2	when we're gonna launch our air strike
+1629.8	against the enemy base stop check it out
+1632.8	we're picking up a submarine excellent
+1636.0	this poor submarine is about to become a
+1638.3	victim how do we know he's there why are
+1641.0	we identifying
+1641.7	he's not stupid enough to turn his radar
+1643.5	on sigh that's got to get him killed
+1648.1	that also means this guy's gonna be busy
+1650.3	alright it is almost 2 o'clock
+1653.7	delightful okay let's prepare our air
+1656.6	strike on the enemy air base now you
+1659.6	could say why don't you just keep
+1660.5	hitting it with tomahawks well that's no
+1662.0	fun let's do it so we're gonna say
+1664.9	strike base we're gonna do a land strike
+1668.1	press okay we're gonna go ahead and make
+1670.1	sure nothing else is in here we don't
+1671.3	want no that's good so I'm gonna go
+1672.9	ahead and get all of my buddies to help
+1674.5	me out with this so we're gonna get all
+1676.1	of these ship or I should say f-18s but
+1679.6	we're gonna do something different we're
+1680.9	gonna tell these guys to be escorts
+1682.9	because again they're gonna be providing
+1684.9	us with these harm missiles we're just
+1686.3	gonna make our life a little bit simpler
+1687.5	meanwhile we're gonna go ahead and grab
+1689.6	the other f-18s log them on there and we
+1692.7	are good to go
+1693.5	somebody go to a mission doctrine WRA
+1696.4	let's go ahead and take a look at my
+1697.8	weapons release so if it's an unknown
+1700.5	surface contact fire - I'd actually
+1702.6	prefer if it fires one if it's an
+1705.2	unspecified ship we don't care about
+1706.5	that it's always saying if you don't
+1708.6	know what type it is yeah that's fine I
+1711.6	don't mind that just don't want to waste
+1712.9	missiles if I don't have to I much
+1714.1	rather than reott AK keep in mind a
+1716.3	walleye is a datalink weapon so you can
+1718.3	talk to it all the way down to the
+1719.7	ground runway facility unspecified I
+1725.7	will say mobile target yeah you want to
+1728.1	use missile defense because you can
+1729.1	shoot those things down and that looks
+1730.4	good to me all right
+1731.5	that mission is ready to roll we're
+1733.3	gonna tell them to turn it on the rate
+1734.6	actually they don't really need the
+1735.5	radar today because it's good weather
+1736.8	let's see how many of these we have
+1738.6	eight so groups of four sounds pretty
+1740.2	good my escorts I'm gonna go ahead and
+1741.6	say two as well and I think I'm happy
+1744.2	now in the real world I prefer to employ
+1746.0	the f-14s as escort but I think we've
+1748.5	done a pretty good job crippling that
+1750.0	enemy airfield I don't think we're gonna
+1751.4	have problems also the f-18s can defend
+1753.7	themselves keep in mind this were a
+1756.0	slightly tougher opponent they would
+1757.8	most likely be engaging us with other
+1759.7	things I really want to grab one of my
+1761.3	helicopters and just be like can you can
+1762.9	you kill that real quick I'm just gonna
+1765.8	tell them to go yeah fingers crossed
+1768.6	that they don't launch any missiles or
+1769.9	anything at that all right so now I've
+1771.9	gone ahead and ordered up my mission in
+1773.2	just a moment the aircraft carriers
+1774.7	going to
+1775.1	fewer air comes it's just going to spew
+1778.2	airplanes like crazy alright pause
+1783.1	there's one thing I want to change
+1784.6	though I'm gonna go back to strike base
+1786.1	under escort doctrine I need to tell him
+1788.4	not to waste the harms so I'm gonna say
+1791.0	you can use up to two at a time actually
+1793.5	even better let's use a half of the
+1795.2	enemy's weapon missile defense value
+1796.9	that's just gonna be safe otherwise I'm
+1798.4	gonna run out of harm's and it's gonna
+1799.6	suck the other thing I want to do to
+1801.4	really quickly is under Oh WRA is I want
+1804.1	to go ahead and tell it feel free to
+1805.5	just keep it shooting even after you've
+1807.0	missed the first time all right here we
+1808.9	go who's this an f-14 yes an f-14 really
+1814.4	hope what is this a torpedo
+1815.7	no it's an enemy whoa stop stop stop
+1817.8	stop stop sorry so notice the reach we
+1821.5	have with these weapons is in crow oh
+1825.2	that's an anti-ship missile battery my
+1829.2	friend you were about to receive a
+1830.7	tomahawk land attack missile my
+1833.5	apologies we'll give him two because
+1835.4	we're just being rude sorry taxpayers
+1838.5	now notice these f-18s drop these
+1841.5	walleyes from an incredible distance but
+1844.0	the best part is is these particular
+1846.0	weapons are data linked which means that
+1848.4	they can just fly in a circle and keep
+1849.9	talking to the missile all the way down
+1851.6	to the ground I wonder who this is do we
+1853.5	know anything about that one
+1854.5	take a look at nope we don't so we
+1857.2	better investigate that guy hopefully
+1858.5	this um helicopters can find out the
+1860.1	hard way that's another one of those
+1861.0	patrol vessels so anyway let's quit in
+1863.6	speed up time a little bit here our
+1865.5	missiles are zooming in I'm avoiding
+1869.5	tact for you today so I don't spoil too
+1871.4	much of the fun and this poor place is
+1874.8	about to get hammered oh here comes the
+1880.1	next round notice after they succeeded
+1882.8	they dropped a second round of walleyes
+1885.0	in order to engage the targets that were
+1886.9	already destroyed this doesn't always
+1888.6	work but in this application it actually
+1890.6	worked pretty well I'm really paranoid
+1892.2	about that SAE I have not seen it yet
+1894.9	keep in mind si eights have to operate
+1896.9	from pretty low altitude so Dom there's
+1899.2	a chance that it'll do something silly
+1901.2	and accidentally engage one of those
+1902.7	walleyes for example in which case it's
+1904.5	going to get hammered by those harm
+1905.7	missiles in about 20 seconds it does
+1907.6	bother me we haven't been
+1908.8	I'd identify where in the island it is
+1910.2	though maybe we killed it earlier for
+1911.9	example I might have missed it we'll
+1913.0	find out if it's another way of walleyes
+1915.8	here comes another wave again notice
+1918.2	we're reott aking because we have a good
+1919.9	sight on the target and our little due
+1922.5	right here it's gonna just cruise all
+1923.8	the way out here and blow that dude up
+1925.2	we'll go ahead and call up our SI threes
+1928.0	not si 3 is our s 3 is my dad to take
+1931.2	care of that as well
+1932.2	now you probably notice on the side of
+1934.2	these targets that you have two
+1935.5	different numbers they basically tell
+1937.1	you how many people are aiming at them
+1938.3	versus how many weapons are currently
+1939.9	committed to us at this point there's
+1941.4	two missiles on the way which is you
+1943.0	recall where our Tomahawk missiles have
+1945.7	we launched a little earlier that worked
+1946.9	really really well so my fingers are
+1949.4	crossed that our little Argonaut number
+1951.2	5 here gets close enough to deploy his
+1953.7	missiles now modern submarines actually
+1955.9	have ants high aircraft missiles on
+1957.7	board so if this guy were to get spotted
+1960.2	he could actually get shot down which
+1962.3	makes it a little bit tougher now what's
+1964.3	his range down to Mike's he's almost out
+1966.8	of range he's gonna have to turn around
+1967.8	in about a second oh no he's gonna run
+1970.1	out of range I'm gonna go ahead get
+1971.9	myself an s3 in a second to go take care
+1973.8	of the rest of this but oh boy this is
+1976.4	his range Circle look at this is he
+1978.0	gonna make it he's got to drop two
+1979.6	torpedoes and get that guy there Paulus
+1981.4	I'm actually gonna manually order him to
+1983.5	fire everything because otherwise he's
+1986.7	only gonna get one shot at this so
+1988.8	closer closer now this guy was stupid
+1991.7	because he accidentally left his radar
+1993.5	on at periscope depth you didn't
+1996.8	seriously just drop that did you fire
+1999.3	fire fire fire what about the other one
+2000.8	yes go back home oh we didn't sink him
+2006.1	now notice this torpedo does a big
+2008.1	doughnut locks on him and coach tracing
+2010.3	after him again ah
+2011.3	come get some Oh what happens maybe he
+2019.1	changed it maybe is sinking no it got
+2021.8	him again okay I think that's the
+2028.1	scenario the last thing we need to see
+2029.6	in our little scenario here is aw it
+2031.7	looks like it didn't need the s3s
+2032.9	I'm actually kind of impressed my guys
+2034.1	that are really good job it's the only
+2035.7	thing I want to watch is our tomahawks
+2037.1	kind of do the deed against this you
+2038.8	know surface to surface missile battery
+2040.1	for that we'll go get the 3d view
+2043.3	okay put that right there oh boy it's
+2047.7	gonna take a second a load there it is
+2052.0	well at least now look how low off the
+2053.5	ground these tomahawks are now if you're
+2054.8	curious you click on your submarine he's
+2056.5	actually under the water it's so cool if
+2059.1	you really think about it now why he's
+2060.8	still at that depth when I told him to
+2062.4	go a little bit deeper earlier kinda
+2064.1	bothers me so I'm actually gonna order
+2066.5	him down he's gonna go underwater and I
+2068.3	won't be able to see him again for a
+2069.6	while because he's gonna get too deep to
+2070.9	communicate by the way submarines use
+2072.5	floating wires that's kind of their
+2074.3	technique if they want to be underwater
+2075.6	and still communicate
+2076.6	so our tomahawks are rushing in here
+2078.3	into the enemy target range here it
+2084.8	looks like we missed something like a
+2086.0	Sam or something like that by the way f4
+2088.1	teens are great reconnaissance platforms
+2089.9	in case you're curious now we definitely
+2091.9	miss something there's an si8 we didn't
+2094.2	get that's okay I think we've done an
+2096.2	awfully good job and we're gonna go
+2097.5	ahead and check the losses in just a
+2098.8	second I think you guys have had a
+2100.3	pretty good ideas kind of the different
+2102.2	elements of this as it is oh we didn't
+2109.0	kill it haha
+2110.1	oh all right let's see what happened so
+2112.4	this whole mission started at eleven
+2114.0	o'clock it's now 14 o'clock so doing the
+2116.9	math and that real quick that's been
+2117.9	about almost four hours just about from
+2119.7	the time we started let's see how much
+2121.5	damage we did so if you take a look here
+2123.7	we use 24 walleyes which honestly that
+2125.7	would be all of them we wouldn't have
+2127.1	that many we've gone through tons of
+2128.9	sonobuoys which is good we've also gone
+2131.2	through a couple torpedoes tons of
+2132.8	tomahawks keep in mind this for a non
+2134.4	tomahawk Abel mission we wouldn't be so
+2137.0	spoiled and be able to use these things
+2138.2	for everything and we've only gone
+2139.4	through eight harpoons which is actually
+2140.7	pretty cheap scrolling down here we got
+2142.8	their tank farm of fuel that's on fire
+2144.6	the airport terminal the control tower
+2146.3	we got twelve enemy fighters make twenty
+2149.2	eighths
+2149.5	we got helicopters we got their little
+2152.4	truck that has the surface service
+2153.8	missile we got four of their ships one
+2155.8	of their subs all of their Sam's except
+2158.3	for that saat got lucky plus all their
+2160.2	radars now check this out the only thing
+2162.7	they shot at us was a few 76 millimeter
+2164.9	rounds probably in defense of the
+2166.2	harpoons a couple acoustic decoys that
+2168.4	was a sub they've they used plenty of
+2170.8	these these are basically sonobuoys
+2172.6	looking for our sub they went through
+2174.1	three si threes my rights
+2175.8	those guys are pretty good and engaging
+2177.5	tomahawks but look at the s8 we went
+2179.8	through 12 of those so we actually no
+2181.7	wonder they didn't attack us is because
+2182.9	they ran out of ammo so hopefully you
+2184.9	found that information like slash
+2186.4	tutorial kind of helpful this is like a
+2188.3	general naval operation keep in mind if
+2190.4	we're going against tougher ships you
+2191.7	have to change your tactics but in
+2193.2	general that's kind of how I manage
+2194.4	things enjoy

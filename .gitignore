@@ -39,3 +39,9 @@ UI_MOdified/server/ai/ai-secrets.local.js
 *.db-wal
 *.db-shm
 UI_MOdified/data/units.db
+
+# Atomic-write temp files from the server's write-then-rename save path
+# (e.g. plans/<uuid>.geojson.tmp.<pid>.<timestamp>). Transient — never commit.
+# NOTE: deliberately scoped to *.tmp.* only. The real journals (data/journal/*.jsonl)
+# and seed plans (data/users/**/*.geojson) are intentional baseline data and stay tracked.
+UI_MOdified/data/users/**/*.tmp.*

@@ -34,11 +34,14 @@ If you find duplication, a stub, or drift while working: **flag it to the user a
 `APP_INVENTORY.md` row** in the same change. Don't let the map rot.
 
 ## Hard rules (locked — confirm before deviating)
-- **AI/sim boundary** (`[[feedback_ai_sim_boundary_rules]]`): the **operator UI** commit path stays
-  *dry-run / guarded* — propose is read-only, the client commit bridge never mutates.
-  ⚠️ **Drift D3:** the *server* now has a real `POST /api/sim/commit` + `data/journal/*.jsonl` write
-  (MC + legacy shim). This may be sanctioned (headless sim) or a violation — **get an owner ruling
-  before any change leans on either side.** See `APP_INVENTORY.md` → Drift.
+- **AI/sim boundary** (`[[feedback_ai_sim_boundary_rules]]`): **UNLOCKED 2026-06-01 by owner ruling
+  (full unlock — operator UI mutates).** The operator commit path is now LIVE — Accept/Reject
+  `POST /api/sim/commit` → durable `data/journal/<run>.jsonl` write (Hold defers); commits carry
+  `operator_id`. **Drift D3 RESOLVED** (server commit/journal sanctioned and now driven by the UI).
+  ✅ Still closed by design: client scenario-state mutation (`window.units`/`map`/`lines`), the
+  journal export/download guards, and the **separate** `scenario-workspace` live-decision flow.
+  `boundary-audit-panel.js` reports the open posture truthfully and its self-test/violation harness
+  assert the new invariants. (Scope was "minimal coherent", not full teardown.)
 - **Event Log is a ledger, not chat** (`[[feedback_event_log_not_chat]]`): keep `#event-log` tabular
   (DTG/severity/category/source/message). No avatars, bubbles, or speaker lanes.
 - **Read-only surfaces stay read-only**: many panels are safety-by-design read-only mirrors. Check

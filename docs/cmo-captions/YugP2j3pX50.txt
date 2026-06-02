@@ -1,0 +1,827 @@
+0.2	hello everyone in today's video we're
+1.6	going to be taking a look at some of the
+2.7	kinematics of torpedoes and kind of
+4.6	going a little bit into the aspect of
+6.2	shots
+6.6	as well as some of the strategy involved
+8.4	with them so what i have today is i have
+10.4	ourselves a handy dandy pla 97
+13.2	one m akula number two this is a shuka b
+16.2	over in russia
+17.1	pretty solid submarine it does some
+18.7	pretty standard things that you're used
+19.8	to nuclear submarines
+21.0	do about 35 knots it's got a pretty good
+23.0	collection of different sensors on board
+24.8	has four torpedo tubes of the 533
+27.0	millimeter variety
+28.0	and it has some of these monster 650
+31.0	millimeter tubes as well
+32.4	those are the anti-carrier tubes back
+34.2	during the cold war
+35.5	now what i want to show off today is
+36.9	just kind of the impact that you can
+38.3	have as far as picking the right angle
+40.0	to fire a torpedo
+41.3	and keeping in mind the kinematic versus
+43.0	you know automatic sort of range of
+44.6	these weapons
+45.5	so what i have right now is i have
+46.7	myself this handy dandy ultra large
+48.3	crude carrier it's one of my favorite
+49.6	targets for these purposes because it
+51.1	takes a
+51.8	lot of abuse when i say a lot of abuse i
+55.0	mean if you take two seconds
+56.2	look at how many damage points it has
+57.8	yeah it takes a lot to put this thing
+59.6	down
+60.1	so what we're going to do is we're going
+61.1	to go ahead and take some shots at this
+62.5	from different angles to see what
+63.8	happens
+64.6	so the first shot i'm going to take is
+65.8	i'm going to take everybody's favorite
+67.1	beam
+67.6	shot this is when you're going to try to
+69.3	hit the 90 percent
+70.8	basically a 90 degree angle almost
+72.2	perpendicular to the beam of the target
+74.0	itself
+74.6	those of you who are familiar with a
+75.7	world war ii submarine games like your
+77.1	silent hunters
+78.0	you know this shot amazing the concept
+80.3	of course of the beam shot is you're
+81.6	trying to hit dead
+82.5	in the center of the ship so what will
+84.2	happen is the ship itself once it hogs
+86.1	and then sags
+87.0	it'll basically snap itself in two and
+88.7	you'll have two very awkward looking
+90.2	ships that don't
+91.1	float very well so we're gonna try that
+93.1	shirt first and now see exactly what
+94.9	happens
+96.2	go ahead and speed up time a little bit
+97.3	here so we know that our torpedoes on
+99.5	board right
+100.0	now these are 50 knot torpedoes if you
+102.2	fire them directly
+103.3	if you choose to fire them as what they
+104.8	call the kinematic range you get a 35
+107.6	knot torpedo on the flip side at 12
+109.9	nautical miles you get a
+111.3	50 knot torpedo so you're probably
+113.4	saying okay this makes sense so far and
+114.9	then why on earth
+116.2	is the range in this thing only five
+117.9	nautical miles that's going to be the
+120.0	you cannot escape from me range that's
+121.9	what this red ring
+123.0	is believe it or not even though this
+124.6	target is completely out of range right
+126.0	now
+126.4	i can still take a shot on it as a
+129.0	matter of fact i can even predict where
+130.4	i need to aim in order to actually hit
+132.0	it
+132.4	so if we know for example that our
+133.8	torpedo will do 50 knots if we're less
+135.7	than 12 nautical miles away
+137.4	i can see my target here is seven and a
+139.0	half nautical miles away
+140.5	so we want to do is we want to predict
+142.5	where we'd have to aim in order to
+144.1	basically get a free hit on it
+145.7	again we're trying to hit the
+146.5	perpendicular here so if he's doing 10
+148.6	knots and my torpedoes are doing about
+150.3	50 knots
+151.2	we need to find the point in space where
+152.8	the two torpedoes would hit each other
+154.4	now in the old days you'd have to do
+155.7	this the nasty way you'd have to sit
+156.9	there and crunch the math
+158.1	but the good news is in this game it
+160.2	does all that math for you
+161.6	as a matter of fact if i order up a
+162.9	manual launch you can see i'm already
+164.5	ready to shoot notice i put my weapons
+166.1	on hold
+166.6	so we don't get any auto launches here
+169.0	so we need to do is we need to optimize
+171.0	our shot
+171.8	so that we hit him right when he gets
+174.0	right there
+174.8	that is exactly five nautical miles away
+177.3	from us
+178.0	so if we're traveling 50 knots and it's
+179.9	five nautical miles away
+181.7	that's going to take six minutes to get
+183.8	to the target
+184.8	so we need to fire so that the torpedo
+187.0	itself gets there
+188.2	six minutes before he gets there so the
+190.3	other thing we know is we know the fact
+192.0	that he needs to travel to get into this
+193.9	position
+194.7	he's doing 10 knots and we're going to
+196.6	be doing 50 knots
+197.8	so how far along are we going to have to
+199.7	be well if you're doing 10 knots
+201.7	and divided by 60 you're going to be
+203.8	doing 0.67 for 6 minutes
+206.1	exactly one nautical mile away is when
+208.3	we're going to have to take our shot
+209.8	so i'm actually going to put a mark
+211.1	right here
+213.4	and we'll make a nice jurassic park
+214.6	reference of course for anybody who's
+216.1	interested ctrl
+217.0	r shooter and now everything is ready to
+221.2	go
+221.7	so again we're trying to hit this ship
+223.4	perfectly on the beam
+226.7	that looks like a pretty good point
+228.3	again we want to wait just a minute just
+230.2	a minute
+231.9	pause okay so we're going to fire now if
+234.7	my calculations are somewhat correct
+236.6	we're going to be aiming basically right
+238.2	here
+238.6	so that when the torpedo actually
+240.2	arrives at the ship it's going to crack
+241.8	it right in the center
+243.3	and lock on fire load up two and fire
+245.8	torpedoes away
+248.5	oh i was close i was close
+253.5	okay now this is going to be a perfect
+255.8	beam shot look at this
+257.6	folks who played a woven two submarine
+259.3	games are going to be jealous how
+261.0	accurate my shot was
+262.4	actually if you take a look my
+263.8	estimation was decent i think my only
+265.6	mistake here
+266.5	was account of the fact that i took a
+268.0	little while to actually launch the
+269.0	torpedoes
+269.9	first one hit and second one hit
+272.3	beautiful
+273.0	pause let's go ahead and take a look at
+274.6	how much damage that nice beam hit
+277.0	did so um it's on fire it's flooding and
+280.2	his systems are screwed and its damage
+282.2	is about six point eight percent if we
+283.5	go to damage control here
+285.0	you can see we took out its propulsion
+287.0	completely the bridge is okay its rudder
+289.0	is okay
+289.6	this thing is dead again this was a
+292.0	mission kill
+292.8	and that fire is pretty nasty as a
+294.5	matter of fact go ahead and speed up
+295.6	time a little bit here and see if the
+296.5	fire gets worse
+298.6	uh it's getting worse we may have just
+300.9	destroyed this thing in a single shot
+303.0	oh she's gone oh look at the fire oh boy
+306.5	oh boy
+308.3	game over
+311.4	nice so you can see that against
+313.1	something like a ulcc
+315.1	two little tiny torpedoes is more than
+317.5	enough to crack that thing
+319.4	so you're sitting there going okay what
+320.9	about the other aspects we can take the
+322.2	shot
+322.7	well let's try everybody's nose shot
+324.3	here so what i'm going to do is i'm
+325.2	going to grab my
+325.8	a little handy dandy hula again park it
+328.2	over here i'm going to
+329.1	face in this direction and this time
+330.7	we're going to go ahead and take a nose
+332.2	shot
+333.3	so again we're going to try to hit it
+334.5	right on the nosey you know or basically
+336.3	put a torpedo through the front
+337.3	windshield there
+338.3	go ahead and lock onto it remember using
+339.9	kinematic launchers by the way to do
+341.4	kinematic launches you have to actually
+343.0	allow the kinematic launches by coming
+344.9	down here
+345.6	and you can see i've got it enabled
+347.0	which gives me the ability to go ahead
+348.4	and fire these
+349.3	remember if i'm less than 12 nautical
+350.6	miles away i can fire a 50 knot torpedo
+353.1	so he's more than close enough i'll go
+354.6	ahead and select two service
+358.5	all right so what happens when you nail
+359.8	somebody right on the nose let's take a
+361.9	look here
+363.4	torpedo's coming in torpedoes he's not
+364.9	even gonna know he's about to get hit
+366.0	boom boom
+367.0	all right let's see what that did again
+368.8	this is a no shot
+370.6	anybody who's played a song hunter knows
+372.2	how difficult these are so
+373.8	that was a very clean hit also let's
+376.4	take a look at damage control
+377.8	you can see we've wrecked the propulsion
+379.6	again we've done quite a bit of damage
+381.1	to our data links our bridge and cic is
+383.0	good
+383.6	and we are both flooding as well as
+385.9	completely on fire i'll go ahead and
+387.4	speed up time let's see if things get
+388.6	worse
+389.8	that fire is pretty bad oh geez
+392.9	we're dead in the water now we gotta
+394.5	fight that fire oh fire's catching
+396.4	fire is catching oh boy this is gonna
+399.7	end poorly for this warship oh
+401.3	we're winning against the fire come on
+403.1	beat the fire beat the fire
+404.3	hey we did it so you can see that when
+407.4	we do a nose shot again there's a little
+409.1	bit of random probability in here
+410.6	that was a good hit no surprisingly we
+412.8	actually destroyed propulsion which is
+414.3	very unusual
+415.5	so chances are what actually happened
+417.0	here is our torpedoes went under the
+418.4	nose of the ship and exploded a little
+420.0	bit further down
+421.1	remember these are very long chips now
+423.2	let's try everybody's oh geez this isn't
+425.2	going to work shot
+426.2	and we're going to go for a tail shot
+427.8	here so i'm going to go right over here
+429.3	go ahead and put ashoka right there
+430.8	point it in this direction go ahead and
+432.6	wait until we reacquire that particular
+434.6	ship there it is
+435.4	these are tough shots too because he's
+437.4	running away from your weapon
+439.0	which means if you fire it outside of
+440.6	the good range which is against this
+442.3	red ring right here there's a good
+443.8	chance he'll basically outrun the
+445.2	torpedoes
+446.3	now a hit like this i expect to
+448.0	basically total his rudder sometimes you
+450.4	get engineering
+451.2	sometimes you don't really depends on
+453.0	how clean of a hit you get
+454.4	so let's go ahead and switch over to him
+455.6	he's enjoying his little drive here
+457.8	just delivering some oil boom boom all
+459.9	right so we have a tremendously large
+462.6	fire
+463.3	instantly because again think about
+465.1	where the back of the ship is and what's
+466.4	usually back there
+467.4	take a look at my damage control okay
+469.0	i'm you're always always going to take
+470.7	off the navigation radar
+472.0	a road cam communications data links are
+473.7	pretty nasty the diesels are
+475.3	wrecked so it's completely annihilated
+477.5	propulsion but it did nothing to the
+478.8	rudder which actually
+479.7	really surprises me so he's going to sit
+481.9	there slowing down because
+483.0	he's got no diesels anymore notice by
+485.9	the way the only hit that caused
+487.4	flooding
+488.1	was the beam hits so he's slowing down
+490.4	he's slowing down he's getting the fire
+491.4	under control
+492.2	he's getting the fire under control all
+494.1	right he's parked is he gonna put the
+495.4	fire out before it sinks him
+496.8	i will do no got it so you can actually
+499.4	see that was the least effective shot
+501.6	we've taken so far
+503.0	so you're going okay i think i know
+504.4	where you're going with this it seems to
+505.5	make perfect
+506.2	sense you know i get it you know take
+507.7	all that time to calculate it get that
+509.1	nice clean shot against the merchant hey
+510.8	it works great
+512.0	what about if you go against a warship
+514.7	now this is where things get
+516.2	interesting very quickly uh to my north
+518.7	right here of course i got a 295 kind of
+520.7	helping me out here
+521.8	we actually have ourselves a destroyer
+524.1	and this destroyer is
+525.2	going to demonstrate the fallacy in
+527.2	thinking you're going to be able to get
+528.3	a beam hit on a destroyer
+529.8	so i'm going to grab my shuka here i'm
+531.5	going to park it right here zoom in a
+533.2	little bit this is another mania in case
+534.8	you're curious we're actually gonna have
+535.9	to go down a little bit to shallow
+537.6	because if we stay up there he'll
+538.9	probably see us and put a torpedo
+540.3	through our front windshield which we
+541.7	don't want
+542.8	so what happens when you try for the
+544.6	beam shot on a warship
+546.5	especially a nice modern destroyer i'm
+548.0	not talking something like a cravat
+549.6	which is you know or even an oliver
+550.9	hazard parry where basically you can
+552.5	shoot it anytime anywhere because you
+553.8	can't hear your torpedo
+555.1	you can see his sonar range is massive
+558.0	so any torpedo launches in the sonar
+559.8	range will get you automatically
+561.1	targeted with basically rocket torpedoes
+563.0	so kind of keep that in mind
+564.3	so ideally what you really want to be
+565.8	doing here is you want to be positioning
+567.4	yourself so you're just outside of his
+569.1	sonar range when he passes ahead of you
+571.0	so that way he doesn't accidentally
+573.1	basically detect you when you fire
+574.9	if he detects you when you fire uh got
+576.9	bad news he's going to be able to plop
+578.5	like i said a rocket torpedo on top of
+580.1	you
+580.4	instead he's just going to accidentally
+581.9	hear your torpedoes when they start
+583.2	getting close
+583.9	so speed up time here you'll never know
+586.6	what hit them
+588.0	all right same technique here obviously
+589.8	we're going to be doing uh basically one
+591.3	of the nice automatic launches the
+592.6	non-kinematic range ones which gets us
+594.8	all
+595.1	50 knots of torpedo so we just have to
+597.2	wait until he gets into the danger zone
+598.7	keep in mind he's doing 10 knots here so
+600.3	he's making an awful lot of noise
+602.0	so let's see here we're about 4.7
+604.6	nautical miles away
+605.9	he's a solid let's see here three nano
+607.6	kilometers away we're going to be doing
+608.9	the same shot here
+609.8	so we're going to wait until he's about
+611.1	one nautical mile away and go ahead and
+612.6	leave myself a little note
+613.8	that's going to be my launching position
+615.4	right there so speed up time just a
+616.9	little bit
+618.2	and pause okay so we're going to go
+620.0	ahead and do sorry didn't mean to do
+621.9	that
+622.6	go ahead and do my classic little launch
+624.1	here we're going to give them two
+625.7	now this is a perfect perfect perfect
+628.2	beam shot here
+629.6	all right speed up time my torpedoes are
+631.1	on the way whoop did you see what he did
+634.3	he turned around now any good destroyer
+637.6	captain would immediately do this
+639.4	again if you all play this game at all
+641.0	you probably have done this about a
+642.2	thousand times
+643.1	first chance you get you basically go
+644.6	ahead and fire two torpedoes in that
+646.1	general direction again down the beam ah
+648.1	i was actually able to hear my launch
+649.7	there that's a bad thing because that
+651.1	means i'm dead
+652.5	so the torpedoes are not going to chase
+653.8	him down keep in mind these torpedoes
+655.7	are doing 50 knots keep in mind he's
+657.7	doing 32 knots
+659.0	he outran my torpedoes
+662.1	so that was hopeless there's no way on
+663.9	earth i was ever going to get that shot
+665.8	now on flip side let's go ahead and
+667.1	tweak things around just a teeny tiny
+668.8	bit
+669.4	gotta reset everything back the way it
+670.9	was just a moment ago
+672.5	go ahead and grab my little handy dandy
+674.2	shook again speed up time
+676.1	and this time we're going to get a
+677.1	little bit closer we're going to go down
+679.5	to shallow because if we go too high
+681.0	he's just going to pop us pretty much
+682.3	first chance he gets
+683.5	so now we're going to take a very risky
+685.4	shot here
+686.8	we're basically going to trap him and
+688.2	get him with the beam
+690.6	all right lock on to him a couple
+693.0	torpedoes
+693.7	now in the real world the moment you do
+695.3	this watch what happens from his
+696.5	perspective
+697.5	he's just chilling he's just chilling oh
+699.6	and there he is fire two torpedoes
+702.6	and he's gonna plop two torpedoes on the
+704.1	bearing right there and you can see it
+706.1	basically becomes a war
+707.3	from our torpedoes versus their
+708.8	torpedoes and of course he's gonna turn
+711.0	around he's gonna start getting as much
+712.3	speed as possible but guess what's gonna
+714.1	get catch up to him guess what caught up
+716.6	to us
+717.8	so you can see immediately how that did
+720.0	not work
+721.4	so um if we're gonna do a beam shot
+723.0	against a warship you had better hope
+724.5	they can't hear you
+725.6	so let's try a different shot let's go
+728.0	ahead and grab our ashoka again
+731.2	and we're going to go up here put them
+732.6	right here we're going to go for a nose
+733.9	shot this time this is actually one of
+735.3	my favorite shots against a destroyer
+737.7	again anybody who's played silent hunter
+739.2	back in the day has done this shot about
+740.7	a thousand times
+741.8	you look through your periscope you look
+743.0	out the window on the window you know
+744.4	what i mean
+745.0	look at the periscope next thing you
+746.2	know there's a destroyer coming straight
+747.7	at you
+748.2	you panic you launch two torpedoes and
+749.9	you cleanly hit them right on the nose
+752.9	now the reason this is usually a good
+754.6	shot against destroyers
+756.2	is because when you take this shot he's
+758.2	going to have to turn around outrun your
+760.4	torpedo
+761.1	the problem is when he goes to turn
+763.0	around he's going to be wasting an
+764.9	enormous amount of energy and he's going
+766.4	to lose all his speed giving your
+767.8	torpedoes plenty of time to get into
+769.8	range
+770.6	so go ahead and give him a pair eat that
+772.7	eat that
+774.6	as usual he's going to be chucking along
+776.2	here chugging along here chugging along
+777.9	here
+778.8	just relaxing nothing too too scary he's
+780.9	just kind of doing his thing
+782.2	kind of doing his thing
+785.2	oh and he's dead oh
+789.4	beautiful beautiful beautiful work he is
+792.6	toast because again it's very difficult
+795.3	for him to hear
+796.2	looking out the front so now that's
+798.4	interesting because different sonar
+799.7	systems are going to have different
+800.6	sensitivities depending where you are
+802.3	in this case that not only hit him it
+804.5	cleaned him
+805.4	out he did not have a chance but but for
+807.9	the sake of experimentation for the sake
+809.5	of proving my point
+811.5	i'm going to go ahead and set the exact
+812.6	same thing up again but this time what
+815.0	i'm going to do
+815.7	is i'm going to slow the destroyer down
+818.7	so now when it takes its shot or now
+820.9	when it gets shot at i should say we
+822.2	should be more specific
+823.5	it's going to be less likely for it to
+825.8	not notice the incoming torpedo
+827.6	there we go five knots it's pretty darn
+829.4	slow okay let's swing back over to here
+831.5	let's grab our handy dandy sub right
+833.1	here we know exactly where he is
+834.8	get him into range lock on give him a
+836.8	pair
+838.2	what do we got all right switch back to
+840.1	the destroyer's perspective
+841.4	he's not not cavitating and we've
+843.7	already got a lock
+844.6	can we at least fire something at him oh
+846.6	maybe we can do a bearing launch torpedo
+848.5	ah it won't even let us do that
+851.0	and there they are we are just
+854.6	slightly out of range okay now we're out
+856.6	running the torpedo notice that we had
+858.6	to turn
+859.4	around in order to avoid the torpedoes
+861.9	and in this case you can see the
+863.3	torpedoes actually got chewed up and
+865.0	spit out
+865.8	by i ran out of energy so you can see
+867.6	myself romania basically out ran him
+870.0	again so again if we're going to take a
+871.9	shot off the nose if he's going that
+873.4	slow he's just going to turn around and
+874.8	run
+875.4	we can get him if he's moving a little
+877.2	faster because then he's going to have
+878.2	less time to react
+879.7	okay we'll take a look at one more shot
+881.8	here and this will be kind of
+883.4	one of the classic ways to disable
+885.0	especially an escort so i'm going to get
+886.7	my suga
+887.5	and i'm going to go right into the
+889.1	baffles of this destroyer
+891.4	and i'm actually going to slow the
+892.7	destroyer down a little bit here because
+894.5	if it goes full blast this is basically
+896.0	going to be a cheap shot on my part
+897.7	not that all of these haven't been cheap
+899.0	shots i mean when you can teleport
+900.2	around the ocean it makes it much easier
+901.7	to hit the other guy
+903.2	all right we'll speed up time a little
+904.3	bit yeah he's not gonna have any idea
+906.1	i'm behind him
+907.8	so i'm floating right now in his baffles
+910.2	what are his baffles well let's give our
+911.9	second just a second for our handy-dandy
+913.8	destroyer to actually
+914.6	be identified here his baffles are going
+917.0	to be the location directly behind him
+919.1	where he cannot see us so i'm actually
+921.7	going to go pop ourselves up real quick
+923.3	because we're not going to be able to
+924.2	see him at this depth go take a quick
+926.6	little peek
+927.0	quick little peek i need to identify him
+928.5	before i can take my shot here
+930.5	and can we see him there he goes back
+932.6	down back down back down
+933.5	now the reason i wanted to identify him
+935.0	is now if i click on him i get
+936.6	information about the particular sub
+938.6	now what you're noticing is that he's
+940.2	got his little outside ring here which
+942.1	is going to be basically his sonar
+943.8	detection he can detect this from every
+945.5	direction
+946.3	which makes things a little bit tricky
+948.2	for a shot like this
+949.7	but we are going to take a crack at it
+951.4	anyway and see exactly what happens
+953.1	plenty of oecm laser rangefinders
+955.8	everything basically under the sun
+957.8	and there's this whole sonar now watch
+959.9	this
+960.9	so now we're going to go ahead and take
+961.8	our subby sub with this uppy sub right
+965.4	well i don't want to do that go ahead
+967.5	and click him he'll have two
+968.7	now let's see what happens from the
+969.9	perspective of the destroyer
+971.8	so he's cruising he's doing his thing
+973.4	but notice
+975.0	he can't hear behind him
+978.4	so he's cruising he's cruising he's
+980.1	being nice and slow he's listening for
+981.4	those pesky submarines
+983.0	you know i heard that there was a couple
+984.2	shukas that are basically doing a war
+985.7	gaming ex
+986.2	and i'm dead okay so what is my point
+990.2	with all this
+991.0	my point is you have to think about the
+992.8	type of target before you try to set up
+994.5	your torpedo shot
+995.7	you can see from all my demonstrations
+997.5	here just how effective you can take
+999.7	those shots
+1000.5	if you take a little bit of time to get
+1001.8	yourself a position keep in mind i had
+1003.8	the added bonus
+1004.7	that i could basically see where
+1006.0	everybody was at all times
+1007.8	if i actually go over here you probably
+1009.4	noticed like i said my duple of 95 which
+1011.3	is doing a bang-up job here
+1013.0	basically keeping an eye on everything
+1014.5	here to make the scenario a little bit
+1015.9	simpler for me
+1017.8	another thing you want to think about
+1019.0	too is trying to stay outside of the
+1021.2	range of the
+1022.1	return fire because again if they're
+1023.9	going to go ahead and shot back at you
+1025.4	you know it's going to make things very
+1026.6	very tricky for us
+1027.9	the other thing you want to think about
+1029.0	too is those kinematic versus your
+1030.9	automatic launcher size i like to call
+1032.4	them
+1032.7	your automatic launches you're firing at
+1034.3	full speed for the torpedo but you're
+1035.8	limiting its
+1036.5	range okay one more thing i want to show
+1038.8	you and of course everybody's sitting
+1039.9	there going
+1040.5	that was rough well what happens if we
+1043.6	want to be able to
+1044.6	compensate for something like that so
+1047.7	i'll show you a couple quick little
+1048.8	tricks to kind of block that real fast
+1051.0	so i'm going to go back to my sofa
+1052.0	romania and this time what i'm going to
+1053.8	do is i'm going to add it to do a course
+1056.0	see this angle right here that
+1057.3	represents this little 90 degree slice
+1059.7	if we wanted to prevent ourselves from
+1061.4	getting cheap shotted here
+1062.7	we would have to set ourselves up to
+1064.2	have course reversals every once in a
+1066.0	while so that we can
+1067.0	clear our baffles so what i'm going to
+1069.0	do is i'm going to go ahead and set
+1070.0	these up 1.7
+1071.5	it's going to be 90 degree turns we're
+1073.2	going to do 1.7 90 degree turns 1.7
+1076.9	1.7 if you're wondering where i'm
+1078.5	getting the 0.7 from just take the
+1080.1	tangent of 45 degrees
+1081.9	we'll go ahead down to 1.7 again we're
+1084.3	going to keep these running around 1.7
+1087.1	and i kind of do 1.7 that looks good to
+1089.7	me that should get him
+1090.6	turning around quite a bit so now i'm
+1092.5	going to go ahead and order him to avoid
+1093.6	cavitation which is going to slow him
+1094.8	down a little tiny bit
+1096.1	but again it's not going to do anything
+1097.2	too crazy all right swing back to us
+1099.6	we'll go back to uh shallow we don't
+1101.1	want to accidentally get spotted
+1103.8	all right let's see if we can sneak up
+1105.2	on this guy and take that cheap shot
+1107.0	okay so right now we're gonna have to go
+1109.0	pretty darn quick in order to catch up
+1110.4	to this guy because like right now he's
+1111.6	doing about eight knots if we don't do
+1113.2	eight knots we'll never actually be able
+1114.8	to catch up to him
+1115.8	so i'm actually gonna slide this sucker
+1117.4	over to we'll do 10 knots to keep up
+1119.6	with them
+1120.3	there we go so that way we can slowly
+1122.2	begin to overtake him
+1123.4	now i'm noticing now that he's got this
+1125.1	weird little oblique angle on him
+1127.2	so i'm actually going to go ahead and
+1128.2	take my typical shot here
+1131.3	and let's see what happens there's my
+1134.2	oblique shot it's looking pretty clean
+1135.7	oh
+1136.0	did you notice as soon as he took that
+1138.2	right turn he spotted them and
+1140.0	immediately jacked his speed up and
+1141.5	started zipping away
+1142.8	and boom boom and now we've got a very
+1145.0	angry silver mania which can probably
+1147.0	track us down and
+1147.9	do all sorts of nasty damage to us yeah
+1149.7	see it already knows where we are but
+1150.9	unfortunately
+1151.6	it already got clunked so you can see
+1153.8	that is one
+1154.7	method to do it another technique that
+1156.7	i've seen that works really really well
+1158.2	that's
+1158.6	kind of a fun way to do it let me go
+1159.8	ahead and reopen everything real fast
+1162.6	switch back to grin actually i should
+1164.9	switch back to road
+1166.5	another really cool strategy is if
+1168.0	you're going to do the little ziggy zags
+1169.5	again these zigzags you can't make them
+1171.0	too big but if you make them too small
+1172.6	obviously
+1174.0	go ahead we'll do a four and a half mile
+1175.4	zigzag this time
+1178.2	is what you'll do is you'll do something
+1179.8	like this so we have our zigzag but
+1181.7	instead
+1182.3	i'm going to go straight
+1190.1	you can see exactly what i'm doing here
+1192.1	again it's clearing your baffles
+1193.8	so now what i'm going to do is i'm going
+1194.9	to get myself a different ship um let's
+1197.0	see here i'm going to do a grisha
+1199.0	these things are pretty darn classic
+1202.0	grab myself a grisha which does not have
+1203.9	the same sonar capability it's not bad
+1205.8	sonar
+1212.5	all i'm doing is setting myself a little
+1213.9	square wave here and the concept here is
+1216.4	that you're going to get
+1217.4	the square wave to be opposite the other
+1219.4	guy's square wave
+1220.6	so now if i go over to map settings real
+1222.4	quick and i do let's see here plotted
+1224.1	courses and i do all
+1225.3	you can see his score away pretty
+1226.6	cleanly so i need to be doing that while
+1228.6	he's doing that
+1230.0	so i can kind of do something like this
+1233.0	and he's going to take up quite a bit
+1234.2	more room here
+1236.1	we're just doing everything we can to
+1237.3	kind of clean that baffle and now when
+1238.6	he goes straight
+1239.4	i can go straight so let's go ahead and
+1241.4	go there of course when he stops going
+1243.1	straight we're going to go ahead and do
+1244.2	our own little square
+1245.4	and basically you can set something up
+1246.7	that looks a little bit like this
+1248.2	against each other so that you're
+1249.5	constantly clearing each other's baffles
+1251.6	to prevent that accidental surprise
+1253.4	torpedo that we didn't find out about
+1255.3	let's go ahead and grab our sub and
+1256.6	watch what happens with this one go
+1258.2	ahead and grab this one real quick we're
+1259.4	going to go this direction
+1260.6	unpause make sure we're not surfaced
+1263.0	because that's a quick and easy way to
+1264.3	get nailed
+1265.1	we don't want to do that today if we
+1266.2	cannot look at that we've already
+1267.3	detected key details about the grisha
+1269.4	go ahead and move a little bit closer
+1270.6	here we want to go kind of slow here
+1273.4	creep all right speed up time a little
+1275.8	tiny tiny bit
+1277.3	now notice the grisha is beaming us at
+1280.0	the same time as the noise floor menu
+1282.3	is basically going away from us so now
+1284.4	if i wanted to do something about this i
+1286.0	could fire this one but as soon as i do
+1288.0	he's going to pick up speed and he's
+1289.6	basically going to outrun it
+1293.3	then i fire a nice little torpedo spread
+1295.8	that was actually a really clean beam
+1297.0	shot
+1298.6	switch to everybody else notice that
+1300.6	grisha has not detected him yet it's not
+1302.3	to say oh
+1303.2	he's going too fast that's my mistake
+1304.6	here shut down the cavitation if you're
+1306.6	going to cavitate you're not going to
+1307.9	hear anything that's sneaking up on you
+1309.2	like those angry torpedoes
+1310.4	up there we go now notice he was able to
+1314.2	see the torpedo being launched at him so
+1316.3	that he now has the ability to respond
+1317.8	to
+1318.0	it ironically did you see how he turned
+1319.6	around and ran he's running from
+1321.1	something he can't actually
+1322.4	see now of course since it is a grisha
+1324.6	you know we could turn around and start
+1325.7	firing all sorts of good stuff in that
+1327.0	direction but we're not going to
+1328.2	as a matter of fact this grisha is about
+1329.5	to get nailed izzy boom and he's gone
+1333.0	meanwhile nuestromania is uh got a
+1334.9	pretty good run there pretty good run is
+1336.6	he gonna make it
+1338.1	done war over but at least you could see
+1341.6	just how lethal it is from taking a shot
+1343.7	like that again the surprise is more
+1345.8	important than that clean kinematic hit
+1347.8	that we saw on the other show
+1348.9	all right hopefully this video has been
+1350.0	helpful again i just you know kind of
+1351.3	shown out kind of neat little things
+1352.4	that you could do kind of
+1353.5	common concerns with naval warfare this
+1355.4	applies to submarines by the way if you
+1357.0	can get in the baffle of a submarine and
+1358.2	take a free shot
+1359.0	that submarine's gone if you get a nose
+1361.0	shot the only way you're gonna get a
+1362.1	clean nose shot is if it's going fast
+1363.9	at you and of course the beam is it's a
+1366.6	tough shot
+1367.4	but against something like a merchant or
+1368.8	like a free shot on a carrier it works
+1370.8	great
+1371.5	enjoy

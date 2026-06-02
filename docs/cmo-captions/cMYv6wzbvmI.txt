@@ -1,0 +1,1197 @@
+0.0	Oh everyone in today's video we're going
+2.5	to be basically responding to a request
+4.3	that a another user had for command
+7.1	tutorials and that's kind of my workflow
+9.1	in a scenario so depending on the
+12.2	scenario is obviously going to change
+13.5	the way you approach it especially
+14.6	depending on the focus depending on the
+16.1	briefing the requirements all that other
+17.6	good stuff but I'm gonna follow in a
+19.2	fairly straightforward kind of offensive
+21.6	situation so what we have right here as
+24.0	you probably recognize this is August 8
+26.1	2008 this is about 12 o'clock at night
+29.1	pretty early in the morning we have
+30.5	Russia and of course we have Georgia if
+32.3	you know your history pretty well you
+33.7	probably remember what happened during
+35.0	this particular conflict a few years
+36.9	back now basically the first thing I
+39.0	like to do in every single one of my
+40.5	scenarios just check the briefing I've
+42.2	already looked over the briefing it
+43.4	basically says do everything possible to
+45.2	support ground operations hmm what does
+48.5	that entail that usually means crippling
+50.5	the enemy's ability to intercept your
+52.7	close air support aircraft and it
+54.4	usually means crippling their air
+55.6	defense as well as commanding control so
+58.1	with those kind of objectives in mind we
+59.8	can start actually getting everything
+61.1	sort of set up here so the first thing
+62.9	I'm gonna do is I'm gonna go ahead and
+64.1	take a look at my order of battle so
+66.8	what do I have at my disposal let's see
+68.7	a Beslan air base that's over here you
+70.7	can see that I'm packin some anti runway
+73.5	bombs makes sense from Sukhoi
+74.9	twenty-fives
+75.8	anything else no just look like it
+77.5	several satellites which is awesome in
+80.0	real be a boy date looks like I have
+82.2	some Sukhoi 24 DS with Krypton's nice
+84.7	the Krypton is a really really nice
+87.0	weapon it's an anti-radiation missile
+89.0	but it has a normal range as opposed to
+90.7	short range which gets irritating and
+92.3	mows dulk which is very famous for in
+94.4	this particular engagement looks like I
+95.8	have a bunch of Sukhoi 27 looks like I
+98.0	have some su 17s he's a little bit older
+100.5	and I have some mig-29 so looks like
+103.1	they're carrying some bombs not bad but
+105.1	couldnäôt chic here it looks like we
+106.5	have a bunch of Sukhoi 25 T's these are
+109.0	the sukhoi side basically anti-tank
+110.9	they're also our precision guided
+113.4	munitions style Sukhoi 25s so you can
+116.3	see they're already equipped with a s 10
+117.6	s which were pretty big missiles looks
+119.7	like we have a kilo who's sort of
+120.9	chillin right there and it looks like we
+122.0	have an Akula - who I have the feeling
+123.9	once he goes a little bit deeper he's
+125.1	gonna be hard to talk to
+126.1	plenty of air defense now we also have a
+128.6	Russian surface action group it looks
+130.3	like it says the sofa - Renia is the
+132.1	most clever is a Cree back which is
+134.0	little tiny frigate we have a new sermon
+135.8	yeah of course we had the Admiral
+137.7	Kuznetsov and you need the boris chicken
+140.0	as well because that's basically going
+141.5	to be underway replenishment now one of
+143.6	the nice things is is I believe we have
+145.4	Sukhoi 33 s we do problematic way of
+149.2	course is that it's air-to-air only at
+151.2	least at this time which is kind of a
+152.6	bummer scrolling down here we have sochi
+154.7	Nadler it looks like we have a bunch of
+155.8	helicopters who I know what to do with
+157.2	those guys
+157.6	scrolling down looks like we have a
+159.3	Spetsnaz company I think I know what to
+161.4	do with those guys so now let's go ahead
+163.3	and take a look at the enemy platforms
+164.7	as well so we'd go ahead and click here
+166.4	browse scenario platforms let's switch
+168.4	over to Georgia let's see what they got
+170.5	pretty normal stuff pretty normal stuff
+173.0	I'm not seeing anything I'm too nervous
+174.7	about it which is enough but ah si 2 F
+177.4	now I know that in this particular
+179.1	scenario as I recall let me go and open
+181.0	this up there are a lot of si to
+183.5	batteries in Georgia at this time during
+185.4	the actual 2008 conflict there was
+187.4	basically a pair of sa-11 batteries
+189.3	which are the bucks those things are
+191.0	kind of nasty and they probably present
+193.1	as well but for this scenario to make
+194.6	things extra difficult I've added a
+195.9	bunch of those scrolling down we have a
+198.0	couple structures bunch of radars I'm
+200.5	guessing these are their early warning
+201.6	radars if we can track these down and
+203.3	destroy them earlier life is gonna be
+204.6	much simpler we have a bunch of si 300
+207.3	G's si LODs the C model that version of
+210.4	the si 3 is extremely good it can really
+212.5	put a lot of missiles in the air it's
+213.9	very accurate these are dangerous weapon
+216.5	platforms fortunately the relatively
+218.1	short range now one thing that we can
+219.9	take advantage of with the buck of
+221.3	course if I recall correctly I believe
+223.9	would look at how scary that thing looks
+225.7	like second si six oh let's see here oh
+228.8	no nope we can't hide above its ceiling
+231.5	which means we're gonna have to deal
+232.4	with it directly that's gonna be a
+234.5	problem I'm not looking forward to that
+236.3	if we're gonna lose somebody it's gonna
+237.6	be to this and the real conflict by the
+239.3	way it was a loss due to it a si 11 but
+243.6	I'm taking a look right here I'm
+244.6	noticing it's a 25 nautical mile range
+246.5	but it's a mobile target so we're not
+248.6	gonna know where it is to start the game
+249.7	bummer
+250.7	alright let's see what else we got here
+252.3	Oh mm Zeus chances are these are gonna
+255.8	be protecting air to aircraft bases
+258.4	they're gonna be protecting or early
+259.5	warning Raiders these things are
+260.8	probably going to be everywhere they're
+261.9	gonna be very difficult to detect
+263.0	however one thing we do know about the
+266.1	particulars
+267.1	2:23 here is that its altitude is
+269.3	limited to 10,000 feet above ground
+271.6	level which means if we keep our seat
+274.2	operations a little bit above that we'll
+276.1	never have to deal with that engagement
+277.5	that being said this is gonna combine us
+279.2	in the end all right
+281.2	I've done my research now let's go ahead
+282.8	and plot my overall strategy so it's the
+285.1	middle of the night looks like the
+286.1	weather is relatively cold it's pretty
+288.4	cloudy at high altitudes which means if
+290.3	we operate at really high altitudes it's
+292.1	gonna have a tough time seeing us if the
+293.7	radar is crippled naturally we're gonna
+295.6	want to their early warning
+297.1	radars first but unfortunately we have
+300.2	no cruise missiles and we also have no
+302.6	jamming units which means my kind of
+304.6	typical one-two punch is just not a
+306.3	possibility unfortunately also is even
+308.8	though we have this beautiful surfers
+310.0	action group over here we don't have the
+312.0	ability to deploy any cruise missiles
+313.5	from them either which is kind of
+315.4	depressing I know what you're saying
+316.7	you're probably saying hey don't you
+318.3	have some to pollute 22 m/s yes as a
+321.4	matter of fact I believe I do have some
+323.0	tuple of 22 M's
+324.0	but these historically in this
+325.5	particular engagement were equipped with
+327.1	basically fab 500s and a lot of them so
+330.7	I'm not gonna order these guys to go
+332.2	ahead and swap them out with cruise
+333.4	missiles even though I have that ability
+334.5	look at that because it's going to take
+336.7	a staggering 20 hours to complete the
+339.3	rearmament and I want to do damage now
+341.2	before they're able to get aircraft
+343.2	airborne basically I believe that their
+346.1	engagements gonna be starting about nine
+347.7	o'clock in the morning that gives me
+348.9	nine hours to do as much damage to the
+351.1	air in structure as possible so I got to
+353.5	work with what I got
+354.3	speaking of that another thing I was
+355.8	like to check after checking the
+356.8	briefing is I was like to take a look at
+358.1	the doctrine because certain Maps
+360.3	um certain scenarios I should say are
+361.9	gonna have different rules of engagement
+363.6	so for this one I'm using the map editor
+365.7	by the way to show you things all you
+367.4	can see that we're allowed to tech any
+368.7	Air Act target which is usually not true
+371.4	because again if we get a civilian
+372.9	aircraft by accident it's gonna be an
+374.4	international incident we're gonna have
+375.5	some explaining to do but in this
+377.0	scenario we're safe it looks like
+378.6	everybody else we have to take the time
+379.9	to identify them we can ignore plotted
+382.3	course that's good
+383.4	ambiguous so obviously we've got a lot
+385.0	of ammunition to waste I hate this
+386.8	setting let's see here check okay
+389.1	automatic invasion looks like we're at a
+391.3	surge tempo which is rare a lot of times
+393.3	from missions like this you're on a
+394.4	sustained tempo that means we'll be able
+396.2	to attack more than once in several
+397.9	cases which is going to be very helpful
+399.8	let's see quick turnaround
+401.3	excellent let's see okay so one that I
+403.5	always like to check is this one one of
+405.3	the things that annoys the hell out of
+406.6	me is what'll happen is they'll do a
+408.3	seed strike fire one seed and turn
+410.3	around and go home a lot of these other
+412.8	are WRAS are going to be linked to that
+416.7	so I was like to change it to actually
+418.6	match what I know my mission needs to do
+420.1	or you can change when they leave a
+421.6	flight I generally keep flights together
+423.3	so that means they're ready to fly again
+424.7	together but again you can change this
+426.7	air-to-ground strafing I do not
+428.5	recommend it when you know that there's
+430.1	some of the CSU 23 is wandering around
+432.3	they're just going to get shot down it's
+434.1	not worth the effort historically I
+436.1	believe the Russians lost a tuple of 22
+438.9	and they lost probably think was like a
+440.2	three or four probably Sukhoi 25s and
+442.9	maybe Sukhoi 24s and you will lose more
+445.6	if you check this box so don't do that
+447.9	jettison ordnance we're probably gonna
+450.1	not need this one but if we were doing a
+452.1	direct attack which I'm not going to
+453.7	this is not a bad thing to have
+455.6	let's see Clank and Jack I'm gonna leave
+457.7	that alone we have several submarines I
+459.9	think we have a kilo and I believe we
+461.4	have a sea here I think this is a shook
+463.2	oh yeah
+463.8	it's a beam not too bad yeah that's all
+465.9	set the way I want it I'm gonna leave
+467.2	that all alone first tomb it's the first
+468.9	to get hit this stuff here yeah I'm
+471.9	gonna leave all that alone - because I'm
+473.2	good all right let's begin
+474.6	step one we gotta do some reconnaissance
+476.5	and at the same time it's doing
+478.1	reconnaissance I'm gonna start setting
+479.3	up my support tracks there's basically
+481.4	looks like there's two concentrations of
+483.0	enemies stuff we have basically the
+485.1	stuff done yeah notice we have the
+487.8	capital Tbilisi which is gonna have a
+489.4	lot of different structure you have some
+491.1	power plant simply they have the
+492.2	pipeline which is gonna be def new
+493.9	that's a target oh yeah wreck this thing
+497.3	you wrecked their economy now
+499.4	historically I believe this was a very
+500.6	popular target also but it never
+502.2	actually took real damage
+503.3	looks like they have some command
+504.5	bunkers over here that's definitely
+505.9	gonna be a priority on the west coast
+508.3	here just so they have their port they
+510.3	have several air bases ready to go I
+512.0	believe these are more civilian up this
+513.6	way obviously we have quite a few Sam's
+515.6	aw I think what there's a SAM right
+518.1	there that's not gonna last long
+519.7	take him look down here we can have all
+522.2	these other areas pretty much the
+523.8	priority is going to be in this region
+525.5	and of course when you click on the
+526.9	enemy Sam's
+527.6	you can see that the vast majority of
+529.6	them are clearly concentrated here and
+532.4	along the coast there's kind of a sweet
+534.1	spot of Opera
+535.0	space that I can go through here to do
+537.1	my stuff that we know of keep in mind
+539.5	those sa 11s could be anywhere and they
+541.5	probably are gonna give us some trouble
+542.8	so let's go ahead and set up our support
+544.9	track but before I do that do I'm gonna
+547.7	wipe out the Sam battery I have a
+549.3	Spetsnaz company you guys have fun
+552.0	all right let's get that support track
+553.7	set up so remember the longest range Sam
+556.2	in this scenario is only about 30
+557.9	nautical miles so taking it safe
+559.9	I'd say my support track could probably
+561.3	be any around here of course we have the
+563.2	tunnel right there we can put
+565.0	them right along there but that seems to
+566.5	be a pretty safe spot let me go ahead
+568.2	and deselect any reference points
+569.6	accidentally grabbed and let's go ahead
+571.5	and create our support track what's the
+572.8	support track this is basically where my
+574.7	Air a refueling as well as my early
+577.2	warning you're gonna be set up set these
+579.6	guys up real quickly set them to Patrol
+582.0	I'm sorry not patrol go set them to
+583.9	support I believe I have a pair of Midas
+589.0	and I have a pair of mainstay whenever
+592.5	you do barrier caps which is basically
+594.0	putting an airplane and making me go
+595.2	back and forth on one line of the map
+596.7	you always want to make sure you have
+597.9	some refueling so you're not wasting
+599.2	aircraft after aircraft constantly
+601.1	cycling back and forth from base let's
+603.3	go ahead and make sure the doctrine is
+604.7	set correctly excellent that is all set
+608.0	okay that's it I don't need to do
+609.5	anything with that yep that's fine all
+611.1	right
+611.4	next thing I like to do is I like to set
+613.0	up my barrier cap now what does a
+614.5	barrier cap basically what you're going
+616.1	to be doing is setting a bunch of
+617.1	waypoints for aircraft to follow and if
+619.3	anybody gets too close to that area they
+621.5	automatically engage now historically
+623.3	the way we did this is we just define
+624.9	like an area like this and we'd say
+626.7	patrol that area the problem with that
+628.8	is in this particular version at least
+630.8	they have a tendency to wonder out of
+632.5	that area and get themselves shot down
+633.8	by Sam's so I'm not going to do that
+636.0	this time so instead what I'm going to
+637.7	do is basically gonna create a barrier
+639.4	we're gonna use these points here grab
+643.7	this one this one and this one go ahead
+648.2	and create ourselves did I accidentally
+649.6	just grab the one I have from before
+650.6	indeed I did that's what I want to call
+653.4	this bar cap when you're doing barrier
+655.5	caps you want to make sure you include
+657.0	an aircraft that actually has that kind
+659.1	of range so I chose to coy 33s for this
+661.9	now how many do we send well before I do
+664.7	how many who can send study this for a
+666.7	second
+667.2	if you engage this checkbox they're
+669.7	going to leave that row and get
+671.5	themselves shot down don't do that if
+673.8	you leave this box on they will leave
+675.8	the range every once in a while to
+677.1	engage something they can actually
+678.3	strike this is actually pretty useful
+680.4	then obviously we want the 1/3 rule from
+682.2	this that means there's gonna be four
+683.8	flankers in the air at a time which kind
+686.0	of sounds like I need to do two sections
+687.6	we can do individual flankers but in the
+689.2	real world you kind of get yourself shot
+690.8	down if you do that well let's go ahead
+692.4	and check my doctrine active radar
+694.0	definitely in case our on AWACS doesn't
+696.0	spot them if I wanted to be sneaky I can
+697.9	shut off their active radar but I don't
+700.3	know how much I trust that a wax unit
+703.0	especially in the caucus mountains
+704.5	speaking of that one thing that it did
+706.6	not mention is it's always a good idea
+707.8	to check the terrain that you're
+710.0	fighting in because a lot of times you
+712.2	realize oh shoot I didn't think of that
+714.5	so for example this is a relatively low
+717.0	plane down here extreme mountains look
+719.7	at Tbilisi you've got all these SAM
+721.6	sites but they also have line-of-sight
+723.5	being blocked because of these mountains
+725.2	which means if we can come in low enough
+727.1	we can basically zigzag into our strike
+729.2	don't recommend it though because once
+731.5	you get into this valley you're
+732.8	basically trapped in that valley in that
+734.5	you can't get out unless you get back to
+736.6	these mountains in this distance I
+738.0	believe that's 20 nautical miles that's
+740.0	gonna take about a minute and a half to
+741.5	get back to so that is not safe and
+744.3	we're gonna have to kind of keep that in
+745.5	mind that being said will abuse
+747.0	everything of what we see right here so
+749.0	it's going to shut off their relief
+750.4	layer again we also have a surface
+753.4	action group we want to make sure they
+754.6	get some combat air patrol last thing
+756.1	you want is an alpha-strike on your
+757.5	wonderful carriers that's a pretty good
+759.8	size they do a battle 150 nautical miles
+762.4	kind of the sweet spot but again see
+764.5	what doctrine actually recommends don't
+766.1	forget to do this step by the way we're
+767.6	gonna make them relative to the surface
+769.1	action group let's go ahead and do Sag
+773.0	cap why not right
+774.3	Patrol aw do not go exploring let's grab
+779.5	our Sukhoi 33 s we don't want them to go
+782.7	exploring because you know how that
+783.9	story ends I thought we had those all
+785.8	right I didn't accidentally assign them
+787.1	to a mission because it's definitely
+787.9	something I would do mmm yep I certainly
+794.3	did
+796.4	why did you guys yell out enough I could
+798.6	have heard you and fixed that sigh all
+802.6	fixed we got it all right I'm just
+804.9	double-checking to make sure this is set
+805.9	by the way you notice I didn't define an
+808.5	area come down here make sure you click
+810.2	repeatable loop otherwise the disaster
+812.6	will happen like I said where they'll
+813.7	explain the area my surface action group
+815.6	combat Air Patrol you can leave those
+817.4	guys as an area they'll stay close
+819.0	enough in that zone and aiko explained
+820.5	too far let me give you another warning
+822.1	now do you notice how this is set to
+823.7	allow refueling if you leave that in he
+826.7	will leave this patrol zone fly across
+828.7	all the enemy Sam's go over here to
+830.8	refuel watch out for that so you can
+833.5	either solve that by saying not allowed
+834.9	which honestly that's the way to do it
+836.4	or you can rearrange all this but I
+838.6	don't recommend doing that alright we've
+840.7	got our support track out we have our
+843.4	bar cap out now it's time to start
+845.9	thinking about what we can do with the
+847.2	enemy Sam's now one of the things that
+849.5	we could do is we could do an
+850.7	old-fashioned strike we could grab this
+852.2	it's a police e can load up all my
+854.1	Sukhoi 25 s in everybody and basically
+856.2	do a full deck alpha strike against that
+859.3	area if we do that we're probably gonna
+861.6	lose six airplanes now you're saying
+863.4	well you're gonna have Sam support right
+864.9	yeah I only have twenty four planes
+867.4	capable of suppressing Sam's you
+869.7	probably like well that that's a lot
+871.2	right not really because that only means
+873.5	it's two missiles per plane that's about
+876.0	sixty now I know that the enemy has
+878.0	something like 25 Sam sites doing the
+880.2	math real quickly twenty-five times four
+882.0	or so plus the six data you're gonna
+884.6	need about 200 a RMS to reliably
+887.0	suppress that region so it's gonna be
+889.2	much better to them first and
+891.4	then come back and actually do big
+893.7	strike because remember it's not gonna
+895.3	be until the morning really that the war
+896.8	is gonna start but obviously they're
+898.5	gonna start getting smart and getting
+899.7	aircraft ready for the big war when that
+901.6	happens meanwhile of course our kilos
+904.0	doing the kilos gonna do and obviously I
+905.8	can't even talk to you the cooler
+907.0	because he's too deep all right so let's
+910.0	set that up so what I'm gonna do is I'm
+912.2	gonna go ahead and deselect on my points
+913.4	I'm going to create I almost think this
+915.6	is a bit of a cheese strategy but um it
+918.7	works pretty well
+919.4	so what I'm gonna do is I'm gonna create
+921.2	a special patrol route again I want to
+924.2	keep this about 30
+925.2	let's do about 25 miles right there okay
+927.8	good so what I'm gonna do is I'm going
+929.7	to
+929.9	a line for a seed Patrol I'm not
+932.7	patrolling this region I'm patrolling
+934.2	from here to here and what I'm gonna do
+937.1	is I'm gonna order all of my
+938.7	anti-radiation missile carrying planes
+940.3	to take this route in to this area the
+943.5	concept is as they arrive and start
+945.7	shooting missiles these guys will start
+947.5	shooting missiles and then the guys
+948.6	behind them will start shooting missiles
+950.1	and basically it would be missile spam
+952.2	to all of the Sam batteries here
+955.6	then I send them back home readjust this
+957.9	track at a different angle and then do
+960.4	the same procedure again Wow let's see
+963.3	what that's gonna look like so this is
+965.2	going to be a Patrol I even put it in
+967.3	quotes for you cuz it I think this is
+969.4	more cheese strategy than anything but
+971.3	it works pretty well so what I'm gonna
+972.8	do is I'm gonna shut this off I'm gonna
+974.2	leave investigate unknown contacts in
+976.2	weapons range contacts I'm gonna set my
+978.7	flight size to maximum reason being is
+981.7	when it's time to fire the
+982.9	anti-radiation missiles quantity counts
+985.6	especially against modern units that can
+987.7	shoot down your arms just keep that in
+990.1	mind we can leave that on we're gonna
+992.6	cruise make sure you set them to
+995.8	repeatable loop let's go ahead and get
+998.2	them we're gonna grab these two groups
+999.8	you guys have got the duty I shut off
+1002.3	1/3 rule I want everybody with an arm to
+1004.9	basically be in the air at the same time
+1006.8	now here's where you're going to get in
+1008.6	trouble take a look at my altitudes if I
+1012.0	order them to approach this area low
+1014.3	altitude they're gonna get shot down by
+1016.3	a zsu if I order them to approach at
+1018.2	high altitude they're less likely to be
+1020.5	engaged because of the cloud cover so if
+1022.6	you see my clouds right now we're about
+1023.8	20,000 feet so what I'm gonna do is I'm
+1025.9	actually gonna tell them to transit at
+1027.7	36,000 feet then when they get to
+1030.0	station I'm gonna have them dip just a
+1033.1	teeny teeny tiny bit under the cloud
+1035.9	level and then what I'm gonna do with my
+1038.3	attack is I'm gonna order them to attack
+1040.3	at about 20,000 50 feet you're sitting
+1045.5	there going what well check this out
+1047.3	actually I'm gonna I'm gonna be more
+1048.4	careful here because they're gonna have
+1049.2	to climb up to that to attack so check
+1051.0	this out what's gonna happen is they're
+1052.9	gonna fly down the radars are gonna
+1054.8	choir launch the Sam these guys are
+1056.9	gonna pop into the cloud and then fire
+1058.9	their missiles back a little spammy a
+1062.1	little cheesy but it doesn't real
+1063.5	good job all right okay so my Sam's are
+1066.6	ready my harm patrols ready I've got a
+1068.8	ton of other aircraft at my disposal
+1070.2	I've got the tupolev 22s and now if I
+1072.7	were a smart person I would use them to
+1074.5	attack these guys first
+1076.2	you're sitting there going aren't these
+1077.9	guys gonna be vulnerable to enemy Sam's
+1079.6	well let's hope not so the safest way to
+1082.4	do that is to actually send something
+1083.8	out first check to see whether or not
+1086.3	it's safe to do it and then send them in
+1088.8	but we'll do that in a second so I'm
+1090.5	gonna go ahead and create a mission I'm
+1091.8	gonna set to inactive I'm gonna call
+1094.0	this bunker strike it's gonna be a land
+1097.1	strike press okay and I'm gonna go ahead
+1099.4	and get myself the most accurate attack
+1101.6	platform that I have at my disposal
+1102.7	which are my Tupolev twenty-twos go
+1105.6	ahead and throw these guys all in there
+1106.8	obviously I want the command bunker am I
+1108.7	gonna even be able to hit that cross
+1111.0	your fingers this is an inactive mission
+1113.6	I'm going to reactivate it once I'm a
+1115.8	little bit more confident
+1117.0	make sure off access attack is off are
+1119.4	you going to be very grumpy all right I
+1121.7	think I've set everything up so that's
+1124.4	that's pretty much it so we're gonna do
+1126.3	is the seed guys are gonna the
+1127.8	Sam's my ships are gonna do my ships my
+1130.3	cap guys are gonna keep an eye out for
+1131.8	anybody you shouldn't be flying and
+1133.2	hopefully my submarines get close enough
+1135.1	to the enemy base of course let me go
+1137.3	take a look at my Spetsnaz remember them
+1139.5	to destroy the Sam batter hey don't
+1141.3	argue this results right and the other
+1143.5	thing you probably noticed is I have a
+1144.8	pack of angry helicopters ready to go
+1147.3	I'm going to use these angry helicopters
+1149.6	against this CW site as soon as I'm
+1152.0	confident that this is a to battery is
+1153.7	knocked out all right
+1155.5	let's actually you know what let's just
+1158.2	do that now so I'm gonna go ahead and
+1160.3	now where's this the ewi want to folk on
+1162.3	centrate on I'm gonna push this button
+1163.8	real quick all right control f11
+1167.0	choppered chopper road strike land
+1171.3	strike uh no that's not how I want to do
+1174.6	that I would actually want to prefer to
+1176.8	do that as an area it's a fine area I'm
+1179.9	gonna call this my chopper chopper
+1182.4	patrol I'm not sending these guys in
+1185.7	until I'm confident there's nothing down
+1187.4	there that's going to destroy them um
+1190.0	nobody say ground patrol press okay
+1191.9	don't let them go exploring outside of
+1194.3	the kill zone and obviously we want to
+1196.6	use
+1197.4	we just sort of Pete no let's use them
+1198.9	all at the same time don't make that
+1200.3	mistake and let's keep them together in
+1202.1	big groups they are typical Soviet style
+1204.6	was to use groups of six I might as well
+1206.6	follow that as well but I'm gonna leave
+1207.9	it inactive for now Wow okay let's uh
+1211.8	let's get started all right I don't
+1219.8	think the Sam is anywhere in Russia just
+1223.1	call it a hunch so you're picking up a
+1224.6	surveillance radar and I think there was
+1226.3	another surveillance radar over there
+1228.3	okay so everybody who's launching right
+1230.6	now is either support bar cap or speed
+1236.5	and do you see what just happened my
+1239.3	Spetsnaz company literally blew up a SAM
+1241.5	site well done boys
+1243.0	send in the UH no I'm not gonna send in
+1245.3	the choppers I'm not confident yet two
+1248.3	ships were just detected uh-oh
+1251.6	fire control radar I don't think those
+1254.0	are friendly all right watch what the
+1256.5	Kirov can do I select you I'll slow down
+1259.8	time this is just satisfying
+1261.6	gotta fire some of the biggest and nasty
+1264.0	anti-ship missiles in existence of
+1266.9	course I'd rather have a more confident
+1268.4	target but the radar guided so I'm not
+1271.1	too too too concerned all right each one
+1273.5	of these suckers is very expensive but
+1275.5	I'll tell you one thing they're a lot
+1276.8	cheaper than the ships I'm about to hit
+1278.6	with them meanwhile my seed guys are off
+1281.1	the going you're probably sitting going
+1282.6	what are they doing didn't you order
+1284.3	them to go over here I did if you
+1286.5	remember what I did that I also told
+1288.5	them that they can attack any target
+1291.1	that they see so watch what happens
+1295.3	shoot enemy aircraft detected its a
+1297.3	bogey detected by the smell that's
+1299.7	basically came off the AWACS
+1301.2	we're detecting more targets
+1305.5	Cedar's and notice here comes the harms
+1310.2	I should say arms not harms Russians
+1314.1	don't use harms that is a lot of wasted
+1319.5	harms on those stupid stupid
+1321.7	early-warning right oh man do I wish we
+1323.7	could tell them not to attack with that
+1325.8	meanwhile our FARC app is doing the best
+1328.4	they can to keep things interesting to
+1329.9	keep firing missiles into the side of
+1331.5	the mountains
+1332.1	hence the blind and it looks like one of
+1337.4	our arms has been smart enough to lock
+1339.2	onto a fire down but in a gut shot down
+1344.0	look at all the other fire dome weapons
+1346.4	here oh look at this there was a SAM up
+1352.1	here was now the good news is whoever
+1359.1	this sa-11 is down here it's got
+1361.1	problems of his own so chances are I
+1363.3	don't think he's gonna hit any of my bar
+1365.8	cap guys of course what am i bar cap
+1368.6	guys they're halfway in the middle of
+1370.6	Georgia I need to check their systems
+1372.9	here because obviously they're not
+1374.1	following directions I thought I put you
+1376.9	guys on a loop oh that sucks these guys
+1379.5	are gonna get themselves killed because
+1381.5	what will happen is they'll fly over an
+1382.7	enemy Sam batter and get hammered
+1384.1	of course lucky us oh that was lucky you
+1388.9	guys have got to get out of there get
+1390.4	out of there
+1393.2	oh my god you guys this is frustrating
+1395.8	and you can kind of feel my frustration
+1397.9	I'm short get out of there
+1399.9	you're not supposed to be in the middle
+1402.0	of Russia or middle Georgia I should say
+1403.7	yeah now I'm gonna lose one oh you're
+1407.5	lucky get out of there I told you guys
+1414.4	to guard that barrier I didn't tell you
+1416.1	guys to go halfway through Georgia now
+1417.7	he's gonna get tapped by NSA three
+1419.2	that's how this story ends the good news
+1421.7	is the Sukhoi 27 that's really really
+1424.2	good defensive ECM so there's a free
+1426.8	chance that it won't get wasted get out
+1431.4	of there
+1432.2	meanwhile somebody else is doing it it's
+1434.5	just another one of my seed guys ah
+1436.3	there's the lag spike I was waiting for
+1438.3	I believe that was this guy over here
+1440.5	but that's all right so these guys are
+1442.4	taking off now I believe most of my seed
+1445.8	guys have already done their job yeah I
+1448.3	can see another crew coming in right
+1449.5	here well by the way you'll notice the
+1451.5	ships we detected got erased oh you guys
+1455.1	oh my so take him out of the way right
+1457.5	Oh a trainer that's got to be worth the
+1459.4	missile we're firing
+1461.6	ah these must be my seed guys oh no I
+1469.0	lost the Sukhoi 27 well so far for
+1472.3	historical results inelegant so good
+1473.9	there all right so now what's happening
+1481.5	is all of our seed aircraft have
+1482.9	destroyed probably maybe a quarter on a
+1486.1	good day of either the early warning or
+1488.5	Sam battery radars keep in mind in the
+1491.1	real world as soon as you do this they
+1492.7	just quickly repair them so we're gonna
+1494.6	go into speed up time my handy-dandy
+1497.3	barrier cap guys are finally doing what
+1499.7	I asked them to do after losing one ooh
+1502.0	boy that pilot is gonna hear from me
+1504.4	when we get him back after the prisoner
+1506.2	swap when this war is over
+1507.2	oh what's this oh we spotted another
+1510.6	ship to be positively identify it indeed
+1512.9	we did it's a Grisha good bye thank you
+1516.4	for playing top spotted another one we
+1520.1	don't know much about it is that a
+1521.1	fire-control radar no it's a surface
+1522.7	search radar dad it's a fire-control
+1525.2	radar thank you for playing and enjoy
+1539.5	worth the missile okay I feel safe
+1543.6	enough to release my tuple of 22s on
+1545.6	their bunkers also feel safe enough to
+1547.9	release my helicopters because I noticed
+1550.1	these batteries got destroyed if
+1552.0	anything I can be kind of cruel and do
+1553.7	something like this and expand the
+1555.8	strike area just a little bit wider and
+1557.4	let my helicopters have a fun time I
+1559.7	have to keep an eye over here though
+1561.5	because what I don't want is the
+1563.0	annoying surprise of being attacked by
+1565.5	those ESU 23s
+1566.7	because they will snap us in - keep in
+1568.9	mind it's still 1:30 in the morning
+1572.4	somebody released those helicopters I'm
+1574.7	also releasing my tip alert of 22s which
+1577.2	are going to group up and attack those
+1578.3	enemy bunkers notice my barrier caps
+1580.7	doing a lovely job now that they're
+1582.2	finally following directions thanks for
+1584.5	that guys I guess they got a little
+1589.4	carried away because they're on the way
+1590.7	right so we're bombing their buggers
+1594.8	I guarantee you we did nothing by the
+1597.2	way when you're done with the mission
+1598.3	it's always a good idea to just
+1599.6	inactivate it and then remove everybody
+1601.9	from it instead of deleting it if you
+1603.7	know you're gonna have to repeat it
+1604.6	however now you have to go back to these
+1606.4	guys and tell them please return to base
+1607.9	keep in mind we won't have access to
+1609.8	these guys for the next 20 hours so
+1611.9	that's kind of a bummer and that's that
+1617.0	I wonder if we even did any damage oh we
+1619.7	got one of them we got one of them okay
+1622.5	so now this is the quiet time basically
+1625.4	I've got everything set up in the
+1626.6	support style that I want my sukhoi 27s
+1629.1	are doing their thing they're my support
+1631.0	crews are doing their things I kind of
+1632.4	feel bad for this guy his best friend
+1634.3	got shut down and now we wait so we can
+1639.5	see that times flying by here meanwhile
+1641.2	the rearming and refueling are so Corey
+1643.4	twenty-four is in 17s which we're gonna
+1645.0	need a little while and we have it's
+1647.5	time to pay attention to our team oh by
+1651.2	the way you notice no helicopters have
+1653.0	launched you think that's weird no it
+1656.0	isn't helicopters of the Russian variety
+1658.2	of that particular variety can't operate
+1660.2	at night time hence they did not launch
+1662.5	or did I didn't neglect it now let me
+1664.6	actually before I make that mistake
+1665.5	whoops sorry
+1668.6	okay now they're gonna launch we want
+1671.8	groups of four check all right sorry
+1675.5	about that yeah so the ka-50
+1677.7	does have the ability to engage at night
+1679.5	I behinds do also okay I take it back
+1681.9	ignore it I was just saying that was
+1683.5	sloppy of me so these guys are gonna
+1685.0	wander around and probably lag my
+1686.6	computer pretty bad
+1687.5	we'll see who's this okay those are the
+1690.8	bar caps for the carrier action group
+1692.5	cool
+1692.9	alright let's pay attention to our kilo
+1695.1	for a second here so I'm gonna go ahead
+1697.2	and bring them to creeps
+1702.4	chello
+1706.0	okay he doesn't know it's go ahead ah
+1709.9	look who just arrived
+1711.7	my Akula which if you remember was back
+1713.4	here when I talked to him has arrived on
+1715.5	station I'm gonna bring him up to
+1716.7	periscope depth does he see anything
+1720.9	unusual at least this way he has eyes at
+1722.9	the port I need a distance of about 10
+1724.3	nautical miles I'm too far away we need
+1726.7	to get to about let's say here I'm gonna
+1731.7	order him here I'm gonna go ahead and
+1733.4	get my other guy right here and sit okay
+1736.3	so meanwhile my helicopters are having a
+1738.6	great old time destroying this airbase
+1744.8	hope I didn't lose anybody because they
+1747.0	noticed that there is Ashoka there
+1748.3	dangerous anyway so now we get to the
+1750.9	quiet part of the game which is always
+1752.6	fun every good game has one of these
+1754.3	moments we of course have plenty of
+1756.2	Sukhoi twenty-fives but I don't want to
+1758.1	use them until I absolutely annihilated
+1761.1	their air defence otherwise you're just
+1762.9	gonna take losses it's not worth it
+1765.7	these guys will be ready in three hours
+1767.5	I'm actually going to inactivate that
+1769.3	mission real quickly so that way I know
+1771.1	it doesn't come back all right three
+1772.5	hours from now would be about 650 that'd
+1776.0	be about 7 o'clock in the morning
+1777.4	meanwhile my handy dandy Sukhoi 27 just
+1781.0	sort of tooling around really kind of
+1782.8	curious as to why they're tooling around
+1784.1	it's just low altitude I feel like
+1785.5	they're just kind of wasting fuel as a
+1787.2	matter of fact we can go take a look at
+1788.5	that real quick cuz I'm interested these
+1791.0	guys like automatically attacking um
+1792.5	they can do unspecified when keep them
+1795.3	at 36,000 feet which is kind of a sweet
+1797.2	spot for them there's stationed altitude
+1799.2	same thing they can be up there pretty
+1800.5	high especially since we have support
+1802.1	attack you can decide on your own I just
+1804.4	want to bring them up a little higher so
+1805.7	they can spend more time in the attack
+1807.4	zone oh I see why he's so low he's so
+1809.7	low cuz he's flying back to the first
+1811.1	point that he needs to fly up meanwhile
+1813.3	this one's just cruising around it seems
+1814.9	Georgia hasn't thrown anything new at us
+1816.5	I think this is the next group
+1819.6	hey remember him he's the one who
+1822.7	disobeyed orders and got shot down I'm
+1824.4	actually gonna send him home cuz there's
+1825.7	only one of him you might as well spend
+1827.4	the rest of the afternoon thinking about
+1829.0	his loss sigh meanwhile our helicopters
+1832.9	have done a pretty good job of shooting
+1833.9	up that airbase but that was a bit of a
+1835.3	surprise they probably also were able to
+1836.8	destroy
+1837.4	early warning radar which I believe they
+1838.8	did actually makes me feel a little
+1840.3	better alright so our next big attack is
+1842.7	gonna come at about 7 o'clock in the
+1844.1	morning
+1844.7	notice our support elements finally our
+1847.6	one of our refueling tries just left
+1849.5	right is another one's gonna take his
+1851.0	place if I was a smarter developer or
+1853.6	smarter planner I would actually wait on
+1856.1	those guys until I know my next wall of
+1858.0	operations will begin which like I said
+1859.7	is right around 7:00 a.m. is gonna be my
+1861.8	next big zinger and the way I'm gonna do
+1864.2	it is basically gonna set it up so
+1866.0	they're gonna launch all their arms
+1868.3	Myint moments later they
+1879.5	there we go
+1884.8	lucky for us we haven't had any more air
+1886.9	launches it's kind of makes me feel a
+1888.4	little bit better I guess he's coming up
+1891.5	to altitude here it's pretty good about
+1896.1	542 in the morning our next round of
+1898.2	attacks is gonna begin exactly at 7:00 I
+1900.9	should say we're going to start them at
+1902.8	7:00 we're gonna start with a big seed
+1906.3	strike and then we're gonna follow it in
+1908.0	with basically destroy every runway
+1909.8	you've ever seen before it's about six
+1912.8	o'clock whoa satellite just went by so
+1919.9	far so good
+1920.9	the great thing about this barrier cap
+1922.6	is that they will keep flying until they
+1924.3	run out of fuel which could be a long
+1926.0	time from now because they keep getting
+1927.7	refuelling looks like I'm not okay so
+1930.2	both aircraft are up right now excellent
+1931.9	so we still have good support you can
+1934.2	see our summer up there cuz another
+1935.3	satellite you can see that our coolers
+1937.7	in position you can see that our kilos
+1939.4	in position these guys who provide us
+1940.7	with really really good intelligence of
+1942.6	what's going on at the port there 6:30
+1946.0	prepare for the next round now keep in
+1949.5	mind if I didn't disable that Nisshin
+1952.2	they would launch as soon as they're
+1953.5	ready again I would need to launch them
+1955.3	all at the same time that's really
+1956.4	critical
+1959.5	6:46 here we go now if you remember this
+1962.8	is our way in actually gonna change this
+1965.2	so that we'd come in more like this this
+1968.0	will make sense when you see it trust me
+1969.5	put it right here it's gonna be the last
+1971.7	point let's actually check the name of
+1978.5	those points real quick for one for two
+1980.2	for three so I missed it by a second all
+1984.6	right let's go find my seed patrol
+1986.9	notice I haven't lost any of these guys
+1988.3	yet now what I'm going to do is disable
+1990.5	outside the patrol area I need them to
+1992.8	strike in a line like this into the
+1995.6	heart of Tbilisi I'm gonna activate the
+1997.9	mission and as soon as I do that all
+1999.6	these aircraft are now going to launch
+2001.2	because they're now ready to go so as I
+2003.7	said I'm using those as sort of the
+2005.4	starters and then I'm going to use my
+2007.0	other aircraft as my finishers
+2008.6	apparently that bunker by the way that I
+2010.6	bombed blew up must have caught fire
+2012.3	makes me feel a little better right okay
+2014.3	let's put those guys openly what's that
+2017.1	those guys go by first
+2021.1	now here is a potential disaster you
+2024.8	observe that these guys are gonna arrive
+2026.5	on station first you don't want them to
+2029.5	do that you want them to all arrived on
+2031.3	station at about the same time so what
+2033.7	I'm gonna do is put a little leg in
+2035.0	their little operation here actually I'm
+2037.2	gonna put a second little leg in their
+2038.4	operation here because I need to slow
+2039.8	them down so that everybody gets there
+2042.8	at about the same time trust me okay
+2048.3	much better now watch this oh you guys
+2053.4	are on station by the way let's see here
+2056.5	this is seed Patrol transit altitude I'm
+2058.8	gonna knock them to 19500 slow down time
+2061.7	just to make sure they're doing the
+2063.1	proper thing here unless it thinks 1943
+2066.3	is the first point no I've got the
+2067.9	correct got that correct - interesting
+2072.3	and here we go
+2078.3	[Laughter]
+2079.8	come get some
+2082.9	now if you launch these piecemeal they'd
+2085.7	all get rats
+2086.9	now notice they engage their fire
+2088.9	control radars to shoot at these
+2090.1	missiles allowing these guys to fire two
+2094.2	fireworks I have no idea how expensive
+2098.3	that strike just was but it was
+2100.1	completely worth it
+2101.7	[Music]
+2103.1	well it looks like we got most of them
+2105.1	this time all right now that I am
+2108.4	confident that we've done a pretty good
+2110.5	number to all of their support units
+2113.4	here in Sam's I think it's time to start
+2115.8	planning the actual strike against those
+2117.8	air bases so let's see here um how do we
+2121.2	want to do this
+2122.2	let's see Tbilisi International that's
+2124.3	an International Airport probably not
+2126.1	worth our trouble Vaz eonnie on the flip
+2128.8	side this we know they store aircraft at
+2131.2	I believe there's an air yeah Marie and
+2132.6	I'll use all the way over there so you
+2133.7	my newly probably pronouncing that wrong
+2136.1	I apologize so let's go ahead and get
+2137.7	ready for that strike also so I'm gonna
+2140.1	go ahead and say strike a B so this is
+2144.5	our big crush the enemies air base
+2146.8	strike so the way you want to do this is
+2149.2	you want to separate the strike into
+2150.4	different pieces depending on what
+2151.7	you're trying to do if I'm trying to
+2153.3	damage the runway for example you want
+2155.5	to use anti runway bomb crews so really
+2158.6	I should be more specific here so burn
+2160.7	with our runway of course gotcha so what
+2163.9	I'm gonna do is clear out all the
+2165.4	targets that are not runway related
+2168.5	looks pretty good to me nice now I'm
+2172.3	gonna call up my Sukhoi 25s that have
+2174.5	anti runway bombs and I'm going to
+2176.6	assign them to attack I'm gonna keep
+2178.1	them very large groups this time cuz I'm
+2181.6	again we want to make sure we do as much
+2182.8	damage as possible however I think
+2184.1	there's only 12 available so there'll be
+2186.1	two groups I take it back
+2188.1	let's do three groups of aircraft so I'm
+2190.1	gonna go ahead and create a new mission
+2191.0	now I'm gonna call strike a be ap let's
+2196.4	set this to a land strike also let's go
+2199.5	ahead and grab the mig-29s for this
+2202.1	their job is going to be to do as much
+2204.4	damage as possible to the access points
+2207.3	let's go ahead and do this remove those
+2209.4	that looks pretty good we don't want
+2210.9	attack the taxiway this looks pretty
+2212.4	good although it's gonna take a lot more
+2213.8	than just those make 29 to destroyed
+2216.7	that many access points so I'm also
+2218.4	going to commit all of my Sukhoi 2025
+2222.3	T's here last but not least I have my
+2224.4	backfires but I won't be able to use
+2226.0	them until like tonight so let's hope
+2228.4	that works out now here's how this is
+2230.2	going to go everybody's gonna take off
+2232.0	they're gonna fly down here and since
+2233.4	I'm a big freakin rush
+2235.3	three aircrafts it's going to be two
+2237.1	Sukhoi 25s and once a mig-29 the reason
+2240.6	being is because there's probably going
+2242.6	to be still some active asset assets
+2244.3	another thing I want to throw out here
+2245.8	too is I can't tell them what else to do
+2247.4	to attack at I don't want them attacking
+2249.6	less than 15,000 feet if they do so if
+2252.2	there's anything infrared or a machine
+2254.4	gun down there I'm going to lose
+2256.0	aircraft just to that and not to all
+2258.0	those Sam's I just hammered
+2259.3	speaking of which by the way we want to
+2261.8	set their mission doctrine to include
+2263.5	offensive electronic countermeasures so
+2266.0	now watch what happens here you'd be
+2270.7	surprised how accurate I'm going to be
+2275.5	here comes the strikers ideally you'd
+2280.1	want to match these guys with some seed
+2281.8	escorts ideally you'd want to match
+2283.2	these guys with some cap escorts so we
+2285.5	just have to cross our fingers that my
+2287.6	Sam crews did enough job
+2298.9	looks like we have one more crew I feel
+2301.0	bad for this guy because this poor crews
+2302.6	got to be going right into the target
+2305.4	zone alone
+2306.2	poor guy as I said okay let's see how
+2313.0	close I was ten ten so you're sitting
+2323.4	there going then why did you pick the
+2325.1	strategy the reason I picked that
+2327.7	particular strategy is I wanted to show
+2329.5	you one of the limitations of the strike
+2331.9	planner now the better and safer way to
+2334.4	have done that mission I'm not gonna
+2335.7	reload and do it again I think you have
+2336.9	a pretty good idea of how to do this at
+2338.4	this point would be actually to go ahead
+2340.6	and define an area to select all define
+2343.7	an area like this what sorry
+2345.9	go like this land patrol ground and then
+2355.0	set the minimum altitudes right here to
+2359.2	keep them out of the line of fire of
+2361.6	those short-range air defence units okay
+2365.0	so now what would happen of course is
+2366.9	some more time would play the main
+2367.9	ground invasion it's gonna start in 45
+2369.5	minutes at that point you'd want to send
+2371.3	your helicopters to back them up at this
+2372.9	point you'd want to send and your
+2374.4	support bombers you'd want to send and
+2376.3	mover a cap down a little bit closer now
+2378.3	if I had more time what I would do is
+2380.8	use that cool seed strike you saw me do
+2382.7	earlier five more times because that
+2385.0	would be about the amount of missiles I
+2386.6	need to the entire Air Defense
+2388.8	of Georgia but again in the real world
+2390.8	in the real battle it was a single Sam
+2392.3	site basically plus everything
+2393.9	shoulder-launched all right hopefully
+2395.4	found that video kind of interesting it
+2397.1	kind of shows how I do things
+2398.6	obviously this didn't go great at the
+2401.0	end we were doing amazing right up until
+2404.2	we did that last strike just like I
+2406.4	promised unfortunately a lot of what you
+2408.4	saw today was kind of like the bad side
+2410.5	of command where you have things where
+2412.5	they don't behave like you want them to
+2414.5	so it's really important you constantly
+2416.5	check and make sure it's matching your
+2418.0	expectations are the good news is if you
+2420.1	look at the other side yeah we got the
+2423.1	Command punkers we got this many planes
+2425.1	we got all their sa-11 so we got there
+2426.8	sa threes we got
+2428.0	- so we got the command welker five
+2430.5	those but look at how bad these losses
+2432.9	were and remember these were probably
+2434.9	avoidable I just didn't realize there's
+2436.8	a shoka there and we should never make
+2438.1	that assumption if it was daytime we
+2440.2	would have been able to destroy that
+2441.5	she'll go with ATGM so keep that in mind
+2443.3	then of course these guys got lost cuz
+2445.7	they got shot down by triple-a these
+2447.3	guys probably all got shot down by
+2448.8	triple-a also all right hopefully you
+2450.7	found this a video kind of interesting
+2452.1	it's kind of how I approach it a little
+2453.4	bit of the strategy more time obviously
+2455.4	you can do things a little bit
+2456.5	differently so now if you want to see
+2458.0	something really interesting I'll show
+2459.5	you one more thing I'll show you one
+2460.7	more thing I apologize but I'll show you
+2462.7	one more thing we could have done this -
+2465.6	we could have grabbed froze eonni
+2467.4	we could have done alpha strike we could
+2471.6	have grabbed everything now watch this
+2489.5	I don't think I missed anything did I
+2494.0	yes I did
+2496.9	sit sit groups of four that's the way I
+2498.5	want to do it obviously we're not using
+2499.9	those we can't use those are out of
+2501.6	range observe now that's how to do an
+2511.7	air strike the sky is about to be
+2520.4	blackened with surface-to-air missile
+2522.0	batteries no notice just as before our
+2526.0	seed aircraft do a really good job and
+2530.9	notice those other missiles get shut
+2532.8	down now that all the seed missiles are
+2536.7	completely depleted watch what happens
+2539.4	when the main strike force
+2553.8	that is like greenie guided it was like
+2556.8	20 billion dollars worth of missiles
+2558.5	that just went by
+2564.1	make it rain
+2580.4	I'd hate to be underground during all
+2582.7	this this is like operation linebacker
+2584.5	which what no what are you doing Oh No
+2588.4	friendly fire did you see it there was a
+2591.4	friendly fire incident right there I'm
+2595.4	still losing airplanes okay ready Oh
+2612.7	[Laughter]
+2621.8	nobody cares about you
+2623.4	oh my gosh I was expensive hey let's go
+2626.8	down here what do they lose they got a
+2628.0	Shoko we got a couple hangars we got a
+2630.2	couple of sa-11 - SI toos we didn't even
+2635.0	we got one of their si threes this is
+2637.4	their total expenditures oh geez so
+2641.5	anyway hopefully you found this video
+2642.8	kind of interesting like I said it was a
+2644.7	workflow video at the same time it's
+2646.0	kind of done it I'll provide a copy of
+2648.1	this scenario in the description for
+2650.3	this in case you want to kind of play
+2651.5	with it I find this to be kind of a cool
+2653.0	scenario again there's no actual
+2654.4	briefing there's no actual scoring I
+2656.2	think there's no actual score I think at
+2657.9	one point actually did put score isn't
+2659.3	it I did not do that today Oh indeed I
+2663.4	did I have a score of 5 yay of course if
+2665.9	you look at the log loss of aircraft
+2669.0	anyway so hopefully you found this kind
+2671.3	of interesting like I said I'll provide
+2672.9	a link to this scenario if you want to
+2674.3	take a shot at it yourself there's a lot
+2676.0	of strategy here again use patrols
+2678.2	they're going to be easier by the way
+2679.8	one thing I forgot to mention when you
+2681.3	do a patrol you could actually go down
+2683.1	to doctrine weapons to release and you
+2685.2	can do smart things like say only use
+2687.6	the anti runway bombs against the
+2689.8	runways and things like that and only
+2692.0	use the fab 500 against run you know
+2694.8	hangars and things like that using these
+2696.9	settings so that you can still dictate
+2698.8	what altitude they can operate from
+2700.0	anyway enjoy

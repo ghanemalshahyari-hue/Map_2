@@ -338,22 +338,29 @@ test('AN5: layer cleanup — engagementArcs array resets on second render call',
     assert.strictEqual(arcs.length, 0);
 });
 
-test('AN5: non-W3 no-op — schema_variant guard fires before any cluster work', () => {
-    // The real guard is: if (!sc || sc.schema_variant !== 'w3-rich') return;
-    // Test the condition directly with non-W3 scenarios.
-    const scenarios = [
-        { schema_variant: 'w1' },
-        { schema_variant: 'wargame2-brega' },
-        {},                              // no schema_variant
+test('AN5: global engagement graphics — gated on DATA (engagement_arcs), not the w3-rich tag', () => {
+    // The renderer is now global: it no longer bails on `schema_variant !== 'w3-rich'`.
+    // The real guard is the empty-arcs check: `if (!allArcs.length) return;`.
+    // So the no-op condition is "this step has no engagement_arcs", regardless of tag.
+    const stepArcsFor = (sc) => {
+        const steps = sc && Array.isArray(sc.steps) ? sc.steps : [];
+        const row = steps[0] || {};
+        return Array.isArray(row.engagement_arcs) ? row.engagement_arcs : [];
+    };
+    const noOpCases = [
+        { schema_variant: 'w1' },                                   // non-W3, no arcs
+        { schema_variant: 'wargame2-brega', steps: [{}] },          // non-W3, empty step
+        {},                                                         // no schema_variant
         null,
     ];
-    for (const sc of scenarios) {
-        const isW3 = sc && sc.schema_variant === 'w3-rich';
-        assert.ok(!isW3,
-            `Expected non-W3 guard to fire for ${JSON.stringify(sc)}`);
+    for (const sc of noOpCases) {
+        assert.strictEqual(stepArcsFor(sc).length, 0,
+            `Expected no-op (no arcs) for ${JSON.stringify(sc)}`);
     }
-    // And w3-rich should NOT trigger the guard
-    assert.strictEqual({ schema_variant: 'w3-rich' }.schema_variant === 'w3-rich', true);
+    // A scenario carrying arcs animates — even a non-w3-rich one (the point of "global").
+    const nonW3WithArcs = { schema_variant: 'w1', steps: [{ engagement_arcs: [{ actor_side: 'RED', coordinates: [[18, 32], [20, 30]] }] }] };
+    assert.ok(stepArcsFor(nonW3WithArcs).length > 0,
+        'A non-w3-rich scenario carrying engagement_arcs should still render (global behavior)');
 });
 
 test('AN5: no scenario mutation — groupArcsByTargetCluster does not modify input arc objects', () => {

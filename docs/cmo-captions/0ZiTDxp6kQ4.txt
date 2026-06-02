@@ -1,0 +1,654 @@
+0.0	hello everyone today's command modern
+2.3	operations video we're going to be
+3.6	taking a look at precision guided
+5.5	munitions now I'd actually make myself a
+7.8	little list of stuff that we needed to
+9.0	worry about today because there's a lot
+10.4	to it but at the same time it really
+12.1	isn't a lot to it and I think there's
+14.1	some confusion and hopefully I'm going
+15.4	to leave e8 this I'm not going to get
+16.9	too crazy as far as the tactical side of
+18.7	things I'm going to concentrate more on
+19.8	just being able to translate with the
+21.6	different capabilities mean for you as
+23.1	well as how you're going to try to
+24.7	employ them so first things first our
+26.8	precision guided munition sigh they go
+28.3	all the way back to a war to basically
+30.5	somebody realized that if I have to drop
+32.2	you know sixty thousand bombs on
+33.6	something to hit it it'd be much simpler
+35.2	if I only had to drop one bomb to hit it
+37.0	remember because of anti-aircraft
+38.7	defenses you had to have basically very
+40.9	very high altitude drop and despite what
+43.1	the good people at Norwood probably tell
+44.7	you the bomb site wasn't terribly
+46.7	reliable so the other nice thing about
+48.5	that too is if you need to drop a less
+50.0	weapons that generally means is going to
+51.7	be cheaper if you have to drop one bomb
+53.1	instead of sixty it's gonna work better
+54.6	there's also less collateral damage
+56.2	which is something we usually don't
+57.3	worry as much about in command but it is
+59.5	a really really big thing we have to
+61.0	think about in the real world
+62.0	another thing to know about pgms is how
+64.1	they're very very expensive so when we
+66.5	use them they're going to be an amazing
+68.0	reason why we need to use one of those
+69.3	and not something cheaper you know if a
+71.0	mark eighty two is a thousand bucks and
+72.8	I can use two of them to blow up a
+74.3	target versus a single JDAM which cost
+76.7	let's say fifty thousand it just wasn't
+79.3	worth it
+79.7	the other thing too is think about the
+81.2	risk level generally it reduces the
+83.3	firing in distress you know if you're
+84.7	sitting at fifty thousand feet with an
+86.4	f-22 and you're blinking with an SDB
+88.8	that's not gonna have that much risk as
+90.7	far as triple-a it even Sam's to a
+92.2	lesser extent and now one thing you want
+94.2	to watch out for is unlike most bombs
+95.9	most precision guided munitions can be
+98.4	targeted with missile defense assets
+100.0	which that makes things a little bit
+101.3	tricky but we'll talk about that a
+102.6	little later on so anyway let's go ahead
+104.4	and take a look at some of our options
+105.8	here so we're sitting here right off the
+107.3	coast of Italy you know this is not the
+108.6	Adriatic looking over on the opposite
+110.5	side of course you've got your former
+112.0	Yugoslavia and everything along those
+113.6	lines and I built a couple classic
+115.9	targets from the Operation Allied Force
+118.3	which you probably remember from the
+119.3	last 90s those you guys who played a lot
+121.6	of Falcon probably know this theater
+123.4	better than they know the Korean theater
+124.8	but it totally depends on what
+126.1	generation you are so there's a lot of
+128.0	different types of precision guided
+129.6	munitions so to kick it off what I'm
+131.2	gonna do is I'm gonna grab my little
+132.5	handy
+133.2	dumb bomb this is a bunch of mark 84 s
+135.6	and I'm just gonna have him go ahead and
+137.5	do an attack run that's automatically
+139.1	generated on the split here just kind of
+141.7	have a baseline alright so he's gonna
+144.1	dive down to pretty low altitude here
+145.9	and it goes swingin in bombs away and we
+149.6	did some damage let's take a look at
+151.3	just how much damage we did probably not
+153.5	too bad yeah not that great so you can
+158.4	see conventional weapons don't have the
+160.3	greatest amount of accuracy if I
+161.7	actually do weapon endgame you can see
+163.4	the fact that both of those despite an
+165.2	f-16 have a very good targeting missed
+168.6	by almost a hundred feet with each one
+170.5	of its bombs which is kind of a bummer
+172.3	given this aircraft has a pretty
+174.0	significant amount of capability for
+175.6	that purpose but again if you have
+177.2	things like wind and stuff like that
+178.8	that could definitely affect it okay so
+181.9	let's talk about the different types of
+183.2	precision guided bombs first kite you're
+185.3	gonna have is what they call
+186.4	radio-controlled now this is crazy the
+189.1	first precision guided munitions I think
+190.9	it was the World War two you had to
+192.7	actually sit there and use a little
+194.2	joystick to steer it all the way down on
+196.2	to its target now this was cool of
+197.9	course if the aircraft maneuvered then
+199.9	that parallax would instantly create
+201.7	itself a major major problem so in the
+204.6	side of command we have a cup up two
+206.3	different types of command guided
+207.9	remote-control weapons we have
+209.3	straight-up command guided which would
+211.0	be something like your RB o 5 for those
+213.0	of you guys who are dcs fans and of
+214.8	course a more conventional one that
+216.4	everybody thinks that when they come and
+217.8	guided will be the walleye which
+219.8	actually was introduced all the way far
+221.5	back is Vietnam so the good thing about
+224.1	a command guided weapon is it's actually
+226.0	a heck of a lot more precise the
+227.9	disadvantage is the firing unit
+229.3	basically has to follow the weapon in so
+232.2	your training accuracy for vulnerability
+234.2	there's also a very limited range
+235.6	because you have to be able to visually
+237.7	see the target you're guiding the weapon
+239.5	onto so in this case if you watch he
+241.9	actually launched the RB o 5 and he's
+243.6	beaming it so that you could look out
+245.0	the window and actually look at it if
+246.8	you were to check out the entry on the
+248.0	RB o 5 you'll notice it has a weapon
+250.7	link it is actually talking to the
+252.9	airplane in order to do its attack so
+255.0	I'm going to go ahead and let it do its
+255.9	little thing here then put a pretty good
+258.2	sized dent in the airport just gotta
+259.7	come by is going to drop its other one
+261.0	notice you can only guide one of these
+262.5	at a time pause all right let's see how
+265.1	that one now keep
+266.5	this was the earliest version you had to
+268.1	have a really good pilot so into to our
+270.4	Bo Phi's yeah we did okay
+272.8	we probably dented up the same thing we
+274.4	dented up last time so you can see we've
+276.5	impacted a barracks actually pretty
+278.0	efficiently
+278.8	we've also uh penetrated the armor of it
+280.9	again we did a pretty decent job we
+283.0	struck both of those targets pretty much
+284.7	dead on but again that aircraft is
+286.8	vulnerable essentially the entire
+287.9	flights out command guided is basically
+290.9	been replaced and you'll see with what
+292.8	so after the command guided I'll you
+294.7	have what they call the electro-optical
+296.2	now these are pretty cool an
+298.0	electro-optical system basically has a
+299.6	TV camera and the front on the case of
+302.1	the walleye which is the classic I
+303.7	always think of the Persian Gulf War
+305.0	when you're watching the camera or
+306.1	getting around something goes fuzzy
+307.8	you're thinking of the walleyes video
+309.7	feed basically straight up
+311.6	electro-optical you're talking a weapon
+313.3	that basically has a little camera in
+314.7	the nose that looks at the target and
+316.6	usually uses contrast in order to guide
+318.4	itself to the ground these weapons are
+320.2	awesome because they're fire and forget
+321.6	the bad news is you have to be able to
+323.8	see the target that you're engaging in
+325.6	order for these to work as well as the
+328.2	fact that you have to consider that they
+329.7	can be engaged on the way up they tend
+331.7	to be more limited range because the
+333.2	poor pilot has to acquire the target
+334.9	launch but then they can get away in a
+337.2	hurry which is a big advantage over the
+339.0	traditional command guided so we went
+341.0	and launched her to Mavericks let's see
+342.5	how we did
+343.7	weapon damage new ground contact always
+346.8	spotted something but that's okay all
+348.9	right let's see we impacted it perfectly
+350.5	penetrated that was an awesome awesome
+352.4	engagement no real difficulty there with
+355.0	the exception of the limited range now
+357.3	of course if we're a cloudy day we would
+359.2	have to be able to somehow still see the
+361.4	target in order to engage the target
+363.6	some of the early electro-optical
+365.3	systems were actually TV guided like
+367.1	they're really really early versions of
+368.4	the Mavericks and if it wasn't daytime
+370.4	you couldn't actually use the weapon
+372.3	because you couldn't see the target you
+373.7	launch that big advantage of
+375.3	electro-optical obviously it's a fire
+377.1	forget weapon as long as it doesn't lose
+378.4	line-of-sight with the target so that we
+380.6	had this cool concept where somebody
+381.9	took the walleye and said well what if
+383.2	we could make it so that it has an
+384.3	electro-optical sensor and a data link
+386.8	now that is a really really cool weapon
+389.2	and we do have that it's a GM 62 now
+391.9	this one's kind of unique and I'll show
+393.6	you why in just a second as long as I
+395.9	have line of sight on the target
+397.4	I can still engage it
+399.0	and because it's got that sensor in I
+402.4	can engage it and actually fly away take
+404.6	a look and because it can fly away that
+407.3	target can keep going all the way to the
+408.8	ground but I can still adjust it on the
+411.3	way down which again is incredible you
+413.2	can see we got a pretty sweet hit there
+414.8	those weapons are dynamite against ships
+417.3	because you can actually steer them into
+419.0	a moving ship as well so again this is a
+421.8	pretty slick system next we get these
+423.9	clinics called laser-guided bombs ah
+426.2	laser-guided bombs let me grab all these
+428.6	are guided bomb aircraft real quick to
+430.2	show you so the great thing about a
+431.7	laser-guided bomb is pretty much you
+433.1	point a laser at the target and then the
+434.8	bomb itself will see the laser and homed
+436.8	in on what you pointing the laser at big
+439.2	advantage here is that as long as you
+440.7	can see it and shine a laser on it then
+442.6	the bomb will keep following it even if
+444.3	it is a moving target which makes it
+445.6	very effective against tanks that are
+448.2	rolling it's good again ships some
+450.2	things that are on the ground and things
+451.3	along those they've even been used
+452.3	against helicopters in a few cases so
+454.8	there is a couple disadvantages with an
+456.7	LG bae and you need to see this real
+458.4	quickly the first thing with them is
+460.2	they have to be able to see the laser in
+462.7	order to be guided now this particular
+464.3	version of the LG be the GPU 24 is a
+467.1	mark 84 it's this version 3 which is a
+469.8	more sensitive tracker in it that laser
+472.4	spot tracker
+473.3	has a limited range based on how strong
+476.9	the laser is this law shining on it now
+479.4	on an f1 11 F you do have a built-in
+481.9	laser that you can do for the purposes
+483.5	of illuminating targets and if you
+485.2	actually take a look let me go get that
+486.7	for you real quickly we're sorry laser I
+489.1	need to find myself the laser I've got
+491.5	my flare I've got my strike camera got
+493.8	the mark one eyeball what are we using
+495.7	for our laser here hang on just a sec
+498.6	sorry about that here we go so we're
+500.8	using a paved track pod which has a
+503.3	pretty darn long attack fuller but it
+505.9	only is a 10 nautical mile range laser
+507.6	designator and a lot of times these will
+509.7	be limited to even lower altitudes now
+512.0	let me grab something a little bit more
+513.4	classic here let's see here though the
+515.6	b-52 does a pretty good job here where's
+518.3	my guy who's got the limited range
+520.8	pretty much any of those earlier
+522.7	lightening pods like the lantern pod for
+524.6	example will have a 10,000 foot
+526.5	limitation on it where if you try to
+528.2	shoot it at a higher altitude than that
+530.1	the laser won't be able to illuminate
+531.4	strong enough to actually guide the
+532.7	weapon down but when everything else is
+534.8	accomplished you can just do something
+536.2	like this where we sitting way way way
+538.8	up here it'll sit down look down through
+540.9	the clouds and it'll go ahead and
+542.4	deliver its weapons notice it's a
+544.3	relatively short distance and the
+546.0	aircraft is able to stay at high
+547.5	altitude
+548.2	you can even actually orbit the target
+550.0	area until those bombs hit just like you
+552.3	saw right there
+553.2	and I guarantee you both of those did a
+554.9	really good job which of course they did
+556.7	a nice job of so let me reopen the
+559.2	scenario quickly and kind of show you
+560.7	the annoying part of laser-guided bombs
+562.4	now let's go ahead and get ourselves
+563.6	some whether those are you familiar with
+566.1	operation Allied Force probably remember
+568.1	the fact that a weather was one of the
+569.5	biggest limiting factors of the basic
+571.9	entire campaign the Gulf War they didn't
+574.0	use as many precision guided munitions
+575.3	but they were still deadly during this
+578.1	campaign it was a different issue we
+579.7	used a lot of precision guided weapons
+581.7	however we could never find the target
+583.6	we're trying to hit so let's go get our
+585.8	LGB real quickly
+586.7	go ahead stick it right here I'm gonna
+588.2	ask it to do the entire engagement again
+590.1	but this time there's a cloud layer so
+594.2	that means this aircraft cannot drop
+596.3	that bomb it's what flies underneath the
+599.0	cloud layer and then attempts to do the
+601.1	entire engagement again I'm just gonna
+602.8	grab it put it back in position there it
+604.5	goes
+605.0	so of course if it flies out of the
+606.8	cloud layer everybody in there
+608.6	anti-aircraft system is gonna be having
+610.1	a really fun day shooting down that
+611.7	aircraft so again you basically nullify
+614.1	that advantage that you had earlier on
+616.0	obviously if this is nighttime and as a
+618.1	matter relations to work at night as
+619.6	well all right now we're gonna go ahead
+621.1	and take a look at some of the other
+622.5	weapons as well so we have lasers again
+624.5	the big thing is you have to have range
+626.1	and some of the earlier pods basically
+628.1	didn't have a strong enough laser to be
+629.4	able to zap the target from anything
+631.0	greater than 10,000 feet which still
+632.6	puts you in the line of danger which
+634.1	brings us to satellite navigation bombs
+636.0	these are cool weapons again during the
+639.3	whole Kosovo campaign one of the big
+641.2	problems that they had was the fact that
+643.4	they couldn't find the target or when
+645.0	they did they could never get
+645.9	line-of-sight to use a laser so somebody
+647.7	realized you could strap a GPS in an
+649.6	inertial guidance unit on to a bomb and
+652.3	have that simply dropped towards the
+654.0	ground and
+654.6	where you going to get you Jade amps now
+656.4	there's a bunch of different variations
+657.4	of this type of weapon but they all had
+659.8	the basic same rule they take
+661.5	coordinates to attack versus taking a
+664.6	specific target that also means that if
+666.9	we're let's say high-altitude here let's
+668.5	go ahead delete this one real quick I'm
+670.1	gonna go ahead and order him to attack
+671.5	this Airport here even if there was an
+673.6	extremely thick layer of clouds but
+675.4	actually you know what I'm gonna put
+676.8	that extremely thick layer of clouds
+677.9	because I want to demonstrate how
+679.1	incredibly effective this is there we go
+681.0	now that's what I call salad I'll cover
+682.7	the f16 has dropped its weapons through
+686.2	the cloud layer and they continue
+688.0	guiding on their own all the way down to
+690.3	the ground and they strike their target
+692.2	just as effectively keep in mind if it
+694.5	was a moving target they would never be
+696.1	able to hit them because the bombs are
+697.7	only dropping on the GPS slash inertial
+699.8	coordinates that they were given
+701.4	originally so these are amazing amazing
+703.7	weapons in its fixed targets not so much
+706.4	against moving targets we have another
+708.6	type of bomb too which is called an
+710.0	inertial believe the only one that I
+711.8	could find in the database or something
+713.6	like the CBU I'm gonna say 107 or 109
+716.5	something like that let me see if I can
+718.2	pick that up for you real quickly why
+719.5	I'm here
+720.0	you 109 I think 107 yeah this one is
+724.5	actually an inertial only Bob but as you
+726.8	can see nobody carries it so I'm not
+728.4	even got to worry about that all right
+729.9	let's take a look what else we have
+731.8	inertia weapons which we talked about
+733.4	now we have hybrid laser and satellite
+736.0	navigation now this is a pretty neat
+738.2	weapon let me go ahead and grab one of
+740.3	these real quickly I have a couple
+741.6	months oh here we go that is this
+743.7	aircraft here this aircraft is carrying
+745.8	two of these gbu 54 LJ dams this
+749.4	particular system can use them there or
+751.1	can use conventional GPS coordinates so
+753.9	if for example I were to attack with one
+755.8	of these I'm just gonna actually have a
+758.1	few let's use a few let's go ahead and
+759.5	launch both so they're gonna go ahead
+761.0	and send those two down on their way
+762.7	those are using the laser now if the
+765.6	weather were to suddenly get really
+766.9	really really bad I wish it already was
+768.6	I apologize it would use the GPS
+771.1	coordinates to go ahead into it instead
+772.7	so now that have cleaned up the sky a
+774.4	little bit in order to attack it we'll
+776.0	use the laser feature actually in this
+777.4	case it's just going to use the darn GPS
+779.6	mode again because it's just simple
+781.3	because it's a fixed target okay so
+783.2	that's done let's take a look at hybrid
+785.0	that's good active radar so the standard
+788.3	of radar-guided weapon that you could
+790.3	probably think of it's going to be the
+791.9	anti-ship missile that's about as
+793.4	typical as you could possibly get as far
+795.6	as a radar guided but believe it or not
+797.6	there are some munitions such as the
+799.6	agm-114 k which actually have the
+802.5	ability to track they have their own
+804.2	built-in active radar homing which i
+806.9	think is really really cool I'm sorry
+808.2	the L model does it actually has if you
+810.7	take a look at the state of history
+811.9	active radar seeker which actually works
+814.4	in tandem with the equipment built onto
+816.2	the ah-64 so if s the age sixty forty to
+819.3	do something like that he would actually
+820.9	fire tons of these things and then
+823.9	switch over to his traditional hell
+825.3	fires once he got a line of sight on the
+827.2	target again very very very cool
+829.5	technology very very accurate technology
+831.7	it can still be jams don't forget all
+833.9	right let's see now we're gonna get down
+836.2	to propulsion we're almost done here
+837.5	first things first
+838.9	a standard basic good old-fashioned
+841.0	precision-guided munition is the
+842.4	laser-guided bomb or the che dam which
+844.1	basically falls off the wing in the
+845.5	plane it's limited by the altitude that
+847.4	the aircraft is dropping it at pretty
+849.1	straight for it you have collide weapons
+851.2	alright it's like a look at glide
+852.5	weapons so glide weapon somebody
+854.7	realized this JDAM slash technology that
+857.4	allows you to satellite navigation and
+858.9	inertial can be used in conjunction with
+861.7	a wing to get a very very long range
+864.2	shot now that gives you what they call
+866.8	the J saw is going to be the American
+868.3	version but there's a lot of countries
+869.9	that actually have this particular type
+871.8	of weapon so what this is is the same
+873.7	thing as a regular jdam but the
+875.5	difference is that your range is almost
+877.4	50 miles there's another variation on
+879.6	this called an SD B which is a small
+881.5	diameter bomb which gives you an
+883.2	unbelievable ability to basically fire
+885.4	and then fly away and let it kind of do
+887.5	the rest of the work on its way again
+889.6	these are very very accurate weapons of
+891.3	course because they glide so slow
+892.9	they're very vulnerable to air defense
+895.0	systems including you know triple-a if
+897.1	you're not careful so you want to be
+898.3	very careful that you've suppressed any
+900.6	systems before you fire next we get
+902.7	rockets these are pretty cool somebody
+904.8	quickly realized that hey that works
+906.2	really really really well is there a way
+907.9	that I can attach some sort of precision
+910.3	guidance system to a rocket and the
+911.7	answer is actually yes there's a couple
+913.6	different kinds of rockets that they can
+915.1	use they actually have laser guided
+917.2	rockets now that you can use you've
+918.7	probably seen the AP kws there's also a
+922.0	nice version I believe as well it uses a
+923.8	laser to guide rockets to make them more
+925.6	accurate and of course you have jet
+927.4	propulsion so I haven't showed you any
+929.3	these glide weapons or precision weapons
+931.6	that have Jets yet that's because the
+933.2	standard one is going to be your cruise
+934.9	missile and although of course when I
+936.4	think cruise missile I typically think
+938.2	of something in the tomahawk family that
+940.0	basically it's a little cruise missile
+941.3	with a very very sophisticated package
+943.4	on it that does both inertial terrain
+945.2	comm as well as satellite navigation to
+947.5	basically reach his target and I'm
+948.8	talking excessive ranges there's another
+951.6	piece I want to throw here too and
+953.3	that's the fact that some ballistic
+954.6	missiles are starting to come with
+957.4	building guidance packages so after they
+959.6	fire and they activate their re-entry
+961.4	vehicles they actually have the ability
+962.8	to guide themselves down on to targets
+965.8	after they've already split into four or
+967.9	five Mir V warheads this works both
+970.2	nuclear as well as conventional
+971.4	ballistic as well
+972.8	scary stuff but it's actually very very
+975.3	impressive alright so that brings us to
+977.5	my last thing here this is going to be
+979.2	the tips first things first if you're a
+981.5	laser you have to have line of sight so
+983.4	if you're an older laser system don't be
+986.5	surprised if you run into a problem
+987.7	where we have to be less than ten
+989.1	thousand feet to hit a target on the
+990.7	ground that means you're at 10,000 feet
+993.2	and you're vulnerable to everything so
+995.3	you want to be very very careful to that
+997.0	also for laser types you have to have a
+999.4	laser in order to actually guide the
+1001.7	weapon if there's no line of sight
+1003.1	because of clouds or you don't have a
+1004.6	laser on board you can't guide that
+1006.2	weapon it's kind of a pain use WRA for
+1008.8	maximum effect so something you have to
+1010.4	watch out for whenever you using these
+1012.5	types of weapons is that you don't
+1014.5	accidentally tell them to drop two of
+1016.3	them on something that doesn't need two
+1018.2	of them especially if you only need one
+1020.0	in order to do the deed the default is
+1022.4	to for most weapons you have to be very
+1024.7	careful with that all right watch out
+1026.8	they can be shot down you want to
+1028.1	suppress or Jam the target area use
+1030.5	datalink to steer weapons into places
+1032.2	they wouldn't normally have line of
+1033.1	sight this is awesome
+1034.8	a lot of weapons especially cruise
+1036.4	missiles can be guided essentially
+1038.0	remotely you can actually tell it from
+1040.1	having line-of-sight by this guy to fire
+1042.3	his missiles basically around this
+1043.9	mountain to go engage this Airport it's
+1046.1	a classic awesome use of a data link
+1048.3	style weapon GPS bombs can't hit a
+1050.6	moving target I can't emphasize that
+1052.2	enough unless it's got its own seeker
+1054.1	onboard you're never going to be
+1055.3	moving-target keep that mind on defense
+1058.2	remember your opponents can't hit but
+1059.6	they can't see so obviously if you have
+1061.2	cloud cover take advantage of it if you
+1062.6	have train you can hide behind lasers
+1064.5	for if you're at sea spread you guys out
+1067.1	everything along those lines keep that
+1068.8	mind another warning is they rarely
+1071.2	carry more than one of these or two of
+1072.9	these at a time so you want to make sure
+1074.8	that the default WRA doesn't have you
+1077.3	dropping every single one of your guided
+1079.2	bombs on the same target when it only
+1080.9	takes one next thing I want to say here
+1083.8	real quickly is that make sure you use
+1085.2	the right warhead for the right job the
+1087.1	reason I say that is if you actually
+1088.7	were to quickly let's add a f-16 a nice
+1090.6	modern f-16 just to demonstrate how
+1092.6	crazy this gets see em that looks pretty
+1095.7	good let's get a nice new one yeah like
+1097.8	that one right there BAM
+1098.9	so what flavour GPU would you like yeah
+1102.7	the one thing you want to watch out for
+1104.4	is these little letters right here
+1105.7	basically they're going to tell you what
+1107.2	style of these weapons they are some of
+1110.3	them are going to be the style where
+1111.6	they basically are going to spread out
+1112.8	CBU style some are going to be
+1114.6	penetrators if you see the word broach
+1116.3	some of these are going to carry at that
+1118.1	personnel weapon some of these are going
+1119.5	to be anti building weapons some of them
+1121.3	are actually anti electrical pole
+1122.6	weapons and you want to make sure you
+1123.9	pick the right jdam or guided palm for
+1126.7	the particular purpose fortunately in a
+1128.5	lot of other countries they have a
+1129.5	pretty standard model for this so you'll
+1130.9	have to worry about it as much just be
+1133.3	advised that when you're picking load
+1134.5	outs that these aren't the two load outs
+1136.5	another thing to watch out for is when
+1138.6	you are picking out load outs and you
+1139.9	see the word pod double check what the
+1141.8	altitude and that pod is that you can
+1143.4	drop that particular weapon also don't
+1145.4	forget your older sets of GPUs such as
+1147.5	your paveway twos are gonna have less
+1149.6	visibility that I could be able to see
+1151.2	something as far away so even though
+1153.0	they've got this unbelievably effective
+1154.5	pod they just can't see targets that far
+1157.1	away so they're gonna be less accurate
+1158.7	as a result so you want to watch out for
+1161.1	that and then last but not least main
+1163.8	attacker is your friend so what I mean
+1165.2	by that watch this I have a b-52h
+1170.9	and I'm gonna go ahead and attack split
+1172.5	Airport I have 24 GB u J dams so let me
+1176.3	grab about 24 targets what each okay
+1180.8	watch this fire
+1187.1	oh we can only do two at a time now you
+1191.4	can fire more than that I really would
+1195.6	appreciate it to be slowed down before
+1197.3	doing that the other thing is stay at
+1198.6	altitude man come on
+1201.0	keep firing there he goes
+1206.8	you can only fire so many Z's at a time
+1209.0	which doesn't surprise me actually and
+1210.7	he's now down to 10,000 feet New Moon's
+1212.2	all my fun so the hope there was that he
+1214.3	basically dropped his entire deck of
+1216.1	weapons so unfortunately since the
+1217.9	b-52's not being as effective at that as
+1220.0	I was hoping we're just gonna have to go
+1221.8	ahead and grab our tomahawks here which
+1224.2	is just as effective a way to do it
+1225.8	fire ah better and that is a real
+1232.4	advantage for precision guided munitions
+1233.8	since we're able to completely
+1235.7	an airport with a one single salvo
+1237.8	rather than having to come back come
+1239.4	back come back come back come back all
+1241.0	right as usual if you guys have any
+1242.1	questions comments threw them down in
+1243.7	the comments hopefully this is somewhat
+1245.2	helpful again I was just trying to give
+1246.5	you a general idea of what the different
+1248.1	weapons are at the end of the day you
+1249.5	gotta have line of sight and at the end
+1250.8	of the day don't waste them so if you
+1252.5	have a target that's 100 hit points of
+1254.1	damage and you have to 500 damaged bombs
+1256.9	you only need to use one so make sure
+1259.3	you set your wre correctly enjoy

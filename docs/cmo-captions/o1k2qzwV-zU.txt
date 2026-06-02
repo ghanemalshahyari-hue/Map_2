@@ -1,0 +1,660 @@
+0.0	hello everyone today's command tutorial
+2.1	we're gonna be taking a look at creating
+3.4	ad-hoc close air support as well as
+6.3	ground attack missions so our scenario
+8.6	here is a pretty straightforward
+9.4	scenario we're sitting here in
+10.7	Afghanistan it is the middle 80s I'm
+12.9	sure you could probably put two and two
+14.3	together with the general kind of theme
+15.7	going with here so first things first
+17.9	I've done a couple things a little
+19.4	differently to kind of make things a
+20.6	little interesting for one if you go up
+23.3	to special actions for this particular
+24.8	mission I've created a script that will
+27.2	actually randomly generate these two
+29.6	different types of units throughout the
+31.4	actual map in Afghanistan and Pakistan
+33.2	and of course in Iran as well so I'm
+35.6	actually going to go ahead and execute
+36.7	both of these so now the cool thing here
+39.5	is as a player I have no knowledge of
+42.6	the quantity or location of anything
+44.8	that just got spawned in a second ago
+46.2	and now I'm not cheating you can
+47.7	actually take a look at the script a
+48.8	little later on if you want to do
+49.9	something similar so anyway with that
+52.1	being said let's take a look at our
+53.4	different units that we have at our
+54.6	disposal today so we'll go ahead and do
+56.9	our usual browse scenario platforms well
+59.0	go ahead take a look at aircraft it
+60.1	looks like we have 23 Bien's
+61.9	those are pretty much the predecessor of
+63.7	the mig-27 it's not too bad
+65.5	make 27 so the M version big 27 217 of
+69.8	course all the M's am threes it's pretty
+71.7	good all right we have the R be in the
+73.5	RB s we don't have the new one but
+75.7	that's some pretty good we have a good
+76.8	pack of hinds here good splattering of
+79.1	mig-21s and of course we have some bad
+81.2	for Kay's so the first problem we're
+83.2	gonna have is locating enemy targets
+85.2	inside of this huge country I mean just
+88.2	quickly going like this you can see them
+89.6	about 450 nautical miles that way about
+92.0	600 nautical miles it that way so how
+94.9	are we gonna arrange this well it kind
+96.8	of goes back to the same expression I'm
+98.3	sure you four before if you try to look
+99.7	everywhere you're going to find nothing
+101.0	you could try looking one spot that's
+102.3	all you're gonna find so we're gonna
+103.7	have to strike some kind of balance
+104.9	between the two and we're also kind of
+106.6	to consider what we have as far as
+107.9	reconnaissance platforms unfortunately
+111.0	for us the only tactical reconnaissance
+113.0	platform that we have for kind of quick
+114.8	stuff
+115.2	there's the mig-21 this this equips aide
+117.8	recon pod which is not the worst but
+120.2	it's also not necessarily the best
+122.0	either if I go it open up at statistics
+124.2	real quickly concealing has a 5 nautical
+126.3	mile range and of course it's usable
+129.1	it's just not terribly great range
+130.9	another problem we have by the way with
+132.8	Afghan
+133.2	the incredible amount of mountains I
+135.7	mean look what mountains are right
+137.6	here's the Himalayas these things are
+139.3	huge so it's definitely gonna make this
+141.1	difficult second item I have come down
+143.4	here at Kandahar Air boys I have the two
+145.6	big 25 I have the RB and of course I
+148.6	have the RBS which are basically the
+150.7	same style aircraft with just a better
+153.0	side looking airborne radar now the neat
+155.3	thing about the RBS is that side-looking
+157.3	airborne radar actually has a pretty
+159.1	decent range it's about 40 nautical
+161.2	miles it also has the ability to search
+163.2	for targets that are moving which is
+165.5	very very usable to us so we get back to
+168.0	the older the RB model let's go ahead
+170.4	and take a look at what we have here we
+171.8	have a generic visual camera with a
+173.4	five-mile range
+174.6	sigh and of course we lack the
+177.1	incredibly potent side-looking airborne
+179.3	radar so with that mind how are we gonna
+181.8	set up our mission to check this place
+183.2	out well we know for a fact that any
+185.3	targets that ended up spawning and down
+187.3	here are going to be easy detect because
+188.8	of how flat it is any targets up here in
+191.0	the mountains are gonna be much more
+192.2	difficult to try to locate because of
+194.0	the presence of these mountains that
+195.5	also means that I'm gonna have to really
+197.9	really take my time here and kind of
+199.8	rush it down there with that in mind I'm
+202.0	gonna pretty much set up using my
+203.5	tactical reconnaissance assets in the
+205.1	north and then use my more broad area
+207.3	assets down here in the south
+208.9	let's go ahead and start setting it up
+211.0	right away all right go ahead and set my
+214.1	standard mission now one really cool
+215.9	trick to make these missions a little
+217.3	bit simpler to execute is simply set it
+219.7	up so that when you do it you do it as a
+221.7	ground attack patrol but your aircraft
+223.9	that your ground attack patrolling with
+225.6	quote-unquote doesn't have any weapons
+228.0	to attack the ground with except for
+229.3	cannons so kind of keep that in the mind
+230.9	so I'm gonna call this tactical recon
+233.8	these guys get everybody up in the north
+236.1	again I'm gonna set this to anti-surface
+238.3	warfare round go ahead and grab all of
+241.1	my mig-21
+242.1	now here's one thing you want to not
+243.6	mess up make sure this is set to single
+246.2	aircraft if you accidentally do pears
+248.9	they're gonna be twice as visible no it
+251.5	doesn't work that way not in command so
+253.1	just keep that back your head the other
+255.3	thing you want to consider is do I want
+256.8	continuous coverage or do I want to kind
+259.0	of send everybody out all at the same
+260.3	time and send everybody back in now this
+262.6	particular mission designer chose
+264.6	set it up so we're using what they call
+265.8	sustained operations sustained
+268.0	operations means that you actually would
+270.5	click on to you and hope this is the
+271.6	wrong unit that means let me go close
+276.9	that because I've made it all sorts of
+278.1	painful if you were to go to reload a
+280.5	unit you'll notice that the time to take
+282.6	available is something like 20 hours
+284.9	that simply means that if I'm going to
+287.2	be doing attacks I might as well get
+288.6	them all done during daylight hours and
+290.4	then reload them overnight that would
+292.6	suggest sending everybody out all at the
+294.2	same time and then kind of bringing them
+295.7	back over time rather than kind of
+297.8	piecing them out because again I'm not
+299.8	really useful at night anyway so I might
+301.6	as well spend the time reloading so
+303.4	let's go ahead and correct mig-21s like
+305.3	i said we need to get to abyss for this
+308.0	where are you
+309.7	everybody's for anyone you could ever
+311.4	ever need by the way there we go
+315.6	excellent set them to single aircraft
+317.4	I'm gonna launch them all at the same
+319.2	time and I have no problem with them
+321.6	investigating as long as they don't go
+323.1	rushing off into ran which are probably
+324.9	not end well for us now down to station
+329.0	throttle I sent this to cruise and the
+332.7	last thing I'm gonna do is I'm gonna set
+334.5	their station altitude now remember
+337.1	these have a 5 nautical mile visible
+339.5	range so five times about 6,000 feet
+342.5	it's about 30,000 feet if I'm looking
+344.6	straight down keep in mind we have some
+347.2	extremely tall mountains here and most
+349.0	of the targets were going to be engaging
+350.4	and attacking are probably gonna be
+352.2	fairly small and fairly tough to spot
+354.4	anyway so if we approach them from
+356.4	30,000 feet yeah we're gonna save a lot
+358.2	of gas but we're not gonna see a thing
+360.2	it's better to save this kind of
+361.9	altitude for a mig-25s so what's a good
+364.8	altitude to use well let's take a look
+366.6	here five thousand seven hundred forty
+368.5	eight feet I'm sure there's some stuff
+370.3	up in the ten thousand range up in here
+372.1	so fifteen thousand feet wouldn't give
+374.2	us a slant distance of about three and a
+376.7	half nautical miles which isn't great
+378.9	but at the same time is this is why we
+380.7	do locate something they're gonna be
+382.3	smart enough not to get in the lethal
+383.8	range of whatever it is we might bump
+385.8	into so in this particular case I'm
+387.7	actually gonna set this out to two to
+389.3	the fifteen thousand feet
+390.6	now one thing you got to watch out for
+391.9	is you have to set your transit altitude
+394.2	the same as your station altitude these
+396.4	two altitudes
+397.9	actually going to be basically the same
+399.1	for a random area Patrol I know that's
+402.1	kind of misleading because technically
+403.4	the airplane is transiting to the next
+405.8	position and it's Patrol it doesn't just
+407.9	patrol at that speed obviously if we
+410.1	were using the repeatable loop this
+411.6	would be a little bit different but for
+413.1	us those are gonna be the same thing for
+415.0	us you can also set this to train
+416.6	following if you want to be a little
+417.8	more precise but this I think it's gonna
+419.6	work fairly well for us okay so that
+422.8	takes care of kind of the north of
+424.1	course what I should probably do is send
+425.9	a couple of those side-looking airborne
+427.3	radar mig-25s up there as well because
+429.5	they're really really good at this but
+431.7	but I'd rather do for them is actually
+433.2	use them to kind of patrol all the place
+435.1	that a couple more aircraft I could
+436.9	probably get a little bit more
+438.2	experimental and just use the radar
+440.2	aircraft down here but you know like I
+443.0	said I like to make things kind of
+444.0	interesting for myself as always let's
+446.3	go ahead grab all those grab all these
+448.4	real quick this is everybody I'm gonna
+450.5	want for my let's take a chance I'm
+454.8	actually gonna create another mission
+458.9	we're gonna do May 25 this things are
+463.5	really cool ground okay I can fix that
+468.9	all fixed hey we did it so we're gonna
+472.4	want to make 25 newer ones let's go
+478.3	ahead and set our options very carefully
+480.8	we want to make sure that they have the
+482.9	ability to use active radar here now
+485.3	because we're going to be using the
+487.0	radar on these aircraft we don't have to
+489.5	worry as much about traveling at the
+491.2	wrong altitude but that being said I
+493.2	still want a chance for these aircraft
+495.0	to actually be able to detect things on
+496.5	the ground so I'm gonna make sure that
+498.8	they're not too high so we're kind of
+500.7	doing the math my head sounds like it's
+502.3	gonna be some around 22,000 feet again
+505.0	same issue we're gonna have before
+508.2	obviously the higher we travel the more
+510.1	casts we say but that's okay that looks
+512.1	good that looks good though I almost
+513.8	fell for it and that'll be pretty good
+515.9	for us as well now last but not least
+519.0	we're gonna be interested in using our
+520.9	regular mig-25s as well now
+523.6	unfortunately the regular mig-25s do not
+526.0	have that incredible capability to
+528.1	basically like I was saying before
+529.8	or use that side-looking radar so we're
+531.9	gonna keep those guys mostly
+533.5	concentrated in the south
+535.0	kind of think that moment is the kind of
+537.2	equivalent of with the head up at the
+539.4	north with the mig-21s but there are
+541.0	less of them so go ahead and set this up
+543.2	as well make 25 r28 Patrol we're gonna
+547.2	do this is one of those there's actually
+548.8	25 that carries bombs I thought that was
+550.8	kind of neat we're gonna go and find the
+552.7	more traditional Fox Matt looks good
+557.4	we're gonna go ahead and say it's been a
+561.2	long thing we're gonna knock this down
+562.9	to 15,000 feet also just like our
+565.1	buddies alright let's go ahead looks
+568.4	like I accidentally deleted half of the
+570.1	patrol points that I wanted to use here
+571.6	we go ahead and add those as well
+574.1	validate the area looks good to me
+576.5	everything's all set it's all good good
+579.1	good single aircraft I want them all up
+581.0	in the air at the same time and now
+582.6	we're good to go
+583.8	somebody gettin on pause to talk about
+585.8	our next part of our strategy now if
+588.2	this were an actual warfare situation
+590.6	generally we could probably take our
+593.1	time and engaging targets but for the
+595.4	purpose of today's demonstration I
+596.8	wanted to kind of show you some of the
+598.1	strategies you can use to be able to
+600.1	quickly attack targets so what I'm gonna
+602.0	do now is I'm gonna go ahead and give
+603.2	myself a patrol area now you're probably
+606.0	sitting here okay what are you doing
+607.5	well what I wanted to do is I want to
+609.4	create a support mission basically keeps
+611.3	aircraft airborne and then as soon as I
+613.2	need them I can basically call them up
+614.9	so how do we do this well we need to
+617.8	consider the range of the aircraft first
+619.3	so if I'm operating out of shinned and
+621.3	we have big 27 s which if you click on
+623.7	one really really really quickly you can
+625.5	see that they have a 540 nautical mile
+628.0	strike radius which is pretty good that
+630.4	means we could go all the way to here
+632.1	and actually come back but we don't
+634.0	necessarily need to do that so what
+635.9	we'll do is we'll instead split the
+637.1	difference and take about half the other
+639.1	point I want to mention too is there's
+640.6	no point in just pointing those two
+642.3	patrol up here when I can use aircraft
+643.9	to make 20 ones that are located up here
+646.1	at this air pace so this area of
+648.1	operations is basically going to be the
+650.0	responsibility of the mig-27
+652.0	let me go ahead and make sure
+653.2	everything's deselect it real quick I'm
+655.9	gonna go ahead and grab these guys and
+657.9	there's something to do something a
+659.3	little
+659.8	big 2700 are I'm gonna call them
+665.2	supports now one big difference here is
+669.2	I'm gonna set them to groups of four
+670.6	number one and number two I'm gonna
+672.8	leave the one-third rule turned on
+674.8	because I don't want to use them all at
+676.9	the same time so I'm gonna go ahead and
+678.7	grab these guys it's probably gonna give
+680.3	me a big angry message here because I
+681.8	have an odd number but that's perfectly
+683.3	fine
+683.8	notice my big twenty sevens by the way
+685.4	are carrying LG B's ah much better
+696.3	two hundred forty millimeter Rockets
+697.8	that'll work okay so that basically will
+700.2	represent our support mission for
+702.1	mig-23s that are basically gonna be in
+704.2	the air ready to strike it anything we
+706.0	find in the north so we'll do two so
+708.0	we'll do the exact same thing down here
+709.9	and this support mission is going to be
+712.0	dedicated to let's see here with the
+713.9	touch maybe 27 M maybe 27 off we'll use
+717.9	the regular make twenty sevens so we're
+720.5	going to call this make 27 South for
+725.0	real set it to support okay go ahead and
+729.2	get our group of mig-27 so we're gonna
+730.9	make sure we don't accidentally get the
+732.1	LGB version which we did last time oh
+734.1	where did you guys go that's what I was
+736.6	hoping to find yeah yeah set this to
+739.1	four sections of course one-third rule
+741.0	critical and everything else is pretty
+743.0	much exactly what I want we're gonna go
+744.6	ahead and change this to May 23 AOR so
+746.9	what's gonna happen is we're gonna have
+748.0	one group of aircraft kind of hanging
+750.0	out down here a little bit
+752.0	another group of aircraft kind of
+753.7	hanging out up here pretty much ready to
+755.5	strike at any time you can see it
+756.8	creates kind of like a little radius
+758.4	meanwhile we have our Hines
+761.6	now Hines are pretty cool helicopters
+764.0	I'm sure you're probably familiar with
+765.1	them they're actually equipped with
+766.8	anti-tank rockets so anything we find we
+769.1	can quickly send Hines in except that
+771.0	helicopters aren't fast so if you really
+773.2	want to use the helicopters in an ad-hoc
+774.7	sort of a way you have to operate them
+776.8	in a very very tight area in this
+779.0	particular case I'm actually probably
+780.2	gonna keep them within 75 miles of the
+782.7	airbase itself hopefully you're able to
+784.5	keep track of all these points because
+785.8	it's starting to get a little crazy for
+786.9	me
+787.5	so go ahead and find a point about
+789.0	seventy-five nautical miles away and
+791.4	that looks pretty good right here go
+797.8	ahead call that Heinz anti ground patrol
+800.4	again when you're working with Heinz you
+802.2	want to use them in large groups to make
+804.3	them a little bit more lethal we'll go
+805.9	ahead and leave the one-third rule left
+807.3	on I'm actually gonna do random with air
+808.9	in area and I'm gonna grab all of my
+811.5	Heinz keep in mind some of these Heinz
+813.4	do have for looking infrared which makes
+815.6	them way way more effective at detecting
+817.4	so there is anything close to our air
+819.6	base we're probably gonna detect it I'm
+821.6	gonna leave stuff down here completely
+822.9	alone but I'm gonna shut that off
+824.3	because they don't want to be wasting
+825.7	time just pulling around like that okay
+828.4	so let's just kind of think things
+830.0	through really quickly by the way you
+831.2	should always name your reference points
+833.4	I chose not to so that we don't spend
+835.7	too much time doing that so last but not
+837.6	least of course we come down to the
+839.0	south to Kandahar Airport we have the
+841.0	su-17 these are going to struggle
+845.1	because of their limited range so I'm
+847.8	just kind of thinking about the best
+849.0	place to place them obviously for this
+851.1	group down here in case for this big 21
+861.1	go ahead patrol actually support sorry
+864.3	because one thing to stay at high
+866.2	altitude so we'll go ahead and grab or
+868.3	maybe 21s for again I'm gonna slap them
+873.7	over here if I need more mig-21s I can
+875.4	always trade those guys out and send in
+877.2	my empties a little later on through all
+879.0	carrying bombs now one thing you're
+880.7	probably sitting there going is why
+882.5	don't you use those bombers is basically
+884.2	endurance reconnaissance platform
+886.9	unfortunately those bombers don't have
+889.5	great disability out the sides in the
+891.3	back which meant if I sent them out into
+893.0	the field they're just gonna end up
+894.2	tooling all the way around and then
+895.9	spending two days being serviced before
+898.6	I could use them again which is well
+900.7	outside the scenarios time limit anyway
+904.4	so now we've got everybody up in the air
+906.3	and now it's just a matter of hoping
+907.4	that our reconnaissance platforms track
+909.0	something down so you can already see
+911.6	our
+913.8	shut that off and off everybody goes so
+918.1	remember single units support units stop
+927.6	we got something so we've identified a
+931.4	mobile unit it came from my side looking
+933.6	yeah
+934.2	nice just like I promised that radar
+937.2	actually does a really solid job even
+939.3	with all his crazy mountainous of
+940.6	spotting things so unfortunately I
+942.7	didn't set up an attack group in the
+944.4	south so that means that I have to
+945.8	borrow one of the big 27 groups or one
+947.8	of the big 21 groups but in this
+949.5	particular case because we're so darn
+951.3	close to Kandahar we might as well just
+953.4	make a quick little mission ourselves
+955.2	go ahead grandpa can't our Airport let's
+958.5	see what's the nature of the target any
+960.0	idea we should probably get some more
+961.1	information
+961.7	do I have one of the regular makes
+963.4	hanging around that red is I'm gonna
+966.3	send in one of my regular 22 go watch
+972.7	this group keep in mind like I said if
+974.6	these guys were close to the other group
+976.0	we'll be using the regular types the
+979.1	ones that have already got airborne
+980.0	rather weather by the way there's some
+986.5	clouds so we've got to be kind of
+987.9	careful what we get in the second group
+991.2	nice
+992.9	apparently we bumped into some sort of
+994.9	outpost and I have a feeling my Hinds
+996.6	are already on it excellent work
+999.7	gentlemen
+1000.2	excellent work meanwhile I made 25 here
+1007.1	I'm actually gonna drop down to low
+1008.4	altitude recent being is I need to get
+1011.5	underneath that cloud so our big 24 's I
+1017.4	should say our mi-24s are doing a nice
+1019.4	job launching their swatter missiles
+1022.2	this particular post here now one
+1025.0	problem is we're gonna go through a lot
+1026.6	of those to kill that outpost so it'd be
+1028.2	better to go get those we lost it nope
+1037.2	there it is
+1037.8	nicely done so we need to keep this
+1046.1	nicely done so again we're using this
+1049.5	mig-25 basically it's waving spotted
+1051.6	another unit just getting interesting
+1053.4	already let's see here ah this is our
+1056.0	lucky day
+1056.5	remember that mig-21s group that we kept
+1059.4	go check it out boys those guys now can
+1062.4	instantly attack working great so look
+1077.7	at this total time from detection to
+1079.7	attack less than five the target oh
+1085.8	shoot oh look at that nicely done boys
+1095.4	altitude let's see this grouping you
+1099.2	guys have plenty of weapons left there's
+1100.8	no reason to waste them so I might as
+1103.1	well sign them meanwhile I'm gonna grab
+1111.4	my little handy dandy mig-21s unassign
+1113.8	them and then order them to make some
+1116.0	pretty quick
+1118.8	while my mid 25 which is over here this
+1124.2	is bigger 25 right here it makes its way
+1125.8	to the target area keep in mind at any
+1129.7	point we could have called up some more
+1131.1	aircraft but up these signs are having a
+1133.0	great time of it so I'm just going to
+1134.4	have some fun nothing else that appears
+1144.1	you can see that group of mig-21 hope
+1148.0	spotted something who's this let's go
+1152.0	ahead and call up another one of my
+1153.0	groups to come help us out
+1154.1	those are hind Dee's they're already
+1156.5	very engaged offensive would you guys be
+1158.2	so kind as to deal with that you guys
+1159.5	are perfectly in range
+1161.2	alright I'm mig-25 I'm actually gonna do
+1164.0	one of these things to try to detect him
+1165.5	with his radar bingo gotcha
+1168.3	go ahead do a little hexagons around the
+1170.6	target area to try to keep him in view
+1172.2	as our mig-21s which are already on
+1174.8	assignment comes swinging around here
+1178.5	alright guys they're up way too high for
+1183.6	some reason but that's okay let's go
+1186.3	bring them down to normal altitudes
+1188.0	oh they already shot I don't think
+1189.6	you're going to hit anything at that
+1190.7	range nicely done boys nicely done so
+1194.2	now I can right-click on them assign to
+1196.3	mission and send them right back to
+1199.0	where they just were without any effort
+1201.7	and now I can just call them back up
+1203.2	again if I need them a little later on
+1204.4	so that's the basic concept that I'm
+1207.2	going to be using throughout the rest of
+1208.6	this scenario basically use a
+1210.4	reconnaissance platform to identify a
+1212.4	target on sign it for just a minute by
+1214.9	the way this guy's all set
+1217.1	and then use support missions to
+1219.6	basically keep aircraft airborne at all
+1221.6	times it's basically all there is to it
+1224.2	this works by the way other types of
+1226.8	missions too for example if you did
+1228.3	reconnaissance on an enemy airfields and
+1230.5	you wanted to determine what's there
+1233.0	before you send strikers you could have
+1234.8	the strikers on a support mission ready
+1236.4	to go before things even happen
+1237.8	looks like we've identified two more
+1239.5	targets now if you remember we have
+1241.4	these su Seventeen's ready to go on a
+1243.7	sine f1 click on a sine f1 click we
+1249.8	could always add them to a mission also
+1251.2	but these guys are gonna do a bang-up
+1253.0	job of this anyway so I'm not too
+1255.4	concerned actually I want him to go like
+1257.1	this and it's dead now I just come here
+1261.2	reassign you guys to the mission good
+1263.3	job guys nicely done it's in the back
+1268.1	home meanwhile are the buddies heading
+1270.2	this way keep in mind we couldn't do
+1273.6	this by just launching aircraft from
+1275.0	airfields as well while that works it's
+1277.6	a lot slower than this method so these
+1280.2	guys are rushing in no this squares
+1283.0	gonna get hammered done so let's go
+1286.1	ahead and reassign these guys back to
+1288.0	the mission they were just on it a
+1289.0	second ago and just like that I could
+1291.7	just call them back up and send them
+1293.0	back to their patrol zone all the time
+1295.5	let's see here I think whatever
+1297.4	helicopters received some damage it's
+1301.6	basically automatic all I have to do is
+1304.2	wait till somebody find somebody in
+1305.8	within minutes they're being attacked
+1307.8	with very very accurate munitions it's
+1310.1	just incredible how effective that is as
+1312.0	far as the strategy goes especially if
+1314.1	you know you're dealing with enemies who
+1315.4	are busy reloading of course if you
+1317.4	notice all of my MIG 21s have all come
+1320.2	back home to refuel which is kind of a
+1322.5	bummer
+1322.8	looks like we spotted something else
+1324.1	here I'm assuming it's not friendly we
+1326.2	should never make that assumption on a
+1327.5	sign F 1 click look at this evaporated
+1331.5	right-click
+1335.8	that's it pick something else up we're
+1338.6	having a good day here I let's see here
+1341.2	what are we looking for
+1341.9	I believe this from whoever you are
+1344.4	whatever that is you're friendly you
+1346.8	need to go home first chance you get
+1348.4	because obviously so what's this fifty
+1357.2	five minutes we can make this work
+1358.7	who's the slowest yeah on a sign let's
+1364.1	go ahead and see them after that now the
+1366.3	cool thing here is you guys can make
+1368.2	twenty ones also um can I borrow you on
+1370.8	this mission
+1371.4	yes as a matter of fact I think I'm
+1372.6	gonna borrow you also for this purpose
+1374.7	all right well we spotted something else
+1377.5	also wow you guys did a nice job of that
+1379.5	well done
+1380.5	you can actually go home oh wait wait
+1382.4	wait reassign them to the mission before
+1384.9	sending them home as far as this group
+1387.6	goes you guys are looking pretty good
+1389.4	you can engage this outpost we spot it
+1391.1	thank you Oh spotted something else oh
+1395.3	you guys ran out oh it's off make sure
+1398.3	you change you WRA by the way otherwise
+1400.2	it's going to go on easily you could
+1406.8	grab them off their support mission do
+1408.5	an attack and reassign them to the
+1410.1	support mission to keep them airborne
+1411.3	now here's the cool thing if you have
+1413.4	aerial refueling you can do this even
+1415.4	better now one last thing I'm gonna do
+1417.2	before I head out is you want to see
+1419.3	just how many targets we missed don't
+1421.2	you take a look you can see that the
+1424.5	concentration of targets that we missed
+1426.1	today were in areas that we were never
+1428.0	searching we didn't really look we
+1429.8	looked a little bit up here but not much
+1431.2	but a lot of these targets we never
+1432.9	would have actually located because
+1434.4	they're in non attack areas now I get
+1437.0	the feeling we lost the hind which that
+1439.1	was because I was rushing I really
+1440.6	should have sent in a regular strike
+1441.9	mission oh we didn't now check this out
+1445.3	we trapped all this ordnance Wow that's
+1449.4	the Hinds fault check this out but not
+1451.8	Soviet team they lost all this including
+1453.9	24 trucks at the expenditure of 94
+1456.8	rounds all right hopefully this video
+1458.3	was helpful again assign you guys to
+1460.4	support missions to keep them airborne
+1461.6	when you need them you can just unassign
+1463.6	them do your attack then reassign them
+1465.6	to this
+1466.1	to keep them up in the air don't forget
+1468.2	to consider your WRA because I'll
+1470.0	lasting it with them to do is to waste
+1471.4	ammo rockets are one of my favorite
+1473.2	because every time you fire rockets you
+1474.5	fire them all so keep that in back your
+1476.4	head and also when it comes to weapons
+1478.2	like those old-style
+1479.5	atgms it's worthwhile to fire more than
+1482.0	one of them at a time because that tends
+1484.0	to be a little bit more deadly otherwise
+1485.7	you're just going to be wasting them
+1487.0	enjoy

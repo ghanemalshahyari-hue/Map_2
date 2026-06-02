@@ -1,0 +1,790 @@
+0.0	hello everyone on today's command
+1.7	tutorial we're gonna be looking at the
+2.9	most deadly of all naval weapons and
+5.6	especially in the last hundred twenty
+7.1	hundred thirty years and that is the
+8.6	naval mine now naval mines as you're
+11.2	probably familiar is basically a giant
+13.1	explosive that's fuse that when an
+14.8	enemy's ship not necessarily an enemy
+16.8	ship I should correct myself any ship
+18.6	gets near it it automatically explodes
+20.6	doing a tremendous amount of below the
+22.7	waterline damage now fortunately or
+25.0	unfortunately for us a command does a
+26.5	wonderful job of simulating the
+27.9	different types of minds now I've gone
+29.8	ahead and made myself a little kind of
+31.3	set of notes here and you're welcome to
+32.6	take some notes off of my notes do if
+34.1	you like I know just why they're
+36.1	effective we're gonna look at the
+37.0	different ways they can be triggered
+38.4	we're gonna look at the different types
+39.7	we're gonna go ahead and look at how you
+40.9	detect them obviously the easiest way to
+42.7	detect them is to get blown up by one
+44.2	ironically we're gonna talk about how to
+46.0	lay them including the mission editor
+47.5	for those who are so inclined and we're
+49.2	also of course going to discuss methods
+50.6	of removal now first of all let's talk
+52.9	about the naval mine itself these things
+54.9	are very difficult to detect as I said
+56.9	there's no telling unless it's a
+59.5	floating mine in which case you can
+61.1	actually see it of course if it's night
+62.7	or bad weather
+63.4	oh you're screwed clearing the mines is
+66.0	extremely challenging to do you can
+68.7	clear them inside this program some
+70.8	mines are actually not sweepable and
+72.4	some mines you can't actually clear
+74.3	except by detonating them which means
+76.6	that unfortunately our vessel that is
+78.8	going to be doing the clearing is going
+80.0	to take a substantial amount of damage
+81.8	in doing so one thing that a warning
+84.0	about mines is there's very little
+85.1	target discrimination that simply means
+87.1	they go off when anything loud gets near
+88.9	them or of course that they're magnetic
+90.4	or their seismic that's gonna be a
+91.7	little different and they come in so
+93.2	many different types that your clearing
+95.0	method has to match the type of mind
+97.7	that you're trying to sweep some of them
+99.2	are considered unsweet ball which simply
+101.0	means you have to send a diver in
+102.5	basically demolition gear underwater to
+104.8	go deal with the actual explosives
+106.2	themselves okay so let's go ahead take a
+108.2	look at what we have as far as mines in
+110.6	our command first thing we can do is we
+113.1	can always go up to the database viewer
+114.4	we can go over the weapon and we can
+116.0	type in the word mine this is going to
+118.2	get you both the minesweepers as well as
+120.3	some of the standard mines at yeah yeah
+122.1	that's a pretty stupid
+123.1	standard mine just sort of sets at the
+124.7	bottom a bunch of different types here
+126.5	and I will talk about these but I'm
+127.9	going to show you a cooler way to do
+129.2	this by the way if you use this
+131.2	that of using the database you can
+132.2	actually scroll the bottom evening it
+133.8	will tell you what types of aircraft are
+136.1	going to be carrying mines no ships in
+138.5	command by default carry mines that
+140.8	includes submarines even though those
+142.2	are some of the most popular mine laying
+143.7	vessels over the last years if you want
+145.9	to learn too much about naval mines by
+147.7	the way search World War 2 Baltic Sea
+150.3	mining and prepare to cry my better way
+154.2	to show you all this different mines is
+155.6	that I'm actually gonna create a fake
+156.8	little zone here I'm gonna go ahead and
+158.6	go ahead drag something looks kind of
+160.0	like this go ahead do one of these sort
+162.2	of things do these things you'll see why
+163.8	I'm doing this in a second and now of
+165.4	course since I'm in the mission editor I
+166.8	can actually scoot over it here to
+168.2	minefields that I can create it let's
+170.1	talk about our different types of mines
+171.3	here so mines are basically divided into
+174.7	a couple categories
+175.4	what fuses them and where they sit in
+177.9	the water different types of fuses for
+180.4	example we have with a call in
+181.6	narrowband fuse a narrowband fuse is
+183.9	looking for specific frequencies to
+185.8	detonate these tend to be a little bit
+187.8	more discriminating you know a whale is
+189.5	less likely to set one of these off a
+191.4	broadband fuse is a little different
+193.2	it's basically gonna be listening in the
+194.6	water with its hydrophone in the moment
+196.5	it hears something go by it's gonna
+199.1	explode keep in mind everything sets
+201.2	these off you have these nice modernized
+203.8	mines I'm gonna go ahead and track that
+205.1	out a little bit oh it doesn't make it
+206.1	bigger what a bummer but you have these
+208.1	modern ones that actually have the
+209.4	ability to identify what it's actually
+211.9	listening to so then we have another
+213.8	kind of fuse and that's called a
+215.0	pressure fuse pressure fuses it's again
+217.7	when a ship goes through water it's
+219.0	gonna cause a pressure change it's
+220.5	basically going to be sent off by almost
+222.2	the weight of the vessel these things
+223.9	are kind of cool the displacement should
+225.4	say because they're going to be going
+227.9	after a bigger target smaller things
+229.3	won't set them off as likely of course
+231.7	we can have remote-controlled which
+233.2	simply means you push a button they
+234.3	explode I don't know I've never used
+236.0	these in command I'm sure there's a way
+237.6	to do it and obviously a seismic sensor
+239.9	simply means it detects vibrations such
+241.7	as through the water which sounds a lot
+243.0	like acoustic if you ask me we also have
+245.7	a seismic fuse with target
+247.7	discrimination this simply means it does
+249.2	the same thing as this one but it knows
+250.7	who's team it's on that's kind of
+252.8	helpful we have a magnetic fuse these
+255.2	are pretty much useless these were the
+256.7	popular little minds that you probably
+258.1	saw in World War two there were the
+260.1	little spiky balls they basically detect
+262.2	the magnetic field of a ship passing by
+263.9	it in automatic
+264.7	explode these things are pretty cool but
+266.7	they're really easy to clear we have a
+268.5	magnetometer this is a little bit cooler
+270.4	this is basically an improved version of
+272.5	this one you have a contact fuse and
+274.5	that's that's kind of interesting
+276.0	because it simply means you have to bump
+277.5	into it in order to set it off think
+279.6	about again those little spiky balls on
+281.4	a chain of course we also have the other
+283.4	style where instead of spiky ball on a
+285.0	chain you do an underwater spiky ball in
+287.0	a chain that works pretty effectively
+288.6	and of course then we have these
+290.2	terrifying mines these are rising mines
+292.1	their narrow band produce what happens
+294.0	is when you set them off they shoot to
+295.7	the surface and then explode man that's
+298.6	a mean weapon
+299.5	scrolling down of course we have one
+301.2	other kind of mine and that's called a
+302.5	capped or this is such a cool mine
+304.5	basically it's a torpedo inside of a
+306.4	mine when it detects a certain frequency
+308.2	it actually releases a torpedo which
+310.0	then attacks the first target that it
+311.8	sees so that's the general gist of the
+314.1	different types of minds now one thing
+315.8	you want to watch out for is where the
+317.1	mind sits some Minds sit on the bottom
+319.7	which means if our waters tremendously
+321.2	deep like over here for example you're
+324.0	not going to actually be able to hit
+325.1	anything except the submarine with it
+326.5	now if we go to something that's a
+328.4	floating mind this simply means it's
+330.0	going to be sitting on the surface you
+330.9	can put these anywhere anytime but keep
+332.6	in mind a floating mind can be engaged
+334.1	with the old machine guns if it had to a
+335.9	contact floating a moored mind simply
+338.3	sits barely under the water because he's
+339.9	only six feet under this is nasty
+341.8	because again this particular one it's
+343.8	actually relatively easy to sweep but
+345.3	we'll deal with that later and of course
+346.7	the rising mines are the same thing as
+348.1	bottom eyes except they shoot to the
+349.6	surface so that's basically it for the
+352.1	different types of minds that we have
+353.5	let me just double check to make sure I
+354.7	didn't make any sense make steaks here
+356.4	and we're good okay
+357.9	well now we're going to go ahead and
+358.9	skip to how we lay them there's three
+360.8	basic way actually four basic ways we
+362.6	can lay mines inside this program the
+364.6	simplest method we can use is to
+367.0	actually define the mine area inside of
+369.0	the mission editor to do that click on
+370.3	editor you go up to here with says
+371.9	minefields it create minefield now we
+373.9	just simply pick the style we want so
+375.6	for example what is her depth here whoa
+377.1	I did not mean to do that my apologies
+378.9	we have a depth of it looks like mmm
+383.0	about a hundred feet so a lot of
+384.4	different mines can go 100 feet water
+385.8	we'll go ahead and keep it kind of
+387.7	classic we'll do a broad band fuse I
+390.1	will do you know let's let's make this
+392.8	interesting enough for some reason I
+395.1	won't let you type in that box I'll keep
+397.2	in mind that's an area like 50 square
+398.7	miles so think about how many minds
+400.7	we're gonna have to fill in that area to
+402.0	actually be remotely effective let's go
+404.1	ahead ad Oh 41 that's a bummer you can
+407.5	always click the button again and cool
+409.9	so these mines are basically gonna sit
+412.4	on the bottom and if they hear any loud
+414.0	noise basically whatsoever again we're
+415.8	look at a broadband noise so that's the
+417.3	four propeller that is in the precise of
+421.0	like a generator or something like that
+422.4	yes those are both technical terms so
+424.6	now we have a beautiful in-game
+426.0	minefield ready to go so there's no
+428.0	point in taking all the time to do this
+429.5	if we can't run a bunch of boats into it
+431.0	so I'm gonna go ahead and get my
+432.2	cellphone let's get something a nice
+434.2	little victim here we'll get something
+436.7	let's do it out like that looks pretty
+441.9	good to me I'm gonna go ahead and set it
+443.6	like this and I'm gonna set him like
+445.9	this and then I'm gonna clone him hmm
+448.3	what am I doing with this clone you'll
+450.6	see creep and I'm gonna set him up to
+453.7	full blast watch this first let me turn
+458.2	on not God mode so I can make sure we're
+459.5	actually going to get close to one of
+460.8	these mines now looks pretty good to me
+462.0	let's grab this guy yeah he's gonna get
+464.3	do plenty of Mines alright so you're
+466.1	probably sitting at home going oh no
+468.0	this is terrible why would you do this
+470.4	well just kind of watch how subtle these
+473.4	darn things are observe anything
+481.4	and our speeding ship got clear of the
+486.4	minefield hmm
+488.8	go ahead and set them down to a cruise
+490.7	speed now I'm gonna go ahead and tell
+492.4	him to go this way meanwhile our buddy
+494.1	who's creeping
+500.6	what do you notice you notice oak pause
+505.5	you notice the fact that this guy just
+507.5	hit with a may 9 when he slowed down as
+509.9	a matter of fact he got hit pretty good
+511.1	there let's actually check where that
+512.5	engagement actually took place oh let's
+514.7	see here uh he got hit a few times that
+517.6	time so the speed at which you transit
+520.0	the minefield will dictate how effective
+522.2	the mines are going to be our creeper
+524.1	right here if you actually observe he is
+526.2	about to pass about six inches away from
+528.0	a mine but watch this do you see how I
+531.0	had basically be on top of it for the
+532.5	mind to go off now the guy who was going
+534.9	ripping along here he was setting the
+536.7	mines off left and right early causing
+539.1	less damage to himself you also probably
+541.5	observe one he was ripping along at full
+543.5	speed he did note barely any damage if
+546.2	at all to himself
+547.4	during that time because the mines
+549.4	exploded so early so that's kind of a
+552.3	neat little demonstration let's go ahead
+554.0	and not fire everything back up here go
+556.0	ahead and switch back to the mine for
+557.7	team so that's one way you can lay mines
+560.1	the other way you can lay mines is with
+562.1	ships and submarines so I've gone ahead
+564.0	and borrowed a couple types now like I
+565.6	said earlier a ship does not carry mines
+568.0	by default you have to give it mines so
+570.3	if you're in the mission editor it's
+571.7	really easy you just go to mount some
+572.9	weapons you can add them out I was like
+575.4	to type in mine and there's a mine
+578.0	magazine that's just generic you go like
+580.1	that and it gives you 80 of these
+581.7	beautiful old school huh there's this
+583.2	bikes old-school contact mines that just
+586.0	sort of sit these are the spiky ball
+587.3	mines if you want to think about it
+588.4	another way now if you don't want that
+590.0	kind of mind you can always come down
+591.2	here to add weapon record you know like
+592.9	this and you can go ahead and type in
+594.0	the type of mind that you want it to
+595.2	actually do so for example if I'm a
+597.1	really mean guy I'll do floating mines
+600.6	oh let's see yeah that's only gonna get
+602.5	me a single one I'm not fan of that I'm
+604.6	more mines what can you hook me up with
+606.4	here see narrow band I like that remote
+609.0	control pressure fuse magnetic fuse that
+611.6	sounds pretty fun contact fuse that's
+613.6	never gonna get hit of course you could
+615.8	put enough of them in the water it's not
+617.0	gonna matter I'm liking this one right
+619.2	here just like that now of course we can
+621.7	remove the previous one make sure you
+623.0	click on it first and now we're carrying
+625.5	22 magnetic mines now if I wanted to use
+628.2	these mines what can't be in god mode
+629.8	wanna do that it's pretty easy all I
+631.9	have to do is get
+632.7	out of that mood let's go ahead and me
+634.8	and you actually want a bearing target
+636.5	what am I saying you can go ahead and
+639.3	just place them like this now keep in
+642.1	mind we can't do a bearing point on
+643.8	these so we have to do with a mine line
+645.5	mission that's okay so we have mines in
+647.2	that ship let's go ahead and take a look
+648.4	at my submarine this is basically a kilo
+650.2	class I'm gonna do the exact same
+651.5	procedure here keep in mind though if
+653.9	you want to be a little more realistic
+654.9	you should really go into his magazine
+657.4	find his kilo magazine and add the mines
+660.9	to the magazine that's a fair way to do
+663.9	it because the other way you could do is
+665.2	you go to mount some weapons you could
+666.7	add them out we could go ahead and add
+668.3	us a magazine number this is going to be
+671.2	a mine magazine make sure it lays in all
+673.0	directions and now we have 80 minds on a
+675.5	kilo which would barely have even a
+677.7	quarter of that many if that many so of
+680.0	course then we can add a weapon record
+681.3	we can filter we can type in mine again
+683.2	we'll go ahead spread this out just a
+685.3	little bit so you can see what I'm doing
+686.8	will do let's see broadband fuse what
+689.2	probably 16 is a pretty fair number for
+691.8	a kilo let's go ahead add select it so
+693.8	now these two ships can be assigned to a
+695.9	mining mission and they will do it
+697.8	automatically so let's go ahead and do
+699.6	that basically the exact same thing we
+701.2	did before I'm going to go ahead and
+702.4	create some reference points real
+704.0	quickly this is gonna be my mining area
+706.7	go ahead and hit ctrl f11 we're gonna
+709.6	set this as a mining mission I did
+713.4	mention to you that mines blow up on
+715.3	everything that they detect right okay
+718.7	so let's go ahead and add our kilo let's
+722.1	go ahead and add our kick class as well
+724.4	so now you're gonna notice this thing
+726.1	down here this is mine arming delay this
+730.0	is a delay for when you put the line in
+731.7	the water to when it actually arms it's
+733.3	fuse be careful with this if you know
+736.9	that you're going to be as hacking of
+738.5	dropping these mines off and coming lit
+740.0	and enemies come by the next day you
+742.0	probably want to give this a good solid
+743.5	two or three hour timer you certainly
+745.4	don't want to do a 10 minute time or a
+746.8	bad things are gonna happen the second
+748.6	point I want to point out real quick too
+749.8	is we want to zip through the water one
+753.7	more lane line so we have to get as far
+755.2	away from them as possible when we are
+757.4	doing things so I'm actually gonna set
+759.1	this to fool
+760.1	all right so mining I'm actually a
+762.1	pretty good arm delay so our two ships
+765.1	are set this I'm actually gonna put them
+766.5	here I'm gonna go ahead and grab this
+768.0	one right here and now to start the
+769.9	mining mission you just kind of let them
+771.2	go so they're gonna zip into the zone
+773.5	and they're gonna just start dumping
+774.7	mines out the back there they go and I
+779.1	love using ships for this it's just what
+781.1	are you doing know why he's doing that
+786.5	he's driving over his own mines if you
+789.0	look really carefully at these mines
+790.3	that he dropped you can actually see
+792.1	there is a two-timer on that that says
+794.1	these mines won't go active for another
+795.6	hour and 32 minutes giving this guy
+797.5	plenty of time to get as far away as
+799.8	possible he's out of mines at this point
+801.2	yeah he said no good meanwhile our sub
+804.2	is just started to drop his mines as
+806.1	well go ahead and speed up time that's
+809.1	an interesting little pattern mister sub
+810.6	I'm not one percent sure what you're
+811.8	doing by the way
+812.3	the tighter your mission area for the
+814.0	mines the more likely they're going to
+815.9	land where you want them to go keep that
+817.8	in mind
+818.7	all right oh yeah out of the good stuff
+820.8	yeah he's out of the good stuff go home
+822.7	so he's heading home right now okay
+825.7	let's go ahead and speed up time here
+827.8	why are you not going okay you were
+829.3	unassigned you go home good you can yeah
+832.9	periscope depth get growing there he
+834.7	goes he's just gonna come up to the
+836.0	surface and do his thing
+837.0	alright so these mines are gonna be out
+838.9	these mines are all active already did
+840.2	you see how quick that happened alright
+842.1	these mines are about to go active then
+846.1	we'll switch to the other guys you know
+847.4	see what happens when you didn't know an
+849.2	enemy sub was operating inside your zone
+851.3	alright switch to the ship force grab
+855.9	ourselves a ship I'm sorry Burke I'm
+857.8	just so mean I'm gonna go we'll do one
+860.2	of these things real quickly I'll set
+861.5	him up to cruise speed alright nothing
+864.4	bad is gonna happen right speed up time
+866.6	a little bit here he's just chillin all
+868.8	right watch this what's gonna happen
+873.2	keep in mind something like a carrier
+875.5	will set these things off a lot quicker
+877.0	boom boom oh he got it with one looks
+880.4	like okay got hit with two keep in mind
+882.4	he got nicked he didn't get a direct hit
+885.6	the water's just a little too deep what
+887.3	is her depth by the way yeah 102 feet so
+889.8	that mines got exploded to 102 feet of
+891.6	water to actually hurt us so we set off
+894.1	two more and we're going to go ahead and
+895.8	set him back to base so after hitting a
+898.1	total of four mines
+899.9	let's see what we actually got for
+901.4	damage here on fire we probably took a
+904.1	lot of below the waterline damage to our
+905.8	half of our electronics are busted did
+908.0	we take damage to our engine light
+910.1	damage to our engine but nothing to to
+911.7	to to bad as you can see right here okay
+914.0	so he's gonna he's out of the fight
+915.2	basically he's gonna have to turn around
+916.4	and come back through the mines watch
+918.0	this one off
+921.6	oh no oh what's gonna happen when he
+924.8	does this sorry
+926.8	Wow Wow keep in mind a lot of these
+931.5	modern destroyers have built in
+933.0	technology to try to reduce the
+934.5	effectiveness of mines so not every ship
+937.6	has got that sturdiness okay let's go
+939.8	ahead and I reload this one one more
+941.3	time and this time we'll look at the
+943.9	most popular method to lay mines and
+946.2	that's using aircraft so to do aircraft
+948.8	we're gonna do the exact same thing we
+950.4	did a minute ago we're just gonna be a
+951.4	little bit more smart and actually make
+952.9	this a nice tight area to do our mission
+954.6	this time so I'm gonna go ahead and
+956.3	scoot down to our secret airbase here
+958.8	zoom out hope I went too far yes there
+962.7	we go the system I miss and I have a
+965.1	bunch of p3 Orion's marked with mark 83s
+967.8	a quick strike is a super unique mine
+969.7	it's literally a bomb with a mine fuse
+971.8	on it they just dump it in the water on
+973.2	ceremoniously these are not my favorite
+975.4	aircraft dewdrop mines on but um I'm
+977.8	gonna use them anyway my favorite
+979.6	aircraft to drop mines with case you
+981.7	didn't guess that already
+982.8	obviously tupolev can have a lot of fun
+985.0	this is really the b-52 watch this I'll
+988.8	get my b-52s go ahead and cheat a little
+991.5	bit so I can go ahead and have them
+992.8	ready to go look at how many of these
+995.2	they can carry watch this you'll be able
+1000.0	to cross the ocean Oh No you'll be dead
+1003.3	so I'm gonna go ahead and create my
+1004.9	mission just like it did before mining
+1007.7	dupit remaining so that's okay remember
+1011.1	you want everybody to be in the air at
+1012.4	once since these are aircraft launch
+1013.9	mines I'm gonna put a two-minute delay
+1015.7	on we're gonna grab everybody make sure
+1018.1	they're set to single aircraft you can
+1019.6	actually set them to rows and they'll
+1021.1	just sort of approach and or basically
+1022.5	almost like a comb shape but I just kind
+1024.5	of like it random to be honest again
+1026.3	here's a little trick you want to make
+1028.5	sure your transit throttles pretty good
+1030.2	you want to make sure your station
+1031.2	throttles pretty good
+1032.4	this is important your station altitude
+1035.1	and transit altitude have to agree with
+1037.4	the type of weapon you're using if
+1038.9	you're using a mind that has a launch
+1041.0	altitude of 4,000 feet you've got to be
+1043.4	4,000 feet when you do the deed somebody
+1046.0	go ahead and set both of these to 4,000
+1047.8	feet this is a little annoying because
+1050.8	you really want the transit altitude to
+1052.6	be 36,000 so you can get there sooner
+1054.4	and then you want the station altitude
+1055.8	to be 4,000 but it's a little tricky to
+1057.9	do when you have a bomber of that size
+1059.5	so anyway let's go ahead and unpause
+1061.7	here they come
+1063.8	this is so mean all right watch this
+1067.7	pause these busy bees are going to make
+1070.9	it impossible to exist pause so the
+1076.6	entire mission as you see did not take
+1078.3	very long and we basically yeah yikes
+1082.9	that that's pretty terrifying amount of
+1085.1	Mines keep in mind these are quick
+1086.0	strikes too so in the shallower water
+1087.9	which I believe these are 46 feet
+1089.9	they're going to be dynamite
+1091.7	so which brings us to our next point how
+1093.9	do we detect the mine so the quick and
+1096.1	easy way to detect the mind is to
+1097.5	accidentally smack into one obviously
+1099.7	that's not that preferred one method we
+1101.9	could use let's go ahead and actually
+1103.3	we're gonna Burke back is we can use
+1105.9	active sonar now the advantage to active
+1108.5	sonar of course is it's pretty precise
+1110.4	the disadvantaged actress owners we let
+1112.9	everybody in the neighborhood know where
+1114.3	we are so I'm going to go ahead and not
+1115.9	shoot you him right through this and see
+1117.3	if we can detect the better tool for
+1119.0	detecting mines believe in other than a
+1120.8	Minecraft is to actually use submarines
+1123.5	because what I can do with a submarine
+1124.9	let's go ahead and get something really
+1126.5	expensive oh yeah now we're talking we
+1130.7	can actually tell it to use is active
+1133.3	sonar it has this very very
+1134.8	high-frequency sonar the great thing
+1136.8	about five frequency but sonar by the
+1138.2	way is it gets attenuated so quickly
+1140.2	it's basically useless and you'll never
+1143.2	be not useless in useless in the sense
+1145.1	that you can't be counter detected with
+1146.7	it so I'm going to go ahead and flip his
+1148.3	sonar czar and as well go ahead and set
+1151.5	it this way I'm gonna set obviously
+1152.7	steep as possible creep and we'll go
+1155.9	ahead turn on this view so we can see
+1157.7	we're doing pause go this way just a
+1160.0	little bit what just went by didn't see
+1164.7	that going
+1166.0	the idea though these poor guys they're
+1168.3	just running home and they just got
+1169.5	blown up too so anyway it sounds like
+1173.0	one of them got hit sounds like another
+1175.8	one got hit that's what you get for
+1181.1	messing with that anyway let me go ahead
+1182.9	and shut that off so both of these
+1184.4	vessels now are working with active
+1186.1	sonar remember the quick strike mine
+1188.8	sits on the bottom of the ocean so how
+1191.2	easy do you expect this to be to detect
+1194.1	it's exactly what you think watch this
+1196.9	pause so this ship has just detected
+1201.4	these mines just because of the fact
+1204.4	that it's using that high-frequency
+1205.5	sonar so this again as a seawall this is
+1208.5	a sophisticated sub that has more than
+1210.6	enough capability to detect those mines
+1212.7	there's also very quiet so it's less
+1214.3	likely to set it off some actually broke
+1216.6	and it set one of the mines off go home
+1222.5	think about what you did
+1224.3	meanwhile our destroyer buddy here is
+1226.8	getting close keep in mind these things
+1228.8	sit on the bottom they're gonna be hard
+1230.3	to detect quit and turn on our view here
+1233.3	remember he's going very slow so watch
+1237.0	this boo boo boo boom boom and now you
+1239.9	are rejected and you get to go home as
+1241.6	well if the mines were moored mines
+1243.9	you'd be able to detect them sooner and
+1245.7	better so now that we've taken so much
+1248.2	damage let's deal with how do you get
+1250.4	rid of the mines boy so to do that
+1253.6	you're going to need two different
+1254.9	vessels you can use an MCM vessel which
+1256.9	is basically a mountain mine
+1258.0	countermeasures vessel I have a few of
+1260.0	them and I also could of course use
+1262.2	helicopters which a lot of people go
+1264.1	wait you can use a helicopter to do a
+1265.3	mine yeah it actually works pretty well
+1267.9	to do an anti mine mission I'm just
+1269.5	going to go ahead and creep myself a
+1270.5	nice little area I assume this is where
+1272.3	the trouble is by the way the secret
+1273.6	here is to keep the area as small as
+1275.3	possible
+1276.1	so for example I'm gonna do something
+1278.5	kind of like this I'm gonna make myself
+1280.4	a tight corridor that's gonna get me out
+1282.3	of here I'm assuming it's gonna be kind
+1284.3	of like something like this is gonna be
+1285.6	where I am I'm actually going to check
+1287.0	real quick and that's pretty good so to
+1288.9	do this you're simply going to do your
+1290.6	standard mission you're gonna create a
+1291.8	new mission I'm gonna say MCM I'm gonna
+1294.8	go to mine clearing mode press ok
+1297.3	I had these Sidra
+1299.5	let me go ahead and ready those well
+1301.5	sorry about that go ahead and grab all
+1303.9	these sea dragons ready selected now a
+1306.3	sea dragon is a special helicopter that
+1308.2	could attack them notice they have
+1310.0	different types of anti mining
+1313.8	technology on board this is an awesome
+1316.1	system because it basically combines
+1317.8	these two systems into one you also have
+1320.2	one that you can act a special sonar
+1322.2	just for the purpose of detecting mines
+1323.9	I'm gonna go ahead and armed it with
+1325.3	these go ahead and launch them like that
+1327.9	none of this 1/3 roll business just go
+1330.0	we need you guys to find those mines as
+1331.5	fast as possible and as usual we're
+1333.7	gonna go ahead and grab our mine
+1335.4	countermeasures vessels as well I have a
+1337.1	whole pack of these we're ready to go
+1338.5	for this particular mission make sure
+1340.2	they're set to single vessel in transit
+1342.4	they can cruise obviously when they're
+1343.7	in station they can creep so I'm going
+1345.8	to go ahead and unpause in just a moment
+1348.0	a bunch of helicopters are just got a
+1349.2	comporting up oh no he's not
+1353.4	nothing a good week I'm sorry mr. Burke
+1356.9	alright there you go
+1358.7	so our helicopters are on the way so how
+1360.9	does a helicopter clear mind
+1362.1	it basically dangles a wire from behind
+1363.9	itself that was weird like the command
+1366.5	hyperspace or something so there we go
+1368.6	so these little zones behind them are
+1371.6	basically the mine clearing zones what
+1374.2	they're going to do is that they bump
+1375.4	into a mine they're automatically going
+1377.1	to clear it do you see little explosions
+1379.2	see it sorry this is not terribly
+1383.8	exciting by the way don't count on ever
+1386.7	getting a hundred percent of the mines
+1387.6	that never happens these guys are doing
+1389.8	a great job I am so impressed you can
+1392.9	see the little pops every once in a
+1394.1	while it's like popcorn um any reason
+1396.7	why the these guys decided not to launch
+1399.0	I'll go ahead and tell them to launch
+1400.3	individual very much like them to join
+1402.1	so I can demonstrate the next problem
+1404.0	with this all right watch this anyway
+1406.3	else let them go go my pretties they're
+1410.8	doing a decent job I'm like not mad
+1413.2	good of a job they've done so far nicely
+1417.1	done guys
+1418.8	now so I'm gonna let them kind of tool
+1421.6	around a little bit here I'm actually
+1422.8	going to expand my mind clearing zone
+1424.7	significantly because I want to show you
+1426.5	what happens when you use ships for the
+1428.9	purpose of clearing mines keep in mind
+1431.3	older mine clearing sets would
+1433.0	I'll be able to get that quick strike
+1434.4	and unfortunately our poor aleck burgers
+1436.5	are sort of parks now watch this let's
+1439.6	grab him he's cruising along here I'm
+1441.8	gonna actually put him right here boss
+1443.6	what did we just detect no they were
+1447.0	good do you hear the pop now watch this
+1454.0	so these ships are basically super
+1456.7	lightweight very quiet
+1458.1	typically wooden ships and they have the
+1460.5	little dragging item behind them that
+1462.2	allows them to get over there you get
+1465.0	over there so what's gonna happen is
+1468.8	they're dragging this thing behind them
+1470.2	and they have to drive over the top of
+1471.7	the mines to get this cable in position
+1474.1	as a result there are going to get hurt
+1476.6	a lot and you'll see that in a second
+1478.4	I'm sure and we have already lost - oh
+1484.4	yes mine sweeping involves damaging the
+1487.2	minesweeper so what you want to do just
+1489.0	to kind of avoid that kind of problem is
+1491.0	see if you go into your I WRA and eMCON
+1493.0	you can actually tell the ship's if
+1494.7	they've been damaged - go ahead and
+1496.7	return back to base you know if they're
+1498.3	more than 75% damage just come back home
+1500.9	because obviously you're going to get
+1502.3	sunk if you get hit again and then you
+1503.9	can tell them to redeploy when they get
+1505.3	down to 25 and they just kind of go back
+1506.5	out there and blow themselves up a few
+1508.3	more times so this ship I think is
+1510.2	completely crippled let's see what it
+1511.7	got hit on damage control data loses it
+1514.7	no the interests are still good I'm
+1516.3	gonna order him back to base because
+1517.6	obviously he's having a bad week where
+1521.1	is my other buddy there thought it -
+1523.9	okay you know I'm simple with you guys
+1526.0	back home clearly you guys are not
+1527.9	disabled oh you can go full speed now
+1531.2	yeah it must have taken off there screw
+1533.6	or something like that go away yeah it
+1535.9	must have taken a screw off didn't it
+1537.5	doesn't say that oh well maybe he's
+1541.2	taking on water so anyway our little
+1543.3	buddy over here by the way notice he
+1544.7	just set off another mine so he's
+1547.0	actually properly damaged let's see how
+1548.5	bad it actually is yeah it's pretty bad
+1550.6	but she should still be able to continue
+1551.8	his mission here creep there he goes
+1554.6	well another mine got set off this one
+1557.0	got set off I believe by the helicopter
+1558.5	notice my helicopters are helping to set
+1561.1	off the minds of everybody oh look at
+1562.6	this helicopter oh he's getting a
+1564.0	Christmas bonus definitely look at that
+1566.1	look at that here's the thing though we
+1568.9	shut off God's eye view here we have no
+1571.0	idea where the mines are you okay there
+1573.9	buddy go home
+1576.0	there he goes I'm just gonna centum he's
+1578.6	pretty dinged up the longer the ship
+1580.9	mine clears the more damage is gonna
+1582.8	take by the way you can get helicopter
+1584.7	shot down because of these stupid mines
+1587.0	yeah he's hurting pretty bad already
+1588.2	let's see what happens when he gets to
+1590.2	our next target speed up time watch this
+1592.8	see that he was able to detect that mine
+1595.3	or right away because he's got his sonar
+1597.6	turned on okay so he's identified the
+1599.4	mines so now he's gonna drive all over
+1601.3	the top of the mine this is not seem
+1603.0	very safe detonates the mines notice his
+1605.7	buddies just showed up too and he's
+1607.3	basically gonna choo-choo until he takes
+1608.9	so much damage he has to return to base
+1610.7	and then rinse and repeat okay so
+1613.3	hopefully that's enough information to
+1614.7	give you guys an idea of how to employ
+1616.0	mines I'm from a strategy perspective I
+1617.9	like to use mines to deny enemies the
+1620.0	ability to use the port's works great
+1621.5	another strategy that you can use which
+1623.3	is like kinda mean is you can actually
+1625.7	drop mines behind you so basically have
+1628.4	a enemy who's following you run into
+1630.2	them as kind of a defensive mindset up
+1631.8	all right if you have any questions it's
+1633.4	dump them in the comments otherwise
+1634.4	enjoy

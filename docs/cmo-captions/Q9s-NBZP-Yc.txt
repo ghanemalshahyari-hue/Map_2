@@ -1,0 +1,1370 @@
+0.0	hello everyone today's video we're going
+1.7	to be taking a look at the basics of
+3.0	using missions as well as kind of how to
+5.2	approach scenarios in command
+7.5	modern operations so the scenario we
+9.7	have here today is that we're gonna be
+11.2	doing this from the map editor so I can
+12.5	kind of play a little bit here just give
+14.0	you some cool ideas is that basically we
+16.1	have ourselves here in lovely Vietnam
+18.1	this is that before Vietnam got split a
+19.9	few years later this is March 15th of
+22.0	1954 and it's about five o'clock in the
+24.1	morning so it's pretty early on as you
+26.2	probably know from history we had the
+28.0	Battle of Dien Bien Phu which is already
+29.5	under way which is way way way over here
+32.0	pretty much on the Laos border we have
+34.2	the good armies of general Jaffa
+36.0	basically surrounding this entire
+37.6	environment where France is basically
+39.4	doing the best they can with an air
+40.8	bridge to supply them meanwhile we have
+43.0	some support in Hanoi we also have this
+44.8	neat little carrier battle group sitting
+46.2	over here and we have important event
+47.9	that something gets damaged so when I
+50.2	first start any scenario in command what
+52.6	I'm actually going to go play it the
+53.7	first thing I like to always do is go up
+55.1	the game and there's this really neat
+56.7	button is's browse scenario platforms
+58.8	knowing about your opponent is like 75%
+62.5	of any battle
+64.9	so just quickly going over to a Viet
+67.4	Minh here go down a facility looks like
+69.2	we have some recon infantry some
+70.7	artillery batteries some mortars looks
+72.7	like we have some sappers again we're
+74.6	borrowing this from 10 years too late
+76.1	but that's ok it looks like we have some
+77.8	triple-a so let's go ahead and take a
+79.4	look at one of these units let's see
+82.4	here what do we have for range it's got
+84.7	about 600 rounds of ammunition because
+86.6	there's six guns and there's a hundred
+88.4	each the hets problematic let's see here
+91.1	it's got some binoculars just gonna make
+92.4	its life a little bit simpler ok it's
+94.3	about a four nautical mile range
+96.2	interesting that's gonna come in handy a
+98.4	little later on
+99.2	let's go scoot over to the mortar
+101.1	battery chances are mortar platoon is
+103.5	not going to have the same range is that
+105.0	looks like a three nautical mile range
+107.5	let's go scoot over - what's if this
+109.6	support will tune us let's say anything
+112.6	fancy looks like they have - 82
+113.9	millimeter mortars three nautical miles
+115.9	interesting and of course let's take a
+118.0	look at this Triple A site as well so
+119.6	this Triple A site would be based on
+121.0	pretty much a really really early
+122.0	lightweight 37 millimeter sight one
+124.9	thing it would have that it wouldn't
+126.0	have is this Oh II see em they're just
+128.1	pretty much be whatever let's take a
+130.0	look here Marine train train trains were
+132.6	very interested in rain there's 37
+134.7	millimeter 1.5 nautical miles v how
+138.3	about altitude altitude is very
+139.9	important as you'll see let's see here
+142.7	maximum altitude doesn't actually give
+144.8	that to me and they're pretty good page
+145.9	let me scoot back real quick so we'd
+150.1	assume that it's 1.5 nautical miles 1.5
+153.6	times just about see thousands about
+158.3	okay so about 10,000 feet he's going to
+161.3	be the limit there which that's enough
+163.2	it's definitely enough okay so why don't
+166.9	we care about the unit's in the
+168.3	particular scenario well I'll show you
+169.9	the whole goal is scenario of course is
+172.1	provide air supports who are poor
+173.6	besieged troops over here in the ambient
+175.4	Fuu we know that the longest range of
+177.8	any enemy artillery is four nautical
+180.0	miles we can use that information to
+182.4	actually determine where your enemy
+184.6	could possibly be placing units before
+187.0	we've even started the battle this is
+188.6	just using some military intelligence
+189.9	here yeah you know it's an oxymoron so
+193.0	we'll go ahead and create ourselves I'm
+194.3	pressing ctrl D by the way to give us
+196.1	this neat little
+196.8	here and basically what I'm gonna do is
+198.7	I'm gonna create a little box press
+202.1	control insert click go ahead and scoot
+205.1	all the way to here so before there we
+207.3	need to go out to eight nautical mile
+208.8	this is gonna be over in this corner
+210.1	gonna go to control insert to place
+211.7	these are called reference points these
+213.4	are very very useful as far as setting
+215.9	up kind of a general zone of everything
+217.7	so go for nautical miles in this
+219.9	direction and will pretty much eyeball
+222.9	it now these reference points can be
+224.4	used for a lot of different things you
+226.1	can also rename these reference points I
+228.1	can actually click one press ctrl R and
+230.2	you could say for example north west
+232.7	corner you do something like that if you
+236.3	prefer again do whatever makes sense for
+238.3	you when you're doing it if you need to
+239.2	delete a reference point you can press
+240.6	ctrl Delete you can also go up here and
+242.5	hit this so why did I create these
+244.5	little reference points my reasoning is
+246.6	simple there's no way the enemy can land
+248.8	artillery on us beyond this area which
+252.7	means if I'm going to be flying in air
+254.2	support and stuff keep in mind I'm not
+255.3	there an interdiction here this is all
+256.6	just gonna be close air support I just
+258.8	need to operate in this area anything
+260.3	beyond that it's nice to hit but it's
+262.2	not necessarily going to be an immediate
+263.6	threat to me and that's kind of
+265.2	important later so that's kind of how I
+267.4	start things in the beginning I also
+268.9	like to check my whether it's 5 o'clock
+270.2	in the morning which is little too early
+272.2	for operations in the air keep in mind
+274.0	nobody's got night vision goggles really
+275.7	1954 oh we know that there's some
+278.1	moderate middle clouds between 7 to
+279.7	16,000 feet which means if I need to
+281.8	escape that's going to be an excellent
+283.3	altitude that also means that if i order
+286.3	my guys to fly underneath that cloud
+288.2	layer we're gonna be right in the lethal
+290.1	range of those enemy artillery pieces or
+292.6	a triple-a I should say so kind of keep
+294.2	that in the back of your head so now
+295.5	that that's all set I was like to kind
+296.8	of survey what I have at my disposal a
+298.5	couple different ways you can do this
+299.6	you can go to game you could scoot over
+301.6	to order battle this works really really
+303.3	well basically it's gonna open up a
+305.3	little menu and you can see everything I
+306.8	have all the different troops so you
+308.1	have about 2 MP n Fu's got all these
+309.7	items down here you can close these menu
+311.8	I've got my french carry about a group
+313.3	which I've got all sorts of different
+314.9	aircraft have one nice aircraft carrier
+316.7	most of Hanoi airbase which has got all
+318.9	sorts of crazy stuff on it and that's
+321.0	kind of pretty much it as far as the
+322.9	initial setup goes and again this is a
+325.1	scenario I created so I have a fairly
+326.6	good idea of where everything is but it
+328.3	I do randomize things
+330.0	so anyway we know that at about 9:30 in
+332.9	the morning there's gonna be a very very
+334.3	large attack that gives us a total of
+336.9	about let's see here four and a half
+338.9	hours to do anything we can in order to
+342.2	protect this particular area keep in
+344.6	mind that there's no close air support
+346.6	aircraft at the end bien phu it's only
+348.6	going to be basically support aircraft
+350.9	like aircraft and things like dc-3 c-54s
+353.7	things like that so that means any air
+356.2	support I need needs to travel this
+358.3	entire distance to get here so if I
+360.8	quickly just measure that it's a hundred
+362.3	and fifty five miles from Hanoi and it's
+365.0	about two hundred and fifteen nautical
+368.2	miles away from our little carrier
+370.1	battle group here that means my travel
+372.6	time is really critical if I have an
+374.5	aircraft that only travels 240 knots for
+377.3	example it's going to take almost an
+379.0	hour to cover that distance which means
+381.2	them if the shootings gonna start again
+382.9	this is just intelligence which tells us
+384.6	it's not going to do very good for us so
+387.4	you have to keep travel time in mind
+389.1	plus remember it takes time to get the
+390.9	airplanes in the air so it's gonna take
+392.5	you even longer
+393.2	anyway let's see what we got so for our
+396.5	carrier battle group keep in mind 250
+399.2	nautical miles we have a pretty good
+401.0	collection of aircraft a couple
+402.1	different types of Corsairs and Bearcats
+403.7	and Helldivers now usually one scenario
+406.7	designers set things up they will set
+409.1	limited ammunition on a carrier so I
+411.1	can't just grab an airplane to load
+412.5	anything I want with it they also like
+414.4	to set some of the aircraft as in
+416.6	maintenance you can't actually use an
+418.4	aircraft maintenance unless you're in
+419.6	the scenario editor this is basically
+421.4	the scenario designers way of saying um
+423.2	you just can't use these planes but
+424.5	they're free targets for the bad guys
+425.9	again design it as you want so I'm gonna
+428.4	go ahead and grab my Corsairs let's go
+430.1	ahead and do ready armed and we have a
+432.0	couple different choices we have some
+433.6	250 kilogram bombs with some Zuni search
+435.9	I can take these are 5-inch rockets we
+438.4	have kind of a mix of bombs and we have
+440.2	a mix of heavy bombs plus rockets before
+442.8	we get carried away you want to scoot
+444.8	all the way over here to check what my
+446.9	strike radius is gonna be you can say
+449.1	very very clearly that it's a 249 I'll
+451.4	come off a strike radius which was
+453.2	actually good because you remember it's
+454.5	only 260 miles away granted they're
+456.7	going to get their drop their stuff and
+458.4	get out fast because it's not gonna have
+460.0	any so what ordnance do
+463.8	right now this is where you're gonna
+465.2	have to use a little bit of cleverness
+467.1	and you can also if you go to the View
+468.8	mode you could actually tell it to show
+471.0	you the land cover s now the land cover
+473.8	here it tells us what is actually on the
+477.2	ground as far as cover goes you can
+479.8	actually bring up a little menu here
+481.0	that will actually show you what the
+483.0	individual places are called what all
+485.0	the different layers are call them ticks
+486.2	along those lines let's see where is
+489.1	that terrain type legend there is so we
+492.0	can see here that in Hanoi naturally
+494.0	it's it's pretty urbanized but way way
+496.1	out here in Zambia Fuu you can see
+498.0	there's while there is some urban area
+500.3	all the troublemakers are going to be
+502.6	over here you can actually hold your
+503.8	mouse over it and it says that they're
+505.6	going to be evergreen broadleaf forest
+507.9	that means that weapons that tend to
+510.8	just go boom or a small booms I should
+513.3	say it should be more specific aren't
+515.1	going to do any damage whatsoever so
+516.8	cluster bombs are out little stuff is
+519.3	out ideally you want to be using things
+521.0	like napalm and very very large caliber
+523.5	anything in order to do any damage
+525.4	unfortunately the poor French forces
+527.6	here they're not nearly as well
+530.4	protected so anyway that's kind of an
+532.3	interesting thing you want to kind of
+533.4	keep in the back yard by the way you can
+534.7	disable that feature if you go to
+536.2	scenario settings you can actually
+537.5	disable effects of terrain sight that
+539.3	also affects mobility by the wire so
+541.1	kind of keep that in mind as well anyway
+543.3	let's go back to what we're doing so
+544.6	with that in mind let's go back to our
+546.3	course there's and what do we need to
+549.5	arm them with guns are kind of nice but
+551.4	the problem guns is they don't like
+552.5	going through trees the Rockets are nice
+555.0	especially these five-inch rocks these
+556.6	seams are gigantic so they're actually
+558.7	pretty effective and they're actually
+560.2	pretty accurate another thing you can do
+561.8	is you can actually click on the rocket
+563.4	itself man things huge and it will
+565.3	actually tell you what its reliability
+567.2	as well as accuracy is in this
+568.7	particular thing the 20 millimeter or 20
+570.8	millimeters that'd be amazing 20 meter
+573.0	CEP makes this a very accurate rocket
+576.2	compare that with our little bomb buddy
+578.1	here let's take a look now we see that
+582.6	we have a 50 meter so this is less
+584.5	accurate but it's got a bigger bang the
+587.5	other thing you want to pay attention to
+588.5	is what altitude can I launch these
+590.4	things at a thousand feet above ground
+592.4	level is actually not that
+594.1	and if we're dealing with a triple-a a
+595.8	thousand feet is pretty dangerous so we
+598.0	got to keep that in mind so what are you
+599.3	Peck personally I'm gonna go with this
+601.0	option because I know that that gives us
+602.8	a really big bang plus it has an
+604.7	accurate component so I'm gonna click OK
+606.7	ready if you're not in the scenario
+608.0	editor you won't get these cool buttons
+609.3	you also have this option here to click
+611.1	here if you push that button that's
+612.7	going to ready the aircraft - any
+614.5	external fuel tanks or you know
+615.9	air-to-air missiles like a sidewind or
+617.8	something so in order them to get ready
+619.4	notice it's going to take some three
+621.4	hours before I can use them mmm that's
+623.7	going to be problematic let's grab our
+625.4	other group of course theirs as well so
+628.8	this one has a very similar setup I'm
+630.6	gonna get something with a big bang it's
+631.9	nice and accurate let's go to the
+634.0	Bearcats now the Bearcats are going to
+635.9	be problematic let's take a look Oh
+639.1	napalm excellent this stuff is great
+642.1	unfortunately you can see our strike
+644.6	radius is 150 nautical miles which means
+646.3	we can never get ambient Fuu from where
+649.4	we are so we are stuck leaving it with
+651.8	internal guns which means we can't use
+653.4	these actually as interceptors so if we
+654.9	needed to but at this point in the war
+656.7	on the Vietnamese don't have ever plains
+658.4	of their own the regular Bearcats it's
+661.0	gonna be the exact same problem yeah you
+663.1	can see it's just too short of a range
+664.9	which is really a bummer the health
+666.7	divers are really really good planes
+668.7	these are dedicated attack aircraft so
+670.9	when it goes to ready on time let's see
+672.0	if there's anything useful here nice oh
+675.2	hello hello hello napalm m47 I like that
+680.4	somebody go ahead and ready these guys
+682.0	they're not gonna be ready for six hours
+683.4	though so hopefully the war isn't over
+685.5	by the time these guys are ready to go
+687.0	let's scoot up here to Hanoi air please
+689.4	Thunder Jets these are definitely early
+692.2	kind of first generation second
+693.9	generation Jets but they can carry a
+695.7	spectacular amount of stuff notice their
+698.0	mission profiles here you got up to 400
+700.1	nautical miles so anything here is good
+702.2	sometimes when you're picking these
+704.2	different kinds of loadouts you're gonna
+705.5	see the unisys long-range that simply
+707.4	says carry less stuff to exchange it for
+709.4	longer range forever ever reason though
+711.8	you'll actually notice that the range
+713.1	for the strake radius is not changed
+715.6	that's just kind of interesting so a
+717.6	couple different choices here once again
+719.0	what am I good for tooth oh that's sweet
+720.6	so it's the difference okay so if I pick
+723.9	this guy what do I get I get an optional
+726.5	I get a little bit more
+727.6	probably range because I've got these
+729.1	extra fuel tanks so there's really no
+731.2	reason in the world not to pick this one
+732.9	unless it takes longer to prepare or
+735.0	search time ready time for hours yeah
+737.4	that's good I'm gonna go for the long
+739.0	range option keep in mind since since
+740.5	the long range option removes bombs like
+743.3	yeah that's a good example right there
+744.7	but I'm gonna go ahead and that's pretty
+746.5	impressive that's really cool all right
+748.9	let's see we got for the meteors let's
+752.6	see here are the meteor these work
+754.5	pretty well
+756.3	busted let's go check that one more time
+759.3	120 nautical miles how do we gotta go
+761.8	that's 160 it happens so these meteors
+765.6	unfortunately are left with just the
+767.0	guns that must mean these meteors are
+768.9	also gonna have the same problem the
+769.9	mystery let's go ready armed real quick
+772.4	what do we get first of all take a look
+774.4	at your range this is pretty tight
+777.4	that's some really really really let's
+779.6	see we got these guys 105 millimeters
+782.2	our four inch rockets we got some bombs
+783.9	Oh what do we do what do we do video
+786.3	let's go with rockets this time I want
+788.5	something a little bit more precise go
+790.7	ahead and ready them up they'll be ready
+791.8	in about six hours we have some
+793.6	Thunderbolts our World War two fans
+795.3	probably know all about Thunderbolts
+797.1	let's see we have here we could go with
+799.4	rockets again I kind of like the idea of
+801.9	a mixed load out like with rockets and a
+804.2	couple bombs that's gonna make it a
+805.7	little bit more flexible what's the
+807.0	ready time in that six hours kind of
+809.0	anything it's a lot oh here we go
+810.5	so this one's only three hours yes I'll
+813.4	take that I like that okay there we go
+816.9	on let's go down to blue Hawk here let's
+819.6	go ahead and nice I'll take that keep in
+825.6	mind if you're in the middle of the
+826.4	desert you can get a little less serious
+827.7	Oh at 8:26 these things are gonna be
+829.9	great but they're gonna take forever to
+831.4	get ready and we have some incendiary
+833.7	bombs looks good to me 600 nautical
+835.7	miles strike radius it looks good to me
+838.0	all right we have c-47s we have two
+841.0	different kinds if we were doing cargo
+842.5	operations we could have a lot of fun
+843.7	the reason I put these in the map is to
+845.6	simulate the resupply of this particular
+848.5	airbase over here on the MAF ooh it will
+851.0	actually set up a mission for that first
+852.2	and last but not least we're gonna scoot
+856.2	over here into to BM BM feu and you can
+858.6	see we have some c-47s and see 50
+861.1	for is desperately loading up the
+862.5	wounded from the battle we also have
+864.5	these are t-33 a's which weren't
+867.1	actually present they actually use these
+869.1	basically Piper Cubs at Dien Bien Phu as
+871.8	in order as a way to spot the Viet Minh
+873.9	artillery but I just put these in here
+875.7	making things kind of interesting we're
+877.0	gonna put these guys to work immediately
+878.3	then of course we have some our b-26s
+880.8	but they won't be around for another
+882.2	three hours this is just a really really
+884.3	nice camera version of the regular Bobby
+888.0	26 all right so let's go ahead and do
+891.5	some damage here so the first thing I'm
+892.7	going to do is I'm going to set up a
+893.6	mission to simulate the cargo transport
+896.8	between Hanoi and Indian plus it makes
+899.4	it fun for the Viet Minh they get
+900.5	something to shoot at so I'm gonna press
+902.1	ctrl f11 if you want to create a mission
+903.9	directly or you can just press the f11
+905.6	key or if you prefer you can go up and
+907.9	actually just click the missions up
+909.5	mission editor right up here we do
+912.0	mission editor and we're good to go so
+913.4	I'm gonna go ahead and click on create a
+914.6	mission I'm gonna call it theory I'm
+919.0	gonna call it fairy mmm-hmm let's make
+921.3	sure it's all set
+922.1	don't need it and go ahead and activate
+923.6	that press okay can also set activation
+925.6	in the activation time should you need
+927.1	check that real quick check that make
+929.7	sure it's all online
+930.4	you only need with single aircraft that
+931.7	works for me very mission so it's going
+934.5	to be going to TN bin few a air base one
+937.0	way now to simulate the aircraft
+939.6	actually going back and forth back and
+940.9	forth I'm gonna set the cycle so it's
+943.6	actually going to go like this so it's
+946.2	actually it's kind of neat if you ask me
+947.8	again this is we don't normally need to
+949.4	do this in the game but some missions
+950.8	will actually have your rebase cargo and
+952.5	this is just kind of any way to do it so
+953.9	anyway let's go ahead get those aircraft
+955.2	from a Hanoi pretty good number of them
+959.0	right here let's go ahead and not grab
+960.7	the c-47s also there we go I hate it
+964.6	when I do that be careful when you name
+966.2	things let's grab that one put those
+972.3	guys there okay so these aircraft now
+974.6	we're going to take off slide it in Biff
+976.6	you quote pick up casualties quote then
+979.2	they're gonna fly back kind of doing one
+980.8	of these so this is not a very specific
+982.7	name for this mission so I'm gonna be a
+984.9	little bit more specific
+989.8	there we go yeah that's better let's go
+992.4	ahead and create a new mission now let's
+996.7	create the call this one Fairy DBP to
+1000.7	Hanoi I always like to doing the little
+1003.5	arrows to kind of give me a heads up
+1004.7	that this is the intention this is the
+1006.4	direction we're traveling in so that
+1008.8	looks good to me that's good we're gonna
+1011.1	set this two cycle also is that this is
+1012.8	a single aircraft double check to see
+1014.9	which its destination is by the way when
+1016.9	you ferry it changes the home base which
+1018.7	could affect you so let's go grab the
+1021.0	other c-54s let's go ahead and grab
+1022.9	those c-47 okay so this means throughout
+1025.6	the entire mission aircraft are gonna be
+1027.1	taken up in the landing basically
+1028.5	simulating that air bridge that we saw
+1030.0	meanwhile we need to put those t-33s to
+1033.1	use immediately so we're gonna get them
+1035.9	doing some kind of little like basically
+1037.5	an aerial patrol here so I notice that
+1039.7	my altitude is about 2500 feet and my
+1042.2	cloud covers about 7,000 feet but if you
+1045.1	remember those anti-aircraft guns are
+1046.9	effective up to 1.5 nautical miles it's
+1049.7	gonna be about 5,000 it's gonna be a
+1051.4	little just shy of 10,000 feet let's say
+1054.0	so in order for us to take
+1055.7	reconnaissance we have to stay under the
+1057.3	clouds or we won't be able to see
+1058.7	anything on the ground obviously the
+1060.4	lower we fly to the ground the easier
+1061.6	just to see stuff on the ground and
+1063.2	easier to get shot down so I'm gonna
+1065.5	kind of split the difference and go for
+1067.0	6,500 feet so let's set up that
+1068.8	reconnaissance mission I'm gonna press
+1071.6	ctrl F 1 I'm gonna call it recon DBP I'm
+1075.9	gonna send it to patrol and I'm gonna
+1077.6	set it to anti surface patrol ground now
+1080.7	there's a bunch of different ways to do
+1082.1	this this method works well for what I'm
+1084.0	doing I'm press ok now you notice it
+1087.0	just gave me that angry message and
+1088.3	you're probably sitting there going what
+1089.5	was that all about well it turns out
+1091.4	that um when you create missions you
+1095.3	have to make sure that the area that
+1096.8	you're drawing draws a normal shape in
+1099.2	this case it was a Riesling that so now
+1101.0	we're good to go so let's go ahead and
+1102.5	get her t-33s up in the air as fast as
+1104.5	possible looking good I'm gonna do that
+1107.0	by single aircraft I rather only one get
+1109.1	shot that one bad news happens I'm gonna
+1111.4	set it yeah that looks pretty good to me
+1112.8	this simply says keep one third in the
+1114.3	air at all times
+1115.1	this one says check out anybody beyond
+1116.8	the patrol area this one check out
+1118.1	anybody who's within weapons range these
+1120.6	by the way can be made exclusive
+1123.1	can also tell him to turn his radar on
+1124.5	when he's inside of this area and of
+1126.0	course you can set them on a repeatable
+1127.3	loop so you can get really really really
+1129.1	fancy with this obviously it's not gonna
+1131.1	be any refueling and for size that's
+1133.4	good okay this is the important part
+1135.3	right down here what we want to do is we
+1137.8	want to set his station throttle to crew
+1140.6	well because this is tricky I'm gonna
+1143.0	leave it unloaded that's gonna be quick
+1144.2	enough so what I'm gonna do is I'm gonna
+1145.7	do station altitude this is how high off
+1147.6	the ground he's going to be at the
+1148.9	station and if you remember I said I
+1150.8	want to go little less than 7,000 feet
+1153.2	the other thing you can do too is you
+1155.0	could set this to 2,000 feet and then
+1157.2	tell it to be terrain-following either
+1159.5	one of those techniques works really
+1160.7	really well here I'm just clicking this
+1162.5	to make sure it's set so now the
+1163.8	aircraft are going to take off one third
+1165.4	of the aircraft by the way that means
+1166.7	for I'm gonna take off and there and
+1168.3	only gonna zigzag in here cruising at an
+1170.1	altitude 6500 feet trying to look for
+1172.4	the Viet Minh so now we're pretty much
+1175.3	ready to go and unpause things so to
+1177.7	speak now if I were a more clever player
+1180.4	which unfortunately I'm not I would take
+1182.6	those Bearcats and actually launch them
+1184.7	immediately so that they're had the
+1187.2	ability to go ahead and rebase here at
+1189.7	the MV on foo the problem is the Viet
+1192.1	Minh artillery is going to be opening up
+1193.6	at 9:30 which is going to ruin that
+1196.0	airbase so it's gonna be a waste of
+1198.1	airplane so I know we were good to go
+1200.1	so my next big step is going to be
+1202.0	waiting for those individual aircraft to
+1204.0	be ready to be used so I can deploy them
+1205.6	but my hope is between now and then that
+1207.9	were able to actually see some of those
+1209.7	ground targets I'm actually going to go
+1211.9	get smart here and add the AR b-26s as
+1215.3	well once they're retic and that's going
+1217.1	to be not until about nine ten o'clock
+1218.6	and by then the fireworks will have
+1220.2	started so let's go ahead and unpause
+1222.1	speaking of pausing and unpausing for
+1224.4	those of you who are relatively new to
+1225.9	all this one of the things you want to
+1228.0	notice is the difference between the
+1229.8	rate of speed as well as these cool
+1232.1	little buttons down here so what these
+1234.2	buttons do is they allow you to only
+1236.4	allow a certain amount of time to elapse
+1238.2	so let me pause for a second let me go
+1240.3	ahead and crank it up to maximum speed
+1241.7	if I ever just hit play it's just gonna
+1243.9	rip along not hit pause now let's say I
+1247.3	only wanted that to go through a single
+1249.4	minute so what you can do is you can
+1251.1	click one minute down here and now
+1252.8	notice only one minute at a time passes
+1255.9	so it's an amazing way to keep a little
+1258.8	bit more control over the action so for
+1260.8	example I can come down here I can say
+1262.3	skip 15 seconds and the good news is my
+1265.3	t-33s have done a wonderful job and
+1267.8	they've actually already identified
+1269.8	several different units kind of spread
+1272.4	out in the real world you're not going
+1273.8	to see these things especially at what
+1275.5	time is it
+1276.0	507 in the morning it's not even
+1278.0	daylight yet but the good news is that
+1280.0	means I can employ some of my air craft
+1282.9	to do some close air support immediately
+1284.5	somebody going to skip ahead five
+1286.0	minutes nice so I'm gonna go into game
+1291.1	I'm gonna go over here to MWRA in
+1294.7	general and I'm gonna allow Eric relay
+1297.5	at our base to open fire slow down time
+1301.1	a little bit so it's gonna happen next
+1303.0	is you're gonna hear all sorts of
+1304.2	explosions is all the main guns try to
+1306.7	open up on all these different batteries
+1308.4	that are up here keep in mind these
+1309.9	targets if you take a look at the little
+1311.4	time underneath them this is the last
+1313.4	time you saw that target most of these
+1315.2	targets are very what they call
+1316.6	ambiguous we're not sure where they are
+1318.3	this big red circle by the way is
+1320.3	basically dictating all its possible
+1322.3	locations depending on what's going on
+1324.2	um it's not stopping there until every
+1326.4	cruise and the mortar crews from doing
+1328.0	the best they can to start the fireworks
+1330.0	so to speak a lot of times this is a
+1332.3	waste of ammo by the way because you're
+1334.0	just gonna end up hitting nothing now
+1335.7	something else I want to point out real
+1337.3	quickly is it's still night time so that
+1339.6	is going to drastically affect our
+1341.1	ability to spot and attack units keep in
+1343.4	mind that in the real world you'd
+1344.6	basically be shooting up muzzle flashes
+1346.2	so it's very interesting like this now
+1348.3	one thing I'm not a fan of is we're
+1349.7	gonna cook through our ammunition fast
+1351.8	not as fast as men are if we don't get
+1354.7	our air support to help us out here but
+1357.0	um again that could cause a lot of
+1358.3	problems I'm gonna go ahead and let um
+1359.8	it go ahead skip by here so after
+1367.3	another minute of shelling I'm down
+1368.8	almost a quarter of my shells so I'll
+1370.5	let another minute pass by real quick
+1371.8	you can see they've automatically
+1373.3	changed targets and they started to
+1374.7	engage people there
+1375.7	we'll have five minutes go by and notice
+1379.0	everybody stopped firing let's go and
+1380.8	pause excellent why do we stop firing
+1383.0	well the reason is most of my guys are
+1386.1	probably out over man I've got some
+1388.1	ammunition
+1388.8	the target probably now is so vague they
+1391.3	don't even know where to put the first
+1392.4	shell so we're gonna have to hope that a
+1394.5	little later on in the day that these
+1396.1	aircraft are able to reacquire that
+1397.9	particular target they saw earlier that
+1401.4	five minutes Zippo it seems like they
+1402.9	found another one these guys are
+1405.5	obviously not friendly these guys are
+1408.4	definitely not friendly okay so we're
+1411.0	doing a decent job here we're doing he
+1412.2	hope stop just kind of highlighting
+1416.1	these guys and I hitting the H key
+1417.3	clearly they're not French so right now
+1420.6	it's about five thirty seven is
+1422.4	perfectly done it is time to start
+1424.2	thinking about the rest of our support
+1425.9	so if I were to go over here and just oh
+1428.6	by the way these over the aircraft that
+1430.3	we launched remember these are the c-54s
+1432.1	they're all coming in to reinforces
+1433.6	anyway so we'll go over to our carrier
+1435.9	battle group and we're just take a look
+1437.0	there about two hours and 22 minutes
+1438.7	away these are the ones I really want to
+1441.1	use but they're about three hours away
+1442.6	so what do we do well if you remember
+1445.9	these guys are about 200 and I think
+1449.1	it's 20 nautical miles away that's in
+1452.1	range and those Bearcats will get there
+1454.6	in about an hour because remember they
+1456.3	only traveled about 210 if we wanted to
+1458.3	check that out by the way you could
+1459.5	always go up here to the database let's
+1463.4	see what we got here oh isn't it so nice
+1464.9	let's scoot scoot real quickly what do
+1467.3	we have for a cruise speed cruise speed
+1469.5	cruise speed cruise speed here we go
+1471.0	cruise speed 320 okay so 320 is not too
+1475.1	bad 320 divided by 220 what I'm sorry -
+1477.6	20 divided by 320 that's going to get
+1480.6	there in 41 minutes so 41 minutes it's
+1483.9	actually pretty good
+1484.5	so what I'm gonna do is I'm gonna call
+1486.0	those Bearcats up and ask them to do
+1487.7	some close air support so to do that I'm
+1490.2	just going to bring up my editor real
+1491.3	quick I'm gonna go ahead and create a
+1492.8	new mission I'm gonna say Bearcat CAS
+1495.6	I'm gonna do let's do a patrol and let's
+1498.8	go ahead and do an anti surface ground
+1500.6	patrol press okay
+1501.8	yay I remember I remember all fixed so
+1506.4	how does this work it's pretty
+1508.5	straightforward let me go make this
+1509.7	great a little bigger for you I'm gonna
+1512.0	grab those Bearcats that remember
+1514.0	they're only armed with those cannons
+1515.5	but they're ready to launch immediately
+1516.9	so might as well use them right
+1518.3	especially going to pause my cam real
+1520.1	quick let's grab both groups
+1522.0	here's an important thing do we launch
+1524.0	all of them at the same time or do we
+1526.9	just kind of hang out and just sort of
+1528.9	launch little bits of them at the same
+1530.2	time it's not worth it you want to
+1532.5	launch everybody at once when you're
+1534.5	doing this kind of operation it's gonna
+1535.8	make it more difficult for them to be
+1537.0	engaged and it's also going to be from
+1538.8	around perspective terrifying when 24
+1541.2	airplanes don't they show up and start
+1542.3	strafing the bejesus out of everything
+1543.7	so I'm gonna go ahead and disable the
+1545.7	1/3 rule that means everybody's gonna
+1547.2	launch I'm gonna let them investigate
+1549.1	other contacts if they do in the
+1550.3	interdiction and now we need to decide
+1553.3	on our flight size so we have a total of
+1555.3	24 aircraft here so how many aircraft do
+1558.1	you put together in a group now
+1559.8	typically when you're doing attack
+1561.2	aircraft it's going to be 4 aircraft per
+1563.2	group you could also do it as pairs
+1565.2	again you want to decide exactly what
+1567.1	you're trying to do here in this case
+1568.7	I'm gonna go for 4 aircraft because it's
+1570.5	a pretty typical size so now I'm gonna
+1572.5	go ahead and pause let's go ahead past
+1573.9	forward 5 minutes it's beautiful
+1578.5	now if I scoot all the way over to the
+1581.3	carrier these Bearcats have just taken
+1584.2	to the sky they will be arriving in
+1586.4	about 42 minutes which is gonna be it's
+1589.2	about 6:30 or so which is pretty cool
+1591.3	but the nice thing is by 6:30 it should
+1595.0	be bright enough for them to actually
+1596.3	start strafing targets on the ground so
+1598.9	I'm gonna head on pause quite see how
+1601.9	things are going right over here looks
+1603.5	like the French are you using their
+1605.8	artillery very aggressively keep in mind
+1607.7	the Vietminh are going to return fire at
+1610.1	about 9:30 so anything we don't get now
+1613.3	it's going to be really really bad a
+1617.5	pretty good job defending themselves so
+1619.7	far again the ground combat model is not
+1621.5	nearly as sophisticated as games like
+1623.1	armored Brigade or anything along those
+1624.4	lines so keeping an eye on the clock
+1627.0	here it's 636 27 and guess who just got
+1630.2	here haha so one of the things that's
+1633.6	really critical is understanding
+1635.0	logistics if you run out of ammunition
+1636.8	run out of fuel you can't actually win
+1638.6	the fight fortunately for us we want to
+1640.7	worry about feeding anybody or defeating
+1642.3	them or something along those lines so
+1644.1	the Bearcats are here so the Bearcats
+1646.5	are now gonna lose a bunch of altitude
+1647.9	and they're going to try to zing in here
+1649.2	and do some strafing by the way in order
+1651.1	to make units actually strafe you have
+1653.2	to enable it with this command right
+1655.2	here keep it mine uh none of these
+1656.8	Bearcats are equipped with bombs so
+1658.5	they're gonna have to use these 20
+1659.7	millimeter cannons and do what they can
+1661.5	with what they have
+1662.1	but 6:30 now so now it's daytime so
+1665.0	they're gonna be a little bit more
+1665.8	successful and you can see there's a
+1667.4	whole bunch more that have just been
+1668.9	launched from the carrier now if you
+1670.5	look at these guys they still have a
+1672.6	pretty substantial amount of fuel
+1674.2	remaining about 326 kilograms to go
+1676.4	before their bingo that's 45 minutes of
+1679.7	loiter time which is incredible once you
+1682.6	get to modern aircraft in modern times
+1684.4	that becomes a little bit more difficult
+1686.0	by the way if you wanna make this red
+1687.6	zone go away you can just go up here and
+1689.4	actually shut it off and now it's gone
+1695.0	all right time to watch some fireworks
+1698.3	all right speed up time a little bit
+1700.7	we'll go ahead and ask it do five
+1702.5	minutes of air-to-ground attacks here oh
+1704.2	I guess I didn't push the button all the
+1705.7	way yeah it's fine whatever so they're
+1710.5	gonna go ripping in they're gonna try to
+1711.8	spot their targets and they've
+1713.0	immediately started strafing whatever
+1714.9	this target over here is you can see
+1716.9	their smiling around you can actually
+1718.3	have a little bit of fun with this
+1719.2	because you can go to view mode you know
+1720.7	to 3d assuming you have TAC view I know
+1723.0	a lot of people demand fog of war attack
+1725.2	view but honestly I just use it because
+1727.3	it looks cool sounds kind of lame but
+1730.7	it's kind of how I feel so we can see
+1733.3	actually you can see the substantial
+1734.8	amount of infantry that looks like we've
+1736.1	got my search telling me though this is
+1737.4	actually going pretty well for us so far
+1738.6	this is not how the real battle at the
+1740.3	MBM fuga went by the way there goes one
+1742.2	of our aircraft arriving at station well
+1745.1	we just spotted something else we're
+1746.5	just gonna assume this hostile keep in
+1748.9	mind identification is one of the
+1750.1	biggest challenges about modern combat
+1751.6	so these guys are just kind of kind of
+1753.7	into the little spiral thing they're
+1757.2	like Angry insects the problem is
+1758.7	they're gonna have a really tough time
+1759.6	killing those infantry because of the
+1761.0	grass notice this guy ran out of
+1763.8	everything yeah they're completely empty
+1765.5	so they turn around and fly home
+1766.9	meanwhile this next group is Bearcats
+1769.7	because remember we called them up in a
+1771.1	huge big big Posse are coming in now now
+1773.8	here's the problem had we not told them
+1776.1	to attack on one giant pile when these
+1778.5	Bearcats started to turn around and
+1780.0	return to base the new ones would be
+1781.9	taking off remember that's a 40 minute
+1783.8	flight so that would have been pretty
+1785.7	bad for us but essentially we're come
+1787.5	pretty well so far a machine
+1789.0	perhaps not gonna lie so if i zoom out a
+1792.5	little bit these would not normally be
+1794.1	these big up paper airplanes but we'll
+1795.7	deal with it Dave you're kind of doing
+1797.6	the little zoom zoom thing looks pretty
+1801.9	good look they're probably on their way
+1803.2	home because they're out of everything
+1804.2	yeah they're out of everything
+1805.5	these infantry are gonna be a lot harder
+1806.8	to kill because of the fact look at the
+1809.3	next Posse coming in it's amazing
+1811.0	they're gonna be a lot tougher to kill
+1812.5	because of the fact their infantry go
+1814.1	ahead and close out for now it speed up
+1815.8	time I'll let them do their thing for 15
+1817.5	minutes you can see they're having a
+1822.7	real tough time trying to spot destroy
+1824.5	here like angry bees and they're running
+1830.7	out of fuel yep so they probably did a
+1834.3	pretty good job of harassing notice
+1836.1	again we're having a very difficult time
+1838.1	identifying where the targets are that's
+1840.3	where you're gonna want some specialized
+1841.6	tech for that but we spotted them but
+1843.4	can't really do much about it for some
+1844.7	reason all right pause it is now about
+1848.6	almost 8 o'clock in the morning and I
+1850.5	think just about every one of our battle
+1852.4	groups here yeah they're all the way
+1853.4	home oh geez look at that
+1854.8	yikes one guy's got a lot of fuel I
+1856.7	wonder where the other guys are
+1857.5	something meanwhile our earlier group
+1859.4	from this morning are coming home by the
+1861.4	way this blue circle it tells you the
+1864.0	flying range of this aircraft at this
+1865.8	time if that bothers you can actually go
+1867.3	up here and shut it off with that button
+1868.7	but we'll take a look at that in just a
+1870.3	minute so anyway he's lying himself up
+1873.0	at the back of the carrier these guys
+1874.5	are gonna take a long time to rearm
+1876.2	refuel so if actually open the carry up
+1878.1	you can see these guys have all arrived
+1879.6	it's gonna take up about three hours to
+1881.4	put ammunition and fuel and you know to
+1883.0	maintenance and stuff like that
+1884.0	meanwhile the Viet Minh are still
+1886.2	looking pretty terrifying we're just
+1887.6	having a real tough time finding where
+1889.1	they are and that's gonna be an issue
+1891.2	let's go ahead and take a look at how
+1893.1	our reinforcements are going I believe
+1894.9	these guys have yeah they're about an
+1896.3	hour to go so like I said at about nine
+1897.9	o'clock we'll be able to really really
+1900.3	have a fun time of this some of the guys
+1901.5	speed up time here just like a bunch of
+1905.9	angry insects I love the time
+1909.2	acceleration in this game without it
+1910.4	this game would just be painful so I'm
+1913.9	our reconnaissance guys are doing a
+1915.3	really solid job of rooting out where
+1917.0	those guys are
+1917.5	now if these reconnaissance units were
+1919.2	actually armed what would happen is is
+1922.2	they'd actually attack run out of ammo
+1923.8	and then go back home and land so kind
+1925.8	of keep that in mind as well got nine
+1927.6	o'clock we need to make sure we hold our
+1929.7	horses stop don't let me go past five
+1933.3	minutes
+1933.7	mm stop yes okay so now if I go to my
+1937.5	message log which I haven't done a lot
+1939.3	of really recently oh let's see here
+1941.9	contact change weapon in game look I
+1944.1	don't be shot so we've fired already
+1945.4	I'm gonna scoot all the way back here I
+1947.3	believe my first yes hahaha
+1952.0	so let's make it exciting I'm gonna go
+1954.8	over to the Viet Minh side real quick
+1956.2	and I'm going to order them to fire at
+1959.1	anything
+1960.2	turns out our intelligence wasn't
+1962.1	terribly good it apparently the reality
+1964.6	was that they intended to attack us at
+1966.0	night meanwhile we're gonna get as many
+1968.0	aircraft on that station as possible so
+1971.1	to do that I'm gonna go and press f11 we
+1973.1	can actually use this close air support
+1975.0	mission by the way if you delete a
+1976.3	mission anybody's still in the air who's
+1978.5	linked with that mission won't know what
+1980.3	to do they just sort of go in circles so
+1984.1	I'm gonna go ahead and create my mission
+1985.4	I'm gonna go call it uh wrecking wrecker
+1990.0	actually it's not terribly specific in
+1991.9	vien Phu close air support I always like
+1996.4	to be specific it's unusually I'm like
+1998.0	thirty these go and it was by the way
+1999.6	you could do things manually and I'll
+2000.9	show you a little bit of that little
+2002.0	later on let's do some ground
+2003.8	let's press ok I don't care that was
+2006.7	industry we had before all fixed by the
+2009.0	way if you have a situation where you
+2011.2	only want to engage in a certain area
+2013.8	you can actually set up a prosecution
+2015.8	area which is basically the equivalent
+2017.9	of the patrol area except you can only
+2020.1	engage in that zone the patrol area you
+2022.1	can actually shoot out of that zone
+2023.5	so anyway I'm gonna shut off the 1/3
+2025.3	roll I'm gonna go sit all these things
+2026.9	up or do we want no that's good that's
+2029.0	good
+2029.4	all right let's get her still some
+2030.4	aircraft get ourselves some meteors
+2034.6	these guys aren't gonna be ready for a
+2036.6	while but we're gonna order them in the
+2037.8	mission anyway 8:26 soo yeah this is
+2041.9	gonna be sweet I know these guys aren't
+2043.9	ready yet but I'm gonna order them up
+2045.1	anyway alright we're gonna send to these
+2047.9	other meteors I'm gonna wrap up the
+2049.5	Bearcats are kind of tired we're gonna
+2051.6	launch all these course I'd hate to be
+2053.2	on that carrier deck right now it's
+2054.5	going to get
+2054.9	little loud go ahead at all those
+2057.6	Corsairs
+2058.4	go grab us every thunderjet ever let's
+2061.8	grab all the p-47s all is it gonna be
+2064.5	sweet and of course let's get the
+2066.9	mystery BAM sweet so again we want to
+2072.2	decide our standards we're gonna allow
+2073.6	them to engage anywhere they were
+2075.2	actually will go ahead and allow them
+2076.4	Tech anywhere random with an area we're
+2078.2	gonna keep them in groups of four groups
+2080.1	of three work really really well if
+2081.6	you're trying to spread yourselves out a
+2082.8	little bit but I kind of like the group
+2084.4	of four let's see here taking us
+2087.0	refueling there's obviously no refueling
+2088.7	we don't need it we can tell them to
+2090.3	only take off if they have the correct
+2091.7	number of aircraft I'm not gonna do that
+2093.1	feature we can set their station
+2095.0	altitude yeah we got a lot of fun here
+2096.6	now let me give you a really really cool
+2098.8	trick so if you want specific aircraft
+2100.9	to take off first what you do is you go
+2103.6	to the airport you select the aircraft
+2105.7	do you want to take off first and hit
+2106.9	launch this group so remember we're
+2108.8	doing groups of four so I'm just gonna
+2110.3	order these guys off the deck first then
+2113.0	I'm actually I really want my Helldivers
+2114.5	to go off the deck before all the
+2116.3	Corsairs and everybody else goes oh
+2117.6	they're not ready yet sigh alright we're
+2120.6	just gonna kind of have to let things go
+2121.8	I have a feeling it's kind of get a
+2122.9	little loud in a second because what's
+2124.4	gonna happen is now that attack any
+2126.6	target has been authorized by the Viet
+2128.7	Minh it's going to start raining which
+2131.4	it is let's hope the close air support
+2134.5	gets here soon so this is gonna get
+2138.2	messy
+2138.8	oh my gosh let's hope they run out of
+2141.5	bombs before I run out of things for
+2144.6	them to blow up now you'll notice my
+2146.8	framerate just kind of took a dive there
+2148.4	that's because we have so many shells in
+2150.6	the air at once and keep in mind we're
+2151.7	still at five times acceleration so a
+2154.4	lot of times you'll read in memoirs or
+2157.1	just people's general comments that you
+2158.8	know a master will study logistics and
+2160.7	an amateur Studies tactics one of the
+2162.9	problems we're gonna have here is the
+2164.2	Viet Minh are going to run out of
+2165.4	ammunition and now unfortunately for
+2168.0	them they won't people to do any more
+2169.3	damage and fortunately for us of course
+2171.0	so keep that mind you can't actually
+2173.6	model logistics in the
+2175.5	game pretty effectively you can actually
+2177.3	rearm units on the ground but that
+2179.4	requires setting up munitions dumps and
+2181.5	magazines and stuff like that and it's a
+2183.6	bit of a project that I'm not gonna
+2185.3	undertake just yet so anyway let's go
+2188.0	scoot back to Hanoi now that I tend
+2189.6	beyond Fu's unders now on the receiving
+2191.6	end and we did a pretty good job of
+2193.3	loosening them up a little bit in the
+2194.4	morning but apparently we definitely
+2195.8	didn't get everybody go ahead out here
+2199.1	it looks like we already have some
+2200.1	aircraft on the way so in the real world
+2202.1	I'd be going get over here we need
+2203.7	emergency air support so I'm there doing
+2208.0	what they can't they have so to speak
+2209.3	let's go scoot over here so these
+2210.8	thunder Jets are carrying 2,000 pounders
+2213.3	they're gonna do a tremendous amount of
+2215.5	damage once they get to the target I
+2216.9	don't know why they're flying so low it
+2218.8	must be something to do with their
+2219.8	loadout meanwhile I believe this is one
+2222.3	of the groups of Corsairs
+2223.4	these guys are going to take a lifetime
+2225.6	to get all the way over to debía if it
+2227.6	remember it's about a 40-minute flight
+2228.8	for them these guys on the flipside I
+2231.0	think they're crucifies a lot higher
+2232.5	it's 400 knots so they're gonna be
+2236.0	joining the fight and I think it's gonna
+2237.3	be like 21 minutes or something like
+2238.7	that
+2239.1	that's 140 nautical miles all right grab
+2243.6	the calculator 140 divided by 400 times
+2246.4	60 oh I was so close yeah I feel I have
+2251.3	to estimate distances sometimes a lot so
+2253.7	anyway you can see my frame rate is just
+2255.4	dying because there's literally
+2257.0	thousands of rounds of artillery shells
+2258.9	going off simultaneously right now so
+2261.3	let's go watch the fireworks while those
+2263.4	guys are meanwhile lagging like crazy I
+2265.8	can't do what you got to do keep in mind
+2268.1	and the bigger the scenario the choppier
+2269.8	is gonna get and yes I do have a very
+2272.0	strong computer oh man I'd hate to be
+2276.1	down there right now oh look at those
+2278.3	shells now the cool thing is if we
+2281.1	actually let me reduce speed here real
+2282.8	quick there we go if we actually load up
+2285.6	tech for you real quick this is gonna be
+2288.0	bad and gonna be choppy oh hi there what
+2292.9	are you guys oh they're fours nice
+2294.6	they're on their way
+2295.2	oh go scoot scoot over here to these
+2297.1	little poor guys you can actually see
+2299.0	each individual okay so sometimes you
+2301.2	can't see them very well but you
+2302.7	literally could watch these little
+2303.8	yellow dots to do it one of these things
+2305.2	just kind of raining all over this place
+2307.1	keep in mind most of the VC
+2309.2	the Viet Minh can see at this point is
+2311.0	mostly airfield stuff and that's that's
+2313.6	kind of sad because they're going to do
+2315.2	a lot of damage to that poor airfield
+2316.5	which was actually exactly what happened
+2318.1	especially on the particular date anyway
+2321.1	let's go ahead and I'll speed up time
+2322.6	and we'll set there to be a five-minute
+2324.8	delay ya gonna get a little choppy like
+2330.9	I just comes in like waves of 15 and 26
+2333.4	and 38 and stuff like that
+2335.3	and of course once they had to run out
+2337.4	of ammunition the battle will get a
+2339.7	little bit quieter but in the meantime
+2341.7	you can enjoy the fireworks it's so many
+2344.8	shells yeah use games like steal
+2347.9	Panthers and armored Brigade for these
+2349.4	things please
+2360.2	okay float on time again I don't even
+2364.2	want to know how expensive this fights
+2365.8	being we could do two is switch out of
+2368.4	this particular mode also let's say ever
+2369.8	actually what I'm gonna do
+2371.6	loosen things up a little bit so we got
+2374.5	these guys around the way they're not
+2376.2	gonna be there for another like 14
+2377.4	minutes I think we got some meteors if
+2379.6	you hold the control key by the way and
+2380.9	you click on something go away dopey
+2383.4	nobody likes you
+2384.7	let's see here you can actually see a
+2386.8	picture of the particular unit plus what
+2388.4	it's doing at that time which is really
+2389.8	really cool
+2391.4	and then see what it's doing there we go
+2393.8	so let's see it's France it's engaged
+2395.6	offensive which means are about to
+2397.1	attack about 275 nice and you can also
+2399.9	see how much fuel they're carrying and
+2400.9	stuff like that oh wow I did not realize
+2404.0	that version of the meteor actually
+2405.5	possessed a radar that's kind of cool
+2407.8	and of course what are they carrying 20
+2410.5	millimeter cannons that's not gonna go
+2412.6	well meanwhile these Corsairs like I
+2414.9	said by the time they get there they'll
+2416.0	battle on the word probably going to end
+2417.7	it already
+2429.0	it's just so much gonna say let this be
+2433.6	a warning to any scenario designer
+2442.3	probably do a little bit of cheating in
+2444.3	a second year but that's okay nope there
+2448.4	comes another launch keep in mind not
+2450.3	only do you have the fireworks but you
+2451.8	have all these individual aircraft
+2453.2	groups having to be spawned in loaded
+2455.3	time calculated and everything like that
+2457.8	and this is not what I would consider to
+2459.0	be a large scenario so when you do
+2461.6	design your own scenario you go to play
+2463.3	scenarios be wary of things that are at
+2465.1	they come come campaigns scale it's just
+2468.8	gonna be way too much I should got a
+2471.9	slowdown time again it's kind of take a
+2474.2	look all right we're gonna cheat a
+2476.5	little bit to kind of move things along
+2477.8	I'm gonna grab these guys and I'm gonna
+2480.3	hurt you I'm glad they found a shortcut
+2484.4	through the mountains I mean otherwise
+2485.5	this would have taken them forever to
+2487.2	get to the target region I think you
+2490.1	guys have got most of the good ideas
+2491.4	anyway and just I think it's important
+2492.9	to kind of see how it sort of plays out
+2494.8	in the end here by the way aircraft can
+2496.1	never collide with each other so do not
+2497.5	worry about that let's go grab our pork
+2500.1	erasers here oh my gosh these Vietminh
+2502.4	are gonna be going um hide there we go
+2508.3	one more I'm using the M key by the way
+2511.4	you can only do this if you're in
+2512.4	Scenario editor mode oh look at those
+2515.0	fireworks
+2522.6	you
+2530.5	you
+2541.1	okay let's see what happens here so our
+2544.2	first close air support aircraft is
+2546.3	going to be the thunder jet which it
+2547.8	still blows my mind that you can carry a
+2549.8	2,000 pound bomb on here now something
+2552.4	you want to I know who's gonna be our
+2553.8	first victim they're diving keep in mind
+2557.1	the cloud covers at 7,000 feet which in
+2559.7	the real world this would be terrifying
+2561.1	because you basically flying right past
+2562.6	the peaks of these mountains right here
+2563.9	let's go ahead seem in a little bit it
+2565.6	looks like the fire from the Viet Minh
+2567.2	has died down a little bit which is
+2568.9	usually indicative of them running out
+2570.6	of ammunition okay there they go so
+2573.4	they've dropped some 2000 pounders
+2575.1	they've only dropped half to 2000
+2576.5	pounders and they're just going nuts
+2578.0	with those cannons ah this is cool
+2580.0	ripping along the valley there and they
+2583.2	are doing their deed let's see if they
+2585.4	do any damage keep in mind these two
+2586.7	thousand pounders are gonna put quite a
+2588.2	hold I guess not
+2591.5	swing-and-a-miss as they say yeah again
+2594.2	these we don't exactly have list of
+2595.4	computers for these things yet so we
+2597.2	missed so these guys are kind of
+2599.6	scooting around they've used half their
+2600.9	supplies by the way if you're interested
+2602.3	in changing the number of bombs or
+2604.0	something they drop you can actually go
+2605.8	into the mission you can go over to the
+2608.4	close air support you can go to the
+2609.5	mission doctrine and you can even do
+2611.1	things like control how many bombs they
+2613.7	drop notice for this particular contact
+2615.3	this has to drop to all you can set this
+2617.0	to like one or something like that I'm
+2618.7	just gonna leave it alone because again
+2620.1	at this time in the universe you just
+2621.8	don't do that much damage oh here comes
+2623.1	from rockets I think those are the
+2624.6	zuni's yep five inches they're gonna be
+2628.0	a little more precise but keep in mind
+2629.4	this is a roughly ambiguous target oh
+2631.3	here comes the rest of it
+2632.9	wonder if that guy's feeling lucky keep
+2638.3	in mind the Viet Minh do have triple-a
+2640.6	yep so they did some damage here so
+2643.4	these bombs remember have to travel an
+2644.6	arc that looks like this oh wow look at
+2648.9	those fireworks oh that's the end of
+2654.2	that unit so what I really would prefer
+2656.6	is if they go ahead and engage this
+2658.3	artillery piece right here you can
+2659.8	actually click on a unit press f1 and
+2662.1	then you can kind of manually tell him
+2663.9	to attack that particular target so now
+2666.0	the guys with the bombs who haven't left
+2667.5	are all going to be arcing around kind
+2668.9	of doing their thing
+2669.7	meanwhile they're still firing stuff off
+2671.8	this stuff got that buried
+2674.1	by our close air support which in the
+2676.1	real world it just wouldn't happen you
+2677.3	take a lot of tops of trees off and make
+2679.0	toothpicks out of them but I don't think
+2681.0	necessarily would have been that
+2682.0	successful so you can see there engaging
+2683.8	them with their air-to-ground guns again
+2685.7	you can disable that if you're worried
+2687.0	about them being shot down by triple-a I
+2688.7	definitely be concerned about it because
+2690.3	it happens a lot I think they go in and
+2695.9	say we got some rockets launched over
+2698.2	here and again have we waited around you
+2701.7	would have been here another 15 minutes
+2702.9	and your time is precious now these guys
+2708.1	are arcing around like this and they're
+2709.6	doing that quite a bit of damage quite a
+2711.4	bit of damage I'm very happy with that
+2713.1	meanwhile look at the rest of this work
+2715.2	this is the next group of c-54s
+2717.4	it helps c-47s I think it back it is so
+2721.8	remember these are evacuating casualties
+2723.2	quote-unquote that's kind of neat it's
+2725.9	kind of any way to simulate a civilian
+2727.3	traffic - if you need something along
+2728.6	those lines let's go ahead sit back in
+2731.1	here and see how we're doing
+2732.1	boy is it getting chunky I have a
+2734.9	feeling that this is a gonna end pretty
+2736.2	poorly for the poor Viet Minh there but
+2738.6	again this is it's so simplified so
+2741.2	there's a triple-a site let's hope it
+2742.9	doesn't shoot back at you again you're
+2745.1	shooting in a pretty ambiguous target
+2746.6	there so you basically dropping rockets
+2748.4	into the jungles what you're doing I
+2749.7	don't think he's nests oh look at that
+2752.9	got another one so who gets their
+2755.1	Christmas bonus the Corsair lovely
+2758.9	meanwhile I actually just saw several
+2761.1	tracers come out of just the air is that
+2762.9	coming out of the jungle is that coming
+2764.1	out of us well if you press the 9 key in
+2765.9	the numpad you can actually see where
+2767.0	everybody is and you can see it's pretty
+2769.0	obvious that it's our guys this time
+2771.3	which is kind of neat so we've got this
+2775.6	crew right here they're looking pretty
+2780.2	good
+2785.3	let's check something real quick
+2790.8	spinning around it's a beautiful time
+2795.5	just a teeny tiny bit all right now the
+2797.3	casualties are starting to seriously
+2798.9	mount it's starting to get a little bit
+2801.5	smoother also I cleared out the message
+2803.7	log sometimes that helps
+2805.2	alright speed up time one more time
+2809.2	that was meteors having a good day yeah
+2814.2	I think that's what it was the message
+2815.5	long was getting to log keep that mind
+2817.6	with your own games as well doing some
+2819.9	close air support men this must be a
+2821.4	look at how many airplanes are coming
+2823.2	out of the woods and then we'll take a
+2825.9	look at casualties and we'll call it a
+2827.2	video done pause cool hopefully you
+2833.9	found that video kind of interesting as
+2835.3	far as just sort of general mission
+2836.7	stuff general close air support in
+2838.5	another video we'll take a look at kind
+2840.0	of things like naval operations and you
+2841.7	know kind of how he handles sort of the
+2842.8	modern engagement let's go ahead and
+2844.6	take a look at our losses real quick so
+2847.9	we lost two watchtowers oh no lost oh
+2851.0	actually we lost a lot of these I wonder
+2853.1	how many these were lost artillery and
+2854.5	how much were actually shot down we also
+2856.3	lost a bunch of these you not gonna be
+2857.8	able to replace those and we also of
+2860.0	course naturally lost a lot of those
+2861.4	reconnaissance planes expenditures oh
+2863.3	yeah
+2864.5	sixteen hundred shells nice that's like
+2867.5	Saipan a war to screw him down for the
+2870.4	Viet Minh here they lost all of their
+2872.8	infantry they lost all of their guns all
+2874.6	the machine guns most their mortars they
+2877.3	lost that they lost binoculars
+2879.0	interesting tons of infantry sections
+2881.1	tons of RPGs as far as expenditures goes
+2883.5	they did not do great all right
+2886.5	hopefully we found that video kind of
+2887.7	interesting I was kind of like to see
+2889.0	these scenarios apparently the game gets
+2890.5	very very choppy if you leave that the
+2892.6	message log get too long to clean out
+2894.3	the message log you can just press
+2895.6	control out all right enjoy

@@ -36,6 +36,7 @@ const { extractJson } = require('./red-team-agent');
 // contract. Loaded lazily from the new server/sim modules.
 const journal      = require('../sim/journal');
 const proposalStore = require('../sim/proposal-store');
+const worldEngine   = require('../sim/world-state-engine');  // WS3 server seam (deterministic decision commit)
 
 // 12-char fingerprint of a system prompt — small enough to log into every
 // step row, long enough to detect drift if the file is edited (item #4).
@@ -1072,11 +1073,93 @@ async function adjudicateStepHeadless(args) {
     };
 }
 
+/**
+ * commitDecisions(body) — DIRECT WS3 decision commit (no LLM proposal).
+ *
+ *   body: { scenario, scenarioName?, stepIndex?, decisions[] (WS3 decisions),
+ *           operator_id? | headless:{reason}, runId?, mods?, engineOpts? }
+ *
+ * Derives World State from the scenario+step, applies the operator's WS3
+ * decision(s) through the deterministic engine (world-state-engine), and
+ * journals the transition — one row per decision, source 'deterministic-sim'.
+ * Closes the "operator decision → new World State" loop on the live, journaling
+ * commit path, DISTINCT from commitStep (the LLM-proposal path, untouched).
+ * R1 (journal is the durable write) + R2 (no commit without intent) hold.
+ */
+function commitDecisions(body) {
+    body = body || {};
+
+    // R2 — intent required.
+    const hasOp = typeof body.operator_id === 'string' && body.operator_id;
+    const hasHeadless = body.headless && typeof body.headless.reason === 'string' && body.headless.reason;
+    if (!hasOp && !hasHeadless) {
+        throw new Error('commitDecisions: operator_id (UI) or headless.reason (in-process) required');
+    }
+
+    const scenario = body.scenario;
+    if (!scenario || typeof scenario !== 'object') throw new Error('commitDecisions: scenario required');
+
+    const decisions = Array.isArray(body.decisions)
+        ? body.decisions
+        : (body.decision ? [body.decision] : []);
+    if (!decisions.length) throw new Error('commitDecisions: decisions[] required (non-empty)');
+    for (let i = 0; i < decisions.length; i++) {
+        if (!decisions[i] || typeof decisions[i].type !== 'string' || !decisions[i].type) {
+            throw new Error(`commitDecisions: decisions[${i}].type required (string)`);
+        }
+    }
+
+    const stepIndex  = Number.isInteger(body.stepIndex) ? body.stepIndex : 0;
+    const engineOpts = body.engineOpts || {};
+
+    // Derive base World State, apply the decision(s) through WS3 (pure clone).
+    const baseWs          = worldEngine.project(scenario, stepIndex, engineOpts);
+    const prev_state_hash = journal.hashState(baseWs);
+    const result          = worldEngine.transition(baseWs, decisions, engineOpts);
+    const committed_state = result.worldState;
+    const post_state_hash = journal.hashState(committed_state);
+
+    const run_id      = body.runId || `manual-${scenario.name || body.scenarioName || 'unknown'}`;
+    const operator_id = hasOp ? `op:${body.operator_id}` : `system:${body.headless.reason}`;
+    const proposal_id = body.proposal_id || `ws3-${Date.now().toString(36)}`;
+
+    // R1 — one durable journal row per decision before returning.
+    let lastSeq = null;
+    decisions.forEach((d, idx) => {
+        const r = journal.appendCommit({
+            run_id,
+            step:            stepIndex,
+            prev_state_hash,
+            post_state_hash,
+            proposal_id,
+            action_id:       `${d.type}#${idx}`,
+            decision:        body.headless ? 'auto' : 'accept',
+            operator_id,
+            source:          'deterministic-sim',
+            mods:            body.mods || null,
+        });
+        lastSeq = r.seq;
+    });
+
+    return {
+        ok: true,
+        committed_state,
+        effects:         result.effects,
+        journal_seq:     lastSeq,
+        prev_state_hash,
+        post_state_hash,
+        proposal_id,
+        run_id,
+        ws3_version:     worldEngine.versions.ws3,
+    };
+}
+
 module.exports = {
     adjudicateStep,
     // Step-1 boundary contract
     proposeStep,
     commitStep,
+    commitDecisions,
     adjudicateStepHeadless,
 
     buildScenarioConstantsBlock,

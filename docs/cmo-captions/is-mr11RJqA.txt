@@ -1,0 +1,447 @@
+0.4	hello everyone in today's video we're
+2.0	going to take a look at how to create
+3.4	units constrained
+4.8	to a specific area not just using
+7.3	latitude and
+8.2	longitude so as you've probably seen
+10.3	before i've used the ability to create
+12.4	massive amounts of units basically
+13.9	randomly in a pretty wide zone
+15.8	this has worked absolutely spectacular
+17.3	until you run into a situation where you
+19.1	have a country that's irregularly shaped
+21.2	in which case if you were to just create
+22.5	a bunch of units you'd end up with some
+23.9	units in china you'd end up with some
+25.5	units down here in
+26.6	south korea as well so what i want to do
+29.0	is not just create units randomly in an
+30.6	area
+31.1	but i want to try to keep them
+32.4	constrained so let's go ahead and take a
+34.3	look at how we can do that
+35.6	so i'm going to go and find and start up
+37.2	the lua script console here okay
+38.9	just kind of drop that down in the
+40.1	middle i really wish there was a feature
+41.7	actually there is a zoom in maybe
+43.0	that'll make your life a little
+44.0	bit easier control plus i didn't even
+46.1	see that before okay now you should be
+47.5	able to see what i'm saying
+48.8	so the first thing we're going to want
+49.8	to do is we're going to go ahead and try
+51.4	to set this up using a traditional
+53.9	population of an area so what i'm going
+55.8	to do is i'm going to go ahead and do
+56.8	something nice and simple
+58.0	i'll go ahead and say let's say 4x
+60.2	equals 1.
+61.4	we'll increment by 1 actually we'll stop
+63.4	at 10 and we'll go ahead and increment
+65.3	by 1 each time
+67.0	go ahead and make sure you include your
+68.7	do statement when you do this i'm going
+70.2	to come down here and go ahead and type
+71.6	in the word
+72.2	end for this okay so let's go ahead and
+74.3	create a few units
+76.0	so the first thing i want to do is i'm
+77.4	going to go ahead and grab myself a
+78.6	random latitude
+79.8	now one of the really cool tricks here
+81.4	is when you're doing your randoms for
+83.3	your latitude
+84.2	you can actually go ahead and make it so
+86.2	that you don't get an even integer for
+88.1	each one of the latitudes
+89.3	otherwise you'll only get people on the
+90.7	intersection of major grid lines
+93.0	the trick there instead of doing
+94.3	something like this for your latitude is
+96.9	actually to do something like this
+98.9	and then divide it by a value so that
+101.1	you get a little bit more variance
+102.6	inside of each one of your latitudes and
+104.4	longitudes
+105.2	again this is a great strategy i find
+106.8	this works great so next what i'm gonna
+108.4	do is i'm gonna go ahead and create
+109.3	myself a random longitude as well we'll
+111.2	do the exact same technique
+113.0	again i've already gone ahead and kind
+114.5	of trying to figure out exactly where
+115.9	everything was
+116.9	i don't have to go looking for this by
+118.5	the way if you're looking for these
+119.5	values on the map all i'd be doing is
+121.4	holding my mouse over the corner
+122.9	and i can see that our latitude there is
+125.0	about 40 degrees
+126.2	obviously everybody remembers the 38th
+127.8	parallel it's not quite the 38th
+129.1	parallel so that's a good place to start
+131.0	here
+131.4	so what these two functions will do is
+133.0	get myself a nice random number between
+135.5	38 and 43 latitude with all sorts of
+138.6	little decimals out to the hundredths in
+140.2	the middle
+140.8	just a simple little way to do it so the
+143.0	next thing we have to do now this is
+144.6	really really tricky and a lot of people
+145.9	move this one up
+147.2	is uh we have to go double check to make
+148.7	sure where we're placing this unit does
+150.4	not accidentally land in water for
+152.2	example
+152.9	or in some cases you don't want to land
+154.4	on land if you're dealing with something
+155.4	like a submarine
+156.5	so the way i'm going to do that is i'm
+157.8	going to create myself a quick little
+159.0	repeat you have to be tremendously
+160.6	careful with repeat because you can get
+162.3	yourself in an infinite loop
+163.7	very quickly if you're not careful so
+165.8	i'm actually going to go ahead and
+166.7	repeat the code that i just did up here
+169.8	stick it right in here i'm going to get
+170.9	rid of the local add-on here by the way
+173.0	the local simply says only uses value
+175.0	inside this current block
+176.3	that looks pretty good to me and i'm
+178.2	going to come down here and i'm going to
+179.4	say
+179.8	until world get
+183.4	elevation we're going to go ahead and
+185.5	feed it a table the latitude of course
+187.4	is going to be my random latitude
+189.1	and my longitude is going to be my
+190.6	random longitude
+193.0	is greater than 0. so what does this do
+196.2	it helps if you spell it correctly
+197.4	obviously
+198.6	basically what this function is doing is
+200.6	it's saying if
+201.8	the generated coordinates has a depth
+205.1	which would simply mean it has an
+206.3	elevation less than zero go ahead and
+208.6	try again
+209.3	once you're happy with those then we can
+210.9	go ahead and use them for the creation
+212.3	of our unit
+213.1	so let's go ahead and go down here i'm
+214.5	going to go ahead and type in let's see
+216.2	send
+216.6	edit we're going to go add unit we're
+219.3	going to go ahead and create ourselves a
+220.6	table all tables are always going to
+221.9	have little curly bracket things you
+223.2	could say
+223.9	side is going to be the prk let's see
+226.5	here type is going to equal a facility
+229.8	you got to be real careful when you do
+231.3	this uh name let's be old-school we'll
+233.4	call it essay 2 site
+235.0	sweet how about an essay 2 sweet sounds
+236.9	good dbid oh we got to go find out what
+238.8	the db idea is here
+240.3	let's go over to the database viewer
+241.8	let's go to facilities uh let's try an
+245.1	sa2f
+246.7	what do we got here what do we got what
+248.2	do we got come on north korea north
+249.6	korea bingo
+250.9	uh 1288 looks to be the number that
+253.4	we're going to be looking for here
+254.8	i will make things challenging so i'll
+256.4	say auto detectable
+258.4	equals false then i'll say latitude
+261.1	equals ran lat
+262.6	and then i'll say lawn equals ran lawn
+265.1	close that
+267.7	go ahead and press enter and i think we
+269.9	are good to go i'm just kind of mentally
+271.8	kind of checking things off in my head
+273.3	here
+273.8	now watch what happens when i run this
+276.1	code go ahead and close this ctrl a
+278.1	control c
+278.7	in case we have to replace it boop uh
+281.9	oh we're missing longitude okay let's go
+285.0	ahead and find out exactly where we're
+286.4	missing longitude
+287.4	uh world get elevation ah i see my
+290.2	mistake right there
+292.7	lovely now exactly as i said we managed
+295.4	to place none of these sam sites in the
+297.4	water
+298.1	however some of the sam sites are in
+300.3	china just like i was warning you a
+301.6	little while ago
+302.5	so how do we fix this well there's
+304.1	actually a couple different ways to do
+305.3	this some people actually build sam
+307.0	sites by
+307.7	area which is a great way to do it but i
+309.9	have an even easier way let's use the in
+312.0	area function inside of lua inside of
+314.5	the command functions
+315.6	to go ahead and do this instead let's go
+317.4	ahead and delete everybody
+318.8	now what i've done and you probably
+320.2	noticed this a little bit earlier is
+321.5	i've created
+322.8	rp's rps these are basically going to be
+325.0	different reference points
+326.2	all the way around korea to define an
+328.6	area if i want to check to make sure
+330.0	that area is contiguous
+331.4	of course i can create a fake patrol
+332.6	mission just to check it to make sure it
+333.8	looks okay
+334.7	looks pretty good to me so now we have
+336.6	to figure out how the heck are we going
+338.2	to set this up
+339.4	so that the units we create are inside
+341.7	of the area how do we check for that
+343.5	it's actually pretty easy to do so what
+345.9	i'm going to do is i'm going to create
+347.0	another local variable
+348.1	i'm going to call it is in area you can
+350.1	name it anything you want
+351.6	equals then all we need to do is somehow
+354.1	get what was the last unit we created
+356.3	now one of the nice things about this is
+357.9	we can actually do that quite simply
+360.1	i can simply declare this function as a
+363.2	variable so i could say last unit equals
+366.9	then all i have to do is come down here
+368.6	and say last
+370.2	units colon this is where it comes a
+372.8	little different because this is a
+373.9	special property
+375.1	is in area now what's my area well my
+378.5	area is north korea
+380.2	so what is north korea well we haven't
+382.2	defined it yet
+383.6	so let's go ahead and do that up here
+385.1	let's say north korea
+386.7	equals and now we're going to go ahead
+388.6	and create a table of all our reference
+391.4	points we created on the map
+393.4	so we had the first one i'm going to go
+394.8	ahead and cheat real quick
+397.8	just like that lovely so now what i've
+400.8	done here
+401.6	is i've created a table with all the
+403.7	reference points
+404.9	that represents north korea so now when
+407.7	i come
+408.0	down here and say is in area i can say
+410.4	is an area equals last in
+412.5	area north korea and all north korea
+415.9	really is
+416.7	is this set of rps that we have right
+419.8	here
+420.3	so then if i wanted to i could come down
+422.0	here and i could say print is
+423.7	in area so now let me go ahead and
+426.0	delete these existing stamp sites
+427.4	they're already gone
+428.3	let's go ahead and run that and see what
+429.8	happens
+432.5	now you're saying it didn't work there's
+434.8	still this whole ring of sam sites up
+436.4	here in korea
+437.2	you're completely correct as a matter of
+439.1	fact we're so correct it even
+440.6	identified those same sites as being the
+443.3	ones who are not where they were
+444.6	supposed to be in the first place
+446.6	or you can see how this is already
+448.6	starting to get close
+449.7	so we need to find out a way to take
+451.8	this by the way this is a true or false
+453.4	value even though it says yes or no
+455.0	remember we're dealing with lua here
+456.6	we need to take this value and we need
+459.0	to either delete the unit or regenerate
+461.3	its location
+462.2	i'm kind of a fan of deleting it myself
+463.9	but again everybody's going to be a
+465.2	little different
+465.9	so let's go ahead and have some fun with
+467.2	this so let's say if
+469.2	is in area and we could say equal is
+473.2	true or false anything you want it to do
+475.4	if is an area we'll say false then
+478.9	we're simply going to delete the unit we
+481.0	don't need
+482.0	send edit will do the delete unit not
+484.4	the remove unit the move unit is
+486.5	actually going to trigger any sort of
+487.8	events you have to be very careful with
+489.3	that
+489.8	side equals a prk guid
+493.1	equals remember how we had last unit
+496.2	because it remembered it when we created
+497.8	it and that's it
+500.5	all right let's see if it works
+504.2	all right ready set standby for disaster
+508.5	go
+510.1	okay so now you're probably sitting
+511.8	there going that works really really
+513.4	well hey i like that i could do that for
+515.0	ships i could use it for subs i could
+516.6	make so many different random things
+517.9	with this now
+518.7	and you're absolutely correct the
+520.5	problem is is it only built
+522.2	for sam sites now if we wanted a certain
+525.1	number of sam sites we have to actually
+527.0	create a way
+527.8	to keep track of how many of these darn
+529.7	things we actually deleted
+531.4	so to do that i'm actually going to get
+533.4	rid of my for loop this is not going to
+535.2	be
+535.4	a good time for a definite loop we're
+536.8	going to be looking for an indefinite
+538.6	loop
+539.0	so i'm going to come up here and type in
+540.2	the word repeat the other thing i'm
+542.1	going to do is i'm going to go ahead and
+543.1	create myself a variable so i can keep
+545.0	track of
+545.4	how many of these particular sam sites
+547.8	successfully built themselves
+549.6	so i'm set that to zero then i'm gonna
+552.0	come down here where it says end and i'm
+553.5	simply gonna say
+554.5	while sam's is less than or equal to
+558.2	how many do we wanna let's do 20 why not
+560.4	right
+561.4	so then we're going to have to come up
+562.6	here and say if is an area equals false
+564.5	in which case we do not want to
+566.1	increment our variable called sams
+568.2	so what i'm going to do here is i'm
+569.3	going to come in let's throw an else
+571.0	statement here
+572.1	else sams equals
+575.2	sam's plus one so what have i done here
+578.8	okay so let's just work through it sams
+581.3	equals zero
+582.1	repeat generate my random coordinates i
+584.7	test it okay then i say if it's in the
+586.6	area
+587.3	if it's not an area delete it otherwise
+589.7	it has to be in the area in which case
+591.4	increment sams by one
+593.0	loopy loopy loopy loop until that sams
+595.4	variable hits the number 20
+597.3	in which case it exits this loop so
+599.9	let's go ahead and see what happens here
+601.8	and it's kind of fun to watch boop
+605.0	oh i always missed something ah
+608.6	my bad this is one of those things where
+610.8	i always forget exactly where that
+612.4	stupid thing is
+613.5	let's see here we're looking for line 19
+616.3	um oh i'm sorry i did while i meant
+618.3	until sorry sorry sorry
+620.9	that was such a newbie mistake sorry
+622.7	about that all right give it a rip boop
+625.9	okay so uh what happened so we gave it a
+629.2	quick run
+629.8	and you can see that everything looks
+631.4	pretty good here as far as things go
+634.0	but for whatever reason it generated no
+636.9	sams
+637.8	so we have to sit here and go okay so
+639.5	well what do we do a little differently
+641.0	here
+641.7	let's see uh we've checked our random
+643.6	that we've checked our repeat our repeat
+645.8	until
+646.6	that's looking pretty good we've got the
+648.6	value of the last unit
+650.0	we're incrementing the sams pretty
+651.4	effectively
+653.0	but are we implementing the sams
+654.6	effectively let's go ahead and take a
+656.1	look real quickly
+657.0	we're going to go ahead and say is in
+658.6	area we've checked to make sure that
+660.2	worked correctly
+661.5	all those things look pretty solid we
+663.6	have our until sam's there
+665.7	ah do you see it
+672.8	bingo
+678.9	and just like that we've created 20
+681.3	randomly placed
+682.4	sam sites in that specific area
+685.6	and hopefully you saw a lot of the
+686.9	common places where people have little
+688.6	errors there i've done that about a
+690.2	bajillion times in programming
+691.6	it's tricky because it's an until i'm so
+693.7	used to while like my first language was
+695.6	basic and c
+696.7	so that's usually what i think of n so
+698.6	anyway hopefully this is kind of helpful
+700.5	obviously we could come back in here and
+701.8	we could set their mcon individually
+704.0	one thing you'll notice is if i do my
+705.4	oob i can actually see that it generated
+707.6	these 20 sams
+709.0	now if you're a clever programmer which
+710.7	all of you are you could probably come
+712.7	in here and actually create several
+714.3	different types of sams
+715.6	randomly every time somebody starts the
+718.0	mission that's an
+719.0	absolutely spectacular way to make
+720.6	things nice and challenging for the
+722.2	player
+722.6	because they never know you can even
+724.0	randomize how many sams you generate
+726.7	you know we could come up here and say a
+728.8	local number of
+731.0	sams equals math.random between
+734.2	let's say 10 and 50. then we could
+737.0	actually come down here
+738.3	and say number of sams
+741.9	so now it randomly generates the number
+744.2	of sims each time let's delete everybody
+746.0	let's hope this doesn't melt because you
+747.5	never know i always spell something
+748.7	wrong boop
+750.1	look at that isn't that so cool and
+753.1	again this is just a ways to make this
+754.6	game a little more dynamic as well as to
+756.4	kind of mix it around
+757.4	and yeah you'll call me out for the fact
+759.0	that this one is actually
+760.5	basically in china but again i tried not
+763.1	to go nuts with this little location
+764.8	thing here
+765.4	and again you can control this so
+767.3	tightly you can create individual rps in
+769.3	here if you wanted to do
+770.4	random submarines and obey and again
+772.6	this is just an awesome method you know
+774.3	later on we'll take a look at ways to
+775.8	make this even more effective
+777.4	by basically optimizing the position you
+779.9	know make sure it's not so close to
+781.2	other sams
+782.2	or maybe even create sets of grids or
+784.3	pick the highest altitude to place the
+785.9	sam
+786.4	but that's for another day all right
+787.8	hopefully you guys found this
+788.9	interesting and enjoyable
+790.0	otherwise have fun

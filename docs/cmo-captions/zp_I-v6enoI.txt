@@ -1,0 +1,368 @@
+0.0	hello everyone on today's command
+1.9	tutorial we're gonna be taking a look at
+3.4	waypoint missiles basically in command
+6.1	you have a couple different whistles
+7.4	that you can actually assign waypoints
+9.2	to follow on their way to their target
+11.4	now these are typically used with cruise
+13.4	missiles especially at land attack
+14.7	variety they are also used with
+16.6	anti-ship missiles depending on what
+18.1	generation now one thing I want to
+19.9	establish before I get too too carried
+21.4	away here is not every aircraft or ship
+24.4	that can launch this type of missile can
+26.5	actually take advantage of the features
+28.1	of this particular kind of missile just
+30.5	because of the limitations of the fire
+31.8	control so anyway let's talk about why
+34.0	we would need something like this so
+35.7	normally if I were to take my
+36.7	Ticonderoga and ordered it to attack you
+38.5	know this Grisha which is kind of
+39.7	hanging out somewhere over here I'll go
+40.8	ahead and shut off God buzz so you can
+41.9	see it it would basically launch pretty
+43.9	much straight down a lot of times the
+45.5	game is clever and will actually leg the
+47.2	missiles a little tiny bit you've
+48.3	actually seen this behavior if you've
+49.6	ever launched a big batch of tomahawks
+51.5	at the same time just to make it a
+53.2	little bit more difficult for the
+54.3	engaging ship to basically to shoot
+56.0	those missiles down now a word about
+57.8	that as you're probably aware most ships
+60.4	have basically fire control centers on
+63.0	them that are responsible for basically
+65.1	aiming all the weapons on that
+66.4	particular side of the ship when you
+68.2	look down and like mounts and sensors
+69.7	and things like that a lot of times you
+71.5	will get things that basically say you
+73.3	know target indicator and stuff along
+75.0	those lines that basically here we go
+76.8	weapon director this is the one I was
+78.0	looking for that enable you to aim all
+80.1	the weapons of your ship most ships have
+81.9	one in the front and one at the back now
+83.7	one of the strategies you can use is to
+85.6	basically overwhelm this by firing all
+87.5	your weapons or you can try to hit it in
+89.8	an area where it cannot cover itself
+91.6	with one of those towers
+92.6	now basically as you know when these air
+95.2	ships are attacked inside this game
+97.3	typically they want to beam the target
+99.1	to try to unveil as many of these
+101.2	particular weapon systems as they
+102.5	possibly can at one time so the trick
+104.6	here is if you were to fire a missile
+105.8	right down the middle try to fire one
+107.7	off the nose as well to limit its
+109.3	ability to engage it like that it's a
+111.3	spectacular strategy and it works pretty
+113.0	well so anyway how do we do this well
+115.0	pretty straightforward actually grab the
+117.5	you want to attack with go ahead and
+119.2	press shift f1 or if you prefer to click
+121.9	man you okay just target click on the
+123.6	target then simply make sure you select
+125.6	the attacking units like this like the
+127.1	blue unit comes down here and this is
+129.0	the weapon we're going to be attacking
+130.4	with I'm gonna go ahead and double click
+131.9	with
+132.7	now I'm gonna click on the weapon and
+134.7	then select the new plot course option
+136.9	now this little dashed line represents
+139.1	the current course the missile is going
+140.5	to be taking without any interference if
+142.6	I click on the map I establish the first
+144.8	Waypoint that I want this missile to
+146.7	travel in order to get to its target now
+148.9	because we want to try to trick this
+150.9	target into beaming us and then we hit
+153.1	it on the nose and on the tail we need
+155.1	to make sure that these missiles are
+156.7	launched first because they have a
+158.2	longer distance to travel so when you
+160.3	set up waypoints you always want to
+161.5	click the LAT first Waypoint and then
+163.3	work your way to the last remember you
+164.5	can always reset it somebody go ahead
+166.6	and I'm guessing he's probably somewhere
+167.8	in the middle of that square click right
+169.5	here and now you can see that this
+171.0	missiles actually a pair of missiles is
+172.5	going to go here and then take a right
+174.3	in fly to the target when you're happy
+175.7	simply tap the Escape key now here is a
+178.5	common mistake if I double click this
+180.6	again all I'm gonna do is add more
+183.0	missiles to this elbow you have to wait
+186.3	until it's fired in order to go ahead
+188.1	and launch more of them so I'm gonna go
+190.4	ahead and do that very briefly keep in
+192.1	mind it only takes about a second to
+193.4	launch a harpoon missile and perfect so
+198.3	I'm gonna go ahead and reattach select
+200.3	the skunk select the weapon again notice
+203.0	it grabbed the exact same way points as
+205.9	from before we don't want that someone
+208.3	click on clear course then I'm going to
+210.4	select the weapon that I'm allocated
+211.7	click on plot course and simply do the
+213.9	exact same thing like this so now some
+216.6	of my missiles are gonna come this way
+218.2	some of my missiles are gonna come this
+219.9	way forcing a choice on this particular
+222.5	ship I'm gonna go and tap escape again
+224.6	I'm satisfied with that go ahead and hit
+226.8	spacebar to launch good so now I'm gonna
+233.7	wait just a few seconds and then I'm
+235.2	gonna launch my missiles that are
+236.4	designed to basically go right down the
+237.8	center give it just a moment by the way
+240.5	you can do some hilarious things with
+241.7	this technology so just turn around a
+243.6	corner and come from the other side if
+244.9	you're so inclined just a little bit
+246.8	more okay perfect now I'm gonna launch a
+248.8	conventional attack watch out though
+250.8	because it will remember from before I'm
+253.4	gonna clear the course plat course I'm
+255.0	going to go right down the center
+256.4	perfect tap escape close it and now our
+261.2	missiles are on the way
+268.6	yep they're allocated oh that must I
+271.0	forgot that had reloaded him earlier so
+272.8	he's got to take a few minutes before
+274.3	he'll be able to fire again I'm sure
+276.2	let's go ahead double it back here to do
+279.3	mark 141 ah bummer these guys are being
+283.3	sneaky it's okay for missiles should be
+285.3	enough to scare him pretty good so if I
+287.2	were to click on one of these missiles
+288.4	now you'll notice that it actually shows
+290.5	this it really feels like you should be
+292.1	able to click this and drag it but
+293.6	remember this missile is basically
+295.0	operating on AI NS / GPS so these two
+297.9	missiles are going to go out and they're
+299.6	going to pinch the target in between
+301.8	itself forcing it to have a really fun
+304.0	time predicting what target it wants to
+305.6	engage so I didn't time this well
+307.8	because you can actually see that these
+309.1	missiles have not lead alight yeah laid
+311.2	yet which means of course these two
+312.9	missiles would be easily shot down long
+314.9	before the other missile is able to get
+316.5	it to range of course now that this
+318.6	missiles coming here and he's wasting
+320.1	his surface-to-air missiles on that guy
+321.7	who's now beaming him means that they're
+323.7	gonna have a much easier time actually
+325.5	engaging so this is one of the classic
+327.4	times where I'm not too noid of course
+329.7	knowing that particular grisha is gonna
+331.2	have no difficulty at all shooting down
+332.9	these harpoons I think it's gonna get
+335.2	them nope got him at the sea whiz so
+338.6	hopefully that makes sense as far as the
+340.2	best way to use that for that obviously
+342.1	this would have worked so so well as you
+344.1	could probably say so now what if you're
+346.0	using a land attack missile well the
+348.0	system is exactly the same but this time
+350.6	you can take advantage of the mapping
+352.2	features of command so I'm actually
+354.0	gonna click the view I'm going to switch
+355.4	over to the relief layer oh look at how
+358.8	nice that looks
+359.7	go ahead and pause right hold on just a
+362.9	second here anybody's played DCs
+365.8	recognizes the Georgia map and everybody
+367.8	who's played DC s down here now bow to
+369.4	me probably knows the river that goes
+371.5	through this now we happen to know that
+373.4	this airfield is being protected by an
+374.8	SI 3 si threes if you've all clicked on
+377.4	them before you'll notice have a noodle
+378.9	loop of about 30 seconds which means
+381.2	anything that's within this range that
+383.4	is detected within 30 seconds can't be
+385.4	engaged that also means it takes a
+388.1	minimum of 30 seconds to engage which
+391.4	means if we want to fire a cruise
+392.9	missile at it
+393.6	firing it straight at the target will
+395.4	give this Flint
+396.5	time to engage that target so what we're
+398.7	gonna do is instead is launch the cruise
+400.4	missile down this valley and basically
+402.4	pop up at the last second and dump right
+404.2	on the SIII before it even has a chance
+406.5	to spin its radar around and engage so
+409.4	let's try that out
+410.4	go myself shift one just like before
+413.1	click on the target of interest we have
+415.5	two tomahawks actually I'm sorry these
+417.9	are ugm 86's I'm gonna grab two of those
+420.5	click on it press pluck course check it
+423.2	out so now what I need to do is keep in
+425.4	mind the range of this particular weapon
+427.2	so I'm gonna go actually turn on all
+429.4	ranges real quickly make it a little bit
+431.7	easier so you can see that this is the
+433.6	engagement range at the SI 3 so it's a
+435.7	couple fun ways I could do this I could
+437.2	come this way or I could come this way
+439.1	personally I'd rather kind of come this
+440.9	way ideally you'd want to come under his
+442.6	radar horizon to make this an even more
+444.5	effective attack so I'm gonna call my
+446.5	first Waypoint here just sent my second
+448.8	Waypoint they will never hit the ground
+449.8	by the way don't worry about it I'm just
+452.0	at my next Waypoint here and I'm gonna
+454.8	put my last Waypoint like this because
+460.6	remember it travels about 9 nautical
+462.6	miles per minute so which means
+464.1	four-and-a-half nautical miles before I
+466.1	can engage the target just estimating in
+468.2	my head real quickly if we popped up
+469.8	from here we might be able to get it in
+471.1	time somebody tapped escape key to
+472.9	confirm go ahead and close this screen
+475.1	let it rip and off they go
+482.5	go ahead spit it back the other way real
+484.7	quickly and now I might as well attack
+486.8	the rest of the airfield while I'm being
+488.1	such a nice guy keep in mind if I fired
+490.1	ahead of the Grisha the grecian would
+491.5	probably slap them right out of the sky
+493.1	also so in this case this is definitely
+495.2	a superior way to do this so now one
+497.5	thing I could do here is let's say I
+498.8	wanted to tack all these tarmacs with my
+501.1	six of these one two three four five
+504.1	let's go ahead and grab the ammo pad -
+506.0	just for fun I can actually tell it to
+508.3	launch one weapon at each one of these
+510.9	particular targets and just by clicking
+512.3	like that which is a great great method
+514.7	and now of course I can come in here I
+516.6	can grab these and I can individually
+518.7	plot their courses as well so for
+520.7	example I could make it come down the
+522.1	same little surprise Valley like that I
+524.2	could grab this one over here I could
+526.5	grab this I can make it come up again
+528.4	we'll just take advantage of this nice
+530.1	Valley probably scare the crap out of
+531.9	the neighbors kind of a thing we go over
+533.9	here we could plot the course for this
+535.1	one I'll take a slightly different path
+536.5	this time we're gonna go down the valley
+538.5	but then we're gonna cut back across and
+541.0	then we're gonna scoot scoot over the
+542.1	top of the mountain there I'm going to
+543.7	grab the next one we'll do something a
+545.6	little different this time
+546.4	what kind of cut make it come out this
+547.7	way scoot scoot through here grab the
+550.2	valley come on and drop in let's go
+552.3	ahead and grab this other one again
+553.3	we're basically protecting our missiles
+555.0	here because they're not gonna be
+556.2	engaged quickly so we'll do one that's a
+558.7	little more direct this time go ahead do
+561.6	something like that and let's see here
+563.4	we have the last one Oh should we do
+565.2	with this one I don't want to shoot it
+567.8	right across the middle but we'll do
+569.0	something kind of like that of course by
+570.7	the way you can do silly things like
+571.9	this it works perfectly well as a matter
+576.9	of fact it's really fun to do this to
+579.0	cause some missiles to fire and
+580.2	completely mess it works great someone
+582.8	on pause he's gonna go ahead and fire
+586.6	each one of his missiles independently
+590.6	and thank you for your service so now
+596.0	these cruise missiles are basically
+597.0	gonna fall out of the sky and they're
+599.4	gonna start doing these really really
+600.8	cool little sign paths that we've
+602.4	assigned so watch this now the grecian I
+605.7	think this is a little close to the
+606.8	Grisha as a matter of fact I would not
+608.0	be surprised if he tries to take a
+609.1	potshot at that but then again it's his
+610.9	waist keep in mind this sa three here
+613.0	right now is sitting there tracking this
+614.6	missile going I've almost got a bead on
+616.5	him
+616.7	I've almost got a bead on him now if
+619.1	he's stupid which is he's going to try
+621.0	to fire in that cruise missile we'll get
+623.0	into cover of the mountains Oh what
+624.8	might ha ha ha
+628.8	so now that si 3 is just wasted
+631.3	ammunition what a spectacular method to
+634.2	go ahead and a waste time and ammunition
+636.0	so in a way these guys are struggling a
+638.4	little bit with the mountain ranges here
+639.7	hope did you see it so watch this is
+642.6	coming around the corner now this guy is
+645.6	my favorite because the SI 3 is probably
+647.5	staring at him right now going what is
+648.9	that this one meanwhile is swinging
+651.1	around the corner yep these are my two
+652.7	ant is a 3 s hopefully the SI 3 sees
+655.2	this one first but if we're lucky he'll
+657.2	get behind this mountain just in time
+658.6	good so this missile is flying up right
+661.5	as this one's going to dip behind
+663.2	again there's a lot of philosophy and
+665.0	design here that we can take advantage
+666.4	of that si 3 is never gonna be up I was
+669.4	right good good excellent man that
+674.7	worked well check it out
+675.8	meanwhile as its being annoyed at this
+677.9	one the ones that are actually gonna
+679.3	attack the SI three are now whipping
+680.9	around the corners they've just popped
+682.6	over the top and now the SI threat you
+684.5	might actually get one you might get one
+686.0	nope not today minimum range well we got
+688.9	one so now his crew is rapidly changing
+691.2	targets as these guys come dropping out
+693.8	of the sky look at that went right by
+695.8	him this might not actually work I'm
+698.7	very impressed with that fast that crew
+700.7	can work Oh No here comes the other two
+705.4	which of course we've run out of essays
+706.7	we've run out of missiles at this point
+711.2	so at least you have the idea keep in
+713.5	mind air-launched cruise missiles are
+715.0	not exactly stealthy targets they're
+716.8	basically you know a Cessna 172s with
+718.9	jet engines and they are very very easy
+720.8	to hit but at least you can see the
+722.7	concept and understand exactly how that
+724.4	operates so that's basically all there
+726.3	is to it I'm gonna go ahead and take a
+727.8	look real quickly it looks like we did a
+729.0	little bit of damage here
+730.2	go ahead losses expenditures real fast
+732.6	you can see how when we fired off here
+734.6	we got an ammo pad and they went through
+736.3	wow I did not realize how many of those
+738.0	they fired that's actually pretty
+739.6	impressive alright hopefully I found
+741.4	this video interesting if you have any
+742.7	questions just sort of toss them in the
+744.3	comments below otherwise enjoy

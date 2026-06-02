@@ -34,17 +34,22 @@ ok('A4 places on the caller-supplied pane (read-only scenario pane), no map muta
 console.log('\n─── B. adjudicator-map.js engagement mission graphics ───');
 ok('B1 renderEngagementMissionGraphics defined; old renderEngagementArcs gone',
    /function renderEngagementMissionGraphics\(state, scenario\)/.test(MAP) && !/function renderEngagementArcs/.test(MAP));
-ok('B2 RED actor → "attack", BLUE actor → "counterattack"',
-   /const isBlue\s*=\s*sideRaw === 'BLUE'/.test(fn) && /const typeId\s*=\s*isBlue \? 'counterattack' : 'attack'/.test(fn));
+ok('B2 RED actor → "Axis of attack", BLUE actor → "Counterattack axis" (side split via isBlueArc)',
+   /const isBlueArc = a =>/.test(fn) &&
+   /const redArcs\s*=\s*allArcs\.filter\(a => !isBlueArc\(a\)/.test(fn) &&
+   /const blueArcs\s*=\s*allArcs\.filter\(a =>\s*isBlueArc\(a\)/.test(fn) &&
+   /drawAxisArrow\(redArcs,\s*ENGAGEMENT_RED,[^)]*'Axis of attack'\)/.test(fn) &&
+   /drawAxisArrow\(blueArcs,\s*ENGAGEMENT_BLUE,[^)]*'Counterattack axis'\)/.test(fn));
 ok('B3 graphic colour = ACTOR affiliation (side palette, not the status/effect palette)',
    /const ENGAGEMENT_RED\s*=\s*'#c41e1e'/.test(MAP) && /const ENGAGEMENT_BLUE\s*=\s*'#3a96d2'/.test(MAP) &&
-   /const color\s*=\s*isBlue \? ENGAGEMENT_BLUE : ENGAGEMENT_RED/.test(fn));
-ok('B4 draws via the read-only bridge (window.AppGraphics.buildReadonlyTmgMarker)',
-   /window\.AppGraphics\.buildReadonlyTmgMarker/.test(fn) && /const buildTmg =/.test(fn));
-ok('B5 head at TARGET: builds with (start=actor, end=target) — head→latlng2',
-   /const start = \[src\[1\], src\[0\]\]; \/\/ actor/.test(fn) && /const end\s*= \[dst\[1\], dst\[0\]\]; \/\/ target/.test(fn) && /buildTmg\(start, end, typeId, color/.test(fn));
-ok('B6 graceful fallback to the legacy arc + arrowhead when the bridge is absent',
-   /\/\/ Fallback/.test(fn) && /makeArrowhead\(start, end, fbColor/.test(fn) && /let layer = buildTmg \?/.test(fn));
+   /drawAxisArrow\(redArcs,\s*ENGAGEMENT_RED/.test(fn) && /drawAxisArrow\(blueArcs,\s*ENGAGEMENT_BLUE/.test(fn));
+ok('B4 draws via the shared maneuver-arrow polygon builder (createManeuverArrowPolygon)',
+   /createManeuverArrowPolygon\(centerline, color/.test(fn));
+ok('B5 head at TARGET: tip pulled back toward the target centroid (engStopShort), centerline ends at tip',
+   /const tip = engStopShort\(aLat, aLng, tLat, tLng/.test(fn) &&
+   /\{ lat: tip\.lat, lng: tip\.lng \}/.test(fn));
+ok('B6 graceful fallback to the legacy polyline + arrowhead when the polygon builder is absent',
+   /\/\/ Fallback/.test(fn) && /window\.L\.polyline/.test(fn) && /makeArrowhead\(\[aLat, aLng\], \[tip\.lat, tip\.lng\]/.test(fn));
 ok('B7 wired on BOTH paths: harness applyState + operator applyStepProgress + zoomend',
    /renderEngagementMissionGraphics\(state, scenario \|\| scenarioRef\)/.test(MAP) &&
    /renderEngagementMissionGraphics\(\{ step_index: stepIndex \}, scenarioRef\)/.test(MAP) &&
@@ -52,8 +57,9 @@ ok('B7 wired on BOTH paths: harness applyState + operator applyStepProgress + zo
 ok('B8 cleared per step + step tracker reset on clear/reset',
    /clearEngagementArcs\(\);/.test(fn) && (MAP.match(/engagementGraphicsStep = 0;/g) || []).length >= 2);
 ok('B9 exposed on the public API', /\n\s*renderEngagementMissionGraphics,/.test(MAP));
-ok('B10 declutter retained (primary shooter prominent, extra arcs dimmed)',
-   /const isPrimary = dense/.test(fn) && /setOpacity\(0\.45\)/.test(fn));
+ok('B10 declutter = ONE axis arrow per side (centroid of actor→target), not per-unit spaghetti',
+   /ONE arrow per side: centroid/.test(fn) &&
+   /aLat \/= n; aLng \/= n; tLat \/= n; tLng \/= n;/.test(fn));
 
 console.log('\n─── C. data oracle — wargame3 supports the mapping ───');
 let total = 0, withSide = 0, redA = 0, blueA = 0, withCoords = 0, twoPt = 0;
@@ -84,7 +90,8 @@ ok('E4 the app.js wrapper invokes no operator state (no selectTmgType / updateTm
 ok('E5 no backend / storage / fetch in the renderer', !/\bfetch\(|localStorage|sessionStorage|XMLHttpRequest/.test(fn));
 ok('E6 no fabricated combat fields (ammo/fuel/readiness/combat power)',
    !/(\bammo\b|\bfuel\b|\breadiness\b|\bcombat_power\b|\bsortie)/i.test(fn));
-ok('E7 W3-only guard (non-W3 scenarios are a no-op)', /sc\.schema_variant !== 'w3-rich'/.test(fn));
+ok('E7 global (data-based, not w3-rich tag-gated): no tag guard, no-op when no engagement_arcs',
+   !/schema_variant !== 'w3-rich'/.test(fn) && /if \(!allArcs\.length\) return;/.test(fn));
 
 console.log('\n═══════════════════════════════════════════════');
 console.log('  MG1 Engagement Mission Graphics — ' + (fail === 0 ? 'PASS' : 'FAIL') + '  (' + pass + ' passed, ' + fail + ' failed)');

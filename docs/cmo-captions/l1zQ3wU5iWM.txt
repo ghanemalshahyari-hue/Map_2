@@ -1,0 +1,996 @@
+0.2	hello everyone in today's video we're
+1.6	going to be taking a look at adding
+3.4	units
+3.9	and simplifying tasks in mission design
+6.9	using
+7.6	lua now although is one of those topics
+9.6	that i could get very very serious
+11.2	i could literally have my own youtube
+12.6	channel dedicated to
+14.5	lua inside of command but i'm going to
+16.8	try to keep it as simple as possible for
+18.6	today's applications
+19.8	as well as show you some kind of quick
+21.1	and easy ways to kind of add a little
+22.7	bit of extra to the missions that you're
+24.3	building
+25.0	so first things first what i've done is
+26.7	i've gone ahead and created myself this
+28.0	boring little airfield
+29.4	it's uh just kind of uh northwest here
+31.8	of vegas you can see that here and
+33.4	obviously you got your hoover dam and
+34.6	everything
+35.4	fallout new vegas veterans will probably
+37.6	recognize that region
+38.6	as well as my dcs folks who know the
+40.4	nttr and again if i zoom in far enough
+42.7	you can actually see this airfield just
+44.0	kind of chilling here
+45.1	so what i want to do today is show you
+46.6	some different ways to use the add unit
+48.6	command
+49.2	in command in order to make your life a
+51.5	little bit simpler
+52.4	so first things first let me go to
+53.8	editor i'm going to go down to lua
+55.4	script console you can see i was playing
+56.9	with it a little bit earlier kind of
+58.2	experimenting
+59.2	so first things first if you're
+60.4	interested in getting started with lua
+62.1	you want to go find this website this is
+64.0	the command
+64.8	lua website if you go on google and
+66.3	literally type in command lua
+68.2	it'll be the first thing that pops up
+70.1	you're going to notice that it's broken
+71.4	to functions and it's broken into
+73.0	wrappers and it has tables and selectors
+75.3	and it looks like a crazy amount of
+77.0	information
+77.9	it's not as bad as it looks but there
+80.0	are a lot of quirks which make it
+82.1	something that you can't get good at
+83.5	quickly it takes a lot of effort to
+85.4	basically get the hang of it that being
+87.2	said you can do some amazing things with
+88.9	it
+89.3	all right so let's go ahead and get
+90.4	started so let's say i want to add a
+92.7	unit
+93.3	somewhere on the map again we're going
+95.0	to do it the hard way then we're going
+96.1	to do it the easy way then we're going
+97.1	to do it the cool way
+98.3	so first things first if this were
+99.7	normal i could press the insert key i
+101.1	could left-click
+101.9	i could go ahead and slap down a unit
+103.5	for example if i wanted to put a lsan
+105.4	sa-9 just for fun
+107.0	we'll say syria boop good to go now that
+110.0	works pretty well for
+111.0	facilities and it works pretty well for
+112.6	ground units because all i can do is
+114.0	place them if i choose to move it i can
+115.5	hit the m key
+116.5	move it any which way i want works
+118.6	pretty good now if i wanted to add
+119.9	myself an aircraft
+121.1	let's go ahead and get myself an f5e
+123.6	whoops
+125.0	force of habit let's go ahead and get
+127.4	one of these stacked ones
+128.6	and we'll go ahead and say throw a
+130.0	sidewinder pop in the middle that works
+131.8	pretty well
+132.3	you know if we want to move that one a
+133.5	while we can do that as well but notice
+135.9	that it's going to be at a fixed speed
+137.5	it's going to be at a fixed altitude and
+139.0	it's going to have this kind of boring
+140.2	name
+140.8	as a matter of fact if i want to copy
+142.3	and make a lot of these they're all
+143.8	going to have
+144.4	exactly the same name and the exact same
+146.0	properties the exact same heading
+147.5	and it's not going to work very well as
+149.2	a matter of fact if i want to fill up an
+150.7	entire air base with those i'm going to
+152.9	end up basically having to use ctrl f6
+155.4	and then i have to come in here and add
+156.8	and find the same unit now it's going to
+158.7	get a little crazy and it's going to
+160.1	look
+160.7	canned is the word i usually will say so
+163.2	what we're going to do is we're going to
+164.3	go find
+165.1	the add unit command under lua and
+168.0	here's the general syntax for it it's
+170.1	pretty straightforward so what i can do
+171.7	is i'm just going to go ahead and copy
+172.8	paste this real quick make myself
+174.2	a little bit simpler come over here and
+176.2	paste that sucker in
+177.7	now the way commands work in command
+180.2	load that sounds weird
+181.5	is the fact that you will have different
+183.3	properties you'll have strings you'll
+185.0	have
+185.3	tables you'll have wrappers you'll have
+187.1	selectors and all these crazy different
+189.1	elements that's going to be going into a
+190.8	function
+191.4	you have to make sure they're all named
+192.6	correctly the correct case
+194.4	they're the correct numbers if it's a
+196.1	quote again all these things you're
+197.3	going to have to figure
+198.0	out on your own but let's go ahead and
+199.7	break down the add unit command on our
+201.7	own
+202.2	so first things first when you're adding
+203.7	a unit using lua you have to define the
+205.6	type of unit
+206.5	you can be air you can be facility you
+208.2	can be sub-submarine you could be a ship
+211.0	next you want to always always always
+213.1	give the unit a name this is really
+214.9	really critical
+215.8	next you want to do the loadout id so if
+218.1	this is an aircraft it's going to have a
+220.1	loadout id
+221.4	in this particular case if you're
+222.6	looking for the specific loadout id
+224.7	i could come in here and do f15c we'll
+227.2	just pick this one randomly and your
+228.7	loadout ids
+229.9	are going to be in the loadouts
+231.4	themselves it's going to be this number
+233.2	right over here on the right hand side
+234.9	the database id by the way which is next
+237.1	is going to come right over in the top
+238.5	left corner here
+239.4	don't get your loadouts and your
+240.6	database is confused you could have some
+242.0	pretty funny issues
+243.1	you always have to define a side you
+244.7	always have to define a lat which is
+246.4	just latitude again latitude is going to
+248.4	be up and down
+249.3	and longitude which is going to be left
+251.2	and right in this particular case this
+252.8	is far
+253.3	far far far away for us so what i'm
+255.5	going to do is i'm going to hold my
+256.4	mouse here i'm going to fix up our
+257.5	latitude and longitude here
+260.0	looks like we're at 3746 which is uh
+263.1	let's say 37 again positive is going to
+266.4	be north 46
+267.6	is going to be something about 0.75
+270.7	and longitude obviously we're going to
+272.3	be negative because we're in the west
+273.6	here that's going to be 116
+276.2	and let's see 46 is about 75 also
+279.3	and of course we have our altitude of
+280.9	5000 i'll go ahead and run that
+283.6	and if there is an issue you will
+285.3	automatically get an error message here
+287.5	in this case it says i have no matching
+289.4	element you know why
+290.7	because we never set it to be the side
+292.6	that we actually created on
+294.1	our actual mission go ahead and run that
+296.0	again and ta-dah oh look at how close i
+298.3	was that's a pretty quick estimation no
+300.4	i did not cheat
+301.4	but you can see i've created a unit and
+303.2	it has an altitude of 16404
+306.4	what well the reason for that is because
+308.6	altitudes are in meters
+310.2	if you want it to be in feet you have to
+311.9	actually put it inside quotes like that
+314.3	so let me go ahead delete that unit run
+316.0	it again now if i click on him check it
+317.9	out
+318.6	he's uh 5 000 feet you're sitting there
+320.2	going he's not 5000 feet and the reason
+322.1	why is because the local altitude is so
+324.0	low he'd be inside of the ground so
+326.5	let's try 12
+327.7	500 feet let's do that again left-click
+331.4	that's pretty cool so what other things
+333.2	can you do when you create a unit with
+334.5	this
+334.7	well if you take a look at the one above
+336.4	we can set things like proficiency we
+339.0	can set auto detectability we can tell
+340.7	it to hold fire
+341.8	we can even identify its proficiency but
+344.0	guess what this is just the start
+345.6	if you actually were to go over to the
+347.5	wrappers and go to unit
+349.1	this is a list of all the things you can
+351.9	add
+352.9	take a look at this we could set speed
+355.1	we could set throttle again let's have
+356.5	some fun with speed here
+358.0	let's see comma speed equals let's see
+361.2	what's pretty fast we'll do
+363.0	750 seems pretty quick so now if i run
+365.4	this again
+366.6	i have a much much much much much faster
+369.0	moving notice it automatically ceilings
+371.1	because i can't actually go faster than
+372.6	that at this altitude
+373.8	so if i were to come up here for example
+375.4	and set this to let's do 45
+377.0	000 feet delete it run it again check it
+379.9	out we can now get our 750 knots it
+381.9	automatically fixes the goofiness that
+383.7	we always put inside these scenarios
+385.5	so already this is really really cool
+387.6	you know i could come in here and say
+389.0	proficiency
+390.6	equals four you know let's make this guy
+392.4	like the red baron here
+393.7	now if i click on him you'll notice this
+395.4	aircraft is now an ace
+397.4	so hopefully you see just how powerful
+399.8	this is
+401.3	now you're probably sitting here going
+403.1	well i could do most of that just by
+404.7	right clicking going through the menus
+406.0	and you'd be absolutely 100
+407.7	correct which is why this functionality
+410.0	is only useful
+411.3	if you're going to apply what i like to
+412.8	say the computer science hacker way of
+414.6	kind of solving things
+416.0	so i'm going to go ahead and delete this
+417.5	unit here now what if we wanted to fill
+420.2	this airfield up with f-15s
+424.5	hmm okay can we somehow build in
+428.2	what base they're at absolutely if you
+430.2	actually go back to the wrapper here
+431.8	you'll notice there's an option for base
+434.0	and there's another option for host
+436.0	unit so in this case let's go ahead and
+438.2	do that
+439.0	so i'm going to go ahead and say we'll
+440.8	get rid of the latitude and longitude
+442.2	and altitude and speed because we're not
+443.5	going to need any of those because we're
+444.8	using a base right
+446.2	we're typing base equals air fields
+448.5	don't forget if it is a string it's got
+450.2	to be in quotes or apostrophes
+451.8	and we'll say host unit equals field
+457.4	all right f-i-e-l-d make sure i'm still
+460.6	inside my little quotes
+461.8	run it let's see if it worked tada so
+465.0	now i've added an f15 to this airbase
+467.8	and again you can sit here and define
+469.1	each one of the individual loadouts
+471.0	so so far you're probably sitting here
+472.3	going okay so this is
+474.1	this is pretty straightforward blow me
+475.8	away all right let's do it
+478.2	so one of the things i like to do here
+479.9	we don't need to be doing manual
+481.0	targeting here let me go ahead and
+482.2	remove that guy real quick
+484.1	is let's say i want to fill this
+485.8	airfield up
+487.3	with randomly named randomly numbered
+489.9	randomly proficient
+491.6	aircraft now we're getting serious and
+494.3	that's going to bring us to
+495.8	iteration so what i'm going to do is i'm
+498.0	actually going to go up here and
+499.1	go ahead and give myself a little bit of
+500.2	space so i'm going to create a variable
+502.6	that keeps
+503.4	track of the item that i'm currently
+505.3	selecting so the good news is i'm just
+507.3	going to left click on him real quickly
+509.0	i'm going to say local which simply says
+510.8	the variable i'm creating here is going
+512.6	to be a variable i'm only using this
+514.0	function
+514.8	airbase equals
+517.9	all right we need a function in here
+519.7	that's going to go ahead and get
+520.9	selected units
+522.1	for us so let's see here anything say
+524.6	the word salah
+525.7	there it is go ahead and insert that
+527.8	really quickly and i'm going to use the
+529.4	print command to show you what finds
+531.2	watch this all right so if you take a
+533.8	look here
+534.4	it printed out this thing units this is
+536.7	actually a table is what you're looking
+538.5	at is what the curly brackets are for
+540.1	you'll notice it has inside of its table
+542.0	another table called units
+543.9	the first item in this table is item one
+547.0	which has these properties which is
+549.8	another table
+550.6	yikes so we're just interested in this
+553.6	piece
+554.1	right here so let's go ahead and get
+556.0	that so there's a bunch of different
+557.0	ways we could do that
+558.2	first of all we could come over here and
+559.7	type in dot units remember how this
+561.5	one's called
+562.1	units so now if i run it it's going to
+564.2	say the word nil
+565.4	now you're probably sitting there going
+566.6	why is it saying the word nil the reason
+568.6	is because of the capital letter
+570.1	so check it out we're now only getting
+572.1	the table of units that i've selected
+574.1	well that's cool can we get the only
+575.6	unit that i'm selecting sure i could
+577.4	just say bracket one
+578.8	so what i'm saying here is get me all
+581.3	the selected units which in this case is
+583.0	this one
+583.8	get me the table out of those selected
+585.8	units because you can also have contacts
+587.7	and then get me the first item from that
+590.2	table and then display it here let's try
+592.2	it out
+593.3	beautiful look at that now here's where
+596.4	people get in trouble
+598.2	what you're seeing here is two things
+599.8	you're seeing the name of the thing i'm
+601.4	selected
+602.1	and you're seeing is guid which is just
+604.4	unique think of it as a serial number if
+606.1	you want to do it another way
+607.6	this is not going to have properties
+610.2	that we're going to need
+611.4	as a matter of fact this is literally
+612.9	just a table with a word and another set
+614.8	of words
+615.5	what we need to do is get the properties
+617.7	of the item that we actually did
+619.4	and lucky for us there's a function for
+621.1	that as well so i'm going to say
+623.1	airbase equals send edit
+626.3	get unit and now we have to define what
+629.4	unit we're interested in
+630.6	so in this case i'm going to say name
+632.5	equals
+633.7	airbase dot name we'll go ahead and
+636.9	print out the airbase now
+638.6	watch this boop now we've got
+642.2	all of the properties look at this
+646.2	we keep adding f-15s to it don't i ah
+648.9	come on guys you're supposed to shout
+650.3	out the screen so i can hear you when
+651.4	you do that
+652.2	let's go ahead and cancel that out for a
+653.3	second so now i have all
+655.5	the properties of this beautiful
+657.3	wonderful airfield
+659.0	excellent so that means we can do cool
+662.2	things like this
+663.0	we can come down to senate ad unit and
+665.2	again remember how we had base
+666.6	in host unit we can now say base equals
+669.5	airbase.name
+671.0	and we can now say host unit equals
+674.4	airbase.name
+676.2	so now if i run this again it's going to
+678.6	add that unit
+679.8	to the airbase that i've selected as
+682.6	opposed to a specifically
+684.2	named airbase so if i had a situation
+686.7	again i don't know why i'd have this
+687.9	situation but you never know
+689.4	again i don't design your missions you
+691.0	guys do these i can now click on this
+693.0	one
+693.3	run my code and now i've actually added
+695.6	aircraft to the other airbase
+697.7	now of course if you do something silly
+699.2	like not click on an airbase when you
+701.0	run this for example
+702.0	describe that radar oh i've selected a
+703.7	radar watch what happens
+705.7	you're going to get an error because you
+707.2	can't add units to it at radar
+709.9	now can you do this with grouped air
+711.4	bases absolutely and that's one of the
+713.4	reasons it's so cool
+715.1	so far so good hopefully this is making
+717.2	some sense to you
+718.6	and now we're going to get cool now what
+721.1	if i wanted to add
+722.6	more than one airplane at a time now
+725.2	we're getting into the computer science
+727.0	hackery solution
+728.3	so what i'm going to go ahead and do
+729.7	this time is i'm going to bring in some
+731.1	iteration
+732.0	now there's two basic ways you can do a
+733.8	loop actually there's more than two
+735.3	i got you again i'm not going to go too
+737.6	far here there's a definite loop and an
+739.4	indefinite loop
+740.6	basically if you're doing a definite
+741.8	loop it has a definite starting point
+743.4	and ending point
+744.2	an indefinite loop is going to be a loop
+746.1	that keeps looping until something
+747.5	happens to tell it not to do that
+749.2	anymore
+750.1	i'm going to use a definite loop so i'm
+752.3	going to type in the word
+753.4	for so a for loop basically is going to
+756.2	let us define the starting value the
+757.9	ending value and
+758.9	how much we should increment so for
+760.9	example i'm going to create a generic
+762.4	variable called x and i'll set it equal
+764.2	to 1.
+765.0	comma stop at the number 10 comma and
+767.8	increase
+768.3	by 1 and then i'm going to type in the
+769.9	word do after this i'm going to go ahead
+771.8	and type an end
+773.1	so what does this do this creates a
+774.9	variable called x assigns it a value of
+777.0	1
+778.0	loops through all this until it reaches
+780.3	the number 10.
+781.4	each time it loops it increases x by
+784.5	1. so after this goes through once x
+786.7	will be 2. x will be 3x to be 4x would
+788.7	be 5x will be 6.
+790.1	so theoretically if i now run this code
+792.6	it should
+793.2	add a unit to this airfield 10
+798.8	times
+800.8	isn't that awesome that is so cool
+804.4	so this is just getting started and
+806.5	again we can have a lot more fun with
+807.8	this which is what we're going to do now
+809.4	so one of the things i love using these
+811.6	functions for is for the purposes of
+813.4	going ahead and creating a different
+815.0	sorts of functions
+816.2	that can basically rename things or set
+819.1	the proficiency
+820.2	using random numbers and we're going to
+822.1	do that next
+823.4	so whenever we're working with any sort
+825.2	of things that are going to be changing
+826.7	each time i always like to put them in
+828.6	my own private variable
+830.2	so let's go ahead and do that first so
+832.6	i'm going to say
+833.4	local again local variable plane name
+836.5	equals i don't know we'll call it f15
+839.0	keep it nice and boring
+841.8	uh let's go ahead now see where it says
+843.6	unit name and i'm gonna go ahead delete
+845.2	the f15 i'm gonna say equals
+847.3	plain name so what i'm doing is
+849.6	replacing that
+851.0	string with the string i've created up
+852.8	here so now if i run it again
+854.7	you'll see that the plane name is f15 i
+857.0	know wonderfully exciting right
+858.9	so we'll go ahead and remove those real
+860.3	quick now can i take advantage of
+863.4	this variable that i keep incrementing
+864.8	every time i go around sure
+866.5	in lua if you want to combine two
+868.0	strings together you do two periods next
+870.3	to each other
+871.2	and now i can write x so what i'm doing
+873.8	here is i'm saying take the word f15
+876.2	and concatenate which is just adding two
+878.3	strings together
+879.4	the number x which of course is like i
+881.6	said it starts at one two three 4 5 as
+883.7	time goes on
+884.5	i'll go ahead and put a space bar or run
+886.2	the script again
+888.2	look at that that's so cool
+891.3	so this is already getting kind of
+892.7	useful if you ask me and again that
+894.4	means you can name things if you're
+895.7	doing interceptor 4 or whatever you'd
+897.2	like to do
+898.2	so i i'm just getting warmed up here oh
+901.1	can we randomize the proficiency
+903.2	yeah i like that so i'm going to create
+905.8	a new one i'm going to call this prof
+907.9	and we're going to use a function called
+910.4	math.random
+911.6	so in this case i want to randomize the
+913.1	number between 0 and 4.
+915.4	so now it's going to randomly generate a
+917.8	proficiency i'll copy that
+919.5	let's go ahead proficiency and replace
+921.1	that with prof it's going to generate a
+922.9	number between 0 and 4
+924.6	and then use that number for the unit's
+926.7	proficiency
+927.6	boop so this is not going to be obvious
+930.0	so i'll go here and you can see i now
+931.4	have a rainbow of different
+933.0	proficiencies
+934.1	at that air base now some of you are
+936.4	saying whoa whoa whoa whoa can we make
+938.3	it so there's a minimum proficiency sure
+940.2	just do the math let's do a number
+942.0	between 1 and 4
+943.7	or 0 and 3 i should say but we'll add 1
+947.4	to it
+948.6	so now when i run it we're not going to
+950.1	have any newbies but we're definitely
+951.3	going to have a pretty good split of
+952.6	everybody else
+953.4	and you can see that clearly by the new
+955.4	sets of colors and new proficiencies
+957.1	that you have
+958.2	you can already see how you're sitting
+959.4	there going oh you could do an entire
+961.2	carrier air wing and everybody's got a
+963.0	dynamic proficiency
+964.5	yeah so let's let's go too far with this
+967.4	right so let's take advantage of what if
+969.3	it was a randomly named or numbered f-15
+972.3	so those of you who know how aircraft
+974.2	are numbered in the united states we
+975.6	probably know it usually starts with two
+977.2	digits referring to what year the
+978.6	airplane was made
+979.6	and then three digits after dash of
+981.4	course basically defining which number
+983.0	of the batch it is
+984.1	so for example if this particular set of
+985.9	f-15s were made in
+987.5	1979 it'd be 79 dash
+990.5	so i'll do dot math.random
+993.6	give me a number between 100 and 999
+996.6	let's go ahead and give that a try
+999.9	hey and now you have neatly like almost
+1003.3	authentically numbered airplanes that
+1005.5	you can go ahead and use
+1007.3	for this particular scenario now if you
+1009.4	wanted to say that planes were between
+1010.9	1979 and 1981
+1012.8	you could do that too you could say
+1014.2	math.random let's say 79 to 81
+1017.6	dot dot don't forget the dash dash
+1020.8	and let's go ahead we'll actually let's
+1021.9	clean everybody out there's so many
+1023.5	f-15s at this airbase i don't know
+1025.1	what's up with that
+1026.4	all right go ahead and run it again
+1027.5	check this out so now i have 79s 80s
+1030.4	and 81 f-15s at this air base
+1033.7	now if you wanted to go too far of
+1035.4	course you could come in here and set it
+1036.8	up so that the different aircraft
+1038.2	have different pilot qualities i mean
+1039.8	why would you give the good pilot the
+1041.1	old plane or something like that
+1042.8	so again you can have a lot of fun with
+1044.2	this so can you go even further with
+1046.7	this
+1047.0	absolutely let's do it so in russia
+1050.6	typically aircraft were randomly
+1052.9	numbered and colored in order to confuse
+1054.9	the heck out of western intelligence it
+1056.7	actually works really really well
+1058.6	so let's say we want to simulate that
+1060.6	for a second so
+1061.8	we'll have red blue and let's say yellow
+1064.2	and we want it to randomly pick one of
+1066.1	those colors and then
+1067.0	randomly stick a number on the back of
+1068.6	it just to confuse the heck out of the
+1069.9	poor person playing the scenario
+1071.4	oh i got red number 45 yeah but there's
+1073.8	a red 42 there's a red 99 oh no how many
+1076.4	reds are there
+1077.4	let's go ahead and take a look at that
+1078.8	too so to do that first thing i'm going
+1081.4	to do is i'm going to sew a local dice
+1083.2	and i'm going to go ahead and give
+1084.1	myself a random number between 1 and 3.
+1086.6	and then all i have to do now so it
+1089.3	looks pretty good here
+1090.7	we'll then say if dice equals
+1094.1	one two equals then uh plain
+1097.4	name equals actually we want to be a
+1099.5	little bit careful here
+1101.4	uh plain name looks pretty good i'm
+1104.6	actually
+1106.4	let's go ahead and i can for the initial
+1108.2	play name we're just going to leave it
+1109.4	blank
+1110.2	local plane name equals plane i always
+1113.1	like to declare my variable so play name
+1115.1	equals red
+1118.4	dot dot math.random and we'll say one to
+1121.5	ninety nine
+1123.4	else if dice equals two
+1126.6	then plain name equals blue
+1130.6	dot dot math.random one
+1133.8	two ninety nine and we could say else if
+1136.6	dice equals
+1137.6	three then plain name
+1140.6	equals yellow don't forget the space dot
+1143.9	dot math dot random
+1147.9	1 to 99 we'll do end uh
+1151.8	looks good run whoopsies
+1155.8	uh which line is that that is line 14.
+1158.8	ah there it is
+1161.8	all right we got a 19 uh let's see is it
+1164.5	else
+1164.9	if where's it elif
+1168.1	i think it was elsa ah my bad check it
+1170.3	out so now i have blue planes
+1172.1	red planes and yellow planes randomly
+1174.1	numbered for your inconvenience
+1176.6	that's pretty cool right so this little
+1178.8	dice method can also be used to equip
+1180.9	aircraft with different loadouts so i
+1183.1	could come up here and say
+1184.4	local uh local
+1187.9	random loadout equals math.random i
+1190.8	could say one or two
+1192.2	it's basically flipping a coin at that
+1193.8	point and then i could come down here
+1195.5	and i could say if
+1196.8	random loadout equal equals one
+1199.9	then do we have a random loadout
+1204.6	loadout actually it's very dangerous we
+1206.7	should never do it that way
+1208.6	let me clean that out i'm sorry my
+1210.0	apologies uh local
+1212.0	actually we'll leave that up at the top
+1213.9	local
+1215.2	load equal oh don't say a load
+1219.5	i'm going to say plain loadout equals
+1222.2	what is the one we used before 30
+1224.5	16 934 there we go there we go let's go
+1227.7	clean this up
+1229.0	so then we could say if math.random
+1231.8	equals
+1232.5	math random between one and two equals
+1234.6	one then
+1235.6	ran plane sorry about that plane
+1238.6	loadout equals sixteen nine three four
+1241.4	else
+1242.6	plane loadout equals i believe it is
+1246.5	loadout one give me half a second just
+1248.7	to check that real fast
+1251.3	uh let's see here f15c it doesn't matter
+1254.0	which one i grab i just need the top
+1255.5	loadout name
+1256.4	it is maintenance loadout 4 else
+1259.8	loadout 4 meaning they're in the hangar
+1261.9	so then i can come down here where it
+1263.7	says loadout id
+1265.5	and i can just change this with plain
+1267.8	load out
+1268.9	let's go ahead and try it out oh let's
+1270.2	clean up that air ah just run it it'll
+1271.6	be fine
+1273.6	i've got a syntax error
+1277.4	there we go space my code out
+1278.7	everything's getting a little
+1279.4	complicated
+1280.6	let's take a look and look at that so
+1282.6	now we have random aircraft that are
+1284.6	actually in maintenance
+1285.9	now one of my favorite ways to do this
+1287.7	even better let me go ahead and clean
+1289.0	everybody out there's a lot of f-15s at
+1290.4	this space what's up with that
+1292.0	so one of the cool ways to actually play
+1293.4	with this is i can change the
+1294.8	variability
+1295.7	let's say that one in three planes is
+1297.4	available i can say math.random one to
+1299.8	three equals one
+1301.0	then you're loaded else you're stuck at
+1302.7	maintenance so if i run this
+1304.5	mathematically i should get about a
+1306.0	third of the 10 planes
+1307.8	which is mathematically almost perfect
+1310.0	so the technique worked really really
+1311.6	well
+1312.2	now if you're a country for example that
+1313.8	half of your planes are going to be
+1315.1	ready at any given time
+1316.6	you could always go inside there let me
+1318.1	go clean that up real quick
+1319.7	run that again and now you can see
+1322.7	roughly half of the planes are randomly
+1324.7	available
+1325.5	with that particular loadout isn't that
+1328.2	incredible how effective that works
+1330.8	so that's again one of the reasons why i
+1332.9	love using lua in order to make my
+1334.3	ambitions a little bit more interesting
+1336.2	so do we stop there uh the answer is no
+1339.2	well we're actually having a lot of fun
+1340.6	with this what if we wanted to set
+1343.0	something up so that i had a certain
+1344.7	number of units
+1345.8	arcing around another unit
+1349.1	hmm okay i think we can work that out i
+1352.6	think we can work that out
+1354.1	so let me go ahead and delete all this
+1356.0	stuff
+1357.2	and i'm gonna go i'll delete all this
+1358.7	stuff so i'm going to be careful i'll
+1361.0	call it
+1361.4	local samdb id equals let's get
+1364.8	ourselves a sam again this is just going
+1366.3	to make it a little bit more readable
+1368.1	facility uh let's see here we'll do an
+1370.0	sa-9 something nice and boring
+1371.8	that looks good 381 lovely
+1375.7	and we'll say local dist
+1378.9	equals we'll say 10 nautical miles and
+1381.8	that looks pretty good
+1383.2	all right cool so now we're going to use
+1385.9	local bearing
+1387.2	equals let's say 45 degrees and we're
+1390.0	great and we're ready to go
+1391.6	so let's go ahead and create a new unit
+1394.3	here and this time we're going to use a
+1395.8	special command in order to offset that
+1397.8	unit
+1398.6	so i'm going to go ahead and create my
+1399.5	add unit table and i'm going to go ahead
+1402.6	and say local
+1404.0	new position equals
+1407.5	and now we're going to use a special
+1408.7	function down here at the bottom under
+1410.4	tools
+1411.1	that says get
+1415.0	right there get point from bearing watch
+1417.8	this
+1419.4	so what i'm going to do is i'm going to
+1420.7	say latitude
+1422.6	equals the air base's latitude the
+1425.7	longitude will equal the air bases
+1428.8	longitude the distance will equal
+1431.9	10 the bearing will equal 45. so this
+1435.3	function let me go ahead and clean this
+1436.9	out real quick we'll actually go ahead
+1439.0	and grab a new position based on the
+1441.8	details that are given here
+1443.4	let's go ahead and print out that new
+1444.6	position because i want you to see what
+1446.3	this looks like before we try to use it
+1448.3	for something
+1449.4	nil now you're probably sitting there
+1451.1	going why did it say
+1452.6	nil let me show you why that said nil
+1456.0	the reason why is because we didn't give
+1457.9	it the correct syntax
+1459.2	and this is why it is so incredibly
+1461.1	important that whenever you're doing any
+1462.9	of these functions you always double
+1464.4	check to see exactly what they're going
+1465.9	to give you
+1466.7	so in this case it's distance equals
+1468.7	this latitude
+1470.2	looks good out airbase.latitude
+1473.4	airbased at longitude i'm going to go
+1474.9	back and check it real quickly
+1476.6	latitude equals distance equals 12
+1479.3	bearing equals 90.
+1480.9	distance equals 10. bearing equals 45
+1483.5	which makes no sense
+1484.8	so i'm just taking a look at this real
+1486.2	quick we printed the new position did i
+1488.3	spell it correctly
+1489.4	no i need to call that positon
+1493.6	run a much better of course this time we
+1496.4	will actually want to use distance
+1497.6	equaling dist
+1498.6	and we want to say bearing equals
+1500.4	bearing actually it's very dangerous
+1502.2	let's call that bear let's go ahead and
+1504.7	call this one bear as well
+1507.0	go ahead and run that real quick
+1510.3	beautiful okay excellent so now we're
+1512.4	able to get a position so now what we
+1514.0	can do is we can go ahead and use our
+1515.4	send edit real quick
+1518.4	and inside of our send edit we can go
+1520.2	ahead and define exactly what we want to
+1522.0	do
+1522.6	as far as setting that up so we'll go
+1525.7	ahead and say name just like we did
+1527.0	before we'll call it a
+1528.1	sam site we'll say dbid
+1531.4	equals sam dbid
+1534.9	latitude don't forget side uh
+1537.9	yep type equals facility
+1541.7	side equals red latitude
+1545.0	equals new position
+1549.1	dot latitude longitude equals
+1552.4	new position
+1555.6	dot longitude and i'm just double
+1558.8	checking to make sure we didn't miss
+1560.0	anything kind of obvious here i've got a
+1561.8	name for it
+1563.3	no i think i'm good let's go ahead and
+1564.7	give it a try
+1566.9	bingo and now we have a brand new sam
+1569.5	site
+1570.0	ready to go up there at the top into
+1572.2	something along those lines
+1574.0	now you're probably sitting there going
+1575.8	well that was pretty cool i like that uh
+1578.0	can we go too far oh heck yes we can go
+1580.3	too far
+1581.0	let's get our loop back so what i'm
+1583.0	going to do is i'm going to go ahead and
+1583.8	create a new loop i'm going to go ahead
+1585.3	and start at 0.
+1586.6	i'm going to end at 360 and i'm going to
+1588.6	increment by 18.
+1591.5	i think you can see where i'm going here
+1593.3	i'm going to go ahead and grab all this
+1595.0	stuff
+1595.6	put this in here i like these two but
+1598.5	i'm actually going to leave that one uh
+1600.0	we don't need bear anymore believe it or
+1601.5	not you're probably going oh what is he
+1603.3	doing
+1604.2	i'm liking that i'm liking that i'm
+1605.4	liking that cool but this time
+1607.9	for about hang on got carried away
+1611.4	let's grab this we do need this one
+1614.4	let's go ahead and change the word bear
+1617.7	to the word x now you're going okay what
+1621.2	are you doing
+1622.0	so now what i'm going to do is i'm going
+1623.0	to start my x 0 increment it by 18
+1625.7	and treat that as the bearing and then
+1628.0	i'm going to go ahead and create a new
+1629.4	unit there so let's go ahead and delete
+1630.7	that zoom out a little bit
+1632.3	snap uh oh i forgot to left click on the
+1635.8	unit by bad
+1636.6	snap look at that so now i've gone ahead
+1640.1	and created a perfectly
+1641.7	shaped ring around my little airfield
+1643.8	here of sa-9s of doom
+1645.6	of course you could come in here and set
+1646.8	random proficiency and but watch how
+1649.0	quick this is i can come up here now and
+1650.6	set the distance to 20
+1652.2	and then i can say i actually want 9.
+1656.0	look at that of course we can go a
+1657.9	little excessive here if you'd like to
+1659.3	go a little excessive i could do
+1660.6	30 and i can increment by 2.
+1664.7	come get some that is a lot of sa-9s
+1668.8	i think that's the entire inventory of
+1670.6	the air force
+1671.8	and the army combined sitting there just
+1673.4	guarding this little airfield
+1675.0	but hopefully that is just a really
+1676.5	really slick way that you can go ahead
+1678.2	and use that for that function
+1680.2	now remember this works for ships this
+1682.2	works for aircraft this works for
+1683.8	absolutely everything and there you go
+1685.0	and i've got to have an arc
+1686.2	everything you could ever wanted to know
+1688.4	just taking advantage of these simple
+1689.9	functions and again trying to make your
+1691.3	life a little bit easier
+1693.0	as far as trying to build missions for
+1695.5	me the big
+1696.0	one is randomly placing units on the
+1697.8	ground you can do stuff like that
+1699.6	filling up air fields with random units
+1701.7	now if you're a real
+1703.1	pro what you'll actually do is randomly
+1705.5	generate
+1706.2	everything every time you start the
+1708.8	scenario
+1709.8	doing something like that is a little
+1711.4	tricky basically what you'd have to do
+1713.2	is under the event editor
+1715.0	let's go down to event header or go to
+1716.4	events you create a new event and again
+1718.7	a mission start is pretty class
+1720.2	our admission in it make sure it's not
+1722.1	repeatable and what we could do is we
+1724.0	could actually add a trigger we could
+1725.5	say let's see here
+1727.3	scenario has loaded then we can add that
+1731.0	in there like that
+1732.2	edit conditions scenario has started
+1735.5	yep all right yep in my case that's what
+1738.8	my doggy does
+1740.4	and then we can come down here and we
+1741.9	could go ahead and create a lewis script
+1745.6	uh spawn units
+1749.4	and then we go ahead and have ourselves
+1751.5	when we start the scenario each time it
+1753.4	will actually
+1754.0	fire that script that we just developed
+1756.7	moments
+1757.3	earlier which is again a spectacular way
+1759.9	to make missions a little bit more
+1761.2	dynamic
+1761.9	now one thing i will point out too is if
+1763.7	you're looking in here you probably
+1764.9	notice there's a thing for mission
+1766.6	you can actually assign the mission of
+1769.6	the unit
+1770.4	that you are using in a particular point
+1772.4	here and again there's a million
+1773.9	different ways to do it you can set the
+1775.3	type of mission you can create the
+1776.3	mission first you can define the group
+1778.1	and all these features are now here
+1780.2	something to watch out for
+1781.7	some of these items you're going to see
+1783.1	the word read only that means when you
+1785.2	go to create them
+1786.1	you may not be able to edit these
+1787.6	functions a lot of things like with
+1788.9	magazines it's very difficult to do
+1790.6	you have to use another function for
+1792.1	that but that is getting way beyond
+1794.3	where we want to be taking a look at
+1795.5	today so hopefully this has been a
+1797.1	little bit helpful as far as how to
+1798.6	enhance things i'm not going to print a
+1800.0	big thing of scripts
+1801.1	although one thing i will say and how
+1803.0	this works really well is i like to keep
+1804.8	a library of all the scripts i develop
+1806.5	as time goes on
+1807.5	in order to make my life a little bit
+1809.8	simpler so that i can always just go
+1811.4	back and get something again you can
+1812.7	actually create dynamic libraries if you
+1814.6	needed it
+1815.3	and again you can see that i love using
+1816.8	random elements you can see that i like
+1818.4	to use different things
+1819.7	using repeat functions and everything
+1821.4	like that setting up the weather
+1823.0	these are all great little scripts that
+1824.6	again if you can pause youtube real
+1826.2	quick you can probably steal some of
+1827.8	them you can see me using some names you
+1829.7	can see me using some titles
+1831.3	everything along those lines again take
+1832.7	a look at my missions if you're looking
+1833.8	for specific examples
+1835.0	other than that if you have any
+1835.9	questions feel free to throw them at the
+1837.2	bottom i will not call myself a lua
+1839.0	expert because i am not
+1840.9	but at the very least i know how to use
+1842.2	it to make motions a little bit more
+1843.5	interesting
+1844.3	enjoy

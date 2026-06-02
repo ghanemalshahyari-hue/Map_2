@@ -3276,6 +3276,7 @@
                 </div>
                 <div class="map-canvas-wrap">
                     <div id="map"></div>
+                    <div id="cesium-container" style="display:none; position:absolute; inset:0; z-index:2;"></div>
                     <div id="mission-graphic-assist" class="mission-graphic-assist hidden" aria-live="polite" aria-atomic="true">
                         <div id="mission-assist-title" class="mission-assist-title">Workflow</div>
                         <div class="mission-assist-steps">
@@ -3647,12 +3648,12 @@
                             <button type="button" id="ap-hold"   class="ap-btn ap-btn--hold"   data-i18n="ap-hold">Hold</button>
                         </div>
 
-                        <!-- Safety note — always visible. PR-7 invariant: nothing
-                             on this panel is wired to simulation; making that
-                             explicit prevents the operator from acting on the
-                             wrong mental model. -->
+                        <!-- Operator note — always visible. UNLOCKED 2026-06-01:
+                             Accept/Reject now commit to the durable server journal;
+                             Hold defers. Kept explicit so the operator knows a
+                             decision mutates state. -->
                         <p class="ap-safety-note" data-i18n="ap-not-connected">
-                            Proposal decisions are not connected to simulation yet
+                            Accept/Reject commit to the durable journal; Hold defers
                         </p>
 
                         <!-- ═══════════ DECISION RECORDS — PR-13 ═══════════ -->
@@ -3668,13 +3669,13 @@
                                 <button type="button" id="dr-clear-btn" class="dr-clear-btn" data-i18n="dr-clear">Clear records</button>
                             </header>
                             <p class="dr-not-saved" data-i18n="dr-not-saved">Not saved after reload</p>
-                            <!-- PR-14: optional surface message — declares the
-                                 draft contract is in place but the real journal
-                                 is not. No file write happens from this line; it
-                                 is purely informational. -->
+                            <!-- UNLOCKED 2026-06-01: the real journal is enabled —
+                                 commits write durable rows server-side at
+                                 data/journal/<run>.jsonl. This in-memory list mirrors
+                                 those decisions; it is not itself the durable store. -->
                             <p class="dr-real-journal-note">
-                                <span data-i18n="dr-real-journal-disabled">Real journal not enabled</span>
-                                <span class="dr-draft-badge" data-i18n="dr-draft-contract-ready">Draft contract ready</span>
+                                <span data-i18n="dr-real-journal-disabled">Real journal enabled (server)</span>
+                                <span class="dr-draft-badge" data-i18n="dr-draft-contract-ready">Commit active</span>
                             </p>
                             <div id="dr-list" class="dr-list">
                                 <p id="dr-empty" class="dr-empty" data-i18n="dr-empty">No local decision records</p>
@@ -4775,8 +4776,21 @@
     <script src="wargame/red-team-controller.js?v=4"></script>
     <script src="wargame/scenario-state.js?v=1"></script>
     <script src="wargame/adjudicator-client.js?v=4"></script>
-    <script src="wargame/adjudicator-map.js?v=37"></script>
-    <script src="wargame/adjudicator-hud.js?v=20"></script>
+    <!-- RMOOZ DB-Lite range model (sensor/weapon ranges) + role→capability
+         catalog — single source of truth for the coverage/threat rings in
+         adjudicator-map.js (and the detection/engagement engines). -->
+    <script src="shell/detection.js?v=1"></script>
+    <script src="shell/engagement.js?v=1"></script>
+    <script src="shell/world-state-db.js?v=1"></script>
+    <script src="wargame/adjudicator-map.js?v=41"></script>
+    <script src="wargame/cesium-view.js?v=3"></script>
+    <script src="dem-layer.js?v=1"></script>
+    <script src="wargame/adjudicator-hud.js?v=22"></script>
+    <!-- PR-MOVE1: continuous movement + playback clock. Drives the existing
+         AppAdjudicatorMap.applyStepProgress over wall-clock time and wires the
+         transport bar (#tl-play/#tl-pause/#tl-speed). Additive — does not touch
+         the W3 render path. -->
+    <script src="wargame/movement-playback.js?v=1"></script>
     <script src="ops-panel.js?v=1"></script>
     <script src="map-hide-panels.js?v=1"></script>
 
@@ -4795,6 +4809,7 @@
     <!-- PR-5: Timeline / Transport placeholder. UI foundation only —
          buttons flip local CSS state; no journal, no sim, no AI hookup. -->
     <script src="shell/timeline.js?v=1"></script>
+    <script src="shell/timeline-event-ticks.js?v=1"></script>
     <!-- PR-8: AI Proposal data contract. Pure frontend validation +
          normalization. Loads BEFORE ai-proposal-panel.js so the panel
          can call AppShellAIProposalContract.normalizeProposal() on
@@ -4922,6 +4937,33 @@
          available when paintDryRunPreview() runs during workspace init. -->
     <script src="shell/scenario-dry-run-fixtures.js?v=1"></script>
     <script src="shell/scenario-workspace.js?v=1"></script>
+    <!-- Owner ruling 2026-06-01: editable scenario workspace (slice 1: metadata/sides/posture).
+         P0 authoring schema (draft/working-copy engine) must load before edit-mode.
+         Edits stay in-memory; commit/journal boundary untouched. -->
+    <script src="shell/scenario-authoring-schema.js?v=1"></script>
+    <script src="shell/scenario-edit-mode.js?v=1"></script>
+    <style>
+        .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; }
+        .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
+            color:#e8eaed; border-radius:5px; padding:4px 10px; }
+        .sw-edit-btn:hover { background:#343a44; }
+        .sw-edit-btn-primary { background:#2f6fed; border-color:#2f6fed; color:#fff; }
+        .sw-edit-btn-primary:hover { background:#3b78f0; }
+        .sw-editmode-editor[hidden] { display:none; }
+        .sw-edit-row dd { width:100%; }
+        .sw-edit-input { width:100%; box-sizing:border-box; font:inherit; padding:3px 6px;
+            border:1px solid #5a6270; border-radius:4px; background:#1f242b; color:#e8eaed; }
+        .sw-edit-actions { display:flex; gap:8px; align-items:center; padding:8px; flex-wrap:wrap; }
+        .sw-edit-status { font-size:12px; }
+    </style>
+    <script>
+        // Mount Edit Mode once the DOM (workspace panel) is ready.
+        (function () {
+            function go() { try { window.AppEditMode && window.AppEditMode.init(); } catch (e) {} }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
+            else go();
+        })();
+    </script>
     <script>
         // Mirror the chosen side into the footer status bar. Tiny inline
         // bridge so the footer's `#statusbar-current-side` stays in sync

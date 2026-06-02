@@ -1,0 +1,626 @@
+0.3	today students weapons this is basically
+6.2	covering all the different kind of the
+14.6	preeminent threat of ships these days
+16.6	although if you go back and take a look
+18.1	at history usually the mine and the
+19.7	torpedo is going to be more effective at
+21.2	actually getting a kill these weapons
+23.2	are still very very dangerous and
+24.7	they're very widely deployed so what
+26.6	I've done today is I've set up a pretty
+27.7	simple scenario I've got my little kind
+29.5	of island here this is Easter Island off
+30.9	the coast of Chile and I have all these
+32.7	different ships that have actually
+34.3	purposely modified to pull things off of
+36.5	them so that you can only see how
+38.4	effective the individual point defense
+39.9	systems are on their own
+41.0	obviously the more point defense the
+42.7	better so to speak helping us out today
+44.6	I've got an e 2d Hawkeye which is going
+46.6	to be kind of spotting targets early so
+48.4	that we can see that behind the horizon
+49.5	and our victim ship is always going to
+51.8	be placed down here in this case we're
+53.8	going to opening up with our Farragut
+55.1	we're going to be launching a couple
+56.4	different types of weapons at our poor
+57.9	ships here the first being this one the
+59.5	P 15 one of the early early early early
+61.8	anti-ship missiles not quite as silly as
+64.0	the as1 which was basically a MIG 15
+66.5	with a radar on the nose this was
+68.4	actually a pretty early anti-ship
+69.7	missile it does have some success and
+71.3	it's also had some pretty bearing
+72.7	failures but unfortunately they're very
+74.2	common still so this is actually pretty
+76.4	solid weapon to be shooting at us so
+78.5	what I'm gonna be doing is launching
+79.3	gets totaled eight of those at my poor
+81.0	victim and I'll be making some comments
+82.4	so let's talk about point defense and
+84.5	they really really early days of point
+85.7	defense of course you had combination
+88.0	things like 50 caliber machine guns 40
+90.1	millimeter cannons and of course these
+91.9	dual purpose 5 inches / 127 millimeter
+94.9	cannons usually armed with variable fuse
+96.8	these things could be guided using
+98.2	weapons mount either visually they could
+99.7	be guided radar completely depending on
+101.5	the particular application systems you
+104.2	can use them against surface targets and
+105.7	air targets the disadvantage as you
+107.7	probably notice in a minute is they're
+109.2	embarrassingly bad at reliably hitting a
+111.9	specific target traveling at high speed
+113.7	towards it so let's go ahead and let our
+115.5	Farragut go ahead and instead please
+117.4	already we've noticed that there's a
+119.4	particular missile notice whenever
+120.6	you're getting missiles launched at you
+122.0	you're going to detect them based on the
+124.0	cruising altitude in this particular
+125.8	case because these missiles are
+127.2	traveling at an altitude of about 800
+129.0	feet we have a pretty early warning of
+131.4	when we need to start in gay
+133.0	but slow down time here these ships are
+135.9	all radar guy there's anti-ship missiles
+137.6	are all radar guided so they're gonna be
+139.1	starting zeroing in here our poor
+140.8	Farragut here is I realized he's under
+142.5	attack he's gonna go ahead and flip on
+143.8	his offensive countermeasures as well as
+145.7	his radar and you'll notice the range of
+147.9	his 5-inch gun is almost not negligible
+150.2	but pretty darn small
+152.0	so until these missiles get within that
+154.2	range he can't even begin to fire them
+156.6	which means your ability to raise hack
+158.5	is gonna be severely limited by the rate
+160.9	of fire of that particular amount in
+163.0	this case I think that one's gonna get
+164.2	through pretty darn clean we'll go ahead
+165.4	put a couple rounds into it just in case
+166.8	I don't think he's got to get a lock on
+169.1	it
+169.3	oh that was lucky go ahead and take some
+172.8	of that as well this scenario of course
+174.5	we're not gonna be taking a look at
+175.5	there's one oh that's not gonna do much
+177.4	you got to do it again oh he's trying
+179.1	again
+179.4	Oh quicker quicker quicker oh he's done
+183.5	so we can see that this really
+185.4	old-school anti-ship missile can easily
+187.7	tear any ship that just has those dual
+189.3	purpose cuts apart again there would
+191.2	have been no competition here if there's
+192.6	less warning there would be an even less
+194.2	competition now just in case you're
+196.0	curious if this was a loaded activity
+197.7	I'm actually gonna look at the endgame
+198.9	real quick and you're kind of noticed
+200.2	that we fired the three rounds and our
+202.1	overall probability to hit was 1% each
+205.2	time which means those weapons are
+208.6	simply last last last last last last
+210.7	ditch or just use them for Shore
+212.7	bombardment all right let's go ahead and
+214.2	reset the scenario and take a look at
+215.5	how point defence approved so after we
+218.9	realize that okay these guns aren't
+220.1	really gonna be able to hit high-speed
+221.2	missiles we had to develop other
+222.8	techniques in order to go ahead and to
+224.4	protect ourselves so afterwards we
+226.2	started developing simple things like I
+227.8	see was what I see was is is basically
+229.9	very very very very very very high rate
+232.5	of fire machine gun that tries to shoot
+234.7	at the missile as it arrives trying to
+237.1	engage and shoot it down these weapons
+239.2	are absolutely last-ditch weapons and
+241.3	usually have limited arcs in which to be
+243.1	used somebody go ahead and order our
+244.6	ship to go like that I'll run it up to
+245.9	cruise speed I'll go ahead and unpause
+247.7	here one thing I'm just gonna confirm
+250.0	real quick cuz I want to make sure these
+251.2	are set to engage any targets good so
+253.5	this particular ship this is the PPK
+254.8	Kara this is a deck rugby I think that's
+256.9	a golden eagle or something along those
+258.6	if I recall correctly I've ripped all
+260.6	the missiles off just leaving these
+262.5	ak-630 s which are 30 millimeter weapons
+265.5	that
+266.1	each time they fire they're actually
+268.0	firing 400 rounds at the incoming
+272.0	missile so I expect this system to be a
+274.2	little bit better we already noticed
+276.1	that those P 15s that have been launched
+277.8	a moment earlier are already starting to
+279.1	be spotted again this thanks to this
+280.9	AWACS
+281.4	it's very difficult by the way for AWACS
+283.0	to see missiles that are traveling very
+284.6	low to the water because it'll get lost
+286.3	in the clutter of the sea especially if
+288.5	this clutter the sea is very very strong
+290.8	that day in situations such as really
+293.0	really bad weather
+293.7	so with this ships going to do to defend
+295.5	itself is this actually going to beam
+297.4	the incoming missiles to make it so that
+299.7	both sets of C was which usually one in
+301.5	the nose and one in the back can engage
+303.2	the incoming weapons all right let's see
+304.8	how we do go ahead reduce time a little
+306.2	bit first ones coming in we got a miss
+311.8	again there's 400 rounds of ammunition
+314.1	it's gonna try to took the first set
+316.4	he's still working still working quite
+319.0	order him to manually attack in case up
+320.4	there's the next shot
+321.3	got it alright you got to do that six
+325.0	more times of course our ship is now at
+327.1	99.1 percent damaged and it is on fire
+329.8	and it is flooding keep in mind this is
+331.2	gigantic cruiser nice beautiful work
+334.1	beautiful work we'll go ahead take a
+335.4	shot at the next one
+336.9	he's on fire and he's sinking but he's
+339.4	defending himself oh look at this the
+340.9	system's working great by the way these
+342.4	are pretty good systems and in several
+344.1	ships actually we have three or four of
+345.5	these Oh oh no game let's see just how
+349.8	efficient that particular sea Wiz was
+351.4	let's see here by the way I see Wiz is a
+353.3	dynamite weapon against helicopters
+355.2	let's see here so we penetrated we
+357.9	trying to attack as weapon damage I'm
+360.0	interested in weapon in game there we go
+362.1	let's see here we fired an awful lot of
+364.8	bullets you're talking thousands of
+366.4	bullets trying to engage those targets
+367.7	and you can see our overall probability
+369.8	of hit was actually not bad about 45% so
+372.4	if we had more time we probably could
+373.8	have gotten those again to see Wiz is a
+375.4	good system against kind of a leaker so
+378.0	that's not gonna work much for us either
+380.1	cuz unfortunately not only are those I'm
+382.5	gonna be last-ditch they simply could
+384.2	not keep up with a lot of missiles at a
+385.6	time which is why you started getting
+387.6	short-range anti-missile missiles such
+390.0	as the sea sparrow so I'm gonna grab my
+391.8	favor get again I'm gonna remove it I'm
+393.3	gonna go ahead and grab myself my
+394.6	short-range these RC sparrows and I will
+396.6	see sparrows kind of unique weapon
+398.0	you've actually seen the mount for it it
+399.7	kind
+400.0	looks like somebody took a 50 caliber
+401.4	machine gun and put two big white domes
+404.4	on either side of it with the crew
+405.8	member would actually do is again this
+407.7	is the same Sparrow that you saw on f4
+409.5	phantoms in case you're curious but with
+411.4	a crew member could actually do is he
+412.9	could actually point the mount at the
+414.9	incoming target and then that since that
+417.1	target of course would have the
+418.2	strongest radar signal the missile will
+419.9	automatically homed in on it so let's go
+422.2	ahead and take a look at what happens
+423.2	here so we immediately launch too now
+425.7	notice if we miss which we probably will
+428.9	at some point we might get lucky if we
+431.5	miss we still have time to reattach in
+434.1	which case we've launched two more but
+435.5	notice we don't have the capability to
+437.7	engage more than one of those at a time
+439.3	because of the limitation of the
+441.3	semi-active radar homing uh-oh clunk ah
+444.0	there's another one so that system even
+447.2	though it came out in the early 70s was
+448.8	actually a pretty good improvement as
+450.5	again you saw we were able to shoot down
+451.9	several of those without that much
+453.5	effort so where did we go from there
+455.9	well we said well that's a good backup
+457.1	especially when you coupled with C whiz
+458.7	we can actually start to succeed at
+460.6	defending ourselves so what is the
+462.6	modern version of that look like well
+464.6	let's take a look real quick there's
+466.0	this weapon called the ESS M that is
+468.0	basically the evolved sparrow missile
+470.1	and what this system is is basically
+472.4	four of these teeny tiny little missiles
+474.3	packed into these vertical launch
+475.7	systems some of these ships can pack up
+477.8	to 250 six of these per vertical launch
+481.1	system so this is going to be basically
+483.4	a waste of this units time watch how
+485.9	efficiently they will engage and thank
+491.0	you for playing
+491.5	so again that was against a 1960s system
+495.6	and finally we're starting to get
+497.2	somewhere what happens if we tried to
+499.2	pack that up again some more modern
+500.7	missile well let's try that out I happen
+502.5	to have an A in two to five down here
+504.4	loaded up with KH 22s which are an
+506.9	incredible missile system very high
+509.5	speed they basically drop from space at
+511.5	stupid stupid high marks and can do a
+513.7	tremendous amount of damage so I'm gonna
+516.0	go try it against these missiles alright
+518.7	thank you for your support there an-225
+520.6	let's go ahead and flip back to these
+522.2	guys already we've identified those
+524.4	missiles the missiles are coming in
+526.0	they're coming in
+528.1	again our engagement range is gonna be
+530.6	this red line all right watch this buyer
+539.3	notice if the missile misses or blows up
+542.1	a target it will automatically be target
+543.7	the next missile effortlessly cuts
+546.5	through that many missiles without - too
+549.1	much effort so obviously those modern
+551.2	short-range missiles coupled with the
+552.8	sea waves are pretty dynamite but can
+554.9	you do better than that yeah believe it
+556.7	or not you can do even better than that
+557.8	and that's part of what we're gonna take
+559.0	a look at next
+559.7	let's go remove that Farragut for a
+561.2	second what they also realized is you
+563.2	could start using long-range Samms for
+565.7	the same purpose but keep in mind a
+567.1	sea-skimming missile is so low to the
+569.2	water that it probably would have the
+571.0	ability to not be noticed until it's
+572.6	about 20 miles away reducing the
+574.7	effectiveness of extremely long range
+576.2	Samms
+577.0	so what I'm gonna do is I'm actually
+578.2	gonna flip his radar on real quick
+579.7	because this system works pretty darn
+581.5	good now what I'm gonna do is I'm gonna
+583.4	grab my cage 22 carrier here he's gonna
+585.9	help me out real fast because obviously
+587.5	those P 15s aren't even gonna get the
+589.5	same time a day as that one yeah he's
+591.4	already jammed and we haven't even
+592.5	identified it there he is Oh nope we
+595.3	didn't even identify the ship yet oh
+598.5	[Laughter]
+601.5	well we could always do a bearing lunch
+603.6	I guess lunch thank you for your help
+609.4	yeah not even worth his time of day he
+612.8	literally cut those missiles as if they
+614.9	weren't even in the sky to begin with
+616.2	now check this out the maximum range of
+618.3	this so far that even those missiles are
+620.7	all the way out there we can actually
+623.1	begin engaging them immediately and
+626.1	thank you for playing obviously it's a
+630.4	little inefficient to be launching you
+632.0	know $10,000,000 missiles at $100,000
+634.7	anti-ship missiles so there has to be a
+636.5	balance there well take a look at some
+638.1	of the solutions to that in a minute so
+639.8	far you can see by combining the C whiz
+641.8	with the 5-inch guns with the
+644.1	short-range missiles with the long-range
+645.9	missiles works really really well is
+648.4	there a better system lasers let's go
+652.2	ahead and try this with a laser somebody
+654.3	borrow myself my little laser test
+656.0	platform here I'm gonna put it right
+657.1	here I'm gonna order them to kind of do
+658.7	one of those things
+659.5	that and I've just kind of kind of let
+661.2	him loose and do his own little thing
+662.6	there why who get those caged 22 is
+664.4	ready to go it's going to move them a
+666.0	little bit closer there is we're gonna
+667.9	launch mines higher hold worth of those
+670.0	pretty confident in a and 225 could
+672.4	probably do this but you never know but
+674.9	anyway we're testing it out
+675.9	so lasers are amazing because if you can
+678.0	see it you can hit it that's how you
+679.8	defeat a laser you have to prevent your
+681.5	missiles from being detected the first
+682.7	place by the way in case you haven't
+684.4	detected this or notice this one of the
+686.3	best ways to defeat things go haha sorry
+690.9	I'm talking too much one of the best
+692.4	ways to defeat a platform this lethal is
+694.5	to make sure it never notices that
+696.2	missiles were launched out in the first
+697.4	place so all your strategy is about
+699.1	countered it didn't even waste oh man
+702.4	didn't even crackin y'all that was too
+704.0	easy by the way it has 10,000 laser
+706.7	shots at its disposal so in a moment
+709.0	they're about to be engaged by these
+710.6	much higher speed missiles as a matter
+713.0	of fact I'm actually gonna flip over to
+714.2	3d view I'm gonna be naughty here go
+716.3	select one of these things just so you
+718.2	can get an idea of just how amazing
+720.1	these weapons are there we go so
+722.4	remember we're getting late updates to
+723.7	this position it's moving Mach 4.2 and
+725.9	look at how high off the ground it is
+728.0	you're talking 75,000 feet here so
+731.2	basically what it's got to do is fly to
+732.6	this position detect the target and then
+734.4	dive at it going even faster making this
+737.8	a lethal weapon oh no this is looking
+739.7	bad I don't think he'll be able to
+741.4	defend himself who are you kidding this
+744.0	is a laser fire and thank you for
+748.5	wasting the laser cruise time the bottom
+751.9	tada these lasers by the way if you want
+756.7	to have a little more fun with them look
+758.0	up hgl LED s it's actually really really
+760.7	solid ground based version so now you're
+763.3	probably sitting there going alright so
+764.7	you've made your point
+765.6	you obviously these are a fixed
+766.9	effective systems they do a really
+768.6	really good job there can slaughter
+770.2	missiles much better than they used to
+771.6	be able to more modern systems are
+773.1	better than old systems just how far can
+775.2	you go well we'll take a look at that
+776.7	real fast somebody go ahead and reset my
+779.0	mission one more time here I'll go ahead
+780.4	and load up this mission real fast and
+782.1	we'll go ahead and switch back to me PD
+784.6	for in the middle of the ocean here I
+787.3	have the CG 52 Bunker Hill all items in
+791.5	this game the half a missile
+793.2	we'll have a missile defense rating if
+795.0	you actually go to the database page for
+796.9	that particular unit and you scroll down
+798.6	you'll see think this is missile defense
+800.2	this tells you how many missiles it will
+803.1	take in order to score a hit with usual
+805.9	probability in this case it will take 96
+808.9	harpoons in order to hit this ship
+811.9	because it has a tremendously good
+814.5	anti-missile platform on it so we're
+817.0	going to put that to the test so what
+818.9	I'm gonna do is I'm gonna switch back to
+820.0	me real fast let's go ahead and grab
+821.7	this one I happen to have a tu-95 r/t
+824.5	equipped with 152 AGM 82 DS so what I'm
+829.2	gonna do is I'm gonna go ahead and turn
+830.1	my Raider on here and we're gonna try to
+832.7	acquire that target beautiful so now
+835.2	what I'm gonna do is I'm gonna order it
+836.4	to fire let's do a hundred one hundred
+842.0	agm-84 DS so to make this even tougher
+845.2	I'm actually gonna order him to go down
+846.4	to low altitude to make a little bit
+847.8	more difficult here oh boy so where does
+854.5	your current bet that we just went out a
+856.6	radar range too low what else to do do
+858.6	we at right now at 12,000 that's fine
+860.5	we'll be able to reacquire them in a
+862.5	second I'm pretty confident position
+864.5	myself like this so place your bets do
+868.2	you think that those are Poon's we'll be
+871.5	able to get through so we'll find out in
+874.6	just a second by the way I've said it so
+876.1	that he can't see him right away
+877.4	otherwise he would have slapped him out
+879.0	of the sky with an sm-3 already all
+880.9	right there they go all right I'll
+884.5	switch back to the other team real
+885.6	quickly
+886.0	he's just sitting there I detected an
+888.3	enemy target I better turn my radar on
+890.1	oh look at that it looks like incoming
+893.5	weapons notice it took a single second
+896.1	between the time he acquired the target
+897.7	and he started firing his missiles oh
+899.8	it's just a it's just a couple don't
+901.6	worry don't worry oh there's more than a
+903.9	couple okay fire we've lost sight of
+913.1	them where do they go well they've gone
+914.5	up to the air begin
+916.8	[Laughter]
+924.5	all right let's see how we did
+927.6	let's go ahead and first of all the ship
+929.0	took no damage which makes me feel
+930.2	better second of all they deployed 5000
+933.2	they only got 50 oh that's disappointing
+935.1	why do they only get 50 you're probably
+937.2	asking well it turns out that my tu-95
+939.7	got shot down before we could actually
+941.8	test the theory I've actually done this
+943.7	demonstration a few different times in a
+945.4	few different ways kind of experimenting
+947.1	with it to make sure it works and this
+948.6	ship would literally protect itself
+950.1	against a hundred ATM 96's now here's
+953.3	what makes this ship even more effective
+954.8	if you actually position the ship's
+956.4	around and fired all at him from all
+958.8	different angles it wouldn't make a
+960.5	single difference his missile defense
+962.5	system faces all directions at all times
+964.5	making this an amazing platform for the
+968.0	purposes of air-to-air alright hopefully
+969.9	this makes a little bit more sense some
+971.4	of you probably going ok thanks for the
+973.4	demo now how do we defeat this what are
+975.6	the best techniques to defeat it is
+976.8	don't let them notice you fired the
+978.1	missile the second technique is to jam
+980.0	their fire control directors the bad
+982.3	news is and this is the really really
+984.5	really bad news is that ships have very
+986.9	powerful radars that make it very
+988.2	difficult to jam them effectively but if
+990.4	you can jam the missile guidance systems
+992.8	with the strong enough jammer you can
+994.6	prevent the systems that engaged the
+997.5	incoming missiles to ever even hit them
+999.5	or not be able to reliably hit them and
+1002.1	that is where your technique and tactics
+1004.0	are actually gonna go we can actually
+1005.4	take a look at this real quick I'll show
+1006.9	you what it looks like believe it or not
+1009.9	my cage 22 carrier up here this not fair
+1013.5	airplane the i-n i've actually equipped
+1015.2	with some offensive ECM so i've got all
+1018.7	sorts of fun little technology on here
+1020.4	so i'm actually going to go ahead and
+1021.4	order him to low altitude and also going
+1023.6	to go ahead and sell them to go cruise
+1024.9	i'm gonna go ahead and turn him tell him
+1026.7	to turn everything on move them over
+1029.2	here flip it over here
+1030.5	go ahead and unpause real quick but i
+1032.1	really needed to do is put a radar on
+1033.8	this one real fast while I'm doing this
+1035.3	again just for a quick little
+1036.7	demonstration lose a wet eye cuz it's
+1039.2	pretty classic
+1040.3	oh here's the 95 model radar on there we
+1046.9	go
+1049.4	Oh something's jamming me I think I know
+1051.6	who that is there we go a little bit
+1062.5	closer to the action bring up to 12,000
+1065.1	feet okay so remember that pesky ship we
+1070.7	had that had the laser let's go ahead
+1073.4	and grab this one let's grab mr. laser
+1075.0	let's put him right here keep in mind we
+1077.4	have spotted this aircraft already so
+1079.2	that's gonna take some of the fun out of
+1080.3	this so I'm actually gonna shut the
+1081.9	hawkeye's radar off I'm gonna drop this
+1084.5	contact he's nice and isolated not so
+1087.0	I'll go ahead and him do one of these
+1088.2	things that is cru speed so he's
+1090.0	completely on his own making things
+1092.1	extra tricky I'm actually gonna change
+1093.7	the time of day real quickly that will
+1099.2	make it literally this five o'clock
+1101.0	that's actually not that late I should
+1102.7	be done by daylight savings calculation
+1104.1	quickly so we need something closer to
+1105.8	Oh 600 do it 600 please there we go let
+1111.6	me talk at night okay watch this now
+1114.6	let's get my anti a little missile to
+1116.4	zero quickly go ahead and drop you're
+1119.0	into higher load of cage 22s and as an
+1122.6	added pain we're gonna make sure his
+1124.3	jammer is turned on so that he follows
+1126.7	the missiles as low as possible trying
+1128.7	to create a strong jamming field behind
+1130.5	him I'm actually gonna order him all the
+1132.0	way down to minimum altitude here all
+1134.7	right
+1135.0	cage 22s are on the way keep in mind
+1137.1	cage 22 so usually travel at very very
+1139.1	high altitude so this technique is that
+1141.2	going to be merely as effective as it
+1143.2	could be if we were at a slightly
+1145.1	different to do so actually I'll split
+1146.8	the difference to do 2,000 feet duper at
+1149.0	PD obviously we know there's an airplane
+1150.8	out there somewhere we were tracking it
+1152.8	by yeah we were tracking by us jamming
+1154.8	signal all right here comes the cage 22s
+1158.9	our laser crews already oh no you
+1161.4	cheated no problem all right
+1172.1	getting awfully close lasers firing they
+1176.6	were still able to acquire them
+1177.8	officially bummer so that did not work
+1181.2	because my jamming signal was so far
+1184.0	below where the missiles themselves were
+1186.3	the only way I could get away with this
+1188.1	is maybe trying with a harpoon but at
+1190.0	the end of the day unless you can jam
+1191.5	whatever sensor is guiding that weapon
+1193.4	you're never going to be able to prevent
+1195.0	it from engaging even in this kind of a
+1197.0	situation now if we try to set it up in
+1199.2	an even more extreme let's go ahead and
+1200.9	try that out real quickly we could also
+1203.7	set it up in such a way that not only is
+1205.5	at night but it also happens to be
+1206.8	pretty bad weather so let's go ahead and
+1208.8	set the weather too obnoxious real
+1210.4	quickly let's make the wind kind of bad
+1211.8	let's set the sky to really foggy and
+1214.4	now let's see if we can get that pesky
+1216.3	laser again this is just experimenting
+1218.4	at this point but it's worth trying
+1219.3	let's grab our laser let's put him right
+1221.6	there let's go ahead and take our
+1223.6	Hawkeye let's shut him off and let's go
+1227.0	switch back to our pesky an-225 here I'm
+1230.8	going to go ahead in this direction
+1231.8	we'll go ahead and reattach the radar
+1234.3	that we used earlier there's a wet eye
+1236.4	like I said wet i that's fine
+1242.4	turn that radar on turn the jammer on
+1249.7	and we're almost there come on keep in
+1254.0	mind because this weather is so bad
+1256.0	becomes very difficult to actually spot
+1257.8	targets so in this case what I'm
+1259.4	actually going to do is order my
+1260.7	aircraft to fly at a lower altitude than
+1262.6	it normally would so that it can see the
+1264.3	side of the ship better there we go eat
+1267.0	cage 22 so now I'm gonna go ahead and do
+1270.4	my little orbit here keep in mind this
+1273.4	ship can't see pretty much to here so
+1275.6	let's find out what happens what we
+1277.7	caught it as soon as we caught it of
+1280.3	course he turns on his radars ah was the
+1282.3	APY that caught it let's go ahead and
+1284.4	delete the Hawkeye completely interrupt
+1286.5	these contacts alright let's try that
+1288.4	again we got something what's this ah
+1291.9	the active radar seeker sown
+1295.2	unfortunately this ship is kind of on
+1296.8	its own it's got a surface scanning
+1298.3	radar but without that better air-to-air
+1299.8	radar and because it's bad weather and
+1302.5	we can't get a good visual fix
+1303.7	on it it's going to become a little more
+1305.1	difficult to engage these weapons let's
+1307.4	see what happens this time laser away oh
+1309.7	the laser can't see through the fog
+1312.0	oh no what's gonna happen boom alright
+1315.8	hopefully you found this video sort of
+1317.1	interesting like I said this is just a
+1318.4	response to something somebody who's
+1319.6	asking I had to do some research on my
+1321.1	own to kind of play with it at the end
+1322.6	of the day it's all about oversaturation
+1324.0	from multiple directions it's how you
+1325.4	can defeat it if you want to optimize it
+1327.5	it's all about putting your systems that
+1329.4	have the best anti aircraft or anti-ship
+1332.0	missile systems in the way of the
+1334.3	incoming attack that's simply going to
+1335.9	be the best way to do it other than that
+1337.6	enjoy

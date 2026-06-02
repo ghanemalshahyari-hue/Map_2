@@ -1,0 +1,494 @@
+0.0	hello everyone today's video we're gonna
+2.2	be answering kind of common question
+3.8	again and that's how to build airfields
+5.2	in the scenario editor in command modern
+8.2	operations now I've had this question a
+9.9	couple different ways and usually when
+11.8	people have trouble with this it's
+13.4	because they forgot to add access points
+15.2	to the runway they only use something
+16.6	like add a runway or they accidentally
+18.5	do a runway grade taxiway instead of a
+20.9	regular runway I don't know why that
+22.6	would mess things up but sometimes it
+24.0	does so for today we're gonna be taking
+25.8	a look at a relatively simple setup here
+27.7	we're gonna be using Otis Air Force Base
+29.5	now one thing I want to say before I get
+31.3	carried away here is you can always use
+32.9	a single unit airfield a single unit
+35.4	airfield if you were just insert a
+36.8	standard facility here you just type in
+38.7	the word airfield and you simply select
+40.3	what runways you need and how many of
+42.2	them you need then press the ok button
+43.9	and bam you're good to go
+45.2	the disadvantage of a single unit
+47.0	airfield is you can only be engaged with
+48.7	nuclear weapons you can't actually
+50.0	attack this with conventional weapons
+51.8	even though it's a massive group of
+53.3	smaller units this is awesome if you
+55.7	don't need this to be a target I
+57.3	recommend it a thousand times over and
+59.8	this is a specific reason why you're not
+62.0	doing it so I'm gonna go ahead delete
+63.4	that let's go ahead and zoom in on our
+64.9	lovely Otis Air Force Base here and we
+67.4	can see that the Sentinel graphics are
+68.9	catching up with us the first thing I
+74.6	always like to do is not like to do the
+75.8	runway you know the easiest way to do
+78.5	the runway believe it or not is not with
+80.3	the Sentinel graphics the easiest way in
+82.3	my opinion to do it is to actually flip
+83.7	over to terrain mode when you flip over
+85.6	to terrain mode it becomes extremely
+86.9	easy to actually see anything that is
+89.4	tarmac related in this case our runway
+91.2	so our main runway here I'm just gonna
+93.0	go ahead and use my directional tool
+94.6	here it says it's 1.7 nautical miles on
+96.8	a heading of 3:07 degrees so work that
+101.0	out real quickly 1.7 times 1852 is 3100
+105.1	meters I'm gonna round it up to 32 half
+107.2	of that is gonna be 1600 nice so I'm
+110.0	gonna go about halfway up about 1600
+111.9	meters up that's gonna be about the
+115.1	runway I'm gonna press the insert key
+116.9	left click I'm gonna go ahead and type
+118.6	in runway in this case we need 3200
+121.6	meter runway usually people like to come
+123.7	in here and label runways warning
+125.6	warning there are true headings in
+129.5	and not magnetic headings so if you're
+131.8	trying to line this up with the correct
+133.3	runway you have to actually do the
+134.9	addition for magnetic variation in this
+136.9	particular case it's a 15 degree so even
+139.4	though our actual heading of a runway
+141.1	here comes in at 307 degrees through a 7
+144.2	plus 15 chances are this is actually
+146.4	runway tree - and not runway tree 1 it's
+149.9	worth noting this or it could even be a
+151.3	real white tree that was low enough so
+153.0	you want to make sure you check that
+154.5	before you do something silly but the
+156.4	reason I'm calculated and heading is
+157.9	more important is to right-click and set
+160.0	the orientation of the runway to match
+162.9	the true heading so in this case like I
+165.2	said it was a tree 0 6 degrees so we can
+167.8	actually rotate this at the runway
+169.3	itself is heading it's correct true
+171.4	heading that's good we want that let's
+174.3	go ahead and do our little runway right
+175.8	here this is the other one this one is
+177.6	not one point seven it's one point two
+181.2	is 222 is that about 2400 meters it's
+184.5	gonna be 1200 it's gonna be the halfway
+186.1	point
+186.5	so let's find about 1200 surprised go
+190.6	ahead insert we need something a little
+192.9	bit let's do this one right here looks
+194.5	pretty good
+195.1	and now we want to set the orientation
+196.2	as well 41 degrees
+200.8	keep in mind orientation also dictates
+203.4	take on so you want to keep that in mind
+206.0	as well when you're building this about
+208.1	43 degrees we have a runway grade
+210.0	taxiway here I don't think it's actually
+211.3	a runway grade taxiway but I'm just
+213.2	gonna count it as being so we'll see
+215.2	that's about 2600 meters as well we're
+217.6	also going to set that to be parallel to
+219.5	that other Airport runway that we're
+221.2	just looking at a moment ago it looks
+225.8	like we also had this really monster
+227.2	long one right here that's going to be
+229.0	our 3200 meters man there's a long
+232.3	runways I do some flying in the real
+234.2	world myself but I never get to land in
+236.1	runways like that there's to be a real
+237.6	special occasion I get to land of
+238.9	something like that like an airshow I'm
+240.3	attending or something along those lines
+241.6	it's worth noting that row a grade
+243.8	taxiways can be taken off and landed
+245.5	from so they're gonna provide a new set
+247.3	of targets okay so those have all been
+249.2	set they've all been gotten the correct
+251.2	orientation I'm actually just gonna
+252.3	confirm that real fast yep
+254.1	now we're good to go to add so I'm gonna
+257.1	go ahead and cancel out of terrain
+259.0	go back to this one so I can see a
+260.6	little more clearly it looks like we
+262.0	have a main building here it looks like
+263.5	we have stuff like this every once in a
+265.2	while you get lucky and you can spot
+266.4	where ammo is stored this doesn't seem
+268.2	to be the case but it is going to be a
+270.0	requirement for this particular airfield
+271.6	so I'm going to go ahead and add some
+272.4	ammo storage down here again I'm just
+274.5	gonna press answer mo and you can pick
+277.3	your type of ammo storage another
+279.3	warning you want to make sure you load
+281.0	your ammo storage with ammunition before
+283.3	you group the units together it's gonna
+285.1	be much simpler and safer to use so in
+287.4	this case I'm gonna assume it's got some
+288.9	remnants nothing too too fancy just put
+291.2	a couple of them in here nothing again
+292.6	it all depends on your individual
+293.7	airport we're also gonna need some fuel
+295.6	fuel is pretty simple I don't actually
+297.4	know where they store fuel here I'm not
+298.8	gonna go look it up online because I'm
+300.5	sure the FBI wants to have enough
+301.8	conversations with me I'm gonna go a
+303.6	swing over here real quick I'm gonna
+304.9	assume you just put some fuel here so I
+306.7	like to type in a V so now we have
+316.5	runways taxiways we have fuel storage
+319.6	and ammo storage are we done no we need
+322.2	access points so in this case I'm
+324.0	actually gonna flip on the terrain layer
+325.4	again because I want to be able to spot
+327.3	anywhere where you can go from the main
+331.3	hairs to the runways now this is
+335.3	important because if I add every single
+337.1	access point to the runway that means
+339.1	that people trying to blow up this
+340.2	Airport are gonna have to work a lot
+341.7	harder to do so instead what I like to
+344.1	do is I like to concentrate on access
+345.7	points that connect to the main part of
+347.2	the airbase taking a quick peek here
+349.1	basically there's parking down here a
+350.8	little bit of parking up here and
+352.0	obviously this parking here that tells
+353.8	me that we're probably gonna have a
+354.8	total of four access points obviously
+356.7	you can come in here and mark every
+358.4	single access point to the runway if you
+360.0	choose to do so but keep in mind in
+362.2	doing so you make it more difficult for
+364.0	the enemy to blow everything up because
+365.5	as long as there's one working access
+367.0	point hypothetically you can get
+368.4	anywhere in this entire airfield
+369.9	that's a scary prospect but it's also
+372.1	just kind of how things run in this so
+374.1	first things first I'm gonna go ahead
+375.2	and set myself access point right here a
+377.0	ccss we want a very large aircraft one
+379.6	this is obviously gonna be for a
+381.1	Christmas tree please right on the
+384.9	runway if you need because again it's
+386.4	where the in runways gonna intersect the
+388.0	taxiway we're gonna have another one
+389.7	right here and
+391.0	just trying to predict where this next
+392.6	one would be so we're imagining we're
+394.5	parking here you can get onto the runway
+396.5	here we already got that one we did not
+398.8	get this one and we did not get this one
+401.2	okay that's looking pretty good again
+403.1	place the access points where you can
+404.9	get onto the runway keeping in mind what
+406.8	I was saying a moment ago
+407.9	are we done no we need to go ahead and
+411.1	add some buildings now too so either
+413.3	buildings or places to park your
+415.1	aircrafts in this case they can a quick
+416.8	look at the rest of the facility I know
+418.3	there's a lot of parking down here if I
+420.0	recall correctly let me flip back to the
+421.8	Train yeah there's a lot of parking so
+423.8	I'm just gonna click here I'm gonna type
+424.9	in the word parking you have the parking
+426.7	spots not to be confused with the tarmac
+429.4	which is going to be this stuff right
+431.3	here in this case I'm going to say 2x
+433.0	very large aircraft and I'm just gonna
+435.6	spread them out if you know where the
+436.8	individual parking space add to give an
+438.4	airport is you probably want to use that
+440.2	rather than guesstimating like I am now
+442.1	so it looks like we have a spot for some
+443.9	large aircraft right there I'm going to
+445.3	go ahead and plop some of those in as
+446.5	well and looks like we have a pretty
+449.0	good-sized hangar right here again I
+451.0	probably has a hangar in the real world
+452.4	I'm just using this as a quick example
+454.1	I'm also going to assume that there's a
+455.9	fairly good-sized hangar here another
+457.6	word of warning by the way you want to
+459.2	make sure that you orient these things
+460.6	appropriately because right now they're
+461.9	oriented to the north it may not
+463.9	actually match the shape of the building
+465.6	as a matter of fact if I opened up the
+467.1	aircraft hangar you can probably notice
+468.8	that it's with the 70 but its length is
+471.5	a hundred and 20 if you get that
+474.0	sideways basically people bombing it
+476.1	will be hitting it from the wrong angle
+477.3	and it's important that you get that
+478.8	correct last but not least we have the
+481.0	beautiful Christmas tree right here I'm
+482.3	actually gonna flip back over to terrain
+483.8	mode it's just easier for me to say that
+486.6	was effective but in terrain mode you'd
+488.8	get a pretty good look of that Christmas
+490.1	tree there it goes
+491.2	so we can actually predict where each
+492.6	one of these individual parking spots
+494.2	are so I'm just gonna assume the parking
+496.0	spots at the end of the tree I'm
+497.2	actually gonna type in parking this time
+498.5	we're gonna do a very large aircraft
+500.6	just regular large aircraft at the end
+503.2	of each one of these positions and
+506.6	obviously you can park one at the
+507.8	tippy-top as well if you need to and now
+509.8	we are almost ready to go this is the
+512.2	part where I like to add in the last
+513.5	couple details which makes an airport
+515.2	extra fun so it says you get things like
+517.0	a barracks like for example that some
+518.8	assume that this building right here
+520.0	again was taking a shot at perhaps is
+522.4	building a barracks so I can assigned it
+524.2	to
+524.4	be Barris by the way if I were doing a
+526.2	cargo mission I could use this barracks
+528.3	as the item that it load up with cargo
+530.0	going up to our edit unit actions and of
+532.2	course editing cargo so I mean if I
+534.0	wanted to get a little fancy again this
+535.4	is getting a little advanced but you
+537.0	know why not have a little bit too much
+538.1	fun while we're here I actually like
+539.9	infantry section it's probably my
+541.5	favourite units that you can use
+543.8	abcdefgh let's say there's 20 look at
+549.7	that now we've got cargo stored inside
+551.3	that barracks I always like to add a
+552.9	control tower too because that's just me
+554.5	again this is completely don't think
+557.0	that you need it control tower and of
+558.9	course we always like to add our air
+560.4	traffic control radar in eastern
+562.5	countries this is usually like one of
+564.0	the Barra Lac radar is a very very big
+565.8	ones like your P 15 s and P 17 usually
+568.5	have height finding like an odd pair or
+570.2	an odd group as well over here in the
+572.4	States we would probably have just good
+574.1	old-fashioned air traffic control radar
+576.1	and it looks right here that we have a
+577.7	generic air traffic control radar which
+579.8	we can now link to everything
+581.2	now before I group everybody together to
+584.2	make the finished working air field
+586.3	there's one more detail that I want to
+588.2	take a look at this really critical and
+589.8	that's do I want to put aircraft in
+591.8	specific spots at my airport if I want
+594.8	to do so it's actually easier to do it
+596.4	at this stage than it is at a later
+598.6	stage so for example I've got my group
+601.8	of aircraft for these little parking
+603.2	spots what if I wanted to put in f15
+605.0	just in these parking spots and not over
+607.5	here what I could do is I could left
+609.2	click on it press control that six and
+611.2	then I could just go ahead and for my
+612.7	f-15 in there we'll just do the a model
+614.9	to keep my life a little bit simpler
+616.4	here this is different by the way than
+622.6	doing it by adding it to the whole
+624.6	airport at the same time and the reason
+626.4	being is if you add it to the entire
+628.1	airport at the exact same time what
+630.1	you're actually going to get is these
+631.8	aircraft going to the most logical spot
+633.9	which is often something like a hangar
+636.0	versus just sitting out here in the
+637.5	woods
+638.0	of course in the real world the f-15s
+640.0	would be sitting here ready to scramble
+641.9	at a moment's notice should they need to
+644.1	in a particular situation so that's why
+646.4	I'm taking the extra time to actually
+648.0	make sure they're in the right spot a
+649.3	word of warning however you want to be
+651.6	very cautious with this and that if you
+653.5	assign a loadout to these after you've
+655.9	regrouped that
+656.9	they will get moved around again to be
+659.8	rearmed so if I actually want to arm
+661.6	these individual aircraft you want to
+663.1	click on them ready arm them and then go
+665.0	ahead and select what you want in this
+666.2	case I'll throw some sparrows on there
+667.7	just because I can I'll grab this one
+670.0	okay I will just do the front two
+671.1	because we don't want to spend all
+672.2	afternoon working on this all right that
+674.0	looks pretty good now we're ready for
+675.7	the finishing touches go ahead and click
+678.2	and drag over the entire airfield make
+679.9	sure you get every detail it's got a lag
+681.6	for a moment then press G to group the
+684.0	entire airfield into one unit it's worth
+686.2	noting that this selected unit can vary
+688.5	if this is not the center runway or you
+690.8	want a different main unit to represent
+692.8	where everybody else's you can click on
+694.3	it press f4 and actually pick which one
+696.4	of these you want so for example let me
+698.3	say that this is actually going to be a
+699.7	group I could then click it and hit SiC
+701.5	group lead and now I'm good to go so if
+703.9	I click that and actually tap f6 check
+705.7	it out there's my team f-15 and note my
+708.8	f-15s are sitting here parked ready to
+711.2	go on the Christmas tree if I need them
+712.7	now of course if I had control six and I
+715.6	wanted to add so let's say I wanna put
+716.9	some C J's on here or something like
+718.3	that I could grab a group of those I'm
+720.2	gonna go ahead and grab this one right
+721.4	here that looks pretty good I'm gonna
+722.9	add four of those an outfit f6 you'll
+725.3	notice that they're ready to be selected
+726.7	and they've actually been assigned this
+728.4	parking spot way back over here but this
+730.3	is actually hanging or not a parking
+731.5	spot and you can see they're ready to go
+733.5	now one thing you're probably noticing
+735.3	is what I'm hitting f6 and a click one
+737.1	of these and hit ready arm you'll notice
+739.0	none of these load outs are available
+740.6	the reason for that is if you were to go
+742.6	to the editor real quick and check my
+744.1	scenario features I don't have unlimited
+745.7	magazines on if you wanted to be able to
+748.0	arm these f-16s and not have a limited
+750.5	things you'd have to actually find your
+752.3	ammo storage which for us if I recall
+754.0	correctly was down here I tapped the 9
+756.1	key mi numpad by the way so I could
+757.6	manually select these units select one
+760.0	of them and then you're actually gonna
+761.3	have to go to magazines and then you're
+763.1	going to have to add weapons now one of
+765.4	the cool tricks to this is you can hit
+766.8	filter by keyword or you can say show
+769.4	only weapons capable with aircraft
+771.8	toasted so for example I could come in
+773.9	here and say let's see you come down
+780.6	here a couple of these I'll see what's
+784.3	the Mavericks Mavericks are good
+786.9	and let me say uh let's do some harms as
+789.2	well I'm gonna add some of those and now
+791.2	you can come in here you can customize
+792.8	how many of them let's say we have a
+794.5	hundred those tanks let's say have 200
+797.0	of these tanks let's say I have 50 these
+799.1	let's say these probably add some
+803.4	Sidewinders sidewinder there we go let's
+809.7	say we have some of those I think that
+812.6	looks pretty good
+813.2	again I'm not have percent short version
+815.1	that at 15 carries I don't want to be
+817.2	wrong
+817.4	Wow they have 16 K just about everything
+819.1	out of the Sun here okay there we go
+821.8	much better let's see what sidewinder
+824.0	variation looks like we're dealing with
+828.2	the M model at some of those yeah and
+831.1	model both cases where are our sparrows
+834.1	again you want to be careful seven so
+837.0	let's go ahead and add some of those and
+838.5	then of course like I said we could just
+839.7	come in here and say oh we got a hundred
+841.1	of these again you could have a lot of
+844.8	fun with this because if this particular
+846.2	building is destroyed
+847.7	it means we won't be able to rearm your
+849.6	aircraft so now if I go to my f-16 ready
+852.1	arm I missed something that yeah you can
+855.4	see exactly because again those were
+860.1	Amram so if i go back to my 15s fingers
+862.7	crossed bummer
+864.2	we're missing the drop tanks yeah we
+866.5	don't have any aim-9 J's so you can see
+870.4	why that would make it very very
+871.6	strategic so that's basically all there
+873.6	is to it this is now a function Airport
+875.4	an endpoint I can go ahead and select it
+877.1	let's go ahead and launch a poll one
+878.5	here that's actually pretty cool
+879.4	actually watch this in action you can
+881.7	see that bull one as soon as I launched
+883.4	him he taxied he's actually act the X's
+886.1	pointed the runway and what will happen
+887.9	over time you still actually move across
+889.8	the airport get on to the main runway
+892.0	and then take off a moment later and
+894.2	there he goes just like I promised now
+896.6	of course I can click him at any time
+897.9	press the B key he's gonna turn around
+899.6	he's gonna come right back for a landing
+901.2	he's set himself up in a nice wide
+902.7	traffic pattern oh come on I don't need
+905.1	to go that far down Rhode Island to get
+906.6	there whatever I'm not the pilot bunk
+909.0	and he's back inside so if I were to
+910.7	zoom back in you can see that he's gonna
+912.6	go and get himself all the way back to
+914.3	his parking spot is he parks up here but
+917.2	he used this
+918.1	point so again you want to watch that so
+920.4	what fun is all this if we can't blow it
+921.7	all up so let's go ahead and switch to
+923.0	the jerk steam here and look at that
+925.5	just so happens there's Kinder's grab
+934.8	everybody it's gonna be 32 missiles go
+944.9	ahead fire and I see if it is let's hope
+957.0	I didn't accidentally pick the nuclear
+958.2	version
+958.6	oh they're within minimum range now try
+966.6	it hey that works remember all that hard
+971.9	work we just did certainly would be a
+974.1	shame if something just were to come out
+975.6	of low Earth orbit and blow it up let's
+980.0	see what happened here switch here team
+983.0	Otis hey we did pretty well it only
+986.4	really damaged one of the buildings
+987.9	which is why manual launches are always
+990.0	recommended when using ballistic weapons
+991.7	alright so flee this helps people out as
+993.7	far as our airports go one thing you
+995.5	don't want to do is combine this style
+997.0	of an airport with a single unit Airport
+998.8	it will melt on you and another thing
+1000.7	you want to kind of watch out for is
+1002.1	building two airports and grouping them
+1003.6	together you tend to get some really
+1005.6	glitchy behavior if you do that other
+1007.6	than that if you have any questions toss
+1009.0	into the comments hopefully this has
+1010.4	been helpful like I said this has been
+1011.5	kind of a common question recently so I
+1013.4	wanted to make sure I addressed it with
+1014.8	a little bit more detail than I usually
+1016.0	do other than that
+1017.5	enjoy

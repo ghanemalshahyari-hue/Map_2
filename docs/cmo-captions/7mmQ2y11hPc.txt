@@ -1,0 +1,1220 @@
+0.0	hello everyone on today's command
+1.9	tutorial we're gonna be taking a look at
+3.3	radar now unlike some of the other
+5.2	videos where it's kind of more of a
+6.5	general we're gonna be talking a little
+8.1	bit of shop here today
+9.2	radar is definitely a complicated
+11.5	subject and I actually delete myself a
+13.8	pretty hefty amount of notes here just
+15.5	to make sure I've got everything that I
+16.7	possibly I'm gonna need to cover
+17.9	wouldn't be surprised at this video ends
+19.6	up on a little longer side but again the
+21.5	more you understand about radar and how
+23.1	it operates the easier for time you're
+24.8	gonna have both employing it as well as
+26.9	defeating it so as you probably are
+29.2	aware for those who probably jumped on
+30.9	the wiki page as our pre reading right
+32.6	you know that radar basically stands for
+34.7	radio detection ranging quick history is
+37.1	basically when you go all the way back
+38.4	to the very very early days of wireless
+40.3	communication somebody observed the fact
+42.2	that if you have a large metal object
+44.2	that passes actually any object
+45.6	technically but in this case it was
+47.2	ships that passed between the sender and
+49.2	receiver of a wireless transmission it
+51.4	would cause that transmissions quality
+53.2	to dip it was an insult in the 1920s and
+56.2	30s as somebody realized wait a minute
+57.9	we can actually probably do something
+59.4	with this not to mention the technology
+61.6	had gotten good enough that we could
+63.3	reliably create certain shapes of
+64.8	waveforms detect those and the kinds of
+66.8	speeds that you would need so the basic
+68.8	principle of radar is relatively
+70.1	straightforward I go and close out of
+71.5	this real quickly basically what you're
+73.1	going to be doing is you're going to be
+74.1	sending out a pulse and then you're
+75.7	going to be timing how long it takes to
+77.5	get any returns to that pulse naturally
+80.0	since we're working at the speed of
+81.0	light those pulses are very very short
+82.7	in the return time is very very very
+84.7	fast which gives us excellent up to the
+87.2	microsecond data about the range of a
+89.5	target in this particular case if I have
+91.5	my little radar station right here keep
+93.0	in mind this is a p7e you couldn't
+94.4	detect the ship with it and i was
+95.7	picking up something that was six
+96.8	nautical miles away the travel time for
+99.4	light in that would be incredibly quick
+102.2	as a matter of fact for those who guys
+103.7	would like to do the math we do six
+105.4	point one nautical miles two
+107.7	light-seconds
+108.9	prepare for a small number BAM point
+113.3	zero zero zero zero zero three seconds
+117.5	in order for the light to go there of
+119.3	course we have to double it because you
+121.0	have to return as well so I should say
+122.9	the double that time but again that's
+124.8	incredibly fast which would tell us
+127.0	exactly where that particular target is
+128.4	now in the early days of radar of course
+130.6	generating these signals reliably was
+133.0	very
+133.5	difficult to do which is why the
+135.3	technology was so large we couldn't
+136.9	really mounted an airplane it was also
+138.2	very power intensive which brings us to
+140.7	our radar horizon now what are the chief
+143.5	limitations of all radar is the fact
+146.2	that it can't see beyond the curvature
+148.2	of the earth now if is it way way way
+149.8	out in here you can see this detail
+151.7	actually pretty clearly if I have a
+153.3	radar station sitting right here and
+154.9	somehow it could detect something that's
+156.3	you know 6,400 nautical miles away I
+158.4	think it's closer to 35 you would never
+160.5	be able to see it because the radar like
+162.8	just like light travels in a straight
+164.6	line there are some exceptions to that
+166.8	but we'll talk about that a little later
+168.2	on but the important thing to know that
+170.0	no matter what you're doing with radar
+171.6	you have got to be within the line of
+173.7	sight of that radar which of course
+175.0	means I selected this location in the
+176.9	middle of the ocean out here to prevent
+178.5	us from running into that problem but if
+180.4	you actually were to look all the way
+181.7	down to this island itself you'd
+183.3	probably notice that there are actually
+184.6	several mountains here these missile
+186.7	systems and these radars actually can't
+188.4	see through this mountain at certain
+190.7	altitudes because it's 1,300 feet tall
+192.7	now the radar horizon itself for those
+194.8	you guys who are curious you can
+196.2	actually calculate the radar horizon if
+198.1	you typed in radar horizon calculator
+199.7	and actually could work it out really
+201.0	really quickly so for example if I had a
+203.0	target that was 1,000 meters in my radar
+206.0	itself let's say 30 meters or to
+208.3	calculate this check this out you would
+210.9	see that my horizon for this radar is
+213.7	limited to twenty two nautical twenty
+216.5	two kilometers away that's an incredibly
+218.9	low altitude if you think about it that
+221.2	means if my airplane is less than a
+223.2	thousand meters and my mast is only 30
+225.4	meters I could be hiding from that radar
+228.1	just because there's no line of sight to
+230.6	it now that's again kind of a neat
+232.7	little detail we'll go into some of
+233.8	those more later all right let's talk
+235.4	about characteristics so I've got a
+238.0	bunch of different types of radars or a
+239.4	little handy too in the island right
+240.5	here I've got a classic this is a p10
+242.8	this is a knife rest this is basically
+244.4	quasi early warning radar classic I mean
+247.3	just looking at those old-style mast
+248.7	imagine a strong wind would take that
+250.2	thing in half we have a slightly more
+251.7	modern absolutely gigantic basically
+254.7	legacy style early warning radar and of
+257.4	course we have more monitor systems with
+258.9	the Patriot which actually has a neat
+260.4	radar that doesn't physically move
+261.9	unless they want to rotate it to point
+263.4	in a different direction
+264.3	and of course we have very sophisticated
+266.6	radars that you could see like here over
+268.6	on our Big Bird particular model I
+270.3	really should have gotten the one that
+271.8	was the clamshell radar but I kind of
+273.3	like this as an example as well and also
+275.1	have some airborne radars and of course
+276.6	I also have these handy-dandy ship
+278.3	radars as well which we'll take a look
+279.8	at in a minute so what are the
+281.1	characteristics of a radar well let's
+282.9	grab a radar and take a look so first
+285.5	things first when you select a unit in
+287.3	the database you're going to get a
+288.3	little bit of data here first of all
+289.9	you're gonna get generation generally
+291.8	the more recent the radar the more
+294.7	sensitive it's going to be in the better
+296.1	sensing in basically processing and anti
+298.7	jamming capabilities are gonna have
+300.2	1950s radars could be jammed so hard
+303.2	through their side lobes that it could
+304.6	actually blank out the entire radar
+306.2	screen modern writers of course would
+308.4	detect the frequency to being jammed on
+309.9	and quickly change frequency but we'll
+311.3	talk about that you're gonna find out
+312.9	what type of raid artists in this case
+314.3	it can search air targets that includes
+315.9	things like missiles we get range
+317.8	information which is actually it's an
+319.6	interesting point here that yes radar
+321.2	usually is designed to return range but
+323.2	there's gotta be other anomalies with
+324.6	this and we'll deal with that a little
+325.5	bit and give you the speed give you a
+327.2	heading and then it gives you this thing
+328.6	called operating bands search and track
+330.9	a so what is that referring to well as
+334.4	you all know there's different
+335.8	wavelengths of electromagnetic radiation
+338.2	basically you have very very wide lit
+341.2	wavelengths again I think this
+342.4	particular wave is I can't read that one
+344.7	kilometer long holy smokes is that a
+347.1	long wavelength and it's frequency is a
+349.0	whopping 300 Hertz it's 300 cycles per
+351.9	second once you start getting up to
+353.5	visible light you can see that
+354.7	everything gets a lot shorter and of
+356.5	course we have sort of the radio
+357.9	frequency which is where we're gonna be
+359.3	operating
+359.8	most of our radars then another way to
+361.7	look at it this is a neat little picture
+363.0	too is you have all these neat little
+364.6	bands starting with the very very high
+366.3	frequency radars and this Sun all the
+368.5	way up to the very high frequency
+369.8	through the ultra-high frequency radar
+371.5	is overrun Bizet so what does that mean
+374.1	and why do we care well this particular
+376.2	radar operates on the a band which is
+378.7	probably going to put it somewhere in
+379.9	the HF range so that wavelength is
+382.7	actually going to dictate a lot of
+384.3	different things the first of which is
+385.9	going to dictate how much power you can
+388.3	transmit through that radar generally
+390.4	lower frequency radars have the ability
+392.4	to produce much much much higher
+394.3	wattages which means if you pour that
+396.6	much more electrical energy into the air
+398.1	you're going to be able to see tar
+399.8	from a greater distance as a matter of
+402.1	fact despite this being late 60s
+403.7	technology it is a substantial tracking
+406.2	range or I should say search and
+407.4	detection range which is actually very
+409.0	impressive for it but there's a
+410.9	consequence to being in the a band and
+413.1	that's because your wavelength is so
+415.2	long you lose resolution and we're
+417.6	actually gonna demonstrate that very
+418.8	quickly somebody got my pizza in here
+420.8	I'm gonna go and turn that on real fast
+422.1	flip this radar on go ahead and unfreeze
+424.7	time and we should pick up some targets
+426.1	stop now what the heck I thought these
+429.9	things were supposed to be precise
+431.5	well this target we know is over here
+434.3	somewhere we don't know how fast is
+435.8	going we don't know its altitude we
+437.1	don't even know its heading but we know
+438.9	it exists somewhere inside this area
+440.5	you're probably sitting there going but
+442.3	but it's a radar these things are
+443.7	accurate I mean usually like
+444.8	electromagnetic creation well here's the
+447.5	problem when your wavelength is this
+450.1	wide at this distance it means that the
+454.0	target could be anywhere within this arc
+457.6	so those of you who played Sam simulator
+460.2	and I messed up with the SI 5 a little
+461.8	bit the s 200 you probably have
+463.5	experienced this when you've looked at a
+464.9	radar contact and it comes like a smear
+466.8	across the PP I like this that's exactly
+469.0	what's going to happen when you use a
+471.0	long wavelength you're going to improve
+473.4	your ability to detect things however
+475.3	you're going to decrease your ability to
+477.6	detect them precisely now the
+479.7	interesting thing here is not only do we
+481.7	have a little bit of issue as far as
+482.9	what angle he look is existing at but we
+485.2	also don't know what the altitude of
+487.0	this target is and we're gonna deal with
+488.4	that a little later on I'm gonna allow
+490.0	that track to get a little bit better
+491.2	here because again these are
+492.6	mechanically scanned radars so they have
+494.9	to basically sweep the sky rapidly and
+496.9	now you can see we picked up that bogey
+498.6	and we're starting to get a little data
+500.5	we're still struggling with this one
+501.9	right here and now that we've had enough
+504.6	time to sweep around a couple times we
+506.3	have a better idea
+507.4	but again look at all these possible
+509.6	locations this particular target was if
+511.8	we were guiding a missile
+513.0	we would never reliably hit them or at
+515.1	least like I said reliably hit them so
+517.4	let's go ahead and drop these two
+518.8	contacts and I'm going to thank this guy
+522.0	on the Alpha band to go ahead and say
+524.3	thanks for help I don't need you anymore
+526.0	today
+526.4	OOP and he's gone so later on people
+529.3	realized that those high frequency
+531.1	wavelengths why they were great at
+532.7	detecting a long distance
+533.7	keep minuses in along electronics they
+535.8	weren't going to be reliable enough so
+538.1	what happened is they realized well we
+539.7	could just build the transmitter bigger
+541.2	and with better materials this one is
+542.6	really cool because it's got all the
+543.7	individual transmitter units here and
+545.2	they're actually able to get a more
+547.1	reliable reading even though again
+549.0	they're still going to be working on
+550.7	that wavelength the idea here was
+552.6	instead of having a little tiny radar we
+554.7	can actually increase the size of the
+556.2	dish to concentrate that signal in a
+558.3	smaller area which is going to improve
+560.0	our gain as well as our maximum range so
+562.4	I flipped this sucker around real quick
+563.7	again this is basically the same
+565.4	generation it's just a much much much
+567.0	larger dish and I don't think we're
+570.0	picking up any up there we go again
+572.9	you've got that significant ambiguity
+574.8	because of the limitation of that
+577.9	particular wavelength now there's
+580.1	another thing I'm going to throw out to
+581.0	that if you were to click on any air
+582.6	unit inside of this game or actually any
+584.8	unit for that matter if you scroll to
+585.8	the bottom you'll notice that there's
+587.4	actually going to be two different radar
+589.5	detection ranges and that's because
+591.5	these are the really really long
+592.6	wavelengths they're gonna have their own
+594.1	personalities and then these are very
+595.7	short wavelengths which are going to
+597.2	also have their own personalities now
+598.9	for normal aircraft that are not stealth
+600.5	enhanced these two values are generally
+602.3	going to be the same but if we get
+604.1	something such as an f-22 you'll notice
+607.5	that with the long wavelength some of
+609.8	those early radars or this early warning
+611.5	radars you have a significantly easier
+613.7	time detecting the f-22 than you do on
+616.4	the shorter wavelength radars that are
+618.9	basically going to be responsible for
+620.1	fire control so like everything there's
+622.4	a little bit of trade-off believe it or
+624.4	not you can use a 1950s radar to pick up
+626.5	an f-22 because that wavelength is so
+628.3	long okay so let's go back to my notes
+630.5	real quick a screwed scoop so basically
+632.6	you're oh why would I do that that was
+635.1	so rude there we go
+636.6	so your long wavelengths are gonna be
+638.1	for early warning radars extremely high
+640.3	power again these things are just absurd
+642.1	and your short wavelengths are gonna be
+643.7	for fire control because their
+645.5	wavelengths are so much shorter I
+646.8	believe on our Patriot let me go confirm
+649.4	this real quick before you do something
+650.5	stupid beautiful this is a jibon radar
+653.1	watch what happens when I flip this
+654.3	thing on give it a second look at that
+657.6	holy smokes is that a reliable track Wow
+661.6	because again that wavelength is so much
+663.0	shorter you get such a better resolution
+664.8	you'll also notice I'm getting speed and
+666.3	heading and things
+667.0	that as well which we'll deal with in a
+669.1	little later on all right let's go down
+671.0	pulse repetition rate now here's an
+673.3	interesting problem that radars great in
+675.2	the early days when you had pulsed
+676.9	radars if I send out a signal I'm
+679.0	listening for the return of that signal
+680.5	which means I'm not sending out another
+681.8	signal and so I've listened for those
+684.2	signals to return this is called the
+685.5	pulse repetition frequency one of the
+687.7	problems you could have is you could
+689.4	send out a signal and then send out
+690.9	another signal and then receive a signal
+693.2	back from the first signal you sent
+695.6	creating a very large ambiguity because
+699.1	of that they started making basically
+701.1	long ranges where you can say at this
+703.1	point light has had enough time to
+704.8	travel this distance we're not going to
+706.5	be listening for that signal anymore
+708.0	that's called range ambiguity and it's
+710.4	kind of a neat little problem that we
+712.2	don't have to worry about in command
+713.4	just know that for us the pulse
+715.3	repetition frequency is going to dictate
+717.0	our typical maximum range unless of
+719.4	course you have something that it has
+721.1	very very sophisticated processing which
+723.2	we'll talk about in a minute which
+725.0	brings us to our waveform so like I said
+726.9	the first early waveforms for radars
+729.1	were basically pulse you sent out a
+730.6	signal any wait until things got back
+732.1	somebody realized that I can send out a
+734.5	continuous wave of things basically
+737.2	measured the Doppler shift to detect
+738.7	targets anybody familiar with the s 200
+741.6	which I of course I'm using the term
+744.1	that I think of it as the s 200 of
+745.9	course is the SI 5 this particular
+748.0	system actually had a continuous wave
+750.6	radar this was amazing because you could
+752.6	just pour the electromagnetic energy
+754.1	onto the target and then basically look
+756.5	for the returns because you'd see it the
+758.6	problem is if you just shooting at one
+760.2	continuous wave there's no way that you
+762.2	can measure the range reliably which
+764.4	brings us to how they solve that with
+766.1	what they call frequency modulation
+767.7	somebody realized that you know I'm
+769.4	sending out my little wave of electrum
+770.8	attic and negative energy out here we've
+772.6	hit something but they'd send a slightly
+774.0	different frequency wave out a moment
+775.7	later and then when they got the returns
+777.7	from whatever target they'd be able to
+779.6	filter out the specific wavelength that
+781.7	they sent out to know when that wave was
+784.1	sent in therefore the range of the
+785.9	target whoa that is quite a mouthful it
+789.1	just know that it was a pretty slick
+790.3	trick by the way a lot of fire control
+792.0	radars use continuous illumination in
+793.8	order to actually fire and guide weapons
+795.8	so for example if I'm launching a
+797.7	sparrow missile if you want to think
+799.4	about it as a quick example
+800.7	you're probably going to want to launch
+802.2	a continuous wave so that the missile
+804.0	can constantly see where that big bright
+806.5	reflection in the sky is for that
+808.9	particular target that you are engaging
+811.1	at that time yeah you can actually see
+813.0	here that this f-16 a you can see that
+815.4	it has two different basically settings
+817.6	depending on when it is illuminating
+820.1	which is continuous wave versus what
+821.8	it's pulsing one is searching and
+823.0	tracking okay too much information don't
+825.4	worry about it just know that that was
+827.1	kind of neat technology let's talk about
+828.8	Doppler filtering all right let's go
+831.4	ahead and disable our radars here she
+834.1	woof real quick make sure you're all
+836.7	shut off as well again we were cheating
+838.3	a little bit cuz I hit both radars going
+839.7	at once let's go ahead and hide this and
+842.3	I'm feeling pretty comfortable okay so
+845.4	I'm gonna go ahead and pause again this
+847.6	time I'm gonna tell my handy-dandy
+849.3	mig-21 to go ahead and flip his radar on
+851.2	and I'm gonna go ahead and tell my
+852.8	handy-dandy f-5e to flip his radar on
+854.7	also I've also got to tell them to
+856.4	travel in this direction so like I was
+858.8	saying the pawl space radar was
+860.1	wonderful because it gave you the
+861.3	ability to see a target measure its
+862.8	range and of course with some side
+864.2	processing you could determine its speed
+865.9	as well as its heading and altitude to a
+868.2	lesser extent the problem was is that
+870.5	the ground is an amazing radar reflector
+873.4	so somebody realized this and said well
+875.3	there's got to be a way that we can
+876.7	still reliably detect targets underneath
+878.9	us
+879.3	that's where Doppler filtering came in
+881.4	I'm just going to confirm that I'm
+882.6	facing the right direction here because
+884.0	I have commonly I'm pretty good for this
+885.8	okay I'm gonna swing you around a little
+887.6	bit there we go so what they realized is
+890.3	not only can you send out a pulse but
+892.2	you can actually scan for the Doppler
+894.3	shift and that pulse remember as you
+895.6	approach a target or you get away from a
+897.1	target you're going to cause that
+898.4	frequency to shift
+899.5	it's the classic I'm sure you've seen
+901.4	the example where they have the train
+902.8	coming towards you and you can hear the
+904.2	pitch shift
+904.8	well electromagnetic radiation do the
+906.7	exact same thing somebody realize I
+908.8	could combine the pulse but then filter
+911.0	it by speed so that I could detect
+913.4	targets even if there have very very
+915.7	strong ground returns basically in the
+917.4	foreground so my example here if I grab
+919.5	my look down and shoot down radar my f4
+921.2	phantom this had a pulse
+923.3	Doppler radar which meant it sent out a
+925.5	pulse and it actually would filter out
+927.5	bad ground reflections by detecting that
+929.9	there was a speed difference between the
+931.9	target and what it was looking for and
+934.6	case it's already picked up at Target
+935.9	here I'll give it a little bit of time
+937.2	to actually get a little more reliable
+938.2	track and you can see it's at 12,000
+941.1	feet versus our handy dandy f4 which is
+943.7	at 36,000 feet now on this side of the
+946.4	world I've gone ahead and got myself a
+947.9	mig-21 BIST which I know doesn't have
+949.6	the greatest radar in the world but it
+951.3	does not have that doppler shifting
+953.0	capability so as a result since it can't
+955.3	filter out the Doppler speed difference
+958.0	keep in mind we're notching here and
+959.3	we'll talk about in a minute we'll never
+961.0	be able to detect a target that is below
+963.6	us so one of the common strategies by
+965.9	the way if you want to improve detection
+967.4	range and radar it's actually fly at a
+969.1	lower altitude because it makes it
+970.6	easier to see things that are above you
+972.2	because there's no ground returns so in
+974.4	this case I could actually fly right
+975.7	over the top of him yeah and I'll never
+977.5	detect that target that's in front of me
+979.1	of course if I ordered in my mig-21 to
+981.2	drop down to a little bit lower altitude
+983.0	this will be a pretty slick trick
+986.2	perfect notice I had no difficulty doing
+989.8	that because I'm not below that target
+992.7	there's no ground reflections to
+994.1	actually block that keep in mind just
+996.1	about all radars have some form of
+997.8	Doppler filtering at this point by the
+999.6	way because if Doppler filtering you get
+1001.2	the speed of the target no problem and
+1002.9	you also run into this problem called
+1004.1	noshing so notching is basically when
+1007.5	you're facing a target directly let's
+1009.3	say you have a situation looks a little
+1010.4	bit like this actually let me go ahead
+1011.9	and simulate this why not right let's
+1013.8	grab him let's move him exactly in this
+1015.7	direction like this
+1016.7	let's grab my radars move it back a
+1019.5	little bit alright slow down time okay
+1023.5	observe this target now has no speed
+1028.2	shift relative to the target I know
+1029.9	you're saying well this guy's moving
+1030.8	well remember he's filtering out his
+1032.7	movement also otherwise he couldn't pick
+1034.1	anything as a result he cannot see this
+1037.4	target because there's no speed shift
+1039.8	now if he had a mode where he'd flip on
+1041.8	just pulsed mode like the f-14s do I
+1044.4	believe he could actually still see this
+1046.4	target even though actually I believe it
+1048.7	he's below it so he'd never be able to
+1050.0	see that target he will never be able to
+1051.8	see this target unless he puts a little
+1053.1	bit of an angle on it let me go ahead
+1054.4	and pause alright we were able to catch
+1056.0	a little bit of that but again in the
+1057.8	real world you'd have a heck of a time
+1059.7	seeing a target that's exactly the
+1061.2	90-degree angle to you and as a matter
+1063.0	of fact now that he's entered into that
+1064.5	filter zone he's gonna be very difficult
+1066.4	I believe he's official
+1067.4	yep oh we're tracking it by the TV
+1069.3	that's cheating
+1070.8	I think you have the idea though just
+1072.9	know that in the real world you'd have a
+1074.3	heck of a time seeing something that
+1075.8	beams you also when we launch weapons if
+1078.3	a target beams us we may actually lose
+1080.4	radar lock on them because of this
+1082.5	phenomenon because again if we didn't
+1084.5	filter out that basically zero speed
+1086.4	we'd pick up all the ground returns
+1087.7	again good stuff for DPS players all
+1090.8	right let's talk about scanning so let's
+1092.9	go ahead and now flip these guys back
+1094.0	off you guys have done a lovely job
+1095.3	thank you so much grab this one really
+1097.7	quickly I'm going to shut him off too
+1099.0	I'm gonna go ahead and order these guys
+1100.5	to go over here somewhere leave me alone
+1102.6	leave me alone and I'm gonna go ahead
+1104.6	and drop these two tracks now radars
+1106.5	themselves if you probably saw our giant
+1108.4	RP 70 here basically are scanned usually
+1111.6	electronically up and down and then
+1113.3	mechanically or by rotating if you
+1115.2	actually were to go into the Beluga
+1116.7	database you can get the detail and how
+1118.4	often the scan is let me show you how
+1120.3	that affects us real quick I'm gonna go
+1121.8	ahead and flip this sucker back on now
+1123.6	notice because he is rotating very very
+1125.7	slowly like my mouse here is here he's
+1128.1	not going to be able to detect a target
+1129.9	until his radar is basically gonna point
+1132.0	in the general direction of that target
+1133.9	like I've demonstrated this is called
+1136.5	the update rate and it's basically built
+1138.8	into every radar inside this program now
+1141.0	old radars like this can update as slow
+1143.1	as once every 10 seconds or even worse
+1145.5	depending on the generation radar so
+1147.4	you'll notice now that that radar is no
+1148.8	longer looking in this direction that
+1150.7	all these targets that we just spotted
+1152.1	now have a little two seconds underneath
+1154.1	them because we can't see them again
+1155.7	and so the radar makes its next pass
+1157.8	coming around so watch this let's hope
+1160.6	we can reconnect those two other targets
+1163.0	that we missed
+1163.7	although these guys might be seeing them
+1165.1	visually also there we go so you'll
+1167.2	observe about 10 seconds later we got a
+1169.0	new update for that target and now we
+1171.4	also have a general idea of their
+1172.7	heading as well as your speed obviously
+1174.2	they're not doing 180 knots to this
+1176.0	information is poor but again it's
+1178.0	important to understand that later on of
+1180.1	course I'll by the way this tracking
+1181.2	limits on radar I just want to mention
+1182.6	that real quickly let me turn this on
+1184.0	real fast and good that's actually
+1186.5	represented by this little bar right now
+1188.2	keep in mind this is a three-dimensional
+1190.6	shape this is basically a cone so
+1192.8	basically if the target is significantly
+1194.8	below this cone even if it has looked
+1196.7	down shoot down you won't be able to
+1198.1	physically see this target my favorite
+1199.9	example of this of course is
+1201.1	if you go over to our handy-dandy
+1202.3	Patriot Barrett battery over here you'll
+1204.4	notice that he can only see targets
+1206.5	inside of this array and actually pretty
+1209.5	limited vertically to if I recall
+1210.9	correctly you could basically be fifty
+1212.6	thousand feet right here the Patriot
+1214.5	could not see straight up although I'm
+1215.8	not a hundred percent sure exactly what
+1217.2	that angle is
+1217.9	that's what I meant by mechanical
+1219.2	scanning okay so later on somebody
+1221.2	realize that we can take a radar and
+1223.5	basically put a bunch of smaller
+1224.9	elements at the radar next to each other
+1226.6	and create what they call a phased array
+1228.4	radar let me see if I can get you a
+1229.6	quick picture of that yay oh there we go
+1234.6	so basically what they did is they took
+1237.0	instead of having one big radar they
+1238.5	took little teeny tiny pieces of the
+1240.2	radar and put them together in a big
+1241.4	array just like you see right here and
+1243.5	as a result they are able to
+1244.9	electronically scanned by doing phase
+1246.8	shifts of the radar itself in order to
+1249.2	see different parts of the sky the
+1251.2	advantage of doing it non mechanically
+1252.8	is it is stupidly fast update rate which
+1255.9	is exactly what I'm going to demonstrate
+1257.1	now let's make sure this guy's shut down
+1259.5	as well that looks good to me let's grab
+1261.6	my f-15 so at f-15 of course as you know
+1265.7	has a very very good air-to-air radar on
+1267.9	it the older version of this air-to-air
+1269.7	radar was actually a mechanically
+1271.3	scanned radar so I'm gonna flip that on
+1273.3	spin around like this and it didn't take
+1277.5	him too long to immediately identify
+1278.7	this target over here again this is a
+1280.9	very very nice mechanically scanned
+1282.8	radar but keep in mind it's basically
+1284.6	sweeping left and right like this let's
+1287.1	go ahead and shut him off again let's go
+1289.7	here and now let's grab an actively
+1292.0	scanned phased array radar watch this
+1295.0	this thing is like it's like cheating
+1298.3	not only can it scan all points of the
+1301.0	sky almost instantaneously but it has
+1303.1	the ability to identify what type of
+1304.6	aircraft we're looking at as well as
+1307.0	things like its position its speed and
+1309.4	it's unbelievably difficult to counter
+1311.8	detect which is something we'll get to a
+1313.3	little later on just know that a phased
+1315.0	array radar is just a lot more
+1317.0	sophisticated and scan speed it's gonna
+1318.6	be a lot more precise moving down
+1320.6	synthetic array so there are some radars
+1323.1	believe it or not that instead of having
+1324.6	the array itself move they actually
+1326.8	moved the whole body this is usually
+1328.4	seen in satellites and it's seen as some
+1330.3	side-looking airborne radar unlike the
+1332.3	mig-25 reconnaissance
+1333.8	versions just know the key thing here is
+1335.5	it's just a phased array that you move
+1337.0	the airplane instead of moving the radar
+1338.8	resolution we've looked at that a little
+1340.9	light already
+1341.7	display we're just gonna go really
+1343.6	really briefly here basically display if
+1345.7	you wanna think about the a scope is the
+1347.0	classic you know this is basically you
+1348.5	had a little chart like this and the
+1350.2	very very early days of radar you
+1351.5	mechanically turn the radar usually with
+1353.1	a little wheel and it would give you a
+1354.5	little display then on the left side
+1355.8	this would be you the right side it
+1357.5	would be any targets and any radar
+1359.1	returns would be represented as a little
+1360.8	basically spikes keep in mind that would
+1363.1	meet thank you a long time to search the
+1365.5	sky with and that's one of the things
+1366.9	you'll see with those old scr style
+1368.6	radars from world war ii abbey scope is
+1370.8	basically the same kind that you're used
+1372.3	to in dcs along the bottom you would
+1374.1	have any left to right up and down would
+1375.7	be range and ppi is the typical radar
+1378.1	display for example if i were doing a
+1379.6	PPI display right now I could pretend
+1381.6	this is my radar and this is what you
+1383.0	would see all around you basically any
+1384.8	contacts will come up like this and
+1386.3	you'd have some kind of bearing that you
+1387.8	can measure relatively don't worry about
+1389.5	that too too much our processing we
+1391.5	talked about that a little bit basically
+1393.1	in the old days you had analog
+1394.3	components which weren't the most
+1395.5	reliable we're talking of a cube tubes
+1397.1	and things like that the oats electrons
+1398.8	and stuff like that really really really
+1400.6	really fun technology but it wasn't
+1402.5	terribly reliable it wasn't very fast it
+1404.3	was very very noisy so you had radars
+1406.4	with like let's say a one megawatt power
+1408.6	rating that would have the same
+1410.3	efficiency as let's say a 25 kilowatt
+1412.9	radar today because the processing was
+1415.1	bad later on you got digital processing
+1417.3	again digital processing enables you to
+1419.1	do things like the frequency modulation
+1420.6	in the s200 you got your face tray
+1422.8	radars basically a drastically improved
+1425.6	the resolution as well as reliability as
+1427.8	well as the need for not having to
+1429.7	overdo it it also improved jamming
+1431.6	resistance as well integration I just
+1434.2	put this in here to say that some of the
+1435.9	better radars will actually take
+1437.4	multiple passes at the same target area
+1439.7	and then integrate those together to
+1441.3	basically if there's a fine signal to
+1443.0	actually make it louder over time
+1444.2	nothing you need to worry about too long
+1446.0	which brings us to derived information
+1447.9	again radars can tell you the heading
+1449.9	over time so basically what you do is
+1452.6	you look at the target wait a minute and
+1454.3	look at the target again and determine
+1455.8	how far they moved in a minute in order
+1457.9	to determine what their heading and
+1459.4	speed is now I'll stick to it I put a
+1461.5	little star next to it and let me show
+1463.4	you why let me go ahead and shut this
+1465.5	guy off real quickly
+1467.0	this one off real quickly as well but it
+1469.0	dropped these two contacts I should
+1470.5	probably move these guys back out of the
+1471.9	way let's go get my knight wait not so
+1474.7	great
+1475.0	aircraft Irish I'm not so great radar oh
+1477.0	that's way too good let's get something
+1478.9	less sophisticated you ass got my piece
+1481.0	ebony turn you back on
+1482.7	of course I like my p70 because it's
+1485.3	just a really really really long range
+1487.4	radar keep in mind our radar horizons
+1488.9	like right here so this is like almost
+1490.6	like pointless pause all right click on
+1493.8	my target real quick you'll notice we
+1495.6	don't know his course speed or altitude
+1497.1	I'm gonna go ahead and give it a little
+1498.3	bit of time to pass here cuz remember we
+1499.8	gotta wait for that to come by again to
+1501.0	get a better track get us a better track
+1503.1	perfect notice we now have a channel
+1505.4	idea of its course and we have a pretty
+1506.9	good at that's actually that's accurate
+1508.2	for speed now that I think about it but
+1509.9	we have no idea what its altitude is now
+1513.3	you're sitting there going well that
+1514.4	doesn't make sense I'm able to detect
+1515.8	though I can only detect the distance to
+1518.1	the target yeah which is another reason
+1520.4	why we have so much ambiguity here is
+1522.3	we're not how 2 percent sure how high
+1523.7	off the ground this particular target is
+1525.6	as a matter of fact since this only
+1527.3	tells us how far away something is we
+1529.4	could actually have a sack of targets
+1530.9	here there are all at different
+1531.6	altitudes at different ranges to us that
+1533.5	would show up basically as a single
+1535.0	contact now the way they solve this
+1537.7	problem is what they call height finding
+1539.4	radars or what they call 3d radars which
+1542.0	are basically radars that have multiple
+1543.5	lobes that you can actually analyze
+1545.5	different slices in the sky as the radar
+1547.8	rotates we'll deal with that a little
+1549.3	later on which finally brings us to whoo
+1552.1	sorry I told you talking shop today
+1553.7	radar in command so we have a couple
+1556.2	different types of radar command we have
+1557.5	air search radars we have surface search
+1559.0	and we have fire control my greatest way
+1561.1	to do this is to grab us our average
+1562.5	Russian ship which is gonna have all of
+1564.9	this basically you have your surface
+1566.9	search radar Caesar also think about the
+1568.8	ones you see this little slotted radars
+1570.5	like on little people's fishing boats
+1571.9	it's basically what this is although
+1573.8	military surface search tend to be a
+1575.5	little more sophisticated a lot of times
+1577.2	they have enough resolution to detect
+1578.6	periscopes which we'll deal with in a
+1579.8	minute usually we have air search radars
+1581.8	keep in mind some can be multifunction
+1583.9	radars the top plate for example here
+1585.9	can search both the air and the surface
+1587.6	it is a 3d radar which means it can also
+1589.9	give you altitude information so let's
+1592.3	go ahead and grab our p7 here get rid of
+1594.2	it let's grab our handy dandy ship right
+1595.8	here flip it on real quickly with this
+1597.6	radars and notice in a moment we
+1600.3	immediately had the altitude and
+1601.6	everything because that is such a
+1603.2	sophisticated radar and it has very very
+1605.6	good processing onboard we have stuff
+1608.1	like this let's scroll down scroll down
+1609.5	scroll down I want to see if we have
+1610.9	exact here we go we also have fire
+1612.8	control radars these tend to have a much
+1614.9	much tighter wavelength you don't really
+1616.7	search with them it's not to say you
+1618.2	can't search with them it usually just
+1620.0	means it takes a lot more concerted
+1621.7	effort it takes a longer time to do so
+1623.6	notice by the way the wavelength is much
+1625.6	much much shorter here and we have a
+1627.3	higher frequency in order to provide us
+1629.1	with that extra resolution that we're
+1630.3	going to need a lot of times fire
+1632.0	control radars they come in paired kits
+1634.2	so basically you can have one side of
+1636.5	the ship with one radar looking at one
+1638.1	target and another side of the ship with
+1639.5	another radar looking at another target
+1640.9	of course if they get destroyed it's
+1642.6	gonna be very very difficult to direct
+1644.0	weapons and here's actually your fire
+1645.5	control radar slash weapon director
+1647.4	right here kind of surprised oh no
+1648.8	there's okay there's a TV version of
+1650.4	this radar version I'm just kind of
+1651.7	surprised by that but again you can see
+1653.4	how many different types of radars can
+1655.3	guide so many different types of weapons
+1657.0	if you actually scroll down here you can
+1658.8	see all the different fire control
+1660.3	radars but they're actually linked to
+1661.8	which is actually like I said pretty
+1663.5	cool so a surface search we have air
+1665.5	search keeping my air search can exist
+1667.2	in the air as well we have fire control
+1669.0	we should have looked at we also have
+1670.2	these other funky ones who have terrain
+1671.5	avoidance and weather radars what do I
+1673.6	mean by that well in case you've ever
+1676.4	seen in f1 11 which is a really really
+1678.1	neat plane you'll probably catch the
+1680.1	fact that it has a terrain avoidance and
+1682.0	following radar this basically enables
+1684.3	this aircraft to fire a fly at a very
+1686.8	very very low altitude safely over rough
+1689.5	terrain so if I were to quickly get one
+1691.5	of these things
+1692.1	let's grab myself an f-111 let's see one
+1696.9	one one F that's what I'm talking about
+1699.0	oh I don't think I'm going to put
+1700.6	anything that shouldn't be on there
+1701.7	let's go ahead and grab this one we'll
+1703.3	make a copy of it go ahead and get his
+1704.9	buddy over here I'm gonna go ahead and
+1706.8	turn his radar on do one of these I'm
+1710.4	gonna go ahead and put him directly
+1711.2	behind him so we can be totally fair as
+1713.5	far as the course leave his radar off
+1715.5	set his altitude to minimum grab this
+1718.0	one set his altitude to minimum alright
+1721.6	so he's now flipped on all of his radars
+1723.7	not just his rain falling radar although
+1725.5	it looks like I'm gonna have to move him
+1726.5	back quite a bit here
+1727.9	speed up time a little bit here wow this
+1730.3	is taking him a lifetime and a half to
+1731.9	get down to altitude here
+1733.5	that's all right though it's like a
+1737.0	continuous conveyor belt all right this
+1740.6	will be a neat little demonstration I'll
+1742.0	go ahead and flip the star mode on so
+1743.5	you can see both alright check it out
+1745.6	both of these aircraft are operating at
+1748.2	the exact same altitude but this one's
+1750.3	got his train falling radar on this one
+1752.7	has his terrain-following radar off when
+1754.9	we approached the terrain here we can
+1757.0	see he pops up to about 250 feet to pass
+1759.2	safely over again this is our radar
+1760.8	version 350 seems to be his max altitude
+1763.5	let's take a look at what this one's max
+1765.6	altitudes going to be exactly the same
+1770.7	so it's important to know that even
+1772.7	though that radar is a type you don't
+1774.5	have to have it switched on in order to
+1776.7	safely go ahead and cross terrain which
+1779.0	brings us to weather radar the only
+1780.8	people who really have weather radar
+1782.2	other than ships are going to be
+1783.8	aircraft such as civilian aircraft like
+1786.1	if I were to go over here and go to me a
+1787.6	737 or something like that grab that one
+1789.7	real quickly load it up with some
+1791.1	passengers if I were to actually flip
+1793.0	its radars on let's go to sensors you
+1795.4	can see it has this generic doppler
+1796.9	navigation radar on it
+1798.3	basically the only thing you need to
+1799.8	know about that is when you detect that
+1801.4	signal it simply means you're probably
+1802.6	dealing with a civilian aircraft okay
+1805.7	all right finally we've talked about
+1807.1	this a little bit later a little bit
+1808.7	earlier I should say not later I'm
+1810.1	talking about it now basically some
+1811.9	radars are 2d which do not give you high
+1813.7	that information in some radars are 3d
+1815.7	which do give you height information
+1817.1	again by using creative work with the
+1819.2	wavelengths themselves should say
+1820.8	nothing wavelengths basically the lobes
+1822.4	but keep in mind in the old days when
+1824.2	you would actually have a lot of Russian
+1825.7	radars as you'll see this sometimes like
+1827.8	if I were to quickly add a file via say
+1829.2	mic I stick this in the ocean if I do
+1830.9	odd pair you'll actually notice in the
+1832.8	old days what they would do a group ride
+1835.0	pair there we go they would actually
+1836.6	take a 2d radar and pair it with a
+1838.6	specifically designed nodding radar that
+1841.3	would be used for basically spotting the
+1842.7	height of the target that the main radar
+1844.8	had already picked up so keep in mind
+1846.6	you have that range we have short medium
+1848.5	and long key thing with short is
+1850.0	generally you're going to be getting
+1851.2	updates to the target more often and as
+1853.3	well as you're probably going to be
+1854.7	using a very very short wavelength for a
+1856.6	more resolution medium is going to be
+1858.4	kind of a balance and of course long
+1859.8	you're going to be trading that
+1861.3	basically extreme range for limitations
+1863.3	such as lack of hype finding or lack of
+1865.6	that other critical
+1866.8	like again speed or something like that
+1869.1	Verizon limitations we've talked about
+1870.7	this already
+1871.5	will you up most radars are limited by
+1873.4	the radar horizon but not all so let's
+1877.1	go ahead and actually reset the scenario
+1878.9	quickly
+1879.6	yeah really creative name I know I know
+1881.7	I know and let's go ahead and take a
+1884.0	look at this radar this is the steelwork
+1888.0	slash Duga this is a massive massive
+1891.5	when I say massive if you've ever seen a
+1893.5	picture of this thing you know how big
+1895.6	this day is again you're about this tall
+1897.1	versus this radar it is so big it
+1899.6	actually has a radar signal that sends
+1901.4	out that's separate from the system that
+1903.8	receives it which is just incredible
+1905.8	these radars are such long wavelengths
+1909.0	that they can actually ricochet their
+1911.0	signals off of the horizon in order to
+1914.1	detect things that are insanely long
+1916.5	distances away
+1917.9	I've actually grabbed this it has a 3200
+1921.5	nautical mile range keep in mind however
+1923.9	though if you look really really quickly
+1925.3	this is designed for space search this
+1927.6	is not typically something that you're
+1929.7	going to be detecting ships or anything
+1931.5	like that however there are some air
+1934.3	radars that do have the capability to do
+1937.3	surface search at extremely long range
+1939.8	as well and these are all your over the
+1942.8	horizon style radars like this is a
+1944.7	great one that Rother the TPS 71
+1947.1	actually you can see this distance and
+1949.2	it can actually see targets beyond the
+1951.9	radar horizon itself because of the way
+1953.9	it ricochet is often basically the upper
+1956.1	parts of our atmosphere just to know
+1958.1	that you're ambiguity is going to be
+1959.5	ferocious
+1960.1	I mean you could be off by 60 miles at
+1962.2	the range of a target but if you needed
+1964.0	that general information about something
+1965.3	off in the distance you can get that
+1967.1	with these over the horizon radars
+1969.5	scrolling down um ECM oh good that's
+1972.7	just an important point so what I'm
+1974.4	gonna do is I'm gonna grab my handy
+1975.7	dandy f-22 I'm gonna flip it on and I'm
+1978.3	gonna grab my handy dandy on my 15 and
+1980.5	I'ma flip on his radar go switch over to
+1982.7	radar the other team and I have myself a
+1985.3	handy dandy conference call which is a
+1986.7	really really really really good
+1988.2	platform for detecting electromagnetic
+1990.1	emissions especially gonna move it right
+1991.8	here if we go which range we're gonna
+1993.5	have to operate here that's about 60
+1994.9	let's get a little bit closer aerial so
+1997.1	whenever you transmit with a radar you
+1999.2	will have the ability to detect
+2000.9	fact that radars emissions if you have
+2003.4	electronic support measures like you'll
+2005.4	notice immediately we've identified this
+2007.2	particular radar as being somewhere
+2008.8	along this particular heading keep in
+2010.9	mind if I have two of these aircraft
+2012.2	working at the same time any time this
+2014.7	guy is transmitting we would actually
+2016.0	have the ability to basically
+2017.1	triangulate his location even though
+2019.4	neither of these platforms are turned on
+2021.0	right now one thing I want to point out
+2022.8	to you really really quickly is notice
+2024.2	we were able to identify the radar
+2026.0	because of its characteristics the other
+2028.2	thing I want to point out to you is we
+2029.8	have not identified the f-22s radar as
+2032.3	even being turned on that is because
+2035.5	that is an incredibly frequency agile
+2037.7	radar which we'll talk about in a second
+2039.3	that also sends very very very very very
+2041.8	short pulses all over the sky at once
+2043.9	making it extremely difficult to detect
+2046.4	this operation keep in mind radars are
+2048.8	subject to jamming if your
+2050.1	electromagnetic noise is louder than
+2051.8	your electrical return you're going to
+2053.4	exceed basically nothing and keep in
+2055.4	mind that ECM has the ability SM I
+2057.3	should say as the ability to detect your
+2059.8	radar at about 1.5 times the range of
+2063.2	the actual radars detection distance
+2065.2	this can actually be enhanced there are
+2066.9	some ships for example let's go get
+2069.6	myself an D just real quickly let's get
+2072.1	an ally Burke this some ships actually
+2077.9	have the ability to detect radars and
+2080.3	extremely long ranges yeah as you can
+2084.2	see right here some of these will
+2085.5	actually do over the horizon analysis oh
+2088.2	yeah
+2089.4	gotcha over the horizon analysis of
+2092.6	electromagnetic signals so you're
+2094.5	talking things like this we can detect
+2097.0	your radar even though you haven't even
+2098.6	known that there's another ship out
+2100.1	there already it's incredible incredible
+2102.2	technology so you have to watch out for
+2103.8	that with the exception of these
+2105.3	extremely sophisticated modern radars
+2108.2	scrolling down here there's some
+2110.0	electronic counter countermeasures
+2111.5	obviously if we can change radar
+2113.1	frequency rapidly it makes it very
+2114.5	difficult to jam some radars have a
+2116.5	staggering amount of bandwidth that
+2118.3	simply means that they transmit over a
+2119.7	range of frequencies instead of one and
+2121.5	of course if a radar is strong enough it
+2123.9	would have the ability to go ahead and
+2125.7	burn through that signal anyway which
+2127.9	brings us to our last and most important
+2129.9	kind of topic on here and that's what
+2132.5	presently let me go ahead and reload our
+2134.4	scenario real quickly presently our
+2136.5	conditions are pretty normal again this
+2138.4	is a clear sky everything that's ready
+2139.9	to go so what I'm going to do to
+2141.4	complicate things is I'm going to make
+2143.2	the weather bad so first of all let's
+2145.4	grab our handy-dandy
+2146.5	legacy e-w radar flip that on for a
+2148.5	second it doesn't have any sonar I just
+2150.4	want to get a couple of little
+2151.3	establishing blinks out there so I can
+2153.2	show you how effective weather is keep
+2155.0	in mind weather if you've ever watched a
+2156.8	weather channel there's something like
+2157.9	that watch the radar display you'll
+2159.6	actually get information about weather
+2161.6	because rain and moisture in the horizon
+2164.4	atmosphere I should say well actually
+2166.0	routeburn the radar signal so I've gone
+2168.1	ahead and gotten these two contacts real
+2169.6	quickly let's go ahead and crank the
+2171.5	weather up to 11 here let's crank up the
+2173.4	rain go ahead and crank up the sky as
+2175.9	well and I'm gonna go ahead and pause
+2179.6	you'll notice that a minute ago we were
+2182.6	detecting the target about here and now
+2184.8	this target is something balancing
+2187.1	around everywhere because basically
+2188.3	there is a wall of rain and cloud that
+2190.9	as well look at it now now it's all the
+2192.5	way over here basically making it
+2194.7	miserable trying to detect that target
+2197.3	through all that moisture that is now
+2198.8	falling all over our sky here keep in
+2200.8	mind clouds themselves don't really
+2202.2	block what radar signals unless of
+2204.5	course they have a situation where
+2206.3	they're very very thick with water or
+2207.8	something like that alright we've got a
+2208.8	decent signal on this one now but again
+2211.1	these systems only are go well look at
+2214.1	that bounce bounce bounce yeah we're
+2216.2	gonna pretty decent signal oh he's over
+2218.0	there now of course if we go over it
+2219.7	here and be like excuse me excuse me
+2221.7	I've got this I've got this we grab a
+2223.7	super-duper ultra-modern one we'll go
+2225.6	ahead and get this one right here flip
+2227.1	that sucker on watch this not only are
+2232.5	we able to filter out the rain but we're
+2234.4	able to get a much more reliable track
+2235.8	you're probably saying how come I can't
+2237.4	see this target anymore that's because
+2239.2	there's a mountain between us and the
+2240.5	target and we can't actually see through
+2242.0	the mountain okay so I'm just gonna
+2244.3	quickly check my notes before I send
+2245.7	everybody on their way here I think I've
+2247.9	got just about everything the important
+2249.8	thing to know in command as well as any
+2252.3	modern naval situation is the first to
+2254.0	admit is the first to get hit exception
+2255.9	being if you have very very
+2256.8	sophisticated you know phased array
+2258.3	radars and things like that as usual if
+2260.4	you have any questions toss them down in
+2262.0	the comments and I'll try to answer them
+2263.4	again this is more of a talking shop
+2265.3	kind of it
+2265.9	gushin keep in mind there's a million
+2267.7	variations on a theme and I want to
+2270.0	leave you with one other slick trick
+2271.5	before I head on out today and that's
+2273.7	the fact that you'll notice if you go to
+2275.4	emissions control and doctrine if you
+2277.3	scroll down to where it says dive one
+2278.6	threat detected you'll notice is this
+2280.5	thing this is yes on periscope surface
+2282.4	search capability some radars have
+2284.8	enough resolution that they can actually
+2287.1	detect the periscope of a submerged
+2289.5	submarine and I just want to quickly
+2292.3	demonstrate this because this is just
+2293.7	such a slick trick let's see ya get
+2297.8	ready to pause pause you'll notice I was
+2302.9	able to detect this goblin with this
+2305.6	specialty radar that is literally
+2307.9	designed for the purpose and keep behind
+2309.3	this is 70s technology so even though
+2311.2	the submarine thought he was being nice
+2312.4	and stealthy surprised I was able to
+2314.5	detect them at a relatively short
+2315.7	distance more modern versions such as
+2317.8	the p8 for example could detect them all
+2320.3	the way out here so make sure you watch
+2322.2	out for those types of radars if you're
+2324.0	playing a submarine game alright like I
+2325.5	said a minute ago as usual if you have
+2327.1	any comments feel free to ask
+2328.8	radar is the topic I know a little bit
+2330.6	about and I'll leave you with one cool
+2332.1	thought I was talking to one of the
+2333.8	developers of this game and they
+2335.0	commented that the US military was so
+2336.9	happy with the radar model the only
+2338.4	thing they asked them to change was
+2340.1	basically switching from decimals to
+2341.7	logarithms so that now that that's
+2344.0	pretty cool and that's any compliment
+2345.5	enjoy

@@ -1,0 +1,1599 @@
+0.0	hello everyone in today's command video
+2.3	we're gonna be taking a look at the
+3.5	database now the database in my opinion
+5.8	is one of the coolest features of
+7.3	command not only because it's so
+9.4	detailed sort of like having a Jane's
+11.2	anthology for every military platform
+13.4	the last eight years but it also gives
+15.3	you a great way to kind of pick out your
+17.4	missions plan your operations determine
+19.7	the strengths and weaknesses of
+20.8	independent units and everything along
+22.7	those lines so first things first there
+24.8	are two main databases inside of command
+27.4	the first one is going to be the DB 3000
+29.8	which covers pretty much 1980 and up and
+31.9	then of course there's the Cold War
+33.3	database which is basically 1979 and
+35.7	down keep in mind in the Cold War
+37.2	database there are some entries that go
+38.7	well before the beginning of the Cold
+40.2	War just like in the modern database
+41.9	there are some entries that have no
+43.0	expiration date the cool thing about the
+45.2	command people the good folks who
+46.8	developed this game is that they're
+48.3	constantly updating these databases
+49.8	based on new information so both of
+51.5	these actually get updated and you want
+53.4	to make sure you have the most recent
+54.6	copy depending on the particular map
+56.3	you're designing so anyway the database
+58.5	itself they're couple different ways to
+59.6	get to it simplest way if you click on a
+61.3	unit you can simply click on its entry
+63.2	anything that's got this kind of blue
+64.6	hyperlink to it will automatically bring
+66.3	it up you also kind of course select
+68.0	that for weapons and of course if you
+70.0	prefer you can go up to game and you can
+71.8	go database viewer the other option you
+74.2	have for database Believe It or Not for
+75.5	those who have an internet connection is
+77.0	you can go on this great website called
+78.6	the blue game campaign wiki just dial it
+80.7	right into Google getting all the
+82.7	database entries in one spot like again
+84.8	I could pick United States for example
+87.5	stand by the f-16 go ahead and click on
+90.0	it and it's going to give me the same
+91.1	kind of information I would expect over
+93.4	in the regular database there's also
+95.2	this new one called semana DB which is
+97.1	really really cool I can do the exact
+98.8	same thing as it just did a second ago
+100.5	and also be able to access this without
+102.5	actually needing to own the game which
+104.5	is kind of a neat little trick if you
+106.0	ask me kind of a thing like that again
+107.9	this is gonna have the same style
+109.1	information like this and for those of
+111.3	you who are more power users you can
+113.1	actually open up these database files
+115.0	all these database files are literally
+116.8	store in as sequel databases keep in
+118.7	mind they're locked sequel databases who
+120.2	not gonna be able to break in and make
+121.5	changes but I actually did a video on
+123.4	that back end I believe it was June of
+125.4	2019 somewhere around there showing how
+127.9	you can use our studio of all things in
+129.9	order to open these databases if you
+131.4	want to take a look at them but honestly
+132.9	the thing
+133.7	into the games is a pretty darn good job
+135.4	so what do we have in the database we
+138.0	have a collection of aircraft we have
+139.2	ships submarines facilities satellites
+141.1	and weapons unfortunately we don't have
+143.3	a sensor section of the database if you
+146.2	need to get more information about
+147.3	sensors in a particular platform first
+149.4	of all if you click on it it does a
+150.6	pretty decent job of giving a little bit
+152.1	of information about the generic sensors
+153.9	but if you need even more in-depth
+156.4	information I highly recommend checking
+158.2	Anthony Lucan campaign wiki or cracking
+160.3	that one open yourself you can actually
+161.9	see coming down here for example if I
+163.7	get in the a and a PG 68 I can click on
+166.0	it it's gonna give me far more detail
+168.2	than I would get in the regular command
+170.0	database for those of you who are power
+171.6	users anyway let's go ahead I'm gonna go
+174.0	basically step-by-step through all the
+175.4	different pieces as well as I have a
+176.7	couple little examples down here to kind
+178.2	of show not oddballs but things that may
+180.2	be a little less clear alright let's
+181.7	check it out so first of all we have
+183.4	aircraft up here you can filter by class
+185.4	which is basically a name search you
+187.3	have a country and then of course you
+188.8	can set whether or not it's a
+189.8	hypothetical platform so for example if
+191.7	I were to do something silly like the
+193.0	age well of a venture you know go look
+195.4	up what this is you'll notice that this
+196.9	is a hypothetical platform I could
+198.7	actually say you know only give me the
+199.9	stuff that's real and of course I'm
+201.2	stuck with it the naval model of the
+202.9	mig-29 sigh but then again it's still
+205.6	pretty good stuff obviously if the map
+207.6	designer feels the need to give you
+208.8	things like well does the f-14 what was
+211.7	that funky version ah here it is the
+213.2	quick strike the e model of the f-14
+215.2	this is so cool but they would give it
+218.0	to you in that particular scenario so
+220.1	anyway we've gone through that little
+221.8	detail let's think about this main entry
+223.9	up at the top first of all this little
+225.8	number is a database ID number the way
+228.8	that this program works so quickly and
+230.7	so efficiently is because every single
+232.5	unit in the game has a unique number
+234.2	assigned to it when you assign this
+235.9	number you actually linked all these
+237.7	other properties to it via this number
+240.6	this also means people who are
+242.1	developing maps missions I should say
+244.0	can use this as a reference number in
+246.0	order to get this unit to come into
+247.5	existence to delete all units with that
+249.2	unique number and so on and so forth
+251.0	afterwards you usually get a description
+252.8	of the particular item you're talking
+254.3	about the name of it depending on what
+255.8	country are this could be very very
+257.2	different for example the Russian /
+259.5	Eastern tradition is to always go by the
+261.5	person who built the aircraft I should
+263.5	say the manufacturer of the aircraft if
+265.0	you go to the American tradition
+266.6	generally
+267.2	a little letter to tell you what it's
+268.3	used for if you go to the French
+270.2	tradition generally you get the name of
+272.3	the aircraft the description itself is
+273.9	actually secondary if you want to get a
+275.9	little more interesting we have the
+277.4	British method of using combinations of
+279.6	letters in this particular case fighter
+281.2	ground reconnaissance that would
+282.6	describe the general gist of that
+284.1	particular fight I was going to give a
+285.4	f--- f-16 again real fast next is kind
+287.9	of give you the nickname and then it's
+289.3	going to give you the country that this
+290.8	fighter is represented by you're sitting
+292.8	there going put on all f-16s American
+294.9	I've where that's as simple as a matter
+297.4	of fact just going like this you can see
+299.0	how many different countries and
+300.8	different versions of the f-16 there are
+302.3	actually if you really wanna have fun
+303.8	with that try this one
+306.4	why are there different versions well if
+309.0	you actually take a look at different
+310.1	countries different countries will have
+311.3	different loadouts depending on when
+314.1	that aircraft was purchased or if
+315.7	there's any other updates if you want a
+317.2	very interesting version for those who
+318.5	guys who are fans of the f5 you'll
+321.0	actually know this is a special version
+322.4	of the f5 called the f5 III which is a
+325.5	special chilean version that actually
+327.3	has more modernized missiles than
+329.1	everything you even have of her recall
+330.7	correctly yep you have the DAX f5 as
+333.2	well for those of you guys who want to
+335.1	do top gun scenarios again this is just
+337.3	incredible
+337.9	the next number after the country of
+339.5	course is gonna be what the year is when
+341.3	it basically saw service keep in mind
+343.2	this might not be the year that it came
+344.7	out of the prototype phase some aircraft
+346.4	are significantly delayed and of course
+348.3	this is where it starts to get confusing
+350.2	I'm gonna grab myself an f-15 real quick
+352.3	we'll get a see model now you're
+354.0	probably sitting here going why are
+355.8	there different f-15 C's all with
+358.6	different unit IDs even though for the
+360.5	most part the descriptions actually
+362.1	appear the same well
+363.5	that's because as different years go by
+365.4	new weapons come into existence like for
+368.3	example this version of the see of the
+370.0	f-15 as the p4 model of the Sidewinder
+372.7	if I grab the 1988 version you'll notice
+375.4	it has the L model of the Sidewinder of
+377.1	course having at the 95 version I would
+379.1	expect to get the yep the s model of the
+381.3	Sidewinder missile if you really want to
+383.5	see how to take this too far grab
+385.3	yourself an f-18 which version would you
+388.3	like or for those of you who are f-35
+390.5	fans try that one out look at how many
+392.5	different versions there are going to be
+394.5	keep in mind the reason there's
+396.0	different years is because there's
+397.1	different weapons the whole idea with
+398.6	that I believe was to prevent you
+400.4	having to basically set each weapons
+402.7	year by year by year and instead just
+404.9	simply set the aircraft and then change
+406.7	their equipment by year by year another
+409.1	way to kind of think about this as well
+410.5	if you get yourself an av-8b for example
+412.8	let's go ahead and get the 92 model I
+415.0	think it's the one that I like yes it
+416.6	does
+416.9	you noticed that 1992 they had the
+419.0	sidearm which is an anti-radiation
+420.2	missile based on the Sidewinder and you
+422.7	notice if I go to 1995 oh don't we still
+425.4	have it this pretty good point let's go
+426.6	skip ahead a little bit to 2003 yes you
+430.4	notice they completely got it out of
+432.0	inventory at that point so again it
+434.2	counts for new weapons and it counts for
+435.6	getting rid of old weapons so that's why
+437.4	there's the different years in the
+438.6	different countries
+439.4	keep in mind different countries might
+440.8	have different capabilities so for
+442.2	example if I grab a j6 which is a
+444.7	classic you know it's basically make 19
+446.6	if you want to think about it the
+447.9	Chinese version of the big night scene
+449.3	cross my fingers this is good doesn't
+451.3	even carry any sort of air-to-air
+453.7	missiles where if I get the North Korean
+456.0	version this to me I can find it there
+457.4	oh look at all nice that looks
+458.7	paint job time it's going down here you
+461.1	notice that I am able to carry the pl2
+463.4	which is basically kind of a knockoff
+465.1	for that really really early Russian
+466.6	Sidewinder knockoff if you want to think
+468.6	about it it's a knockoff of a knockoff
+470.5	so anyway that's basically why that's
+473.0	like that okay
+474.8	so that takes care of the details up at
+476.6	this line scrolling down here sometimes
+478.1	you get a picture again if we go back to
+479.6	f-15c real quick a lot of times you're
+482.0	going to get yourself a nice little
+483.1	almost like a Wikipedia if a matter of
+484.8	fact I think that's where that came from
+486.0	I entry on this particular aircraft if
+488.5	there's a picture that goes along with
+490.1	it generally this is going to go up at
+491.4	the tippy-top as well so that's enough
+493.2	of that I think you guys have the idea
+494.7	scrolling down to general data so first
+497.4	of all you're going to find out what
+498.7	type of category this aircraft is we
+500.6	have a different kinds of categories we
+502.2	have fixed-wing we have carrier based
+503.9	fixed-wing of course we have rotary wing
+505.7	as well and if you really want something
+507.4	interesting we have aerostats as well
+511.4	too bad we don't have step one side be
+513.1	kind of fun
+513.6	you have arrow status type as well this
+515.3	is really a balloon just kinda neat
+517.9	after that you're gonna get you general
+519.8	again good old fashioned description you
+522.0	can have its general size keep in mind
+524.0	size does not equal radar signature it's
+526.7	just sighs you have a little rating down
+529.0	here for crew let's go and get may f-16
+530.9	real quick let's get a D model this time
+532.5	you
+533.5	this is a crew of two this is no impact
+535.3	unless you're designing a mission where
+536.6	you could have people who got shot down
+538.4	and they automatically get ejected this
+540.1	is a great reference you can use you
+541.7	have an empty wait you have a max weight
+543.1	the max payload of course you can do the
+544.7	math real quickly to work that all out
+546.1	very very quickly you have the unicycle
+548.0	something we've talked about before
+549.2	basically this is how fast the unit can
+551.4	get off a shot based on detection of an
+553.1	enemy of course you have a thing for
+554.5	evasion as well how long does it take to
+556.1	evade over on this side this is general
+558.5	aircraft size I also kind of think of
+560.3	this as aircraft bulkiness this is going
+562.6	to be physically how large it is this is
+564.1	how the game is going to treat it as far
+565.6	as being in the ground or in a hangar or
+567.3	basically sitting on the deck of an
+569.1	aircraft carrier so for example if we've
+571.0	got a Sukhoi 33 let's go grab this one
+573.1	you'll notice that oh by the way carry
+575.0	capable you'll notice that the size is a
+577.1	large aircraft again that will impact
+579.4	how many of these you can pack onto a
+581.0	carrier under that you typically have a
+583.0	rating called agility this is a relative
+585.1	rating of how long you can hold a
+587.0	sustained turn and how it's height of a
+588.5	sustained turn will actually look at
+590.3	this in just a minute
+591.2	next to get average climb rate this is a
+593.1	great way to have a relative scale of
+595.3	how quickly an aircraft can do a
+597.0	sustained climb so if I order this
+599.1	aircraft go from zero feet to 36,000
+601.5	feet this is going to be able to allow
+603.3	me to have a drop estimate of how long
+604.9	it's gonna take
+605.5	keep in mind as you go higher the air
+607.3	gets thinner this average climb rate
+609.1	decreases instantaneous climb rate is a
+611.6	little different this is basically I'm
+613.2	up to speed already and I need to get up
+614.8	in a hurry I'm willing to trade energy
+616.6	in order to get a little bit of altitude
+617.9	to maybe get that Dutch missile off for
+619.8	example this is not something you can
+621.5	sustain but it gives you a great idea of
+623.2	the performance of the aircraft down
+625.1	here of course we have takeoff in
+626.3	landing distance this is related to the
+627.8	size through the airport for example you
+629.5	look at my airport here and there's a
+630.6	3201 to 4,000 meter runway that means I
+633.4	have no problem launching and landing
+635.1	this aircraft at that airfields keep in
+637.3	mind every once in a while you see
+638.5	something like this zero it simply means
+644.4	it can take off and land now I know
+645.9	people who are experts in Harry would
+647.8	tell you you can't actually take off and
+649.2	zero distance at max load we don't care
+651.7	good some of this is abstracted for your
+654.1	food convenience underneath that even
+656.0	what they call cockpit visibility which
+657.6	basically tells you how easy it is to
+659.5	spot targets visually obviously if we're
+661.8	looking out the front window it's easy
+662.9	to see in a hangar Harrier having
+664.8	experienced Harrier and VR
+666.5	for I can tell you it's like sitting in
+667.8	a giant bubble it's like sitting on top
+669.3	of like a telephone pole it's not quite
+671.0	f-16 visibility which is pretty good
+672.5	sideways of disability is left and right
+674.6	of course aft is directly over your tail
+676.5	now if we do something silly like let's
+678.3	go get something that we know you can't
+679.7	see behind let's get a big 21 bits
+681.7	you'll notice that it's after visibility
+683.7	is out pretty poor if we go grab
+685.1	something let's go get it enough sixteen
+686.4	see again I think this might have decent
+688.2	average yeah that's what I expected it's
+690.8	a great bubble canopy so it's easy to
+692.4	see I don't nee that you're gonna have
+694.0	your armor keep in mind this armor is
+695.5	basically non-existent with the
+696.8	exception of a couple aircrafts inside
+698.7	the database my favorite example of this
+700.4	of course the a-10 if you were to click
+702.5	on this one you'd actually see that
+703.8	there is some armor simply means that
+705.8	weapons are gonna attack it are gonna
+707.2	have their damage reduced significantly
+708.6	there's not a lot of weapons in the game
+711.1	that are assault rifle and size so
+714.1	you're not gonna have to worry about
+715.1	this most of the stuff that's gonna be
+716.5	shooting up at your aircraft it's gonna
+717.8	be bigger than 20 millimeters so this is
+720.0	actually not gonna help you too much but
+721.5	keep in mind it does help you below this
+723.2	is damage points keep in mind most guns
+724.9	do about 1 damage but also keep in mind
+727.1	that individual components can't be
+728.8	damaged in command so just because I
+730.7	have 5 damage doesn't mean my engines
+732.3	have 5 damage even though they are
+734.1	armored so that's the general gist of
+736.4	this stuff up here scrolling down here
+738.4	you gonna have your sensors any W
+739.9	generally it's gonna be radar first
+741.5	eyeball last that's kind of a general
+743.4	rule obviously well get two ships this
+744.9	is gonna be different
+745.6	general descriptions the sensors are
+747.2	provided keep in mind if you try to use
+748.8	the sensor beyond its max range it's not
+750.8	going to pick up anything and you'll see
+752.2	this especially look at ships later
+753.4	it'll tell you what it's for and of
+755.3	course it'll give you a general
+756.3	generation generally the newer the
+758.0	technology the better it is that
+759.3	detecting older technology or detecting
+762.0	older targets or targets that have
+763.2	larger signatures obviously this is a LR
+766.0	69 is radar warning receiver this
+768.0	doesn't mean it's a surface search radar
+769.7	coming down here you have they paid
+771.5	penny which is a great system for
+773.0	spotting laser targets and of course you
+774.7	have every almost every unit the game is
+776.5	gonna have some version of the mark one
+778.4	eyeball keep in mind just because it was
+780.1	in 50 nautical mile range doesn't mean
+781.9	the pilot can see 50 nautical mile range
+783.6	he's gonna be limited by this stuff plus
+785.6	the regular atmospheric visibility
+787.6	conditions scrolling under that you're
+789.3	gonna get mounts stores and weapons this
+791.4	is basically what I carry by default and
+793.4	what am i capable of holding which is
+795.8	gonna be this stuff down here so you
+797.3	guys know the age sentence carries a 30
+798.9	millimeter cow
+800.4	it is an amazing cannon and it goes
+802.4	ahead and gives you a description of
+803.5	what it can attack it's a range it tells
+805.4	you if it's local control of course you
+807.2	also have some much half and flare here
+808.9	if you need it this is always on the
+810.9	plane no matter what scrolling down here
+812.9	these are all the possible weapons that
+816.0	this aircraft can carry we don't have
+818.0	direct control over what the aircraft
+820.1	can carry we basically get to pick from
+821.9	a menu of loadouts that are going to be
+823.8	a combination of these weapons in order
+825.5	to be successful speaking of loadouts
+827.3	once you scroll down a little bit more
+828.7	you get the individual load outs
+830.1	themselves you keep in mind yours at the
+831.9	top you're gonna have the ferry loadout
+833.2	which is basically designed to go as far
+835.0	as you possibly can
+836.0	it's gonna give you the range believe it
+837.8	or not an a-10 can travel 2,500 miles on
+841.0	its own that's incredible keep in mind
+843.1	you're only carrying two extra fuel
+844.2	tanks to do so that's going to tell you
+846.1	how long it takes to get ready it's
+847.2	gonna tell you day/night weather it's
+848.7	gonna tell you its pre beef reppin state
+850.2	again go look at the WRA video if you're
+852.6	looking for more details here you've got
+854.3	all the different possibilities keep in
+856.6	mind just because it's on this chart
+857.8	does not mean you can necessarily use it
+859.7	especially if it's nuclear or if the
+861.5	scenario designer has chosen to
+863.0	basically limit your ability to carry
+864.6	certain weapons obviously an a-10 is a
+866.6	lot of selection because it is an
+868.3	air-to-ground aircraft if you pick
+870.0	something a little bit simpler let's
+872.1	grab the hunter UAV you'll notice it
+874.2	literally carries basically nothing
+875.9	except for the bat which is kind of fun
+877.5	and again very very very simple stuff
+880.1	coming down below you could put the call
+882.0	to comms and the data links basically
+883.8	this is all communications for those you
+885.4	guys who have communications disruption
+886.6	turned on if these get destroyed they
+888.7	lose their ability to communicate let's
+890.5	actually we'll look at this one we look
+891.6	at ships sometimes as well you'll see
+893.8	these things called data links and
+895.3	that's basically their ability to
+897.1	communicate with certain types of
+898.9	weapons the popular one you're going to
+900.2	see is the link 16 system we're
+902.1	basically with that you can actually get
+903.8	information back to the launching
+906.2	platform which is really cool like your
+908.2	tactical tomahawks underneath here you
+910.1	have your signatures there's a couple
+912.1	different types of signatures we'll look
+913.3	at this one we look at ships and
+914.5	submarines again in a minute basically a
+916.5	visual detection range again if I can't
+918.6	see through a cloud it doesn't matter
+919.8	what this number is
+920.5	we have classification range generally
+922.5	you have to get close to a target to
+923.9	classify it in a 10 is kind of unique
+925.7	example it's pretty distinctive so it's
+928.0	again that kind of has the longest
+929.3	classification range this is going to be
+931.0	the detection range again this is from
+932.5	front side and rear and
+934.2	course you have the infrared
+935.0	classification range which I'm pretty
+936.5	impressed that you can identify
+937.4	something exactly by its infrared
+939.1	something to notice here though is
+940.9	infrared detection range look at a high
+942.5	it is from the back because that's where
+944.3	all the heat from the engines are gonna
+945.2	be coming down here you're going to get
+947.0	a rating of of course you did different
+950.0	radar signatures now this little UAV
+952.4	here is small as a matter of fact it is
+955.3	point zero zero four nine square meters
+958.3	area keep in mind that isn't how big
+960.9	this thing is that's how hard it is to
+963.5	detect there's a difference your radar
+965.7	signature doesn't equal your physical
+967.7	size now my favorite example of this
+969.8	let's go get ourselves a b-2 bomber
+972.7	there we go it looks pretty good notice
+975.2	it's wingspan is 52 meters notice his
+977.8	radar signature is point zero zero zero
+980.0	one five square meters now that's what I
+983.6	call stealthy now keep in mind too it's
+986.5	very visible
+987.2	it's a b2 would you expect but at the
+989.3	same time as you'll notice that our
+990.7	radar is set into two different bands
+992.4	you have basically long wavelengths and
+994.4	you have short wavelengths another way
+996.0	to think about it is these are you
+997.4	search radars these are your fire
+998.9	control radars now b-2 bomber was
+1001.0	optimized to have a better time against
+1003.4	these search radars as you can see
+1004.8	because it's a smaller signature I'm
+1006.1	sorry the attack radars than it was the
+1007.9	search radars as a matter of fact you
+1009.7	can pick up a b-2 bomber on an ancient
+1011.2	radar system because of the fact that
+1013.7	it's going to be more sensitive in that
+1015.0	particular area obviously if you grab
+1016.8	something like let's get in our 35 a
+1018.4	real fast you'll notice that it is a
+1021.9	little bit easier to detect from a
+1023.8	search Raiders perspective than it is a
+1025.3	fire control radars as well even though
+1027.4	it's a smaller target by the way talking
+1029.2	back what I was saying about the link-16
+1030.3	there it is by the way you're gonna see
+1032.6	this thing assist channels if you have
+1034.3	more weapons in the air controlled by
+1035.6	this unit then you have channels you're
+1037.2	not able to control all the weapons at
+1038.6	one time underneath there you're gonna
+1040.4	have recall properties now properties
+1042.2	are interesting and to me I've talked
+1043.9	about these before basically they're
+1045.7	gonna tell you is there an agility
+1046.9	modifier is it gonna be a modify that
+1049.0	let some fly lower to the ground
+1050.3	do they have special bombing systems
+1051.9	obviously helmet-mounted sight means
+1053.4	that you can engage targets off
+1054.8	basically off bore which is incredible
+1057.0	if you've ever seen some of those
+1057.9	weapons in action it'll even tell you
+1059.6	what the refueling capability
+1060.7	underneath there you're gonna propulsion
+1062.4	obviously if I do something like it's
+1063.9	gonna be 52 H real quick
+1066.0	you'll notice that it tells you how many
+1067.7	you have Plus what they're called tells
+1069.9	you a general type you gotta be careful
+1071.3	with this general type I'll show you why
+1073.2	whoops hey the only aircraft I have a
+1076.4	significant amount of time actually at
+1078.3	the wheel of no no no no it's work there
+1082.4	we go
+1083.8	pista okay so did work that time never
+1086.2	mind then
+1086.6	so keep in mind sometimes this will say
+1088.3	something other than what you expected
+1089.5	to but anyway it tells you how many
+1090.7	engines you have if you have different
+1092.0	kinds of engines that are we represented
+1093.5	here this is gonna be important we look
+1094.5	at ships of course it gives your max
+1096.2	speed things along those lines
+1097.6	under technical details let's go get our
+1099.5	f-35 again real quick the Canadian
+1101.2	version it will give you how much thrust
+1103.2	you get at sea level
+1104.1	your afterburner thrust it will also
+1105.6	give you your fuel consumption for those
+1107.0	of you guys who are so inclined if you
+1108.7	really really want to work out this
+1110.1	calculation yourself which you could do
+1112.0	is you can calculate how much thrust you
+1113.6	need let's say one nine five to two then
+1115.6	you multiply it by this little number
+1119.5	here which will give you how many
+1120.8	kilograms of fuel per hour you would get
+1123.6	at that particular burn you co of course
+1126.2	you'd be scroll down real quickly you
+1127.6	realize that our f-35 only carries
+1129.6	eighty-three seventy-five 75 out of 16
+1132.8	and 788 means you only get about a half
+1135.0	an hour with a fuel at full afterburner
+1136.6	at zero altitude now this is actually
+1138.8	broken down even better for you using
+1140.5	this performance detail chart you can
+1142.6	see for example if I'm in an altitude of
+1144.2	24 to 36 thousand feet this is how much
+1146.4	fuel I burn per minute this is what
+1147.8	speed I'm going to be getting naturally
+1149.9	aircraft that are high performance are
+1151.4	going to be going faster at higher
+1152.6	altitudes and they're also going to be
+1154.6	burning significantly less fuel at those
+1157.1	altitudes some aircraft like an f-35 can
+1159.6	actually super cruise which is even
+1161.1	cooler and all you'll see that
+1162.7	represented in this year keep in mind
+1164.6	anything between these values is always
+1166.2	going to be lurked generally as far as
+1168.5	Jets go the lower altitude you traveling
+1170.2	the worse your fuel economy the lower
+1171.7	your top speed at the very very very
+1173.6	very bottom you're gonna have whatever
+1175.0	kind of fuel this ship carries or
+1176.3	aircraft carries plus its weight that's
+1178.8	it for aircraft not to do complicated
+1180.6	keep in mind if you're not sure about
+1181.9	anything you can always just click on it
+1183.3	to get some more details so for example
+1184.9	if I click on the aim-120 you'll get
+1186.7	this detail but we'll go into that a
+1188.1	minute alright let's look at ships now
+1190.9	I'm gonna grab myself a Garcia frigate
+1193.0	here I wanted something complicated
+1194.0	without being too complicated ships are
+1196.1	gonna be following the same basic format
+1197.9	with some extra bonuses
+1199.6	first of all you're gonna get the
+1200.5	general category you're gonna get the
+1201.8	type again every different country has a
+1203.6	different way of classifying one of my
+1205.1	favorite examples of this is the
+1206.3	Russians like to have these things
+1207.8	called aviation cruisers it's not really
+1210.0	an American concept it was basically an
+1211.8	excuse to have aircraft carriers in the
+1213.3	Black Sea we have how many damage points
+1215.5	obviously for ships this has to be a big
+1217.1	number we have its general sizes notice
+1219.5	there's no value for height coming down
+1222.0	here we have empty displacement this is
+1223.5	again not too too critical for us by the
+1225.5	way with aircraft our maximum weight
+1227.8	versus our current weight does matter
+1229.7	because it impacts our agility coming
+1231.8	down here you're gonna have crew you
+1232.8	have to recycle you get this new value
+1234.6	called missile defense this is simply a
+1236.8	rating of how well this particular ship
+1238.8	is at defending itself against incoming
+1240.5	missile attacks generally if this number
+1242.3	is greater than 1 it simply means that
+1244.3	it has some capability to engage
+1246.1	incoming missiles now if we were
+1247.8	actually scroll down a little bit we
+1249.5	have these 5-inch guns here yep which
+1251.3	would have the ability to engage
+1252.5	incoming missiles and if I recall
+1254.0	correctly nope not in this particular
+1255.3	aircraft ship I should say but it does
+1257.9	have the ability to sort of kind of
+1259.5	engage them with this particular weapon
+1261.1	not gonna go well obviously generally
+1263.5	this is a pretty accurate number for
+1265.0	ships it can be less accurate depending
+1266.5	of course how advanced this missile is
+1268.1	this is assuming a harpoon which is not
+1270.1	exactly the most sophisticated or highly
+1272.0	damaging anti-ship missile coming up
+1275.1	here of course we have all your details
+1276.2	as follows armors goes if you really
+1278.2	want to really want to look at some
+1279.2	armors you're gonna have to get yourself
+1280.4	something of the battleship class
+1281.6	generally this is just going to resist
+1283.3	incoming damage and you can see from
+1285.0	looking at these numbers that this
+1286.0	battleship is going to take a lot of
+1288.2	pepper to bring down compared to
+1290.1	something we can go get let's go get a
+1291.9	big one we'll get the Belknap why not
+1293.2	notice no armor basically we got away
+1296.2	from armor once I wore it was over
+1298.0	because of those silly anti-ship
+1299.5	missiles afterwards you're gonna get
+1301.2	your sensors and electronic warfare
+1302.5	again take a look real quickly notice
+1304.8	you have your general radars up at the
+1306.0	top turn on the fire control and
+1307.3	generally have eyeball something here
+1308.6	down here sometimes when they tack on
+1310.3	new stuff to put it down here you're
+1312.0	gonna get all the information as far as
+1313.6	what it could search for it because it
+1315.1	provide range information altitude
+1316.6	information you're gonna get details
+1318.2	about what operational band it operates
+1320.1	on now if you remember when we saw a
+1321.8	minute ago signatures this is a sea band
+1324.0	radar which means it would have an
+1325.3	easier time seeing the b2 then this
+1327.3	radar which happens to be a G band radar
+1329.6	and again that's generally
+1331.5	you see that keep in mind you're gonna
+1332.8	be getting details like 3d long range
+1334.6	you're gonna have a little general piece
+1336.1	here if you need more details you're
+1338.5	gonna have to go back to the Blue Beam
+1340.0	campaign wiki and track down the actual
+1341.9	detail that you need for that particular
+1343.3	unit okay hopefully that makes sense
+1346.3	again it's pretty straightforward as far
+1347.8	as aircraft down here you have mounts
+1349.3	stores and weapons keep in mind for
+1351.0	ships generally you have several
+1352.6	different mounts that are built into the
+1353.8	ship you're not really going to be you
+1355.7	know trading out your main mission
+1357.1	packages that's gonna go by version but
+1359.6	which you will see just kind of Scouten
+1360.9	down here very quickly is you're gonna
+1362.4	see the different weapons it's gonna go
+1363.9	ahead and tell you how they can be
+1365.0	directed give you my most ship's ID what
+1366.7	they call it director control towers
+1368.0	which can aim the guns for you and again
+1370.2	that'll be represented over here local
+1372.0	control simply means if we've lost our
+1373.6	ability to use the central fire control
+1374.9	we can just grab the gun by hand and
+1377.1	just do it that way which is actually
+1378.9	kind of neat if you ask me but I
+1380.2	wouldn't trust my aim against a 700 mile
+1382.1	an hour target how about you keep in
+1384.0	mind you're gonna see this little item
+1385.3	here where you're gonna have one number
+1386.4	that's in white and usually two or three
+1387.8	numbers in blue that simply means this
+1389.6	is the default sometimes users choose to
+1392.6	go ahead and add these particular items
+1394.1	onto the ship as the standard this
+1396.0	becomes really important with torpedoes
+1397.3	and submarines as we'll see in a minute
+1399.3	scrolling down here of course you get
+1401.6	your magazines your magazines and ships
+1403.7	can also include magazines for
+1405.8	helicopters and aircraft depending on
+1407.9	what type of carrier or something along
+1409.8	those lines it is generally this is
+1411.3	gonna let you know what it's got kind of
+1412.5	backup that of course it can go in here
+1414.0	and feed into these guns a little later
+1416.0	ah you have your communications and data
+1417.9	links just like you have with aircraft
+1419.4	only there tend to be more of them and
+1421.0	more different kinds of them we have
+1423.0	aircraft facilities you're not gonna
+1424.3	find an aircraft with an aircraft
+1425.4	facility I don't think we have flying
+1427.3	carriers I don't think we have TB 3z
+1429.5	there so I don't think that's something
+1431.1	we really need to worry about but in
+1432.6	general that's gonna tell you the size
+1433.7	of the aircraft that can accommodate and
+1435.1	of course it's gonna tell you it can't
+1436.3	park one as well as have one of the pad
+1437.9	in this case we can actually carry two
+1439.5	small helicopters you're gonna have your
+1441.3	signatures but this time I have a brand
+1443.0	new signature and that's gonna be our
+1444.4	sonar signature we have all these
+1446.9	different bands of sonar sound so for
+1449.4	example two very low frequency which is
+1451.1	0-2 2000 Hertz think this is your bass
+1453.3	boost for those you guys in the stereo
+1454.7	it's going to be extremely loud which is
+1457.4	not a surprise
+1458.2	given the way that you have to turn a
+1459.9	propeller in order to make you go in the
+1461.6	ocean
+1462.0	keep in mind up 125 decibels is it
+1464.7	big number it's going to be detectable
+1466.3	by pretty serious distance also notice
+1468.6	that this particular frequency radiates
+1470.5	outwards because it's J stood about
+1472.1	equal on all sides of the ship looking
+1474.8	down here we have our medium frequency
+1476.2	sonar you can see depending on the side
+1477.8	of the ship it changes and obviously
+1479.2	high-frequency sonar is not going to be
+1480.8	as loud because it tends to be
+1482.0	attenuated very very very quickly as a
+1484.2	matter of fact the human ear would have
+1485.3	a heck of a hard time listening to
+1486.8	anything the frequency that high mind
+1489.1	you the torpedoes tend to operate on
+1490.7	different frequencies finally you get
+1492.4	this funky one called active sonar this
+1494.4	means somebody is pinging you and this
+1495.7	is the response you notice from the
+1497.4	front of the ship that is not much of a
+1499.2	response at all from the side of the
+1501.6	ship
+1501.8	look at how loud that ship is which
+1504.5	should mean anybody with active sonar
+1506.2	ever can pick this thing up from an
+1508.1	absurd distance from the side but not so
+1510.4	much from the front to the back we have
+1512.0	a visual detection Classification
+1513.4	infrared detection classification and of
+1515.2	course as usual we have a radar
+1516.9	detection now there's not many ships
+1519.8	that have the ability believe we're
+1522.4	gonna try to find this one real quickly
+1523.8	I'm just gonna type of 1,000 and see
+1525.2	what I get ha this is in volt I believe
+1527.6	this is the only one I can think of off
+1528.8	the top of it yeah take a look you'll
+1530.4	notice that for our control radars look
+1532.5	at how tiniest signatures from the front
+1535.1	for a ship this is staggering that's
+1537.7	this large that is pretty cool it's like
+1540.6	a stealth ship but not really scrolling
+1543.5	down here of course you get your regular
+1544.6	properties again every different ships a
+1546.4	little different generally you get
+1547.8	things that will tell you things like
+1548.9	'i'm a TKO steel hall which simply means
+1550.6	that a magnetic mine isn't going to
+1552.0	notice you can tell you where you can
+1553.2	get fuel and of course it can tell you
+1554.6	where you can get ammunition on the
+1555.7	thing down here you're gonna get your
+1557.4	propulsion type in this case we have a
+1559.0	couple MC 30s obviously if you lose one
+1561.2	you can still go in the other you're
+1562.4	just not gonna be able to achieve top
+1563.5	speed the performance details are
+1565.5	basically the same as aircraft except
+1567.1	that fortunately there's only one off
+1568.2	the two that ships operate in and you're
+1570.0	gonna see these down here of course a
+1571.9	lot of times we'll see aviation fuel if
+1573.4	you can carry a separate helicopter now
+1575.4	something you want to watch out for
+1576.3	that's a little different to looking up
+1578.1	here in case you missed this you've got
+1579.9	this back sea state this basically says
+1582.1	that the ocean is bumpier than this then
+1583.8	it's not possible to do operations with
+1585.7	this particular ship the real world it
+1587.5	would mean that you couldn't you
+1588.6	basically have to come to you basically
+1590.5	put the ship at a very very slow crawl
+1592.2	you couldn't have anybody walking around
+1593.7	the deck they'd probably get eject it
+1595.0	your weapons would probably be soaked
+1597.3	and you'd be very very high
+1598.7	basically really tough time operating
+1600.3	the ship you have a trip capacity or
+1602.2	cargo capacity in this little detail
+1603.8	real quickly which tells you how big of
+1605.5	a dock you're gonna need in order to
+1606.8	accommodate this particular vessel and
+1608.4	again you have the regular armor and
+1610.0	things that you probably saw before now
+1612.4	if you get something a little different
+1613.8	it's going to get the Nimitz for example
+1615.0	you'll notice that its magazine is
+1618.1	loaded with good stuff basically to
+1620.5	support a typical carrier airwing of
+1623.3	1994 you know your f-14 is your f-18s
+1626.5	you're a seven or eight sixes stuff
+1628.3	along those lines this of course can be
+1630.7	modified all right so that's about it
+1633.0	for ships let's go ahead and take a look
+1634.4	at some rays hey we're halfway there
+1635.4	right so some reason little different
+1637.4	we're going to close this so what I've
+1638.8	done is I've gotten get myself three
+1640.3	submarines by the way if you're ever
+1641.5	curious if you zoom in on the map the
+1643.2	size of the unit is actually represented
+1644.8	against other ship sizes in eighths
+1646.9	group
+1647.4	so in a way we have a submarine we have
+1648.9	the Dallas we have this kilo class and
+1651.6	of course we have a type 209 over on the
+1654.0	side you're probably saying why did you
+1655.7	pick these well if you take a look over
+1657.4	here do you see it alright let's take a
+1662.2	look at a submarine injury on submarines
+1665.4	you basically have the same information
+1666.5	again different types of submarine you
+1668.2	have the damage points keep in mind if
+1670.0	you submerge these damaged points become
+1671.7	less effective because crush scrolling
+1674.4	down here if your displacement crude a
+1676.0	loop we have our evasion now we have a
+1678.0	max depth
+1679.2	unfortunately in command we cannot send
+1681.8	us submarine deeper than its max depth
+1683.3	kind of a bummer keep in mind this is
+1685.6	also limited by how deep the ocean is
+1687.1	where you are obviously we're at 10,000
+1688.7	feet here 3,000 meters is about a
+1690.4	thousand feet we'd have no problem going
+1691.8	all the way down you have the pier size
+1693.5	and you have this little ROV operating
+1695.4	radius for those of you who use you you
+1697.5	v's scrolling down here same sort of
+1700.6	information you get on ships of course
+1702.1	they tend to be tailored to being
+1703.1	underwater again you have radars not
+1705.1	that I recommend using them on a
+1706.4	submarine that seems a little silly you
+1708.2	have towed sonar so you have special
+1710.0	active sonars going down here sometimes
+1712.9	you have periscope as is it notice you
+1715.7	have this new version called a periscope
+1717.1	which basically is all the cool
+1718.3	technology that your periscope is
+1719.7	capable of doing you're probably
+1721.0	wondering why this is a weird distance
+1722.9	that's because of the curvature of the
+1724.4	earth for those who are curious about
+1725.9	that little detail and obviously we've
+1727.7	all this information keep in mind a
+1729.2	submarine has to be at periscope depth
+1730.6	to automatically use any of these
+1732.6	censors and obviously mark one eyeball
+1734.3	but it's only good if your surfaced
+1736.0	scrolling down here we have our usual
+1737.7	amounts and stores keep in mind
+1739.0	submarines are a little trickier because
+1740.3	they tend have less tubes to launch
+1741.5	stuff from so their default stuff may
+1743.7	actually be different so for example if
+1745.6	I came up here and click mounts and
+1746.8	weapons you'll notice my mark 67 torpedo
+1749.2	tube has got this nice little we got
+1752.0	here mark 48 ready to go in it if we
+1754.0	wanted to switch this to one of these
+1755.3	tomahawks I'd have to actually click it
+1756.7	and then tell it reload priority and
+1758.8	that would go ahead and swap that
+1759.9	particular one out but anyway going back
+1761.9	to the details here we have our
+1765.1	magazines in the event that we have
+1766.2	anything that we need to eject we of
+1767.9	course had the magazines that are on
+1769.1	board keep in mind we have some
+1770.1	tomahawks if we didn't want to use this
+1771.7	version we as the scenario designers
+1773.7	we'd have to delete those and then add
+1775.1	in the version we did want to add last
+1777.2	but not least you have your
+1777.8	communications the data links a lot of
+1779.7	modern submarines have this little
+1781.0	tricky one called a torpedo wire control
+1782.5	basically I can launch the torpedo and
+1784.4	then using a wire just like a total
+1786.0	missile I can actually steer it around
+1787.7	as long as this data link is still
+1789.6	intact of course you've got your radios
+1791.6	ships submarines are a little tricky
+1793.3	because of course if there are low
+1794.7	depths they will not be able to
+1796.4	communicate with the ground yeah
+1798.4	basically if this operation right here
+1801.7	realistic submarine communications is
+1803.7	turned on so kind of keep that in the
+1805.4	back of your head as well obviously if
+1806.8	that's not the case you can talk to your
+1808.0	subs at any time you have a course to
+1810.0	your HF for you huge radio you have all
+1812.0	your signatures down here notice very
+1814.2	low frequency here is a lot quieter and
+1816.0	then it ship because again it's a
+1817.3	nuclear sub scrolling down here of
+1819.2	course you can see these things are
+1820.3	super duper quiet especially from the
+1822.2	front but if you can ping this submarine
+1824.0	on the side look at that rating for
+1826.2	noise that's incredible
+1828.1	detection range is only relevant if
+1829.8	you're on the surface although it does
+1831.1	simulate shadowing so if you're in very
+1834.0	very calm seas and it's bright outside
+1835.4	you can actually see a shallow depth
+1837.8	submarine from above visually which does
+1840.1	a really neat trick screw ting down here
+1842.1	of course you got your radar signatures
+1843.5	your submarine shouldn't be radar
+1845.3	signature ring then you have your
+1847.1	properties which are very similar to
+1848.3	those of the ship and of course you have
+1849.7	your propulsion in this case we have an
+1850.9	S 6g nuclear reactor its nuclear
+1853.0	32 knots notice there's nothing about
+1855.5	fuel but what there is and this is a
+1857.5	submarine issue is it gives you
+1859.2	different bands like you have with
+1860.2	aircraft however you'll notice the
+1862.9	speeds are going to be different
+1864.3	depending on how deep you are
+1866.1	was subs if you go deeper you can go
+1867.7	faster of course this changes if your
+1870.1	diesel which is why we're gonna go take
+1871.6	a look at a diesel sub clicking on a
+1873.8	good old-fashioned kilo here scrolling
+1875.8	down to the bottom this stuff's all
+1877.1	pretty much the same you'll notice that
+1879.5	we have two separate ratings here we
+1881.6	have one for the electric motor we have
+1883.2	one for the diesels keep in mind if you
+1885.3	are a diesel-powered submarine you have
+1887.3	to have a snorkel which is listed right
+1888.8	here or you have to be on the surface in
+1891.0	order to use your Diesel's basically if
+1893.1	I'm using my electric motors because I'm
+1894.6	too deep to use my diesels these are
+1896.1	gonna be the different speeds I get at
+1897.4	the certain depths at the fuel
+1899.3	consumption of course at the very bottom
+1900.9	instead of giving you a number for
+1902.2	battery they give you this annoying
+1903.4	thing where it says how many hours you
+1904.8	get a creep throttle if you need it to
+1906.7	actually calculate how much battery time
+1909.6	you'd have it's a full throttle you'd
+1911.5	have to do something kind of like this
+1912.8	you'd have to take whatever the creep
+1914.8	throttle is multiply it by how many
+1917.0	hours you get on it and then divide that
+1919.5	by how much this particular one uses so
+1922.6	you see I get five point three hours at
+1924.7	full throttle and 11 knots at that
+1927.7	particular depth actually look at this
+1929.4	performance t2 that 85 battery units per
+1933.3	minute Wow
+1934.1	what depth is that okay that's a fast
+1937.2	sub and of course you have performance
+1939.6	details for diesels keep in mind once
+1941.3	you bring your diesels up to a certain
+1942.6	speed you're assumed to not be charging
+1944.6	your batteries so kind of keep that in
+1946.0	the back your mind and of course you
+1947.5	have your diesel fuel as well as your
+1948.9	battery power at the bottom let's get
+1950.5	more confusing shall we
+1951.4	this particular submarine has a IP which
+1954.4	is air-independent propulsion it's a
+1956.1	special motor that basically gives you
+1957.5	really really nice power without running
+1959.8	this electric motors and without running
+1961.6	the diesels think of it as like an
+1963.2	improved I guess I'm trying to think
+1965.3	about it like a better battery almost
+1967.0	but of course once you run out of it
+1968.7	that's it it's game you just tend to
+1970.6	have a lot of it which is kind of nice
+1971.8	this is gonna be the exact same as the
+1973.8	other two submarines the only difference
+1975.2	being of course is you have three
+1976.3	different ratings here you have to tell
+1978.7	this submarine by the way to use
+1980.4	air-independent propulsion in order to
+1982.4	do any of the stuff down here if you
+1984.3	were to go to its doctrine window of
+1986.1	course you can go ahead and define that
+1987.5	right down here whether or not you
+1989.0	wanted it to be using it but again all
+1991.4	the other details on the submarine are
+1992.7	the same and of course you can see you
+1994.1	have all the units and stuff along those
+1995.4	lines over here on the right but that's
+1997.5	pretty much it for submarines
+1998.7	now let's get to
+2000.3	city's facilities facilities - catch-all
+2005.0	term for ground units basically anything
+2006.7	on the land is considered a facility
+2008.3	which includes things like a little
+2009.8	building and some artillery maybe a
+2011.7	radar maybe a SAM site we have an
+2013.8	underground bunker we have this little
+2015.4	airfield over here basically those are
+2017.6	all considered to be facilities
+2018.8	unfortunately for us they have different
+2021.0	properties depending on what they do
+2022.3	let's take a look real quick for example
+2024.4	our single unit airfield here you can
+2025.9	see it has the size it tells us how many
+2027.9	damage points Wow
+2029.3	it also tells us its size it tells us
+2031.6	the total area it tells us what it's uh
+2033.5	loop is it's kind of give a missile
+2034.9	defense by the way single unit airfields
+2036.8	cannot be attacked by anything except
+2039.2	nuclear weapons you're also gonna notice
+2042.4	going down here when its armor is going
+2043.7	to be you're gonna see if it has a
+2044.8	magazine I didn't give it a magazine so
+2046.8	this is just generic munitions and of
+2048.8	course we have all the different
+2049.8	aircraft facilities here now if we did
+2052.3	something like scoot over here to a
+2054.0	medium building again your details are
+2056.2	gonna be pretty much the same it's gonna
+2057.7	tell you what it is how healthy it is
+2059.2	how big it is kind of give you a general
+2061.1	area food loop it's gonna have a missile
+2063.2	defense value this is kind of
+2064.7	interesting because why would a medium
+2066.5	building with no defense have a missile
+2068.0	defense value this is gonna be roughly
+2069.6	how many missiles it takes to destroy
+2071.0	excreting up here you have a general
+2072.8	idea of armor again this is a medium
+2074.6	building soon probably stone
+2076.0	construction or something a lot of those
+2077.2	lines because it's relatively strong you
+2079.0	have a mass site and dispersal radius
+2080.5	which will be important coming down here
+2082.3	you have all the usual signatures that
+2083.9	you're quite familiar with at this point
+2085.2	let's get a little more complicated
+2086.9	let's get something like 155-millimeter
+2089.1	howitzer now this time you're going to
+2091.1	notice the categories changed to mobile
+2092.7	vehicle the other thing you're gonna
+2093.9	notice is it has no size to probably sit
+2097.4	there going well that's strange because
+2098.6	I can clearly see something here it's
+2100.2	gotta have something it's a little
+2101.9	different when it comes to artillery
+2103.7	basically what you have is you have a
+2105.9	unit that's made up of several smaller
+2108.3	units that are 80 meters apart from each
+2111.5	other each one of these units can
+2114.2	actually be attacked not individually
+2116.1	but they're attacked together but they
+2118.0	basically get destroyed independently of
+2120.5	each other depending on the type of
+2121.9	weapons that you're using against it so
+2124.2	in this particular case because it's
+2125.6	such a wide dispersal radius that again
+2128.2	if you had a weapon that only did 40
+2129.6	meters radius you would not actually hit
+2131.3	every one of these weapons
+2132.7	each time it hit of course if you're
+2134.2	used to something like a CB u this is a
+2136.2	very very different story as far as that
+2138.1	goes again the reason this missile
+2140.0	defense is prevalent here is because it
+2142.2	takes more than one missile to hit all
+2143.5	of the vehicles in that thing
+2145.2	down here you kind of sense this need to
+2146.7	W you can have the regular weapons as
+2148.3	well as signatures let's try a
+2150.9	complicated one radars first of all if
+2154.0	you were to click on mount some weapons
+2155.1	you see there's nothing here because it
+2157.1	is a single unit now if I click that on
+2159.6	the database entry get a nice picture
+2161.2	and of course you get all the details
+2163.2	you saw before now we have this funky
+2165.8	value called masked height masked height
+2168.4	refers to how high off the ground the
+2170.3	SAMS radar is now you notice on ships
+2173.2	it's something we really need so you can
+2174.9	know how far you can see over the
+2175.8	horizon because otherwise is assumed to
+2177.5	be zero they actually estimated based on
+2179.1	size in case you're curious but this
+2180.8	gives you a finite value if you want to
+2182.6	calculate radar horizon notice we have a
+2184.9	length and a width because we're only a
+2186.2	single unit to sign we every usual mood
+2188.2	a loop and everything like that as well
+2189.7	as their senses need DOW and your band
+2192.2	notice this one has a two missile
+2194.9	defense
+2195.4	even though it's a single vehicle use
+2198.0	your judgement people don't fire two of
+2199.8	something at it unless you have to don't
+2201.5	waste those harms by the way some later
+2203.6	radars will have like eight for that
+2205.0	value even though they have no way of
+2206.2	defending themselves watch out for that
+2208.2	let's take a look at a SAM ah the S 75 M
+2211.2	also known as of course you have the
+2213.9	Volkoff or the guideline Sam si - this
+2216.7	is a little different first thing you're
+2218.0	gonna notice is category it's building a
+2219.5	rivet in it if it does not have a speed
+2221.6	here that means that particular building
+2223.1	cannot move now for example if I would
+2225.3	grab my cellphone we don't need a
+2226.4	submarine on land I don't know about you
+2227.7	guys it seems like a little silly we got
+2229.5	something like a t-64a Blatz we clicked
+2232.9	on this guy let me just bring up his
+2234.2	database by the way can I wear the one
+2235.4	database window open at a time
+2236.7	isn't that awesome now if you look at
+2238.5	this one you'll actually get data down
+2240.0	here that should describe do we get into
+2242.1	this version or is it something you have
+2243.6	to get in the other one
+2244.5	Oh bummer but if of course you can press
+2248.1	f2 you can get its top speed that way
+2249.6	anyway ignore that scrolling on you have
+2252.0	your census in you w again you've got
+2253.5	all sorts of tracking information at the
+2255.0	top you have any types of radars a lot
+2256.8	of times they'll have a mark one eyeball
+2257.8	then of course because this Sam system
+2260.3	is basically a radar plus several
+2262.7	missile launchers if actually clicks
+2264.0	that mounts well I'm clicking on the
+2265.8	wrong
+2266.3	sorry about that everybody let me go
+2268.5	ahead and click that and click that
+2269.8	let's go announce weapons good you'll
+2271.8	see that this particular unit is made up
+2273.9	of many many many many units all spread
+2276.0	out including some jerks with the
+2277.5	manpads which is never any fun of course
+2279.9	you've got the radars you got the
+2281.0	missiles and of course if you want to
+2282.2	kill a SAM site you can kill these
+2283.6	pieces independent all these pieces by
+2285.5	the way are 75 metres away from each
+2287.8	other again that's pretty much it for
+2289.7	SAM sites what see we have for missile
+2292.4	defense I've never heard of an s 75
+2294.5	being able to shoot down something
+2295.7	launched at it but you never know
+2297.1	there's a first time for everything
+2298.4	scrolling over here of course we got a
+2300.3	weird one underground hardened bunker C
+2302.5	3m command communications and control
+2305.0	first of all let's see it has some size
+2307.3	as a note this is underground let's see
+2309.8	it's got some area here as mass site
+2312.1	special hmm you'll notice it says
+2315.2	penetrators required that simply means
+2317.3	that this particular target could not be
+2318.5	engaged or even see unless the map
+2324.0	editor has set this as being Auto
+2325.7	detectable so it's actually like an
+2327.6	invisible underground bunker it's
+2329.1	actually kind of neat how that works but
+2330.7	basically it's the same as anything else
+2332.1	just very very difficult to kill which
+2334.0	is about it for facilities again you're
+2336.2	gonna see things like every once in
+2337.4	while I Campbell Thompson stuff but you
+2338.7	know those properties are the same all
+2340.3	right moving on now we have satellite
+2343.2	satellites are basically flying sensor
+2345.0	platforms if you click on it it's gonna
+2346.6	give you all the detail you're familiar
+2347.9	with from before so for example let's
+2350.4	get something which we have a big bird
+2351.9	in here somewhere
+2352.6	oh there's big bird black flower you can
+2356.1	see it gives you the type again
+2357.2	different types of satellites have
+2358.2	different properties but if you
+2359.2	interested in what they are just look at
+2360.7	the sensors themselves for example this
+2362.4	is basically the good old fashioned
+2363.8	camera on a satellite basically this
+2366.0	ability to see anything with the 225
+2367.6	nautical miles slant range of itself it
+2371.4	gives you some general information for
+2372.5	size and it gives you radar signatures
+2374.7	you're probably sitting there going why
+2376.4	would I need to be able to target a
+2378.2	satellite this in the air well for those
+2380.9	who guys who are interested if you
+2382.6	actually type it you just see do have
+2385.5	any the good ones these are the ones
+2387.4	that have anti satellite capability I'd
+2389.1	have to look it up I where's Baloo you
+2390.4	know what I need them basically some
+2392.1	systems actually can engage satellites
+2394.8	so they have to have a radar signature
+2396.4	but that's pretty much all there is to
+2397.7	them we don't have to launch the
+2398.9	satellite so we're not really too
+2400.1	concerned with the rest of it last but
+2402.1	not least whoo sorry this ended up being
+2404.0	a little longer than anticipated but
+2405.4	this information is usually pretty good
+2406.5	to know I wish I knew it when I first
+2407.8	started this game you have weapons now
+2410.4	there's different kinds of weapons you
+2411.9	have good old-fashioned things like guns
+2413.8	for example hundred millimeter heat
+2415.3	rounds is probably come off a tank
+2416.7	notice by the way you can come down here
+2418.4	and click on the unit that this
+2419.4	particular weapon is carried by we also
+2421.4	have things like drop tanks now this is
+2423.5	a little annoying because if you
+2424.9	actually look here it's gonna say oh
+2426.2	look at that it carries some fuel 5.1
+2428.8	minutes worth ha I think you can do the
+2431.6	math to figure out how many liters that
+2432.8	this particular fuel tank is carrying
+2434.7	and actually do the calculation for
+2436.1	weight I believe it's a point 87
+2438.4	kilograms to the litre or something
+2439.8	along those line for jp4 again I'm gonna
+2442.3	leave that for your own calculations
+2443.6	just know that you're gonna have things
+2444.8	like drop tanks in here you're also
+2446.4	gonna get stuff fly this do we have
+2450.5	sensor pods yeah here we go sensor pod
+2452.7	check it out so the sensor pod is
+2454.8	actually a combination of sensors loaded
+2457.0	into a little pot that can be mounted on
+2458.8	this cooler Reaper UAV you're gonna see
+2461.4	quite a bit of this you can even type in
+2462.8	I think do we've camera on this one yes
+2464.2	we have generic camera pods of course
+2466.2	which can be mounted on different items
+2467.7	with a specific cameras and again the
+2469.9	details are relatively straightforward
+2471.4	where things become less straight for it
+2474.0	is when you start looking at actual
+2476.2	weapons now for example you'll notice
+2478.1	this type is a gun you'll notice it has
+2480.1	what type of warhead the warhead is what
+2481.8	does the damage this windows 3 damage
+2483.4	points for those you guys who do
+2485.1	division quickly you'll realize that
+2486.4	three damage points it's going to take
+2487.6	an awful long time to blow up that
+2488.9	single unit Airport we saw a while ago
+2490.3	tells you valid targets it also tells
+2492.9	you things like its range keep in mind
+2494.8	there's four different ranges depending
+2496.8	on the type of weapon the best way to
+2498.7	look at this let's go get a kiss
+2500.0	nineteen is the fact that this weapon
+2502.3	can be used against air targets against
+2504.1	surface targets and land targets now a
+2506.2	lot of you are gonna be a little bummed
+2507.4	out that this KS nineteen which is a
+2509.0	gigantic anti-aircraft gun cannot engage
+2511.7	targets that are greater than 1.5
+2513.4	nautical miles away that's less than ten
+2515.4	thousand feet even those real range
+2517.2	would probably be twenty or thirty
+2518.5	thousand feet it's just kind of
+2520.0	interesting how that works you have the
+2522.2	percent of hit in the air obviously four
+2523.8	percent is not a terribly good chance
+2525.2	but if you fire enough eventually it
+2526.9	then of course saver surface percent of
+2528.8	hit reliability things like that and of
+2530.5	course CEP which is simply a measure of
+2532.2	how accurate the round
+2533.7	it's within 80 metres of what you aimed
+2535.7	at with it it will also give you the WRA
+2537.9	default and of course you can always
+2539.1	click on unit if you want to see who
+2540.5	normally gets to carry that particular
+2541.9	weapon so let's go to something a little
+2544.2	bit more complicated let's get a torpedo
+2546.2	by the way notice there's different
+2548.1	versions of weapons some versions are
+2549.9	actually named the same thing which
+2551.2	makes it nice and complicated but the
+2552.9	key elements that are pretty much the
+2554.1	same for example if I have my mark 48
+2555.8	mod 3 I can see it's a torpedo it's got
+2558.2	its general size its weight I have
+2560.3	important things such as how fast it can
+2561.8	go up this is an important number by the
+2563.6	way if you are a submarine that's at a
+2565.1	thousand feet below sea level and you're
+2566.7	shooting at a store pedo and a target
+2568.3	directly above your head you can't
+2569.9	actually hit it right away because they
+2572.3	miss the torpedo I should say will
+2574.1	basically have to keep spiraling and
+2575.5	spiraling spiraling and climbing to get
+2577.5	all the way up to an altitude where you
+2578.8	can actually engage a shallower target
+2580.7	it also gives you launch altitude target
+2582.6	altitude gives you its general range
+2584.3	torpedoes are special because they have
+2585.8	two ranges or sometimes three basically
+2588.0	you have ultimate long range and of
+2590.1	course you have faster but shorter range
+2592.3	your percentage of hit you have
+2593.9	reliability basically if the torpedo
+2595.9	connects with the target is not spoofed
+2597.4	and it's a 70% chance of actually doing
+2599.1	damage and of course this number can be
+2601.0	different from subs than it can't be
+2602.6	from surface targets you have what kind
+2604.6	of sensors a torpedo or missile or
+2606.3	anything basically they can carry on
+2607.7	assuming as a sensor keep in mind this
+2609.4	mark 48 is amazing it as it is look at
+2611.6	how short the ranges on the seeker
+2613.2	that's actually pretty impressive it'll
+2614.9	give you data links if they have it for
+2616.4	example to figure myself a tactical
+2618.4	tomahawk real quick this is a really
+2620.1	really neat weapon by the way it'll
+2621.8	actually give you let's see here
+2623.6	Tomahawk missile datalink so it can
+2625.1	actually talk back to the unit that
+2627.2	fired it which is really really cool
+2628.8	you have signatures keep in mind weapons
+2630.8	have signatures of their own a good
+2632.3	example actually tomahawks a good
+2633.5	example here you can notice that it's
+2635.3	pretty darn small for radar of course if
+2638.3	you get something like this watch this
+2642.0	now that's what I call a small target we
+2646.0	finally found a cruise missile that can
+2648.0	destroy the s400 and that's basically
+2650.7	gonna be the same as what you're used to
+2652.1	in the other categories it's gonna give
+2653.6	you some propulsion obviously if any
+2655.3	weapon gets hit it's automatically
+2657.1	destroyed keep in mind there's no damage
+2659.3	to weapons it's either one and done kind
+2661.2	of a thing or it's a weapon that can't
+2662.4	be engaged so for example if a fire
+2664.2	mortar shell there's nothing that could
+2665.6	shoot that mortar shell
+2666.7	it's always gonna hit its target
+2668.4	carousing down here of course you have
+2670.3	cruise speed that's got to be a little
+2671.6	different depending if again we'll go
+2673.1	grab a torpedo scrolling down you can
+2675.3	see that they're different speeds
+2676.6	because they're different methods of
+2678.8	using this particular torpedo and then
+2680.5	of course a lot of times this is gonna
+2682.0	be confusing but for fuel type you're
+2683.9	actually going to get a rating in
+2685.5	minutes so for example if I get an a
+2687.8	maybe something a little ancient here oh
+2689.8	it's so cute little roller ons coming
+2693.0	down here you can see that rocket fuel
+2694.5	is ten seconds in this particular game
+2697.5	this rocket fuel is how long the weapon
+2699.8	stays in the air for those of you who
+2701.4	are from flight simulators when you fire
+2702.8	missile after the engine burns out it
+2704.6	just cruises unfortunately we don't
+2706.6	simulate that we abstract that a little
+2708.6	bit in command as a matter of fact if
+2710.5	you actually scroll down here you're
+2711.9	gonna notice for any guided missile is
+2713.7	it's actually going to have different
+2715.1	performances depending on what altitude
+2716.9	it's launched so for example if I
+2718.8	actually I'm gonna gives you a better
+2719.7	one here let's get an aim 120 D for
+2722.2	example any 120 D if I launch it at an
+2724.2	altitude of 36,000 feet look at the
+2726.8	speed it travels at for a hundred and
+2729.0	five seconds that's amazing on the
+2731.7	flipside if I launch it at less than
+2733.1	12,000 feet look at how much slower the
+2735.2	weapon is going to be traveling because
+2736.7	it's going to be at a lower altitude and
+2738.9	therefore in thicker air so for those of
+2741.0	you guys who can do the math really
+2742.0	really quickly on that one
+2743.3	you can probably determine this thing is
+2744.8	probably gonna have somewhere around I
+2746.3	don't know about a 75 mile range ish if
+2748.6	you actually go up here you can see that
+2750.4	surprise it's about a 75 nautical mile
+2752.6	range if you fire it at a target that's
+2755.2	at the same altitude of you in your way
+2757.2	up keep in mind some guided missiles of
+2759.1	course have the ability to do lofting I
+2760.7	think the aim-7 I think the new one does
+2764.2	let me go take a look where cuz it's the
+2765.7	lofty one some of them will actually
+2767.3	travel and go like this and then come
+2769.3	back down some of these have let's see
+2771.7	target altitude there is cruise altitude
+2774.5	these missiles actually launch
+2776.2	themselves upwards and then they dive
+2777.8	down on their targets that's what the
+2779.7	cruise altitude is represented by now
+2781.7	another thing to notice about guided
+2783.0	weapons to let's go get ourselves a
+2784.3	harpoon get a nice classic one we'll get
+2786.2	a look at the end model I was like this
+2787.9	is it notices cruise altitude is
+2789.6	exceptionally low because of course it's
+2792.1	an anti-ship missile it's a sea skimmer
+2793.7	and you'll actually see some of those
+2794.9	details and down here as well as the
+2796.9	type of warheads as well as who's going
+2798.4	to use it as well as what's doing it
+2800.2	as well as all the units that carry it
+2802.3	and how long can stay in the air so
+2805.9	that's about it as far as the database
+2808.0	and command goes okay the quickest and
+2810.1	easiest way to use it just click on a
+2811.3	unit that you're interested in click on
+2812.8	the entry and you're able to read it
+2814.3	like this I like these two web resources
+2816.3	too for those who want to go in a little
+2817.6	more detail and go ahead and check out
+2819.2	that video as well like I said the one
+2820.7	on our studio where you can actually
+2821.8	open up that database for those of you
+2823.5	who are a little savvy one last thing I
+2825.4	will leave you with is just to give you
+2826.7	an idea of the differences in climb
+2828.5	rates so right now I notice that my two
+2830.7	plaits 16 here has a 2180 crime rate
+2833.1	looking at my f-16 am right here the mlu
+2836.3	version you'll notice as the climb rate
+2838.0	up ah 32,000 so what I'm gonna do is
+2840.4	order both of these units to get to
+2842.0	maximum altitude at afterburner keep in
+2844.4	mind tuple of 16 can't do that but watch
+2846.9	this I'm gonna go ahead and turn this
+2848.4	mode on so you can see it very very
+2850.0	clearly especially gonna get rid of that
+2851.4	and you can watch for yourselves
+2855.6	go ahead speed up time so it's not too
+2858.0	too long you can see our f-16 pause f-16
+2862.0	is just crossed 10,000 feet in 23
+2864.7	seconds this particular unit is that a
+2866.8	whopping altitude of 1500 and 65 feet so
+2871.0	notice even though they have sixteen
+2872.5	quote can climb 30,000 feet per minute
+2874.4	actually we would probably have to go a
+2875.6	full minute should my let's go full
+2877.3	minute just to demonstrate our point
+2878.6	here doo-doo-doo-doo you'll notice that
+2885.2	in that time the average climb rate was
+2888.3	just about that and keep in mind and
+2890.2	this time the average climb rate was
+2891.7	also just about that and again I respect
+2895.3	about a minute gain about 2,000 feet a
+2897.0	little less because again it's an
+2898.8	average so hopefully this video was
+2900.9	helpful again it's usually not a topic
+2902.6	people associate with this program but
+2904.2	for those you guys who are looking to
+2905.3	buy this again it's one of the coolest
+2907.5	things I have a good collection of
+2909.1	jane's books i've collected over the
+2910.4	years but they're practically moot given
+2912.6	how much detail is inside this
+2914.2	particular program enjoy

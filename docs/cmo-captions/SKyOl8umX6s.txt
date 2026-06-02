@@ -1,0 +1,146 @@
+0.0	hello everyone today's of command' video
+2.2	we're gonna be taking a look at how to
+3.5	use custom locations for your quick
+5.4	battle edits so this is based on a
+7.8	question that I got over in the forum as
+9.4	well in YouTube who was basically asking
+11.1	how do you edit your location as well as
+13.7	all the other details it's a little more
+15.7	involved than just adding a brand new
+17.1	unit with loadout but I will take a look
+18.7	at it today anyway
+19.5	so first things first what I'm gonna do
+21.5	is I'm going to go ahead and open up the
+23.5	area that I was working in yesterday in
+25.3	this case I'm command modern operations
+27.1	quick battle I have the one that I want
+28.8	to edit so to do this you're going to
+30.5	have to edit both the HTML file as well
+32.9	as the Lua script in order to be
+34.5	successful at this we're also gonna have
+36.1	to do a little bit of math too but I
+37.6	wouldn't worry too too much about that
+38.9	so let's go ahead and grab our notepads
+40.7	let's go ahead and start by editing the
+43.0	HTML file now the way that they chose to
+45.6	do locations is basically you have a
+48.2	center longitude and latitude point and
+50.6	then they extrapolate the radius from
+52.9	that location randomly in order to place
+55.6	the other unit which i think is actually
+57.0	really slick trick so what we need to do
+59.4	is we need to change that center point
+61.1	which is all we're going to be doing so
+62.9	to do that I'm gonna scroll down and
+64.3	find where it says game location you can
+66.3	see there's some really really good
+67.3	examples real quickly I'm gonna go ahead
+68.9	and create my own game location copy
+71.9	paste the Baltic Sea let's call it
+73.7	Indian Ocean deep water now the first
+85.0	thing you want to notice is I've named
+86.3	this this is going to be my location
+87.9	this you don't actually see in the HTML
+89.8	and this is just a description to make
+91.7	it a little easier for the user to
+92.8	understand so what I'm actually gonna do
+94.8	is I'm gonna grab the Indian Ocean
+96.3	notice there's no space here and there's
+97.9	no fancy symbols we don't want to break
+99.6	the HTML by accident I'm just gonna grab
+102.1	that I'm gonna go ahead and save it and
+103.3	we're all done with the HTML now what
+105.7	we're gonna do is go grab the script
+107.3	that Lua which is over here and we're
+109.4	gonna scroll down until we can find game
+111.4	locations now this is where the actual
+114.1	game location is it just like I was
+115.7	promising you here's that variable from
+117.5	the HTML here's the latitude and here's
+119.3	the longitude and then you get this
+120.7	funny number crunchy MT offset the
+123.1	reason this exists is because if you set
+125.5	the time of day to say 12 o'clock 12
+127.7	o'clock isn't the same time everywhere
+129.6	in the
+130.3	so this variable here basically saves us
+132.4	the trouble of that problem so let's go
+134.3	ahead and do it first thing you want to
+135.8	do is if you're adding a new location is
+137.3	to come down to the last location add a
+139.1	comma if you skip the comma then it's
+142.0	going to blow up on you because it's
+143.3	gonna think this was all online so now
+145.3	what I'm gonna do is I'm just gonna copy
+146.7	paste this information from this one
+148.9	just like that again there's no comma at
+151.6	the end of it now your last item does
+153.1	not need a comma but anything in between
+154.6	does and if you remember we call it
+156.6	Indian Ocean so now we're not done
+160.8	unfortunately we need to get the
+162.3	latitude and longitude value as well as
+164.1	the gmt offset well let's start with the
+166.5	gmt offset because that's pretty easy
+167.9	let's say I want my battle to take place
+170.0	right here to get the gmt offset all i
+172.3	have to do is compare the zulu time to
+174.4	the local time in this case i can see
+176.4	that there's positive for our difference
+178.6	so now i can just come in here make it
+180.2	four now the latitude and longitude this
+182.5	is gonna be a little bit more difficult
+184.3	to do what you're gonna want to do is
+185.9	you're gonna want to grab your favorite
+187.0	web browser and then on search engine
+189.0	you're gonna look for degrees minutes
+192.6	seconds to decimal degrees now the
+197.5	reason we have to do this is command in
+200.1	front of us is giving us degrees minutes
+202.0	seconds to command inside of the script
+204.6	is looking for decimals so we have to
+206.9	make sure we do that carefully so I like
+208.9	lat/long net they seem to do a pretty
+210.5	good job of this so what I'm going to do
+212.5	is I'm just gonna basically copy right
+214.2	where my cursor is there it looks like
+215.6	13 3408 coming down here for my aviation
+219.8	folks so put the zero in front of the 62
+221.9	I'll do 44 and 19 can read that right
+224.9	off my cursor now I wanna click on
+226.6	convert it'll give me my latitude and
+228.9	longitude warning warning you need to
+232.2	make sure that the numbers positive for
+234.0	the northern hemisphere negative for the
+235.5	southern hemisphere for latitude again
+236.9	that's up and down for longitude
+238.8	positive is the eastern hemisphere and
+240.8	negative is the Western Hemisphere so
+243.5	make sure you include that sign
+245.0	otherwise you're gonna find people in
+246.3	the middle of the Great Lakes instead of
+247.7	trying to see so watch out for that next
+250.2	what we're gonna do is we're gonna go
+251.0	back to our script and now it's simply a
+254.0	matter of grabbing this value come on
+256.4	there we go copy pasting it directly
+259.5	into here again make sure you don't get
+261.2	your latitude and longitude confuse that
+263.0	could be
+263.4	problem also copied that value I'm gonna
+265.8	scoot over here as well paste it in
+267.5	let's go ahead and save file save I've
+271.0	already saved the HTML file I'll close
+272.6	that out real quickly go to file the
+275.5	Start menu quick battle and all I'm
+278.1	gonna do is click right here and if I
+279.7	come down here you'll notice deep water
+281.5	in your India tada just like we expect
+286.7	it you can see be spotted in a location
+288.6	okay hopefully this is helpful you can
+290.4	use the same technique for the
+291.3	air-to-air engagements or pretty much
+292.5	any engagement that you imagine the
+294.2	important thing is like I was saying a
+295.6	minute ago don't get this goofed up
+297.4	otherwise you're gonna have issues enjoy

@@ -1,0 +1,606 @@
+0.5	hello everyone uh based on some of the
+2.1	feedback we got from
+3.1	last week's video concerning kind of the
+5.0	misconceptions as far as jamming goes
+7.0	i thought we'd kind of take it to the
+8.0	next level and take a look at d-e-c-m
+10.4	which is a defensive electronic counter
+11.9	measures as well as you know kind of
+13.5	what it looks like in-game versus you
+15.1	know how it performs in the actual you
+17.1	know
+17.6	i'm going to say real world but
+18.6	obviously we've only got simulators so
+20.0	we're working with what we got
+21.1	so let's go ahead and take a look at
+22.0	what we have for our scenario today so
+23.9	what i've done is i've taken a bunch of
+25.1	aerostats
+25.8	these are pretty cool they're basically
+27.1	giant balloons nothing too too fancy
+29.2	and i've mounted each one with a
+30.7	different type of defensive ecm
+34.1	we have one that has no decm we have
+36.0	this one up here which is the alq-211
+38.2	that's a very
+39.0	very modern system it's got pretty much
+40.6	every electronic trick in the book
+42.3	we have a generic system which we're
+43.9	going to pretend is basically going to
+45.4	be a range gate pull-off system
+47.5	and of course over on the side we have
+48.8	the classic alq-131
+51.2	let's go and switch to the other side
+52.5	real quick i'm going to go ahead and
+53.5	pause
+54.2	now decm only works when you actually
+58.2	are being attacked
+59.4	and one thing that you're going to see
+60.6	when we look at over in the simulator as
+62.0	well is even though we can see the
+63.4	target and still engage the target
+65.1	it's going to be very very different
+66.4	depending on what our given situation is
+68.9	so let me go ahead and flip on my radars
+70.4	here and make sure that i can see
+71.4	everything pretty cleanly you can see my
+72.7	aerostats
+73.6	notice i have no difficulty identifying
+75.8	where these particular targets are
+77.4	so now what i'm going to do is i'm going
+78.4	to go ahead and grab my sa2 battery
+80.8	and i'm going to go ahead and assign one
+82.2	missile to each one of these targets
+84.6	it's going to take us a minute to
+85.6	actually engage these but i want you to
+87.4	see
+87.8	what happens in command versus what
+90.0	happens when we go and try it over in
+91.5	sam simulator
+92.5	which is going to be a very different
+93.8	experience for us but at least you can
+95.0	understand
+95.8	what the crew has to go through so the
+97.8	first missile's been launched we're
+100.0	attacking this guy here this is
+101.4	average decm this remember an sa2 is a
+104.2	pretty old technology as far as radar
+106.1	goes if you want to take a look
+107.4	we're dealing with an old-school camera
+108.9	which is 60s and 70s our radar itself is
+111.0	a 1970s device
+112.7	the sensor on here is a 1980s decm
+116.2	so we're going to launch our weapon
+117.4	right into him let's see what happens
+120.6	okay that was a clean hit this time so
+122.7	if we actually look at the end game
+124.6	we can see that the first thing that
+126.1	happened is my decm attempted to
+128.6	jam the incoming missile what would
+130.4	happen is i needed to roll a 30 percent
+132.4	or less on basically a hundred sided
+134.2	dice
+134.6	i rolled a 45 so the weapon missed which
+137.6	means
+138.9	that the weapon itself then gets to do
+140.6	its normal attack with no modifications
+142.8	because of the distance it was a 20 at
+144.4	basically 28 chance i rolled an eight i
+146.6	got a hit
+147.4	so let's see what happens when we aim
+148.6	for the guy who does not have any ecm
+150.7	whatsoever again this is decm this is an
+152.7	active jamming
+154.7	it looks like we got a clean head on
+155.9	this one as well because again there's
+158.2	no jamming whatsoever because nothing
+160.0	actually went
+160.6	on so we don't actually see that
+162.2	calculation here so now we're going to
+163.8	go ahead and attack
+164.6	this one this is an aoq 211. this is an
+167.0	ultra modern system
+168.6	again they're mounting these things on
+169.8	the f-16s it's actually a coupled system
+171.6	which has two different pieces to it
+173.3	so watch this okay take a look so
+176.3	first things first the jammer attempted
+178.6	to block the incoming missile
+180.4	in this case you'll notice his final
+181.7	probability was a 35 percent
+183.4	as opposed to the older system which
+185.0	only had a 30 percent probability
+187.4	so you can see we rolled our dice we got
+188.8	a 64. unfortunately the jammy did not
+191.3	succeed
+192.6	so like i said i went in so then the
+195.0	weapon one had an attack anyway but
+196.6	again given that incredible distance
+198.0	we missed even though the jamming did
+200.2	nothing to the actual attack itself
+202.2	speed up time a little bit here we have
+205.7	go ahead and took a few more shots there
+207.4	you can see we took a few more here and
+208.9	both times those were
+210.4	jammed now what does this look like when
+213.7	we are inside
+214.7	of samsung what does it look like from
+216.5	the exam crew well it totally depends on
+219.0	what type of jamming we're using to
+220.8	actually engage
+221.8	the actual target now one interesting
+223.8	thing about command and i just want to
+225.0	show this to you real fast
+226.1	before we go take a look at it is
+227.6	there's nothing in the universe stopping
+229.4	me from adding more than one jamming
+231.0	platform thing onto one platform
+233.1	so i could actually come in here and do
+234.4	something really silly like i could take
+235.8	this
+236.3	q11 i could go to sensors and i could
+238.5	add like 10 different types of jamming
+239.8	on this thing if i wanted
+241.3	you know i could say a decm oop helps if
+243.8	you spell it correctly right
+245.6	we could come over here we could say
+247.0	well we actually want to use this
+248.7	advanced
+249.8	we want to use this average we want to
+251.4	use this simple we're also going to do
+253.5	some chaff as well whoop generic
+259.8	let's see here what else can we use as
+261.3	far as jamming goes
+263.2	i don't think we want to use too too
+264.5	much of that actually we'll stick with
+265.8	just the jamming
+266.7	now watch what happens when i take the
+268.3	shot this is crazy
+269.9	so i'll go ahead and pause go ahead and
+271.6	take my sam battery
+273.0	lock under this guy who's going to be
+274.2	appearing just a moment there it is
+276.1	i'm going to go ahead and fire six
+277.8	missiles in his general direction now
+279.5	watch what happens here
+281.2	so the missile's all going to launch now
+284.1	look here
+286.2	you can see that each jammer attached to
+289.3	that system
+290.2	gets one free effort to try to block the
+292.6	actual incoming weapon
+293.8	you can see in this weapon we actually
+295.0	did a really good job initially but then
+297.4	of course things changed just a little
+299.0	bit
+299.3	and several of those missiles actually
+301.0	did get through but it took an awful lot
+303.2	of them to actually engage
+304.6	and strike the individual target itself
+306.5	again i'm shooting at stationary objects
+308.2	so this is pretty easy
+309.4	so what exactly does that decm look like
+312.8	to the crew that's taken the shot let's
+315.2	go pop over real quickly to sam
+316.7	simulator and take a look at what this
+318.1	is going to look like
+319.2	so i've got an sa2de and i'm going to go
+321.4	ahead and add myself one of these nice
+322.6	balloons
+323.2	but what i'm going to do is i'm going to
+324.3	get a couple different types of jamming
+326.0	the first one is called range gate
+328.0	pull off jamming i'm going to go ahead
+329.6	and add this target now i'm going to go
+331.3	ahead and get myself another target
+333.7	and we'll give it rain wrap this one is
+336.3	neat but this particular one is it
+337.9	creates
+338.3	false targets so we'll go ahead and add
+339.8	that one as well
+341.7	we'll go ahead and grab one that's
+342.8	called angle deception jamming which
+344.7	basically is going to try to spoof our
+346.7	angle ability to actually
+348.1	precisely point our radar at the
+349.9	individual target
+351.3	and we're going to go ahead and set it
+352.4	to none so he's here's going to be all
+354.3	of our targets we've got plenty of
+355.6	missiles to work with
+356.7	is it going to be that difficult for us
+358.4	let's find out so i'm going to go pop
+360.2	over real quick
+361.0	into the sam simulator go ahead and get
+362.4	everything all started up since this is
+364.2	defensive ecm
+365.4	you're not going to get any nasty lines
+368.1	on your search radars
+369.4	as a matter of fact things are going to
+370.6	stay relatively constant so if i were to
+372.6	flip this on you'd actually be able to
+374.0	see those targets immediately
+375.8	on my search radar because of the fact
+378.1	that dc
+378.9	ecm only works if you're being locked
+381.0	onto so you can see i've got several
+382.6	targets i'm actually going to go tell
+384.1	my crew to go ahead and aim that
+385.0	direction i'm going to go ahead and take
+386.5	my radar spin it around point in that
+388.1	direction
+388.9	engage the transmitter and now we can
+391.0	start seeing immediately the different
+392.6	targets
+393.4	so i'm actually going to rotate the
+394.4	radar very gently to the side you can
+396.1	see i'm obviously at the right wrong
+397.7	height here
+398.8	all right i see one target right there i
+400.7	also see a little bit of ground clutter
+402.0	i'm sticking my radar up a little bit i
+403.2	can see another target right there
+404.7	and you can see they're all kind of
+405.8	floating so that looks like a pretty
+407.4	good target right there i'm going to go
+408.7	ahead and lock myself onto them spin the
+410.4	radar around
+411.0	go ahead and lock it in left and right
+413.0	then we're going to come over this way
+414.1	i'm going to go ahead and lock it in up
+415.2	and down
+415.8	and now it's time to lock it in range so
+417.5	i'll go ahead and switch my radar modes
+419.0	to more intense
+420.2	and something weird is happening do you
+422.9	see what's going on with that radar
+424.2	signal let me go ahead and flip my
+425.3	visibility mode
+426.6	what do you notice about my target watch
+429.8	really carefully do you see this thing
+431.2	right here
+432.3	let me go ahead and zoom in even more so
+433.5	you can really make it up too far zoomed
+435.2	in too far
+436.0	let me go and bring this thing down a
+437.0	little bit so you can actually see it
+438.3	pretty clearly
+439.0	there we go go ahead and lock it in
+440.5	range real fast do you notice that
+442.7	there's this extra little beam that
+444.0	keeps coming off the top of it
+447.8	if you watch really closely you see this
+449.3	little thing snapping out of it
+450.8	so what this system is doing is creating
+453.1	a copy of its radar signal
+455.1	and then it is actually projecting that
+457.0	radar signal slowly away from itself
+459.5	to try to get my lock to go ahead and
+461.5	break from the individual target
+463.0	this is called range gate pull off let
+465.0	me see if i can get you a better look at
+466.1	that
+466.9	zoom in a little bit all right there we
+469.7	go
+470.0	now watch this i'll be able to get you a
+471.5	much much better look at it
+474.2	there it is take a look so this is what
+476.0	i see as my target right
+477.6	but my system is designed to
+479.0	automatically lock onto the target and
+480.3	try to keep it logically centered but
+482.3	watch what happens do you see this
+483.7	little piece here
+484.8	this is a fake target that's trying to
+487.0	grab my range gate
+488.7	and pull it off of the target denying me
+490.8	that critical range information
+492.3	if i actually look at the target you can
+493.8	see the target cleanly but i keep
+495.6	getting this weird little piece here
+497.4	now let's say i want to go ahead and
+498.5	launch at it i'll go ahead and prepare
+499.7	all my missiles real quick it only takes
+501.0	a moment
+501.9	go ahead and lock myself onto the range
+503.6	here you can see i've locked in range
+505.4	but watch what happens now that i've
+508.2	locked myself in range you see how this
+509.7	thing something went like this
+511.3	this is the false target so it actually
+514.1	delocked me i know that's unlocked
+516.0	you see how the radar had to re-snap to
+517.5	the original target so as a result i
+519.6	can't reliably measure this guy's range
+521.5	or engage the target
+522.6	so what i'm going to have to do is
+524.0	engage this using what they call a
+525.4	three-point attack
+527.2	basically a three-point guidance i'm
+528.7	just gonna have to point the missile
+529.6	where he is and try to aim right for the
+531.1	center of him
+531.8	so go ahead and fire now remember i
+535.2	can't track him in range
+536.6	if he were to be moving this could be a
+538.4	very very tricky shot
+540.3	so again he keeps trying to break my
+541.9	lock by going ahead and pulling that out
+543.7	there
+544.1	if i were to let my missile go ahead and
+545.8	lock him up right now
+547.2	oh we got them so in this case
+550.6	decm that roll failed so that's one of
+553.7	the methods i can use and you can see
+555.2	that that's actually
+556.0	really really effective because it
+558.2	basically prevents me from getting
+559.5	reliable range information
+561.1	let's go ahead and take a look at what
+562.3	this target has as far as security goes
+565.4	so i'm basically instructing the sam
+567.0	system to go ahead and lock onto our
+568.6	next target
+569.4	it's going to swing the entire battery
+571.0	around you see how it disintegrated and
+573.0	broke up into teeny tiny pieces
+574.7	so let's go ahead and grab on our next
+576.6	target
+577.8	i'm going to flip it over this way i'll
+579.2	make the whole radar system kind of flip
+580.9	in try to get a good lock at this thing
+584.0	and i'm going to go ahead and grab it by
+585.4	hand real quick here i seem to be having
+587.0	a little bit of trouble receiving the
+588.1	signal but that's okay
+589.4	maybe we'll try to get this one instead
+592.1	again we need an update from battery
+593.6	command in order to reliably point the
+595.1	weapon ah there it goes
+596.3	hey there he is okay so this looks
+599.1	pretty good let's go ahead and lock them
+600.5	up in elevation let's lock them up in
+602.5	azimuth and um looks like a pretty good
+604.3	target to me doesn't seem like there's
+605.7	any problem whatsoever you can see from
+607.4	my camera that i'm pointing right
+608.7	directly at the center of them
+610.0	looks like we're going to be in pretty
+611.0	good shape here taking a look at it
+612.5	everything looks perfectly fine
+613.8	i'm going to go ahead and lock them up
+614.8	in range and everything's fine it looks
+617.5	like
+617.8	we're good to go in this particular
+618.9	point we'll go ahead and launch on right
+620.4	now
+621.2	fire missile number two why not
+625.4	this is going to go up and away you can
+626.8	see do it's a little zigzag
+630.1	and in just a moment you're gonna see
+631.4	the missile up here from the bottom of
+632.4	the screen and it's gonna go say hello
+633.8	directly to his front windshield
+636.7	boom no problem now was that one
+639.4	supposed to have some kind of jamming on
+640.8	it the answer is
+641.6	yeah but the problem was he was so close
+644.2	to us that we never even saw that
+659.0	because we don't need to be watching
+660.2	something that got destroyed
+662.4	let's go ahead and spin the radar around
+663.7	here we go and we'll go take a look at
+666.1	another kind of jamming
+667.7	so what's weird about this target you
+670.7	know i'm looking out the window going it
+672.0	looks pretty normal to me
+673.1	let's go ahead and acquire it in this
+674.9	way let's go and acquire it in this way
+676.3	as well
+677.0	but there's something strange going on
+679.8	here
+681.0	oh look at this type of defensive ecm
+685.8	in this case you can see that i have a
+687.4	total of five individual targets
+689.8	one of these is an actual target if you
+691.8	guess wrong
+692.9	the missile will overshoot as a matter
+695.0	of fact if i look to my camera right now
+696.7	i can see cleanly that i'm aiming at
+698.4	that particular target if i were to
+699.8	adjust my actual range a little bit here
+702.2	i'm actually already locked in on range
+703.5	let's go ahead and unlock my range so i
+705.1	can adjust it
+706.8	there it goes ah let me go ahead and
+708.6	break the lock here so i have a little
+710.3	bit more control there we go
+711.9	now watch what happens if i shift
+713.2	through the range each one of these
+715.1	targets is considered a valid target for
+717.4	us
+717.8	we could actually try to engage any of
+719.5	these so we as an operator now needs to
+721.7	be able to predict
+722.8	which one of these targets is the enemy
+724.8	now imagine how long this would take in
+726.5	the real world where you're arguing with
+727.9	everybody else on your deck keep in mind
+729.7	this from night time we couldn't
+730.7	reliably see what we're shooting at
+732.3	so which one of these is correct well if
+734.6	i go like this real quick and switch
+735.8	range modes and then switch back to that
+737.8	mode let's see what happens
+739.6	no changing road images don't work maybe
+742.0	if i shut off my transmitter for a
+743.7	moment
+746.6	turn the transmitter back on no that
+748.8	didn't work either
+749.8	so you can see we're in a bit of a
+751.2	pickle here as far as figuring out which
+752.6	one of these targets is the one we need
+754.2	to go ahead and engage
+755.6	so we could predict that uh maybe it's
+757.2	this one right here so i've locked on to
+758.9	it
+759.2	everything's ready to go we're going to
+760.3	do a three-point attack missile away
+763.1	and now we have to cross our fingers
+764.5	that what we're launching at doesn't
+766.2	also have a different form of decm
+768.2	that could go ahead and prevent us from
+769.8	accurately getting that range let's go
+771.2	watch another camera
+772.5	should be there in just a moment all
+774.2	right did we get it oh we got lucky
+778.5	so this is one of the rare times i've
+780.0	played this game where i've reliably
+781.6	struck every target
+782.9	usually i end up overshooting or
+784.3	completely zipping by it but one thing i
+786.2	didn't see and i really wanted to
+787.8	demonstrate better is what that other
+789.6	type of jamming is going to look like as
+791.0	well so i'm just going to quickly reset
+792.3	this
+792.8	go back to the shoe look give myself
+794.5	plenty of missiles to work with
+796.2	i really want to see if i can show you
+797.8	that angle jamming because it's actually
+799.2	really wild to watch
+801.1	all right start everything back up again
+802.4	this will take just a minute because
+803.7	again you're probably curious so we want
+805.5	to go ahead and
+806.2	satisfy that curiosity no we need the
+809.8	generator to come on thank you
+811.4	all right let's go find that other
+812.8	target select the target i'm going to go
+815.3	ahead and order up the system to go
+816.8	ahead and rotate towards the target
+820.2	i'll go switch on zoom modes here i
+821.6	don't need to be in 25 we'll leave it in
+823.2	maximum range mode
+824.5	radar system spinning around and there
+827.2	is the
+827.7	target lovely what do you notice about
+830.4	that target
+831.1	do you see how it has this weird little
+832.5	distortion to it let me go and flip to
+833.8	this mode ah there it is
+835.0	this is called angle jamming do you
+836.6	notice that the target itself seems to
+838.3	be breathing a little bit
+839.6	you can actually watch the sides of it
+841.3	kind of tipping away from you
+842.6	that's because it is distorting the
+844.2	electronic return of itself
+846.1	to go ahead and create a situation where
+848.2	there's no
+849.2	center of the target so what does that
+851.6	mean for us
+852.4	well let's go take a look at what this
+853.6	looks like right now i'm pointing right
+855.1	at him no problem
+856.9	i'm going to lock into him and i'm going
+858.4	to go ahead and lock into him over here
+859.7	as well
+860.5	now what is my radar doing take where is
+863.3	he going
+864.8	do you see how my radar now can't
+867.0	reliably identify electronically where
+870.1	the center of that target is
+871.9	this is called angle jamming or angle
+873.9	deception i should say
+875.1	so as a result my radar is basically
+877.3	going whoa
+879.1	trying to desperately lock onto the
+881.3	target but it can't reliably do so
+883.2	because like i said it can't actually
+884.3	figure out what the center of the target
+885.7	is
+886.2	so what i have to do is i have to
+887.7	manually point the radar and the missile
+890.0	together
+890.6	in order to successfully engage this
+892.1	target which is a no
+894.0	small feat i might add i'm going to do
+895.4	the best i can with it i think i'll
+896.6	probably miss but some days i get close
+898.7	some days i don't
+900.3	again imagine if this were a moving
+901.8	maneuvering target now i'm sitting here
+903.4	trying to fix a little tiny handle
+905.0	trying to get that thing perfectly lined
+906.8	up
+907.2	nice set at the three-point launch
+909.8	fortunately for
+910.9	us we happen to have a system that can
+913.7	reliably engage targets like that
+915.9	because it is a proximity fuse the fuse
+919.2	itself will go off as soon as it gets
+920.8	close enough to the target
+922.2	if that weren't the case there's no way
+924.2	in a million years we're going to be
+925.4	able to reliably hit this target
+927.0	now in the real world such as in vietnam
+929.0	where they actually use this system
+930.9	the people in the radar van would
+932.4	actually have to use small hand wheels
+934.0	in order to keep the target
+935.6	centered during the entire flight now
+937.8	i'm going to speed up time a little bit
+939.2	to demonstrate just how nasty this is
+941.8	now i'm slightly off to the right oh got
+943.5	it anyway
+946.7	now imagine if that were a moving target
+949.3	imagine if that were nighttime
+951.1	how on earth could we safely engage that
+954.0	target
+954.6	and that's just to show you how
+956.1	incredibly powerful that defensive ecm
+958.2	is now the neat thing is like i pointed
+959.8	out earlier i can actually shut my radar
+961.8	off
+962.3	and the target will disappear decm does
+965.5	not
+966.0	run itself if it does not have a lock
+968.6	signal on it
+969.8	that is one of the biggest differences
+971.2	between oecm which we saw with the noise
+973.2	jamming
+973.7	and the decm now if somebody wanted to
+976.2	be awful they'd use both types of
+977.6	systems at the same time
+978.9	and you can get an idea of how difficult
+980.9	electronically it just
+982.0	was to engage plus how difficult the
+984.1	electronic it can actually be
+985.7	and now you understand why over in
+987.4	command things are basically simplified
+989.5	to eliminate some of that trouble all
+991.4	right hopefully this video was helpful
+992.7	as far as revealing let's see how close
+994.2	we were
+995.0	we got within 39 meters of the target
+996.9	when we actually struck it
+998.2	so that was absolutely amazing usually i
+1000.2	can't get that close when you have to do
+1001.6	it manually
+1002.2	but again imagine if that were a target
+1003.9	doing mach 2. there's
+1005.4	no way in the universe i'd be able to
+1007.0	reliably hit that target you can see we
+1008.4	did a three-point attack
+1009.6	all right hopefully this is helpful and
+1010.9	allows you to see a little bit of what's
+1012.5	going on as far as what happens when you
+1014.2	engage a target with dcm
+1015.8	obviously in command everything is super
+1017.5	duper simplified and yes you can have
+1019.4	more than one of these systems working
+1020.6	together
+1021.4	and still outmaneuver the weapon to
+1023.0	safely dodge it other than that
+1024.9	enjoy

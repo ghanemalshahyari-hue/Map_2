@@ -1,0 +1,423 @@
+0.1	hello everyone in this command modern
+2.7	operations tutorial video we're gonna be
+4.3	taking a look at modern Sam slash iAds
+8.0	now what has really changed over the
+10.8	last 3040 years is that technology has
+13.6	gotten better
+14.3	munitions have gotten stealthier
+16.3	aircraft have got healthier the ability
+19.3	to target and reliably detect things has
+21.3	gotten better it's just it's
+22.8	unbelievable the change in technology in
+25.0	a relatively short period of time keep
+26.9	in mind it's been a long time coming but
+28.3	at the same time it's just amazing what
+30.0	we can do now that we could never do in
+32.3	the past before so in this scenario
+34.1	basically this is a follow-up to the
+35.8	previous one of the legacy Sam's we
+37.8	basically have gone ahead and set our
+39.5	island up just like we had before we
+41.1	have all the different targets we've
+43.0	added a nice little new item called
+45.5	jammers which if you know the Russian
+48.0	army loves their portable jammers I
+49.9	guess the concept here is that if you're
+51.4	going to be using a UAV or something
+52.8	like that surprise you can't see the
+54.6	camera feet anymore because it's been
+56.1	jammed it's also very effective against
+57.8	GPS signals which are used in a lot of
+59.8	different types of precision guided
+61.2	munitions I basically spread these guys
+62.9	around the island and may try to turn
+64.2	them on this time our aw we have
+67.3	significantly less early warning than we
+69.2	did the last time the reason is is
+71.2	because these are all phased array
+72.7	radars they have a spectacular
+74.6	capability to spot stealth targets they
+77.5	have less range that's of the legacy
+80.2	systems but they still at the same time
+82.0	we're tremendously good at detecting
+83.8	I've already preset them all up at good
+85.8	altitudes and good positions I've
+87.2	checked the line-of-sight and everything
+88.3	like that so now the only thing we need
+90.1	to worry about is the placement of Sam's
+91.5	now what we could do in this scenario to
+93.6	make things interesting this of course
+94.7	you could set a bunch of you know
+96.0	American British French Sam's but when I
+98.6	think Sam's I usually think of the
+100.0	Russia Ashley the former Soviet Union
+102.3	well then accounted the fact that you
+103.8	know our airpower I should say the
+105.2	Western air power is very very good so
+107.5	they always were looking for
+108.4	cost-effective and very very awesome
+110.5	means to limit our ability to employ it
+113.0	which is something we're going to
+114.3	simulate here so what do we have as far
+116.5	as why nonsense systems now you can see
+118.2	the year here is 2020 I've given our
+120.3	opponents at 35 f-22s b2 s f-117 even
+124.3	though they're out of service they have
+125.3	tornados they have jammers they have
+126.9	everything under the Sun to hit us with
+128.2	so we need to take that into account our
+130.4	biggest enemy in modern times is going
+132.8	to be the precision guided
+134.2	you know you have your joint standoff
+135.8	weapons you have your Jas SMS there we
+139.4	go we have cruise missiles we have
+141.4	everything along the sides now with the
+142.6	hypersonic weapon simply the MP weapons
+144.5	so our focus for us is not so much to
+146.8	eliminate the carrier it'd be nice if we
+149.2	can eliminate the guy who actually
+150.3	carries the missile which we're going to
+151.9	try to do but it's going to be more
+154.0	important that we mitigate the damage of
+155.7	the standoff weapons can cause keep in
+157.9	mind is this risk scenario where
+159.0	everybody was mobile and not detectable
+160.6	it would be very different because then
+163.4	the enemy would have to come find us in
+164.7	which case then we could attack his
+165.9	aircraft so again it's different times
+168.0	require different tactics so anyway
+169.8	let's go to town here so first things
+171.6	first let's go ahead and I'm just gonna
+173.3	actually select this guy real quick just
+174.6	select everybody let's go ahead and
+176.3	bring up our strategic targets and go
+177.8	ahead and turn that on real quick so the
+179.4	same as they were last time so as usual
+182.3	our most important priority targets are
+183.8	going to get the best protection as far
+186.0	as surface-to-air missiles goes so on
+187.8	this peninsula I'm gonna go ahead and
+189.0	throw up the nastiest of nasty Sam's
+191.0	that I could play and that is going to
+192.7	be s400 there's a reason why they call
+196.0	this the triumph I'm gonna go ahead and
+197.8	grab that place that right there and
+199.4	it's gonna sit right there kind of on
+201.5	the end of that little Peninsula and it
+203.1	is going to provide coverage of this
+205.2	size we're going to try to launch at
+207.9	them as they leave the ground now I'm
+210.8	gonna do something very scandalous and
+212.6	I'm actually going to enable its search
+216.6	radar you're probably sitting there
+219.9	going why would you do that well it's
+221.8	simple the only way we're going to
+224.0	detect precision-guided munitions is if
+225.7	we detect them by radar if we detect
+227.7	them by vision especially if it's night
+229.1	or cloudy it's too late they're gonna
+230.8	hit us that being said and s400 can get
+233.5	a lot of shots off at one time so that
+235.9	s400 will basically prevent the British
+238.4	from attacking anywhere on that side of
+240.5	the island so we're just gonna apply the
+242.3	same philosophy to some of our point
+244.2	targets as well so let's go ahead and
+246.4	get ourselves out let's see here we have
+248.1	this little group down here we'll go
+249.7	ahead and go on the top of a mountain
+250.8	about 459 feet we'll get ourselves one
+253.4	of the older s-300s there's different
+255.1	flavors of s-300s you have a very very
+257.6	old one if the PT you have the P or the
+259.6	PT one if the PM just think m4
+262.1	modernized near the PMU which is the
+264.0	very very very nice version and of
+266.0	course you have the PS which is
+267.5	range version as well so while what
+270.0	version would be like to use well let's
+272.1	get let's go legacy here let's go legacy
+273.9	let's go down let's see here we must
+276.1	upset the country to Russia now that way
+278.4	we're getting kind of the modern
+279.6	versions of everything there we go let's
+281.7	see what we have here I say it's a move
+283.1	the PM move the PT one let's see in the
+285.6	SI 12s but that's ok the PS is obviously
+287.7	a very modernized version all the SI
+289.9	tens are kind of old at this point so
+291.5	it's really the a or the bate what would
+293.0	you like we'll grab a PT and he's
+296.8	basically gonna keep an eye on this side
+298.3	of the island we go ahead and grab a PM
+300.6	you find the tallest mountain that we
+302.5	can get ourselves on stick it up in the
+304.6	tippy top right here we're gonna get a B
+306.3	we're gonna PM's fine - that'll work for
+308.6	me
+308.9	Oh which one I want that one we'll go up
+311.9	to the center this is a very large very
+314.6	flat area so it's a spectacular place to
+316.9	put a SAM battery we're gonna go ahead
+318.7	and stick up and Sh twelve here this is
+320.7	a pretty effective I say 12 this is kind
+322.9	of unique story where the SI 1012 are
+324.8	actually developed in parallel with each
+326.1	other but they almost ended up with the
+327.7	same system think of the SI 12 is like
+329.7	the mobile version think of the regular
+332.4	si 10 as sort of the fixed sort of
+335.1	strategic version so I'm gonna have the
+336.9	mobile version protect us in the middle
+338.4	of our town here I'm actually going to
+340.1	enable his battalion radar which is I
+342.5	know very very naughty you shouldn't do
+343.9	that but I'm gonna do it anyway to give
+345.8	us a little bit more coverage there
+347.6	going up to the north side of things
+349.4	again they have to come via water so all
+351.9	I have to do is protect the water they
+353.4	should be able to get through right
+354.7	right somebody go ahead and get myself
+356.9	and I say ten I'm gonna get one of the
+358.7	older one is a tense
+360.0	I want a PS this time oh that looks
+362.5	pretty good right there and then I think
+365.4	the last place we really need to be shut
+367.2	off merge symbols for a second here so I
+368.4	could see what I'm doing and let's
+370.2	actually turn everybody on there we go
+373.5	so it looks like we need something up
+375.3	here as well this is a again there's a
+377.2	pretty tall mountain right here I'm just
+378.4	gonna go ahead and Park him right in the
+379.6	top I'm gonna get one of the little s er
+381.8	s older s 300 our new rs300 ization 70s
+385.2	oh yeah there it is the PM one is the
+387.1	one I want go ahead put him right there
+388.9	I'm actually also going to activate his
+390.4	battalion radar because I want him to be
+393.0	able to spot anything that's coming and
+395.1	it's going to hit us okay so that's it
+397.3	for the big unbelievably long-range
+399.3	weapons so now what we want to do is
+401.4	to trade on point defense so there's a
+404.1	couple different point defense we have
+405.5	at our disposal with modern times we
+407.9	have the sa 15 which is it's decent we
+411.5	have the sa 19 not the best choice we
+414.3	have the upon seer which i think is the
+415.9	sa 24 if i recall well let's see here i
+420.5	say 22 i take it back which is a
+422.1	spectacular anti position guided
+425.5	munition platform so we're gonna use a
+427.5	mix of those basically the things that
+429.2	are really important we're gonna protect
+430.5	with the better system so let me scoot
+432.7	down here this is kind of like I said
+434.5	this is a Dublin kind of a big deal
+436.0	going to go ahead and place it so that
+437.8	it can target anybody who basically gets
+439.8	past the sa 21 let's go ahead and grab
+442.3	that real quick okay there's only two
+444.4	vehicles in this little tiny platoon
+445.7	here I'm actually gonna move him back a
+447.0	little bit because I want to make sure I
+448.1	can cover all this that looks good right
+450.0	there
+450.3	umm let's go ahead and drop it another
+452.7	one up here with our bunkers because
+454.2	remember we're dealing with P GM's now
+455.5	so I'm gonna put this one let's mount
+458.0	right here I think that'll give us good
+459.3	coverage and not the greatest coverage
+461.5	of that other bunker
+462.4	I'm gonna go ahead and place another one
+463.8	right here there we go now we've got
+466.3	good coverage they're looking up here
+468.7	again it's very difficult to protect
+469.8	that with a SAM to begin with we have a
+471.8	military base we'll come back with an SI
+473.1	15 for that let's see is there anybody
+474.9	else grouped together that we can
+476.2	protect it's okay this looks pretty good
+477.9	go ahead put him right here anybody
+479.7	tries to fly over these hills they're
+481.0	gonna get a surprise and that should do
+484.4	it alright so now for some of our point
+486.9	targets which are a little more
+487.8	difficult to protect I'm gonna employ
+489.4	the SI 15 this is a very short range and
+493.4	ice basically same system you can see it
+495.9	kind of sitting right here this is the
+497.4	SI 15 e right here I'm gonna grab that
+499.8	I'm gonna park that basically using that
+501.7	for my point defense protect my refinery
+504.0	we're gonna go ahead and stick it there
+505.8	a safer spot to put this refineries in a
+508.1	terrible spot but go ahead up there
+510.7	let's see a naval dock we should
+512.8	probably protect that I'm gonna go ahead
+514.8	and stick it so it's got decent view
+516.5	over right here let's see it looks good
+518.9	looks good Oh military base got to
+520.2	protect that I see he's got a good field
+522.9	of view we were I'm gonna add something
+524.0	it's got a little bit greater range but
+525.4	we're gonna go ahead and stick the SI 15
+526.7	there anyway we have our industrial
+528.8	plant that one right there and of course
+532.5	what do we have down here we have
+534.7	our guy in our Valley again our
+536.0	industrial plant if you remember before
+537.5	we stuck the sae up here in the hill
+539.4	that's a great spot I'm only gonna add
+541.5	one little detail right here I'm gonna
+543.1	add myself an infrared guided missile
+544.7	right there as well and now I'm feeling
+547.1	fairly confident if the enemy is gonna
+550.0	launch cruise missiles they're probably
+551.6	gonna come up through this way so it
+553.2	makes a lot of sense to give us a little
+554.5	bit more protection kind of protecting
+556.0	that direction so I'm going to go ahead
+557.5	and drop myself another s-300 down there
+560.0	we'll take we'll do it 20 this time and
+563.8	I'm feeling fairly confident okay well
+568.9	let's see how well this goes right okay
+571.3	so some of these guys have their
+573.1	battalion Raiders turned on again I keep
+574.5	saying that it is Italian radar it can
+576.9	be different like I said I'm actually
+578.1	got to flip this guys on as well usually
+579.8	don't do this but you kind of have to
+581.9	because you need to be able to spot
+583.8	incoming munitions soon keep in mind a
+585.9	lot of these guys have cameras and stuff
+587.0	like that so anyway let's go ahead
+589.2	double check to make sure my early
+590.3	warning radars are working correctly
+591.9	I don't want embarrass myself too too
+593.6	much here I'm gonna do that go ahead
+595.7	spacebar go ahead check to make sure
+597.3	that's active remember we have active
+599.1	jammers now so that's kind of make
+601.2	things even more interesting for our
+603.0	opponents all right
+604.6	let's watch what happens okay so what do
+613.5	you think we spotted so far notice the
+615.4	jamming notice very very aggressive
+617.7	jamming by the way let's see with a
+620.1	bunch of bogeys we can't identify them
+621.5	look at all the targets we missed by the
+622.7	way
+624.6	alright let's unpause notice I didn't
+630.4	change my WRA you're probably sitting
+632.5	there going why pause
+640.2	tada and here comes our precision guided
+644.8	munitions notice while we were busy
+647.4	wasting an awful lot of ordnance on
+649.5	these guys we could barely even hit the
+651.5	precision guided ordnance showed up and
+653.5	started punching holes in our defense
+654.9	now notice we could barely make these
+657.8	guys out rs400 is desperately trying to
+660.6	take shots at these guys
+661.9	meanwhile the Greyhound here he's going
+664.6	to start engaging in about half a second
+666.1	as well
+666.6	this platform loves killing pgms I
+674.2	always feel bad having the s400 wasting
+677.1	his shots at that distance but it's just
+679.0	satisfying to slap all this aircraft out
+681.0	of me especially since most of them are
+682.3	stealth aircraft I think I put him on
+686.8	the wrong side of this hill yeah looks
+688.5	like it
+688.9	well bummer look at him in the ese oh
+693.1	jeez like I mean I've gone through all
+694.4	right he's actually reloading right now
+695.9	so if this were against a player I would
+698.2	have already won because I ran had him
+699.6	out of ammo isn't that interesting but
+702.1	again I wanted you guys to see how that
+703.4	affects things and we're already started
+706.0	to take damage our Greyhound by the way
+712.0	he's got his radar turned off but he
+713.5	can't do anything because you just can't
+715.7	lock it up oh the jamming is too
+718.4	effective don't you like pgms I'm
+724.5	actually gonna turn this guy is radar on
+726.5	immediately cuz they do not trust what's
+728.5	going by me right the second there we go
+731.9	that's stuff we can engage oh never
+737.1	losing stuff like crazy
+739.3	I'm just got about half oh good we got
+742.2	most of those we just lost a bunch more
+746.3	oh we got oh there's even more
+751.5	that's tore you can go and flip your
+753.7	radar any time you like chief mention Oh
+758.6	oh jeez that jamming is so aggressive
+762.7	where's my that's three hey there you go
+770.9	[Music]
+772.2	he's trying he's trying
+806.6	[Music]
+829.5	let's go ahead and activate these guys I
+831.7	get the felony they're gonna get a lucky
+832.8	shot in a second
+836.4	apparently I responded to there for some
+838.6	reason I bet who's this that's a 10 keep
+843.2	in mind the SI ten is a little out of
+844.5	date by now hey my ask 400 reloaded he's
+852.0	about to get a free shot Oh his radar
+854.4	got destroyed okay so that was a little
+858.9	different now I'm sure you were
+860.4	expecting me to slaughter all those
+862.8	stealth aircraft but the fact of the
+864.5	matter is if you combine stealth with
+866.1	jamming it's an incredibly tough thing
+868.2	to beat even against pgms yes you can
+871.0	jam for P gems so let's go and take a
+872.9	look at losses and expenditures oh let's
+884.9	see expenditures here okay looks pretty
+887.4	good and let's see we got one b2 we got
+890.4	all the Raptors we got all the f-35 so I
+892.8	got all the tornados and we got all this
+894.2	- total shots yeah this is the secret
+898.1	weapon alright hopefully you found that
+900.3	video kind of interesting if we were to
+902.2	do this in the middle of the desert like
+903.9	for example if you really want to see
+905.4	some flat let's see thinking good now
+909.4	here we go we wanted to do stuff over
+911.9	here in Iraq this would be a very
+913.4	different scenario because there'd be
+914.9	nothing to hide behind but - the fact of
+917.2	the matter is the reason those
+918.3	penetrators are so effective was the
+921.0	fact that was just so many mountains for
+923.1	them to basically hide behind and break
+924.8	line of sight to our sam systems it was
+927.2	neat to see that the a couple arms did
+929.8	get through which i thought was kind of
+931.4	neat so anyway hopefully you found that
+933.2	interesting of course in the real world
+934.5	had the Americans lost that many so I
+937.0	should say the England doesn't matter
+938.1	NATO lost that many aircraft at a single
+941.1	mission that would have been a nightmare
+942.2	you're probably wondering why we only
+943.7	got a single b2 by the way b-2s are
+946.2	extra stealthy because they're so large
+948.2	I know you said they go and wait what
+950.8	turns out if you have a smaller
+952.2	wavelength it's harder to detect a
+954.4	bigger object interesting I know so
+956.7	hopefully you found that interesting how
+958.3	could we make this better obviously we
+960.2	had two or three of the triumphs just
+962.0	kind of
+962.3	along the coast here that would have
+963.9	been no contest but it's still kind of
+966.3	neat to say enjoy

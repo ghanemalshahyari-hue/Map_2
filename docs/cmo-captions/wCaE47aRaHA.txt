@@ -1,0 +1,1030 @@
+0.4	hello everyone uh now for a part two of
+2.9	our little serial design scenario
+5.0	so in the meantime i went ahead and
+6.6	finished adding up all the units and
+8.1	actually deleted the epo international
+9.7	because i couldn't find anything at
+10.8	aleppo worth adding for that particular
+12.6	scenario
+13.3	but i did go through and add everybody
+15.2	in here and kind of get everything set
+16.5	up
+17.0	so now that i've gone through and done
+18.2	all that stuff for syria we got to take
+19.9	a look at the other sides
+21.3	now lucky for us the other sides we
+23.0	don't have to stress as much about
+24.7	because there's just not going to be as
+26.2	much kind of minutiae not as much back
+28.0	and forth kind of a thing as we kind of
+29.5	work our way through it
+30.6	but one thing worth doing at this point
+32.4	is mentioning things about weather and
+34.0	mentioning scenario features
+36.0	so first things first let's go to
+37.5	weather now when you're doing weather in
+39.4	a scenario one thing that i always like
+40.9	to consider is what part of the world it
+42.6	is and a lot of times i don't actually
+44.0	know the weather in that part of the
+45.1	world nearly as well so one thing you
+47.0	can do is you can do aleppo weather
+50.1	october for example and do something
+52.2	like that and you can actually get a
+53.6	little bit of details right here as far
+55.4	as you know the different months and
+56.5	stuff goes
+57.4	so in this case we get one day of rain
+59.2	and we can expect an aleppo syria
+61.3	to have basically 82 degrees on the
+63.5	fahrenheit scale and as opposed to
+65.4	temperatures and things like that there
+66.9	are actually really really good weather
+68.4	forecasts
+69.0	out there that can give you individual
+70.8	by month which is really really really
+73.0	cool stuff because you can actually take
+74.5	a look real quickly
+75.6	like in this case it's going to be sunny
+77.8	and it's probably going to be 28 degrees
+80.2	so if we take the average of these two
+81.7	real quick 28 19 gives us about a 24
+84.2	degree celsius average temperature
+86.2	it is almost universally going to be
+88.3	sunny so the good news is we could just
+90.3	translate that right in here we'll set
+92.0	this to 22 degrees
+93.5	there'll be no rain the sky is not going
+95.8	to have anything in it it's basically
+97.0	going to be clear skies
+98.3	as far as wind and stuff like that goes
+100.2	it's worth kind of poking around through
+101.5	that as well
+102.4	generally there's always going to be a
+103.7	little bit of wind but nothing too too
+105.2	excessive so there we go so now we've
+107.0	got a weather
+107.9	so going under editor again i'll go back
+109.4	to the features and scenarios
+111.4	we're going to detail gun control we're
+112.6	going to unlimited magazines since
+114.0	there's only going to be a single strike
+115.2	here
+115.9	realistic submarine communications i'm
+117.5	going to disable and i'm going to leave
+119.0	communication disruption in
+120.6	all right now that i've got this all set
+122.3	up it's a good time to go ahead and
+123.8	resave our scenario
+125.3	so in this case i'm going to save it as
+126.6	01 now that everything is the way i want
+128.6	it to be
+129.3	we're going to come back and arm
+130.4	everybody a little later on but for now
+132.3	i think this is in pretty good shape
+134.2	let's go take care of the other side so
+135.7	let's grab the cis
+137.9	now in this scenario we're going to
+139.4	assume that syria had done something
+141.2	that made a lot of people
+142.3	really really really annoyed so as a
+144.6	result
+145.4	we want to go ahead and punish them but
+147.2	one of the things we have to do is we
+148.7	have to go ahead and make sure that
+150.2	whatever we want to punish them with
+151.7	quote unquote
+152.6	that we are in range to do so so one of
+155.0	the problems we're going to have
+156.0	in this scenario is because everything
+157.6	in syria is kind of concentrated along
+159.3	this slide
+160.2	it's going to be very very difficult to
+161.8	strike them from russia directly
+164.1	again you know we could come straight
+165.2	across the black sea or something like
+166.6	that from crossing the dar
+168.0	and that's actually probably not a bad
+169.4	idea except for the fact that's a 550
+171.8	nautical mile journey in order to do so
+174.1	and we need permission from turkey to
+175.6	fly over which for this particular
+177.2	scenario i'm going to go ahead and allow
+178.9	because it's just going to simplify
+180.1	things
+180.9	speaking of weight shell we never
+182.2	actually decided on any targets in the
+184.3	syria proper
+185.4	again we have these airfields but these
+186.8	are all single unit airfields which
+188.3	means we can't actually target them
+189.8	unless we're using nuclear weapons we
+191.7	could target their air defenses on the
+193.4	flip side which would be a pretty cool
+195.0	way to do a lot of damage
+196.5	but the same token is that's not really
+198.1	going to be the point of the scenario
+199.7	i think personally that we should put
+201.0	some chemical plants somewhere inside
+202.6	syria and use those
+203.9	targets for a particular scenario so
+206.0	before i even do russia i'm going to go
+207.5	back to syria
+208.6	and we're going to go ahead and see what
+209.9	we can do as far as finding some
+211.4	chemical plants
+212.6	now this is when we're going to pull out
+213.7	one of my favorite tools for this
+215.7	program
+216.4	so what i'm going to do is i'm going to
+217.4	type in syria chemical
+221.8	facilities kml now
+225.8	file oh look at that so a kml file is
+228.9	basically a file that google
+230.8	earth can read in order to store
+232.7	information on it
+234.4	so in this case somebody has already
+235.8	given us one of these and i'll go ahead
+237.5	and download this sucker real quickly
+240.3	so yeah i already had a copy of that
+241.4	from when i was playing with it earlier
+242.9	and now i can grab the kml tool
+245.1	to turn it into actual units inside
+248.6	command
+249.3	so let's go ahead and do that now so
+251.0	let's go ahead over to my cmodb file
+253.4	let's create this thing called kml this
+255.2	by the way is located
+256.5	on the forms for command if you just
+258.3	type in command cmano space kml
+261.7	transfer you'll get everything you need
+263.8	all right let's go ahead and load up my
+264.9	kml file
+265.9	it's going to be that one right there
+267.2	check those facilities save the
+268.7	locations
+269.4	i'll go ahead and save it here syria
+272.4	chemical
+274.5	facilities let's go ahead and click save
+277.0	after i do that it converts this file
+279.2	into something that command can read
+280.7	directly
+281.5	let's grab my notepad real quick drag
+284.0	this sucker over here all right first
+285.4	thing we need to do is we need to make
+286.7	sure we're using the correct database id
+288.6	i'm gonna set it to one
+289.7	and you're gonna see all these units
+291.3	have ten thousand as their dbid
+293.5	that doesn't do anything for us because
+295.1	again we want chemical plants
+296.6	so i'm going to go to the database
+297.8	viewer and let's see if there's anything
+299.0	chemical
+299.8	related bummer okay how about plants oh
+303.6	there we go an industrial plant seems
+305.1	fair looks like it could be chemical
+306.4	facility
+307.5	database id is going to be four five
+309.6	five so again i'm just using good
+311.2	old-fashioned notepad here
+312.6	we just replace now look at that i
+314.3	already had a preset from what i was
+315.6	practicing earlier
+316.9	all right that's good to go so now that
+318.4	we've replaced it we now have the
+319.8	latitude longitude of these beautiful
+321.5	facilities
+322.4	so i'm going to go ahead and save that
+323.7	i'm going to go ahead and cut that and
+325.0	we're going to go over to our main
+326.5	command folder which i believe i had
+328.0	opened somewhere
+329.0	i do let's go to import and export let's
+331.0	go down to syria
+332.6	paste that in there and now look at that
+334.2	we have our brand new awesome perfectly
+336.5	placed chemical facilities
+338.1	so i'm going to import export load
+339.8	groups we're going to scroll down to
+341.2	syria like we did earlier
+343.8	and there it is stereochemical
+345.7	facilities load installation
+347.3	bam and now we have perfectly valid
+350.2	targets that we can use
+351.5	right i'm gonna go ahead and save
+352.9	everything one more time we'll go ahead
+354.3	and switch over back to the cis
+356.2	and we'll start planning what we're
+357.4	gonna do from the cis so in this
+359.2	particular scenario we're gonna assume
+360.8	that
+361.2	turkey gave russia the ability to
+363.5	overfly their country
+364.6	combine the real world when this has
+365.9	happened in the past things didn't
+367.8	always
+368.2	go well they weren't the best of
+369.8	neighbors or a lot of times
+371.5	so what we're going to do is we're going
+372.6	to go ahead and import some airports
+374.3	that we can launch strikes from
+375.8	keep in mind if you know what the russia
+377.7	stores are big bombers they're all
+379.0	archangelists which is going to be up
+380.7	this way we're just going to assume
+382.0	they've redirected down to grass in the
+383.6	dark we could even come out from
+384.9	sevestopol as well
+386.2	but in this case we'll import these so
+388.0	let's see what we have at our disposal
+389.4	by the way make sure you're on sirius
+390.7	side
+391.4	cis side import export load let's see we
+394.6	have for ussr
+396.4	russia there we go
+400.1	all right so not a lot to work from here
+402.3	this is actually kind of disappointing
+403.5	we have the wmd which is actually not a
+405.4	bad thing
+406.2	but again we can't use too too much of
+407.9	this the way it is but we do have this
+409.8	great one called single unit airfields
+413.0	oh my
+414.4	[Laughter]
+416.8	okay i see how it is well we don't need
+419.2	any of these
+420.7	and we're definitely not going to need
+421.9	any of these we're not going to need any
+424.1	of the ones in georgia
+426.1	where's our christmas let's craft
+427.5	another and we're also going to need
+428.9	crimps
+429.4	over there too and we have archangelisk
+432.2	because that would be the most
+433.3	appropriate one there's angles right
+434.6	there we need angles as well
+436.5	go ahead delete that delete that we're
+438.3	going to leave this one out
+439.9	we're going to knock all these from
+441.4	sevista pull out obviously
+443.6	they're not in germany anymore
+447.2	go ahead and clean all these out we
+448.6	don't need of these let's see this uh
+451.2	crescent okay that's pretty good too we
+453.9	don't need any of these
+455.4	don't need any of these that's pretty
+457.5	good don't need that one
+460.2	i'm gonna leave angles because that's
+461.8	gonna be one of their major bomber bases
+463.7	uh we need to go take a look
+465.1	did we miss any i guarantee we always
+467.1	miss one
+469.8	and it looks like we missed none wow
+473.2	that was lucky and look at that now i
+475.0	have four perfectly usable airfields
+477.0	that i could use for the purpose
+478.0	of this mission so now you have to sit
+479.9	here and go okay so what would russia
+481.8	contribute to this particular strike
+483.8	so remember this is 2008. 2008 at this
+487.3	point we have
+488.3	two lift 16s we still have the big
+490.7	tupelo 22 the m3 which is a spectacular
+493.8	bomber
+494.4	we have some cruise missile capability
+496.5	at this point so we could definitely
+497.9	consider using those we could also go
+499.4	old school and use the sukhoi 24s
+501.5	which is kind of my preferred way of
+502.8	doing things so let's go ahead and
+504.7	figure out what
+505.7	russia is going to need in order to pull
+507.1	this off they're going to have to travel
+508.7	a total of like i said about 600
+510.6	nautical miles which is a long distance
+513.5	so let's do a mixed effort here so we
+515.6	have angles so let's go ahead and uh
+517.6	let's get some tupelo 22 m3s
+521.0	let's see what we have here we have the
+522.6	air force the 92 version we also have
+524.6	the 2014 version that looks pretty good
+527.1	now bomber regiments in russia are the
+529.0	same way they're basically going to have
+530.7	12
+531.2	aircraft to a squadron if you have a
+533.9	full regiment you'd have about 36
+535.7	aircraft keep in mind you're not going
+536.8	to get to use all 36 aircraft
+538.7	so in this particular case let's just
+540.2	say there's eight of them
+541.8	so now how do you figure out who
+544.3	operates tupolev
+545.6	22s so it gets a little involved here
+548.3	but the good news
+549.4	is regiment
+552.4	so you can actually look here and see
+554.3	who uses it in a lot of different
+556.7	uh places like in this case we have
+558.4	former operators we have the soviet
+559.9	forces
+560.6	we have the 22nd guard we have and this
+563.4	one this is in the kuluga
+566.3	and we have a couple different places
+567.6	where we can borrow this from we could
+569.4	assume that they've redistributed
+571.0	but in this case we'll go ahead and use
+572.6	this particular one here so
+574.1	50 second heavy bomb bridge and looks
+575.7	pretty good 50 second
+577.8	uh br because they're bomber regiments
+580.1	and again we only have a piece of that
+581.7	bomb regiment we don't have the full
+583.3	bomber regimen
+584.5	so again we're going to assume we're
+585.6	using some cruise missiles and cis is
+587.4	going to be showing off here
+588.7	we're going to go ahead and use let's
+590.4	see i'm going to grab the kh22na
+592.8	this is a pretty slick missile and given
+594.8	this age like i said it's actually
+596.1	pretty darn cool
+597.1	yeah look how big that thing is yikes
+599.5	good anti-ship missile also go ahead and
+601.1	ready that immediately
+602.2	now what is that going to give us for
+603.6	range again the cis player is going to
+605.4	be ai so we don't have to worry about
+607.3	that
+607.8	i just want to study real quickly what
+609.4	kind of range we're going to be at 1475.
+612.3	1475. it's going to take us right
+614.3	through the middle of georgia but we're
+615.7	going to be in range
+616.4	beautiful yes all right go ahead and
+619.8	save my game again
+620.8	and now let's go ahead and get some
+622.2	closer stuff so crims is our closest
+624.3	position
+625.0	we're probably going to be using crimson
+627.1	a pretty small runway
+628.5	we'll be using this for fighter escort
+630.8	purposes so let's get some sukhoi-27s
+633.8	here
+634.6	and we probably want the s model if we
+636.3	can get it there's the that version
+638.2	again we're going to do 15 aircraft so
+640.4	we could type in
+641.6	su-27 regiment something like that and
+645.3	sometimes you get lucky and somebody
+646.7	will actually mention
+647.8	exactly who it is oh look at this
+649.5	beautiful
+651.3	sukhoi 27 third fighter aviation
+653.6	regiment they're based in krimsk
+655.5	it was meant to be so we're going to do
+659.1	the third fighter regimen again this
+660.6	would be three groups of 15 be 45
+662.6	aircraft total here
+664.0	but again you're not going to get all of
+665.4	them so we're just going to use a
+666.6	smaller section of them
+668.4	so now usually like i said with russia's
+670.6	you're going to have probably about 12
+672.3	of them are going to be available
+673.6	these three are all going to be spares
+676.1	let's see here we need something that's
+677.2	going to have a lot of range
+678.9	so we can do this one uh what do we oh
+682.1	my gosh
+682.7	that is going to be garbage though yeah
+684.6	we're going to have to put some kind of
+685.5	refueling in here
+687.0	go ahead and grab this group and set
+688.2	them to maintenance usually this means
+690.2	you don't even need to include them
+691.7	if they're not targets there's no reason
+693.4	to include them but again just for
+694.7	completion we're going to go ahead and
+695.6	put them in here
+696.5	so we're also going to add some
+697.5	refilling capability here so the primo
+699.9	tanker for russia is going to be the
+701.5	illusion 78. let's see what we got here
+704.0	soviet union that's not the version we
+705.6	want
+706.9	we have mta let's see here
+710.5	i think that's the one we're going to
+711.9	want here just want to make sure there's
+713.0	not a newer one
+714.1	yeah the m model what for let's see if
+716.7	anybody
+717.2	does il-78s that we could steal here
+720.0	well we have file 76's
+722.0	that's not bad plenty of army aviation
+727.1	now the interesting thing here is is
+728.6	you're probably sitting here going
+730.5	this seems a little incomplete and
+732.4	you're not wrong
+733.6	there's actually a better website if
+736.0	you're trying to find stuff like this
+737.7	it's actually two really really really
+739.1	good websites for the purpose of this
+741.0	one is called scramble you go here they
+744.6	have a spectacular database of all the
+747.0	aircraft and military units in the
+748.9	entire planet it's like it's
+750.6	excessive how impressive this particular
+753.0	one is
+753.7	you've got order of battles like you
+755.4	could go here you can type in russia
+758.0	russian federation and you've got
+760.8	everything you could ever want you know
+762.9	like for in this case we could say
+763.9	aerospace forces
+765.1	and we could go through all the
+766.6	different units that they have here so
+768.1	let's go to aerospace
+770.8	and you've got all the fighter regiments
+773.1	everywhere let's see if anybody's
+774.2	carrying an il-78 that we could borrow
+776.0	here
+776.6	okay bingo so what group is this here
+779.2	this is vta
+780.5	this is an aew this is the 12th
+784.0	okay 12th mta sounds good to me 12th
+788.6	mta they also have a 50s which works
+791.0	really really well for us
+792.6	so we're going to get ourselves one 850
+794.6	for the purposes of battlefield control
+797.1	and we need the closest version that
+798.6	looks broke pro geez definitely don't
+800.0	need one of those
+801.2	one of those and we're in great shape
+803.9	here
+804.7	so we're going to need these tankers
+806.1	otherwise we're never ever going to make
+807.9	it
+808.6	and of course we're going to go ahead
+809.8	and grab our mainstay also we'll do
+811.6	airborne early warning
+813.0	ready i'm going to go ahead and save and
+815.4	now we're going to go up to krasnodar
+817.0	and we're going to get ourselves some
+818.2	sukhoi 24s
+819.6	we don't get 34s because this is a 2012
+822.2	aircraft that's kind of a bummer
+824.1	but we do get the m's which is good
+825.7	which is good it's not bad it's not bad
+828.6	all right let's see here 2009 is a
+830.2	little too new for us
+831.7	but we can get this version we have the
+833.9	m version we also have the mr version
+835.8	and we have the mp version so we might
+837.4	want to split this up just a little bit
+839.0	let's go back to scramble suit ah
+842.1	beautiful
+842.9	so obviously this is the wrong airport
+844.6	we need to we can actually take a look
+845.9	at crest
+846.6	no dar military aviation they got
+849.5	mig-29s and 26s
+851.5	sequoia 25s again we're just going to
+854.0	pretend oh look at that that's
+855.1	convenient
+857.1	but we do really want the sequoia 24
+859.0	unit and again you can make up your own
+860.6	units here you don't have to stick to
+862.2	this
+862.6	98th independent so we'll do 98
+866.5	uh ir and we're going to go ahead and
+868.5	give us a group of different
+870.1	aircraft so we'll get some of the
+872.1	regular ones and we'll go ahead and get
+873.9	a group of the mrs
+875.6	mps i should say all right so this group
+878.6	is going to be primarily for the purpose
+880.5	of striking
+881.5	oh let's see here i'm just thinking here
+883.1	we're gonna have to go through half of
+884.4	northern syria which doesn't have
+886.0	that much in terms of support but let's
+888.6	actually take a look at those mps real
+890.5	quick are these guys allowed to carry
+892.5	arms no they get ecm and that's it
+895.8	okay so basically we're to have to use
+897.4	the sequoia 24s as a way
+899.3	we're going to do some for different
+900.3	purposes which is kind of a bummer all
+902.4	right let's go to the sequoia 24s
+904.4	we're going to use half of you for the
+906.0	purposes of anti-radiation work
+909.4	and we're going to use the other half of
+910.8	you for the purposes of precision guided
+913.0	with cabs
+914.0	cabs are basically these tv i os we're
+916.3	going to need something with a
+917.1	spectacular long range here looks good
+919.4	right there
+920.4	ready immediately obviously notice it
+922.2	said clear weather only for this
+923.6	particular scenario these guys are
+924.9	unavailable
+926.1	and we're not going to add any of these
+927.9	soviet or soviet
+929.4	former soviet ones we also have crews
+931.4	just kaya but i'm not even going to
+932.6	bother with that
+933.7	and now we're pretty good to go for the
+935.6	cis unit and now it's time to start
+937.3	thinking about
+937.9	nato oh boy here we go
+941.7	so if we're making a strike into syria
+943.8	from nato well we have turkey
+945.9	we can't really use cyprus we could but
+947.8	we can't really we also have israel at
+949.6	our disposal of course to get through to
+951.2	syria from israel we'd have to be going
+953.4	directly through lebanon here
+955.1	so the first thing i'm going to do in
+956.7	this particular scenario is ban them
+958.3	from overflying lebanon i think that's
+960.1	only fair
+961.0	so what i'm going to do is i'm going to
+962.1	create what they call a new navigation
+964.0	zone
+964.7	so i'm going to start is by creating a
+966.7	few of these handy-dandy little
+969.6	points on our chart it looks good i'm
+972.4	gonna select them all i'm gonna go up to
+973.8	mission i'm saying no navigation create
+975.6	new
+976.8	and call this lebanon and we're gonna go
+979.4	ahead and make them not visible
+981.3	and it is not player editable because
+983.2	you don't want the players to just edit
+984.5	it so they can fly around lebanon if
+985.9	they want to
+986.6	so that's going to ban them from
+987.9	operating over lebanon so we could also
+990.1	do that all the way for jordan here as
+991.8	well if we wanted to
+993.0	and also again multiple countries we
+995.4	could do this for
+996.2	but that's just going to discourage nato
+997.9	from flying this over
+999.3	okay so what are we going to do as far
+1000.8	as nato units go small you want to think
+1002.7	about how hard do you want to make this
+1003.8	particular scenario
+1005.3	do we want to have just air force units
+1006.7	do we want just a carrier strike
+1008.5	again this is 2008 so the pgms are in
+1012.3	so we probably want to showcase them as
+1013.9	much as we possibly can
+1016.2	so the first ones i'm going to actually
+1017.4	work with is going to be the nato naval
+1019.9	assets
+1020.6	so the nato naval assets are basically
+1022.7	going to be punching through
+1024.0	anywhere along this corridor because
+1025.9	remember we can fly through turkey here
+1027.8	anywhere in here which is a pretty wide
+1029.6	area and we want to stay a pretty good
+1031.6	distance away from the kill zone
+1033.9	because again if there's any ssms which
+1035.8	i almost promise you there would be
+1037.4	they're probably going to be operating
+1038.4	within 50 nautical miles of the coast
+1040.5	so we want to stay at least 50 nautical
+1042.3	miles away so we're probably going to
+1043.5	put ourselves
+1044.3	really probably going to be striking
+1045.5	from here or more likely we're going to
+1047.1	be striking from up here it's just safer
+1049.4	so let's go ahead and get ourselves our
+1051.0	little carrier action group here
+1052.8	so first things first we need a carrier
+1054.7	surface ship let's grab a cvn
+1057.4	i'm a fan of the enterprise myself one
+1059.3	thing you want to consider doing if you
+1060.8	get stuck
+1061.6	you can always come in here and you can
+1062.7	say cvn
+1065.0	enterprise you could do something like
+1067.4	that and you could type in mediterranean
+1070.2	and it turns out that they were there in
+1071.8	the mediterranean good remember this is
+1073.4	your scenario so you decide who gets to
+1075.3	be in it
+1076.1	so i'm gonna go ahead and create the
+1077.0	enterprise now i like to populate my air
+1079.0	wing
+1079.4	first so what would be in an arrow wing
+1082.3	yikes
+1083.0	so the good news is go back to wikipedia
+1085.3	again of
+1086.4	cvn enterprise
+1088.6	[Music]
+1089.9	and you can actually type in oh that's
+1091.7	the one i wanted i hope we need the new
+1093.4	one
+1094.0	is that a new new one it is a new new
+1095.7	one cool see uh we can do air
+1098.0	wing so when you type an air wing a lot
+1100.2	of times it will either give it to you
+1101.6	up here on the right or you have to
+1103.1	scroll and do a little digging
+1104.6	so in this case we notice that when we
+1106.3	were in the mediterranean we got carrier
+1108.2	air wing one
+1109.3	beautiful i've loved the internet
+1110.8	imagine doing this in the old days you
+1112.0	had to get those jane's books out
+1113.6	so this is who we have on this
+1116.0	particular carrier which is actually
+1117.5	pretty solid
+1118.4	we have vfas these are all none of these
+1120.8	are fighter squadron i mean they're all
+1121.8	fighter squadrons but most of these are
+1123.5	strike fighter squadrons
+1125.0	all right so let's start from the top
+1126.4	now we have fa-18fs
+1129.1	so we're going to go ahead and come in
+1130.2	here fa-18f
+1132.6	united states 2008. so who do we got we
+1135.5	have vfa
+1136.2	11 and we have vfa 211
+1139.8	interesting we can actually call them
+1142.2	the nighthawks and rippers and
+1143.2	everything like that if we wanted to
+1145.1	so vfa11 so we get how many do you get
+1148.4	on a carrier
+1149.4	here's the next tricky part right you're
+1151.3	going to get 12.
+1152.6	so vfa11 and we also get vfa 211
+1157.1	looks pretty good we can also carry more
+1158.6	depending on if we're at war we also
+1160.3	have some e models of the super hornet
+1162.4	so we'll grab e super hornet notice
+1165.3	these are not marine units
+1166.8	what do we have for the super
+1167.7	coordinates we have 81 136
+1171.3	81 136
+1175.0	beautiful that's actually quite a
+1176.6	loadout all right we have e2
+1179.0	it says ds we didn't have those we had
+1181.1	the e2c 2000s which were kind of like
+1183.0	the new ones
+1183.9	united states air force you always carry
+1185.7	four or less of these
+1187.6	so kind of keep that in the back of your
+1188.8	head as well this is vaw126
+1191.5	go ahead and post those guys in there as
+1193.1	well we have an electronic attack
+1195.3	squadron obviously we're not going to be
+1197.3	using ea 1812s it's a little too early
+1199.4	for that
+1199.9	but what we do have is we have ea sixes
+1203.3	so united states navy 99 do we have the
+1205.5	new one we do have the new one
+1207.0	good so usually with attack you get
+1209.4	between six and eight we're just going
+1210.6	to go ahead and do six in this case
+1212.0	that's a pretty fair number for attack
+1214.1	let's say we have fleet logistics we
+1215.6	have a couple c2as
+1217.5	c-2a we're gonna have four of those you
+1220.3	rarely have more than four
+1221.8	and again these guys are just there to
+1223.2	look pretty kind of a thing
+1225.0	nothing too too crazy let's go vrc 40
+1229.2	vrc40 keeping an eye on our time here it
+1232.0	looks good
+1233.0	and we also have a couple helicopter
+1234.5	squadrons of mh-60r and mh-60s
+1237.8	mh-60s 2005 this is hsc-11
+1244.4	go ahead and put that one in there right
+1245.6	there usually this is going to be a
+1246.7	group of eight
+1248.9	and we have hsm72 but there are models
+1255.2	and do we have a 2008 version we do not
+1258.0	okay so we're just going to stick with
+1259.2	that version from 2009
+1260.9	again we could go back and clean that up
+1262.5	and now our carrier is complete
+1264.8	so now we need to think about the
+1266.2	escorts for that particular carrier and
+1268.1	when it comes to escorts carriers are
+1269.8	pretty high value assets so you're going
+1271.0	to want to make sure your carriers are
+1272.3	amazing
+1273.1	so i'm going to save our scenario again
+1275.0	and let's go ahead and set them up i'm
+1276.3	imagining we're probably gonna have a
+1277.4	frigate a destroyer and probably a
+1278.8	couple cruisers
+1279.8	plus some logistics so let's go ahead
+1281.9	and measure out about
+1283.0	10 nautical miles straight north
+1286.1	and let's go ahead and put ourselves a
+1287.9	ddg up there
+1289.4	now united states uh we're going to do
+1290.9	it by date
+1292.7	what do we have that's 2008 and it's a
+1294.6	dtg oh we've got plenty to pick from oh
+1297.1	what do we select
+1298.4	ah bingo in case we need to do an
+1300.0	amphibious landing we might as well get
+1301.4	ourselves something like that
+1302.7	we have an arleigh burke looks pretty
+1304.3	good go ahead and put him way up front
+1305.6	there
+1306.3	now we're going to go ahead and set
+1307.5	ourselves up with another escort this
+1309.5	time we're going to do a cruiser
+1310.9	i'm not going to put it directly in this
+1312.2	direction because if the weapon comes
+1313.7	through this way it'll basically block
+1315.3	the cruiser the enterprise's ability to
+1316.8	defend itself
+1317.7	so we'll go ahead and stick it out at
+1319.0	like let's say a 20 degree angle another
+1321.1	10 nautical miles out
+1322.7	that looks pretty good right there we'll
+1323.9	go ahead and get ourselves a cg
+1326.4	we want something nice and new it's
+1327.8	going to be a psycho i almost promise
+1329.3	you
+1330.0	all right what do we got for tychos
+1331.2	we're the lake erie which is aegis which
+1333.2	is amazing
+1334.6	uh what else we got here i like erie we
+1337.3	have a response boat woohoo
+1338.8	i don't need that anzio no aegis i'll be
+1341.9	the mrs though okay that looks good
+1343.6	looks good
+1344.5	we're gonna go ahead and give ourselves
+1345.8	another cruiser this time again 10
+1347.5	nautical miles we're going to be about
+1349.5	120 degrees
+1351.0	sounds pretty good to me looks good
+1354.0	so let's go ahead and get ourselves
+1355.5	another one just a regular little taiko
+1358.4	i really don't want one of the new ones
+1360.3	let's see that's antietam sounds good to
+1361.9	me
+1362.5	and just for run we'll go ahead and
+1365.4	straight south and we'll go ahead and
+1366.4	throw ourselves in ffg we'll go get the
+1368.1	underwood
+1369.2	and this is when it lost it's beautiful
+1371.3	sm oh
+1372.3	it's so sad and now of course in order
+1374.6	to complete our little excitement here
+1375.9	we're going to have to get ourselves a
+1376.9	replenishment oil so that's going to be
+1378.6	a tao
+1379.9	let's see what we have here as far as
+1381.6	taos go supply is pretty good choice
+1383.8	here
+1384.4	that's an aoe though so it's going to be
+1386.8	ammunition
+1388.0	does that have what i think it oh no it
+1389.3	does not oh i got so concerned for a
+1390.8	second there
+1392.1	all right so we can replenish we can
+1393.8	refuel okay so we can replenish the
+1395.6	enemy can refuel that's awesome
+1397.3	let's go ahead and throw that in there
+1398.5	and let's go ahead and add one submarine
+1400.4	there's always a submarine whenever you
+1402.2	have something this important
+1404.0	ss let's do a gn this time we'll grab
+1406.3	the ohio
+1407.8	and now we're in great shape so this is
+1410.6	our little carry action group so let's
+1412.2	go ahead and add our
+1413.1	helicopters obviously ddgs are going to
+1415.2	have an sh60
+1416.5	actually i take it back it's not going
+1417.7	to be an sh-60 it's probably going to be
+1419.1	an ocean hawk
+1421.4	there we go 19 2005 looks good we'll add
+1424.2	one
+1425.5	while we're at it we're just going to go
+1426.6	ahead and prepare this one if we knew
+1427.8	the actual name of that one i'd highly
+1429.4	recommend going in and naming it as well
+1431.4	it's going to be a long duration mission
+1433.0	so you're going to want to make sure you
+1433.8	go in there and clean that up there
+1435.5	ocean hawk go ahead and add another one
+1437.7	of those
+1439.5	some people get very creative when they
+1441.0	actually come through and name each unit
+1442.4	based on like the nickname of the
+1443.7	individual ship
+1444.7	oh it's so great when folks do that but
+1446.5	again you don't necessarily need that
+1447.8	level of detail
+1449.2	this is going to be more than enough
+1450.6	level of detail for the vast majority of
+1452.3	people who are going to be playing on
+1453.8	your given scenario
+1455.2	so let's scoot scoot over here here
+1457.1	let's type in ocean hawk one more time
+1459.2	looks good right there like that add go
+1461.8	ahead and prepare it
+1462.7	ready arm we'll go ahead do this with
+1464.2	this new lightweight torpedo the
+1466.2	54. i don't think i did that for this
+1468.5	one i did not
+1469.4	oh no what have i done all right let's
+1471.4	go to ready arm
+1472.6	scroll down to here we'll just give it
+1474.2	the barracuda and now the important part
+1476.4	we need to set up our formation
+1478.5	so i'm going to select everybody press
+1480.0	the g key call this yeah remember this
+1482.6	is the player side so you want to be
+1484.3	careful
+1485.2	okay action group looks good press the
+1487.1	f4 key to switch to formation mode
+1489.3	and now we have to be very careful here
+1491.4	so the first one is i want to make sure
+1492.8	his
+1493.1	he's got a relative bearing looks good
+1495.4	the parry i want a fixed bearing you'll
+1497.4	notice that it's
+1498.3	a little position actually change now
+1500.0	why do i want a fixed bearing
+1501.8	you want to make sure that when the
+1503.2	player forgets to set the formation
+1504.9	correctly
+1505.4	that the axis of threat is always
+1507.8	covered by the escort so that's very
+1510.0	very very critical
+1511.4	see the antietam same thing we don't
+1512.9	want that to be a rotating bearing we
+1514.6	want that to be a fixed bearing
+1516.7	so let's grab the anzio as well we're
+1518.2	going to set that to be a fixed bearing
+1520.7	we're going to grab the oscar austin and
+1522.9	we're going to set that to be a fixed
+1524.2	bearing again you can look up the actual
+1525.6	ships that escorted but i'm not going to
+1526.9	worry about that
+1527.8	i'm going to set this one to be a
+1529.1	relative bearing he's actually right
+1530.5	where i want him to be
+1531.9	save let's grab that chip and go give
+1534.6	him some instructions he's basically
+1536.2	going to be just tooling along slowly
+1537.6	here
+1538.2	kind of do one of these he's going to do
+1539.7	one of these kind of come down this way
+1542.1	come down this way and again you can do
+1543.4	anything you need to do but remember in
+1545.0	the real world when you're recovering
+1546.4	aircraft you have to actually fly up at
+1548.0	really really high speed in order to
+1549.4	give you a nice crosswind
+1550.8	sometimes cruise speed will reduce their
+1552.4	speed to let's say there's doing
+1554.1	10 knots is a pretty fair speed here and
+1556.6	we're in great
+1558.0	shape as far as the us carry action
+1560.6	group goes
+1561.8	now here's where your problem is going
+1563.8	to start as a scenario designer
+1565.9	if you probably noticed we are carrying
+1568.2	88
+1569.1	tomahawk cruise missiles on board now
+1571.9	any smart player is going to use them
+1574.2	like crazy
+1575.6	so in this scenario you may wish to
+1577.7	remove those if you don't want the
+1579.1	player to use them
+1580.1	otherwise they will don't underestimate
+1582.6	how effective those can be as weapons so
+1584.6	kind of keep it in the back of your head
+1585.4	when you're designing
+1586.5	but here's the more subtle problem we
+1587.9	have we have sm-2rs
+1590.2	which are literally going to have a
+1592.1	range so wide they can
+1593.9	shoot down syrian aircraft from the
+1596.8	ocean
+1598.1	now if you want to eliminate all the fun
+1599.4	of the eredar combat go ahead and leave
+1601.4	those in
+1602.2	otherwise we need to address that at
+1603.8	some point so let's go ahead and
+1605.6	move on to our next set and we need to
+1607.5	think about the air assets that we're
+1609.1	going to use on the ground
+1610.2	now like i said we have three different
+1611.5	basic places we could operate other
+1613.5	assets for the first one that comes to
+1615.4	mind is going to be turkey
+1617.0	so when it comes to turkey and it comes
+1618.6	to this part of turkey there's one air
+1620.5	base that's going to be coming to mind
+1622.0	almost immediately
+1623.2	i'm going to scroll down to this one and
+1624.8	that's going to be right
+1626.2	here beautiful
+1629.8	now that is an air base so since it is
+1632.0	not going to be a target look at how
+1633.4	many
+1633.8	things are at this air base it's crazy
+1635.4	there's nuclear weapons here by the way
+1636.9	so it's
+1637.5	it's a little excessive let me go ahead
+1639.6	and place that one real quickly
+1641.9	we're going to use a facility we're
+1643.8	going to do again we're just doing this
+1645.5	to reduce the lag of the scenario
+1647.5	because they're not going to be targets
+1649.4	okay so now we have our air base and
+1651.4	we're ready to use them for the purposes
+1653.1	of designing them
+1654.1	so what are we going to give them as far
+1655.5	as assets well the first things first
+1657.6	you're probably going to be using some
+1660.1	kind of f16 version
+1661.8	against 2008 we have f22s but we're not
+1664.6	going to be using them
+1665.8	so let's go ahead and see what we can do
+1667.5	for f16s
+1669.6	let's go over here f16 operators
+1673.8	let's see what we got here that looks
+1676.5	pretty good users
+1677.8	sometimes here we are let's scroll down
+1681.5	to united states
+1683.4	united states operators we'll do air
+1685.6	combat command
+1687.4	ah here we are so f16s so we can
+1690.9	actually look the squadron up 55th
+1692.8	fighter squadron
+1694.0	and we can go see what version of the
+1695.6	f-16s are actually operating again look
+1697.4	how wonderful this information is
+1699.1	it does not tell us so it's safe to say
+1701.2	they're probably using one of the newer
+1702.7	blocks
+1703.7	so i'm going to go ahead and take a look
+1705.1	real quickly
+1707.0	let's see here i'm going to shoot
+1708.6	through this real fast now let's see
+1710.4	here we'll do a
+1711.4	cm and we'll do a block 40s we'll do
+1714.6	2008 we'll do 24 of those is the size of
+1717.0	an f16 55th
+1718.6	fighter squadron fs i believe the 55th
+1720.9	actually does not operate them anymore
+1723.1	but it's okay i'm not worried about it
+1724.3	too much add
+1726.4	all right let's grab the 77th as well
+1728.6	77th
+1729.4	fs 24 of those as well we'll keep with
+1732.4	the cm
+1733.1	theme here we'll go to the block 50s
+1734.7	again with the 2008 version
+1737.4	it looks pretty good and we'll go ahead
+1740.2	and grab the 79th fs as well
+1742.3	79th fs and we're going to make sure we
+1744.8	get the 52s
+1746.2	ccip that version again the reason we're
+1748.7	doing this is for those who want to play
+1750.0	with this in dcs later
+1751.4	so we're probably going to be carrying
+1752.8	f-15es as well because those are the
+1755.0	strike eagles we want the 2008 version
+1757.4	the cool thing again look how wonderful
+1758.7	this is my f-15e operators
+1762.9	just search for that real quickly let's
+1764.9	take a look real quick
+1767.0	and let's see who's got the f-15e
+1771.0	ah bingo the 333rd
+1774.6	fs and these are smaller squadrons so
+1777.4	we're only going to be bringing 18 of
+1779.0	these along and last but not least
+1780.8	though let's make things kind of
+1781.9	exciting as we kind of round things off
+1783.7	let's grab ourselves some b1s too just
+1785.8	because we're mean
+1787.5	and uh b1 there's only a few b1
+1791.4	bomber squadrons there's only a few of
+1793.4	these if i recall correctly
+1796.6	uh let's do the ninth bs ninth
+1800.1	bs and we're only going to be having 12.
+1804.5	okay next video i'll go ahead and add
+1807.0	some more units down
+1808.1	here i'll do that kind of off camera
+1809.5	we'll add something to promote that feed
+1811.3	and then we'll start taking a look at
+1812.4	the ai as well as how to structure the
+1814.2	rest of the mission
+1815.3	enjoy

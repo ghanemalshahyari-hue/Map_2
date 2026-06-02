@@ -1,0 +1,1178 @@
+0.0	hello everyone today's command video
+2.2	we're going to be taking a look at the
+3.3	side doctrine settings now if you mess
+6.1	with the doctrine page before chances
+8.0	are you've probably gotten a little bit
+9.5	more into the trickier aspects of
+11.8	command now just pop it over here really
+14.4	really quickly you'll probably notice
+15.8	that when I open this page up it brings
+17.7	up tons of settings that can really
+20.5	really impact the performance the rules
+22.8	of engagement the different types of
+24.7	bingo States different type of weapons
+27.0	should submarine surface should they
+29.0	automatically attack targets everything
+31.0	is contained within this page and this
+33.4	page itself is blended with your eMCON
+35.7	settings weapon release optimization and
+37.8	your withdraw and redeploy settings
+40.1	these other pages were gonna save for
+42.5	another day otherwise this is gonna be
+43.9	an extremely long video oh great
+46.5	so basically when you're doing doctrine
+48.7	the first thing you want to kind of keep
+49.7	in the back of your head with all
+50.8	doctrine settings is the fact this is
+52.8	the entire sides doctrine it is an
+55.3	omission doctrine it is an individual
+57.8	units doctrine unless of course you come
+59.7	down here and you tell it to
+61.5	automatically override everybody's
+63.9	doctrine in the entire basically side so
+67.7	to these particular settings that you
+69.4	just set up here so we're going to do
+71.1	today is we're gonna take a look at what
+72.4	the effects of some of these different
+73.5	settings a little bit of quick little
+74.8	scenarios to kind of show you as well as
+76.6	kind of describe some of them so they
+78.0	can better set you up so starting up at
+80.2	the top this is a pretty straightforward
+82.0	doctrine setting using nuclear weapons
+84.1	you notice that it's dull it has a not
+86.4	granted option and then it has a Beluga
+88.0	option up here at the top as well
+89.6	note that scenario designers can allow
+92.6	you or disallow you from being able to
+94.5	change a doctrine setting so for example
+97.0	if I click this box here that would mean
+98.6	people playing my scenario could change
+100.3	this on mate
+101.3	clicking it here of course means they
+102.8	cannot change it I'm in the map editor
+104.8	slash scenario editor Mon right now so
+106.7	it gives me the ability to adjust this
+108.1	after you have strategic you have your
+110.6	rules of engagement now a rules of
+112.7	engagement are one of those things that
+114.3	if you do it right you shouldn't have to
+116.6	worry about - too much but the fact of
+118.6	the matter is rules of engagement we do
+120.5	per tricky because you'll acquire target
+122.5	way sooner than you actually identified
+125.4	the target so as soon as you have to do
+127.2	a little bit of deduction - in order to
+128.5	do it all rules of engagement are
+130.3	separated into air targets surface
+132.1	targets
+132.7	sub-surface a k' submarine and land
+135.5	surface and land are considered the same
+137.6	type of target so kind of keep that in
+139.4	the back of your head so what can we set
+141.5	this to well let's take a look if we set
+143.4	this to free we will attack anything
+145.6	that is not friendly let's watch what
+148.2	happens when we do that go ahead and
+150.9	pause speed up time a little bit here oh
+152.9	I forgot one thing real quick I'm gonna
+154.4	have to actually go ahead and turn my
+155.4	little radar system so that it can
+157.0	actually acquire things oh oh what's
+159.2	this oh we see some aircraft coming out
+162.4	of that was pulling there oh you see
+165.8	some wire craft there okay that looks
+167.7	pretty good here of course they're well
+169.8	within our range go ahead and turn on
+171.2	the Battalion radar handing them
+173.2	so what are we just shoot down surprise
+177.6	we shot down a bunch of civilian
+179.2	aircraft so that's one situation when
+182.8	that's a bad idea let's take a look at
+184.8	another situation when that's a bad idea
+186.7	now let's say let's go go - 300 again
+189.7	dude rice 400 I should say and let's go
+192.6	ahead and turn this radar on and let's
+195.2	go ahead and get ourselves an f-16 I
+197.0	always feel bad for of 16s I love this
+199.1	airplane so much but it's such an easy
+201.3	victim I'll grab this one right here
+203.2	we'll go ahead and give it a random
+204.2	armament and he's just sort of tooling
+206.5	around now in my settings I have
+209.0	communication disruptions on as an
+211.2	option what does that mean well let me
+213.8	show you I do damage control scroll down
+216.5	to his radios and I'm going to destroy
+219.3	him
+219.6	obviously Battle Damage is the number
+221.0	one reason that this happens but some
+222.8	missions actually have jamming stuff
+224.4	like that so I'm going to go ahead and
+226.0	unpause for a second here I'm gonna go
+228.1	ahead and get my FPS 117 here I'll go
+230.7	ahead and flip that sucker on we go
+233.0	ahead we have our SU huan'er he's also
+234.5	got his a radar turned on and this f-16
+237.3	is I doing pretty good here he's just
+238.8	kind of tolling around doing his own
+240.2	thing and what will happen is he will
+242.3	suddenly drop off the communications
+245.0	network so what's the problem no problem
+248.9	he's just kind of up here float let's go
+251.1	to my doctrine real quickly and set it
+253.4	so that we attack anything we see in the
+255.8	air so now watch what happens here
+257.7	go ahead speed up time a little bit
+259.4	we're tracking it right now
+260.9	oh we spotted something uh uh it's
+263.0	probably a target aircraft quick fire
+265.1	I think you know where this story adds
+268.4	and we just shot down one of our own
+270.5	f-16s so one of the most common ways you
+273.2	get shot down by this by the way is when
+275.0	you're already in the air a lot of times
+277.2	so these big packages flying in somebody
+279.4	don't get a radio damaged and all of his
+281.3	escort usually you know your fighter
+283.0	escort go ahead and shoot him down even
+285.2	though he's on your side so I have to
+287.6	warn you against setting this setting
+289.9	unless of course you have a particular
+291.8	site or particular country who features
+293.4	that tight is an interesting combination
+295.5	it will not allow you to attack targets
+297.7	that have a good positive identify it
+299.5	has hostile unfriendly targets don't get
+301.9	attacked by the way they do get followed
+303.5	hold is tricky because it won't allow
+306.4	any attacks unless it's in self-defense
+309.0	so if you shoot an anti-ship missile at
+311.1	a target that's said to hold
+312.3	he's smart enough to know not to go on
+314.5	return to return fire at it but not to
+316.4	attack the platform that attacked it
+317.8	first so it's very interesting in
+319.9	general I keep my chart guys on Titan
+321.8	depending on the particular mission
+323.4	obviously if I see a bunch of unknown
+325.0	contacts coming directly from an enemy
+326.8	airbase usually you can figure out what
+329.1	those are gonna be if that does happen
+330.6	you can always click on a contact and
+332.3	you can actually mark it differently
+333.8	depending on what the situation is
+335.5	obviously HK makes it hostile hitting
+337.7	the F key is gonna make it friendly all
+340.3	right let's take a look at the other
+341.5	settings ignore plotted course when
+343.8	attacking this isn't an irritating one
+346.3	when you forget to set it so what does
+348.5	that mean that simply means that if you
+350.7	order a unit to attack and that unit has
+353.1	a course let's go get our victim f-16
+355.5	again here we'll borrow the one from
+356.6	Turkey quick order to do one of these
+359.7	things if for example I had a situation
+361.6	where this aircraft were travelling
+363.4	along this line and I wanted them to
+365.2	attack somebody over there they would
+367.2	have to move to this point and then turn
+369.6	to go ahead and do the attack there's a
+371.9	positive benefit to that and that's the
+374.4	fact that if I wanted to attack for
+375.9	example an enemy runway and I wanted to
+377.8	hit it at a specific angle I can set it
+380.1	not to ignore plot of course when
+381.8	attacking however if you don't set this
+384.3	setting and you have something like a
+385.9	ship trying to attack somebody with the
+387.1	torpedo if he's got a course that takes
+389.1	a little over here and his target is
+391.1	down here he'll just keep on trucking
+392.7	right out of range so keep that in mind
+395.3	one quick shortcut by the way if you do
+397.0	have that setting on if you order
+398.4	somebody
+399.0	move and then just click on the waypoint
+400.4	press delete they'll go do their own
+402.0	thing now you'll notice he's gonna start
+403.6	loitering because I didn't give him an
+404.9	attack obviously if I said go attack the
+406.7	Sam battery or something like that
+408.1	use immediately gotta kick up his speed
+409.6	to go do the deed keep in mind he's
+411.3	armed with so that's what that one does
+414.9	next one down is ambiguous targets so an
+417.9	ambiguous target is a target that we
+419.5	haven't quite fixed its location of
+421.7	basically you have three different
+423.4	flavors you have ignore which simply
+425.6	says don't attack and Big E was targets
+427.6	ever you have optimistic which says you
+430.0	can fire at a target if you're confident
+431.6	in its range pretty confident as and I
+433.6	think it's like point four nautical
+434.9	miles and pessimistic is I know the
+437.4	targets out there but it's not a great
+439.6	target but it's not a bad target take
+441.6	the shot anyway this is critical when it
+443.8	comes to using torpedoes against
+445.3	submarines
+446.2	because as you know submarines are must
+447.8	always ambiguous targets unless of
+449.5	course they're stupid in there on the
+450.5	surface last but not least you have
+453.3	engaged opportunity targets what does
+455.6	this meet let's show you know I hit
+458.5	myself we're gonna grab facility here
+460.5	I'm a fan of high Mars everybody's got
+462.8	their own favorite okay so I'm just
+465.4	gonna sitting right here I'm also gonna
+466.6	sit actually let's move him a little bit
+468.3	here I'm gonna go ahead and set his
+469.8	proficiency to maximum so uh how are
+475.4	things good okay you'll notice he did
+479.8	not fire at the enemy targets even
+481.8	though he was perfectly within range to
+483.3	do so that is because if you take a look
+486.2	here actually whoops sorry about that
+488.7	let's go get his doctrine specifically
+491.0	let's get his doctor window WRA I call
+494.8	these beautiful weapons you notice that
+497.6	they're programmed not to use these
+499.5	weapons self defense this is considered
+501.3	a self defense situation they do not
+503.9	attack things unless you give them a
+505.8	doctrine that allows them to do
+507.3	opportunities so for example if I came
+509.3	down here says hey notice as soon as
+512.9	they did that he started firing
+515.1	oops have fun you notice he immediately
+519.0	starts doing his own thing it starts
+521.1	attacking ground units that do not have
+524.0	the set engage opportunities will not
+526.7	engage on the ground units and less
+528.2	they're attacked first keep that in the
+530.5	back of your head air units by the way
+532.3	have a brand new fun thing that they do
+533.9	which is super irritating what they'll
+536.0	actually do is um let's say they have
+537.5	cruise missiles and they're taking off
+538.8	and they're ordered to attack the space
+540.1	they take off and attack these guys
+542.0	first because they're targets of
+543.7	opportunity so make sure you watch out
+545.8	for that particular setting so that
+547.6	takes care of the rules of engagement
+548.8	sometimes you can't control these
+550.6	depending on what country would hear
+552.1	things along those lines
+553.1	the next item a Mission Control ignore a
+555.6	Mission Control wonder nerd attack this
+557.6	simply says that if it detects that a
+559.5	weapon is about to attack it it will
+561.2	automatically turn on its jammer as well
+563.4	as its radar as well as as active sonar
+565.5	if you disable this setting it won't do
+568.0	any of those things which may preclude
+570.4	returning fire or even being able to
+573.0	engage the incoming weapon keep that in
+575.3	the back of your head
+576.0	the advantage to this by the way is the
+578.1	fact that if you turn it off you won't
+580.2	give yourself away if somebody takes a
+581.8	pot shot at you the disadvantage
+583.8	naturally is you won't be able to
+585.0	automatically engage now when is this
+587.2	going to be a situation well there's a
+589.6	couple different ways to look at this
+590.7	the first one is let's say I have a
+593.1	situation when I let's go get myself a
+594.8	b-52 for this one real quick we'll get
+597.4	ourselves to b-52h
+598.6	even though my personal favorite is the
+600.2	D oh I don't want to Jassim I want
+602.5	something that's actually gonna annoy it
+603.6	looks pretty good good go ahead over
+607.6	here I'm gonna add six here whoops sorry
+612.0	about that and I'm gonna allocate six
+616.4	right here alright that should do it so
+621.9	these are decoys so what they're gonna
+625.4	do is they're gonna leave the b-52 real
+627.2	quickly and they're gonna fly towards
+629.2	that target go ahead and send you back
+631.7	to base you've been very helpful thank
+633.3	you let's jump to red for us real
+635.2	quickly I'll get myself to borrow lock
+636.6	p37
+637.4	pretty decent radar go ahead flip it on
+640.0	real quick
+641.1	observe we have identified several
+643.9	unusual bogeys now I don't know about
+645.6	you but when I see that I think crews
+648.0	mess
+648.5	so of course what else do we have we
+650.5	have these si threes we're ready to go
+652.2	if they need to be used so let's see
+653.7	what happens they come and within their
+656.7	coming within now if we had a rules of
+659.5	engagement that said attack anything
+661.2	that hasn't been identified yet he's
+663.5	going to automatically fire missiles now
+667.3	keep that mind because if I switch to
+669.6	the other team and I had something like
+671.0	a compass call that looks good to me
+676.2	looks good to me I automatically can
+680.3	identify this target as well as its
+682.8	types of radars because it has to turn
+685.3	its radars in to engage this that would
+688.4	means if I shot a wall of decoys at an
+690.6	enemy surface action group for example
+692.3	the surface action group if they didn't
+694.4	have the correct WRA we'd start shooting
+696.5	at these things turning on the radars
+698.1	giving themselves away so you can
+701.2	already see the positive and negative
+702.8	benefit of that Alright cop is calling
+706.1	but very helpful so that's gonna be that
+714.1	Alright ranges so as you probably know
+718.3	from some of the other videos as well as
+719.8	exploring the database on your own that
+721.7	torpedoes have a maximum range and kind
+724.6	of like I have to consider it a kill
+726.2	range basically that simply says that if
+728.6	you set this to kinematic range the
+730.7	torpedo is gonna be fired at its
+731.9	absolute maximum range if you said it's
+734.0	a practical it's gonna be set at where
+735.6	it has a higher chance of getting to the
+737.1	target without running out of fuel mines
+739.0	big targets can't turn around quick
+740.7	enough to get out of the way of a
+741.6	torpedo if you are playing a submarine
+744.3	scenario you're going to find that
+746.2	you're gonna want to set this a lot more
+748.2	often than leaving it at this I
+749.8	understand they're going huh
+751.1	it's because the submarine is going to
+752.7	be detecting their targets it's let's
+754.1	say 10 nautical miles the targets will
+756.1	pick you up at 5 nautical miles and
+757.8	you're already dead at that point
+759.1	basically so kind of keep in mind that's
+761.4	what this is going to dictate right here
+762.9	underneath here you have a thing where
+764.8	you can dictate whether or not a
+765.9	submarine should automatically basically
+767.8	be evasive this also includes aircraft
+769.5	this also includes ships now the cool
+771.8	thing here is let's say I'm let's go
+774.2	ahead and reload everything real quickly
+775.4	sink and take a quick look let's say I'm
+778.2	attacking a target now if I have very
+780.5	strong electronic count
+781.9	measures I don't need to turn away from
+784.2	an incoming missile I can just use my
+786.0	electronic countermeasures to basically
+787.5	help intercept the target so I'm gonna
+789.6	do real quick cuz I'm gonna get myself a
+790.9	b-52 go out let's grab an H let's go
+794.7	grab a nice modern one let's be
+796.5	old-school with this looks good to me
+798.9	and let's go ahead do one of these
+801.0	things and let's go ahead and say I'd
+803.5	like you to bomb this base please oh by
+805.9	the way if I move this over here he's
+808.1	gonna fly there and never bomb the base
+809.6	because he's not programmed by doctrine
+812.5	to ignore his plotted course I'm
+815.2	actually gonna turn that back on for the
+816.6	scenario okay that looks pretty good so
+818.8	now if he just sort of flies over the
+820.9	target range scoot scoot
+824.2	I'm actually gonna do something
+825.7	different real quickly to allow those
+827.1	other Sam's to actually have a shot at
+828.7	this uh-huh oh good they've already
+831.0	identified him excellent so I don't even
+832.6	have to bother with that well that's the
+834.3	disadvantage of being a b-52 you're kind
+836.1	of distinctive even at high altitudes
+838.2	all right lying about perfectly he's
+840.2	about to get shot at in just a second
+844.1	seriously guys you're disappointing me
+846.2	today the reason why is I didn't have
+847.9	any electronic radar stuff oh no this
+849.5	missile on way so now with the b-52
+854.7	who's gonna do with automatic evasion as
+856.6	soon as he sees that missile he's gonna
+858.4	start beaming the target which also
+860.8	means if you take a look he's no longer
+863.8	in line with the target I was going to
+866.1	engage and to be honest a b-52 is not
+868.4	exactly an aircraft that I associate
+871.0	with being able to get out of the way of
+872.7	a missile even if it jinx so as a result
+875.5	it threw off my entire attack run Thank
+878.6	You b-52 you've been very helpful so
+880.8	let's go ahead and grab another one of
+881.9	those we'll do the same exact kind of
+883.6	thing but this time we will disable that
+886.3	setting somebody go ahead I'm just gonna
+888.6	order him to attack like this but this
+890.8	time I'm gonna tell my doctrine not to
+894.2	evade keep in mind you can set talk to
+896.1	him by mission you don't have to set it
+897.9	by entire side so as a result he's now
+900.5	gonna approach the base but I'm gonna do
+901.9	this properly I'm gonna turn on his
+903.5	offensive electronic countermeasures
+905.4	which is gonna make absolute spaghetti
+907.3	out of those those threes down below me
+909.1	I would go ahead turn on a radar too
+911.4	just in case you wanted to watch
+913.6	just a cup about us I heard something
+916.7	take a look
+918.2	it was the SI five that took the shot at
+921.1	us now notice the b-52 will not dodge
+927.4	it'll stay on its attack run the entire
+930.5	time which means that hopefully the
+933.5	countermeasures are better than the
+935.4	maneuvering of the b-52 you can see the
+937.4	weapons coming up watch this fingers
+940.7	crossed those are si threes they can
+942.3	chop it b-52 okay
+943.5	hahaha you're B si threes can't go up
+945.8	fast enough so now notice our b-52
+948.4	completely focused the entire time gets
+951.5	to the attack zone delivers his payload
+953.5	and then gets creamed by an SI 5 but at
+957.7	least you get the idea as a general rule
+959.7	you're not going to be using that
+961.7	setting if is a very very modern Sam
+963.7	system with a very very large bomber it
+966.5	reverses of course back in the day we're
+968.4	even something like a be 66 could
+970.6	actually outmaneuver an early si 2
+972.3	especially a B or C so anyway that's
+974.7	that setting I think that's kind of cool
+976.3	but remember if you set this off your
+978.1	ship stop manoeuvring that way your
+980.1	submarines not moving that way so it's
+982.2	important you do it by mission not for
+984.0	the entire side now obviously an f-16
+986.4	should be allowed to help maneuver a
+987.7	missile by the way this works great with
+990.1	this but we'll get there in a minute
+991.7	moving down we have under refuelling
+993.7	underway replenishment this is pretty
+995.3	straightforward I think this is common
+996.8	sense if you put this to allow a tanker
+998.5	can fill a tanker whoops
+999.9	you set this pretty straight forward now
+1002.2	obviously you can say it's not allowed
+1003.4	coming down here you can always say if
+1005.3	you want nearest if you want to pick up
+1006.6	between the objective or give priority
+1008.5	to tankers now this is an interesting
+1011.5	problem because what'll happen is your
+1013.4	aircraft will take off then fly to the
+1015.2	tanker that's back here and then fly
+1016.8	over here to where the actual mission is
+1018.1	run out of fuel halfway come back to the
+1019.8	tanker and basically get in a vicious
+1021.4	loop like this refueling is something I
+1023.8	have to say for another video but just
+1025.2	be advised and watch out for that keep
+1027.2	in mind too that you can be allowed to
+1028.4	refuel allied units you don't have to
+1030.8	but some people like to do it that way
+1032.6	especially if you're doing like a Navy
+1033.9	and airforce kind of a mission which
+1035.8	brings us to the right side of this page
+1038.0	hey we're halfway there right air
+1040.0	operations tempo this setting dictates
+1042.7	how long it takes for an aircraft to be
+1044.5	rearmed and refueled
+1045.8	now if I go run run
+1047.4	over here real quickly to pop airbase
+1048.8	let's go ahead and just demonstrate
+1051.2	we'll get our poor f-16 victim again
+1053.1	what - now if I say hey I'm gonna load
+1057.1	this up with some GPUs for example let's
+1059.4	get some gbu-12 and a press ready
+1061.1	observe they will take six hours to
+1064.0	prepare this aircraft now remember when
+1065.9	you prepare an aircraft you're doing a
+1067.4	lot more than just putting bombs and
+1069.1	fuel on the pilot into it there's a lot
+1071.0	of prep work that goes into it that is
+1073.1	because we're using a surge that simply
+1075.2	means we need to get these airplanes out
+1076.5	as fast as a day we need four or five
+1078.5	sorties per day it is extremely
+1080.5	difficult for any Air Force to keep this
+1082.1	going for any length of time so a lot of
+1084.2	scenario designers disable this as an
+1086.3	option just keep that in mind now if you
+1088.2	set this sustained which is a little
+1090.5	more realistic in a lot of scenarios
+1091.7	watch what happens when I ask that nice
+1094.2	f-16 to load up some gbu-12 it's going
+1097.7	to take him 20 hours to do because
+1100.1	remember you're getting all that extra
+1101.7	time for maintenance all that extra time
+1103.1	for fuel
+1103.7	having unload the bombs load it reset it
+1106.0	basically you get one mission per day
+1108.2	which is a little more realistic for
+1109.8	longer campaigns so that's what that
+1111.7	setting does underneath that of course
+1113.9	you have this amazing thing called quick
+1115.5	turnaround quick turnaround simply
+1117.1	allows you to quickly load the bombs
+1119.2	fuel in the aircraft and send it right
+1120.9	back up in the air again so go ahead and
+1122.7	enable that real quickly let's go ahead
+1125.6	and grab our f-16 buddy real fast let's
+1127.8	go ahead and ready our mom we're gonna
+1128.8	cheat a little bit just to demonstrate
+1130.0	how effective this is you can click that
+1131.9	on right here I press ready immediately
+1133.6	now observe he has this little box now
+1136.5	that says quick time around turn around
+1138.5	he has two sorties total as two missions
+1141.6	takeoff and landings he has four hours
+1143.4	maximum flying time and it'll also say
+1145.9	that he has no downtime between these
+1147.8	sorties so if I grab my I have 16 buddy
+1150.1	order him to launch go let's find it
+1153.7	happens ready go impossible I ordered
+1157.9	him to be back on the ground thank you
+1160.1	check this out
+1163.8	check it out hold on okay now we're good
+1168.0	he's being really armed and reloaded in
+1170.7	the half an hour which is incredible if
+1172.6	you think about however if you take a
+1175.0	look over here on the right you'll
+1176.4	notice he's used up one of those
+1177.8	opportunities and he has a total of
+1179.9	three minutes flying town out of four so
+1181.8	if he has four and a half hours flying
+1183.6	time on his first sortie he will not be
+1185.8	allowed to do this again so it's just
+1188.1	something to kind of keep in the back
+1189.1	your mind a lot of times are gonna
+1190.5	downtime remember that we run sustained
+1192.1	right now that's why that number is so
+1193.4	big but anyway it's kind of a neat
+1195.4	little trick there and it works really
+1196.6	really well for both air-to-air loadouts
+1198.5	as well as anti-submarine loadouts all
+1201.5	right fuel state pre-planned this is
+1203.1	pretty straightforward basically bingo
+1204.7	fuel says I have enough fuel to get back
+1206.2	to base based on where I am currently if
+1208.6	you need to check out the bingo fuel of
+1210.0	a particular unit let's go ahead and get
+1211.8	somebody who's gonna be a kind of a bad
+1213.2	victim here actually let's go ahead and
+1217.1	give it a derby all right
+1220.5	observe if you scroll down here you'll
+1222.7	see this thing this is bingo fuel this
+1224.5	is 3,500 kilograms to it as well as a
+1227.5	time as well as a mileage obviously this
+1230.2	aircraft is equipped to stay in the air
+1231.7	for a long time because of the way it is
+1233.9	configured if it ordered it to start
+1235.6	moving like that
+1236.5	obviously I'm gonna start burning fuel
+1238.0	my bingo fuel is gonna get reduced now
+1240.1	one of the neat features about this
+1241.5	particular version of command it's about
+1243.1	a little bit they gave you this blue
+1244.8	ring which is essentially the I'm out of
+1246.8	fuel ring so you can see we can get all
+1249.1	the way to the UK and back from all the
+1250.7	way out here just on the field that
+1252.1	we're carrying now with the doctrine
+1253.8	window says is basically when do you
+1256.1	want us to go ahead and return to base
+1257.8	at Bingo it runs out of fuel when you're
+1259.9	out at joke are you basically saying
+1261.5	give me an extra 10% of fuel so if I
+1263.9	click Joker notice it switches to Joker
+1267.8	fuel but now I have reduced air time now
+1270.6	if you want to do something really
+1271.6	absurd you could say 50% above bingo
+1273.8	that's called paranoid driving of course
+1276.4	if this were like driving our cars at
+1277.9	home I'm sure you'd be doing something
+1279.6	like 25 percent like a quarter tank of
+1281.3	gas now if I reduced this look at how
+1284.0	much shorter of a flight he has and if i
+1286.2	zoom out yeah his range is gonna stay
+1288.0	the same because that's absolute range
+1289.1	of course if I fly away from the target
+1292.0	notice I have a massive decrease in my
+1295.1	choke
+1295.6	because I'm getting farther away from my
+1297.7	home base so I can oh of course order
+1299.5	him to return to base no if he goes okay
+1303.3	which brings us to fuel state our TV so
+1307.5	when I first played this game and I
+1309.1	played it for a little while since the
+1310.3	original command modern era now naval
+1312.0	operations came out I love this setting
+1314.2	at the top which basically says that if
+1316.3	a unit is in a group and it runs low on
+1318.2	fuel it leaves the group and flies back
+1320.5	home that sounds awesome right yeah but
+1323.3	now they can't be supported by everybody
+1324.7	else in the group now what you don't
+1326.4	want to do is the opposite which says
+1328.2	when the last guy in the group runs out
+1329.8	of fuel then everybody goes home you can
+1332.4	use this setting but usually when I use
+1335.1	this setting I come up here and do this
+1337.0	as well so basically it's a forced bingo
+1340.4	fuel kind of a situation that's a little
+1343.2	sketchy but in general most people pick
+1345.2	this one that simply says one of a lot
+1346.5	of fuel just go home you of course could
+1348.3	say don't return to base when your fuel
+1350.3	runs out but you're gonna end up with a
+1351.7	lot of aircraft casualties because of
+1353.8	that it's a bit much
+1355.1	speaking of which weapons state
+1356.6	pre-planned this is tricky this allows
+1360.1	you to basically dictate when it's time
+1361.9	to return to base based on your weapons
+1363.7	Winchester's very very popular setting
+1365.9	which basically says the first
+1367.5	Winchester if I run out of weapons
+1369.1	specific to my mission that's it let's
+1370.9	go home this one is the same thing
+1372.5	however if there's something in the air
+1374.7	worth shooting it with guns do it so the
+1377.3	problem here is you have an F for e he's
+1379.8	fired all have his aim sevens and you
+1382.3	know how those things never had anything
+1383.5	and he finds a MIG 17 so oh yeah
+1387.2	let's allow targets of opportunity for
+1389.0	air-to-air guns please don't do that
+1390.7	you're going to get the f4 shut down so
+1392.4	you one might want to consider this for
+1394.2	less manoeuvrable weapon carriers it
+1396.1	might consider this for something you
+1397.9	know as a solid dog fighter such as an
+1399.9	f-16 now there's a variation on this and
+1403.3	it's almost something you could do a
+1404.4	separate video on to explain how
+1405.7	powerful this is but if you actually
+1407.6	scroll down there's other settings
+1409.3	called shotgun now I'll check this one
+1411.4	out right here one engagement with guns
+1413.2	can you imagine that so basically what
+1415.9	that would be the equivalent of as a
+1417.0	hit-and-run with guns there's also
+1419.2	another one this is one engagement with
+1421.2	beyond visual range of standoff weapons
+1422.9	that means it's a hit-and-run with
+1425.0	standoff weapons you also of course have
+1427.4	an opportunity to fire all of
+1429.3	these weapons and then quickly run away
+1430.7	which is very similar to this however
+1433.1	its bvr standoff this is not include
+1436.1	dogfight missiles scrolling down here of
+1438.3	course here percentages as well word of
+1441.1	warning loadouts
+1443.6	have a specific setting for that so for
+1446.5	example if I go to my have 5e again
+1448.1	scrolling down it'll actually dictate
+1450.7	what the automatic setting is check this
+1453.3	out
+1453.8	this one's programmed to 1 engagement
+1456.2	and then return to base that means that
+1460.2	if you doesn't fire both as missiles in
+1461.9	one engagement guess what that is that
+1464.5	would say we've wasted 2 more missiles
+1466.5	and just ran home and probably got shot
+1468.2	down on the way back you have to be
+1470.7	careful with that so for example if I
+1472.8	click his doctrine real quick you'll
+1474.6	check it out and see and this particular
+1476.2	says Lowe's used loadout setting you
+1478.8	have to come in here and override this
+1481.0	otherwise the first fight he gets in he
+1483.6	turn around and go home whether or not
+1485.3	he's discharged all his weapons which
+1487.2	now means a six-hour wait time for him
+1489.3	to be rearm to refueled unless he's
+1490.7	quick turnaround you've got to watch out
+1492.7	for that this is also true by the way
+1494.5	when you are doing operations where
+1496.5	you're going to be doing precision
+1498.3	guided munitions from the air to ground
+1499.8	targets its kind of urinating but it's
+1502.5	just something you have to watch out for
+1503.6	of course you can come up here and
+1505.0	override it but like I said you have to
+1506.9	do that by mission so be very careful
+1509.0	next one you have weapons state RTB this
+1511.8	is the same as bingo the difference here
+1513.9	is you can um I love this one at the top
+1516.0	when you run out of useful missiles by
+1517.9	the way be careful here you can just say
+1520.2	oh oh too bad um you can go ahead and
+1522.0	return a base and be defenseless the
+1523.7	whole ride home this is a possibility
+1526.8	but again now you've got an airplane
+1528.5	that's ready in two hours and you have
+1530.1	four aircraft that are ready in eight
+1531.5	hours because they've all arrived at
+1533.3	different times operationally this
+1535.5	doesn't work so yet to be very careful
+1537.6	with this that being said if you're
+1539.1	doing cruise missiles and stuff like
+1540.1	that it's 20 hours anyway get back to
+1541.9	base as fast as you can next one
+1543.9	air-to-ground strafing woohoo
+1545.1	demonstration time thank you mister f5
+1547.6	you've been very helpful
+1549.2	alright so let's go ahead and delete
+1551.9	this si 5 that thing's pretty nasty
+1553.6	let's get ourselves everybody's favorite
+1556.9	bad guy CSU 23
+1560.4	yeah well just isn't Vietnam that seems
+1562.3	pretty legit well go ahead and turn this
+1564.3	radar on again we're gonna make things
+1565.7	interesting also you know I'm gonna
+1567.5	throw in an essay 9 to just have a
+1569.0	little bit of fun here oh I mean you
+1574.1	can't do an essay 9 without a dog here
+1575.8	radar I mean they were just meant to be
+1577.4	I will grab that one from Bolivia I'm
+1579.8	not gonna make any judgments about my
+1581.5	selection here I'm just trying to be
+1582.8	fairly efficient so the next one is
+1585.2	air-to-ground strafing so let's go ahead
+1587.5	and get one of my old school favorites
+1589.6	air-to-ground aircraft which nobody
+1591.4	thinks about anymore which is a shame
+1592.7	because it's a really neat plane and
+1594.5	that's the big 27 let's take a MIG 23
+1596.9	and make it more usable for ground
+1598.8	attack by making the nose easier to see
+1600.4	over so we have an attack here with five
+1602.3	fab 500s those are basically very very
+1604.7	large high-explosive bombs
+1606.1	we'll get them together in a good old
+1607.4	fashioned group before and remember
+1610.0	their default loadout setting is high
+1613.0	low high which means they're going to be
+1615.6	attacking at an altitude to do let's see
+1618.1	here pretty low if I recall correctly
+1620.0	actually it's gonna be down here isn't
+1622.0	it scrolling down it's going down and
+1623.9	scroll down strike down two minutes I
+1627.2	believe it's gonna be about a hundred
+1628.5	feet attack altitude so what I'm gonna
+1630.8	do is I'm gonna order them to fly in
+1632.3	here and I'm gonna go ahead and have
+1634.3	them do their little thing they're gonna
+1635.7	do a really really sharp dive they are
+1638.2	not allowed to choose air-to-ground
+1640.6	strafing watch what happens
+1648.8	[Laughter]
+1654.5	unfortunately my demonstration wasn't
+1656.6	quite as good as I was hoping it cuz
+1658.4	they literally got rekt so I'm gonna go
+1660.8	ahead and grab those could the next
+1662.9	group of MIG 27s please come in please
+1665.3	and we're gonna go ahead and grab those
+1667.3	guys again group them together and now
+1669.5	demonstrate what was supposed to happen
+1671.5	so those guys got rekt they just flew in
+1674.6	at a hundred feet the Zeus just ripped
+1676.8	them a new one the SI nines hit them all
+1678.7	as they fold up it was just a disaster
+1681.0	so watch this disaster get worse I want
+1684.5	to order them to use their air-to-ground
+1686.1	guns by the way by the way they're
+1689.5	programmed to do one attack which means
+1691.5	I have to come up here now and tell them
+1693.3	not only to use the gun
+1694.3	but they're allowed to use a targets of
+1696.1	opportunity all right let's Redis all
+1699.3	right boys do the deed here they go
+1703.0	actually before I do that on a sign
+1707.0	that's fine I just don't you guys
+1709.4	attacking that target because I always
+1710.8	feel bad when he do that all right
+1712.1	I check that go all right watch this so
+1716.7	they're gonna zip in just like they did
+1718.2	last time but this is gonna be a new
+1720.1	complication so they're gonna drop all
+1721.5	the bombs first and one guy get ripped
+1724.1	up okay yeah this is a really really
+1736.1	good system I'm actually gonna delete
+1738.3	that delete that and now I'm gonna
+1740.2	demonstrate what was supposed to happen
+1741.7	this time definitely is usually what I
+1743.5	like to say right so I'm gonna go ahead
+1745.5	and get the aircraft again high low high
+1749.3	make a few copies group them yeah you
+1752.2	can stay there it's fine I don't feel
+1753.8	bad
+1754.1	whoop ordered them to attack spacebar
+1756.6	Delete all right they're programmed to
+1759.7	allow air-to-ground strafing yes indeed
+1762.1	so watch what happens so they're gonna
+1763.6	zip in here like this first thing
+1766.2	there's gonna do is they're gonna have a
+1767.4	tough time identifying their targets oh
+1769.0	that looks pretty good from here so then
+1772.3	they start shooting at the targets so
+1775.3	then they're gonna pass wide they're
+1776.9	gonna come around again they're gonna
+1778.4	come around again keep in mind if that's
+1783.8	use for shooting at them the whole time
+1785.4	I probably would have lost every single
+1787.3	one of these even though I already lost
+1789.1	every single one of these not strafing
+1790.9	so because they get so many attacks it's
+1794.2	five attacks per pass that simply means
+1797.8	they're in the line of fire at extremely
+1799.5	low altitudes with a weapon that doesn't
+1801.4	necessarily penetrate as you probably
+1802.9	observing at all so as a result these
+1805.8	guys are basically zigzagging causing
+1807.7	all sorts of trouble not being terribly
+1809.8	helpful so now if I go back up here and
+1812.0	say hey you guys can't do that anymore
+1814.4	now they're gonna track the bottom to go
+1816.3	home hopefully you see the difference
+1817.9	between the two somebody you're going to
+1819.4	say well what about the a-10 I love the
+1821.6	a-10 that has an amazing gun on it is it
+1823.7	necessarily
+1825.6	in game terms but it is still a pretty
+1828.3	usable weapon you're gonna get shot down
+1830.3	just keep that in mind okay moving on
+1833.3	jettison ordinance what does this mean
+1835.0	this means if you're attacked drop all
+1837.0	your weapons off the plane and run away
+1838.7	this does not include air-to-air weapons
+1841.5	it only includes things like fuel tanks
+1843.2	it only includes things like bombs and
+1845.6	very very expensive missiles so keep
+1847.6	that in mind the advantage to this of
+1849.3	course is if I'm at f-105 during the
+1851.2	Vietnam War it's somebody shoots an
+1852.7	essay to me I'm gonna be smart enough to
+1854.9	dump all my ordnance off and basically
+1856.5	bug out as fast as I can that's the only
+1858.5	way you're gonna have enough maneuvering
+1860.2	speed by the way if you combine this
+1863.0	with this you are silly I'm sorry no
+1868.6	you're silly why well if you take a look
+1871.3	at this particular got to turn that back
+1872.9	on maybe that's why everybody died a
+1874.4	minute ago oh well basically you have an
+1877.0	interesting little problem here that if
+1878.7	you're not trying to setting ordnance to
+1880.0	lighten yourself and just not evading
+1882.6	then wait what just try to keep that in
+1887.5	the back of your head it said it doesn't
+1889.2	make sense but anyway moving on BV our
+1892.9	engagement logic this one is a little
+1895.2	bit not tricky it's just tough to
+1897.4	understand basically when you fire a
+1899.5	missile let's go ahead and get my
+1900.8	favorite example get me an F for e this
+1903.3	time we need something on purpose go
+1908.3	ahead and give it some sparrows pointed
+1910.6	in this direction like there what do you
+1913.0	have to watch out for is that sa v let's
+1915.0	go ahead and do this switch to red for
+1917.0	let's get everybody's favorite victim
+1935.6	okay so first things first in order for
+1938.8	any of these doctrine settings to work
+1940.6	properly other than follow them it's
+1942.1	actually all them to be honest you have
+1944.0	to make sure ignore apply to courses on
+1946.0	so what do these three mean follow
+1948.2	missiles straight in if you set this
+1950.1	setting
+1950.7	well we fire our missile at our poor
+1953.0	victim here let's go give him a pair of
+1954.5	sparrows probably gonna need more than
+1956.1	that he will turn the nose of the plane
+1959.2	so that he is facing the target that he
+1961.8	is attacking let me go dumb let's check
+1963.7	real quickly to make sure nothing weird
+1965.1	is happening here oh you're probably
+1966.7	wondering why he's turning like that
+1968.6	it's because he takes a certain amount
+1970.2	of time in order to successfully engage
+1971.7	the target okay now he's got a problem
+1975.0	yep there he goes now notice after he's
+1978.1	fired the missiles he's literally
+1979.8	keeping the nose of his aircraft pointed
+1981.6	perfectly straight at the target he's
+1983.8	engaging now if the target were to
+1986.0	maneuver outside of this cone obviously
+1987.7	these missiles from go Tom so why would
+1989.7	you do this well if you have an inferior
+1992.2	weapon and you need to close the
+1993.6	distance to get to a deadlier weapon I'm
+1995.7	thinking our 27 es and our oh sorry
+1998.4	our 27 T's and our 27 ours those are
+2001.6	basically the standard Russian missiles
+2003.0	you're gonna be firing the RS to get the
+2004.7	guy to turn waiting for in return and
+2006.6	then using the t's the only way you can
+2008.3	get away with that is if you're pointing
+2009.7	at the target the entire time and the
+2011.8	sparrowmon that ever happens okay so
+2014.7	that's the first victim of this guy
+2016.1	let's see if he can go for two let's go
+2019.7	ahead and switch the other side real
+2021.0	quick and let's take a look over the
+2022.8	other option is let's go get our mig-21
+2025.0	again we'll use one for Vietnam all
+2031.5	right let's go ahead and change our
+2033.5	doctrine one more time and now we're
+2036.0	gonna tell it to crank the missile so
+2038.8	what is cranking so basically cranking
+2041.0	is where after you fire the weapon
+2043.2	you're gonna turn the nose of the plane
+2044.7	to an angle of the target so that the
+2047.3	missile continues to travel safely to
+2049.3	the target but you don't close the range
+2051.6	on that target as quickly so I'm gonna
+2054.1	ordered and we go ahead and attack my
+2055.4	bogey here watch what happens this time
+2057.5	I'm actually gonna have to back him up a
+2058.9	little bit reason being is he has a
+2060.8	limitation oh oh da that he's got to get
+2063.1	with it okay watch he's going to turn
+2065.3	himself so that the missiles leave it
+2067.9	still inside his radar cone however this
+2071.0	is stupid you should have fired to see
+2075.8	how he turns like that he's cranking so
+2079.8	that he doesn't get any closer when the
+2081.1	missiles on the way because remember you
+2082.3	couldn't get shot back so what about the
+2084.7	last option crank and drag well you're
+2087.4	gonna need something a little bit more
+2088.6	modern to demonstrate this so let's go
+2090.4	classic victim over here we'll do a
+2092.4	medium load out like this well point
+2094.4	them like this we'll go ahead and set it
+2095.8	to radar on we'll go ahead and get our
+2097.9	beautiful mig-21 over their green
+2100.0	forward by the way was on my civilian
+2101.6	element go grab my big 21 again we could
+2105.4	do it em we're just doing them this time
+2107.4	why not like that at the briefing sorry
+2115.5	I'm trying to move quickly here switch
+2117.1	to groov 4 okay so now what's gonna
+2119.6	happen is by the way notice how much
+2121.1	wider this is holy smokes so I'm gonna
+2123.6	order the doctrine to crank in drag so
+2126.5	what this means is when you fire you're
+2128.9	gonna not just crank but as soon as the
+2131.3	missile goes active you're actually
+2133.0	gonna turn the airplane away from the
+2135.3	enemy target to avoid his incoming
+2137.3	attack somebody go ahead and that guy
+2139.8	like that we're gonna lock on I'm gonna
+2141.9	back up just a little bit here notice he
+2143.8	fires see how he's cranking now watch
+2146.7	this when the target gets active see how
+2149.4	he turns away
+2150.1	BAM nicely done keep in mind if you do
+2154.1	that you can't see the target however
+2156.4	you don't close distance between you and
+2158.8	the target pretty cool if you ask me
+2160.9	alright moving down anti-surface warfare
+2163.5	use Samson anti-surface warfare mode
+2166.0	this is cool
+2167.2	you can tell surface certain kinds of
+2169.1	surface-to-air missiles have the ability
+2170.5	to engage surface targets this is
+2172.3	SuperDuper useful against mass boat
+2174.4	attacks it's also a great way to run out
+2176.4	of a lot very very very expensive
+2178.4	surface-to-air missiles keep in mind
+2180.1	maintain standoff to target this is neat
+2182.9	too basically all this is saying is try
+2185.1	to keep away from the target that you
+2186.8	fire weapons at next one is navigation
+2189.8	this is pretty straightforward when you
+2191.3	tell the ship to navigate do you want to
+2192.7	do a shortest deepest or do you want to
+2194.8	stay in shallow water keep in mind that
+2197.4	if you're traveling over very long
+2199.5	distances this calculation can take the
+2201.4	game some time to do which brings us to
+2203.6	anti-submarine warfare first sitting at
+2206.2	the tippy-top avoid contact if you set
+2208.0	this to yes always the submarine will
+2210.2	never engage things it'll always try to
+2212.5	run from anything that tries to attack
+2214.1	it it's self defense the difference here
+2216.2	is it will defend itself even though
+2218.0	it's still trying to be evasive now this
+2220.2	is the one that everybody has a tough
+2221.6	time with
+2222.4	- I've one thread is detected now you'll
+2225.7	see there's a couple different options
+2226.7	here no says don't dive when I detect a
+2229.3	threat this one says if there's a ship
+2231.2	within 20 nautical miles or an aircraft
+2232.6	within 30 this is new classic I call
+2234.9	this like the world war 2 model oh I saw
+2236.7	something - binoculars everybody dive
+2238.4	dive dive that's what that is on
+2240.7	periscope surface search radar detection
+2242.5	in on ESM detection and threat proximity
+2245.3	this one basically uses the ship's judge
+2247.4	submarines judgment this one's like
+2249.0	don't even take a chance this one is a
+2251.5	kind of a combination but it could be
+2252.9	difficult to calculate and of course you
+2254.7	have the no option which is don't dive
+2256.2	so what I'm gonna do is I'm gonna set it
+2258.1	to periscope a surface search and
+2259.5	demonstrate Thank You mr. f16 you've
+2261.9	been very helpful
+2262.6	let's go up here so I've got ourselves a
+2266.0	handy dandy it's an SSN this is the I
+2268.4	believe this is the Dallas Hunt for Red
+2270.4	October faint I'm gonna set it to
+2272.2	periscope depth go ahead and pause here
+2275.1	I'm gonna wait it comes up it's gonna be
+2276.9	about minus 66 feet keep in mind he can
+2278.8	now see pretty well at the front good
+2281.0	read for real quickly and surprise
+2282.7	there's a tuple of 142 just sort of
+2284.8	chillin up here I'm gonna turn on his
+2286.9	radar and I'm gonna go ahead and flip
+2289.6	back to blue for sono notice this
+2292.2	aircraft aircraft what's that the
+2294.4	submarine has now detected that there is
+2296.3	an aircraft looking at it somewhere
+2297.8	which is a little we might I mean I'm
+2299.6	set auto set it up to cruise notice as
+2302.5	soon as I did that he immediately drove
+2304.3	just a little bit to keep himself safe
+2306.7	now if it did something stupid like told
+2308.8	them up to come up to the surface watch
+2311.1	this I think it might be a little too
+2315.9	far away for him to do that you're
+2320.8	supposed to automatically dive let's
+2325.1	take a look real quick to make sure I
+2326.3	didn't up you may also judge that this
+2328.8	particular aircraft is too far away to
+2330.6	matter let's see here where if I messed
+2332.8	up let's say i dsm detection is that
+2334.7	gonna make you go and go diving no so
+2337.7	set it back to auto yeah see when you
+2339.4	put it to auto hope there he goes now
+2340.7	he's identified it as a hostile now he
+2342.8	dives go figure
+2344.4	so that's all that does okay so now we
+2347.3	take a look at these settings recharge
+2349.1	battery so if you're working with the
+2350.7	diesel submarine you don't get unlimited
+2352.4	battery power I know that sounds obvious
+2354.0	but I've been surprised how many times
+2356.3	ran out of battery when I didn't realize
+2357.9	I was still dived basically this says
+2360.2	that if you're just cruising along
+2361.6	automatically come to these periscope
+2364.2	depth and start recharging a battery
+2365.6	when you get to this percentage if
+2367.3	you're under attack or offense don't
+2369.8	come to the surface and do that until
+2371.0	your batteries at this setting keep in
+2373.3	mind this function of avoid contact this
+2376.5	function of dive when detected complete
+2379.5	competes against these two settings if
+2382.3	you have a diesel sub that can't surface
+2384.2	to recharge its batteries because it
+2385.8	keeps detecting this then you're gonna
+2387.4	get basically an infinite loop going up
+2389.1	and down up and down up and down without
+2390.7	really recharging anything just keep
+2392.6	that in the back of your head
+2393.8	dipping sonar I love this one so let's
+2397.7	go ahead and switch back sOooo actually
+2399.7	real quickly obviously we've detected a
+2402.5	submarine because you just surfaced so
+2404.4	most helicopters will grab ourselves a
+2406.4	hormone for this a lot of anti-submarine
+2409.1	helicopters have dipping sonar onboard
+2412.0	dipping sonar is literally just a giant
+2414.2	set of sonar that you can hang off the
+2416.0	bottom of the helicopter it's actually
+2417.3	kind of cool so to use that normally
+2419.5	what you have to do is kind of get mad
+2421.0	at me it's got to tell me I'm at bingo
+2422.3	fuel I know I know
+2423.9	no don't you dare I have work for you
+2426.5	I'm on assigning you so what's gonna
+2428.9	happen is if you are less than 200 feet
+2430.9	at a hover you could deploy this
+2432.5	manually check it out so I'll set him
+2434.6	down to a hover minimum altitude he's
+2436.7	gonna go cruising down so now if I
+2439.8	right-click to ant ASW specific and hit
+2442.2	deploy dipping sonar he's going to stick
+2444.6	his entire sonar into the water and
+2446.7	start listening around him you can tell
+2449.1	helicopters to do this automatically by
+2451.3	using this setting right here keep in
+2454.0	mind they usually like to do it when
+2455.4	they're assigned to a mission they won't
+2456.9	necessarily do that automatically so
+2459.0	that's all that is so that's kind of
+2460.6	neat so I can go ahead and order him to
+2461.8	go here he's gonna have to stick a sonar
+2463.6	in the water for a few minutes then of
+2464.9	course when he parks again you can order
+2466.9	him to go ahead and start listening
+2468.0	again it's actually pretty cool how that
+2469.4	works so if we were smart of course we'd
+2471.2	come over here and take a listen to our
+2472.7	buddy that we knew is in the water let's
+2474.8	see if I can pick up there is nice we
+2477.4	found him kind of neat how that works
+2479.5	okay almost done swing it down here of
+2482.8	course submarines you can tell them to
+2484.1	take the shortest route the deepest
+2485.4	route nice easy which is simply these
+2487.6	own
+2488.3	again if you talked about a submarine
+2490.2	warfare this basically where sound is
+2491.7	gonna reflect in littoral simply means
+2493.8	stage shallow last but not least land
+2496.8	warfare navigation we have one choice
+2498.9	shortest route now there's one thing I
+2501.2	want to throw out really really quickly
+2502.4	that just something to think about after
+2504.3	you watching this when you create
+2506.2	missions those default doctrines can get
+2509.2	overridden the standard one for that by
+2511.9	the way is sea control what are you
+2513.8	doing sea control submarines are going
+2515.8	to automatically turn the radar on I
+2517.3	know that's an eMCON issue but they're
+2518.9	also going to automatically ignore plot
+2520.5	a course and everything along those
+2522.4	lines so keep in mind when you're
+2524.2	building

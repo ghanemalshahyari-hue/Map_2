@@ -1,0 +1,579 @@
+0.4	hello everyone in today's video we're
+2.0	going to be taking a look at some
+3.4	misconceptions with radar in command the
+6.2	purpose of this one here is to kind of
+7.4	answer a couple questions that have come
+8.8	up and uh not too long ago
+10.4	people going well in the flight
+11.4	simulator it does this or you know one
+13.3	of those kind of things and i just
+14.5	thought we could kind of take a look at
+15.5	some of that as well with a kind of
+16.6	basic description
+18.6	so what do we have here today basically
+20.3	we have our sitting up here and um this
+21.8	is basically
+22.6	western china right in the border of
+24.1	mongolia and we have a couple different
+25.8	demonstration aircraft for the purpose
+27.5	of kind of checking things out for us
+29.0	today
+29.7	in the middle of all this of course is a
+31.0	bar lock radar this is a b37
+33.1	p37 sorry this would actually be an r37
+35.8	but that's all right
+36.8	and basically what we're going to do is
+38.2	take a look at a couple different
+39.2	scenarios and kind of see how things get
+41.2	changed
+42.0	so first things first i'm going to go
+43.3	ahead and fire up our simulation here
+44.8	i'll give this
+45.5	radar a moment to acquire all the fun
+47.3	targets i've created out there
+49.2	and that looks pretty good so first
+51.7	things first when it comes to radars and
+53.4	this is again one of those things that
+54.6	people are familiar with but they never
+55.9	really think it through
+57.0	you always want to be thinking about
+59.0	line of sight of that radar
+60.4	there are some radars that have the
+61.7	capability of bouncing as radar beam off
+63.5	the
+64.0	basically the troposphere and then come
+65.7	back down but for the most part all
+67.4	radars need line of sight in order to
+69.0	see a target
+70.0	if you take a look way way over here
+71.3	i'll go ahead and give this just a
+72.3	moment to identify these targets
+74.4	should only take a second here by the
+76.1	way if you're curious why it takes time
+77.8	to reset it it's because this radar is
+79.5	physically rotating
+80.6	and it takes a while before it can come
+82.2	all the way around and actually identify
+83.8	things
+84.4	perfect so the first thing we've
+85.8	identified is a mig-21 and it's at
+88.0	medium altitude about 12 000 feet
+90.2	the next one we've identified is another
+92.0	aircraft this is mig-21 the same range
+94.2	at 36 000 feet
+95.8	since there is line of sight to those
+97.3	two targets obviously we can detect them
+99.3	which you don't see is there is a third
+101.0	mig-21 here at 400 feet
+103.7	there are just too many mountains and
+105.0	nastiness between here and where the
+106.6	radar is located
+107.8	to be able to actually see this again
+109.5	with line of sight another common
+111.2	misconception is the concept of doppler
+113.4	shift
+114.0	so what i have here is i actually have
+115.5	two different helicopters or identical
+117.1	helicopters
+117.9	one's a mi24v again it's just sitting
+120.6	here
+121.2	perfectly parked no speed change
+123.8	whatsoever
+124.7	and it is detectable by our p-37 radar
+128.6	even though it is just sitting there
+130.3	hovering in the air our second one has a
+132.7	very very little doppler shift again
+134.6	doppler shift is basically a change in
+136.3	speed
+137.0	most radars use doppler shifts in order
+138.7	to filter out noise we'll actually take
+140.2	a look at a demonstration of that in a
+141.7	minute
+142.4	so you can see even though this one's
+143.6	only doing 20 knots we are still able to
+145.8	detect it
+146.6	again this is a very common thing that
+147.9	you'll see in flight sims where if you
+149.8	know you move slow enough you basically
+151.3	cannot be detected or reliably engaged
+153.4	especially if there's a bunch of noise
+154.8	behind you which we do actually have
+156.3	some mountain ranges here
+157.6	and you can see in this case even though
+158.8	this is a relatively old radar system
+160.6	that doppler shift doesn't solve
+162.4	our problem now there's another part to
+164.8	this too and that's going to be
+166.4	reflectivity
+167.4	let me go ahead and pause for a second
+169.0	here let me go ahead and get things
+170.0	going again
+171.2	pause okay lovely you'll notice that we
+173.5	have this mig-21 out here who's a long
+176.3	distance away by long you can take a
+178.0	look it's almost 210
+179.4	nautical miles away and he is flying at
+182.0	a 90 degree to the radar system
+184.3	so i'm going to speed up time a little
+185.5	bit here
+193.8	okay awesome and now you'll notice a new
+196.3	target just appeared as a matter of fact
+197.8	i'll give it just a moment to identify
+199.3	it
+199.9	perfect you notice that this target was
+203.0	detected at about 217 nautical miles
+206.0	you'll notice that this target which is
+207.5	an identical airplane at an identical
+209.4	speed and an identical altitude
+211.2	wasn't detected until it got to about
+213.0	204 nautical miles we can actually
+215.0	confirm that real quick
+216.2	yeah perfect the reason for that is
+218.6	because of the fact that that particular
+220.3	aircraft
+220.9	has a smaller radar cross section at
+223.4	that altitude
+224.4	a lot of people don't believe me when we
+225.8	have things like that but believe it or
+227.0	not pointing at the radar you're trying
+228.6	to hide from
+229.4	is that one of the best ways to not be
+231.4	seen by it on account of the fact that
+233.3	you take up a little smaller radar cross
+235.1	section
+235.7	now if it was a pure doppler radar
+237.2	pointing right at it would be the last
+238.7	thing you'd want to do because it would
+239.9	be able to detect that speed difference
+241.4	between you and it
+242.6	and identify you even through any sort
+244.4	of clutter it's just a common
+245.8	misconception
+246.8	another misconception that a lot of
+248.2	people have and this is one of those
+249.3	things where people just do not believe
+250.7	in the slightest until they see it for
+252.1	themselves is the concept of stealth we
+254.6	had a whole video basically dedicated to
+256.5	this and we kind of talked about the
+257.7	different techniques and stuff
+258.9	but it's kind of worth reminding here
+260.4	for just demonstration purposes
+262.6	so we'll give it just a moment just a
+265.0	moment
+267.4	i don't want to speed it up too much
+268.5	because then we're going to miss the fun
+269.9	pause
+271.0	this is an f-117 and you notice that it
+274.0	has a range of about
+275.0	37 nautical miles and we had no
+278.1	difficulty in the slightest with this
+279.9	old style radar again it's a bar lock
+282.2	if you want to take a look at its
+283.1	details real quick you can see it's
+284.4	actually early 1960s technology
+286.3	had no difficulty in detecting this
+288.4	f-117
+289.7	that was literally flying right up to it
+291.5	and we're not talking a visual detection
+292.9	this was an
+293.4	electronic detection now the reason for
+295.8	that is usually stealth aircraft have
+297.5	other things going on for them
+299.1	such as jamming clutter any of those
+301.4	things that make it more difficult to
+302.6	detect and again i did a whole video
+304.1	dedicated to it
+305.0	but some people don't realize that
+306.6	certain wavelengths especially from an
+308.5	older radar that's an early warning
+310.4	radar notice it's an enf band
+312.4	actually having easier time detecting
+314.3	stealth aircraft the more modern radars
+316.3	are working on higher frequency bands
+318.2	again it's just a simple misconception
+319.6	that people forget about
+321.5	which brings us to our next point let's
+323.8	go ahead and grab this one more time
+325.9	we'll go ahead and get blue side okay
+328.4	another one that people commonly think
+329.7	of is the concept of
+331.4	hiding at different altitudes in order
+332.9	to avoid detection
+334.4	so what i have here is have a group of
+336.0	mc23s these are the ml versions they're
+338.2	all sitting there
+338.9	i've got all the radars and i have a
+340.4	mig-21 over here on the left
+342.5	what they're going to do is they're
+343.5	going to be flying this way and they're
+345.8	going to attempt to detect
+347.4	four different targets the topmost
+349.9	target of course is at high altitude
+351.5	same
+351.8	altitude this one's at medium altitude
+353.8	so we've got about about 12 11 000 foot
+356.0	difference
+356.6	and of course we have one skimming
+358.3	barely over the ground doing about 400
+360.2	feet
+360.6	this one over here is just at 12 000
+362.5	feet it's just going to be demonstrating
+363.8	the effect of this
+365.3	so these are mig-23s so mig-23s don't
+368.1	have the world's best radar they don't
+369.4	have the world's worst radar if you
+371.0	actually come in here it's a sapphire
+372.6	23ml version
+373.9	it's like 1970s technology it does have
+376.9	what they call
+377.8	look down shoot down capability what
+380.2	does that mean
+381.0	that means because of it using doppler
+382.9	shifting technology it should be able to
+384.7	see
+385.0	targets that are below it that can
+386.8	potentially be lost in ground clutter
+389.0	so i'm going to go ahead and speed up
+389.9	time a little bit and see if that ground
+391.1	clutter helps us
+392.0	at all even though this is old 70s
+393.7	technology give it just a moment pause
+396.3	you'll notice it had no impact
+398.8	whatsoever
+400.2	because this technology is good enough
+402.5	to filter out any targets that are
+404.0	approaching it
+404.8	on the flip side our mig-21biss over
+406.6	here has i not detected its target
+408.6	that's at medium altitude because it
+410.6	does
+411.0	not have that capability to look down as
+413.3	a matter of fact it just flew over the
+414.7	top of that target and never ever once
+416.9	saw it because it didn't have the
+418.6	ability to look down
+420.2	now my mig-21 we're at a lower altitude
+422.5	than that other mig-23 that was coming
+424.2	at us we'd still be able to detect it
+426.0	this is an issue in usually cold war
+427.6	scenarios more so than you're going to
+428.9	see in modern scenarios
+430.3	but generally don't think that just
+432.1	because you can go at a lower altitude
+433.5	that you can hide in ground clutter
+435.4	and again we'll take a look at ground
+436.5	clutter in a minute in a rather dramatic
+437.8	fashion
+439.3	now let's go ahead and take a look at
+440.4	the final thing that people commonly
+441.9	kind of
+442.7	look at things a little differently here
+444.2	i'm actually going to switch teams
+445.8	so what i have way way way over here is
+447.8	i have an f4 phantom e
+449.7	he's got his radar turned in directly in
+451.7	front of us are going to be three
+452.7	different targets one's going to be a
+454.2	crossing
+454.9	one's going to be receding and one's
+456.4	going to be approaching these are all
+458.3	really really good doppler style targets
+460.5	because the speed differences are going
+462.1	to be rather dramatic
+463.4	perfect so now you can see very very
+465.8	clearly that one is crossing us which
+467.5	should theoretically get notched
+469.1	notch simply means that our filters
+470.7	built into the radar won't see him
+472.4	because he's moving basically at no
+474.0	speed relative to us
+475.5	this one should be very challenging to
+477.2	detect because it's moving basically the
+478.9	exact same speed as us
+480.5	so again there's not going to be much of
+481.8	a shift there and of course this one
+483.4	approaching us would be very easy to
+484.8	detect because it's at the same altitude
+486.3	no clutter anything like that
+488.1	so let's go ahead in a shut off god view
+489.9	here go ahead and make all these go away
+492.1	and let's go ahead and pause and see
+493.2	what happens
+501.1	pause notice we had no difficulty in the
+503.8	slightest detecting those three targets
+506.0	despite them being all in their little
+507.9	different filter zones
+509.1	again folks who are familiar with flight
+510.7	simulators have seen this in action and
+512.4	had a really tough time trying to detect
+514.2	especially this target
+515.4	especially this target but it's just
+517.2	worth seeing that in command because of
+518.6	the way the radar is modeled
+520.0	that might not go down so that classic
+522.0	technique actually does not apply here
+524.2	which is again very very interesting
+526.2	now what about jamming targets now
+528.6	jamming targets is kind of its own
+530.4	thing here now what i actually have here
+532.3	is i have this nice little tuple of 16p
+534.6	and of course for those of you again
+535.8	going back to your flight sim folks so
+537.3	you are very familiar with what jammers
+539.1	look like in the games
+540.4	basically they're going to fled you with
+541.6	all sorts of noise so what i'm going to
+543.3	do here is i'm going to flip on this jam
+544.9	in here
+546.6	and i'm gonna go ahead and pause i'll go
+548.1	ahead and switch back to the other team
+549.1	and let's see what that jamming looks
+550.2	like
+550.9	so the first thing happens is we lose
+552.8	sight of this target immediately because
+555.0	visually on the display of this
+556.4	particular guy he's seeing basically
+558.4	vertical lines
+559.4	where he should be seeing any sort of
+561.1	targets now this particular target is
+563.1	now completely
+564.2	invisible to this radar it can simply
+566.6	not be detected
+567.7	because that noise is so strong remember
+570.0	though the closer this jammer gets to
+572.0	that radar the easier it is to be to
+574.2	burn through the actual view
+576.0	of that radar so it actually becomes
+577.8	possible to detect it
+579.1	even though it shouldn't be something
+580.4	you can do now hopefully all this is
+582.3	kind of making a little bit of sense
+583.8	some of it shouldn't be surprising but
+585.1	it's just kind of worthwhile to take the
+586.6	time to actually demonstrate it
+588.0	and to demonstrate it even further i
+589.8	pulled out a really really cool program
+591.5	for those of you who have never had a
+592.6	chance to play with this
+593.8	called samsim and what this does is this
+596.0	gives us the ability to actually
+597.5	model what these radar sites are
+599.5	actually experiencing when they're using
+601.3	these particular sites so what i'm going
+602.8	to do is i'm going to
+603.4	unpause real quick we're sitting in an
+605.1	essay 2 here in case you're i'm curious
+607.1	particularly which
+607.9	version of this is and basically i'm
+609.7	going to go quickly go over here
+611.2	i'm going to flip on my transmitter make
+613.1	sure everything's working
+614.2	and this would be what we would see if
+616.2	we were looking through the basically
+618.2	your search radar
+619.4	right now we have a target directly to
+620.8	the south we can go ahead and switch to
+622.8	maximum range but you'll notice there's
+624.8	absolutely
+625.4	zero noise here because this particular
+627.4	radar only detects
+629.0	objects based on speed differences so
+631.1	there's no speed differences you're
+632.5	completely invisible to me
+634.5	now contrast this with my regular fire
+636.7	control radar which is basically a pulse
+638.7	style
+639.3	remember since we're on the ground we
+640.6	don't have to worry about looking down
+642.0	but you'll notice if i go ahead and
+643.6	change the elevation of the radar
+645.4	you start getting all these funky little
+646.9	lines and stuff like that starting to
+648.5	appear directly there
+649.8	this is all going to be ground clutter
+651.9	as a matter of fact i'm going to spin us
+653.2	around here
+655.8	just point the general direction of the
+657.0	target and see if we can actually find
+659.0	that target
+660.0	so now the cool thing is we have these
+661.2	beautiful plotting boards like i can see
+662.8	for the fact that my target is right
+664.3	here
+664.7	one eight zero so now i can go ahead and
+666.7	take my radar point it right about one
+668.6	eight zero
+669.4	and hypothetically i should be able to
+671.0	see the target somewhere here i'll go
+672.6	ahead and try a slightly higher
+673.5	elevation
+674.0	i'll try a slightly lower elevation
+675.8	trying to visually see that target but
+677.4	i'm having a heck of a time actually
+679.0	identifying where it is out there
+680.8	the reason for this is my target that
+682.3	i'm actually looking for is actually
+683.7	really really low altitude
+685.3	so as a result it's very very difficult
+687.3	there he is see him
+689.0	so this is actually what i would see
+691.0	yeah that's all i get to say i actually
+692.7	can't lock onto him because if i tried
+694.1	to move the radar down any lower i'd
+695.6	actually
+696.2	bottom the radar out now let's see he
+698.4	was flying through some of this nasty
+699.9	clutter right here
+701.0	how could i actually still see him well
+702.8	you can actually filter the clutter out
+704.5	by getting rid of any speed changes
+706.6	i could come over here and hit this and
+708.2	now it makes it very very clear
+710.3	who is a target and who is clutter but
+712.5	you can see in just a moment yep did you
+714.1	see him drop
+714.6	out because now he's behind this piece
+716.9	of hill i won't be able to see him again
+718.8	until he crosses over the hill and
+720.3	starts coming down this way
+722.0	even though i'm still filtering him out
+723.7	directly so again it's very very
+725.8	interesting
+726.6	and you can kind of see that even though
+728.4	that's a problem and even this is old
+729.9	technology you can actually still see
+731.4	through
+731.8	all of that and actually get pretty far
+733.3	with it so i'm going to go ahead and
+734.7	exit out real quick
+736.4	because i want to show you what the
+737.4	jamming looks like real fast so again
+739.2	everything can kind of get reinforced
+740.8	when we take ourselves up to hungry
+743.0	we'll go ahead and pick a site that's
+744.2	nice in the open so i have plenty of
+745.8	room to see
+746.6	we'll go ahead and add that same target
+748.1	one more time this is called sam
+749.8	simulator by the way for those who have
+751.6	never seen this one before
+753.4	give it just a moment because probably
+755.0	he's running off the other drive it
+756.2	looks pretty good
+757.2	put him right here and i'm actually
+758.7	going to turn on jamming as well
+760.6	let's see what happens this time go
+762.7	ahead and start it again
+765.8	all right looks pretty good i'm going to
+767.1	turn everything on turn on my receiver
+769.2	and i'm not going to energize my radar
+771.0	now you're probably going uh what are
+773.5	you what are you doing here what's your
+774.8	point
+775.2	well let me show you so this is going
+777.4	back to our search radar remember when i
+779.0	said that when you get jammed you can
+780.4	see it very distinctively
+781.8	there it is now tell me where exactly
+785.1	i'm supposed to be able to find a target
+787.0	in that giant wall of noise now keep in
+789.8	mind my search radar is separate from my
+791.6	regular attack fire control radar
+793.4	okay let's go look at my fire control
+794.7	radar so that was roughly the south of
+796.6	us
+797.1	so i'm going to spin my radar around
+798.9	remember my transmitter is not
+801.0	turned on watch this
+805.0	there it is all this is all what that
+808.6	jamming looks like to me notice i can
+810.5	still see targets on either side of the
+811.8	jammie no problem
+812.9	but watch what happens when i turn my
+814.2	radar into it
+816.6	bam so now i can't actually see the
+820.3	target
+821.0	through any of these lines now if i were
+822.8	to go flip on my transmitter again real
+824.5	quick just for fun
+825.5	you could see that not only have i got
+827.2	the noise but look at this
+829.1	how am i supposed to track a target
+831.0	through that the reality is i can
+832.8	actually burn through that jamming if i
+834.4	give myself enough time
+835.8	i can actually use i have special
+837.1	instruments on board again this is old
+838.6	technology
+839.4	but it still works good enough to enable
+841.8	me to go ahead and try to lock onto this
+843.4	guy
+844.3	right now i'm having a really tough time
+846.1	because he's so low to the ground but
+847.8	i'm going to go ahead and use some
+848.9	electronic means to go ahead and
+850.8	actually tilt the radar down
+852.2	electronically
+853.8	and i'm almost able to lock onto the
+856.9	jamming itself
+858.3	there we go cool so we've actually
+860.2	locked onto both the jamming as well as
+862.6	the object but there's no object to lock
+864.3	onto
+864.8	all i'm doing right now is pointing the
+866.5	radar at the jamming
+868.2	now again if i go over here and we're
+869.8	just shut off my transmitter
+871.2	i can still lock onto that target
+872.7	because there's still noise but we're
+874.1	trying to demonstrate burn through so
+875.5	we're going to flip my radar back on for
+877.1	this purpose
+877.8	i'm going to go ahead and change modes
+879.0	real quick that looks pretty good right
+881.6	there
+882.2	good so now we're going to do is we're
+883.8	just going to speed up time a little bit
+887.0	and we're going to see if we can ever
+888.8	ever ever see that target
+890.6	through that jamming so keep in mind if
+892.7	i go to my plotting board
+894.0	go ahead and put it to a normal speed
+895.4	here real fast you can see that the
+897.1	particular target that
+898.0	i'm tracking is getting extremely close
+900.0	as a matter of fact it's right about to
+901.4	cross over our heads if we
+902.7	give it any time right now it's actually
+904.6	passing to the side of us
+906.0	but notice at no point have i ever been
+908.3	able to actually see the target itself
+910.7	switch modes real quickly here
+914.5	okay looks pretty good no that's not
+917.4	going to help us today
+919.5	nope and you can see we never actually
+922.0	can see that target
+923.2	directly so we'll pop back over to
+924.9	command real quick and you can imagine
+926.6	now if this guy's looking at that he's
+928.3	seeing the same thing i was looking at a
+929.8	moment ago
+930.8	all right hopefully this video kind of
+932.2	answers some of those questions about
+933.3	the misconceptions
+934.3	that program over there was sam
+935.7	simulator it is free it's kind of fun to
+937.4	play with if you ever wanted to see it
+938.6	from the other perspective
+939.8	some of you are probably going you know
+941.1	some of these things seem a little
+942.1	unrealistic or not quite what you expect
+944.2	but again it's a pretty complex
+945.7	simulation and it does a pretty good job
+947.3	it's just a matter of understanding
+948.8	kind of how that's modeled so that when
+950.2	you start developing tactics you
+951.8	recognize that things may work a little
+953.4	bit better than you thought they did
+955.0	enjoy

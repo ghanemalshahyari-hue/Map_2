@@ -1,0 +1,1219 @@
+0.0	hello everyone today's command modern
+2.2	operations tutorial we're gonna be
+3.5	taking a look at reconnaissance
+4.8	specifically air reconnaissance but will
+6.9	actually touch on a few different types
+8.4	of reconnaissance during this particular
+10.4	video so what is reconnaissance it's not
+13.0	basically trying to find the other guys
+14.7	stuff so what I did is I put together a
+16.9	little bit of an outline of some useful
+18.3	information that we're gonna need to
+19.5	know to kind of employ this stuff well
+21.4	in general the Recon game in command is
+24.8	simplified so on in the real world of
+27.7	course if you're using something that
+29.1	requires film development you don't get
+31.0	the reconnaissance information directly
+32.3	you'd have to actually analyze it later
+34.1	on if you want to read some really
+35.6	really interesting material on photo
+37.1	reconnaissance look at how many
+38.9	photographs per day were collected
+41.5	during the Second World War that
+42.9	actually had to be analyzed by hand
+44.7	which is just incredible so that's kind
+47.6	of make things a little different than
+48.8	it would be in the real world and we'll
+50.5	talk about that in a minute - so first
+52.4	of all all recon and command like I just
+54.1	said is real-time so if I use an sr-71
+56.7	blackbird and it takes pictures you
+58.5	can't see my finger quotes but they're
+59.8	there it would give you the development
+62.4	for those pictures instantaneously which
+64.0	is amazing because you can't do that in
+65.5	the real world obviously we have digital
+67.3	cameras now we have satellite uplinks we
+69.1	have all sorts of amazing technology
+70.7	that gives us real-time visual
+72.2	reconnaissance also things like tactical
+74.2	tomahawks come to mind but unfortunately
+76.5	or fortunately it's just kind of a
+78.4	limitation oh we get no communications
+80.5	Intel in side of command I'm sure the
+83.3	people who do the professional military
+84.6	version of this spend 90% of their time
+86.6	doing comm Intel and the other 10% doing
+88.7	actual combat it's kind of a shame
+90.7	because if we had come Intel we could
+92.5	identify where the enemy are getting
+94.4	orders from and we can get responses
+96.8	back if the enemy wants to submit
+98.2	information to the person who sent it to
+100.2	it come and tell if you are familiar
+102.2	with basically what it is is you're
+103.4	basically doing direction-finding on any
+105.0	enemy radio communication it also gives
+107.1	you valuable intelligence you know if
+108.8	you listen on the radio and somebody
+110.0	says oh we're launching ten bombers at
+111.7	this target well surprise surprise I
+113.9	don't even need to turn my radar on to
+115.3	know probably where those bombers are
+117.4	coming from so another thing I want to
+119.2	throw out too is in command you can't
+121.4	actually look through clouds unless you
+123.9	are dealing with something that provides
+125.8	electronics such as a synthetic aperture
+128.2	radar which we'll look at in just a
+129.6	little while but basically the reason
+131.5	that's a big deal is if you actually
+132.9	take a look at my Center
+133.8	remit a gas card today in case good so
+135.4	you'll notice that I have some light
+137.0	clouds between twenty and twenty three
+138.5	thousand feet if I had to satellite
+140.6	imaging even though it's light clouds
+142.3	quote-unquote it would severely limit my
+145.1	ability to see targets through those
+147.4	clouds even though their quote light so
+149.7	kind of keep that in mind it's so it's
+151.2	like if there's any clouds you're going
+153.0	to have difficulty seeing through them
+154.5	so it's just kind of interesting how
+155.9	that works it's going to close that you
+157.7	don't need to see that scooting over
+159.4	these kind of things we have a couple of
+161.1	the big things that you got to be aware
+162.4	of there's basically two kinds of
+164.2	reconnaissance that we simulate in
+166.1	command obviously there's a much more
+167.6	but this is kind of how I like to look
+169.0	at it
+169.4	there's the strategic which is sort of
+171.0	the big picture reconnaissance these are
+172.8	like your III is and your e8 and your
+175.4	really really really large long-range
+177.3	kind of things these would be you u2's
+179.2	these would be your sr-71 x' this would
+181.5	be your mig-25 rbt's things like that
+184.7	these are big picture basically you're
+187.1	gonna put them in the air and you're
+188.0	gonna leave them there for eight hours
+188.9	scanning massive swaths of land these
+192.0	particular assets are usually really
+193.6	really slow you have to protect them but
+195.5	they usually see further which is
+197.3	important then you get what they call
+198.9	what I like to collage it's a is the
+200.6	tactical these are basically you take an
+202.9	f-16 you throw a camera on the side of
+204.7	it and say go see if you can find me or
+206.6	the unit that happens to be at that
+207.9	location so with that in mind let's take
+211.6	a look at our scenario so right now we
+214.0	have our nice little country of
+215.2	Mozambique across the ocean from
+217.3	Madagascar so what I've done a little
+219.4	bit differently here is I've created
+220.5	these little airports and at these
+222.2	airports are pretty much every
+223.8	reconnaissance Arabs asset that I could
+225.8	pretty much locate quickly and easily so
+228.4	that you could kind of see the different
+229.7	types of assets sort of in action you
+231.6	know I've got some r4s I've got some you
+233.4	know what's the Eurofighter doing here
+234.7	actually this is a great great
+235.9	reconnaissance asset so to kind of give
+237.9	you guys an idea of how to sort of
+239.4	approach this so what can we determine
+241.5	from a reconnaissance asset well let's
+243.7	go ahead and take a look I'm gonna skip
+244.8	ahead real quickly our first thing we
+246.6	can do is we can always identify where
+248.8	something is so for example if I fly
+251.2	over this way we can identify where this
+252.8	Airport is this aircraft I should say
+254.8	Airport has automatically been
+256.1	identified by us thanks to the scenario
+258.2	editor now if I was looking for what
+260.5	types of airplanes were visible at this
+263.5	Airport I could use a reconnaissance
+266.1	to do that one thing that I will throw
+268.4	out really really quickly is the fact
+270.2	that I'm not going to be including
+271.8	underwater reconnaissance with this
+273.1	because we kind of covered that with a
+274.3	SW so basically what can we do we can
+276.8	identify aircraft that are other
+278.6	airports that are visible from the sky
+280.1	obviously the airport is instead of a
+281.7	hangar no amount of reconnaissance
+283.3	assets can identify it
+284.7	it's spectacular finding enemy building
+287.2	strategic targets i've actually hidden a
+288.9	bunch of enemy buildings in here and see
+290.3	if we can try to find them today
+291.5	one thing I will always say is it's hard
+293.8	to see something that's not moving
+294.9	that's small so if you have like a
+296.9	little tank or pt-76 or something you're
+298.9	not gonna see it unless it's moving or
+300.7	you're right on top of it as you'll see
+302.1	a little later on I'll talk about this
+304.3	in a minute we'll talk about that in a
+305.5	minute
+305.8	enough for that let's go ahead and take
+307.2	a look at the different kinds we can use
+308.7	so we have two different families of
+310.6	actual sensors we have active such as
+313.2	radar that's the ground mapping radar
+315.1	which we've had since World War two you
+316.7	have your MTI your GMT eye which
+319.6	basically it's a doppler filtered ground
+322.2	mapping radar if it's moving it becomes
+324.0	very visible this stuff is spectacular
+326.4	and it's actually pretty old-school but
+327.9	it works really well you ever take all
+329.3	synthetic aperture radar which is really
+331.3	clever basically you hold the radar
+332.8	still but should move the airplane you
+334.6	can literally see through clouds and we
+336.5	also have a variant of that I like to
+338.0	call alright what am I saying I didn't
+339.8	invent it called SL AR which is
+341.8	side-looking airborne radar the simply
+343.7	synthetic aperture but instead of
+345.1	pointing forward we're pointing out the
+346.4	sides you'll see these up big 25
+347.9	naturally we have our active sonar and
+349.7	of course we have laser if we want to do
+351.1	distance measuring lasers in the side of
+353.7	command or considered to be done kind of
+355.2	basically automatically so you don't
+356.9	have to worry about that as far as
+358.4	passive goes we have visible light
+360.2	obviously we can magnify visible light
+362.3	which is convenient we're obviously
+363.8	limit it's a daytime we're limited to
+365.5	weather conditions were limited to you
+367.3	know can be seen through the clouds etc
+368.4	we've a bunch of different cameras look
+370.4	at these in a minute we have lower low
+372.1	light television which is basically you
+373.8	know night-vision if you want to think
+375.0	about it generally when you see lltv and
+377.6	not IR fli are that simply means you do
+380.2	the old-fashioned night vision I'm sure
+382.1	you've seen pictures from the Gulf War
+383.3	of how wonderfully easy it is to see and
+385.2	identify things other than the things
+387.1	that are shooting shot at you
+388.2	resolutions usually not as good but you
+389.8	can see at night infrared is great
+392.2	there's some limitations with infrared
+394.2	of course naturally in that it's more
+395.7	difficult to pick out certain kinds of
+397.0	details but one of the great things
+398.5	about IR as anybody
+399.9	played flight simulators is you know it
+401.5	makes it really easy to spot warm
+402.7	targets in any sort of environment of
+404.5	course if it's anywhere close to dusk or
+406.4	dawn as a real-world pilot will tell you
+408.1	you can't see a thing but that's
+409.7	unfortunate we don't simulate that or
+411.1	maybe we do it though then last but not
+412.9	least of course we have electronic
+414.0	support measures / electronic
+415.9	intelligence like I said we have no
+417.0	common telogen s-- as far as platforms
+419.4	go we'll start taking a look at these in
+420.9	just a minute we'll save satellites kind
+422.6	of yet which brings me to this
+424.0	incredibly important part how to read
+426.3	the capabilities of a reconnaissance
+428.7	unit before I do that though we want to
+431.0	take a look at what we're trying to
+432.5	identify so what I'm gonna do like I
+434.2	normally do an admission is I'm going to
+435.5	go ahead and browse it platforms I'm
+437.4	gonna go hide from yeah I'm gonna go and
+440.0	take a look at one of these objects
+441.3	let's see if I can find something so if
+445.2	you open up a database entry you scroll
+447.1	all the way to the bottom you're gonna
+449.0	get signatures if we're looking for a
+451.4	target using the naked eye or a camera
+454.0	we're gonna be interested in the visual
+455.4	detection range in this particular case
+457.0	I can see this target from point sixty
+459.7	nautical miles away from the front the
+461.8	side and the rear basically you can do
+464.1	the integration here to figure out what
+465.7	its gonna be from the top likewise I can
+467.9	classify it from a distance of likes
+470.1	just shy of a quarter mile which knowing
+472.4	how small this radar is that doesn't
+473.7	surprise me
+474.4	notice my infrared detection range is
+476.3	awesome you're probably sitting there
+477.5	going well that makes sense it's a radar
+478.9	it's hot and I'd say yeah you're right
+480.4	but notice the classification range
+482.0	isn't great which also ties up the
+483.8	visual now if I'm looking for something
+485.7	by radar like ground mapping radar s lar
+489.2	I'm going to be dealing with a very
+491.1	small and very very difficult to detect
+493.7	target doesn't mean that I can't detect
+495.9	it it just means it's going to be
+497.0	difficult to detect now of course if I
+499.0	had something like let's go get
+500.4	something fairly large here grab a
+502.1	hospital watch this now I can identify
+504.6	it from 3 nautical miles and now I can
+506.9	classify it obviously infrared it's a
+508.8	little easier to see but look at my
+510.7	radar emissions this is spectacular sand
+513.3	thousand square meters will be able to
+515.4	pick this thing up from like 300 miles
+517.2	away assuming we could deal with the
+518.6	curvature of the earth so keep that in
+520.4	mind for just a second so what I'm going
+522.4	to do now is I'm going to go scoot scoot
+523.8	over to the wonderful Blue Moon campaign
+525.8	wiki real fast and the reason I'm doing
+527.8	this is I want to show you how you could
+529.4	use that information to figure out what
+530.7	you need so first thing I'm going to do
+532.1	is I'm gonna grab myself an SF
+533.5	37 Viggen vegans are amazing
+535.4	reconnaissance aircraft they're just
+536.8	they're really really cool scrolling
+538.7	down you notice I have a bunch of these
+540.7	ska 24 seat cameras 120 millimeter
+543.5	lenses I'll be like talk about zooming
+546.5	in and you can see I have several of
+548.3	these facing different directions we
+550.1	notice that they're frame cameras is
+551.6	simply a fancy term for you have to
+553.2	develop it conventionally and we also
+555.2	possess this really really nice ska 24
+558.0	seat this is a 57 this is a wide-angle
+560.1	lens and it also has longer range now
+562.6	what do I care about for a second well
+564.4	check this out I'm actually going to
+566.0	open this up real fast when you open up
+569.3	a camera's data you're going to be
+570.9	interested in several numbers the first
+572.4	being its maximum range if this the
+575.3	target you're trying to detect exceeds
+577.3	this range the quality the camera does
+579.6	not matter now you're sitting there
+581.7	going well that's okay what well think
+584.2	about that for a second let me get my
+585.5	little terrible example here if my
+587.3	aircraft is at about twenty five
+588.5	thousand feet this five nautical miles
+590.9	can only be used straight down to see
+594.0	things that are directly below us
+595.9	because if I were looking out the side
+597.8	of the airplane
+598.8	I'd be at some point one again I'm not
+600.6	gonna do the trigonometry quickly this
+602.1	is just me early in the morning trying
+603.4	to work this out I targets out the side
+606.7	of the airplane would be 7.1 nautical
+608.9	miles away which exceeds the maximum
+611.3	range of the camera I know you're
+613.7	sitting there going wait wait I thought
+615.5	these cameras could see from 36,000 feet
+617.5	if you're looking for a building you can
+619.6	but the fact of the matter is if you're
+621.3	looking for a dude with a hey 47 you're
+623.8	not going to be seeing it from that
+625.1	altitude so how do we solve this well
+627.4	let that's pretty straightforward which
+629.1	you simply do is you'd fly two nautical
+630.7	miles which would mean your slant
+632.7	distance out the side would probably
+634.4	let's see square root of two what is
+636.2	that three point four or something like
+637.3	that I'm not gonna make this up
+638.7	basically about that distance so now I
+641.2	would be within my five nautical mile
+643.8	maximum range for things out the side as
+646.1	a matter of fact I'm not gonna work this
+647.3	angle out your range now out the side
+650.3	could be all the way up to five nautical
+651.9	miles if your altitude were zero so just
+655.6	kind of keep that in mind this is going
+656.8	to be a big problem as you'll see in a
+658.4	minute alright so scrolling down we have
+660.7	a maximum range again this includes
+663.0	vertical and horizontal range if the
+665.3	slant is greater than five you can't see
+667.3	anything with this camera I can't
+669.1	emphasize this enough because this will
+670.4	irritate you to no extent scrolling down
+672.5	we have a scan interval that's just how
+673.8	often we look out the window this is
+675.2	once every 10 seconds this doesn't
+677.2	bother us much for too slow for this to
+679.2	be a problem usually scrolling down to
+681.3	the bottom we have detection zoom level
+683.5	sweet this is awesome
+686.0	you take this value and you multiply it
+689.2	by the target you're looking for sitting
+693.0	there going what let me show you what I
+694.7	mean so if I get myself a tuple what the
+697.7	heck is it to you 64 let me get a T 64
+700.2	thank you take a look here the detection
+702.6	range in at T 64 is 0.6
+704.7	however the multiplication visual
+708.0	detection level is 10 that would mean I
+711.7	could detect those tanks at a distance
+714.5	of 6 nautical miles except my maximum
+718.7	range is still 5 nautical miles so that
+720.5	would mean instead of picking up the
+722.0	t-64 is at a distance of point 6
+724.2	nautical miles I'd be texting them
+725.7	instantaneously at 5 nautical miles
+728.0	you also notice that my classification
+729.6	zoom is actually very high also that
+732.2	simply would mean that I had the ability
+733.7	to classify that take also at that
+736.1	distance of 5 nautical miles so
+738.2	hopefully that makes sense
+740.1	scooting back real quick to our Viggen
+742.2	again really really wild airplane here
+744.6	I'm gonna go take a look at my
+745.6	long-range frame camera real quickly
+747.3	this is a great example of a long-range
+750.8	very capable tool so if you look here
+753.1	wow that's a neat we're actually using
+754.9	okay that makes sense so our maximum
+757.0	range now is 20 nautical miles so I came
+759.4	out gonna go get my paint but you could
+760.8	imagine 20 nautical miles
+762.2	I could be 10 up and still see something
+764.1	like 33 miles of this way that's amazing
+766.5	of course that doesn't do anything for
+768.1	me because my cloud levels here but
+769.6	we're gonna deal with that later always
+771.8	scan interval to change availability
+773.6	don't worry about that
+774.4	notice detection level is still 10 so
+777.9	remember that tank we couldn't see with
+779.5	that other camera we can now see it no
+781.7	problem because it's visible at 6
+784.4	nautical miles
+785.2	but our maximum range is 20 nautical
+787.5	miles so that means we're actually able
+789.4	to see that target instantaneously now
+792.1	if you really want to see oh don't kill
+793.9	like overkill
+795.5	this is always fun to do let's go get
+798.0	ourselves a u2 you want to see a
+799.4	long-range camera look at this
+801.1	here we go very long range
+803.3	reconnaissance camera 80 nautical miles
+805.7	but check this out
+807.9	20 times ooh Wow is this a
+811.5	reconnaissance asset not only could it
+813.5	multiply anything signature by 20 but it
+816.6	has a maximum range of 80 so you want to
+819.0	talk about trying to find enemy ships
+820.9	this thing is better than a radar zoom
+822.6	in the cloud so blocky oh okay so that's
+824.5	cameras let's go ahead and take a look
+825.8	at everybody's favorite the rq-4 rail
+827.6	fist you guys probably familiar with
+829.6	this this is a dedicated reconnaissance
+831.3	only this isn't one of the MQ so it's
+833.4	not a combat variation you notice it has
+835.8	this thing called isar and it also has a
+837.8	good old fashioned forward-looking
+838.9	infra-red let's go ahead open up that
+840.6	real quickly I just want to kind of give
+842.2	you a preview of what this looks like
+843.2	scrolling down here you notice it's
+845.0	detection zoom level is garbage it's
+847.7	only times 2 so that tank is only
+849.2	visible at 1.2 nautical miles at night
+851.5	however look at its classification
+854.2	capability if it sees it it can classify
+857.1	it so that's actually really effective
+859.1	let's go ahead and take a look at a
+860.5	classic Soviet Union asset as well the
+863.1	tupolev 16 are you can take a look here
+866.3	is um we don't even have any form of
+870.4	camera on this thing instead we've got
+872.1	this surface search radar which we'll
+873.6	take a look at just a second
+875.0	so basically if you can't see it you
+877.7	can't do it by the way um terrain type
+880.5	matters in case you haven't ever
+882.3	actually seen the terrain of this
+883.6	particular area let me flip this on real
+884.9	fast and this will be a very dramatic
+886.4	picture for us in a second if enemy
+888.7	units are hiding in things like cities
+890.9	or they're hiding in lush forests
+892.9	they're going to have their detection
+894.6	range vastly reduced this is going to be
+897.8	a very big problem for us especially if
+899.4	you're trying to find something in here
+900.5	for example stuff in these kind of areas
+902.4	we could probably have an easier time
+903.7	saying okay not enough chat let's do
+906.3	this
+906.6	so first thing I like to do in any
+908.8	reconnaissance situation is I like to
+910.4	use my ESM a set slash electronic
+912.7	intelligence assets doing that it's
+914.6	pretty straightforward I got a bunch of
+916.0	different ones I could pick from
+917.1	generally if I'm flying with the
+918.9	American side almost everybody has some
+920.7	form of electronic intelligence but when
+922.8	I think of it I usually think of the
+924.0	rivet joint it's going to get one of
+925.3	those the Pilatus isn't too too bad
+927.5	either but that's not what I want
+928.8	Jase
+929.4	is wonderfully useful as well I also
+931.1	have an EP three they borrowed that one
+933.1	and you know what why not we'll grab
+935.1	this one - this is signals intelligence
+936.5	what's - so with these particular
+938.3	aircraft are gonna do for me it's at the
+940.0	one I don't what that one what a signals
+941.7	intelligence aircraft is going to do is
+943.4	they're going to identify enemy radar
+945.6	emissions somebody go ahead and uh send
+947.6	each one that's Argo not one gladiator
+950.0	one you guys get off there let's go
+952.2	ahead and get clansmen one that doesn't
+953.8	sound racist and send them off there so
+956.1	these aircraft are going to do is
+957.6	they're gonna climb up they're gonna
+958.7	start listening for electronic emissions
+960.9	from enemy targets you can detect
+962.6	electronic emissions at about oh we got
+965.9	one already at about 1.5 - 2 times the
+969.9	range of the actual thing emitting so in
+972.1	this case we've just identified a long
+973.6	track radar from a distance of looks
+975.4	like about 184 nautical miles I believe
+977.6	a long track radar has a range of about
+980.2	200 now you're sitting there going but
+982.4	why do we pick it up at not 350 well it
+985.6	turns out that when you're looking at
+987.4	these the electronic intelligence
+988.6	packages sometimes have a limited range
+991.4	so be aware of that just because you
+993.9	could detect it doesn't mean you can see
+995.2	it there's also the limitation of
+996.8	everybody's favorite the curvature of
+998.7	the earth for certain signals some ships
+1000.9	by the way have spectacular ESM packages
+1003.5	now there's another thing I did here
+1005.4	that you might have missed you'll notice
+1008.5	I put the two ESM assets basically at an
+1012.7	angle to the target that I'm interested
+1014.8	it the reason I did this is because that
+1016.8	can now triangulate its position by
+1019.4	comparing the two different aircrafts of
+1021.6	view of the electronic asset in order to
+1023.8	pinpoint it
+1024.5	this works amazing so make sure you take
+1027.0	advantage of it I'm actually gonna get
+1028.8	all my Klansmen here and haven't ordered
+1030.2	you know I'm gonna go all the way around
+1031.8	of course when it runs out of fuel what
+1034.1	is he gonna do he's gonna fly right over
+1035.5	the target area I'm gonna go stop it
+1038.7	that'll speed up time okay got one so
+1043.7	now we're gonna play a little bit of
+1044.7	common sense it looks like we got
+1045.7	another p40 and I'm pretty confident
+1047.8	it's not sitting in the ocean but if I'd
+1049.8	had another ESM asset up there this
+1052.0	would be a little easier ESM assets by
+1054.1	the way some of them had the ability to
+1055.8	just identify this a radar signal some
+1058.0	can identify the specific type of object
+1060.3	that's looking at them if you're curious
+1061.9	about that when you actually
+1063.2	open them up you can actually scroll
+1064.6	down and it'll tell you specific emitter
+1066.8	ID will let you know precisely who's
+1069.2	looking at you otherwise who get generic
+1071.8	search radar four or something along
+1073.5	those lines
+1074.0	looks like we've identified another
+1075.3	piece for whatever reason we're losing
+1077.2	track of it if that happens to you you
+1079.0	just click on it and hit mark position
+1081.2	this is a great way to just remind you
+1083.5	that that's where that was in case you
+1085.2	run out of time and it disappears I'm
+1087.0	actually gonna go and flip off the
+1088.0	arranged settings here all right let's
+1090.2	go ahead let that happen
+1092.8	yeah maybe it's over there but again
+1095.7	we're doing a pretty good job here well
+1097.3	pause what do we got looks like we
+1099.2	picked up ship radar that's a palm frond
+1101.6	it's a sofa norman yeah which doesn't
+1103.7	surprise me it looks like we've also
+1104.7	picked up a P 18 so that could be a
+1106.6	surface-to-air missile radar that could
+1108.1	be a lot of different things but keep in
+1109.5	mind I'm basically listening remember
+1111.2	you can only see the radars that are
+1113.0	turned on so I think at this point we
+1114.9	probably have enough electronic
+1116.6	intelligence to make some decent
+1117.9	assessments as to where the enemies are
+1120.3	early warning stuff is which this is
+1122.0	gonna sound funny but that actually
+1123.4	tells us a lot more that you think
+1124.7	because it lets us know where they're
+1126.5	concerned to hide things I'm actually
+1128.6	gonna move him along a little bit here
+1130.7	just kind of move these guys out of the
+1132.7	way okay now let's go ahead and take a
+1134.8	look at our area assets so as far as
+1138.0	area assets the Americans have some
+1139.7	amazing choices they have the sr-71
+1141.8	which is incredible if you've not seen
+1144.4	the actual stats on this thing it just
+1146.6	it's it's staggeringly good like if you
+1148.7	just take a look at its cameras for a
+1150.0	second here here we go
+1151.9	look at this 80 nautical miles range of
+1155.4	camera that's incredible
+1157.8	not to mention this thing is also stupid
+1159.5	FAST now you notice I'm skipping stuff
+1161.6	like this so I'm gonna go ahead and take
+1163.3	before I grab my photo assets I'm
+1166.5	actually gonna grab a couple of my radar
+1168.1	assets now the reason I'm doing this is
+1170.8	because I want something that could
+1171.9	possibly spot lanta moving targets first
+1174.7	and then I'll go ahead and get those
+1176.2	u2's and everything else like that get
+1178.3	in the air please areas let's get my
+1180.5	j-stars or just regular doses yeah this
+1183.5	is joint startups right so with this
+1185.8	aircraft has is it has synthetic
+1187.8	aperture radar on it what that does is
+1190.1	it basically this can scan it can see
+1192.5	using a radar beam rather than needing a
+1194.8	key
+1195.4	in order to do things also notice it's
+1197.2	got amazing electronic capability was
+1199.1	actually able to pick up a radar we
+1200.3	missed last time so of course you can't
+1202.8	use that wonderful radar unless you turn
+1204.3	it on so let's go flip that spear on now
+1206.9	notice it spits out the sides because
+1209.3	basically you're taking pictures by
+1210.7	looking at one slice of sky at a time
+1213.1	with each one of these radar beams now
+1215.5	watch this
+1216.3	anything that's moving will be detected
+1218.6	also anything that still will be
+1220.5	detected perfect stop check it out so we
+1225.1	immediately figured out where that so
+1226.2	Fuhrman is but we also picked up these
+1228.0	truck depots that we weren't aware of
+1229.6	previously we pick these up
+1231.7	electronically using the radar as
+1234.0	opposed to with a camera we've also been
+1235.8	able to pinpoint where that radar is
+1237.3	which makes me feel a little bit better
+1238.8	go ahead again like this and we've
+1242.8	identified another radar we missed this
+1244.8	thing has incredible system of course
+1246.5	it's very modern aircraft doesn't
+1247.5	surprise me
+1248.0	Oh picked up another one Wow
+1251.5	I guess we just need to bring this out
+1253.0	the first time I don't know I wasted so
+1254.5	much time with those other elements
+1255.8	let's go ahead take a look take a look
+1257.9	look at that we've got it literally
+1260.4	laser-guided pinpointed this guy cannot
+1263.2	only see objects but it can see moving
+1264.7	objects extra well there is and you go
+1268.3	back home okay so now we have a pretty
+1270.6	good idea of where the enemy's stuff is
+1272.6	so now it's time to bring out the
+1274.4	tactical reconnaissance assets now for
+1276.7	tactical reconnaissance I'm going to be
+1278.6	pulling out actually you know before we
+1280.1	do tactical reconnaissance let's do a
+1281.9	little bit more aerial reconnaissance so
+1284.0	as far as area reconnaissance if we're
+1285.4	doing something for with a photo system
+1287.7	you're looking at using the American u-2
+1289.7	or the American sr-71 if you're a little
+1292.0	bit more classic the Russians have a
+1293.7	couple really really neat photo assets
+1295.5	but they have nothing that's got the
+1297.0	range of the American systems so to do
+1300.0	that I'm actually gonna back up to my
+1301.2	airport grab myself an sr-71 and grab
+1304.6	myself both of the different youtubes
+1306.6	and I'll explain what these are capable
+1308.0	of in just a second alright let's go
+1312.3	ahead and eat these oh stop
+1314.4	another clansmen interesting so you too
+1317.1	so it's like I was saying looking at the
+1318.8	database and look at the size of the
+1319.9	swings looking at this real quickly
+1321.7	you'll notice it has a surface search
+1324.0	radar on it you'll also notice that it
+1326.7	speed information of heading information
+1327.9	also it possesses an extremely long
+1331.1	range camera and as an added bonus it
+1334.1	can travel up to eighty five thousand
+1335.9	feet so I'm actually gonna go sell them
+1338.0	to go over here let's go ahead and grab
+1339.3	his buddy
+1339.8	that's the sr-71 you know what that's
+1341.9	for and I'm going to grab this end down
+1344.3	here so you can kind of get a feel look
+1345.6	at the sr-71 go that's amazing
+1350.3	now you're probably sitting here going
+1352.7	how can we haven't identified anything
+1354.9	new that's because there's clouds you'll
+1357.2	probably observe first of all look at
+1358.5	the time of day you can see right now
+1360.1	it's about 1:30 in the afternoon but we
+1362.2	have clouds blocking the view of this
+1364.3	incredibly capable of aircraft if we had
+1367.3	a higher altitude with less clouds we
+1370.0	could just shoot this over this entire
+1371.2	continent and be done in a second it's a
+1373.1	matter of fact I'm gonna cheat real
+1374.2	quick and do something like that watch
+1377.2	this so now I could do something silly
+1379.0	like this send him up to 85 thousand
+1382.3	feet crank him up and just let him go
+1384.8	watch this we've already identified
+1388.0	something we did see it notice my
+1390.3	youtube still on the way
+1391.6	Oh picked up something new picked up
+1396.1	both three former things okay my you two
+1398.8	you're actually a synthetic aperture
+1400.3	radar I'm gonna go ahead and make you
+1401.9	fly around like this of course I'm sure
+1403.5	the people have met a gas car getting a
+1405.0	little nervous at this particular point
+1406.4	all right let's let him go notice we've
+1410.1	identified that visually which means we
+1413.7	have it fixed but here comes the next
+1415.8	best part you'll notice that all these
+1418.9	airports and things along those lines
+1420.3	suddenly have this little icon in the
+1422.5	corner that looks like a little arrow
+1423.6	that means that visually we've been able
+1426.8	to identify aircraft that are located at
+1429.0	that particular Airport if actually
+1430.8	click on 'contact report in its spot
+1432.2	hosting units I can identify that there
+1434.5	were two small attack planes there as a
+1436.5	matter of fact to pick up master 71 just
+1438.1	a little bit closer I'm actually gonna
+1439.4	fly over directly stop look at what else
+1442.2	we've identified we're at ninety
+1444.2	thousand feet and we photo identified
+1446.6	all of these are
+1448.0	vehicles we've also been able to get a
+1450.1	pretty good look of this particular unit
+1452.2	we've identified them as hind
+1453.6	helicopters we've also picked up some
+1455.8	vehicles and things that we didn't even
+1457.1	know were there previously because of
+1459.6	his camera
+1460.4	likewise keep in mind are a little handy
+1462.5	dandy you two here is helping us out
+1464.4	looks like we've even identified
+1465.5	buildings that weren't visible at the
+1466.8	beginning again because we have that
+1469.3	visual range like I did in my little
+1471.0	doodle in paint again if we did have bad
+1473.6	clouds we can always use the radar units
+1475.4	but it's gonna be difficult to see
+1476.7	anything that is not as you can see this
+1478.5	guy flying over right here nice look at
+1480.4	that we have an idea to pick some ships
+1482.1	we even identified that this ship over
+1484.3	here seems to be having some distress
+1485.8	because it's been damaged again that's
+1488.4	because of the photo capabilities so now
+1490.9	that we've had a pretty good idea of
+1492.5	where all the enemies stuff is it's time
+1494.1	to bring out the tactical reconnaissance
+1495.9	aircraft actually gonna grab him inside
+1498.5	everybody go up so tactical
+1500.7	reconnaissance I like to think of as
+1502.3	point reconnaissance now the problem of
+1504.5	tactical reconnaissance aircraft is it
+1506.2	pretty much doesn't matter what country
+1507.6	you are they're all gonna have the same
+1509.4	basic limitation and that's that
+1510.7	five-mile range if we're not using a
+1512.9	radar unfortunately we got to get really
+1515.0	close it really really low so what I'm
+1517.1	gonna do is I'm gonna bring back the bad
+1518.2	weather we had a medic okay that wasn't
+1519.8	bad one that was average weather looks
+1522.9	good to me and now I'm gonna go ahead
+1524.5	and grab one of my tactical
+1526.3	reconnaissance M efforts here this by
+1528.2	the way is really cool if you've never
+1529.2	seen this skirt excuse him he's got a
+1532.3	little recon pod quite a pause there he
+1535.5	goes okay so how do we use this element
+1538.6	so what I want to do is I want to get a
+1540.2	better idea of the kind of aircraft that
+1541.5	are located here so what I'm gonna do is
+1543.5	I'm gonna fly him over keep in mind
+1546.5	su-17 is not going to have a lot of
+1548.8	range so that's gonna always be
+1550.3	elimination and when he gets close to
+1552.7	the target area 36,000 feet by the way
+1555.2	is about six nautical miles up which
+1557.4	means he wouldn't be able to see
+1558.3	anything with this camera so we're gonna
+1560.5	have to do is tell them to actually dive
+1562.2	one really cool way you can do this is
+1564.3	you can actually edit the waypoints
+1565.6	manually and do something like this
+1567.5	this also gets us underneath that cloud
+1569.3	layer by the way and then we could
+1572.2	course come over here we could set the
+1573.8	Waypoint height on this one back up to
+1575.1	high altitude and of course when you do
+1577.0	this you want to go fast all right
+1579.7	especially what happens
+1582.0	so he's gonna fly all the way down to
+1584.5	12,000 feet which he did and he
+1586.6	immediately identified several aircraft
+1588.4	now I usually tell him to I'll go up to
+1590.6	full speed here you don't want to waste
+1593.6	any time in the target zone because
+1595.3	remember there's no limitation to how
+1596.7	many things you can take a picture on
+1597.9	well there is but it's minor based on
+1601.3	how fast you're going so he's kind of
+1602.9	tough himself all the way down to 2,000
+1604.8	feet so now his slant distance is
+1606.8	significant out the side he's gonna fly
+1608.8	over the target area because I said his
+1610.7	Waypoint to go back up you'll finish
+1612.4	crossing the target area they don't
+1614.1	climb back up again so let's see what
+1615.9	kind of intelligence we've collected
+1617.2	we've identified a Cessna 208 an
+1619.3	assistant of 500 so nice job nice job
+1622.4	nice job
+1623.2	now this applies to anybody who's got
+1625.3	that basically five nautical mile camper
+1627.5	I'm actually gonna send him home you did
+1629.1	a great job thank you for your help so
+1632.6	for example if I go over the UK for
+1634.3	instance Sweden pick up myself an RF
+1636.1	four you'll notice it has the exact same
+1639.0	basic camera limitation is he's a little
+1641.5	five nautical miles he does have side
+1643.9	looking airborne radar which again it's
+1646.0	decent seeing things that are moving
+1647.6	it's not gonna identify and ships by the
+1649.4	way it's not gonna have a great time
+1650.8	I've seen something that's still now one
+1652.6	of the things I identified I'm actually
+1653.7	gonna launch this guy right away one of
+1655.7	the things we identified a minute ago
+1656.9	was a bunch of some kind of infantry
+1659.5	units down here this was actually 48
+1660.9	minutes ago by the way if a contact goes
+1662.5	greater than an hour it's going to
+1664.3	automatically basically be dropped so
+1665.9	you might need to mark them so I want
+1667.7	identify whose units these are so this
+1670.7	time what I'm gonna do is I'm gonna set
+1672.4	up a mission to do the same activity the
+1675.0	basic way to do reconnaissance missions
+1676.7	is with support missions there's two
+1678.4	kind of ways that I like to do it
+1679.8	there's the easy way where you basically
+1681.6	set up a kind of an area and centrist to
+1683.8	Patrol and then there's kind of like the
+1685.6	fancy tactical way where you can
+1687.2	actually mark out individual waypoints
+1688.7	of the path you want him to follow like
+1690.4	we did a minute ago so to do that which
+1692.4	was my intention
+1693.2	I'm gonna go ahead and say this is the
+1695.2	start of his patrol zone this is going
+1698.2	to be the midpoint obviously we're all
+1699.4	these unusual enemies are this is going
+1701.6	to be the endpoint of course I'd like
+1703.4	him to get safely out of there so now if
+1705.5	I go like this and create a tactical
+1709.3	recon I can now say support press okay
+1713.0	yeah whatever it's not polygons anyway
+1715.1	chill set this to single loop
+1722.1	now that I've done that I gotta remove
+1724.6	that subtly that now that I've done that
+1726.9	it's going to follow this path like this
+1729.2	when it arrives on station you could
+1731.8	also of course say that it's a
+1732.9	one-time-only mission so that
+1734.3	automatically ends after it's completed
+1736.1	now here's the cool thing we can tell
+1738.4	him to transit at cruise and go to
+1740.8	afterburner when he arrives we can also
+1743.2	set his station altitude low enough for
+1745.2	him to actually identify those units on
+1746.8	the ground
+1747.3	remember tanks and trucks and stuff can
+1749.2	only really be seen well from about two
+1750.9	or three miles
+1751.8	so that means when he arrives he'll be
+1753.8	at high altitude he'll dive down to low
+1755.8	altitude at this point do his
+1757.6	reconnaissance and then take back off
+1759.1	and then fly back home so let's go ahead
+1760.9	and get that a hands fancy-dancy flight
+1762.7	real quickly believe he was down here
+1764.8	somewhere we can of course if we don't
+1766.1	find him right away I'm not too too
+1767.3	concerned
+1767.7	actually what am i doing let's do this
+1769.1	easy way just got a hit f6 signed a
+1774.0	mission take care of that way it bucks
+1778.3	Eddie's off by the way if you have an
+1783.6	aircraft with a radar that you want to
+1785.4	be using when they get to that zone
+1786.9	which you can do is you can click this
+1788.6	button right here to tell it to do that
+1790.6	as a matter of fact don't forget to come
+1792.2	in here and set this also when you do
+1793.5	that so otherwise his radar will not get
+1795.8	turned on when he gets in there
+1796.7	connaissance so watch this he's gonna
+1799.4	come to this point dive down SuperDuper
+1801.5	low once he gets here I believe where
+1804.1	are you there is pause notice he's
+1807.2	entered the reconnaissance area he's
+1808.7	diving down to 2,000 feet he's also
+1811.7	flipped on his side looking airborne
+1813.3	radar which again that's going to help
+1815.1	identify large or moving targets
+1817.2	technically can identify other targets
+1819.7	but I think it's gonna have a really
+1820.6	tough time to do so
+1822.1	alright let's see if we can get a good
+1823.9	look at these targets alright he's
+1828.8	diving down he's about 2,000 feet above
+1830.4	sea level now he's just skipping along
+1832.4	remember if I put him at say 15,000 feet
+1835.2	he wouldn't be under the clouds a and B
+1837.8	we wouldn't be able to actually see much
+1841.0	because we would be up too high for the
+1842.3	cameras work properly
+1843.3	here he goes and he's decided to climb
+1847.2	back up for some reason
+1848.1	what do you think you're doing get back
+1850.3	down there
+1851.4	but notice he's traveling the exact path
+1853.9	that we asked him to he zips over the
+1856.3	target area
+1857.1	full speed identifies half of them and
+1859.1	then he gets out of there as fast as he
+1861.1	can I flip it back to Otto so notice
+1863.2	we've actually been able to identify a
+1864.3	bunch of tanks who have identified looks
+1866.2	like some triple a well actually this
+1867.6	artillery I take it back
+1868.8	and he is on his way and as soon as he
+1870.8	hits this last point he's gonna
+1872.3	automatically go return to base mode
+1875.8	have fun
+1877.2	nicely done that was good that was good
+1879.3	he did a nice job so that's one of the
+1881.6	cool ways to do this so now that you've
+1883.6	seen kind of how to use all the assets
+1885.2	you have a pretty good understanding of
+1886.6	all the different pieces that you could
+1888.0	do um what do we do next
+1890.9	well now it's time to get some
+1892.5	satellites now I've been saving
+1894.5	satellites for the end because everybody
+1895.8	loves satellites because they're so
+1896.8	amazing unless there's a cloud so what
+1898.9	I'm gonna do is I'm gonna go ahead and
+1899.8	open my scenario back up again and
+1901.4	before I do that I just want to point
+1903.1	out a couple of things about satellites
+1904.7	and I think we had that yep okay
+1907.0	satellites here we go so there's a wide
+1908.9	variety of different satellites of
+1910.4	different quality different types
+1911.8	different sensing basically an image
+1914.1	intelligent satellite is like the old
+1916.4	coriolis ones basically you can look
+1918.5	through if you have no clouds they can
+1920.7	see things on the ground and they're
+1922.1	really old days they actually had film
+1923.7	they take a bunch of pictures and you
+1925.3	deject the film out the side of the
+1927.0	actual satellite to reenter it was
+1929.0	pretty cool we have the massive
+1930.6	satellites which are kind of the Omni
+1932.3	satellites they have a little bit of
+1933.5	everything a lot of time I call this the
+1934.8	CSI satellite because it does everything
+1936.3	enhance and hands-on we have the NOS /eo
+1939.5	our intelligence satellites these are
+1941.1	the I'm looking for enemy ships based on
+1942.7	their mission satellites both the u.s.
+1944.7	pretty much every country has some
+1946.0	variation of this obviously Russia
+1947.9	obviously the United States are kind of
+1949.5	this is their specialty and then we have
+1951.0	signals intelligence satellites which
+1953.2	are we're gonna take a look at so how do
+1954.7	we get satellites well usually the
+1956.2	mission editor would provide you with
+1957.6	satellites in if they don't if you're in
+1960.2	editor mode you can go up to unit
+1962.0	actions we're gonna add satellites now
+1963.8	like I was just saying and hey there's
+1965.3	our categories hey there's our
+1966.7	categories again this is an older-style
+1968.9	satellite takes pictures this is a very
+1971.5	modern basically again mass signals
+1973.7	intelligence it's going to be looking at
+1975.0	different types of emissions we have the
+1977.1	naval basically observation satellites
+1979.0	and of course through the signals
+1980.0	intelligence satellites I don't think we
+1982.2	have any image satellites you laugh
+1984.3	no not in 2001 but kind of done with
+1986.7	that but we do have mass it's obviously
+1989.2	we have the early warning satellites
+1990.4	this would basically detect ballistic
+1992.2	missiles things like that
+1993.4	we had the keyhole blocks these are all
+1995.5	amazing amazing satellites that can do
+1997.5	just about anything as far as detection
+1999.5	goes go ahead and grab a couple of those
+2001.3	those let's see we have the new ones
+2004.2	we'll go ahead and grab one of those you
+2005.6	would say 161 yeah we have the kind of
+2008.7	semi modern ones go ahead and launch
+2010.3	these guys to notice it tells you if
+2011.7	it's in orbit based on your current year
+2013.1	we'll grab our misty's we'll grab we
+2016.7	don't get those yet don't get those yet
+2018.1	don't get those yet so that's going to
+2020.0	get us in trouble of course you have
+2021.2	your signals intelligence satellites as
+2022.8	well you have kind of the old ones let's
+2025.2	see we don't even have that as
+2026.0	technology we'll grab these and we'll
+2029.7	grab those why not keep in mind the more
+2031.4	satellites you add the slower your
+2032.6	simulation is gonna go so I added a
+2034.1	bunch of satellites where are they zoom
+2035.7	out tada and there are my satellites
+2039.8	kind of always chillin around the Earth
+2041.0	if I fast forward a time to go just like
+2043.4	that now one of the things I really kind
+2045.5	of respect these guys for is if you go
+2047.0	over to 3d view when you've selected a
+2049.0	satellite let's hope attack for you is
+2051.6	behaving today since Isaac it's a little
+2053.2	funky sometimes I understand in the most
+2054.9	recent update they've had a little bit
+2056.3	of fun with this also watch this if I
+2058.7	click on a satellite go ahead select
+2060.5	that for a second Boop it's actually in
+2062.4	the sky look at how high up it is that's
+2064.7	so cool anyway moving on so the first
+2067.3	thing we need to remember with
+2068.3	satellites is you can't really see well
+2069.7	through clouds so with that in mind I'm
+2071.8	going to say the weather got better and
+2073.8	we go ahead and clear the clouds out
+2075.1	second thing with satellites is they
+2077.1	have to get close to see the are subject
+2079.6	to the same limitation as this however
+2082.1	as an added bonus because we're
+2084.1	satellites look at the range we get
+2086.9	that's awesome the third thing is you
+2089.7	have to make sure the satellites got any
+2090.8	close enough so the way you can check
+2092.3	that believe it or not is you can click
+2093.4	on something go up to view I'm should
+2095.6	say game and there's just as a satellite
+2097.2	passed predictions if you open that up
+2098.9	you can click on the map and it will
+2100.9	tell you when the next satellite will
+2102.8	actually pass by so in this case in 55
+2106.2	minutes our next step by this is very
+2107.7	expensive calculation we can see that
+2110.1	USA 116 will be flying over in about an
+2112.8	hour so let's go ahead and fast forward
+2114.3	about an hour
+2115.2	whoa stop so you're going whoa what's
+2117.6	all that
+2118.1	these are signals being detected in this
+2121.3	area by this satellite here look at the
+2125.0	range on that thing that is excessive
+2127.1	anyway we'll go ahead and fast-forward
+2128.8	time a little bit look that goes another
+2131.4	one
+2132.2	anybody know why that's sitting there
+2133.9	geosynchronous that just kind of kind of
+2138.6	hang out here for a bit so how you guys
+2140.9	doing today pretty good pretty good
+2142.9	all right where's USA 116 should be here
+2145.7	any second now USA 116 I'm still waiting
+2149.9	[Music]
+2151.5	there's another geosynchronous site stop
+2154.2	okay
+2155.4	let's double check my weather as well
+2157.0	real quick to make sure I didn't
+2158.1	accidentally forget to change that
+2159.6	pretty confident that he would have got
+2162.0	close enough to gotten a decent picture
+2163.5	there go ahead and pick this one real
+2165.7	quickly 45 minutes where's USA 116 so
+2172.1	there's USA 53 which one is so this is a
+2175.8	massive this has got a camera yes nice
+2177.6	so what this is going to do or actually
+2179.7	what it did already is it actually was
+2181.4	able to identify at each one of these
+2183.8	airports the fact there are different
+2185.3	units there I open up my contact report
+2188.2	I can see there's a triple seven here if
+2190.3	I clicked right here I can spot the fact
+2192.0	that there are some full freedom
+2193.2	fighters and supposed to have those as
+2194.7	he zips by we also identify an aircraft
+2197.7	from space we also were able to identify
+2200.2	this ship from space let him finish
+2202.7	going by and then we're good
+2203.9	so the satellite basically did
+2205.4	everything we did with all this aircraft
+2206.9	but he can't get shot down simply so now
+2209.7	last what do we do with this information
+2211.5	well that was kind of the big idea
+2213.2	wasn't it well let's say I wanted to
+2215.7	order up a strike against this Airport
+2217.5	now that I know that there is enemy
+2220.3	aircraft there I could do something nice
+2221.8	and sneaky like I can get myself on SSG
+2224.7	n here let's be fairly polite about this
+2228.3	and now I can order an attack on this
+2231.0	site but watch this it tells you right
+2234.3	in the screen where there are aircraft
+2238.5	located at specific points of the
+2241.1	airport of course it tells you how long
+2242.9	that information is old so now what I
+2245.0	can do is I can actually select this
+2246.6	specifically let's see here let's order
+2249.3	two
+2251.3	let's order two up for each so now we're
+2256.1	gonna launch two tomahawks at the
+2258.0	specific location on the ground where
+2259.7	that target is
+2260.5	let's go ahead and let that go of course
+2262.1	we just declared war Madagascar of
+2264.2	course what does Mozambique doing with
+2265.6	it Ohio submarine well we're gonna
+2267.2	ignore that and watch this pause so now
+2276.7	of course what we could do is get
+2277.8	something smart we could get ourselves
+2279.0	off this meanwhile as we launch those we
+2281.7	should have been smart and I launched
+2283.4	ourselves like a Reaper or something
+2284.7	that would be in the target area so as
+2287.2	soon as that hit took place we could
+2288.9	actually fly over the target zone and
+2290.9	identify if we actually did enough
+2292.3	damage to it let's go ahead take a look
+2294.1	in a second we've identified something
+2296.2	over here I wonder what that is contact
+2297.9	report oh there's still six unknown
+2300.6	units what happened oh no what happened
+2305.3	I guess we didn't do enough damage
+2307.4	losses expenditures oh no we did it we
+2310.8	did a nice job nice so as you can see we
+2313.8	still were able to absolutely blow them
+2315.2	up meaning that we're not wasting our
+2316.7	expensive precision-guided munitions
+2318.1	alright let's go take a look to see if I
+2320.0	didn't miss anything
+2320.7	platform submarines modern ones can do
+2322.8	ESM and visual there are electric
+2325.4	intelligent electronic intelligence
+2326.9	bunkers the satellites think we covered
+2328.8	that oh by the way land cover matters if
+2331.3	you're looking for something in the
+2332.2	desert it's easy if we're looking for
+2333.4	something in the jungle it's hard oh
+2334.5	let's see here yes some clouds defeat
+2337.2	you recon speed don't freak out what
+2338.8	time of day it is yeah I think we did a
+2340.7	good job alright hopefully this is
+2342.1	informative this is basically in
+2343.4	response to somebody's question about
+2344.8	reconnaissance assets actually one more
+2346.7	thing I'll do before I leave one of my
+2349.5	favorite reconnaissance assets that's a
+2351.2	relatively recent aircraft is the
+2353.8	Eurofighter 2000 because it has such an
+2357.0	incredibly good radar on the nose of it
+2360.2	check this out I'm actually going to
+2361.9	crank the clouds up to something
+2363.3	excessive real fast just so you can see
+2365.3	just how effective the radar is on this
+2366.9	thing go ahead speed up time real quick
+2368.9	pause let's go ahead grab it of course a
+2371.9	limited range always a problem flip his
+2374.3	radar on there we go
+2376.5	watch this
+2385.5	keep in mind terrible weather we
+2388.6	identify the ship and look at this
+2390.7	instantaneously identify this two truck
+2392.7	depots get a little closer oh we ran out
+2395.3	of gas
+2396.7	I guess that's a limitation all right
+2399.6	hopefully found this in formative if you
+2401.4	have any questions toss them in the
+2402.7	comments otherwise just remember pick a
+2405.4	reconnaissance asset that actually is
+2406.8	line of sight on the thing you're
+2407.8	looking for don't worry about speed
+2410.2	consider range radars good if you're
+2412.7	looking for something big or something
+2413.9	that's moving and I'm just trying to
+2415.7	think always use your ESM before you use
+2417.5	your cameras and obviously if you're
+2419.2	going to use something with a big camera
+2420.5	like an sr-71 or u2 you've got to be
+2422.9	able to see the thing you're looking for
+2424.0	enjoy

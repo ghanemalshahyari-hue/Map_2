@@ -35,9 +35,7 @@
 
     var _on    = false;   // edit mode active?
     var _draft = null;    // working-copy scenario draft (deep clone)
-    var ECHELONS = ['division', 'brigade', 'battalion', 'company'];
-    // transient add-forms (kept across re-renders so map-pick survives renderEditor)
-    var _unitForm = { side: 'BLUE', name: '', role: '', echelon: 'battalion', bls: '', lon: null, lat: null };
+    // transient BLS add-form (kept across re-renders so map-pick survives renderEditor)
     var _blsForm  = { name: '', lon: null, lat: null };
 
     /* ---- small helpers ---------------------------------------------------- */
@@ -106,14 +104,67 @@
             }
         } catch (_) {}
     }
-    function defaultSidcForSide(side) {
-        return side === 'RED' ? '10061000001211000000' : '10031000001211000000';
-    }
     function genUid(prefix, arr, key) {
         var n = (arr ? arr.length : 0) + 1, id = prefix + n;
         var taken = function (v) { return (arr || []).some(function (u) { return u && u[key] === v; }); };
         while (taken(id)) { n++; id = prefix + n; }
         return id;
+    }
+    // Side from the SIDC standard-identity digit (20-digit APP-6D: index 3).
+    // 6 hostile / 5 suspect → RED; everything else (3 friend, 2 assumed, 4 neutral, 1 unknown) → BLUE.
+    function sidcSide(sidc) {
+        var idc = String(sidc || '').charAt(3);
+        return (idc === '6' || idc === '5') ? 'RED' : 'BLUE';
+    }
+    function nearestBlsName(lon, lat) {
+        var arr = _draft.bls_template || [], best = null, bd = Infinity;
+        arr.forEach(function (b) {
+            if (!b || !Array.isArray(b.coord)) return;
+            var dx = b.coord[0] - lon, dy = b.coord[1] - lat, d = dx * dx + dy * dy;
+            if (d < bd) { bd = d; best = b; }
+        });
+        return best ? best.name : null;
+    }
+    function addUnitFromSymbol(sidc, lon, lat) {
+        var side = sidcSide(sidc);
+        if (side === 'RED') {
+            var bls = nearestBlsName(lon, lat);
+            if (!bls) { setStatus('Add a landing site (BLS) first — red units must reference one.', true); return; }
+            _draft.red_units = _draft.red_units || [];
+            var rn = _draft.red_units.length + 1;
+            _draft.red_units.push({ uid: genUid('R-cust-', _draft.red_units, 'uid'), label: 'Red unit ' + rn,
+                bls: bls, appear: 0, role: 'unit', coord: [lon, lat], echelon: 'battalion', sidc: sidc });
+        } else {
+            _draft.blue_units_initial = _draft.blue_units_initial || [];
+            _draft.blue_units_base_ids = _draft.blue_units_base_ids || [];
+            var uid = genUid('B-cust-', _draft.blue_units_initial, 'unit_uid'), bn = _draft.blue_units_initial.length + 1;
+            _draft.blue_units_initial.push({ unit_uid: uid, base_id: uid, label: 'Blue unit ' + bn,
+                coord: [lon, lat], echelon: 'battalion', role: 'unit', sidc: sidc });
+            _draft.blue_units_base_ids.push(uid);
+        }
+        renderEditor(); previewDraftOnMap();
+        setStatus(side + ' unit placed from symbol at ' + lon.toFixed(3) + ', ' + lat.toFixed(3) + '.', false);
+    }
+    // Reuse the app's existing SIDC/symbol picker, then click-to-place into the scenario.
+    function placeUnitViaSymbol() {
+        var openBtn = document.getElementById('open-sidc-picker');
+        if (!openBtn) { setStatus('Symbol picker not available on this view.', true); return; }
+        window.__APP_UNITS_CAPTURING_SIDC = true;   // make the operator-symbol flow ignore this pick
+        function onMsg(ev) {
+            var d = ev && ev.data;
+            if (!d || d.type !== 'sidc-picker:sidc') return;
+            window.removeEventListener('message', onMsg);
+            window.__APP_UNITS_CAPTURING_SIDC = false;
+            var modal = document.getElementById('sidc-picker-modal');
+            if (modal) { modal.classList.add('hidden'); modal.setAttribute('aria-hidden', 'true'); }
+            var sidc = String(d.sidc || '');
+            if (!sidc) { setStatus('No symbol picked.', true); return; }
+            setStatus('Now click the map to place the ' + sidcSide(sidc) + ' unit…', false);
+            pickCoordOnMap(function (lon, lat) { addUnitFromSymbol(sidc, lon, lat); });
+        }
+        window.addEventListener('message', onMsg);
+        setStatus('Pick a NATO symbol… then click the map to place it.', false);
+        openBtn.click();
     }
 
     /* ---- "New scenario" seeds (build fresh, not edit the loaded one) ------- */
@@ -395,48 +446,16 @@
         });
         oobCard.appendChild(redList);
         oobCard.appendChild(blueList);
-        var uform = el('dl', { class: 'sw-kv' }, [
-            fieldRow('Side / الطرف', selectInput(['BLUE', 'RED'], _unitForm.side, function (v) { _unitForm.side = v; renderEditor(); })),
-            fieldRow('Name / الاسم',  textInput(_unitForm.name, function (v) { _unitForm.name = v; })),
-            fieldRow('Role / الدور',  textInput(_unitForm.role, function (v) { _unitForm.role = v; })),
-            fieldRow('Echelon',       selectInput(ECHELONS, _unitForm.echelon, function (v) { _unitForm.echelon = v; })),
-            fieldRow('Longitude',     numberInput(_unitForm.lon, function (v) { _unitForm.lon = v; }, { step: 'any' })),
-            fieldRow('Latitude',      numberInput(_unitForm.lat, function (v) { _unitForm.lat = v; }, { step: 'any' }))
-        ]);
-        if (_unitForm.side === 'RED') {
-            uform.appendChild(fieldRow('Landing site (BLS)',
-                selectInput(blsNames.length ? blsNames : ['(add a BLS first)'], _unitForm.bls || blsNames[0] || '', function (v) { _unitForm.bls = v; })));
+        // Symbol-driven placement: pick a NATO symbol (existing SIDC picker) → click the map.
+        // Side is derived from the symbol; red units auto-link to the nearest BLS.
+        oobCard.appendChild(el('div', { class: 'sw-edit-hint',
+            text: 'Place units by symbol: pick a NATO symbol, then click the map. Friend → Blue, hostile → Red (from the symbol); red units auto-link to the nearest landing site.' }));
+        var placeBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary', text: '➕ Place unit (pick symbol) / إضافة وحدة بالرمز' });
+        placeBtn.addEventListener('click', placeUnitViaSymbol);
+        if (!blsNames.length) {
+            oobCard.appendChild(el('div', { class: 'sw-edit-hint', text: 'Tip: add a landing site above before placing red (hostile) units.' }));
         }
-        oobCard.appendChild(uform);
-        var uPick = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Pick on map / تحديد' });
-        uPick.addEventListener('click', function () {
-            pickCoordOnMap(function (lon, lat) { _unitForm.lon = lon; _unitForm.lat = lat; renderEditor(); });
-            setStatus('Click the map to place the unit…', false);
-        });
-        var uAdd = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary', text: '+ Add unit / إضافة وحدة' });
-        uAdd.addEventListener('click', function () {
-            if (!_unitForm.name) { setStatus('Unit needs a name.', true); return; }
-            if (_unitForm.lon == null || _unitForm.lat == null) { setStatus('Unit needs a location (lon/lat or Pick on map).', true); return; }
-            if (_unitForm.side === 'RED') {
-                if (!blsNames.length) { setStatus('Add a landing site (BLS) first — red units must reference one.', true); return; }
-                _draft.red_units.push({
-                    uid: genUid('R-cust-', _draft.red_units, 'uid'), label: _unitForm.name,
-                    bls: _unitForm.bls || blsNames[0], appear: 0, role: _unitForm.role || 'Main effort',
-                    coord: [_unitForm.lon, _unitForm.lat], echelon: _unitForm.echelon, sidc: defaultSidcForSide('RED')
-                });
-            } else {
-                var uid = genUid('B-cust-', _draft.blue_units_initial, 'unit_uid');
-                _draft.blue_units_initial.push({
-                    unit_uid: uid, base_id: uid, label: _unitForm.name, coord: [_unitForm.lon, _unitForm.lat],
-                    echelon: _unitForm.echelon, role: _unitForm.role || 'mech_brigade', sidc: defaultSidcForSide('BLUE')
-                });
-                _draft.blue_units_base_ids.push(uid);
-            }
-            var added = _unitForm.side;
-            _unitForm.name = ''; _unitForm.lon = null; _unitForm.lat = null;
-            renderEditor(); previewDraftOnMap(); setStatus(added + ' unit added.', false);
-        });
-        oobCard.appendChild(el('div', { class: 'sw-edit-actions' }, [uPick, uAdd]));
+        oobCard.appendChild(el('div', { class: 'sw-edit-actions' }, [placeBtn]));
         host.appendChild(oobCard);
 
         /* --- actions --- */

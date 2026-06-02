@@ -1,0 +1,693 @@
+# C: MO - Targeting Priority
+Video: https://www.youtube.com/watch?v=v3aWJ3s1zQM
+Video ID: v3aWJ3s1zQM
+
+hello everyone in today's video we're
+going to be taking a look at the new
+targeting priority feature in command
+modern operations but before I do that
+I've got to say man of those elevators
+low in the water that seems a little
+sketchy but it's in aircraft carrier
+what are we gonna do so what is the
+target prioritization feature well it
+was something that was added a little
+just a little while ago that basically
+gives us the ability to select how we
+want to engage things which we've had
+quite a bit of control in the past over
+with the WRA so what we're going to do
+is we're going to demonstrate the
+problem first and then we're going to
+kind of look at exactly what we can do
+to kind of address it so what I'm going
+to do is I'm going to start it today by
+grabbing us a handy dandy A6 because why
+not I don't want to ruin my fun there
+let's do an A6 I'll grab my 1963 version
+why not go ahead and load it up with a
+bunch of bombs oh yeah that'll do the
+trick here now as you know if I were to
+just grab this plane press that lovely
+uh actually before we do that we have to
+tell it to go ahead and let's see here
+ignore plotted course yeah we wanted to
+do that so I'm going to grab this guy
+I'm gonna press the F1 key and go ahead
+and click on our Homestead Air Force
+Base there now one of the reasons I'm
+doing this in the cold War database I
+will be revealed shortly
+so you can see my a6a is a drop in some
+altitude here starting to pick up it's
+aligning itself up with this lovely
+Runway it looks beautiful oh there's
+plenty of targets down here that it can
+go ahead and select you can see it's
+locking on I'm gonna pause for just a
+second here I'm going to grab this
+targeting Vector so I'm going to do
+selected unit you can see it is
+hypothetically attacking everything here
+but uh the important thing here is what
+it actually attacks so we're going to
+run down the runway obviously priority
+targets are going to be things like
+hangers everything along those lines
+it's getting real close it's getting
+real close and you'll observe that it
+picked the closest object that it could
+attack which happens to be the runway
+axis point number two now um yeah that's
+definitely priority for that many bombs
+that's just deployed Down Under The
+Runway now for those of you who are
+veterans of this game you're like Ah
+that's not a big problem I solve that by
+you know going in and changing the way
+the weapons and oh yeah that that good
+job Asics you've done everything we've
+designed you to do so that didn't really
+work the way that we really wanted it to
+unfortunately on account of the fact
+that it's just targeted the thing that
+was closest to us now what if we had a
+little more control over what it
+actually attacks the reality is we do
+now so let's go ahead and grab another
+one of those I'll grab that one I'm
+gonna grab myself the mark 84 because
+you know because science go ahead and
+line them up at the runway here I'm
+gonna go ahead and adjust this WRA so
+that he ignores the plot of course and
+this time I'm going to go to the
+targeting priority screen
+now the targeting priority screen is
+just another form of Doctrine and Roe
+that means you can do it for individuals
+you can do it for groups you can do it
+for Missions you can also do it globally
+if that's something you want to do now
+um people who do a lot of scenario
+design are going to be spending a long
+time in here now because they're going
+to want to be able to adjust this to get
+a really perfectly fine-tuned engagement
+so I'm going to press the create button
+when you do this it's going to go ahead
+and create one now when you see this for
+the first time you're going to be
+sitting there going
+um what what what what so there's two
+parts there's the actual priority and
+then there's the actual items that
+you're prioritizing if that makes sense
+so what I'm going to do is press the add
+item button and it's going to bring this
+up so this is going to go ahead and give
+you um this is really really handy by
+the way if you click this box it only
+lets you target the things that are
+available inside the mission which oh my
+gosh this is so useful so what I'm going
+to do is I'm going to go ahead and
+select the Target and priority here I'm
+gonna click on facility uh let's see
+here that looks pretty good to me Supply
+we'll do a surface of facility and let's
+see here we're going to pick latrine now
+you're probably going wait what but now
+you'll notice that up at the top here
+that we have a new little option we have
+engagement timing and of course this has
+been set to the immediate which means
+that this is going to be our priority
+when we're going to go ahead and do this
+now if we wanted to add another priority
+here I can just press add item we go
+back to facility and let's say our
+secondary priority is uh oh boy what
+should we blow up here so many good
+things so many good things to attack oh
+let's go make this back to facility
+we'll go oh and he's fine make sure you
+hit the right button all right we'll go
+down to uh building surface and we'll go
+to a second priority on the control
+tower because you know why not
+so what we have now is we have a couple
+priorities and again the way this works
+is if you read the bottom here editing
+priority list for the stock during
+removal movement priority list from this
+Doctrine remember stuff at the top is
+first stuff at the bottom is going to be
+whatever notice by the way there's any
+any any any business going on down here
+this is the last priority if you were to
+do this for some reason that would mean
+these two priorities are actually going
+to come after are any priority so it's
+really important you kind of keep that
+in the back of your mind so I'm going to
+close that I'm going to grab this guy
+and go ahead and order him to attack
+Homestead Air Force Base again so what
+you're going to see here let me go ahead
+and get rid of the targeting vectors so
+we don't go blind here and he's got to
+come around and he's going to
+immediately consider what his priorities
+are as he's swinging around to go ahead
+and drop his bombs now if you recall
+from before when he did his little
+bombing run here I'm going to delete
+that real quick just to let him go ahead
+and drop some altitude here his original
+priority was to attack the thing that
+was closest to him so now if I actually
+take a look here and I'll go ahead and
+watch my little attack you're going to
+watch these bombs come flying way way
+way way way way down Earth here either
+dropping they're dropping they're
+dropping they keep coming down just
+gliding down towards the ground boom and
+you can see that the target here was our
+tarmac and not the particular Outhouse
+over here now the reason you're doing
+that and the reason you're seeing that
+is like wait what I thought I I thought
+I ordered you to prioritize that well
+remember whenever you do a manual attack
+you're actually overriding whatever type
+of priority that the particular unit is
+in which case even with the target
+prioritization it's still going to
+emphasize trying to attack an object
+that is the closest to it that it has
+the weapons for so in this case even
+though we really really wanted to blow
+up the latrine here and we ordered it to
+attack the only way we would have
+actually destroyed the latrine is if we
+came in from this side let me show you
+what I mean all right we're all nice and
+lined up and I'm coming right on in you
+can see I'm coming from the south here
+our little aircraft is a swooping down
+from high altitude he's a little high up
+right now so again all I've done is
+press the F1 key and left click on it
+like that it has the exact same Tire
+Target prioritization as it did before
+our Intruder is going to drop down to
+lower altitude now you can see that nice
+little dive it just did there to kind of
+drop it of course my brain immediately
+thinks of all you know the Triple A's
+the s60s and the ks12s are taking pot
+shots at an A6 The Palms are going to be
+delivered and of course if You observe
+the closest Target there is actually
+going to be that one right there we're
+going to sail right over the top of that
+one keep on cruising and the bombs get
+dropped in this case you will notice
+that Kaboom our new priority Target
+happened to be the access point again so
+that's one of those things like I was
+mentioning when you're doing those
+automatic attacks it doesn't matter it's
+going to try to ignore it and it's going
+to go ahead and do that strike based on
+what it feels most appropriate now
+you're probably saying well this target
+prioritization thing doesn't seem to be
+working very well then isn't it supposed
+to prioritize targets it does but the
+big thing is we have to know how to tune
+it in such a way that actually makes
+sense so um you've been very helpful Mr
+Intruder and now he's gone
+lost I guess he must have had an engine
+failure or something like that you know
+those old Intruders a little unreliable
+all right so let's show you another way
+to approach this problem so what I'm
+going to do is I'm actually going to do
+a good old-fashioned control F1 real
+quickly actually let's be cool control
+right click I'm going to grab a
+rectangle let me drag a box around my
+targeting Zone here would you like to
+create a Zone entity from this defined
+area Isn't that cool yes yes I do so
+then you can come up here and it pops up
+this thing now this is so neat that we
+could do this uh Target region region
+region helps if you spell things
+properly it's been a long week all right
+so now we have ourselves a new region if
+you're curious by the way if you're
+actually to come up here look at all
+these really cool new options we have
+here this is definitely for another
+video but if you actually were to go in
+here you can see that I've got my little
+Target region and I can change what mode
+it's on and everything that's just so
+cool we can transform it into a node
+navigation Zone it's so slick that we
+have that capability now it's going to
+be fun to try to update all the
+documentation for all this but I gotta
+have a project for next week all right
+so we're going to go ahead and grab our
+cvbg actually not even I'm going to
+press Ctrl f11 we're gonna go say uh
+blow up airport how many times have I
+done a mission like this but we're gonna
+go ahead and set this to go ahead in b a
+a ground attack Patrol this is
+anti-surface Warfare ground I'm not
+going to get a package I'm not gonna do
+anything like that it's fine for me
+I'm gonna press the OK button and what
+I'm going to do is I'm going to grab
+everybody I always think that great
+scene in the professional uh you can
+think of uh was Gary oldman's character
+there can be everyone I'm sure you know
+that one but anyway so we're gonna go
+ahead and grab this guy down here and
+we're gonna make a little bit bigger
+flights here we'll do groups of four so
+they have a little bit of backup I don't
+want an area rule this is just going to
+be a mob attack here notice that we
+already have everything but check this
+out you can push this button now and
+pick the one that you want that's so
+cool I love how they have that built in
+now and of course we can do a
+prosecution area I'm not gonna worry
+about any of that oh let's see our
+station altitude here um we're gonna go
+pretty low we're gonna go yeah I really
+wish I could just type in oh custom
+altitude what was I saying I could just
+come in here and go like that so this
+would be the AGL button by the way
+aflang terrain altitude yeah we'll do
+that that's fine I don't mind that so
+where I have all this stuff looks good
+um let's see timeline station I'm not
+going to do any of that I just don't
+need to do any of that for this this is
+just an example let's see unknown
+contacts uh qra I'm not gonna worry
+about that oh we got this one looks good
+we're not attacking with submarines I'm
+kind of so what I'm going to do now is
+I'm gonna go woo and push I'm going to
+turn on strafing which because you know
+they can't strafe but why not and I'm
+going to go up to Target and priority
+and I'm going to create myself a
+targeting priority editing priority
+remove will completely delete it and
+I'll worry about that I'm going to press
+this button and we're going to go ahead
+and do some prioritization here again I
+love the fact there's a little button
+done here to make your life a little bit
+simpler for this we're going to go down
+a subtype obviously Runway is not a
+priority I don't want them to waste a
+single bomb on that any surface building
+um that is not going to be a priority
+either much more open uh to this one
+right here let's see here tarmac space
+oh yeah definitely prioritize that
+the next thing of course I'm going to be
+interested in prioritization I've got a
+facility again we're going to click the
+little button down there at the bottom
+we're going to go ahead and select let's
+see here structure open I believe we got
+all that building surface point I don't
+care about those things I'll see surface
+building anything oh hangers we're going
+to go ahead and order up surface
+buildings next which unfortunately will
+destroy the other dream
+and we're going to set Priority One
+number one two I'll go ahead and Destroy
+said item that I was mentioning earlier
+all right let's go ahead and set this to
+structure open we're going to set this
+to specific sorry helps if you do it
+correctly let's go down here okay number
+one priority is to destroy that building
+all the other priorities are going to be
+going down from there but you can see
+now is we're sort of ignoring the runway
+in our attack here during our little
+Patrol that we're going to be doing over
+the ground there so this is going to
+work fairly well this is also that's all
+said I don't need to change any of those
+things I'll need to change any of those
+things oh that's fine I'm happy with
+that we don't want opportunity targets
+we don't want them to get carried away
+here and let's go double check bvr
+navigation missile waypoints navigation
+I'm just going to check to make sure I
+didn't miss anything important here
+nuclear weapons that sounds like it'll
+do the trick no don't do that that looks
+pretty good to me and we're gonna go
+back to Mission settings that looks
+pretty good to me yep I like that that's
+good looks good looks awesome excellent
+uh so one of the things you can do of
+course is get in here and start fitting
+with all this but for today I'm just not
+going to worry about it we can also do
+Dynamic missions and everything but
+again way way way way ahead of us here
+so I'm going to go ahead and pause
+oh it's going to happen in a few moments
+is our aircraft carrier is going to
+start deploying aircraft so let's see
+our first guy off the loose oh we have
+an a6a oh sweet these guys are going to
+come ripping in here now remember this
+time I did not order an automatic attack
+or a manual attack this crew is acting
+completely based on what WRA I've
+installed upon them so they're going to
+have to pay what their priority targets
+are as they come rushing into the little
+area here you can just imagine the
+people in this part of Florida just look
+it up going Ah that's strange I didn't
+realize the military were doing some
+practice exercises today meanwhile I'm
+like
+all right pause
+now if you look very very carefully
+you'll notice as soon as they arrived on
+the scene here let me go ahead and
+switch to F9 you'll notice that this
+chap right here uh started locking onto
+something almost immediately and if I go
+and pause for just a little bit one of
+these times they're going to add us a
+one-half speed you know you're all
+probably going why would they do a
+one-half speed well it's for moments
+like this when you want to see the humor
+in action that you'd want the one half
+speed so what you're observing now is um
+this guy of course released his bombs
+which makes sense because that's one of
+his priority targets here you're also
+noticing that our entire group is now
+making a rush directly towards the
+primary targets so our va1 or one our
+maximum attacker here is that going to
+get them in look at that
+he goes ahead and deploys his bomb now
+you're probably saying wait a minute why
+they attack all these things on the way
+well the reason was is because this chap
+was actually the farthest out front and
+he would already selected this latrine
+as his Target so these guys were
+completely free to attack whatever
+Target they felt like prioritizing at
+this particular point so let's go ahead
+and swing this back to normal mode here
+that would make me crazy so you'll see
+that we're actually attacking pause
+multiple targets here we're taking a pot
+shot at the latrine which was the
+priority Target we're also attacking
+this Hangar space which is a priority
+Target we're also attacking this lovely
+weather shelter here which was another
+priority Target as well so the bombs
+come while rolling down here
+and you can see oh my gosh you guys
+missed so bad
+naughty oh my gosh
+now the next crew arrives and they're
+going to do the same thing so take a
+look watch this watch us
+so you can see they're prioritizing on
+the new targets that is exactly what we
+wanted them to do I mean they're not
+doing a the most incredible job of it
+but notice their um that priority Target
+is quite the priority come on all right
+how much U.S Navy aircraft does it take
+to destroy a little tiny building
+chilling in the woods there notice they
+keep prioritizing it over and over again
+but obviously if there's bombs on the
+way already they're smart enough to know
+oh here comes the Trey strafing runs
+there's oh boy this is gonna be fun let
+me zoom out a little bit here go with my
+pretties
+that's just fun to do now again they
+prioritize the things that are
+specifically assigned to them one of the
+reasons that more than one person did
+not drop a bomb on the same Target is
+because they're not supposed to which is
+actually very desirable there so if I
+actually go back up to f11 real quickly
+here I've got my kind of piece I really
+wish I could make this unspecified kind
+of a thing so I'll drop it down to a
+thousand feet and an attack altitude um
+of course you can do a thousand feet too
+just to make it so that when they're
+ripping back down there they don't go
+strafing past the thing they're trying
+to shoot at and you can see they're just
+going to kind of rip back and forth rip
+back and forth kind of do all their
+little bomb things continue the little
+Patrol try and identify targets
+so let's go ahead and pause and let's
+grab ourselves some losses and
+expenditures here uh you can see that we
+did a little bit of damage because we
+prioritize the hangers as well as the
+tarmac spaces and if you scroll down a
+little bit uh you can see that our
+expenditures are pretty heavy duty here
+but we didn't do a lot of damage to a
+lot of buildings and again the reason
+for that is not on account of the fact
+that the target priority was incorrect
+it's not accounted the fact that the
+bombs are just not accurate if you drop
+them from 12 000 feet with 1965
+technology here so again that's going to
+have a big impact on it you can see just
+how many of those we just dropped on the
+targets now if I switch to the other
+team real fast then we can go show you
+the impact of this go ahead and press
+the F9 key I'm sorry the regular nine
+key and you can see that the things I
+wanted us to attack were actually
+exactly the things that were attacked
+now keep in mind here that most of it
+did not get blown up on the reason most
+of it did not get blown up is on account
+of the fact we just didn't hit it so
+obviously if we're working with um let's
+see here Mavericks for example we
+probably would have destroyed or even
+bullpups we would have probably been a
+little more successful here but you'll
+see things like the hangers the weather
+shelters the tarmac spaces and of course
+the little building that I've been
+making fun of which did get fire set to
+it by the way I just want to point that
+out real quickly so it was a successful
+operation overall so the takeaways here
+for this new feature is of it's very
+very powerful you can assign it by unit
+you can assign it by side and the other
+thing you have to remember is when
+you're doing automatic and manual
+attacks it's going to kind of be ignored
+it'll be really the best place to do
+this is to use it in places where the
+aircraft have to make a decision on
+their own who they want to engage now
+one of the things that I've seen that
+works really really well with this is if
+I were a Sam battery I could actually
+have my Sams prioritize everything that
+is a particular type of aircraft we'll
+show that to you really really quick
+here just in case you're curious
+grab myself an essay too of course it's
+going to be an essay too why wouldn't it
+be an sa2 sa2 oh let's see here it's
+probably going to be a c or a B here
+um probably a b uh maybe a d yeah we'll
+go with a d why not all right so the
+union the d e the d e is actually the
+nice one in my opinion when it comes to
+the sa2 the new ones have like digital
+displays but that one is the one that's
+always in my heart so if I press Ctrl
+shift F9 go ahead and head up to Target
+in priority create a targeting priority
+I'll go ahead add an item aircraft and
+if I wanted to I could have them specify
+attacking specific types so for example
+I want my essay twos to only target
+attack aircraft if I press add now
+they're going to attack those guys
+before they're going to attack other
+aircraft so there's a bunch of phantoms
+over here and a bunch of a6s here at the
+same time this crew will actually engage
+that particular type of aircraft real
+quick and to show you how that works I'm
+actually going to flip on the sensors
+real quick here just to sort of
+demonstrate oh my gosh it's a p12 all
+right so ancient all right let's go grab
+them real fast control V I like that
+let's go ahead and grab this one and
+we're gonna waste to basically a couple
+aircraft here just to demonstrate my
+point uh a6a that sounds good to me uh
+you've got a Bullpup because I still
+want to get revenge on something in a
+minute and we'll go over here and grab
+an f4b because it's going to be a little
+old school 1962. that looks pretty good
+to me and we're going to carry some of
+these we're going to order both of these
+to drop down to a low altitude we're
+going to drop you down to a low altitude
+and we're also going to adjust the size
+logic so that it can identify what type
+of aircraft it is let's see awareness
+level auto side and unit ID that's the
+one I wanted
+all right let's flip over here real fast
+unpause I'm gonna go and grab my Sam
+crew here I'm actually going to change
+the proficiency the reason I want to
+change the proficiency here is I want to
+make them a little bit quicker on the
+draw so they're going to of course see
+those two Targets right there they're
+going to start immediately working out
+the math let's go ahead and grab it so
+you can see what the math looks like and
+in action here
+let's see here oh we're not attacking
+them yet because they haven't been
+identified as hostile yet all right uh
+we definitely are seeing that amount
+we're able to identify what type this
+crew now of course knows to go ahead and
+begin the process of locking on starting
+to Target and everything along those
+lines go ahead and say no right there of
+course if they were going to engage with
+their Eliminator they'll turn on in a
+second I'm not worried about it just yet
+so this crew right now is working out
+everything oh they're sitting there the
+same Cruise the Gyros on the sa2
+missiles are being spoiled up
+um basically he's going over to his
+different mode he's switching from the
+wide band and he's going to flip the
+switch to the right and he's going to
+switch to basically the um you know
+receive only mode the Loro mode I forget
+exactly what it's called it's been a
+while since I fired one of these things
+all right so he's going to sit there he
+sees the two Targets a very cool calm
+confidently he's working out I'll go
+ahead and make sure he's allowed to go
+ahead and engage anybody who feels like
+engaging I'm going to go ahead and just
+give him a couple more moments to go
+ahead and lock on remember these systems
+took a little while to work out the
+targets here so even though we have a
+pretty good sight on them he's still got
+to wait until they get into position
+where they can actually engage
+all right they're getting themselves all
+lined up he's probably working out the
+shot any moment now he's got to wait
+until they get into the little flight
+envelope missile is locking on here
+probably flipping on his Fire Control
+radar he's got to flip the safety off
+he's got a pretty good look and again he
+knows what both types of aircraft he's
+dealing with here and the weapons on the
+way
+off it goes I was wondering when you
+guys were gonna shoot jeez now dramatic
+reveal are they attacking the attack
+airplane or are they attacking the F or
+Phantom pause and you'll observe that
+the a6a Intruder which is the attack
+plane is the priority Target so you can
+see how fantastically useful this is for
+people who are designing scenarios and
+trying to adjust sort of the way that
+Doctrine adjusts with time and of course
+we have to watch what happens here so
+our poor A6 Crews immediately got to
+start beaming that missile assuming they
+got enough warning against the early
+version of the A6 it might not even have
+known it it's also an early six to the
+sa2 so unfortunately hope there goes
+another one
+whoa now that's an essay 205 I've ever
+seen one oh they never leave the rail
+straight by the way they go straight for
+a little bit and then they go whoa whoa
+whoa whoa and start doing weird Spirals
+and especially depending on what lead
+mode you click the switch over to when
+he took this shot I'd be very surprised
+there oh that one's gonna go a little
+short now if the A6 crew is smart they
+just dive straight down and push the
+missile into the ground especially the
+older versions I hate to say it but I
+think my A6 is going to get away clean
+here
+oh look at that shot oh I love that oh
+man I've done so many shots like that
+with you oh there's the lead there's the
+lead nope a little short a little short
+come on
+May 6 survives enjoy

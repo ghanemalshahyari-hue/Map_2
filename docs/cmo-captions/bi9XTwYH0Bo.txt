@@ -1,0 +1,523 @@
+# C: MO - Cargo 2.0 Transfer
+Video: https://www.youtube.com/watch?v=bi9XTwYH0Bo
+Video ID: bi9XTwYH0Bo
+
+hello everyone in today's video we're
+going to show you how you can set up a
+unit such as a port or an airport so
+that you can transfer cargo to and from
+it now this is kind of a big deal
+because one of the recent additions they
+added were things like cargo containers
+and like pallets and stuff so we can
+play international shipping now which is
+super exciting so what I'm going to do
+is I'll show you kind of both variations
+of this real quick so the first
+variation I'm going to do is we're going
+to deal with an airport now airports are
+a little interesting as far as I kind of
+set them up so I'm going to go and pick
+a spot where it would be very amusing to
+have an airport hmm where could we put
+an amusing airport in the middle of New
+York City ah this looks pretty good for
+me so I'm gonna go ahead and create a
+pretty standard airport though before I
+do that though let's go and add some
+edit sides here we're only gonna have a
+blue four this time because we don't
+need to just for the purpose of
+examining um we're going to keep this
+pretty straightforward Testa I don't
+know why I call it that I've been
+calling it that for like years I think I
+misspelled test at one point just kind
+of got stuck so let's go ahead and
+create ourselves an airport airports in
+command are relatively straightforward
+we just need a couple different
+components to it first way I'm going to
+do I'm gonna go ahead and get ourselves
+a Runway it's a pretty honking long
+Runway there um one thing I like to do
+is measure the length of the runway
+because I'm just like that so that's a
+1.6 so that's about 32 3400 meters my
+estimation was pretty good oh let's go
+ahead and check the heading on this one
+it's a Runway one two I don't think it's
+one two I think it's like one three or
+one four in the real world on account of
+the fact that we have a magnetic
+variation but one thing I will do real
+quickly is I'll just dial this in
+basically as close remember this is true
+heading anyway so that's what we want it
+to be a lot of times what we'll do too
+is I'll come in here and say Runway one
+four um let's see here let's see 36
+minus 14 that would be 22 14 plus 18.
+there we go Runway three two I knew that
+cool so once that's done of course you
+have to add an access point to it so
+let's go ahead and add some access
+points I would say very large aircraft
+obviously it's a JFK go ahead and add a
+couple of those pretty good I'm going to
+add some fuel because why not obviously
+we need some AV gas at some point I
+believe they're going to make it so that
+all fuel is actually going to be
+consumed so this is going to be a much
+more lucrative Target and of course
+we're going to add ourselves a little
+Armory here I'll keep it real simple I'm
+not going to put any ammunition or
+anything crazy into it because we just
+don't need to
+let's see here ammo bunker surface that
+looks pretty good to me and then one
+more detail I'm going to add I'm going
+to add a warehouse so I'm going to go
+ahead and say large it's a shame that we
+don't actually have a building that is a
+warehouse oh we know there's a lot of
+different variations kind of a thing
+like this but like having like that kind
+of tall wide sort of building would be
+pretty cool we have a lighthouse I like
+that all right cool so what I'm going to
+do is I'm gonna change the name of this
+building I'm just going to call
+warehouse now the reason I'm doing that
+is once I start putting this all
+together I want to have the ability to
+go ahead and actually
+um put things into that warehouse that
+we can now load onto aircraft let's do a
+bunch of very large aircraft like I said
+I'm just keep them pretty generic here
+you don't even have to put a control
+tower or anything like that but you know
+I am because I can let's say control
+tower Tower that looks pretty good to me
+and that's awesome there is my version
+of JFK and 30 seconds or less hit the g
+key come over here
+JFK so what we're going to do now is
+we're going to add a cargo carrying unit
+so I'm going to come in here and I'll
+kind of keep it real simple we'll do a
+c130h nothing too too exciting as far as
+that goes there we go 2008 version two
+so now we're ready to go ahead and set
+up the cargo aspect of this now what
+some people do is they like to come up
+here and mash the edit cargo button if
+you do that you're going to get a big
+Angry error message saying you have to
+choose an individual unit not a group
+um that's because cargo is stored at
+units it's not stored in the whole box
+so I know it's very tempting to say I'll
+put all the cargo so they spread it out
+it doesn't work that way so what I'm
+going to do is actually at the 9 key on
+my keyboard that's in the numpad by the
+way which is going to give me the
+ability to select individual units I'm
+going to go up to my warehouse then
+press edit cargo
+no some people want to hit this button
+they go what have you done um Don't
+Panic Don't Panic hit the database
+button and everybody goes ah it's much
+better than I thought so over here on
+the left this is the current cargo at
+the warehouse this is my capacities
+obviously I chose a warehouse for this
+which gives me tons of space to operate
+on I could put up to 2 800 people into
+my warehouse here which that could be
+pretty entertaining I'm not going to but
+it could so let's go ahead and be real
+careful here and you're going to notice
+you have things like ground units the
+other thing you're going to notice is
+you're going to have let me see if I can
+get it carefully today containers and
+now you have mobile facilities and to
+make it even more fun check this out you
+have mounts so you have multiple
+different types of things that we can
+actually load or create as far as cargo
+goes now let's say I want to go ahead
+and keep this really simple I'm going to
+go to ground unit which is generally
+what I prefer and let's go ahead and
+throw in some oh the a2ds nice that's
+sweet I know there's a t model when do
+they do that and you learn something
+every day so let's go ahead into the
+m2a2 that's actually the m2a3 we're
+going to add 12 of those that's
+basically a company and you can see
+their mass is sucked up you can see our
+area sucked up and you can see our packs
+are not sucked up at all because the
+Bradley is a Bradley is not an
+infantryman so one thing I like to do to
+help me out a little bit is if you come
+over the cargo size button and you bop
+that button what it will do is it'll
+actually go ahead and sort them in terms
+of size but the reason I like pushing
+that button is if I scroll down you'll
+see there's a thing that says Personnel
+you see how useful that is so what I
+like to do is just grab myself some
+pretty typical infantry here now there's
+two different types of infantry you have
+the mobile facility version of the
+infiltrate and then you have the ground
+unit version of the Infantry now let's
+say for example I want to actually
+populate my infantry company now I'm not
+an expert on Army or anything along
+those lines so I'm just going to make
+this up as I go so let's assume when we
+have ROM let's see we'll each do one
+fire team each that's going to be 12
+fire team leaders we'll go ahead and do
+that our rifle men we're going to assume
+that we have probably 36 of those and
+we're going to go ahead and add an
+automatic Rifleman we're going to say we
+have 12 of those we're going to add 12
+assists and automatic Riflemen so what I
+have just done is I've created myself a
+mechanized company and you can see
+coming down right here that it
+automatically calculates all the
+different number of people now you're
+probably saying why are my Pax numbers
+at zero right now I thought you added
+automated Rifleman well the way that
+they do this is if you're working with a
+ground unit you won't have a Pax
+quantity it'll simply be the massing
+area of that unit now if I come down
+here and say oh what I actually wanted
+to do is uh put an infantry platoon in
+here let's say I want an infantry
+platoon Marine let's press one load
+selected now when I do that you're going
+to notice that it's going to recognize
+it as Pax but remember this is using the
+old mobile facility technique now you're
+saying well we've got to be careful with
+this because what if I'm dealing with
+something like a C130
+exactly so now what I'm going to do is
+I'm going to press the 9 key again click
+on my little airport press the lovely F6
+button so I'm going to grab these to
+C130 so I'm going to cheat just a tiny
+bit you can see we have a bunch of
+different options as far as a cargo goes
+we can do paratroopers we can do rangers
+we can do troops so what I'm going to do
+is a 19 tons of cargo press ready
+immediately so now what I'm going to do
+is grab Mouse cut one and if you come to
+the bottom right corner you're going to
+notice this new button that says cargo
+operations I bought that button and it's
+going to bring up a screen that looks
+like this now one of the great things
+here is they designed this so if you're
+dealing with mobile units you're going
+to have them all grouped if you do
+ground units they're all going to be
+separate in an individuals so just kind
+of keep that back your head when you're
+working now coming down here I got all
+my fire teams and stuff like that now
+ready to rock I have a platoon of
+Marines here so I can come in here
+notice by the way the pair drop
+compatible so if I go Boop like that
+it's going to go and slam it into the
+back of that C-130 so those guys my 16
+guys are awesome I'm kind of queuing up
+getting ready to rock kind of a thing I
+like that I'm going to press OK send
+over to these guys say cargo Ops and I'm
+going to scroll down here
+um let's see here what do we want to add
+for some reason I don't think yeah we
+can't fit it Bradley in the back of one
+of those too much area so go ahead and
+load one of those load one of those load
+one of those yeah all the fire team
+leaders are going to enjoy the flight
+here
+now notice because the ground units is
+that they're individual um I know what
+you're thinking you're thinking I can
+press the shift key and go through
+unfortunately that's not an option
+Someday I'm sure it will be an option
+but you can still easily manually kind
+of come in here and fill this aircraft
+up looking pretty good I'm gonna press
+the OK button and now our two aircraft
+are ready to rock as far as cargo goes
+now some of you are probably saying well
+that's not bad so can I just hit the F6
+key and come over here and oh notice it
+takes time to load these aircraft
+depending on how much you ask to get on
+board so keep that in the back of your
+head but now we can do is of course
+launch individually into them wherever
+whenever or I could set up a mission or
+anything like that now there's another
+neat trick to this cargo system watch
+this so I'm going to come up to my
+remember how my little Warehouse one day
+I hope they add a little button like a
+little I don't know a little infantry do
+like somebody's head with like a circle
+or something so I know that this unit is
+carrying cargo that'd be awesome someday
+someday but if I come over here and hit
+edit cargo one of the cool things you
+can do is you can actually eject people
+from the warehouse so let's say I wanted
+to take my Bradley ifes held down the
+shift Keys like them all I can come over
+here and press the unload selected
+button and do you see how it says loader
+crate units these are all the units that
+are now in the vicinity of my warehouse
+as a matter of fact not only at the
+vicinity but if I zoom in massively I
+don't think I can zoom in far enough I
+now have a bunch of Bradleys right at a
+rock so I can actually come in here and
+I can select my at least you know can do
+the F3 key in order to move around you
+could do one of these things and I kind
+of grab them all individually one of the
+quick hacks is if you group them
+together you can now come in here you
+can hit the F4 key and new course since
+they're only going to be grouped a
+non-group I now have a group of groupers
+so now I can grab that like that and as
+soon as I hit the spacebar key they're
+going to go start driving away now one
+of the Slick tricks with this new cargo
+is that I can actually come in here and
+press on let's see here let's grab on to
+this AV gas Farm if I could edit the
+cargo on these you'll notice I can now
+grab local units and shove them into the
+cargo of the AV tank farm I don't
+recommend this um it's not a lot of
+space inside one of these gas farms and
+it must be very uncomfortable especially
+if you're you know in a Bradley or
+something like that but you can see very
+quickly just how effective this can be
+for kind of moving kind of cargo around
+kind of having fun with it loading them
+up and kind of sitting them away
+now what I was saying earlier is there
+is a difference in cargo between
+airports and ship ports let me show you
+why
+so let's go ahead down to Staten Island
+here Ron let's go ahead and pick a nice
+place to put a port that looks pretty
+good to me so what I'm going to do is
+I'm going to grab myself some components
+for Port all we need up here let's go
+ahead and grab ourselves a pretty big
+one here underground here I think that's
+so cool this looks pretty good again I'm
+Gonna Keep It whoopsies it helps if you
+put it online like a normal person would
+there we go let's go ahead and grab the
+pier uh extra large sounds pretty good
+to me I like that press that go ahead
+and flip the sucker around set
+orientation oh by the way check it out
+you can change the pier size now so I
+actually got to zoom out and go oh just
+a teeny tiny bit bigger I love that it's
+a neat little feature all right so now
+what we're going to do is we're going to
+add some bits to the pier here obviously
+we need some diesel
+d-i-e-s-e-l let's go ahead and press
+that 750 liter tank that sounds good to
+me I'm gonna come over here I'm gonna
+put a crane because oh why not actually
+I should have done Port crane oh well
+come over here we'll have to add a
+bunker and put some bullets in it of
+course we could get all detailed at the
+bottom not going to get too far with
+that looks pretty good select all the
+goop let's see call this what do we want
+to call this port Jersey I think it said
+Port j-e-r-s-e-y sounds good to me and
+now we're ready to go ahead and fill it
+up with some ships so I'm going to press
+Ctrl and press F7 again keep in mind
+we're in mode oh let's see LSD I think
+is what I want to go with today Harper's
+Ferry for sure give me two of those I
+had just one just one I know it's got
+the capacity so now if I tap the F7 key
+you'll notice if I click on this one
+there's a cool little option to load and
+unload cargo and you should probably
+recognize this screen uh pretty much
+right away it's the same as we saw
+before obviously we haven't loaded any
+cargo yet so we can't do much of that so
+now we've got this all set up I'm going
+to press the F9 key I'm gonna grab
+ourselves there and actually we should
+do is let's add my warehouse a large
+build and one of these days I'll be able
+to control a there building large
+a lighthouse yes a full bunch in between
+lighthouse
+sounds good to me rename Warehouse
+of stuff I like that so let's go ahead
+and hit enter cargo again I'll go ahead
+now notice by the way we can grab onto
+those we don't want to I'll hit this
+button real quickly and we'll keep it
+pretty simple um unfortunately this
+doesn't have a filter base it does what
+am I talking about
+the c72. all right let's see here are
+some ground units we'll keep it old
+school here we'll grab a bunch of d72s
+here we'll make it three oh sounds
+pretty good so now we have plenty of
+t72s there
+I'm going to press the 9 key I'm going
+to click on our little handy dandy
+whoops helps if you actually grab the
+thing I don't want to do that all fixed
+so I'm going to go ahead and click on my
+port itself you might notice that they
+are grouped I'm going to press the S7
+key click on my LSD and go ahead and
+click on load and unload cargo and you
+will notice there are no units here the
+way that ports are done they're not
+grouped the same way that airports are
+if you want to have things that you can
+pick up at a port you have to actually
+integrate it directly into the pier
+itself so what I'm going to do is I'm
+going to press that level A9 key again
+this time I'm going to click on the peer
+the peer not the little building that
+was part of my port now I'll press edit
+cargo real quick and now we can go over
+to database we can go ahead and add in
+our t72s c72 I know it's going to be
+some other country t82 I've invented
+something new it looks pretty good there
+we'll do three load selected and press
+nine again click on my port press the F7
+key and take a look
+Tada see how they're waiting for us and
+ready to go so it's important that you
+link the ports correctly so now the cool
+thing is I can load all but
+unfortunately the way that they have
+this set like I said one of these days
+I'll be able to hold down the shift key
+and go bang bang bang bang or something
+like that but it does work pretty well
+and you can see that now we're able to
+put those loaded ones on I'll press the
+OK key I can grab onto the ship and at
+any point of course we can go ahead and
+launch it which is exactly what I intend
+to do so it's going to take a few
+minutes to get this thing underway speed
+up time
+apparently they need to load the ship
+molecule by molecule
+we are ah 50 minutes
+did he just launch he did
+sweet so now if I come over here and
+click on the Harper Safari I can go over
+edit cargo and you're going to notice
+that these guys are here and you'll also
+notice those local units are actually
+still here so I could actually
+technically do one of those look at this
+I can actually grab the Bradley all the
+way from over here which is pretty Slick
+Trick if you ask me so what I'm going to
+do now is I'm going to go ahead and
+order him to a return back to base and
+of course his base is right over there
+he's got to turn around we'll give him
+plenty of time to get in position go
+all right I like how it can go right
+through our main Town downtown there
+it's got to be slightly awkward kind of
+like the movie Speed if I hit the F7 key
+I can go ahead and select on them I can
+press the unload option and it can
+actually eject all of the cargo that we
+have here
+delightful press the OK button uh let's
+give them 13 minutes to reject
+everything
+yeah it looks pretty good there hit F7
+and now if I click on him one more time
+oops helps if you assign him to the
+proper Mission here uh load unload cargo
+let's see what we got here nothing now
+here's the cool part
+if I press the name key and I click on
+the port itself and at edit cargo you'll
+notice that those units that we loaded
+into here are now inside of the cargo of
+the pier that he docked at
+sweet all right so that should conclude
+and by the way uh palettes and all that
+stuff are handled the exact same way so
+I concludes our little video and just
+kind of show you how you can set up
+cargo operations for different types of
+ports the big difference to watch out
+for is airports treat the whole airport
+as a unit when you're dealing with piers
+and ports I treat the whole Port as a
+unit yes there is a single unit Port
+just in case you're curious if you come
+in here and type in single unit you're
+going to discover that there's a single
+unit Port you can actually now put
+everything in one operation and one of
+the things I get a kick out of this
+particular structure is it includes a
+lot of the different pieces that you're
+going to need a bunch of peers and
+everything pretty much ready to rock and
+um all set for you other than that enjoy

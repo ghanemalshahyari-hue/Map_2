@@ -1,0 +1,464 @@
+# C: MO - R-27 Missile Overview and Tactics
+Video: https://www.youtube.com/watch?v=U_eBSdZMR6U
+Video ID: U_eBSdZMR6U
+
+Hello everyone. In today's video, we're
+going to be taking a look at the R27
+series of missiles. Now, it might seem
+like kind of a niche topic, but as
+you're probably well aware, this has
+been something that has come up a little
+bit lately because of a certain DCS
+launch. And, you know, I'll be honest,
+it's just kind of an interesting weapon
+and it kind of almost bucks the trend of
+some other Eastern/Russian/s
+Soviet weapons of the era. So, let's uh
+go ahead and get started here. So, we
+have ourselves, of course, the Sukoy 27
+here. I'll go ahead and pause. I keep
+getting all these lovely contacts here.
+And I've modified this one quite a bit.
+Uh you can see here that it has the
+AA10, which again the R27 to me, the
+AA10, A10, A10, A10, A10. And you'll
+notice there's five different variations
+of this weapon. Now, this weapon is kind
+of an interesting weapon. And when you
+first take a look at it and kind of get
+a little hint is the 470-1,
+you'll probably say this thing looks a
+little weird. It looks kind of like it's
+got an oversized head, these big control
+fins, and then if you look a little more
+closely, you'll probably start to
+recognize the fact that this is actually
+designed to be a modular weapon. Yes, a
+modular weapon. And now, the reason I
+say that's kind of fun is because a lot
+of Soviet designs were always really,
+really, really good at that one thing
+that they did. And sometimes you had
+alternate versions. Let me give you a
+case in point. Name the American
+torpedo. You're sitting there going,
+"Um,
+the Mark 48." correct. Name other
+American torpedoes. And you start to go,
+"Oh, now meanwhile, I say, name a
+Soviet/ Eastern torpedo." And all of a
+sudden, you panic a little bit when you
+realize it's like 30 different kinds.
+That's just because philosophically over
+on the eastern side of things. So,
+whenever you had engineers, they tended
+to get really, really, really, really,
+really, really, really good at that
+thing, and they kept getting promoted
+for that one thing they were really good
+at. Whereas, western designs tended to
+be more generic. So, basically simplify
+logistics. That all aside, this weapon
+basically consists of one body, which is
+a very, very, very large warhead for its
+size. And again, if I come down here
+real quick, you'll see that it is a 39
+kg warhead. That's a gigantic warhead.
+And the reason I love that is because
+there's like nothing like it. Uh, let me
+show you what I mean here. Let's grab an
+AM7M here, which is a classic. Again,
+when people look at this weapon, they
+say, "Aha, there's the R27." It's not
+the same thing. Trust me, and you'll see
+why in a minute. But if I go down here,
+you'll notice it's a 16 kg warhead.
+You're like, "Oh, what about the AM120?"
+The A120, you say? Well, the A120,
+believe it or not, is also a tiny
+warhead. And if I scroll down here,
+you'll see that this one is a 7.7 kg
+warhead. These are tiny, tiny little
+warheads compared to our R27. Now, the
+cool thing here is the R27's main
+warhead is basically stored kind of in
+the middle there. And meanwhile, the end
+and the front are interchangeable. We
+can pop the front out and put on a radar
+seeker. We can pop the front out and put
+on an infrared seeker. And there's one
+really, really fun one, which is, get
+this. This is an anti-raar seeker.
+However, it's an air-to-air anti-raar
+seeker. We'll show you that in a minute.
+Of course, the other thing you could do
+is you could pop the butt off of this
+thing. You can throw on what they call
+the extended range module. You can see
+how much bigger the booster is on this
+one. Or you can leave it as kind of the
+short one. Unfortunately, let me get you
+a picture of the short one. You can see
+the difference in size immediately. So,
+what does this mean for us? Uh, this
+means a lot actually. Uh, this means
+that we have a wide variety of different
+kind of combos in order to be effective
+in combat. Now, the R model and the T
+model, kind of the OG sort of short
+range sort of thing like that, is pretty
+short range. It's um, if I go up to the
+tippy top here, it says up to 32
+nautical miles. Now, you're sitting
+there going, what is 32 mi nautical
+miles really look like? Well, if you
+take a look at my Sukoy 27P here, if I
+hold my mouse about here, that's the
+range. And you're sitting there going,
+okay, so that's that's not awful. That's
+That's like a Sparrow. It is like a
+Sparrow. But the big difference here,
+and this is one of the fun things that
+makes it a little different than the
+Sparrow, is when they were launched,
+they were typically launched with a
+thermal version as well as a radar
+guided version. The concept is if you
+could get one to work, uh, then you
+wouldn't have to worry so much about the
+other. You'll see what I mean. So, we
+have two targets coming at us. We have
+one that's a little difficult to
+identify. We have one that's very easy
+to identify. It's got a fire control
+radar, air-to-air, medium range.
+Obviously, this is a fighter size
+target. something over here. Clearly a
+bomber sized target. And again, we know
+that just from what distance we picked
+it up and we're actually detecting its
+radar right now. Now, we've closed
+distance of about 30 miles. So, this is
+the absolute max range of our good
+friends, the R27, the standard versions,
+the standard range model, not the E
+models I would call it. Now, let's go
+ahead and kind of show you a typical
+engagement with this particular weapon.
+Now, we're a little too far to be able
+to hit this one. This one's just going
+to maneuver. We're never never never
+going to hit it. So, I'm going to get a
+little bit closer here. Get a little bit
+closer. That's about 21. Pause. Now,
+watch one of the fun tricks people
+didn't realize. I'm going to press shift
+F1. Hold down shift. Drag a box around
+these two. And I'm going to go ahead and
+fire these. So, the first one I am I'm
+going to go ahead and fire one R and one
+T to the bogey number one. And I'm going
+to fire one R and one T for bomber
+number one. Now, this is one of the fun
+things you might not have known about
+Sequo 27 is they have TWWS. Not only do
+they have TWWs, but if you look here,
+you'll actually see that I can fire off
+four missiles. Each one of these
+missiles, of course, packs both two
+different kinds of warheads here. One's
+the thermal and one is the radar. Now,
+let me zoom in a little bit and show you
+something weird going on here. You will
+notice my thermal missile has no lock
+right now. It is actually flying
+completely dumb. It's actually flying in
+a straight line. And what happens here
+is as our target turns and lights up,
+you will see that the thermal model of
+our weapon here, the R27T, will actually
+see the flight the trail of this
+actually start chasing after it. This is
+a completely dumb missile otherwise. And
+it's kind of interesting. Now, you'll
+notice our radar models, they don't
+care. Now, if you actually look
+carefully here, you'll see that our T-
+model Oh, that one hit and it blasted
+that B-52 out of the air. Meanwhile,
+this guy on the run here is running
+really, really, really, really fast. So,
+if we're going to do anything here, we
+have to actually catch up to him.
+Now, you're probably sitting there
+going, "Okay, that that's kind of neat.
+Uh, what what else can you tell me?" Uh,
+what else I can tell you? I can tell you
+a lot. Uh, namely, for example, this
+thing is very dangerous. So, I'm
+actually going to grab this guy in order
+him to turn because we have something
+very, very dangerous that can make our
+day here. And that happens to be a
+Phantom. Now, the Phantom, of course,
+packs its own radar missile, and this is
+the affforementioned Sparrow, which
+actually has a pretty good range on it.
+But because we also have the ER version,
+we can basically engage this phantom
+with impunity. The trick here is
+whenever you're dealing with the
+air-to-air weapons that are not going to
+be the active radar version like AM54s
+or AM Rams, the trick here is to
+basically get the other guy to turn
+around because if you can get the other
+guy to turn around, especially if you
+get them to turn around after they've
+already fired, you win the engagement
+because they're going to basically put
+their tail to you and you get a free
+shot on them as you'll see. Now, the
+problem is we have to know the range of
+this particular aircraft's weaponry. So,
+if I actually were to click on my
+Phantom here, you will see I'm
+completely within range of my Sparrow
+here. It's got about a 38 mile range.
+So, if I wait to 20 miles, we're
+basically both going to get a free shot
+on each other. So, it actually creates
+kind of an interesting little um I I
+don't want to call it like a standoff,
+but you'll kind of see what I mean. So,
+what I'm going to do is hold off just a
+few more seconds here. One, two, three,
+four. And I'm going to go ahead and fire
+one of these long range versions. I'm
+not going to fire the ET version. I'm
+going to fire the ER version. Now,
+here's a fun fact. You see the P version
+here? This will actually home in on the
+radar emissions of the Phantom. The
+problem is the Phantom is going to get a
+shot off, and that's going to put us in
+a really bad spot. But if we wanted to
+be kind of have some fun with him, we
+could actually fire this weapon off. he
+would keep following us to guide his
+sparrow in and he'd get hit in the face
+with it. At least we hope. But then, of
+course, we're giving us our tail and the
+the other way around. So, what I'm going
+to do is I'm going to go ahead and fire
+one ER model at him. Like I said, if we
+wanted to be a little cheeky, we could
+use that strategy of basically firing
+it. So, what you'll notice here is he
+has already fired on us. So, I waited a
+little too long, but that's okay. So,
+I'm going to go ahead and get the heck
+out of here.
+And remember, he fired an ER at us. If
+he fires an ER at us, oh, see how he's
+turning? See how he's turning? So, this
+fight is over for him. Do you notice?
+Um, as soon as we launched on him, he
+basically uh panicked and went around.
+You can start evading anytime you like
+here. Anytime. There it goes. Do you see
+how as soon as we fired on him, he
+retreated. So, what we're going to do
+now is kick this thing up to afterburner
+and we're just going to basically track
+him straight down. So, that actually
+worked exactly as I intended for it to
+work. Now, the scary thing here is this
+ER version probably not going to catch
+up to the Phantom in time. Whenever you
+do any tail chase with any weapon, it
+has a tough time. You can actually see
+that Alamo, my anti-RAR missile version.
+It's just sort of putts along there. So,
+what we're going to do now is we're
+going to go ahead and get a little bit
+closer cuz again, we have a tail chase
+here. Right there. And this will be a
+perfect opportunity to fire one of the
+ET models. The ET is not
+extraterrestrial. It is a thermal
+launched weapon. Now, the scary thing is
+this weapon right now actually has a
+really, really good motor on it because
+it's so much bigger as I showed you in
+the picture there. So, this thing has
+already stepped itself up to about Mach
+4, and our poor Phantom actually doesn't
+know we've launched on him. So, what
+happens a lot of times here is they will
+actually turn on you, not realizing that
+they're being hunted down. But, it's not
+going to happen. Yep. He's He saw it. He
+saw the weapon. But again, all we're
+trying to do right now is close up on
+him and try to get him to turn. Come on,
+you're going to turn. See how he's just
+running, running, running, running.
+Right. There it is. There's the turn.
+So, we're going to come this way and
+we're just going to get ready to fire
+another ET on him. Remember the ETs, of
+course, we're running halfway down enemy
+territory here. And right there, that's
+going to be the shot. See, now he's got
+us nice and square. Let's go ahead and
+fire that ET. We could even fire an ER
+if we were being nervous here. Off it
+goes. And again, notice the ET, it has
+to go behind the target before it goes.
+Notice the ER has no challenge. And also
+notice our Phantom because he can't turn
+point at us long enough to get a shot is
+basically uh right in our kill zone
+here. And again, I don't think this is
+going to go so well for the Phantom
+here. Hey, surprise. Oh, got him. Nice.
+All right, let's go and reload their
+scenario here. And now you can kind of
+see tactically why it is an incredibly
+good weapon because it has that longer
+reach. You can get the other guy to turn
+and basically get that cheap shot. But
+one of the things I want to share with
+you real quick, cuz I just get a kick
+out of this, is that version I was
+mentioning a minute ago, the R27P.
+That's the E model. Basically, this is
+the one that homes in on radar
+transmissions. It's a really funny
+weapon to shoot because if they don't
+know they've been launched on and they
+leave their radar on, it basically will
+get them shot right in the face. It's
+kind of fun. Now, this is not a
+anti-raar missile in the sense that if
+you probably noticed down here, there's
+a boat looking up at us. You can't fire
+this weapon at a surface target. It just
+does not work that way. Uh that's just
+kind of one of the fun little kind of
+catches. But anything else is totally
+acceptable. So again, we have these two
+targets. He has a surface search radar.
+This is an F-16 drone. I don't feel bad
+about shooting the drones up. That's
+just a drone. But if I were to take my
+um regular P model here, lock onto this
+fellow here. Again, we can technically
+fire either of these. If I fire this
+one, he's a little out of reach to hit
+the F-16. And uh this is going to be
+kind of fun to watch cuz if you notice,
+the F16 turds immediately. This weapon
+is homing in on the radar missions of
+the bomber. Oh, it's not going to go
+well. As you can see, it didn't go so
+well. And I had a feeling it wasn't
+going to go so well. Bam. Now we got
+him. So now, of course, we can turn our
+F-16 and we can go ahead and we're
+actually close enough to fire the R and
+we'll hit him with an R and a T just in
+case. There we go. One of those and one
+of those. F16 is not going to have a lot
+of time to react here. There it goes.
+There's the turn. You're up too high
+though. He's up too high. Notice the T
+model again is doing that inefficient
+chase. And we got a turn. Of course, we
+still have the phantom we have to deal
+with and we're already launched on. So
+the best thing we can do is immediately
+fire one of our own.
+which we've done. And all he has to do
+is knows he's been fired on. Watch how
+tight this is going to be. Watch this.
+Watch this. See how the missile overshot
+us.
+Oh. Oh. Oh.
+And as you can see, you got to make sure
+you pay attention in combat, otherwise
+that kind of thing will happen. We were
+too close. We needed to take advantage
+of that extra five mile range there to
+be able to get that cheap shot as you
+saw in that previous scenario. Now, if
+we open the scenario one more time,
+we'll show you kind of the other thing
+that could happen. So, let's go ahead
+and speed up time. And again, air to air
+combat is actually quite boring once you
+get to modern weapons, cuz like this
+fight's over as soon as somebody
+launches with modern weapons. But for
+now, it's pretty traditional. I'm going
+ignore those two planes for a second
+here. I just want that one. That's the
+one I want.
+All right. So, we're going to do the
+same thing we did before, but we're
+going to take advantage of that really
+long reach we have here. Notice I can
+fire this thing at any time.
+The probability of that weapon actually
+hitting that target is so low, but he
+doesn't necessarily know I fired on him.
+So, wow. A little bit of an overachiever
+here. There he goes. He turned after
+burner.
+Notice I didn't tell him to do anything.
+He just slapped all those other aircraft
+down. So, our F4, believe it or not,
+knows there's a missile behind him, but
+the only reason he knows there's a
+missile behind him is cuz there's
+actually a radar site on the ground
+tracking me right now. If that wasn't
+there, he would not have known there's
+basically this insanely long range shot
+taken on him. Nope, you're fine. Keep
+going. Keep going. Keep the afterburner
+going. By the way, do not climb with
+this aircraft. Um, if I try to climb up
+to 45,000, the altitude difference
+between myself and the target that I'm
+basically running down right now would
+be too low. Now, there's one thing I am
+curious about, a little bonus, I guess
+I'm going to call it. I'll shut the
+radar off for a second here. Do you
+notice that I can still see this target?
+No problem. The reason I can still see
+the target and you see I'm starting to
+lose him
+is because I'm using my thermal sight.
+Oh. Oh. Oh. No. No. No. No. No. If
+you're going to get this guy, you're
+going to have to get a lot closer and
+you're going to have to stop wasting
+them. Oh boy. This is going to end up
+being a gun kill here.
+There goes the next one. I really
+appreciate it if you don't keep firing
+those, but you know what? You do you.
+just like that. So, as you can see, the
+R27's kind of a unique weapon. There's a
+lot of different platforms that can
+carry it. Uh, it's widely exported. The
+short-range versions are actually still
+pretty useful, and the longrange
+versions really, really, really give you
+a lot of tactical flexibility if you
+don't mind flying uh was that 90 miles
+across Sri Lanka for the purposes of
+chasing the target down. Enjoy.

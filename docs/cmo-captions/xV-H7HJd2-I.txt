@@ -1,0 +1,343 @@
+# C: MO - Look Down/Shoot Down Radar
+Video: https://www.youtube.com/watch?v=xV-H7HJd2-I
+Video ID: xV-H7HJd2-I
+
+hello everyone in today's video we're
+going to be taking a look at the pulse
+doppler radar slash look down shoot down
+technique now what i've done today is
+put together a couple different things i
+have a little visual as well as a quick
+little demonstration to kind of get you
+guys an idea of it but before i get too
+carried away i thought i'd just pull out
+this really ugly illustration that i did
+here and i just want to show you we've
+got ourselves an aircraft over here on
+the left and now we're sending out our
+radar beams of course radar beams don't
+travel in a straight line we picked up
+an airplane and if we were to take a
+look at that in a two-dimensional thing
+you get something that looks a little
+bit like this where you have a single
+little boop and we'd be able to identify
+the target by its range by of course how
+long it takes that radar signal to get
+back to us now it gets a little
+interesting however now if i have a
+target that's below us that means that
+we're actually going to get two returns
+the first one of course is going to be
+the target itself the second is going to
+be this big hard thing called the ground
+now if i were to take a look at that two
+dimensionally i end up with something
+that's a little bit like this now to
+make things extra complicated let's say
+i had something that's all the way way
+down here that would mean that its
+return would basically be completely
+touching the return of the ground making
+it impossible to differentiate of course
+in the real world the radar beam as you
+can see here doesn't really come out in
+a very straight line so what happens is
+the ground actually ends up giving us a
+return like this completely concealing
+this airplane down to this little
+altitude those who play dcs probably
+have seen this effect if you've ever
+flown the mig-21 around at low altitudes
+the entire bottom half of your radar
+scoop is one blah as it desperately
+tries to go ahead and identify stuff
+below it so we'll go ahead and pop over
+here real quick we have this a lovely
+place um you can zoom out a little bit
+north africa and we have ourselves an
+f4c which on the definitely the aircraft
+we want to pull out for this particular
+activity what i've done is i've sent him
+to 36 thousand feet and i've equipped
+him with three radars he has an apq 120
+which is a semi pulse stopper radar this
+is kind of that's one of an f4 actually
+we have an an apg-68 which is a true
+pulse doppler look down shoot down radar
+and we have a drop kick which is a pulse
+only radar so what i'm going to do is
+i'll go flip the pulse only radar on and
+we're just going to start cruising along
+and see what we kind of encounter is
+that we're just sort of bouncing like
+this so we're cruising you know nothing
+not too scary you know just kind of
+enjoying my little flight here and yes
+this radar doesn't normally operate in
+three dimensions like this this is just
+because oh we picked something out
+let's see what we have here we have a
+drop kick it's um we picked them up at a
+range of about 21 nautical miles we're
+just going to keep on cruising no big
+deal no problems
+what's this oh we have somebody who's um
+pretty high about the same altitude as
+us about 21 nautical miles all right
+cool how you doing good to see you good
+to see you just cruise oh pick somebody
+else up here let's see here uh 23
+nautical miles actually pretty good
+range but this is where things get weird
+where did the target just go
+now you're probably saying well i mean
+the target is oh
+remember what i showed you my little
+doodle where i had the ground starting
+to create that strong reflection you've
+just seen it happen now that i've even
+gotten close to it i could pick it up
+initially but once the ground took up
+the majority of the radar scope boop he
+disappeared even at 25 000 feet so we're
+going to keep cruising kind of keep
+everything's fine nothing to worry about
+oh who's that oh i just didn't even see
+with the radar i saw you fly by with my
+eyeballs interesting let's keep flying
+and you can see we're not picking up
+much of anything at all the reason for
+this of course is if you take a look
+these all aircraft here are very very
+very very very low to the ground you
+know this guy right here is about 2000
+feet 1000 about 200. no matter how hard
+i try this radar will never be able to
+detect those guys down there on account
+of the fact that there's no doppler
+filtering on it this is a non-look down
+shoot down radar so let's go ahead and
+reopen everything here i'm going to
+press it although this machine right
+back up here looks pretty good i've got
+this guy sort of chilling right here
+everything's looking good and let's flip
+on a semi pulse doppler radar now this
+is a super unique radar because what it
+actually would do is it would use
+basically an algorithm to identify
+certain contacts that it could see in
+pulse mode and identify them as aircraft
+because of their return so it was
+actually really really clever and you
+know just trying to get around the
+problem without having to go to a true
+doppler radar so this thing is a semi
+doppler so we picked him up right away
+um that was a distance about 36 nautical
+miles sweet that worked well keep crews
+up got another guy this is a little same
+altitude as us 37 nautical miles let's
+keep cruising keep cruising nothing to
+worry about oh look somebody else up
+here what do we got here we have a
+distance of 38.8 nautical miles okay
+interesting interesting so he's a little
+bit below us now remember we lost him
+last time cruising along oh picked up
+this guy let's see we're at a range of
+38 nautical miles okay he's a cruise in
+a medium altitude that's about 12 000
+feet there oh pick somebody else up pile
+this chap down here 36 nautical miles
+away it's chilling at 2 000 feet so far
+so good so far got somebody else what's
+this here notice by the way both of
+these guys dropped out uh this one right
+here of 38.1 nautical miles
+and we got one another one this guy
+looks like he's about 200 feet off also
+38 nautical miles now because of the
+algorithms and advanced programming of
+this particular radar even though it's
+ancient technology it was able to
+basically identify things that are down
+on the ground pretty efficiently plus it
+used a little bit of doppler filtering
+to help out so what happens when you get
+yourself a modern radar which has the
+capabilities of that it's like a true
+pulse doppler so let's go try that out
+so flip the sucker on go ahead and pause
+is the radar f16 by the way which
+honestly would be an excellent addition
+to an f4 and make the thing a little bit
+more effective there's actually quite a
+couple really neat versions of the f4
+that never got made which is kind of a
+shame so let's see what happens this
+time so we're cruising we're cruising
+nothing to complain oh we got something
+uh the guy above us we detected about 39
+nautical miles away cool cool i like
+that cruising oh got somebody else i
+picked this guy up at 40 nautical miles
+away again co-altitude here cruising
+along cruising along oh what's this
+pretty high we've detected him at 42
+nautical miles interesting we've
+actually detected him bigger you're
+saying whoa whoa whoa you've done
+something wrong that makes no sense how
+are you able to detect something below
+you at a longer range than something's
+at the same altitude well if you think
+about it geometrically i'm now seeing
+part of the top of the airplane which
+has actually improved my ability to see
+something farther away than at
+co-altitude where i only see the nose of
+the airplane wow that's so cool cruising
+along cruising long all right we picked
+somebody up at medium altitude we have
+41 nautical miles away think of how much
+at the top of the plane i can see in a
+moment we're going to lose this guy
+because what's going to happen is he's
+going to get into our kind of dead spot
+there let's see we got him a medium we
+just picked this guy up at 43 nautical
+miles away
+this guy was picked up at like 39 we
+picked this one at three and a half
+miles greater range even though it's
+very very low off the ground keep
+cruising keep cruising let's see what
+happens at this time yes oh we picked
+somebody's supper to identify him 41
+nautical miles away for this guy who's a
+thousand feet above ground level and
+let's go pick on this guy too this one
+is 41 nautical miles away
+and he's 400 feet above ground level so
+you can see because we're filtering out
+the frequencies involved with it we're
+able to identify things that are closing
+towards us or going away from us using
+the look down radar now you're sitting
+here saying okay i get where you're
+going with this so basically you're
+using a little bit of fancy electronics
+to make it so you can see down with the
+radar yeah what does that mean for us
+tactically well let me show you a trick
+let's go ahead and grab this guy and
+send it down to low altitude and let's
+go ahead and flip on that really really
+bad sensor this time where that lovely
+rpo orion again it was early technology
+they were still working the kinks out
+you got you got to respect that you got
+to respect that so he's going to go
+ahead and fly downwards now if you
+recall we lost everybody after 25 000
+feet so um let's see if it makes a
+difference if we fly a little bit lower
+remember our radar now we're below most
+of the ground cloud that we're cruising
+around well picked him up no problem
+we lost him for half as i picked him up
+no problem cruising along here cruising
+along picked him up no problem i believe
+this is 25 000 feet yep cruising along
+we got somebody else here that looks
+pretty good to me open picked up
+somebody else right there that guy's at
+very low altitude yeah we got this guy
+over here he's also at very low oh look
+at that we got another one and i don't
+think we're going to be able to acquire
+that last one or was oh nope that was
+the last one so you can see what i've
+done is i've essentially solved the
+problem by taking my radar dish and
+getting it underneath where the ground
+clutter was going to make it impossible
+for me to see the targets that i'm
+looking at so again conceptually as well
+as structurally you can see that knowing
+a little bit about the way the radar
+works makes it easier for you from a
+practical upshot of course in the real
+world i'll show you something that i
+kind of wish they simulated a little
+better but we'll kind of see exactly
+what i mean in a second so what i'm
+going to do is i'm actually going to
+take this aircraft and i'm going to
+order it to fly straight up now normally
+if you had a true pulse doppler radar it
+would be tremendously difficult to
+detect these aircraft because if there's
+no doppler shift pulse only would be the
+only way you could detect them so let's
+go ahead and test that as a theory you
+know put the uh in the dcs slash flight
+simulator world up against this system
+so then flip that sucker on again now
+we'll get a little bit closer here to
+make a little bit fair for us and we're
+going to try to god's eye view speed up
+time just a teeny tiny bit
+and ideally we should not be able to see
+anybody so let me move a little bit
+closer here again like we're just a
+demonstration purposes so because
+they're perpendicular to us they have no
+movement relative to us and as a result
+we should not be able to see this
+aircraft as a matter of fact see this
+guy right here he's a distance of 26
+nautical miles and look what happens
+he's completely completely invisible to
+our radar because he has no doppler
+shift now if i speed up time just a
+little bit notice i suddenly spotted him
+the reason i can see him now is because
+he's no longer perpendicular to us he
+has a bit of an oblique angle so now we
+can actually scan how fast i mean if i
+can measure this angle which i can't
+quickly let's see 360 degrees minus 8.
+so about an 8 degree window where he's
+completely utterly blind anything that's
+perpendicular to m the only reason we
+can see this now i'm not going to take
+the sine of eight degrees real fast and
+multiply it by speed to calculate the
+shift but you get the idea you can see
+he was completely blind because of that
+so although this technology is amazing
+that's a heck of a downside now where it
+gets a little bit fun of course is
+probably saying wait a minute what if
+you flip on the dropkick instead which
+does not use that technology
+in a hypothetical world assuming
+everybody's the same altitude notice we
+immediately start to identify people who
+are around us because we are using a
+pulse only radar so hopefully we found
+that interesting like i said just to
+provide people just a little bit of
+insight into what look down shoot down
+actually is and how it behaves obviously
+when you get into the world of phase
+array radars that changes completely
+those are unbelievably system
+try that one the mythic
+sophisticated radars that's going to
+have a much much more complicated way of
+doing things but it's also going to be
+that much more sophisticated enjoy

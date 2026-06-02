@@ -1,0 +1,708 @@
+# C: MO - Aspect
+Video: https://www.youtube.com/watch?v=qoq4e8n3MfM
+Video ID: qoq4e8n3MfM
+
+hello everyone in today's video we're
+going to take a look at something called
+aspect now aspect is definitely one of
+those things you're probably familiar
+with and it basically refers to the
+angle by which you're approaching a
+particular object now inside of military
+simulations like we have over here in
+command aspect is a very very critical
+component of many many engagements but
+it's one of those things that kind of
+gets relegated to oh it's not really
+that big of a deal I see the trucker
+pull the trigger kind of a thing like
+that so let's go ahead and break that
+down in detail here and kind of look at
+some of the complications that kind of
+come through with it so the first things
+first is that we have ourselves a
+relatively simple scenario here again I
+just built this just for the purposes of
+kind of demonstrating some of these
+different aspects
+so one of the things we have now is this
+new short Airfield for tactical support
+and just a really really quick Pro tip
+if you want to use this you're actually
+going to have to go ahead and toss in
+some way for the aircraft that at the
+field to get all into the actual Husky
+jump and stuff like that but it is cool
+that they finally added one of those I
+like that touch so we're going to do is
+we're going to use our F1 ER if wow I'm
+going to talk about one of the Eagles
+that have used me too many times or 15a
+Eagle to go ahead and attack our bogey
+so I'm gonna go ahead and click on my
+Eagle shift F1 click on the bogey and
+you're going to notice here that it
+shows us some interesting information
+for things first we're carrying the nine
+Juliet Sidewinder and you're also going
+to observe the fact that it says that
+I'm out of range which is definitely a
+problem so we'll go ahead and get a
+little bit closer here
+and just kind of kind of do my thing
+cruising the range here the scale will
+never see me coming oh picked up
+something else out there somewhere
+do do just make my way over into range
+ah there we are we're beautifully in
+range now fantastic
+so I'm gonna go ahead and press shift F1
+we'll go ahead and order that attack one
+more time
+and you'll notice here that I am out of
+aspect it says that two degrees is out
+of the envelope with the rear aspect
+weapon that's because of the Juliet
+version of The Sidewinder in many many
+Early Air infrared missiles cannot
+Target things that it can't see well so
+in this particular case our handy dandy
+Juliet Sidewinder has actually got
+itself a situation where it has to be in
+the rear of the Target in order to
+engage it so even though it's possible
+to get a lock you're probably not going
+to get a reliable hit on the target
+itself so I'm going to go ahead and uh
+do a couple quick things here Ctrl shift
+of nine I'm going to switch this to no
+reply to course it's kind of a critical
+component click on my Eagle I'm going to
+go ahead and select my bomber here and
+we'll let him kind of do his thing here
+so what he's going to do is he's going
+to step up to afterburner speed and
+start to approach this target basically
+on a front end aspect now if I wanted to
+do a cheap shot here around what I could
+do is actually use the guns on him and
+basically try to take a passing shot on
+him it's kind of one of the fun
+strategies you can use that sometimes
+you get away with again I don't think
+I'll be able to get away with this shot
+here we shall try but like I said every
+once in a while you can get oh there it
+is
+missed them
+so now we're going to do is we're going
+to turn around you're going to notice
+there are bullets pouring out of the
+back of this enemy bomber right here and
+they actually took some pretty close
+shots on our Eagle now what did you
+you're sitting there going wait what
+well believe it or not this is a bison
+and one of the reasons I pulled this
+particular aircraft out is because it
+has a rear aspect firing weapon if you
+actually come up here you'll notice here
+that it's got It's a little 23
+millimeter cannon on the back and it
+faces the back and you're like why would
+it face the back actually makes perfect
+sense because they're Eagle here who
+just fired by the way you'll notice that
+we were able to go ahead and get a round
+off at this particular Target
+um is well with an engagement profile of
+this so we'll let them go ahead and fire
+some Sidewinders here now one of the
+things you'll find very interesting here
+is the Sidewinder shot to the back does
+not work very well
+hey
+there's a lot of meat on that aircraft
+that's in the back of it and firing this
+little tiny 6.5 kilogram overheads here
+is not going to do much to it as a
+matter of fact you can see that's our
+third hit so one of the other downsides
+of rear aspect attacks is first of all
+your target is running from your
+missiles which limits your range notice
+by the way a range here the second thing
+it does of course is it opens up if you
+pull the ball firing in that direction
+and then lastly of hitting things from
+the back doesn't do as much damage as
+hitting things from other directions so
+what I'm going to do is I'm going to go
+ahead and open the scenario back up
+again
+yes I need to name all my scenarios the
+same thing it's just simple that way and
+then what we're going to do is we're
+going to grab my eagle and we're going
+to replace my eagle with a more modern
+Eagle here I will do an f-15a but we'll
+grab a nice 1995 with the bass version
+cool let's grab that and now we're going
+to grab ourselves some sparrows that
+looks pretty good to me I'm not actually
+going to fire The Sparrows we're just
+going to have The Sparrows sort of on
+hand so to speak one of the things I
+actually like to do is to come in here
+like this and what you can do is you can
+come to The Sparrows you can actually
+get rid of them and the advantage there
+of course is we're not going to get an
+accidental there so what I'm going to do
+is the same thing we did last time go
+ahead and set this to be ignore plotted
+chorus I like that I'm going to click on
+the eagle F1 and just like that and
+nobody's going to do of course now he's
+going to spin up all sorts of
+afterburner goodness and he's going to
+come rushing at our Target
+now the aim 9M not to be confused with
+the p by the way with aim9s the letter
+it's complicated different letters mean
+different things it doesn't mean that m
+is necessarily better than P or p is
+better than M vice versa actually kind
+of be careful with that of course the x
+is going to be the best of the
+Sidewinders but what you're going to
+notice is we have a couple of new toys
+oh we have a much much bigger Warhead
+which is definitely handy for us another
+thing of course now is we have the
+ability to engage a target from the
+front which is super duper useful to see
+how it's an anti-air all aspect that's
+actually really useful for us so we're
+going to do is approach this target from
+the nose this time and we're going to
+take a pot shot down the barrel and uh
+things are going to get kind of
+interesting this time and you'll see
+exactly why because now that we're
+approaching it in our shot that
+increases our effective range because if
+we were to fire now by the time the
+missile got to this point our Target
+would have already gotten to that point
+which now means that we have less time
+for the engagement which gives him less
+time to maneuver and also means our
+weapon now is that traveling at a much
+much higher speed so press shift F1 I'll
+go ahead and select him real quickly
+we're little outside the dlz range here
+which is doesn't surprise me that simply
+means um if we were doing other types of
+targets they could potentially
+outmaneuver it but even then a few
+seconds later we go pop one of these
+things off and that was a pretty good
+range too that was about six or seven
+miles so The Sidewinder these are dog
+fighting missiles that they come ripping
+and they're coming right into the front
+of the aircraft this time now believe it
+or not even though these guys are
+slowing down rapidly this bomber can't
+do a thing and they're going to
+basically take those Sidewinders right
+off the nose there and then of course
+we're gonna have to fire a third
+Sidewinder
+and you can see that made quite a mess
+of things actually we just got that
+cheap shot just the pass now you're
+probably sitting there going how did
+that airplane survive that I'm actually
+asking the same kind of question there
+again because this is a big very very
+very beefy aircraft that's quite durable
+and again that's one of the reasons I
+like about it is that all the engines
+and stuff are kind of in the middle here
+which makes it a tougher shot so now
+you're probably sitting there going okay
+I think I see exactly where you're going
+to go next and I said yeah you're right
+so a front aspect is one of the best
+shots that you can take against aircraft
+because it limits the maneuvering
+capabilities and it's very difficult to
+outturn it but what happens when you get
+a side aspect that's when we enter the
+land of the deflection shots so let's go
+ahead and grab ourselves a Saudi Arabian
+F-15 here I will do the Sierra
+Sidewinder which is actually kind of
+interesting because notice we have m's
+I'm sorry we have just Sierras I like
+that grab that one I'm gonna go ahead
+and order him to basically go like this
+go and unpause and see him directly
+actually what I'll do is I'll be nice to
+everyone body and put them right here
+and what I'm going to do is I'm going to
+take a side aspect shot now side aspect
+shots are kind of interesting because
+what happens now is our missile is
+actually going to travel a significant
+lead on the Target that we're attempting
+to engage here so let me go ahead and
+finish up my turn here align ourselves
+up so that we're basically taking a side
+aspect shot here now these are Tricky
+Tricky Tricky Tricky shots because now
+we've got a lot of physics working
+against us here to make this a more way
+now one of the safest ways to do that by
+the way is you can just delete the
+missile if you're trying to demonstrate
+nope there goes another one Ah that's
+the sparrow perfect so our Sparrow now
+is initially going to travel towards the
+Target and then what we're going to see
+is because we're taking this huge side
+aspect is that our weapon is actually
+going to start turning and throwing
+itself into a lead against our weapon
+now notice by the way this is in real
+time uh sparrows are that quick so
+you'll notice uh it should have probably
+put a little more lead on them but it
+creamed him now you're sitting there
+going wow that was the first time you've
+actually gotten a hit that actually
+killed something but the reason if we
+actually flip to the other side and take
+a look at this you're going to notice
+that parts of the bomber that were
+struck here we can see the initial hit
+here oh we took a bunch of damage we
+lost the radio we lost our SPO we lost
+one of our engines right away we lost
+one of other engines um let's see that
+one crashed unless you have some more
+component damage are the radio radios
+are gone we can go take a look at here
+that one got blasted the other engine
+got blasted that engine got blasted and
+you can see there that our crew decided
+to immediately get out of here because
+it ran out of functioning engines
+because our weapons struck them where
+the engines are versus the nose versus
+the tail so you can already start to see
+why this starts to be complicated
+problem now the problem gets more
+complicated so let's go ahead and get
+rid of our F15 here right now we have
+ourselves a handy dandy skunk um of
+course it's not just a skunk it's
+something I put out there for the
+purposes of whack in here let's go to
+ourselves an F-18
+see actually I'll use a c today
+go ahead and get ourselves a 2014 flavor
+and we want the uh let's see actually
+we'll take the Harpoon the nicer Harpoon
+we'll grab that one right there uh
+because the nice Harpoon is just a
+little tiny bit easier to use there we
+go cool so what does this mean for ships
+well it's actually the same kind of
+problem that you're going to have with
+aircraft and where we try to strike the
+ship is going to have a big impact on
+how easy it is to detect it's gonna have
+a huge impact on the fact that when the
+weapon arrives what's it going to Target
+so to demonstrate that concept what
+we're going to do is we're going to use
+this f18c here to actually engage our
+handy dandy Target that we have down
+below and our goal here of course is to
+see what happens so first things first
+we're on basically a nose aspect here
+front front here we've got a slight
+deviation as this particular ship is
+actually moving to kind of improve our
+little whatever's here I'm actually
+going to pull ourselves up just a little
+bit to make it a clean front shot here
+so I'm going to press shift F1 click on
+my target I'm gonna go ahead and pop off
+two harpoons here and of course it's
+going to yell at me saying you have to
+be at a lower altitude fine
+and there we go cruising on down and you
+just got to get low enough there goes
+one there goes two
+and that's it he's off
+so now what we have is we have a news
+shot now from a ship's perspective this
+is one of the worst places to be
+attacked from because most weapon
+systems in most Fire Control towers that
+you actually have on ships are going to
+be designed to kind of Face Off Your
+beams here so these two weapons here
+this is actually perfect
+so our missiles are coming in uh they're
+moving very very quickly here
+and now where this is going to get
+interesting is that we're actually
+dealing with a carrier targets and a
+carrier Target is going to be kind of
+fun here because of the fact that it has
+a very very very long nose one of the
+things I can actually do here is I can
+turn this carry a little bit so that it
+can kind of see it now most of its
+anti-aircraft weapons which it has known
+by the way this is a training aircraft
+carrier they actually have those are
+going to have a really really tough time
+because of the fact that these missiles
+are going to be coming off the nose of
+course since this one has no esm to
+detect the fact that all these Harpoon
+missiles you can see them doing little
+happy Harpoon dance here are not
+detected we're actually going to have to
+use a visual detection actually spot
+those incoming weapons which again makes
+it even more challenging oh and we just
+get smacked in the nose all of the
+sudden with absolutely no warning so
+let's see what happened here so we took
+a shot right off the nose oh we got
+those two harpoons that struck us I
+believe uh we lost the component we uh
+damaged and of course that other one
+nailed us right on the nose we have an
+armor penetration as well 100 let's see
+what it did so let's go open up our
+damage control real quickly here I'm
+being blind there it is and carrying
+Magazine's fine sensors are fine I did
+data lengths of fine air facilities
+usually you damage the deck when you hit
+off the nose there but you can see we
+basically hunk right off the bow
+probably shot the anchor off or
+something like that and this looking
+good looking good no problem because
+again the weapons hit from the nose so
+let's go ahead and go switch back to the
+other team there and we'll go and grab
+ourselves another one of those
+handy-dandy f-18s and we're now going to
+go ahead and take a side aspect shot
+here now from the ship's perspective
+this is going to be ideal because it's
+going to have the easiest time detecting
+and engaging the incoming weapons from
+our perspective it's not ideal because
+of that but since we are taking a side
+shot we have a different part of the
+ship exposed that we're actually going
+to be engaging with our weapons let's go
+ahead and flip on our hand any radar
+there make it a little bit easier to
+detect and we can already see people
+picking them up with the tarps there
+that's kind of interesting finish that
+flip around we should get a pretty
+confident aim of where this guy is right
+now looks pretty good yep so now we're
+going to take the side aspect shot so
+this is going to be hitting the broadest
+part the most detectable part of the
+ship I should also add here so we gotta
+pop those two off I'll go ahead and
+delete him because oh he's done a nice
+job there and those two weapons are
+going to come cruising on down here
+making their thing we only fired one but
+that's perfectly fine I deleted him too
+soon that's cool though because um
+you'll still be able to see the effect
+of taking these side shots now from a
+radar detection perspective this is
+perfect for us because now we have a
+huge side of a Target to detect and
+again ships are like trying to detect
+buildings they're very very very I love
+that little trick by the way very very
+very very obvious so we'll keep on
+moving here our carry of course normally
+would have sensors keeping an eye on
+that direction and all this Triple A
+would have all afternoon in this whiz
+would just be opening up and having a
+happy time of it but unfortunately we
+didn't expect that and all of a sudden
+our little Lookout on the side is going
+to be like what's that little white
+Speck that's a couple feet off the oh
+and we took that Harpoon shot right to
+the side of the ship now if we go up to
+damage control there's a couple things
+you'll probably notice the first one is
+arcade images spiked up to 21.7 it's
+done about the same amount of damage the
+first one did of course it hit us across
+the side now you'll notice one of our I
+high frequency radios was knocked out
+now the real world of course the towers
+on the left side so a lot of times your
+radio damage is going to be inflicted if
+you hit up and over on that side but we
+didn't have that but the rest of the
+ship is perfectly fine so again even
+though it was easier Target to hit and
+you notice our harpoons had a much
+easier time of actually detecting the
+carrier to do the thing it was not able
+to really delivering a given killing
+below or at least causing real damage
+here so we're going to switch sides
+again we'll grab blue and then we'll try
+a rear aspect shot on this particular
+one right same exact weapon types we'll
+keep it honest here and only fire single
+Harpoon again try to make it fair I'll
+grab a harpoon too that looks pretty
+good to me a little look in this general
+direction and of course now we have some
+new problems that we're gonna have to
+compete with uh one of them of course is
+and now that we're chasing after our
+Target we would have the issue that we'd
+have to put up with having basically uh
+what's the best way we have to shoot
+sooner because otherwise the target will
+move out of the way of the effective
+range of the weapon but with ships you
+usually don't have to deal with that too
+too much because they're ships they're
+kind of kind of big kind of slow so you
+don't have to deal with those things too
+what's the deal with the Scrolls or
+something like that so go ahead and take
+one shot with harpoon
+now we're going to attempt the rear
+aspect shot here so the rear aspect shot
+again against the ship this is an
+Optimum place to hit it a lot of times
+because basically you're sneaking up on
+the ship and that's going to give them a
+little less time to respond assuming
+they're not looking in that direction
+notice of course we all flip on our
+little surface radar here we have no
+difficulty tracking the target
+especially if the target accidentally
+starts turning on us or something like
+that they're never ever going to be able
+to see this thing coming from the rear
+now a rear shot is kind of an odd shot
+too because a lot of times in the back
+of the boat that's where you're gonna
+have things like your helipads at this
+we're going to have stuff like some of
+your weapon systems your VLS is usually
+in the back you're very unlikely to get
+a propeller or Rudder hit like this the
+reason being is the anti-ship missiles
+generally hit pretty high so again we
+can see that it slams at the back of our
+carrier there click on him couple things
+you'll notice oh he's at 32 and a half
+percent so again it added about 10
+damage this is why I like the Harpoon
+it's absolutely doodoo as far as causing
+damage goes go to a damage control here
+and you can see that it did a
+significant amount of damage to the air
+facilities so if you wanted to sort of
+interpret where this missile landed most
+likely what it did is it came down and
+sort of dropped onto the top of the deck
+and hit it oh we have no fire however
+which is very interesting but you can
+see that one missile completely crippled
+the ship's ability to basically launch
+and recover aircraft and again it's not
+completely disabled it's a reduced
+capacity which just means it's going to
+take a lot longer but you can see things
+like our engineering and propulsion are
+going a lot quicker so as we can see
+when it comes to ships it's a little
+willy-nilly as far as a missile hitting
+now if we get these guys with Torpedoes
+in the rear aspect that would be a
+different story so we're going to do now
+is now we're going to attack this
+particular platform with a missile that
+is designed to drop into this Center yes
+we've got front we've got side we've got
+rear but with Targets this large we also
+have the top and the bottom that we can
+strike
+so we're going to bust down a backfire
+this is a two plus 22. this is one of
+the two 22s the other one is the 22A
+that is not the same thing as the tu-22m
+they're very very different aircraft
+even though they have the same general
+kind of configuration now the reason I
+really really love this missile and this
+is a kh-22 by the way is the missile is
+called a kitchen is because it's
+ridiculously stupidly awesome what it
+does is it basically goes whoop turns
+around goes oh and comes back I know
+that sounds like a technical term there
+but um when you see what it does I'll
+switch it to Tech view so you can watch
+it in action it is the definition of a
+um fire up and let it come back down to
+orbit sort of a weapon I'll show you
+what I mean here let's go switch on a 3D
+view I'm gonna pop that one up real fast
+I'm going to unpause I love this weapon
+this is so cheap watch this watch this
+harpoon's like this thing's like Watch
+Me Hit a satellite in the way up kind of
+a thing like that what going up
+of course I would let attack View kind
+of catch up okay let me Slow Down slow
+down so our weapon just hit the peak of
+its orbit and uh now it's coming back
+down and as you can see here from our
+aspect we're hitting it kind of off the
+nose and the other thing we're doing is
+you can probably observe as we're coming
+back down is we're pretty high up so
+this aspect on this particular Target I
+mean I wish it dropped a little bit
+straighter like some of the ballistic
+missile versions of this it's going to
+hit pretty high so you're going to get
+kind of a middle sort of side is how
+overseeing from this perspective so
+let's go ahead and close that out to go
+switch over to Red real quickly here
+again blissfully aware uh no fires of
+course the hangar facilities are all
+dented up all sorts of nasty and then we
+have this thing which is dropping in
+from orbit 23 000 feet pushing about
+1600 knots it's just kind of swinging in
+again these things are so much fun to
+shoot I love how it's 1970s technology
+too and we got a little tiny warning as
+somebody looks up and says hey what's
+that is this thing I come slamming down
+and again you can see this is mostly a
+front aspect but what it'll probably do
+is yeah can sees about 1500 feet right
+oh no
+uh yeah I forgot to mention this was a
+1970s technology let me get another one
+of those
+well that worked
+sorry about that uh because of the way
+the recording worked I missed it so um
+that was our Tu 22s missile the kitchen
+which went right into the deck and now
+you can see that it did some interesting
+damage it popped right through the
+middle here and you can see 100
+penetration achieved and you can see it
+did absurd levels of damage to this
+particular platform here you can see
+that not only are we almost completely
+obliterated here but we also have
+firearm we also have flooding and we
+actually opened up the screen here you
+can see that it definitely hit the
+middle of the deck there it below our
+carrier accountable I should probably
+clip towards the front there you could
+see it annihilated our radios which
+happens every time by the way and
+amazingly our Raiders only got nicked
+which I swear that never happens they're
+like usually the first thing to get and
+of course this particular weapon did
+nothing to our Westinghouse gear
+turbines because they're deep underneath
+the ship but you can see it absolutely
+creamed the rest of the upper deck here
+and um I don't think this ship is going
+to survive let's go speed up time here
+you can see that the fire and flooding
+is uh pretty substantial here but we
+still have Paul show which I'm impressed
+with so the interesting thing is for
+those you've not seen this before when
+you are taking damage this creates
+accumulative damage and there's this
+little check that happens every so often
+where it checks to see how things are
+going so if you actually come down here
+you can see the fact that our leaks are
+sealed we actually were able to deal
+with the leakage but now we're having a
+new problem in this effect that we now
+have a major fire so what you're going
+to see here is as this thing is kind of
+sitting there floundering that fire is
+either going to get better or it's going
+to get worse but it's constantly doing I
+call like hit point damage to a
+particular ship here so you can see our
+just damage is just slowly Rising oh
+we're getting the fire under control
+fire is under control Fire's under
+control look at this look at this
+oh
+fantastic so um wow so this ship is 99
+damaged and um insanely insanely it's
+still going I guess this is literally
+the definition of they just don't make
+them like they used to so I think that
+Lexington deserves a repair there I
+don't think I'm going to be mean and
+I'll pop another kitchen into the side
+of it that'd be just rude but it's very
+very interesting to see just how all
+these different things come together in
+a modern Naval situation now if you
+really really really really really want
+to have fun uh you can experiment with
+the weapons that come from under the
+water for example you can do different
+speeds they have especially I think what
+is it the Blinder and stuff like that
+actually sorry the granite which is much
+much later anti-ship missile has a very
+fun little attack profile but the
+important thing that I want everybody to
+take away from is when you do engage
+your target the angle in which you
+engage it does make a difference enjoy

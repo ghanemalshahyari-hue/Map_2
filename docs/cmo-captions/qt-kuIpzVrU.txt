@@ -1,0 +1,262 @@
+# C:MO - Laser Dazzling Weapons
+Video: https://www.youtube.com/watch?v=qt-kuIpzVrU
+Video ID: qt-kuIpzVrU
+
+hello everyone in today's video we're
+going to be taking a look at Laser
+dazzlers which are an extension of
+typical laser weapons and they're kind
+of fun to play with and they have a
+couple limitations but in general
+they're really really really effective
+if employed properly so let's get
+started so what we have here is a pretty
+straightforward scenario we're sitting
+down here in the coast we have ourselves
+one of these little Humvees and what
+I've done is I've removed the regular
+laser on board which is a little bit too
+powerful for us and I've replaced it
+with just a straightup laser dazzler
+tool now the laser dazzlers have a
+couple different capabilities and we're
+going to take a look at each one of
+those in turn the first thing is is
+their target selection and one of the
+cool things about laser dazzlers is they
+going to Target both ships as well as
+aircraft now the aircraft gets a little
+more interesting which is why we're
+going to start by targeting a ship first
+so one of the things I can see here is
+I've got myself a little skunk he's
+making my way towards me I'm going to
+press F1 go ahead and click on him real
+quickly you can see my little humpy is
+going to drive up to the coast there pop
+up on the beach he's going to fired up
+and he's going to start dazzling and you
+can see that's a pretty intense beam
+there now the big thing you need to know
+about laser dazzlers in command is that
+they don't damage the unit what they do
+is they damage the unit's mark1 eyeball
+so if I swing over here real quickly and
+actually click on my Osa one of the
+things you'll notice here is under
+damage control you know the ship itself
+is fine there's no I'm not sinking but
+what you'll see is that my Mark 1
+eyeball has been damaged it hasn't been
+destroyed basically are running
+downstairs quickly and grabbing
+ourselves some new eyeballs and
+installing them into all the crew
+members now it's worth noting if I get
+close enough with this dazzler I could
+potentially destroy all the eyeballs on
+board this vessel and you would no
+longer have control of it speaking of a
+lack of control watch what happens when
+we Dazzle something else so I notice
+here we have an aircraft approaching us
+it's a MIG 25p I'm going to go and press
+F1 go ahead and click on him now
+aircraft are a little bit more
+challenging to Dazzle the first problem
+you're going to have is distance since
+we have a 10 nautic mile range here as
+our aircraft does get into range we're
+also going to be blasting the bottom of
+that particular Target so you know as
+I'm starting to Dazzle here it's not
+that I'm going to miss trust me you
+won't have any issues missing here as a
+matter of fact if I look here apparently
+I missed what are you aiming at that
+you'll notice here that we're attacking
+with a base percent to hit it's a range
+issue and of course I'll re hit them
+over here now if I jump over to my Mig
+25 real quickly and actually take a look
+at them you will notice something new
+appeared it says lost control and the
+reason to lost control of course is if I
+click on this unit you'll observe that
+for a moment there he was so blind he
+couldn't actually control his aircraft
+uh the other thing that makes this more
+challenging of course other than
+distance is angle uh right now even
+though we've got some control of this
+particular aircraft over shooting at the
+bottom of it which makes it much much
+harder to actually hit the pilot who's
+currently operating it who's probably
+getting a little bit miserable here but
+as you can see under damage um again
+we're going to be losing those eyeballs
+and that's where the real damage is
+going to start so our mc25 here has lost
+control he probably went completely
+blind here and you'll notice he's doing
+this weird little death spiral towards
+the ground the other thing you probably
+observed is our little helicopter down
+here also did this weird little death
+spiral towards the ground and basically
+smacked directly into the ground now
+when they lose control they're program
+to automatically slowly spiral down I'm
+actually going to order him to keep uh
+working over the other Target you can
+always press U for unassign you can
+press F1 to go Ahad and select something
+else keep dazzling the boat keep
+dazzling the boat and our poor Mig 25
+here is absolutely unable to do anything
+spaling 8,7 6 5 4 3 2 1,900 ft
+SP you one of the interesting things
+here is you can see he was dazzled I
+feel like somebody's having way too much
+fun with this but of course he just
+swimming and U that worked very very
+effectively because again we didn't have
+to discharge any fancy ammunition we
+just basically blinded the pilot now
+things get interesting when we get to
+uavs as you know a UAV of course does
+not have eyeballs it just has sensors so
+what I'm going to do is speed up time a
+little bit here and there goes our truck
+uh attacking the sensors on board of our
+UAV now if I click on my UAV here you'll
+notice that it's just kind of trucking
+along and just relaxing it's getting
+dazzled can see there's a little bit of
+damage now the damage here is going to
+be to the TV cameras and all those sort
+of instruments built onto it notice that
+we don't have an eyeball here so we
+don't have to worry about blinding that
+but the key thing here is of the gain on
+the TV would have to be turned down
+quite substantially but you'll notice
+that no matter how much we blast this
+thing right in the face it doesn't
+really seem to be kind of putting it
+down because of the fact that those TV
+cameras have all sorts of safety tools
+are they being damaged yeah they're
+absolutely being damaged but if we were
+to drop a bomb right now my little
+Humvee would have gotten hammered for it
+it's kind of an idea like that so we
+back to the other team again uh do we
+have any laser left yeah we have plenty
+of laser left and I'll order him to
+renew his efforts on our good friend
+over here uh shift F1 go ahead and click
+on them right here we can do this so
+we'll allocate all of them why not
+fire let's see if we can do enough
+damage to cause our boat to lose control
+here and again our boat crew is like um
+can we do something about this this is
+getting kind of
+irritating yeah just kind of getting
+blasted you'll notice every once in a
+while because they are a boat uh we do
+take enough damage to actually go
+completely blind and then of course we
+gain our eyeballs back as we go find
+somebody else's eyeballs below deck
+there and he's just looking right into
+that
+laser keep in mind if we were trying to
+attack him ah that worked uh now you'll
+notice here that the eyeball is
+destroyed nice that took quite a bit but
+again we don't normally shoot major
+warships with tools like this uh usually
+what we're going to be doing is that
+we're going to be concentrating our
+efforts on you know much much smaller
+ships that you know basically try to
+attack like cruise ships and things like
+that one of the interesting things
+though is let me go and speed up time a
+little bit here
+look at that just blast in the face
+you'll notice even though he has no more
+eyeballs he still has the ability to
+safely operate um it's not like the
+airplane that we just watched or the
+helicopter we just watched it just
+spiraled downwards and just kind of went
+down so it's kind of an important
+concept now I know what you're thinking
+now you're saying okay that's uh pretty
+darn effective um I like that a lot but
+is there anything that can neutralize
+them and the answer is yes and we'll go
+Ahad and demonstrate that real quickly
+here let's get aesa
+172 sorry sorry my friend this is uh not
+going to go well for you but this is for
+science so I'm going to go ahead and
+click over there I'm going to go ahead
+and set his altitude to a much more
+reasonable assessin of 172 altitude of
+5,500 ft especially since we're
+traveling to the east there go switch
+back over to my laser unit and what
+we're going to do is that we're going to
+unpause real quickly he's still shooting
+him leave him alone so what I'm going to
+do now is I'm going to grab myself some
+weather and again weather is going to be
+the key thing that's going to make this
+not as effective so let's see here I've
+got myself uh let's see here uh it's a
+clear sky I don't know oh I did wind
+State my bad
+I meant to do this one uh let's see here
+middle Cloud 7,000 we actually got a
+raise our s up a little bit higher there
+otherwise he's going to be right back in
+the line of fire again uh let's go up to
+I'll do uh 7500 feet here that's
+perfectly fine quit unpause here let me
+go switch back to my little laser
+dazzler buddy here keep in mind there
+are now clouds present in the air around
+us so our little Humvee here is looking
+at that guy we're going to shift F1
+we're going to get yelled at cuz we're
+out of range here that's perfectly fine
+go ahead and click on that one keep in
+mind our Sessa is detectable because of
+my radar is not the detectable CU of my
+flare or anything like that also I've
+gone through half of my laser
+already it's just annoying that OA all
+right let's see so we're now in
+horizontal range I'll go ahead and click
+on this one and you'll notice here I no
+longer have visual line of sight to the
+Target um because I don't have that line
+of sight I'm not able to actually Engage
+The Target I can't just fire the laser
+up through the clouds um that technology
+for dazzling doesn't exist for
+conventional lasers you can just go for
+it and hope you burn up the cloud as the
+laser bolt actually hits it's a very
+beautiful image if you've never seen a
+laser literally cut through a cloud it's
+it's pretty satisfying but the key thing
+here is we now have found immunity
+basically by avoiding line of sight or
+staying outside of that 10 nautical mile
+range enjoy

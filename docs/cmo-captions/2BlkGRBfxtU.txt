@@ -1,0 +1,983 @@
+# C: MO Playalong Tutorial 3 - ASW/Anti-Submarine Warfare
+Video: https://www.youtube.com/watch?v=2BlkGRBfxtU
+Video ID: 2BlkGRBfxtU
+
+hello everyone in today's video we're
+going to be getting started with our
+third in the playalong scenario series
+with ASW also known as awfully slow
+Warfare also known as anti-submarine
+Warfare this is a pretty neat little
+scenario very simple it's relatively
+straightforward because we just have
+kind of the fundamental units as far as
+anti-submarine Warfare with the
+exception of the submarine which
+ironically is one of the best
+anti-submarine Warfare platforms out
+there I've skipped that for today just
+to kind of give you an idea of some of
+the more complex aspects of this so
+strategy today or basically our mission
+today is going to be to try to find k170
+as it tries to navigate the cabit
+straight now if I pull this out of the
+way here and make it a little bit easier
+to kind of see here you can see we've
+got the CET straight basically chilling
+between here we're up here in Canada
+which is awesome and we have a couple
+different assets at our disposal for the
+purposes of the scenario and again any
+of these assets could easily complete
+the scenario on their own but for the
+sake of you know getting comfortable
+with the mechanics of the game we're
+going to be taking a look at a couple
+different ones just to make it easy we
+have the HMS Norfolk which is fantastic
+it's got some great great ASW
+capabilities it's also got tooray it's
+got to be really important we've got the
+Underwood because I can't do an
+anti-submarine scenario without an ASW
+vessel for those of you who are curious
+why I always pick on the Oliver Hazard
+Perry class go play the game Dangerous
+Waters and come back I'll wait the other
+one we'll have is the cp40 which is
+basically the Canadian version of the
+Orion which is great of course we've got
+a couple helicopters couple lynxes which
+is going to make things a little bit
+easier for us our objective here is
+pretty straightforward obviously don't
+hit any c civilian traffic if we can
+help it but uh the other thing we want
+to keep in mind as well as we're kind of
+coming down here as we know there's some
+low visibility conditions we just have
+to be mindful of that and of course our
+job here is to basically get that k1170
+now if I recall correctly the reason
+this whole scenario is taking on is
+they're expecting to deploy anti- maple
+tree operatives to disrupt Canada's
+vital maple syrup Supply a fun fact
+there's actually a national reserve of
+or maple syrup in Canada go look it up
+if you don't believe me so let's go
+ahead and take a look at our scenario
+shall we so we have our ship this one
+chilling here this is the Norfolk like I
+had mentioned earlier kind of
+approaching the cabit this straight is
+uh pretty big it looks pretty small from
+here but if I do one of these things and
+drag across you realize this is 60 naal
+miles of territory we have to protect
+now keep in mind sonar on a good day
+typically has about a 10 naal mile range
+which is an awful lot of space but the
+good news is this is where the water is
+going to be the easiest to basically
+protect against because it is the
+shortest distance between these two
+points the problem is we have no idea
+where that submarine is it could be over
+here already we've already missed it and
+it's making its way over to the mainland
+now one of the kind of neat things here
+is that whenever you're working with
+anybody's scenario you got to remember
+humans design these things and really
+really clever humans will attempt to do
+like all sorts of goofy things like come
+up with like skipping over here or
+having a second submarine or making the
+submarine like come in through here or
+anything and like all those really
+really fun things just to annoy the heck
+out of players and make them feel dumb
+um we didn't do that here the only thing
+we did is try to make our submarine
+Captain somewhat approached this
+intelligently which means very slow very
+quiet take advantage of any places where
+Sonar doesn't work well now let's think
+about that for a second where does sonar
+not work well shallow water correct the
+probability of our submarine coming
+through the deepest part of the water
+here would be absurd the reason they
+wouldn't come through here is because
+although the water is um you know nice
+and easy you can go down to like 1,800
+ft not that there are Subs that go down
+that we know of but the reality is is
+when you go down deep here where there's
+not a lot of bounce off the shore it
+makes it very easy to detect a submarine
+especially if you have trailing sonar
+which is we do have which makes me think
+our submarine Captain is probably going
+to be coming in somewhere in the more
+shallow regions now Shallow by the way
+of course is that going to be anything
+where it's like you know 100 feet 200
+feet 300 feet that's shallow this huge
+trench here not shallow so chances are
+if our submarine Captain is trying to
+make it hard for us to listen to him
+he's going to be coming in somewhere
+shallow most likely through here or if
+he's really stupid or a very very brave
+he'll try to basically make his way up
+here so when I think of it that way I
+know the highest probability for
+detection is going to be in the Deep
+Zone our submarine Captain if he's worth
+his salt is probably going to be picking
+a spot where he's going to be hard to
+detect which is going to be where all
+the noisy Shore is that being said we
+can't count on that and that's an
+important fact now if I were smarter
+what I would do is design the scenario
+so every time we play it basically he
+moves somewhere else so every time you
+do this experience you're not sure which
+way he's going to go but we know he's
+got to go through the straight to cabit
+so at least we got that going for
+ourselves now that that's out of the way
+let's go ahead and take a look what we
+have we have the Northfolk fantastic
+great ship uh we have the said the end
+word a little earlier this this guy's
+chilling here down at the dock he's not
+going to be ready for another 5 minutes
+um let's just say surely you've got a
+little out of hand so one of the things
+we can do of course is we can launch him
+right away because there's no reason for
+him to be basically chilling in Port so
+I'm just going to hit that button and
+get him launched and of course down here
+we have a CFB Greenwood and I've opened
+up we have the Aurora and we have the
+Moose Whisperer which are both a solid
+little craft that are going to help us
+out here so normally what I would do
+with these playalongs is I try to set it
+up in such a way that we're going to
+basically do everything manually then I
+do with a mission please don't do that
+that does not work it is way too tedious
+to do anti-submarine Warfare as a
+basically manual the best part of ASW
+manually he using helicopters to attack
+you'll see me do that a little later on
+so let's go ahead and get everything set
+up here to deny our opponent this asset
+so what I'm going to do is I'm going to
+go ahead and start by creating a patrol
+Mission between the two shortest points
+of our little straight here and the
+reason I want to do this is I want him
+to show up basically dump a million
+saabo which are basically these little
+portable microphones into the water to
+basically lock this straight down once
+the straight is locked down with sonab
+what we can do is we can actually spread
+out and actually try to find the sub
+itself because at least that means we
+have a trip wire that he could set off
+as he's trying to sneak through so let's
+do that first so I'm going to go ahead
+and press that control F 11 them like I
+usually do and I'll call this a barrier
+o Sono why not so we're going to set
+this to be a patrol Mission and we have
+plenty of options here I'm going to pick
+ASW patrola that's going to be the
+correct one to use here I'm going to go
+ahead and press the oky do button now
+again we've got all of our units here
+ideally of course we'd use the lynx
+helicopter for this problem but the
+problem with the lyx helicopter for
+those of you who are not familiar with
+it is the fact we don't have Sono on
+board we've got a little machine gun and
+we have one torpedo that's not going to
+do much for us as far as that goes and
+obviously our Ryan um they have
+fantastic quantities of sis so these are
+going to be the folks that are going to
+get the work done so what I'm going to
+do is I'm going to take the Aurora and
+I'm going to go ahead and pop them on
+this mission right away he's got to get
+over there as fast as he can so much so
+that I'm actually going to order his
+Transit throttle to get up to full speed
+I need this guy to get into position in
+a hurry and once he gets there to start
+dumping the son of buys all over the
+ground there that's very important now
+you'll notice here my movement style is
+random with an area I'm actually going
+to make this a repeatable loop so he's
+basically going to drop all those things
+into that area along this line there
+actually some really really fun sneaky
+ways to do that I'm going to actually do
+the other aircraft for that particular
+purpose so that takes care of that
+they're going to go do their thing one
+thing I'm going to do is I'm going to
+shut his radar off because I don't
+really want the radar to be running at
+all times cuz that could clue our
+submarine into where he is now you're
+probably saying well what if he put this
+Periscope up isn't that detectable by
+radar sure it definitely is but you want
+to be mindful the water today is a
+little rough so it's going to be pretty
+tough to detect the submarine therea
+Periscope rather all right that's good
+that's good that's good I like that I
+like that I like that fantastic of
+course I didn't have it on aircraft
+settings so let's go ahead and send to
+Military and Crews once he gets into
+station there one of the things you want
+to keep in mind too is station altitude
+you can see it's 1,000 ft that's perfect
+that's a really really good altitude for
+any MPA aircraft craft and again the
+aora will take care of that nice so he's
+going to go ahead and take care of this
+problem here basically locking that up
+and creating a trip wire for us to deny
+them the ability to use this particular
+space again that doesn't mean we're
+going to pick them up but at the very
+least if he's stupid enough to make any
+real noises as he crosses through this
+straight of cabit we're going to know
+that he's there the second one is going
+to be my actual attack aircraft and this
+is going to be for the purposes of
+actually finding it now there's a
+hundred different ways to do this and I
+will show you kind of the method that I
+particularly prefer I always like to
+asse that the submarine got through and
+by keeping that in mind that means it's
+going to give me a little more options
+as far as how I'm going to deploy my
+forces here so I'm going to create
+myself a little mission that basically
+is going to fill in this area and
+basically randomly just cruise around
+dropping sis in the water listening
+Meanwhile my norol here this is a very
+important craft for us because this
+particular ship's job is basically going
+to be doing the attack if by freak
+chance we pick up the sub with the norol
+I am super impressed in which case we'll
+use the helicopter on board the norul to
+do the attack now I don't like using
+surface ships to do attacks because they
+tend to get hit by Torpedoes in a
+retribution much safer to use a
+helicopter of course in modern times you
+can shoot helicopters down from
+submarines but we're going to ignore
+that detail let's go ahead and do it so
+I'm going to go ahead and press control
+uh insert here and I'm going to go ahead
+and set myself basically my little
+search region here I'm going to go do
+this I'm going to go do this and this is
+going to be where I want my other eror
+the other yeah the other c140 cp40 to
+basically start doing its Patrol so I've
+select my points control f11 uh search
+for sub we'll go ahead and set this one
+to a patrol Mission this is an ASW press
+the oky do button let's go ahead and
+grab the other one we don't need multi-
+Mission here there it is the Moose
+whisper you're up let's see here one/
+thir rule looks good to me he can be a
+little bit more leisurely on his way
+over only on account of the fact that we
+don't really have to worry so much CU
+this is the one trying to find the sub
+this isn't the one that's trying to
+basically deny them the use of that
+particular position there let's see
+we're going to shut his radar off too
+just cuz we don't want to accidentally
+give it away sometimes when people will
+do is they'll set up like a pair of
+radar units on opposite sides that
+basically do a donnut and they're
+basically there to scare the submarine
+but if we can get the submarine to be
+dumb enough to get to a depth that we
+can pick it up that's going to make the
+scenario really easy for us all right
+that's delightful so that one's going to
+go ahead and deny this area now we need
+to take a look at our ships our ships
+have a lot of work to do here um of
+course so what we could do with our
+vessels is we could basically have them
+start doing a little search pattern here
+to try to keep an eye on it like I said
+a Wy submarine Captain would likely
+probably be trying to come in on the
+edges the a where the water is going to
+be a little bit shallower so I'm kind of
+thinking of basically using this vessel
+to kind of deny this side of the
+straight and I'm thinking of using the
+Oliver Hazard Parry to kind of come up
+from the back here and deny this side of
+the straight because like I said
+depending on how sneaky or cuss out
+submarine Captain is and again if this
+were a good scenario it would be random
+each time so we can't get away with
+Shenanigans like this we would be able
+to use it for that purpose so I'm
+actually going to grab it this way and
+we're going to go ahead and set up a
+pretty standard search pattern for this
+one again we assume the enemy submarine
+is trying to be stealthy here which
+means if if we're a little loud that's
+going to be perfectly fine so what I'm
+going to do is set up what I call a
+barrier basically a ladder search so
+we're going to order ourselves over to
+this position I'm going to go ahead and
+press the F3 key and what I'm going to
+do is I'm going to build myself a little
+ladder whoops helps if you press the F3
+key Inc correctly here so we're going to
+go straight we're going to go this way
+we're going to go straight we're going
+to go this way we're going to go
+straight we're going to go this way and
+again I don't know where he's coming
+from so we're going to do the best we
+can to kind of do something like this
+and then of course since we're a naval
+vessel we can turn right around and come
+back there in a second so what I'm going
+to do I'm going to order this vessel
+real quickly to Sprint and drift so
+sprinting and drifting is awesome cuz
+what that will do is that will basically
+make you go up to a high speed then slow
+down go up to high speed and slow down
+the 10 knots simply refers to the
+desired speed now you'll notice here my
+cavitation speed is 13 knots so if I
+click avoid cavitation cavitation is
+just a way of saying you're making a lot
+of bubbles if you've ever been one of
+those like boats where you can pedal
+with your feet and it goes fast and you
+jam on your feet really fast it makes
+bubbles and you don't move yeah that's
+cavitation that's not a good thing for
+us so we're going to order him to avoid
+cavitation Sprint and drift so he speeds
+up slows down speeds up slows down as he
+does his entire operation so the North
+falk's in great shape here obviously we
+have a couple helicopters we can utilize
+so now we know the Oliver has a Perry is
+on his way so we're basically going to
+have to kind of unpause things now and
+kind of see how things shake out which
+like I said anyw uh oh civilian vessels
+oh my goodness that's a lot of Civilian
+vessels oh boy oh didn't see that coming
+did you so one of the things you have to
+know about any thing in the water is
+that it makes noise now the reason
+that's really really complicated and
+irritating is because of the fact that
+whenever you have something like this a
+submarine can hide in the noise of other
+vessels that are on the ground that
+means are a little off hasard I should
+say I'm going to keep saying that every
+time by the way our Nerf walk here is at
+a bit of a disadvantage because anywhere
+there is a vessel it is blocking the
+line of sight to the sound from the
+submarine keep in mind our sub Captain
+is going to be going real slow now let's
+go ahead and speed up time a little bit
+here I'm going to be cautious I don't
+want to go too far one of the things you
+can do is go to your settings and
+basically tweak it so that you have
+preventing yourself from missing
+anything that pops up but trust me
+there's a subsurface contact where we're
+going to find it speed up time a little
+more there we go there's my two aircraft
+they've got a very long
+journey and there they go first one's
+coming up on station now where's my
+Oliver Hazard Perry there he is let's go
+ahead and order him to come over this
+way and we're going to kind of do one of
+these things with it I'm going to order
+him to get out moving pretty quick here
+I don't want him to waste any time
+getting into position of of course one
+of the things you have to get good at is
+basically leaving yourself a mental note
+to know when to switch them back to the
+zigzag pattern and again our enemy sub
+could be anywhere here so we got to keep
+that in mind get going Underwood ah
+there we go he's on his way so moose
+whisper is in position now so one of the
+things we can do is if we're nervous
+about the situation you can actually
+rightclick and you can actually ask them
+to drop a passive sonab boie or an
+active sonab boie and when you press the
+button it'll go ahead and do that you
+can we have some diecast and we have
+some die far and he'll basically take
+care of that for us now one of the
+things you got to watch out for is if
+you're noticing that they're struggling
+to launch I also like the fact that you
+can press like you know the bracket keys
+and stuff like that one of the goofy
+things I've seen people do is like just
+go shift shift shift do one of those
+kind of a things and he'll basically
+start dropping son of buies into the
+water you are going to start dropping
+son ofies in l oh I've got the wrong
+one it was the other one that we needed
+for that particular Mission but that's
+okay and again he's doing a pretty nice
+job here as it
+is my apologies um I accidentally forgot
+to set son a Bo visibility to on so as
+many times as I pushed that button I
+couldn't see it but as you can see our
+we've created a beautiful trip wire
+across this space here that's basically
+going to deny our opponent the ability
+to do this and one of the cool things is
+when they're on automatic like this
+they're smart enough to alternate what
+type of Sonna boies they actually drop
+here so this is awesome we could
+actually order the Aurora here to slow
+way way way way down only on count of
+the fact that he's just
+going like that and that's a technical
+term to say basically Cloud the sea with
+sonab Bo's here but he's doing a perfect
+job job here and he smart enough to know
+not to drop anymore obviously for some
+reason we lose it and you can whoa whoa
+whoa whoa uport
+uport hello we got him so our in our
+sonab buy randoming here we just
+detected uh subsurface contact and by
+the world's most bizarre coincidence we
+actually were able to drop a sonab buy
+within like 10 feet of the guy that's
+incredible so that's actually really
+impressive that's good news so we're
+going to grab the Underwood now and
+we're going to get the Underwood going
+fast what we need to do is we need to
+positively identify that Target so a lot
+of math is going to have to happen to
+make this possible and one of the things
+you have to remember too is subsurface
+contacts don't have to be submarines
+they could also be things like whales so
+just because we' have detected something
+under waterer does not necessarily mean
+it's the thing we're looking for so kind
+of keep that in mind now one of the cool
+thing here is Moose whisper is
+obviously WBUR wins front row tickets to
+a game kind of a thing like that so he's
+going to try to do is he's going to
+start doing one of these like my mouses
+trying to identify where this particular
+Target is so let's go ahead and unpause
+and I see how that kind of goes
+underneath here so he's going to do a
+Big Wide Circle and we have him
+positively confirmed okay now it's the
+attack sequence so the cool thing with
+submarines is uh they're very very very
+very good at getting out of the way of
+torpedoes now there's a couple different
+philosophies on how to hit this one we
+can see that he's very slow and he's
+very deep ah good I good nicely done
+nicely done so what we're going to have
+to do here in order to strike this
+target is we're going to have to hit him
+in such a way that he cannot quickly
+Escape so the safest method to use is to
+basically drive them into a place where
+they can't go fast if you let these guys
+get up to full speed they could
+basically outrun your torpedo and then
+you end up having to start the search
+all over so we've got a lot of work to
+do here one thing is we have to deny
+them the ability to basically run this
+direction and basically duck underneath
+everything that we have here so we have
+the FFG the Underwood is already on the
+way we're going to go ahead and get this
+one as well we've got to cut off their
+Retreat I can't say how incredibly
+important that is uh youer are doing a
+wonderful job today please go up to full
+speed uh get us going as fast as you can
+uh Sprint and drift is off go get going
+get going so we've got to deny them that
+ability the second thing is we have to
+set up a hammerhead attack and a
+hammerhead attack is basically where
+we're going to come at the submarine
+from two different angles simultaneously
+so that as it turns to run from the
+first torpedo it runs face first into
+the other torpedo that's the absolute
+best way to guarant a hit if you just
+shoot him from behind he's just going to
+run and you're going to lose him from
+all the noise that he's basically going
+to make propellers and torpedo
+propellers are extremely loud so it's
+going to be very challenging after we
+fire we've got another problem with a
+civilian vessel in the way which means
+it's extremely dangerous to shoot a
+torpedo this way because we could
+accidentally hit him now some Torpedoes
+are underwater only which makes our life
+a little bit safer here we got the Moose
+Whisperer here right now let's see what
+he's got so let's see he's got the near
+tip Mod Five if we hit the near tip Mod
+Five here you can go ahead and take a
+look real quickly it is an
+anti-submarine with only a four nautical
+mile range so we got to drop this right
+on his head so let's go ahead and send
+this one out a little bit and we're
+basically going to get ready for the
+attack oh where's my other buddy hey
+aora we're going to go ahead and use you
+because I need to set up for the
+Hammerhead here so I'm immediately going
+to pull this guy off his mission I'm
+going to press the unassigned button I'm
+going to press the himon and press
+unassigned as well and I'm going to get
+these folks into position as fast as I
+can just because we have a lock on him
+now does not mean that we can kind of
+get lazy here and the last thing I want
+him to to do is to drop a torpedo too
+early because if he drops it like I said
+the other guy he'll just run and that'll
+be the end of it all right moose whisper
+is getting out of the way here get out
+of the way moose whisper the other thing
+you want to be doing too is if you have
+any helicopters you want to be getting
+them I'll launch High te here launch
+individually just so that I can get them
+in the air immediately so that I can
+strike them in the event that I have to
+basically gank them again overwhelm your
+target don't give it the target any
+quarter because a very smart submarine
+Skipper is going to be starting to get
+defensive here especially if you picked
+up the C sploosh of the uh sonab when we
+originally dropped it let's grab a
+football here and send them there
+immediately let's grab ourselves high
+tea and send them there immediately
+again we're just trying to set ourselves
+up let's see here this one is a aora I
+need you to set up for the Hammerhead
+here so come swing around this way
+excellent okay do not let this
+particular sub out of your sight
+otherwise the scenario will basically be
+over all right Aurora you're in a
+perfect spot I don't need you actually
+who whisper I should say stay right
+there so what we're going to do is we're
+going to set up for the Hammerhead and
+we're going to basically aim like this
+kind of like a triangular shape if you
+want to visualize it another way we're
+going to go that way and we're going to
+go that way and basically make it so
+that he drives towards the shore and has
+nowhere to go uh that's going to be the
+absolute Superior method for this
+particular attack here give us a few
+minutes oh we've already lost sight of
+them see how quick that happens so we
+know that it's going to do something
+like this if you right click on them
+real quick and hit Mark position you
+make it very very easy to know that this
+particular time they're at that
+particular position perfectly fine
+though but again we don't want to lose
+sight of them all right let's let's get
+going let's get going oh
+boy all right here we go everybody's
+zooming in here moose whisper is in the
+position we're going to go ahead and
+send him South and we're going to come
+back up
+here so at this point we have to prevent
+them from getting out of the little box
+this was 11 minutes ago so they're
+probably anywhere in this particular
+position here now one of the nice things
+is I can go ahead and drop some SAA
+buoys on my way to the Target to try to
+reacquire them and again you can H the
+bracket key there for that purpose so if
+I go like that you can see I can start
+dropping some aab buys on my way towards
+the target all right I don't want him to
+get away go set a little trail of these
+behind me just like that I don't want to
+know what the taxpayer cost of this is
+because it's going to be a lot all right
+that's good let's do set up for the
+strike Aurora is ready to go we've got
+these two to block his Escape if he
+tries to get out got these two to block
+his Escape if he tries to get out and
+now the party starts notice by the way
+that the total lapse time in the
+scenario is already quite substantial go
+ahead now get some Son of buoys in the
+water here here we need to try to
+identify where he's going to be again
+speed up time don't lose sight of your
+targets all right I think we're close
+enough that we should be able to drop an
+active buoy here getting close getting
+close there's my active buoy again
+that's the a right bracket
+key and we're going to do another
+passive one right there do another
+active one there do passive one
+here and we have lost our sub ah
+ah I did say this was going to be
+challenging didn't
+I oh boy we lost our sub okay that's
+fine so what we're going to do now is
+we're going to send them back to the
+mission it's not over we're going to set
+the Aurora back to this one uh that's
+fine I'm not going to worry about that
+too much moose whisper right here I'm
+just going to keep looking with him
+because I'm I'm not completely convinced
+that we've all lost our sub here so he's
+going to go ahead and fly over here I'm
+going to go ahead and try dropping a son
+of buy over here just to take a listen
+see if he's a pass through this
+particular position one thing we do know
+is is a previous speed ah we lost them
+that's okay though like I said we're
+going to set up a little line here to
+try to trap him in the event that he
+tries to come back through again come
+over this way I've got a bunch of
+submarines in the job
+now try to come across this way again
+I'm just using a manual drops here but
+you can see just how close of a range
+these things have at this point I would
+be a little nervous as that submarine
+right now I I I feel like I'd be a bit
+targeted and again I'm just using the
+bracket key to kind of set up a little
+situation where we can take a look at
+them oh my goodness let's go ahead and
+set him to go ahead and operate on his
+uh search for sub as well there we go
+and now those two aircraft are going to
+start trying to find this
+guy that was 35 minutes ago he was
+probably making five knots ah we can't
+do that though because we've lost are we
+have gaps now so now we have to take one
+of those and immediately order it I
+didn't say this would be easy did I and
+we're going to send moose whisper over
+there right away to go check that
+out all right Aurora he's already on
+that operation where's my helicopters or
+do they already head home helicopters
+already headed home that's okay there
+they are go ahead and set him to search
+for sub and again we can just assign
+them to the missions this one of the
+things I love about this game it's just
+how incredibly simple we can just right
+click on somebody right click on
+somebody we'll just send him right to
+the mission to search for sub ah this
+guy's good this guy's good I told you it
+would happened there we go so they're
+going to start looking around for our
+submarine friend
+again oh boy so hopefully that Aurora
+gets in place and he's going to start
+replacing the damage that we have he's a
+running out of range
+there and now of course this ship is
+close enough we're going to send him
+down to creep speed and he's going to
+start listening very very carefully our
+alare Hazard Perry as well we're going
+to slow him down quite a bit as well now
+that he's in this position he is more
+than close enough eight knots between
+eight and 10 is usually a pretty safe
+speed for these kinds of craft if you're
+trying to look for him particularly
+let's see here we got the Underwood
+we're basically going to come this way
+oh we know that he's around here
+somewhere there we go so now the
+Underwood slowed down nicely and of
+course our other one is slowed down
+nicely
+too all right so now what we have to do
+is try to figure out where he went we've
+got our barrier cap set back up moose
+whisper actually when he comes by to
+about this position here I'm going to
+drop another son of Buy in there just
+another the freak chance that they manag
+to get through so I'm going to go ahead
+and drop one there I drop one there I
+just want to block up that Gap in case
+that submarine does get through so our
+helicopters are looking everywhere um we
+can obviously one of the things we could
+do is we can take this big field here
+and concentrated completely in this
+region as a matter of fact that's
+exactly what I'm going to do I'm going
+to shrink this down substantially
+because we know that our opponent is
+somewhere in this area so we might as
+well make it so that we C Target just
+that area as we're working that means
+everybody is going to be operating here
+trying to find that sub which will make
+it a little bit easier to try to
+identify where they possibly went oh oh
+nope I got excited all right we still
+don't know where that one is we just
+have to look just have to look like I
+said at any point this one here is going
+very very slow we'll drop them down to
+creep speed we'll grab this one and
+again anywhere in here we've got our sub
+friend and we just have to kind of start
+looking around I'll set up again another
+ladder search just trying to keep an eye
+out for where they possibly are and
+again the best I can do with these
+scenarios as you can see is I basically
+go ahead and do this and obviously
+probably the smarter thing would have
+been to do to attack our Tor our Target
+earlier but then we would have risked
+accidentally hitting one of those
+civilian
+vessels all right everybody's here I'm
+actually going to take this lower edge
+of this Mission and bring it even closer
+there we go because it's got to be in
+here somewhere what he could have done
+if he was a smart Skipper what he would
+do is he there he
+is sorry I got excited if he was a smart
+Skipper he would have immediately turned
+around and tried this from a different
+angle the moment he knew he was busted
+so that guy's run out of fuel which
+means that we got to use the helicopters
+that's perfectly fine so this range
+right here let's go ahead and do some
+quick measures that's 12 nautical miles
+that's about 12 nautical miles about 15
+nautical miles unfortunately if I shift
+F1 and click on him my my Torpedoes are
+way out of range so we have to use
+helicopters so at this point I'm just
+taking a look at our situation as far as
+helicopters goes so I'm going to take my
+two ships and I'm going to bring them
+down to steerage speed and the reason
+I'm bring them down to steerage is so
+they can hear better uh steerage is
+about two knots I'm going to go ahead
+and send my other guy to get up there
+NASCAR you've got a job to do I'm also
+going to take my other one I'm going to
+hold my final helicopter in reserve he t
+uh you've got the duty here so the
+problem here is we have an enemy ship or
+basically a friendly vessel right over
+here but this torpedo is a little
+different it's an underwater torpedo
+only so what I'm going to do is I'm
+going to try to get on the other side of
+the submarine this time in order to
+basically get that shot I'm going to
+right click on him Mark position again
+and now we're in business all right
+helicopter get going get going get going
+we need to try to trick the submarine to
+rush at our two ships which have very
+effective Torpedoes again if we try to
+cheap shot this one and get a shot
+through the middle firing now he's going
+to turn and run and we're going to have
+to do this entire operation all over
+again so I'm going to send NASCAR on the
+other side as well well get going ascar
+get going get going there we go
+delightful and again we just want to
+deny him that direction otherwise he's
+just going to run in it and we're going
+to be completely
+busted okay looking good looking good
+what's he what are you doing low fuel
+low fuel no he's engaged defensive here
+we go he's going for it all right you've
+got to get the torpedo in behind him now
+notice here for my to range for my
+torpedo uhoh he's still in a mission
+right now so he's done absolutely
+determined to annoy me here that's okay
+missiles away we've got one hit one hit
+all right everybody concentrate all
+Firepower on this one right here F1 F1
+keep in mind if you're not on mission
+right now they're not going to go ahead
+and do this all right right click oh no
+he's still on the Move say unassign F1
+click F1 actually I believe he is out of
+torpedoes go home NASCAR on the flip
+side I believe has at least one torpedo
+left which is plenty for
+us comes swinging around just like that
+get into range we're going to basically
+land right on top of him with this
+torpedo shift F1 click see I have to be
+dropping with a very very short distance
+that's okay though because we're going
+to do that in just a moment getting over
+the top getting over the top look at
+this basically Point Blank
+Range all right go ahead and pause why
+are you not firing uh he has to be a
+th000 feet above ground level oh he's at
+2,000 ft my friend you need to lose a
+little bit of altitude otherwise we're
+not going to be able to inconvenience
+this underwater target
+there we
+go 1,400 1,300 200 100 delightful shift
+F1 click must be dropped within that
+distance that's okay because we're going
+to be within the distance in a few
+seconds so I'm not too worried about
+it torpedo in the
+water now one of the things you'd want
+to do normally is you'd want to take
+this helicopter and you want to
+basically send it nice and low put it
+into a hover and basically listen to the
+festivities here keep in mind our two
+destroyers now now actually destroying
+our frig are ready to basically cut this
+Target off in the event that they try to
+run so I'm going to take NASCAR here and
+I'm actually going to slow it down to a
+hover flip it down here and then what
+I'm going to do is actually have it
+deploy its um navigational tools
+navigational tools dipping sonar there
+we go and the reason I want to do this
+is he can basically listen in on the fun
+here as you can see here my torpedo
+actually completely missed the Target
+now these are circular running Torpedoes
+actually depending on what torpedo
+manufacturer it is it might be circular
+running it might be one of those let's
+go and speed up time here and see what
+happens we've got ourselves a lock now
+notice my helicopter is listening in the
+water right now so you can hear all the
+fun that's going on right now oh we got
+a
+hit there it is the scenario has
+concluded you will now be presented
+delightful so as you can see awfully
+slow Warfare is awfully slow and again
+the scenario started at 5:30 in the
+morning it is now 2:35 in the afternoon
+um we spent about $60 Million worth of a
+taxpayer money on son of buoy here my
+biggest mistake was probably not going
+right after the target as soon as I saw
+it but I really didn't want to miss the
+chance to be able to set up that
+Hammerhead attack cuz I really didn't
+want to hit one of the civilian vessels
+with one of those modern American
+Torpedoes enjoy

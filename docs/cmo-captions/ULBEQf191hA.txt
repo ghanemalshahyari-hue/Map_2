@@ -1,0 +1,190 @@
+# C: MO - Manual Bombing with unguided bombs trick
+Video: https://www.youtube.com/watch?v=ULBEQf191hA
+Video ID: ULBEQf191hA
+
+hello everyone in today's video we're
+going to be taking a look at a little
+trick when it comes to doing manual
+attacks so we have here the lovely b-52h
+and it is packed with these lovely
+market82 500lb low drag general purpose
+bombs there's actually 45 of them and of
+course over here in the distance we have
+ourselves a lovely little Target that
+we've popped here in Nevada and I'm
+taking a look here and my little
+reconnaissance unit over on the hill
+here is uh successfully identified
+several interesting targets as a matter
+of fact if I press the N9 key I can look
+down and see o it looks like there's a
+bunch of airplanes now one of the
+problems I'm facing though is that I've
+got a B52 now a B-52 of course can pack
+all sorts of modern Precision guided
+Munitions and stuff along those lines
+but for today uh we've just got
+conventional bombs so you're sitting
+here going oh I see what he's going to
+do he's going to do one of those
+Shenanigans and the answer is absolutely
+so what I'm going to do is I'm going to
+order a manual attack and then I'm going
+to fly the attack run myself so I'm
+going to go ahead and pause press shift
+F1 go and click on my Airbase now one of
+the cool things here is you'll observe
+that any of the aircraft You observe
+will show up in this list so what I'm
+going to do is I'm going to grab all
+these and I'm going to go ahead and
+allocate one weapon of this to them go
+and allocate some bombs to them come
+down here and grab this entire group
+right here we're going to go ahead and
+get them you get a bomb let's see is
+there anything else we have a bunch of
+access points we probably should be
+hitting those too but ah we'll go ahead
+and keep it simple go ahead and hold
+shift click and grab all these and
+that's 39 bombs I still have bombs left
+over oh I guess we'll just do the medium
+aircraft why not I still have two bombs
+oh my goodness so what I have done here
+is I've gone ahead and targeted the
+entire Airfield one bomb per part of the
+Airfield F now what I'm going to do is
+I'm actually going to shut off this
+automatic tle V timeout if you leave
+that on things are going to happen so
+what we've done essentially is told the
+B52 bomb at a to Target one bomb on one
+position on this large air base here
+that is a little absurd as far as a task
+goes but because this is command we're
+allowed to get away with Shenanigans
+like this so what I'm going to do is
+grab my B52 I'm going to go ahead and
+switch to kind of group View mode you
+know we're just going to kind of speed
+up time a little bit here and we're
+going to get set up for our Tech run
+switch to targeting computer
+comp I don't think that would work very
+well in this particular case but hey
+it's whatever works kind of a thing so
+we're swinging across the land here
+getting pretty close getting ourselves
+positioned and what I've done here is
+I've optimized my attack run so that it
+goes right across the center here I want
+to try to capture as much of the enemy
+targets as I can I notice most of the
+planes were interested and are kind of
+on that side of the Airfield too so our
+B52 now because I've manually targeted
+everything is going to attempt to drop
+bombs on all of those targets at the
+same time and yes these are not
+Precision guided Munitions here these
+are conventional bombs and that's why I
+actually knock myself down to 20 grand
+here let's go and slow down time a
+little
+bit and we'll zoom in on our strike here
+now the cool thing here is the B-52's
+effective bombing range is this circle
+so as long as I can keep targets inside
+of that Circle I can get away with
+things like this now one thing I do want
+to mention though is when you are doing
+kind of cheese strategies like this you
+just have to be mindful of the fact that
+when you do drop the bombs you're
+obviously dropping unguided Munitions
+these are not you know pgms by any means
+so we could do the exact same strike
+with a PGM and basically achieve the
+same exact kind of thing so let's go
+ahead and go across here this is very
+goofy to watch watch this watch this so
+it looks like he dropped three bombs
+there you makes his pass look at those
+so he's done a bunch and you can see
+here that we've gone through about 11 of
+our bombs so far so what I'll do now is
+I'll grab my B52 I'll move him down here
+and I'll kind of come up this way so
+that way he can kind of make his St so
+if you look here all these bombs are
+individually targeted none of these
+bombs of course are like you know that
+I'm trying to be pinpoint Precision with
+but you'll notice that as long as they
+were in that kind of nose cone of my B52
+here he went ahead and happily dropped
+them and as a matter of fact as you're
+watching the bombs hit keep in mind
+again these are Mark 82s they're not big
+boy bombs but watch this is that amazing
+so now the cool thing is he still has
+everything pre-targeted here so now as
+EAS I finishes up his little turn here
+I'll kind of square him up this way he's
+going to go ahead and drop a bunch more
+of his weapons so you know if I come
+down here like this and go like that
+you'll see that was another almost 30
+bombs that he released and you can see
+each one of those is again independently
+targeted here which just gives you an
+idea of like not how cheap things are
+but like just look at the spread here I
+I don't know any bomber in the universe
+that could ever try to do something that
+with Unk kinded weapons but look at that
+HOH we've got an error I'm not going to
+worry about that all right fantastic
+swings around again this is the beta
+version beta beta beta beta version so
+things like that are going to happen
+from time to time let's see I think we
+have what 15 bombs left
+let's go ahead and get ourselves all
+lined up we'll make one more Victory
+pass
+here this is so cheap I can't wait to
+see how much damage we don't do uh
+that's always my favorite part of
+whenever you do silly things like this
+all right one more pass I don't think
+there was anything in that side of the
+Airfield that we actually needed to hit
+so let me try this side oh there we go
+and we are out of the good stuff I'm
+going to go ahead and send him back home
+we I'll watch our last couple look how
+beautiful that spread is there oh
+fantastic all right let's go ahead and
+pause we'll go ahead and bring up our
+losses and expenditures here keep in
+mind this was a single B52 and yes he
+made multiple passes so um we got 28
+airplanes in that strike
+28 wow so going down here it cost us 45
+bombs for 28 planes that is epically
+good especially because these are the
+little Mark 28s you can see all the
+barks here it's absolutely panicked
+basically because of all the damage I
+caused here and the cool thing is if you
+actually look at the air base itself um
+not a terrible amount of like actual
+pinpoint damage like it didn't damage
+really the charmx baces but the
+important part is I BW all the airplanes
+right off of them which now means you're
+not going to be able to use those best
+place to kill a plane of course is on
+the ground enjoy

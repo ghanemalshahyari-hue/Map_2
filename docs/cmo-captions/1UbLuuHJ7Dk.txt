@@ -1,0 +1,509 @@
+# C: MO - Tiny Update BVR Implications
+Video: https://www.youtube.com/watch?v=1UbLuuHJ7Dk
+Video ID: 1UbLuuHJ7Dk
+
+hello everyone in today's video we're
+going to be taking a look at some of the
+implications of the changes to the boost
+glide model of the missile now i did a
+video about this a couple weeks ago but
+it was one of those things that i knew i
+was going to have to go into a little
+bit more detail with because the change
+in wra now makes it very very important
+that you take advantage of this at the
+same time just be ready for scenario
+designers to be changing the way they do
+things to make your life miserable so
+you're saying that okay yeah i'll make a
+point make your point okay so we have
+here we have a group of f-16s and on the
+opposite side we have a bunch more f-16s
+and i know what you're thinking that's a
+waste of f-16s um it is a waste of 16s
+and i feel very bad but um these are old
+f-16s i don't feel terrible about them
+because um they're all drones don't
+worry so what we're going to do is we're
+going to go ahead and attack each other
+simultaneously and you'll probably
+notice that i've immediately fired a
+missile because of the current rwra
+which is what we want so what i'm going
+to do is i'm going to leave the wra
+completely alone and let the two sides
+basically lob a ton of aim 120s at each
+other now i expect the f-16s on the
+other side to be doing the exact same
+thing which is precisely what i was
+hoping they were going to do because
+they have the same exact rule set as the
+one on the other side and my only
+disappointment here is this one guy at
+the end really really shoot out there it
+is right there he's getting the next
+shot off right away now one of the cool
+things with f-16s is you do have twiz on
+here a track while scan it doesn't
+necessarily mean that it works whoopsies
+oh my god they've got to get rid of that
+all right speed up time a little bit
+here so my a120s have burnt themselves
+out of energy oh here comes the m120
+from the other side watch out oh no what
+do we do what do we do they all turn and
+run i love this i can't tell you how
+many times i've saved myself a lot of
+frustration by just turning around and
+leaving look at this one
+remember missiles stall at about 350
+knots so just in case you're wondering
+how much it takes to rub there it is now
+watch this they turn around oh
+guess what's going to happen all those
+members of 16s we saw a minute ago and
+we're all going to reacquire them
+and
+whoa
+okay anytime anytime we know this f16 is
+over there somewhere we just got to take
+a shot on oh my god i hate that
+so we found them again so we're gonna go
+fire more at them and again this group
+is not dumb either they're gonna start
+shooting back in a second ha told you
+so this happens again everybody turns
+around they go oh god oh god what do i
+do run run run run run run of course
+eventually one of those m120s we'll find
+something valuable and actually smack
+into it but the realistic scenario here
+is this entire mission here is going to
+become this back and forth whoa boom
+boom whoa
+boom kind of a thing like that and
+eventually one side will get unlucky
+here or you'll get into dogfighting
+range and you'll have to deal with the
+pesky aim 120s that always come with it
+so you're saying okay you've made your
+point you've made your point how do we
+fix this well fixing this is difficult
+and let me show you why so what i'm
+going to do is i'm going to take my
+group here and i'm going to tell them
+not to fire until they get a little bit
+closer so what i'm going to do is come
+up to automatic firing range i'm going
+to set them to half a range this is a 30
+nautical miles i can tell you from
+experience of firing these darn things
+at 30 nautical miles is about average if
+you play dc as some i can't think of
+many times when i get to fire them at a
+longer distance than that so here's what
+we're going to do we're going to go
+ahead and on pause now things are going
+to take exactly the same way they did
+last time we're going to acquire them
+but we're not going to fire right away
+we're now going to fire look what
+happens
+what was different notice that the group
+that was firing very very long range i
+was able to get their entire battalion a
+big pack of missiles off but nothing bad
+happened you can actually see that i
+didn't strike any of them and they
+didn't strike any of us so we'll go
+ahead and again the cycle will continue
+so they've already fired on us oh we got
+one off that time
+and that a120 is not going to do much
+and you notice see how we just we do it
+again we do it again here we go again
+and we end up in this bvr um i i i guess
+i'll call it bvrbs but um i don't know
+what the bs stands for so it didn't work
+either so let's get a little more
+extreme here
+let's go back to blue team
+and let's change their personality one
+more time let's go ahead and tell them
+remember they have the exact same
+weapons we're going to order them to go
+ahead and fire at even closer range than
+that we're going to order them to fire
+at 25 nautical miles which actually you
+know we'll go even we'll go i'll do 20
+nautical miles that's uh oh boy that's
+getting uh serious dcs ranges here so
+we'll do dcs and the other thing we'll
+do too and now this is going to be
+helpful in our case is we're actually
+going to order them to crank and drag
+immediately uh this is very very
+important we do not need to follow that
+missile n it's an a120 it'll do the deed
+let's find out what happens this time
+oops
+oh my god
+and notice we never got a shot off
+because what had happened is all those
+extremely long range lobby lobs um
+notice oh there it goes again
+there's the lobby lobs one more time
+come on
+oh one off now watch this
+this is where the tactic starts to pay
+off
+notice now that all the crazy lobby lob
+strategy only works for the first couple
+rounds and now notice my guys here
+are now getting a free side shot on the
+f-16s because now that this whole group
+is on the other side unfortunately i do
+not know why they haven't continued to
+engage were able to actually sneak up on
+them and splat oh my god what a waste of
+f-16 what a waste of f-16 so you can see
+what had happened there was we basically
+weathered their first extremely
+long-range shots closed and then fired
+at a more lethal distance
+now we got really really really really
+lucky with that because uh at any point
+they could have tapped us and sent us
+flying and obviously they were too
+determined to fly in that direction then
+turn around and come engage us again so
+you can see the big difference there and
+now what i'll show you is this slight
+variation on the theme as well so i'm
+gonna go back to the scenario one more
+time
+and this time i'm gonna change something
+different this is gonna seem very
+unintuitive but it actually works
+interestingly and you'll see exactly
+what i mean so i'm gonna go grab this
+group and of course what you're tempted
+to do here is make it so that they
+always automatically evade i'm actually
+going to tell them not to automatically
+evade you're sitting there going uh why
+would you do that if they don't
+automatically have laid they're going to
+get splattered okay
+you're right you're right watch
+her splattered
+so you can see in that particular case
+that even though it feels like you can
+just chase the other side down and
+actually get closer to them it's really
+not going to do much for you as far as
+being able to engage that particular
+shot so it's very very interesting how
+that is change your bvr tactics
+drastically now because the weapons are
+different so now it becomes much much
+much much much more important to take
+shots in such a way they give you a
+stronger advantage that's going to
+prevent them from be able to fire back
+quickly especially if they have a weapon
+now if these guys all are packing
+radar-guided missiles this would be
+completely different because those
+radar-guided missiles require constant
+lock in order to engage so again if
+you're dealing with things like f-14s oh
+this becomes a little bit different
+speaking about 14s
+now we got ourselves some f-14s now the
+problem with the f-14 is uh look at the
+range of the m154 is uh the m54s i don't
+know what the m154s that's something new
+world event in a couple years so now and
+traditionally in this game you
+immediately go oh go ahead and take a
+long range cheap shot on these guys so
+it's really really important that you
+don't do that anymore and i know it's
+like oh but i should be able to get away
+with that you know i'm an f-14 i can
+take these ridiculously long-range shots
+well
+let me show you what's going to happen
+here so we've acquired these guys i'm
+going to press f1 go ahead and select
+the whole group and off go the am54s
+unfortunately we'll have one of them
+well locked on here so that's kind of a
+bummer
+hoping we'd have a slightly better lock
+on these guys it actually surprises me a
+little bit 100 sure why i only have one
+good luck there we go there's the other
+one uh oh i know i have a bad lock the
+reason i do is because remember the
+radar in the f-14 is not terribly good
+so it's difficult to see targets that
+are close together at that distance it's
+okay though so this m54 is not going to
+come ripping out there see how we can
+see them more clearly so these things
+come dropping down on these f-16s and we
+immediately realized this was a bad idea
+we know it was a bad idea because as you
+can see the f-16s just beam us and they
+suck the energy right out of the missile
+so even though we have this massive
+advantage of firepower here uh this is
+not helping us at all as a matter of
+fact i'm actually going to order my guys
+to slow down i'd probably be saying why
+why would you do that the reason you
+tell them to slow down is to give the
+missiles more time to do their job if
+you tell them to speed up they're going
+to get in range of the f-16 sooner and
+notice by the way that i am wasting like
+20 million dollars where the m54s and
+here comes the aim 120s as a response so
+you can see that already because of the
+change of that missile now i'm useless
+you know those f16s are going to go
+after burner they catch right up to me
+they're basically going to run me down
+so it doesn't work anymore
+fans of dcs you know exactly how to fix
+this problem and again this is going
+back to illustrate my point from earlier
+so let's go grab our fz-14s again hey
+guys how you doing and now this time i'm
+just going to order them to make one
+simple change to the wra here uh the
+thing i'm going to do is i'm going to
+order them instead of firing at maximum
+range i'm going to order them to fire
+i'm a huge fan of about 40 50 miles for
+this a 45 will probably do it i'm just
+going to order 40 which is a significant
+decrease now keep in mind if we're
+shooting at something like tuples 95s or
+something like that they don't really
+maneuver uh it doesn't matter but in
+this particular case it definitely
+matters so i'm going to order an attack
+here they're going to start using their
+old school radars oh they're very close
+for this let me actually back them up a
+little bit here all right order up some
+time here and it starts locking in
+getting stuff they're not going to fire
+until they get a heck of a lot closer
+and here comes the a120s
+i'm just gonna outmaneuver them we're
+gonna try to run we're f-14s we cannot
+run anything
+that wasn't fair so we come back around
+and you can see that they've got us in
+this kind of infinite loop of justice
+here that's going to prevent us from
+being able to take that other shot
+because as long as they can keep running
+us down we're never ever ever going to
+be able to get there's one
+that's not going to do much to them
+unfortunately because now they're going
+to be in the effective range of the
+m154s oh there's a whole bunch more i'm
+going to lose an f-14 over this
+oh oh whoa
+i'm going to lose an f-14
+oh that's a good shot i like that one
+didn't work it was a good shot though
+it's good shot rf16 buddy right now it's
+going oh god
+and there we have it we'll come back
+around and finish the job real quickly
+what a waste of f-16s here feels so bad
+for these guys
+and command
+oh geez it didn't even work so now
+you're probably sitting here going okay
+you've proven your point um it's
+obviously very difficult to utilize
+these weapons against fighters at long
+distances with a new damage model the
+new muscle model absolutely but the
+world has not ended yet
+so you're probably saying okay okay
+you've made your point pretty well here
+it's obviously going to be a little more
+difficult to win these fights how might
+you change your mind well some of the
+fun comes in trying to basically use a
+little bit of tactics here so what i'm
+going to do is i'm actually going to
+break my group into smaller groups here
+i know i know i know general kuster
+warned about something like this but um
+unfortunately sometimes you do what you
+have to do here so what i'm going to try
+to do is use one of them as bait as i
+use my other ones as my shooters so what
+i'm going to do is i'm actually going to
+order them up to a little bit higher
+speed i'm going to grab the other group
+here i'll group these up
+i'll lock them up looks pretty good mla
+same as my little bait here and again
+they're going to probably try to pick a
+pot shot at him first so grab my bait
+i'm going to go ahead and order my bait
+to come up front i'm going to go ahead
+and order my squadron here this is uh
+jimmy and the tomcats here we pick up
+that guy right away
+and i'm going to order the guys in the
+back to slow down and we'll leave the
+guy in the front and go in nice and fast
+there so the reason i'm doing this is
+i'm intentionally trying to create a
+little bit of room here so let's go and
+pick up some speed
+and what we're going to do is we're
+going to intentionally suck the shot in
+so that we can use the other guys to do
+the deed here so a lot of times when you
+do a maneuver like this you can actually
+pull the guy a little bit to the side
+i'm actually going to do something like
+that they've already fired one of the
+m54s that's a waste
+that's okay though
+go ahead and pull him back
+i'm actually going to grab him move back
+just a little bit for the purposes of a
+demonstration here so these guys are now
+going to lock onto this one and they're
+going to go ahead and take a shot so
+while we're doing that we're going to
+kick this guy up to afterburner we're
+going to order him to slow down
+we're going to tell him to slow down
+because as you know there's already
+going to be aim while 120 is on the way
+and we need to get a lot closer before
+we engage as a matter of fact i'm going
+to order these guys to stop wasting
+those expensive missiles on something
+that i know we can't get a shot on so
+order a half range shot here
+again just because you can go that far
+does not mean you will be able to go
+that far safely go ahead slow this down
+just a little bit there we go
+so these 16s now are going to be seeing
+the incoming missiles they're going to
+panic and they're going to immediately
+dive out of the way the other thing
+they're going to try to do is they're
+going to try to go ahead and engage this
+guy so i'm going to slow him back down
+i'm gonna pick this guy's speed up a
+little bit
+and again we're gonna try to keep an eye
+on the f16s at all times so what i'm
+gonna do is i'm gonna fire just one
+right down the middle here uh let's see
+here aim sparrow cec that's fine hold
+quiet in a second
+so our f-16s are reforming and they're
+going to get ready to take their shots
+get a little bit closer there goes my
+m154 or my m54 i gotta stop calling my
+name 154. so this next shot is going to
+go ahead out so we're going to order
+this guy on the right to go ahead and
+pick up his speed a little bit as well
+because again we're just trying to close
+that distance and keep the f-16s as busy
+as possible so we fire this next one the
+f-16s are now going to start turning
+into us and what's going to happen is
+we're going to go ahead and trade places
+go ahead and drop these guys speed up a
+little bit so what you can do is you can
+actually pull a little bit off to the
+right here we're actually going to crank
+the shot just a teeny bit whoop that's a
+little too much crank just a little tiny
+bit of crank there we go go ahead and
+slow him down a little bit the f-16s at
+any moment now are going to get prepared
+for their next shots i mean while i've
+got to have him close remember he's
+they're going to do a complete donut to
+basically get out of the way any seconds
+we're going to be getting aim 120s here
+if we have not got them already
+notice how they're automatically
+engaging the guy on the side which means
+everything's working perfectly according
+to plan so far so i know it's really
+really tempting to fire one of each and
+then close the distance because right
+now we're sitting here at about 57
+nautical miles which is more than close
+enough to go ahead and pull that in so
+i'm going to have each one fire one
+a little far out of a shot but that's
+okay
+they're all each gonna fire one and he's
+gonna get the heck out of here
+go ahead pull that f-16 out of there
+waste the energy that missile you're
+doing great go go go go go
+so now remember that missile we fired
+earlier all our f-16 buddies are
+panicking and they're basically getting
+themselves into a good position here
+meanwhile this guy is basically just
+going to casually outrun this one now
+we've got a couple m120s on the way
+which makes things fun for us but that's
+perfectly fine because what we're going
+to do is we're just going to crank just
+a teeny tiny bit
+we'll need to crank a lot here we need
+to create just a little bit
+slow down give our weapons plenty i
+remember this one from a minute ago
+there it is
+nice meanwhile i can turn this guy
+around and i can order him to start
+coming back over here come back up to
+afterburner and go ahead and finish the
+job here these guys are now much closer
+i'll go ahead and order them up to
+afterburner
+now the thing you gotta really really
+watch out carefully here for is the fact
+that they're going to return fire
+and here comes all the m154s
+unfortunately i can't count on the fact
+that the missile itself is not always
+the world's most accurate missile but
+you can see we basically kept one
+missile into them forcing them to
+constantly retreat every single time
+which denied them the ability to fire
+their follow-up missiles so you can see
+by splitting them like that you can get
+a little bit into it again it takes a
+lot of timing and much more
+micromanagement in my opinion than it
+should have but other than that enjoy

@@ -1,0 +1,343 @@
+# C: MO - Classical tactical vs Strategic bombing
+Video: https://www.youtube.com/watch?v=dBDmncdpD9g
+Video ID: dBDmncdpD9g
+
+Hello everyone. In today's video, we're
+going to be taking a look at an
+interesting discussion they had in World
+War II between the difference between
+having a strategic heavy bomber with a
+huge payload versus a carrier aircraft
+or a light tactical aircraft for the
+purposes of, you know, engaging close
+air support. So, I said, well, I think I
+know how to make this one work. So, what
+I did is I went over to Iwo Jima here,
+which by the way, if if you've never
+tried this one out on Google Earth, take
+a look at how tiny this island is. It is
+literally 4 and 1/2 miles, about 5
+nautical miles wide, like teeny teeny
+teeny tiny. So, what I did is I took
+this place, I built a little airfield,
+and I put a bunch of Japanese airplanes
+on it. I built a bunch of these little
+kind of common coastal bunkers, and I
+tweaked them out just a little bit. And
+then what I did is I had you create a
+two groups of aircraft. I created one
+group of aircraft over here. This is I
+think my carrier group. This carrier
+group originally had over 3,000
+airplanes, but I reduced it a little bit
+for obvious reasons. And then the second
+group is a way way way down here in
+Saipan. Uh this is the United States
+group. Uh it's made up of a group of
+bombers. Uh we have two bomb wings
+essentially here. Um both B-24Ms. And
+what I did is I equipped them with an
+equal number of bombs. Now, that was a
+lot of division on my part to try to
+make that one work. So, what we're going
+to do is we're going to whack the island
+with the navy, and then we're going to
+whack the island with the air force, and
+see exactly what happens. Then of
+course, if we have a couple moments
+afterwards, go ahead and grab a, you
+know, a battleship, too, and see what
+happens. So, let's do it. Let's see
+here. Press this button F1. I've got it
+already ready to go. I can
+take off time. Oh, yeah, let's really
+break this computer. Let's see if this
+thing's got what it takes. Space bar. Ba
+ba ba ba. Watch this. Go. This is just
+the warm-up group.
+Uh ready then. Let's take a look at my
+aircraft carriers. You guys are all
+getting ready for a takeoff and taxi.
+So, the first group is on the way. Um
+when I've experimented with this one
+before, uh one thing I have learned from
+uh doing this enough times is that the
+more airplanes you have, the choppier
+it's going to get.
+So, here we go. Let's go ahead and now
+focus on Iwo here because uh you know,
+the airplanes is the fun part here. By
+the way, if you really want to see
+something terrifying,
+that's not even the fun part though.
+You'll see what I mean. All right, here
+they go. Ba ba ba ba ba ba ba ba ba ba
+ba ba ba ba ba bombs away.
+All right, they've done their thing.
+They're heading back to base here. Got
+to go, guys. Got to go. Whoop, here
+comes the next ground uh lining up,
+setting up for their bombing runs. Ba ba
+ba ba ba ba ba ba ba ba ba ba ba ba By
+the way, this is what it actually looks
+like. All right, they've done their
+deed. Now, I'm waiting a few moments. 47
+minutes have gone by. Here comes a whoa,
+look at how many airplanes that is. Go.
+Oh, yeah. Teach them a thing or two.
+Kind of reminds me of like a bunch of
+bees or something like that. So, yeah,
+our total number of aircraft here is uh
+something like 384 or something, which
+actually is not that much of an
+exaggeration. During the actual battle
+for Iwo Jima, they had something like 11
+full-sized carriers working the island
+over. And uh right now, I only got six.
+So, this is like this this is being nice
+compared to uh how ridiculous it is. Oh,
+oh, oh, got some stragglers. Don't
+worry, your contributions are important.
+Oh, here we go. Here comes the next
+crew. Begin. This is a lot different
+with the B-24s. Yeah, eat it. Eat it.
+All right, those guys are having a
+pretty good time. Here comes the next
+crew. Let me zoom in a little bit so you
+can see how many end up in the water
+here.
+[Laughter]
+They do their little job here. What do
+the bunkers just looking like it's in
+rough shape there?
+And everybody's heading home. Oh my
+gosh, look at the computer. The frame
+rate's dying.
+Okay. So, um
+I think I may have just locked up my
+recording here. I'm going to go back to
+Iwo and zoom in really high. Okay, there
+we go. So, that was graphical in nature.
+That was not uh CPU in nature. So,
+anyway, let's go switch to the other
+guys real fast at Japan and let's see
+how much damage we did. So, we didn't do
+a lot of damage to the airfield, which
+is expected based on the WRA. Uh we
+dropped something like uh let's see,
+take a look here. Uh well, we lost three
+Hellcats. 6 768 500-lb bombs here. And
+now, the Japanese they didn't go through
+enough ammunition here. Let's see here.
+Looks good. Looks good. We lost We got a
+single bunker. And now, if we come down
+here and take a look at the damage of
+these bunkers,
+uh they're they're not bad. They're a
+little worse for wear. Like I said,
+nothing nothing terrible.
+Okay. So, that was the navy's attempt.
+So, now we're going to go ahead and uh
+take a look at the US Army Air Force
+here. And we're going to say, okay, so
+you guys claimed that you could do a
+better job than the navy could with
+small tactical aircraft. All right,
+let's put your money where your mouth is
+here. So, we have 96 B-24s here. And
+now, one mistake I was about to make is
+do one of those kind of things. Instead,
+what we'll do is keep them in very very
+large flights here. So, go ahead and now
+create update flight plans. Boop.
+You can also do a trick the system, and
+you can actually press the um set a
+takeoff time right here. And when you do
+that, it does the exact same effect. And
+if your computer does one of these
+things, that's a clear indication that I
+got to pause the video and reload. Okay.
+There we go. So, uh we've reloaded. Uh
+the missions are activated. Now, we can
+see that we've got our 12s. We're going
+to speed up time just a teeny tiny bit,
+and uh we're going to let the computer
+kind of parcel everything out here
+rather than uh whack them all at the
+same time. We'll of course give them a
+little push along the way cuz otherwise,
+you're going to be sitting here while
+these bombers have to complete, you
+know, like a nice 8-hour round trip
+here. Hey, how you doing? Whoa.
+Actually, it's going to cause problems.
+We got to zoom out a little bit here.
+One of the problems is that not only do
+we have an extreme distance, but these
+aircraft take time to get up to their
+bombing altitudes. So, what we're going
+to have to do is actually grab
+everybody, and we're going to have to
+basically put them into position so that
+they don't have as long of a flight, but
+they still have enough time to get up to
+altitude here. All right, I think that's
+good. Now, if you want to see something
+really cool, switch it over here to 3D
+view.
+This is fun.
+Let's see here. 3D view.
+So, if you ever get a chance to see
+stuff like this, this is amazing.
+Watching all these aircraft all kind of
+clump together and uh sort of make their
+way towards the target region. All
+right, so let's speed up time a little
+bit. Climb climb climb. 21,000.
+Remember, this is daylight precision
+bombing we're doing here. Daylight This
+is The word is precision bombing. And
+now, keep in mind, there's 96 bombers,
+but they have the exact number of bombs
+as our good friend the Hellcats did. And
+I have a feeling they're going to take
+slightly less casualties. Of course, in
+the real world, and probably uh you
+know, 10 15% of them would have some
+kind of um you know, mobility
+casualties, so to speak. Maneuverability
+casualty. All right, it's always fun to
+watch. Watch how not accurate the
+bombing is.
+Well, I mean, here they come. Whoa whoa
+whoa whoa whoa whoa whoa whoa. Whoa.
+All right, that was the air force
+contribution. Whoa whoa whoa whoa whoa.
+Sorry, I cut them short. I cut them
+short. Let's let them Let's let them do
+their job.
+All right, anybody else in the air force
+want to uh step up? Man, that was a lot
+less choppy than it was uh
+than from the navy's perspective, but I
+can see why. All right, let's go take a
+look at what happened here. So, um we
+This guy right here seems like he's on
+fire, and he's probably a little the
+worse for wear. We got some this. The
+command bunker of course is completely
+unscathed. Makes sense. And the damage
+in general is not as complete as the
+damage that the single engine aircraft
+did. As a matter of fact, if I pop over
+to losses and expenditures,
+and apparently, I must have deleted a
+unit at one point. I bet you I could
+tell you which one it was. All right,
+let's see here. 768, same amount of
+bombs. Uh let's see here. Uh Japan lost
+nothing. But, they barely fired any
+shots at all, and they just lost
+something. So, I hate to say it, but I
+think the tactical aircraft actually do
+a better job here than um as far as
+being precise, at least in this
+characteristic. Obviously, it'd be
+different if we had, you know, PGMs and
+things like that, but that's for another
+day. But, one thing I do want to try out
+because, you know, why not? We're here
+already. Is uh naval bombardment cuz uh
+why not? Let's go ahead and uh set
+ourselves up here. And what are we
+thinking today? Uh Colorado or Montana?
+Uh we'll have to try it. Let's see here.
+We're going to get ourselves a range of
+Let's call it 4 nautical miles. Let's go
+to surface ship. We'll go to BB. Um
+Iowa's pretty classic. How about
+Alabama? Ooh, Massachusetts, for sure.
+Cool thing about the Massachusetts is I
+visited the Massachusetts. All right,
+we're just going to kind of do one of
+those. We're going to press F1, drag a
+box. We're going to go ahead and set his
+speed to creep. So, there's plenty of
+time. All right, let's see how our ship
+does. Go.
+Oh, wait a minute. We should probably uh
+modify his WRA a little bit here because
+we have this new uh thing that basically
+slows everybody down initially.
+All right, begin.
+That's entertaining to watch.
+Oh, yeah. Oh, yeah, work it.
+The best part is every once in a while,
+one of these big shells goes by. Oh,
+he's having a good time in the airfield.
+Not bad. Not bad. Oh, here comes the big
+stuff again. Most of that's probably 5
+6-in shells.
+And not the most accurate I've ever
+seen. I mean, at the very least um I
+wouldn't want to be there when this is
+going on. I'll say that, but it doesn't
+really seem to be terribly deadly here.
+And it's funny, every once in a while,
+one of the 406 comes out. Yeah, that was
+a 406. Maybe if I press F9, you can kind
+of see the damage a little bit more
+clear here.
+Oh, yeah, take it. Eat it. Eat it.
+I can't believe how much uh 5-in
+ammunition I've gone through already
+here. This is ridiculous.
+And then of course, uh we can't shoot
+much out the back now. We have to rotate
+so that we can start shooting at the
+front again. There we go. Now, we can
+get those 406-mm guns to join in.
+Uh it's it's a good effort. It's a good
+effort. I mean, he's not not doing too
+badly here.
+I think it's very neat if you come down
+to this level, you can like watch like
+almost like tracers coming in and
+causing little explosions here.
+Love it. Let's see. He's got about 30
+rounds of 406-mm. Things are looking
+pretty good so far. Kind of uh decrease
+the range a little bit.
+I don't know why he loves that one so
+much, but hey.
+All right. Let's see here. He's got
+about 72 rounds of the really really big
+stuff left, and he's working on this
+side. Keep in mind, when they did naval
+bombardments, it wasn't a single
+battleship. It was a pack of battleships
+that did it. Okay, let's take a look at
+how we did this time.
+Take a look at Japan. Uh we didn't
+really Oh my gosh, yes we did. Nice. We
+dented that sucker up in nice. Uh we
+also shot up a bunch of the shore
+batteries, and we splattered probably
+everything on that side of the airport.
+And you can see a bunch of things are on
+fire right now. Take a look at losses
+and expenditures.
+Wow. I don't even want to get the Oh my
+god. Imagine the taxpayer bill for that.
+Oh god. Scrolling down, scrolling down.
+Let's see here. Da da da da da da da.
+Amazing. So, we can see from looking at
+the three different systems here that
+obviously, the tactical aircraft at
+least in this era were a little more
+accurate than the bombers. Whereas, the
+ships uh just they just could kind of
+spread it out and just kind of let it go
+kind of a thing. But, they were
+definitely more vulnerable. But, other
+than that, enjoy.

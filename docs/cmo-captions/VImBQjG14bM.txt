@@ -1,0 +1,384 @@
+# C: MO - Understanding SAM Radar Limitations
+Video: https://www.youtube.com/watch?v=VImBQjG14bM
+Video ID: VImBQjG14bM
+
+hello everyone in today's video we're
+going to be taking a look at one of the
+limitations of track via missile systems
+and that's because when you use command
+guidance you need to keep the missile
+pointing in the direction of the target
+so we have ourselves an sa 10A this is a
+Grumble s300 pt1 is the one I like to
+think about it and it's a really neat
+system it consists of a very very large
+radar that's basically flat it's a
+passively scanned phase array radar and
+you have these very very large missiles
+basically stored in this vertical tube
+the way this works is really cool they
+pop out of the tube they ignite a motor
+boom and it's something in the distance
+I don't know why it made a meow noise
+but you never know sometimes a cat gets
+into someone of those tubes so we have
+an interesting bit of a situation here
+you know some one of the cool things
+with old classic style Radars where
+basically you illuminated them long
+enough the radar could kind of track on
+it we need to guide the missiles to the
+Target by tracking the missiles
+individually on their way to the Target
+that creates an interesting problem in
+that we have to make sure our radar
+faces the target we're trying to hit so
+I've got a couple bis here and I'm going
+to go and highlight them and order them
+up to be hostile my Sam crew is going to
+immediately start getting to work on it
+now one thing I'm going to change real
+quickly here this I'm actually going to
+fire two instead of one because we have
+up to six so like why not right let's
+see we'll do six so we'll do six that'd
+be pretty hilarious that's a lot of
+missiles there we go two rounds towards
+each Target and remember I have six
+channels here so it's going to be pretty
+easy we're entering into range here and
+again this is a big missile system very
+very easy to use and you're going to
+notice something
+happens if You observe very carefully
+you probably notice the fact that we
+have this large radar beam that is now
+facing in the direction of where my bogy
+is you also see that it's kind of taking
+a chunk out of the sky here all of its
+electrical energy is basically
+concentrating on this one point another
+thing you're probably observing is the
+fact that my bogey my Bandit over here
+this would be a bandit not a bogey Sor
+is not being engaged at all um I have
+six missile channels to Fire and only
+two of my missile channels are presently
+being used if I scroll down a little bit
+here uh let's see it's analog controls
+yeah exactly I'm sorry we have eight
+channels not six my bad different
+version and you can see here that we're
+guiding two missiles quite successfully
+towards our handy Bandit there and we go
+ahead and launch towards it one of the
+things I'll do for the purposes of
+demonstration because I know that you're
+going to ask this question in a second
+yes I know I'm going to waste a
+perfectly good F16 on this but it's for
+science folks it's for science so you
+can see here that we're still tracking
+this target over on this side our
+missiles are going right up to it and
+saying hello we're about to get a
+confirmation on that Target in a second
+it only takes a moment there it goes and
+we're probably going to Splash that
+F-16 really I'm just going to delete
+that F16 so what's going to happen now
+of course is our missile battery is
+going to rotate its radar and then it's
+going to point in this direction so I'm
+going to go ahead and give it a moment
+there for that missile to stupidly just
+kind of shoot off into the woods here
+and what you'll observe now is if I
+click back on my battery it has now
+faced its array this direction and the
+other thing you'll notice which you'll
+find very interesting here let me shut
+off God's eye view here is the fact that
+we are still struggling to acquire all
+those targets now if I were to go shift
+F1 and click on this one here you'll
+notice I can pop a couple of those into
+him as well because my radar beam is
+still still able to point in this
+direction you actually saw we were
+between loes there so I'm able to guide
+missiles under this Target and I'm able
+to guide missiles onto this target at
+the exact same time and you can see how
+we're popping these things off like
+crazy now the reason I was having
+problem is cu I was perfectly on this
+lobe here see how this lobe is sort of
+rotated like an awkward angle this is
+because of the default rotations built
+into command normally you'd illuminate
+this entire side of the sky as a matter
+of fact if this guy were smart he' go to
+the left by like a millimeter and then
+he'd have to split his fire between the
+two loaves oh that one got hit oh
+they're gone and as you can see we're
+able to basically Splash those targets
+very very effectively as long as they're
+within that kind of beam width now I
+know you're sitting here going what does
+that have to do with anything is there a
+way that you could kind of cheat this
+system and sort of manipulate them into
+making mistakes the answer is yeah there
+absolutely is ways to do that so what
+I'm going to do is reopen the scenario a
+little bit here I'm going to grab this
+guy I'm actually going to Mark him as
+known and the reason I'm doing that is
+just to be a little more fun for us and
+what I'm going to do is I'm going to
+order this guy to use one of our
+favorite cheese strategies we can see
+that his danger zone is right there so
+I'm going to go ahead and Mark in right
+here right here and I'm going to order
+my guy to go like
+this there we go and the pr of this of
+course is to trick our little sa 10 into
+firing so you're going to see here I'll
+go ahead and open up this view real
+quickly let's there it goes as you can
+see there's an sa 10 now launched right
+at us but my F-16 knew that was coming
+and he's going to very intelligently
+turn himself around and he's basically
+going to do power Donuts like I've drawn
+with my little diagram this is
+everybody's favorite chees strategy in
+command by the way I'll go ahead and
+pull this one real quickly here I know
+that's going to be roughly the range
+he's just going to turn himself around
+and I hate to say it but that sa1 was
+wasted and you can see my little F-16
+buddy is uh going to get pretty much
+Clear ah I didn't do it hard enough I
+really needed to keep my display visible
+here but again that thing's going to be
+out of missile long before it gets to my
+M16 so he's going to keep taking pot
+shots at that F-16 and as you probably
+observed this F-16 is still coming uh
+he's actually wasted no time and for the
+purposes of heading towards that Target
+you can see I'm still wasting all this
+time and money basically trying to hit
+this F-16 which is going to pull that
+missile out of its effective range you
+can actually see it's pulling out of its
+effective range right now I think I
+might have done
+a that is a one close call on that
+f-16's point there oh my gosh if the
+F-16 just waited a second longer kept
+going so now you'll see that this guy
+has gone ahead and taken a pot shot over
+at him because unfortunately he only
+fired once and now he rotates his radar
+around very very quickly and he takes a
+shot at this guy as well but of course
+so we're going to be jerks down here
+we're going to go ahead and do one of
+these things we're going to grab him
+we're going to go ahead and estimate
+that range real quickly there uh let's
+see we don't want the Grumble we want
+that one that's what I want and I'm
+going to order my F16 here to kind of
+move around and I think you can get a
+feel for what I'm doing here so he's
+just going to turn himself
+around again he's got you know a suic
+missile coming right for him and it's
+basically right behind him actually if
+we wanted to we could go after burner
+and like really really clear the
+distance here oh I think that was a
+risky one oh I got him too
+close oh boy did not time that one
+correctly oh well he blew up stuff
+happens so the cool thing here is I can
+now do this along this edge with
+multiple aircraft and basically waste
+his time so what I'll actually do to
+kind of take it to the next level here
+let's go and turn on all units range
+circles actually I don't want to merge
+them because if you merge them you're
+never going to be able to see what
+you're doing here
+Boop cuz now I can grab this guy and do
+this everybody's seen this AI strategy
+about million times it's one one of
+command's legendary Chief
+strategies now of course I can speed
+this guy up and every time he comes in
+is it going to going to attempt a shot I
+always got to remeasure it every time I
+do this strategy CU I never get the
+original Circle correct there it is
+called it there he goes ha so let me go
+ahead and borrow another F-16 here I'm
+going to go ahead and do order him to do
+the exact same cheese
+strategy there we go let's let's let's
+make some cheese here making some cheese
+there we go so of course 16 is
+completely in the oh my God he turned
+back in you idiot bad timing so of
+course then the one down there if we
+timed it a little bit better which we
+didn't would basically have been shot at
+while this guy is basically going out of
+range you can see this guy's going to
+cheese his way back into range let's
+pull him just a little bit tighter here
+that'll get a shot that'll get a shot
+there it goes look at them now they're
+just wasting their missiles just taking
+Bot Shots and then of course that guy's
+going to pull out of range and the trick
+to this strategy of course is to get
+them out of phase with each other you
+see how like this guy is now pulling in
+and so the whole missile battery is is
+going to be rotating himself around to
+basically line up with this one we're
+about to get a warning that he's firing
+basically in that direction and again
+his intention right now is still there
+he goes a my friend you waited too long
+and now the the F16 gets into safe
+distance look at
+that I love that strategy meanwhile he
+comes and sneaks in here like this and
+again there's no ho effective range
+versus maximum range you just saw it in
+action of course we have to be a little
+more careful with this this is
+definitely one of those things that if
+you take your time and you Do It um very
+very carefully you could basically get
+away with flying a big basically Square
+wave pattern all the way around this
+entire danger zone and basically never
+get hurt and know this is kind of one of
+those fun little strategies to sort of
+play with that another really popular
+use of that strategy of course too is to
+basically keep the missile busy while
+you fire something else at it we're
+going to need another unit for this so
+what I've got going on here is I have an
+ssgn that is just fired five Tomahawk
+cruise missiles now an sa 10 is going to
+have no problem laying waste to a bunch
+of cruise missile is it's going to
+pretty much embarrass them so what I'm
+going to do here is I'm going to keep
+the there it
+is all right turn around full afterburn
+get us out of here okay turn right or
+left rather go go go go go go get us out
+of here get us out of here of course we
+could lose some altitude too if we
+wanted to be a little more effective as
+it but that's okay and basically we're
+going to burn for the Border here at
+about 720 knots while these tactical
+tomahawks are doing the little chaa line
+directly towards my sa 10 site here so
+uh I think this is going to be close I
+get the feeling we're about to lose
+another F16 to the cause here which
+that's always embarrassing when that
+happens but um that thing is doing 3,450
+knots so it's moving pretty quick my F16
+come on man you've got to get to the
+safety zone he's he's out of a danger
+zone he's out of theoretical range here
+but this missile is not going to quit
+just because the fact he left his
+effective range oh my gosh here we go oh
+boy this guy's uh this guy's Brave this
+is a one Brave pilot here good job my
+friend keep going keep going keep going
+keep going it's running out of energy I
+swear it's running out of energy don't
+stop don't look back don't look back
+that was a mistake you should just kept
+burning it would have been fine and that
+thing ran completely out of ammo or out
+of fuel all right let's do it again nice
+job F16 come on back and do it again so
+basically what we're doing here is we're
+keeping the eye of the radar on my F16
+over here on this side while my
+tomahawks close in basically doing their
+terrain following and all that other sh
+oh there he goes again go oh I hate this
+Duty
+just burn just burn go go go go go go go
+go go go go go go go go go go go go go
+go go go go go go go don't stop don't
+look behind you don't look behind you
+don't look behind you you're doing fine
+doing
+fine and you can see it ran out of a
+fuel once again and my F-16 guy is
+basically Sweating Bullets I wonder just
+how close that was to actually cliping
+my F-16 here let's take a look uh Sam 11
+has vanished I wonder how close it got
+uh it was spoofed okay it was actually
+my chaff that us kept me alive there but
+again nobody said this would be an easy
+task so what I'm going to do is I'm
+going to send him my F16 one more time
+here so what's going to happen is my Sam
+site is going to be looking up at F-16
+and he's firing up F-16 like an
+idiot
+go get out of there turn around turn
+around oh it doesn't matter surprise
+[Laughter]
+tomahawks as you can see here my
+extremely deadly Sam battery is now
+receiving a bunch of tactical tomahawks
+directly into the side of the battery
+there and eventually one of those will
+hit the radar in which case my little
+F-16 buddy is going to feel pretty
+confident after that oh that's another
+one how many these does it take to kill
+an sa10
+OMG oh it's gone and now I can tell my
+F-16 pilot you can relax now we blew up
+the enemy s site without any loss to
+ourselves so as you can see it's
+interesting from a technical perspective
+as far as having to guide the radar but
+basically pointing in the danger zone
+the other thing you have to keep in mind
+is that kind of a limitation as far as
+how far it can rotate left or right
+because it can only do so many clock
+angles and you can take advantage of
+that to basically stay out of the Zone
+the other thing we showed you is how you
+could use a little bit of a cheese
+strategy basically for the purposes of
+keeping the system distracted while you
+used another weapon platform to finish
+the job enjoy

@@ -1,0 +1,364 @@
+# C: MO & DW - Identifying targets with sonar
+Video: https://www.youtube.com/watch?v=PMTfEjrclcc
+Video ID: PMTfEjrclcc
+
+hello everyone in today's video we're
+going to be taking a look at the
+challenges of identifying things that
+are underwater now you're probably going
+well that's pretty straightforward i
+mean i understand it like what's the
+deal well i thought what we'd do today
+is we'd actually bring in a little bit
+of dangerous waters out for those who
+are not familiar with that game it's a
+very very classic submarine frigate
+basically anti-submarine warfare game
+all in one it's very sophisticated but
+combined with command it's going to
+prove my point pretty well so let's go
+ahead and take a look at what we have
+here so i have the sea wolf that's just
+sort of chilling here doing its little
+thing in water i'm going to pause time
+here it's going about five knots nice
+and slow and instantaneously all you've
+noticed that we've identified three
+submarines we haven't actually
+identified three submarines the only
+thing we've done at this point is we've
+said there's three submarines somewhere
+along this bearing which makes sense
+anybody's played any silent hunter games
+you know you stick the hydrophone in one
+direction you'll listen for a while and
+you go oh it's down that bearing good to
+know so we're going to continue for just
+a few moments here as we start to work
+out the ambiguity of this particular
+situation with something called target
+motion analysis without tma basically
+all we're doing is we're trying to go
+okay how fast do we think it's going
+where do we think it's going to go where
+do we think it's going to be and
+basically by doing the math we're able
+to calculate roughly the course and
+therefore the position of the actual
+object so you can see as i'm moving
+across time here and i'm taking new
+measurements it's called a running
+bearing i'm able to pinpoint the
+location of everything okay perfect stop
+now you'll just notice here that i've
+identified one of the submarines i've
+identified it with a combination
+remember we have a big toad array and a
+sea wolf which makes it a little easier
+we're not sure if it's positioned but
+we're absolutely confident that it is a
+delta four submarine so i'm knowing that
+particular piece of information we can
+now say oh that's the one we're looking
+for and go sync it and stuff like that
+but again that's not really what the
+point we're going for here so i'm going
+to speed up time a little more so we'll
+get a little bit more detailed
+information
+and probably saying hey that's not bad
+so remember i'm not using active sonar
+here but i'm able to identify these
+three submarines pretty effortlessly i'm
+also able to identify their depths i'm
+able to identify everything about them
+that i possibly need to know so what i'm
+going to do is i'm going to go ahead and
+reset the scenario and make things a
+little bit more interesting for us so
+we'll go back to green
+grab onto these guys and we're going to
+slow them down now you're saying well
+obviously if you go a little bit slower
+you know you're going to be harder to
+detect yes not only are you going to be
+harder to detect but you're also going
+to be vastly more difficult to identify
+now that's going to be like i said kind
+of the point of what i'm saying here so
+let's grab messy wolf let's go ahead and
+unpause i'll give them a few moments to
+kind of acquire what's going on notice
+the sea wolf has a fantastically
+sensitive sonar array on it um i think
+it's incredible i will take a look at in
+dangerous waters in a moment you can see
+just how effective it is but we're
+having kind of you know the same kind of
+problem we had before so we're able to
+identify it we're doing some tma here
+we're having a pretty good idea of where
+everything is except for this guy up
+here the reason we're having a tough
+time with him is because of the depth
+that he is actually operating at so it's
+making it a little more difficult for us
+to do our math we knew he was there but
+as soon as he slipped down to the proper
+depth notice we're also having
+difficulty identifying their exact
+position so i'll speed up time here in
+whoosh we were able to finally identify
+these two right away and this one we're
+still waiting on just a little bit
+longer so we'll give it a little bit of
+time and
+identified perfect so you can see the
+distance was about half which again
+nothing you're not surprised by in the
+slightest so as you can see as by
+traveling faster not only are you easier
+to identify but you're also easier to
+detect now how does that translate well
+let's take a look
+dangerous waters for this you've not
+played this uh this is absolutely wild
+like i saw it for three bucks the other
+day like it's not bad um good luck
+getting working on windows in case you
+didn't notice that i'm in a window here
+so this is the same scenario i recreated
+it as close as i possibly could down to
+like you know longitude latitudes and
+everything like that and i've even taken
+my little sea wolf and i've popped out
+the little toad array and everything so
+we can see what it looks like so what
+i'm gonna do is i'm gonna pause
+and we're gonna go ahead over to the
+sonar display so our center display oh
+what you're seeing here is this is
+basically the bearing this is how loud
+things are on that bearing so for
+example on my 270 bearing it's very
+obvious that there's something that's
+fairly loud there um again this is what
+they call a broadband display so what
+i'm going to do is i'm going to switch
+to my tote array and what i'm going to
+notice immediately is i'm picking up
+three distinctive sources of sound i've
+got this one right here this is at my
+eight bearing i'll go ahead and mark
+that one
+i've also got myself another one right
+here this looks like it's at a bearing
+of 30 degrees i'll sign him a tracker as
+well and i've got this one right here
+who's also right there so i've declared
+those three so in his essence i've
+declared my three bearings now you're
+immediately going
+uh dude um they're over here weren't
+they you're absolutely correct so but
+one of the problems we have and again
+i'm not going to get into this today is
+the concept of bearing ambiguity
+whenever you use something that's
+circular you basically run into a
+problem where when you're scanning some
+stuff with it you could actually have
+yourself a situation where you're
+actually detecting the inverse bearing
+now the way we get rid of ambiguity is
+you basically turn really really quickly
+and that kind of snaps us around so
+let's take a look at our condition ah
+does this look familiar yeah it does you
+can see i have all these as a matter of
+fact i'm going to drop these i know for
+a fact that these are all ambiguous
+bearings so it's the same exact
+situation we were in a minute ago we
+have the three bearings again remember
+we identified them down that line here
+so now what we have to do is we have to
+identify what they are obviously we're
+starting our tma process now um
+somebody's got to go downstairs and
+they're going to run up we're actually
+going to bring our course up to 360 here
+to try to make it just a little bit
+easier to see what's going on here oh i
+guess we're going to zero degrees that's
+fine with me too so now what i'm gonna
+do is i'm gonna switch from broadband
+which is how loud is the water i'm gonna
+switch to narrowband which is what does
+the sound of the water sound like i know
+that sounds odd but you can see we have
+ourselves these distinctive little blips
+of audio again this is just background
+noise or water noise so i come to this
+guy right here obviously this is a
+pretty big spike i'm going to
+immediately assign him a tracker right
+there come over to this big spike right
+here assign tracker here click on this
+one right here assign a tracker here so
+now i've got these three different
+positions i'm tracking now what am i
+trying to do here so if you take a look
+down here you can see this is a
+basically waterfall display of the
+different spectrum think of it like a
+little spectrum analysis what we're
+doing is we're seeing the different
+frequencies coming from that particular
+direction and we can use those to
+identify what we're interested in so if
+i were to come over here for example if
+i say i'll try out a chia okay i'm
+looking for something at the higher
+frequency lanes we're not going to pick
+up any high frequencies at this range if
+i pick let's see here i've only got
+these two possibilities so again delta
+four if i look at the spectra these are
+the two low frequencies is kind of that
+um kind of low middle this is the higher
+this is a very high frequency you can
+see very clearly that the expected
+spectra is identical to the spectrum
+we're getting here so i can say pretty
+confidently that we're probably dealing
+with the delta four submarine so i'm
+gonna go ahead and activate auto crew
+here and i'm just going to go ahead and
+classify each one of these now yeah of
+course it's a flying airplane right
+no it's a submarine so we'll go ahead
+and do submarines we come down here we
+say it's a delta 4. i'm assuming it's
+probably hostile and i'm pretty
+confident about that
+so then we come over here we go ahead
+and classify this contact the exact same
+way and again notice this is exactly
+what happens inside of command mode on
+operations except i don't have to do all
+the hard work here there's usually some
+guy on the ship that's taking care of
+this for me um i do not see my delta i'm
+completely blind as always
+there it is cool i've assumed it's
+hostile and we're going to grab this one
+right here we're going to go ahead and
+classify this
+or you can do that and not get rid of
+the contact which now means we have to
+go find it again but it's perfectly fine
+but you can see that we were able to
+identify how much noise it made now i
+can go back in this scenario and i can
+reduce the speed of those targets watch
+what happens
+all right same situation nothing's
+changed at all except all my opponents
+now are going a little bit quieter than
+they were before remember before we had
+them going you know 12 knots and now
+we've reduced them down to five knots so
+the first thing you notice is remember
+the first time we did this so we picked
+them right away take a look
+[Laughter]
+we got something if you look
+extremely carefully you can see this
+little tiny line here look really really
+careful you can actually see this little
+tiny line right here um we're basically
+hopeless here not that we're blind or
+anything like that but we utterly cannot
+pick anything i mean obviously my sonar
+guy is fantastic and he's probably got a
+good pair of headphones on and he's
+listening he can hear this swoosh but
+notice the difference in volume is
+incredible here now if we go to narrow
+band this is where we're really in
+trouble take a look here so remember
+before how we're able to identify the
+sub very very obviously by spectra now
+notice how little of the actual spectra
+we have in order to work with here
+before when we had this we had tons and
+tons and tons of spectra now we barely
+have any so i'm going to go ahead and
+assign a tracker here and like i have to
+go to display signature we can guess
+it's any one of these submarines
+obviously it's a delta four but notice
+we can't actually identify what flavor
+it is because the spectra up here is
+different so you can see that the not
+only going faster made it easier to
+detect but it also made it easier to
+identify so i'm going to get my auto
+crew here we're going to pop back here
+and notice it didn't take them long to
+identify these three sources as being
+some quarter subsurface contact so we
+were still successful at actually
+identifying the actual target itself now
+where things get interesting this is one
+of the fun things to do especially like
+when you're in a game like this is you
+can play with things like this so i'm
+actually going to order him to go ahead
+and go a little bit deeper here and now
+the purpose of this is just to show you
+what's going to happen to the properties
+of sound as we get a little bit lower
+and stop
+all right so notice that my sounds
+it's not that the sound the volume of
+the other submarines has got louder
+although obviously it's gotten closer
+it's that the noise in the background
+has started to come down and when i
+actually come over here like i said to
+my little toed array notice how much
+more obvious they are on the narrow band
+display now compared to what they were
+before making them vastly vastly easier
+to identify so again just an interesting
+little thing remember by the way in this
+game your tote array actually has to
+catch up to you it's not instantaneous
+like it is over in command so what does
+tma look like i know you're going to ask
+i just want to share this with you so
+you can see how crazy tma actually is so
+if i select uh let's see here we want
+sonar06 seems to be one they have a
+really really good i mean whatever here
+right let's go to sonar06
+and you can see exactly what's going on
+here these are all my running bearings
+and this little line with the green
+thing is basically simulating my
+expected speed my expected heading on it
+and i'm trying to basically merge it
+with this little new little chart here
+this is an amazing process not today so
+hopefully you saw a couple different
+interesting things today like i said you
+had the opportunity to see what it looks
+like over in command see how we were
+able to identify see how we're able to
+kind of move it keep in mind different
+submarines are louder than others and
+keep in mind different water conditions
+will cause different things to happen as
+well other than that enjoy

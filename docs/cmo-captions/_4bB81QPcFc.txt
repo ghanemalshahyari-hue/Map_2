@@ -1,0 +1,376 @@
+# C: MO - Weapon Records and Mounts
+Video: https://www.youtube.com/watch?v=_4bB81QPcFc
+Video ID: _4bB81QPcFc
+
+Hello everyone. On today's video, we're
+going to be showing you the differences
+between a weapon and a weapon mount.
+Now, I was noticing over on Discord a
+couple days ago, some people were kind
+of caught up on the whole concept of
+"Well, I want to add things to the
+loadout on an airplane." Now, as we all
+know, we can't just willy-nilly add
+things to a loadout on an airplane. You
+know, if I were to, for example, quickly
+create myself a handy-dandy airfield
+here. Airfield, grab this one, it
+doesn't matter. You'll notice that if I
+were to come over here and let's say add
+an airplane to it, and grab myself a 5X.
+Yeah, that sounds good to me. I just
+need one of them for my demonstration
+here. I go over here, press this button
+right here, and go ahead and say "All
+ready arm." Let's go boop. Let's see
+here, ready arm.
+As you can see, I have not a lot of
+choices here. You know, whatever they
+have here is what we're going to get for
+that particular mission. Now, the reason
+this is important is an aircraft such as
+my MiG-28 right here, you have to
+remember that if I do have a specific
+loadout, I can't change the loadout,
+land the plane, and then have it keep
+that loadout when I get in the air. If I
+intend to have a modified loadout on it,
+I actually have to edit it in
+mid-flight. So, what I want to do is I'm
+going to grab my MiG-28 right here, and
+I'm going to go ahead and uh click on
+the weapons button. What you're going to
+notice here is we have two different
+things here. We have the internal
+loadout. This is the bit that's always
+attached. And then below that, we have
+the actual loadout. Think about this is
+the stuff dangling off the wings. Now,
+the reason this is important is you'll
+notice that when I click on my 20 mm
+here, see down here it says "Add weapon
+record, add mount." If I go over here
+where it says "Loadout", you'll notice
+it says "Add weapon record, add mount."
+But, if I click here, you'll notice it
+says "Add mount." That's because
+everything is handled in a slightly
+different way. If you want to think
+about it another way, our little AIM-9s
+here, this is the weapon. The four out
+of four is the actual mount, and then
+the loadout, the total bit here, is
+actually the one that you have up here.
+So, the reason that's important is cuz
+of this. Let's say I want to add on an
+A-120 to my MiG-28 right here. I guess I
+would have to add one of the Alamo
+missiles or something like that. But,
+I'm going to do an AIM-120 because
+science.
+So, what we're going to do is we're
+going to come over here, and I'm going
+to press "Add weapon record." You're
+going to notice if I come in here and
+type in AIM-120, I'll get a 120D cuz I'm
+a silly person. You'll notice all the
+possible combinations, including some of
+these very absurd options like this. Uh
+keep in mind, things that have rate of
+fires of 60 are usually things like
+magazines that do loading. They're not
+intended to be utilized like this. So,
+if I grab this, yeah, we'll carry eight
+of those cuz why not? It says "A data
+missile has a data link. Would you like
+to add one?" So, one of the new features
+they actually added, which is absolutely
+fantastic cuz we didn't used to have
+this in command, is you'll notice if I
+add a data link weapon, it will
+automatically offer to add it onto our
+aircraft. I'm actually going to click
+yes right now. And what they're going to
+do is they're going to say "Is this the
+one you want to add?" And you say "Yeah,
+that's the one I want to add." And what
+they'll do is they'll actually stick
+that in there. But, what you'll probably
+observe is this is the wrong data link.
+So, uh when we do this, uh we need to
+make sure that we actually search by the
+appropriate item here. Now, if you skip
+that step, you're going to find that you
+have no control over the weapon itself.
+It's worth noting here that there's
+actually different types of AIM-120. You
+have the command data link, which tells
+it what to do. You have the missile data
+link, which sends information back. And
+then, of course, you have the two-way
+versions as well. And then, you have the
+really, really absurd off-board version,
+which allows you to do silly things like
+launch uh guided missiles with a CEC
+cooperative engagement here. So, what
+I'm going to do is I'm going to
+So, one of the common mistakes people
+make is when they start experimenting
+with loadouts and editing things to make
+the game uh more challenging or whatever
+they're trying to do there, you have to
+remember, if you get this part wrong,
+you're not going to get any launches.
+So, it's actually very, very critical.
+You'll notice I'll just I'll run the
+example here because it's important you
+see it. Let's add more stuff to this
+aircraft cuz why not?
+AIM-7P.
+I like the P2 if I can get it, but I'll
+stick with AIM-72. Notice it did not ask
+me at all about adding anything about a
+radar. As a matter of fact, if I click
+the S A R H S A R H link here, it's not
+even going to tell me, unfortunately,
+what particular item that this is going
+to be guided with. So, we might fire
+this weapon and discover we're not able
+to get a sufficient illumination to
+actually even launch it, even though we
+put it on there and it didn't yell at us
+for not having the appropriate data
+link. So, kind of keep those pieces in
+mind when you start experimenting. Now,
+the other thing people like to do is
+they like to add in air-to-ground
+weapons. They're like "Oh, you know,
+it'd be awesome if I had a GBU-12."
+Yeah, GBU-12. Ooh, we have the D model.
+Yeah, I'll take one of those.
+Our MiG-28 is a Wunderplan Wunderluft or
+whatever the equivalent would be. I
+don't speak German, as you know. So, now
+we have this lovely guided weapon, which
+is has a laser spot tracker, but we have
+no laser spot tracker technology. So,
+this is where people get really, really
+sophisticated. They're like "Well, what
+if I do a targeting pod, OSTI pod?
+What's the one everybody likes to use?
+You have the sniper." So, I'll let's go
+ahead and put on the sniper pod, which
+is actually two components, but I'll add
+the sniper pod. Ta-da! So, now I have
+everything that I need on my lovely
+MiG-28 here for the purposes of dropping
+weapons, firing these different types of
+weapons, except for the Alamo cuz, like
+I said, we don't actually have the data
+link on this weapon. And all these other
+options that you have here.
+Now, some people at this point like to
+say "Well, what if I want to put a 30 mm
+cannon on it?" Well, you could do that.
+Now, the difference here is remember
+we've been dealing with weapon records
+here. Like in this the whole secret
+weapons. If we want to actually add to
+this, we'd have to actually hit the add
+mount button. Now, notice there's some
+pretty neat stuff here. We can also
+define, of course, the arc of which we
+used to employ this weapon, and we can
+actually go in here and define. So, for
+us, obviously, we're looking for the 30
+mm.
+Uh let's see here, 2A42.
+Yeah, no, that's not for us. Let's see
+here, China, DEFA. I always forget it's
+the GO8, I think it's correct, right? I
+always get this one wrong. Ah, there it
+is. GO8. Sounds good to me.
+So, not only do we have a GO8 now, but
+if I turn on the arcs I accidentally uh
+set my arc up to be wide. So, not only
+can we engage this aircraft like a
+Wunderplan, uh we now have the ability,
+of course, to fire in any direction in
+front of us with it. Keep in mind, this
+is independent of the rest of this. Now,
+let me show you the big important point
+here. I'm actually going to order it
+where this guy go flying back to base.
+Hey, get back to base.
+So, let's uh run inside real quickly
+here. I'm just going to grab him. I'm
+not going to order him to do anything
+silly. Ready arm. Oh, actually, no, I
+don't want to do that. I want to go
+ahead and set time to ready in 01.
+So, he's going to be ready in about a
+minute.
+I always think of the uh super uh
+superheroes.
+Super best friends.
+All right, let's grab this one. He's 2
+hours, not many times. I don't think so.
+Let's go ahead and set him to 1 minute.
+And we'll allow 1 minute to go by. That
+was plenty. 1 minute to go by. Grab him
+right now. Go ahead and order my MiG-28
+to launch.
+And yes, I know what you're thinking.
+Just give it a few moments, and there he
+is. Now, he's airborne. Now, if I click
+on this chap, uh like I was saying a few
+minutes ago, remember all that lovely
+stuff we did? It's gone. You'll notice
+down here that all the original weapons
+are there, except
+that my GO8 is still attached. Now,
+because it's still attached, that's
+because when we created it, we added it
+to the unit itself. We didn't add it to
+the loadout to the unit. So, it's
+important that you see the difference
+between those two so you don't kind of
+get kind of sneaky in that regard. So,
+that's it for aircraft. And like I said,
+aircraft are tricky. Um again, if I go
+over to comms, for example, you're going
+to notice I get to keep my data link,
+even though I can't fire AIM-120s right
+now because I don't have any.
+Now, if we're dealing with an aircraft,
+in this case, I've got my Q-ship here.
+This is my container commercial vessel.
+Uh it's a great little ship for this
+particular demonstration here. Right
+now, it's just chilling in the water, uh
+just sort of relaxing. Now, the thing
+is, we can do the same exact process
+here. I can go up to weapons. Notice we
+have to add a mount. There's nothing to
+stick this to. So, a lot of people say
+to me that "Well, what mount should I
+add here?" Well, it depends on what
+you're trying to do. Are you trying to
+do a VLS? In which case, uh there's
+plenty of choices as far as a VLS goes.
+Let's see, Mark 41, the Mogami. Let's
+see which one do I want? The
+Brandenburg. Let's type type. Here we
+go, TTT flight one.
+And now, of course, I have a Tomahawk
+firing capability here. Now, if I want
+to have some fun, of course, uh let's
+say I want to modify this. I could come
+up to this. Again, this is going to
+happen when you click it the first time.
+I could actually change the number of
+weapons here. I'll drop that down to
+zero. I'll go run over to my SM. Which
+one do I want? The Block 3? Yeah, heck
+yeah, I want the Block 3. Give me some
+Block 3s. And now, you can see I have 29
+Block 3s. I'll go up here to the RIMs.
+Um let's see here, 23. That'd be six, I
+think. Uh that's about the best we got.
+29 out of 29. We're ready to rock. Now,
+of course, we have no way to guide them,
+hence the uh problem that I was
+mentioning many times before. So, what
+we're going to have to do is we're going
+to have to go over to sensors. You'll
+notice we have a couple generic
+navigation radars here. We're going to
+go ahead and say SPY. Of course, this is
+the correct one we want to use. Ooh,
+NCTR upgrade sounds good to me. Go ahead
+and toss that sucker on there. I made it
+face all directions. And now, of course,
+if I turn on my radars here, I should
+have the capability of actually
+illuminating things around me. And if I
+zoom out, you can see
+no difficulty with that whatsoever. As a
+matter of fact, we've detected a target
+over there. I'm going to order them to
+be hostile, and uh you're going to
+notice that our Q-ship here is going to
+sit here relaxing. Yep, we're definitely
+in range. I guess I'll order an attack.
+Aha! Uh you'll notice we have a
+307-second
+delay before we're actually able to
+engage that target because of Just
+because you put all the weapons on the
+platform does not automatically mean
+that platform can employ it. So, I'm
+going to go ahead and let that time
+expire. I'm going to go ahead and unlock
+on again. And here we go. Just like I
+was saying in the beginning, the
+mandatory data link is still required.
+So, again, if you're not sure about what
+data link you need, the nice thing is I
+can click on this, scroll down, and it's
+going to let me know it's an Aegis
+missile data link. So, I'm going to go
+ahead and grab our Q-ship here, go back
+to sensors. Actually, I'm sorry, this is
+a comms thing. We have some really,
+really exciting things coming up now.
+Aegis data link. And as you can see,
+there's like 50 of these different
+things. And obviously, if we get it
+wrong, um we're going to have difficulty
+with that. So, it's just kind of kind of
+the some of the fun here.
+Go ahead and toss that one in there.
+Let's see, two-way, that's the SSN
+version. SPY, that's the two-way
+version. I probably got the wrong one,
+but eh, this is what happens when you
+try these things. Shift F1.
+Uh no weapons director available to
+illuminate the target.
+So, what I'm trying to emphasize here
+and try to make my point is that this
+could be very, very, very challenging in
+order to find all the different
+components you need. Uh for those of you
+who have never seen the command
+database, like what it actually looks
+like to edit, it's intense. Uh when you
+come in here and I click on an option
+like this, and it's all neatly, prettily
+formatted, you don't realize that you're
+pulling from like 60 different types of
+basically databases in order to populate
+the information that you're looking at
+right here. It's a tremendous amount of
+detail going on in here. And when you
+don't see that, it becomes hard to see
+why does this not work? Why does this
+not work? Why does this not work?
+Because for everything else to work
+correctly, it needs to be
+self-integrated. Now, one thing I want
+to say, too, before I kind of end our
+video here, too, is uh you'll notice
+there's some changes to communications.
+I just want to kind of give everybody a
+head little heads-up about this. You're
+going to notice we have a lot more
+properties about communications cuz this
+is going to play a much bigger point in
+the game coming up pretty soon.
+Something to be excited about. And the
+last one, of course, is if you go up
+here, you'll notice this new add
+reference point app function, where you
+can actually dial in the decimal degrees
+in order to put something at a specific
+point. Enjoy.

@@ -1,0 +1,156 @@
+# C: MO - Adjusting Ground Unit Icon Size
+Video: https://www.youtube.com/watch?v=6xT-VJomG3A
+Video ID: 6xT-VJomG3A
+
+hello everyone in today's video we're
+going to be showing how you can adjust
+the size of ground units in command
+modern operations so for this one we've
+created a relatively straightforward
+pretty simple scenario to kind of show
+you what the different components
+actually mean here so what we're going
+to do is we're going to head up over to
+our view options and we're going to skip
+that and go right to game options hit
+that one and we're going to go all the
+way over to map display now you have a
+bunch of different display options here
+some of which of course will give you
+the ability to sort of adjust the type
+of map symbols changing the cursor data
+box visibility we've gone through
+several of these in the past before but
+one of the things that's a relatively
+new feature that a lot of people have
+missed out on is the fact you can now
+change the size of ground units I'll go
+ahead and pause my scenario here so we
+can play with this one keep in mind
+whenever you're doing any of this work
+you're not going to be doing this with
+the anything other than the ntds NATO
+ap6 if you do any of the other styles
+for example if I do a directional
+stylized here you'll notice it'll change
+the style of my units it's not really
+going to do much for us again we'll see
+why in a second here so what I'm going
+to do here is come down to where it has
+these four options ground unit Zoom icon
+Zoom rectangle and flower shape now
+you're probably be sitting here going
+what do these have to do with anything
+well it actually has a lot to do with a
+lot of things and now for those of you
+who are not familiar with the ntds Let
+Me Go a and open this one up real
+quickly here each different type of side
+has a different distinctive shape what
+you'll probably notice here is like our
+players are going to be rectangles
+neutrals are going to be kind of squares
+hostiles will be diamonds unfriendlies
+are going to be this and of course our
+flower shape comes with our unknown
+units here and that's what we're
+referring to with these different icons
+for example I notice the fact that I
+have my ground units here so I'm going
+to grab my rectangle zoom and I'm click
+and drag that you'll notice I can now
+make my boxes gigantic if that's
+something that I want to do so go ahead
+and restore that back to a normal size
+now for my flower shape icon I would
+need a neutral unit that's ground that's
+hard to do because usually identify
+ground units as soon as you see them but
+for the diamond we can take a clear look
+at our buddy over here that's Sam group
+so if I were to grab this and make this
+one bigger it will change the size of
+enemy diamond shaped units uh grabbing
+this one of course changes the size of
+everybody's units so it kind of gives
+you an idea of what that can do directly
+now there's another cool thing that we
+have on this one which is kind of fun to
+play with as well and that's the fact
+you have the ability to go ahead and
+show color data blocks and now for those
+of you who've not played with this one
+before what this does is when to click
+on a red unit it'll actually turn it red
+uh you'll see the text itself turns red
+when I turn on a neutral unit it'll
+actually turn kind of that green if type
+in one of friendly units you'll notice
+it'll turn blue when that particular
+unit is selected now the cool thing with
+that of course is if I come to my gam in
+here if I write click on this one say
+that this neutral you'll notice it'll
+actually change its color to the green
+to be able to identify it obviously if I
+make it unfriendly and orange you can
+see that that's kind of changeed to that
+shape we go right back to Mark hostile
+again you can see it absorbs that shape
+as well so these are all useful tools
+for you now of course if we want to have
+a little bit of fun here let me go
+directional stylized real fast and if
+you were to start grabbing these things
+you will notice it will still change the
+size of these style units but it will
+not change the style of other units like
+that another thing worth noting is is if
+you are changing the zoom you are
+changing the zoom of all of your units
+at one time now what you're probably
+saying is okay that was a pretty cool
+thing that's that's good to know I
+didn't realize I could play with that I
+especially like the red text here by the
+way this little icon thing if you shut
+this off this really does save a few
+frames if you were worried about in game
+performance that actually works about
+pretty well but one of the things that I
+really find kind of interesting about
+this is that when we start getting out
+to here obviously we're in the fa Lin
+today because I needed a really really
+big distance to work with that was
+simple you'll see here that as soon as I
+go ahead and click some of these items
+that it causes some other issues namely
+that once you get out to a certain zoom
+level you're going to start finding that
+things get very very difficult to see
+you know if I go like this um I can't
+tell you how many individual units I've
+got down here just just one gigantic
+massive rectangle and the other thing
+that's worth noting too is when you
+start playing with this is it will not
+make it easier to select a unit U for
+example if I zoom way way way down here
+well let's make these things double size
+you will think that you'd be able to
+click on the unit from this corner here
+but you'll see no matter how many times
+I click it doesn't you still have to
+actually select the center of the unit
+it's not even the center of the unit
+that you're selecting you're actually
+selecting the upper center of the unit
+when you have to click on it so it's
+just kind of one of those little quirks
+that by making them bigger and easier to
+see like that especially if you're
+creating specific kinds of missions it
+does help with certain things but you
+can also notice that it is just nice to
+be adjustable in general enjoy

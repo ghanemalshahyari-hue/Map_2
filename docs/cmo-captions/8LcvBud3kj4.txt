@@ -1,0 +1,697 @@
+# C: MO - Naval Mine types and the ways to detect and deal with them
+Video: https://www.youtube.com/watch?v=8LcvBud3kj4
+Video ID: 8LcvBud3kj4
+
+Hello everyone, in today's video we're
+going to be taking a look at mine
+warfare, uh the different types of mines
+and some basics on how to actually deal
+with them. Now, when people think of
+mines, uh they usually typically think
+of what I kind of call uh movie mines,
+which are those old school 1908 to 1915
+floaty types. And if I go over to weapon
+real quick here and I just type in
+floating real fast, these are the mines
+that basically look like this. Uh
+they're going to have little sensors on
+the outside, which could be acoustic
+sensors, they could be magnetic sensors,
+they could be contact sensors, meaning
+you have to actually bump the mine to
+set the thing off. This is a very old
+school type of mine and believe it or
+not, they're still pretty popular
+because you just throw these things off
+the edge of the deck and hope that you
+don't drive over it later on. Believe it
+or not, these are actually very very
+difficult to detect even though they sit
+on the surface. Uh not only are they
+difficult to detect, but you also
+probably realize they come with some
+nice little quirks, which make them kind
+of interesting. Now, the other type of
+mine that you're going to see as well is
+something called a moored mine. These
+are mines that are going to be sitting
+on the If you want to imagine you take a
+little cable, usually it's almost like
+an anchor. You're going to drop them in
+the water, the anchor's going to slam
+into the bottom and these are going to
+float upwards and they're going to be
+sitting below the surface of the waves
+waiting for somebody to come by. Now,
+they come with a bunch of different
+types of tools for detection. Uh again,
+they can use magnetic, they could use
+pressure, they could use contact, which
+is a little harder because you have to
+know exactly where the thing is. Now,
+these mines are kind of cool because
+obviously you can't detect them by
+looking down at them. And second of all,
+to get rid of them, you've got to cut
+the cable, let the thing float to the
+surface, and then you got to use regular
+gunfire to kill it. Now, this is a
+really classic type of mine and it only
+really works in depths that are shallow
+enough to support it. That also means
+the crew that's laying it has to know
+the exact depth of the weapon that
+they're going to be using.
+The next type of mine that you're going
+to see is going to be
+the most frustrating of all,
+and that's going to be a bottom mine.
+These things are annoying. The good news
+with bottom mines though is you don't
+have to worry about them in your deep
+water because if you drop one of these
+things at 10,000 ft depth water, it's
+just going to float to the bottom and
+not bother anybody. These are mines that
+are basically thrown off the edge of
+airplanes typically, although they could
+be subs, they could be boats. And what
+they do is they just sit in shallow
+water and they listen. And there's a
+bunch of different fusing types. I have
+broadband simply mean is something loud
+going by. You have narrowband, did
+something loud go by that has a certain
+sound signature to it. You have pressure
+fuses, is something making a pressure
+change above us. And of course, you have
+the incredibly lethal type, which is a
+remote controlled mine, which somebody
+basically on the shore basically sits
+over the button goes, "Hey, a ship's
+going by." Click. And you'll notice it
+is unsweepable. You also notice that the
+seismic fuse mine is also unsweepable.
+These mines we haven't figured out a way
+to deal with them yet because they're so
+darn effective. Now the neat thing is if
+you float down here, you'll see nobody
+actually drops these in this default
+game. Uh both of these like I said are
+those kind of specialty types, but like
+I mentioned, they're pretty nasty. These
+are basically smart mines if you want to
+kind of think about it.
+The next type of mine you're going to
+see is something called a captor mine or
+I like to call it a torpedo mine. These
+are mines that again, I picked this one
+particularly. There's different
+countries have different variations on
+this. That is a torpedo housed inside
+the mine. Uh what it actually does is it
+sits at the bottom of the ocean, detects
+a submarine typically, and then shoots a
+torpedo at it. Uh which is an
+interesting problem cuz it makes it very
+very difficult to deal with. And again,
+this thing is just chilling until it
+hears the right sound to actually go
+off.
+And then if that weren't bad enough, you
+also have these guys. Uh these are mines
+that are basically torpedoes that run
+out of energy and float down to the
+bottom and become bottom mines. Uh these
+are kind of neat because you can
+basically use them to get the mine where
+you want to go. For example, let's say I
+want to put a mine right here, but
+there's an anti-aircraft battery right
+here. What I could do is I could fire
+the mine here, it would hit the water,
+and actually swim here, and then drop
+itself down to the bottom, keeping me
+out of the danger zone of the actual air
+anti-aircraft system. Now that's pretty
+nasty. And now one of the things I want
+to emphasize too with all mine warfare
+is it's indiscriminate. It doesn't care
+who it explodes. And again, some of the
+more modern types that you saw, the
+unsweepable varieties, are very, very
+nasty in that regard. So, you always
+have to remember that if I set a mine,
+you're basically denying everybody. The
+other thing you need to keep in mind is
+that mines, if you put a thousand mines
+into this area, there's still the
+probability we could get through without
+bumping into anyone. Let's show my point
+here. So, what I have right here is I
+have the merchant vessel insurance
+claim.
+&gt;&gt; [laughter]
+&gt;&gt; That's an awful name, I'm sorry. And I'm
+going to order him to go straight
+through the minefield. Uh you can't see
+the minefield. Woah, there it is. So,
+I'll go ahead and I'll let you see what
+happens here.
+Yes. Did you just notice that a ULCC, an
+ultra large crude carrier of 420,000
+displacement tons, deadweight tons
+actually, sorry. Um sailed right through
+without any damage, and we have the
+world's most deadly mines there. And
+that's one of the interesting problems
+with this, is that if he were a mile to
+the right, he would have not hit one or
+two, he would have hit probably seven on
+the way over. As a matter of fact, if I
+were to grab him and put him over here,
+I'll go ahead and be mean. Sorry, MV
+Insurance Claim, but I need you for
+demonstration purposes. All right, go
+through.
+Oh. Ah. Oh. Ah.
+Now, what you'll notice here is he's so
+big that every time he hits a mine,
+&gt;&gt; it only scratches him. Oh, he's done.
+Well, MV Insurance Claim, you you you
+did your purpose here. And if we
+actually were to back up real quickly
+here, you'll see he probably went
+through like four or five mines here. As
+a matter of fact, let's see here. 1 2 1
+2 3 4 5 6 7 8. He hit eight mines, and
+now you can see that the difference in
+course made that much of a difference as
+far as hits. And that's one of those
+things that I want to sort of emphasize,
+is that these are not well placed as far
+as actually trying to do it, but that's
+again a video for another day. Even the
+the rising mine didn't hit him, which by
+the way is a bottom mine that floats up
+and then explodes. I forgot to mention
+that, my apologies.
+So, as you can see, very dangerous. So,
+my MV Insurance Claim probably doesn't
+have a working engine right now. Yeah,
+the diesel's
+Oh, they're cooked. So, we're going to
+make them operational and we're going to
+send him back to home base here, which
+unfortunately is over here in Block
+Island. Again, um I'm not going to worry
+about that too much cuz he's going to
+hit about six more on the way over. So,
+how do we deal with this? Well, it all
+comes down to the type of actual mine
+that you're dealing with. Obviously, um
+you have to know that it's there and um
+unfortunately, our MP insurance claim
+did a pretty good job of detecting that
+mine for us. But, one of the old-school
+ways of doing this, which is a stupid
+way to do this, is to get something
+that's really, really durable in order
+to go directly through the minefield.
+Now, the cool thing here is I like how
+it says I can't sell land. I know.
+So, um the reason this is kind of a neat
+trick is because believe it or not, if
+we can figure out the path this thing
+takes, if we know that it takes that
+path and gets through, we found a safe
+path in the minefield. And um what I'm
+doing here is I'm actually going ahead
+and drawing these two points here and
+I'm just making a mental note of this.
+So, in the event that I want to use this
+as a safe path to get through later, I
+can just have all my ships that are
+following basically follow along behind
+it. Now, the fun thing with this
+strategy is uh you'll see in a moment
+here.
+Also, he didn't round that corner where
+I rounded that corner.
+Uh let's put him right there. Okay, here
+we go.
+Oh boy.
+&gt;&gt; I feel sorry for this guy.
+Okay, have fun uh USS Volunteer.
+Uh-oh.
+See, the problem is the water's really
+shallow here and they did not model the
+channel. So, as you will probably
+observe, um unfortunately, every time
+that he takes a little kink in his turn,
+this is up just path fighting in action
+here. I have to actually make a little
+adjustment to this so that it works
+properly.
+Uh there we go. Okay, go swimming.
+All right. All right, haven't anything
+yet.
+Wow, that was the uh world's most uh
+torturous course you could possibly have
+taken here, but um like I said, for this
+purpose, this is pretty good. All right,
+USS Volunteer. Oh! Oh, nope, USS
+Volunteer clipped one.
+All right, but the nice thing is we know
+that the USS Volunteer hit the mine for
+us. And let's see how bad he did.
+Remember, this is a battleship. This is
+a pretty big ship. Uh damage control,
+what happened?
+Nothing.
+&gt;&gt; You heard a thump and everybody said,
+"What was that?" And meanwhile, there's
+some guy who was like reading a magazine
+who basically probably got ejected
+through the ceiling, poor guy. But the
+reality is I know this is a safe path. I
+could go get my insurance claim and send
+him back through this again if I needed
+to.
+Now, that didn't work great. So now
+you're saying, "Well, didn't you have
+some mines that were floaty varieties?"
+Uh yeah, we do. And now as I was
+mentioning earlier, those floaty
+varieties are actually low enough in the
+water that a very, very sophisticated
+maritime patrol aircraft, such as my
+lovely little P-8 here, Mr. Mister,
+can't take these broken wings.
+Um cannot detect those floating mines.
+And you can see here he's uh just kind
+of chilling scanning that whole region.
+Even if I were to try to lower his
+altitude, he's just not going to pick
+anything up. And uh while I'm saying
+that, too, I just want to point out the
+fact that uh your assistant volunteer
+here, if I were to turn on his surface
+search radar, which is not messing
+around, he's not going to be detecting
+any of those floating mines. Like I
+said, they sit kind of low in the water,
+so you're not going to be able to
+identify them right away. Now, one thing
+you could technically do is you could
+see them, again, if you had a good view
+of this. So one of the best tools we
+have for detecting mines is actually
+submarines. Uh submarines have lovely,
+lovely tools on board, such as
+ultrasonic radar. Not ultrasonic,
+high-frequency radar, I'll be more
+specific here. If it was ultrasonic, we
+couldn't hear it. High-frequency radar
+is cool because it has the ability of
+basically picking these things up
+accurately. It's very, very
+short-ranged, and it's difficult to
+detect at a distance, which is a huge
+advantage for us. So what I'm going to
+do is I'm going to go float this sucker
+on and off about six times. And I'm
+going to go ahead and aim my uh lovely,
+extremely expensive submarine at uh our
+destination here. And I'm going to order
+it to go at creep speed. Obviously, if
+you want to go a little bit faster, um
+you're
+Yeah, you try that. Whoa, we found one.
+Now, the interesting thing is the
+Careful Now sailed underneath this
+drifting contact fuse mine. Now, the
+cool thing here is in the real world, I
+could send a little ship with a gun on
+it and basically just go pew pew, blow
+that thing up. But unfortunately, I'm
+going to have to sweep it conventionally
+cuz the way they model it. Whoa, what's
+happened? What you'll observe here is my
+USS Careful Now has done a beautiful job
+of detecting those mines basically from
+underneath them. You also see the USS
+Careful Now is being attacked by two
+torpedoes. Now you're sitting here going
+there's no torpedoes here, but there are
+torpedo launching mines. As a matter of
+fact, there's 60 torpedo launching
+mines. So, one of the things you can do
+is if you want to make the world's most
+irritating scenario is you can mix those
+in with the regular their explody kinds,
+and that causes a basic disaster for
+anybody trying to get through them. As a
+matter of fact, you can see that my
+Careful Now is going home because I'm
+not risking a Seawolf class submarine
+against a bunch of mines. That guy is
+doing 35 knots through a minefield. That
+seems safe. The worst part is he's
+probably going to attract about six or
+seven more.
+I feel sorry for this guy. Uh basically,
+those mines are going to go sailing by.
+Not the mines, the torpedoes are going
+to go ripping by. And then by the time
+he's finished turning around here, he's
+uh probably going to smack himself in
+about six more of these things. Sigh.
+Oh, here comes another one.
+Well, I'm about to use lose the USS
+Careful 9 to an underwater mine. Notice,
+by the way, the uh torpedo mines here
+are having a real tough time actually
+hitting him. But again, nobody No
+submarine captain in their right mind
+would ever do that speed underwater
+through a minefield.
+&gt;&gt; He's having a bad week. Go go go go go
+go.
+The incredible thing is at 35 knots,
+those torpedoes are having a heck of a
+time actually tracking him. So,
+ironically, the Careful Now is probably
+going to survive. The Careful Now is
+going to survive. By the way, we did
+find some mines with the high frequency
+sonar.
+Now, as you also know, there are
+wonderful wonderful ships that have the
+capability of basically doing mine
+sweeping as well. Now, the key thing
+with these ships is that they are
+usually designed to be not blow up if I
+bump into a mine. I actually I take that
+back. If they bump into a mine, they
+will explode and they will be snapped in
+two cuz they're so tiny. But, they're
+built of hull materials and special
+tools that make them less likely to set
+off different mines. Now, one of the
+problems with these, and now this is a
+definitely a
+Did you know this was a problem kind of
+a problem? Is the fact that a lot of
+their sweeping equipment only works on
+certain types of mines. Additionally,
+any of their sweeping equipment on board
+is only going to operate when working in
+a straight line, which is really
+important. So, if I grab USS Hope and
+Pray here and grab him real fast, uh
+you'll notice he's got a couple
+different tools. He has a very, very
+good mine hunting set off uh sonar,
+which works fantastically. And he's also
+got many different tools that he can use
+for the purposes of breaking these
+mines. For example, you notice we have
+the cable cutter variety, which is
+basically, remember the moored mines
+with the cane chain? What it will do is
+it will snap the chain, the mine will
+float to the surface, and then you just
+blow it up the old-fashioned way. We
+have acoustic and magnetic influence.
+These are pretty cool. Basically, make a
+bunch of noise and cause all sorts of
+magnetic disturbances and it causes the
+mine fuses to go off on their own. By
+the way, modern mines will ignore that
+automatically and explode on the second
+pass. Isn't that irritating? And of
+course, if you really have to do it
+properly, you can send a diver down
+there with an explosive charge. Uh
+that's going to take a hot second to do,
+by the way. So, keep that in mind when
+you're working with this. So, anyway,
+let's go ahead and grab this guy. We're
+going to go ahead and flip on his uh
+sonar here. Does a good job. Again,
+these are some pretty good sonars. Uh we
+can flip some radar on, too. It really
+doesn't matter. The reality is, if
+you're on I need to sink mine situation,
+you're just going to have to accept the
+fact that people are going to know
+you're doing it. Uh that's part of the
+fun.
+Uh speed up a little bit.
+And he gets going. And if
+That poor guy is having such a week.
+So, one of the things you'll notice here
+is my little mine sweeper mobile is I
+got these little blue things behind it.
+It simply represents the area in which
+it's sweeping mines. I'm just going to
+say this now, if you attempt to sweep a
+mine that's floating with something
+behind you, you're going to smack into
+the mine.
+It's I know, it's one of those things
+that's like, well, yeah, but the reality
+is it just doesn't work that way most of
+the time. So, just be really, really
+careful that before you send him in
+here, you have a good idea where the
+floaters are before you start going for
+like the bottom mines and the captor
+mines and stuff like that. But
+basically, what this guy's going to do
+is he's going to be sailing right on
+through. He'll try to sail through. I
+could have done sail away, that would
+have been a good choice. Notice when he
+turned, by the way, he stopped breaking
+the mines and he's going to basically
+line himself back up and then he can
+start sweeping again. Just check it.
+Yep, the sweeps come back out cuz
+remember the chain has to kind of follow
+it. Basically, it's kind of you know how
+this works, but he's got the duty and
+he's going to go through.
+Now, the other thing we can do, too,
+when we want to deal with all sorts of
+mines is we can actually come up with a
+more effective way, which is using
+something in the air to sweep the mines
+so we don't have to constantly put our
+little boat at risk here. Like you'll
+notice Oh, no!
+As you notice, the uh hope and prayer
+was annihilated and it got annihilated
+by our friend Let's see who got the
+insurance claim is being repaired. It
+got blasted by a rising mine and it's
+gone. And you can see, so much for that.
+All right, let's go try this a different
+way and get ourselves a helicopter. So,
+I have the LPDOMG. I'm going to go ahead
+and click right here. We have hovering
+doubt and mild concern. I'm going to go
+with hovering doubt for this. All right,
+come on out, hovering doubt. You're a
+secret weapon here.
+All right, I feel sorry for hovering
+doubt here.
+So, as you're probably noticing, this
+sucks. Um again, if this were a warfare
+and I'm trying to do a basically an evil
+invasion of this entire region here, I
+don't know what Providence did to me
+this week, but um too bad.
+It's It's tough. It's really really
+really really tough. Now, we have
+something called the ALQ-220 Oasis,
+which is a kind of fun little tool. And
+uh the thing too is it's a magnetic
+influence tool only. Uh there's no cable
+cutters or anything here. You're only
+working on one type of mine. Now, if I
+come in here and I go ahead and flip the
+sucker on, uh there's a couple little
+rules this helicopter's going to have to
+basically follow to do so. Uh one thing
+is for sure is that uh he's got to get a
+lot lower. You're not doing that at
+altitude. Come on down to normal people
+altitudes, please.
+Come on down.
+There we go. Come on down. Come on. Come
+on. Yes, you can realize how insanely
+dangerous this is. I'm dragging a cable
+behind a helicopter. That seems like a
+good idea to me. What about you? And
+obviously we got to slow down quite a
+bit here. We can't be a ripping along as
+we're doing this.
+There we go. Let's go ahead and take a
+look real quickly at that sensor. I
+believe it has a specific uh height that
+we have to operate from. There we go.
+Uh yeah, I'm just going to do it the way
+that I normally do it.
+All right. So, what I just did is I
+created a quick mission, a mine clearing
+mission. For those of you who've not
+done mine clearing missions, it's the
+same thing as a regular mission. Just
+make sure that when you define it that
+you set your flight size if you want it
+to be one at a time. And the other thing
+too is if you remember from the mine
+laying video, we actually had the
+ability to repeatable loops if you
+wanted to find a more tight range. Now,
+one of the things you'll probably
+observe here is the fact that this
+helicopter has dropped its tool and it's
+uh basically actually got actually go
+into this one and put this one back on
+uh manual there, whatever I have to tell
+it, just so that it works automatically.
+So, one of the things you'll notice is
+it's a very, very tiny sweep. And uh
+this is a very much the case. It's a 300
+m wide sweep here. And if we're trying
+to sweep this entire region of mine, we
+have these two little tiny helicopters
+with their little tiny things. Now, what
+you'll notice here is they automatically
+went after that mine, which was awesome
+because as you probably observed from
+our MCM buddy, he didn't do much. But
+again, every time they detect a mine,
+they're going to try to go ahead and get
+it and uh see if they can blast it.
+Remember, some of these mines won't be
+set off by these helicopters. So, even
+though we're ripping around here and uh
+doing a real nice job. As a matter of
+fact, I'm going to intentionally expand
+this a little bit, which is going to
+cause them to basically zero in and see
+how they just blasted it.
+I can have these two helicopters go hard
+in this region for a very, very long
+time. As a matter of fact, what I'm
+going to do is I'm going to expand this
+a little bit. And again, I'll switch to
+God's eye view so you can kind of see
+how many mines we've hit so far today.
+It's been a few. All right, we'll spread
+that out a little bit and just kind of
+let them go at it for a little while.
+And again, this region here is only
+about four nautical miles wide, which uh
+from a navigational perspective, if
+you're dealing with a really, really
+tough situations, uh this probably
+wouldn't be accurate enough. And again,
+our helicopters are ripping around with
+their tiny 300-m fingers, uh basically
+going through all this, trying to clean
+out anything in here. And as you're
+observing, they're not doing a great job
+because they can only influence certain
+types of mines.
+All right, I'm going to let them kind of
+do that. We'll go ahead and grab our LP
+OMG. And just for giggles, we'll go
+ahead and order the LP OMG right through
+the minefield that we {finger quote}
+cleaned up. Let's see what happens. Here
+Ha ha ha [laughter] ha ha,
+we did it. Now, the interesting thing
+here, of course, is look at how many
+mines there still are. So, it just gives
+you an idea of how stupidly annoying
+these things really are. So, let's go to
+losses and expenditures real quickly
+here. I think you'll find this
+interesting. So, they lost a total of uh
+these are the ones we blew up. Uh so, we
+got 11, 12, 13 mines. Uh I laid 300
+mines today, by the way. So, uh we got
+uh about 5%, a little less. Not good.
+Not good. Expenditures on the flip side,
+uh you can see Remember those uh torpedo
+mines? 17 torpedoes were launched at my
+Seawolf there, and incredibly, he didn't
+get sunk from it. You can also see that
+my contact, I set off 14 of these, which
+is a lot. Meanwhile, remember our little
+mine vehicle? It got tapped by this one
+and basically snapped in two. And of
+course, the rising one did quite a bit
+of damage. We lost the Avenger, and of
+course, that's nasty.
+So, where am I going with all this? And
+why is this all important? What's really
+important is if you're doing a scenario
+that involves mines, you have to
+remember that you don't have to sweep
+the entire ocean. So, what I have here
+is, as I was mentioning a second ago,
+this thing's 4 nautical miles wide. It
+doesn't have to be 4 nautical miles
+wide. Take a look real quick.
+What I want you to see here under our
+message log real quick is if I just go
+down this, you'll notice our surface
+detonation here was 450 m away from the
+helicopter that passed by it. That's
+half a kilometer when these weapons are
+actually going. And if you actually come
+over here to our generic mine warhead,
+the one that actually broke our poor guy
+here, unfortunately, this one, you'll
+notice here that it detonated directly
+underneath. So, this was a zero nautical
+mile hit. You'll also notice that this
+guy actually took several hits
+previously, too. Uh the going from this
+one you can see here that this range was
+also an underwater detonation. That was
+a pretty darn close. Oh my goodness,
+this thing got nailed. Armor da da da da
+da da da just trying to see uh the MMV
+insurance claim. And you'll see that the
+one that was taking the hit at our
+battleship went off at 1,300 ft. Now,
+that means and again, if you want to
+take kind of the thing to take a look at
+this, that our giant cleared the zone
+out did not need to be nearly this wide.
+If we know that a mine's effective range
+is only going to be about, let's say, a
+kilometer at the most, this could have
+been a lot smaller.
+We could have built it for this size.
+This is almost exactly 1 km apart, and
+we would have been okay. Keep in mind
+though, that would mean that if we were
+to try to go down the middle of this
+thing, we'd have to be perfectly down
+the middle of this thing. So, for
+safety's sake, you probably want to at
+least double the area that you're
+covering and sweep a 2-km wide zone.
+Otherwise, you're going to get a lot of
+those surprises. Another thing too with
+any sweeping is the job is never done
+because even though we got most of them,
+we really didn't in the end. Enjoy.

@@ -1,0 +1,508 @@
+# C: MO - Effects of Rain on Detection
+Video: https://www.youtube.com/watch?v=P6UAdBqTUhk
+Video ID: P6UAdBqTUhk
+
+hello everyone in today's video we're
+going to take a look at the effects of
+rain on radar detection and command now
+the interesting thing with uh rain is
+it's something we're all very familiar
+with on almost like an intuitive scale
+and it's a little interesting when you
+try to abstract it inside if a military
+simulation like we have over here in
+command so for us we have a couple
+different selections when it comes to
+rain and if I come over here to a
+weather real fast and hit on that you'll
+notice I have no rain which represents
+itself as clear sky and of course if I
+crank it to that you'll see that it
+gives me extreme rain now one of the
+things find very interesting here is of
+course the sky uh the clouds are not
+linked to the rain you can actually do
+them separately which is kind of fun
+when you think about it so what we're
+going to do is we're going to
+demonstrate the impacts of rain so I've
+got myself a p37 radar nothing special
+and now one of the things I've done for
+the purposes of demonstration today is
+under my message log I forced it to go
+to 1x if we detect a new air contact so
+if I do this do you see how the game
+instantly froze to 1x now I can click on
+him and I can see that I have a Target
+at 231.50 mil so I happen to know he's a
+B52 2 31.6 NM no rain actually if I'm
+just smart about this I can come in here
+and say no rain right here I'll go ahead
+and grab this window and pull it off to
+the side so let's speed up time
+again ah we picked something else up
+let's see what this is that's a I happen
+to know it's an F22 and that's 29.7 so
+come down here I'll go aad and say have
+22 29.7 nautical miles nice so then what
+we're going to do of course is daylight
+so I'm going to go Mark both of these as
+hostile and I'm going to let my sa3 crew
+which happens to be a really talented
+crew of missile years uh do the best
+they can and they're going to try to
+take pot shots at are incoming missile
+targets basically the F22 of course is
+going to be a very complicated Target to
+hit because it's not only a very high
+performance fighter but it's a very
+ambiguous Target so even though it's com
+to visual range and we're desperately
+trying to lock on it our Fire Control
+radar has no ability to lock on B52 on
+the other hand no problem Splat so let's
+go ahead and load our scenario up again
+so we have our initial results here and
+this is where things are going to start
+getting a little bit different so I'm
+going to come up to here I'm going to go
+to edit real fast I'm going to go down
+to the weather options I'm going to go
+ahead and um let's see we'll make the
+sky kind of nasty we'll make it uh solid
+cloud cover sounds good to me we'll
+crank up the way all the way all the way
+up to maximum maximum level level rep
+repetition repetition so what we're
+going to do now is we're going to un
+pause and now we're going to speed up
+time and we're going to see if that ises
+any difference on the detection distance
+now I notice here that our handed nb52
+was picked up at 2315 2 31.5 so I think
+it's pretty safe to say no difference
+and of course you can argue that point
+all you want I'll afternoon but the
+reality is um tactically not a big
+difference not really a big deal so
+let's go ahead and speed up time a
+little bit and I'll give it a few
+moments here and we should spot
+something else ah pause my game let's
+see what this is this is a B52 it's an
+onum rather it's an F22 and when I come
+down here of course 3.7 NM and no
+difference at all so you can see here
+that we don't have any difference
+whatsoever when we're dealing with rain
+as far as radar detectability goes now
+obviously if I go like this and I'll
+make them both hostile targets so let's
+see what happens this time time so we
+shoot down the B52 no problem and we
+actually lost sight of the F22 when I
+was traveling along this point because
+we basically can't physically see it of
+course there's this big nasty BL back
+large wall of clouds above us which is
+preventing us completely from being able
+to engage it but the Tactical result is
+essentially the same here and it's
+actually very interesting we're using a
+p37 here so when we look at the actual
+results we can see there's no difference
+whatsoever so we're sitting there going
+why I thought these Radars were really
+really powerful and um you they'd be
+limited by rain and things like that
+it's because of the generation and age
+of the radar we can see here when we
+head over to radar tutorial to EU great
+website by the way is the fact that uh
+this particular radar came out in 1961
+so it actually has the ability to do all
+sorts of fun things it's also a very
+very powerful radar it's actually 700
+kwatt radar so once you kind of uh mix
+the two different factors together even
+though it doesn't have the most precise
+targeting it is more than capable of
+burning through any rain that might get
+in its way and limit its maximum
+range now the scenario changes a little
+bit so we've now gone ahead and backed
+up in time a little bit here to a much
+much earlier generation radar we're
+looking at the P3 Dumbo radar and if you
+actually take a look at the little image
+that they give us you could tell that
+this radar is anything if not remotely
+sophisticated it's actually very clear
+that it is an old school radar here and
+it's actually kind of neat it's the 1947
+initial operational date kind of a thing
+so what we're going to do is we're going
+to go ahead and try to detect some
+targets I had also change the database
+to make this work and now we're going to
+look around and see if anything comes up
+oh we picked up something now we've
+detected here so we' detected probably
+our B-52 friend uh but one of the things
+you probably notice about our B-52
+friend is he's over here and our current
+detection places him over here on this
+side so we're struggling a little bit by
+the way the weather is clear weather at
+this time so I'm going to goe and
+unpause real quickly here speed up time
+a little bit we'll let them kind of make
+a less ambiguous Target uh we're getting
+a little better this is a little better
+okay we're we're fairly confident about
+where this target is now so we were a
+second ago and then of course the radar
+finished spinning around and now we're
+not terribly confident anymore and it's
+uh all over the we picked something else
+up here oh boy let's see here and keep
+in mind there's no jamming going on here
+this is just conventional radar
+technology this this is what we had work
+with what you got kind of a thing so we
+can see here very clearly that after
+initial detection of about 120 nautical
+miles from 130 for obviously the B52 the
+F15 was a little bit closer let's go
+ahead and grab our little handy dandy
+thing uh 119 for the F-15 and it was
+what do we say it was about 130 or so
+for our buddy over here so if I click on
+this one 127 so if I go 127 for the B52
+so that's pretty good that's pretty good
+again this is ancient technology and you
+can tell very clearly we have a very
+very ambiguous Target so what I'm going
+to do is I'm going to pause I'm going to
+go ahead and drop both those targets I'm
+going to go and grab them this is one of
+the nice things about the mission
+editors I can just click on stuff I can
+go grab them
+who can can I get an
+undo let's go grab a b52d which is the
+correct B52 by the way click on this one
+I'm going to go press on and do one of
+these things real fast I'll grab that
+guy as well I'm just going to take him
+and move him over here kind of a thing
+like that so what we're going to do now
+is we're going to crank up the rain a
+little bit so I'm going to grab up the
+weather one more time we'll go make the
+sky kind of nasty and we'll Jam the rain
+up so this is absolute maximum rain kind
+of a thing like that and what I'm going
+to do is I'm going to speed up time and
+moments later of course we acquire a
+Target and we notice that we've detected
+it at about 142 uh keep in mind of
+course when we did our original
+detection is a slightly different range
+so this is not valid so you can see um
+we're able to kind of narrow that Target
+down roughly um we can tell it's it's
+out there about 146 which is pretty fair
+for a B-52 B-52 is kind of a really
+really big Target so it's it's it's it's
+there is got a little closer as we get a
+better radar and again Radars are such
+fascinating tools oh we picked something
+else up so then we got a new Target now
+this is our F15 buddy and of course as
+you're probably aware we picked them up
+at about 119 last time when I pull this
+down you'll see the fact that our radar
+detection range is completely unaected
+and again now this is a classic example
+of having a radar that's extremely
+extremely powerful for its size so even
+though there is a penalty because of the
+rain and the scatter that it causes it
+doesn't necessarily cause it to give us
+an issue where we can't see the Target
+in it there's another issue that we're
+not thinking of too which is very
+interesting and that's the height of the
+rain now if I go up to my switch two
+real quickly here and I grab this guy
+you'll probably observe that he is um
+pretty much at the solid deck he's at
+the top of the solid Cloud deck he is
+not anywhere inside of the solid Cloud
+deck as a matter of fact he's just
+skimmy across the top now if I order him
+to move into the center of the cloud
+deck let's order him down to 25,000 ft
+here which puts him basically in the
+middle of this giant wall of clouds kind
+of a thing let's make sure 7 to 36,000
+yes correct now what I'm going to do is
+I'm going to go ahead and grab these two
+I'm going to send them back out to sea
+so to speak and I'm going to give them
+enough time to sort of start descending
+downwards well that's usually what
+direction people descend but um what I'm
+going to do is I'm going to allow them
+to descend end into the layer of rain
+that we're actually going to be looking
+for here so let me go and speed up time
+one more time here oh and we picked up a
+Target right away now if I grab my handy
+dandy Guy this is the B52 as you
+probably remember now one of the
+interesting things of course if I
+unfreeze this here you can see we're
+looking at the B52 here he's got a range
+of uh about 146 I think 152 kind of a
+thing in our estimate right now puts him
+at 151 so that's actually a pretty fair
+estimate so goe and speed up time a
+little bit here and I'll allow those
+targets to kind of resolve themselves a
+little bit all right he's cruising along
+pretty well here you know you still have
+not acquired that F-15 remember last
+time we acquired the F-15 it about there
+he is give him a second to kind of conal
+into a Target we can actually launch
+stuff at here and when I click on them
+it gives me a range of 11 19.2 and if
+you take a look down here you'll see
+that in fact our radar range is utterly
+unaffected by the presence of this
+extremely heavy rain even though our you
+know lovely aircraft are actually
+traveling directly through the rain
+itself so you're sitting here going well
+that's kind of a bummer I was kind of
+hoping that the rain would like really
+really make it so much more difficult to
+see these targets that are flying
+directly towards us and allowing us to
+basically Doppler shift out the rain and
+I'd say yes exactly so what I'm going to
+do now is I'm going to grab on of these
+guys and I'm going to order them to go
+ahead and be my radar and the purpose of
+this of course is to demonstrate what
+would happen now these really really
+oldfashioned Radars did not have good
+capability to deal with notching that's
+somebody who has no Doppler shift so as
+our little F-15 turns the fascinating
+thing is we can identify is turning but
+we don't know where his position is I'm
+actually not mathematically sure how
+they would do that maybe there's like a
+shift of a Doppler beam or something
+like that but I'll give it a few moments
+to kind of resolve itself because now
+we're notching the um particular radar
+here but what you'll notice is even
+though we're notching it uh the only
+thing it's done is it's absolutely
+ruined our ability to U basically
+precisely identify the target you know
+we think that the target somewhere in
+this box if I opened it up you'll see
+that the target is actually not in that
+box and even when I come over to this
+one here we're a little bit more
+confident on the B52 because it is so
+much larger but even though we're
+traveling through that cloud bang in the
+rain which would cause turbulence that
+you've never experienced before by the
+way we're still having no limitations as
+far as detectability
+goes so you're sitting here going well
+that sucks um I was kind of hoping it
+would be the thing like you know it
+would be different like you could Notch
+it and all that other stuff and it would
+work well there is kind of a practical
+upshot to thick heavy rain so what I'm
+going to do is I'm going to go ah and
+grab onto a different aircraft tier and
+I'm going to go ahead and grab onto kind
+of a classic aircraft tier I'm sure
+you've seen me use this one for plenty
+of things before I'm going to grab a MIG
+21 and now the reason I want to grab a
+MIG 21 here is I want to get this really
+really really ancient not so great
+missile on the r13 m not great it's um
+it's it's pretty garbage the range is
+absolutely minimal it's percent of hit
+is basically squat it will shoot
+something down but um we have a new
+problem now and that's the fact that my
+lovely mig21 here now has to come down
+here and say hello to this guy Who's
+down to 25,000 ft so now we've created a
+new problem now we go like this like
+that real quick un pause speed up time a
+little bit I'll actually give him it on
+he doesn't even need to what I'll do is
+surprise cuz my make my F-15 is turning
+oh we can't do that we have to actually
+acquire
+him this could be problematic let's go
+ahead and turn on my radar real fast
+here this is the sappier sapphire radar
+and we're looking real hard and we're
+actually going to dive a little bit here
+we're going to come down to 25,000 ft uh
+and you'll actually notice I am having
+no ability in the universe to acquire
+the presence of that F15 even though we
+totally know he's right there even
+though we know that that particular
+Target is located up there we go we've
+acquired him kind of a thing like that
+you'll notice I didn't really pick up on
+him until I was on top of him so I'm
+going to go ahead and order all of my
+weapons to fire here just like that and
+I'm going to go ahead and cut inside of
+his corer kind of a thing remember these
+are tail Seeker so we have to kind of we
+have to temper our expectations a little
+bit on when we do our little engagement
+here so what I'll actually do is grab
+him pull him over here go like that I'll
+let them kind of spin around keep in
+mind um our F-15 is utterly clueless of
+the presence of this guy as a matter of
+fact the other radar crew puts the F15
+somewhere else so we're right behind him
+we're locked on to him F15 is coming
+around I'm going go and kick the power
+up a little bit here pick up a little
+bit of speed to close that distance oh
+yeah here it comes here it comes we're
+closing that
+distance Sapphire R radar says that he's
+at a three natic mile range I'm right on
+top of him oh we got to get just a
+little bit closer here just a little
+tiny bit closer we actually go all the
+way up all right this is going to be a
+bit of a surprise for this poor F-15
+crew here I'm actually going to have to
+go like that that by the way if you want
+to defeat a MIG 21 just go in a
+circle so we're catching up on this guy
+real real quickly here and I'm way way
+within my range it's a four nautical
+mile I when I shift F1 here and I go
+ahead and Target my lovely F15 here
+you'll notice this new problem weapon
+must detect Target prior to firing that
+is because the rain blocks INF Fred
+light it also blocks laser light it also
+blocks visible light now the the reason
+this is so cool is uh because now what
+I'm going to do is I'm going to grab
+this guy real quick I'm actually going
+to put him all the way over here and I'm
+going to go ahead and leave him at that
+altitude of course and I'm going to go
+ahead and get rid of the rain real fast
+here I go grab the rain real fast I'll
+make it clear sky obviously rain and
+clear sky these go together I need to
+kind of keep that mind so now I'm going
+to go unpause real quick I'm actually
+going to drop this target completely I'm
+going to grab my uh handy D mig21 he's
+looking out the front window trying
+desperately to locate that very pesky
+F-15 there which will make short work of
+him and we're just going to kind of do
+the best we can as sort of accommodate
+and sort of lock on to this guy keep in
+mind it's still pretty early in the day
+so it's relatively difficult oh uh oh
+our Radars detected something ah there
+we go and what you'll observe here is my
+Sapphire radar detected him at under
+half the distance that I had well
+previously as a matter of fact if I back
+it up even further if I were to just
+dump this Target and I just let the
+sapphire radar do his little scanny scan
+thing real fast you'll probably see that
+my Sapphire radar will still be able to
+require My Level af-15 there at about
+the same distance that we saw a few
+moments ago keep in mind the pilot if uh
+you can see his little tail kind of a
+thing like that you probably wouldn't
+have too much difficulty at all as far
+as acquiring that a 15 but uh this is
+part of the fun as they say you know
+it's a sapphire radar by the way not the
+greatest radar but it does demonstrate
+my point pretty clearly as far as a
+detection range goes and keep in mind
+visible detections at this point are
+going to be very challenging there he is
+again and you'll notice that with the
+rain and the clouds gone I am
+substantially able to detect him
+actually about 8.1 antical miles versus
+are 4 and a half from for which
+illustrates our Point perfectly which is
+the issue that when you bring in the
+rain and the wind and all that other
+good stuff that kind of comes along with
+it your biggest problem you're going to
+suddenly face is um not going to be not
+being able to detect things at long
+distance it's going to be not being able
+to engage them with fighter aircraft
+which is kind of an interesting problem
+and like I said it's uh definitely kind
+of fun and I'll go aad and speed this
+guy up to military see if you can get a
+cheap shot on an F-15 here we'd have to
+use every single missile on our rack
+there to come even close to taking a
+shot at this guy all right here we go
+I'm getting a little closer I love the
+fact that if I do a shift F1 here you'll
+actually notice that I can't attack my
+Target because it's a Chase Weapon It's
+not a not Chase weapon so again if you
+want to defeat early aircraft um just go
+into a circle it works great there we go
+looks like he's in range come on man
+fire the missiles don't disappoint me
+don't there it goes one of the way so
+now you have to drop them off to loader
+speed so that when the missile leaves
+the rail it um just have some time
+here oh you got r13 M so as you can see
+when it comes to detectability in Radars
+um when you have very very very very
+powerful early warning Radars that have
+very very very wide wavelengths you're
+not really going to have issues uh once
+you have Radars that are Fire Control
+Radars things that are in the X band you
+know the higher bands kind of the high
+frequency Radars that's when the
+problems start to show themselves enjoy

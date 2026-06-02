@@ -1,1227 +1,1219 @@
-0.4	hello everyone in today's video we're
-1.9	going to be taking a look at ballistic
-3.1	missiles and ballistic missile defense
-5.5	now i actually made this exact movie way
-7.8	way back in august and unfortunately
-9.7	when i did it
-10.4	i discovered several kind of tricky
-11.9	little bugs that made things a little
-13.4	not functional for us and they usually
-15.5	had to do with the way the interceptors
-16.9	basically attacked projectiles that were
-18.7	traveling at huge angles
-20.2	so unfortunately i've had to redo
-21.5	everything and hopefully this works out
-23.0	pretty well for everybody
-24.3	so let's go and take a look at our
-25.4	situation and kind of see what's going
-26.9	on here i got my typhoon
-28.0	now that is a big sub by the way so
-30.3	we're about two minutes to midnight
-31.6	which is
-32.2	pretty good reference for those of you
-33.4	know and basically what we've done is we
-35.3	brought out all the different types of
-36.7	ballistic missiles available
-38.2	here in command the first one of course
-40.4	the one that i have selected here
-41.6	are submarine launch ballistic missiles
-44.1	those are pretty cool because basically
-45.6	as long as there's water that's deep
-47.0	enough you could be launching out of
-48.3	them
-49.0	we have much much much shorter range
-50.6	ones such as um this simple system here
-52.4	this is an mlrs
-53.7	this is actually one of the most
-54.6	effective ballistic missile platforms we
-56.7	have what they call basically a tactical
-58.6	ballistic missile
-59.5	this one is going to be used for the
-61.0	purposes of attacking things in this
-62.6	particular case our range is
-64.1	about 30 nautical miles or so we have a
-67.4	little bit bigger ballistic missiles
-69.0	over here we have the short range
-70.4	ballistic missiles such as the scud
-72.1	this is a little bit more traditional as
-73.9	far as range goes again you're starting
-75.5	to get a little bit higher with a weapon
-77.1	like this
-77.8	we go out a little bit further than that
-79.5	we have a really really weird one
-82.1	now why did i grab an iskander an
-84.0	isconder is basically a short-range
-85.7	ballistic missile
-86.7	however this one has a unique feature if
-89.5	i actually open it up real quick
-91.0	you'll notice its projectiles have
-93.0	defensive ecm
-94.8	built into them to make them more
-96.2	difficult to engage this is actually a
-97.9	very very special case but we'll take a
-99.4	look at that of course if i go a little
-101.0	bit further range than that
-102.3	we get what they call medium-range
-104.1	ballistic missiles a good example of
-105.8	this one is the shahab this is
-107.3	the shahab 3. this particular weapon as
-110.0	you can see just for taking a quick look
-111.6	it's got a range of just about 700
-113.4	nautical miles which is getting pretty
-115.2	substantial
-116.2	of course what good is long range medium
-118.1	range if we can't go out to
-119.8	medium range again these both are
-121.4	basically medium range ones
-122.9	this one's a little bit different some
-124.2	of you are probably familiar with one
-125.6	this is a df-17
-127.1	this one i actually put into the
-128.3	scenario because it is basically a hyper
-130.2	velocity one when it infringes the
-131.8	atmosphere it's
-132.8	moving and of course what good is all
-135.4	those beautiful weapons if we can't have
-137.6	something a little bit longer range such
-139.1	as an intermediate
-140.7	range ballistic missile if you take a
-142.4	look at the globe here look at that
-144.2	reach
-144.8	it can literally hit anywhere in the
-146.8	hemisphere now that's a pretty
-148.6	substantial range here
-150.4	but it isn't as much range as
-152.3	everybody's favorite
-153.9	the icbm now this is truly
-156.5	intercontinental
-157.5	if it is on this planet it can be struck
-159.5	with this weapon
-160.7	so what makes ballistic missiles
-162.4	ballistic missiles now of course i've
-164.1	given you a few examples here
-165.5	basically they travel in a ballistic arc
-167.4	what will actually happen is
-168.6	after they launch they're going to burn
-170.0	their engines they're going to run out
-171.0	of fuel and they're essentially going to
-172.4	coast the rest of the way
-174.0	now one of the things that makes them so
-175.7	difficult to engage is because they're
-177.4	incredibly high speed
-178.9	and because of their flight path what do
-181.8	i mean by that well let me go grab
-183.4	emma's paint real quickly real here
-185.2	let's say i have a ballistic missile
-186.6	again this is going to be very
-187.7	unscientific
-188.6	and let's say i have a target here now
-190.5	if i fire and i fly just kind of a
-192.0	normal arc i get something that's going
-193.3	to look a little bit like this
-194.4	a pretty standard ballistic trajectory
-196.7	when this projectile
-198.0	re-enters the atmosphere and actually
-199.5	strikes the target its speed is going to
-201.8	be dependent on its
-203.1	distance that it had to cover it because
-204.7	remember in order to get it to go this
-206.2	far it had to have gone significantly
-207.8	faster
-208.4	but also note that the range is going to
-210.4	have an impact on what
-211.7	angle it hits the ground now if i have
-214.1	the same one and i have the same rocket
-215.8	turn
-216.6	i'm going to end up with a trajectory
-218.0	that looks like this
-221.2	as a result the projectile is going to
-223.4	have to be able to be hit
-224.9	basically coming straight at the target
-226.7	vertically now if i have something
-228.2	that's really far away that does
-230.1	something like this with this ballistic
-231.8	trajectory
-232.6	you're going to have a very long time to
-234.6	actually aim at it because of the fact
-236.6	that it's going to be spending so much
-237.9	time basically being
-239.1	flat so the range of these projectiles
-241.5	has a huge
-242.5	impact on when you can actually engage
-244.7	them and it's also going to have a huge
-246.2	impact on what weapons are going to work
-247.5	best against it
-248.6	whenever you have one of these really
-249.8	really flat injuries like an icbm is a
-251.8	very flat entry
-252.9	relatively speaking it's going to give
-254.9	us plenty of time to engage it but we're
-256.3	going to need a missile that can
-257.7	hit something at a deflection if we have
-261.0	a ballistic missile that's basically
-262.2	going straight down especially some of
-263.8	the
-264.1	more theater-based ones you're basically
-266.5	going to aim straight up at the missile
-268.0	and hit it pretty cleanly it's actually
-269.4	a very easy engagement profile
-271.4	so all these things are going to impact
-273.4	you now if you are a scenario designer
-275.8	and you want to make people miserable
-277.6	fire ballistic missiles at their minimum
-279.3	range because when you do that they have
-281.0	less time to react because they're
-282.2	basically going to fall out of the sky
-283.9	and your engagement window is going to
-285.3	be very short if you're going to be
-286.9	taking shots like this
-288.1	let's say the weapon has a maximum
-289.8	altitude of i don't know about 300
-292.1	kilometers
-292.9	you could actually spend most of the
-294.2	time in the engagement range of that
-295.8	weapon
-296.3	so kind of keep that in the back your
-297.5	head when you are designing it excuse me
-299.4	a terrible art here but it's really
-300.8	important to understand that trajectory
-302.3	because it's going to impact
-303.7	the way we do things okay so now that
-306.2	we've done that let's go ahead and take
-307.5	a quick look at how they function so for
-310.2	us we have a couple different types of
-311.5	ballistic missiles
-312.4	we have these like i said super short
-313.8	ones with like an mlrs and we've also
-315.8	developed ourselves a really good
-317.1	defensive system
-318.2	if i actually go to missile defense here
-320.1	we have a couple ballistic missile this
-321.7	is actually called the cat house this
-323.0	the dunai 3u this is a massive
-326.2	massive radar array if you actually take
-328.3	a look at the statistics on it real
-329.6	quick i'll go pop that up so you can see
-331.0	it
-331.3	it has a staggering 1500 nautical mile
-334.2	maximum range
-335.4	this thing is designed to pick up
-337.1	basically the last second remember
-338.7	satellites are usually go to against
-340.3	ballistic missiles
-341.4	coming over here we have hen house this
-342.8	is nester it's the exact same style
-344.9	technology the only difference is that
-346.3	it's a 1900
-347.4	mile range over here of course we have a
-349.7	couple different systems that i put in
-351.4	here
-351.8	we have the sa26 the s350 this is the
-354.2	vitas
-355.0	this is a very very very good system
-357.2	because there's the ability to engage
-358.3	multiple projectiles
-359.7	coming over here of course we have the
-361.1	sc19 this is a very very very slick
-363.8	system this is a chinese system that's
-365.3	new
-365.7	that can actually engage missiles in a
-367.8	pretty long range
-369.1	if you actually take a look at this
-370.6	scrolling down to real quick
-372.2	we have i'm just going to take a look at
-373.6	this one real quick if i recall
-374.9	correctly
-375.5	a 645 nautical mile range with this
-379.2	weapon but
-380.8	its cruise altitude and its maximum
-383.4	target altitude
-384.6	can severely limit your ability to
-386.4	engage things with it
-387.7	that being said it's an amazing system
-389.6	coming over here of course we have
-390.8	pillbox this is another radar battery
-393.1	and we of course have the sh-11 which is
-395.3	a nuclear anti-ballistic missile
-397.3	and then finally we have the gazelle
-398.9	which is also a nuclear anti-ballistic
-401.0	missile
-402.2	so we have quite a bit to work with as
-403.8	far as to engage things so let's go
-405.8	ahead and see what happens if we try to
-407.7	use a regular mlrs
-409.3	against this you know fairly robust
-411.2	defense here so let's go ahead and
-412.8	select everybody
-414.0	i'm gonna go select all my targets just
-415.7	like that i'm gonna go ahead and do one
-417.0	of these
-417.8	and notice i have weapons hold because i
-419.2	don't want them firing nuclear weapons
-420.6	without me you know
-421.4	saying go kind of a thing and we'll do
-423.0	one of those and we'll go ahead and hit
-424.6	play
-425.2	so as soon as i do that of course
-426.6	they're going to start shooting i
-427.7	actually want to switch to 3d view today
-429.6	i usually don't use 3d view too often
-431.5	but it's really important that you see
-432.8	that trajectory so you know exactly what
-434.6	the projectile is doing when it's
-436.3	traveling like that
-438.5	see if i can get my hands on one of
-439.6	these there we go there you go
-443.2	notice it's more or less a vertical
-445.4	trajectory that immediately turns around
-447.6	and then comes
-448.2	screaming back down trying to hit the
-450.8	target again there's that nice arc
-452.7	which means let's go ahead and flip to
-454.2	the other guy's perspective real quickly
-457.6	they are going to be scrambling to try
-459.9	to get shots
-461.0	up at it basically vertical shots so
-463.7	it's actually not a difficult shot to
-465.5	take
-466.2	let's go ahead and click on one of those
-467.3	missiles so you can watch it on the way
-468.5	up and let's unpause
-470.6	again this is real time so you can get a
-472.6	feel for just how insanely fast these
-474.7	weapons are
-475.7	notice by the time the weapon had
-477.3	finished climbing
-478.7	that we barely had enough time to arc
-480.8	downwards in order to engage it
-482.7	now again the secret to all ballistic
-484.5	missile defense is basically to saturate
-486.8	and you can see that with a simple
-488.7	single mlrs battery
-490.6	we have completely saturated the defense
-493.2	and now they're all incredibly screwed
-496.4	so this is the first lesson is you have
-498.1	to limit the amount of time
-499.7	that they have to react one trick slick
-502.2	trick that i've actually seen people use
-503.8	is use basically jammers
-505.2	in order to extend this even further if
-507.1	they need to i should say farther in
-508.4	this particular case
-509.6	so again you can kind of get that
-510.8	trajectory kind of a pretty good idea of
-512.6	what that looks like
-513.8	so um we were screwed by the short range
-515.8	weapon we just didn't have time
-517.3	and nor do we have enough defenders that
-519.4	we could actually go ahead and
-520.8	defend ourselves with so let's switch to
-522.8	a tactical ballistic missile
-524.4	now the disadvantage with these is that
-526.3	they travel very very steep
-528.2	however they don't really have huge
-529.9	payloads so i'm going to go ahead and do
-531.5	the exact same thing as they just did
-532.8	before
-533.4	let's go ahead and do one of these let's
-535.2	do one each boop
-536.8	go ahead on pause and let's watch them
-540.2	kind of travel upwards there
-541.9	speed up time a little bit takes a
-543.5	little while to aim these things
-545.2	there we go let's go ahead and pause
-546.8	let's switch back to 3d view real quick
-549.1	uh notice by the way the interceptors
-551.1	have already been
-553.0	launched because the missiles travel so
-556.2	high look at this
-559.6	that's insane now if i actually switch
-561.8	back real quick we can see exactly who
-563.6	fired first here
-564.6	these are all the sa26s notice they had
-567.1	plenty of time to go ahead and engage
-569.6	those targets
-570.6	so if we actually switch back to 3d v
-572.2	real fast like i said i think it's
-573.8	important that we actually see that path
-575.2	that it's taking so you can understand
-576.5	what it's doing
-577.4	you can see that my missiles are
-579.4	traveling more or less
-580.7	straight on a deflection shot in order
-583.0	to try to actually hit those missiles
-585.4	now the interesting thing here is if we
-587.2	miss note by the way
-589.4	that none of the super ballistic missile
-591.4	systems have fired yet
-593.3	the reason being is i have nuclear
-594.9	weapons presently disabled
-596.6	notice that one of the guys in the top
-598.2	this is the gazelle it's a conventional
-600.0	version of the gazelle
-601.1	starts taking his shots as well these
-603.3	gazelles are limited because you can't
-605.4	be firing them at targets that are
-607.1	moving too quickly they actually have a
-608.8	really really difficult time hitting
-610.1	icbms
-611.0	also notice we fired both of the sc-19s
-613.4	which have a significantly longer firing
-615.8	time
-616.4	notice what's happening here though
-620.0	you can see the sc19s didn't have enough
-622.2	time to turn
-623.3	so these gazelles of course are doing
-624.7	what they can to kind of loosen things
-626.2	up
-626.6	but notice despite all that ballistic
-629.0	missile defense
-630.2	none of these weapons were in their
-631.8	optimum firing platform
-633.5	of space i should say except for the
-635.7	s826
-636.7	which is doing its darndest to try to
-638.7	shoot down those last couple missiles
-640.4	unfortunately it missed and we're going
-642.2	to get creamed again
-644.2	so again these amazingly advanced
-646.2	systems are really really struggling
-648.2	because they don't have enough time to
-650.6	get up to speed to safely engage
-652.6	so let's go ahead and use a short i'm
-654.3	actually going to skip the short range
-655.6	ballistic and go right to the special
-657.0	case
-657.5	this is a short range system however
-660.0	this system has decm on it so let's see
-662.5	what happens
-663.1	this time it's going to take another 35
-666.2	seconds before we can fire but that's
-667.4	okay
-668.0	this camera by the way is a very cool
-669.8	anti-runway weapon
-671.8	all right let's go ahead and watch that
-673.1	trajectory on this one again
-675.0	we're trying to limit the time that the
-677.3	interceptors can react
-679.6	so grab my iskender here and you can see
-681.8	how high this weapon has gone
-684.2	already notice how fast the weapon is
-687.8	traveling
-688.5	notice how high this weapon is traveling
-690.8	however and this is going to be very
-692.2	interesting
-692.9	these interceptors now because that arc
-695.2	is going to be so wide
-696.9	they're going to have a very very long
-699.0	time in which to react
-700.2	as a matter of fact if you look the
-702.0	sc-19s have already
-704.1	fired even at this distance giving them
-706.6	plenty of time to engage
-710.2	switching back to missile defense look
-712.2	at that yep see it
-714.1	so these weapons are already on their
-716.3	way even though i
-717.4	just launched so far it seems the best
-719.8	ballistic missile system is the other
-721.2	one
-721.6	notice the gorgons are traveling on a
-723.4	totally different trajectory
-725.5	the sc-19s are basically going to fly at
-728.0	the missile
-728.7	the sh-11s are basically going to go up
-731.0	really high and then try to intercept it
-732.9	directly
-733.5	we can actually switch directly to the
-735.0	view of this thing and kind of watch
-736.2	this come in
-737.1	now remember the iskander has decm in
-740.2	the real world it basically has the
-741.7	ability it's going to be a little choppy
-743.1	because we're fast forwarding
-744.0	time here it has the ability to actually
-746.2	change its trajectory
-747.6	okay so the sh-11s have hit their
-749.8	ballistic thing
-750.9	they're basically their cruise altitude
-752.7	you can see i'm going to look at this
-753.9	from the side
-755.0	beautiful hit on those sn19s notice the
-757.3	sh-11s
-758.3	coming more but notice the sa-26 is not
-762.1	fired yet because the sa-26 is still out
-764.2	of range
-767.1	beautiful beautiful here comes my sh-11
-771.0	now notice what's happening here my
-773.2	sh-11s got to their cruise altitude and
-775.4	they start now to arc
-776.9	downwards on their own ballistic
-778.8	trajectory to try to get in front of
-781.0	these missiles in order to hit them
-782.6	if this were a steeper trajectory it
-784.9	never would have gotten to that cruise
-786.2	phase
-786.7	so we're basically sucking the energy
-788.4	out of these weapons because we almost
-790.5	fired them too
-791.3	early we quote of course waited when the
-793.3	trajectory started tipping downwards
-795.2	but if we did that we would have had
-796.6	less time and wish to intercept the
-798.0	actual weapons themselves
-799.4	so i'll give you a little speed up here
-801.4	i think you can see exactly where this
-802.8	goes we missed
-804.4	so of course at this time everybody else
-806.2	fires i think at this point we're
-807.8	getting close enough to use the sa-26
-810.5	assuming the sa-26 can hit that because
-812.4	those things are entering the atmosphere
-813.7	at
-814.0	very high speeds let's go double check
-816.6	the speed real quick
-817.8	we are moving at yeah mach 7.6 i think
-821.0	the s826 can't actually fire at that
-823.1	speed because it's too darn fast
-825.3	so we'll go ahead and take a look at the
-826.2	weapon real quick maximum bunk bunk
-829.9	see so you can see we've traded
-833.0	a longer flight time for the ability to
-835.6	block interception by point defense
-837.4	systems
-838.0	because they're coming into the
-839.4	atmosphere too darn fast
-841.0	we got lucky and we're able to shoot
-842.4	them down that time so let's go ahead
-844.6	and
-844.9	mix things up a little bit hopefully
-848.1	you're starting to see the
-849.0	relationship between distance and
-851.0	engagement type
-852.2	so now let's go ahead and grab our slbm
-854.6	this is a submarine launch ballistic
-856.2	missile and uh we're about to erase
-858.2	this part of this continent i'm using
-859.8	antarctica today by the way because i
-861.8	i'm not a big nuclear weapons fan to be
-864.0	honest uh for those of you looking for a
-865.7	really interesting story about nuclear
-867.3	weapons this
-867.9	book called i think it was command and
-869.4	control came out a few years ago
-871.4	very very very interesting book which
-873.4	basically described what happens when it
-874.9	doesn't work right
-876.1	so anyway our submarine launch ballistic
-877.7	missiles are going to fire
-879.1	now these weapons are different than the
-882.0	others
-882.6	you probably wonder why it looks like
-883.8	they accelerate it's because they travel
-885.5	basically
-886.2	vertically for the first part of their
-887.8	trajectory so you can see
-889.5	how high up these particular weapons
-891.4	have to travel in order to basically get
-893.4	going here
-894.2	this one right here look at this it's
-895.9	166 kilometers notice
-899.0	the sams have already been launched
-902.3	so even though we're shooting a longer
-903.9	range we have more time to engage
-906.1	and it's going to be easier to engage
-908.2	because all the trajectories are going
-909.8	to be agreeing with each other better
-911.6	our sa26 now is worthless because it'll
-914.7	never
-915.2	ever ever engage now this brings us to a
-917.9	different type of interceptor called
-919.4	what they call
-919.9	a mid-course interceptor in the united
-922.4	states we have a system called the gmd
-924.5	so what this is if i'm going to flip
-925.9	over here real quick
-928.4	these sc19s have the ability to engage
-932.0	a missile such as a ballistic missile
-934.8	before it starts to descend
-936.6	back down through the atmosphere now
-938.8	this is a massive advantage for us
-940.7	because we can hit it before it breaks
-942.6	apart
-943.1	because they're mirvs which basically
-945.7	means they're going to have multiple
-947.0	vehicle
-947.5	missiles that are going to separate from
-949.3	the main what they call it the bus
-950.9	and split and then hit us in multiple
-952.4	spots means that's going to
-954.2	save a lot of trouble on the ground and
-955.8	it also means their other types of
-956.9	interceptors aren't going to have to
-957.8	work quite as hard
-959.0	now one of the neat things about these
-960.5	mid-course defense weapons
-962.1	is not only do they have a staggering
-963.7	range but they're actually fairly
-965.0	effective with what they do
-966.5	so i'm going to go ahead and grab one
-967.4	real quick look at how high up this
-970.0	missile is
-971.0	now do you see those little wiggles it's
-972.6	doing the reason it's doing that
-975.5	is it's trying to get itself on an
-977.3	intercepting heading
-978.7	of the particular weapon look at how
-980.6	high up these are
-982.2	this is amazing we're 290 kilometers out
-985.8	of the atmosphere right now
-987.5	we are absolutely totally clean here and
-989.8	we're trying to hit
-990.6	these let's go and click on one of these
-992.2	real fast this thing is at 306
-995.0	kilometers so what we're hoping to do is
-997.0	again let me zoom out from the side here
-998.6	is this is going to continue arcing it's
-1000.3	going to split up into multiple vehicles
-1002.5	if this missile can hit this before it
-1004.6	splits up into multiple vehicles
-1006.5	that means it's going to be that much
-1008.0	less warheads to worry about on the way
-1009.7	down
-1010.3	keep in mind these are basically just
-1012.4	trying to stop those missiles before
-1013.9	they split
-1014.8	once they've split we're basically can't
-1016.6	use these missiles because we don't have
-1017.9	enough of them to reliably engage the
-1019.8	targets
-1020.5	so and speed up time a little bit here
-1024.7	all right these are going to be
-1025.8	splitting apart in just a moment i do
-1027.8	kind of want to see that in 3d as well
-1029.3	so you can kind of understand what's
-1030.6	going on here
-1034.8	all right zoom in here we go here's the
-1036.8	intercept now it's just hitting the peak
-1039.8	as long as it doesn't split don't split
-1042.3	don't split
-1044.1	surprise sc19s boom got one
-1047.1	notice the se19 can re-target
-1051.0	it's going to miss it geometrically
-1053.1	though let's go ahead and take a look at
-1054.3	it from the side
-1055.7	there it is so unfortunately we're out
-1057.8	of sc-19s
-1059.3	so what happens next so these weapons
-1061.6	now are going to get to the peak of the
-1063.0	trajectory let's go ahead and check one
-1064.3	real quick
-1065.0	he's uh 373 kilometers how high up that
-1067.7	is
-1068.2	he is now going to break apart and start
-1070.5	raining little teeny tiny smaller
-1072.2	projectiles on a little defensive
-1073.8	encampment
-1074.4	the good news though is those
-1075.8	projectiles when they hit the atmosphere
-1077.4	start slowing down because they're not
-1078.7	being boosted
-1079.6	the bad news is they're going to be so
-1081.8	many of them that even though i've got
-1083.3	pretty good systems down here they're
-1084.8	probably going to get through
-1086.9	so i'm going to go ahead and speed up
-1087.8	time a little bit here so we can kind of
-1089.0	skip to the fun part
-1090.5	notice my next round of interceptors
-1092.4	have now entered into their
-1093.8	optimum firing positions
-1097.8	let's go ahead and zoom out for just a
-1099.3	moment let's grab this guy who just took
-1100.9	space there it is that's a gorgon again
-1103.4	remember this was designed to be a
-1105.0	russian
-1105.4	anti-ballistic missile system these are
-1107.6	nuclear
-1108.5	weapons which means as long as one gets
-1110.8	close enough it's not going to matter
-1112.7	one thing that i always tell people when
-1114.1	they're doing ballistic missile defense
-1115.6	is to double
-1116.5	check to see what your particular rules
-1118.7	of engagement are
-1120.0	you don't want to have multiple weapons
-1122.5	targeting
-1123.4	the same weapon if you notice that it
-1125.0	has a very good percentage chance to hit
-1127.0	so in this case if you actually look
-1128.2	really really close
-1130.6	you don't have just one missile these
-1133.0	are oh do you see it
-1134.4	these are actually little teeny tiny
-1135.8	mirv's that are now breaking from the
-1137.6	main missile
-1138.4	let's go ahead and take a look at things
-1139.4	from the side again so you can kind of
-1140.6	see it
-1145.0	all right see i'm doing little squiggles
-1147.2	the squiggles are trying to get
-1148.6	just the right position but notice some
-1150.7	of the weapons boosted
-1152.4	above the incoming weapons which now
-1155.7	means
-1156.1	they can never geometrically hope to try
-1158.7	to hit it see how this one's diving
-1160.1	straight down on it
-1161.6	it's never going to happen these on the
-1163.7	flip side they're already on the way up
-1165.0	haven't finished boosting so they're not
-1166.2	going to hit it either
-1167.3	and we got one intercept notice it's a
-1169.0	nuclear explosion when those go off
-1171.4	hey nuke stop nukes right this one's uh
-1173.4	look at the geometry in that one
-1176.8	yep that that guy's not gonna get
-1178.1	through one of these are gonna clip it
-1180.1	indeed they do there's another nuclear
-1181.7	explosion but notice
-1183.4	how many more missiles are still coming
-1186.4	remember these are actually multiple
-1188.2	groups of projectiles they're not
-1189.6	singles
-1190.6	so you can see very clearly how that's
-1192.6	all coming through
-1195.8	now this is going to get messy i'll go
-1197.2	ahead and skip to the exciting part at
-1198.6	the end
-1201.0	some of these missiles have the ability
-1202.3	to read target some of them don't if
-1204.0	you're wondering why that one looks like
-1205.3	it's just stopped
-1206.2	it's because it's basically zig zagging
-1207.7	in the atmosphere
-1209.8	oh looks like we have a couple leakers
-1213.3	so now if we had any short-range
-1215.1	anti-ballistic missile systems such as
-1216.7	the sa-26
-1217.8	it's right about to start launching
-1219.9	except as i mentioned before
-1221.9	the sa26 has a maximum speed limit it
-1224.8	can actually engage
-1226.2	in this case let's go ahead and take a
-1227.5	look real fast maximum speed
-1230.6	yes 2300 knots these are entering the
-1233.7	atmosphere remember there's actually a
-1235.0	group of missiles here
-1236.4	doing 1100 knots so even though i've got
-1240.1	that last stitches defense system
-1242.2	in this particular scenario i'm still
-1244.0	nuked because there's nothing i can do
-1245.8	to stop that from getting through
-1247.4	because i don't have a system that can
-1248.9	intercept it and that's the end of that
-1251.6	target
-1253.5	okay so now let's go ahead and take a
-1255.0	look at what we can do and what we can
-1256.5	kind of learn from our little
-1257.5	demonstration here
-1258.4	so i'm going to jump back to missile
-1259.5	defense force and i'm going to go ahead
-1262.1	and bring in a couple different systems
-1263.8	here
-1264.6	we're going to go ahead and take a look
-1265.6	at what a complete missile defense is
-1267.0	going to look like
-1267.8	so the first thing i'm going to do is
-1269.0	i'm going to get myself something called
-1270.6	gmd
-1271.8	that is ground-based missile defense
-1274.4	this system requires a special radar in
-1277.0	order to operate
-1278.1	properly so uh dash x so if i do um
-1281.3	ships
-1284.8	x band there it is we need a special
-1288.6	radar system to guide
-1290.1	these separate from the weapon so i'm
-1292.0	going to go ahead and turn the sensors
-1293.0	on real quickly
-1294.3	next what i'm going to do is i'm going
-1295.4	to bring in you just ashore which is a
-1297.1	very neat system
-1298.3	you can actually get a version of this
-1300.3	that's on a ship
-1301.4	you just assure us what it's called
-1302.8	we'll go ahead and grab this one it's
-1304.4	literally just an sm3 that's been
-1306.4	modified to
-1307.2	shoot at very very very very very long
-1309.8	ranges
-1310.7	next to that of course i'm going to go
-1312.0	ahead and get myself everybody's a
-1313.4	favorite
-1314.4	basically last stitch system which is
-1316.0	called thaad this particular system is a
-1318.5	very very good at this we have the brand
-1320.0	new one as well if we wanted to get that
-1321.5	one
-1321.9	go ahead and flip on the radar on that
-1323.1	one you want to make sure that when
-1324.2	you're using that or any of these that
-1325.8	you push the radar in the correct
-1327.4	direction
-1328.2	in this case we're pointing the correct
-1329.6	direction so i'm not too worried that's
-1331.0	a universal one so i'm not worried about
-1332.5	that too much
-1333.4	but he's just ashore looking pretty good
-1335.1	as well i'm not too worried about that
-1337.0	and now of course i'm gonna get myself
-1338.6	the emergency somehow they got through
-1340.8	system get ourselves one of the new uh
-1342.7	patriots we're gonna get the
-1344.1	errants right there
-1348.0	remember with any of these systems that
-1349.4	you make sure they face the correct
-1351.2	direction
-1352.2	otherwise you won't be able to engage
-1353.8	anything with them in this case we want
-1355.5	them to be pointing basically towards
-1356.9	africa good good good good good
-1358.9	and now we're basically ready to go so
-1360.9	we have our very long range system which
-1363.0	is the gmd
-1364.2	we have the intermediate system which is
-1366.2	aegis ashore we have the almost about to
-1368.6	get killed system the thaad
-1370.2	and of course we have our last stitch i
-1371.8	think we're already screwed system
-1373.9	basically going to be your regular
-1375.4	patriot missile battery
-1376.8	so let's see how effective these are
-1379.4	against
-1380.3	the most scary of all weapons the
-1382.8	intercontinental ballistic missile
-1385.2	so i'm going to go all the way up here
-1386.5	i'm going to grab myself one of those
-1387.9	this is a df5a that's a dong thing
-1390.6	i'm gonna go ahead and point that right
-1391.9	at our little targeting zone here it's
-1393.6	not gonna take much for this that's for
-1395.1	sure
-1395.8	and we're gonna launch one
-1399.1	give ourselves a moment to go ahead and
-1400.4	let this thing look at how long of a
-1401.5	range this is
-1405.3	there it goes so
-1408.6	there it goes actually look at this
-1412.3	it's hard to like rotate the earth so
-1414.0	you can follow this
-1415.5	so now those other missiles had a heck
-1417.8	of a high altitude that they traveled at
-1420.2	this one look we're already at 500
-1423.3	kilometers off the ground
-1425.2	speed up time a little bit here and that
-1428.6	looks good it's about to drop
-1430.0	its bus actually the bus is supposed to
-1431.9	come out and drop off its individual
-1433.2	weapons
-1434.1	notice we have not yet acquired that
-1437.0	missile
-1437.6	it's already getting to the position
-1439.1	where it's going to split into multiple
-1441.0	independently target reentry vehicles
-1443.1	and we don't even
-1444.1	know it's coming so you can get an idea
-1446.2	of just how terrifying of a situation
-1448.2	this could
-1448.8	really be remember the world is in the
-1451.0	way
-1453.0	all right i'll speed up time a little
-1454.2	bit here
-1456.3	and it's going to split in just a moment
-1459.3	there it goes
-1460.6	so now it has split and we still have
-1463.8	not detected it
-1465.0	even though we have you know denying and
-1466.8	stuff like that it's just coming in with
-1468.7	that unbelievable speed and it's just a
-1470.6	zip and zip and zipping
-1472.6	so i'm gonna go ahead and bring up my
-1473.5	message log real quick so we don't
-1475.0	accidentally miss when this thing
-1476.2	gets spotted remember this is just the
-1478.2	reentry vehicle this isn't even the
-1479.9	missile anymore
-1481.8	again we've got everything ready to go
-1483.3	there it is pause okay
-1485.6	so we are currently at a range of 1300
-1489.5	nautical miles and you probably noticed
-1492.0	if you look really closely
-1494.2	this weapon has already fired this is
-1497.0	the aegis ashore
-1498.6	this system has a staggeringly long
-1501.2	range
-1502.0	actually click on it real quick it's a
-1503.4	very big missile by the way don't let
-1504.7	anyone kid you
-1505.5	of 300 nautical miles
-1508.8	so this weapon can actually get almost
-1511.0	all the way there in that time
-1513.0	so let's go ahead and unpause we'll
-1514.4	speed up time a little bit
-1516.7	off it goes no this is just a short this
-1518.9	isn't gmd
-1521.8	let's take a look at the geometry of the
-1523.3	shot remember icbms because of the range
-1526.6	tend to enter the atmosphere flat
-1528.2	which gives you plenty of time to
-1529.8	intercept them and identify that they're
-1531.8	on the way
-1532.6	the problem is and i mentioned this
-1534.1	before is the fact that look at the
-1536.0	speeds involved
-1540.2	all right here we go
-1544.2	we are at an altitude of 240 kilometers
-1547.3	incredible notice the missile is
-1549.4	starting to arc downwards
-1551.6	if we overshoot it because it's too much
-1553.7	of a deflection shot we're busted
-1559.0	and we overshot it bad so now
-1562.2	since the very very long range jesus
-1563.8	ashore has missed we're going to start
-1565.6	firing with another round of these
-1567.1	basically i'm actually going to delete
-1568.4	them because that's going to be too much
-1569.4	fun if they accidentally hit
-1571.8	so now what you would do of course is
-1573.3	since that missed you'd switch over to
-1575.2	thaad
-1575.8	which is a much much shorter range
-1577.4	system it's also kind of a last ditch
-1579.0	sort of a system
-1581.2	all right here comes the next two again
-1582.7	notice aegis ashore is able to fire this
-1584.6	entire time
-1586.0	go ahead delete that sucker let's go
-1587.8	ahead and grab our patriot because we'll
-1589.4	never be able to engage it because it'll
-1590.7	be too fast
-1591.7	our fat on the flip side will have no
-1593.8	difficulty engaging it
-1595.0	because it's well within its targeting
-1596.8	range that by the way has one of the
-1598.9	coolest trajectories ever
-1600.3	look at the speeds involved here this is
-1602.9	moving in real time
-1606.7	go back to here so you can see what this
-1608.2	looks like these puny little tiny
-1609.7	missiles doing the best they can
-1611.2	to get themselves up quick enough to
-1612.7	actually engage it and it looks like our
-1614.8	boost phase was too long so we're going
-1616.6	to overshoot from the top of the weapon
-1619.0	actually i think we might get it and we
-1621.8	missed we missed we missed
-1623.2	and we got it safe
-1627.0	so that's basically your different
-1628.4	techniques and different methods that
-1629.9	you can try to engage it
-1631.3	whatever you do when you do go to design
-1633.2	these systems or design scenarios around
-1635.1	them
-1635.5	remember that each one of the systems
-1637.0	has a minimum and maximum speed it can
-1638.6	engage at as well as the minimum and
-1640.0	maximum range it can engage at
-1641.8	so if you create a scenario where the
-1643.0	player can't win since the weapon simply
-1645.0	can't hit it
-1645.8	you're kind of busted now how would this
-1648.6	end up have being
-1650.0	if we went ahead and used slbms this is
-1652.5	actually a really really good
-1653.4	demonstration
-1654.1	too so let's do a saturation attack
-1659.2	all right we'll go ahead and do all no
-1661.5	fire
-1662.3	now this is a scary situation because
-1664.8	not only do you have nuclear weapons
-1666.6	involved
-1667.1	but they have a very short cruise time
-1669.4	and there's going to be a lot of mirvs
-1672.1	making things much more interesting for
-1674.2	us so let's go ahead and switch back to
-1676.2	our other side real quick
-1681.3	okay now you'll notice that these are
-1683.6	all the aegis ashore systems
-1685.4	and they've assigned two missiles per
-1688.2	incoming weapon here
-1689.6	and notice they are able to engage
-1691.9	before the weapon
-1693.1	breaks into the different pieces this is
-1695.1	one of the wonderful advantages of this
-1697.0	missile
-1697.8	let's speed time a little bit here look
-1699.7	at how many missiles we have
-1701.3	watch this so we've already gotten one
-1704.7	it allows us to retarget in case we
-1706.6	missed see how that one twitched at the
-1708.1	last second
-1709.0	let's go ahead and watch this from the
-1710.4	side
-1715.1	there we go and you can see that each
-1717.2	one of these systems is either leveling
-1718.8	off to hit the incoming weapon
-1720.6	or it's going to basically do a direct
-1722.7	energy look at the little squiggles i
-1724.3	love that
-1725.7	hey we're doing a pretty good job with
-1727.0	this
-1734.4	but the missile always gets through
-1737.1	usually you run out of ammunition
-1739.0	and now we bring out thaad
-1744.6	now remember you're not targeting one
-1747.0	weapon
-1747.7	you're targeting multiple weapons this
-1750.0	is actually a group of missiles that are
-1751.8	falling to the ground it's not a single
-1753.4	projectile
-1754.5	so that of course doesn't have to work
-1756.1	very hard here
-1757.6	uh oh now you're like
-1761.8	what happened why'd the missiles not hit
-1763.4	it looked like a clean thing again
-1765.5	think about the trajectory here because
-1768.6	our thaad were flat
-1769.8	then we went right under the missile
-1771.7	because of the speeds involved
-1773.4	here comes another one notice it's in
-1774.9	the boost phase it has just a teeny tiny
-1777.8	last second ditch time to go but
-1782.2	and that's it war's over because one
-1785.4	of those missiles got through so
-1787.3	hopefully that makes you realize
-1788.4	just how deadly saturation tactics can
-1790.6	be even with these incredibly
-1792.2	sophisticated systems there's nothing we
-1793.7	can do
-1794.4	and notice i've got nothing left to
-1795.9	guide those weapons anymore it's doomed
-1798.1	so is this the end of everything is
-1799.8	there no way to defeat these incoming
-1801.3	projectiles
-1802.3	the reality is and essentially yes mirvs
-1805.6	are tremendously effective and you can
-1807.4	actually see how these split into
-1808.6	multiple pieces to make things
-1809.8	interesting they're also very very
-1811.7	you don't have a lot of warning even
-1813.2	with something like gmd you're not going
-1814.7	to have a lot of time
-1815.6	aegis ashore was great but you didn't
-1817.1	have enough missiles is there anything
-1818.7	that we could possibly use to try to
-1820.6	take the edge off of this and the answer
-1822.5	is there actually is
-1824.7	let me go back to missile defense force
-1826.2	again i'm gonna scroll down here i'm
-1827.9	gonna go ahead and delete all these uh
-1829.2	systems here
-1830.4	and i'm gonna type in the word arrow
-1833.8	bingo so the israelis as
-1837.0	those who are familiar with israel's
-1838.2	situation it's not unusual that they get
-1840.2	missiles pretty much in their backyard
-1841.7	all the time
-1842.5	so as a result they built a whole new
-1844.6	generation of
-1845.5	anti-ballistic missile systems so in
-1847.8	this case we have both versions of the
-1849.4	broken arrow
-1850.1	they're very very similar to that they
-1851.8	have a tremendously good radar system
-1854.1	we also have a short range mode called
-1857.4	iron beam which is a laser based
-1860.8	system let's go ahead and bring in one
-1862.7	of those as well notice the range is
-1864.9	virtually nothing so i'm actually going
-1866.2	to have to duplicate it and add a second
-1867.8	one
-1868.2	they also of course have the iron dome
-1870.5	which is a very short range system you
-1872.6	can see it's barely any bigger than that
-1874.5	and we're going to see if all these
-1875.8	short range systems have the capability
-1878.2	to intercept the exact same attack in
-1880.6	less
-1881.3	time than the other system did now that
-1883.9	should be interesting to see just how
-1885.5	effective this can actually be
-1887.0	just confirming that they are facing the
-1888.6	correct direction with their radars
-1890.2	last thing in the universe i want is to
-1891.8	uh give it a freebie kind of so to speak
-1893.8	iron dome is looking good iron beam wait
-1895.8	and you see that working it's awesome
-1897.4	there's the arrow three system perfect
-1901.0	okay let's let that slbm do its thing
-1903.2	again so in case you're curious what
-1904.6	piece of the
-1905.2	nuclear triad to be most afraid of i
-1907.3	think you have a pretty good idea
-1910.1	alright so weapon goes away normally
-1912.2	this would be detected by satellite
-1915.1	okay looks pretty scary it looks pretty
-1916.6	scary let's go ahead switch back to
-1918.1	missile defense force
-1919.7	obviously they're completely aware of
-1921.0	these incoming weapons because we have
-1922.3	the nester in the pillbox
-1923.9	notice there have been just starting to
-1927.0	start firing
-1928.1	the reason why of course is like i said
-1929.8	we have to get range first so these are
-1931.5	all
-1931.8	arrow threes
-1934.8	off they go notice the mirvs
-1938.1	independently targeting they're all
-1939.4	splitting apart just like i said they
-1940.6	would
-1941.3	here comes the big wall of arrow 3. so
-1943.1	we'll go ahead and switch to 3d view
-1944.4	real quickly
-1946.7	take a look at it from the side let's go
-1948.5	ahead and suck away these vampires
-1950.1	oh we're going to overshoot now yeah
-1953.0	we're going overshoot bad
-1954.3	it's okay though look at him many more i
-1955.6	have coming those are all the arrow twos
-1957.5	notice the arrow 3s could not catch up
-1959.8	they spent so much time in boost they
-1961.4	basically literally overshot
-1964.0	switch back to this view zoom in a
-1965.4	little bit here they come
-1968.2	arrow arrow threes right about to hit
-1975.9	and that's game over
-1978.5	so again just saturating is all you
-1981.1	needed to do in order to defeat these
-1982.8	systems
-1983.6	no amount of sophisticated lasers no
-1985.5	amount of anything could ever
-1987.1	possibly do it and keep in mind when
-1989.0	you're doing these multiple
-1990.0	independently targeted systems
-1991.8	you never just drop the bombs you also
-1994.2	drop decoys in order to make it even
-1996.3	more difficult to see
-1997.8	now imagine if 15 of these submarines
-1999.6	were all firing at the same exact time
-2001.8	you could imagine we'd have well over
-2003.4	six or seven hundred individual targets
-2006.3	in that short of a time plus the decoys
-2008.9	so again it's almost like a no-win
-2010.8	situation
-2012.0	okay so last but not least what is my
-2014.4	general advice for any of this if you're
-2015.9	going to build a ballistic missile
-2017.3	scenario
-2018.2	keep in mind the easiest way to make the
-2019.8	player lose is just to launch more
-2021.4	missiles than they possibly have
-2022.4	interceptors
-2023.3	that works really well from a player
-2025.3	perspective your job is going to be to
-2027.6	decide how many weapons to fire at each
-2029.7	incoming target
-2030.6	if you're dealing with something like an
-2031.6	mirv you're basically screwed two is
-2033.9	going to be the minimum
-2035.0	if you're firing against a single
-2036.5	missile you could basically dump your
-2037.8	entire stack at them
-2039.3	but the other piece and this is what i
-2041.0	said with my little ms paint drawing
-2042.4	earlier
-2043.0	is making sure that when you do fire
-2045.1	you're firing in such a way that you're
-2046.6	not overshooting the target as it starts
-2048.7	to re-enter
-2049.9	the only way to prevent that is limiting
-2052.1	the attack range
-2054.2	our wonderful arrow 3s here would have
-2055.8	been great against a katusha rocket
-2057.5	but they don't work because basically
-2059.0	they spent so much of that time climbing
-2060.8	to get to the cruise altitude they
-2062.2	overshot the top
-2063.4	you as a player the only way you could
-2065.0	avoid that would basically have been to
-2066.6	go in there
-2067.4	and tell them not to fire their weapons
-2069.4	at maximum range
-2070.7	otherwise you're going to overshoot if
-2072.4	you run into a situation where you're
-2073.7	about to get saturated
-2075.0	you should probably go up into your
-2076.6	weapon doctrine again i'll pull that up
-2078.2	real quick so you can take a look at it
-2079.8	and then you can actually set it so that
-2081.6	you're only finding one missile
-2083.2	per incoming weapon as far as an
-2085.8	offensive capability goes if you're
-2087.5	looking to
-2088.0	really really crush another country just
-2089.8	launch everything at once it works very
-2091.5	very well
-2092.0	in which case your only problem is
-2093.4	making sure the weapons get there at the
-2095.0	same time
-2095.9	otherwise they'll be able to piecemeal
-2097.5	them out one thing you want to keep an
-2099.4	eye out for as well and i'll go ahead
-2100.5	and switch over here real quickly is you
-2102.2	want to be very very careful that if you
-2103.8	are designing a situation where you have
-2105.1	an mlrs if you have a few of these
-2107.2	you basically can saturate any defense
-2109.7	so kind of keep that in the back of your
-2111.0	mind as well
-2112.1	so again hopefully that helps again
-2114.0	showing a little bit about ballistic
-2115.2	missiles showing a little bit about the
-2116.5	interceptors
-2117.3	plus the problems you're going to face
-2119.2	again as usual if you have any questions
-2120.6	i'll toss it down there in the comments
-2122.3	i never endorse these things because i
-2123.8	think it's terrible we still have
-2124.8	nuclear weapons and
-2125.8	again people make fun of me a little bit
-2127.3	in the comments and i get that it's just
-2129.3	it's not pleasant but at the same time
-2130.9	is understanding how it works
-2132.2	understanding how effective they are
-2133.6	you're going to have a pretty good idea
-2135.0	of how to set up a scenario with it
-2136.7	and again if you're trying to win one of
-2137.9	these scenarios it's the only way to win
-2140.2	is not to play i know that sounds a
-2141.6	little cliche
-2142.6	but it's actually very very true and the
-2144.5	trick there is is there a way you can
-2145.8	deny than the targeting information
-2147.8	is there a way that you can somehow
-2149.4	force them to space their shots out
-2151.1	is there a way that you can give them
-2153.0	try to hit their missiles as they're
-2154.4	climbing upwards which would be optimum
-2156.1	especially if you're dealing with
-2157.0	extremely long ranges
-2158.6	and of course if you can somehow set up
-2161.1	your missiles so they don't fire too
-2162.6	soon you almost always be able to
-2164.1	intercept them
-2164.8	before you overshoot that weapon other
-2166.7	than that enjoy
+# C: MO - Ballistic Missiles and Missile Defense
+Video: https://www.youtube.com/watch?v=DLX9f5QMxOQ
+Video ID: DLX9f5QMxOQ
+
+hello everyone in today's video we're
+going to be taking a look at ballistic
+missiles and ballistic missile defense
+now i actually made this exact movie way
+way back in august and unfortunately
+when i did it
+i discovered several kind of tricky
+little bugs that made things a little
+not functional for us and they usually
+had to do with the way the interceptors
+basically attacked projectiles that were
+traveling at huge angles
+so unfortunately i've had to redo
+everything and hopefully this works out
+pretty well for everybody
+so let's go and take a look at our
+situation and kind of see what's going
+on here i got my typhoon
+now that is a big sub by the way so
+we're about two minutes to midnight
+which is
+pretty good reference for those of you
+know and basically what we've done is we
+brought out all the different types of
+ballistic missiles available
+here in command the first one of course
+the one that i have selected here
+are submarine launch ballistic missiles
+those are pretty cool because basically
+as long as there's water that's deep
+enough you could be launching out of
+them
+we have much much much shorter range
+ones such as um this simple system here
+this is an mlrs
+this is actually one of the most
+effective ballistic missile platforms we
+have what they call basically a tactical
+ballistic missile
+this one is going to be used for the
+purposes of attacking things in this
+particular case our range is
+about 30 nautical miles or so we have a
+little bit bigger ballistic missiles
+over here we have the short range
+ballistic missiles such as the scud
+this is a little bit more traditional as
+far as range goes again you're starting
+to get a little bit higher with a weapon
+like this
+we go out a little bit further than that
+we have a really really weird one
+now why did i grab an iskander an
+isconder is basically a short-range
+however this one has a unique feature if
+i actually open it up real quick
+you'll notice its projectiles have
+defensive ecm
+built into them to make them more
+difficult to engage this is actually a
+very very special case but we'll take a
+look at that of course if i go a little
+bit further range than that
+we get what they call medium-range
+ballistic missiles a good example of
+this one is the shahab this is
+the shahab 3. this particular weapon as
+you can see just for taking a quick look
+it's got a range of just about 700
+nautical miles which is getting pretty
+substantial
+of course what good is long range medium
+range if we can't go out to
+medium range again these both are
+basically medium range ones
+this one's a little bit different some
+of you are probably familiar with one
+this is a df-17
+this one i actually put into the
+scenario because it is basically a hyper
+velocity one when it infringes the
+atmosphere it's
+moving and of course what good is all
+those beautiful weapons if we can't have
+something a little bit longer range such
+as an intermediate
+range ballistic missile if you take a
+look at the globe here look at that
+reach
+it can literally hit anywhere in the
+hemisphere now that's a pretty
+substantial range here
+but it isn't as much range as
+everybody's favorite
+the icbm now this is truly
+intercontinental
+if it is on this planet it can be struck
+with this weapon
+so what makes ballistic missiles
+ballistic missiles now of course i've
+given you a few examples here
+basically they travel in a ballistic arc
+what will actually happen is
+after they launch they're going to burn
+their engines they're going to run out
+of fuel and they're essentially going to
+coast the rest of the way
+now one of the things that makes them so
+difficult to engage is because they're
+incredibly high speed
+and because of their flight path what do
+i mean by that well let me go grab
+emma's paint real quickly real here
+let's say i have a ballistic missile
+again this is going to be very
+unscientific
+and let's say i have a target here now
+if i fire and i fly just kind of a
+normal arc i get something that's going
+to look a little bit like this
+a pretty standard ballistic trajectory
+when this projectile
+re-enters the atmosphere and actually
+strikes the target its speed is going to
+be dependent on its
+distance that it had to cover it because
+remember in order to get it to go this
+far it had to have gone significantly
+faster
+but also note that the range is going to
+have an impact on what
+angle it hits the ground now if i have
+the same one and i have the same rocket
+turn
+i'm going to end up with a trajectory
+that looks like this
+as a result the projectile is going to
+have to be able to be hit
+basically coming straight at the target
+vertically now if i have something
+that's really far away that does
+something like this with this ballistic
+trajectory
+you're going to have a very long time to
+actually aim at it because of the fact
+that it's going to be spending so much
+time basically being
+flat so the range of these projectiles
+has a huge
+impact on when you can actually engage
+them and it's also going to have a huge
+impact on what weapons are going to work
+best against it
+whenever you have one of these really
+really flat injuries like an icbm is a
+very flat entry
+relatively speaking it's going to give
+us plenty of time to engage it but we're
+going to need a missile that can
+hit something at a deflection if we have
+a ballistic missile that's basically
+going straight down especially some of
+the
+more theater-based ones you're basically
+going to aim straight up at the missile
+and hit it pretty cleanly it's actually
+a very easy engagement profile
+so all these things are going to impact
+you now if you are a scenario designer
+and you want to make people miserable
+fire ballistic missiles at their minimum
+range because when you do that they have
+less time to react because they're
+basically going to fall out of the sky
+and your engagement window is going to
+be very short if you're going to be
+taking shots like this
+let's say the weapon has a maximum
+altitude of i don't know about 300
+kilometers
+you could actually spend most of the
+time in the engagement range of that
+weapon
+so kind of keep that in the back your
+head when you are designing it excuse me
+a terrible art here but it's really
+important to understand that trajectory
+because it's going to impact
+the way we do things okay so now that
+we've done that let's go ahead and take
+a quick look at how they function so for
+us we have a couple different types of
+ballistic missiles
+we have these like i said super short
+ones with like an mlrs and we've also
+developed ourselves a really good
+defensive system
+if i actually go to missile defense here
+we have a couple ballistic missile this
+is actually called the cat house this
+the dunai 3u this is a massive
+massive radar array if you actually take
+a look at the statistics on it real
+quick i'll go pop that up so you can see
+it
+it has a staggering 1500 nautical mile
+maximum range
+this thing is designed to pick up
+basically the last second remember
+satellites are usually go to against
+coming over here we have hen house this
+is nester it's the exact same style
+technology the only difference is that
+it's a 1900
+mile range over here of course we have a
+couple different systems that i put in
+here
+we have the sa26 the s350 this is the
+vitas
+this is a very very very good system
+because there's the ability to engage
+multiple projectiles
+coming over here of course we have the
+sc19 this is a very very very slick
+system this is a chinese system that's
+new
+that can actually engage missiles in a
+pretty long range
+if you actually take a look at this
+scrolling down to real quick
+we have i'm just going to take a look at
+this one real quick if i recall
+correctly
+a 645 nautical mile range with this
+weapon but
+its cruise altitude and its maximum
+target altitude
+can severely limit your ability to
+engage things with it
+that being said it's an amazing system
+coming over here of course we have
+pillbox this is another radar battery
+and we of course have the sh-11 which is
+a nuclear anti-ballistic missile
+and then finally we have the gazelle
+which is also a nuclear anti-ballistic
+missile
+so we have quite a bit to work with as
+far as to engage things so let's go
+ahead and see what happens if we try to
+use a regular mlrs
+against this you know fairly robust
+defense here so let's go ahead and
+select everybody
+i'm gonna go select all my targets just
+like that i'm gonna go ahead and do one
+of these
+and notice i have weapons hold because i
+don't want them firing nuclear weapons
+without me you know
+saying go kind of a thing and we'll do
+one of those and we'll go ahead and hit
+play
+so as soon as i do that of course
+they're going to start shooting i
+actually want to switch to 3d view today
+i usually don't use 3d view too often
+but it's really important that you see
+that trajectory so you know exactly what
+the projectile is doing when it's
+traveling like that
+see if i can get my hands on one of
+these there we go there you go
+notice it's more or less a vertical
+trajectory that immediately turns around
+and then comes
+screaming back down trying to hit the
+target again there's that nice arc
+which means let's go ahead and flip to
+the other guy's perspective real quickly
+they are going to be scrambling to try
+to get shots
+up at it basically vertical shots so
+it's actually not a difficult shot to
+take
+let's go ahead and click on one of those
+missiles so you can watch it on the way
+up and let's unpause
+again this is real time so you can get a
+feel for just how insanely fast these
+weapons are
+notice by the time the weapon had
+finished climbing
+that we barely had enough time to arc
+downwards in order to engage it
+now again the secret to all ballistic
+missile defense is basically to saturate
+and you can see that with a simple
+single mlrs battery
+we have completely saturated the defense
+and now they're all incredibly screwed
+so this is the first lesson is you have
+to limit the amount of time
+that they have to react one trick slick
+trick that i've actually seen people use
+is use basically jammers
+in order to extend this even further if
+they need to i should say farther in
+this particular case
+so again you can kind of get that
+trajectory kind of a pretty good idea of
+what that looks like
+so um we were screwed by the short range
+weapon we just didn't have time
+and nor do we have enough defenders that
+we could actually go ahead and
+defend ourselves with so let's switch to
+a tactical ballistic missile
+now the disadvantage with these is that
+they travel very very steep
+however they don't really have huge
+payloads so i'm going to go ahead and do
+the exact same thing as they just did
+before
+let's go ahead and do one of these let's
+do one each boop
+go ahead on pause and let's watch them
+kind of travel upwards there
+speed up time a little bit takes a
+little while to aim these things
+there we go let's go ahead and pause
+let's switch back to 3d view real quick
+uh notice by the way the interceptors
+have already been
+launched because the missiles travel so
+high look at this
+that's insane now if i actually switch
+back real quick we can see exactly who
+fired first here
+these are all the sa26s notice they had
+plenty of time to go ahead and engage
+those targets
+so if we actually switch back to 3d v
+real fast like i said i think it's
+important that we actually see that path
+that it's taking so you can understand
+what it's doing
+you can see that my missiles are
+traveling more or less
+straight on a deflection shot in order
+to try to actually hit those missiles
+now the interesting thing here is if we
+miss note by the way
+that none of the super ballistic missile
+systems have fired yet
+the reason being is i have nuclear
+weapons presently disabled
+notice that one of the guys in the top
+this is the gazelle it's a conventional
+version of the gazelle
+starts taking his shots as well these
+gazelles are limited because you can't
+be firing them at targets that are
+moving too quickly they actually have a
+really really difficult time hitting
+icbms
+also notice we fired both of the sc-19s
+which have a significantly longer firing
+time
+notice what's happening here though
+you can see the sc19s didn't have enough
+time to turn
+so these gazelles of course are doing
+what they can to kind of loosen things
+up
+but notice despite all that ballistic
+missile defense
+none of these weapons were in their
+optimum firing platform
+of space i should say except for the
+s826
+which is doing its darndest to try to
+shoot down those last couple missiles
+unfortunately it missed and we're going
+to get creamed again
+so again these amazingly advanced
+systems are really really struggling
+because they don't have enough time to
+get up to speed to safely engage
+so let's go ahead and use a short i'm
+actually going to skip the short range
+ballistic and go right to the special
+case
+this is a short range system however
+this system has decm on it so let's see
+what happens
+this time it's going to take another 35
+seconds before we can fire but that's
+okay
+this camera by the way is a very cool
+anti-runway weapon
+all right let's go ahead and watch that
+trajectory on this one again
+we're trying to limit the time that the
+interceptors can react
+so grab my iskender here and you can see
+how high this weapon has gone
+already notice how fast the weapon is
+traveling
+notice how high this weapon is traveling
+however and this is going to be very
+interesting
+these interceptors now because that arc
+is going to be so wide
+they're going to have a very very long
+time in which to react
+as a matter of fact if you look the
+sc-19s have already
+fired even at this distance giving them
+plenty of time to engage
+switching back to missile defense look
+at that yep see it
+so these weapons are already on their
+way even though i
+just launched so far it seems the best
+ballistic missile system is the other
+one
+notice the gorgons are traveling on a
+totally different trajectory
+the sc-19s are basically going to fly at
+the missile
+the sh-11s are basically going to go up
+really high and then try to intercept it
+directly
+we can actually switch directly to the
+view of this thing and kind of watch
+this come in
+now remember the iskander has decm in
+the real world it basically has the
+ability it's going to be a little choppy
+because we're fast forwarding
+time here it has the ability to actually
+change its trajectory
+okay so the sh-11s have hit their
+ballistic thing
+they're basically their cruise altitude
+you can see i'm going to look at this
+from the side
+beautiful hit on those sn19s notice the
+sh-11s
+coming more but notice the sa-26 is not
+fired yet because the sa-26 is still out
+of range
+beautiful beautiful here comes my sh-11
+now notice what's happening here my
+sh-11s got to their cruise altitude and
+they start now to arc
+downwards on their own ballistic
+trajectory to try to get in front of
+these missiles in order to hit them
+if this were a steeper trajectory it
+never would have gotten to that cruise
+phase
+so we're basically sucking the energy
+out of these weapons because we almost
+fired them too
+early we quote of course waited when the
+trajectory started tipping downwards
+but if we did that we would have had
+less time and wish to intercept the
+actual weapons themselves
+so i'll give you a little speed up here
+i think you can see exactly where this
+goes we missed
+so of course at this time everybody else
+fires i think at this point we're
+getting close enough to use the sa-26
+assuming the sa-26 can hit that because
+those things are entering the atmosphere
+at
+very high speeds let's go double check
+the speed real quick
+we are moving at yeah mach 7.6 i think
+the s826 can't actually fire at that
+speed because it's too darn fast
+so we'll go ahead and take a look at the
+weapon real quick maximum bunk bunk
+see so you can see we've traded
+a longer flight time for the ability to
+block interception by point defense
+systems
+because they're coming into the
+atmosphere too darn fast
+we got lucky and we're able to shoot
+them down that time so let's go ahead
+and
+mix things up a little bit hopefully
+you're starting to see the
+relationship between distance and
+engagement type
+so now let's go ahead and grab our slbm
+this is a submarine launch ballistic
+missile and uh we're about to erase
+this part of this continent i'm using
+antarctica today by the way because i
+i'm not a big nuclear weapons fan to be
+honest uh for those of you looking for a
+really interesting story about nuclear
+weapons this
+book called i think it was command and
+control came out a few years ago
+very very very interesting book which
+basically described what happens when it
+doesn't work right
+so anyway our submarine launch ballistic
+missiles are going to fire
+now these weapons are different than the
+others
+you probably wonder why it looks like
+they accelerate it's because they travel
+basically
+vertically for the first part of their
+trajectory so you can see
+how high up these particular weapons
+have to travel in order to basically get
+going here
+this one right here look at this it's
+166 kilometers notice
+the sams have already been launched
+so even though we're shooting a longer
+range we have more time to engage
+and it's going to be easier to engage
+because all the trajectories are going
+to be agreeing with each other better
+our sa26 now is worthless because it'll
+never
+ever ever engage now this brings us to a
+different type of interceptor called
+what they call
+a mid-course interceptor in the united
+states we have a system called the gmd
+so what this is if i'm going to flip
+over here real quick
+these sc19s have the ability to engage
+a missile such as a ballistic missile
+before it starts to descend
+back down through the atmosphere now
+this is a massive advantage for us
+because we can hit it before it breaks
+apart
+because they're mirvs which basically
+means they're going to have multiple
+vehicle
+missiles that are going to separate from
+the main what they call it the bus
+and split and then hit us in multiple
+spots means that's going to
+save a lot of trouble on the ground and
+it also means their other types of
+interceptors aren't going to have to
+work quite as hard
+now one of the neat things about these
+mid-course defense weapons
+is not only do they have a staggering
+range but they're actually fairly
+effective with what they do
+so i'm going to go ahead and grab one
+real quick look at how high up this
+missile is
+now do you see those little wiggles it's
+doing the reason it's doing that
+is it's trying to get itself on an
+intercepting heading
+of the particular weapon look at how
+high up these are
+this is amazing we're 290 kilometers out
+of the atmosphere right now
+we are absolutely totally clean here and
+we're trying to hit
+these let's go and click on one of these
+real fast this thing is at 306
+kilometers so what we're hoping to do is
+again let me zoom out from the side here
+is this is going to continue arcing it's
+going to split up into multiple vehicles
+if this missile can hit this before it
+splits up into multiple vehicles
+that means it's going to be that much
+less warheads to worry about on the way
+down
+keep in mind these are basically just
+trying to stop those missiles before
+they split
+once they've split we're basically can't
+use these missiles because we don't have
+enough of them to reliably engage the
+targets
+so and speed up time a little bit here
+all right these are going to be
+splitting apart in just a moment i do
+kind of want to see that in 3d as well
+so you can kind of understand what's
+going on here
+all right zoom in here we go here's the
+intercept now it's just hitting the peak
+as long as it doesn't split don't split
+don't split
+surprise sc19s boom got one
+notice the se19 can re-target
+it's going to miss it geometrically
+though let's go ahead and take a look at
+it from the side
+there it is so unfortunately we're out
+of sc-19s
+so what happens next so these weapons
+now are going to get to the peak of the
+trajectory let's go ahead and check one
+real quick
+he's uh 373 kilometers how high up that
+is
+he is now going to break apart and start
+raining little teeny tiny smaller
+projectiles on a little defensive
+encampment
+the good news though is those
+projectiles when they hit the atmosphere
+start slowing down because they're not
+being boosted
+the bad news is they're going to be so
+many of them that even though i've got
+pretty good systems down here they're
+probably going to get through
+so i'm going to go ahead and speed up
+time a little bit here so we can kind of
+skip to the fun part
+notice my next round of interceptors
+have now entered into their
+optimum firing positions
+let's go ahead and zoom out for just a
+moment let's grab this guy who just took
+space there it is that's a gorgon again
+remember this was designed to be a
+russian
+anti-ballistic missile system these are
+nuclear
+weapons which means as long as one gets
+close enough it's not going to matter
+one thing that i always tell people when
+they're doing ballistic missile defense
+is to double
+check to see what your particular rules
+of engagement are
+you don't want to have multiple weapons
+targeting
+the same weapon if you notice that it
+has a very good percentage chance to hit
+so in this case if you actually look
+really really close
+you don't have just one missile these
+are oh do you see it
+these are actually little teeny tiny
+mirv's that are now breaking from the
+main missile
+let's go ahead and take a look at things
+from the side again so you can kind of
+see it
+all right see i'm doing little squiggles
+the squiggles are trying to get
+just the right position but notice some
+of the weapons boosted
+above the incoming weapons which now
+means
+they can never geometrically hope to try
+to hit it see how this one's diving
+straight down on it
+it's never going to happen these on the
+flip side they're already on the way up
+haven't finished boosting so they're not
+going to hit it either
+and we got one intercept notice it's a
+nuclear explosion when those go off
+hey nuke stop nukes right this one's uh
+look at the geometry in that one
+yep that that guy's not gonna get
+through one of these are gonna clip it
+indeed they do there's another nuclear
+explosion but notice
+how many more missiles are still coming
+remember these are actually multiple
+groups of projectiles they're not
+singles
+so you can see very clearly how that's
+all coming through
+now this is going to get messy i'll go
+ahead and skip to the exciting part at
+the end
+some of these missiles have the ability
+to read target some of them don't if
+you're wondering why that one looks like
+it's just stopped
+it's because it's basically zig zagging
+in the atmosphere
+oh looks like we have a couple leakers
+so now if we had any short-range
+anti-ballistic missile systems such as
+the sa-26
+it's right about to start launching
+except as i mentioned before
+the sa26 has a maximum speed limit it
+can actually engage
+in this case let's go ahead and take a
+look real fast maximum speed
+yes 2300 knots these are entering the
+atmosphere remember there's actually a
+group of missiles here
+doing 1100 knots so even though i've got
+that last stitches defense system
+in this particular scenario i'm still
+nuked because there's nothing i can do
+to stop that from getting through
+because i don't have a system that can
+intercept it and that's the end of that
+target
+okay so now let's go ahead and take a
+look at what we can do and what we can
+kind of learn from our little
+demonstration here
+so i'm going to jump back to missile
+defense force and i'm going to go ahead
+and bring in a couple different systems
+we're going to go ahead and take a look
+at what a complete missile defense is
+going to look like
+so the first thing i'm going to do is
+i'm going to get myself something called
+gmd
+that is ground-based missile defense
+this system requires a special radar in
+order to operate
+properly so uh dash x so if i do um
+ships
+x band there it is we need a special
+radar system to guide
+these separate from the weapon so i'm
+going to go ahead and turn the sensors
+on real quickly
+next what i'm going to do is i'm going
+to bring in you just ashore which is a
+very neat system
+you can actually get a version of this
+that's on a ship
+you just assure us what it's called
+we'll go ahead and grab this one it's
+literally just an sm3 that's been
+modified to
+shoot at very very very very very long
+ranges
+next to that of course i'm going to go
+ahead and get myself everybody's a
+favorite
+basically last stitch system which is
+called thaad this particular system is a
+very very good at this we have the brand
+new one as well if we wanted to get that
+go ahead and flip on the radar on that
+one you want to make sure that when
+you're using that or any of these that
+you push the radar in the correct
+direction
+in this case we're pointing the correct
+direction so i'm not too worried that's
+a universal one so i'm not worried about
+that too much
+but he's just ashore looking pretty good
+as well i'm not too worried about that
+and now of course i'm gonna get myself
+the emergency somehow they got through
+system get ourselves one of the new uh
+patriots we're gonna get the
+errants right there
+remember with any of these systems that
+you make sure they face the correct
+otherwise you won't be able to engage
+anything with them in this case we want
+them to be pointing basically towards
+africa good good good good good
+and now we're basically ready to go so
+we have our very long range system which
+is the gmd
+we have the intermediate system which is
+aegis ashore we have the almost about to
+get killed system the thaad
+and of course we have our last stitch i
+think we're already screwed system
+basically going to be your regular
+patriot missile battery
+so let's see how effective these are
+against
+the most scary of all weapons the
+intercontinental ballistic missile
+so i'm going to go all the way up here
+i'm going to grab myself one of those
+this is a df5a that's a dong thing
+i'm gonna go ahead and point that right
+at our little targeting zone here it's
+not gonna take much for this that's for
+sure
+and we're gonna launch one
+give ourselves a moment to go ahead and
+let this thing look at how long of a
+range this is
+there it goes so
+there it goes actually look at this
+it's hard to like rotate the earth so
+you can follow this
+so now those other missiles had a heck
+of a high altitude that they traveled at
+this one look we're already at 500
+kilometers off the ground
+speed up time a little bit here and that
+looks good it's about to drop
+its bus actually the bus is supposed to
+come out and drop off its individual
+weapons
+notice we have not yet acquired that
+it's already getting to the position
+where it's going to split into multiple
+independently target reentry vehicles
+and we don't even
+know it's coming so you can get an idea
+of just how terrifying of a situation
+this could
+really be remember the world is in the
+way
+all right i'll speed up time a little
+bit here
+and it's going to split in just a moment
+there it goes
+so now it has split and we still have
+not detected it
+even though we have you know denying and
+stuff like that it's just coming in with
+that unbelievable speed and it's just a
+zip and zip and zipping
+so i'm gonna go ahead and bring up my
+message log real quick so we don't
+accidentally miss when this thing
+gets spotted remember this is just the
+reentry vehicle this isn't even the
+missile anymore
+again we've got everything ready to go
+there it is pause okay
+so we are currently at a range of 1300
+nautical miles and you probably noticed
+if you look really closely
+this weapon has already fired this is
+the aegis ashore
+this system has a staggeringly long
+range
+actually click on it real quick it's a
+very big missile by the way don't let
+anyone kid you
+of 300 nautical miles
+so this weapon can actually get almost
+all the way there in that time
+so let's go ahead and unpause we'll
+speed up time a little bit
+off it goes no this is just a short this
+isn't gmd
+let's take a look at the geometry of the
+shot remember icbms because of the range
+tend to enter the atmosphere flat
+which gives you plenty of time to
+intercept them and identify that they're
+on the way
+the problem is and i mentioned this
+before is the fact that look at the
+speeds involved
+all right here we go
+we are at an altitude of 240 kilometers
+incredible notice the missile is
+starting to arc downwards
+if we overshoot it because it's too much
+of a deflection shot we're busted
+and we overshot it bad so now
+since the very very long range jesus
+ashore has missed we're going to start
+firing with another round of these
+basically i'm actually going to delete
+them because that's going to be too much
+fun if they accidentally hit
+so now what you would do of course is
+since that missed you'd switch over to
+thaad
+which is a much much shorter range
+system it's also kind of a last ditch
+sort of a system
+all right here comes the next two again
+notice aegis ashore is able to fire this
+entire time
+go ahead delete that sucker let's go
+ahead and grab our patriot because we'll
+never be able to engage it because it'll
+be too fast
+our fat on the flip side will have no
+difficulty engaging it
+because it's well within its targeting
+range that by the way has one of the
+coolest trajectories ever
+look at the speeds involved here this is
+moving in real time
+go back to here so you can see what this
+looks like these puny little tiny
+missiles doing the best they can
+to get themselves up quick enough to
+actually engage it and it looks like our
+boost phase was too long so we're going
+to overshoot from the top of the weapon
+actually i think we might get it and we
+missed we missed we missed
+and we got it safe
+so that's basically your different
+techniques and different methods that
+you can try to engage it
+whatever you do when you do go to design
+these systems or design scenarios around
+remember that each one of the systems
+has a minimum and maximum speed it can
+engage at as well as the minimum and
+maximum range it can engage at
+so if you create a scenario where the
+player can't win since the weapon simply
+can't hit it
+you're kind of busted now how would this
+end up have being
+if we went ahead and used slbms this is
+actually a really really good
+demonstration
+too so let's do a saturation attack
+all right we'll go ahead and do all no
+fire
+now this is a scary situation because
+not only do you have nuclear weapons
+involved
+but they have a very short cruise time
+and there's going to be a lot of mirvs
+making things much more interesting for
+us so let's go ahead and switch back to
+our other side real quick
+okay now you'll notice that these are
+all the aegis ashore systems
+and they've assigned two missiles per
+incoming weapon here
+and notice they are able to engage
+before the weapon
+breaks into the different pieces this is
+one of the wonderful advantages of this
+let's speed time a little bit here look
+at how many missiles we have
+watch this so we've already gotten one
+it allows us to retarget in case we
+missed see how that one twitched at the
+last second
+let's go ahead and watch this from the
+side
+there we go and you can see that each
+one of these systems is either leveling
+off to hit the incoming weapon
+or it's going to basically do a direct
+energy look at the little squiggles i
+love that
+hey we're doing a pretty good job with
+this
+but the missile always gets through
+usually you run out of ammunition
+and now we bring out thaad
+now remember you're not targeting one
+you're targeting multiple weapons this
+is actually a group of missiles that are
+falling to the ground it's not a single
+projectile
+so that of course doesn't have to work
+very hard here
+uh oh now you're like
+what happened why'd the missiles not hit
+it looked like a clean thing again
+think about the trajectory here because
+our thaad were flat
+then we went right under the missile
+because of the speeds involved
+here comes another one notice it's in
+the boost phase it has just a teeny tiny
+last second ditch time to go but
+and that's it war's over because one
+of those missiles got through so
+hopefully that makes you realize
+just how deadly saturation tactics can
+be even with these incredibly
+sophisticated systems there's nothing we
+can do
+and notice i've got nothing left to
+guide those weapons anymore it's doomed
+so is this the end of everything is
+there no way to defeat these incoming
+projectiles
+the reality is and essentially yes mirvs
+are tremendously effective and you can
+actually see how these split into
+multiple pieces to make things
+interesting they're also very very
+you don't have a lot of warning even
+with something like gmd you're not going
+to have a lot of time
+aegis ashore was great but you didn't
+have enough missiles is there anything
+that we could possibly use to try to
+take the edge off of this and the answer
+is there actually is
+let me go back to missile defense force
+again i'm gonna scroll down here i'm
+gonna go ahead and delete all these uh
+systems here
+and i'm gonna type in the word arrow
+bingo so the israelis as
+those who are familiar with israel's
+situation it's not unusual that they get
+missiles pretty much in their backyard
+all the time
+so as a result they built a whole new
+generation of
+anti-ballistic missile systems so in
+this case we have both versions of the
+broken arrow
+they're very very similar to that they
+have a tremendously good radar system
+we also have a short range mode called
+iron beam which is a laser based
+system let's go ahead and bring in one
+of those as well notice the range is
+virtually nothing so i'm actually going
+to have to duplicate it and add a second
+they also of course have the iron dome
+which is a very short range system you
+can see it's barely any bigger than that
+and we're going to see if all these
+short range systems have the capability
+to intercept the exact same attack in
+less
+time than the other system did now that
+should be interesting to see just how
+effective this can actually be
+just confirming that they are facing the
+correct direction with their radars
+last thing in the universe i want is to
+uh give it a freebie kind of so to speak
+iron dome is looking good iron beam wait
+and you see that working it's awesome
+there's the arrow three system perfect
+okay let's let that slbm do its thing
+again so in case you're curious what
+piece of the
+nuclear triad to be most afraid of i
+think you have a pretty good idea
+alright so weapon goes away normally
+this would be detected by satellite
+okay looks pretty scary it looks pretty
+scary let's go ahead switch back to
+missile defense force
+obviously they're completely aware of
+these incoming weapons because we have
+the nester in the pillbox
+notice there have been just starting to
+start firing
+the reason why of course is like i said
+we have to get range first so these are
+all
+arrow threes
+off they go notice the mirvs
+independently targeting they're all
+splitting apart just like i said they
+would
+here comes the big wall of arrow 3. so
+we'll go ahead and switch to 3d view
+real quickly
+take a look at it from the side let's go
+ahead and suck away these vampires
+oh we're going to overshoot now yeah
+we're going overshoot bad
+it's okay though look at him many more i
+have coming those are all the arrow twos
+notice the arrow 3s could not catch up
+they spent so much time in boost they
+basically literally overshot
+switch back to this view zoom in a
+little bit here they come
+arrow arrow threes right about to hit
+and that's game over
+so again just saturating is all you
+needed to do in order to defeat these
+no amount of sophisticated lasers no
+amount of anything could ever
+possibly do it and keep in mind when
+you're doing these multiple
+independently targeted systems
+you never just drop the bombs you also
+drop decoys in order to make it even
+more difficult to see
+now imagine if 15 of these submarines
+were all firing at the same exact time
+you could imagine we'd have well over
+six or seven hundred individual targets
+in that short of a time plus the decoys
+so again it's almost like a no-win
+situation
+okay so last but not least what is my
+general advice for any of this if you're
+going to build a ballistic missile
+scenario
+keep in mind the easiest way to make the
+player lose is just to launch more
+missiles than they possibly have
+interceptors
+that works really well from a player
+perspective your job is going to be to
+decide how many weapons to fire at each
+incoming target
+if you're dealing with something like an
+mirv you're basically screwed two is
+going to be the minimum
+if you're firing against a single
+missile you could basically dump your
+entire stack at them
+but the other piece and this is what i
+said with my little ms paint drawing
+earlier
+is making sure that when you do fire
+you're firing in such a way that you're
+not overshooting the target as it starts
+to re-enter
+the only way to prevent that is limiting
+the attack range
+our wonderful arrow 3s here would have
+been great against a katusha rocket
+but they don't work because basically
+they spent so much of that time climbing
+to get to the cruise altitude they
+overshot the top
+you as a player the only way you could
+avoid that would basically have been to
+go in there
+and tell them not to fire their weapons
+at maximum range
+otherwise you're going to overshoot if
+you run into a situation where you're
+about to get saturated
+you should probably go up into your
+weapon doctrine again i'll pull that up
+real quick so you can take a look at it
+and then you can actually set it so that
+you're only finding one missile
+per incoming weapon as far as an
+offensive capability goes if you're
+looking to
+really really crush another country just
+launch everything at once it works very
+very well
+in which case your only problem is
+making sure the weapons get there at the
+same time
+otherwise they'll be able to piecemeal
+them out one thing you want to keep an
+eye out for as well and i'll go ahead
+and switch over here real quickly is you
+want to be very very careful that if you
+are designing a situation where you have
+an mlrs if you have a few of these
+you basically can saturate any defense
+so kind of keep that in the back of your
+mind as well
+so again hopefully that helps again
+showing a little bit about ballistic
+missiles showing a little bit about the
+plus the problems you're going to face
+again as usual if you have any questions
+i'll toss it down there in the comments
+i never endorse these things because i
+think it's terrible we still have
+nuclear weapons and
+again people make fun of me a little bit
+in the comments and i get that it's just
+it's not pleasant but at the same time
+is understanding how it works
+understanding how effective they are
+you're going to have a pretty good idea
+of how to set up a scenario with it
+and again if you're trying to win one of
+these scenarios it's the only way to win
+is not to play i know that sounds a
+little cliche
+but it's actually very very true and the
+trick there is is there a way you can
+deny than the targeting information
+is there a way that you can somehow
+force them to space their shots out
+is there a way that you can give them
+try to hit their missiles as they're
+climbing upwards which would be optimum
+especially if you're dealing with
+extremely long ranges
+and of course if you can somehow set up
+your missiles so they don't fire too
+soon you almost always be able to
+intercept them
+before you overshoot that weapon other
+than that enjoy

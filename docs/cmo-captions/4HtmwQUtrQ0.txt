@@ -1,0 +1,230 @@
+# C: MO - Using Lua to generate accurate bridges
+Video: https://www.youtube.com/watch?v=4HtmwQUtrQ0
+Video ID: 4HtmwQUtrQ0
+
+hello everyone in today's video we're
+going to be showing you how to lay a
+bridge using Lua so you don't have to
+sit there and add all the segments
+individually keep in mind this also
+works for things like railroad track uh
+buildings uh structures anything that
+basically needs to be linear so what I
+want to do here is I want to lay a
+bridge between these two islands pretty
+good distance here and of course we'll
+go ahead and go to it now the
+oldfashioned way we do this of course
+you press the insert key you come in
+here you type in facility you type in
+Bridge like that you'd have all sorts of
+good Bridges let's say we wanted to take
+the four lane here you'll notice this
+one we can place on water you got to be
+a little careful with this one because
+it causes all sorts of fun little
+problems with uh targeting especially
+automatic targeting but that's okay so
+what you would have to do is you'd have
+to sit here and you'd have to press C
+then you have to press C and do the best
+you can to keep this in align kind of
+obnoxious without traditional drawing
+tools on here so like I said we're going
+to use some malua here but one thing we
+have to keep in mind is we have to know
+how long the bridge is if we want to be
+technically correct which of course is
+the best kind of correct and one of the
+things I can see here is my bridge
+segment is only 40 m long and of course
+it faces North so we need to know how
+many Bridge segments this is going to
+take so if I go ahead and press contr D
+and do a drag there you can see that's a
+1.1 nautical miles my goodness that's
+going to be a lot it's about 1,900 about
+2,000 M there so if we grab our handed
+in calculator we do 2,000 M divided by
+40 m in length whoa boy I think I did
+times that was my mistake I did that's
+50 Bridge segments um no problem if we
+use Lua let's do it so what I'm going to
+do is I'm gonna go ahead and fire up the
+Lis script console and we're going to go
+to it here so let me make this a little
+bit bigger for the folks at home as I
+like to say there we go nice so the
+first thing we want to do is just kind
+of get all of our variables all set here
+so we'll do something like this I think
+I called these guys red today uh we're
+going to go ahead and get to the unit
+name prefix here this is going to be
+just simply um what we're going to call
+our Bridge segments individually uh
+we'll call it Bridge four lane bridge
+section I guess I'm going to call it
+that sounds good
+SE so then of course we'll get one that
+designates the type of facility so a
+unit type obviously we're going to go
+Unity unit type we're going to be
+dealing with facility today because
+remember it's going to be a bridge we're
+going to create a variable that
+represents the
+DB now the DB ID represents the database
+ID for a particular component now if I
+come over here and hit this I can see
+that it is
+4126 makes my life real easy there 4126
+just like that so now we're going to do
+ahead and set our starting low attitude
+and starting longitude now luckily for
+me um I looked this up earlier so I
+wouldn't have to go do it right now but
+if you're not sure what your starting
+local at latitude and longitude is one
+of the things you can do is you can jump
+online real quick and you can hit up
+Google Maps and you can actually
+basically drag and click and it'll tell
+you right on the map I'll go to copy
+that in a second as soon as I've done my
+little piece here let me grab that for
+you so can take a look there we go so
+you can see here I can just click and
+it'll read off those numbers for you if
+you're wondering where I'm getting that
+set of numbers from nice so we're going
+to go ahead and set the number of units
+I believe we did this already uh this is
+going to be how long our bridges divided
+by how um actually I'm sorry sorry the
+length our Bridge needs to be total
+divided by the length of our Bridge
+segment uh we could also just come in
+here and be lazy and put 50 in makes it
+nice and easy for us on type in a local
+let's see here spacing this will be
+distance apart this is going to be a
+pain in the butts it needs to be degrees
+latitude but it needs to be decimal
+degrees latitude that's okay though
+because you can always do the math too
+if you need to and again you can see
+I've done my math here it works out to
+be 40 m because remember that's our
+length works out to be all these
+decimals 36 M okay here we go 0 point 1
+2 3 3 6 uh that's going to be our
+distance apart for each segment if you
+want it to be a little less gamey I
+guess you could probably reduce this uh
+make it a little bit further apart but
+hey we're going to go all out here so
+let's go ahead and create ourselves a
+loop again maximum lazy here um IAL zero
+let's see the number of units which is
+how many we want uh minus one and we're
+going to go ahead and do let's go ahead
+and get our n down here too because this
+is L that we're working with there and
+nice so here's what we got to do we got
+to create a local unit name first and
+this is just going to represent the name
+of our unit now I'm a lazy person so I'm
+going to grab a unit name prefix like
+this toss that in there like that and of
+course we're going to put a little space
+cuz um you know reasons you could also
+go like that if you wanted to but again
+we're just creating a thing I + one nice
+so that means each one of our Bridge
+segments is going to be called Bridge
+section one Bridge section two Bridge
+section three so on and so forth I like
+that so then of course we need to figure
+out where it's going to be I'm going to
+do a local I'm do it one more time this
+will be lat will be my starting latitude
+remember that's our starting position up
+here real quick I'm grab that one of
+these days we'll get a fancy ID for this
+but hey I'm going to work it minus cuz
+my bridge goes south not North if you
+want to go north you just go positive
+here um we're going to do I times
+spacing uh spacing remember that's how
+far apart each bridge is going to be now
+all we have to do is place the darn
+thing oh oh boy youall ready for
+this I'm sorry it is it's just too much
+fun to play with that every single time
+I do it okay so we're going to use the
+add unit command so going type in send
+edit helps if you type it correctly send
+edit and we're going to go ahead and say
+underscore add units now I'm going to go
+maximum lazy here cuz we're using a
+table so I'm going to open my table I'm
+going to close my table and again we're
+just going to do it kind of old school
+and we're going to put all the details
+we need here watch how easy this is type
+equals unit type right comma do not
+forget the comma I do that every time
+we're going to say unit name is going to
+be exactly what you expected which is
+going to be unit name comma do not
+forget the comma DBI ID remember we
+worked this out already here's our DB ID
+Comm on I'm going to forget one comma
+it's going to happen side equals side
+cuz remember this is our side or actual
+what this represents for me it's going
+to be red comma we're going to now say
+latitude equals lat we're going to say
+longitude equals lawn I forgot the comma
+told you i' do it longitude all my
+apologies it's going to be start lawn
+just remember how we're doing a vertical
+Bridge here we it's doing an angly
+bridge and of course uh if we wanted to
+we could come in here and give it a
+proficiency
+proficiency um I guess we'll set the
+proficiency to regular it's a regular
+bridge segment now we do not need a
+comma so here we are we're going to add
+the unit it's going to be this name it's
+going to be this ID it's going to be
+this D and of course our latitude is
+going to get longer each time we test it
+now if I've learned anything about my
+programming it's the first time you try
+something it doesn't work because
+there's that one thing everybody's
+screaming at the monitor for right now
+but that's okay I like that I mean I
+need audience participation run all
+right so let's see here ah here it is I
+was in the wrong
+country so if you come down here now
+you'll observe it worked almost
+perfectly it gave us exactly 50 Bridge
+sections and you can see they're all
+linearly numbered and they're just in a
+nice little row isn't that so awesome
+and the crazy thing too and this is my
+favorite part is if I measure the
+distance between them you'll see it's
+exactly 40 m oh my goodness is that
+awesome so there you have it a script
+that goes ahead and will quickly
+generate yourself a nice little segment
+obviously if I wanted it to be shorter I
+could use less Bridge segments but that
+is glorious and ready to be exploded
+enjoy

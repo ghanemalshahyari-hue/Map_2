@@ -1,0 +1,663 @@
+# C: MO - Air Tasking Order
+Video: https://www.youtube.com/watch?v=qFEqo-cdynk
+Video ID: qFEqo-cdynk
+
+hello everyone in today's video we're
+going to be taking a look at the air
+tasking order now this video comes as a
+request it just takes a few videos a
+couple weeks in order to kind of get to
+it but I thought this would be a good
+time to kind of review sort of
+operations management sort of in general
+so today we have a pretty straight
+forward scenario uh you know the evil
+North Connecticut here is decided to
+secede from the rest of the union and
+the combined Naval and Air Force decide
+to kind of step in and show them where
+it's at kind of a thing so what I've
+done before I got the video rolling here
+is I got all my stuff set up here and
+there's a lot this is what I would
+consider to be probably a moderate
+complexity scenario here so Target
+region of course is our lovely um heart
+fer stand heart fer stand there we go
+down here protect to by you know some
+classic Cold War goodness here we have a
+Midway carrier battle group down here in
+the bottom and of course uh we have the
+Nova Scotia Tactical Air Base up here to
+kind of help us out just a little bit
+here what I've done is I've created a
+bunch of zones and have color
+coordinated everything here uh just kind
+of using the best of all the different
+skills that I know here sort of
+integrating all this I really should
+have named all these if I were a better
+planner I would but again this is just
+for a quick video kind of a thing we
+also have a lot of Air Force units at
+our disposal as a matter of fact there
+were so many of them that when I had to
+create my missions I actually created
+two task pools and then filled them up
+with packages in here in order to
+basically kind of organize everything
+now there's two big kind of thrusts as
+far as packages goes there's the Air
+Force which should be there about 1400
+Zulu and of course the Navy will be
+getting there at about 12:00 Zulu now
+keep in mind these have all been broken
+down by you know air support they've
+been broken down by you know seed Cap
+all those other kinds of things and
+they've made themselves a big old mess
+kind of a big deal here so I'm going to
+quickly save my scenario and I'm going
+to bring up the air tasking order now
+now what you're going to notice here is
+that there's nothing here by the way
+when you first open this sucker you
+might get something looks a little bit
+like this there actually is stuff over
+here so one of the things you probably
+want to do is grab that sucker and make
+it big enough what you will observe is
+there's nothing here now the reason
+there's nothing here is because of the
+fact that nothing has been generated cuz
+I am still paused I did all of this
+before the scenario actually started
+today now the reason I did that of
+course is just to make it a little bit
+simpler now there's a cool thing here is
+if remember how I did everything as far
+as task packages task PS rather you'll
+notice that they're all kind of broken
+apart here to make my life much much
+much simpler here and you will see what
+happens of course when things get
+generated so let me go ahead and pause
+un pause I should say give it a few
+moments here it's a lovely day a very
+very nice crisp cold you know 1968
+August day
+now if we open up the air tasking order
+one more time you'll see that things got
+busy uh just a quick little word of
+warning here is that when you are
+working with this the clock is still
+ticking so you probably want to make
+sure you way up to the top push that
+little triangle there before you get
+carried away now there are so much so
+much I wish I used the correct term here
+so many different items that you can see
+here that basically appeared uh the key
+thing of course is uh we want to go
+ahead and read through these so this is
+going to be missioner packages uh we're
+using all packages here today uh you do
+not have to use packages for them to
+show up in their tasking order there is
+no consequence to that uh to the right
+of that of course is going to be our
+flight call sign these are really really
+cool we can come in here any point of
+course and we'll get to the scary point
+in a second I don't want to push this
+button and you'll see why in a minute we
+have our flight plan which is basically
+the type everything's going to be type
+Flight Plan there's no other options at
+this time it's going to give us our
+status uh one thing you need to know
+about status here is status is going to
+list this taking off even though the
+takeoff time could be actually
+relatively late now the interesting
+thing we don't see here is the takeoff
+time if you recall many of these
+missions are actually quite a bit later
+in the day so you're not going to see
+those you're going to notice this item
+called task now this is an interesting
+little thing this task here basically
+refers to what the point of the mission
+is supposed to be now one of the things
+you're going to notice here is this
+little task Arrow actually allows you to
+change what the particular mission is
+now remember all these were missions
+that we generated for the purposes of
+this exercise so coming in here you'll
+notice there's a lot of things that you
+probably haven't seen before uh for one
+example you have your tar caps you have
+your bar caps you have your rest caps
+there's a lot of different types of
+items in here that you've probably never
+seen before now I know you're sitting
+here going well isn't that going to have
+some kind of um you know impact as far
+as what happens in the game and as a
+general rule it's not going to have a
+large impact some of these have slightly
+different flight profiles but it's not
+going to make that big of a difference
+trying to get in here and explain what
+all these is it would be an exercise and
+ah the most important thing you have to
+remember with all of this is this is for
+you this is not for the AI so for
+example here I happen to notice that my
+combat air patrols Voodoo One my U my
+twos here I can actually come in here
+and set these to be tar cap now the
+reason that's helpful for me is going
+forward is I'm going oh yeah these guys
+are going to be the tar cap kind of a
+thing like that and I can set that here
+to act as a reference to me to let me
+know the fact that we're dealing with a
+tar cap now the interesting thing here
+is there's no deed and I kind of wish
+there was of course deed dead kind of a
+thing like that and there are things in
+there for like drones and fun things
+like that but I usually never mess with
+those the other thing you'll notice
+coming down here with all of our support
+folks you'll notice surveillance and
+support is separated automatically our
+surveillance of course you'll notice
+that our F10 5DS are set to surveillance
+uh these folks are not surveillance at
+all and in a minute this will update
+itself to actually represented where on
+all these folks down here all going to
+be set of course to support now one of
+the cool things here is I'll go ahead
+and kind of move from the left to right
+here keep in mind this information will
+constantly be dynamically updated unless
+you've changed something to the right of
+course we have aircraft type uh notice
+here that if we double click this this
+does not bring up the database page kind
+of wish it did uh it doesn't do that yet
+uh some point of course uh you know
+Uncle demet is going to see it and go oh
+that sounds cool I'll go tell the guy
+who does that for us to the right of
+course this is going to give us our
+Loadout types uh we're going to have our
+takeoff times remember none of this has
+been generated yet but there's one
+really really cool thing here and is if
+you actually come over here you're going
+to notice there's this Landing location
+item which is really cool because uh
+this would basically allow us to tweak
+it once we get some stuff getting into
+the air here but keep in mind now
+nothing has gotten in the air air now
+there's other stuff we have the ability
+to do too which is really wild this is a
+large list box which means if we want to
+be that way I can actually organize
+things by alphabetical if I choose to do
+so I can order them by my takeoff
+location like I can see exactly where
+they're coming from keep in mind if I'm
+running like the cold war here there
+there'd be 600 of these so this makes it
+really really easy you can also organize
+by type of aircraft and all those
+different items to make your life much
+much simpler as far as keeping this all
+organized I'm a big fan of uh doing it
+by takeoff time that's just me obviously
+we have no takeoff times cuz nobody's
+there yet I we still have an hour before
+anybody starts getting in the air so I
+don't have to worry about that yet now
+one cool thing here is we can go ahead
+and play with this we can change what
+time of day it is we can even switch to
+just Air Force and I Can See For example
+I've got some Air Force folks who are
+getting ready if I switched to Navy here
+remember all we did here is create
+ourselves task pools for the purposes of
+us staying organized because if you're
+doing a for example one of my scenarios
+which is uh let's see here operation
+Allied Force you'll have like down to
+here in packages it's it's insanity but
+again that's one of the cool things here
+is we can go and open individual ones if
+we need to which again like I always
+tell people try to stay organized so I'm
+going to go unpause here I'm going go
+speed up time a little bit and and I
+heard the happy sounds of the
+helicopters launching I'm turn my own
+volume down here so I don't deafen
+myself and of course these guys are now
+in the air let's go ahead and pause and
+let's go bring up the air tasking order
+one more time here it's going to take a
+second it's going to start getting a
+little messy so what we're going to
+notice now is if I come down to package
+7538 so
+538 you're going to notice now that
+things have changed uh you'll first of
+course observe the fact they're no
+longer going to be in the taking off
+position you're going to see they're in
+the Airborne position you can see
+they're currently on their current task
+as well as a different aircraft and
+again we don't have any local takeoff
+times or time on targets or anything
+like that and you're probably panicking
+saying but but they missions why aren't
+they I'll show you why when I created
+these missions today because of the
+scale of the scenario I created
+scenarios that are only patrols now now
+the reason that's a big deal is because
+of the fact that when I do patrols there
+really is a Time on station there's not
+a Time On Target which is going to
+change the way that of course our
+different scenario goes so I'm going to
+go ahead and run the clock just a tiny
+bit here and I'll kind of generate a
+bunch of shenanigans and going on I'm
+just
+gonna I know they're all bad guys I set
+this scenario up myself so now of course
+if we go back up to the air tasking
+order um things are going to get a
+little busy so if I were to go over to
+all missions including in the ATO
+including those not in the ATL now
+there's one interesting thing about the
+ATL now if I press the f11 key and I
+pick one of these packages one of the
+things you're going to know is that you
+can actually decide whether or not this
+is part of the air tasking order now if
+we want to set that up we can uh it's a
+general rule I don't really know why you
+wouldn't set it up that way but again
+depending on how you want to set those
+things up you can it's just kind of one
+of those neat little features so now
+that we've got ourselves in the air and
+now things are starting to get a little
+Shenanigans and going on here you can
+see we've got people taking off we have
+people Airborne all sorts of stuff is
+start starting to flow blood into here
+to kind of keep everything all sorts of
+busy now one of the things I love is you
+can switch to status mode here and you
+can quickly take a look at all the
+different types that are airborne now if
+you remember a little while ago we set
+these chaps to be a tar cap and I
+actually are tar cap here which is going
+to work well for us but what I like to
+do now is I like to go ahead and grab my
+Nova Scotia tab real quickly I'm just
+going to control F6 here and what I like
+to do just refl is I just demonstrate
+what it's going to look like when you
+have a mission that is actually going to
+have a specific time where it needs to
+blow stuff up so I'm going to go ahead
+and grab might P 52 DS here go that'll
+do it that' be kind of
+rude oh man I feel sorry for this city
+I've dropped so many bombs on it over
+the years I'm probably should reel that
+in a little bit so strike this so I'll
+go ahead and keep it nice and simple
+we'll do a land strike oh let's see what
+time is it it is 5:40 actually it's
+10:41 so we can get there for 12:30 is
+probably going to be the D time I when
+we hit it so I'm going to go ahead and
+press
+okay nice so now we've got everything
+notice uh we've got everything ready to
+go here we're going to go ahead and set
+a time on Target and we're going to do
+uh 12 what do we say 12:31 uh let's see
+10 yeah we'll call it 12:30 we'll be our
+Strike Time there that sounds pretty
+good to me deactivation time I'm not
+going to do any of these things because
+I don't need to if I wanted to I could
+technically come in here and say shut
+the mission off at XY and Z time but
+I've already got a Time On Target so I
+don't have to worry about that too much
+so I'm going to go Ahad and grab my
+Buffs and go ahead and drop them in
+there that looks fine to me that looks
+fine to me there's no escorts I'm not
+worried about it um targets oh yeah like
+I want to Target those oh boy by the way
+if you're C ious about how you can
+customize which one of these targets
+should be your priorities um that's
+going to be a different screen than this
+the old days of course you could
+actually come up here and press control
+up arrow and stuff like that like move
+them around we don't do that anymore
+there's better opportunities uh focusing
+on strike targets we definitely want
+that to be something like that all this
+stuff here mcon um I want this to be
+going blasting the whole time to give us
+some sort of chance to get a little bit
+closer to the enemy without getting hose
+there and U let's go ahead and take a
+look real quickly here targeting
+priority I'm not going to set any of
+this today but I could set it like
+medium buildings or something like that
+if I want to specifically Target them
+but the reason I did that of course is I
+wanted to demonstrate what'll happen
+here so let me go speed up time just a
+little bit and let's go grab our air
+tasking order one more time here now
+this is where it's going to be different
+so I'm going to go grab strike this and
+you'll notice we don't have a takeoff
+time yet uh because we're not quite
+there uh if I go to my no scoer tab
+let's see press 11 real quickly here
+you'll see my time on target is until
+12:30 now if I wanted to and now this is
+a big deal um we can go ahead and by the
+way this's is a quick thing if you press
+this button it pop set up ah now we have
+a takeoff time you're going to notice
+here that some things have changed in
+our tasking order one thing you'll see
+here for example is the fact that we
+have a new status called planning when
+we're on patrol it's a little different
+you also notice my task is the same as
+it was before notice the fact my load
+out is here you'll see that I have a
+takeoff time and I have a Time On Target
+one of these must be set the other one
+does not so for example you'll see that
+my takeoff time is set to be 6:58 a.m.
+local time and now what I can actually
+do is I can change that time over in the
+screen and it will automatically adjust
+itself here now if I wanted to unlock
+that I could unlock that which would now
+make it in a situation where I could go
+ahead and modify it over in the mission
+editor you know if I go like this and
+double click you'll notice there's
+nothing I can click here but keep in
+mind this is all supposed to be
+information for us minus of places where
+the little drop- down boxes are now of
+course you'll notice when I hit the
+little button here flight plan and
+flight plan template it gives us the
+ability to dial one of these in I'm not
+going to punch this in cuz that's going
+to like blow up everything that I did
+already
+swinging down to this side you're going
+to noce something new and there's this
+lovely thing called privity uh this is
+really for a good old fashioned you know
+real military planner types there are
+two there either it's got to happen or
+none so what some people will do is
+build a lot of plans and they'll
+actually come back and actually have
+some fun on it which is actually kind of
+neat but again it's all depends on what
+you want to do now another thing you'll
+see here too is we have the ability to
+show Airborne flight plans on tactical
+map for the selected units now the
+reason this is cool and I don't know if
+I can give myself enough room to
+actually show this to you is you can
+actually now see the flight plan for
+this particular operation that's going
+uh the other thing you'll observe too is
+when you come down to the bottom is just
+going to be this whole section where
+it's going to give you the ability to
+create edit and delete and changing
+aircraft types takeoff times all these
+items are actually built directly into
+the bottom now we have not launched yet
+it's says 6:58 a.m. it says this is It's
+on 5:42 so we have an hour and a half
+before these things are actually going
+to launch but the reason this is so cool
+now is if I wanted to create I could
+actually come in here and I could go
+ahead and create a flight independent of
+the actual units themselves now this is
+an interesting little piece here because
+I could build all of this myself
+completely within my uh package here
+notice by the way I've got a new call
+sign here it's all part of that mission
+package generate everything and then
+afterwards you could come in here and
+you could actually assign the aircraft
+that you wanted to use here now this is
+where things are going to get incredibly
+complicated let me show you why why cuz
+if I were to go back over into here and
+I were to go ahead and edit this flight
+plan you would recognize the traditional
+sort of a little piece here the
+difference being of course is that when
+we're in our creator flight mode you
+probably observe the fact that we had
+all that other stuff there so watch this
+I'm actually going to go and not delete
+this one or we don't need this one real
+quick I'm going to press change aircraft
+type and load out I'm going to leave it
+as my B52 we're move existing are do you
+want to proceed no notice we've got
+these all selected notice we have the
+weapons but notice now we have this
+brand new profile option over here on
+the right now the reason this is so cool
+is this gives us the ability to not only
+uh tweak the profile manually for the
+mission but it also lets us do things
+like changing the landing location we
+had another Airbase we could actually
+come in here and change the landing
+location to a different air base if
+we're doing like a kind of Clean Sweep
+obviously we don't have carer capable
+b52s here so I'm not going to worry
+about that I noticed by the way there's
+a cruise oneway only which I find kind
+of amusing another thing you got to
+watch out for with the screen is
+everything's going to be in meters uh we
+have to kind of be mindful of that but
+one of the cool things is that if I want
+to do my intact Ingress I could actually
+go ahead and set this manually if I
+wanted to be a silly person and again I
+would have to set the plane then I'd
+have to set this then I'd have to set
+that and do all that over again to
+basically get this all configured so I'm
+not going to change that because once
+you start getting into flight pan
+territory that's where you're going to
+start getting into things getting
+complicated but again I'll pull this out
+real quickly to kind of show it to you
+what it looks like you can see how this
+will get a little involved very quickly
+but this is honestly for another day
+because that gets very like I said
+involved and the incredible thing is
+there's all sorts of crazy buttons and
+stuff down there which makes things very
+very interesting for us and we have
+talked about the flight PL editor before
+so let's go ahead and uh get some time
+going here we'll let our aircraft kind
+of get
+airborne I have a pretty powerful
+computer but um these things slow down
+sometimes I'm pretty sure they're bad
+guys I'm sure the people of Harford are
+very confused why the Air Force chose to
+do an exercise directly over their heads
+now notice how um I'm going to go and
+pause here good let's bring up the air
+tasking order once more now that we've
+had an opportunity to run things I'll
+get out of this package we'll go to all
+ready for pain ow and you can see here
+that um everything we've got people air
+bling we have people Landing we've got
+all sorts of stuff going here of course
+my strike plan down over on this side uh
+these folks are still getting ready for
+takeoff but you can see their takeoff
+time is 6:58 that's uh 52 minutes from
+now so we have plenty of time and notice
+my Air Force guys arrive right on
+schedule my f105 DS which are a
+fantastic airplane and they're just
+doing their exercise definitely doing
+some military exercises I promise you
+that
+um they're probably not terribly
+thrilled about this all right we can see
+our 658 I'm just waiting for that to
+come roll around and of course look at
+everybody running over to the refueling
+I need gas man give me gas of course
+that's one of the reasons why you oh
+look at all these
+missiles every once in a while the radar
+comes back online for a second and then
+it's like just slammed by standard
+missiles like part of me feels bad about
+that the other part of me is like the
+only reason I feel bad about that is how
+expensive those D things were you know
+let's take a rim TS and uh just put an
+anti- radar missiles thing on it all
+right let's go ahead and bring up the
+air tasking order one more time here and
+I believe at this point if I go over to
+my strike this plan these guys are
+airborne and they're on the way and you
+can see the takeoff time was basically
+13 seconds after 58 which is exactly
+correct which is why I tell everybody to
+do things with take off times and they
+are on their way well which is awesome
+we'll go pick up with them in a minute
+here once we get things a little bit
+more stabilized here ah what a lovely
+day it's a lovely day and there are our
+friends right there now let's see here
+this is our b52s are they're well on the
+plan just like we expected I think our
+attack point there was supposed to be
+let's see they're supposed to strike at
+7:30 so they're right on schedule these
+guys are doing a great job of it today
+now takes some it shouldn't take them
+too long shouldn't take him too long so
+let's go pop up with the air t asking
+order one more time real quickly and
+again you can always go back to the
+flight plan and I love the fact you can
+come in here and actually click on this
+and like change it if you want to be a
+weird person as a matter of fact I can
+come up here and hit F2 I'm not going to
+I'm not going to I can but I'm not going
+to these are B-52s they're they're
+intended for a certain altitude and
+let's see what they do to my poor city
+of Hartford one more time again this is
+all a military operation they're just
+planning in case um you know Hartford
+stand ever breaks off or something along
+those lines all right here they
+go yes man that is a lot smoother than
+it used to be in the old days and now
+one of the things you'll notice of
+course is that when we head back over to
+the air tasking order you'll see that
+they're on basically still Airborne but
+in a bit they're actually going to come
+back and settle themselves back down to
+the ground so going speed up time here I
+love this new double flame speed
+unfortunately with the double flame
+speed is if obviously something's being
+tracked or targeted or something like
+that it's uh going to slow things down a
+little bit magic of editing another they
+coming in for landing sweet so now I
+want I bring up the air tasking order
+again you'll notice the fact fact that
+uh even though it lists them as Airborne
+they're very much down onto the ground
+which is again everything is going to
+update in Cycles it's not going to
+update continuously that would be an
+absolute disaster so as you can see the
+air tasking order is a very useful tool
+for us it's basically going to enable us
+to be able to see a lot of things going
+on to be able to organize everything
+another big thing that I hope everybody
+takes away here is using the task pools
+if you have really really really large
+units like this because it keeps
+everybody separate when you need them to
+be separate obviously if I need a bunch
+of phantoms no matter where they're
+coming from all strike the same Target
+you're not going to be using a task pool
+for that you're just going to the old
+fashioned way kind of a thing but as you
+can see it's a very useful tool and it's
+going to lead us into the flight plan
+editor but uh that's for another day
+because that gets a little involved
+enjoy

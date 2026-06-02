@@ -1,0 +1,202 @@
+# C: MO - Show ‘Real’ Altitude of Objects in new beta
+Video: https://www.youtube.com/watch?v=2H3gazg1seo
+Video ID: 2H3gazg1seo
+
+hello everyone in today's video we're
+going to be showing you an interesting
+feature just introduced with the latest
+beta for command modern operations now
+the first thing I want to say before I
+show this goofy feature off and you say
+why did they do this uh you'll
+appreciate it by the way is just to
+quickly point out the fact that as of
+this exact moment the only place you're
+going to get this beta is if you want
+over to the command modern operations
+forum and you track down our topic here
+and again they break down some of the
+cool different options especially like
+the HTML stuff the new restrictions on
+aircraft fuel loadout and things like
+that but the main feature I want to
+concentrate on today is the fact you can
+now show air units at their true
+altitude now you're sitting there going
+what do you mean by that well it's like
+this if I move my mouse around right now
+you'll notice my aircraft stay in the
+same point the interesting thing of
+course is the ground is down here my
+aircraft are actually above my ground
+wouldn't it be nice if we could actually
+see the relationship between the two and
+the answer is yes there is a way to do
+that now so if you would actually go up
+to your game options now after
+installing the beta of course as you can
+tell from the upper point if you go to
+map display you'll see thing that says
+draw units at true altitude I'm going to
+go ahead and click that button now when
+I clicked on that you said hey nothing
+really changed I saw the move a little
+tiny bit you know if you zoom in here
+and I got to do one of these but if you
+look very very very closely you will
+observe that behind each one of these
+aircraft are these little tiny lines as
+a matter of fact if I would go like this
+and get myself another one of those
+f-16s F-16 CMP actually let's get the
+Aurora let's get something that could
+could really do this properly there we
+go this will do my demonstration you'll
+actually observe now if you look very
+carefully that that aircraft is now
+three-dimensionally placed as I move my
+mouse around here you can see I can see
+the relative position of that aircraft
+relative to everything underneath it
+just by moving it around like this so no
+longer is it straight down but it
+actually shows something that looks like
+this and you get a great idea of how
+stupidly high is particular aircraft is
+capable of trialing go and do one of
+those I'll do Max altitude just for
+demonstrations here but again this one's
+only chilling at 36,000 ft here let's go
+ahead and pop it up to its maximum
+altitude just to give you an idea of how
+incredibly absurd this new feature is
+90,000 enter pause ah typed it in wrong
+note to self type in things
+correctly all right remaining fuel don't
+touch that I meant to do altitude there
+we go 90,000 ento there we go now look
+at this
+he's so high look at this look at this
+look at this isn't that incredible the
+fact that we have a little
+three-dimensionality um I know what
+you're thinking and of course I will
+demonstrate that in a moment as well but
+one of the cool things about this
+feature now is if I come down here and
+look at my little f16s these guys are
+traveling extraordinarily low and one of
+the cool things is it's actually based
+on ground level so as I start scooting
+along these mountains you can actually
+see the relationship between the F-16
+and the ground as it's kind of ripping
+along right now
+now I have my one F-16 up here you can
+see he's struggling to stay in a
+straight line there but he's basically
+got nothing going on as far as altitude
+goes and if we grab this one in the end
+who's basically th000 fet AGL some of
+these mountains over here are 1500 feet
+so if I were to move him like this you
+can actually see very clearly how that
+relationship is actually going just how
+close he is to basically smacking into
+the top of course this guy's like
+yo look how high that is my brain wants
+to rotate this map so hard right now to
+be able to like go all out now the next
+thing we'll go ahead and take a look at
+too and I get while we're kind of
+getting ready to be do some naughty
+things here is you're wondering what
+happens if you have something that is in
+an airplane perhaps um you have an SSM
+and you'd very much like to test it out
+on a Target well this is where it gets
+fun so I'm going to go and press shift
+F1 and go and click on that and I'm
+going to go ahead and find a
+peacekeeper now you know my opinion on
+nuclear weapons um so I'm not going to
+allow the nuclear weapon to actually
+strike its Target but what I do want to
+observe here is if I zoom in on just a
+little bit here we can actually press
+the T key button the way and that will
+auto lock your map onto this and if I
+speed up time a little bit here you can
+see it's starting to make a contrail
+it's starting to make a contrail and Bam
+we are out of the contrail land because
+we are 54 km up now this missile is high
+and when I say High I mean absurdly high
+if I actually go like this you can see
+we're 87 kilm up now you're sitting here
+going this doesn't feel like 87 km but
+remember my camera altitude is 700 km
+right now so that missile is actually
+making the trajectory as if it was the
+real weapon now what's so cool here is
+that if you do happen to have a attack
+view you open this sucker up if I were
+to actually go find this missile and do
+one of these things you can actually see
+that it's the same view side by side now
+as it kind of climbs so if you want to
+look the side view as this thing
+basically is a scoot scooting up into
+the sky here oh my goodness look at that
+look at look at this look at this when
+your pin cushion is up that keep in mind
+we're 4600 km up here look at the
+altitude that that weapon travels to get
+to its Target now what I really really
+love about this is the fact that you now
+can visualize just how ridiculous
+ballistic missiles really are in action
+now we'll go ahead and pause that right
+there I think I've kind of made my point
+and we'll have a little bit of fun of
+course so under unit actions here I'm
+going to add some
+satellites let's go to the United States
+here uh us of course I always get it
+wrong I have a pretty much 99% chance of
+getting it wrong the first time uh DSP
+those are all the old ones the fighter
+that's a little bit older where is
+lacrosse that's ancient OB we go we add
+that one all right
+so no there it is Bam so you can see
+here that I'm looking at USA 69 here
+basically chilling there uh you can see
+it's a pretty high it's let me unpause
+for a second here there we go it's also
+moving quick there we go there we go you
+can see it's 676 km up and you can see
+how stupid high that thing is now but of
+course when we come and swing around you
+can see very clear watch this watch this
+if we go to the side of the planet you
+can see how high my Peacekeeper is if I
+go like this look at this I don't think
+I'll be able to pull it yeah I will
+there you go see the difference it's
+that insane just giving you an idea of
+the differences and finally kind of
+brings in a three-dimensionality to
+command that we did not have in the past
+now there's one other thing I want to
+throw out real quick before we go ahead
+and break this video here I love the
+this is so absurd is the fact that um
+when you go into your database now one
+of the things they added is the updated
+HTML and the reason that's so good is
+when you open things you'll notice
+everything's nice and Speedy and crisp
+but more importantly because they
+Implement to the new HTML you can now
+bring them into your briefings enjoy

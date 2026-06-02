@@ -1,0 +1,366 @@
+# C: MO - Beta 1.08 Comms Jamming and Drone Autonomy
+Video: https://www.youtube.com/watch?v=tKndAfw6m34
+Video ID: tKndAfw6m34
+
+Hello everyone. In today's video, we're
+going to be taking a look at some of the
+new features brought to us in Command
+Modern Operations version 108 beta. Now,
+I will say right away that this is
+definitely a beta version. You know,
+there's some little bugs kind of here
+and there. So, for those of you who are
+doing an ongoing playthrough or
+something like that, I'd recommend
+staying on the regular public build,
+waiting until some of the kinks are kind
+of ironed out, especially like saving
+and things like that. So, our little
+scenario today is relatively
+straightforward. Uh what we have here is
+we have a couple drones. And now one of
+the big things that they've added is not
+only have they made it so that drones
+have different levels of autonomy, but
+they've also added communications
+jamming. Now, communications jamming has
+been one of those things that we've
+actually had for a really long time in
+the professional edition. And I can
+safely say that communications jamming
+creates some really interesting
+scenarios and there's a lot to it. And I
+will definitely do a more detailed video
+on communications jamming once the beta
+kind of evolves just a little bit more
+because I don't want to go too crazy on
+that stuff, especially if things are
+going to change later. So, we have here
+is a pretty straightforward scenario. We
+have a ship we're trying to find. I'm
+pretty sure it's right there. There it
+is. And of course, what we have is a
+couple drones. Uh, one of our drones
+here is an MQ1C and the other one, of
+course, is an MQ9A. Now, this sucker
+right here is an interesting aircraft
+because when I open up its little
+display, you're going to see here that
+its autonomy level is self-reovering,
+which means if it can't talk to the home
+base, it's going to attempt to return to
+home base. It's going to create a really
+big problem. You'll see. This one over
+here, on the other hand, is the MQ9
+Reaper. This is a little bit bigger, a
+little more modern, and you're going to
+see it is fault adapt event adaptive.
+That means not only can it work in areas
+where it cannot talk to home base, but
+it's smart enough to kind of fulfill the
+mission. There's actually a lot of
+different modes of this autonomy level
+and there's a really really good article
+that's kind of kicking around if you're
+absolutely interested in kind of taking
+a look at this. You can find it
+basically right here. And the cool thing
+with of course all of these things that
+you see here is that they're going to
+have interesting little gameplay
+elements. And now for those of you who
+play different scenarios, you're going
+to get a kick out of this. So what I'm
+going to do is I have my two little
+reapers here. And of course, if I recall
+correctly, uh yes, we have ourselves a
+little ship which we have to acquire.
+Let me borrow my tupalift real quick
+here. Hey, flip your radar on, will you,
+buddy? We're trying to find the
+ship. Hey, we got it. Fantastic. All
+right, so we have our ship. And of
+course, I'm going to take my drones. I'm
+going go press F1. Go ahead and click on
+this one. Uh-oh. Bugs. And it looks like
+we recover from that pretty easily. All
+right, we're going to go ahead and
+select that other one, too. That's
+called a fail safe. I did say this was a
+beta. I did say this was a beta. So,
+we've ordered these two guys to go ahead
+now check out this little target here.
+And now, they're going to start speeding
+up a little bit, and they're going to be
+engaged offensive in just a moment and
+start making their way towards our
+little target here. Meanwhile, Tupelift
+142 is got to keep an eye on things.
+Meanwhile, let's go swing to the other
+side real quick. Now, I'm going to pause
+my game for a second and bring up the
+scenario features and settings. One of
+the things you're going to notice is
+there are a lot of new ones now,
+including these drone autonomy levels,
+including ASCM terrain falling
+restrictions. I'm going leave that here
+because this is going to be funny in a
+minute. And the other thing you'll
+notice too is we have just
+communications jamming now as an option.
+If you don't hit that, you don't get the
+fun part that's going to happen in a
+second. So, I'm going to go over to my
+lovely, lovely ship here. I'm going to
+go to my sensors real quick, and I'm
+going to turn on my communications
+jammer. Now, the communications jammer
+on this thing is a very modern one. It
+is very, very, very, very, very
+sophisticated. Now, one thing I want to
+say immediately is as soon as the
+communications jammer flips on, you'll
+probably observe the fact that the
+little word jammed is going to appear
+next to each one of these. I'm kind of
+visualizing space balls with jammed.
+Uh-oh. And you can see my two drones
+have dropped off the network because
+there's no way to communicate with them.
+Now, you're sitting here going, "What if
+you have satellite communications? I
+thought these guys had satellite
+communications. You can't jam them line
+of sight." The answer is that's correct.
+What I had actually done is I'd gone
+into here and I'd actually removed the
+satellite communications from these two
+units. Uh the reason I did that, of
+course, is that completely denies them
+the ability to talk back to us. So,
+right now, we are completely hopeless.
+We are on our own. These drones are just
+doing whatever the heck they're going to
+do. So, what I'm going to do is I'm
+going to spin my OSA around real quickly
+here. I'm actually going to get a more
+powerful radar on the OSA. The reason I
+want to do this is just so we can keep
+an eye on the goofiness that's going on
+in this guy above us here. Uh, let's
+see. We need We need a TPY. We'll
+probably do a two. Uh, TP3, TP1, or
+maybe SPY1. That's what I wanted. There
+we go. We'll do a 1D here. And the
+reason I'm picking this radar is I just
+want to be able to see my own aircraft I
+can no longer identify. Now, one of the
+things you'll probably notice now that
+the comm's jammer is kicked on is my
+little tupalive up here. I actually know
+where this thing is pretty accurately.
+Now, the reason I do is because I'm
+detecting it with my own radar. If I
+didn't have that ability, it would work.
+Another thing you'll probably notice is
+there's no line of sight between the
+enemy vessel and where my handydandy OS
+is. You'll also notice we don't know
+where the enemy vessel is anymore cuz
+her tupalive basically doesn't have the
+ability to communicate back to him.
+Start to see how it gets a little
+complicated. So, the other thing I'm
+going to do too, while we're kind of
+going along here, is I'll go and get my
+guy moving a little bit quicker here.
+Come on, get moving. We've got work to
+do. These things are really fast, by the
+way. Is to see what happens next. So,
+I'm going to speed up time a little bit
+here. And obviously, I can only see so
+far in the sky. We have a pretty good
+sight on where our friend, the tupalive
+is, just because it shows up on radar
+really easily. But our two drones are
+completely completely off the network.
+We have no idea where these drones are.
+They're not talking to me. They're not
+telling me what's going on. Nothing's
+going on. So, what I'm going to do is
+I'm actually going to come over here.
+I'm going to add myself another radar.
+All right. Now, the reason I'm doing
+this is just to show you how frustrating
+this uh communications jamming will make
+your life here. Let's see. This would be
+dramatic. Uh let's see. Air traffic
+control radar. It sounds pretty good to
+me. And the reason I'm adding this is
+just to give us an idea of anybody comes
+into view here. All right, let's go
+ahead and speed up time here. We'll go
+ahead and add a minute here and see what
+happens. Oh, actually, we'll pause
+first. Speed it up to one flame. And
+then we I must have pressed F1 while I
+was doing things here. 1 minutes. Okay,
+so we passed by one minute. So, we still
+have a pretty good idea where all those
+guys are. We have no idea. Oh, we have a
+little bit of knowledge about this
+drone. Oh, we know they're still on the
+way. We still have no idea where that
+other one is. We can see it continues to
+proceed on its mission. Notice it's
+disregarding the fact that it has no
+idea where the enemy is. It's just
+trying to complete its mission. This one
+on the flip side is returning to base.
+All right, let's go ahead and take a
+look here. I'll go and speed up time
+again. Another minute and chunk. And we
+can tell this guy's basically making his
+way over there trying to do what he can.
+He's going to try to identify and find
+that target on his own. And again, he's
+smart enough to do that. But what you'll
+observe is he flew right over the target
+because he had no knowledge of where the
+target is. So now he's going to come
+spinning around. I'll go slow down time
+a little bit here. And again, this is
+all real time. Not real time. It's a
+slightly exaggerated time. I think
+they've changed spacebar. Let's see
+here. It's coming around just like that.
+All right. I have lost the ability to
+proceed in time. That's an interesting
+new problem to have. Ah, I fixed it.
+Good. All right. There it is. We have an
+unknown identified something's unknown.
+This is not unknown. This is actually a
+missile that was launched at this
+particular target right here. So, he's
+going to come flying down here. Go ahead
+and press controlV. And you can see our
+little drone. It's not a missile. It's
+our drone trying to find that target on
+the ground, which it has no knowledge of
+any longer. And you can see just how
+challenging this is as far as making
+these things a little bit more
+complicated for any type of scenario
+that you're actually running at any
+given
+time. There we go. Now everything's
+moving smoothly. There we go. I can
+speed time up. So, that poor drone.
+Remember, I'm on show everything mode.
+So, if I press Ctrl +V, we don't even
+know that this is one of our drones as a
+result of all these consequences that's
+kind of stacking up together here.
+That's getting messy. So, now let's go
+ahead and go back to the team for a
+second here. And you can already see by
+the remember that drone earlier I was
+talking about. He turned around, he flew
+all the way home. He's actually going to
+come home, land, and go, "What?" and
+then be confused as to why he didn't
+return back to the mission. Isn't that
+crazy how that works? So, let's go
+switch to the other team again for a
+second here, and I'll demonstrate some
+shenanigans. I'm going to go to sensors
+real quick and I'm going to shut the
+communication jammer off. Now, there's a
+big reason why I chose to do that. Let's
+go swing back to the other team here. Go
+ahead and fast forward a little bit of
+time here. I don't need you to be in
+auto pause mode. You can just do it on
+your own and we'll keep skipping around
+with auto pause mode. Those of you
+getting ready for real time kind of
+stuff, uh you're going to have to get
+used to it. So, I'm going to go ahead
+and RTB that particular unit. And he's
+just going to kind of head bow. Oh, he
+took a shot. He took a shot. You can go
+home. Like I said, you can return to
+base. So, I'm actually going to unassign
+you real quickly and head you back home.
+Now, you know, my OSA right here is
+getting awfully close to being in range
+here. You know what I should do? I
+should use one of those missiles on the
+side of this thing against that boat. I
+mean, we've done a lot of damage to it.
+Let's finish the job, right? So, I'm
+going to press shift F1. I'm going to
+click on the boats. And what you will
+notice here is we cannot fire our
+missile. This is another new feature
+that they've added to this one. And it's
+the fact that the older cruise missiles
+only float one altitude. And
+unfortunately, there's mountains between
+us and the target that will cause it to
+slam into it. Now, quite hilariously, if
+I press control F1 for a manual shot,
+and I say, "No, no, no. Just just just
+fire. It'll be fine." Kind of a thing
+like that. And of course, I add order
+the thing to fire. You can see the
+missile kind of comes flying out there.
+Comes flying out there. Oh, we got lucky
+that time. Oh, actually, it's just kind
+of overshot and basically cruised over.
+Our mountains weren't tall enough.
+Normally, what would happen, of course,
+is we'd smack into one of these targets
+and not be able to affect the target on
+the other side at all. So, let's go
+ahead and flip them over to the other
+side here. Grab ourselves another lock.
+And you'll notice we actually can safely
+take our shot here. So, we'll go ahead
+and take our shot. There goes the round.
+It went. What was that? Did that thing
+just go swimming? Yes, it just went
+swimming. Oh man, these old missiles are
+hard to use. Let's try this one. There
+it goes. Oh, and that one also went
+swimming. Sigh. And it just gives you an
+idea of some of the complications that's
+going. Let's see. 48 from feet from
+intended point. No units affected by
+explosion. Oh well, it turns out we ran
+out of weapons. But one of the things
+you'll probably also know is since we're
+no longer jamming. Remember a while ago
+this guy was returning back to base,
+he's no longer being jammed, which now
+means he's allowed to continue his
+mission. As a matter of fact, you will
+see here that he continues his mission
+exactly as it was previously. This
+creates an interesting little problem.
+By the way, go ahead and skip it away.
+There we go. There comes the missiles.
+Bang. Bang. And the mission is
+accomplished. I can order that one to
+return home. There are a lot of other
+features in this new version of command
+modded operations and I'm still kind of
+playing with them and getting the hang
+of it. Some of the stuff we have seen
+over in the PE version before, but the
+key thing is once you start fiddling
+with that comm's jamming, once you start
+figling with those little drones, things
+are going to change quite a bit for
+Modern Warfare. Enjoy.

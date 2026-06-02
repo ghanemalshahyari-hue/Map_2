@@ -1,0 +1,202 @@
+# C: MO - Understanding SAM Trajectories with SimpleRockets 2
+Video: https://www.youtube.com/watch?v=blDlSkDLKg0
+Video ID: blDlSkDLKg0
+
+hello everyone in today's video I
+thought we'd be answering a question
+that I've seen come up more than one
+time and that's what's the deal with the
+new missile model and is how realistic
+or why has it got to be that way so what
+I thought we'd do today is I'd quickly
+show it to you and then I load up a
+program dedicated to missiles and we'd
+actually show you how it works in the
+real world ish again it's a simulation
+so let's do it so I'm gonna go ahead and
+fire my radar oh we got a Target looks
+pretty good to me and go ahead and lock
+onto that one I don't care if it's a
+civilian targets too bad they should
+have been flying on my zone anyway all
+right so let's watch what happens here
+so our little guy is going to comply and
+into range here my essay two crews are
+going to get ready to fire they're gonna
+start zooming in a little bit go ahead
+and fire up their Radars too to help out
+and the missile's on the way sweet let's
+grab this missile and we can see what it
+does so it's going to go ahead and boost
+itself up to speed here it's doing about
+Mach 2. it's that climbing pretty
+aggressively it's got a pretty good tank
+of gas here you can see it's slowly
+burning through its fuel supply here
+continues to climb continues to climb
+getting a little bit higher going right
+after that Boeing 707 that I've used as
+a drone here you can see it's starting
+to accelerate and then it starts to slow
+down that's because the engine has
+stopped firing it literally ran out of
+fuel and it's relying just on momentum
+alone for the purposes of carrying
+itself all the way to the Target now
+keep in mind we're at 25 000 feet here
+so we're pretty darn High over the air
+is relatively thin so our missiles only
+pitched up at about 10 20 degrees we'll
+actually do is go ahead and fire up
+attack view here
+now attack view is kind of a good thing
+if you want to kind of visualize stuff
+like this there it is beautiful so you
+can see this guy coming right on up
+cruising he's cruising he's cruising
+there's our drone that we chose to shoot
+at today
+and you can see even though it's slowed
+down to Mach 1.5
+oh bam we got one hit and you can see
+the other one sails on by so even though
+the missile ran out of gas it still had
+plenty of capability to get to the
+Target well let me show you what this
+looks like in simple rockets for a
+second here
+ta-da so here is my handy dandy sa2
+analog it's nothing special just like a
+real sa2 you have a solid rocket booster
+on the back and then you have the main
+body which is basically liquid fueled
+here so what we're going to do is we're
+going to launch this and we're going to
+show you how it works so I'm gonna go
+ahead and press this button at the top
+oh whatever I'm a rocket deal so this
+one has a little bit of AI attached to
+it but watch how fast this takes place
+this launches
+it's up to supersonic drops off the
+booster and it continues flying the rest
+of the way using a conventional means
+here so you can see here this little
+number up at the top the 3200 this is
+how many kilometers I've actually meters
+I've traveled at this particular case
+you also have a little indicator over
+here which tells you how high off the
+ground we travel in this case if we do
+about 3 500 meters here so it's about 15
+16 000 feet we've already traveled 10
+kilometers now if you remember back in
+command when we took this shot we
+actually took this shot at a pretty
+hefty distance I'm actually going to
+activate my OMS here to kind of help out
+just a tiny bit and we have burnout so
+right now we are traveling on Mach three
+and a half and we have plenty of energy
+left as a matter of fact I can do one of
+these things and actually get the
+missile to go ahead climb up so notice
+I've traveled 32 kilometers already here
+I'm still moving at Mach 2 and I still
+have maneuvering capability like for
+example if I wanted to try to Bonk into
+that I hit the side of the beach there I
+could go ahead and order my little
+missile fins which aren't nearly as
+effective as the ones you'd probably
+have on a different type of missile and
+I can actually guide this thing towards
+my target I've traveled 45 kilometers in
+about four minutes so far so you can get
+an idea of just how ridiculous this is
+now the interesting thing and the thing
+I really want to show here other than
+I'm about to make a bit of a funky
+looking lawn dart here is the fact that
+by changing the flight profile a little
+bit we have a drastic change in the
+performance of the weapon let me show
+you all right let's do it again we're
+going to do something a little different
+this time we're going to keep the
+missile at 45 degrees
+now what we're doing here is we're
+intentionally trying to get the missile
+while it's still under power to a higher
+altitude so we're changing or basically
+trading our horizontal distance or our
+vertical distance in this case we're
+punching through quite nicely so you can
+see my Mach number here I'm pushing
+about 2.6 2.7 here I got about a quarter
+of my energy there's my 3.2 so I'm about
+as fast as an sa2 of course
+and we're going to run out of energy and
+there it is yeah
+now notice because we made this missile
+travel so high and so fast even though
+I'm doing uh slowing down I've already
+traveled 30 kilometers so what I can do
+at any time now is if I want to take
+advantage of this I can actually level
+the missile off I'm now 25 kilometers
+upwards and now I can complete my arc
+and land down on my target below I've
+got enough energy left in this
+particular rocket right now and I'm
+still doing a Mach 3.6 this is going to
+give me an apogee of uh let's see here
+about 39 kilometers so you can actually
+start to see a little bit of space here
+as we come down keep in mind this is a
+simple Rockets we have a different
+atmosphere than Earth but it is to scale
+of Earth so now that that has occurred
+we can now come crashing back down into
+orbit with plenty of energy to spare
+look at that Mach 3. now let's say I'm
+like I want to go ahead and intercept
+some pesky little whatever down there so
+unfortunately for us we don't have any
+uh propellant left so we have to kind of
+do this aerodynamically and because we
+don't really have a lot of air up here
+um you can see we're really really
+struggling to build up any sort of speed
+but notice I'm keeping my speed the
+entire time as I'm continuing down here
+I actually speed up time a little bit
+here
+and you can watch us now imagine I've
+traveled 100 kilometers so far and I'm
+still have plenty of energy left for the
+purposes of engaging a particular Target
+now notice like I said my motor burnt
+out 20 seconds after takeoff and this is
+several minutes later and I'm still a
+perfectly usable weapon as a matter of
+fact I'm probably a more terrifying
+weapon because now I'm going to start my
+little re-entry process 135 kilometers
+away and it's gonna be moving very very
+very fast when it re-enters here so
+let's go ahead and get just a little bit
+more angle on it that's looking pretty
+good yeah there we go so now we're
+actually picking up speed as we start to
+re-enter atmosphere here and you gotta
+imagine the hapless you know B-52 right
+here that I'm about to go and slam into
+and wow 170 kilometers we could have
+gone a lot farther than that if we
+needed to so what's the point of all
+this the point of this is just to show
+you that just because we ran out of fuel
+doesn't make us any less of a weapon in
+that by tweaking our flight profile we
+really get our range enjoy

@@ -1,0 +1,48 @@
+# C: MO - Changing Default Scenario Features
+Video: https://www.youtube.com/watch?v=teanDoZu4fA
+Video ID: teanDoZu4fA
+
+hello everyone in today's video we're
+going to be taking a look at a response
+to a question where they were asking how
+you can change the scenario features so
+the scenario features is you know if you
+come up to the main menu here and press
+start new game you pick a scenario and
+you press load selected you pick a side
+you press enter scenario that's this guy
+that's the scenario features and realism
+options page and it tells you kind of
+what you have now what you'll notice
+here is I can't change any of these and
+the reason we're doing that is because
+we not in scenario editor mode so if I
+wanted to of course I could come down
+here and press begin scenario it would
+fire the scenario there's no scenario
+here now let's open up the same exact
+scenario but this time what we're going
+to do is we're going to do it in the
+editor so I'm going to come down to edit
+scenario come down to Testa go ahead and
+press the button there press enter
+scenario notice the Box did not pop up
+the reason the Box did not pop up is
+because when you come up here now you
+actually have the ability to go to the
+scenario and features settings so you
+can go over here it's going to yell at
+you and say watch out for that da da da
+da da well let's say I want to do
+detailed Fire Control let's say I want
+to do communication disruption and I'm
+just going to press okay now if I come
+up here now and Save save this I've now
+made that the official version of this
+scenario so if you're going to go back
+to the start menu go up to start new
+game click on the Testa button hit load
+selected you'll notice when I press
+enter scenario now that my options have
+changed because of the fact that I have
+changed the default settings enjoy

@@ -1,0 +1,469 @@
+# C: MO - Using Nuclear Weapons Effectively against Airfields
+Video: https://www.youtube.com/watch?v=Si71JPkREWk
+Video ID: Si71JPkREWk
+
+Hello everyone. In today's video, we're
+going to be taking a look at an
+interesting article that I was reading
+involving using nuclear weapons to
+neutralize runways. So, I said, well,
+this could be kind of a fun little
+scenario. Well, how we going to do this?
+Um, obviously they we recommended using
+basically nuclear rockets. And I said,
+well, that's kind of fun, but I've been
+on a cold war kick lately. So, I'm like,
+we got to use a proper airplane for
+this. So, we're going to use a B-58.
+Now, the interesting thing here is our
+target today is, of course, going to be
+Homestead Air Base. Now, when I was
+first playing with this scenario, I made
+a bunch of mistakes as far as the best
+way to sort of approach it. As we can
+see here, if I were to flip this on real
+fast, oh gosh, that's useless. The cool
+thing you can see here is there's a
+bunch of ammo bunkers down here. You've
+got the runway, and you've got a ton of
+tarmac space. Now, your brain, of
+course, as a nuclear planner,
+immediately goes, "Well, obviously you
+want to drop a bomb right on this guy
+here because that's going to do the most
+amount of damage because basically air
+burst it right over the center of the
+base, not only to get the runway, but to
+get all the support equipment, stuff
+like that."
+Now, the interesting thing here is if
+you were to order up a direct mission on
+this, you would actually discover that
+your bombers would love to bomb these
+ammo bunkers. Now, one of the things I
+discovered when I was testing this
+scenario is the fact if I hold my mouse
+down here, you're going to notice that
+this is some crop lands and things like
+that. I hold my mouse here, all of a
+sudden it says we have a builtup land 30
+ft and of course it's urban. And if you
+come over here, it goes back to crop
+lands and shrublands again. That's an
+interesting problem for us. And I'm
+going to demonstrate that in just a few
+moments here. So, let's go ahead and get
+our little situation all set up. We're
+going to do a custom flight plan for
+this one to make it a little bit easier.
+I've already set up the refueling track
+right here in the middle to basically
+get us some gas. We're going to be using
+the B-58 today, which is not exactly
+known for its mileage. It's actually a
+really unique plane, not going to lie.
+All right, so let's demonstrate the
+wrong way to do this first, and then I
+will go back and correct it. So, what
+I'm going to do is I'm going to
+accidentally target this bunker right
+here. I'm going to call this one oopsies
+because it'll demonstrate my point
+perfectly. I'm going to press a land
+strike there. I'm going to grab myself
+the B-58 Hustler. Do not add it to your
+mission. Now, the reason I don't want to
+do that is because if I do that, it's
+going to try to do four of these things.
+I only want one of these for this
+purpose. So, that's looking pretty
+groovy. Uh, looks at one target. I
+obviously want to return back to base
+after I've dropped it. You could add
+some extra secondary targets. I kind of
+like the way that they used to do this.
+Uh, this is just changed a little bit,
+but again, it's perfectly fine. All
+right, B58 Hustler. That's good to go.
+And that's basically all I need to do.
+Like I said, I've already got the
+support track ready to rock there.
+Couple KC135s to give me some gas. And
+again, we're going to do it the wrong
+way the first time, then we'll go back
+and fix it. All right, let me zoom out a
+little bit. One thing I like about
+command min operations is you get double
+peppers and you could see that it was
+about that long it took to uh get our
+guys going here. Let's see here. This is
+a Howdy number one. What an awesome name
+for that. All right, here he is. This is
+Luca. Whoa. And we've dropped our bomb
+so fast you couldn't even see it happen.
+So, I'm going to come down here and I
+want you all to sit here and go, are you
+kidding me? Uh you look at the damage
+here and now you realize that um not
+much. Not much at all. As a matter of
+fact, if I open up the screen here,
+you'll see he didn't even drop his
+weapon. So, what I'm going to do is I'm
+going to grab this guy. Hey, Luca one,
+get your butt back here. You forgot the
+most important thing, which is deploying
+the weapon that you're supposed to drop.
+Sometimes when you use very, very, very,
+very high time accelerations, you get
+that exact problem. All right, so we're
+going to intentionally drop the B-53
+here. This is a 9 megat ton. And we'll
+drop uh you get a bomb. And you over
+here, you know, you might as well get a
+bomb, too. You know what? You look like
+you need a bomb, too. And uh that should
+do it right there. Fantastic. All right,
+let's line ourselves up here since he
+wasn't listening the first time. That's
+okay, though. All right, here he goes.
+Oh my gosh, look at the altitude
+difference here. Of course, if this were
+B58 properly, we would basically come
+around here. Uh, you need to come to
+your right a little bit. Ah, that's
+better. Drop you down a little bit
+altitude. There he
+goes. Go, go, go, go, go, go home. Go,
+go, go, go, go. After burner, go away.
+Go away. Another reason, of course, I
+make that comment here is um what was
+that? Let's see here. That's uh 13 megat
+tons worth of explosives that I'm
+dropping on poor Homestead Air Force
+Base here. And it should make my point
+pretty clear when this goes off.
+Obviously, I don't want to see her all
+afternoon waiting for the incredible You
+might put your goggles on, by the way,
+if you don't have your goggles on
+already. There we go. Goggles are on.
+And
+whoa. That's one way to make an
+impression on the ground. So, the theory
+here is that a couple nuclear bombs
+should basically be able to nullify the
+effectiveness of an airport here. And oh
+my goodness. Whoa. Okay. Like I said,
+hopefully you're not on a mobile device
+right now because you actually will need
+goggles. Okay, there it is. Look at how
+little damage that did. Do you see? As
+you can see very clearly here, that that
+builtup area basically sucked all the
+energy out of 13 megat tons worth of
+explosives. And you can see, as a matter
+of fact, this is what'll make me cry the
+most when I saw this the first time I
+tested it. You'll see I did some damage.
+Like I did not do damage here, but he
+didn't even get everybody. Like there's
+still quite a few working airplanes
+here. So unfortunately, this chap's
+going to have to go get some gas here.
+Um he's basically alternating between
+the two different speeds. That's okay.
+You can go ahead and go back to
+automatic. I know I know you really want
+to do it on your own. What I really
+should do is send this guy back to
+repair get some fuel on the way back.
+Uh, go ahead and get yourself some gas.
+And now he's going to go run and get
+some gas on his ride home. He actually
+doesn't have enough range to get there.
+So, one of the things you can do is you
+can grab this guy and basically order
+him to fly there. They are smart enough
+to know that they're supposed to meet up
+with each other. And it's just one more
+of those little command modern
+operations features that like you don't
+realize how critical it can be. I hate
+micromanaging as everybody's well well
+aware. But you can see we can pull
+things like this off if you're very very
+careful with it. All right, you my
+friend. I'm gonna go ahead and unassign
+you. I'm going to right click on you.
+I'm gonna immediately order you to
+refuel. I'm gonna can even click that
+and I can even click on him like that.
+And what he'll do, of course, is he'll
+go get some gas. He's unassigned. And of
+course, he's going to go run over there.
+Go get some gas. Get some gas, Luca.
+One, don't waste time. But you have the
+right idea. So, let's go ahead and
+recreate our mission here. I'm go and
+open everything up. And uh somebody
+asked me once, so why do I name things
+the exact same thing? And why don't I
+like save them separately? Um you don't
+want to know how many scenarios I would
+have in this game. All right, let's do
+this correctly this time. So, my
+refueling track's already ready to go,
+and we're going to go ahead and drop the
+bomb, so to speak. And I'm only going to
+need one this time. All right, so what
+I'm going to do is intentionally drop
+the bomb in the center of the airport
+where we have the advantage of not
+hitting this builtup elevation stuff
+down here. So, again, I'm press F11. Uh,
+this time, definitely. That sounds like
+a pretty nice name for mission to me. Go
+ahead and press okay. We're going to go
+ahead and do everything we did before.
+I'm going to do a slightly different
+mission profile this time just to
+demonstrate what the B-58 is really
+capable of. All right, let's see here.
+It looks good to me. Uh, we got
+ourselves a single target. Sounds good.
+Mcon. We're allowed to use nukes. Nice.
+But one thing I do want to do is weapon
+relief authorization. I guess I have to
+add the unit first. My apologies. Hey,
+there we go. Is this is going to be
+awful, but I'm actually going to use all
+weapons. I don't know about you, but
+that seems a little rude. But you know
+what? We're here to demonstrate things.
+So, uh, let's go ahead and do this. So,
+we're going to intentionally drop our
+entire rack of nuclear weapons this
+time. And like I said, I hate nuclear
+weapons. I think they're awful. Part of
+me should be like, "Oh, Fallout, yay!"
+or something like that. But like, I'm
+just I'm not like that at all. Let's see
+here. Use all weapons against target.
+That sounds pretty good to me. Let's go
+ahead and open up the B-53. There's only
+one of these, so like it doesn't matter
+what I target. It's going to do its
+thing no matter what. All right, that
+looks pretty good to me. That looks
+pretty good to me. Pretty good. Pretty
+good. Pretty good. Pretty good. Let's
+create or update flight plans. Nice. So,
+let me go and zoom out and take a look
+at this lovely flight plan. I'll drag
+that off the screen so you all can't see
+it. But there's our flight
+plan. Let me zoom out a little bit more
+here. What I really want him to do is
+get some gas on the way over. So, we got
+a position three here. So, one of the
+things I'll do, I'll pull this down so
+you can see this. I'm going to hit the
+flight plan editor real quick. I'm going
+to go ahead and grab this thing. Uh,
+let's see here. We have uh what I say
+waypoint three. Between three and four
+is where the party's got a hat. All
+right, between three. I'm simply going
+to come down here and insert waypoint.
+It's like, are you sure you want to do
+this? Oh, yeah, I am. Why would I not
+want to do this? And then we have new
+waypoint 4. Wow, do I have enough
+windows going on at one time? This is
+why I like having two screens for this
+game. Let's see here. Where is waypoint
+4? So, there's wayoint 3. Waypoint 4,
+where are you? There's way five. All
+right. A dollar a dollar to the person
+who can see way point4 because heck if I
+can find it right now. If this ever
+happens to you, by the way, uh let's see
+here. Way point4 must be turning point.
+No, we'll go back and fix it so that it
+actually so it doesn't bother me. Uh D.
+That's fine for me. Let's see here. Way
+point to must be ingress. Um I believe
+way point four must be turning point. In
+ingress or turning point egress. Uh the
+flight plan has no targets. A weapon
+targets waypoint.
+Um
+huh. Yeah. It's work in progress as they
+say. All right. F2. Let's go find where
+that waypoint 4 is. Let's see here. Way
+point 4. I still can't see this thing. I
+mean, like I said, I must be completely
+bl I know the way to find it. There it
+is.
+I knew if I did something cheeky like
+that, I'd find it. There it goes.
+Waypoint 4. Okay, so we're going to
+change this waypoint. I'm going to go
+back to the flight plan editor, and I'm
+going to tell this waypoint to be a
+refueling waypoint. It's going to get
+mad at me. It's going to say, uh, that's
+perfectly fine. Press okay. And the
+reason I want to make this a refueling
+waypoint is I really want to get some
+gas before I do my stupidity at the end.
+So, I'm actually going to take that
+refueling waypoint. I'm going to put it
+just shy this key right here. So, these
+basically going to switch to refuel
+mode, grab the fuel that he needs, and
+kind of come on back. The other thing I
+would like to do is I got my kind of
+like last leg, a little operation here.
+Let's go ahead and tweak that a little
+bit. Let's find where it is. Obviously,
+we want to speed up a little bit and I'm
+going to take advantage of the
+directionality of the runway here. I'm
+actually going to flip this around like
+this and we'll do a couple things on
+wayoint 6 here. So, we'll go ahead and
+open up our flight plan editor again.
+Come down to wayoint 6. That's my IP.
+We're going to kick a speed up quite a
+bit here. Let's see. Adjust speed. It
+looks good to me. That looks good to me.
+Tanker air refueling looks good. You can
+see that his target is already selected.
+Uh, like I said, I want to go a little
+bit faster. So, I'm going to edit speed
+or altitude here. I'm going to go ahead
+and drop down a little bit to 25,000 ft.
+And I'm going to kick on my
+afterburners. And now, the reason I'm
+going to do this, of course, is I want
+to be a little bit faster. So, coming
+across my target here, I'm going to make
+sure that's perfectly the way I want it
+to be at its speed altitude. I'm also
+going to kick on my afterburners there.
+Again, I'll keep about 25,000 ft for
+better accuracy. Turning point egress,
+of course, so we can drop down any speed
+we want, but that should be perfectly
+acceptable for the purposes of our
+mission. All right, let's see what we
+did here. All right, so we take off. We
+get some gas, drop a couple nukes, and
+uh come on back. That's all there is to
+it. Sounds good to me. Go ahead and
+close that sucker. Go ahead and
+unpause. I will try a little bit harder
+this time, not too fast forward past the
+fun part. What I find interesting is our
+B-58 is basically flying formation with
+our KC135 right here. All right, let's
+see if he refills correctly. Where is my
+buddy here? Luca 1. Hey, Luca 1. How you
+doing today? Uh, you forgot to do
+something, my
+friend. Did you remember to get some
+gas? I bet you didn't remember to get
+some gas. Go get some gas. All right. Or
+or just ignore me. I get it. I get it.
+This guy is apparently not reading his
+flight plans carefully, but that happens
+sometimes. That's okay, though. That's
+not the purpose of this video. It's all
+about dropping the bomb. All right. Here
+we go. So, we're coming into this egress
+point. So, what he's going to do is drop
+down to 25,000 ft. He's also going to
+kick up to afterburner to give him a
+little bit more room to operate. Now, if
+you remember, we're intentionally
+dropping this weapon in the center of
+the airport. We're not just going to
+willy-nilly drop on the ammo bunker like
+an idiot. All right, let's see what
+happens here. We are perfectly lined up
+with the runway here. Oh, taking a rip
+across here. I like this. Looking good.
+Looking good. Remember, we're dropping
+all four of our B43s here. So, even if
+it refuses to drop the big one, the
+little ones will do the job here. And
+here we go. Over the
+top. Did you see it? There they are.
+Now, remember, these are the little
+firecrackers. These are not the big
+firecrackers. And one of the cool
+things, if you go like this, you can
+actually see little lines coming back
+down to the ground. Um, you might want
+to put your goggles back on. I'm sorry
+if you took them off from earlier, but
+um it'll prove my point really quickly
+here. All right, gonna stay
+Whoa. Wow. Oh my goodness. That That's
+blinding. Remember, school children used
+to go and watch these things test. Whoa.
+Sorry, Florida. Remember, this is just a
+game. This is just a game. All right, so
+let's take a look here. So, as you can
+see, as the uh basically the shock wave
+clears, we've completely annihilated
+that airport. If I were to actually come
+in here real quick to my losses and
+expenditures, uh you'll see here that we
+got everybody. Every single airplane,
+every single hanger, every single
+tarmac, every single everything that we
+could, and it only cost us four megat
+tons of explosives. It really didn't
+take that much of it. We could have used
+significantly less for this purpose, but
+as you can see, it didn't matter in the
+end anyway. So, he's going to go ahead
+and head home now. He's got to kick up
+to 25,000 ft, though, cuz he's not going
+to get very far otherwise. Yeah, he's
+probably going to run out of gas. You
+know what you should have done is you
+should have got gas when I told you to
+get gas. I feel like this is a
+conversation many families have had
+before. I know that there is a bug
+there. It's a known issue there. So, it
+did not surprise me. It did not work.
+All right, come on back, Luca. You had
+fun.
+Fantastic. So, let's go ahead and take a
+look at the damage from the other side
+real quickly here. We'll switch to the
+team red. We'll zoom in a little bit.
+Press the nine key. And one of the
+things you find so fascinating here is
+this particular basically this hanger
+was spared. Everything else got
+destroyed around it. And another thing
+that's really cool is if you actually
+come in here, you can see a very long
+message log of just how tremendous the
+damage on this thing was. And one of the
+things I find so interesting is if you
+kind of scroll down, oh no, we lost our
+command center. But the cool thing is if
+you actually come down here to the
+bottom where it says B43, you can
+actually hit that and it will show you
+basically where it hit. In this case,
+you can see it impacted. It did not air
+burst. An air burst weapon would have
+had a slightly different personality to
+the actual damage caused. Enjoy.

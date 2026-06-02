@@ -1,0 +1,206 @@
+# C: MO - Effect of ground radar on bombing accuracy
+Video: https://www.youtube.com/watch?v=nxaO2Er_9Lw
+Video ID: nxaO2Er_9Lw
+
+hello everyone in today's video we're
+going to be taking a look at the effect
+of air-to-ground radar on accuracy so
+for today's scenario i've kept it pretty
+straightforward we have ourselves a
+amendola airport loaded up with a bunch
+of f-16s and up in the north side of
+things of course so we have the split
+airport which we're basically going to
+use as target practice obviously folks
+who know operation allied force know
+exactly what i'm going to achieve to
+make things interesting of course i'm
+going to go into the weather options
+here and i'm going to rip
+no don't do that so we're going to go
+ahead and leave that alone but we're
+going to crank the clouds up let's see
+that's going to give a solid cloud cover
+yeah it's going to be pretty nightmarish
+there i certainly would not want to land
+it i'll go ahead and save it so what
+i've done already is i've gone ahead and
+set two missions up the first one's
+going to be having a pair of cj's here
+and they're going to be attacking a
+bunch of buildings which are pretty easy
+to spot targets and the second group is
+basically going to attack a bunch of
+tarmac space which has of course plenty
+of airplanes on it so what i'm going to
+do is i'm just run the scenario as is
+test it out see what happens and then
+we'll go ahead and see kind of what
+results so we're going to speed up time
+here comes my f-16s going into the ip
+zone here go ahead and speed up time a
+little bit so you can see it nice and
+easily here they come they're going to
+be diving down into their altitude by
+the way this is a really beautiful area
+in the real world if you've never got a
+chance to actually fly over it so my
+first group of f-16s these are going to
+be the ones attacking the buildings they
+get into range they immediately deploy
+their weapons the bombs go
+and here comes the second round of them
+and they're probably going to do all
+sorts of nasty damage so go ahead and
+pull up and get out of the way now my
+next group of s16s that come running in
+here
+looks pretty good they have the tougher
+task of hitting the tarmac so they're
+ripping along about 819 feet off the
+ground and not too too far up they
+release their bombs up pretty much right
+on schedule which is awesome the bombs
+are going to of course speckled the
+whole tarmac though looks like we got
+something expensive there let's hope it
+was worth it and let's go ahead and see
+the results we don't need to watch these
+folks fly all the way home here so it
+looks to me like we went through 48 mark
+82s typical and it looks like we got one
+building and we got six mig mig-21mm
+fishbed jays which is decent given that
+there's 50 at that airport so let's go
+ahead and reload the mission here and
+we'll make one tiny change again we want
+to make one little change at a time when
+we're doing experiments here so what i'm
+going to do is i'm going to tell it to
+use the active radar from the ip all the
+way to winchester so we're going to go
+ahead and activate that looks good looks
+good looks good all right we need to
+build beat one building plus six
+airplanes let's see if it makes any
+difference at all to be honest i don't
+expect it to make that much of a
+difference if there is any difference at
+all so the aircraft comes rushing in and
+we're going to go ahead and set up our
+same scenario real fast
+coming in hits the ip he's going to go
+ahead and flip on his radar as soon as
+he gets the ip the radar on the f16 by
+the way is not what i would consider
+terribly good at air-to-ground work that
+being said it will make it a little bit
+easier to pick out in a building when
+you're trying to do a rush anybody who's
+played enough falcon can probably speak
+to the efficacy of the system all right
+so we did a little bit of damage there
+next group is uh coming in he flips on
+his radar as soon as he gets to the ip
+it's always good to keep that radar
+silent into the last possible second
+unless they're you know trying to spot
+something on the ground he comes rushing
+in delivers his first package he drops
+his one splatter splatter okay let's see
+how we did this time again same exact
+scenario we only changed if the radar
+was turning on losses in expenditures we
+check it and we did exactly
+exactly the identical amount of damage
+now you're probably sitting there going
+well in the real world you'd need that
+radar in order to find the target on the
+ground and then you could drop the bomb
+on it you're absolutely 100 correct so i
+find this kind of an interesting idea
+it's like what is the point of that
+radar then right personally i always use
+the radar for the purposes of spotting
+other targets i might have been missing
+on the ground now other of you are going
+now if you change the scenario a little
+tiny bit you could probably be a little
+more lethal you're absolutely right
+so i'm actually going to reload this
+scenario now let's go ahead and take a
+look at what we've learned here and i'll
+see if we can get a little bit more
+sophisticated so my strike buildings
+group i'm actually going to change their
+doctrine because i hate their doctrine
+we're going to tell them to go ahead and
+use four rounds at a time now you're
+probably sitting here going what are you
+doing here well believe it or not you
+don't have to drop the entire stack of
+bombs every single target that you
+attack so i'm going to flip that one on
+here we'll say runway facility we'll set
+that to all four we'll do the exact same
+thing for the other mission as well yes
+you can do this from the other doctrine
+page this is just easier for me close it
+we'll go to strike tarmac that's a
+technical term by the way we're going to
+go over to wra we're going to go to this
+one there really needs to be a button
+set all to this option that would be so
+handy
+so uh dimitris if you're watching please
+make that an option it's like the
+greatest thing ever so we're going to
+set that or you can set it to half or
+something like that but even then i'd
+wish you could just control set
+everybody so we're gonna we can always
+reset by the way coming down here looks
+good looks good flip that one on grab
+that one flip that one on obviously we
+don't have to set this for all of them
+we could have just set it for the exact
+bomb building that i wanted to use but
+i'm not going to we'll go ahead and flip
+on the radar again i don't know if this
+is going to make any difference but
+again we're just experimenting all right
+looks pretty good going to unpause let's
+go ahead and crank up time here f16's
+launch i can't tell you how many times i
+flew this mission in falcon it's like
+it's like bad memories at this point
+all right we're going to come down nice
+and low our 16s are 200 feet above
+ground level actually sea level at that
+point in ground level essentially they
+come swinging down here they flip on
+their attack radars of course um as you
+guys would know they'd be spotting
+individual targets they'd be picking
+which one they want they'd be looking at
+that the asl line you see the little
+white line notice you dropped two three
+four different sets of bombs now notice
+this guy drops a different set of bombs
+as well let's see what happens here i
+speed up time matinee a little bit here
+look at that oh my god that was an over
+the shoulder shot with those bombs i
+love that look at this look at this
+all right so let's go ahead and pop that
+up to losses and expenditures real quick
+so we dropped the same amount of bombs
+however we got three buildings in
+airplanes
+so hopefully this video is helpful as
+far as that making you realize that the
+fake efficacy or lack of efficacy of the
+ground radar but it also at least shows
+you the efficiency of a really really
+clever wra when you're trying to attack
+something spread out like that enjoy

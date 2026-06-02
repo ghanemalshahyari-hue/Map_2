@@ -1,664 +1,664 @@
-0.5	hello everyone in today's command video
-2.3	we're going to be taking a look at a
-3.3	couple things that a few people are
-4.6	asking specific questions about over
-6.7	on the discord as well as you know just
-8.8	kind of general tips that kind of make
-10.2	make things a little bit easier for you
-11.4	to play
-12.1	the first question i was getting was
-13.4	asking about using buddy lasers are
-15.2	basically not self
-16.3	lasing for laser guided weapons the good
-18.5	news is this is a mostly automatic
-20.3	process
-20.9	the bad news is you have to make sure
-22.2	you have all the right pieces in place
-23.5	in order to do it
-24.5	the second question came to do with
-26.5	active versus passive sonar which we'll
-28.6	go ahead and take a look at in just a
-29.8	minute to kind of have a little
-31.0	idea as what's going on again some of
-32.9	this stuff will be kind of redundant if
-34.3	you've seen the sonar video but at the
-35.8	same time this is kind of a good way to
-37.3	go ahead and kind of look at it from
-38.4	another perspective
-39.3	so let's go and take a look at our
-40.2	current situation so i have a crew down
-42.2	here this is an infantry platoon it's
-43.7	some u.s navy seals and if i click on
-45.6	sensors real quick
-46.8	you'll notice that they have a different
-48.1	collection of sensors on board we have a
-50.1	binoculars we have an ll tv
-52.2	we have an ir camera and we have a laser
-54.1	designator and you'll notice that when i
-56.2	left click on a particular unit that you
-58.0	have this option over here where it says
-59.4	mcon window and sensors window
-61.4	you'll notice that if i want to turn on
-63.1	the laser designator on this particular
-64.9	unit
-65.3	i can click on sensors unit and i can
-67.0	actually come down here and make this
-68.2	active
-69.1	if i disable this checkbox here the
-72.1	problem is if i turn on a laser with
-73.8	nothing to point at it it doesn't
-75.2	actually do anything for me
-76.6	so there's no reason in the world why it
-78.6	ever needs to do this i'm sure there is
-80.5	one i just can't think of what it would
-81.8	be
-82.2	i'm going to go ahead and disable that
-83.2	checkbox go ahead and hit unit base
-85.2	so let's go ahead and take a look at
-86.2	what's going to happen here so i have an
-87.9	f5e
-88.8	tiger ii over here this particular
-90.4	version here is a one that
-91.8	carries lgbs in this case it's a gbu-12
-94.6	it's basically a mark 82.
-96.2	it does not have the ability to laze its
-98.9	own
-99.8	weapon so what we're going to have to do
-101.4	here is we're going to have to go ahead
-102.6	and use this crew
-103.9	to lock onto this target so that it has
-106.1	the ability to go ahead and see where it
-107.5	is
-108.2	now here's where it gets cool as long as
-110.7	this particular aircraft
-112.2	has the ability to drop a bomb
-114.7	successfully and
-116.2	this guy with the laser designator has
-118.3	line of sight on the target
-120.2	we are able to automatically deploy this
-122.0	weapon keep in mind this can work with
-123.2	aircraft this can work with submarines
-124.8	i've seen
-125.4	i've also seen of a shore craft and not
-127.1	usually it can be done with other
-128.5	aircraft with built-in laser designation
-130.3	systems
-131.0	so well let's go ahead and set up our
-132.2	attack around here i'm going to go speed
-133.4	up to afterburner
-134.5	i'm going to bring this to about 25 000
-136.2	feet which is a pretty good altitude to
-137.6	deploy these weapons
-138.7	whenever you're using lgbs you have to
-141.1	really really really
-142.2	remember that the lgb itself doesn't
-144.2	have unlimited vision range it's not
-146.1	like when you play in dcs where you can
-147.7	drop
-148.3	an lgb from like 36 000 feet which is
-150.8	absurd
-151.7	because there's no laser out there that
-153.1	could possibly give you enough
-154.2	reflection on the target to actually use
-155.8	it
-156.1	so you can see for this one this thing's
-157.5	valid up to 65 000 feet
-159.4	but keep in mind the sensor on the nose
-161.2	of this particular weapon
-162.5	might not be sensitive to 65 000 feet so
-165.4	that's something you're going to have to
-166.3	kind of keep in the back your mind
-167.7	you also notice that if i look at the
-169.0	loadout for the f5 it tells you it's
-171.2	going to require buddy elimination
-173.0	which just means somebody else has got
-174.3	to light it up for us all right let's go
-176.2	ahead and do our attack run here
-179.1	so what i'm going to do for this first
-180.6	strike is i'm going to go ahead and do a
-182.0	manual launch
-183.1	so we're at 25 000 feet we're going
-185.0	after burner which by the way there's no
-186.6	reason in the world not to use
-187.8	afterburner unless you have limitations
-189.4	of range
-190.1	i'm going to press shift f1 i'm going to
-192.3	left click on a commercial container
-193.8	vessel and i'm going to allocate 2
-196.5	to the target just like that now keep in
-199.1	mind we don't
-200.2	have ignore plotted course on so i'm
-202.0	basically plotting the course by moving
-203.8	this one around
-204.7	but keep in mind the range for the lgb
-206.5	is pretty significant at 25 000
-209.0	feet it basically has a 5 mile range
-211.8	vertically so you have to kind of keep
-213.3	that in mind even though we'll be in
-214.6	range for the weapon
-215.8	doesn't mean we can hit the weapon
-217.3	because of that limitation it's slant
-219.1	distance we have to
-220.1	kind of keep that in mind so now watch
-221.9	what happens so my f5 is going to come
-223.7	screaming across the fjord
-225.5	it's going to get itself into range and
-227.1	it's going to go ahead and drop its
-228.4	weapons
-229.0	but the moment that it drops its weapons
-231.0	watch what our little handy dandy navy
-232.8	seals team
-233.6	by the way they are in range of this
-235.4	particular ship with this laser is going
-237.0	to go ahead into in just a moment
-239.0	so again this thing's going to be
-240.2	falling basically vertically ah there's
-241.9	the handy dandy red line
-243.4	this is actually an illumination vector
-245.7	the other thing i want you to notice is
-247.0	the fact that only a single lgb was
-249.1	dropped at this time
-250.0	so i'm actually going to grab my tiger
-251.4	and i'm going to do an automatic attack
-252.8	i pressed f1 and left click on it
-254.6	so this particular lgb is actually being
-257.2	guided by our little handy dandy rangers
-259.3	on the top of fjord here
-260.5	and it's going to go all the way down to
-261.6	the ground now of course when you drop
-263.2	from altitudes like that the particular
-264.9	weapon is basically going to be
-266.2	traveling vertically
-267.3	it's actually pretty cool let's go take
-268.4	a look at it real fast yeah there it is
-270.5	yeah
-270.9	basically straight down bunk slams right
-273.8	into the hole of that particular ship
-275.6	now a little f5 is going to come around
-277.1	this is an automatic attack this time
-279.1	so look at that weapon deployed and he
-281.1	goes ahead and gets the heck out of
-282.3	there and returns to base
-283.5	while that laser is being guided
-285.0	successfully by this particular crew
-286.9	over on this side
-288.7	looks pretty good bingo
-292.3	nice shot so that's how to do buddy
-295.0	lazing it doesn't matter what type of
-296.2	unit it is as long as you have line of
-297.6	sight andrew and range
-299.2	i'm going to say the enter and range
-300.6	piece again because that's what people
-301.7	forget
-302.2	our laser designator in this case has an
-304.2	insane 10 nautical mile
-306.4	range on it which is actually better
-307.8	than a lot of aircraft laser designators
-309.8	and keep in mind if you have clouds or
-311.6	fog they can interfere with that
-312.7	capability
-313.7	all right let's go ahead and answer our
-314.8	second set of questions here
-317.0	so i have a group of submarines i have
-318.6	the typhoon which is
-320.3	an unbelievably big submarine easily one
-322.9	of the biggest submarines in
-324.2	history it's huge and next to that have
-327.0	a kilo which is a little diesel and it's
-328.6	a very very lightweight diesel
-330.2	i have the exact same setup over on this
-332.1	side now what i want you to see is our
-334.0	little typhoon here is cavitating at
-335.6	about 131 feet that's shallow depth our
-338.0	kilo on the flip side is at -357 it's
-340.9	pretty darn deep
-342.0	and we've already identified a contact
-343.8	directly ahead of us okay
-345.2	what kind of contact ah we don't know
-347.0	what the contact is but we do
-348.7	know that it is pinging us using active
-351.1	sonar
-352.0	if you actually measure this distance
-353.4	you're talking almost 10 nautical miles
-355.1	away we're detecting this target pinging
-357.0	us with active sonar
-358.6	over on this side we don't notice
-359.9	anything unusual so uh let's go ahead
-361.9	and
-362.2	flip things around real quick now you'll
-364.6	notice on this side of things i actually
-366.2	have my two identical ships i have an
-368.1	oliver hazard perry over here it's a big
-369.7	seven
-370.1	and he's sitting here picking away with
-371.4	his active sonar i have another oliver
-373.4	hazard perry this is again
-374.6	same exact ship who's not using active
-377.3	sonar
-377.9	now what i want you to observe is the
-379.2	fact we have already acquired
-381.0	the kilo submarine over on this side and
-383.4	this one has acquired
-385.0	nothing you're probably sitting there
-386.8	going okay
-388.3	something's wrong here because that
-389.7	makes no sense it's the same submarine i
-391.3	mean active sonar just a black passive
-392.8	zone are right
-393.8	and the answer is it doesn't the answer
-395.9	is look at the depth
-397.2	this particular ship here you'll notice
-398.8	when i left click on it you can see that
-400.4	it's underwater detection radius is
-402.1	there
-402.6	when i click on this one it's under show
-404.4	water detection radius is gigantic
-406.6	that's because this ship has the ability
-409.4	to use toad sonar
-411.2	toad sonar is sensitive underneath the
-414.3	acoustic
-415.1	layer inside the water so in this
-417.4	particular case
-418.2	i have passively detected the kilo class
-420.9	because of its being
-422.9	deeper than the actual layer this
-425.2	particular ship you're going why is he
-426.6	not get that ability
-427.8	because the water is too shallow to
-430.1	successfully deploy
-431.3	the toad array and as a result he's
-433.6	completely incapable of detecting that
-435.4	target which
-436.0	i'll go to god's eye view it's literally
-437.6	right here and cavitating all afternoon
-439.6	so that means we're not actually going
-441.0	to be able to pick up these two
-442.0	submarines until they get within the
-443.4	range of the whole sonar now if i speed
-445.6	this ship up
-446.5	that's simply going to go ahead and make
-447.8	it so we can't hear anything to begin
-449.0	with now where it gets really
-450.6	interesting i'm going to go ahead and
-451.7	speed up time a little bit here just
-454.4	kind of tooling away i'll show you guys
-455.8	eye view so you can see this very
-456.9	clearly
-458.2	notice the ship that's above the layer
-460.5	is still completely undetected even
-462.7	though it's completely cavitating it's
-464.8	also a much noisier thing
-466.4	now watch what happens when we get just
-468.6	a teeny bit closer
-471.0	speed up time one more time go ahead and
-473.5	unpause real quick
-474.6	you'll notice i instantaneously acquire
-476.7	the ekula now
-477.8	now under the echo outside i believe no
-479.8	sounded cool i'm sorry this is the
-481.1	typhoon
-481.8	so this particular ship identified it as
-483.6	it entered its passive sonar rage
-485.6	because this particular submarine was
-487.9	above the acoustic layer
-490.1	now the cool thing is if i actually
-491.4	switch back to the other side real fast
-493.8	you're going to notice this submarine is
-495.7	still completely clueless there's
-497.4	something out there
-498.5	however our ship over on this side who's
-500.6	pinging you away with this active
-502.1	intercept basically i should say is
-503.5	active sonar
-504.6	is not detected anything and it's been
-506.9	completely perfectly identified of
-508.8	course we'd have to surface one of these
-510.3	subs or pop up the periscope to get a
-511.9	visual identification on it so we'd
-513.4	actually know what it is
-514.6	but you notice how he completely gave
-516.7	himself away
-518.0	whereas this one over here relying
-519.5	completely on passive sonar has already
-522.1	seen exactly where the both of these
-523.6	subs are now if this kilo were a little
-525.6	bit shallower i wouldn't be able to pick
-527.0	him up until he's here which would be
-528.3	well within torpedo range
-529.9	now in the real world what we can do is
-531.7	we can launch a helicopter to go say
-533.1	hello to one of these two subs
-534.7	which is a spectacular trick so now
-537.2	coming back over to this guy he still
-538.7	hasn't detected anything let's
-540.4	go ahead and speed up time a little bit
-542.9	ah we've acquired something bing
-544.6	we've instantaneously acquired this
-546.6	particular sub here and again that's
-548.6	because we've entered into the radius of
-550.3	the active sonar system which now has
-552.2	that's this little arc here
-553.5	now can see this particular sub but we
-555.8	can't identify it we just know that it's
-558.2	a fast moving goblin so what i could
-560.2	actually do is shut off my active sonar
-561.8	and just listen to the water for it for
-563.3	a minute
-564.0	keep in mind over on this one who's been
-565.5	using passive this entire time
-567.2	our whole sonar has not been terribly
-568.9	successful at identifying this one
-570.7	but because the total ray is so
-572.2	sensitive we've had no issue
-573.8	identifying the kilo even though the
-575.6	kilo is a very quiet submarine because
-577.8	it's a diesel electric
-579.4	now watch what happens here i'm going to
-580.8	speed up time a little bit so of course
-582.8	what's going to happen is the elevator
-584.1	yeah he's going to shoot a torpedo in
-585.2	the water
-585.8	i knew he was going to do that he
-587.6	identified the typhoon and sunk it
-591.1	now notice we're still having no issues
-594.3	at all
-594.7	tracking this particular sub over here
-596.4	with our conventional whole
-597.8	sonar again this is just using active
-599.7	sonar we have a very precise
-601.1	measure on it but look at where the kilo
-603.3	is the kilo is sitting here two nautical
-605.4	miles away
-606.5	and has still not had the ability to be
-608.8	identified
-609.8	by this particular ship it's completely
-611.4	clueless it's there because it's so
-613.1	deep beneath the layer this one who's
-615.0	deep beneath the layer on the flip side
-616.5	is about to get a torpedo through its
-618.0	front windshield
-618.9	of course most submarines don't have a
-620.6	machine but notice
-622.0	he hasn't even noticed that the parry is
-624.3	above him
-625.4	which is again the danger that you have
-627.3	to be tremendously careful with that
-628.6	particular layer there
-629.8	by the way if you want to check your
-630.8	layer depth you can just kind of hold
-632.5	your mouse over things and it will tell
-633.9	you exactly where all that stuff is so
-635.7	you can take a look at it directly
-637.4	all right we still have not detected
-639.4	that kilo as a matter of fact if you
-640.8	watch it's going to sail right by us
-642.6	another kilo on the flip side just got a
-644.2	torpedo and it kind of gets sunk
-647.0	oh it missed and let's go in on pause
-650.9	we never ever ever saw the kilo
-654.6	so some of the things i want you guys to
-656.0	kind of take away from this again this
-657.3	is going back to what we did with sonar
-659.0	is that that layer that depth is going
-661.3	to seriously impact your ability to go
-663.4	ahead and identify things in water
-665.1	you can always identify what depth that
-667.3	a particular sensor is working on by
-669.0	taking a look at it itself
-670.6	in this case this is our total ray
-672.1	system it's a very low frequency
-673.7	whenever you have this you can always
-675.0	assume it's going to be under the layer
-676.9	hall sonar is always going to be
-678.2	shallower because it's connected
-679.4	directly to the ship it can never see
-680.9	through that basically acoustic layers
-682.7	you have to be tremendously careful with
-684.1	that
-684.6	now to make things interesting i'm going
-685.8	to turn around our fig7 here real fast
-689.0	go ahead and grab this one notice we've
-691.9	identified that ship
-693.1	no problem because of that stupid active
-696.6	sonar
-697.4	i'm going to go ahead and bring this up
-698.7	to let's say just over the layer i'm
-700.2	going to keep my speed relatively slow
-701.8	bring me down to creep speed there let's
-703.3	pretend we're sneaking up on this
-704.3	particular one here
-705.8	so now our ship is rotating aggressively
-707.8	because then obviously the baffles are
-709.4	going to block the sub from being able
-710.6	to hit i should say ship from being able
-711.9	to identify anything
-713.3	notice by the way with active sonar you
-714.9	can't actually identify the target you
-716.6	just know that it's out there somewhere
-717.9	like that
-719.7	uh meanwhile we got this guy right here
-721.4	who's sung two subs without even being
-723.3	noticed which is amazing
-725.1	so now we're gonna go ahead and grab
-726.3	this guy uh we'll spin it up there we go
-728.2	check it out we immediately were able to
-730.6	pick up that kilo when he popped himself
-732.6	back out of the
-733.6	little depth zone there because again he
-735.2	was going so low to the actual depth
-737.1	here he's basically flying napa the
-738.6	bottom of the ocean here
-739.8	now we're able to identify his direction
-741.5	his speed everything using this active
-743.8	sonar
-744.4	now if i were to flip off the active
-745.8	sonar let's go ahead and do that now
-747.3	you'll notice that i've lost that
-748.9	contact almost instantaneously
-751.0	so if i want to be able to identify him
-752.5	i'm going to have to get a heck of a lot
-753.9	closer to him
-755.4	go ahead slow down to a creep and let's
-757.8	see if we were able
-758.9	able to actually identify that kilo no
-762.6	not even again the reason we're having
-765.3	so much trouble identifying here is
-767.1	because of how shallow this water is as
-768.6	far as 361 feet deep
-770.4	that's it this particular one right here
-772.2	the cldp is right now he's only 131 feet
-775.1	and we still can't pick him up on the
-776.8	active sonar because of the interaction
-778.6	because
-779.2	of that shallow water if we flip the
-781.2	backups active watch this
-784.2	bam we got him again so you can see
-786.9	where you would need to use those two
-788.6	applications
-789.5	so one more thing i'm going to show you
-790.9	kind of uh before we go ahead and let
-792.4	you guys loose today
-793.3	you can see my board ship who got hit
-794.6	with the lgb earlier is
-796.5	using helicopters for this purpose now
-798.5	helicopters are sort of unique because
-800.1	some of them have what they call
-801.5	dipping sonar and this is something a
-803.1	couple people have asked me about
-804.6	i really should have included this in
-805.9	the other video kind of dealing with asw
-807.7	stuff so let's grab that helicopter and
-809.8	move them over here
-810.8	again the magic of the map editor real
-812.5	quick and i'm going to go ahead and go
-814.3	excuse me there i'm going to move you
-815.6	out of the way
-816.4	get over there nobody likes you anyway
-818.0	you make too much noise in the water
-820.0	all right so i'm going to grab my
-821.0	helicopter here
-823.4	i'm going to zip them over here this
-825.0	helicopter has a couple really really
-826.5	sophisticated tools for identifying
-828.3	things the water
-829.3	let's go ahead and reduce them to
-830.3	minimum altitude let's bring them down
-831.6	to a hover
-832.4	and while i'm at it i'm also going to
-833.8	send a sono buoy into the water just to
-835.6	kind of start listening around
-837.5	we'll do a passive we'll do it above the
-839.1	layer because we identified him at a
-840.6	relatively high level there
-842.7	all right let's go ahead and restore
-844.7	time there so that sono boys in the
-846.4	water is starting to listen
-847.8	now we've come to a complete hover now
-849.8	we can actually do is right click on
-850.9	this helicopter
-852.0	and tell it to go ahead and start using
-853.8	its dipping sonar
-855.0	when you order this command this
-856.8	helicopter assuming it has a dipping
-858.6	zone on by the way to check on that
-860.1	if you actually click on the helicopter
-861.4	itself you can see that it will have
-863.3	something that says dipping
-864.4	sonar on it has a relatively limited
-866.8	range on it but it's absolutely
-868.2	wonderful
-868.8	you want to make sure you're out of
-869.6	hover and you want to make sure you're
-870.6	at the minimum altitude it's actually
-872.1	not minimum altitude it's a little bit
-874.3	higher than it's like 150 feet or
-875.8	something like that yeah
-876.6	so now he's going to stick his dipping
-877.9	sonar directly in the water and he's
-879.4	going to start listening
-880.6	but this is a common mistake people make
-882.6	is that if he is set to be
-884.3	not active sonar he will only use the
-887.1	dipping sonar passively which is pretty
-889.0	effective but if we absolutely had to
-890.6	guarantee where a target is and we're
-892.2	not worried about getting shot down by
-893.7	basically a mass launched missile we
-895.7	could actually safely turn on active
-897.7	sonar
-898.5	on his little sono buoy now what he's
-900.7	doing this operation where he's just
-902.1	kind of sitting here floating up above
-903.4	the surface of the ocean
-904.5	i got him you're going to notice that he
-907.2	has a timer of how long he has to sit in
-909.1	this position before he can move again
-910.9	in this case we've spotted our kilo
-912.6	again we're going to go ahead and shut
-913.8	off the
-914.2	sonar there again that's the active
-916.1	sonar one of the great advantages to
-918.0	this
-918.4	is the fact we can very very precisely
-921.0	target something underwater
-922.5	without worrying about retribution
-924.9	mostly
-925.6	some modern submarines actually have the
-927.1	capability to carry
-928.6	sams on board that could actually engage
-930.5	our helicopter here
-931.8	which is why it's important that don't
-933.7	turn that on it's the last possible
-935.7	second of the engagement
-936.9	and keep in mind this helicopter
-938.4	actually dips that sonar very very deep
-941.3	so even if this guy were trying to run
-943.1	very deep which we'll demonstrate really
-944.5	quickly
-944.9	look at that we've identified him as a
-946.4	helicopter sonar just because of how
-948.4	the noises is i'm going to bring up the
-950.1	fullest cruise speed i'm going to send
-951.3	him as deep as possible
-953.0	now keep in mind this handy dandy depth
-955.0	sonar hanging off the edge of this
-956.2	helicopter now
-957.7	goes so deep it may have the ability to
-959.7	actually acquire that
-960.7	there it is it was able to acquire the
-963.8	sub
-964.6	because it went so darn deep now if we
-967.3	were extremely mean at this particular
-968.8	juncture of course we could land a mark
-970.2	54 right on its front windshield again
-972.5	which we'll do in just a moment hello
-974.3	there sir have two please
-976.9	we'll set him up to loiter speed minimum
-979.0	altitude
-980.1	he's going to speed up and he's he's
-981.4	gonna go oh we gotta wait until he's
-982.6	finished uh deploying his dipping soda
-984.0	oh he doesn't care
-985.0	two torpedoes in the water now this is
-987.1	actually really entertaining to watch
-988.6	from the
-989.0	3d view here go ahead and call that up
-991.3	real quickly
-992.1	i'll zoom in a little bit you can see
-994.3	he's just sort of chilling
-995.6	if anything we can send it back home go
-997.0	home uh-oh
-999.0	pull up pull up and we sunk the kilo
-1003.5	so hopefully that helps answer some
-1004.9	questions with active and passive sonar
-1006.8	as well as buddy lazing uh one other
-1008.4	person was asking me
-1009.5	they were saying something along the
-1010.7	lines of you know what goes on with the
-1012.2	sensors window
-1013.1	uh to be able to turn individual sensors
-1015.0	on or off you have to unclick the switch
-1016.5	first
-1017.3	and of course you can turn everybody on
-1018.5	with one click and you can turn
-1019.5	everybody off with one click
-1020.7	and one of the things i love about this
-1022.2	is it'll actually tell you the type of
-1023.6	sensor right here
-1024.9	anything that's got fire control radar
-1026.8	on it with a couple exceptions generally
-1028.6	it's kind of like looking at the sky
-1030.0	through a straw
-1030.8	it's very very difficult to see what
-1032.1	you're targeting like for example if we
-1033.8	flip down this air search radio
-1035.1	radar real quick kind of give it a scan
-1037.0	you can see now that we're looking
-1038.1	around here we'll probably pick up that
-1039.4	f5 although i'm pretty sure he got back
-1041.0	to base by now so we won't be able to
-1042.2	see him anymore
-1043.0	ah bummer remember anything that's
-1045.0	active can be detected at about 1.5
-1047.2	times the range of the thing that's
-1048.9	emitting
-1049.5	so you have to kind of basically balance
-1051.6	your needs there before you go active
-1053.5	and again it all depends on the
-1054.6	situation if you're in a terrible
-1056.2	weather environment
-1057.4	passive sensors are basically useless up
-1059.7	to a certain range so you have to be
-1061.1	very cautious with that
-1062.8	but again hopefully this all helps you
-1064.2	guys out and answers those questions
-1065.5	that you had
-1066.3	the buddy lacing's kind of fun
-1067.6	especially if you have a whole like
-1068.6	secret mission where you have to like
-1069.6	drop off navy seals and get them to a
-1071.4	vantage point and then have them like
-1072.9	laze like a ship or
-1073.8	shipyard or something that's just fun
-1075.7	mission making but again
-1077.0	enjoy
+# C: MO Tutorial - Buddy lasing, EMCON, Active/Passive Sonar
+Video: https://www.youtube.com/watch?v=-3pP4_FAg68
+Video ID: -3pP4_FAg68
+
+hello everyone in today's command video
+we're going to be taking a look at a
+couple things that a few people are
+asking specific questions about over
+on the discord as well as you know just
+kind of general tips that kind of make
+make things a little bit easier for you
+to play
+the first question i was getting was
+asking about using buddy lasers are
+basically not self
+lasing for laser guided weapons the good
+news is this is a mostly automatic
+process
+the bad news is you have to make sure
+you have all the right pieces in place
+in order to do it
+the second question came to do with
+active versus passive sonar which we'll
+go ahead and take a look at in just a
+minute to kind of have a little
+idea as what's going on again some of
+this stuff will be kind of redundant if
+you've seen the sonar video but at the
+same time this is kind of a good way to
+go ahead and kind of look at it from
+another perspective
+so let's go and take a look at our
+current situation so i have a crew down
+here this is an infantry platoon it's
+some u.s navy seals and if i click on
+sensors real quick
+you'll notice that they have a different
+collection of sensors on board we have a
+binoculars we have an ll tv
+we have an ir camera and we have a laser
+designator and you'll notice that when i
+left click on a particular unit that you
+have this option over here where it says
+mcon window and sensors window
+you'll notice that if i want to turn on
+the laser designator on this particular
+unit
+i can click on sensors unit and i can
+actually come down here and make this
+active
+if i disable this checkbox here the
+problem is if i turn on a laser with
+nothing to point at it it doesn't
+actually do anything for me
+so there's no reason in the world why it
+ever needs to do this i'm sure there is
+one i just can't think of what it would
+be
+i'm going to go ahead and disable that
+checkbox go ahead and hit unit base
+so let's go ahead and take a look at
+what's going to happen here so i have an
+f5e
+tiger ii over here this particular
+version here is a one that
+carries lgbs in this case it's a gbu-12
+it's basically a mark 82.
+it does not have the ability to laze its
+own
+weapon so what we're going to have to do
+here is we're going to have to go ahead
+and use this crew
+to lock onto this target so that it has
+the ability to go ahead and see where it
+is
+now here's where it gets cool as long as
+this particular aircraft
+has the ability to drop a bomb
+successfully and
+this guy with the laser designator has
+line of sight on the target
+we are able to automatically deploy this
+weapon keep in mind this can work with
+aircraft this can work with submarines
+i've seen
+i've also seen of a shore craft and not
+usually it can be done with other
+aircraft with built-in laser designation
+systems
+so well let's go ahead and set up our
+attack around here i'm going to go speed
+up to afterburner
+i'm going to bring this to about 25 000
+feet which is a pretty good altitude to
+deploy these weapons
+whenever you're using lgbs you have to
+really really really
+remember that the lgb itself doesn't
+have unlimited vision range it's not
+like when you play in dcs where you can
+drop
+an lgb from like 36 000 feet which is
+absurd
+because there's no laser out there that
+could possibly give you enough
+reflection on the target to actually use
+it
+so you can see for this one this thing's
+valid up to 65 000 feet
+but keep in mind the sensor on the nose
+of this particular weapon
+might not be sensitive to 65 000 feet so
+that's something you're going to have to
+kind of keep in the back your mind
+you also notice that if i look at the
+loadout for the f5 it tells you it's
+going to require buddy elimination
+which just means somebody else has got
+to light it up for us all right let's go
+ahead and do our attack run here
+so what i'm going to do for this first
+strike is i'm going to go ahead and do a
+manual launch
+so we're at 25 000 feet we're going
+after burner which by the way there's no
+reason in the world not to use
+afterburner unless you have limitations
+of range
+i'm going to press shift f1 i'm going to
+left click on a commercial container
+vessel and i'm going to allocate 2
+to the target just like that now keep in
+mind we don't
+have ignore plotted course on so i'm
+basically plotting the course by moving
+this one around
+but keep in mind the range for the lgb
+is pretty significant at 25 000
+feet it basically has a 5 mile range
+vertically so you have to kind of keep
+that in mind even though we'll be in
+range for the weapon
+doesn't mean we can hit the weapon
+because of that limitation it's slant
+distance we have to
+kind of keep that in mind so now watch
+what happens so my f5 is going to come
+screaming across the fjord
+it's going to get itself into range and
+it's going to go ahead and drop its
+weapons
+but the moment that it drops its weapons
+watch what our little handy dandy navy
+seals team
+by the way they are in range of this
+particular ship with this laser is going
+to go ahead into in just a moment
+so again this thing's going to be
+falling basically vertically ah there's
+the handy dandy red line
+this is actually an illumination vector
+the other thing i want you to notice is
+the fact that only a single lgb was
+dropped at this time
+so i'm actually going to grab my tiger
+and i'm going to do an automatic attack
+i pressed f1 and left click on it
+so this particular lgb is actually being
+guided by our little handy dandy rangers
+on the top of fjord here
+and it's going to go all the way down to
+the ground now of course when you drop
+from altitudes like that the particular
+weapon is basically going to be
+traveling vertically
+it's actually pretty cool let's go take
+a look at it real fast yeah there it is
+yeah
+basically straight down bunk slams right
+into the hole of that particular ship
+now a little f5 is going to come around
+this is an automatic attack this time
+so look at that weapon deployed and he
+goes ahead and gets the heck out of
+there and returns to base
+while that laser is being guided
+successfully by this particular crew
+over on this side
+looks pretty good bingo
+nice shot so that's how to do buddy
+lazing it doesn't matter what type of
+unit it is as long as you have line of
+sight andrew and range
+i'm going to say the enter and range
+piece again because that's what people
+forget
+our laser designator in this case has an
+insane 10 nautical mile
+range on it which is actually better
+than a lot of aircraft laser designators
+and keep in mind if you have clouds or
+fog they can interfere with that
+capability
+all right let's go ahead and answer our
+second set of questions here
+so i have a group of submarines i have
+the typhoon which is
+an unbelievably big submarine easily one
+of the biggest submarines in
+history it's huge and next to that have
+a kilo which is a little diesel and it's
+a very very lightweight diesel
+i have the exact same setup over on this
+side now what i want you to see is our
+little typhoon here is cavitating at
+about 131 feet that's shallow depth our
+kilo on the flip side is at -357 it's
+pretty darn deep
+and we've already identified a contact
+directly ahead of us okay
+what kind of contact ah we don't know
+what the contact is but we do
+know that it is pinging us using active
+sonar
+if you actually measure this distance
+you're talking almost 10 nautical miles
+away we're detecting this target pinging
+us with active sonar
+over on this side we don't notice
+anything unusual so uh let's go ahead
+and
+flip things around real quick now you'll
+notice on this side of things i actually
+have my two identical ships i have an
+oliver hazard perry over here it's a big
+seven
+and he's sitting here picking away with
+his active sonar i have another oliver
+hazard perry this is again
+same exact ship who's not using active
+now what i want you to observe is the
+fact we have already acquired
+the kilo submarine over on this side and
+this one has acquired
+nothing you're probably sitting there
+going okay
+something's wrong here because that
+makes no sense it's the same submarine i
+mean active sonar just a black passive
+zone are right
+and the answer is it doesn't the answer
+is look at the depth
+this particular ship here you'll notice
+when i left click on it you can see that
+it's underwater detection radius is
+there
+when i click on this one it's under show
+water detection radius is gigantic
+that's because this ship has the ability
+to use toad sonar
+toad sonar is sensitive underneath the
+acoustic
+layer inside the water so in this
+particular case
+i have passively detected the kilo class
+because of its being
+deeper than the actual layer this
+particular ship you're going why is he
+not get that ability
+because the water is too shallow to
+successfully deploy
+the toad array and as a result he's
+completely incapable of detecting that
+target which
+i'll go to god's eye view it's literally
+right here and cavitating all afternoon
+so that means we're not actually going
+to be able to pick up these two
+submarines until they get within the
+range of the whole sonar now if i speed
+this ship up
+that's simply going to go ahead and make
+it so we can't hear anything to begin
+with now where it gets really
+interesting i'm going to go ahead and
+speed up time a little bit here just
+kind of tooling away i'll show you guys
+eye view so you can see this very
+clearly
+notice the ship that's above the layer
+is still completely undetected even
+though it's completely cavitating it's
+also a much noisier thing
+now watch what happens when we get just
+a teeny bit closer
+speed up time one more time go ahead and
+unpause real quick
+you'll notice i instantaneously acquire
+the ekula now
+now under the echo outside i believe no
+sounded cool i'm sorry this is the
+typhoon
+so this particular ship identified it as
+it entered its passive sonar rage
+because this particular submarine was
+above the acoustic layer
+now the cool thing is if i actually
+switch back to the other side real fast
+you're going to notice this submarine is
+still completely clueless there's
+something out there
+however our ship over on this side who's
+pinging you away with this active
+intercept basically i should say is
+active sonar
+is not detected anything and it's been
+completely perfectly identified of
+course we'd have to surface one of these
+subs or pop up the periscope to get a
+visual identification on it so we'd
+actually know what it is
+but you notice how he completely gave
+himself away
+whereas this one over here relying
+completely on passive sonar has already
+seen exactly where the both of these
+subs are now if this kilo were a little
+bit shallower i wouldn't be able to pick
+him up until he's here which would be
+well within torpedo range
+now in the real world what we can do is
+we can launch a helicopter to go say
+hello to one of these two subs
+which is a spectacular trick so now
+coming back over to this guy he still
+hasn't detected anything let's
+go ahead and speed up time a little bit
+ah we've acquired something bing
+we've instantaneously acquired this
+particular sub here and again that's
+because we've entered into the radius of
+the active sonar system which now has
+that's this little arc here
+now can see this particular sub but we
+can't identify it we just know that it's
+a fast moving goblin so what i could
+actually do is shut off my active sonar
+and just listen to the water for it for
+a minute
+keep in mind over on this one who's been
+using passive this entire time
+our whole sonar has not been terribly
+successful at identifying this one
+but because the total ray is so
+sensitive we've had no issue
+identifying the kilo even though the
+kilo is a very quiet submarine because
+it's a diesel electric
+now watch what happens here i'm going to
+speed up time a little bit so of course
+what's going to happen is the elevator
+yeah he's going to shoot a torpedo in
+the water
+i knew he was going to do that he
+identified the typhoon and sunk it
+now notice we're still having no issues
+at all
+tracking this particular sub over here
+with our conventional whole
+sonar again this is just using active
+sonar we have a very precise
+measure on it but look at where the kilo
+is the kilo is sitting here two nautical
+miles away
+and has still not had the ability to be
+identified
+by this particular ship it's completely
+clueless it's there because it's so
+deep beneath the layer this one who's
+deep beneath the layer on the flip side
+is about to get a torpedo through its
+front windshield
+of course most submarines don't have a
+machine but notice
+he hasn't even noticed that the parry is
+above him
+which is again the danger that you have
+to be tremendously careful with that
+particular layer there
+by the way if you want to check your
+layer depth you can just kind of hold
+your mouse over things and it will tell
+you exactly where all that stuff is so
+you can take a look at it directly
+all right we still have not detected
+that kilo as a matter of fact if you
+watch it's going to sail right by us
+another kilo on the flip side just got a
+torpedo and it kind of gets sunk
+oh it missed and let's go in on pause
+we never ever ever saw the kilo
+so some of the things i want you guys to
+kind of take away from this again this
+is going back to what we did with sonar
+is that that layer that depth is going
+to seriously impact your ability to go
+ahead and identify things in water
+you can always identify what depth that
+a particular sensor is working on by
+taking a look at it itself
+in this case this is our total ray
+system it's a very low frequency
+whenever you have this you can always
+assume it's going to be under the layer
+hall sonar is always going to be
+shallower because it's connected
+directly to the ship it can never see
+through that basically acoustic layers
+you have to be tremendously careful with
+that
+now to make things interesting i'm going
+to turn around our fig7 here real fast
+go ahead and grab this one notice we've
+identified that ship
+no problem because of that stupid active
+i'm going to go ahead and bring this up
+to let's say just over the layer i'm
+going to keep my speed relatively slow
+bring me down to creep speed there let's
+pretend we're sneaking up on this
+particular one here
+so now our ship is rotating aggressively
+because then obviously the baffles are
+going to block the sub from being able
+to hit i should say ship from being able
+to identify anything
+notice by the way with active sonar you
+can't actually identify the target you
+just know that it's out there somewhere
+like that
+uh meanwhile we got this guy right here
+who's sung two subs without even being
+noticed which is amazing
+so now we're gonna go ahead and grab
+this guy uh we'll spin it up there we go
+check it out we immediately were able to
+pick up that kilo when he popped himself
+back out of the
+little depth zone there because again he
+was going so low to the actual depth
+here he's basically flying napa the
+bottom of the ocean here
+now we're able to identify his direction
+his speed everything using this active
+now if i were to flip off the active
+sonar let's go ahead and do that now
+you'll notice that i've lost that
+contact almost instantaneously
+so if i want to be able to identify him
+i'm going to have to get a heck of a lot
+closer to him
+go ahead slow down to a creep and let's
+see if we were able
+able to actually identify that kilo no
+not even again the reason we're having
+so much trouble identifying here is
+because of how shallow this water is as
+far as 361 feet deep
+that's it this particular one right here
+the cldp is right now he's only 131 feet
+and we still can't pick him up on the
+active sonar because of the interaction
+because
+of that shallow water if we flip the
+backups active watch this
+bam we got him again so you can see
+where you would need to use those two
+applications
+so one more thing i'm going to show you
+kind of uh before we go ahead and let
+you guys loose today
+you can see my board ship who got hit
+with the lgb earlier is
+using helicopters for this purpose now
+helicopters are sort of unique because
+some of them have what they call
+dipping sonar and this is something a
+couple people have asked me about
+i really should have included this in
+the other video kind of dealing with asw
+stuff so let's grab that helicopter and
+move them over here
+again the magic of the map editor real
+quick and i'm going to go ahead and go
+excuse me there i'm going to move you
+out of the way
+get over there nobody likes you anyway
+you make too much noise in the water
+all right so i'm going to grab my
+helicopter here
+i'm going to zip them over here this
+helicopter has a couple really really
+sophisticated tools for identifying
+things the water
+let's go ahead and reduce them to
+minimum altitude let's bring them down
+to a hover
+and while i'm at it i'm also going to
+send a sono buoy into the water just to
+kind of start listening around
+we'll do a passive we'll do it above the
+layer because we identified him at a
+relatively high level there
+all right let's go ahead and restore
+time there so that sono boys in the
+water is starting to listen
+now we've come to a complete hover now
+we can actually do is right click on
+this helicopter
+and tell it to go ahead and start using
+its dipping sonar
+when you order this command this
+helicopter assuming it has a dipping
+zone on by the way to check on that
+if you actually click on the helicopter
+itself you can see that it will have
+something that says dipping
+sonar on it has a relatively limited
+range on it but it's absolutely
+wonderful
+you want to make sure you're out of
+hover and you want to make sure you're
+at the minimum altitude it's actually
+not minimum altitude it's a little bit
+higher than it's like 150 feet or
+something like that yeah
+so now he's going to stick his dipping
+sonar directly in the water and he's
+going to start listening
+but this is a common mistake people make
+is that if he is set to be
+not active sonar he will only use the
+dipping sonar passively which is pretty
+effective but if we absolutely had to
+guarantee where a target is and we're
+not worried about getting shot down by
+basically a mass launched missile we
+could actually safely turn on active
+on his little sono buoy now what he's
+doing this operation where he's just
+kind of sitting here floating up above
+the surface of the ocean
+i got him you're going to notice that he
+has a timer of how long he has to sit in
+this position before he can move again
+in this case we've spotted our kilo
+again we're going to go ahead and shut
+off the
+sonar there again that's the active
+sonar one of the great advantages to
+this
+is the fact we can very very precisely
+target something underwater
+without worrying about retribution
+mostly
+some modern submarines actually have the
+capability to carry
+sams on board that could actually engage
+our helicopter here
+which is why it's important that don't
+turn that on it's the last possible
+second of the engagement
+and keep in mind this helicopter
+actually dips that sonar very very deep
+so even if this guy were trying to run
+very deep which we'll demonstrate really
+quickly
+look at that we've identified him as a
+helicopter sonar just because of how
+the noises is i'm going to bring up the
+fullest cruise speed i'm going to send
+him as deep as possible
+now keep in mind this handy dandy depth
+sonar hanging off the edge of this
+helicopter now
+goes so deep it may have the ability to
+actually acquire that
+there it is it was able to acquire the
+sub
+because it went so darn deep now if we
+were extremely mean at this particular
+juncture of course we could land a mark
+54 right on its front windshield again
+which we'll do in just a moment hello
+there sir have two please
+we'll set him up to loiter speed minimum
+altitude
+he's going to speed up and he's he's
+gonna go oh we gotta wait until he's
+finished uh deploying his dipping soda
+oh he doesn't care
+two torpedoes in the water now this is
+actually really entertaining to watch
+from the
+3d view here go ahead and call that up
+real quickly
+i'll zoom in a little bit you can see
+he's just sort of chilling
+if anything we can send it back home go
+home uh-oh
+pull up pull up and we sunk the kilo
+so hopefully that helps answer some
+questions with active and passive sonar
+as well as buddy lazing uh one other
+person was asking me
+they were saying something along the
+lines of you know what goes on with the
+sensors window
+uh to be able to turn individual sensors
+on or off you have to unclick the switch
+first
+and of course you can turn everybody on
+with one click and you can turn
+everybody off with one click
+and one of the things i love about this
+is it'll actually tell you the type of
+sensor right here
+anything that's got fire control radar
+on it with a couple exceptions generally
+it's kind of like looking at the sky
+through a straw
+it's very very difficult to see what
+you're targeting like for example if we
+flip down this air search radio
+radar real quick kind of give it a scan
+you can see now that we're looking
+around here we'll probably pick up that
+f5 although i'm pretty sure he got back
+to base by now so we won't be able to
+see him anymore
+ah bummer remember anything that's
+active can be detected at about 1.5
+times the range of the thing that's
+emitting
+so you have to kind of basically balance
+your needs there before you go active
+and again it all depends on the
+situation if you're in a terrible
+weather environment
+passive sensors are basically useless up
+to a certain range so you have to be
+very cautious with that
+but again hopefully this all helps you
+guys out and answers those questions
+that you had
+the buddy lacing's kind of fun
+especially if you have a whole like
+secret mission where you have to like
+drop off navy seals and get them to a
+vantage point and then have them like
+laze like a ship or
+shipyard or something that's just fun
+mission making but again
+enjoy

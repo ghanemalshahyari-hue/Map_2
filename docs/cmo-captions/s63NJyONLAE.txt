@@ -1,0 +1,484 @@
+# C: MO - Understanding the OODA Loop
+Video: https://www.youtube.com/watch?v=s63NJyONLAE
+Video ID: s63NJyONLAE
+
+hello everyone on today's video we're
+going to be looking at a kind of
+interesting topic it's one of those
+things that everybody hears about all
+the time but you never really go into
+too much detail with
+and that is what they call the ooda loop
+that refers to how quickly a particular
+system can respond to a detected threat
+so to demonstrate this today uh the
+first thing i want to do is i actually
+want to kind of show you
+what the ooda loop is going to look like
+inside of the database
+and then we're going to test it against
+a real scenario using the sam simulator
+to see just how fast i can respond again
+i consider myself to be pretty quick at
+that particular system
+and we'll compare it again to the actual
+speeds of a regular command
+so let's go check it out so first things
+first if you open up any database entry
+in this case i have the s75
+vena this is the de model this is the
+fancy pvo
+only version i actually really like this
+version because it gives you a little
+bit more control over the missile
+you'll notice that it's got your typical
+sets of sensors you've got a couple
+missiles including the nuclear version
+of the sa2
+i think that's a little cheap but hey
+whatever and if you go to the tippy top
+of a database entry you can do this
+thing called the uda cycle
+that reserves refers to observing
+orienting deciding and acting
+this is your reaction time between the
+moment you've detected something in the
+moment you are able to engage something
+now the interesting thing is after
+you've already passed through this 15
+seconds of hey i found something let me
+point my missiles at it
+let me think about it if i want to shoot
+and let me start the targeting process
+it then takes this much time in order to
+actually launch a weapon at the
+particular target
+so remember i have to do this first
+which takes 15 seconds
+then i have to do this which is going to
+take a varied amount of time depending
+on what type of system it is
+as well as how good my gun crew is so
+let's experiment with that real quick in
+view so you can see
+so i've got myself my good old-fashioned
+s75 just kind of parked here you can see
+it's just sitting there nothing too too
+exciting going on
+i've turned on the battalion style radar
+we're sitting up here at the schulich
+test range which is
+basically where they try these things
+out i'm going to unpause real quick
+and i immediately have detected a few
+different targets so the first one i've
+got is i got this weird bogey
+pokey number two it's well within my
+attack range here we also have this
+bogey number one which is way the heck
+over here
+so now i have detected both of these
+targets
+so the clock has now started at exactly
+this time
+so now what i want to do is i want to
+use my samcro and i'm going to order
+them to attack this target
+keep in mind in the real world you have
+to worry about things such as
+well i want to go ahead and engage it
+you know i have to identify it i have to
+know whose team it is and all that other
+stuff
+which you'll notice at the top of my
+system here is that i have a 36
+second delay that 36 seconds is a
+combination of multiple factors
+remember here it takes me 15 seconds
+after i see something to decide what i
+want to do with it
+then it's going to take me another 36
+seconds
+to go ahead and actually launch a weapon
+at it so even though i've called up an
+attack on this one remember we started
+our scenario at exactly 1001 here
+it's going to take me nearly a minute
+before i'm able to engage that
+so again times clicking times clicking
+we're 35 seconds in i still have not
+launched there's my first weapon
+so you can see i've now launched two
+missiles off it that doesn't quite look
+right when you scale it like that but
+whatever it's all good so you can see
+now that after the
+targeting cycle has completed i'm now
+able to go ahead and engage the target
+directly now if i didn't order up a
+manual attack and i just had them do
+this completely automated i'd have to
+take all this time to actually identify
+this thing in order to go ahead and
+shoot at it in this case i chose a tip
+63 which is an aerostat it's actually
+kind of a neat just basically a balloon
+with a radar on it
+but again i wanted to simulate this
+pretty accurately now you'll notice that
+it took like i said about 45 seconds
+which is a combination of the targeting
+time plus the i've detected an
+active time so again if i click on this
+one more time and i go pop it up
+you can see i have my 15 and then i
+added my 36 so it took me
+about 50 seconds between the moment that
+i spotted the target the moment i was
+able to engage
+with a manual engagement man this
+balloon takes a lot of pepper
+meanwhile we have this bogey who's
+sitting way the heck out here in kind of
+a nowhere man's land
+but the interesting thing here is my 15
+second time to go ahead and target and
+orient and decide
+has already expired which means that the
+moment he is in range
+i will have already had enough time to
+not only decide if i'm going to attack
+but have also had enough time to decide
+that i want to go ahead and fire a
+weapon at them
+meaning the moment that this particular
+character gets into range
+i will automatically engage that
+particular target that is a massive
+difference
+so let me go ahead and lock onto him
+real quickly right now fire three
+because i'm you know
+wasting missiles here now notice that
+whereas the other missile took about 45
+seconds before i could safely get a
+weapon on the way this one is going to
+take a significantly shorter amount of
+time once it enters into our attack
+range here keep in mind our battalion
+radar is not exactly the most precise
+and we're going to see that as a problem
+later on
+so i'm just going to let him kind of
+enter into our attack range here it's
+getting close is getting close
+enters into the attack range the reason
+we have not fired yet
+is not because of my uta loop limitation
+it is now because the weapon is not
+inside the dlc which is just the dynamic
+lounge so
+you'll see that but notice i was able to
+fire the
+millisecond i was in range because i had
+detected that target
+so much earlier than the previous target
+so that time had already expired per
+target
+that's a wonderful wonderful thing it
+means if somebody ducks behind a
+mountain
+as long as i'm able to identify it as
+the exact same contact that was pretty
+garbage
+the exact same contact i can still
+reliably engage it
+without having to deal with that 45
+second wait time
+so now you're probably going hey that's
+actually good to know that means as long
+as i spot a target i don't have to wait
+to fire at it
+yes and that's the most important thing
+to take away from this video today
+but what i wanted to explore a little
+bit today is the firing time
+so i'm going to go ahead and reset our
+scenario here real quickly
+sam go back to it pretty straightforward
+now if you remember
+i started my scenario exactly 701 and i
+took me about 50 seconds before a single
+missile left the rail
+so what i'm going to do now is i'm going
+to go ahead and pop over to sam
+simulator and try this exact scenario in
+exactly the same way
+so what i'm going to do is i'm going to
+go ahead and create myself a handy dandy
+radar reflector balloon there's your
+schulux sign
+and i'm going to get myself an sa2 the
+reason i'm giving myself a 30 second
+delay
+is because i want to simulate how long
+it's going to take me to identify more
+importantly i have to make sure my
+missiles are going to be ready to go
+so let's go ahead and fire it up and see
+what happens here
+give it just a second okay begin
+remember
+go ahead and turn my volume down so i
+don't define all of you we're going to
+turn on this one we're going to turn on
+this one i only need three missiles go
+ahead and flip it to vp go ahead and pop
+all my arming switches to master mode
+and remember let's go pop over to my
+battalion radar grab the handy-dandy
+handle
+and let's see how long it really takes
+for a sam crew to actually identify and
+engage
+now one thing i do like to do is i
+usually like to shut those little lines
+off because i find them absolutely
+blinding
+but again do whatever works for you
+no nothing so far i'm just kind of
+chilling i'm the battalion radar guy
+if you ever wonder why it takes so long
+for you to get a target update it's
+because it takes time for that radar to
+physically move
+whoa we got something all right the
+timer is going
+immediately orient the radar go ahead
+and get me the radar transmitter turned
+on again i'm gonna experience crew
+there's the target i'm gonna go ahead
+and lock it this way rotate it
+this way just a little bit go ahead and
+lock it this way we need to go ahead and
+get in range next
+there we go let's get in range range is
+set
+switch tt missile away
+now notice i never took the time to
+actually determine what kind of target
+it was i just launched as soon as i saw
+it
+so my reaction time here while insanely
+good
+is limited by the fact that in the real
+world we have no idea what i just shot
+at
+so we can go flip on little tv and you
+can watch my little missile spiraling
+now one of the problems here is i can't
+identify with the heck i just shot at
+here i just know it's up there somewhere
+let's go ahead speed up time a little
+bit here
+this is to be one heck of an aggressive
+shot you can see my missiles are
+actually following the path of the radar
+here
+it's about three nautical miles away
+pretty clean shot here pretty clean shot
+and let's see what happens and i think
+that's going to go right into his front
+windshield
+[Music]
+oh no so in this case we fired way
+outside of the effective range of the
+weapon
+even though my firing time is actually
+extremely quick
+it wasn't able actually to reliably go
+ahead and i've actually just lost it
+we're gonna have to take another shot
+so if you ever wonder why it's like you
+know 45 chance of hitting a target you
+just saw it happen yourself
+i really should do too as i should
+change my radar mode here get myself a
+little bit more reliable shot here
+and gotcha
+okay so you can see from this example
+that i was able to reliably hit a target
+now we had plenty of plenty and plenty
+and plenty of time
+to actually reliably acquire here so you
+could see my total reaction time from
+the moment i detected it the moment i
+launched was basically squat you're
+talking seconds here
+so let's go ahead and open up my actual
+scenario here and see just
+how quickly i was able to get a shot off
+like that this is one of the neat
+tricks with this particular program is
+that after you go ahead and open it up
+you can actually save an after action
+report
+so get myself some google earth here go
+ahead and get myself my little file
+explorer i'm going to scoot scoot over
+to my back drive here
+and where's the most recent one from
+today ah that looks good to me
+and we're gonna do that boop all right
+let's take a look what i did here
+okay so they said it took about 54
+seconds to reliably get a shot off here
+let's see how i can do hey there's a zoo
+look
+all right let's see what happens here
+alrighty so go ahead and make him
+disappear
+remember he appears 30 seconds in so he
+appears right
+let's see here he's going to appear
+right no actually he started in the air
+so we had to acquire him the
+old-fashioned way okay that's fine
+so her scenario starts at uh seven
+o'clock in 31 seconds
+remember the fact that nothing really
+happened until yeah okay this makes
+sense now
+so he appeared 30 seconds into the
+scenario here so we have fast forward
+time here
+this is of 10 seconds again our total
+detection oriented side act
+time we've gone up to 15 seconds again
+that's how long it took them inside of
+the actual scenario in order to complete
+the ooda loop
+now we begin the targeting cycle we get
+ourselves to about
+701 so the total time between the moment
+he appeared in the sky could be detected
+and was launched at was exactly 30
+if you remember over inside of the
+simulator itself i should say in command
+you'll notice it took us about 50
+so even though i am definitely quicker
+than command there was no time here to
+actually go ahead and do any analysis of
+the iff or anything like that
+and you can see when the missiles ran
+out of energy it was actually a pretty
+sloppy shot on my part
+oh good so you can see that even though
+i was that
+fast it still takes a pretty hefty
+amount of time
+between identifying locking simulating
+moving getting the targets and getting
+everything all lined up
+hence why the ooda loops seem to be as
+long as they are so i'll go ahead and
+close google here it's actually a pretty
+slick demonstration
+go ahead and close this one go ahead and
+fire back up command here so you can
+kind of get a feel for that
+now the interesting thing is this you've
+seen what this thing looks like inside
+when we're trying to target those
+particular guys is such a quick amount
+of time
+now why are the modern systems so much
+quicker
+that's because a lot of the targeting is
+done automatically you simply make the
+decision of whether or not you want to
+fire
+come over here i'm going to get my
+everybody's favorite we'll get a pmu
+facility we'll do s300 pmu we want the
+upgraded version
+um that looks good to me i'll get the
+iran version
+we're going to go ahead and open this
+one up fire up the active radar now take
+a look at the oota loop here
+look at this so it still takes 15
+seconds to go ahead and engage
+however the targeting cycle watch this
+is a staggering
+six seconds so it is faster to target
+but the detection still takes
+15 seconds so let's go ahead and flip on
+our radar here just to demonstrate my
+point
+so um okay we started at seven o'clock
+we've targeted two targets we're gonna
+go ahead and lock on both of those
+um we'll fire three of these here we
+have this other bogey we'll do three of
+these here
+and we'll go ahead and unpause so again
+the clock remember we started at 701 we
+detected the targets
+at seven o'clock to say we detected the
+targets one second later
+it is now pushing 15 seconds remember
+we're still in the ooda loop cycle
+and we have already launched not only
+have we launched but we've launched
+three
+missiles at each target in the time it
+took
+me over here to actually completely lock
+onto the guy calculate the range and
+fire the missiles
+now keep in mind this is mostly
+automated this was manual this requires
+a good crew of five or six in order to
+reliably use you saw me do it
+individually
+and notice my lethality here is uh
+pretty darn effective as you can see
+very very clearly here
+all right so hopefully this helps out
+people kind of realize you know why
+these things take so darn long and which
+to launch and all those i've got the
+good stuff
+oh apparently we needed a couple more
+but the sa2 got in on it
+i just feel lonely when these guys don't
+get a freebie all right hopefully this
+video has been interesting again i just
+want to kind of show you what's going
+on and the general tip here is if you're
+on the offense and you're trying not to
+get engaged by either of these systems
+remember the moment anything on that
+side detects you
+you now have a total of 15 seconds
+in which case you are immune because
+they're trying to decide whether or not
+they want to shoot at you
+after that for this particular unit the
+modern system it takes
+six seconds before they fire at you for
+this kind of classic system which is
+still trying to work over that same site
+over there
+it takes a much much longer staggering
+36 seconds to actually target you
+all right uh other than that again this
+is kind of neat topic this is relevant
+for all weapons in this game
+so if you're sitting there in an f-14
+you're trying to engage a bunch of
+incoming missiles
+remember it still takes that same chunk
+of time in order to act
+enjoy

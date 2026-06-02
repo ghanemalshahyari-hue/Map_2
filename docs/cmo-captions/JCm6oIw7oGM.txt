@@ -1,0 +1,321 @@
+# C: MO - Submarine Propulsion Types
+Video: https://www.youtube.com/watch?v=JCm6oIw7oGM
+Video ID: JCm6oIw7oGM
+
+hello everyone in today's video we're
+going to be taking a look at the
+different types of propulsion available
+in submarines represented in command
+modern operations now i thought this
+would be kind of a fun video you know
+i've been reading a lot of stuff about
+you know probably the news lately about
+a certain country that decided to say i
+don't want diesel electrics instead i
+want to do some nuclears and i'm sure
+you can figure out what the news is
+based on today's date so anyway we have
+a cool little scenario here basically we
+have ourselves three different
+submarines we have a diesel electric
+which i'm using the kilo class as a
+representative we have an aip aircom
+aircraft i almost said it a submarine
+which basically means that we can do
+propulsion independent of air air
+independent propulsion it's a pretty
+neat system and of course on the other
+side we have everybody's favorite
+nuclear sub now off in the distance you
+could probably see this thing just
+popping up oh we got a fig this is of
+course the oliver hazard perry which is
+kind of my favorite go-to standard kind
+of anti-submarine warfare platform so
+let's go ahead and pop to the side real
+quick we can see he's just kind of
+chugging along here now what i did is to
+modify this a little bit is all three of
+those submarines moving at exactly the
+same speed and they're all exactly the
+same depth so we have a fairly realistic
+kind of representation the other thing
+i've done too is i've taken the
+different subs and i've set them to use
+their particular type of washing so in
+this case i'm going to grab my electric
+he's running on electric i'm going to
+grab my aip and i'm gonna go ahead and
+order him to use aip so i'm gonna come
+into here we're gonna come down here
+we're gonna say boo aip yes so now he's
+gonna flip the aip on he's gonna start
+sucking that stuff down pretty darn
+quick again it's not gonna take very
+long now the neat thing about this aip
+though is again that's what's going to
+be providing us with our primary
+propulsion here we don't have to be on
+the surface so let's go switch back over
+to our detector here and see how we do
+i'm going to speed up time just a tiny
+bit here and kind of let everybody get
+into position
+and they're off
+so remember oh we've already got three
+ding pause so now check it out the first
+thing we detected was the ssk which is
+going to be our electric sub this is
+going to be the kilo the second thing
+we've detected almost exactly the same
+time was the other ssk this would have
+been r1 with aip and then our nuclear
+one actually found itself somewhere in
+the middle let's go ahead and speed up
+time a tiny bit more here and let all
+those contacts kind of resolve
+themselves
+you can see it's taken a little bit of
+effort for them to kind of now narrow
+down the individual position but there's
+absolutely nothing new to that there and
+we'll go ahead and pause okay so the
+first thing we did is we pretty much
+identified everybody in a slightly
+different thing again the aip we did a
+little bit better but we were able to
+identify the type of submarine first by
+its nuclear sub because of the fact that
+the reactors are so distinctive and
+sound now these two subs here keep in
+mind they're running on a totally
+different propulsion system here so as
+we get close we're probably not even
+going to be able to identify them until
+we pretty much pass over the top of them
+so we can see the next one we've
+identified is the one with aip and then
+the last one we identified was actually
+the akilo which was again that was our
+one that was running purely on electric
+so um you can see here that they're
+pretty much on par with themselves and
+it's going to be more of a tactical
+decision versus an acoustic decision so
+what i'm going to do is i'll reopen this
+scenario one more time
+i'm going to tweak things just a tiny
+bit here so what i'm going to do now is
+i'm going to order my kilo here to come
+up to periscope depth which means you
+can start using his diesel engines i'm
+going to take my aip and i'm going to go
+ahead and bring him up to periscope
+depth but i'll leave on the aip and of
+course i'll take my nuke as well and
+bring him up to periscope depth now to
+make this remotely possible as far as
+not being able to cheat and spot the
+periscopes we're just going to go ahead
+and make the weather a little bit worse
+so that there's no way you're going to
+get that kind of freebie there so i'm
+going to go to the weather options i'm
+going to take the sky and make a bunk
+and now it's um yeah you can't see
+through that without a radar so at least
+this way we can see what happens now
+when we're on our surface here so let's
+speed up time a little bit here however
+how's the power is going to start
+approaching things let's speed it up a
+little bit that's what i love about this
+like pause
+okay let's see what happened this time
+now the first thing you'll notice is we
+immediately identify the k the kilo
+class because again a diesel engine is a
+kind of have a very distinctive sound
+frequency so you can see because he's on
+the surface running those diesels we
+identified him immediately now you'll
+also notice that these three individual
+subs here basically got detected at
+about the same distance with the
+exception of this one which of course we
+don't have a very good bearing on but
+you're going to notice we pretty much
+hear everybody at exactly the same time
+however when it comes to identification
+we immediately identify the air um the
+submarine running on its diesel engines
+so go ahead and speed up time a tiny bit
+here
+let's go see if we can rectify what all
+these strange contacts actually are so
+again we've been able to identify two
+now now we can identify this one in the
+middle because he's also running off of
+his diesels because he's on the surface
+if in order to run off to aip be a
+little different now notice our nuclear
+sub is still unidentifiable until we get
+a lot closer in which case now we're
+able to identify those super duper low
+frequencies so in this case if you're
+thinking about propulsion techniques
+remember that now you go okay so if i'm
+anywhere near the surface i'm not only
+equally detectable but i'm also easier
+to identify if i'm anywhere under water
+of course i know we have a new problem
+that's going to be its battery life so
+let's go ahead and flip this sucker back
+on again and we'll see the other really
+really really challenging component on
+this is the fact that each one of these
+subs has a unique limitation now
+remember the nuke is easy to identify at
+the same distance every single time but
+the nuke can go any depth it can go
+pretty much any speed forever our aip
+actually has multiple different fuel
+types so we have got the diesel we've
+got the battery we've got the aip so if
+we actually come in here and go to the
+bottom of all this you can see that we
+have three different performance
+profiles like you know i'm taking a look
+right here and you can see what all my
+different performances are going to be
+as well as my fuel consumption now the
+fun way to do this of course as you come
+down to the bottom here you can see we
+have 215 hours at creep we have 100
+hours so we have way way way way longer
+run at this and in most scenarios you're
+not going to really have that much time
+but one of the fun ways to kind of
+experiment with this a little bit and
+like i said while we're doing a multiple
+experiment i'm going to send this guy as
+steep as possible flank
+now we're going to have a little bit of
+fun so let's go ahead and grab this guy
+real quick i'm going to go and order him
+up to only use aip and watch what
+happens this time so i'm going to set
+this up i don't want that to do right
+there always cool let's grab my kilo
+let's go ahead and send it as deep as
+possible uh he doesn't have anything fun
+like that so grab my nuke and we'll go
+send him as deep as possible so this is
+where it's going to get a little a
+little different and again it's kind of
+neat so let me go bring up everybody to
+maximum speed
+oh yeah
+okay let's see what happens this time so
+what's going to happen is everybody's
+going to start turning
+they're going to bring up their maximum
+speed here they're going to go stupid
+deep and you'll notice my nuke
+immediately pulls ahead and is doing 32
+knots he's also not cavitating now my
+little guy in the middle here my aip you
+can see he's pulling about 20 knots i
+believe is the expected speed here but
+you can see his endurance is one hour in
+nine minutes flipping over to my kilo my
+endurance is a staggeringly low
+one hour and 20 minutes which means i
+have very little time at the speed
+meanwhile our oliver hazard perry
+immediately identified all three of
+these submarines picked up the nuke
+first like oh we could expect to pick up
+the nuke first remember the nukes are
+always easy to identify then picked up
+the kilo and then only after all that
+are they going to be able to go ahead
+and identify our middle submarine right
+here but you could see that we actually
+took a lot longer so again it's kind of
+an interesting way to look at it so now
+you're probably sitting here saying okay
+so i see what you've done here you
+basically said that depending on you
+know the type you're going to have
+limited range limited endurance and
+they're going to be easier less easy to
+go ahead and identify so let's go ahead
+and make this a little more complicated
+so i'll go ahead and switch back to
+submarine real quickly here so all three
+of these are unbelievably deep and
+they're traveling extremely fast now if
+i were to take my oliver hazard perry
+this is where it's going to get
+interesting and i were to go ahead and
+pop a torpedo into each one of these
+guys because i'm such a nice guy you
+know i'm sure they they probably had it
+coming they probably had it coming so
+i'm just going to lock onto him we're
+going to fire a couple of those
+and we're going to lock on to him for a
+couple of those and we're going to lock
+onto him and fire a couple of those
+actually you know what uh yeah that's
+fine that's fine so i'm going to slow
+him way down we'll go ahead and bring
+him straight up north remember the
+torpedo tubes are going to go off the
+side let's see what happens this time so
+he's got to sit there and reload now
+what this is where it's going to get
+interesting our sub is going to know he
+got fired on about half a second here
+and watch what he does he's going to
+immediately turn himself around and then
+start basically booking it
+now because he's erasing so fast to book
+it i now can identify all three of these
+submarines very quickly and very easily
+unfortunately we don't have those cool
+rocket torpedoes that we could just kind
+of like pop over there just like land
+right on top of them so if i want to
+actually keep up the chase here actually
+got to pick up a bit of speed now notice
+our nuke because he's so much faster is
+literally out running the torpedo not in
+this case they don't know your tips are
+going to catch them but he's basically
+out running the torpedoes now these two
+guys are doing absolute maximum speed
+and they're only pulling 20 knots so if
+i were to borrow one of these torpedoes
+real quick and put them over here
+what's going to happen is you're going
+to see that there's no way in the
+universe my diesel or my nukes are going
+to be able to run it as a matter of fact
+maybe not let's go put it right here
+there we go okay we got him now
+oh look at this yeah they're chasing
+each other down pretty well here
+oh then i got two for two
+so the whole point of this again let's
+just kind of show you the general
+differences as far as tactics and
+strategy goes remember the slower you go
+the quieter you're going to be to an
+extent also know that the if you're
+going to be going really really really
+really fast you become easier to
+identify and always remember that nukes
+are easier to identify than their diesel
+and their aip equivalents enjoy

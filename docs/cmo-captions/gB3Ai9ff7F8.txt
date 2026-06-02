@@ -1,0 +1,199 @@
+# C: MO - Creating Communication loss vulnerable IADS
+Video: https://www.youtube.com/watch?v=gB3Ai9ff7F8
+Video ID: gB3Ai9ff7F8
+
+hello everyone in today's video we're
+going to be taking a look at how you can
+design a system so that you can isolate
+its Communications in order to break up
+the integrated integrated iads
+so as you know in Command right here any
+unit that's on a side that is not jammed
+has the ability to communicate to all
+the units that are near it so in this
+case we've taken our lovely little city
+here right now we've made some quick
+little modifications here I'm actually
+going to shut this off to make a little
+bit easier to see let's go and shut off
+the city names there it's just a bit too
+much ah much better so right now we have
+it set up we have these three sa2 sites
+and we have one sa5 site which as you
+know has quite a bit of reach here which
+gives a huge advantage and we have a
+Target cited over in the distance now
+normally in command all these units talk
+to each other automatically so this unit
+right here is able to identify this
+particular Target now we're kind of
+busted because that immediately will
+spend that message over to the sa5 the
+sa5 which already has this all acquired
+it's all got it all locked up ready to
+go we'll immediately fire and go ahead
+and engage on our Target because it was
+able to make the ID and because this WRA
+allows that to happen now sometimes you
+don't want that to happen now there's a
+couple different ways we can do that as
+designers one thing we can do is we can
+come to any it we go ahead and right
+click on it we could do and make this
+come over here you've got all these unit
+properties and stuff like that you've
+got your unit proficiencies you've got
+all these other items you can of course
+can come in here and attempt to separate
+this unit with Communications now one of
+the things you have to remember when you
+do that is when you go into scenario
+features you have to go ahead and design
+it so that the communications can be
+disrupted so when I press that now we
+now have the ability to modify it
+I'm going to right click scenario editor
+yeah this is out of comms now this is
+pretty cool because basically what this
+would enable us to do is if we enabled
+that we now can only see that unit's
+perspective if we were to go ahead
+actually click on it now we could go up
+and view what it can see versus what
+other people can see which actually is a
+pretty wild little way to go ahead and
+do this the problem with this particular
+method is is we'd have to actually go in
+here and show its POV which you can see
+now we can only see what it can see over
+here so unfortunately for us we'd have
+to go through and right click and do
+that to all of these that is totally an
+acceptable method for that particular
+purpose the downside to that though is
+what if we want to simulate damage now
+in the professional version of command
+we have the ability to actually disrupt
+Communications if I were to click on
+this unit real quick I'll go ahead and
+grab this one apparently I have two of
+them here I'm famous for that apparently
+whoopsies it doesn't matter we'll go
+grab another one if we actually have
+this one right here and we come up here
+real fast we'll notice if we go to comms
+that it has no Communications on it that
+would mean if we struck this particular
+Target with a weapon that didn't kill it
+let's say we had of the harm for example
+it wouldn't ever ever come off the line
+here because there's no communication
+systems to actually disrupt so if we
+were to come in here and add a
+Communications device this is when
+things will instantly start to change a
+little bit on us now there's plenty of
+different options we have here you know
+we've got data links obviously we won't
+want anything like that we have
+satellite navigations we have link 18 we
+have all sorts of different
+Communications here but if we want to
+keep things really really simple for us
+today all we're going to do is we're
+just going to grab ourselves a good
+old-fashioned UHF Let's see we have a
+couple different versions We have
+unsecure we have secure it doesn't
+really make that big of a difference
+okay now that I have added a radio to
+this unit that now means if anything
+happens to this radio it will
+automatically drop off the
+communications line here so what I'm
+actually going to do is I'm going to
+delete this one I'm going to grab this
+guy hit his sensors real fast I'm going
+to put a really really nice radar not
+radar I'm gonna put a nice A little
+light TV on here to make it so it can
+see really really really really really
+well here let's see here Target tracking
+identification I like that that's going
+to give us a much much better view of
+this guy which would then relay it over
+to this one over here so let me go ahead
+and unpause real quickly here so we go
+ahead and see a Target over there and
+notice that our radar is having no
+difficulty kind of picking it up here
+I'll give it just a few moments as they
+get a little bit closer in the range I'm
+also going to confirm that my sa5 can't
+cheat here we want to make sure under
+its sensors it does not have a
+television screen it doesn't which means
+that it has to use the sa2 to go ahead
+and identify that particular incoming
+Target so go ahead and click on it
+obviously we're tracking it with the odd
+pair the spoon rests up there we go stop
+ah so now you'll notice that my sa2 is
+able to identify this particular Target
+it was recognizing it as a multi-role
+notice at this range we don't have a lot
+of information about the target we have
+to get a little bit closer in order to
+identify it a little bit better but the
+point is is that we now identified as
+multi-role aircraft which can now be
+referred over to our sa5 to go ahead and
+engage now let's say my sa2 site
+received some battle damage you know it
+was under attack or something like that
+and uh something went wrong and it
+Baroque its Communications data lake so
+if I destroy that right there give that
+a few moments to sink in for it to
+realize that what has happened you'll
+notice it has dropped off the
+communications Network which now means
+this particular target has its receipt
+battle damage is no longer able to feed
+information to the rest of the
+integrated air defense system that now
+means that if I click on this guy real
+quickly I'm having no difficulties
+detecting him with my actual um a big
+old sa5 here but you'll notice now I'm
+no longer receiving any information at
+all from this sa2 battery because he has
+dropped off the air so this is a massive
+problem here because now this sa5
+doesn't know whether or not to Fire and
+of course our little sa2 crew might have
+all the information in the universe to
+understand what that Target is and could
+even be planning to fire or even
+actually take a shot but it won't be
+able to actually take a look at it
+because of the fact that it can't feed
+that information back into its link
+because it had a Communications Network
+that has now been destroyed so in this
+case as we get a little bit closer here
+we'll probably be able to get a little
+bit more identification on it this
+particular one I'm looking at this one
+obviously we're picking that up with
+that one but you could see just how
+powerful and just how effective that
+technique is at breaking up an
+integrated air defense system that's
+pre-built in now some people say can I
+just write a script that makes it so if
+something happens it just disconnects
+everybody sure this is just a really
+really quick and easy way to simulate
+battle damage that can also disrupt
+Communications enjoy

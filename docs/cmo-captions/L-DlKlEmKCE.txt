@@ -1,0 +1,520 @@
+# C: MO - Version 1258.1 Changes
+Video: https://www.youtube.com/watch?v=L-DlKlEmKCE
+Video ID: L-DlKlEmKCE
+
+hello everyone in today's video we're
+going to be taking a look at some of the
+changes brought about by the interesting
+new beta 1258.1
+now most people probably are familiar
+with the tiny update at this point which
+brought in a stupid number of new
+features into command and today we're
+going to be taking a look at this little
+update which actually adds some really
+profoundly different things to the game
+now the first one of these big updates
+is i'll go ahead and demonstrate this so
+that you can kind of see exactly what
+i'm calling at here is the fact they
+have changed the way that command and
+control on ships works uh conventionally
+what you have is if you click on a
+random ship and click any of my osi k
+here also by the way means wasp in case
+you were curious if i scroll down here
+you're going to see this thing has my
+little huda cycle
+i have a detection takes about 15
+seconds and targeting i'm pretty quick
+about two seconds for evasion but one of
+the things you're going to notice is we
+have this new feature called combat
+system combat system refers to how fast
+the ship can respond to new information
+so in this case this is how long it
+takes them to engage something this is
+how long it takes them to actually start
+the process of engagement so let's
+demonstrate exactly how sketchy that
+really looks here so i'm gonna go to my
+sensors window i'm gonna go ahead and
+flip on this radar unfortunately this is
+an apy-one which uh for some reason oh
+that's right because this is the old
+version of this entry you know what let
+me get something a little bit more
+modern for this then by the way we're in
+the cold war database for today just to
+make things a little bit easier for me
+let's grab the hawkeye i think the
+hawkeye does have some surface
+capability otherwise so help me i'll go
+get myself one of the p3s i know that'll
+work let's go flip that on is it going
+to give me what i want yeah it is cool
+you stay here
+let's just give a few moments to go
+ahead and acquire interesting targets
+there we go
+so we have here it's an enemy ship and
+i'm actually going to switch teams real
+quick so we can kind of show off and we
+have ourselves dd-445 fletcher remember
+fletcher equals destroyed story equals
+fletcher i'm sorry but that it can't do
+anything about it so if i click on the
+ship database entry now you're going to
+notice that it has a combat system cs
+generation 1 which means it will not be
+quick at responding to targets but
+notice its total uda is about 15 16 17.
+so what i'm going to do is i'm going to
+go ahead and flip on his radars here you
+know why not let's go shut that down
+radar's turned on by the way this is how
+you do this now this doesn't work as
+well as it used to like i
+whatever i'm not even gonna worry about
+it i just click the switch when i want
+the radars to turn on now so we
+instantaneously acquire this guy up here
+keep in mind the radars are turned on so
+what i'm gonna do is i'm gonna grab
+myself my osa here
+let's see one two three four
+this is such a rude number of these
+things to fire by the way if you've
+never actually seen this weapon i'm
+gonna go ahead and open it up real fast
+so you can take a look at it the sticks
+it looks like somebody took a big 15 and
+chop the cockpit off of it it's the
+funniest thing so we're going to fire
+sticks uh the 6 is going to get going
+it's an ssn 2 a p15 like i said
+literally it's a big 15. it even has it
+in the name so this guy instantaneously
+acquires his incoming vampire now keep
+in mind if we were missile arm like we
+had a talos or something for like a
+1960s or 70s i'd be sitting there
+scrambling to get ready to fire i'm
+going to speed up time a little bit my
+sticks are coming in they're coming in
+i've acquired them my radar has detected
+them now keep in mind the fletcher is
+more than capable of engaging a stick so
+sticks is a slow-moving big 15. so watch
+what happens
+nothing now i pause because i want to
+show you why nothing happened it is
+because our crew even though we've
+acquired is now screen cranking knobs
+turning buttons pushing things calling
+on the phone getting waking up the
+gunners getting those guys ready they're
+trying to acquire the target they're
+looking for the target they're trying to
+coordinate where it is they're trying to
+do all these other things and as a
+result it's going to take me another 217
+seconds before i can get a shot off even
+though i have the capability of doing so
+so i sit here just a little bit longer
+and i'm about to use
+oh i'm sorry mr fletcher oh that's right
+those are the old missiles those things
+i swear to god they've never ever ever
+exploded the first oh and now i don't
+have a fletcher
+oh
+my fletcher it's gone so you can see now
+these older ships with the older cic are
+basically worthless against anti-ship
+missiles and i don't even want to
+discuss the implications that's going to
+have but let's show you what happens if
+you have something slightly more modern
+so let's go grab myself a surface ship
+and i'm going to grab an ffg of course
+you know which one i'm going to grab the
+oliver has a parry
+scrolling down here you can see we now
+have generation 4. so watch the
+difference here so we're going to grab
+our parry we're going to order him to do
+basically the same thing and we're going
+to shoot more sticks at him because i'm
+such a mean person go ahead and click
+that radar zom boop like i said some
+point i'll probably just get rid of this
+because it doesn't mean anything anymore
+let's switch back over here to blue
+let's go ahead and grab my osa you did a
+nice job osm replacing it with another
+oso and like i said you can't replace an
+oso without another one oh we have the
+er model suite grab this guy i'm going
+to go like this i'm going to pause these
+two guys can be deleted there he is
+we've already acquired the fig uh we
+probably acquired him with something
+else so uh bell tap yeah picked him up
+directly and there he is on pause shift
+tab one two three four
+all right so now as you know a parry is
+equipped with a little tiny one little
+heat missile up in the front when uh for
+those of you not seen a parry actually
+we can probably call down we have to go
+flip it over to the side which we're
+gonna have to do anyway because we're
+gonna have to watch the oasis take the
+shot here so the parry believe it or not
+has this little teeny tiny missile
+launcher in the front but it has a
+quicker reaction time
+so i'm gonna go ahead and speed up time
+a little bit here in just a moment we're
+gonna acquire that missile and there's
+the missile so i'm going to grab the
+parry lock onto that missile it's a
+vampire and notice my total time here is
+50.4 seconds so the missile's coming in
+this is coming in i'm acquiring my guys
+are tweaking knobs um they're acquiring
+this and look at that missile on the way
+but notice my missile of course is
+engaging the basic hawkeye
+not these vampires now you're probably
+saying wait a minute i thought you said
+that this was a faster system it should
+be more capable well the thing here is
+you have to remember that this
+particular weapon is traveling a very
+very very very very high speed which
+makes it very difficult to acquire if
+you actually look do you see how we lost
+contact with weapon for that moment so
+right now my crew is basically
+scrambling to go ahead and lock onto
+this sucker now it's in visual range so
+it should be a little bit quicker so i
+have 3.1 seconds before i can get this
+thing off the rail here so let's go
+ahead and switch to 3d view so we can
+watch the last couple moments um what is
+it red storm rising i forget the name of
+the movie clear and present danger one
+of those like i said always comes to me
+later on so there's my parry there's my
+vampires you can see they're not the
+seascaping variety but they are
+traveling basically mach 1 right now so
+our perry is locked on he's in range sea
+whiz fires automatically seawiss does
+not have the same limitation as far as
+that goes and that one's gone okay nice
+nice i don't know what happened to him
+apparently he's just sort of chilling
+see whiz is going at the next one see
+whis is going at the next one fire fire
+fire firefighter no
+safe
+all right next one's coming in again now
+because we have that sea wiz that
+doesn't have that incredibly tight oodle
+limitation here
+pause and of course i'm gonna show you
+real quick what we have let's click on
+him shift one now you can see that we're
+still waiting for this thing to engage
+because unfortunately all my weapon
+directors right now are busy uh
+basically guiding a weapons onto this
+one here comes the next one we got
+another one that petered out and here
+comes the last one oh my gosh here it
+comes
+and we're firing away firing away
+uh oh this is gonna be the one isn't it
+nice
+so what happened here
+well what had happened is remember how
+this guy fired a bunch of missiles at
+this guy here and you can see he's still
+tracking them unfortunately that gave up
+his ability to engage the things that
+were coming at him that were a bigger
+danger so again this is a common issue
+with these older style craft and anybody
+who's ever played dangerous waters as
+the frigate can tell you how difficult
+it is to get two sm2s in the air at the
+same time it's quite a process for those
+you're not knowing so you can see
+immediately that we have brand new
+strategies that we're going to have to
+start to employ in order to engage
+things i'm sure you probably follow the
+news about certain ships getting sunk in
+certain black seas and you probably
+start to realize why that probably
+happened so let's take a look at some of
+the other things another thing that's
+very interesting if i click on my
+fletcher i'm right clicking
+yeah they fixed it so if you go to game
+options now you have this new option
+this is enable right click mouse move
+order i have disabled that because that
+made me positively insane so i'm glad
+that got rid of it but there's another
+thing you probably notice on our screen
+here and that's these little kind of x's
+these are trails so if i actually switch
+back over to the other team real quick
+pop over to these guys you'll notice now
+that this little guy here who's running
+for his life away from this missile
+that's been launched at him you'll
+notice he's got a little trail that
+actually shows where he came from if you
+go to map display you can actually dial
+these in one thing i warn you about the
+trails by the way is anything you turn
+on is going to be on i know that sounds
+obvious but the reality is do you see
+how it has this little trail here any
+weapons i fire are also going to have
+that trail which means if i fire like
+500 weapons it's gonna get really messy
+and we'll demonstrate that in just a
+minute so i'm gonna take the pair right
+now i'm gonna delete you uh thank you
+for your contribution perry you did a
+wonderful job of demonstrating how
+lethal
+anti-ship missiles just got like i
+that's the sound i have to make to that
+effect yeah good luck articulating that
+google comments all right so now what
+we're going to do is we're going to take
+a look at the next new feature and this
+to me is probably the coolest feature
+that they've released in a very long
+time and now we have the ability to f11
+pick what time we want our bombs to drop
+on a target now i know you're thinking
+going what time under target i'm on
+target rather than under under would be
+a little weird time on target we finally
+have that capability the answer is yes
+so what this does is this gives you the
+ability to select what time you want
+your strikers to hit so i'm going to go
+ahead and activate this mission
+and i'm going to come here and pick a
+time let's see here i'm going to have my
+guys hit the target at on 9 am now
+there's something i've learned from
+playing with this your tart missile or
+aircraft will always be a minute late
+now i mean this is just from basic back
+of the envelope kind of calculations
+here but for whatever reason at least
+for me if i want them to hit at nine i
+always have to do 859. so 8590. whoa
+that would have been really bad there we
+go 859 and 0-0 keep in mind we're here
+at gmt so it makes it very easy to do
+these calculations so that's it so right
+now we now have a time on target and
+that's all i have to do my mission by
+the way we have a bunch of f4s and we
+have some escorts as well everything's
+been pre-programmed by the way check
+this out you can do flight sizes that
+are custom so if you want to do a 48
+bomber run you can now do a 48 bomber
+one
+one thing that i really wish they had
+here that they don't have yet and i get
+the feeling it's probably in the works
+is we can't define what type of
+formation that we're actually going to
+use and now there's another button down
+here
+we'll deal with that button once we
+launch so now i'm going to go ahead and
+unpause give it a little bit of time to
+pass a little bit of time past hit f11
+now notice that these guys here these f4
+phantoms are all ready to go now watch
+what happens when i press atl you'll
+notice that this is completely blank you
+know i've got nothing special going on
+here everything's completely blank
+because nothing is currently in the air
+yet until the mission actually gets set
+off and it actually gets everybody
+rolling here you're not actually going
+to see anything in that particular thing
+again like i said this is so wild that
+we can do this so what i'm going to do
+is i'm going to fast forward time a
+little bit
+and you'll notice that this new flight
+plan has appeared on my screen this
+flight plan is the flight plan that will
+get my tar
+aircraft my strikers on target at the
+correct time now if i tap f11 again and
+click on ato check this out there's all
+of my flights ready to rock check it out
+you can pick tasks you can set them to
+different types of escorts or we can do
+a tar cap if you want instead of a
+fighter sweep i mean you can set them
+all right here then we have my strikers
+you have all the different types of
+flight plans obviously this isn't going
+to do anything yet they have the flight
+call signs you can come in here you can
+delete flights you can create new
+flights everything is now here i'm so
+glad they finally added this feature but
+take a look here we now have a takeoff
+time the computer automatically
+calculated what time these guys need to
+get airborne in order to strike my
+target at exactly nine remember i
+knocked a minute off of it so watch what
+happens now so we're going to hit 8 43.
+well not quite 843 843 in xy seconds and
+we have our first flight in the air also
+i like this little donut i love it so
+this guy's now going to fly into this
+holding pattern now remember i
+intentionally chose a very very large
+formation here in order to simplify my
+logistics so here comes i believe this
+is one of the escort groups yep that's
+my escort group there's my other group
+of escorts
+and oh look at all the don't see this is
+one of the things i was warning you
+about those new trails i almost wish you
+could do trails by formation rather than
+trails by it now notice look at how
+cluttered the screen got so this guy is
+now airborne this is my second group now
+the way they programmed at least from
+what i've observed again i could be
+completely wrong here oh look at that
+i'm leaving contrails is the fact that
+now when these guys strike they strike
+one minute apart so i'm actually going
+to disable those trails because i hear
+my computer getting ready for takeoff
+itself right now boop let's shut that
+off real quick
+so what you're seeing here is these this
+group here this will be my first in at
+exactly nine o'clock they're going to
+run through a holding pattern meanwhile
+the second crew do you see how they're
+in a one minute later holding pattern so
+they're going to leave this holding
+pattern exactly as this group starts to
+start their strike and if the math is
+correct everybody will get there about
+exactly nine o'clock like i promised so
+they're leaving the holding pattern now
+notice both groups of strikers are on
+the way and notice my escorts are
+now this will be interesting because
+it's about to make a lie no no i think i
+was right i think i was right
+okay remember i called for a strike at 8
+59 but like i was saying before it
+always seems to be about exactly one
+minute early so now the question is is
+it when the bombs hit the ground at nine
+o'clock or is it when we're over the
+target at nine o'clock now according to
+from what i've seen so far it seems that
+you're going to be roughly dropping at
+exactly nine o'clock so we got about
+you can see i'm just a little tiny bit
+late and anybody who's ever done
+anything in the air force knows two
+minutes is considered accurate so we're
+well within air force standards as
+navigation here so nine eleven nine ten
+nine look at everybody's circling under
+the target remember these are very large
+formations too they tend to slow things
+down and look at that 30 seconds late
+look at that
+sorry that is a maniacal laugh do you
+have any idea how long the folks in
+command have been waiting
+how are you doing there if you have any
+idea how long the folks who have been
+playing this game have been waiting for
+the ability to be able to dump that much
+stuff um apparently my trails have not
+disappeared that's a little weird let me
+go back to map display here i thought i
+shut that off that was a little weird
+well oh well at least you get to see
+kind of a little display here so you can
+see that my strikers went in they
+dropped their bombs they're about 30
+seconds late like i said that one minute
+thing might have something to do with
+how large my formation is but like i
+said it seems to work and again at any
+time i can come to my air thing i can go
+over here and say oh we want you to do
+tar cap instead so i can press these two
+buttons and you notice it immediately
+switches them over to a different style
+system like i said it's so so so so so
+cool how that works now and now the neat
+thing too is if you have like 100
+airplanes in the air you can all get
+them go oh my god look at all this
+landing now that's what i call a
+successful strike package all right
+and we're good
+i believe he had to go around
+all right so those are the big changes
+that we have in 1258.1 now there's
+probably a couple other little things
+that are different uh one thing that i
+found that was very interesting is it
+actually gives you advice if you
+accidentally do something wrong on a
+ship so this might have been a feature
+from a previous one but it was just one
+of those when i saw it i'm like oh cool
+so for example let me go to this weapons
+i'm going to add a weapon mount uh we'll
+add something nice and i'll do 127
+millimeter
+and let's see here we want a dual
+purpose gun here dual purpose
+add it says you need a mist gun director
+isn't that so cool so then it even
+suggests uh which one it needs see i'll
+automatically pick the correct one we
+need so then i can just pick it like
+this and say yeah what design that's it
+and now i have a gun director what a
+neat little feature i'm so glad they
+must have added that before but now i
+actually have one that will shoot
+properly but other than that enjoy

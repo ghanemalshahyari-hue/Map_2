@@ -1,0 +1,297 @@
+# C: MO - Using LUA to get unit details
+Video: https://www.youtube.com/watch?v=pxiVqchUYGw
+Video ID: pxiVqchUYGw
+
+hello everyone in today's video we're
+going to take a look at the anatomy of a
+unit in command modern operations now
+there's been a couple questions lately
+actually a couple questions a little
+while ago too that were kind of asking
+what actually is being stored with a
+particular unit and like what are the
+different details and what do you really
+mean by a mount and what do you really
+mean by a weapon entry and things like
+that you know what is a data link what
+is Communications what does it mean it
+has a hanger what kind of support
+structures and there's really a lot that
+goes into each one of the units and now
+without opening up the database and
+scaring everybody we'll go over the
+basics today as well as how you can use
+Lua to kind of understand what's going
+on with a specific unit so normally when
+you pick on units and you go right up to
+the database entry here you get this
+kind of lovely page which gives you all
+sorts of useful details you get your
+description again we've talked about the
+database before you get some general
+data always call this like fluff and
+then of course you get down to the
+sensors in ew now the sensors in ew
+which makes things a little bit
+complicated come in two general types
+the first type would be a single sensor
+such as a guy with binoculars the other
+one would be a sensor group now the
+reason that gets kind of interesting is
+when you go ahead and open up the
+sensors page if you're in kind of our
+view here you can look side by side at
+the two different systems and looking at
+this side is basically going to be
+telling you where the sensor is looking
+in kind of its General capabilities
+while looking on this side is going to
+tell you which one's turned on as you
+can see I picked a very complex model
+intentionally for this particular
+purpose now once you get past the
+sensors and you make your way down a
+little bit further here you get to the
+mounts now mounts are an interesting
+concept because a mount is not
+necessarily a weapon think of a mount as
+hand and the weapon as the weapon now
+for example if I run over here real
+quick to weapons and actually click on
+this you will see all these different
+things and you probably notice in the
+upper left corner this word Mount this
+is the actual mount for the weapon it's
+not the physical weapon itself now if I
+grab something such as our little
+machine guns which you can see side by
+side you will notice that the actual gun
+attached to the mount is his 12.7 50 cal
+basically a machine gun and you can see
+that when it fires it fires a burst and
+you get 10 of those before we have to do
+a Reload now the important thing to note
+is that this actual Mount contains
+potentially more than one type of weapon
+now for example if I run down here to
+skip the Ser box for a second here's the
+VLS system you will see that has a wide
+variety of different weapons remember
+the mount holds the thing the weapon
+record is the thing so if I come down
+here you can see side by side the
+difference between our Mark 41 VLS as
+far as what it describes versus what you
+see when you look at the actual weapons
+themselves now this is all going to be
+very very important in a minute when we
+open up the Lua console and dive in a
+little bit deeper so now that you
+understand that scrolling down you'll
+see our magazines and again we'll take a
+look at our magazines side by side this
+will be another component again we've
+got no cargo or anything to confuse us
+or anything like that but one of the
+things we can do is we can care store
+all sorts of weapons here and you can
+actually see again this is our general
+description this is our specific
+description we got plenty of 50 cal ammo
+as you can see right here now at the
+very very bottom you've got your coms
+your data links your aircraft facilities
+now these of course are going to line up
+with everything that you see over here
+so for example if I click on comms you
+can see a list of of my data links and
+my coms now comps fortunately are one of
+the simplest things that they have in
+here they've definitely made this a
+little bit easier for us basically you
+have the type and what it is and it
+tells you whether or not it's operating
+of course this isn't relevant to us over
+in kind of the consumer Edition but keep
+in mind if we were talking to like a
+mile or something like that we would
+have to be using our link 14 link 16
+link 4 kind of a thing to talk to it now
+the cool thing with com devices is if
+you wanted to ever increase capability
+you come down here and add com device
+and go nuts kind of a thing so at this
+point you should have a pretty good idea
+sort of how these two things line up now
+the reason we're really doing this today
+is what happens when we want to open
+this up with Lua so I'm going to run up
+to Lu script console here you can see
+it's all nice and empty and what I'm
+going to do is I'm going to create a
+print out of the details of this
+particular unit in the event that I
+wanted to write a script for example to
+change it and the way I'm going to do
+this is real simple first I'm going to
+go ahead and create myself a really
+really basic variable called Unit uh
+this variable of course let me see if I
+can make that bigger for you folks there
+we go a little better and we're going to
+use a special command called get unit so
+I'm going to do is type in send
+editore get unit left parentheses now
+this particular thing takes a list a
+lists it's actually very interesting how
+L it handles it I write a lot of
+programms and do computer science and
+everything this is different but
+basically what we're going to do is use
+a squiggly bracket and we're going to
+create a list of ways to describe our
+interest in unit so in this case we can
+describe it a couple different ways so
+we can describe it by its name or its a
+guid so for me I'm just going to use its
+name because I know there's only one
+that has this particular name in the
+world so I'm simply going to type in
+side equals and of course I only have
+one side today is blue comma and and all
+we're going to do now is use unit name
+equals and we're going to get the name
+of the unit I'm going to be lazy I'm
+going to press rrl C press okay contrl +
+V just like that let's go ahead and
+expand this a little bit you can
+obviously see the benefit of naming your
+things a little bit simpler here so go
+ahead and toss a quote on there we'll
+close our squiggly bracket we'll close
+our right parentheses and I'm going to
+press run to make sure nothing explodes
+good nothing exploded that's a good sign
+now we're going to do is we're going to
+print this units so I'm going to type in
+print I'm going type in unit and when I
+run you're going to get all sorts of
+goofy stuff up here here which is
+actually going to be very fascinating
+because it's going to give you all the
+critical details of that specific unit
+Unfortunately they don't let us get this
+bigger can I make this bigger a come on
+this is the part that you actually need
+to see so what you see here is you can
+see the type subtype the name the size
+the GU ID in case I needed to reference
+it later it gives you the full class
+it's going to give you the proficiency
+latitude longitude altitude heading
+speed Throttle auto detectable mounts
+magazines unate and so on and so forth
+now the reason this is so incredibly
+useful is because we're actually getting
+not a random single object but we're
+actually getting a list of details out
+of this unit now the reason that's so
+helpful is we can actually use that as a
+way to read out specific things for
+example I noticed that we have this
+thing this is mounts and it say 26 it
+doesn't do us any good what if I wanted
+to print out the specific mounts well
+you could do that so if I come up to
+where my line two is here I can do unit.
+mounts now if I press the Run command
+Wham you will see that it prints out
+every single Mount we have here now when
+you look up here at the tippy top you
+can see clearly Mount ID it gives you
+the individual IDs of it it gives you
+the weapon IDs but the critical thing is
+and this is true when people are running
+with a lot of Lis scripts is they need
+specific numbers specific IDs and that's
+where these special IDs are and the nice
+thing is they will always list them by
+what they are so if I know for example
+my little 15 caliber Mount right here I
+can see that its dbid is 561 and I can
+tell you the weapons are a list of
+weapons including the weapon default
+which is weapon 10 here's the maximum
+cap that's how much I can carry
+basically there's the name of the weapon
+there's it database ID there's its type
+and of course it works your way all the
+way down here you can see how incredibly
+useful that can be for the purposes of
+changing these items now if I wanted to
+for example come in here and type in
+magazines if I were to run this instead
+you can see it's going to list
+everything that we're carrying and
+obviously this is going to be a rather
+complicated little piece here and
+there's a lot of different things now
+Lou got an interesting little Quirk now
+if I want to spit out a specific one of
+these magazines perhaps I want to spit
+out the third one we're going to treat
+it just like you're using a list in like
+a c or a python I'm going to come over
+here I'm going to go ahead and toss in a
+bracket and I'll type what item I want
+now one of the obnoxious things here is
+if I do item zero which would be the
+instinctive item for me if I were to
+press the Run key here you'll notice it
+says nle and the reason it says nle is
+because L utas this as a list we don't
+actually have an item zero which feels
+wrong we have an item one so if for
+actually to change this to number one
+hit run again you'll observe that it
+gives me only that specific item which
+makes it much much much easier to go
+ahead and divide this now one of the
+really cool things you could do here is
+you could come up with a little script
+real fast to print the SE out a little
+neater hey let's do that let's see what
+we can do here so let's create ourselves
+a really simple po Loop here I'll do for
+KV and I Pairs and remember the unit
+we're not using the unit we're going to
+be using the mounts so if I just come in
+here and type in mounts type in do and
+all we have to do now is we just have to
+print V now there's a 50/50 chance I got
+this backwards let me try it oh I got it
+right first time so if you take a look
+here you can see here that it prints
+each one of these mounts as a nice neat
+item and you can see one at a time so
+it's much much much much much easier to
+read as far as trying to identify the
+specific details of that now if I wanted
+to I could go ahead and change this so
+it's not just the unit mounts it also
+could do the unit you know if I wanted
+to change this real quick I could come
+in here and say unit. weapons now if I
+run this like this you'll see that it'll
+go ahead and freak out on me because we
+do not have a unit. weapons we have a
+unit.
+mounts my bad sorry about that let's run
+that one real quick ah there we go so we
+can see the mounts if I want to see the
+magazines I can come in here and do
+magazines just like that and you can see
+it breaks it all down for you very
+neatly for those you who are using Lua
+for the purposes of grabbing these
+things enjoy

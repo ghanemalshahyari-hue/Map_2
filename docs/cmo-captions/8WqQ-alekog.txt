@@ -1,0 +1,517 @@
+# C: MO - Missile Performance at Different Altitudes
+Video: https://www.youtube.com/watch?v=8WqQ-alekog
+Video ID: 8WqQ-alekog
+
+Hello everyone. In today's video, we're
+going to be showing you why missiles do
+not get the range that they do when you
+fire them in the low part of the
+atmosphere and when your target is in
+the low part of the atmosphere. Now,
+it's a common phenomenon. We have this
+nasty thing where the air gets thicker
+as you get lower. And these beautiful
+weapons are not like the ones in the
+movie where when you fire the weapon, it
+basically burns and burns and burns and
+burns all the way until the hero dives
+out in time. Most modern missiles
+actually only fire for about 10 to 20
+seconds and then they burn out and
+basically use momentum to carry
+themselves to the target. Now, when you
+put those two things together, what
+you're going to see today is going to be
+very, very clear. All right, so we have
+ourselves an F-16. It's uh packing these
+wonderful A120DS.
+Fabulous, fabulous weapons. And it's
+cruising at about 500 feet above sea
+level here. And meanwhile, we have a
+tupal lift 95. Very large target. And
+you can see it's chilling at about 200
+feet above sea level. It's cruising
+awfully slow. So, as you can see, we are
+already in range of firing our aim of
+120s. And again, this would be an ideal
+solution sort of situation. And again,
+our range here is about almost 90 miles
+with this particular weapon, but we
+can't use it at this range for about 100
+different reasons, and you'll see why.
+So, I'm going to go ahead and order my
+attack here. I'm going to click on the
+tupalive here. I'm going to pick two of
+these weapons. And again, I'm basically
+creating the worst firing scenario
+possible. And watch what happens here.
+You'll notice we're not firing. We're
+not firing. We're not firing. We're not
+firing. We're not firing. Still not
+firing. Just cruising along here. I got
+to get right at space here. Oh, pause.
+And you can see we have launched at
+about 45 nickel miles, which is about
+half of the maximum range. Now, this is
+where things get really, really tricky.
+And I want to show you this so you can
+see it very, very clearly. So, our
+missile now has to do several things.
+For one, what it has to do is it has to
+travel upwards through the thickest part
+of the atmosphere for the purposes of
+making its way to us. So, as you can see
+here, it's basically climbing like this
+to get into the thinner parts of the
+atmosphere. Now, as it's climbing here,
+its motor is still going. And then the
+motor burns out, which now means our
+weapon, which had to fight gravity, and
+the thickest part of the atmosphere now
+is lost almost all of its energy. So,
+our weapon here now is coasting. Keep in
+mind, you actually see how it's slowly
+going downhill here. And we're cruising
+at about Mach 2 and a quarter here,
+which is plenty. Now, the problem here
+is is because we're already really,
+really, really slow, our maneuvering is
+now going to be limited. So, what does
+our missile do? Even though gravity's
+helping push it along right now, it now
+has to get through the thickest part of
+the atmosphere again. And as it's diving
+through here, you can see all that
+transsonic drag is grabbing onto our
+weapon here, and it's just sucking the
+energy right out of it. And now you can
+see here our interception kind. He's
+down to about 10,000 feet here. I'm
+running at 2x. And you can see 70. He's
+about 510 knots, which anybody who's
+played any flight sim involving missiles
+would say, I've outrun missiles before
+cuz you just turn around and run away
+from them. So, as you can see here, ah,
+this missile's got like nothing left
+against it. And of course, if we're
+shooting against a maneuvering target,
+that maneuvering target would have no
+difficulty in the world getting out of
+the way of that. It could basically just
+turn. And you can see it ran out of
+energy. As a matter of fact, if we open
+this up, you can see here our original
+probability to krill is 95%.
+But you can see because it literally ran
+out of energy. You can see the
+probability is down to 30%, cuz the
+missile is just like, ugh, give me some
+more. And of course, agility adjusted.
+By the time you get to it, it's only got
+a 1 in4 chance of actually doing damage.
+Now, you're going to sit here and say,
+okay, then I kind of get what you're
+going there. So, basically, you're
+showing that if you take a shot from the
+lowest part of the atmosphere, your
+missile runs out of energy before it
+even finishes its climb to get any
+reach. Yes. Excellent. So, you say,
+"What if I fire it from a higher part of
+the atmosphere?" I say, "Oh, I was
+hoping you'd ask me that."
+So, what we're going to do is we're
+going to take my level F16 here, and
+we're going to fly him up into the thick
+part of the atmosphere. As a matter of
+fact, we're going to cheat to get them
+in the real thick part of the atmosphere
+real, real quickly here. Let's see.
+40,000 ft. Enter. Aha. Now, my F-16 is
+ready to go. So, now none of the weapons
+energy will be wasted trying to get
+through the thick part of the atmosphere
+on the way up. It's still going to use
+quite a bit of its energy in order to
+basically get an initial climb there to
+build some power, but wait. Do you see
+the differences in speeds involved here?
+All right, I got to get ready on the
+space. Oh, it helps if you turn on the
+radar on this thing. And again, an F-16,
+for those of you who played BMS, you
+know that the F-16 can easily easily
+take shots at those ranges. All right,
+let's take a look here. So, that was a
+65 nautical mile shot. And again, this
+shot was fired almost 20 miles farther
+out. So, let's go ahead and open up our
+three-dimensional view here. I'll go and
+slow down time a little bit so that you
+can see it clearly. Let's grab that
+missile one more time and watch what it
+does differently this time. So you can
+see here just like before it climbs but
+the atmospheric density is only about 10
+to 15% of what it was. So it's not
+dealing with all that extra drag as it's
+powering itself. So as you can see it's
+still running on its motor now and it's
+basically climbing as much as it can to
+try to get a nice lofted shot. So when
+it basically re-enters orbit it's going
+to have all of its energy back. Ah, see
+the burnout. So now this thing is
+coasting in the thin part of the
+atmosphere and it's almost, if you want
+to think about it another way, on a nice
+gentle ballistic trajectory here and
+already we're moving twice the speed
+that we were traveling before. Now this
+is where things get really interesting.
+This is what always surprises people. So
+as this weapon starts to reenter our
+atmosphere here into the thicker parts
+getting out of the tropopause here, it's
+going to pick up speed because of
+gravity. But as it re-enters, because
+the engine is no longer firing, it is
+literally going to start slowing down as
+it hits that thicker part of the
+atmosphere. And this thing starts
+getting really hot as well. But you can
+see relatively speaking here, just the
+altitudes involved in trying to take a
+shot at this target. So the interesting
+thing is from a radar perspective, this
+is actually very irritating of a shot
+because I have to drop on top of
+something and uh that makes it easy to
+get confused when you look at the
+ground. They always say fly low to avoid
+radar stuff. They're not joking. But
+what I want to show you here is our
+missile now because it had so much time
+to reenter and it spent so much time at
+higher speed is doing Mach 2. This thing
+is booking. This thing is almost three
+or four times faster. So as it drops in
+on our Tupalift 95 who's barely going to
+have enough time to see this weapon,
+assuming he does see the weapon at all
+before it hits him. In reality, you
+wouldn't even have known you've been
+shot at. And of course one of those.
+Let's take a look what happened to our
+probabilities here. So 95% chance. Our
+final chance to hit was a 5050. That's
+awesome. That was no problem. As a
+matter of fact, I'm actually kind of
+surprised we missed. Talk about uh just
+bad luck. Sometimes that happens. And
+again, um anybody who's ever done
+anything and read anything about warfare
+knows that that just happens sometimes.
+All right. So, we could see here that
+our probability doubled. So, let's go
+reopen our scenario again and let's
+create the ultimate ultimate ultimate
+method to go ahead and utilize this
+weapon. We're going to create everything
+in perfect ideal conditions here. I'm
+going to grab my Tupelift 95 and I'm
+going to order it up to maximum
+altitude. Let's see here. Maximum
+altitude for us is going to be 45,000
+ft. Oh gosh, what an easy target. Let's
+go ahead and grab the scenario editor
+here. We're going to grab its
+properties. We're going to go 45,000 ft.
+Delightful.
+This is basically unfair. All right,
+let's grab our F-16. We'll go ahead and
+flip on this radar one more time. We'll
+go ahead and pop the F16 to maximum
+altitude.
+Now, the interesting thing you'll
+observe here is if you had to take this
+F-16 and launched through up to this
+target through the thick part of the
+atmosphere, we would have had the
+identical problem we had before where we
+basically have run out of energy before
+we actually were able to take the hit.
+It would be a little bit better only on
+account of the fact that the air is a
+little bit thinner up there. All right,
+let's go set our altitude to 40,000 ft.
+Perfect. And now we're chilling at
+40,000 ft. We're going to order our two
+missiles to fire here. One, two. Just
+like that. And yeah, like I said, we
+could switch to the F-35 if you want to
+see me take a much longer shot, but
+we'll do that in a second. All right,
+watch this. You'll notice my F-16 fired
+right here at about 64 nautical miles.
+So, already we're increasing our max
+range of engagement here. Let's go grab
+one of those missiles real quick. We'll
+go bring up the attack view here. People
+always say, "Is Tac View worth it?" I
+said, "This is what I use Tac View for."
+So you can answer your own question.
+Okay, so our weapon here is using all of
+its boost capabilities to get it up in
+the upper upper upper atmosphere here.
+And you can see the engine just burnt
+out. So at this point now we're
+basically just kind of coasting. You
+know, you can see we're going arcing
+pretty high. We're about 76,000 ft. If
+we zoom out a little bit, it's a little
+more obvious to kind of see the
+trajectory. And you can see that it went
+up and now it's coming back down to say
+hello to our friend Tupelift 95 there.
+So, now that this one is re-entering
+atmosphere here, you can see it's still
+doing 2270, which is well, let's see
+here, uh, Mach 4. And, of course, we're
+striking a target in the thin part of
+the atmosphere. This is basically unfair
+here. Weapon turns on its radar, and you
+can see our intercept speed is um, still
+Mach 3 and a half. Oh my goodness. Watch
+this. Watch this. Oh boy. Oh,
+splattered. Now, take a look here at
+what our in-game report is. base to hit
+was 95%, final probability to hit was
+88%.
+So, we almost doubled again our chance
+of hitting because our speeds were so
+much higher. Now, you can take this to a
+logical extreme as well. Take a look
+here. Let's grab my blue here real fast.
+Let's go ahead and take this one.
+Goodbye, F-16. You were awesome, by the
+way. Let's grab myself an F-35. I'll
+grab a C because I like the C. Uh, we'll
+grab I don't know, the transmit receive
+version. We'll do light internal
+standard cap only two. Ah, that's all I
+need. Don't worry. We'll be able to take
+care of it without any concerns here.
+All right, you're going to go up to
+maximum altitude, which by the way is
+50,000 ft. Now, if that doesn't impress
+you, waiting to see the shot I'm about
+to take. All right, let's go back to
+red. I'm going to back this guy up.
+Otherwise, he's never going to get to
+the altitude. We'll send him to max
+altitude. I'm going to go right click on
+him. We're going to go and edit his
+properties directly. We're going to send
+him up to 50,000 ft, which again, he can
+do 45,000, so it'll level off in a
+second. And then of course I'm F-35
+which I have to back up cuz this shot's
+just got to be fantastic. Watch this.
+All right, try my radar. Look at the
+reach on this radar. Gosh, this F-35 is
+a UFO as far as I'm concerned.
+There we go. All right, let's keep
+climbing here. We need to get a little
+more altitude. And again, I can just
+come over here and quickly edit it. Edit
+unit properties. Unit properties of
+50,000 ft. Okay, watch this. Watch this.
+Okay, this aircraft is at the thinnest
+part of the atmosphere and this aircraft
+is at its thinnest part of the
+atmosphere. I have the entire deck is
+stacked. As a matter of fact, I'm going
+to cheat a little bit and I'm actually
+going to give this missile a little bit
+extra energy. Now, you're sitting there
+saying, "Wait, what did you just do?"
+So, what I did is I kicked the
+afterburners on. And now, when you kick
+the afterburners on, what you do is you
+impart a higher launch speed on your
+missile. Now, some people say, "Does
+that really make that much of a
+difference?" It's it's minimal, but it's
+there for those of you who are curious.
+And you can see I'm up to 780 here. So
+again, my missile starts at 780 knots
+before I even take the shot. Oh, even
+more than that. Cool. Let's go ahead and
+lock onto this target. I'm only going to
+fire up here. Actually, it's an F35. I
+get a couple. There we go. Now, watch
+this. Let me speed up time a little bit
+here. Oh my goodness. Mach 1.5 and an
+F-35. You are brave, sir.
+Now, the joke here is you'll notice I'm
+not really burning a lot of fuel either.
+Now, the reason for that is again my
+engine's not working that hard because
+the airship's in. Ah, I fast forwarded
+past the shot. My apologies. All right,
+let's go ahead and take a look here. And
+somehow we uh overshot, but that's okay.
+I can always go like this and take the
+shot again. All right. Um, did you like
+forget to shoot or something like that?
+Uh, like what's the year here? Oh,
+target is outside vertical bore sight
+limit. A all that says here is the fact
+that our tupelive 95. We got to adjust
+our bore sight a little bit to take a
+better shot. Sigh. All right, come on
+down to 45,000 ft.
+There we go. There goes the shot.
+Actually, I don't even like that shot.
+I'm going to delete that shot. I do not
+like it. Delete. Delete. Much better.
+And we're going to go ahead and take
+that shot again. And we get a little bit
+closer. And again, the reason he
+couldn't fire was she was looking down
+too far, basically. If you want to think
+about All right, watch this. Watch this.
+Watch this. All right. Looking good.
+Looking good. For some reason, he's not
+going to the manual overridden altitude
+I just ordered him to. Hey, buddy. I
+gave you an order. Do it. Unit
+properties. I'll just manually order him
+down there. All fixed.
+Shift F1. Take the shot. One. Two. He's
+just slightly out of DLC cuz if he turns
+around, this is going to be pretty
+pointless. There it is. Nice. So, you
+can see here we fired at maximum range
+minus about six or seven nautical miles.
+Now, check this weapon out. We'll go
+ahead and grab the F-35. We're going to
+order him back to manually. We're also
+going to actually, we can't order him to
+base unassign. And obviously, we need to
+keep him going this way because
+otherwise he won't be able to guide the
+weapon. Sorry. All right. So, these
+weapons now left the rail already doing
+800 knots. So, now we've given them a
+little push. So, let's go ahead and take
+a look at this from the side. And you
+can see these weapons are maxed out.
+They are just going everything ham here.
+They're climbing at maximum speed. They
+got that nice little push that we gave
+them a few moments ago. They're still
+burning. The motors are going to burn
+out any second now. I'll go and speed up
+time a little bit for you. And look at
+this. They just burnt out at 72,000 ft.
+So, if this dupal of 95 was smart, uh,
+he'd be trying to get the heck out of
+there because this weapon now is again
+four times the speed of sound as things
+gliding through. And, uh, that was a
+shot at maximum range. Remember, we're
+shooting at twice the range that we were
+shooting at at the initial example
+there. This thing's cruising about
+80,000 ft. It's arcing back down here,
+and it's just going to glide. I wish we
+had a 3x speed for weapons like this,
+but it is what it is. All right, we're
+re-entering the orbits here. Go pull
+this to the side if I can. Pull like
+this so you can kind of see it like
+that. And the radar gets turned on. Oh
+my goodness. Look at this. It's
+intercepting at Mach 3 and a quarter.
+Well, this fight's got to be pretty
+short. Assuming that we hit him the
+first time, but that's okay. Oh, it's
+over. Over. All right, let's go take a
+look here. So, remember the percent to
+hit was a 95%. And let's see, adjusted
+for speed was 79. We lost a little bit
+of speed there. That's okay. and we had
+our final probability of hit of 77%. Our
+actual probability of hit went down
+because we launched at such stupidly
+long range. So hopefully that reveals to
+you very quickly why weapons don't work
+as well as they should. Uh the big thing
+is once you get into the thick parts of
+the atmosphere, they're just not going
+to work great. Now, one of the
+interesting things a lot of people kind
+of remark about is they say, "Doesn't
+that make SAMs a little more challenging
+to use?" Yeah. Ironically, if you're at
+low altitude, a SAM has a really, really
+hard time of cutting its way through to
+you. Also, low altitude, you can hide
+behind things. That's why systems like
+the S400 make this a little bit trickier
+to get away with because the missiles
+are gigantic. They're like a bus
+launched at you, so they have plenty of
+energy by the time they get to you. But
+again, that's just another example of um
+again, little details. Now, somebody of
+course is going to say, "Hey, could you
+give me some more information on like
+what speeds missiles go at?" Yeah. Go
+ahead and click right here. Scroll down
+and you can actually see here on the
+database page the speed of the weapon.
+So you'll notice here if I fire between
+36 I get Mach 4.62. All I have to do is
+go a little bit lower and I lose
+almost.7 Mach. And you can see if I
+stupidly shoot this thing at like less
+than 10,000 ft. Look at my Mach. It's a
+2.6 is the peak speed. Gosh, that's a
+different speed that you can get in
+this. Uh some people of course comment
+on what about the old AM120B? I like
+that version. I do like the A120B. And
+the cool thing about the A120B is that
+it's um pretty much the same speed, but
+it's a continuous burn, which is a
+little bit different. And again, it's a
+little bit shorter range, but it is
+very, very easy to use in that regard.
+And one of the things you can do too as
+you're going through here is you can
+learn everything you need. For example,
+home on jam capable flight pile
+profiles, level cruise flight. Then you
+can jump up to the C7. And if you look
+here again, level cruise flight. I go up
+to the D3. Oh, this is the new one. Oh,
+I haven't played with the new one yet.
+Now, check this out. The new one, Oman
+Jam, allspec capable lock on after
+launch. Nice. Um, INSGNS. It actually
+has a GPS on board. Uh, uses GPS and of
+course it's level cruise flight. Now,
+people of course say, "What about that
+missile U8?" Oh, yeah. What about that
+missile I hate? There it is. You'll
+notice our AM7, believe it or not, uses
+the same technique. So, this is why,
+again, I hate the AM7 because it's not
+very fast, as you can see down here, and
+it has a stupidly short range. It says
+38 miles. I think you get lucky at 10
+miles.

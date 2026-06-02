@@ -1,0 +1,124 @@
+# C: MO - Keyboard Camera Controls
+Video: https://www.youtube.com/watch?v=PwQEW34ng28
+Video ID: PwQEW34ng28
+
+Hello everyone. In today's video, we're
+going to be showing you some basic
+camera controls. Now, one of the things
+that blows my mind is the fact I didn't
+make this the first video ever because
+it's actually pretty fundamental stuff.
+The first command control I'm going to
+show you is how to make a unit a quick
+viewed unit. Uh, simply select the unit
+you're interested in, hold down the
+control key, and then press a number key
+at the top of your keyboard. I'm going
+to call the C130 item one. I'm going to
+click on my B-52, control 2 for item
+two. I'm going to use this air base as
+item three. Control 3. Now, if I come
+all the way down here in the middle of
+the ocean and I press the number one on
+my keyboard, it'll instantly snap to
+where that B-52 is currently located. If
+I press two, it'll snap to my buddy, the
+C130. And if I press three, it's going
+to take me up to this air base. Now, one
+of the things I want to warn you about
+with that one is the fact that this goes
+by units position. It doesn't go by
+where you are in the map. I can't sit
+here and go control 4 and then press the
+floor key. Uh, nothing will happen here
+because that won't work. Now, another
+thing that would probably I never really
+thought of is you can actually use the
+arrow keys for the purposes of panning
+around the map. Now, one of the things
+that makes this kind of useful here is
+for some reason your mouse is like kind
+of in a weird spot or you just want to
+go one to the right or something like
+that. You can actually use the arrow
+keys for this. But one of the fun things
+you can also do here is you can actually
+press Z to zoom in and X to zoom out.
+The kind of the fun thing with that, of
+course, is that gives you the ability to
+go, wow, party on. Excellent. Now, I
+don't want to make anybody sick here,
+but the reality is sometimes having that
+set fixed zoom can be a valuable tool.
+Now, one other thing we're going to show
+you, too, while we're kind of doing our
+controls and things is quick and easy
+ways to select units. Now, if you look
+at your keyboard and find the backspace
+key, if you press the backspace key, it
+will select the previous unit. If I
+press backspace again, it'll grab my
+B-52. Backspace again, it'll grab that
+airport. Backspace again, it'll come
+down here. Now, what you're probably
+observing is I'm mashing the backspace
+key. And you're probably also observing
+that it completely forgot about my unit
+down here. Now, if I press backspace a
+bunch of times, you will notice it only
+grabs units that are in your view. Now,
+right underneath the backspace key is
+the pipe uh vertical line, I guess you
+can call it. I call it a pipe. So, if
+you go ahead and press the pipe key,
+which is also the other slash, you'll
+notice that it gives you the ability to
+select forward. If I press backspace, we
+can go backwards, back, forward, back,
+forward, back forward, a little to the
+left, a little to the right. I think you
+have the idea as far as that compon
+particular component is concerned. Now,
+the one last thing we'll take a look at
+with the camera now that you've got an
+idea of all these buttons, like I didn't
+realize there were buttons that were
+always there, is if you select a unit
+and you press the T key, it will lock
+your view to that specific unit. Now, a
+lot of people are like, why would you
+ever do any of these things? Like, this
+is silly. I don't want to follow the
+B-52 all the way to its destination.
+Well, sometimes this is kind of handy.
+And one of the things I will do is if
+I'm like doing some math or something
+like that, like calculating a strike
+during real time, I'll lock onto a unit
+and basically let it just kind of
+cruise. Now, here's the important part.
+If you press T again, that's going to
+break the lock. Likewise, if I press T
+and I click on this guy, it's simply
+going to lock onto another player. So,
+kind of keep that in the back of your
+head when you're hitting that button
+that you don't kind of get that little
+whoopsy daisies kind of a thing like
+that. The last thing we're going to take
+a look at, and this is, in my opinion,
+kind of neat, is um any unit on the
+screen. And this is probably a different
+video, but I'm going to show it anyway.
+It's really cool. If I click a unit and
+press Ctrl X, what did that do? You're
+going to get an absolute kick out of
+this. If I open up Notepad and press
+Ctrl +V, it will save the latitude and
+longitude of that unit. Now, that's one
+of those things that I played Command
+for how many years now, and I never knew
+that was a thing. But I figured if we're
+going to be talking about buttons that I
+never remember to use, it'd be helpful
+to show this off as well. Enjoy.

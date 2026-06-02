@@ -1,0 +1,514 @@
+# C: MO - Decoys
+Video: https://www.youtube.com/watch?v=IqnnWO8Erk8
+Video ID: IqnnWO8Erk8
+
+hello everyone in today's video we're
+going to be taking a look at these pesky
+little things called decoys uh something
+that they added as a full feature a
+little while ago now it's important to
+differentiate the difference between a
+decoy like those little sticks that the
+F-14 shoots that makes people waste
+missiles versus a decoy that is like oh
+it's a decoy it looks like a decoy and
+it feels like a decoy and it quacks like
+a duck and it's a chicken so we're going
+to take a look at that today in some of
+the Tactical implications and kind of
+understand sort of how it was
+implemented so what to do this of course
+as you can tell by the date you know
+where we are so we're going to do is
+we're going to organize a little strike
+mission on the little split Naval Base
+down here uh to help us out today of
+course we've got a bunch of f-15es
+perfect aircraft for this of course
+we're taking agm-130s which is a little
+extreme for this but that's okay and of
+course we have some F-16 CGS it feels
+wrong though like that's that's not my
+standard F-16 there but had to be
+somewhat uh you know timely so to do
+this strike I'm going to be a little old
+school here I'm going to control right
+click I'm going to Define myself an area
+dragging around here let go yes uh let's
+say blow up split anybody who's played
+the operation Allied Force scenarios
+over in the lovely game Falcon Allied
+force is very very familiar with this uh
+so I'll just kind of run through the
+motions here uh blow up stuff please all
+right I'm going to do a Patrol we'll do
+a destroy stuff on the ground Patrol
+press the okie doke button right there
+lovely so one thing I'm going to do here
+is I'm actually going to Define some WRA
+and I'm going to do targeting priority
+because I want them to attack the peers
+first so I'm gonna go and create one now
+let's see here units of things like this
+facilities uh your first priority
+naturally is going to be yeah let's see
+here uh building surface
+um is it structures or is it buildings
+they never remember oh here we go Piers
+delightful Priority One destroy all the
+piers because that would be the first
+thing I'd be interested in all right
+we'll do facility again I'll see here
+priority number two here uh let's see
+here I don't need any of that stuff uh
+we obviously want to blow up anything
+that looks expensive let's see yes I
+gotta do many good actually yeah we'll
+blow that up too uh let's see here
+surface buildings let's see hangers and
+oh what was that a control tower
+Warehouse a lighthouse and none of that
+stuff's really that important for us now
+let's see here we'll do bunkers anything
+expensive oh ammo bunker oh heck yeah
+I'm gonna press okay on that one all
+right but I actually would prefer if you
+target the ships first so anything
+that's an open bunker go for anything
+that's an open structure go for after
+that go notes that sounds good to me I
+like that
+on the next priority of course I'm going
+to add in here I'll go do facilities and
+we're going to attack any sort of
+facility yeah we'll limit to types in
+this I like I wish I kept it but yes
+it's kind of the way Sam of course any
+targeting class is going to be a
+preferred here we got some Sam sixes I'm
+actually going to reduce their priority
+here and then of course last is going to
+be any sort of surveillance Radars
+that's going to kind of keep an eye on
+us we don't want to be wasting ammo on
+those things surveillance press okie
+doke cool all right go down and we have
+a beautiful Mission here Priority One is
+going to be destroyed the piers we got
+to get their Navy very important uh
+priority two is going to be the ammo I
+could put you know the diesel bunkers
+and stuff like that in here but the
+bunkers I should be dealt with then of
+course if you have any free ammo waste
+them on Sam's then race them on any
+surveillance Radars looks pretty good to
+me so what I'm going to do is I'm going
+to order everybody to launch here so I'm
+just going to leave it like that
+obviously this is
+Yugoslavia in Italy so the weather's
+going to be terrible so on that's fine
+with me uh flight size I'm gonna go set
+up to four I'm actually going to
+disengage that it doesn't matter that
+much all right see I'm going to contacts
+uh qra Flight Plan to do any flight
+plans I don't need any of that today all
+right looks pretty good looks pretty
+good it looks pretty good I think that's
+basically all I want on that units we're
+going to go ahead and toss in our lovely
+strike Eagles here and we're also going
+to go ahead and toss in our CGS normally
+what I would do is run these exactly
+let's do it right I'll put them as a
+separate Mission all right so that's
+done I'm happy with that let's see here
+the current time is 2300 on the lazulu
+scale we'll set a takeoff time I will do
+this in a true Allied Force fashion
+we'll set them to be 2302 because you
+know you always want to launch the f-16s
+first all right that's good let's go
+ahead and add my next mission
+the CD I wonder if that's actually how
+you spell CD it's one of those words
+that you always hear but you never
+actually see sped all right it is why by
+the way all right let's go push that one
+down uh CD oh Mission settings here we
+want a group of four uh we don't have to
+do that obviously I'm not gonna set
+priority or anything like that actually
+yes I will I love being able to set
+priority now all right let's go ahead
+and add a new priority uh primary thing
+of course is we're going to be blowing
+up Sam's then we're going to blow up The
+Radars because I do not want to be
+wasting my really expensive harm
+missiles on something that I don't uh
+really you know it's nice to blow up of
+course but that's not the priority I
+believe the Navy's job is to blow up all
+those surveillance Radars anyway so I'm
+not going to bother with that all right
+surveillance will be our second type
+press the OK button surveillance is
+going to go underneath Sam man that's a
+great feature I'm glad they added that
+no our mission settings looks good looks
+good looks good looks good looks good
+looks good looks good it looks good
+looks good looks good looking all right
+we'll flip that on why not head over
+here Mission settings we'll actually
+flip that on here movement style I love
+that
+um yeah I don't feel like I need to
+change anything else except my CD you
+guys are gonna just gonna take off at oh
+one that way they have a little tiny bit
+of priority when it comes to take off
+perfect so I'm gonna go ahead and save
+and we'll go ahead and unpause here just
+in case I think it's gonna falling apart
+on me like they always do oh man I'm
+getting some flashbacks here all right
+so Amendola airports
+so this one's are pretty fun because
+it's like you know it's a big military
+base but it's not really a big military
+base it's actually pretty pretty tame as
+far as military bases goes all right
+let's launch here we go
+whooped it easy Here Comes our aircraft
+ah let's see here it looks like we've
+immediately opened the proceedings I'm
+guessing these are harms yeah they're
+harms and they're on the way now
+remember a minute ago I said please
+prioritize destroying like Sam's now
+you're probably like why did you just do
+that uh the reason we just did that is
+on account of the fact that this
+particular radar was the first thing we
+detected within the zone of influencer
+so I'm noticing our lovely guys our AGM
+launched in their 130s these are absurd
+weapons look at this thing it's like a
+little tiny camera on the wing regular
+Mark 84 with a bunch of huge wings and
+they have massive standoff range so you
+can see they're just letting these
+things rip and we're getting all sorts
+of warnings for Fire Control Radars down
+there which um that's a little scary if
+you ask me either come ripping down I
+don't know where where are those going
+are you guys going to take a turn or is
+this just an oopsie and it's going to
+end up in the drink yep that's an oopsy
+that's gonna end up in the drink oh
+there we go that was cool they decided
+to retarget it looks like oh now we've
+got three different warnings down there
+for Sam's well one of them is lighting
+us up there that's probably bad news but
+we'll see what happens what we'll let
+things shake out
+okay so one of them is trying to track
+us there and here comes all my bombs uh
+hopefully those all hit the desired
+targets where's my F-16 buddies I don't
+know because the rest of them hey harm
+to oh they called them harm too I like
+that all right so my F-16 is going to
+come rolling in here hopefully they left
+a couple arms so they could do the deed
+here all right let's see here and we got
+some fire control Radars we're starting
+to confirm the location of these
+different uh something down there seems
+to be oh we got a sand we got a sand we
+got a sand
+Sam
+I think we don't have like a Michael or
+James or something like that just a Sam
+all right uh do you have confirmation on
+where that guy was is he gonna fire
+again or do we do we tapped him already
+nice there's three Sams down there of
+course I knew they'd be playing
+something sneaky like that all right
+missiles are on the way missiles are
+coming here they go here we go wreck the
+Sams wreck the Sams oh yeah there it is
+wow they speckled those guys pretty bad
+there good job f-16s everybody uh come
+on home and uh we'll take a look hope it
+comes the next round with a really
+expensive bombs ooh and we're pretty
+good there nice all right good job
+everybody good job good job all right
+let's pause
+so now what I'm going to do is I'm going
+to go up to a losses and expenditures
+real quick and let's see here we got an
+ammo shelter and it says that oh we've
+lost some different items here let's see
+here oh my God that we blew up a lot of
+generic missile training rounds and
+stuff like that but we actually didn't
+do any of that
+now you're saying oh boy here he goes
+here we go so in reality is there were a
+lot of decoys in this Mission and that
+was the purpose of the mission
+um the only Sam that was a real Sam was
+this one these two were both decoys and
+you'll notice up in the upper right
+Corners is the word decoy they don't do
+anything they're just they're looking
+pretty and then believe it or not my
+Naval Base here every single one of
+these ships was a decoy and you're
+sitting there going oh so what did we
+blow up um you blew up a bunch of uh
+plywood and paint is what you just blew
+up here and it's one of those things
+that we didn't know it was a decoy so we
+just blew it up there's a couple things
+you probably did notice though you'd
+probably noticed that when my Sam locked
+on all of these had Radars but this was
+the only Sam to actually fire the other
+thing you probably observed is the fact
+they all had exactly the same wavelength
+and they were frustrating our ability to
+identify them separate from each other
+and you're probably noticing a couple
+those different components in here this
+was a genuine radar so what is a decoy
+in the context of what we have in
+command well first of all if you press
+shift insert you allow yourself to go
+ahead and place one I'm going to click
+right here for example and you're going
+to notice that everything looks exactly
+the same so let's go ahead and grab
+myself everybody's favorite essay 2 2D I
+like the I like the d e it's the one
+that I'm most familiar with you want to
+click on it you'll notice it says decoy
+this unit is exactly identical to other
+units like it there's nothing different
+about this particular unit as a matter
+of fact the missiles it shoots are very
+rear missiles the radar signals it
+shoots out are very real radar signals
+it's hard to say those two together but
+the big thing here is the reason this is
+so effective is because this is a decoy
+we can do some silly things on it to
+make it more decoy like let me show you
+what I mean so if you actually take a
+look at my little essay sixes up here
+notice The Radars are chirping away and
+they were causing us problems and we
+were trying to lock onto them and blow
+them up well surprise if you actually
+come over here you'll notice there are
+no weapons here this is just the radar
+station that I sit up here which they
+happily tripped away with to actually a
+confused the heck out of the opponent uh
+this guy over here he's a full essay too
+but if we were to leave him here in
+decoy mode um he would actually fire off
+missiles that would do actual real
+damage here so you're probably saying so
+what's the point of the decoy then the
+decoy is exactly what you expect when
+you build a decoy you can limit its
+capabilities by basically adjusting it
+if you want to make it a shooting decoy
+cool if you want to make it a
+non-shooting decoy you don't have to
+um one of really really silly things
+that I've seen somebody do here is they
+actually went in here to weapons uh you
+can add a weapon record and you can do
+some really really really silly things
+here I could actually attach missiles of
+a different platform here so if I wanted
+to well let's see here we have a d and
+an e l which one's the one I like 32 out
+of 32 yeah this is a v601p it's gonna be
+the one I had all right cool so I'm now
+going to go ahead and toss that in there
+whoopsies my mistake there I'm going to
+add a mount I accidentally added the
+weapon let me fix myself real fast here
+uh remove weapon record I did not mean
+to do that I meant to add a mount
+sa3 ah there we are we want the quad
+rail all directions click don't forget
+if you're using an essay 3 you media
+Associated radar as well which I believe
+it's the dog ear I don't remember it's
+been a while since I've done pachora oh
+we'll see what I got here
+oh oh nice weapon Mount yeah I want it
+about give me a mount
+let's see if they just have sc3 radar
+that make my life much simpler I gotta
+earn it hang on a second
+yeah low blow dog ears the one that's on
+the little vehicle oh well all right
+cool so what I've actually done here is
+I've created a custom nasty unit so I
+have not only a decoy but I have a decoy
+that won't actually fire any sa2s as a
+matter of fact if we want to complete
+the expression here we can actually come
+in here and remove the individual weapon
+records so I can come in here I really
+wish it didn't do that you should double
+click it to make it do that so we can
+come in here very carefully and we can
+remove all the weapon records and what
+would happen is when people fly up to
+this thing they'll detect it as an sa2
+and of course the whole thing is just a
+decoy that launches sa-3s so you can
+have a lot of fun with these kind of
+options here one of the things you want
+to note though and let me go switch to
+the other team again real fast here let
+me grab myself a uh I don't know I'll do
+something pretty big here give me give
+me an E8 because I'm pretty confident
+that it can do the job here all right we
+want the ea8c J Stars surveillance this
+thing's such a cool aircraft if you've
+ever actually seen it uh sensors let's
+go flip on that bizarrely powerful radar
+on here and go this way a little bit
+unpause and just give me some time to do
+his little anything in place here there
+we go all right acquire acquire my
+friend acquire okay he's nice and
+acquired sweet am I in God's eye view
+mode
+no I wasn't
+uh that's the um J stars for you um not
+only did the J stars do a perfect job
+but it actually identified everybody too
+I forgot how good this aircraft was for
+these things all right so if I click on
+my essay 2 here you'll notice that it
+says sa2de on it and it that's what it's
+identified as everything about this says
+sa2 even if I clicked up here it would
+give me all the details of the essay too
+but of course now this isn't an essay
+too now one of the cool things is
+there's a new option if you right click
+this is toggle decoy when you click that
+you're going to get the load the little
+arrow thing here and it's going to flag
+itself as a decoy now let me give you a
+couple notes about this uh first things
+first of that Decoy right there still
+can fire missiles uh just because it's a
+decoy doesn't mean it's not an armed or
+radared decoy so in on my particular
+ironic case here if I were to take pot
+shots at that thing I would Engage The
+other thing worth noting about decoys
+and let me show you this real fast and
+this is an important point of order here
+is the fact that if I right click and
+Order somebody to be at the koi like
+I've done right here you'll notice that
+even though it's a real aircraft other
+units will ignore it now this is kind of
+an interesting little tactical piece
+here and this is one of those that I'm
+sure people will find a fun way to
+exploit but the reality is is because I
+can flag something as a decoy I can now
+order specific units to be ignored from
+attacks so if I wanted to I could go to
+an air base and flag everything except
+the thing I want to blow up as a decoy
+and what it would do is not engage those
+you'll see now by the way that other
+firing both of those are real targets by
+the way neither one of those is a decoy
+you'll notice that because I flagged one
+as a decoy he's just happily kind of
+firing away here now the cool thing is I
+can always go shift F1 click on him and
+give him a a pair of these kind of a
+thing like that and even though he was a
+decoy originally there's nothing
+stopping me from actually launching
+stuff Adam and you can see it gets
+splattered there so now forever to go
+over to my losses and expenditures let's
+go ahead and pop that one real fast
+you'll see they lost to Bear egg which
+is it doesn't say which one of these was
+a decoy I kind of wish it would tell me
+that it blew up the decoy just to kind
+of throw me for a loop kind of a thing
+like that but I'm perfectly fine with
+that so you can see there's a lot of
+tactical implications of what we'll be
+seeing here today why do they do this by
+default every time I get a new patch
+they've all to change the setting but um
+as you can see very quickly it actually
+works really really well to add a little
+bit of variety and kind of confuse the
+player and now one thing you're probably
+also seen and before I shop let's take a
+look at that real quick
+and that's an interesting little
+complication I almost forgot to mention
+this so I have an OA 10 here and he's
+kind of flying around and we have these
+two buildings down here you'll notice
+the two buildings are marked exactly the
+same way if I order my little A10 here
+to come flying down come on down here
+A10 I need you to do me a flavor but you
+got to lose a little bit of altitude to
+demonstrate it get down here get down
+here get down here
+okay thank you A10 you've done a
+beautiful job you'll notice
+both of these buildings are still large
+buildings if I were to switch over to
+Red real quick you'll notice this one's
+large you'll notice this one's large but
+this one is actually a decoy that means
+that our poor players now when they
+click on things even if they do some
+sophisticated you know acquisition of
+their various targets actually I want to
+make sure very very carefully that we
+are capturing them properly there we go
+so if I click on these now you'll notice
+that I cannot identify that one as a
+decoy even though I can visually acquire
+that particular unit so this is going to
+create some interesting little
+challenges and little things that will
+definitely have some fun there and again
+it's all about how you employ it and
+what you're going to intend to do with
+it enjoy

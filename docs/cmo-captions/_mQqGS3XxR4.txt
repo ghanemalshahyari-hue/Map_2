@@ -1,0 +1,374 @@
+# C: MO - Customizing Flight Plans
+Video: https://www.youtube.com/watch?v=_mQqGS3XxR4
+Video ID: _mQqGS3XxR4
+
+hello everyone in today's video we're
+going to be showing you how you can edit
+flight plans for better for worse for
+refueling and dealing with funny little
+situations where if you try to go in a
+straight line you go right through the
+Sam site so let's get this thing kicked
+off here we've got a pretty long range
+operation here taking off from that
+distance I think that's going to give us
+something to like about 412 miles which
+is a very very long distance for any
+aircraft to be flying car bombs and then
+come back especially if they have to do
+any vasive miniverse so with that in
+mind what we're going to do is set
+everything up so it works pretty well
+for us so I'm going to start by creating
+ourselves a handy dandy little place for
+our tankers to basically hang out now
+one of the mistakes people make when
+they do tankers is they always make them
+like this far apart when you do that
+that's a really long distance for the
+tanker to travel that's actually 35
+miles I much rather uh suggest you make
+them a little bit shorter distance it's
+like five or six miles didn't even do a
+single point for the purposes of tankers
+so I'm going to press control f11 here
+I'm go and create a tanker support
+Mission keep it nice and easy it's high
+spell support we're going to come in
+here do support looks good PR I'm going
+to grab all my KC 135s I'm going to go
+ahead and do that real quick I'm going
+to go ahead and make sure all of them
+get in the air otherwise you're going to
+have a bit of issues as far as refueling
+and things like that just something you
+want to kind of be mindful of another
+thing I want to keep an eye out here is
+the transit altitude is Max you might
+want to drop that down to something that
+your aircraft actually are operating on
+otherwise you're going to be burning a
+ton of fuel to basically get up to the
+point where we can actually do the DED
+so to speak so with that out of the way
+let's go ahead and get the main strike
+set here I'm going to click on our
+Target here press control f11 uh let's
+see shoot this thing keep it nice and
+easy looks good to me land strike press
+to so first thing is first is I'm going
+to grab my f-16s here they're xl's these
+are Big f-16s you've not actually seen
+an XL it's the most gorgeous thing ever
+that they made with an F16 and it it
+shames me that they didn't actually make
+this into like a real plane I mean it
+does exist and it does fly it does work
+but it's like an F15 in the shape of an
+F16 it's fantastic so this one does have
+enough range to get all the way to the
+Target and all the way back the problem
+is I'm a little nervous about the range
+here being so darn far that I want to
+actually create a point where they can
+get some gas so what I'm going to do is
+go to my Mission settings again I'm not
+being very sophisticated here I'm just
+going to delete the runways cuz please
+do not attack runways it just don't do
+that unless you have something to
+actually destroy the runway with you
+won't kill it so under Mission settings
+I'm going to set my flight size to four
+which is pretty Optimum here curling
+down here attack method single aim that
+doesn't make much sense to me deal
+multiaxis time on attack lot attack 30
+second separation gorgeous I'm going to
+come down here and press create or
+update flight plans now if you don't
+mind I'm going to pull this out of the
+way so you all can see what's kind of
+going on here so one of the things right
+away that you can do which is kind of
+neat is if you actually click on one of
+the individual units you can see their
+current Flight Plan kind of shown in the
+worlds now this is already pretty darn
+useful but it's not quite as powerful as
+the flight plan editor we're going to be
+fiddling with in just a few moments here
+so I'm going to come down and click on
+flight plan editor go ahead and hide
+this out of the way real quick now this
+thing is um it could be a little easier
+to use but for the reality is it's
+actually not as bad as it looks so one
+of the things you'll notice is we have
+all of our way points and they're listed
+on the map they're highlighted in green
+to make our life a little bit simpler
+for example if I click on a turning
+point erress I'll way point 4 way. 3 you
+can see where it is in the map very
+clearly now when I zoom in a little bit
+one of the things you're going to
+observe is the fact that we're pulling
+ourselves right through the Sam SES so
+basically lethal area so we're going to
+have to adjust our flight plane either
+by adding a wayo between these two which
+is what I'm going to do or we have to
+move all the way points over which uh
+that gets super duper awkward and you'll
+know exactly what I mean the first 50
+times you try it so I'm going to come
+into here real quickly here and I'm
+going to add myself a wayo adding way
+points always come after the Waypoint
+you create so for example if you see
+I've got Waypoint 3 here I'm going come
+here oh by the way notice Hammerhead 1 2
+3 4 these are separate aircraft don't
+worry there's a way to copy over it
+quickly you'll see so what I'm going to
+do is come here to Waypoint 3 I'm going
+to come down to the bottom and press
+insert Waypoint it's like did you want
+to do this for every flight in the
+mission that's everybody of course I
+want to do that hook me up and one of
+the things you'll notice here is after I
+created that it creates this thing
+called Turning Point now if I zoom down
+here you can see the fact that I've got
+my Turning Point basically chilling
+right there but you also observe that
+all of these waypoints on the other
+units have all turned red as a matter of
+fact if I go over here real quickly
+it'll give you an error saying hey wait
+a minute way point four you can't do a
+turning point that's not allowed you're
+not allowed to you can't park your car
+here so the problem is is whenever we
+create way points in the on the way to
+the Target we need to create Ingress
+waypoints whenever we go away they
+become egress way points so if I go back
+to thunder one Niner you can see it's
+going to yell at me here and turn red if
+I were to come down to Waypoint 4 here
+and switch the sucker over to basically
+being the one that I needed to do which
+is turning point Ingress it's like are
+you sure you want to do that yes are you
+sure you want to do that that yes and
+you'll notice everything turns happy
+white and green again notifying us that
+that wayo is now quite valid now with
+that done I'm actually going to do
+something else to this Waypoint I want
+to get some gas so what I'm going to do
+is I'm going to actually drag this
+Waypoint over here and I'm going to get
+it a little bit closer to where our
+tanker track is as a matter of fact
+we're going to fly through the middle of
+the tanker track here and what I'm going
+to do is I'm going to order my aircraft
+to get some gas now the way we do that
+is we simply change the Waypoint type to
+a refueling Waypoint so turning point
+Ingress I'm just going to click little
+arrow here I'm going to click on refuel
+get ready for the error messages are you
+sure you want to do yes I want to do
+that are you sure you want to do that
+are you sure you want to do that yes
+yeah I'm good that that that's why I did
+it so we just did is ordered everybody
+to basically get some gas right here
+which is desirable because they'll have
+a full tank of gas more or less by the
+time they start setting up for the
+actual Ingress to their attack so this
+is very desirable everything's going
+swimmingly so far I always like to check
+everybody on the teammates too just to
+make sure everything's working correctly
+sometimes that copy pasting is
+ineffective you'll know what I mean the
+first 10 times you use it so after I see
+a refuel here I'm going to come down
+here and press insert Waypoint once more
+it's like did you want to do it for
+everybody yeah I did so now that we have
+a turning point number five I'm just
+going to come down here and make a
+turning point egress are you sure you
+want to do that yes yes and you can see
+no problem everything's working exactly
+the way we intended it to work so what
+I'm going to do is I'm going to grab way
+point5 I'm going to grab way point5 I'm
+going to grab way point5 I'm and bring
+it over here I'm going to pull this out
+of the way if that's okay with everybody
+real quick so you can zoom in and kind
+of see the magic here so there's all my
+wayo FS obviously not desirable we
+really want to take got way point 6 and
+we want to make sure way point 6 is on
+the Ingress here so I'm just going to
+drag way point 6 down here we're all
+going to kind of bounce up right there 1
+2 three we're going to try to stay out
+of the Sam S sites range and you can see
+I've got all that all nice and neatly
+set up at some point what they're going
+to do is they're going to let us have
+the button work please let this come on
+Uncle Demetrius make me let me use this
+button I want to use this button because
+that would allow us to define the
+individual Targets on the ground which
+would save a lot of time so that's
+looking really really good almost our
+next problem of course is way point9 is
+sailing right through our danger zone
+here and it's not the fun Kenny login
+danger zone this is actually you're
+going to get shot at danger zone so
+instead of creating a waypoint after
+Target which I could do I'm simply going
+to create a waypoint after way point9 so
+swinging down here I'm going scroll all
+the way down you can see a waypoint
+Turning Point egress I'm going to come
+down here and press the insert button
+don't worry it's going to get really mad
+at you so you'll notice here it says
+Turning Point eress that's good that's
+what we wanted it to do actually
+everything went better than expected I
+thought it was going to make a regular
+Turning Point again so what we're going
+to do now is we're going to get that way
+point9 and we're basically just going to
+bring it down down here just like that
+and now what we're going to do is we're
+going to grab way point 10 I'm just
+going to park it over here where the way
+point fives are and we're just going to
+confirm that we are out of the dangerous
+zone of that particular Zone don't do
+this by accident it's got a panic on you
+all right idiot check time let's do it
+so we're going to take off we're going
+to hold we're going to refuel and we're
+going to go do a couple turning points
+we're going to do our bombing we're
+going to come out and erass delightful
+uh one quick tip I've said many times
+before you see this thing says hold
+start if you want to cheat come here and
+change the altitude so like I can come
+here change altitude and I'm going to
+say oh I actually wanted 36,000 ft now
+if you do that that means instead of
+being at low altitude where they're
+wasting fuel doing their donuts they're
+going to be at high altitude not wasting
+as much fuel doing their power Donuts
+that's just a fun little trick that I
+don't know I find that kind of useful I
+mean everybody's a little different but
+that works pretty well for me keep in
+mind thatd only did that for one
+aircraft you'd have to go through and do
+each aircraft
+individually alrighty then let's do it
+this is the fun part so I'm going to go
+ahead and unpause here I'm going to go
+ahead and fast forward time a little bit
+we'll see how many things I miss with
+fast forwarded time and away they go
+first thing you'll notice is our tankers
+take off immediately have 16 xl's there
+are just kind of taking off after them
+and the cool part here is when they get
+on position with they're actually going
+to try to do is link up with the tankers
+which I think is awesome now watch this
+see the little chaa
+line nice continue I say and they're
+going to continue making their way
+towards the target region uh which one
+is this this is a pistol 11 one and by
+the way he's refueling right now isn't
+that so cool that they basically picked
+up a tanker along the way got some gas
+you know now they're just like cruising
+isn't that awesome I just find that's so
+stupidly useful I mean why would you not
+do that tactically speaking one of the
+things you probably observe is the fact
+that they did not fill up all the way if
+you're looking for fuel full fuel that's
+a hard thing that's a tongue twister for
+me uh you have to kind of keep that in
+mind when you give them time to do
+things like this and obviously they
+don't have enough time so just beware
+all right so they get to way. five just
+as I ask them to do they go right
+outside of the Sam range which is
+exactly what I asked them to do they're
+going to Cruis on here and they're going
+to drop a bunch of bombs don't worry
+they're quite virtual there's the bombs
+they do their little thing they do their
+happy dance and you can see they very
+very very efficiently grab right back
+onto way point 10 and they start scoot
+scooting all the way home home which is
+the way way it should be be so that's
+pretty handy stuff so I click this guy
+here they've got plenty of gas if there
+was a concern of course they could stop
+by the tankers and kind of gas up if
+that was an issue they're going to get
+to the marshalling point they're all
+going to queue up and just slam into the
+ground with that done of course I can
+always press the f11 key um one of these
+days I'll press the F1 key oh that's
+over right I left it open the whole time
+so the cool thing here is I can come
+here delete this Waypoint just like that
+tanker support here um I could basically
+say that this mission's all set say
+satisfied and then I can grab this group
+here and press the b key and they're all
+going to fly home after having done a
+delightful job of keeping our five boys
+in the air now I know you're probably
+curious to see how much damage I didn't
+do so if I go over to my little losses
+and expenditures real quick you'll see
+the fact that they didn't fire a single
+missile at us but you'll also observe
+the fact that the losses were pretty
+lame not going to lie we basically
+dropped a bunch of bombs all over the
+place and I made an awful lot of noise
+but didn't do any real damage again I
+didn't take the time to laser guide h i
+could have uh very very precisely
+basically go in here and design
+everything exactly the way I wanted
+that's just not what I wanted to do here
+I just want to show you how you could
+use those way points to an effective
+manner enjoy

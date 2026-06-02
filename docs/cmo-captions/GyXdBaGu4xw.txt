@@ -1,0 +1,279 @@
+# C: MO - Collateral Damage
+Video: https://www.youtube.com/watch?v=GyXdBaGu4xw
+Video ID: GyXdBaGu4xw
+
+we were somewhere around the edge of the
+deserts when we heard the strange
+journey noise above our heads staring up
+into the sky we saw a long silver
+contrail on the little dots suddenly
+this happened no just kidding but uh
+today's video we're going to be doing is
+we're going to be taking a look at
+collateral damage and what i've decided
+to do is i took a couple minutes and i
+built myself a neighborhood now though
+you're probably going oh you're a
+terrible person you should never use
+this i'm like it doesn't have to be a
+neighborhood it could be just a bunch of
+bunch of wood buildings and we're
+testing but what i did is i carefully
+got up my little technique measure and
+made sure each building was the correct
+distance apart i even took a runway that
+i'm simulating essay street you know i
+put a convenient little school you know
+some power lines kind of come around the
+back and what i was most curious about
+is how carefully modeled collateral
+damage is simulated inside of command so
+here's what we did so i've got myself my
+good old dawg b u f f up here it's
+actually b 52 this is an h um no no no
+no that's not right i'm sorry that can't
+be right at all i'm sorry the correct b
+52 is the b 52 d now you're probably
+saying um it doesn't really matter that
+much um in my opinion it does because
+b52 is i don't know it's just it's
+cooler again you're like you can
+disagree only one but i don't know just
+me so we're gonna do is we're gonna grab
+this bomber and we're gonna go ahead and
+order a manual strike right in the
+middle of all of this excitement from a
+bit of an oblique angle here we have 108
+50 pound 500 pound bombs here and i'm
+going to allocate all weapons to the
+target
+go ahead and unpause and create some
+crimes against humanity here so this
+thing is just going to kind of go
+sailing it's going to get itself all
+nice and lined up stepping up we're
+going to be doing a nice high altitude
+bombing operation here again this is not
+going to be the most precise attack i
+don't think anyway we're not using a b2
+for this we're certainly not using f22
+or anything like that and we're just
+going to see how much collateral damage
+is created here and then we'll come back
+and we'll probably play with it just a
+teeny tiny bit and there they go
+this is so mean all right b-52 you're
+done goodbye some pickets all right so
+the b-52 has dropped its stack of 108
+500 pound bombs on this unsuspecting
+series of quote small buildings now
+remember my aim point was actually right
+here in the middle and what i'm most
+curious to do is to see if i hit it at
+this nice oblique just how much damage
+is it going to or not going to cause
+actually going to pause real quickly
+actually now we'll be fine we'll go
+ahead and let this run and let's see
+what happens here again our target point
+was right there in the middle and this
+happened
+well
+that is a one way of saying hello there
+so remember we targeted the one in the
+center so now we're going to quickly
+inspect to see what happened on the
+other side here
+okay so let's see um our power lines
+every single one of the transmission
+lines were damaged um everybody within i
+believe my target point there that looks
+like i'll call that 61 meters of the
+impact site where we're hit pretty hard
+and meanwhile we have a school across
+the street here which looks like it's a
+kid is it on fire no it is not on fire
+our water tower is popping
+right now and now pouring water all over
+the street our street is completely
+unaffected which i thought was actually
+kind of interesting here and you can see
+it was absolutely positively
+unbelievable damaging so i'm obviously
+it was pretty effective so you can see
+collateral damage is very very very well
+modeled now the real question is is
+there a way we can like utilize this in
+order to be uh tactically clever well
+well the answer is probably so let's
+test that out so what i did is i had my
+favorite little f-16 here one of these
+days the air force is going to loan me
+one because i advertise it so much but
+basically what we have is we have a very
+similar situation i've got myself an aim
+point here in the middle is the building
+small this is the same distance we had
+earlier we also have another building
+small here with the same distance as you
+can kind of see over on this side of
+things so what i'm going to do is i'm
+going to grab my handy-dandy little f-16
+here and i'm in order to launch aj damn
+it the one in the middle and i'm asking
+that jam to attack the one in the middle
+as well oh i hate it when it does that i
+swear just for giggles it just changes
+things on me but that's perfectly fine
+so i'm gonna go ahead and unpause here
+let my little f-16 buddy take a few
+moments oh he's gonna take about 12
+seconds to line that all up so i'll make
+him do a little zigzag i'll drop him
+down to loiter speed he's going to
+feather the speed brakes just a little
+bit to kind of get ready lining himself
+up here all right do not disappoint me
+and whatever you should do do not dud
+so there's our first launch there's our
+second launch and he exits the combat
+zone he probably signed off the game
+there so let's see what happens here so
+with the first jdm again these are mark
+82s this is nothing sophisticated i
+might use a mark 84s for this i was
+thinking about using mark 84s but i'm
+like yeah
+let's let's let's see what happens with
+just a really really well aimed mark 82
+here all right let's see here he's
+coming in speed of time just a little
+bit here swinging i know exactly what
+you're thinking and i think you'll be
+surprised let's see what happens here so
+this one and he's going to land right in
+the middle bam destroys all four
+buildings even though pause they were a
+distance of 109 meters apart this one's
+going to come down here in the middle
+kaboom
+it explodes
+now i know you're all sitting there
+going
+what i just did what what what what was
+that
+now that is a classic example of when
+things get a little interesting if you
+actually watch really really closely you
+can see that the last bit of that blast
+is kind of finished off let's go ahead
+and switch to the other side real quick
+we'll go to red and you can see that we
+dropped the bomb in the dead center here
+and it did zero damage to everything
+around it you can also see the one that
+we dropped at a longer distance that did
+quite a bit of damage to everybody it
+actually completely annihilated all the
+targets around it now this is just one
+of those i call it like a commandism
+here now unfortunately there is no
+difference here as far as altitude so
+that was now what cost it um and as a
+matter of fact i'm not 100 sure because
+i was really expecting there to be some
+kind of altitude difference that would
+cause that to happen so now i'm like i
+don't know i think i've just discovered
+something in command that's not supposed
+to be there so that means i got to test
+it again uh one thing i did notice that
+i don't know if you noticed it but the
+project the trajectory of the bomb on
+the left was significantly shorter than
+the bomb that was on the right so let me
+i don't know i'm sorry i was really not
+expecting that so let's go ahead and
+load it back up here so what happens
+when you test things they turn out to
+work differently when you test them
+later on the flip side of course the
+bomb could have been a nice little dud
+for us too so that most likely is what
+happened with the exception of the fact
+it completely annihilated the middle
+building so i've got a lot of questions
+now i've got a lot of questions but
+sometimes this happens
+i'm sure the lead developer is watching
+this one and going hmm
+don't worry i can be the same game if
+you ask
+all right i just need him to acquire
+that mystery third building in the
+middle
+acquire sir acquire sir acquire the
+building in the center this is one of
+the fun things about when you put things
+on automatic detection is you'll run
+into a scenario where it doesn't quickly
+auto detect it has to basically complete
+its entire look around cycle in order to
+safely actually detect something but
+like i said that was interesting and now
+i don't know i've got a bit of a puzzler
+here because the terrain is uh let's see
+baron's sparsely vegetated so it should
+be a pretty oh there it is all right
+let's try this again because now like i
+said i'm
+i i'm i
+interesting maybe it had something to do
+with the trajectory of the bomb maybe
+the second one released at a steeper
+angle and maybe the first one didn't
+that would be the first guess i would
+have because if obviously if you drop it
+kind of a flat shallow angle you can hit
+everything behind it not everything on
+it if you drop it steep it tends to
+blast out but we'll replicate the
+experiment see what happens
+that is so
+interesting
+that would you probably just heard me
+scratch my head there because um i'm i'm
+at a loss i'm at a loss
+because um
+okay so that did clearly do a
+significant amount of damage to the
+things around it but it didn't
+necessarily act as the kill shot there
+so what
+okay this this became a thing now so now
+what i'm going to do is i'm going to
+drop it in the corner and see what
+happens here i love how you can do these
+over the shoulder shots with an f-16 i
+just think that's absolutely ridiculous
+all right so here comes the jdm for the
+third time these little can i say they
+must be dug in or something like that
+and i'll go ahead and drop this sucker
+right down there let's see what happens
+interesting that was interesting all
+right so for this video the one thing we
+did see is that there is a significant
+amount of collateral damage that is
+generated when you drop weapons one of
+the things you want to do is you want to
+try to optimize your pattern of
+collateral damage if you're trying to
+kind of saturate a target the other
+thing we saw when we saw the b52 is
+because you dropped 108 bombs the
+scatter looked like a shotgun blast
+which created an amazing effect on the
+target because i aimed at the center
+target but other than that this is
+interesting enjoy

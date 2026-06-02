@@ -1,0 +1,411 @@
+# C: MO - Effect of Altitude on Bombing Accuracy
+Video: https://www.youtube.com/watch?v=RDE4S8kzZTQ
+Video ID: RDE4S8kzZTQ
+
+hello everyone in today's video i
+thought we'd answer a question that has
+been kind of plaguing me for a little
+while uh so for those of you who know
+the game command pretty well whenever
+you go ahead and go up to the mission
+editor you select the target and then
+you go to this and you create a new
+mission it automatically defaults the
+attacking profile especially in altitude
+of the particular aircraft now those who
+really know command of the fact that the
+default profile generally is pretty darn
+low which means when these guys go to
+drop especially iron bombs they
+basically cruise right through all the
+enemy aaa and get wasted so obviously
+you can override all those things and
+that's usually what i end up doing is i
+have to come in here and edit it but i
+said what actually is the optimum
+altitude in which to be trying to drop
+weapons onto a target that is the best
+trade-off between not getting shot up by
+you know a zeus versus actually going to
+hit the target so what i did today is i
+took off five f-16 cm block 52's this is
+the 2008 model surprise and now we're
+sitting here now lovely southeast
+england and there's a bunch of targets
+and we're going to drop all sorts of
+bombs on them so to help us out with
+this little experiment i got myself this
+little tiny chart and what i'm going to
+do is run the mission see what happens
+at the different altitudes and see if
+there's sort of like a sweet spot and
+again i can run over to google's sheets
+real quick and graph this one out but
+again like i said just want to kind of
+experiment a little bit so let's go
+ahead and develop the baseline value so
+i'm gonna go ahead and unpause here
+we're gonna send everybody in cruise
+cruise cruise cruise cruise cruise this
+is always kind of fun because you know
+the good people are enjoying their
+little kind of beach holidays and
+everything like that and then this
+happens
+so i'd say um out of five here actually
+we should go like this to confirm oh it
+looks like we got let's let's call it
+three and a half out of five here so 3.5
+out of five survived okay cool so now
+let's reload that scenario that actually
+was way better than i expected i thought
+it was going to be vastly less accurate
+than that but hey i'll take what i can
+get so let's go load it back up again
+and we'll send them out to medium
+altitude this time or medium-high
+altitude let's call it 25 000. so again
+i'm not complaining i was actually
+surprised we were able to plaster them
+keep in mind the f-16 does have the
+benefit of you know gps guidance and
+everything's for its bomb site which
+makes it a little bit more accurate
+let's go ahead and try that again so now
+we're going to go dip down to 25 grand
+here so we've knocked off 11 000 feet
+let's see what happens as far as a
+little test experiment goes again people
+rebuilt their houses on all of a sudden
+interesting okay then let's go ahead and
+change the thing so we can actually see
+our actual damage here so that ended up
+to be
+didn't lose a single one it certainly
+hit all of them and again i could run
+this experiment 60 000 times and get a
+better number here but it looks like we
+really didn't do any real damage someone
+called it like 4.7 out of 7. 4.7 out of
+5 survived interesting
+all right all right we're about halfway
+through our little experiment here so
+now we're going to knock the altitude
+all the way down to 12 000 feet so we're
+just starting to enter the range of
+typical air to air um surface-to-air
+systems not including obviously sam
+sam's going to hit you anytime anywhere
+anyhow so let's go grab all these grab
+all these medium altitude now i'm
+thinking we're gonna be a wee bit more
+successful
+let's take a look back up to 15. the
+good folks over here in southeast
+england i just put my tent back up
+everything is fine i really hope that
+nato is not doing those exercises on the
+beach again oh
+so uh let's see that looks like uh
+there is it's okay so we got four
+clearly damaged let's check it so the
+actual damage done here is vastly less
+than a look so i'm going to call this
+like 3.9 out of 5. so ironically the 36
+thousand feet seems to be our winner so
+far
+so um
+this is not what i expected but then
+again maybe it is let's find out so
+reset the scenario one more time this
+time we're going to send everybody down
+to 2 000 feet we're going to put this
+one uh just 2000 feet here we're not
+going to go above ground level or
+anything like that select this guy we're
+going to do 200 000 feet 2000 feet now i
+expect to be able to kill all five of
+these and again this would be kind of my
+expectation but hey so far it's been
+disappointing there's actually been no
+direct relationship to anything we did
+fine at 36 we did fine at low altitude
+also it might just be a function of the
+weapon too but we'll find out oh by the
+way there's no wind bombs away
+okay that was different so that left a
+point eight
+zero point eight out of five survive
+okay i think we found the magical
+altitude here i'm guessing when i do it
+at one thousand feet it's gonna be five
+out of five i must guarantee it all
+right let's try it
+go grab everybody again f2 we'll set
+them to a thousand i'm pretty sure this
+is going to be more than close enough
+but what i am noticing is a general
+trend here is the fact that even though
+i've lowered them down this far they
+still are you know slightly out of aaa
+range again slightly is the key word
+there
+all right ah nothing like a nice
+relaxing day i'm going to go ahead and
+go to my lounge chair and nato came by
+again
+oh i call that uh that's like point two
+technically two of them survive so i'm
+gonna call that 0.2 out of five survive
+there point two out of five survive but
+again we did have two physical
+structures and let's see what happens
+when we send them all the way down to
+minimum altitude here
+those things are probably on fire now
+and they're probably going to burn
+themselves out anyway so they're
+probably defeated so now let's send them
+down to minimum altitude so to be a
+little bit fair here i'm just going to
+override this to 500 feet because if i
+send them down a minimum altitude
+they'll be too low to actually safely
+drop their bombs so i'm just going to
+come in here and do one of these things
+real quick let's do manual override 500
+feet
+manual override we could of course do a
+little bit of variety here and override
+and manual override this is interesting
+actually i've got a question that i need
+to answer now on my own because now i'm
+getting curious getting curious
+and let's go ahead and send them over
+they dropped the bombs uh they did not
+drop the bombs i'm guessing the reason
+they did not drop the bombs is they were
+too darn low so let's go send it over
+here i believe the minimum altitude on
+the mark 82s we should go check that
+real fast shame on me it's 800 feet agl
+so this one i'm just gonna have to kind
+of call that one because we can't even
+drop the bombs lower than a thousand
+feet okay so what can we conclude with
+this uh too low
+so let's see here um when we do 36 000
+feet it's just about all these altitudes
+are about the same as a matter of fact
+if i ever do one of these
+plus 3.9 divided by three that gives us
+about four out of the five so we only
+kill one house above twelve thousand
+feet the problem is once you get down to
+two thousand feet all of a sudden we've
+suddenly um our average spikes let's
+just take the average of these two plus
+zero point two divided by 2. oh wow so
+likely anything between 1000 and 2000
+are going to be like that so now i'm
+sitting here going well this is pretty
+cool and this is a pretty useful
+information but
+what if we actually want to make this a
+little more authentic how will we
+analyze this well i got an idea so i'm
+going to grab my houses here i'm going
+to get myself everybody's least favorite
+air-to-air surface to air platform
+esu of course it's not called a surface
+ship i believe it is called a facility
+this is the one i like let's go ahead
+and get the nice soviet union version of
+it let's grab that guy let's see here
+the altitude on the zeus is up to 10 000
+feet so that means that um we're always
+gonna have to go ahead and attack more
+than one in house but let's split the
+difference and assume five thousand feet
+so i'm gonna go ahead and get him get
+one of those get one of those i hate
+these things they're such a passion i've
+been dinged by these so many times it's
+not even funny let's group them together
+we're gonna go ahead and flip on their
+radars we're also gonna say they can
+shoot anything that looks dangerous
+that seems sketchy we'll switch back
+over to our the team and now we'll see
+if we can split the difference and try
+5000 feet to see if that works so we'll
+do 5000 and again we're hoping this is
+going to work i don't know but again
+we're just experimenting with a
+realistic scenario obviously if i sent
+them down to 800 feet they get
+splattered so we kind of want to think
+about that as well we'll do 5000 manual
+override i feel like this guy did not
+get set properly oh yeah he did
+grab this one and override 5 000 feet
+5200 feet i don't think so we'll set
+five thousand we'll come to this guy
+we'll do five thousand feet
+okay so i didn't do fifty thousand did i
+no i did not all right let's try now so
+f16s are gonna come ripping out here
+they've immediately spotted how do they
+spot him so quickly holy smokes what is
+your secret oh i forgot they had the
+sniper pods okay that's why they're
+shooting so straight here so we know
+this the zeus the zeus are we even able
+to identify them as zeus's
+uh let's see here this guy is down to
+5000 feet we're going to rip over the
+top of the zeus and begin the triple a
+nightmare here
+bombs got released right on time none of
+the zeus has had a chance to fire
+ah
+nicely done
+i don't even think any of those got a
+shot off i'm actually going to go
+confirm that real quick let's go up to
+losses and expenditures did they
+actually fire
+no
+interesting
+okay so let's talk about conclusions for
+a second here so we discovered that even
+though the maximum range of this thing
+was 10 thousand feet because the f-16
+was traveling so fast and it was so high
+the actual slant distance to the f-16
+was about 7 500 feet a good chunk of
+that time meaning it was well outside of
+its effective engagement range even
+though the f-16s had been detected all
+the way down the other thing we learned
+is chilling at that altitude was the
+fact we had no difficulty we ended up
+getting it looks like we left about 1.7
+out of the buildings without having a
+single shot fired at any of these f-16s
+as they went flying over the top so this
+seems to be a pretty good mess so now
+let's go ahead and take a look at the
+last piece and this is probably going to
+be the most useful one so now i'm going
+to go back here and reset this real
+quickly go back to testo again hang on
+one of these days i'll name these
+missions something more creative than
+that but too bad so i'm going to come
+down here i'm going to go ahead and
+throw those zeus back up because
+everybody loves uses
+grab one of these grab one of these grab
+one of these grab one of these grab one
+of these let's go ahead and copy them
+all
+group them up let's go ahead and slap
+them into the radar turned on mode let's
+go ahead and flip the air engage anybody
+who looks not friendly so now we're
+going to do is we're going to do a
+practical application of this so i'm
+going to go ahead and create a random
+airfield i'm sure that's in the middle
+of a lake or something like that but too
+bad it works for me
+airfield we're going to make it a pretty
+good sized one i'm going to name it i'm
+going to grab these guys i'm going to
+group them together and i'm going to go
+ahead and create a mission so press
+control f1
+strike it we'll do a lan strike press ok
+we'll go grab our f16 group um you can't
+even select five so i'm just going to
+ignore this boop boop i'm going to go
+ahead and select them like that you can
+see they create the world's most
+convoluted flight plan in order to do
+this but let's see what does he have to
+actually do here so he has to go from
+here where is where's my waypoint 2 way
+point 2 is over here okay so we have to
+run over here go like this come back to
+here then come around but what i will do
+is i will manually edit the uh flight
+plan real quickly here so it manually
+added a flight plan it's super easy you
+can just click on one of the waypoints
+press f2 and now we can come in here and
+dial it see us at 200 feet let's use our
+new knowledge here and we'll go swing
+this over here and we'll say manual
+override five thousand feet manual
+override 36 is perfect
+okay this is a 2000 does not need to be
+we'll put him up to um yeah we could do
+like a pop-up attack too so we could do
+1000 but i'm feeling more confident at
+about 5000 ingress initial point target
+egress looks good to me looks good looks
+good looks good
+all right let's see if we can apply this
+so all the f-16s here
+you did not just edit my flight plan did
+you
+okay
+that made me nervous okay still 5000
+feet all right here we go here we go
+here we go f-16 is coming down they're
+coming down they're reducing speed to
+regroup they're hitting the initial
+point
+initial points hit they're swinging
+around they're picking up full speed by
+the way going after burner is one of the
+highest recommendations i can give you
+here bombs away
+bums away bombs away
+bombs away
+and one for the money two for the show
+have some bombs and enjoy the show boom
+oh
+oh no
+he got splattered all right so let's see
+how we did so let's go flip over to
+losses and expenditures uh they got two
+buildings they fired uh plenty 50 times
+18 i could just divide by two that's 900
+rounds of 23 millimeter we lost a single
+f16 we dropped 30 bombs but notice that
+some of my f-16s are walking away a
+little bit wounded here now this is
+interesting because as we saw earlier
+when we kind of did everything manually
+we had super tight control now imagine
+had i flown this exact same scenario but
+i had done it at much much much lower
+altitude so we had this one they all
+impacted they all unpacked it oh we
+actually want weapon damage and it would
+be helpful if it actually gave us the
+numbers on that one where it talks about
+yeah here we go high deflection shot no
+effect uh 15. look at the probability of
+hit was 20 percent if we were at 1000
+feet the probability of hit probably
+would have been you know 75 percent
+which could have ended a lot worse so
+hopefully this helps you as far as
+making you consider what kind of bombing
+altitudes we need to use for effective
+attacks it's another thing is it just
+goes to show you how effective this
+triple a is enjoy

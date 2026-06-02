@@ -235,20 +235,73 @@
         var m = s.match(/^(\d{1,2}(?:\.\d)?):1/);
         return m ? Number(m[1]) : null;
     }
+
+    // PR-WS4: a unit's operational weight in company-equivalents, used by the
+    // balance math (force ratio + losses) and, later, threat/control. Kept
+    // BEHIND A HELPER so DB2 can replace the source (unit profile: role/domain/
+    // capability) without rewriting any caller. Today: an echelon lookup. The
+    // table is the only place these constants live.
+    var ECHELON_OPERATIONAL_WEIGHT = {
+        division: 9, brigade: 3, regiment: 3, battalion: 1, company: 0.33, platoon: 0.1, team: 0.05
+    };
+    function getUnitOperationalWeight(unit) {
+        var u = obj(unit);
+        var ech = (u.echelon == null ? '' : String(u.echelon)).toLowerCase().trim();
+        var w = ECHELON_OPERATIONAL_WEIGHT[ech];
+        return (typeof w === 'number') ? w : 1;   // default ≈ company-plus
+    }
+
+    // PR-WS4: balance computed FROM World State units — the first real
+    // Units → Balance link. Operational force ratio = Σ(red live·weight) /
+    // Σ(blue live·weight); losses from unit status/strength. Pure; returns nulls
+    // when units are absent so the objective rule falls back to the mirror.
+    function computeBalanceSummary(ws) {
+        var units = arr(ws && ws.units).filter(function (u) { return u && !u.off_map; });
+        if (!units.length) return { force_ratio_value: null, losses: null };
+        var redForce = 0, blueForce = 0, blueDestroyed = 0, blueTotal = 0, redCoyEq = 0;
+        units.forEach(function (u) {
+            var w = getUnitOperationalWeight(u);
+            var s = (typeof u.strength === 'number' && isFinite(u.strength)) ? u.strength : 1;
+            var live = Math.max(0, Math.min(1, s));
+            var dead = (u.status === 'DESTROYED') || s <= 0;
+            if (u.side === 'RED') {
+                redForce += (dead ? 0 : live) * w;
+                redCoyEq += (1 - live) * w;             // attrition in coy-equivalents
+            } else if (u.side === 'BLUE') {
+                blueTotal += 1;
+                if (dead) blueDestroyed += 1; else blueForce += live * w;
+            }
+        });
+        var fr = (blueForce > 0) ? (redForce / blueForce) : null;
+        return {
+            force_ratio_value: (fr != null && isFinite(fr)) ? Math.round(fr * 10) / 10 : null,
+            losses: {
+                blue_destroyed: blueDestroyed,
+                blue_total: blueTotal,
+                red_company_equivalent: Math.round(redCoyEq * 10) / 10
+            }
+        };
+    }
+
     // Objective status display: only CAPTURED is re-litigated against the
     // evidence (force ratio + losses); every other status passes through.
+    // PR-WS4: evidence is read from WS-OWNED balance_summary (computed from
+    // units) with the `state` mirror (ws.balance) as the parity fallback.
     function computeObjectiveStatusDisplay(ws) {
         var d = obj(ws && ws.derived);
         var status = d.objective_status || 'DORMANT';
         if (status !== 'CAPTURED') return status;
+        var bal = obj(d.balance_summary);
         var b = obj(ws && ws.balance);
-        var fr = String(b.force_ratio || '');
-        var lc = obj(b.losses);
+        var haveComputedFr = (typeof bal.force_ratio_value === 'number');
+        var frNum    = haveComputedFr ? bal.force_ratio_value : parseFrRatio(String(b.force_ratio || ''));
+        // Keyword blocks only apply to the authored string mirror (computed FR is numeric).
+        var frBlocks = !haveComputedFr && /\b(below\s+decisive|not\s+engaged|N\/A)\b/i.test(String(b.force_ratio || ''));
+        var cl = obj(bal.losses);
+        var lc = (cl.blue_destroyed != null || cl.red_company_equivalent != null) ? cl : obj(b.losses);
         var blueLost  = Number(lc.blue_destroyed) || 0;
         var blueTotal = Number(lc.blue_total) || 39;
         var redCoyEq  = Number(lc.red_company_equivalent) || 0;
-        var frBlocks    = /\b(below\s+decisive|not\s+engaged|N\/A)\b/i.test(fr);
-        var frNum       = parseFrRatio(fr);
         var frNumBlocks = (frNum !== null && frNum < 2);
         var blueIntact  = (blueLost / blueTotal) < 0.25;
         var redSpent    = redCoyEq > 6;
@@ -257,7 +310,10 @@
     }
     // Registry: derived-field name -> pure rule. The runner writes each result
     // into ws.derived[name]. This is the ONE place a new derived field is added.
+    // ORDER MATTERS: balance_summary runs first so the objective rule sees the
+    // computed evidence. New derived fields are added here (one row each).
     var DERIVATIONS = {
+        balance_summary: computeBalanceSummary,
         objective_status_display: computeObjectiveStatusDisplay
     };
     function applyDerivations(ws) {
@@ -316,6 +372,10 @@
         // app projects fresh inputs); computeObjectiveStatusDisplay is the first.
         applyDerivations: applyDerivations,
         computeObjectiveStatusDisplay: computeObjectiveStatusDisplay,
+        // PR-WS4: balance computed from units + the swappable weight helper
+        // (DB2 will replace getUnitOperationalWeight's source).
+        computeBalanceSummary: computeBalanceSummary,
+        getUnitOperationalWeight: getUnitOperationalWeight,
         DERIVATIONS: DERIVATIONS,
         // exposed for tests / future rule modules
         _bearing: bearing,

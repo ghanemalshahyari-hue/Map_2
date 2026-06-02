@@ -1,37 +1,64 @@
 ---
 name: project-authoring-slice2-next
-description: Slice 2A (Geography) BUILT 2026-06-02 — next concrete step is Slice 2B (Forces / red_units + blue_units_initial editing inside Edit Mode)
+description: Slices 1 + 2A + 2B all BUILT 2026-06-02 — next concrete step is DOC1 (Doctrine/ROE/WRA), the highest-value engine gap per the CMO playbook
 metadata: 
   node_type: memory
   type: project
   originSessionId: 7fca86e4-e6c4-4274-a551-da787767e6cf
 ---
 
-**Status (2026-06-02).** Edit Mode **Slice 2A (Geography)** landed: `shell/scenario-edit-mode.js`
-now makes `map_bbox`, `ao_boundaries[]`, `obj` (with client-side `carver` 0..60 hard block),
-`pipeline`, `throughput_ceilings_km`, and `bls_template[]` editable on the same in-memory working
-copy as Slice 1 (Metadata + Sides + Posture). Save now also repaints the map via
-`AppAdjudicatorMap.drawScenario` + `fitScenarioAO` — geometry edits must redraw. Static test
-`test-edit-mode-slice2a.js` is 50/50 green, including a round-trip on the playbook sample that
-re-validates `ok:true`. The "Use map_bbox as AO" one-click writes the GeoJSON Polygon shape the
-renderer expects (not the playbook sample's flat `coords` shape).
+**Status (2026-06-02).** Edit Mode now has THREE slices live, all on the same
+in-memory working-copy boundary as Slice 1:
 
-**Why this order.** CMO build-order says *define the AO before placing units* — and the wargame3
-audit (2026-06-02) showed exactly the geography fields missing/empty (`ao_boundaries: []`,
-`throughput_ceilings_km` absent). Splitting Slice 2 into 2A (Geography, done) + 2B (Forces, next)
-keeps PRs small/Node-testable per the roadmap rule.
+- **Slice 1** — Metadata + Sides + Posture.
+- **Slice 2A (Geography)** — `map_bbox`, `ao_boundaries[]` (with "Use map_bbox
+  as AO" one-click), `obj` (with carver 0..60 client-side hard block),
+  `pipeline`, `throughput_ceilings_km`, `bls_template[]`. Save repaints the
+  map via `AppAdjudicatorMap.drawScenario` + `fitScenarioAO`.
+- **Slice 2B (Forces)** — `red_units[]` and `blue_units_initial[]` with full
+  add/remove/edit. `blue_units_base_ids` is **derived** from
+  `blue_units_initial[].base_id` on Save (single source of truth — operator
+  never edits the parallel array). **Writes into the in-memory scenario
+  draft, NOT the durable `/api/units` SQLite store** (the AUTH1 roadmap
+  decision: those two stores are unbridged and the durable one is the wrong
+  target for scenario authoring). Add Red unit is **disabled until ≥1 BLS
+  exists**, with a visible hint; disable-state is live-reactive to BLS
+  add/remove in the Geometry card via a small cross-card refresh hook
+  (`_refreshForcesAvailability`) — no full re-render, no input-focus loss.
 
-**Next = Slice 2B (Forces).** Make `red_units[]` and `blue_units_initial[]` editable inside Edit
-Mode. Reuse the existing ORBAT-dock + `units-map.js` cursor-follow placement plumbing **but write
-into the in-memory scenario draft** (`window.RmoozScenario.scenario`), not the durable
-`/api/units/:id/place` SQLite store — those stores are unbridged and the durable one is the wrong
-target for scenario authoring. AUTH1 in the roadmap is exactly this. Slice 1's boundary
-(in-memory only, no `/api/sim/commit`, no journal write, no download) carries forward unchanged.
+**Hard rules mirrored client-side** (matching `scenario-validator.js`): 2A
+carver 0..60; 2B every `red_units[].bls` ∈ `bls_template[].name`, `appear` ∈
+steps range, `uid`/`unit_uid` non-empty + unique. Static tests
+`test-edit-mode-slice2a.js` (50/50) and `test-edit-mode-slice2b.js` (46/46)
+round-trip the playbook sample against the **real** validator. Browser
+verification via `scripts/verify-server.js` (registered as
+`rmooz-web-verify` in `.claude/launch.json`).
 
-Build against:
-- [`docs/cmo-functional-rules/exhaustive/scenario-authoring-part{1,2}.md`](../cmo-functional-rules/exhaustive)
-  (behavior contract for OOB + appearance + roles).
-- [`docs/cmo-functional-rules/sample-sahil-corridor.json`](../cmo-functional-rules/sample-sahil-corridor.json)
-  — target JSON shape (passes `scenario-validator`).
-- Validator hard rules to mirror in 2B: every `red_units[].bls` must match a `bls_template[].name`;
-  `red_units[].appear` ∈ steps range; `blue_units_base_ids.length === blue_units_initial.length`.
+**Next = DOC1 — Doctrine/ROE/WRA.** Per the CMO playbook Step 5
+(`docs/cmo-functional-rules/5-build-playbook.md`) this is the **highest-value
+engine gap** (⚠️ GAP marker): no scenario field exists for doctrine/WRA/ROE
+today and the AI adjudicator uses prompt prose instead of authored policy.
+The playbook +
+`docs/cmo-functional-rules/exhaustive/doctrine-adjudication.md` are the
+behavior contract. The roadmap row also calls this out as **DOC1** in the
+AUTH track — its definition: *"Doctrine/ROE layer — visible & auditable
+data; AI decisions cite doctrine/ROE."*
+
+Concrete shape for DOC1 (sketch — to be confirmed before building):
+- Add a `doctrine{}` top-level scenario block (per-side, hierarchical:
+  side → mission → group → unit overrides).
+- Author WRA state (Free / Tight / Hold) per side.
+- Stamp self-defense, EMCON, fuel/withdrawal policies.
+- An Edit Mode **Slice 3 (Doctrine)** card to author it, mirroring the
+  2A/2B pattern (defaults + render + hard rules + repaint).
+- AI proposal explainer surfaces "decision X cited doctrine policy Y".
+
+**Pre-DOC1 questions to settle:**
+1. Schema shape — bilateral matrix vs per-side flat? Hierarchical override
+   semantics?
+2. WRA UI: per-unit override, or only side/group level? CMO does both.
+3. AI citation: do we add a `cites:[{path, policy}]` field on AI proposals
+   or wire it through the existing explainability surface?
+
+After DOC1: TASK1 (Tasking/Mission layer — structured mission objects +
+tasking view, per the roadmap row).

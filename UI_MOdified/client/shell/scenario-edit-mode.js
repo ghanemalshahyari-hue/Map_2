@@ -34,6 +34,11 @@
 
     var _on    = false;   // edit mode active?
     var _draft = null;    // working-copy scenario draft (deep clone)
+    // Slice 2B: cross-card reactivity hook. The Forces card stashes its inner
+    // "refresh Add Red availability" callback here when it renders; the Geometry
+    // card calls it after every BLS add/remove so the operator doesn't need to
+    // close+reopen Edit Mode to see the Add Red button enable.
+    var _refreshForcesAvailability = null;
 
     /* ---- small helpers ---------------------------------------------------- */
     function el(tag, attrs, kids) {
@@ -90,8 +95,88 @@
         if (!Array.isArray(d.sides) || !d.sides.length) d.sides = defaultSides();
         if (!d.postures || typeof d.postures !== 'object') d.postures = defaultPostures();
         fillGeographyDefaults(d);
+        fillForcesDefaults(d);
         d.authoring_status = 'draft';
         return d;
+    }
+
+    /* ---- Slice 2B: forces defaults (red_units, blue_units_initial) ------- */
+    function fillForcesDefaults(d) {
+        if (!Array.isArray(d.red_units))           d.red_units = [];
+        if (!Array.isArray(d.blue_units_initial))  d.blue_units_initial = [];
+        if (!Array.isArray(d.blue_units_base_ids)) d.blue_units_base_ids = [];
+    }
+
+    /* ---- Slice 2B: blue_units_base_ids is DERIVED from blue_units_initial ---
+     * Single source of truth = blue_units_initial[].base_id.  We rebuild the
+     * parallel index at Save time so the operator never has to maintain two
+     * lists in parallel — and the validator's "lengths must match" warning
+     * (scenario-validator.js:145-149) is impossible to trip from the UI. */
+    function syncBlueBaseIds(d) {
+        if (!Array.isArray(d.blue_units_initial)) { d.blue_units_base_ids = []; return; }
+        d.blue_units_base_ids = d.blue_units_initial.map(function (u) {
+            return (u && u.base_id != null) ? String(u.base_id) : '';
+        });
+    }
+
+    /* ---- Slice 2B: forces hard rules (mirrors scenario-validator.js) -----
+     * Lines 145-168 of UI_MOdified/server/ai/scenario-validator.js:
+     *   - every red_units[i].bls must reference an existing bls_template name
+     *   - every red_units[i].appear must be in [0, steps.length-1]
+     *   - uid / unit_uid must be non-empty and unique inside their array */
+    function validateForcesHardRules(d) {
+        var why = [];
+        if (d && Array.isArray(d.red_units)) {
+            var blsNames = new Set((Array.isArray(d.bls_template) ? d.bls_template : [])
+                .map(function (b) { return b && b.name; }).filter(Boolean));
+            var lastStep = (Array.isArray(d.steps) && d.steps.length > 0) ? d.steps.length - 1 : null;
+            var seenUid  = Object.create(null);
+            d.red_units.forEach(function (u, i) {
+                if (!u || typeof u !== 'object') {
+                    why.push('red_units[' + i + '] is not an object');
+                    return;
+                }
+                if (!u.uid || !String(u.uid).trim()) {
+                    why.push('red_units[' + i + '].uid is empty');
+                } else if (seenUid[u.uid]) {
+                    why.push('red_units[' + i + '].uid duplicates "' + u.uid + '"');
+                } else {
+                    seenUid[u.uid] = true;
+                }
+                if (u.bls && !blsNames.has(u.bls)) {
+                    why.push('red_units[' + i + '].bls "' + u.bls + '" is not a defined BLS');
+                }
+                if (Number.isInteger(u.appear) && lastStep != null && (u.appear < 0 || u.appear > lastStep)) {
+                    why.push('red_units[' + i + '].appear ' + u.appear + ' out of range [0..' + lastStep + ']');
+                }
+            });
+        }
+        if (d && Array.isArray(d.blue_units_initial)) {
+            var seenBlueUid = Object.create(null);
+            d.blue_units_initial.forEach(function (u, i) {
+                if (!u || typeof u !== 'object') {
+                    why.push('blue_units_initial[' + i + '] is not an object');
+                    return;
+                }
+                if (!u.unit_uid || !String(u.unit_uid).trim()) {
+                    why.push('blue_units_initial[' + i + '].unit_uid is empty');
+                } else if (seenBlueUid[u.unit_uid]) {
+                    why.push('blue_units_initial[' + i + '].unit_uid duplicates "' + u.unit_uid + '"');
+                } else {
+                    seenBlueUid[u.unit_uid] = true;
+                }
+            });
+        }
+        return { ok: why.length === 0, why: why.join('; ') };
+    }
+
+    /* ---- Slice 2B: combine all hard rules (carver + forces) -------------- */
+    function validateAllHardRules(d) {
+        var a = validateDraftHardRules(d);
+        var b = validateForcesHardRules(d);
+        if (a.ok && b.ok) return { ok: true, why: '' };
+        var why = [a.why, b.why].filter(Boolean).join('; ');
+        return { ok: false, why: why };
     }
 
     /* ---- Slice 2A: geography defaults (AO, obj, pipeline, BLS, throughput) ---- */
@@ -379,6 +464,11 @@
                 rm.addEventListener('click', function () {
                     _draft.bls_template.splice(idx, 1);
                     rerenderBlsList();
+                    // Slice 2B: a BLS removal may invalidate red_units[].bls
+                    // references and may need to disable Add Red unit.
+                    if (typeof _refreshForcesAvailability === 'function') {
+                        try { _refreshForcesAvailability(); } catch (_) {}
+                    }
                 });
                 var label = 'BLS #' + (idx + 1);
                 blsList.appendChild(el('div', { class: 'sw-edit-list-item' }, [
@@ -412,8 +502,216 @@
                 coord: [0, 0], role: '', throughput: 0, terrain_friction: 0
             });
             rerenderBlsList();
+            // Slice 2B: notify the Forces card so Add Red unit can enable.
+            if (typeof _refreshForcesAvailability === 'function') {
+                try { _refreshForcesAvailability(); } catch (_) {}
+            }
         });
         card.appendChild(el('div', { class: 'sw-edit-actions' }, [addBls]));
+
+        host.appendChild(card);
+    }
+
+    /* ---- Slice 2B: Forces card (Red OOB + Blue OOB) ---------------------- */
+    // CMO maneuver-role enum the renderer recognises (adjudicator-map.js).
+    var RED_UNIT_ROLES = [
+        'Main effort', 'Fixing', 'Support', 'External envelopment',
+        'Follow-on', 'Exploitation', 'Recon'
+    ];
+
+    function nextFreeUid(prefix, list, key) {
+        var taken = new Set(list.map(function (u) { return u && u[key]; }).filter(Boolean));
+        var i = 1;
+        while (taken.has(prefix + '-' + i)) i++;
+        return prefix + '-' + i;
+    }
+
+    function renderForcesCard(host) {
+        var card = el('div', { class: 'builder-card sw-card' }, [
+            el('div', { class: 'builder-card-header' }, [
+                el('span', { class: 'builder-card-title',
+                             text: 'Edit · Forces (Red OOB + Blue OOB) / القوات' })
+            ])
+        ]);
+
+        var blsNames = (Array.isArray(_draft.bls_template) ? _draft.bls_template : [])
+            .map(function (b) { return b && b.name; }).filter(Boolean);
+        var stepCount = Array.isArray(_draft.steps) ? _draft.steps.length : 0;
+
+        /* --- Red OOB --- */
+        var redCard = el('div', { class: 'sw-edit-subcard' }, [
+            el('div', { class: 'sw-edit-subcard-header', text: 'Red Order of Battle / ترتيب المعركة (أحمر)' })
+        ]);
+        var redList = el('div', { class: 'sw-edit-list' });
+        function rerenderRedList() {
+            redList.innerHTML = '';
+            if (!_draft.red_units.length) {
+                redList.appendChild(el('div', { class: 'sw-edit-empty', text: '(no Red units — Add Red unit below)' }));
+            }
+            // Refresh local BLS-name cache each render so removing/renaming a BLS
+            // in the Geometry card upstream is reflected here.
+            blsNames = (Array.isArray(_draft.bls_template) ? _draft.bls_template : [])
+                .map(function (b) { return b && b.name; }).filter(Boolean);
+            _draft.red_units.forEach(function (u, idx) {
+                if (!Array.isArray(u.coord) || u.coord.length < 2) u.coord = [0, 0];
+                var label = 'Red #' + (idx + 1);
+                var rm = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Remove' });
+                rm.addEventListener('click', function () {
+                    _draft.red_units.splice(idx, 1);
+                    rerenderRedList();
+                });
+                // Build the BLS select — must include the unit's current value
+                // even if it's no longer in bls_template (so the operator can see
+                // and fix the broken reference rather than have it silently change).
+                var blsOpts = blsNames.slice();
+                if (u.bls && blsOpts.indexOf(u.bls) === -1) blsOpts.push(u.bls);
+                redList.appendChild(el('div', { class: 'sw-edit-list-item' }, [
+                    el('dl', { class: 'sw-kv' }, [
+                        fieldRow(label + ' · uid',
+                            textInput(u.uid || '', function (v) { u.uid = v; })),
+                        fieldRow(label + ' · label',
+                            textInput(u.label || '', function (v) { u.label = v; })),
+                        fieldRow(label + ' · bls',
+                            selectInput(blsOpts, u.bls || (blsOpts[0] || ''),
+                                        function (v) { u.bls = v; })),
+                        fieldRow(label + ' · appear (step index)',
+                            numberInput(u.appear == null ? 0 : u.appear,
+                                        function (v) { u.appear = (v == null ? 0 : v); })),
+                        fieldRow(label + ' · role',
+                            selectInput(RED_UNIT_ROLES, u.role || 'Main effort',
+                                        function (v) { u.role = v; })),
+                        fieldRow(label + ' · coord.lon',
+                            numberInput(u.coord[0], function (v) { u.coord[0] = (v == null ? 0 : v); })),
+                        fieldRow(label + ' · coord.lat',
+                            numberInput(u.coord[1], function (v) { u.coord[1] = (v == null ? 0 : v); })),
+                        fieldRow(label + ' · echelon',
+                            textInput(u.echelon || '', function (v) { u.echelon = v; })),
+                        fieldRow(label + ' · strength (0..1)',
+                            numberInput(u.strength == null ? 1 : u.strength,
+                                        function (v) { u.strength = (v == null ? 1 : v); },
+                                        { min: 0, max: 1, step: '0.05' })),
+                        fieldRow(label + ' · sidc',
+                            textInput(u.sidc || '', function (v) { u.sidc = v; }))
+                    ]),
+                    rm
+                ]));
+            });
+        }
+        rerenderRedList();
+        redCard.appendChild(redList);
+
+        var addRed = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Add Red unit' });
+        var redHint = el('div', { class: 'sw-edit-hint',
+            text: 'Add Red unit needs at least one BLS — define one in the Forces Geometry card above.' });
+        function refreshAddRedAvailability() {
+            var hasBls = (Array.isArray(_draft.bls_template) ? _draft.bls_template : [])
+                            .some(function (b) { return b && b.name; });
+            if (hasBls) {
+                addRed.removeAttribute('disabled');
+                redHint.style.display = 'none';
+            } else {
+                addRed.setAttribute('disabled', 'disabled');
+                redHint.style.display = '';
+            }
+        }
+        addRed.addEventListener('click', function () {
+            // Repopulate the BLS cache RIGHT NOW (operator may have just added one upstream).
+            blsNames = (Array.isArray(_draft.bls_template) ? _draft.bls_template : [])
+                .map(function (b) { return b && b.name; }).filter(Boolean);
+            if (!blsNames.length) {
+                setStatus('Add at least one BLS in the Forces Geometry card before adding Red units.', true);
+                return;
+            }
+            var firstBls = (_draft.bls_template[0] && Array.isArray(_draft.bls_template[0].coord))
+                ? _draft.bls_template[0].coord.slice() : [0, 0];
+            _draft.red_units.push({
+                uid:      nextFreeUid('RED', _draft.red_units, 'uid'),
+                label:    '',
+                bls:      blsNames[0],
+                appear:   0,
+                role:     'Main effort',
+                coord:    firstBls,
+                strength: 1
+            });
+            rerenderRedList();
+        });
+        refreshAddRedAvailability();
+        // Slice 2B: publish the in-place refresh callback so the Geometry card
+        // can update Add Red availability when bls_template changes — without
+        // forcing a full editor re-render that would lose input focus.
+        _refreshForcesAvailability = refreshAddRedAvailability;
+        redCard.appendChild(el('div', { class: 'sw-edit-actions' }, [addRed, redHint]));
+        card.appendChild(redCard);
+
+        /* --- Blue OOB --- */
+        var blueCard = el('div', { class: 'sw-edit-subcard' }, [
+            el('div', { class: 'sw-edit-subcard-header', text: 'Blue Order of Battle / ترتيب المعركة (أزرق)' })
+        ]);
+        var blueList = el('div', { class: 'sw-edit-list' });
+        function rerenderBlueList() {
+            blueList.innerHTML = '';
+            if (!_draft.blue_units_initial.length) {
+                blueList.appendChild(el('div', { class: 'sw-edit-empty', text: '(no Blue units)' }));
+            }
+            _draft.blue_units_initial.forEach(function (u, idx) {
+                if (!Array.isArray(u.coord) || u.coord.length < 2) u.coord = [0, 0];
+                var label = 'Blue #' + (idx + 1);
+                var rm = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Remove' });
+                rm.addEventListener('click', function () {
+                    _draft.blue_units_initial.splice(idx, 1);
+                    rerenderBlueList();
+                });
+                blueList.appendChild(el('div', { class: 'sw-edit-list-item' }, [
+                    el('dl', { class: 'sw-kv' }, [
+                        fieldRow(label + ' · unit_uid',
+                            textInput(u.unit_uid || '', function (v) { u.unit_uid = v; })),
+                        fieldRow(label + ' · base_id',
+                            textInput(u.base_id || '', function (v) { u.base_id = v; })),
+                        fieldRow(label + ' · coord.lon',
+                            numberInput(u.coord[0], function (v) { u.coord[0] = (v == null ? 0 : v); })),
+                        fieldRow(label + ' · coord.lat',
+                            numberInput(u.coord[1], function (v) { u.coord[1] = (v == null ? 0 : v); })),
+                        fieldRow(label + ' · echelon',
+                            textInput(u.echelon || '', function (v) { u.echelon = v; })),
+                        fieldRow(label + ' · sidc',
+                            textInput(u.sidc || '', function (v) { u.sidc = v; }))
+                    ]),
+                    rm
+                ]));
+            });
+        }
+        rerenderBlueList();
+        blueCard.appendChild(blueList);
+
+        var addBlue = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Add Blue unit' });
+        addBlue.addEventListener('click', function () {
+            // Default coord: copy the first existing blue unit's coord if any,
+            // else use map_bbox centre, else [0,0].
+            var seed = [0, 0];
+            if (_draft.blue_units_initial.length &&
+                Array.isArray(_draft.blue_units_initial[0].coord) &&
+                _draft.blue_units_initial[0].coord.length >= 2) {
+                seed = _draft.blue_units_initial[0].coord.slice();
+            } else if (Array.isArray(_draft.map_bbox) && _draft.map_bbox.length === 4 &&
+                       _draft.map_bbox.every(function (n) { return typeof n === 'number'; })) {
+                seed = [(_draft.map_bbox[0] + _draft.map_bbox[2]) / 2,
+                        (_draft.map_bbox[1] + _draft.map_bbox[3]) / 2];
+            }
+            var nextN = _draft.blue_units_initial.length + 1;
+            _draft.blue_units_initial.push({
+                unit_uid: nextFreeUid('BLUE', _draft.blue_units_initial, 'unit_uid'),
+                base_id:  'B' + nextN,
+                coord:    seed
+            });
+            rerenderBlueList();
+        });
+        blueCard.appendChild(el('div', { class: 'sw-edit-actions' }, [addBlue]));
+        card.appendChild(blueCard);
+
+        // Note: blue_units_base_ids is DERIVED at Save time from
+        // blue_units_initial[].base_id — no separate editor.
+        card.appendChild(el('div', { class: 'sw-edit-hint',
+            text: 'blue_units_base_ids is derived from Blue · base_id on Save (kept in sync automatically).' }));
 
         host.appendChild(card);
     }
@@ -478,6 +776,9 @@
         /* --- Forces geometry (Slice 2A) --- */
         renderGeometryCard(host);
 
+        /* --- Forces / OOB (Slice 2B) --- */
+        renderForcesCard(host);
+
         /* --- actions --- */
         var status = el('span', { id: 'sw-editmode-status', class: 'sw-edit-status', text: '' });
         var saveBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary', text: 'Save draft / حفظ المسودة' });
@@ -498,10 +799,15 @@
     function saveDraft() {
         if (!_draft) return;
 
-        // Slice 2A: hard validator rule (obj.carver int 0..60). Mirrors
+        // Slice 2B: keep the derived blue_units_base_ids parallel array in
+        // lockstep with the authoritative blue_units_initial. Runs FIRST so
+        // the hard-rules check sees the synced state.
+        syncBlueBaseIds(_draft);
+
+        // Hard validator rules (Slice 2A carver + Slice 2B forces). Mirrors
         // UI_MOdified/server/ai/scenario-validator.js so the operator gets
         // immediate feedback instead of a later server-side reject.
-        var hard = validateDraftHardRules(_draft);
+        var hard = validateAllHardRules(_draft);
         if (!hard.ok) { setStatus('Blocked: ' + hard.why, true); return; }
 
         var gate = draftIsSafe(_draft);
@@ -601,19 +907,27 @@
         setMode: setMode,
         getDraft: function () { return _draft ? clone(_draft) : null; },
         isOn: function () { return _on; },
-        // Slice 2A: pure helpers exposed for static Node tests
-        // (test-edit-mode-slice2a.js). Not intended for runtime callers.
+        // Slice 2A/2B: pure helpers exposed for static Node tests
+        // (test-edit-mode-slice2a.js / test-edit-mode-slice2b.js).
+        // Not intended for runtime callers.
         _testing: {
-            defaultSides:           defaultSides,
-            defaultPostures:        defaultPostures,
-            defaultGeography:       defaultGeography,
-            fillGeographyDefaults:  fillGeographyDefaults,
-            validateDraftHardRules: validateDraftHardRules,
-            parseCoordLines:        parseCoordLines,
-            coordsToLines:          coordsToLines,
-            aoExteriorRing:         aoExteriorRing,
-            setAoExteriorRing:      setAoExteriorRing,
-            makeMapBboxAoPolygon:   makeMapBboxAoPolygon
+            defaultSides:            defaultSides,
+            defaultPostures:         defaultPostures,
+            defaultGeography:        defaultGeography,
+            fillGeographyDefaults:   fillGeographyDefaults,
+            validateDraftHardRules:  validateDraftHardRules,
+            parseCoordLines:         parseCoordLines,
+            coordsToLines:           coordsToLines,
+            aoExteriorRing:          aoExteriorRing,
+            setAoExteriorRing:       setAoExteriorRing,
+            makeMapBboxAoPolygon:    makeMapBboxAoPolygon,
+            // Slice 2B
+            fillForcesDefaults:      fillForcesDefaults,
+            syncBlueBaseIds:         syncBlueBaseIds,
+            validateForcesHardRules: validateForcesHardRules,
+            validateAllHardRules:    validateAllHardRules,
+            RED_UNIT_ROLES:          RED_UNIT_ROLES,
+            nextFreeUid:             nextFreeUid
         }
     };
 })();

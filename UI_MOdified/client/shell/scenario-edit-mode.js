@@ -416,7 +416,7 @@
         rerenderAOList();
         card.appendChild(aoList);
 
-        var addBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Add polygon' });
+        var addBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Add polygon (empty)' });
         addBtn.addEventListener('click', function () {
             _draft.ao_boundaries.push({
                 name: 'AO ' + (_draft.ao_boundaries.length + 1),
@@ -430,10 +430,57 @@
             if (!poly) { setStatus('map_bbox must have 4 finite numbers first.', true); return; }
             _draft.ao_boundaries.push(poly);
             rerenderAOList();
+            _maybeRepaintMap();
         });
-        card.appendChild(el('div', { class: 'sw-edit-actions' }, [addBtn, useBboxBtn]));
+        // 2D-2: draw an AO polygon by clicking vertices on the map.
+        var drawAoBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary',
+            text: 'Draw AO on map' });
+        drawAoBtn.addEventListener('click', function () {
+            _beginPickOnMapPolygon(function (ring) {
+                _draft.ao_boundaries.push({
+                    name: 'AO ' + (_draft.ao_boundaries.length + 1),
+                    coordinates: [ring]
+                });
+                rerenderAOList();
+                _maybeRepaintMap();
+                setStatus('AO polygon added (' + (ring.length - 1) + ' vertices).', false);
+            }, function () { setStatus('AO draw cancelled.', false); });
+        });
+        // 2D-2: set objective coord with one click on the map.
+        var pickObjBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary',
+            text: 'Set objective on map' });
+        pickObjBtn.addEventListener('click', function () {
+            if (!_draft.obj || typeof _draft.obj !== 'object') {
+                _draft.obj = { name: 'OBJ', coord: [0, 0], target_depth_km: 0, carver: 0, radius_km: 0 };
+            }
+            _beginPickOnMap(function (coord) {
+                _draft.obj.coord = [Number(coord[0]) || 0, Number(coord[1]) || 0];
+                _maybeRepaintMap();
+                setStatus('Objective set to [' + _draft.obj.coord[0].toFixed(4) + ', ' + _draft.obj.coord[1].toFixed(4) + '].', false);
+                // Re-render the Map step so the new coord shows in the obj fields.
+                renderEditor();
+            }, function () { setStatus('Objective pick cancelled.', false); });
+        });
+        card.appendChild(el('div', { class: 'sw-edit-actions' }, [drawAoBtn, pickObjBtn, useBboxBtn, addBtn]));
 
         host.appendChild(card);
+    }
+
+    // 2D-2: helper to push the current draft into the live RmoozScenario and
+    // repaint the map so the operator sees the new AO/obj/pipeline/BLS
+    // shapes immediately (without waiting for Save draft). Read-only repaint;
+    // commits + journal are still gated by Save draft.
+    function _maybeRepaintMap() {
+        try {
+            var slot = window.RmoozScenario || (window.RmoozScenario = { scenario: null, stepIndex: 0 });
+            // Quick clone so the live scenario reflects current draft geometry.
+            // Save draft is still the official commit; this is a preview.
+            slot.scenario = clone(_draft);
+            if (typeof slot.stepIndex !== 'number') slot.stepIndex = 0;
+            if (window.AppAdjudicatorMap && typeof window.AppAdjudicatorMap.drawScenario === 'function') {
+                window.AppAdjudicatorMap.drawScenario(slot.scenario);
+            }
+        } catch (_) {}
     }
 
     /* ---- Slice 2A: Geometry card ----------------------------------------- */
@@ -469,9 +516,22 @@
         var pipeTa = textArea(coordsToLines(_draft.pipeline), 5, function (v) {
             _draft.pipeline = parseCoordLines(v);
         });
+        // 2D-2: draw pipeline waypoints on the map (polyline; double-click finishes).
+        var drawPipeBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary',
+            text: 'Draw pipeline on map' });
+        drawPipeBtn.addEventListener('click', function () {
+            _beginPickOnMapPolyline(function (line) {
+                _draft.pipeline = line;
+                _maybeRepaintMap();
+                setStatus('Pipeline replaced with ' + line.length + ' waypoints.', false);
+                // Refresh the textarea content so the operator sees the new values.
+                pipeTa.value = coordsToLines(line);
+            }, function () { setStatus('Pipeline draw cancelled.', false); });
+        });
         card.appendChild(el('dl', { class: 'sw-kv' }, [
             fieldRow('pipeline (one "lon, lat" per line; ≥2 waypoints)', pipeTa)
         ]));
+        card.appendChild(el('div', { class: 'sw-edit-actions' }, [drawPipeBtn]));
 
         var t = _draft.throughput_ceilings_km;
         var tDl = el('dl', { class: 'sw-kv' });
@@ -500,6 +560,16 @@
                     }
                 });
                 var label = 'BLS #' + (idx + 1);
+                // 2D-2: per-BLS pick-on-map button replaces the lon/lat dance.
+                var blsPickBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Pick coord on map' });
+                blsPickBtn.addEventListener('click', function () {
+                    _beginPickOnMap(function (coord) {
+                        b.coord = [Number(coord[0]) || 0, Number(coord[1]) || 0];
+                        _maybeRepaintMap();
+                        rerenderBlsList();
+                        setStatus(label + ' coord set to [' + b.coord[0].toFixed(4) + ', ' + b.coord[1].toFixed(4) + '].', false);
+                    }, function () { setStatus(label + ' pick cancelled.', false); });
+                });
                 blsList.appendChild(el('div', { class: 'sw-edit-list-item' }, [
                     el('dl', { class: 'sw-kv' }, [
                         fieldRow(label + ' · name',
@@ -517,6 +587,7 @@
                             numberInput(b.terrain_friction, function (v) { b.terrain_friction = (v == null ? 0 : v); },
                                         { min: 0, max: 1, step: '0.01' }))
                     ]),
+                    el('div', { class: 'sw-edit-actions' }, [blsPickBtn]),
                     rm
                 ]));
             });
@@ -675,15 +746,158 @@
         _forcesPickOnMap = false;
         var h = _forcesPickMapHandlers;
         _forcesPickMapHandlers = null;
+        // 2D-2: a multi-vertex pick (polygon/polyline) installs its own cleanup
+        // closure. Invoke it so map handlers + preview layer are torn down.
+        if (h && typeof h.externalCleanup === 'function') {
+            try { h.externalCleanup(); } catch (_) {}
+            return;
+        }
         // 2D-1O: tear down the overlay-collapse + banner.
         var panel = document.getElementById(PANEL_ID);
         if (panel) panel.classList.remove('sw-editmode-picking');
         var banner = document.getElementById('sw-editmode-pick-banner');
         if (banner && banner.parentNode) banner.parentNode.removeChild(banner);
         if (!h) return;
-        try { h.map.off('click', h.onClick); } catch (_) {}
+        try { if (h.onClick) h.map.off('click', h.onClick); } catch (_) {}
         try { h.map.getContainer().style.cursor = ''; } catch (_) {}
-        try { document.removeEventListener('keydown', h.onKey); } catch (_) {}
+        try { if (h.onKey) document.removeEventListener('keydown', h.onKey); } catch (_) {}
+    }
+
+    /* ---- Slice 2D-2: multi-vertex pick (polygon / polyline) -------------- */
+    // Shared shape with _beginPickOnMap (single point) — same overlay-collapse,
+    // same ESC, same status banner. Click adds a vertex; dblclick finishes
+    // (returns array of [lng,lat]); ESC or Cancel button returns null.
+    //   mode: 'polygon' draws + closes (last == first) on finish
+    //   mode: 'polyline' open-ended (no automatic close)
+    function _beginMultiPick(mode, label, onFinish, onCancel) {
+        _cancelPickOnMap();
+        var map = window.map;
+        if (!map) { setStatus('Map not ready.', true); return false; }
+        if (!window.L) { setStatus('Leaflet not ready.', true); return false; }
+        _forcesPickOnMap = true;
+        try { map.getContainer().style.cursor = 'crosshair'; } catch (_) {}
+
+        var panel = document.getElementById(PANEL_ID);
+        if (panel) panel.classList.add('sw-editmode-picking');
+
+        var verts = []; // [[lng, lat], ...]
+        var preview = null;
+        function rerenderPreview() {
+            try { if (preview) { map.removeLayer(preview); preview = null; } } catch (_) {}
+            if (verts.length < 2) return;
+            var latlngs = verts.map(function (c) { return [c[1], c[0]]; });
+            if (mode === 'polygon') {
+                preview = window.L.polygon(latlngs, {
+                    color: '#5da9e8', weight: 2, opacity: 0.85,
+                    dashArray: '5 4', fillColor: '#3a96d2', fillOpacity: 0.12,
+                    interactive: false
+                }).addTo(map);
+            } else {
+                preview = window.L.polyline(latlngs, {
+                    color: '#c9a227', weight: 3, opacity: 0.85,
+                    dashArray: '5 4', interactive: false
+                }).addTo(map);
+            }
+        }
+
+        var bar = document.getElementById(BAR_ID);
+        var banner = null;
+        function setBannerText() {
+            if (!banner) return;
+            var top = banner.querySelector('.sw-pick-banner-top');
+            if (top) top.textContent = label + ' — ' + verts.length + ' vertex' + (verts.length === 1 ? '' : 'es');
+        }
+        if (bar) {
+            banner = el('div', { id: 'sw-editmode-pick-banner', class: 'sw-editmode-pick-banner-global' }, [
+                el('span', { class: 'sw-pick-banner-top', text: label + ' — 0 vertices' }),
+                el('small', { text: 'Click map to add a vertex · Double-click to finish · ESC to cancel' })
+            ]);
+            var cancelBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Cancel' });
+            cancelBtn.addEventListener('click', function () {
+                cleanup();
+                if (typeof onCancel === 'function') onCancel();
+            });
+            var finishBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary',
+                text: 'Finish (or double-click)' });
+            finishBtn.addEventListener('click', finish);
+            banner.appendChild(finishBtn);
+            banner.appendChild(cancelBtn);
+            bar.appendChild(banner);
+        }
+
+        function onClick(e) {
+            // Skip if the click is the first half of a dblclick (Leaflet fires
+            // both); use a small grace window to detect that.
+            if (e.originalEvent && e.originalEvent._dblClicked) return;
+            var lat = e.latlng && e.latlng.lat;
+            var lng = e.latlng && e.latlng.lng;
+            if (typeof lat !== 'number' || typeof lng !== 'number') return;
+            verts.push([lng, lat]);
+            rerenderPreview();
+            setBannerText();
+        }
+        function onDblClick(e) {
+            if (e && e.originalEvent) e.originalEvent._dblClicked = true;
+            try { if (e && e.originalEvent && typeof e.originalEvent.preventDefault === 'function') e.originalEvent.preventDefault(); } catch (_) {}
+            // The last single-click usually fires before dblclick; if it just
+            // added the dblclick point, keep it as the last vertex. Otherwise
+            // ignore the dblclick coordinate.
+            finish();
+        }
+        function finish() {
+            if (verts.length < (mode === 'polygon' ? 3 : 2)) {
+                setStatus(label + ': need at least ' + (mode === 'polygon' ? 3 : 2) + ' vertices.', true);
+                cleanup();
+                if (typeof onCancel === 'function') onCancel();
+                return;
+            }
+            var result = verts.slice();
+            if (mode === 'polygon') {
+                // Close the ring (validator + adjudicator-map expect first==last for safety)
+                var first = result[0], last = result[result.length - 1];
+                if (first[0] !== last[0] || first[1] !== last[1]) result.push([first[0], first[1]]);
+            }
+            cleanup();
+            if (typeof onFinish === 'function') onFinish(result);
+        }
+        function onKey(e) {
+            if (e.key === 'Escape') {
+                cleanup();
+                if (typeof onCancel === 'function') onCancel();
+            } else if (e.key === 'Enter') {
+                finish();
+            }
+        }
+        function cleanup() {
+            try { map.off('click', onClick); } catch (_) {}
+            try { map.off('dblclick', onDblClick); } catch (_) {}
+            try { map.getContainer().style.cursor = ''; } catch (_) {}
+            try { document.removeEventListener('keydown', onKey); } catch (_) {}
+            try { if (preview) { map.removeLayer(preview); preview = null; } } catch (_) {}
+            _forcesPickOnMap = false;
+            _forcesPickMapHandlers = null;
+            if (panel) panel.classList.remove('sw-editmode-picking');
+            var b = document.getElementById('sw-editmode-pick-banner');
+            if (b && b.parentNode) b.parentNode.removeChild(b);
+        }
+
+        map.on('click', onClick);
+        map.on('dblclick', onDblClick);
+        document.addEventListener('keydown', onKey);
+        // We don't use the single-shot _forcesPickMapHandlers tuple here —
+        // multi-vertex uses its own cleanup closure. Set the in-progress flag
+        // so _cancelPickOnMap() called externally (e.g. by another button)
+        // can still no-op-safely.
+        _forcesPickMapHandlers = { map: map, onClick: null, onKey: null, externalCleanup: cleanup };
+        setBannerText();
+        return true;
+    }
+
+    function _beginPickOnMapPolygon(onFinish, onCancel) {
+        return _beginMultiPick('polygon', 'Draw polygon', onFinish, onCancel);
+    }
+    function _beginPickOnMapPolyline(onFinish, onCancel) {
+        return _beginMultiPick('polyline', 'Draw line', onFinish, onCancel);
     }
 
     function renderForcesCard(host) {
@@ -1794,7 +2008,14 @@
             PHASES_ENUM:                 PHASES_ENUM,
             // Slice 2D
             groupByEchelon:              groupByEchelon,
-            unitMatchesFilter:           unitMatchesFilter
+            unitMatchesFilter:           unitMatchesFilter,
+            // Slice 2D-2: multi-vertex picks. Exposed so the static test can
+            // exercise the helpers without a real Leaflet map by stubbing
+            // window.map + window.L (see test-edit-mode-slice2e.js).
+            _beginMultiPick:             _beginMultiPick,
+            _beginPickOnMapPolygon:      _beginPickOnMapPolygon,
+            _beginPickOnMapPolyline:     _beginPickOnMapPolyline,
+            _cancelPickOnMap:            _cancelPickOnMap
         }
     };
 })();

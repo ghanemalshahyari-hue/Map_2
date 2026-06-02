@@ -332,9 +332,9 @@
                  AppApprovedActions; consumed and cleared inside
                  adjudicateNext() once shipped to the server. (todo #7) -->
             <div id="wg-adj-approved-preview" style="display:none;margin-top:6px;padding:6px 8px;
-                background:#0e1623;border-left:3px solid #ffc94a;border-radius:3px;
-                font-size:11px;color:#cdd;">
-                <div style="font-size:10px;color:#9ab;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;">
+                background:var(--panel-2);border-left:3px solid #ffc94a;border-radius:3px;
+                font-size:11px;color:var(--text-main);">
+                <div style="font-size:10px;color:var(--text-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;">
                     Approved actions for next step
                 </div>
                 <div id="wg-adj-approved-list"></div>
@@ -349,20 +349,20 @@
                 <div id="wg-adj-step-summary" style="font-size:13px; line-height:1.5;"></div>
                 <div id="wg-adj-bls-line" style="margin-top:4px; font-size:12px; color:#888;"></div>
 
-                <div style="margin-top:10px;border-top:1px solid #2a3140;padding-top:8px;">
-                    <div style="font-size:11px;color:#9ab;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px;">السرد &middot; AR</div>
+                <div style="margin-top:10px;border-top:1px solid var(--panel-border);padding-top:8px;">
+                    <div style="font-size:11px;color:var(--text-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px;">السرد &middot; AR</div>
                     <div id="wg-adj-narrative-ar" dir="rtl" lang="ar"
                          style="font-size:14px;line-height:1.75;text-align:right;
                                 font-family:'Segoe UI', 'Tahoma', 'Arial', sans-serif;
-                                color:#e6e6e6;background:#0e1623;padding:8px 10px;border-radius:4px;
+                                color:var(--text-main);background:var(--panel-2);padding:8px 10px;border-radius:4px;
                                 border-right:3px solid #3a96d2;"></div>
                 </div>
 
                 <div style="margin-top:8px;">
-                    <div style="font-size:11px;color:#9ab;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px;">Narrative &middot; EN</div>
+                    <div style="font-size:11px;color:var(--text-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px;">Narrative &middot; EN</div>
                     <div id="wg-adj-narrative-en"
-                         style="font-size:12px;line-height:1.55;color:#ccc;
-                                background:#0e1623;padding:8px 10px;border-radius:4px;
+                         style="font-size:12px;line-height:1.55;color:var(--text-main);
+                                background:var(--panel-2);padding:8px 10px;border-radius:4px;
                                 border-left:3px solid #888;"></div>
                 </div>
 
@@ -409,14 +409,14 @@
                     <div id="wg-adj-lessons-list" style="margin-top:4px;display:none;font-size:11px;"></div>
                     <!-- Inline compose form, hidden by default -->
                     <div id="wg-adj-lessons-form" style="margin-top:4px;display:none;font-size:11px;
-                        border:1px solid #2a3140;padding:6px;background:#191e29;">
+                        border:1px solid var(--panel-border);padding:6px;background:var(--panel-2);">
                         <div style="margin-bottom:4px;">
                             <input id="wg-adj-les-title" type="text" placeholder="Lesson title (required, max 120)"
-                                style="width:100%;box-sizing:border-box;background:#12161e;border:1px solid #2a3140;color:#ddd;padding:3px 5px;font-size:11px;">
+                                style="width:100%;box-sizing:border-box;background:var(--panel);border:1px solid var(--panel-border);color:var(--text-main);padding:3px 5px;font-size:11px;">
                         </div>
                         <div style="margin-bottom:4px;display:flex;gap:4px;">
                             <select id="wg-adj-les-category"
-                                style="background:#12161e;border:1px solid #2a3140;color:#ddd;padding:3px 5px;font-size:11px;">
+                                style="background:var(--panel);border:1px solid var(--panel-border);color:var(--text-main);padding:3px 5px;font-size:11px;">
                                 <option value="general">general</option>
                                 <option value="tactics">tactics</option>
                                 <option value="logistics">logistics</option>
@@ -425,11 +425,11 @@
                                 <option value="maneuver">maneuver</option>
                             </select>
                             <input id="wg-adj-les-author" type="text" placeholder="Author"
-                                style="flex:1;background:#12161e;border:1px solid #2a3140;color:#ddd;padding:3px 5px;font-size:11px;">
+                                style="flex:1;background:var(--panel);border:1px solid var(--panel-border);color:var(--text-main);padding:3px 5px;font-size:11px;">
                         </div>
                         <div style="margin-bottom:4px;">
                             <textarea id="wg-adj-les-narrative" rows="2" placeholder="Narrative (optional, max 2000)"
-                                style="width:100%;box-sizing:border-box;background:#12161e;border:1px solid #2a3140;color:#ddd;padding:3px 5px;font-size:11px;resize:vertical;"></textarea>
+                                style="width:100%;box-sizing:border-box;background:var(--panel);border:1px solid var(--panel-border);color:var(--text-main);padding:3px 5px;font-size:11px;resize:vertical;"></textarea>
                         </div>
                         <div style="display:flex;gap:4px;justify-content:flex-end;">
                             <button id="wg-adj-les-cancel" type="button" class="wargame-action-btn secondary"
@@ -443,7 +443,7 @@
             </div>
 
             <div id="wg-adj-mc-panel" style="display:none; margin-top:8px;">
-                <div class="wargame-feed-head" style="background:#1c2230;">
+                <div class="wargame-feed-head" style="background:var(--panel-2);">
                     <span>Monte Carlo run</span>
                     <span id="wg-adj-mc-pill" class="wargame-state-pill is-active">starting…</span>
                 </div>

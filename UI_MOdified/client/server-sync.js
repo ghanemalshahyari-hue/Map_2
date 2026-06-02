@@ -64,7 +64,7 @@
     function collectPrefsFromLocalStorage() {
         const prefs = {};
         try {
-            prefs.theme = localStorage.getItem(THEME_KEY) || 'dark';
+            prefs.theme = localStorage.getItem(THEME_KEY) || 'light';
             prefs.lang = typeof window.getCurrentLang === 'function' ? window.getCurrentLang() : 'en';
             prefs.distanceUnit = localStorage.getItem(DIST_KEY) === 'nm' ? 'nm' : 'km';
             prefs.coordSystem = localStorage.getItem(COORD_SYSTEM_KEY) || 'wgs84';

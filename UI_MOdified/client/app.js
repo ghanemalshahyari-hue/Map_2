@@ -17232,7 +17232,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const legendToggleBtn = document.getElementById('legend-toggle-btn');
     function getTheme() {
-        return localStorage.getItem(THEME_KEY) || 'dark';
+        return localStorage.getItem(THEME_KEY) || 'light';
     }
     function setTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);

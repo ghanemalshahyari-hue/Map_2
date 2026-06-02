@@ -154,6 +154,16 @@
             balance: {
                 force_ratio_local: num(s.force_ratio_local),
                 force_ratio_operational: num(s.force_ratio_operational),
+                // PR-WS2.5: inputs for the derived-field rules (force ratio string
+                // + cumulative losses). Populated from scenario baselines here;
+                // the live app overwrites them with the running `state` values
+                // before re-running the rules (same Inputs→Rule→Output path).
+                force_ratio: (typeof s.force_ratio_baseline === 'string') ? s.force_ratio_baseline : null,
+                losses: {
+                    blue_destroyed: num(s.blue_destroyed_count_baseline),
+                    blue_total: num(s.blue_total),
+                    red_company_equivalent: num(s.red_losses_cumulative_baseline)
+                },
                 ew_effect: s.ew_effect_baseline || null,
                 logistics_state: s.logistics_state_baseline || null
             },
@@ -205,6 +215,59 @@
             engagement_arcs: clone(arr(s.engagement_arcs))
         };
 
+        // PR-WS2.5: World State computes its derived fields from its OWN inputs
+        // (objective_status_display today; balance/threat/control/readiness later
+        // add a row to DERIVATIONS). Owns the derivation, not just storage.
+        applyDerivations(ws);
+        return ws;
+    }
+
+    /* ---- derived-field rules (Inputs → Rule → Derived Output) -------------
+     * Each rule is a PURE (ws) -> value that reads its inputs from the snapshot
+     * and returns ONE derived output. World State owns the derivation; consumers
+     * (the renderer, 3D, future formula layer) read the result. Add a future
+     * field by adding ONE row to DERIVATIONS — same pattern, no new plumbing.
+     * WS2.5 ships the first rule, relocated VERBATIM from the renderer's
+     * deriveDisplayOutcome (no new formula).
+     * ---------------------------------------------------------------------- */
+    function parseFrRatio(s) {
+        if (typeof s !== 'string') return null;
+        var m = s.match(/^(\d{1,2}(?:\.\d)?):1/);
+        return m ? Number(m[1]) : null;
+    }
+    // Objective status display: only CAPTURED is re-litigated against the
+    // evidence (force ratio + losses); every other status passes through.
+    function computeObjectiveStatusDisplay(ws) {
+        var d = obj(ws && ws.derived);
+        var status = d.objective_status || 'DORMANT';
+        if (status !== 'CAPTURED') return status;
+        var b = obj(ws && ws.balance);
+        var fr = String(b.force_ratio || '');
+        var lc = obj(b.losses);
+        var blueLost  = Number(lc.blue_destroyed) || 0;
+        var blueTotal = Number(lc.blue_total) || 39;
+        var redCoyEq  = Number(lc.red_company_equivalent) || 0;
+        var frBlocks    = /\b(below\s+decisive|not\s+engaged|N\/A)\b/i.test(fr);
+        var frNum       = parseFrRatio(fr);
+        var frNumBlocks = (frNum !== null && frNum < 2);
+        var blueIntact  = (blueLost / blueTotal) < 0.25;
+        var redSpent    = redCoyEq > 6;
+        if (frBlocks || frNumBlocks || blueIntact || redSpent) return 'DENIED';
+        return status;
+    }
+    // Registry: derived-field name -> pure rule. The runner writes each result
+    // into ws.derived[name]. This is the ONE place a new derived field is added.
+    var DERIVATIONS = {
+        objective_status_display: computeObjectiveStatusDisplay
+    };
+    function applyDerivations(ws) {
+        if (!ws) return ws;
+        ws.derived = obj(ws.derived);
+        for (var key in DERIVATIONS) {
+            if (Object.prototype.hasOwnProperty.call(DERIVATIONS, key)) {
+                ws.derived[key] = DERIVATIONS[key](ws);
+            }
+        }
         return ws;
     }
 
@@ -248,6 +311,12 @@
         DECISION_TYPES: DECISION_TYPES,
         deriveWorldState: deriveWorldState,
         applyDecision: applyDecision,
+        // PR-WS2.5: derived-field rules (Inputs → Rule → Derived Output).
+        // applyDerivations re-runs all rules over a snapshot (used live after the
+        // app projects fresh inputs); computeObjectiveStatusDisplay is the first.
+        applyDerivations: applyDerivations,
+        computeObjectiveStatusDisplay: computeObjectiveStatusDisplay,
+        DERIVATIONS: DERIVATIONS,
         // exposed for tests / future rule modules
         _bearing: bearing,
         _nmBetween: nmBetween

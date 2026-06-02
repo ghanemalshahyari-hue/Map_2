@@ -95,8 +95,11 @@ ok('non-W3 scenario derives without throwing', degradedOk && !!degraded);
 ok('non-W3 snapshot flagged degraded', degradedOk && degraded.degraded === true);
 
 /* 6. Render read is GUARDED — legacy fallback present --------------------- */
+// WS2.5 relocated the rule into World State; deriveDisplayOutcome now returns the
+// WS-computed value and keeps the inline rule (starting at this line) as the
+// WS-absent fallback. Assert that legacy fallback line still exists.
 ok('deriveDisplayOutcome keeps state.objective_status fallback',
-   /ws\.derived\.objective_status\)\s*\n?\s*\|\|\s*state\.objective_status\s*\|\|\s*'DORMANT'/.test(MAP_JS));
+   /const\s+status\s*=\s*state\.objective_status\s*\|\|\s*'DORMANT'/.test(MAP_JS));
 
 console.log(`\nPR-WS2: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

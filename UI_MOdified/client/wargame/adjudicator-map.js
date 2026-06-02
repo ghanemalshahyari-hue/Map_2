@@ -2505,14 +2505,15 @@
     }
     function deriveDisplayOutcome(state) {
         if (!state) return 'DORMANT';
-        // PR-WS2: objective status is the FIRST render field read from the live
-        // World State snapshot. Gated on `state === lastAppliedState` so the
-        // snapshot is only used for the state it was reconciled from (else fall
-        // back to `state.*`). Value is identical (reconciled in applyState), so
-        // this is a no-op today; WS4 makes World State the owner of this field.
+        // PR-WS2.5: the objective-status evidence rule now lives in World State
+        // (AppWorldState.computeObjectiveStatusDisplay, run via applyDerivations).
+        // Read the World-State-computed value for the live state; the inline rule
+        // below is kept VERBATIM only as the fallback when WS1 is absent.
         const ws = (lastWorldState && state === lastAppliedState) ? lastWorldState : null;
-        const status = (ws && ws.derived && ws.derived.objective_status)
-            || state.objective_status || 'DORMANT';
+        if (ws && ws.derived && ws.derived.objective_status_display) {
+            return ws.derived.objective_status_display;
+        }
+        const status = state.objective_status || 'DORMANT';
         // Only re-litigate CAPTURED — the others (DENIED, THREATENED,
         // CONTESTED, DORMANT) describe Red NOT dominating, and the
         // server validator already blocks regressions.
@@ -5357,16 +5358,31 @@
             try {
                 const ws = window.AppWorldState.deriveWorldState(lastAppliedScenario, stepIdx);
                 if (ws) {
-                    // Reconciliation — the ONE transitional line (WS4 inverts it):
-                    // the snapshot reflects the LIVE step truth, not just the
-                    // scenario baseline. Value is identical to `state`, so reading
-                    // it back in deriveDisplayOutcome is a no-op until WS4.
+                    // PR-WS2.5: project the LIVE inputs the derived-field rules
+                    // consume (raw objective status + force ratio + losses), then
+                    // let World State recompute ALL derived outputs generically
+                    // (same Inputs→Rule→Output path every field uses). World State
+                    // owns the derivation; `state` still owns the raw inputs until
+                    // WS4 computes those from WS units too. Value is identical to
+                    // the renderer's old inline rule, so the display is unchanged.
+                    ws.derived = ws.derived || {};
                     if (state.objective_status) {
-                        ws.derived = ws.derived || {};
                         ws.derived.objective_status = state.objective_status;
                         if (ws.objectives && ws.objectives[0]) {
                             ws.objectives[0].status = state.objective_status;
                         }
+                    }
+                    ws.balance = ws.balance || {};
+                    if (state.force_ratio != null) ws.balance.force_ratio = state.force_ratio;
+                    if (state.losses_cumulative) {
+                        ws.balance.losses = {
+                            blue_destroyed: state.losses_cumulative.blue_destroyed,
+                            blue_total: state.losses_cumulative.blue_total,
+                            red_company_equivalent: state.losses_cumulative.red_company_equivalent
+                        };
+                    }
+                    if (typeof window.AppWorldState.applyDerivations === 'function') {
+                        window.AppWorldState.applyDerivations(ws);
                     }
                     lastWorldState = ws;
                 }

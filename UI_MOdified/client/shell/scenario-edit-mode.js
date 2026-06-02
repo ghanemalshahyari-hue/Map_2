@@ -47,6 +47,17 @@
     // for a 6-item static enum; if the server enum changes, update both.
     var PHASES_ENUM = ['PRE-H', 'PHASE 1', 'PHASE 2A', 'PHASE 2B', 'PHASE 3', 'RESOLUTION'];
 
+    // Slice 2D: Forces step state (scale-aware tree + detail pane).
+    // The old Slice 2B flat list rendered ~1198 inputs on wargame3 (153 units).
+    // New: tree groups units by side → echelon; only ONE unit's full editor
+    // is rendered at a time in the detail pane below the tree.
+    var _selectedUnitSide = null; // 'red' or 'blue'
+    var _selectedUnitUid  = null; // uid (red) or unit_uid (blue) of the selected unit
+    var _forcesFilter     = '';   // current substring filter for the tree
+    var _collapsedForcesGroups = new Set(); // group keys the user has collapsed
+    var _forcesPickOnMap  = false;          // 'Pick on map' placement mode active?
+    var _forcesPickMapHandlers = null;       // teardown handle for the click+ESC listeners
+
     /* ---- small helpers ---------------------------------------------------- */
     function el(tag, attrs, kids) {
         var n = document.createElement(tag);
@@ -519,8 +530,13 @@
         host.appendChild(card);
     }
 
-    /* ---- Slice 2B: Forces card (Red OOB + Blue OOB) ---------------------- */
-    // CMO maneuver-role enum the renderer recognises (adjudicator-map.js).
+    /* ---- Slice 2D: Forces (OOB) — tree + detail pane (replaces 2B flat) -- */
+    // CMO maneuver-role enum: now used as a *datalist* (suggestion list)
+    // rather than a strict <select>. Real-world scenarios like wargame3
+    // carry 33+ distinct role values (mech_inf_div, sam_s300, submarine, …);
+    // a strict <select> would silently overwrite those values when an
+    // operator opened the dropdown. Free-text + suggestions preserves data
+    // and still makes the CMO 7 visible.
     var RED_UNIT_ROLES = [
         'Main effort', 'Fixing', 'Support', 'External envelopment',
         'Follow-on', 'Exploitation', 'Recon'
@@ -533,167 +549,152 @@
         return prefix + '-' + i;
     }
 
+    // Group a flat unit list by an echelon key. Returns
+    //   { 'division': [u, u, ...], 'brigade': [...], ..., '(no echelon)': [...] }
+    // preserving insertion order within each bucket.
+    function groupByEchelon(units) {
+        var groups = Object.create(null);
+        var order  = [];
+        units.forEach(function (u) {
+            var k = (u && u.echelon) ? String(u.echelon) : '(no echelon)';
+            if (!groups[k]) { groups[k] = []; order.push(k); }
+            groups[k].push(u);
+        });
+        return { groups: groups, order: order };
+    }
+
+    // Case-insensitive substring match against the fields a user is likely
+    // to search by. Returns true for an empty filter (no-op).
+    function unitMatchesFilter(u, q) {
+        if (!q) return true;
+        q = String(q).toLowerCase();
+        var hay = [
+            u.uid || u.unit_uid || '',
+            u.label || '',
+            u.role  || '',
+            u.bls   || '',
+            u.base_id || '',
+            u.echelon || ''
+        ].join(' ').toLowerCase();
+        return hay.indexOf(q) !== -1;
+    }
+
+    // Build a tiny milsymbol SVG for a row. Falls back to a colored dot if
+    // milsymbol isn't loaded (Node tests, etc.) so this stays render-safe.
+    function buildMiniSymbolHtml(sidc, side) {
+        try {
+            if (window.ms && typeof window.ms.Symbol === 'function') {
+                var s = (sidc && String(sidc).length >= 10) ? String(sidc)
+                      : (side === 'red'  ? '10061000001211000000'
+                                          : '10031000001211000000');
+                var sym = new window.ms.Symbol(s, { size: 18 });
+                if (sym.isValid()) return sym.asSVG();
+            }
+        } catch (_) { /* fall through */ }
+        var color = side === 'red' ? '#d6332e' : '#3a76c2';
+        return '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + color + '"></span>';
+    }
+
+    function _selectUnit(side, uid) {
+        _selectedUnitSide = side;
+        _selectedUnitUid  = uid;
+    }
+    function _clearSelection() {
+        _selectedUnitSide = null;
+        _selectedUnitUid  = null;
+        _cancelPickOnMap();
+    }
+    function _findSelectedUnit(d) {
+        if (!_selectedUnitUid || !d) return null;
+        if (_selectedUnitSide === 'red') {
+            return (d.red_units || []).find(function (u) { return u.uid === _selectedUnitUid; }) || null;
+        }
+        return (d.blue_units_initial || []).find(function (u) { return u.unit_uid === _selectedUnitUid; }) || null;
+    }
+
+    // "Pick on map" placement mode: next Leaflet map click writes the
+    // selected unit's coord. ESC cancels. Reuses window.map directly
+    // (Leaflet's once() guarantees a single-shot handler). Does NOT call
+    // /api/units/place — this is scenario-draft authoring, not the durable
+    // ORBAT store.
+    function _beginPickOnMap(onPicked, onCancel) {
+        _cancelPickOnMap();
+        var map = window.map;
+        if (!map) { setStatus('Map not ready.', true); return false; }
+        _forcesPickOnMap = true;
+        try { map.getContainer().style.cursor = 'crosshair'; } catch (_) {}
+        var onClick = function (e) {
+            var lat = e.latlng && e.latlng.lat;
+            var lng = e.latlng && e.latlng.lng;
+            _cancelPickOnMap();
+            if (typeof onPicked === 'function') onPicked([lng, lat]);
+        };
+        var onKey = function (e) {
+            if (e.key === 'Escape') {
+                _cancelPickOnMap();
+                if (typeof onCancel === 'function') onCancel();
+            }
+        };
+        map.once('click', onClick);
+        document.addEventListener('keydown', onKey);
+        _forcesPickMapHandlers = { map: map, onClick: onClick, onKey: onKey };
+        return true;
+    }
+    function _cancelPickOnMap() {
+        if (!_forcesPickOnMap && !_forcesPickMapHandlers) return;
+        _forcesPickOnMap = false;
+        var h = _forcesPickMapHandlers;
+        _forcesPickMapHandlers = null;
+        if (!h) return;
+        try { h.map.off('click', h.onClick); } catch (_) {}
+        try { h.map.getContainer().style.cursor = ''; } catch (_) {}
+        try { document.removeEventListener('keydown', h.onKey); } catch (_) {}
+    }
+
     function renderForcesCard(host) {
         var card = el('div', { class: 'builder-card sw-card' }, [
             el('div', { class: 'builder-card-header' }, [
                 el('span', { class: 'builder-card-title',
-                             text: 'Edit · Forces (Red OOB + Blue OOB) / القوات' })
+                             text: 'Edit · Forces (OOB) / القوات' })
             ])
         ]);
 
+        // Local handles so the inner rerender callbacks can find them.
+        var treeEl   = el('div', { class: 'sw-forces-tree' });
+        var detailEl = el('div', { class: 'sw-forces-detail' });
+
+        // ── Toolbar (search + add buttons + counts) ──────────────────
         var blsNames = (Array.isArray(_draft.bls_template) ? _draft.bls_template : [])
             .map(function (b) { return b && b.name; }).filter(Boolean);
-        var stepCount = Array.isArray(_draft.steps) ? _draft.steps.length : 0;
 
-        /* --- Red OOB --- */
-        var redCard = el('div', { class: 'sw-edit-subcard' }, [
-            el('div', { class: 'sw-edit-subcard-header', text: 'Red Order of Battle / ترتيب المعركة (أحمر)' })
-        ]);
-        var redList = el('div', { class: 'sw-edit-list' });
-        function rerenderRedList() {
-            redList.innerHTML = '';
-            if (!_draft.red_units.length) {
-                redList.appendChild(el('div', { class: 'sw-edit-empty', text: '(no Red units — Add Red unit below)' }));
-            }
-            // Refresh local BLS-name cache each render so removing/renaming a BLS
-            // in the Geometry card upstream is reflected here.
-            blsNames = (Array.isArray(_draft.bls_template) ? _draft.bls_template : [])
-                .map(function (b) { return b && b.name; }).filter(Boolean);
-            _draft.red_units.forEach(function (u, idx) {
-                if (!Array.isArray(u.coord) || u.coord.length < 2) u.coord = [0, 0];
-                var label = 'Red #' + (idx + 1);
-                var rm = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Remove' });
-                rm.addEventListener('click', function () {
-                    _draft.red_units.splice(idx, 1);
-                    rerenderRedList();
-                });
-                // Build the BLS select — must include the unit's current value
-                // even if it's no longer in bls_template (so the operator can see
-                // and fix the broken reference rather than have it silently change).
-                var blsOpts = blsNames.slice();
-                if (u.bls && blsOpts.indexOf(u.bls) === -1) blsOpts.push(u.bls);
-                redList.appendChild(el('div', { class: 'sw-edit-list-item' }, [
-                    el('dl', { class: 'sw-kv' }, [
-                        fieldRow(label + ' · uid',
-                            textInput(u.uid || '', function (v) { u.uid = v; })),
-                        fieldRow(label + ' · label',
-                            textInput(u.label || '', function (v) { u.label = v; })),
-                        fieldRow(label + ' · bls',
-                            selectInput(blsOpts, u.bls || (blsOpts[0] || ''),
-                                        function (v) { u.bls = v; })),
-                        fieldRow(label + ' · appear (step index)',
-                            numberInput(u.appear == null ? 0 : u.appear,
-                                        function (v) { u.appear = (v == null ? 0 : v); })),
-                        fieldRow(label + ' · role',
-                            selectInput(RED_UNIT_ROLES, u.role || 'Main effort',
-                                        function (v) { u.role = v; })),
-                        fieldRow(label + ' · coord.lon',
-                            numberInput(u.coord[0], function (v) { u.coord[0] = (v == null ? 0 : v); })),
-                        fieldRow(label + ' · coord.lat',
-                            numberInput(u.coord[1], function (v) { u.coord[1] = (v == null ? 0 : v); })),
-                        fieldRow(label + ' · echelon',
-                            textInput(u.echelon || '', function (v) { u.echelon = v; })),
-                        fieldRow(label + ' · strength (0..1)',
-                            numberInput(u.strength == null ? 1 : u.strength,
-                                        function (v) { u.strength = (v == null ? 1 : v); },
-                                        { min: 0, max: 1, step: '0.05' })),
-                        fieldRow(label + ' · sidc',
-                            textInput(u.sidc || '', function (v) { u.sidc = v; }))
-                    ]),
-                    rm
-                ]));
-            });
-        }
-        rerenderRedList();
-        redCard.appendChild(redList);
+        var searchInp = el('input', {
+            type: 'text', class: 'sw-edit-input',
+            placeholder: 'Filter by uid / label / role / bls …'
+        });
+        searchInp.value = _forcesFilter;
+        searchInp.addEventListener('input', function () {
+            _forcesFilter = searchInp.value || '';
+            rerenderTree();
+        });
 
-        var addRed = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Add Red unit' });
-        var redHint = el('div', { class: 'sw-edit-hint',
-            text: 'Add Red unit needs at least one BLS — define one in the Forces Geometry card above.' });
-        function refreshAddRedAvailability() {
-            var hasBls = (Array.isArray(_draft.bls_template) ? _draft.bls_template : [])
-                            .some(function (b) { return b && b.name; });
-            if (hasBls) {
-                addRed.removeAttribute('disabled');
-                redHint.style.display = 'none';
-            } else {
-                addRed.setAttribute('disabled', 'disabled');
-                redHint.style.display = '';
-            }
-        }
-        addRed.addEventListener('click', function () {
-            // Repopulate the BLS cache RIGHT NOW (operator may have just added one upstream).
-            blsNames = (Array.isArray(_draft.bls_template) ? _draft.bls_template : [])
-                .map(function (b) { return b && b.name; }).filter(Boolean);
+        var addRedBtn  = el('button', { type: 'button', class: 'sw-edit-btn', text: '+ Red unit' });
+        var addBlueBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: '+ Blue unit' });
+        addRedBtn.addEventListener('click', function () {
             if (!blsNames.length) {
-                setStatus('Add at least one BLS in the Forces Geometry card before adding Red units.', true);
+                setStatus('Add at least one BLS in the Forces Geometry step before adding Red units.', true);
                 return;
             }
-            var firstBls = (_draft.bls_template[0] && Array.isArray(_draft.bls_template[0].coord))
+            var seed = (_draft.bls_template[0] && Array.isArray(_draft.bls_template[0].coord))
                 ? _draft.bls_template[0].coord.slice() : [0, 0];
+            var uid = nextFreeUid('RED', _draft.red_units, 'uid');
             _draft.red_units.push({
-                uid:      nextFreeUid('RED', _draft.red_units, 'uid'),
-                label:    '',
-                bls:      blsNames[0],
-                appear:   0,
-                role:     'Main effort',
-                coord:    firstBls,
-                strength: 1
+                uid: uid, label: '', bls: blsNames[0], appear: 0,
+                role: 'Main effort', coord: seed, strength: 1
             });
-            rerenderRedList();
+            _selectUnit('red', uid);
+            rerenderTree(); rerenderDetail();
         });
-        refreshAddRedAvailability();
-        // Slice 2B: publish the in-place refresh callback so the Geometry card
-        // can update Add Red availability when bls_template changes — without
-        // forcing a full editor re-render that would lose input focus.
-        _refreshForcesAvailability = refreshAddRedAvailability;
-        redCard.appendChild(el('div', { class: 'sw-edit-actions' }, [addRed, redHint]));
-        card.appendChild(redCard);
-
-        /* --- Blue OOB --- */
-        var blueCard = el('div', { class: 'sw-edit-subcard' }, [
-            el('div', { class: 'sw-edit-subcard-header', text: 'Blue Order of Battle / ترتيب المعركة (أزرق)' })
-        ]);
-        var blueList = el('div', { class: 'sw-edit-list' });
-        function rerenderBlueList() {
-            blueList.innerHTML = '';
-            if (!_draft.blue_units_initial.length) {
-                blueList.appendChild(el('div', { class: 'sw-edit-empty', text: '(no Blue units)' }));
-            }
-            _draft.blue_units_initial.forEach(function (u, idx) {
-                if (!Array.isArray(u.coord) || u.coord.length < 2) u.coord = [0, 0];
-                var label = 'Blue #' + (idx + 1);
-                var rm = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Remove' });
-                rm.addEventListener('click', function () {
-                    _draft.blue_units_initial.splice(idx, 1);
-                    rerenderBlueList();
-                });
-                blueList.appendChild(el('div', { class: 'sw-edit-list-item' }, [
-                    el('dl', { class: 'sw-kv' }, [
-                        fieldRow(label + ' · unit_uid',
-                            textInput(u.unit_uid || '', function (v) { u.unit_uid = v; })),
-                        fieldRow(label + ' · base_id',
-                            textInput(u.base_id || '', function (v) { u.base_id = v; })),
-                        fieldRow(label + ' · coord.lon',
-                            numberInput(u.coord[0], function (v) { u.coord[0] = (v == null ? 0 : v); })),
-                        fieldRow(label + ' · coord.lat',
-                            numberInput(u.coord[1], function (v) { u.coord[1] = (v == null ? 0 : v); })),
-                        fieldRow(label + ' · echelon',
-                            textInput(u.echelon || '', function (v) { u.echelon = v; })),
-                        fieldRow(label + ' · sidc',
-                            textInput(u.sidc || '', function (v) { u.sidc = v; }))
-                    ]),
-                    rm
-                ]));
-            });
-        }
-        rerenderBlueList();
-        blueCard.appendChild(blueList);
-
-        var addBlue = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Add Blue unit' });
-        addBlue.addEventListener('click', function () {
-            // Default coord: copy the first existing blue unit's coord if any,
-            // else use map_bbox centre, else [0,0].
+        addBlueBtn.addEventListener('click', function () {
             var seed = [0, 0];
             if (_draft.blue_units_initial.length &&
                 Array.isArray(_draft.blue_units_initial[0].coord) &&
@@ -705,21 +706,249 @@
                         (_draft.map_bbox[1] + _draft.map_bbox[3]) / 2];
             }
             var nextN = _draft.blue_units_initial.length + 1;
+            var uid   = nextFreeUid('BLUE', _draft.blue_units_initial, 'unit_uid');
             _draft.blue_units_initial.push({
-                unit_uid: nextFreeUid('BLUE', _draft.blue_units_initial, 'unit_uid'),
-                base_id:  'B' + nextN,
-                coord:    seed
+                unit_uid: uid, base_id: 'B' + nextN, coord: seed
             });
-            rerenderBlueList();
+            _selectUnit('blue', uid);
+            rerenderTree(); rerenderDetail();
         });
-        blueCard.appendChild(el('div', { class: 'sw-edit-actions' }, [addBlue]));
-        card.appendChild(blueCard);
 
-        // Note: blue_units_base_ids is DERIVED at Save time from
-        // blue_units_initial[].base_id — no separate editor.
-        card.appendChild(el('div', { class: 'sw-edit-hint',
-            text: 'blue_units_base_ids is derived from Blue · base_id on Save (kept in sync automatically).' }));
+        // Refresh Add Red availability when bls_template changes upstream.
+        function refreshAddRedAvailability() {
+            blsNames = (Array.isArray(_draft.bls_template) ? _draft.bls_template : [])
+                        .map(function (b) { return b && b.name; }).filter(Boolean);
+            if (blsNames.length) addRedBtn.removeAttribute('disabled');
+            else                  addRedBtn.setAttribute('disabled', 'disabled');
+        }
+        refreshAddRedAvailability();
+        _refreshForcesAvailability = function () {
+            refreshAddRedAvailability();
+            rerenderTree();   // bls options in detail pane depend on bls_template
+            rerenderDetail();
+        };
 
+        var countsEl = el('span', { class: 'sw-forces-counts', text: '' });
+
+        var toolbar = el('div', { class: 'sw-forces-toolbar' }, [
+            searchInp, addRedBtn, addBlueBtn, countsEl
+        ]);
+
+        // ── Tree rendering ────────────────────────────────────────────
+        function groupKey(side, echelon) { return side + ':' + echelon; }
+        function renderRow(unit, side) {
+            var uid     = unit.uid || unit.unit_uid;
+            var sym     = el('span', { class: 'sw-forces-sym', html: buildMiniSymbolHtml(unit.sidc, side) });
+            var uidSpan = el('span', { class: 'sw-forces-uid',  text: uid || '' });
+            var label   = el('span', { class: 'sw-forces-label', text: unit.label || unit.base_id || '—' });
+            var tags = [];
+            if (unit.role)    tags.push(el('span', { class: 'sw-forces-tag', text: unit.role }));
+            if (unit.bls)     tags.push(el('span', { class: 'sw-forces-tag', text: unit.bls }));
+            if (unit.base_id && !unit.bls) tags.push(el('span', { class: 'sw-forces-tag', text: unit.base_id }));
+            var rowKids = [sym, uidSpan, label].concat(tags);
+            var row = el('div', { class: 'sw-forces-row' + (
+                _selectedUnitUid === uid && _selectedUnitSide === side ? ' selected' : '')
+            }, rowKids);
+            row.addEventListener('click', function () {
+                _selectUnit(side, uid);
+                rerenderTree();   // update .selected class
+                rerenderDetail();
+            });
+            return row;
+        }
+        function renderSideGroup(label, sideKey, units) {
+            // Filter first; if nothing matches, skip the whole side.
+            var visible = units.filter(function (u) { return unitMatchesFilter(u, _forcesFilter); });
+            if (!visible.length) return null;
+            var grouped = groupByEchelon(visible);
+            var sideExpanded = !_collapsedForcesGroups.has(sideKey);
+            // When the user is searching, force everything open to surface hits.
+            var force = !!_forcesFilter;
+            if (force) sideExpanded = true;
+            var header = el('div', {
+                class: 'sw-forces-group-header sw-forces-side-' + sideKey
+            }, [
+                el('span', { class: 'sw-forces-group-chev', text: sideExpanded ? '▾' : '▸' }),
+                el('span', { text: label }),
+                el('span', { class: 'sw-forces-group-count', text: '· ' + visible.length })
+            ]);
+            header.addEventListener('click', function () {
+                if (sideExpanded) _collapsedForcesGroups.add(sideKey);
+                else              _collapsedForcesGroups['delete'](sideKey);
+                rerenderTree();
+            });
+            var wrap = el('div', null, [header]);
+            if (!sideExpanded) return wrap;
+
+            grouped.order.forEach(function (echelon) {
+                var ekey = groupKey(sideKey, echelon);
+                var ulist = grouped.groups[echelon];
+                var eExpanded = !_collapsedForcesGroups.has(ekey);
+                if (force) eExpanded = true;
+                var eHeader = el('div', { class: 'sw-forces-group-header sw-forces-group-echelon' }, [
+                    el('span', { class: 'sw-forces-group-chev', text: eExpanded ? '▾' : '▸' }),
+                    el('span', { text: echelon }),
+                    el('span', { class: 'sw-forces-group-count', text: '· ' + ulist.length })
+                ]);
+                eHeader.addEventListener('click', function () {
+                    if (eExpanded) _collapsedForcesGroups.add(ekey);
+                    else           _collapsedForcesGroups['delete'](ekey);
+                    rerenderTree();
+                });
+                wrap.appendChild(eHeader);
+                if (eExpanded) ulist.forEach(function (u) { wrap.appendChild(renderRow(u, sideKey === 'RED' ? 'red' : 'blue')); });
+            });
+            return wrap;
+        }
+
+        function rerenderTree() {
+            treeEl.innerHTML = '';
+            var red  = renderSideGroup('RED · ',  'RED',  _draft.red_units          || []);
+            var blue = renderSideGroup('BLUE · ', 'BLUE', _draft.blue_units_initial || []);
+            if (red)  treeEl.appendChild(red);
+            if (blue) treeEl.appendChild(blue);
+            if (!red && !blue) {
+                treeEl.appendChild(el('div', { class: 'sw-forces-empty',
+                    text: _forcesFilter ?
+                        ('No units match "' + _forcesFilter + '". Clear the filter to see all.') :
+                        '(no units yet — add a BLS in the Forces Geometry step, then click + Red unit)' }));
+            }
+            // Update toolbar counts (post-filter so it reflects the tree).
+            var rt = (_draft.red_units || []).filter(function (u) { return unitMatchesFilter(u, _forcesFilter); }).length;
+            var bt = (_draft.blue_units_initial || []).filter(function (u) { return unitMatchesFilter(u, _forcesFilter); }).length;
+            var rTotal = (_draft.red_units || []).length;
+            var bTotal = (_draft.blue_units_initial || []).length;
+            countsEl.textContent = _forcesFilter
+                ? ('Showing ' + (rt + bt) + ' of ' + (rTotal + bTotal) + ' units')
+                : ('Total: ' + rTotal + ' Red · ' + bTotal + ' Blue');
+        }
+
+        // ── Detail pane (single unit's full editor) ──────────────────
+        function rerenderDetail() {
+            detailEl.innerHTML = '';
+            var u = _findSelectedUnit(_draft);
+            if (!u) {
+                detailEl.appendChild(el('div', { class: 'sw-forces-detail-empty',
+                    text: 'Click a unit in the tree above to edit it, or use + Red unit / + Blue unit.' }));
+                return;
+            }
+            var uid = u.uid || u.unit_uid;
+            var side = _selectedUnitSide;
+            var sideLabel = side === 'red' ? 'RED' : 'BLUE';
+            var rmBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Remove' });
+            rmBtn.addEventListener('click', function () {
+                if (!window.confirm('Remove ' + sideLabel + ' unit "' + uid + '"?')) return;
+                if (side === 'red')  _draft.red_units = _draft.red_units.filter(function (x) { return x !== u; });
+                else                  _draft.blue_units_initial = _draft.blue_units_initial.filter(function (x) { return x !== u; });
+                _clearSelection();
+                rerenderTree(); rerenderDetail();
+            });
+            var header = el('div', { class: 'sw-forces-detail-header' }, [
+                el('span', { class: 'sw-forces-detail-title',
+                    text: sideLabel + ' · ' + uid + (u.label ? ' — ' + u.label : '') }),
+                rmBtn
+            ]);
+            detailEl.appendChild(header);
+
+            if (!Array.isArray(u.coord) || u.coord.length < 2) u.coord = [0, 0];
+
+            // Common: uid (read-only — uid changes break ai/world-state cross-refs)
+            var fields = [];
+            fields.push(fieldRow(side === 'red' ? 'uid' : 'unit_uid',
+                (function () {
+                    var i = el('input', { type: 'text', class: 'sw-edit-input', value: uid, readonly: 'readonly' });
+                    i.style.opacity = '0.7';
+                    return i;
+                })()));
+
+            if (side === 'red') {
+                // Role: free-text + datalist suggestions. Slice 2D bug-fix: was a strict
+                // <select> in Slice 2B which silently corrupted wargame3's 33 role values.
+                var dlistId = 'sw-cmo-role-list';
+                if (!document.getElementById(dlistId)) {
+                    var dlist = document.createElement('datalist');
+                    dlist.id = dlistId;
+                    RED_UNIT_ROLES.forEach(function (r) {
+                        var o = document.createElement('option'); o.value = r;
+                        dlist.appendChild(o);
+                    });
+                    document.body.appendChild(dlist);
+                }
+                var roleInp = el('input', {
+                    type: 'text', class: 'sw-edit-input',
+                    list: dlistId, value: u.role || ''
+                });
+                roleInp.addEventListener('input', function () { u.role = roleInp.value; rerenderTree(); });
+
+                // BLS: select that includes the unit's current value even if stale.
+                var blsOpts = blsNames.slice();
+                if (u.bls && blsOpts.indexOf(u.bls) === -1) blsOpts.push(u.bls);
+
+                fields.push(fieldRow('label',
+                    textInput(u.label || '', function (v) { u.label = v; rerenderTree(); })));
+                fields.push(fieldRow('bls',
+                    selectInput(blsOpts, u.bls || (blsOpts[0] || ''),
+                        function (v) { u.bls = v; rerenderTree(); })));
+                fields.push(fieldRow('appear (step index)',
+                    numberInput(u.appear == null ? 0 : u.appear,
+                        function (v) { u.appear = (v == null ? 0 : v); })));
+                fields.push(fieldRow('role (free-text; suggestions = 7 CMO maneuver roles)', roleInp));
+                fields.push(fieldRow('coord.lon',
+                    numberInput(u.coord[0], function (v) { u.coord[0] = (v == null ? 0 : v); })));
+                fields.push(fieldRow('coord.lat',
+                    numberInput(u.coord[1], function (v) { u.coord[1] = (v == null ? 0 : v); })));
+                fields.push(fieldRow('echelon',
+                    textInput(u.echelon || '', function (v) { u.echelon = v; rerenderTree(); })));
+                fields.push(fieldRow('strength (0..1)',
+                    numberInput(u.strength == null ? 1 : u.strength,
+                        function (v) { u.strength = (v == null ? 1 : v); },
+                        { min: 0, max: 1, step: '0.05' })));
+                fields.push(fieldRow('sidc',
+                    textInput(u.sidc || '', function (v) { u.sidc = v; rerenderTree(); })));
+            } else {
+                fields.push(fieldRow('base_id',
+                    textInput(u.base_id || '', function (v) { u.base_id = v; rerenderTree(); })));
+                fields.push(fieldRow('coord.lon',
+                    numberInput(u.coord[0], function (v) { u.coord[0] = (v == null ? 0 : v); })));
+                fields.push(fieldRow('coord.lat',
+                    numberInput(u.coord[1], function (v) { u.coord[1] = (v == null ? 0 : v); })));
+                fields.push(fieldRow('echelon',
+                    textInput(u.echelon || '', function (v) { u.echelon = v; rerenderTree(); })));
+                fields.push(fieldRow('sidc',
+                    textInput(u.sidc || '', function (v) { u.sidc = v; rerenderTree(); })));
+            }
+            detailEl.appendChild(el('dl', { class: 'sw-kv' }, fields));
+
+            // Pick-on-map action row.
+            var pickBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary',
+                text: 'Pick coord on map' });
+            var pickBanner = el('div', { class: 'sw-forces-pick-banner', text: '' });
+            pickBanner.style.display = 'none';
+            pickBtn.addEventListener('click', function () {
+                if (_forcesPickOnMap) { _cancelPickOnMap(); pickBanner.style.display = 'none'; return; }
+                var started = _beginPickOnMap(function (coord) {
+                    u.coord = [Number(coord[0]) || 0, Number(coord[1]) || 0];
+                    pickBanner.style.display = 'none';
+                    rerenderDetail(); rerenderTree();
+                    setStatus('Picked coord [' + u.coord[0].toFixed(4) + ', ' + u.coord[1].toFixed(4) + '] for ' + uid, false);
+                }, function () {
+                    pickBanner.style.display = 'none';
+                });
+                if (started) {
+                    pickBanner.textContent = 'Click on the map to set ' + uid + '’s coord (ESC to cancel)';
+                    pickBanner.style.display = '';
+                }
+            });
+            detailEl.appendChild(el('div', { class: 'sw-edit-actions' }, [pickBtn]));
+            detailEl.appendChild(pickBanner);
+        }
+
+        rerenderTree();
+        rerenderDetail();
+
+        card.appendChild(toolbar);
+        card.appendChild(treeEl);
+        card.appendChild(detailEl);
         host.appendChild(card);
     }
 
@@ -1421,7 +1650,10 @@
             stepPillClass:               stepPillClass,
             synthesizeDefaultPhaseTable: synthesizeDefaultPhaseTable,
             ensureStepsMatchPhaseTable:  ensureStepsMatchPhaseTable,
-            PHASES_ENUM:                 PHASES_ENUM
+            PHASES_ENUM:                 PHASES_ENUM,
+            // Slice 2D
+            groupByEchelon:              groupByEchelon,
+            unitMatchesFilter:           unitMatchesFilter
         }
     };
 })();

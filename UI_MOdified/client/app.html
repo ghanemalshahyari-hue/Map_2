@@ -4941,7 +4941,7 @@
          P0 authoring schema (draft/working-copy engine) must load before edit-mode.
          Edits stay in-memory; commit/journal boundary untouched. -->
     <script src="shell/scenario-authoring-schema.js?v=1"></script>
-    <script src="shell/scenario-edit-mode.js?v=2"></script>
+    <script src="shell/scenario-edit-mode.js?v=3"></script>
     <style>
         .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
@@ -4994,6 +4994,40 @@
             background:#1a1d22; color:#a8b0bb; }
         .sw-gap-card-title { font-weight:600; color:#cfd4dc; margin-bottom:6px; }
         .sw-gap-card-why   { font-size:12px; line-height:1.5; }
+        /* Slice 2D — Forces (OOB) tree + detail pane (scale-aware) */
+        .sw-forces-toolbar { display:flex; gap:6px; align-items:center; padding:6px 8px;
+            border-bottom:1px solid #2a2f37; background:#1a1d22; flex-wrap:wrap; }
+        .sw-forces-toolbar input.sw-edit-input { flex:1 1 200px; max-width:340px; }
+        .sw-forces-counts { font-size:11px; color:#8d949e; margin-left:auto; }
+        .sw-forces-tree { padding:4px 0; max-height:55vh; overflow-y:auto; border-bottom:1px solid #2a2f37; }
+        .sw-forces-group-header { display:flex; align-items:center; gap:6px; padding:4px 8px;
+            cursor:pointer; user-select:none; font-size:12.5px; color:#cfd4dc; font-weight:600; }
+        .sw-forces-group-header:hover { background:#1f242b; }
+        .sw-forces-group-chev { display:inline-block; width:10px; color:#8d949e; text-align:center;
+            font-variant-numeric:tabular-nums; }
+        .sw-forces-group-count { color:#8d949e; font-weight:normal; font-size:11px; }
+        .sw-forces-side-RED  { color:#d6332e; }
+        .sw-forces-side-BLUE { color:#3a76c2; }
+        .sw-forces-group-echelon { font-weight:500; color:#a8b0bb; padding-left:22px; font-size:12px; }
+        .sw-forces-row { display:flex; align-items:center; gap:8px; padding:3px 8px 3px 40px;
+            cursor:pointer; user-select:none; font-size:12px; border-left:3px solid transparent; }
+        .sw-forces-row:hover { background:#1f242b; }
+        .sw-forces-row.selected { background:#22324d; border-left-color:#2f6fed; }
+        .sw-forces-row .sw-forces-sym { flex:0 0 22px; height:22px; display:flex;
+            align-items:center; justify-content:center; }
+        .sw-forces-row .sw-forces-sym svg { max-width:22px; max-height:22px; }
+        .sw-forces-row .sw-forces-uid { flex:0 0 90px; color:#bcd2ff; font-family:ui-monospace,Menlo,Consolas,monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .sw-forces-row .sw-forces-label { flex:1 1 auto; color:#e8eaed; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .sw-forces-row .sw-forces-tag { flex:0 0 auto; font-size:10.5px; color:#8d949e;
+            background:#2a2f37; padding:1px 5px; border-radius:3px; }
+        .sw-forces-empty { color:#8d949e; font-style:italic; padding:8px; font-size:12px; }
+        .sw-forces-detail { padding:8px; background:#1a1d22; }
+        .sw-forces-detail-header { display:flex; align-items:center; gap:8px; padding:0 4px 6px;
+            border-bottom:1px solid #2a2f37; margin-bottom:6px; }
+        .sw-forces-detail-title { font-weight:600; color:#e8eaed; font-size:13px; flex:1 1 auto; }
+        .sw-forces-detail-empty { color:#8d949e; font-style:italic; padding:14px 8px; font-size:12px; }
+        .sw-forces-pick-banner { background:#22324d; color:#cfd4dc; padding:4px 8px;
+            border-radius:4px; font-size:11px; margin-top:6px; }
     </style>
     <script>
         // Mount Edit Mode once the DOM (workspace panel) is ready.

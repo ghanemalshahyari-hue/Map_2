@@ -18,8 +18,9 @@
  *   - Draft safety is checked through the P0 module
  *     (window.AppScenarioAuthoring.isScenarioAuthoringDraftSafe).
  *
- * Slice 1 scope (CMO "first videos" order): Scenario Metadata + Sides + Posture.
- * Geography / Forces / Doctrine / Missions follow in later slices.
+ * Slice 1 (done): Scenario Metadata + Sides + Posture.
+ * Slice 2 (in progress, CMO build-order): Geography — Objective (this step);
+ *   BLS / pipeline / AO and Forces/OOB placement follow. Forces/Doctrine/Missions later.
  * Vanilla JS, no build step. Self-mounts into #scenario-workspace-panel.
  * ========================================================================== */
 (function () {
@@ -129,6 +130,31 @@
         s.addEventListener('change', function () { onChange(s.value); });
         return s;
     }
+    function numberInput(value, onInput, opts) {
+        opts = opts || {};
+        var attrs = { type: 'number', class: 'sw-edit-input', value: (value == null ? '' : String(value)) };
+        if (opts.step != null) attrs.step = String(opts.step);
+        if (opts.min  != null) attrs.min  = String(opts.min);
+        if (opts.max  != null) attrs.max  = String(opts.max);
+        var i = el('input', attrs);
+        i.addEventListener('input', function () {
+            var n = parseFloat(i.value);
+            onInput(isFinite(n) ? n : null);
+        });
+        return i;
+    }
+    /* One-shot map-click coord capture — reuses app.js's __APP_UNITS_PLACING hook
+       (app.js routes the next map click to onClick(latlng) then we clear it).
+       cb receives (lon, lat) in scenario [lon,lat] convention. */
+    function pickCoordOnMap(cb) {
+        window.__APP_UNITS_PLACING = {
+            unitId: '__scenario_authoring_coord__',
+            onClick: function (latlng) {
+                window.__APP_UNITS_PLACING = null;
+                try { if (latlng) cb(latlng.lng, latlng.lat); } catch (_) {}
+            }
+        };
+    }
 
     function renderEditor() {
         var host = document.getElementById(EDITOR_ID);
@@ -184,6 +210,34 @@
         postCard.appendChild(dl);
         host.appendChild(postCard);
 
+        /* --- Geography · Objective (Slice 2, CMO build-order step: define the area/objective
+               before placing units — see docs/cmo-functional-rules/exhaustive/scenario-authoring) --- */
+        _draft.obj = _draft.obj || { name: 'OBJ', coord: [0, 0], target_depth_km: 40, carver: 0 };
+        if (!Array.isArray(_draft.obj.coord) || _draft.obj.coord.length < 2) _draft.obj.coord = [0, 0];
+        var objCard = el('div', { class: 'builder-card sw-card' }, [
+            el('div', { class: 'builder-card-header' }, [
+                el('span', { class: 'builder-card-title', text: 'Edit · Geography: Objective / الجغرافيا: الهدف' })
+            ])
+        ]);
+        objCard.appendChild(el('dl', { class: 'sw-kv' }, [
+            fieldRow('Objective name / اسم الهدف', textInput(_draft.obj.name, function (v) { _draft.obj.name = v; })),
+            fieldRow('Longitude / خط الطول',  numberInput(_draft.obj.coord[0], function (v) { _draft.obj.coord[0] = v; }, { step: 'any' })),
+            fieldRow('Latitude / خط العرض',   numberInput(_draft.obj.coord[1], function (v) { _draft.obj.coord[1] = v; }, { step: 'any' })),
+            fieldRow('Target depth km / عمق الهدف', numberInput(_draft.obj.target_depth_km, function (v) { _draft.obj.target_depth_km = v; }, { step: 1, min: 0 })),
+            fieldRow('Carve index 0–60', numberInput(_draft.obj.carver, function (v) { _draft.obj.carver = v; }, { min: 0, max: 60, step: 1 }))
+        ]));
+        var pickBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Pick on map / تحديد على الخريطة' });
+        pickBtn.addEventListener('click', function () {
+            pickCoordOnMap(function (lon, lat) {
+                _draft.obj.coord = [lon, lat];
+                renderEditor();
+                setStatus('Objective set from map: ' + lon.toFixed(4) + ', ' + lat.toFixed(4), false);
+            });
+            setStatus('Click the map to set the objective…', false);
+        });
+        objCard.appendChild(el('div', { class: 'sw-edit-actions' }, [pickBtn]));
+        host.appendChild(objCard);
+
         /* --- actions --- */
         var status = el('span', { id: 'sw-editmode-status', class: 'sw-edit-status', text: '' });
         var saveBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary', text: 'Save draft / حفظ المسودة' });
@@ -211,7 +265,14 @@
         if (typeof slot.stepIndex !== 'number') slot.stepIndex = 0;
 
         try { window.AppShellScenarioWorkspace && window.AppShellScenarioWorkspace.refresh(); } catch (_) {}
-        logOperator('Scenario draft edited (metadata/sides/posture) — in-memory only, not committed',
+        // Slice 2: live map feedback — best-effort redraw of the scenario from the draft.
+        try {
+            if (window.AppAdjudicatorMap && typeof window.AppAdjudicatorMap.drawScenario === 'function'
+                && slot.scenario && slot.scenario.obj && Array.isArray(slot.scenario.obj.coord)) {
+                window.AppAdjudicatorMap.drawScenario(slot.scenario);
+            }
+        } catch (_) {}
+        logOperator('Scenario draft edited (metadata/sides/posture/objective) — in-memory only, not committed',
             { label: _draft.scenario_label || '' });
         setStatus('Saved to working copy (not committed). Commit stays gated.', false);
     }

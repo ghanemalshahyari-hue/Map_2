@@ -1671,12 +1671,17 @@
             if (strip)  strip.style.display = 'none';
             if (editor) { editor.hidden = false; renderEditor(); }
             if (btn) btn.textContent = 'Exit edit mode / إنهاء التحرير';
+            // 2D-1M: grow the workspace panel over the map so the rail +
+            // content pane have horizontal space to render legibly. Map stays
+            // visible to the left of the panel for Pick-on-map.
+            panel.classList.add('sw-editmode-wide');
             renderIndicator();
             logOperator('Edit mode ON');
         } else {
             if (strip)  strip.style.display = '';
             if (editor) editor.hidden = true;
             if (btn) btn.textContent = 'Edit mode / تحرير';
+            panel.classList.remove('sw-editmode-wide');
             renderIndicator();
             logOperator('Edit mode OFF');
         }

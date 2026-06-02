@@ -1,0 +1,148 @@
+# C: MO - New Tactics for Phased array radar changes
+Video: https://www.youtube.com/watch?v=ESM7cvhTkco
+Video ID: ESM7cvhTkco
+
+hello everyone in today's video we're
+going to be taking a look at some of the
+tactical implications of the new
+modifications to the radar that we saw
+in command now the situation i've set up
+here is kind of to demonstrate it we saw
+in a video last week where we could kind
+of see just how tricky it is to deal
+with this new phase the ray radar
+shenanigans but i immediately stepped to
+work and trying to develop some kind of
+tactics that would enable me to kind of
+nullify the effect now the neat thing
+with the phased array changes again as
+you get further away from the center you
+basically lose sensitivity is actually
+lose gain it's a little more complicated
+than that but what eventually would
+happen is um if you have a radar that
+has a 360 degree circle looking around
+it um you don't have any of these
+problems because they're essentially
+covering each other's nodes if you have
+an aircraft like yeah this one here the
+sequoia 57 you run into a problem where
+surprise um our radar only points in one
+direction which means we're really
+really in a bad place as far as trying
+to detect enemy aircraft goes so let's
+go ahead and see just how bad this is so
+i have three enemy aircraft i have a
+p52h i have an f16 cm and i'm an f35 so
+what i'm going to do is i'm going to let
+the sukhoi 57 basically fly through this
+gauntlet of strange planes and see if we
+are able to detect any of them
+so we immediately enter into proper
+range here there's our f-16 buddy and
+there's a b-52 off my left here i expect
+to see the b-52 there he is
+the f-16 though completely invisible
+completely invisible completely
+invisible completely invisible
+and completely invisible and the f-16
+would have no problem now coming around
+and basically sniping that guy no
+problem
+all right so we did pick up the f35
+which is what i expected the f-35 does
+have a very very very good radar on it
+but then the stealth capabilities are
+pretty good too but at the end of the
+day this is a pretty solid radar too
+notice we completely missed the f-16
+which could easily have snuck up on us
+and blasted us here keep in mind this
+particular craft doesn't have a lot of
+the crazy stuff the f-35 has so that's
+the problem so immediately set to work
+going okay what tactics are you going to
+have to apply in order to make this
+possible to defeat this particular
+situation so i explored i explored i
+tried i tried and basically identified
+one quick and easy way to do it so what
+i'm going to do is i'm going to set up a
+series of reference points and you're
+going to see exactly what i'm doing
+pretty much before i'm even done doing
+it and this is kind of like i said my
+initial tactic that i came up with i
+need to play with it some more but it's
+not too too bad so what i've done is
+i've set up this little weird zigzag
+pattern so now what i'm going to do is
+i'm going to go ahead and create a
+mission we'll do aaw we'll do patrol aw
+patrol looks good to me we're going to
+add this guy even though he's not
+appropriate for that so i'm not going to
+worry about it too much and then i'm
+going to change my movement style to
+repeatable loop you see what i did there
+so what i've essentially done is i've
+created a way to clear the baffles of
+the airplane and the interesting thing
+is you don't really have to be super
+aggressive with these left right you can
+actually keep them pretty much on the
+same course you were originally but this
+strategy works pretty well so delete the
+original one i'm going to go ahead and
+unpause and let's see what happens this
+time so we're going to cruise around and
+we're going to come up to my first white
+point here keep in mind we have a b52
+over here we have an f16 over there that
+would have blasted us no problem so this
+guy's immediately going to hit this
+point he's going to do this little
+zigzag he's going to come cutting across
+this way he's going to start looking in
+the general direction of our b52 frontal
+speed of time there's a b-52 and
+unfortunately he immediately chases
+after him so i'm going to scoop him up
+put him back where he belongs i'm going
+to go ahead take that lovely b-52 i'm
+going to go ahead and now and you know
+knock it out of existence here so we'll
+have to deal with it perfect
+all right problem solved we go back on
+our patrol route here so now we're going
+to go ahead and clear the baffle in the
+other direction so we come up oh there's
+our f-16 friend
+and you thought you were able to hide
+from us we've got you now
+oh it's an f-16 what do we do what do we
+do we delete it so we can go worry about
+something else so now he's going to go
+ahead and spin back around and just kind
+of continue back in his operation
+heading for our waypoint seven now
+remember we still have that little big
+screen kind of opened up to us that
+would enable us and look there's our f35
+front
+so you can see by making a quick little
+adjustment to my pattern remember in the
+old days it was just a straight line we
+can now actually prevent ourselves from
+running into a baffle situation now the
+cool thing like i said is there's
+nothing in the universe stopping you
+from doing something like this either
+where it's a quick zigzag back and forth
+prior to going ahead and doing anything
+that you need to do in the other
+direction but as you can see very
+clearly not a big change but it actually
+has a pretty big effect as far as
+employing these kind of aircraft with
+these kinds of radars enjoy

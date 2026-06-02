@@ -1,0 +1,349 @@
+# C: MO - Getting information from the user then validating it using lua
+Video: https://www.youtube.com/watch?v=VI50BSsBxP8
+Video ID: VI50BSsBxP8
+
+hello everyone in this video i thought
+we'd show a couple neat little tricks
+you can use in lua into your scenario in
+order to make things a little bit more
+dynamic
+so we're going to do today is we're
+basically going to try to set things up
+so that when people
+start the scenario a little box is going
+to pop up it's going to ask them a
+question
+they're going to answer that question
+then the scenario is going to do
+something depending on what they put
+as their answer so well let's go ahead
+and try this out and see what we can do
+here so the first thing we're going to
+want to do is we're going to ask the
+user for a particular value
+so to do that i'm just going to use the
+good old-fashioned technique that you've
+probably seen before
+you probably have seen the message box
+which is msg box
+but what we can also do is this thing
+called input box so i'm going to insert
+that right down here
+so i'll go ahead and say how many b52s
+would you like now if i go ahead and run
+this
+code real fast it's going to pop up and
+say how many b52s would you like
+a lot now the problem we're going to
+have almost immediately is that the user
+might accidentally put the wrong thing
+into that little box since it doesn't
+have any error checking
+so we have to do our own error checking
+here so that's really where this is
+going to get tricky
+so first things first i'm going to go
+ahead and save this as a number run this
+one again
+q good excellent so now we're going to
+do is we're going to test to see whether
+or not the value they gave us
+was a number so to do that the standard
+technique i like to do is i like to say
+the number equals to number the number
+i know that seems a little weird but in
+the event that you feed a string into
+this function it will automatically
+return a nil
+value for you which is awesome so if we
+actually come here and print num
+watch what happens if we do the letter q
+this time haha nil
+no good so this is a great thing to do
+so now all we have to do is simply ask a
+if num if not num
+i know you're sitting there going what
+okay so if num is nil therefore not nil
+is
+true two negatives make a positive so if
+not num
+then we're gonna go ahead and pop up in
+a message box here let the user know
+that they've made a booboo
+message box will say you
+did not enter the appropriate
+value and we'll go ahead and say um
+version one
+let's go ahead and close this one off
+and test it out to see if it works all
+right run
+q oh i didn't enter the appropriate
+value
+good so press ok so now there's another
+problem we're going to run into let's
+run this and i want negative 50 b
+52s so we can come in here and say if
+or num is less than a certain value or
+we can say or
+num is less than zero for example
+i'll go ahead and break this up a little
+bit to make this a little bit simpler so
+now we have a simple or statement here
+let's go ahead and run it now we'll type
+in a minus 25
+i guess it didn't like that very much
+run it again and the letter q
+find b that way i'll try that one again
+now 50. nice
+it worked it worked all right so now
+what we'll do is come down here and
+create an else statement
+and we'll do send edit msgbox thanks
+for entering entering a number
+generating b52s now the problem we have
+here is the fact that with this current
+system we have now
+it works perfectly so if i press run
+it's going to say i'm in b52 i'll give
+you 50 of those i press ok
+it's immediately going to give me an
+error because i forgot to do comma 1
+whoopsies try it again 50 and generating
+that many b52s
+awesome isn't that awesome so now if you
+want to be really really really really
+specific with this
+which i always recommend it's it's
+suggested it's suggested
+we can come in here and do something
+like this num dot b52s
+so now when i run it thank you for a
+number generating 50 b52s it actually
+takes that value and throws it back at
+us
+solid programming skill here so the
+problem we have now is if we run this
+once for an entire scenario what it's
+going to do is it's going to generate
+a certain number of b52s but if the user
+gave us the wrong value then this
+doesn't run so if we're only running
+this once per
+iteration here that's going to mean that
+we're in trouble so what we're going to
+have to do now
+is we're basically going to have to put
+this entire thing in some kind of loop
+that keeps going until the user gives us
+a reasonable value
+i'm actually going to be a little more
+specific here or num is less than um
+or numb is greater than 50. let's be
+specific here just in case let's run
+that one one more time 99999
+nice i like that so let's put this whole
+entire thing into a loop in this case
+i'm going to use a wild true loop with a
+break command
+so i'm going to go to the top of all
+this i'm gonna type in the word while
+true
+now some of you are sitting there going
+wait a minute while true is an infinite
+loop how do we get out
+well don't worry i've got a plan go
+ahead and take all this content here go
+ahead and hit tab so it makes it a
+little bit easier to see
+so now we have to do is when we do enter
+the appropriate value we're just going
+to use a command called break so i'm
+just going to come down here type in the
+word break
+and now we're in business let's try it
+out run uh the letter q
+oh the letter r a million
+okay fine be that way smiley face all
+right find that be the way
+a 900 all right minus 20. all right if
+i'd be that way
+25. nice it worked so now we're able to
+validate the input that the user is
+going to give us
+now that we have all that information
+ready to go we can go ahead and get some
+work done
+so i'm gonna go ahead and say create
+ourselves a classic little loop we're
+gonna say well x
+equals one uh x is less than num
+and then we're simply going to go one by
+one do come down here and press end
+now it's just a matter of randomly
+generating our units but before we do
+that we might as well create a couple
+sides here we'll go ahead and create a
+blue team
+nice and simple and now we need to get
+some critical information such as what
+the unit id is and everything for our
+buff
+before we do that we'll go ahead and
+generate a little bit of local variables
+here
+we'll do a simple that
+ran lats equals math.random
+we'll make it an absolutely massive zone
+here we'll do a 40
+uh let's see we're doing with latitude
+here we'll do between 40 and 80 or 60
+why not
+i will say for random longitude we'll
+say a pretty wide range here
+we'll say a minus let's see minus 70
+through positive minus 60. that's an
+absolutely massive massive range for
+random numbers here
+oh i have to actually do math.random
+all right now we'll go ahead and fix up
+my little syntax errors here now we'll
+come down here and we'll simply go ahead
+and say hey
+let's go ahead and get ourselves the
+actual unit so we'll do send edit
+add unit prepare for lots of stuff hmm
+okay so the first thing is we're going
+to need a type we're going to do an
+aircraft
+we're going to say name equals b52
+hashtag dot dot we'll use
+x as our iterator here we're going to
+say let's see we need a dbid let's go
+ahead and get the dbid of ourselves a
+b52 here
+database viewer we'll type in b52 i'm a
+fan of the d model personally but i'll
+deal with whatever i can get
+we'll get this one right here two two
+six five looks like it's going to be our
+magic value here
+whoa two two six five we're going to
+load out id
+we're gonna have to get that value as
+well so apparently i've just closed my
+little database viewer window here let's
+go grab it again
+scrolling down here i can see that my
+let's see here we'll get some pretty
+standard weapons
+that the harpoons that sounds like fun
+all sorts of bar bones
+cluster but man this might be a fun
+bombing run oh here we go let's get old
+school uh 117 of these two two nine one
+six
+two two nine one six okay you're
+probably sitting there going well that
+looks like it's roughly what we wanted
+it to do
+not really so we're going to do latitude
+equals i'll do rand lat
+we'll do longitude equals rand long
+uh we'll say we can do manual altitude
+if we choose to do so there's a lot of
+different things we could do course we
+could do heading but again i'm trying to
+keep this
+nice and simple for this particular
+application so that's looking like it's
+going to be pretty solid i'm sure i'm
+missing a piece here but i'll let the
+error catching
+do all that hard work of its error
+catching for me i'll go ahead and
+minimize this a little bit
+all right let's give it a try and see oh
+we forgot something very important
+side we forgot that one we would have
+been in all sorts of trouble
+all right let's give it a try run give
+me 25.
+uh oh unable to create a new unit
+exception of type
+is thrown okay that means i simply
+missed something within my little
+context here let me play with that for a
+minute
+all right i found my error all my booboo
+here was i forgot to give it an altitude
+ah that's a newbie mistake so i'm gonna
+go ahead and run this code and i'll see
+if everything works the way it's
+supposed to
+uh give me 50 b52s haha look at that
+and now we have 50 b52s each one of
+these b52s are equipped with the exact
+loadout that i had
+now there's a million one different
+things you could do from the user for
+example we could ask how many sam sites
+would you like how many of these would
+you like how many of those would you
+like how tough would you like the
+enemies and you could sit here at the
+beginning
+of any scenario and actually go through
+it real quick as a matter of fact let's
+bring this in so it is at the beginning
+of the scenario
+so i'm gonna grab all my content here
+control a control c
+close my screen i'm gonna go delete all
+these guys thank you guys you've been
+wonderful
+let's go up to editor we'll go ahead and
+go up to the event editor
+we can do this couple different ways we
+can do this as special action we can do
+this as an event i'm going to stick to
+event because it's simple
+let's say start of scenario let's say
+this one is active it is not repeatable
+it does not need to be shown in the log
+we'll go ahead and now add ourselves a
+trigger
+uh scenario started it seems like a
+pretty straightforward one
+excellent go ahead and throw that one up
+there now what we're going to do is
+we're going to go down to our actions
+we'll go ahead and create a new action
+called lower script
+and we'll paste all of our hard work
+right here so that we can go ahead and
+use this whenever the scenario starts
+so i'll probably should give that thing
+a name or something create
+buffs go ahead and close that that looks
+pretty good looks pretty good i'm gonna
+come down here create buffs
+i'm gonna go ahead and add that press
+okay i'm gonna make sure this is active
+repeatable
+is shown does not need to be shown don't
+need to stress about that in any way
+so now what i'm gonna do is i'm gonna
+quickly save this scenario so we can
+play with it
+now let's see here i always just have
+there's auto save right there
+i know you never save things as auto
+save but oh well so now i'm gonna go
+ahead and open that scenario
+and let's see what happens haha look at
+that
+nice oh no it still works
+isn't that amazing so that means you can
+do entire customized scenario elements
+right at the beginning of the scenario
+enjoy

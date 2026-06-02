@@ -1,0 +1,178 @@
+# C: MO - Rocket Torpedo Tactics
+Video: https://www.youtube.com/watch?v=0gSWMv2kiO4
+Video ID: 0gSWMv2kiO4
+
+hello everyone in today's video we're
+going to take a look at rocket torpedoes
+and how best to implement them so we
+have a pretty typical situation here
+we've got the knox freaking about 10
+nautical miles away we got some kind of
+goblin i'm suspecting he's not safe and
+of course we got her handy to any sh-60
+taking a good listen so we're able to
+identify him although realistically this
+frigate could probably pick him up as
+well so what's a rocket torpedo well
+let's take a look
+it's this it's a rocket with a torpedo
+on the top it's an absolutely amazing
+little piece of machinery which gives
+you a little bit more reach so that you
+don't get that kind of knife fighting a
+telephone booth kind of problem so how
+are we going to implement this well the
+first instinct you probably have is to
+do one of these click on him and fire
+away the problem with this is if you
+choose to do that he's going to turn
+around and he's going to run at about 40
+knots in the torpedo will possibly never
+catch up to him likewise he might dodge
+it with his countermeasures so what we
+want to do is we want to set up an anvil
+attack
+what an anvil attack is is when he
+doesn't have a choice basically drop one
+torpedo in a position to send him
+running and then you drop the other
+torpedo in the position of where he's
+running too so basically he gets monk
+right in the front and he basically
+cannot avoid it or if he chooses to
+outmaneuver the other one he then finds
+himself between two torpedoes which is
+typically not good so let's go ahead and
+set this attack up so what do we know we
+know he's here we know he's probably
+roughly on this heading here so our
+initial torpedo is going to force him to
+turn around turning around takes time
+remember our torpedoes use a circular
+harming pattern so after it hits the
+water it's going to rotate detect him
+and then come after him when he hears it
+hitting the water and he hears it
+shifting position he's going to
+immediately turn around and start
+running in which case we need to set it
+up so that our next weapon is going to
+land basically right when he starts to
+accelerate now this is tricky because
+he's perpendicular to us if he's coming
+right at us it'd be super easy because
+then we could drop the torpedo behind
+him and then drop one in front of him
+but because he's a little oblique to us
+we have to do a little bit of math here
+so what i want the first torpedo to do
+is to land about one mile off his nose
+so i'm going to go ahead and press ctrl
+f1
+ah that's right because we don't have
+that in this mode
+ctrl f1 click right there and we'll go
+ahead and set this one up right away
+all right so what that's going to do is
+that's going to fire and go chris
+sploosh so we need to do now is we need
+to give him time to get there give him
+time to turn around before the other one
+goes chris sploosh so i like to use
+about 30 seconds at this range so what
+i'm going to do is take a look at the
+time it's a 47. so when the rocket
+torpedo fires which it just did let's
+see it's about 50. i'm gonna fire my
+second rocket torpedo right when this
+reads about 9 31 in 20 seconds
+torpedoes on the way
+and perfect so what i'm going to do now
+is i'm going to do a shift one i'm a
+little bit behind him because remember
+he's going to turn around this is not
+going to land directly so we just need
+to kind of land in this general vicinity
+so i'm going to call it right there
+shift one and control f1 helps if you
+use the right command come down here and
+we'll fire number two service
+i gotta give credit to the guy who
+invented these because there's actually
+submarine versions of this too which are
+really terrifying so this thing's just
+chilling and you can see its buddy has
+just launched as well and we're gonna go
+harass this upward submarine here who
+probably does not realize he's about to
+get cursed blooped so let's go take a
+look at it from his perspective
+so he's cruising he picked up some
+distant sound we're not sure what it is
+it's probably a knocks or something like
+that i'm not sure what it is i'm just
+going to keep on cruising keep on
+cruising not going to worry just
+enjoying my day i certainly don't see
+those two rocket torpedoes that have
+been perfectly placed coming for me and
+what will happen is the torpedo will hit
+the water go curse plush
+and then immediately start doing its
+thing but i believe i'm just a little
+bit too loud to even hear that torpedo
+in the water somebody slow down because
+if you look real carefully the torpedo
+up there it is
+full power
+now a smart captain would immediately
+pull away from the torpedo
+oh
+what a hit what a hit i did not intend
+for that to work so well but i'll allow
+it i'll allow it
+so now let's say that he said i'm gonna
+run in this direction as fast as he can
+so he got his flank speed going that was
+just a coincidence it's just probably
+the best torpedo shot i think i've taken
+at a very long time proud of that one so
+let's say he chose to go like this
+he started running real real fast i'll
+go ahead and shut this one off he
+clanked up to flank speed here's that
+torpedo behind him of course the
+torpedo's going to enter into his
+baffles so he'd be racing he'd be racing
+his engines to be going full power full
+power that other torpedo hit the water
+about 30 seconds later doesn't hear it
+doesn't hear it at all and all of a
+sudden surprise that torpedo has now got
+a lock on him he doesn't hear all sin
+here's what's that pinging noise
+oh i think that one uh missed shot but
+good thing these things are required to
+write again ah bummer didn't blow him up
+of course we can solve this very quickly
+as well but you can already see how
+because we had timed that so carefully
+he had nowhere to go
+so in this particular case i was going
+to order up a regular one uh
+fire that one
+fire oh that one didn't work let's see
+that one
+and gets them
+completely defeated so you can see these
+are very very effective weapons there's
+actually submarine versions of these if
+you want to try them the big trick there
+is you've got to create the xantos
+gambit if he runs from it backwards just
+180 and tries to get away from it he
+runs right into the other one otherwise
+he doesn't give himself enough time to
+turn and smacks right into the first one
+and then the other one follows up and
+finishes him off enjoy

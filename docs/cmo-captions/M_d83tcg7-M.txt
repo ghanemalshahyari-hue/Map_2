@@ -1,0 +1,71 @@
+# C: MO - Improving Performance with the Message Log
+Video: https://www.youtube.com/watch?v=M_d83tcg7-M
+Video ID: M_d83tcg7-M
+
+hello everyone in today's video i just
+thought i'd share a really quick tip if
+you run into situations where you have
+these scenarios that as the scenario
+progressively gets longer and longer the
+scenario starts to slow down i'll be
+found out fairly recently that the big
+reason why this occurs is this lovely
+new message log that we'd love to play
+with and it does all these great little
+features here will actually start to
+accumulate so many events that it
+actually basically slows everything down
+now i'm sure at some point they're
+probably going to clean this up a tiny
+bit but for now we're just going to go
+ahead and take a look at a quick way
+that we can get around this so the way
+we do this is we're basically going to
+take this message log and we're going to
+pop it into a separate window so there's
+a couple different ways to do that the
+simplest one if you go up to your game
+options and you pop over to general
+you're going to see this thing this is
+message log in separate window or you
+can press the combination control shift
+m control shift m so that does not work
+uh oh don't worry about it though
+because you can always click on that
+little checkbox instead to make sure it
+goes ahead and works instead so now that
+we have it in a separate window we can
+feel free to go pop it over here we can
+stick it right here but over here to
+make it bigger bigger make it smaller
+now the great thing about this is now
+that it's in a separate window if we
+want to reduce the amount of lag it
+creates in these mega scenarios you can
+just press this button right here and
+what it does is it switches into the old
+school you know command modern air
+enable operations mode where it puts
+everything in this little timeline i
+actually prefer this method and one of
+the cool things is you get this little
+filter button up here so if i type in
+something like red i can now get all the
+events that are received underneath red
+now the fun thing with this one too is i
+can do one of these and now it goes
+ahead and puts it right back down here
+so when you do do that remember if you
+close that sucker you have to come back
+up here push the button again switch
+back to raw text and i think you'll find
+that your performance will be
+considerably better usually what i do
+now is i do one of those and now i don't
+have to worry about it so hopefully this
+step helps you out like for those longer
+scenarios i actually prefer that view to
+the new one the new one's great for
+analysis this one's a little bit better
+for kind of you know as things kind of
+unravel enjoy

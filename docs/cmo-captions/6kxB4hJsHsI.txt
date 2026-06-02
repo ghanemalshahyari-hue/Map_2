@@ -1,0 +1,241 @@
+# C: MO - Sonar Masking using other ships
+Video: https://www.youtube.com/watch?v=6kxB4hJsHsI
+Video ID: 6kxB4hJsHsI
+
+hello everyone in today's video we're
+going to be taking a look at an
+interesting concept that a few people
+miss when it comes to submarine and
+anti-submarine warfare and that's the
+concept of using another ship to
+basically mask your acoustic presence
+now we've talked about this concept a
+little while ago when we're doing some
+anti-submarine warfare but i said you
+know this might be a good time to go
+ahead and bust out some of the actual
+features here and see just how effective
+this actually is so let's go and take a
+look at a little scenario here uh we
+have two oliver hazard parries which
+when i think of anti-submarine warfare
+this is the one i think of thank you
+dangerous waters great game if you've
+never had a chance to play it and we
+also have a pause for a second here a
+total of three enemy submarines
+each one of these submarines has a
+slightly different situation going on
+for it the first one is a delta one he's
+at relatively low depth here we have
+another one this one's going down to
+deep depth he's down to 344 feet and of
+course we also have this one who's uh
+not that deep at all he's actually
+chilling at regular depth now off of
+these three vessels are actually three
+civilian vessels each one being a very
+large which is one of if you take a look
+at the actual size this is literally how
+big these things are relative to the
+submarines to give you an idea of just
+how absurdly large and how loud these
+things probably are these are all moving
+at 10 knots by the way our submarines
+are also at 10 knots and like i said
+they're going to different depths so our
+two olive house parries are completely
+passive right now and they're basically
+listening to the water and trying to
+hear what they can hear now one thing i
+notice immediately is we picked up this
+submarine instantly this one was the
+good old-fashioned this is the ssbn this
+is our one who's shallow with no masking
+notice the total distance here is uh
+let's call it about three nautical miles
+so try to keep things tight here this
+guy on the flip side has no knowledge
+whatsoever of those two submarines that
+are being masked by these ladder ships
+here so as far as we concerned we don't
+even know there's two more submarines
+here we only can see this one but ah
+what just happened
+you can see our oliver has a parry here
+has just detected one of the submarines
+right here now you're probably sitting
+here going wait wait wait how can we
+pick them up ah it's a line of sight
+issue you can actually see that oliver
+hazard parry can trace a line of sight
+through that submarine that does not
+pass close to these ships that are
+making all the noise whereas this oliver
+hazard parry unfortunately is basically
+lined up perfectly if i would actually
+take him out of this scenario here
+disable a sonar this guy would actually
+have a very difficult time seeing it now
+the next thing you're probably saying is
+well wait a minute which one of the two
+submarines is this is this the one
+that's deep or is this the one that's
+shallow well let's go take a look
+exactly what you expected this is the
+submarine that went to its maximum depth
+so unfortunately you have to think of
+three dimensions here you know if i were
+to pull out a microsoft paint real
+quickly here excuse my little really
+really nasty detail this smell ever
+hazard perry
+put a little thing on the time because
+why not we have our ship that's blocking
+it again this is uh going to memphis
+paint action here this is a big old
+cargo ship here you know what exactly
+what it looks like this is one of my
+submarines and this is my deep submarine
+notice when this ship is trying to
+detect this guy here he has a very very
+close range actually if you take the
+actual angle here this is a very very
+tiny angle now when you compare it to
+this one here remember we're kind of 3d
+we have a much greater angle this angle
+is called the masking angle and
+basically as you'll notice the deeper
+you go the less effective the masking
+effect of another vessel is so in this
+case even though it's physically the
+same distance this one we pick up
+because it has a greater difference
+between the actual source of the noise
+hopefully like my microsoft paint skills
+there all right let's go ahead and take
+a look so let's see how things evolve
+so one thing i am going to do though is
+i'm going to order my two ships not to
+start doing its syncing thing because as
+soon as they do the syncing thing i
+think you know exactly what's going to
+happen afterwards so i'm actually going
+to order them to hold fire at this time
+don't shoot unless i tell you to shoot
+so here we go we've immediately
+identified the one boomer we've
+immediately identified the other boomer
+who passed into the masking angle but
+notice the third boomer is completely
+invisible to us at this time he's right
+there and we still cannot pick up this
+boomer it's just chilling okay boomer
+right so we keep going we keep going we
+keep going notice we still have no
+knowledge as a matter of fact as we
+started to get physically closer to the
+source of the sound we are actually
+masking ourselves from all the sound
+that comes around it which is why when
+you have vehicles that are going to be
+working in anti-submarine warfare you
+don't want to put them near each other
+otherwise they mask each other so we're
+going to continue cruising continue
+cruising notice we've lost both
+submarines at this point
+cruising along cruising along look at
+how close these subs are to our oliver
+hazard parry who's completely clueless
+at this time meanwhile that other stuff
+we've been tracking there he is now
+notice we get so close to the two subs
+we're finally able to acquire the one
+that is shallow versus the one that is
+deep now if we wanted to be a real punk
+we could do one of these kind of things
+and flip on the active sonar
+unfortunately active sonar and games at
+least this game is not nearly as good as
+it is like when you do a dangerous watch
+or something but we were able to acquire
+this one pretty accurately hopefully we
+get just a little bit more and bingo now
+we've got some very very good
+information both of these two subs we
+immediately identify the depth of course
+we're not showing the depth in this one
+because he's a little shallower but
+notice we had to get that physically
+close to be able to identify i should
+say be able to even get close enough to
+notice the identification phase hasn't
+even taken place like look at this we
+won't be able to identify either of
+these subs until they basically cruise
+right underneath us
+and we weren't able to identify that one
+either which is a real problem in most
+scenarios because you do need to get a
+positive id so that just shows you how
+effective that masking technique can be
+so of course i feel bad that we haven't
+sunk the jesus out of these guys so i'll
+give you a couple of torpedoes and you
+know what i feel so left out i'll give
+you a couple torpedoes you know what you
+deserve a torpedo too you know you work
+really really hard so it's important to
+make sure that they feel very very
+equally treasured as far as
+anti-submarine warfare situations are
+concerned now ironically one of these
+torpedoes will never be able to get deep
+enough to actually engage the submarine
+if we switched over to i'll just
+actually go do one of these see one of
+these do one of these
+these are always super entertaining to
+watch because you'll see that the
+submarine the torpedo basically shoots
+straight downwards
+yeah i think this guy's actually going
+to get tapped here
+notice it didn't even sink him that's
+always going to happen every single time
+all right now we're going to go ahead
+and order them to go nuts let them have
+it
+now of course our guys are going to be
+reloading on that side of the ship and
+he's going to come flipping around he's
+got to pre-reset everything get that all
+ready to go oh he's still got a torpedo
+left can i borrow that torpedo for a
+second thank you
+hey i didn't want to waste the torpedo i
+mean like what's the point right
+oh this guy is still gonna get caught by
+this thing
+i'm gonna have to do a whole video on
+submarine decoys one of these days but i
+just thought this would be kind of a fun
+thing to do
+look at this one i'm coming i'm coming
+give me a second oh swing into miss
+let's grab this one again excuse you get
+back down there he's right there like
+he's right you
+that was a big explosion all right folks
+so hopefully this video is helpful like
+i said that masking technique is
+wonderful if you want to get a little
+old fashioned with it you could like try
+to like hide in the guy's wake with your
+snorkel poked up but remember if you
+have anything visible coming out of the
+submarine out of the water people are
+going to be able to see it and it's
+going to completely eliminate the
+technique other than that enjoy

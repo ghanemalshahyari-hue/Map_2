@@ -1,0 +1,298 @@
+# C: MO - IR Missile Aspects
+Video: https://www.youtube.com/watch?v=8RAjIrn_meU
+Video ID: 8RAjIrn_meU
+
+hello everyone in today's video we're
+going to be taking a look at aspects and
+how it relates to air-to-air missiles
+now keep in mind that aspect has other
+things we can worry about but for today
+we're just going to be looking at our
+air missiles let's get started so first
+things first we have ourselves our
+favorite little F-16 block 52 Falcon and
+now we're gonna go ahead and crack it
+open real quick and you're probably
+going to notice that it has a rather
+unique Loadout here uh you'll see it's
+got some a9x's but it also has a silly
+Loadout called generic RPG which is just
+sort of my fun way of loading things
+into something that doesn't necessarily
+supposed to carry it and you're going to
+notice we're carrying some aim 9 B's now
+the m9b is an old school Sidewinder
+missile this is back when they called
+things like the gar9 and stuff like that
+apparently this thing is a
+sophistication of a washing machine
+electrically not really a lot going on
+in it so the one thing we want to take a
+look at though is if we scroll through
+all these little useful details that
+we're going to spot a couple neat
+details the first one we're going to see
+is that we have an IR Seeker on board it
+is single spectral IR air search
+altitude info good to know the other
+thing we're going to notice if you
+scroll down a little bit is it says
+anti-air Stern chain okay so what that
+means is this weapon has to see a very
+very hot source and basically run after
+it which in my opinion is the worst
+combination of where you want to see so
+let's try this out so I'm going to
+unpause here
+I'm going to order my Hefty handy little
+F16 to go ahead and flip us around here
+we have nothing less than a B52 just
+sort of hanging out and what we're going
+to do is we're going to get my handy
+dandy F-16 line up for the B-52 and
+we're going to try to go ahead and pop
+it right from the front here so I'm
+going to line ourselves up we've
+confirmed the targets let's go ahead and
+press that little F1 key click on them
+use that closing up you should be
+building up a little bit of energy which
+is everything's looking pretty clean
+everybody's getting ready for the fun
+part where we're going to let loose that
+missile
+sneaking up speed up time just a tiny
+bit here getting into range getting into
+range here we go
+nothing
+you're probably saying well why is rf16
+not firing that's because when you have
+an air rear Stern Chase missile you can
+only launch at the stern of the target
+so if I actually grab my F-16 bring him
+over here spin them around here now
+let's go pop them around real quickly
+and then order him to go ahead and gauge
+our Target what's going to happen is
+he'll be able to go ahead and launch but
+one of the challenges you're going to
+face with a weapon like this is that you
+have to close extremely close to the
+Target to actually launch the weapon and
+the reason being is because when the
+weapon launches it's going to burn its
+motor out very very quickly let's go
+ahead and pause for a second take a look
+at our scenario you can see we have
+automatic fire we're ready to fire I'll
+go ahead and pop all four because it's
+probably about as many as it's going to
+take the weapons fire they immediately
+begin their Stern Chase uh not oh we
+have one hits here comes the next one
+and we got two hits okay let's go ahead
+and release that last one A Little Too
+Close there let's back up and here comes
+the next one I'm actually amazed I hit
+that many
+seems unlikely oh that one didn't do
+anything and we fired the last one and
+we splattered that B52 but notice that
+we could only Engage The B-52 when we
+were behind it and that our weapon had
+to chase after them so let's go ahead
+and recreate our scenario here and we'll
+go ahead and take a look at a different
+style weapon so that was our Classic
+rear aspect missile so obviously
+technology improved and all we have what
+they call an all aspect weapon in this
+particular case so we're dealing with
+the aim 9M so let's go ahead and open up
+the weapons real quick pops down to
+generic RPG but click on this you'll see
+a couple things have changed
+first of all visually the weapon's a
+little bit different so a little brute
+by the way these roller rounds on the
+back brilliant but if we come down here
+you'll notice that we now have a dual
+spectral IR technology so we're using
+multiple parts of the IR spectrum which
+also makes it more flare resistant
+another thing you'll probably notice is
+it is anti-air all aspect which means
+the Seeker is sensitive enough that it
+can spot a Target in any direction just
+because of the heating of the surface of
+the target so let's go ahead and fire
+things back up here and go ahead and
+order him to go ahead and spin this way
+well in just a few moments of course
+we'll acquire a lucky B52 here poor guy
+you know he's just doing his thing and
+we spot him we press the F1 key actually
+I'll press shift F1 go ahead and click
+on it and we'll go ahead and pop in all
+four of our aim9s here it's not going to
+take that many notice we get ourselves
+into range pretty much right away and go
+ahead and spin ourselves to the right
+we're going to wait until we have a
+little bit better shot where you can't
+just turn around and run and we're going
+to go ahead and start firing immediately
+now notice the weapon leaves the rail it
+burns for about a second and then it
+immediately starts losing energy however
+but since we are a doing a front-on
+attack here this B52 is not going to be
+left with a heck of a lot of options as
+far as dodging goes so wham wham wham
+wham
+now a couple of you probably going um
+why does it take so many Sidewinders to
+kill a B-52 well it takes that many
+Sidewinder it's going to be 52 because
+of the size of B-52 so then the last
+type of aspect and this isn't less of an
+aspect question but one of the things
+you got to remember about these old
+Seekers is that their field of view is
+actually very very tiny something they
+added later on was actually the ability
+to have a very wide field of view which
+brought us into one last kind of aspect
+and that is what they call extremely
+wide well so if I actually pop this one
+up ah12 real fast scroll down you're
+going to see that we are carrying this
+lovely lovely little missile here called
+the AA12 this is I'm sorry the aa1 our
+chart this is an r73
+now if I open this up and scroll down
+there's a couple things you're going to
+notice first of all we have the same
+dual spectral which makes it more
+resistant to flares but if you take a
+look at the Arc of this particular
+sensor it is gigantic so this thing can
+basically see anything in front of the
+aircraft in a mass of 180 degree Arc
+you'll also notice if we come down here
+with properties that we have dogfight
+high off bore sight meaning we can fire
+this weapon out of our shoulder so
+you're saying wait what so there's a
+reason why I named this a particular
+aircraft a little hacks so let me show
+you what I mean
+so go ahead and spin around we have
+ourselves my friendly little B52 here
+it's not that friendly poor guy's about
+to get shot about six times and what I'm
+going to do is I'm going to demonstrate
+how this works so we're going to come
+around uh normally of course we'd use
+our adders here the adders yet like I
+said the a12 I keep forgetting here I'm
+just going to confirm the fact that I'm
+not carrying any of those good but
+notice my Archer has a massive range as
+far as weapon goes and I'm intentionally
+going to take my aircraft here I'm going
+to put him so he's like an angle like
+this there we go actually I'm going to
+pull them to the side and finish your
+turn thank you I'm going to put them
+right here and we'll go even a little
+bit more ridiculous there we go we'll do
+something like that so now we have our
+situation where aircraft is at an
+extremely bizarrely weird angle here but
+because the weapon has such a large
+field of view the pilot can actually use
+a helmet mounted site to look and tell
+the Seeker where to look to so in this
+case we're looking out to be 52. so lock
+into my guy real quickly and you'll
+notice that in three seconds I'll be
+able to go ahead and engage him I'll go
+ahead and pause now watch what this
+weapon does when it leaves the rail it's
+going to go normal normally and it's
+just going to take a left
+that's amazing let's go ahead and look
+at this one in 3D because it is just so
+amusing to watch it just it looks like
+it shouldn't be a thing all right let's
+go look at our handy dandy Mig 35 there
+you can already see how ridiculously
+oblique that missile is that just left
+the rail there now watch here comes the
+next one Whoopsie Daisy
+so those are called high offs um I
+believe should we get this correct here
+I'm having a heck of a time of my
+vocabulary oh let's see here r73 this is
+called a high off boresight I was going
+to be right but as you can see this
+weapon basically launched sideways and
+is able to engage any aspect of the
+target you can see it's basically
+chasing our B-52 down right now yeah man
+on the B-52 apparently had enough time
+to start accelerating getting out of the
+way and unfortunately uh we were not
+successful in that particular engagement
+so what we can do of course is we could
+spin around and go get them with some
+Cannon now there's a reason why I picked
+the B-52 here and that was one of the
+points of this video here was actually
+because the B-52 if you actually click
+on it real fast let's see is this the
+version that I'm thinking is going to be
+let me take a look indeed it is
+there's a reason why in the old days it
+used to mount tail guns on B-52s as well
+as Tuple of 95s and Tupelo 16s and
+that's because all those missiles of the
+era were tail chasing weapons so what
+would happen is you'd run into this sort
+of a situation where I'm chasing this
+guy down gotta sneak up to him we're
+gonna go ahead and hit him with our gun
+and what you would do is you basically
+fly right into the line of sight of the
+tailgunner and since you had to chase
+after him in order to get a weapon to
+fire you'd basically get shot back at
+from the guy in the rear so let's go
+ahead and unpause for a second here
+grab this guy I'm gonna go ahead and say
+F1 and click on him and he's just going
+to go to time actually I probably
+shouldn't press F1 that was a bad idea
+but what I will do is I'll order him to
+fire all of them this poor guy's about
+to get a bit of a surprise when he gets
+into a shooting range here all right
+getting a little closer getting ready
+for attack looks pretty good gonna go
+ahead
+[Laughter]
+as you could see uh there was a reason
+why they used to do that but of course
+once he developed the all-ass Spectrum
+weapon you just didn't need to do an
+attack like that on a Target like this
+unless something else had come up of
+course meaning that it basically
+eliminated all them as a matter of fact
+if I go up in here real quick and type
+in B-52 and we'll do an H model here um
+pretty much any grab this one real quick
+you'll notice they eliminated that tail
+gun because they realized it's not going
+to matter anymore enjoy

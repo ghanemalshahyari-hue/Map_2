@@ -1,0 +1,353 @@
+# C: MO - Spreading out ASMs using waypoints
+Video: https://www.youtube.com/watch?v=tGf--9UUcck
+Video ID: tGf--9UUcck
+
+hello everyone in today's video we're
+going to be taking a look at the concept
+of using waypoints for anti-ship
+missiles in order to spread out a salvo
+to make it a little bit more difficult
+to intercept so what I have here is a
+pretty typical scenario and what am I
+saying about typical way of Iceland and
+Russia China and you know it goes we
+have a scenario in which we have a type
+55 and we're basically going to launch a
+strike on a zoom vault which uh we can't
+really tell that this is a zoom Vault
+down here but uh trust me it's a zoom
+fold you can believe me I can press Ctrl
+V you can take a look at it now some of
+you are saying this is not really a hard
+target to engage here as a matter of
+fact if you click on it and you scroll
+down you can see that it's missile
+defense is 20 which is not great that is
+not what I consider to be the optimum
+platform for shooting down incoming
+weapons but I chose intentionally just
+to cut the number of missiles and
+waypoints I had to create down if I
+wanted to go against some of the Aegis
+Cruisers where they have like a 96 like
+a 112 missile defense we'd be here for a
+while as I built all the waypoints so
+anyway what are we gonna do so what
+we're going to try to do is we're going
+to try to strike this target with the
+minimum number of missiles possible so
+what I'm going to do is I'm going to
+start breast control V we're just going
+to mark that guy's hostile I'm gonna
+grab my handy dandy little type 55 here
+I'm going to press shift F1 come down
+here and we're going to allocate exactly
+20 missiles and I'm gonna go ahead and
+pause and we're going to see the initial
+problem that everybody faces when they
+try to launch visual attacks like this
+and that's that you get what I like to
+call the conga line so if you take a
+look at our weapons here oh they're all
+coming off the rails okay they actually
+go up and then they go down like this so
+you can't really see that clearly maybe
+I can show you so you can actually see
+why it seems to hesitate a little bit
+when it first comes up because remember
+these are vertical launch weapons they
+don't they're not like regular ones
+let's go zoom out a little bit you can't
+really see that if this were DCS you'd
+see you do little upwards Arc but you
+can see them all kind of ramming off the
+air by the way these are the YJ 18s
+these are really really cool anti-ship
+missiles because they accelerate when
+they see their targets so right now
+they're just sort of chilling at like a
+fuel economy you know a nice relaxing
+speed of 530 knots and what they'll do
+is they'll actually step up to many many
+many many many knots once they get a
+little bit closer to the actual Target
+itself I know that's that correctly so
+what you can see here is a straight line
+of missiles coming directly from my zoom
+Vault here
+now this is going to give us a lot of
+tactical information from the defender's
+perspective the first thing we're going
+to know is of course these weapons are
+all fired from probably the same
+platform at least a group of platforms
+that were very close to each other why
+do we know that because we're in a
+straight line the second thing we're
+going to know is because our particular
+systems are these nice phased array
+Radars we actually had the ability to go
+ahead and fire out one of these if we
+miss or if let's say we blow one up the
+follow-up missile can now be used to
+attack other missiles that are already
+in that line of weapons that are coming
+down on our Portugues here or sorry the
+zoom vaults here now the reason that's
+important is because it saves us time
+from spinning around our Fire Control
+radar so that we can actually aim it in
+a direction that can do the most
+effective damage now we're going to take
+advantage of that little uh inadequacy
+in a little while here as you'll see so
+right now the zoom balls is cruising
+around the ocean peacefully unaware of
+the fact that there's a bunch of
+SuperSonic death literally what was that
+like 20 miles away look at this yeah 21
+miles away so it's like not too far away
+now one of the things you'll see here is
+he says oh there they go and we slow
+down by the way we picked up the
+submarine Charlie Charlie come here so
+this is trouble because it's now doing
+1900 knots uh he's sitting there he's
+immediately got that first shot off I
+actually edited his magazines so he
+could crank these things out and off
+they go and uh let's begin the game here
+now you notice these things barely get
+up to speed by the time that we get in
+range but this nice predictable line of
+missiles is just keep firing missiles in
+that direction you'll be fine kind of a
+thing like that so oh oh one oh one got
+through yeah that's the end of the zoom
+Vault there man that thing was expensive
+yeah he's still firing by the way you
+can see his Fire Control Radars like see
+how they come on and they actually
+illuminate the air and everything and
+Mark it out like that of course I want
+to Mark those missiles unfriendly oh boy
+Zoom world's gone oh this was not the
+best platform but he demonstrated quite
+nicely my point oh Bunch came off look
+oh there it is
+Ah that's the end of him
+tough days tough days so let's go ahead
+and uh reuse a loader scenario here and
+let's fix our tactical mistakes here so
+that we can make it a little bit more
+dangerous so I'm going to go ahead and
+pause again our handy dandy a bear which
+absolutely fantastic platform for this
+literally like my go-to for anything
+that requires mayor term surveillance
+yeah there's p8s and there's all that
+other fun stuff too but I don't know in
+my mind this is this is the archetypical
+uh Maritime Patrol aircraft perfect so
+now we're going to change our strategy a
+little bit here so I'm going to press
+shift F1 I'm gonna go ahead and click on
+my target I'm going to come down to my
+club uh you're going to notice by the
+way that we still have a little bit of
+time before we can fire this because I
+just my fire control guy just can't move
+that fast on the controls I'm not
+worried about that so what I'm going to
+do is I'm gonna go ahead and grab this
+I'm going to go ahead and double click
+this to create it on myself two of these
+and what I'm going to do is I'm going to
+plot a course now when you plot courses
+you always work away from the platform
+what we're going to try to do is design
+our attacks so that it basically creates
+an effect where it looks like a spread
+of missiles is coming out of Target at
+one time so I'm actually going to tap
+escape a few times here because I
+actually want to be able to measure that
+sense let's see control D we said about
+20 nautical miles I like that control R
+split here SVP
+looks pretty good to me awesome all
+right let's go ahead and grab my shift
+F1 again I'm going to slick on them I'll
+click on him we're going to plot a
+course plot a course Captain all right
+so we're going to come down here and now
+we're going to start our little hand in
+any split now the rule is the farthest
+miss last to travel the farthest
+distance is also the one that fires
+first so the one that shorts the last
+Miss will be fire is basically going to
+go straight and all the other missiles
+are going to kind of go around the
+corner so what I'm going to do is I'm
+going to encrypt my split point I'm
+going to bring it out oh about to here
+and then I will go ahead and call that
+an attack so this is going to be the
+farthest distance everything in here has
+to be a smaller distance remember the
+one that's the closest will be the last
+weapons we fire so I'm going to tap
+Escape looks good to me
+and of course oh you're sitting here
+saying well can I just double click on
+this one and pick another one no you
+have to actually wait until that
+missile's done its thing there and now
+then you can do it because I would come
+over here and press black course do you
+see how it's the same course as before
+so you have to wait until they actually
+fire before you can do the deed there
+it's a little little thing that's yeah
+it's kind of a pain but oh well what are
+you gonna do all right so one two and
+then we should have a couple more coming
+off the rail up there's three fantastic
+all right so my first ones are on the
+way so now what I'm going to do is I'm
+gonna press shift F1 click on him again
+and we're just going to go ahead and add
+two more to the fun here I'll go ahead
+and clear the course and of course we
+need to apply a new one now remember
+this is going to be the one that splits
+on the other side so what I'm going to
+do is do the exact same thing I did here
+see that kind of kind of a thing like
+that that looks pretty good tap Escape
+we're firing a two more so when this
+number says the number five we can go
+get the next two missiles perfect shift
+to F1 let's do it again so we're gonna
+grab two more we're going to go ahead
+and clear the course we're gonna go
+ahead and plot the course and on this
+remember these fired a little bit later
+so we need to wait before we do this one
+so I'm going to call this one right here
+and yes you can do extremely precise
+math to get these distances perfect I'm
+not going to do that I find that a
+little outside of what we should do
+today this is just demonstrating a quick
+way to kind of handle the concept all
+right that's seven let's go ahead and
+get two more one two let's go and grab
+these two we'll clear the course we'll
+plot the course and again we'll use the
+little split Point technique here and
+that's actually pretty good actually if
+we want to be really cool we can do
+something like this which I'll just
+confuses the heck out of them tap Escape
+pretty good uh eight nine shift F1 oh
+fire I two more for victory here one two
+and I'll clear the course one more time
+and we'll do a Swiggity Swag here so
+we're going to come to the split point
+we're going to faint this way we're
+going to faint this way and then we're
+going to go straight in again to create
+that little burn up a little bit of that
+time looks good to me and that should be
+11 total I think if I did my math
+correctly here
+so what we've done here is we've
+actually made our single conga line
+split into multiple little pieces so
+when it arrives at the Target as you
+could observe it'll actually be hitting
+them from multiple directions now one of
+the things I've done in the past has
+actually had missiles go like this and
+come around like this and get them on
+both sides at the same time but it's a
+little outside of the context of what
+we're trying to demonstrate today fun
+strategy by the way
+all right let's go back to our vault
+here so he's chilling he's doing his
+thing he's just kind of enjoying the
+ocean it's it's a nice day and you can
+see the enemy conga line here obviously
+if we had an a-wax plane or something
+keep an eye on this we would know the
+shenanigan I'm about to pull as soon as
+we saw it so it's kind of like all
+clustered and bumping into each other
+interesting problem at DCS by the way if
+you haven't tried that now this is where
+it gets interesting now ideally and I
+did not do this correctly I'm telling
+you now these missiles should start
+splitting outside of the Horizon here so
+he should not be able to see the little
+action of the Horizon you should see a
+bunch of missiles just coming at him
+like this that's not going to happen
+just because I made them split way too
+close but um you'll see some of the
+problems that it creates is a targeting
+situation so now of course he comes in
+here he's looking out the Scopes he's
+got his Radars activated everything's
+looking pretty good here he's just gonna
+start catching some of those oh they're
+coming from multiple directions we must
+be being attacked from all these
+different places at one time remember
+these are the missiles that we saw
+earlier these are the ones that are
+actually look but you'll notice instead
+of that nice straight line that he was
+attacking earlier he's now gotten
+himself of this all sorts of nasty mess
+as this guy comes in for his final
+attack now notice by the way because the
+lack of that last couple little
+waypoints that we created we've done a
+situation where unfortunately all the
+targets kind of pulled in pointed at him
+at one time we really needed an extra
+Waypoint to give the radar some more
+time but the interesting thing you're
+noticing here is that we've already got
+two missiles through because he
+basically is scrambling to snap all
+these well oh oh that was sweet and you
+could see because they weren't all
+coming in the same line he had to
+constantly do one of these things to
+fire his weapons than if one of his
+weapons of course came into a situation
+where let's say it was arriving like
+this if another one was down here and
+this one was killed he had to turn his
+missile at mid-flight to engage the next
+Target which wasted a ton of energy and
+time allowing those other weapons to
+slip in
+so as you can see this is a very slick
+strategy it's a very very effective it's
+one of the reasons why these particular
+items have waypoints I'm just going to
+drop that one off there because I'm
+pretty sure that's executed there could
+be a fire with half those missiles yeah
+but if you're firing against something
+like Aegis it's got a little more
+Challenger we need a lot more missiles
+but it gives you an idea of just how
+lethal those things can be if you used
+carefully enjoy

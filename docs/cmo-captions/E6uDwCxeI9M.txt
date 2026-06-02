@@ -1,0 +1,614 @@
+# C: MO - Setting up a Carrier Battlegroup and Combat Air Patrol
+Video: https://www.youtube.com/watch?v=E6uDwCxeI9M
+Video ID: E6uDwCxeI9M
+
+Wait, hold on. Sorry about that. In the
+year 2008, the seas were troubled by
+strange shadows. Some whispered of
+submarines gliding unseen beneath the
+blue. Not monsters of the imagination,
+but machines of steel and quiet purpose.
+Hello everyone. In today's video, what
+we're going to be doing is I'm manually
+assembling a carrier battle group and uh
+setting up some combat air patrols. all
+kind of set up to make things a little
+bit easier for those of you who are kind
+of wondering is there a baseline for
+this and we'll go ahead and do that now.
+So, we have here is a group of different
+ships and of course we also have a
+carrier airwing and we need to put them
+to good use here. We've been assigned to
+basically head off to Syria here and
+just kind of keep an eye on things and
+make sure there no air threats or
+subsurface threats and all that other
+good stuff and of course threat threat
+threats. So, what we're going to do is
+we're going to manually build a carrier
+battle group. Now, we have a couple
+different pieces here at our disposal.
+Of course, we have the Shad Diggov. Uh
+we have ourselves the 4B and of course
+the Aquit. Along with that, we have a
+support ship, the Durance, which I'm
+going to pronounce wrong every single
+time like most things that I try to
+pronounce, but that's okay. So, how do
+we build a carrier group out of this?
+Well, the first things first is we need
+to actually get everybody where they
+need to go. So, I'm going to grab this
+group of ships here. I'm going to go and
+press the G key. Now, you probably
+notice there's this little submarine. Of
+course, we don't have a Nautilus. be the
+Juva if we were actually going to do
+something like this. But that's okay
+because um you know why not? But we're
+going to take this one. We're actually
+going to send him kind of early to our
+destination there and just kind of do
+one of those. And realistically, we
+could be fiddling with all sorts of
+stuff with like groups and areas and
+stuff, but the reality is he's going to
+do just fine on his way over there. And
+of course, because I'm so darn deep, I
+can just basically crank his speed up
+and not really worry about people
+listening. Now, the group itself, uh, we
+have to get kind of serious here because
+we need to fiddle with this formation
+quite a bit to make it work a little bit
+better for us. First of all, our pivot
+point, also known as the leader, will be
+our friend, the shuga. And what we're
+going to do with this one is basically
+set up a defensive barrier. And there's
+a couple different pieces to defensive
+barriers. There's what they call the
+anti-surface warfare side, there's the
+anti-air war side, and of course,
+there's the anti- subsurface side,
+depending on the natures of the threats
+in the actual war. Now, fortunately for
+us, we only have two destroyers here,
+which makes us a little bit tougher.
+Luckily, the Horizon here does a great
+job at anti air warfare. And of course,
+luckily for us, the Aquatane does a
+really nice job with anti- subsurface
+warfare. So, what I'm going to do is I'm
+going to go ahead and take our lovely
+horizon here. I'm basically going to
+order to get about 10 nautical miles in
+front of our friend, the Shugo. So, if I
+go about to here, again, about 10 miles
+is kind of the sweet spot. You could
+even bring it into like seven and a half
+for those you like to kind of do the
+half kind of a thing. So that's going to
+be about right there. So what I'm going
+to do is grab this one. I'll go back to
+our group. We're going to go ahead and
+click on place member. And you can see
+we have a relative bearing or we have a
+fixed bearing. This is obviously going
+to be a relative bearing. So I can go
+ahead and hit that one and go ahead and
+click on the ground right where I want
+it to be, which like I said is about 10
+miles. So this is going to order the
+horizon to go power off and go ripping
+over there as fast as he can. Good. I'm
+also slightly off center here, but
+that's okay. Now, our anti-ubmarine
+warfare is going to be a little bit
+further out. And again, depending on the
+axis threat since we're going to be
+transiting to Syria, our threat
+theoretically is going to be in front of
+us. Now, there's a lot of different
+philosophies on how to do this depending
+on the nature of this. Generally, what
+you do is you have a pair of destroyers
+doing anti-ubmarine warfare. We're not
+going to have that luxury, so we're
+basically going to have to kind of keep
+that in mind when we do that. But
+generally with anti-ubmarine warfare,
+you're looking for about 15 to 20
+nautical miles away. So, what I'm going
+to do is I'm going to glove our
+wonderful ship here. We're going to do a
+relative bearing again. And again, if we
+come up here, this is about 29 nautical
+miles. Is way too far. About 15. And I'm
+going to put it slightly off center
+right there. Just like that. And the
+nice thing about putting things off
+center is people doing the math when
+they're doing like submarine attacks and
+stuff like that. They see the ship in
+the front, assume everybody's in a line.
+When you put them slightly off the line,
+it confuses them to death. Now, of
+course, we have to deal with our good
+friend here, the Guts, which I said I
+would mispronounced 10 times. This thing
+basically chills right next to the
+carrier. That's really its only defense
+is the carrier's air defense. The nice
+thing, too, is um you know, we have some
+20 mm cannon. Now, like it's not going
+to do that much for us. So, what I'm
+going to do is I'm going to do a
+relative bearing and basically park it
+right here, which is going to be I think
+that's about 2 and a half mile. It's
+about a mile. That's fine. That'll do
+the deed. Of course, if the carrier
+itself needs to rearm, refuel, it has
+got a ship basically to get us going.
+Now, our submarine is already on the
+way. He's going to be choo chewing way,
+way, way off there. here. And believe it
+or not, he actually has really, really
+good ears. So, it's going to make it
+pretty easy. So, this group's going to
+get together. What I like to do when I'm
+kind of assembling a group is I kind of
+like to give them a gentle destination
+so they sort of all cut each other off
+cuz it's going to take them some time to
+kind of get into position. One of the
+tricks to this though is remembering
+that it's going to take them time to
+form up. So, what you really want to do
+here is you want to slow them down
+during this forming up sort of stage
+here. We'll make about 10 knots here. We
+only need to do steerage or anything
+like that. But, it is important that
+these other vessels do get into
+position. Now, if I bring up the other
+vessel itself real quick just by
+clicking on him, you can see he's going
+pretty darn Actually, he's making good
+time. My bad. He's ripping here, which
+is what we want. As a matter of fact, if
+I pop this up, you'll notice here that I
+can set sprint and drift if I wanted to,
+just for the purposes of basically
+getting them going quicker. But, um,
+this is perfectly fine. And they're
+going to come snapping around and
+basically line ourselves up. And then
+we're going to be ready for the actual
+transit into the danger zone, so to
+speak. All right, let's go ahead and
+grab this. I'm going to do an
+acceleration waypoint. And then we're
+going to stay kind of away from Cyprus
+and make our way that way. But maybe my
+acceleration way point. That's just a
+quick slang term for one that we're
+going to change our speed here. So we'll
+pop up to cruise speed when we get
+there. We'll stay at this kind of like
+10 knot semi steerage here. And of
+course this guy's got to go faster than
+us no matter what. He's basically going
+to look in the water for any subs or
+anything like that. Hey, I just found
+Mew or is that Atlantis? I don't know
+which one that is. All right, so that's
+taken care of. Let's get our combat air
+patrol going. Now, the combat air patrol
+relatively straightforward. The big
+thing again is threat access, but uh
+first thing we need to do is establish
+our awax coverage. So, what I'm going to
+do is I'm going to measure out about uh
+usually it depends kind of on the
+situation here. Usually, it's half the
+distance of your longest awax. So, I'm
+sorry cap. Generally, my cap is going to
+be about 150 mi out, which is about
+here, which puts our awok here. Well,
+wwax, it's a new one. And what I like to
+do again is I like to offset it
+slightly, just a little bit over again.
+Try to stay clear of Cypress there. So,
+I'm going to come down here. I'm going
+to add a waypoint. Uh, this is going to
+be a fixed waypoint relative to our
+carrier group. So, I'm going to go ahead
+and call this um awax loop. And what
+some people do is they'll actually loop
+the Awax kind of along here. I don't
+think that's a bad idea. I'm just going
+to be lazy and make them do a power
+donut because well, keep it simple,
+right? Let's see. Mission reference
+points. We're going to do a fixed
+reference point right there. Click on
+the carrier group. Boop. And that's
+going to be awesome. Let's go ahead and
+get that guy going.
+Head
+to our support. Looks good. Let's grab
+our Awax. Who do we have today? We have
+IL. We have Suku and Sua.
+That's fantastic. All right, let's go
+top that down there real quick. Uh,
+we're going to say one unit at a time,
+and we're going to make sure they turn
+on the radar when they get there. That's
+just a little tiny thing, but that's
+okay. MCON settings, we're just going to
+adjust it to allow radar because
+obviously we need that. And of course,
+uh, they should be able to come back and
+forth pretty effectively. Now, if we
+wanted to, we could have them go out and
+come back. I don't think that's
+necessary. I think it's perfectly fine
+to do the way we did it. And again,
+we've got a wax loop. It's just one
+point. It's continuous loop. If you
+want, it'll work perfectly fine. All
+right, that's all set. So, they're going
+to come take off there. Again, that's
+usually the first thing I launch. If you
+want to cheat a little, you can actually
+come in here real quick and you can
+actually grab one of them. like this one
+for example, the hook and I just launch
+him individually and he becomes like the
+designated first awax plane and it just
+kind of makes it easier. All right,
+let's get our cap ready. So there's
+three layers to cap. There's the cap
+that deals with the stuff that's far
+away. Theoretically, we should get that
+first. You've got the inner cap, which
+is usually also known as your flank cap.
+And then of course you've got your oh my
+god, something got through. I just get
+in the air cap. That's your 5minute cap,
+for example. So let's get the first one
+set up. Uh we're going to assume that
+the we're going to, like I said, we're
+going to try to stay out of Cypus if we
+can help it. So, I'm going to go ahead
+and get ourselves a little mission here.
+Like I said, about 150 is a pretty good
+distance here. Right about there. Looks
+good to me. That looks good to me. And
+that's awesome. I'm going to go ahead
+and set this to be a fixed cap.
+Naturally, we have to shrink it. So,
+when we get closer to Syria, we're not
+flying over Syria.
+That could be a problem. So, we'll put
+this as a fixed bearing because again,
+the thread axis is going to be over
+here. And this is going to be kind of
+cap region one if you want to think
+about it. All right. Uh, so one of the
+things we could do too is if we wanted
+to make this a little bit more effective
+is we could basically create a
+prosecution zone for them as well. As a
+matter of fact, we'll do that. But
+before we do that, let's get the cap
+going. Uh, we'll call this far cap
+patrol a and let's go ahead
+fail polygon. Oh no, my polygon has
+failed. How about now?
+Done that a few times, trust me. All
+right, let's get some raf. Uh, again, I
+didn't give them funny French names this
+time. But we're going to grab this
+group. They're going to be our first
+group here. And of course, uh we're
+going to try to keep two at a time.
+Movement with an area of flight size
+two. Uh they're going to rip out there.
+Cap is usually a slightly lower altitude
+than uh you would expect. A lot of
+people think of cap as maximum altitude
+for maximum loiter, but you actually
+want to go a little bit lower just to
+get that radar closer to the ground,
+which makes it easier to pick up things
+like submarine launch cruise missiles
+and stuff. So, I'm actually going to
+reduce our altitude here to 25,000 ft.
+Even though it's going to cost me a
+little bit of range, it's it's kind of
+worth it. So, that's good to go. Let's
+set up our nice little prosecution zone.
+So, the prosecution zone is basically
+anything in here. Go ahead and start
+blasting. And I'll go ahead and make
+this a fairly large prosecution zone.
+There we go. And again, we're going to
+have multiple layers to our cap here,
+which makes this a little bit easier.
+So, that's my prosecution zone. Um,
+basically, anything in here is what
+we're going to blast. So, I'm going to
+go back to my mission. Go back to our
+friends far. That's how you spell far
+capital cap. It's far leaka.
+All right, let's go to prosecution area.
+We'll add all points in the map. And you
+can see that is good to go. Although for
+some reason, let's see if I can figure
+out what did I did wrong here. Select.
+Ah, much better. So, you can see this
+will be our um prosecution zone here.
+So, I'm just going to validate that.
+Checks. Uh, let's see. Inside
+prosecution area, that's fine. I can
+turn that on. It's not that big of a
+deal. Outside patrol area, we do want
+that. Um, within weapons range, we do
+want that. But keep in mind, they're
+only going to shoot things that are in
+this area, which is perfectly fine for
+us. We really don't want them to go to
+Israel cuz um you know, like I I don't
+it's a lot, but again, we'd have to play
+with this, but that's fine. All right,
+so that group is all set. That's going
+to be our far cap. And now what we're
+going to do is we're going to do the
+midcap, aka the flank cap. This is
+really to kind of guard the sides that
+are a little bit closer to us. And the
+problem with this one, as you're going
+to kind of see in a second, is it's a
+very awkward shape when you have Cypress
+right there. But, uh, we're going to
+make it work. I'm going to go ahead and
+borrow this one right here. And one of
+the things we can do is we can actually
+build one of these shapes. This is going
+to look really, really ugly, by the way.
+All right. Ew, ew, ew. This is going to
+get so ugly.
+And uh yes, one of the things you did
+observe is the fact that I forgot to set
+these way points to be fixed bearing.
+So, I've actually got to go back. Oh,
+no. See, I did it on that one. I didn't
+do it the other one. Let me fix that
+real fast. This whole area has to move
+with the carrier. So, I'm going to do
+the same thing I did before. Uh let's
+see. fixed points. Uh, we went fixed.
+Why am I being so blind? Ah, I was
+right.
+Tada. Actually, this is fine. That one
+can totally be that way, too. All right.
+So, we're going to grab this one here.
+These four are going to be my flankers
+here. We'll do a fixed point to our
+carrier group. Looks nice. And we'll
+grab all these goofy ones down, I guess.
+You know, I'm just going to roll with
+this shape here because why not?
+Let's make those all fixed as well.
+All right. And we're good to go. Woo.
+This is going to be a pain in the butt
+in a second, but you know, it's part of
+the fun. Part of the fun. Let's go stick
+that right there. The Awax loop is now
+part of the fun as well. I'm perfectly
+fine with that as well. And we're good
+to go. Fantastic. Okay, so now we need
+to deselect everything. So, let's come
+up here real fast. Deselect all way
+points. Let's grab this one. And then we
+need to somehow grab that one. Uh, let's
+see here. One of the problems is you
+can't do something like this. See how
+this is split? Apparently, I missed one.
+Uh, let's see here. Fix, fix, fix, fix,
+fix, fixed. I'm just being blind today.
+Sorry. All right, that looks good to me.
+So, we've got the group to the north for
+the north flank, and we have the group
+to the south for kind of the south flank
+here. Problem is, if we want to merge
+these two groups, we're actually going
+to have to make a two more sets of way
+points. I did say this was going to be a
+pain. And that's going to be like that.
+And that's going to be like that. This
+polygon is going to look horrifying. I
+can't wait. All right, fix
+checky checky check for you. Riggity
+wreck. All right, watch this. So, we're
+going to do a flank cap. This is going
+to be our group here that's going to
+keep an eye on things on the side.
+That's okay. I know the it's going to be
+an awful polygon. Oh boy.
+I had a feeling it was going to be
+pretty rough. All right, let me fix
+this. Tada.
+All right, that's all fixed. That was
+ugly. But, as you can see, I got it all
+nice and shaped up. It's now a good good
+cap shape there. All right, let's go
+ahead and grab my next units here. Uh,
+this is going to be um 12 float. Toss
+them in there like that. We're going to
+do the same basic thing we did before.
+Again, keep that station altitude a
+little depressed so you get better reach
+for radar. I'm not going to set up a
+prosecution area for these. These folks
+know what to do when they get there.
+Kind of a thing like that. All right,
+that looks good to me. That looks good
+to me. Good, good, good. Flight size two
+1/3 rule. Set city set. Whoa. Okay, so
+now what we're going to do is we're
+going to get I kind I call it the alert
+status five group. And that's the people
+who are going to basically be chilling
+on the deck ready for emergencies. Now,
+one of the things you can do, of course,
+is you can set up an opportunity to
+intercept mission around the carrier. I
+don't want to do that because as soon as
+they see a red dot appear on the screen,
+they're going to panic and go. We don't
+necessarily want that for this
+particular mission. As obnoxious as it's
+going to be, I'm just going to leave
+them on the deck and if I need them, I
+will manually launch them, especially if
+it's an operation this small. Okay,
+ready to launch some airplanes? Cuz I
+certainly am not. Let's do it. So, I'm
+going to go and speed up time here. I'm
+actually going to deselect everything.
+You got to kind of watch the party here.
+This is going to this is going to get a
+little silly in a few seconds here. All
+right. And what it should do is I'll
+grab tac view real fast now that I fixed
+some of the boo boos that I was doing
+earlier. So glad they fixed that bug
+with the invisible units. There they go.
+&gt;&gt; I'll let you enjoy the sound effects.
+That's so much fun.
+All right, everybody's off. Now, one of
+the things that uh the French Navy
+suffers from, actually, I I'll take a
+step back. All navies suffer from is the
+fact that carrier planes since the
+beginning of carrier planes have always
+struggled with range. It's it's just
+unfortunately it's just the nature of
+carrier aviation in general is range is
+always going to be an issue kind of a
+thing. So, even though I have the
+ability to send these guys way way way
+out there, the problem is they're only
+going to be able to hang out here for
+about 45 minutes before the next group
+sends. Now, if you do the math on this
+real quick, you'll recognize the fact
+that we're going to run out of fuel on
+these before the next group is even
+ready. Uh, that's kind of the nature of
+the beast. That's why we're only
+launching two planes at a time. But you
+can see my lovely, lovely aircraft here,
+my feeds over there. You can see my Awax
+planes doing a glorious job of keeping
+an eye on everything. You can see can
+see deep into Syria. And he's giving us
+plenty of warning for our good friends
+here to kind of cause some trouble.
+Now, the cool thing here, too, uhoh. Oh,
+wait a minute. Oh, the trouble. The
+trouble. Uh oh. We've got ourselves some
+trouble right away. What is this? Uh MiG
+23 is uh heading right for us. Now, just
+for the record, a MiG 23 would uh
+definitely struggle to make that flight
+and get back, but uh this is going to be
+a problem for us. Now, the nice thing is
+because we've set everything up so
+carefully. Now, watch what happens. So,
+our cap flight here is doing its job.
+It's cruising around back and forth. And
+notice it is not engaging these angry
+MC23s yet because it has not actually
+entered into our prosecution zone. Now
+watch what happens the moment one of
+these aircraft accidentally. So there it
+goes. Oh no. Look at him go. Look at him
+go.
+And I think that's the end of that. Real
+fast. You better run. Oh, we're fed.
+We're fed.
+Stop shooting at maximum range.
+And now we've accidentally got ourselves
+a dog fight because somebody forgot to
+set the mag range on things correctly.
+And that's the end of that.
+But you can see that it works absolutely
+perfect for those kind of situations.
+All right, that was uhoh. Oh jeez, what
+is going on today? It's just stuff
+coming out of everywhere. Now, this is
+kind of an interesting problem. Um, all
+of our aircraft were basically optimized
+for the purposes of uh doing combat air
+patrol. We don't really have anything
+optimized for anti-surface warfare, as
+weird as that sounds. Now, the cool
+thing here is we have a pretty darn good
+idea of what kind of vessel this is. But
+if we actually were to take a look at
+our CBG, one of the things you're going
+to notice is we have all these beautiful
+weapons, including everybody's favorite
+exoset, Block 2. Gosh, I love that
+vessel. So, what we're going to do here
+is um I'm pretty suspicious about this
+guy. You know, if we wanted to, of
+course, we could send analyst to go take
+a look. And without knowing the range of
+this particular one other than the fact
+it's obviously a patrol craft and if I
+do the math on it, you can see that
+there's no way the university is going
+to get there. But like what's the fun in
+that if I can't fire an exo set like
+this? I never get to use these things.
+So like it's it's just fun for me. All
+right, Nixie. I definitely don't want
+that sh to go. Nope, I do not want that
+one. Oh, look at that exite. Oh, I've
+got block threes. Fire.
+Oh, this is so rude. This guy's not even
+going to know he got shot at. Now, the
+Exo set, of course, is a very unique uh
+anti-hship missile because it is one of
+the few anti-ship missiles that have
+actually done a lot of damage to ships
+over the years. You know, we make all
+these wonderful weapons, but never
+really get a chance to try them. You can
+see here our ref is just kind of
+cruising around. Uh-oh. Uh-oh. Uhoh.
+Again, there's no way this patrol craft
+would have come out this far. This would
+be like I like you. You're lost, my
+friend. You are very very very lost.
+Also surprise exoset.
+So the one thing I did not do is a
+subsurface threat. And the reality is is
+there was no subsurface threat to worry
+about too much for these kinds of
+things. But if we did have a subsurface
+threat, we'd be usually our helicopters
+and basically keeping them about the
+same range as everything else. But if
+you actually look here, you can see very
+very carefully how everybody kind of
+fanned out to the correct size and shape
+that they're required to do and
+everything is running great. Enjoy.

@@ -1,0 +1,191 @@
+# C: MO - Manual Time on Target Calculation
+Video: https://www.youtube.com/watch?v=84hRgY7Qous
+Video ID: 84hRgY7Qous
+
+Hello everyone. In today's video, we're
+going to be showing you how you can
+manually calculate time on target, even
+if you have things with complicated
+waypoints. Now, keep in mind, we can do
+a lot of this already with the mission
+planner, but sometimes it's fun to do it
+the old way. Now, the way we're going to
+do this is we're going to use the
+world's simplest spreadsheet. Again, try
+to keep this relatively basic here. We
+have simple inputs. We're going to have
+the cruise speed of the weapon, which we
+can get right out of the database. It's
+a tomahawk. It's going to be 500. We
+have the arrival time of the weapon. And
+then of course all we have to do is
+enter the total distance the specific
+weapon needs to travel. So one of the
+things you can see here is my travel
+time here is in minutes. It doesn't do
+anything. And of course my launch time
+is here. Now let's say that we're
+traveling 250 nautical miles. Now if you
+think that through really really
+quickly, you'll realize 250 is half of
+500, meaning it's going to take 30
+minutes to get to its target. So when I
+press enter, you'll see here that it
+quickly calculates 30 minutes. It tells
+me my launch time, of course, will be
+9:30 a.m. Cool stuff, right? So the
+calculations for this is actually really
+really really simple. To get travel
+time, we simply take the distance
+divided by the cruise speed and you
+multiply that whole business by 60 to
+get minutes. Now for launch time, this
+is where the math gets a little weird.
+We're going to take the time that the
+weapon needs to be struck and then we're
+going to subtract the time that the
+minutes is divided by 1440. Now you're
+sitting there going 1440. I feel like
+I've heard that number before. That's
+correct. Uh that is how many minutes
+there are in a day. And basically we're
+subtracting days. Unfortunately, these
+decimal days as times inside of sheets
+and that would give us our time. So if
+we had 100 here, 150, 200, 250, you can
+see that the spreadsheet will quickly
+tell me exactly what times I need to
+launch my weapons in order to get there
+at the same time. So with that taken
+care of, let's head back over here and
+actually let's work it out. So let's
+assume one of our weapons is going to be
+a straight shot. So if I look at that
+there, that's uh what have we got?
+149.5.
+So I'm going to come down here. I'll
+clear this all out. 149 or 0.5 means we
+need to launch at 942 for my straight
+shot. It's pretty easy. Let's go ahead
+and do a couple deflection shots here.
+We'll do one here. We'll do one here.
+And we'll do one here. So, this is going
+to launch from here. It's going to
+travel a distance of 154.1.
+Uh 154.1. And then from the 154.1,
+again, control D. I'm going to drag down
+to the target. That's going to be 30.1
+plus 30.1. I'm just working this out in
+the sheet as I go here. All right, let's
+take this shot here. Uh, that's going to
+come down to here and that's going to be
+about 155.7.
+155.7. You got to be careful with your
+decimals. And then from that point, it's
+going to be traveling up to here, right
+there. And that is 45.1 plus 45.1. Nice.
+That was 451. That could be a problem.
+All right. And then our last shot, which
+is actually going to come from inland,
+more or less. We're going to go all the
+way to here. We can actually do it from
+here to here to here if you wanted, but
+I'm going to do it the easy way. Click
+on that weapon right there. And that
+looks like uh 188.3
+188.3 plus. And we need to measure the
+distance between that waypoint and our
+target, which is going to be about 40.2.
+All right, let's go ahead and take a
+look at what we've got here. So, you can
+take a look. Tada. So, we can see here
+very clearly that our first weapon is
+going to be launching at 9:32. That's
+very, very soon. It's also going to be
+traveling a distance of 228 mi. It's
+going to take it 27 minutes to do it.
+Our final missile is going to launch at
+9:42.
+Now, we have to be really, really
+careful with time acceleration here. So,
+what I actually recommend doing is
+hitting the buttons at the bottom here.
+So, if I hit that and I unpause,
+theoretically, that should only get me a
+minute or so, but I'm going to monitor
+it real carefully here. Kind of be
+gentle because the amount of times I've
+overshot my targets is uh ridiculous.
+All right, we're looking for 932 and 35
+seconds.
+All right, almost there.
+9:32 and 35 seconds. Get ready on the
+space bar. Two. One. Boop. Boop. Boop.
+Boop. Boop. Boop. Pause. All right,
+let's do it. So, I'm going to do shift
+F1. I'm going to click on the target.
+I'm going to go ahead and come down to
+my tactical tomahawk. Here's the one
+I've got loaded. Double click. I'm going
+to click it. Press plat course. And now
+you can see it's tal final destination.
+But I'm actually going to click right
+here because it's going to be my
+waypoint. And if you notice here, it's
+going to go all the way past the site.
+Hit that waypoint. It's actually going
+to turn around and come back that way.
+Press the escape key. I'll go ahead and
+close the screen. And we're going to
+unpause. Our next weapon is going to be
+and 54 seconds.
+All right, time to launch. Shift F1.
+We'll go ahead and pick the next target.
+We're going to go ahead and fire another
+one. U if this gives you trouble, by the
+way, with this double click, one of the
+things you can do is you can clear the
+course and then if you click it, you can
+then plot the course. Remember, that's
+going to be the weapon that we have down
+here. Good. So, I'm going to go and
+unpause and it should go ahead and
+deploy that weapon, which it did.
+Perfect. Our next launch is 937 and 54
+seconds. 937. I may have just broken the
+course, but that's okay. That you'll get
+the idea when we get there.
+All right, here we go. Two. Three.
+Pause. All right. Shift F1. We'll select
+the target again. Select the tactical
+tomahawk. Grab this one. Clear course.
+Click it. Flat course. And we're going
+to pick that point that's all the way up
+here. Click right there. Press the
+escape key. Close. Unpause. There it
+goes. It's on its way. All right. Our
+next weapon is 942 in 4 seconds. And
+infinite
+brilliance. I accidentally can't talk,
+but I accidentally overshot it by quite
+a bit here. So, unfortunately, we're not
+going to see the direct shot, but that's
+okay. Anyway, but what we are going to
+get to see is we are going to get to see
+the other shots. And that's fine because
+these were the tricky ones anyway. Now,
+what you'll observe here is because we
+did the math so precisely, all three of
+those weapons are arriving at the target
+more or less simultaneously, any
+inaccuracies from this process that
+you're observing right now is really
+because I didn't measure it accurately
+enough. And if we actually were to
+unpause this and check, you will notice
+our first weapon struck at 59, our
+second at 08, and our final weapon at
+14. So, this is an interval of 9
+seconds. Uh, this is was an interval of
+6 seconds. Now, that is what I call
+accurate. Enjoy.

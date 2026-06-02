@@ -1,0 +1,466 @@
+# C: MO - Terrain Masking
+Video: https://www.youtube.com/watch?v=wycT9grtrOE
+Video ID: wycT9grtrOE
+
+hello everyone in today's video we're
+going to be taking a look at terrain
+masking you know basically the whole
+goal here is just to kind of show you
+some tactical considerations you can
+make when attempting to deploy weapons
+in such a way that limits the ability
+for them to be intercepted so as you can
+probably tell by looking at a little
+scenario here and of course the date
+um this is basically the precursor to
+the persian gulf war operation desert
+shield operation desert storm depending
+what part of the operation you're in
+that is and what we're going to do today
+is that we're going to launch a couple
+tomahawk missiles directly into the
+heart of baghdad with the express
+purpose of basically blowing up as much
+of these command centers as we possibly
+can now for those of you who know
+history you'll probably recall that when
+they actually originally did this they
+launched a bunch of decoys in to
+basically trickle the same batteries
+into lighting up early and each and
+every one of those got a harm missile
+unfortunately we don't have the benefit
+of that we're actually going to have to
+do the tomahawk part which means we have
+to basically carve our way around a rock
+and try to find it so let's see what we
+can see well first of all taking a look
+i noticed there's a pretty serious river
+here if you can get the thing low enough
+and you're in a valley that's usually a
+great place to put a weapon the other
+thing i noticed there's just a huge body
+of water here which means no cover at
+all swinging over this side obviously we
+could launch things into iran but i'm
+sure rand is not going to tolerate that
+very much even though these guys were at
+war basically two years prior now i know
+some of you are probably going well why
+don't we fire into kuwait here well
+kuwait's perfectly fine as well but what
+we're really missing is if you remember
+the original persian gulf war saudi
+arabia was an ally which means all of
+our shots we can actually take through
+saudi arabia basically turn and go
+flinging into a rock here so with that
+in the back of our head we have one
+possible vector but there's something
+else i want to see and that's going to
+be what the terrain looks like in the
+country now there's a bunch of different
+ways to look at terrain in this program
+my favorite one of course is to switch
+to the relief layer which makes it very
+very very obvious what the different
+terrain is for example holding my mouse
+down here i can see the average
+elevation is like 40 feet which means no
+cover coming to this side of things the
+average elevation shoots up to about a
+thousand feet and obviously into iran
+you've got plenty of high mountains so
+if we're going to try to come up with a
+way to get our weapons into iraq and not
+be detected into the last possible
+second we need to basically avoid this
+section because if we do we're basically
+a free hit but if we fire all of our
+weapons into the higher altitudes over
+here that's also going to mean that
+anybody looking up will be able to see
+them unless the weapon of course is
+traveling mostly over the high sections
+so with that in the back of our head
+let's plot our strategy here so i'm
+going to concentrate on targeting these
+bunkers in here because these are going
+to be absolutely the toughest of the
+bunkers to get through now the
+interesting thing here is because this
+is the persian gulf war the iraq army
+and rock air force and air defense only
+has the sa-2s and sa-3s now that's not a
+problem except sa-3s have the capability
+of engaging tomahawk cruise missiles
+sa2s do not which means we can actually
+basically
+right through all these sa2s without
+having to deal with a single one of them
+taking a pot shot of one of our rockets
+however as you know the moment you fire
+and you're detected that means everybody
+else is going to be detected too so
+they're going to know that they're being
+attacked so our basic strategy looks
+like it's going to have to be firing
+around this way coming up and around and
+then kind of scooting through the big
+nastiness here as a matter of fact i
+think i can see a pretty distinctive
+little hole in their defense again this
+is the benefit of having good intel of
+course the best hotel that i see in
+their defense is actually coming from
+here the problem is we're gonna have to
+fire over the top of this particular
+location here go out and then come
+around again so if we come right through
+here it's not gonna end so well if we
+come up and around here however we're
+gonna have our work cut out for us again
+it's a super chain we can't fire into
+iran here otherwise we'd fire the mons
+we're on
+the last possible second basically
+surprised but i do notice that this lake
+here is a pretty good depression i do
+notice that this river is pretty low as
+well so we might be able to sneak some
+in this way and i can see that there's a
+little valley in here that we can take
+advantage of all right enough of that
+let's shoot
+hold down shift f1 i'm going to drag a
+box around the center and we'll go ahead
+and put those guys in the middle too why
+not shift f1 drag let go so what we're
+going to do is we're going to get rid of
+all the things we don't actually need
+here to do these radars while they're
+very very high high priority targets
+we're going to be much more interested
+in these particular targets that we have
+here so we're going to keep it nice and
+cheap here and i'm going to go ahead and
+fire let's see here who do we really
+want to attack bunkers you're not going
+to kill them with tomahawks sometimes
+we'll take them out of the running here
+and that leaves us with all these sector
+commands okay that looks delightful so
+we have a total of let's see here 16 and
+we have three targets do the division
+that's going to be about five each i'll
+be fairly cheap here and i'll fire let's
+call it for each so go ahead and
+allocate four and press allocate and
+then i'm like
+that is not what i wanted at all i
+wanted the top hawks allocate four
+apparently we're going to get both
+go away okay here we go click on these
+ones i'm going to press the plot course
+button okay so let's plot our course
+using as much of the terrain masking as
+we possibly can so we've got that little
+radar there so what i'm going to do is
+pop the first one into saudi arabia here
+and then we're going to cruise up along
+this side is there anything we can hide
+in here i'm just really hoping to be
+some terrain there's some low level
+stuff here and there's probably that's a
+flat face so we can get underneath this
+if we kind of go low so i'm actually
+going to stay relatively uh the best i
+can underneath the radar horizon here i
+can see there's a little low
+ah it's gonna exceed the maximum weapon
+range so we're gonna have to come back
+at some point so let's go ahead and find
+out where this uh there's that little
+valley right there i'm gonna take
+advantage of so i'm gonna pop out this
+way i'm gonna drag my mouse here and
+let's see here if we're gonna get
+through that we're gonna have to come
+into this valley here we're gonna have
+to scoot up through here and we're
+basically going to have to b-line it
+directly downtown like that through the
+center of an incredibly tough gauntlet
+again i'm trying to take advantage of
+the low altitude where all these guys
+are posted above remember most sams
+can't shoot down well so that's looking
+pretty good i'm gonna tap the escape key
+and those are targeted so let's go grab
+this one we'll go ahead and give you and
+you get four tomahawk cruise missiles
+plot course on this guy i will use a
+slightly different strategy this time
+we'll see who gets through the best here
+so what i'm gonna do with this one is
+i'm basically gonna scoot right up the
+coast here try to stay as much in a rock
+as i can this is a huge open spot of
+course it's all flat here so i'm going
+to try to spread the difference between
+these two radar posts we'll go ahead and
+sneak up here we can't go through that
+if we go through that we're going to get
+destroyed so we can either go around
+like we did with the last group or we
+can come out kind of the back here so in
+this case i think i'm actually going to
+go around sector command uh let's call
+it this one oh boy i don't think we're
+going to be able to thread that needle
+there i'm going to go through here i'm
+going to kind of come up here um
+is that an sa3 oh it's nsa too never
+mind
+we're gonna go right over the sa2
+because um they're not gonna be able to
+engage all right cool let's go ahead and
+lock onto this one as well we'll go
+ahead and give you get four tomahawk
+missiles
+click on it press the plat course button
+all right let's see here oh oh oh you
+gave me an easy one thank you sir so uh
+this one again we'll stick close to ron
+here we'll kind of do one of these uh we
+don't want to cross into iran uh see
+there's no weapons here that are
+effective but we're going to take
+advantage of our low altitude cruise
+here we're going to go up through here
+we're going to kind of come sneak as
+close to the border here and we're going
+to try to get ourselves as far away from
+all those sams as we possibly can and
+we're just going to beeline right
+through it oh man you got to love these
+weapons the fact that you can cheat like
+that so then we got all those now let's
+pretend for a second that um we knew we
+had to hit uh let's see let's pick
+something really difficult this guy
+right here so let's pretend we need to
+hit him so we're going to grab all the
+weapons we have left which if i recall
+correctly we only have four left so it's
+allocate four and how would you apply a
+course through that many sams well
+there's one of these cool tricks that
+i've learned i'm playing a command over
+the years there and that's the fact the
+sam cannot hit a deflecting target
+especially the old ones so here's what
+you do we're going to go ahead and now
+take the exact same path we took with
+everybody else but what i'm going to do
+is go right here and i'm going to fly an
+arc
+in and out of their sam batteries now
+you're probably going what are you doing
+so what you're doing is by flying an ark
+you're going to go ahead and make the
+missiles fire all deflection shots at
+your tomahawk and then you're going to
+make a b line for it and hit it after
+it's already wasted all its missiles on
+you it's a fun strategy but it actually
+works pretty well all right let's go and
+switch back to the other team
+all right
+unpause so in case you're curious we
+have said that they can fire at anything
+they can hit so we'll go ahead and speed
+up time here and let's see how we did
+oh
+notice the ones that fired in saudi
+arabia notice we completely lost the
+ones that went in here they're about
+halfway now notice that this one's here
+yes i did turn on all those radios in
+case you're curious we're doing fine oh
+we spotted we spotted them so now this
+group right here was picked up this must
+be like a field battery or something
+like that we missed it yeah so it's
+picked up by that guy but you can see
+they dipped down at the last second
+meanwhile the crew that's traveling here
+through saudi arabia has not even been
+detected at all yet but again we're
+interested in how many of these are
+going to get through
+versus how many are going to get hit so
+i'm guessing this is an sa-3 oh it's a
+hawk yep i'm about to lose a lot of my
+tomahawks here oh and they lost sight of
+them
+that's a chasing shot that's a tough
+shot to make with any missile especially
+against a target notice because it was a
+deflection shot most of those initially
+missed we completely missed this guy ah
+we fell for their trap that's okay
+because i have a whole pack of them over
+here that they haven't even noticed got
+launched on them shame on me though
+shame on me whoa surprise several of
+them got through so now what's going to
+happen is all these batteries here are
+going to try to do one of these things
+they're all going to be really nasty
+deflection shots trying to yep yep watch
+this watch this
+so they're going to go to take the shot
+and he's going to turn away
+and then this guy is turning away a lot
+meanwhile surprise there's a whole group
+of ones that come out of this direction
+all of a sudden while they're too
+distracted dealing with that these guys
+that come rolling in here huh rolling
+denier i should have made them do a
+squiggle at the last second otherwise
+they got themselves wrecked i'm not
+gonna lie this is the most talented
+surface air missile crew i've ever seen
+in my life because i mean it's pretty
+darn late at night meanwhile this crew
+sneaks in bam bam bam
+so those are certainly got to their
+target this guy's doing his thing notice
+anybody who can fire a shot such as the
+sa-3s and the sa-6s this is getting
+really irritating because they are now
+shooting at a deflection here oh the
+deflection shot oh the more deflection
+shots ah they snuck out and they managed
+to jump on an s8 here oh that's just not
+fair all my tomahawks are going to get
+plastered
+yuck
+so we saw one more crew of tomahawks
+that we have not detected yet this is my
+last crew here and they snuck through
+completely unscathed more or less and
+was able to hit in here and nailed this
+adoc of baghdad so total damage here as
+you can see is absolutely positively
+minimal we have a 22 here i think we're
+25 here which is nothing the other one
+that we targeted i knew we weren't going
+to be able to hit it so it was hopeless
+so i'm gonna go ahead and take a look at
+losses and expenditures let's see how
+much we cost the american taxpayer here
+so they went through well about 30 sam's
+let's call 37 38 we went through 16
+tomahawks so we did a little tiny bit of
+damage but not really a lot so now i
+know you're sitting there going okay so
+your terrain mapping the best it did is
+confuse the heck out of them well that
+wasn't bad so what would have happened
+if i ordered my guys to just do a
+general assault well let's try that i'm
+going to tap the f1 key shift oops tap
+shift f1 drag my little box here and
+let's go ahead and just get rid of all
+these bunkers that we don't need remove
+targets from the list we'll grab all
+these here that we don't need hey there
+they are again we'll go and allocate
+four each
+click right here
+so now each one of these targets should
+have four all right on pause
+and off they go
+so notice he automatically predicts kind
+of this random little pattern here he's
+going to go swipe sweetie swoop
+and he's on his way and we'll switch
+back to iraq real quick to see how they
+are doing so far back to iraq they had
+no trouble detecting them they didn't
+fire on them at all because none of
+those weapons were short-range anything
+so they wouldn't have been able to
+engage it the first crew systems of
+tomahawks are coming in the second crew
+of tomahawks is coming in they're going
+to be do what they can and here comes
+the shots
+splattered oh here comes the next ones
+coming in coming in and here comes all
+the sams
+all right so we did zero damage and they
+fire the same amount of interceptors
+again we call uh we're four or less
+tomahawks however as you can see they
+went through a heck of a lot of
+interceptors and had no difficulty
+slapping arm missiles out of the sky so
+again hopefully this video helps as far
+as starting to think about things from a
+more up perspective as far as distances
+and times and places to hide your
+weapons tomahawks are great but there's
+nothing stopping me from using an f-16
+for the exact same purpose
+if you really really want to do
+something kind of funny you can actually
+design tomahawks that have the express
+purpose of wasting interceptors for
+example if i wanted to go right through
+along here if i designed a tomahawk that
+basically did something like this you're
+watching this real quick let's go ahead
+and i'm going to fire four whoops i
+don't need any 25 millimeter cannon i
+just want four of those allocate all
+please
+if you wanted to really really waste
+their interceptors you can do something
+like this
+however many waypoints you're allowed to
+use just fly a circle around the enemies
+like that
+and watch this
+so now when the weapons fire they're for
+the express purpose of irritating the
+air defense not so much for causing
+physical damage so now as the missiles
+are on their way here i'll go ahead and
+put this mode here comes my pack of four
+notice they didn't get picked up notice
+we're getting that really really tough
+deflection shots they miss every one of
+those those are really hard shots to
+take with any sam system especially
+since the target keeps dipping behind
+terrain now watch this
+here we go waste your missiles waste
+your missiles give me your missiles
+waste your missiles
+incredibly i actually still hit the
+target
+[Laughter]
+so what i want to show you here today
+like i said is how you can use terrain
+to your advantage as well as take
+advantage of the geometry of the shot in
+order to make your weapons more
+difficult to do now of course like i
+said if you had an f-16 or something you
+could do the exact same process but at
+least you have a little more variety in
+altitude enjoy

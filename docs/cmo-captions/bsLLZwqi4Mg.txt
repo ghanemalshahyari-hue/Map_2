@@ -1,0 +1,463 @@
+# C: MO - Understanding Radar Horizon
+Video: https://www.youtube.com/watch?v=bsLLZwqi4Mg
+Video ID: bsLLZwqi4Mg
+
+hello everyone in today's video we're
+going to take a look at radar horizon uh
+something most folks are probably
+familiar with but are looking for some
+sort of way to be able to beat so to
+speak and we're going to look at some of
+the different strategies involved in
+kind of defeating it as well as sort of
+understanding exactly what you can do to
+understand you know kind of how to play
+with it a little bit especially if
+you're on the defending side too so
+let's go and take a look at our scenario
+real quick so what we have here is we
+have a little radar surveillance
+platform here and what i've done is i've
+actually edited their sensors real quick
+to have a tps43 obviously i like the
+tips 43 it's like my go-to radar for
+everything which has a spectacular range
+here if i actually hold this out real
+quickly you can see it goes out to be
+about 240 nautical miles we have another
+tps 43 which is uh sitting up here this
+is a solo if i recall correctly over
+down here in south africa by the way so
+what i'm going to do is i'm quickly flip
+on the scenario and now we're going to
+see kind of what happens
+all right delightful so what just
+happened we noticed there's a number of
+different contacts as a matter of fact
+if i zoom onto these little contacts
+here you'll probably notice that the
+first contact was uh designated only all
+the way at the bottom here at a distance
+of just about the radar on distance that
+this particular contact radar can pick
+up our next contact showed up at about
+the same distance as well our next
+contact showed up at a little bit short
+of a distance the final one much shorter
+the next one significantly shorter and
+then finally the last one you can see
+the last two here were significantly
+shorter as well now what do these
+contacts have that are different they
+are at different altitudes as a matter
+of fact our 36 center 60 thousand mile
+or 60 thousand feet rather a particular
+contacts as you can see with the first
+ones we picked up and then the last one
+we detected of course was the one that
+was extremely low i believe this one was
+at an altitude of yeah 104 feet above
+ground level so as you know on all
+radars are limited mostly by line of
+sight if you want to think about the
+world for a second if i put my radar
+right over here we could not see through
+all this beautiful rock in sparta target
+that was on the other side of things
+like this the term for that one is radar
+horizon which like i said i'm sure most
+people are familiar with
+so what we're going to be interested in
+doing today is finding out how we can
+optimize our aircraft flight pattern to
+take advantage of the fact that that
+radar horizon exists now there's one
+thing i do want to give you a quick
+little warning about and that's the fact
+there are radars out there that can
+actually see over the radar horizon
+those are called oth receivers it's over
+the horizon there's actually quite a few
+radars that can ricochet basically radar
+beams off the atmosphere in order to see
+very very very very long distances but
+again this is kind of cool how this
+works so what we're going to do now is
+we're going to go ahead and switch my
+let me load the scenario grab our little
+example i always use this exact same one
+grab this one and we're going to delete
+everybody and we're going to leave just
+one of our beautiful little mig-31s here
+and what we're going to do is we're
+going to design a flight path for this
+guy so that he does not get picked up by
+radar now many of you are immediately
+saying oh that's easy boop bite path
+complete the problem with that though is
+if we travel at low altitudes and not
+only are we going to be restricted in
+speed but we're also going to be
+restricted in fuel consumption now this
+aircraft for not a mig-31 and say it's
+an f-16 without fuel tanks you could
+imagine how limited our range would
+actually be should we choose to fly this
+particular flight plane the way that we
+have it so one of the problems we need
+to solve is how do we know where the
+radar horizon ends and how do we know
+what altitudes to do if we don't have
+access to it now some of you are like
+wait a minute um command mode and
+operations they got a thing for that if
+you click on the thing and you come up
+to the thing and you push the thing oh
+look at that line of sight boop we win
+yes you're absolutely 100 correct to
+that extent however
+one of the problems this does not tell
+us is that let's make our flight you
+know target two thousand five thousand
+feet press refresh is we don't have
+access to this particular line of sight
+tool when we are on the other team the
+only way we'd be able to identify this
+is if we knew exactly where this was and
+if we don't know exactly where this is
+when we're estimating we need to come up
+with a different method
+now fortunately for us we can do the
+math let's assume that this target radar
+platform is uh somewhere down here let's
+call this a target radar platform why
+not right again this is just an assumed
+position we could use esm to try to
+triangulate this and let's say we want
+to sneak up on it so we get to a minimum
+distance while maximizing our fuel
+consumption now we know that the maximum
+range of this particular one is 240
+nautical miles so i'm going to go ahead
+and come over here and we'll call this
+whoops make sure you do this correctly
+we'll call this 240 nm
+max range again if your intelligence was
+a little bit better we could probably
+take advantage of this so now we're
+going to split the difference here we're
+going to pick one that's um we'll call
+this about well we'll call this about
+let's see here what do we have for
+distance here control d that's uh let's
+call 115 115 nm
+range and press ok so now what we're
+going to do is we're going to order up
+our airplane to make our way to this and
+try to stay under the radar while
+maximizing its capability to fly at high
+altitude so what is going to be the
+magical distance or altitude i need to
+travel at well first things first i'm
+going to grab my character here i'll go
+ahead and pause ourselves i'm going to
+put one of them here i'm going to put my
+next one here i'm going to put my next
+one here and i'm going to put the next
+one over here so what is my initial
+maximum altitude well time to do some
+math whoop ah-ha radar horizon and
+target visibility calculator oh yeah so
+we know that we are at a height of 36
+000 feet
+and we know that the radar height um
+33 feet actually it's a
+32.804884 or something along those lines
+now you're immediately going whoa slow
+down chief how did you know the radar
+height was well this is a kind of cool
+thing you need to know about command
+this guy right here is sitting on the
+water which means his radar height is
+technically zero right
+not quite one of the things you actually
+see in the database if i click on this
+tipsy up here for example is it'll
+actually tell you how high up the radar
+mast is so this one is a 10 meter which
+like i said it's about 32 feet now for c
+going vessels it's a little bit more
+complicated and if i click here there's
+nothing in here about how tall my mast
+is you've got this height option ding
+ding ding ding and now we know exactly
+how high it is so 10 meters if that's my
+mass type we assume we put a radar at
+the top of that mast is about 32 feet so
+we know now exactly what altitude we're
+going to be going to battle with now
+some of these will not have a height in
+which case you're going to have to do a
+little bit of interpolation and a little
+bit of experimenting
+okay back to our little calculations
+here let's see thirty six thousand feet
+is uh
+gives us a radar horizon of
+surprise 240 miles also known as radar
+target visibility
+240.17 nautical miles now isn't that
+amazing that that radar was literally
+designed to target something 36 000 feet
+away that was 240 nautical miles away so
+in reality the radar actually has a
+greater range than what you see here but
+the reason it's limited is again like i
+was saying it's based on that rate of
+horizon kind of interesting if you
+actually think about it that way so we
+need to get under 36 000 feet at our
+first waypoint so let's just estimate
+we'll do 32 000 feet here that's going
+to limit us to
+196.45 that's about 200 nautical miles
+so now if we did 115 out of a miles
+let's work out whatever that needs to be
+let's see that's about 60 volt 25. oh my
+gosh what have i done
+25 000 feet gets us a 201 nautical mile
+again we're just trying to guesstimate
+how far we need to be that's 115 so 201
+will come down to what if we do 12 000
+feet that's 141 10 000 feet is going to
+be 125 looks like 8 000 feet ah about
+160 nautical miles we need to be at an
+altitude we the altitude we need to be
+at is going to be 8 000 feet or less now
+here's one of the tricky things about
+command that makes everybody positively
+absolutely nutters and that's the fact
+that you don't descend to the altitude
+until you hit this waypoint so if i
+order him to do 8000 feet here i've
+already been spotted because i'm
+whatever my previous altitude actually
+was so maybe what we want to do here is
+molding down the control key by the way
+is i'm just going to add an intermediate
+waypoint that's going to give us some
+capability here so this is going to be
+the point when i wanted to send down to
+eight thousand feet
+whoop i hate it when it does that eight
+thousand feet delightful so we know that
+we need to be at 8000 feet by this point
+so i'm descending a little on the early
+side now we just need to calculate what
+altitude we need to be when we hit that
+point so that's 177 nautical miles let's
+just sneak in here we'll do i'm just
+estimating real quickly fifteen thousand
+we can actually go higher than that
+eighteen thousand there's one seventy
+seven so we need to be at eighteen
+thousand feet when we hit this point so
+that means that we don't wanna set this
+to 18 000 feet if we did that we've
+already missed it we want to set the
+previous point to manual override 18 000
+feet
+so now we're going to start at our
+current altitude which is 36 grand we're
+going to hit the max range but we want
+to be under 36 000 feet so let's just go
+ahead and estimate it to be about 32 000
+feet go ahead and dial that in now so
+we're 32 000 feet then we're going to
+dip it down to 18 000 feet to be in time
+for hitting this one where we're going
+to dip down to 8 000 feet which is going
+to put us in time for this one which is
+going to have to be very low let's go
+and take half of that real quick it says
+60 nautical miles i'm guessing that's
+going to be about a thousand feet or
+less
+uh yeah it's about 1500 feet
+wow so we have to actually take this one
+now in order this one to basically drop
+down to minimum altitude here so we can
+actually be a little bit more safe in
+dial in 1 500. so now what we're going
+to do is rather than traveling at the
+same altitude we're going to be dipping
+down kind of like my little mouse is
+kind of going like this so
+hypothetically before we get to this
+target we're going to be at a pretty
+hefty altitude so i'm actually going to
+do so let's put the difference on that
+one again again i'm holding down the
+control key
+tap the f2 and we're going to get down
+to minimum altitude so i have plenty of
+time on altitude now let's take
+advantage of what we're doing here so
+let's do after burner for my first white
+point my second waypoint we're at 18 000
+feet that's going to be a little hard on
+the jet engine there now that we drop
+all the way down we're going to do a
+cruise speed we're going to hold on to
+that cruise speed at our next way point
+and obviously when we cross the last one
+we're going to spend as little time here
+as possible we'll step up to afterburner
+and then when we come to the last one
+we'll drop back down to cruise so
+basically what we're going to do is
+we're going to go fast go down slow down
+speed up speed up and burst pi our
+target let's see if it almost works i
+guarantee you that i've calculated
+something slightly different but again
+we're going to do the whole scenario
+from the other guy's perspective so
+let's grab radar make sure the radar's
+flipped on let's try it
+ah we picked him up early let's see what
+happened where did we go wrong
+7690 feet what distance did we pick them
+up 115 nautical miles so in this case if
+you remember our waypoints that we
+selected the one that we had previous
+that 8 000 we should have put something
+immediately after it that was a little
+bit lower ah we got so close but notice
+how far and how fast oh notice we didn't
+pick him up again until we got close and
+the bam he rips by us at high speed see
+how effective that is but at the same
+time as it wasn't really that much math
+on our part now there's a second part to
+this and i just want to kind of share
+this with folks too and again our
+mistake there was 8000 was a little on
+the high side i should have been a
+little bit more careful there's actually
+a really nice chart which gives you the
+radar horizon by the nautical distance
+but again it's going to be offset by the
+height of the detecting platform
+okay so now what we're going to do is
+we're going to mix things up a teeny
+tiny bit i'm going to reload the
+scenario now that you can see one of the
+methods you can get a little bit sneaky
+and again we went really fast and we
+also saved tons of fuel because we spent
+so much time at altitude so what i'm
+going to do now is i'm going to go ahead
+and clean up all my little aircraft here
+i'm going to save my 36 000 footer
+actually i'll say my twelve thousand
+footer delete that one delete that one
+let me go ahead and grab this one i want
+three of these thank y'all in order to
+him to go here i'm gonna him to oh what
+have i done now i've done it ordered him
+to here go here and order him to go over
+here and go ahead and order him to go
+over here again assuming it's a he i
+don't actually know it's an airplane so
+we're going to switch back to the other
+side real quick i'm actually going to
+disable that radar we were just looking
+at a minute ago let's go to this one
+real quick shut them off grab this one
+turn them on
+boop
+and now we are detecting so let's go
+ahead and pause and uh let's see what
+happens this time
+ah we picked up everybody immediately
+what are the altitudes these guys are
+traveling at 36 000 feet i thought i
+ordered you folks to go down to 12 000
+feet ah gotta be careful because it will
+automatically reset all your hard work
+every single time you choose to do
+anything in this game so always keep an
+eye out for stuff like that let's go and
+grab that put everybody back from which
+they came go back go back that was not a
+fair start not a fair start switch back
+to him
+and they're all gone except for these
+two
+alright so what was the difference
+between these two aircraft at the same
+altitude and this aircraft well it
+wasn't so much a difference as far as
+altitude goes it actually was a
+difference i was going up to my view
+options real quick and hit relief layer
+it had to do with terrain
+now for those of you who know this
+particular region this is a tremendously
+mountainous and it's a very very tall
+mountains all located here and now our
+beautiful radar dish here could not see
+this guy because there were mountains
+that were taller than the actual radar
+itself that could not see through so
+even though this particular radar here
+is popped up all the way at a staggering
+altitude of about 12 000 feet if i were
+to flip over the line of sight tool real
+quick take a look at this
+look at how limited its line of sight
+actually is even though we put it on the
+top of a mountain now using terrain
+masking to sneak up on something that is
+a video i will save for another day i
+just wanted you to be aware of the radar
+horizon at this particular time so that
+you could see just how critically
+important it is to be able to identify
+those things and be able to work with
+them quickly so that you can plan
+attacks that are the best now if you're
+doing things like missile runs if you
+want to be a really really really nasty
+uh really really sneaky commander you
+can do things like really really make
+all the interceptors run after one guy
+by having him detected while you send
+everybody else underneath the radar
+horizon to basically get that surprise
+attack in so meanwhile the interceptors
+are over here your guys are dropping
+bombs on this platform here they have to
+turn around and run back but by the time
+that's happened you've already extracted
+yourself from the area in the opposite
+direction i've actually seen people who
+will do altitude profiles kind of like
+my little half sine wave here in order
+to basically force interceptors to go
+attack people and waste all their energy
+of constantly gaining and then
+relocating that lock backwards so like i
+said i just want to provide you folks
+with just a little bit of information on
+the radar horizon to get you thinking
+just a tiny bit about that i will take a
+look at train masking next time so you
+can see how you can make the world's
+most nasty cruise missile strike but
+then again like i said it's just a fun
+little limitation and by the way watch
+out for those over the horizon radars
+because they're not affected by any of
+this enjoy

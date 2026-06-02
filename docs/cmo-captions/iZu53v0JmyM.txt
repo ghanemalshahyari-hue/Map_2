@@ -1,0 +1,762 @@
+# C: MO - SAM Placement and Tactics
+Video: https://www.youtube.com/watch?v=iZu53v0JmyM
+Video ID: iZu53v0JmyM
+
+Hello everyone. In today's video, we're
+going to be showing you optimum SAM
+placement. It's just some general
+strategies when you're building
+scenarios with surface terror missile
+batteries. Now, you probably noticed
+we're chilling over here by North
+Ireland and regular Ireland. And uh the
+reason I've chosen this is it allows me
+to provide a lot of really good little
+examples of kind of what to do, what not
+to do. So, the first things first uh
+deals with the placement of the SAM site
+itself. Now, when I place SAM sites, uh
+one of the things you have to keep in
+mind is they're usually designed to
+protect something. They're not just like
+there to annoy the player. Like I know
+that sounds weird, but uh the reality
+is, you know, if you're trying to
+protect, you know, Dublin or something
+along those lines or, you know, anything
+on the Irish or North Irish coast, we
+need to make sure the same site is
+actually defending it. So, one of the
+mistakes that I always would do is I
+look, oh, we're going to protect Ireland
+from, you know, invaders. You know, I
+come to the middle and press insert. We
+come in here, we do facilities, we get
+ourselves an S400 because, you know, why
+not? There we go. We grab one of these.
+Toss this right in the middle. And haha,
+look at that. I win. I protected all of
+Ireland with one SAM site. Yes, they do
+have that range, by the way. And that is
+the effective range of these weapons.
+It's Is that disgusting? But the reality
+is this is not the best placement for a
+SAM site. Let's say our interest was
+Belfast, for example. Kind of chilling
+up here. Maybe those giant shipyard
+cranes. Don't ask me the names. I think
+one's Goliath. I always forget the other
+one. But maybe those shipyard cranes
+need to be protected from damage because
+it's a ship port or something along
+those lines. So, this would be the
+region where we'd want to go ahead and
+set up our SAM site. Now, the big thing
+with SAM sites is you have to consider
+things in terms of protecting the zone
+as well as not being destroyed quickly
+and easily. And a lot of times those two
+things kind of contradict each other.
+But the good news is there's one easy
+method we can use for this and that's
+bringing up the relief layer. So, let me
+pop that sucker open real quick. As you
+can see how this region is a pretty it's
+got a bit of a valley going on here.
+You've got some mountains on either
+side. We've got a very very lovely kind
+of bay in here and everything along
+those lines. And we need to design
+things in such a way that we can kind of
+cover this without really leaving
+ourselves exposed. This brings up the
+first problem people have usually, and
+that's the fact that people tend to put
+SAM sites in places like this. So, let's
+go ahead and grab my SAM site. I'll go
+ahead and toss it right there. You know,
+this is definitely going to have a
+pretty good view. If we were to switch
+to Openo map real quick here, you can
+actually see we've got really good
+coverage of downtown here. So, this is
+actually not bad at all kind of a thing
+like that. The problem is this isn't
+very practical. And if I ever go up to
+my uh little map settings up at the top,
+hit line of sight tool, and I just give
+it a second, you realize that my
+incredibly effective SAM site can only
+see this entire region. Which also means
+if I was a cruise missile and I was
+launched in this direction, I could come
+over the top of this mountain and drop
+right on top of this. And now the
+distance here is I think that's about
+1.5 miles. I don't know about you, but I
+can do the math on that pretty quick.
+That's about 15 seconds travel time for
+your average cruise missile. There's no
+way this SAM is ever ever ever going to
+get a missile back off. So, it's
+basically worthless because I can
+destroy it that quickly. Obviously,
+against an asymmetrical threat, again,
+why are we using an S400 against an
+asymmetrical threat? Um, yeah, it's
+going to be a little different. But
+against a modern threat with cruise
+missiles, this basically pointless.
+You're going to get your SAM site blown
+up before you can use it. Not worth it.
+So, you're sitting here going, "Okay,
+fine. What if we move it downtown?"
+Okay, well, we'll move it downtown.
+Let's see if that improves things a
+little bit. Let's see here. Losses and
+setting are That' be kind of
+interesting. Okay. Uh, downtown's
+actually quite a bit better. Of course,
+um, this is probably in the way of the
+museum downtown, but that'll be okay.
+That's better. That's better. And you
+can see here the closest mountain here
+is about 2 and a half miles. It's about
+20 seconds. A very, very quick SAM crew
+might be able to get a missile off and
+defend itself in that distance. So, this
+is better. So, you're saying, "Okay,
+that's fine. Um, obviously you want us
+to go on a mountain nearby." Yes,
+obviously that's what we were going to
+do. So, what I'm going to do instead is
+I'm going to use my mouse here with the
+relief layer to try to identify
+something that's up nice and high. Let's
+see here. I saw I saw a th00and feet a
+second ago. There we go. Now, he's up
+there. Uh, let's see here. Anything
+taller here? 531. Okay, not bad. Not
+bad. Let's see what this does for us.
+Let's go back to that little line of
+sight tool.
+And we can see that that is gorgeous. I
+can see everything that's coming through
+the water. Nothing that's coming from
+the mountains behind us. Now, keep in
+mind our target altitude might be the
+same as our observer. If I flip that
+switch right there and hit refresh, my
+computer's going to lag massively. And
+you can see we actually have gorgeous
+coverage, but we actually completely
+blindsided our SAM sites behind us. We
+actually can't see anything behind us.
+That is uh one of the fun things about
+all this. And if I move my mouse about
+here, again, you can zoom in to help
+yourself out a little bit here. Uh let's
+see here. It's about 1,000 ft. That's
+about 9008. Let's see if there's
+something a little bit higher here.
+Let's try popping them over here and see
+if that improves the situation a little
+bit. And again, this is part of the fun.
+And the nice thing is in the real world,
+things are a little more obvious
+sometimes with line of sight. But that
+ain't bad. Of course, look at this.
+We're not protecting our city anymore.
+Ah, such as the life say love.
+So, the cool thing here, as you're
+probably noticing, is that there really
+is no sweet spot. If we were to put it
+right here, we have beautiful coverage
+to the water. If we put it back here,
+we'd have a much better coverage
+basically in the whole region. And you
+have to kind of decide what is the
+bigger threat. Generally, when you're
+defending something this important,
+you're probably going to have two SAM
+sites anyway. But one of the things I do
+want to share, though, is if you ever
+have trouble finding where to pop one of
+these as far as altitude goes. One of
+the other tricks that works really well
+is if you open up the open top map real
+quick, you can actually see the hills.
+So, like for example, if I'm not going
+to pronounce this one correctly, uh the
+Ulie Hail here over and you can actually
+see it's pretty high up and it actually
+will mark it with a little mark there.
+There's Galloway Hill over here, kind of
+a thing like that. We have Colon, we
+have Black Hill over here. We can see we
+actually got this right. Uh this is
+Divas. Uh there's actually a thing up
+here already. I would be surprised if
+there is a radar site. So we actually
+have kind of a little bit of realism
+completely unintentionally there. But
+the cool thing there is you can see
+immediately sort of how to place these
+things. And a lot of times in open topo
+map they'll actually give you the
+heights. Like I can see Black Hills is
+360. I can see Divis is about 478. And
+you can just kind of get a little
+literally the lay of the land is the
+best way uh to get the hang of these
+sorts of things. Actually I'm curious
+about this one. How high is it? Says
+312. So, not doing so hot. Not doing so
+hot. But again, that's a great way to
+kind of help you out. But let's say, you
+know what, sorry, you're going to have
+to defend down here anyway. It's just
+too risky. You say, "Okay, let me put it
+downtown." So, now we create a new
+problem. And I like to call this problem
+range baiting. So, right now, if I were
+to go flip on the relief later again,
+let's pop this on. This is very helpful
+today. You will notice that I have a
+range around me of mountains that are
+about five or six miles or so. Now,
+you're sitting here going, "Okay, so so
+what? So what? Obviously, you won't
+engage anything that gets that close to
+you." Uh, the answer is absolutely won't
+us. However, we also want to avoid a
+classic classic player strategy. So, I'm
+going to come down here. I'm going to
+actually replace this with a Nike. No,
+no, let's do an SA6. Let's make it
+challenging. All right. An SA6. I'll do
+the Cub. Actually, the C for that. Uh,
+this kind of the new one, but that's
+fine, too. There we go. Look at that.
+Let's flip on to sensors.
+Yeah, that looks good. Yeah, that's what
+I'm talking about. Yes, this is going to
+be so irritating. I can't wait. So, we
+can see here we've got my SA6 downtown.
+It's looking pretty good. I'm actually
+going to make it autodiscoverable just
+for my demonstration purposes here. Let
+me show you what I mean by range baiting
+real quick. Let's go switch to the other
+team.
+All right. So, what we're going to do is
+we're going to intentionally use a
+classic strategy in both the real world
+as well as the uh lovely program here,
+and that is tricking this guy into
+firing and wasting his missiles by
+destroying terrain instead of our
+expensive aeroplanes. So, as you
+remember, we intentionally placed this
+unit inside of this valley. And uh as
+you remember also, we had doesn't have a
+lot of room before there are a bunch of
+mountains in the way, which means I in
+F16 just have to get myself low enough
+so that I can hide behind this but be
+still in range. And you can see our
+range bracket we're about to enter in
+just a few seconds here. So watch this.
+So what I'm going to do is drop his
+range down to about 1,000 ft. Now the
+highest thing here is about 1,000 ft,
+which is going to be perfect for us. And
+the other thing I'm going to do is
+actually order him not to use automatic
+evasion. I will do it manually. Watch
+this. Watch this. So my F16 continues to
+descend. He's just kind of cruising
+down, losing all sorts of altitude.
+About 15,000 ft. My SA6 I set them to
+ace, by the way, so they're not messing
+around when it comes to this. And what
+I'm going to do is I'm going to pull an
+oblique here. We're going to go a little
+to the side and we're going to keep our
+altitude at about 2,000 ft. I don't know
+why they got rid of the data here for
+2,000 ft. I must have messed something
+up somewhere. There we go. That's
+gorgeous. So, right now, our SA6 batter
+is Look at that F16 going. Just get a
+little closer. Little closer. That's it.
+Get in range. Come on in. Now, the best
+thing if you really want to be a jerk,
+send them down to loiter speed. Look at
+this. Just kind of This is obvious.
+Obvious bait is obvious, but you can see
+how we're just about in range here. This
+is going to be so funny.
+All right. Okay. Take your shot, SA6.
+Take your shot. Take your shot. One of
+the things you can do if you're really,
+really mean with the strategy is you can
+actually pull in just a little bit. I'm
+going to pull towards him. Ah, see this
+is the problem is that we have to work
+out the arrangement here. Actually, I
+think he's too low for us to hit.
+Whoops. All right, let's go up to 5,000
+ft. Okay, I'm being a little reckless
+here. Usually I get my calculator out
+and do this correctly, but um you'll see
+the strategy. You'll see what I'm doing
+here. All right, we're well within range
+here. I want to see what the SA6 is
+waiting for. Probably getting within the
+firing. Oh, he's friendly. That
+definitely explains why they did not
+engage. I'm sitting there going, man,
+why is he not firing? He's This is the
+world's most patient crew. All right,
+posture. Set him to hostile. There we
+go. That's what I'm talking about. All
+right, here we go. Here we go. Now he's
+going to fire.
+Let's see here. Anything blocking his
+line of sight? I just want to inspect.
+Uh, actually, we'll just kind of push
+him along here. One, two. Cool. Let's
+switch back to the team here. All right.
+Now, watch this.
+This is the hard part is There it is.
+There. See the missile? See the launch?
+So, what I'm going to do is I'm going to
+take my F-16. I'm going to order him to
+go dropping down to minimum altitude
+here. Let me Watch this. Watch this.
+Watch this.
+It's a minimum altitude. Look at this.
+Look at this. It's blind. So, as you can
+see, I can actually have my F-16 go up
+and down, up and down, up and down, up
+and down, and waste this entire
+battery's ammunition until it's over.
+So, again, if I pop him up back up to
+12,000 ft here. Go ahead and unpause.
+Let's see if I can get him to do another
+cheap shot. Go ahead, take your shot.
+12,000's too high. He should be a lot
+lower. I should keep him down to like
+8,000 or something like that. Come on,
+take your shot. Take your shot. Come on,
+SA6. I hate SA6's. I hate them so much.
+I've been shot down by them way too many
+times in Falcon. Come on, take a shot.
+You're going to do it. Look at this. I'm
+turning towards you. I've got bombs. I'm
+going to drop bombs on you.
+And the SA6 battery is sitting there
+going, "What is this guy doing?
+Do you want me to come up and knock?"
+Huh? That is the world's most patient
+SA6 battery. I am super impressed.
+Anytime now, SA6 battery. Anytime.
+Actually, I'm kind of curious. I'm going
+to switch to the team real quick and see
+why he's not taking the shot. I might
+still be really really low or something.
+Whoops. Control V. Shift one. Uh, let's
+see here. What is it doing here? It's on
+the magazines. Launch at max range. High
+maneuverability target. Interesting.
+This is the world's most patient crew.
+But regardless, let's get back to what I
+was trying to explain here.
+What are you waiting for? There you go.
+All right. So, now the F-16 just has to
+go minimum altitude.
+And we wasted two more SA6es into the
+woods there. Okay, you get the idea.
+Okay, so how do we prevent that? Well,
+the trick here is all you have to really
+really do, see I went blind. All you
+have to do is order him not to fire at
+targets that are going to be in excess
+of his um ability to basically duck like
+I just showed you a few seconds ago.
+Now, the cool thing is we notice the
+nearest mountains about 2.4 miles away.
+This is about three. This is about
+three. Obviously, we have this long
+valley. So, what we'll do is we'll
+intentionally limit our range to a
+stupid 5 miles. Now watch this. Crl+ F9.
+We'll go to our We'll go to this one and
+we'll drain it. Drop it all the way down
+to 5 miles, which seems silly, but it
+actually isn't a bad thing. There we go.
+5 miles. 5 miles.
+5 miles. Obviously, against things like
+cruise missiles, this is going to be a
+little different, but we can change that
+in here, too. This is just for
+demonstration purposes. 5 miles. Go down
+here. 5 miles. 5 miles. And I'm also
+going to make sure this entire side is
+allowed to engage willy-nilly.
+Optimistic. Uh let's see here. Uh engage
+opportunities. Yes, engage
+opportunities. Don't sit there leaving
+me hanging. Not on YouTube. All right,
+let's head back. So, let's grab my F-16
+here. Uh we'll grab the same one we had
+before. We'll load him up with some uh
+wind corrected munitions dispensers.
+Fantastic. Okay, so let's aim this way.
+Drop him down to minimum altitude.
+Now, as before, we're sneaking up on
+him. We're sneaking up on him and we're
+going to try to get him to take a shot
+at us. So, if I pop up a little bit
+here, again, there's a mountain about 1
+th000 ft right here. So, we're just
+going to get him to take the shot. Go
+ahead and take the shot. I'm going to
+see if I can pull him up just a little
+bit. And you see that he is not falling
+for it. Uh, that Sam's sight isn't going
+to do anything to engage us right now.
+We're completely within his range. And
+there's the shot. Now, the interesting
+thing is all I have to do now is turn
+around and go basically to ground here.
+No, you're auto evading. Don't auto
+evade. No. As you can see, he auto
+evaded, which was the wrong thing to do.
+It would have been safer to just die
+below. But what you'll notice there is
+he engaged him when he was 5 miles away.
+Basically preventing this from
+happening. Again, defending Belfast like
+this is absurd. Put it up on the hill
+like that. The next thing, and this is
+important, is making sure you align the
+system that you're using for the SAM
+site towards the incoming threat. Now,
+certain types of SAM systems, the S400,
+for example, don't have this issue, but
+systems like this Patriot definitely
+does and the THAAD. So, what I'm going
+to do is I'm going to come down here.
+I'm going to go flip his radar on real
+quick. And you'll observe that the radar
+has a limited range in which it can see.
+This is also a limited range in which it
+can actually engage. So, if we knew the
+threat was coming from the east here, we
+have to actually align this battery
+towards the threat. Now, the annoying
+thing is you can't actually change this.
+Uh, so keep in mind wherever you point
+this as a scenario editor is going to be
+where it's actually going to be going.
+All right. Uh, so we have our unit
+properties here. I'm just going to
+arrange this real quick.
+And in my blindness, I did not realize
+set orientation is here now. All right.
+So, what I can do now is I can just make
+a quick little adjustment. And now this
+radar is covering this entire region,
+which is going to be the only zone in
+which I can actually engage stuff.
+Another tip when it comes to landing
+down SAMs is making sure that you
+separate the battalion radar from the
+local radar. What do I mean by that? Uh,
+if I were to grab, let's say, an SA2 for
+example, I think this is actually going
+to be the best visual for you. Grab the
+D/ E model, which is the classic one.
+You'll notice if you click on it and
+press your sensors that you have your TV
+camera, your eyeballs, you have the fan
+song E, which is the basically fire
+control radar, and you have a spoon rest
+C, which is basically going to be your
+search radar. So, when you're designing
+sets like this, one of the strategies I
+really like to do is to actually create
+a separate unit for the purposes of the
+actual radar itself. Now, there's a
+couple different philosophies to this.
+Uh, one thing you can do is I can press
+insert. I can actually come in here and
+type in spoon rest as an example. I can
+just pop it in there like that. Press
+okay. And now I've isolated the search
+radar from the search the actual fire
+control radar. Now if you want to take
+this a little bit further, what you can
+actually do is go to the battery itself.
+Again, this is all in the mission
+editor. And I can actually remove that
+completely, which means that we
+basically snapped the radar off and put
+it somewhere else. Now, one of the cool
+things here is if you want to mess with
+players, and like who doesn't want to
+mess with players, right? One of the
+things you could do is actually create a
+dummy SA2 battery. And I'm going
+actually rename this SA2
+two battery radar, for example. Search
+radar.
+Now, the reason I did that is I'm
+actually going to come in here and I'm
+going to clean all this stuff out. And
+this is just this is so cruel. This is
+so cruel. I'm going to leave the Sams
+cuz I'm a jerk. And I'm going go ahead
+and get rid of that one. So, what we've
+done here Oh, what did I do? I got rid
+of the one radar I actually needed to
+keep. Sigh spoon rest. C. Let's add it
+back in. There we go. So, what I've done
+is I've just left the spoon rest vehicle
+here and I've essentially called this an
+SA2. So, if I come down here and
+actually switch this to be uh not
+autodetectable. Let's make this one not
+auto detectable as well. Um, while I'm
+at it, I might as well delete the spoon
+rest here cuz technically I deleted the
+radar already. So, what I have here is
+two SA2s. One's the battery, one's the
+radar. So, if I come in here now and
+actually flip the sensor on, uh, we now
+have pretty good coverage. And it's
+actually kind of fun because it says we
+have a range even though we don't have a
+range. It's just kind of funny. But the
+important thing here is if I were to
+switch to the other side real quick. Let
+me shut off God's eye view here. Grab my
+F-16 cuz you know F-16s are good for
+this kind of demonstration. F-16 CM BLK
+52 is the correct F-16. There's the one.
+And we'll switch to the harm missile.
+Watch this. All right. So, I'm cruising
+along. I'm cruising along. I'm doing my
+F-16 thing. I've detected a SAM. Aha, an
+SA2. I've detected the search battery
+radar. Oh no. Where's the SAM itself?
+Now, if you did not rename that to
+search battery radar, actually, I think,
+let me check my settings real quick
+here. I might have it set. So, nope, I
+don't. If I did not call this SA2,
+battery search radar and left it as SA2.
+The player might go, "Aha, this will be
+easy. I'll hit you with a harm missile."
+The harm missile gets launched. Look at
+this. Look at this. And splattered. I
+win. War's over. I destroy the SAM site.
+I don't have to worry about anything.
+But surprise, the actual SAM site that
+has the business end of the SAMs, which
+would be of course the missiles
+themselves, is completely operable. But
+keep in mind, we did just the
+search radar. So unfortunately, our poor
+Sam site down here, unless he's got a
+really good pair of binoculars, is not
+going to be able to see our F-16 hanging
+out here. So kind of keep that in mind.
+So one of the things you can do is if
+you're a real jerk, and again, depends
+on how much of a jerk you want to be
+here, you can come in here and you can
+do a generic cameras and stuff like that
+just to be like really, really mean. If
+I do LLTV, for example, uh we'll do it
+as the name. I just went generic LLTV.
+Uh you can do surveillance.
+Watch this. Watch this.
+Now, if I unpause, we actually have the
+ability to spot the target. So, if I
+mark him as hostile, now the SAM site
+will still operate uh just fine. And
+it's just kind of one of those things
+that I find kind of funny that even
+though we got the battery radar, as long
+as you have a visual on the target, you
+can still take your shot. And the reason
+we're not taking a shot here, too, is
+we're a little bit too steep here. But
+that's okay. You get the idea. And then
+the last tip I will say about setting up
+SAMS is not to leave them undefended
+themselves. What do I mean by this?
+Let's say, for example, I wanted to come
+down here and I wanted to do something
+like put down. We'll do THAAD because
+this is a great example of this. Grab
+myself a classic THAAD. It just feels
+weird. Go ahead and right click on that
+sucker. We need to get its radar view.
+Again, we'll assume the Canadians are
+feel like shooting a bunch of missiles
+at us today. So, we'll set the
+orientation. snap this thing around so
+it's aimed generally towards Canada kind
+of a deal. But the reality is is it's
+obviously got this dead zone behind it.
+And again, this is an anti-bballistic
+missile radar. It's not really a SAM,
+but it'll work fine for us either way.
+Well, technically it's a SAM. But one of
+the things you could do to kind of
+eliminate that is set this up with a
+little bit of local defense when you're
+actually building the scenario. Now, for
+local defense, there's a lot of little
+things you can do here. For example, um
+Nam Sams, if we're dealing with this
+one, NASAs. I always get a NAS. There it
+is. NAS. And now what we can do here is
+actually pop this one down. I love the
+fact that it says that it's United
+States Army all loan. There's the radar
+itself and I think the United States Air
+Force ah right there. So we can actually
+pop this thing here and it's basically a
+little truck with basically A120
+missiles just sort of hanging out and it
+gives it a little bit more protection
+than just sort of sitting on its own. So
+again, some sneaky F-16 can get quite
+the surprise when all of a sudden it
+discovers that this one's sitting here.
+Other things I do too with sand
+batteries is I love this trick is if you
+run up to the hill real quickly here and
+you go to facility, you can do observer.
+You know, if you set up an observation
+post or even a generic observation post,
+they can actually provide you with a
+kind of a visual coverage of the region,
+making it so much harder to sneak up on.
+The other thing you can do too to make
+this even more tricky is you can also
+set up some AAA. I really like AAA and
+it's really fun way to surprise players.
+But uh one of the things you could do,
+for example, is if you expect the player
+to come through this little valley here,
+you can come down here and just pop some
+AAA right there. So again, we don't have
+a lot of AAA anymore in the United
+States. They've definitely come down on
+that. But if we wanted to, uh what am I
+thinking? Linebacker is the one I'm
+thinking here. That'll do it. Even
+though we don't use them anymore, uh you
+can pop that thing right there and
+basically hang out waiting for anybody
+silly enough to try to fly through this
+particular point. Then of course, uh
+since they know they'd be going for the
+thad, most things would be coming in
+this way. You could even come to like
+this little valley right here and set up
+a mechanum. This is all hypothetical,
+but we'll put a Zeus. Uh we'll put a
+Zeus here because why not? Actually, no,
+no, we'll be good. We'll be good. We'll
+be good. We'll grab that one right
+there. Fantastic. So, now if I switch to
+the other side real quick, I'll grab the
+other blue team. I'll grab my F-16 one
+more time, and you'll demonstrate just
+how irritating this has just gotten. So,
+sort of swinging down here with my F-16.
+I can see there's a wide variety of
+targets there. And again, nothing beats
+infantry men with a stinger missile.
+Those things work great, but I can see
+there's all sorts of mobile targets, and
+I'm really, really unsure which one I'm
+going to go. Of course, intelligence has
+told me that the one I really want to
+target is that one right there. Well,
+they're all going to be hostile, but
+that's the one I want right there on the
+left. So, what I'll do is I'll get ready
+on F-16 mode. I'll get my little plan
+going here. I'm going to go this way,
+and I'm going to kind of hang around
+here, and then I'm going go diving
+straight forward at maximum speed. Go
+drop myself down to minimum altitude
+here, and this will be easy. Going to do
+some solid F-16ing action here. Just
+cruising along, doing my thing. Of
+course, I'm burning fuel like crazy.
+Hey, you're an F-16. You only have an
+hour of gas left ever.
+Buddy and I have a running joke about
+the F-16 that um it's not really an F-16
+unless the fuel warning is flashing.
+It's like, you know, it must be parked
+and the engine off. Oh, look at how easy
+this is. Oh, they thought they could
+trick me. Look at this. I'm sneaking up.
+I got this mountain to cover me. I'm
+just a couple feet off the ground. I'm
+going to get all my stuff all queued up
+and ready to rock here. Lock onto this
+here. I'll go hit this with the Maverick
+IR. And I don't know what this thing is.
+possible to hit that with the Maverick
+IR2. Come rip around the corner. Oh no,
+surprise. You didn't know that that was
+a hostile target, did you? And you can
+see my poor F-16 is had a much more
+interesting afternoon now.
+Now, of course, he's like, "Oh, well,
+this is going to go on for a minute, but
+I kind of enjoy it." So, as you can see,
+uh there's a wide variety of strategies
+that you can use to make Sams more
+effective. Of course, the big thing
+there is obviously placement. Making
+them a little bit harder to defend works
+really, really, really well. Mixing them
+up with different types really makes
+things like this really, really, eily
+irritating. And again, if I had a bunch
+of tomahawks and I came back, I could
+probably be a little irritating, but
+it's it's not going to make a difference
+in the long run here. Now, if I pop this
+guy up to maximum altitude, I don't
+think that's going to get me more range
+here. Uh, I don't think so. We're going
+to try. We're going to try. Weapons
+away.
+Actually, I think I got out of range of
+my own Mavericks.
+All right. Did I get out of range of the
+Mavericks? Yeah, I did. All right. Let
+me back myself up. I actually got to get
+lower because I'm too high for my own
+weapons. There we go. Right into the
+danger zone.
+There we go. Finally. Of course, what
+happened? The Nam Sams ran out of ammo.
+So, unfortunately, I still win.
+Oh, no, I didn't.
+Isn't that awesome? Other than that,
+enjoy.

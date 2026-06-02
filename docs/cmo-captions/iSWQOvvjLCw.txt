@@ -1,0 +1,484 @@
+# C: MO - Hammer and Anvil Attack
+Video: https://www.youtube.com/watch?v=iSWQOvvjLCw
+Video ID: iSWQOvvjLCw
+
+hello everyone in today's video we're
+going to be taking a look at the Anvil
+attack now there's a lot of variations
+on this particular one and in my case
+I'm going to be doing for an
+anti-submarine Warfare but believe it or
+not it works for a lot of different
+types basically the concept of an anvil
+attack is you're going to have two
+different components of the attack
+you're going to have the Anvil which is
+basically going to be the wall and then
+you're going to have the hammer which is
+basically going to be the object kind of
+doing the damage the concept is you're
+trying to push one into the other so
+that there's no chance now what we're
+going to be doing is we're going to be
+using the Oliver has a Parry here this
+is the FFG 909 and of course so we have
+a couple submarines on board these are
+um be careful when you push that button
+we have a couple options we have the 110
+and we have DMX for two uh C Sprites
+here I'm gonna go ahead and grab my 110
+here I'm gonna get him airborne and just
+kind of get going it takes him a few
+minutes to kind of get it in the air and
+obviously folks who are dangerous water
+fans you all been here before so you
+know exactly what we're doing so we need
+to do is we need to establish a
+situation whereby the target submarine
+which don't worry it's out there we need
+to set them up so that they're basically
+going to run into our Anvil as being
+pushed out by our Hammer now one of the
+things that makes these kinds of attacks
+really really dangerous is if I have a
+surface ship like my fig nine here or
+fig 909 we're gonna have an issue where
+he can be fired upon by an enemy torpedo
+keep in mind that standard Doctrine
+around the world for every crew is
+always to have a torpedo ready to go in
+self-defense you never drop your entire
+deck unless you basically have to Rack
+rather kind of a thing like that so
+we're gonna have to do is we're gonna
+have to position the enemy sub in a way
+that we can basically smack into them
+very very hard and not allow them to
+have the ability to basically kind of
+get away with a cheap shot here so what
+I'm going to do is I'm going to sneak
+this guy over here
+so which one's gonna be the hammer which
+one's going to be the Anvil think about
+this for a second my Alva Harrison Perry
+here this is a ship this thing cannot be
+a runaway I should say from a torpedo I
+can beam it I can use the Nixie and
+stuff like that to try to limit the
+chance of being hit with a torpedo but
+the reality is this is the vulnerable
+platform here on the flip side my little
+helicopter this is it sounds like My
+Little Pony this is a fantastic tool for
+this purpose because of the fact that it
+cannot be attacked by a torpedo I know
+that there are some submarines out there
+in the world now that actually have mass
+mounted anti-aircraft missiles that's
+just not fair man but the reality is is
+we can use this one basically as the one
+that does the kill shot and use this one
+as the one that gets this kind of
+pushing out of the way now some of you
+are immediately saying uh what if you
+did this with two helicopters at once to
+which I'd say fantastic believe it or
+not most of these helicopters were not
+really used as detection units during
+the Cold War most of these the purpose
+of them was actually for the young
+trying to get into position and actually
+do the attack to protect the actual ship
+Itself by the way
+look at that thing go kind of cruise now
+so I'm going to speed things up just a
+little bit here oh we're going to go
+ahead and acquire where the enemy sub is
+this is the k808 down there underwater
+I'm going to grab this guy and we're
+just gonna again put ourselves in
+position so we can start looking at the
+geometry of the shot that we're gonna
+have to take in a few seconds uh he's
+already way too high uh hey chief I
+don't need you to do that I much prefer
+if you do minimum altitude this is water
+I don't worry about water so much that's
+good sneak back down here we're not
+going to get a mad tap or anything like
+that
+now some of you of course are going to
+say well why don't you just drop a
+circular running torpedo right on the
+top of him I agree with you completely I
+agree with you completely but for the
+purposes of demonstration now we're not
+going to do the easiest most logical
+shot here so now that I'm in position
+I'm going to throw a handy dandy passes
+on a buoy
+uh right off the side Let's see we have
+sqs 62b so this might be active are they
+they're Die Cast is it a size these are
+little ones by the way these things are
+so tiny you have to actually lift up one
+of these to religious how tiny they are
+they're active only so unfortunately
+we're gonna have to do this the wrong
+way and generally when you drop an
+active sounded buoy it's going to let
+everybody know in the neighborhood that
+um you're nearby kind of a thing like
+that so go ahead and pop that thing in
+the water it's going to start peeing
+away uh I'm having DCS flash but not TCS
+uh Dangerous Waters flashbacks and there
+is we've acquired R sub oh we can see
+them right there obviously we want to
+triangulate that position so we're just
+going to go ahead and drop another one
+and we're just going to keep on moving
+we also picked them up on the Mad pause
+let's see here so we look now we're
+picking up on this quiz we also picked
+them up on the anasq what is this is the
+81 this is the V2 so that of course
+would be that one right there nice
+so what I'm going to do is I'm going to
+grab my helicopter here and we're just
+going to kind of do one of these things
+keep in mind the operator off look at
+this we've even got a this guy is so
+pegged unfortunately we don't know what
+his up particular position is I don't
+know necessarily that we have dipping
+sonar here we did have dipping sonar we
+could take a listen and we had the mad
+but we do not nope we do not have
+dipping sonar that is a super shame
+because we could use that to identify
+him because we really need to know what
+he is we can't just assume the fact that
+he's an XYZ and one thing I notice is
+he's down at 500 feet and the depth
+around here is about 500 feet so it
+looks like he's trying to run on Napa
+Earth here so I'm going to order him to
+go down to hover so now here is the hard
+Parts the challenging here obviously if
+I click on him I have no knowledge of
+what he is so in the real world we can't
+actually execute the attack the way I'm
+about to execute it because if I did
+that would be kind of mean because we
+don't actually know what this is we just
+know it's an underwater contact that's
+just the way it works all right so now
+we are set up and ready to rock This
+ship's job is going to be to deliver the
+kill shot so you can see I've actually
+got myself pretty well establish for
+that particular purpose here I'm
+actually going to order him to come up
+this way just a little bit this one's
+the kill shot and we're going to try to
+put him into a position where he's
+basically going to get a freebie attack
+now when this Goblin gets racing up to
+speed here he's going to make a
+tremendous amount of noise what do we
+have for Distance by the way I'm just
+working out the numbers here because
+they don't want him to get picked up
+right away he's doing 10 knots that's
+going to be about three and a quarter so
+let's go ahead and unmark it right real
+quick so see this is why I like
+dangerous water I can put a circle
+around him so I know exactly how far
+away he is believe it or not we can do
+that control right click add a circle
+all right let's go ahead and pause the
+game oh we can do that now I forgot we
+could do this let's go ahead and add a
+circle
+and we're going to draw it
+um let's see here if I grab it like that
+um do you want to define a Zone entity
+no I don't need that I should have done
+that that was dumb on my part but what
+you could actually do is draw a circle
+it does not matter the key thing here
+though is I want to know roughly what
+his detection range is it's going to be
+about right there so if he hits that
+point um let's go ahead and rename that
+real fast
+um shoot by this point
+I don't want him to get any closer on my
+fig here my 909 so here's what we're
+going to do we're going to order my
+helicopter to move in a position whereby
+if I were to go like this this would put
+him in a perfect square position so
+again this is going to be the hammer and
+we'll go ahead and uh drop the again
+this is going to be our Anvil this is
+going to be our hand actually I'm sorry
+it's going to be the other way around
+this is going to be our Anvil which is
+basically what he's going to be running
+from and this is going to be the hammer
+that's going to deliver the kill shot so
+I'm just going to kind of come sneak
+around here like this and again we're
+trying to be nice and careful ideally we
+try to perpendicular to his actual path
+of travel here um not I'm kind of not
+perpendicular parallel so we could
+actually take the shot right up his
+baffles so he's less likely to pick up
+the attack itself but we're gonna have
+to kind of make do with what we have
+here just kind of on the basis of what
+we have okay so our goal is basically to
+fire in such a way that he has to take
+this path to get right up into our fig
+and what's going to happen is we're
+going to count about 30 seconds for him
+to build up so much speed he can't hear
+Torpedoes and then we're going to dump a
+torpedo right down his throat and that's
+going to be kind of our Kill Shot there
+all right you're perfect
+now the helicopter crews are on the
+radio right now going okay what do you
+want to do of course these guys would be
+diving and trying to silence themselves
+as aggressively as possible right now
+all right ready remember take some oh my
+God this is going to be such a clean
+shot
+Ready Set that'll do it see right there
+so what's going to happen is my torpedo
+is going to drop in the water he's going
+to hear it run and he's going to fly
+right into my fig who's also going to
+fire Torpedoes at him watch this shift
+F1 click um always save one now let's
+see I need to be within 0.4 oh that's
+easy I can fix that
+0.4 Ctrl shift F9 we're just going to
+confirm that this is not in Practical
+mode because I'd much rather take the
+shot when I this is a great position to
+be let's see here 0.4 is going to put us
+right here
+we need to move it just a little bit
+again you're trying to push him into the
+frigate so I can actually aim slightly
+to the left when I take my shot here
+because I want to send him flying into
+the frigate who could deliver the kill
+shot here and this will be doesn't want
+to pause
+okay sweet so this ssbn is going to hear
+that immediately and it's going to
+Sprint as fast away from the trajectory
+that this torpedo is taking you can see
+that's a directory that the torpedo is
+taking it looks like this which puts it
+perfectly in line for our frigate
+uh go ahead and take out your stopwatch
+take a look what time it is it's 9 38.
+we need to give this guy time to build
+up some speed before we take the shot
+with the frigate itself so we're going
+to go ahead and count 30 seconds
+of course you know every people on the
+Shuka right now are running for their
+lives by the way we want to order this
+guy to immediately hover because I don't
+want him to uh go flying by if we need
+to take a second shot we can and yes we
+could have used this particular
+helicopter to do the kill shot here but
+most likely what would have happened is
+we'd actually have two ships working in
+concert doing this kind of an act so
+shook was coming up to speed here in
+seven seconds we're going to drop our
+second torpedo right down on him so the
+ssbn is probably yep he's pulling up
+full speed and he's trying to rush as
+fast as he can I don't know why he's not
+oh he can't go fast he's too close to
+the surface well let's give him a
+Fighting Chance shall we let's go grab
+him oh he's already hit
+oh no so in this case he didn't have a
+fighting chance and now the reason for
+this was is if you actually look at this
+in 3D real quick
+let me open this up real fast so you can
+see it you can see that he's actually
+grinding along the bottom here he's so
+shallow that he can't actually build up
+speed we gotta that was a cheap shot
+cheap shot cheap shot oh that was not
+fair zero I'm just gonna make sure that
+um he's able to hear everything well I
+hate to say it but this K1 808 is going
+to get replaced here
+that was actually kind of a good
+demonstration because it was a great
+great SRS uh plarb is what we want here
+I'll do a Delta four that works for me
+that looks good hey we replaced them all
+right I think he was traveling roughly
+on this Vector here he was doing crude
+oh don't do crew speed please it's way
+too fast and shallow please we want to
+get him a little bit higher I like how
+the other guy exploded literally like
+next to him
+it's all right he's fine he's fine all
+right let's see I just want to confirm
+that the speeds are what I wanted to be
+yes excellent again we're feeling this
+time okay so as you can see um he
+couldn't escape uh the reason he
+couldn't escape was encounter the fact
+that if he tried to escape he was
+basically going to land right on that
+other torpedo so now I've got to work on
+my angles again I'm trying to get this
+kind of a shot actually this is perfect
+fire two please
+uh the enemy below is a fantastic movie
+by the way all right so he's going to
+hear that and he's going to spin up his
+full speed
+[Laughter]
+uh no he's not gonna spin up his full
+speed because uh we just slammed into
+his rear almost CB play for some reason
+all I can think of is then I started
+blasting but on this particular case
+we're right back where we were and I did
+change the altitude of that ship that
+doesn't make any sense I changed the
+depth of the submarine so we're going to
+do the same thing we did last time
+basically we got everything lined up we
+got to get within 0.4 and we're just
+kind of right in the water kind of after
+him ideally what I would actually do is
+control F1 and do one of these and you
+can see it'll actually let me do that
+the advantage of taking a pot shot like
+this is because I don't have to worry
+about all those other items so I'm going
+to put up like that go ahead unpause
+and now of course this guy is going to
+get moving any second now
+go ahead again I did not take that as a
+nice clean shot I did not do that as a
+manual Target but we can see he's
+immediately going to turn and start
+running for his life and I did put him
+at a depth where he's actually going to
+have a much much better chance now the
+interesting thing here is when he steps
+up his power he's going to be making
+quite a bit of noise and that's actually
+to our advantage and we can see that
+he's basically running helicopter is
+essentially going to keep Pace with him
+as he's stomping on the gas here trying
+to outrun this and Meanwhile we're
+watching the clock here to go ahead and
+deploy our own Torpedoes and the goal
+here is try to get this shot as clean as
+possible like if I do control D here you
+can see how that is almost a perfect
+clean shot so our torpedo run is
+actually going to be here so the
+basically he's going to go face first
+into it but it's so much I can't tell
+you how critical this is you cannot fire
+the shot until he's making so much noise
+that he can't hear your incoming shot
+because remember Torpedoes are very very
+very very very very loud
+he's spinning up and he's going come on
+man just go a little bit faster I need
+you to be so loud that you can't hear
+the torpedo that's actually going to
+kill you and not the one that's on top
+of you right now come on come on come on
+come on a little bit faster a little bit
+faster scoop all right DMX drop the next
+one all right let's do it so now what
+I'm going to do is I'm going to do a
+control F1 I'm going to put myself a
+little bit of angles on this and we're
+going to go actually see this is one of
+the problems I really wish I had like a
+Line to Line these things up again too
+much fun fire
+that's the sound the Torpedoes make so
+now we have the hammer and the Anvil set
+up perfectly so basically what's going
+to happen now is that my little
+helicopter is basically here to monitor
+oh we got a hit and you can see my other
+torpedo is on basically coming down the
+pipe here so what would happened is
+let's go ahead and pause for a second
+we'll set that little simulation up for
+you so you can see exactly what it looks
+like notice by the way we had no idea
+where the frigate was at any point let's
+grab this guy real quick Ctrl V I'm
+going to actually do this in order up to
+flank speed and do shallow depth
+unfortunately I'm gonna have to override
+a settings like nine times here
+that's fine the reason being is he's
+going to hear that torpedo and he's
+going to kind of grumpy about it
+I just want to simulate exactly what
+would have happened here so he would
+have spun up to flank speed again flank
+speed uh shallow that looks pretty good
+to me he's not going to hear that
+incoming torpedo just yet okay don't
+worry you will in a minute
+and now of course remember our
+helicopter back yeah he's making so much
+racket he's never gonna be able to hear
+it so he would be running now from the
+torpedo that I launched behind him and
+ironically in doing so he's flying
+straight into this torpedo that is
+happily listening to him this entire
+time so as he's cruising here notices oh
+my God 157. so there's that torpedo it's
+chasing him down it's chasing him down
+but he doesn't ever hear the other one
+coming and that's what makes this
+strategy so effective watch turn turn
+turn
+boom
+and we've got him
+just how incredibly effective of a
+strategy that is and they never even
+knew that torpedo was in the water which
+is why attacks like that especially if
+you do with dual helicopters it's
+basically cheating it's unavoidable now
+there's another variation on this
+particular strategy where you do this
+with anti-ship missiles but we'll say
+that for another day enjoy

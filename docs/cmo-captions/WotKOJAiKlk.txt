@@ -1,0 +1,348 @@
+# C: MO - Missile Snapup Limitation and Spiral Trick
+Video: https://www.youtube.com/watch?v=WotKOJAiKlk
+Video ID: WotKOJAiKlk
+
+hello everyone in today's video we're
+going to be taking a look at something
+called Snap up altitude which is one of
+those things that was there that you
+probably knew was there that wasn't
+there that wasn't there that is a thing
+that isn't there let's go ahead and take
+a look so we're going to do today is
+that we've got ourselves a pair of f4
+Phantoms of course because it came out
+in DCS and this is all I've been flying
+lately and now down here we have an sa6
+and um I don't love the sa6 it's an
+extremely lethal system it is still
+effective to this day it's shot me down
+more times than I care to admit probably
+more than anything else combined except
+maybe MC 21's but it's a different isue
+and what we're going to do is we're
+going to attack them and to attack them
+of course we have a lovely weapon this
+thing called the gb8 hobos which is it's
+not that great but it does do a good job
+but unfortunately for us we've got a bit
+of a problem if I go ahead and pause for
+a second here click on my sa6 let's look
+at our problem so we have ourselves of
+course the straight flush the straight
+flush All The Radars and good stuff like
+that we will notice the s6a gainful has
+a maximum effective operating altitude
+of 35,000 ft you're sitting there going
+Dodge stay at 36,000 ft for some reason
+my name is Chad now but if we press f2
+you'll notice there's a bunch of clouds
+between us and the ground so we're like
+oh that's easy to solve we're just going
+to grab this and pull this down here
+putting us right into the lethal
+envelope of the si6 so you're sitting
+here going oh well that kind of sucks
+you got to do something about that cuz
+you don't want them to shoot you down I
+mean can't you do$ 34 9999 and make them
+get a cheap shot on you and the answer
+is no that doesn't happen so we're
+busted right there's nothing we can do I
+guess we're just going to have to take
+the shot and hope for the best no one of
+the interesting problems we have is on
+Earth we have this thing called gravity
+and the reason gravity is awesome is
+because it limits things that are trying
+to travel directly through it so if you
+want to think about this from a
+threedimensional perspective for a
+second here let me go get some Ms paint
+action here got it so if I were to go
+draw this out here uh this is my missile
+launcher ignore how pointy that thing is
+and this is my little Phantom it's got
+two engines it's got a bomb on the
+bottom you get the idea so now if you
+want to imagine this geometrically real
+quickly here when I'm firing at a weapon
+let's go ahead calculate my angle let's
+say this is a 45° angle here 45° angle
+which means this would be 13 miles this
+way and this would be 13 miles this way
+which is not going to happen we know
+that this particular missile has to
+travel through gravity and it actually
+gets a little bit of lift on the way up
+when it does this now when my airplane
+of course is right here instead all of
+the missiles effort is now through
+gravity which means we're getting no
+lift now this magical distance where our
+missile basically burns out no longer
+climb is our snap up distance
+now what does it matter to us it matters
+everything because it means if we keep
+our aircraft in the snap up limitation
+which means basically um High until we
+get close in which case then we can
+start going lower they can't actually
+fire at us see how clever that is so
+what I'm going to do is I'm going to go
+and lock onto this guy I'm going to go
+and launch one hobos from this guy I'm
+going launch one hobos from this guy I
+know what you're thinking you're
+thinking hobos it's not hobos what we're
+going to do is we're going to close
+within the snap up limitation distance
+now if I actually would go back to the
+sa6 real quick and click this guy right
+here go ahead and click on the uh let's
+go get that missile again say 6A yuck if
+I scroll down here you'll probably
+observe that it has that as a limitation
+um it's one of those things that we
+don't have listed here it's one of those
+secret things but we do know is there is
+a sea level climb rate of about 1476 fet
+per minute which actually is extremely
+slow that's everything we need to know
+because now we know it's relative thrust
+that would mean we get take quite a few
+minutes to get up to us this is good
+news uh this basically means as long as
+we're within that 45° band there so let
+see if we're six miles up right now we
+need to go down to 5 miles 5 miles up
+would be doing the math excuse me uh
+that would be about descending now
+actually so let's go ahead and start my
+descent so what I'm going to do is just
+like a promise I'm going to descend
+right below my cloud layer and again
+we're going to be flying right into its
+lethal kill range right now and you can
+see we're cruising down I'm actually
+going to slow down a little bit here and
+the reason I want to slow down is I
+going to give us a little more time to
+descend here so he's popping on his
+speed brakes and we're just gliding
+through this guy sitting there he's
+tweaking his little radar the range
+officers are sitting there cranking that
+thing a current distance away from him
+right now you can see he's three miles
+there is no way in the universe he can
+take a vertical shot on us and hit us it
+just can't be done with that particular
+missile so as a matter of fact ifer to
+click on him real quickly here let's see
+if I can zoom in on the scenario real
+fast click on him click on him oh won't
+highlight him you got to imagine that he
+is basically right here and there's
+nothing he can do about us because we're
+basically in that sweet spot where
+gravity is going to prevent the missile
+from getting any higher now this sweet
+spot by the way gets really really
+amusing once you get to certain
+altitudes just going to make a quick
+little adjustment here there we go it's
+28,000 and we're in the thickness of the
+clouds real quickly here we're about to
+pop out the bottom of the clouds he
+cannot shoot at us even though we're
+completely within his range because the
+missile has to do all the work there's
+no aerodynamic Aid anywhere here let's
+go ahead and pause we'll go ahead and
+take a rake a look here uh we have to be
+within minimum range let me just back
+them up just a tiny bit here I always
+forget the minimum range of this weapon
+when I fire it probably should have been
+one of those things that we looked up
+before we fired right let's go check
+that real quick see hobos hobos minimum
+range minimum range minimum range
+minimum range 1 to five oh I was within
+one mile whoopsy daisies can I fire now
+uh outside of vertical bore side limit
+ah we got to get a little bit lower you
+can see we have the same limitation of
+our own weapon so what I'm going to do
+is I'm actually going to come down much
+lower
+here and again we're going to make sure
+that is selected we within his b site
+he's going to fire on us just about
+anything here getting in 24,000 ft I
+think we're going to enter into minimum
+range again here and again he can't fire
+at us even though we're within his range
+I'll back myself up just a little bit
+further here I should probably Mark
+where're one mile is let's go back him
+up just a little bit more there it goes
+and that's all we need After Burner
+maximum
+[Laughter]
+altitude so unfortunately my guys here
+are still within that snap up altitude
+limitation here even though we have a
+fire control lock on these guys there's
+nothing you can do to fire now
+ironically as they pull away from from
+the sa6 site there it is told you to
+take a shot we actually enter into that
+45° Sweet Spot in which case we're
+actually able to guide a weapon onto him
+now keep in mind I have two Phantoms
+burning with no yes oh I don't know if
+that did the job because the Fire
+Control radar is still working whoa look
+out look out look out look out I should
+have dropped more than two there but you
+can see there that we were able to
+attack a Target completely within its
+effective envelope because we were too
+high above it now I know what you're
+thinking does this apply to other
+targets like it and the answer is no be
+very careful actually now if you take a
+look here we're running at the Egyptian
+border and there's a bunch of S2s now an
+sa2 does not care it has more than
+enough time to basically climb and if
+you actually come down here and take a
+look at the weapon itself of R pick2 du
+real quick kind of scroll on down you
+can see it gets me up to 2,000 knots
+which is plenty of thrust we also get 46
+seconds with an endurance of 58 now want
+to go to the Sam 6 a this is important
+point I should have probably brought
+this up sooner if I actually to scroll
+down here to the bottom you'll notice I
+get 30 seconds wor the aviation fuel
+totally totally different category now
+unfortunately you can already see that
+my F4 flight has already been launched
+upon by a group of these Sam twos um
+don't worry about it too much because I
+can cheat delete the missile so they
+can't hit me uh one for you and one for
+you and the missiles are gone now the
+reason I did that is for the purposes I
+think I got something else even bigger
+lawn shadows this an sa3 I want an sa2
+sa3 is are going to actually hit me is
+there any sa 2s are just chilling uh I
+think that one sa2 right there is just
+chilling are you just chilling ah you're
+an sa3 again how come all the good ones
+that I really like are all S2s uh you
+guys are all S2s can we get one that is
+just not oh give me a
+second there we go now keep in mind an
+sa2 was designed to attack targets that
+were high altitude kind of constant
+direction as you can actually see it is
+already fired so we're going to cheat a
+little bit there and we're going to go
+ahead and reappear on the opposite side
+of the Sam roup and of course look at
+that thing turn all I think you're a
+show off now haha where you going to be
+now now I'm just being mean I'm actually
+pretty impressed that this missile still
+has any energy left here because I'm
+basically making to do donuts how you
+doing there how you doing having a
+having a little trouble keeping up with
+this huh now it was one of the
+interesting things is in the early
+development phases we had some really
+interesting problems with weapons that
+basically would get stuck in circles and
+it was pretty fun to watch but anyway so
+let's go ahead and grab my crew here and
+I'm going actually order them to fly
+right over the top of the sat2 here now
+what you're going to observe is we're
+chilling here at about 40,000 ft we're
+pretty high and you're also observing
+that the sa2 can no longer shoot upwards
+if I were to actually shift F1 and click
+on this guy you'll notice here that it
+is first of all above the target ceiling
+by about 5,000 ft which is it happens
+sometimes and the other thing we're
+going to have of course is like I said
+that snap issue there interesting thing
+yeah exactly so we can't possibly we
+can't Elevate the radar of course but
+because of that snap up limitation even
+though this is a really really good
+system for this we can't quite hit it
+now of course i' ever to grab these guys
+guys and say once you come down to 1,000
+ft you're going to notice I'll put on
+God's eye view here so you can see them
+just doing their kind of power Donuts we
+actually slow down even pop out those
+speed braks and just be really
+irritating there they go yeah it's about
+look at that we're about 11,000 ft and
+notice we're completely incapable of
+actually engaging this target now what's
+really fun here is I'm actually going to
+speed up here let's go up to afterburner
+real quick here right turn right turn
+right turn whoa come on he's just
+sitting there
+mushing now unfortunately he turned away
+at exactly the wrong time if you turn
+back the other see I still trying to
+pull up here hope he doesn't run into
+the ground so the cool thing here is now
+that we basically spiral down here what
+I can do is grab those hobos that I had
+left over from before I can come around
+and I can basically get a cheap shot on
+him cuz now Not only was I inside of a
+snap Zone I was also within the weapons
+minimum range so I can literally just
+come back here like this uh pop up just
+a little bit I don't know what the local
+altitude here is 105 yeah I should be
+fine I did order you to fire right you
+did see me you did see me do that again
+let me just double check make sure I
+wasn't doing that ah I was out of
+vertical boright limits I do that every
+single time there he goes you got to
+remember those weapons are Glide weapons
+they're not straight down weapons like
+later J dams but you can see there that
+I've gone ahead and fired both of those
+weapons off and I never was engaged by
+the sa2 again even though it has six
+missiles it'll fired two of them on me
+already and as a matter of fact what
+it'll probably do is get a
+couple just kidding it's not going to
+get anything so as you can see the
+strategy here is to go to the Target do
+a long spiral down to it do your thing
+and then do a long spiral and leave and
+go get another one and never ever have
+to deal with it as long as that
+particular missile is of an older
+generation and incapable of engaging
+targets that are that steep to it cool
+engage also enjoy

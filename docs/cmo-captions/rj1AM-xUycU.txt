@@ -1,0 +1,327 @@
+# C: MO - Area Creation
+Video: https://www.youtube.com/watch?v=rj1AM-xUycU
+Video ID: rj1AM-xUycU
+
+hello everyone in today's video we're
+going to be taking a look at some of the
+recent changes to zones in uh notably
+how you can create them and how you can
+manipulate them so as you probably know
+already when you create a Zone you can
+be using the zone for a missionary you
+can be using it for a new area that's
+exclusion you could do a no navigation
+Zone and basically creating them is a
+pretty straightforward process usually
+what you would do is you go down your
+keyboard you press Ctrl insert you press
+Ctrl insert control insert you'd click a
+few times you'd drag a big box around
+here and you end up something looks a
+little bit like this after that of
+course we can actually make our zone so
+you know you come up here you do your
+mission thing you go to area reference
+points manager uh we create ourselves a
+pretty standard Zone we take all these
+add points highlighted on map we give it
+a fun name like Iceland or something
+along those lines we come down here if
+we had to we could change its color we
+could make it a hot pink because you
+know because oh oh my uh let's uh tone
+that down a little bit there okay that's
+a little better cool so then you have
+yourself your Zone and of course once
+you've created that we now can go ahead
+and grab onto our little reference
+points and we can one of these things
+and we can have it include Reykjavik
+which by the way I have having been
+there it looks like the surface boom
+like this whole entire land when the
+snow isn't there it's just like Barren I
+mean like if you saw the movie
+Prometheus I'm pretty confident there's
+an alien pyramid on this particular
+Island somewhere but anyway
+so that works out pretty well now the
+problem when you get to these kinds of
+zones when you build them this way is
+you always end up with this little thing
+happening and uh people play this game
+for any length of time I've done that
+about a million times because you know
+you put them in the wrong order that
+when you start to build them and
+everything and you end up with this
+goofiness and it's like ah shoot and you
+press Ctrl Z but unfortunately we don't
+have an undo button for that particular
+oopsie that you just did there so what
+I'm going to do is I'm actually going to
+delete this little Zone here because
+it's nice and everything like that but
+it doesn't uh it doesn't do much for me
+so one of the things that they added
+recently I'm actually going to delete
+all these points too is the ability to
+create zones using different options we
+have a fine area rectangle if I press
+Ctrl k i can drag a box and let go and
+then of course after I've drawn The Zone
+check this out you get the little thing
+lines do you want to create a Zone
+entity from this defined area yes
+Ice Land not go ahead and press OK and
+you can see now it's gone ahead and
+created a Zone from those pretty good
+points now the cool thing here is I can
+still go over here and go and like do
+one of those things and everything works
+really really well for us for that
+particular purpose now I'm done with the
+Zone it was it was a this Zone had a
+good run it had a good run so I'm gonna
+go ahead and delete this one too I'm
+gonna grab all these points here control
+delete and we're going to go ahead and
+show you everybody's favorite you got
+the circle of course you know I go to
+click you click and drag like this
+remember you're clicking and dragging
+from the center you can always tap the
+Escape key if you mess up that one again
+so I'll go to the middle of Iceland let
+go
+wow look at that one press okay ice
+hello now I've done the offensia title
+version and you can see of course that
+we have a million little points here and
+I don't even want to imagine the
+calculations involved and figure out
+exactly how this is and if you actually
+look really really closely here these
+are straight lines these are not curved
+so they did save themselves a little bit
+of memory doing it that way so that's
+all pretty routine stuff uh we'll go
+back up here we'll go ahead and delete
+that area I mean it was cool it's cool
+I'll give it to you I'll give it to you
+and of course we'll delete these but
+they added a few new items uh one of
+course is now we can draw polygons so if
+you see this thing here which is polygon
+control P this is kind of fun so the way
+this works is we're going to go ahead
+and give this a name we'll call it ice
+vans we'll press OK and now what happens
+is it's going to bring up this new
+little thing here this is Strong's own
+polygon now the way this works is you
+just click so we're going to go ahead
+and Define the shape of our polygon here
+as with all polygons uh the more
+complicated you make it is going to be
+the more work on you to create it so I'm
+going to go ahead and set this sucker up
+pretty relaxing here again not going to
+do anything too crazy there's some
+wonderful people over on the Discord I'm
+thinking one really loudly right now but
+I'm not gonna say their name uh who I
+really really enjoys making these
+polygons a super duper detail for a
+certain countries here but again you can
+see there's my version of Iceland so
+what I've done I go ahead and now I can
+press the Escape key to cancel and you
+can see there it is now I've given
+myself a much nicer well relatively
+speaking a nicer version of Iceland here
+so pretty cool pretty cool those are
+polygons are definitely gonna make
+things a little bit easier now if you
+want it to be a hilarious person of
+course you could come down here and
+spawn in an aircraft like this uh we can
+be really really really really really
+mean and do one of these things because
+again it this is what I love about
+programs like this you can literally do
+anything with this that looks pretty
+good to me I don't know why this would
+be here but of course we can do one of
+these we can grab all these reference
+points because again I'm a terrible
+person and of course we could make them
+all uh relative fixed pairing to our
+little pa here now the advantage to this
+of course event freeze time look at that
+Iceland follows the airplane uh please
+don't do things like this um your
+calculations involved to remove all that
+stuff is going to be so ferocious that
+if you try to run it at any really
+really high rate it's going to go nuts
+but as you can see um unfortunately um I
+accidentally made my Poseidon move all
+of Iceland here so as you can see
+whoopsies I did not want to do that so
+I'm gonna go ahead and undo that because
+um of course so we can't undo that so
+I'm going to move relativity here I'm
+going to delete my p8 and now I've got a
+huge problem I've got this huge mass
+here and I want to put it back where I
+found it so one of the cool things of
+course is that if you hold down the
+shift key you will notice now that you
+have the ability to move all of your
+points
+simultaneously so what I could do is
+they can come to this corner of the
+island and go ahead and let go and I've
+actually reset it now one of the things
+you probably noticed is the stuff that
+was on this side of the island seems to
+be slightly distorted one of the reasons
+I chose Iceland here is because this is
+a fantastic demonstration of what
+happens when you're working with a globe
+versus a flat surface so unfortunately
+when these things happened it's going to
+mess your stuff up just a little bit but
+the fact of the matter is I can still
+come in here at any point just left
+click and drag to move a point or I can
+shift click and drag and do the entire
+thing together so again that's a massive
+advantage
+now let's go ahead and delete this
+little Zone here this one's not working
+pretty well for us so far today not bad
+not bad
+stupid p8 way to ruin everything all
+right let's go ahead and delete all
+those guys there hey I'm gonna get
+control delete because I'm lazy zoom out
+again so now one of the cool things you
+can do now is if you press Ctrl right
+click you're going to notice that we
+have a couple of new options here we can
+define an area so I'm actually going to
+Define an area of Iceland again and let
+go it's got to ask me do you want to
+create an area yeah I do
+um i s land
+press OK ah sweet now sometimes what
+happens when you're building areas is
+that you're like I really just want one
+more point right here but I don't want
+to add a point delete the area and start
+over so one of the things they've done
+is if you actually shift right click
+you'll actually notice there's now the
+option to actually go ahead and do
+different things with an area you can
+see we can select the reference points
+we can rename it we can delete it we can
+also interpolate it so if I come to
+interpolate and press double reference
+points look what happens you get a new
+set of points obviously if you did 16x
+you're going to get a few points here so
+I'm just going to go ahead and put this
+one right here I'm gonna go ahead and
+clean up my Edge down here go grab this
+on your Reykjavik and pull that one in
+as well go ahead and pull that down
+right there make this a little higher
+so you can see how incredibly valuable
+this tool is for the purposes of
+adjusting again remember I can hold down
+the shift and move it around I could
+delete it like this guy's just chilling
+he's got to get back to Iceland proper
+here
+so now we're going to do is we're going
+to take a look at another cool feature
+that they've added again they're having
+way too much fun with this so I I think
+it's cool so I'm going to grab myself an
+F-16 here because yeah because I can
+that'd be okay 52 we're going to get the
+half have class number two grab that guy
+we'll go ahead and put some of that
+stuff on and delightful now if I left
+click on a unit now watch what happens
+if I hold down shift and right click on
+a Zone you'll see now I can create
+missions using the Zone dynamically so
+if I wanted to for example obviously
+he's going to be air control Patrol here
+so AAW click on that one and notice my
+F16 was pre-selected and that area that
+I just had was also pre-selected which
+now means I can do quick missions if I
+just want to right click somewhere and
+order like an intercept amount well you
+couldn't do that if I wanted to order a
+patrol Mission or something like that or
+you know a support or something like
+that I can actually just do that right
+away on the map the other option you
+have too is you probably noticed here so
+we have this pick area button and if you
+click on that you can actually now left
+click and select different areas and
+there's a cool little filter button up
+up here where you can actually adjust
+these different items to make a little
+bit easier to identify which one of the
+one million areas that you have here
+this area stuff is fantastic you know
+people especially would do really
+hardcore middle Sim planning you know
+like the people who actually you know
+the folks um it makes it much much
+easier to control all those different
+types of areas you have marshalling
+areas and you have refueling areas and
+you have no control areas and then you
+have Sam areas and bear defense areas
+and like you know exactly what I'm
+talking it makes it much much much much
+easier from a scenario designer to set
+those all up without overwhelming the
+player
+so as you can see these are all really
+really useful tools here this guy of
+course is not going to fly into this
+area and I'll start doing this little
+dude here and I'm going to unpause here
+get over there
+isn't that so awesome because now you
+can do that with groups you can do that
+with all sorts of different things
+obviously I can't pick my little airport
+here and I'll right click and say create
+Mission here because that's not going to
+do much for me for that particular
+purpose because as you probably know
+this is going to do it uh one thing I do
+want to throw out here now this is a
+really really important I should always
+establish this is if you take a look at
+what build that I'm currently on at this
+time this is actually one of the beta
+bills is one three two three one some of
+this might change and I'm sure that
+there's a couple little things that here
+and there they're going to kind of tweak
+but otherwise this is another fantastic
+way to make it a little bit easier to
+control everything you're doing in
+command enjoy

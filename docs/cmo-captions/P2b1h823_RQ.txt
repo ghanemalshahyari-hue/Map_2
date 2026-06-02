@@ -1,0 +1,172 @@
+# C:MO  - Installing Betas
+Video: https://www.youtube.com/watch?v=P2b1h823_RQ
+Video ID: P2b1h823_RQ
+
+hello everyone in today's video we're
+going to be showing you how you can
+install betas for command modern
+operation now one thing I want to say
+before you get too carried away with any
+beta that you're interested in playing
+with command it's worth noting that when
+you do install them it could cause all
+sorts of fun problems so there's a
+reason why they're called betas in the
+first place there are basically going to
+be two different major sources for Betas
+one thing you want to know though is
+your current command version before you
+start going crazy on your betas to make
+sure everything installed for me right
+now we're on a 1328 14 and the reason I
+like to check that is just kind of an
+idiot way to make sure I did everything
+correctly when I'm doing it you can also
+confirm that in the upper left corner
+and you can also confirm that down here
+as well like I said little stuff like
+that is uh going to be important if
+things go wrong so there basically two
+primary ways to do it the one way is
+going to be the automatic way this only
+works for our major betas usually and of
+course there's the Forum way or the
+Google Drive way and we'll take a look
+at both of those side by side so the
+automatic way I just come over here to
+my command mod operations press
+properties you go down here there a
+betas and if there is any bet Bas is
+going to be down here now one of the
+things that's interesting is often they
+give you beta unlock codes the purpose
+of these codes are basically to limit
+who has access to the beta if you do
+have one of those you simply punch it in
+here click check code and then you will
+see that your new option is down here
+which works pretty well but for us we're
+going to be installing one of the betas
+that came from the Forum directly these
+tend to be very very raw builds these
+tend to have that one thing that
+everybody's not going to know that did
+not work until they tried it and found
+that it did not work so it's just kind
+of something you have to be mindful of
+so if you come in the Forum at s this is
+the command modern operations Forum if
+you're looking for an easy way to search
+for this CMO forum and that'll get you
+right over here and I noticed though we
+have this new build here this is a build
+13285 which is a 01 bigger than ours and
+if you come down here it's going to talk
+about all the different components that
+kind of go with that particular one it's
+also going to kind of mention some
+things down here and that's kind of cool
+it even mention the fact it's a soft
+release again I can't say enough times
+that whenever they create new betas
+you're going to have some issues with it
+so one of the things I'm going to do
+here is I'm going to go over to here we
+have a download link for this basically
+the Forum the website Slytherin B our
+big publisher here or you of course you
+have a media fire link um I like the
+regular download link my so I'm going to
+go ahead and press the save button now
+one of the things that shocks everybody
+real quick here is the fact that the
+file is going to come as a seven zip not
+as a raar file it's not going to come as
+you know a standard zip now when people
+see seven zip uh they always panic and
+say oh my God seven zip what do I do
+well the good news is and this goes for
+RS too if you just go in here and type
+in seven zip out right into Google it's
+a free program completely free and open
+source and it opens raw FL AES as well
+as the S zip files so don't panic if
+that comes up so what I'm going to do is
+I'm going to come over to this file I've
+already installed seven zip I'm going to
+right click you're going to have this
+lovely button at the top you got a
+little open width here but you also have
+a seven zip option and this is open
+archives so I'm going to go and hit that
+and voila you can see everything is
+ready to rock uh this is our update so
+I'm going to go ahe and pull that to my
+other screen here because one of the
+things I noticed here is this says the
+exe is unsigned and thus likely to
+trigger a lot of false positive a alerts
+if you're uncomfortable with this wait
+for the official release um I promise
+you that there's nothing that command
+would do that would jeopardize their
+product by intentionally releasing
+viruses and of course it's coming right
+off the official forums so you have a
+pretty good idea it's just kind of one
+of those things that you want to be
+mindful of it also gave us a warning
+here and this is why you have to do
+these things carefully they recommend
+you redo all those files here um I don't
+usually play with those tutorials I
+don't worry about it so the next step of
+course is going to be to go ahead and
+get our own Community data file here so
+I'm going to over here at command
+monitor operations if you press manage
+there's a sub thing this ISS browse
+local files now if you hit that like
+that it's going to open up your command
+folder of course what did I do is I gave
+that the wiggle here and here's
+everything ready to go uh what a lot of
+people will actually do is they'll
+rename the original command when they do
+this again this is raw kind of forum
+builds but that's totally up to you so
+what I'm going to do is I'm going to
+grab this I'm going to go and drag it
+right there just like that and what it's
+going to do is it's going to get very
+grumpy at me it's going to see you have
+all these files with the same names I'm
+going to press replace all you're going
+to give that half a second and that's it
+the build has been installed now this is
+where things get a little more
+interesting so I'm going to press the
+play button here it's going to pop up uh
+one of the things you'll notice here is
+this is the command launcher the command
+launcher is version 13281 4 uh when I
+press the play button uh this is where
+things get a little more interesting and
+when we're done loading here you can now
+see we are 1
+328.15 uh this is our new build here
+ready to go and I can confirm that as
+well I can create a new scenario and I
+can look up at the top and I can also
+see that we're 13281 15 and just like
+that ready to go with the new beta uh
+some people of course at this point say
+how would I go back to the previous one
+uh there a couple different ways you can
+do that first thing is if you renamed
+your command files you could rename the
+new one to something else and then
+replace it uh the other thing you could
+do of course is you could uninstall
+command or reinstall it and that would
+give you everything back enjoy

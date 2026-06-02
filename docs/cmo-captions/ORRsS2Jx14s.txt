@@ -1,0 +1,347 @@
+# C: MO - Visual sensors: TV, LLTV, IR and FLIR performance comparison
+Video: https://www.youtube.com/watch?v=ORRsS2Jx14s
+Video ID: ORRsS2Jx14s
+
+hello everyone in today's video we're
+going to be taking a look at the
+difference between a TV Camera an
+infrared camera a low light TV camera
+and of course a forward looking infrared
+camera now it's one of those things
+where you're like wow those are all
+things that I've I've seen and used and
+pretty much more or less interchangeably
+and not really give much thought about
+it but believe it or not there is quite
+a bit of difference between the
+different systems which is why we're
+going to kind of put together a little
+bit of a demonstration for you today so
+you can actually see side by side what
+the different systems actually do so the
+first thing we're going to do is we're
+going to grab my little small building o
+Observer here kind of reach inside here
+add a sensor and what I'm going to do is
+I'm going to begin by defining myself
+pretty simple Zer we're going to grab a
+television camera TV camera and we're
+going to go ahead and get the most
+recent greatest version of it that we
+have so we're going to grab a generic TV
+Camera of the third generation
+surveillance variety and I'm going go
+ahead and slam that sucker on there now
+this is just a standard TV Camera
+there's nothing special about it it's
+just visual keep in mind it's like 1:00
+in the afternoon aha so it looks to me
+like we've detected a new contact here
+it's a bogey number one we can see that
+we got a with the generic TV Camera 50°
+at 28 nautic miles we actually picked it
+up by its contrail which is actually
+fairly accurate that actually did a nice
+job there fantastic so let's go ahead
+and reset everything real quickly here
+I'm going to go set it back to Blue
+Team grab my handy and dandy little
+building one more time I have a little
+IR camera go ahead and change that real
+quickly here I'll go ahead and filter it
+again and this time we're going to do IR
+camera and we're going to keep it like I
+said pretty simple we're going to grab
+ourselves a third generation now an
+infrared camera detects a Target by heat
+as opposed to detecting a Target by a
+visible light so you're going be picking
+up a very different part of the spectrum
+so one of the things you'll notice here
+is our range was substantially reduced
+many people think oh just because you
+have a fancy infrared camera means you
+can see things at longer distances and
+now one of the things you'll observe is
+we identifi the target not by its
+contrail but we identify the Target by
+its physical existence so you'll notice
+here that we did not see its contrail we
+actually saw the building itself so
+that's one of the first are building we
+the building uh the aircraft itself
+because we lose that when we were
+looking through an infrared camera so
+let's go and set everything again you're
+starting to see a little Trend here so
+let's get that one all set up already
+you're starting to go ahuh I'm starting
+I get it I I I know where you're going
+with this and we go with this so let's
+go ahead and get a different one too
+we're going to this time get a lltv a
+little light television and this on are
+pretty handy these are your night vision
+devices is kind of a thing grab my third
+generation surveillance toss that on the
+top and you're probably sitting here
+going is it at 1:00 in the afternoon
+isn't it a bad idea to be using lltv As
+a matter of fact if you saw when we
+captured that guy sorry I hit space so
+fast there you'll see we picked it up at
+the same distance as the regular camera
+so it actually had a pretty solid
+benefit to it so we have the benefit of
+nighttime as well as having the benefit
+of being able to see things like
+contrails okay so now let's throw in
+lltv which everybody thinks or not lltv
+I should say F forward looking in for
+red now when people think of Flur of
+course um you're thinking the magical
+technology that lets us see everything
+all the time and it's just a wonderful
+wonderful tool because it's you know
+awesome so watch what
+happens there we go you'll notice we
+picked them up once again at half the
+distance we did with our cameras
+starting to see how this gets a little
+more complicated than people thought it
+did which is one of the reasons I really
+really enjoy things like this because it
+just kind of dispels the myths so to
+speak so let's go ahead and reset here
+as you'll notice our two cameras were
+actually the best at detecting targets
+at long range that are in the air
+because of the presence of contrails see
+how that get sneaky so next thing we're
+going to do is we're going to go and
+change the time of day here it was
+originally 9:30 U let's see local time
+is about 13:30 so if we go up to say 15
+:00 it sounds very awkward go to 15:00
+that puts us to 7 that's actually not
+late enough we need to go a lot later
+than that let's do 21:00 I think that'll
+be a good time let's go ahead and say
+okay there that puts us at 1: in the
+morning obviously uh it's considered on
+about because of the time of year so
+that's one of the problems here so we're
+actually going to have to tweak this a
+little bit so let's get away from this
+and we'll do um we'll do 0101 something
+like that press okay copy time and date
+so that should make it a little bit
+darker yeah that's like super duper
+Ultra super dark we'll go ahead and save
+this one real quickly so let's go ahead
+and grab our original camera here with
+have a generic IR camera just kind of
+chilling in there so we're going to get
+our TV camera and I think you know it's
+going to happen here when we try the
+generic TV Camera you're going to sit
+here and go oh boy he's going to fly
+right by and you're never going to
+notice him well let's find out Tada we
+actually picked him up at 10 nautical
+miles very large contrail detected
+interesting right so as you can see um
+TV cameras aren't useless during the day
+they're actually still fairly effective
+at picking targets up granted that's a
+much much much shorter distance than the
+26 miles we got earlier so let's go and
+open it up one more time here again we
+keep into the theme let's grab our
+sensors one more well not one more time
+a few more times let's go ahead and
+throw on the IR camera this time now the
+IR camera again a little different
+technology than you're thinking when
+you're thinking of a traditional for
+looking in for red like I said slightly
+different wavelengths that we're dealing
+with so Watch What Happens at this
+time you'll notice we picked them up at
+the precise the same distance almost to
+the 0.1 nautical mile there that we did
+the first time which makes perfect sense
+so our infrared camera now as you'll
+notice is not picking up the contrail
+however it is able to see at night I
+should probably build a little chart
+that goes along with this that'll
+probably make more sense but hey this is
+the fun way to do it right so let's go
+ahead and get our lltv here this is our
+lowlight television technology here grab
+that sucker real quickly there and this
+is going to be the one that always puts
+a smile on my face you'll see that we
+picked them up at 27 nautical miles that
+is the same r we picked them up during
+the day if you remember with our bigger
+regular camera here which again the low
+light television has a really fantastic
+capability of being able to see things
+like contrails at those really long
+distances so now we're going to get the
+the king of them all you know the one
+that everybody's like oh this is the one
+I want to have the most of which of
+course is going to be our lltv now the
+lltv not lltv I'm sorry I did it for the
+second time our fli of course is really
+really really useful except again it's
+going to have that same limitation that
+we saw before so let's grab this this
+one real quick pop that one on go ahead
+and push this I'll wait uh let's see
+here if I had to guess probably about 16
+let's see what happens oh I'm so
+good interesting so what can we take
+away from this well you can actually
+take away a lot of things so the first
+things first is don't throw away your
+cameras and low light television cameras
+because they can see contrails at
+distances that our in Fred camera
+buddies cannot see uh the second thing
+you probably notice is at night time our
+camera wasn't completely useless it
+actually was okay now the last thing
+we're going to take a look at here of
+course is we're going to make things a
+little bit tricky so let's go ahead and
+grab our blue here I'm going to go ahead
+and grab this guy one more time I'm
+going to go to my sensors window go
+ahead and remove that camera and what
+we're going to do is we're going to add
+in everything that we've seen so far
+today let's go ahead third gen I think
+you just type in through a gen like that
+and what we're going to do here is we're
+going to throw in a Flur we're going to
+skip the gun directors they don't do
+anything for us here for today we don't
+have any guns to direct they also tend
+have a very very strong Zoom that's kind
+of cheating let's grab ourselves lltv
+let's grab ourselves a generic TV here
+and again these are all surveillance
+devices so what we're going to do now is
+we're going to crank on the weather and
+I'll go up to the weather real quickly
+here uh weather let's go ahead I'm not
+going to put any clouds on because we're
+not going to be able to see it at all
+let's go ahead and jack up the rain so
+that gets us a heavy rain heavy rain is
+a messy uh current time in the morning
+of course is 1:00 in the morning so
+let's go ahead and
+unpause let's see what there we
+are I was way too fast for that give me
+a second all right this time I promise
+I'll go a little bit slower so let's go
+ahead and grab the weather here so I'll
+go ahead and set this back to our heavy
+rain again we don't really have any
+specific clouds here we're going to keep
+it simple we're just going to go to 15x
+here now place a bet which one of our
+four sensors remember lltv TV F and IR
+are going to detect our bomber first now
+this is uh everybody sitting there going
+my my money is on lltv no no my money is
+on F and everybody's sitting there going
+oh which one's it going to be which
+one's it going to be
+cuz um we'll find out in a few seconds
+here as the bomber flies over and as
+you'll see the generic LL TV was our
+winner and they detected by a very large
+contrail see how that gets sneaky so of
+course you're sitting there going oh
+that's ridiculous that doesn't make any
+sense how are we able to see it what if
+you shut the contrail off okay oh you
+said shut the contrail off I'm going to
+shut go ahead and shut that sucker off
+let's grab my Bice in here and let's go
+ahead and drop them down to medium
+altitude and um like I said this is
+where're limit in this aspect of our
+little mystery here so that you can have
+a pretty good understanding of what's
+going on edit unit properties what do we
+say 12
+w 12,000 ft I'm go ah and do that close
+unpause uh 45,000 ft I guess I did not
+right click that correctly that's
+something I do every time all right
+altitude 12,000 Enter
+key I I did do yeah there we go there we
+go fantastic all right let's swinging
+back over to our other one we've hidden
+them here so we can go ahead and see
+what happens again he's flying through
+the heavy rain and there we are as you
+will see we picked up no contrail
+however the lltv our low light
+television is the champion again being
+able to see through all of it and seeing
+it even though you expected the infrared
+camera to be sort of the magical tool
+now there's something you have to know
+about these sensors one of those things
+that people kind of miss so let's go up
+to the database real quick here let's go
+up to aircraft we down sensors I'll type
+in lltv everybody's like this is the
+winner this is the magic one this is the
+one I have to mount on everybody from
+now on so when things you'll notice here
+is my generic lltv has a max range of 30
+nautical miles it's got a bunch of
+useful things here night vision
+capability all this other really really
+really useful things watch this let's
+see here we'll go down to generic flare
+of course they appreciated you'll
+observe they actually have a better
+maximum range I knew you were saying oh
+there's probably something here like
+you're not zooming in enough or
+something like that you can actually see
+here that my inform Zoom detection
+classification is 20 here and my maximum
+range here is 45 miles there's no
+Limited as far as um I have to I can't
+identify out to a certain distance or
+anything like that so of course when we
+did our lltv which is our magic remember
+the number 20 remember the number 20
+4520 4520 4520 4520 you'll see here it
+is also 20 it is 30 so that is just one
+of those interesting little things that
+um people kind of miss and of course if
+we just wanted to do a generic TV Camera
+here just confirm that we're not
+cheating remember how good the generic
+TV Camera was most of this time here
+surveillance you'll see it is exactly
+the same the only difference being that
+are low light buddy can see in the dark
+so what do you want to use for a sensor
+when you don't want people to know that
+you're looking your LL TV is the way to
+go Flur works great of course for lots
+of other things but lltv has all those
+added little fun little benefits enjoy

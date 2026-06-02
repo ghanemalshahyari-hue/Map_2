@@ -1,0 +1,549 @@
+# C: MO - Building a SAM Site with an Air-to-Air missile
+Video: https://www.youtube.com/watch?v=f9qHbpGR6oA
+Video ID: f9qHbpGR6oA
+
+hello everyone in today's video we're
+going to be showing how you can create a
+custom Sam site using weapons that you
+wouldn't conventionally use on a Sam
+site uh this is a great exercise in
+building your own units which is
+something everybody's always asking
+about it's also a really really good
+exercise in understanding that missiles
+are a little complicated as far as to
+get them to behave and you'll see what I
+mean when we get there so our scenario
+of course is relatively straightforward
+we have this healthy place called the
+town of Townsville BG here and um we
+need to build a Sam site to protect it
+now of course you're sitting there
+saying why are you working so hard why
+don't you just go to facility and come
+in here and say S400 and pick the one at
+the bottom and press okay and you turn
+the radar on and you go no that's too
+easy we can't do that let's make things
+complicated today I want a Sam site that
+shoots the same missile that a MIG 25
+shoots because I can let's do it so what
+I'm going to do first is I'm going to
+create myself as a facility I'm going to
+go ahead and type into that Sam site we
+have two different flavors of generic
+Sam site so we have a regular one which
+is it's not bad it's just right there of
+course we have a more fancy one which is
+reved which obviously gives it a little
+bit more protection but um because we're
+being Shenanigans here we're going to do
+conventional Sam site now if you click
+on the Sam site you're probably going to
+observe that it has nothing it has a
+little machine gun on it doesn't have
+any fancy coms or anything like that as
+a matter of fact I think its sensors is
+literally the mark1 eyeball which is uh
+pretty garbage if you ask me so uh we
+want to do better than that so let's
+have some fun so as I mentioned a minute
+ago we're going to be using the Mig 25's
+Armament so let's go take a look at what
+the Mig 25 shoots these days M 25
+obviously we want a b version which is
+going to be a little bit nicer come down
+here right let's see we have the little
+ow radar oh that's garbage but it is an
+iband radar that works for
+us so we're going to scroll down here
+what do we have for a Weaponry here we
+have a drop tank we can't shoot that we
+have the as11 and we have the as11 here
+these are armm this is not the right
+version of the Mig 25 so what we're
+going to have to do now is we're going
+to have to go find the right version ah
+there we go much better let's see here
+Fox poot PD PD PD PD there we are the PD
+oh PDS sounds even better we'll stick to
+the PD though just for us you know old
+school stake here let's see here scroll
+down here Ah that's what I was expecting
+that's much much better here the aa6 A6
+A6 let's see here aa6 IR TD R40 R40 that
+looks pretty good to me let's use the
+R40 as our basis here so we're looking
+at the aa6 acurate C also known as the
+R40 Romeo Delta s RH radar um this is a
+semi-active radar homing weapon which
+means it probably requires a pretty
+strong beam so we're going to go down to
+the secret real quickly here and if I
+click on that I observe that it is U not
+providing us any information at all as
+far as what band it homes in on um
+that's a big point for us now remember a
+moment ago I mentioned that it uses the
+iband on the radar so if I had to guess
+I'm guessing this particular platform
+also uses an iband radar let's take a
+look here let's a highlark radar but you
+it's an iband yes it is an iband radar
+we are saved cool let's do it so now
+what I'm going to do is run down to my
+Sam site I'm going to go ahead and click
+on weapons and now you can see right now
+it's got some guy with him I guess a
+scar one of the Big H ones and we're
+going to go ahead and add add a mount
+here we can either add a weapon record
+which adds a weapon to that or we can
+add a mount now what I'm going to do is
+I'm going to get myself a car you're
+probably sitting here going what is he
+do not car I'm sorry add yeah I was
+right I was right I was right I did it
+right the first time let's see here
+generic and what I would really really
+like is just a car and I know you're
+sitting here going oh okay that seems
+kind of random but um it actually works
+pretty well for us because it keeps
+things relatively simple when I'm trying
+to visualize what exactly it is that I'm
+trying to grab here uh we can grab a
+tank too if we need let's it's like an
+engineer T forget it we're just going to
+go with the engineer tank I must
+coverage JS yeah we'll assume we can
+shoot our weapon in every direction so
+our little tank here comes with a
+machine gun but we know better than that
+so I'm going to come down here and press
+add weapon record F right keyword and
+we're looking for our what would we say
+an R40 I think it was yeah an R40 so
+let's see here we have the F model which
+is a little bit fancier we have the IR
+model which is not what we want to shoot
+the IR model actually could use
+theoretically um we could shoot both if
+we wanted to be a jerk but like let's
+keep it simple for us today and I'm
+noticing a couple different types here
+one thing you'll notice is we have the
+two out of two with a rate of five of
+five and then of course you have these
+absurd things which are a um we have a
+zero of 10,000 with a rate of fire of
+one that's actually pretty good A lot of
+times when we have these they represent
+you know big magazines or something like
+that so they have a rate of fire of like
+60 so it's like one per minute which
+isn't great so this works great for us
+um we can definitely play with this so
+let's grab a Romeo Delta here and um
+we'll go ahead and grab a four of the
+weapon record added misses the data
+length which you like to add one this is
+really really really important um one of
+of the things you probably noticed let
+me press no and let me come over here I
+love how the fact they actually color
+coordinate all these things now to let
+you know that we've done goofed so I'm
+going to move this weapon record one of
+the things you probably observe when
+we're looking at the database entry on
+our friend the Mig 25 there Mig 25 PD
+this time we'll get it right uh one of
+the things you observed is the fact that
+the weapon itself has a data link on it
+uh the data link is kind of a tricky
+thing there so if I click on the
+accuracy here now one of the things
+you'll notice here is there's an aa6
+command data link uh the purpose of this
+is basically to send information over to
+the weapon so that it can safely track
+now one of the problems people do is
+that when they go to add something like
+this so I go and add that on there again
+do you want to add the data link I'm
+going to press the S button it's going
+to say what data link did you want to
+add isn't that nice that it doesn't do
+it for you but it does actually include
+it right there so we can actually filter
+by keyword and you can actually see it's
+right here now if I add that this is
+actually adding to this comms to this
+Sam site unit if I had forgotten that um
+our ACD would not be able to track even
+though is is a semi-active radar homing
+weapon it's just kind of one of those
+things you just got to like I said you
+got to be mindful of stuff like that so
+go ahead and add a few of these we'll
+assume that this truck just has like a
+bunch of racks of these things on the
+roof it's kind of absurd if you ask me
+and uh you know what this is science
+here so we're going to go ahead and add
+another one too avlb we'll go just add
+another one he can point his missiles in
+every direction and uh you know let's
+just be a jerk here let's go ahead and
+add some more of those what do we say A6
+today and let's add some of the TD ones
+which are hilarious because they are
+very very effective
+uh let's see here which one do we want
+the TD On's the TD 2s we'll add a few of
+these and again his buddy like's two
+tanks parked next to each other you have
+to imagine one sitting there with a
+bunch of the radar guy to the other guy
+sitting there with one of those so now
+we're good to go right wrong uh the
+problem now we have is remember it's a
+semi-active radar homing weapon we have
+a little site here and under sensors it
+has some binoculars which is nice but it
+can't actually guide a weapon it needs
+something that uses the eye band for the
+purposes of actually guiding the weapon
+to the Target now of course many of you
+very very sharp people will point out
+the fact that um what about the infrared
+ones you just mounted on here according
+to this these are TDS these have IR
+Seekers we can just YOLO fire because
+it's missile data link you're right you
+can U but we want to be able to kind of
+cover both sides of this aspect just so
+you you're aware of that we'll
+demonstrate that against a bunch of
+Russian airplanes in a minute here so
+what I'm going to do now is I'm going to
+go ahead and add a sensor so we need to
+add a radar that can basically
+illuminate key word is illuminate there
+you don't illuminate you can't actually
+hit now if you're remember a minute ago
+we mentioned that we need an iband radar
+for those of you who missed that detail
+at the beginning let me show you what
+I'm talking about real fast cuz that's
+going to make you insane later so if I
+go back to M25 PD and grab one again
+they're all basically the same you
+observed here that it says operating
+bands Fire Control illumination I if we
+do not have an i band radar that can
+illuminate we will not be able to create
+enough reflection off the target to
+successfully guide that weapon to our
+Target that's an important point you
+have to kind of think about because
+people forget about that they'll do an
+x-band radar a Juliet band radar or
+something like that and it won't work
+now very very clever folks will
+immediately go well wait a minute there
+are other sensors out there that are
+also on the iband and you would be
+correct my friend as a matter of fact if
+we wanted to be very very goofy we could
+go to aapg and we could use American
+Radars for the purposes of guiding an
+iban weapon as long as its illumination
+band is set to the one that we want now
+you'll see this is actually not a great
+radar for this cuz we're only allowed to
+eluminate one at a time now I know what
+you're saying you're saying why don't
+you throw an ace on the front of it aces
+are great except for the fact they can't
+illuminate so if we can't illuminate
+that means we can't hit the target so
+even if we go to this really really
+really really really nice f-15e radar
+here again you can see here that we're
+on iband and um but we have no
+elimination capability so that's not
+going to work if we go back to our M 25
+for the 50th time here PD even though
+we're not using it if I go to this one
+real quickly here and I'll scroll down
+on we have the highlark four if I click
+on this you will observe the fact that
+yes indeed it is an i band radar it's
+actually pretty good range radar too now
+one of the things I'm curious about
+while I'm kind of rambling on here is
+some wonder if this is an iband radar
+because it's a really really nice radar
+so's see flash look at that we found a
+winner so what we're going to do is
+we're going to steal the radar off the
+Mig 31 here it's called a Flash Dance
+isn't that kind of fun all right let's
+come down here we'll add a Flash Dance
+radar here Flash Dance oh we have a
+couple different versions here we have
+lot of fancy versions We have the blank
+T version the a version the M version
+we'll add the M version because we're
+bad people boop just like that so now
+what we have done is we went to the
+aircraft junkyard ripped off a bunch of
+pieces and slammed them into our Sam
+site so we need an appropriate Target to
+actually test this with now I don't
+trust myself at all when I do these
+videos so I'm going to press save and
+just in case kind of a thing like that
+to make sure it works and we're nice and
+saved and ready to begin unpause so we
+have our Sam site here um we actually
+have a tips 43 up in the hill here and
+he's kind of keeping an eye out to see
+if there are any pesky airplanes out
+there somewhere of which there are so um
+we've got our handy dandy of Sam S sites
+um we've got our acds here which is a
+very absurd weapon to use against things
+that are flying we spotted something we
+have a couple hostiles there so we'll go
+ahead and mark them as bad right away
+there I'll go ahead and grab my Sam site
+go ahead and click on him and we can see
+a couple things uh first of all you'll
+notice we're out of range horizontal so
+unfortunately we're going to have to
+wait until whatever these pesky
+airplanes that we're looking up at the
+sky get closer and you can see my tips
+43 actually does a really really nice
+job of tracking these things let me give
+you a hint these things are stealth just
+in case you're curious here all right
+getting a little closer getting a little
+closer and we just need one more little
+Zing zap of range there looks pretty
+good to me so of course we have a couple
+different things here um you'll notice
+here no weapon directors to available to
+eliminate the target um the problem with
+this one of course is that we're dealing
+with an issue where um we don't have
+enough reflection which makes sense cuz
+your stealth but we notice our TDS the
+IRS we're just a little out of range
+right now which is perfectly fine for us
+I'll speed up time a little bit here
+kind of cruising kind of cruising kind
+of cruising and what I will do is I'll
+actually activate the radar on board the
+Flash Dance and let's see The Flash
+Dance gets us a little bit better
+elimination Ah that's much better go
+ahead and light this guy up again and
+now you can see here we're looking
+pretty good looking pretty good we're a
+little outside of dlz range for a weapon
+here but that's okay give it just a few
+more moments and actually let's be kind
+of mean here I'm going to shift delete
+and I'll grab one for each here uh we'll
+fire you get one and you got we got to
+get a little closer so one of the
+downsides we have here is we are firing
+a air-to-air weapon from the ground and
+that's never w recommended and again
+we're a little outside of dlz range
+again I could probably order it to fire
+anyway even though it's outside of dlz
+range but um that was going to be kind
+of a disadvantage for us there ah there
+it goes
+po this is such a stupid weapon to use
+off the
+ground we're firing an air to- a weapon
+off from the ground and it's not a very
+good one so obviously our stealth
+aircraft are having a very very little
+difficulty basically literally running
+circles around this thing so I'm going
+grab this one again hold on the shift
+key drag a box around here like that and
+he's going to try it again I don't think
+we're going to have enough snap up power
+here yeah not enough snap up to actually
+hit it so I think in conclusion it is
+not the best um weapon for that
+particular purpose
+unless all right so all we've done here
+is we've adjusted the altitude of my
+targets they're only at 5,000 ft and yes
+there's squ 57 so these are pretty
+serious aircraft so our Sam site is
+sitting there again what I did is I just
+reloaded or save like I said if you're
+experimenting with things and look at
+that we're able to get a shot off right
+away so there's the TD it's uh launched
+already doing its thing I probably not
+going to have enough reflection on
+either one of those to be able to hit
+that unable to accept firing can unable
+to connect to firing unit with mandatory
+data link oh no so if that ever happens
+and U this is a really really good
+example of when that happens in place if
+I were to go to my Sam site hit coms you
+see I've got my aa6 missile data link
+here if you ever have a problem with
+that one of the things you can do is you
+can type in aa6 and what you'll observe
+is there's actually two different data
+links we have the command data link and
+the missile data link so when this
+happens to you the trick here is um you
+can make sure you add the command data
+link otherwise you will not have the
+ability to actually launch the weapon so
+if you take a look here when I open up
+my screen do you see how I can shoot
+everything so I can go one and do one of
+these like that and then my Sam site is
+happy to
+just and pop those things off like crazy
+now uh that's one of those little things
+that I missed in the beginning that you
+will definitely run into when you start
+fiddling weens like this this is not a
+very satisfying conclusion however
+because I'm basically watching these
+things I go cut across the sky at these
+look they just turn and ran and they're
+just like I'm getting out of here kind
+of a thing that's not satisfying enough
+especially with an aircraft like that so
+what I'm going to do is I'm going to
+control shift F9 here I'm switch teams
+by the way and I'm going to order them
+not to Dodge I don't think I'm going to
+actually hit anything but I will tell
+them not to dodge here all right here
+bbrr engagement quick turnaround
+navigation refuel automatic evasion off
+this is so wrong don't do this all right
+let's go ahead and do one of these I
+want a satisfying conclusion I mean
+we're taking some good shots here all
+right this guy's just sitting there
+probably twiddling his little lobs he's
+a little outside of the dlz range here
+that's okay it's okay again that's not
+the best weapon for this I think I made
+that very clear at the beginning we
+really should not be taking bits and
+pieces off of different airplanes and
+trying to use them against Targets on
+the ground here but that's okay or not
+Targets in here I should say all right
+that's a little better that's a little
+better it's a little bit cleaner of a
+shot there let's see if we can do one of
+these here I think I have plenty of TD
+RDS RDS and TDS here so you get one you
+get one grab you you get one you get one
+I have a feeling oh we're going to have
+to fire quite a few of these to actually
+hit anything but that's okay that's what
+happens when you fire oh look at it go
+look at it go look at it
+Go isn't that awesome he just needed a
+little bit of encouragement there and
+now we fire like an entire rack of these
+things at him a little better a little
+better like I said kind of amusing to
+watch stuff like that on action all
+right meanwhile there suco 57s here
+which are these noxiously obnoxious
+airplanes for those you've not seen one
+of these things in the real world I have
+a good feeling that um it's going to be
+interesting if I can actually hit them
+with an
+R40 no I didn't think so we're trying
+again this is why the Mig 25 as a Sam
+site is not the most effective unit all
+right what do we got what do we got what
+do we got here we go here goes here
+comes my next literally volley this is a
+volley this is unfair here they come
+here they
+come nothing
+look at my S site's just Distributing
+these things like they're free have
+another one have another one and of
+course the probability of actually
+striking at the Target even though this
+look like the world's cleanest shots
+there is relatively low uh the reality
+here is these weapons were just not
+designed to hit stealth targets and so
+it's a pretty good demonstration for
+that too so we'll leave it at that I'll
+go ahead and close there real quick and
+when answer a question everybody's going
+to ask and they're going to say hey is
+there any way that I can take this and
+copy it so you click on it you press C
+click again and you'll notice all that
+hard work that is gone so I'm going to
+delete it instead I'm going to press
+shift C I'm going go ahead and click
+somewhere else like that and you will
+notice that it will go ahead and uh
+change some things here I go ahead and
+click on this one more time I go to my
+weapons and you'll observe that it has
+unloaded all of my missiles now you're
+saying there why did it do that why did
+it do that um that is because we have no
+Magazine on here we'd have to build a
+magazine and basically set that up so be
+very very mindful if you are going to
+clone the unit you want to make sure you
+get your magazines all set up and stuff
+like that before do the Clone otherwise
+you're going to get Shenanigans like
+that and be kind of disappointed even
+though that was like the cleanest shot
+that we would have had I mean like
+they're pointing right at them and one
+thing I do want to see real quickly here
+for anybody who's curious oh the Jammer
+is doing the job here so um you can see
+my Jammer is being incredibly successful
+as a matter of fact I don't even know
+how many of these missiles I fired at
+these SEO 57 there we go we got
+one it tried to jam but failed you
+rolled the 74 that time so anyway it's a
+really really cool trick uh Sam sites
+can literally be filled with anything if
+you want to be goofy you could fill the
+Sam site with uh guys with rifles it
+doesn't really matter but it does
+provide you with a nice little kind of
+tool to build up your own things
+especially at a bits you found out an
+airplane
+graveyard enjoy

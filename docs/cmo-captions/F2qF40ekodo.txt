@@ -1,0 +1,286 @@
+# C: MO - GNSS Jamming Counter Tactics
+Video: https://www.youtube.com/watch?v=F2qF40ekodo
+Video ID: F2qF40ekodo
+
+Hello everyone. In today's video, we're
+going to be taking a look at a recent
+added feature to Command Modern
+Operation 1776. Thought that was kind of
+a fun name for version, but um in order
+to hint at what this feature is all
+about, if you haven't read the title
+already, we're going to demonstrate it
+and then discuss the implication of it.
+Let's do it. So, I'm taking my B-52
+here. I'm going to press shift F1. I'm
+going to go ahead and click right here.
+I've got this lovely little base here.
+I'm going to select them all. I'm going
+to go ahead and allocate one to each one
+of these targets. That's going to give
+me six, but I've got eight, so I'm going
+to do the rest. And of course, let's
+have some fun. I'm going to press
+execute. I think that's kind of a fun
+new button there. So, we're going to be
+launching a bunch of those level
+conventional air launched cruise
+missiles. Meanwhile, I'm going to grab
+this B-52 with the exact same setup as
+you probably observing here. We go ahead
+and allocate one to each. We're going to
+go do that. We got to do it twice
+because we got eight. I'm going to press
+the execute button. Now, what I'm going
+to do is I'm going to go and unpause.
+And of course, uh for those you've not
+seen this party in the real world, it's
+actually pretty terrifying when these
+things do their drops. What it will do
+is it'll actually drop them off the
+bottom. Now, the little warhead, I
+should say, the motor will light up and
+then they'll start ripping towards its
+target. You can see just sort of this
+thing just diving down till I get to low
+altitude to begin doing its work there.
+And of course, that's awesome for us.
+Meanwhile, I'm going to do is I'm going
+to grab my B-52 here. I got actually get
+the right one. You can go home. You've
+done your job today. Let me go grab the
+other B-52 here. Yeah. What do I need?
+The tomahawk. Yeah, go home, please.
+Now, let's get the B-52 and send him
+home. Beautiful. Now, there's something
+you probably have observed right away
+against our target here. You'll observe
+that the cruise missiles that have fired
+out here in the middle of um I guess
+we're leaving California, getting to
+like Nevada territory in Utah here. Just
+cruising around. They got a bit of a
+contrail, which makes sense because
+they're cruise missiles. And we come
+over to these and uh you probably
+noticed something on the side of them.
+You will have observed that we have this
+thing that says GNSS62%
+next to them. What's going on here?
+Well, these lovely cruise missiles are
+being jammed. um they're actually
+blocking the GPS signal which is causing
+them to lose accuracy of their
+particular position. You'll notice the
+uh G missiles at really high altitude
+here are really losing the GPS much
+quicker. And you're noticing the GPS I
+should say the missiles at the low
+altitude have great GPS reliability
+right now. And you're sitting here
+going, "Oh, I know why you did this in
+the mountains. I see what you're doing
+here." Yeah. So, the Earth is curved. We
+have a vehicle right now that is
+currently jamming all GNSS satellite
+signals. I'm basically that's like
+saying ATM machine, I know, but the fact
+of the matter is the Earth is curved and
+that means if my jammer is on this side
+of the curve and my target is on this, I
+should say my missiles on the other,
+they don't talk to each other. That also
+means that terrain masking has a massive
+impact on the ability to guarantee that
+your particular platform does not get
+jammed. So, what is the practical upshot
+to this? Well, the practical upshot to
+this is that the longer something does
+not have GPS or GNSS signal because
+obviously Compass and Gausnes and all
+those guys are affected as well. It is
+going to be progressively less accurate
+over time. It'll still be pretty
+accurate because again, these things
+were designed to be jammed, but the
+reality is is they're going to feel the
+pain differently. Now, our missiles here
+will launched over the water
+intentionally for the purposes of giving
+them the most exposure to the strongest
+jamming. Meanwhile, the missiles we
+launched over the mountain range here
+are going to have plenty of time to
+basically not get seen by the jammer and
+vice versa. if that makes sense. You
+can't really see anything with a jammer.
+You know what I mean? Line of sight.
+There we go. So, they're going to have
+plenty of time to basically hide
+themselves until they pop out and do the
+deed kind of a thing. Now, look at the
+practical consequence to this. I'll
+speed up time gently this time. So, our
+cruise missiles are arriving right now.
+These are big cruise missiles, by the
+way. These are not little like this is
+like getting struck by, you know, a
+Cessna 182 kind of a thing with a miss a
+big warhead on the front. It is big. All
+right, they're coming in here. And as
+you'll notice, their GNSS, a little
+warning has reappeared on them. And you
+can also take a look at my calculator
+instead of pressing the minus key. You
+probably know what that's all about. And
+you can see um we've completely lost
+satellite signal. So in the real world,
+we wouldn't even be confident where
+these particular missiles are right now.
+They're pretty confident because this is
+command modern operations. And I'm sure
+at some point in the future, they're
+going to make this a lot different as
+far as communications between units
+goes. But for today, this works
+perfectly fine for us. All right, so
+here they come. We got a good spread of
+targets here. And you can see they're
+all allocated. And here comes the party.
+All right, that was nice. That was nice.
+That was nice. All right, so none of
+those weapons had GPS signal, basically.
+And of course, if I pop up here to
+losses and expenditures. Uh, let's see
+here. Actually, what am I doing? Just
+come down here and show you. You can see
+the weapon accuracy was degraded to uh
+14.3 m, which is um good enough. It's
+good enough. It's good enough. If I
+press controlV real quick, you can see
+the fact that one of the bunkers was
+struck more or less directly. So, that
+did work. But what about our buddies who
+haven't been jammed for the last 15
+minutes? Well, their story is going to
+be a little different. And as you can
+see, they're still cruising through the
+mountain range here. They're only going
+to lose GPS signal in a moment once they
+start diving out of these valleys here.
+And you can see the immediate tactical
+difference that you're going to see as
+they pop out, basically. So, here they
+come again. No warning. No issues with
+jamming. No issues with jamming. They're
+cruising along. Cruising along. I think
+we're basically not going to get jam.
+Oh, there we go. So, you can see the GPS
+is quickly degrading. But wait, they've
+only lost a few percentage before they
+show up and start exploding things.
+[laughter] Look at that. What a hit. All
+right, let's go ahead and pop this open
+real quick here. And as you can see, um
+the weapon accuracy went down to 9 and
+1/2 mters. So basically a 3 m difference
+between having GPS um at all and not
+having GPS. Now, of course, you're
+sitting here going, "Okay, that was
+pretty good. I like I like what you did
+there. You you showed us very clearly
+why terrain masking still works." It's
+because, again, jammers are line of
+sight. So how do we deal with one of
+these pesky jamming units? Well, I've
+got a buddy for that. And a F-16 C on
+block 52. Surprise, surprise. Which one
+did you think it was going to be? All
+right, let's go get him. All right. Uh,
+you need to you need to take off now. I
+need you down south. California needs
+you. Come to California. Come to the
+California.
+That's a joke that nobody's going to
+understand anymore, but that's okay. All
+right, let's grab our buddy, Dill number
+one. Dill number one, if you'd be so
+kind as to head down south. Hachu. Oh,
+look at that. Now he's a little more hot
+chew. use for even further down south.
+That was awesome. All right, so one of
+the things these are capable of doing is
+they're capable of detecting GPS
+jammers. There it is. The GNSS. I should
+be more specific. So, there it is. And
+of course, we're going to inconvenience
+this jammer basically by delivering a
+much more expensive weapon than the
+actual jamming unit itself. A fun fact,
+GPS satellites are really, really,
+really, really far away. So, if you
+think imagine normal satellites are like
+where my mouse is, a GPS satellite would
+be over here. So, just keep in mind
+their signals are very weak. So they're
+very easy to jam. It doesn't matter.
+There are some constellation systems
+again depending on how they do it. Some
+are at different altitudes again
+depending if it's compass or glowness.
+But the reality is is their signals are
+not very strong by the time they get
+down to the ground. They're not
+geocynchronous. Geocynchronous would be
+over here. But the reality is they're up
+pretty high so they have good coverage
+and that gives them a very very weak
+signal. All right, let's get a little
+bit closer. A little X F16 here. This
+should just say like the Gjet or
+something like that on the side of at
+this particular point. All right, let's
+go ahead and waste some money. So, I'm
+going to go ahead and fire up one harm.
+Now, a harm has no problem tracking this
+particular signal. That is unless the
+other guy shuts off his jammer. One of
+the interesting things I want to point
+out as well is this harm missile is
+going to have a really easy time of this
+because the jammer does not affect the
+harm missile. The harm missile just
+wants to go for the big strong radar
+signal, which of course since that's
+provided by our jammer unit here, he's
+going to get a bit of surprise when this
+thing shows up and snaps him in two.
+Now, the interesting thing here is now
+that that's taken care of, I can just go
+up and knock. Just roll in here. Let's
+see here. What do we have for a weaponry
+here? We'll go lock on to you. You get
+You get a J Dam. And you get a J Dam.
+Let's go ahead and take care of that
+real fast. And one Mississippi 2. We got
+both. Nope. We got to wait for the
+second one to come off the rail there.
+There he goes. Go home. Nicely done.
+Now, you'll observe our J dams here,
+which of course are GPS weapons. Uh
+they're not affected anymore. There's
+just no problem. They're just going to
+fall right down to the ground. nothing's
+going to affect their accuracy any
+longer and they're going to happily
+smash into those targets down there. Pop
+pop pop just like that with no
+consequence.
+So, as you can see, the GNSS jamming is
+an interesting problem. It has
+incredibly long, very, very powerful,
+very effective range, but it can be
+countered but either by doing some
+terrain masking or hitting with a good
+oldfashioned weapon of its own to go
+ahead and destroy it. Enjoy.

@@ -1,0 +1,580 @@
+# C: MO - Bombing a ship with unguided bombs
+Video: https://www.youtube.com/watch?v=oVs-5gylEcA
+Video ID: oVs-5gylEcA
+
+hello everyone in today's video we're
+going to be taking a look at dropping
+bombs on ships now you're probably
+saying hey wait a minute that sounds a
+little on the nosy well it and there's
+reasons for it for today's exercise
+we're not going to be looking at trying
+to draw guided bombs onto ships
+obviously if you have a laser designator
+it's a pretty easy going as far as
+popping a ship instead we're going to
+concentrate on the good old-fashioned
+unguided variety so let's take a look at
+our little scenario here so we have the
+handy dandy Admiral kuznitzel other
+reason I went for this particular vessel
+is because it's very obvious from long
+distance because of the black smoke
+coming at it no the reason I picked this
+one is because it's long and it's also
+you know fairly skinny it also moves
+pretty quick when it has to kind of a
+thing like that so we're going to go
+ahead and attack it and look at kind of
+the different variables that are going
+into attacking uh first things first
+though before I do get too carried away
+the ship is set to Blind so will not
+return fire here so the returning fire
+aspect of this is not going to be
+explored too much and if you're
+wondering what this is this is just a p8
+he's just helping me out as far as
+identifying where we are here so the
+first things first what kind of bomb do
+we want to drop on a ship one of the
+things you got to watch out for us I've
+actually come over here to the question
+itself and actually hit the button here
+you're going to notice that it has an
+interesting little database entry and
+I'll scroll down a little bit a lot of
+times which will detect is they'll have
+armor in different parts of the ship for
+example you can see our belt armor is
+between a 9140 millimeters RHA
+engineering is pretty good and big thing
+is it has no deck armor this is a really
+important piece of information for us
+because it tells us that if we hit it at
+a low angle and strike the side of the
+ship our bombs are gonna have to work a
+lot harder to do damage than if we dump
+one right down the middle now if you pop
+over to a CVN real quick CNB it's a new
+kindness third time is the charm all
+right uh let's do carrier nope this
+would not be a carry this would be
+conventional let's try CVN no I see this
+over here it's hidden you have to look
+carefully CVN there we go let's grab the
+Enterprise real quick you can take a
+look it's got the belt armor but no deck
+armor as well as a matter of fact if you
+want ships with deck armor you're gonna
+have to go back way way way way way way
+way back I don't even think this it does
+we're gonna have to go back a few years
+and you can see that they actually do
+have deck armor and some ships
+this has a really really big impact on
+our attack it tells us that if we want
+to do a lot of damage we're gonna have
+to come through the top we can't come
+down the side obviously depending on the
+defensive arrangements and things like
+that we have to consider that
+possibility as well keep in mind with
+most modern vessels a defensive
+arrangements are designed to basically
+attack very effectively out the sides of
+the ship which means for this particular
+strike we know ideally we'd probably be
+coming up the back of the ship because
+if there was a little Miss Elantra like
+it's a frigate or something it would
+probably be a forward-facing missile
+launcher of course not everything's a
+VLS and it doesn't matter but again
+thinking about that aspect of the
+geometry is going to have a big impact
+on it all right the second thing we need
+to consider is the weapon we're dropping
+here so in this case our little A4 ends
+that we're equipping a mark 82 low drag
+bombs uh the advantage the mark 82 of
+course is it does have quite a bit of
+bang to it obviously we go with a bigger
+bomb but the disadvantage to bigger
+bombs is now we are going to drop less
+of them so the philosophy here the
+question becomes do we want a really
+really big bomb but have a chance of
+missing or do we want a little bomb and
+have a chance of basically hitting the
+Target and that's going to they're going
+to depend on the size of the target
+itself as the target gets bigger in this
+case we have a carrier it's much much
+easier to go ahead and you know switch
+to a big bomb here because you're more
+likely to hit the target if you're
+dealing with something like a frigate
+you need to drop as many bombs as you
+can
+so next we're going to take a look at
+the geometry of our attack here so we
+know we're going to be striking this
+target from the front it's very very
+tempting to come at a low altitude and
+try to do a pop-up and drop you
+definitely will have to do that in
+situations where you're going to be
+dealing with a lot of defensive fire or
+for example from the Falklands and we
+know we have a big mountain right here
+we're going to high into our little drop
+real quick but for us we're going to go
+right down the deck except we're going
+to change things just a tiny bit here so
+let me go ahead and pause here and start
+getting lined up so when you attack this
+target especially along flat Target like
+this you actually want to hit it at an
+oblique the reason you want to hit it in
+oblique is I've actually switched my
+game I'm going to do something so
+naughty here let's go to a map display
+oh this feels so wrong
+ah much better so if you notice if we
+were to attack this thing uh dead on we
+were actually going to have to make sure
+all of our bombs hit on the same axis of
+the target if we try to pull something
+like that the downside to that of course
+is if there's a wind coming from the
+south of the north and we go right down
+the deck all the bombs will land you to
+the port of starboard side so what we do
+instead is we actually are going to
+design our stack of bombs to bracket the
+ship at a slight oblique angle for those
+of you who are familiar with trikes from
+bombs on Bridges it's the same exact
+philosophy as attacking a ship we're
+actually going to design it so that our
+stack comes across it versus Beyond it
+so one thing I really do have to do to
+this guy though he's up at us pretty
+high right now let's go drop him down to
+something a little bit lower here we're
+actually going to go even lower than
+that we'll say a little under 10 000
+feet anything past ten thousand feet
+with traditional sights and uh good luck
+I don't think you're going to strike
+anything in my opinion one of the fun
+things though of course is I do play a
+good amount of DCs and um when you have
+really really modern sites like ccip and
+you can punch in the correct wins and
+everything I can plink a ship from 16
+000 feet like with any bomb that I
+dropped you're not gonna be able to
+achieve that in command even with a
+really really high sophisticated
+aircraft here all right let's go ahead
+and drop down to our Target altitude
+here
+and again when you hit the oblique here
+we're just trying to do it at a gentle
+angle we're not trying to go you know 45
+degrees or anything like that we're
+basically just trying to zip across the
+deck remember also the ship the aircraft
+itself takes a moment to turn so when
+you calculate your Bleak here you have
+to make sure that you don't under overdo
+it so I'm gonna go ahead and cut out of
+God's eye mode here go ahead and select
+it and of course when we drop our bombs
+it's very tempting to go ahead and dump
+them all if we do that of course if we
+miss we miss a lot but if I'm sorry if
+we miss and miss a lot if we drop them
+all but of course that also means we're
+only in the line of fire the defensive
+Weaponry ones which really has a big
+impact here so okay we're going to go
+ahead and line ourselves up and our goal
+here is to make it so that our stack of
+bombs there it is right there hits right
+on the oblique so now if you want to
+visualize this in 3D unfortunately I
+don't think we're going to get a good
+view of this but we'll try anyway our
+stack of bombs is like a straight line
+very difficult to sales unfortunately
+let me go grab the question itself here
+can we see the stack of bombs I don't
+think we can see it as well as we can in
+DCS no so if you want to imagine it it's
+a straight line like this so when we
+drop that straight line we have to make
+sure that straight line as it hits it's
+going to hit in its own line so if we
+actually zoom in a little bit here you
+can see that little tiny angle is going
+to make it so that the line when it
+crosses the ship is going to cross it
+like this
+wow
+wow I don't think I could have asked for
+a better shot than that that was really
+sweet I don't know exactly how many of
+those hit but um wow did it go through
+the deck
+yeah I think almost every single one of
+these went through the deck it casually
+casually went through the armor there
+and I did one heck of a lot of damage
+that was a sweet hit I'm actually kind
+of proud of that like usually those
+shots aren't nearly that clean if we go
+over to the ship itself we can now take
+a look at how much damage we caused here
+and take a look at my damage control uh
+yeah I got one of The Radars I got one
+of the missiles and no big deal I'll
+smashed up a radar again not that much
+damage remember these ships are pretty
+darn big so even though we did a really
+really nice shot here and we bracketed
+the ship almost perfectly it just didn't
+have the kick that we needed to do real
+damage so let's go ahead and change our
+strategy a little bit and kind of see
+what's going to change when we approach
+it from a different way
+all right so now we have a slightly
+different way to approach this so what
+we've done is we've taken the same exact
+aircraft and we've reduced the number of
+bombs on it but instead of doing those
+little tiny kind of you know 500 pound
+pop guns we're gonna hit it with
+something that's got a little more kick
+here on this particular aircraft for
+carrying our Loadout is Mark 83s which
+is a much much bigger bomb it's actually
+one of my favorite sized weapons because
+it just makes sense to me but you'll
+actually notice we're carrying a mix of
+82s and 83s so let's go ahead and use
+the same Technique we did last time and
+see if this extra little bit of kick
+makes a difference for us manual
+override one zero thousand please
+give it a second to go ahead and start
+its descent ah perfect so we're going to
+use the same Technique we used last time
+we're going to go ahead and try to hit
+it pretty much dead on here um we don't
+want to do too much of an angle because
+we're not dropping a very very tall
+stack of bombs here I'm really dropping
+four so we have to make sure we hit it
+right the first time kind of a thing one
+two and three four whoops apparently
+I've allocated many many many of those
+all right we're closing into range there
+don't mind that screen all right that
+looks pretty good we're gonna have a
+little bit of angle I'm actually going
+to pull my strike point up just a little
+bit here to give them just a little more
+time to kind of put himself with a
+little bit of an angle remember we're
+dropping a total of four weapons here so
+that's going to be a little bit more
+actually back it up just a little bit
+get that turn started maybe even a
+little early there coming in he's going
+to start his turn
+now remember we're packing two regular
+82s into much much bigger Mark 83s here
+all right he breaks off that's a hundred
+a ten thousand foot obviously if I were
+the ship I'd be pulling to the right or
+the action yeah I'd be pulling right as
+hard as I can go right now but again
+we'll see exactly what happens here they
+come
+ready set and oh
+you can see we did everything but strike
+the target we had a couple Splash back
+here and then we had the bigger ones
+kind of Splash off the side so you can
+immediately see we scored no damage
+whatsoever so you probably seeing it
+sitting there going well it is pretty
+difficult to kind of take that shot
+across the bowel like that you know what
+if you tried to hit it from the side
+well it's a slightly different
+philosophy all right so now what we've
+done is we tweaked things a little bit
+tomorrow what people think of as the
+traditional ship strike now if we're
+going to pull up this traditional shot
+like this so we really have to keep in
+mind the fact that as we're doing this
+our probability of hitting is going to
+drop because of the fact that um if we
+miss with one we basically Miss with all
+of them as they go actually I can't say
+that it could be better than that you're
+not going to hit as many bombs on The
+Target just because of the physics of
+the shot itself the other thing you have
+to think about with a shot like this now
+is we're now dealing with the problem
+that we're going to be going right into
+the strongest defensive fire that you
+can possibly be engaged with at this
+time and you're also going to be
+attacking the ship at its thickest part
+of its armor along its belt here so
+we're going to do it anyway to kind of
+demonstrate this let's go ahead and get
+out of God's eye view here shift F1
+click on this two bombs of those two of
+those please and that should be
+beautiful there
+so what we're doing is we're basically
+skimming across the water at very low
+altitude and actually we're not at the
+moment I got to get us even lower it's
+worth noting that if you're going to do
+a very very low altitude basically
+pop-up attack like this double check to
+see what altitude your weapon can be
+utilized at I can't tell you how many
+times I've basically gone over the top
+of a Target because I can't drop the
+bomb so if we actually go on to this you
+can see it has a minimum watch altitude
+of a thousand feet above ground level
+that's really important because if we're
+less than a thousand feet like we are
+right now we can't actually drop the
+weapon so what you can do is you can
+come in at like 500 feet and pop up at
+the last second and drop which works
+great or you can try to get a little
+closer another advantage to this
+particular tag is you're going to have a
+better chance of hitting the Target on
+account of the fact that your aircraft
+itself is going to be you don't have as
+much distance with Mobs to travel so the
+wind and weather is not going to affect
+you as aggressively here all right
+getting close we're about a thousand
+feet above ground level there they go
+bombs away and this guy's going to go
+right over the top of the deck which is
+ironically one of the safer places to
+fly as weird as that sounds let's see
+what we do here oh
+let's see how that worked let's go ahead
+and unpause uh looks like um the
+Thousand missed the Thousand missed the
+500 missed uh two and five hundreds did
+click the other two did not and we can
+see we did get through the armor
+penetration here I'd have to switch it
+back to old-fashioned mode here to
+actually read the exact amount of
+penetration that we got uh let's see
+here uh what is that 34 that's not bad
+so about half the bomb actually got
+through the armor which not terrible not
+terrible
+let's go switch sides real quick and
+take a look at the other guy so hopping
+onto him real fast we can see let's see
+here five percent so that damage was
+abysmal the armor basically sucked it
+all off and I don't think yeah did no
+real damage so you can already see
+because that we just did not have the
+Firepower to get through it it just was
+not nearly as effective of a weapon and
+we don't even have any fire or anything
+like that so uh thanks for the bomb jerk
+it's kind of one of those things so it's
+really important that you think about
+the geometry of those shots when you're
+taking them now some of you are like is
+there such thing as an extreme bombing
+run well the answer is yes
+[Laughter]
+this is the b-52h it's uh one of my
+preferred bombing platforms here there's
+just something incredible to think about
+a plane that was designed in the 1950s
+that we'll probably see about a hundred
+year service it's kind of like the Tuple
+lift 95. now this aircraft is not what I
+would consider of much of a Naval Strike
+aircraft especially against a moving
+Target but it doesn't change the fact
+that we're going to use it that way
+because I'm like that so I'm going to go
+ahead and press shift up one here we
+can't do that I guess let me call this
+this video before it gets all mad at me
+in a second well I knew it was going to
+do that so let's go ahead and hit shift
+F1 and that guy and yes I had like all
+45 of my low drag general purpose bombs
+to be dumped on the deck here so I'm
+actually gonna have to kind of uh get a
+bit closer here we're gonna have to
+monitor altitudes carefully obviously it
+takes a little while to get down from a
+27 000 feet now please do not use a B-52
+in this fashion it will get slapped out
+of the sky by c-whiz and point defense
+and pretty much everything under the sun
+that cannot possibly engage so it looks
+like our my end point was pretty darn
+close here was not perfect but again I'm
+guesstimating here as I'm doing this all
+right we're coming up to that point oh
+this is going to be his you're dating to
+watch and we're about to get the longest
+stick of bombs I think ever dropped on a
+aircraft carrier I know that they have
+tried to use level bombers against
+aircraft carriers it is a thing it just
+doesn't work well typically all right
+we'll go and do this my little Bleak
+that looks pretty good make sure one
+last time that they're working oh yeah
+it's working beautifully
+I could just imagine the crew here
+sitting there looking out the window
+going is that a B-52 yeah it means it
+seems to be making a pass at us a pass
+you say yes 45 mark 82s
+all right B-52 you've had a very fun day
+go home now the interesting thing here
+is that is a very long stack which also
+means that if the bottom of that stack
+is a little offset let's say it's a
+little over here the entire stack is
+going to make a beautiful straight line
+and not do
+see what I mean
+well I bet you that woke the crew
+they're cruising itself up a little bit
+here let's see what we did make you
+sweet not bad that was a definitely uh
+when I think of a B-52 strike that
+that's how I visualize that typically
+all right let's take a look what we did
+uh nothing remember that first plane
+that we dropped at like just at the
+sweet altitude and it basically went
+right across the deck and did enormous
+amount of damage yeah that one is the
+winner for doing the most amount of
+damage to the ship so far so you can see
+a total damage uh nothing and again the
+reason it didn't really do any damage is
+because all those bombs basically landed
+over here in the water into sort of
+shock damaged into the armor plating
+where it's basically the strongest which
+as you can see it did not do much damage
+to it
+so hopefully this helps you out as far
+as our striking ships goes the key thing
+is you've got to remember that you have
+to hit the part of the ship where the
+armor is weakest or you have to use a
+big enough bomb or it doesn't matter and
+of course as you know I'm saying big
+enough button it doesn't matter I'm like
+well what happens if you do this
+I know what you're thinking you're
+probably saying hey you're about to
+commit a war crime and I'm probably am
+but um unfortunately this is an
+important important thing we need to
+discover here and that's what happens if
+you try to drop a very very very large
+bomb of the Target and it wasn't nuclear
+I thought about nuclear for a second
+there and I almost did it I almost did
+it but then I realized we have something
+called the gbu43 which is a much more
+amusing weapon to drop on an aircraft
+carrier
+so let's align the sucker up and it
+looks pretty clean right there a little
+tiny oblique is probably not recommended
+I really should just be hitting it from
+the side let's go ahead and slow down
+time here shift F1 click on the target
+oh apparently that's not a valid Target
+well in that case I'm just going to drop
+it right off the nose here pause drop it
+right here actually what we want to do
+is we want to fly we need to drop the
+fly the plane right up to where we're
+going to drop the bomb here so that way
+we can safely do this uh it looks pretty
+good really should do the math before
+trying to do something like this but
+yeah well what are you gonna do
+and that's going to be beautiful I want
+it to control F1 because now we're doing
+a manual drop here we're going to put it
+right there
+oh wait a minute I think that is not a
+bol capable weapon oh well
+it's going to drop it
+[Music]
+so it will not let me do that
+oh well stuff happens all right so
+unfortunately that weapon did not work
+but yeah there's other Solutions of
+course as you know guided missiles and
+Torpedoes and things like that but again
+you were able to kind of see the general
+concept
+so what are the takeaways here the first
+thing is you have to keep in mind like I
+said where the armor is if you're using
+little bombs you're not doing anybody
+any justice if you're hitting the part
+of the bar the part of the ship that is
+going to get not do anything so if we
+come at low altitude and we're heading
+right into this side of the armor
+nothing's going to happen again this
+applies not just to carriers this
+applies to anybody with weapons like
+this another thing we have to think
+about too is that when we drop our bombs
+if we use a little bomb we are more
+likely to hit the target but we're less
+likely to do more damage and vice versa
+the other thing we can think about too
+is if we're dropping all those bombs at
+the same exact time what we're doing is
+if we miss with that first one you could
+see with the B-52 how the entire stack
+missed one of my mistakes with my bomb
+dropped there was I didn't put nearly
+enough oblique on the angle so that I
+could cut that across that deck and sell
+it in half but other than that enjoy

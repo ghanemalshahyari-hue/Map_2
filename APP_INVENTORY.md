@@ -1,4 +1,4 @@
-<!-- AUDIT_SHA: e75ff6524c4cfd2fd3dc46fd42114190c1e19dab -->
+<!-- AUDIT_SHA: e0cf324fde5fabff7e6abe580e3c2b7d59468fd0 -->
 # APP_INVENTORY — RMOOZ / CMO feature map
 
 > **The single map of what this app has, what it doesn't, and what's drifting.**
@@ -7,7 +7,8 @@
 > start reads the `AUDIT_SHA` marker on line 1 to tell you how stale this is.
 
 **Last audited:** `e75ff65` · 2026-05-31 · two same-day delta refreshes over the `1d4fa64` deep-dig (+16 commits, audited during an active parallel coding session). **Wave 1** (`f31548c`): AN1 attrition visuals, P0 authoring foundation, animation-readiness audit, stray-`wargame 5/` cleanup. **Wave 2** (`11e17b1`→`22d576e`, +9 commits): the **W3 presentation suite** — echelon roll-up, event pins, movement trails, engagement legend, symbol scaling + formation hover-peek, SIDC family-symbol resolver (SYM2), selected-unit operational readout (P5b), and engagement **mission graphics** (MG1). Code audited at `22d576e`; `855301c`+`e75ff65` on top are docs-only (this inventory + CMO docs) with no code drift. Drift D1/D2/D3 re-verified, line refs refreshed. ⚠️ Working tree has active uncommitted code WIP (`app.js`, `adjudicator-map.js`) — re-audit when it lands.
-**Branch at audit:** `chore/remove-stray-wargame5-dir` (cleanup branch off `pr-241a-import-path-labels`).
+**Wave 3** (`22d576e`→`e0cf324`, +41 commits, audited 2026-06-02 by /audit-app): the **structural CMO backbone landed and is wired.** (1) **World State Engine** — WS1 projection (`shell/world-state.js`), WS3 transition (`shell/world-state-transition.js`), DB-Lite catalog DB1 (`shell/world-state-db.js`), detection DET1 (`shell/detection.js`), engagement ENG1 (`shell/engagement.js`), + server seam `sim/world-state-engine.js`; all pure/framework-free, tests **WS1 25 / DB1 15 / DET1 15 / ENG1 17 / WS3 15, all green**. (2) **MOVE1** continuous movement + playback clock (`wargame/movement-playback.js` — units glide, no teleport). (3) **3D Cesium globe** (`wargame/cesium-view.js`, lazy-loaded) + **Libya DEM terrain** (`client/dem-layer.js` 2D + Cesium 3D provider; server `dem-service.js`, `/api/dem/*`). (4) **Edit Mode slice 1** (`shell/scenario-edit-mode.js` — metadata/sides/posture editable, in-memory working copy; P0 authoring schema now consumed). (5) **Live read-only overlays** wiring the engines onto the map (4b79cf0): coverage/threat rings (41/41), DET1 detection contacts (30/30), ENG1 firing solutions (28/28), 3D parity. (6) **D3 unlocked** — `/api/sim/commit` LIVE + journals; new `/api/sim/decide` (WS3) and `/api/units/:id/place` endpoints. Smoke test 2026-06-02: server boots, `/api/ai/scenarios`+scenario load+`/api/dem/info` all 200.
+**Branch at audit:** `claude/magical-lewin-e1ab3a` (32 commits ahead of `main`/`c7b8abc`; the most-advanced app). Prior audit branch was `chore/remove-stray-wargame5-dir`.
 
 ### Legend
 | Icon | Meaning |
@@ -200,7 +201,9 @@ Newer feature work uses **`test-p0*` / `test-an*` / `test-sym*` / `test-unit-*`*
 - **Known issue KI-1:** wargame1 baseline violates the BLS-4 never-SECURE invariant (pre-existing; see `docs/known-issues.md`).
 - **No unified test runner** (see §F).
 - **Decision Package import:** internal + external "خطوات صنع القرار" contracts — already wired in `scenario-workspace.js` + `web-server.js` — `[[project_decision_package_import]]`.
-- **Scenario Authoring Mode (P1–P4):** the P0 data foundation shipped but is **unwired** (`shell/scenario-authoring-schema.js`); the editor UI — Sides/Posture (P1), Doctrine/ROE (P2), Missions/Events (P3), Save/Export + "New from template" (P4) — is not built. `[[project_scenario_authoring_foundation]]`.
+- **Scenario Authoring Mode — IN PROGRESS (Wave 3):** **Slice 1 BUILT & wired** — `shell/scenario-edit-mode.js` (`window.AppEditMode`, mounted in app.html) makes **Metadata + Sides + Posture** editable on an in-memory working copy (Save → `window.RmoozScenario.scenario`; export = clipboard; draft-safety via `AppScenarioAuthoring`). The P0 schema (`scenario-authoring-schema.js`) is now **consumed** (template/gap-fill/diagnose). **Next = Slice 2: Geography & Forces** — objective, BLS, pipeline/AO, and unit/OOB placement (CMO build-order step "define AO before units, then place units"). Unit *placement* already works independently (ORBAT dock drag + `units-map.js` cursor-follow → `/api/units/:id/place`); Slice 2 should drive those from Edit Mode, guided by `docs/cmo-functional-rules/exhaustive/scenario-authoring-part{1,2}.md`. Then Doctrine/ROE, Missions/Events. `[[project_workspace_editable_owner_ruling]]`.
+- **WS3 client direct-decisions not yet wired:** the State Transition Engine runs server-side (`/api/sim/decide`) and is embedded client-side, but the live map doesn't yet let an operator issue direct MOVE/ENGAGE/EMCON decisions through it (future Step-2 per-unit actions).
+- **`scen-catalog-contract.js` — stub/unloaded:** file exists, export incomplete, not in app.html. Leftover from the deferred external-catalog work — `[[project_external_scenario_catalog_deferred]]`.
 - **CMO-style animation coverage (P0B audit):** the W3 presentation suite landed — per-unit attrition (AN1), movement trails (AN4), event pins (AN2), echelon roll-up, engagement legend, symbol scaling/hover, the SIDC family resolver (SYM2), and engagement **mission graphics** (MG1, reusing the operator TMG builder). **Wave 2 closed most of P0B problems #1–#2 for W3.** Still open: on-map **phase label**, **timeline event ticks**, **before/after step compare**, and the core **coverage gap** — all the rich animation is still gated on `schema_variant === "w3-rich"`, so non-W3 imports (Decision Packages, CSP51) get markers + movement only. `docs/scenario-animation-presentation-readiness-audit.md`.
 
 ---
@@ -268,10 +271,19 @@ is parked. Each PR ships its own `test-*.js` and a re-verified W3 render.
 
 ---
 
-## TODO — CMO→RMOOZ capability roadmap (from `docs/cmo-vs-rmooz-capability-comparison.md`)
+## TODO — CMO→RMOOZ capability roadmap (chosen set, sourced from `docs/cmo-functional-rules/exhaustive/`)
 
-Ordered by value÷effort, filtered through RMOOZ's read-only / ground-amphibious / AI-adjudication thesis. Full
-rationale + per-function gap tables in the doc. **Buckets:** CORE = central to RMOOZ, ADJ = adjacent/clear value.
+> 🔒 **GUARDRAIL — build only what's on this chosen list.** The single source of truth for CMO behavior
+> is **`docs/cmo-functional-rules/exhaustive/`** (945 caption-grounded rules, 9 buckets). The list below is
+> the **explicitly chosen** subset RMOOZ will implement. **Do NOT invent functions or build CMO mechanics
+> that are not on this list** — if a desired function isn't here, add it here first (citing the governing
+> rule file), get it chosen, *then* build. Anything in the "Deliberately NOT building" list stays out.
+
+Ordered by value÷effort, filtered through RMOOZ's ground-amphibious / AI-adjudication thesis. Per-rule
+behavior (inputs/thresholds/formulas) lives in the exhaustive bucket specs cited per item.
+**Buckets:** CORE = central to RMOOZ, ADJ = adjacent/clear value. **Note:** Wave 3 already shipped the
+World-State/MOVE1/DET1/ENG1/DB1 engines + Edit Mode Slice 1 — see the Wave 3 audit line; the next chosen
+item is **Edit Mode Slice 2 (Geography & Forces)** = items 1+3 below joined to unit placement.
 
 - [ ] **1. Surface Sides + Posture cards** — CORE, XS. `sides`/`postures` are schema-ready + loader-defaulted but discarded at load; add two read-only cards.
 - [ ] **2. Consolidate 3 clock surfaces → 1 + add explicit `scenario_clock` (start_utc/duration_hours)** — CORE, S. Closes a PARTIAL gap *and* a known 3× duplication.
@@ -298,7 +310,7 @@ rationale + per-function gap tables in the doc. **Buckets:** CORE = central to R
 - `docs/scenario-animation-presentation-readiness-audit.md` — P0B audit: what animates per step (W3-rich), coverage gaps (non-W3 = markers+movement only), per-unit fidelity, static-units gap. Re-runnable via `node test-p0b-animation-readiness.js`.
 - `docs/unit-symbol-fidelity-audit.md` — SYM1 audit: 117/153 W3 units render proper milsymbol glyphs, 36 fall back (milsymbol 2.0.0 rejects specific child SIDC entity codes); fix = role/domain→canonical-family remap (SYM2). Re-runnable via `node test-sym1-unit-symbol-fidelity.js`.
 - `docs/pr-166-external-scenario-pack-audit.md` + `docs/scenario-pack-audit/` — CSP51 audit (630 scenarios; don't re-run).
-- `docs/cmo-scenario-editor-application.md` — CMO→RMOOZ workflow mapping (general concept→status).
-- `docs/cmo-vs-rmooz-capability-comparison.md` — **deep** function-by-function CMO→RMOOZ comparison (mined from 245 tutorial transcripts); source of the CMO→RMOOZ TODO roadmap above.
-- `docs/cmo-pgatcomb-playlist-inventory.md` — CMO tutorial playlist caption-read inventory (research/reference; `e75ff65`).
+- **`docs/cmo-functional-rules/exhaustive/`** — ⭐ **the single source of truth** for CMO behavior: 945 caption-grounded rules across 9 buckets, the chosen-function roadmap above sources from here. (Superseded + replaced the older `cmo-scenario-editor-application.md` and `cmo-vs-rmooz-capability-comparison.md`, now deleted.)
+- `docs/cmo-functional-rules/5-build-playbook.md` + `sample-sahil-corridor.json` — worked "build a scenario the CMO way" example (validates `ok: true`); the target shape for the authoring editor.
+- `docs/cmo-pgatcomb-playlist-inventory.md` — CMO tutorial playlist index (maps title→videoId→`cmo-captions/<id>.txt`).
 - Cross-session "why" lives in the memory dir (`MEMORY.md` index) — this file is the "what", memory is the "why".

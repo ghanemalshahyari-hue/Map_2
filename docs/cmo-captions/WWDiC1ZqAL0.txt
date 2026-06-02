@@ -1,0 +1,427 @@
+# C: MO - Anti-Satellite Operations
+Video: https://www.youtube.com/watch?v=WWDiC1ZqAL0
+Video ID: WWDiC1ZqAL0
+
+hello everyone in today's video we're
+going to be taking a look at
+anti-satellite weapons and sort of some
+of the challenges you're probably going
+to face in trying to employ them we
+definitely have some things that are
+probably bug worthy as far as these goes
+but it's quite a bit involved here and
+we'll kind of go ahead and get started
+so first things first uh how do you
+shoot down a satellite well before we
+look at how to shoot that assembly
+there's a couple things you have to
+understand about satellites the first
+thing is if I click on a satellite line
+like we have this one right down here
+you're going to get a lot of interesting
+information now the least of which
+you're going to get its future path that
+we can go ahead and take the shot at now
+if we're going to be taking a shot at
+this as you probably observe I position
+myself so I'll be right in the way so
+this will be a pretty easy shot for us
+now if you were doing something where
+you were trying to take a shot over here
+keep in mind these distances are let's
+see here 1300 nautical miles so the
+satellites travel an incredibly long
+distance so it's a worthwhile to note
+that the scale of shooting at satellites
+is very different than the scale of
+shooting at airplanes and a lot of
+people don't realize that one of the
+really really nice things that we have
+in our disposal is if you should go
+somewhere there's a satellite past
+predictions option if I click on this
+what it'll actually do is give you a
+finger you can go ahead and click
+something on the ground and it will
+actually calculate when the next
+satellite will come close to it it'll
+also give you the dwell time which is
+basically how long it's going to be
+visible in the sky and you can see very
+very carefully our two satellites in the
+scenario you can see where they're going
+to be you can also recalculate this like
+I said it was a very quick calculation
+because I know that these two satellites
+are supposed to get really really close
+because I put them there so I'd be able
+to take the shot
+another thing you need to know about
+satellites is their altitude as you
+probably noticed in my little opening a
+sequence here I know exactly what you're
+thinking I'm just not going to say it if
+you take a look at the satellite and I
+zoom out a little bit notice how high
+off the ground the satellite is keep in
+mind all of our operations in command
+basically take Polaris where my finger
+is this guy is up here he's just an
+order of magnitude higher as a matter of
+fact he's at 416 kilometers upwards now
+the reason why this is going to be
+really really really really important to
+us is because whenever you have altitude
+that also means it takes more time and
+then finally and this is a really
+important point of order here is the
+fact that the satellite's traveling at
+14 863 knots remember as the satellite
+gets higher off the ground the satellite
+is going to be moving relative to the
+Earth slower I know that sounds weird
+but remember they take about the same
+amount of time to go around the world
+which means if I'm way up here it's
+going to take me a slower than it's
+going to take me if I'm way down here
+it's just a kind of one of those nice
+little quirks that you kind of have to
+keep in the back of your head when
+you're dealing with satellites that
+ironically as they get higher they
+almost becoming simple a shot but again
+no matter what they're going to be
+traveling you know Mach 40 or Mach 50 or
+something like that I'm not I'm sorry
+um Mach 14 that's like I think the 24
+000 miles an hour uh you can do the math
+quicker than I can on that one
+so let's go ahead and take a look now at
+what we can use to shoot them down the
+first thing is everybody's favorite
+Choice here is using an airplane um the
+other one playing that they have
+simulated there's actually a few
+airplanes throughout history that
+supposedly have had these weapons but
+this is the most common one and that's
+the f-15a ASAT which carries this thing
+called an ASM 135 which is this big honk
+and honking thing let me show it to you
+which was used to shoot down satellites
+as you can see it looks a little Derpy
+because it was a little Derpy
+um but this one particularly we'll do is
+it's launched off the bottom of this
+aircraft upwards so unfortunately in um
+all everything that they were trying to
+achieve as far as you know putting all
+those brand new radar features and they
+broke this aircraft so what I'm going to
+do is I'm going to order him to proceed
+in the direction of our anime satellite
+here go ahead and speed up time a little
+bit and let me show you the problem here
+so we're going ahead in a flying I'm
+actually going to tweak my positioning
+just a little bit here so I have a
+pretty clean shot on it so now you
+probably notice my aircraft here I'll go
+ahead and speed up time I love how fast
+this thing travels we noticed there were
+about 36 000 feet and we noticed that
+the satellite itself up there is about
+like I said
+um what do we have here 416 kilometers
+so when we fire we have to basically
+shoot vertically if I wanted this
+aircraft to take the shot on this one
+right now I'll just press shift up one
+go ahead and click on our satellite here
+of course when you do that you declare
+war one of the problems we're going to
+have is we're out of the DLC range
+that's fine so let's go ahead and speed
+up time a little bit here
+I can almost almost almost hear a few
+bars if I James Bond as we come here and
+he's not going to take the shot
+you're sitting there going but but he
+knows how to take that that's not
+that big a deal well not exactly you'll
+notice that we cannot take the shot no
+matter what so you see that we are
+outside the vertical bore site limit
+check Observer altitude and Pitch so
+it's like oh okay fine then we'll just
+have the the F-15 travel upwards Okay
+cool so we'll set to Max altitude we'll
+go ahead and flip on the afterburner
+switch there we'll also back them up
+just a teeny tiny bit here so now our
+aircraft is going to go ahead and Pitch
+up so he's pitched up to about 20
+degrees there so he's pointing up pretty
+darn steep he's also traveling a really
+really really really really really high
+speed and you can see we're basically
+pointing just like you saw in that
+little picture a minute ago if you
+actually watch the picture you'll see
+how steep of an angle he was flying at
+the time when he actually fired the
+weapon quite an angle so we'll take the
+shot again
+and you'll notice we are unable to no
+matter what we'll never be able to take
+the shot because the satellite is just
+too darn high now here's the joke though
+the weapon can theoretically shoot down
+that satellite the problem is our F-15
+buddy doesn't have a radar that can look
+up high enough to take the shot anymore
+uh that's again something that was I
+think that's a bug I don't think that
+was intentional so let's fix it so what
+I'm going to do is I'm just going to go
+up to sensors real quick we're going to
+add something that can actually do the
+deed here let's do an APG 77 I think
+it's the 101 double output power oh I
+like that uh which one do we want we'll
+go with the V1 here I'll go ahead and
+flip it onto detection remember he needs
+to detect the target before he's able to
+take the shot on the target even the
+weapon doesn't really care all right
+looks good looks good looks good add
+selected let's go ahead and flip
+everything under the sun on and that
+should now give him this kind of a thing
+like that meaning he now has a radar
+because it's an ace he can look up with
+it so let's go ahead and move them back
+just a teeny tiny bit
+it's going to get close go ahead and
+lock onto that sucker go ahead and take
+the shot
+take the shot man take the shot oh I
+don't think we're going to be able to
+take this shot
+keep pitching upwards
+he has to probably get just a little bit
+higher in 20 degrees is going to be a
+very tight window here
+so he's pitching up as high as he can
+he's got that nice sophisticated radar
+he's looking right at that Target as
+it's going to sail over
+and of course he's got to take the shot
+and everything's going to be too late so
+let me go ahead and cancel this other
+two shots and take the shot he's not
+going to be able to
+back them up a little bit see if at any
+point he's going to get the magic
+position which gives him the ability to
+take it
+I don't think it's going to happen
+bummer so as you can see unfortunately
+because of the new radar modeling we're
+never able to get to a point where we
+can actually safely actually do the deed
+here now of course in a luckier World
+he'd just pitch up to his thing 45 50 60
+degrees and be able to take that shot
+every day of the week but you'll notice
+we're no longer able to actually safely
+engage that particular Target so he's
+going to get away my poor little f-15a
+is just going to sit there and watch him
+Sail by so what about ground-based
+options well there are some ground-based
+options that can help us out here so
+let's swing back over the USA including
+the saw handy-dandy new system called
+the sc19 now this is a Chinese it's
+basically an hq9 derivative so let's try
+it so I'm going to go ahead and now
+let's see here there's our satellite
+shift F1 click double click double click
+and we'll go ahead and speed up time
+here and we'll see what happens this
+time actually I can probably grab that
+F-15 you know you were a wonderful help
+please return to base okay he's probably
+pretty sad after all that so now this
+weapon system has a really really long
+range I mean I think we have a range in
+the order of whoop and it already took
+the shot ah busted did we though now
+notice those shots I went right up that
+came up to where the target was and
+didn't seem to do much of anything uh
+the reason for that is of course because
+the missile cannot travel fast enough to
+engage the target if you actually come
+down here and take a look you'll notice
+that we have a 70 chance to hit however
+because the target is 1500 knots and
+Omar back's weapon speed is 10 000 knots
+we have a zero percent chance we'll
+never ever ever hit that satellite
+ah so you're going ah this is why you
+had to make a video of this because
+there's a lot of complications yeah well
+the good news is there actually is a way
+to shoot down a satellite and I'm not
+talking just clicking on and pressing
+delete either it's actually a much more
+fun way
+let's go over the United States for a
+second here
+um down here we have this thing called
+SBX oh this is the C based x-band radar
+this is a pretty slick thing it's giant
+oil rig where the satellite sitting on
+the nose and it's basically an ABM it's
+linked to the GMD which is pretty fun
+that's a lot of eios but the weapon
+we're going to use today to actually
+succeed at shooting down a satellite is
+none other than the sm-6 so I'm gonna go
+ahead and now hit play here and we're
+gonna go ahead and acquire this
+satellite I flew it up here apparently
+it's a slightly different satellite from
+the other one I swear those movies just
+use the same plot over and over again
+but I'm I'm not going to notice I'm not
+going to notice so I'm going to go ahead
+and press shift F1 go ahead and click on
+this guy and now notice I have two
+different weapons I could throw at these
+These are sn3s these aren't even sm-6s
+so I'm going to grab this one right here
+this is a block 2A another eight seconds
+before I could take the shot um we're
+gonna launch six because each one of
+these is probably gonna have about a 20
+chance and yes I know this now how
+statistics work but um don't worry about
+it too much so we now launched the
+missiles you're sitting there going are
+you kidding me that missile your the max
+range is over here how on Earth are you
+supposed to hit something that's over
+there well remember these missiles have
+to travel upwards in order to reach the
+target if I actually go to 3TV real
+quickly here look at that oh I don't
+want the F-15 I want that much more fun
+stuff stuff over here Boop so remember
+this thing has to go all the way up
+so we're traveling at about Mach 14 here
+just chewing over at an altitude of
+actually the one I had clicked the
+second the other one right there there
+we go uh we're up to Mach 16 with this
+missile right now and uh we're getting
+up pretty high uh we're pitched up at
+about a 45 degree angle trying to
+desperately claw our ways up in order to
+take a crack at this thing look at how
+high up this satellite is that's
+676 kilometers and again this is what
+makes these things so obnoxiously
+difficult to shoot down is because
+everything is just at a totally
+different speed in a totally different
+scale now notice these guys are just
+kind of climbing away our little
+satellites out kind of chilling it's
+coming over our Northern Canada here man
+I wish I could fly that fast that'd be
+pretty sweet missiles on the way up
+we'll go ahead and grab one of them you
+can see they're still climbing they
+haven't even finished their initial
+climb out at this point and now they're
+starting to get a little bit closer and
+again their final engagement time is
+coming pretty soon we have to hope hope
+against hope here that we managed to
+climb enough altitude actually be able
+to make the intercept here
+continuing to climb continue to climb or
+it's going to be close
+oh man look at this shot
+all right here we go now that was a shot
+notice how early we had to fire by the
+way in order to get these things
+remotely up to this altitude so here we
+go go sm3 go sm3 not sm6 I think one of
+the sm-6s oh there it is
+so who needs uh you know super secret
+agents when you can just pop them with
+missiles kind of a thing like that now
+that works great I'm actually kind of
+impressed obviously if you put some
+deflection on that that probably
+wouldn't have worked so well but here's
+what we want to show quick a little
+demonstration of where people who really
+really struggle with asaps there so I'm
+going to speed up time okay stop so now
+our satellite's halfway across the
+United States so let's take that exact
+same shot and I want to show you so the
+kind of the last little oopsie oopsie
+oopsies that uh is going to occur here
+that so like I said typically throws
+people off so we fired our weapons they
+start climbing they start climbing
+you're in this 2D view here you're
+watching it you're like oh man this is
+sweet look at this ah no problem those
+missiles are going to connect no problem
+and pause
+now you're sitting there going oh yeah
+that was a good shot man why did you
+shoot that last one so early well let me
+show you why
+as I stated the satellite is 675
+kilometers upwards so if I were to
+actually go ahead and grab that
+satellite
+yeah man
+you'll probably observe the fact that
+our satellites uh is just Out Of Reach
+of the Arthur r3s the sm-3s so if you
+actually look at the intercepts here the
+first three that we fired sailed right
+past it because they did build up enough
+altitude on the way up these two on the
+flip side I'm actually kind of surprised
+I didn't realize they were going to get
+that close that was a good shot on my
+part not even close so you can see those
+missiles basically ran out of time to
+get up to the altitude to actually
+strike that satellite so our satellite
+here is going to keep going around and
+threatening the world until you know
+somebody can stop the counter at seven
+seconds or something like that so it's
+important to kind of know that that's
+why that's so challenging to do you've
+got a combination of bugs you have a
+combination of really high speeds and of
+course you have a combination of having
+extremely narrow launch Windows but you
+can see it's still possible or at least
+until somebody puts Star Wars into the
+system you know the ASAP from back in
+the 80s but you know how it is other
+than that enjoy

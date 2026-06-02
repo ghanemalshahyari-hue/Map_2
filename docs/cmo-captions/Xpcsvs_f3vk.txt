@@ -1,0 +1,303 @@
+# C: MO - Fire Control Radar Facing Limitations and Tactics
+Video: https://www.youtube.com/watch?v=Xpcsvs_f3vk
+Video ID: Xpcsvs_f3vk
+
+hi everyone in today's video we're going
+to be taking a look at the
+directionality of Fire Control Radars
+now in the earlier versions of command
+when you had radar platforms like this
+rsa10 you can actually hit the sensors
+real quick and we would see that its
+primary Fire Control radar here would
+actually have the ability to point
+itself in every single Direction at once
+now in the real world that's simply not
+something that is actually possible and
+it says something a few versions ago
+they actually corrected for now the
+reason that's so interesting is if I
+type in say I'll do a radar here go
+ahead and give you an idea of how this
+is just physically impossible is that
+the radar is to always face the
+direction of the object that it is
+actually attempting to illuminate for
+the purposes of engaging so you can see
+here we have a pretty standard radar
+beam of course this is a billboard B
+this would not necessarily be off an
+essay 10 but um it still kind of
+illustrates my point here this has to
+face the target it wants to shoot at now
+this thing can't point in every
+direction at once which is a tactical
+good thing for us now the neat thing is
+inside of command they actually simulate
+this fairly accurately and they'll do a
+good job even though you you might not
+be able to see it in action so what we
+have here is that we have a pretty
+straightforward scenario while we have
+an essay 10 sitting here in the middle
+and we have a bunch of contacts that are
+sort of making their way directly
+towards us now what we want to do is of
+course engage these contacts now the
+older older versions going back to
+Commando here for a minute not command
+itself we'd actually be able to shoot
+all these at the same time but one of
+the things you'll see here is we can't
+actually achieve that so we're waiting
+for now is our little sa10 here to get a
+little bit range pause now you'll notice
+this huge little Zone here which now
+represents which direction the radar is
+actually facing it's actually
+concentrating all of its energy in this
+general direction trying to engage at
+this particular bogey that's coming in
+right now now until that bilge is
+finished being engaged we can't actually
+shift this thing around for the purposes
+of engaging the other targets now I know
+what you're thinking you're sitting
+there going but what if you had two
+Targets in that region at the same exact
+time well the reality is they would
+actually be able to engage both of those
+because it's in the line of sight of
+that particular radar are so as you can
+see this guy is starting to come into
+view here this guy of course has got to
+process the targeting get everything
+ready to go but since he's inside of the
+cone of where the radar can look it
+would have the ability to actually
+launch a Miss on that general direction
+which is just kind of one of those sort
+of neat pieces again we're waiting a
+moment here because we need to get a
+slightly better track for the purposes
+of engaging the actual Target itself so
+there goes the missile and you can see
+there goes that second one you can see
+that the beam actually turned itself for
+the purposes of keeping both of those
+targets illuminated at the same time
+notice by the way that these targets
+over here are not engaged at all but the
+fact that he spun his entire radar
+around to try to engage the bigger
+thread which was actually the Target
+that was physically closer to him before
+spinning back around all the way doing a
+180 there
+and attacking the targets that are the
+opposite directions to them now
+tactically this is a very very useful
+thing for us to take advantage of
+because it means that when we're trying
+to engage these kinds of targets we can
+come from multiple directions at the
+same time and completely prevent it from
+actually happening now the best way to
+do that of course would be to have one
+come in this way and then when this one
+gets to about here have this one come in
+and then have this one come in to
+basically force it to step its attacks
+rather than concentrate all its attacks
+in One Direction at one time now if we
+wanted to real quick let's go ahead and
+switch to the other side I'll do over
+red team we're technically blind right
+now but that's perfectly fine so if I
+came in here and did a surface vessel
+and actually you you know what we should
+do we should try one of these we haven't
+done one of these in a while b52h
+um which one do I want I'll take the
+calcium block one here of course we can
+use the nuclear calcium because we're
+mean people B and then let's see do I
+want to use that one you know we'll be
+nice we'll be nice we'll do this one
+kind of a thing now so if I were to
+press that control it can't do that in
+guides that view Ctrl F1 actually the
+nice thing is we actually need to be
+able to see that Target in order to
+engage it properly we'll cheat a little
+we'll make it auto uh detectable even
+though it's technically a mobile
+platform we can't get away with stuff
+like this but that's perfectly fine all
+right let's turn around my B52 and start
+out kind of crunching there we go shift
+F1 click
+all right so automatic fire is not
+possible missile defense fire I think
+the reason for this is because I'm
+technically blind right now I'll send
+this back to normal close that shift F1
+left click uh cannot fire I think we
+have to come back into range to actually
+be able to take the shot here be pretty
+funny if the B52 just kind of did its
+thing and started launching those things
+like you know kind of a thing like that
+definitely be funny aha now we're good
+to go so what we're going to do is uh
+we're gonna go ahead and make sure the
+first missile that gets there is going
+to be the one that is going to kind of
+go around so right now it's just going
+to fly right at the Target which we
+don't want it to do instead what we want
+to do is we want to waste as much time
+as we can on that so I'm actually going
+to put that up there tap the Escape key
+and I'm just going to go pause cool
+shift F1 go ahead and do it again and
+now we're going to grab this one double
+click grab this one I'm going to press
+allocate clear course I'll do this every
+time plot course remember this one's
+coming from here so now we're going to
+go ahead and do the same thing down here
+again we're trying to spread out its
+ability to go ahead and engage those
+weapons sounds good to me fire
+I believe it did I can't actually see
+fire
+do we need a moment
+this is an important moment for this
+fb52 here so he's considering it
+um did I not allocate it I didn't
+allocate it shame on me plot course yeah
+that's correct clear fire
+there it goes nice just step one we'll
+do it again so uh now we've already
+fired two of these things uh so we'll go
+ahead and double click to create another
+one uh do you allocates uh we'll clear
+course that's fine it's the allocated
+one plot course this one of course uh we
+can fire right down the middle because
+um we know that it's not going to make
+any difference whatsoever because this
+guy's gonna be basically busy firing in
+these directions but what we're going to
+do instead of that because we know
+better because it is an S 300. we're
+simply going to fire another one this
+way
+all right we did double click we did it
+we did it we did it
+like I said it takes a second to
+actually fire the darn a thing sometimes
+which makes sense you're not really
+supposed to be popping these things off
+like oh there it goes then I will shift
+up one again we'll click on him again
+this is feels so wrong a clear course so
+I'll go ahead and I'll grab the one we
+just allocated plot course and we're
+gonna do this thing again again we're
+trying to keep that radar spinning in
+place as much as possible so we'll go
+ahead and I'll let that thing fire off
+there
+nice and then of course the last shot we
+have to take here we can't just go right
+up and knock because if we do that the
+other missiles won't be in position in
+time so we'll do uh this little I call
+it kind of a dog leg here so instead of
+I don't normally do actually do one of
+these kind of things and then just dog
+leg a little bit and the reason we're
+dog legging it here is just for the
+purposes of basically wasting its time
+so that the other missiles have more
+time to get into position before it kind
+of does this run-in sort of a thing like
+that so go ahead and pause there and
+we'll go ahead and give it a moment to
+release its payload here I don't think I
+doglegged enough I didn't do the math
+before doing this Mission which is
+always a bad thing but you get the idea
+the key thing is you get the idea so
+let's go ahead and clear that out we'll
+go ahead and apply a course on that one
+too we'll do I don't know this is one of
+my special attacks here I love doing
+this this is such a mean thing to do you
+basically do a big circle like this
+around it and then you just tighten the
+circles you come around to waste as many
+missiles as possible
+it's such a good strategy of course
+we're flying from out here in the middle
+of the ocean here and then of course you
+know we'll do one for victory there just
+to click it right down the middle
+all right here comes the victory one
+come on one Victory one give me a
+victory one let's do it
+meanwhile the crew is going is this
+going to work I feel like this is
+millions and millions of dollars wasted
+on one Sam site uh wouldn't it just be
+smarter to you know kind of come in
+another way or something like that and
+that should do it delete okay so now
+let's watch how the event unfolds from
+the perspective of our other team here
+so we're expecting a couple things um
+first thing we're going to do is we're
+going to easily acquire those tomahawks
+tomahawks are not Jason so this is an
+essay 300 this is one of the old ones so
+um it's not quite as good but we're
+losing the targets that's okay again the
+only reason we saw them is because they
+were fired off of B-52 so Nest is where
+the funding starts because remember our
+tomahawks look like this we secretly
+replaced the tomahawk so something more
+Sinister so they're going to go ahead
+and approach like this and a couple
+moments later we spot one now this is
+the worst case scenario for any missile
+shot this is a oblique Target and it's a
+90 degree oblique Target here so our
+poor s 300 years has to sit here and go
+I can't take this shot because if I take
+this shot I'm basically going to waste
+my weapon because I'm going to be
+getting this insane insane shot surprise
+[Laughter]
+waste them that's it waste your missiles
+meanwhile if you look carefully you can
+see that we're sneaking up on him
+waste those missiles waste those
+missiles don't look behind you don't
+look behind you
+[Music]
+you could see that we curse splattered
+that thing no problem you know that just
+shows you how effective you can use the
+fact the radar can't point in every
+direction at once against itself as well
+as how you kind of can create that
+little oblique making it really really
+challenging for that a weapon to
+actually successfully engage it now if
+you have jasms with some emps you can
+make this real good on like an S400 but
+that would certainly be a video for
+another day enjoy

@@ -1,0 +1,325 @@
+# C: MO - Transferring Munitions between Airbases
+Video: https://www.youtube.com/watch?v=QiaqKwE6Fw8
+Video ID: QiaqKwE6Fw8
+
+hello everyone in today's video we're
+going to be a good looking at cargo a
+little bit uh somebody was asking a very
+interesting question on the Discord
+basically you know how do I move
+ammunition around now the interesting
+thing is we've actually had the
+capability to move ammunition around for
+a little while now but it's up until
+this point especially when cargo 2.0
+came out it's been relatively
+challenging to kind of I want to say
+fits with it and you'll see exactly what
+I mean there's definitely some places
+where they could probably add and they
+are I know they are expanding a lot of
+this so some of the stuff we're going to
+see today might change the future which
+is just kind of the nature of
+development so let's take a look at our
+problem so right down here very close to
+nice now nice I've actually been to
+these beautiful place I have myself a
+lovely super Eternal which is uh really
+really in desire need of us a magic one
+missiles here if I actually come over
+here real quick oh where's my EXO set
+you can see I have a bunch of extra sets
+ready to rock and yes I'm not flying
+with unlimited ammunition first time
+ever right and of course we have
+ourselves some Magics I really really
+want these Magics but unfortunately
+these Magic are way way up here in
+Illinois so we need to find a way to get
+them from here to there now in
+traditional command you're out of luck
+and what we used to do of course is we
+take all of our safe bread you know and
+we'd send them all the way up here on a
+ferry flight to basically re-arm so that
+we could redeploy them wherever we need
+to actually use that weapon uh one of
+the things we also used to do which was
+really chaotic is we take a bunch of
+those airplanes with the magic ones we'd
+send them all down here and we'd order
+them all to be reserved so they pull all
+the missiles off of them so we could use
+them down here those were some tedious
+days for our Munitions folks but
+fortunately it's gotten simpler so what
+I'm going to do is I'm going to fly up
+here I'm up to loyal and you'll probably
+notice that I have myself a lovely a400m
+this is a really neat aircraft it's
+basically a modern C130 is kind of what
+I like to think about it and now we're
+in scenario editor right now so keep in
+mind some of the things I'm going to be
+showing you you can't do in the regular
+game but it's still worth checking out
+so what I want to do is I'm going to
+take a look at the magazines real fast
+and I noticed that over here we have 80
+magic ones ready to rock um do I really
+really want to get these things all the
+way down here so um how are we gonna do
+that well it's actually relatively
+simple we're going to use a palette so
+what I'm going to do is hit the nine key
+real quick that's on my numpad real fast
+and I have this little thing that says
+cargo pad I'm gonna go up to edit cargo
+and I'm gonna add some Airbus container
+friendly objects so I'm going to go over
+here and press the database so I'm gonna
+press filter by I'm going to type in the
+word container once that pops up you're
+going to see we have a bunch of
+different containers now this is a
+really important point of order here the
+size of the container matters let me
+show you what I mean let's say I want to
+take an ISO 45 container here this is a
+big container um this is the same one
+when you look at those big big big cargo
+ships this is the long one this is the
+tiny one so keep that in mind so I'm
+gonna grab one of those I'm gonna go
+ahead and head over to my Airbus real
+quick let's grab this Chap and let's go
+do cargo Ops on them now you'll notice
+that this 40 foot container I'm going to
+grab that load one we can actually fit
+it inside of here not only can we fit it
+but we can fit several of them we can
+actually fit two now if you're looking
+at this number up at the top where it
+says 37 tons your brain is going wow
+that's actually really good this thing
+where'd you get the 37 tons from well
+believe it or not when you ready arm a
+cargo aircraft there's actually an
+option here that tells you how many tons
+that it's actually going to carry What
+You Won't See is the size of the cargo
+that's a kind of the nature of the Beast
+as I'd like to say especially going to
+unload this because I don't actually
+want this to be on here I want to use
+that ISO container so I'm going to go
+back over here press the nine key again
+this is why I picked the Airbus for this
+because I knew that it could handle it
+let's go grab ourselves another one of
+those 40 Footers 40 but one of the jokes
+I always like to say it's an intramotal
+container and we're gonna go ahead and
+do that now what you're going to notice
+now in the bottom right corner is this
+option that says edit container now I
+have to say this now because if I don't
+say this now it's going to confuse
+everybody a lot later when we edit this
+container we're doing this in the
+scenario editor we're not doing this in
+the regular game so whatever you shove
+into this container it's there for the
+scenario so keep that in mind so I'm
+going to edit a container and I'm gonna
+go ahead and I'll throw in some stuff
+now quality of life thing this has
+already been requested is to actually
+add a search box down here but I like
+this just as is so there's my Magics uh
+how many Magics can we fit in here so
+here's how I do this I always do 10 and
+press load and see what happens let's
+see here 8.89 7.9 looks like uh we have
+plenty give me more
+I did not realize you could shove that
+many Magic missiles in there 40 magic
+missiles they're all nice and neatly hot
+I love how it says stacked that puts a
+smile on my face all right let's grab
+this one over here we're going to edit
+this one notice by the way the mass has
+changed you cannot cheat and so I really
+really appreciate the fact that they
+took the time to actually add that
+aspect to things because it really does
+matter when it comes to these things so
+now I have two of these huge containers
+they're both 7.4 tons That's Heavy
+enough and they're all sitting here on
+my little cargo pad now one thing I want
+to point out and you're all probably
+going to go wait a minute I thought you
+were taking the missiles out of this
+magazine and bringing it we can't
+actually do that yet other than the
+methods that I mentioned at the
+beginning we will at some point but at
+this time all the stuff I shove on the
+cargo is the stuff I can transport so
+now what I'm going to do is uh now we've
+loaded up those containers you can
+actually hit the cargo button real quick
+you'll notice that it even mentions how
+many tons of objects we have in there
+I'm going to go ahead and press uh I'm
+not even gonna bother with that I'm
+going to be lazy I'm gonna come down
+here I'm gonna click right here and for
+some reason I always make that mistake I
+always want to make them a scenarios I
+leave stuff in let's go ahead and press
+Ctrl f11 and we go ahead when you do
+that make sure you select the first one
+first actually but it doesn't matter
+control f11 uh cargo drop off SVP we'll
+go ahead and do a cargo and we're gonna
+just do really really simple we're doing
+a cargo transfer here because we're
+dropping our cargo off all the way to
+here press okay I'm gonna grab my handy
+dandy Atlas pop him down here and you
+can see that uh nothing is here uh the
+reason for this and this is one of the
+mistakes that I always makes is you
+notice how this was a cargo and I did it
+as a transfer as opposed to a delivery
+that makes a difference and one of the
+ways that you can always remember the
+two difference apart is that the one
+that is going to be our regular transfer
+is always Base to Base delivery is
+always if you think about it in terms of
+like dropping stuff off on the beach so
+in this case we're good to go click that
+one go ahead and toss that one down here
+you can see that he's ready to go
+unfortunately he has no cargo on board
+yet and we have to go run over there and
+do it so one of the cool tricks that I
+like to do here is um believe it or not
+when he's up here let me go ahead and
+flip that multi-mission I'll just do it
+the easy way go up to the Bare Base
+click on it I'm going to click on this
+jab real quickly I'm going to do cargo
+Ops I'm going to go ahead and toss all
+of this good stuff here now keep in mind
+these are these huge 40-foot ISO
+containers that were sticking into this
+plane I'm going to press the OK Button
+he's now on the mission ready to go Club
+materials and of course he's got 37 tons
+it's going to take him about a half an
+hour to load up matter of fact if I
+pause and I'd pause real quick press F6
+you can see it's going to take them
+about a half an hour to shove two 40
+foot containers into the back of this
+airplane I'm actually pretty impressed
+with that not gonna lie so let's fast
+forward time here
+and off the go so here comes my Airbus
+oh that's a nice picture there I love
+how it's got the four engines it's great
+redundancy there so we're swinging
+across France here going past the lovely
+French Alps here and kind of swinging
+around this is the best part though he's
+doing his 36 000 feet thing I've got
+plenty of fuel on board it's not like
+I'm gonna run out or anything does a big
+loop-de-loop this is my favorite look at
+this High LS approach here dropping
+right in from orbit and it's going to
+land around in the airport I love it
+yeah I'll wait for the
+nice so now that he's on the ground uh
+you can see he's gonna actually put
+something on my time so you don't
+accidentally so if I press this now
+you'll see that this guy is coming in
+now he needs about 21 seconds to finish
+his operation here I'm actually going to
+come in here you can um actually he'll
+do it automatically what am I saying
+I'll let him take care of that there we
+go sweet so now if you look up here in
+the upper right corner we now have cargo
+here
+now this cargo itself if actually click
+on it let me pause real fast just in
+case you'll notice that our I'm not even
+going to try to pronounce that my
+phone's saying no no ball uh you can see
+we have right now this aircraft Hangar
+was selected as a location for these
+huge pallets
+again things that'll change and you can
+see we have those two ISO containers now
+located here so what I'm going to do
+here is I'm actually going to click on
+the edit cargo button or the cargo
+button here keep in mind you won't have
+this button you'll have this button if
+you're playing the regular scenario and
+you'll notice you have these two options
+and now we can't do anything special
+with those at this time but what we can
+do is we can come up to where it says
+Mission reference I'm sorry unit options
+and there's this button that's going to
+say unload cargo now I'm going to say
+this now when you push this button the
+magic will happen however click now if
+you notice let's go ahead and apply
+somewhere else real quickly here oh
+sorry we can do that in this version of
+command I forgot you'll now notice uh we
+now have no cargo that's correct when
+you unload a object such as a container
+the stuff in the container the container
+itself is gone but the stuff in the
+container lives on so now if I go to
+magazines you're going to notice that we
+have actually this brand new generic
+Magazine with 80 magics
+so now I can press the F6 key I can go
+to my super antenna press ready arm and
+ta-da I'm ready to go you may go ahead
+and load them up so in about six hours
+or so we'll be ready to shoot a bunch of
+anti-ship missiles at our Target so one
+of the things I want to just throw out
+here is like I said this is all going to
+change most likely a lot of little qol
+things there but the basic gist is
+absolutely incredible when you think
+about it in terms of Munitions now one
+of the fun things that I actually saw
+that I got such a kick out of and we'll
+save this for a video for next time is
+actually reloading ground units with
+Logistics distribution but you can
+already see just how powerful that
+feature is and how it will enable you to
+finally do all sorts of crazy things now
+one thing you're probably sitting there
+going is there anything stopping me from
+sending this to an aircraft carrier and
+reloading all the missiles on the
+aircraft carrier the answer is no and
+that's one of the coolest things that we
+can now see in this version of commands
+enjoy

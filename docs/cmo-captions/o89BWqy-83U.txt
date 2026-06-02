@@ -1,0 +1,268 @@
+# C: MO - Beta 1243.5 Missile Motor Burnout
+Video: https://www.youtube.com/watch?v=o89BWqy-83U
+Video ID: o89BWqy-83U
+
+hello everyone in today's video we're
+going to be taking a look at one of the
+features that has been added to the most
+recent patch for command i'm running
+build 1243.5 at this time it's called
+the tiny update and it had a couple
+little patches that kind of came after
+it to fix a couple things there are
+definitely some bugs out there as far as
+things that they're kind of working out
+and um like i said but what i thought i
+would do is i'd take a couple moments to
+share one of the features that i think
+is really really great that they took
+from the professional edition and they
+finally brought over to the commercial
+version and that's the fact that
+missiles behave like missiles and i know
+you're saying they go on now all the
+missiles always behave like vessels it's
+actually a little more complicated than
+that and so what i'm actually going to
+do here is i'm going to grab my little
+f-16 of justice here i'll go pop this
+one up here we'll go ahead and hold fire
+i don't want him to attack anything on
+the ground without my permission and the
+reason i'm doing this is you'll see in a
+minute but um by the way we can do this
+now i'm right clicking i really wish
+there's a check box where i could turn
+this on and off because when i do things
+like this because i want to do a very
+very aggressive course like this oh let
+me move them out oh
+that that that that that
+i really hope they uh change that and
+make that optional because i really want
+to right click to move the map but if
+did did it did you see it did you see it
+um i'm sure they'll be able to fix that
+soon but anyway on to work here so what
+do i mean by the missile model change
+well missiles now have a burnout so in
+the real world when missiles fire and i
+can put together a really really basic
+little demonstration of this over in
+simple rockets if you want to see it in
+action but basically what happens is you
+fire the missile it runs this motor for
+not a long time and that burns out and
+basically all the energy it accumulated
+during that climb is going to be the
+energy that it has to continue track
+leveling to the target usually this is
+limited by the stall speed of the
+missile or it's going to be limited by
+you know what the battery life or
+something like that is of that
+particular missile so we're going to do
+is we're going to go annoy this essay 2
+here i'm getting well within range here
+and normally of course i'd be firing
+that harm off and everything because i'm
+sure it's going to want to
+interconvenience me uh oh bang mcon
+manual edition
+manual edition disabled
+interesting
+ah this is a new fun thing to play with
+by the way yeah if you haven't messed
+with us you're missing out so i'm gonna
+set this to yellow status and i'm gonna
+close that one right here and what's
+gonna happen is that yellow status if i
+go to his mcon now he's yellow you could
+actually decide exactly what the
+different modes are so i can do just
+custom presets i can do continuous i can
+do intermittent the intermittent by the
+way is amazing this is for another day
+so i'm just going to leave it on
+continuous for now i'm going to go ahead
+and notice we're in yellow code here i
+don't think that's going to turn him on
+still come on man turn on turn on ah
+all right so i gotta play with this and
+i'll play with it a little more but what
+i'm gonna do is i'll flip this to a
+continuous i'll go ahead and ignore my
+orders here i'm just gonna order him
+right up to activeradar there we go that
+should acquire that f16 no problem up
+there is
+f1
+oh look we have a little crosshair now
+check that out click right there and now
+we get to watch out of this actually in
+action so like i said there's a couple
+new things we're gonna have to kind of
+learn about as we do whoa oh my gosh
+ah
+that's how we move the map man that's
+how we move the map don't make the
+button to make us go places also like
+how you can deselect units now so like
+if i click here and click over here you
+can deselect it that's a nice touch but
+uh this business oh i'm gonna move the
+map
+um they'll fix it eventually i'm sure
+all right so we're coming in here at any
+moment we're about to get popped by a
+couple sa2s here and you go
+sweet nice i can show you that but this
+looks like an action now so let's go
+switch our red team real fast we'll go
+ahead and grab this essay too okay so
+take a look at our speed here so our
+speed here is that we're picking up to
+about 1 400 knots right now we're
+probably on the burner motor so what's
+going to happen is we're going to keep
+going up that f16 is going to see it any
+second
+of course you're sitting here going why
+is f16 not maneuvering the reason f16 is
+not maneuvering is because he just
+acquired those missiles what he's going
+to do normally is instead of beaming the
+missiles like we used to he's actually
+going to do a turn in burn it's called
+exhausting the vessel watch this he's
+going to turn himself around and jam his
+afterburn at full blast and run away
+anybody who's played any flight
+simulator um combat flight simulators
+knows his strategy extremely well that
+often the best way again i didn't tell
+him to do this he's doing this
+completely on his own is to simply run
+the missile out of energy now speaking
+of energy if i click on this missile
+right now it's actually slowing down
+very rapidly the reason it's slowing
+down is because it's actually stopped
+its rocket motor so now as it's pursuing
+my f-16 here it's basically the dense
+air here sucking all the energy out of
+the missile and the f-16 is basically
+trying to outrun a missile as it's
+slowing down now really really really
+clever pilots what they'll do is they'll
+actually pitch up now do you see all the
+missiles at about 30 thousand feet so
+one of the things you can do as a pilot
+is you can actually dive to try to get
+to the thicker air but of course when it
+dives this thing takes advantage of
+gravity now notice my missile now is
+down to 965 and it's still chasing after
+my f-16 here who's running again it's
+called exhausting the missile and i
+always find it hilarious because if you
+look at the maximum range of this weapon
+how on earth were we able to fire a shot
+that far that's going to be a question a
+lot of times it'll self-destruct or
+something but notice that has a massive
+gameplay impact because now aired air
+fighting having a missile has a very
+very long sustainer motor is now going
+to give you a massive edge in range so
+let's go ahead and annoy this guy now
+now i'm annoyed i'm annoyed come get
+some
+so we're going to go fire my my fan song
+here anybody who's familiar with the
+harm missile knows the trajectory it
+takes it's going to climb very very very
+high and then it's going to basically
+drop
+depending of course of the range that
+you launch i'll harm and again depending
+on the version of the arm missile but
+what's so cool here is that normally
+okay so it's going to do a straight
+trajectory normally one of these is
+going to do one of these
+this little lofting action but what
+it'll do is it'll now run its motor for
+a while burn out and then glide all the
+way down to the target of course the f16
+buddy right here has got to get himself
+a lot lower if he's actually going to be
+able to succeed at getting close to this
+thing without it getting a second shot
+off all right so we're coming in with
+the harm now flying in flying in oh
+we're getting an illuminator warning
+that means it's tripped there's the next
+missile
+i don't think you're gonna hit my arm
+you can try
+yeah that arm's gonna come right in and
+land right on your roof here now notice
+my arm is starting to slow down as it
+gets to the thicker part of the
+atmosphere and bam right into the
+guidance radar that thing is toast
+notice my f16 buddy by the way i knew
+that the guidance stopped tracking there
+she's coming back around and i'm gonna
+go ahead and have him have a fun time
+with people on the ground here all right
+you can go ahead and engage at your
+leisure so engage at cholesia
+he's gotta run to the end of his unit
+and here comes a bunch of j dams
+nice all didn't kill it well that's
+going to be the case then i'm going to
+order you use your cannon and finish
+your job here air to ground strafing yes
+please by the way you can save your
+templates now so if you have a certain
+system you use every single time just
+keep coming back to it and i'll reset it
+each time and again your uh little modes
+here this is super fun and it will
+definitely be a video probably next week
+because it's so cool all right we'll
+slow down take a nice big old arkan turn
+here and this one the whole plane starts
+buffing goes
+just one of those things and you come
+ripping down here um i thought i asked
+you nicely
+you have a gun you can use that
+he claims to be a winchester here okay
+fine be that way be that way
+all right you're about to get burped
+he's got to get nice and low over the
+ground here 400 feet above ground level
+he's going to do his pop well i would do
+a pop-up at this point let's pop up to a
+thousand feet right pops up whips
+himself upside down
+burst fire oh that was a mess all right
+so hopefully found this video
+interesting i had a bigger video as far
+as explaining a bunch of the new things
+in this new version but unfortunately i
+ran into a couple things but i've
+already posted a bug report on it to
+make it a little bit easier and
+obviously going forward we'll take a
+look at those different modes as far as
+intermediate and continuous emission and
+it should be very very interesting like
+i said there's a new fun thing in here
+called a sonar computer i mean like
+where did that come from but like i said
+that'll definitely be something to do
+another day enjoy

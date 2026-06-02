@@ -1,0 +1,292 @@
+# C: MO - Using Bing Chat AI to create lua scripts to populate bases with units
+Video: https://www.youtube.com/watch?v=UZ1pbAhzhwI
+Video ID: UZ1pbAhzhwI
+
+hello everyone in today's video we're
+going to be showing you how you can use
+a bing and co-pilot and chat GPT to
+create Lis scripts for commands now one
+thing I want to say real quickly here is
+that you're going to have to do a lot of
+tweaking the system was not designed
+with these things in mind so you're
+going to have to kind of be aware
+especially with the syntax of the
+various functions in the command L docs
+so what are we going to do today we're
+going to put this thing into a real real
+real tricky challenge we're going to
+have it basically pick a unit or we're
+going to create a base and then we're
+going to stuff a bunch of stuff into
+that base for the purpose of making
+things interesting for us you know
+quickly adding big squadrons of
+different pieces so let's go ahead and
+put the sucker together with our prompt
+so whenever you're working with any sort
+of these sites and prompts you have to
+like I said put as much context in there
+as possible so that it understands
+exactly what it is you're trying to do
+so let's go ahead and do it so create a
+script for command mod Lis script who
+should be more specific for command
+modern
+operations operations that creates a
+series of units units
+as set by a local variable of a specific
+D DB ID specific DB ID of type
+air and assigns them assigns them a
+base called uh let's see here we should
+be pretty specific if we go to command L
+dox real quickly we can see that base is
+unit base or guid uh we can go look up
+the guid and things like that where the
+unit will be again we can just use name
+to make it nice and simple uh Base
+called um AB
+Base called AB you know Air Base kind of
+a thing like that sends him to a base
+called AB uh dbid I'm sorry um type of
+type air it signs to base called ab and
+a DB ID of of course you know exactly
+what dbid we're going to use here let's
+go into here we're just going to do F16
+CM BLK 52 oh AP so if you type this
+thing correctly it would work great for
+you uh let's see here to have glass that
+looks pretty good to me and we're just
+going to come down here we need the dbid
+uh 1083 that looks good to me 1083 have
+dbid 1083 with a load out ID of and
+let's see here what are we going to pack
+up today we're going to make it nice and
+simple Loadout IDs are these numbers
+over here on the right uh 1192 I like
+that
+1192 one oh I definitely missed the
+digit somewhere
+1192 11192 there we go and load out ID
+FD um set the side to Blue
+4 and use the
+following uh parameters for the I
+believe the S edit I think unit add unit
+add
+units sended add
+unit function that will add the
+units okay we'll go ahead and do a colon
+here and we'll go ahead and copy paste
+because I'm a super lazy person here I'm
+just going to grab all this real quickly
+contrl C just contrl V like that uh
+we're going to go ahead and press press
+enter and see what
+happens and it generates this script so
+you'll see here it's went ahead and took
+our five units you can see it created
+our little list here it created this
+little thing called local Di and look at
+this it actually made it as a list and
+you'll even see where it took the
+parameters that we fed at using our copy
+paste up above and actually shove this
+in here we can actually come through and
+delete a bunch of these things and I
+really really love this part here with
+unit so um let's have a little bit more
+fun first of all we should probably test
+to make sure this works so let's go
+right over to command real quick I'm
+going to go to the middle of here we're
+going to go ahead and create a facility
+I'm going to go ahead and call this
+Airfield we're going to go ahead and
+press this one right here I'm going to
+go ahead and rename this as AB real
+specific right one thing I probably
+didn't do no we're on Blue for we're
+good so let's go grab our handy dandy
+Little lu console here paste this sucker
+in press the Run button and let's see
+what happened let's pull this out of the
+way click on ab press
+F6 now imagine how much work that would
+have been if you had to do this in a
+different way all you basically need now
+is just a list speaking of lists
+wouldn't it be fun if we had a little
+bit more fun with this so I'm going to
+go and grab these units which by the way
+perfect no you saw me again magic this
+is a free tool you don't have to panic
+with it let's have more fun though um
+that's
+great can you who can you make it so
+each unit's unit name is a random
+country in random um Township in
+oh random oh we got to have some fun
+with this a random Italian
+town on the coast of
+Italy yeah random town on the coast of
+Italy also comma um let's see here let's
+see here we got to have some fun we got
+to make this fun we got to make this fun
+add 24 units instead of
+five all right let's see what happens
+copy you can see a generated a bunch of
+names we'll go back over here contr a
+contrl v paste let's see what happened
+this time close that click on this
+F6 you can see that Not only was I able
+to generate a quick group of units you
+can actually see very clearly here that
+it went ahead and gave me a we have
+actually a lot of Positano I've actually
+been to Positano it's a very pretty city
+I would not want to have to uh you know
+deal with any snow on that road though
+but we can see here it did actually a
+really really nice job of this and
+that's one of the cool kind of things
+now this is where it gets sort of
+interesting you're probably sitting here
+going that was uh that was actually
+pretty useful didn't seem like you had
+to do a lot of work here uh how long did
+that take you and I'd say about you know
+45 seconds the hardest thing about this
+and I will state this whenever you're
+doing any of these different components
+is it's very very very challenging U to
+be able to come up with ways where um
+you know again if you have little issues
+with data and stuff like that you have
+to make sure your lists are correctly to
+make sure it knows the right idea it's
+smart enough to as you can see interpret
+so much of these things and actually
+generate them dynamically now this works
+for aircraft carriers this works for so
+many different things you can even use
+it to basically generate different
+random components now if we run back
+over to the command luid dox real
+quickly here we can see there's all
+sorts of fun things that we can add
+again we can create units we can set
+units we can delete things we can create
+notifications so we can emulate things
+we can get bearings we can create Minds
+we can do all of those components here
+you know the key thing here is whenever
+you're working with them when you paste
+those things into it it's going to be
+more aware of what the different
+components of the actual table are now
+this is pretty slick and again very very
+simple but where it gets a little more
+sophisticated here is if you want to try
+to do something where let's say you want
+to populate an entire airwing inside of
+an aircraft carrier this gets a little
+bit more intense the reason for this of
+course is um basically you're going to
+have to find out the actual name of
+everybody so let's experiment with that
+a little bit all right so we come back
+here and we have everything all squared
+away we have the CVN 65 Enterprise here
+uh this is great this is great let's
+build it even further helps see if you
+spell further correctly uh oh even more
+I'll just stick with more uh make modify
+the script remove the unique the Italian
+names Italian
+names Town names there we go from the
+unit names and
+substitute I cannot spell today them
+with random
+numbers and then instead of just adding
+24 of One DB ID
+add each of add eight of each of the
+following
+dbids and their respective
+Loadout loadouts followed by the colon
+now what we can do here is we can now
+run over to command we can figure out
+what we want to mount on this carrier so
+I'm going to go up to here and I'll go
+up to database view real quickly I we'll
+just kind of keep it nice and easy we'll
+do f18c which is a greater plane here
+we'll grab the 1999 version here looking
+at the tippy top I can see here that it
+is 594 and we're going to go ahead do a
+colon and then of course we're going to
+say Loadout ID we'll keep it super
+simple today 3036
+3036 go and backspace all that good
+stuff out we'll grab ourselves an
+fa8 help see if you type correctly right
+seriously I'll grab this one this is a
+number 1089 and we're going to go ahead
+and load it up with this next item id
+down below let's see here uh 15480 I
+like that 15480 and then of course we'll
+add one more aircraft here and you know
+what why not let's add the victory one
+here grab see United States Navy oh look
+at that thing that think serious looking
+824 colon and we're going to go ahead
+and add and load out ID 199
+199 so my data looks a little bit like
+this right now and you can see kind of
+what that is so we'll go back over to my
+handy dandy little script that we're
+building here and we'll go ahead and
+build that
+in remove the Italian names from each of
+the unit names uh replace the base
+with comma remove the Italian unit
+names at each of the following dat
+separated by a colon so we're going to
+594 3036 comma
+1089 15480 comma
+824 199 let's give it a shots and there
+we have something like this so a couple
+things that it did of course as you
+notice it left this bit out which we're
+clever enough to be able to check that
+out notice we created ourselves a little
+local list here call DB outlay loadouts
+with our respective numbers Isn't that
+cool now notice coming down here what it
+did is if it basically tweaked the DB
+IDs for the individual components so if
+I copy that script let's go migrate over
+to our lovely command slick on the CVN
+we'll go ahead and Lis script console
+control a control V run go ahead and
+close this press F6 look at
+that look at that do you see how
+incredible that capability is and of
+course everybody's now clamoring saying
+give me give me give me give me give me
+kind of a thing like that but the whole
+point of this video is basically to show
+you how quickly with the help of little
+AI I can populate entire planets worth
+of units without ever having to uh sit
+there and press the F6 key again and
+again a little bit of work on my part to
+be able to find out what the numbers are
+but you can see kind of how to customize
+those things as you go now I will go
+ahead and paste the final version of the
+script down there over in the uh
+comments below if you want to grab it um
+but again the key thing here is that you
+can see how you can employ the work with
+the that in order for the purposes of
+Jing things like this enjoy

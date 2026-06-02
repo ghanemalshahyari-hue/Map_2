@@ -1,0 +1,214 @@
+# C: MO - Comms Jamming of Stationary Ground Targets
+Video: https://www.youtube.com/watch?v=ffTSj81bjBU
+Video ID: ffTSj81bjBU
+
+Hello everyone. In today's video, we're
+going to be showing you how you can jam
+ground units as communication systems.
+Now, as you're probably well aware, uh
+whenever you do any communications
+jamming, now that that's everybody's
+favorite feature. I mean, come on, it's
+awesome. But one of the problems you
+probably have noticed is you want to jam
+some kind of battalion radar so it can't
+communicate to it subunits. In this
+case, we have ourselves an F-16 block
+52, which is the correct F-16, and it's
+making its way over Nucket here, and
+there happens to be a P70 radar there
+just kind of hanging out. And of course,
+we also have ourselves, you know,
+basically a SAM site. And as you can
+probably observe, we're cruising right
+over the top of it. Now, what I'm going
+to do real quickly here is I'm going to
+go ahead and pop on all sorts of good
+stuff as far as contact emissions here.
+We'll do that real quickly. There we go
+to contact selected contact and I'll go
+ahead and press this. Uh let's go ahead
+and unpause here. You'll notice no
+emissions coming from the SAM site. Uh
+that's basically accurate. Now, when I
+come to the P70 here, uh this one, of
+course, we kind of tacking away at us.
+So, let's go swing to the other side
+real fast here. And now we can see very
+clearly that the radar on this one.
+We'll go and pop that on. Make sure it's
+working. Good. It's working. And we have
+a very, very good look at our lovely
+F-16 here. Target number one. I love how
+they do the little note uh you have
+little numbers for things now to make
+them a little bit easier to keep a
+track. Nice touch. You know what I also
+really like in this beta? Look at how
+smooth that is. I don't know what they
+changed, but that is so good. So, right
+now, this radar is communicating over to
+the SAM site, saying, "Just so you're
+aware, there happens to be an enemy
+coming our way. Get ready to take a pot
+shot at it." This radar station is
+actually not transmitting anything. It's
+not going to do any of that until it
+gets much much closer. Basically, it's
+collecting data. So, let's run back to
+F-16 real quick. And let's be a jerk.
+So, I'm going to go up to my F-16, go to
+sensors, and I'm going to turn on my
+comm's jamming system now cuz like I
+said, I brought one of these. Oh, that's
+comm's monitor system. It was supposed
+to be a comm's jamming system. Don't
+worry, we'll fix it. We'll fix it. We'll
+fix it. All right. See? Uh Jama. There
+we
+go. Much better. Click. So now our F-16
+is jamming
+communications only communications. Uh
+we have nothing actually. We have no
+active noise barrage or anything like
+that. But now let's switch to the other
+team and see what's going on. What
+you'll observe here is nothing. There's
+been no impact whatsoever. Our lovely
+radar site is having no problem
+identifying that one. And of course our
+SAM site is having no problem getting
+ready to take a shot. So we'll go speed
+up time a little bit here. I don't want
+to go too hard because we're going to
+miss our shot. Again, you can see every
+15 seconds the radar finishes rotating
+around. And what's going to happen in a
+few moments, of course, is our SAM2 is
+going to flip up its fire control radar,
+and it's going to send a nasty SA2 right
+up to our lovely F-16, and it's going to
+make quite a mess. So, speed up time
+just a tiny bit more
+hereun. I love the old James Bond
+movies. This is fun. So, we enter into
+its SAM range and the missiles are on
+the way. Tada! Everything worked
+perfectly. So, you can see even though
+our F-16 was jamming their
+communications, they clearly were
+talking to each other. Why is this?
+Well, it turns out in command, if you
+were to select a ground unit such as
+this one, you go to comms, there will be
+no comms. A unit with no comms is always
+in communication. See how that's nasty?
+So, you're asking yourself, well, that
+that's a problem. Obviously, that means
+that we can't cheat and like get away
+with this. So, what are we supposed to
+do here? Well, the good news is um we
+can add coms for the purpose of jamming
+coms. Let me demonstrate. Let's go up to
+the coms window real quick. I'm going
+add a com device here, and I'll do uh
+generic. Oh, we can just type in. Oh,
+that's nice. Generic. We'll go ahead and
+make it a nice little radio here. Uh,
+two-way radio. Two radio. I just need
+radio. How about just radio, folks?
+Let's see. HF. That's really insecure
+radio. Oh, let's add that. So, what
+we've done here is we've added a UHF VHF
+radio. So, let's go run over to this
+guy, too. You know, we might as well go
+all out here. Come into here. Add com.
+Uh, UHF. UHF. I think we did with
+unsecure. What? Why are you being weird
+to me? Uh, remove com device. I believe
+I did this correctly. Uh, hold on a
+second. Apparently UHF is in UHF. Not
+worried about it. Boop. There we go. And
+now we have a secure radio or an
+unsecure radio on both these platforms.
+Now, this guy right here is tapping away
+with his radar. As a matter of fact, I
+can uninherit there just to check that
+it's working. We haven't picked up the
+F16 yet because that's okay. So, let's
+go run back to F16 real fast. And let's
+go ahead and add back the correct
+jamming unit to this time. So, we've
+been jammed. I always go back to space
+balls there. Oh, no one dare give me the
+raspberry. Uh, let's see here. We have
+commammer from the 2020s. That seems a
+little unfair, but hey, I'm not here to
+be nice. I'm in the business to
+demonstrate. All right, so we are now
+jamming communications
+intentionally. Now, this means you're
+going to be jamming the very radar radio
+that it had a few moments ago. So, let's
+go take a look what's going on here. One
+of the things you'll notice is my P70
+radar is having no difficulty still
+acquiring our F-16 here. Now, if I speed
+up time a little bit, it continues to
+acquire. It continues to acquire. It's
+uh you can see it's kind of sitting
+there. Why do we have ah see it? See it?
+These two stations are no longer in
+communication with each other. Do you
+see how it's got this little A
+underneath and it says no comm? You can
+come over here and see the A with no
+comm. That means these two units are no
+longer on speaking terms. There was a
+really messy breakup and they just
+refused to talk to each other. No, it's
+actually because of R16's fault. The
+other thing you'll notice is if I come
+up here, I can't see this F-16 at all in
+my world map because this radar has now
+dropped off the network and I no longer
+have the ability to get readings to
+central command which is generating this
+map. By the way, that means my F-16 can
+fly right over the top of them and
+they'll never know the wiser. Now, one
+of the things you're probably sitting
+here going, "Hey, well, that's that's
+pretty cool. What if you press
+controlV?" Yeah, we'll do that. I can
+come up here to this unit. I'm in
+controlV mode and notice there's nothing
+I can do. I can't actually go in here
+and add back the radio and take it back
+out. But if you wanted to, for example,
+I could actually have taken this radar
+and basically told it to um keep on the
+hard line, meaning I could still receive
+radar signals, but right now everybody's
+blind. So, let's go ring over to the
+F-16 real quickly here. Speed up some
+time here. Speed up some time. F-16's
+looking pretty large and in charge. He's
+just going to zip right over the top of
+an Nucket. Remember, this radar sees him
+the whole time, but this SAM site,
+because he has his radar off right now,
+doesn't even know there's an F-16 flying
+over until it sees the contrail with its
+camera, in which case it'll probably do
+a parting shot. Look at this. Look at
+this. No clue in the universe because
+there's no communication between these
+two units. As you can see, breaking up
+communications has a dramatic impact
+tactically in many scenarios. And that
+is why when you uh read about, you know,
+scenarios in the real world, one of the
+first things they do is destroy all the
+communications hubs, making things like
+this possible. Enjoy.

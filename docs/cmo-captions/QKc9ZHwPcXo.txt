@@ -1,0 +1,242 @@
+# C: MO - Ballistic Missile Analysis
+Video: https://www.youtube.com/watch?v=QKc9ZHwPcXo
+Video ID: QKc9ZHwPcXo
+
+hello everyone today's video we're going
+to be answering a question that came up
+on discord uh last week uh somebody was
+bringing up the whole time on target
+challenge saying well how are you going
+to be able to calculate all when the
+weapon's going to arrive and i did a
+video on that a while ago and then i
+said well would it be cool if you could
+calculate the time on target of a
+ballistic missile so i said um
+that sounds like it's going to be kind
+of a fun project yeah it turns out it
+was way more of a project than i
+actually anticipated it to be i actually
+read this great research paper where a
+guy was basically talking about the
+impact but one of the problems he ran
+into is um he did not include friction
+the atmosphere in here which can be
+modeled and it also requires some hefty
+integration here in order to make that
+work properly i took one look at that
+and said well my calculus foo is not
+weak i haven't touched calculus since
+when i was back in my college and
+undergrad days so i wasn't about to sit
+there and try to crunch that number and
+then i actually found an online
+calculator for it as well and i kind of
+played around with that too to try to
+see if i could like narrow it down kind
+of a thing and the answer was no so what
+i did instead is i wanted into command
+and i said well this shouldn't be too
+hard let me take some pot shots at
+christmas island and see if there's some
+sort of correlation between the distance
+and flight and the time and maximum
+range and the altitude and everything
+like that try to be pretty scientific
+about it so what i'm going to do is i'm
+just going to quickly show you how i did
+this test i went ahead and locked onto
+that one i went and locked onto that one
+i reset my time to be a nice logical
+time of day i'm gonna clear my message
+log and i basically did this for 45
+minutes where i was shooting pairs of
+ballistic missiles at a poor christmas
+island here i feel like that islands
+kind of got it pretty bad so a couple
+things i noticed pretty much right away
+and that was the fact that if you have a
+short range missile you tend to get to
+your target initially faster but then
+you tend to slow down if you fire a
+ballistic like a really like an icbm or
+a medium range or like a theater missile
+these things tend to take forever to get
+to altitude but once they get to
+altitude they actually match the speed
+of their fellow missiles
+so i immediately sat down and said well
+what does that mean for us and while
+these both missiles were fired at the
+same time what's going to happen when we
+come back down to earth here as you can
+see the iskander
+splat and of course we can see the
+dongfeng basically
+splat sorry christmas island
+i know you've had a lot of dents in you
+but i just put some more in there so i
+did some math i uh sat down and i
+basically calculated what happens oh
+what's the total cruise time you know
+what is the relationship between the
+different altitude bands and the speed
+the missile travels now here's where
+things got interesting i took a look at
+each individual one of the weapons and
+tried to determine what's going on here
+and i notice you have the cruise speeds
+here just like you do for regular
+airplanes and things like that so i
+immediately said well if we're going up
+to 19812 meters our vertical speed is
+this oh that should be fine so i said
+cool let me show you what happens when
+we do that however so i'm gonna go ahead
+and fire another one of these lovely ss6
+he's gonna leave the barrel no problem
+he's gonna start climbing up here's what
+i want you to notice this thing says
+that until it gets to 65 000 feet i'll
+go ahead and show this so i'm not making
+things up here so we get to 65 000 feet
+we're supposed to be doing 200 knots so
+uh if you take a look right this second
+now we're now doing two and a quarter
+226 230 250 274 and the best part though
+is watch what happens when you cross 65
+000 feet which is gonna happen and
+not much time
+wait for it
+and whoosh
+as you can see that made that
+calculation basically unviable so it
+would cruise up and what it would do is
+it actually would level off and just fly
+at full speed for a little while like
+you can see here at 136 kilometers at
+its constant speed it wasn't actually
+changing speed during this segment so
+then of course it would dump off its rv
+and the rv would come down and i'd put
+yet another dent into christmas island
+sorry sorry sorry sorry sorry so i
+realized all those hard calculations
+that i've been working on trying to do
+aren't going to help me so i said all
+right all right fine i'll do some more
+experiments so what i started doing is i
+started to plot the maximum distance uh
+and how long it took for the weapon to
+get there in the effective speed of the
+weapon so i immediately plotted the one
+for this candor and i discovered this
+beautiful little curve here and my brain
+immediately saw this 75 74 and said wait
+a minute that's the rms value that's of
+0.707 if you're curious and i said oh
+we've solved the problem yay so all we
+have to do is take the range go ahead
+and multiply whatever the maximum range
+percentage is by a variable and then you
+could go ahead and take the rms of it
+and you're good to go and you could
+calculate it no problem
+so i did this and the numbers came out
+beautifully for my little short range
+ballistic missile i was super excited so
+i said well let's try it with something
+that's a little bit longer range so i
+did the same exact experiment using even
+my little rms value which you can see
+right here to try it out with a dongfang
+17 which has got much significantly
+longer range and look what happened
+all my calculations were completely
+spoiled because basically you ran into
+that problem where if you fire at just
+the right range you fly in a perfect
+ballistic trajectory but when you exceed
+that range you actually travel in a you
+go up plateau plateau plateau and then
+you start to re-enter so that was about
+the moment when i realized that my
+little time on target calculation for
+ballistic missiles was probably going to
+be outskis here which is a little on the
+disappointing side so it's like there's
+got to be something that i can extract
+out of this that's still going to be
+useful so when i was going through all
+the different values um i was able to
+spot something and what i did notice is
+i noticed for longer range weapons
+whatever 50
+is remember the effective speed of all
+ballistic missiles is 4 500 4500 i
+noticed that when you're at half of your
+range for long range missiles your
+effective speed is the rms value of the
+particular top speed of that weapon and
+then i noticed for shorter ranged
+weapons like your um studs and stuff
+like that i noticed it's closer to about
+75 percent of the range also will get
+you a value that's a little bit quicker
+i believe it was uh 71 i got to go check
+it again real fast 4500 gets you closer
+to 52 percent of the maximum speed so
+you're standing here going um so if i'm
+doing a time on target when do i need to
+fire the ballistic missile
+the short version is it depends if
+you're firing an icbm that's coming out
+of russia and going into united states
+it's going to take about 20 minutes if
+you're firing a weapon that's a little
+bit shorter range it's 200 it's going to
+take you closer to 5 minutes so at the
+end of the day it all comes down to how
+far of a shot you are taking the longer
+fire missiles don't necessarily take
+that much longer except that they do
+when you get closer to the maximum range
+so then i started to realize wait a
+minute maybe command's model for
+ballistic projectiles is not quite up to
+you know quick and super duper ultra
+precise calculations to which i finally
+will say at the end of the day your
+effective range your effective your
+fastest effective speed is somewhere
+between 50 and 75 of your maximum range
+past that and it takes too long to slow
+down below that of course it doesn't
+have enough time to speed up so
+hopefully this video interests you and
+as far as calculating this i'm going to
+keep working on this time on target
+problem because um everybody would love
+to use ballistic missiles and enable
+engagement because you know you fire a
+bunch of torpedoes you fire a bunch of
+anti-ship missiles then you rain a bunch
+of ballistic missiles on their head at
+the same time and if you can get that
+all to arrive you're going to obliterate
+anything that you are basically rain
+stuff onto so hopefully this video like
+i said i wish i had some better numbers
+for you so you can kind of play with
+this like i said the iskandar was no
+problem once he got to things that had a
+thousand nautical mile range the math
+got a little bit more interesting and we
+weren't able to get a very precise value
+but at the least if you have to guess
+pick 65 percent of the maximum speed of
+the weapon do the division real quick
+and then you should be able to get a
+rough idea of when the weapon will
+arrive
+enjoy

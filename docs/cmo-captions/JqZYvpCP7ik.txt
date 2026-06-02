@@ -1,0 +1,168 @@
+# C: MO - Ground Units Automatic Attack
+Video: https://www.youtube.com/watch?v=JqZYvpCP7ik
+Video ID: JqZYvpCP7ik
+
+hello everyone in today's video we're
+going to be taking a look at how we can
+get ground units to shoot at other
+ground units now this is uh one of those
+things that came as a question and I sat
+there going oh yeah I do remember this
+being an issue at one point and I'm like
+what did I do to solve this one and then
+of course I played a little bit I'm like
+oh yeah but to illustrate the problem
+we've created ourselves a relatively
+stereotypical battle for those of you
+who are not up on the history
+here uh I think that should be enough
+and of course we're just going to let
+things run and see what happens here so
+un pause and just kind of fast forward
+time here comes my infantry my artillery
+is in position and they're running in
+and they're running
+in and um they're just just kind of
+standing
+there and this is one of the problems
+that know people face so of course
+people say well that wasn't very helpful
+at all um I want them to be attacking
+how come the other guys aren't attacking
+each other how come things have been
+queued up for attacking now the
+interesting thing here is if actually
+sit around for a few minutes you'll
+probably notice I sent some Mig 15s kind
+of down this way to sort of help us out
+now what's going to be fascinating
+though is all my infantry are going to
+get themselves in position and look at
+this my Mig 15s show up and uh they do a
+great job of denting the place up
+dropping bombs getting themselves shot
+down you know pretty much the typical
+Mig 15 thing so you're wondering why
+they don't actually attack it's because
+all ground units inside of command
+including things like Coastal batteries
+have to be given the order to either
+directly attack something through a
+mission or they have to be given an
+order to attack things just basically
+willy-nilly let me show you what I mean
+by that so if I open up my Doctrine in
+Roe here you're going to notice here
+this this is um of course engage
+opportunity targets when this is set to
+know our ground entry will never ever
+ever attack now you're sitting here
+going well that doesn't make sense if
+you go to w I can come here into my
+basically akm and scroll down and it
+says that the WR allows it that's fine
+but it's actually built in in such a way
+they're not supposed to give themselves
+away so you have to actually enable this
+in order for them to actually start
+shooting now where gets interesting is
+this let's go ahead and create a mission
+real quickly I one time I pressed the
+wrong button for that I must always hit
+the right one when I do that control f11
+we're going to do ground attack that's
+not how you spell any of that but that's
+okay let's go ahead and do a Patrol
+we'll go ahead and say ground Patrol
+here press Ok We're going to and grab
+all of this lovely stuff that we have
+ready to go here and we're just going to
+kind of actually what I don't want to do
+is I don't want to get the ones that are
+multi- mission here I just one of my
+guys who up here in the Hills there we
+go so we're going to order them all to
+just kind of do their thing and now this
+is where things are going to get
+interesting go un pause here they're of
+course going to start moving into
+position and now they're starting to
+shoot matter of fact not only they
+starting to shoot they're doing a bang
+up job here and it seems to me a little
+bit like um the other team is really not
+putting enough effort into their
+engagement you also observe that they're
+taking an effort to actually identify
+the targets they want to shoot at if I
+make this one H for example they shoot
+at it if I make that one H they'll start
+shooting at it and you can see they're
+just having a you know kind of a funnel
+time here kind of just going to town on
+the ground troops now you also probably
+observed that our friends on the ground
+who we just sort of steamrolled here did
+nothing to defend themselves so let's go
+ahead and reset our scenario one more
+time here and this time we're going to
+tweak it just a tiny bit to enable them
+to be able to shoot back so I'm going to
+go up to France real quick I'm going to
+go ahead and do this by side I'm not
+going to do this by group control shift
+dev9 I'm just going to come up here to
+go ahead and engage opportunity
+targets now I'm going to go ahead and
+switch over to the AET men here control
+shift f11 oh I did it again control
+shift F9 we're going to go ahead and
+order them to engage opportunity targets
+ah ready for some fireworks here you
+[Music]
+go
+best part though is when the big 15 show
+up and there we have the Battle of dmam
+Fu and now you can see it was not
+terribly successful here and that's
+actually kind of funny you'll notice on
+France's side we we definitely lost some
+stuff here and of course when you go to
+the vimin here you'll notice how we lost
+everything and you also get an idea of
+just the Staggering amount of
+expenditures that are required now the
+reason this is so cool is if you were
+trying to create like a full the Gap
+scenario which exists by the way it's
+very fun to play if you haven't had a
+chance you can actually now set up a
+bunch of hidden units that you have to
+drive a convoy through and protect and
+you'd have a really really cool Mission
+even though you might not have all the
+Dynamics of a typical Mission now
+there's one other thing I have to warn
+everybody about real quick here and
+that's the fact that un editors if you
+go down to scenario features and
+settings I'm press okay here one of the
+options here is what they call effects
+of terrain type one of the things you
+got to watch out for is a lot of times
+units won't engage each other because
+they have no line of sight because
+there's stuff in the way whether it be a
+mountain or a tree you always have to be
+mindful and if I actually hold my mouse
+here you can see it's a woody Savannah
+with a height of 16 ft and a Skyline of
+1643 coming up here we become you know a
+natural vegetarian Mosaic or crop land
+and you can see just how much different
+of line of sight we're going to have
+looking down into this Valley that's a
+really really important concept because
+you can't see through things you can't
+see through that makes sense it's the
+classic cover vers concealment enjoy

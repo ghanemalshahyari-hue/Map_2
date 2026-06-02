@@ -1,0 +1,161 @@
+# C: MO - Firing Laser Guides Missiles over Obstacles with Buddies
+Video: https://www.youtube.com/watch?v=cIfd_uCAxdQ
+Video ID: cIfd_uCAxdQ
+
+hello everyone in today's video we're
+going to be showing you how you can use
+a group of helicopters to fire things
+from out of cover into cover so this
+will be kind of a neat little exercise
+here so what I have here is a Kio
+Warrior and what I've done is I've
+ordered it to lose a little bit of
+altitude this Chap's going to be acting
+as our forward Observer here we're
+actually going to be taking advantage of
+the terrain in here a little bit and of
+course I also have a commanche and that
+commanche will be helping us out quite a
+bit here what I intend to do is use my
+commanche here for the purposes of
+taking the shots and I want to hide my
+commanche and then I want to use my
+warrior B basically as the purposes of
+acting as the eyes of the commanche here
+so what I'm going to do is I'm going to
+order my warrior to go zip up here I've
+already adjusted my altitude by hitting
+F2 and did Lan cover masking which is
+going to allow him to basically stick a
+sensor up rather than stick all of him
+up this is going to cause a pretty
+substantial disruption in how fast he
+can travel it's kind of the downside to
+this and I really wish it did exactly
+what I told it to do because I want it
+to go over the top of this mountain so
+one thing I noticed is my commanche here
+is kind of getting a little lost that's
+okay though I'm just going to turn
+around order it into actually we can
+probably do a loer here just do like a
+very slow Journey my key will Warrior
+I'm going to slow as slow as we can get
+here and now the reason we want to slow
+down here so if I take a look at this
+drain here depending on what setting you
+have under scenario features and
+settings if you have advanced terrain
+here you might have it be high enough
+problem is this is all grasslands so
+there no trees we can really hide
+ourselves behind so I'm going to take my
+command get a little bit faster I can
+see we have some enemy units on a little
+kind of peninsula over there and we're
+just going to order them to pop down to
+a hover once we get a little more of
+that Peninsula locked on that looks
+pretty good to me meanwhile I'm a ke
+Warrior here we've got pretty good sight
+on what's going on over here I'm
+starting to actually identify them as
+being a t 55s uh so they're worth taking
+a shot at what I'm going to do now is
+just kind of bring them around just a
+little tiny bit more here again we're
+very very very very low but that is
+perfectly in my intention here about 20
+ft so we've got a pretty good lock on
+everybody and I'm going to go ahead and
+order him to come down to a hover at
+this particular point so my kyy now is
+going of slow way way way way way down
+it's actually going to sit here at a
+hover making it harder to pick up my
+radar also and then I've got my Comanche
+back here commanche is going to be my
+shooter here you know one of the fun
+things you can do is you can actually
+get groups of these and have another
+commanche on the other side as a matter
+of fact let's do that because that
+sounds kind of a cool way to do this so
+I'm going to go swing it over this way
+I'm going to go send him to actually
+kind of high altitude I'll send him to
+over as well I definitely want him to
+just kind of get himself all nice and
+squared away here so that we're going to
+be able to just fire from both
+directions and full stop there actually
+we can come down even lower we can do
+about 100 feet I think that's fine so
+now we have our two units ready to go
+and they're both completely concealed as
+a matter of fact if I click on my R over
+on this side if we go down to my line of
+sight tool you'll actually see here that
+his line of sight is completely blocked
+to our Target region and if I click on
+this guy right here I don't know yeah
+he's got a little bit of line of sight I
+can actually push him further Inland
+here or even drop his altitude a little
+bit my of course uh K Warriors got good
+eyes on everything so these are going to
+be communicating via radio when to shoot
+so what I'm going to do now is I'm going
+to grab my commanche I'm going to press
+the F1 key for automatic attack and hold
+on the shift key and I'm going to drag a
+box around them like this I'm going to
+grab my other crew M here hold down F1
+hold down the shift key and drag a box
+around them as well now what's going to
+happen here is you're going to notice
+that these Hellfire missiles which are
+laser guided weapons are now on their
+way as a matter of fact we can see that
+there's 13 seconds what's actually
+happening right now is if I switch onto
+illumination vectors of the selected
+unit this unit is actually firing a
+laser down there and guiding the weapons
+down onto the Target now the ones in
+this side don't really count because
+they're being fired directly from my
+commanche here but as you can see we're
+actually firing the Hellfire missiles
+over out of the cover down onto my
+target allowing us to get basically a
+freebie hit here now we've seen things
+like this before using infantry but when
+you use helicopters you have the added
+benefit of cover if you doing very very
+low altitude terrain masking now go
+ahead and speed up time just a little
+bit here and allow them to kind of have
+their little fun there's the laser being
+turned on again and you can see these
+hellfires are just raining in on these
+targets and there's very very very
+little these folks can do over on the
+other side if they even had an sa8 or
+something we'd be within the minimum
+altitude and they wouldn't even be able
+to fire a missile at us and you can see
+the two commanches have finished having
+their fun there so they turn around and
+head back to base so you can see that's
+kind of a neat strategy and a neat
+tactic and it doesn't just work with K
+was as long as you have something that
+can communicate to these other units you
+can safely do it even if it was a
+satellite weapon keep in mind satellites
+can't shoot lasers down C ey but um keep
+in mind that if they did have the
+capability you could basically designate
+from space making this whole process
+that much more exciting for us enjoy

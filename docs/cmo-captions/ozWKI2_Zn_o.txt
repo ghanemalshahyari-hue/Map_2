@@ -1,0 +1,1451 @@
+# C: MO - Designing and Building a COIN scenario
+Video: https://www.youtube.com/watch?v=ozWKI2_Zn_o
+Video ID: ozWKI2_Zn_o
+
+hello everyone in today's video we're
+going to be taking a look at how you can
+create an interesting coin scenario in
+command modern operations for those you
+not familiar with coin coin simply means
+counter Insurgency and now there's a
+wide variety of different insurgencies
+you can create as well as how you can
+simulate them but we're looking
+basically to get the player a little bit
+of a taste for things without kind of
+going too far so for the purposes of
+this course I'm going to be taking a
+look at our lovely lovely Columbia here
+the great country for this purpose if
+you know the historical context of it of
+course and of course it's also got some
+great Terrain for us speaking of terrain
+let's take a look at the terrain for a
+second here so I'm to go up here to land
+cover and take a peek at this very
+rugged country there's a lot of things I
+notice and of course depending on how
+you're setting up your scenario you want
+to be taking them into account for
+example I noticed that the terrain of
+the country kind of varies we have a
+very very strong Andes mountain region
+here which also has the very very large
+population centers which are going to be
+these guys in red here the other thing I
+notice here is just kind of moving my
+mouse across is we have this broad
+Savannah here as well as you know kind
+of grasslands here and everything else
+is thick heavy Forest uh that's very
+important to us because one of the first
+things you want to do when you're
+designing scenarios like this is you
+want to try to understand the context of
+the scenario so that you can
+appropriately create your forces
+speaking of which let's do that now I'm
+going to go ahead and call this Colombia
+and I'm going go ahead and create
+another group called uh we'll call them
+insurgents of course if we were smart we
+come in here and also create us some
+civil infrastructure as well just to
+make a little bit more interesting for
+us so let's see what we got here so the
+civilians let's set up the postures here
+the Columbia side they definitely
+consider them to be friendly insurgents
+they consider them to be completely
+unfriendly uh the Columbia of course
+we'll switch to them civil of course
+they consider these folks to be friendly
+they're not really going to go out of
+their way to attack them insurgents of
+course as hostile as we can absolutely
+get here and when we switch over of
+course to the Civil we're going to
+consider them to be hostile and of
+course Colombia we're also going to
+consider them to be hostile as well now
+there's a couple other little things I
+want to do in here one thing that I want
+to do which is a kind of important Point
+here is I want to make sure that this is
+a computer only side civil is a computer
+only side and I'm also going to make it
+so that is BL any of our civilian
+structures don't need to be able to see
+it's completely irrelevant another thing
+that I'm going to do while I'm sitting
+in here too is when we swinging over to
+our insurgents I'm going to reduce their
+proficiency a little bit here the reason
+why is even though they can be very very
+highly motivated troops um once the
+cluster bombs start dropping around your
+position no they're just not used to
+that kind of a threat so they struggle a
+little bit with that so I'm going to
+reduce the proficiency a little bit as
+well so the next thing we want to do is
+we want to try to establish some kind of
+geopolitical kind of what's going on
+here in order to make more sense of
+where we're going to put stuff now when
+I look at the terrain here one thing I
+noticed is we kind of have the city here
+but we also have this beautiful region
+kind of north of Bata here which is
+really really really friendly terrain
+for our friends but the problem is is if
+you actually look at how rugged this
+terrain is let's go swing to this real
+fast here open up open that's going to
+work pretty well for us it's got to take
+a second you can see that we have this
+excellent Valley here to sort of operate
+in and out of here it's got major
+highways it's going to have plenty of
+support there's large civilian areas
+that we can cause terrorist problem with
+but of course when you throw yourself
+into this massive Valley here you're
+kind of limiting your options to get out
+of the valley whereas when you kind of
+come down here everything is much more
+Broad and much much much more friendly
+to Insurgent forces if we need to piece
+we got room to go but again this
+mountain range is beautiful so for the
+purpose of the scenario I see two
+different spots to kind of set
+everything up to let me go grab my to
+not the tobo map that's nice let me go
+grab my land cover map here I see this
+region right in here which is is a
+little bit of population but it's also
+really really good terrain for us and
+you also see this more populous terrain
+that's kind of coming through here
+especially this zone right here which
+could be an excellent place to basically
+put a bunch of insurgents and stuff a
+lot kind of lining up because they'd be
+able to attack the political centers
+while still having somewhere to go so
+I'm going to concentrate in this region
+here so what I'm going to do first is
+I'm going to go ahead and start with the
+insurgents swing over the insurgents
+real quick and I'm just going to kind of
+Define sort of their AOS so kind of what
+I'm going to call it here guess it would
+be OA I'm not going to worry about it
+too too much come right here and again
+this will be sort of our operating
+region you that works pretty well for me
+so let's go ah and zoom in I'm going to
+go switch off a l cover here again and
+kind of see what we have to see here um
+this is a pretty good spot here but
+again we've got beautiful beautiful kind
+of terrain to sort of hide in we've got
+Forest we've got just about everything
+to hide from now when it comes to
+Insurgent operations the whole goal is
+to basically terrify the local populace
+but there is no local populace left so
+we're going to have to go ahead and
+figure out what kind of problems they
+could cause for us in order to give us
+some kind of angle to actually proceed
+in our scenario so I'm going to swing
+over to civil real quick here I'm going
+to go swing over to uh let's see here we
+want to do a land cover and I want to
+see if there's any particular regions
+and I see I've got some really really
+good stuff right in here so coming down
+here I can see I've got um you know some
+of these little cities pretty well built
+up this is definitely going to be where
+our Center of operations are going to be
+today now when to go ahead and drag
+across this you can see this gets me a
+16 nautical mile sort of operational
+area now what we want to do here is
+create some tasty civil targets that we
+could basically let our insurgents
+harass so we could kind of basically do
+that voodo that we do so to speak so
+what I'm going to do is come in here and
+now go ahead and develop a couple of
+those and I'm actually going to build it
+as a group so swinging down here I've
+see that we got some pretty good
+elevation I'm just trying to get an idea
+for scale here I don't want to make this
+too big one thing we can do is we can
+actually come in here and type in
+village now if you come in Village this
+creates an interesting problem because
+this is a marker called village now it's
+an open structure and it counts
+basically as a simple one and you'll
+notice it has a whopping 50,000 damage
+points on it which is great cuz uh this
+is basically going to enable us to uh
+you know basically make the village
+survive the attack the other thing that
+we have at our disposal we have a town
+uh the advantage to the town too is um
+other than the length and width being a
+little absurd here again this is
+considered a marker for the town now
+some people of course when they go to
+put these things in here I'll go a and
+put my town marker in here this actually
+makes pretty sense one of the problems
+they'll do is they'll try to create each
+individual building um you could
+definitely absolutely do that and we'll
+do that with the insurgents little kind
+of base camp I would not necessarily
+recommend it for this kind of a scenario
+now if I wanted to be a really really
+really good designer here and again I'm
+not being the world's best designer CU
+you know this is just the purpose I can
+actually come in here and find out the
+name of this this town and that's one of
+the cool things here we'll call this L
+amario and of course um this is a little
+bit to the west of us but that's okay
+now the cool thing is I can now zoom out
+here I zoom out this a little bit here
+and we can go ahead and copy these and
+actually load them into different areas
+so I can control C uh let's see we come
+to this particular region here it looks
+pretty good to me oh I just saw
+something important to us for later Los
+gabos uh let's see here we'll come down
+here to Barbosa actually Barbosa is more
+of a city than a town Barbosa and and we
+go to guava go ahead contrl c contrl v
+and can press that there we go rename g
+u a v a t a yes I did not put the X on
+on the a I apologize to all the Spanish
+teachers out there now this is actually
+really cool um this tells us a lot of
+information and the other thing you
+probably notice in this really really
+rough terrain is the presence of some
+other terrain features such as rivers
+and now that also means where there are
+rivers there are going to be Bridges and
+now where we have bridges of course we
+have something important one of the
+things they notice that are swinging
+down here EXC the loing time here is is
+a beautiful this is the real sweat I
+actually have a bridge right there you
+now the reason that's important for us
+is now we're starting to come up with a
+scenario that makes a little bit more
+sense it's probably a 30 ton again one
+of the things people do with bridges too
+is to make sure they're line properly so
+that's uh let's see we got a heading
+there I could barely read that because
+of the text 329 degrees so you can
+actually come in here and get really
+really specific as far as how this goes
+uh go about three 30° that looks pretty
+good close enough close enough and again
+now that provides us a little strategic
+sort of uh objective that they could
+kind of Operate Now the other thing I
+like to do too he soia um just kind of
+look around see if there's anything
+that's like oh I got to put something
+there but this actually looks pretty
+darn good so I'm going to go and flip
+off the opot top map and now we have
+kind of our civil targets uh this is
+going to be where the insurgents are
+going to be wanting to harass and don't
+worry they'll do a pretty good job of
+that so I'm going to go ahead and save
+our scenario now now one thing I always
+recommend whenever you're working at any
+sort of scenarios uh Colombia coin Ops
+as I always like to save it in versions
+but for the purpose of this I'm just
+going to keep it pretty simple today
+just press save all right so we have
+some civil targets again I'm trying to
+keep the scope on this small so I don't
+go too crazy here so now what we want to
+do is we want to start considering the
+Insurgent targets or the Insurgent kind
+of folks here and again since we decided
+to move kind of up here we're still
+within our region of operations but now
+it's simply a matter of picking out
+where they're going to be operating for
+the purposes of making it crazy now when
+you're going to be doing this there's a
+couple things you need to keep in mind
+first of all insurgents are going to
+have different types of things they're
+going to have the actual units the
+solders
+they're going to have base camps they
+need somewhere to stop and eat and go to
+the bathroom and all that stuff and re
+Ambush they're going to have places
+where they're going to want to attack
+and of course um some of these guys are
+going to have local support they're
+going to need some way to do
+reconnaissance otherwise they're just
+going to be hanging out in the jungle
+and not having a very easy time of
+course it depends on the terrain you're
+in so we need to take those factors into
+account and sort of kind of plan our
+campaign a little bit here so a looking
+here I know that one of the most
+critical components for us and our
+scenario here is a single lane bridge as
+well as Barbosa because that is a very
+very nice region there we could also put
+like a little f airport or something in
+there too to kind of add a little bit of
+interest to it again it's your scenario
+so you can decide exactly how you want
+to kind of play that but for me the
+bridge is probably going to be the most
+interesting thing so now what I'm going
+to do is try to figure out where I'm
+going to be striking from so I'm going
+to swing over to my L cover layer again
+and I noticed that there's this really
+really nice Broadley Forest right here
+kind of between all the action and
+there's also this really really nice
+little splot of it here I do not want to
+operate out of this region because this
+region is not going to have enough air
+cover you can see this is all natural
+vegetation Mosaic easy to see so from a
+strategic perspective it actually makes
+it really easy for me as a player I know
+that I'm probably going to be coming out
+of here and I'm probably going to be
+operating out of here kind of coming in
+and out so now we know exactly kind of
+how to get our Logistics together so now
+that I know that I'm going to just kind
+of create myself just sort of a generic
+little region here let me go ahead and I
+Des select all my regions and again I'm
+just planning this in order to make it
+as interesting as possible let's see
+here so I'm guessing this is probably
+going to be my base area so I'm just
+going to call this my base camp
+area camp area can kind should probably
+do this all in espanol area looks pretty
+good to me press okay looks pretty good
+and let's go ahead and measure some
+quick distances here so that's about
+seven nautical miles uh that's a Long
+Day's March if you're hiking so if we
+kind of operate right out of this corner
+here that's three and a half nautical
+miles that's a good 4our March there so
+that's going to take us quite a while
+especially with the terrain here coming
+over here is not terribly easy so our
+base camp itself we actually can almost
+predict where the base camp is going to
+be located just based on where our
+Target region is going to be so let's
+try to keep it with within 8 or n which
+is going to put our base camp right here
+I'm going to go ahead and rename this
+one I'll go and select all the other
+ones real fast and we control our base
+camp base of operations of course you're
+not going to let the player know
+anything about this because um they know
+where this ISS they're going to blow it
+up right away and it's going to take all
+of her fun away kind of thing like that
+keep in mind you're going to be hoofing
+it mostly at night doing your thing and
+then getting out or you're going to try
+to do it close to the evening so you can
+get the cover of Darkness on your way
+out and again these are not nice areas
+to do this so now let I know where my
+base of operations is going to be I'm
+actually going to build my base of
+operations so let's go a and shut off
+land cover s back to the open too map
+and um let's see what we have to work
+with here oh boy oh my gosh this terrain
+is terrible but you know what I did
+notice look at this yes our insurgents
+now have a path to take which also means
+we have the Ambush point right here
+that's going to be important to us later
+you're saying what do you mean an ambush
+Point see this River they have to cross
+that which means if I keep my eyes on
+this River I get a free hit on them so
+always kind of keep it behind there so
+I'm noticing here there's a lot of
+builtup infrastructure that's not going
+to go well for us we really don't want
+to just be uh just building guys like
+right next to the road that's kind of
+make it kind of obvious but we still
+want to have some access so again we'll
+kind of build our base camp in somewhere
+around here let's see here this river is
+not too bad it's going to be pretty good
+I don't want to row an attack there's a
+lot of roads down here though and I'm
+not loving that I'm also not loving the
+fact that there's another town right
+down there and so that's going to make
+it very very challenging for us here but
+uh for the purpose of the scenario we're
+going to do it what we again with what
+we have we're going to make this the
+little Camp I kind of like that sort of
+across there we have a little bit of
+coverage we can disappear into the woods
+again this is very very very dense
+terrain it's also very mountainous plus
+we have access to this nice Road here so
+it's going to make it pretty good all
+right there's where it's going to be I
+choo choo choose this mountain right
+here so what is our base camp going to
+have in it it's going to have a bunch of
+different components to it so the first
+thing I'm going to do with my Camp is
+I'm going to go ahead and type it in
+here and I'm going ahead and type in
+structure now there's a lot of really
+nice structures that you have and you
+can get kind of sophisticated with some
+of these structures one of these of
+course you can see you got all sorts of
+underground tunnels and stuff like that
+if I went to hide underground I could do
+something like that but the big thing
+here is just kind of figuring out
+roughly what you would expect to see in
+a place like this keep in mind things
+come at different sizes we also have
+buildings A lot of people are like oh I
+want to use the desert fort let me show
+you why you shouldn't use a desert Fort
+the size of this it's too big it's going
+to get picked up pretty much right away
+some people like how about an fob an fob
+is pretty nice too but again it's too
+large and a lot of people will
+accidentally latch on things like that
+without realizing how about a military
+base same problem but one of the things
+I did notice here is I noticed that
+there is a mast I'm actually going to
+leave the Mast out and switch over to
+building for the purposes of this now
+this is a little bit better for us one
+thing we have is a communication Hub
+which is nice because it's a little
+teeny tiny building and it's little
+surface building I like this one so
+we're going to go ahead and use that as
+our initial one so this is going to be
+our communication Hub our Hub oh it's
+okay com station again you need to be
+able to talk so this is probably a com
+station if you have a com station you're
+naturally going to need need an antenna
+the antenna is going to be at the higher
+part of the Hill there so if I type in
+antenna you have a lot of fun choices
+here for antennas and if you want to
+have a lot of fun with this one of the
+things you could do of course is you
+could switch this to civil and um kind
+of make it a little bit more fair like
+they're kind of tapping into the local
+TV channel of course if you don't want
+to do that um you can be a little more
+generic with this as well so of course
+we have to find the world's tiniest one
+so I'll will do a ultra high frequency
+actually makes no sense so probably CB
+radio pretty small and of course one of
+the things you want to do is not make
+these targets detectable you do not want
+the other guy to know exactly where
+these things are this is actually a
+surprisingly detectable unit oh take it
+back it is not a surprisingly detectable
+unit that is literally the most perfect
+thing I've done so far in the scenario
+all right let's come in here let's get
+ourselves a generator oh you're going to
+need a generator a downside to the
+generator structure at least the one
+that they give us here is you'll notice
+that it is massive it is actually so
+massive I'm going to delete it because I
+don't want it accidentally so what I'm
+going to do now is I'm going to come in
+here we'll give ourselves some tents uh
+we have structured tents tents are very
+very small uh the nice thing is that
+they gave for us again little tiny
+things and you can see that you
+basically have to be right on top of and
+keep in mind we're in a thick forest
+here so this is going to make it a
+little bit more challenging for them to
+F so we've got a building tents we've
+got a little antenna to do in
+communication I'm going to make sure
+this is not autod detectable I don't
+want to make this too easy for the
+player and now it's sort of a matter of
+deciding uh who's going to be around
+here and uh keep in mind with any sort
+of operation you're going to have kind
+of your Command Staff you're going to
+have the people down to the ground
+you're going to have your operators all
+that other stuff is going to be kind of
+mixed around keep it mind these are very
+well organized insurgents if they have
+this much infrastructure especially
+right next to all these other things but
+hey this is is just for demonstration
+purposes so let's go ahead and grab
+ourselves an infantry platoon here and
+this is basically going to be our boss
+so to speak so grab generic H you can
+even come down here and type in I think
+they have terrorists but I'm not going
+to worry you can even hit Rebels if you
+want to have a little bit of fun with
+that totally up to you you can also just
+do generic Recon again pretty good so
+I'm going to come here and I'm going to
+say
+headquarters um
+Insurgent who that's a nice spell the
+Insurgent HQ press okay obviously this
+would be a very high priority Target and
+one of the things they would do of
+course is they crank up the proficiency
+little bit to represent that they know a
+little bit more um they're going to need
+Transportation so I'm going to come in
+here too we're actually going to go over
+ground unit real quickly here actually
+you know we'll give them a group of
+trucks we'll keep it simple for them
+truck and we're just going to run down
+to the bottom here know we have a bunch
+of different options here we can do like
+a little gager we can do a humy why to
+use a hve that's perfectly fine we can
+actually do a couple of those just to
+kind of represent sort of their organic
+Transportation last thing we're going to
+want is somewhere to store some
+ammunition so I'm just going to come in
+here I'm going to create myself an ammo
+dump ammo pad is probably plenty here as
+a matter of fact it's too big again you
+can see that it's detectable out to one
+which is that's a lot of space but it's
+about the best they would have and again
+until we have the ability to go in and
+like edit things individually we can't
+do that just make sure it's not autod
+detectable I can't say that enough so
+this looks pretty good um we'll add a
+little surprise for the player here I'm
+going to come in here real quick here
+and I'm grab myself something preferably
+something in the not too huge actually
+it's basically perfect 14.5 23 mm that's
+actually pretty good but that's huge
+again these folks need to be able to
+move these things around in the jungle
+so it's a little unreasonable to expect
+them to have have something that big oh
+let's say oron that's actually not bad
+either I think that's just a little
+little tiny thing Optical sight again 20
+mm that's got to be a bit of a
+surprise the state forces to say the
+least let's grab this one real quickly
+the zuboo and that should be fine for us
+and that'll be the APA or not APA
+that'll be AAA and looks pretty good all
+right let's go ahead and save our
+scenario here nice so now we have the
+Insurgent base of operations and like I
+said I can go grab that little point
+that we created I'm just going to drag
+it over here so I have a pretty good
+idea so this kind of makes sense uh
+we're not too far away from verbosa and
+we can see again normally we would never
+be operating this close this stupidly
+close to all the civilian territories
+but it at least gives us you know
+something to work from that's a little
+bit reasonable here so now we're going
+to do is we're going to go ahead and
+create a couple different organic forces
+now one of the things they're going to
+want to do is they're going to want to
+make sure they protect all of their
+lines of communication that's going to
+be critical for Insurgent groups here um
+obviously if you can't talk to the guy
+that just got cut off by the government
+forces you go smacking right into him
+anyway so we need to kind of predict
+where they're going to be to keep an eye
+on things and that's kind of the fun now
+again we've got our work cut out for us
+cuz when to look carefully here we can
+see a lot of these territories have
+pretty high peaks so I'm going to come
+over here I'm just going to sneak in an
+observer uh there's a lot of different
+ways to do observers you can do a little
+infantry section observation post I love
+this one cuz it's simple they're just
+basically standing there keeping an eye
+on everything that's going on inside of
+the valley uh we can grab another one of
+these groups too again trying to get all
+these uh these are going to be the
+hardest ones to find to be honest and
+we'll just go ahead and take a bunch of
+Peaks and of course Barbosa which is
+going to be our Target if you put it
+here it'll be spotted immediately it's
+not going to be worth it and we'll go
+toss them up here real quick and uh just
+trying to see if there's another spot
+yeah right there looks good so now we
+have a bunch of observation posts I'll
+go ah and save everything because we've
+done a pretty nice job with this so far
+now it's a matter of adding the actual
+Insurgent groups themselves now there's
+a bunch of different ways we could do
+this kind of the fun way of course would
+be to basically uh spam out a lot of
+groups and then let them kind of just
+kind of go to town and that's again one
+of those sort of neat things that they
+will do here so what I'm going to do
+real fast is I'm going to go ahead and
+populate a bunch of Rebel groups here
+I'm Type in Rebel here grab this one
+looks pretty good I'm just going to read
+Insurgent group go ahead and press okay
+that looks pretty good shift see and all
+I'm going to do is kind of sprinkle them
+around and you'll see why I'm sprinkling
+them around a second looks pretty good
+to me that looks awesome yeah they're
+all nice and spread out nice and
+irritating again that's the thing that
+makes coin op so incredibly hard now one
+of the things I always like to do when
+I'm making scenarios especially if other
+people are going to play them is I
+always like to cheat a little and I give
+the player kind of a a freebie in the
+reason I'm going to give the player
+freebie is to make them feel like
+they're so clever you know kind of a
+thing like that but what will happen is
+here is you got these great little kind
+of paths that everybody can take so what
+you can do is you can pick a point on
+that path that one of the enemy units
+got stuck in and the reason I love stuff
+like that is it it gives you basically a
+free shot kind of a thing and it
+sometimes reveals but what I also like
+to do cuz I'm a mean designer is I like
+to design the scenarios so that this is
+the base we need to keep the player away
+from this so I'll give the freebie
+somewhere else so I'm going to come up
+here to a s Bonito that looks pretty
+good to me press insert I'm going to go
+put a rebel unit here that just does not
+make any sense so some to do an ammo
+truck oh my God what a dumb thing to do
+here and I'm just going to assume
+they're just taking the highway and the
+reason I'm doing this is because it's
+going to give the player basically a
+free shots and I love doing stuff like
+this cuz the people are like oh I'm so
+clever I I found your ammo trucks I must
+have found where the insurgents are
+hanging out me while I'm like
+nope awesome so the last thing of course
+what I want to do is I want to give them
+something to do there's a lot of groups
+here leaving them in the woods is
+perfectly fine this is going to be more
+than challenging enough of a scenario
+without us having to get really
+sophisticated here but I want to make a
+group that's actually actively like kind
+of getting stuff done so to speak so
+what I'm going to do is I'm going to go
+ahead and grab this little group here
+and I'm going to come in here and
+actually add an organized or
+organization sounds pretty good to me
+grab myself uh we're going to go ahead
+and do some let's see here INF and we're
+going to give them a little bit more
+capability than they really should have
+so I'm actually going to add a mortar
+you know the reason I'm adding a mortar
+here is um it scares the player to death
+uh when they see a 60 mm mortar
+basically exploding over our heads now
+you can see here the range in this
+mortar is pathetic but um that's not a
+problem and again it's going to make
+things interesting for the players cuz
+I'm going to put them right here like
+that now what a lot of players will do a
+lot of scenario designers is they'll
+actually allow them to get into position
+and then let them start coming to town
+um these guys are not particularly fast
+you if I click on them and press F3 and
+do one of those things you'll notice my
+top speed here is 16 16 knots man those
+guys can move so what I'm going to do is
+I'm going to move them here and then I'm
+going to order them to get into range of
+the city so that they don't just start
+dropping bombs in the first five minutes
+of the scenario so I'm going to go ahead
+and order them to move there throw them
+all the way over here and that's going
+to take them a pretty good length of
+time to cover that distance let's go
+ahead and measure that real fast that's
+a 3.38 me nautical miles it'll be about
+an hour's travel time yeah makes sense
+so let's go set this to creep H we'll
+actually make you go four here um s
+sorry one of the things I do want to do
+is I'm going to press contr F9 here and
+I'm going to go ahead and order them to
+engage opportunity targets so they will
+be harassing the player pretty much
+right away when the scenario starts
+about an hour in after they get into
+position now one other thing we could do
+too so we can grab one of my a lot of
+the sections that just kind of buried
+somewhere and we could order them to
+kind of sneak into the town and kind of
+do their things all right that's looking
+really really good so far we have
+ourselves a really good basis of
+different stuff going on so what I want
+to do now is I want to go ahead and
+start thinking about the uh feder allies
+kind of so to speak so I'm going to go
+ahead and now switch over here press the
+Columbia Team Real Fast actually yeah
+press contrl V so we can't see it and we
+know we have some allies targets here
+now of course what you usually want to
+do is you want to design the scenario so
+that they're going to have some tools at
+their disposal but never enough to be
+able to put all the fires out at a time
+unless you're looking for like a squash
+match so to speak which is that's a
+little different so what I need to do is
+figure out where our aircraft are going
+to be operating from you know again the
+way we can do that is we can go back to
+the topo map and I can see we have Paka
+down here we have on and we have Bogata
+which is actually not far away that's um
+what do we got here uh it's 82 82 not
+Comm is perfectly fine for me so what I
+like to do is I always like to see if
+there's already something available for
+me so I come in here open the sucker up
+we're going to go down to Colombia and
+we're going to see if there's something
+already ready for us here uh let's see
+here that's uh this one we have this one
+bi Ventura that's I got some naval
+aircraft I like that that's a GC car
+that's Nicaragua that's uh Southern
+California Ernesto modest airbase and
+Bogata okay that's not bad we could
+probably work with that one Captain
+Louise it's a fighter base east of
+Bogata perfect press close and what that
+will do is that will get us a fighter
+base of course I did not press
+insert so unfortunately I have to go
+back and do that one again but not going
+to worry about it too too much it's one
+of those kind of a deals so what I want
+to do is I'm going to go ahead and
+create a single unit Airfield for that
+particular purpose now there a couple
+different ways we can do this let me go
+swing back to this mode real fast the
+first thing we can do of course is we
+can create ourselves kind of like where
+we'd expect that Airfield to be like
+down in bataa for example go down to
+Airfield we're going to go ahead and
+make it really L small I know there's
+these fun tactical support ones which
+looks good that looks pretty good to me
+we'll do 2600 and we'll call this um
+operating operating airport obviously we
+have the actual name we should always do
+something along those lines I always
+like to shut off the autod detectable so
+now we have to think about a couple
+different things here what are we going
+to have as far as forces goes are we
+going to have military forces that we
+can deploy by helicopter are we going to
+have forces that we actually have the
+ability to uh just kind of order into
+the region are we going to do everything
+by the air and we have to start thinking
+about those things before we head to our
+next step there we go so what do we want
+to do is we want to give the user a
+couple different options so they can
+deploy what makes most sense for us so
+for this we know that we're probably
+going to have to take our lovely airport
+we just imported that a second ago by
+the way yay for editing um what we're
+going to do here is we're going to go
+ahead and populate our airport with some
+stuff now I want to see what we have at
+this airport oh that's a lot of lot of
+lot of stuff here and I notice here wh
+let me press my 9 k a keyboard Let's see
+we have a building we have an aircraft
+hanger we have an ammo shelter we have
+some we Airport terminal Ah that's what
+I wanted to find kind of a thing like
+that and the reason I'm interested in
+the airport terminal here is cuz the
+airport terminal is going to be the
+place where we're going to put our
+infantry where we can get some stuff
+that's the control tower that's some
+tarmac space that's some more tarmac
+space it's a boy H this is part of the
+fun everyone there we go let's see if I
+can spot it kind of the old fashioned
+way here uh I've never been here before
+so I don't know where the terminal is
+aha got you so we have our El Dorado
+passenger cargo terminal excellent so
+this is going to allow us to go ahead
+and populate some of our forces that we
+can use in our scenario here go ahead
+and save our scenario real quick so what
+I'm going to do is I'm actually going to
+break my group up here you can press the
+nine key and you numpad by the way to
+switch toing this I'm want to find El
+Dorado cargo Passenger Terminal building
+and I'm going to go ahead and add some
+cargo to it so we need to figure out
+what kind of stuff we can add and
+there's so many different choices of
+course if we go over to the database you
+can see that we have plenty of things to
+pick from here and again different
+people have different ways of kind of
+loading thing so one thing you'll notice
+is you have mobile facilities and you'll
+notice you have ground facilities or
+mobile facilities ground unit it's got
+it so one of the things we need to think
+about is how we're going to do this and
+one of the cool things is if you
+actually go down here to filter by if I
+just type in I in f um your computer's
+going to lag so hard you're going to
+think you broke something but after we
+do that of course you can actually see
+there's plenty of infantry groups to
+pick from and we have infantry platoon
+we have infantry sections so many good
+choices now ideally one of the things we
+do is we come down here and there' be
+Colombian troops for us but that's fine
+I'm just going to grab some infantry
+platoons so what we're going to do is
+load them up uh we can do Special Forces
+we can do paramilitaries there's so many
+different things we could put in here
+depending what we can do we can put
+straight up a paratroopers if we wanted
+to do this so I'm going to go ahead and
+one of the cool things is you can go
+ahead and give them custom names you a
+302 infantry or something but for my
+purposes today I'm not going to do that
+instead what I'm going to do is I'm just
+going to add in a bunch of generic
+infantry platoons you know nothing crazy
+nothing special I'm not going to add
+anything on so now what I'm going to do
+is I'm going to give the user kind of a
+freebie as the best way to say that I'm
+going to go ahead and add a Mor as well
+the mortar is going to unbalance the
+scenario so painfully you might not be
+able to come back from it so I just kind
+of keep that in mind the moment you get
+the mortar things are going to change
+around here so let's see we have a 60 mm
+Mount that's actually not quite what I
+want uh we have mortar sections uh 20 60
+60s are pretty good size and we have a
+couple different groups here so we're
+just going to go ahead and give them one
+of them just like that uh that's going
+to give us just a little bit of stuff to
+work with and again as you play the
+scenario a thousand times you're going
+to have a fairly good idea of what to do
+with that so I'm going to go and save
+all this real quickly I like that I'm go
+ahead and close that so now we have
+cargo and if you press edit cargo it's
+going to get very grumpy at you because
+remember remember the cargo is part of
+that one building here so now let's add
+some aircraft U we have a million
+different aircraft to pick from for this
+particular purpose one of the things we
+could do is you can actually come down
+here to Colombia and you can see we have
+some great choices and it'll even do
+things like let us know how many of them
+they want for example we want a 37s
+which are one of my absolute favorite
+coin planes they're not great but they
+work great of course we have the super
+tanos which are absolutely fantastic
+these are much newer airplanes we can
+definitely utilize those as well and you
+also get really critical things like
+helicopters and we're going to need some
+of that cuz it's going to make our life
+a little bit easier we also have some
+strike aircraft in here depending again
+we even have some Mirage fivs which are
+great uh one of these great things here
+is we have the OT 47b which is awesome
+so I'm actually going to go ahead and
+add one of those and we're going to just
+do this again one of the things we could
+do is come through here and know
+carefully name and rename everything but
+I kind of like that again this is just
+the initial piece Colombian Army we'll
+go ahead and add about 12 of those
+plenty of those that's actually too many
+but um that's okay and we can come back
+and edit these things and now we need to
+get ourselves some of our coin planes to
+make things interesting so we have the 8
+37s 829s the correct answer here of
+course is the 37s and now 12 is quite a
+few you can see they own 32 of them so
+having 12 is a lot so we're going to
+make sure half of these are maintenance
+so that we can't actually utilize them
+and then of course it's just a matter of
+do you want to add some uavs to make it
+a little bit easier I do you want to add
+some kind of you know refueling aircraft
+again depending on how much time you're
+going to be spending in the air a lot of
+really really good choices and we'll go
+ahead and add one to scan Eagle here
+that's a pretty good collection of
+forces and you probably sitting here
+going really uh let's go ahead and set
+that up so what I'm going to do now is
+I'm going to come over here I'm going to
+press my F6 key and I'm going to get
+this set up so the OT 47b real quick I'm
+going to grab that one and I'm just
+going to set this into area surveillance
+I'm going to enable quick uh this is a
+military operation after all our
+helicopters even though we have that
+many of them I'm only going to give you
+a few of them and we have a couple
+different choices here so we could do
+airdrop and stuff like that that's going
+to give us a little bit of cargo
+capacity run down here we're going to
+set these to maintenance these are just
+to kind of taunt the players coming down
+to the a37 uh we're going to have six of
+those ready to go you can see we have a
+bunch of different choices here and keep
+in mind whatever we end up picking is
+going to be what we're kind of stuck
+with um we can go ahead and add in our
+different types of Munitions and stuff
+and again let the player choose that
+kind of depending on how they want to do
+it but for us we're just going to keep
+it simple I'm just going to give the
+users a bunch of these which is plenty
+and we're going to grab the rest of them
+we're going to slam them into a
+maintenance of
+course now we're going to come down to
+the scan Eagle here we're going to press
+ready arm real fast we'll set this one
+to area surveillance and now we have
+ourselves a really really good group of
+units now one of the things you probably
+observed here when we were setting this
+up if I click on Bard one real quick and
+I press the cargo Ops button one of the
+things you'll notice is I can't load any
+infantry into this unit this is a cargo
+only helicopter so we have to fix that
+fortunately for us the Bell 212 utility
+helicopter uh they've got a couple of
+these which is actually pretty nice uh
+they do have the ability to carry
+Commandos uh that's only going to be
+part of a solution let me show you why
+you'll see here after we open them up
+even though we've given them a load out
+for Commandos you'll see we we still
+don't have enough space here the problem
+we have is our infantry platoon are
+16 we need a much larger helicopter for
+this so there's a lot of different ways
+we can solve this one and I kind of like
+to use this method
+personally ah wasn't it nice at the
+United States military offered to give
+us some CH 47s now the interesting
+problem with this one and we'll go ahead
+and take a look at that real quick is uh
+when you actually go to ready arm this
+particular unit you'll probably observe
+that it has 33 or 55 so when actually
+want to Lad groups into this I can
+actually go to Cargo Ops and you can see
+I have everything ready to rock here one
+thing I cannot carry though is I can't
+carry this mortar section H that's part
+of the fun and the reason I can't carry
+it of course it's just a little bit too
+big you can see here the biggest thing I
+can carry I can't carry small that's
+just too much to us of course if you
+were to run up to our to L2 12s or
+something like that we could and one of
+the things you could do of course is we
+could come in here and switch this to a
+slung load cargo uh this would be an
+interesting experience for that crew and
+if go back to Cargo Ops here you will
+see we can now carry the mortar section
+which you have fun being slung lo as a
+mortar team but again it is a when
+you're the designer of the scenario you
+can decide exactly how you want to
+handle that that's not bad and of course
+the other thing we could have done too
+is reduce the size of the squads if we
+can actually make handheld manual squads
+too if we wanted which works but I don't
+know it just gets a little gets kind of
+finicky so I'm not going to play with
+that too too much and again we can get a
+little creative as far as how this goes
+I'll go back to the this one we'll go
+ahead and set this back to 33 troops
+ready immediately we'll grab uh 33
+troops we'll go ready arm we'll go ahead
+and set these ones both to Cargo cargo
+slung load ready arm so now we can
+actually carry the mortar so we're ready
+to go so now we're in a really good spot
+as far as our scenario Goos one thing we
+could do of course is to make it a
+little bit easier for the player is we
+could go up to scenario and features
+here we could go down to at
+communication realistic Communications
+we don't need that Fire Control I like
+we can make the unlimited magazines at
+air Naval bases not a bad choice and I
+of course like the Advanced terrain
+techniques which makes things fun so now
+of course this is the fun part of the
+scenario this is when we're going to
+kind of build some of the last couple
+pieces that we're going to need for the
+purposes of scenario these are going to
+be things like briefings uh these are
+going to be things like setting up our
+events and all kind of our trackers and
+stuff like that but we have enough stuff
+to go on now to kind of give this thing
+a spin one thing I will do of course is
+I give it a
+date uh let's see here we'll set this up
+relatively early in the morning so we'll
+do 14:30 that should be pretty early
+Okie do Okie do and that consist about
+9:30 in the morning which is are pretty
+darn good so let's go ahead and adjust
+the weather I'll go up to weather it
+would not be that cold it would be quite
+a bit warmer do 22 in the Celsius scale
+we could actually bring in some rain if
+we wanted one thing I like to do is I
+bring in some moderate clouds that's
+perfectly fine make it it's not going to
+be windy windy because of all the trees
+here but at least it makes it a little
+bit more
+interesting so at this point we switch
+to the let's play with the scenario
+stage everything is saved we've got
+aircraft ready to go we've got our stuff
+done one thing we did not do is we
+didn't go into Doctrine a lot of people
+when you're doing coin on s they'll
+actually change this into sustained and
+the nice advantage of that of course is
+it's going to slow your scenario down
+massively which it might be more
+realistic but it might not be as much
+fun just something be careful there and
+one other thing I always like to do too
+is if you're going to do air to ground
+strafing it's a good time to set up some
+air to ground strafing if that's
+something you desire to do so let's go
+ahead and get our scenario started again
+we're just going to play this one very
+very quickly to get a feel for just kind
+of how it works so obviously most
+players what they would do is they go
+ahead and say this is going to be my AO
+and again you would take time to create
+zones around on this and everything but
+we've been going on half an hour already
+we going to give some folks kind of a an
+opportunity to see kind of the fun so to
+speak I'll do a control insert real
+quick we're going to put control f11
+here we're going to say support track
+again we're just going of keep this as
+simple as possible like I said speedrun
+as they like to say so we'll go ahead
+and toss some things on that right away
+grab our scan Eagle which is fantastic
+we'll also grab our OTB traffic and
+we're going to throw both of those on
+there Mission settings I'm not going do
+one/ third rule um absolutely we're
+dealing with terrorists are people
+basically run around the woods I should
+be more specific one person's terrorist
+is another person's Freedom Fighter
+everybody knows that so I'm going to
+come over here I'm going to set that to
+active uh it's not going to make that
+much of a difference here and one of the
+things we can do too is lower the
+altitude substantially Cu uh right now
+our aircraft settings here transition
+station throttle's fine station
+altitudes way too high I'm going set
+this to our 12,000 ft here that's going
+to give us a little bit better view
+you're going to have to get very close
+to see things here um now that we've
+gotten that uh next thing I would want
+to do if I were playing this as if it
+was a real scenario is I'd be loading up
+all my stuff um I had my my two
+helicopters here cargo Ops I'd shove as
+many people as I absolutely positively
+could that's two squads not a lot I'm
+going to grab over to this cargo Ops
+here I'm going to goe and throw a couple
+of these on here as well I'll load all
+confirm on that one we're going to grab
+our popular number three here he gets
+the mortar team the mor team in my
+opinion is the most important thing that
+they're going to have so I'm going to go
+to unpause I keep in mind I already
+saved the scenario speed up time a
+little bit here there goes my two
+scanning units one thing I want to check
+real quickly is it's going I'm looking
+at my c47s it's going to take him 9
+minutes to get going I'm going to go
+ahead and take these two right away some
+people like can you just do like a Ops
+like a cargo Ops operation he absolutely
+could the reason I rather do this by
+hand is when you get scenarios that are
+this small and this simple I really like
+to do stuff by hand I don't know it's
+just it's more fun that way to me so I'm
+going to go ahead and order this well
+basically my CH 47s I could set up a
+cargo like an operation where they go
+back and forth and do all this manually
+but luckily I've already spotted
+something so uh that works for me it
+looks like we spotted the enemy's Camp
+there so now that we've spotted the
+enemy's Camp I'm immediately going to go
+ahead and control f11 uh unfortunately
+for them their camouflage sucked uh
+strike this I'm going to go ahead do a
+strike land strike press and we're going
+to go ahead commit all of my a37 to this
+purpose I hate the idea of committing
+all of my a37 so I'm going to leave two
+of them as Reserve here just for the
+purposes of kind of helping us out if
+things go down um I'm going to strike
+this
+right you know how many times I've done
+that I do that to myself every single
+time so we're going to leave a couple in
+reserve I always recommend Reserve um
+Reserve is critical Mission settings
+it's going to be a group of four that's
+perfectly fine for me escorts uh one
+time attack uh nah they want to go down
+and dive into the weeds there and kind
+of do their thing they're going to be
+fine so at least we have something
+prioritized we've kind of given a frag
+order here unpause and then we're going
+to go ahead and send that group of units
+up there right away and of course so we
+have my infantry coming so they're going
+to be coming in a minute there they go
+oh we spotted something so we spotted
+some enemy infantry there which is fine
+we got lucky on that one um now we can
+go ahead and grab those other aircraft
+that I mentioned a few minutes ago we
+can get them going as well let's get uh
+my two groups here let's go and launch
+that group we're going to launch our
+mortar crew I think our mortar crew is
+on board this one if I recall correctly
+yes it is so I'm going to go ahead and
+get him Airborne as well again we can
+handle all these things with missions
+but I don't know it's just kind of fun
+to do it this way so let's see here
+again now you have all these things to
+keep track
+of little skan Eagle gu is kind of doing
+his thing again you can do a patrol
+Mission too go zoom in here one thing
+that's kind of fun is you can go like
+this so you can actually tweak with
+Direction so here comes my Tucanos uh
+they're going to come rushing in here
+diving across the jungle at super low
+altitude one thing you don't get a
+really good look at here is just how
+rough this terrain is this is very
+unpleasant terrain to say the least
+let's go and see here comes the bble one
+here okay they're going in to attack the
+camp what a lucky day that we got
+something like this and now we can kind
+of just come zinging down here they're
+about to drop a ton of rockets all over
+that and again it would just be a matter
+of testing this scenario there they
+go oh we wasted a lot of those Rockets
+but uh part of the fun as they say and
+keep in mind there is a humpy here and
+oh we dropped a couple bombs I really
+hope you did not waste that on that
+stupid antenna I'm going to be mad for
+you
+oh
+ah that was expensive waste of
+ammunition let's go a and grab this
+other group here I'm going to go ahead
+and order them to Target that infantry
+and they're just going to kind of hang
+out in the region after they get our
+born like I said always have a reserve
+then of course my ch47 is going to be
+coming in and we're going to get ready
+for oh there's something else nice hey
+we're starting to find all sorts of fun
+things here my twoos are doing their
+thing bombing that enemy camp that we
+spotted again relatively too easy of a
+camp to spot but again we had really
+really really nice uh units for this and
+it's not like anybody firing s7s or
+anything up at us or anything like that
+and then we can go ahead and get our
+ch47 in position and then my regular
+infantry can start doing their work
+let's go ahead and grab my mortar team
+we got to find a good spot for my mortar
+team grab that one real quick uh let's
+see here good spot for Mortar team
+probably centrally located I'm just
+going to put them right there and that
+will be a little bit easy for us Tucanos
+are doing their little piece actually I
+keep saying that my tweets are doing all
+their work here which is awesome they're
+coming around for the pass again you can
+see how challenging it is though when we
+lose sight of the target here we really
+desperately need that particular um
+basically the UAV to have it all right
+these folks are good so I'm going to go
+ahead and order them to unload everybody
+unload unloading cargo now does anybody
+remember that
+game that was a pretty fun game I
+enjoyed that one let's see here Force
+Commander by the
+way and oh no we're under no no no aort
+aort and look at look at that right on
+time my Mort crew did exactly what I
+wanted them to do look at how nice that
+is see how it creates like a fun
+scenario like the player thinks they got
+it and then all of a sudden things start
+going downhill I've got to get these
+guys to an altitude where they actually
+can unload things they're little high up
+right now of course you right click and
+order them to unload units and it's just
+going to get so messy because they're up
+here nice and low you got to get them
+all the way down to a hover got to get
+them down to minimum altitude here and
+all that other good stuff and you can
+see they're kind of taking their sweet
+time
+yeah folks uh we can also unassign them
+too unassign hover minimum
+altitude do I need to break you into two
+different groups yeah part of the fun go
+break these into two different groups
+We'll order him to uh hover minimum
+altitude we're going to grab him hover
+it was just him I was being order ah
+it's one of those fun things like I
+always do there we go thank you popular
+one thank you thank you unload please
+grab him unload it's going to be very
+Challen unload because of this mountain
+strain I'm probably going to have to
+take these s helicopters and take them
+up to this flat spot but that's all part
+of the fun of uh doing scenarios and
+testing things out so we can see here
+that our motor crews are firing but look
+at that just on time my a37 is come
+running now look at that well done a37
+I'm going to go order them to go do that
+attack as well and now we have ourselves
+a pretty darn fun
+scenario so as you can see creating
+scenarios like this a lot of fun uh it
+doesn't take too long to build a
+scenario a lot of things we'd have to
+change one thing is we're probably going
+to adjust the helicopter infantry
+situation cuz we can see we're
+struggling with that a little bit one
+thing we'll have to do is probably put
+the Infantry to unload them here or
+we're going to have to put an air base
+and then eject them from the air base
+set up like a farp kind of in this
+region maybe a helipad or a small like
+civil airport we could do something like
+that it's not too bad uh the other thing
+we noticed is our little base was very
+easy to spot and like I said on our
+little Target trucks remember how
+there's trucks going down this year we
+never even saw them but again that's
+part of the fun and then the other thing
+I think too is that we have just a
+little bit too good of reconnaissance we
+probably should waited for the attack
+and then kind of zip through a low
+altitud with airplanes to go at it but
+as you can see pretty cool stuff pretty
+cool stuff enjoy

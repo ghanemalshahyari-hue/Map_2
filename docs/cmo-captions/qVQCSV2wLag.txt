@@ -1,0 +1,819 @@
+# C: MO - Making a cold war scenario part 1
+Video: https://www.youtube.com/watch?v=qVQCSV2wLag
+Video ID: qVQCSV2wLag
+
+hello everyone in today's video i
+thought we'd do something a little bit
+different um recently we've been doing a
+lot of kind of experimental different
+ideas and
+i thought it'd be a good time to kind of
+run back and do a little bit of stuff
+with some scenarios
+so when i was kind of sitting there
+going i'd really like to do something in
+the cold war you know it would be kind
+of a neat scenario that kind of blends
+in some elements i brought in before
+as well as bringing some elements that
+maybe are a little bit new to some folks
+and
+i've spoken around my library and i came
+across this kind of interesting book
+called the emerging shield and now for
+those of you who haven't checked this
+one down you can actually grab this this
+is just a pdf it came
+right out of the defense.gov there's
+actually a whole library of these kind
+of books and they're super duper
+fascinating
+but basically what this book talked
+about is it talked about and let me get
+down to our
+table of contents down here this is
+really interesting stuff at least to me
+is it talked about the problem of air
+defense from the united states
+perspective it went into the early years
+which is actually a really curious read
+because it talks about things like
+well they initially used machine guns
+and then they used a large caliber
+artillery which could traverse upwards
+and they talk about war ii how they
+start to bring in the integrated air
+defense system
+they have a whole piece here that says
+okay now aircraft are getting faster
+what do we do
+we talked about this guy named seville a
+very very creative little guy who
+invented the radar fence which we know
+is the do line we'll deal with that
+later
+we invented something called continental
+air command cac which
+we barely even saw this thing later on
+of course it became air defense command
+which is what we're going to concentrate
+on us
+the navy of course got involved and
+talked a little bit about this of course
+the ruski's got themselves one of those
+atomic bombs
+and things everything got very serious
+we had korea which was kind of
+interesting because you realize how
+dangerous jets are
+it then started talking about sage which
+was an amazing system which you can see
+right here
+basically a computerized air defense
+system that we had for many many years
+and of course then later on it became
+the joint command which was much much
+and then they started talking about the
+icbms and how the traditional idea of
+defending against a bomber basically
+became moot now the reason i really love
+this book is because it actually gets
+into the nuts and bolts which every once
+in a while you get lucky
+let me actually skip ahead just a teeny
+time but there we go
+so what it'll do is it'll actually do
+things like describe where the different
+crews were and where they operated and
+stuff along those lines
+you know scrolling all the way down here
+would even do things that you're really
+really going to need to know
+it told us how many of different
+aircraft were available at different
+years
+it could tell you things like you know
+what kind of bombers they were expecting
+about it talks about bomark it talks
+about sage everything like that
+look at the size it's building by the
+way so this is really really cool but
+how do we translate something like this
+into a scenario
+so the first thing first is i'm thinking
+okay so why was this developed it was
+basically designed as a way to
+counteract
+any sort of you know basically massive
+bomber invasion from the soviet union
+now there was a perception for quite a
+while and the russians had no problem
+kind of continuing this deception that
+they had basically 1500 nuclear bombs
+ready to go at a moment's notice
+we know past much much later on that
+that wasn't true
+but you know we might as well play to
+the fears and see if it actually
+happened that is the point of command
+right
+okay so let's work out the geography
+real quickly here and then we'll work
+out where everybody's got to go like i
+said it's probably going to be a
+multi-part video i don't think i can do
+all of this in one sitting
+so basically uh here's our little russia
+we got our siberia on the side of things
+we've got kamchatka over here on the
+and everything like this so if we wanted
+to attack the continental united states
+with a bomber
+if we were to do it in basically a
+straight line we're going to get
+something that looks a little bit like
+this
+you know we can go all the way over to
+like mermansk and the cola peninsula and
+everything along those lines you know
+severnayas over this way
+but we end up with about a 4 000
+nautical mile direct line if we're going
+to try to harass washington dc directly
+now if we're interested in let's say
+attacking texas which is a little bit
+further away
+you can see that that trip jumps up to
+about 4 500 nautical miles in a straight
+line
+so looking at this it's it that that's
+that's a heck of a distance
+so what do we have for bombers well
+before we do that we need to figure out
+what year we're going to pick for the
+scenario
+now for me i'm going to go with 1955.
+now the reason i like 55 is it's
+just before we started getting all the
+fighter aircraft that you saw like the
+f-102 f-104s
+f-100s and we were just getting to those
+transitional days we had you know not so
+great airplanes such as the f-89
+or the f94 and a bunch of really really
+goofy solutions
+but the good news was that the other
+guys really didn't have bombers ever
+capable of doing anything dangerous
+so let's take a look at what we have at
+our disposal for that era so
+first things first from the russians
+perspective we have a couple different
+bombs that we can utilize here again i
+should be more specific this is the ussr
+it's not just russia
+i'm going to make that mistake about a
+thousand times you're going to have to
+forgive me for that
+so i'm going to go ahead and now set my
+i'll come up to here database we're
+going to set it to cold war database
+remember do that first before you do
+anything with a new scenario
+and now we are in business so let's go
+ahead and set this to soviet union
+is it me is there no soviet union here
+it's right there okay let's take a look
+so we had the bison which came out 1958
+uh this is a very
+very big jet bomber it's actually a
+really cool bomber if you've never seen
+a picture of this thing
+sometimes you get lucky and they got a
+good picture not gonna worry about it
+too much
+those are all not things we got i'll be
+the aisle 28 which oh man you want to
+talk about a goofy bomber this is
+pretty darn goofy it's pretty cool
+actually uh we have everybody's favorite
+uh we're going to go down the tupolev
+because they were pretty much at the
+bomber crew over there they're like your
+boeing of the day
+let's scroll down uh tupulip tupelo live
+tuplev well we want the tupolev
+obviously not the fiddler are the boson
+i'm not interested in that
+but we are interested in is the badger a
+which came out in 1955 so the badger a
+is in
+so let's see here the badger a has a
+range let's scroll all the way down at
+the bottom again this would be the
+research phase of missions like this
+some people do like to take a look at
+this let's see here 45 000 feet
+that's going to give us a pretty good
+let's see we have we carry one rn42
+that's going to give us let's see here
+scroll down the load outs r and 42
+i guess it's a 1300 nautical mile which
+is actually 2600 nautical miles because
+it's a one-way mission and we intend to
+treat it that way
+so i'm going to go ahead and grab myself
+my notepad real quickly again this is
+exactly what i do in the real world you
+know this is the real world
+g16a it's got a 1600 nm max
+so that's it that's as far as we're
+going to get with that one so that's not
+bad
+oh we have a couple different versions
+of the badger of course and all these
+are a little bit too late for us because
+remember we need 1955
+here so let's go through the badgers
+that's not too bad i'll be the tuple of
+two which is a teeny teeny tiny airplane
+i don't think it's going to be able to
+get to us no not even close
+that's going to give us 300 miles
+garbage we have the blinder which we
+can't use yet because it's too new
+ah this is the one i was hoping to find
+the bull we have the a and we have the
+regular one
+what's the difference you might ask the
+a model carries an ru57
+and it has a 2 324 nautical mile strike
+radius okay now we're talking two three
+two four times two
+that's a forty six hundred nautical
+miles hey i like that
+4600 nmx okay we can work with that
+all right let's see what else we have do
+we get the we can't have any of these
+these don't actually exist
+uh let's see here we have the kd how
+about the bear a 1957
+ah that is so lame this would be a great
+bomber for this particular exercise but
+unfortunately it just does not have the
+reach that we can use for this
+and that's going to be it as far as what
+we get for bombers which is a little
+depressing
+okay so let's work with this if we're
+doing a tu4 that's going to give us a
+range of what we say 4 600 nautical
+miles
+which means if we want to hit austin
+we're going to do something that looks
+like this
+which means our strike is going to be uh
+if we come out of here that's that's
+pretty much yeah
+pretty much our strike no matter what is
+going to have to come out like this we
+don't really have a choice there
+if we come out of cola i'm just going to
+try this real quick again 4 600 miles is
+our limit here
+that gets us yeah that's not going to
+hit texas can i hit dc
+ah barely hits dc you get a little bit
+of new england here and you get a little
+bit of this
+so it looks to me like our tu-16s are
+going to have to basically come out of
+here
+which means you're going to get pretty
+much remember about a 2600 nautical
+that's going to get us yeah kind of this
+side of things but um it's not too too
+so let's go ahead and create our sides
+now add edit sides we'll call them red
+four we don't actually know what they're
+going to be but
+that's fine for me we're going to go
+ahead and grab our other side we'll call
+it blue four
+let's go ahead and press that one as
+well we'll set them to be very unhappy
+with each other because as soon as they
+find out they launched
+everything they're gonna get a little
+grumpy let's grab red four
+so i'm gonna come down here and i'm just
+gonna create myself just a little
+marshalling point here that just kind of
+reminds me
+of exactly where we are i'm going to
+call this marshall oh man this is
+confusing
+we'll call this marshall point 216.
+the whole purpose is this is just to let
+me know where everybody's going to be
+coming from
+my other ones the two fours on the flip
+side i'm going to make them have to go
+the long way
+so if we come directly out of here like
+i said your severnaya side of things
+i think yeah we can just about get to
+florida i think we can get to texas from
+here yes we can get to texas from there
+so that's going to be marshall point
+tupolev4a
+go ahead god that one disable it uh
+marshall.24
+hey this is going to be important for us
+because these are going to be our two
+starting points for our
+massive massive bomber strikes so that's
+pretty much all i need to do on that
+side
+so far i've got myself kind of my
+initial marshall points i've got myself
+everything else
+so now we enter the difficult part and
+this is the part that everybody gets a
+little bit stuck on when they're
+building scenarios like this
+and that's going to be to install all of
+the squadrons and all of the air bases
+that are going to be protecting the
+content of the united states
+so how do we figure this out well the
+great news is is we have this thing
+called wikipedia
+i'm going to go ahead and type in
+tactical we'll call air
+defense command go ahead and hit that
+one real quickly
+and it gives you this great little
+layout which talks all about the
+different years all about the different
+aircraft
+but importantly for us it breaks it down
+by what air force
+what region and if you look carefully
+enough it'll
+actually tell you what your air defense
+sectors are and everything that you're
+going to possibly need along these lines
+now what you can do is you can go
+through each one of these and they'll
+talk about like the different aircraft
+and all the different people like that
+that are going to be coming through it
+again this is a pretty involved
+as far as doing research so what i would
+do is i'd actually come in here and i've
+done this
+stuffed oreos you don't have to worry
+about that too too much for it let's see
+interceptor aircraft i will go to
+interceptor squadrons and you can see
+that this actually breaks
+us down by squadron by year by airplane
+this is a tremendous amount of
+information and it's also written in a
+way that's extremely difficult to work
+with
+because you actually have multiple
+problems here you have air bases which
+you're going to have to locate
+you've also got squadrons which you're
+going to have to name then you're going
+to have
+aircraft which you're going to have to
+assign so
+what i did and i took a couple minutes
+to do this a little bit earlier so that
+i didn't have to sit here and do it in
+front of you kind of a thing
+i actually broke it down a little bit
+like this i have all the different air
+force bases here
+and again i located all the different
+squadrons on it what i did not do which
+was
+going to take a lifetime was actually
+label each and every one of these
+quadrants
+if you were to do that step you'd be
+here for a very very very very very very
+long time
+so that's something that i do typically
+avoid because like i said i'm not going
+to make this video
+16 hours just be going through by the
+way there's this thing that you're going
+to hear about called scenario creep
+where you take a neat scenario
+and you basically make it too big but uh
+that's going to bother us
+so now what are we going to do so we
+know where the error bases themselves
+are we know what squadrons and how many
+of each one of the squadrons are going
+to be located at databases
+how do we translate that into command
+well there's a lot of different ways to
+do it there's kind of the hard way
+there's kind of the easier way there's a
+bunch of different methods
+but the method i actually use for this
+let me go ahead and grab my google earth
+real quickly here
+go ahead and pull this down so you all
+can see it is what i actually whoa
+sorry about that give me that so what i
+actually did is i
+created a little kml that had all the
+different air bases located around the
+united states
+and then i made sure they're all labeled
+correctly this took a little while to do
+but it wasn't exactly killer because
+again you had the great resource that i
+had already taken notes on
+now one of the greatest things about
+command is you actually have the ability
+to take this kml file save the kml file
+and you can actually go ahead and
+basically convert that kml file
+into an imports file so after i did all
+that step again i'm kind of skipping
+that bit here because you
+i'll be here for a little while if i do
+that as i simply built an import file
+i'll go down to cover database and go
+down to united states
+and you can see i have culver air bases
+so it's a boop just like that and then i
+instantaneously have
+all did i accidentally put them on the
+russian side i did so apparently
+americans are also the ussr today so i
+can fix that
+and this gave me all of the air bases
+now since i have all the air bases all
+ready to go
+now it's simply a matter of going
+through and programming each one of
+these squadrons being located at that
+base
+now typically the way i would do that is
+i come up here let's say i would grab
+this airbase here
+one thing's for sure is that when i did
+do this originally i made the awful
+mistake of
+not naming them properly when i did the
+conversion that's something
+that that's my bad that's not your bad
+so then what i would do is i'd have to
+go pop over here real quick
+go back over to google earth and
+determine exactly which airport this was
+then i simply rename it so i'll show you
+what i do for one of those then i'll
+kind of fast forward so you can kind of
+see what the rest look like so to speak
+so that's pain air force base so come up
+here type in pane afb
+i'd go ahead and press ctrl f6 and bring
+up my little screen here and then we
+just need to find out who is that pane
+afb
+here so i'd come down here i'd scroll
+down to where painife is and it says it
+is the f89
+now the f89 is a very curious aircraft
+so you're sitting there going oh there's
+so many different versions of the f-89
+which one do i pick
+well we want to pick the one we have so
+if you take a look here at my years
+remember we're in 1955 well
+we will be in 1955. let's go and fix
+that mistake i just made real quick
+1955 we'll make it right in the middle
+of the summer and of course we'll make
+it extremely early in the day
+i'll do 0.630 copy
+okay delightful okay that's a little
+better so we know that none of these
+aircraft are available except
+the d model the scorpion so now we know
+in the united states all squadrons are
+about 24 wide so come down here i'll
+type in 24.
+i'll press add now you're probably
+saying well wait a minute can you
+actually name this properly because i
+mean if i click on this right now
+boop and look at this these are called
+black lens or one you know that's kind
+of generic can we
+actually do the appropriate squadron
+name the answer is yes absolutely
+so we could go up here and go back to
+payne
+up in washington that's the wrong one
+yep the
+321st fighter interceptor squadron
+so we can come up here and we can grab
+these guys just like that we could post
+them down like this
+or if we want to be a little bit calm we
+could do fs fis
+just to be a little bit safer we'd say
+there's 24 because that's how large a
+squadron well i just gave them bison b's
+sorry about that we'll go to f89ds again
+this is going to be unices air force
+add so now we have the actual squadron
+so when i bring them up you'll see it
+gives me the actual squadron here
+now remember there aren't just one of
+these air bases there's going to be
+several there's like 50 of these spread
+around the united states so this can
+take a very long time so as a scenario
+designer you need to ask yourself
+is it worth me to polish the cannonball
+some people think it's like the greatest
+thing in the world because you can tell
+me exactly which plane crashed or
+something like that
+so let's say we went ahead and we did
+all these squadrons and just went all
+the way through and
+you know we kind of snap our fingers and
+bang it's all done
+oh there we go so now bang it's all done
+so what we do now is we'd have to go
+ahead and go ahead and once we have all
+the squadrons where they need to be
+is go ahead and equip them so that
+they're ready i gotta stop saying go
+ahead i'm sorry so
+click on that and press f6 so this is a
+typical little squadron here notice i
+opted not to go ahead and label each
+squadron by squadron because again
+without the individual histories of them
+it can be very difficult to know exactly
+which one and again it's running into
+the polish the cannonball problem
+so how many of these aircraft do we need
+to make available to the player
+now some people would argue there's no
+reason to put a full squadron here and i
+actually kind of agree with those people
+the reason being of course is if we do
+choose to do something along those lines
+you're going to have other issues
+because now there's a lot of units you
+have to keep track of in the scenario
+usually as a general rule i like to use
+a third at a time so i'm going to grab
+this one i'll grab this one right here
+click that and i'm going to go ahead and
+select the typical loadout which is the
+mighty mouse rocket
+typically what i do is then you take the
+next third of the squadron and you go
+ahead and make them
+arming they're not armed they are arming
+then we come down here ready arm we're
+gonna go ahead and slap these guys into
+maintenance not available
+now one interesting problem we're gonna
+run into is our time to ready it's going
+to be three hours which is actually
+extremely
+unlikely because it's kind of early in
+the morning number one
+and it's also technically during peace
+time so as a result uh
+we can solve that if we go up to our you
+know kind of
+all down here obviously we want to grant
+the use of nuclear weapons here
+we could cause this scenario to be using
+a sustained air operation kind of a
+of course if there's nuclear armageddon
+on the way stained might not actually be
+a likely plan that we'd be using here so
+you have to make a decision from a
+scenario perspective if you want to use
+either one of these
+sustain is going to take 20 hours to arm
+those airplanes
+which is probably not going to be enough
+time but again if you want to make the
+scenario a lot harder you make it
+sustained if you'll make a little easier
+you can put it to surge
+we'll put it to sustain because we're
+jerks okay so then what you would have
+to do of course is
+you can see there's quite a few of these
+air bases and each one of them have been
+populated by the appropriate squadrons
+is you'd have to go through and
+basically arm each one of these ones so
+each one is going to be a third
+now there's something kind of
+interesting and i thought this would be
+kind of a fun example if i go up to
+dallas
+you notice my f-86ds are ready but
+they're red
+the reason being is it's the middle of
+the night and these aircraft were not
+nitrated aircraft so as a result you
+actually cannot use them at night
+so if the bombers show up in the middle
+of the night we're kind of busted
+okay so we're basically going to go
+through that now that's all set i've got
+all my air bases everything's ready to
+go
+next thing we're going to be taking a
+look at is going to be our air defense
+kind of our warning now if you remember
+from what we took a look at that book a
+little bit earlier the method they used
+for this was basically having the pine
+tree line the dew line
+basically a bunch of radar stations kind
+of along the front here here
+remember since this is our scenario we
+can kind of design it how we want
+so we know that the bombers are
+basically going to be coming from over
+here and we know the rest of the bombers
+are going to be coming from over there
+so we have no need really of putting
+radar stations in places the bombers
+won't show up
+i know you're sitting there going well
+that's kind of unrealistic well you need
+to think about it another way for a
+second here
+if they are coming here and they're not
+coming over here this is a lot of cpu
+cycles we're going to be wasting doing
+constant radar calculations
+for literally hundreds of radar stations
+against 1 000
+individual targets if you do the math on
+that real quickly you realize that gets
+a little absurd pretty quick
+that being said we're going to do the
+best we can with what we have so we're
+going to compromise so i'm going to go
+ahead and load these units in
+i'm going to import it's exports again
+this is built in by naturals you don't
+have to worry about this too too much
+continental us so we have the sam sites
+which we'll need we have the dual line
+and of course we have pine tree and of
+course we have sage
+we're going to leave sage out just more
+units we don't need so i'm going to grab
+the pine tree i'm going to grab the do
+and press
+load select the installations you're
+going hey that wasn't so bad
+[Laughter]
+oh you thought it wasn't so bad eh yeah
+as you can see
+there's a lot of radar stations that
+that particularly loads in and
+thank god somebody took the time to
+create and put all these things in here
+because this would have taken me a half
+a lifetime to basically get all this
+information
+the air bases were bad enough trust me
+when i say that so like i was saying a
+minute ago we only need the radars we're
+actually going to be using here so
+there's a couple different philosophies
+we can use to sort of approach that
+first of course we can get rid of the do
+line which i know you're probably
+sitting there going
+wait why would you get rid of the do
+line because that's like the critical
+early warning position
+well you're not wrong in that regard or
+of course we can come down here we can
+get rid of the pine tree line
+now the pine tree line is going to be
+kind of our last emergency so this is
+the one line that you want to hang on to
+as much as possible
+so it's like what do you do do we get
+rid of those do we get rid of those oh
+no what do we do
+well the strategy i would actually
+advise here and this is actually very
+very interesting if you want to do it by
+the way they named each one of these
+which blows my mind
+again thank you thank you that was great
+research um one thing we could do here
+is we could go ahead and design it so
+that you know we've got everything we're
+only using like half the radar stations
+turned on at any time
+or we could leave it to the player
+whether or not they want to turn the
+radar stations on or off
+kind of what i'm thinking is basically
+removing the side of the do line we
+don't actually need
+remember they're going to be coming from
+this way basically through here which
+means stuff down here is worthless stuff
+in here is worthless
+if you come from up here like i said a
+severnay and stuff like that
+the middle is going to become much more
+important but you can see that drawing
+this arc
+the most useless radar stations are the
+ones basically over here
+so what i'm actually going to do is i'm
+going to press the 9 key so i can select
+these things i'm going to grab
+all these over here that i don't need
+and look away while i press the delete
+key
+boom they're gone also we know that
+these are not really going to serve a
+purpose because there's nobody going to
+be coming from that perspective
+and we know that these way way way way
+over here are not going to serve much of
+a purpose either so i'm going to go
+ahead and get rid of those as well
+so now what we've done is we've just
+taken the two lines and we shrunk them
+significantly so we have kind of the
+northwest version of the do line and we
+kind of have the south version of the
+pine tree line
+there's actually another it's called the
+mid-canada line which we don't have
+represented here which is even more
+radar stations
+so you're going to have to kind of think
+about that now good creative scenario
+designers will actually break several of
+these radar stations
+in order to simulate you know mechanical
+maintenance or anything along those
+lines
+all right so this is all set now this is
+all set now i'm kind of happy the way
+this is going i'll do a quick save so
+we're good to go
+so basically what we're going to do now
+is over now i need to think about what
+are the targets
+of you know this massive raid of russian
+bombers going to be
+so uh the way i like to do this one is i
+like to get myself what they call the
+world cities import
+that gives us the ability to import all
+the different cities throughout the
+so that we can quickly you know
+basically have themselves some targets
+and they're ready to go
+okay i think this is probably going to
+be a pretty good place to call this
+video you know i've been going i've been
+rambling for 21 minutes already
+and you can kind of already see i'm
+starting to get kind of the structure of
+this part took a little while as you can
+probably imagine and it will make this
+scenario available for you to play with
+a little later on
+so like each and every one of these air
+bases has got themselves plenty of
+interceptors
+and we'll deal with strategy as well as
+the russians next time enjoy

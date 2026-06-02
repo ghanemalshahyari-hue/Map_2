@@ -1,0 +1,221 @@
+# C: MO - Effect of Multiple Jammers on Detection
+Video: https://www.youtube.com/watch?v=FI-ZwDubiMY
+Video ID: FI-ZwDubiMY
+
+hello everyone in today's video we're
+going to be taking a look at the effect
+of adding multiple jamming pods to a
+single unit as far as detectability goes
+so switch around real quickly on a red
+team here we have this handy dandy this
+is a tall rack this is the nebo m this
+is a very very very large radar and a
+very very capable radar for detecting
+things at long ranges on the receiving
+end though we've got ourselves a b52h
+and basically we've stored everything
+internally and we're going to make some
+electronic modifications to this b52
+just to try things out and see if it
+makes an impact on as far as adding more
+offensive jamming pods so what i'm gonna
+do is i'm gonna go to sensors obviously
+we've got tons of different tools here
+so i'm gonna go ahead and move that one
+we'll go ahead and get rid of that one
+couple more radar we're starting
+receivers that sounds pretty good i'm
+not gonna worry about too much so we've
+removed all of our electronic warfare
+gear on here at this time so what i'm
+going to have them do is go ahead and
+fly directly over that radar and see at
+what distance does our radar actually
+pick them up and then we'll go ahead and
+try adding some of the jamming and see
+if we can affect that just a little bit
+so actually what we need to do is back
+our b52 up even more because
+unfortunately the sky has a really
+really really really really long range
+so go ahead and put them all the way
+back there save our scenario switch back
+to the other guys shut off god's eye
+view let's go ahead and pause and see
+how it takes to pick for b52 here again
+the p52 is a fairly large target so it
+shouldn't take too long oh that was nice
+okay let's see here take a look at our
+message log new air contact new air
+contact at a distance of
+250 nautical miles so uh we could
+definitely benefit from some electronic
+attack here so let's go ahead and reset
+the mission real quickly go to blue team
+go ahead and grab our b52 and to sensors
+we're going to add in a single
+uh jamming system here we'll do an
+a-n-a-o-q because uh everybody loves
+e-a-l-q oh it's the one i'm gonna play
+with today let's see with some decm i
+really actually you know what keep it
+nice and simple today i'll do a generic
+oecm and we'll go ahead and call it
+generic 2000's oecm i think that's fair
+so again close that i'm going to turn
+the jamming mode on and we're going to
+switch to the other side and see if we
+can pick up that target at less than 250
+nautical miles which is what we'd expect
+it to be so go ahead and unpause we're
+going to speed up time a little bit here
+and pause okay so let's take a look at
+what happened here so in this case my
+jammer was running full blast and we
+were absolutely bombarding that sucker
+but as far as i can tell and i think
+this is going to be something kind of
+interesting is the fact we picked up the
+target at exactly the same distance as a
+matter of fact if you take a look we
+picked them at a newer at a farther out
+distance than we did previously now
+you're probably sitting here going wait
+that makes no sense weren't you trying
+to jam that guy of course i was trying
+to jam the guy how come he wasn't jammed
+well take a look real quickly here and
+this is an interesting concept that
+you're going to have to kind of keep in
+mind you'll notice that my search and
+track band here is the b band now if i
+go switch over to my handy dandy b52
+real quickly here my b 52 with all
+itself fancy pants electronics here
+let's see generic oecm let's go ahead
+and take a look at that actually i don't
+know actually we may not have access to
+that sensor that would be too oh it is
+we don't have it shucks so a generic
+oecm does not have the ability to jam on
+the b band it actually has to jam on
+higher bands so in this case it just
+made itself more electronically obvious
+which i goes to show you you want to be
+kind of careful with these kind of
+things so let's go ahead and reset
+everything again real fast go ahead and
+grab my little blue guy put them back
+over here and let's give them something
+that actually works this time so let's
+go into here filter by kill keyword i'm
+going to do a 99 because 99s are easy
+let's go ahead and get the one i like
+let's say and i can't block 86. ooh the
+x oh my gosh that one's like cheating
+we're gonna go and add one of these this
+is an anal q 99j this is more than
+powerful and capable enough to a block
+on that particular frequency so i'm
+going to save this real quick remember
+we only have one jamming pot operating
+at this time so let's see what happens
+uh when we go ahead and run things speed
+up time
+oh he's jammed
+he's jammed he's jam run oh and he's
+been detected let's see what distance we
+were able to actually identify our new
+air contact here at a distance of 104
+nautical miles interesting so now what
+we're going to do is we're going to
+reset our scenario real fast
+and now what we're going to do is we're
+going to add a second jammer onto this
+one now we're doubling our jamming power
+here so we expect the range of the
+target to be reduced by about a quarter
+again that's just doing some really
+really quick uh fake math here let's see
+a n a l q 99 juliet that's the i89
+that's the 80i boop now we've got two of
+them
+so we're going to go ahead and shut this
+jamming off and then we're going to turn
+this jamming back on just confirm that
+both are optional rational good so we're
+going to go ahead and switch back to the
+other side red team go ahead and unpause
+so remember the last time we picked them
+out at 105 nautical miles let's see what
+happens this time with double the
+jamming power
+pause let's go ahead and see how we did
+pop it to new air contact new air
+contact bogey
+nautical miles now you're probably
+sitting there going that was a two
+nautical mile difference i thought you
+said we're gonna have a quarter power
+change hmm
+so let's see just how poorly this
+actually scales and i think this is
+actually really interesting so let's
+switch back to blue go and get our b52
+one more time we'll go back over to our
+sensors and we're gonna go ahead and add
+a five of these because you know why not
+we'll do eight and a oq 99 juliet that's
+the one
+oh yeah
+so now we've just converted uh one two
+three four one two three four five now
+we have five of these things on on check
+my sensors window oh yeah now that's
+what i call electronic noise so let's go
+ahead and switch back to red team you
+know go ahead and see how five have an
+impact on the actual detection range
+here i think you'll find this kind of
+interesting
+our range of detection went up
+so now the reason this is significant is
+because you're going but we put so much
+electronic power onto that radar there's
+no way they still would have been able
+to burn through and detect us believe it
+or not it doesn't make that much of a
+difference by adding more jammers at
+least in this universe in this game i
+should say one of the big advantages of
+adding multiple jammers is it increases
+the amount of variety of techniques that
+you can use and also forces the other
+guy to have to kind of split up the
+different types of powers and also again
+remember jammers usually are going to be
+hanging outside of the attack and
+jamming inwards versus basically going
+along with the ride it's a big
+difference
+and the other thing as we saw in our
+earlier example if you jam on the wrong
+frequency you can't really safely jam it
+so if the enemy here had like nine
+different radars and they're all in
+different frequencies our single jamming
+pod would only be able to get a couple
+of them at least well now if we had nine
+different radar frequencies we had nine
+different jammers we could successfully
+jam each one of those frequencies in
+turn and that is something modeled in
+command hopefully this video is a little
+interesting like i said it's always kind
+of neat to run these little experiments
+to kind of see the misconceptions versus
+the reality and it gives you a pretty
+good idea of just how effective or if
+you want to think of it another way
+ineffective electronic attack can be
+enjoy

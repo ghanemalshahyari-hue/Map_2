@@ -2043,6 +2043,12 @@
         // is a placeholder; applyState() fills it as the trial progresses.
         addSitrep();
 
+        try {
+            document.dispatchEvent(new CustomEvent('rmooz:scenario-visibility-changed', {
+                detail: { drawn: true }
+            }));
+        } catch (_) { /* ignore */ }
+
         return true;
     }
 
@@ -4483,6 +4489,8 @@
         blsCoordByName = {};
         objCoord = null;
         unitRegistry = {};
+        lastAppliedState = null;
+        lastAppliedScenario = null;
         runningDestroyedUids = new Set();
         lastAppliedStepIndex = -1;
         playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
@@ -4493,6 +4501,11 @@
         engagementGraphicsStep = 0; // MG1: reset engagement mission-graphic step tracker
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
+        try {
+            document.dispatchEvent(new CustomEvent('rmooz:scenario-visibility-changed', {
+                detail: { drawn: false }
+            }));
+        } catch (_) { /* ignore */ }
     }
 
     // ── Find existing user-placed Blue marker by base id ─────────────
@@ -4988,6 +5001,8 @@
             reg.canMove  = true;
         }
         runningDestroyedUids = new Set();
+        lastAppliedState = null;
+        lastAppliedScenario = null;
         lastAppliedStepIndex = -1;
         playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
         try { clearEchelonAggregates(); } catch (_) {} // echelon roll-up: drop aggregates
@@ -5118,6 +5133,14 @@
             phase_line_km: (objDepthKm || 95) * Math.max(0, Math.min(1, progress || 0)),
             blue_actions:  null,   // fall back to the local schedule
         };
+
+        if ((Number.isFinite(stepIndex) ? stepIndex : 0) <= 0) {
+            resetMap();
+            updateUnitPositions(syntheticState);
+            try { renderEchelonRollup(); } catch (_) { /* ignore */ }
+            return true;
+        }
+
         updateUnitPositions(syntheticState);
         // AN1: refresh per-unit attrition visuals, but only when the step
         // index actually changes (this is called repeatedly with fractional

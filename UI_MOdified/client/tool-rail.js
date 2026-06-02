@@ -201,6 +201,22 @@
         return warGameLoadPromise;
     }
 
+    /* ── Unit panel visibility ────────────────────────────────────────── */
+    function syncUnitPanel(tool) {
+        const unitPanel = document.getElementById('unit-panel');
+        if (!unitPanel) return;
+        if (tool !== 'select') {
+            unitPanel.setAttribute('hidden', '');
+        } else {
+            const up = window.AppShellUnitPanel;
+            if (up) {
+                const unit = up.getCurrentUnit();
+                if (unit) up.renderUnit(unit);
+                else up.renderEmpty();
+            }
+        }
+    }
+
     /* ── Rail button state ────────────────────────────────────────────── */
     function updateRailButtons(tool) {
         document.querySelectorAll('.tool-rail-btn').forEach(btn => {
@@ -246,6 +262,7 @@
                 })
                 .catch(err => console.warn('War Game engine load failed', err));
             setTimeout(showWarGameHud, 250);
+            syncUnitPanel(tool);
             return;
         }
 
@@ -278,6 +295,9 @@
 
         // 5. Ensure context panel is visible
         if (contextPanel) contextPanel.style.display = '';
+
+        // 6. Hide unit panel when not in select mode; restore it on select
+        syncUnitPanel(tool);
     }
 
     /* ── Wire tool rail clicks ────────────────────────────────────────── */
@@ -331,6 +351,7 @@
                 updateRailButtons(tool);
                 updateHeaders(tool);
                 setVisibleSections(tool);
+                syncUnitPanel(tool);
             }
             // Always re-apply drawing section visibility to override app.js's
             // switchSidebarForMode which may have shown symbolManager for 'pan' mode

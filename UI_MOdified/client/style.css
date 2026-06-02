@@ -5594,6 +5594,16 @@ body.orbat-dock-resizing .map-workspace .leaflet-bottom {
     color: var(--text-main);
     font-size: 12px;
     overflow: hidden;
+    transition: right 200ms ease;
+}
+
+/* Shift unit-panel left when ops-intel or chat panels are open,
+   so it doesn't sit under them. */
+.ops-intel-panel.is-visible ~ .unit-panel {
+    right: clamp(270px, 20vw, 330px);
+}
+.chat-sidebar:not(.collapsed) ~ .unit-panel {
+    right: clamp(260px, 22vw, 360px);
 }
 
 /* Keep unit panel pinned to the physical right edge across EN/AR so

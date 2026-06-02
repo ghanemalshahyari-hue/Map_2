@@ -94,6 +94,42 @@
         return d;
     }
 
+    /* ---- "New scenario" seeds (build fresh, not edit the loaded one) ------- */
+    function buildBlankDraft() {
+        var d;
+        if (window.AppScenarioAuthoring &&
+            typeof window.AppScenarioAuthoring.buildStandardScenarioAuthoringTemplate === 'function') {
+            d = clone(window.AppScenarioAuthoring.buildStandardScenarioAuthoringTemplate());
+        } else {
+            d = { scenario_label: '', scenario_id: '', steps: [] };
+        }
+        if (!Array.isArray(d.sides) || !d.sides.length) d.sides = defaultSides();
+        if (!d.postures || typeof d.postures !== 'object') d.postures = defaultPostures();
+        d.authoring_status = 'draft';
+        return d;
+    }
+    function startBlankScenario() {
+        _draft = buildBlankDraft();
+        renderEditor();
+        setStatus('New BLANK scenario started — build it step by step, then Save to working copy.', false);
+        logOperator('New blank scenario started');
+    }
+    function startScenarioFromSample() {
+        setStatus('Loading sample…', false);
+        fetch('/samples/sample-sahil-corridor.json', { credentials: 'same-origin' })
+            .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+            .then(function (j) {
+                _draft = clone(j);
+                if (!Array.isArray(_draft.sides) || !_draft.sides.length) _draft.sides = defaultSides();
+                if (!_draft.postures || typeof _draft.postures !== 'object') _draft.postures = defaultPostures();
+                _draft.authoring_status = 'draft';
+                renderEditor();
+                setStatus('New scenario seeded from sample (Sahil Corridor). Edit, then Save to working copy.', false);
+                logOperator('New scenario started from sample');
+            })
+            .catch(function (e) { setStatus('Could not load sample: ' + e.message, true); });
+    }
+
     /* ---- safety gate via the P0 authoring module -------------------------- */
     function draftIsSafe(d) {
         try {
@@ -161,6 +197,25 @@
         if (!host) return;
         host.innerHTML = '';
         if (!_draft) _draft = buildDraft();
+
+        /* --- New scenario picker (Blank vs From-sample) — build fresh, not edit loaded --- */
+        var newCard = el('div', { class: 'builder-card sw-card' }, [
+            el('div', { class: 'builder-card-header' }, [
+                el('span', { class: 'builder-card-title', text: 'New scenario / سيناريو جديد' })
+            ])
+        ]);
+        var blankBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Blank / فارغ' });
+        blankBtn.addEventListener('click', function () {
+            if (window.confirm('Start a new BLANK scenario? This replaces the current draft (the loaded scenario is untouched until you Save).')) startBlankScenario();
+        });
+        var sampleBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'From sample / من نموذج' });
+        sampleBtn.addEventListener('click', function () {
+            if (window.confirm('Start from the sample scenario (Sahil Corridor)? This replaces the current draft.')) startScenarioFromSample();
+        });
+        newCard.appendChild(el('div', { class: 'sw-edit-actions' }, [blankBtn, sampleBtn]));
+        newCard.appendChild(el('div', { class: 'sw-edit-hint',
+            text: 'Blank = empty template, build from scratch (CMO step by step). From sample = the validated Sahil Corridor example to edit.' }));
+        host.appendChild(newCard);
 
         /* --- Scenario Metadata --- */
         var meta = el('div', { class: 'builder-card sw-card' }, [

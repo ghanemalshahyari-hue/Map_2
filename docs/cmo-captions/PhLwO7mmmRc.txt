@@ -1,0 +1,543 @@
+# C: MO - Strike Plan Workflow
+Video: https://www.youtube.com/watch?v=PhLwO7mmmRc
+Video ID: PhLwO7mmmRc
+
+hello everyone in today's video we're
+going to be answering some questions
+that people are having about the strike
+planner a bunch of players have been
+away for a while or we just have a group
+of very very new players to this and
+like oh my God what if you're done to
+the mission editor it's not nearly as
+scary as it looks and I'll kind of walk
+you through sort of my workflow in a
+pretty typical strike sort of a scenario
+so here we are in the tip of Florida
+down here and uh down here we're going
+to be striking Havana Havana because why
+not it's there so we're going to go
+ahead and set up a pretty standard
+Mission here with the support elements
+we're going to use the flight plan
+editor a little bit here to kind of play
+with some things and kind of just show
+you sort of what's different is for how
+I would use that information so first
+things first let's get ourselves a
+support track going here and our support
+track is going to take care of both fuel
+as well as some radar services so go
+ahead I like that supports services
+limited liability Corporation because
+why not let's go down here we'll do a
+support Mission press OK it's going to
+bring up our mission editor now you're
+probably going to see a bunch of brand
+new things on here some of this looks
+different one thing you probably want to
+do is hide that it's just going to make
+your life just a little bit simpler for
+what we're doing we also have this
+Dynamic option now this is very very
+very Advanced and it's a very much a
+work in progress because this is a beta
+version of command so this is something
+we'll deal with in a later video it's
+actually pretty wild how that works so
+let's go ahead and grab my support
+elements here we've got to say refueling
+as well as a warning star here a good
+thing to go ahead and use the one-third
+rule on this one the other thing I'm
+going to do too is under this m con I'm
+going to go ahead and select it so it's
+going to be using Active Radar that's
+going to work pretty well for us another
+thing you probably notice coming down
+here is We Now can do take off times and
+time on Targets this is a really big
+deal for us
+the reason I say that is on account of
+the fact that I want to make sure that I
+have a good high value cap going on
+before my aircraft get to that position
+so what I'm going to do here is that
+it's currently 11 30 Zulu time I'm going
+to go ahead and order these guys to take
+off at uh let's call it 11 40. so that's
+going to give us about 10 minutes time
+to go ahead and set up those other
+aircraft so now what I'm going to do is
+I'm going to come back down here Ctrl
+right click we'll do a rectangle go
+ahead and Define my little half cap Zone
+and press Ctrl f11 we're going to go
+ahead and say hav Capital that's got a
+nice little pop there Patrol aw so now
+what I'm going to do is I'm going to
+grab four of my Phantoms here one I'll
+grab hash one oh and I've got everybody
+patch two patch three patch four okay
+that looks pretty good toss them down
+here we're going to order them size of
+two one third rule sounds good to me
+we're also going to make sure that uh
+after they do an engagement they don't
+go running away which is always
+frustrating I use air-to-air guns oh
+heck yeah we definitely want that cool
+so let's select that option have cap is
+set we're also going to make sure that
+they don't go wandering down to Cuba to
+try to become you know Tom Cruise's and
+stuff like that up so it looks pretty
+good that looks pretty good that looks
+pretty good and we're going to go ahead
+and Define their takeoff time to be uh
+11 30 and I don't know 30 seconds so
+they take off they start the takeoff
+process 30 seconds now the great thing
+here is remember our Support Services
+limited liability Corporation they're
+not going to take off until 11 40.
+giving these guys time to get into
+position see how useful that is
+so now we're going to do is plan our
+main strike down in Havana so I'm going
+to come down to him and I'm going to
+click on my target which is going to be
+this level the airbrush here
+control f11 uh let's see um we'll be
+very polite here very polite here
+perfect we'll go ahead and call this a
+little dance strike press OK Google and
+now things get a little more complicated
+so things over here on this side are
+pretty much the same I don't know where
+anything is so I'm just going to kind of
+be old school here I'm just going to
+take the runway off the hangers sound
+pretty yummy to me we also have this
+also critical fuel tank uh one of the
+things I learned is playing command for
+as long as I have is that this isn't how
+you should do this really what you
+should do is have four or five missions
+each Mission has its own Target at the
+air base or what I see some people do is
+they'll actually get people into a
+support Mission and then basically blow
+everybody up when they get there kind of
+a thing those both work well but we
+don't need to worry about that today so
+let's go ahead and grab my Strikers
+we're going to be using f4es this is the
+correct Phantom it's also has the
+correct Loadout of having a bunch of
+Mark 82 is just a ton of them sweet a
+flight size we're going to set the
+flight size to six so it's going to be
+slightly larger now the next thing
+you're probably going to notice is if
+you come down here we've got some new
+buttons to play with here we've got
+attack methods and split distances and
+off axi attacks and everything like that
+good that's exactly what we want before
+I do that though
+I'm going to set a time on target to be
+uh let's call it 12 30. I should give
+them plenty of time for everything to
+get in place before we start a mission
+notice as soon as I did that by the way
+that you noticed we had this new Flight
+Plan up here we also have a holding
+pattern right here which is really
+really awesome now you can get a little
+old-fashioned with this I can actually
+click on these points here I can press
+f2 and you can actually come in and
+customize each and every one of those
+waypoints something we've done before
+make sure before you do that by the way
+you actually come down here and you like
+click these guys to make sure the one
+that you're actually editing is the one
+you're editing now the other thing we
+can do and this is really really cool is
+if I click come down here and press
+flight plan editor you'll notice it
+actually pops up a little GUI here that
+allows me to customize all the points on
+the flight plan themselves like one
+thing you're going to notice is that we
+have all the different aircraft here and
+we also of course have all the different
+flights up here as well you can do
+things like changing the aircraft we can
+copy the flight plan paste it we can
+insert waypoints which is exactly what I
+intend to do here we can edit speeds we
+can do everything as a general rule of
+this is what I found kind of the
+workflow for me do while you Waypoint
+stuff then do all your altitude and
+speed stuff also make sure whatever your
+time on target is is set before you
+start running around and starting to
+click these
+these little guys by the way these
+little locks allow you to set certain
+times of day or certain types of speeds
+so for example if I wanted to dial a
+speed to be this speed that's going to
+change my timeline Target which requires
+a change in all the speeds here yeah we
+have time on target now which is
+freaking awesome so what I'm going to do
+here is I'm going to add an extra
+Waypoint right after you can see my
+Turning Point highlights right here I
+want a waypoint that comes after hold
+end to refuel the aircraft so I'm going
+to press insert Waypoint and it's going
+to get all grumpy at me and it's going
+to say did you mean Turning Point what
+have you done so I'm like no I don't
+want a turning point I want a refuel yes
+just like that we now have a refueling
+point so remember how I set up that cool
+little refueling track check this out my
+aircraft are intentionally going to get
+gas on the way to their target area to
+actually get gas on the way then come
+back and go do the thing Isn't that cool
+I love that feature I mean this oh man
+this is something I've wanted for so
+long the other thing I like to do is I
+like to tweak altitudes like I'm looking
+right now and I can see actually let's
+go grab a bone cheetah 472 cheetah four
+seven we're gonna say uh let's see here
+holding point I think we added the
+Waypoint right here insert Waypoint
+looks good to me there's that lovely
+Waypoint for we're going to switch that
+to a refueling Waypoint as well yeah
+it's fine grab it and we're gonna go
+ahead and toss it right here and just
+like that we now have two refueling
+waypoints which are awesome because now
+I can go ahead and do stuff so the other
+thing I like to do here and by the way
+be careful because we have all the
+airplanes here and you can change which
+one's which so just be mindful of what
+you're changing here the other thing I'm
+going to do is down to Target uh 200
+feet is too low if I do 200 feet they'll
+get chewed up by 23 millimeter cannons
+which yeah some people like that I don't
+somebody got at speed altitude come in
+here I'm going to click them up to
+afterburner I'm going to pop them up to
+2000 feet so now when they cross the
+target they're going to be going out a
+lot faster and they're going to be just
+a tiny bit higher I'm also going to go
+down to Bones one six here we have a
+little Target click on that one right
+here altitude edit speed and altitude
+we're going to set them up to 2000 go up
+to afterburner so now we have a refuel
+Point as well as a place to print a
+little extra gas too when we're over the
+target uh the other thing that people do
+which I think is really really super
+clever is see how it holds now we can
+actually change the altitude of the hold
+so you notice right now my hold starts
+at two grand why waste fuel at low
+altitude when you could change it to a
+high altitude and actually take
+advantage of the thinner air for the
+purposes of your holes obviously you
+don't let the enemies know that you're
+holding but it's a I think it's a
+perfectly valid strategy hold start and
+we're going to go ahead and edit the
+speed and altitude we're going to go up
+to well that would have been a mistake
+however yeah definitely however that's
+going to be the speed I want to travel
+at 36 000 feet so you can see we're
+loitering at 36 for a hold so we can
+save gas we're going to get gas we're
+going to do our thing and then we're
+going to attack a 2 000 feet so this is
+all set and ready to rock now you're
+probably going hey what about all these
+like attack methods and stuff like that
+I'm not going to play with these today I
+have a separate video in that if you
+want to kind of take a look at them if
+you change these or you change the time
+on target I got some bad news these two
+flights will reset that flight plan
+it'll regenerate every single time you
+do it I sort of wish there was like a
+regen button here that would like hold
+off until you click it or it doesn't do
+it until it launches but as it is now if
+you make any changes here it's going to
+regenerate all that work it's going to
+be gone so just be mindful of that
+so now what I'm going to do is I'm going
+to go up to Homestead Air Base click
+right here press F6 I'm going to go
+ahead and grab my lovely little f4ds
+remember how we reserve some of them I'm
+going to right click assign a mission
+escorts now I did that that way because
+it's just a little easier for me it's
+again another one of those things that
+played the game too long it just works
+best for me but one thing I will do is
+go back to f11 notice by the way our
+flights are perfectly intact nothing bad
+happened go to escorts I'm going to set
+my flight size to two if you're
+wondering about that by the way is it
+because I have eight and six so unless I
+have 48 aircraft there's no way we're
+going to get a nice uh LCD there so I'm
+we're gonna have to deal with two so oh
+wow that's just how big they're gonna be
+the other thing I want to do too is I'm
+going to go over to my mcon Rubber and
+I'm going to come over here and make it
+so that they actually use the air-to-air
+guns and run themselves out of
+ammunition another thing you can
+actually do here is this cool button
+engage until shotgun I'm engaging so
+Winchester keep dropping bombs people
+like that's that's what we gave you
+bombs for like let them rip so now
+there's one more thing we're going to
+take a look at before we take a look at
+the next section
+and that is going to be the error
+tasking order so the error tasking order
+now gives you the ability to see all of
+your flights in one place of people who
+are fans of Falcon you know exactly what
+this looks like so I can actually come
+in here and go boing and you can see
+everybody we can see what time they're
+taking off we can change who's flying we
+can change their names if you're one of
+those kind of people I don't know I like
+doing it because remember if you name a
+flight they live longer so we have our
+local objective time we have Zulu time
+all these things can be locked you can
+change your take off you can change the
+landing position everything is here a
+nice nice easy to read position so
+that's good to go go ahead and close
+that and that's it
+let's go ahead and quickly I'll auto
+save that sucker just in case because I
+always miss that one thing and I don't
+want to be that guy who's like whoopsies
+and I have to run back and reset it all
+all right let's see what happens here so
+we're going to go ahead and get going so
+as you recall our first flight starts
+the process at 11 30 in 30 seconds so
+I'm about two minutes after that
+particular Point what he's going to do
+he's going to come ripping into the sky
+ding
+oh psyched me out I forgot these are
+pretty long runways so that's kind of
+effective oh there he goes you psyched
+me out how could you it's okay though so
+he's got to get going of course my
+strato tankers and of course uh There
+Goes My escort remember how I set the
+escort to get there first check this out
+they're just gonna fly right over there
+and they're going to start doing their
+little escorty thing first I'm gonna
+flag all these guys as bad guys because
+I'm pretty confident they're not
+friendly
+so then of course we wait around for a
+while at any point we can come up here
+and see the ATO go to the ATL we can see
+the takeoff time is going to be 6 52 in
+the AM scale uh that's about five
+minutes from now I think I gave them
+just enough time to get the Safeway all
+right that's going to be pretty darn
+soon so now of course the process of
+getting those guys are airborne there
+they go so they're taking off oh look at
+that look at that oh it's gone now I
+can't see it there's my refueling point
+so check it out so these guys this is of
+course our escort so the escorts can
+take off at any time here's one of my
+squads here bones one six they enter
+into the flight check this out they are
+climbing up to 36 000 feet isn't that so
+clever it's just better to have them up
+at that altitude especially if you got
+like a really big package like I've
+recreated like raids and like you know
+Germany for World War II with beef 29s
+and stuff like that um yes the B-29 was
+not used in the Western Front deal but
+we've actually done it with like big
+squadrons like that and have 200 bombers
+all coordinated at the time that's a lot
+of flying around so you got to kind of
+give them a chance to cut into it but
+they'll fly their holding pattern and
+off they go
+so here they go oh this is a flight a
+bones one six is going to immediately
+travel over to position four they're
+gonna say hey give me some combustibles
+get about a bunch of combustibles uh
+notice now that our escorts immediately
+ran ahead which is exactly what we hoped
+they would do they're going to go ahead
+and get themselves a big old dog fight
+that is more aim seven than I think I've
+ever seen at one time that actually hits
+something I think the overall strike
+rate for aim sevens in the Vietnam War
+was like five or six percent it was just
+embarrassing
+there's the other one wow we fired three
+more and it still didn't hit
+come on guys you can do it oh we got a
+couple more
+and I believe those are probably Sam's
+yeah those are Sam's splattered
+splattered and it looks like my thuds
+are doing what thuds do best which is uh
+fire missiles that just kind of
+innocently go flying into decoys or
+trees depends on which version of the
+missile I believe you had to fill out a
+form to fire that particular missile but
+that's all right Mark these guys as
+hostile notice my escorts are doing what
+I asked them to do nicely here and
+they're doing the escort thing meanwhile
+of course my Strikers are right on time
+uh the clock says I'd have two minutes
+to get to the Target Zone here which is
+fantastic there's my thuds uh there's my
+group that's bones one six and I believe
+two minutes behind them is cheetah four
+seven wonderful so bones one seven
+they've got a nice full tank of
+combustibles here
+that's a lot of uh sidewind not
+Sidewinders um not I think they were
+standards at this point no shrikes
+shrikes is the word I was looking for
+that was a lot of strikes
+all right here comes my crew the time is
+7 32 they're two minutes late you're
+saying they're going but but you ordered
+them to be there at 7 30. did you notice
+them turn around because they didn't
+turn around they would have been within
+10 seconds of where they're supposed to
+be notice by the way they're popping up
+to the correct altitude they do their
+bombing thing make a big Splat oh here
+comes in the next group
+oh yeah Mark 82 so those guys don't have
+a Vietnam camouflage like kind of like
+the jungle green pattern on them I'd be
+disappointed so they're going to do a
+big donut here and uh this is fantastic
+because they're basically going to come
+flying right back home now so they're
+going to go ahead and do the little F4
+thing which involves oh getting a cheap
+shot oh dropped a couple more bombs
+there fantastic everybody hits the gas
+one of them obviously took some battle
+damage because he's apparently become a
+non-commissioned officer somehow along
+the way back I think the museum has no
+communication so he's heading back he's
+heading back uh we had a couple hits
+actually but that's perfectly fine
+because you all did exactly what I asked
+you to do which was to get some gas on
+the way over meet up at the same time
+and then head home so everybody's
+heading out
+everybody's cruising we're going back
+and we're all going to go land at our
+base here and then we can go evaluate to
+see how well we did by the way you can
+Define the speed that they land in here
+everybody landed and I believe that is
+one crew of this probably yet one of the
+thuds go land will you all right let's
+see how we did here
+let's see I crashed one hanger and blow
+up the control tower oh we splashed a
+couple of these which I'm happy about
+pull up a couple of this we didn't do a
+lot of damage I mean I'm gonna go take a
+look in a second but let's see here they
+fired an awful lot of things at us all
+these little 23 and 25s a couple atoles
+plenty of sa2cs these things are
+embarrassingly hard to shoot scrolling
+down here they lost a bunch of stuff and
+look at that one loss now that was an
+achievement I don't know about you but
+with this era equipment with that
+organized of an opponent I'm actually I
+don't know I'm kind of proud of that
+nice job nice job I got a gold star gold
+star so what I'm going to do now is
+let's go inspect what the actual damage
+looks like here
+um we definitely splattered that one
+hanger it looks like we speckled stuff
+on this side of the runway and it looks
+like there were some aircraft stored
+here so with a little bit more
+intelligence we could have actually you
+know what I mean that kind of
+intelligence and that kind of
+intelligence we probably could have come
+in here and hit the exact places where
+they were and of course you can see that
+we did a really nice job with minimal
+losses and everything was basically on
+time so hopefully that video helps you
+out as far as seeing how the strike
+planner works and the ATO works in the
+flight plan editor that's kind of how
+I've been using it if you want to get a
+little more complicated and by a little
+more complicated I mean complicated plus
+plus of they have this thing called an
+operation planner but I'm going to say
+that for another day other than that
+enjoy

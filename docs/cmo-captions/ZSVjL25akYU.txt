@@ -1,0 +1,1210 @@
+# C: MO - ASW and AAW Missions in the GUIK
+Video: https://www.youtube.com/watch?v=ZSVjL25akYU
+Video ID: ZSVjL25akYU
+
+Hello everyone. In today's video, we're
+going to be answering a question that
+somebody on Discord had that was a new
+player as far as you sort of how to
+manage different types of missions and
+kind of just general strategies once
+scenarios start to get a little bit more
+complex. So, we have today, of course,
+is we're sitting here arresting in the
+GUIK gap. Of course, we've got
+Greenland, you've got Iceland, you've
+got the United Kingdom, and everything
+in between. And we're tasked with
+basically not getting blown up by the
+Soviets. It's 1985. And of course, uh,
+we're trying to eliminate any submarine
+threat that we can find. Uh, speaking of
+submarine threat that we can find. Man,
+I couldn't have timed that better if I
+tried. It seems we have made two quick
+detections here using the Sosus array.
+Now, the Sosus, of course, is a bottom
+fixed array. If you want to imagine it a
+different way, it is essentially a giant
+microphone underwater. It's actually a
+series of microphones. They won't tell
+you how far away anything is, but
+they'll tell you there's something
+interesting in that direction. Now,
+here's where things get kind of fun for
+us. First of all, we have no idea the
+nature of these subconts. saw they could
+literally be whales. I didn't put whales
+in the scenario. I could have, but I
+didn't. Uh, the second thing is we don't
+know what country it belongs to, what
+type, we don't know depth, but we do
+know direction. And with a little bit of
+deduction on our part, we can figure out
+where things are without needing the
+triangulation. Now, ideally, we would
+have picked this target up here, and
+then this one would have also picked it
+up here, and we would know it's right
+here or something like that. However,
+well, if you take a look at the weather
+conditions, u, we notice, for example,
+at sea state 4, which is awful. It is
+light rain. There's a lot of clouds. It
+is a nasty day outside, which is going
+to severely reduce our detection range.
+Now, I happen to have my little master
+cheat sheet over here, and it says that
+a Sosus array, especially this
+particular unit, can pick up your
+average uh nuclear submarine at about
+350 to 400 miles. Now, that's awesome
+because that gives us a range in which
+to work from. We know probability wise
+that if we had to guess, this submarine
+is probably right where my mouse is. If
+I had to put money on it, I'd say he's
+plus or minus 20 mi right where my mouse
+is. Again, if we want to take about a
+400 mile range reduced by the nastiness,
+say between 300 and 350 miles. So, he's
+probably in here. As a matter of fact,
+if I had to bet more money on that, if I
+do about this range since we have not
+detected him from here, but we have
+detected him from here. If I were to put
+this at about 330 mi away, we'll just
+put that as an estimate. But we know
+that he has to be about that range, too.
+we can safely say he's probably right
+there. That's where our submarine is
+going to be. Now, you're sitting here
+going, "There's no way you just figured
+that out on your own." And the reality
+is they do this stuff all the time. Once
+I hear something and know how loud it
+is, I can make a pretty good guesstimate
+as to where it is. Now, this of course
+is a goblin. It's a subc target. And
+this is what I'm interested in first.
+So, now I'm going to prosecute this
+target by creating basically a little
+region of h kind of a thing in here. So,
+let's go ahead and do that first. So,
+I'm going to start by pressing on
+creating myself an area here. Now, of
+course, the weather's really really bad.
+So, my area can't be too big. So, like
+25 by 25 is probably plenty here. So, if
+I go out to about uh we'll call it 30
+miles here. We'll come up to here. I'm
+going to go ahead and define an area.
+We'll go ahead and control end control
+delete. Control rightclick. And we'll do
+an area. And we're just going to go like
+that. And this is going to be where our
+subsurface prosecution is going to be.
+Prosecute. Prosecute.
+subcont
+contact contact. Fantastic. So now I've
+got a lot of different things I could
+use to prosecute the subcont. And again,
+this is a major guess on my part, but I
+almost promise you I'm not that far off.
+The other thing, too, is we haven't
+picked them up on this one yet, which is
+pretty safe to say that he's probably a
+little bit farther away than this, cuz
+otherwise we would have gotten both of
+them. So, what we have at our disposal,
+of course, is we have over here is a
+couple P3 Orions. P3s are great for this
+kind of work. I would almost say that
+that was their intended purpose. So, I'm
+going to press control F11 here. I'm
+going to do ASW. I'm going to do a
+patrol. We're going to do an
+anti-surface ASW patrol. I'm going to
+press the okeyoke button. And I'm going
+to grab those two. I'm going to hide the
+multi mission. Just gets messy. All
+right. Let's grab my two P3s here. Uh,
+where are they? I just saw one right
+there. Bing. I'm going to go and toss
+them in there like that. And I'm only
+going to do one in the water at a time.
+Otherwise, they're going to waste a lot
+of time. We're just going to be dropping
+son of everywhere and just making a big
+old mess. All right. So, that guy's
+going to go check that subsurface
+contact out. But what about this
+subsurface contact? Now, as I was saying
+before, u we need to use a little bit of
+logic here, a little bit of tactical
+thinking. We know there's an ice shelf.
+If you wonder what this little yellow
+line is here, this is the ice shelf.
+Anything here is under the ice. Anything
+here is above the ice. If I am a Soviet
+submarine and I'm trying to hide, you
+want to be under the ice, number one,
+which means I can't basically drop
+sunobies on you because they'd land on
+the ice and go conk. Number two, uh you
+want to stay shallow. shallow is noisy.
+Like you'll notice where my mouse is
+here, the depth here goes down to 8,000
+ft. That's really, really, really deep.
+The subsurface does very little, I
+should say. By subsurface, I'm referring
+to the seafloor here. You don't really
+hear it. But when you get shallow, like
+it is over here on the shore, it gets
+really, really loud. That being said,
+Greenland does not exactly have shallow
+water here. You can see we're about 800
+ft. So, he can go anywhere in here. And
+really, his only benefit is going to be
+the fact that he's got this ice shelf to
+stop him from dropping sunobies on his
+head. So that's going to make it a
+little bit more exciting for us to hunt
+him down. In this particular case,
+again, it's going to be kind of hard to
+hit him. If I had my own submarine, what
+I would do is I basically send my own
+submarine this way trying to take a
+listen for him, but the reality is I
+can't touch this guy easily. Again, I
+can set a mission up over here and try
+to like go around the corner and listen
+for him, but like it's going to be very,
+very unlikely. And chances are he's
+trying to be sneaky to get into the
+North Atlantic. He's not coming for us.
+Now, what about us? We are a carrier
+group here. And one of the problems
+we're going to make here is these lovely
+underwater rays, which you can see are
+already doing a wonderful job of
+detecting things. Um, they basically do
+not have the capability of hearing
+through my carrier group. So, if you've
+ever seen soccer, you know how the
+goalie always stands away from the goal
+when the ball is over here. It's the
+same problem. If my carrier group gets
+in the way of my little underwater
+microphones, I'm not going to be able to
+hear anything. There's an added bonus as
+well. If I get myself closer to Iceland,
+that means the Ruskies or the Soviets at
+this particular point have to fly a lot
+farther to deliver weapons to me, which
+gives me time to think. Now, you're
+sitting here going, "Whoa, whoa, whoa.
+If you turn that carrier group around,
+that's going to be bad because then
+you're not going to be able to hear
+behind you." That's only partly true.
+Uh, one of the nice things we have at
+our disposal, of course, is something
+called a Toad Array sonar. Now, if I
+grab the Sammy B here and actually click
+on him, one of the tools that he has to
+make things a little bit better for him
+is he has a sonar array that he drags
+behind himself. So, if I were to go up
+here real quickly here, there we go.
+Toad array. And now, that makes it a
+much much much easier for us to
+basically listen as we leave, if you
+want to kind of think about it another
+way. So, the first step is I'm going to
+get my carrier group away from the
+party. If I get them closer to the
+Russians, it's going to give them more
+time in which to do awfulness to us. So,
+what I'm going to do is I'm actually
+going to sneak inland here and kind of
+hide a little bit. We'll keep our speed
+down. Even 10 knots is pretty quick
+there. And again, we can hear pretty
+well into the water, but not perfectly.
+Now, one of the challenges for us is we
+have no subs. Um, this would be a much
+simpler scenario with subs because we
+basically leave a sub where they were,
+and anybody tries to sneak up on them
+gets a nice torpedo surprise. Okay, so
+that takes care of that. Now, let's talk
+about the Russian or the Soviet air
+threats. We're not dealing with Russians
+here. We're dealing with the Soviet
+Union. The Soviet air threat is very
+real. This is the thing they're good at.
+Uh they're going to have Tupelift 95
+RTS, which are long range maritime
+reconnaissance planes. We'll look at
+that problem in a second. And of course,
+they're going to have the dreaded
+tupelift 16 and 22s with their extremely
+high velocity anti-ship missiles. Let me
+show you what I mean. So, if I go to
+browse scenario platforms real quick,
+switch over to team red, go to aircraft.
+If I were to go to my Badger C, a pretty
+big thing, but look at the size of those
+missiles underneath this guy. Now, if I
+scroll down here, I can see that those
+missiles, the Kipper and the Kingfish,
+let's see here. The maximum range is
+going to be 175 miles. Oh, this is good
+news. Oh, this is good. That 180 mi
+means if we can get them before they get
+to us, they can't touch us with those
+weapons. Ah, that's the flaw. That will
+be our strategy. All right, so we know
+they're very, very dangerous. However,
+and of course, if we take a look at the
+other ones, let's see here. The tupula
+backfire bees here. Big airplanes, by
+the way. Very fast big airplanes.
+They've got the kitchen, which is a huge
+missile if you've never seen one of
+these things before. And let's see here.
+The kitchen mod 1. What do you got for
+range in the kitchen mod 1? 215. Oh, it
+is a happy day. Why is it happy day? So,
+one of the things people don't realize
+is how huge this area is. If I take off
+and I fly in this direction for an hour,
+you get that far. That's it. And you can
+see just how big this area is. And keep
+in mind, our carrier group here is
+pretty well equipped. We've got
+intruders. We've got F-14s. But even an
+F-14 is incredibly limited in how far it
+can actually fly. Welcome to naval
+operations, by the way. It's one of the
+most frustrating parts of naval
+operations is how little range your
+aircraft actually have. You know, if I
+poke around with this real quick, just
+as an example, let me see if I can find
+one. Here we go. So, if I do heavy
+barrier cap, that gets me about an hour
+and a half at 150 miles. That's it. An
+hour and a half is not a lot of time.
+Now, there's a reason why I'm going to
+point that out, and that's if I launch
+all my aircraft at once, check it out. I
+don't have my next set of aircraft ready
+for another 3 hours. Which means if I
+send all four of these airplanes out
+now, that means I will only only only
+have aircraft an hour and a half
+afterwards actually ready to take to
+flight. That's a big problem for us and
+it's going to be the biggest limiting
+factor of our operations. Many people if
+you can you're dealing with aircraft
+with basically you know limitless range.
+You come here and go okay let's see the
+Soviet skis are coming from here so I'm
+going to set my operation my barrier
+basically over here. You can't do that.
+If you do that, you're going to be so
+low on fuel by the time you get to your
+barrier that you're not going to be able
+to do anything once you're there.
+Whoops, I accidentally deleted that
+entire mission. Let me fix that. All
+fixed. I hate it when I do that. All
+right, so that's all set. So that means
+we can't throw our aircraft everywhere.
+It's so tempting to goip make a huge
+group and just send them out there. But
+the reality is we can't do that
+effectively. We're going to run out of
+fuel before we can do anything. And if
+they send a bunch of Tupalift 95s at us,
+so be it. Uh, we know we can get to them
+as long as they don't get within a
+certain range of us. Speaking of the
+Tupalift 95, one of the things we know
+about it is the fact that its radar is
+fabulous. However, it has a major
+limitation. Take a look here. If I go to
+RAID and I go to RT, this is our target.
+That's our bear. I forget what the name
+of this like big chin or something like
+that. I always forget what it's called.
+Ah, big bulge j. Here it is. We know it
+has a range of 260 nautical miles. So
+that means if their aircraft never gets
+within 260 nautical miles of our carrier
+group, we win because they can't
+actually touch us. There's another
+important point. The Soviets have no
+aircraft that can engage our aircraft,
+which means we can do some speed chests
+and basically pretend to use our queen
+for all operations. Our queen, of
+course, being our Hawkeye, which we're
+going to take advantage of. Okay, that's
+the scenario. Let's do it. Let's do it.
+So, first things first, I'm going to get
+the combat air patrol ready. But I'm
+going to do that first by getting my E2
+active. So I'm going to go ahead and
+pick a target that's about uh 210 mi. I
+like about 200 miles for my cap. That
+seems to be kind of the sweet spot here.
+So I'm going to put that right here.
+This is where our Hawkeye is going to
+hang out. So what I'm going to do to
+this reference point is I'm actually
+going to make it so that it hangs out
+with the carrier by selecting make
+selected ref points relative fixed
+bearing. That means if my carrier moves,
+my Hawkeye will move with them. See how
+that works? Pretty cool, huh? Crl F11.
+Uh, we're going to do eyes in the sky.
+H. We'll set this to support. We'll make
+this an active mission. We're going to
+go ahead and reduce one/3 rule to one.
+We only need one Hawkeye going at a
+time. Let's grab all my Hawkeyes. Toss
+them in here. And really important, by
+the way, you have to tell them to turn
+their radar on when they get there. So,
+I'm going to go to MCON. I'm going to go
+to MCON. Shut that off. And we're just
+going to say active radar. That way,
+they basically keeping an eye out. Now,
+they are going to be our early warning
+platform. They're going to be very,
+very, very useful at us because they're
+going to give us the capability to
+basically um keep an eye on things. Now,
+this is where the fun starts. We need to
+think about where we're going to put our
+F-14s. Keeping our F-14s in the deck is
+perfectly fine because again, if we know
+something's coming, we can just launch
+an intercept mission just like that. As
+a matter of fact, I almost always tell
+people to keep a couple carriers,
+whatever your intercept planes are,
+always keep a couple of them just ready
+to go. Don't throw them all to a
+mission, but we're going to throw
+caution into the wind here and go for
+it. So, what I'm going to do is
+establish two zones here. The first zone
+is going to be where my aircraft are
+going to patrol. The second zone is
+going to be where they're going to be
+allowed to attack things. Now, remember
+that tupil of 95 has a 260 nautical mile
+attack or basically radar range on us.
+So, that means anything within here is
+in the danger zone. However, I don't
+want my aircraft to go out that far. So,
+what I'm going to do here is I'm going
+to have a little bit of magic. So, I'm
+going to press my control D and I'm
+going to define my axis of patrol to be
+basically, let's call it about 150 mi
+away from the carrier itself. It's going
+to be about right here. And we're going
+to put this axis. Now, you have to be
+careful here because we're dealing with
+distorted views here. They're going to
+be coming out of here. So, if I put my
+axis about right here, which
+conveniently is right where my E2 is,
+150 right there. Bingo. So, what I'm
+going to do is I'm going to create my
+little axis. And I'm going to try to
+keep that axis kind of small. I don't
+want this to be a big distance. This is
+about 100 nautical miles. That's plenty.
+Again, 100 nautical miles is 15 minutes
+flying time if you want to kind of think
+about it another way. So, this is going
+to be where my F-14s are going to hang
+out. It's not going to be the limits of
+where they can hang out, but it is going
+to be the kind of their hang out spot.
+Again, be careful with about the
+projection here. This is going to give
+you a headache. So, what I'm going to do
+is the same thing I did before. I'm
+going to make them fixed bearing to our
+carrier group. Looks good. And then
+we're going to get our F-14s going.
+F-14's
+uh cap. That looks good to me. We'll go
+ahead and set this to be patrol a AW,
+but I'm going to do something special.
+I'm going to define a zone where they
+can engage. So, this is where they hang
+out, but their engagement zone is going
+to be much bigger so that they have the
+ability to basically snipe anything
+trying to get at our flanks here. So,
+I'm going to go ahead and create myself
+a little range here. I'm going to do
+about 260 mi, which is going to be about
+right here, which is going to be about
+like that. So, we're going to come down
+here 260 mi in that direction. Remember,
+this is a kind of that limiting point
+here. 260 miles like that. And let's see
+here. About 260. Well, that's Greenland,
+so we don't have to worry about that so
+much. And we'll come down here. I doubt
+they're going to be coming from that far
+south. We'll pick them up. There we go.
+Nice. So, I've got these four points
+here, and they're going to basically be
+what I call the prosecution zone. I'm
+actually going to give myself a little
+bit more room. So, anybody stupid enough
+to fly into this zone who is detected
+automatically gets blasted inside of the
+zone. We can make the zone even bigger
+if we wanted. There we go. Let's do it.
+So, I'm gonna tap F11. I'm gonna go back
+to my mission settings. I'll pull this
+to the side so you can see the party
+here. So, our patrol area is going to be
+these two points. Our blow things up
+area is going to be those points. Uh-oh.
+Let's fix that. Delightful. So, let me
+review. Our patrol area is are these two
+points here. They're going to basically
+be going back and forth between them.
+I'm actually going to do repeatable
+loop. So, they're going to go back and
+forth, back and forth, back and forth.
+But their zone where they can launch
+missiles is this entire region. So in
+the event that they pick up something,
+say sneaking over here, they'll
+immediately abandon our patrol route and
+go take a look and then they'll come
+back to the patrol route to protect that
+access at all times. Pretty darn cool,
+right? So what I'm going to do is I'm
+going to reduce this to two aircraft on
+station at any time. The reason I'm
+reducing that is because the F-14 is got
+a lot of missiles and again I need to
+keep my stuff back in case I need more
+of it. Really, really important. So,
+let's go to my F-14 units here. I've got
+just about everybody. I can launch my
+entire group of F-14s here. So, if I go
+like that, that means at any time we're
+going to have two F-14s in the air, but
+you can see how many of these darn
+things we can commit at a time. So, I
+actually don't like that. I'm going to
+do four at a time. So, that way we have
+four in the air. They're allowed to do
+this. The repeatable loop, their
+prosecution zone is huge. They've got
+Awax support. If I need to, I can send
+more. I'm not putting all my eggs in one
+basket. This is glorious. except we need
+to make sure that it stays with the
+carrier group. So I'm going to set this
+one to be fixed bearing to our carrier
+group as well. So it follows my carrier
+group around stays in the active axis.
+Everything is awesome. I'm going to
+press control N to deselect. We've got
+this guy right here who's basically
+hanging out here. He looks awesome. He's
+doing a nice job. We've got my P3s. And
+now it's time to talk about ASW.
+There is always a chance that one of our
+enemy submarines is going to sneak up on
+us or we're going to smack into it. So,
+we have to make sure we sterilize the
+water near our carrier group here. So,
+what I'm going to do is I'm going to
+create basically a 35 mile little zone
+around our carriers. And this is where
+we're going to be using our ASW
+helicopters to keep a listen in the
+water in case anybody's really really
+crafty. Now, what I'm going to do for
+this one is I'm going to make this a
+rotating bearing. So, if my group moves,
+the group um size of the box changes,
+too. That's important. And what we're
+going to do here is we're going to
+commit our helicopters and not our fixed
+wing um sub anti-ubmarine tools. You
+know, the reason I don't want to commit
+my fixed wing is because I want them to
+be kind of like attack platforms if I
+need them. So, I'm going to press
+control F11 again. I'm going to do ASW.
+We'll do patrol. ASW patrol. Looks good
+to me. I'm press okay. Uh mission
+already calls. Ah, that's right. I
+already did this. ASW near carrier.
+There we go. That's what I meant to do.
+Good. So, what we're going to do here is
+we're going to do ASW near carrier and
+we're going to be using our lovely sea
+kings for the purposes of this and we're
+also going to use our seahawks. We don't
+need a lot of these at a time. So, I'm
+just going to say basically keep two in
+the water at a time and that'll be
+plenty. Problem is, we don't have a lot
+of these. So, what we're going to do is
+we're going to say flight size of one.
+Try to keep two in the air at a time.
+That's going to be four at a time, which
+is a lot. Oh, I don't want to do two.
+Okay, we don't have a choice here. We
+don't have enough helicopters to
+constantly be cycling here. So, I'm
+going to say basically keep one of each
+in the air at a time. That should be
+delightful and keep everybody in the
+water. Shut the radar off. They
+absolutely can use active sonar, though.
+If they want to dip in the water and
+take a listen. There's no problem with
+that. All right, let us review. So, we
+have an ASW mission going over here to
+basically take a check out for this.
+Again, we're trying to listen to what's
+going on inside of here. Uh, see if
+there's anything interesting here. We'll
+see if the P3s get anybody. We've got
+this guy who we'll probably prosecute
+with an S3 once we understand what's
+going on. We have our Awax plane. We
+also have our F-14s who are allowed to
+engage anything in this area. Wow. And
+you think warfare is simple, man.
+Imagine being the guy who has to come up
+with all this stuff.
+That's work. One of the things you will
+notice is nobody is using active radar
+except my Awax planes except my
+interceptor planes. That's an important
+point. If we turn our radar on, we're
+letting every Oh my goodness. What the
+heck? No way. Look at that. I was so
+close. So, um, incredibly, again, this
+is just a coincidence, I swear. Um,
+we're even better. Look at this. We
+estimated his position here, and I his
+actual position is a little south of
+that. Nice. Well, this guy's about to
+have a really bad day. Um, well, this
+works really well, actually. Let's grab
+all that. We're going to put that little
+box right around him like that. We can
+actually probably get a pretty confident
+box here. Now, the cool thing is we're
+actually triangulating his position. Oh,
+this is going to be good. All right, P3,
+you got the duty today. I'm very tempted
+to send an S3 after him, which is they
+call the Hoover. It's a pretty funny
+airplane. But for now, we know exactly
+where he is. Let me show you a really
+quick trick. By the way, if you right
+click on this real fast, you can go
+ahead and say a mark hostile if you want
+to say he's already a bad guy. But you
+can mark his position so we know what
+time we saw him last. So, we can
+basically start to work him out if we're
+not sure where he is right now. Like
+even now, my P3s are basically getting
+updated information. We're going to have
+to kind of manually control them once we
+get a little bit closer. That's okay.
+Let's go ahead and move that over here.
+So, that was our first sighting. And
+we'll get another sighting frame in
+about five minutes.
+All right, let's get this party started.
+Whoa, somebody needs to turn the volume
+down.
+I don't know how people have high
+volumes on anything. That makes me
+crazy.
+All right, look at this. Look at this.
+Oh my goodness. He is so busted.
+So busted. There goes my P3.
+P3 Orion, go get him, P3, go get him. Go
+get him. All right. Uh, meanwhile, this
+guy, like I said, I'm guessing
+I'm guessing he's an SSN. Maybe he's a
+boomer again. Why would Let's do the
+range real quick here. Ah, it's so
+awkward working on the side of the
+globe.
+Yeah, if he's a boomer, he's Yeah, he
+could go be a boomer. He could be a
+boomer. All right, so what we're going
+to do here is we're just going to
+update. Look at how confident we are
+about his position right now. Go, we've
+got a contact. So, our Sosus actually
+identified him not only as a potential
+submarine, but it also was able to
+identify exactly what type he is. And
+I'm guessing if he's that loud. Oh, it's
+a Victor 3. Okay. I thought it'd be a
+Victor 1. All right. Cool. So, we're
+after him. Nice. Speed up time a little
+bit here. There goes our P3 ripping
+across Iceland. And you can see
+everybody's in position right now. I've
+got my Awax. He's sitting there taking a
+listen. I've got my F-14s. They're doing
+their barrier cap ready to go. Oh, we're
+not sure about this guy up here. We
+probably should have marked him and
+pursued him, but like I said, if I have
+time, we'll go send the P3 after him. Uh
+oh, we got something.
+Oh, that's trouble. Big Bulge A radar. I
+have good news, everybody. The Big Bulge
+A radar only comes from one aircraft.
+Hostile. Nice. All right. Meanwhile,
+let's go ahead and do this real quick.
+We want to definitely go after this
+contact. I just have to keep changing
+the size of this. One of the things we
+can do, you want to see a really cool
+trick? Show you a fun one. Since we know
+where he is, we can actually modify this
+little attack zone here to be relative
+to him. Watch this.
+So, if he moves around, the mission
+follows him. Is that kind of a All
+right. Uh, that looks good to me. So, we
+have an incoming aircraft. It's a
+reconnaissance. We picked him up at long
+range. Probably we picked him up based
+on his radar emissions, which is, like I
+said, naughty, naughty, naughty. But you
+should have left his radar off until he
+got a lot closer. But that's okay
+because we have F-14s in the game here.
+Oh boy, here comes Uh-oh, we got more
+trouble. Let's see here. This is a big
+ball J. That's definitely an RT. That is
+a down B. Who makes that? That would be
+a tupalift 22. That's bad news for us.
+We've got to keep that away from our
+carrier fleet. Meanwhile, our good
+friend, the P3 Orion here. I can just
+literally order him just to attack and
+he's going to lose all his altitude so
+he can go say hello. Got to keep a
+lookout though. We still are not
+confident about the position of that
+other submarine there. But that's okay.
+Part of the fun. Look at him. He's
+coming in.
+He's going to skip across the water. Oh,
+this is going to be good. This is going
+to be good. What he has to do is drop
+through below the clouds here. And he's
+got to get low enough to drop his
+torpedoes. It's actually very difficult
+to prosecute a submarine contact
+underwater, even from the air. You'll
+see what I mean. Now, you are saying,
+"Hey, why don't you order your F-14s to
+run over here and check this out?" I'll
+tell you why. My F-14 right now has 35
+minutes worth of fuel, about 206 miles.
+Ready to do the math? This target is 333
+mi away, which means we can get to here
+before we're out of fuel, which would be
+basically the end of us. The smarter
+strategy would actually be to send him
+back to base and send up another group
+of F-14s so that they're basically in
+position by the time he has to go ahead
+and refuel himself. Do you see the trap?
+And like I was warning you earlier,
+these distances are very large here.
+It'll be okay, though. I think we'll be
+fine.
+All right, it's going to be P3 Orion
+action in a few seconds here.
+Now, the cool thing with the P3 is got
+the near tip Mob Fives, which are much
+better. So, what he will do during this
+um prosecution, let's go ahead and open
+up my 3D view here so you can take a
+peek.
+Let me grab him real fast. Here he is.
+Look how low in the water he is. So,
+he's going to drop a bunch of sunabo in
+the water. You can see he just sent that
+in the water real quick. He's trying to
+find this Victor and get a better listen
+for him because until he knows exactly
+where it is, it's going to be a waste of
+his time to just drop a torpedo on his
+head. Again, it seems like this is
+contradictory. Why doesn't he just fire?
+He can't. He has to know where it is
+before. Uh-oh.
+See what happened?
+We weren't as confident about that
+position as we thought we were. See?
+See? It's not as easy as it looks. All
+right, we need to get those other F-14s
+airborne. It looks like things are going
+to get pretty bad for us pretty quick
+here. That tuple of 95 is entering into
+our no zone. And you can see that his
+maximum range is well within the range
+here. Like I said, we don't have enough
+fuel in those to do it. So, what I'm
+going to do is go back to my carrier and
+I'm actually going to order those guys
+to get airborne immediately. I'm going
+to launch these as a group because
+otherwise they're never going to get
+there in time in order to do anything.
+So, I'm going to launch them as a group
+and these guys can come home as soon as
+they're ready. Oh, this is going to be
+tight. Oh, this is going to be tight.
+Meanwhile, we're taking a listen on the
+water the best we can. We got that
+Victor down there. One of the cool
+tricks you can do is drop a torpedo on
+his head. If you drop a torpedo N, there
+it goes.
+Well done. Well done. Go ahead and pause
+right there. All right. So, now our
+F-14s with a nice full tank of gas just
+took off. They will be able to engage
+these bombers. As a matter of fact, I
+can even order them to engage the
+bombers like that. You want to limit
+their speed, though, otherwise they're
+going to run themselves out of fuel.
+It's an F-14, folks. They're not good on
+the gas. All right. Now, I am interested
+in the Boomer or whoever this is. I'm
+guessing it could be 50/50. It could
+even be a kilo. That could be kind of
+funny. I'm still interested in this
+submarine. It's been 2 hours and he's
+going pretty slow. So, two hours are
+pretty slow. Actually puts him about
+where he is now. So, let me show you a
+really fun trick here. So, I'm going to
+grab uh this waypoint here. I'm actually
+going to make it so that Let me come
+down here. I'll show you this cool
+trick. Uh, let's see here. I actually
+don't need this one anymore. Delete. I
+don't need Oh, no. I need that one. I'll
+delete that one. I'm going to grab this
+group. This is kind of a fun trick here.
+I'm going to hold down helps if you
+select it. If you hold down the shift
+key, you can actually move the whole
+group. So, what I'm going to do is I'm
+actually going to take the mission and
+I'm going to move it over here and
+basically try to find this guy. And like
+I said, they guessed he was about here.
+If he's going slow, which would be about
+10 knots, he's anywhere in here
+basically. So, what I'm going to do is
+I'm going to grab this. Like I said, and
+we're just going to look for him cuz
+like I mean the P3's got nothing else to
+do today. War were declared, you know.
+All right, we'll go ahead and do this
+like this. I doubt he's going to be
+outside of the ice, but in the event
+that he is, we'll be able to take a look
+at him. And one of the things we can do,
+too, is we can actually go over here and
+we can send him another P3. He's already
+on the mission. So, if I launch him,
+he's just going to head directly over
+there and start taking a look. Like I
+said, I don't think we're going to find
+anything, but it's worth a shot. All
+right, let's go ahead and unpause and
+watch the party. So, as we can see,
+these guys are blindly looking around
+for our carrier group right now. We
+have, let's see, this is the RT. We have
+very good look at them with our E2. We
+can't engage. It's so tempting to order
+them to attack, but they're just
+miserably out of range. So, it's going
+to take us a very long like we just we
+just can't do it. We just can't do it.
+So, we can't waste time. All right, here
+we go. So, here comes these groups.
+These guys, on the other hand, have
+plenty of fuel. I actually have to slow
+them down. If uh we leave them at full
+speed here, they're going to run
+themselves out of fuel before they get
+to the target region. Whoops.
+&gt;&gt; Oh, you almost missed the party. There
+we go. Come get some tuple of 95s.
+Boom. Uh-oh. Go get him. Go get him. Go
+get him. Bam. Sliced. Oh, miss. F14's
+doing what F14s do best right here.
+&gt;&gt; Oo, splattered.
+Now, you have to be careful here. Um,
+these folks used a lot of fuel for that
+little intercept there. And even though
+we did deny them what they needed for
+the purposes of this mission, they're
+now a little low. So, we have to kind of
+keep that in mind here. All right, we
+should take a quick little idiot check
+here and make sure everything makes
+sense. Um, that's going fine. We've got
+plenty of protection around our carrier
+group. We have plenty of aircraft in the
+air right now. I'm really kind of
+curious, but um, we'll keep flying here.
+&gt;&gt; All right, where are the rest of the
+Ruskies? There they are. Bingo.
+Just like I promised, here comes some
+more. I'm guessing we know nothing about
+these. Um, can you tell us anything
+about them? Uh, backfires. These have
+very very big missiles on here. So, it's
+the same problem as we had before. Oh my
+gosh. They sent the whole regiment after
+us. Oh no. Well, this is classic uh good
+good military plotting on their part.
+You know, count their guns basically
+with one aircraft and then send the rest
+of the party to come say hello. As long
+as they don't get within missile range
+of us, I'm not concerned with them. This
+is a very long flight for them, so
+they're going to be at a bit of a
+disadvantage when they do get all the
+way out here. So, I'm not as concerned
+with that as I could be. Oh gosh, look
+at how many there are.
+I'm going to mark them manually as
+hostile with the H key.
+Oh, this is bad. This is bad.
+Oh my gosh, they sent the whole regiment
+after us. Uh-oh, there's another one. Oh
+boy, this is going to get in. Oh,
+they're coming right for us. Okay,
+really important. Our guys have a pretty
+good amount of fuel right now. So, if we
+order them to intercept them, if we
+order them to intercept them leisurely,
+we should be able to pull this off. Uh,
+that's enough. Let's see here. That's
+548 miles. We can do it. F1. We're just
+going to go ahead and go like this. I'm
+holding on the shift key and I'm going
+to release. I'm going to grab this
+group. F1. Hold down the shift key. Drag
+a box. Release. And I'm going to order
+them to cruise speed. This seems like a
+contradiction of the capability of an
+F-14, but we don't have a choice because
+if they go full blast, they will run out
+of fuel before they get in range to
+intercept these targets. And what could
+happen is they could psych us out. They
+could turn around and go back the other
+way. It's very obvious where this group
+is going. I mean, if you just work it
+out mechanically, they're going right
+for Iceland. So, we need to find them.
+Meanwhile, we're still looking around
+for this guy up here. And it does not
+surprise me in the slightest that we
+can't find him. Like I said, it's been
+hours since we saw him, so it's very
+unlikely to pick them back up, but in
+the chance that we do, we'll be ready
+for it. All right, this is where it's
+going to get really difficult for us.
+Here we go.
+All right, F-14s, do what F-14s do best.
+That's the beautiful, beautiful thing
+about the F-14 is those Phoenix missiles
+have so much reach.
+Now, the F-14s will fire off their
+Phoenix's first and then what they will
+do is they will close and they'll start
+using everything else. You can see these
+two balloons are getting the heck out of
+there. Run, run, run, run, run, run,
+run. Now, ironically, you'll watch the
+Phoenix run out of fuel and go swimming.
+That's okay, though. Our F-14s have
+they're doing their job beautifully
+here. See how the Phoenix's are just
+kind of
+that kind of thing happens all the time.
+Now, this guy is running after something
+he can't get. So, um, he's going to run
+out of fuel way before he gets in range
+of that crow. That's okay, though. Like
+I said, we're trying to deny them the
+ability to attack us. Of course, now any
+military planner knows the fact that Oh,
+there must be an American carrier group
+out here somewhere because we just got
+shot at by a bunch of F-14s. All right.
+See how this guy's basically racing
+after these? He'll run out of fuel and
+have to return back to bait. Yeah, there
+it is. Come on back. Come on back. Come
+on back. Unassigned back to base. I
+don't want him to run out of fuel. A
+loss of an F-14 at this point in the
+game is awful. So, he's got to head back
+home. You can see another group of F-14s
+just took off. Like I said, this is
+what's so important. You can see the
+tupal of 95s. Even though we didn't
+destroy them, they were driven off and
+they never found our car. Oh, nope.
+Sorry, I got excited. I got excited. I
+thought we spotted that guy.
+I thought we'd get him. All right, let's
+expand our patrol zone a little bit
+here. Like I said, there's a pretty good
+chance we're just never going to see
+this guy. But in the chase that we
+accidentally do it again, how can you
+drop a sonoy through the water through
+ice? I'm not going to think about it.
+But uh we can see that there's another
+tupelift of 95 RT there.
+All right, what do we have? We have a
+group of uh TU95s are coming back for
+another try. Uh this RT is kind of going
+that way. That's okay. That's okay. Like
+I said, don't worry about it yet. We
+just launched. Um do we have any I don't
+think we have any fresh F-14s left.
+Well, these are about as fresh as they
+can get. But again, we're constantly
+constantly having to cycle them in and
+out. And those two of 95s are way off
+base. Oh, they are not. See this group
+here? He's coming for us. Ah, shoot.
+Here we go again. All right. Um, you
+have plenty of fuel.
+Okay, really important. Do not use flank
+speed. Save your fuel. He's got us 565
+miles of fuel in board. And again, you
+can take a look at that right here. All
+right, intercept going. This is going to
+be fun.
+Man, the Soviets are sending everything
+they have at us. And incredibly, notice
+we've only picked up one submarine so
+far. How who knows how many more there
+are going to be in this scenario. I
+guess we'll find out the hard way, so to
+speak. All right, there we go. Not good.
+Not good. They're coming right for us.
+Uh where is this group? Uh you folks
+have a tiny bit of fuel. They have a
+half an hour's worth of fuel. They're
+going to have to get a lot closer before
+we can play them. Look at this. Oh, it's
+going to be tight. Got them. Nicely
+done. Nicely done.
+Nicely done. Nicely done. Nicely done.
+All right, so we got to keep an eye out.
+Oh man, they're they're Soviets are
+working us over today. All right, take a
+look. Take a look. They're coming at us.
+See this group here? How much fuel we
+got? We have 48 minutes worth of fuel.
+That's uh 283 miles. 283 mi that way.
+That's 204 mi. Just too far. We're going
+to have to wait until they get closer
+before we commit to them. We can start
+ordering them to kind of like march in
+that direction. But the reality is that
+we just don't have the f Yeah, we're
+going for it.
+And again, cruise speed. Cruise speed.
+Take your time, guys. Take your time. Uh
+we're going to order we'll be stupid
+here and order these guys to attack.
+They just not going to have the fuel to
+do it, but we'll try it. And again, this
+is the classic classic classic classic
+problem of any engagement like this is
+logistics. How are you going to keep
+everybody with plenty of gas? Okay, you
+are going after that group. Not anymore.
+You're going after that group now
+because of otherwise they're going to
+run out of fuel. Nope. Nope. Nope. Nope.
+Nope. Nope. Nope. Nope. So, you can see
+how they all started running right back
+there. I'm just going to go ahead and
+unassign them real quick. One of the
+things you could do is you can run up
+here and press P, which basically
+removes them as targets. So, what
+they'll do is they'll drop and they'll
+return back to their patrol route. And
+of course, our Awax is like, "Bro, why'd
+you do that? I I had them all nice and
+neatly detected for you." So, you can
+see our tupelives are basically trying
+to find us, and they still can't find
+us. So, they have to keep going back to
+Romans here, which again, part of the
+fun. Part of the fun. And again, we're
+only eight hours into this operation so
+far. And we did not find our friend
+missing target here. I kind of want to
+pull my P3s back because I'm sure
+they're going to need some fuel. Look at
+this guy. He's coming in on fumes here.
+He's also been flying for a really long
+time, so he's pretty worn out. All
+right, let's pull the P3s back. So, uh,
+let's see here. We have the P3s. I
+believe that's this operation here.
+Let's see. P3 Orion update 2. I'm
+actually going to just simply delete
+that mission, and I'm going to go ahead
+and send him back home. We're just We're
+just not going to find them.
+It's just It's not going to happen. Uh,
+whoever that guy is up there, we're not
+going to see him. What we're going to
+have to hope here is the P3s get all
+nice and refueled and ah, there's more
+trouble.
+Gosh, look at that. They're trying.
+They're trying to come to my next group
+of F-14s. Man, this group of F-14s just
+had a day. Constantly cycling in and
+out, trying to protect us. And then the
+Awax. Oh, boy. Everything's okay so far.
+We've got something. And here they come
+again. And again, their airplanes can
+only fly so long, too. So, if they want
+to be Oh, there's some more.
+All right, let's take a look what we
+have here. Let's take a look what we
+have. Oh, there's more. H. That's not
+looking very good. We're going to mark
+them as hostile. And that one is getting
+awfully close. Again, these are the old
+version of the Awax planes. The newer
+ones are much better. Uh, it's so
+tempting. That's a puffball radar.
+That's a different radar. Who is this?
+Uh, those are TU16s. They have to get a
+lot closer. So, do not move your F-14s.
+See how they turned around? They ran out
+of range. Haha. Go back home.
+Nice. So at the end of the day, the war
+was won not by superior stra Texas and
+strategies, but by fuel. And that is one
+of the most true things you'll ever see.
+We now have 12 hours remaining in our
+scenario. We haven't taken a single loss
+and everybody's doing fine. It looks
+like 20 hours there. Oh boy, it's going
+to be close.
+Oh boy. Uh-oh. We got something. Here it
+come again.
+&gt;&gt; Uh I'm not worried about it. He's
+heading south. Oh, we could go say hello
+though. What is this? That is okay.
+Looks good to me. We can go say hi. Why
+not
+go ahead and order him to cruise speed?
+Why not? Why not? We'll try to get a
+freebie here at the end. He's going to
+have to turn around. Yeah, there he
+goes. There he goes. Did you see how he
+ran out? Had to turn around. Go run
+away. Run away. Run home.
+All right, 9 hours. At 8 hours, we'll
+call it. We're already a 35m minute
+video here. Apologize for that. Oh, here
+comes somebody else. We are so out of
+range. Don't even bother.
+What I'm really disappointed about is we
+didn't find more submarines, but welcome
+to submarine warfare. All right, let's
+call it spacebar. All right, let's see
+how we did. So, if we go to my losses
+and expenditures, you'll see that we
+destroyed three tankers, one Victor, we
+got three of their 16s, we got eight of
+the backfires, and we got two of their
+RTS. So, we had a really good time with
+these guys. On this side, we lost a
+single F-14 Tomcat, and I can tell you
+why. And now, we went through quite a
+bit of missiles here. Now, why do we
+lose the F-14 Tomcat? We lost the F-14
+Tomcat. I I bet you 50 to1 that we ran
+out of fuel. I almost guarantee it. As a
+matter of fact, if I shut all these off
+real quickly here, this is kind of a fun
+trick. You can see here that he had to
+ditch. He ran out of fuel and went into
+the water. Um, like I said, logistics is
+the this game. And by making it
+challenging for them, it won. All right,
+I want to see the other submarines I
+miss. Control V. Let's see how we did.
+So, I can see here there's an alpha.
+Totally missed the alpha. He's doing 12
+knots. He's going pretty slow. So that's
+probably why I didn't pick him up. And
+of course, we have our Delta 2, which
+incredibly he didn't go into the ice
+cap. I just missed him. He's going very,
+very slow and very, very deep. Yeah,
+very unlikely to pick him up. It would
+have been very challen. You can see he's
+just sort of hanging around the tip. So
+hopefully this helps you as far as
+understanding kind of the logic and the
+reasoning. Remember, you can always beat
+them if they don't have enough fuel to
+get to you. Enjoy.

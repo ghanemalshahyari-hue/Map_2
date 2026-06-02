@@ -1,0 +1,389 @@
+# C: MO - Anti-Submarine Warfare tips
+Video: https://www.youtube.com/watch?v=Ue4xgT8jqMo
+Video ID: Ue4xgT8jqMo
+
+hello everyone in today's video we're
+going to be giving you some ASW tips and
+these are just kind of basic suggestions
+to make your anti-submarine Warfare also
+known as awfully slow Warfare is also
+known as good thing we have time
+acceleration Warfare and what we're
+going to be doing today is showing you
+kind of how you can control both sonab
+buy placement as well as how to make the
+best of a surface unit that you might
+have at your disposal so first things
+first we're going to jump to our surface
+unit uh we have the lovely FFG 07 Oliver
+Hazard Parry which for the good
+dangerous water folks uh you probably
+recognize that one right away this is a
+great anti-submarine platform it's does
+a excellent job it's got good speed it's
+got good Torpedoes and it has two lovely
+Attack Helicopters if we need to use
+them so we know that there's a kilo
+class based on intelligence that's
+sneaking out of the sea trying to get
+through the straight of jalta now I know
+everybody and anybody already knows that
+you literally cannot get through the
+straight of trala with a submarine
+without everybody in Spain and Morocco
+knowing exactly where you are you just
+it's as a matter of fact look at this
+it's 9.1 nautical miles folks that's
+really really easy to listen to a space
+that tight one of the things I find very
+interesting by the way is just how deep
+the water is here I mean you can see
+it's like super deep like deeper than
+Sea Wolf deep kind of a thing like that
+I just find that interesting but anyway
+I digest so what we're going to do is
+we're going to order our Oliver Hazard
+Parry to I start looking around in here
+kind of a thing like that now when
+people do this a lot of times they run
+into a situation where our particular
+unit will either take too long to get to
+the destination so we have to go fast
+and then we can't hear or we go too slow
+and we can listen beautifully but we
+never really cover the distance that we
+need to cover so what we're going to do
+is we're going to take advantage of the
+Sprint and drift feature so what I'm
+going to do is I'm just going to build
+myself a little bit of a box search
+region here again I'm not going to make
+it a massive box search this is the oler
+hazard Perry after all it's not going to
+have a difficult time of finding our
+kilo even though the kilo is going to be
+going awfully slow and again this is
+just the good old fashion expanding
+ladder search here nothing special again
+keep it nice and boring nice and boring
+that looks pretty good to me we'll come
+down here and again if you're wondering
+why I got that little zigzag dashy thing
+it's in case they're trying to go real
+real shallow and that looks pretty darn
+good to me and if for some reason we
+miss that we'll come to the middle and
+we'll come shooting back like that now
+Sprint and drift is a super cool feature
+because if I were to go ahead and click
+on a specific Waypoint and tap the F2
+key you'll notice I can actually turn on
+Sprint and drift so if like that it's
+going to automatically do that but
+notice desired average speed average
+Sprint drift speed not entered if you
+don't put that number in here I've got
+some bad news it's not going to work so
+if I want my average speed for example
+to be 15 knots like that you'll notice
+my desired average speed is now 15 knots
+this is the speed I want my vehicle or
+my in this case my ship to average over
+time now the nice thing about 20 15
+knots here is I can actually do the math
+now if I go to my next way point and tap
+the F2 key as well you'll notice it's
+now ignored my Sprint in drift order one
+or more speed is set to zero cannot
+estimate DTG TTG full quantity or
+anything like that now what we could do
+of course is uh we could go sprinting
+through and setting all these manually
+that's a lot of work on our part but
+again sometimes people want to do that
+so what I'm going to do instead is I'm
+going to shut that off come back to my
+ship click on him and I'm going to go
+ahead incept Sprint and drift here now
+this is the important part because this
+is our desired average speed again so my
+desired average speed is going to be 15
+knots set to sprint in drift mode which
+means he's going to pick up speed slow
+down pick up speed slow down for my
+entire Journey so now if I press this
+point you can see very clearly here that
+um again this is going to just inherit
+everything that comes from behind it so
+let's go and unpause right quick we'll
+let the alare hasard Perry pick up a
+little bit of speed here he's going to
+get up to 2 three four five he's
+cruising at five knots right now let's
+tap the F2 key and you can see remember
+this is his desired average speed his
+desired average for his entire Journey
+needs to be 15 knots so let's go ahead
+and speed up time a little bit of course
+whenever I speed up time my brain
+immediately thinks about oh travel by
+map kind of a thing now notice he's
+chilling at five knots so his current
+average speed over raw is five but did
+you see what he just did he's shot up to
+33 kn because now he's trying to make
+that average speed back to the 15 knot
+Mark so he's going to go rip rip rip and
+notice he slows down beautifully right
+before he gets to his lovely little
+Waypoint and goes ah yeah I should
+probably be uh starting to listen around
+a little bit or something like that I'll
+make my turn okay I'm still averaging oh
+getting to my average is below 14 it's
+coming down to 15 oh I better speed up
+again but he'll continue doing that
+throughout the entire pattern here
+without me ever having to babysit his
+speed which is fantastic so that's our
+first tip our second tip of course we're
+going to be dealing with the pesky
+sanabo so I'm going to go ahead and
+pause when a lot of people think of
+sanabo is they think of this action they
+go like this they go like that they go
+like that they drag a big box they press
+control f11 uh they do a mission they
+call it aswo uh they go down to here
+they set to patrol they make sure it's
+an ASW Patrol you did make sure it was
+an ASW Patrol right you press the okay
+button this thing pops up you grab your
+Orion you push them down here go to
+Mission settings you shut this one off
+you turn this one on you shut these two
+off because you know how irritating it's
+going to be and then you UNP and of
+course this is what happens when you do
+that let's give it a few moments so our
+our P3 takes off and the first thing he
+does of course is he locks onto a
+specific point and he dumps a bunch of
+random Sun ofis out of the back now cool
+thing here is when he drops sunab he's
+actually smart enough to drop both an
+active and a passive at the same time
+which is like nice I like that I like
+that a lot and in the past of course uh
+you could put enough s of buies in the
+water that you can go from point A to
+point B without getting your feet wet
+kind of a thing I always appreciated
+that but you notice as soon as he
+entered the Zone here he dumped one of
+these diecasts for us and of course he's
+going to hit that point and you can see
+he's now dropped these two the total
+distance here is about seven nautical
+miles apart people say where do they get
+the distance from click Tada Tada you
+see how there's a slight overlap between
+the two that's how far apart now people
+are like dude I want to be able to
+control where my sonab go like that what
+a waste of sonobe can I like can I like
+tell him where to put it uh yeah there's
+actually a lot of ways you can do that
+so what I'm going to do is I'm going to
+hu reverse this guy real quickly I'm
+going to go ahead and come to the tippy
+top I'm going to create one way point in
+and I'm going to go ahead and create one
+point in as well down here so I'm going
+to go ahead and unpause here and Ina is
+going to start making his way rabido
+come up this actually Ry D that' be
+rapidly sorry about
+that all right so he's cruising along
+here he's a little high not going to lie
+here but that's okay because he's trying
+to get to his destination he's going to
+enter our little Zone here and I'm not
+sure if you can actually eject the sonab
+at 25,000 ft uh dude you might want to
+come down a little come down man come
+down but what we're looking for here is
+for him to enter the zone and drop a
+Bowie where we wanted him to drop a buoy
+look at that so what he's going to do
+now is he's going to
+go look at that he's going to give us a
+beautiful textbook straight line right
+along the path we asked him to do now if
+you want to go fun with this you can do
+one of these things like that too
+because you know you're like one of
+those players look at that look at that
+look at that look look look look look
+look at that look at that is that not
+the most awesome way to control the
+placement of Sono you've ever seen in
+this game before now there's actually
+another method to do this too you I find
+that method a little more amusing than
+this version and what you can actually
+do is you can create a linear Patrol
+Mission but um of course what we want to
+do is we want to see if we can catch
+that pesky kilo and that's kind of our
+objective here so what I'm actually
+going to do is I'm actually going to
+order him to go home I'm going to go
+ahead and press my f11 key I'm actually
+going to delete that mission because I
+want to show you the other way to do
+this so I'm going to go ahead and get
+rid of this one get rid of this one uh
+actually what am I doing uh control
+delete I got rid of them too effectively
+so what I want to do now is I want to go
+ahead and create a line of sunab buys
+and I want to just make them from right
+here I'm grab it right here and I don't
+want to deal with all that pesky
+business where I have to do that uh
+plotted course or anything like that so
+what I'm going to do this time press
+that levely f11 key we're going to
+create a new Mission uh in a straight oh
+straight
+line uh we're going to go down here
+we're going to do a patrol we're going
+to set this ASW Patrol press the oky do
+button we got got to find the one that I
+did not waste this time there he is he's
+right there but we're going to change
+this times instead of doing an area
+we're going to keep it with two points
+and I'm actually going to instead of a
+random I'm going to say a repeatable
+loop see what I'm doing see what I'm
+doing let's go down here set this one to
+the number one and it looks lovely
+unpause so what's going to happen now is
+our other P3 I think this is in I don't
+remember which one it might be in I
+forgot which one it is this time he's
+going to go ahead and take off he's
+going to proceed direct to reference
+point number 10 there and he's going to
+go ahead and start dropping some sonab
+himself ah there he goes ah this wasn't
+last year though so the cool thing here
+and of course if you're wanted to little
+micromanagement and make this a little
+bit more precise you can actually order
+him to kind of get out of a weird angle
+here go up that way that way there he
+goes that way he's nice and lined up so
+he's going to come scoot scooting down
+here and heading for a reference point
+number one Z and what's going to happen
+when he gets there is he's going to
+start doing a barrier cap for us which
+is awesome cuz we know that pesky kilo
+is in here somewhere making his way to
+directly for jalta of course our
+incredibly our lovely alare House of
+Perry has not detected him yet all right
+so we're going to sneak up on reference
+point number 10 here here we go here we
+go oh son of in the water and he's going
+to Zig down this line down here and he's
+going to act as a big barrier protector
+here look at it look at it look at
+they're in a straight line look at how
+fantastically oh my gosh have you ever
+seen such a beautiful deployment that
+you've ever seen before and again this
+little tiny trick it makes such a
+difference if you're trying to uh you
+know create that barrier real fast to
+these PES and again people always
+complain these things don't work now one
+of the cool things here is that inless
+SC done right now is going to actually
+zigzag back and forth along this track
+right now and because he going to be
+zigzagging along it if one of the buoys
+expires which they do by the way as a
+matter of fact if you click on one real
+quick let's grab this one real quick uh
+let's see what he's got left here uh
+he's got six hours um he'll actually
+redeploy a bunch more and actually keep
+the process going so you have a per
+we've got him ha C
+is this not like Perfection or what and
+again we're spoiled because we're in a
+nice small area this is the best ASW
+work I've ever seen these chaps doing so
+of course if we wanted to we could
+immediately order him to drop some bombs
+on this guy and stuff like that but um
+unfortunately you two I have to click
+the violence option if something
+explodes so I don't want to click that
+today so I'm just going to skip the
+explody part but now of course the next
+challenge would be to identify this guy
+and the way we would do that is we
+basically sneak right up on him there's
+some really really hilarious gaming
+methods to cause somebody to force an
+identification like you know you have a
+passive buoy right here one of my
+favorite examples is actually to fire a
+torpedo behind him and know when he
+hears the torpedo he'll panic and he'll
+accelerate which will make him make a
+lot of noise which will cause you to be
+able to identify him um I think there
+are probably laws against doing
+something that gamey but it's it's a fun
+way to get somebody to accelerate if
+that's that's your desire so to speak
+we'll go sneak up on the this guy hey
+how you doing we're going to get a mad
+ping in a second here control
+f11
+oh got to click on him first that's
+right control F1 control F1 rather is
+going to be a bearing attack
+here torpedo in the
+water all right and last you've done a
+wonderful job for us today notice by the
+way that did not count as declaring war
+but um of course this guy probably got
+the pants scared out of him as he
+suddenly hold a torpedo and and start to
+accelerate behind him so sometimes it'll
+happen and again depends on the angle
+you drop the torpedo looks like he's not
+going to take the bait here because
+they'll actually pick up speed and start
+running really really fast away from the
+torpedo and when they do that they get
+nice and loud and they're very very easy
+to
+identify did not quite time it I had to
+do it it like an oblique to sort of
+trick him into accelerating but ah again
+that's such a gaming maneuver I don't
+think I feel all right so hopefully this
+video is helpful as far as showing you
+some ways to have far more control over
+the placement of these pesky things as
+well as you know how to make your little
+searching platforms have a much easier
+time of searching enjoy

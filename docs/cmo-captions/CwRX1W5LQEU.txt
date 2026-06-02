@@ -1,0 +1,453 @@
+# C: MO - Jettison Weapons Effects
+Video: https://www.youtube.com/watch?v=CwRX1W5LQEU
+Video ID: CwRX1W5LQEU
+
+hello everyone in today's video we're
+going to take a look at the influence of
+jettisoning your weapons one under
+attack has on not being destroyed for
+those of you not familiar with the WR
+and command bot operations if you press
+control shift up9 take a beak you
+probably notice there's this lovely
+thing here that says jettison ordinance
+uh this really refers to when under
+attack now there's two options for this
+there's either no or there's jettison
+ordinance when under attack convenient
+so what we're going to do is we're going
+to set this to no and leg goette and we
+have two different aircraft here we have
+an F-15 e Strike Eagle and what we've
+done is we've loaded them down pretty
+hard with a lot of Mark e2s here and of
+course directly behind it is none other
+than our lovely b-52d Strat Fortress
+which is also loaded down with oh let's
+see
+108 Mark 82500 Pounders so we're here to
+see is what happens when we get in range
+of my very very talented sa2 crew down
+here when they go to fire at our
+incoming aircraft and now what we want
+to evaluate is what happens if they
+jettison what happens if they don't
+jettison so let's find out what happens
+here first so f15e is up first so he's
+basically sitting here coming on in he's
+a skitting pretty high altitude about
+36,000 ft there that's pretty good for a
+Strike Eagle just kind of cruising just
+kind of cruising just kind of there's
+the warning so what he will do is he
+will immediately put the missile at his
+uh looks like a 9:00 right there it's
+actually going to be a little more than
+9:00 but that's perfectly good Doctrine
+he's doing everything correctly the
+other thing you'll notice is he's
+building up as much speed as he can and
+he's starting to execute a little bit of
+a climb here you can see he's got about
+36,000 ft here this is real time by the
+way we have the two sats are rolling in
+right now we're almost up to uh we're
+moving we're moving moving Mark 1.22
+here comes first missile is just going
+to sail right on by and our second
+missile is just going to come sneak up
+on this F15 as well it's going to get
+close it's going to get close but it's
+not going to do anything so let's go
+ahead and take a look at the results so
+the first one of course that one is
+missed that happens sometimes the second
+one there if you actually take a look at
+the results here you can see here that
+its original probability of hit was 30%
+which is based on the weapon by the way
+if you ever want to know like if you
+want to play the probability game so to
+speak you can actually come here on this
+is a 12 20 D is a 20D I always forget
+what 20 it's a 20D I was right let's see
+here original probability of hit for
+this particular weapon if we just wanted
+to consult it real fast it starts at 30%
+so not very good so let's see here
+probability of hit was 30% adjusted for
+actual speed 20% so this's a 10%
+reduction because of speed pretty
+substantial but again we're not here to
+measure that we're here to measure
+payload so if you go through this you'll
+see our nominal agility is 4.5 our
+adjusted altitude is 2.2 high altitude
+less agility U my guy here is a Cadet I
+did a Cadet I know I redu this one
+already let see empty weight fraction is
+097 uh he's really close to maximum
+weight here and that's intentional
+you'll see because of that he has an
+actual agility adjusted to 46 which is
+not bad not bad it's not terrible low Al
+to do this would be a little better um
+we have a high flexion impact which
+doesn't affect agility final agility
+modifier minus five that's the magical
+number we're interested in here this is
+the one that's going to tell us how much
+our manuverability really made it easier
+not to get blown up so we can see you
+look here and we can see we have a final
+probability of hit of 8% and of course
+our result was a 65 we rolled a miss so
+I'm going to go and delete my poor F15
+here so next step of course is a B52 and
+now the reason I pulled out the B52 for
+this is this is an excellent exercise
+because this thing is Laden it is very
+very heavy and it'll be able to
+demonstrate the importance of agility
+very quickly let me pause there's one
+thing that I forgot to do though I
+forgot to make sure that it won't just
+Jam everything that's going to be
+attacked so let's go ahead and uh remove
+all these real fast just to make a
+little bit more fair look good to me
+that looks good to me tail warning radar
+that looks good to me go pop over to
+weapons we're going to dump all the
+chaff and everything there we go that's
+a little better all right I'm pause if I
+did that on the F15 already by the way
+so let's see our sa2 fires our B52 crew
+sees this thing rolling in here they're
+going to go ahead and execute their turn
+as well they're going to try to put it
+on the 9:00 of course we're dealing with
+B52 here so we are not going to be able
+to go that fast one thing you'll notice
+of course is we're going ahead and
+slowing down in the turn here that's
+going to happen on account of the fact
+that we are just kind of big but the
+first missile comes in which kind of
+either goes by or does not detonate it
+comes by here comes the next one and we
+get nothing let's go ahead and take a
+quick cander and see where the results
+are so swinging in here we can see our
+B52 here 30% probability of hit that's
+already in there B52 has a 1.5 agility
+not much justif altitude a little bit
+proficiency uh 64 empty weight fraction
+99% agility adjusted to 26 half of the
+agility of our F-15 buddy um it has some
+a little forward bleak impact final
+probability of hit was a 21% and I
+rolled a
+22 that was close wow that's a totally
+different probability than our F15 keep
+in mind our F15 was going twice as fast
+let's see coming down here you can see
+the other one pretty much the same and I
+kind of open the sucker up real quick
+you take a quick Gander and let's see
+probability 19% was the second shot
+again it was a little bit worse
+probability because we had that weirder
+impact angle than we had on that initial
+one we hadn't finished taking our turn
+if that makes sense so this is
+interesting we have our numbers here and
+we can now go ahead and reopen the
+scenario but this time we're going to
+dump our payload and see if it makes a
+difference all right here we go so I can
+see here that our F15 yes before anybody
+asks I did rip off all the sensors and
+offensive ECM and all that other good
+stuff so it comes to our F15 and now
+what we're going to do is we're going to
+press control shift of9 and we're going
+to order it to jettison ordinance if it
+gets attacked let's see if it makes any
+difference here so remember our final
+probability of hit with ordinance was
+right around 10% so we'll see what
+happens when we get close closer again I
+expect to launch right about here if my
+um sa2 crew is doing a pretty good job
+here big difference though is we're
+about to lose all of our bombs there
+goes let's see so f15e immediately
+executes a right turn again that turn
+was a little bit quicker this time
+because we didn't have all that extra
+weight the other thing I noticed is he
+automatically jettison into all of his
+ordinance and oh well stuff happens you
+know we I accidentally pushed the
+Admiral's doorbell the other thing we're
+going to notice is he is climbing like a
+rocket and picking up speed a lot faster
+than he was a moment ago so the first
+Sam comes in here oh that one landed
+pretty darn close I did not like how
+nasty close that was here comes the next
+Sam we're already doing 700 almost 80
+knots when need that missile oh yeah
+that one did not have a chance the
+geometry was just not on the side of
+this particular aircraft or I should say
+the missile so we're at 15 no problem
+let's see how we did here so open this
+one up real quickly here same numbers we
+saw before let's see um Cadet aircraft
+has weight fraction of 0.54 so it was
+half the weight last time and you can
+see our agility went up by an entire
+third which is actually substantial
+amount of agility we got all the math
+here probability of hit 7% so that was a
+basically negligible change here and the
+reason that's important is that that 3%
+yeah it means theoretically use 3% less
+planes out of 100 shots yeah you can see
+why that's important but the other thing
+is not massive and of course um I now
+have no bombs so he's going to have to
+go back home and explain to you know the
+colonel there why he doesn't have any
+weapons on board now where things get
+interesting is with our B52 here let's
+go ahead and unpause here and let the
+B-52 kind to sneak up and again I picked
+the f-15e intentionally because I knew
+for a fact that that aircraft is very
+very special when it comes to
+Performance and they're going to be
+launching in just a moment here uh turn
+the wheel slowly slowly zush you got to
+hold down the button you have to press
+and hold that's the thing everybody
+forgets so we got a warning from the
+Illuminator there's the actual missiles
+coming up rv52 crew immediately
+jettisoned nothing so let's go ahead and
+pop real quickly here uh they're under
+attack maybe they didn't think to Jet us
+and everything so let's see here why did
+you folks not jet us in your cargo here
+that was very very disappointing perhaps
+they don't have a button to do it in a
+hurry kind of a thing like that sort of
+disappointing me folks but one thing I
+can do of course is I'm going to go into
+weapons real fast I go to my Loadout I'm
+going go and change this we're going to
+assume that they jettison maybe I didn't
+give them enough time because I didn't
+see the maneuvering right away and
+there's the maneuvering ah I just didn't
+give them enough time to drop the stuff
+off so here we go the B52 is now going
+to execute a turn we're losing all sorts
+of speed in that turn oh no oh the first
+one didn't do anything here comes the
+next one prepared to lose a plane oh
+here it comes here it comes oh nothing
+pause let's see what happened so the
+first one of course came rushing in here
+I know we can see here pretty much the
+same probability of hit uh we didn't
+have any speed our nominal agility
+adjusted for altitude empty weight
+fraction was 89 which meant our agility
+instead of being 26 there was like3 so
+not a massive impact in agility here
+this was a forward oblique impact does a
+the math Force final probability of hit
+is a 22 which is basically the same as
+it was a minute ago down here if we take
+a look at the second weapon that was
+fired again we had a better oblique here
+again we were more Square to the missile
+if you want to think about it another
+way coming down here um again agility
+slightly improved um final probability
+of hit was a 21 I rolled a 28 and our
+B52 lives to drop a bomb another day so
+what is the biggest takeaway here the
+first thing you're probably going to
+notice is yes there is an impact if you
+jettison stuff obviously if I were a
+little bit lighter we could probably
+cheat just a little bit as a matter of
+fact as I'm discusting the impacts of
+this so we're going to set this up and
+have some fun with it but there's a
+bunch of different things that we can
+take away from this one thing of course
+that we'll probably notice which I'm
+sure everybody did is the fact there is
+indeed an impact of jettisoning your
+weapons that does make a difference you
+will definitely have a greater agility
+at your disposal downside as you
+probably noticed is we've now failed the
+mission because we've dumped a bunch of
+bombs in the ocean for a 3% better
+probability of not getting shot down
+kind of a thing not the greatest combo
+so what I'm going to do this time is I'm
+actually going to go ahead and help this
+airplane out just a little bit uh let's
+see here change up properties I do this
+every single time uh right click I'm
+pretty sure whoa I hate hate that oh
+that's right cuz we have a new version
+so they changed all that I hate it when
+I do that by accident right click uh
+let's see here cargo unit properties oh
+why am I being blind here set aircraft
+properties um why am I being blind every
+single time every single time all right
+here select new home base we're going to
+go to scenario editor unit properties ah
+there it is unit properties I was just
+being blind oh let's see Airborne time 2
+hours and 30 minutes oh that's 23 hours
+that would probably be bad for us uh
+let's do 2 hours and 30 minutes please
+there we go so oh my gosh don't be
+difficult please 3 hours of flying
+automatically adjust and you can see
+that lowers our weight a little bit and
+let's just do 25,000 let's see if that
+helps there we go so again I right
+clicked again that was my mistake my
+part all right so B52 is going to come
+hovering over here again I've already
+ordered him I can actually come over
+here and press delete on that click on
+him F1 click he's looking pretty good
+again I'm going to have to disable that
+right click oh we had a recent patch
+that overrode all my local settings ah I
+hate it when it does that all right so
+we're coming in missiles launched uh so
+what we're going to do here is we're
+going to intentionally drop our payload
+and uh to do that of course we're going
+to rather than have him drop it in a
+second we're just going to go through
+the motions ourselves just for the
+purposes of this experiment so we're
+going to un pause here comes the weapons
+we get the Illuminator warning first RP
+52 it's a little bit
+lighter there's the first one and here
+comes the second one and there we go
+let's go take a look at the results of
+that here so our first one of course
+there's another one on the way uh let's
+see here final probability is 18% wow so
+dumping all that fuel gave us four more
+perc probability of not getting cupal
+loed uh keep in mind that um obviously
+we also had to get rid of our bombs on
+board so that had a pretty substantial
+impact notice by the way when we made a
+really really hard deflection shot that
+our probability of hit dropped to
+15% that's amazing for completely uned
+B52 here that's actually it's going to
+take a lot of missiles look at that the
+B-52 is just turning and running oh oh
+that was a mistake no no no no no no no
+that was a
+mistake well I'm going to have to
+explain to uh the Youtube sensors there
+that there was violence in my video
+thanks to that one H sometimes they just
+do the silliest things they get panicky
+so the cool thing here is as you can see
+we can no longer accomplish the mission
+for a 3% change so does that make a big
+difference it could make a big
+difference but again a lot of it comes
+down to the aircraft the performance of
+the aircraft and obviously big airplanes
+that have burnt up a tonch of fuel um
+that's going to work well for them if
+you're a little airplane with tons of
+gas on board dropping your payload
+you've just failed the mission
+automatically kind of a thing so it's
+just kind of another way to look at now
+of course I know you're sitting here
+thinking well uh but what
+if you're saying but what about modern
+aircraft what about modern Fire Control
+rados what about modern missiles isn't
+that going to help well realistically
+it's not going to do us much good let me
+show you why in a second here so what
+I've done is I've gone ahead and tossed
+in of course an s300 because I'm a bad
+person
+and taking a look at this thing it has a
+really really really really long range
+when it come down here you can see we've
+already deployed our weapons and the
+missiles are actually on the way right
+now so off the go so off the go whoa
+that one's not doing the turn if you're
+wondering where this one's going by the
+way it's actually going towards our
+little Hawkeye
+which I'm mean so this one's coming
+sneaking in we can see our F-15 has two
+of these things coming in our F15 crew
+immediately jet us in their weapons
+they're turning hard I'm going to leave
+the ECM on the B-52 here just in case it
+makes a difference rf15 turning turning
+turning turning splattered and
+splattered let's go ahead and take a
+look did it matter let's see here it
+impacts the this one it's sa20 by the
+way let's see it was a 90% probability
+of hits oh we managed to get it down to
+76 for the B52 now our high performance
+F-15 here that got splattered you'll see
+here that it was pretty effective
+actually did a nice job you can see our
+empty weight fraction 54 High deflection
+impact that's really what mattered
+intercept angle that's really really
+What mattered you can see again 42%
+chance so it didn't it didn't matter
+those High performing weapons even if we
+had 3% greater the probability of that
+follow-up missile getting us puts us up
+into like the 75% probability of
+Destruction there so you can see here as
+the weapon systems get more capable it
+makes that whole just jettison not as
+effective it's much much safer to not
+get launched on in the first place or
+try to trick them to launching at long
+distance so that it's much much safer
+for you for the purposes of getting the
+heck out of there rather than trying to
+turn what the weapon and again with and
+all that other stuff it becomes slightly
+more possible to make these engagements
+and again it's that initial turn to get
+you that deflection shot that matters
+almost more than your empty weight
+fraction enjoy

@@ -1,0 +1,182 @@
+# C: MO - Update 1147.26 Changes
+Video: https://www.youtube.com/watch?v=eg8U-wp7pSk
+Video ID: eg8U-wp7pSk
+
+hello everyone in today's video we're
+gonna take a look at some of the updates
+that we've received in command build one
+one four seven point
+two five and a two six so basically it's
+a pretty simple build there's
+nothing too crazy uh we got a wonderful
+new database update and a lot of
+updates that we're gonna take a look at
+i like that but we'll take a look at a
+couple of the different options we have
+directly
+uh the first one is way back in the day
+they had this wonderful thing where you
+could go ahead and
+make groups of things like this you
+could go ahead and group those groups
+together
+close that's perfectly fine we're going
+to close and resume and of course
+if you ordered them to go ahead and move
+somewhere like over here and you ordered
+them to go ahead and avoid cavitation uh
+not every group
+would go ahead and do that so if you had
+a certain ships that went a little bit
+faster
+and certain ships went a little bit
+slower they'd all travel at the speed of
+the fastest ship which of course would
+cause cavitation
+now granted this is a group of sea
+wolves they're all going to move at the
+same speed that bug wouldn't have been
+present but it's at least worth noting
+that was one of the big things that they
+fixed
+they also supposedly added this neat
+little option that you can actually go
+ahead and eliminate cavitation from
+missions
+but the most that i was able to play
+with i didn't find anything about that
+inside of here
+nor did i find it instead of the
+doctrine setting so i'm not sure if that
+stuck on there or it's something i'm
+missing probably user error on my point
+uh the next option they gave us which is
+pretty cool is all in the database
+so if we actually go up to the database
+viewer you notice you have a brand new
+box up here and it is the
+subtype box now this is actually really
+handy
+because i can come in here and say um
+give me let's say here
+i'll do electronic warfare and
+let's go ahead and pick this one right
+here so now you can actually identify
+different units by what type of unit
+they actually are
+now you can have a lot of fun with this
+you know you can set the commercial you
+can come set it in them let's see are
+there any
+cargo planes of course you're going to
+have like cargo planes here you know i'm
+going to say go ahead and give me an
+airship and we'll give all our airships
+granted we have no airship so we don't
+worry about it obviously we have no
+image satellites so that's not going to
+come over
+a naval utility there's a couple
+different naval utility helicopters and
+it goes ahead and regenerates this list
+for us
+the next item that they've had i think
+this is pretty cool is if you scroll
+down it actually tells you what arcs
+that the particular devices are used for
+now
+now i think you're probably sitting here
+looking all these numbers going oh my
+gosh what does all this mean
+i don't panic too much it's actually
+pretty straightforward ports basically
+saying your left side
+sbs are basically referring to your
+right side you can actually work out
+roughly what this is you've got your
+fronts you've got your rear rears you've
+of course got your sides
+now if you're wondering um wait what
+does that even mean so if we were to
+quickly grab a unit let's grab the
+sensors real fast
+let's go ahead and add a sensor if i
+actually pull this to the side now
+you can now see what arcs everything is
+based on what it is itself
+so in this case we've got these two pb's
+right here we have the pma which is
+going to be the middle one
+we have the pmf which is going to be the
+one in the front so basically we have an
+r
+coverage that's basically going to go
+all the way through here since we have
+no r's meaning the rear sector here
+so again if there's a 360 degree
+coverage it actually tells you there i
+really wish this was a little graphic
+which would make this much much simpler
+to actually understand and read
+but hey we're going to deal with what we
+got sort of thing uh the next thing
+they've added which is kind of cool as
+you can now directly edit
+the damage of a unit as far as fire and
+water goes
+so i've got myself the beautiful aoe
+sacramento and it's going to be a victim
+so i'm going to go click the damage
+control button and now we have brand new
+options down here at the bottom so i can
+set it on fire and of course i can start
+it flooding
+now the reason i love this which is
+actually pretty funny is the fact that
+remember the fire always gets put out
+without the flooding that's how that
+works right
+so let's go ahead and ignore the fact
+the spell is cerev instead of severe but
+again this my spelling is about that
+good too go ahead unpause i'll speed up
+time here
+so you can see he's on fire badly oh and
+he sank
+but don't worry the fire will go out
+because eventually it'll be completely
+underwater
+so that's a pretty neat little change
+that they added to there as well there's
+another item that they'd added which is
+dealing with search and rescue they
+actually added combat search and rescue
+as an option
+i was playing with that a little bit and
+i couldn't quite get it to work with the
+lua and maybe just needs a little bit
+more tweaking
+but the last feature i want to show off
+that came out brand new in this version
+is let's go to submarine
+let's go to subtype and click biologics
+we now have
+shrimp i'm gonna go press this button
+press okay and just like that now we
+have a whole school of shrimp that we
+can go ahead and order to uh
+cruise around at no speed because you
+know there's shrimp
+hopefully you enjoy this video again
+like i said just a quick little brief
+update to some of the new things i
+really like this feature because you can
+dial this in using lua so you can create
+some really really
+neat dynamic events you probably
+couldn't do in the future some of those
+other items
+just need to be digging a little bit
+deeper but for now this should give you
+a rough idea what's
+going on enjoy

@@ -1,0 +1,669 @@
+# C: MO - Tactical Effects of Altitudes
+Video: https://www.youtube.com/watch?v=KOOxlw5dfrU
+Video ID: KOOxlw5dfrU
+
+Hello everyone. In today's video, we're
+going to be taking a look at altitude
+and its tactical implications. Now, the
+interesting thing here is we've created
+a pretty basic scenario. I particularly
+like Nevada for this because there's a
+good variety of different terrain and
+makes things tactically interesting. And
+I'm going to start off also by saying
+the fact that this strike that we're
+about to do is suboptimal. And I want to
+do that intentionally so we can control
+one variable at a time. So, what we're
+going to do first is we're going to
+create kind of like a baseline here. I'm
+going to call this one pointless strike.
+I'm going to go ahead and do a land
+strike real quickly here. It's a regular
+one. Let me go ahead and make a quick
+adjustment for you folks at home.
+Hopefully that's a little better for
+you. So, what I'm going to do is I have
+a bunch of F-16s and I feel bad because
+a lot of these are going to get shot
+down today. But I'm basically going to
+grab the whole posi here. Go ahead and
+toss them onto the mission. Again,
+straightforward stuff. Nothing weird.
+I'm grabb myself some escorts. I'll mark
+them as escorts. Come down here. I've
+got lots of seed escorts, which trust
+me, you're going to need it this time.
+And um that's my strikers. Now, my
+strikers themselves are made up of a
+couple different F-16s here. Apparently,
+I clicked the wrong thing. There we go.
+Uh, we have F-16s that have Mark 84s,
+which are basically dumb bombs. You have
+to essentially go up and then drop them.
+And of course, we have LGBs, which are a
+little bit more useful, a little more
+accurate, except for the fact that they
+require us to have line of sight. Now,
+the weather today, I'm going to go click
+on the strata tanker. Well, we can't see
+it. Basically consists of some light
+high clouds at about 20 to 23,000 ft.
+All right. So, as you can see by the
+title on this, this is about altitude.
+So, what I'm going to do is I'm going to
+begin by launching my strike at a
+conventional altitude.
+&gt;&gt; Let's go ahead and take a look at what
+this looks like. So, if I switch on my
+flight view mode, you can see we have
+our different flights here broken up at
+different altitudes. Most of them around
+36,000 ft. Now, 36,000 ft is a good
+altitude for several reasons. Uh, first
+of all, it's going to give you fabulous
+line of sight for any sensors.
+Basically, if it's out there and it's
+electrically detectable, we're going to
+detect it as long as we can see it. Uh,
+that also means you are very, very easy
+to detect by anything on the ground,
+including all this nastiness that's down
+here. The other advantage to high
+altitude is your fuel burn. If I were to
+grab, for example, one of these little
+F-16s real quick, and scroll down to the
+bottom,
+the database is your friend, by the way,
+D. Here we go. You will notice that
+between 36,000 and 45,000 ft at uh
+cruise speed, we're burning 21 kg of
+fuel per minute. You'll notice at the
+moderate altitudes it's about 30 29 kgs
+per minute. And at kind of these middle
+altitudes that we're going to be playing
+with quite a bit, you can see my
+consumption is up almost 30%. If my
+consumption goes up 30%, my range
+decreases by the exact same amount as
+well. So, one of the advantages to these
+higher altitudes is the fact that you
+are going to be burning substantially
+less fuel and your electronic sensors
+are going to have a much much easier
+time of seeing things. So, here we go.
+We're getting ourselves into position
+here. I'm going to go ahead and flag a
+couple of these guys as hostile. We know
+the whole region is quite hostile here.
+You can see I have a couple, of course,
+the M28s. So, the party starts. Uh, you
+can see right away that my air
+interceptors basically ran out and
+started going after them. Uh meanwhile,
+my seed aircraft are starting to do what
+seed aircraft do best and basically
+waste uh $50 million worth of uh harms
+is the best way to describe it,
+especially against a very very high
+precision system like the S300 down
+here, which is having no problem
+blinking away at all the incoming say.
+Oh, I got them all. [laughter]
+All right, S300's cheap. All right,
+looks like we got something here, but
+that's okay. Meanwhile, my strikers have
+basically turned around and ran, which I
+don't blame them. That that was a good
+call on their part kind of a thing. Now,
+my seed aircraft are pretty much out of
+everything, which doesn't surprise me.
+And again, remember, we're operating at
+36,000 ft here, which is, in my opinion,
+kind of the high altitudes. So, we did
+see the missiles coming. That's a
+positive. We are aware of the enemy
+aircraft. That's another one of those
+great positives for us. And, uh, the
+enemy had no problem basically dropping
+their entire rack. Now, there's another
+hidden advantage to this altitude that
+you probably don't see from where we
+are, and that's the fact that our
+basically unguided bombers, which are
+going to run, actually, they're at high
+altitude right now. These guys are going
+to run out of fuel before they get home.
+One of the neat advantages is if you do
+have a precision guided weapon,
+especially a GPS variety, you can
+basically drop it, turn around, and
+leave, which is awesome. All right, here
+they come. So, these guys are actually
+the wrong altitude. I prefer you folks
+get up to a higher. Actually, you can't
+because you won't be able to see. We'll
+pop you guys up to middle. Uh, what is
+this here? This is flight status one.
+Oh, you guys can come up to max altitude
+there for the purposes of demonstration.
+All right, they've turned around and
+ran. They ran out of everything. Oh,
+he's going to crash.
+Oh no. And you can see that poor guy had
+a fun time of it. All right, so what are
+the takeaways? First of all, we had the
+most time possible to basically engage
+with our weapons and we had a great
+electronic line of sight. That was cool.
+But as you could probably tell very very
+clearly when we were doing our approach
+there that um so did the enemy. Uh they
+had no problem detecting us. Their
+engagement window was very long. They
+were shooting at us about 30 miles away
+from where they actually located and we
+didn't have a lot of turnaround.
+Likewise, um one of the things we could
+not demonstrate well here would have
+been the fact that our lovely F-16s
+would not have been able to accurately
+drop these bombs. However, being at the
+high altitudes, we were basically
+untouchable by the short-range SAMs as
+well as the AAA. Let's reset things.
+Now, for this operation, we're going to
+do things slightly differently. We're
+going to intentionally select what I
+consider to be the middle altitudes. So,
+your middle altitudes are usually
+between 10,000 and about 18,000 ft. Now,
+middle altitude creates an interesting
+little thing, uh, kind of a detail. Let
+me go grab my MS paint real fast. There
+we go. That's awesome. Now, one of the
+problems with mechanically steered
+radars, especially like on my F-16 here,
+is the fact that they operate in a
+conicle section when they're looking
+through the sky itself. Now this is a
+very very very concentrated like a
+quarter degree kind of a thing. But the
+reality is if the target is not within
+the cone that the particular radar is
+operating in it can't actually detect it
+which means that this target here and
+this target here would be completely
+undetected even though it does exist in
+the world. Now one of the things they do
+in the real world to kind of get around
+this is usually one of 16 points that
+way one of 16 points that way with their
+radars. That way we can get away from
+this. But the reality is if I have a lot
+of altitude, it basically makes it so
+that I create a blind spot underneath my
+aircraft's radar detection. I'll expand
+my detection here where other aircraft
+can get through. And because of ground
+clutter, it makes it very, very, very
+challenging to actually identify targets
+underneath us, especially with older
+style radars. That means if I operate at
+a lower altitude, I create a less chance
+of being undetected by lowaltitude
+targets. And it also means targets above
+me, such as this guy right here, is
+easier to detect because there's no
+terrain behind it. The practical upshot
+of that, of course, means that if you're
+basically cap aircraft are operating at
+middle altitudes, it's very difficult to
+get underneath them. So, what we've done
+here is we've reset everything. Got an
+all ready to go. What the heck is up
+with that? We reset it. Everything's all
+ready to go. And this time, we're going
+to intentionally order our strike
+mission to be using the middle altitudes
+of 12,000 ft instead of that really,
+really high altitude to see if it
+improves things a little bit as far as
+being able to actually strike the
+target. That would be nice, wouldn't it?
+All right, so how we going to do that?
+So, I've already created my strike
+mission. You can see that's all ready to
+go. I'm going to click on pause for a
+second. Pause. Create update flight
+plans. So, what that did is it generated
+a bunch of flight plans for us. And you
+can see they're all broken down here.
+So, I've got this one right here, flight
+astro 40. That looks pretty good to I'm
+going to open up the flight plan editor.
+It's going to open up this sucker. We've
+covered this one many, many times
+before. And what we're going to try to
+do is intentionally adjust some
+altitudes here. Uh we got some holding
+start. Why would we be holding at that
+altitude? That doesn't make sense. You
+should be holding at 36,000 ft to save
+as much fuel as possible. All right, so
+we have our hold end. Uh we have our
+turning point, which is ingress or IP.
+And then we have our target. You can see
+all these altitudes are they're moderate
+altitudes. So not too high, not too low
+kind of a thing like that. What we
+really need is one more waypoint after
+this hold so we can drop down low before
+actually engaging it. So while I'm here,
+what I'm going to do is I'm going to
+quickly tweak things a little bit. Uh
+let's see here. I don't want that
+altitude. I'm going to edit speed and
+altitude. That's not what I want. I want
+to do Actually, I can just click the
+button. Why make work for myself? All
+right. IP is also going to be 12,000 ft.
+Again, we're keeping this kind of
+moderate middle altitude thing going on
+here. All right, good. So that's going
+to get them to 12,000 ft. Target
+altitude. Again, we should have
+overwritten this at the last mission,
+but this is it's going to be a good
+enough demonstration for us. Then what
+we're going to do is we're going to
+insert one waypoint afterwards. So, I'm
+just going to go boop. Insert waypoint.
+Uh, would you like to insert waypoint
+for all the flights of this mission?
+Yes. [laughter] Good. And what we're
+going to do here is use this as kind of
+our just, you know, turning point kind
+of a thing like that. So, we have
+ingress. Uh, let's see here. Start. And
+we're going to set that to 12,000 ft
+here. So, let's go ahead and pull all
+this out of the way so you can all see
+what this actually looks like. Okay. So
+way point four now, as you probably saw
+a few moments ago, is going to be the
+get down, get down altitude. And uh
+that's going to work well for us because
+that's going to give us plenty of time
+at the higher altitude to basically take
+advantage of the fuel savings before the
+savings and pass it on to you before we
+actually do the engagement here. You
+know, while we're fiddling with our
+waypoints a little bit here, let's let's
+let's go let's go all out. Let's go all
+out. Let's get this guy kind of in this
+little shadow of this valley here. Make
+it a little bit more challenging. I'm
+flip the IP to the other side. There we
+go. This is going to give them a lot
+less time in the danger zone, uh, which
+should be a little bit safer for
+operation here. Let's go pull that down.
+So, you can see our hold down is 36,000
+ft. Our turning point here is going to
+be uh 12,000 ft. And then we're
+basically going to drop down to a lower
+altitude. Now, the other flight in this
+group, of course, is my LGB. And, uh,
+those are going to be, let's see here,
+they're going to be flight named Goose
+51. So, I'll grab Goose 51.
+Boop. All right. Goose 51. And you can
+see Goose 51 has a very similar flight
+plan. As a matter of fact, I think it
+kept all Yeah, it did. Nice. Cool. I
+like that. So, Goose 51 is sharing the
+same flight plan with Astro 40. That's
+wonderful. That makes my life a lot
+simpler, actually. Thank you. I
+appreciate that. All right, let's go
+ahead and close that screen here and
+we'll go and unpause and we'll let the
+party start. So, what's a little
+different this time is we're
+intentionally coming in at a much lower
+altitude. Again, this is a moderate
+altitude. This is not a high altitude.
+This is not a low altitude. This is a
+moderate altitude. full control.
+&gt;&gt; Now, you notice our escorts are staying
+high while our strikers are staying low.
+All right, the party is starting.
+Yeah, that was that's some wishful
+thinking on whoever took that shot.
+All right. Whoa. Careful, careful,
+careful. Don't run out of fuel before
+you can actually deploy your weapons.
+It's always embarrassing. Now, you'll
+notice here we're operating at that
+middle altitude. And again, you dock
+underneath that nice little valley here.
+We just lost like six F16s. This is such
+a waste of F-16s. the way I'm doing this
+tactically today. That's okay, though,
+because for the purposes of
+demonstration, our digital F-16s can get
+smashed around a little bit. All right.
+Now, notice again, keeping that lower
+altitude for the purposes of uh reducing
+the enemy's engagement time while still
+keeping a pretty good line of sight to
+what's actually going on with the party
+here. All right, so we're tearing
+across. We're still at a little higher
+than 12,000 obviously because of the
+mountain heights in this region. All
+right, here he goes. They're breaking
+apart. And you'll notice here that our
+SAM finally saw them, but we actually
+had a chance to deploy our weapons here.
+And you'll notice very quickly the fact
+that every single one of those weapons
+was shot [laughter] down before it
+struck the target. Oh boy. Uh, that's
+incredibly typical, unfortunately. All
+right, everybody's going to turn around
+and go home. And that was 100% more
+successful than the last strike that we
+just took. You can go home. It's okay,
+Marlin. Go home. So, what was the actual
+practical damage that we caused there?
+Again, that lower altitude made it so
+they had a lot less time to engage us.
+You can see we lost three F-16s and uh
+we blew up nothing. [laughter]
+That's rough. That's rough. All right.
+So, as you can see from high altitude,
+it gave us more situational awareness,
+better fuel economy, but it gave them
+too much time to respond. At that medium
+altitude, our fuel consumption wasn't
+quite as good. Our line of sight with
+our sensors was okay, and uh gave them a
+lot less opportunity to take a shot at
+us. So, what happens if we try this at
+low altitude?
+This is where things are going to get a
+little harder for us. Um, I like the
+fact that we took advantage of this
+little valley here. And um, I am
+completely 100% to take advantage of
+that a second time for the purposes of
+this. So, this is our IP right here.
+This is our endpoint if you want to kind
+of think about it there. And we're going
+to try to absolutely minmax this as hard
+as I can. So, I'm going to try to give
+it right there. Got to give him enough
+time to finish the turn, too. And he's
+going to come in do his little bombing
+here. So, I'm going to pull this down so
+you all can see it real quickly. So,
+obviously my IP, this is for group 66.
+Remember how last time we did 12,000 ft?
+We're going to put them basically at
+minimum altitude to deploy their weapons
+today. So, I'm actually going to go down
+to my turning point here and I'm
+actually customize their altitude. Add a
+speed and altitude. And what I'm going
+to do is I'm going to do terrain
+following 2,000 ft. We'll do 1,00. Let's
+go for it. So, we're going to do 1,000
+ft, which is not much. So, we're going
+to come down here. We'll do terrain
+following 1,000 ft. And we'll do target
+terrain following 1,000 ft. That's low.
+That's very low. So, our fuel
+consumption is not going to be so good
+down here. So, one of the things I'm
+going to do as I did before is I'll
+insert a waypoint just like that. And
+I'm going to leave him up at 36,000 ft
+cuz if I don't, he's going to run out of
+gas before he comes even close to the
+target here. All right, so that's called
+waypoint uh four. Way point four is our
+get ready to dive point. All right, dive
+dash cord is a fantastic movie. All
+right, so that's going to be our four.
+One of the things you always want to do
+is um in the real world again when we
+get multiplayer or something, you want
+to spook the other guy into thinking
+you're not striking what you're
+striking. So if they're going this way
+and you suddenly dive, they're going to
+be like, "Oh, they're coming over here."
+But the reality is obviously we're
+sneaking in here. But again, it's the AI
+and they're not going to know what I'm
+doing. But the reality is I need this
+little bit of altitude here to be a
+little bit safer. So they're going to be
+at 36,000 ft and they're going to drop
+down to minimum altitude and uh do their
+deed here. I actually don't love that
+endpoint. I actually would prefer to put
+the inpoint on this side. Again, I'm
+trying to line it up so they have as
+little time open as possible. So, we're
+getting a little bit of a lesson on I
+guess I would call strikes here. All
+right, that looks pretty good to me. So,
+they're going to run in there, do their
+thing, and get the heck out as fast as
+they can. Now, this is going to be
+interesting. And again, we're minimum
+altitude here, so it should be kind of
+fun to see exactly what happens. All
+right, that is all set. That is all set.
+That is all set. On pause.
+All right, let's do it. All right,
+folks. These guys are all bad guys. And
+yes, my escorts are remaining at high
+altitude this entire time. There's no
+reason to put them up that high other
+than I'm not going to fiddle with way
+points for them because that'd be a lot
+of micromanagement. I don't like that.
+All right, let's start the party. So,
+our first group, again, we're all at
+36,000 ft here. So, we're optimizing our
+fuel consumption. Um, again, you can see
+we've already gone through almost 75% of
+our fuel capacity already. Our
+handydandy little F-16s for the purposes
+of air interceptor are doing a
+delightful job. And you can see already
+the S300's doing his job. That poor S300
+crew. Do you have any idea how many
+millions of dollars of missiles that
+they're going to be firing? Now, watch
+this part. Our lovely little ravager
+group here is as soon as they cross that
+point 4, um, they're going to go ahead
+and bleed off a lot of altitude.
+Actually, you know, they're good. Where
+are you guys going? Oh, they're engaged
+offensive. Yeah, that checks. We are
+getting shot at at the moment, so I
+could see why they're engaged offensive.
+You know, folks, if you dive, you don't
+have to worry about being engaged
+offensive.
+You gonna come on back at some point
+today?
+[laughter]
+Come on back, guys. Come on. Come on. I
+make a whistling noise, but it probably
+blow everybody's ears. All right, come
+on back. You need to get to way point 4
+so you can lose some altitude. Notice,
+by the way, because we came at this
+higher altitude this time inside of the
+threat range. They were um basically
+wasting all the fuel for the mission and
+the mission's actually a failure before
+we actually got a chance to take the
+shot. So, one of the things I wish I
+could do, and I'll probably get smart
+about this later, is basically tweak the
+MC Con and so they ignore incoming
+missiles.
+All right, here we go. This is the fun
+part. Let's see here. Uh 1,000 ft. And
+that was our point there. That was
+36,000 ft. Oh boy. This is the fun part.
+Watch this. Watch this. So, again, we're
+just reducing the time they have to
+engage us.
+So, now we have a lot of advantages and
+we have a lot of disadvantages, folks.
+If you keep going defensive like that,
+you're going to run out of fuel before
+you get there. You literally,
+this is a really well-defended target.
+They're literally going to run out of
+fuel before we get a chance to actually
+gauge the target. [laughter]
+Oh boy. Well, that's a mission fail.
+All right. So, I went through and I
+manually adjusted all the flight plans.
+again. Welcome to Command Modern
+Operations, everybody.
+&gt;&gt; So, one of the big differences this time
+is the fact that our aircraft um I've
+disabled defensive maneuvering for our
+strikers. Now, you probably sit there
+and go, "That's kind of silly because if
+they have to maneuver defensively in the
+first place, that usually means that
+your strikers messed up." But the
+reality is is um our escorts are now
+going to be attracting all the incoming
+missiles, giving our strikers, as you
+can see here, that are now moving at as
+low as they can go, have all afternoon
+to get into position without having to
+deal with all those pesky SAMs. And
+since we're flying so low, again, that's
+the theme today. Um we can just kind of
+cruise right on through and kind of do
+our thing here. Bam. Bam. Look at this.
+Look at this. So, keep in mind the
+mountain here is uh let's see, 6,500 ft
+and we're at 5100 ft. So, we're
+completely masked by this terrain here.
+Now, the big problem we're going to
+face, and you're going to see this
+extremely distinctively as we come
+tearing across that airport, is the fact
+that every AAA and surf shoulder launch
+surface air missile is going to reach up
+and say hello to our F-16s here. So, now
+we're just popping over the valley.
+Let's see if I can get you a 3D view to
+make it a little bit easier for you. And
+I've done this flight a few times
+myself. Here we go.
+Red one.
+or something. I don't like that. All
+right. So, as we can see now that we're
+at minimum altitude, the actual time
+they had to respond to us was very
+minimal. The other thing you're probably
+observing is our F-16s are getting
+roasted uh by the superior air-to-air
+capabilities of this, but they were
+still able to get into a position where
+they could deploy their weapons in such
+a way that they're basically cannot
+miss. Now, the interesting thing is
+because we did do such a low altitude,
+they're actually struggling to get to a
+point where they can use their weapons,
+which is kind of interesting, actually,
+if you think about it.
+Oh, I think I lost every single F-16. Oh
+my gosh. Oh, this is bad. This is bad.
+All right, I think I can make my points
+now. All right, everybody go home. You
+Everybody tried. Everybody tried. All
+right, go home. Go home. Now, what is
+the takeaways? The first thing you'll
+notice here is the fact that we did no
+damage again. Uh, we probably got a few.
+Actually, we got a few, so it wasn't all
+bad. We lost four F-16s, and that's
+that's quite a loss in my book because
+any loss of F-16s is bad. But one of the
+things you probably also noticed was the
+fact that it lost the same amount of
+F-16s almost despite the altitude
+choices. But one of the things you
+probably also noticed is the fact that
+when we were at the high altitudes, we
+basically had way more time to react,
+but we didn't really have a chance to
+strike. When we were at the moderate
+altitudes, it was kind of like a
+trade-off. You know, we didn't have
+quite the same line of sight, but we
+also limited their time to actually
+engage. When we were at low altitudes,
+we basically went through an extremely
+extremely lethal air defense corridor.
+And even though they didn't really have
+a lot of time to take shots at us,
+everybody in their short-range weapon
+had no problem. And uh the interesting
+thing here is all these F-16s more or
+less survived. So, if you don't mind
+taking a little bit of damage, it makes
+a really big difference. Now, I feel
+kind of bad the fact that this target is
+basically been untouched. So, let's get
+a little bit of revenge on it. Nothing
+says, "Well, that's not fair." Like a
+B-52.
+You would never fight these things at
+that distance. But, you know what? I
+felt like getting a little bit of
+revenge here. Now, the interesting thing
+you probably observed is the fact that
+um we're using JASMs here. So they are
+literally stealth cruise missiles. And
+you probably also notice that the cruise
+missiles basically dropping down through
+medium altitude as it's sneaking up on
+its target region here. Now this is uh
+kind of fun because uh these things will
+basically land right on top of the
+enemies and then they're going to start
+getting shot at by the AAA because you
+can see these triple A's are having a
+hell of a time with it.
+Oh yeah, that's
+about the budget of California worth of
+JSims if I've ever seen it.
+Hey, a little better. That makes me feel
+a little bit better. So, as you can see
+here, that was devastatingly effective.
+And it also demonstrated kind of that
+concept that with enough stealth and
+with enough low altitude, it doesn't
+matter. Even with the best AAA, it's not
+going to stop anything from happening.
+Enjoy.

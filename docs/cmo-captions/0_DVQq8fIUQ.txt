@@ -1,0 +1,271 @@
+# C: MO - No Escape Zone Launches
+Video: https://www.youtube.com/watch?v=0_DVQq8fIUQ
+Video ID: 0_DVQq8fIUQ
+
+hello everyone in today's video we're
+going to be taking a look at the new no
+escape zone launch option for wra so
+what is the no escape zone well
+basically it's a zone where when you
+fire the weapon even if the target were
+to turn around and go full blast away
+from you it would not be able to escape
+to enable this of course you go ctrl
+shift f9 pop up to wra you can select
+the weapon in this case i'm using amram
+p3s here and you just set it to no
+escape zone now what makes this so
+interesting is that for folks who are
+fans of things like dcs you're going to
+see a very very
+almost a commonality now because when we
+take those shots with the no escape zone
+it's pretty guaranteed to get a hit of
+course the trick here is you have to get
+close enough to actually fire the weapon
+so that's going to be an interesting
+exercise so to set this up today what i
+did is i have myself an f-16 surprise
+and of course over here i've got myself
+a mig-29 so what i did is on the f-16 we
+have a bunch of am-ramps and on my buddy
+of the mig-29 over here i popped up a
+bunch of these lovely r-77s we only have
+two r77s here but the fact of the matter
+is is that a mig-29 buddy is going to
+fire at maximum range rf16 buddy is
+going to be firing at the no escape zone
+range so we're trying to take a look
+here is to see not only how the scenario
+actually goes how do things work out but
+we're also going to be interested in
+what the ultimate distance that they
+engage is so let's see we'll go ahead
+and get the f-16 in a range for anybody
+curious about how accurate the f-16
+radar is let's wait for it to acquire
+and it's going to be a little yellow
+square on your little multiple there it
+is what do we have for a range here 50
+nautical miles is actually very good so
+that must be a very up-to-date version
+of that particular radar all right so
+we're going to go ahead and order f16 to
+engage remember this is going to be an
+automatic shot so we're going to wait to
+the last second to take it on the flip
+side or make 29 here i'm just going to
+say go for it
+switch back over to the blue side so we
+can kind of see what we can see here
+all right we're closing in f16 is
+kicking up the afterburners here picking
+up some speed uh our big 29 is see how
+the mig-29 just cranked that's the
+universal sign to say he's already
+launched on you you're about to fly into
+his missile
+indeed he has whoop so then we're gonna
+fire the last possible second here and
+of course the f-16 has not realized
+notice we fired by the way at a range of
+about 30 nautical miles which i'm not
+going to call that ambitious but
+remember this guy slowed down quite a
+bit to take his shot which is probably
+why we fired it and there's the r-77
+there it's coming around mig-29 buddy
+has not realized yet that the amram was
+fired at such close range but we can see
+immediately the fact that uh this guy
+has still got quite a bit of energy
+we're doing mach 3. this is going to be
+seriously a no escape situation for the
+big 29 big 29's hitting it come on mc29
+you could do it run run run run run okay
+turn at the last second
+crank crank crank crank and he's down
+meanwhile our f-16 buddy is casually out
+running the r-77 here because the r-77
+was fired at a longer range and
+therefore doesn't have equal capability
+that it needs now the real interesting
+thing to ask yourself here just keep
+going f16 you're doing great no no no
+keep going keep going you're doing fine
+you're doing fine are you at afterburner
+right now good after burn just keep
+going just keep going just keep going
+keep going
+keep going the r77 is down to 0.85 you
+could just go and get away from it come
+on there it is the r77 ran out of
+battery sweet so you can see immediately
+the tactical benefit of using that shot
+with the exception of the fact you have
+to drive up to the guy taking a shot at
+obviously this new strategy is involved
+now what i'm most curious about is this
+now things get a little more interesting
+so i was experimenting with this a bit
+to try to get a feel for kind of some of
+the way that it operates you know one of
+the things i found very very interesting
+and i'll kind of show you this off here
+is um what happens if you have two
+aircraft that are totally different
+classes you haven't identified them yet
+but you want to go ahead and engage them
+conventionally with a no escape zone
+launch so you can see here that i've
+acquired one target right here he's a
+pretty good distance away he's traveling
+at about 400 knots 100 nautical miles
+away um i don't have the chart in front
+of me but a hundred nautical miles and
+let's see did i do i don't care the one
+uh yeah so that's probably a fairly
+large target so i without doubting this
+is probably some heavy bomber or
+something like that but we'll continue
+cruising you'll probably notice in god
+mode that we do have a mig-29 here and
+that's actually a tuple of 95. so i'm
+going to keep going keep going we're
+just going to kind of keep scanning
+we're going to go ahead and engage these
+using everybody's favorite tws perfect
+uh we've already launched which is not
+what i wanted him to do so i've actually
+ordered him to delete that weapon that's
+the problem with automatic firing range
+you got to be kind of cautious with that
+sometimes let's go ahead and put that
+missile back on your rack where it
+belongs now what i'm going to do is i'm
+going to go to ctrl shift f9 wra we're
+going to take my am54s and we're going
+to go ahead and say no escape zone
+launch here and i can actually back
+everybody up just a tiny bit just to
+kind of prove my point here so
+theoretically we really should not be
+firing those aim 54s at the mig-29 until
+we get
+probably 45-50 kilometers or 50 nautical
+miles out the uh bear though the tubular
+22 rather that's a backfire um we're
+going to be aiming at that a lot sooner
+so i'm actually going to back them up
+just a teeny tiny bit here
+and now we do have both of those
+acquired i'm going to go ahead and just
+let it get a little bit closer on just
+fire for grins here so again they're
+moving exact same speed we can't
+identify either one of the oh let me
+shut off god mode no no we've actually
+identified them how do we identify them
+so incredibly early i'm very impressed
+with that what do we use here a-n-a-a-s
+what is the a-n-a-s
+ah
+search and track okay so we have
+identified them already which is gonna
+make this a little more difficult so
+give me a moment all right that fixes
+that so now we don't have a camera so
+we're going to do this the old-fashioned
+way so as far as we're concerned these
+would be two targets that are just
+picking up on radar we should not have
+any other shots on so what we're going
+to take a look at here is we're going to
+be interesting if to see whether or not
+we engage both targets at the same range
+or we engage them at different ranges
+given that they have different
+maneuvering capabilities so we're
+cruising along we're getting into that
+no escape zone launch of course the big
+29 is probably thinking the same thing
+we're thinking right now it's like oh it
+make 14. our mig-14 wouldn't that be
+funny uh no we have an f-14 okay so what
+happens so our tuple of 22 here received
+one missile at the exact identical range
+as did our mig-29 here so you can see
+the missiles are kind of cruising in
+they're probably going to be taking
+their shots in a moment here so now of
+course what happens is our poor tuple of
+22 is going to pick him up pretty darn
+early spin himself around and then i'll
+start running here meanwhile mig-29 oh
+there's the missiles boom boom and it
+looks like none of those contacted which
+is kind of what i expected now let's
+reset all this and crank up the speed of
+everything
+now the thing you've probably been
+wondering this whole time is how do we
+know when to fire the weapon and it
+completely comes down to target speed
+so what i've done here is i've got two
+different bogeys one bogey here they're
+both about the same exact range we'll
+give the radar just a moment to kind of
+catch up to us perfect so this one's 57
+nautical miles away this one's basically
+the same the difference here though is
+this one's traveling 693 knots this one
+down here is traveling 400 knots so what
+we've done is we've taken our f14 here
+we've set it to go ahead and use a no
+escape zone launch so i'm going to flag
+both of these as hostile and watch what
+happens
+so what we're going to have here is
+you're probably saying well it's the
+same target type the f-14 is going to
+fire at the same range that's not the
+case as a matter of fact notice my f-14
+fired at the slower target first
+this means you can potentially spoof the
+weapon into firing if you do a
+high-speed afterburner run right at it
+so now the f-14 is launched but this one
+which is traveling twice as fast
+remember same type of airplane is not
+having has not been engaged yet so you
+can see that this makes a really big
+difference you know if i've got a
+helicopter you're going to get targets
+firing at stupidly dangerously long
+ranges if you have something that goes
+mach 1 you can basically trick the
+system with a no escape zone launch to
+fire way way way too well he survived
+that
+i'm not even mad i'm impressed
+and cursed blatter
+nice
+so you can see that it is not so much
+the type of target that matters it is
+the speed of the target that matters so
+hopefully this kind of reveals some cool
+things with the no escape zone launches
+i think they're really really wild i
+can't wait to basically cheat by
+basically having aircraft you know turn
+and burn as fast as it can or run at
+them and get them to fire the missiles
+and turn around there's a whole brand
+new set of tactics that we can take
+advantage of just to frustrate people
+but again remember with the wra 2 that
+you don't have to set this weapon to
+engage fifth generation fighters at that
+speed you can actually tweak it so that
+it makes more sense for different types
+of targets enjoy

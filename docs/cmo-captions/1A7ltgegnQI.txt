@@ -1,0 +1,287 @@
+# C: MO - Changing Weapons and Magazines of Ground Units
+Video: https://www.youtube.com/watch?v=1A7ltgegnQI
+Video ID: 1A7ltgegnQI
+
+hello everyone in today's video we're
+going to be taking a look at an answer
+to a question somebody was asking over
+on Reddit about how you can change
+ammunition of certain platforms so
+specifically our lovely friend over here
+the high Mars now if you know this High
+Mars unit here if I were to go ahead and
+click on it and pop open the weapon
+screen one of the things you probably
+notice is this unit is made up of
+several smaller units we have a bunch of
+these different platforms and when you
+go ahead and open this little box here
+what you're probably going to observe is
+there's actually a lot of different
+ammunition choices we have for this
+particular unit now for the example here
+we're going to go ahead and load up some
+of these fun m GM 168a attack hams this
+is the unitary high explosive version
+over here and one of the things you'll
+notice is it says no reloads available
+so you're saying oh that's easy to fix
+I'm going to go up to the magazine
+button over here I'm going to go ahead
+and go to the himars battery I'm going
+to go ahead and delete some of these
+like say like 20 or something I'm going
+to scroll down here to where it has the
+one that we want I'm going to come up
+here and say I don't know 20 or
+something like that that looks pretty
+good then of course you come back over
+here you bop the magazines button you
+pop open the high Mars battery oh not
+the battery my bad You' open up the
+weapon screen here you'd scroll on down
+of course you'd see that this one is now
+an accessible option so you're like
+sweet I know what to do I'm going to
+come over here and push this button this
+says reload
+priority and we're going to speed up
+time a little bit and I'm going to
+unspeeded up time a little bit so let's
+see what happened when we did that let's
+take a look at my loveely high Mars here
+and you'll now observe the fact that my
+teams is just sitting here in The Ether
+says it's ready to fire but it's not
+able to Fire and the reason of course
+it's not able to fire is because of the
+fact it wasn't originally set up to
+begin with and U that's one of the fun
+little I guess you want to call them
+quirks of a command here
+so we actually have to do here is we
+have to tell the himars battery that
+that is a weapon we wanted to use
+originally even though there was no
+ammunition for it essentially we have to
+make that electronic link within the
+software code itself so what I'm going
+to do then is I'm going to go and reset
+my scenario here let's go load recent
+let's hold up this one yes I use the
+same name for absolutely everything oh
+well you'll deal with it someday let's
+go back to my har Mars hi Mars hi Mars
+let's go ahead and reset some of these
+things first thing I'm going to do is
+I'm going to go up to the magazine page
+and I'm going to make some room for the
+missiles we're about to remove so if you
+remember I've got a bunch of these
+spirals these things come in like little
+packs so there's a lot of them together
+so I'm going to say I don't know 10 next
+one I'm going to do is I'm going to go
+ahead and run over here to my regular
+weapons page head to one of my guys and
+I'm going to go ahead and empty out
+these right here so I'm going set this
+to zero then I'm going to head up to my
+attack him here I'm going go ahead and
+press change set that to one go ahead
+and close that screen now if I click on
+this guy again you'll observe that we
+have an MGM 168 attack AMS ready to go
+if I actually to come down here you'll
+actually see that it is in blue and it
+is ready to fire and ready for action so
+let's and test it out right so let's go
+click over here and everything's pretty
+good to go you can see we have an UDA
+Loop limitation here that happens but
+that's fine I'm going to fire it anyway
+oh where I was I in range by the way
+that was something I always forget about
+this weapon these things have really
+painfully long ranges so you have to
+kind of remember that sometimes fast
+forward time there it goes so as you can
+see my lovely little attack Ms is on the
+way it's kind of cruising through the
+atmosphere here you can see it's about
+123 km up there so it's not exactly what
+I consider to be a low flying Target
+here so let's go ahead and zoom out a
+little bit so you can get an idea of the
+look how high up this thing is and again
+these are ballistic weapons these are
+not like he weapons these are very very
+very very very very serious very very
+long range weapons which are incredibly
+effective so we goe and speed up time
+here you can see it's 127 km up and it's
+just now starting to Arc downwards now
+of course if you're an sa you know I
+don't know sa 10 sa 21 you'd be taking
+pot shots at this thing as it starts at
+this part of the atmosphere but boy is
+it moving that would be a very involved
+Target to try to strike here so anyway
+let's see what happens when it down here
+it's unitary H which means the Warhead
+does not malfunction you should get one
+bang let's see if that actually works
+today I'd say that building got
+obliterated pretty darn good there not
+as much fun as the regular ones because
+they tend to sprinkle the whole
+environment now keep in mind the same
+strategy works for everything so one of
+the cool bits here is actually come back
+to my high Mars battery if I were to go
+back into the weapons page and click
+here you will see that it has actually
+reloaded our friends the spirals here
+and the reason it's done that is because
+this is the last thing we have on board
+now you're sitting here going okay okay
+that's not bad I can get behind all this
+um so uh like how do I do it all so well
+here's how you do it all so what I'm
+going to do is I'm going to go back in
+here I'm going to go over down to my
+loveely one that I want to use unitary
+is pretty fun we're going to go with the
+attacks B here this one's kind of fun to
+play with go ahead and put 20 of those
+in there I'll go back to my battery and
+remember it's going to be the same issue
+you had before when I go back up to this
+weapons page real quick you can see I
+have reloads available and again if I
+run over and hit reload priority this
+doesn't make mental sense because you
+can't easily like basically pop the
+missile out and put the new missile in
+it's kind of an irritating process as my
+understanding anyway so what I'm going
+to do instead is I'm going to do the
+same thing I did before come down here
+set this to zero go up to the one I want
+to fire and I go ahead and press change
+this to one I'm also going to set this
+to reload priority which means when we
+swap everything out after we take our
+shot we will have another one basically
+another one ready to go so that'll work
+actually pretty well for us so let's go
+down here I'll say a fire two those go
+ahead unpause so what he's going to do
+is he's going to take his whatever time
+although I 50/50 bet did I actually
+click the button when I did that let's
+go ahead and see a loo let's see here
+weapon is on magazines ah I let it
+reload shoot I always do that by
+accident and unfortunately sometimes
+when you do this you're going to run
+into that problem where it's like I
+can't reload the weapon at this time
+because remember that link I was
+mentioning earlier that makes it a
+little tricky so I'm just going to go in
+here go back to weapons go back to this
+guy go ahead and drop this back to zero
+and again you can do these things very
+quickly if you are in the editor they
+kind of a pain in the butt to do if you
+you're going to do them elsewhere keep
+in mind this also works for things like
+Torpedoes and stuff like that but you
+just have to be mindful of the way you
+set it up now there's other techniques
+you can use as well for this particular
+process I'll show you another way to do
+it as well so what I'm going to do is
+I'm going to create a generic unit here
+and generic units are actually really
+really fun because they give you the
+ability to essentially wonder if I can
+just type in generic rocket yes I can
+because I can just type in SSM look at
+that so we can actually create like a
+little Silo and everything like that if
+you wouldn't get really really goofy in
+here but again I don't want to do
+anything too do you can do a little
+trailer I love that stuff so let's go
+ahead and create a little battery here
+this is an SSM press okay I click on
+this unit you can see it has some
+machine guns that's fine so the cool
+thing is if actually come in here you
+have this lovely button here and we can
+actually add on the goofiness directly
+to this silly um 7.62 mm Mount this is
+one of the cool things about command I
+can actually come down here add weapon
+record and I can actually take and type
+something in like this which is really
+goofy so let's see here what all these
+fun things we could put on here I could
+do so we could do 80 of them that seems
+like a very rude way to inconvenience
+our opponents let's go ahead and set
+that one there I'm going to make sure
+I'm paused a lot of things don't work if
+you're not paused when you're changing
+them by the way very quick and very easy
+way to ruin all the fun that you're
+having right now now there we go I I
+guess I can fit about 80 that seems like
+a fair bit there and again I've just
+quickly converted this unit over
+there all right let's do some shift F1
+hold down the shift key when you do this
+let go and now we're ready to go I'll
+send you a couple of those we're going
+to give you a couple of those I guess
+I'll give you a couple of those your
+brain's going this is not right this is
+not right you shouldn't do it too bad
+all right let's goe unpause here so I'm
+now we're going to be firing from our
+little homemade unit here and you can
+see look at that this is like Point
+Blank Range for these things by the way
+all right again Point Blank Range is you
+know 80 miles but that's a different
+shoe here they come back through the
+atmosphere in our little village here
+it's just sort of relaxing it's having a
+pretty good day you know everybody's
+outside having their virtual lemonade
+and then these things come raing in and
+um you'll see by the Speckles the way
+they cluster everywhere when they hit
+it's actually kind of cool Sparkle
+Sparkle Sparkle let me zoom in a little
+bit here so you can watch the Sparkles
+it's like fireworks extremely extremely
+lethal fireworks that spray shrapnel
+everywhere and they're very unpleasant
+kind of feel bad for my little sparter
+unit here because he's just kind of
+going around at altitude you also notice
+we didn't do as much damage to the
+building as the units are h8 but if you
+were like an infantry group all bunched
+around this um thank you for playing um
+you're no longer part of our experience
+here so as you can see that's a quick
+and easy way to go ahead and adjust
+those things you got to remember to
+change the weapons in addition to the
+magazine if you intend to have reloads
+though or do what I do Build It Up from
+scratch and it's even easier enjoy

@@ -1,0 +1,260 @@
+# C: MO - Tacview Tweaks
+Video: https://www.youtube.com/watch?v=SW-BZLTGmds
+Video ID: SW-BZLTGmds
+
+hello everyone in today's video i just
+wanted to share with you a quick tip on
+using attack view and customizing the
+information that you see visible here so
+originally i was going to do another
+video on our sicily series with
+operation husky which you probably have
+been watching for the last month or so
+and what i'm actually going to do is
+release that particular video as a
+non-monetized non-announced video that's
+just going to be sitting in my scenarios
+playlist for those who are interested in
+watching it the reason i'm not
+continuing that series is because i got
+a little frustrated and if i actually
+watch the video at the very very end you
+can see exactly why it's going to take a
+lot of time to kind of go through and
+i'll tweak it again but um at least
+we've got some good ideas from it anyway
+let's get started so as you can see i
+have a attack view running here to use
+tech view by the way all you need to
+make sure you have tac view pro you
+can't use the basic version of the
+advanced or whatever it is you'll notice
+that my little oliver has a parry here
+he's got this little kind of data card
+sort of hanging off the side of him
+giving all sorts of details so what i'm
+going to do real quickly here is i'm
+going to go ahead and add in an aircraft
+that will do i'm pretty classic here
+we'll do an f-14a you know why not go
+ahead and slap this guy in here let's do
+this one looks like a pretty good one i
+click on him i give him an order to go
+ahead and move and what will happen is i
+can actually go up here i press control
+and click you'll notice that i give this
+little information piece and you'll also
+notice if i hold my mouse over this guy
+i get this huge block o text which gives
+me a lot of information based on what
+i'm holding my mouse over you're
+probably sitting there going why is it
+that the information i'm seeing here is
+not the same as the information i get
+when i use my tech view the reason is is
+because tac view itself can be
+customized to what type of information
+is actually displayed so what i'm going
+to do is i'm going to go ahead and add a
+bring up tag view here i'll pop it up
+real fast this is default tag view
+speaking of which i got to come over
+here and actually pause this because i
+don't want that to be running so what
+i'm going to do is i'm just going to
+open up a good old-fashioned standard
+scenario here and you'll notice that
+i've got my little data blocks right
+here in which case this is the name of
+the aircraft this is speed this is its
+altitude if i want to customize this
+which also customizes it over in command
+all you do is you come down here and
+you've got a bunch of little data blocks
+there's two different sets there's going
+to be the one that gives you the
+selected object labels and it's going to
+be the one that gives you the unselected
+object labels like you'll notice in my
+unselected guides it tells me the name
+of the pilot if i hold my mouse on this
+one you get the pilot name you get the
+speed you also get the altitude so let's
+say we want to change the unselected one
+and now we're just going to be
+interested in the label here so let's go
+ahead and get rid of that you can see
+it's unselected at the moment let's go
+down label automatic looks good
+i'll go ahead and uncheck those other
+boxes as well real fast we'll get rid of
+pilot name we'll also go ahead and get
+rid of like i said it's object name so
+now you can see there's absolutely
+nothing there because they don't have a
+specific label so as a result and you're
+not going to get anything to be able to
+see there let's say for unselected
+though what i do want to do is i want to
+get the name of the object now you can
+see the little name of the object as
+well so now one thing i really really
+like to do let me shut this one off real
+quick as i like to actually go ahead and
+unselect it you can actually do what i
+call atc which is asl vs and gs the
+reason this is cool let me push that one
+on real fast is this gives you
+everything you need to know just by
+looking at it we've got the name of it
+we've got what its altitude is and we
+also have its airspeed as well so now if
+i were fast forward time here a little
+bit you can see that if i were to say
+for example control click this guy here
+you can see that's going to give me that
+but this one it tells me that he's
+climbing that's going to be my air speed
+and that's going to be my altitude so
+now let's go ahead and close tack view
+here and pop back over here go to file
+and go to 3d view
+so what's going to happen now is it's
+going to open up tag view i'll give it
+just half a second here and you can see
+now that my little tomcat here because
+it is not the selected item i just get
+the label on it this guy down here on
+the flip side you can see that it's
+going to give me the information ah see
+how it's giving me all these pieces now
+and if i hold my mouse here it'll do
+this now if i wanted to i could do my
+control click to go ahead and select
+somebody else you'll see that that
+information is going to be the important
+one but if you also look up them f14 see
+how because this is our atc information
+36 000 feet and we're also traveling 41.
+now if i were to grab this guy and go
+ahead and order him to let's go drop
+down let's go ahead and kick up to
+military speed you know 10 14 why not
+check it out it will now actually show
+you that downwards facing arrow saying
+that my airspeed is increasing in that
+my altitude is now decreasing now this
+is a really slick trick and it's a great
+way to limit the amount of information
+here like you can see from this oliver
+hazard parry this is just too much
+information for us so let's go back over
+to tack view again clean this up just a
+tiny bit more press over here we'll go
+back to a town attack at night let's go
+ahead and zoom in let's tweak it just a
+tiny bit more to make it a little bit
+more friendly so let's go ahead and grab
+this one i like the atc one i don't feel
+like i need to change that out that
+works pretty well one difference i will
+do though is i will enable it so it
+gives me mach number as opposed to gs gs
+is great mach number is just going to be
+a little bit more appropriate for us and
+let's go ahead and grab the selected
+objects label and i'll clean this up one
+thing we don't need is a pilot name here
+so what you can actually do is i like to
+shut off object name and just leave
+pilot name that makes it just a little
+bit simpler you'll see exactly what i
+mean when it activates in a second if
+you're working with a lot of tech view
+with um
+over in i should say dcs obviously this
+is going to work for you because you can
+see it just says new call sign here and
+then the unselected guy over there is
+just going to say rotary to 1. so again
+you have to pick what makes sense i'll
+flip it back to the way it was just make
+my life a little bit simpler there we go
+let's go pop that one over here we'll go
+to a selected deselected only thing
+we're interested in here is probably the
+object name we don't really need the
+pilot name again you can decide exactly
+what makes most sense for you so let's
+see what we've got here so we have the
+name or we have metro airspeed we have
+my asl people who are not selected let's
+go and pick this guy over here for
+example we should be getting yeah well
+you can see that's my new mach number
+visible over there so let's go ahead and
+clean this one up as well we'll go ahead
+and let's see here pilot name that
+sounds good to me we'll shut off speed
+tasks
+come over here sort of altitude and now
+you can see that my selected unit is
+actually quite a bit simpler as far as
+the display that it's giving me again
+everybody's a little different if you
+want to have a little bit of fun with
+this of course you know you can come in
+here and do squawk and bullseye and you
+can do like total energy like if you
+don't have a lot of fun with it you can
+do mechanical energy like i don't know
+why you would we can't do that because
+unfortunately we can't calculate that
+directly so it would work anyway so
+don't worry about it as far as that goes
+let's see is it going to do it for me
+yep you can have my mechanical energy
+just kind of a fun thing let's pop back
+over to here let's go ahead and open my
+3d view
+and watch what this awfulness is created
+here yep so you can see my i have a
+total of a 1920 uh mechanical energy
+here but notice if i hold my mouse over
+here it tells us the name of that unit
+without giving that extra detail so now
+of course like you know i want to grab
+this guy let's order him too i'll get
+some altitude
+let's give him some speed
+now watch this mechanical energy go
+boing
+and you can see the difference that that
+creates pretty much instantaneously
+notices the mechanical energies are just
+coming up here we're in a bit of a climb
+here so it's going to take him a little
+while to get kind of up to speed but i
+think you can see exactly kind of the
+difference there so anyway i thought
+that would be just kind of a neat little
+quick tip people always ask how do you
+get your labels by the way if you click
+on the shift button you get this little
+laser pointer if you lift click on
+something it's going to highlight it
+like that and it's kind of fun like if
+you're recording videos oh look at this
+this is what he dies this is what he's
+done you know also remember you can hold
+down the control and then left click on
+something and then i'll go ahead and
+select this guy such as this oliver
+hazard perry here but again have fun
+with this i'm gonna go back and change
+this probably to something a little bit
+simpler just to make a little bit easier
+on the eyes and notice by the way you
+have no label unless you hold your mouse
+over it which makes your life a little
+bit simpler other than that enjoy

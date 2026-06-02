@@ -1,0 +1,1055 @@
+# C: MO - Playalong Tutorial 2 - Air-To-Ground Strike Using Missions
+Video: https://www.youtube.com/watch?v=ZD0z_nWLSp4
+Video ID: ZD0z_nWLSp4
+
+hello everyone welcome back to our
+playalong scenario last week we took a
+look at the part one of this which was
+doing the scenario with manual attacks
+this week we're going to take a look at
+doing it with missions now the good
+thing about missions is once you kind of
+get them all set up things work pretty
+darn well uh once of course if you miss
+little teeny tiny details you'll find
+that missions do not behave nearly as
+well as you want them to especially when
+certain conditions arrive and now we
+will definitely see quite a bit of that
+with today's scenario now as before you
+can go ahead and tent down to the
+comments Below in the event that you're
+looking for the particular Mission file
+here if you want to play around so what
+we have here of course is for those of
+you who missed us last time is we have a
+pretty simple scenario where we have to
+strike an air base now the fun thing
+about Air Base strikes naturally is
+there's a lot of different flavors of
+targets that have kind of different
+needs and different priorities and we're
+going to have to kind of balance all
+that to do as much damage as we possibly
+can to it in order to be able to
+successfully basically put it out of
+commission now what I have here is a
+mig21 and like I said if followed around
+last time if you've already seen this a
+PO plane last time I ran this one of
+course it got shot down by some Triple A
+but you know that's one of the dangers
+of scouting you now what we're doing
+here is basically getting an idea of
+what the enemy targets are going to look
+like so we have a really really good
+idea of what we're going to be dealing
+with here I'll go and slow my time down
+a little bit so you can kind of see us
+make this really really high speed pass
+and I did order it up to After Burner I
+thought uh chances are no I did not all
+right after burner go go go go go go go
+go go go go so this poor airplane right
+now is going to get shot at a lot again
+this a pretty small Airfield here but
+we've already identified a mobile Target
+he snap some camera pictures as he's are
+ripping over the runway here just kind
+of seeing if there's anything
+interesting and we're under Fire all
+right that's what I was hoping for you
+now one of the things I wanted to do
+here is I wanted to reveal the enemy AAA
+in the real world of course you're
+hoping to be able to reveal the enemy
+AAA without getting shot at by it so
+unfortunately for us my mig21 almost
+became a victim of its own success here
+so the cool thing is we've identified
+enemy AAA that's going to be really
+important for us later on so I'm going
+to go ahead and order this guy to go
+back to base you did a delightful job
+big 21 go ahead and head home and You'
+taken your pictures and you've
+identified the real threat which is
+going to be these three AAA sites now
+one of the things you always want to be
+thinking about whenever you're
+approaching any scenario you always want
+to be thinking about the things that are
+going to complicate your choices and our
+complications of choices today comes
+from the weather now if I hold my Mouse
+anywhere on the screen you can see that
+we have these moderate clouds from 7,000
+to 16,000 ft that means anything that
+requires line of sight has to be less
+than 7,000 ft which means laser guided
+bombs Rockets anything that doesn't have
+a GPS on it basically we're going to
+have to people to see the thing we want
+to hit in order to reliably damage it
+that's going to really limit our options
+as far as the scenario is going to be
+concerned and you'll see exactly what I
+mean when we try it now what I'd like to
+do here is I like to first of all set up
+our scenario and to do my missions I
+want to see what I have first so heading
+over to my air base if I press F6 I can
+see I have some Badgers Badgers are area
+of effect weapons I think that's the
+best way to describe them uh they do
+work on account of the fact that they do
+have quite a bit of ordinance they're
+really good at suppressing wide areas
+they're not great at pinpoint targeting
+we'd have to bring them down to like
+8,000 ft to drop their bombs and they'll
+get shot to Pieces so we definitely
+don't want that but um they do a really
+good job for what I want them to do
+which is basically suppress the area the
+other thing we have of course is these
+great flounders now flounders are pretty
+neat planes for those of you who have
+not seen one of these before you can
+click on the blue text here it's
+basically a strike plane it's a pretty
+good sized strike plane as you probably
+be getting the feel from just taking a
+look at this thing and of course as
+scrolling down here you can see we carry
+everything under the sun as far as
+explosive and everything like that they
+also have really good range which we
+don't really need for this scenario
+because we're only 100 nautical miles
+away it's a quick flight but one of the
+things you'll notice is they have laser
+guided bombs and lgbs are beautiful
+weapons obviously they're very precise
+but they have a limit where they can
+only be used at 12,000 ft or less and on
+top of that just to make things
+miserable for us they of course lgbs
+which means we need to be under 7,000
+fet because of the cloud coverage you
+can start to see why this scenario gets
+very complicated very very quickly so
+the first thing we're going to need to
+do is use these bombers for the purposes
+of putting the that AA a out of action
+if we don't use the triaa these folks to
+basically put that Tria a out we're
+busted because that AAA will tear us
+apart because everybody else in the
+scenario is going to be operating within
+the lethal range of that AAA that's a
+big thing to remember now if you come
+down to a carrier Fleet and a hit F6
+you'll see we have a bunch of j15s which
+are really really neat planes too yes it
+looks an awful lot like a suco 33 sh
+nobody needs to know also yes I know my
+ears aren't correct here but I don't
+care it's a tutorial so coming down here
+this is a great plane but unfortunately
+the carrier Master decided to arm it
+with 122 mm Rockets uh for those you not
+familiar with these Rockets they're
+pretty goofy you have to be pretty darn
+close to the Target to even hit it and
+of course their circular eror probable
+basically how precise they are is 20 M
+so you hit within the neighborhood of
+the target but the good news is each one
+of these planes is 20 so if you do the
+math real quickly that's 240 122 mm
+Rockets landed it these are going to be
+for anything that's easy to hit
+obviously we can't use these against AAA
+we'd lose a lot of airplanes cuz we'
+basically be hitting everything but the
+AAA so let's go ahead and start putting
+our scenario together here so coming
+down here I've got myself all my targets
+and I'm just interested in bang bang
+bang those three right there now there's
+so many different ways to do this you
+know different people play this game do
+it different ways some people what
+they'll do is they'll select each Target
+individually like I've just done there
+and create one mission for it some
+people what they'll do is they'll come
+in here and basically um individual
+missions some people basically do flax
+suppression with basically manually
+which is honestly probably the best
+thing I always recommend flax
+suppression in my opinion is a very very
+challenging task for those of you who
+fly like DCS and stuff like that you
+already know very well how challenging
+it can be to hit a very small Target
+that can hit you very easily but what
+we're going to do is we're actually
+going to do both situations so I'm going
+to start my party by clicking on this
+group one two 3 I'm going to press uh
+that was holding the shift key by the
+way I'm going to press contr f11 and I'm
+going go ahead and uh say Flack back up
+and the purpose of this is to back up if
+I miss with my first strike very
+important to start thinking in terms of
+if I miss you'll know what I mean so
+this is a strike it's going to be a land
+strike I'm going press ok so what I want
+to do is I want to make sure that my
+Strikers my basically my suppression
+strike here in case I miss one of these
+three is going to arrive a little after
+our first strike is actually going to
+get here now watch this trick one of the
+things I like to do and I think this is
+just handy is I can come in here and I
+can set up the entire Mission without
+adding a single airplane to it so what I
+want to do is I want to make sure my
+Strikers arrive here at about 10:00 a.m.
+now you're probably sitting here going
+where did you get 10: a.m. from that's a
+very specific time that you seem to be
+busting out well it's relatively easy
+let me show you why zoom out real quick
+we know that our carrier is about 10
+basically almost exactly naal miles away
+it's like the designer put it that way
+so 100 nautical miles we also know that
+our lovely J 15s Cruise between 4 and
+500 knots now if you put the math on
+that together real quickly for those of
+you who need to see the math out
+basically what we do is we take the
+distance we need to travel divided by
+our cruise speed which works out to be I
+believe it's 480 knots that means it's
+going to take 0.20 hours to get to the
+Target now if you multiply that by 60
+you can see that it's 12 minutes and 50
+seconds well 12 minutes and 30 seconds
+my apologies to actually get to the
+Target now if you take a look what time
+it is it is 9:35 Zulu so 12 minutes plus
+that would be be about 47 after which
+gets us a 13-minute window now you're
+saying that seems kind of tight is that
+okay perfectly fine keep in mind once
+aircraft get airborne if you have like a
+thousand of them it's going to take them
+a while to get organized but with
+individual aircraft if I want them to be
+somewhere on time that's only 30 minutes
+away they'll have no problem in the
+world doing it so that's going to work
+perfectly for us so I'm going to go
+ahead and press f11 again I just go and
+take a look at my options here like I
+said and I'm going to pre-build the
+mission rather than trying to basically
+you know kind of sit here and Fiddle
+with things so what I have here is I
+have emission settings everything's
+simple but what I'm going to do is I'm
+going to reduce my flight size to one
+and the reason I want to do that here is
+I only need a single Striker if I'm
+dealing with an LGB now we're going to
+have a major problem in a minute and I
+will trust me when I say it's a major
+problem it's going to frustrate you too
+because you'll miss it so we're going to
+go ahead and now press my flight size to
+one I've got my three targets ready to
+go I know this is hostile it shooting at
+us I watched it mcon the only thing I
+really want to do is go to General and I
+want to make sure that my weapon state
+says use all of your weapons we don't
+want them to waste weapons here you can
+also come down here and set engage into
+Winchester just to double check so this
+one right here is my backup strike for
+my flax suppression now the reason I
+know this is my backup strike is because
+I'm only going to assign a single
+airplane to it and it really only needs
+to do its Mission if the enemy has been
+destroyed that's an important thing to
+note here so good good good those are
+all set no problem uh one of the things
+we can do here which I recommend you see
+where it says targets destroyed rtb I
+like to leave this on Contin Contin
+Mission just in case one of the missions
+the targets do get destroyed before I
+get to take a shot at it otherwise it
+tends to abort it's attack run now you
+don't want it to do that so one of the
+cool things we can do here is of course
+we can come down the flight plan editor
+and do all that stuff but I'm not going
+to instead what I'm going to do is I'm
+going to come over to my flight plan
+backup and what I'm going to do is I'm
+going to duplicate my mission and what
+I'm going to do is I'm actually going to
+duplicate it several times and the
+reason I want to see who played it
+several times is this is going to be
+each of the individual Flack targets so
+we did that so watch this so this one's
+going to be the Triple A remove uh
+remove selected a we're going to call
+this aa37 so we call this aa37 again you
+can be very specific here uh we're going
+to grab this one this is going to be
+mobile 38 so I'm going to move that one
+move that one this one here is going to
+be striking mobile 38 mobile 38 just
+like that and then of course our last
+buddy here it's going to be pretty clear
+is going to be striking um our last one
+here which is n36 so I'm going to remove
+these two Targets remove these two
+Targets this one is going to be called
+none 36
+delightful now of course if we knew what
+these targets actually were you could
+name them properly the important thing
+here is we have our backup one that is
+going to strike everybody and we have
+our individuals that are going to strike
+the individual targets as you can see
+just like that so another thing you want
+to keep in mind is our backup strike
+gets here at the same time as our
+individual strikes uh that's sloppy so
+what I'm going to do is I'm going to go
+to my backup strike and I'm going to set
+it to arrive at 9:02 a.m. so 2 minutes
+after these folks get their shot we're
+actually going going to go ahead and
+make sure the backup can finish anybody
+who survived always be thinking about
+things like this in terms of that if you
+really really want to be thorough for
+any strikes when we do this Mission a
+third time and we actually show you how
+to use patrols for this we'll show you
+another way to attack that as well so my
+timing looks good now it's just a matter
+of adding the units so my aa37 we're
+going to go under dun dun dun we're
+going to grab our lovely lovely LGB
+units here so I'm add a single one
+that's all we're going to need here
+that's perfect so he's good to go one of
+the things that do want to do and this
+is important is I want to make sure he
+strikes at an appropriate altitude let
+me pull this out of the way for a second
+to show you a problem we're going to
+have okay so if we have this island here
+and you take a look at the shape of the
+island this is actually a very
+mountainous Island so if our aircraft is
+going to be striking across this line
+you actually notice my elevation is
+everything between almost up to 900 ft
+where I'm crossing where this place is
+that means if I'm at 2,000 ft I can't
+drop my bombs you're saying how did you
+know I'll show you how I know if you up
+to LGB real quick you'll observe that my
+minimum launch altitude is 2,000 ft
+above ground level now think that think
+hard think hard think hard yes the cloud
+layers 7,000 ft which means if I drop
+them at 1,000 ft I'm too low if I drop
+them at 7,1 FT I'm too high which means
+when I drop my bombs I have to customize
+what altitude I'm actually going to be
+striking at otherwise I got some bad
+news you're gonna miss you know because
+you're basically gonna overshoot it and
+your laser is going to lose sight of the
+ground very common problem with
+scenarios like this again you got to
+watch out for weather it's quite
+irritating in the real world too so
+let's go ahead and fix that problem so
+I'm come back down here oh we got
+everybody I'm just going to sign
+everybody real fast here let's see here
+this one you can do this one come down
+here and grab like I said I'm just
+assigning one each it's very very sloppy
+to only have a single bomber basically
+strike a Target but it's going to work
+well for us so I basically have my
+initial strikes will arrive at 10: a.m.
+my backup strike will arrive at 10:02
+a.m. now this is important command will
+not do this for you so if you've been
+following along watch out here we need
+to tell our Strikers here to basically
+go ahead and attack using a flight plan
+that we predesigned before we launch
+otherwise you will be
+disappointed so the way I'm going to do
+this is pretty easy I'm going to come up
+to Mission settings and if you come down
+here at the bottom there's this button
+that says create or update flight plan
+I'm going to mangle that key click on
+this one mangle that key click on this
+one mangle that key and mangle that key
+the reason I did that is I want to
+generate my flight plans I've just
+dragged that off the screen here and you
+can actually see very clearly that this
+flight plan is kind of dumb so if I pick
+this strike you can see it's there if I
+pick this strike it's over there if I
+pick this strike and again you can see
+exactly where the units are so if I
+click on this one for example you can
+see exactly how it's going to be
+striking our Target do the best I can to
+kind of keep both of these things open
+at once but like I said there's a lot of
+data going on here so if I pick aa37 and
+left click on it it will show me the
+flight plan of this particular Target
+now there's a lot of silliness here you
+can see for example we're basically
+going to be swinging over the highest
+part of the mountain where we're not
+going to have any line of sight with the
+target trying to take a shot at it
+that's silly so what we're going to do
+is we're going to grab my IP and we're
+going to rotate it so it makes somewhat
+sense and you can see my IP is basically
+going to take us around the island here
+so we basically strike it from behind
+now there's a second thing I need to do
+with my IP I need to make sure my IP is
+low enough that we can use our laser on
+our bomb so I'm going to left click on
+this point press f two and I'm simply
+going to set my altitude to nice and low
+2,000 ft so we could probably go a
+little bit lower if we had to now watch
+this trick I'm going to press this right
+arrow here and you see how it selected
+way point 6 my target I can also come in
+here and dial in the altitude I want to
+strike the target at 25,000 ft stupid
+because if I do that I'm going to fly
+into the cloud and my laser is not going
+to see my target the other thing you
+have to keep in mind is my altitudes
+here so if I look here I can see my
+altitudes of all the terrain here is
+only about 200 ft so 2,000 ft is
+perfectly EX able here for a climb so
+you can see we're at 2,000 ft over the
+target we're at an altitude of 2,000 ft
+when we're swinging around another thing
+a lot of people will do is they'll kick
+up their speed here to After Burner so
+they spend less time in the danger zone
+it's kind of a fun way to look at it one
+thing you can do too is if you want to
+be a little sneaky so you can do
+something like this so you have even
+more room to basically take this turn
+drop the bomb laser guide it get the
+heck out of Dodge now this is going to
+be a very aggressive maneuver on our
+part so that one's all set I'm go and
+close it we'll go to to our mobile 38
+left click and you can see we're going
+to have the same problem with this one
+again our endpoint is going to take us
+over the highest part of the mountain
+and we're not going to be able to see
+the target so I'm just going to do the
+same thing so I'm going to come this way
+and you can see that get this a nice
+long time obviously the triple A has
+plenty of time to take shots at us if we
+were using something like cbus I'd
+actually come along the island like this
+with my flight plan just to basically
+limit the attack but we're LGB so we can
+take advantage of this so let's go to
+our IP here I'm going to press f2 we're
+going to set them to 2,000 ft that looks
+good our over the target we're going to
+sit to 2,000 ft as well so they're going
+to come swinging this way left turn
+we're going to come over this way drop
+the bombs come out of here and basically
+Buzz out of there as fast as you can now
+we're going to grab none 36 we'll left
+click on him as well and we're going to
+go do the same thing now if we want to
+be a little fun here we could actually
+do one of these things I don't know why
+you would do this but I guess you could
+I mean I I'm not judging but again the
+key thing here is we have plenty of time
+and we're not going to block our Laser's
+path I can't say that enough you will
+make that mistake at some point where
+the laser cannot see the target so we'll
+do 2,000 ft here we'll do 2,000 ft here
+delightful all right let's do some quick
+idiot checks here a37 click let's just
+double check to make sure it looks good
+a37 looks good all right we'll do mobile
+38 left click we'll go take a look again
+just idiot checks and we can see we are
+beautiful oh my goodness this is
+actually looking pretty good for once
+I'm never this good at this game all
+right that looks pretty good to me here
+and now you can see it's swinging over
+there delightful and of course our
+backup strike don't forget this one this
+is if things don't go well by the way
+we're going to go ahead and give our
+backup strike a little bit plenty of
+leeway here we can actually come from
+another angle I'm kind of thinking
+something like this obviously we're
+shooting over boats which is stupid
+because everybody with a man pad would
+take a shot at us as we go by but for
+this scenario I could be a little lazy
+so I'm going to come up to here I'm
+going to go ahead and do that 2,000 ft
+again we can even come up a little bit
+higher like if we want to be a little
+bit safer we can do 3500 ft I'll come
+over here we'll do 3500 ft as well just
+for safety and he's going to go ahead
+and drop bombs on anything that survives
+which you never know it could happen
+beautiful so I'm very happy with this
+I'm going to go ahead and close this
+this is really important by the way I'm
+going to go do a quick save as here and
+I'm going to go ahead and save as
+autosave in case I messed this video up
+for the 50th time this week just because
+I want to see that this works before I
+plan the rest of my scenario I know you
+all want to see me do like 60 missions
+and make sure it all works but it's
+really important that we check to make
+sure we got every little piece right
+before we come by with the real bombers
+all right get going folks all right
+let's see what happens this time all
+right so we're cruising along cruising
+along here again I'm just testing again
+theoretically I could do this and then
+set up the rest of my missions but I'm
+not going to stress about that today all
+right watch this watch this watch
+this yes I have the Mission Impossible
+theme suck in my head too I don't know
+why look at this through the clouds he's
+taking his ark prepare to drop bombs
+he's lining himself up at the Target
+boom boom boom boom boom boom there goes
+the bombs Stellar one yes you get all
+the sound effects today sorry there he
+goes
+bam here comes the next group hey look
+over there look over there look where
+look where hey boss what's that little
+thing coming right at us oh
+no oh eat it yeah that's what I'm
+talking about delightful so now what
+we're going to do is uh you can see I
+obviously I was a little frustrated the
+last 50 times I did that okay so we know
+that that works and now we're ready to
+set up the rest of our bombing now that
+we know that that part works
+so we're going to do now is we're going
+to come in here to this air base and
+we're going to go shoot up the rest of
+it now that I know that strike works I'm
+going press my f11 now and it works we
+know it works we just watched it work
+and yes theoretically one of our
+aircraft could have been shot down
+during that turn what we really should
+have done is increase the speed or made
+them come from multiple directions to be
+a little bit safer but the important
+thing is you understand that unless we
+put the bombs in their shooting envelope
+you will never ever ever hit the target
+on the ground I can't say that enough
+all right let's deal with everybody else
+so first thing I want to do is I notice
+there's a bunch of tarmac space here and
+I'm very very excited to um
+inconvenience this tarmac just a little
+bit with 122 mm explosive weapons now
+the way I'm going to do that is I'm
+going to go ahead and select this group
+here press control f11 and we're going
+to attack tarmac attack tarmac
+delightful I'm going to do a land strike
+here and press Okie do and now you're
+saying wellow you said 122 mm weapons
+you mean Rockets yes it is very tempting
+to drop lgbs on the tarmac but the
+reality is that works too well and one
+of the things we can do is we can use
+our Rockets which by the way they're not
+very accurate to basically spam this
+piece of ground until we're able to
+obliterate it so coming up here I'm
+going to grab my j15s I'm going to grab
+all of my j15s and toss them down here
+that's a total of 12 j15s so I want
+their time on target to be just after my
+flax suppression arrives so I'm going to
+get them on target at 10:05 a.m. that
+looks good there looks good there we're
+going to do Mission settings now here's
+a cool thing we have ourselves 12 flying
+sharks so under Mission settings I'm
+going to do flight sizes of three now
+you're sitting there going I see what
+you did there you took 12 divided it by
+four and you got three nice I can math
+now the other thing I'm going to do here
+which is very important is I'm going to
+come down here where it says attack
+method and I'm going to order them to do
+independent attack now we have two
+different ways of doing this we can do
+what they call a multiaxis which means
+they come in multiple directions which
+is usually the safe option and it's also
+single axis where they all come in in
+the same direction I like single axis
+for this so I'm going to come into here
+and press that and that will cause them
+to basically split apart and then rejoin
+and all attack at the same time all the
+different targets at once now I'm going
+to go over to my four Targets this looks
+delightful I'm going to go ahead and say
+engage into Winchester very important
+here uh targets destroyed I'm going to
+let them do continue Mission and the
+reason I want them to do here is just in
+the event that um you know the first
+pass doesn't work I want them to come
+back and take another shot the other
+thing I'm going to do is I'm going to
+double check to make sure under my
+weapon state that it is using a
+Winchester now here comes a real big
+point of argument here here says air to
+ground strafing I'm turning it on and
+the reason I'm turning it on is because
+I know my Flack will be destroyed in the
+real world you basically can't do air to
+ground strafing unless you are so lucky
+you get maximum surprise but for us I'm
+not taking any chances and you're also
+saying this is crazy you're launching
+like 60 rockets at each piece of tarmac
+isn't that going to do it you'd be
+surprised how an accurate Rockets can be
+last thing I want to double check is I'm
+going to go to my WR I'm going to come
+down to my Rockets I'm just going to
+make everything set to all weapons and
+it looks delightful to me now if you
+want to have a little bit of fun and you
+want to get a little spammy you see
+where it says uh Shooters per Salvo one
+we can have the entire Squadron shoot at
+the same time so if you come up here see
+where this is four units we can actually
+say let have everything what I'm
+actually going to do is I'll do two
+units here because you always want to
+back up just in case so that means
+everybody in the unit is basically going
+to spam fire their Rockets
+simultaneously and the reason that's
+kind of fun is that means you're going
+to make less passes even though you're
+probably going to waste some of your
+Rockets you're lot less likely to
+accidentally when you come by with it
+all right delightful that looks good to
+me that looks good to me attack tarmac
+the time for that one is 10:05 a.m. FL
+backup is 10:02 a.m. delightful I love
+it okay so what do we have left we have
+these folks and they're going to help us
+out so I'm going to head back over to
+our Target region here we're going to
+set up one more strike Mission and
+that's going to be for our hangers here
+piece of advice runways can be repaired
+very very quickly basically basically
+they put some concrete that acts fast
+Runway fixed you know it doesn't get
+fixed fast airplanes and when it comes
+to attacking air bases destroying the
+airplanes are often the simplest way to
+put the base out of commission even
+though maybe the runway looks fine so
+what I'm going to do is I'm going to
+grab these three airports or hangers
+here do the same thing I did before
+control f11 strike hanger delightful
+we're going to set this to land strike
+yep yep yep yep yep yep pressie do now
+we want these folks to be on the target
+about the same time in the real world of
+course you would never do this and the
+reason you wouldn't do this is they bomb
+each other when they fly over which is
+kind of dangerous but if we know that
+we're attacking the tarmac at about
+10:05 we can safely attack this
+basically 1006 they are about that
+accurate 106 looks delightful for me now
+I'm going to grab all of my flounders
+and I've got quite a few of these left
+here they're very very nice aircraft for
+this purpose grab them all I'm going to
+go and toss them down here now the math
+does not work you will see I've got 30
+targets and I've got eight flounders now
+you're sitting here going can't you just
+take two of those Founders and go drop
+bombs on something else I completely
+agree with you that's not a bad strategy
+as a matter of fact in the real world
+what I would ually well not real world
+usually what I would do is keep two in
+reserve and basically use them manually
+in case there's any freeb Targets that I
+can use but because this is a mission
+based video we're going to concentrate
+on using missions for it so that looks
+good to me I'm going to come over to
+Mission settings way too big we're going
+to do groups of two uh groups of two
+because unfortunately if you divide
+eight by three you get a funky decimal
+not going to fight in today so two works
+because it gets us for groups looks good
+looks good good it's good stop attack
+method we don't want them targeting one
+thing at a time instead what I'm going
+to do is I'm going to have them do a
+independent Aim so they spread their
+attacks out all at the same time now all
+I have to do is check my targets
+delightful we're going to engage into
+Winchester I'm going to use those Bombs
+Up opportunity is fine mcon H this looks
+good to me but what we do want to do is
+we want to make sure they're using all
+of their bombs don't come back with any
+bombs they did not need you can come in
+here and order them like double attacks
+and stuff now we are in trouble a second
+time let me go and zoom out real quick
+here do you remember that these bombers
+are going to try to drop their bombs at
+12,000 ft do you also remember there's
+clouds at 7,000 ft sigh yes that means
+you're going to have to manually create
+your flight plans here so what I'm going
+to do is I'm going to go up to my
+setting I'm going to save my game just
+in case I accidentally because I'm
+really really good for that strike
+hanger I'm going to go ahead and come
+down to the bottom click Creator update
+flight plans and there they are
+delightful you can see here that they're
+basically going to do multiple passes
+they have multiple split items
+everything is looking delightful here
+and you can actually see the individual
+flight plans of the individual groups
+the important thing for us is we have to
+have to have to design it so that when
+they come in they're coming in at an
+altitude where their bombs can't see the
+ground otherwise they will not strike
+can't say that enough so let's grab a
+dragon 71 here I'm just going to press
+the F2 key here this is kind of handy so
+what I can do is I can actually skip to
+the Ingress Point skip all the way to
+the initial point and set our altitude
+to a more comfortable altitude 2,000 ft
+is going to be fine here obviously we
+want to be a little bit higher if we
+were in a situation where we had a
+little bit of cloud cover or not less
+cloud cover I should say but that works
+fine so I'm going to go and pull this
+down so you can see what I'm doing here
+I'm going to click ghost 35 o helps if
+you click it F2 and we're just going to
+go all the way to our initial point
+we're going to set this down to 2,000 ft
+2,000 ft delightful close that one F2
+we're going to go all the way to our
+initial point right there we're going to
+do 2,000 ft 2,000 ft yes we could use
+6,900 ft but as I was saying earlier as
+soon as they drop the bombs they have a
+tendency to climb when they do that they
+lose sight of their targets and that
+becomes worthless for us all right 2,000
+ft and 2,000 ft now I know you're
+thinking in the back of your mind going
+can't you sit here and like fiddle with
+these lines and like make it really
+accurate sure if you want to be here for
+another 45 minutes but realistically
+this is close enough for what we need it
+to be delightful let's go ahead and save
+again perfect
+now the last thing we need to do is use
+our bombers we have badgers now Badgers
+are kind of fun like I said they're
+definitely area of effect weapons and
+that's a good thing so what I'm going to
+do is I'm going to go ahead and click on
+my enemy airport here press control f11
+and say uh let's area bombing it's the
+best way to describe it set this tool
+land strike press okay yeah we go I told
+you there'd be a few missions nobody
+said this would be easy so the last
+thing I'm going to do is grab my Badgers
+and toss them all in here and one of the
+things I love doing with Badgers or any
+area of effect bomb like b7s or
+something so I like to go to my mission
+settings and I like to drop the size of
+the groups pretty small you could use
+cells of four cells of three and of
+course I'm going to order them to go
+ahead and do an independent attack now
+the reason this is going to be so much
+fun is bombers are fantastic flax
+suppressing units because of how wide of
+an attack they have one thing I do want
+to do though is I go to 15 targets I'm
+actually going to remove by the way left
+click and shift click you can go remove
+all these at a time I'm just going to
+Target everything we did not shoot at
+here and you can see there's plenty of
+good stuff to drop bombs on and trust me
+they will make a big mess at the place
+Eng CAG to Winchester that looks pretty
+good to me mcon WR all this is good I'm
+just going to make sure that they use
+all the bombs naturally we're not going
+to attempt to do air to ground strafing
+with a bomber we could try but I
+wouldn't necessarily recommend that that
+stuff's all good that stuff's all good
+that stuff's all good um that looks good
+to me that looks good to me delightful
+now what time do we drop the bombs this
+is going to surprise you but we're
+actually going to drop bombs a little
+bit earlier than everybody else 9:58
+a.m. now you're sitting here going I
+thought we had flx suppression units why
+don't use those because the bombers will
+drop their bombs through clouds it's a
+nice thing about being a bomber because
+of that they have a chance of destroying
+one of the Flack targets before my folks
+have to put themselves in Danger's way
+as a matter of fact one of the more fun
+ways to solve this scenario is to use
+the bombers against the triaa it doesn't
+seem like a good idea but it works great
+so I'm actually going to have them get
+there before everybody else gets there
+because they can't even be shot at which
+is actually kind of cool all right let's
+go ahead and save our game save as here
+we go always save whenever you do
+missions there's always a 10% chance
+more like 90% for me that you forgot to
+set time of Target you forgot to split
+up a mission you forgot to click add
+Mission everything's delightful
+Perfect all right bum bum everybody
+ready for the moment of truth let's find
+out what happens all right let the party
+begin There Goes My Mig 21 everybody
+laches and there they
+go there they go of course as you'll
+probably observe the fact that our
+bombers have arrived after the fact that
+our these folks basically our flax
+suppression gets there first uh folks uh
+we intentionally sent the bombers out
+first well they were asking really ni
+did that guy just turn around I swear I
+saw that guy just do a 180 not going to
+worry about it yeah either way we know
+how the scenario is kind of R out here
+comes my Flack suppression Flack is
+suppressed here comes the party here
+comes the party
+ready all right we definitely want to
+watch the fireworks here so we've
+destroyed all the Flack success so good
+job so far Here Comes our rocket Cru off
+first so you can see they're coming over
+ripping across a bunch of fishing boats
+are like did we just get passed by It
+sey 33 but as you'll observe as they
+come down here I'll click somewhere we
+can see the party you will notice that
+they are going nuts with all these
+Rockets bang bang boom boom bang and
+it's doing basically nothing welcome to
+Rockets everybody so here comes the next
+group you can see The Swinging Direct
+directly out of the East there here they
+come oh look at that look at that look
+at that look at that look at that nice
+nice get out of here all right meanwhile
+guess who else joins the fun please are
+guided
+bombs uhoh hate it when that happens
+keep in mind we are in the beta version
+so that kind of stuff happens all the
+time ah this is relaxing I can just sit
+here just sort of enjoy my little
+Saturday morning watching some fireworks
+if you want to have a little extra fun
+of course you can always bring up Tac
+view if you happen to have it handy go
+ahead and zoom in there uh will pick you
+I choo choo Choose You yero looks good
+to me I have to pause and pause to kind
+of get it all there we go delightful
+okay let's watch some fireworks here on
+pause ah I recorded ah I'm working too
+fast there too many units I'm not going
+to worry about it all right we'll let
+them do some more bombing so you oh
+fuses 3 minutes later all right so our
+strike is complete everybody's done a
+delightful job they're heading home I
+think remember this guy from before that
+was our Triple A pressing unit there and
+I can actually just order him to turn
+right around we did a delightful job go
+home so what that's all taken care of
+one thing I always recommend whenever
+you doing missions it's always mangle
+the f11 key and start deleting things
+actually interestingly enough um our
+bombers never launched which is very
+interesting that's okay I'm actually
+just going to let them attack now
+because I can't imagine our bombers not
+launching here I did mention auto save
+didn't
+I all right here comes the bombers oh we
+can't can't forget about these guys
+apparently the reason it did that was on
+account of the fact oh there's my
+bombers ah delightful and now you can
+see like I was mentioning before that
+our bombers are very much area of effect
+weapons what I needed to do and this was
+my bad is I needed to have them get in
+the air a little bit later only on
+account of the fact they couldn't get to
+the Target in time so that's why they
+did not launch they basically didn't
+have time to launch and that's why they
+didn't do it all right let's go ahead
+and take a look at how we did go up to
+our game losses and expenditures holy
+smokes wow uh we got all of the AA we
+got all their hangers we got all their
+airplanes we got all we even got the
+control tower oh let's see we got all
+their vehicles we got all of their
+aircraft we lost a single flying shark
+I'm imagine that one probably got nailed
+a while ago that's unfortunate and you
+can see our expenditures were actually
+complete we did not fired 240 of those
+Rockets we actually fired significantly
+less this was a resounding success if I
+go to my scoring here you can see my
+required score is 220 I got a score of
+350 I crushed the scener with the
+mission so as you can see there's a lot
+of things that you have to get right and
+there's so many little places where we
+could like not have the right altitude
+for a bomb or the cloud would block us
+we had enemy aircraft a AAA that could
+tear us to Pieces there were so many
+little things you have to get right and
+that's what so amazing about this game
+is you can get those things right and
+you can have a resounding success like
+we had here the loss of the j15 was
+unfortunate he'll probably be a pow
+until the end of this war especially if
+it was Triple A we could actually go
+back over the message log and try to
+find where he actually got nailed here
+oh here we go oh you ran out of fuel oh
+you ran out of gas interesting so um I
+did even better than I thought I did but
+some dope did not come back home when he
+was low on fuel next time what we'll do
+is we'll take a look at how to do this
+mission in a very different way using a
+patrol enjoy

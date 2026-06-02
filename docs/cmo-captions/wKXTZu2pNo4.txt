@@ -1,0 +1,520 @@
+# C: MO - Active Sonar
+Video: https://www.youtube.com/watch?v=wKXTZu2pNo4
+Video ID: wKXTZu2pNo4
+
+hello everyone in today's video we're
+going to be taking a look at active
+sonar now we've talked a bit about sonar
+many many moons ago and fairly recently
+we were actually doing some videos on
+our lovely friends the diesel electric
+Subs which had The Uncanny ability to
+literally make no noise so of course uh
+how do we find something that's
+underwater that makes no noise and um
+that that's a bit of a mystery and if we
+were doing mind sweeping we'd have the
+same kind of a problem so what we've
+done here is we've set ourselves up a
+little scenario to kind of show you sort
+of the ins and out of active sonar as
+well as some limitations as well as kind
+of the downside to operating it now some
+of you know active sonar from playing
+some of the games like cold Waters or
+Dangerous Waters and basically what
+you're doing is you're taking a very
+very low frequency ping if you want to
+think on acoustic sound and you're
+projecting it in all sorts of different
+directions and then listening for The
+Echoes now active sonar in the real
+world of course is a bit of interesting
+process because everything is going to
+reflect that sound back which makes the
+digital signal processing side of the
+problem very real for those of you who
+know Dangerous Waters of course uh
+active sonar was like this magical
+device for detecting anything that was
+underwater at any time at any position
+at any depth and having a pretty good
+idea of where it was as well now over
+here in command it's a little different
+and uh active sonar is not nearly as
+effective so the first thing we're going
+to do is take a look at some of the
+details of two different active sonar
+systems out way the FFG 7 the AL Hazard
+Perry of course there's plenty of
+British destroyers and frigs and Russian
+ones we use but I'm sorry when I think
+Subs I think this and we'll take a look
+at what we have here you're going to
+notice as scrolling down here that we
+have a couple different systems in the
+water here we have this one Hall son our
+active passive track you can see it's
+late '70s technology and it's the sqs 56
+what do we know uh we know that it's got
+a f mile range which is embarrassing and
+we know that it has a 15sec scan
+interval which is actually probably fast
+it takes a really really really long
+time for that sound to actually get back
+to us the other thing we have over here
+is a lovely Seawolf I see what I did
+there now our Seawolf on the flip side
+is a little bit better equipped for this
+and if we actually go down here you will
+know that we have the bqs 24 Midas which
+is our little active only Under Ice
+navigation and we also of course have
+the BQ cube10 which is going to be a 70
+nautical mile range active and passive
+search and track that's an incredibly
+long range so let's go ahead and take a
+look at the competition real
+fast oops let's go pop that sucker open
+real fast go over switch to Orange so we
+have ourselves five some mares yeah you
+can tell how well I can count on a
+Saturday morning and we have ourselves
+all unarmed submarines now you're
+probably sitting here going why did you
+pick Narco subs for this purpose the
+reason I pick Narco Subs is if you go to
+the unarmed submarine and scroll
+down here you're going to see that
+they're active sonar detection range we
+have a 8 debel response from the front
+40 from the side and then eight from the
+rear now if you want to put that in
+perspective for a second here let's go
+get the typhoon which on my opinion is a
+little um uh what's the best way to say
+this uh probably a little tiny extreme
+here
+but if you ever needed an office
+building with a motor on the back of it
+this is what it is and if you take a
+look at the Active sonar range on this
+thing is 40 DB from the front 300 from
+the side so it's a very obvious Target
+but again we're going to demonstrate
+just how effectively in effective all
+these things are so let's swing back to
+a blue real fast and we have our two
+subs and we're going to go ahead and
+fire up those sonars right away now when
+I fire up the sonar and here I'm going
+to go to sensors I'm going to uncheck
+this box and you can see I have a couple
+choic here I have active only Under Ice
+not needed for me but I also have Hall
+CER active passive search and track
+click that's it that's the sound of it
+turning on because you know we don't we
+don't have sound effects so we're going
+to work with that so coming over here of
+course we want to do the same thing of
+course we can go down here and be lazy
+and click that button but I'm just going
+to come here and push that one so we are
+now both happily pinging away now keep
+in mind they targets so put on God's eye
+view here are um five or six miles away
+for those of you of course like I said
+remember Dangerous Waters you probably
+said well I can pick up somebody from 25
+miles like you know 36,000 yards or
+whatever um yeah that doesn't work that
+well in the real world so we're pinging
+we're making noise we're dinging and
+we're pinging and we're making all sorts
+of noise here we're floating around of
+course remember when you're using any
+type of sonar the speed of the vessel
+pinging away will also have a big impact
+on how well it can detect things ideally
+what I would actually do is tell my
+Oliver has a period here to come down to
+basically steerage or eight knots or
+something like that to basically reduce
+the self noise of all this racket in the
+water now let's switch over to the other
+team real quick here and um we're going
+to observe something and the thing
+you're going to observe is the fact that
+we are currently detecting a a target
+with low frequency sonar beeping away at
+us now not only are we detecting a
+target with low frequency sonar that is
+beeping away at us but we have no idea
+of its speed or direction or anything
+like that and our confidence idea a
+little box here that's a little polygon
+of how confident we are of its current
+position is actually pretty decent it's
+only about uh 2 mies wide now for those
+of you who are firing Torpedoes into
+this particular Z equation this is more
+than enough of a targeting solution for
+an actively guided torpedo so as you can
+see uh that's not good for us because we
+almost know exactly where my Seawolf is
+without having any concept of of course
+where the frig is and the reason for
+this is because whenever you are doing
+acoustic intercept on that's you're just
+listening for pings it's always about
+twice the actual range of the Ping so
+that means if my Seawolf has a maximum
+ping range of you know 70 miles here
+that would mean I could detect it with
+an acoustic intercept out to about 140
+miles and of course my Oliver has Perry
+here who's pinging away happily is got a
+much more limited range it would be
+about 10 miles away you'd be able to
+hear his pings just to give you an idea
+of the difference in how powerful the
+two systems really are so as of right
+now um our little Narco Subs if they had
+acoustic intercept uh knows exactly
+where my Seawolf is and I'll have no
+difficulty attacking that one so that's
+not so good on the active sonar front so
+let's go swing back to the other team
+real quickly here I'm going speed up
+time keep in mind we're just ping ping
+ping into the water making a ton of
+Racket here and um I'm speed of time oh
+we pick something up pause excellent
+we've detected something happy days so
+the first one we did is we picked this
+guy up right here uh this is our Goblin
+number one he's doing five knots and
+he's up pretty shallow actually and what
+you're going to observe probably if you
+go down through all these systems here
+is the fact that we did pick it up on
+the active sonar before we picked it up
+acoustically remember on a Seawolf you
+hear things behind you better because
+you've got that trailing wire the other
+thing you probably observe is the fact
+that my alazard perry here is still
+completely clueless about the presence
+of it now this one is a little bit more
+interesting and I'll go ahead and select
+that real quickly and what you're going
+to observe here is that we have somebody
+not moving we have them at a shallow
+depth and we also have them just sort of
+chilling here but we actually detected
+them at a range of six nautical miles
+even though they're not actually moving
+so that's actually a plus and also
+notice by the way we have depth
+information we have speed information so
+what's the difference between these two
+aha this one is moving which means we
+now get a Doppler shift to make it
+easier to detect it this one on the flip
+side is at an interesting depth let's
+take a look at that depth 131 ft of
+course is shallow and if you take a look
+at our little kind of breakdown of depth
+here that is for us just slightly under
+this lovely little acoustic layer yeah
+remember that little layer that causes
+all sorts of saltwater density to change
+depending on what it is acoustic sounds
+Ricochet off of it which actually limits
+our range so believe it or not there's
+another sub right here that we still
+have not even detected yet because of a
+different problem and that's because of
+its depth now if I come over to the sub
+and actually click on it right now
+you'll see that it's at a depth of 1
+96.9 ft that's negative by the way this
+sub is sitting on the floor of the ocean
+right now which means all this racket
+that we're making here is being
+basically not absorbed it's being
+ricocheted off of whatever nice soft
+bottom we have here it's uh I think this
+is mostly sand here be either sand or
+probably lots of icky mud sometimes you
+get stone which makes it a little bit
+more chaotic as far as trying to listen
+to what we're hearing there so so even
+though it's a physically closer Target
+than that one we can't pick it up
+because all of our sound is basically
+bouncing off the acoustic layer here so
+what I'm going to do is I'm going to
+grab myself sub again I'm going to
+actually order him to go down I'm going
+to order him under the layer here which
+for him is just a little bit deeper and
+so again just trying to get underneath
+that little acoustic layer there go and
+speed up time
+again notice we're having no difficulty
+by the way acquiring this particular sub
+because this particular sub is making a
+ton of Racket and again these are not
+loud submarines that's why I picked them
+and we can see we are still completely
+utterly clueless to the presence of
+these other subs also notice by the way
+our Oliver haard Perry here who's been
+tip tapping this entire time is utterly
+unaware of anything that's going on
+around them so I'm going to go ahead and
+give us a little bit of time here again
+I try to enjoy our little hunting around
+15x again a good thing the Coast Guard
+is being polite to us today and remember
+they said it's awfully slow Warfare oh
+we picked something up
+stop so we finally detected this guy
+notice by the way we detected him at a
+depth of minus 197 his speed is zero the
+other thing that's worth noting here is
+if you actually look the Seawolf
+detected them not the Oliver Hazard
+Perry even though the Oliver Hazard
+Perry was here remember all those pings
+and pangs as ricocheting right now is
+basically bouncing off of that nice
+little acoustic layer and you can
+actually see by my little tool tip here
+that it's between - 70 and minus 120 so
+we're basically making a ton of noise
+for almost nothing we're not going to be
+able to achieve much so what I'm going
+to do is I'm going to grab my sea wolf
+I'm actually going to order him to go
+over here I'm going to grab this guy and
+I'm going to do one of these things with
+him and you're probably wondering why
+you'll see in a second so Oliver has a
+par he's turning here you know he's up
+pinging away pinging away trying to
+detect and I actually want my Seawolf to
+get out of there you now the reason I
+want to do that is because I want to
+give this particular one a particular
+chance to take a shot notice by the way
+the one that we now have our perfect
+Beam on we've completely lost
+acoustically here it's gone oh we
+reacquired it and you can see we
+reacquired it with our handy dandy
+little wide aperture array that we're
+basically listening to behind the
+Seawolf here which doesn't surprise me
+notice by the way we've completely lost
+track of this target here because we're
+no longer pointing notice we're just a
+little outside of our baffles here so we
+can't hear it very well but notice our
+original one that we've acquired we
+still can see so oler has a Parry is
+pinging away pinging away pinging away
+still cannot find this sub even though
+it's right on top of it the total
+distance here is um about almost less
+than a Kil about a kilometer or so so
+even if we were to take mile our Hazard
+Perry and just do one of those things
+and then of course we're going to go fly
+over here so you can see the next
+problem with AC Zar we still have no
+idea and that just gives you an idea now
+the cool thing here is we've actually
+picked up another sub and that's our
+good buddy Goblin number four here this
+one was also detected by the Seawolf at
+a range of about four miles so um
+remember this one right here is at a
+depth of 131 which is just inside of the
+layer this one over here that we picked
+up is actually just below the layer now
+remember handy dandy Seawolf now since
+it's under the layer with it it has a
+much easier time of spotting stuff at
+its depth so you're actually able to
+acquire this one reasonably I guess if
+you want to call it reasonably I don't
+even know so I'm going to go ahead and
+turn my sea wolf around here he's done a
+great job now one cool trick that active
+sonar has is the fact you can hear
+things and see things that are next to
+you and now one of the kind of fun
+little problems that we can generate
+here is the fact that because we can see
+things next to us again that means kind
+of our of being here we have the ability
+to set ourselves up in a targeting
+situation where it's easy for us to
+avoid incoming weapons at the same time
+still being able to basically see things
+that are to our side here so for example
+if I wanted to engage this sub right
+here I'm already basically in a perfect
+spot to track the projectile that I'm
+launched at it and if it fires back at
+me I'm able to hear anything coming in
+at it because I can actually look
+basically out theide if you want to
+think about it another way so we're
+going to go spin ourselves around great
+example of this by the way is right here
+you can see that I can still see this
+sub because I know that it's there
+because of the reflection and this guy
+right here he's just easy because now
+we're listening to his propeller from
+behind him which makes it a little bit
+easier so we're going to go speed of
+time again here and we're looking for
+that last sub and we're going to go
+we're going to go we're going to go the
+alare hasard par remember he's running
+full acoustic active sonar right now and
+he's he's not picking up anything that's
+why I love these Subs because they they
+generate my points perfectly go Ahad do
+one of those things we'll get him out of
+the way Meanwhile my sea wolf is doing
+his thing he's doing his thing doing his
+thing ah he picked something up what's
+this ah we actually detected him at a
+range of zero with my Oliver hasard
+Perry just to give you an idea of how
+poor that active sonar system is so I'm
+actually going to dump this guy I don't
+like you anymore I'm dumping you speed
+time here whoop looks like our Seawolf
+didn't even acquire this guy go ahead
+and speed up time again here all right
+let's get going all right and notice we
+still cannot acquire this guy there he
+is and we acquired him at a staggering
+range of 1.3 nautical miles again the
+reason for this in this particular case
+is because of that depth now a lot of
+people are saying um what does aspect
+got to do with it you know is aspect
+something that we need to think about
+when it comes to um preventing ourselves
+from being detected and the answer is
+kind of um so for this particular case
+because of the actual um if you want to
+think surface area the side of the sub
+is so small based on the nose or the
+side it didn't make a big difference for
+us but if we were to go ahead and grab
+out one of those typhoons I we'll go
+scoop one of those things up real quick
+just for the purposes of
+demonstration let's grab this one real
+fast let's grab this oh my God this
+thing is ready to go oh my God folks do
+not have this as the default feature so
+we're going to go ahead and order this
+one to a complete stop and we're going
+to go ahead and order this one to go
+ahead and turn so we can demonstrate our
+concept here well what are you doing
+where are you going you don't need to be
+engaged defensive there's nothing over
+there stop that all by the way if you
+want to disable that you just have to go
+over here and go no bad bad now notice
+of course he went engaged defensive
+against this nit I didn't order you to
+surface my my my guy my guy what are you
+doing all right let's order this guy to
+a stop let's order this guy to go this
+way and also order him to a stop now the
+one thing I wish you could do is if you
+press the move key it just automatically
+acquires the next heading but that's
+perfectly fine so what we're going to do
+now is I grab my handy dandy little
+we're going to use the sub for this cuz
+the sub's going to do a lot better job
+of this so I'm going to take the sensors
+and I'm going to go ahead and shut them
+off real quickly here I'm going to go
+ahead and grab this one real fast I'm
+going to go ahead and ajust ourselves
+over like this and then we're going to
+come make our way that way all right
+let's get in
+position and we can see we have the two
+typhoons remember these typhoons are
+huge so we're going to approach one of
+them from the side and then we're going
+to try to go ahead and approach the
+other one from the front to see if it
+really makes that much of a difference
+and get ready for pause pause let's see
+here so we detected this one with the
+ark five Victor here if we go down here
+that is our active we picked them up
+actively before we picked them up
+passively the other thing you can see is
+we picked them up at a range of about
+5.2 remember we're looking at this sub
+perfectly at a 90° beam so let's go
+ahead and grab them again get over here
+let's hope the big Subs are not making
+so much noise we won't be able to pick
+them up fairly so let's go Ahad and
+unpause here and we went and acquired
+that one almost immediately let me back
+this up a little bit that's about five
+let's go a little bit further back here
+that's better let's go ahead and dump
+both of these because I don't want to
+look at them until I can see them nice
+good timing on my part and you can see
+we picked them up at about the same
+range now that's just one of those
+things it's it feels like that doesn't
+make sense but remember to be able to
+overwhelm everything is going to be at
+the square of the distance so even
+though you can see we got him on the
+nose at six nautical miles and we also
+got them at the beam at about the same
+distance and again that's part of the
+fun of using active sonar now this
+entire time by the way if we actually go
+back over here you would note the fact
+that we have a very very very confident
+position of our incoming submarine which
+makes it pretty useless now one of the
+fun things we can do of course with this
+sonar technology and kind of playing
+with it is we can do a fake shot and
+know basically trick people into making
+a ton of noise so if I were to sit in
+here and let's say I accidentally fired
+a torpedo I fired a torpedo over here
+and let's say accidentally fired a
+torpedo over here let's go ahead and
+grab my sub real quickly here I'm G to
+slow this thing down just a little bit a
+creeps fine creeps fine and we're going
+to let it
+fire you could see that we can trial or
+basically reconnaissance by fire enjoy

@@ -1,0 +1,673 @@
+# C: MO - Radar versus Visual Recon
+Video: https://www.youtube.com/watch?v=agqnyM3Hwkg
+Video ID: agqnyM3Hwkg
+
+hello everyone in today's video we're
+going to be showing you the relationship
+between radar and traditional
+surveillance as in photo infrared or
+even Visual and kind of how they
+interplay with each other so that you
+can kind of understand what sort of
+information you can gain from each as
+well as kind of how best to employ them
+so let's get started so our scenario
+today has a relatively straightforward
+setup uh way down here in Panama we have
+ourselves a bunch of different targets
+of which several of them autod
+detectable you can actually see usually
+the autod detectable targets are things
+like buildings and structures we have a
+couple different peers down here that we
+know exist but we have no idea what's on
+them we're also picking a bunch of
+unknown targets including whatever this
+is right here some kind of Civilian of
+course you're sitting there going how do
+you know it's some kind of Civilian cuz
+if we pop up to the contact report you
+can see that it has a generic navigation
+radar along with all of these items down
+here so unfortunately that's not
+terribly helpful for us we also know
+there's some kind of radar up here it's
+a mobile vehicle of some kind we're
+getting the Watchman signal off of it we
+can actually pop up here real quickly
+and take a look at this and I think it's
+pretty safe to say it's a Watchman radar
+now one of the things that a good friend
+Dangerous Waters had years ago is the
+ability to manually identify a Target
+like if you can kind of into it what it
+is uh you can actually sit here right
+click and say change to whatever but
+unfortunately we don't have that
+capability here so we're going to have
+to kind of work with what we have so the
+first type of on surveillance we're
+going to be doing here is purely radar
+surveillance now one thing you have to
+know about radar surveillance is there's
+different types of Radars with different
+wavelengths with different styles so you
+might be able to get some information
+from some Radars but you might not to
+get them from other Radars and it gets
+relatively straight forward as you'll
+see in just a few minutes so the
+aircraft I'm going to use this for as
+far as my little demonstration here of
+course it's going to be the e2d now the
+e2d is a really really impressive awax
+airplane the radar is sticking off the
+top of this if I actually to grab it
+real quick is the an apy number nine uh
+the cool thing you need to know about
+this is two things first of all you'll
+observe that it has some amazing
+capabilities it has the ability to
+identify Friend or Foe it can classify
+items which is really fancing
+you have NCT so you can actually
+identify a particular type of aircraft
+by its engines it's a PO stopler of
+course is actively scanned these are
+wonderful wonderful tools that give us a
+lot of information about the target but
+of course if we run off and grab this
+one right away we're almost cheating a
+little so we might as well grab
+something a little bit older so to do
+that of course I'm going to go and grab
+myself an F1 here going to press some
+insert action we're going to get to S
+something a little more traditional
+we're going to get an e2a which is going
+to be a little bit older E2 if you type
+it correctly it's e-2c would be the old
+one so we're going to grab one of these
+real quickly here this is going to be
+the old school one this one does not
+have the same quality radar here if you
+actually hit this one on here you'll see
+here we're the aps 139 which is a little
+bit older technology and it doesn't have
+a lot of this fun stuff so let's go
+ahead and flip that sucker on real
+quickly and let's see what we can find
+out about the target region keep in mind
+we are in range here if I zoom out a bit
+you can see this so immediately um we
+get a bunch of unclear contacts and I
+give it a few moments here the radar
+operators in the back of this airplane
+right now we're looking at this going um
+there's a lot of dots and I think
+they're
+helicopters um um okay this is uh giv us
+some information here and oh and
+honestly it's a kind of spaghetti and um
+there's a bunch of helicopters and they
+being all irritating there and of course
+this is the radar operator attempting to
+interpret we as the player here never
+get to see the raw radar data and I know
+some of you out there are like can we do
+that I'm like there's games for that go
+play those but the cool thing here is we
+we know that there are some targets down
+here that's about as much information as
+we're going to be able to get with this
+particular generation of radar it's not
+bad data per se but it's certainly
+worthless from a targeting perspective I
+certainly couldn't hit any of these
+things with the current data that I'm
+collecting I know it's there and like I
+said can see a couple skunks down here I
+can I know there's an Airfield here but
+I have no idea what's at the Airfield
+I've got a couple buildings I also know
+there's that Watchtower so let's grab
+this guy and move him a little H you
+closer and of course uh when you close
+the range here it's going to improve
+things a little bit here but not nearly
+as much as you really wanted to do one
+thing you notice of course by the way
+here is we have some weather today we
+have these moderate middle clouds which
+are going to limit us but Radars can see
+through clouds generally so we'll have a
+pretty good time of it but as you can
+see even when we close the range to
+about 30 nautical miles there's just a
+bunch of helicopters and I'm pretty
+confident there's a civilian boat
+somewhere in here and I'm pretty
+confident there's something else here if
+I go to the contact report I got nothing
+I'm not getting a lot of data from this
+generation of radar so generally what we
+have now is um a bit of a puzzle U we
+know that there's something there we
+know roughly what it is but we don't
+know much more about it so at this point
+of course we can up our game a little
+bit by bringing in a better more
+dedicated reconnaissance unit so one of
+the things you need to bring up about
+reconnaissance units in general is if
+you actually wait what oh okay I get you
+um so one of the things you need to know
+here and this is really important is
+that when I open up anything that's a
+visual reconnaissance you and hey they
+put a circle on it for me you will
+notice it has a maximum range which is
+how far I can see something and it has I
+can see you range the difference between
+these two is if I know something is
+there I can see it at 50 Mi if I don't
+know something is there I can only see
+it at five nautical miles that makes it
+rather challenging for us to be able to
+get close enough to actually identify
+things so what I'm going to do is I'm
+going to leave the radar of our Hawkeye
+on here I'm going to grab the vgan and
+I'm going to order him to do basically a
+low altitude pass we have to get
+underneath that cloud layer here so I'm
+going to get UNS and get going this is
+what the VIN are good for V's going to
+come scooting right over the water about
+to Dive Right Through the cloud layer
+gets all sorts of bouncy turbulence
+there as he busts through now as I was
+mentioning remember his little visual
+pod here only has a 15 M range so I
+won't even be able to start seeing
+things until I get to about this point
+if I wanted to I could actually grab the
+leg so we have a pretty good idea of
+where he's actually going to be able to
+start seeing things now remember his
+sensor is being cued by our friend the
+Hawkeye here so we're going to let him
+go ahead and take his highs speed pass
+here give it a few moments he's getting
+a little bit closer here we can
+definitely pretty pretty confident about
+some of the smoke pause you will notice
+as soon as we've come to range we have
+some new things one of the things you'll
+notice here is our little civilian has
+finally been identified as a commercial
+Tugboat and if you actually go over here
+you can see all the different things
+that are looking at him right now and of
+course when we go to it we can see the
+fact that these are all possible matches
+based on this you can also see here that
+our camera mounted onto our lovely
+little vgan did some good work here
+which is awesome the other thing we
+notice is we
+have down here which of course I think
+you can guess which one that is is one
+of the things we know about is it's just
+sort of chilling there we're actually
+still missing a bunch of units coming
+down here by the peers again those are
+all kind of chaotic little aircraft
+zipping around now as we get closer our
+aircraft is going to have an easier time
+of identifying some of the stuff down
+there and again this is just pure visual
+right now being assisted by radar if we
+going pure visual which we'll do in a
+minute this gets a little more
+challenging so he's going to go ahead
+and make his pass again he's going
+sideways here like a good cyborn and uh
+We've identified a couple new things uh
+one thing we've identified is that
+there's these two large peers and we see
+that there are certain structures on it
+and when I zoom in here you'll notice I
+got some small ships that's about the
+best I'm able to detect at that distance
+using photography here again I'm amazed
+you can develop the photography that
+quickly but it's part of the fun I guess
+we also know that over at the airbase um
+we're pretty sure there's something
+there but we can't actually identify it
+or even be able to recognize it directly
+now as you can see with a little bit of
+radar help we can get a slightly better
+picture of what's going on so what I'm
+going to do now is I'm going to reset my
+scenario real quickly here I'm grab my
+blue side as always I'm going to grab
+that vgan again but this time I'm not
+going to give him the aid of having
+queuing from our good friend of the
+radar ship here so I'm going to go down
+and pause I'm going to let him go ahead
+and sneak in here I'm going to let him
+get a little bit closer here before we
+order him to drop down to two grand all
+right we'll go ahead and give that order
+to 2,000 ft we got to get under that
+cloud layer and he drops down nice and
+low now remember there is no assistance
+to this aircraft from those Radars to
+cue where his sensors should be facing
+so everything he's doing right now is p
+what he can see looking out the window
+now the cool thing here is that doesn't
+mean he's useless and as a matter of
+fact the gets picked up right away here
+by the along lens of this camera you can
+actually see here that you know having
+that little handy dandy the camera Recon
+pod it has a 20 natic mile F stuff range
+which I'm sorry 12 m f stuff range 20 na
+mile if you can tell me where it is
+range which is great so we're able to
+identify very quickly the fact that
+there is a aircraft carrier there I'll
+go ahead and do one of these real fast
+that was about 10 nautical miles away
+where we identified it Which is less
+than 12 so that checks out so our handy
+D airplane here again vigan's a great
+great airplane for this particular
+purpose and he's just going to go ahead
+and do his quick little pass over the
+bay here and we identify the fact that
+there are definitely some Port
+structures here we can identify probably
+if I click on one real fast if I do a
+contact report I Can See Clearly that um
+apparently one has a bpk it has a cannon
+on it which is pretty cool there's a
+little commercial Tugboat again kind of
+doing his thing and he comes ripping by
+and doing the best he can kind of
+spotting things and again visual alone
+we're kind of limited here we're missing
+a lot of details and the other thing
+we're missing too is all these
+helicopters but we're going to ignore
+that part for just a second here so it's
+not great now another kind of cool Quirk
+about this aircraft and this is true
+with many reconnaissance aircraft
+depending on what area you're dealing
+with of course is the fact a lot of them
+have surface search Radars now the
+advantage to that of course is if I make
+him go take a turn real quickly I can
+flip on his own radar now what's going
+to happen is we're now going to be using
+the radar to find the thing and we're
+going to cue the sensor the camera to be
+able to identify the so let him come
+swing around here we'll get a really
+really good view of the whole area and
+many many things suddenly just appeared
+now that we're combining the visual as
+well as the radar Wy here when I come
+over to um let's
+sayri airport if I go to a contact
+report I'll actually identify several
+aircraft that are located there likewise
+I'm actually able to spot these
+helicopters because again we've got the
+radar which now means we can cue the
+cameras as weird as that sounds swinging
+down here I've got a couple ports uh
+let's see if we get a little bit better
+information here ah so we have a bunch
+of gas all kind of queued up there and
+of course I know the this down here as
+well so it gives us the ability to kind
+of see that as we kind of zip by here
+I'm kind of make one more quick pass
+with the radar see if he can identify
+anything else and again he needs to get
+close enough to be able to visually
+identify and this is an older aircraft
+there's not a lot of fanciness going on
+here this is just for the purposes of
+kind of showing you off we're missing
+all of our ground units by the way here
+and of course we can identify most of
+the stuff here and it's kind of an
+upside a downside but the good thing is
+we're able to at least identify more
+because we're using the radar I'm going
+to go ahead and send the vgan back home
+here he's going to go head out right now
+keep in mind by the way it is 4:45 in
+the morning if it was a little bit later
+in the day and there's a little bit more
+Sunshine these cameras would give you
+much much better range but for this
+purpose here I did that intentionally
+just to give you an idea of how
+challenging this can be so of course um
+technology moves on and some technology
+is actually very sophisticated and
+especially once we enter into the world
+of phased array Radars now the e2d here
+that we took a look at for a moment
+there earlier has a really really
+powerful radar on board it's anap y9
+it's got a lot of stuff uh the first
+thing you'll notice here is it's got all
+these lovely tools that we saw earlier
+and uh when we flip this sucker on watch
+what kind of information I can collect
+I'm actually going to come down here and
+drop all those contacts just for the
+purpose actually we're going to grab him
+get him out of here CU otherwise he's
+not going to let me demonstrate my point
+here why are we able to identify this
+one still oh no nobody's detecting
+that's fine so I'm going to go and take
+my Hawkeye actually I'll do it even more
+carefully here I'll reset the scenario
+just in case I'll put this one to back
+to blue side grab this one zoom out just
+a bit I'm going to grab that Hawkeye I'm
+move him right about here I'm going to
+go ahead and flip on his radar now this
+is a very very very powerful very modern
+radar and I'm going to flip that sucker
+on real quick in immediately you can see
+how much better the phase aray radar is
+at detection uh first things first we
+identified these two ships immediately
+not identified we spotted them we have
+to still be able to get a little bit
+more time and a little more data to be
+actually tell you but not only can we do
+that but you'll notice here that this
+ship here is actually identified as
+carrying small aircrafts the radar is so
+precise that not only do you know that
+we're dealing with a aircraft carrying
+ship but we also can identify how many
+aircraft are on the deck of that ship
+and again this is a pretty pretty
+serious piece of technology here you
+know we're not getting anything fancy as
+far as that goes so I'm going to let him
+do his little donut here and see what
+else we can identify and again without
+that visual detection it's going to be
+very challenging to identify certain
+ships it's going to be difficult to
+identify the name of the ship unless he
+turns a radar on or something like that
+and you can see we've also lost
+information about where all those other
+items are now of course the technology
+moves on again and we're concentrating
+on kind of both here so you can get an
+idea of just how effective some of these
+units are and there's this guy right
+here uh for those of you not familiar
+with the J Stars think of a j stars as
+like when you play strategy games and
+you have that top down view where you
+can see everything that's literally what
+this is so I'm going to go ahead and
+send this guy home send this guy home
+I'm going to take this guy I'm going to
+get him a little bit closer I'm going to
+have him do a single pass now the J
+stars is unique uh the radar on board of
+this thing is ridiculous and know when I
+say ridiculous I'm like I can't describe
+to you how powerful this radar is it's
+staggeringly effective and uh you'll see
+exactly what I mean once we flip this
+thing on so just in a few seconds here
+I'm just going to let this rad it's the
+only thing running by the way it makes
+one pass watch
+this pass is being spun around here keep
+in mind we have some distance I've
+identify the radar and we're done pause
+you'll notice at the this distance I
+have identified my first ground unit
+something we didn't pick up at all so
+far we've also identified the carrier
+well a spot of the carrier we haven't
+actually identified it yet NOW Watch
+What Happens is my J Stars makes a pass
+by here and again he's just kind of
+doing his thing here he's not really
+lined up right now so I'm going to give
+him a moment to go ahead and turn oh
+watch this all right let's pause
+remember this is radar through a cloud
+the first things first is you'll notice
+we finally identified the moring buoys
+uh they've been here this entire time
+but we haven't been able to identify
+them at all we have very very large
+moring booies here and of course if we
+actually a contact report we can
+actually spot the fact that these things
+have Cruisers connected to them the
+other thing you'll know here is if I
+click on the carrier here um I can
+actually tell you what type of aircraft
+actually the small aircraft that are on
+the deck of this particular carrier so
+what I'm going to do is I'm going let my
+J Stars kind of zip by real fast here
+and just kind of kind of do his thing
+here again these Radars work best when
+they're at a 90 Dee angle to the thing
+they're looking at in the real world it
+might be a little bit different inside
+the Sim obviously but he makes his pass
+and again You' never put a jar Z craft
+this valuable this close to a Target
+region like this this would be kind of
+dangerous but you can see just how much
+data I can identify here and again if I
+coupled this with a little bit more
+stuff I'd have the ability to see even
+more so as you can see these
+Technologies are fantastic but what
+happens if we only have visual
+technology are we really in that bad of
+a game kind of to speak so what I'm
+going to do is I'm going to grab one of
+my favorite examples of this I'm going
+to run over to my Carrier Group here and
+I'm going to grab myself an mq 8B fire
+Scout now the the reason I love this
+thing so much is because it's so cheesy
+not in a bad way I mean it's actually
+pretty cool so I'm going to grab this
+helicopter I'm going to move it to here
+and I'm going to go dump my knowledge of
+all the targets here uh just for safety
+here and I'm going to order my little
+helicopter here to drop down to probably
+about we'll do 4,000 ft here Cruz is
+fine and he is just a visual helicopter
+everything on this one is basically
+geared for that particular purpose if I
+go up here to the mq and kind of scroll
+down uh you'll see here this Maritime
+surveillance it doesn't really have the
+most sophisticated sensors everything's
+IR everything's laser range fire
+everything is camera remember it's kind
+of early in the morning too so my
+Longbow is just going off of what it can
+see remember none of these other units
+have Radars engaged right now this is
+just pure visual reconnaissance and
+notice what we can pick up first of all
+we get the carrier second of all we get
+a couple of the air units so we spotted
+that one kind of luckily which was cool
+and we also finally finally have
+identified the fact that there are other
+aircraft here that we can actually see
+the different components too we identify
+them as Mig 29s and stuff like that so
+I'm going to let my mpq our mq8 get a
+little bit closer here again these are
+little tiny helicopters these are you
+look at the picture of this thing and
+you're like seriously you sent that
+thing all the way here uh yeah yeah we
+did and you'll notice of course our
+aircraft we can identify all these
+different components and if we get a
+little bit closer which is going to be
+really dangerous there's actually a uh
+shoot me down Zone in this place that I
+have not violated yet I'm kind of proud
+of my handiwork here you'll notice I got
+a little tiny bit closer I'm finally
+able to identify this ground unit which
+has been sitting here the whole time at
+the end of a peer basically looking at
+us going is he going to get closer is he
+going to get closer and then unusually
+which I find very interesting is you can
+actually identify the types of
+submarines in a submarine pen and these
+of course our kilo submarines so that is
+awesome so I'm going to go ahead and
+send him back to base and I'm going to
+pull out kind of the cheating cheating
+cheating cheating cheating cheating that
+you can get and that of course is an
+aircraft that combines visual sensors so
+you can identify into visual components
+with a stupidly strong radar and that is
+our friend the F35 I have no love for
+the F35 I think it is a UFO as far as
+I'm concerned technologically speaking
+and there's a there's a lot of cool
+things here and obviously other
+countries have Fantastic Tools for this
+too especially once you start adding
+pods so what I'm going to do is I'm RI
+my F35 here this is just the F35 by the
+way I'm not doing anything special all
+my Radars are kind of shut down uh he's
+just kind of chilling kind of getting
+set up for his little pass and we're
+just going to make a high-speed pass
+through this region and basically
+collect as much Intel as we possibly can
+there we go so I'm going to go ahead and
+drop his altitude to low altitude I'm
+going to kick his speed up a little bit
+again 740 plenty go ahe and switch my
+sensors on I'm going go turn on the
+stupidly powerful radar on the front of
+this thing and let's see what we can see
+so again we're just coming over the
+mountain now but we've quickly quickly
+spotted all these helicopters that are
+doing their thing we spotted the tugboat
+we've identified the carrier not even
+spotted it and we're also aware of all
+those like moing buoys and stuff like
+that and we can also identify the Sam
+which um remember how few people
+actually saw that Sam Sams are tough to
+say and of course this is the best part
+our little F35 gets a little tiny bit
+closer and it finally gets in range of
+some of its other tools on board forward
+such as it's you know very very
+sophisticated forward looking infrared
+surveillance technology and look what we
+can identify from this distance I can
+tell you what ships are here I can tell
+you who's parked at the airport I can
+tell you what part of the airport
+they're parked at right now I can
+identify the fact we've got all these
+Waring booies we can't identify WIS on
+them for whatever reason but that's okay
+and we're just going to come ripping
+through here everybody's going to go
+ahead and take their little snap snap
+snap snap snap taking a couple pictures
+there we're going to lose the radar
+coverage in just a second there you can
+see we're getting really close to the
+edge to that lobe so we're going to lose
+most of these as we Zip by but remember
+the visual sensors are still fantastic
+so I make my pass there and of course
+like I said these are all being detected
+by the basically the 360 awareness
+system on the F35 it's really cool if
+you've never seen one but as you can see
+we have all the information we required
+all those other units to basically
+collect in order in one pass with one
+aircraft now keep in mind if we're
+equipped with some anti- ship missiles
+or something we could have a real fun
+time with this party kind of a thing and
+keep in mind too an F35 is stealthy
+aircraft so it kind of gives you another
+Advantage like that so as you can see
+this technology is interesting um
+obviously when it comes to surveillance
+radar surveillance has the ability to
+look through clouds you know if I did
+everything as visual surveillance today
+I never would have been able to spot any
+of the targets it' just be completely
+invisible to me the second thing we saw
+was with the radar surveillance with the
+older generations of Radars they're
+basically going to let you know
+something is there slightly newer
+Generations are going to let you know
+specifically where something is and
+generally roughly what type is and of
+course the latest and greatest Radars
+which we demonstrated a little later on
+can actually identify the presence of
+specific units that are parked at
+airfields and on carriers um when you do
+just visual reconnaissance uh you have
+some nice advantages the biggest one
+being you just get much much better
+classification of your targets but it is
+very very challenging to spot targets
+visually unless you're basically right
+on top of them so the best combination
+of course of any of these things as you
+could probably imagine is Sensor Fusion
+you want to have aircraft that basically
+have the ability to see the target
+initially on radar so that they can cue
+their regular visual sensors to actually
+spot identify and then later of course
+engage enjoy

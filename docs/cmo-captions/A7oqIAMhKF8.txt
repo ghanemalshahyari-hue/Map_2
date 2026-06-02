@@ -1,0 +1,387 @@
+# C: MO - Visual Sensor Distances
+Video: https://www.youtube.com/watch?v=A7oqIAMhKF8
+Video ID: A7oqIAMhKF8
+
+hello everyone in today's video we're
+going to be taking a look at how you can
+calculate the distance you'll be able to
+see a Target now that's one of those
+things where people are like wait what
+that's actually something you need to be
+thinking about and believe it or not it
+can be from time to time one of the
+things that commonly happens is you'll
+be doing visual reconnaissance as
+opposed to radar reconnaissance
+especially if you're doing like a
+Vietnam scenario or something like that
+and you're sitting there going well um
+what is the acceptable altitude I could
+put my airplane at so that it doesn't
+get shot down but it can still spark the
+target so we're going to go ahead and
+take a look at that today so let's see
+what we've got going on let me go and
+close my little screen here we have a
+pair of commercial vessels uh they're
+pretty big vessels as a matter of fact
+when you click on one of these if you
+were to go up to its database page up at
+the dippy top what you can do is
+actually scroll all the way down here
+and what you will see is you will see
+how far away you can visually spot a
+Target so for example we have a visual
+detection range and it's a 12.97
+nautical miles from the front and it's
+going to be about 22 nautical miles from
+the side keep in mind if it's dark or
+it's rainy or cloudy or something like
+that obviously that value is going to be
+significant different so what we do is
+when we have ourselves a handy dandy
+Harrier gr1 now the reason I picked the
+gr1 is because it has a really really
+cool little pod on board let me go ahead
+and open that up real fast grab our
+Harrier scroll down to the W bottom here
+and right there it's called the tiatld
+now what this pod has is a bunch of
+really cool little thermal cameras as
+well as traditional TV cameras in there
+you'll notice that if I have this one TV
+camera up at the tip top and the thermal
+camera is also obviously going to be
+relevant here if I pop that button
+you're going to notice a couple
+different things here
+and the first thing you're going to see
+is it has a minimum range of zero and it
+has a maximum range of 30 nautical miles
+the other thing you're going to see if
+we scroll all the way over here and this
+is the important part is we have the
+ability to visual Zoom detection and
+classification eight what does eight
+mean eight means that it has the ability
+to detect things at a distance eight
+times greater than that of a 1x
+detection device you'll also notice over
+on the side of a scannage of wolf 10
+which means you get one look around you
+every 10 seconds which in my opinion
+that's pretty impressive so let's go
+ahead and pause for a second here let's
+go open up this one and we'll go ahead
+and drag a little line here now you'll
+notice we are beyond the maximum range
+of that particular sensor here we have
+to go within 30 nautical miles to
+actually see anything with it we also
+know that of course since we're a little
+bit too far away that we're not actually
+even with our incredible amount of Zoom
+able to actually see that Target now I'm
+going to go ahead and grab myself a
+slightly different aircraft real fast
+and O2 is actually exactly what I wanted
+here we'll go ahead and grab one of
+these I'll do forward Observer I like
+that click on this got we're going to
+see and take a look and you'll see it's
+a very very similar situation we
+actually have two devices here we have
+the mark one eyeball and we also have
+generic binoculars here now this is very
+very useful to us because it tells us a
+lot of what we need we have a fun little
+situation where our Mark 1 eyeball
+actually has a better detection distance
+than our binoculars actually do but on
+the flip side once we've identified a
+Target we have a much better
+identification radius although again
+like I said you're going to see a bit of
+a Twist here in a second
+if I go to these generic binoculars
+you're going to notice that not only is
+an 18 mile range but we have a 4X
+detection distance for this particular
+aircraft so let me go ahead and click on
+these guys again and see if we can work
+out what that works out to be here so
+we're looking at this guy from the side
+right now ish it's again ish and if we
+take a look down here let's see here
+active visual detection range from the
+side should be 22.04 nautical miles
+which is going to be a little in excess
+of my binocular range but remember
+identification distance for
+classification is about half of that now
+if I take this number 13.36 and I
+multiply it by the zoom there that gets
+me of 53 nautical mile classification
+distance but remember we still have that
+18 mile distance here so if I go ahead
+and unpause real quickly here I'm just
+going to kind of aim you'll notice he
+instantaneously I spotted did not
+identify spotted this particular guy
+with both the binoculars as well as our
+little handy dandy um eyeballs here I'm
+actually going to pull them out of the
+way here just a teeny tiny bit notice
+even at this distance which is about
+about 20.6 we are able to easily see
+them with the eyeball into a lesser
+extent on that particular one notice our
+range is not perfect but now notice
+we're starting to be able to identify
+and actually start to classify because
+we're now physically close enough or
+we're in that kind of sweet spot as far
+as it one thing you notice here though
+see how everything here is eyeball as
+opposed to the binoculars because like I
+was saying a minute ago if I click back
+on this guy and pop this one open you
+can see that this little forward
+Observer thing let's grab our little
+binoculars real fast
+there it is binoculars again it's got
+that limitation there whereas the
+eyeball it does not have as much of a
+limitation so what I'll do is I'll
+actually move this a little bit closer
+here so it's about 18 nautical miles
+that's what we wanted let's go ahead and
+move this guy to about this distance and
+let's see here what do we have now we
+have uh 14.5 nautical miles
+so now I'm gonna go ahead and click on
+him we're now within range of the
+binoculars and did you notice
+instantaneously we were able to identify
+this Target because our identification
+distance was about 50 nautical miles
+even though the eyeball can see farther
+it doesn't mean it can identify better
+that 4X Zoom kicked in and enabled us to
+be able to see that immediately and
+actually classify it with both sensing
+systems so in this case it's pretty
+straightforward because again we're
+traveling it wow that's a really high
+altitude for this thing only smokes um
+you can see we're able to see it from
+that particular distance so what I'm
+going to do is I'm going to go ahead and
+drop this guy out real quick our Harrier
+is a well on its way now and so kind of
+cruising along remember the Harrier has
+a very very significantly longer and
+much much more powerful Zoom here you
+know when I scroll down you can see that
+let's see here our scroll down well we
+have this limitation I believe which one
+is this the TV camera has a 30 so it's
+actually very very similar in this sense
+so I'm going to switch this on real
+quick we want to see what we got so 30
+nautical miles is going to be about
+right actually we're just about in range
+there I'm gonna swing them over here to
+this side so one of the things you have
+to remember too and this is the part
+that makes this tricky is that the fact
+is is that you have a slant distance
+problem you know at these particular
+altitudes you're not looking
+um at the side of the target you're
+actually looking at an oblique angle to
+the Target another way to kind of think
+about that is if I have my ship yes this
+is my ship deal and I have my little
+airplane up here again this is my
+airplane deal when I'm looking at this
+I'm actually looking at the side of the
+ship you know you want to imagine a kind
+of like a cube like this okay this is my
+terrible little orthographic drawing
+here there we go this is what we're
+seeing here we're not looking at a flat
+as if we're looking at the top or the
+direct side of the ship now when you do
+that that's going to of course cause
+other issues as far as that limitation
+goes so as we're starting to get closer
+and closer and closer if we have nothing
+to cue our sensor the fact that there's
+something there we're not going to be
+able to see it until we get a lot closer
+so now if I click on this you'll notice
+about 22.3 nautical miles away we were
+able to pick up and identify the target
+you'll also notice almost at the same
+time the eyeball grabbed it
+so let's go ahead and pause real quick
+and unpack what we have here for about
+22.5 nautical miles away if I click on
+this one by the way one cool trick you
+can do is if you click here you can
+actually see exactly information about
+it and kind of how it was spotted and
+everything along those lines so it does
+make a little bit easier you can
+actually click here and it'll highlight
+it for you so you can see exactly who
+picked up and how they picked it up kind
+of a thing like that so we notice we're
+far enough away and even though we are
+because we're within that one distance
+we're able to actually start to identify
+that Target which is definitely
+desirable so let's get ourselves a
+little tiny bit closer here and you'll
+notice we picked up the second target
+let me pause now notice this target is
+now a very very confident I'm like oh we
+can engage this target if we had to kind
+of a thing and you'll notice look at the
+distance 15 nautical miles away now
+you're probably saying I thought I saw
+that number 15 a little while ago wasn't
+that something that we saw yeah we did
+see that number 15 nautical miles a
+little while a while ago so let's go
+ahead and open up that pod real fast and
+you'll notice ha ha there's your 15
+nautical miles that's that critical
+distance where we're able to get enough
+information about the target to actually
+engage it so now this chap right here is
+a little bit further away we just picked
+them up they're much much much much
+smaller vessel here so we can have them
+about 17.5 15 nautical miles would be
+bad right there so let's go ahead and
+just put a mark and I'm gonna go over my
+hair here to go ahead and take a right
+here now watch what happens when we
+cross that magical threshold here see
+how we're not confident we're not
+confident and working the best I can and
+whoosh just like that we now have a very
+very confident and engageable Target
+that is being identified by this
+aircraft now some of you probably saying
+well what happens if you set it up so
+that you know you're have somebody who
+has a radar and then the eyeball is
+directed by the radar well you're gonna
+find yourself looking at something like
+this our Hawkeye over there in the
+distance was able to kind of cue this
+guy right here so now we're a little far
+away still and the Hawkeye is doing a
+pretty solid job as far as identifying
+roughly where in the ocean these chaps
+are but um we're waiting for this guy
+right right here to get close enough now
+for actually to click on this one you're
+going to notice that even though we're
+within that 30 nautical mile range I
+believe let me check that real fast
+before I make a lie out of this that's
+33 we're getting a little closer how
+about this guy that's 30. so any second
+now you'll notice that even though we
+know where the target are we don't have
+that visual ID on them and of course we
+do not have that classification on them
+because we're still a little bit too far
+away so even though our Zoom is
+fantastic we're just not able to get
+close enough at this point to actually
+make it there we go I'm going to pause
+now notice now this is critical that we
+were able to get a solid identification
+on this target from a much much much
+longer range and the reason we did is
+because we knew where to look so we
+weren't searching at that point we were
+just looking down the scope at this
+point and we're able to get that ID much
+much much much further out than if
+actually farther out would be the
+correct term there then we would have
+otherwise so you can see it has a nice
+little kind of tactical advantage to it
+when you know where to look so to speak
+now there's always of course the extreme
+version of this as well and then you get
+things like the SR-71 Blackbird now
+you're saying why is this the extreme
+version I mean it's just it's just a
+black bird it's nothing special well one
+of the things I'm always tickled with
+this aircraft and this is always kind of
+fun is if you scroll down a little bit
+you'll notice that it has this
+ferociously long range infrared
+reconnaissance frame camera on it and
+it's a 15-80 meaning we can see all the
+way out to 80 nautical miles with it if
+we know what we're looking for which is
+I'm absolutely absurd so um before we go
+ahead and take our scenario let's go
+ahead and back ourselves up here oh what
+is this it's about 50 nautical miles
+notice we have no visual on those
+targets down there we just we can't see
+them because we don't know where to
+actually Point our aircraft now if I
+were to get an E2 let's get a nice basic
+one here that looks good to me press OK
+grab that so let's go sit sensors window
+let's cue this chap as to where we
+should be looking with our frame cameras
+here it's going to take them a minute oh
+did I push the wrong button no I'm good
+I'm good it just takes a moment for him
+to acquire just check yeah be illegal
+here there we go so now watch this so
+even though I'm 15 nautical miles away
+the SR-71 now knows where to look and
+they're going to start taking little
+pictures now this unit was uh previously
+one of the most ultimate ultimate units
+look at that look at that it's 50 miles
+away uh this was used to be the ultimate
+reconnaissance platform before they made
+that subtle little change but you can
+see it's still fantastic as long as you
+have the ability to know roughly where
+the actual Target is going to be so that
+you can use a different platform to give
+you that pinpoint position so now of
+course my submarines and stuff like that
+cannot you know do the Deeds that they
+do
+so as you can see it's a pretty
+straightforward one thing you got to
+watch out for now especially with the
+visual cameras is the fact that they're
+going to be able to see things better if
+they know where to look otherwise
+they're going to be searching which is
+going to slow down their response time
+obviously if you do a combination of
+radar and image like we saw here that
+worked well the other thing we saw of
+course is that ID range versus that
+classification range it's just a
+multiplier based on the zoom capable but
+you're still going to have a maximum
+range limitation on it enjoy

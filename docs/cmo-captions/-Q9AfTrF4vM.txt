@@ -1,0 +1,346 @@
+# C: MO - Effects of Volume on Detection Range
+Video: https://www.youtube.com/watch?v=-Q9AfTrF4vM
+Video ID: -Q9AfTrF4vM
+
+hello everyone in today's video we're
+going to be taking a look at the
+relative detectability of sound
+underwater now when you hear all those
+words together you're like what are you
+talking about what's your point well the
+short version is a little while ago
+somebody had asked a question about just
+how loud is a submarine does it really
+matter with these little orange numbers
+chilling on the bottom like is 100 too
+loud is 30 too loud like what's the
+problem like what does it mean like if I
+do 40 is it more than 30 and stuff like
+that so I said you know this is a good
+time to go ahead and put together a
+video on that very topic so what we have
+here is we have ourselves a classic
+boomer this is a Del four and Dophin
+Lally dolphin and it's just chilling
+here shallow it's making about steerage
+about three knots and it's producing a
+total of 31.5 DB that's decibels that's
+a on10th of a bell a bell is a pretty
+loud sound and the one that kills me
+just a little bit here is this is
+overall intensity usually when you
+measure sound you have likeus 10 - 20us
+30 again go look at your stereo if you
+want inspiration for that but this is
+actually above zero here so this is
+above ambient if you want to think about
+it now a decibel is a very very curious
+unit because it is a logarithmic unit so
+which means that when you go from 30 to
+40 you're not actually increasing your
+volume by 10 units you're increasing it
+by a power of 10 let me go borrow
+something from the US Navy here wh there
+it is delightful as a matter of fact if
+you look up some old school Navy sonar
+charts they actually have a nice little
+diagram that shows you just how this
+effect actually kicks in you'll notice
+by the way notice the negative decb here
+you'll see here that a range of 10 if we
+have a source that is 0 DB that would be
+kind of whatever the reference value is
+that you're using you could see at 10
+yards it now becomes - 20 you can see
+here at 100 yards it becomes -40 at
+1,000 it goes to 60 10,000 it goes down
+to- 80 and 100,000 obviously we've about
+- 100 DB that's pretty darn quiet if you
+ask me now the reason this is so
+important here is we have two different
+problems that you're going to be dealing
+with the first problem you're going to
+be dealing with is the fact that this
+little scale right here is affected by
+that power of 10 so if we add 10 to this
+we're basically increasing its
+detectability by two even though we're
+not because of course there's another
+problem you have to contend with which
+is the fact that sound does not travel
+in a straight line so the reason this is
+so problematic for us is that when I
+release my sounds I'm not pointing it
+all in this direction you I'm not
+blasting it with all 100 Deb this way
+what I'm really doing is taking my 31 A2
+DB and Blasting them in every direction
+which actually causes it to attenuate
+quite dramatically now if we were at
+shallow depths like if we were chilling
+by the coastline or something this sound
+would go everywhere and it' be an
+absolute nightmare to try to capture it
+now the reason this is important to us
+of course is US answering our question
+about relative detectability so let's go
+ahead and go switch to the other team
+real quick and see what we're dealing
+with here so what I have here is I have
+a Gard this is an SKR it's a pretty
+small little frig I like it because it
+has a really boring standard son on on
+the front of it it doesn't have any VDS
+or anything fun like that and the reason
+I chose it is because it's going to
+demonstrate this purpose perfectly so
+I'm going to go speed up time here we'll
+go up to uh red here you can see there
+goes my P3 actually it's a tup of 142
+and we're just going to be listening to
+see if we can detect anything and I keep
+in mind I can see the tup just ripping
+by doing all oh we've detected something
+so if you come here we've detected a new
+contact. Goblin number one is by this
+guy at an estimate of 17 Nao miles you
+of course know that that's
+mathematically unlikely and now if I
+unpause of course the people inside the
+sonar room they're going to start doing
+their target motion analysis their TMA
+the best thing we can do of course if we
+wanted to be Pro sonar people is we can
+go ahead and execute a turn basically to
+try to get some bearing change on it in
+order to be able to read it range a
+little bit so I'm going to order that
+bearing change and I can see right away
+we're starting to get a better listen
+heree and pause real fast I'm going to
+cheat and I'm going to go ahead and
+measure distance and that's a distance
+of four nautical miles so what I'm going
+to do is I'm going to grab my notebook
+real quick or my notepad doesn't matter
+so at minus 31 DB um we I'm sorry 31.5 D
+it's not minus 31.5 DB detection was at
+4nm that looks pretty good to me so now
+watch this let's go and recreate our
+scenario
+again blue looks pretty good to me I'm
+going to go switch to the other team and
+what I'm going to do is I'm going to
+order him up to a new speed I'm going to
+get him rolling a little bit faster here
+so let's go up to 5 knots maybe even 6
+knots it's about 42 DB that's about 10
+louder so again we've gone from 31.5 to
+42 Deb here now you're predicting here
+remember that 42 DB is not going in a
+straight line that doesn't mean we're
+going to pick him up at 8 nautical miles
+it just simply means that again you're
+going to be marginally louder so let's
+go ahead and switch to the other team
+again and I'll recreate our experiment
+we're going to unpause speed of time
+here I love the tup of 142 just ripping
+around oh and if you take a look we've
+again detected him at 17 nautical miles
+that's okay because it's not actually 17
+nautical miles if we quickly press my
+control+v here we can actually make that
+measurement ourselves and you can see
+our new detectability distance is
+5.7 nautical
+miles let me goe and pull that down so
+you all can see in case you're taking
+notes and you can see a 10 dbel increase
+in volume increased my detectability
+let's do the math here 5.7 divided by 4
+by uh 42%
+that's incredible a simple 10 DB was the
+difference of detecting a that makes no
+sense whoa whoa whoa whoa whoa do my
+math correctly my friend 42 divided 31.5
+is 1.33 so that's actually a 33%
+increase my apologies everybody who math
+thing 33% increase wow now that seems
+problematic at first glance but it
+actually gets better so let's go ahead
+and uh recreate our experiment again so
+now we have some numbers we know every
+10 DB increase your detectability by
+about 33% keep in mind it won't be that
+even in the real world that's
+mathematically unlikely so let's go
+ahead and grab it one more time and
+let's go ahead and crank that volume up
+even more so uh let's see here if we
+wanted to predict here if we go up to 52
+DB we would expect uh 55.7 * 1.33 we
+detect expect to be detected at 7.5
+nautical miles let's give it a try uh
+let's do 5 DB 7 DB we're going to get
+pretty loud here uh 9 DB what is that
+about 52 okay now that's quite a bit
+more volume so let's go switch back to
+the other team here and again our
+predicted value as you just saw a few
+moments ago is going to be about 7.5
+let's see what happens here watch this
+watch this watch this we've detected him
+let's go take a look ready ready ready
+ready ready
+ready
+7.5 nautical miles on the nose how's
+that for some math for you so what we
+can see here is let's go ahead and add
+that to our little notepad if you're
+taking track uh 52 DB detection at uh
+7.5 natic miles isn't that incredible
+how precise those calculations actually
+are and you can see here that the
+difference between 20 DB was 50% so if I
+do actually not quite 50 divided by four
+was um about 87% that gives you an
+incredible idea of just how much louder
+52 is versus 30 again 20 simple DCB and
+it was that much easier to be detected
+now let's go ahead and take this to uh
+some hyperbola here go ahead and recate
+our scenario reopen it up again
+hopefully you're starting to realize
+just how loud a decel really is swing
+over here back to the other team real
+quick grab this guy real fast and we're
+going to order him up to a stupid volume
+here flank now what I'm going to do with
+this one is I'm actually going to back
+him up a little bit he's cavitating
+right now so he's going to be making an
+awful lot of noise so let's go ahead and
+switch back there
+unpause this should not take long there
+it
+is so if we measure him now um again we
+have to switch to Gods ey view so you
+can get a feel for the distance here you
+could see that was about 13 naal miles
+away holy smoked it's actually even
+bigger than that so if I were to grab
+him and back him up a little bit let's
+go ahead and intentionally drop this
+contact because I think we can actually
+pick him up from an even longer distance
+than that let's go get him going here
+there it goes nice let's go ahead and
+close let's go ahead and get the
+measurement there and the new range is
+13 nautical miles and pull that down so
+we can keep track of it 102db detection
+at
+13nm now the thing I think you find Most
+Fascinating is if you go back to that
+original chart you will realize that
+this chart actually perfectly matches
+everything that we've already done minus
+of course you know all the different
+kind of intricacies of the calculations
+and stuff like that so now you're
+starting to go wow so if you're cruising
+around in the ocean this is a pretty
+hopeless um if you do anything faster
+than three knots people are going to
+pick you up from basically anywhere the
+answer is these are basically standoff
+torpedo ranges so they can pick you up
+no problem so what's the trick here and
+there is a trick of course and that is
+you got to go deep so let's go ahead and
+reopen my scenario one more time here
+grab this one we don't play as blue here
+I mean we already know what blue is all
+about but we want to go grab red real
+fast so grab my red I'll grab him real
+quickly I'm going to order him as deep
+as possible I'm going to him up to YOLO
+speed grab him I have to actually
+manually set a speed here set unit
+properties I'm glad they finally fixed
+that bugus 99999 now what you do is you
+pause un pause there we go so um did I
+do negative or positive I do that wrong
+every like every other time I do that I
+put the wrong number in let's see here I
+do this every time set unit properties
+minus um 800 enter let's see if I got it
+this time minus
+800 nice he's going loud Okay so so he's
+down to uh he's going to get pretty deep
+I believe the Delta I do not remember
+the crush depth of the Delta it's pretty
+deep let's see here we get 1,50 ft
+that's
+plenty and switch to Blue real fast go
+and grab this guy keep in mind this one
+is now pushing 90 DB by our quick
+calculations if you had the chart if you
+need to make yourself a little cheat
+sheet on the right there uh we probably
+would expect to pick him up around N9
+nautical miles If This Were conventional
+but it is not conventional because he is
+so darn low he's a well below the
+acoustic layer here as a matter of fact
+if I hit a two got to switch to his side
+real quick I'll show you the acoustic
+layer real fast uh yep yeah see the
+layer is chilling down here anything
+down here basically all sound goes boing
+well actually his sound bounces off of
+it my sound bounces off of it like that
+so this very very unlikely to pick him
+up um we'll probably hear him right as
+he goes ripping by but we'll take a look
+we might not even hear him let's try it
+oh got him just kidding so I'm going to
+go press my measurement here and you can
+see I've detected him at a range of 3.5
+nautical miles now the 3.5 nautical
+miles should sound pretty familiar
+because if you go back to original chart
+here you'll remember that was about our
+distance so traveling let's make our
+little note here traveling below the
+sound uh barrier I guess it's not it's
+an acoustic barrier it's a little more
+complicated than that results in 75%
+less
+detectability fantastic so this tells
+you everything you need to know about
+your subs first of all a deciel is loud
+you can see that very quickly and again
+I did not pick the world's quietest sub
+for this I picked a boomer intentionally
+because I wanted something with a little
+bit bit of you know boom to it but the
+big thing that you can probably notice
+here is just how stupidly effective it
+is if you need to get moving you've got
+to go deep now of course one thing we're
+not taking a look at our analysis here
+is if you're operating close to shore we
+actually had an entire video basically
+dedicated to operating close to Shore
+and we demonstrated to you very quickly
+that the detectability goes from you
+know 30 mil to like 15 ft because of all
+the reflections and stuff like that now
+I know you're probably curious about
+passive and active sonar but the big
+problem with active sonar is it's not
+terribly effective and that would
+definitely be something for another
+video enjoy

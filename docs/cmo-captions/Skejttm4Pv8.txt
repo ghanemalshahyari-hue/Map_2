@@ -1,0 +1,355 @@
+# C: MO - Weapon Penetration
+Video: https://www.youtube.com/watch?v=Skejttm4Pv8
+Video ID: Skejttm4Pv8
+
+hello everyone in today's video we're
+going to be answering a question i saw
+come up on the discord as well as the
+forums a couple times asking about a
+bomb penetration what does it actually
+mean in command so uh the short version
+is it matters a lot it doesn't matter a
+lot it completely depends on the
+application the type of explosive we're
+using and everything along those lines
+but as a general rule a weapon that can
+penetrate its certain type of armor will
+be able to mostly 100 penetrate it but
+even if you have something that can
+penetrate it won't so you're saying okay
+make your point here all right let's do
+it so for example let's go ahead and
+fire up our database viewer for a second
+here let's grab ourselves a ship that we
+know can take some punishment and we'll
+use the battleship iowa here for an
+example if we were to scroll down here
+and take a look at its armor you'll
+notice that it says special 201 to 500
+millimeters that doesn't mean that it
+has 500 millimeters of armor it just
+means that his armor itself is happens
+to be extremely strong another way to
+think about this too is if we pop over
+to facility if i type in bunker for
+example we'll do
+a service bunker if i scroll on down
+here you'll notice it also has the
+special now if i got something that was
+a little bit lighter so let's grab a bmp
+one for example you'll notice that this
+particular one has no armor and you're
+probably saying hey that doesn't make
+any sense well you have to remember that
+these are groups of units that you're
+actually taking a look at but for
+example if i wanted to take let's grab
+myself a generic barracks that looks
+pretty good to me and if you come down
+here you'll notice it has the light so
+now you're like okay so i can see
+there's light armor this medium arm is
+heavy armor the special armor so what
+does that mean as far as weapons goes
+well let's go pop over to weapons real
+quick
+let's say i take something that is a
+good old fashion here we'll do a mark 81
+which is getting a little old school but
+hey it works pretty well to me click on
+that sucker and you'll see if i scroll
+down here that its warhead is a mark 81
+250 pounds and it's a 67.5 but notice
+there's nothing in here about any
+special penetration on the flip side if
+i grab a blu-116 for example which
+oh boy now this thing can go through
+anything it's pretty cool if you've
+actually seen this thing in action
+you'll notice when we scroll down to its
+weapon it says the word penetrator
+unfortunately the information that tells
+us what the total penetration of a
+particular weapon is is actually
+obfuscated in the database here so even
+though it says the word penetrator
+there's actually another variable in
+here that we can't see on this page that
+would actually tell you precisely how
+penetrating it is but let's go ahead and
+do an example anyway so that you can get
+a feeling for it so we're sitting here
+up and now this is a
+zoom out a bit we're up in canada today
+because why not we have ourselves an
+f-18 yeah he's loaded up with uh some
+nice little gbu-38s these are mark 82s
+by the way and we notice that they do a
+total of 130 damage so what i'm gonna
+have him do here is i'm having to
+speckle things uh we have a wooden house
+we have a brick house and we have a
+straw house i know you're sitting there
+going i see what you did there but
+that's perfectly fine too so we're going
+to do is we're going to go ahead and
+take a look at what these houses
+actually are our straw houses consist of
+tents so in this particular case this is
+a simple surface building it has no
+armor which means every bit of damage
+that i cause of that bomb is going to
+100 affect it so if we hit this tent
+with a bomb remember a bomb itself here
+if i bring it up again real quickly we
+can see that it does scrolling down here
+130 damage and we know that we have a
+total of let's take a look here i don't
+think we have anything that's a group of
+things 25 damage we expect this to be
+obliterated
+now if i come over here and take a look
+at my wooden house i'm going to pop this
+one open here let's go and take them
+look side by side here we know that this
+armor is light but we're attacking it
+with a non-armor-piercing weapon so the
+damage points is 300 the weapon itself
+like i said is doing 130. so if this
+building had no armor we'd expect it to
+take 130 damage evenly so if we do 130
+into let's see here it's going to be a
+300 total we expect this thing to be 43
+damaged if it takes an even hit so let's
+go ahead and try that out meanwhile our
+brick house over here if i click this
+one real fast we can see that he has
+1600 damage points which means a direct
+hit with a mark 82 if there was no armor
+involved would do a total
+of uh zero point oh my god eight percent
+damage which would be nothing but it has
+a special armor so let's see what
+actually happens when we drop the
+weapons so i'll go ahead and lock onto
+the straw house here we'll go ahead and
+deliver a mark 82 to you you get a mark
+82 you get a mark 82 and you get a mark
+82. uh let's go ahead and now make this
+guy a little bit more proficient to
+speed them up a little bit ace
+and we'll let those weapons go ahead and
+get released this is one of the great
+things about platforms like this is they
+can just sort of
+at the bottom and that's good to go
+unfortunately for him he's got no place
+to go home to so he's just gonna have to
+sort of deploy his weapons and go home
+kind of a thing get out of here
+here they come here they come pause
+let's go ahead and switch to the other
+seam real quickly so they cannot receive
+the uh gift that i'm dropping from the
+sky for them
+and clean that message log out too boom
+boom
+okay let's go ahead and take a look at
+the damage log what actually happened
+here so my straw house i got hit first
+as a matter of fact the straw house was
+damaged by the damage from the wooden
+house across the way so we expected the
+straw house to be obliterated um yeah
+but if you take a look it actually
+suffered 46 points of damage from the
+explosion of the wooden house holy
+smokes then it took another 53 which is
+exactly more than enough to put that
+poor thing of tents out of business
+meanwhile our wooden house took a total
+of 264. our damage report over here he
+instantly caught fire and of course a
+brick house look at this a whopping 16.7
+damage here so if i actually click on
+him remember we expected him to be eight
+percent damaged if he had no armor if we
+actually take a look at his total damage
+he's one percent damaged which means the
+armor reduction was 90
+you're sitting here going wait what take
+a look here we have a weapon hit you can
+actually see sometimes what it is but
+we're going to weapon damage so our one
+that hit the wooden house here it just
+bunked the house was penetrated notice
+92 percent of the damage got through
+remember this was um if you want to
+think about it on a scale this was a
+basically minimum armor here but it
+still absorbed eight percent of the
+total damage coming down to my gbu-38
+here it impacted the big house and uh
+basically exploded the armor was
+penetrated but look at this only four
+percent of the damage got through
+because again you're using a
+non-penetrator against something that
+has special armor so you're sitting
+there going okay i'm starting to get it
+a little bit so basically the stronger
+the armor is the more damage reduction
+it gets when it's hit with something
+that doesn't penetrate it yes so let's
+spin it around a little bit
+i'm not going to take my super hornet
+here i'm going to replace it real
+quickly with the 2008 version and we're
+going to switch it with these really
+really really fancy weapons
+in case you've never played with one of
+these before these are super fun these
+are blu-160
+what a blu-116 is is basically an ultra
+ultra bunker buster it basically can get
+through anything and everything that you
+smack into it but what i'm going to do
+is i'm going to try to stay consistent
+here and stick with the gpu
+31 family so that we stick to that
+basically the same size so grab that one
+right there i'm actually going to grab a
+couple of these so that we can drop them
+all at once go ahead and move him into
+position here looks pretty good so let's
+take a look at this weapon real quick
+i'm going to press g view 31 scroll down
+here and you'll notice it now it gives
+us the same thing you can see it's just
+363 damage and it says the word
+penetrator again we don't know exactly
+how much penetration this weapon has
+because we don't have that information
+in the database that we have access to
+so i'm going to grab that real quickly
+i'm just going to go ahead and uh
+deliver some death here let's go ahead
+and up the proficiency just a teeny bit
+here set unit proficiency we'll set it
+to ace now we'll go do one of these
+things um let's see here you get a bomb
+you get a bomb and you know what you get
+a bomb too i'm so mean
+now here's what we expect
+expecting that because we're a
+penetrator warhead that more of our
+damage is actually going to get through
+so i'm gonna go ahead and deliver those
+uh delicious death devices switch over
+to the other side real quick
+here they come now remember last time
+this guy got hit by some of the debris
+and it actually almost blew him up which
+is amazing if you think about it
+weapons incoming
+slow down time
+done
+oh one house gone
+boom boom boom now this is an
+interesting anomaly you'll notice the
+brickhouse took no damage it took no
+damage because unfortunately for us the
+weapon malfunctioned it happens that's
+why you always have a backup
+okay fire another one it didn't make my
+point okay that's a little better all
+right get out of here all right thank
+you sweet so let's go and take a look
+what happened here
+so we'll go to weapon end game obviously
+we got a weapon hit weapon damage so the
+one that hit the straw house penetrated
+the armor 100 remember it had no armor
+so you can't not penetrate that
+meanwhile this guy the 31 the one that
+hit the wood house remember this was a
+lightly armored structure that's 100
+penetration as long as the penetrator
+does more penetration than the armor it
+automatically penetrates it completely
+something sounds really dirty about that
+i can't quite put my finger on what
+that's about when we take a look at the
+damage the straw house got obliterated
+it actually did double the damage to it
+now our wooden house on the flip side
+also received double damage now it's
+kind of interesting how that works out
+so we're going to go ahead and zoom out
+here and i'll remember we have another
+weapon on the way and here it comes
+boom okay this is the one you all wanted
+to see special armor let's see how he
+did here so the impact struck the brick
+house it was a very clean hit damage the
+brick house was damaged it took 313
+damage pause now you're sitting here
+saying wait a minute that 313 number
+sounds familiar it does and we'll take a
+look at that in a second we can see
+weapon end game here and missed by like
+30 feet no big deal and we can see that
+we took a little bit of damage here so
+if i click on the brick house real fast
+let me go reset everything real quickly
+here we took 313 damage unfortunately
+because of our no that was the original
+shot
+let's see here weapon damage we can see
+to do 100 penetration armor penetrated
+40 percent penetration
+so you can see that because the special
+armor matched the special penetration of
+the penetrator again
+no don't think dirty thoughts here um
+because of that it did only some damage
+now you notice a minute ago i said well
+what about that weird 300 number that we
+saw a minute ago didn't we see that
+recently yeah as a matter of fact if we
+go back over to the shooter real quick
+and we grab that weapon that he had a
+minute ago until he went ahead and
+wasted it let's see here
+[Music]
+looks familiar it does so in this
+particular case if you have a massive
+penetration it does double damage if you
+just penetrate it because you're like
+basically balanced armor you do
+basically your full damage to the target
+kind of interesting all right actually
+i'm going to do some quick math here
+helps if you actually do it three six
+three times two tadas that number look
+familiar yeah roughly all right so
+hopefully this video is helpful again at
+the end of the day if you're trying to
+use a weapon that can not penetrate for
+example a 50 caliber machine gun against
+a battleship it's going to take a little
+while and you might not even actually do
+any real damage to it because once you
+get below a certain amount of damage it
+doesn't do anything to it but hopefully
+this video is kind of helpful as far as
+revealing some of that stuff to you
+again it's just kind of neat to kind of
+see those things side by side at the end
+of the day if you have a weapon that's
+designed to get through armor it's going
+to get through armor and it's going to
+do its full damage if you try to use
+that same weapon against something that
+doesn't have armor it's going to do
+basically double damage good stuff enjoy

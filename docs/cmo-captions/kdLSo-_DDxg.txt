@@ -1,0 +1,197 @@
+# C: MO - Relative and Moving Reference Points
+Video: https://www.youtube.com/watch?v=kdLSo-_DDxg
+Video ID: kdLSo-_DDxg
+
+hello everyone in today's video we're
+going to be showing you how you can make
+reference points move with particular
+objects and I will show you a couple
+different tricks that you can use with
+that as well as kind of the uh thing to
+avoid and we'll get started right away
+so first things first uh when you do
+reference points normally again I'm
+going to press control insert and go
+ahead and click on the map we get a
+little thing that looks like this and as
+you probably know once you put them down
+in the world they chill in the world but
+the reality is you can actually make
+them so that they move and to do that
+all we're going to do is come up here
+where it says missions and reference
+points and what you're going to see here
+is there's a couple different options
+one of them of course you'll see make
+selected reference point relative fixed
+bearing 2 make selected ref Point
+relative rotating bearing 2 now let me
+show you the difference here so if I
+click on this one here and I go ahead
+and click on my unit which happens to be
+a tup of 142 you'll notice this is the
+letter F now gives me the name and then
+tells me who it's attached to now watch
+this I'm going to go ahead and order my
+tuve here to move to the right and what
+you'll observe here is as he's moving to
+the right that is remaining in exactly
+the same position no matter what he does
+so let's go ahead and reloader scenario
+here real quick we name the same thing
+every time just for Simplicity on my
+part and that looks pretty good to me so
+let's go ahead and do that again so I'm
+going to press control insert I'm going
+to go ahead and click another time but
+this time I'm going to go up and I'm
+going to select make selected reference
+points rotating bearing I'll go ahead
+and click on my T live here I'll go
+ahead and order him to do his little
+Power Square and now if I double click
+and let it go you will notice that this
+now moves with my T here so if I send
+this shooting up here you can see that
+it sort of hangs out there just like
+that now you're sitting here going
+that's actually pretty useful I like
+that um does it have to be uh you know
+does it have to be a single point are
+you allowed to do multiple points the
+answer is yeah you can so that's one of
+the cool things here and I'll go ahead
+and show you where the real power in
+this is so let's go ahead and create a
+Zone this time I'm going to press
+control right click I'm going to go
+ahead and Define myself a new area I'm
+just going to pop it right here like
+this I'm going to press yes now watch
+this I'll give it a name um tup live
+look Zone look Zone keep it pretty
+simple here so now if I come up here and
+do reference points rotating bearing
+again I now have a zone that not only
+moves but it will move let me pause for
+a second here go like this give myself a
+little square you'll see that that now
+moves based on the current facing that I
+have and the actual shape here I'll go
+ah deselect it so you can see it a
+little bit better you can literally
+watch the shape whip around so we
+actually kind of have like sort of like
+a death zone now what you're probably
+sitting here going is Ah that's actually
+pretty darn useful if I were doing
+something like having like a submarine
+and I needed to create an area that kind
+of has somebody looking ahead of it you
+could definitely do something like that
+and actually this is a very popular
+method to create sort of almost uh
+sanitization areas to make sure there's
+no subs ahead of a convoy or something
+now there's something else we can do
+which is really really fun with this so
+what I'm going to do is I'll go ahead
+and reset our scenario again here again
+nothing wrong with doing that and what
+I'm going to do is I'm going to
+reacquire that Target I saw a few
+moments ago ah so what I'm going to do
+this time is I'm going to create myself
+another one of those rate points
+reference points make it to a rotating
+bearing and I'm going to go ahead and
+click on skunk one that means if skunk
+one moves guess what else moves that
+reference point will move with our skunk
+so if I speed up time you can actually
+see the reference point moving now
+you're sitting here going oh I see what
+you did there so what I'm going to do
+now is I'm go and create myself a
+mission control f11 I'm going to say spy
+on boat because obviously we're dealing
+with a boat here so if I come in here
+and set that's a support Mission press
+Okie all I'm going to do is I'm going to
+add my bear to this mission it's going
+to scream at me and say I can't find it
+are you sure there something you want to
+do yeah just just relax it's fine it's
+no big deal and I'll make sure he's
+active emissions I'm going to go over
+here and make sure he's active emissions
+because I do want him using his radar
+during this time so what's going to
+happen now is he's of course going to
+change his position he's going to go
+rush over to that new point that I've
+created now if I go up to my missions
+page real quick here and go up to uh
+let's see here uh missions and contact
+Mission editor and I come into here I
+just want to confirm that I did add that
+Waypoint to it cuz since since I forget
+to do that um setting support
+non-aircraft settings yeah looks pretty
+good that's exactly the one that we
+wanted to have there now what you'll
+observe here is our tup is racing over
+to that reference points and you can see
+he got to the reference Zone and he
+flipped his radar on as soon as he got
+there now watch this you'll see here
+that my target is just ripping along but
+that reference point is remaining with
+that particular turret or Target I
+should say not turret well it could have
+a turret too but that's not what we're
+locked on to and you can see that we'll
+basically hang out with this guy the the
+entire time now where things get cool
+here is if we were to switch teams real
+fast and grab this one and go ahead and
+say let's do a turn to Port here since
+we're not in fixed mode watch what
+happens to this reference point it's
+going to go shooting way over there and
+then of course our tup is going to shut
+his radar off he's going to run over
+there like an idiot and then turn his
+radar back on when we get to the new
+position so this is actually a good time
+to go ahead and set it to fixed so if I
+were to go back up here for example and
+actually set this to fixed mode this is
+going to change it so that it stay there
+no matter what the Fig does here so if I
+grab this guy again and Order him to go
+straight South let's go ahead and open
+that back to the other side real quick
+you'll actually see because we set it
+fixed even though he's changing course
+my tup of 142 does a beautiful job of
+chilling right there in a nice nice safe
+spots far away from its rrange of course
+we mark this hostile it doesn't matter
+we have to know what kind of Target it
+is one of these days they'll give us the
+ability to right click and identify
+contact so we can like temporarily
+identify it so we can get the range
+rings but that something uh I know we'll
+see that in command three or something
+like that but as you can see these
+rotating reference points are darn
+useful and you can create Dynamic zones
+around things like I want a cap over
+here and I want anti- submarine over
+here and you can have them all fire
+around the big aircraft carryer in the
+middle the other thing you could do too
+is do that with a whole group so it's
+like following the whole group enjoy

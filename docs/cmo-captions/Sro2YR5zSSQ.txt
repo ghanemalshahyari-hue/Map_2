@@ -1,0 +1,615 @@
+# C: MO - Torpedo Evasion
+Video: https://www.youtube.com/watch?v=Sro2YR5zSSQ
+Video ID: Sro2YR5zSSQ
+
+hello everyone in today's video we're
+going to be showing you kind of a fun
+little way to defeat wake homing slash
+passive acoustic tracking Torpedoes that
+you may not have thought of so while we
+have ourselves a lovely appease to nine
+six year of school ah this is a
+fantastically fast vessel and the reason
+I picked this vessel is because I needed
+something that could move so I could
+demonstrate kind of the different pieces
+here that are going to go on so we have
+a way up here a lovely of this guy this
+is an akula and what I did of course is
+I loaded it up with a bunch of wake
+homers I have a 65 76 and a 5365. we're
+going to be using the 5365 today to make
+it nice and easy and what that torpedo
+does is basically listens tries to find
+itself and then it starts to chase the
+ship by its wake so I'm going to press
+shift F1 go ahead and click on my shield
+here go ahead and click on that now this
+shot of course the skill is traveling at
+55 knots which means when it goes to
+fire this particular round you can't
+really aim at the Target it has to aim
+where the target is expected to be so
+let's go ahead and pause real quickly so
+you can work out some of the geometry
+here so this is the path of travel that
+our particular weapon is going it's not
+basically going this way you can see
+it's got a pretty hefty intercept angle
+there of course if we were any bit more
+in this region we'd just have a slower
+torpedo so it's going to take a long
+time for that torpedo to actually get to
+this particular position so of course
+you can see it's got its little happy
+acoustic detection cone here and it's
+all pretty wide and then we have our
+ship itself yeah you can see exactly
+what I'm going to do so what I'm going
+to do is I'm basically going to stop the
+ship so I'm going to grab my handy
+Advantage ship here I'm going to order
+full stop you know what's going to
+happen here is we're going to be
+traveling from 55 and dropping all the
+way down to more or less zero and what
+we can do of course at the last second
+is actually take a quick little turn to
+suck the last bit of energy out of the
+plane or not the plane it's going to be
+in this case the ship you know I'm used
+to having to turn like that for other
+reasons so what we've done is well we've
+slowed down pretty effectively here my
+Torpedoes are making its way remember
+the torpedo is still trying to look for
+where I'm going to be but as you can see
+my skilled is uh basically coming to a
+complete stop here so we are way way
+outside of That acoustic detection cone
+that you can see but one of the things
+that makes these Torpedoes sort of
+tricky to defeat is they don't give up
+so what's going to happen is when it
+kind of gets to the end of its little
+law this is where I'm going kind of a
+thing like that it's going to suddenly
+start turning all over the place
+desperately oh oh look what it just saw
+is that something is that a Target over
+there
+and you can see it's kind of come flying
+right at us because of that nice little
+snake pattern that all the designers
+were smart enough to put in so the
+question now becomes is 1.5 decibels so
+quiet that the target will not be able
+to be struck now remember there's a way
+combing torpedo so it's going to
+actually try to find the Wake as well as
+the acoustic signature and you could see
+it's it's it's doing some work here it's
+it's getting somewhere it's a it's
+certainly uh got a pretty close angle
+here my skill comes to a complete stop
+here and starts relaxing the entire crew
+is basically going I hope this works
+Chief I don't know what you've done but
+I hope it works so then we have this a
+gigantic torpedo
+and it sells oh no
+no
+did not work
+so then of course you're sitting there
+saying well that didn't work so um let's
+see why don't we turn into that uh cone
+a little bit there to make us less
+likely to hit us well we'll try that as
+well we'll give that one a shot all
+right let's switch it back to the other
+team real fast then we'll do switch two
+we'll do red we'll do a shift F1 click
+on the target we'll go blast it with a
+single 5365 and it's in the water
+beautiful
+divide press Ctrl V here so you can kind
+of track the progress so we're going to
+order a stop and we're also going to
+order an emergency go this way
+[Music]
+well I just that ship would have listed
+so hard when we did that so now what
+we've done is we've changed our course
+and we're coasting so while we slowed
+down massively quicker than we did the
+first time we attempted this effort here
+so here comes the torpedo one more time
+and now you can see we're just sort of
+hanging out missile is coming in I
+should say Torpedoes coming it's
+underwater missiles really what it is
+now this time of course we didn't go as
+far in that direction but notice
+it got us anyway and now you can see
+it's a homing in it's looking for us it
+could be anywhere could be anywhere
+oh it found us again so that strategy
+did not work either so now of course
+you're sitting there saying so it sounds
+like just stopping is just not gonna do
+it yeah just stopping is not gonna do it
+especially when you're dealing with that
+particular type of torpedo so what do I
+do this time is I'll take the shot again
+take the shot and on this time what
+we'll do is instead of stopping we'll
+time our stop after we've gotten
+ourselves out of the way so let's see
+what happens here so uh Torpedoes in the
+water well which we expect and I'm gonna
+go ahead and immediately order return
+this way
+and what we're going to try to do is
+we're going to try to pull ourselves out
+of the actual line of the torpedo itself
+so remember this torpedo is looking in
+that direction so what I'm going to try
+to do is basically go opposite it and
+climb into it at full power here you
+know you just take advantage of the fact
+I can go 55 knots keep in mind if we're
+like an Oliver Hazard Parry or something
+this is right out um this just could not
+work we're just not fast enough for this
+so it accelerates we're again pulling
+ourselves that way and the Torpedoes are
+kind of sneaking up and remember it's
+going to do its snake when it gets to
+that point that's enough stop
+it's basically the sound it's going to
+make there and we start slowing down
+immediately again 40 knots 19 20
+decibels is nothing that's a very very
+quiet so here we go again and again you
+can see the little Trail it's going to
+switch over to its other mode right now
+so it's going to start doing its snake
+pattern and it's going to try to find us
+oh and there we are again
+had no difficulty tracking us down again
+remember this is a wake torpedo oh boy I
+think we're about to lose another one
+so theoretically what should happen here
+is our wake Homer should cross my wake
+and take a really really tight left turn
+oh
+I would say that did not work again now
+you can see it of course floated me on
+although for the record though that was
+a half a nautical mile is where I got
+Chris bloated so that torpedo has a very
+very very very very specialized Warhead
+I suppose so as you can see that
+strategy just simply does not work um no
+matter how much of that that I actually
+did would have actually achieved
+anything so let's go ahead and switch
+back to the other guys again and now
+we'll load everything up and this time
+we're going to fire a different type of
+torpedo we're going to fire a
+conventional passive slash acoustic
+torpedo now see what happens a little
+differently this time so let's go ahead
+and grab this guy shift F1 you can see I
+also have the U set these are pretty
+useful weapons here
+um these are pretty cool because let me
+go ahead and check my weapon magazine
+here I want to make sure it's ready to
+go yeah man
+I did click you I clicked you I swear I
+clicked you it's taking a moment now one
+of the interesting things about the uset
+torpedo of course is the fact that it
+only has a speed of 50 knots and that
+means this shot can't be taken ever and
+the reason it can never be taken is the
+fact that my ship here is traveling 55
+knots which means that the shot is
+basically impossible so what I'm going
+to do is I'll slow down I'll be nice
+I'll switch down to 45 knots that'll
+make the shot a little bit more possible
+because remember at 55 knots there's no
+angle I can fire at that'll actually
+intercept The Target just kind of one of
+those uh it's not going to work I tried
+taking some Arc tangents and you'll see
+what I mean so shift F1 again click on
+him again and we're going to go ahead
+and now we're skipping the Wake homers
+these things are just Dynamite uh some
+double click that real fast and of
+course once we get a little bit closer
+in the range here we will take the shot
+speed up time just a tiny bit
+there we go uh that's a pretty clean
+shot Chief uh what are we waiting for
+here now let's see here weapons on
+magazines no it's not it's out of dlz
+range so I'm gonna go ahead and pull him
+down a little bit closer there we go oh
+I missed it it's gonna be another one
+there it goes repeat on the water so
+this is a different type of torpedo this
+is a you set so one thing you're
+noticing is it has a much bigger
+acoustic cone here so it's listening
+already the audience is listening so we
+fired our into our leading shot there
+which is exactly what we intended to do
+and now we're just going to go ahead and
+experiment see if we can get out of that
+range so I'm gonna go ahead and turn
+this way immediately pop up flank speed
+you know I forget that manual business
+let's go go go go go go go go go go go
+go go go go go go
+come on skilled let's do it get us out
+of here all right and it's basically
+gonna run so basically what we're
+looking for here is we're looking for
+this thing to charge out of the cone of
+I can hear you before it gets into
+position you can see these two are
+running parallel to each other right now
+as we desperately try to get out of
+there oh I think we're gonna get pretty
+clear here and let's go ahead and slow
+down just in case
+and then give it a moment give it a
+moment and here comes the U set it's
+going to start looking around right
+there and there it goes looking it's
+listening remember this is not a wake
+homing torpedo and it came right around
+and locked right onto her oh no oh is he
+got us it's got us
+that is impressive go go go go go go go
+let's see if it does it still have us or
+does it think it has us no it's got us
+it's definitely got us so let's go ahead
+and swing this way and now we're gonna
+go say oh it's wire guided ah Shucks so
+one of the downsides here of course is
+we're going to run the torpedo out of
+energy by the way is because this is a
+wire guided shot um once it was fired
+even though we missed initially they
+just turned the torpedo right around
+which made it so they could come running
+after us that's not fair uh what we'd
+have to do of course is close the
+torpedo tube snap the wire or the other
+thing we could do too is actually delete
+the ship let me get that all set up all
+right it is on so our buddy that you
+said is coming for us I deleted the
+submarine that has the wire that could
+guide the thing so now this is
+completely acoustic now we're not doing
+anything with wires here so my skill of
+course is going to pick up some speed
+and he's going basically zip in that
+direction as fast as possible trying to
+clear some distance there and we're just
+going to keep an eye on the other
+torpedo as it's kind of making its
+progress so we're going pretty hard here
+this is a 55 knots you can't get away
+with this with the Enterprise but it's
+worth kind of showing you just how
+challenging this can get so it runs it
+runs it runs it runs it runs we're going
+to order full stop here just on freak
+Chance full stop and again as soon as
+those Motors cut out
+kind of a thing like that across the
+water as we start slowing down all right
+you set begin so it's looking for things
+at this time it's done a nice big old
+180. it thinks it hears something it's a
+working it's working
+it's working oh yeah oh yeah work that
+work that money maker
+and it's just sort of sailing around
+kind of went to where we were a while
+ago
+and that's it gotcha
+so as you can see uh no difficulty there
+in the P of course depeding it's a new
+kind of word it's defeating but it's a
+pope periodo
+so basically we were able to have no
+difficulty at getting out of the way of
+this one because it lacked that extra
+basically homing in technology here and
+of course so the question is always
+asked what happens if you have a ship
+that has a decoy okay now it's gonna get
+complicated
+all right now things get a little more
+complicated so we have a ffg01 this is
+the Adelaide this is a Perry you know
+one of the things this one is equipped
+with to make ourselves a little bit
+safer is it has a torpedo decoy on board
+it's got the Nixie which is this really
+really obnoxious thing that you
+basically drag behind you which makes a
+ton of noise it makes it less likely to
+be detected as you're basically running
+from an actual specific Target although
+as I'm looking through this one really
+quickly uh let me go check I got the
+right one yeah I was right right there
+we got the Nixie so the next C is a
+noise maker and the purpose of that of
+course is to make it less likely to get
+struck by a torpedo because the torpedo
+targets the wrong thing so let's go
+ahead and grab our handy dandy guy here
+and we're going to press shift F1 again
+our our Perry here is going full speed
+so I'm gonna fire one of these you sets
+atom and remember these are the ones
+that require the passive and active
+track yeah you've said is on the way and
+what I'm going to do is I'm not going to
+order a speed change out of Perry I'm
+actually going to leave it at standard
+speed here and what we're going to do is
+this is fun to watch it's like uh Space
+Invaders across my stream in here I
+noticed by the way that the Perry did
+fire its own torpedo
+see how you like it so of course these
+two are coming at each other pretty
+aggressively that's probably the
+cleanest torpedo solution I've ever seen
+here and normally of course we'd want to
+turn away from that torpedo as some sort
+of a desperate effort to basically put
+the Nixie in the way so what I'm going
+to do is I'm going to go and whip us
+around here and what that's going to do
+is remember the Nixie is a basically
+trailed behind us and theoretically our
+torpedo that's coming after us quite
+aggressively here should be like Nixie
+yummy and it should go after that
+instead of our ship itself now keep in
+mind I'm doing 33 knots right now so I
+am not going slow and the ship's
+obviously making a ton of rackets 127
+decibels right now and you can see it's
+uh it's got a pretty good lock on us and
+it's it's coming after us it's coming
+after us there it is it's got a pretty
+clean oh boy come on Perry you can do it
+you can do it oh boy oh boy don't look
+behind you don't listen on Sonar don't
+look at the thing in the water that
+keeps jumping out of the water no no no
+no no no and the test here is does the
+decoy make a difference
+full stop
+over the shoulder shot so let's go take
+a look here at what actually happened
+you know this is kind of interesting so
+obviously we got hit we got hit twice
+apparently I'm not 100 sure how you get
+hit twice by the same weapon oh it's
+just telling you this is impacted by bad
+so in this case um you can see my nexte
+did nothing uh it did nothing and of
+course unfortunately bummer so let's try
+that again you know we're going to use
+our original strategy here about the
+basically the method of how would you
+design this in such a way that's let me
+just hit the brakes and see if the Nixie
+can do the job to protect us rather than
+the rest of the ship itself so let's
+switch back over here and I'll go ahead
+and grab our skilled and set everything
+back up all right so this time what
+we're going to do is we're going to take
+a shot with the missile or the torpedo
+is it's underwater missile good enough
+and we're going to order the Parry to
+immediately go ahead and turn itself
+into the Target and we're also going to
+cut to creep speed here so the objective
+here would be to desperately try to set
+it up so that our Nixie which is our
+torpedo decoy does all the work here at
+the same time as we do the best we can
+to reduce the acoustic noise of our ship
+so one of the things I'm going to do is
+I'm going to grab this equivalent I'm
+going to delete him the reason being is
+um he'll just order his wire to
+basically turn and then our poor ffg07
+here is going to get slammed so we're
+down to creep speed which is not much
+like I said we're we're just basically
+making steerage here not going too
+quickly and we're way outside of the
+acoustic detection range of this thing
+now and you can see that it's basically
+going to keep on sailing here 50 knots
+all right here we go so what it's going
+to do now is it's going to switch to
+active track mode and it's got a
+beautiful lock on us already it's uh
+zooming in remember we're barely making
+any noise oh did you see how it was
+searching it was listening for us and
+then it hurt us with just the side of
+our ship so um right now it's going to
+be Nixie vs torpedo here over barely
+moving right now it's uh sailing in it's
+a very clean shot oh my that's a clean
+shot wow
+um perhaps to the torpedo manufacturer
+they did a fantastic job on the tracking
+on that thing but yeah yep that was
+gonna happen so let's go take a look
+here armor was penetrated uh scroll down
+just a teeny tiny bit we identified the
+torpedo type at the last second you know
+props to the crew for being able to
+identify it and you can see my Nixie
+just it just didn't work um we did the
+best we could here it had a 30 chance of
+succeeding we rolled a 92 on a 30 and um
+unfortunately we're down another ffg07
+so as you can probably start to see here
+a lot of these very very tactical like
+twists and turns are just not working
+you know the reason they're not working
+is because of how effective these
+Torpedoes are you basically have
+something that's tremendously loud and
+big versus something that's very small
+and precision designed for this exact
+kind of purpose so at this point you're
+sitting there going this just sucks um
+do you have any recommendations like I I
+was hoping you know after watching this
+video I could be like oh I know how to
+defeat a torpedo now I hate to say it
+but the standard method is still the
+best method there is so let's go ahead
+and grab ourselves our ffg7 again we'll
+in order to go this way I'm gonna do one
+of these I'm gonna go flank speed
+and uh watch this Ctrl shift F9 I'm
+going to turn automatic evasion on
+you'll get a kick out of this let's go
+put that on it looks good to me we're
+doing flank let's unpause I want the
+pair of course the Perry's pointing in
+the wrong direction here I have them
+swing around here align ourselves back
+up on course he's going to pick up some
+speed go switch to go to Red Team here
+shift F1 click and uh let's see here
+we're waiting for another eight seconds
+before we fire you set at him that's
+fine with me all right speed up time and
+the ones in the water so now watch this
+so again everything's an automatic now
+I'm not gonna order him to do anything
+watch what he does actually while we're
+doing this um oh that's not the one I
+wanted I want to control F1 I'm gonna go
+right there
+might as well fire torpedo off the side
+hey somebody's playing some uh Dangerous
+Waters here I like hazardous Waters
+that's kind of fun too and what I want
+you to observe here is this is the
+ship's automatic evasion procedure which
+you probably observe is what does he do
+he turns around and he Sprints in the
+opposite direction of the torpedo that
+was launched at him now do you see how
+he's doing this uh panicked a 180 right
+here which is going to get him killed uh
+the reason he's doing that Panda oh
+there's another one
+what are you doing my guy what are you
+doing there he goes now he's running
+I like that little uh double zip uh
+there there it puts on it and now notice
+um the reason he's being uh absolute
+chaotic here is because he doesn't have
+a good look at the torpedo that's
+launched at him so he's doing this uh
+Power donut basically uh
+trying to identify where the torpedo is
+so that he can turn around but every
+time the torpedo changed his position
+unfortunately that also means oh oh
+run run
+see how you like it
+um you can see there that um because he
+didn't have a good position on the
+torpedo itself it didn't do any good for
+him so let's try that manually this time
+all right torpedo in the water let's get
+out of here
+now this time what we're going to do is
+uh we're gonna do everybody's favorite
+maneuver and instead of doing those
+donuts with the automatic evasion mode
+we're just leaving
+screw you guys I'm leaving gotta go
+now the downside with the um I'm just
+going to leave method um I'm gonna head
+out I'm gonna head out I'm gonna head
+out that's uh kind of the thing that I
+want to visualize here is the fact that
+if our goal was to of course attack this
+guy over here
+um if I have a ship like a not a ship if
+I buy a helicopter he'd already be
+launched off the deck right now coming
+to say hello and finish this guy off but
+my new battle Becomes Of course can I go
+fast enough to basically outrun the
+torpedo and now what you're probably
+observing here is that torpedo is very
+very in the mood to come see me here and
+now we're basically burning 33 knots
+here desperately trying to get it away I
+know your airplane instincts are kicking
+in here you want to just do a 90 degree
+turn and get the heck out of here
+um that's not going to work for us and
+the reason that's not going to work for
+us oh oh
+is that because if we do that we're
+going to be he'll just take a turn and
+cut ourselves right off hey there we go
+and you can see we made a little tiny
+course adjustment here
+little tiny course adjustment now you're
+probably sitting here going that makes
+no sense how come he's not following
+anymore remember that submarine that
+fired that torpedo well that torpedo is
+being still Guided by a wire right now
+the submarine crew was acting on my best
+position it wasn't acting on my current
+position so therefore the wire actually
+backfired and actually enabled it so I
+could just basically take a turn and get
+out of the way and not have to worry
+about that torpedo at all so as you can
+see a torpedo evasion is involved it's
+um not something that there's any
+guarantees to well there's so many
+different types of torpedoes out here
+has to be a classic joke with submarine
+battles goes is that two people doing a
+knife fight in a phone booth kind of a
+thing and you can see if he fires a
+torpedo I fire one too and one of us are
+going to hit each other or what happens
+a lot of times in these kind of
+scenarios you both end up hitting each
+other but other than that enjoy

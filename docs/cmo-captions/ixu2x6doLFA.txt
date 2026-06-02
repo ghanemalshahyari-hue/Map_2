@@ -1,657 +1,661 @@
-0.0	hello everyone today's videos you'll be
-3.1	seeing the next few different couple
-6.1	people are asking you know could you go
-7.5	through scenario editing you know kind
-9.3	of in a complete sort of way of doing
-11.1	things and I said well I guess I could
-13.4	but it's gonna take more than one video
-15.1	to do because otherwise you're gonna go
-16.4	like a six hour video kind of a thing so
-18.0	for the next few videos I'm basically
-19.8	gonna break them up into little half an
-21.2	hour chuckles to kind of go over what I
-23.0	do when I am making a level and I'll try
-25.4	to make sure it title everything my
-27.1	resources and the links again just just
-29.2	a solid place to start so in a way we're
-31.4	gonna be designing a mission basically
-33.2	from start to finish the big thing with
-36.6	mission design is a lot of people kind
-38.1	of think about it in terms of oh I've
-39.6	got to be perfect about every detail I
-41.2	got to make sure each fighter squadron
-42.7	is the correct number in the correction
-44.1	units and all those other kind of things
-45.4	well this is great it won't necessarily
-47.7	make for an entertaining scenario and
-49.6	again we're here to be entertained so
-51.3	the people who want to be doing actual
-52.7	analysis and stuff like that that's our
-54.2	military type so they get a different
-55.5	version of command to play with and we
-57.4	do anyway so we don't have to worry
-59.3	about that too much so the place that I
-61.7	like to look as far as scenarios goes is
-63.5	I always try to read the news and see
-65.0	kind of what's going on and as you could
-66.7	probably see by the way I'm kind of
-68.3	moving in this direction and
-69.5	particularly got Syria of course got
-71.4	Iran and I've got a rack and of course
-73.3	we have Turkey what's going on with it
-74.6	at Greece and everything like that as
-76.0	well and then you usually try to look up
-77.8	as much news information as I can about
-79.5	it and then kind of work backwards I'll
-81.2	actually show you a little bit of this
-82.4	process so let's say we want to create a
-84.8	scenario in which NATO in the CIS
-86.9	decides to do a complete strike against
-89.5	let's say Syria now there's plenty of
-91.8	different types of targets in Syria that
-93.3	they could be striking industry going
-94.4	for chemical plants they could be going
-96.0	for naval assets although there's not a
-97.5	lot of them they could be going out Isis
-99.5	training camps it could be going after
-101.0	anything along those lines
-102.9	after infrastructure just to kind of be
-104.8	destructive so we need to decide kind of
-107.0	what we're gonna do so the first thing I
-108.8	like to do when I'm building a scenario
-110.2	after taking a look and deciding my
-111.6	journal just here is I'd like to see
-113.3	what I have available for me that I can
-115.0	use kind of basically out of the box now
-118.3	the first place I look for that is going
-119.9	to be for imports but before I do that I
-121.7	want to set my sizing the correct
-125.6	database I'm going to go up two sides
-127.7	scenario times and duration and
-130.4	go ahead and pick a random date for this
-132.2	I'm gonna pick something in 2008 now you
-134.2	probably wonder why I always pick 2008
-136.7	as kind of like the upper limit of my
-138.2	scenarios and the reason for this is
-140.1	those of you who played TCS would know
-142.0	that any aircraft is no doubt up TCS is
-144.6	2008 or earlier so it's always cool if
-147.7	you want to go back and play in dcs
-148.8	later on now what time of year is a
-151.0	logical time to be doing a complete
-152.8	effort strike against Syria usually for
-155.2	me it's going to be after the hot season
-159.7	so let's go ahead and that's a pretty
-162.9	good to me
-163.4	Oh time let's see here so it is 924 here
-167.2	or my local time is 1124 that's a 2-hour
-169.5	difference which isn't too too bad let's
-171.4	say operations start at 5:30 in the
-173.2	morning
-173.6	so 5:30 in the morning is going to give
-175.3	us whoops
-177.5	do that copy this it's gonna be one big
-186.5	maximum effort strike things like that
-196.5	as far as complexity difficulty goes
-198.4	this is something this isn't something
-200.6	they said I don't know okay so that
-205.9	gives us 5:30 in the morning it's gonna
-207.8	be a ten-hour scenario it's going to be
-209.4	a September 10th 2000 and we're having
-218.3	up to 4 or 5 sides here in this scenario
-220.8	the first one is pretty easy it's gonna
-222.6	be Syria second one is going to be easy
-225.0	as well that's going to be the CIS and
-226.8	the final one is going to be now if I
-231.2	stick in a side as well you know simple
-234.9	airliners flying around or something
-236.5	along those lines that is awesome stuff
-238.7	but it also makes a scenario quite a bit
-240.8	more complicated to do well and again
-242.7	we're trying to keep this relatively
-243.9	simple and I'm trying to keep these
-245.2	videos less than 40 hours kind of a
-246.9	thing now the next thing I like to do is
-248.7	I like to go ahead and set a proficiency
-249.9	now Russia of this time again this is
-253.4	2008 ish and remember this is our
-255.2	universes isn't the real universe we can
-257.1	set to anything we want we can crank
-259.4	them up
-260.9	is the best of the best of us we tracked
-262.8	them down a novice simply representing
-264.4	technology that's either not well
-265.7	maintained Normal School and down to
-273.5	NATO
-273.8	NATO's kind of be combination of again
-276.1	you could have France Germany
-278.5	you're gonna have your Spain now force a
-293.0	little more difficult now remember Syria
-294.7	does not exactly have a huge weapons
-297.0	industry in order to maintain their
-298.3	craft they have takeoffs and landings
-301.9	they have older equipment so I have a
-303.9	really tough time as rating the
-305.3	proficiency of all their forces as
-306.9	regular they're just worn out on the
-309.3	flip side with that being said I'm gonna
-316.1	reduce it down to cadet again they're
-318.2	not gonna have quite as detailed
-319.4	training as these two next thing we want
-323.4	to do is we want to go ahead set the CIS
-324.8	to be computer only this basically means
-326.9	when we load our scenario up later on
-328.2	that we will be able to select from them
-329.6	NATO is going to be our preferred side
-331.4	so we're gonna leave them on in Syria
-333.2	we're gonna set to computer only also
-334.9	now collective responsibility this can
-337.4	cause some very interesting problems and
-339.0	basically what it's going to do is
-340.4	dictate whether or not if I blow up one
-342.9	of them all of them because I wore on me
-344.8	so you want to be very cautious with
-346.4	that all right next thing I'd like to do
-347.9	is set up kind of a global doctrine and
-349.8	things like that so the first thing with
-354.0	the CIS is is you probably know
-355.9	geographically the Russia had to operate
-359.1	all their aircraft against Isis ISIL
-361.1	basically in Syria they couldn't fly out
-363.9	of rock they certainly could not over
-365.3	fly turkey so they were in kind of a bad
-367.3	shape as far as where to base their
-369.1	groups I'm actually gonna be basing them
-370.9	in Armenia in this mission
-372.0	cuz it's just simple so let's go ahead
-373.5	and think about the doctrine for a
-374.8	second here so generally of as far as
-377.1	rules of engagement you want to make
-378.2	sure you tack the person you know ignore
-379.9	apply to course I actually at the end of
-381.5	that one ambiguous targets since we have
-383.9	limited ammunition because we're the
-385.4	modernity is here I'm gonna say that's a
-387.1	pessimistic you don't waste it
-388.4	opportunity targets absolutely not you
-390.6	don't want them to be just attacking
-391.8	happen
-392.9	over at that time this looks good this
-394.8	all looks good automatic evasion air
-397.1	operations it's going to be sustained
-398.8	and we're gonna be sustained as well
-400.8	because basically this represents you
-402.9	know we've already had our big rush and
-404.3	our people are all tired we need to rest
-406.2	our crews quick turnaround anyway fuel
-413.3	state I like that state weapons state
-415.4	let's see
-419.8	going down to air-to-ground strafing
-422.0	they would never allow that even there
-423.6	would be very tempting this will be
-424.7	different we get to the u.s. ordnance I
-427.1	believe their doctrine does allow them
-428.8	to jettison ordinates bvr looks good
-431.0	Sam's Mission Control absolutely going
-437.9	to be using the chance there's new wre
-441.0	ok that's pretty good for the CI yes
-443.9	let's go ahead and take a look at NATO
-446.3	dr. Andros engagement of course if
-448.4	you're playing as NATO you're not gonna
-449.6	get nuclear weapons of course we have
-459.7	some that will also be a sustained
-463.7	really really impact our planning here
-466.1	so we have to be very very clever about
-467.7	how we're gonna manage that this to new
-470.6	let's see if you'll stay let's see
-472.8	weapons stay say disengage immediately
-475.6	when you're out of mission looks good
-478.6	strafing new let's jettison I believe as
-484.1	NATO but this is gonna waste an awful
-485.7	lot of ammo so if you're going to
-487.3	jettison ordnance you might want to come
-488.7	up here versus weapons state and you
-490.6	might want to set it so aircraft will
-491.9	leave the flight if they have to
-493.0	jettison their stuff otherwise again
-495.1	you'll have no problem
-495.9	since we are NATO we're gonna do crank
-498.8	and drag impossible if it comes up we're
-500.9	absolutely going to be using our sampson
-502.7	ASUW mode if we get a chance to do so
-504.9	everything else is looking pretty good
-506.8	alright so let's go and take a look at
-508.8	Syria so posture let's see here let's
-515.1	see there identify targets optimistic
-518.9	let's waste some ammo engage any
-521.1	contacts
-522.4	they can shoot at it let's go take a
-524.1	look here they're gonna be sustained
-525.7	also see quick turnaround though because
-528.5	we're attacking them on home ground
-529.7	let's see here weapon state will allow
-532.2	them to do some air-to-air work here if
-533.8	they need to I don't know why they do
-535.5	that crank and drag impossible but they
-537.3	don't really have any weapons that you
-538.4	can drag so it wouldn't matter anyway
-540.6	yes as far as that goes
-544.7	we're nacelles pretty good okay like in
-548.0	the way this is so now this is a good
-549.8	time now that I've set up my basic sides
-551.5	to go ahead and save this scenario so
-553.6	there's a lot of different ways to do
-555.3	this Syria strike we'll worry about
-558.8	briefing and stuff like that much much
-560.4	much later on so what I like to do is
-561.9	I'll create myself a folder open this
-565.8	one up we'll call this Syria strike
-570.5	Syria strike and we'll call this one
-572.9	I'll be a fun way to do it the classic
-574.4	way I was always taught to do zero zero
-576.4	for your initial base version and now
-578.6	we're good to go we have the base sides
-580.4	all set up one thing we should do those
-589.7	against Syria we're gonna assume it's a
-591.9	hostile situation again we're deciding
-594.2	this is our situation so we can choose
-596.1	how this is kind of run we'll go over to
-598.3	our postures again NATO is probably yes
-603.1	Syria
-610.7	go ahead and close that close that and
-613.4	now I'm in great shape one more time so
-616.8	now I'm ready to start adding stuff in
-618.4	so the first thing I like to do is I
-620.2	like to focus on the target side of
-621.9	things so I'll open this sucker up and
-628.4	let's see what we have by default in
-630.9	Syria so scroll down Syria again this
-633.6	all comes with command which is another
-635.4	amazing reason for this game Wow to pick
-639.7	from here
-640.3	Wow okay let's start with the basics
-643.5	Syria aww alright looks good open that
-646.9	one up excellent so now we have Syrian
-649.1	aww
-649.8	let's go ahead and close this
-655.5	that's loaded up Oh beautiful they all
-658.4	come grouped together by the way I
-659.7	approached it for those of you making
-660.8	your own imports please put them in
-662.6	groups it's much simpler to remove them
-664.7	alright let's see what this actually
-665.8	looks like wow wow what is this a rock
-670.5	this is incredible so they have quite a
-673.2	bit of air defence assets and you can
-676.1	see that they basically as well as
-680.6	people coming out of the ocean which
-681.8	makes a lot of sense fortunately that
-683.5	means that folks in Russia are going to
-685.1	be coming basically out of Armenia over
-686.8	Turkey mine the real world but for this
-691.1	I'm just simplifying the scenario we
-692.8	could also come out of Iran but then you
-694.3	need permission to come out of Rock you
-696.0	get very very quickly so what do we have
-699.1	here looks like the combination of twos
-701.1	threes and sixes let's say six by the
-703.8	way is a pretty nasty system we also
-705.6	have two so while we're at it we might
-709.1	as well turn the e.w on cuz oh we're
-711.5	gonna need it a little later on so
-716.7	that's looking pretty good
-718.2	let's go ahead and import some more
-719.8	stuff and again this is just you know
-721.8	fake it to make it kind of a thing don't
-724.9	work harder than you have to work on a
-726.6	scenario Wow let's do it anyway
-745.4	Wow okay so that's actually looking
-748.8	pretty darn good not gonna lie here
-750.8	looks like we have a really strong
-752.0	concentration of airports all right
-754.2	along here we have one way way way out
-756.0	here you've got this beautiful section
-757.9	here we got that river coming through as
-760.0	far as our scenario goes what's the
-762.0	point of it remember do we need all this
-764.0	do we only need one of these can we swap
-765.8	them out with single unit because
-767.4	they're not supposed to be targets
-768.7	that's completely going to be your
-770.4	choice when you design a scenario in
-772.4	this particular case I'm kind of a fan
-774.1	of swapping them out for single units
-775.8	only because that's going to simplify
-777.4	our scenarios loading and if they're not
-779.1	supposed to be targets anyway why would
-781.0	it matter so let's
-782.3	take a look at what we have here but now
-785.0	over to the Internet
-787.0	Syrian Air Force bases let's see
-792.9	and now we actually have a list of these
-795.2	bases and more importantly what
-797.5	squadrons they have you know this is
-800.9	great because we could take this
-801.9	information and put it right into the
-803.1	scenario so in our scenario I'm actually
-807.4	going to be trading them out in getting
-809.3	rid of the ones I don't need so let's
-810.9	see we have data restore my Arab is
-813.5	absolutely terrible I apologize in
-815.6	advance
-816.2	let's see here I'm just trying to see if
-818.5	this is something we even have any
-819.7	information about right there okay what
-833.2	do you guys carry so let's see we have
-837.6	mig-23 m/s and we have l-39s so what I'm
-841.4	gonna do is I'm actually going to delete
-842.7	this airbase and then replace it with a
-844.8	single unit airbase of the same style so
-847.6	that way that we don't have to worry
-849.1	about it too much which are long as we
-850.4	have to 3200 remise again this makes us
-853.3	so this is not going to be a valid
-855.1	target for the players one thing you
-857.7	want to watch out for is spelling here
-859.4	so go ahead delete that and I'm going to
-861.4	insert it as a single unit airport again
-864.7	this is not going to be a target anymore
-868.2	right single unit so we found it had two
-871.6	3,200 runways a BU a B okay
-879.8	all right let's go ahead we have 20
-887.7	shelters so there's not gonna be a lot
-888.9	of aircraft we have the 678 squadron of
-891.6	mig-23 ms/ms we want to grab the Syrian
-898.9	version and we want to say what 617
-901.9	squadron sqd let's see how many we have
-906.6	here so does that tell us how many we
-912.6	have okay so if you're using the
-914.5	Russians
-915.0	before basically aircraft do you have
-917.5	the cold regiments which are basically
-919.1	the Western equivalent of squadrons
-921.1	usually in a regiment you have three
-923.3	groups of 12 aircraft it's really three
-925.2	groups of 15 but 2/3 of those aircraft
-927.5	have basically considered spare so you
-929.1	don't get them anyway so let's go ahead
-931.0	and grab what we can do here let's
-932.4	assume that it's a full unit here and we
-935.4	also know that we have some l-39s I
-937.5	believe here there's iou's let's go
-940.0	ahead grab okay 1984 let's see what we
-943.1	have here we don't know so these are
-945.0	probably going to be very very small so
-947.0	we know this is the 2 squadron and we
-949.1	know they have a CAS and cos since
-951.1	there's 15 to squadron we want to
-954.5	probably reduce that to 12 and probably
-957.2	due to split groups maybe six and six
-959.6	it seems pretty reasonable well there's
-961.4	six CAS and we'll do 6c O's and we're
-964.7	pretty much good to go with that
-965.6	particular Air Base beautiful let's go
-967.9	take a look we have pronounced that I'm
-971.0	just going to embarrass myself horribly
-972.5	here we have we have no information on
-980.4	it this we have no information on it I'm
-982.4	just gonna delete it right out of the
-983.5	scenario of course we could make stuff
-985.1	up one of the main air bases that we
-992.2	have at our disposal we have Aleppo
-994.2	International I do not just know there's
-999.8	all right there sweet so they have a 25
-1003.1	squadron of mig-21 bits okay baby
-1021.7	grab it control f6 let's see we got here
-1025.4	we are packing mig-21 bists and we have
-1028.6	826 squadron which we're not sure so
-1031.1	this is probably this is that's not much
-1033.6	here let's go grab it ourselves and make
-1036.1	21 bits which is a really nice aircraft
-1038.3	go down to Syria let's say we're gonna
-1041.7	look at 15 probably since we don't know
-1044.1	what that other squadron
-1045.7	they probably are splitting and sharing
-1048.0	legal unit here so let's say that eight
-1050.8	of these are from let's see here eight
-1053.7	to five squad and we're gonna say that
-1058.6	the other six would be us to seven of
-1061.5	them are from the eight to six squads
-1063.9	I'm sure that's correct looks good add
-1066.4	selected and now we're good to go for
-1068.4	that particular base alright so we've
-1070.6	got that one out of the way we want to
-1072.1	take a look at Aleppo now let boat
-1074.6	International League Aleppo yes notice
-1080.3	that I'm not orienting the runways here
-1082.1	the reason I'm not doing that is because
-1084.0	they don't need to for a scenario in
-1085.7	which you're not attacking these
-1087.7	international let's see what we actually
-1108.7	I think I did see this one an hour there
-1112.5	it is right there oh they have to make
-1113.7	21 Biss oh so unfortunately our owl in
-1118.4	this riah what do we say they had these
-1121.0	guys actually have mig-23s this happens
-1125.2	all the time maybe 23 BN let's go to
-1130.0	Syria what units do we have here makes
-1132.1	23 P yeah they have twenty six nine
-1137.6	eight six nine five okay now back to
-1146.8	what we were doing here so again there's
-1148.7	this awful concept called scenario creep
-1150.5	in which case you know you designed a
-1151.9	basic scenario next thing you know
-1153.2	you've got a bajillion units at it
-1155.0	because each one of these individually
-1158.1	but again we'll kind of work our way
-1159.7	through so this one is going to be
-1162.0	simply an airport baby check my spelling
-1170.1	here q of course this is an anglicized
-1172.3	spelling so you don't actually know
-1175.6	there we go some real pros will actually
-1178.8	come in here in nameless things properly
-1180.3	so this one has are a 25 squadron of the
-1183.5	mig-21s 21 fish
-1188.0	scroll down to Syria eight eight ten ten
-1193.6	or eight eight this is we have yeah it's
-1195.3	gotta be eight Nate we have a twenty
-1196.7	five and eight twenty six twenty five
-1200.5	twenty six squads cutie beautiful
-1204.9	alright moving right along so you're
-1208.2	taking care of that we've taken care of
-1209.3	them we've taken care of them
-1210.5	alright let's go to s do we have them as
-1215.5	an option of course the zoom out a
-1219.8	little bit find out where they are right
-1221.5	on the border that definitely makes them
-1222.9	something we'd be interested in checking
-1224.3	out I just don't see them as one of our
-1228.3	options here checking very closely
-1230.4	because I'm gonna make mistake nope they
-1232.3	get deleted sorry guys it could also be
-1235.6	a heliport as well alright let's go
-1238.7	ahead and do this now let's go sorry we
-1241.8	have a salvia okay so I'm just taking a
-1250.1	quick look here see if it's something
-1251.5	that's nice and easy I don't see it do
-1259.7	not so I'm just gonna knock that one
-1261.8	right out of our scenario because
-1263.1	there's no reason for it to be here if
-1264.4	we don't need it we have Damascus
-1267.6	International Wow okay Lenti of Damascus
-1274.4	choices here but again these are all
-1276.2	going to be the relative the normal
-1278.7	airports these are not going to be our
-1280.0	official ones I do not see the Damascus
-1282.5	Airport that I want so I'm just kinda
-1283.9	delete that one too
-1284.9	again save a little bit of time I mean
-1287.0	we don't need a million airports either
-1289.3	see to mask Assad messy now this is a
-1292.8	heck of an airbase that this is a big
-1297.4	Airport let's go ahead do this one let's
-1299.8	go ahead
-1300.5	all this means easy baby now this one is
-1305.2	big if I recall correctly know I'm messy
-1308.0	messy messy there it is Meza so we have
-1311.3	the nine and thirty six nine seventy six
-1314.0	and we also have the 977 in their bows
-1316.7	quadrants of si 342 okay interesting
-1328.0	that's okay though let's see actually
-1331.8	you know what I'm gonna completely skip
-1333.3	this Airport to there's no reason to
-1335.2	include them because of the fact that
-1336.7	we're what are we gonna do with
-1338.0	helicopters in the scenario and since
-1339.4	it's not gonna be a target there's
-1340.8	really no point you know engaging it
-1342.4	anyway alright let's take a look so now
-1344.4	we have to Mayer let's go take a look up
-1347.5	at the top
-1348.0	DeMar DeMar there's all tomorrow make 23
-1355.0	MLS and Sukhoi 22 okay that's fine
-1357.6	excellent so these guys are definitely
-1359.3	gonna be worth using this grab it do a
-1373.1	control f6 action here we are going to
-1376.4	include we've 23 MLS as well as plenty
-1381.0	of spaces here so we're talking
-1382.7	definitely a whole squadron so 6 7 s QD
-1386.6	confirm one more time we got the right
-1388.7	one
-1390.6	23 MLS classic a little interceptors
-1395.5	Syria networks and we also have Sukhoi
-1402.4	22 M twos interesting they're not going
-1408.6	to give us the M - maybe this
-1413.3	information is out of date maybe this
-1414.7	information isn't out of date so I'm
-1416.3	just gonna swap them with the m3 is
-1418.0	there 15 of those as well even the other
-1420.7	strike aircraft it's an unknown squadron
-1423.0	so I'm just gonna mash some numbers
-1426.4	together and we're good ok awesome
-1429.0	so you're probably sitting here at this
-1430.8	point going so we do this for about an
-1433.1	hour in order to
-1434.0	make sure you have all the different
-1435.2	stuff and the answer is yeah this is
-1436.6	basically what you do in most scenarios
-1438.5	depends on how big your scenario needs
-1440.4	to be so we have Hannah real quickly AJ
-1443.1	mah a B what do we have a hammam we have
-1450.3	some big twenty ones again okay so this
-1453.1	is definitely worth looking at let's go
-1457.4	ahead maybe again by making them single
-1462.7	unit we're not going to be using these
-1464.4	particular aircraft as targets so let's
-1467.2	go ahead and grab this one we have six
-1469.8	seven 9 squadron six seven nine and we
-1473.2	are looking at mig-21mfs actually a
-1484.6	training squadron because they've the UM
-1486.2	version and apparently we do have a
-1487.8	group of mig-29s here as well so we
-1490.9	don't know which group is that doesn't
-1492.9	actually know unknown squadron so I'm
-1494.5	actually just gonna leave them out
-1495.5	completely there's no point in putting
-1497.0	them in there probably the u version of
-1499.1	the mig-29 okay so that's looking pretty
-1501.6	good so far
-1503.5	alright gar-bear this is another very
-1506.5	large air base not really mm-hmm
-1509.2	let's add a scenario RH press ok again
-1518.8	wikipedia is your friend this would be
-1520.7	quite a pain without it what do we get
-1522.7	we gets two squadrons of LC 39 oh not
-1526.2	even worth our time l-39 CA Syria we're
-1532.1	gonna go ahead and grab some of these
-1533.1	two squadrons but how many stands
-1535.0	there's only 20 stands so it's probably
-1536.8	gonna be to group unknown squadron
-1538.7	number yeah we don't know 25th squad why
-1552.7	not make it to fake it like I said
-1554.8	alright fake it to you make it alright
-1558.6	we're doing pretty well here she's not
-1560.1	gonna try to pronounce that one that's
-1561.4	just gonna be embarrassing on my part
-1562.8	alright take a look there it is right
-1566.0	there
-1566.8	Oh make 21 bits we have nine four five
-1569.2	nine four six and we have thirty stands
-1570.8	nice this is definitely going to be an
-1573.3	interesting opportunity very large air
-1575.2	base also two runways in this one all
-1580.1	right okay H okay go ahead of this
-1588.2	aircraft to it all right we have pickets
-1591.8	why nine four five and nine four six
-1593.2	both and big 21 bits 21 this let's go
-1601.6	ahead and grab 15 let me set nine four
-1603.7	six fifteen of those as well beautiful
-1606.7	all right hey we're getting there
-1609.9	alright skip skip skip skip skip skip ah
-1613.5	okay
-1614.5	we have Mars Rojo right there this
-1617.8	Marshall suit on there's Mars so this is
-1620.7	a big 23 's and we get a squadron okay
-1625.0	all right single unit airfield yes this
-1632.2	is what half of making a good scenario
-1634.0	is and they are J Rho f6 what do we got
-1643.5	so we have 24 stands but we have three
-1647.5	squadrons that's a little weird not
-1649.2	gonna lie
-1649.8	so we have a group of mig-23s okay this
-1652.8	is definitely a training squadron also
-1654.4	so probably it's gonna be 15 in 10
-1657.2	something like that 50 for squad look
-1662.6	there's make 23 MLS 3 ml Syria we said
-1668.7	we're gonna 15 of those we're gonna have
-1671.0	10 for the next quadrant that's going to
-1673.3	be the 7/7 squadron technically they're
-1675.3	UMS it's the training version so you
-1677.2	probably wouldn't even be using them in
-1678.4	combat we also have a small group of
-1680.2	mi-25s which they're not really going to
-1682.7	be a thing in the scenarios I wouldn't
-1684.1	even bother inputting them at all and
-1686.2	again imagine trying to do this for the
-1688.0	entire United States I'm actually
-1689.5	working on a side project with that
-1691.2	Minka Air Base Minka Air Base
-1694.6	then we have access to the information
-1696.3	of again you can always go online see we
-1699.0	just do a generic search but I'm trying
-1700.6	to keep it relatively straightforward
-1702.0	here we have Manoj caber Shah rots and
-1707.1	we have okay I do not see this one as
-1709.9	one of our options
-1713.0	all right so we start very very close to
-1717.5	the end we have that's a tiny airport
-1723.0	that might not you can be represented in
-1725.5	here just looking through real quick I
-1728.3	don't see it nope deleted I think I've
-1734.9	been saying don't only map only really
-1737.2	is necessary Iran as they like to say I
-1740.0	reversing out about here is just one of
-1745.2	her options you got to watch the
-1746.5	spelling on a lot of these because it
-1748.0	might not quite be what you expect it to
-1749.7	be nope I don't see that one either so
-1753.8	we're just gonna delete it of course we
-1756.9	could stick anything with one in there
-1758.0	we don't have to delete it scroll down
-1761.2	to the bottom here I just saw
-1768.2	Air Base which is a very large Air Base
-1770.6	a sequel Air Base I believe that is one
-1774.0	of our choices right there make 29s
-1778.6	important okay so we've been going on
-1781.5	about a half an hour and well we've
-1782.7	choose you through quite a few of these
-1784.2	so I'm gonna go ahead and think about
-1785.6	ending our video here and we'll pick up
-1787.0	next time so what I'm gonna do is I'm
-1788.8	gonna continue going back and forth
-1790.2	between what we have here on this list
-1792.4	and we have representatives inside the
-1794.0	mission sticking everybody in and then
-1795.9	next time we'll take a look at actually
-1797.5	taking this scenario and start putting
-1798.7	in the NATO assets as well as the CIS SS
+# C:MO Building a Mission Part 1 of 4
+Video: https://www.youtube.com/watch?v=ixu2x6doLFA
+Video ID: ixu2x6doLFA
+
+hello everyone today's videos you'll be
+seeing the next few different couple
+people are asking you know could you go
+through scenario editing you know kind
+of in a complete sort of way of doing
+things and I said well I guess I could
+but it's gonna take more than one video
+to do because otherwise you're gonna go
+like a six hour video kind of a thing so
+for the next few videos I'm basically
+gonna break them up into little half an
+hour chuckles to kind of go over what I
+do when I am making a level and I'll try
+to make sure it title everything my
+resources and the links again just just
+a solid place to start so in a way we're
+gonna be designing a mission basically
+from start to finish the big thing with
+mission design is a lot of people kind
+of think about it in terms of oh I've
+got to be perfect about every detail I
+got to make sure each fighter squadron
+is the correct number in the correction
+units and all those other kind of things
+well this is great it won't necessarily
+make for an entertaining scenario and
+again we're here to be entertained so
+the people who want to be doing actual
+analysis and stuff like that that's our
+military type so they get a different
+version of command to play with and we
+do anyway so we don't have to worry
+about that too much so the place that I
+like to look as far as scenarios goes is
+I always try to read the news and see
+kind of what's going on and as you could
+probably see by the way I'm kind of
+moving in this direction and
+particularly got Syria of course got
+Iran and I've got a rack and of course
+we have Turkey what's going on with it
+at Greece and everything like that as
+well and then you usually try to look up
+as much news information as I can about
+it and then kind of work backwards I'll
+actually show you a little bit of this
+process so let's say we want to create a
+scenario in which NATO in the CIS
+decides to do a complete strike against
+let's say Syria now there's plenty of
+different types of targets in Syria that
+they could be striking industry going
+for chemical plants they could be going
+for naval assets although there's not a
+lot of them they could be going out Isis
+training camps it could be going after
+anything along those lines
+after infrastructure just to kind of be
+destructive so we need to decide kind of
+what we're gonna do so the first thing I
+like to do when I'm building a scenario
+after taking a look and deciding my
+journal just here is I'd like to see
+what I have available for me that I can
+use kind of basically out of the box now
+the first place I look for that is going
+to be for imports but before I do that I
+want to set my sizing the correct
+database I'm going to go up two sides
+scenario times and duration and
+go ahead and pick a random date for this
+I'm gonna pick something in 2008 now you
+probably wonder why I always pick 2008
+as kind of like the upper limit of my
+scenarios and the reason for this is
+those of you who played TCS would know
+that any aircraft is no doubt up TCS is
+2008 or earlier so it's always cool if
+you want to go back and play in dcs
+later on now what time of year is a
+logical time to be doing a complete
+effort strike against Syria usually for
+me it's going to be after the hot season
+so let's go ahead and that's a pretty
+good to me
+Oh time let's see here so it is 924 here
+or my local time is 1124 that's a 2-hour
+difference which isn't too too bad let's
+say operations start at 5:30 in the
+morning
+so 5:30 in the morning is going to give
+us whoops
+do that copy this it's gonna be one big
+maximum effort strike things like that
+as far as complexity difficulty goes
+this is something this isn't something
+they said I don't know okay so that
+gives us 5:30 in the morning it's gonna
+be a ten-hour scenario it's going to be
+a September 10th 2000 and we're having
+up to 4 or 5 sides here in this scenario
+the first one is pretty easy it's gonna
+be Syria second one is going to be easy
+as well that's going to be the CIS and
+the final one is going to be now if I
+stick in a side as well you know simple
+airliners flying around or something
+along those lines that is awesome stuff
+but it also makes a scenario quite a bit
+more complicated to do well and again
+we're trying to keep this relatively
+simple and I'm trying to keep these
+videos less than 40 hours kind of a
+thing now the next thing I like to do is
+I like to go ahead and set a proficiency
+now Russia of this time again this is
+2008 ish and remember this is our
+universes isn't the real universe we can
+set to anything we want we can crank
+them up
+is the best of the best of us we tracked
+them down a novice simply representing
+technology that's either not well
+maintained Normal School and down to
+NATO
+NATO's kind of be combination of again
+you could have France Germany
+you're gonna have your Spain now force a
+little more difficult now remember Syria
+does not exactly have a huge weapons
+industry in order to maintain their
+craft they have takeoffs and landings
+they have older equipment so I have a
+really tough time as rating the
+proficiency of all their forces as
+regular they're just worn out on the
+flip side with that being said I'm gonna
+reduce it down to cadet again they're
+not gonna have quite as detailed
+training as these two next thing we want
+to do is we want to go ahead set the CIS
+to be computer only this basically means
+when we load our scenario up later on
+that we will be able to select from them
+NATO is going to be our preferred side
+so we're gonna leave them on in Syria
+we're gonna set to computer only also
+now collective responsibility this can
+cause some very interesting problems and
+basically what it's going to do is
+dictate whether or not if I blow up one
+of them all of them because I wore on me
+so you want to be very cautious with
+that all right next thing I'd like to do
+is set up kind of a global doctrine and
+things like that so the first thing with
+the CIS is is you probably know
+geographically the Russia had to operate
+all their aircraft against Isis ISIL
+basically in Syria they couldn't fly out
+of rock they certainly could not over
+fly turkey so they were in kind of a bad
+shape as far as where to base their
+groups I'm actually gonna be basing them
+in Armenia in this mission
+cuz it's just simple so let's go ahead
+and think about the doctrine for a
+second here so generally of as far as
+rules of engagement you want to make
+sure you tack the person you know ignore
+apply to course I actually at the end of
+that one ambiguous targets since we have
+limited ammunition because we're the
+modernity is here I'm gonna say that's a
+pessimistic you don't waste it
+opportunity targets absolutely not you
+don't want them to be just attacking
+happen
+over at that time this looks good this
+all looks good automatic evasion air
+operations it's going to be sustained
+and we're gonna be sustained as well
+because basically this represents you
+know we've already had our big rush and
+our people are all tired we need to rest
+our crews quick turnaround anyway fuel
+state I like that state weapons state
+let's see
+going down to air-to-ground strafing
+they would never allow that even there
+would be very tempting this will be
+different we get to the u.s. ordnance I
+believe their doctrine does allow them
+to jettison ordinates bvr looks good
+Sam's Mission Control absolutely going
+to be using the chance there's new wre
+ok that's pretty good for the CI yes
+let's go ahead and take a look at NATO
+dr. Andros engagement of course if
+you're playing as NATO you're not gonna
+get nuclear weapons of course we have
+some that will also be a sustained
+really really impact our planning here
+so we have to be very very clever about
+how we're gonna manage that this to new
+let's see if you'll stay let's see
+weapons stay say disengage immediately
+when you're out of mission looks good
+strafing new let's jettison I believe as
+NATO but this is gonna waste an awful
+lot of ammo so if you're going to
+jettison ordnance you might want to come
+up here versus weapons state and you
+might want to set it so aircraft will
+leave the flight if they have to
+jettison their stuff otherwise again
+you'll have no problem
+since we are NATO we're gonna do crank
+and drag impossible if it comes up we're
+absolutely going to be using our sampson
+ASUW mode if we get a chance to do so
+everything else is looking pretty good
+alright so let's go and take a look at
+Syria so posture let's see here let's
+see there identify targets optimistic
+let's waste some ammo engage any
+contacts
+they can shoot at it let's go take a
+look here they're gonna be sustained
+also see quick turnaround though because
+we're attacking them on home ground
+let's see here weapon state will allow
+them to do some air-to-air work here if
+they need to I don't know why they do
+that crank and drag impossible but they
+don't really have any weapons that you
+can drag so it wouldn't matter anyway
+yes as far as that goes
+we're nacelles pretty good okay like in
+the way this is so now this is a good
+time now that I've set up my basic sides
+to go ahead and save this scenario so
+there's a lot of different ways to do
+this Syria strike we'll worry about
+briefing and stuff like that much much
+much later on so what I like to do is
+I'll create myself a folder open this
+one up we'll call this Syria strike
+Syria strike and we'll call this one
+I'll be a fun way to do it the classic
+way I was always taught to do zero zero
+for your initial base version and now
+we're good to go we have the base sides
+all set up one thing we should do those
+against Syria we're gonna assume it's a
+hostile situation again we're deciding
+this is our situation so we can choose
+how this is kind of run we'll go over to
+our postures again NATO is probably yes
+Syria
+go ahead and close that close that and
+now I'm in great shape one more time so
+now I'm ready to start adding stuff in
+so the first thing I like to do is I
+like to focus on the target side of
+things so I'll open this sucker up and
+let's see what we have by default in
+Syria so scroll down Syria again this
+all comes with command which is another
+amazing reason for this game Wow to pick
+from here
+Wow okay let's start with the basics
+Syria aww alright looks good open that
+one up excellent so now we have Syrian
+aww
+let's go ahead and close this
+that's loaded up Oh beautiful they all
+come grouped together by the way I
+approached it for those of you making
+your own imports please put them in
+groups it's much simpler to remove them
+alright let's see what this actually
+looks like wow wow what is this a rock
+this is incredible so they have quite a
+bit of air defence assets and you can
+see that they basically as well as
+people coming out of the ocean which
+makes a lot of sense fortunately that
+means that folks in Russia are going to
+be coming basically out of Armenia over
+Turkey mine the real world but for this
+I'm just simplifying the scenario we
+could also come out of Iran but then you
+need permission to come out of Rock you
+get very very quickly so what do we have
+here looks like the combination of twos
+threes and sixes let's say six by the
+way is a pretty nasty system we also
+have two so while we're at it we might
+as well turn the e.w on cuz oh we're
+gonna need it a little later on so
+that's looking pretty good
+let's go ahead and import some more
+stuff and again this is just you know
+fake it to make it kind of a thing don't
+work harder than you have to work on a
+scenario Wow let's do it anyway
+Wow okay so that's actually looking
+pretty darn good not gonna lie here
+looks like we have a really strong
+concentration of airports all right
+along here we have one way way way out
+here you've got this beautiful section
+here we got that river coming through as
+far as our scenario goes what's the
+point of it remember do we need all this
+do we only need one of these can we swap
+them out with single unit because
+they're not supposed to be targets
+that's completely going to be your
+choice when you design a scenario in
+this particular case I'm kind of a fan
+of swapping them out for single units
+only because that's going to simplify
+our scenarios loading and if they're not
+supposed to be targets anyway why would
+it matter so let's
+take a look at what we have here but now
+over to the Internet
+Syrian Air Force bases let's see
+and now we actually have a list of these
+bases and more importantly what
+squadrons they have you know this is
+great because we could take this
+information and put it right into the
+scenario so in our scenario I'm actually
+going to be trading them out in getting
+rid of the ones I don't need so let's
+see we have data restore my Arab is
+absolutely terrible I apologize in
+advance
+let's see here I'm just trying to see if
+this is something we even have any
+information about right there okay what
+do you guys carry so let's see we have
+mig-23 m/s and we have l-39s so what I'm
+gonna do is I'm actually going to delete
+this airbase and then replace it with a
+single unit airbase of the same style so
+that way that we don't have to worry
+about it too much which are long as we
+have to 3200 remise again this makes us
+so this is not going to be a valid
+target for the players one thing you
+want to watch out for is spelling here
+so go ahead delete that and I'm going to
+insert it as a single unit airport again
+this is not going to be a target anymore
+right single unit so we found it had two
+3,200 runways a BU a B okay
+all right let's go ahead we have 20
+shelters so there's not gonna be a lot
+of aircraft we have the 678 squadron of
+mig-23 ms/ms we want to grab the Syrian
+version and we want to say what 617
+squadron sqd let's see how many we have
+here so does that tell us how many we
+have okay so if you're using the
+Russians
+before basically aircraft do you have
+the cold regiments which are basically
+the Western equivalent of squadrons
+usually in a regiment you have three
+groups of 12 aircraft it's really three
+groups of 15 but 2/3 of those aircraft
+have basically considered spare so you
+don't get them anyway so let's go ahead
+and grab what we can do here let's
+assume that it's a full unit here and we
+also know that we have some l-39s I
+believe here there's iou's let's go
+ahead grab okay 1984 let's see what we
+have here we don't know so these are
+probably going to be very very small so
+we know this is the 2 squadron and we
+know they have a CAS and cos since
+there's 15 to squadron we want to
+probably reduce that to 12 and probably
+due to split groups maybe six and six
+it seems pretty reasonable well there's
+six CAS and we'll do 6c O's and we're
+pretty much good to go with that
+particular Air Base beautiful let's go
+take a look we have pronounced that I'm
+just going to embarrass myself horribly
+here we have we have no information on
+it this we have no information on it I'm
+just gonna delete it right out of the
+scenario of course we could make stuff
+up one of the main air bases that we
+have at our disposal we have Aleppo
+International I do not just know there's
+all right there sweet so they have a 25
+squadron of mig-21 bits okay baby
+grab it control f6 let's see we got here
+we are packing mig-21 bists and we have
+826 squadron which we're not sure so
+this is probably this is that's not much
+here let's go grab it ourselves and make
+21 bits which is a really nice aircraft
+go down to Syria let's say we're gonna
+look at 15 probably since we don't know
+what that other squadron
+they probably are splitting and sharing
+legal unit here so let's say that eight
+of these are from let's see here eight
+to five squad and we're gonna say that
+the other six would be us to seven of
+them are from the eight to six squads
+I'm sure that's correct looks good add
+selected and now we're good to go for
+that particular base alright so we've
+got that one out of the way we want to
+take a look at Aleppo now let boat
+International League Aleppo yes notice
+that I'm not orienting the runways here
+the reason I'm not doing that is because
+they don't need to for a scenario in
+which you're not attacking these
+international let's see what we actually
+I think I did see this one an hour there
+it is right there oh they have to make
+21 Biss oh so unfortunately our owl in
+this riah what do we say they had these
+guys actually have mig-23s this happens
+all the time maybe 23 BN let's go to
+Syria what units do we have here makes
+23 P yeah they have twenty six nine
+eight six nine five okay now back to
+what we were doing here so again there's
+this awful concept called scenario creep
+in which case you know you designed a
+basic scenario next thing you know
+you've got a bajillion units at it
+because each one of these individually
+but again we'll kind of work our way
+through so this one is going to be
+simply an airport baby check my spelling
+here q of course this is an anglicized
+spelling so you don't actually know
+there we go some real pros will actually
+come in here in nameless things properly
+so this one has are a 25 squadron of the
+mig-21s 21 fish
+scroll down to Syria eight eight ten ten
+or eight eight this is we have yeah it's
+gotta be eight Nate we have a twenty
+five and eight twenty six twenty five
+twenty six squads cutie beautiful
+alright moving right along so you're
+taking care of that we've taken care of
+them we've taken care of them
+alright let's go to s do we have them as
+an option of course the zoom out a
+little bit find out where they are right
+on the border that definitely makes them
+something we'd be interested in checking
+out I just don't see them as one of our
+options here checking very closely
+because I'm gonna make mistake nope they
+get deleted sorry guys it could also be
+a heliport as well alright let's go
+ahead and do this now let's go sorry we
+have a salvia okay so I'm just taking a
+quick look here see if it's something
+that's nice and easy I don't see it do
+not so I'm just gonna knock that one
+right out of our scenario because
+there's no reason for it to be here if
+we don't need it we have Damascus
+International Wow okay Lenti of Damascus
+choices here but again these are all
+going to be the relative the normal
+airports these are not going to be our
+official ones I do not see the Damascus
+Airport that I want so I'm just kinda
+delete that one too
+again save a little bit of time I mean
+we don't need a million airports either
+see to mask Assad messy now this is a
+heck of an airbase that this is a big
+Airport let's go ahead do this one let's
+go ahead
+all this means easy baby now this one is
+big if I recall correctly know I'm messy
+messy messy there it is Meza so we have
+the nine and thirty six nine seventy six
+and we also have the 977 in their bows
+quadrants of si 342 okay interesting
+that's okay though let's see actually
+you know what I'm gonna completely skip
+this Airport to there's no reason to
+include them because of the fact that
+we're what are we gonna do with
+helicopters in the scenario and since
+it's not gonna be a target there's
+really no point you know engaging it
+anyway alright let's take a look so now
+we have to Mayer let's go take a look up
+at the top
+DeMar DeMar there's all tomorrow make 23
+MLS and Sukhoi 22 okay that's fine
+excellent so these guys are definitely
+gonna be worth using this grab it do a
+control f6 action here we are going to
+include we've 23 MLS as well as plenty
+of spaces here so we're talking
+definitely a whole squadron so 6 7 s QD
+confirm one more time we got the right
+one
+23 MLS classic a little interceptors
+Syria networks and we also have Sukhoi
+22 M twos interesting they're not going
+to give us the M - maybe this
+information is out of date maybe this
+information isn't out of date so I'm
+just gonna swap them with the m3 is
+there 15 of those as well even the other
+strike aircraft it's an unknown squadron
+so I'm just gonna mash some numbers
+together and we're good ok awesome
+so you're probably sitting here at this
+point going so we do this for about an
+hour in order to
+make sure you have all the different
+stuff and the answer is yeah this is
+basically what you do in most scenarios
+depends on how big your scenario needs
+to be so we have Hannah real quickly AJ
+mah a B what do we have a hammam we have
+some big twenty ones again okay so this
+is definitely worth looking at let's go
+ahead maybe again by making them single
+unit we're not going to be using these
+particular aircraft as targets so let's
+go ahead and grab this one we have six
+seven 9 squadron six seven nine and we
+are looking at mig-21mfs actually a
+training squadron because they've the UM
+version and apparently we do have a
+group of mig-29s here as well so we
+don't know which group is that doesn't
+actually know unknown squadron so I'm
+actually just gonna leave them out
+completely there's no point in putting
+them in there probably the u version of
+the mig-29 okay so that's looking pretty
+good so far
+alright gar-bear this is another very
+large air base not really mm-hmm
+let's add a scenario RH press ok again
+wikipedia is your friend this would be
+quite a pain without it what do we get
+we gets two squadrons of LC 39 oh not
+even worth our time l-39 CA Syria we're
+gonna go ahead and grab some of these
+two squadrons but how many stands
+there's only 20 stands so it's probably
+gonna be to group unknown squadron
+number yeah we don't know 25th squad why
+not make it to fake it like I said
+alright fake it to you make it alright
+we're doing pretty well here she's not
+gonna try to pronounce that one that's
+just gonna be embarrassing on my part
+alright take a look there it is right
+there
+Oh make 21 bits we have nine four five
+nine four six and we have thirty stands
+nice this is definitely going to be an
+interesting opportunity very large air
+base also two runways in this one all
+right okay H okay go ahead of this
+aircraft to it all right we have pickets
+why nine four five and nine four six
+both and big 21 bits 21 this let's go
+ahead and grab 15 let me set nine four
+six fifteen of those as well beautiful
+all right hey we're getting there
+alright skip skip skip skip skip skip ah
+okay
+we have Mars Rojo right there this
+Marshall suit on there's Mars so this is
+a big 23 's and we get a squadron okay
+all right single unit airfield yes this
+is what half of making a good scenario
+is and they are J Rho f6 what do we got
+so we have 24 stands but we have three
+squadrons that's a little weird not
+gonna lie
+so we have a group of mig-23s okay this
+is definitely a training squadron also
+so probably it's gonna be 15 in 10
+something like that 50 for squad look
+there's make 23 MLS 3 ml Syria we said
+we're gonna 15 of those we're gonna have
+10 for the next quadrant that's going to
+be the 7/7 squadron technically they're
+UMS it's the training version so you
+probably wouldn't even be using them in
+combat we also have a small group of
+mi-25s which they're not really going to
+be a thing in the scenarios I wouldn't
+even bother inputting them at all and
+again imagine trying to do this for the
+entire United States I'm actually
+working on a side project with that
+Minka Air Base Minka Air Base
+then we have access to the information
+of again you can always go online see we
+just do a generic search but I'm trying
+to keep it relatively straightforward
+here we have Manoj caber Shah rots and
+we have okay I do not see this one as
+one of our options
+all right so we start very very close to
+the end we have that's a tiny airport
+that might not you can be represented in
+here just looking through real quick I
+don't see it nope deleted I think I've
+been saying don't only map only really
+is necessary Iran as they like to say I
+reversing out about here is just one of
+her options you got to watch the
+spelling on a lot of these because it
+might not quite be what you expect it to
+be nope I don't see that one either so
+we're just gonna delete it of course we
+could stick anything with one in there
+we don't have to delete it scroll down
+to the bottom here I just saw
+Air Base which is a very large Air Base
+a sequel Air Base I believe that is one
+of our choices right there make 29s
+important okay so we've been going on
+about a half an hour and well we've
+choose you through quite a few of these
+so I'm gonna go ahead and think about
+ending our video here and we'll pick up
+next time so what I'm gonna do is I'm
+gonna continue going back and forth
+between what we have here on this list
+and we have representatives inside the
+mission sticking everybody in and then
+next time we'll take a look at actually
+taking this scenario and start putting
+in the NATO assets as well as the CIS SS

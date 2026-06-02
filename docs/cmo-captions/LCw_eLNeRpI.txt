@@ -1,0 +1,341 @@
+# C: MO - Ship Screening Distance
+Video: https://www.youtube.com/watch?v=LCw_eLNeRpI
+Video ID: LCw_eLNeRpI
+
+Hello everyone. In today's video, we're
+going to be answering a question
+somebody had that I thought was actually
+pretty good. And the question was, is
+there any documentation out there that
+tells you exactly how far away you
+should put your screens? Uh the answer
+is there are a couple documents out
+there that will help with this
+particular process. Of course, you're
+sitting here going, "Well, that's fun. I
+don't want to do any reading. Um I know
+you're going to show us anyway, so could
+you just show us?" Sounds like my
+students, right? So, what we're going to
+do today is kind of demonstrate the
+general way to set up a ship screen.
+We're also going to involve some subs.
+We're not going to be dealing with
+airplanes today just because you've seen
+me do that before. So, how do you do
+this? Well, there's a couple rules of
+thumb that work really, really well as
+far as determining where things should
+go. So, what I did is I sort of divided
+the two forces up into what I call a AW
+sort of ships and then of course ASW
+ships. Generally, an AW ship. These tend
+to be bigger ships. You can see I've got
+the Bunker Hill there. You can see I
+have the Sansion. Of course, you can
+come down here. Of course, that would
+not be how you pronounce that. I know.
+We have the Extor. Of course, I grabbed
+the Forbin, the Horizon class here.
+Swinging down here are my ASW,
+anti-ubmarine warfare. You've got the
+Norfolk. Of course, I've got the Bremen.
+That one I got right. The Carol Dorman,
+and of course, we got our friends, the
+Navara. In the middle of all this is, of
+course, our Stenis. And then up front,
+we have the Rubis as well as Virginia
+here. So, we have a really, really,
+really tight screen of ships. It's just
+a matter of putting them in the right
+spot. So generally the way we do this is
+whenever you're dealing with anything a
+a w the magic number works out to be
+about 45 and you're sitting there going
+that's cool. What does that mean? What
+that means is if you were to take a unit
+I'm going to borrow the tao here. I'm
+going to park it over here. See this uh
+kind of a slightly red almost I don't
+want to call it a salmon color. Again
+partially color blind here I work with
+what I got. You'll notice this ring here
+is my air defense range. You always want
+to make sure it is 1/2 of a ring away
+from the thing it is trying to protect.
+Now, here's a cool thing. If I press
+Ctrl D and drag a box from this, you'll
+see it's 90 miles. Now, when you do the
+math on that real quick, your brain
+goes, "Haha, 45, correct?" So, not only
+do we want to put it about 45 miles from
+the carrier group, we also want to make
+sure that it is in the place where the
+danger is coming from. So, in this case,
+if the danger were coming from France,
+all we would do is basically position 45
+miles in the direction of the threat. So
+in this case, I'm going to press control
+D, drag a line here to about 45 miles
+and press the M key and go and go ahead
+and pop them right there. Just like
+that. So that's where Tao goes. Now
+you're sitting here going, obviously the
+enemy is not stupid. You're going to
+need more than one of those ships at a
+time. And I say, aha, that's not a
+problem because it demonstrates the next
+point. So we have this one. This is the
+type of F124. I'm not even going to
+pretend to pronounce it this time, which
+has actually got some really, really
+good weapons. And you'll notice its
+maximum weapon engagement range for air
+defense is also about 90. starting to
+see where this is going to happen. Oh
+yeah. Oh, just give me a minute. Wait
+for the fun part. Wait for the fun part.
+So, what I'm gonna do is I'm gonna grab
+this guy. And again, we need to keep him
+within 45 miles of the thing he's
+protecting. And of course, we want to
+make sure he has a 1/3 overlap with the
+person he's working with. In this case,
+my forget 219 is basically chilling out
+with my CG-52 Bunker Hill. So, how do we
+know that these are one-third
+overlapping with each other? Well, this
+is actually pretty cool. You go up to
+map settings, range symbols, all units.
+Okay, it's about to get a lot worse. So,
+um, one of the things you can do is you
+can turn on and off merging of range
+symbols. Prepare to cry.
+But the reason that I don't have to
+worry about that too much here is, um,
+we can disable all range indicators. Go
+back up here, reenable just air weapons.
+Tada. Look at how nice this is. So now
+what we can do is we can grab the F-124
+here and say, hey, there's a massive
+overlap here. This is way more than a
+one-/ird overlap with the thing I can
+do. I could put this one over here and
+still be legal. And that's exactly what
+I'm going to do. Again, trying to keep
+that 1/3 going here. That's about a
+third of a ring. So, he's about 45 miles
+away still. And he shares, you can kind
+of take a look at this. They sort of
+have this kind of co-helping each other
+out. And they're within one/ird of a
+ring of each other, which is exactly
+what you want. So, this is perfect
+placement for that unit. I actually got
+lucky this time. That never happens.
+Now, one of the things you'll notice is
+our type 42 here, the exit, does not
+have a 90 mile range. is a much much
+more normal people range of about about
+60 miles. So again, use one half of that
+range as sort of your kind of way to
+think about it. So 1 half of 60 of
+course is 35. And the one thing we want
+to be thinking about too is kind of how
+we're going to plug our gap here. And
+again, we're assuming France is the
+threat here. So I'm going to grab this
+one, pop it over here for now. Crl D.
+I'm gonna measure about 35 miles. And
+it's going to be about right there. I'm
+gonna grab this one, park it right here.
+So this is about 35 miles, give or take.
+Actually, it's a little bit closer to
+40. And of course, you can see we still
+have that nice overlap. As a matter of
+fact, the overlap is so large that this
+one is completely engulfed.
+Theoretically, if I wanted to be a
+little brave, I could kind of bring it
+around the south here, in which case
+it's a little bit different of an angle.
+But again, we're still fine. And that's
+perfectly good place. Now, what about
+the horizon here? Now, the horizon's got
+a really good radar. I always like to
+save one destroyer with the stuff that
+doesn't go long distances and get it
+nice and close to the actual thing it is
+going to be protecting. Remember, the
+cheap stuff always gets in front of the
+expensive stuff. So, if I park this guy
+a little bit behind, we're assuming
+we're traveling north, by the way.
+Little bit behind. This will not mask
+the firearms of the actual carrier, but
+it still provides a beautiful kind of a
+range here. Now, if I actually go down
+here, usually these are about a mile
+apart. Now, you can see we're about
+three miles here. So, I'll come about
+we'll call 2.1 miles. That looks pretty
+darn good. So, that's solid. Uh, that's
+where the horizon's going to be
+chilling. Excellent. So, what I'm going
+to do now is I'm going to go ahead and
+hide everything because it's getting a
+little messy in here. And I'm going to
+go ahead and turn on underwater weapons.
+Now, there's a difference between
+sensors and weapons. Weapons is our
+effective weapon range. Sensors is
+sensor range. Now, it's really important
+you understand that concept because my
+torpedo on the Bremen here can only
+reach four miles effectively. Meanwhile,
+of course, my Virginia uh Yeah, show off
+21.6 nautical miles. Yeah, you do you
+kind of a thing like that. The reality
+is the underwater weapon range, we have
+to be able to get to the target by
+detecting it first and then getting
+within our underwater weapon range. Keep
+in mind that in the real world we have
+helicopters to do this for us. We don't
+have to move the ship. We just send a
+helicopter while the ship keeps an eye
+on the fun. So, one of the things we can
+do here is instead of using the
+underwater weapon range, we'll go ahead
+and shut that off. We'll go ahead and
+turn on the underwater sensor range.
+Tada! Now we're cooking. So, one of the
+things you'll notice is these cruisers
+are fabulous. But that being said, this
+still works perfectly fine for us
+because we have our lovely Rubis here
+and of course we have our Virginia. Now,
+I can see there's a lot of overlap here.
+So, what I'm going to do is I'm going to
+park my Virginia. Generally, the rule is
+20 miles from the HVT. So, I'm going to
+go to this one. I'm going to go out to
+about 20 miles. That looks pretty good
+right there. Go ahead and grab this one.
+Remember, the threat axis is France. So,
+I'm going to come down here and grab
+another 20 miles. And we're going to
+park this one about right here.
+Generally, I like to have submarines
+ahead of my fleet, but again, just for
+demonstration purposes, this works
+pretty well. Let's go ahead and pull
+these guys out of the way. Again, these
+are my ASW frigots. I'm going to grab
+all of them. And I could have sworn that
+Dorman was a I might have made a mistake
+on that one. And again, I'm perfectly
+fine making mist. No, I'm not wrong.
+This guy's fantastic at anti-ubmarine
+warfare. What am I doing? All right. Did
+I accidentally grab uh one of the other
+ships by accident? Oh, yeah. Oh, yeah.
+Definitely did. So, in my infinite
+brilliance, of course, I grabbed the one
+ship that I needed to be in that
+position and yonked it and put it
+somewhere in the wrong spot. My bad. All
+right, you all team up over there where
+you're supposed to be. Okay, so we've
+got our two submarines. Like I said, I
+like submarines to be in advance of the
+fleet. But when it comes to ASW, you can
+be struck at any time, anywhere. So, I
+always like to concentrate those at
+about a 20 nautical mile per flank. So,
+of course, we have a front, we got a
+left, we got a south, or you say bottom
+or behind, rear, aft, whatever you want
+to call it. And we're going to park one
+of those at each one of those points of
+the cross. So, there's 20 miles. I'm
+going to go ahead and pop the breman
+right there. I'm going to grab this
+buddy right here. I'm going to go ahead
+and find about 20 miles to the right
+here. Just like that. There's the Carol
+Carl Carell. Again, I'm awful with these
+things. I'm press uh go ahead and park
+him over there like that. And let's go
+get this guy and mark him over here like
+that. Excellent.
+So now we are in awesome shape here.
+Oops. And I just unpaused. Silly. So
+let's go ahead and now turn on my range.
+Don't panic. Don't panic. Merge.
+Continue not panicking. Continue not
+panicking. Oh, there we are. Good. So we
+have our ship in the middle. We have our
+ASW ring at about 20 in half the missile
+distances with overlapping fields of
+fire for our lovely anti-aircraft
+warfare weapons. Now, of course, you're
+sitting here going, "Man, that's an
+awful lot of ships protecting that
+carrier." Well, if it's war time, you're
+going to stack the deck a bit. So, is
+this going to work? Let's find out. All
+right, we've set up some shenanigans
+here. So, one thing we do want to do is
+get some radar coverage. And again,
+having just a random vessel kind of
+chilling in the way. Kind of a good way
+to uh get yourself targeted is kind of
+the best way to describe it. So, you
+want to be a little strategic about the
+way that you employ all of your radar
+sensors, but again, that would be
+something we cover in another video.
+Regardless, standby for fireworks.
+Standby for fireworks. Fireworks. Any
+Probably would help if I set the other
+team to actually be hostile to me.
+That'll definitely change things. And I
+don't think they're ever going to get a
+chance to even get a single shot out
+here. We probably should have used like
+stealth weapons or something like that
+cuz um I'm going to be honest with you,
+there's no way they're going to get
+within range. Oh, here comes the party.
+Here comes the party. Party begins.
+Uh oh, here comes our first loss. Oh,
+there goes the frigot.
+[Music]
+Uhoh. Whoa. Whoa.
+Nice. Oh, I think that one's still
+chasing that one down. Woo. That was
+fun. Now, the cool thing here is you
+probably observed the fact that my Tao
+got slammed. Um, the Tao also got
+slammed by the world's probably one of
+the world's best anti-hship missiles,
+and it uh did not have its own radar
+going at the time. So, um, that is
+really, really, really impressive that
+Tao could take a hit like that
+completely unassisted. But it also shows
+you kind of what I was saying before
+where a carrier, which is really, really
+important, valuable bit, is pretty fine.
+And keep in mind, in the real world, you
+wouldn't be not having an E2 keeping an
+eye on that entire party. You know, if I
+ran that again, but I had an E2 that
+could see where things were coming at
+us, they would never have gotten close
+because again, F-35s would come find
+them. But it gives you an idea of
+exactly the goal, exactly the system,
+and exactly kind of how everything
+works. Enjoy.

@@ -1,0 +1,364 @@
+# C: MO - 1328.13 Changes
+Video: https://www.youtube.com/watch?v=TrCk5m3e5ts
+Video ID: TrCk5m3e5ts
+
+hello everyone in today's video we're
+going to be taking a look at some of the
+new features given to us in Build 1
+32813 of command modern operations so
+the first one and probably the majority
+of what we're going to be exploring
+today is how theyve adjusted the way
+that some facilities can now exist both
+on water as well as on land you're
+sitting there going so so let me show
+you remember in the old days when you
+press the insert key and you went ahead
+and been like you know there should be a
+bridge here cuz you know Long Island
+needs to be more connected to the rest
+of Connecticut so we come up here and we
+go to facilities and we type in Bridge
+ignore the ones that aren't supposed to
+be you press okay and you get this big
+Angry message that says you can't do
+that well guess what you can do that now
+as a matter of fact when I press the
+okay button you'll see that there's new
+Bridges and they can actually say can
+place on water so you know what I am
+going to build that bridge I'm going
+press the okay button Bing now you can
+see I have a bridge now this technology
+actually extends to other types of units
+as well as a matter of fact if you come
+up here you can type in a can place and
+you'll notice we have a whole collection
+of new items that we can now put in here
+so not going to put a bridge there but
+you know what let's go ahead and stick
+up a wind farm because you know what I
+like wind farms let's make a really big
+Wind Farm yeah now start to look like
+Long Island cool now the cool thing is
+these can be attacked by both by anti-
+ship weapons as well as Conventional
+Weapons which gives us a nice little
+benefit to the technology to demonstrate
+that um we're going to do some real
+damage to this bridge that is very
+iconic to me as a kid and we'll also
+take a look at some other little
+features as we do it so what I'm going
+to do is I'm going to set myself up a
+mission we got a bunch of bridge
+segments before you get excited there's
+no such thing as Bridge segment it's
+just a bridge that I stuck in the water
+here and of course I also have this
+little offshore surveillance platform
+now some of you going to say whoa whoa
+whoa slow down Chief slow down Chief
+what if I wanted to go to surface and I
+wanted to type in platform I'd say sure
+whatever you like as a matter of fact
+you can come right in here and I'll grab
+one of your regular platforms if you
+rather they not be the facility variety
+but the facility variety has the unique
+benefit that it can shoot anti- ship
+missiles at it now he so let's do that
+so what I'm going to do is I'm going to
+grab this contr f11 I should say I'm
+going to go ahead and blow up C
+B we do a strike we'll do a land strike
+here press do and we're picking the
+appropriate units for this which happen
+to be AGS 37 vgin that looks pretty good
+to me looks pretty good to me all like
+that's looking solid let's go ahead and
+unleash my uh hell here so they of
+course they're going to start taxing
+down the runway they're going to start
+their big big big engines um it's going
+to say all sorts of angry things in
+Swedish when you get the thing rolling
+but it's really really neat plane for
+those of you who have not played around
+with in DCS at least I think it's a neat
+playe so anyway I've ordered my aircraft
+to get ready for take off and here they
+come so these aircraft of course are
+equipped with um something a little
+nonstandard they have the RB 15f it's
+this gigantic gigantic gigantic anti-
+ship missile and they're great you can
+program waypoints on them do all sorts
+of other silly stuff to it depending on
+what you need to do here so I've ordered
+them to go ahead and launch and they're
+going to go ahead and get themselves all
+segmented now there's something brand
+new that you'll probably are observing
+if you're looking very closely and
+that's the fact you'll notice on their
+status screen now we have a couple new
+bells and whistles one of these of
+course you'll notice is the fact that it
+says says Target Bridge segment uh this
+is a new feature now we can actually see
+what they're targeting at a specific
+time now that's one of the fun new
+features that they added and there's
+actually several other that we're going
+to get in a minute but we'll get there
+in a minute so what I'm going to do is
+I'm going to grab one of these units
+real quickly here and what you're going
+to observe now is there's actually a new
+feature on the right you will see we
+have Tas and ground speed the reason
+this is so handy is it now tells you
+what the expected manual is um sorry not
+manual the expected throttle is at this
+particular time now the cool joke here
+is if I order my guy to go up to 10,000
+ft actually watch his ground speed drop
+because of course they're climbing
+that'll have a big impact over there
+it's actually cool because you have your
+task ground speed and you have your
+altitude down which is actually pretty
+cool and it even tells you over here
+exactly what particular altitude has
+been selected for this given operation
+here so that's pretty neat but um we're
+going to explore this a little bit more
+and you'll see why in a moment so I'm
+going to go and speed up time our units
+are going to start sailing their way
+towards that release Point uh they're
+getting close they're just about in
+range it's looking pretty groovy and
+they're going to go ahead and pull the
+trigger there once they get a little bit
+bit closer here and come on guys don't
+let me down notice by the way they're
+not firing and now the reason they're
+not firing watch this this is one of
+those fun little things everybody
+forgets let's see looks good looks good
+looks good looks good oh we're in range
+I'm sorry I'm just being rude to myself
+kind of a thing like that so our guys
+are going to Contin continue flying
+towards it they're going to fly a
+basically Point Blank Range here and of
+course these missiles go off on their
+own and if I click on them you'll notice
+something brand new they now have
+difficult to see on your screens
+probably an ET time built right into our
+Target and which you can actually see if
+you look very closely there's now
+Crosshair that tells you what the
+selected Target is so if I click on this
+one for example you'll notice the
+Crosshair is now on this guy and in 24
+seconds that particular Target is going
+to be struck now go ahead and I'll zoom
+out just a tiny bit here they fixed a
+lot of things by the way time
+acceleration which would been great and
+oh my gosh oh the humanity oh this is
+bad this is a lot oh no oh no that poor
+Bridge oh but we didn't destroy the
+whole Bridge so we have to finish the
+job here and um we're going to do that
+Zoom zo zoom zoom let's go borrow one of
+these yeah dong Fang 20 one we'll
+definitely do the job here so I'm going
+to press shift F1 I'm going to go ahead
+and drag a box let go and then of course
+I've got four of these I'm going select
+all of these I'm going to press this and
+each one of you gets a missile and you
+specifically you get a two missiles
+there oops turns out I did not push that
+correctly when I did it my apologies
+everyone that's a little better cool so
+now this is when things are going to get
+interesting um people like ballistic
+missiles they're very very effective
+weapons it just sort of drop in but the
+problem with ballistic missile of course
+is trying to predict when they're going
+to get to their target now you're
+sitting here going all just going to
+click on it and you're going to see
+exactly how long it's going to take to
+get to the Target nope not correct as a
+matter of fact when I click on this you
+will observe that um we do have our
+little poiner here which is telling us
+where the weapon is being guided towards
+but you see nothing on here that's
+actually indicating exactly how long
+it's going to take to get to its Target
+so what I'm going to do is speed up time
+a little bit here let's go ahead and
+give it a nice little push it's a 800
+what is that woo 900 km up there's the
+rid right there and it's going to start
+going whoa and flying back into the
+atmosphere here now for those of you
+know BMS of course you would know of
+course this particular ballistic missile
+will split and actually come into us
+just kind of the Warhead component and
+let the rest of it sort of drop off the
+back now the Warhead component which is
+interesting enough will have an ETA
+because of course it's in the terminal
+phase so I'm let this thing continue
+dropping there getting a little bit
+closer starting to get into the upper
+atmosphere it's going to start slowing
+down pretty soon cuz you're going to
+start hitting thick stuff as I like to
+call it let's go a and grab one of these
+right here it's really cool though and
+there's my t is like 6,000 knots but my
+ground speed is 2500 just to give you an
+idea of just how steep of an entry this
+particular Target is doing it's pretty
+cool that we hit that as a feature now I
+got to be a time this carefully because
+it doesn't drop off the boss until like
+the last second there it is right there
+now if I click on one of these targets
+you're going to observe that I now have
+32 seconds to impact which is so cool
+because of now we can basically predict
+these things which I find very very wild
+so I'm just going to let this thing kind
+of drop in from orbit here um what are
+you guys doing are you oh you still have
+some rb1 15s left it's okay my dolphin
+is going to take care of the rest of
+that for you guys but you can um join in
+if you'd like you're going to have to
+wait until these things strike before
+they're going to launch their missiles
+though so look at this look at this I
+promis two of those all malfunction here
+we go oh just one of them malfunctioned
+not bad so now this crew of course is
+going to deal with the last Target there
+now there's another really neat feature
+that they added which I think is really
+really cool and that's the fact that you
+can have aircraft that basically
+emergency go to a diversion base rather
+than go to their original kind of their
+OG takeoff point so what I'm going to do
+real quickly here is I'm going to grab
+myself another airplane I'm pretty
+confident they're going to blow that
+sucker up I'm going to grab myself an
+aircraft and I'm going to call it I'll
+do cesna 172 cuz oh my gosh why do we
+have so many versions of this now the P
+model I know that version so we're going
+to grab this one and um we're going to
+go ahead and take him real quickly and
+I'm going to order wow I've never been
+that high in ss72 I think I hit 8,000
+once so what I'm going to do is I'm
+going to go ahead and order him to have
+a base um not return a base my bad un
+assign un assign un assign you can just
+set the UK key to cancel that by the way
+order to have a new base let's go ahead
+and grab this guy let's see here let's
+see here attack options assigned to
+Mission I'm being blind hang on a second
+yeah right in front of me S like new
+home base so now what I'm going to do is
+I'm going to go ahead and click on my
+original base here so he's going to
+start kind of cruising kind of Cruis and
+he's going to go home and all of a
+sudden out of nowhere a piece of debris
+from one of those missiles suddenly
+strikes him and he finds himself low on
+fuel uh let's see here fuel would be low
+for this guy let's go up to unit
+properties set unit properties let's see
+here um he's got 169 he finds himself
+with eight units of fuel that's not even
+enough let's do seven units of fuel
+oh that's not good that's a gallon pause
+so what he's going to do is he's going
+to immediately panic and um you're going
+to see his say return to base Bingo
+because he does not have enough fuel to
+do this check a look at this he's
+selected a new base to land emergency
+Air Base isn't that convenient that
+somebody put that air base right there
+so what he's going to do now is he's
+going to select this as his new home
+base and he's going to have the world's
+steepest approach to Landing from anyone
+s 71 yeah 172 ever 4.3 oh my gosh he's
+got like 24 minutes for one gallon of
+fuel nah that's that's wishful thinking
+in a 172 but I'll take it I'll take it
+all right here we go he's got 4
+kilograms left actually I take it back 4
+kilograms isn't bad especially in a
+descent my bad it wasn't wasn't in
+pounds it was in kilograms
+and you can see now all he's all set now
+what you're probably saying is hey that
+was pretty handy oh he's got to finish
+Landing guess I should give him a minute
+to taxi up to the line of course the
+little long you guys tell him to cut his
+oh still taxing I'm sorry I'm being
+impatient I'm being impatient come on my
+guy these are Big air bases finish up
+all right I'm going to give you two
+minutes this time okay that's plenty of
+time so let's grab him now and um let's
+go ahead and set time to ready and let's
+go ahead and say he's got basically he's
+ready I'll give a second to go and now
+what I'm going to do is I'm going to
+grab him and I'm going to order him to
+go ahead and take off so I'm going to
+launch him individually now here's where
+things get a little interesting so he's
+going to take off and he's going to
+start doing some apparently Touch and Go
+Landings which is what I would do so so
+one of the things you'll notice here is
+if I order him to comply over here if I
+come over here notice his assigned base
+is emergency Air Base it is no longer
+the original Air Base that we assigned
+him to so after that's been done we have
+to actually come in here we have to come
+back to the button I couldn't find the
+first time go ahead and click on him and
+now if I press the b key you'll notice
+he's actually going to fly back to where
+he needs to go and plop himself down for
+landing so this is a really cool feature
+and there's actually a lot of other
+little bells and whistles and features
+that they added to this version of
+command but those are kind of the ones
+that jumped out at me as hey this is
+neat and I had to play with it enjoy

@@ -1,0 +1,468 @@
+# C: MO - Refueling and Rearming Ships At Sea
+Video: https://www.youtube.com/watch?v=Xz9A8IsvFpI
+Video ID: Xz9A8IsvFpI
+
+Hello everyone. It was once said that a
+beginner studies tactics and a master or
+professional studies logistics. Today
+we're going to take a look at one aspect
+of logistics and that's going to be
+underway replenishment of vessels that
+are at sea. Now uh somebody was having
+an interesting question where they're
+like, "Is there any way I can basically
+shove some tomahawks back into my empty
+destroyers? Been having a heck of a fun
+time with it." And the answer is yeah.
+There's actually a couple different ways
+you can do it. The simplest method, of
+course, we covered in a video a little
+while ago where we basically went into
+shore and basically pulled tomahawk
+missiles out of bunkers and we actually
+delivered them by aeroplane. Uh today
+we're going to take a look at how they
+do it while they're already underway,
+especially in the middle of the ocean.
+So, let's go ahead and take a look at
+our scenario here. So, we have a very
+very very small carrier group here. We
+have the lovely Milus Air and Arley
+Burke number one and he's basically
+chilling. He's had a busy week. He's
+fired off a lot of Tomahawks. He's fired
+off a lot of SM. Um, I don't even know
+what happened to the rest of the carrier
+group, but we can safe to say he's had a
+fun time. You can also see that he does
+not have a lot of fuel on board. He's
+more or less empty. Our carrier on the
+flip side is looking pretty good. Uh,
+you can see that our carrier there has
+got a full tank because, of course, it's
+nuclearpowered, but it has gone through
+a substantial amount of its aviation
+fuel because obviously it's going to be
+supporting all the F-35s and stuff that
+ripping off the deck. Yes, I know what
+year it is. So, what we're going to take
+a look at here is we're going to try to
+figure out how to get stuff into these
+vessels now that we're at sea. So, what
+I'm going to do is start by clicking on
+my lovely little DDG here, popping this
+sucker up real fast. And what I want to
+show you real quick, and this is going
+to be kind of a point that's going to
+confuse you a little bit later on, is
+the fact that our vessel itself can
+refuel from port, can refuel from
+starboard, replenish from port,
+replenish from starboard. Now, this is
+important because you'll notice it has
+an X2, and it has an X2. That's cool. In
+case one gets broken, we can use the
+other one. That's all that means. It
+does not mean you can stick like eight
+ships into the side of this thing and
+basically fill it up in a hurry. That'd
+be kind of fun if you could do that, but
+other reality you can't. The other thing
+we need to pay attention to is the type
+of fuel it carries. You'll notice we
+have two kinds. We have a gas fuel, good
+oldfashioned MGO, and of course, we have
+aviation fuel in a secondary fuel tank.
+You know, we burnt quite a bit of this.
+Now, if you're a level designer and you
+want to kind of have some fun with this,
+one of the things you can actually do if
+you're in scenario edit mode, like I am
+right now, is if you right click on
+these and go down to the scenario
+editor, edit unit properties, set unit
+properties. You can't do this in
+scenario mode. Obviously, you can
+actually come in here with this little
+drop down and pick what you want to
+control. You can see, like I said, while
+does he burn fuel fast. It's quite a bit
+in a very, very short period of time. We
+got to get some gas in this guy here.
+So, there's a bunch of different ways
+that we can replenish. And everybody's
+favorite way that doesn't work is by
+air. So, what I have right here is I
+have a lovely C2 Greyhound. This is a
+really neat plane. If you've not seen
+this, a carrier based basically mini
+mini mini cargo plane. And now, believe
+it or not, what I did to this poor thing
+is I put an ISO 20ft container on it.
+And inside there, of course, there's a
+tomahawk missile waiting. Now, you're
+sitting there going, "This is so cool.
+We can just take that vessel and we can
+order him to land, which is what he's I
+just ordered him to do." He's going to
+land on the ship. He's going to unload
+that container and the container is
+going to sit on the deck of the ship.
+Unfortunately, there's no way that we
+can do that. But we can't get into that
+container and basically pull the missile
+out of it cuz it wouldn't matter anyway
+because we'd have a very heck tough time
+basically trying to get the thing into
+the destroyer across the ocean here. So
+unfortunately that strategy at least at
+this time is not going to work like you
+want it to. Keep in mind if you have an
+aircraft that has softened like it's
+loaded out it can drop that off in the
+carrier. Okay. So now that that's taken
+care of, let's take a look at our
+options for replenishment here. There's
+kind of the I call it the almost aerial
+refueling method which is a little it's
+okay. It's okay. And of course the other
+method we have is to basically ride
+alongside of it while you refuel. So the
+US uh Navy at this time basically has
+three different flavors of replenishment
+ship. That makes sense. You basically
+have your fast combat support ships. Uh
+this is this guy right here. This is the
+T AOE 6. In the old days you had these
+AOS which are basically these big ships
+that could kind of do one of everything.
+Let me go grab you one of those real
+quick just for the sake of being
+thorough today. Uh, let's see here. A O
+R Wita is the one. So, if you want to
+imagine, this ship was basically a kind
+of an all-in-one. It had fuel on board.
+It had dry stores on board. You can see
+it's got a million cranes and debits on
+the side, making it really, really easy.
+Solid ship. Uh, we kind of got rid of
+these, as you can see a little while
+ago. Instead, we kind of diversified the
+fleet as far as it goes. Um, our second
+option, of course, here is all of the
+Henry Kaiser class. These are your
+oilers. Let me see if I can get you a
+bigger picture here.
+This particular vessel, again, this is
+designed for the stuff that burns,
+basically, if you want to think about
+petroleum, oil, lubricants, stuff like
+that. This is kind of the all-in-one.
+It's also very, very fast ship. I think
+it's about like 20 knots or 22 knots.
+And then, of course, if you just need
+missiles and stuff like that, you have
+the AK versions. This is the Louiswis
+and Clark here. Very simple. It's a dry
+cargo ship. And when I look at this, you
+can see it's also a little bit smaller.
+This thing, as you can tell by the
+openings on the side and everything, it
+is engineered from the ground up for the
+purposes of dropping things like
+missiles and stuff off. Now, if you're a
+scenario designer, one of the things you
+have to keep in mind is you have to put
+missiles and stuff into there. You're
+not going to get it by default. So, if I
+click on this vessel and click on
+magazines, you'll actually see here that
+there's a special area here to add
+munitions. So, for example, if I want to
+add those tomahawks in here, I can
+actually come down here. I can type in
+uh what is it? RGMO. I never get it
+right. And I know I know they're D's. Uh
+where's my D's? Uh carbon filaments. I
+didn't realize they had a thing for
+that. That's cool. I got to go play with
+that one later. And of course, you can
+add as many as you want. You can come in
+here and say, "Give me 100." And now
+there's 100 tomahawks on here. Granted,
+you can't shoot them off the deck, which
+that seems legit, but um keep in mind,
+we can now reload them. All right. Now
+that that's taken care of, let's deal
+with the actual replenishment. Now,
+there's a couple different ways to do
+this. And this is kind of where things
+get a little interesting, I guess I
+would say. So, the first thing we can do
+is we can come over here, right click on
+my entire group, unwrap, and pick which
+one we want to do. We can either select
+provider automatically, in which case
+they're going to pick something that's
+available and it's got what it needs, or
+of course, we can do it manually. Then,
+of course, we can also rearm
+automatically, and we can rearm
+manually. Now, one of the things that
+happens, and you got to be kind of
+careful with this, and by the way, we
+can do this with missions as well, is
+the fact that our lovely setup right
+now, if I do this with a carrier group,
+it's just going to go as the carrier and
+this guy's going to do power donuts.
+Now, it's useless to us. So, what I'm
+going to do instead is hit my nine key
+on the numpad, which allows me to select
+these by unit. And then I can do them
+individually. I really recommend doing
+it this way because it's just simpler.
+You'll see what I mean when we get more
+complex in a second. So, I'm going to
+come over here to my list here. I'm
+right click on this one. I can unwrap. I
+can provide automatically. And I can
+rearm. Check this out. So, if I go to
+select prior automatically and just go
+like that, you'll notice he will break
+from the group without actually breaking
+from the group. That's important. and he
+will go scoot scoot over to the first
+guy who can basically refuel. If you
+actually come up here, you can see
+heading to refuel point. He's heading
+over to the Gerald Ford. Now, did you
+expect that? Um, you should have cuz if
+you remember, our carrier here is
+designed to do some replenishment of its
+own. That is basically the old school
+World War II logistics technique where
+your carriers basically refueled all
+their escorts. That was just kind of how
+they did it. So, the cool thing here is
+he's going to go ahead and peel off and
+he's going to run into the carrier and
+he's going to put some gas on board.
+Now, the interesting thing is all he's
+going to do is pick up aviation fuel.
+He's not going to be picking up his gas
+fuel because a carrier doesn't carry
+any. Now, if I want him to rearm, of
+course, I can come in here and I can say
+rearm automatically. I can pick what
+things I want to rearm, which is
+actually really cool, assuming they're
+available. I go like that to anything.
+And what you'll notice here is he's
+changed his mind. He's no longer going
+to the carrier. He's decided to go over
+to supply because supply has everything
+he needs on board, which is super handy.
+Let's go and speed up some time here.
+There you can see it goes.
+You can see the Greyhound just landed
+there.
+All right. So, let's go ahead and take a
+look. By the way, I was mentioning
+earlier, we can't make that delivery.
+So, you'll see here that a Greyhound did
+land. He's basically getting ready to
+go. And you can see he dropped off the
+ISO container. But unfortunately, like I
+said, if I go to cargo right quick and I
+go to my ISO container and I open it, it
+says you can't put it like this. And
+it's like a that would be so easy. I
+could just deliver what I need. So
+anyway, you can see Arley Burke here is
+racing over to the resupply point. And
+uh this is one of the things that people
+forget about logistics. Okay, so we're
+refueling. You can see I have 1.2
+million kg of fuel to go. And you can
+also see we're replenishing. We have 233
+items. Oh, now keep in mind I cheated a
+little because I actually loaded this
+guy up with all sorts of really good
+stuff. Like if I go into his magazine,
+see how he's got all his tomahawks and
+his rims and stuff like that. He's
+pretty much ready to rock. So, you're
+probably doing the math in your head
+real quickly here going, "Okay, you're
+at 15x speed and every time I look up,
+it's about, you know, 100 kilograms."
+Yeah, that's how fast that is. It's that
+that's logistics for you. Now, the cool
+thing here is, and I love this. If I
+come to my Gerald 4 and right click, if
+I were to actually go in here and say,
+"Hey, do you mind uh doing this, too?" I
+can come in here, right click with that.
+I can come here, rearm automatically
+like that. And check it out. He's going
+to go rip over to the same ship. So both
+of these ships are actually rearming at
+the same time from the same buddy here.
+So poor supply is basically getting
+emptied by an aircraft carrier and
+getting emptied by the Arley Burke down
+here. Just kind of the fun I guess. You
+can actually see it's a fuel start to go
+down. It's kind of cool. And keep in
+mind there's different types of fuel on
+board as well. Now our carrier of course
+you'll see he's refueling. He's actually
+basically getting loaded up with
+aviation fuel which he needs. And if I
+come down here too, you can see uh how
+we doing here? He's actually doing
+pretty good. He's uh refueled nicely.
+And the big thing for him is that he's
+replenishing. And you can see it takes a
+very very long time. Now, you're sitting
+there going, "Wow, that's that's kind of
+obnoxious." It's like, "Yeah, it is."
+Let me show you something different. So,
+I'm going to go and re select our
+scenario again here. I'm going go and
+open up blue team for the win. And what
+I'm going to do is first of all, I'm
+going to tell that Greyhound to come
+down and land. I don't want him just
+being around in the sky. We're going to
+grab this ship. I'm going to move it
+down here. I'm go ahead and delete this
+point. And I'm actually going to group
+these ships together so that our buddy
+supply is actually part of our squad
+here. Squad or whatever. I don't know. I
+don't know. Vines aren't things anymore,
+I hope. So, what we have here is we have
+this one is now part of this group. What
+I really want to do is be able to keep
+going to my destination. But what I
+really like is for everybody to go ahead
+and get some stuff off this guy. Now,
+there's a lot of really fun ways to do
+this. And I'll show you one of the ways
+that you could do it. So, what I'm going
+to do is click right here, press F4, and
+I'm going to make the supply vessel the
+chief of this group. It sounds like a
+bad idea, but you'll see why it's so
+useful. And again, there's different
+ways to do this, but this is kind of the
+fun way to do it. All right, we're going
+to set him as leader, which, like I
+said, seems goofy. And I'm going to
+cheat a tiny bit here. And I'm actually
+going to place them into a little
+formation like this. And all I did that
+for is just to simplify kind of what's
+coming up next. So, now that he is the
+group lead, we can now do really silly
+things like this. Watch this. I'm going
+to come to the mus here, right click.
+I'm going to unwrap. And look at this.
+I'm going to select a provider manually.
+Click. And now I'm going to go ahead and
+order him to go ahead and do some
+unwrapping. I'm going to grab this guy
+over here. I'm going to go ahead and
+select my provider. We're going to do
+manual providing select. And I'm going
+to go ahead and order him to go ahead
+and uh do some rearming because he's
+running out of stuff. Now, if you
+observe here, this is this is pretty
+wild if you actually watch this. But
+you'll notice that my two vessels here
+are basically sneaking up on the poor
+witcha here. Actually, it's not the
+witcha. You can tell I've done that one
+a few times. All right. Are you guys
+doing 10 knots? No, you need to slow
+down. You need to slow down. We're about
+to get two massive vessels coming
+alongside your vessel right now. And
+they're basically going to steal every
+Why did you just turn that on? Uh
+they're basically going to sit here and
+steal stuff off of you. And again, this
+is what's so great about these logistic
+vessels is they can do silly things like
+this. Like look at this. Look at this.
+destroyer comes sneaking up and goes,
+"Um, can you hit the brakes for just a
+second? You're going awfully fast for
+us." And what you'll notice here is we
+are moving and resupplying
+simultaneously. You can see he's taking
+on his fuel. You can see he's also
+replenishing those items. Meanwhile, the
+carrier here is like, "Could you could
+you slow down, please?" Is he going to
+get it? Is he going to get it? I think
+that's uh I don't want to say I got to
+remember the name of that musical there.
+I'll never remember. Ah, there you go.
+So you can see here that our AOE6 supply
+is actually providing for everybody
+behind him. And as long as he has
+available things to do that with, he can
+crank those things out. Keep in mind in
+bad weather, you can't do this. And
+again, he can do two, one, two, three,
+four ships. Oh, wait. What's this? He
+can do four ships at a time. And then
+replenishment, he can do six ships at a
+time. That's absurd. And I have no idea
+how in the universe with any real
+weather you'd be able to pull something
+like that off. But you can see right
+away just how darn useful this
+particular strategy is once you're
+already at sea. I wonder what happened
+to our poor greyhound. He's coming. He's
+coming. He's had a long week. He's
+coming, though. So, as you can see, it
+is perfectly possible to do silly things
+like this where we basically use one
+vessel to kind of keep everybody
+rearmed. Uh things you need to know
+though is obviously this takes a long
+time to do. This is not something you
+want to see a little chaot line. Let me
+show you. Um it takes a while and you
+probably noticed when you're doing
+anything with fuel, the fuel numbers
+tend to be in millions. They don't tend
+to be in like hundreds or anything like
+that. Yeah, look at this. Look at this.
+So, if I were a really really angry
+missile right now, you can see just how
+easy of a task this would be to
+basically end this entire fleet. But it
+also gives you an idea in the real
+world. They'll actually pull up
+alongside like this. It'll basically run
+hoses to each other. And it is the most
+sketchy dangerous thing you've ever
+seen. Especially if you take a look at
+the difference in scale of the vessels.
+I think this guy's a little oversized,
+but that's okay. It is really, really
+cool stuff though. But as you can see,
+very useful. We could also create a
+mission for it. I chose not to do that
+because if you create a mission, it's
+going to do the same thing as what we
+did over here originally. But as you can
+see, if you just add them to the group
+and slow down, makes it easy enough.

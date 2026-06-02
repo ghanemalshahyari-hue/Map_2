@@ -1,0 +1,558 @@
+# C: MO - Self Defense WRA
+Video: https://www.youtube.com/watch?v=AyjnPvsooWw
+Video ID: AyjnPvsooWw
+
+hello everyone in today's video we're
+going to be taking a look at the
+difference between automatic firing
+range and self-defense now one of the
+interesting things is as you probably
+heard this before but if you ever go to
+the Wright window of a unit you probably
+noticed under here that you have weapons
+per Salvo Shooters automatic firing
+range and whatever this self-defense
+business is now the interesting thing is
+in this game self-defense is considered
+um separate from the automatic firing
+range itself as a matter of fact if
+you're in a situation where you see
+something coming directly at you you
+could actually design your WRA in such a
+way that it only engages things that are
+coming directly at you regardless of how
+many other people basically thrown
+missiles up into the air to protect you
+for example so down here we have two
+different units so we have an sa20 it's
+the pm1 Fantastic system and of course
+we have the sa17 here this is a buck M1
+this is a very very good crew as a
+matter of fact I'm actually going to
+modify the proficiency and make them
+even better so what we're going to do is
+we're going to modify it so the sa17 is
+going to do all the work of engaging
+incoming missiles and the S 300 is
+basically going to sit here
+sitting on its hands kind of a thing so
+what I'm going to do is go up to WRA for
+my sa20 go down here and I'm going to go
+ahead and make it so that it does not
+fire any automatic shots at incoming
+weapons I'm going to go ahead and set
+this to no automatic fire now you could
+do this globally if you want but if
+you're going to do globally don't forget
+to come down here and hit one of these
+buttons otherwise you're gonna have
+confusion
+now self-defense is a different category
+believe it or not I can Define
+self-defense as being maximum range now
+if I set this to maximum range I'm going
+to go ahead and do that now just to
+demonstrate how why this works and does
+not work and you'll see what I mean in a
+moment and I'm going to go ahead and
+close that screen so let's go ahead and
+fast forward time here and I'm just
+enjoying having my little you know
+beverage of course is some root beer or
+some nice iced tea or something on the
+beach because you know I'm down here in
+the Caribbean today because I needed
+some I needed some ocean that was deep
+and I didn't feel bad about wasting
+interceptors into the water kind of a
+thing and we're just relaxing missiles
+oh no so the first thing that's going to
+happen here is our handy dandy our sa20
+here is not going to fire at any of
+these weapons if I press shift F1 as a
+matter of fact and actually click on
+them you're going to say no automatic
+fire allowed which is okay because
+that's what we wanted but self-defense
+fire is allowed now what do You observe
+yes You observe the fact that rsa20 is
+not firing in self-defense you're
+probably sitting here going wait why is
+it not firing in self-defense you figure
+it'd be doing a panic shot right now
+trying to fire in self-defense the
+reason it's not firing in self-defense
+is uncounter the fact that it does not
+know it is the victim of the incoming
+weapons
+because of that as these weapons come
+arriving the sc20 is like wow we're
+going to keep an eye on those missiles
+but we're not actually going to fire we
+don't actually know if we're going to be
+engaged even though we're completely
+within range of the weapons itself now
+our buddy right here our essay 17 he's
+basically starting to work out the
+geometry of taking a pot shot at these
+incoming tactical tomahawks uh the
+reason it's not firing by the way is on
+account of the fact that we just don't
+have good reflection on these targets
+these are pretty small targets coming in
+a pretty low altitude so our handy to
+any sa17 it just does not have the mass
+type for example so it won't be able to
+start popping those shots off right away
+you know we could come in here you can
+see our Radars are all enabled and ready
+to fire so now notice our s820 has not
+fired RSA 17 in just a half a moment
+here is probably going to start opening
+up any second unless I did something
+really hilarious like put it on like the
+back side of a Coast or something like
+that and can't see through the mountain
+in front of it that's something now
+you'll do about 100 times and off they
+go
+notice our essay 20 is still not firing
+even though it was set to maximum
+self-defense range now notice our sa 17
+is doing its essay 17 thing now pretty
+effectively here it's a pop in these
+shots you know it's intercepting these
+incoming tomahawks some Hawks are really
+really easy targets to hit by the way
+they're not stealthy they're just
+they're like little mini airplanes like
+there's nothing special and you can see
+he's doing his sa17 thing on perfectly
+fine and you can see that the next ones
+are coming reaching up and us back in
+that next one out of the air notice our
+big expensive missiles on our sa20 still
+have not started firing yet notice now
+that our missiles are getting within a
+very very very very short there it goes
+and you can see he immediately starts
+engaging that's actually an essay 16 is
+that what he's firing here it is not the
+sa20 which is coming off this rail here
+and you can see that little Panic
+basically infrared missile coming
+popping off the shoulder here here comes
+another one here comes another one
+they're all basically popping there's
+guys off the shoulder and you're like
+why is he not oh no as he gets us
+smacked into here you know the first
+explosion goes off and the next one
+comes down go bam in a moments later the
+reason is is this guy did not know that
+he was actually the target of the attack
+so he didn't actually return any fire in
+self-defense so let's go reopen that
+scenario again you know again this is a
+nice thing just quickly hit the reset
+button and off you go so let's go back
+to the WRA again and let's tweak it a
+little bit and I'll see if we can try to
+get it let's make a little bit more
+sense here so what I'm going to do is
+I'm going to say don't use this weapon
+in self-defense this seems like a very
+strange thing to do especially given
+that we're gonna have all sorts of nasty
+missiles basically coming in to say
+hello in a few seconds here don't use it
+in self-defense don't use it in
+self-defense don't use it but we're
+gonna leave automatic fire in maximum
+range is perfectly fine um we won't be
+too aggressive here we'll do 40 miles
+which is that's fair again that's not
+too too bad 40 miles is fine
+all right let's unpause now watch what
+happens this time so we're going to give
+us some time of course uh as you can
+tell we're enjoying our root beer on the
+beach again and they're kind of relaxing
+you know maybe I can do something with
+some coconuts a little later on I think
+there's a snorkeling Excursion that I
+can go head over to oh but that's not
+for oh no incoming missiles Bam Bam Bam
+Bam Bam and now the sa20 is going to
+with no problem whatsoever start
+Distributing it's a very very high
+velocity missiles down onto the incoming
+targets here and you can see they come
+raining down you can see one of these at
+a time but some of them will miss uh
+that's just the nature notice by the way
+we're only getting six missiles at a
+time here uh that's because there's only
+that many channels also notice this
+lovely representation of where our radar
+is currently pointing to engage these
+targets makes sense I don't know why
+it's not pointing exactly like this but
+I think it has something to do with just
+the simplification of the radar angles
+here so he's popping these suckers off
+and uh slapping them out of the sky one
+by one and you can see oh
+uh oh you're sitting here going why did
+he stop shooting well the problem with
+him of course is um we've gone through
+24 of our missiles already and there's a
+huge pile of smoke all over the place by
+the way this entire thing just be
+clouded in white dust and meanwhile I
+say 17 is a kicking in here and I'm
+starting to join in on the fun doing
+everything I can to a slap the last
+couple missiles out of the sky and I
+think we might actually succeed oh look
+at that look at that oh no sa16 sa16
+hahaha
+didn't expect that I thought that was
+not going to be enough missiles to
+actually hit the s300 but it happens so
+now if I actually go to the weapons page
+here actually let's go to damage control
+real fast you can see that who got hit
+some dude in his essay 16 who was up on
+the embankment is the one who got
+smacked here but everything else in the
+battery is actually in good shape still
+and I've actually go to weapons real
+quick you can actually see that we're
+already doing the reloading process to
+actually get any weapons ready to go and
+it will take a little while to load all
+24 of those basically at one time and
+you can see our sa20s here I wonder
+which who's actually a Reload priority
+one of the things I appreciate is you
+can actually hit the little button for
+reload priority and say concentrate on
+this one real quickly and they'll
+actually concentrate on that one as far
+as slapping some more missiles in of
+course in the real world as we all know
+I'm trying to load missiles in a hurry
+it's difficult because you don't have
+unlimited numbers of trucks and cranes
+and crew for the actual purposes of
+actually loading these weapons back up
+so as you can see in a couple minutes
+they'll have a new missile ready to go
+the guy with the sa16 is slapping
+another one in there
+now the reason this is a really really
+important to consider is you have to
+remember that that self-defense it has
+to know that it's being attacked in
+order to actually go ahead and do this
+now if you're an airplane a lot of times
+being attacked means somebody's locked
+you up with a Fire Control radar but in
+this case there was no warning that
+there was a Fire Control radar so it did
+not automatically stop defending itself
+even though you could see that last
+Panic couple shots of the sa16s trying
+to hit the incoming tomahawks not that
+it did a ton of damage to begin with now
+what's the Practical upshot of this well
+let me show you we're going to take the
+same scenario again but what we're going
+to do this time is we're going to grab
+our say 17 and we're actually going to
+come over here we're going to throw down
+a facility and we're going to grab a s a
+actually a tour would be pretty good but
+I actually want the pants here here
+because that's going to be easiest to
+use for this there we go the m so this
+one right here I'm going to set the crew
+quality to be very very high here so
+proficiency is going to be set to Ace
+and I'm also going to go ahead and set
+him with a special instruction here I'm
+going to go to my sensors move on WRA
+yeah sensors is nice too I'm actually
+going to pop over to my WRA window real
+fast open the sucker up and then which
+you can probably notice here is my
+guided weapons are ready to go so
+automatic fire I'm actually just going
+to leave this basically ready to go it's
+going to be a maximum range kind of a
+thing like that that's all perfect I
+really don't feel any change any of
+these things self-defense is fine and
+then what I'm going to do is I'm going
+to come over to my sa20 here go to mywra
+window and I'm going to design it so it
+only engages leakers so I'm going to
+come down here I'm going to leave my
+self-defense alone again this isn't
+going to make a huge difference here and
+I'm going to set it so that it's 10
+nautical miles is the range it can start
+popping shots off here so that's going
+to give my pants here plenty of time to
+go ahead and take some shots before it
+actually gets in the critical distance
+now if I could set it to eight miles I
+would the bigger thing is I would
+actually do the math and division and
+calculate what 11 seconds is and but I
+can't so I'm not going to stress about
+that too much so let's go ahead and
+pause again
+and this is kind of the Practical upshot
+of all this which I find very very
+interesting which is kind of fun and now
+one of the things you can do too which
+is really really cool is I believe this
+is one vehicle worth I don't think this
+is like a platoon or anything like that
+let's take a look there's two so we have
+two vehicles and that's not much you can
+shift C click and now of course we have
+another one and if I think correctly I
+don't believe yes it already did all
+that correct fantastic so now we have
+these two guys with the same set of
+orders as far as to engage incoming
+weapons now the cool thing is my S a20
+is uh got the big radar like you can see
+actually that engage ah there it is
+sorry to pick anything coming to weapons
+so what's gonna happen is uh my two
+greyhounds are immediately going to join
+another fun now keep in mind from the
+perspective the enemy we haven't
+actually detected the Greyhounds they're
+just sort of sitting there parked and
+basically the battery commanders
+screaming in the rear right now to say
+hey how could you do something about
+that you'll notice by the way a little
+bit of out of range but that's okay so
+the weapon gets a little bit closer a
+little bit closer and again the reason
+we're out of range here is because it's
+so low uh we have a little bit of the
+coverage for the earth to kind of
+compete with which again you can pop
+things up a little bit higher so what's
+going to happen in a moment is that
+we're suddenly going to get into range
+shift F1 will inspect it again and again
+we're just slightly out of slant range
+these things are so low to the ground
+and of course our sa20 crews sitting
+here going um hey buddy uh they're
+almost within 10 miles as a matter of
+fact I can even go like this and control
+R panic
+and uh this of course will be one the
+sa20 starts to kick in here because
+remember we set that to a 10 nautical
+mile so we get into this range and there
+he goes so the fireworks immediately
+start notice of course because our
+little other guys were not able to get
+into that critical range there they
+didn't actually start engaging you can
+see again now we're a little bit out of
+sight of range now if I flip on their
+sensors which all you can see
+everything's already turned on massively
+and you can see we're just not quite
+able to get those couple shots in and
+they'll join in on the fun but notice
+our sa20 still has the ability to kind
+of help us out at least a little bit
+here before everything gets kind of out
+of his range now one of the fun things
+is you can use the big big heavy one to
+basically kind of wear everybody out and
+then you can have the other two on the
+inside actually kind of do the deed as
+far as softening up the rest goes so you
+can see as before we've completely run
+out of those our two little Greyhounds
+right now are sitting here watching
+these incoming weapons going uh are we
+supposed to shoot Chief but as you can
+see um we're still slightly out of a
+range yet we have no line of sight I'm
+just trying to check to make sure I
+didn't actually put them on the back
+side of a mountain or something like
+that I've done that so many times it's
+not even funny aha but you know what I
+did do
+watch this
+you have to make sure that um you're not
+accidentally on the inside of like like
+a tree or something like that that
+doesn't give you the ability to actually
+engage now 62 meters we should be able
+to take that shot I'm actually kind of
+surprised there we go there they go and
+now when we finally get within uh let's
+see here this 1.63 miles you can see
+that the Panic firing begins uh
+basically in Earnest the air is uh
+they're all sort of joining in there's
+the sa-16 okay he's joining him with a
+30 millimeter cannon oh he's working on
+the 30. oh we got hit again so again is
+that valuable as this strategy is and
+maybe the Greyhound wasn't the best
+choice for the purposes of giving us
+that last second Point defense but it is
+still a very very solid strategy if
+you're looking for kind of that
+opportunity now when you jump up to
+airplanes things get a little more
+complicated
+now we have a situation here where we've
+detected a couple Fire Control Radars a
+little bit further out so we have these
+handy-dandy f-16s so what I'm going to
+do is I'm going to take my f-16s I'm
+going to go over to my WRA for this
+group here and I'm going to order them
+to only fire these weapons in
+self-defense so I'm actually going to
+shut off automatic fire completely which
+means I'd have to actually order them to
+basically take the shot if they need to
+take it so you can see we're all maximum
+range here we're just going to use this
+weapon only in self-defense we're not
+going to use this weapon for the
+purposes of just kind of taking pot
+shots as soon as we get kind of a thing
+like that so what I'm going to do is I'm
+going to go ahead and Mark both of these
+targets as hostile and unpause so our
+F-16 buddies here are going to swing
+around and you can see they immediately
+panicked and fired their aim 120s
+actually zoom in you can see one of
+these suckers is already on the way and
+you're sitting here going why did why
+did they fire that right away I thought
+you said not to do that the reason they
+did that is because that weapon was
+already on the way before I finished
+doing the WRA
+not too worried about too much but
+you'll notice here that um our little
+amram will be sitting here chilling I'm
+actually going to delete that and you
+can see that oh here comes the next one
+as you can see automatically launching
+off the side there because of the way
+that this one is particularly configured
+he sees himself as being in danger
+because he's detected A Fire Control
+radar of an enemy airplane basically
+flying right at them the other thing you
+don't notice here is we never actually
+fired at the second one here now the big
+thing with WRA and you have to watch out
+for this is if I actually open this up
+here and open this one right real
+quickly you can observe the fact that we
+have no automatic fire for the group now
+if I press nine and I click on an
+individual unit this is where you have
+to be very careful with these things if
+I would open up the WR for that unit
+which we'll observe is it should inherit
+everything which you can see it did so
+now if I grab this one over here and
+actually look at this WRA you'll see it
+also is going to probably exactly it
+will automatically take an advantage of
+that particular feature so now I'll go
+ahead and switch back to the other team
+switch to Blue and now we have this guy
+so what I'm going to do is I'm going to
+press F1 here and oh I really wish
+they'd fix that I'm going to press F1
+again I'll go ahead and click both those
+targets so what they're going to do is
+they're going to come out of their way
+to go ahead and engage our buddies on
+the um f-16s here go ahead and close the
+range a little bit so it is a little bit
+easier time for them so now notice our
+F16 has not chosen to fire another round
+here he's just chilling because he is
+not acting in self-defense just yet
+oh it's a little bit out oh incoming so
+there's a weapon fired at us uh now we
+have uh basically an order and you can
+see what he would normally have done is
+I fired another Miss on that particular
+case but since we're so far away we're
+just going to basically turn around and
+run for my big 29s it's just a simpler
+solution to it kind of a thing I don't
+think that amram is going to hit
+anything he's going to turn around again
+there's another two missiles now notice
+they immediately fired at these two
+because they were in danger of being
+attacked by the guys who had already
+fired on them so now notice the big
+difference here between being targeted
+by a unit versus being targeted by a
+weapon so those amrams are going to do
+absolutely nothing unless for some
+reason the mig29s aren't paying
+attention as I mentioned it's not going
+to go well for us kind of a thing like
+that F1 go ahead finish the job again
+we're running like crazy here because
+now there's a bunch of r27s on our six
+oh boy our 27s don't waste my time big
+29s this is when you really really wish
+you had yourself you know like an r73 or
+something like that I'm bored of this
+what are you guys doing he's gone
+so now of course they've already gone
+ahead and defending themselves or
+popping these out of incredibly tight
+shots there oh
+got one of them and there again another
+one of those nice over the shoulder
+shots I gotta love those missiles this
+is so much fun
+and we just go ahead and splatter the
+enemies
+so the key thing is to take away when it
+comes to anything self-defense is the
+difference between I'm being attacked by
+a missile and I'm being attacked by a
+unit now if I have a missile that we're
+like an anti-ship missile for example if
+I picked up the radar emissions locked
+onto me I would defend myself if I had
+self-defense set separate but if it's
+just something kind of doing its thing
+flying by I'm not necessarily going to
+automatically defend myself and that's
+an important difference between the two
+settings enjoy

@@ -1,0 +1,1410 @@
+# Creating DCS: World missions with the help of C: MO
+Video: https://www.youtube.com/watch?v=vYj5qAZ0NyM
+Video ID: vYj5qAZ0NyM
+
+hello everyone in today's video i'm
+going to be answering a question that a
+couple of different folks have asked me
+they basically said hey you know i heard
+that you like to use command as a way to
+kind of prototype missions for dcs
+is there an easy way to convert from
+command to dcs the answer is not really
+but it does not necessarily mean that
+you can't actually do something
+so what i was going to share with you
+today is basically what my workflow
+looks like when i want to plan out
+something in dcs
+actually in command and then go bring it
+over so that we can actually test it in
+the real world
+there's going to be a couple of
+assumptions along the way and i'll go
+ahead and point those out as we go
+so the first thing i always do is
+actually build the scenario exactly as
+if i were going to be flying it
+so let's say we want this to take place
+in august 10th anybody who knows the
+history of georgia understands why i
+always picked that time
+so we're going to go ahead and flap that
+on there press ok go ahead and save it
+everything's now ready to go go ahead
+select my database make sure i'm in the
+correct one which i am
+i'm gonna go ahead and add in my sides
+again sides it's not really critical
+here
+except for the purposes of testing so go
+ahead and create a red and blue
+because naturally that's usually the
+sides that we get here
+go ahead and pop into red side so for
+the purposes of this i'm going to keep
+the scenario super duper ultra simple so
+that i don't have to like stress out
+about a lot of the little details and
+things along those lines
+so we're going to just assume that we're
+going to be doing a straightforward
+runway bombing
+and we're going to be basically starting
+up in most dock coming down
+doing some damage to georgia and then
+flying home so we'll keep it pretty
+simple so the first thing i want to do
+is i'm going to give myself some
+airports here click on load
+pop over here we'll go over to georgia
+actually say unit ssr is actually one of
+the best ways to do this
+and there's this great one called single
+unit airfields and i love this one so
+i'm going to press load
+so what it's going to do is it's going
+to suck in all the airports basically in
+the existence that the soviet union
+never used
+the only one i really needed was most
+dock and these are in single unit
+airports
+so you do not need to worry about
+dealing with anything that's going to be
+you know a double unit or it's going to
+give you an issue
+again i just need a single unit airports
+here obviously when i go to delete all
+these i always miss like two or three
+like in vietnam or something
+you can always check that by pressing
+the o button it looks like we did an
+alright job here
+now you're probably saying why did you
+bring this in as a single unit airport
+the reason is i just need this as a base
+to test my base if that makes sense to
+you
+and what we're going to be concentrating
+on is not the placement of the
+individual units
+but more so the placement of the things
+we're going to be adding to the map
+so if the airport is already part of the
+map there's no reason to actually go in
+here and add it in yourself
+so that part's been taken care of let's
+go pop over to blue team real quick
+let's go ahead and find our target here
+which is uh probably going to be uh
+batumi or kutaisi depending on which one
+of these i can find first
+so now the important thing here is when
+you're going to do this
+do not add it as if you're adding an
+entire runway
+if you have no purposes for having
+people taking off from this runway
+don't even add the airport as weird as
+that sounds unless you're doing initial
+testing
+in this particular case i'm just going
+to go ahead and keep this a little bit
+simple i'll go back up to the george or
+the editor i'll go ahead and import
+these
+and again i'll kind of show you the trap
+that you're going to fall into if you go
+importing everything all at once
+let's go ahead and grab that to me i'm
+going to press load select the
+installation
+and i got go to easy instead which was
+my bad there and of course that adds a
+bit to me way down here which is that
+should told you i should come up with
+easy let's go ahead and grab the other
+one instead just keep this nice and
+simple today
+we'll go here to do okay fine
+i'll take that one instead whatevs all
+right let's go ahead delete this one we
+don't need to worry about this one too
+much
+okay so now in this scenario we're going
+to assume that this is protected by a
+bunch of um you know let's make it
+really really boring we'll do like c101s
+or l39s or something like that
+so as always i'm just going to come in
+here and throw in these l39s
+well i'll use the zas obviously we're
+going to use this particular version and
+then we'll use the new version why not
+we'll say that well we have 12 of them
+we'll equip them basically for whatever
+the heck we can find that's going to be
+remotely closed here
+so i'm looking around i guess i can give
+us some rockets in long range to go to
+some drop tanks
+and that's about the best i can do as
+far as that goes now the cool thing is
+because this is a grouped unit
+it's not only a target but i can
+actually click on something else now
+let's go ahead and design an air defense
+for this particular facility so what i'm
+going to do is i'm going to go ahead and
+place my air defense keep it nice and
+simple like i said we'll do some
+aaa now you need to make sure you pick a
+unit that exists in the universe
+so in this case i'm going to go with the
+zeus well you know why not
+suits 23 millimeter or obviously it's
+gonna be the four-barrel version
+the version does not matter usually but
+there's something you have to watch out
+real careful here
+almost every one of these units is a
+platoon not an individual unit
+so for example if i grab the red army
+version here and actually scroll down
+you realize there's two gun dishes and
+two zuzus so you want to make sure that
+you keep that in mind when you plan your
+scenarios
+that being said in command you're
+drastically less likely to score a hit
+than you are inside of dcs for certain
+things
+for triple a dcs um you almost never hit
+anything
+inside of command uh when you do go
+ahead and fire triple a you're going to
+get hit almost every single time
+so keep that in mind when you're
+planning scenarios sams are reversed now
+when you fire sam unless it's an s 400
+or something at a guy not maneuvering
+you almost always hit them
+in dcs inside this one there's always
+that light small chance to do a mess
+let's go ahead and throw up a zeus over
+on that side now notice when i clicked
+away
+he's his own unit this is what you want
+so i'm going to grab this one go ahead
+and grab this one i'm going to grab this
+one we'll zoom um we'll actually
+move this guy's a little bit closer i'll
+get a little old school here i'll go
+ahead and throw them right at the end of
+the runway
+i was like at the end of the runway
+because you know when they panic fire
+into the
+people landing it's always not very safe
+or anything like that so that's going to
+be my four little defenders there now
+there's a couple cool things i can do
+i can group these defenders which is
+going to make it easier to export them
+so now i can come in here and say aaa or
+if i prefer to i'm actually going to
+delete that group real quickly
+i can go ahead and separate them as well
+but in this case i actually want to add
+one more thing here
+you know we'll just add a dog gear radar
+you know why not so we can grab that one
+and let's take a look here you can see
+where all the guys are going to be
+loaded
+just taking a mental picture here this
+is actually i'd rather put them over
+here by the
+main bases radar here so that looks like
+a pretty good collection of protection
+for this particular
+location of course you can sprinkle in
+all sorts of nastiness you know i can
+put an sae
+we're going to put in sa you always want
+to put them right where they least
+expect it
+so let's see they're going to be coming
+out of the north they're going to come
+oh you know what let's take advantage of
+the reason why i always do this in
+command
+let's switch to relief mode real fast
+now this is really cool because you can
+actually sit here and go
+oh i didn't realize how flat it was out
+near napkari
+so if i'm an enemy airport i'm probably
+going to be coming through here and i'm
+probably going to come swinging down
+again you're thinking players here
+you're not thinking ais so logically
+if we can get them on the cheap shot
+right when they break out of here we can
+probably get a free hit on them
+in which case now let's go ahead and pop
+this guy right on this little hill right
+grab ourselves an sa8 we want the b
+model which is the one that's going to
+be represented
+i always use the soviet union or the
+russian version of it so i'm going to
+flip it on again for the purposes of
+your scenario we're going to go and flip
+this guy on for the purposes of
+scenario as well so now what i usually
+do is when i'm testing these things i
+always set up my usual missions
+i run everything through to see what
+it's going to look like i test how much
+damage i'm going to cause and i'll go
+ahead and set that up now
+so i'm going to go ahead and now press
+control f4 actually go ahead and control
+right click
+we'll go ahead and define our cap area
+again when you're playing dcs
+you have a much smaller map so i tend to
+generally make the cap area very very
+small
+so i'm going to ctrl f11 call this one
+cap
+i'm going to switch that to a patrol aaw
+patrol sounds good i'm going to sign
+everybody um since this is dcs
+for dcs we're going to go ahead and
+uncheck all these boxes here and let
+them go nuts and absolutely spread out
+into that zone as fast as they can and
+go ahead and get airborne
+naturally remember you can change
+activation times if you want to simulate
+kind of a different effect but it
+totally depends on what you're trying to
+do in that scenario
+so let's go ahead and grab the other
+guys now let's go ahead and red team
+and we're going to get i'm just trying
+to think was kind of a fun combination
+so we could do sukhoi 25 teas which
+would be right out of
+what you're doing over there in dcs land
+so we're going to grab these watch out
+there's a tm and there's a t
+this one is the fancy platypus version
+this is the one that you should probably
+be a little bit more familiar with so um
+obviously we want to wreck the runway so
+we're going to go ahead and eight
+uh we'll get old school too we'll grab
+ourselves some su 27s and we want to
+make sure we use the s
+version which is kind of the classy old
+school version you have two different
+versions here it simply gives you a
+different set of air-to-air weapons
+i generally always pick the most recent
+one let's go ahead and add four
+and you know what i'm just trying to
+think here you know we'll add a couple
+mig-29s too
+obviously we have both the fulcrum a as
+well as the other one if you need it
+so we'll grab the full chrome c we'll
+grab this one at four nice
+so now here's the killer in dcs your
+loadouts won't necessarily agree with
+your loadouts inside command so you have
+to kind of
+work with what you got so to speak
+remember you can always go back and edit
+it so
+these are mig-29s that they're going to
+be carrying two alamos
+plus uh four archers cool our sukhoi 25s
+prepare to be disappointed
+are only going to be carrying a babies
+let's see here we have a range of um
+let's check it real quick
+one hundred not off tune on yeah it's
+gonna have to be the long range version
+so remember this loadout i actually will
+write this out
+but i do a lot of times actually keep a
+spreadsheet just so that i can keep
+track of
+what i've done here so let's grab that
+one in the sequoia 27s as well we'll go
+ahead and give them something fun to do
+we'll give them let's see here r27s that
+seems like an awfully light load out
+there
+standard is 27 ts and ers remember this
+like i said you can always write it out
+too
+looks good so now what i'm going to do
+is i'm going to pause and unpause
+watch this the reason i did that is so
+that we could see them on the map
+all right let's go ahead and make these
+guys not friendly to each other makes
+sense right
+postures not friendly
+all right so then what i do is i just
+build the mission as if i was playing
+command regularly
+keeping the little things in the back of
+my head that matter so go ahead and i'll
+lock onto this we're going to say bomb
+this on this thing
+strike we'll do a lane strength press
+okay let's get all the sequoia 25s
+obviously you want to keep them in
+pretty good size groups
+one thing you really want to watch out
+for is if you come down here you want to
+make sure you actually target that thing
+you're trying to target
+so in this case i'm only really
+interested in destroying the runway i
+don't need any of this stuff
+so i'm actually going to get rid of that
+and leave the taxiway in the runway as
+my primary targets
+and if for some reason things go well
+we'll go ahead and leave like an access
+point or something like that as a target
+now that looks like a pretty good
+combination inside of dcs remember your
+missions have to be a lot more precise
+than this
+so whenever you're doing something like
+this this will probably be individual
+missions so kind of keep that in the
+back of your head
+so let's go ahead and add in the s
+chords so we're just going to mark them
+as escorts mark them as escorts for the
+escorts i always use groups of four
+obviously the reason i picked this is to
+keep it simpler when we get over to dcs
+and now everything is ready to go so
+what i do now is i usually test this
+scenario five or six times
+uh dcs 40 so i'll just call this 4dcs
+i'm going to press the ok button
+i usually like i said try this a few
+times to see exactly what happens so
+let's go see what happens
+on its own so i'm going to unpause real
+quickly obviously in the real world it
+takes a little while to actually get
+airborne
+and dcs you can start them in the air if
+you choose to do so and we can simulate
+that effect as well
+so everybody goes ahead and takes off
+remember it's um pretty early it's about
+12 30 in the afternoon which is pretty
+typical
+griffin five niners that just taken off
+we've also got a
+group up poker six four let's see here
+now our sukhoi 25s have just taken off
+now what i like to do is i like to study
+the flight plan that dcs creates in
+which case this is very straightforward
+basically choo choo's over the mountains
+and if we actually click on the
+waypoints we can get the exact altitudes
+as well as what waypoint we have you can
+actually take this information and go
+ahead and mentally save it so that you
+can again put it on your master
+spreadsheet later on and you can see the
+ip
+that's going to be just shy of it this
+is actually a terrible ip if we're
+trying to bomb a runway you actually
+want to line it up
+so it's in range of the runway like this
+so i've actually adjusted that very
+quickly to
+kind of correct for the little error yes
+you can do that in this program and it's
+actually pretty cool
+so i'm going to go ahead and unpause
+let's go grab that other group we'll see
+what their ip is
+so generally when you're doing strikes
+like this you always want to do
+something like that so that you can hit
+them from different angles
+just make sure you guys break to the
+correct direction so they don't all run
+into each other
+when they go passing by and again this
+is a great way to test your theories and
+we can change the altitudes
+like for my ip here i'm actually going
+to set my altitude we'll go ahead and
+knock it to 2000 feet we don't want to
+get too low and of course we're going to
+grab this guy over here
+we're also going to set his ip again you
+can pull that ip out a little bit if you
+need to
+put that one to 2000 feet 2000 feet
+got it let's take a look that's our two
+groups and the last thing i'm going to
+do is i'm going to double check to make
+sure
+our final attack point it's also 2000
+feet because if you do 200 feet
+they're going to fly right over the
+triple a and it'll explode so kind of
+keep that in the back of your head too
+is that anything you're setting here
+you're going to have to go back into dcs
+and manually set
+so keep that in the back of your head
+but again it's still a great way so
+everybody launches we're on our way
+the frog foots are doing their thing
+they're cruising along the
+flankers come zipping in we've
+immediately identified something of
+interest here
+remember in dcs you have tremendously
+accurate
+precise emitter locators that are
+reliable every time
+it just does not work that way and we
+picked up a bunch of enemy aircraft in
+dcs you have automatic identification
+for the sides
+so if we want to simulate that we can
+actually go in here go up to add edit
+sides
+and just set this to auto side id that
+makes it a little bit more
+that's the best way to describe it not
+authentic but it's going to make it a
+little bit more traditional at least dcs
+style
+so we get the reign of missiles you know
+that was coming and these poor l-39s get
+obliterated
+now dcs these l-39s will give a much
+better chase but
+they will not normally so meanwhile our
+sukhoi-25s are coming down into a cruise
+they're getting to their ip they're
+gonna pop up to two grand
+apparently i have to tell them to pop up
+to two grand i'll keep in mind and the
+real one
+they're very very good about that
+they'll actually do exactly the altitude
+you tell them to travel at
+so he's coming around he's lining
+himself up at the end of the runway here
+again you can go to this view if you
+want to take a look at exactly what it
+looks
+and here comes the bet abs the abs away
+and we're getting shot like crazy
+and every single one of them was
+obliterated by triple a
+fire so that's a massive difference
+you're going to see inside of dts
+in dcs we will put all of the different
+sheikahs the zeus is basically for that
+purpose of engagement
+and i think i've run out of people to
+launch so now what i like to do is i
+like to go up the losses and
+expenditures and i like to study this
+we lost everybody and dcs we're probably
+going to lose one if that
+so kind of keep that in mind sort of
+temporary expectations as far as that
+goes
+the interesting thing is yeah we got all
+the l39s and we also got 12 geckos were
+launched which gives us a good idea of
+how effective that sams site was
+which it definitely was so now we get to
+the hard part
+and that's going to be actually
+converting this over into dcs so what
+i'll do is actually reopen it and i'll
+show you how i do it
+so what i'll do now is i go back to blue
+side and we're interested in getting the
+locations of all the units that we have
+in this scenario now the problem we're
+going to have with this is
+it's kind of a pain in the butt unless
+we take advantage of some lua here
+so let's go ahead and grab our little
+console here and we're just going to go
+to town
+so the first thing we want to do is we
+want to get all the units that the
+player has selected so we'll do a send
+edit
+yeah get selected
+units and we'll say dot units let's go
+ahead and make sure this worked
+correctly so i'm just going to print
+units just for now to make sure
+everything's
+working okay here go ahead and press the
+run key delightful
+i'll go ahead and zoom this in for you
+so folks can see there you go that
+should be a little better
+so now what we're going to do is
+obviously we want to do all this at once
+so remember a while ago i said to be
+really careful with um you know airports
+and stuff like that because they're just
+going to give you issues
+now you understand why we don't need all
+the units in that airport so i'm
+actually going to group all these guys
+together click on them
+and now watch what happens when i run
+the function we're going to get a group
+see how this gets tricky really really
+really fast so unfortunately this
+group is a unit so we'd have to actually
+break it out into individual units which
+is where it gets very very tricky
+so you want to be kind of careful with
+that so i'm actually going to break this
+group up
+and instead what i'm going to do is i'm
+just going to grab all the units i
+intend to bring to dcs just like that
+now i'll run the script unfortunately it
+gives us this massive nasty list
+and don't panic we have a way to get
+around this so what i'm going to do is
+i'm going to say 4kb in ipairs
+and we're going to say units and we're
+going to come down here i don't need
+this echo it actually don't need this
+anymore
+we're going to say do i'm come down here
+and say end so this is where the magic
+happens
+i'm going to say a unit i'll call a
+local variable called unit
+equals send edit get
+unit and we're going to go ahead and
+grab v.g.oid
+now the interesting thing here is what
+this will do is this will go into this
+unit and it'll actually suck out the
+details for it so now i'm going to say
+local lawn equals
+unit dot multitude
+now i'm going to say local lats equals
+unit dot latitude
+now what i'll do is i'll go ahead and um
+print these details onto the screen now
+let me give you a quick check here
+do it like this i know you're tempted to
+go ahead and put them all in individual
+pieces here
+but um you do not want to do that if you
+don't have to so we're going to come in
+here we'll say
+that let's see if it works don't need
+that anymore
+that's something that i've done about a
+million times don't panic
+let's try that hey it worked perfectly i
+love it when a client comes to beta
+okay so take a look here real quickly um
+obviously i've gotten way too much stuff
+here and this was actually my mistake
+i probably should have come down here
+and said unit dot name
+let's see that shrinks it up a little
+bit oh that's so much better
+so now what it does is it's actually
+going to display oh let's clear that out
+so what it's going to do now is it's
+actually going to display all the
+details for each individual units
+as well as its latitude and its
+longitude this is wonderfully useful to
+us
+except it's in a format that dcs can not
+use do you see where this starts to get
+a little tricky so what i like to do is
+actually like to use this neat little
+tool online to convert the coordinates
+into a way that we can actually behave
+with them
+if i want to go over a say hi to max by
+the way now we can actually go ahead and
+now make those
+note though their latitude comma
+longitude so to save myself a little bit
+of insanity here
+i'm just going to go ahead and call them
+latitude kind of longitude so go ahead
+and put this on one side of the screen
+put this in the other screen
+so what we do now is we go to the top of
+our list actually let's make a little
+bit of room here
+print blank just make ourselves a little
+bit of room
+let's see if that looks a little better
+nice now we know where to start
+so now what we can do is uh like i like
+to do is like to put a little list
+together here
+so we'll say unit name latitude
+longitude sounds like a naughty word it
+really isn't it's multi-grid reference
+system so we'll go ahead and grab that
+one we'll just call it as the su-23
+so the latitude on this guy i can just
+copy paste and i love this
+you can actually minimize this and then
+open that one back up go ahead and grab
+that real quick
+and go away man we don't need you right
+now could pull this one to this side and
+pull this one on the side
+and what you would do is you basically
+copy paste all those down this list here
+all right that looks a little bit like
+this so now what we have to do is
+convert this into mgrs it's a military
+group reference
+so to do that it's real simple we just
+can copy paste exactly what we need
+grab this one about this one press the
+button and it'll go ahead and calculate
+exactly what it is
+in this particular case you can see
+under mgrs we get this big
+long chunky chunk of all the sorts of
+good stuff here now the problem is
+this is not an acceptable value in dcs
+so what you actually have to do
+is you have to actually break it into
+the shape that it's actually going to
+look like when you get to
+dcs a lot of times what i'll actually do
+is just kind of eyeball things
+rather than try to kind of i'll work my
+way through each one of these
+individually because it can take a
+little while
+all right in your lead with something
+that looks a little bit like this when
+you're done going through this
+now some people like myself will
+actually not go through the actual
+absolutely ultra super duper precise
+calculations here because i don't need
+to polish the cannonball i just need to
+know roughly how the scenario will run
+before i actually get into it but
+regardless we'll go ahead and check out
+what it's going to look like
+once we bring it over to dcs and now
+we're over here whoop
+i hate it when it doesn't i don't know
+why that should change that so now we're
+over here in dcs and it's time to
+put all of our hard work to work work so
+the way this works is pretty
+straightforward now what i like to do is
+i have to pick a random spot on the map
+and i like to zoom way way in
+and you're probably going wait why are
+you doing that well the reason is pretty
+simple
+um we need to zoom in on this particular
+point for one of our zeus's so i'm going
+to put that away real quick
+i'm going to go up to customize i'm
+going to press position
+paste our coordinate and press the ok
+button and whoosh
+if i actually zoom in even more let's go
+do one of these you can now see our zeus
+would go exactly where we expected it to
+now remember this was a platoon of
+zeus's so we're going to come in here
+and do air defense
+we're going to go ahead and grab some
+super triple a here
+zeus 23 that's not what we used we used
+the shika
+so we're gonna go track our way down
+through all these ah there it is
+let's make sure we do two of these
+because remember in command we use two
+so if we actually go back and edit it a
+little bit we can
+and obviously at this point you'd wanna
+kind of do one of those sort of things
+you know make it a little bit more
+realistic
+so what i'm going to do is quickly
+populate the map with all the units that
+we saw in that spreadsheet
+all right looks good let's go ahead and
+see what we have now so what i've done
+is i've quickly pasted through a total
+time for me was maybe a minute
+not even and you can see that we've
+essentially recreated everything that we
+saw over there in dcs if i zoom in you
+can see the positions of my little
+platoons of everybody again
+the resolution is a little bit better
+but you're going to notice everything
+might be slightly offset
+depending kind of how things went for
+example i noticed this one crew
+probably doesn't want to be in the path
+of the runway i don't know about you but
+that doesn't sound like fun to me i'm
+going to leave these guys down here
+and also notice that our dog ear radar
+is exactly where we wanted to place it
+if i actually were to wonder up north
+you can see my little sa8
+is just sort of chilling here so um what
+i might want to think about doing is
+actually tweak this just a little bit to
+make them a little bit better on the
+road or something like that
+maybe they're one of those kind of crews
+kind of a thing so let's switch to
+satellite view real quick oh there's no
+trees around there's no problem here
+so what i'm gonna do is i'm just gonna
+go boop just like that so now they're on
+opposite sides of the little row there
+and now we're in pretty darn good shape
+as far as the placement again total time
+here has been less than a half an hour
+since i said i'm gonna go sit down to do
+a video on this
+so go ahead and switch those guys to red
+i'll go up to mozbuck and go ahead and
+switch these guys to blue
+and now it's just a matter of plopping
+everybody on the map and going ahead and
+getting the airplanes to be pointing
+where they're supposed to be going
+so now what's going to make this extra
+tricky i really wish would stop doing
+that
+is the fact that not all the airports
+have the correct number of parking
+spaces so be very mindful of this so
+when you're building a scenario
+so i'm gonna go ahead and set up my
+sukhoi 25 t's first
+we can obviously pop them pretty much
+anywhere we need to yeah it's not a
+little
+long island there so we'll go ahead and
+grab su 25t obviously set this to
+whatever you feel appropriate
+if you're playing regular command
+usually veteran's fine ace is pretty
+rare if you assembly
+ace but again that seems to work pretty
+well so now we need to add this playload
+so it matches the one that we saw over
+in dcs now this is pretty
+straightforward
+so we're going to go ahead and attack
+our bombs remember we don't carry very
+much of this
+so we have the shp version and then we
+have the regular one i'm kind of a fan
+of the
+fancy shp version i don't know just kind
+of a little nicer and obviously remember
+we also had to carry big fuel tanks in
+order to go ahead and get ourselves the
+maximum range that we required for this
+one
+so i think it's a very interesting to
+see how that you know we see a dcs
+doesn't always agree with what we see
+elsewhere here somebody go ahead and
+grab these ones as well again we can't
+get anything fancy it's just going to
+have to be the regular stuff
+bombs we're going to go to shps just
+like that and that's basically the limit
+obviously we get to go ahead and carry
+our air missiles as well
+one in each wing tip and that's it
+that's uh that's that's the loadout
+based on what it says over in command
+that's all we can do of course you can
+come in here and play with the colors
+and stuff like that if you want to
+now you can come in here and make all
+sorts of nasty numbers or whatever you'd
+like to do
+really doesn't make that much of a
+difference here so i'm gonna go ahead
+and set these guys
+to take off from parking hot parking hot
+is gonna get you closer response to what
+you saw over in dcs
+so we need to go ahead and grab a total
+four of these which i have
+so they're gonna take off in that
+parking hot they're gonna climb up to 25
+000 feet if you remember in dcs
+or i should say in command they
+basically flew direct so i'm going to go
+ahead and
+set this up just like i did before set
+these guys to i'm
+trying to keep this as a straight line
+as i can get it here let's put it right
+here go to 25 000 feet
+we're going to come on down here this is
+going to be our ip which is basically
+right with the bridges i mean we can
+come in here if we want we can actually
+call it ip if you want
+so we're going to set this down to 2000
+feet above ground level which is
+roughly what we expected it accelerate
+up to 300 knots
+we're also going to use that as my
+attack point so i'm actually going to go
+now after you've done your quick little
+attack there we'll go ahead and climb
+back up to 25 000 feet
+and then we'll go ahead and go all the
+way back home here let's go ahead and
+pass the landing
+and now we're in pretty good shape yes i
+did reverse the color there's nothing
+bad don't worry about it
+so now from this point right here i have
+to actually set this point to be the
+bomb the runway position
+so right now it's set to close air
+support we're going to set this to
+runway attack
+so when we do that now it can actually
+have bombing runway which is kind of a
+nice little tweak here
+and you can actually see here we can
+pick the runway that we want to blow up
+so i've actually selected it
+it's smart enough to do it automatically
+i'm going to say bombs i'm going to say
+all make sure you do group attack
+otherwise
+they won't attack as a group or they'll
+do it like in a weird column or
+something like that that seems to be the
+way to do it
+so let's go ahead now those guys are now
+set up we'll go ahead and grab oh
+we have to set these guys to blue team
+in order to be legally taking off from
+this runway here
+so let's go ahead and grab a second pair
+of those guys they're going to be the
+same
+if you remember this one attacked from
+the opposite side when we're over there
+in command
+so go ahead and grab that one we're
+going to just kind of leave the eye
+we're going to leave this one alone
+we'll switch what side is what am i
+saying
+move this over just a tiny bit go ahead
+and put this one to the ip
+i'm going to use this as the number
+three point you can see i grabbed the
+wrong
+three uh you're gonna do the same thing
+about a hundred times so um don't blame
+me don't blame me
+go ahead and line it up just like that
+and it's looking pretty good so those
+guys are now good to go we're gonna have
+to go ahead and add all the escorts that
+we brought them along with so i'm gonna
+come up to here we'll set this back to
+combined blue we'll say uh we're going
+to call this escort
+we'll pop up to here we'll pop over to
+you obviously we have sukhoi 27s
+uh we'll go and see there that's fine
+we'll plop them down on the map here
+we're going to go ahead and set them to
+take off from parking hot
+very important parking hot that is your
+best friend here actually change what
+parking spot they're in
+now remember their loadout was um not
+crazy they were carrying these pods
+so go ahead and equip those and
+basically they're carrying a lot of r27s
+so we're gonna go under here
+we're gonna grab some r27s so we're
+going to grab a couple of those
+a couple of those they actually had
+quite a few of these r27
+and we also had some teas if you
+remember as well now those are the
+regular t's not the fancy tees
+and naturally of course you're going to
+have a couple r 73s as well
+now programming these guys for the
+purposes of actually being able to
+escort these guys
+a little bit more involved so basically
+what we're gonna have to do is unless
+it's set to cap
+i'm gonna come up here and change this
+up to escort so once you do that
+usually what i do is i create a really
+really simple mission i go that far
+make myself a little rectangle and
+that's about as much as i'm going to
+need i don't even care about the other
+details
+and then what i'll do is at position one
+i'll actually come in here and add the
+order
+four s chords we'll go ahead and come
+down here i'll have
+them escort this group here and then
+we'll go ahead and create some big 29s
+for the purposes of escorting the other
+ones
+and now we're looking like we're in
+pretty good business sorry about that
+little glitch there i don't know why
+they
+changed it used to work fine oh wow
+let's go ahead and now create this group
+they're set to a takeoff and parking hot
+we're going to do the same thing we did
+with the sukhoi 27s as well i'm just
+going to go ahead and give them kind of
+the opposite traffic pattern here put
+them down on the ground when they're
+done
+and we're just going to order them just
+like we did on the other group to go
+ahead and escort as soon as they do get
+into a good position
+come up to cap let's hit this to escort
+add perform task escort
+now we'll go ahead and swing down to our
+other group of uh sequoia 25 t's
+and now we're pretty much ready to go on
+that side i'm going to save things real
+fast
+good time of course to check the weather
+i set it at 12 30 as you recall
+we also said it was in i believe it was
+october and actually i'm sorry it was
+august
+august 10th uh 2008. okay now our
+business
+so i'm going to come back down here now
+we're just going to go ahead and add all
+the aircraft for this particular region
+a couple different ways we can do this
+of course we can plot them all on the
+ground have them all take off
+individually
+that's going to give you the best time
+balance but it could also cause other
+issues depending on what you're trying
+to achieve as well
+so let's come down here and go ahead and
+switch this back to red team
+we'll go ahead and call this a
+combinator patrol and like i said in the
+other scenario we're actually going to
+make these l39s
+which is uh that's going to be
+interesting to say the least
+oh we'll put some teeth on them i'll go
+ahead and throw on some i don't know pk3
+seems good
+now inside of command we do not have the
+option to mount any sort of missile like
+this on here
+so if we want to be honest to that
+particular thing we can actually go just
+like this or if we could of course you
+know sneak in here and throw in some
+other stuff as well
+for example i could put a couple fuel
+tanks on and just kind of use that as my
+interceptor aircraft
+since this is an interceptor i'm going
+to set this to solo flight
+and we're going to go ahead and say take
+off from parking hot i'd like to go
+ahead and number these guys we'll do
+602 602 go ahead and create four of them
+so now this is where it's a little bit
+tricky in command we can just say hey
+this whole area is our zone
+in this one you have to actually kind of
+spell it out so i'm going to go ahead
+and set these guys to 15 000 feet
+and i'm just going to have them fly kind
+of a little rectangle like this and then
+i'll have them come back down and go
+ahead and land the plane
+hopefully by then enough trouble has
+been caused to give them a reason to go
+ahead and give
+chase so remember we had 16 of these
+total so boop
+and boop and now we have plenty and
+plenty plenty plenty plenty of stuff
+to go ahead and entertain us on our way
+down so now what i like to do is i like
+to give it just a try without actually
+flying it
+the reason for this of course is to kind
+of check to see if there's any sort of
+uh
+not wonkiness but a little bit of
+weirdness now the fun part of this of
+course is i get to watch everything i
+super fast motion here
+so go ahead and zoom out we'll go ahead
+and grab our folks up north
+oh man this is definitely going to take
+them a minute you know you can speed up
+time and everything just like you can
+like right now i'm at 15x so it's the
+exact same speed that you usually see
+inside of a regular command here
+and it's so much fun because everybody
+basically sits there queues up at the
+end of the runway and they
+start ripping up into the air man is
+this a bright time of day maybe
+there goes one no no that's so much fun
+so basically what they're going to do is
+they're going to run through the entire
+scenario
+in fast motion everybody's going to go
+ahead now kind of get themselves at the
+end of the runway there
+just like you could probably imagine and
+again it's kind of neat to see what this
+sort of looks like you know
+almost like a 3d world as opposed to
+seeing what this looks like over in the
+command where it's 2d
+obviously we have takvview too if you
+want to see it this is kind of fun to
+watch everybody just kind of warms up
+look at that poor little radar truck
+that's the nodding radar by the way it's
+a height follower it's up basically for
+the version of ils if you're kind of
+curious about that
+and i love the black smoke coming out of
+the back of those that is just so
+satisfying
+so what i'll do is i'll go ahead and now
+speed this up until right before the
+action actually takes place here with
+this guy get airborne first
+go go go go go nice
+it almost sort of looks like command i
+mean you can have like the big map and
+everybody's moving around but uh
+yeah it happens all right now for the
+fun part it is go time everybody's
+gone ahead and got themselves into a
+pretty good spot our interceptors are
+now kind of spreading and i'll go ahead
+and speed time up just like a wooden
+they're going to go ahead and start
+spreading out and getting ready to
+engage all these l39s that are just sort
+of chilling here
+i notice that our first groups are doing
+perfect they're lining themselves up
+with that bridge which remember is going
+to be the input
+and of course if i grab these guys right
+now we can watch them basically tearing
+these l39s to pieces here
+oh that's going to get messy i've turned
+on labels here again this is for the
+purposes of testing before i try the
+real scenario
+when you do the real scenario it's going
+to be uh pretty pretty intense pretty
+intense
+all right let's go take a look at my
+attack aircraft my sukhoi 25s i'm
+getting themselves down to remember 2000
+feet agl is what we set them to be
+they go and pop themselves down they're
+going to cross that bridge that's their
+ip ip
+and bound all right here they go
+now if you recall there are quite a few
+air defense units uh ready for this
+particular task here so i'll be curious
+to see how they manage or don't
+of course they're aiming all right for
+the taxiway there oh and here comes the
+triple a now remember what happened in
+that was a lot of burst fire for a
+little teeny tiny head so that's
+actually fairly accurate so far and i
+believe there's another group of them on
+the end there
+going to zoom down is he going to take
+the shot now he's not going to take the
+shot they're just gonna get a little
+altitude and come back again
+and i can see an airplane way in the far
+side got coming down now if you remember
+we also had this guy who's all the way
+over here
+and i'm sure that he's gonna take
+another shot if he gets the chance to do
+so
+it's like anybody's gonna pass over him
+but you can see this is this is what it
+actually would look like
+all right we've got our fighters popping
+over the top here
+looks like he's acquired somebody he's
+kind of zipped through those little
+clouds
+oh this is going to end quickly oh no
+he's required his attack aircraft nice
+let's see how our other attack group is
+doing here
+come check on this side there's attack
+one he's got to kind of turn around
+remember he's
+carrying those extra heavy fuel tanks
+makes this a very tedious process and it
+looks like the s8 fired a couple if you
+remember i won't be testing the scenario
+we did
+and everybody immediately aborts and
+returns home because they've detected a
+sam site
+and it makes it impossible to continue
+the scenario so let's go and hit this
+group here let's see how they're doing
+are we going to go for it no they're all
+going to abort and fly back home
+now you're probably saying why did they
+do that it's because in dcs it's
+programmed in such a way that if you
+ever hit a situation
+where um you know they can't complete
+their mission they just ignore you and
+go home
+so if we want to disable that we can
+actually come up here advanced we can
+actually set the option for it
+so i can say reaction to threat and not
+actually can tell them to evade fire i
+can even tell them to be passive
+in which case they're only going to dump
+basically chaff and flare for the
+purposes of engaging
+the other thing you want to do while
+you're in here too is you can restrict
+the jettison just like we can over in dc
+sergeant say command as well
+let's grab this crew as well we're going
+to go ahead and tell them to do the same
+thing reaction to threat
+uh you could do passive and of course uh
+no jettisoning for you guys that just
+wouldn't be fair
+all right i'm gonna go and fast forward
+to the action and see if it makes a
+difference
+all right back to the action so we've
+gone ahead and fast forward a little bit
+to kind of let everything kind of take
+place exactly
+as it did last time you can see the
+mig-29s are basically rearranging all
+the l39s that georgia had
+obviously again this is in your scenario
+you can design any way they want what
+i'm really curious now is to see the
+response of the sukhoi-25s here
+so they've hit their ip already and
+they're kind of coming down this way
+which i find a little weird
+again now they haven't jettisoned their
+weapons or they come swinging around
+this way
+doing a couple of zigzags there again
+they've been programmed to be allowed to
+drop fire oh here comes the other crew
+it looks like the other team is doing
+their first run here
+all right he's coming down the runway
+here he's getting that initial burst
+remember these bursts absolutely and
+look at that remember what happened to
+all right let's see he's gone down it
+looks like he's dropped a couple of his
+explosives on the way
+and you can see the zeuses are too busy
+shooting at him as opposed to worrying
+about these guys who are making their
+way down now
+so they've just started dropping their
+ordinance now you can see that raining
+down onto the runway just like we saw
+another one's lost his wing have been
+shot to pieces and he's going down just
+like we saw in command also this is the
+importance of choosing the correct
+altitude for planning missions like this
+come down to this one uh he's also gone
+ahead and i've done his little drop
+right there as well
+you can see each one of these these are
+pretty neat munitions because what they
+do is they come down on a parachute then
+a rocket fires and they actually smack
+themselves out of the ground they're
+kind of cool
+oh goodbye that thing is cratered he's
+going to zip out with that not too too
+much difficulty i think probably one of
+the zeus is going to take appreciate
+yeah you can see a couple of shots did
+miss
+a couple of the shots go ahead and take
+out a wide shot he's done his thing he's
+deployed his weapons
+and now he's going to go ahead and turn
+around and head back home
+all right now that we've seen that
+everything seems to work basically the
+same way we saw in command this is
+always a fun thing because now we get to
+determine you know how well did it work
+or not work or something like that
+so we're going to let this guy of course
+get tapped by pro he exploded
+so of course this guy's running for his
+life going no no no no
+meanwhile these i think 29s are going to
+come reeling them in in just a second
+of course remember there's an sa8 right
+there so they might get a little close
+to the action as i like to say
+there it is here comes the fireworks
+we're probably gonna get stuck using
+cannon or something like that but that's
+all right
+what are you doing there he goes and
+that battle was
+over all right meanwhile the next
+crew is actually making their runs now
+notice there are slightly higher
+altitude because we told them to be
+the other crew for whatever reason
+decides to ignore that suggestion but
+that's not right
+and i didn't even see that many traces
+come up at us this time but you can see
+that it did succeed at wrecking the
+runway just like we saw over in command
+here comes the last guy you never want
+to be the last guy in the chain of
+bombers because by then everybody knows
+where you are
+oh we just got nicked no problem no
+problem
+guess how it works his way over because
+the trick here was not putting the zeus
+at the end of the runway
+whoa that would have been nasty but
+actually putting them kind of in the
+middle where it would be a little easier
+ah look at that
+runway destroyed all right mission
+accomplished
+so i'm gonna go ahead and press escape
+press quit so now we're gonna do is
+we're just gonna go ahead and take a
+look at what's happened here so go ahead
+and check for it hits
+event so we'll do hit and you can see
+everybody who was struck here obviously
+we did a lot of damage to the ground
+a bunch of these guys got a bunch of
+free hits the other one that's good
+worth checking
+is whether or not you had to crash in
+this case you can see these are all the
+aircraft that were lost
+taking a look at the tip top you can see
+that our sukhoi 25s we lost quite a few
+of them which is interesting because we
+didn't command two
+and obviously the other guys lost every
+single l39 that they had
+so hopefully this video is helpful as
+far as kind of coming up with the
+general workflow for working from
+with as well as dcs i find this system
+works great i don't go crazy accurate
+with all the grids when i don't have to
+be
+but from time to time i will get that
+precise if i'm like putting individual
+tanks like in people's houses or
+something
+enjoy

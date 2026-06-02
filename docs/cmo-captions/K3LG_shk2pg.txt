@@ -1,314 +1,314 @@
-0.3	hello everyone in today's video we're
-1.8	going to be taking a look at how you can
-3.4	create a custom flight plan for strike
-5.6	missions in command mod
-6.9	operations now this is something that i
-8.6	probably should have done video of a
-10.0	very very very very long time ago but it
-11.9	was one of those things where just
-13.1	recently i was playing with it going
-14.8	you know what this would probably not be
-15.9	a bad idea so let's go ahead and do it
-18.0	first things first we're going to need
-19.2	to go ahead and get ourselves a couple
-20.6	units
-21.1	so what i'm going to do is i'm going to
-22.2	get myself a handy dandy f4e
-24.4	we'll go ahead and get out one of the
-25.5	classic ones the dbu 15s here
-27.9	and the reason i'm doing this is just to
-29.4	kind of demonstrate what you can do with
-30.9	this quickly
-31.8	so i'm gonna go ahead and get myself
-32.9	these two aircraft again keep in mind
-34.4	you do this from aircraft that we
-35.7	launched we'll demonstrate that in a
-36.9	minute
-37.4	and what i'm gonna do is i've already
-38.7	got a mission pre-built to attack this
-41.1	little group of targets here
-42.4	if you actually take a look real quickly
-43.7	you can see they're all pre-selected
-45.2	everything's ready to go
-46.6	so what i'm going to do is i'm going to
-47.5	right-click i'm going to press the
-48.8	scientific
-49.8	watch what happens when i click on
-51.4	ascent mission here you'll notice that
-53.4	this strange little white line suddenly
-55.5	appears
-56.2	that gives you all the details of the
-59.0	actual flight plan
-60.1	of this particular aircraft now what
-62.0	makes it so awesome is the fact that if
-63.9	you actually move yourself off
-65.6	you can see exactly what waypoint the
-68.0	particular aircraft is heading towards
-70.0	now instead of going okay this is kind
-72.1	of cool how do i how do i play with this
-73.8	how do i play with this
-74.9	well let me show you what you're going
-76.3	to do to edit flight plan is to left
-78.1	click and drag if you want to move where
-79.7	the particular waypoint
-80.7	is or if you prefer you can left click
-83.0	on it and then press
-83.9	f2 if you press f2 it gives you the
-86.8	ability to not only define descriptions
-89.0	for waypoints
-89.8	but you can also do things like set the
-91.4	throttle you can set the altitude
-93.5	now you're probably sitting and going
-94.8	hey wait a minute this is actually kind
-96.7	of useful
-97.8	and anybody who knows anything about
-99.1	command knows how many times you've
-100.4	ordered strike missions and your
-101.5	aircraft basically choo-choo right
-103.1	through all the surface wear missile
-104.5	patterns or maybe
-105.5	right through a bunch of anti-aircraft
-106.8	artillery and they make a mess of things
-108.6	because they're too high or they're too
-109.8	low
-110.4	well now you can actually manually stop
-112.2	that from happening so in this case what
-114.0	i want to do is i'm going to leave him
-115.1	at 36 000 feet for
-116.6	1.4 when he hits waypoint 5 i'm actually
-119.8	going to adjust this position a little
-121.6	bit closer here
-122.6	i'm actually going to rename this i'm
-124.3	going to call this pre-ip
-125.6	why not right and i'm going to drop his
-128.6	altitude down to 12
-130.2	000 feet and kick on the afterburners
-133.2	now what i'm going to do when he gets to
-134.6	the weapon launch position
-136.6	of course if you ever run into a problem
-138.2	where you can't quite select the one
-139.6	that you're trying to do you can always
-140.7	click the one before it and press the
-142.6	right arrow
-143.4	so in this case uh this is still an
-145.0	ingress position but that's actually our
-146.6	target ah there it is right there
-148.5	there's our actual target waypoint and
-150.1	now we can go ahead and dial in
-151.5	exactly what we want to do during the
-153.0	attack so add them to an afterburner i
-155.0	want them to be traveling a total of
-156.8	i'll keep them at 12 000 for here
-158.6	actually you know what i'll drop them
-160.0	down to 10 000 feet
-161.8	and now you can see that we have the
-163.1	ability to actually customize
-165.2	each one of these waypoints so you can
-167.2	see we start at 36
-168.6	we drop down to 12 we went back up to 12
-170.7	000 25 000 rather
-172.2	except real quick then we go ahead and
-174.1	stay at our way point target drop our
-175.8	little bombs here do our deed
-177.3	at afterburner and then once we're done
-179.4	our attack we're then going to go ahead
-180.8	and reduce and start to egress back out
-182.9	here
-183.4	cruise well we'll say i'll go ahead 36
-185.9	000 feet and now we're pretty much ready
-187.5	to go
-188.2	so now if i run the scenario our
-190.7	aircraft is going to cross way point
-192.5	four at its
-193.4	normal altitude again remember it was 36
-195.3	thousand feet it's going to proceed
-196.9	along you know nothing too
-198.1	sketchy nothing too sketchy he's just
-199.8	going to kind of cruise along here
-201.2	you see a comp is called doing his job
-203.0	pretty well there we're going to go
-204.6	ahead and crossway 0.5
-206.1	remember when we hit waypoint 5 he was
-208.3	supposed to automatically descend
-210.5	by the way they can't descend unless you
-212.3	have this set to automatic mode
-213.8	so very important to do all right roo's
-216.4	in here we're going to cross way 0.5
-218.0	that was my pre-ip
-219.2	notice he kicks on afterburners just
-221.4	like i told him to
-222.6	accelerates up to really high speed and
-225.3	drops down
-226.1	to 12 000 feet so now he's at 12 000
-229.1	feet he's ripping around doing 700 knots
-231.4	all these angry sam sites and everything
-233.2	are busy acquiring them but they have a
-234.8	much
-235.4	much tougher target now than they did
-237.4	previously so they're going to go ahead
-239.0	and get themselves into range and
-240.4	they're going to go ahead and deploy
-241.5	their weaponry in just a moment
-243.6	again all sorts of things here remember
-245.1	twelve thousand feet just like ordered
-248.0	they're getting into range weapons away
-250.4	they're now turning themselves away
-252.2	they're gonna go keep themselves at ten
-253.5	thousand feet just like we ordered
-255.2	they're gonna come spinning around and
-256.6	then they're gonna start heading
-257.7	themselves back out
-259.0	keep in mind though since they're an
-260.1	afterburner they're going to slowly run
-261.8	themselves out of fuel here
-263.4	so one of the really easy ways to kind
-265.1	of preclude that is you can actually
-266.5	grab this waypoint actually i'm sorry
-268.0	you can't grab that
-268.6	point because it's the landing way point
-270.2	you can grab the waypoint before it
-272.2	bring it a little bit closer and set
-273.8	this waypoint to be kind of your exit
-275.5	way point
-276.2	so on this one you can sit up here go to
-277.8	altitude go to cruise
-279.2	and once they cross that spot they'll
-280.8	stop wasting all that fuel at the time
-282.4	while rip
-283.2	just like that and now they cruise back
-285.0	home that was an
-286.3	amazing strike so you can see already
-289.6	just how effective this particular
-291.2	strategy is as far as making this a
-293.0	little bit more efficient
-294.2	normally if i had done that strike at
-295.4	low altitude the shulkes now were
-297.0	actually put down here that you can't
-298.2	see
-298.6	would have ripped those f4s to pieces so
-301.4	um
-301.8	now it works pretty well but what if we
-303.4	ran into a situation where we had
-304.9	a lot of flights going at the same time
-307.1	well that does get a little tricky and
-309.0	let me show you what i mean
-311.1	i'll go ahead and grab the same scenario
-312.8	this time i'm going to go ahead and let
-313.9	the aircraft take off on their own
-316.3	watch what changes here pause
-319.4	you'll notice i have four flights of
-321.4	aircraft gear you know
-322.7	this one this one this one and this one
-324.6	notice when i left click on one it shows
-326.6	you automatically what flight plan it's
-328.4	following
-329.2	based on which bright white line you got
-332.1	here
-332.6	now if i wanted to tweak this i just
-334.0	simply select one of the waypoints on
-335.4	that path
-336.1	hit f2 now i can go ahead and surf
-337.7	around the different points that i want
-339.2	to use in this particular case
-340.8	this is a low altitude strike i'm not
-342.5	too too concerned with it
-343.8	but one thing you can do in order to
-345.2	improve range a little bit is like my
-346.7	way point three here
-347.9	normally this is a 200 feet if i set
-349.6	this to 36 000 feet
-351.6	now the aircraft is going to be cruising
-353.3	at that altitude rather than being so
-355.0	low
-355.7	notice as long as i have that target
-357.4	selected i can see just its flight plan
-359.6	but if i zoom in i lose everybody else's
-361.4	plan
-361.9	so we came over here to our waypoint 4
-364.1	for example
-365.0	now i could do minimum altitude so that
-367.0	way our aircraft travels along this
-369.0	saving as much fuel as possible then it
-371.1	descends does this attack and then when
-373.0	i get back to say way point seven here
-374.9	i can tell it to pop back up to thirty
-376.2	six thousand feet and basically safely
-378.3	cruise out of here
-379.3	now if you had really good intelligence
-381.1	you would know for example there's an
-382.4	sa2 here and it has a limitation of
-384.1	let's say 30 nautical miles
-385.7	you could build this so accurately that
-387.7	they wouldn't be able to do anything to
-389.2	basically scratch you
-390.5	and that's one of the great techniques
-391.8	that you can use for this
-393.5	now you probably just noticed a moment
-395.5	ago that i grabbed that waypoint and
-397.6	another waypoint
-399.0	came out of my mouse now what i did here
-402.5	is i pressed the
-403.6	left clicked on it held on the control
-405.5	key and then dragged away from it which
-408.2	gave me a brand new waypoint
-410.0	so in this case let's say i want my
-411.4	aircraft to actually come through this
-413.0	little
-413.7	tight value right here i can now set
-415.8	this one to be my 200 footer minimum
-417.7	altitude
-418.5	i can come over here set this one to be
-420.6	my papa belted to let's say a thousand
-422.3	feet
-422.7	we'll also make sure right after burner
-424.5	the aircraft's gonna get to its ip again
-426.5	i want to keep it about a thousand feet
-427.9	after burner
-428.7	it's going to do its little swiggity
-430.0	swoop and then it's going to get out of
-431.2	here and egress
-432.6	at cruise power as well as normal
-434.4	altitude so now if i warn this flight
-436.5	real quick
-437.8	again we're just interested in this
-438.9	group right here
-441.1	now watch the difference in attack
-443.0	pattern that we're going to get since we
-444.7	chose to do it manually
-446.0	notice the other groups of course
-447.4	proceed on their normal courses they're
-448.9	just kind of cruising up the tiki by the
-450.3	way in case curious
-451.4	notice our fight karma 2 as soon as they
-453.4	cross that line there
-454.7	they immediately pop up to a thousand
-456.2	feet they zip in
-457.8	they start dropping the bombs all over
-459.0	the place targets hit
-460.9	they come spiraling out of there they go
-462.7	rip and try to stay as low
-463.9	as possible as they come true nobody's
-465.8	lost one keep cruising keep cruising
-467.8	that altitude low
-470.9	and then as soon as they get to the
-472.0	egress point they pop back up to 36 000
-474.3	feet
-474.7	and they are on their way so you can
-477.9	already see how
-478.8	wonderfully wonderfully useful this is
-481.4	as far as doing these kinds of plans you
-483.7	know you can go
-484.5	nuts with this now i really appreciate
-486.8	it i really wish we had
-488.1	was the ability to find out how long
-489.7	it's going to take you to get the
-490.7	waypoint
-491.4	but that is a video for a completely
-493.1	different day hopefully this helps out a
-495.0	little bit and shows you just how
-496.1	powerful that feature is again all you
-497.5	have to do is click on something to find
-498.6	out its flight plan is
-499.8	and you can figure it out very very
-501.0	quickly to do your modifications
-502.8	enjoy
+# C: MO Tutorial - Customizing Strike Flight Plans
+Video: https://www.youtube.com/watch?v=K3LG_shk2pg
+Video ID: K3LG_shk2pg
+
+hello everyone in today's video we're
+going to be taking a look at how you can
+create a custom flight plan for strike
+missions in command mod
+operations now this is something that i
+probably should have done video of a
+very very very very long time ago but it
+was one of those things where just
+recently i was playing with it going
+you know what this would probably not be
+a bad idea so let's go ahead and do it
+first things first we're going to need
+to go ahead and get ourselves a couple
+units
+so what i'm going to do is i'm going to
+get myself a handy dandy f4e
+we'll go ahead and get out one of the
+classic ones the dbu 15s here
+and the reason i'm doing this is just to
+kind of demonstrate what you can do with
+this quickly
+so i'm gonna go ahead and get myself
+these two aircraft again keep in mind
+you do this from aircraft that we
+launched we'll demonstrate that in a
+minute
+and what i'm gonna do is i've already
+got a mission pre-built to attack this
+little group of targets here
+if you actually take a look real quickly
+you can see they're all pre-selected
+everything's ready to go
+right-click i'm going to press the
+scientific
+watch what happens when i click on
+ascent mission here you'll notice that
+this strange little white line suddenly
+appears
+that gives you all the details of the
+actual flight plan
+of this particular aircraft now what
+makes it so awesome is the fact that if
+you actually move yourself off
+you can see exactly what waypoint the
+particular aircraft is heading towards
+now instead of going okay this is kind
+of cool how do i how do i play with this
+how do i play with this
+well let me show you what you're going
+to do to edit flight plan is to left
+click and drag if you want to move where
+the particular waypoint
+is or if you prefer you can left click
+on it and then press
+f2 if you press f2 it gives you the
+ability to not only define descriptions
+for waypoints
+but you can also do things like set the
+throttle you can set the altitude
+now you're probably sitting and going
+hey wait a minute this is actually kind
+of useful
+and anybody who knows anything about
+command knows how many times you've
+ordered strike missions and your
+aircraft basically choo-choo right
+through all the surface wear missile
+patterns or maybe
+right through a bunch of anti-aircraft
+artillery and they make a mess of things
+because they're too high or they're too
+low
+well now you can actually manually stop
+that from happening so in this case what
+i want to do is i'm going to leave him
+at 36 000 feet for
+1.4 when he hits waypoint 5 i'm actually
+going to adjust this position a little
+bit closer here
+i'm actually going to rename this i'm
+going to call this pre-ip
+why not right and i'm going to drop his
+altitude down to 12
+000 feet and kick on the afterburners
+now what i'm going to do when he gets to
+the weapon launch position
+of course if you ever run into a problem
+where you can't quite select the one
+that you're trying to do you can always
+click the one before it and press the
+right arrow
+so in this case uh this is still an
+ingress position but that's actually our
+target ah there it is right there
+there's our actual target waypoint and
+now we can go ahead and dial in
+exactly what we want to do during the
+attack so add them to an afterburner i
+want them to be traveling a total of
+i'll keep them at 12 000 for here
+actually you know what i'll drop them
+down to 10 000 feet
+and now you can see that we have the
+ability to actually customize
+each one of these waypoints so you can
+see we start at 36
+we drop down to 12 we went back up to 12
+000 25 000 rather
+except real quick then we go ahead and
+stay at our way point target drop our
+little bombs here do our deed
+at afterburner and then once we're done
+our attack we're then going to go ahead
+and reduce and start to egress back out
+here
+cruise well we'll say i'll go ahead 36
+000 feet and now we're pretty much ready
+to go
+so now if i run the scenario our
+aircraft is going to cross way point
+four at its
+normal altitude again remember it was 36
+thousand feet it's going to proceed
+along you know nothing too
+sketchy nothing too sketchy he's just
+going to kind of cruise along here
+you see a comp is called doing his job
+pretty well there we're going to go
+ahead and crossway 0.5
+remember when we hit waypoint 5 he was
+supposed to automatically descend
+by the way they can't descend unless you
+have this set to automatic mode
+so very important to do all right roo's
+in here we're going to cross way 0.5
+that was my pre-ip
+notice he kicks on afterburners just
+like i told him to
+accelerates up to really high speed and
+drops down
+to 12 000 feet so now he's at 12 000
+feet he's ripping around doing 700 knots
+all these angry sam sites and everything
+are busy acquiring them but they have a
+much
+much tougher target now than they did
+previously so they're going to go ahead
+and get themselves into range and
+they're going to go ahead and deploy
+their weaponry in just a moment
+again all sorts of things here remember
+twelve thousand feet just like ordered
+they're getting into range weapons away
+they're now turning themselves away
+they're gonna go keep themselves at ten
+thousand feet just like we ordered
+they're gonna come spinning around and
+then they're gonna start heading
+themselves back out
+keep in mind though since they're an
+afterburner they're going to slowly run
+themselves out of fuel here
+so one of the really easy ways to kind
+of preclude that is you can actually
+grab this waypoint actually i'm sorry
+you can't grab that
+point because it's the landing way point
+you can grab the waypoint before it
+bring it a little bit closer and set
+this waypoint to be kind of your exit
+way point
+so on this one you can sit up here go to
+altitude go to cruise
+and once they cross that spot they'll
+stop wasting all that fuel at the time
+while rip
+just like that and now they cruise back
+home that was an
+amazing strike so you can see already
+just how effective this particular
+strategy is as far as making this a
+little bit more efficient
+normally if i had done that strike at
+low altitude the shulkes now were
+actually put down here that you can't
+see
+would have ripped those f4s to pieces so
+um
+now it works pretty well but what if we
+ran into a situation where we had
+a lot of flights going at the same time
+well that does get a little tricky and
+let me show you what i mean
+i'll go ahead and grab the same scenario
+this time i'm going to go ahead and let
+the aircraft take off on their own
+watch what changes here pause
+you'll notice i have four flights of
+aircraft gear you know
+this one this one this one and this one
+notice when i left click on one it shows
+you automatically what flight plan it's
+following
+based on which bright white line you got
+now if i wanted to tweak this i just
+simply select one of the waypoints on
+that path
+hit f2 now i can go ahead and surf
+around the different points that i want
+to use in this particular case
+this is a low altitude strike i'm not
+too too concerned with it
+but one thing you can do in order to
+improve range a little bit is like my
+way point three here
+normally this is a 200 feet if i set
+this to 36 000 feet
+now the aircraft is going to be cruising
+at that altitude rather than being so
+notice as long as i have that target
+selected i can see just its flight plan
+but if i zoom in i lose everybody else's
+plan
+so we came over here to our waypoint 4
+for example
+now i could do minimum altitude so that
+way our aircraft travels along this
+saving as much fuel as possible then it
+descends does this attack and then when
+i get back to say way point seven here
+i can tell it to pop back up to thirty
+six thousand feet and basically safely
+cruise out of here
+now if you had really good intelligence
+you would know for example there's an
+sa2 here and it has a limitation of
+let's say 30 nautical miles
+you could build this so accurately that
+they wouldn't be able to do anything to
+basically scratch you
+and that's one of the great techniques
+that you can use for this
+now you probably just noticed a moment
+ago that i grabbed that waypoint and
+another waypoint
+came out of my mouse now what i did here
+is i pressed the
+left clicked on it held on the control
+key and then dragged away from it which
+gave me a brand new waypoint
+so in this case let's say i want my
+aircraft to actually come through this
+little
+tight value right here i can now set
+this one to be my 200 footer minimum
+altitude
+i can come over here set this one to be
+my papa belted to let's say a thousand
+feet
+we'll also make sure right after burner
+the aircraft's gonna get to its ip again
+i want to keep it about a thousand feet
+after burner
+it's going to do its little swiggity
+swoop and then it's going to get out of
+here and egress
+at cruise power as well as normal
+altitude so now if i warn this flight
+real quick
+again we're just interested in this
+group right here
+now watch the difference in attack
+pattern that we're going to get since we
+chose to do it manually
+notice the other groups of course
+proceed on their normal courses they're
+just kind of cruising up the tiki by the
+way in case curious
+notice our fight karma 2 as soon as they
+cross that line there
+they immediately pop up to a thousand
+feet they zip in
+they start dropping the bombs all over
+the place targets hit
+they come spiraling out of there they go
+rip and try to stay as low
+as possible as they come true nobody's
+lost one keep cruising keep cruising
+that altitude low
+and then as soon as they get to the
+egress point they pop back up to 36 000
+and they are on their way so you can
+already see how
+wonderfully wonderfully useful this is
+as far as doing these kinds of plans you
+know you can go
+nuts with this now i really appreciate
+it i really wish we had
+was the ability to find out how long
+it's going to take you to get the
+waypoint
+but that is a video for a completely
+different day hopefully this helps out a
+little bit and shows you just how
+powerful that feature is again all you
+have to do is click on something to find
+out its flight plan is
+and you can figure it out very very
+quickly to do your modifications
+enjoy

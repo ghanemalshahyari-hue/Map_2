@@ -1,0 +1,147 @@
+# C: MO - Beta 1278.1 Detection Changes
+Video: https://www.youtube.com/watch?v=Ccyl-4E_dl4
+Video ID: Ccyl-4E_dl4
+
+hello everyone in today's video we're
+going to be taking a look at some of the
+major changes that they brought in this
+latest command update of one two seven
+eight point one which you can pick up on
+the command form if you're looking to
+kind of get kind of in on the ground
+floor so to speak so there's a couple
+different updates so the first update
+that I want to show you that I'm really
+really super duper majorly happy with is
+they change the mission Editor to make
+it have more room to work this is
+awesome so what was different before is
+you kind of had everything kind of
+crammed on one of these little teeny
+tiny windows and you know you come down
+here and kind of do one of these things
+trying to like fits with it to try to
+get it right and you just could never
+quite get what you needed on the screen
+so what they did which I think is super
+clever is they came up here and they
+actually Baroque this apart so that you
+have like a whole page for Mission
+settings which you cannot do stuff for
+and they have a whole separate page for
+targets that you can go ahead and
+concentrate and they've actually changed
+them a language down here to make it
+much more easy to follow and I think
+it's a really really awesome change so
+woohoo uh the second thing and this one
+has some interesting implications is
+they implemented changes to the way that
+Horizon is calculated related now it's
+not that the world has changed size it's
+just that when you look at some
+equations as far as the propagation of
+electromagnetic energy in an atmosphere
+you discover that sure enough they
+behave differently depending on the
+scenario in one scenario we have of
+course if we just were to go ahead and
+look out with some binoculars we're not
+going to be able to see as far as if we
+look with a radar signal because radar
+signals when you shoot the Mover Horizon
+they'll actually hang on to the Horizon
+let's need a tiny bit giving you an
+enhancement in the maximum range that
+you can actually detect something so to
+show you what this looks like if I
+actually were to click on the unit real
+quickly here hit that one go switch over
+to line of sight mode Let's go ahead and
+last tool here and we'll go ahead and
+set this to an 80 foot Target
+and you'll see exactly what our rough
+radius is it works out to be something
+like 19 20 miles of my math is correct
+right now watch what happens when we
+switch from a radar esm Horizon to an EO
+visual Horizon
+see what happens so what's really going
+on here is the typical Horizon is
+actually at that distance about 12
+nautical miles however because of the
+propagation of the radar the way that
+that's been mechanically simulated we
+actually can detect things over the
+horizon with a radar but we can't with a
+visual sensor so what does that look
+like practically
+let's kind of take a look so what's
+going to happen here so what I've done
+is I've spawned in a little aircraft and
+I've sent them down super duper low to
+about 80 feet I've also set up this
+little generic Watchtower nothing too
+crazy here but on our Watchtower we have
+a variety of different sensors we have
+good old-fashioned Spotlight binoculars
+radar everything into the Sun so what
+I'm going to do is flip on the radar now
+in the previous model the way that this
+information was transferred was that we
+wouldn't be able to detect this target
+until we got within say 10 11 12
+nautical miles now we're going to be
+able to pick up the target to the
+distance of the radar just like we
+calculated a minute ago let's go ahead
+and unfreeze time here give us a little
+bit of multiplication and give it a
+second any moment there it is perfect
+we'll grab it and we see we detected
+them at about 19 nautical miles which is
+about what we expected like I said
+between 19 and 20. of course keep in
+mind you have to be able to identify
+that Target so here's what we're going
+to do we're going to continue monitoring
+this Target and again every five seconds
+we'll get a quick update because again
+that radar slowly turns around taking
+five seconds to sweep the sky it's going
+to continue traveling towards us now
+Watch What Happens we've detected them
+on our air search radar but we have no
+visual fix on them yet they're going to
+have to cross the traditional Horizon
+which we calculated about there it is at
+about what did we say there 11 12
+nautical miles go ahead and pause for a
+second here
+and you can see that next we've gone
+ahead and not only acquired them on our
+radar but we also for a second if you
+spotted it as it went by is we've now
+gone ahead and picked them up on our
+generic IR camera and we've also picked
+them up with our eyeballs here you know
+kind of the generic visual now the
+interesting thing is because we had such
+a powerful IR system we were actually
+able to identify this aircraft pretty
+much instantaneously at that distance
+we're also able to kind of Identify some
+other features with the exception of
+altitude which is going to take a little
+while longer to be able to calculate
+based on that angle so you can already
+see that this could have a major
+implication on the way that Radars work
+now you suddenly have the ability that
+traditionally you can kind of get
+between Radars real carefully by just
+flying super low you can still do that
+but your ability to do so has been
+seriously adjusted because of that
+change and how far that radar Horizon is
+calculated other than that enjoy

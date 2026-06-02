@@ -1,0 +1,346 @@
+# C: MO - Task Pools and Packages
+Video: https://www.youtube.com/watch?v=OOMcIVfQxaQ
+Video ID: OOMcIVfQxaQ
+
+hello everyone in today's video we're
+going to be taking a look at the
+differences between emissions task pools
+and packages now if you've been keeping
+along with a tiny update which we've had
+all these wonderful little additions
+this is another one of those things that
+kind of snuck in under the radar a
+little bit and it's actually pretty
+useful in a lot of ways so let's go
+ahead and get started so first things
+first we hit the f11 key we bring up our
+classic little Mission editor this is
+the latest and greatest version where
+they put all the tabs in like nice and
+easy to use places and everything but
+more importantly we come over here we
+notice we have a couple different
+buttons over here that we had from
+before we also over time we've taken a
+look at that in other videos so let's go
+ahead and take a look at what the
+differences are so let's say I want to
+create a mission I'm going to click on
+this a little Port stay on the airport
+here I'm going to go ahead and create
+myself a traditional Mission and let's
+say blow it up why not I think I've done
+that a few times but oh well strike and
+we're gonna do a line strike press the
+okie doke button cool so now this is a
+standard Mission so if I go up to escort
+I can set my WRA I can come over here to
+my targets I can go ahead and say oh I
+want to go engaging into Winchester I
+want to end a mission after they've
+blown things up I want them to just
+focus on strike time targets and again I
+can come here and change my targets for
+example I know I'm not going to be
+shooting at that runway for example so I
+can knock that off it will just
+concentrate on a bomb in kind of the
+tarmac and stuff like that
+and now what you do of course is you
+come over units you pick the units you'd
+want let's say we want these a4ps we go
+Boop just like that and now we're good
+to go for this particular Mission that's
+all there really really is to it in this
+particular case now you're saying okay
+but you said you're telling me about
+task bullets and packages today yeah I
+am so let's take a look so I'm going to
+delete that mission we'll go up to add
+again and this time I'm going to switch
+over to a task pool so up to Mission
+task poll what is a task pool a task
+pool is basically a group of similar
+Unix it doesn't have to be similar it is
+a group of units that can be assigned
+packages I'm sure what I mean so let's
+go ahead and call this task force one go
+ahead and say it's open and press OK
+notice there's no Mission here there's
+no options for Missions all you're doing
+is selecting who belongs to task force
+one so what I'm going to do is I'm going
+to grab all these a4p so I'm going to
+grab all these A4 cues and we'll go
+ahead and grab um let's say the we'll
+actually leave those for the other task
+force so I'm gonna go and leave that
+there so I'm gonna go ahead and create
+another one and I'll go ahead and create
+this as a task pool we'll call this task
+take Force task force two press the OK
+button come here I'll grab the other
+Skyhawks and I'll just grab the mb3309
+alpha is there just like that and now
+let's go ahead and create a support task
+group as well let's call it taskpool
+supports
+task group
+perfect press ok now I'm gonna go ahead
+and toss in all of these aircraft right
+here just like that
+now you're sitting there saying well
+that's very nice how you've gotten
+yourself all quite organized uh what's
+the point well the point here is now
+that each one of these groups has been
+defined as a task force or a task pool I
+can now add packages to them let me show
+you so first things first I'm on a
+couple different missions here I want to
+do some anti-surface Warfare at the same
+time as I also want to strike this
+airport because why not so what I'll do
+is go ahead and Define an area that I'm
+going to use for some of my anti-surface
+War if we're here press Ctrl f11 like I
+always do I'm gonna go ahead and not
+give it a name except I'm going to do is
+go to Mission click on package and what
+you're going to see here is now a couple
+different things have appeared the first
+one here is we have a name for this
+package I'm a huge fan of the Falcon
+series like Falcon three I think the
+first Falcon I played was Falcon 2 and
+it was like on a flappy disk going back
+a few years so I like my package numbers
+but that's just me so I go to class
+we're going to call this one a patrol
+we're going to make this an anti-surface
+Warfare Patrol navel and we're going to
+set it to active now notice I have a new
+Option down here to select who I'm
+pulling units from so in this case I'm
+going to pull them out of Task Force One
+press the okie doke button now notice
+this looks just select Mission page the
+difference though is you can only pull
+aircraft from the task pool so let's say
+I wanted to grab both of those as
+quadrillos and I'll toss them over here
+into that and now we've got both of the
+squadrons assigned to this Mission now I
+could treat it exactly like I would
+normally do let's say I want to keep uh
+try to keep eight on station at all
+times we'll go ahead and pop that off
+um we're not going to worry about that
+movement style is perfect that's what I
+want my flight size are going to be
+sizes of four I think this is what the
+Houston Falcons I'd have to look this up
+we can come in here and change things as
+like you know the transit altitude
+attack altitude so I'm going to let them
+kind of decide that on the Rope
+next we're going to do is go to the WR
+you can just have what's going to happen
+here
+all right looks pretty good not going to
+change anything here I could come in
+here like a really really technical with
+the different bombs but not going to
+just not needed for this one but you'll
+notice a new thing has occurred and
+that's over here on the left I now have
+my task force with a package in it so
+now let's go ahead and we already have
+those guys quite occupied let's go ahead
+and create another package go ahead and
+shut this one off we'll also do some
+anti inconveniencing of this airport
+here Ctrl f11 again I'm going to switch
+this over to package mode package 5865
+sounds good to me land strike looks good
+looks good I'm gonna pull from task
+force too grab this one right here the
+mb339 alphas cannot make that flight so
+I'm not even going to bother with them
+so we're going to go and pop them in
+here and of course is when you can set
+all your normal stuff here sizes of four
+sounds good to me I'm actually going to
+go up to sizes of six we'll shut this
+button off just in case I did my math
+wrong like we said before we'll go ahead
+and pop those off kind of real quick
+let's see dude focus on strike targets
+that's exactly what I'm hoping for I'm
+not going to bother with any of this
+here I'm not going to worry about the
+WRA for the escorts either because we
+don't have any escorts or anything like
+that so now we have those two packages
+ready to rock now I wanted to I could
+come in here and Define my takeoff time
+so if I wanted to package 85864 for
+example take off before or after I could
+come in here and actually do that right
+now so let's go ahead and do that let's
+see 5 30 on the am scale it is 9 30 Zulu
+so we'll order this group to take off
+that I'll call it a 9 45 actually we
+have to be Zulu time here 09 35 and 0
+seconds sounds good to me I'm not going
+to worry about time one station let's go
+pop over to task force 2 here we'll go
+ahead and order them to take off a
+little bit later in the day oh we got a
+little bit of a warning here about range
+I'm not worried about that yet because
+I'm just going to add some stuff onto
+there so don't panic all right so let's
+go ahead and say that'll be 09 that's
+called 10 o'clock 10 o'clock is fine
+you're going to get a bunch of angry
+things here don't worry about it because
+we're just going to sign some refillers
+real quick sweet so this is all set and
+ready to rock go ahead and close that
+let's go ahead and create a refueling
+pattern over here and then we'll use a
+different task force for that particular
+Mission here control f11 again I'm going
+to go ahead and say this will be a
+support Mission let's go ahead and press
+okie doke I actually remember there's a
+package this time package task force
+support
+just like that you can see they're
+pre-selected you can see the package is
+ready to rock so I can grab all these
+guys and toss them into this mission
+right away one of the things I will do
+is I will not enforce this I'll say this
+and let's see here escorts we don't have
+any escorts or anything like that let's
+see here one thing we do want though is
+under WRAS we want them to turn on their
+radars
+no good it's already activated sweet so
+I'm not going to stress about that too
+much because yeah there would be no
+targets unless of course I did this one
+as a patrol give me a second
+indeed I did
+oh well what are you gonna do go back to
+the f11 page here
+toss those guys in there and then we're
+good to go now I'm going to go to WRA
+it'll have radar off good making sure
+I'm not going to Zane here looks pretty
+good Mission settings are looking good
+uh one third try to keep units on
+station here's a fun thing to do you do
+five even though there's only three of
+them and that means they're all on
+station which will work really well for
+us which is exactly what we want to do
+so we have them assigned to this Mission
+they're ready to rock the mission
+settings are ready to rock we can change
+the takeoff time and everything like
+that if we needed to we could make them
+take off immediately which actually
+makes a lot of sense if you ask me so
+let's go ahead and order them to take
+off at 09 30 and 30 seconds so in about
+30 seconds from now they're going to
+start the process of getting Airborne
+now what we can do is actually go back
+to task force two remember how this one
+didn't have enough fuel to make it so
+now what we can do is we can actually
+pop over and Define what we have for air
+data refueling so I can pop in here real
+quickly and I can actually select that
+other package to be the ones with the
+refueling so now we're gonna have the
+capability to actually fly kick ass
+halfway and then of course come back get
+some gas and then go back to base kind
+of a thing like that so they're now
+ready to rock that was a very dangerous
+thing I just did
+so um hopefully nothing bad happens now
+if I click here like this yeah I see all
+the flights generated without any issues
+here the reason they did not is because
+now we have tankers in place they will
+be able to go okay that's going to be an
+awfully long flight but whatever you say
+boss kind of a thing like that
+all righty then so I'll look at our air
+tasking order here we've got tons of
+stuff going on so this is going to be a
+ton of fun for us so we'll see exactly
+what happens I don't know why they're on
+Maritime surveillance here I believe
+they are always because of the way that
+that was set up not stressing about it
+all right so let's speed up time here so
+I believe our first crew is going to
+start taking off let's see two and a
+half minutes plus 9 30 I believe that's
+933 should be the initial time and those
+will be our tankers getting themselves
+in ready the nice thing about aerial air
+refueling here of course is the way that
+this is set up is when it does launch up
+there they go it's not going to matter
+anybody can use them so they're going to
+get on the way there comes all my
+Strikers
+look at them gal now this is super fun
+to look at see what you do is you go hit
+up your air tasking order real quick and
+you can just see just how chaotic
+everything is
+look at that one of the neat things
+about the ato2 is I can actually come in
+here now and change some of these
+numbers if I had to but you can see
+everybody's kind of going we shall see
+what happens here I would definitely be
+a little bit nervous if I were you know
+the United Kingdom here oh look at the
+family A couple of these are probably
+going to get popped on the way down
+because I did put quite a few things on
+the ground there to make things
+interesting for us they all ran out of
+fuel and had to go refuel
+that's a familiar sight looks like our
+Strikers are going to make it though oh
+nope they revealed they're good nope
+they all ran out of gas again there's my
+successful strike it looks like the
+rapiers didn't do what they were
+supposed to do there what a shame what a
+shame and obviously there's a lot of
+mission planning on my part that I did
+not do but again the goal of this video
+is to show you just how effective it is
+to organize your forces with your task
+pools now there's one more thing I want
+to share too now if I bring this up
+notice if I want to create a new Mission
+real quick let's say I just want to
+create a just a fake Mission here fake
+Mission fake fake and press the OK key
+notice that the aircraft that were
+assigned to the task forces are not here
+so it's worth noting that if you do do
+this you're not going to have them
+available for regular missions enjoy

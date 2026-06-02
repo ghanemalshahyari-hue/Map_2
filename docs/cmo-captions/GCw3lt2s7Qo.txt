@@ -1,0 +1,292 @@
+# C: MO - Effects of shallow water on sonar detection
+Video: https://www.youtube.com/watch?v=GCw3lt2s7Qo
+Video ID: GCw3lt2s7Qo
+
+hello everyone in today's video we're
+going to be taking a look at the effect
+of the ocean floor on Sonar detection
+and uh to do this what we've done is set
+up a relatively simple scenario we have
+a pair of kilo classes here of we have
+one basically chilling right there in
+the ocean floor and we have another one
+that even though it doesn't look like
+he's actually about 20t over the ocean
+floor the third kilo of course that we
+set up is way way way out here where you
+can see the Shelf kind of drops off here
+he's chilling at 200 feet about 33
+fathoms there in order to kind of prove
+my points so let's go ahead and open
+this sucker up real quick I've got my
+couple constellation frigs here these
+are absolutely fantastic anti-submarine
+platforms they really do everything
+great they're very modern vessels based
+on the Friend by the way so I'm going to
+do is I'm going to unpause go and speed
+up time here and we're going to look
+we're going to look nope and ding ding
+ding ding ding ding and we're going to
+go right over the top of where those
+kilo class submarines are now if I go
+all the way out to see you'll observe
+that this one indeed also Choo choed
+right past our kilo class submarines now
+you're sitting there going what that
+doesn't make sense I mean it was there
+wasn't it you should be able to detect
+it with one of the world's best Zar
+platforms yeah but the kilo class is an
+electric sub a diesel electric sub and
+it makes no sound when it's not moving
+a so as we can see um it makes no
+difference as far as passive goes so
+we'll tweak things just a tiny bit here
+just to sort of make my point here let's
+grab our two subs here and I'm going to
+go ahead and order them to start moving
+here now we're going to keep them
+relatively slow here we're going to set
+them to a creep speed I'm a creep kind
+of of a thing like that and let's go
+grab our other one here we'll also order
+him up to creep speed and we'll
+basically order him to go straight here
+uh just like that double check to make
+sure I press creep correctly now one of
+these Subs of course the one that's
+closest to us is going to be the one
+that is going to basically be chilling
+just over it the other one's basically
+going to be grinding his bow on the you
+know under ocean floor basically below
+him but um let's see what happens as far
+as detection this
+time pause now the first thing you'll
+observe is we instantaneously picked up
+this guy as soon as he's started turning
+his propeller we detected him
+immediately and the reason for that of
+course is we're using a different sensor
+because we're so deep we're using
+basically our toaday which is very
+sensitive this guy can't use his toor
+Ray sonar because he's too darn close to
+the actual Shore here drag basically
+across the ocean and you snap it off
+when it gets caught on a rock so keep in
+mind the differences between the two in
+order to make this more fair one of the
+things we have to actually do is I'll
+drop this contact here I'm going to
+click on this boy okay my friend you're
+very very very good at what you do
+so one of the things I'm going to do is
+I'm going to rip off your toor sonar and
+that's the only way to make it slightly
+more fair otherwise like I said it's a
+basically it's it's rigged it's rigged
+because he'll never detect him ah he
+picks him up anyway so as we can see
+here if I click on him we still have no
+problem picking up over the capus there
+that's our vas our VDS rather so
+meanwhile our guy close to the shore oh
+there they are finally detects these two
+we Blitz by them but the chances are the
+detection range was two or three
+nautical modes which is nothing uh
+that's within B basically if he wanted
+to spear you like a you know a giant
+whale kind of a thing he'd be able to
+hit you at that distance so passively
+that makes a massive massive difference
+as far as detectability when you're
+close to this big nasty soft bottom
+ocean floor here it reflects sound it
+absorbs sounds there's biological sounds
+there's rain there's wave noise so much
+noise going on here and when you're so
+close to the surface it actually makes
+it tricky now one of the interesting
+things that we don't know that we do
+simulate or don't simulate in command is
+the fact that when you actually operate
+close to a hard surface on underwat you
+actually make yourself louder because
+the sub interacts the hall basically
+reflects off of the bottom of the ocean
+and reflects back and forth it makes
+things louder so that's one of those
+neat little effects that I'm not sure if
+they model that but I think it's cool
+either way but now what we're going to
+do is take a look at active sodar now
+this is where you're going to go oh so
+what I'm going to do is come in here I'm
+going to go ahead and activate the capus
+um the reason I like this one is because
+again remember this guy can use his toad
+aray we can't use our toad aray all the
+way out here that's just not fair so I'm
+going to go ahead and uh flip this one
+on as well I'll turn on the capus only
+and know one thing I'm going to do to
+this guy is uh he's a little too close I
+know you're sitting here going what do
+you mean too close he's four nautical
+miles away there's no way that he's
+going to have that issue U the reality
+is we're going to have to move him a lot
+further away so I'm actually going to
+bring him out to 30 nautical miles away
+now keep in mind he's 30 nautical miles
+away this chap over here I'll go and
+shut off Gods eye view here is four
+nautical miles away so you can get a
+really really good idea of the
+differences in detectability here so
+let's go ahead and unpause and uh speed
+up time a little bit
+you know I like was like how they call
+ASW awfully slow Warfare it's so true so
+true got him nice all right we've made
+ourselves our first detection I can tell
+you without even looking this is the one
+that's basically 20 feet off the ocean
+floor here we picked them up and the
+range here looks like about three
+nautical miles which is roughly what I
+expected oh and we picked up the other
+one I'm guessing about three nautical
+miles yeah because the basically the
+ocean floor is doing its thing here this
+guy in the other hand will just kind of
+let time kind of Advance here he's just
+sort of sitting here pinging away making
+more noise in the ocean ah there it
+is 26 nautical miles wow so um the most
+incredible thing about this particular
+FR here is I can detect an enemy sub at
+26 nautical miles it basically they
+can't hit me with the torpedo back at
+this distance this is like cheating now
+the cool thing here of course is when we
+were closer to that nice little
+basically the sea floor here you can see
+my range was reduced pretty
+substantially I think it was 2.6 so let
+a 2.6 / 26 points that whatever it is uh
+let's see I get about
+10% of the detection range when I am
+close to the shore now that's kind of a
+neat thing here that's actually really
+important tactically because when you're
+planning I want to go ahead and go from
+here to here kind of a thing with my sub
+now one of the things that you also
+probably find kind of fascinating here
+is does it work the other way
+around so what I've done is I've reset
+our scenario here you know but basically
+looking at it from the submarines
+perspective now keep in mind the two
+ships that are going to be checking
+these Subs out are moving about five uh
+it's that's not very fast that's pretty
+darn quiet for a surface vessel I think
+it's something like 20 DB which that's
+nothing as far as volumes go in the
+water but it does give you a pretty good
+idea and you can see they're kind of
+sneaking up on us so any let's speed up
+time again the kilos is a pretty good
+sub but it's very very sensitive hearing
+if that makes sense I guess it does so
+we'll go ahead and speed up here
+wait for
+it it's almost like my ship isn't moving
+I'm pretty sure no he's making five
+knots we're
+fine so again our my ship is basically
+cruising along my kilos are just sort of
+chilling what I probably should have
+done is set my kilos to be a little bit
+quicker here but it'll do it'll work
+it'll work it'll work there we go pause
+so one of the things I noticed is the
+first one to detect uh the incoming
+frigate here by the way look at how
+close this is this 2.1 AAL miles this is
+knife range right here uh this guy picks
+it up about miles away which pretty darn
+close so that's that's about what I
+expected actually now if we that was
+remember the middle of the deep ocean
+here meanwhile what I want you to
+observe here is my constellation here is
+now about 2 nautical miles away from
+both of my kilos here so let's go ahead
+and I'll let time kind of Advance
+remember that sound is ricocheting all
+over the place some of it's getting
+observed absorbed observed Naturally by
+the bottom here kind of a thing like
+that and it's it's struggling a little
+bit here still haven't picked up the
+there it is you observe that we picked
+up our Target at less than a nautical
+mile away so as you can see sound is an
+interesting problem when you start
+getting a little bit closer to the
+seashore uh once you get close to it it
+affects all detection ranges not just
+subsurface that also affects surface uh
+you get another interesting problem too
+that you can't use your fancy sensors
+like your Tass and your sonar and all
+that other fun stuff because of just the
+chaos that goes on over here now in the
+middle of the deep ocean one of the
+things you probably observed is even at
+the same depth the ability was almost
+100% more like 10 times stronger so it's
+really important when you're thinking
+especially building a scenario or
+something if you want to think about
+these things tactically you are very
+safe as a submarine or basically
+anything acoustically whenever you're
+close to a Shore but the moment you
+sneak out now there's one more thing I
+wanted to share real quickly and you
+probably notice the fact that on my
+little scenario here if you look at my
+weather settings I intentionally set the
+weather settings to create a little bit
+of ambient noise and the reason I did
+that of course is because without that
+ambient noise you get a slightly
+different impression of uh kind of the
+way sound travels obviously when it's
+windy the waves are louder obviously
+when it's rainy the water is a lot
+louder and obviously you know if your
+sky is cloudy that has no impact on
+anything because there's not even a lot
+of daylight at this particular point so
+hopefully this is helpful as far as kind
+of understanding that concept of the big
+thing is it actually gets even more
+complicated from the reading that I've
+done on the actual topic here and um I
+won't thank anybody today we did orange
+teen and blue teen for the purposes of
+this demonstration one thing I do want
+to say real quick though is with a
+nuclear submarine you can't actually
+stop making noise your nuclear sub um
+always makes noise so this still applies
+to you but it's not going to be as good
+as if you are a diesel enjoy

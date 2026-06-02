@@ -1,0 +1,151 @@
+# C: MO - Creating large ground units
+Video: https://www.youtube.com/watch?v=14386Qbw24A
+Video ID: 14386Qbw24A
+
+hello everyone in today's video we're
+going to just do a quick one this week
+because we've got some other things
+going on we'll pick up with our sicily
+series a little later on we're going to
+take a look at a way to quickly create
+infantry or armor during pretty much
+anything you want companies now you're
+probably saying now what's the deal with
+that well first of all let's take a look
+so if i go ahead and i want to insert
+some units here let's go ahead into this
+i think there's a large gap in here
+somewhere i forget exactly where it is
+let's say i come in here and i want to
+do some t55s grab myself group of 255's
+and you can see i have myself a lovely
+armored platoon consisting of a bunch of
+t55s so if i wanted to make myself a
+company you'd have to press c a couple
+times and well bam now i've got myself a
+company of t55s but you know i want to
+make that of italian i don't want to
+make that a company so we'll make it a
+full battalion here and all of a sudden
+you run up the unit count really really
+really fast so all of a sudden it's like
+oh that's a bummer so what can we do to
+facilitate this process well there's
+actually a really easy way to do it so
+what i'm going to do is i'm going to
+insert a new unit i'm going to go up to
+where it says facility i'm going to type
+in the word armored i want to type in
+armored you'll notice you have a bunch
+of different options here you have armor
+generic you have an armored battalion
+you have a brigade you also have a
+company chilling down here so i'm going
+to press ok now this unit is actually a
+placeholder for other units which i
+think is actually kind of interesting
+with it so if i actually were to come up
+here where weapons is you'll notice that
+i have a single machine gun yep my
+entire armored company consists of a
+machine gun so what we're going to do is
+we're going to delete that mount i'm
+just going to come over here and add
+mount in command at least this version
+of command mounts are individual
+vehicles so if we click on add mount i
+can now come in here filter by keyword
+click right here go ahead and change
+which arc i'm doing i'll go ahead and
+type in t55
+there it is one two three four five six
+seven eight nine ten eleven twelve all
+right i'll go ahead and minimize that
+we'll take a look we've done so you can
+see in the time it's taken me to quickly
+explain this i now have myself an entire
+tank company ready to rock but one of
+the cool things here is i can come in
+here and call this t55 company and if
+you want to get old school you can do
+company a or you can say koi a or
+something like that cpya so what i can
+do now is i can actually come to this
+press shift c
+click and now i have myself a copy so
+this is a company b
+shift c this is going to be my company c
+and i'll come down here and i'll go
+ahead and create one more and i'll go
+ahead and call this one company d
+now you're probably sitting here saying
+hey that's actually kind of handy
+because now i have not one two three
+four tanks or four platoons but i now
+have an entire battalion of d55s at my
+disposal ready to go that i could use in
+any scenario now you're probably sitting
+here going well wait a minute can't you
+use this to recreate an entire proper
+company yeah you can so if you actually
+go up to here like this type in
+something like a mech you actually have
+a mechanized infantry company as one of
+the generic pieces here so i can
+actually grab this one grab it of course
+like i said weapons wise comes with a
+generic machine gun get it out of here
+so you can do crazy things with this i
+could do a bmp1 oh it'll be in p2 why
+not grab that one pretty old school one
+tooth we'll do three of those or four of
+those so we have to put two into those
+let's toss in some t-62s here
+one two three four and you know we'll go
+ahead and throw in a 2s1 here let's see
+here uh what's that we'll do is that one
+have a pair of those and you know what
+just for fun let's go ahead and find a
+csu23 go ahead and add one of those and
+you know we'll go old school here we'll
+grab ourselves an sa-9 yeah with the old
+school one boop and now i have just
+created myself an entire mechanized
+infantry company in one quick whack so
+you can see this is a complete company
+ready to go it's actually i know it's a
+company i'm right it's actually a
+reinforced company you wouldn't normally
+have that many that's an entire platoon
+actually yeah this is about a company
+it's a pretty small company but now i
+can now take this and i can call this
+you know mech infantry company and we'll
+go ahead and say it's part of the same
+regiment of brigade here so we'll say e
+press ok and then again i got shift c
+just like that and now i've duplicated
+it so not only do i have single units
+representing huge units but i now have
+the capability to quickly mass produce
+entire armies i was actually
+experimenting with a scenario of course
+you can take a look at the year you can
+see what i've been experimenting with it
+takes place here that actually uses more
+or less one-to-one soviet forces and i
+was able to do it with significantly
+less numbers of individual units but
+still make them a tenable if you know
+exactly what i mean
+so hopefully this video helps you out
+like i said this is kind of a fun little
+trick i've been playing with this a lot
+because it's kind of entertaining you
+can do this like to other things to have
+like landing craft that does all sorts
+of silly things hanging off of it oh my
+t55 is hanging off my lighting craft you
+can do that and that's one of the cool
+things i like about command other than
+that enjoy

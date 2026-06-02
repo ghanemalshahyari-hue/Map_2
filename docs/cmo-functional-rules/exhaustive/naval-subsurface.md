@@ -12,11 +12,17 @@ geometry as it bears on the ASW/anti-surface fight.
 **This file is exhaustive for the bucket.** It is the merged, de-duplicated union of every rule
 extracted from *all* transcripts in the Naval & Subsurface bucket (157 raw extractions). Near-
 identical mechanics seen in multiple videos have been merged into a single rule that keeps the
+<<<<<<< HEAD
 richest wording and cites **all** contributing `source_video_id`s. The companion first-pass spec
 [`../3-damage-attrition.md`](../3-damage-attrition.md) governs the *general* damage/Pk/armor model;
 where a naval rule below touches damage (torpedo aspect, missile warhead/fire/flooding, point-
 defense saturation, DLZ gating), it is consistent with that spec and cross-references it rather than
 restating the whole model.
+=======
+richest wording and cites **all** contributing `source_video_id`s. Where a naval rule below touches
+the *general* damage/Pk/armor model (torpedo aspect, missile warhead/fire/flooding, point-defense
+saturation, DLZ gating), the relevant general authority is inlined here so this file stands alone.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 
 **Caveat.** Transcripts are YouTube **auto-generated captions** — unit names, weapon designations,
 and especially numbers may carry transcription errors (e.g. "Cheval" = Shkval, "McKinatic" =
@@ -441,7 +447,11 @@ documented constants. Confidence tags reflect how directly the rule was shown.
 ### WRA "Kinematic range for torpedoes" firing-permission setting + DLZ gating
 - **Models:** a weapon-release-authorization toggle controls whether the engine lets you fire torpedoes out to kinematic range (automatic and/or manual); the DLZ still gates every shot.
 - **Inputs / parameters:** WRA option "Kinematic range for torpedoes" with values **automatic-and-manual** vs **manual-launches-only**; firing mode (Shift-F1 / Ctrl-F1 manual engage); target range vs the chosen mode's DLZ; target top speed.
+<<<<<<< HEAD
 - **Behavior / rules:** by default a target **beyond** the normal firing range cannot be engaged ("outside the firing range/arc") even with weapons ready. Setting "Kinematic range for torpedoes" to **manual-launches-only** (vs automatic-and-manual) then allows the operator, via manual engage (Shift-F1, select target), to take the **extended-range kinematic shot** previously blocked — distinguishing auto vs manual so the AI doesn't auto-burn weapons on marginal long shots while the human still can. **Even with the setting enabled, the DLZ still blocks shots outside it:** Shift-F1/Ctrl-F1 + click refuses the shot if the target is "outside its DLZ range (Dynamic Launch Zone)." The DLZ is computed from the chosen speed mode's effective range **and** the target's ability to flee (top speed); it recomputes continuously as range/speed change. When the target is slow enough that the torpedo "can probably get to the target in time," the shot becomes allowed (the operator waited ~5 seconds for the firing solution to close). A slow cargo target opens the DLZ that a fast warship would close. Firing also required a confirming **sonobuoy drop** to establish target range before the attack would execute in one ASW example. *(Mirrors the general DLZ/min-range rule in [`../3-damage-attrition.md`](../3-damage-attrition.md).)*
+=======
+- **Behavior / rules:** by default a target **beyond** the normal firing range cannot be engaged ("outside the firing range/arc") even with weapons ready. Setting "Kinematic range for torpedoes" to **manual-launches-only** (vs automatic-and-manual) then allows the operator, via manual engage (Shift-F1, select target), to take the **extended-range kinematic shot** previously blocked — distinguishing auto vs manual so the AI doesn't auto-burn weapons on marginal long shots while the human still can. **Even with the setting enabled, the DLZ still blocks shots outside it:** Shift-F1/Ctrl-F1 + click refuses the shot if the target is "outside its DLZ range (Dynamic Launch Zone)." The DLZ is computed from the chosen speed mode's effective range **and** the target's ability to flee (top speed); it recomputes continuously as range/speed change. When the target is slow enough that the torpedo "can probably get to the target in time," the shot becomes allowed (the operator waited ~5 seconds for the firing solution to close). A slow cargo target opens the DLZ that a fast warship would close. Firing also required a confirming **sonobuoy drop** to establish target range before the attack would execute in one ASW example. **General DLZ/min-range gate (applies to all weapons):** even with no NEZ doctrine set, you cannot fire outside the weapon's **dynamic launch zone** — the weapon must be kinematically able to reach the target (missiles fired beyond their energy envelope stall and log as no-joy; "in range" on the map ≠ a kill).
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Outputs / effects:** enables manual firing out to kinematic range; without it the shot is disallowed beyond practical range; DLZ still blocks any kinematically impossible shot.
 - **Edge cases / quirks:** target must be detected to fire. A confirming sonobuoy drop may be required before an air/ship ASW shot will execute. Aircraft must descend into the allowed altitude band (next rule, §11).
 - **Source:** hUtHFA6EFZM; njLblgsMRuM
@@ -508,7 +518,11 @@ documented constants. Confidence tags reflect how directly the rule was shown.
 - **Confidence:** High
 
 ### Torpedo aspect (beam / bow / stern / baffle) effect on damage and hit probability
+<<<<<<< HEAD
 - **Models:** the angle at which a torpedo strikes determines damage location, kill probability, and whether the target can evade. *(Damage magnitudes follow the general armor/HP model in [`../3-damage-attrition.md`](../3-damage-attrition.md).)*
+=======
+- **Models:** the angle at which a torpedo strikes determines damage location, kill probability, and whether the target can evade. **General armor/HP damage model (applies here):** damage = (weapon damage points) × (fraction that gets through armor), where the through-fraction compares the weapon's **penetration value** (hidden in the player DB) to the target's **armor class** (None / Light / Medium / Heavy / Special). No armor = ~100% (a penetrator far over-matching an unarmored target does ~2× damage); a non-penetrator vs armor passes only a small fraction (special armor absorbs ~96%, ~4% through); a penetrator matched to the armor does ~full single damage; below-threshold per-hit damage never accumulates a kill. Targets carry **damage points (HP)**; HP reduction drives the percent-damaged readout.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Inputs / parameters:** aim aspect relative to target (beam ~90°, bow/nose, stern/tail, baffle from astern); target type (merchant vs warship); target speed; whether the target hears the launch.
 - **Behavior / rules:**
   - **Beam (~90°, center hit):** can break a ship in two (hog/sag) and was the **only** aspect observed to cause **flooding** in the test set; most damaging vs merchants.
@@ -850,7 +864,11 @@ documented constants. Confidence tags reflect how directly the rule was shown.
 ### Missile speed vs interceptor engagement difficulty
 - **Models:** faster incoming missiles are disproportionately harder to shoot down.
 - **Inputs / parameters:** incoming missile speed; defender weapon acquisition capability; engagement window.
+<<<<<<< HEAD
 - **Behavior / rules:** as missile speed rises, defenders get a smaller engagement window **and** need much more precision — "you're off by a tiny bit that's more than enough to completely miss." At very high speeds (BrahMos/Onyx ~**1,450 kt** sea-skimming) "a lot of these ships will not be able to engage these weapons because they're too fast to actually be acquired properly," so only certain CIWS (SeaRAM/"C Viper"-type, Phalanx) can attempt, waiting "to the last possible second." Slow missiles (Harpoon ~0.86 Mach, Exocet) were all intercepted (~2 interceptors per attacker, nothing through). *(Consistent with the point-defense ladder in [`../3-damage-attrition.md`](../3-damage-attrition.md).)*
+=======
+- **Behavior / rules:** as missile speed rises, defenders get a smaller engagement window **and** need much more precision — "you're off by a tiny bit that's more than enough to completely miss." At very high speeds (BrahMos/Onyx ~**1,450 kt** sea-skimming) "a lot of these ships will not be able to engage these weapons because they're too fast to actually be acquired properly," so only certain CIWS (SeaRAM/"C Viper"-type, Phalanx) can attempt, waiting "to the last possible second." Slow missiles (Harpoon ~0.86 Mach, Exocet) were all intercepted (~2 interceptors per attacker, nothing through). **General point-defense ladder (per-layer, each scored separately):** ship air defense is a layered ladder of independent systems each with its own per-engagement Pk and concurrency limit — dual-purpose 5"/127 mm guns ("overall probability to hit ~1%," last-ditch only); CIWS gun (AK-630/Phalanx ~45% per engagement, but one target at a time); SARH PD missile (Sea Sparrow — re-attacks on a miss but single-target via illumination); ESSM (quad-packed, removes the magazine bottleneck); modern active-seeker short-range missile (auto-retargets, no bottleneck); long-range SAM repurposed for PD (engages at max range but a sea-skimmer isn't noticed until ~20 nm); defensive laser ("if you can see it you can hit it," ~10,000 shots, beaten by fog/clouds). Each leaker that gets through applies full missile damage.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Outputs / effects:** which defensive weapons can engage; hit/leak probability; number of interceptors expended.
 - **Edge cases / quirks:** acquisition can outright **fail** above some (unstated) speed threshold — qualitative only. Defenders also waste shots / fire late against fast skimmers.
 - **Source:** Avtu34yzCh0
@@ -875,7 +893,11 @@ documented constants. Confidence tags reflect how directly the rule was shown.
 - **Confidence:** Med
 
 ### Weapon reliability stat
+<<<<<<< HEAD
 - **Models:** each weapon has an inherent reliability that affects whether it works as launched. *(Same independent dud/reliability roll as in [`../3-damage-attrition.md`](../3-damage-attrition.md).)*
+=======
+- **Models:** each weapon has an inherent reliability that affects whether it works as launched. **General dud/reliability roll:** an independent reliability roll is applied per weapon even on a geometrically perfect hit — if the weapon malfunctions it does no damage regardless of aim (older PGMs are shown repeatedly dudding, e.g. a GBU-28 quoted at "15% chance of malfunctioning"). This is a distinct roll from the hit/Pk roll.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Inputs / parameters:** per-weapon reliability rating (shown in the weapon database).
 - **Behavior / rules:** Harpoon "incredibly reliable"; Exocet "not quite as good"; BrahMos slightly more reliable than Harpoon; Onyx and Caliber "about the same reliability as many of these weapons." Reliability is a distinct DB field separate from range/speed/warhead.
 - **Outputs / effects:** probability a launched weapon functions correctly (dud/failure chance).
@@ -884,7 +906,11 @@ documented constants. Confidence tags reflect how directly the rule was shown.
 - **Confidence:** Med
 
 ### Warhead damage, fires, and flooding aftermath
+<<<<<<< HEAD
 - **Models:** hits cause warhead damage plus persistent **fire** and **flooding** that can sink a ship over time. *(Detailed fire/flood/subsystem model in [`../3-damage-attrition.md`](../3-damage-attrition.md); this is the naval-missile observation of it.)*
+=======
+- **Models:** hits cause warhead damage plus persistent **fire** and **flooding** that can sink a ship over time. **General fire/flood/subsystem model:** a hit applies HP/percent damage **and** can knock out individual subsystems (radars, comms/data-link, FCR, engines, guns, sensors) — radars/radios are the most fragile and degrade first ("you're always going to shoot a radar whenever you take damage"). Ships additionally track **fire** and **flooding** as ongoing/spreading states resolved by a damage-control crew: a ship outcome can be driven by fire + flooding even at low HP% ("flooding will get worse → sinks"), flooding can ironically put out a fire, and damage-control reduces fire/flood over time if HP isn't fatal. This yields **mission-kill** (sensors/comms gone but platform alive) vs **hard-kill** (HP/sink/destroyed).
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Inputs / parameters:** warhead size (Harpoon ~500 lb, BrahMos ~440 lb); number of accumulated hits; ship type/size; crew damage-control.
 - **Behavior / rules:** a single hit "will definitely start some fires." Fires persist and grow over time; a ship can put a fire out (damage control) or "the fire is going to win that fight" and sink it. Flooding is modeled separately and can interact ("the flooding will put the fire out... he's going to go swimming"). Large/armored ships absorb many hits — the Iowa took 7-10+ hits and was "still going." Many ships are only "damaged" after one hit, not sunk.
 - **Outputs / effects:** immediate damage state; ongoing fire and flooding progression; eventual sink-or-survive over elapsed time.
@@ -893,7 +919,11 @@ documented constants. Confidence tags reflect how directly the rule was shown.
 - **Confidence:** Med
 
 ### Saturation / time-on-top attack to overwhelm defenses
+<<<<<<< HEAD
 - **Models:** defenses are saturated if enough missiles arrive faster than interceptors can engage. *(Reinforces the saturation/fire-control-throughput mechanic in [`../3-damage-attrition.md`](../3-damage-attrition.md).)*
+=======
+- **Models:** defenses are saturated if enough missiles arrive faster than interceptors can engage. **General fire-control-throughput / saturation mechanic:** point-defense fire control engages essentially **one target at a time** — each launcher must finish targeting one threat before the next, so a large concurrent salvo overwhelms the loop (multiple PD units redundantly chase the same leaker and "panic," letting most through). The best optimization is **geometry, not hardware** — oversaturation from multiple directions is the canonical way to defeat a layered defense (overwhelming *throughput*, not finding a blind arc).
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Inputs / parameters:** total missiles allocated (allocate N per target); arrival timing; defender interceptor inventory & rate of fire; launch-to-fire spool-up (~30-36 s off the rack).
 - **Behavior / rules:** allocating only **2 missiles per ship** (≈32-50 launched) left the convoy's defenses intact (Harpoon/Exocet: ~2 interceptors per attacker, zero leakers). The "key to sinking the convoy is not letting them have a chance" — allocate **5 per target** (~**240 missiles** total) so defenders "didn't really have a lot of weapons they could use to fire off" and the whole fleet sank. Defenders run out of ready interceptors under saturation. Launch has a fixed spool-up (~30 s) before missiles leave the rack.
 - **Outputs / effects:** leak rate through the defensive screen; interceptor depletion; ships sunk vs damaged.
@@ -925,7 +955,12 @@ documented constants. Confidence tags reflect how directly the rule was shown.
 
 > These rules came from the naval/ASW bucket transcripts and govern how a surface group is arranged
 > around a high-value unit — directly relevant to where ASW/anti-surface sensors and weapons sit. The
+<<<<<<< HEAD
 > general air-defense Pk / point-defense ladder lives in [`../3-damage-attrition.md`](../3-damage-attrition.md).
+=======
+> general air-defense Pk / per-layer point-defense ladder these screens rely on is summarized inline
+> under *Missile speed vs interceptor engagement difficulty* (§14).
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 
 ### Group formation editing (pivot/leader + relative vs fixed bearing placement)
 - **Models:** naval task-group station-keeping where escorts hold position relative to a guide ship.
@@ -1145,6 +1180,15 @@ documented constants. Confidence tags reflect how directly the rule was shown.
   **emitting** defender shoot from short range, against a **non-emitting** target you can shoot from any
   distance (§13). For torpedoes, long kinematic range can beat the AI's engagement envelope **if** you can
   detect that far, but gives a maneuvering target more time (§8).
+<<<<<<< HEAD
 - **Damage, fire/flooding, point-defense saturation, dud rolls, and DLZ gating** are all consistent with
   the general model in [`../3-damage-attrition.md`](../3-damage-attrition.md); the naval rules above are
   the sub-surface/anti-ship *observations* of those mechanics, not separate models.
+=======
+- **Damage, fire/flooding, point-defense saturation, dud rolls, and DLZ gating** all follow the general
+  models inlined above (torpedo aspect = general armor/HP model; warhead/fire/flooding = subsystem +
+  fire/flood model; missile-vs-interceptor = per-layer point-defense ladder + fire-control-throughput
+  saturation; weapon reliability = independent dud roll; kinematic-range firing = DLZ/min-range gate);
+  the naval rules above are the sub-surface/anti-ship *observations* of those mechanics, not separate
+  models.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78

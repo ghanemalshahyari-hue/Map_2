@@ -1,0 +1,306 @@
+# C: MO - Custom Group Sizes
+Video: https://www.youtube.com/watch?v=GwXfFGBUBW8
+Video ID: GwXfFGBUBW8
+
+hello everyone on today's video we're
+going to be taking a look at how to do
+non-standard formation sizes when you're
+doing
+strikes so as you probably are very very
+well familiar looks like we've got
+ourselves a little bit of a warning here
+the uss nautilus has spotted somebody
+as you all know when you're ordering up
+strike missions you can select how many
+aircraft are in each strike group
+unfortunately when you do that you end
+up with the conga line which
+unfortunately for us especially with the
+modern warfare here tends to have a lack
+of concentration of force
+let me go ahead and prove my point real
+quickly here so if you take a look at
+the top of the screen now you can see
+we're sitting here right around the cusp
+of the
+battle midway here we've got of course
+this is a much simplified version of
+what went on although it's a really
+really fun battle for those who've never
+tried it out
+and i noticed my submarine here the
+nautilus has actually spotted a whole
+carrier action group um
+made up of the akagi and you know you've
+got probably the congo and the tone
+and stuff like that and of course since
+we found them first we're going to order
+up a nice little strike mission against
+them
+so this is what happens normally when we
+do strike missions we go ahead and
+select the guy we want to put a hole
+into and we're going to say the whole
+japanese navy here
+we're going to go ahead and do control
+f11 we're going to say uh think i'm good
+i think i'm good
+we're going to do ourselves a
+anti-surface warfare strike
+we're going to grab all of our nice war
+2-esque airplanes and we're going to put
+them in the largest groups we can
+possibly get them in
+so you can concentrate their fire we're
+going to close that screen i'm going to
+hit play and
+now we're going to get disappointed here
+make sure it's undisappointed all right
+here we go
+so we sit here everybody launches in the
+conga line
+so the problem with the conga line is
+that when we finally do get to the
+japanese navy
+the japanese gunners now are going to
+sit here and go
+and look at this they're coming at us
+one at a time let's just point our guns
+in that direction and keep shooting
+and we get ourselves you know the battle
+of midway here and obviously we're
+having a pretty fun time of it
+you know those escorts are definitely
+getting whacked here and uh there we are
+we have just deployed a massive massive
+massive force against these ships
+and now let's see how we did as far as
+successes goes let's see here we lost
+ho ho ho this is just as bad as it was
+in the real one of course in the real
+one
+we lost avengers like crazy we did lose
+some dive bombers but
+these were the ones who were the victims
+here meanwhile um what do we get
+okay it looks like we didn't get
+anything let's actually switch over to
+the other side real quick just to prove
+my point here
+we can see there's a bunch of airplanes
+let's see who's actually heard here
+oh no we definitely got more than that
+but you can see that they're in pretty
+rough shape
+all right so let's reopen the scenario
+again but this time let's implement a
+little slightly different strategy this
+time
+as far as how to make a more successful
+strike mission so let my nautilus do his
+thing real fast here he's going to come
+up to periscope depth go oh god and dive
+immediately of course in the real world
+it was the nautilus that
+was one of the early spotting submarines
+here and he was basically chastised for
+you know not really uh pushing his luck
+there but unfortunately a bunch of
+japanese destroyers
+were not thrilled with the fact that
+they are attacked by a gado class in the
+middle of everything
+all right he's going to go ahead and
+dive and we'll go ahead and do my
+mission again but this time i'm going to
+do this quick little hack that i really
+like to do when i do these kinds of
+missions
+so let's go ahead and uh sync it sync it
+right
+this time all right i'll go ahead and
+call this one a anti-service warfare
+strike
+we'll go get everybody and this time
+i'm going to make sure i'm pause i'm
+going to go over to my american carrier
+here press f6
+i'm going to select all of my
+dauntlesses and click
+launch as group so now instead of doing
+the conga line towards the target
+i have a group of 18 going towards the
+target keep in mind when you do this
+strategy it will
+limit your range because of all extra
+fuel we're gonna have to burn to stay in
+this
+mega group so we're gonna put those guys
+all in a group we're gonna put these
+folks all in a group
+and we're going to put these folks all
+in a group now it will ignore what we
+told it to do
+when we set up the mission so because of
+that this is awesome by the way
+um they're basically going to sit there
+form up into one mega pile of airplanes
+and then they're going to come flying
+look at this look at this
+aha look at that now of course if you
+were a more careful planner you would
+have done
+check that out so now we have literally
+the wall of airplanes
+and they're all perfectly well
+coordinated and if actually zoom in of
+course they're not gonna look right
+look at this now that looks to me like
+one of those a war
+two kind of operations where everybody
+basically all queued themselves up in
+these mega mega v within v
+formations let's see if it makes any
+difference with the fight so let's go
+switch over to the
+japanese perspective here they're
+enjoying their flight here everything's
+feeling pretty confident i'll
+kind of monitor the americans and the
+giant posse here
+and just kind of cruising along they're
+making pretty good time of course as you
+know they're all rearing and refueling
+all the torpedoes and bombers on board
+and looks like the americans initially
+cannot locate where the japanese navy is
+actual problem by the way somebody go
+ahead and order these guys
+swing up that well we have to identify
+them first have everybody swinging up
+this way real quick
+see if we can reacquire the japanese
+navy
+and as soon as they identify them there
+it goes
+now i don't even need to give them
+orders they know how to do this part i'm
+gonna go ahead and select everybody and
+delete that
+movement order that i gave them delete
+this movement order that i gave them
+and delete this more more that i gave
+them okay let's see what happens this
+go ahead and speed things up a little
+bit so first this
+mega group not just a couple planes one
+at a time but everybody
+shows up all the same time starts
+shopping bombs like crazy
+of course why they're chilling at that
+altitude is a little bit beyond me at
+the moment
+did i accidentally unassign them let's
+make sure i do it right
+yeah there we go i just had to reassign
+them to the mission ah you don't want to
+do that
+um yes do it anyway
+we'll go ahead and grab these guys we'll
+go ahead and or sign them as well and
+there we go now we're in business now
+they should all go to the quick look
+at this look at this look at this
+now that looks like the battle of midway
+now the best part is because they're so
+spread out
+it's going to cause the poor gunners
+there to have a heck of a time being
+able to concentrate their fire
+obviously there's a lot of fire in that
+many vessels but you can see i'm already
+on my torpedoes they're doing their job
+a bunch more torpedoes one in the water
+meanwhile here comes my s these are my
+wild cats
+yeah talk about durable a little bit
+look at this look at this they start
+doing the dye bombing
+boom boom all at the same time in
+perfect unison and of course my other
+crew have already dropped their bombs
+so i'll see here you guys all ran out of
+fuel no you got plenty of bombs and you
+guys did it all right
+let's see what's different this time
+switch back to the ign
+ijn sorry and we can see uh let's see we
+did we noticed
+everybody got quite a whack here and i
+believe a couple of these guys are on
+fire
+yeah the congo took no damage the akagi
+of course is uh sitting here i don't
+think it's on fire which is
+good news uh the negara is um yeah that
+that's a lost cause right there
+and of course our ashashi oh yeah
+looking pretty good and the other one
+is gonna burn to death so hopefully this
+video was helpful again the trick there
+is that you can group your thing in any
+size when you launch them
+some people of course are pointing out
+the facts saying well can you do this
+once they're already in the air the
+answer is absolutely
+so if we wanted to just to kind of
+finish the deed here let's go get uh
+aircraft you know just for fun just for
+fun let's go get some tv
+95 the mlkms oh which one do i want i'll
+do the m's are the ones i'm probably
+going to use here
+um hydrogen bomb that seems safe uh
+let's see here
+really one of the m16 so look at this
+they have the u91s
+these things are interesting units they
+don't actually exist the bare c
+definitely not i think this is
+there's the one i want got it okay oh oh
+jesus nuclear i want nuclear
+try to find myself just the right one
+here real fast that's a kangaroo also
+that's nuclear gotta remember this is
+the cold war database they have a
+slightly different collection of
+aircraft that we can use at disposal
+and we could get them all tactical like
+that or something like that all right
+fine be that way
+i'll do a4s instead
+let's see here what could be a fun
+little way to kind of finish the job
+here uh
+1960 and 1972 should do the deed here
+that's what i was hoping for
+two three four five six seven eight
+nine ten eleven twelve group and i'm
+gonna go ahead and assign them to the
+mission just like i did a moment ago
+and we're just gonna let them kind of do
+their thing um very dramatically i love
+how they all fall
+in like one super tight pattern there
+and this is going to get
+really really messy here comes the a4s
+they've acquired their targets
+we need a 10x watch this fire
+isn't that great this works by the way
+really really good if you want to
+simulation gg bombing
+all right hopefully this video was
+helpful again the trick there is you can
+launch them as a group or you can
+regroup them in the air enjoy

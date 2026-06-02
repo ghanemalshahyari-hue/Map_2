@@ -1,0 +1,368 @@
+# C: MO - Setting up a Submarine DDS Operation
+Video: https://www.youtube.com/watch?v=i1WkusTHN7k
+Video ID: i1WkusTHN7k
+
+hello everyone in today's video we're
+going to be showing you how you can use
+a DDS system also known as a dry dock
+shelter on a submarine in a scenario
+we're also going to show you how to move
+units around without using Lua which
+could be very very helpful if you're
+trying to keep things simple in a
+scenario let's get started so a dry do
+system AKA DDS is basically an
+underwater system that you can basically
+uh deploy units with without surfacing
+now when you think Special Forces you
+win because that's really what they're
+there for so what we're going to do is
+we're going to design a really really
+simple situation where we have a
+submarine deliver some special forces to
+the beach through an sdv which is
+basically a little underwater mini sub
+thing it's actually pretty wild go check
+it out on Google Images when you got a
+second so what I'm going to do first is
+I'm going to go and grab myself a
+submarine capable of this and just do a
+quick search for DDS there oh go a good
+old fashion Los Angeles sounds good to
+me I'm now going to go ahead and select
+them press contrl F7 again I'm the
+mission editor here I'm going to go
+ahead and come down here set this to
+submarine and all we need to do is find
+our stdv of Victory here let's see here
+uh uhuh mhm yep uh-huh inspection ah
+here we are STV Mark 8 mod one sounds
+good to me I'll add a pair of those I
+can't add more now this is where things
+get a little more interesting in our
+scenario of course so you're sitting
+there going cool you've got the STV it's
+ready to SV seal delivery vehicle it's
+ready to go it's basically got to drop
+off the troops now we just got to add
+some cargo right no one of the problems
+with our submarines in this game is
+you'll notice they have no cargo
+capacity so you say well wait a minute
+can't you just use an stdv put some
+cargo into it and then load that onto
+the submarine bad news everybody and STV
+also has no cargo capacity that
+basically means that unfortunately for
+us we're going to have to actually do
+this the oldfashioned way so we're going
+to have to create the units and
+basically move them into position once
+we get there so what I'm going to do is
+I'm going to grab my submarine here and
+I'm going go ahead and send it this way
+and I'm going to start getting ready
+over on this side of things so the way
+this is going to work is once our heroes
+or whatever you want to call it our
+deployment team manages to get
+themselves close enough to shore with
+the STV it'll automatically deploy the
+Navy Seals let's do it so I'm going to
+press contr F1 here sorry control insert
+I'm going to go ahead and create my
+little area where the NV seals are going
+to deploy I'm going to go ahead and one
+of the things you'd probably want to do
+is you'd want to lock these reference
+points the reason we do that of course
+is if you are playing like an actual if
+you're making like a real scenario here
+you'd want to do something like this to
+kind of deny the player from being able
+to move these things around but that's
+perfectly fine um this is going to be
+our deployment zone for our Navy Seals
+and one thing you want to check too so
+if I hold my mouse here see a lot of
+this is technically underwater we got to
+be mindful as a matter fact that's so
+frustrating we might actually want to
+grab all those points one more time move
+them Inland so we don't run into the
+next problem we're going to have we go
+and unlock them hold down the shift key
+by the way look at this look at this oh
+isn't that so cool the more you know
+right cool so that's going to be our
+spawn zone for our Navy SEAL so I'm
+going go ahe and lock that and now of
+course what I'm going to do is Define r
+we're close enough to the beach with the
+sdv zone so we can actually spawn them
+in so again I'm just going to go ahead
+and grab myself some points here control
+insert control insert control insert
+control insert I guess technically if we
+wanted to be doing this in a true way if
+we want to get into the asset and all
+that we could go through right here I
+actually appreciate the fact they took
+the time to like actually build a little
+Gap here where everybody's sailboats go
+through uh the real world I have bad
+news folks this is an incredibly tiny
+Channel but that's not my problem right
+now so this is going to be our sdv zone
+so so one of the things we could do is
+we can make this a Zone we could Define
+this different ways and stuff like that
+so if I were actually Define an area
+here it ask me um stdv deploy Zone
+something like that now if I press okay
+the player is going to know that this is
+going to be where they're going to
+arrive now one of the things you're
+going to want to do real quick is you're
+going to want to lock those points too
+if you're designing an actual scenario
+cuz you don't want the player to move
+those one of the cool things though is
+you'll actually see here that it
+maintains that properly so that's
+perfectly fine not have to worry about
+it now for the weird part so we need to
+take units and now when we get our sdv
+in here after deploying it from our
+submarine we have to actually take units
+from somewhere else in the map and shove
+them into this area now when players do
+this in the old days they got pretty
+confused as to why there was a bunch of
+units sitting in the middle of uh you
+know some island country somewhere so
+what I usually like to do when I do this
+again it could be pretty darn cheeky as
+far as where you'd like to put them
+because remember we're just going to
+pull them out and we're going to move
+them somewhere else but for me ah
+nanta's looking pretty good so let's go
+ahead and grab a couple units of Navy
+SEALs here uh let's see here I need a
+facility this is a little strange to
+think there is Navy Seals facilities but
+I'm not going to argue with it Navy
+Seals uh we get a couple squads that
+works fine for me two squads and what
+we're going to do is we're going to
+build an area around around them a lot
+of times when people do this they try to
+make the area kind of like inclusive so
+there's no chance the player
+accidentally orders somebody's like walk
+out of the area and they don't get
+teleported because trust me players look
+around scenarios that's what they're
+supposed to do so what I'm going to do
+is I'm going to go ahead and deselect
+all of my reference points because I
+don't want this to break when I go to do
+something in a minute we're going to go
+ahead and Define an area rectangle and
+I'm going to come down here and um we're
+going to press okay I'm just got to call
+this area ironically uh units uh
+marshalling Zone nice so that's going to
+be my unit marshalling Zone and of
+course I'm definitely going to lock that
+zone as well cuz we really don't want
+the player to move that otherwise you're
+going to get hilarious unintended
+consequences nice so now we have the
+units in the marshalling zone the units
+in the deploy Zone and of course we have
+the place where we're actually going to
+be putting our kny seals here you can
+start to see why this starts to get a
+little complicated and yes Lou can
+simplify this but for our purposes we're
+not going to do that today we're going
+to keep it kind of old fashion so I'm
+going to go over to my effects real
+quick and go aad and get my event editor
+ready to go create a new EV uh this
+should not be repeatable deploy seals
+from
+sdvs nice I like that so we're going to
+add a trigger again you can edit your
+triggers keep it nice and simple uh one
+thing we want to do is unit ERS area
+this is so important that we get this
+correct blue uh Target type is going to
+be a submarine Target subtype is going
+to be an sdv uh one of the cool things
+here is you can actually Define when
+it's okay for it to actually enter the
+area right now it's between 818 and it's
+going to be oh my goodness that's not
+good what do we have today we have 88
+we'll do 819 oh boy that would have been
+pretty oh that's a year later yeah we're
+fine we're fine I'm not worried about
+that at all so one of the things we want
+to do is we want to define the area that
+that's going to be working in oh boy so
+we need to select our stdv deployment
+Zone this is going to be basically where
+we're going to operate come down here
+I'm going to go ahead and select pick
+area it's going to say which one did you
+want Oh making too many screens there it
+is sdv deploy Zone confirm Ching so now
+if an stdv enters this Zone we're ready
+to go so I'm happy with that check check
+check sdv enters Zone check check check
+chickity check before you Ry wck press
+do super so we're going to add that as a
+quick little trigger I'm going to go
+ahead and clean this out is going to go
+nuts so now we need to add a condition
+edit conditions all we're going to do is
+create the world's simplest condition
+scenario has started scenario has
+started I I I I I don't write this stuff
+there we go go ahead select that one
+too nice now we're ready to set up our
+action this is the easy part
+edit actions we're going to create
+ourselves a new action teleport to area
+now this is the fun part you can
+actually pick the units to teleport in
+the old days you couldn't actually do
+this it was actually kind of fun so for
+example if I want to grab them I can
+hold down the control key and select
+both of them but the important thing is
+uh teleport from Nantucket we probably
+want to make sure we did that part
+correctly oh boy did I mention we have a
+lot of Windows going right now it just
+seems that way so I'm going to carefully
+deselect everything select this Zone and
+I'm going to pick the area now if I did
+it right I should just be able to go
+like that and press confirm and I
+shouldn't even have to select it all
+right idiot check we're highlighting all
+these sections from this sector check
+check check check check check check
+check okay nice let's go ahead and close
+that I'm going to go ahead and teleport
+add action okay let's review our stvs
+will enter the Zone we'll deploy them
+from the submarine the scenario must
+have started and as soon as they do
+enter the Zone we're going to teleport
+the Navy Seals unit from this location
+over here to this location uhoh did you
+see what I just did cuz I just realized
+what I just did so unfortunately um if I
+ever did this this would have been very
+embarrassing so I might actually go back
+and go fix my mistake did you catch the
+fact that this is the area we're
+teleporting to not the area we're
+teleporting from oh that was going to be
+embarrassing I am so sorry everybody
+let's go ahead and delete that I'll go
+ahead and grab the actual correct points
+this time there we go let's go ahead and
+up pick area let's go ahead and create
+an area just for safety now it's going
+to ask me which points these are 12 11
+13 14 12 11 13 14 those are going to be
+my points uh let's see here I go ahead
+and create myself a new area uh let's
+see here what are we going to call that
+we have a second one of these for some
+reason uh Navy
+Seal Beach head sounds good to me go
+ahead and add those points to it save
+delightful so now we have our zones Navy
+Seal Beach head is ready to rock so now
+I can come back here here click on pick
+area once more ah at voila I like it
+confirm and now we're good to go good
+thing I caught that now I was about to
+be incredibly embarrassed in a few
+minutes here press Okie do that looks
+good to me I'm going to go ahead and
+close that let's see check check check
+chity check oky do and you can see it is
+now ready to go and it is active so
+we're ready to rock oh this is going to
+be goofy it's not going to be my proud
+ofest moment of uh submarine operations
+here all right let's test it now if you
+haven't saved your scenario contrl s
+just to make sure we don't boo boo here
+all right hu oh look at that we're much
+much closer to the beach that's very
+nice let's go ahead and get ourselves a
+little closer and let's get ready to
+deploy our sdvs all right get going Los
+Angeles I don't think I'd ever quite get
+this close to the beach so fun fact um
+I'm actually poking out of the water
+right now which is kind of funny but um
+fortunately it's night time and nobody
+here in Ocean City is going to be
+suspecting us uh especially because it's
+August and there's going to be everybody
+in their pleasure boat out right now
+okay so let's go ahead and come to a
+complete stop we'll try to do this as uh
+you know kind of I guess accurately if
+you can so we're going to slow down so
+in the real world what we have done is
+we would have very slowly snuck up to
+the surface if we needed to deploy boats
+but since we don't I just pressed the F7
+key grab my two stvs I'm going to launch
+them as a group isn't that awesome so
+basically now all the Navy Seals are
+going to climb on board and as soon as
+they climb on board what they're going
+to do is they're basically going to
+flood the little DDS they're going to
+open the door on it and they're just
+going to float on out there they go is
+that so cool let's go grab my SSN here
+and let's order them to get the heck out
+of there uh we're going to creep at
+maximum delude or dep itude that's a new
+word meanwhile we now have our two stvs
+group 26 uh these things there's a
+picture oh I was wondering if we're
+going to get a picture of this thing so
+I'm going to grab them um obviously um
+we have to be mindful of the fact they
+have basically no range they have a 6
+hour and 45 minutes and there they
+go kind of a thing like that they're so
+cute aren't they I don't know I just
+think they're the cutest little thing
+Aha and it worked you will notice the
+second my sdvs entered into the Zone my
+Navy Seals immediately arrived so now if
+we want to can continue the scenario we
+could of course grab my Navy Seals and
+order them to head over to Thrashers and
+get my popcor French fries and to
+Fishers to get my popcorn but uh for now
+I think that's what it's going to be so
+as you can see we did all of that
+without Lua could youve done it with Lua
+absolutely but sometimes the easier ways
+are the best ways enjoy

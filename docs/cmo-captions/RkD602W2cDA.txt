@@ -1,0 +1,360 @@
+# C: MO - Intermittent Emission
+Video: https://www.youtube.com/watch?v=RkD602W2cDA
+Video ID: RkD602W2cDA
+
+hello everyone in today's video we're
+going to be taking a look at
+intermittent emission a new feature
+added by the latest build of command now
+it's worth mentioning at this time that
+by the time you watch this video this
+may have changed a little bit but i
+think the basic concept is going to stay
+on pretty similar so let's go ahead and
+talk about it so what is intermittent
+emission well let's go ahead and show
+off so what i'm going to do is i'm going
+to grab myself this early warning radar
+this is an antps south 43ef of course
+and what i'm going to do is i'm going to
+go to the sensor window and i'm going to
+open not the sensor which i'm going to
+go to the mcon window we're going to pop
+in here and i'm going to go over to this
+one that says m-con settings so we have
+a couple different things you probably
+have not seen before the first one being
+at the tippy top we know how this thing
+is alert by the way if you go to global
+settings as well you can come over here
+and you can see there's an alert now
+it's worth noting here so if i change
+this anywhere it's going to change
+everybody's settings so keep that in
+mind when you're playing with that mode
+so what does this do basically you have
+different modes so when you change the
+color you change what mode i'm on for
+example if i switch to blue mode it
+would slip on intermediate mode now
+normally when you first set this up
+you're going to see something that's
+going to look like this where everything
+is just going to say the word continuous
+that simply means that run the radar on
+at all times but let's say we don't want
+to do that as a matter of fact let's go
+ahead and set up a preset so i'm going
+to go to green again remember this for
+the whole side here i'm going to go
+ahead and activate the radar this is
+important that you do allow it and then
+i'm going to come down where it says
+continuous and now we have our
+intermittent options first one is how
+long does it run now this is an
+important number and i'll show you why
+it's an important number if you go to
+the actual radar itself again it's a
+tips 43 and i come down to it it says
+that scan interval is 10 meaning it
+takes 10 seconds to scan the entire sky
+which means if your emission duration is
+less than that number that means
+potentially you're not going to see the
+entire sky with your rotation now i know
+there's some people who do really silly
+things like set this to one and do an
+interval of two and like you know like
+blank or something like that that
+probably works okay with the phase radar
+radar but again it's not going to do
+much for us
+so what i'm going to do is go ahead and
+set the duration to 10 seconds so it's
+going to run just long enough to sweep
+this guy once the next number is going
+to be how long i wait while the radar is
+off so in this case um because this is
+going to be green i'll go ahead and set
+this to 30 seconds the last one is going
+to be an interval random in variation
+again this is adding here this is if you
+want to add a little bit of randomness
+to it to make it more difficult to
+calculate now the interval here um i
+really recommend that you make these
+intervals uh smart and one of the things
+i did when i was playing with this is i
+was actually able to predict the
+interval of the system because i could
+measure it so what you can do here and
+i've seen some people do this very
+aggressively so you can set this to 20
+and you can set this to 10 which means
+it gives us anything between 21 and 31
+seconds here which is a pretty extra i
+believe it starts at zero so anywhere
+between 20 and 30 seconds the last thing
+we're going to see here is wake when
+detecting threats um if you pick up some
+kind of a target that gets very very
+close by and we need to identify it this
+is obviously not really relevant for my
+tips but obviously if i was a sam we
+could do this differently we can
+actually have it wake when it detects a
+threat so in this case it
+it's going to detect a threat no matter
+what so i'm not really caring about that
+too much so when we are in green and i'm
+set to active this aircraft i should say
+this radar will run for 10 and then
+between 20 and 30 seconds go ahead and
+continue so let's go ahead and just
+demonstrate this so what you see here
+and it's very very very difficult to see
+let me see if we could zoom out just
+right
+uh
+there we go you can see the emitting
+zero seconds so what i'm going to do is
+i'm going to press play and it's going
+to go ahead and say the radar is running
+silently for a total of 20 seconds i'm
+going to speed up time a little bit here
+it's going to get down to the bottom of
+its piece here and it's going to click
+and start emitting for 10 seconds so the
+radar now has just gotten booted up it's
+doing a slow sweep of the entire sky and
+what we're hoping is it does is it
+detects oh hey look at that with two
+seconds to spare so now the radar is
+going to go ahead and silence itself
+again and come back in a few seconds so
+now notice this target we acquired we
+acquired like basically 10 seconds ago
+when we were doing one of our sweeps so
+now what's going to happen is the radar
+is going to sit here nice and calmly
+nice and coolly sitting away just time
+is sticking kind of keeps on digging
+digging it's going to emit again so it's
+going to scan the entire sky and we
+expect somewhere around probably between
+seven eight nine seconds of that to
+suddenly reacquire this target here and
+voila you can see when the radar bops
+into this part of the sky we get a good
+look at him and if you actually look
+carefully you'll notice the interval
+between this one and the interval
+between this one is exactly 30 seconds
+which is how long it took us to admit as
+well as how long it took us to sleep now
+keep in mind the guy on the other side
+knows this too let me show you what i
+mean
+so if i'm sitting here obviously i'm a
+duplicate 16k i don't have the most
+sophisticated esm system that we do it's
+just not that sophisticated so go ahead
+and grab that and improve the quality of
+my esm let's go ahead and get a generic
+esm i'll go ahead and make that a 2020
+csm here so it's going to be pretty good
+quality esm here well i gotta love that
+new right click and notice we
+immediately identified a target four
+seconds ago that is our good
+old-fashioned tps we haven't identified
+it yet pretty much at this point we're
+going to sit here and take a few minutes
+to identify its frequency in a spectrum
+it's prf and we're going to try to
+catalog it against all possible radars
+so again times pass in here times pass
+and we haven't picked it up again up
+there it is again and now notice there
+is an interval of time between these two
+when we apply the initial detection to
+when we get the update so i'm going to
+fast forward time a little bit here
+and let's get ourselves one more update
+bingo
+so you can see now that we're getting
+these updates every once in a while
+we're basically guesstimating how far
+away it is and noticing that our time
+versus our actual time emitting is
+slightly different each time because of
+that little random interval that you see
+here so in this case i know he's down
+there but it's going to take me a little
+bit more effort than usual to be able to
+pinpoint his exact location because now
+i have to deal with a target that shuts
+his radar off every once in a while so
+let's go and take a look at a couple
+extensions of this
+so let's go grab our radar one more time
+here and let's say we want to design a
+radar setting where he does not operate
+at all when he's on green mode so let's
+say that he's on green and we're just
+going to tell him to shut off so how
+would you do that well yeah you can do a
+little bit just set this to 0 and then
+what you could do for the interval is
+you set that to 60 seconds like that so
+now what's going to happen is it's going
+to be off for 60 seconds it's going to
+mitt for zero seconds and it's going to
+be off for 60 seconds again so if i
+actually close this you're going to
+watch the silent time take down and then
+it goes right back up to whatever the
+previous time is now let's say we want
+to create a new system by the way when
+you do this make sure you press the
+enter key otherwise you're going to get
+some shenanigans and goings-ons when you
+do that so let's create a new preset
+called continuous so i'm going to come
+in here and we're going to make this
+look exactly what we had before we'll do
+10 20 and we'll do two so we'll do a
+five second variation and we'll also
+leave wake when detecting threat off
+because again it doesn't matter because
+um we're already running so let's create
+a yellow mode that's going to be very
+very aggressive so we're going to emit
+for 10 we're going to be off for 5 and
+we're going to do zero we're not going
+to do any of this so this is a very very
+fast we'll go to orange mode and let's
+assume mission time is going to be 50
+seconds with a 10 second pause in
+between again just to kind of mess up
+people i'll shut this one off because we
+don't need it red mode will be
+continuous and by the way if you want to
+create a custom one you can click use
+custom preset only this overrides all of
+these settings so now how do we tweak
+this
+well take a look so right now we are in
+silent mode and at the end of the 30
+seconds i'll go ahead and fast forward
+here so you can see it you can see we
+emitted for a millisecond not even and
+now we're back silent so let's go ahead
+and crank up the alert level perhaps i
+detected something i'm going to go back
+to my doctor inside press green i'm
+going to set it right to yellow so
+what's going to happen now is he's going
+to finish his countdown and then he's
+going to go ahead and engage his yellow
+procedure so now notice he's emitting
+for 10 seconds and at the end of that 10
+seconds there he is we spot that bogey
+for just a moment able to reacquire him
+the radar again is still going to be
+running and then they're gonna pause for
+only five seconds and then flip it back
+on just like our preset enables now
+let's say we want to go to you know
+condition red here so we'll go right up
+to condition red and what's going to
+happen now is the radar is immediately
+going to flip to continuous emission you
+can actually see here it is now running
+full blast all the time and at any point
+of course i could pop back in here and
+say oh oh they're just kidding just
+kidding go back to orange mode but you
+can see now we still have a good view of
+the entire sky now i know what you're
+thinking you're saying you know well if
+you time these things correctly you
+could actually get them to work off of
+each other yeah you definitely could let
+me show you what i mean so what i'm
+going to do is i'm going to go back up
+to my doctrine admissions here we're
+going to order everybody into condition
+yellow uh that was just fine and we're
+going to grab this guy right here we're
+going to go ahead and dial in a thing
+for his yellow so for yellow we're going
+to go ahead and order him to do let's
+see here yellow for this guy let's go
+ahead and check it real fast the tips
+let's see what the tips is here the tips
+for the yellow is ten five zero so i'm
+gonna go set ten enter
+five enter zero now you're going okay so
+what's your point here what's your point
+here well let me show you watch this
+so what's going to happen now is i'm
+going to take a look at these two
+vehicles sorry these two things notice
+by the way he's emitting so he's going
+to go silent for a few moments and
+that's going to be it by the way i can
+shut off the inherits here if i had to
+and i'll kind of disable that one so
+what i'm going to do is i'm going to let
+him finish his little emissions here
+and what you're probably noticing is
+these are now out of sync with each
+other you're noticing that the one on
+the left is emitting for a little bit
+then he triggers it again then the one
+over here is emitting for bit and then
+he gets triggered again as well now the
+reason that's useful is we can now use
+them as a way to counteract each other
+for example i could have this one emit
+for 20 and be silent for 10. i could
+have this one to emit for 20 and then be
+i'm sorry i'm it for 10 and then be
+silent for 20. and by doing so you
+basically create an interesting little
+situation where both of these two radars
+here are now going to be working
+opposite each other so again this one
+will get going you can see one of them
+is emitting now the other one's silent
+the other one's silent now this one's
+silent now this one's emitting now this
+one's emitting another one silent and by
+doing so you create an amazing situation
+there's a
+little situation where you have the
+ability to actually kind of tweak the
+radar settings in order to make it very
+difficult to acquire so you can see this
+is already a pretty valuable useful
+feature and again one of the things
+that's a little weird about it is that
+you have to set this globally
+the other thing too is i will actually
+set this to yellow right now because
+that way it actually follows the preset
+actually i'm sorry this is the wrong
+team this is the other team that's their
+version of yellow we'd have to come over
+here and set these guys to yellow to go
+ahead and make sure they actually behave
+in that particular sense so again you
+can see this is a great way to kind of
+have little pop-up radars kind of
+simulating an integrated air defense
+system and obviously you can control a
+lot of this through lua as well if you
+want to get very very aggressive with it
+but other than that enjoy

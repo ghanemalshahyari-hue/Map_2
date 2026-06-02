@@ -1,0 +1,253 @@
+# C: MO - Submarine Launched Missiles
+Video: https://www.youtube.com/watch?v=oVFjZ3Jb--g
+Video ID: oVFjZ3Jb--g
+
+hello everyone in today's video we're
+going to be taking a look at submarine
+launched cruise missiles and kind of how
+to use them and sort of one of those
+things that everybody always forgets
+about when they go to use them so what
+we have today is a relatively
+straightforward scenario we have
+ourselves a little kilo because kilo and
+of course we can have this little kind
+of army base here that we're going to
+strike with a cruise missile now many
+people of course are going to be sitting
+here going all the kilo doesn't really
+have cruise missiles but there are some
+cruise missiles so what I actually had
+done here is gone into weapons grabbed
+my two big torpedo tubes w relatively
+speaking the easy ones to get to for
+those who are familiar with this actual
+sub and I basically threw in a Sizzler
+on one barrel and of course I threw in
+the caliber on the other one which are
+really the same missile but they're
+pretty capable one's anti- ship and the
+other one obviously is going to be
+anti-surface so let's go ahead and do
+the deed here now conventional wisdom
+says whenever you're launching a
+submarine launched missile of some kind
+it's that you want to make sure you have
+as much room between you and the target
+as possible but that's actually an
+interesting problem that that creates
+and we're actually going to show you
+both versions of that just to give you
+an idea of how that conventional wisdom
+can sometimes be contradictory so first
+thing first is I'm going to order my
+submarine here to come up to a little
+bit shallower of a depth here we're
+making pretty good speed at about five
+knots we got plenty of battery you'd
+never have that much battery let's be
+realistic even my elrac car doesn't have
+that much battery ever so I'm just going
+to bring it up here and we have
+ourselves a pretty good thing of course
+you're like how do you know that there's
+a ship here the reason we know that of
+course is because there's a tupf 95
+helping us out over there so um
+conventional wisdom would say you would
+never fire a cruise missile at this
+distance our distance here is about 12
+not miles um this is really almost
+torpedo range and you can actually see
+just the edge cuz we have UG gmts and
+they're kind of fun but we're not going
+to worry about that today so I'm going
+to press shift F1 I'm go ahead and click
+on the Target and now we can see the
+caliber is ready to go double click and
+we're going to go ahead and pop the
+sucker off and this is the fun part
+let's go and switch to the other team
+now you're sitting here going that other
+guy is going to pick up that incoming
+missile immediately well remember he's
+on ASW Duty so he's remaining his he's
+keeping his Radars and things off he's
+not emitting which means he's not going
+to notice the missile until it goes
+active so what you'll notice here is my
+total distance when we actually picked
+up the missile was about 3 miles now
+we're moving at real time here now I
+picked this missile specifically because
+it has one fun trick and that's the fact
+that it has the ability to pick up its
+speed at the last second and accelerate
+towards the Target and Bam slam into it
+just like that basically destroying it
+instantly and you can
+see that's the end of that so let's go
+ahead and reopen our scenario again real
+quickly here I'm go and open this one up
+real fast I'm grab this real
+quick here we are so now we've moved
+ourselves a little bit further away from
+the strike zone so what I'm going to do
+now is same thing we did before we'll
+come up to our shallow here I'll order
+him to creep there's no chance that he's
+not going to be able to do this shift F1
+go ahead and click on our Target we're
+going to go double click like that the C
+missile is going to come railing off the
+rail and it's got a very very very very
+long flight ahead of itself you can see
+this thing's doing 30 ft above sea level
+about 530 knots again I picked this
+weapon specifically because it's kind of
+fun to play with as you'll see so this
+thing comes rushing in and you can tell
+that our lovely new Thia here has got
+plenty of time to spot that missile now
+there's a couple things stacking the
+deck against our poor hapless Destroyer
+here one of those of course is that it
+is radar silence the other thing that
+you're probably aware of is the fact
+that it just successfully shot down that
+incoming weapon because I fast forward
+it too quick you could see it actually I
+did this last little thing and new
+weapon contact and then basically it
+spoofed it uh did it spoof it uh failed
+failed tried to jam weapon malfunction
+we would have got him again anyway so
+let's change up the scenario one more
+time now you're sitting there going okay
+so you would had more time to lock on to
+it if the helicopter had his radar
+turned on he probably would have noticed
+it what would happen if the ship had its
+radar turned on now things get a little
+different here so let's go ahead and
+grab it real fast go flip on our sensors
+real quick Go Active Radar please Active
+Radar on radar enabled so we'll go ahead
+and unpause this one here we'll go bring
+ourselves back up to per oh that would
+be bad let's not do that so let's let's
+go ahead and shift up one click on this
+guy here give him the old double clicker
+real fast uh we have to get up to pretty
+shallow before we can actually launch
+one of these things you can't shoot them
+from depths like that they'd basically
+fizzle before they got up to the surface
+there to actually break the water and do
+the thing here the good news is I think
+about 164 there goes okay this ship now
+knows it's been fired at and something
+else happened and this is one of those
+critical things I want you to be
+thinking about next time you go to do
+this so he's sitting there um he's going
+right at to Port he's actually bringing
+his nose into it which I find a little
+little strange I would expect him to
+beam it but one of the things you'll
+observe here is he does not have time to
+react if I were all the way out here he
+would have 15 minutes to start firing
+missiles at that thing now the important
+thing is and this is the one thing I
+want you to take away from this is one
+of the things you'll observe is the fact
+that we now are visible on the map the
+submarine I'm talking about here and
+you're sitting there going but we shot
+it from underwater but we shot it from
+underwater which meant this beautiful
+calm ocean not really um and this
+missile came out of it went shooting
+in sight of this helicopter number one
+and number two it also came in sight of
+the radar of the Destroyer see where
+this gets complicated so that means now
+if I click on this we actually have a
+surface unknown on Water contact because
+our weapon broke the surface in view of
+an enemy unit see how that happens again
+it's one of those little details that
+people don't necessarily catch with
+command so let me intentionally drop
+this contact for a second here I'm going
+to grab this guy real fast here I'm
+going to say just like that again he's
+gonna be doing this little dip and sonar
+thing in a second here so let's say oh
+we we sunk that thing I'm not worried
+about it kind of a thing let's go ahead
+and launch our next weapon um let's see
+here we'll go ahead and launch right at
+this one real quick we're find this aeri
+which is a fantastic little cruise
+missile here it's going to go ahead let
+me go and zoom out here so we can
+actually see this happen so um of course
+the missile comes up popping out of the
+water one more time and you can actually
+watch ah the radar in this thing is not
+quite as good as it is on the newmen so
+unfortunately we don't get that warning
+of it popping out of the water even
+though we're right next to it shoot ah I
+hate when that happens but you do get to
+see that when action kind of a thing
+like that so of course this weapon is
+going to go pop out uh this one's kind
+of interesting too because it's a very
+similar design to the other missile it's
+just basically a good old fashion c one
+of these pieces here now this thing's
+rushing by um we have ourselves an FFG I
+remember how this thing's actually sunk
+you're sitting there going but it's
+still there why is it not firing it's
+not firing because it's sinking and of
+course so we just got a big Angry radar
+contact here from an enemy helicopter
+does not surprise me in the slightest
+this thing's going to sail right by the
+Hulk of that Destro here let me go ahead
+and zoom back to this view yeah he's
+going down actually we got to look at it
+for a second there and know we actually
+acquired this I think yeah we have a 2d
+search radar that's kind of doing the
+deed here and of course we have a Rapier
+platoon because like you know any James
+Bond movie it's always a Rapier platoon
+kind of a thing you're like why is it
+not firing at the cruise missile not
+able it just was not designed to be able
+to do that so of course this missile is
+just going to sail right over the top
+and it's going to go wham um I
+missed but again that's kind of a thing
+so as you can see um when you're firing
+missiles with some It's relatively
+straightforward you have to make sure
+you've got the right range the kind of
+unintuitive piece is if they're running
+their Radars then you've got to actually
+shoot them relatively short so they
+don't have time to react if they're not
+running their Radars you can basically
+fire at any distance the next thing you
+need to be able to remember here and
+this is all we saw very clearly here is
+if you fire the missile in range both
+visually or a radar of another unit you
+will be detected because it knows where
+the missile basically popped out of the
+water enjoy

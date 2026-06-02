@@ -1,0 +1,355 @@
+# C: MO - Sneak attack with aircraft
+Video: https://www.youtube.com/watch?v=TBzN6X3AFb4
+Video ID: TBzN6X3AFb4
+
+hello everyone in today's video we're
+going to be taking a look at a classic
+tactic and that is to sneak up in
+somebody in their blind spot and
+basically give them the good
+old-fashioned surprise attack now what
+makes this a particular tactic very very
+viable is the fact that is if you can
+somehow get into somebody's behind
+quarter and they can't see you you
+basically can just obliterate them
+without them even knowing you're there
+that's the concept right but there's
+actually a couple little problems that
+you're going to run into when you
+attempt that tactic and we're going to
+take a look at that today so let's take
+a look at our scenario i'll go ahead and
+flip things on so you can kind of see it
+in real time here we have a group of a
+bunch of mig-35s this is a mig 1.42 mfis
+these are very very modern very very
+high tech on big aircraft uh they work
+great they're proceeding basically in
+this little northerly course here right
+next to baja california behind them is
+this very very crafty f-35a lightning ii
+equipped with none other than the
+aim-260 jatums which are basically these
+stupidly long-range missiles that can
+like basically reach out and touch
+things what is 120 nautical miles away
+not to mention look at his probability
+of hit 95
+these things don't miss right well uh we
+got issues
+so the first thing we're going to do is
+we're going to go ahead and come up with
+a way that we can sneak up on these guys
+and i'll show you both problems now
+right now the f-35 does not have his
+radar turned on of course the f-35s
+radar is an extremely advanced phase to
+raid radar which you basically can't
+pick up using any type of electronics
+mostly that being said we're going to
+rely on its visual sensors to spot so
+let's go ahead and pause for a second
+and go ahead and acquire them and now
+notice immediately i'm going to pause
+again we have a boogie number two here
+we picked him up with the uh eodas the
+eodas remember which is ridiculously
+effective infrared array i've actually
+watched a video of this thing in action
+it is that ridiculous now notice as soon
+as i've acquired them on that one
+moments later the eot kicks on and
+that's again the infrared navigation so
+now the neat thing is because these
+missiles are super duper modern we can
+basically pop these things off right now
+let's do it so i'm going to go ahead and
+uh select these guys i'm going to lock
+onto them i'm going to order up an
+attack immediately i'll go ahead and
+give them just a few moments he's going
+to flip on his radar for probably a
+millisecond here and he's gonna start
+popping these suckers off like uh
+they're basically candy here so there
+goes one two three four five six seven
+eight of these things they're on their
+way and we'll go ahead and switch over
+to our good friends over here in the big
+35s now the first thing they're going to
+notice is they're going to get a warning
+that something's coming up behind them
+they have moz on board so they're going
+to know that the missile attack is
+coming everybody immediately breaks and
+starts cutting directly into it and
+pause
+so now something i want to show off here
+i'll go ahead and give it just a few
+moments here let's go ahead and fire up
+a weapon in game so we can go ahead and
+see what happens here so our missiles
+come arriving they start exploding they
+can start exploding they start exploding
+boom boom boom boom boom boom and all
+the aircraft are obliterated now the
+interesting thing here now this is
+actually really really important here is
+if i take a look at the weapon itself
+you'll notice that its normal percent a
+hit was a 95 percent now of course what
+happens is because that missile had to
+travel to get to the target remember by
+the time the missile arrived there these
+migs had traveled something like
+i can't do the math waking up 17 miles
+18 miles so that means even though i
+fired within one third of the range of
+the weapon i've already sucked up almost
+half of its range getting to the target
+which means if you take a look right
+here a nominal agility of 5.5 just for
+altitude just for proficiency empty
+weight fraction we're not going to worry
+about that high deflection impact i
+don't think it was that much of a high
+deflection the final agility modifier
+was a staggering 26 percent reduction
+putting it all the way down to a 69 not
+counting all you know the spoofs and
+chaffs and stuff like that but that
+being said we were still successful in
+that engagement so what i'm going to do
+is i'm going to open that up one more
+time
+go ahead and pop back over here and what
+i'm going to do this time is i'm going
+to double the range of our good f-35
+buddy so right now we're at 30 nautical
+miles i'm gonna go ahead and back him up
+over here go ahead and put him at uh
+what is this distance that should be
+somewhere close to 60. that's a bomb 60
+on the nose not bad good estimate so go
+ahead and give him a moment to go ahead
+and acquire those pesky aircraft now
+watch what happens this time so again i
+put myself a little bit of distance here
+press the little f1 key go ahead and
+select them all the f-35a of course um
+by the time they get there they'll still
+have not just traveled 18 miles they'll
+probably have traveled something like
+let's see 450 that's gonna take about
+three minutes that's at three into that
+that's almost 25 miles
+so the missiles go ahead and fire off
+just exactly like they did this time now
+watch what happens
+so these missiles are fired at double
+the range even though they're well
+within the maximum range capacity of
+this aircraft so let's go ahead and
+switch to god's eye view here so we can
+watch what happens missiles arrive the
+maus goes off and notice the missiles
+just start kind of raining one of the
+guys pulled away from it immediately and
+managed to duck out of the way just in
+time now when i've tested this in the
+past one of the missiles have struck
+them at that distance and all the other
+ones missed now let's go ahead and take
+a look at the records here real fast go
+ahead and pop this up so you can kind of
+see here you'll notice our datum
+remembers the 95 percent was down to 67
+by the time it got there so again that
+little teeny tiny percentage could
+really make a difference when you're
+trying to really really nail the other
+guy now let me show you the next aspect
+of setting up an engagement like this so
+let's go ahead and grab this guy again
+yes i name all my missions the same
+thing deal so i'm going to grab this guy
+again but this time we're going to
+design it to make it a little less
+likely that he'll be picked up so what
+i'm going to do is i'm actually going to
+go ahead and move him a little bit
+stupid close here and i'm also going to
+increase the speed just a tiny bit so
+that we accidentally pick him up and
+we'll show you in the next issue go
+ahead and unpause switch to the other
+team go to red
+he's going to do his little turn there
+they're all going to do a little turn
+and we picked him up immediately off the
+left side of course that's actually a
+missile that's not him he's uh chilling
+here what a distance of uh what do we
+got there it's about seven nautical
+miles here so the next thing you need to
+be thinking about is you need to be
+thinking about the altitude of your
+engagements now i'm gonna go ahead and
+let him i'll kind of finish the job here
+i love that guy just diving for the deck
+oh didn't work ha ha
+surprise now we're gonna go ahead and
+get you migged
+let's come on down here is that 15 000
+oh no he's down two there he is
+get him
+get that f-35 get that f-35 this is to
+basically a vertical engagement oh look
+at this this is bad
+so unfortunately i was not able to
+demonstrate what i wanted to so i'm
+going to quickly reset that so the next
+thing you need to be thinking about like
+i said a moment ago is aspect so what
+we're going to do now is we're going to
+take a look at the differences in
+altitudes between the two targets here
+so we're at 36 000 feet right now we're
+going to pick up these guys in a minute
+just like we did the first time but
+you're going to notice these chaps are
+at an altitude once the eots kind of
+kicks up oh no actually identifies them
+280 come on let's go ahead and get it
+come on eots come on eots it'll get them
+in a second there we go so we don't know
+what the altitude of these targets are
+and of course what is the f35 done he's
+already launched but we know that 36 000
+feet so if we want to be able to safely
+do this operation we actually want to
+get underneath the targets that we're
+trying to fire at so when we do ahead
+and launch they can't turn around and
+see us immediately because we're going
+to be basically out of their effective
+range so i'm going to go ahead and let
+the fireworks start here and we're very
+effective to show you how easy that can
+be i'm actually going to switch again
+we'll go ahead and load this scenario
+one more time
+i'm gonna go ahead and delete this f35
+and instead what i'm going to do is i'm
+going to put in something uh you know
+that i probably used a few times in the
+past and that is the f5e so what i'm
+going to do is i'm going to get the nice
+version here i think there's the g model
+i always forget or is the m i think
+that's not the r model i feel like
+there's a tiger three tiger one two
+three e i was right it was chili that's
+the country i was in chile sorry go
+ahead and grab this one real quickly
+here actually we don't want the e or the
+f version we want the e version because
+we want the one that doesn't have the
+stuff so we can use a derby or we can
+use a python i'm gonna go with the
+python because why not so now we have an
+f5 which is a totally different aircraft
+as far as trying to sneak up on
+something as advanced as the mig-35s so
+notice we have no concept of where the
+enemy aircraft are so what i'm going to
+do is i'm going to kick speed up a
+little bit i'm also going to reduce his
+altitude now when you reduce altitude of
+corsa you're going to be struggling a
+little bit for range here so be kind of
+a mindful of that so we're just kind of
+cruising along we're cruising along we
+got some gci information saying hey
+there's a group of mig-35s my little f5e
+is like going okay we'll do
+if i can find them i'll do something
+about it now notice the last thing in
+the world this f5 wants to do is flip on
+his radar if he were to do that he'd
+immediately get picked up helping us out
+a little bit though let me go ahead and
+flip over sensors i'll go ahead and add
+something real real quickly we'll go
+ahead and add the same sensor that our
+good friend had over there in detection
+tracking go ahead and say f35
+that should make it a little bit easier
+for us to continue our scenario here so
+now he's going to look around with the
+yachts and it shouldn't take up too long
+there we go
+what an amazing system that is so now
+we're going to do is we're going to try
+to use this you know ancient piece of
+technology against this extremely modern
+and we've set everything up really
+really carefully here so i'm going to do
+is i'm going to go ahead and flip over
+to 3d view just so you can kind of
+understand the geometry a little bit
+here
+3d view
+3d view there we go so now notice if we
+look at it from the side our little f5e
+is chilling at a significantly higher
+altitude than these guys which is not
+desirable what we want to do is we want
+to be below them now if you remember if
+we switched to a guides eye view let's
+go ahead and press this one real fast
+oops i should have closed that quicker
+you'll notice the reality however is
+whoops is that we're below them so line
+of sight-wise they have to look through
+the body of the airplane and they have
+to be able to see this guy come sneaking
+up on him right now so this is going to
+be a superior position to be in now if
+these were ships of course we want to be
+constantly kind of clearing our baffles
+now he's gone ahead and got himself real
+real aggressive here and he immediately
+popped a shot off which is going to be a
+problem for him because even though he's
+in a perfect aspect for firing these
+things he fired them at the absolute
+maximum of their range so we're going to
+see exactly what that does to the
+overall performance up in just a second
+that was a big mistake
+oh that was a mistake
+notice this missile will run out of
+energy before it even gets to him so as
+you can see that was a mistake and now
+these mig-35s are going to have a real
+real fun time with this guy
+unfortunately as you could say you've
+got to be very very mindful of your
+units but the actual engagement was
+pretty clever our little young pilot
+just got a little uh
+cocky is the word i'll use for this one
+so hopefully this helps as far as
+showing you how you can use that tactic
+as well as some of the common traps that
+people fall into it it's a great tactic
+if you can get away with it a lot of
+times i'll do a bait and switch i'll put
+two f-35s i'll send one up here and i'll
+send the other one behind these guys
+will go raining down on the one f-35 or
+the other guy basically just sneaks
+right up on him so that's a great
+strategy enjoy

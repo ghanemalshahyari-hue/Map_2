@@ -1,0 +1,846 @@
+# C: MO - Creating random regional air traffic
+Video: https://www.youtube.com/watch?v=K2KCpbYHrtc
+Video ID: K2KCpbYHrtc
+
+hello everyone in today's video we're
+going to be taking a look at a way to
+create
+convincing civilian traffic without
+having to make 50 or 60 airports
+so in the old days basically what we
+would do is if we want to make a bunch
+of civilian traffic kind of zipping
+around the area in order to make things
+that kind of complicated by the way
+we're talking about air traffic and i
+don't
+see traffic here what we would do is
+create a bunch of little airports and
+then we go ahead and create a little
+ferry mission between them
+that basically causes them to zigzag in
+every direction that you can imagine
+while this effective is out really
+really good i mean we've all seen that
+people try it before and it kind of does
+its job
+i said there must be a lure way to do it
+that's probably going to be a little bit
+smoother and a little bit more chaotic
+which is always something that i like
+so i sat down and i started playing with
+a couple different concepts and i came
+up with a couple neat ways to do it
+so we're going to go ahead and try those
+out today so first things first
+let's go ahead and create some sides
+here i'm going to be interested in a
+civil side
+this is going to be my poor civilians
+who are going to be the ones that are
+going to be spawning into existence i'll
+make them blind
+not terribly proficient and we'll go
+ahead and act i don't know we'll do a
+blue four too why not
+go ahead and say the blue four we're
+going to say the neutral that looks
+pretty good go ahead double click on
+symbol
+so the way we're going to have to do
+this is we're basically going to
+generate airplanes
+just on the edges of the expected
+theater that we're going to be operating
+on
+once we've done that we're simply going
+to let them go flying across the theater
+and then when we detect they've crossed
+out of the theater we're operating and
+we're simply going to remove them from
+existence
+and replace them with another airplane
+that appears in a different location
+now obviously the size of your theater
+is going to dictate some of our numbers
+here so keep that in mind
+so the first thing i'm going to be
+interested in doing is kind of picking
+where the middle of all this action is
+going to take place
+and i can see here we have about uh
+north 26 easting is about 56. i'm just
+going to remember that
+let's go ahead and open up our lure
+script console and go ahead and zoom
+things in a little bit make this a
+little easier
+okay so the first thing we're gonna have
+to do is we're gonna have to get
+ourselves some airliners
+now i like to do random lists of
+airliners because it just makes things a
+little bit more exciting
+this works great for ships too by the
+way so let's go ahead and start by
+creating a
+list called airlinerdbids then inside
+this list let's populate
+it with some different airline or tv ids
+that we can get our hands on here so go
+over here i'll switch over to commercial
+and you can see we got a beautiful list
+of aircraft here i look pretty solid so
+if i want an airbus a310
+2427 looks pretty good so then i simply
+go down to the next airplane i'm
+interested in random let's take an
+airbus a330
+i said two four two eight looks pretty
+good two four two eight and i basically
+go through and populate this entire list
+with a bunch of database ids now let me
+go ahead and do that real fast
+all right that was easy so now that we
+have our randomly selected i picked out
+random basically 20 here that makes it
+pretty pretty simple for us
+we can now go into this list and grab
+each one of these airliners for the
+purposes
+of going ahead and generating them so
+the first thing we need to do with the
+startup scenario is actually generate
+all these random traffics and then later
+on we'll build our script that'll
+actually scan the traffic and remove
+them as needed
+so the first thing i want to do is i'm
+going to go ahead and establish what the
+center of my theater is
+so i'm going to create a local variable
+i'm going to call it center long i mean
+central longitude
+and i'm going to go ahead and find
+something in the middle that's a nice
+even number so we got a 26 again we're
+interested in the longitude here which
+is going to be the easting
+so that's going to be 5615. we'll just
+stick with 56.
+and we'll go ahead and get ourselves a
+central longitude at our latitude as
+well
+let's see here we're going to be
+interested in the end value this time
+that's going to be at 26.5 looks about
+accurately there okay cool so let's go
+ahead and randomly start our scenario by
+generating a bunch of airplanes
+i've done this about a billion times i
+love doing this it's so much fun
+you can actually make a whole shooting
+gallery if it's something you want to do
+i made a mob at one point too just like
+to test the theory and it was actually
+pretty cool
+so let's go ahead and get ourselves a
+really really basic loop here so i'm
+gonna say x equals one
+uh we're going to say twenty we're gonna
+say do we're gonna say end
+now this is going to get a little
+mathematically complicated now the first
+thing we're going to do is we're
+basically going to take that center
+pick a random bearing and then put an
+airplane on that bearing at a random
+distance
+so let's go ahead and do that so i'm
+going to say random bearing i'm going to
+say equals math.random
+let's say between 0 and 359 degrees it's
+a circle
+now i'm going to be interested i'm just
+thinking here i'll use my head here hmm
+let's do a random range because we're
+going to need that as well
+math.random let's see here probably
+anywhere between 500 and 300 nautical
+miles that seems pretty good
+we're going to need to get a random
+airplane out of my database id
+so i'll call it random dbid now this
+one's a little tricky we're going to say
+airliner
+dbids which is our list we're drawing
+from
+give me item that is math.random we need
+a random item
+between one and the number of items
+inside of that list minus
+one this should go ahead and get us a
+random number of random dog dbid each
+time
+hopefully pretty so the next thing we
+need to do is we're gonna have to
+generate with the starting position
+of our particular airplane remember this
+is just establishing the initial traffic
+so let's go ahead and say a local start
+long longitude
+we're going to use our world get point
+bearing camel case gross latitude is
+going to be pretty easy we're going to
+be interested in our center latitude
+our longitude is going to be our center
+longitude
+uh let's see here we're going to need
+distance is going to have to be random
+range because remember we created that
+and bearing of course has to be random
+bearing
+whoop random bearing i almost had a
+camel case moment for a second there dot
+nice let me go pull this over so you can
+actually see what i'm typing here cool
+so i'm gonna go grab all this some of
+you are saying why don't you just create
+the point first and then go ahead and
+i'll just do it twice instead of having
+to do it twice well um too bad
+all right we'll go and make sure this is
+latitude okay so what do we have
+we have our random starting position
+which is important
+and now we also have a random airplane
+so now it's just a matter of actually
+popping it down on the ground
+but if we were to just pop this thing
+onto the ground now we'd have a problem
+in that that initial airplane would just
+sit there and spin in circles because we
+didn't tell it to go anywhere
+so we're also going to have to give it a
+waypoint as well so let's go ahead and
+use the same technique we just did
+so we'll say local we'll call it a
+waypoint long
+equals i will use the exact same code
+the only difference however
+is i'm going to be interested in
+changing some of these little details
+for one i'm now interested in my
+starting latitude which i got from these
+two positions as well as my starting
+now my distance i'm just going to make
+it an arbitrary distance let's say about
+and as far as my bearing goes a random
+bearing is perfectly fine i can keep
+that pretty logical
+let's go ahead and copy that code paste
+remember work smart not long
+latitude okay i'll make sure this is
+latitude let me just do a mental check
+here
+so this is going to get us a starting
+position this is going to give us a
+starting place to go
+okay so the next thing we need to do is
+decide how many of these random
+airplanes are actually going to spawn
+so what i'm going to do is i'm going to
+create a little my fair little thing
+called the coin
+do math.random between one and two so we
+have heads or tails
+and we're simply going to say a simple
+little logical statement here we'll say
+uh if coin equals one
+then we'll come down here and i'll go
+ahead and create ourselves our airplane
+but what i want to do before i do that
+is i just want to make sure my insanity
+is not totally insane here
+i will dbid just to test just to test
+we'll say else
+print no plane
+got eaten by snakes all right that looks
+pretty good to me
+and we'll go ahead and end that okay
+let's test this
+ctrl a ctrl c in case something explodes
+me paste
+all right so um notice i see nil here
+which tells me that when i did this
+my dbid was not correct because it was
+actually random dbid is what i was
+supposed to do
+and that's why i checked these things
+run yeah so you can see it generated a
+bunch of plane and several of them got
+snakes i'm
+very very sick of these snakes on my
+planes here okay so now we have to do is
+go ahead and create that unit now that
+we've done all the hard work above
+already
+so let's go ahead and say send edit
+we're going to add unit my favorite
+command in the universe
+we're going to go ahead and say let's
+see here we're going to say type it's
+going to be an airplane which is an
+aircraft
+we're going to say name equals a civil
+we're going to say that the dbid equals
+let's see a random dbid this is about to
+get very very very long
+let's see here um loadout id equals
+three
+which actually says reserve but because
+we're not going to know the individual
+loadouts for each of these airplanes you
+can't do it if you want it's just going
+to be a
+quite the pain in the butt it's not
+worth it i'm just going to say reserve
+heading is going to be the direction
+that we initially came in at which is
+going to be random bearing
+and let's see here i'm just making some
+common sense here we need side is going
+to be
+civil not really latitude is going to be
+our start
+latitude a lot rather our
+longitude is going to be our start
+now obviously airplanes travel about 36
+thousand feet so say altitude is going
+to be 36 000
+feet and now for the most annoying part
+of them all we have to give it a
+course oh i hate this course
+equals ready for this double left
+bracket
+longitude equals waypoint
+told you this is going to get crazy
+let's see latitude is going to be
+waypoint lats
+and let me see
+unfortunately you don't get any sounds
+like that when you make these things
+just doing a kind of a mental check here
+ctrl a control c in case i blow
+everything up
+run let's see what happens hey
+look at that so now we have a bunch of
+airplanes that are going to be inside of
+our starting region here
+so this worked exactly the way i hoped
+it worked
+man that never happens i swear it just
+it did no
+that was excellent so this is actually
+pretty effective so um i'll go ahead and
+leave that on the screen if anybody
+wants to steal it from me
+if you need to i can post this in the
+comments as well there we go so now
+everybody can steal it
+okay so this is going to randomly
+generate a bunch of airplanes in random
+directions with random latitudes based
+on the center point of our scenario
+so now what we need to do is we need to
+copy this code go up to the event editor
+we're going to go up to event editor
+narrator cells in event
+start starting game it is not reputable
+we're going to go ahead and edit
+triggers we're going to create a new
+trigger let's see here we're going to
+make this every so
+often so we'll do regular time we'll do
+this in
+probably five minute intervals that's
+pretty good but i'll do a one minute
+interval
+let's do one minute that looks good
+actually wait a minute we can't do this
+yet i'm getting ahead of myself we'll
+need that
+actually we will need that trigger later
+on but um we're gonna have to go ahead
+and get that one scenario is
+loaded there we go all right scenario is
+loaded
+uh we don't need any conditions we can
+say scenario has started or whatever i'm
+just going to say scenario is loaded is
+fine
+we're going to add ourselves an action
+now edit actions we'll create a lua
+script
+create new one i'll go ahead and dump
+that right in there starting
+aeroplanes nice so now we got ourselves
+a bunch of starter airplanes that are
+going to appear in the beginning i'm
+going to go ahead and press ok
+go ahead and close this one mental check
+here don't forget to add it that's
+something i've done a million times
+all right so when the scenario is loaded
+it should randomly generate a bunch of
+airplanes for us
+press the ok button and now we have our
+starting game make sure it is active
+so now we have the hard part we're going
+to have to program this now so that as
+the aircraft move
+through our region and get to the edge
+of the region we go ahead and stop and
+delete that aircraft and then create a
+new aircraft somewhere else in the
+region
+so let's go ahead and close this event
+out real fast
+um let's see here what am i going to
+need what am i going to need what am i
+going to need i'm probably going to need
+this i'm probably going to need this
+so what i'm going to do is i'll clean
+this all out in a minute all right let's
+go ahead and see this so what we're
+gonna have to do is every few minutes is
+we're gonna have to scan all the
+civilian airplanes
+and determine if any of them have gotten
+outside of our theater which we'll
+define as 300 nautical miles away from
+our center
+so let's go ahead and do a 4k comma v in
+i pairs
+units aha but i haven't got the units
+yet
+something i've done about a thousand
+times so we'll say units equals
+vp and get side side equals
+civil now i've already made a bit of a
+boo-boo here dot
+units i'm just i'm using some common
+sense checks here
+make sure i haven't done anything really
+say i did this is supposed to be a table
+i've done that so many times you don't
+even want to know okay mental check
+mental check
+good all right so now we're going to do
+is we're going to iterate through each
+of our
+units that are part of this remember
+this script won't be here when we run it
+this is just here so that i don't lose
+this important value up at the top here
+okay so first thing we're going to have
+to do is we're going to determine how
+far away
+the airplane that we're scanning is from
+the center of our theater
+so we'll go ahead and say range from
+center and go snake case
+equals tool range now the tool range is
+actually pretty cool
+we'll say center lats i will say
+longitude equals
+center long and then we'll compare it to
+the unit we're interested in which is v
+guid well there we go so this will get
+us the distance
+from the center of our theater to the
+current unit we're scanning
+out of the units list so okay so that's
+pretty easy that's pretty easy now we're
+gonna have to do is we're gonna have to
+do some logic here we're gonna say if
+range from center is greater than 300
+nautical miles
+that simply oh i just did it there we go
+if the range is greater than i'm just
+working with the back my head here
+physio okay good so if the range is
+greater than 300 nautical miles the
+first thing we do
+delete it send edit
+delete unit and we're going to say side
+equals
+civil and we're gonna say um unit
+name oh no no no oh we're busted we
+can't do unit name because we need a
+unique name
+ah hold on uh equals
+visa name okay we're in trouble we need
+to fix something here
+go up to civil airliner dot dot
+math.random uh we'll do 100-999 there we
+go okay so now i've saved myself because
+i've randomly
+adjusted the names of my airplanes so
+that they're random we'll do a little
+hashtag right here hey i like that
+cool all right let's go back down so now
+we deleted the unit now we have to
+generate a new unit that's 300 nautical
+miles
+actually not 300 we should do less than
+300 otherwise it'll get deleted when we
+start it again
+so let's go ahead and get myself my
+random bearing my rainbow actually we
+don't need random range anymore we know
+what it's going to be
+so we're going to go ahead and get
+myself with a random bearing again so
+now we're going to have to get ourselves
+a reverse
+bearing you're saying why do we need the
+reverse because remember the aircraft is
+going to spawn here it needs to not go
+in this direction it needs to come
+towards us across the theater
+so i'll say reverse bearing equals a
+random bearing
+plus 180 half of a circle modulo
+360. that'll get me a nice pretty
+reverse bearing there
+it's just doing some fancy computer
+science there let's go ahead and get
+ourselves a random debug
+dbid and let's go ahead and scoop all
+this stuff right here and i'm just going
+to shove it right here why not why don't
+i make more work for myself
+yes you could put all this in a nice
+neat function i know people who do those
+kind of things
+i'm not one of those people but i know i
+really should be i'm sorry
+all right let's see here so we generated
+our random bearing we generated a
+reverse bearing we generated our random
+dbid
+now things get difficult so we're not
+interested in random range we're
+interested in a distance of 270 nautical
+now what we need to do is we need to
+come down here for a waypoint
+and set instead of a random bearing
+we'll set it to our reverse
+bearing now the reason we're doing the
+reverse bearing is like i said let's say
+we spawn in here
+facing this direction we now just need
+to spawn in here and go
+this direction so that's going to work
+for us pretty well
+now it's just a matter of adding the
+unit so go ahead and just copy all this
+hard work that it did right here
+again never reinvent the wheel if you
+don't have to i always just keep myself
+a little inventory of things
+and press home and let's just do a quick
+little idiot check here
+all right so this is going to randomly
+generate it it's going to be in the
+reverse bearing
+reverse start start long start long a
+bearing is going to be my new one start
+it's going to be my center is my start
+start long is going to be the position
+it's going to be that bearing it's going
+to be just
+we got it so this is going to be our
+code for the purposes of you know
+running this particular scenario
+so i'm actually going to do is i'm going
+to grab a couple of these airplanes just
+to make sure that it makes sense
+and move them out of my range here
+so that way we'll see if they get
+themselves deleted and replaced
+appropriately ctrl a control c in case i
+made a critical mistake here let's just
+test it
+so that was interesting so um let's see
+what's at 300
+miles that was 380 nautical miles let me
+move this guy a little bit further
+around go ahead and run it again yeah he
+got deleted and replaced
+excellent so it generated all of our new
+airplanes in made them go in the
+opposite direction
+yes so i think i made one teeny tiny
+little mistake there
+this is supposed to be reverse bearing
+reverse
+bearing whoopsies let's go ahead and
+grab a couple of these to a test to make
+see how they're facing the wrong
+direction
+move him move him move him i just run it
+one more time
+nice see how this airplane came into
+existence facing the correct direction
+across oh my gosh it works
+yes that never works the first time man
+i love that ah that's so cool
+all right so now that we've got all this
+hard work done let's go ahead and bring
+it into our event
+so let's go ahead and grab we need
+everything from here to here we also
+need that dbid
+by the way once this has been declared
+it's permanently locked into memory
+but we'll lose our center long we'll
+lose our center lat so one thing we need
+to think about doing is grabbing this
+with it
+let's go ahead and come down here
+actually i can make that a local
+variable i don't need to waste more
+memory than i have to
+let's go ahead and come down here we'll
+actually call this a local
+actually it's fine all right let's scoop
+all this material now we just have to
+load it up into in
+event so-called event editor events
+we'll go ahead and create a new one
+we'll go and call it um check for
+stragglers
+repeatable repeatable edit triggers
+create a new one we'll say a regular
+time we'll check every five minutes i
+think it's going to be
+plenty check for
+new civvies i'm going to press the ok
+button looks good go ahead and close
+that one out
+i'm going to add that one check for new
+civvies add trigger we're going to go
+ahead and add a condition we're going to
+say scenario has started
+yup new
+i'm going to throw this one right in
+here and we're simply going to edit
+actions create a new action it's going
+to be a lewis script
+and we're going to poop pop poke that on
+there right there we need our airline
+our dbids otherwise this will get quite
+broken on us
+all right let's just do a mental check
+here of course one thing i really like
+is you can do something like this you
+can see everything i've typed here in
+case you need to oh dark mode
+just doing one mental check to make sure
+to do anything silly here okay that
+looks pretty good looks pretty good it
+looks pretty good press the ok button
+manual of iteration i don't know where
+we'd be without it and i forgot to give
+it a name
+um delete the planes that
+don't belong and add the right
+ones how's that for camel case for you
+all right that looks pretty good go
+ahead and throw this one on
+real quickly and i'm making people
+twitch because it's capital l right here
+press okay make sure this is repeatable
+and now we are good to test
+oh my oh my oh my my okay here comes the
+moment of truth here we go here we go
+here we go okay
+all right oh my gosh i'm so nervous so
+nervous okay let's go my script console
+let's generate some airplanes first just
+to kind of get our scenario kicking off
+press the ok button
+looks good i've got a bunch of random
+airplanes let's go ahead and switch to
+the other side we'll switch to blue
+force
+had myself a nice little taiko right in
+the middle of everything tycho
+ponderosa pine go ahead and grab this
+one right here and grab it turn on its
+air search radar
+looks pretty good i'm gonna hit on pause
+and we should really pick up some
+airplanes
+yep there's a couple civilian airplanes
+we've just detected now let's watch
+those watches watch us
+see the airplanes they cross right over
+my theater but watch this watch this
+watch us
+they're gonna go to the other side and
+then we're gonna get a bunch of other
+random airplanes coming in the direction
+that's excellent so that is a great
+great great strategy if you want to kind
+of
+make things a little bit interesting for
+your scenarios without having to create
+a bajillion different little things
+i'm a little curious as to why the
+airplanes are kind of facing a little
+bit too close to each other i also
+appreciate the fact that we're able to
+identify them as being different
+they also seem to be um the same kind of
+airplane
+so we definitely have a little bit of a
+puzzle going on but i think what is
+happening is it's being triggered
+too quickly there so i'm actually going
+to double check my logic real quickly
+here to see what's going on about this
+that's causing that
+because we're clearly generating this
+properly double check to make sure i'm
+using a random dbid which i
+am i'm generating this each and every
+time that it runs so we'd almost have to
+run it in a staggered method in order to
+prevent that from happening all
+simultaneously
+but it's very very interesting that it
+doesn't really have that delay
+so we need a little bit more entropy on
+it but um other than that this is
+actually a fairly decent script for this
+particular purpose
+it definitely makes things interesting
+for the players now some of you are
+probably saying well wait a minute you
+know can i set this up instead where the
+aircraft you know kind of come in at
+angles and kind of cross you
+you absolutely positively can do that as
+a matter of fact if we wanted to
+implement that quickly all we have to do
+when we generate our destination is we
+simply can use the center point
+as opposed to using the let's make sure
+start use my center longitude and my
+central latitude
+as my precision so if i do center lat
+and i do center long and i come down
+here and i say center lats
+and i say center long now i'm actually
+going to be generating a random position
+within
+my theater for the travel throw so
+theoretically they should spend a little
+less time traveling down the center
+there
+it's going to close that out let's go
+back to my editor remember this happens
+in five minute intervals which is
+going to cause a lot of those
+shenanigans and goings on let's go to
+actions
+we'll go ahead edit control a control v
+all right that's looking pretty good so
+far i'm gonna press the ok button
+i'll go ahead and close that let's see
+what happens this time let everybody
+kind of pass by
+they're doing a little conga line thing
+i love that though that's so cool
+now look at this interesting so they
+keep kind of want to come to the middle
+here now things start to get a little
+more interesting let me go take a look
+at what i've done here it's goofed up
+let's see here let's see longitude
+ah that's where it starts that's what we
+want waypoint long that's where we want
+it to go
+uh bearing is reverse bearing so if it
+starts from the center position
+and goes on a reverse bearing we could
+also create another random bearing off
+of this one as well
+i'm just trying to debate which is going
+to be the better technique here
+yeah because the reverse bearing is
+always going to have us come across the
+center
+so let me try creating another let's go
+over here
+local very random bearing
+equals math.random zero to 359.
+we'll go ahead and throw that one on
+here too call this a very
+random very random
+bearing we'll call this one very random
+bearing as well
+there we go control a control c in case
+the whole thing blows up on me
+double checking to make sure this makes
+sense makes sense makes
+sense looks good looks good all right
+speed up time again
+let's see what happens this time give us
+more entropy give us more entropy
+aha check that out so now we've got a
+little bit more entropy see how the
+aircraft are coming in at different
+angles now
+there we go that was the key all right
+folks hopefully this
+video has been helpful as far as kind of
+coming up with some interesting ways to
+do this i'll go ahead and call up that
+special action up on the screen real
+fast in case anybody wants to kind of
+seal my code sort of a thing here
+make this a little tiny bit bigger again
+the key element was here was
+basically generating a very very large
+little circle and then basically pickens
+points within that very very large
+circle
+so that we could go ahead and seal it so
+this is the code right here that i used
+for the purposes
+of checking to see whether or not the
+units had exited the area and respawning
+them
+go ahead and grab the other list as well
+again you can use anything that you want
+with this one
+i'll go ahead and grab the code that i
+use for the starting airplanes again
+this code is people have done this a
+million times so i don't need to
+regenerate this code too many times
+obviously you don't need this bit with
+the snake being plain but it's just kind
+of fun
+all right folks so hopefully that's
+helpful as far as you know creating a
+little bit more chaos in the air it
+actually makes more sense for these
+aircraft to come in like this because
+generally they fly using the same
+navigational aids
+enjoy

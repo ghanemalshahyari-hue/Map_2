@@ -1,0 +1,423 @@
+# C: MO - ESM Triangulation and Manual Attack
+Video: https://www.youtube.com/watch?v=cQ6PGSl8Yuw
+Video ID: cQ6PGSl8Yuw
+
+hello everyone in today's video we're
+going to be taking a look at passive
+detection and targeting now we've talked
+about electronic support measures before
+and basically the concept is is if you
+send out an electronic signal somebody
+can read that electronic signal and use
+it to basically figure out where you are
+not to mention the details of that
+electronic signal now what I have here
+is a pretty straightforward setup I have
+my lovely little Iceland here we have
+ourselves of course an F16 of course we
+also have nisconser up in the northeast
+corner there and what I'm noticing is
+I'm picking up an electronic signal from
+a radar that's down in the ocean now
+where this is a surface-based facility
+as a matter of fact if I were to left
+click on it real quick I could actually
+see all the possible contact reports it
+looks like it could be a bp37 or one of
+the big bird B Radars he has a 5n64
+Sierra there now we know that this radar
+is out here somewhere along this Vector
+Now using some quick Common Sense here
+unless it's a floating radar it's pretty
+safe to assume that this radar is
+somewhere on the land mass here now
+really really smart intelligence people
+know the fact that when you plant light
+Radars you try to put them up high so
+what I'd probably do is I get a pump
+people map out I try to find the highest
+mountain you know I try to look for
+something that looks secure and it's
+probably where I would guess where the
+Radar Site is but the reality is if we
+want to engage this target we don't have
+a good enough quality lock to actually
+do this now the other thing you're
+probably saying is but we're detecting
+the signal is it possible to just
+triangulate it between two different
+units sure let me show you what happens
+when we do that so I'm going to grab
+myself a copy of the F16 because you
+know life is better with F16 we'll go
+ahead and unpause real quickly here and
+you'll notice that we've Shrunk The
+ambiguity substantially
+now you're sitting there saying why are
+we getting an exact location well let me
+show you the problem here so let's say
+for example that I have myself a
+detector
+okay but then when you take another beam
+of something it always has a fixed width
+to it now let's say we have a beam
+that's um you know this width here and
+let's say you know we're right at the
+location and we're trying to detect a
+Target now if our Target is this wide
+compared to the beam we're very
+confident about the position of that
+Target we might even be able to predict
+how big the target is now what happens
+is as you move farther out we start to
+create ambiguity now if we have the same
+size Target at this distance we can only
+detect the target when our beam is
+touching it we don't know where in the
+beam the target is so theoretically it
+could be all the way up to this Edge and
+it could be all the way down to this
+Edge now this ambiguity gets worse as
+the range increases so when they design
+attack Radars the kind that actually
+guide weapons they tend to have teeny
+tiny wavelengths so that they're not
+actually they have that too teeny tiny
+beam widths in order to make it so
+they're more likely to actually detect
+the target precise enough to you know
+guide a missile right into them kind of
+a thing like that now we have the same
+problem in Reverse so we have a our
+radar that's sending signals you know in
+every single Direction here when we
+receive that signal remember we're
+receiving a beam of that signal now if
+we're chilling here like this and we
+have four antennas hanging out of the
+side of our airplane like that we detect
+the signal any time that we're touching
+the signal which now means this Arc is
+our new Arc of ambiguity so instead of
+going this way you're going that way now
+you probably noticed here as when we
+looked at a little F-16 we had something
+that was shaped kind of like this
+initially now when we added the second
+F16 you'll notice we got something that
+was shaped like this now our new
+possible locations became somewhere
+inside of the intersection now if we go
+back over to command ah you can see
+without a doubt that's exactly what
+happened here now people are saying is
+this going to be good enough to actually
+take a shot um what if you added a third
+of 16. keep in mind These are nice f-16s
+and one of the things they have on board
+is they actually have the HTS now for
+those of you not familiar with HTS so
+what the HTS does is it allows you to
+Target harm missiles very very
+accurately and you can actually see it
+has one of these pods now this
+particular thing is not a newbie pod
+this is a very sophisticated tool for
+detecting items directly it's a very
+very slick system for those of you who
+are DCs fans you probably fits with this
+thing at some point it works great so
+you're saying well if all that high
+technology highfalutin esm can we get a
+more precise Target or assume you just
+take the shot well let's get a more
+precise Target so I'm going to grab
+myself a third of 16. now at this point
+you're saying okay 3 of 16 should be
+more than enough to give us a firing
+solution well not really no
+no so as you can see what we've done is
+we've created this nice little triangle
+of starting to hear of those of you who
+are Navigator types you've seen this
+triangle so many times it's not even
+funny but all we've done here is we've
+confirmed its position remember our F-16
+still has the same size detector Square
+even though it is significantly far away
+now is this going to be good enough now
+some people are like well can you just
+run the scenario for a minute and see if
+we can get a better answer uh marginally
+on the reason we're getting a marginally
+better detection here is on account of
+the fact that we're getting
+progressively closer to it now if you go
+back to my Microsoft Paint my little
+John Madden action you probably observed
+that because the radar beam gets tighter
+as you get closer we are more confident
+about its position now rf16 right now is
+62 nakamas way which is pretty
+substantial but we should have enough
+accuracy now to actually take the shot
+so to speak so I'm going to go ahead and
+guess where these guys are um uh we'll
+go ahead and assume it's right in the
+middle here control F1 and I'm going to
+go ahead and undrop the hammer so to
+speak and I'm also going to go ahead and
+beat my f-16s here actually what I'm
+going to do is I'm going to delete their
+waypoints I want them to orbit until um
+such time I actually need them again so
+let's grab them all I don't know why
+they changed that maybe this is setting
+the options I changed somewhere most
+likely that's what I did all right let's
+go ahead and unpause for a second so
+miss Condor is going to get those
+missiles going on the way remember we're
+firing at an ambiguous Target that we
+used with four targeting f16s now that's
+a pretty tight probability here I mean
+if I look at this this is a mile wide of
+probability here almost in both
+directions so it's not a bad probability
+but
+in case you didn't notice I missed so um
+we need a much more precise shot to
+actually be able to take that so what
+I'm gonna do with some grab my 16s and
+move them a little bit closer let's see
+here we want to be about 30 miles away
+should be more than close enough and
+we'll order my f-16s to get a little bit
+closer that looks pretty good there go
+ahead and find those 30 miles from here
+30 miles is not a made-up number by the
+way it actually makes a lot of sense and
+we'll grab this guy and we're going to
+move him in here
+let's check my 30 miles oh it's a little
+bit too close to back it up just a
+little bit all right nice so I'm
+ordering my f-16s to move in and you
+immediately noticed that I was able to
+acquire the target to an extreme level
+of precision and you probably also
+notice I've identified the Target now
+you're sitting and going isn't that so
+sophisticated isn't it great that your
+Radars could do that not so fast as a
+matter of fact um if we actually go up
+here we'll realize that this unit here
+was actually identified visually it
+wasn't a Target that we identified by
+our esm so unfortunately our f-16s in
+their infinite berylliums even though
+it's literally the middle of the night
+had no difficulty seeing that Target so
+what I'm going to do is I'm going to
+adjust the weather a little bit to deny
+them the pleasure so to speak there that
+should do that let's go ahead and drop
+them as a Target let's go ahead and I'm
+going to go and drop the target am I in
+God's eye view there we go cool unpause
+so now I have to give these guys a
+minute to reacquire but notice we lost
+the target completely once I cranked up
+the clouds here because now the sneaky
+visual sensors don't do much to us so
+let's see how much certain do we have on
+this guy it needs to get a lot closer
+here hey chief um 30 miles man 30 miles
+that's what I was asking for there it's
+a little bit closer we'll give him a
+second to uh confirm his position again
+HTS is a very very precise system this
+is not some 1970s YOLO kind of a
+detection mechanism and you can quote me
+on that if you need so now we've gotten
+substantially closer let's see what it's
+done to our uncertainty we're a mile
+wide still that's not enough and as you
+probably noticed by me raining a bunch
+of missiles down in that location
+nothing happened now some of you of
+course will immediately say well why
+don't you just rain a pattern on
+missiles rather than just eight missiles
+into the same spot yeah you're right we
+could certainly have tried that but a
+mile wide is still pretty big even for
+the iskander of course if we're dealing
+with nuclear weapons I just need to know
+what state it's in and I cannot
+evaporate it now notice as we're getting
+closer and closer our little range of
+probabilities get smaller we're down to
+a half a mile by about a half a mile now
+about a third of Mile that's actually
+pretty good probabilities right there
+now of course you're saying what if you
+added another 16 well we could do that
+too if you like but um I think you're
+going to be slightly disappointed in the
+results here uh this one's actually
+going to have to bisect this one in
+order to have an appropriate little
+thing there there we go so we'll give
+everybody a few moments to kind of uh
+zero in yeah I'm feeling pretty
+confident now and now you can see
+without a doubt that we actually are
+pretty darn sure of the range that this
+target is in on my maximum range this
+way is I think I've got it down to oh
+what is that point one maximum range
+this way is about 0.4 pause I'm gonna go
+ahead and Mark that
+I'm going to Mark the position now the
+reason I'm positioning this is in the
+event that I'm not confident but that
+again look at how close my f-16s are
+they're about five eight miles away here
+that's not very much all right Mr
+esconder I need you again let's go zoom
+in a little tiny bit here and uh we will
+Pepper this pattern with uh the light
+remaining missiles all right you're
+gonna get a missile I'm gonna I'm not so
+confidently fire missile there I'm not
+so confidently fire missile there and
+I'm not gonna confidently fire a missile
+in that direction either all right do
+your thing
+should make like a little grenade
+launcher we we you know R16s of course
+are gonna like pinpoint all right let's
+see if we succeeded
+I'd say we got him
+now as you know our actual position was
+a little bit to the West there but oh
+nice so you can see without a doubt we
+were able to engage that Target now the
+thing you have to remember too is that
+was a very Cooperative Target it wasn't
+shooting at us it wasn't dodging funny
+it wasn't doing anything along those
+lines and of course it was emitting if
+it wasn't emitting that would have been
+a much more challenging Target to kind
+of detect so usually at this point
+people say okay so obviously with manual
+attacks if you get within eight miles
+with a really good sensor even with bad
+weather like we have now we're still
+able to actually Engage The Target
+fairly successfully so the concept does
+work with late 2000s technology so what
+I want to demonstrate real quickly here
+is just so everybody can realize that
+this is not a Panacea is the fact that
+if we were to reopen this scenario again
+and I'll go ahead and grab my F16 and
+remove it instead what I'm going to do
+is I'm going to grab myself an f5e
+uh it helps if you actually type in f5e
+I suppose that looks pretty good A tiger
+three this is like the nice one grab
+some pythons let's go over here and go
+to sensors we're gonna go ahead and add
+a receiver we're gonna make it a nice
+modern not release on I will do 1970s oh
+yeah this is going to be disappointing
+simple esm watch this I'm actually gonna
+have to remove these two because if I
+leave them on there they're going to be
+so good it's going to actually make it
+obvious all right let's go ahead and
+unpause for a second here all right
+there we go look at the cone of
+uncertainty on that technology and again
+as I was demonstrating before so we're
+actually going to grab ourselves three
+F5s go ahead and pause and you can see
+with the three F5s we at least know it's
+somewhere in Iceland where this radar
+actually exists and you can see this is
+not going to be nearly good enough track
+even though we are like I said we're
+relatively confident here again we can
+arrange it now it's another thing that
+we don't see in a command very often is
+the fact that the antennas that detect
+these signals are in different parts of
+an aircraft and sometimes have different
+sensitivity these and sometimes have
+different you know kind of tolerances
+for things being underneath so to speak
+but you can see with my little kind of
+cone of uncertainty here even with this
+1970s detection technology I'm not great
+but I'm also not bad let me go ahead and
+zoom in a little bit here so we can go
+ahead and see if we can get a good
+enough shot there
+uh I'm not Wicked confident but I'm
+confident enough to take the shot here
+so let's go grab ourselves our ss26 one
+more time
+and let's see what is our width here
+this is going to be a lot of peppery I
+wish it had a little Mark on the ground
+that told you were a manual attacks were
+that would be so convenient right now
+and again I'm just going to Pepper this
+entire region is about the best I can
+let's see here it looks pretty good
+there and it looks pretty good there I
+think I've allocated eight at this point
+uh
+uh eight sweet
+fire
+all right my friends these Condors let's
+see how close we get this time
+remember this is just with 1970s
+technology this isn't anything fancy or
+like well deployed or anything like that
+all right here we go
+um I hate to say it but uh he's fine as
+a matter of fact if I switch teams
+you'll see that it took absolutely zero
+damage so I just was not pretty nice
+enough so now what's my big kind of end
+conclusion here the end conclusion here
+is it is completely possible to engage
+with these sorts of attacks of the
+manual uh the key thing is there's
+probably better ways for example if I
+load this up real fast I'll go ahead and
+grab Green Team one more time you can
+couple the two different Technologies
+together like if I were to grab um
+actually let's grab something a little
+bit better at this let's grab myself an
+F-18 now I'll grab an e-model here FAA
+it helps if you actually type it in
+properly if I grab myself an e United
+States Navy we'll go ahead and grab
+ourselves uh argum why not because of a
+jerk we'll delete this guy we're going
+to point him this way we'll unfreeze
+we'll also flip on his radar real quick
+there we go now we have a nice fancy
+phased array radar and we've identified
+the target's position and what kind of
+emissions they have that's going to be
+the best if you really really really
+want to save ammunition otherwise it's
+straight up esm attack while it's
+possible is very challenging enjoy

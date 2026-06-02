@@ -5,7 +5,8 @@
  * a CMO-style "start → build/edit a scenario → fix issues as we proceed" flow,
  * overriding the previously read-only design.
  * See memory [[project_workspace_editable_owner_ruling]] +
- *     docs/cmo-vs-rmooz-capability-comparison.md (CMO→RMOOZ TODO roadmap).
+ *     docs/cmo-functional-rules/exhaustive/ (CMO behavior rules — source of truth) +
+ *     APP_INVENTORY.md "TODO — CMO→RMOOZ capability roadmap" (chosen-function list).
  *
  * SAFETY BOUNDARY PRESERVED (the agreed default):
  *   - Edits mutate an in-memory WORKING COPY draft, then (on Save) the in-memory

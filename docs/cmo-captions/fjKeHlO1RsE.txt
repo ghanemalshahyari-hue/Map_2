@@ -1,0 +1,241 @@
+# C: MO - Self Defense WRA vs Automatic Firing
+Video: https://www.youtube.com/watch?v=fjKeHlO1RsE
+Video ID: fjKeHlO1RsE
+
+hello everyone in today's video we're
+going to be taking a look at
+self-defense Doctrine in uh command
+modern operations now a couple times
+recently people have been discussing
+kind of WR and having a little bit of
+confusion with it but um that's okay
+because we hope to kind of sort that out
+a little bit for you today so when you
+go ahead and open up your WR which is
+your weapon release authorization I'm
+going to go ahead and cheat here you can
+either run up here and go and click that
+button if you have a group or if you
+want to be lazy like me you can press
+control shift and then F9 it's going to
+bring up your kind of Doctrine and Roe
+now I'm going to head over to the W Ur
+right in here and you'll notice that my
+lovely little Arley Burke chilling down
+here right now the ban Bridge has a
+bunch of different weapons on board and
+what I've done before I actually started
+recording so you didn't have to watch me
+click each one of these one at a time is
+I went through and I made sure that all
+of my weapons are not automatic firing
+instead they're all self-defense firing
+now self-defense is an interesting thing
+and I'll show you exactly why for one if
+you take a look at the maximum range of
+the weapons on this you'll probably
+observe that I can hit a Target that's
+239 Comm away but that's not even
+accurate I can actually hit a Target as
+far as 900 dentical miles away now right
+now all of the weapons on board this
+vessel have been told to only do
+self-defense now if you look outside
+we'll notice there's two different
+targets already one of these targets is
+a tup of 95 RT and of course we have
+another One Way Out West here which is a
+SEO 34 fullback and one of the things
+you'll observe is now that have set
+everything to automatic firing if I
+unpause you will see that my Destroyer
+happily just sort of chugs away just
+kind of doing its thing thing they're
+probably monitoring uh they're probably
+doing a little bit of panic right now as
+we're watching these two aircraft kind
+of Bear Down on them the commander is
+looking over at the lieutenant the
+lieutenant is looking at the fire
+control guy they're all sitting here
+going is this about to happen is this
+about to happen but what you'll observe
+is nobody is pulling the trigger not
+only is nobody pulling the trigger but
+watch this I'm going to click on auto
+engage Target and I'm going to go ahead
+and select the tup of 95 I'm going go
+ahead and unpause now you're expecting
+any second now for an essm or maybe an
+sm6 to come ripping off the barrel and
+attack that but believe it or not my
+ship will not fire any weapons
+whatsoever at this airplane because
+their W says not to do any automatic
+fire now you're sitting here going well
+this is actually not very optimal
+because if you want to engage this
+target automatically I'm not going to
+shoot at it because the W says only use
+the weapon for self-defense yeah it
+actually gets better than that if I were
+to shift F1 which is a manual attack and
+click on the RT what you'll notice here
+is we are allowed to manually allocate
+weapons which is pretty handy for us one
+of the things you'll notice though is it
+will warn us do not use weapons against
+this target type it will literally not
+Auto fire but we can manually fire
+should we need now this is where things
+get a little complicated over on my left
+here we've got the SEO 34 which is our
+ripping across about 12,000 ft he's
+probably lighting him up with his laser
+about now getting ready to deploy his
+weapons on our lovely Bane bridge right
+now now what you're going to observe is
+kind of interesting also he's going to
+get a little bit closer oh boy he's
+going for that beam shot here let's go
+ahead and double check to make sure I
+didn't accidentally which is something I
+do every time check this one oh we're
+just not oh we're so close to being in
+range ah shcks all right we'll let him
+continue his attack here so in a few
+moments he's going to go ahead and drop
+a bunch of weapons on my lovely
+Destroyer here there it goes now watch
+what happens you'll observe my Destroyer
+is going to go ahead and defend itself
+automatically and not only is it going
+to defend itself automatically it's
+probably not going to do the world's
+grid job against it cuz that was
+basically a point blank shot here so at
+the moment here they come the essom are
+going to come ripping off the side of
+the deck here unfortunately the way that
+the fire control works on this one is
+it's very difficult to queue up all
+these attacks there we go so we' got a
+bunch there we've got a bunch here comes
+the last essome and you'll notice the
+target of course is he's going right for
+this one oh see whz time see whz time
+uhoh uhoh oh that's bad oh we took a
+hits now one of the things you'll
+observe here is my suco 34 was never
+ever shot at which you'll actually have
+observed and you'll see still here um we
+still have plenty stuff working on the
+ship trust me that at no point did we
+actually shoot at it it looked like we
+did but that was actually a missed
+missile against one of the incoming
+missiles so even though this aircraft
+attacked this Destroyer he is not going
+to shoot back now we can't have it in
+that way of course so um we got to thing
+for that so I'm not too too worried eat
+essm so the important thing you have to
+know about self-defense is it only
+defends itself against things attacking
+it it doesn't it defended against the
+actual platform that is attacking it
+that's a very very important distinction
+because without that that makes things a
+little bit more challenging so one of
+the things you have to remember going
+forward is if you are interested in
+making sure that no aircraft can get
+that close to us you would actually have
+to change your Doctrine in such a way
+that when you fire you have the ability
+to basically um kind of maybe have a
+more limited range so let's go ahead and
+set that up real quick and I kind of
+show you the difference oh man this guy
+is just this seoi 34 is just not going
+down today what you've got to be kidding
+me okay those are all spoofed by the way
+fascinating let's go modify things a
+little bit
+all right same scenario but we're going
+to change our logic a little bit I'm
+going to h control shift F9 go to my w
+and I'm going to adjust it so that I'm
+allowed to fire these against targets
+that kind of get within my safety window
+kind of like that minimum range there so
+what I'm going to do here is I'm going
+to go ahead and set this to the normal
+I'll go ahead and do a pair which is
+pretty good do a pair of these looks
+pretty good again a pair is perfectly
+fine pair is perfectly fine looks pretty
+good to me now what I'm going to do is
+come to my automatic firing range now
+normally this is a 22 nautical mile
+weapon what I'm going to do is say that
+anybody within 15 that's getting a
+little bit too close so what I'm going
+to do is come in here and say it to be
+50% so that if anybody does get within
+that range we do it but it doesn't
+change the fact that we will self-defend
+ourselves in the event that we get shot
+at right away now this tiny little
+change is going to have a pretty big
+impact now coming down here let's see
+here we have the sm6 block 1A sm6 block
+1A that's the one we've got here we'll
+come in here of course I we'll adjust
+this one we say we'll just do one these
+things are really really big and very
+very very very very expensive weapons
+now one of the things you'll find very
+very interesting here I find this kind
+of interesting is if you go to the
+automatic firing range you'll see our
+max range is 172 miles so I'm going to
+set this one down to 15 as well but I'm
+going to do a little tiny cheat here
+remember that obnoxious tup of 95 over
+there let's get some Revenge Airborne
+early warning and control let's see
+actually we need a reconnaissance low
+performance uh reconnaissance there we
+go low performance that's what I want
+right there so I'm going to go ahead and
+adjust the maximum range of Engagement
+to 50 a miles again this is automatic
+firing range not self-defense range all
+right let's watch the scenario and see
+what happens differently this time so
+same kind of thing happens you'll notice
+that sm6 comes off the rail right
+away yeah that's getting some Revenge
+right there of course this is a well
+less than 50 miles so no problem and of
+course our SEO 34 thinks he's feeling
+pretty confident here
+Wham eat it so whoa so what you'll
+notice here if I almost didn't fast
+forward through it is as soon as my
+airplane got within 50 nautical miles
+which is what I said he's now
+automatically firing his missile at him
+now the reason this is an interesting
+variation on the theme is what you can
+do as a scenario designer is you can
+basically decide that um you know what
+we're going to do is we're going to say
+you can come no closer than 10 nautical
+miles within a ship or something like
+that and basically dare the players to
+get into that range without compromising
+the fact that these ships will still
+defend themselves against incoming
+weapons enjoy

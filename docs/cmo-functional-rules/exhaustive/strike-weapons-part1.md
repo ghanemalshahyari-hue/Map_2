@@ -31,6 +31,7 @@ videos have been merged into a single rule that keeps the richest wording and ci
 contributing `source_video_id`s. Sibling files **Part 2/3** and **Part 3/3** cover the remaining
 Strike & Weapons rules.
 
+<<<<<<< HEAD
 **Relationship to the first-pass spec.** The companion [`../3-damage-attrition.md`](../3-damage-attrition.md)
 governs the *general* hit-probability pipeline, penetration/armor/damage model, degradation/mission-
 kill, point-defense ladder, range/altitude kinematics, and special weapons. Rules below that touch
@@ -39,6 +40,17 @@ those areas have been reconciled with it — its corrections are folded in here 
 reduction / divide-to-kill** formula, the **probability-to-hit chain**, the **graded flak model**,
 **ship directional belt-vs-deck armor**, the per-layer **point-defense Pk ladder**, the published
 **missile-defense rating**, and **min-release-altitude / "won't drop"** gates) rather than dropped.
+=======
+**General damage/Pk/armor authorities.** This part is the home of the *general* hit-probability,
+penetration/armor/damage, degradation/mission-kill, point-defense, range/altitude, and special-weapon
+authorities for the Strike & Weapons bucket; the relevant ones are stated self-contained below — the
+**altitude-vs-accuracy resolution conditioned on bomb-sight tier** (§4), the **HE ≈80% light-armor
+reduction / divide-to-kill** formula and the **damage-points × through-armor-fraction** model (§4),
+the **probability-to-hit / Pht modifier chain** and **half-range rule** (§6), **ship directional
+belt-vs-deck armor** (§5), the per-layer **point-defense Pk ladder** (§6), the published
+**missile-defense rating** (§6), the **DLZ/min-release-altitude "won't drop"** gates (§4, §10), the
+guidance/loadout **gating taxonomy** (§8), and **EMP electronics-only damage** (§11).
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 
 **Caveat.** Transcripts are YouTube **auto-generated captions** — unit names, weapon designations, and
 especially numbers may carry transcription errors. Stated numbers are captured **verbatim** and are
@@ -530,9 +542,14 @@ tags reflect how directly the rule was demonstrated.
 
 ### Accuracy vs bombing altitude (conditioned on bomb-sight tier — resolved)
 - **Models:** unguided-bomb accuracy falls off with altitude **for lower bomb-sight tiers** but
+<<<<<<< HEAD
   **flattens out at the Advanced-INS tier** — altitude is conditioned on sight quality. *(This folds in
   the explicit resolution from [`../3-damage-attrition.md`](../3-damage-attrition.md): the apparent
   "non-monotonic vs monotonic" contradiction across other videos is settled here.)*
+=======
+  **flattens out at the Advanced-INS tier** — altitude is conditioned on sight quality. This resolves
+  the apparent "non-monotonic vs monotonic" contradiction seen across other videos.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Inputs / parameters:** release altitude, **bomb-sight tier** (the gate), wind (grows with
   altitude), weapon min-release / fuze-arming altitude, local terrain elevation.
 - **Behavior / rules (authoritative wording):** *"in general the accuracy is about the same until you
@@ -548,7 +565,11 @@ tags reflect how directly the rule was demonstrated.
 - **Edge cases / quirks:** the "non-monotonic survival curve" seen elsewhere reflects a GPS/CCIP-sighted
   aircraft where altitude barely matters, plus a min-release floor at the very bottom — not a genuine
   mid-altitude accuracy peak. Treat the sight-tier rule as governing.
+<<<<<<< HEAD
 - **Source:** bPVkIPVlNlA (folds in `../3-damage-attrition.md`)
+=======
+- **Source:** bPVkIPVlNlA
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Confidence:** High
 
 ### Default attack altitude & manual-attack altitude override
@@ -571,9 +592,14 @@ tags reflect how directly the rule was demonstrated.
 
 ### Minimum release altitude & terrain-blocked drops ("won't drop")
 - **Models:** a bomb has a **minimum / default release altitude**; below it — or with terrain in the
+<<<<<<< HEAD
   way — the weapon **does not release at all** (a precondition gate before any Pk roll). *(Folded in
   from [`../3-damage-attrition.md`](../3-damage-attrition.md) and corroborated across the bombing /
   ship-bombing tutorials.)*
+=======
+  way — the weapon **does not release at all** (a precondition gate before any Pk roll). Corroborated
+  across the bombing / ship-bombing tutorials.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Inputs / parameters:** weapon min-release / retarder-arming altitude (example **~1,000 ft AGL**);
   **AGL vs local terrain elevation**; auto- vs manual-attack mode; commanded attack altitude;
   aircraft-sight ceiling.
@@ -588,7 +614,11 @@ tags reflect how directly the rule was demonstrated.
 - **Edge cases / quirks:** flying directly over the target deck after a low pop-up is "ironically one of
   the safer places to fly." Low/pop-up profiles also reduce wind drift (bombs travel less distance).
   **GPS/sat-nav bombs refuse to target anything in the water** ("it assumes it's not going to hit it").
+<<<<<<< HEAD
 - **Source:** bPVkIPVlNlA, oVs-5gylEcA (folds in `../3-damage-attrition.md`)
+=======
+- **Source:** bPVkIPVlNlA, oVs-5gylEcA
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Confidence:** High
 
 ### Damage-points vs armor / warhead-type damage model (penetration resolution)
@@ -631,7 +661,11 @@ tags reflect how directly the rule was demonstrated.
   through-fraction from the UI. Weapons can **malfunction** on impact and do 0 damage (always carry a
   backup); splash/debris from one struck building can damage adjacent buildings. Grouped units can
   confusingly read as "no armor."
+<<<<<<< HEAD
 - **Source:** bPVkIPVlNlA, Skejttm4Pv8 (folds in `../3-damage-attrition.md`)
+=======
+- **Source:** bPVkIPVlNlA, Skejttm4Pv8
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Confidence:** High (qualitative rules), Med (the explicit double-damage / 4% / 0.8 figures)
 
 ### Bomb yield vs accuracy/count tradeoff
@@ -667,7 +701,13 @@ tags reflect how directly the rule was demonstrated.
   separate target then turn back to re-attack already-hit targets; with re-attack disallowed one target
   was left and the flight went unassigned and had to be re-assigned. More important for big bombs than
   small ones. (This is the same allocation lever that, in the ground-radar demo, accounts for lethality
+<<<<<<< HEAD
   gains independent of radar — see `../3-damage-attrition.md`.)
+=======
+  gains independent of radar: turning on the air-to-ground radar produced identical damage in a
+  controlled rerun — radar's value is **detection**, not a Pk modifier on the drop; the lethality gain
+  came from changing the WRA salvo size, i.e. doctrine/allocation.)
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Source:** bPVkIPVlNlA
 - **Confidence:** High
 
@@ -735,8 +775,15 @@ tags reflect how directly the rule was demonstrated.
 ### Ship armor model for unguided-bomb penetration (belt vs deck RHA)
 - **Models:** ships carry **separate armor values by location** expressed in mm RHA (e.g. belt
   91–140 mm RHA); modern ships typically have **belt armor but no deck armor**, so top-down hits
+<<<<<<< HEAD
   penetrate easily while side hits must defeat the thick belt. *(Consistent with the directional-armor
   rule in [`../3-damage-attrition.md`](../3-damage-attrition.md).)*
+=======
+  penetrate easily while side hits must defeat the thick belt. Impact geometry selects which armor the
+  weapon must defeat: a top-down/oblique stick "goes through the deck" (little/no deck armor) and does
+  heavy damage, while a low side-on run hits the thick belt and is largely absorbed (~5% total in one
+  example). Fires + flooding can finish a ship even after a moderate penetration.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Inputs / parameters:** DB armor entries per zone (belt mm RHA, deck mm RHA); hit angle/aspect
   (top-down vs low-angle side); bomb size/penetration capability; ship size.
 - **Behavior / rules:** before striking, check the target DB armor entry. If **deck armor is absent**
@@ -838,8 +885,15 @@ tags reflect how directly the rule was demonstrated.
 
 ## 6. Naval point defense & saturation
 
+<<<<<<< HEAD
 > Per-layer Pk figures below are **single-engagement endgame readouts**, not constants — folded in and
 > reconciled with the point-defense ladder in [`../3-damage-attrition.md`](../3-damage-attrition.md).
+=======
+> Per-layer Pk figures below are **single-engagement endgame readouts**, not constants. This section is
+> the authoritative per-layer point-defense Pk ladder: ship air defense is a layered ladder of
+> independent systems, each resolved with its own per-engagement Pk and its own concurrency limit, and
+> CMO scores every layer separately.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 
 ### Dual-purpose gun point defense (5 in / 127 mm) vs high-speed missiles
 - **Models:** a last-ditch gun engagement of an inbound missile, limited by gun range and rate of fire.
@@ -914,8 +968,14 @@ tags reflect how directly the rule was demonstrated.
   actually begin engaging them immediately" at maximum range. But **sea-skimming missiles are not
   noticed until ~20 miles**, which "reduces the effectiveness of extremely long-range SAMs." Noted cost
   inefficiency: launching ~**$10M** SAMs at ~**$100k** anti-ship missiles, so there must be a balance.
+<<<<<<< HEAD
   *(Compare the offensive/defensive WRA-range economy in [`../3-damage-attrition.md`](../3-damage-attrition.md):
   firing defensive missiles at max range can also "fire over the heads" of fast maneuvering threats.)*
+=======
+  *(Compare the WRA auto-fire-range economy below in this section: firing defensive missiles at max
+  range can also "fire over the heads" of fast maneuvering threats, so tightening the engage range
+  conserves the magazine and raises per-shot Pk.)*
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Outputs / effects:** early engagement when detection allows; otherwise the long range provides no
   benefit vs low flyers.
 - **Edge cases / quirks:** **detection limit, not missile range, is the binding constraint** for
@@ -999,10 +1059,18 @@ tags reflect how directly the rule was demonstrated.
 
 ### WRA auto-fire range & probability-to-hit (Pht) calculation (engagement economy)
 - **Models:** a per-weapon **auto-firing-range** setting that governs automatic fires and the resulting
+<<<<<<< HEAD
   hit probability against maneuvering targets. *(This is the offensive/defensive analog of the
   probability-to-hit pipeline and the half-range rule in
   [`../3-damage-attrition.md`](../3-damage-attrition.md); applies equally to SAM defense and air-to-air
   shots.)*
+=======
+  hit probability against maneuvering targets. **This is the general probability-to-hit / Pht modifier
+  chain and half-range rule** (CMO resolves each shot as a base Pk, then applies a chain of
+  multiplicative/additive modifiers for speed/range/agility/deflection/EW, then rolls a d100 against the
+  final number; a single hit/miss per weapon, with EW able to zero the whole chain). It applies equally
+  to SAM defense and air-to-air shots.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Inputs / parameters:** WRA / "automatic firing range" setting per weapon type (e.g. set to half of
   max range); weapon maximum range; actual launch distance; target speed; target agility/maneuverability;
   line-of-sight / radar horizon (terrain masking); target ECM/jamming & RWR.
@@ -1178,9 +1246,16 @@ tags reflect how directly the rule was demonstrated.
 ## 8. Bomb guidance taxonomy & employment constraints
 
 ### Guidance types & their launch constraints (LGB / GPS-INS / command / passive / laser-JDAM)
+<<<<<<< HEAD
 - **Models:** how each weapon-guidance class is employed and what it can/can't hit. *(Reconciled with the
   guidance-taxonomy rule in [`../3-damage-attrition.md`](../3-damage-attrition.md); CEP itself is a
   per-munition accuracy + reliability rating.)*
+=======
+- **Models:** how each weapon-guidance class is employed and what it can/can't hit. **This is the
+  general guidance/loadout gating taxonomy:** each guidance class imposes a precondition (a gate before
+  the Pk/CEP roll) on whether/where it can be employed; CEP itself is a per-munition accuracy +
+  reliability rating.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Inputs / parameters:** weapon guidance label (**LGB** = laser; **JDAM/GPS/GLONASS** = satnav;
   **command-guided**; **passive** IR/laser/anti-radiation; **laser-JDAM** dual); target coordinates;
   laser source & its max range; weather/cloud; whether the target is moving; whether the target is over
@@ -1674,9 +1749,16 @@ tags reflect how directly the rule was demonstrated.
 
 ## 11. EMP weapons
 
+<<<<<<< HEAD
 > The general EMP behavior is also summarized in [`../3-damage-attrition.md`](../3-damage-attrition.md);
 > the rules below are the exhaustive, de-duplicated treatment for this bucket. EMP damages
 > **electronics/comms**, not structure.
+=======
+> This section is the authoritative, exhaustive treatment of EMP for this bucket. EMP/microwave is an
+> **electronics-only** effect: it damages **electronics/comms** (scaling with how modern they are and
+> whether they are powered on), line-of-sight at speed-of-light, and causes **no HP/structure loss** by
+> itself — a sensor/comms mission-kill, not a hard kill.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 
 ### Omnidirectional vs directional EMP warhead
 - **Models:** two EMP delivery patterns — **directional** (focused cone) vs **omnidirectional** (spreads

@@ -1,0 +1,315 @@
+# C: MO - Escort vs Area Missions
+Video: https://www.youtube.com/watch?v=-tGJR0DUIOw
+Video ID: -tGJR0DUIOw
+
+hello everyone in today's video we're
+going to be taking a look at the
+difference between using mission escorts
+versus creating a separate cap mission
+for it striking a target so what i've
+done here is i've set up a pretty
+typical scenario the good folks down at
+barnes air national guard base is
+offered up their entire airport as a
+victim sorry sorry guys and up here we
+have an airbase this is my secret
+airport and it's absolutely loaded to
+the gill with some really really good
+generation four four and a half fighters
+so it should be pretty interesting
+engagement so first of all we're going
+to try this as a normal mission and then
+we'll try it out a little later
+let's get this all set up strike this
+all right so we're going to be using
+strike eagles today
+we use six of them go ahead now use our
+attack method we'll go ahead and use a
+split attack 30 seconds is good i like a
+50 nautical mile split looks good looks
+good we don't need the two runways to be
+struck beautiful so instead of going in
+here and assigning escorts i'm simply
+going to set a size of four escorts and
+then we're going to add them separately
+now the reason i do that that way
+instead of the classic way where you
+click in here and you click on little
+arrow is because it's a little
+frustrating and it gets a little fiddly
+when you're trying to oh which one is
+this who was carrying okay was this guy
+i'm not a big fan of the way they
+changed that aspect i wish they had a
+button where they could just go back to
+the old one we just told you what the
+loadout was also i really wish you could
+change the size of this because it's
+very difficult to go through but that's
+okay so what i'm going to do is i'm not
+going to add those regular aircraft
+normally go up to f6
+helps if you click on the right airport
+there we go grab all these f-16s we're
+going to say escort grab hold oh man
+this is it feels like a waste of
+aircraft but it's actually probably
+going to be worth it all right escort
+escort escort and we got our strikers
+delightful let me just do one mental
+check all right sounds good let's test
+so we're interested in how much damage
+do we do how many losses do we take
+whoa that's a lot of stuff they just
+flowing up at us but that's all right
+i'm sure none of these are friendly
+speed up time a little bit oop there
+there again
+hustle
+all right we didn't do a time on target
+here
+and begin
+all right so here's where we got to get
+things interesting i've adjusted the wra
+on these guys a little bit to make them
+a little bit less aggressive so when
+they fire they should pretty much be in
+kill range here oh nope apparently 50
+was not the correct range i should have
+set that even higher but that's okay we
+suppressed them and got them to run away
+distribute those missiles holy smokes
+guys jeez
+yep this is just like all modern warfare
+the first guy to run out of missiles
+loses
+all rights this is uh oh here they go
+again
+maybe i should have set it to 25 of max
+range
+oh there goes another one
+and here they come again
+look at this
+this is just chaos
+i have 24 f-15cs that should be enough
+seriously he got a missile off
+i'm like disappointed
+see the chaos here
+pretty much every day over uh the gulf
+war there
+over a rock during the gulf war there we
+go let's be more specific
+oh that's a lot of harms i'd hate to see
+the bill in those apparently had to fill
+out a form every time we launched one of
+those
+that might have been the shrike though
+i'm not the straight straight there's
+the cheap one what was the other one
+oh i can't remember it off that one of
+the standard yeah the storm
+[Music]
+all right our strikers are incapable of
+getting into position here because
+they're running for missiles all the
+time
+keep in mind this is a 50 max range for
+the wra here
+jeez
+there's going to be so many missiles in
+people's trees it's going to be
+unbelievable like most of new england
+here is just going to have am rams in
+the back seats somebody's going to go
+out to his tractor this is going to be
+amram hanging out the side if it's like
+oh you got another one
+you know you'll go to do some farming
+and keeps running into oh why is my
+truck to keep getting stuck and so much
+of air rams just sticking out of his
+farm ah it's just that's what it is
+all right our bombers got into position
+and they're doing their thing now and oh
+whoa whoa looks like somebody got a
+couple missiles off at the last second
+there
+oh getting a couple extra looks good
+looks good looks like oh
+somebody decided to take a last-second
+shot that was a mistake and now
+everybody's going to turn around and run
+we got a bit of a dogfight going here
+and over the western part of connecticut
+all right i think everybody's going home
+maximum speed
+nice love it all right let's see what we
+did
+so we got a losses in expenditures oh we
+blew up a lot hangers a b gas
+mig-21s mig-19s uh there's a pretty
+successful operation a bunch of uh sutro
+a27s not bad they went through quite a
+few expenditures as well here oh boy
+lots of those
+how many essay two quite a few of those
+things lost man they lost a lot of
+bullets
+going through a bunch i say sevens sa3s
+meanwhile we lost 15 eagles 17 strike
+eagles and one of 16.
+oh that hurts that that that's that
+that's not a fair exchange rate that did
+not go well so what i'm gonna do is i'm
+gonna reload the mission real quick and
+we'll try it by doing a cap
+all right let's give it a pie let's give
+it a try all right so what we're gonna
+do this time is we're gonna set up a cap
+for both seed and aaw and then we're
+going to release our strikers and see if
+anything goes a little differently here
+so i'm going to define area rectangle go
+ahead and give it a square here ctrl f11
+i will do tar cap and this will be our
+aaw folks
+okie duke let's grab all of f 16's looks
+good groups of four perfect don't change
+it and we're going to send everybody up
+at the same time so we'll say time on
+target i'll do 14 o'clock because why
+not 14 o'clock
+perfect let's go ahead and click there
+looks good looks good looks good all
+right let's create a new mission
+and we're going to call this one seed
+what do you call the seed and deed i
+know it doesn't look like d looks like
+did but deal all right press okidoke
+we'll go ahead and press ok i didn't
+order anybody to do that yet so it
+doesn't surprise me grab all of our 16
+buddies toss them in there in groups of
+four everybody goes at the same time so
+they're going to be concentrating on
+time on target we're going to send these
+two minutes later so we'll go say 1402
+o'clock
+perfect
+so now our f-16s our cnc deeds comes
+just a tiny bit after so i'm going to
+grab this target right here we'll go
+ahead and add our final mission here
+strike it better
+this time all right strike we're going
+to do a land strike procedure okie doke
+we're going to press
+relax it doesn't matter i haven't done
+it yet
+we add all our strike eagles oh groups
+of three here
+i'll go ahead and keep it pretty
+straight forward like i said i'm not
+doing anything weird here
+knock off the two runways looks good
+three to da check my numbers check my
+numbers time on target we're going to
+set them to be there at 14
+10 o'clock so that way we have a little
+tiny bit of time here for them to
+actually do the deed alright strike it
+better seat indeed's all set tar cap is
+all set we are ready to rock so let's
+see if things go differently this time
+all right here comes all of our seed
+guys which is sort of funny because if
+you recall i told them to be on the
+target at 14 o'clock but they decided to
+get out a little early i don't know
+they're just they're enthusiastic what
+can i say let's see what happens this
+all right so far pretty good
+oh
+i did tell you guys to be there at 14
+sigh we would have to have done active
+and inactive missions to make this one
+work better
+there goes another sam
+ooh
+ouch
+hmm
+nope they're out in the air okay
+just seemed like i didn't see a lot of
+f-15s cruising around there that's okay
+though
+looks good looks good
+unfortunately they're going to be
+completely gone by the time my actual
+strikers get here kind of problematic
+whoa
+did you see this guy he did like a
+triple doughnut and he's still flying
+what does he got here oh he's like 30
+thousand feet that's why and of course
+now all my escorts are all going to head
+home which is very problematic because
+that means anybody who launches after
+the fact is now going to run smack dab
+into my regular strikers but at least
+we're able to kind of see the two things
+side by side
+all right here comes my tight group
+they're all going to split apart like
+they're supposed to
+ready here comes the strike
+wow
+so far so good actually
+bombs away
+yep that's going to lag any computer
+i think that's it everybody go home
+since when you hit f9 you can see that
+like last three fighters that you didn't
+over there and they just kind of do the
+quick little thing there as well
+all right off they go
+i don't know what's with those attackers
+they're sort of chilling there
+nice that was that was different that
+was very different
+looks like somebody got the message a
+little late there uh what's this oh it's
+an f 15 group they must have finished
+refilling or whatever
+i don't know what that was about
+all right attempting retargeting gotta
+love those am-rams those things are
+pretty pretty brutal i love the range we
+have to shoot them at them to actually
+get a hit though
+i love how realistic this has become
+and then all the rest escorts are going
+to show up and deny them the ability to
+even operate from their own base
+all right let's take a look
+all right let's see about the same
+amount of hangers about this little less
+mig-29s but probably some of the one
+homes the sn18s couple of these went
+down
+let's see here all the sequoias are down
+let's see some of these went down okay
+and then pretty good effective strike so
+far
+losses we lost three f-15cs and we lost
+one f-16 no f-15es
+so i think in this particular case it's
+actually safe to say that uh whacking
+them really really really hard with a
+tar cap was actually more effective than
+having them be escorted but obviously
+there's times when you're gonna want
+both escort and tower cap especially if
+you're gonna be dealing a smart human
+player that'll do things like ambush you
+from the side along the way but other
+than that enjoy

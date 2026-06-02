@@ -1,0 +1,356 @@
+# C: MO - MPA Altitudes
+Video: https://www.youtube.com/watch?v=_qeXJWmRBks
+Video ID: _qeXJWmRBks
+
+hello everyone today's video we're going
+to be taking a look at a question that
+was over on discord asking about the
+ideal altitudes for marine patrol
+aircraft so what i've done is i've set
+up a simple experiment and we'll kind of
+get to the whole uh what can you take
+away from this a little bit towards the
+end so we have our
+r95rt when i think of mpa aircraft this
+is the aircraft that i think of there's
+also the tuple f142 of course you have
+your p3 you have your p8 you have your
+shackleton there's tons of really really
+good mpa but this is the one i always
+think of mostly because the propellers
+are so incredibly loud in the engines
+and the propeller combination you can
+hear them from underwater so what we're
+going to do is we're going to flip on
+our little radar here and we're going to
+go for a little quick trip and we're
+going to see if we can identify anything
+which happens to be in the ocean
+cruising along cruise oh pause aha we've
+spotted something so i'm going to slow
+down time again go ahead and click on
+the sucker and it looks like we have
+ourselves a target now we detected a
+minute ago at a range of about 182
+nautical miles cool so what i'll do is
+i'll accelerate times about 15x so i'll
+just kind of keep an eye on that target
+for a little while getting closer to
+maybe trying to plan to identify it it's
+not giving us any useful missions uh
+yeah i'm pretty confident oh we picked
+somebody else up what's this there's
+another ship that happens to have about
+the same range and we picked this one up
+at 161 miles and nearly 30 nautical mile
+difference now you're probably sitting
+there going okay what's special and
+those who are very observant will
+immediately identify what's different
+about these two ships one of them is
+facing towards us and one of them is
+beaming us as a matter of fact these two
+ships are actually very special because
+they're both zoom vault and destroyers a
+guide to missile destroyers from the
+united states the reason i picked these
+as you can tell from looking at the
+picture real quick is this thing was
+engineered to be stealthy in the front
+you know obviously if you look at from
+the side it's a pretty big pretty normal
+flat ship here so in this case it took
+us a really really long time to detect
+it facing straight so um overall we
+picked up that aircraft i should pick up
+that all ship i should say it should be
+more specific let's go ahead and click
+on it again at a distance of 161.3
+nautical miles so what i'm going to do
+is quickly reset our scenario here
+looks good looks good enter scenario
+looks fine for me go ahead and flip on
+the radar but what i'm going to do is
+i'm going to crank the altitude up to
+maximum altitude let's go ahead and flip
+on the radar again boop and let's see
+what happens this time
+there's our first
+let's see here 195. and let's get up and
+see if we can pick up our second
+there we are we expected less than 161
+or more than 161. well let's take a look
+and we get a distance of sorry about
+that of 160.3
+we actually picked it up sooner even
+though we were at a higher altitude
+you're going oh that's weird is that
+consistent well let's take a look go
+back to my little scenario again here
+this time we'll go ahead and order him
+to come down to medium altitude flip on
+that big old radar and we'll let him rip
+along here
+notice his maximum detection radius has
+shrunk
+stop
+notice we picked up both of these
+targets at about the same exact distance
+actually this one was picked up just
+slightly later than this one you're
+wondering why that's because the earth
+is curved if i actually zoom out a
+little bit you can see this nice
+beautiful curvature of the earth when we
+do reduce our altitude we in effect
+reduced our radar's ability to see far
+because we are now seeing on the other
+side of that curve where those
+particular targets are so in this case
+we've actually seen that increasing the
+altitude improves our radar detection
+distance so we're like wow okay that
+makes sense obviously you're dealing
+with something like this so uh what's
+the other extreme well let's have a
+little fun with this someone again turn
+my radar on and this time i'm gonna
+order him down to 25 000 feet let's see
+what happens to the size of his big
+circle see the circle shrinking
+let's go order him back up to that's my
+altitude let's see what happens to his
+lovely circle there
+other way
+going up
+there he goes that circle's getting big
+now
+keep going keep going keep going also
+notices his range is increasing
+come on give me that big circle bring it
+oh just about that keep climbing keep
+climbing notice it caps out by the way
+there's a maximum range of this
+particular radar
+keeps increasing keeps increasing and we
+should pick this guy up any moment now
+pause there it is perfect so you can see
+we picked up this guy at the exact same
+distance as we picked him up earlier so
+what's the takeaway here well the first
+one you have to remember is no matter
+what altitude you set your mpa if you're
+using your mpa for the purposes of
+detecting a target you have to remember
+that that target has to be visible so if
+it's on the opposite side of the horizon
+you can't actually detect it the vice
+versa is actually a little bit more
+complicated so let me go ahead and get
+my little um about ms paint here so i
+can show you what i mean so the other
+problem is the surface area of the
+target do you remember that we were able
+to detect the target when we're up
+higher than when we were up below it
+well for imagine for a second then i
+take myself my little airplane i'm at
+low altitude and again this is my
+airplane let's grab the airplane up here
+and put him up at high altitude let's
+say this is the beam he's creating again
+this would be the world's most narrow
+radar beam and let's say this is the
+beam that this guy's creating i'm trying
+to keep these roughly the same but you
+can see the difference when you look at
+the beam coming down here and hitting
+this edge you're actually deflecting
+some of the energy in opposite
+directions which is actually changing
+the detectability of this surface when
+you're hitting the beam right on the
+flat part of the ship like this you're
+actually going to get the best return
+back but remember because the earth is
+curved you might run into a situation
+like this where you can't actually get
+that reflection on account of the fact
+that the physical geometry of the
+situation does not allow you to enable
+it on the flip side check this out let's
+say my aircraft is up here like this
+looking like this
+yeah you see that we now have the
+ability to detect almost the entire
+massive surface area of the ship which
+was why when we were testing against the
+zoom vault remember how the top of the
+zoom vault it's like a little spiky
+thing like this looks like this to the
+radar from the front of the radar it
+looks more again this is my ugly
+rendition here looks more like this
+obviously from the side you know you got
+this kind of a thing going here which is
+why it was so easy to detect now this
+quotation gets a little bit more
+complicated than it appears first thing
+obviously if i have a radar like this
+which is one of the world's longest
+range maritime surveillance radars in
+existence this gets a little more
+complicated if you're dealing with a
+lesser radar system
+so what i've done here is i've taken an
+f16 which does have the ability to do a
+surface search and have set up the exact
+same scenario now keep in mind this
+version of the f-16 it only packs a more
+traditional you know mechanically
+scanned radar we don't have any of that
+phased array fanciness here so we're
+dealing with uh detecting things
+basically the old-fashioned way now my
+f-16 is chilling up here at 36 000 feet
+keep in mind my two ships are right
+there let's go move him to the side a
+little bit he's cruising along he's
+cruising along he's cruising along
+cruising along up there we go and now
+we're able to detect our first target at
+a range of about 42 nautical miles now
+if i let this run a little bit longer
+here i'll go back up to 15x
+notice that other zoom vault doesn't
+become visible until there when we
+detect them at a range of 35.3 nautical
+miles so what i'm going to do now is i'm
+going to grab this guy i'm going to pull
+him back and what i'm going to do is
+intentionally reduce his altitude i'm
+also going to drop these two targets for
+the purposes of my demonstration here so
+we're going to pop down to 12 000 feet
+notice it had no impact in the slightest
+on his detection range
+get a little closer
+whoops
+get back there i think he ran out of
+fuel there
+you're not going back to reicheve which
+is my terrible spelling of reykjavik
+oh that was funny i can't believe i ran
+out of fuel like that i'm actually going
+to delete this base because i don't
+actually need it yes i know i spelled
+reiki vic wrong
+put you back there i'll go ahead and
+adjust my little experiment here
+let's see here all right did you acquire
+anything nope that's okay though you're
+supposed to be at 12 000 feet ah you're
+still assigned unassigned 12 000 feet
+gotta love it when it does stuff like
+that there we go but i wanted you to
+detect for the purposes of my experiment
+here not detect for your silliness try
+again
+all right there we go so now we're 12
+000 feet remember about 43 nautical
+miles when we first detected the target
+let's take a look now
+43 nautical miles exactly
+continue along continue long about 37
+nautical miles on the other one
+there's the other one
+make sure i pick the right guy here
+song for
+30.2 nautical miles
+so what had happened now is if you go
+back to my very very crude drawing which
+unfortunately closed you can see because
+my
+available at seven about seven thousand
+you were saying they were supposed to
+to twelve thousand feet well that's
+because a lot of marine maritime you
+know search patrol activity does not
+take place at high altitudes because
+you're trying to see things not
+necessarily pick them up with radar if
+we were only worried about picking up
+radar you've already seen the optimal
+arrangement but if we were trying to
+acquire target visually things get a
+little bit more complicated
+so what i have here is that same bear we
+had seen earlier and this time i've shut
+its radar off and we're chilling at 36
+000 feet i'm gonna go ahead and speed up
+time a little bit here and we're gonna
+basically fly right over the tippy top
+of these two ships and i'll watch what
+happens now the bear does have some
+pretty slick equipment on board to help
+facilitate this process and you've got a
+little like camera to write everything
+you know very very much like a p3 it's
+also got a magnetic anomaly detector
+assuming that you get close enough and
+everything pretty much along those lines
+so now the problem we're going to be
+running into is to be able to physically
+visually see the target which remember
+all vision is based on slant distance
+which again radar is based on slant
+distance as well but this is a little
+bit more complicated so there you see
+we've immediately acquired one of the
+two ships but we're not 100 confident
+about it so we'll continue traveling
+continue traveling continue and now
+we've acquired the second ship
+so we didn't visually acquire these
+until they were about six nautical miles
+away so what i'm gonna do is i'm gonna
+grab him i'm gonna go send him down to
+mpa altitude real fast and i'll go ahead
+and drop these two ships from existence
+again and now we'll see exactly what
+will happen this time so again we're
+trying to sneak up on these two ships
+and pause real quick on pause we'll go
+sneak up like that cruising along
+remember is about five or six nautical
+miles before we're able to actually
+acquire that target cruising along
+cruising along getting pretty darn close
+trying to beat six nautical miles
+a pause
+nice we acquired them both at the same
+time at three nautical miles more for
+those of you who do math quickly
+that's a 1.6 times it's almost 150
+percent sooner that we detected them
+than when we were using our radar
+exclusively in which case at the higher
+altitude it actually made more sense
+so what are the takeaways the first one
+is you've got to remember that at the
+end of the day you have to be able to
+physically see it with whatever thing
+you're doing now if there were clouds or
+something we'd be hopeless here but
+because we reduced our altitude we
+decreased our slant distance making it
+possible to visually acquire these
+targets sooner now we've been up at 36
+000 feet we were basically right on top
+of them before we even began to come
+close to seeing them now if it's night
+time this gets more complicated on the
+flip side if you are using radar get as
+high as you can to take advantage of
+that better cross section that you can
+get but other than that enjoy

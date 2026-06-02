@@ -1,885 +1,877 @@
-0.4	hi everyone in today's video we're going
-2.0	to continue we're working on last time
-4.1	with setting up the nato forces as well
-5.9	as kind of getting everybody ready
-7.4	and then actually being able to test
-8.6	this scenario out set up some events
-10.1	louis stuff like that
-11.5	so where we last left we were setting up
-13.5	this great little place up in turkey
-15.0	here this is insular airplace and
-17.0	basically we put in a few different
-18.6	groups
-19.0	we have some f-16 squadrons as well as
-21.2	some strike eagles and some lancers it's
-22.9	going to work out great
-24.0	and now i'd like to do our nato assets
-25.9	and allies as well and go and throw them
-27.9	at ramatavi
-28.9	airport down in israel as well so let's
-31.8	go ahead and see if there is an import
-33.9	for that already because remember this
-35.5	is nato not just the united states
-37.9	all right let's go down to israel okay
-40.5	israel israel israel looks good
-42.7	and air bases are not david beautiful
-45.8	open it up perfect again we're going to
-48.0	replace this with a single unit
-49.8	airport because we don't need 99 more
-52.6	units in our scenario
-53.9	especially given how huge this scenario
-56.2	has gotten already
-58.2	a b now it looks pretty good this is
-60.5	actually a two runway one
-62.8	vermont
-65.9	maybe beautiful go ahead and save real
-68.2	quick
-69.4	all right so who would be at ramatavid
-71.4	so the first thing you want to do is see
-72.9	if there's anybody there
-74.5	because i'm nothing quite like taking
-76.2	over another air base without giving
-77.4	them a chance to go ahead and kind of
-78.9	having things on their own
-80.2	so let's go ahead and do orbots again
-82.7	let's go to israel
-86.5	this rail apparently i can't spell this
-89.4	real today that's okay though
-91.0	there it is real i kept trusting the
-93.0	wrestling ladder all right israeli air
-94.9	force
-96.2	let's see we have a ramadan
-101.5	there it is all right here we are
-105.0	so it looks like we have some f-16 ds
-107.9	and we also have
-109.1	some cs as well and we have some of this
-112.2	group as well
-119.4	all right let's go ahead and set those
-120.5	in f16c let's see what we have here
-123.6	israel air force the 2006 version looks
-125.8	pretty good their
-126.7	squadrons are a little smaller than ours
-129.1	let's see here 109 squadron
-130.9	109. now those were the d's or those
-134.6	were the c's
-135.4	those are the d 30s uh
-138.5	nope we need d's d block 30.
-143.1	delia looks good d blind no no we need d
-145.4	block 30s
-146.8	oh i don't know if we have that one
-149.4	there we go
-150.1	d block 30s right there got it so we got
-153.3	the 109th
-154.2	and now we also have some 40s as well
-157.3	so let's go grab those uh we'll go down
-159.5	to 40s
-161.1	looks pretty good okay solid and
-164.3	oh is there any good reports here oh
-166.3	actually i don't think i've ever pressed
-167.3	that button i'm just going to kind of
-168.3	let it
-168.7	it doesn't do anything so it looks like
-171.3	we also have the 117th here
-174.4	and the 117th is operating 16
-177.7	c30s f16c these are all block
-181.4	30s i believe that'll work pretty well
-183.6	right there
-184.7	looks pretty good and we also have this
-187.4	group as well
-188.2	these are going to be operating these
-189.2	helicopters so that's a lot of aircraft
-192.0	at our disposal for the purposes of this
-193.9	given scenario you know we could
-195.1	actually look up to see how many
-196.2	individual airplanes they are and poke
-197.6	around
-198.2	but that's a lot and again like a lot a
-201.2	lot a lot a lot
-202.4	so let's go ahead and throw in some of
-204.2	our european allies here as well
-205.9	so again we can take a look at you know
-207.6	in the united kingdom in which case
-209.5	let's see here if we're going to be
-210.6	doing
-211.4	you know kingdom we could probably throw
-212.8	in some typhoons actually that's going
-214.3	to be regular europe we'll get to them
-215.6	in a minute
-216.6	so let's do you know let's just think
-218.7	here if we do
-219.8	tornado yeah tornado there we go now
-222.1	we're talking
-223.4	let's go to the united kingdom what's
-225.0	our most recent version of the tornado
-227.0	that we can use i think that's going to
-228.6	be the gr4
-230.3	got it so let's go back to our handy
-232.2	dandy buddy google here
-233.7	tornado gr4 squadron let's see what we
-237.1	get
-239.5	all right let's do oh here we go united
-241.8	kingdom
-245.3	flying gr4 disbanded 2008 we got a
-247.6	squadron number
-248.6	13 squadron x111
-252.2	sq all right so how many's to a british
-255.4	squadron so you got to be a little
-257.4	careful here
-258.6	because uh taking a look real quickly
-259.9	this is how many looks like 18 is
-261.8	probably not a bad number to pick from
-264.0	it could be a little bit different again
-265.8	18 is a pretty big group i'm going to
-267.1	drop this down to 12 just to make things
-268.8	a little bit simpler for us
-270.2	all right so we've got some tornadoes
-271.5	which are awesome italy is obviously
-273.7	going to contribute some of their
-274.6	tornadoes as well because they're being
-276.2	very nice to us today
-277.7	let's see we have the ids and we have
-279.9	the ecr
-281.1	let's see what we got for italy here
-282.6	might as well right ids
-285.0	1984 we have the 156th rebel and we have
-288.3	the 6th thrombo
-289.8	uh let's see here they're flying the
-291.1	european typhoon again this is all
-293.0	pretty good data
-294.0	now let's go ahead and use this one
-296.4	let's do 156 group
-298.3	and i believe they only have five or six
-300.0	ecrs
-301.4	five yikes so we get five
-304.5	we get all of the ecrs and let's go
-307.1	ahead and throw in some eurofighter
-308.6	typhoons as well
-310.2	so let's see what we got here germany
-312.1	i'm going to do the 2007 version what do
-314.2	we have as far as
-316.2	ef 2000 units go ahead and close this
-319.0	one out real quickly
-320.7	uh upper right actually we want to do
-322.8	operators
-324.8	near final typhoon operators
-327.8	operational history german air force
-329.6	luther
-331.1	let's see here we have i'm not even
-332.8	going to try to pronounce that one i'm
-334.0	just going to embarrass myself as always
-336.2	let's take a look we have jg 74 sounds
-339.1	pretty good
-340.0	jg74 let's get ourselves some of the
-343.3	regular ones i'll go ahead and say they
-345.0	contributed 12 of those which is quite a
-347.1	few
-347.8	and we might as well grab some of the
-349.3	two-seaters as well
-351.0	let's see who can we get the two seaters
-352.7	from saudi arabia sounds pretty good
-354.3	there we go
-356.2	uh spain spain spain spain what can we
-358.1	get from spain here spain spain spain
-360.1	spain uh they have allah
-364.2	and say looks pretty good to me and
-366.9	we'll say we're just going to get 12 of
-368.2	those as well
-369.0	uh they've got 40 more 73 ordered 61 in
-371.9	operation okay
-373.3	sounds pretty good and now we're in
-375.2	great shape and now our nato allies are
-377.9	ready to go ah starting to get somewhere
-381.0	in the scenario okay
-382.2	let's go ahead and do a save as we'll
-384.4	save this as o2
-386.6	and now we're in great shape now it's
-388.5	time to equip now one of the things
-390.1	about the scenario is we could set it up
-391.4	so that the user could actually pick
-393.0	what
-393.5	elements they want in each one of their
-395.5	actual targets and air bases and
-397.0	everything like that
-397.8	that's going to take some time and
-399.4	that's a lot of time because we're using
-401.0	sustained ops
-401.9	we're looking for a maximum effort
-403.5	strike so basically as the designer we
-405.8	need to design
-406.6	what is it going to look like that
-408.0	you're going to need so first things
-410.0	first it's going to seem a little weird
-411.1	i'm going to run the scenario for a
-412.2	millisecond which is what i just did i'm
-413.9	going back up to scenario times and
-415.9	updates and reset that so we're able to
-418.2	populate everything that we can see
-420.6	so let's go ahead and start with the
-422.2	carrier group now we have
-424.2	quite a few helicopters which we can use
-425.9	for some asw purposes
-427.8	and we have fa-18es and we also have
-430.8	some f's
-431.5	we have some hawkeyes we've got some
-432.9	really really really really good stuff
-434.2	here
-434.7	so first things first when picking out
-436.3	what the players get you need to
-437.4	consider how many aircraft are going to
-439.0	be available in the scenario at any
-440.4	given time
-441.3	now some people are so against doing it
-443.8	this way
-444.7	and basically they'll have it set up so
-446.3	if the aircraft is available the
-447.6	aircraft is available kind of a thing
-449.4	so in the general rule one third of your
-451.7	aircraft of your group at any given time
-453.5	are operational it's just kind of how
-455.0	that works
-455.8	and again this can change depending on
-457.8	spare part availability damage
-459.5	everything like that
-460.6	so we have a total of 24 f-18es now the
-463.6	e-model the f-18
-465.2	is basically the single-seater so i like
-467.4	to i don't know from a role-play
-469.0	perspective
-469.7	give these types of aircraft more
-472.3	basically doing close air support kind
-474.0	of things
-474.8	doing things where they're doing any
-476.1	sort of escort work and not really the
-477.7	hard
-478.0	part of doing precision guided work
-479.6	which i'll save for the f models
-481.4	so let's go ahead and grab our skies
-483.5	i'll do eight from this group
-486.1	we'll assign these guys to be standard
-487.8	combat air patrol sounds pretty good to
-489.4	me
-491.0	this group right here we'll assume these
-492.4	guys are all getting maintenance again
-493.9	it takes a tremendous amount of
-495.1	maintenance to keep these things flying
-496.7	we're going to grab this group here and
-498.3	we're going to all assign them some
-499.8	harms
-500.8	we also have j cells which are wonderful
-503.0	for this purpose and like all these
-504.5	really really things we have slammers
-506.3	but in this case i'm going to be using
-507.8	short range arms which gets us
-509.4	four harm missiles which means that four
-512.6	times eight that's 32. this is not going
-514.2	to be enough harms to be honest
-515.8	realistically these guys all gotta have
-517.6	harms too in order to be safe in this
-519.0	given scenario but we'll be okay
-520.9	so let's go ahead and grab our f models
-523.1	let's go and grab eight of these
-524.6	ready arm these are going to be our
-527.0	strikers
-527.8	so when it comes to strikers obviously
-529.8	since this is in the days of pgms let's
-531.8	take advantage of our pgm technology
-533.8	here
-534.4	so let's see what we have we have the j
-535.9	cells which are pretty pretty solid at
-537.6	this with the broach one which works
-539.0	really really well
-540.1	what do we get 650 nautical miles is
-542.1	plenty i just want to confirm the range
-543.6	on the broach real quickly
-545.3	what do we have 45 nautical miles now
-547.6	that's how you make a strike let's do
-549.2	the short range version so we can carry
-551.0	four so this is 32 of these incredibly
-554.8	long range weapons now we're striking
-556.8	properly
-558.3	all right we're going to set these guys
-559.6	they're all sitting in maintenance
-560.7	pretty much below decks kind of
-562.5	cooling their heels let's grab this
-564.2	group right here
-565.5	ready arm uh let's see what we got here
-567.2	we must do the same load up we can also
-568.8	use the slammers
-569.8	slammers are kind of neat because
-571.0	they're very very precise there's a
-572.2	slammer oh that's a new one
-574.5	let's go ahead and take a look what we
-575.4	got for range 150 nautical miles
-577.6	sweet let's do that too all right
-580.3	looking pretty good
-581.2	and these guys are all sitting in
-582.3	maintenance as well uh you know hangar
-584.6	queens
-585.1	that's usually how it goes that is some
-587.1	awesome stuff
-588.2	all right hawkeyes we only ever ever
-590.2	ever get to use two at a time even
-591.7	though we've got that many of them
-593.1	these two are going to be sitting there
-594.4	getting tuned up in a new engine stuff
-596.3	like that
-598.2	prowlers we're going to need these so
-600.3	i'll say about two-thirds of them we're
-601.9	going to do short range
-603.4	massive massive massive amounts of noise
-605.7	jamming we're going to need that like
-607.0	crazy
-607.8	our seahawk buddies basically these guys
-610.1	are all sitting there on
-611.0	decks right now just sort of relaxing
-612.8	this is not a scenario where we want to
-614.6	be employing these
-615.7	one really fun use of these by the way
-617.2	is to load them up with hellfires
-618.9	and actually set them out to go do some
-620.6	damage and things like that
-622.1	and our c2a greyhounds they're not
-624.0	really relevant to this scenario so i'm
-625.5	just going to set them to maintenance
-626.7	even though these guys basically carry
-628.2	the bail
-628.7	you know vip stuff like that and now our
-631.4	carry action
-632.1	group is ready to go let's go up to here
-635.1	oh boy oh boy what do we pick first
-638.7	well first things first let's work
-640.0	backwards let's grab our bomber squadron
-642.2	we're going to assume that eight of
-643.3	these again about two-thirds or so are
-645.2	actually available
-646.3	so the jason's would be a spectacular
-649.2	choice for this because these are
-650.7	stealth cruise missiles do we get a
-652.9	picture yeah this thing is basically
-654.7	undetectable
-655.9	so if we give that to the player we're
-657.4	going to give them a really easy time
-658.8	and honestly
-659.7	there's too much air defense in syria
-661.4	not to so we're going to go ahead and
-662.6	give those again this is going to be a
-663.9	pretty easy scenario
-665.3	once we're done with it we'll go to the
-667.3	f-15 strike eagles now the strike eagles
-669.6	are going to have to do some actual work
-671.4	which is you know kind of a bummer but
-673.0	you know do what you got to do
-674.6	so let's see here what do we make these
-676.6	guys have again we don't have a lot of
-678.2	that really long range stuff with strike
-680.1	eagles which is actually kind of a
-681.3	bummer
-681.8	so we're going to get stuck using bj
-683.7	dams and again this is the 2008 version
-686.0	so we do get the laser j dams which are
-687.9	awesome you can actually plink with
-689.1	these
-689.8	we get eight of them oh yeah oh yeah
-691.8	definitely laser jade amps let's do it
-694.2	go ahead and set the rest of these to
-695.4	maintenance okay so now we have the
-697.4	block 52s 50s and 40s to play with
-700.0	so what do we do so for the first group
-702.2	i'm going to go ahead and assign them to
-703.7	be dedicated
-704.8	basically protect us from surface to our
-707.8	missiles
-708.5	so i'll go ahead and grab some arms
-710.4	we're going to need a stupid number of
-712.0	arms for this particular exercise
-714.0	go ahead and ready to immediately again
-715.4	this is what you're giving the players
-716.8	to work with so you can give them less
-718.5	you can give them all mark
-719.6	82s if you want to make this difficult
-722.0	the block 50s i'm going to dedicate this
-723.8	entire group they're going to be
-725.2	basically our shooters so we need to
-727.8	give ourselves a pretty hefty amount so
-729.7	we're going to take an average
-730.9	now we should do the sniper pod too yeah
-733.2	it looks good
-734.7	they're going to be our escorts go ahead
-737.0	and set the rest of them to maintenance
-738.6	and our block 52s let's go ahead and use
-741.3	these as shooters as well
-743.3	so in this case since the other the
-745.0	f-15es have to get into the nasty bits
-746.8	we might as well use these guys as well
-748.6	we'll do the laser j dams as well let's
-750.4	give them something a little bit heavier
-751.6	actually
-752.5	i don't want the mark 82 something with
-754.1	a little bit more kick there we go
-756.2	ready arm beautiful now we have a bunch
-758.3	of pgms on our f-16s as well
-761.2	there's no refueling assets for nato
-762.8	because we have such a short drive which
-764.2	is going to be great
-765.2	i'm happy with that i'm not going to
-766.7	change any more of those details
-768.5	all right let's go to matavik so we have
-771.5	a couple
-772.0	different groups here to play with again
-773.8	just smaller groups
-775.2	now you could get a little political you
-777.6	could get any way you want with this but
-779.4	basically countries that don't have
-780.8	bigger military budgets can't throw as
-782.6	many aircraft
-783.7	in the air at a time so we're going to
-785.7	represent this by only being able to use
-787.9	a third of each individual of these
-790.1	units
-790.9	so we get six so the d model that's a
-793.4	two seater so whatever we use it for is
-795.4	going to let itself well for two seating
-797.0	purposes
-797.7	so in this particular case since we're
-799.2	going to be targeting their chemical
-800.5	facilities
-801.6	let's go ahead and equip them with harms
-803.6	we're going to need a lot of harms in
-805.3	this scenario
-806.6	we're going to go ahead and set this to
-808.0	maintenance we have the dg so we're also
-810.9	going to use these particular aircraft
-812.4	for the purpose of harms
-813.7	i know you're sitting there going why
-815.0	are you using so many of these things
-816.9	you're going to need them all trust me
-820.1	i'll do some maintenance there we have
-821.8	the c models again we'll go ahead and
-823.7	grab six of them because this is all
-825.0	we're going to get
-825.8	we'll go ahead and equip these guys with
-827.4	pythons we'll do heavy these are going
-829.2	to be our air-to-air escorts again air
-830.9	air is probably not going to be as big
-832.8	of a concern
-833.9	as everything else the gr4 this is a
-836.0	really really nice fixed-wing attack
-837.4	aircraft
-838.2	they're obviously again the uk pretty
-840.4	hefty military budget there so i'm
-841.8	actually going to say that we get about
-843.2	that many
-843.8	as well they're going to be carrying the
-845.8	very very short range alarms
-847.6	it's not that short range they're short
-849.3	range the alarms are not the alarm is a
-851.0	wonder missile by the way
-853.4	neuro fighter these are basically going
-855.2	to have to have to have to be
-857.6	air to air as you can see so with
-859.5	intercept heavy cap standard cap we'll
-861.2	set them as standard cap
-862.5	the eurofighters have another really
-864.0	neat quirk to them and that's that
-865.6	magical capital
-866.6	radar in the front the italians with the
-868.7	goodwill we're going to go ahead and
-870.1	equip these with harms as well
-871.7	i know you're sitting there going this
-872.6	seems like an awful lot of harms trust
-874.3	me you're going to need them
-876.4	ready arm let's go ahead and say i'll
-878.4	give these to standard cap oh we can
-880.1	drop some bombs too
-881.6	hmm we'll let them drop some bombs
-886.2	i'll do mark 83s what does that give us
-888.3	for range 180 too short we need the one
-890.2	this gives us a little bit more room
-891.9	ready arm maintenance available done
-895.0	done nato is now ready to go the cis is
-898.8	now ready to go the only people we have
-900.1	to take a look at now is syria
-901.8	so i'm gonna go ahead and save the
-902.9	scenario and then we're gonna go switch
-905.4	over to the
-906.3	sirius side and we're gonna start
-907.8	getting everything ready for them
-909.6	syria okay let's go ahead and start from
-911.7	the top
-912.6	all right so these are training aircraft
-914.8	so they're basically have no point in
-916.4	being in our scenario other than to be
-918.0	irritating which is actually kind of a
-919.5	fun way to use them
-920.8	syria does not have the best
-922.5	infrastructure as far as aircraft goes
-924.3	so if you have more than four
-925.7	in a squadron ready to go at any time
-927.8	i'm impressed
-928.9	so let's go ahead and equip them for
-930.2	some long range rocketry here
-932.7	i actually want them to be already
-934.1	equipped we'll do ready immediately
-935.8	i'm assuming the rest of this group here
-937.6	is probably not able to do anything
-939.8	they're probably going to be sitting
-940.6	there without missing wheels and stuff
-942.1	like that
-942.7	again i'm trying not trying to be mean
-944.3	or anything like that just the reality
-946.1	is
-946.3	it's very difficult to maintain an
-947.6	airplane so it looks pretty good there
-950.3	all right we'll screw it over to
-951.8	abdulmar okay so big 23 ms
-954.3	it's getting a little old so again
-956.5	you're not going to have a lot of these
-957.8	available
-960.2	so let's see here we're definitely going
-961.4	to be an air to air configuration here
-963.2	grab the rest of them technically you
-964.5	could just delete the rest of them
-965.7	because you're not going to be able to
-966.6	shoot at them anyway
-967.6	these l39s we're going again this would
-969.8	be a training squadron is probably what
-971.5	you're dealing with here they're
-972.3	probably going to be carrying some
-973.3	rockets or bombs or something like that
-975.3	again this is more of a role play kind
-977.0	of way of looking at things the zos are
-979.0	slightly different than the zas
-981.4	so let's go ahead and say they're
-982.5	equipped with these and we'll say the
-984.4	rest of that squadron is all sitting in
-985.8	maintenance these guys can be tooling
-987.2	around doing training exercises while
-989.0	everybody else is flying around
-990.7	i don't know that's an airplace right
-992.5	there
-993.8	oh mig-21mf so the mig-21 is easier to
-996.2	maintain than mc23 so i'd say they
-998.5	probably have a little bit better
-999.7	availability
-1000.6	so let's say that in this case they have
-1002.3	about half of the squadron ready to go
-1004.6	oh r3s that is not what i consider the
-1007.9	fanciest air-to-air missile but hey work
-1010.1	with what you got
-1011.4	all right let's go ahead and see this
-1012.6	one we've already got them all set scoot
-1014.2	down the hama air base
-1015.4	mf's so these are very difficult to
-1017.6	maintain as well so there's probably not
-1019.1	going to be as many of them available
-1021.0	the rest of these again if you're
-1022.4	playing a attack the airport sort of a
-1024.2	scenario you could come in here and you
-1025.6	could destroy all of them on the ground
-1027.0	if you really wanted to
-1028.2	but we're not doing so it's not the
-1029.6	point of the scenario mc21 bis
-1031.7	again it's going to be a little easier
-1033.1	to take care of these so we're going to
-1034.6	go ahead and have a few of these
-1036.8	r60s that's going to be scary
-1041.4	i don't like r60 i hate the m version
-1043.1	that thing is a legitimately good
-1044.6	missile
-1045.8	all right ready then immediately
-1047.4	remember they only have sustained ops it
-1049.4	looks pretty good
-1050.9	all right scroll down here we're going
-1052.4	to go over to charade
-1054.3	and maps again you can have the same
-1056.0	exact problem it's going to be very
-1057.4	difficult to keep more than
-1058.9	too many of these going at a single time
-1060.7	again we can delete all them we can also
-1062.4	randomly select this
-1063.6	i'll actually get a dice out from time
-1065.0	to time to actually roll how many are
-1066.4	available
-1067.3	now the fitter is an older style
-1069.1	aircraft it is not an air-to-air
-1070.8	aircraft but you can use it for
-1072.4	air-to-air purposes
-1073.8	so let's go ahead and get that ready to
-1075.3	go
-1077.0	set that to maintenance for the rest of
-1078.2	the squadron let's go ahead and grab
-1080.4	this group as well
-1081.4	and this is the m4 version i'm going to
-1083.0	equip them for air-to-air purposes even
-1084.6	though they're an air-to-ground sort of
-1086.1	aircraft
-1087.2	again do what you got close that out
-1089.8	save your game
-1090.9	tyus again we have some more m4s here
-1093.0	we'll say about half of them because
-1094.2	they're not impossible to maintain
-1096.8	go ahead and grab that right there as
-1098.2	well maintenance ready available go
-1100.5	ahead and close that oh
-1101.9	mig 25s now these aircraft are nice but
-1106.3	they're probably
-1107.2	ancient i'd be amazed how many of these
-1109.5	still actually can fly
-1111.3	that being said they probably still
-1112.8	can't so we have two different squadrons
-1114.8	here you squadron's group of 15.
-1116.7	we're going to be extremely generous and
-1118.6	say that we have the ability to have
-1120.4	four of these at a time so that looks
-1122.6	pretty good we're going to see the rest
-1123.8	of the squadrons
-1124.7	sitting there being hanger queens go
-1127.2	ahead set these to maintenance
-1128.6	grab this group as well ready arm
-1131.8	set them long range as well and we'll
-1134.4	make these mixed you never know
-1136.3	come down here the rest of you guys are
-1137.9	all going to have to relax
-1139.7	and we also have these mk fencer d's
-1142.0	these are very very very high
-1143.6	maintenance aircraft
-1144.7	so we're going to see we have about four
-1146.1	of them and again we've got nothing we
-1147.6	can really use
-1148.4	for this particular purpose so let's
-1150.3	just equip them with some i don't know
-1152.1	fab 250s
-1153.2	just to just because again these are
-1155.0	more for role-playing purposes we could
-1156.4	delete that squadron because they don't
-1157.8	form any purpose
-1159.2	coming down here getting closer to
-1160.5	israel so we have the bns which again
-1162.6	you can have some maintenance challenges
-1163.9	with a mig-23
-1165.0	so we're probably not gonna have as many
-1166.5	and again the bn model of the mig-23 is
-1168.6	not a fighter
-1170.0	so let's go ahead and do some rbks that
-1172.2	seems pretty fair
-1173.6	ready arms the rest of these guys to
-1175.4	maintenance go ahead and grab this group
-1177.3	let's just assume
-1178.0	again you're basically role-playing by
-1179.8	equipping things inside of these
-1181.2	particular groups good maintenance looks
-1182.7	pretty good
-1183.8	all right let's go to sequoia mig-29s
-1188.2	this is one of the most advanced
-1189.6	aircraft syria has
-1191.6	so chances are if they're going to put
-1192.9	money into things we're going to put it
-1194.0	into the mig-29s
-1195.4	so i'm going to say that we probably get
-1197.3	six out of each squadron available
-1201.4	again if we were targeting the airfield
-1202.8	itself we could do that but we're trying
-1204.1	to cut
-1204.7	down on how much lag we're going to
-1206.7	create because we have so
-1208.2	many units in a given scenario so we
-1210.9	actually want to
-1211.6	go ahead and already arm make sure that
-1213.7	we're ready immediately otherwise not
-1215.0	going to be available at the beginning
-1215.9	of the scenario go ahead set these guys
-1217.4	to maintenance
-1218.3	this is going to be the biggest nato
-1220.6	threat there's going to be in this
-1222.3	scenario because these things are just
-1224.1	so darn maneuverable so these are
-1226.6	maintenance
-1227.2	and now we have a wonderful amount this
-1229.6	is scary
-1230.6	so the player is going to have to be
-1232.0	very resourceful and basically capping
-1233.8	that airport
-1234.7	all right with some mls which again you
-1236.3	can have those maintenance problems it
-1237.5	looks like i had a little bit of fun
-1238.7	going ahead and
-1239.4	setting this up so i'll grab this group
-1241.8	set these to the apex missile which is
-1243.9	eh it's okay you can actually outfly
-1246.7	it's kind of neat
-1247.6	we of course m3s again very very high
-1249.7	maintenance aircraft go ahead and set
-1251.0	these guys to also be carrying air their
-1252.6	missiles
-1253.1	again this is a pretty considerable
-1254.8	air-to-air threat here
-1256.4	it doesn't look like it but it really is
-1258.0	once you combine it with all the sams
-1260.2	all right so we're going to come down
-1261.4	here okay so we have two different
-1262.9	squadrons here available again
-1264.8	we're just going to predict that we have
-1266.2	this many available at a time go down to
-1268.1	this one
-1269.2	keeping a look at the time real quickly
-1271.0	it looks good ready arm
-1272.9	we'll set these to the apex as well and
-1275.8	we'll go ahead and clean this out
-1277.3	maintenance
-1278.6	looks good and we have make 21 bits
-1282.8	which are easier to maintain there's
-1284.1	also multiple squadrons here
-1286.2	so looks like we have two so we're just
-1287.7	going to assume that we have about let's
-1288.7	say six at each
-1290.2	we'll say these guys have the more
-1291.4	advanced r60s
-1295.9	and go ahead and grab the squadron as
-1298.0	well go ahead and say they also have the
-1299.8	r60s
-1301.7	keep in mind when they come back to
-1302.7	below they'll have to re-arm those and
-1305.0	we are
-1305.5	all set delightful so now syria's got an
-1309.2	air force now it's time to start
-1310.5	thinking about their artificial
-1311.8	intelligence
-1312.9	so first things first let's go and take
-1314.4	a look at what we have at our disposal
-1315.9	here so we have a really strong
-1318.5	concentration of surface to our missiles
-1320.2	here
-1320.6	this is basically a death slash kill
-1323.4	zone in here
-1324.5	so anything that flies through here is
-1326.5	you can't get through this
-1327.8	safely basically plus you got the mix to
-1330.2	make things even more exciting so i'm
-1331.4	not that worried about that
-1333.0	now scrolling up to the tippy top there
-1334.7	where are our chemical facilities
-1336.6	so our chemical facilities are here
-1338.2	which means this is what we have to
-1339.8	protect this poor one on the coast is so
-1342.0	doomed it's going to be the first one to
-1343.9	get hit so it looks to me like we need
-1345.7	to really concentrate our
-1347.3	air efforts here as well as to a lesser
-1349.5	extent kind of in here
-1350.8	so i'm probably going to split my forces
-1352.6	oh it's going to be a disaster trying to
-1354.1	protect these
-1355.2	well we're going to try so what i'm
-1357.7	going to do is i'm going to come down
-1358.6	here real quickly i'm going to go ahead
-1359.9	and
-1360.2	create a mission let's go ahead and
-1361.8	control right click create area
-1363.8	rectangle
-1364.7	so i'm going to go ahead and do one of
-1366.5	these things we're going to assume the
-1367.5	people in lebanon are being generous and
-1369.1	they're going to give us a little bit of
-1370.3	protection here
-1371.5	obviously you don't want to cross into
-1372.7	turkey if you can help it
-1375.8	all right that's looking pretty good all
-1377.1	right let's go ahead and create our
-1378.2	mission
-1379.4	call it cap patrol
-1382.4	and aaw patrol okay so let me show you a
-1385.1	really cool trick here
-1386.3	so the problem with the good player is
-1388.2	they're basically going to launch their
-1389.8	aircraft as soon as they unpause the
-1391.1	scenario
-1391.8	we can take advantage of that by
-1393.3	intentionally timing our own aircraft to
-1395.4	be airborne when they get there so to
-1397.2	speak
-1398.0	so let's go ahead and set that up so
-1399.5	first things first we'll use the third
-1400.8	rule we'll try to keep up four units per
-1402.6	class in the air at a time
-1404.0	we're going to try to keep them inside
-1405.8	of the area that they're actually going
-1407.2	to be protecting here
-1408.7	actually we'll get rid of the
-1409.5	prosecution area we don't need that
-1410.7	that's going to be fine so
-1412.0	basically going to be tooling around in
-1413.3	here i'm actually going to expand this
-1414.3	just a teeny tiny bit
-1415.8	again the sams are going to do all the
-1417.1	real work down here so i'm not that
-1418.7	concerned with it
-1420.2	go ahead and deselect those that looks
-1421.6	pretty good to me that looks pretty good
-1423.0	to me all right let's get our aircraft
-1425.1	i'll go ahead and grab this squadron the
-1427.5	squadron of the squadron the squadron we
-1429.4	can't use those
-1430.0	that squadron i don't think those are
-1432.2	going to work at
-1433.2	everybody oh yeah those are not going to
-1436.1	do much for us how about these guys yep
-1438.0	so that's a lot of aircraft but keep in
-1439.9	mind out of this aircraft there's only
-1441.4	going to be about 20 airborne at a time
-1442.9	which is going to be deadly
-1444.2	now here's the problem we're going to be
-1445.8	facing in this scenario remember when i
-1447.4	was warning you that the nato
-1449.0	destroyers are basically going to shoot
-1450.2	down our airplanes if they get too high
-1452.2	we're going to have to reduce our
-1453.8	station altitude significantly to
-1455.9	protect ourselves with this mountain
-1457.4	range right
-1458.0	here so i'm actually going to set the
-1459.7	station altitude much
-1461.3	lower let's do 12 000 feet attack
-1464.0	altitude is anything you want transit
-1465.6	naturally i'm going to set that to 12
-1466.9	000 feet too
-1467.8	we've got to keep them low otherwise
-1469.8	nato will slap them out of the skies
-1471.5	basically with their ship based sam
-1473.1	systems and that's not a fun scenario if
-1475.0	you ask me
-1476.1	okay so the other thing i'm going to do
-1477.4	is i'm going to delay this mission
-1480.1	i don't want it to activate until let's
-1482.9	say
-1483.4	it's going to take them it's going what
-1484.8	is that a distance of 100 nautical miles
-1486.9	that's going to take them 15 minutes to
-1488.5	cover that distance so we want to wait
-1490.1	15 minutes before we start the scenario
-1492.3	but we actually want to make 10 minutes
-1494.4	so let's see our scenario starts at 3
-1496.1	30 so we will wait until 3 40 before we
-1499.2	activate
-1499.8	and of course we'll deactivate the
-1501.2	mission a little later on so 1330 that's
-1504.2	a pretty it's about 10 hours later
-1505.7	that's actually fair we'll deactivate it
-1507.1	at that time
-1508.1	and now we're in great shape that way
-1509.8	we're not wasting fuel when native is on
-1511.7	the way kind of a thing it's just
-1513.0	a way to look at things a little bit
-1514.6	differently now for kind of like an rp
-1516.6	purposes we're going to add one more
-1518.3	mission
-1519.4	i'm actually going to use most of syria
-1521.0	for this
-1523.0	we'll use that we'll borrow this
-1524.2	waypoint grab this one
-1526.6	so what i'm going to do is i'm going to
-1527.7	create a little mission where those
-1529.0	little training planes are basically
-1530.5	doing their little thing
-1531.6	kind of scooting around being annoying
-1533.5	that way we distract
-1535.0	the player just
+# C: MO Building a Mission Part 3 of 4
+Video: https://www.youtube.com/watch?v=b5RbZgiSpPU
+Video ID: b5RbZgiSpPU
+
+hi everyone in today's video we're going
+to continue we're working on last time
+with setting up the nato forces as well
+as kind of getting everybody ready
+and then actually being able to test
+this scenario out set up some events
+louis stuff like that
+so where we last left we were setting up
+this great little place up in turkey
+here this is insular airplace and
+basically we put in a few different
+groups
+we have some f-16 squadrons as well as
+some strike eagles and some lancers it's
+going to work out great
+and now i'd like to do our nato assets
+and allies as well and go and throw them
+at ramatavi
+airport down in israel as well so let's
+go ahead and see if there is an import
+for that already because remember this
+is nato not just the united states
+all right let's go down to israel okay
+israel israel israel looks good
+and air bases are not david beautiful
+open it up perfect again we're going to
+replace this with a single unit
+airport because we don't need 99 more
+units in our scenario
+especially given how huge this scenario
+has gotten already
+a b now it looks pretty good this is
+actually a two runway one
+vermont
+maybe beautiful go ahead and save real
+quick
+all right so who would be at ramatavid
+so the first thing you want to do is see
+if there's anybody there
+because i'm nothing quite like taking
+over another air base without giving
+them a chance to go ahead and kind of
+having things on their own
+so let's go ahead and do orbots again
+let's go to israel
+this rail apparently i can't spell this
+real today that's okay though
+there it is real i kept trusting the
+wrestling ladder all right israeli air
+force
+let's see we have a ramadan
+there it is all right here we are
+so it looks like we have some f-16 ds
+and we also have
+some cs as well and we have some of this
+group as well
+all right let's go ahead and set those
+in f16c let's see what we have here
+israel air force the 2006 version looks
+pretty good their
+squadrons are a little smaller than ours
+let's see here 109 squadron
+109. now those were the d's or those
+were the c's
+those are the d 30s uh
+nope we need d's d block 30.
+delia looks good d blind no no we need d
+block 30s
+oh i don't know if we have that one
+there we go
+d block 30s right there got it so we got
+the 109th
+and now we also have some 40s as well
+so let's go grab those uh we'll go down
+to 40s
+looks pretty good okay solid and
+oh is there any good reports here oh
+actually i don't think i've ever pressed
+that button i'm just going to kind of
+let it
+it doesn't do anything so it looks like
+we also have the 117th here
+and the 117th is operating 16
+c30s f16c these are all block
+30s i believe that'll work pretty well
+right there
+looks pretty good and we also have this
+these are going to be operating these
+helicopters so that's a lot of aircraft
+at our disposal for the purposes of this
+given scenario you know we could
+actually look up to see how many
+individual airplanes they are and poke
+around
+but that's a lot and again like a lot a
+lot a lot a lot
+so let's go ahead and throw in some of
+our european allies here as well
+so again we can take a look at you know
+in the united kingdom in which case
+let's see here if we're going to be
+doing
+you know kingdom we could probably throw
+in some typhoons actually that's going
+to be regular europe we'll get to them
+in a minute
+so let's do you know let's just think
+here if we do
+tornado yeah tornado there we go now
+we're talking
+let's go to the united kingdom what's
+our most recent version of the tornado
+that we can use i think that's going to
+be the gr4
+got it so let's go back to our handy
+dandy buddy google here
+tornado gr4 squadron let's see what we
+get
+all right let's do oh here we go united
+kingdom
+flying gr4 disbanded 2008 we got a
+squadron number
+13 squadron x111
+sq all right so how many's to a british
+squadron so you got to be a little
+careful here
+because uh taking a look real quickly
+this is how many looks like 18 is
+probably not a bad number to pick from
+it could be a little bit different again
+18 is a pretty big group i'm going to
+drop this down to 12 just to make things
+a little bit simpler for us
+all right so we've got some tornadoes
+which are awesome italy is obviously
+going to contribute some of their
+tornadoes as well because they're being
+very nice to us today
+let's see we have the ids and we have
+the ecr
+let's see what we got for italy here
+might as well right ids
+1984 we have the 156th rebel and we have
+the 6th thrombo
+uh let's see here they're flying the
+european typhoon again this is all
+pretty good data
+now let's go ahead and use this one
+let's do 156 group
+and i believe they only have five or six
+ecrs
+five yikes so we get five
+we get all of the ecrs and let's go
+ahead and throw in some eurofighter
+typhoons as well
+so let's see what we got here germany
+i'm going to do the 2007 version what do
+we have as far as
+ef 2000 units go ahead and close this
+one out real quickly
+uh upper right actually we want to do
+operators
+near final typhoon operators
+operational history german air force
+luther
+let's see here we have i'm not even
+going to try to pronounce that one i'm
+just going to embarrass myself as always
+let's take a look we have jg 74 sounds
+pretty good
+jg74 let's get ourselves some of the
+regular ones i'll go ahead and say they
+contributed 12 of those which is quite a
+few
+and we might as well grab some of the
+two-seaters as well
+let's see who can we get the two seaters
+from saudi arabia sounds pretty good
+uh spain spain spain spain what can we
+get from spain here spain spain spain
+spain uh they have allah
+and say looks pretty good to me and
+we'll say we're just going to get 12 of
+those as well
+uh they've got 40 more 73 ordered 61 in
+operation okay
+sounds pretty good and now we're in
+great shape and now our nato allies are
+ready to go ah starting to get somewhere
+in the scenario okay
+let's go ahead and do a save as we'll
+save this as o2
+and now we're in great shape now it's
+time to equip now one of the things
+about the scenario is we could set it up
+so that the user could actually pick
+what
+elements they want in each one of their
+actual targets and air bases and
+everything like that
+that's going to take some time and
+that's a lot of time because we're using
+sustained ops
+we're looking for a maximum effort
+strike so basically as the designer we
+need to design
+what is it going to look like that
+you're going to need so first things
+first it's going to seem a little weird
+i'm going to run the scenario for a
+millisecond which is what i just did i'm
+going back up to scenario times and
+updates and reset that so we're able to
+populate everything that we can see
+so let's go ahead and start with the
+carrier group now we have
+quite a few helicopters which we can use
+for some asw purposes
+and we have fa-18es and we also have
+some f's
+we have some hawkeyes we've got some
+really really really really good stuff
+here
+so first things first when picking out
+what the players get you need to
+consider how many aircraft are going to
+be available in the scenario at any
+given time
+now some people are so against doing it
+this way
+and basically they'll have it set up so
+if the aircraft is available the
+aircraft is available kind of a thing
+so in the general rule one third of your
+aircraft of your group at any given time
+are operational it's just kind of how
+that works
+and again this can change depending on
+spare part availability damage
+so we have a total of 24 f-18es now the
+e-model the f-18
+is basically the single-seater so i like
+to i don't know from a role-play
+perspective
+give these types of aircraft more
+basically doing close air support kind
+of things
+doing things where they're doing any
+sort of escort work and not really the
+hard
+part of doing precision guided work
+which i'll save for the f models
+so let's go ahead and grab our skies
+i'll do eight from this group
+we'll assign these guys to be standard
+combat air patrol sounds pretty good to
+me
+this group right here we'll assume these
+guys are all getting maintenance again
+it takes a tremendous amount of
+maintenance to keep these things flying
+we're going to grab this group here and
+we're going to all assign them some
+harms
+we also have j cells which are wonderful
+for this purpose and like all these
+really really things we have slammers
+but in this case i'm going to be using
+short range arms which gets us
+four harm missiles which means that four
+times eight that's 32. this is not going
+to be enough harms to be honest
+realistically these guys all gotta have
+harms too in order to be safe in this
+given scenario but we'll be okay
+so let's go ahead and grab our f models
+let's go and grab eight of these
+ready arm these are going to be our
+strikers
+so when it comes to strikers obviously
+since this is in the days of pgms let's
+take advantage of our pgm technology
+so let's see what we have we have the j
+cells which are pretty pretty solid at
+this with the broach one which works
+really really well
+what do we get 650 nautical miles is
+plenty i just want to confirm the range
+on the broach real quickly
+what do we have 45 nautical miles now
+that's how you make a strike let's do
+the short range version so we can carry
+four so this is 32 of these incredibly
+long range weapons now we're striking
+properly
+all right we're going to set these guys
+they're all sitting in maintenance
+pretty much below decks kind of
+cooling their heels let's grab this
+group right here
+ready arm uh let's see what we got here
+we must do the same load up we can also
+use the slammers
+slammers are kind of neat because
+they're very very precise there's a
+slammer oh that's a new one
+let's go ahead and take a look what we
+got for range 150 nautical miles
+sweet let's do that too all right
+looking pretty good
+and these guys are all sitting in
+maintenance as well uh you know hangar
+queens
+that's usually how it goes that is some
+awesome stuff
+all right hawkeyes we only ever ever
+ever get to use two at a time even
+though we've got that many of them
+these two are going to be sitting there
+getting tuned up in a new engine stuff
+like that
+prowlers we're going to need these so
+i'll say about two-thirds of them we're
+going to do short range
+massive massive massive amounts of noise
+jamming we're going to need that like
+crazy
+our seahawk buddies basically these guys
+are all sitting there on
+decks right now just sort of relaxing
+this is not a scenario where we want to
+be employing these
+one really fun use of these by the way
+is to load them up with hellfires
+and actually set them out to go do some
+damage and things like that
+and our c2a greyhounds they're not
+really relevant to this scenario so i'm
+just going to set them to maintenance
+even though these guys basically carry
+the bail
+you know vip stuff like that and now our
+carry action
+group is ready to go let's go up to here
+oh boy oh boy what do we pick first
+well first things first let's work
+backwards let's grab our bomber squadron
+we're going to assume that eight of
+these again about two-thirds or so are
+actually available
+so the jason's would be a spectacular
+choice for this because these are
+stealth cruise missiles do we get a
+picture yeah this thing is basically
+undetectable
+so if we give that to the player we're
+going to give them a really easy time
+and honestly
+there's too much air defense in syria
+not to so we're going to go ahead and
+give those again this is going to be a
+pretty easy scenario
+once we're done with it we'll go to the
+f-15 strike eagles now the strike eagles
+are going to have to do some actual work
+which is you know kind of a bummer but
+you know do what you got to do
+so let's see here what do we make these
+guys have again we don't have a lot of
+that really long range stuff with strike
+eagles which is actually kind of a
+bummer
+so we're going to get stuck using bj
+dams and again this is the 2008 version
+so we do get the laser j dams which are
+awesome you can actually plink with
+these
+we get eight of them oh yeah oh yeah
+definitely laser jade amps let's do it
+go ahead and set the rest of these to
+maintenance okay so now we have the
+block 52s 50s and 40s to play with
+so what do we do so for the first group
+i'm going to go ahead and assign them to
+be dedicated
+basically protect us from surface to our
+missiles
+so i'll go ahead and grab some arms
+we're going to need a stupid number of
+arms for this particular exercise
+go ahead and ready to immediately again
+this is what you're giving the players
+to work with so you can give them less
+you can give them all mark
+82s if you want to make this difficult
+the block 50s i'm going to dedicate this
+entire group they're going to be
+basically our shooters so we need to
+give ourselves a pretty hefty amount so
+we're going to take an average
+now we should do the sniper pod too yeah
+it looks good
+they're going to be our escorts go ahead
+and set the rest of them to maintenance
+and our block 52s let's go ahead and use
+these as shooters as well
+so in this case since the other the
+f-15es have to get into the nasty bits
+we might as well use these guys as well
+we'll do the laser j dams as well let's
+give them something a little bit heavier
+actually
+i don't want the mark 82 something with
+a little bit more kick there we go
+ready arm beautiful now we have a bunch
+of pgms on our f-16s as well
+there's no refueling assets for nato
+because we have such a short drive which
+is going to be great
+i'm happy with that i'm not going to
+change any more of those details
+all right let's go to matavik so we have
+a couple
+different groups here to play with again
+just smaller groups
+now you could get a little political you
+could get any way you want with this but
+basically countries that don't have
+bigger military budgets can't throw as
+many aircraft
+in the air at a time so we're going to
+represent this by only being able to use
+a third of each individual of these
+units
+so we get six so the d model that's a
+two seater so whatever we use it for is
+going to let itself well for two seating
+purposes
+so in this particular case since we're
+going to be targeting their chemical
+facilities
+let's go ahead and equip them with harms
+we're going to need a lot of harms in
+this scenario
+we're going to go ahead and set this to
+maintenance we have the dg so we're also
+going to use these particular aircraft
+for the purpose of harms
+i know you're sitting there going why
+are you using so many of these things
+you're going to need them all trust me
+i'll do some maintenance there we have
+the c models again we'll go ahead and
+grab six of them because this is all
+we're going to get
+we'll go ahead and equip these guys with
+pythons we'll do heavy these are going
+to be our air-to-air escorts again air
+air is probably not going to be as big
+of a concern
+as everything else the gr4 this is a
+really really nice fixed-wing attack
+aircraft
+they're obviously again the uk pretty
+hefty military budget there so i'm
+actually going to say that we get about
+that many
+as well they're going to be carrying the
+very very short range alarms
+it's not that short range they're short
+range the alarms are not the alarm is a
+wonder missile by the way
+neuro fighter these are basically going
+to have to have to have to be
+air to air as you can see so with
+intercept heavy cap standard cap we'll
+set them as standard cap
+the eurofighters have another really
+neat quirk to them and that's that
+magical capital
+radar in the front the italians with the
+goodwill we're going to go ahead and
+equip these with harms as well
+i know you're sitting there going this
+seems like an awful lot of harms trust
+me you're going to need them
+ready arm let's go ahead and say i'll
+give these to standard cap oh we can
+drop some bombs too
+hmm we'll let them drop some bombs
+i'll do mark 83s what does that give us
+for range 180 too short we need the one
+this gives us a little bit more room
+ready arm maintenance available done
+done nato is now ready to go the cis is
+now ready to go the only people we have
+to take a look at now is syria
+so i'm gonna go ahead and save the
+scenario and then we're gonna go switch
+over to the
+sirius side and we're gonna start
+getting everything ready for them
+syria okay let's go ahead and start from
+the top
+all right so these are training aircraft
+so they're basically have no point in
+being in our scenario other than to be
+irritating which is actually kind of a
+fun way to use them
+syria does not have the best
+infrastructure as far as aircraft goes
+so if you have more than four
+in a squadron ready to go at any time
+i'm impressed
+so let's go ahead and equip them for
+some long range rocketry here
+i actually want them to be already
+equipped we'll do ready immediately
+i'm assuming the rest of this group here
+is probably not able to do anything
+they're probably going to be sitting
+there without missing wheels and stuff
+again i'm trying not trying to be mean
+or anything like that just the reality
+is
+it's very difficult to maintain an
+airplane so it looks pretty good there
+all right we'll screw it over to
+abdulmar okay so big 23 ms
+it's getting a little old so again
+you're not going to have a lot of these
+available
+so let's see here we're definitely going
+to be an air to air configuration here
+grab the rest of them technically you
+could just delete the rest of them
+because you're not going to be able to
+shoot at them anyway
+these l39s we're going again this would
+be a training squadron is probably what
+you're dealing with here they're
+probably going to be carrying some
+rockets or bombs or something like that
+again this is more of a role play kind
+of way of looking at things the zos are
+slightly different than the zas
+so let's go ahead and say they're
+equipped with these and we'll say the
+rest of that squadron is all sitting in
+maintenance these guys can be tooling
+around doing training exercises while
+everybody else is flying around
+i don't know that's an airplace right
+there
+oh mig-21mf so the mig-21 is easier to
+maintain than mc23 so i'd say they
+probably have a little bit better
+availability
+so let's say that in this case they have
+about half of the squadron ready to go
+oh r3s that is not what i consider the
+fanciest air-to-air missile but hey work
+with what you got
+all right let's go ahead and see this
+one we've already got them all set scoot
+down the hama air base
+mf's so these are very difficult to
+maintain as well so there's probably not
+going to be as many of them available
+the rest of these again if you're
+playing a attack the airport sort of a
+scenario you could come in here and you
+could destroy all of them on the ground
+if you really wanted to
+but we're not doing so it's not the
+point of the scenario mc21 bis
+again it's going to be a little easier
+to take care of these so we're going to
+go ahead and have a few of these
+r60s that's going to be scary
+i don't like r60 i hate the m version
+that thing is a legitimately good
+missile
+all right ready then immediately
+remember they only have sustained ops it
+looks pretty good
+all right scroll down here we're going
+to go over to charade
+and maps again you can have the same
+exact problem it's going to be very
+difficult to keep more than
+too many of these going at a single time
+again we can delete all them we can also
+randomly select this
+i'll actually get a dice out from time
+to time to actually roll how many are
+now the fitter is an older style
+aircraft it is not an air-to-air
+aircraft but you can use it for
+air-to-air purposes
+so let's go ahead and get that ready to
+go
+set that to maintenance for the rest of
+the squadron let's go ahead and grab
+this group as well
+and this is the m4 version i'm going to
+equip them for air-to-air purposes even
+though they're an air-to-ground sort of
+again do what you got close that out
+save your game
+tyus again we have some more m4s here
+we'll say about half of them because
+they're not impossible to maintain
+go ahead and grab that right there as
+well maintenance ready available go
+ahead and close that oh
+mig 25s now these aircraft are nice but
+they're probably
+ancient i'd be amazed how many of these
+still actually can fly
+that being said they probably still
+can't so we have two different squadrons
+here you squadron's group of 15.
+we're going to be extremely generous and
+say that we have the ability to have
+four of these at a time so that looks
+pretty good we're going to see the rest
+of the squadrons
+sitting there being hanger queens go
+ahead set these to maintenance
+grab this group as well ready arm
+set them long range as well and we'll
+make these mixed you never know
+come down here the rest of you guys are
+all going to have to relax
+and we also have these mk fencer d's
+these are very very very high
+maintenance aircraft
+so we're going to see we have about four
+of them and again we've got nothing we
+can really use
+for this particular purpose so let's
+just equip them with some i don't know
+fab 250s
+just to just because again these are
+more for role-playing purposes we could
+delete that squadron because they don't
+form any purpose
+coming down here getting closer to
+israel so we have the bns which again
+you can have some maintenance challenges
+with a mig-23
+so we're probably not gonna have as many
+and again the bn model of the mig-23 is
+not a fighter
+so let's go ahead and do some rbks that
+seems pretty fair
+ready arms the rest of these guys to
+maintenance go ahead and grab this group
+let's just assume
+again you're basically role-playing by
+equipping things inside of these
+particular groups good maintenance looks
+all right let's go to sequoia mig-29s
+this is one of the most advanced
+aircraft syria has
+so chances are if they're going to put
+money into things we're going to put it
+into the mig-29s
+so i'm going to say that we probably get
+six out of each squadron available
+again if we were targeting the airfield
+itself we could do that but we're trying
+to cut
+down on how much lag we're going to
+create because we have so
+many units in a given scenario so we
+actually want to
+go ahead and already arm make sure that
+we're ready immediately otherwise not
+going to be available at the beginning
+of the scenario go ahead set these guys
+to maintenance
+this is going to be the biggest nato
+threat there's going to be in this
+scenario because these things are just
+so darn maneuverable so these are
+maintenance
+and now we have a wonderful amount this
+is scary
+so the player is going to have to be
+very resourceful and basically capping
+that airport
+all right with some mls which again you
+can have those maintenance problems it
+looks like i had a little bit of fun
+going ahead and
+setting this up so i'll grab this group
+set these to the apex missile which is
+eh it's okay you can actually outfly
+it's kind of neat
+we of course m3s again very very high
+maintenance aircraft go ahead and set
+these guys to also be carrying air their
+again this is a pretty considerable
+air-to-air threat here
+it doesn't look like it but it really is
+once you combine it with all the sams
+all right so we're going to come down
+here okay so we have two different
+squadrons here available again
+we're just going to predict that we have
+this many available at a time go down to
+this one
+keeping a look at the time real quickly
+it looks good ready arm
+we'll set these to the apex as well and
+we'll go ahead and clean this out
+looks good and we have make 21 bits
+which are easier to maintain there's
+also multiple squadrons here
+so looks like we have two so we're just
+going to assume that we have about let's
+say six at each
+we'll say these guys have the more
+advanced r60s
+and go ahead and grab the squadron as
+well go ahead and say they also have the
+r60s
+keep in mind when they come back to
+below they'll have to re-arm those and
+we are
+all set delightful so now syria's got an
+air force now it's time to start
+thinking about their artificial
+intelligence
+so first things first let's go and take
+a look at what we have at our disposal
+here so we have a really strong
+concentration of surface to our missiles
+this is basically a death slash kill
+zone in here
+so anything that flies through here is
+you can't get through this
+safely basically plus you got the mix to
+make things even more exciting so i'm
+not that worried about that
+now scrolling up to the tippy top there
+where are our chemical facilities
+so our chemical facilities are here
+which means this is what we have to
+protect this poor one on the coast is so
+doomed it's going to be the first one to
+get hit so it looks to me like we need
+to really concentrate our
+air efforts here as well as to a lesser
+extent kind of in here
+so i'm probably going to split my forces
+oh it's going to be a disaster trying to
+protect these
+well we're going to try so what i'm
+going to do is i'm going to come down
+here real quickly i'm going to go ahead
+and
+create a mission let's go ahead and
+control right click create area
+rectangle
+so i'm going to go ahead and do one of
+these things we're going to assume the
+people in lebanon are being generous and
+they're going to give us a little bit of
+protection here
+obviously you don't want to cross into
+turkey if you can help it
+all right that's looking pretty good all
+right let's go ahead and create our
+mission
+call it cap patrol
+and aaw patrol okay so let me show you a
+really cool trick here
+so the problem with the good player is
+they're basically going to launch their
+aircraft as soon as they unpause the
+scenario
+we can take advantage of that by
+intentionally timing our own aircraft to
+be airborne when they get there so to
+speak
+so let's go ahead and set that up so
+first things first we'll use the third
+rule we'll try to keep up four units per
+class in the air at a time
+we're going to try to keep them inside
+of the area that they're actually going
+to be protecting here
+actually we'll get rid of the
+prosecution area we don't need that
+that's going to be fine so
+basically going to be tooling around in
+here i'm actually going to expand this
+just a teeny tiny bit
+again the sams are going to do all the
+real work down here so i'm not that
+concerned with it
+go ahead and deselect those that looks
+pretty good to me that looks pretty good
+to me all right let's get our aircraft
+i'll go ahead and grab this squadron the
+squadron of the squadron the squadron we
+can't use those
+that squadron i don't think those are
+going to work at
+everybody oh yeah those are not going to
+do much for us how about these guys yep
+so that's a lot of aircraft but keep in
+mind out of this aircraft there's only
+going to be about 20 airborne at a time
+which is going to be deadly
+now here's the problem we're going to be
+facing in this scenario remember when i
+was warning you that the nato
+destroyers are basically going to shoot
+down our airplanes if they get too high
+we're going to have to reduce our
+station altitude significantly to
+protect ourselves with this mountain
+range right
+here so i'm actually going to set the
+station altitude much
+lower let's do 12 000 feet attack
+altitude is anything you want transit
+naturally i'm going to set that to 12
+000 feet too
+we've got to keep them low otherwise
+nato will slap them out of the skies
+basically with their ship based sam
+systems and that's not a fun scenario if
+you ask me
+okay so the other thing i'm going to do
+is i'm going to delay this mission
+i don't want it to activate until let's
+say
+it's going to take them it's going what
+is that a distance of 100 nautical miles
+that's going to take them 15 minutes to
+cover that distance so we want to wait
+15 minutes before we start the scenario
+but we actually want to make 10 minutes
+so let's see our scenario starts at 3
+30 so we will wait until 3 40 before we
+activate
+and of course we'll deactivate the
+mission a little later on so 1330 that's
+a pretty it's about 10 hours later
+that's actually fair we'll deactivate it
+at that time
+and now we're in great shape that way
+we're not wasting fuel when native is on
+the way kind of a thing it's just
+a way to look at things a little bit
+differently now for kind of like an rp
+purposes we're going to add one more
+i'm actually going to use most of syria
+for this
+we'll use that we'll borrow this
+waypoint grab this one
+so what i'm going to do is i'm going to
+create a little mission where those
+little training planes are basically
+doing their little thing
+kind of scooting around being annoying
+that way we distract
+the player just

@@ -1,1032 +1,1019 @@
-0.4	hello everyone uh now we're moving on to
-2.2	part four uh sorry about part three
-3.8	there i think it got kind of cut off
-5.2	when i'm just doing a little upload
-6.5	thing and
-7.1	i don't want to go back and have to redo
-8.6	all that so i'm just gonna kind of
-9.9	continue kind of where i left off the
-11.4	good news is we got things pretty well
-12.7	set up
-13.4	so now it's time to start actually
-15.2	considering what this mission is going
-17.0	to run like
-17.8	and the first thing i want to do is set
-19.2	up the cis and make sure everything is
-21.0	ready to go
-21.8	for them as far as you know the
-23.8	airstrike and the kind of things going
-25.3	off in the background
-26.5	now when i was playing with this a
-28.0	little bit earlier i've discovered that
-29.7	our poor little sukhoi-24 is here
-31.7	let's go grab them real quick and crush
-33.6	in the dark they have the problem that
-35.9	they are basically long-range bombers
-39.0	which means that unfortunately what
-40.4	they're going to do is they're literally
-42.0	going to fly over here all the way into
-43.7	the dead of syria and get themselves
-45.2	slaughtered by the syrian air force and
-47.8	air defense which
-48.8	isn't cool if you ask me again you can
-51.2	decide
-51.8	how this would have gone completely on
-53.1	yourself the other thing you have to
-54.3	think about too is keep in mind that
-55.8	nato is going to be helping us out this
-57.3	whole time as well
-58.5	so maybe it's not as bad as i think it's
-60.2	going to be maybe it's going to be worse
-62.2	i don't actually
-63.0	know so we can always set it up and give
-64.7	it a try real quick so i've got
-66.6	everything all set up
-67.4	basically what it is i created a couple
-68.9	missions i've got one mission where
-70.4	we're going to be launching basically
-71.6	everything at the chemical weapons
-73.0	factories
-73.8	and of course i have some support units
-75.4	as well so i'm going to go ahead and
-76.9	unpause
-77.6	speed up time a little bit and we're
-78.9	going to watch kind of how things play
-80.3	out
-80.9	now this is the part of the scenario
-82.2	where the fun starts i'm sure you're
-83.5	sitting there going man it was a really
-85.0	tedious working through and having to
-86.6	build each and every one of those air
-88.2	bases and make sure everything's set
-89.5	correctly
-90.8	unfortunately you have to do that if
-92.5	you're going to have a pretty good
-93.3	scenario and again smaller scenarios
-95.1	take a lot less time to construct
-97.9	so you want to kind of be thinking about
-99.1	that a little bit itself by the way if
-100.6	you probably noticed a bunch of aircraft
-102.1	got just got shot down
-103.2	and you're probably wondering what was
-104.2	that about well like i was warning you
-105.9	before
-106.5	we have nato here and they're just going
-108.6	to shoot down everything yep
-110.5	like i said so we already need to start
-112.8	thinking about
-113.5	oh there's another one so nato is just
-115.8	going to sit here and literally shoot
-117.0	down
-117.4	oh my gosh look at that that's got to be
-120.6	terrible anyway let's take a look at how
-121.9	things are going with russia
-123.0	so these are sukhoi 24 m's uh they're in
-126.4	a bad bad bad bad bad
-128.1	place because what they're basically
-129.2	going to do is fly right over the air
-130.7	defense zone
-131.6	and get themselves completely shot down
-133.4	which is kind of must be a waste of
-134.6	everybody's time kind of a thing
-136.2	uh meanwhile of course so we have
-137.8	everybody else who's come ripping in
-139.4	here with the score 27s they ran out of
-141.1	fuel and had to refuel
-142.7	that doesn't work very well all these
-144.2	poorest so core 24s are all going to get
-146.0	shut down
-146.6	keep in mind this is really our fault as
-148.2	nata because we're not actually helping
-150.1	them out
-151.2	so they're just it's going to end so
-153.4	poorly oh what's this hey
-155.0	look at that there's one of those cruise
-156.5	missiles we ordered up a little while
-157.8	ago
-158.8	bam okay so that did not work very well
-162.4	at all and again we want to take a look
-164.1	at ways to improve this
-165.4	re-enter scenario again i don't know why
-167.1	it's interested in staring at the ground
-168.6	there but that's fine too
-170.2	and we'll go ahead and play with things
-171.8	first thing i want to do actually today
-173.2	is i'm actually going to go into cereal
-175.5	and i'm going to create an exclusion
-177.0	zone for them and basically this is
-178.7	going to allow them to automatically
-180.0	classify enemy contacts
-181.7	as soon as they cross their
-183.0	international bar their you know their
-184.4	borders basically
-185.6	all right that looks pretty good to me
-187.3	let's go ahead in mission editor we'll
-189.1	go ahead uh
-190.0	exclusion zone create new looks good
-192.7	anybody who crosses that line is
-193.9	considered
-194.5	hostile all right looks good to me
-196.4	actually it looks really good to me
-198.1	i like that good i'm gonna go ahead and
-200.2	save that real quick i'm gonna go ahead
-201.4	and save our scenario real quick and now
-203.0	i'm gonna rethink how we're gonna handle
-204.5	the cis real quickly
-205.9	i could be using russian federation
-207.2	instead of cis but i decided to be a
-208.8	little bit more inclusive here
-210.6	so what are we going to do i'm thinking
-212.7	of taking those
-214.1	sukhoi 24s this group right here and
-216.1	come up with something else that we
-217.2	could do with them
-218.1	for example i could assign them all to
-220.1	be escorts which actually is not a bad
-222.1	idea to be honest
-223.5	because that would simplify things
-224.7	because again in that case we're
-225.8	basically supporting the tuple of 22s
-228.2	which is not a bad idea if you think
-230.2	about it as a matter of fact
-231.8	i'm going to do that switch these like
-234.3	this
-234.9	i'm going to go ahead and just reassign
-236.1	them real quickly we'll set them to be
-237.8	escorts
-238.5	and i'm actually pretty happy with that
-240.4	that's going to work that's going to
-241.5	work a lot better you'll see
-243.0	now the next thing i want to think about
-244.2	too is russia is basically targeting the
-246.0	chemical plants which is what austin
-247.4	nato is going to be doing too
-248.9	which means from a player perspective we
-250.7	might not have anything to do
-252.6	so let's find out what exactly happens
-254.2	here and i'll make a decision on that i
-255.8	just saved a moment ago by the way
-257.4	pretty much every time you twitch your
-258.6	hand you have to press ctrl s and that's
-260.2	when you're making scenarios
-261.4	and it's always good to version your
-262.9	scenarios too so it makes it a little
-264.5	bit simpler to build
-265.7	so here comes our tuple of 22. 22s you
-267.4	can actually grab these during testing
-269.0	and move them if it makes your life a
-270.3	little bit simpler
-271.3	but again i like to kind of see how
-272.6	things play out notice by the way the
-274.2	scenario is running
-275.4	great and one of the reasons it's
-277.2	running so well is we took so much time
-279.1	to replace so many of those ground units
-281.4	with those single unit airports again if
-283.0	the airports were supposed to be a
-284.1	target we could have built them out
-285.2	individually
-286.1	which would have been fine as well but
-287.5	like i said that's really really going
-289.0	to kill us as far as performance goes
-291.0	and the concentration here in this
-292.4	mission is basically attack those
-294.2	chemical targets
-295.4	now remember what i was saying earlier
-296.6	with the cruise missiles basically
-297.8	winning the scenario automatically
-299.8	so if you wanted to be more sandboxy of
-301.7	course you could just leave those in in
-302.9	which case you could choose whether or
-304.2	not to use the cruise missiles
-305.6	but as you're going to see in about two
-307.0	seconds oh man there's a lot of flights
-308.5	up here
-309.4	basically what's going to happen is our
-311.0	tuple of 22s are going to fire and
-313.1	that's going to be the end of that
-314.2	mission
-314.9	because they're going there they go
-316.4	there's one
-318.3	there's another one
-321.6	and off go the cruise missiles and that
-324.4	is the end of the scenario as far as
-325.9	we're concerned
-327.0	yep looks like every single one of those
-329.0	cruise missiles succeeded
-330.8	a couple did a couple didn't i take it
-332.2	back
-335.2	some of them got shot down and that's it
-338.3	nicely done nicely down let's actually
-340.3	see how that worked
-341.5	so uh they lost five out of the nine
-344.2	chemical plants
-345.3	to those cruise missile strikes so i'm
-347.3	not gonna lie i'm actually okay with
-348.7	that
-349.4	i know that sounds kind of weird but
-350.7	what i will do i'm going to reopen the
-352.9	scenario again
-353.9	i'm going to set it so those tuple of
-355.7	22s only carry a single cruise missile
-358.7	each
-359.2	you know it's a very subtle change but
-361.1	it's a change it's going to really
-362.2	dramatically it change
-363.5	how effective they're going to be let's
-365.4	go back up to angles
-367.1	and let's go ahead and reduce their
-368.8	loadout again this is just a quick and
-370.2	easy way to fix this problem
-371.9	beautiful so now they can't do as much
-373.9	damage leaving us a native with
-375.3	something to do
-376.2	yes everybody contributes to my scenario
-378.8	equal opportunity
-380.1	all right let's go back to nato real
-381.4	quick so nato is in pretty good shape
-384.0	here
-384.6	so i don't really need to change any of
-386.4	the elements of nato
-387.8	but we can also start experimenting a
-389.6	little bit to see just how effective the
-391.8	syrian air defense is going to be
-394.0	so what i'm going to do is put together
-395.4	basically a fake airstrike
-397.4	see how bad it is and then go in and
-399.8	change any loadouts that i need and then
-401.7	we'll start looking at scripting and
-402.8	things like that
-403.8	all right so let's go ahead and see
-404.8	chemical facilities we're going to say
-406.5	ctrl f11
-409.4	give me gary oldman
-412.8	let's do land strike for those who say
-415.8	leon the professional you understand
-417.3	where i'm coming from
-418.4	uh let's see here give me everybody
-421.6	except i don't need helicopters anything
-423.8	else i don't need in this group
-425.4	okay this thing's going to explode when
-427.3	i click it so i'm actually going to
-428.4	click that i'm going to do off axis
-429.9	attack as well
-431.1	that looks good that looks good that
-432.4	looks good man this would be such a
-434.0	project to coordinate i wouldn't even
-435.6	want to imagine
-436.8	obviously we don't need the greyhounds
-438.0	and we don't need the e2's which i'm
-439.6	pretty sure i grabbed by accident
-441.5	uh we need those we need those we need
-443.2	those
-445.8	uh oh apparently we left a couple
-448.1	aircraft out but that happens all the
-449.4	time
-450.6	all right looks good looks good looks
-451.9	good all right let's do it so these guys
-453.4	are going to be strikers
-454.4	these guys are going to be escorts
-457.4	these guys are going to be escorts
-460.5	these guys are going to be strikers
-463.1	escorts
-465.8	this is going to be escorts that's not
-468.0	even going to be enough trust me
-469.4	these guys are going to be escorts
-471.5	tornadoes
-472.4	clearly going to be escorts strike
-475.3	eagles gonna be strikers
-476.7	your fighter typhoons you're going to
-478.5	actually be doing the job
-479.8	these group are going to be escorts
-482.6	tornado gr1s you are going to be escorts
-485.7	ea2s you're going to be escorts yikes
-488.6	super hornets you're going to be doing
-489.8	the d
-490.3	super hornets you're going to be escorts
-492.9	i believe
-493.7	nope yes you're all escorts bam now
-496.9	that's what i call an alpha strike i
-499.8	think the scenario has already gotten
-501.0	too big to be honest but again
-502.6	let's try it see what happens right so
-504.6	one thing i want to do real real quickly
-506.2	again this is just from experience i'm
-507.8	just going to do weapon release
-509.0	i'm going to tell them not to waste the
-511.6	stupid arms i
-512.9	hate it when they do that let's see here
-515.7	harms okay you're allowed to fire
-517.9	one no more because otherwise they're
-520.8	just going to waste them
-521.6	and that's going to be awful because
-522.8	there's going to be so many air defense
-524.6	units attacking us it's going to be a
-525.9	waste of our time
-527.2	all right so we have the alarms as well
-528.6	go ahead add those
-531.0	close close all right prepare for lag
-535.5	go
-536.5	[Laughter]
-541.8	come get some and i already see
-545.6	their missiles have been launched and
-547.7	we're already being engaged
-549.3	so let me make things a little bit
-550.4	simpler let's grab our carry about a
-552.3	group here
-553.0	action group let's turn their radars on
-555.1	i know that's naughty
-556.2	but they have nctr on these carriers so
-558.8	they can actually identify the aircraft
-561.0	very very quickly
-562.1	and then they can automatically make it
-563.5	much much simpler for all of our
-564.8	strikers to do what our strikers are
-566.3	going to do
-568.1	and here comes the fireworks
-570.0	[Music]
-572.2	wow that slowed things down nicely look
-575.3	at how many aircraft
-576.1	there are i think this is a complexity
-579.4	three scenario if i had to uh guess so
-581.1	far
-582.0	again i just like to let it rip don't
-583.5	touch it don't don't touch it
-585.6	just let it do its thing by the way all
-589.0	these little question marks are all sam
-590.4	batteries that were identified by the
-591.8	eurofighters really really really good
-593.8	radar system
-595.4	oh we're getting yelled at oh you knew
-598.0	that was coming
-600.2	remember when i said that we're trying
-601.6	to keep the lag of the scenario down by
-603.4	reducing the number of units
-605.3	there might be a very powerful lesson
-606.8	which you're learning right here
-611.1	oh man just listen to those sound
-612.6	effects it's crazy
-617.4	fan song yeah those are all attacking
-620.1	all the strike radars
-621.9	i'm actually a little disappointed here
-623.9	because from syria's perspective anybody
-625.4	across the line is automatically hostile
-627.2	which means they're going to get engaged
-628.6	and since we're dealing with clear skies
-630.0	today
-630.5	they're going to have no difficulty in
-632.2	the slightest identifying facts
-634.3	remember by the way russia's launched
-635.8	their aircraft as well so we don't want
-637.7	to accidentally engage them
-640.1	this is so great to watch reduce my
-643.5	volume considerably here
-647.6	oh man look at that oh my gosh look at
-650.8	all the harms
-652.6	that's so crazy
-656.3	interesting thing is the syrian air
-657.5	force doesn't seem to be that present
-659.4	here which means when we do that mission
-661.0	activation we might have had to have
-662.5	done it
-663.0	sooner so that's again another
-664.7	consideration we need to do right away
-666.8	and again there's nothing stopping us
-668.6	from grabbing our ohio class and just
-670.5	launching a wall of tomahawks at syria
-673.0	and again that's something you want to
-674.2	think about when you're designing the
-675.8	scenario itself
-677.2	and again i'm just trying to get a feel
-678.4	for everything is playing out here
-679.8	straight flush that's a very very long
-681.7	range radar
-682.6	now one thing you could do is you could
-683.8	actually come in here and do one of
-684.6	these things
-687.4	because when you do this now they're
-688.7	just free targets so now anybody who can
-690.6	launch can launch adam
-692.1	you're also going to get things like
-693.4	tomahawk launches look at how many
-695.7	oh my god there's the rest of the syrian
-697.6	air force
-699.5	look at this this is absurd
-704.6	yeah this would be a great use for
-706.1	command pe by the way i put it on
-707.8	i think what is it command line mode or
-709.4	something like that just like let it rip
-711.5	because this is just like oh this is
-713.2	nutty uh he's obviously hostile
-715.0	kill it and again if you design your
-717.3	mission carefully you shouldn't have an
-718.4	issue these guys all launched and
-719.5	they're landing already that was an easy
-721.2	mission they sort of took off
-722.5	got to about 100 feet and launched and
-724.2	got one away
-726.6	let's take a look that's a smirch that
-729.0	is not a friendly radar
-730.6	this merge comes off mig-25 if i recall
-732.7	correctly
-734.2	look at how many oh my gosh look at the
-736.5	missiles
-738.5	i wonder how much this strike is going
-740.2	to cost
-741.8	i mean each one of those is like half a
-743.2	million dollars a piece uh
-745.1	i'm not going to do the math quickly but
-747.3	i promise you it's going to be expensive
-751.3	that's probably a sam yes it's going to
-753.0	go right by not doing anything i think
-754.2	we use standoff weapons because this
-755.4	could have been a lot harder
-757.0	now the joke here is after our initial
-758.7	strike which is going to cost us like 9
-760.3	f-18s
-761.4	the missiles from the russians are going
-763.2	to show up five minutes later and
-764.6	finish the job if we missed so it's like
-766.8	oh that's not fair
-769.3	oh man imagine if you're the iads trying
-772.0	to coordinate this i believe get more
-773.7	amrams
-775.1	i told you guys you shouldn't have
-776.3	crossed into the ocean you're just going
-777.7	to get slapped out of the sky don't do
-779.4	that
-780.7	ah let's not do that
-784.2	now if we want to have a little bit of
-785.2	fun let's go ahead and reduce time for a
-786.5	second here let's grab this am ram let's
-788.1	go to 3d view
-789.4	this is one of the cool parts of command
-792.4	all right i finally got this working a
-794.6	little bit better but like if i zoom out
-796.8	ah nightmare what are you doing
-800.6	oh there's one of the sequoia 20s or 22s
-802.7	i should say
-803.6	now the fun thing is let me go scoot
-804.9	over here you can see just how
-806.8	nutty this is keep in mind these guys
-808.2	are flying nice and low to stay
-810.0	underneath these particular radars of
-812.0	course that means they get to rain and
-813.5	rams on them
-814.4	anybody who's played enough flight sims
-815.9	no you don't want to be below the target
-817.8	if you're going to do
-818.8	uh you can be below the enemy aircraft
-821.0	if you're trying to look up at it
-822.5	it's much simpler than looking down at
-824.2	it even with modern doppler
-825.6	set filter what's going on over here
-828.7	oh boy all the f-18s doing the thing all
-830.7	right close that out
-831.8	speed of time again we're testing our
-833.4	scenario here so we need to be studying
-835.1	what kind of goes on well
-836.6	and again players who micromanage like
-838.4	crazy they're going to do things quite a
-839.7	bit differently
-842.5	i'm going to kind of study the
-843.6	interactions i'm going to study the
-844.8	losses i want to study the difficulty
-846.7	am i having fun right now i mean right
-848.7	now this is like i think it's a little
-850.6	nutty i think our scenario got what they
-852.2	call scenario creeped
-853.9	where basically now you've got too many
-855.8	things going on in a given scenario at
-857.7	any given time i think it's a big 23.
-860.9	i did not catch it oh well no big deal
-863.1	all right we've probably done pretty
-864.3	good amount of damage over here to the
-865.7	syrian aed i'm actually a little
-866.8	disappointed in these sams they weren't
-868.6	near oh
-870.2	we have two unknowns keep in mind of
-871.8	course there's a lot of radar
-873.4	calculations going on right now
-876.3	i don't know how much of the syrian air
-877.7	force we were able to disable at this
-879.4	time
-881.0	all right that one got hit let's take
-883.0	another one
-884.2	at the very least i don't think syria's
-886.6	air force is going to be effective
-888.4	after this unfortunately the losses are
-890.9	going to be so high there's going to be
-892.2	so many fired generals and kernels and
-894.2	everything when this is all over it's
-895.4	just going to be terrible
-897.0	yep those are room 66s somebody must
-899.0	have got too close
-902.2	oops merch is doing his thing those
-903.5	mig-25s are pretty scary what do we got
-905.7	here ah jasms
-907.1	so those are penetrators i don't think
-908.6	we're gonna lose any bm1s these things
-910.6	by the way
-911.1	are the only weapon i know that
-912.8	effectively reliably will kill an s400
-915.0	every time
-915.8	you don't use one use a few but they're
-918.1	just so effective because they have
-919.9	basically no radar cross section
-922.1	i'm actually going to scroll down take a
-923.3	look real quickly and
-925.6	here we go radar cross section -42 wow
-929.6	yeah you can't detect it i'm going to go
-932.6	ahead and pause by accident
-934.4	continue running things okay looks like
-936.3	an s6 s86 was my least favorite sam
-939.0	system of all
-940.1	of the falcon series i've been shot down
-942.4	by this thing more than
-943.4	every sam system combined i think the
-945.8	one i've never been shot down by i'm
-947.4	just trying to think real quickly like
-948.5	an sa-4 i don't think i've ever actually
-950.0	been hit by
-951.0	same thing with the sa-5 it's another
-952.6	one i just just never get hit by
-954.2	it's just one of those things it's there
-955.8	but it's just i don't know not much of a
-957.9	threat
-958.7	it's very easy to avoid as long as you
-960.0	know it launches you of course and again
-962.0	the sa-5s it's a strategic system oh
-963.9	cool the euro fighters are doing a
-965.4	wonderful job here and they're all
-966.5	running out of fuel
-967.7	like he's trying to dodge and save his
-969.3	life here and he's being hunted down by
-970.8	this group of uh
-972.0	24s that is an interesting thing to be
-974.7	chased down with but
-976.4	unfortunately this guy might just run
-977.7	out of fuel i really wish i could back
-979.2	him out and get him out of there
-980.4	because he's trying to stay underneath
-981.7	oh my gosh look at how many people just
-983.1	fired at him at once
-984.6	wow can that thing turn i knew that
-986.7	aircraft was maneuverable
-987.9	but damn and this guy's getting chased
-990.6	down by something right here too that we
-992.1	can't see so it could be a little sam an
-993.8	sa6 or something like that
-996.2	all right it looks like our scenario is
-998.1	just about ready for our results check
-1000.4	what are these jasms yeah those are
-1001.9	jasms
-1003.8	what's this is the chemical facilities
-1005.4	bam done
-1007.8	why are you here oh the b1 oh my gosh
-1012.2	we're about to lose a b1
-1014.8	oh no look at how many aircraft you're
-1017.0	chasing after him
-1018.6	oh no run run run
-1021.7	oh he's gone he brought
-1023.5	[Music]
-1024.7	well that was the most expensive
-1026.4	expensive expensive thing ever
-1029.4	oh he's still going he's still going
-1032.6	this little scenario is running nice and
-1034.0	smoothly because we finally uh you know
-1035.6	got some of those units
-1036.6	out of the air bam bam
-1039.8	bam bam bam we gotta be missions of
-1041.3	course remember i was telling you about
-1042.4	russia a little while ago
-1043.5	we picked up their 850.
-1047.3	all right let's go take a look that's
-1048.6	probably some more rims you guys are
-1049.9	stupid you shouldn't have followed us
-1051.0	all the way to turkey you paid the
-1052.4	ultimate price
-1055.0	funk and he's gone all right i think
-1057.6	that's about it for our first run of the
-1059.7	scenario go ahead and reduce time here
-1061.5	these guys are all going to land sooner
-1062.9	or later and let's see how
-1064.9	terrible that went so they lost some of
-1067.5	those
-1068.1	they lost so many airplanes
-1072.0	so many airplanes and if we could detect
-1074.3	them on the ground too we could have
-1075.3	done even more damage here
-1076.7	let's scroll down here we have some
-1077.9	gishes they went through an awful lot of
-1079.9	those look how many sa3s they fired
-1082.7	nice oh my gosh look at that that's
-1085.7	probably all their sams
-1087.0	russia lost nothing they didn't shoot
-1088.5	anything we lost three lancers
-1090.6	oh my gosh this is going to be difficult
-1092.7	to explain
-1095.0	a couple f-18s usually we lose the most
-1096.8	look at how few f-16s we lost though
-1098.8	isn't that incredible caught one tornado
-1101.5	ecr
-1102.8	oh my gosh this is terrible look at how
-1106.3	many harms we went through and that
-1107.8	still
-1108.0	was not enough because if you actually
-1109.4	go up here
-1111.8	you'll notice just how many they didn't
-1113.8	lose
-1114.9	and again we come down here they lost
-1116.2	five essay twos and one of those six of
-1118.5	those but really they didn't lose that
-1120.7	many but they did of course lose a
-1122.6	couple radars and you can see they lost
-1124.1	probably about 40 radars out of all that
-1126.5	so that was kind of a bummer first run
-1129.0	so let's go ahead and reload the
-1130.1	scenario
-1131.1	try not to save by accident
-1134.4	let's go ahead and reload it back to
-1135.6	nato and let's do this the right way
-1138.6	and this is the way that some players
-1139.8	are going to approach your scenario and
-1141.0	this is the easy way to do it
-1142.3	so let's see here shift f1 let's go
-1145.0	ahead and grab
-1146.2	these go ahead and grab this one right
-1148.9	here
-1149.7	this looks good to me actually let's be
-1151.4	very rude
-1153.0	uh okay let's go to this one we have 12
-1155.8	seconds uh
-1157.0	i need to waste allocate 27
-1160.0	begin the mission
-1165.5	[Music]
-1169.8	and i think we won already
-1184.2	actually we didn't we should have
-1185.0	launched a lot more so let's see how
-1187.1	well that version of the scenario
-1188.6	actually went let's go to losses and
-1190.0	expenditures
-1191.7	so we got three out of the nine so that
-1193.9	doesn't surprise me but look at how many
-1195.4	weapons they wasted in attempting to try
-1197.1	to shoot them down we used 27 tomahawks
-1199.2	for that
-1199.9	so uh that didn't work so let's be
-1203.0	cheaper let's be cheaper let's go back
-1204.5	to nato
-1206.6	let's zoom ourselves back out here let's
-1208.6	go ahead to
-1209.6	this one let's go get a pair of b1bs
-1212.6	this is all we're going to need
-1215.0	all right give us a moment for them to
-1216.2	launch
-1219.0	come on there they are point them at
-1222.4	syria
-1225.3	pause grab
-1228.7	this many now allocate two
-1233.7	and we'll grab this one allocate to
-1237.4	fire
-1241.2	return to base
-1245.1	so uh how are things going and that
-1247.4	one's destroyed
-1249.0	and that was destroyed and that one's
-1250.4	destroyed and that was destroyed
-1252.9	that one's destroyed that one's
-1254.5	destroyed and that one's destroyed okay
-1256.6	let's see how we did as far as this
-1258.3	scenario goes
-1259.8	so we got eight of them we got i believe
-1261.8	that is all of them yeah that's all of
-1263.3	them
-1263.5	we won
-1264.0	[Music]
-1264.2	[Laughter]
-1266.9	so what i wanted to show you with this
-1268.3	is just how you have to think about how
-1270.2	to balance the scenario
-1271.6	and hopefully you can see a little bit
-1273.2	into that and again right now you're
-1274.7	realizing holy smokes after all that
-1277.0	that's how easy this scenario was it's
-1278.7	like
-1279.2	that's the reality and again that's why
-1281.3	you know the best weapons are the ones
-1282.5	where you don't have to fly through this
-1283.9	nasty air defense situation
-1285.8	to do it so the last thing we want to do
-1288.4	in our scenario
-1289.2	today is we want to go ahead and start
-1290.6	setting up some of the events so that we
-1292.5	actually have the ability to go ahead
-1294.6	and score the mission and you know
-1296.2	decide things that happen
-1297.8	so let's go ahead to scenario editor
-1299.9	let's go to events
-1301.1	editor and go to events and go ahead and
-1303.3	create a new event
-1305.0	uh we'll say nato air loss
-1308.1	we'll do event is repeatable because it
-1309.7	happens more than once
-1311.2	a unit is destroyed
-1315.6	nato aircraft lost so we'll say nato
-1320.2	we'll say aircraft we'll say we'll do
-1322.3	any aircraft technically
-1323.8	we can set it to class we can even say
-1325.3	specific unit now you could go through
-1327.1	and create one of these for each
-1328.7	different type of aircraft in nato and
-1330.2	give each one a score but in this case
-1332.0	i'm just going to keep it kind of
-1332.9	generic any loss is a loss under
-1335.2	conditions we'll go ahead and create a
-1336.4	nice easy one we'll do scenario has
-1338.2	started
-1341.0	go ahead close that make sure after you
-1342.7	click this you have to actually click
-1343.8	this button to make it work
-1345.1	and then we'll go ahead and create an
-1346.4	action lose points create new action
-1350.6	lose 100 points side nato
-1355.0	minus 100 and while we're at it
-1360.7	we'll go ahead and gain some points as
-1362.2	well this will be nato and we'll say
-1364.5	50 points this will make sense in a
-1367.5	minute
-1368.0	beautiful all right close that we'll
-1369.6	need that one in a minute
-1371.0	close that we'll go ahead down to here
-1373.0	lose 100 points if you lose an airplane
-1375.3	okay i'll go back to my event editor
-1378.4	create a new one
-1381.5	click on edit we're going to go ahead
-1383.4	and edit this one and we're going to go
-1384.8	ahead and create a
-1385.6	new one we can actually clone it it's
-1387.1	usually the easy way to do it
-1389.2	uh chemical facility destroyed
-1393.8	so then we're going to say target side
-1395.5	syria we're going to say
-1397.0	land facility we're going to say i think
-1399.4	it is structure open if i recall
-1401.2	correctly
-1402.3	we'll find out about two seconds hey we
-1404.9	were right
-1405.4	beautiful close that so chemical
-1407.9	facility destroyed
-1409.0	make sure you change this one here add
-1410.6	trigger remove selected chemical
-1412.6	facility droid
-1413.8	this time we're going to gain some
-1414.9	points remove selected awesome
-1417.8	so the one that i want okay sorry
-1421.5	chemical facility destroyed
-1425.4	all right that works pretty well we'll
-1426.6	go ahead and do that again and then
-1428.6	we're going to say
-1429.6	syria aircraft loss event is repeatable
-1433.0	obviously because uh you know this could
-1434.5	happen a few times
-1435.9	we'll go ahead and edit triggers go
-1437.6	ahead and clone this one go ahead and
-1439.1	edit that again cloning is always going
-1440.7	to be a little bit quicker
-1442.5	seria aircraft loss we'll do
-1445.6	syria aircraft that's it
-1450.2	close that one go ahead and say siri
-1451.9	aircraft lost the scenario has started
-1454.9	and edit actions we'll actually clone
-1457.0	this one
-1458.9	edit gain five points
-1462.5	i know that doesn't seem like much but
-1464.0	you decide what's valuable in your
-1465.6	scenario i'm not going to tell you it's
-1467.2	your scenario
-1468.7	add action okay we want to test those to
-1470.8	make sure they work so i'm going to save
-1472.3	our scenario one more time
-1474.2	once you start programming things you
-1475.8	want to be very very cautious again i'll
-1477.5	save my scenario one extra time
-1479.4	okay so let's go ahead and test to make
-1481.0	sure this works correctly
-1483.5	i will do a proper tomahawk strike here
-1486.6	go grab this one grab this one and we'll
-1488.8	allocate five each
-1490.6	that was 45 tomahawk cruise missiles wow
-1493.1	that's a lot again we're just testing
-1495.0	fire
-1498.6	off they go several of them just got
-1502.2	shot down
-1502.9	it happens
-1512.6	looks like we're going to be relatively
-1513.8	successful here again we're just testing
-1515.1	the scenario
-1516.3	okay so that worked okay let's go to
-1519.1	group m
-1519.8	let's go ahead and turn on our sensors
-1521.3	here
-1523.0	declare these all hostile it's being
-1525.5	awfully rude of us i know we don't even
-1526.9	know the guys it's not like we've taken
-1528.1	them out to lunch or anything we got to
-1529.2	know them
-1530.0	but we just want to test real quick to
-1531.4	make sure that everything's working as
-1532.7	far as our scoring goes
-1534.5	let's go to losses and expenditures so
-1536.5	we got four of them which is kind of
-1538.1	embarrassing not gonna lie
-1539.4	and we went through 45 tomahawks so that
-1542.1	just goes to show that it's going to be
-1543.8	can't get away that cheaply uh let's
-1546.3	take a look here
-1547.1	so we'll go ahead and go down to scoring
-1549.7	let's see how we're doing here
-1550.9	so we have 200 points and we got four of
-1553.2	those scoring log looks accurate looks
-1555.0	pretty good to me
-1556.0	i'm actually going to grab my mission
-1557.7	group here again we're just testing i'm
-1559.0	going to move them a little bit closer
-1561.7	do one of these things real quickly and
-1563.0	just kind of let my escorts start firing
-1565.4	all of their rims and their smrs
-1569.3	because we just need to test to make
-1570.5	sure this scoring works correctly as
-1572.0	well
-1572.5	imagine being on the receiving end of
-1574.0	that
-1576.2	oh it's so unfair when you use modern
-1578.3	weapons correctly
-1585.4	now the neat thing is they can actually
-1586.6	auto retarget which i always thought was
-1587.8	neat
-1589.3	all right that should be more than
-1590.5	enough damage to test that theory
-1592.6	i'm also going to launch a single
-1593.7	airplane uh let's see here oh a hawkeye
-1596.3	what a waste
-1598.0	yeah let's launch a hawkeye why not you
-1599.7	can't defend himself
-1602.2	once he gets airborne i'm gonna send him
-1603.8	right into the middle of the action
-1609.1	come on look at all these missiles
-1612.5	valid strategy by the way expensive
-1615.3	strategy but valid strategy
-1617.4	maybe the real test in this mission is
-1619.0	how can you do this mission cheaply
-1621.4	all right i'm gonna launch this guy at
-1622.7	maximum speed medium altitude
-1625.1	right through the center of the enemy
-1626.7	units and we're going to test to see if
-1629.0	we lose points because we lost an
-1630.8	aircraft
-1631.8	let's go ahead and move him right into
-1633.0	the thick of it it won't take them long
-1635.6	to find him
-1636.6	of course with all those missiles
-1637.7	zipping by maybe it doesn't matter
-1640.6	man this is an expensive scenario
-1644.0	how come he's got shots oh there it is
-1645.4	is that the one nope missed
-1647.4	overshot
-1652.0	look oh he's got no all right let's take
-1654.4	a look to see what happened with our
-1655.4	scoring just to make sure everything
-1656.6	worked the way we expected it to
-1658.6	so we can see our score yeah look what
-1660.7	happened when we lost him
-1662.3	so let's take a look here aircraft look
-1664.2	at all look at how many aircraft we shut
-1665.7	down losses and expenditures man this is
-1667.6	such a cheap strategy isn't it
-1669.8	all right we have se3s we have those we
-1672.2	have everything looks good
-1673.5	we can see how many ridiculous amounts
-1675.0	of weapons we've already gone through
-1676.4	here
-1676.9	but we've done a lot of damage here
-1679.4	another fun thing to do too is you can
-1681.0	actually order them to just do a strike
-1683.0	so you know i could sit here and i could
-1684.2	just click on it and they'll
-1685.2	automatically predict exactly how many
-1687.0	they need
-1687.4	so everyone get all the chemical
-1688.6	facilities i can do something like that
-1689.8	and automatically launch tomahawks
-1691.8	it's just like ah it's so cheap when you
-1693.6	do it this way okay
-1695.2	so now where are our next steps
-1698.6	so at this point the scenario is
-1700.6	tremendously easy to play
-1702.3	all you have to do is get some jasms and
-1703.9	you can end it pretty much right away
-1706.0	however the point of this exercise is
-1707.7	basically to show you how you can start
-1709.2	from one end of scenario
-1710.6	and go all the way through to the other
-1712.6	end of the scenario and you kind of
-1714.2	little pieces in there
-1715.4	how you do your little edits as a player
-1717.6	as a designer i recommend getting rid of
-1719.1	the b1s completely they don't serve a
-1720.6	purpose for you right now
-1721.8	the tomahawks are interesting but you
-1723.5	can also reduce it so you'll have five
-1725.0	of them or something like that
-1726.3	in which case you're forced to do things
-1728.6	the hard way
-1729.8	so that would be a great way to
-1730.9	rebalance and make the scenario a little
-1732.4	bit more challenging
-1733.6	so i'm going to go ahead and last thing
-1735.0	i like to do let's go ahead and reopen
-1736.3	the scenario one more time
-1739.8	go ahead and open it real quickly is i
-1741.4	like to add the briefing so you know you
-1743.2	can come in here you can add a briefing
-1744.6	a lot of people
-1745.6	destroy enemy syrian
-1749.9	chemical facilities so when you do a
-1752.8	briefing
-1753.4	generally people like the fancy ones
-1755.0	when you get really really standard so
-1756.4	what you can do is you can actually go
-1757.7	online
-1758.4	you can type in nato briefing format pdf
-1761.9	or something like that
-1763.1	and what they'll do is actually not nato
-1765.4	let's see uh
-1766.2	us mission briefing format pdf
-1769.8	uh let's see is this the one we want
-1771.6	i'll know it if i see it correctly
-1773.6	uh is this the handout yes this is it so
-1776.0	it'll actually walk you through
-1777.5	what a briefing looks through like in
-1779.6	all the different different types that
-1781.0	information that you want to have in it
-1782.4	the types of weather and stuff like that
-1784.2	some people actually use templates for
-1786.8	this particular purpose oh cool they
-1788.0	have a whole briefing thing in here neat
-1789.6	but again all this stuff is available at
-1791.3	your disposal online
-1792.7	and one of the best places to look is
-1794.2	other scenarios if you want to grab
-1795.8	something
-1796.6	all right hopefully this has been
-1797.6	helpful this has been a quite a project
-1799.8	as you probably have seen you know this
-1801.4	is a not something you can do quickly
-1803.3	and i've got a lot
-1804.3	probably another two hours of just
-1806.5	tweaking to try to make this scenario a
-1808.7	little bit more difficult for the player
-1810.3	because right now it's a vacation
-1812.3	unless of course you try to do the
-1813.4	hardware where you drive everybody
-1814.9	through the middle and basically get
-1816.1	slaughtered
-1817.2	one thing i will leave with you know
-1818.9	this is again these videos have been
-1820.6	long enough
-1821.2	is it might not be a bad idea to give
-1823.3	syria some
-1824.3	optical units i know that sounds a
-1826.1	little weird but let me show you what i
-1827.8	mean by that
-1828.7	so let's go ahead this is just one quick
-1830.5	little last thought in the back of my
-1831.8	head
-1832.4	i'm going to go to syria i'm going to go
-1835.0	ahead and add a watch tower
-1838.6	and i'm going to edit the watchtower
-1841.3	sensors just i'm just doing this real
-1842.8	quickly this is something just occurred
-1843.8	to me off the top of my head i'm going
-1845.1	to add a sensor
-1847.3	we'll use some low light tv generic low
-1850.5	light tv surveillance add
-1852.6	so now i'm going to clone this
-1858.3	i'm pressing shift c by the way not
-1859.8	regular c it's a copy
-1861.8	and now i have a whole set of optical
-1864.1	identification platforms all the way
-1865.7	around syria that are going to be
-1866.9	difficult to detect
-1868.2	go ahead and save the scenario the
-1869.4	scenario is now ready to go
-1871.3	hopefully this video series has been
-1872.6	helpful i know it's a long kind of
-1874.1	rambled i definitely left details in
-1875.6	there you probably didn't need to watch
-1877.0	like going through each one of those
-1878.5	but it's kind of worth it to see how you
-1880.2	can build these scenarios quickly
-1881.8	effectively and have a pretty
-1883.2	challenging thing in the end
-1885.0	enjoy
+# C: MO Building a Mission Part 4 of 4
+Video: https://www.youtube.com/watch?v=0SwTlMuRdzo
+Video ID: 0SwTlMuRdzo
+
+hello everyone uh now we're moving on to
+part four uh sorry about part three
+there i think it got kind of cut off
+when i'm just doing a little upload
+thing and
+i don't want to go back and have to redo
+all that so i'm just gonna kind of
+continue kind of where i left off the
+good news is we got things pretty well
+set up
+so now it's time to start actually
+considering what this mission is going
+to run like
+and the first thing i want to do is set
+up the cis and make sure everything is
+ready to go
+for them as far as you know the
+airstrike and the kind of things going
+off in the background
+now when i was playing with this a
+little bit earlier i've discovered that
+our poor little sukhoi-24 is here
+let's go grab them real quick and crush
+in the dark they have the problem that
+they are basically long-range bombers
+which means that unfortunately what
+they're going to do is they're literally
+going to fly over here all the way into
+the dead of syria and get themselves
+slaughtered by the syrian air force and
+air defense which
+isn't cool if you ask me again you can
+decide
+how this would have gone completely on
+yourself the other thing you have to
+think about too is keep in mind that
+nato is going to be helping us out this
+whole time as well
+so maybe it's not as bad as i think it's
+going to be maybe it's going to be worse
+i don't actually
+know so we can always set it up and give
+it a try real quick so i've got
+everything all set up
+basically what it is i created a couple
+missions i've got one mission where
+we're going to be launching basically
+everything at the chemical weapons
+factories
+and of course i have some support units
+as well so i'm going to go ahead and
+unpause
+speed up time a little bit and we're
+going to watch kind of how things play
+out
+now this is the part of the scenario
+where the fun starts i'm sure you're
+sitting there going man it was a really
+tedious working through and having to
+build each and every one of those air
+bases and make sure everything's set
+correctly
+unfortunately you have to do that if
+you're going to have a pretty good
+scenario and again smaller scenarios
+take a lot less time to construct
+so you want to kind of be thinking about
+that a little bit itself by the way if
+you probably noticed a bunch of aircraft
+got just got shot down
+and you're probably wondering what was
+that about well like i was warning you
+before
+we have nato here and they're just going
+to shoot down everything yep
+like i said so we already need to start
+thinking about
+oh there's another one so nato is just
+going to sit here and literally shoot
+down
+oh my gosh look at that that's got to be
+terrible anyway let's take a look at how
+things are going with russia
+so these are sukhoi 24 m's uh they're in
+a bad bad bad bad bad
+place because what they're basically
+going to do is fly right over the air
+defense zone
+and get themselves completely shot down
+which is kind of must be a waste of
+everybody's time kind of a thing
+uh meanwhile of course so we have
+everybody else who's come ripping in
+here with the score 27s they ran out of
+fuel and had to refuel
+that doesn't work very well all these
+poorest so core 24s are all going to get
+shut down
+keep in mind this is really our fault as
+nata because we're not actually helping
+them out
+so they're just it's going to end so
+poorly oh what's this hey
+look at that there's one of those cruise
+missiles we ordered up a little while
+ago
+bam okay so that did not work very well
+at all and again we want to take a look
+at ways to improve this
+re-enter scenario again i don't know why
+it's interested in staring at the ground
+there but that's fine too
+and we'll go ahead and play with things
+first thing i want to do actually today
+is i'm actually going to go into cereal
+and i'm going to create an exclusion
+zone for them and basically this is
+going to allow them to automatically
+classify enemy contacts
+as soon as they cross their
+international bar their you know their
+borders basically
+all right that looks pretty good to me
+let's go ahead in mission editor we'll
+go ahead uh
+exclusion zone create new looks good
+anybody who crosses that line is
+considered
+hostile all right looks good to me
+actually it looks really good to me
+i like that good i'm gonna go ahead and
+save that real quick i'm gonna go ahead
+and save our scenario real quick and now
+i'm gonna rethink how we're gonna handle
+the cis real quickly
+i could be using russian federation
+instead of cis but i decided to be a
+little bit more inclusive here
+so what are we going to do i'm thinking
+of taking those
+sukhoi 24s this group right here and
+come up with something else that we
+could do with them
+for example i could assign them all to
+be escorts which actually is not a bad
+idea to be honest
+because that would simplify things
+because again in that case we're
+basically supporting the tuple of 22s
+which is not a bad idea if you think
+about it as a matter of fact
+i'm going to do that switch these like
+this
+i'm going to go ahead and just reassign
+them real quickly we'll set them to be
+escorts
+and i'm actually pretty happy with that
+that's going to work that's going to
+work a lot better you'll see
+now the next thing i want to think about
+too is russia is basically targeting the
+chemical plants which is what austin
+nato is going to be doing too
+which means from a player perspective we
+might not have anything to do
+so let's find out what exactly happens
+here and i'll make a decision on that i
+just saved a moment ago by the way
+pretty much every time you twitch your
+hand you have to press ctrl s and that's
+when you're making scenarios
+and it's always good to version your
+scenarios too so it makes it a little
+bit simpler to build
+so here comes our tuple of 22. 22s you
+can actually grab these during testing
+and move them if it makes your life a
+little bit simpler
+but again i like to kind of see how
+things play out notice by the way the
+scenario is running
+great and one of the reasons it's
+running so well is we took so much time
+to replace so many of those ground units
+with those single unit airports again if
+the airports were supposed to be a
+target we could have built them out
+individually
+which would have been fine as well but
+like i said that's really really going
+to kill us as far as performance goes
+and the concentration here in this
+mission is basically attack those
+chemical targets
+now remember what i was saying earlier
+with the cruise missiles basically
+winning the scenario automatically
+so if you wanted to be more sandboxy of
+course you could just leave those in in
+which case you could choose whether or
+not to use the cruise missiles
+but as you're going to see in about two
+seconds oh man there's a lot of flights
+up here
+basically what's going to happen is our
+tuple of 22s are going to fire and
+that's going to be the end of that
+mission
+because they're going there they go
+there's one
+there's another one
+and off go the cruise missiles and that
+is the end of the scenario as far as
+we're concerned
+yep looks like every single one of those
+cruise missiles succeeded
+a couple did a couple didn't i take it
+back
+some of them got shot down and that's it
+nicely done nicely down let's actually
+see how that worked
+so uh they lost five out of the nine
+chemical plants
+to those cruise missile strikes so i'm
+not gonna lie i'm actually okay with
+that
+i know that sounds kind of weird but
+what i will do i'm going to reopen the
+scenario again
+i'm going to set it so those tuple of
+22s only carry a single cruise missile
+each
+you know it's a very subtle change but
+it's a change it's going to really
+dramatically it change
+how effective they're going to be let's
+go back up to angles
+and let's go ahead and reduce their
+loadout again this is just a quick and
+easy way to fix this problem
+beautiful so now they can't do as much
+damage leaving us a native with
+something to do
+yes everybody contributes to my scenario
+equal opportunity
+all right let's go back to nato real
+quick so nato is in pretty good shape
+here
+so i don't really need to change any of
+the elements of nato
+but we can also start experimenting a
+little bit to see just how effective the
+syrian air defense is going to be
+so what i'm going to do is put together
+basically a fake airstrike
+see how bad it is and then go in and
+change any loadouts that i need and then
+we'll start looking at scripting and
+things like that
+all right so let's go ahead and see
+chemical facilities we're going to say
+ctrl f11
+give me gary oldman
+let's do land strike for those who say
+leon the professional you understand
+where i'm coming from
+uh let's see here give me everybody
+except i don't need helicopters anything
+else i don't need in this group
+okay this thing's going to explode when
+i click it so i'm actually going to
+click that i'm going to do off axis
+attack as well
+that looks good that looks good that
+looks good man this would be such a
+project to coordinate i wouldn't even
+want to imagine
+obviously we don't need the greyhounds
+and we don't need the e2's which i'm
+pretty sure i grabbed by accident
+uh we need those we need those we need
+those
+uh oh apparently we left a couple
+aircraft out but that happens all the
+time
+all right looks good looks good looks
+good all right let's do it so these guys
+are going to be strikers
+these guys are going to be escorts
+these guys are going to be strikers
+this is going to be escorts that's not
+even going to be enough trust me
+tornadoes
+clearly going to be escorts strike
+eagles gonna be strikers
+your fighter typhoons you're going to
+actually be doing the job
+these group are going to be escorts
+tornado gr1s you are going to be escorts
+ea2s you're going to be escorts yikes
+super hornets you're going to be doing
+the d
+super hornets you're going to be escorts
+i believe
+nope yes you're all escorts bam now
+that's what i call an alpha strike i
+think the scenario has already gotten
+too big to be honest but again
+let's try it see what happens right so
+one thing i want to do real real quickly
+again this is just from experience i'm
+just going to do weapon release
+i'm going to tell them not to waste the
+stupid arms i
+hate it when they do that let's see here
+harms okay you're allowed to fire
+one no more because otherwise they're
+just going to waste them
+and that's going to be awful because
+there's going to be so many air defense
+units attacking us it's going to be a
+waste of our time
+all right so we have the alarms as well
+go ahead add those
+close close all right prepare for lag
+go
+[Laughter]
+come get some and i already see
+their missiles have been launched and
+we're already being engaged
+so let me make things a little bit
+simpler let's grab our carry about a
+group here
+action group let's turn their radars on
+i know that's naughty
+but they have nctr on these carriers so
+they can actually identify the aircraft
+very very quickly
+and then they can automatically make it
+much much simpler for all of our
+strikers to do what our strikers are
+going to do
+and here comes the fireworks
+[Music]
+wow that slowed things down nicely look
+at how many aircraft
+there are i think this is a complexity
+three scenario if i had to uh guess so
+far
+again i just like to let it rip don't
+touch it don't don't touch it
+just let it do its thing by the way all
+these little question marks are all sam
+batteries that were identified by the
+eurofighters really really really good
+radar system
+oh we're getting yelled at oh you knew
+that was coming
+remember when i said that we're trying
+to keep the lag of the scenario down by
+reducing the number of units
+there might be a very powerful lesson
+which you're learning right here
+oh man just listen to those sound
+effects it's crazy
+fan song yeah those are all attacking
+all the strike radars
+i'm actually a little disappointed here
+because from syria's perspective anybody
+across the line is automatically hostile
+which means they're going to get engaged
+and since we're dealing with clear skies
+today
+they're going to have no difficulty in
+the slightest identifying facts
+remember by the way russia's launched
+their aircraft as well so we don't want
+to accidentally engage them
+this is so great to watch reduce my
+volume considerably here
+oh man look at that oh my gosh look at
+all the harms
+that's so crazy
+interesting thing is the syrian air
+force doesn't seem to be that present
+here which means when we do that mission
+activation we might have had to have
+done it
+sooner so that's again another
+consideration we need to do right away
+and again there's nothing stopping us
+from grabbing our ohio class and just
+launching a wall of tomahawks at syria
+and again that's something you want to
+think about when you're designing the
+scenario itself
+and again i'm just trying to get a feel
+for everything is playing out here
+straight flush that's a very very long
+range radar
+now one thing you could do is you could
+actually come in here and do one of
+these things
+because when you do this now they're
+just free targets so now anybody who can
+launch can launch adam
+you're also going to get things like
+tomahawk launches look at how many
+oh my god there's the rest of the syrian
+air force
+look at this this is absurd
+yeah this would be a great use for
+command pe by the way i put it on
+i think what is it command line mode or
+something like that just like let it rip
+because this is just like oh this is
+nutty uh he's obviously hostile
+kill it and again if you design your
+mission carefully you shouldn't have an
+issue these guys all launched and
+they're landing already that was an easy
+mission they sort of took off
+got to about 100 feet and launched and
+got one away
+let's take a look that's a smirch that
+is not a friendly radar
+this merge comes off mig-25 if i recall
+look at how many oh my gosh look at the
+missiles
+i wonder how much this strike is going
+to cost
+i mean each one of those is like half a
+million dollars a piece uh
+i'm not going to do the math quickly but
+i promise you it's going to be expensive
+that's probably a sam yes it's going to
+go right by not doing anything i think
+we use standoff weapons because this
+could have been a lot harder
+now the joke here is after our initial
+strike which is going to cost us like 9
+f-18s
+the missiles from the russians are going
+to show up five minutes later and
+finish the job if we missed so it's like
+oh that's not fair
+oh man imagine if you're the iads trying
+to coordinate this i believe get more
+amrams
+i told you guys you shouldn't have
+crossed into the ocean you're just going
+to get slapped out of the sky don't do
+ah let's not do that
+now if we want to have a little bit of
+fun let's go ahead and reduce time for a
+second here let's grab this am ram let's
+go to 3d view
+this is one of the cool parts of command
+all right i finally got this working a
+little bit better but like if i zoom out
+ah nightmare what are you doing
+oh there's one of the sequoia 20s or 22s
+i should say
+now the fun thing is let me go scoot
+over here you can see just how
+nutty this is keep in mind these guys
+are flying nice and low to stay
+underneath these particular radars of
+course that means they get to rain and
+rams on them
+anybody who's played enough flight sims
+no you don't want to be below the target
+if you're going to do
+uh you can be below the enemy aircraft
+if you're trying to look up at it
+it's much simpler than looking down at
+it even with modern doppler
+set filter what's going on over here
+oh boy all the f-18s doing the thing all
+right close that out
+speed of time again we're testing our
+scenario here so we need to be studying
+what kind of goes on well
+and again players who micromanage like
+crazy they're going to do things quite a
+bit differently
+i'm going to kind of study the
+interactions i'm going to study the
+losses i want to study the difficulty
+am i having fun right now i mean right
+now this is like i think it's a little
+nutty i think our scenario got what they
+call scenario creeped
+where basically now you've got too many
+things going on in a given scenario at
+any given time i think it's a big 23.
+i did not catch it oh well no big deal
+all right we've probably done pretty
+good amount of damage over here to the
+syrian aed i'm actually a little
+disappointed in these sams they weren't
+near oh
+we have two unknowns keep in mind of
+course there's a lot of radar
+calculations going on right now
+i don't know how much of the syrian air
+force we were able to disable at this
+all right that one got hit let's take
+another one
+at the very least i don't think syria's
+air force is going to be effective
+after this unfortunately the losses are
+going to be so high there's going to be
+so many fired generals and kernels and
+everything when this is all over it's
+just going to be terrible
+yep those are room 66s somebody must
+have got too close
+oops merch is doing his thing those
+mig-25s are pretty scary what do we got
+here ah jasms
+so those are penetrators i don't think
+we're gonna lose any bm1s these things
+by the way
+are the only weapon i know that
+effectively reliably will kill an s400
+every time
+you don't use one use a few but they're
+just so effective because they have
+basically no radar cross section
+i'm actually going to scroll down take a
+look real quickly and
+here we go radar cross section -42 wow
+yeah you can't detect it i'm going to go
+ahead and pause by accident
+continue running things okay looks like
+an s6 s86 was my least favorite sam
+system of all
+of the falcon series i've been shot down
+by this thing more than
+every sam system combined i think the
+one i've never been shot down by i'm
+just trying to think real quickly like
+an sa-4 i don't think i've ever actually
+been hit by
+same thing with the sa-5 it's another
+one i just just never get hit by
+it's just one of those things it's there
+but it's just i don't know not much of a
+threat
+it's very easy to avoid as long as you
+know it launches you of course and again
+the sa-5s it's a strategic system oh
+cool the euro fighters are doing a
+wonderful job here and they're all
+running out of fuel
+like he's trying to dodge and save his
+life here and he's being hunted down by
+this group of uh
+24s that is an interesting thing to be
+chased down with but
+unfortunately this guy might just run
+out of fuel i really wish i could back
+him out and get him out of there
+because he's trying to stay underneath
+oh my gosh look at how many people just
+fired at him at once
+wow can that thing turn i knew that
+aircraft was maneuverable
+but damn and this guy's getting chased
+down by something right here too that we
+can't see so it could be a little sam an
+sa6 or something like that
+all right it looks like our scenario is
+just about ready for our results check
+what are these jasms yeah those are
+jasms
+what's this is the chemical facilities
+bam done
+why are you here oh the b1 oh my gosh
+we're about to lose a b1
+oh no look at how many aircraft you're
+chasing after him
+oh no run run run
+oh he's gone he brought
+well that was the most expensive
+expensive expensive thing ever
+oh he's still going he's still going
+this little scenario is running nice and
+smoothly because we finally uh you know
+got some of those units
+out of the air bam bam
+bam bam bam we gotta be missions of
+course remember i was telling you about
+russia a little while ago
+we picked up their 850.
+all right let's go take a look that's
+probably some more rims you guys are
+stupid you shouldn't have followed us
+all the way to turkey you paid the
+ultimate price
+funk and he's gone all right i think
+that's about it for our first run of the
+scenario go ahead and reduce time here
+these guys are all going to land sooner
+or later and let's see how
+terrible that went so they lost some of
+they lost so many airplanes
+so many airplanes and if we could detect
+them on the ground too we could have
+done even more damage here
+let's scroll down here we have some
+gishes they went through an awful lot of
+those look how many sa3s they fired
+nice oh my gosh look at that that's
+probably all their sams
+russia lost nothing they didn't shoot
+anything we lost three lancers
+oh my gosh this is going to be difficult
+to explain
+a couple f-18s usually we lose the most
+look at how few f-16s we lost though
+isn't that incredible caught one tornado
+ecr
+oh my gosh this is terrible look at how
+many harms we went through and that
+still
+was not enough because if you actually
+go up here
+you'll notice just how many they didn't
+lose
+and again we come down here they lost
+five essay twos and one of those six of
+those but really they didn't lose that
+many but they did of course lose a
+couple radars and you can see they lost
+probably about 40 radars out of all that
+so that was kind of a bummer first run
+so let's go ahead and reload the
+scenario
+try not to save by accident
+let's go ahead and reload it back to
+nato and let's do this the right way
+and this is the way that some players
+are going to approach your scenario and
+this is the easy way to do it
+so let's see here shift f1 let's go
+ahead and grab
+these go ahead and grab this one right
+this looks good to me actually let's be
+very rude
+uh okay let's go to this one we have 12
+seconds uh
+i need to waste allocate 27
+begin the mission
+and i think we won already
+actually we didn't we should have
+launched a lot more so let's see how
+well that version of the scenario
+actually went let's go to losses and
+expenditures
+so we got three out of the nine so that
+doesn't surprise me but look at how many
+weapons they wasted in attempting to try
+to shoot them down we used 27 tomahawks
+for that
+so uh that didn't work so let's be
+cheaper let's be cheaper let's go back
+to nato
+let's zoom ourselves back out here let's
+go ahead to
+this one let's go get a pair of b1bs
+this is all we're going to need
+all right give us a moment for them to
+launch
+come on there they are point them at
+syria
+pause grab
+this many now allocate two
+and we'll grab this one allocate to
+fire
+return to base
+so uh how are things going and that
+one's destroyed
+and that was destroyed and that one's
+destroyed and that was destroyed
+that one's destroyed that one's
+destroyed and that one's destroyed okay
+let's see how we did as far as this
+scenario goes
+so we got eight of them we got i believe
+that is all of them yeah that's all of
+them
+we won
+so what i wanted to show you with this
+is just how you have to think about how
+to balance the scenario
+and hopefully you can see a little bit
+into that and again right now you're
+realizing holy smokes after all that
+that's how easy this scenario was it's
+like
+that's the reality and again that's why
+you know the best weapons are the ones
+where you don't have to fly through this
+nasty air defense situation
+to do it so the last thing we want to do
+in our scenario
+today is we want to go ahead and start
+setting up some of the events so that we
+actually have the ability to go ahead
+and score the mission and you know
+decide things that happen
+so let's go ahead to scenario editor
+let's go to events
+editor and go to events and go ahead and
+create a new event
+uh we'll say nato air loss
+we'll do event is repeatable because it
+happens more than once
+a unit is destroyed
+nato aircraft lost so we'll say nato
+we'll say aircraft we'll say we'll do
+any aircraft technically
+we can set it to class we can even say
+specific unit now you could go through
+and create one of these for each
+different type of aircraft in nato and
+give each one a score but in this case
+i'm just going to keep it kind of
+generic any loss is a loss under
+conditions we'll go ahead and create a
+nice easy one we'll do scenario has
+started
+go ahead close that make sure after you
+click this you have to actually click
+this button to make it work
+and then we'll go ahead and create an
+action lose points create new action
+lose 100 points side nato
+minus 100 and while we're at it
+we'll go ahead and gain some points as
+well this will be nato and we'll say
+50 points this will make sense in a
+minute
+beautiful all right close that we'll
+need that one in a minute
+close that we'll go ahead down to here
+lose 100 points if you lose an airplane
+okay i'll go back to my event editor
+create a new one
+click on edit we're going to go ahead
+and edit this one and we're going to go
+ahead and create a
+new one we can actually clone it it's
+usually the easy way to do it
+uh chemical facility destroyed
+so then we're going to say target side
+syria we're going to say
+land facility we're going to say i think
+it is structure open if i recall
+we'll find out about two seconds hey we
+were right
+beautiful close that so chemical
+facility destroyed
+make sure you change this one here add
+trigger remove selected chemical
+facility droid
+this time we're going to gain some
+points remove selected awesome
+so the one that i want okay sorry
+chemical facility destroyed
+all right that works pretty well we'll
+go ahead and do that again and then
+we're going to say
+syria aircraft loss event is repeatable
+obviously because uh you know this could
+happen a few times
+we'll go ahead and edit triggers go
+ahead and clone this one go ahead and
+edit that again cloning is always going
+to be a little bit quicker
+seria aircraft loss we'll do
+syria aircraft that's it
+close that one go ahead and say siri
+aircraft lost the scenario has started
+and edit actions we'll actually clone
+this one
+edit gain five points
+i know that doesn't seem like much but
+you decide what's valuable in your
+scenario i'm not going to tell you it's
+your scenario
+add action okay we want to test those to
+make sure they work so i'm going to save
+our scenario one more time
+once you start programming things you
+want to be very very cautious again i'll
+save my scenario one extra time
+okay so let's go ahead and test to make
+sure this works correctly
+i will do a proper tomahawk strike here
+go grab this one grab this one and we'll
+allocate five each
+that was 45 tomahawk cruise missiles wow
+that's a lot again we're just testing
+off they go several of them just got
+shot down
+it happens
+looks like we're going to be relatively
+successful here again we're just testing
+the scenario
+okay so that worked okay let's go to
+group m
+let's go ahead and turn on our sensors
+declare these all hostile it's being
+awfully rude of us i know we don't even
+know the guys it's not like we've taken
+them out to lunch or anything we got to
+know them
+but we just want to test real quick to
+make sure that everything's working as
+far as our scoring goes
+let's go to losses and expenditures so
+we got four of them which is kind of
+embarrassing not gonna lie
+and we went through 45 tomahawks so that
+just goes to show that it's going to be
+can't get away that cheaply uh let's
+take a look here
+so we'll go ahead and go down to scoring
+let's see how we're doing here
+so we have 200 points and we got four of
+those scoring log looks accurate looks
+pretty good to me
+i'm actually going to grab my mission
+group here again we're just testing i'm
+going to move them a little bit closer
+do one of these things real quickly and
+just kind of let my escorts start firing
+all of their rims and their smrs
+because we just need to test to make
+sure this scoring works correctly as
+well
+imagine being on the receiving end of
+oh it's so unfair when you use modern
+weapons correctly
+now the neat thing is they can actually
+auto retarget which i always thought was
+neat
+all right that should be more than
+enough damage to test that theory
+i'm also going to launch a single
+airplane uh let's see here oh a hawkeye
+what a waste
+yeah let's launch a hawkeye why not you
+can't defend himself
+once he gets airborne i'm gonna send him
+right into the middle of the action
+come on look at all these missiles
+valid strategy by the way expensive
+strategy but valid strategy
+maybe the real test in this mission is
+how can you do this mission cheaply
+all right i'm gonna launch this guy at
+maximum speed medium altitude
+right through the center of the enemy
+units and we're going to test to see if
+we lose points because we lost an
+aircraft
+let's go ahead and move him right into
+the thick of it it won't take them long
+to find him
+of course with all those missiles
+zipping by maybe it doesn't matter
+man this is an expensive scenario
+how come he's got shots oh there it is
+is that the one nope missed
+overshot
+look oh he's got no all right let's take
+a look to see what happened with our
+scoring just to make sure everything
+worked the way we expected it to
+so we can see our score yeah look what
+happened when we lost him
+so let's take a look here aircraft look
+at all look at how many aircraft we shut
+down losses and expenditures man this is
+such a cheap strategy isn't it
+all right we have se3s we have those we
+have everything looks good
+we can see how many ridiculous amounts
+of weapons we've already gone through
+but we've done a lot of damage here
+another fun thing to do too is you can
+actually order them to just do a strike
+so you know i could sit here and i could
+just click on it and they'll
+automatically predict exactly how many
+they need
+so everyone get all the chemical
+facilities i can do something like that
+and automatically launch tomahawks
+it's just like ah it's so cheap when you
+do it this way okay
+so now where are our next steps
+so at this point the scenario is
+tremendously easy to play
+all you have to do is get some jasms and
+you can end it pretty much right away
+however the point of this exercise is
+basically to show you how you can start
+from one end of scenario
+and go all the way through to the other
+end of the scenario and you kind of
+little pieces in there
+how you do your little edits as a player
+as a designer i recommend getting rid of
+the b1s completely they don't serve a
+purpose for you right now
+the tomahawks are interesting but you
+can also reduce it so you'll have five
+of them or something like that
+in which case you're forced to do things
+the hard way
+so that would be a great way to
+rebalance and make the scenario a little
+bit more challenging
+so i'm going to go ahead and last thing
+i like to do let's go ahead and reopen
+the scenario one more time
+go ahead and open it real quickly is i
+like to add the briefing so you know you
+can come in here you can add a briefing
+a lot of people
+destroy enemy syrian
+chemical facilities so when you do a
+briefing
+generally people like the fancy ones
+when you get really really standard so
+what you can do is you can actually go
+online
+you can type in nato briefing format pdf
+or something like that
+and what they'll do is actually not nato
+let's see uh
+us mission briefing format pdf
+uh let's see is this the one we want
+i'll know it if i see it correctly
+uh is this the handout yes this is it so
+it'll actually walk you through
+what a briefing looks through like in
+all the different different types that
+information that you want to have in it
+the types of weather and stuff like that
+some people actually use templates for
+this particular purpose oh cool they
+have a whole briefing thing in here neat
+but again all this stuff is available at
+your disposal online
+and one of the best places to look is
+other scenarios if you want to grab
+something
+all right hopefully this has been
+helpful this has been a quite a project
+as you probably have seen you know this
+is a not something you can do quickly
+and i've got a lot
+probably another two hours of just
+tweaking to try to make this scenario a
+little bit more difficult for the player
+because right now it's a vacation
+unless of course you try to do the
+hardware where you drive everybody
+through the middle and basically get
+slaughtered
+one thing i will leave with you know
+this is again these videos have been
+long enough
+is it might not be a bad idea to give
+syria some
+optical units i know that sounds a
+little weird but let me show you what i
+mean by that
+so let's go ahead this is just one quick
+little last thought in the back of my
+head
+i'm going to go to syria i'm going to go
+ahead and add a watch tower
+and i'm going to edit the watchtower
+sensors just i'm just doing this real
+quickly this is something just occurred
+to me off the top of my head i'm going
+to add a sensor
+we'll use some low light tv generic low
+light tv surveillance add
+so now i'm going to clone this
+i'm pressing shift c by the way not
+regular c it's a copy
+and now i have a whole set of optical
+identification platforms all the way
+around syria that are going to be
+difficult to detect
+go ahead and save the scenario the
+scenario is now ready to go
+hopefully this video series has been
+helpful i know it's a long kind of
+rambled i definitely left details in
+there you probably didn't need to watch
+like going through each one of those
+but it's kind of worth it to see how you
+can build these scenarios quickly
+effectively and have a pretty
+challenging thing in the end
+enjoy

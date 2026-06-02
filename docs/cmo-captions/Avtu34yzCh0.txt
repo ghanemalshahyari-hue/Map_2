@@ -1,0 +1,599 @@
+# C: MO - Submarine Launched Anti-ship missile comparsion
+Video: https://www.youtube.com/watch?v=Avtu34yzCh0
+Video ID: Avtu34yzCh0
+
+hello everyone today's video we're going
+to be taking a look at the performance
+of various anti-ship submarine launched
+missiles now there's quite a few of
+these and everybody's classically
+terrified of your typical submarine
+launch missile attack because all of the
+sudden you're just kind of going along
+and the ocean explodes and all of a
+sudden there's 60 missiles coming your
+direction from completely whoa what
+happened here now the interesting thing
+about anti-ship missiles is they've
+evolved quite a bit in the early days
+basically you took a MIG 15 stripped out
+the cockpit and put a radar in the nose
+and and they've got a little more
+sophisticated so what we have here is we
+have a pretty straightforward Convoy by
+straightforward probably the least
+straightforward Convoy in the history of
+convoys as a matter of fact it consists
+of uh let's see here we have the new
+Thia we have the adal Clos itself itself
+we have a commercial cruise liner we
+have the witchet on here we have an EK
+we have the DNA we have the Bane Bridge
+we have a commercial tanker and it's
+absolutely chaotic so it'll be very very
+interesting here to see exactly um what
+the results of this are going to be and
+knowing me probably not going to have a
+lot of results for the older missiles
+but we're very interested to see how the
+newer missiles do so let's go ahead and
+do it so the first one we're going to go
+ahead and launch is everybody's favorite
+classic missile and that of course is
+the UGM 84 Lima Harpoon now the Harpoon
+was originally designed basically as an
+anti-submarine missile because in the
+old days if you wanted to launch anti-
+ship missiles from a sub you'd actually
+surface and open the door and fire which
+it's kind of awkward a w whiskey twin
+clone is the one you're looking for by
+the way so um they basically came up
+with this weapon it's it's a curious
+missile it's a kind of like in my mind
+not the OG anti- ship missile we have
+something for that I think it's a ks15
+is the one ah here it is ks1 kind is the
+one I'm thinking of here this is even
+more old school than that one on the
+upside downside of a harpoon of course
+is it's simple it's a Little Weapon It's
+a got a pretty good size Warhead I think
+it's something like um like a 500 lb
+Warhead which is enough it'll definitely
+start some fires it's also incredibly
+reliable and it has a range of about 75
+nautical miles the downside to the
+underwater launched um carpoon of course
+if you take a look at it other than a
+very limited range Active Radar Seeker I
+like how to a passive radar Seeker
+that's kind of a nice touch is the fact
+that it's uh not very fast it's a very
+very very very slow weapon as a matter
+of fact if you come down here you can
+see that get is about 086 mock
+fortunately it's low altitude it is a
+se- scheming weapon which makes it a
+little bit harder to detect so um we
+have to get within 75 miles of this and
+I'm not really looking forward to that
+here so let's go ahead and move
+ourselves to about we'll call it right
+there it looks like a pretty good spot
+so let's give it a shot so I'm doing
+shift F1 holding down shift dragging a
+box around the whole party here so I'm
+going to go and allocate two missiles
+for each one of these so let's grab my a
+UGM 84l we're going to do two missiles
+I'm going to click on allocate now in my
+opinion I don't think any of these
+missiles will actually strike a Target
+you know if I to speed this up a little
+bit here cuz um he actually have to
+Target I mean it is going to be a chaa
+line of missiles basically coming out of
+my sub granted there's a lot of them so
+that makes it a little bit harder for
+the other team but as you can see ah
+now one of the fun things to do with
+this of course is though if you do have
+Tac view here there's always fun to
+watch because you can actually control V
+I'm switching to God's eye view real
+quickly here one of the reasons this is
+fun is if you go to 3D view real quickly
+here just give it a few seconds to boot
+up you can actually uh see that chaa
+line of missiles coming in here and you
+could see this a big group of ships and
+you got a really good idea of the
+different scale of all these different
+vessels like the witch is this little
+tiny thing the Iowa is sitting there in
+the middle kind of doing its thing and
+there's this massive just wall of
+missiles basically uh sneaking up I mean
+when you look at it this way it's uh
+looks like we're going to lose this
+fight but I can already say that the
+Harpoon is not going to do so well here
+and as a matter of fact I doubt many of
+them will strike a Target if
+any standby for return
+fire
+begin here they
+go oh yeah that's working real well
+there oh boy that is just like fire
+lightning every oh my gosh oh oh oh he
+might get through is he G to get through
+is he G to get
+through and that was Garbo Let Me Go a
+and slow down time again here and we'll
+go ahe and take a look at the results so
+um from what we saw there I doubt any of
+those actually got through as a matter
+of fact if we go back to God's eye view
+here I can see that none of them
+penetrated the defensive screen here and
+again this isn't an incredibly strong
+defensive screen but it is a thorough
+defensive screen let's go take a look at
+losses and expenditures real quickly
+here so this is quite a few that's a 20
+that's 30 40 so about 50 so about let's
+call it two interceptors for every one
+of my missiles and nothing got through
+so it did not work so let's go ahead and
+reload our mission here we'll go back to
+a Testa here and open that one up let's
+go try the next missile which is the EXO
+set now the EXO set's pretty famous it
+is one of the missiles that actually did
+quite a bit of damage to real world
+ships which is pretty cool well unless
+you're on the receiving end I suppose
+but the neat thing about this weapon of
+course is it's just classic it's a
+basically a really really souped up
+version of the Harpoon with its own kind
+of a there's a few little things that
+make it different however one thing
+you're probably going to observe is the
+fact that it's reliability is not quite
+as good but more importantly its range
+is terrible it's a 28 naal mile range on
+this thing speed wise is actually faster
+than the Harpoon which means you're
+going to have less time to respond to it
+downside as I mentioned is we have to
+get so much closer to it so if I come
+over here 28 oh my goodness look at how
+close we have to be oh so in the real
+world of course if you brought a summary
+this close to a big group of ships like
+this they would fire their basically
+standoff Torpedoes and this this would
+end very quickly but we're here for
+science so we got to give it a shot
+let's go grab all of these we're going
+to grab the EXO set we're going to give
+two each we're going to go ahead and
+allocate that just like that it's going
+to take us 36 seconds before the party
+starts let's go ahead and speed up time
+a little bit here and 36 seconds has
+elapsed all right now this will be
+interesting the ex like I said it's a
+much substantially faster it's about a
+uh what is it 15% faster and off they go
+there's also a lot less time for our
+interceptors and our basically everybody
+to respond so the incredible thing is
+it's just the commanding coordination
+required to fire the
+missiles uh oh I don't think our ex
+set's going to get through oh oh oh oh
+oh
+oh look at that all right let's see how
+we do with the EXO set here again I
+would already have standoff Torpedoes
+being fired at me at this particular
+point if I pull something that stupid
+but if we come down here we can see here
+that it's uh about the same so about the
+same amount of interceptors re used here
+and again use 32 of the EXO sets so not
+great and those are kind of the Legacy
+missiles if you want to think about it
+so now we're going to take a look at the
+more modern missiles starting with a
+nasty little piece of work known as a br
+this is a pretty cool thing a papa
+Juliet 10 this is a neat missile
+basically it's got the little bit on
+here and then of course it has a much
+much higher speed and it also can Sprint
+the other thing that makes this weapon
+incredibly dangerous is the fact that if
+you take a look over here you'll notice
+that it has a 2 to 160 nautical mile
+range which is so much much much much
+longer than anything else that we saw
+the other thing you'll notice about the
+same reliability Harpoon a little more
+reliable here now where it gets really
+terrifying is not only do you have about
+a 440 lb Warhead which is enough if you
+come down here you can even see that
+it's Cruise speeds there's a couple
+different Cruise speeds when we're at
+higher altitudes we can do Mack two 2.8
+which is amazing and in the lower
+altitudes we do about 2.19 that's really
+really fast now very very sharp High
+people would probably catch the fact
+that I attached the wrong Bros missile
+and the reason you know this of course
+is you can see a launch outed too don't
+worry I'll fix it all right all fix
+don't worry so the cool thing about the
+BR is I have a much much much much much
+much much much longer range to do the
+deed here I'm kind of liking the fact I
+got this little island to kind of
+protect me here so I'm going to fire
+from behind the island this time how
+novel right holding the shift select
+everybody we're going to grab them all
+together with shift again I'm going to
+go down to where it says a
+br each of you gets
+two now you're going to have to share I
+don't have unlimited Supply I only have
+10,000 okay watch this now this is going
+to be a little different this time we
+got to wait our aention time this weapon
+has such a different flight profile than
+everything else we've seen here so let
+me go and zoom out a little bit here so
+you can kind of get take a look at the
+party as it starts here so as you can
+see this weapon is very very very low SE
+skimming just like all the other weapons
+that we saw before the difference is
+it's staggering speed if you take a look
+over here on the right you'll notice
+that I'm doing uh
+1,450 knots I am not going slow here so
+um I'm going to fire my entire rack
+here imagine if you were a ship and you
+see this coming oh my goodness look at
+that okay this should be a little more
+interesting so our interceptors of
+course we have new problems when
+missiles start Trav traveling at higher
+speeds like this they become drastically
+harder to engage cuz not only do you
+have a smaller engagement window but you
+also have to be a lot more precise cuz
+you're off by a tiny bit that's more
+than enough to basically completely Miss
+basically you whiff the missile so our
+first ones are coming in again 30 feet
+above sea level and basically not like
+on the water but 30 feet is
+enough and they're closing in oh boy
+imagine just seeing this little white
+line basically skimming towards you at
+stupidly stupidly high speeds here so if
+actually s look at this thing this is
+real time by the way so I'm not like
+accelerating you just get a feel for how
+incredibly fast this weapon is you know
+if I zoom out all the way here you can
+just see how quickly they're closing the
+distance here between us and the ships
+now the interesting thing is a lot of
+these ships will not be able to engage
+these weapons because they're too fast
+to actually be acquired properly so
+that's going to be interesting for us
+all right not us I should say
+unfortunately our receivers here some of
+the weapons will be able to engage but
+you can see basically had to wait to the
+last possible second to take that shot
+this is a c Viper those will have no
+problem here and now you can see they're
+just kind of spreading out all over the
+place our destroyers are doing what our
+destroyers do best here on they taking
+kind of pot shots all over the place I
+don't think it's going to be enough nope
+here we
+go now one of the things I wanted to
+point out with this weapon is how
+accurately it's targeting the thing I
+shot
+at oh
+boy now I think that's how oh Newman oh
+no more
+Newman oh boy oh boy they get some of
+them are getting through not all of them
+oh boy here we oh there's another one
+and there's another one and there's
+another one you could see the minigun
+just firing happily into the sky just
+basically wasting you also probably
+observe several of the missiles actually
+those are not our missiles those are
+their missiles they're basically firing
+off into the woods there okay let's take
+a look at the damage with the brahos
+missile here I have a feeling we were a
+little more successful this time so we
+got four um oh oh we got the new slania
+oh well uh coming down here you can see
+um they tried pretty darn hard they
+fired a lot of weapons but notice they
+didn't really have a lot of weapons they
+could use to actually fire off you see
+all the stuff that got lost here of
+course cost me 32 missiles those
+missiles ain't cheap we can also see
+here that the roro is gone we can see
+the Bristol's gone and Incredibly I
+think uh where's our buddy the Iowa the
+Iowa didn't even take a hit there almost
+everybody received a hit so if we fast
+forward time a little bit here we can
+actually see that we're getting all
+sorts of fires am I getting shot back at
+no I guess not and again we're going to
+have a bunch of fires and we run the
+risk like this guy no he's put the fire
+out uh he's on fire but he's got it
+under control oh he's wicked on fire oh
+very large crud container yeah this guy
+if we give him some time that fire is
+going to win that fight uh this guy of
+course just damaged again we can damage
+these guys and of course the LPG guys F
+oh don't worry the flooding will put the
+fire out I'm pretty confident he's going
+to go swimming there all right let's go
+ahead and reset everything
+again and this time we're going to go
+switch over to CIS Russian weapons here
+and now we have two to pick from here we
+have the p800 Onyx and we have the
+caliber which is a unique weapon to say
+the least all right let's go ahead and
+do my shift right click again here I'm
+going to grab everybody we're going to
+allocate to because we're polite you
+must share so this weapon is an
+interesting weapon as well we'll take a
+look at the Onyx first this double click
+uh did I double click or did I not
+double click sometimes I don't know if I
+actually hit the button correctly nope I
+definitely did not let's grab all those
+grab the Onyx there we go now we know it
+worked fantastic so the cool thing with
+this weapon is if I open it up real
+quick is it's very very very similar to
+the BR missile here you'll notice it is
+an incredibly long range very very low
+Cruise altitude it's pretty reliable not
+as reliable as a harpoon unfortunately
+kind of a thing like that it's got the
+same kind of General radar Seeker on
+board and as we come down here one of
+things you'll observe it is also
+incredibly fast of a missile this is not
+messing around as far as speed goes this
+is like I said very very very very
+similar to the bramos so let's go ahead
+and unpause there and we'll let all
+these missiles come off the rack
+remember it takes 30 seconds actually
+start shooting
+them oh man what a perfect setup of a
+shot there because uh basically all
+they're going to see is when they pop
+over the terrain here when they start to
+show
+up all right so this is going to be a
+very very similar engagement to the
+bramos missile on account of the fact
+that you're dealing with extremely highs
+speeed projectiles very very short
+engagement times and they're just
+incredible weapons so here they come
+comes our little guy in the fronti doing
+1,450 knots he's moving
+oh my gosh a suon Sonic sea skimming
+missile that's just not fair submarine
+launch too uh first couple range I don't
+think we've gotten a hit yet no nothing
+yet uhoh here comes our first one
+HOH no oh we're hit we're hit oh boy
+here we go
+again all right do what we can here do
+what we
+can oh whoa that ship disintegrate ated
+wow what a hit oh that one almost hit I
+think his SE whz did oh look at the guy
+with the SE whz trying to do the best
+they can oh that one got hit as well
+ouch so take a look real quickly here
+the witch gun probably that'll be a sink
+that will be a snc let's see here the
+5050 on that one I'll come over here to
+crew tank that'll be fine just got hit
+no not too bad so let's take a look at
+our losses it expenditures to the Onyx
+here and you'll see we got three right
+away we'll probably get two more for
+five total so about the same as the
+bramos coming down here you'll see we
+got very few weapons off um we
+definitely probably about 30 40 50
+weapons off total lost a ton of stuff
+here and you can see it cost me 32 of
+these missiles which again Subs can hold
+that many so about the same as the BR
+now the last weapon we're going to be
+taking a look at today of course is
+going to be none other than the caliber
+this is the Sizzler as we would call it
+this thing is incredible so we got a
+couple fun little toys here first of all
+range is pretty good it's not bad uh
+it's going to be a c skimmer as you can
+see very clearly here you can also see
+it's got about the the same reliability
+as many of these weapons have uh
+scrolling down here you can see that
+performance-wise it is significantly
+slower uh than a lot of the other
+weapons that we saw which makes it a
+little bit different of a weapon now one
+of the cool things of the Sizzler is
+there's also the rocket booster that's
+the T version of it and now what this
+does is it has a fun little toy on it
+and what it will do at the last second
+is it'll pick up a ton of extra speed
+for the purposes of basically sneaking
+in uh let me see here terminal maneuver
+zigzag bearing only the launch terrain
+let me see if I can I'll find that one
+there
+all right we lacked the missiles that we
+needed to launch here our sissors are
+now safely on the way we did a TW each
+sorry for the little Interruption there
+we had a little technical problem but uh
+they're on the way and zipping right in
+there looking pretty good looking pretty
+good now these weapons are pretty fun
+they have a really neat trick you'll
+notice they're only doing about 530
+knots here watch what happens when they
+get a little closer they speed
+[Laughter]
+up look at him go look at him go isn't
+that a fun
+trick oh isn't that
+awesome isn't that sweet so that's one
+of the things that makes the caliber
+weapon so dangerous is the fact that
+it's got that little zoom zoom at the
+end there now the cool thing is if we
+bring up our view real quickly here uh
+you'll see that we really only got it
+looks like we only got this guy the
+Bristol's going down we can see our very
+large cruise container oh he's fine he's
+just damaged but if we go over to our
+here one of the things you'll notice is
+we got three uh basically the same
+amount as we did before and you can see
+not a lot of weapons were fired in
+response to those incoming weapons of
+course it cost us um oh yeah CU I
+deleted it by accident the first time so
+you can see exactly how lethal that can
+be in a particular situation like this
+now you're probably sitting here going
+well that was all kind of fun but uh you
+never really sunk the Convoy like how
+would you sink the Convoy the key to
+sinking the convoys not letting them
+have a
+chance so let's go ahead and uh shift
+one grab this one all right so let's
+grab all these let's see here exra sets
+ain't going to do it uh let's see here
+bramos I'll take one of these we take a
+five of those each uh the Onyx will do
+five of those each and the caliber will
+do five of those each uh let's see here
+that should be enough um pretty sure
+that's 240
+missiles okay you may now do do the 1812
+go look at
+that come get some now the interesting
+thing is I think these are the bramos so
+these are the fast ones where it's going
+to get really amusing is when we switch
+over to the Sizzlers to kind of finish
+the job here look at the
+fireworks all right we'll do a God's eye
+view here so we can watch the
+shenanigans do you ever feel somebody
+doesn't like
+you would you like to exterminate the
+fleet how many missiles should we land
+yes oh boy here they go they're starting
+they're starting we can see the aquatan
+here is kicking in here starting the
+party we can also see our lucky little
+the arly Burke back in the way there is
+I getting started up as well he's kind
+of doing his things and they're trying
+they're trying this ain't kind of go so
+well I don't think wow that's a lot of
+missiles so you know these things called
+chaa lines that's what I'm instantly
+reminded of all right here we go
+fireworks oh
+boy did you notice the attack capability
+of several of the missiles like they
+arrive and they change your targets at
+the last second I wonder if these are
+still the bramos yeah let's take a look
+yeah they're still the bramos we haven't
+even gotten to the Onyx
+yet oh did you see the re
+attack look at that one of the things
+you'll find very fascinating is how many
+how many hits the Iowa will take it's
+already up to seven 8 9 10 it's still
+going
+I feel very evil right now I don't know
+what's wrong with me oh this one's just
+not going down oh that's the ultral he's
+on fire he's going down I would say the
+party's over and as you can see um
+oopsies H these don't count oh these are
+the Sizzlers a so um yeah we obliterated
+that Fleet and the interesting thing I
+think you'll take a look here is other
+than the fact we literally sunk the
+entire Convoy is
+um let's see here uh you can see we went
+through quite a few of these for the
+purpose of the engagement there and um
+let's go see what the retail value of an
+onyx I should say a br is
+eek let's see here get my calculator out
+here that's a 351 two 1 two 3 uh times
+80 and um actually that was a pretty
+cheap attack pretty cheap attack uh when
+you really come down to it that was
+really cheap I know it doesn't feel
+cheap but the reality is I just sunk 16
+vessels um they definitely punched way
+bigger than their weight so I guess the
+conclusion here is um anti ship missiles
+are really really dangerous and I think
+the other conclusion is the modern ones
+even though they work a little better
+than them you're still going to need a
+to lot to get through the Defenders
+enjoy

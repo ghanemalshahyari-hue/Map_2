@@ -1,0 +1,352 @@
+# C: MO - Decoy Land Strike
+Video: https://www.youtube.com/watch?v=EgrrTt4ldHw
+Video ID: EgrrTt4ldHw
+
+hello everyone in today's video we're
+going to be doing something a little
+different today we're going to be
+concentrating on some classic tactics in
+order to maximize our capabilities and
+limit our losses i know you're saying
+they're going wait a minute is that the
+point of this all along yeah but i
+thought we'd do something a little more
+concrete today so here's our scenario we
+have ourselves over here at lovely
+nellis air force base a nice beautiful
+airport huge huge airport with a really
+fun instrument approach by the way and
+we have ourselves eight f-16s now 16 so
+we have two different types of equipment
+here we have ourselves the classic am
+120s here aims i should say not ams we
+also have cb105s which we're clearly
+going to be using for the purposes of
+inconveniencing certain aerial targets
+that are still parked on the ground so
+we know from
+enemy intelligence that there's a pretty
+good contingent of both sam sites as
+well as having a pretty good strong
+amount of those pesky mig-28s that you
+always got to kind of keep one eye out
+for so we're gonna have to use a little
+bit of strategy in order to basically
+lure the s chords away and then sneak in
+from behind so take a look at our little
+terrain here it's like aha i'm glad we
+set this in nevada not the middle of
+kansas or i wouldn't be able to pull
+this one off so what i'm going to do is
+i'm going to pop over the relief layer
+real quick and see if there's anything
+we can use to help us out
+of course i have to wait for the relief
+layer to actually load up that can take
+a couple moments here
+so uh that's why we're doing this we
+might as well make sure everything is
+all set here take a look at f-16s i
+could probably get them launching up
+pretty much right away if i wanted to
+because again most of this is going to
+have to be by hand ah there's what i was
+looking for so just taking a look
+generally again that'll sharpen up in a
+second now i noticed that this area is
+not only just in a kind of high altitude
+zone but it's actually in a valley
+that's been kind of flanked by this very
+very distinctive mountain range now if i
+were a helicopter i promise you i'd be
+flying through here in order to get to
+this particular target here the other
+thing we notice there's a very very tall
+mountain on this side it's actually
+quite probably like a river or lake or
+something sneaking through here given
+the shape but more importantly i notice
+down here there's a massive low
+depression and if i do some quick
+calculations let's see that's a 35
+nautical miles let's see here whoo msi
+cow the calculator is broken when did
+they break my calculator that's new okay
+34 nautical miles divided by 60 times
+let's see here 34. see here we do i
+don't know rush we can probably get up
+to about 600 so 34 divided by 600 times
+60 means 3 minutes 0.4 0.4 times 60 3
+minutes and 24 seconds to cover this
+distance which we can certainly pull off
+and we can turn around and run really
+really really fast if we had to the only
+downside to that is that also means
+anybody who's at a higher altitude for
+us also needs that same amount of time
+to come and intercept us if they spot us
+early
+what does that mean for us that means
+we're going to have to pull the targets
+at least twice as far away from where
+our strikers are going to be as they're
+going to be when they get there you can
+start to see where this is going to get
+kind of fun so let's go ahead and grab
+our guys here we're going to assume that
+34 nautical miles here we're going to
+add ourselves another 34 nautical miles
+which takes us out to here so this is
+going to be my decoy point so this is
+where i'm going to send out my air to
+aircraft basically the purposes of
+confusing everybody meanwhile i'm going
+to have my strikers basically come up
+this valley here and pop out do their
+thing and then turn around get the heck
+out of there as fast as they can so this
+will be kind of an interesting little
+exercise and timing so let's do it so
+what i'm going to do is i'm actually
+going to quickly save my game if this
+whole thing blows up on me i can always
+go back and try it again let's do it so
+i'm going to grab my challengers and
+order them to launch i know this is crew
+is more than capable i'm also going to
+grab my strikers i'm going to order them
+to launch as well now this is going to
+be a little tricky because we want to
+limit how long they know where we are so
+what i'm going to do is i'm going to
+speed up time a little bit so i'm going
+to actually fly my guys at low altitude
+i actually know this value very well
+from playing way too much dcs there they
+go
+let's go ahead and grab flight 437 and
+we're going to send them at super duper
+minimum altitude
+right up this valley like this i believe
+this is my nope wrong crew
+we're going to send these guys out this
+valley i'm actually going to start
+sending them right away we're going to
+do cruise and we're going to set them to
+as low as they possibly can as a matter
+of fact i'm going to add myself one more
+waypoint here because i don't trust
+myself enough with this so i'm going to
+leave this waypoint alone but i'm going
+to take this waypoint i'm going to whoa
+now i've got nine waypoints oh well what
+are you going to do about it i've
+certainly got the range so i'm not
+worried about it too much today
+okay one thing i do want to do though is
+minimum altitude okay let's go ahead and
+get that other crew did those guys
+launch already ah how come you guys
+launched first there they are
+436 all right so we're going to use
+these guys as my decoys so i'm going to
+send them really really really low
+altitude here same thing nice and slow
+i'm actually going to send them to
+loiter speed here because i want them to
+take their time to get into position
+meanwhile my strikers are going to be
+basically chilling 10 feet off the
+ground making their way over here now
+meanwhile of course the enemy general i
+should say the enemy young basically air
+force guy we're both sitting there
+looking at each other going so where's
+your red guys i'm like well my red guys
+are obviously going to be nice and
+sneaky and the blue guys are like oh
+where's my blue guys going to be well
+you know how my blue guys are so here's
+what we're going to do we're going to
+use this nice mountain range here to
+basically shield these guys is to get
+into the decoy position and then once
+they get into the decoy position we're
+going to basically do a pulling maneuver
+to basically pull them away as fast as
+we can so that our strikers basically
+are going to get a free hit now if we
+quickly switch to the other team real
+fast
+you'll notice uh they're absolutely
+clueless they haven't seen anything
+launched yet one thing i'm a little
+confused this is why these guys have not
+launched it themselves uh when i built
+this airfield of course i'm sure they
+made something silly enough forgot to
+connect like a runway or something like
+that let's see what they're looking for
+here waiting for next available taxiway
+ah one of those okay we can fix that
+really quick we'll do an access point
+and we'll go ahead and get ourselves a
+taxiway it's not gonna make any sense
+but at least it'll work fine for what
+we're doing here today there we go all
+right group group and now you folks are
+all together oh i don't want this guy
+grouped i'm actually going to let's see
+here if i ungroup this uh let's see
+delete the group by pressing delete
+yes
+sounds good to me delete yes grab
+everybody group f6
+grab these guys and they should be
+launching momentarily god i have to go
+ahead and i'll probably refresh
+everything so that it works out okay are
+you guys doing okay yeah i think you're
+okay now hmm
+i think i broke my airport
+that's a shame all right i'll just have
+to launch in the old-fashioned way then
+i'm not too worried about it f5 uh we've
+gotta get the aircraft here
+f5a let's go ahead and get some dect and
+we'll do the old school
+that looks good right there we'll grab
+these guys grab some a19ms more than
+deadly enough to bother us grab a group
+of them press the g key go ahead and
+assign them to that mission that i've
+assigned a little bit earlier
+and we're good to go let's go and pop
+back over to blue team
+all right so so far so good we've
+immediately acquired these other
+aircraft so we know that they're out
+there i want to make a mental note of
+them i'm going like i said they have no
+idea that any of my guys are actually in
+position at this time and i notice
+they're coming to the north
+so that's okay that's okay that's okay
+that's basically what we want them to do
+is we don't want them to waste their
+time until they get into a position
+where they need to waste their time so
+now these guys are coming back to the
+south we've got some fire control
+warnings there that's okay that's okay
+all right now the fun parts so these
+guys are going to have to basically put
+themselves into a sprinting position so
+i'm going to go kick them up to military
+speed here
+these guys are a little bit too close
+for what i'd like them to do so i'm
+actually going to go like this go ahead
+and order them to pop up to altitude i'm
+going to send them right over here at
+military speed also
+speed up time a little bit as everything
+kind of pulls out it shouldn't take
+these guys long to immediately identify
+where those f16s are watch this
+that's it
+all right come on come on
+there it is oh no no i think they may
+have acquired the other group so i'll go
+spin around like this pop on the radar
+to attempt them
+keep that military speed up oh they're
+turning away there it is
+see how they're all turning back
+spin back this way
+see how they're all kicking up to after
+burner excellent
+come get some
+come and get it
+ah these guys can actually slow down so
+here's one of the tricks go ahead and
+slow down a little bit let them get
+close remember these guys have a pretty
+good tight range here
+all right come get us come on
+come on
+come on keep coming keep coming
+keep coming
+that's right come on
+come on be a dumb ai oh there they go
+again
+uh oh that's a problem
+now the neat thing here is if i time
+this correctly we should be able to
+sneak back up on them
+there it is
+nice
+nice timing everybody
+all right let's go sneak back over here
+afterburner thousand feet
+let's go ahead and target automatically
+all the different let's see a revit
+mints or definitely the ones i'd like to
+put space bombs all over
+grab oh look at these we even have some
+recon
+go grab all these guys right here
+target is out of range that's fine with
+me
+now we'll do one of these buttons press
+this
+see you're going to drop a couple here
+you're going to drop a couple here and
+this guy right here we'll go ahead and
+drop a couple there
+so now these guys can actually proceed
+leisurely i don't even have to hit
+afterburner because otherwise i'm going
+to run myself out of time meanwhile this
+crew we're going to go turn these guys
+right around
+again oh we've actually just fired a
+bunch of missiles so we might as well we
+might as well finish the engagement here
+because we do have ammo on one l120
+there's the crank ooh
+we're going to launch these guys
+bombs are away we're going to spin them
+around again because apparently i was
+not paying enough attention here we're
+going to go sneak up on them just at the
+right time apparently we were at the
+wrong altitude for those i guess let's
+go take a look at what the minimum
+altitude is maybe we'll pop up real
+quick
+do our deed real quick there goes our
+bombs
+and get out of here
+meanwhile of course right as they've
+launched everybody would be immediately
+engaged we come flying back home lay on
+the sucker and now let's see how we did
+as far as effectiveness goes losses and
+expenditures so we can see that we went
+through quite a few missiles here went
+through a couple of these and they lost
+13 tigers
+so hopefully you see how this strategy
+can work really really well it's kind of
+an anti-ai strategy because basically
+you're fooling them but it is pretty
+valuable and now when the enemy has
+multiple combat air patrols you can
+actually split your little f-16s into
+little tiny groups and basically have
+them do a shape like this constantly
+going in and out of their patrol range
+basically constantly pulling them like
+this away so that you can sneak your
+strikers in other than that enjoy

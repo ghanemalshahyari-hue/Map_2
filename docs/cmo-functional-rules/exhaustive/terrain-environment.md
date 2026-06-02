@@ -18,10 +18,17 @@ engagement. It covers:
   deflection arcs, helicopter pop-ups) and how capable SAMs defeat masking by lofting.
 
 **Exhaustive.** This document merges every rule extracted from all transcripts assigned to
+<<<<<<< HEAD
 this bucket *and* absorbs the corrections/quirks already captured in the first-pass spec
 (`docs/cmo-functional-rules/1-movement-detection.md`, `## Terrain & Environment` section and
 related radar/LOS notes). Near-identical mechanics across videos have been deduplicated into a
 single richest entry that cites all source videos.
+=======
+this bucket and is self-contained — all terrain/environment corrections, quirks, and the
+overlapping radar/LOS authorities (radar horizon, Doppler notch) are stated in full below.
+Near-identical mechanics across videos have been deduplicated into a single richest entry
+that cites all source videos.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 
 **Auto-generated-caption caveat.** Source transcripts are auto-generated YouTube captions, so
 numbers, unit names, and API field names may contain transcription errors. Stated numbers are
@@ -133,6 +140,7 @@ unstated formulas are flagged as "observed test values, not a stated formula."
 - **Outputs / effects:** Maximum effective detection range is capped by the radar/optical horizon,
   which grows with observer altitude; low altitude shrinks how far you can actually see regardless
   of sensor spec.
+<<<<<<< HEAD
 - **Edge cases / quirks:** No explicit horizon-distance formula is stated — qualitative only ("be
   surprised that if only 1,000 ft up, even if I have a 30-mi radius, doesn't mean I can see"). Low-
   altitude observers also suffer from ground clutter masking low targets. (For the radar-specific
@@ -141,6 +149,47 @@ unstated formulas are flagged as "observed test values, not a stated formula."
 - **Source:** f8uR3dLCq0M (Cloud Cover and Visual Sensors)
 - **Confidence:** Med
 
+=======
+- **Edge cases / quirks:** No explicit horizon-distance formula is stated in this video —
+  qualitative only ("be surprised that if only 1,000 ft up, even if I have a 30-mi radius, doesn't
+  mean I can see"). Low-altitude observers also suffer from ground clutter masking low targets. The
+  radar-specific "altitude → horizon distance" calculator model is stated in the next rule.
+- **Source:** f8uR3dLCq0M (Cloud Cover and Visual Sensors)
+- **Confidence:** Med
+
+### Radar horizon (line-of-sight limit) — altitude/mast-height → horizon distance
+- **Models:** Earth-curvature / LOS limit on radar detection range — the radar-specific quantitative
+  form of the curvature rule above. All radars are LOS-limited; the maximum detection range against a
+  target is the **lesser** of the radar's instrumented range and the radar-horizon distance for that
+  geometry.
+- **Inputs / parameters:** target altitude; the radar/sensor mast height above its platform (a
+  database field — for a ship/sea platform this is the **mast height**, e.g. "10 m ≈ 32 ft"; some
+  platforms have an explicit "height" option; if none is listed, interpolate/experiment); Earth
+  curvature; the radar's instrumented range (a hard cap). CMO provides a **"Radar Horizon and Target
+  Visibility Calculator"** (own height + radar height → target-visibility distance).
+- **Behavior / rules:** Lower targets are detected at much shorter ranges; high targets near the
+  radar's max instrumented range. Detection range increases monotonically with both platform/sensor
+  height and target altitude. Worked figures (auto-caption, treat as approximate — the model is
+  "altitude maps to a horizon distance"):
+  - A **1,000 m** target against a **30 m** radar mast gives a horizon of only **~22 nm / 22 km** —
+    an aircraft below 1,000 m vs a 30 m mast can hide from a long-range radar purely on LOS.
+  - Calculator readings for a **240 nm** radar at a ~32.8 ft mast: 36,000 ft → **~240 nm**; 32,000 ft
+    → **~196 nm**; 25,000 ft → **~201 nm** [transcript noise]; 18,000 ft → **~177 nm**; 12,000 ft →
+    **~141 nm**; 10,000 ft → **~125 nm**; 8,000 ft → **~160 nm** [noise]; ~1,500 ft → **~60 nm**.
+    That radar detected a 36,000-ft target at ~240 nm but a **104-ft-AGL** target only when very close.
+- **Outputs / effects:** lets an attacker plan a descending altitude profile (sine-wave / staircase)
+  to stay just under the defender's horizon, popping up only when needed, while keeping high altitude
+  as long as possible for fuel.
+- **Edge cases / quirks:** **Over-the-horizon (OTH) radars** ignore the radar horizon (bounce signals
+  off the upper atmosphere) — e.g. a **Steel Yard / Duga** (separate transmit and receive sites) rated
+  at **~3,200 nm** for space search, or a TPS-71 doing surface search beyond the horizon; the price is
+  **ferocious ambiguity** (can be off by **~60 miles** in range), so OTH gives only rough cueing.
+  Terrain can cut the horizon far shorter than the geometric value (see *Terrain / elevation masking
+  of LOS*). Same descent-timing trap as waypoints: descend early or you are already spotted.
+- **Source:** bsLLZwqi4Mg (Understanding Radar Horizon), 7mmQ2y11hPc (Tutorial - Radar)
+- **Confidence:** High (model High; exact numbers Med due to transcription)
+
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 ### Slant range and observer altitude in LOS detection
 - **Models:** An airborne sensor's range is measured along the **slant** (3D straight-line)
   distance from sensor to target, not the horizontal ground distance, because the platform sits at
@@ -318,9 +367,22 @@ unstated formulas are flagged as "observed test values, not a stated formula."
   targets against old radars; detection persists.
 - **Edge cases / quirks:** The narrator is unsure of the exact modeled mechanism (possible Doppler-
   beam shift). Affects position precision, not detectability range. Modern pulse-Doppler radars
+<<<<<<< HEAD
   handle notching better (implied). (See the look-down/shoot-down notch rule in `1-movement-
   detection.md` for the related ~8° blind-window measurement.)
 - **Source:** P6UAdBqTUhk (Effects of Rain on Detection)
+=======
+  handle notching better (implied). Related measurement on a **true pulse-Doppler look-down/shoot-down
+  set**: a target flying **perpendicular** to the radar (zero relative velocity) is *invisible*
+  because the radar filters out its own motion and the target shows zero relative Doppler — the demo
+  measured a roughly **~8°** blind window (eyeballed by the narrator, not a confirmed CMO constant);
+  the moment the target's path becomes oblique, Doppler returns and it is seen. A launched weapon can
+  **lose radar lock** when a target beams it, and a pure **pulse**-only radar (e.g. F-14) has no notch
+  at all (it would still see a beaming target if not also masked by ground clutter). Nearly all radars
+  now have some Doppler filtering, so notching applies broadly.
+- **Source:** P6UAdBqTUhk (Effects of Rain on Detection); ~8° figure from xV-H7HJd2-I (Look Down/Shoot
+  Down Radar) and 7mmQ2y11hPc (Tutorial - Radar)
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Confidence:** Med
 
 ---
@@ -597,10 +659,17 @@ unstated formulas are flagged as "observed test values, not a stated formula."
   elevation masking* entry citing all three; the helicopter-specific (AGL coupling, pop-up,
   auto-evasion) and high-end-SAM-lofting behaviors are kept as separate entries because they add
   distinct mechanics.
+<<<<<<< HEAD
 - **Notching/Doppler position-loss** is described in both the rain video (P6UAdBqTUhk, this bucket)
   and the look-down/shoot-down + radar videos (Movement & Detection bucket). The rain video's
   version (position-fix loss on old radars, range unaffected) is kept here; it cross-references the
   ~8° blind-window measurement that lives in `1-movement-detection.md`.
+=======
+- **Notching/Doppler position-loss** is described in both the rain video (P6UAdBqTUhk) and the
+  look-down/shoot-down + radar videos (xV-H7HJd2-I, 7mmQ2y11hPc). The rain video's version
+  (position-fix loss on old radars, range unaffected) and the ~8° beaming blind-window measurement
+  are both stated in full in the *Radar notching / Doppler limitation* entry above.
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 - **Cloud as an opaque layer** is the through-line of yhs02DUz9bg (editor mechanics + binary visual
   block), P6UAdBqTUhk (vertical engagement blocking), and f8uR3dLCq0M (radar penetration / SAR /
   satellites). These are split into the *cloud barrier* (richest editor+block detail), *cloud-deck
@@ -615,7 +684,11 @@ unstated formulas are flagged as "observed test values, not a stated formula."
   blocking is its own entry.
 - **Earth curvature, slant range, and visual dual-range** all come from f8uR3dLCq0M (Cloud Cover and
   Visual Sensors) and are kept as three distinct geometry entries.
+<<<<<<< HEAD
 - **Land cover vs elevation masking are separate layers** (reiterating the first-pass cross-note):
+=======
+- **Land cover vs elevation masking are separate layers:**
+>>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
   elevation (relief) masks LOS at **macro** scale and ignores micro-relief; land **cover** modifies
   spotting/movement/weapon-effect at **fine** (sub-pixel) scale. A unit benefits from both
   independently (e.g. low in a valley **and** in forest/urban cover).

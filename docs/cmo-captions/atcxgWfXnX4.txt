@@ -1,0 +1,409 @@
+# C: MO - Indirect Fire
+Video: https://www.youtube.com/watch?v=atcxgWfXnX4
+Video ID: atcxgWfXnX4
+
+hello everyone in today's video we're
+going to be taking a look at trying to
+use collateral damage as a way to hit
+targets that we don't necessarily see
+now what this kind of got started with
+is if you remember from back in the old
+days when you did amphibious Landings is
+that one of the strategies you would do
+is you'd fire a really long preparation
+where basically your entire Navy would
+Point guns at the thing you intend to
+land on and just start shooting so of
+course this is a little difficult to
+simulate in command because you kind of
+need fixed targets you know I can't just
+grab this thing press contrl F1 and
+click and then like select I want the
+artillery to land here kind of a thing
+so I started working on this puzzle
+trying to figure out how what would work
+and what might be a strategy to kind of
+test it you know is there anything that
+does work here and um I'll kind of walk
+you through sort of my tests and sort of
+some of my results so the first thing I
+realized is if I created myself a
+temporary Target near where there were
+some targets maybe I could shoot at the
+temporary Target and it would do some
+damage to the things around it so if I
+actually come down here by my pre-plan
+Target number one and open that up real
+quick let me shut down on attack view
+here you'll notice there's a bunch of
+infantry units that are between
+basically 150 M away which is a pretty
+good distance but it's not really safe
+distance uh for most heavy weapons here
+so what I'm going to do now is I'm going
+to go ahead and grab my ship here I'm
+going to go ahead and order up a
+preparation here we have big old guns
+here this looks pretty good to me I'll
+go ahead and give it 20 press allocate
+go ahead and let her rip so the
+interesting thing here of course one of
+the things I really like is you have the
+little pin cushion mode here you can
+actually watch the artillery shell make
+its way across the sky here and then of
+course it comes riding back down and
+it's going of come slamming into the
+target I'm going to go ahead and pause
+right right here so I can jump to the
+other side real fast so you can kind of
+watch the shell sort of do its thing so
+it's going to come in again we're trying
+to Target this pre-plan Target and you
+can see pretty clearly that that stuff
+kind of landed everywhere which is
+pretty typical when it comes to very
+very large artillery like that now
+there's another shell already on its way
+so I'm just going to speed up time and
+we'll kind of see what happens here so
+here comes the next one we'll see how
+well this goes oh okay pause oh that was
+actually basically perfect one of the
+things you'll notice is that shell
+landed H let's call it it's about 17 M
+away from this Infantry T you'll
+probably also observe that they're
+looking pretty pretty chill right now
+obviously if they're entrenched or
+something that blast might not have done
+anything to them but been more of a
+morale hit than it would have been a
+physical hit but the reality is you can
+clearly see that that was pretty darn
+close so I'm sitting here going looks
+like my battleship strategies out we're
+going to have to find another way to do
+this so I'm going to go and delete my
+battleship there and I'm going watch the
+little shell return here so I said what
+about aircraft what could we do with an
+airplane that could simulate the concept
+of a successful preparation kind of a
+thing you one of the things I actually
+did is I wrote a Louis grip once it just
+peppered the entire beach with
+explosions all over it made a lot of
+noise and it was kind of fun to play
+with didn't do
+anything so what I'm going to do now is
+we're going to go and grab this f-15e
+which is loaded up with a bunch of cbus
+that actually has 12 of them which is a
+little absurd so what I'm going to do is
+I'm going to order an attack my pre-plan
+Target here with all of them uh we're
+going to disable that feature all yep
+and we're going to just spray them all
+over the place on the ground there with
+an attention to try to do as much damage
+as we possibly can here and again the
+objective for this would be trying to
+just saturate the area with as many
+explosions as we can so let's go speed
+up time actually SP pretty good here
+they did a recent update which tweaked
+the speeds of things in a good way which
+I think is awesome all right so he's
+ripping across uh looking pretty good
+I'll go switch the other team real fast
+here pop over to Red real fast in just a
+few seconds of course that F15 is going
+to be doing it there he goes here we go
+here we go F15 on the way and I believe
+he has dropped he did not drop ah so I
+got to double check to make sure that
+all the parameters were set correctly
+cuz he was not ready to fire there
+unpause you're going to explain to me
+why you decided not to attack my uh
+pre-plan Target there hit that one out
+of range horizontal that's fine with me
+let's get a little bit closer sometimes
+these weapons have very very specific
+profiles uh I need to be 4,000 ft oh
+that was a newbie mistake on my part we
+can fix that real quick though and unit
+properties we'll go to unit properties
+here we're supposed to be at 4,000 ft
+3999 cool so now if I move him just a
+tiny bit there that should be good there
+goes now he's dropped the thing I was
+asking him to drop let's take a look so
+these are all cbus they're basically
+designed to just all over the place
+that's a technical term by the way for
+dispersing so this is going to come in
+um it's a pretty clean spread obviously
+you're looking at this from a 3D view
+there looks like it's going to go right
+into our pre-plan Target and you can see
+it did a fantastic job it also made a
+nice little pepper all over the place
+which unfortunately it was just too darn
+accurate um I need something less
+accurate unfortunately my F15 is little
+too good at his job here so I'm going to
+go ahead and delete the F15 so that
+didn't work so then I sat there going
+there's got to be a way to do this so
+then I got a little more fancy and then
+I said well why don't I try something
+like uh you know one of the scarabs in a
+SS 21 I said all right we'll give that a
+shot so again I'm ignoring the fact I
+could see these infantry guys here I'm
+click right here I'm going to fire these
+things these are SS 21s basically
+relatively short range ballistic
+missiles uh they do the job really
+really really well and know one of the
+amusing things here is you can see just
+how stupidly high up these darn things
+go that's about 50 km up right there
+it's halfway to space and then the
+things start arcing and they come right
+back down now the reason I chose the
+scarabs and the reason I really like it
+for this purpose is they have a massive
+spread not only do they um obviously do
+a lot of damage but what they tend to do
+when they hit the ground is they tend to
+just spray everywhere and that's exactly
+what I was hoping to do to try to catch
+those infantry sort of inside of that uh
+kind of blast zone again I want an
+aerial shotgun here I don't necessarily
+need something that's hyper precise so
+that's not the point of this you'll see
+the problem with the high Mars in a
+minute for that so this is going to come
+in um you can see it's GNA all over the
+place again there's my technical ter and
+you can see it actually did a really
+really good job of exactly what I wanted
+it to do you can see that it abely
+obliterated that infantry platoon you
+can see that it scratched the P plan
+Target if it bothers you the P plan
+Target is not exploding or anything um
+just go ahead and take a look at his
+health real quick it's 100,000 hit
+points or damage points you're not going
+to kill one of these things even with a
+nuke well we'll see about that so you
+can see that actually worked so again
+using a ball B istic missile with
+combined effect Munitions works great so
+then of course I said well let's go use
+the high Mars then now High Mar has
+obviously been in the news a lot lately
+this is a very good platform it also
+shoots a nice little kind of sort of
+thing you can also see I've got quite a
+few these are the GLS DBS so I'm going
+to go and allocate all of these which is
+going to make quite a mess of the guy
+here let them go ahead and fire those
+off there they go and again this is like
+a of these a lot a lot lot lot lot and
+again just like the previous weapon here
+you can see they get stupidly High off
+the ground before they start ripping
+back into the atmosphere here I zoom in
+a little bit and they tend to really
+really saturate a region now you'll see
+what I mean when they get here here they
+come man that is how do you shoot that
+down that's real time by the way and
+they oh one malfunction there we go
+there we go and you can see they're all
+kind of doing their thing they're all
+kind of doing their thing and you can
+see extremely clearly that they all work
+perfectly they nailed my pre-planned
+targets and did nothing as far as
+spreading out whatsoever now you're
+probably sitting here going well did you
+try this Cod of course I tried this scud
+problem with the scud is you'd fire and
+it'd land in the water even from that
+distance uh welcome to scud accuracy so
+then I quickly realized really the only
+way you're going to get this is if you
+have some kind of weapon that's got a
+lot of spread it's either going to be a
+cluster weapon and I'm talking an
+ballistic cluster weapon or you're going
+to have to deal with something that has
+a really really really big special
+Warhead because the standard Warheads
+don't really do the collateral damage
+that we need them to do so uh that's
+when I got a little more creative and I
+said well what happens if you use
+something with a little bit bigger
+Warhead in it so let's see what happens
+this time so I'm going to go ahead and
+shift one here F1 click on that that
+should do
+it feel so wrong using this in this way
+I like how the high Mars is a firing
+again now one of the things it's kind of
+fun here uh let's go ahead not fun but
+devastating is um just to get an idea of
+the altitude this thing travels at so we
+are already higher than the space
+station and we're higher than all the
+Gemini program combined we are getting
+up into tli altitudes here that's uh
+what do we got there it's 2200 km I
+think that's enough all right come on
+back come on back but if you'll notice
+here not only 22 I'm at 3 3,487 km up if
+we look at this from the side here U
+most satellites are down
+here uh that that will do it that will
+do it so of course this thing has to
+turn around and come right back down
+talk about a ballistic trajectory right
+so this thing's going to return to Earth
+literally it's going to make a big mess
+I'm going to speed up time actually got
+up to about 4,000 km that's enough and
+what it's going to do is it's going to
+go a and flip on the little missile bus
+is going to break off from the Warhead
+and it's just going to kind of sprinkle
+the WarHeads down downward here and oh
+boy this is going to be messy got a nice
+classic Blan method oh the scenario took
+too long launch the
+nukes please don't do that in the real
+world it's not very polite all right
+let's go ahead and zoom in on our action
+here I don't want to miss the fireworks
+cuz believe me there will be fireworks I
+like how it says contrail very large now
+one of the cool things here is I don't
+think we're going to see this we'll try
+we'll try uh nope we can't see it you'll
+see Fireball like in the upper
+atmosphere kind of a thing like like
+that and it is definitely a fireball if
+you've ever watched the old atall
+missile tests with mirvs and stuff you
+can see just the way they pepper the
+ground all right so let's see here we
+are still the nose of the missile we
+haven't actually split into the
+individual Warheads yet like I said just
+give it a
+second now that's what I call a beant
+stock right there all right 1,00 kilomet
+we're coming back what do we got for
+Speed right now we're doing uh MOX 15 or
+so as we're coming back into the
+atmosphere moving pretty quick moving
+pretty quick that's 15 16 yep about 16
+mock whoa there it goes so there goes
+the missile bus and what it does is
+basically pushes out one little Warhead
+you can see just drops one Warhead at a
+time and pushes the next one out pushes
+the next one out pushes the next one out
+and gets see that nice lovely spread
+there so we're going to come zoom in a
+little bit here and uh we're just going
+to see if this works like I said we're
+targeting that training Target we're not
+targeting the Infantry that we spotted a
+little bit earlier so we're going to
+have to see exactly what kind of
+shenanigan this is going to cause here
+would it be fun to start firing like F
+at it or something like that all right
+uh you can go ahead and put the dark
+goggles that you have reserved on the
+side of your desk on anytime now because
+um you'll know what I
+mean just look at how steep these things
+reenter that's insane you're telling me
+you're going to reliably hit those yeah
+I don't think so ah here we are like how
+looks like a couple one a little wide
+that's not a
+problem ready uhoh oh boy here it goes
+oh well I would say that successfully
+struck the Infantry that I was trying to
+hit and now one of the things I find
+most
+amusing can't see is the fact that
+remember how we had a battleship off the
+coast there and you're sitting there
+going did you just blow up your own
+Battleship and uh yeah I got some bad
+news I think I suck my
+battleship actually I don't think I suck
+my battleship I think I deleted my
+battleship yeah I deleted my battleship
+but that's okay switch back to the other
+team real Quest yeah I definitely blew
+my own Battleship ah collateral damage
+so the super short version is if you're
+trying to create a preparation situation
+where you've got like a bunch of uh
+targets that you can't necessarily see
+the safest thing you can do is to
+basically hit them with a ballistic
+missile of some kind a ballistic
+missiles just as a quick reminder from
+many many moods ago is you can actually
+use ballistic missiles for the purposes
+of manually engaging a point and the
+reason that's so darn helpful is you can
+pick the point let me show you what I
+mean so for example if I were to grab
+this uh particular platform right here
+if I press contrl F1 and I go ahead and
+pick let's say like right here on the
+ground I can actually order up an attack
+here we did this in a video a while ago
+but interestingly enough even when I
+tried to kind of work around that video
+this still to this day Remains the most
+reliable way to do something like this
+and you can see I've got sped up time a
+little too aggressively there again
+these were all manually targeted they
+weren't locked onto this particular
+point on the ground here and the reason
+this is so helpful is if you're writing
+Lua and that'll probably be next week we
+could write a Lis script that
+basically kind oh you've got to be
+kidding me did they
+what well they all
+detonated huh I guess I guess um the guy
+who was packing the 7even Munitions that
+I did a little bit of damage I did a
+little bit damage um so whoever was
+packing the sub Munitions that day
+didn't do a great job of it but you
+still get an idea of how you can utilize
+that and what we'll try to do next time
+is build a script that basically spams
+those and just kind of sprinkles the
+ground with just some Munitions
+everywhere and I'll see what that does
+enjoy

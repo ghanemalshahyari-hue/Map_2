@@ -11,19 +11,10 @@ and how manual orders override them; No-Escape-Zone (NEZ) launch timing; collect
 identification gating; and the probabilistic resolution of salvo Pk and soft-kill (chaff/spoof).
 
 This document is **exhaustive for this bucket**: it consolidates *every* rule extracted from *every*
-<<<<<<< HEAD
 transcript in the bucket, then merges in the corrections and additional detail from the first-pass
 spec (`docs/cmo-functional-rules/2-doctrine-wra-engagement.md`). Near-identical mechanics are merged
 into one rule citing all source videos; nothing from the first pass (especially its **CORRECTION**
 findings and the "Why won't my weapons fire?" diagnostic checklist) has been dropped.
-=======
-transcript in the bucket. Near-identical mechanics are merged into one rule citing all source videos.
-Hand-verified **CORRECTION** findings (the proficiency Ace→Regular→Novice scale and its exactly-four
-effects; Weapons Hold still self-defending against the incoming weapon; the side→mission→group→unit
-doctrine inheritance with per-setting scenario-designer lock; the geometric `1−(1−p)^n` salvo math;
-the air-vs-ground opportunity-target split) are carried inline below, along with the "Why won't my
-weapons fire?" diagnostic checklist; nothing has been dropped.
->>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 
 > **AUTO-GENERATED-CAPTION CAVEAT.** All source material is YouTube **auto-generated captions**, so
 > spelling and exact numbers may be imperfect (e.g. "WRA" mis-transcribed as "W Ur"/"Wright window",
@@ -499,39 +490,6 @@ Responsibility · `JqZYvpCP7ik` Ground Units Automatic Attack · `qHuId62Lba8` N
   `fjKeHlO1RsE`, `hCDLw5AZk0E`).
 - **Confidence:** High.
 
-<<<<<<< HEAD
-=======
-### Diagnosing why a weapon won't fire (ordered checklist)
-- **Models:** The full set of gates that must each clear before an acquired, in-range target is actually
-  fired upon — the diagnostic order to walk when a weapon refuses to launch.
-- **Inputs / parameters:** A manual-engage attempt (**Shift+F1** then click the target) surfaces the
-  blocking reason in red (cannot fire) or green (clear) text.
-- **Behavior / rules — ordered checklist (each blocker must clear):**
-  1. **Weapons control = Hold** for that target environment (e.g. "holding fire against air targets").
-  2. **WRA bars the weapon vs this target type** ("do not use weapon against this target type").
-  3. **Weapon stowed in magazine** ("cannot fire because the weapons are currently located in our
-     magazines") — must be loaded/ready.
-  4. **Range gate** — target outside the WRA min/automatic-firing range (e.g. set to 15 nm but target at
-     116 nm; or below a minimum). Green text but still no launch.
-  5. **Imprecise target** — sensor track too coarse: "weapon is unable to engage imprecise targets"
-     (long-range radar can't point precisely enough). Resolves as track quality improves.
-  6. **No illumination / no director** — needs a fire-control/illuminator with LOS ("no directors are
-     able to illuminate this target," "insufficient reflection," "no line of sight").
-  7. **Weather/LOS for designators** — laser-guided bombs fail when clouds sit between designator and
-     target even within the 15 nm / 40,000 ft designator envelope; must descend below the cloud layer and
-     **maintain LOS** while guiding.
-  8. **Weapon geometry/aspect** — e.g. a Stern-Chase (rear-aspect) IR missile reports "target aspect is
-     out of range for this type of weapon" in a head-on pass.
-  9. **Reaction (OODA) delay not elapsed** (see §13) — even when acquired, the unit's proficiency-scaled
-     per-system reaction countdown must finish before launch.
-- **Outputs / effects:** Identifies the single blocking gate so the operator can clear it; **"Shift+F1
-  and click" is the universal diagnostic.**
-- **Edge cases / quirks:** Red text = cannot fire; green text = clear. Multiple blockers can stack, so
-  re-check after clearing each.
-- **Source:** `hCDLw5AZk0E` (corroborated by `YepPcVyCtnA`, `XjfL2uNhGR0`).
-- **Confidence:** High.
-
->>>>>>> 10671e19ae9977053062c737c8cd82d831f79b78
 ### WRA: weapons-per-salvo vs target durability and Pk (the two damage gates)
 - **Models:** How many weapons to fire per target type, which must satisfy **both** the weapon's kill
   probability **and** enough cumulative damage to destroy the target's hit points.

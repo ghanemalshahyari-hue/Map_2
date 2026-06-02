@@ -1,31 +1,37 @@
 ---
 name: project-authoring-slice2-next
-description: Post-audit (2026-06-02) RMOOZ state — structural CMO backbone is built+wired; next build step is Edit Mode Slice 2 (Geography & Forces / unit placement)
+description: Slice 2A (Geography) BUILT 2026-06-02 — next concrete step is Slice 2B (Forces / red_units + blue_units_initial editing inside Edit Mode)
 metadata: 
   node_type: memory
   type: project
   originSessionId: 7fca86e4-e6c4-4274-a551-da787767e6cf
 ---
 
-`/audit-app` at HEAD `e0cf324` (branch `claude/magical-lewin-e1ab3a`, 32 ahead of `main`) found the
-structural CMO backbone from [[session_2026-06-01_world_state_engine]] is **no longer pending — it
-landed, merged, and is wired**: WS1/WS3/DB1/DET1/ENG1 (`client/shell/world-state*.js`, `detection.js`,
-`engagement.js` + server seam `sim/world-state-engine.js`), MOVE1 continuous movement
-(`wargame/movement-playback.js`), 3D Cesium globe + Libya DEM, and the engines are wired onto the map
-as read-only overlays (coverage rings 41/41, detection contacts 30/30, firing solutions 28/28).
-Engine tests green (WS1 25 / DB1 15 / DET1 15 / ENG1 17 / WS3 15). D3 unlocked: `/api/sim/commit`
-live + journals; `/api/sim/decide` (WS3) and `/api/units/:id/place` added.
+**Status (2026-06-02).** Edit Mode **Slice 2A (Geography)** landed: `shell/scenario-edit-mode.js`
+now makes `map_bbox`, `ao_boundaries[]`, `obj` (with client-side `carver` 0..60 hard block),
+`pipeline`, `throughput_ceilings_km`, and `bls_template[]` editable on the same in-memory working
+copy as Slice 1 (Metadata + Sides + Posture). Save now also repaints the map via
+`AppAdjudicatorMap.drawScenario` + `fitScenarioAO` — geometry edits must redraw. Static test
+`test-edit-mode-slice2a.js` is 50/50 green, including a round-trip on the playbook sample that
+re-validates `ok:true`. The "Use map_bbox as AO" one-click writes the GeoJSON Polygon shape the
+renderer expects (not the playbook sample's flat `coords` shape).
 
-**Why:** the user wants to "start building a scenario by placing units, from the CMO captions." The
-ground truth is that placement + the engine already exist — so the work is *continuing the authoring
-slices*, not building from scratch (avoids the CLAUDE.md rebuild trap).
+**Why this order.** CMO build-order says *define the AO before placing units* — and the wargame3
+audit (2026-06-02) showed exactly the geography fields missing/empty (`ao_boundaries: []`,
+`throughput_ceilings_km` absent). Splitting Slice 2 into 2A (Geography, done) + 2B (Forces, next)
+keeps PRs small/Node-testable per the roadmap rule.
 
-**How to apply:** the **next concrete step is Edit Mode Slice 2 — Geography & Forces**.
-[[project_workspace_editable_owner_ruling]]: `shell/scenario-edit-mode.js` (`window.AppEditMode`) has
-Slice 1 done (Metadata + Sides + Posture, in-memory working copy). Slice 2 adds the CMO build-order's
-next steps: define the AO (objective, BLS, pipeline/`ao_boundaries`) **then** place units/OOB. Unit
-placement already works (`units-orbat-dock.js` drag + `units-map.js` cursor-follow →
-`/api/units/:id/place`) — Slice 2 should *drive those from Edit Mode*, not reimplement them. Build
-against the CMO rules now in the workbench: `docs/cmo-functional-rules/exhaustive/scenario-authoring-part{1,2}.md`
-+ the validated `docs/cmo-functional-rules/sample-sahil-corridor.json` as the target JSON shape
-(passes `scenario-validator`). Keep the in-memory working-copy / commit-journal boundary.
+**Next = Slice 2B (Forces).** Make `red_units[]` and `blue_units_initial[]` editable inside Edit
+Mode. Reuse the existing ORBAT-dock + `units-map.js` cursor-follow placement plumbing **but write
+into the in-memory scenario draft** (`window.RmoozScenario.scenario`), not the durable
+`/api/units/:id/place` SQLite store — those stores are unbridged and the durable one is the wrong
+target for scenario authoring. AUTH1 in the roadmap is exactly this. Slice 1's boundary
+(in-memory only, no `/api/sim/commit`, no journal write, no download) carries forward unchanged.
+
+Build against:
+- [`docs/cmo-functional-rules/exhaustive/scenario-authoring-part{1,2}.md`](../cmo-functional-rules/exhaustive)
+  (behavior contract for OOB + appearance + roles).
+- [`docs/cmo-functional-rules/sample-sahil-corridor.json`](../cmo-functional-rules/sample-sahil-corridor.json)
+  — target JSON shape (passes `scenario-validator`).
+- Validator hard rules to mirror in 2B: every `red_units[].bls` must match a `bls_template[].name`;
+  `red_units[].appear` ∈ steps range; `blue_units_base_ids.length === blue_units_initial.length`.

@@ -14007,6 +14007,14 @@ document.addEventListener('DOMContentLoaded', () => {
             // otherwise stacks two identical symbols at the same spot.
             if (isDuplicatePlacementClick(e.latlng, e.originalEvent)) return;
             const sidc = generateSIDC();
+            // Scenario Edit Mode: a symbol placed on the map IS a scenario unit. Route it
+            // into the scenario draft (side from SIDC, coord from the click; red units
+            // auto-link to the nearest landing site) and skip the operator-layer marker.
+            if (window.AppEditMode && typeof window.AppEditMode.isOn === 'function' && window.AppEditMode.isOn()
+                && typeof window.AppEditMode.placeUnitFromMap === 'function') {
+                window.AppEditMode.placeUnitFromMap(sidc, e.latlng.lng, e.latlng.lat);
+                return;
+            }
             const opts = { ...getTextModifiers(), size: 25, simpleStatusModifier: true };
 
             const marker = L.marker(e.latlng, { icon: L.divIcon({ className: 'custom-nato-marker', html: '<div></div>', iconSize: [1, 1], iconAnchor: [0, 0] }), draggable: true });

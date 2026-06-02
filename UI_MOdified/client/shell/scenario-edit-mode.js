@@ -145,27 +145,6 @@
         renderEditor(); previewDraftOnMap();
         setStatus(side + ' unit placed from symbol at ' + lon.toFixed(3) + ', ' + lat.toFixed(3) + '.', false);
     }
-    // Reuse the app's existing SIDC/symbol picker, then click-to-place into the scenario.
-    function placeUnitViaSymbol() {
-        var openBtn = document.getElementById('open-sidc-picker');
-        if (!openBtn) { setStatus('Symbol picker not available on this view.', true); return; }
-        window.__APP_UNITS_CAPTURING_SIDC = true;   // make the operator-symbol flow ignore this pick
-        function onMsg(ev) {
-            var d = ev && ev.data;
-            if (!d || d.type !== 'sidc-picker:sidc') return;
-            window.removeEventListener('message', onMsg);
-            window.__APP_UNITS_CAPTURING_SIDC = false;
-            var modal = document.getElementById('sidc-picker-modal');
-            if (modal) { modal.classList.add('hidden'); modal.setAttribute('aria-hidden', 'true'); }
-            var sidc = String(d.sidc || '');
-            if (!sidc) { setStatus('No symbol picked.', true); return; }
-            setStatus('Now click the map to place the ' + sidcSide(sidc) + ' unit…', false);
-            pickCoordOnMap(function (lon, lat) { addUnitFromSymbol(sidc, lon, lat); });
-        }
-        window.addEventListener('message', onMsg);
-        setStatus('Pick a NATO symbol… then click the map to place it.', false);
-        openBtn.click();
-    }
 
     /* ---- "New scenario" seeds (build fresh, not edit the loaded one) ------- */
     // Blank = a RUNTIME-shape scenario skeleton (the shape the validator / adjudicator /
@@ -448,16 +427,13 @@
         });
         oobCard.appendChild(redList);
         oobCard.appendChild(blueList);
-        // Symbol-driven placement: pick a NATO symbol (existing SIDC picker) → click the map.
-        // Side is derived from the symbol; red units auto-link to the nearest BLS.
+        // Units are placed on the MAP via the Symbol tool while Edit Mode is on: each placed
+        // symbol becomes a scenario unit (wired in app.js → AppEditMode.placeUnitFromMap).
         oobCard.appendChild(el('div', { class: 'sw-edit-hint',
-            text: 'Place units by symbol: pick a NATO symbol, then click the map. Friend → Blue, hostile → Red (from the symbol); red units auto-link to the nearest landing site.' }));
-        var placeBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary', text: '➕ Place unit (pick symbol) / إضافة وحدة بالرمز' });
-        placeBtn.addEventListener('click', placeUnitViaSymbol);
+            text: 'Add units on the map: open the Symbol tool (left rail), pick a NATO symbol, then click the map — each symbol becomes a scenario unit. Friend → Blue, hostile → Red; red units auto-link to the nearest landing site. Remove units with × above.' }));
         if (!blsNames.length) {
             oobCard.appendChild(el('div', { class: 'sw-edit-hint', text: 'Tip: add a landing site above before placing red (hostile) units.' }));
         }
-        oobCard.appendChild(el('div', { class: 'sw-edit-actions' }, [placeBtn]));
         host.appendChild(oobCard);
 
         /* --- actions --- */
@@ -567,6 +543,13 @@
         toggle: toggle,
         setMode: setMode,
         getDraft: function () { return _draft ? clone(_draft) : null; },
-        isOn: function () { return _on; }
+        isOn: function () { return _on; },
+        // Called by the map Symbol tool (app.js) when Edit Mode is on: a placed symbol
+        // becomes a scenario unit. Returns true if it handled the placement.
+        placeUnitFromMap: function (sidc, lon, lat) {
+            if (!_on || !_draft) return false;
+            addUnitFromSymbol(sidc, lon, lat);
+            return true;
+        }
     };
 })();

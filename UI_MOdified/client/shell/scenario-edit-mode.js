@@ -35,6 +35,10 @@
 
     var _on    = false;   // edit mode active?
     var _draft = null;    // working-copy scenario draft (deep clone)
+    var ECHELONS = ['division', 'brigade', 'battalion', 'company'];
+    // transient add-forms (kept across re-renders so map-pick survives renderEditor)
+    var _unitForm = { side: 'BLUE', name: '', role: '', echelon: 'battalion', bls: '', lon: null, lat: null };
+    var _blsForm  = { name: '', lon: null, lat: null };
 
     /* ---- small helpers ---------------------------------------------------- */
     function el(tag, attrs, kids) {
@@ -94,19 +98,46 @@
         return d;
     }
 
+    /* ---- forces/OOB helpers ----------------------------------------------- */
+    function previewDraftOnMap() {
+        try {
+            if (window.AppAdjudicatorMap && typeof window.AppAdjudicatorMap.drawScenario === 'function' && _draft) {
+                window.AppAdjudicatorMap.drawScenario(clone(_draft));
+            }
+        } catch (_) {}
+    }
+    function defaultSidcForSide(side) {
+        return side === 'RED' ? '10061000001211000000' : '10031000001211000000';
+    }
+    function genUid(prefix, arr, key) {
+        var n = (arr ? arr.length : 0) + 1, id = prefix + n;
+        var taken = function (v) { return (arr || []).some(function (u) { return u && u[key] === v; }); };
+        while (taken(id)) { n++; id = prefix + n; }
+        return id;
+    }
+
     /* ---- "New scenario" seeds (build fresh, not edit the loaded one) ------- */
+    // Blank = a RUNTIME-shape scenario skeleton (the shape the validator / adjudicator /
+    // these editor cards use: name, scenario_label, obj, bls_template, red_units,
+    // blue_units_initial, postures, …). NOT the P0 authoring-template shape, which is a
+    // different contract (metadata{}, units[], posture, objectives[]) and would mismatch.
     function buildBlankDraft() {
-        var d;
-        if (window.AppScenarioAuthoring &&
-            typeof window.AppScenarioAuthoring.buildStandardScenarioAuthoringTemplate === 'function') {
-            d = clone(window.AppScenarioAuthoring.buildStandardScenarioAuthoringTemplate());
-        } else {
-            d = { scenario_label: '', scenario_id: '', steps: [] };
-        }
-        if (!Array.isArray(d.sides) || !d.sides.length) d.sides = defaultSides();
-        if (!d.postures || typeof d.postures !== 'object') d.postures = defaultPostures();
-        d.authoring_status = 'draft';
-        return d;
+        return {
+            name: 'new-scenario',
+            scenario_label: '',
+            model_version: 'authored-v1',
+            obj: { name: 'OBJ', coord: [0, 0], target_depth_km: 40, carver: 0 },
+            pipeline: [],
+            bls_template: [],
+            red_units: [],
+            blue_units_base_ids: [],
+            blue_units_initial: [],
+            phase_table: [],
+            steps: [],
+            sides: defaultSides(),
+            postures: defaultPostures(),
+            authoring_status: 'draft'
+        };
     }
     function startBlankScenario() {
         _draft = buildBlankDraft();
@@ -292,6 +323,121 @@
         });
         objCard.appendChild(el('div', { class: 'sw-edit-actions' }, [pickBtn]));
         host.appendChild(objCard);
+
+        /* --- Geography · Beach Landing Sites (red units must reference one) --- */
+        _draft.bls_template = Array.isArray(_draft.bls_template) ? _draft.bls_template : [];
+        var blsCard = el('div', { class: 'builder-card sw-card' }, [
+            el('div', { class: 'builder-card-header' }, [
+                el('span', { class: 'builder-card-title', text: 'Edit · Beach Landing Sites / مواقع الإنزال' })
+            ])
+        ]);
+        var blsList = el('div', { class: 'sw-edit-list' });
+        _draft.bls_template.forEach(function (b, idx) {
+            var rm = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-rm', text: '×' });
+            rm.addEventListener('click', function () { _draft.bls_template.splice(idx, 1); renderEditor(); previewDraftOnMap(); });
+            blsList.appendChild(el('div', { class: 'sw-edit-listrow' }, [
+                el('span', { text: (b.name || '(unnamed)') + ' · [' + (b.coord ? b.coord[0] : '?') + ', ' + (b.coord ? b.coord[1] : '?') + ']' }), rm
+            ]));
+        });
+        if (!_draft.bls_template.length) blsList.appendChild(el('div', { class: 'sw-edit-hint', text: 'No landing sites yet.' }));
+        blsCard.appendChild(blsList);
+        blsCard.appendChild(el('dl', { class: 'sw-kv' }, [
+            fieldRow('BLS name / الاسم', textInput(_blsForm.name, function (v) { _blsForm.name = v; })),
+            fieldRow('Longitude', numberInput(_blsForm.lon, function (v) { _blsForm.lon = v; }, { step: 'any' })),
+            fieldRow('Latitude',  numberInput(_blsForm.lat, function (v) { _blsForm.lat = v; }, { step: 'any' }))
+        ]));
+        var blsPick = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Pick on map / تحديد' });
+        blsPick.addEventListener('click', function () {
+            pickCoordOnMap(function (lon, lat) { _blsForm.lon = lon; _blsForm.lat = lat; renderEditor(); });
+            setStatus('Click the map to set the landing-site location…', false);
+        });
+        var blsAdd = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary', text: '+ Add BLS' });
+        blsAdd.addEventListener('click', function () {
+            if (!_blsForm.name) { setStatus('Landing site needs a name.', true); return; }
+            if (_blsForm.lon == null || _blsForm.lat == null) { setStatus('Landing site needs a location (lon/lat or Pick on map).', true); return; }
+            _draft.bls_template.push({ name: _blsForm.name, coord: [_blsForm.lon, _blsForm.lat], role: 'supporting', throughput: 800, terrain_friction: 0.3 });
+            _blsForm = { name: '', lon: null, lat: null };
+            renderEditor(); previewDraftOnMap(); setStatus('Landing site added.', false);
+        });
+        blsCard.appendChild(el('div', { class: 'sw-edit-actions' }, [blsPick, blsAdd]));
+        host.appendChild(blsCard);
+
+        /* --- Forces · Order of Battle: add / list / remove units (the "place units" step) --- */
+        _draft.red_units          = Array.isArray(_draft.red_units) ? _draft.red_units : [];
+        _draft.blue_units_initial = Array.isArray(_draft.blue_units_initial) ? _draft.blue_units_initial : [];
+        _draft.blue_units_base_ids= Array.isArray(_draft.blue_units_base_ids) ? _draft.blue_units_base_ids : [];
+        var blsNames = _draft.bls_template.map(function (b) { return b.name; }).filter(Boolean);
+        var oobCard = el('div', { class: 'builder-card sw-card' }, [
+            el('div', { class: 'builder-card-header' }, [
+                el('span', { class: 'builder-card-title', text: 'Edit · Forces / OOB — place units / القوات' })
+            ])
+        ]);
+        function unitRow(label, coord, role, onRemove) {
+            var rm = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-rm', text: '×' });
+            rm.addEventListener('click', onRemove);
+            return el('div', { class: 'sw-edit-listrow' }, [
+                el('span', { text: (label || '(unnamed)') + ' · ' + (role || '') + ' · [' + (coord ? coord[0] : '?') + ', ' + (coord ? coord[1] : '?') + ']' }), rm
+            ]);
+        }
+        var redList = el('div', { class: 'sw-edit-list' });
+        redList.appendChild(el('div', { class: 'sw-edit-sublabel', text: 'RED (' + _draft.red_units.length + ')' }));
+        _draft.red_units.forEach(function (u, idx) {
+            redList.appendChild(unitRow(u.label, u.coord, u.role, function () { _draft.red_units.splice(idx, 1); renderEditor(); previewDraftOnMap(); }));
+        });
+        var blueList = el('div', { class: 'sw-edit-list' });
+        blueList.appendChild(el('div', { class: 'sw-edit-sublabel', text: 'BLUE (' + _draft.blue_units_initial.length + ')' }));
+        _draft.blue_units_initial.forEach(function (u, idx) {
+            blueList.appendChild(unitRow(u.label, u.coord, u.role, function () {
+                var uid = u.unit_uid; _draft.blue_units_initial.splice(idx, 1);
+                var bi = _draft.blue_units_base_ids.indexOf(uid); if (bi >= 0) _draft.blue_units_base_ids.splice(bi, 1);
+                renderEditor(); previewDraftOnMap();
+            }));
+        });
+        oobCard.appendChild(redList);
+        oobCard.appendChild(blueList);
+        var uform = el('dl', { class: 'sw-kv' }, [
+            fieldRow('Side / الطرف', selectInput(['BLUE', 'RED'], _unitForm.side, function (v) { _unitForm.side = v; renderEditor(); })),
+            fieldRow('Name / الاسم',  textInput(_unitForm.name, function (v) { _unitForm.name = v; })),
+            fieldRow('Role / الدور',  textInput(_unitForm.role, function (v) { _unitForm.role = v; })),
+            fieldRow('Echelon',       selectInput(ECHELONS, _unitForm.echelon, function (v) { _unitForm.echelon = v; })),
+            fieldRow('Longitude',     numberInput(_unitForm.lon, function (v) { _unitForm.lon = v; }, { step: 'any' })),
+            fieldRow('Latitude',      numberInput(_unitForm.lat, function (v) { _unitForm.lat = v; }, { step: 'any' }))
+        ]);
+        if (_unitForm.side === 'RED') {
+            uform.appendChild(fieldRow('Landing site (BLS)',
+                selectInput(blsNames.length ? blsNames : ['(add a BLS first)'], _unitForm.bls || blsNames[0] || '', function (v) { _unitForm.bls = v; })));
+        }
+        oobCard.appendChild(uform);
+        var uPick = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Pick on map / تحديد' });
+        uPick.addEventListener('click', function () {
+            pickCoordOnMap(function (lon, lat) { _unitForm.lon = lon; _unitForm.lat = lat; renderEditor(); });
+            setStatus('Click the map to place the unit…', false);
+        });
+        var uAdd = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary', text: '+ Add unit / إضافة وحدة' });
+        uAdd.addEventListener('click', function () {
+            if (!_unitForm.name) { setStatus('Unit needs a name.', true); return; }
+            if (_unitForm.lon == null || _unitForm.lat == null) { setStatus('Unit needs a location (lon/lat or Pick on map).', true); return; }
+            if (_unitForm.side === 'RED') {
+                if (!blsNames.length) { setStatus('Add a landing site (BLS) first — red units must reference one.', true); return; }
+                _draft.red_units.push({
+                    uid: genUid('R-cust-', _draft.red_units, 'uid'), label: _unitForm.name,
+                    bls: _unitForm.bls || blsNames[0], appear: 0, role: _unitForm.role || 'Main effort',
+                    coord: [_unitForm.lon, _unitForm.lat], echelon: _unitForm.echelon, sidc: defaultSidcForSide('RED')
+                });
+            } else {
+                var uid = genUid('B-cust-', _draft.blue_units_initial, 'unit_uid');
+                _draft.blue_units_initial.push({
+                    unit_uid: uid, base_id: uid, label: _unitForm.name, coord: [_unitForm.lon, _unitForm.lat],
+                    echelon: _unitForm.echelon, role: _unitForm.role || 'mech_brigade', sidc: defaultSidcForSide('BLUE')
+                });
+                _draft.blue_units_base_ids.push(uid);
+            }
+            var added = _unitForm.side;
+            _unitForm.name = ''; _unitForm.lon = null; _unitForm.lat = null;
+            renderEditor(); previewDraftOnMap(); setStatus(added + ' unit added.', false);
+        });
+        oobCard.appendChild(el('div', { class: 'sw-edit-actions' }, [uPick, uAdd]));
+        host.appendChild(oobCard);
 
         /* --- actions --- */
         var status = el('span', { id: 'sw-editmode-status', class: 'sw-edit-status', text: '' });

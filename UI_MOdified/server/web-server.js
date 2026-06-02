@@ -686,6 +686,75 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    // Slice 2C: durable persistence for an Edit-Mode-authored scenario.
+    // Mirrors /api/scenario/import's write+cache+SSE pattern but takes a
+    // *complete scenario JSON* in the body (not a GeoJSON bundle):
+    //   POST /api/scenarios            { scenario: {...} }
+    //   POST /api/scenarios?overwrite=1 — replace an existing file (else 409).
+    // 409 anti-clobber prevents accidentally overwriting wargame3 etc.
+    if (pathname === '/api/scenarios' && req.method === 'POST') {
+        readJsonBody(req, { maxBytes: 25_000_000 }).then((body) => {
+            const scenario = body && body.scenario;
+            if (!scenario || typeof scenario !== 'object') {
+                return sendJson(res, 400, { ok: false, error: 'body.scenario object required' });
+            }
+            // 1) Validate against the same schema the loader runs on read.
+            const validator = require('./ai/scenario-validator');
+            const r = validator.validateScenario(scenario);
+            if (!r.ok) {
+                return sendJson(res, 400, {
+                    ok: false, error: 'scenario validation failed',
+                    errors: r.errors,
+                    formatted: validator.formatErrors(r.errors).split('\n').slice(0, 10)
+                });
+            }
+            // 2) Same sanitisation as /api/scenario/import so the on-disk
+            //    filename is predictable and safe.
+            const rawName = (scenario.name && typeof scenario.name === 'string')
+                ? scenario.name.trim() : '';
+            const safeName = rawName.toLowerCase()
+                .replace(/[^a-z0-9._-]+/g, '_')
+                .replace(/^_+|_+$/g, '')
+                .slice(0, 64) || 'authored';
+            // The loader requires name to match filename; enforce it here.
+            scenario.name = safeName;
+
+            const dir = path.join(DATA_DIR, 'scenarios');
+            try { fs.mkdirSync(dir, { recursive: true }); } catch (_) {}
+            const file = path.join(dir, safeName + '.json');
+
+            // 3) 409 if exists and overwrite not requested.
+            const overwrite = url.searchParams.get('overwrite') === '1';
+            if (!overwrite) {
+                try {
+                    fs.accessSync(file, fs.constants.F_OK);
+                    return sendJson(res, 409, {
+                        ok: false, error: 'scenario "' + safeName + '" already exists',
+                        name: safeName, file: file
+                    });
+                } catch (_) { /* not found — fall through to write */ }
+            }
+
+            // 4) Write + invalidate cache + record active.
+            fs.writeFileSync(file, JSON.stringify(scenario, null, 2), 'utf8');
+            try { scenarios.clearCache(); } catch (_) {}
+            try { scenarios.setActiveName(safeName); } catch (_) {}
+
+            sendJson(res, 200, {
+                ok: true, name: safeName, file: file,
+                steps: (scenario.steps || []).length,
+                red_units: (scenario.red_units || []).length,
+                blue_units: (scenario.blue_units_initial || []).length,
+                overwritten: overwrite
+            });
+        }).catch((e) => {
+            const code = e && e.code === 'BODY_TOO_LARGE' ? 413
+                       : e && e.code === 'INVALID_JSON'   ? 400 : 400;
+            sendJson(res, code, { ok: false, error: e.message || String(e) });
+        });
+        return;
+    }
+
     // Persist the operator's active-scenario selection so the HUD boots into
     // the same scenario next time, even after a server restart.
     if (pathname === '/api/scenario/active' && req.method === 'POST') {

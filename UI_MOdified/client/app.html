@@ -4941,20 +4941,59 @@
          P0 authoring schema (draft/working-copy engine) must load before edit-mode.
          Edits stay in-memory; commit/journal boundary untouched. -->
     <script src="shell/scenario-authoring-schema.js?v=1"></script>
-    <script src="shell/scenario-edit-mode.js?v=1"></script>
+    <script src="shell/scenario-edit-mode.js?v=2"></script>
     <style>
-        .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; }
+        .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
             color:#e8eaed; border-radius:5px; padding:4px 10px; }
         .sw-edit-btn:hover { background:#343a44; }
+        .sw-edit-btn[disabled] { opacity:0.5; cursor:not-allowed; }
         .sw-edit-btn-primary { background:#2f6fed; border-color:#2f6fed; color:#fff; }
         .sw-edit-btn-primary:hover { background:#3b78f0; }
         .sw-editmode-editor[hidden] { display:none; }
         .sw-edit-row dd { width:100%; }
         .sw-edit-input { width:100%; box-sizing:border-box; font:inherit; padding:3px 6px;
             border:1px solid #5a6270; border-radius:4px; background:#1f242b; color:#e8eaed; }
+        textarea.sw-edit-input { resize:vertical; min-height:60px; font-family:ui-monospace,Menlo,Consolas,monospace; }
         .sw-edit-actions { display:flex; gap:8px; align-items:center; padding:8px; flex-wrap:wrap; }
         .sw-edit-status { font-size:12px; }
+        /* Slice 2A/2B item styling (was using browser defaults) */
+        .sw-edit-list { display:flex; flex-direction:column; gap:8px; padding:4px 8px 8px; }
+        .sw-edit-list-item { border:1px solid #3a3f47; border-radius:5px; padding:8px; background:#1c1f24; }
+        .sw-edit-empty { font-style:italic; color:#8d949e; padding:4px 0; font-size:12px; }
+        .sw-edit-hint { font-size:11px; color:#a8b0bb; padding:2px 8px 6px; }
+        .sw-edit-subcard { border:1px solid #3a3f47; border-radius:6px; margin:6px 8px; background:#1a1d22; }
+        .sw-edit-subcard-header { padding:6px 10px; font-weight:600; border-bottom:1px solid #2a2f37;
+            background:#222630; color:#cfd4dc; font-size:12.5px; letter-spacing:.02em; }
+        /* Slice 2C — stepped layout */
+        .sw-step-layout { display:flex; gap:0; align-items:stretch; min-height:300px; }
+        .sw-step-rail { flex:0 0 200px; border-right:1px solid #2a2f37; padding:6px 4px;
+            background:#161a1f; display:flex; flex-direction:column; gap:2px; max-height:80vh; overflow-y:auto; }
+        .sw-step-item { display:flex; align-items:center; gap:8px; padding:6px 8px;
+            cursor:pointer; border-radius:4px; font-size:12.5px; color:#cfd4dc; user-select:none; }
+        .sw-step-item:hover { background:#222630; }
+        .sw-step-item.active { background:#2f6fed; color:#fff; }
+        .sw-step-item.gap { color:#8d949e; }
+        .sw-step-item.gap:hover { background:#1d2026; }
+        .sw-step-num { flex:0 0 18px; font-variant-numeric:tabular-nums; font-size:11px;
+            color:#8d949e; text-align:right; }
+        .sw-step-item.active .sw-step-num { color:#bcd2ff; }
+        .sw-step-title { flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .sw-step-pill { flex:0 0 12px; height:12px; border-radius:50%; background:#3a3f47;
+            border:1px solid #4a4f57; }
+        .sw-step-pill.ok    { background:#1a7f37; border-color:#1a7f37; }
+        .sw-step-pill.warn  { background:#c9a227; border-color:#c9a227; }
+        .sw-step-pill.gap   { background:transparent; border-color:#4a4f57; border-style:dashed; }
+        .sw-step-content { flex:1 1 auto; padding:8px; min-width:0; overflow-x:hidden; max-height:80vh; overflow-y:auto; }
+        /* Slice 2C — New Scenario inline form */
+        .sw-newscen-form { border:1px solid #3a3f47; border-radius:6px; padding:10px;
+            background:#1c1f24; margin:6px 8px; display:flex; flex-direction:column; gap:6px; }
+        .sw-newscen-form-title { font-weight:600; font-size:13px; color:#e8eaed; margin-bottom:4px; }
+        /* Slice 2C — placeholder ("gap") card */
+        .sw-gap-card { padding:14px; border:1px dashed #4a4f57; border-radius:6px;
+            background:#1a1d22; color:#a8b0bb; }
+        .sw-gap-card-title { font-weight:600; color:#cfd4dc; margin-bottom:6px; }
+        .sw-gap-card-why   { font-size:12px; line-height:1.5; }
     </style>
     <script>
         // Mount Edit Mode once the DOM (workspace panel) is ready.

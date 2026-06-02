@@ -192,9 +192,11 @@
     }
     function startBlankScenario() {
         _draft = buildBlankDraft();
+        // Wipe whatever scenario is currently drawn — a blank start = empty map.
+        try { if (window.AppAdjudicatorMap && typeof window.AppAdjudicatorMap.clearScenario === 'function') window.AppAdjudicatorMap.clearScenario(); } catch (_) {}
         renderEditor();
-        setStatus('New BLANK scenario started — build it step by step, then Save to working copy.', false);
-        logOperator('New blank scenario started');
+        setStatus('New BLANK scenario started — map cleared. Build it step by step, then Save.', false);
+        logOperator('New blank scenario started (map cleared)');
     }
     function startScenarioFromSample() {
         setStatus('Loading sample…', false);

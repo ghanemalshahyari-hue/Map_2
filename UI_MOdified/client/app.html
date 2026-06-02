@@ -4941,7 +4941,7 @@
          P0 authoring schema (draft/working-copy engine) must load before edit-mode.
          Edits stay in-memory; commit/journal boundary untouched. -->
     <script src="shell/scenario-authoring-schema.js?v=1"></script>
-    <script src="shell/scenario-edit-mode.js?v=6"></script>
+    <script src="shell/scenario-edit-mode.js?v=7"></script>
     <style>
         .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
@@ -5077,6 +5077,30 @@
            only the editor. They're back when Edit Mode is OFF. */
         #scenario-workspace-panel.sw-editmode-wide > :not(#sw-editmode-bar):not(#sw-editmode-editor) {
             display: none !important;
+        }
+        /* Slice 2D-1O — when "Pick coord on map" is active, collapse the
+           overlay to a thin right-edge strip showing just a banner so the
+           map underneath is fully clickable. */
+        #scenario-workspace-panel.sw-editmode-wide.sw-editmode-picking {
+            left: auto !important;
+            width: 280px !important;
+            background: rgba(34, 50, 77, 0.96) !important;
+        }
+        #scenario-workspace-panel.sw-editmode-wide.sw-editmode-picking #sw-editmode-editor {
+            display: none !important;
+        }
+        #scenario-workspace-panel.sw-editmode-wide.sw-editmode-picking #sw-editmode-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .sw-editmode-pick-banner-global {
+            display: block; padding: 10px; margin: 8px 0;
+            background: #2f6fed; color: #fff; border-radius: 6px;
+            font-size: 13px; font-weight: 600; text-align: center;
+        }
+        .sw-editmode-pick-banner-global small {
+            display: block; font-weight: normal; opacity: 0.85; margin-top: 4px;
+            font-size: 11px;
         }
         /* The two-column field rows ("dt | dd") were laid out for a wide pane —
            when the panel is the default narrow width (Edit Mode OFF, read-only

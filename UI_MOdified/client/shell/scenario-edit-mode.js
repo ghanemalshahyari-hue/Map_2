@@ -634,6 +634,25 @@
         if (!map) { setStatus('Map not ready.', true); return false; }
         _forcesPickOnMap = true;
         try { map.getContainer().style.cursor = 'crosshair'; } catch (_) {}
+        // 2D-1O: collapse the overlay so the map underneath is clickable.
+        // Adds a global banner inside the bar with cancel button.
+        var panel = document.getElementById(PANEL_ID);
+        if (panel) panel.classList.add('sw-editmode-picking');
+        var bar = document.getElementById(BAR_ID);
+        var banner = null;
+        if (bar) {
+            banner = el('div', { id: 'sw-editmode-pick-banner', class: 'sw-editmode-pick-banner-global' }, [
+                el('span', { text: 'Click on the map to set coord' }),
+                el('small', { text: 'Press ESC or click Cancel to abort' })
+            ]);
+            var cancelBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Cancel pick' });
+            cancelBtn.addEventListener('click', function () {
+                _cancelPickOnMap();
+                if (typeof onCancel === 'function') onCancel();
+            });
+            banner.appendChild(cancelBtn);
+            bar.appendChild(banner);
+        }
         var onClick = function (e) {
             var lat = e.latlng && e.latlng.lat;
             var lng = e.latlng && e.latlng.lng;
@@ -656,6 +675,11 @@
         _forcesPickOnMap = false;
         var h = _forcesPickMapHandlers;
         _forcesPickMapHandlers = null;
+        // 2D-1O: tear down the overlay-collapse + banner.
+        var panel = document.getElementById(PANEL_ID);
+        if (panel) panel.classList.remove('sw-editmode-picking');
+        var banner = document.getElementById('sw-editmode-pick-banner');
+        if (banner && banner.parentNode) banner.parentNode.removeChild(banner);
         if (!h) return;
         try { h.map.off('click', h.onClick); } catch (_) {}
         try { h.map.getContainer().style.cursor = ''; } catch (_) {}

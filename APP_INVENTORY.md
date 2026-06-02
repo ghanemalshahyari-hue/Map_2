@@ -271,10 +271,19 @@ is parked. Each PR ships its own `test-*.js` and a re-verified W3 render.
 
 ---
 
-## TODO — CMO→RMOOZ capability roadmap (from `docs/cmo-vs-rmooz-capability-comparison.md`)
+## TODO — CMO→RMOOZ capability roadmap (chosen set, sourced from `docs/cmo-functional-rules/exhaustive/`)
 
-Ordered by value÷effort, filtered through RMOOZ's read-only / ground-amphibious / AI-adjudication thesis. Full
-rationale + per-function gap tables in the doc. **Buckets:** CORE = central to RMOOZ, ADJ = adjacent/clear value.
+> 🔒 **GUARDRAIL — build only what's on this chosen list.** The single source of truth for CMO behavior
+> is **`docs/cmo-functional-rules/exhaustive/`** (945 caption-grounded rules, 9 buckets). The list below is
+> the **explicitly chosen** subset RMOOZ will implement. **Do NOT invent functions or build CMO mechanics
+> that are not on this list** — if a desired function isn't here, add it here first (citing the governing
+> rule file), get it chosen, *then* build. Anything in the "Deliberately NOT building" list stays out.
+
+Ordered by value÷effort, filtered through RMOOZ's ground-amphibious / AI-adjudication thesis. Per-rule
+behavior (inputs/thresholds/formulas) lives in the exhaustive bucket specs cited per item.
+**Buckets:** CORE = central to RMOOZ, ADJ = adjacent/clear value. **Note:** Wave 3 already shipped the
+World-State/MOVE1/DET1/ENG1/DB1 engines + Edit Mode Slice 1 — see the Wave 3 audit line; the next chosen
+item is **Edit Mode Slice 2 (Geography & Forces)** = items 1+3 below joined to unit placement.
 
 - [ ] **1. Surface Sides + Posture cards** — CORE, XS. `sides`/`postures` are schema-ready + loader-defaulted but discarded at load; add two read-only cards.
 - [ ] **2. Consolidate 3 clock surfaces → 1 + add explicit `scenario_clock` (start_utc/duration_hours)** — CORE, S. Closes a PARTIAL gap *and* a known 3× duplication.
@@ -301,7 +310,7 @@ rationale + per-function gap tables in the doc. **Buckets:** CORE = central to R
 - `docs/scenario-animation-presentation-readiness-audit.md` — P0B audit: what animates per step (W3-rich), coverage gaps (non-W3 = markers+movement only), per-unit fidelity, static-units gap. Re-runnable via `node test-p0b-animation-readiness.js`.
 - `docs/unit-symbol-fidelity-audit.md` — SYM1 audit: 117/153 W3 units render proper milsymbol glyphs, 36 fall back (milsymbol 2.0.0 rejects specific child SIDC entity codes); fix = role/domain→canonical-family remap (SYM2). Re-runnable via `node test-sym1-unit-symbol-fidelity.js`.
 - `docs/pr-166-external-scenario-pack-audit.md` + `docs/scenario-pack-audit/` — CSP51 audit (630 scenarios; don't re-run).
-- `docs/cmo-scenario-editor-application.md` — CMO→RMOOZ workflow mapping (general concept→status).
-- `docs/cmo-vs-rmooz-capability-comparison.md` — **deep** function-by-function CMO→RMOOZ comparison (mined from 245 tutorial transcripts); source of the CMO→RMOOZ TODO roadmap above.
-- `docs/cmo-pgatcomb-playlist-inventory.md` — CMO tutorial playlist caption-read inventory (research/reference; `e75ff65`).
+- **`docs/cmo-functional-rules/exhaustive/`** — ⭐ **the single source of truth** for CMO behavior: 945 caption-grounded rules across 9 buckets, the chosen-function roadmap above sources from here. (Superseded + replaced the older `cmo-scenario-editor-application.md` and `cmo-vs-rmooz-capability-comparison.md`, now deleted.)
+- `docs/cmo-functional-rules/5-build-playbook.md` + `sample-sahil-corridor.json` — worked "build a scenario the CMO way" example (validates `ok: true`); the target shape for the authoring editor.
+- `docs/cmo-pgatcomb-playlist-inventory.md` — CMO tutorial playlist index (maps title→videoId→`cmo-captions/<id>.txt`).
 - Cross-session "why" lives in the memory dir (`MEMORY.md` index) — this file is the "what", memory is the "why".

@@ -63,6 +63,10 @@
                     <span data-i18n="legend-toggle-btn">Legend</span>
                 </button>
                 <button id="lang-toggle-btn" class="header-btn" type="button" data-i18n-title="lang-toggle-title" title="Switch language">عربي</button>
+                <!-- Scenario Entry Consolidation: launch-window nav + safe local export -->
+                <button id="rmooz-back-home" class="header-btn header-btn--text" type="button" title="Back to the main launch window"><span data-i18n="rmooz-back-home">← Main Window</span></button>
+                <button id="rmooz-export-scenario" class="header-btn header-btn--text" type="button" title="Export the current scenario as JSON"><span data-i18n="rmooz-export-scenario">Export Scenario</span></button>
+                <span id="rmooz-export-status" class="rmooz-export-status" aria-live="polite"></span>
                 <div id="server-account-bar" class="server-account-bar hidden" aria-label="Server plans">
                     <select id="server-plan-select" class="glass-select server-plan-select" title="Plans"></select>
                     <span id="plan-save-status" class="plan-save-status plan-save-status--hidden" aria-live="polite" role="status"></span>
@@ -4977,6 +4981,9 @@
          only acts when a ?launch= intent is present, so direct /app.html and the
          Wargame-3 path are untouched. -->
     <script src="shell/native-scenario-loader.js?v=1"></script>
+    <!-- Scenario Entry Consolidation: Back to Main Window, Export Scenario JSON,
+         and the Developer/Import disclosure that hides scenario-load clutter. -->
+    <script src="shell/workspace-consolidation.js?v=1"></script>
     <!-- Owner ruling 2026-06-01: editable scenario workspace (slice 1: metadata/sides/posture).
          P0 authoring schema (draft/working-copy engine) must load before edit-mode.
          Edits stay in-memory; commit/journal boundary untouched. -->
@@ -5223,6 +5230,20 @@
         .wn-code { font-weight: 600; font-size: 11px; }
         .wn-exp { flex: 1 1 100%; opacity: .85; font-size: 11px; }
         .wn-src { font-size: 9px; opacity: .5; font-family: monospace; }
+
+        /* Scenario Entry Consolidation: scenario import/source loaders are hidden in
+           the normal workspace view; the "Developer / Import" toggle reveals them.
+           Nothing is deleted — the global import path + diagnostics stay recoverable. */
+        body:not(.rmooz-dev-import-open) #sw-scenario-source-section,
+        body:not(.rmooz-dev-import-open) #wg-adj-import,
+        body:not(.rmooz-dev-import-open) label[data-i18n="wg-adj-import-label"] { display: none !important; }
+        .rmooz-dev-import-toggle {
+            display: inline-block; margin: 10px 0; padding: 4px 12px; font-size: 11px;
+            background: transparent; color: #8d949e; border: 1px dashed #2a2f37;
+            border-radius: 6px; cursor: pointer; letter-spacing: .03em;
+        }
+        .rmooz-dev-import-toggle:hover { color: #fff; border-color: #3a96d2; }
+        .rmooz-export-status { font-size: 11px; color: #8d949e; margin: 0 6px; }
 
         .oep-eyebrow {
             display: block; font-size: 10px; text-transform: uppercase;

@@ -1669,6 +1669,9 @@
             'wn-hdr-sub':                'Read-only explanation of why the current action is feasible, blocked, or risky.',
             'wn-empty':                  'No action selected for Why-Not review.',
             'wn-clear':                  'No blockers, risks, or evidence gaps in the current state.',
+            // Scenario Entry Consolidation
+            'rmooz-back-home':           '← Main Window',
+            'rmooz-export-scenario':     'Export Scenario',
             // PR-132: Scenario Briefing Panel card labels
             'sw-brfg-title':             'Scenario Brief',
             'sw-brfg-field-purpose':     'Purpose',
@@ -4045,6 +4048,9 @@
             'wn-hdr-sub':                'شرح للقراءة فقط يوضّح سبب كون الإجراء الحالي ممكناً أو محظوراً أو محفوفاً بالمخاطر.',
             'wn-empty':                  'لا يوجد إجراء محدد لمراجعة الموانع.',
             'wn-clear':                  'لا توجد عوائق أو مخاطر أو فجوات في الأدلة ضمن الحالة الحالية.',
+            // Scenario Entry Consolidation
+            'rmooz-back-home':           '← النافذة الرئيسية',
+            'rmooz-export-scenario':     'تصدير السيناريو',
             // PR-132: Scenario Briefing Panel card labels
             'sw-brfg-title':             'موجز السيناريو',
             'sw-brfg-field-purpose':     'الغرض',

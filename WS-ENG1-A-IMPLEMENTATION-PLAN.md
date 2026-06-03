@@ -10,13 +10,19 @@
 
 ## Executive Summary
 
-Move engagement outcome ownership from **on-demand map computation** to **World State DERIVATIONS** (once per decision). This is the minimal safe inversion following the DET1-A pattern.
+**SCOPE (LOCKED):** WS-ENG1-A stores engagement outcome RECORDS ONLY. Damage application logic stays UNCHANGED.
+
+Decouple in layers:
+- **WS-ENG1-A (THIS):** World State owns outcome records (ws.derived.engagement_outcomes) — no damage application changes
+- **WS-ENG1-B (FUTURE):** Consume outcomes for damage application
+- **WS-ENG1-C (FUTURE):** Readiness computation from outcomes
+- **WS-OBJ-A (FUTURE):** Objective evidence / outcome history
 
 **Key Finding:** ENG1 is **deterministic** (no randomness) — outcomes can be stored once and safely read by all consumers.
 
-**Complexity:** 7/10 (higher than DET1-A due to tight coupling with damage application)  
-**Risk:** 🔴 CRITICAL (engagement is core simulation loop)  
-**Estimated Effort:** 80-100 lines changed + 20 tests
+**Complexity:** 4/10 (lower than originally planned — outcome storage only, no refactoring)  
+**Risk:** 🟡 MEDIUM (outcome storage is isolated, damage logic unchanged)  
+**Estimated Effort:** 40-50 lines changed + 15 tests
 
 ---
 
@@ -129,78 +135,53 @@ ws.derived.engagement_outcomes = [
 
 ---
 
-### **4. WS3 Damage Application & Outcome Consumption**
+### **4. Outcome Storage (WS-ENG1-A) vs. Damage Application (WS-ENG1-B)**
 
-**Current Data Flow (WS3.resolveEngagement):**
+**⚠️ IMPORTANT: WS-ENG1-A does NOT change damage application. Damage logic stays UNCHANGED.**
 
-```
-Input: ENGAGE decision { shooter, target, force }
-  ↓
-Compute contacts (from WS.derived.contacts)
-  ↓
-Detection gate check
-  ↓
-ENG1.computeEngagements(pairWs, synthetic_contact)
-  ↓ Returns { recs }
-  ↓
-Find engaged record, extract pk_kill
-  ↓
-Apply damage: target.strength -= pk_kill
-Apply status: target.status = DESTROYED | DEGRADED
-  ↓
-Decrement magazines (shooter)
-  ↓
-Output: effect record
-```
+**Current Code (WS3.resolveEngagement) — UNCHANGED in WS-ENG1-A:**
 
-**Target Design (WS-ENG1-A):**
-
-```
-Input: ENGAGE decision { shooter, target, force }
-  ↓
-Compute contacts (from WS.derived.contacts)
-  ↓
-Detection gate check
-  ↓
-[NEW] Check if outcome already in ws.derived.engagement_outcomes
-      (for determinism, avoid recomputing same step)
-  ↓
-[IF not found] Call ENG1.computeEngagements() → outcomes stored
-  ↓
-[THEN] Read from ws.derived.engagement_outcomes
-  ↓
-Apply damage: target.strength -= outcome.pk_kill
-Apply status: target.status = outcome.target_status_after
-  ↓
-Decrement magazines (from outcome.salvo)
-  ↓
-Output: effect record (points to outcome in WS)
-```
-
-**Key Design Decisions:**
-
-1. **Outcomes stored IN WS3** (during decision application), not as separate DERIVATIONS pass
-   - Why: Damage application needs to read outcomes immediately
-   - Why: Avoid race conditions (DERIVATIONS reads, WS3 writes)
-   - Implication: engagement_outcomes computed eagerly, not lazily in DERIVATIONS
-
-2. **ENG1 stays pure** (clones inputs, never mutates)
-   - ENG1 still called from WS3 (not moved to DERIVATIONS)
-   - WS3 stores results + applies side effects
-
-3. **DERIVATIONS includes shallow engagement_outcomes copy** (for other consumers)
-   - Map reads from ws.derived.engagement_outcomes
-   - Points to same data as WS3 computed
-
-**Implementation Detail:**
 ```javascript
-// In WS3.applyDecision():
-if (decision.type === 'ENGAGE') {
-  var outcomes = AppEngagement.computeEngagements(...);
-  ws.derived.engagement_outcomes = outcomes;  // Store for consumers
-  applyDamage(ws, outcomes);                   // Apply side effects
-}
+// Lines 158-189: Damage application logic stays exactly as-is
+var recs = e.computeEngagements(pairWs, synthetic, ...);
+var rec = recs.filter(...)[0];
+
+// Apply damage (THIS STAYS UNCHANGED)
+var before = target.strength || 1;
+var after = Math.max(0, before - rec.pk_kill);
+target.strength = after;
+if (after <= DESTROY_AT) { target.status = 'DESTROYED'; }
+
+// Decrement magazines (THIS STAYS UNCHANGED)
+var w = (shooter.weapons || [])[...];
+mag.stock[key] = Math.max(0, mag.stock[key] - rec.salvo);
 ```
+
+**WS-ENG1-A Addition ONLY:**
+
+```javascript
+// NEW: Store outcome for other consumers (maps, future layers)
+if (!ws.derived) ws.derived = {};
+if (!ws.derived.engagement_outcomes) ws.derived.engagement_outcomes = [];
+ws.derived.engagement_outcomes.push(rec);
+
+// ^ That's it. Everything else in resolveEngagement() unchanged.
+```
+
+**Why This Approach:**
+
+1. ✅ **Outcome storage is isolated** — no risk to existing damage logic
+2. ✅ **Damage application unchanged** — proven code path stays intact
+3. ✅ **Determinism proven** — outcomes computed once, stored, reused
+4. ✅ **Future refactoring safe** — WS-ENG1-B will consume stored outcomes for damage later
+
+**NOT in WS-ENG1-A:**
+- ❌ Reading outcomes to apply damage
+- ❌ Refactoring damage application
+- ❌ Computing readiness from outcomes
+- ❌ Computing objective evidence
+
+**These come in WS-ENG1-B, C, OBJ-A (future phases)**
 
 ---
 
@@ -412,43 +393,43 @@ Overall:
 
 ## Architecture & Data Flow
 
-### **Ownership Model**
+### **Ownership Model (WS-ENG1-A: Outcome Storage Only)**
 
 ```
-┌─────────────────────────────────────────────────────┐
-│  ENG1: Engagement Computation Engine                │
-│  • Purely functional                                │
-│  • Deterministic (1 - (1-pk)^salvo formula)        │
-│  • Input: units, contacts, weapon DB               │
-│  • Output: engagement records (blocked/engaged)    │
-│  • Called from: WS3.applyDecision()                │
-│  • Never called from: Map, HUD, tests (except unit)|
-└────────────────┬─────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│  ENG1: Engagement Computation Engine (unchanged) │
+│  • Purely functional                             │
+│  • Deterministic (1 - (1-pk)^salvo formula)     │
+│  • Input: units, contacts, weapon DB            │
+│  • Output: engagement records (blocked/engaged) │
+│  • Called from: WS3.applyDecision() ONLY        │
+└────────────────┬─────────────────────────────────┘
                  │
                  └─ Compute once per ENGAGE decision
+                    │ [NEW: Store outcome]
                     │
-    ┌───────────────┴────────────────┐
-    │                                │
-    v                                v
-[WS3 Layer]                    [DERIVATIONS]
-• Apply damage                 • (shallow copy for consumers)
-• Decrement magazines          • ws.derived.engagement_outcomes
-• Update unit.strength         •
-• Update unit.status           •
-• Store outcomes in ws         •
-    │                          │
-    └──────────────┬───────────┘
-                   │
-    ┌──────────────┴──────────────────┐
-    │                                 │
-    v                                 v
-[Map Consumer]               [Future Consumers]
-• Read ws.derived.outcomes   • HUD (display options)
-• Render firing arcs         • AI (COA eval)
-• Show engagement details    • Doctrine (MTH1)
-• (No recompute)             • Evidence (OBJ-A)
-                             • Event log
+    ┌───────────────┘
+    │
+    v
+[WS-ENG1-A: Outcome Storage]
+    ws.derived.engagement_outcomes ← store rec
+    (That's it! Damage logic unchanged below)
+    │
+    └──→ ws.derived.engagement_outcomes
+         (immutable, read-only for rest of step)
+             │
+    ┌────────┴──────────┬──────────────┐
+    │                   │              │
+    v                   v              v
+[WS3: Damage]    [Map Consumer]   [Future (WS-ENG1-B/C)]
+(OLD CODE)       • Read outcomes  • Refactor damage
+• Apply damage   • Render arcs    • Compute readiness
+• Decrement mags • Show details   • Objective evidence
+• Update status  • (No recompute)
+(UNCHANGED)
 ```
+
+**Key:** WS-ENG1-A stores outcomes. Damage application unchanged. Future phases refactor.
 
 ### **Step-by-Step Data Flow**
 
@@ -460,19 +441,26 @@ Overall:
 └──────────┬──────────────────────────────────────────┘
            │
            v
-┌─ WS3.applyDecision() ──────────────────────────────┐
-│ 1. Read ws.derived.contacts (from DET1)            │
-│ 2. Gate: shooter detects target?                   │
-│ 3. Call AppEngagement.computeEngagements()         │
-│    Input: { units: [R-d3, B-d1], contacts: [...] }│
-│    Output: [ { status:'engaged', pk_kill:0.85 } ] │
-│ 4. Store in ws.derived.engagement_outcomes         │
-│ 5. Extract pk_kill from outcome                    │
-│ 6. Apply damage: B-d1.strength -= 0.85             │
-│ 7. Update status: B-d1.status = 'DEGRADED'        │
-│ 8. Decrement magazines: R-d3.magazines[0] -= 2    │
-│ 9. Return effect record                           │
-└──────────┬───────────────────────────────────────────┘
+┌─ WS3.applyDecision() (ALMOST UNCHANGED) ─────────────┐
+│ 1. Read ws.derived.contacts (from DET1)              │
+│ 2. Gate: shooter detects target?                     │
+│ 3. Call AppEngagement.computeEngagements() [unchanged]
+│    Input: { units: [R-d3, B-d1], contacts: [...] }  │
+│    Output: [ { status:'engaged', pk_kill:0.85 } ]   │
+│                                                      │
+│ [NEW] 4. Store in ws.derived.engagement_outcomes    │
+│          → That's the ONLY new line! ←              │
+│                                                      │
+│ 5-9. OLD CODE (apply damage, decrement mags) [unchanged]
+│ 5. Extract pk_kill from outcome                     │
+│ 6. Apply damage: B-d1.strength -= 0.85              │
+│ 7. Update status: B-d1.status = 'DEGRADED'         │
+│ 8. Decrement magazines: R-d3.magazines[0] -= 2     │
+│ 9. Return effect record                            │
+│                                                     │
+│ ws.derived.engagement_outcomes = [outcome]          │
+│ (new field added to ws for consumers to read)      │
+└──────────┬──────────────────────────────────────────┘
            │
            v ws is returned with derived.engagement_outcomes
            │
@@ -524,30 +512,28 @@ Overall:
 
 ## Implementation Sequence
 
-### **Phase 1: Core WS-ENG1-A (2-3 days)**
+### **Phase 1: Core WS-ENG1-A (1 day)**
 
-1. Add `engagement_outcomes` schema to world-state.js
-2. Create `DERIVATIONS.computeEngagementOutcomes()` (shallow copy)
-3. Update WS3.resolveEngagement() to store outcomes in ws.derived
-4. Update WS3 to apply damage from outcomes (not recompute)
-5. Write test-ws-eng1-a.js (25+ assertions)
-6. Browser verify: steps 0, 5, 12
+1. Add ONE line to WS3.resolveEngagement(): `ws.derived.engagement_outcomes = outcomes;`
+2. Update map.computeEngagementRecords() to read from ws.derived (no ENG1 call)
+3. Write test-ws-eng1-a.js (20+ assertions, focused on outcome storage and map consumption)
+4. Grep verification: no production computeEngagements calls in map/HUD
+5. Browser verify: steps 0, 5, 12 (outcomes present, map unchanged)
 
-### **Phase 2: Map Consumer (1-2 days)**
-
-1. Update map.computeEngagementRecords() to read from ws.derived
-2. Remove direct AppEngagement.computeEngagements() call from map
-3. Update existing engagement tests
-4. Grep verification: no production computeEngagements calls outside WS
-
-### **Phase 3: Integration & Cleanup (1 day)**
+### **Phase 2: Verification & Cleanup (half day)**
 
 1. Run full test suite (240+ tests)
 2. Browser smoke test (all layers)
 3. Commit + tag
 4. Post-audit document (similar to POST-DET-OWNERSHIP-AUDIT.md)
 
-**Total Effort:** ~4-5 days (code + test + verify)
+### **Phases 3+: Future (separate commits)**
+
+- **WS-ENG1-B:** Refactor damage application to read from stored outcomes
+- **WS-ENG1-C:** Readiness computation from outcomes
+- **WS-OBJ-A:** Objective evidence / outcome history
+
+**Total Effort for WS-ENG1-A:** ~1.5 days (minimal change, maximum safety)
 
 ---
 

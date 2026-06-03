@@ -502,6 +502,180 @@
             });
         }
 
+        // Collect evidence from readiness (READINESS-A: operational capability)
+        // Uses existing fields: units[].strength, units[].status, units[].readiness, units[].supply
+        // and engagement outcomes from balance_summary
+        var units = arr(ws.units);
+        var blueUnits = units.filter(function(u) { return u.side === 'BLUE' && !u.off_map; });
+
+        // Type 1: unit_strength_avg — normalized operational effectiveness
+        if (blueUnits.length > 0) {
+            var totalStrength = 0, validStrengthCount = 0;
+            for (var ui = 0; ui < blueUnits.length; ui++) {
+                var u = blueUnits[ui];
+                var str = num(u.strength);
+                if (str != null) {
+                    totalStrength += str;
+                    validStrengthCount++;
+                }
+            }
+            if (validStrengthCount > 0) {
+                var avgStr = totalStrength / validStrengthCount;
+                // normalize from 0..2.5 to 0..1
+                var normalizedStr = Math.max(0, Math.min(1, (avgStr - 0.5) / 2.0));
+                result.push({
+                    objective_id: objId,
+                    evidence_type: 'unit_strength_avg',
+                    value: normalizedStr,
+                    source: 'engagement_outcomes + balance_summary',
+                    confidence: 0.85,
+                    step_index: step
+                });
+            }
+        }
+
+        // Type 2: force_availability_ratio — percentage of force still active
+        if (losses.blue_total != null && losses.blue_destroyed != null && losses.blue_total > 0) {
+            var activeUnits = losses.blue_total - losses.blue_destroyed;
+            var availability = activeUnits / losses.blue_total;
+            result.push({
+                objective_id: objId,
+                evidence_type: 'force_availability_ratio',
+                value: Math.max(0, Math.min(1, availability)),
+                source: 'balance_summary.losses',
+                confidence: 1.0,
+                step_index: step
+            });
+        }
+
+        // Type 3: ammunition_sustainability — estimated remaining ammo from engagements
+        var outcomes = arr(d.engagement_outcomes);
+        if (outcomes.length > 0) {
+            var totalSalvo = 0;
+            for (var oi = 0; oi < outcomes.length; oi++) {
+                var o = outcomes[oi];
+                var salvo = num(o.salvo);
+                if (salvo != null) totalSalvo += salvo;
+            }
+            // Estimate: assume 1 magazine per shooter unit initially, each magazine ~30 rounds
+            // After X salvos, magazine state estimated as remaining rounds
+            var blueShooters = {};
+            for (var oi2 = 0; oi2 < outcomes.length; oi2++) {
+                var o2 = outcomes[oi2];
+                if (o2.shooter && o2.shooter.uid) {
+                    var shooterUid = o2.shooter.uid;
+                    blueShooters[shooterUid] = (blueShooters[shooterUid] || 0) + num(o2.salvo || 0);
+                }
+            }
+            var shoeterCount = Object.keys(blueShooters).length;
+            if (shoeterCount > 0) {
+                var roundsPerMag = 30;
+                var totalMagRounds = shoeterCount * roundsPerMag;
+                var estimatedRemaining = Math.max(0, totalMagRounds - totalSalvo);
+                var ammoSustainability = estimatedRemaining / totalMagRounds;
+                result.push({
+                    objective_id: objId,
+                    evidence_type: 'ammunition_sustainability',
+                    value: Math.max(0, Math.min(1, ammoSustainability)),
+                    source: 'engagement_outcomes',
+                    confidence: 0.75,
+                    step_index: step
+                });
+            } else {
+                // No engagements yet — assume full magazines
+                result.push({
+                    objective_id: objId,
+                    evidence_type: 'ammunition_sustainability',
+                    value: 1.0,
+                    source: 'engagement_outcomes',
+                    confidence: 0.75,
+                    step_index: step
+                });
+            }
+        } else {
+            // No engagement outcomes — assume full magazines
+            result.push({
+                objective_id: objId,
+                evidence_type: 'ammunition_sustainability',
+                value: 1.0,
+                source: 'engagement_outcomes',
+                confidence: 0.75,
+                step_index: step
+            });
+        }
+
+        // Type 4: supply_sustainability — average supply level
+        if (blueUnits.length > 0) {
+            var totalSupply = 0, supplyCount = 0;
+            for (var sui = 0; sui < blueUnits.length; sui++) {
+                var suUnit = blueUnits[sui];
+                var sup = num(suUnit.supply);
+                if (sup != null) {
+                    totalSupply += sup;
+                    supplyCount++;
+                }
+            }
+            if (supplyCount > 0) {
+                var avgSupply = totalSupply / supplyCount;
+                result.push({
+                    objective_id: objId,
+                    evidence_type: 'supply_sustainability',
+                    value: Math.max(0, Math.min(1, avgSupply)),
+                    source: 'ws.units[].supply',
+                    confidence: 0.7,
+                    step_index: step
+                });
+            } else {
+                // Supply field missing — fallback
+                result.push({
+                    objective_id: objId,
+                    evidence_type: 'supply_sustainability',
+                    value: 0.5,
+                    source: 'ws.units[].supply',
+                    confidence: 0.7,
+                    step_index: step
+                });
+            }
+        }
+
+        // Type 5: combat_readiness_state — authored readiness enum
+        if (blueUnits.length > 0) {
+            var readyCount = 0, limitedCount = 0, notReadyCount = 0;
+            for (var rui = 0; rui < blueUnits.length; rui++) {
+                var runit = blueUnits[rui];
+                var rdiness = runit.readiness || 'ready';
+                if (rdiness === 'ready') readyCount++;
+                else if (rdiness === 'limited') limitedCount++;
+                else if (rdiness === 'not_ready') notReadyCount++;
+            }
+            // State is the majority state
+            var maxCount = Math.max(readyCount, limitedCount, notReadyCount);
+            var state = 'ready';
+            if (limitedCount === maxCount) state = 'limited';
+            else if (notReadyCount === maxCount) state = 'not_ready';
+            result.push({
+                objective_id: objId,
+                evidence_type: 'combat_readiness_state',
+                value: state,
+                source: 'ws.units[].readiness',
+                confidence: 0.8,
+                step_index: step
+            });
+        }
+
+        // Type 6: casualty_rate — fraction of force lost
+        if (losses.blue_total != null && losses.blue_destroyed != null && losses.blue_total > 0) {
+            var casualtyRate = losses.blue_destroyed / losses.blue_total;
+            result.push({
+                objective_id: objId,
+                evidence_type: 'casualty_rate',
+                value: Math.max(0, Math.min(1, casualtyRate)),
+                source: 'balance_summary.losses',
+                confidence: 0.9,
+                step_index: step
+            });
+        }
+
         return result.length ? result : null;
     }
 

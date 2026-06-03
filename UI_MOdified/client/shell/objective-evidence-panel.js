@@ -171,6 +171,34 @@
     }
 
     /**
+     * Humanize an object key: "compliant_unit_count" → "Compliant unit count".
+     */
+    function humanizeKey(k) {
+        var s = String(k).replace(/_/g, ' ');
+        return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    /**
+     * DOCTRINE-A polish: return SAFE HTML for an evidence value. Plain objects
+     * (WCS {air,surface,subsurface}, compliance summary) render as stacked
+     * "Key: value" lines instead of raw JSON. Dynamic parts are escaped.
+     */
+    function formatValueHtml(value, type) {
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+            var parts = [];
+            for (var k in value) {
+                if (!Object.prototype.hasOwnProperty.call(value, k)) continue;
+                var v = value[k];
+                var vStr = Array.isArray(v) ? (v.length ? v.join(', ') : '—') : String(v);
+                parts.push('<span class="oep-kv"><span class="oep-kv-key">' +
+                           escapeHtml(humanizeKey(k)) + ':</span> ' + escapeHtml(vStr) + '</span>');
+            }
+            return parts.length ? parts.join('<br>') : '—';
+        }
+        return escapeHtml(String(formatValue(value, type)));
+    }
+
+    /**
      * Main render function: Display objective evidence
      */
     function renderObjectiveEvidence(ws, objectiveId, stepIndex) {
@@ -226,13 +254,13 @@
                 for (var i = 0; i < groupEvidence.length; i++) {
                     var rec = groupEvidence[i];
                     var label = EVIDENCE_LABELS[rec.evidence_type] || { label: rec.evidence_type, key: '' };
-                    var value = formatValue(rec.value, rec.evidence_type);
+                    var valueHtml = formatValueHtml(rec.value, rec.evidence_type);
                     var dots = confidenceDots(rec.confidence);
 
                     html += '    <div class="oep-evidence-item">';
                     html += '      <dt data-i18n="' + label.key + '">' + label.label + '</dt>';
                     html += '      <dd>';
-                    html += '        <span class="oep-value">' + escapeHtml(String(value)) + '</span>';
+                    html += '        <span class="oep-value">' + valueHtml + '</span>';
                     html += '        <span class="oep-dots" title="Confidence: ' + Math.round((rec.confidence || 0.5) * 100) + '%">' + dots + '</span>';
                     html += '      </dd>';
                     html += '      <dd class="oep-source" data-i18n="evidence-source">Source: ' + escapeHtml(rec.source || 'unknown') + '</dd>';

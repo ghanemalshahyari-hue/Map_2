@@ -4,12 +4,21 @@
 Movement Operations** bucket of *Command: Modern Operations* (CMO/CMO2). It covers how
 land and air/sea units are modeled and moved, how they detect and are detected, how
 terrain and environment shape both, and the engagement-control / weapon-delivery /
-weapon-physics rules that movement and positioning feed into. It is **self-contained**:
-every rule object extracted from **every transcript** mined for this bucket is deduplicated
-and merged below, and the overlapping radar-fundamentals, radar-horizon,
-look-down/shoot-down, RCS/aspect, jamming, ESM, IFF, rain, cloud, sonar-intensity,
-best-LOS-algorithm, and helicopter-masking authorities are stated in full inline (with their
-verbatim numbers) so nothing must be looked up elsewhere.
+weapon-physics rules that movement and positioning feed into. It folds together two
+sources:
+
+1. Every rule object extracted from **every transcript** mined for this bucket
+   (deduplicated and merged below), and
+2. The corrections and rules already captured in the first-pass spec
+   **`docs/cmo-functional-rules/1-movement-detection.md`** — its radar-fundamentals,
+   radar-horizon, look-down/shoot-down, RCS/aspect, jamming, ESM, IFF, rain, cloud,
+   sonar-intensity, best-LOS-algorithm, and helicopter-masking material is preserved here
+   (cross-referenced where it is the authority) so nothing from the first pass is lost.
+
+This document is meant to be exhaustive within the bucket; where the first-pass spec is
+the deeper authority on a sub-topic (notably the standalone *Tutorial - Radar*, visual
+day/night, rain, cloud, sonar, and the Lua best-LOS algorithm), that is noted inline
+rather than re-derived.
 
 **Auto-generated-caption caveat.** Source transcripts are YouTube auto-generated
 captions. Stated numbers and unit/weapon names may contain transcription errors. All
@@ -23,8 +32,8 @@ cited `source_video_id`.
 `RDE4S8kzZTQ`, `_qeXJWmRBks`, `a47fSjGQYq4`, `fh1QmQVLiBs`, `trk7WTa9SzI`,
 `dui_lPsECfE`, `ILGHFWHn6Rk`, `JqZYvpCP7ik`, `O7qj1RaEU9M`, `OWCZPAVviuE`,
 `eame83G2Asw`, `atcxgWfXnX4`, `xhmuBfBQ_DY`, `ffTSj81bjBU`, `2H3gazg1seo`,
-`8WqQ-alekog`, `O4HTj5ct7yg`, `KOOxlw5dfrU`. Additional radar/EW/terrain authorities folded
-inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
+`8WqQ-alekog`, `O4HTj5ct7yg`, `KOOxlw5dfrU`. First-pass-only authorities (see
+`1-movement-detection.md`): `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 `xV-H7HJd2-I`, `1r4P_gI-Pdw`, `oF8LwbZSm28`, `0R6-5oQR-l0`, `FI-ZwDubiMY`,
 `A7oqIAMhKF8`, `o4bPT47vuK8`, `P6UAdBqTUhk`, `yhs02DUz9bg`, `2SJDdTiuRPs`,
 `u9R-59fusCM`, `-Q9AfTrF4vM`.
@@ -145,7 +154,7 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 - **Inputs / parameters:** selected waypoint; the **F2** dialog (name + speed); per-waypoint altitude (set in individual-unit view); AGL/ASL toggle; terrain-following option; "Insert waypoint" (can apply to all flights of a mission).
 - **Behavior / rules:** Select a waypoint and press **F2** to name it and set its speed; the unit adjusts speed (and altitude) **as it reaches that waypoint**, not at order time — the new value takes effect on the leg *into* the waypoint. To be at altitude X by point P, set point **P-1** to X. The editor offers terrain-following at a set height (e.g. 1,000 ft / 2,000 ft). A demo strike flew the assigned profile: cruise at 1,000 ft AGL, climb to ~4,000 ft at the IP, descend, then pop up to drop on the target.
 - **Outputs / effects:** scheduled speed/altitude changes triggered at specific waypoints; controls exactly where the profile changes.
-- **Edge cases / quirks:** The presenter labels per-waypoint editing "pretty advanced" and recommends beginners ignore it. Within a group, individual members' altitudes can be set per-unit (see *Aircraft formation limitation*). The sim "automatically resets all your hard work every time you do anything" — re-check assigned altitudes after any edit. A "holding" waypoint should be set **high** (e.g. 36,000 ft) to conserve fuel before a low dive; insert an extra high waypoint before the dive so the aircraft doesn't run out of fuel crossing to the target. One flight (Goose 51, LGB) automatically **inherited/shared** another flight's (Astro 40) edited flight plan.
+- **Edge cases / quirks:** The presenter labels per-waypoint editing "pretty advanced" and recommends beginners ignore it. Within a group, individual members' altitudes can be set per-unit (see *Aircraft formation limitation*). The sim "automatically resets all your hard work every time you do anything" — re-check assigned altitudes after any edit (first-pass correction). A "holding" waypoint should be set **high** (e.g. 36,000 ft) to conserve fuel before a low dive; insert an extra high waypoint before the dive so the aircraft doesn't run out of fuel crossing to the target. One flight (Goose 51, LGB) automatically **inherited/shared** another flight's (Astro 40) edited flight plan.
 - **Source:** FTRQtZg_jwk, O4HTj5ct7yg, bsLLZwqi4Mg
 - **Confidence:** High
 
@@ -186,7 +195,7 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 - **Behavior / rules:** Helicopter AGL altitude is tied to throttle: **loiter ≈ 50 ft AGL; cruise ≈ 100 ft AGL; military ≈ 100 ft AGL.** When ordered to move from a hover, a helicopter at 50 ft automatically climbs to ~100 ft AGL to avoid obstacles at speed. To stay maximally masked, use a loiter speed.
 - **Outputs / effects:** lower speed → lower altitude → better terrain masking and lower detectability behind ridgelines.
 - **Edge cases / quirks:** "Pop-up attack": order a hover, briefly command a higher altitude (demo: 200 ft) to fire over a ridge, then descend. Automatic evasion mode can make a low helicopter climb/sprint and expose itself.
-- **Source:** hu1Mu_qaXQ8 (Helicopter Terrain Masking)
+- **Source:** hu1Mu_qaXQ8 (first-pass authority)
 - **Confidence:** High
 
 ### Aircraft/object altitude rendered relative to ground level (true-altitude display)
@@ -300,31 +309,19 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 
 ## 6. Detection — Radar, Line-of-Sight & Sensor Geometry
 
-### Radar fundamentals (band, wavelength, resolution, waveform)
-- **Models:** how a radar's database characteristics (generation, band/wavelength, PRF, waveform, scan type) drive its detection range, positional accuracy, and counter-detectability. This is the foundational rule the bucket-specific radar/LOS mechanics below specialize.
-- **Inputs / parameters:** per-radar database fields — **generation** (1950s → modern), **type** (air search / surface search / fire control / height-finder / terrain-avoidance / weather / nav), **range** (instrumented; short / medium / long), **operating bands (search and track)**, wavelength/frequency, **PRF** (pulse repetition frequency), waveform (pulse / continuous-wave / FM / pulse-Doppler), scan/update method (mechanical rotate, electronic, phased array, synthetic-aperture), and **two separate radar-detection-range values** carried on each *target* (one for long wavelengths, one for short).
-- **Behavior / rules:**
-  - **Principle:** radar sends a pulse and times the return at light-speed; in-game this yields range to the target. Raw radar inherently returns **range only**, not altitude (see height-finding).
-  - **Generation:** newer radars are more sensitive with better processing and anti-jamming. 1950s radars could be jammed through their side-lobes so badly the whole scope blanks; modern radars detect the jammed frequency and hop. Processing matters as much as raw power — a 1-MW old radar can equal a 25-kW modern one, and better radars **integrate** multiple passes to pull a weak signal up over time.
-  - **Band / wavelength tradeoff (core rule):** long wavelength / low frequency → can transmit **much higher power** → **longer detection range**, but **poor resolution** (the contact smears across an arc; you may get range only, with no reliable heading/altitude — positional **ambiguity**). Short wavelength / high frequency → far **better resolution** (tight track with speed + heading) but shorter range — hence **fire-control radars use short wavelengths** and **early-warning radars use long wavelengths** (extremely high power). Mechanically scanned long-wave sets need several sweeps before the track tightens.
-  - **Two detection ranges per target:** every unit carries a long-wavelength and a short-wavelength radar-detection-range. For non-stealth aircraft they are equal; for stealth (e.g. **F-22**) the **long-wavelength** value is much larger — a 1950s long-wave EW radar detects an F-22 far more easily than a short-wave fire-control radar can.
-  - **PRF → max range:** the pulse repetition frequency sets the radar's typical maximum range (it stops listening past the round-trip distance for one interval, avoiding range ambiguity). Sophisticated processing can extend beyond this.
-  - **Waveform:** earliest radars were **pulse** (send, then listen). **Continuous-wave (CW)** pours energy continuously and reads Doppler but can't range by itself; **frequency modulation (FM)** tags successive emissions so the return can be matched and ranged. Many **fire-control radars illuminate continuously** to guide semi-active weapons (a Sparrow needs the target lit); an airframe can carry separate **search (pulse)** and **track (CW)** settings.
-  - **Scan / update rate:** mechanically scanned radars detect a target only when the beam sweeps onto it; the database **update rate** can be as slow as **once every ~10 s** on old sets, so contacts go stale between sweeps (an age counter shows under the symbol) and a maneuvering target can be lost. **Phased-array** radars electronically scan nearly instantaneously (very fast update, more precise, hard to counter-detect, can classify the airframe). **Synthetic-aperture / side-looking** radars move the whole platform instead of the antenna (satellites, MiG-25 recon).
-  - **Coverage volume:** a radar's vertical coverage is a 3-D **cone** — a target far below the cone is invisible even to a look-down/shoot-down set (a Patriot array could not see a target ~50,000 ft directly overhead).
-  - **2D vs 3D / height-finding:** a plain 2D radar gives range/bearing but **no altitude**; **3D / height-finding** radars use multiple lobes to derive altitude. Historically a 2D search radar was **paired** with a dedicated **nodding height-finder** to supply altitude.
-- **Outputs / effects:** determines for each radar how far it detects, how precisely it locates (point vs smear), whether it yields altitude, how fast it updates, and how detectable it is to enemy ESM.
-- **Edge cases / quirks:** A very frequency-agile radar firing very short pulses all over the sky (e.g. **F-22**) can be impossible for enemy ESM to even register as emitting (LPI), while a conventional radar is instantly classified and bearing-fixed. Wide-bandwidth radars are harder to jam; a strong enough radar can **burn through** jamming. Counter-detection truism: "the first to emit is the first to get hit" — except for very sophisticated phased-array/LPI radars.
-- **Source:** 7mmQ2y11hPc (Tutorial - Radar)
-- **Confidence:** High (model High; specific numbers Med — auto-caption)
+> The standalone *Tutorial - Radar* (`7mmQ2y11hPc`) is the deeper authority on radar
+> fundamentals (band/wavelength range-vs-resolution tradeoff, generation, PRF, waveform,
+> scan/update rate, 2D vs 3D height-finding, two-detection-ranges-per-target stealth
+> rule, frequency-agility/LPI). See `1-movement-detection.md` → *Radar fundamentals*. The
+> rules below are the bucket-specific radar/LOS mechanics from the extracted transcripts.
 
 ### Terrain elevation / line-of-sight masking for sensors
 - **Models:** 3D terrain blocks radar and visual/IR line of sight between sensor and target.
 - **Inputs / parameters:** terrain height field (relief data); sensor position and altitude; target position and altitude; Earth curvature.
 - **Behavior / rules:** Terrain elevation data is what CMO uses to compute LOS for radars and visual cameras. A sensor only loses LOS to a target if terrain is **between** sensor and target **AND** the target is low enough to be masked: a target at **36,000 ft** is not masked by mountains unless it is down inside a valley. Higher sensor placement (hilltop/mountaintop) yields better LOS; valleys can hide/mask aircraft on ingress. **Earth curvature also masks** — a unit flying low enough can hide behind the curvature of the Earth even when nominally "in range."
 - **Outputs / effects:** whether a sensor can detect/track a given target (a binary LOS gate layered on top of range).
-- **Edge cases / quirks:** "In range does not mean you can hit it" — LOS masking and curvature can deny a track even within nominal sensor range. The dedicated Line-of-Sight tool visualizes this (next rule). CMO's relief layer is **granular** — macro elevation only; individual trees/tiny folds aren't modeled for elevation LOS, only ridges/mountains mask. Open desert offers no masking other than elevation. A radar even on a 12,000-ft peak can be blocked by taller terrain. High-arc SAMs (S-300/S-400) can still loft a missile over a ridge to hit a masked target.
-- **Source:** 5dJfIKiNHj8, wycT9grtrOE (Terrain Masking), bsLLZwqi4Mg (Understanding Radar Horizon)
+- **Edge cases / quirks:** "In range does not mean you can hit it" — LOS masking and curvature can deny a track even within nominal sensor range. The dedicated Line-of-Sight tool visualizes this (next rule). The first-pass *Terrain masking* note adds that CMO's relief layer is **granular** (macro elevation only — individual trees/tiny folds aren't modeled for elevation LOS) and that high-arc SAMs (S-300/S-400) can still loft over a ridge.
+- **Source:** 5dJfIKiNHj8 (+ first-pass wycT9grtrOE, bsLLZwqi4Mg)
 - **Confidence:** High
 
 ### Line-of-sight blocked by terrain prevents engagement ("Effects of terrain type")
@@ -341,30 +338,17 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 - **Inputs / parameters:** selected unit (sensor); max radius/distance; target altitude (e.g. 10 m / 30 ft, 100 m, 1500 m); terrain. Must click **Refresh** after changing parameters.
 - **Behavior / rules:** You select any unit, set its maximum radius and the target's altitude, hit Refresh, and the tool shades the map where that target altitude would be visible to that sensor. Raising the assumed target altitude **dramatically increases** the highlighted (visible) area; lowering it shrinks it. Increasing max distance also enlarges coverage.
 - **Outputs / effects:** a highlighted visibility footprint on the map (a detection zone, not an engagement zone).
-- **Edge cases / quirks:** Can be used "in reverse" by the attacker: knowing a radar's position, route strike assets (e.g. Tomahawks) through the un-shaded/non-visible terrain to stay masked. The LOS tool is only available for your **own** units; for enemy radars you must estimate via ESM + horizon math. The Lua *best-LOS-point* algorithm (next rule) automates finding the longest-LOS position.
-- **Source:** 5dJfIKiNHj8, u9R-59fusCM (Determining a point in terrain with the best LOS)
+- **Edge cases / quirks:** Can be used "in reverse" by the attacker: knowing a radar's position, route strike assets (e.g. Tomahawks) through the un-shaded/non-visible terrain to stay masked. (The LOS tool is only available for your **own** units; for enemy radars you must estimate via ESM + horizon math — first-pass note. The Lua *best-LOS-point* algorithm in `1-movement-detection.md` automates finding the longest-LOS position.)
+- **Source:** 5dJfIKiNHj8 (+ first-pass u9R-59fusCM)
 - **Confidence:** High
-
-### Best-LOS terrain point (Lua elevation-scan + horizon-probe algorithm)
-- **Models:** finding the position in an area with the best (longest) line-of-sight, by combining a terrain-elevation scan with the LOS/horizon tool.
-- **Inputs / parameters:** a bounding box (start/end latitude and longitude); a scan **granularity step** (demo `0.01`; `0.001` for ultra-fidelity at the cost of processing time); elevation per point (`GetElevation`); a sample count (demo ≈ 10); and the **horizon/LOS tool** parameters.
-- **Behavior / rules:** The dedicated tutorial walks an actual Lua algorithm:
-  1. **Scan elevations:** nested loops step over lon (`x`) and lat (`y`) by `step`, calling `GetElevation{latitude=y, longitude=x}`. Track the running max elevation and **append** each new high point's lat/lon to two lists (a set of candidate high points).
-  2. **Sample:** pick `numberOfSamples` (≈10) high points out of the list (clamp the count to the list size to avoid overrun).
-  3. **Probe LOS:** create a temporary marker **facility unit** (a generic geographic-marker DBID, e.g. `2349`) at each sampled point, then call the LOS tool — `HorizonTool_LOS{ observer = <unit guid>, target altitude = 100, mode = 0 (distance), horizon = 1 (visual), use range limits = false }`. `use range limits = false` is **required** because the bare markers have no sensors. The call returns a **horizon distance**; larger = sees farther.
-  4. **Pick best:** keep the point with the greatest returned horizon (`bestLat/bestLon/bestHorizon`), drop a final unit there, and ideally delete the temporary probe units afterward.
-- **Outputs / effects:** the single best-LOS sensor/observer position in the area, plus the LOS distance from it.
-- **Edge cases / quirks:** In the demo the best-horizon point **was** simply the **highest** point (Bear Mtn, CT; best horizon ≈ **64.67**), so elevation is usually the dominant driver — but the LOS probe is what proves it, since a high point ringed by taller terrain would lose. Confirms that elevation alone isn't sufficient if surrounded by higher ground. Easy lat/lon (x/y) and hemisphere-sign mistakes place points in the wrong spot.
-- **Source:** u9R-59fusCM (Determining a point in terrain with the best LOS)
-- **Confidence:** High (algorithm shown end-to-end; exact API field names Med due to auto-caption)
 
 ### Radar horizon from Earth curvature (altitude extends max detection range)
 - **Models:** radar detection is line-of-sight; raising the sensor's altitude pushes the horizon out so distant low contacts beyond the curve become visible.
 - **Inputs / parameters:** sensor (aircraft) altitude; target height above surface; Earth's curvature; the radar's intrinsic max range (a hard cap).
 - **Behavior / rules:** With a maritime patrol aircraft's long-range radar: at maximum altitude two ship contacts were detected at ~**195 nm** and ~**160.3 nm**; at medium altitude the "maximum detection radius shrunk" and both ships were picked up much closer. Climbing visibly grows the detection circle and increases range until it "caps out" at the radar's maximum range. Lowering altitude makes you unable to "see on the other side of that curve," hiding targets below the horizon.
 - **Outputs / effects:** size of the radar detection ring; range at which contacts first appear.
-- **Edge cases / quirks:** There is a **hard maximum radar range** altitude cannot exceed (the circle stops growing). A target on the far side of the horizon cannot be detected at all regardless of altitude. CMO provides a **"Radar Horizon and Target Visibility Calculator"** (own height + radar/mast height → target-visibility distance); the radar height for a sea platform is its **mast height** (DB field, e.g. 10 m ≈ 32 ft). Worked figures (auto-caption, approximate): a **1,000 m** target vs a **30 m** mast → only **~22 nm**; a **240 nm** radar at ~32.8 ft mast saw 36,000 ft → **~240 nm**, 12,000 ft → **~141 nm**, 10,000 ft → **~125 nm**, ~1,500 ft → **~60 nm**, and a 104-ft-AGL target only when very close. **Over-the-horizon (OTH) radars** ignore the horizon (atmospheric bounce) — e.g. a **Steel Yard / Duga** rated **~3,200 nm** for space search, or a TPS-71 for surface search — at the price of **ferocious ambiguity** (can be off by **~60 miles**), so OTH gives only rough cueing.
-- **Source:** _qeXJWmRBks, bsLLZwqi4Mg (Understanding Radar Horizon), 7mmQ2y11hPc (Tutorial - Radar)
+- **Edge cases / quirks:** There is a **hard maximum radar range** altitude cannot exceed (the circle stops growing). A target on the far side of the horizon cannot be detected at all regardless of altitude. (The first-pass *Radar horizon* entry adds the explicit horizon-distance calculator figures and the OTH-radar exceptions — see `1-movement-detection.md`.)
+- **Source:** _qeXJWmRBks (+ first-pass bsLLZwqi4Mg, 7mmQ2y11hPc)
 - **Confidence:** High
 
 ### Target aspect / radar cross-section effect on detection range
@@ -372,8 +356,8 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 - **Inputs / parameters:** target geometry/RCS shape (e.g. Zumwalt stealthy bow vs flat broadside); target aspect (bow-on/"facing us" vs "beaming us"/broadside); sensor altitude (changes how much of the deck/side the beam can strike).
 - **Behavior / rules:** Two identical Zumwalt destroyers were detected at very different ranges purely from aspect: the broadside ("beaming") ship at ~**182 nm** and the bow-on (facing) ship at ~**161.3 nm** — the stealth bow delayed detection. A beam hitting the flat side gives "the best return," while hitting an angled/spiky top deflects energy away; flying higher lets the beam see more of the ship's large top/side surface, improving the return.
 - **Outputs / effects:** earlier vs later detection / shorter vs longer detection range for otherwise-identical targets.
-- **Edge cases / quirks:** Interacts with curvature: even with a good RCS aspect, geometry/curvature may block the reflection so you still can't detect it. The effect is strongest with a top-tier long-range radar; with a lesser radar it is muted (next rule). Quantitatively, **aspect alone is a small modifier** against a powerful EW radar: each airframe carries separate per-aspect RCS values (demo F-16 front 4.65, side 2.9, rear 4.7 m²), but a 0.3 m² nose difference moved detection only ~3 nm at ~210 nm (~2%), and showing side vs nose changed range only ~2–2.5%. Aspect becomes significant (~10%) only when combined with jamming (e.g. nose-on F-104 with jamming ~187 nm vs ~207 nm) or true stealth. **External stores** massively inflate RCS (GBU-49s on an F-35); internal carriage keeps it small. So model aspect as a *small* standalone detection modifier.
-- **Source:** _qeXJWmRBks, 1r4P_gI-Pdw (Radar Aspect and Detectability)
+- **Edge cases / quirks:** Interacts with curvature: even with a good RCS aspect, geometry/curvature may block the reflection so you still can't detect it. The effect is strongest with a top-tier long-range radar; with a lesser radar it is muted (next rule). (The first-pass *Radar aspect & RCS* entry quantifies that aspect alone moves detection only ~2% against a powerful EW radar — keep aspect a *small* standalone modifier.)
+- **Source:** _qeXJWmRBks (+ first-pass 1r4P_gI-Pdw)
 - **Confidence:** Med
 
 ### Lesser (mechanically-scanned) radar shows little altitude sensitivity in detection range
@@ -390,9 +374,9 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 - **Inputs / parameters:** radar type (mechanically steered vs electronic); current radar pointing angle/cone; own altitude; presence of ground/terrain behind a target.
 - **Behavior / rules:** A mechanically steered radar (e.g. F-16) looks through a narrow "conicle section" — roughly a **quarter-degree** concentrated beam; targets outside the cone are "completely undetected even though they exist in the world." Real radars sweep "1 of 16 points" each way to cover more sky. Practical rules modeled: (1) at high own-altitude a **blind spot** forms directly underneath the aircraft, so low-flying targets can slip under your radar; (2) **ground clutter behind a low target** makes it "very, very challenging to identify," especially with older radars; (3) operating at **lower** own-altitude shrinks the lower blind spot; (4) a target **above** you is easier to detect because "there's no terrain behind it."
 - **Outputs / effects:** which targets are detected/identified vs missed (look-down vs look-up); detection difficulty against cluttered low targets.
-- **Edge cases / quirks:** Older radars suffer more from ground clutter; CAP aircraft at middle altitudes are very hard to sneak under; targets silhouetted against open sky (above you) are detected most easily. **Pulse-Doppler ladder vs ground clutter:** a target below the radar produces two returns (target + ground); a low-enough target merges with the ground return and is lost. A **pulse-only** radar cannot detect low targets at all (the lower half of coverage is one clutter blur); **semi-pulse-Doppler** picks aircraft-like returns out of clutter (detected 200–2,000 ft targets ~36–38 nm); **true pulse-Doppler (look-down/shoot-down)** filters by Doppler shift and sees closing/receding low targets. **Notch / beam gate:** a target flying **perpendicular** to a pulse-Doppler radar (zero relative velocity) is invisible because the radar filters out its own motion — the demo measured a roughly **~8°** blind window (eyeballed); the moment the path becomes oblique, Doppler returns. A launched weapon can **lose lock** when a target beams it. You can also defeat clutter by flying **lower** than the targets so they are no longer against the ground (looking up there are no ground returns).
-- **Source:** KOOxlw5dfrU, xV-H7HJd2-I (Look Down/Shoot Down Radar)
-- **Confidence:** Med (8° figure Med — eyeballed)
+- **Edge cases / quirks:** Older radars suffer more from ground clutter; CAP aircraft at middle altitudes are very hard to sneak under; targets silhouetted against open sky (above you) are detected most easily. (See the first-pass *Look-down/shoot-down* entry for the pulse-Doppler notch/beam-gate model.)
+- **Source:** KOOxlw5dfrU (+ first-pass xV-H7HJd2-I)
+- **Confidence:** Med
 
 ### Radar lock mechanical elevation limit / vertical bore-sight gate
 - **Models:** a radar has a mechanical scan/elevation limit, so very steep geometry (high shooter vs low target, or vice versa) can prevent acquiring a lock or releasing a weapon at all.
@@ -439,8 +423,8 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 - **Inputs / parameters:** which sensor is primary (radar vs visual/EO); the target must be physically "visible" (not below horizon, not obscured).
 - **Behavior / rules:** Stated takeaway: "if you are using radar get as high as you can to take advantage of that better cross section"; for visual acquisition you must reduce altitude to cut slant distance so you can see it sooner. Maritime search often flies lower (the ~7,000–12,000 ft band) precisely because the goal is to **see** contacts, not just paint them.
 - **Outputs / effects:** recommended patrol altitude given the detection method.
-- **Edge cases / quirks:** Hard precondition for any detection: the target must be on the near side of the horizon and not hidden by clouds/night. **Time-of-day visual model** (detection range as a fraction of full daylight): **day** = baseline (demo eyeball spotted a contrailing bomber ~53 nm); **dawn/dusk** ≈ **60–66%** (~35 nm); **night** ≈ **25–28%** (~15 nm, i.e. a ~75% reduction). **Moon phase** has no appreciable effect. **Contrails** (formed ~20,000 ft and above) are detectable far beyond the airframe even at night; below ~12,000–20,000 ft there is no contrail, so low aircraft are only seen close in. **IR/FLIR** gains little night advantage (it detects at roughly the same range regardless of daylight), so a FLIR+TV combo is best for long range. Clouds and rain gate optical/EO detection further (see the Terrain & Environment bucket's cloud/rain entries).
-- **Source:** _qeXJWmRBks, A7oqIAMhKF8 (Visual Sensor Distances), o4bPT47vuK8 (Visual Sensors and time of day), P6UAdBqTUhk (Effects of Rain), yhs02DUz9bg (Cloud Cover's Effects on Spotting)
+- **Edge cases / quirks:** Hard precondition for any detection: the target must be on the near side of the horizon and not hidden by clouds/night. (See the first-pass *Visual sensors — time of day* entry: night ≈ 25–28% of daylight range; dawn/dusk ≈ 60–66%; contrails ≥ ~20,000 ft are visible far beyond the airframe; IR/FLIR gains little at night. And *Cloud cover* / *Rain* entries for weather gating.)
+- **Source:** _qeXJWmRBks (+ first-pass A7oqIAMhKF8, o4bPT47vuK8, P6UAdBqTUhk, yhs02DUz9bg)
 - **Confidence:** High
 
 ### Day/night lighting effect on visual & IR sensors
@@ -448,8 +432,8 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 - **Inputs / parameters:** local time of day at the contact's location (scenario clock + geography); sensor type (visual/camera/IR vs radar/sonar).
 - **Behavior / rules:** Day vs night does **NOT** matter to radar or sonar, but it matters to **visual** and **IR** sensors (cameras/pods that detect units from far away). At night their performance is "significantly degraded"; during the day it is "great." A day/night terminator overlay shows lit vs dark regions (example: ~11:00 local = lit; ~18:00 in October over China = night).
 - **Outputs / effects:** reduced visual/IR detection range/quality at night for affected sensors.
-- **Edge cases / quirks:** Magnitude is qualitative in this transcript ("significantly degraded" / "can't see"). The quantitative model is stated under *MPA search-altitude doctrine trade-off* above: night ≈ 25–28% of daylight range; dawn/dusk ≈ 60–66%; moon phase negligible; IR/FLIR not strongly night-advantaged; contrails (≥ ~20,000 ft) visible far beyond the airframe even at night.
-- **Source:** 5dJfIKiNHj8, o4bPT47vuK8 (Visual Sensors and time of day)
+- **Edge cases / quirks:** Magnitude is qualitative here ("significantly degraded" / "can't see"). The first-pass *Visual sensors — time of day* entry supplies the quantitative model (night ≈ 25–28% of daylight; dawn/dusk ≈ 60–66%; moon phase negligible; IR not strongly night-advantaged).
+- **Source:** 5dJfIKiNHj8 (+ first-pass o4bPT47vuK8)
 - **Confidence:** High
 
 ### Sensor / targeting-pod effect on target ID and weapon delivery accuracy
@@ -496,44 +480,19 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 
 ## 9. Detection — ESM, Emissions, Comms & Networks
 
-### ESM (passive electronic detection) — bearing, classification, triangulation
-- **Models:** detecting and locating emitters by their emissions without emitting yourself.
-- **Inputs / parameters:** ESM sensor generation (1950s → 2010s); emitter type/frequency/PRF/pulse-dwell signature; geometry (must face/see the emission); number of cooperating sensors.
-- **Behavior / rules:**
-  - ESM gives **bearing + emitter classification** but **not** exact position from a single sensor — you get a bearing line / wedge of uncertainty. Position requires triangulation.
-  - **Detection range:** ESM can typically detect an emitter to **~1.5× the emitter's own detecting range** (e.g. a 100-nm radar is sensed to ~150 nm). Better/newer generation tightens the wedge; modern (2010s) ESM gives a very tight wedge but still no instant fix.
-  - **LOS requirement:** you must be able to see the emission (face the emitter); contacts drop when the emitter turns away (with OTH exceptions). Some energy radiates sideways, so a non-facing radar may still be partially detectable.
-  - **Triangulation:** cross two bearings (from RPs at different times, or from two/three platforms simultaneously). Best accuracy near a **~90°** cut between bearings; three-way fixes localize within <1 min of game time. Satellites in groups of three self-triangulate. A demo achieved ~2.3 nm fix accuracy from a platform that never came within 100 nm.
-- **Outputs / effects:** locate SAMs/ships/aircraft passively; classify by signature (PRF reveals long-range search radar; demodulated return reveals engine count/type and rough size class).
-- **Edge cases / quirks:** **If the target does not emit, ESM cannot detect it** — clever players radar-snap then go silent (EMCON), leaving ESM only a stale bearing. Sensors are **frequency-specific** (early RWRs only detected pre-programmed SAM bands; RWR and HARM Targeting System are just less-accurate ESM). **Frequency-agile / LPI emitters can be un-locatable:** an **F-22**'s frequency-agile, very-short-pulse radar could not even be registered as emitting by a high-end ESM platform, while a conventional radar nearby was immediately classified and bearing-fixed — an explicit exception to the "emit → get located at 1.5×" rule. Some **surface ships (e.g. an Arleigh Burke)** also do over-the-horizon analysis of electromagnetic signals.
-- **Source:** oF8LwbZSm28 (Electronic Support Measures), 0R6-5oQR-l0 (IFF), 7mmQ2y11hPc (Tutorial - Radar)
-- **Confidence:** High (1.5× and 90° figures stated)
-
-### EMCON / radar-snap discipline
-- **Models:** managing own emissions to avoid passive (ESM) detection.
-- **Inputs / parameters:** emitter on/off state; scan interval; who else is emitting.
-- **Behavior / rules:** Emitting makes you locatable by enemy ESM/RWR to ~1.5× your radar range. The counter: turn the radar on briefly, grab a snapshot of contacts, then **shut it off** — enemy ESM then holds only a stale bearing, not a current fix. In an IFF context, a fast/high contact that is silent while everyone around it emits is itself a red flag.
-- **Outputs / effects:** trades own situational awareness for survivability.
-- **Edge cases / quirks:** Side-lobe radiation means a non-facing radar can still leak detectable energy. Wrong-band jamming makes a jammer *more* conspicuous, not less.
-- **Source:** oF8LwbZSm28 (Electronic Support Measures), 0R6-5oQR-l0 (IFF)
-- **Confidence:** High
-
-### IFF / identification reasoning
-- **Models:** classifying a contact (friend/neutral/hostile) from kinematics, emissions, and scenario OOB.
-- **Inputs / parameters:** detected speed, altitude, formation behavior, emissions (radar type, fire-control vs search), known scenario platform list, detection range (RCS clue).
-- **Behavior / rules:** A contact starts as a **bogey**; the operator narrows identity using: **kinematics vs database cruise speeds at altitude** (e.g. 480 kt at 25,000 ft narrows the airframe; speeds atypical for airliners — >~320 kt at altitude — flag a likely military target); **behavior** (tight formation + one aircraft accelerating to catch up suggests a military flight); **emissions** (a **fire-control radar** emission ⇒ almost certainly hostile; civilian aircraft "almost always fly with radars on," so a fast, high, **non-emitting** contact while everyone else emits is suspicious); **detection range as an RCS clue** (detecting far out implies a large RCS; only-when-close implies small); and **logical elimination** (if only one scenario platform has a given radar, the contact must be that platform).
-- **Outputs / effects:** drives manual hostile/neutral tagging and whether weapons may engage.
-- **Edge cases / quirks:** A determined opponent can fly a fighter at airliner speed to spoof IFF — then fall back to formation/emissions cues or send an interceptor for visual ID. SAM electronics are modeled finely enough to read engine count and size class from the demodulated return.
-- **Source:** 0R6-5oQR-l0 (IFF)
-- **Confidence:** High
+> The first-pass *ESM*, *EMCON*, and *IFF* entries (`oF8LwbZSm28`, `0R6-5oQR-l0`,
+> `7mmQ2y11hPc`) are the deeper authority on passive emitter localization
+> (bearing-only, ~1.5× detect range, ~90° triangulation cut, LPI exceptions) and on
+> identification reasoning. The rules below add the bucket-specific emissions/comms
+> mechanics from the extracted transcripts.
 
 ### ESM / contact-emissions classification
 - **Models:** passive detection and classification of contacts by their radar/sensor emissions.
 - **Inputs / parameters:** the contact's emitting sensors; ESM sensor sensitivity/quality; emission type (search vs fire-control / navigation).
 - **Behavior / rules:** CMO models every sensor individually; you can passively detect a contact's emissions and classify what it is from its electromagnetic signature (e.g. "this radar sounds like a civilian ship / civilian aircraft / battleship") — "passive sonar but for radars." The emissions display can show all emissions, fire-control-only, or "all emissions for the selected contact and fire-control-only for the rest." A fire-control emission turns **bright red** as a launch warning.
 - **Outputs / effects:** a contact identity / possible-type list; emission warnings.
-- **Edge cases / quirks:** Different ESM sets have different sensitivities/qualities. **No emission warning at all if the threat sensor is passive** (e.g. a camera). See *ESM (passive electronic detection)* above for the ~1.5× detect-range rule and the F-22 LPI un-locatable exception.
-- **Source:** 5dJfIKiNHj8, oF8LwbZSm28 (Electronic Support Measures), 7mmQ2y11hPc (Tutorial - Radar)
+- **Edge cases / quirks:** Different ESM sets have different sensitivities/qualities. **No emission warning at all if the threat sensor is passive** (e.g. a camera). (First-pass adds the ~1.5× detect-range rule and the F-22 LPI un-locatable exception.)
+- **Source:** 5dJfIKiNHj8 (+ first-pass oF8LwbZSm28, 7mmQ2y11hPc)
 - **Confidence:** Med
 
 ### Comms jamming requires the target to actually have a comm device
@@ -558,27 +517,20 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 
 ## 10. Terrain & Environment Effects on Land Operations
 
-### Land cover — quantitative spotting ranges and weaponeering by cover type
-- **Models:** the terrain **land-cover type** under a ground unit changes how easily it is visually spotted and how survivable it is to attack (distinct from macro-elevation masking).
-- **Inputs / parameters:** land-cover classification at the unit's location; whether **"effects of terrain type"** is enabled (Scenario editor → scenario features/options); spotter LOS/altitude; attacking weapon type (area/cluster vs unitary bomb). View via View → Land Cover (+ terrain-type legend; the mouse cursor reports the cover type underneath).
-- **Behavior / rules:** Holding aspect/altitude constant and flying identical F-16s over identical ground targets, the demo measured **visual detection range by cover type** (all numbers verbatim, nm):
-  - **Easiest / detected first, roughly equal (~4.4 → 3.3 nm):** grasslands, snow & ice, croplands, wetlands, barren — open types are all spotted at about the same long range, trending slightly shorter as the ground gets greener/more wooded.
-  - **Harder:** woody savanna, then **cropland/vegetation mosaic** (crops dotted with trees) take noticeably longer.
-  - **Forest:** detected at about **half** the cropland range — cropland onset ~**3.2 nm** vs forest ~**1.6 nm**. A big deal for recon runs.
-  - **Urban / built-up — the standout:** a vehicle in an urban tile may **never be acquired** even on a low overflight; in the demo the F-16 only detected the urban target at **~1.2 nm** after descending to ~417 ft directly over it. Hiding in a city is extremely effective.
-  - **Weaponeering / attack:** dense cover sharply changes weapon effectiveness — with **cluster munitions (CBU)** a 12-vehicle M113 group in the **woods** was cut to ~2/12 and savanna fared similarly, but the **urban** group "did pretty well" (survived); re-running with **unitary bombs (Mk-84)** "plastered" the woods and urban groups (total **12× Mk-84 ⇒ ~35 APCs killed**). So **area/cluster weapons** work on open ground while **unitary/penetrating bombs** are needed for dense cover and especially urban.
-- **Outputs / effects:** sets the visual-acquisition range for a ground unit by terrain type and the weapon needed to defeat cover; drives where to hide vs bait units.
-- **Edge cases / quirks:** Land **cover** is modeled at fine (per-pixel) scale even though micro-**relief** isn't modeled for elevation LOS — so you can tuck a unit into a small hard-to-see patch (e.g. an SA-15 in a dense-town pixel beside an "obvious" T-55 bait in cropland). A **moving** ground unit is easier to detect. Land cover doesn't apply over water (but radar there is still affected by weather/sea state). You must explicitly order the attack (units don't engage dense-cover targets well on their own); a 12-vehicle group is a distributed target, so "kills" are per-vehicle.
-- **Source:** 2SJDdTiuRPs (Land Cover)
-- **Confidence:** High (detection-range numbers stated verbatim)
+> The first-pass entries *Land cover — effect on spotting*, *Land cover — effect on
+> movement & attack*, *Rain*, *Cloud cover*, and *Terrain masking*
+> (`2SJDdTiuRPs`, `P6UAdBqTUhk`, `yhs02DUz9bg`, `wycT9grtrOE`) carry the quantitative
+> land-cover detection ranges, the rain/cloud-layer model, and the macro-vs-micro
+> elevation distinction. The rule below is the extracted-transcript view of land cover;
+> treat the first-pass land-cover numbers as the authority.
 
 ### Terrain / land-cover effects on land units (sighting, damage, speed)
 - **Models:** the underlying terrain/land-cover type changes how ground units move, are seen, and take damage.
 - **Inputs / parameters:** terrain type at the unit's location (e.g. desert, built-up city, crop land, mixed forest, barren/sparsely vegetated); unit type (land units specifically); a "terrain type legend" map setting; mouse-hover terrain readout.
 - **Behavior / rules:** CMO2 added a **land cover** terrain layer where the underlying terrain type has real effects on (1) unit sighting/detectability, (2) unit damage, and (3) unit **speed** for land units. Stated qualitatively: **cities slow things down AND can speed things up, and make units a lot harder to see**; **desert is a lot easier to see units in** than cities. Open desert lets you "see very very far," making high-precision weapons "way too effective." Mixed forest gives near-zero open spots / heavy concealment. No numeric modifiers given in this source.
 - **Outputs / effects:** modified land-unit movement speed, detection probability/range, and damage outcomes depending on the terrain class under the unit.
-- **Edge cases / quirks:** Devs explicitly frame this as extending the established hydrographic/oceanography water modeling onto land. Land-cover "splashes" (where people live, i.e. cities) can be used as a metagame hint for likely SAM placement. A terrain-type legend (map setting) maps colors to terrain classes; hovering the mouse anywhere reads out the terrain type. The verbatim detection-range numbers (open types ~4.4→3.3 nm, forest ~1.6 nm vs cropland ~3.2 nm "half," urban as low as ~1.2 nm) and the weaponeering result (**area/cluster weapons** on open ground vs **unitary/penetrating** weapons for dense cover/urban) are stated in *Land cover — quantitative spotting ranges and weaponeering by cover type* above.
-- **Source:** 5dJfIKiNHj8, 2SJDdTiuRPs (Land Cover)
+- **Edge cases / quirks:** Devs explicitly frame this as extending the established hydrographic/oceanography water modeling onto land. Land-cover "splashes" (where people live, i.e. cities) can be used as a metagame hint for likely SAM placement. A terrain-type legend (map setting) maps colors to terrain classes; hovering the mouse anywhere reads out the terrain type. (First-pass *Land cover* supplies verbatim detection-range numbers: open types ~4.4→3.3 nm, forest ~1.6 nm vs cropland ~3.2 nm "half," urban as low as ~1.2 nm; and the weaponeering result that **area/cluster weapons** work on open ground while **unitary/penetrating** weapons are needed for dense cover/urban — see below and `1-movement-detection.md`.)
+- **Source:** 5dJfIKiNHj8 (+ first-pass 2SJDdTiuRPs)
 - **Confidence:** Med
 
 ---
@@ -746,8 +698,8 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 - **Inputs / parameters:** weather/cloud layer altitude; weapon guidance type (e.g. a laser-guided bomb requiring LOS).
 - **Behavior / rules:** If a weather pattern interferes, aircraft "know to stay underneath it" when they need a line-of-sight weapon such as a laser-guided bomb. Doing so keeps the target visible but forces the aircraft lower (into threat/AAA range).
 - **Outputs / effects:** the aircraft chooses an altitude below the cloud deck; LOS maintained for the weapon.
-- **Edge cases / quirks:** Staying under the clouds puts the aircraft "right in the line of fire" of short-range AAA like the ZSU-23. **Full visual/EO weather-gating model:** clouds are a **single opaque layer** at one density bar occupying an altitude band (e.g. light high clouds 20,000–23,000 ft); you **cannot see through** it with visual/EO sensors — only when the sensor is **below** the layer does visual detection return to normal range, and an EO/IR-seeker weapon still "must detect the target prior to firing" and cannot engage through cloud (radar/low-frequency still works through it). **Rain:** powerful low-frequency EW radars "burn through" rain with essentially no range loss, but high-frequency/fire-control/X-band radars lose markedly (a weak fighter radar dropped from ~8.1 nm clear to ~4–4.5 nm in heavy rain — roughly half); rain **blocks** IR, laser, and visible light, causing "weapon must detect target prior to firing" failures. Both rain and cloud occupy a height band — an aircraft above the layer is unaffected.
-- **Source:** O4HTj5ct7yg, yhs02DUz9bg (Cloud Cover's Effects on Spotting), P6UAdBqTUhk (Effects of Rain on Detection)
+- **Edge cases / quirks:** Staying under the clouds puts the aircraft "right in the line of fire" of short-range AAA like the ZSU-23. (See first-pass *Cloud cover* and *Rain* entries for the full visual/EO weather-gating model.)
+- **Source:** O4HTj5ct7yg
 - **Confidence:** Med
 
 ### Manual point-targeting of a ground location (Ctrl+F1 / bombardment)
@@ -978,7 +930,7 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
 - **Inputs / parameters:** the weapon warhead's "damage points" (weapon database); the target unit/component's damage-point pool; hit/proximity of the round.
 - **Behavior / rules:** On a hit, the warhead's damage points are applied to the struck unit or sub-component. Stated values: a **Standard ARM warhead = 62** damage points (obliterates a radar truck/post); an **AGM-65 Maverick = 66** ("that is enough"); a single radar **truck = 1** damage point, so either weapon vastly over-kills it. Against a distributed battery, each round is allocated to and resolved against an **individual component**, not the battery as a whole (UI shows "one missile allocated to this target").
 - **Outputs / effects:** the component is destroyed if warhead damage ≥ component pool; the remaining-strength counter decrements; surviving components keep operating.
-- **Edge cases / quirks:** Over-killing a 1-damage-point truck with a 62/66-point warhead is normal (warhead damage points — Standard ARM ~62, Maverick ~66 — are compared against the target's damage points, e.g. a 64-point Osa). Very large structures (350-dmg shelter; 100,000-dmg training/pre-planned target) cannot be killed by normal warheads at all.
+- **Edge cases / quirks:** Over-killing a 1-damage-point truck with a 62/66-point warhead is normal. Very large structures (350-dmg shelter; 100,000-dmg training/pre-planned target) cannot be killed by normal warheads at all. (First-pass also cites a 64-point Osa example.)
 - **Source:** eame83G2Asw
 - **Confidence:** High
 
@@ -1121,32 +1073,20 @@ inline below: `7mmQ2y11hPc`, `bsLLZwqi4Mg`, `wycT9grtrOE`, `hu1Mu_qaXQ8`,
   component/unit pool. Underground targets need a **penetrator** tag; very large pools
   (350, 3,200, 100,000) need many hits or can't be killed by normal warheads.
 
-- **Land cover vs elevation masking are separate layers:** relief
+- **Land cover vs elevation masking are separate layers** (first-pass authority): relief
   masks LOS at *macro* scale (no micro-relief), while land **cover** modifies
   spotting/movement/weapon-effect at *fine* (per-pixel) scale. A unit benefits from both
-  independently. The extracted `5dJfIKiNHj8` land-cover rule is qualitative; the verbatim
-  detection-range numbers and the area-weapon-vs-unitary-weapon weaponeering result are in
-  *Land cover — quantitative spotting ranges and weaponeering by cover type* (`2SJDdTiuRPs`).
+  independently. The extracted `5dJfIKiNHj8` land-cover rule is qualitative; the
+  first-pass `2SJDdTiuRPs` rule has the verbatim detection-range numbers and the
+  area-weapon-vs-unitary-weapon weaponeering result.
 
-- **Jamming / RCS interaction and multi-jammer non-stacking** (`1r4P_gI-Pdw`,
-  `FI-ZwDubiMY`): a noise jammer must cover the **band** the victim radar uses or it does
-  nothing useful (and may make the jammer more obvious); when effective, jamming + small
-  aspect compounded to roughly a **10%** detection-range reduction (vs ~2% from aspect alone).
-  A "jammed" radar still sees — "jammed" just means it is receiving jamming, not blinded.
-  **Multiple same-band jammers scale very poorly:** going from 1 → 2 jammers changed detection
-  by only ~2 nm, and adding 5–8 jammers actually *increased* detection range. The real value of
-  many jammers is covering many different radar **frequencies** (one per band) and forcing the
-  enemy to split power — not raw power stacking. Wrong-band jamming detected the target at the
-  same or **farther** range.
-
-- **Emission intensity → detection range (logarithmic model)** (`-Q9AfTrF4vM`, sonar, but the
-  clearest stated intensity→range math): decibels are logarithmic (+10 dB = ×10 power) but
-  because energy radiates in all directions and attenuates, detection range scaled gently —
-  **every +10 dB ≈ +33% detection range** (31.5 dB→4.0 nm; 42 dB→5.7 nm; 52 dB→7.5 nm;
-  102 dB→13 nm). Crossing below the **acoustic layer** (going deep) cut detectability ~**75%**
-  (a ~90 dB sub heard ~9 nm in the layer was only heard ~3.5 nm below it). Shallow water /
-  coastline reflections drastically *increase* detectability. Quiet/slow → short detection
-  range; a shielding layer (terrain/horizon analog) sharply reduces it.
+- **First-pass-only authorities not duplicated here** (see `1-movement-detection.md`):
+  full radar-fundamentals model (`7mmQ2y11hPc`), pulse-Doppler look-down/notch
+  (`xV-H7HJd2-I`), RCS-aspect magnitudes and jammer-non-stacking (`1r4P_gI-Pdw`,
+  `FI-ZwDubiMY`), ESM localization math (`oF8LwbZSm28`), IFF reasoning (`0R6-5oQR-l0`),
+  visual day/night quantities (`o4bPT47vuK8`), rain (`P6UAdBqTUhk`), cloud
+  (`yhs02DUz9bg`), land-cover numbers (`2SJDdTiuRPs`), the Lua best-LOS algorithm
+  (`u9R-59fusCM`), and the sonar intensity→range model (`-Q9AfTrF4vM`).
 
 - **Open / not-yet-mined** (low priority): *Radar Misconceptions* (`FOQ6kcf9YzA`),
   *Radar Jamming Bands* (`BIiSHFYKFQ8`), *Radar versus Visual Recon* (`agqnyM3Hwkg`),

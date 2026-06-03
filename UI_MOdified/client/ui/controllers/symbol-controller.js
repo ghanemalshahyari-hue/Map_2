@@ -113,6 +113,13 @@ function applyAffiliation(newDigit) {
 function updatePlacementHint() {
     if (!placementHint) return;
 
+    // Only write the global statusbar when Symbol is the active tool.
+    // tool-rail.js sets symbol-manager's inline display:'none' when another
+    // tool is active, so this prevents the init call from overwriting a
+    // different tool's statusbar (e.g. Select) after tool-rail.js has run.
+    const smEl = document.getElementById('symbol-manager');
+    const symbolActive = !smEl || smEl.style.display !== 'none';
+
     const hasSidc = pickedSidcDisplay &&
         pickedSidcDisplay.classList.contains('active');
 
@@ -131,14 +138,14 @@ function updatePlacementHint() {
             ? 'انقر على الخريطة لوضع هذا الرمز.'
             : 'Click on the map to place this symbol.';
         hintSpan.textContent = text;
-        setStatusBar('Symbol', text);
+        if (symbolActive) setStatusBar('Symbol', text);
     } else {
         symbolState.isPlacementActive = false;
         const text = getLocale() === 'ar'
             ? 'اختر رمزًا للبدء.'
             : 'Choose a symbol to begin.';
         hintSpan.textContent = text;
-        setStatusBar('Symbol', text);
+        if (symbolActive) setStatusBar('Symbol', text);
     }
     updateStepIndicator();
     // NOTE: do NOT call updateSymbolSummary() here. The summary is driven by

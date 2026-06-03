@@ -57,6 +57,23 @@
         return fallback;
     }
 
+    function isScenarioVisible() {
+        try {
+            return !!(window.AppAdjudicatorMap
+                && typeof window.AppAdjudicatorMap.isScenarioDrawn === 'function'
+                && window.AppAdjudicatorMap.isScenarioDrawn());
+        } catch (_) {
+            return false;
+        }
+    }
+
+    function syncScenarioVisibility() {
+        const p = panel();
+        if (!p) return;
+        if (isScenarioVisible()) p.removeAttribute('hidden');
+        else p.setAttribute('hidden', '');
+    }
+
     function fmtLat(lat) {
         if (!Number.isFinite(lat)) return null;
         return `${Math.abs(lat).toFixed(4)}°${lat >= 0 ? 'N' : 'S'}`;
@@ -298,6 +315,7 @@
     function renderEmpty() {
         const p = panel();
         if (!p) return;
+        syncScenarioVisibility();
         p.classList.add('unit-panel--empty');
         // Title back to "No unit selected"
         const titleEl = $('up-name');
@@ -318,6 +336,7 @@
     function renderUnit(unit, selectedAt) {
         const p = panel();
         if (!p || !unit) { renderEmpty(); return; }
+        syncScenarioVisibility();
         currentUnit = unit;
         currentSelectedAt = selectedAt || Date.now();
 
@@ -414,6 +433,17 @@
         document.addEventListener('rmooz:unit-deselected', () => {
             try { renderEmpty(); } catch (_) { /* ignore */ }
         });
+        document.addEventListener('rmooz:scenario-visibility-changed', () => {
+            try {
+                if (!isScenarioVisible()) {
+                    currentUnit = null;
+                    currentSelectedAt = null;
+                    renderEmpty();
+                    return;
+                }
+                syncScenarioVisibility();
+            } catch (_) { /* ignore */ }
+        });
         // P5b — when the scenario steps while a unit is selected, re-read the
         // unit's LIVE marker (current position + per-step status) so the panel
         // stays current. Covers BOTH the bottom timeline transport (fires
@@ -448,6 +478,7 @@
     function init() {
         if (!panel()) return;
         bindEvents();
+        syncScenarioVisibility();
         renderEmpty();
     }
 

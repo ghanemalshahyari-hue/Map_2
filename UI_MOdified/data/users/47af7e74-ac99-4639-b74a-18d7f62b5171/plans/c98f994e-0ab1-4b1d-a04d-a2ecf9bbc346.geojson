@@ -4,14 +4,7 @@
     "version": 3,
     "appName": "tactical-map"
   },
-  "__layers": [
-    {
-      "id": "layer-1",
-      "name": "Layer 1",
-      "visible": true,
-      "active": true
-    }
-  ],
+  "__layers": [],
   "__folders": [],
   "features": []
 }

@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>rmooz - رموز</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&family=Alexandria:wght@400;700;800&family=Noto+Kufi+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../lib/leaflet.css">
     <link rel="stylesheet" href="style.css?v=102c">
 </head>
@@ -3422,7 +3425,7 @@
                  PR-3 is UI foundation only — every section that requires
                  simulation data (fuel/ammo/damage/ROE/etc.) shows a
                  localized "Not available" placeholder. -->
-            <aside class="unit-panel unit-panel--empty" id="unit-panel" aria-label="Selected unit details">
+            <aside class="unit-panel unit-panel--empty" id="unit-panel" aria-label="Selected unit details" hidden>
                 <header class="unit-panel-header">
                     <span class="unit-panel-eyebrow" data-i18n="up-eyebrow">SELECTED UNIT</span>
                     <h3 class="unit-panel-title" id="up-name" data-i18n="up-empty-title">No unit selected</h3>
@@ -4782,7 +4785,12 @@
     <script src="shell/detection.js?v=1"></script>
     <script src="shell/engagement.js?v=1"></script>
     <script src="shell/world-state-db.js?v=1"></script>
-    <script src="wargame/adjudicator-map.js?v=41"></script>
+    <!-- PR-WS2: World State projection (WS1). Loaded before the map so the
+         adjudicator can derive a live World State snapshot per step and route
+         objective status through it (parity-proof read seam — World State
+         mirrors `state` today; WS4 inverts ownership). -->
+    <script src="shell/world-state.js?v=3"></script>
+    <script src="wargame/adjudicator-map.js?v=43"></script>
     <script src="wargame/cesium-view.js?v=3"></script>
     <script src="dem-layer.js?v=1"></script>
     <script src="wargame/adjudicator-hud.js?v=22"></script>
@@ -4941,20 +4949,187 @@
          P0 authoring schema (draft/working-copy engine) must load before edit-mode.
          Edits stay in-memory; commit/journal boundary untouched. -->
     <script src="shell/scenario-authoring-schema.js?v=1"></script>
-    <script src="shell/scenario-edit-mode.js?v=1"></script>
+    <script src="shell/scenario-edit-mode.js?v=7"></script>
     <style>
-        .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; }
+        .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
             color:#e8eaed; border-radius:5px; padding:4px 10px; }
         .sw-edit-btn:hover { background:#343a44; }
+        .sw-edit-btn[disabled] { opacity:0.5; cursor:not-allowed; }
         .sw-edit-btn-primary { background:#2f6fed; border-color:#2f6fed; color:#fff; }
         .sw-edit-btn-primary:hover { background:#3b78f0; }
         .sw-editmode-editor[hidden] { display:none; }
         .sw-edit-row dd { width:100%; }
         .sw-edit-input { width:100%; box-sizing:border-box; font:inherit; padding:3px 6px;
             border:1px solid #5a6270; border-radius:4px; background:#1f242b; color:#e8eaed; }
+        textarea.sw-edit-input { resize:vertical; min-height:60px; font-family:ui-monospace,Menlo,Consolas,monospace; }
         .sw-edit-actions { display:flex; gap:8px; align-items:center; padding:8px; flex-wrap:wrap; }
         .sw-edit-status { font-size:12px; }
+        /* Slice 2A/2B item styling (was using browser defaults) */
+        .sw-edit-list { display:flex; flex-direction:column; gap:8px; padding:4px 8px 8px; }
+        .sw-edit-list-item { border:1px solid #3a3f47; border-radius:5px; padding:8px; background:#1c1f24; }
+        .sw-edit-empty { font-style:italic; color:#8d949e; padding:4px 0; font-size:12px; }
+        .sw-edit-hint { font-size:11px; color:#a8b0bb; padding:2px 8px 6px; }
+        .sw-edit-subcard { border:1px solid #3a3f47; border-radius:6px; margin:6px 8px; background:#1a1d22; }
+        .sw-edit-subcard-header { padding:6px 10px; font-weight:600; border-bottom:1px solid #2a2f37;
+            background:#222630; color:#cfd4dc; font-size:12.5px; letter-spacing:.02em; }
+        /* Slice 2C — stepped layout */
+        .sw-step-layout { display:flex; gap:0; align-items:stretch; min-height:300px; }
+        .sw-step-rail { flex:0 0 200px; border-right:1px solid #2a2f37; padding:6px 4px;
+            background:#161a1f; display:flex; flex-direction:column; gap:2px; max-height:80vh; overflow-y:auto; }
+        .sw-step-item { display:flex; align-items:center; gap:8px; padding:6px 8px;
+            cursor:pointer; border-radius:4px; font-size:12.5px; color:#cfd4dc; user-select:none; }
+        .sw-step-item:hover { background:#222630; }
+        .sw-step-item.active { background:#2f6fed; color:#fff; }
+        .sw-step-item.gap { color:#8d949e; }
+        .sw-step-item.gap:hover { background:#1d2026; }
+        .sw-step-num { flex:0 0 18px; font-variant-numeric:tabular-nums; font-size:11px;
+            color:#8d949e; text-align:right; }
+        .sw-step-item.active .sw-step-num { color:#bcd2ff; }
+        .sw-step-title { flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .sw-step-pill { flex:0 0 12px; height:12px; border-radius:50%; background:#3a3f47;
+            border:1px solid #4a4f57; }
+        .sw-step-pill.ok    { background:#1a7f37; border-color:#1a7f37; }
+        .sw-step-pill.warn  { background:#c9a227; border-color:#c9a227; }
+        .sw-step-pill.gap   { background:transparent; border-color:#4a4f57; border-style:dashed; }
+        .sw-step-content { flex:1 1 auto; padding:8px; min-width:0; overflow-x:hidden; max-height:80vh; overflow-y:auto; }
+        /* Slice 2C — New Scenario inline form */
+        .sw-newscen-form { border:1px solid #3a3f47; border-radius:6px; padding:10px;
+            background:#1c1f24; margin:6px 8px; display:flex; flex-direction:column; gap:6px; }
+        .sw-newscen-form-title { font-weight:600; font-size:13px; color:#e8eaed; margin-bottom:4px; }
+        /* Slice 2C — placeholder ("gap") card */
+        .sw-gap-card { padding:14px; border:1px dashed #4a4f57; border-radius:6px;
+            background:#1a1d22; color:#a8b0bb; }
+        .sw-gap-card-title { font-weight:600; color:#cfd4dc; margin-bottom:6px; }
+        .sw-gap-card-why   { font-size:12px; line-height:1.5; }
+        /* Slice 2D — Forces (OOB) tree + detail pane (scale-aware) */
+        .sw-forces-toolbar { display:flex; gap:6px; align-items:center; padding:6px 8px;
+            border-bottom:1px solid #2a2f37; background:#1a1d22; flex-wrap:wrap; }
+        .sw-forces-toolbar input.sw-edit-input { flex:1 1 200px; max-width:340px; }
+        .sw-forces-counts { font-size:11px; color:#8d949e; margin-left:auto; }
+        .sw-forces-tree { padding:4px 0; max-height:55vh; overflow-y:auto; border-bottom:1px solid #2a2f37; }
+        .sw-forces-group-header { display:flex; align-items:center; gap:6px; padding:4px 8px;
+            cursor:pointer; user-select:none; font-size:12.5px; color:#cfd4dc; font-weight:600; }
+        .sw-forces-group-header:hover { background:#1f242b; }
+        .sw-forces-group-chev { display:inline-block; width:10px; color:#8d949e; text-align:center;
+            font-variant-numeric:tabular-nums; }
+        .sw-forces-group-count { color:#8d949e; font-weight:normal; font-size:11px; }
+        .sw-forces-side-RED  { color:#d6332e; }
+        .sw-forces-side-BLUE { color:#3a76c2; }
+        .sw-forces-group-echelon { font-weight:500; color:#a8b0bb; padding-left:22px; font-size:12px; }
+        .sw-forces-row { display:flex; align-items:center; gap:8px; padding:3px 8px 3px 40px;
+            cursor:pointer; user-select:none; font-size:12px; border-left:3px solid transparent; }
+        .sw-forces-row:hover { background:#1f242b; }
+        .sw-forces-row.selected { background:#22324d; border-left-color:#2f6fed; }
+        .sw-forces-row .sw-forces-sym { flex:0 0 22px; height:22px; display:flex;
+            align-items:center; justify-content:center; }
+        .sw-forces-row .sw-forces-sym svg { max-width:22px; max-height:22px; }
+        .sw-forces-row .sw-forces-uid { flex:0 0 90px; color:#bcd2ff; font-family:ui-monospace,Menlo,Consolas,monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .sw-forces-row .sw-forces-label { flex:1 1 auto; color:#e8eaed; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .sw-forces-row .sw-forces-tag { flex:0 0 auto; font-size:10.5px; color:#8d949e;
+            background:#2a2f37; padding:1px 5px; border-radius:3px; }
+        .sw-forces-empty { color:#8d949e; font-style:italic; padding:8px; font-size:12px; }
+        .sw-forces-detail { padding:8px; background:#1a1d22; }
+        .sw-forces-detail-header { display:flex; align-items:center; gap:8px; padding:0 4px 6px;
+            border-bottom:1px solid #2a2f37; margin-bottom:6px; }
+        .sw-forces-detail-title { font-weight:600; color:#e8eaed; font-size:13px; flex:1 1 auto; }
+        .sw-forces-detail-empty { color:#8d949e; font-style:italic; padding:14px 8px; font-size:12px; }
+        .sw-forces-pick-banner { background:#22324d; color:#cfd4dc; padding:4px 8px;
+            border-radius:4px; font-size:11px; margin-top:6px; }
+        /* Slice 2D-1M (revised) — Edit Mode opens a full-area OVERLAY.
+           Previous attempt (width: min(900px, 75vw)) was still constrained by
+           the parent sidebar AND by the viewport width — on a sub-1000px screen
+           the panel only reached ~615 px and the right edge was still clipped
+           (user screenshot 2026-06-02). Real fix: detach the panel from its
+           sidebar position when Edit Mode is ON and pin it as a fixed overlay
+           that spans from just past the tool rail to the right edge of the
+           viewport. Map sits underneath; Pick-on-map shrinks the overlay
+           temporarily so the operator can click the map. */
+        #scenario-workspace-panel.sw-editmode-wide {
+            position: fixed !important;
+            left: var(--rail-w, 72px) !important;
+            top: var(--header-h, 52px) !important;
+            right: 8px !important;
+            bottom: 8px !important;
+            width: auto !important;
+            max-width: none !important;
+            height: auto !important;
+            max-height: none !important;
+            z-index: 600;
+            background: var(--panel-bg, rgba(15, 23, 42, 0.98));
+            border: 1px solid var(--panel-border, rgba(148,163,184,0.2));
+            border-radius: var(--radius, 12px);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.55);
+            padding: 12px 14px;
+            overflow-y: auto;
+        }
+        #scenario-workspace-panel.sw-editmode-wide .sw-step-rail {
+            flex: 0 0 200px;
+            max-height: calc(100vh - var(--header-h, 52px) - 200px);
+        }
+        #scenario-workspace-panel.sw-editmode-wide .sw-step-content {
+            min-width: 0;       /* allow inner flex children to shrink instead of overflow */
+            max-height: calc(100vh - var(--header-h, 52px) - 200px);
+        }
+        #scenario-workspace-panel.sw-editmode-wide .sw-card,
+        #scenario-workspace-panel.sw-editmode-wide .builder-card {
+            min-width: 0;
+        }
+        #scenario-workspace-panel.sw-editmode-wide .builder-card-title {
+            white-space: normal;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+        }
+        /* When Edit Mode is ON, hide the rest of the workspace panel's
+           read-only content (briefing, summary, etc.) so the operator sees
+           only the editor. They're back when Edit Mode is OFF. */
+        #scenario-workspace-panel.sw-editmode-wide > :not(#sw-editmode-bar):not(#sw-editmode-editor) {
+            display: none !important;
+        }
+        /* Slice 2D-1O — when "Pick coord on map" is active, collapse the
+           overlay to a thin right-edge strip showing just a banner so the
+           map underneath is fully clickable. */
+        #scenario-workspace-panel.sw-editmode-wide.sw-editmode-picking {
+            left: auto !important;
+            width: 280px !important;
+            background: rgba(34, 50, 77, 0.96) !important;
+        }
+        #scenario-workspace-panel.sw-editmode-wide.sw-editmode-picking #sw-editmode-editor {
+            display: none !important;
+        }
+        #scenario-workspace-panel.sw-editmode-wide.sw-editmode-picking #sw-editmode-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .sw-editmode-pick-banner-global {
+            display: block; padding: 10px; margin: 8px 0;
+            background: #2f6fed; color: #fff; border-radius: 6px;
+            font-size: 13px; font-weight: 600; text-align: center;
+        }
+        .sw-editmode-pick-banner-global small {
+            display: block; font-weight: normal; opacity: 0.85; margin-top: 4px;
+            font-size: 11px;
+        }
+        /* The two-column field rows ("dt | dd") were laid out for a wide pane —
+           when the panel is the default narrow width (Edit Mode OFF, read-only
+           strip), stack each row's dt above dd. */
+        #scenario-workspace-panel:not(.sw-editmode-wide) .sw-edit-row {
+            display: flex; flex-direction: column; gap: 2px;
+        }
+        /* Slice 2D-1J — "Editing: {name}" indicator + saved-state badge */
+        .sw-editmode-indicator { display:inline-flex; align-items:center; gap:6px;
+            margin-left:8px; padding:3px 8px; border-radius:4px; background:#1c1f24;
+            border:1px solid #3a3f47; font-size:12px; color:#cfd4dc; }
+        .sw-editmode-indicator-label { color:#8d949e; font-size:11px; }
+        .sw-editmode-indicator-name { font-family:ui-monospace,Menlo,Consolas,monospace;
+            font-weight:600; color:#e8eaed; max-width:240px; overflow:hidden;
+            text-overflow:ellipsis; white-space:nowrap; }
+        .sw-editmode-badge { display:inline-block; padding:1px 6px; border-radius:3px;
+            font-size:10.5px; font-weight:600; letter-spacing:.02em; }
+        .sw-editmode-badge.unsaved   { background:#c9a227; color:#1c1f24; }
+        .sw-editmode-badge.in-memory { background:#3a76c2; color:#fff; }
+        .sw-editmode-badge.on-server { background:#1a7f37; color:#fff; }
+        .sw-editmode-badge.on-disk   { background:#2f6fed; color:#fff; }
     </style>
     <script>
         // Mount Edit Mode once the DOM (workspace panel) is ready.

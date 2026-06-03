@@ -136,6 +136,11 @@
     // px-per-km for the current view.
     let lastAppliedState    = null;
     let lastAppliedScenario = null;
+    // PR-WS2: live World State snapshot (AppWorldState.deriveWorldState) for the
+    // current step. Reconciled from `lastAppliedState` in applyState; objective
+    // status is read from it (the first render field sourced from World State).
+    // Null when WS1 is absent/throws → render falls back to the legacy `state.*`.
+    let lastWorldState      = null;
 
     // setTimeout handles for the in-flight staggered-death scheduler so a
     // step change can cancel anything still queued from the previous step.
@@ -2163,6 +2168,12 @@
         // is a placeholder; applyState() fills it as the trial progresses.
         addSitrep();
 
+        try {
+            document.dispatchEvent(new CustomEvent('rmooz:scenario-visibility-changed', {
+                detail: { drawn: true }
+            }));
+        } catch (_) { /* ignore */ }
+
         return true;
     }
 
@@ -2494,6 +2505,14 @@
     }
     function deriveDisplayOutcome(state) {
         if (!state) return 'DORMANT';
+        // PR-WS2.5: the objective-status evidence rule now lives in World State
+        // (AppWorldState.computeObjectiveStatusDisplay, run via applyDerivations).
+        // Read the World-State-computed value for the live state; the inline rule
+        // below is kept VERBATIM only as the fallback when WS1 is absent.
+        const ws = (lastWorldState && state === lastAppliedState) ? lastWorldState : null;
+        if (ws && ws.derived && ws.derived.objective_status_display) {
+            return ws.derived.objective_status_display;
+        }
         const status = state.objective_status || 'DORMANT';
         // Only re-litigate CAPTURED — the others (DENIED, THREATENED,
         // CONTESTED, DORMANT) describe Red NOT dominating, and the
@@ -5232,6 +5251,8 @@
         blsCoordByName = {};
         objCoord = null;
         unitRegistry = {};
+        lastAppliedState = null;
+        lastAppliedScenario = null;
         runningDestroyedUids = new Set();
         lastAppliedStepIndex = -1;
         playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
@@ -5242,6 +5263,11 @@
         engagementGraphicsStep = 0; // MG1: reset engagement mission-graphic step tracker
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
+        try {
+            document.dispatchEvent(new CustomEvent('rmooz:scenario-visibility-changed', {
+                detail: { drawn: false }
+            }));
+        } catch (_) { /* ignore */ }
         clearSuppressionHalos();
         clearSalvoAnimations();
         for (const t of effectTimers) { try { clearTimeout(t); } catch (_) {} }
@@ -5320,6 +5346,48 @@
         lastAppliedStepIndex = stepIdx;
         lastAppliedState     = state;
         lastAppliedScenario  = scenario || scenarioRef || null;
+
+        // PR-WS2: derive a live World State snapshot from the running scenario at
+        // this step, then route objective status through it (read in
+        // deriveDisplayOutcome). The snapshot MIRRORS the live `state` for now —
+        // ownership stays with `state`; WS4 inverts the fill direction so World
+        // State OWNS. Pure read-through, fully guarded: a missing/throwing engine
+        // → null → the renderer uses the legacy `state.*` path (zero regression).
+        lastWorldState = null;
+        if (window.AppWorldState && lastAppliedScenario) {
+            try {
+                const ws = window.AppWorldState.deriveWorldState(lastAppliedScenario, stepIdx);
+                if (ws) {
+                    // PR-WS2.5: project the LIVE inputs the derived-field rules
+                    // consume (raw objective status + force ratio + losses), then
+                    // let World State recompute ALL derived outputs generically
+                    // (same Inputs→Rule→Output path every field uses). World State
+                    // owns the derivation; `state` still owns the raw inputs until
+                    // WS4 computes those from WS units too. Value is identical to
+                    // the renderer's old inline rule, so the display is unchanged.
+                    ws.derived = ws.derived || {};
+                    if (state.objective_status) {
+                        ws.derived.objective_status = state.objective_status;
+                        if (ws.objectives && ws.objectives[0]) {
+                            ws.objectives[0].status = state.objective_status;
+                        }
+                    }
+                    ws.balance = ws.balance || {};
+                    if (state.force_ratio != null) ws.balance.force_ratio = state.force_ratio;
+                    if (state.losses_cumulative) {
+                        ws.balance.losses = {
+                            blue_destroyed: state.losses_cumulative.blue_destroyed,
+                            blue_total: state.losses_cumulative.blue_total,
+                            red_company_equivalent: state.losses_cumulative.red_company_equivalent
+                        };
+                    }
+                    if (typeof window.AppWorldState.applyDerivations === 'function') {
+                        window.AppWorldState.applyDerivations(ws);
+                    }
+                    lastWorldState = ws;
+                }
+            } catch (_) { lastWorldState = null; }
+        }
 
         if (scenario && scenario !== scenarioRef) {
             // Defensive: keep the per-step movement model in sync with whatever
@@ -5801,6 +5869,8 @@
             reg.canMove  = true;
         }
         runningDestroyedUids = new Set();
+        lastAppliedState = null;
+        lastAppliedScenario = null;
         lastAppliedStepIndex = -1;
         playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
         try { clearEchelonAggregates(); } catch (_) {} // echelon roll-up: drop aggregates
@@ -5935,6 +6005,14 @@
             phase_line_km: (objDepthKm || 95) * Math.max(0, Math.min(1, progress || 0)),
             blue_actions:  null,   // fall back to the local schedule
         };
+
+        if ((Number.isFinite(stepIndex) ? stepIndex : 0) <= 0) {
+            resetMap();
+            updateUnitPositions(syntheticState);
+            try { renderEchelonRollup(); } catch (_) { /* ignore */ }
+            return true;
+        }
+
         updateUnitPositions(syntheticState);
         // AN1: refresh per-unit attrition visuals, but only when the step
         // index actually changes (this is called repeatedly with fractional
@@ -6303,5 +6381,9 @@
         // Cesium 3D sync — last state/scenario from applyState()
         get _lastState()    { return lastAppliedState; },
         get _lastScenario() { return lastAppliedScenario; },
+        // PR-WS2: live World State snapshot for the current step (read-only).
+        // The first live consumer of WS1 on the client; exposed for tests, 3D
+        // parity, and the future formula layer. Null until the first applyState.
+        getWorldState: () => lastWorldState,
     };
 })();

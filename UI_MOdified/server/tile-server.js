@@ -85,7 +85,7 @@ app.get('/services/:tileset/:z/:x/:y.:fmt', (req, res) => {
 loadAll();
 const tileListener = app.listen(PORT, '127.0.0.1', () => {
     console.log('');
-    console.log('  Tile server running at http://localhost:' + PORT);
+    console.log('  Tile server running at http://127.0.0.1:' + PORT);
     console.log('  Tilesets ready:', Object.keys(dbs).join(', ') || '(none - check maps/ folder)');
     console.log('  (Supports large files - reads from disk, no size limit)');
     console.log('');

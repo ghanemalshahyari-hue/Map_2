@@ -1,5 +1,8 @@
 # Memory index — RMOOZ / CMO
 
+- [World State connection is the central architecture problem](project_world_state_connection_central.md) — AUTHORITATIVE (2026-06-02): World State must become the single live source of truth; no new subsystem until that path is proven; gate every feature with the 4 connection questions. Build order WS2 ✅ → WS2.5 ✅ → WS4-Balance ✅ → WS-BLS (planned) → WS3/DB2/MTH1/DOC1/personnel.
+- [Math realism rules](project_math_realism_rules.md) — future: gradually add simple, explainable, editable formulas that all read+write World State; HARD rule — no hidden/magical math; gated by the World State connection direction.
+- [Session 02/06/2026 (night)](session_2026-06-02_night.md) — current-state audit + World State connection: WS2 → WS2.5 → WS4-Balance wired, tested, browser-verified, pushed to `map2/main`; WS-BLS planned.
 - [RMOOZ direction reset](project_rmooz_direction_reset.md) — mimic CMO *structurally* (not its data), World State Engine first, continuous movement, regional/2D/data-driven; build roadmap in APP_INVENTORY. Adds math rules in the current build to maximize realism.
 - [Workspace editable (owner ruling)](project_workspace_editable_owner_ruling.md) — 2026-06-01 owner ruled the scenario workspace becomes editable; edits hit an in-memory working copy, commit/journal boundary preserved. Parked under the direction reset.
 - [Personnel/maintenance/reliability (FUTURE)](project_personnel_maintenance_reliability_future.md) — future schema for crew/maintenance/reliability/controlled-events feeding World State, DB-Lite, readiness/supply, and AI COA explanation. Not for implementation now.

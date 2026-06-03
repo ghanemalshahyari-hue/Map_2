@@ -29,7 +29,7 @@
             err_invalid_username: 'Username is not valid',
             err_password_short: 'Password must be at least 4 characters',
             err_network: 'Could not reach the server — check your connection',
-            err_no_api: 'No API at this address (404). Open the app from the rmooz Node server — http://localhost:8000/ — not Live Server or another static-only host.',
+            err_no_api: 'No API at this address (404). Open the app from the rmooz Node server — usually http://127.0.0.1:8000/ or the same host serving this page — not Live Server or another static-only host.',
             success_registered: 'Account created — signing you in…',
             working: 'Working…',
         },
@@ -54,7 +54,7 @@
             err_invalid_username: 'اسم المستخدم غير صالح',
             err_password_short: 'كلمة المرور يجب ألا تقل عن 4 أحرف',
             err_network: 'تعذّر الوصول إلى الخادم — تحقق من الاتصال',
-            err_no_api: 'لا توجد واجهة API على هذا العنوان (404). شغّل التطبيق من خادم rmooz Node — http://localhost:8000/ — وليس Live Server.',
+            err_no_api: 'لا توجد واجهة API على هذا العنوان (404). شغّل التطبيق من خادم rmooz Node — عادةً http://127.0.0.1:8000/ أو من نفس المضيف الذي يقدّم هذه الصفحة — وليس Live Server.',
             success_registered: 'تم إنشاء الحساب — جاري تسجيل الدخول…',
             working: 'جاري التنفيذ…',
         }
@@ -95,20 +95,6 @@
     }
 
     const isHttpOrigin = /^https?:$/i.test(window.location.protocol || '');
-
-    if (isHttpOrigin) {
-        const host = window.location.hostname;
-        if (host === '127.0.0.1' || host === '::1' || host === '[::1]') {
-            try {
-                const next = new URL(window.location.href);
-                next.hostname = 'localhost';
-                if (next.href !== window.location.href) {
-                    window.location.replace(next.href);
-                    return;
-                }
-            } catch (_) { /* ignore */ }
-        }
-    }
 
     function apiUrl(path) {
         const p = (path && path.charAt(0) === '/') ? path : '/' + String(path || '');

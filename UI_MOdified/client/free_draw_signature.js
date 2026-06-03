@@ -242,6 +242,20 @@
         return target.closest?.('.sidebar') || target.closest?.('.top-bar') || target.closest?.('.modal') || target.closest?.('.leaflet-control');
     }
 
+    function getHeaderBottom() {
+        const el = document.querySelector('.app-header') || document.querySelector('.top-bar');
+        return el ? el.getBoundingClientRect().bottom : 74;
+    }
+
+    function getPopupRightOffset() {
+        const unitPanel = document.querySelector('.unit-panel');
+        if (unitPanel) {
+            const r = unitPanel.getBoundingClientRect();
+            return window.innerWidth - r.left + 8;
+        }
+        return 12;
+    }
+
     function updateInstruction(text) {
         const instructionText = document.getElementById('instruction-text');
         if (instructionText) instructionText.textContent = text;
@@ -1051,10 +1065,9 @@
         const panel = document.getElementById('auto-flank-controls');
         if (!panel) return;
         const affPopup = document.getElementById('free-draw-affiliation-popup');
-        const topBar = document.querySelector('.top-bar');
-        const top = affPopup ? affPopup.getBoundingClientRect().bottom + 8 : (topBar ? topBar.getBoundingClientRect().bottom + 8 : 70);
+        const top = affPopup ? affPopup.getBoundingClientRect().bottom + 8 : (getHeaderBottom() + 8);
         panel.style.top = `${top}px`;
-        panel.style.right = '18px';
+        panel.style.right = `${getPopupRightOffset()}px`;
     }
 
     function showFlankConfigPanel() {
@@ -1176,9 +1189,8 @@
         changeSetupBtn.id = 'fd-change-setup-btn';
         changeSetupBtn.textContent = fdT('change-setup');
         changeSetupBtn.style.cssText = 'position:fixed;right:12px;z-index:1000;background:rgba(15,23,42,0.88);color:#93c5fd;border:1px solid #3b82f6;border-radius:6px;padding:5px 12px;font-size:0.76rem;cursor:pointer;font-weight:600;';
-        const topBar = document.querySelector('.top-bar');
-        const topBarBottom = topBar ? topBar.getBoundingClientRect().bottom : 48;
-        changeSetupBtn.style.top = `${topBarBottom + 6}px`;
+        changeSetupBtn.style.top = `${getHeaderBottom() + 6}px`;
+        changeSetupBtn.style.right = `${getPopupRightOffset()}px`;
         changeSetupBtn.addEventListener('click', () => {
             removeChangeSetupButton();
             showAffiliationPopup();
@@ -1466,10 +1478,10 @@
 
         document.body.appendChild(affiliationPopup);
 
-        const topBar = document.querySelector('.top-bar');
-        const topBarBottom = topBar ? topBar.getBoundingClientRect().bottom : 48;
-        const finalTop = Math.max(topBarBottom - 1, 0);
+        const finalTop = Math.max(getHeaderBottom() + 4, 0);
         affiliationPopup.style.top = `${finalTop}px`;
+        affiliationPopup.style.right = `${getPopupRightOffset()}px`;
+        affiliationPopup.style.maxHeight = `calc(100vh - ${finalTop + 8}px)`;
 
         const countSelect = document.getElementById('fd-circle-count');
         if (countSelect) {

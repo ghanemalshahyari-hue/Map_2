@@ -35,13 +35,11 @@ documents; **this is Part 1/3**. It covers the sensing-and-electronic-warfare co
 - **Realism toggles** — gun-control/director gating, submarine radio isolation, aircraft
   sub-system damage spreading, terrain-type effects.
 
-**Exhaustive.** This document is self-contained: it merges **every** rule from the transcripts
-assigned to this part, and the overlapping radar / look-down / ESM / RCS / IFF / horizon
-mechanics (radar-horizon LOS model and calculator readings, the look-down/clutter and ~8° notch
-model, the ESM detection-range multiplier and triangulation geometry, the LPI/F-22 exception, the
-aspect/RCS rules, the rotating-radar refresh cadence, and IFF reasoning) are all stated in full
-below. Near-identical mechanics across videos have been deduplicated into a single richest entry
-that cites **all** source video IDs.
+**Exhaustive.** This document merges **every** rule from the transcripts assigned to this part
+*and* absorbs the corrections/quirks already captured in the first-pass spec
+(`docs/cmo-functional-rules/1-movement-detection.md`) for the overlapping radar / look-down /
+ESM / RCS / IFF / horizon mechanics. Near-identical mechanics across videos have been
+deduplicated into a single richest entry that cites **all** source video IDs.
 
 **Auto-generated-caption caveat.** Source transcripts are auto-generated YouTube captions, so
 numbers, unit names, band letters, and API field names may contain transcription errors. Stated
@@ -1777,13 +1775,13 @@ values / worked example, not a stated formula."
 
 ## Cross-references & absorbed corrections
 
-- **Overlapping radar/EW mechanics are stated in full above:** the radar-horizon LOS model (mast height +
-  target altitude → horizon distance; calculator readings), the look-down/clutter and notch model (incl. the
-  "fly lower to see above you" trick and the ~8° eyeballed notch), the ESM ~1.5× detection-range rule and 90°
-  triangulation geometry, the LPI/F-22 un-locatable exception, the aspect/RCS "point at the radar to hide"
-  rule and its pure-Doppler inversion, the rotating-radar refresh cadence (~5 s / ~10 s), and the IFF
-  kinematic/emission reasoning — each merged into its entry above with the richest numbers (e.g. the 240 nm
-  calculator table, the SEAD horizon-vs-range pairs, the multi-video ESM 1.5–3× spread).
+- **Absorbed from `1-movement-detection.md`:** the radar-horizon LOS model (mast height + target altitude →
+  horizon distance; calculator readings), the look-down/clutter and notch model (incl. the "fly lower to see
+  above you" trick and the ~8° eyeballed notch), the ESM ~1.5× detection-range rule and 90° triangulation
+  geometry, the LPI/F-22 un-locatable exception, the aspect/RCS "point at the radar to hide" rule and its
+  pure-Doppler inversion, the rotating-radar refresh cadence (~5 s / ~10 s), and the IFF kinematic/emission
+  reasoning. Where this part adds richer numbers (e.g. the 240 nm calculator table, the SEAD horizon-vs-range
+  pairs, the multi-video ESM 1.5–3× spread), those are merged into the entries above.
 - **Naval formation contact-fusing** (stacked contacts merging into one) lives in the movement-detection doc
   under *Naval formation spacing* and is also reflected in the range-resolution entry here.
 - **Sibling parts (2/3, 3/3):** this part deliberately stops at the sensing/EW/IADS *engagement* core listed

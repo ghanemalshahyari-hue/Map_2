@@ -34,7 +34,10 @@ into 945 deduplicated behavior rules** across 9 per-bucket specs. Build against 
 
 > Treat these as the **behavior contract**: if an implementation diverges from a rule, the
 > implementation is wrong (or the rule needs a sourced correction). The earlier curated first-pass
-> specs have been **inlined into the exhaustive set and removed** — it is now fully self-contained.
+> specs (`1-movement-detection.md` … `4-scenario-authoring.md`) are **kept as referenced companions**
+> — several exhaustive rules cite them for overlapping detail, and a few authorities (e.g. the
+> radar-horizon calculator, the general damage/Pk model) currently live **only** there. Don't delete
+> them until those references are inlined.
 
 ## Worked build (apply the rules to a full scenario)
 

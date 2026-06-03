@@ -222,9 +222,107 @@
         return null;                                    // L3-A supports ENGAGE + ATTACK_OBJECTIVE
     }
 
+    /* ---- L3.5-A: Feasible Alternatives generator -----------------------
+     * Inverts the L3-A finding: each blocker/risk it surfaced maps to a known
+     * feasible-alternative OPTION (constraint → known inverse), drawn entirely
+     * from existing state. It does NOT simulate outcomes, rank/score, mutate, or
+     * recommend — it lists read-only candidate options the operator could weigh.
+     * ATTACK_OBJECTIVE only for this slice (ENGAGE alternatives later).
+     *
+     * Codes with no tactical inverse (data/structural gaps: unknown_unit,
+     * unknown_objective, objective_evidence_missing, objective_not_actionable,
+     * objective_already_captured) intentionally map to NOTHING → empty when those
+     * are the only issues, and empty when the action is already feasible. */
+
+    // code (blocker/risk) → alternative id
+    var ALT_MAP = {
+        readiness_unavailable: 'restore_readiness',
+        readiness_degraded:    'restore_readiness',
+        supply_limited:        'resupply',
+        engagement_pressure:   'reduce_engagement_pressure',
+        contact_unresolved:    'resolve_contacts',
+        doctrine_caution:      'review_doctrine',
+        objective_contested:   'improve_objective_state',
+        objective_threatened:  'improve_objective_state'
+    };
+
+    // alternative definitions. requiredCapabilities reference EXISTING capability
+    // layers (READINESS-A / DB1 weapons & sensors / WS3 mobility / DOCTRINE-A) —
+    // not invented. `limits` state plainly that no outcome is simulated.
+    // Declaration order = deterministic output order (NOT a ranking/score).
+    var ALT_DEF = {
+        restore_readiness: {
+            label: 'Restore unit readiness',
+            reason: 'Current readiness state limits the action.',
+            requiredCapabilities: ['readiness'],
+            limits: ['Read-only option. Time-to-ready and its effect are not simulated.']
+        },
+        resupply: {
+            label: 'Resupply before committing',
+            reason: 'Supply is below the readiness layer’s neutral level.',
+            requiredCapabilities: ['supply'],
+            limits: ['Read-only option. Resupply availability and timing are not simulated.']
+        },
+        reduce_engagement_pressure: {
+            label: 'Reduce engagement pressure (engage or reposition)',
+            reason: 'Opposing forces currently have firing solutions against friendly units.',
+            requiredCapabilities: ['weapons', 'mobility'],
+            limits: ['Read-only option. No engagement outcome is simulated.']
+        },
+        resolve_contacts: {
+            label: 'Resolve the contact picture',
+            reason: 'The contact picture is uncertain.',
+            requiredCapabilities: ['sensors'],
+            limits: ['Read-only option. Detection improvement is not simulated.']
+        },
+        review_doctrine: {
+            label: 'Review ROE / weapons-control posture',
+            reason: 'Doctrine indicates caution.',
+            requiredCapabilities: ['doctrine_authority'],
+            limits: ['Read-only option. Doctrine is authored; this does not change it.']
+        },
+        improve_objective_state: {
+            label: 'Defer until the objective state improves',
+            reason: 'The objective is contested or under threat.',
+            requiredCapabilities: [],
+            limits: ['Read-only option. Future objective state is not projected.']
+        }
+    };
+
+    function generateFeasibleAlternatives(ws, action, finding) {
+        var result = { alternatives: [] };
+        if (!ws || ws.degraded) return result;
+        action = action || {};
+        if (String(action.type || '').toUpperCase() !== 'ATTACK_OBJECTIVE') return result;  // L3.5-A scope
+
+        var f = finding || evaluateAction(ws, action);
+        if (!f) return result;
+
+        // Collect alternatives keyed by id; merge basedOn from every matching code.
+        var byId = {};
+        [].concat(f.blockers || [], f.risks || [], f.evidence_gaps || []).forEach(function (item) {
+            var altId = item && ALT_MAP[item.code];
+            if (!altId) return;                      // no tactical inverse for data/structural gaps
+            if (!byId[altId]) {
+                var d = ALT_DEF[altId];
+                byId[altId] = {
+                    id: altId, label: d.label, reason: d.reason,
+                    basedOn: [], requiredCapabilities: d.requiredCapabilities.slice(),
+                    limits: d.limits.slice(), readOnly: true
+                };
+            }
+            if (byId[altId].basedOn.indexOf(item.code) < 0) byId[altId].basedOn.push(item.code);
+        });
+
+        // Deterministic order (declaration order) — explicitly NOT a ranking.
+        Object.keys(ALT_DEF).forEach(function (id) { if (byId[id]) result.alternatives.push(byId[id]); });
+        return result;
+    }
+
     var api = {
         AF_VERSION: AF_VERSION,
-        evaluateAction: evaluateAction
+        evaluateAction: evaluateAction,
+        generateFeasibleAlternatives: generateFeasibleAlternatives
     };
     root.AppActionFeasibility = api;
     if (typeof module !== 'undefined' && module.exports) module.exports = api;

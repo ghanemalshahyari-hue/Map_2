@@ -124,12 +124,24 @@
         var s = obj(steps[step]);
         var sPrev = obj(steps[Math.max(0, step - 1)]);
         var w3 = scn.schema_variant === 'w3-rich';
+        // PR de-W3 gate: decision-support eligibility is CAPABILITY-based, not
+        // schema-label-based. A scenario can drive the evidence layers (OBJ-A/B,
+        // readiness, doctrine, contacts, Why-Not) if it carries the minimum data
+        // they read — an objective + at least one unit. schema_variant no longer
+        // gates this, so RMOOZ-native scenarios qualify too. W3 keeps
+        // schema_variant 'w3-rich' AND has objectives+units, so it stays eligible
+        // and every downstream derivation is byte-for-byte unchanged. Scenarios
+        // lacking objectives/units stay degraded → contributors return null →
+        // neutral / evidence-gap state (no fabrication, no new thresholds).
+        var hasObjective = !!(obj(scn.obj).name || obj(scn.obj).coord) || arr(scn.objectives).length > 0;
+        var hasUnits = arr(scn.red_units).length > 0 || arr(scn.blue_units_initial).length > 0 || arr(scn.units).length > 0;
+        var decisionCapable = w3 || (hasObjective && hasUnits);
         var curEl = num(s.elapsed_hours), prevEl = num(sPrev.elapsed_hours);
 
         var ws = {
             ws_version: WS_VERSION,
             source_variant: scn.schema_variant || null,
-            degraded: !w3,                         // honest: non-W3 = positions/objectives/phase only
+            degraded: !decisionCapable,            // capability-based (objective + units), not schema-label
             meta: {
                 scenario_id: scn.scenario_id || null,
                 scenario_label: scn.scenario_label || scn.name || null,

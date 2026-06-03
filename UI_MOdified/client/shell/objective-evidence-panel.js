@@ -270,10 +270,10 @@
         // Derive world state at this step
         if (typeof window.AppWorldState !== 'undefined' &&
             typeof window.AppWorldState.deriveWorldState === 'function' &&
-            typeof window.RmoozState !== 'undefined' &&
-            window.RmoozState.scenario) {
+            typeof window.RmoozScenario !== 'undefined' &&
+            window.RmoozScenario.scenario) {
 
-            var ws = window.AppWorldState.deriveWorldState(window.RmoozState.scenario, stepIndex);
+            var ws = window.AppWorldState.deriveWorldState(window.RmoozScenario.scenario, stepIndex);
 
             // If DB1 enrichment available, apply it
             if (typeof window.AppWorldStateDB !== 'undefined' &&

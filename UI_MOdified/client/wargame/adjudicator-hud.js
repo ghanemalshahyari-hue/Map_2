@@ -1145,7 +1145,9 @@
     function renderSidePanelOnly(state, validation, meta) {
         $('wg-adj-step-display').style.display = '';
         renderTimeline(state.step_index, state.objective_status);
-        const blsLine = Object.entries(state.bls_status || {})
+        // PR-WS-BLS-A2: read BLS status from World State when available; fallback to authored state.
+        const wsBlsStatus = typeof AppAdjudicatorMap !== 'undefined' && AppAdjudicatorMap.getWorldState ? (AppAdjudicatorMap.getWorldState() || {}).derived || {} : {};
+        const blsLine = Object.entries((wsBlsStatus.bls_status || state.bls_status) || {})
             .map(([k, v]) => `${k}·${v.slice(0, 3)}`).join(' ');
         const fallback = (validation && validation.fallback) ? ` [${validation.fallback}]` : '';
         $('wg-adj-step-summary').innerHTML = `
@@ -1176,7 +1178,9 @@
     function renderStep(state, validation, meta) {
         $('wg-adj-step-display').style.display = '';
         renderTimeline(state.step_index, state.objective_status);
-        const blsLine = Object.entries(state.bls_status || {})
+        // PR-WS-BLS-A2: read BLS status from World State when available; fallback to authored state.
+        const wsBlsStatus = typeof AppAdjudicatorMap !== 'undefined' && AppAdjudicatorMap.getWorldState ? (AppAdjudicatorMap.getWorldState() || {}).derived || {} : {};
+        const blsLine = Object.entries((wsBlsStatus.bls_status || state.bls_status) || {})
             .map(([k, v]) => `${k}·${v.slice(0, 3)}`).join(' ');
         const fallback = (validation && validation.fallback) ? ` [${validation.fallback}]` : '';
         $('wg-adj-step-summary').innerHTML = `

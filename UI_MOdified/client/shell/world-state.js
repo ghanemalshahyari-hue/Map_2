@@ -369,25 +369,369 @@
         return Object.keys(result).length ? result : null;
     }
 
+    // PR-OBJ-A: Objective Evidence Ledger — evidence aggregation point.
+    // Flat array of evidence records (no nesting, no grouping).
+    // Each record: objective_id, evidence_type, value, source, confidence, step_index.
+    // Storage only; no weights, scoring, or interpretation (deferred to OBJ-B).
+    // Aggregates from: balance_summary, bls_status, engagement_outcomes, contacts.
+    function computeObjectiveEvidence(ws) {
+        if (!ws || ws.degraded) return null;  // parity gate
+        var objectives = arr(ws.objectives);
+        if (!objectives.length) return null;
+        var objId = (objectives[0] && (objectives[0].id || objectives[0].objective_id)) || 'objective_0';
+        var step = ws.meta ? (ws.meta.step_index || 0) : 0;
+        var d = obj(ws && ws.derived);
+        var result = [];
+
+        // Collect evidence from balance_summary
+        var bal = obj(d.balance_summary);
+        if (bal.force_ratio_value != null) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'force_ratio',
+                value: bal.force_ratio_value,
+                source: 'balance_summary',
+                confidence: 0.95,
+                step_index: step
+            });
+        }
+        var losses = obj(bal.losses);
+        if (losses.blue_destroyed != null) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'blue_destroyed_count',
+                value: losses.blue_destroyed,
+                source: 'balance_summary',
+                confidence: 1.0,
+                step_index: step
+            });
+        }
+        if (losses.blue_total != null && losses.blue_destroyed != null) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'blue_intact_ratio',
+                value: (losses.blue_total - losses.blue_destroyed) / losses.blue_total,
+                source: 'balance_summary',
+                confidence: 1.0,
+                step_index: step
+            });
+        }
+        if (losses.red_company_equivalent != null) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'red_company_equivalent',
+                value: losses.red_company_equivalent,
+                source: 'balance_summary',
+                confidence: 0.9,
+                step_index: step
+            });
+        }
+
+        // Collect evidence from bls_status
+        var blsStatus = obj(d.bls_status);
+        var blsControlCount = 0, blsContestedCount = 0, blsDeniedCount = 0, blsSecuredCount = 0;
+        for (var blsKey in blsStatus) {
+            if (Object.prototype.hasOwnProperty.call(blsStatus, blsKey)) {
+                var status = blsStatus[blsKey];
+                if (status === 'CONTESTED') blsContestedCount++;
+                else if (status === 'DENIED') blsDeniedCount++;
+                else if (status === 'SECURED') blsSecuredCount++;
+            }
+        }
+        if (blsSecuredCount > 0 || blsDeniedCount > 0) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'bls_control_count',
+                value: blsSecuredCount + blsDeniedCount,
+                source: 'bls_status',
+                confidence: 1.0,
+                step_index: step
+            });
+        }
+        if (blsContestedCount > 0) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'bls_contested_count',
+                value: blsContestedCount,
+                source: 'bls_status',
+                confidence: 1.0,
+                step_index: step
+            });
+        }
+
+        // Collect evidence from engagement_outcomes
+        var outcomes = arr(d.engagement_outcomes);
+        if (outcomes.length > 0) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'engagement_outcomes_total',
+                value: outcomes.length,
+                source: 'engagement_outcomes',
+                confidence: 1.0,
+                step_index: step
+            });
+            var engagedCount = outcomes.filter(function(o) { return o.status === 'engaged'; }).length;
+            result.push({
+                objective_id: objId,
+                evidence_type: 'engagement_effectiveness_ratio',
+                value: engagedCount / outcomes.length,
+                source: 'engagement_outcomes',
+                confidence: 0.85,
+                step_index: step
+            });
+        }
+
+        // Collect evidence from contacts
+        var contacts = arr(d.contacts);
+        if (contacts.length > 0) {
+            var firmCount = contacts.filter(function(c) { return c.confidence === 'firm'; }).length;
+            var probableCount = contacts.filter(function(c) { return c.confidence === 'probable'; }).length;
+            var possibleCount = contacts.filter(function(c) { return c.confidence === 'possible'; }).length;
+            result.push({
+                objective_id: objId,
+                evidence_type: 'contact_confidence_summary',
+                value: {
+                    total: contacts.length,
+                    firm: firmCount,
+                    probable: probableCount,
+                    possible: possibleCount
+                },
+                source: 'contacts',
+                confidence: 0.95,
+                step_index: step
+            });
+        }
+
+        // Collect evidence from readiness (READINESS-A: operational capability)
+        // Uses existing fields: units[].strength, units[].status, units[].readiness, units[].supply
+        // and engagement outcomes from balance_summary
+        var units = arr(ws.units);
+        var blueUnits = units.filter(function(u) { return u.side === 'BLUE' && !u.off_map; });
+
+        // Type 1: unit_strength_avg — normalized operational effectiveness
+        if (blueUnits.length > 0) {
+            var totalStrength = 0, validStrengthCount = 0;
+            for (var ui = 0; ui < blueUnits.length; ui++) {
+                var u = blueUnits[ui];
+                var str = num(u.strength);
+                if (str != null) {
+                    totalStrength += str;
+                    validStrengthCount++;
+                }
+            }
+            if (validStrengthCount > 0) {
+                var avgStr = totalStrength / validStrengthCount;
+                // normalize from 0..2.5 to 0..1
+                var normalizedStr = Math.max(0, Math.min(1, (avgStr - 0.5) / 2.0));
+                result.push({
+                    objective_id: objId,
+                    evidence_type: 'unit_strength_avg',
+                    value: normalizedStr,
+                    source: 'engagement_outcomes + balance_summary',
+                    confidence: 0.85,
+                    step_index: step
+                });
+            }
+        }
+
+        // Type 2: force_availability_ratio — percentage of force still active
+        if (losses.blue_total != null && losses.blue_destroyed != null && losses.blue_total > 0) {
+            var activeUnits = losses.blue_total - losses.blue_destroyed;
+            var availability = activeUnits / losses.blue_total;
+            result.push({
+                objective_id: objId,
+                evidence_type: 'force_availability_ratio',
+                value: Math.max(0, Math.min(1, availability)),
+                source: 'balance_summary.losses',
+                confidence: 1.0,
+                step_index: step
+            });
+        }
+
+        // Type 3: ammunition_sustainability — estimated remaining ammo from engagements
+        var outcomes = arr(d.engagement_outcomes);
+        if (outcomes.length > 0) {
+            var totalSalvo = 0;
+            for (var oi = 0; oi < outcomes.length; oi++) {
+                var o = outcomes[oi];
+                var salvo = num(o.salvo);
+                if (salvo != null) totalSalvo += salvo;
+            }
+            // Estimate: assume 1 magazine per shooter unit initially, each magazine ~30 rounds
+            // After X salvos, magazine state estimated as remaining rounds
+            var blueShooters = {};
+            for (var oi2 = 0; oi2 < outcomes.length; oi2++) {
+                var o2 = outcomes[oi2];
+                if (o2.shooter && o2.shooter.uid) {
+                    var shooterUid = o2.shooter.uid;
+                    blueShooters[shooterUid] = (blueShooters[shooterUid] || 0) + num(o2.salvo || 0);
+                }
+            }
+            var shoeterCount = Object.keys(blueShooters).length;
+            if (shoeterCount > 0) {
+                var roundsPerMag = 30;
+                var totalMagRounds = shoeterCount * roundsPerMag;
+                var estimatedRemaining = Math.max(0, totalMagRounds - totalSalvo);
+                var ammoSustainability = estimatedRemaining / totalMagRounds;
+                result.push({
+                    objective_id: objId,
+                    evidence_type: 'ammunition_sustainability',
+                    value: Math.max(0, Math.min(1, ammoSustainability)),
+                    source: 'engagement_outcomes',
+                    confidence: 0.75,
+                    step_index: step
+                });
+            } else {
+                // No engagements yet — assume full magazines
+                result.push({
+                    objective_id: objId,
+                    evidence_type: 'ammunition_sustainability',
+                    value: 1.0,
+                    source: 'engagement_outcomes',
+                    confidence: 0.75,
+                    step_index: step
+                });
+            }
+        } else {
+            // No engagement outcomes — assume full magazines
+            result.push({
+                objective_id: objId,
+                evidence_type: 'ammunition_sustainability',
+                value: 1.0,
+                source: 'engagement_outcomes',
+                confidence: 0.75,
+                step_index: step
+            });
+        }
+
+        // Type 4: supply_sustainability — average supply level
+        if (blueUnits.length > 0) {
+            var totalSupply = 0, supplyCount = 0;
+            for (var sui = 0; sui < blueUnits.length; sui++) {
+                var suUnit = blueUnits[sui];
+                var sup = num(suUnit.supply);
+                if (sup != null) {
+                    totalSupply += sup;
+                    supplyCount++;
+                }
+            }
+            if (supplyCount > 0) {
+                var avgSupply = totalSupply / supplyCount;
+                result.push({
+                    objective_id: objId,
+                    evidence_type: 'supply_sustainability',
+                    value: Math.max(0, Math.min(1, avgSupply)),
+                    source: 'ws.units[].supply',
+                    confidence: 0.7,
+                    step_index: step
+                });
+            } else {
+                // Supply field missing — fallback
+                result.push({
+                    objective_id: objId,
+                    evidence_type: 'supply_sustainability',
+                    value: 0.5,
+                    source: 'ws.units[].supply',
+                    confidence: 0.7,
+                    step_index: step
+                });
+            }
+        }
+
+        // Type 5: combat_readiness_state — authored readiness enum
+        if (blueUnits.length > 0) {
+            var readyCount = 0, limitedCount = 0, notReadyCount = 0;
+            for (var rui = 0; rui < blueUnits.length; rui++) {
+                var runit = blueUnits[rui];
+                var rdiness = runit.readiness || 'ready';
+                if (rdiness === 'ready') readyCount++;
+                else if (rdiness === 'limited') limitedCount++;
+                else if (rdiness === 'not_ready') notReadyCount++;
+            }
+            // State is the majority state
+            var maxCount = Math.max(readyCount, limitedCount, notReadyCount);
+            var state = 'ready';
+            if (limitedCount === maxCount) state = 'limited';
+            else if (notReadyCount === maxCount) state = 'not_ready';
+            result.push({
+                objective_id: objId,
+                evidence_type: 'combat_readiness_state',
+                value: state,
+                source: 'ws.units[].readiness',
+                confidence: 0.8,
+                step_index: step
+            });
+        }
+
+        // Type 6: casualty_rate — fraction of force lost
+        if (losses.blue_total != null && losses.blue_destroyed != null && losses.blue_total > 0) {
+            var casualtyRate = losses.blue_destroyed / losses.blue_total;
+            result.push({
+                objective_id: objId,
+                evidence_type: 'casualty_rate',
+                value: Math.max(0, Math.min(1, casualtyRate)),
+                source: 'balance_summary.losses',
+                confidence: 0.9,
+                step_index: step
+            });
+        }
+
+        return result.length ? result : null;
+    }
+
+    // Helper: extract evidence value by type from evidence ledger.
+    // PR-OBJ-B: evidence-based consumer (replaces direct balance_summary reads).
+    function getEvidenceValue(evidence, type) {
+        if (!Array.isArray(evidence)) return null;
+        for (var i = 0; i < evidence.length; i++) {
+            if (evidence[i].evidence_type === type) return evidence[i].value;
+        }
+        return null;
+    }
+
     // Objective status display: only CAPTURED is re-litigated against the
     // evidence (force ratio + losses); every other status passes through.
-    // PR-WS4: evidence is read from WS-OWNED balance_summary (computed from
-    // units) with the `state` mirror (ws.balance) as the parity fallback.
+    // PR-OBJ-B: evidence is read from objective_evidence ledger (WS-owned);
+    // balance_summary fallback remains for parity gate (degraded scenarios).
     function computeObjectiveStatusDisplay(ws) {
         var d = obj(ws && ws.derived);
         var status = d.objective_status || 'DORMANT';
         if (status !== 'CAPTURED') return status;
-        var bal = obj(d.balance_summary);
-        var b = obj(ws && ws.balance);
-        var haveComputedFr = (typeof bal.force_ratio_value === 'number');
-        var frNum    = haveComputedFr ? bal.force_ratio_value : parseFrRatio(String(b.force_ratio || ''));
-        // Keyword blocks only apply to the authored string mirror (computed FR is numeric).
-        var frBlocks = !haveComputedFr && /\b(below\s+decisive|not\s+engaged|N\/A)\b/i.test(String(b.force_ratio || ''));
-        var cl = obj(bal.losses);
-        var lc = (cl.blue_destroyed != null || cl.red_company_equivalent != null) ? cl : obj(b.losses);
-        var blueLost  = Number(lc.blue_destroyed) || 0;
-        var blueTotal = Number(lc.blue_total) || 39;
-        var redCoyEq  = Number(lc.red_company_equivalent) || 0;
+
+        // PR-OBJ-B: Try evidence ledger first
+        var evidence = arr(d.objective_evidence);
+        var useEvidencePath = evidence && evidence.length > 0;
+
+        var frNum, blueLost, blueTotal, redCoyEq, frBlocks;
+
+        if (useEvidencePath) {
+            // Primary path: extract from objective_evidence ledger
+            frNum    = getEvidenceValue(evidence, 'force_ratio');
+            blueLost = getEvidenceValue(evidence, 'blue_destroyed_count');
+            redCoyEq = getEvidenceValue(evidence, 'red_company_equivalent');
+            // Compute blueTotal from blue_intact_ratio if available
+            var blueIntactRatio = getEvidenceValue(evidence, 'blue_intact_ratio');
+            if (blueIntactRatio != null && blueLost != null) {
+                blueTotal = blueLost / (1 - blueIntactRatio);
+            } else {
+                blueTotal = 39;  // default fallback (from W3 scenario)
+            }
+            frBlocks = false;  // no keyword blocks from evidence ledger (only from authored mirror)
+        } else {
+            // Fallback path: use balance_summary (backward compat)
+            var bal = obj(d.balance_summary);
+            var b = obj(ws && ws.balance);
+            var haveComputedFr = (typeof bal.force_ratio_value === 'number');
+            frNum    = haveComputedFr ? bal.force_ratio_value : parseFrRatio(String(b.force_ratio || ''));
+            frBlocks = !haveComputedFr && /\b(below\s+decisive|not\s+engaged|N\/A)\b/i.test(String(b.force_ratio || ''));
+            var cl = obj(bal.losses);
+            var lc = (cl.blue_destroyed != null || cl.red_company_equivalent != null) ? cl : obj(b.losses);
+            blueLost  = Number(lc.blue_destroyed) || 0;
+            blueTotal = Number(lc.blue_total) || 39;
+            redCoyEq  = Number(lc.red_company_equivalent) || 0;
+        }
+
+        // Apply thresholds (unchanged logic)
         var frNumBlocks = (frNum !== null && frNum < 2);
         var blueIntact  = (blueLost / blueTotal) < 0.25;
         var redSpent    = redCoyEq > 6;
@@ -415,6 +759,7 @@
         balance_summary:          computeBalanceSummary,
         bls_status:               computeBlsStatusB,
         contacts:                 computeContacts,
+        objective_evidence:       computeObjectiveEvidence,        // PR-OBJ-A: evidence ledger (before status)
         objective_status_display: computeObjectiveStatusDisplay
     };
     function applyDerivations(ws) {
@@ -485,6 +830,9 @@
         // PR-WS-DET1-A: contact generation from World State (DET1 ownership inversion).
         // Computes detection contacts (radar/ESM) from enriched units with sensors.
         computeContacts: computeContacts,
+        // PR-OBJ-A: objective evidence ledger (flat array of evidence records).
+        // Aggregates balance, BLS, engagements, contacts into auditable evidence.
+        computeObjectiveEvidence: computeObjectiveEvidence,
         BLS_RADIUS_NM: BLS_RADIUS_NM,
         DERIVATIONS: DERIVATIONS,
         // exposed for tests / future rule modules

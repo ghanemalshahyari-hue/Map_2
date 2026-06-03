@@ -211,9 +211,9 @@ console.log('SCHEMA / FALLBACKS / PARITY');
     ok('verdict rule: blocked ⇒ ≥1 blocker', AF.evaluateAction(wsB, ENGAGE).blockers.length >= 1);
 })();
 
-// non-ENGAGE and degraded → null (slice scope + parity gate)
+// unsupported type and degraded → null (slice scope + parity gate)
 (function () {
-    ok('non-ENGAGE action → null', AF.evaluateAction(makeWs(shooter(), target(0.1), DETECTED), { type: 'ATTACK_OBJECTIVE' }) === null);
+    ok('unsupported action type → null', AF.evaluateAction(makeWs(shooter(), target(0.1), DETECTED), { type: 'MOVE' }) === null);
     ok('degraded ws → null', AF.evaluateAction({ degraded: true, units: [], derived: {} }, ENGAGE) === null);
     ok('missing ws → null', AF.evaluateAction(null, ENGAGE) === null);
 })();
@@ -227,6 +227,150 @@ console.log('SCHEMA / FALLBACKS / PARITY');
     ok('purity: ws unchanged after evaluation', JSON.stringify(ws) === before);
 })();
 
+/* ========== 5. L3-A-2: ATTACK_OBJECTIVE (consumes existing state) ========== */
 console.log('');
-console.log('L3-A-1: ' + pass + ' passed, ' + fail + ' failed');
+console.log('ATTACK_OBJECTIVE (L3-A-2)');
+
+// Build a ws whose derived state mirrors the real ledger (OBJ-A/B + READINESS-A + DOCTRINE-A).
+function objWs(o) {
+    o = o || {};
+    const ev = [];
+    const push = (t, v) => ev.push({ objective_id: 'OBJ', evidence_type: t, value: v, source: 'x', confidence: 1, step_index: 0 });
+    if (o.bls_contested != null) push('bls_contested_count', o.bls_contested);
+    if (o.readiness != null)     push('combat_readiness_state', o.readiness);
+    if (o.supply != null)        push('supply_sustainability', o.supply);
+    if (o.contacts !== undefined) push('contact_confidence_summary', o.contacts);
+    if (o.wcs != null)           push('side_weapons_control_status', o.wcs);
+    if (o.posture != null)       push('unit_posture_state', o.posture);
+    if (!o.noLedger && !ev.length) push('force_ratio', 1.5);  // ensure a non-empty ledger
+    return {
+        degraded: false,
+        units: o.units || [],
+        objectives: o.objectives !== undefined ? o.objectives : [{ id: 'OBJ', name: 'Obj', position: [19, 30] }],
+        derived: {
+            objective_status_display: o.status || 'DORMANT',
+            objective_evidence: o.noLedger ? [] : ev,
+            contacts: o.wsContacts || []
+        }
+    };
+}
+const ATTACK = (extra) => Object.assign({ type: 'attack_objective', objectiveId: 'OBJ' }, extra || {});
+
+// --- blockers (clear existing-state gaps) ---
+(function () {
+    const f = AF.evaluateAction(objWs({ status: 'CAPTURED' }), ATTACK());
+    ok('captured → blocked', f.verdict === 'blocked');
+    ok('captured → objective_already_captured', codes(f.blockers).indexOf('objective_already_captured') >= 0);
+})();
+(function () {
+    const f = AF.evaluateAction(objWs({}), ATTACK({ objectiveId: 'NOPE' }));
+    ok('unknown objective → unknown_objective', codes(f.blockers).indexOf('unknown_objective') >= 0);
+    ok('unknown objective → blocked', f.verdict === 'blocked');
+})();
+(function () {
+    const f = AF.evaluateAction(objWs({ units: [] }), ATTACK({ actorUid: 'GHOST' }));
+    ok('unknown actor → unknown_unit', codes(f.blockers).indexOf('unknown_unit') >= 0);
+})();
+(function () {
+    const f = AF.evaluateAction(objWs({ noLedger: true }), ATTACK());
+    ok('no ledger → objective_evidence_missing', codes(f.blockers).indexOf('objective_evidence_missing') >= 0);
+})();
+(function () {
+    const f = AF.evaluateAction(objWs({ objectives: [{ id: 'OBJ', name: 'Obj' }] }), ATTACK());  // no position
+    ok('objective without position → objective_not_actionable', codes(f.blockers).indexOf('objective_not_actionable') >= 0);
+})();
+(function () {
+    const ws = objWs({ units: [{ uid: 'B1', side: 'BLUE', readiness: 'not_ready' }] });
+    const f = AF.evaluateAction(ws, ATTACK({ actorUid: 'B1' }));
+    ok('actor not_ready → readiness_unavailable (blocker)', codes(f.blockers).indexOf('readiness_unavailable') >= 0);
+})();
+
+// --- risks (reuse existing categoricals; NEVER DIVERGE from status_display) ---
+(function () {
+    const f = AF.evaluateAction(objWs({ status: 'CONTESTED' }), ATTACK());
+    ok('CONTESTED status → objective_contested risk', codes(f.risks).indexOf('objective_contested') >= 0);
+    ok('CONTESTED → feasible_with_risk (no blockers)', f.verdict === 'feasible_with_risk');
+})();
+(function () {
+    const f = AF.evaluateAction(objWs({ status: 'THREATENED' }), ATTACK());
+    ok('THREATENED status → objective_threatened risk', codes(f.risks).indexOf('objective_threatened') >= 0);
+})();
+(function () {
+    // never-diverge: contested/threatened risk presence must track objective_status_display
+    ['DORMANT', 'THREATENED', 'CONTESTED', 'DENIED', 'CAPTURED'].forEach(function (st) {
+        const f = AF.evaluateAction(objWs({ status: st }), ATTACK());
+        const hasContested = codes(f.risks).indexOf('objective_contested') >= 0;
+        const hasThreatened = codes(f.risks).indexOf('objective_threatened') >= 0;
+        ok('status ' + st + ': contested-risk iff CONTESTED/DENIED', hasContested === (st === 'CONTESTED' || st === 'DENIED'));
+        ok('status ' + st + ': threatened-risk iff THREATENED', hasThreatened === (st === 'THREATENED'));
+    });
+})();
+(function () {
+    const f = AF.evaluateAction(objWs({ readiness: 'limited' }), ATTACK());
+    ok('readiness limited → readiness_degraded risk', codes(f.risks).indexOf('readiness_degraded') >= 0);
+})();
+(function () {
+    const lo = AF.evaluateAction(objWs({ supply: 0.3 }), ATTACK());
+    const hi = AF.evaluateAction(objWs({ supply: 0.9 }), ATTACK());
+    ok('supply 0.3 (< neutral 0.5) → supply_limited risk', codes(lo.risks).indexOf('supply_limited') >= 0);
+    ok('supply 0.9 → no supply_limited risk', codes(hi.risks).indexOf('supply_limited') < 0);
+})();
+(function () {
+    const unresolved = AF.evaluateAction(objWs({ contacts: { total: 3, firm: 1, probable: 1, possible: 1 } }), ATTACK());
+    const resolved   = AF.evaluateAction(objWs({ contacts: { total: 2, firm: 2, probable: 0, possible: 0 } }), ATTACK());
+    ok('non-firm contacts → contact_unresolved risk', codes(unresolved.risks).indexOf('contact_unresolved') >= 0);
+    ok('all-firm contacts → no contact_unresolved', codes(resolved.risks).indexOf('contact_unresolved') < 0);
+})();
+(function () {
+    const f = AF.evaluateAction(objWs({ wcs: { air: 'HOLD', surface: 'FREE', subsurface: 'HOLD' } }), ATTACK());
+    ok('WCS air HOLD → doctrine_caution risk', codes(f.risks).indexOf('doctrine_caution') >= 0);
+    const def = AF.evaluateAction(objWs({ wcs: { air: 'FREE', surface: 'FREE', subsurface: 'HOLD' } }), ATTACK());
+    ok('default subsurface HOLD alone → NO doctrine_caution (not a false alarm)', codes(def.risks).indexOf('doctrine_caution') < 0);
+})();
+
+// engagement_pressure: must track ENG1's own output (never diverge)
+(function () {
+    // RED shooter with a firing solution on a BLUE unit → ENG1 emits an engaged RED record
+    const redShooter = { uid: 'E1', side: 'RED', domain: 'ground', position: [19.0, 30.0],
+        weapons: [{ id: 'sam', class: 'long_range_sam', mount: 'm1' }],
+        magazines: [{ mount: 'm1', stock: { long_range_sam: 4 } }],
+        sensors: [{ id: 'fc', class: 'fire_control', channels: 1 }] };
+    const blueTgt = { uid: 'B9', side: 'BLUE', domain: 'air', position: [19.0, 30.1] };
+    const blueActor = { uid: 'B1', side: 'BLUE', domain: 'ground', position: [19.0, 30.0], readiness: 'ready' };
+    const ws = objWs({ units: [redShooter, blueTgt, blueActor],
+                       wsContacts: [{ detected_by_side: 'RED', target_uid: 'B9' }] });
+    const f = AF.evaluateAction(ws, ATTACK({ actorUid: 'B1' }));
+    const engRecs = ENG.computeEngagements(ws, ws.derived.contacts) || [];
+    const enemyEngaged = engRecs.some(r => r.status === 'engaged' && r.side !== 'BLUE');
+    ok('engagement_pressure tracks ENG1 (enemy has a solution)', enemyEngaged === true);
+    ok('engagement_pressure risk present when ENG1 says so', codes(f.risks).indexOf('engagement_pressure') >= 0);
+})();
+
+// clean feasible: DORMANT, ready, strong supply, firm contacts, FREE doctrine → no blockers, no risks
+(function () {
+    const ws = objWs({ status: 'DORMANT', readiness: 'ready', supply: 0.9,
+                       contacts: { total: 2, firm: 2, probable: 0, possible: 0 },
+                       wcs: { air: 'FREE', surface: 'FREE', subsurface: 'HOLD' },
+                       units: [{ uid: 'B1', side: 'BLUE', readiness: 'ready', supply: 0.9 }] });
+    const f = AF.evaluateAction(ws, ATTACK({ actorUid: 'B1' }));
+    ok('clean state → feasible', f.verdict === 'feasible');
+    ok('clean state → no blockers', f.blockers.length === 0);
+    ok('clean state → no risks', f.risks.length === 0);
+})();
+
+// schema + purity for ATTACK_OBJECTIVE
+(function () {
+    const ws = objWs({ status: 'CONTESTED' });
+    const before = JSON.stringify(ws);
+    const f = AF.evaluateAction(ws, ATTACK());
+    ok('AO shape: exact keys', JSON.stringify(Object.keys(f).sort()) ===
+       JSON.stringify(['action', 'blockers', 'evidence_gaps', 'risks', 'verdict']));
+    ok('AO: no inverse populated (L3.5 reserved)', f.risks.concat(f.blockers).every(x => !('inverse' in x)));
+    ok('AO: verdict rule (risk, no blocker → feasible_with_risk)', f.verdict === 'feasible_with_risk');
+    ok('AO purity: ws unchanged', JSON.stringify(ws) === before);
+    ok('AO: action echoed', f.action.type === 'ATTACK_OBJECTIVE' && f.action.objective_id === 'OBJ');
+})();
+
+console.log('');
+console.log('L3-A (ENGAGE + ATTACK_OBJECTIVE): ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

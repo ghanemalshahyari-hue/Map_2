@@ -59,7 +59,9 @@ An `action` is a plain object describing what the operator is considering. L3-A 
 | type | shape | meaning |
 |---|---|---|
 | `ENGAGE` | `{ type:'ENGAGE', actor_uid, target_uid }` | "Can unit `actor_uid` engage `target_uid` right now?" |
-| `ATTACK_OBJECTIVE` | `{ type:'ATTACK_OBJECTIVE', objective_id? }` | "Should I commit to the objective now?" (defaults to first objective) |
+| `ATTACK_OBJECTIVE` | `{ type:'attack_objective', actorUid?, objectiveId? }` | "Should I commit to the objective now?" (actor optional; objective defaults to first) |
+
+`action.type` is matched case-insensitively; `actorUid`/`actor_uid` and `objectiveId`/`objective_id` are both accepted.
 
 The action vocabulary intentionally aligns with WS3 decision types (`ENGAGE`, etc.) so L3-A can later evaluate
 any WS3 decision. Other WS3 types (MOVE/SET_EMCON/…) are out of scope for L3-A.
@@ -116,20 +118,33 @@ No input is recomputed with new formulas; L3-A consumes what `applyDerivations` 
 | `no_fire_control_channel` | `reason:'no_fire_control_channel'` | no free FC channel |
 | *(engaged)* | `status:'engaged'` | → verdict `feasible`, blockers empty, `pk` available |
 
-### ATTACK_OBJECTIVE (L3-A-2) — reuse existing evidence + existing thresholds
-| code | severity | source | reused threshold |
-|---|---|---|---|
-| `force_ratio_below_decisive` | blocker | balance_summary | force_ratio < 2 (from `computeObjectiveStatusDisplay`) |
-| `area_contested` | blocker | bls_status | `bls_contested_count > 0` |
-| `roe_hold` | blocker | ws.doctrine WCS | weapons_control_status = HOLD (relevant domain) |
-| `posture_hold` | risk | ws.units[].posture | majority posture = hold |
-| `readiness_degraded` | risk | ws.units[].readiness | combat_readiness_state ≠ ready |
-| `supply_low` | risk | ws.units[].supply | supply_sustainability < 0.5 |
-| `attrition_high` | risk | balance_summary.losses | casualty_rate ≥ 0.25 (the 25% cutoff) |
-| `detection_picture_incomplete` | evidence_gap | contacts | contact_confidence_summary absent / low |
+### ATTACK_OBJECTIVE (L3-A-2) — CONSERVATIVE; consume existing categorical state, invent no thresholds
 
-> The 25%/force-ratio-2 values are the SAME ones already in the codebase. **If any ATTACK_OBJECTIVE threshold
-> semantics need adjusting, that is an owner ruling — L3-A ships with the existing values, unchanged.**
+**Blockers** fire ONLY on clear existing-state gaps (otherwise it's a risk):
+| code | source | existing signal |
+|---|---|---|
+| `unknown_unit` | world_state | a named `actorUid` is not in `ws.units` |
+| `unknown_objective` | world_state | `objectiveId` not in `ws.objectives` (or none exist) |
+| `objective_evidence_missing` | world_state | `ws.derived.objective_evidence` empty (no consumption path) |
+| `objective_already_captured` | objective_status_display | status_display = `CAPTURED` |
+| `objective_not_actionable` | world_state | objective has no `position` (cannot be targeted) |
+| `readiness_unavailable` | ws.units[].readiness | named actor's readiness = `not_ready` (existing enum meaning) |
+
+**Risks** explain current-state concerns (reuse existing categoricals — no new math):
+| code | source | existing signal |
+|---|---|---|
+| `objective_contested` | objective_status_display / bls_status | status `CONTESTED`/`DENIED`, or `bls_contested_count > 0` |
+| `objective_threatened` | objective_status_display | status `THREATENED` |
+| `readiness_degraded` | ws.units[].readiness | actor `limited` (or force-level `combat_readiness_state` limited/not_ready) |
+| `supply_limited` | ws.units[].supply | supply `< 0.5` — **reuses READINESS-A's own neutral midpoint, not a new threshold** |
+| `contact_unresolved` | contacts | `contact_confidence_summary` absent, or probable/possible contacts present |
+| `engagement_pressure` | engagement | ENG1 reports an opposing-side `engaged` solution (reuses `computeEngagements`) |
+| `doctrine_caution` | ws.doctrine | DOCTRINE-A WCS air/surface = `HOLD`, or posture = `hold` (default subsurface HOLD does NOT fire) |
+
+> **No combat simulation.** ATTACK_OBJECTIVE never says "you will win/lose" — it reports that the *current
+> state* contains these reasons. The one numeric judgment (`supply < 0.5`) reuses the value READINESS-A
+> already uses as its neutral supply midpoint; any change is an owner ruling. Risk presence for
+> contested/threatened is driven by `objective_status_display` (OBJ-B) so it cannot diverge from it.
 
 ---
 

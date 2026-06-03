@@ -26,6 +26,7 @@
 
     // Factual explanations — no recommendation verbs (that wording is L3.5/AI, not here).
     var EXPLAIN = {
+        // --- ENGAGE (L3-A-1) -------------------------------------------------
         // ENG1 reasons (verbatim from engagement.js — source: 'engagement')
         out_of_range:            'Target range exceeds the weapon’s effective range.',
         weapons_hold:            'Weapons are at HOLD (WRA / ROE).',
@@ -35,9 +36,30 @@
         undetected:              'Target is not currently held by this side’s sensors.',          // source: 'detection'
         no_engagement_solution:  'No weapon can produce a firing solution against this target ' +
                                  '(shooter unarmed, or target outside every weapon’s domain).',   // source: 'engagement'
-        // fallback
-        unknown_unit:            'Actor or target unit was not found in the current world state.'       // source: 'world_state'
+        // --- ATTACK_OBJECTIVE (L3-A-2) — blockers ----------------------------
+        unknown_objective:          'Objective was not found in the current world state.',          // world_state
+        objective_already_captured: 'Objective is already CAPTURED — an attack is unnecessary.',    // objective_status_display
+        objective_evidence_missing: 'No objective evidence ledger is available to assess this action.', // world_state
+        objective_not_actionable:   'Objective has no position in the current state — it cannot be targeted.', // world_state
+        readiness_unavailable:      'Actor readiness is not_ready — the unit cannot act.',           // ws.units[].readiness
+        // --- ATTACK_OBJECTIVE (L3-A-2) — risks -------------------------------
+        objective_contested:        'Objective control is contested (current evidence).',           // objective_status_display / bls_status
+        objective_threatened:       'Objective is under threat and not yet ready for capture.',      // objective_status_display
+        readiness_degraded:         'Unit readiness is limited (not ideal).',                        // ws.units[].readiness
+        supply_limited:             'Supply is below the readiness layer’s neutral level.',           // ws.units[].supply
+        contact_unresolved:         'The contact picture is uncertain (non-firm or missing contacts).', // contacts
+        engagement_pressure:        'Opposing forces currently have firing solutions against friendly units.', // engagement
+        doctrine_caution:           'Doctrine indicates caution (weapons HOLD / hold posture).',      // ws.doctrine
+        // --- fallback --------------------------------------------------------
+        unknown_unit:            'Actor or target unit was not found in the current world state.'       // world_state
     };
+
+    // Read a value from the OBJ-A evidence ledger by type (no recompute — consume it).
+    function evVal(ws, type) {
+        var ev = arr(ws.derived && ws.derived.objective_evidence);
+        for (var i = 0; i < ev.length; i++) if (ev[i] && ev[i].evidence_type === type) return ev[i].value;
+        return undefined;
+    }
 
     function finding(code, source) {
         return { code: code, explanation: EXPLAIN[code] || code, source: source };
@@ -103,12 +125,101 @@
         return out;
     }
 
+    /* ---- L3-A-2: ATTACK_OBJECTIVE ---------------------------------------
+     * Consumes EXISTING state only — objective_status_display (OBJ-B), the
+     * objective_evidence ledger (OBJ-A / READINESS-A / DOCTRINE-A), the unit
+     * readiness/supply enums, and ENG1's engagement output. It does NOT simulate
+     * the attack ("will I win?"), invent thresholds, or mutate. Conservative:
+     * blockers fire only on clear existing state gaps; everything else is a risk. */
+    function evaluateAttackObjective(ws, action) {
+        var actorUid = action.actor_uid || action.actorUid || null;
+        var objectiveId = action.objective_id || action.objectiveId || null;
+        var out = {
+            action: { type: 'ATTACK_OBJECTIVE', actor_uid: actorUid, objective_id: objectiveId },
+            verdict: 'feasible', blockers: [], risks: [], evidence_gaps: []
+        };
+        function block(code, source) { out.blockers.push(finding(code, source)); }
+        function risk(code, source)  { out.risks.push(finding(code, source)); }
+
+        var units = arr(ws.units);
+        // resolve actor (optional) — if a uid is given but not found, that's a clear gap
+        var actor = null;
+        if (actorUid) { for (var i = 0; i < units.length; i++) if (units[i] && units[i].uid === actorUid) { actor = units[i]; break; } }
+        if (actorUid && !actor) block('unknown_unit', 'world_state');
+
+        // resolve objective (default to first) — clear gap if none/unmatched
+        var objectives = arr(ws.objectives);
+        var objective = null;
+        if (objectiveId) { for (var j = 0; j < objectives.length; j++) if (objectives[j] && (objectives[j].id === objectiveId)) { objective = objectives[j]; break; } }
+        else objective = objectives[0] || null;
+        if (!objective) block('unknown_objective', 'world_state');
+
+        // no evidence ledger → we cannot assess (the "no consumption path" gap)
+        var hasLedger = arr(ws.derived && ws.derived.objective_evidence).length > 0;
+        if (!hasLedger) block('objective_evidence_missing', 'world_state');
+
+        // If we can't even identify the objective or have no evidence, stop here.
+        if (!objective || !hasLedger) {
+            out.verdict = out.blockers.length ? 'blocked' : 'feasible';
+            return out;
+        }
+
+        var status = (ws.derived && ws.derived.objective_status_display) || objective.status || null;
+
+        /* ---- BLOCKERS (clear existing-state gaps only) ---- */
+        if (status === 'CAPTURED') block('objective_already_captured', 'objective_status_display');
+        if (!objective.position) block('objective_not_actionable', 'world_state');
+        // readiness_unavailable: ONLY the existing 'not_ready' enum, and only for a named actor.
+        if (actor && actor.readiness === 'not_ready') block('readiness_unavailable', 'ws.units[].readiness');
+
+        /* ---- RISKS (current-state concerns; reuse existing categoricals) ---- */
+        // objective state (from OBJ-B's status_display + OBJ-A control evidence)
+        var blsContested = evVal(ws, 'bls_contested_count');
+        if (status === 'CONTESTED' || status === 'DENIED' || (typeof blsContested === 'number' && blsContested > 0))
+            risk('objective_contested', 'objective_status_display');
+        if (status === 'THREATENED') risk('objective_threatened', 'objective_status_display');
+
+        // readiness (actor enum if present, else READINESS-A force-level state)
+        var readyState = actor ? actor.readiness : evVal(ws, 'combat_readiness_state');
+        if (readyState === 'limited' || (!actor && readyState === 'not_ready'))
+            risk('readiness_degraded', 'ws.units[].readiness');
+
+        // supply: reuse READINESS-A's OWN neutral midpoint (0.5) — not a new threshold.
+        var supply = (actor && typeof actor.supply === 'number') ? actor.supply : evVal(ws, 'supply_sustainability');
+        if (typeof supply === 'number' && supply < 0.5) risk('supply_limited', 'ws.units[].supply');
+
+        // contacts: uncertain if non-firm contacts exist, or no contact evidence at all
+        var cc = evVal(ws, 'contact_confidence_summary');
+        if (cc === undefined) risk('contact_unresolved', 'contacts');
+        else if (((cc.probable || 0) + (cc.possible || 0)) > 0) risk('contact_unresolved', 'contacts');
+
+        // engagement pressure: ENG1 says opposing forces currently have firing solutions
+        var eng = getEngagement();
+        if (eng) {
+            var friendly = actor ? actor.side : 'BLUE';
+            var recs = eng.computeEngagements(ws, arr(ws.derived && ws.derived.contacts)) || [];
+            if (recs.some(function (r) { return r.status === 'engaged' && r.side !== friendly; }))
+                risk('engagement_pressure', 'engagement');
+        }
+
+        // doctrine caution: authored WCS HOLD (air/surface) or hold posture (DOCTRINE-A)
+        var wcs = evVal(ws, 'side_weapons_control_status');
+        var posture = evVal(ws, 'unit_posture_state');
+        if ((wcs && (wcs.air === 'HOLD' || wcs.surface === 'HOLD')) || posture === 'hold')
+            risk('doctrine_caution', 'ws.doctrine');
+
+        out.verdict = out.blockers.length ? 'blocked' : (out.risks.length ? 'feasible_with_risk' : 'feasible');
+        return out;
+    }
+
     /* ---- public: evaluateAction ----------------------------------------- */
     function evaluateAction(ws, action) {
         if (!ws || ws.degraded) return null;            // parity gate, same as the evidence ledger
         action = action || {};
-        if (action.type === 'ENGAGE') return evaluateEngage(ws, action);
-        return null;                                    // L3-A-1 supports ENGAGE only
+        var type = String(action.type || '').toUpperCase();   // accept 'ENGAGE' / 'attack_objective' etc.
+        if (type === 'ENGAGE')           return evaluateEngage(ws, action);
+        if (type === 'ATTACK_OBJECTIVE') return evaluateAttackObjective(ws, action);
+        return null;                                    // L3-A supports ENGAGE + ATTACK_OBJECTIVE
     }
 
     var api = {

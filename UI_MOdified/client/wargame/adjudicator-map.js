@@ -1920,6 +1920,14 @@
                 [obj.coord[1], obj.coord[0]],
                 { icon: targetIcon(COLORS.OBJ.DORMANT, obj.name), title: obj.name },
             ).bindTooltip(buildObjTooltip(obj, 'DORMANT'), { permanent: false, sticky: true });
+
+            // OBJ-C: Click handler for objective evidence panel
+            objMarker.on('click', function() {
+                document.dispatchEvent(new CustomEvent('rmooz:objective-selected', {
+                    detail: { objective: obj, objective_id: obj.id || 'objective_0', step_index: stepIdx || 0 }
+                }));
+            });
+
             objMarker.addTo(layerGroup);
 
             if (Number.isFinite(obj.radius_km) && obj.radius_km > 0) {

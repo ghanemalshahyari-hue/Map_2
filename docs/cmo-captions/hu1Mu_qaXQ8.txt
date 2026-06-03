@@ -1,0 +1,236 @@
+# C: MO - Helicopter Terrain Masking
+Video: https://www.youtube.com/watch?v=hu1Mu_qaXQ8
+Video ID: hu1Mu_qaXQ8
+
+hello everyone in today's video we're
+going to be taking a look at something I
+was reading about in The Forum that I
+thought was very interesting and I was
+using Apaches for the purposes of
+destroying s300s or s400s so I said well
+I play a lot of DCs and one of the
+things I'm always doing in DCS of course
+is flying helicopters and doing insane
+missions like flying up to 10 s 300
+batteries protected by sa-19s up to
+Wazoo and sitting there and plinking
+each and every one from an altitude of I
+don't know six feet or something along
+those lines so I said well I wonder if
+that applies inside of a wonderful
+command over here so I started playing
+and fixing it actually discovered a
+really neat built-in feature that he did
+not know about that'll share with
+everybody in a moment before I get too
+too carried away hero one thing I do
+want to emphasize here is the relief
+layer in command while it's absolutely
+incredibly excellent is fairly granular
+so a lot of the different things that I
+do when I do um when I'm operating like
+in a flight Sim and taking advantage of
+each little teeny tiny Nook in each
+little teeny tiny tree you're not gonna
+see that as having a much of an effect I
+mean definitely to get like macro things
+like you can see there's a pretty strong
+mountain range right here and obviously
+a very distinct mountain range right
+here but when you look at this area here
+even though like in a simulator there's
+trees and stuff I could duck behind I
+can't do that this is basically a desert
+as far as the game is concerned the only
+thing we have really to hide behind is
+elevation so let's go ahead and take a
+look at our lovely little helicopter
+here oh we're sitting here this is an
+ah-64e it's a very lovely love a
+helicopter and you can see very clearly
+that I'm just slightly out of range I
+just need to get just a little bit
+closer so I can go ahead and take my
+shot now if I actually switch to the
+other team real fast you'll notice I
+have no clue that Apache is sitting here
+hovering right now I just can't see it
+it's behind this little Ridge line here
+so it prevents it which is a nice job
+helicopter pilot I don't know how I got
+that close now one thing we can do and
+now this is always kind of slick is we
+can always click on the Sam battery go
+up to map setting hit lost tool and of
+course we can switch this to Samus
+Observer and we can see that our
+helicopter he literally flew along this
+Ridge line in every single time the
+radar warning came up they went oh God
+inducted behind the nearest tree so you
+can see in order for us to take the shot
+but we have to get to this Square which
+um that's not a lot of room for us what
+I'm actually going to do is I'll go
+ahead and click on our buddy again here
+and oh my gosh look at how close that's
+got to be well that's gonna be that's
+that that's going to be that's gonna be
+involved I'd be amazed if we're going to
+be able to pull this one off but we're
+going to try
+so one of the problems we have inside of
+commands uh not a command there's
+actually a realistic thing they did a
+wonderful job modeling this it's the
+fact if I order this helicopter to start
+moving you'll notice right now he's
+chilling at 50 feet the moment I order
+him to move with this helicopter is
+immediately going to start doing is it's
+going to jump up to 100 feet let me show
+you what I mean
+let's go ahead and press on the set auto
+button ta-da I'm gonna pause immediately
+because I'm about to lose a helicopter
+so I popped up to 100 feet AGL when I
+started accelerating because obviously
+if you're traveling 160 miles an hour
+you don't want to run the risk of
+hitting power lines and trees so you go
+up a little bit makes perfect sense
+watch this
+did you see it now if
+50 feet above ground level
+so they actually designed it so that
+helicopters traveling at a slower speed
+have a better low altitude performance
+which is fantastic because it's actually
+very realistic you know this simulates
+you know the helicopter itself basically
+doing the little bob-up attack where
+it's going a little left it's going a
+little right and it's trying to duck
+here and it's trying to duck there kind
+of going behind each one of those trees
+is it desperately crawls to get itself
+in range I'm basically going to need to
+Alpha strike this thing as soon as I
+could fire give me everything I just got
+to move this up just a teeny tiny bit so
+again my helicopter stand as low as
+possible here and you can see we just
+got into range so what I can do here is
+I can actually order a hover now that
+I'm exactly in range remember I'm
+staying super duper low and I can
+actually order him to do a quick little
+pop-up attack here so press the F10 key
+we'll go ahead and order up an altitude
+of um that's way too high let's try 200
+feet that should be plenty he's gonna
+pop up and there goes the missiles now
+if I were a smart helicopter pilot I'm
+getting out of there go go go go go go
+get it okay okay okay okay
+ignore ignore ignore okay so what he's
+going to do he's going to automatic
+evasion mode and that's going to cause
+him to kill himself because he's going
+to try to shoot away at high speed
+minimum altitude hover go down down down
+down down
+well that's not fair that missile would
+hit that tree so fast so unfortunately
+um this missile uh ran right into that
+Ridge line right there so I'm not going
+to stress about that one at all let's go
+back to our helicopter buddy have you
+lost all that altitude I ordered you to
+lose yep he's back down to 50 feet I'll
+go ahead and order him to sneak very
+carefully away
+go low and go low man go low stay low
+50 feet man 50 feet oh our helicopter's
+about to get Chris splattered
+[Music]
+oh
+[Laughter]
+so as you can see the pop-up attack was
+totally possible and I was able to sneak
+all the way there thanks to that new
+lawyer capability but you can see it did
+not stop the s300 with its arcing
+missile attack to basically go over the
+ridge line and give us a bit of a
+surprise there which is a kind of
+unfortunate because I was kind of hoping
+that would work so you can see
+immediately that even though you know
+strategically that worked fairly well
+and if I were flying a DCS I'd probably
+pull the same maneuver the difference
+being DCS of course is I do one of these
+kinds of things and basically use each
+one of these little holes get 50 feet
+away from it and just hit it with my
+Cannon hmm how would that work
+what would happen is we'd have something
+that looks a little bit like this so
+what I had to do is actually shove the
+s300 to the s-400 in the worst possible
+place and I'm basically hiding on the
+back side of this Ridge line here so
+what I'm going to do is I'm going to
+lock onto this one and we're just going
+to let them have it as soon as we do our
+little pop-up attack here so
+everything's been located and ready to
+rock I'm still feel so bad for this
+helicopter uh basically I'm going to
+have to Sprint as fast as I possibly can
+towards him and as soon as I get to the
+altitude where the weapons can let loose
+we can go ahead and start letting those
+weapons loose but keep in mind the S 400
+here is immediately going to start
+firing at me even though the bigger
+weapon to be using here would probably
+be my Cannon oh we got him
+oh so did he
+we're so dead again nope I think we're
+gonna survive this one all right we'll
+go ahead and order my Apache Garden to
+uh go ahead and hover here and uh
+destroy him at my leisure is the best
+way to say it I think those are app Quiz
+and the S 400 got her splattered so what
+are our conclusions here so the first
+thing we know is like I always say is
+that is an amazing system there is just
+it I wow it's it's incredible you can
+saturate it with all sorts of decoys you
+can tackle with stealth weapons and it
+just does a fantastic job when we try to
+sneak up on it we couldn't because it
+was just a little too well placed but
+you could see that we were able to get
+off a couple initial missiles before
+those missiles came down and arced down
+into our position and fried us so again
+fantastic system the second thing we saw
+and I think that's actually probably the
+bigger thing to take away from this
+video today is the fact that if you do
+have a helicopter in the altitude or the
+speed you're traveling the altitude
+matters if you use a loiter you'll stay
+down at 50 feet if you go up to cruise
+it's going to make you pop up to 100
+feet if you go up to military it's going
+to pop you up to 100 feet as well so if
+you desperately desperately need to be
+able to do this really dangerously
+careful sneaky thing you can always plop
+down to a loiter speed in order to hide
+yourself enjoy

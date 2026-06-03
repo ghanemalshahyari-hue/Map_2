@@ -1,0 +1,266 @@
+# C: MO - Creating "Flak" effects using lua.
+Video: https://www.youtube.com/watch?v=0_XMMSsxl4Q
+Video ID: 0_XMMSsxl4Q
+
+hello everyone in today's video we're
+going to show you a kind of a neat
+little trick that we can use to create
+explosions to simulate what it's going
+to look like flying through flac
+so now this is more of a visual effect
+than it is an actual physical effect
+although if you want to use nuclear flac
+i would assure you that it will be very
+very effective so basically here's how
+we're going to do this so we're going to
+create a zone around this little place
+that's protected by some
+mobile anti-aircraft artillery here and
+then what we're going to do is say if
+anybody enters that zone
+identify who entered the zone and then
+afterwards go ahead and now basically
+start creating explosions around them
+so the first thing we need to do is
+basically create the kill zone here so
+what i'm going to do is i'm just going
+to use the distance measuring tool here
+dust made
+pretty much the end of this ring we're
+going to call this kind of the maximum
+zone here
+so go ahead and create one here in
+reference point here here
+here and here it's going to grab that
+and that's basically going to be our
+boom boom boom zone if you want to kind
+of think about it another way so now
+what i'm going to do is i'm going to go
+up to event editor go up to events and
+now we're going to go ahead and
+delete the old one because the old one
+unfortunately it did not work
+correctly and we're going to go ahead
+and create ourselves a new one uh it
+seems uh that one didn't up there it
+goes got it
+so now we're gonna go ahead now unit
+gets flack
+so the first things first we're gonna
+make it repeatable we're gonna go down
+to our little triggers we're gonna edit
+triggers
+and we're gonna go ahead and add
+ourselves a trigger called unit remains
+in area
+this simply says that the unit has to
+stay in this area in order to be engaged
+so we'll say unit enters area we'll go
+ahead and switch this out to the other
+team and we're just going to set it to
+aircraft because again we're going to be
+flacking them we're going to go and add
+that area press ok
+next thing we're going to do is we're
+going to go ahead and add a limit to how
+often this can happen so i'm going to go
+ahead and come down to a regular time
+and i'm also going to go ahead and set
+this to being basically uh we could do
+15 seconds we could do 5 seconds
+really doesn't matter or 5 seconds is
+pretty darn quick for this game
+so i'm going to go ahead and press that
+and close that one as well so what i'm
+going to do is i'm going to come
+add these two items to my event here go
+down to event conditions
+another thing i like to do is a scenario
+has started yup
+and now this is basically just kind of a
+sanity check here make sure the thing
+has started
+looks good and now we're going to go
+ahead and create our action here we're
+going to go down a little script
+create new action and now we're going to
+go ahead and do this shoot
+some flock yo but of course that's not
+how that works
+so basically this is how it works we
+need to get the unit that entered the
+zone
+is our violator easiest way to do that
+now that i've always liked to you i'll
+do something like
+local unit equals and it will just say
+send edit
+unit x that simply says what unit was
+the one that went ahead and entered our
+in this case that'll grab that unit for
+us now what we're going to do is create
+a little bit of
+jitter that's pretty easy to do so i'm
+just going to go x equals math.random
+and we'll say minus 1 to positive 1. i
+know you're probably saying that seems a
+little weird
+divided by a thousand there we go now
+we're a little better we'll go ahead and
+local y
+equals math.random we'll say minus one
+to positive one
+divide that by a thousand also and then
+local z this will be basically elevation
+math.random minus one to one divided by
+a thousand
+now we have to do is create an explosion
+now that we've identified who the unit
+is the violator
+and now we've gone ahead and created a
+little thing here that gives us a
+basically random position around it
+so let's go ahead and do that part now
+so i'm gonna say send edits add
+explosion and we're going to say warhead
+id equals all right let's see if we can
+find out a good warhead here
+personally when i do this i love 155
+millimeter or bigger warheads they have
+like a nice like
+over dramatic bang but it really does
+not matter what you use here again you
+can come up here
+you want to do 203 millimeter and knock
+yourself out it doesn't matter
+all you do 54 is kind of your warhead
+here you know why not
+warning by the way if you do this with
+nuclear weapons you will destroy the
+aircraft you won't just
+speckle it and scare the crap out of the
+guy flying it so we'll say lats
+equals unit dot latitude plus
+x then we're going to say longitude i
+think it's l-o-n or l-o-n-g i'm always
+trying to remember this one
+no l-o-n that's right equals unit dot
+longitude remember this is the unit that
+triggered this
+plus y and then we're going to say let's
+see altitude
+equals unit dot altitude plus
+yep memory z all right
+that looks pretty good let's go ahead
+and press okay let's go close this one
+out real quick
+go ahead and toss that one there add
+sheets of flaccio i kind of like that
+it's kind of fun
+and uh we're looking pretty good let me
+just confirm something real quickly just
+mentally for my own sanity here to make
+sure i didn't blow up
+nope i'm good so that looks good that's
+good that looks good that's good press
+okay make sure it's repeatable and let's
+go let's go ahead and test it so i'm
+gonna go ahead and get myself a victim
+here now it looks pretty good
+we'll get ourselves some mark 82s press
+okay i'm gonna go ahead and send him
+into oh oh
+that wouldn't have worked we need to
+actually use the other team because
+remember they're the ones triggering it
+lucky for me i already have a bunch of
+these guys ready to go
+so we're gonna go and set them down to
+medium altitude we're gonna go up to
+cruise speed
+speed things up a little bit here and
+they shouldn't be getting any of the
+little speckly flaky goodness
+just yet until they enter into that zone
+so let's see if all my calculations all
+worked out here
+i always like to add debugging
+statements and stuff like that but i'm
+pretty sure this will work okay
+all right if you're wondering why i'm
+dividing that number by a thousand but
+oh there it is
+see it that's it
+isn't that awesome so now they're
+getting a little flack burst as they're
+kind of rubbing around here is this the
+coolest thing
+so of course just sitting here going how
+come it's only attacking him and not his
+buddies
+well this is considered a group so if
+actually delete the group
+now everybody's going to get popped out
+but it's actually pretty funny because
+only the first person who enters the
+zone is actually the one that's going to
+be attacked oh geez these guys are
+getting
+look at that they're getting blasted
+everywhere because remember only a
+single unit
+could be uh triggering that particular
+thing at a time so unfortunately uh this
+is kind of the lucky guy and you can
+actually follow the little flak bursts
+across the sky
+as he goes out chasing after him which i
+think is just awe that's so much fun
+so anyway just like i said a brief
+little scenario in order to have a
+little bit of fun here
+uh what we will do is we'll switch to
+nuclear weapons just to demonstrate if
+you have to be that guy and
+what happens if we try to hit them with
+a nuke instead you know just i mean i
+got a couple moments right
+let's see nuclear nuclear all right
+we're going to need something that goes
+bang
+uh kh22 i don't need anything that big
+ah here we go
+the genie let's do it with 25 kilotons
+that seems fair
+all right what do we got here we have 2
+4 8 as our device and prepare to
+obliterate
+everything so let's go down to this
+again we're having a little bit of fun
+here because we can
+let's just change this to 2 4 8 put my
+comma back that i just knocked out press
+ok
+close close uh let me make sure that
+didn't accidentally
+edit edit get my 248 yes it did i don't
+always trust that because there's no ok
+button
+that always makes you nervous press ok
+boom
+watch this
+and that my friends is why you don't use
+nuclear flak it's um
+it is yeah i believe they call that
+collateral damage i think that's the
+word for it
+all right folks hopefully this video is
+helpful as far as coming up with a neat
+little visual effect that you can add to
+your little scenarios again there's a
+bunch of variations on this because
+remember multiple things triggered it at
+one time and only gives us the most
+recent trigger
+and again it's all super duper cool how
+that all works enjoy

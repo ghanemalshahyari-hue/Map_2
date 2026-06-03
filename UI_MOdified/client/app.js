@@ -6952,8 +6952,13 @@ document.addEventListener('DOMContentLoaded', () => {
             symbolManager.style.display = 'none';
             lineManager.style.display = 'none';
             if (textManager) textManager.style.display = 'block';
-        } else {
+        } else if (mode === 'symbol') {
             symbolManager.style.display = 'block';
+            lineManager.style.display = 'none';
+            if (textManager) textManager.style.display = 'none';
+        } else {
+            // 'pan', 'select', and any other mode — tool-rail.js owns symbol-manager visibility
+            symbolManager.style.display = 'none';
             lineManager.style.display = 'none';
             if (textManager) textManager.style.display = 'none';
         }

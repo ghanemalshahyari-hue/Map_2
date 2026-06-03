@@ -1,0 +1,806 @@
+# C: MO - Ambushing a Submarine
+Video: https://www.youtube.com/watch?v=dApaT5CcfS8
+Video ID: dApaT5CcfS8
+
+hello everyone in today's video we're
+going to be continuing our little series
+on some strategies with what i like to
+call the 140. now for many of you who
+are no classic submarine movies there's
+this great movie called the enemy below
+there's actually a star trek episode
+like the original series based on this
+and i was kind of playing around with
+some of the theories and some of the
+tactics and some of the techniques and i
+said you know what i could probably
+recreate some of that using command and
+i started kind of playing with some of
+the different strategies and then i went
+back to my dangerous waters days and
+said hey wait a minute i've done stuff
+like this before and i decided to put
+together a quick little scenario that
+kind of simulates some of the things we
+can do in order to maximize our chances
+to strike in this particular case an
+underwater target while minimizing its
+chances to fight back let's get started
+so first things first we have ourselves
+my kind of standard go-to ship again my
+dangerous water days are very evident
+here we have the oliver hazard perry
+class this is the ffg 36 underwood this
+is nice and long it's basically a little
+tiny frigate it has a little missile
+launcher in the front a couple torpedo
+tubes sort of chilling on the side here
+a couple sea whizzes and the most
+importantly these lovely lovely
+helicopter pads in the back helping us
+out today of course we have the sosus
+which is a really neat system there's
+actually a very very long line of these
+things underwater basically spot
+submarines that are trying to sneak
+through the duik here and we have some
+really really good intelligence that
+there is an enemy submarine somewhere in
+this region now central command says you
+know for the purposes of this scenario
+we like you to do a close quarters kill
+uh likely without getting spotted
+allowing the other target to return on
+fire of course as everybody knows the
+true enemy of any submarine is going to
+be an air unit but um we're going to use
+the ship because we can now the
+submarine's captain has been cranked up
+to maximum aggression which means if he
+sees anything tempting in the water he
+will simply put torpedo through his
+front windshield now i'm not going to
+worry about that too much today because
+i've got strategy in math let's do it so
+first things first i'm going to use my
+orion here as my spotting aircraft the
+solstice is immediately identified some
+kind of submarine nearby it's kind of
+weird because when i clicked it a second
+ago i noticed that it says it was right
+on top of it that usually means that
+you're dealing with a target that if
+again if i draw my little sensor here
+you kind of have a big cone it's
+somewhere in the nearby cone but again
+what is the nearby cone we have no idea
+it's estimated range right now is zero
+so obviously we got an error but let's
+figure it out
+i'm going to grab my orion here and just
+go ahead and uh build myself a quick
+little expanding box expanding boxes uh
+everybody's an old-school strategy
+basically draw a little tiny box and
+then each time you go around with the
+box you just make the box just a teeny
+bit bigger each time it's kind of like
+almost like a squirrel it's like a
+spiral squirrel thing kind of a thing
+like that so i'm going to go ahead and
+use this as kind of my little search
+region here i don't think it's going to
+be that far out but you never know next
+what i'm going to do is i'm going to
+drop them down to minimum altitude and
+kick on the thumb kick the tires and
+light the fires not really this is a
+turbo prop it doesn't go that fast and
+the next thing i'm going to do is i'm
+going to go ahead and actually delete
+off my weapons turns out we didn't carry
+any of these because what i don't want
+him to do is spoil all my fun here go
+ahead and set that to zero we'll go
+ahead and speed up time a little bit
+here
+remember asw stands for awfully slow
+warfare one thing i did notice though is
+i notice i got a nice little line here
+which means we have a better idea of
+where a target sub is so let's actually
+send him out to that line and have him
+track inwards oh we picked up something
+there keep in mind the reason i'm sort
+of estimating down a little bit is
+because i have a feeling that it's going
+to be kind of an oblique angle by the
+time i get to it as a matter of fact i'm
+actually getting myself got a little bit
+of room to kind of turn here and for
+some reason he's decided to ignore my
+request i'll send him another cruise
+power send him down to mad search
+altitude
+and he's going to come swing around here
+and he's going to start searching along
+this vector that the socialist has
+helped i'm pretty confident this guy's
+not there as a matter of fact i'm
+looking now and i'm getting a little bit
+closer let's go ahead and order him to
+come over this way we'll go ahead and
+add another waypoint across this one as
+well and again we're just trying to fix
+his position we're not trying to drop
+torpedoes on him yet we're going to get
+to the mathy part in a minute so then we
+can worry about that oh he's very close
+to the social station let's come swing
+on a little wider here again this is the
+pilot kind of refining his course while
+working with his mission specialist here
+and we're just going to swing along here
+i'm going to go ahead and start dropping
+buoys so the cool thing is you can press
+the square bracket key to go ahead and
+plop a buoy in the water and now we have
+something as even picked up by the buoy
+indeed
+gotcha
+so what we want to do is we want to
+bracket him with buoys so what i'm gonna
+do here is i'm gonna actually come down
+this way just a teeny tiny bit
+overflying a sub is never a good idea
+you never know if the guy on the sonar
+duty is actually pretty good at his job
+here the other thing too is we don't
+want to give up the game if i drop an
+active buoy with right bracket basically
+what's going to happen is he's going to
+know i'm here he's going to go aha
+they've got me and he's going to go
+quiet and he's going to go deep and
+we're going to lose him and said sploosh
+i'm going to drop a passive bowie about
+30 feet from him right there so now in
+the real world he'd be panicking and
+going silent and going deep but we don't
+know if the sonar guy was paying
+attention that day so the one thing i do
+notice right away is i notice he has a
+general direction i don't have his
+position perfect but what i'm going to
+do is pause right here at 30 seconds so
+i'm going to right click on this guy
+real quick i'm going to go ahead and say
+mark position so i know that at 9 19 p.m
+here all i have to do is uh one minute
+from now i can mark his position again
+and then go get his speed it looks like
+i have a pretty good idea of what his
+heading is going to be so what i'm going
+to do is actually head out this way a
+tiny bit and we'll go ahead and pop in
+another buoy in a second and then we'll
+kind of come way around again we're just
+sort of extrapolating his course a
+little bit here just through a little
+bit of guesswork so go ahead and go here
+we'll go ahead and put a line through
+his of course a little bit here that way
+we can just keep plopping buoys along
+the way kind of a thing
+all right right as my little orion kind
+of comes zooming around the corner makes
+me think of a metallica song actually
+we'll come popping around here and again
+i'm pretty confident we have a good idea
+of where he is and curse bloop
+we have a really good idea where this
+guy is so i'm going to go ahead and give
+it ourselves another minute i
+accidentally let the 30 seconds go by
+there so i'm going to go wait to uh 20
+21 30 and we'll go ahead and pause
+everything 14 15 21 2 3 4 5 6
+seven
+eight and
+pause excellent let's go ahead and mark
+his new position that was two minutes
+and now we do some math hey math i love
+math so i'm gonna do is i'm gonna
+measure the distances between these two
+points as properly accurately as i
+possibly can go ahead and line this guy
+up right through the middle here and it
+looks like we have a total distance of
+0.7 or 1 240 meters 1240 meters in two
+minutes now we can do the math so if we
+do the measurement division on that real
+quick oop one two four zero divided by
+two meant he traveled 620 meters
+in one minute so if we want to go ahead
+and divide that by
+60 that means he's traveled 10.3 wow
+whoa whoa this guy's moving
+10.333 is a really really really fast
+sub no wonder we picked him up meters
+per second so that means in every minute
+he travels a total of 620 meters or
+about 0.7 nautical miles now you're
+sitting there going can you make that
+bigger i gotcha i gotcha i gotcha
+there's a little better good so he's
+going 0.7 nautical miles every two
+minutes so this is going to work well so
+what i want to do is convert this into
+knots so i'm going to go pop over to
+google real quickly here we're going to
+say what is it 10.33
+um let's see meters per second two
+cannots two cannots is about 20 knots
+and knowing this is command it's 20
+knots he's doing 20 knots excellent
+that's what we need to know now the next
+thing we need to know of course is we
+need to know exactly where he's actually
+going to end up so that i can take my
+frigate who's really really loud and
+noisy and park him on his course so we
+can basically go surprise and drop a
+bunch of torpedoes directly into a trunk
+so to know that we need to go ahead and
+take this right here and we'll go ahead
+and measure through here and ah surprise
+it looks like he's on a course of one
+four zero
+nice so now we have all the pieces of
+the puzzle we're ready to act
+so intelligence tells us that the
+overall range of this entire ring here
+is pretty substantial for the akula
+according to this we can get a
+staggering range of about let's call
+about 40 nautical miles which
+unfortunately my little alpha hyzer
+parry is well within which means i'm in
+detectable range however we know that
+that sub is doing 20 knots 20 knots
+means your total array is basically
+going to be useless now a smart skipper
+of course is going to slow down and do
+zig zags every once in a while and make
+it more challenging for us but we're
+just going to make a couple of
+assumptions so what i'm going to do is
+i'm going to take my parry and of course
+like i said you know the outer limit
+here which is going to be about here and
+we're going to go ahead and use this
+point here as a way that we're going to
+get ourselves away from the sub so i'm
+going to go ahead and call this exit
+points
+once we hit the exit point we know we
+can then go ahead and go ahead and get
+ourselves out of here so i'm going to
+grab my parry here i'm going to point at
+the exit point i'm going to go ahead and
+do a little overshoot of the exit point
+and i'm going to travel on one four zero
+whoa
+let's go ahead and make sure i line that
+up properly here there we go through the
+exit point and now what we're going to
+do is we're going to travel on a
+parallel course of 140 ourselves but
+what we're going to do is we're going to
+do it nice and fast here now
+unfortunately it doesn't tell me what
+140 is so i'm kind of having to guess a
+little bit here what we're going to do
+is once we get outside of his range
+we're going to go outside and we're
+going to turn ourselves around and bring
+ourselves right back in line with where
+we expect the sub to be now i haven't
+done the math yet we have to calculate
+some of this on our own so let's assume
+we make
+full speed here full speed on the
+elevator has a pairing let's go ahead
+and check it real quick full speed is
+going to get us 30 knots so if i click
+right here
+30 knots is equivalent to it will take
+17 hours at current 5 hours and 49
+minutes at desired so how far can i go
+in 5 hours and 49 minutes so 49 divided
+by 60 times 20 plus 100 that means the
+other submarine will cover
+116 nautical miles in that time that is
+a very very very long distance as a
+matter of fact if i want to work that
+out he'll be hitting that point one hour
+and 16 minutes 160 nautical miles that
+will put him here at that time which
+means not only will we be hitting him
+exactly when he's crossing that point
+but it also means we'll be making a ton
+of noise and basically get picked up by
+his regular kind of surface sonar so
+unfortunately five hours from now that
+is not going to work for us it's not a
+viable strategy at that speed
+if we go up to 33 knots that's going to
+improve things a little tiny bit here
+and that's going to mean that's going to
+be 5 hours and 17 minutes which as you
+can see that doesn't do anything for us
+as well which means if we're actually
+going to be able to kind of parallel
+this guy for a while we're going to have
+to be able to do it really really really
+aggressively now what we could do of
+course is we could do a b line in that
+general direction but we're basically
+giving them our entire baffles when we
+do that which is basically the zone that
+we cannot hear we're also counting on
+this poor airplane here to basically
+hang out here this entire time dumping
+enough of a sonar buoys inside the water
+that they can walk from one end to the
+other but hey this is all about strategy
+so we're gonna have to give it a try the
+other thing of course we could do is
+grab out our attack helicopters and
+smoke him but that's going to not be
+nearly as satisfying as doing it
+properly so what i'm going to do instead
+is i'm going to go ahead and extend this
+just a little bit here and i'm actually
+going to add myself another waypoint to
+give him a little tiny bit more room
+which means he's going to hit that point
+let's go ahead and click on it press the
+f2 key oh you're no fun we're probably
+going to hit this point quite a ways
+from here so what i'm going to do is
+order him up oh it's really not let me
+do that two keys anymore make sure i
+didn't accidentally let's see here boop
+ah there it is five hours and 11 minutes
+that i can i think that's workable let's
+see six hours in five minutes six hours
+and five minutes would be 120 nautical
+miles for a sub 129 miles is beautiful
+yes we can do this
+okay
+crack those knuckles let's do it
+meanwhile what i'm going to do is i'm
+going to keep our little orion here and
+i'll keep them kind of busy so what i'm
+going to do is i'm going to build a
+little zone around the sub and have the
+orion basically live in that zone the
+entire time so to do that what i'm going
+to do is deselect all of my reference
+points here i'm going to go ahead and
+control right click create a little
+ranked rectangle here i'm going to go
+ahead and square this off real quickly
+and then i'm going to link it to the
+submarine
+so now what i'm going to do is order
+that little p3 to basically stay there
+stay here please
+and i'm just going to have him basically
+just tool around asw patrol press okay
+we're going to grab that orion he's
+going to do the job i'm going to tell
+him to loiter the entire time i don't
+want him wasting any more fuel than he
+needs to what i really wish i should do
+is tell him not to use active anything
+because if he flips on that radar he's
+gonna kill us so i'm gonna go ahead and
+shut that thing off okay so he's now
+gonna go ahead and fly through this
+little region and keep him meanwhile our
+perry is gonna turn around and book it
+all the way to that other spot
+ready go
+oh apparently i've messed that up a
+little bit so let me go ahead and do a
+fixed bearing oh yep fixed bearing to
+this guy oh it won't let me do fixed
+bearing that's so lame all right fine
+which case i'm going to make it a
+corridor then that's lame i should be
+able to do that maybe it's something i
+did wrong i'm sure okay good enough
+all right here we go
+do i feel sorry for that p3 he's got a
+kind of a boring job here
+oh losing sight losing sight that's okay
+i really want to have mission impossible
+right now but uh i can get you
+demonetized
+that's right boy stay on one four zero
+don't not be on one four zero i got a
+present for you
+oh man i might actually have to drag
+that out a little bit he's really making
+time right now
+yeah let's drag it out a little bit i
+don't like it of course by the time i
+managed to get to an attack position on
+this guy we'll have already gotten to
+england and that's no fun
+at that point now we'll get all the
+nimrods and stuff to help us out but hey
+this is just for the purpose of an
+exercise here normally this works much
+much better with you know slow moving
+diesel submarines not you know these
+high speed modern things
+all right
+let's do it
+all right we lost sight of them again
+that's all right that's all right we'll
+pick him up
+there he is
+losing him again we're losing him and
+we've lost him completely that happens
+all the time all right i'm gonna drop
+this guy down to creep
+all right send in the helicopters
+okay helicopter number one here i'm
+going to launch individually
+and he's got to pick up the trail of our
+pesky pesky pesky enemy sub remember we
+have those two positions from a while
+ago i can go select those real quick and
+by just lining those up we can tell that
+he's roughly in this position although
+i'm noticing we're picking up something
+it's probably right in here somewhere so
+the very least i can go ahead and stick
+my helicopter on him oh there he goes
+all right my friend you've got the duty
+so what i'm going to do is use this
+helicopter as basically a little barrier
+system here so that he can kind of spot
+that sub and we can do deeds them before
+they manage to get away
+so i'm guessing
+so we last saw him okay so i'm guessing
+he's probably a little bit further out
+of my little zone here so what i will do
+is i'm going to try to try to spot him
+here i'm going to grab this shrink this
+down all i can do is add the helicopter
+to it so i can try to identify where he
+is again this is going to stay here
+plays out the name of that and meanwhile
+i'm assuming he's going to be somewhere
+along here chances are he's going to be
+quite a bit further there so i'm going
+to grab this little helicopter i'm going
+to go ahead and tell him to do attach
+that mission there side to mission stay
+here please he's going to go run off and
+do that real quick i don't know why oh
+because i did the slow down let's make
+sure it's a cruise on the transit there
+so he gets there in time we'll go ahead
+and trick the zone a little bit tighter
+because again we're just interested in
+basically dropping right on him but we
+need that last couple little positions
+here i actually think this is going to
+be further out if i'm not mistaken it's
+going to be more like this
+so i'm going and line that up a little
+bit
+line it up a little bit i'm gonna go
+ahead and actually order up a couple
+extra knots here and keep them from
+cavitating though because they don't
+want to making any noise
+we're coming for you sub we're coming
+whoa what did you run out of fuel
+or did i mess something up up here oh
+because i must have added that as a whip
+i didn't
+huh okay i'm just having a bit of a
+glitch there but we'll go ahead and take
+him off there send him over here what on
+earth is he doing oh he's trying to
+attack the oh i see what he's doing
+there he's trying to automatically
+attack
+so let me go ahead and take this and
+actually drop it so that way i get a
+little more control for this guy
+gladiator too let's go send him over
+here and let's go ahead and pop a buoy
+in the water yes he already did an
+active buoy right there
+i wonder if this is a new bug all right
+fine i'm gonna have to cheat a little
+bit in order to get him properly lined
+up here so i'm gonna go ahead and start
+dropping because like i said i'm having
+a little bit of technical difficulties
+drop another one of those let's go ahead
+and drop another one of those and we'll
+see if we can find that guy and like i
+say i expect him to be somewhere along
+this bearing and unfortunately it keeps
+locking on whatever this is so i'm
+actually going to take it one step
+further i'm just going to delete the
+fixed bottom array so it doesn't
+distract us from this particular mission
+here there we go now you can start
+getting to work sir so let's go ahead
+and assign him to mission stay here
+please now i can go ahead and start
+taking care of that
+it's still detecting it what is it doing
+all right so we're gonna go ahead and
+sneak around here where are you going
+oh man i love it when it does it you're
+not allowed to do any of that i'll get
+your butt back in here and go back to
+work
+now we've got him under control cool is
+that what i would like oh there he is
+yes
+my math was good all right let's do it
+to it
+so that's my ssn he's uh no no i got to
+be more precise than that again i'm
+using my bearing tool here to line it up
+it's perfectly spot oh my gosh look at
+how close i was
+so that's going to be my attack point
+it's going to be right here so let's
+deselect everything
+deselect i need this guy to get to this
+point that will be my sinking point so
+i'm going to go ahead and delete this
+i'm going to go ahead and order him
+let's see that's going to take him how
+long is it going to take him to get
+there total time to get there is going
+to be 13 nautical miles it's going to
+take 54 minutes this guy how long is it
+going to take him this 47 yeah we got to
+go faster go fast go fast ignore
+cavitation just go go go go go go go go
+go go go go go go go go we can slow down
+later
+all right i'm gonna keep this guy right
+on top of him if anything i wouldn't
+mind that if you would slow down and go
+ahead and pop down his dipping sonar so
+we could take a better listen for him
+all right here we go here we go stay
+with him stay with him nice stay right
+there
+speed up time a little bit
+i told you this was awfully slow warfare
+all right i'm going to take him and
+we'll go ahead and line him up this way
+oh yeah we're going to get it we're
+gonna get it
+creep
+slow down
+stop
+okay so we're gonna go ahead now we've
+got our chance
+okay so here's how this game is played
+now so this gladiator right here is i
+basically gotta stay with this guy so
+what i'm gonna do is actually delete him
+from the mission because they don't want
+him to be causing any issues here knock
+him out of that mission that way i can
+basically use him to kind of keep an eye
+on this guy the whole time so we're
+gonna go sneak up on them i've only got
+two die casters left so i'm gonna go
+ahead and pop a couple of those in the
+water on our way home drop one here and
+we'll drop one here go home
+all right everybody cross your fingers i
+hate this part
+58 minutes oh those two things have
+already faded away
+now our entire frigate crew right now is
+just sitting there going when is it
+gonna hit
+any second any second
+interesting now something doesn't hmm
+i want oh
+oh
+ah okay i see what happened so in this
+particular case uh what our little
+lovely submarine our helicopter did is
+it must have launched a torpedo if i
+have to guess i'm guessing he's sinking
+right now because there's no way he
+wouldn't have made this distance in that
+time so he's either slow down or he's
+sinking i'll take a look
+it looks like
+our helicopter was a bit of an
+overachiever there so what i'm going to
+do is i'm going to go ahead and edit our
+scenario real quickly so you can kind of
+see the fun conclusion here so it's
+sorry that this guy got a little banged
+up a little bit here no fire damage 0.0
+see he's fine fine no damage he's fine
+uh overall damage let's go ahead and
+unpause paul look at that he's fine uh
+send this by back up to full speed we'll
+make sure he's not gavitating crew speed
+let's uh one two skip a few notice we
+never detected the oliver hazard parry
+at any time that's how nice of a job we
+did here oh we would have been off
+course a little bit but that's okay so
+let's go ahead and move him right about
+here let's make sure his speed is set
+correctly looks good looks good we still
+can't see the oliver hazard power
+because remember the parry is just
+sitting there nice and quietly just kind
+of hanging out nothing to worry about
+meanwhile
+he
+surprise so now here's what we're going
+to do so we fast forward it a little bit
+if you want to think of it so our
+calculations are correct you decided to
+stay on 140 for some silly reason so now
+launch my other helicopter now here's
+what you're going to want to do you're
+going to want to launch the helicopter
+and then you're going to want to use the
+helicopter to force this guy up to speed
+right into the incoming torpedoes that
+come out of the parry so what i'm going
+to do now is i'm going to speed up time
+just a little bit here there's my
+helicopter helicopter helicopter good to
+see you helicopter notice by the way our
+shuka is completely clueless that
+there's an oliver has a parry just
+relaxing right there on the ocean's
+surface everybody's sitting there the
+torpedo crews are sitting there looking
+very very confident you know cool calm
+collected at this point of course we'd
+want to go ahead and sneak up on this
+guy a little more aggressively so what
+we're going to do is we're going to
+drive him into the parry and he's going
+to make a ton of noise and he's going to
+get a real surprise in just a few
+moments now the oliver hazard perry has
+a range of this so we're going to do
+what they call an anvil attack we're
+going to try to wedge him between both
+at the same time so i'm actually going
+to order my helicopter to slow down a
+little bit all right so he's getting a
+little closer we're going to wait until
+he just gets into range and then we're
+going to pop him with the deed here
+so again we'll speed up time just a
+little bit here just a little tiny bit
+again we need that um submarine to go
+blasting as fast as it possibly can into
+the danger zone here and you can see i'm
+actually going to order my helicopter to
+come to a hover here
+there it is right there there it is
+right there okay so here's how the game
+is played we're gonna go ahead and order
+the helicopter to come back up to speed
+we're gonna order him to fire a maximum
+ranged torpedo here uh he needs to get
+within point zero zero point four of the
+target range so we're up to full speed
+here he's gonna catch right up to him
+and the torpedo is gonna get popped in
+the water i don't know why they need
+that silly requirement where you have to
+be within a certain range but that's
+okay so as soon as a torpedo gets popped
+in the water he's gonna accelerate as
+fast as he can okay can you do it you're
+gonna do it or you're gonna be lame here
+put the torpedo in the water please
+are we up too high perhaps let's go
+ahead and see what he's doing this time
+cancel
+too high like i said minimum altitude
+and go ahead and get down get down i
+hate it when it does things like this
+and that's a thousand feet come on
+torpedo in the water
+order the attack
+and torpedo that c drop the sono buoy to
+confirm the target range
+and come on anvil attack you're more
+than there it is for pete on the water
+good so now we're going to grab our
+hazard parry and now what i would do is
+i would tell them to hold on just a tiny
+bit before firing so what i'm going to
+do is bring them off to the side going
+like two knots here
+just so that he can get into range to
+pop his two torpedoes so we'll notice he
+fires both torpedoes and now we've got
+the anvil shots
+so what's going to happen now is our
+suka friend here let's go and switch to
+the other side he's a zoom zoom zoom in
+he knows there's a torpedo on his tail
+he's jamming on check it out he is up to
+27 28 knots but he has no idea there's
+an ffg right here and two other
+torpedoes that are going to come say
+hello these are mark 46's look at him
+just go he's nice and confident and you
+know i'm fine there's a torpedo back
+there i could probably outrun it no
+problem i am the safest little thing in
+the entire ocean right now nothing bad
+will ever come about me let's go ahead
+and switch to um let's see tom clancy
+vision here and see what happens go pop
+into my little uh cooler here
+and let's watch the action check this
+out i see sprites going home after a
+hard day's work my cooler look at him
+dude look at him go he's like i'm fine
+look at this it's just the mark 46 ain't
+going to do anything to me i'm just
+going to go as low as i can look at that
+mark 46 he's going to eat my decoy in a
+second everything's going to be
+perfectly fine this by the way is always
+nice oh look at that look at that sails
+right past them that mark 46 is going
+clueless it's immediately starting to go
+into circle mode because it's lost the
+acquired target akula's feeling more
+confident than ever he's still making
+really really good time oh by the way
+did you know i launched two more
+torpedoes
+[Music]
+and the other torpedoes are detected and
+now they're all jumping on him at once
+and he's gone
+all right folks i hope you like my
+little demonstration there i just wanted
+to kind of show you how you can use a
+little bit of tactics to basically
+create an impossible unwinnable scenario
+for a buddy obviously a lot of these
+things have required a little bit of
+finagling in order to get right but at
+the same time is you've got a chance to
+see just how impossible an escape
+maneuver you can create enjoy

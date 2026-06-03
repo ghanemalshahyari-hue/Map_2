@@ -33,19 +33,19 @@
     --panel-w: 340px;
 }
 
-/* ── Dark mode override ─────────────────────────────────────────────── */
+/* ── Dark mode override — AEGOV aeblack palette ─────────────────────── */
 [data-theme="dark"] {
-    --bg: #0f172a;
-    --panel: #111827;
-    --panel-2: #1e293b;
-    --panel-bg: rgba(15, 23, 42, 0.95);
-    --panel-border: rgba(148, 163, 184, 0.2);
-    --text-main: #e5e7eb;
-    --text-muted: #94a3b8;
-    --accent: #b68a35;
-    --accent-hover: #d7bc6d;
+    --bg: #0e0f12;                        /* aeblack-950 — deepest surface   */
+    --panel: #1b1d21;                     /* aeblack-900 — panel surface      */
+    --panel-2: #232528;                   /* aeblack-800 — secondary surface  */
+    --panel-bg: rgba(14, 15, 18, 0.97);
+    --panel-border: rgba(195, 198, 203, 0.14); /* aeblack-200 faint hairline  */
+    --text-main: #f7f7f7;                 /* aeblack-50  — primary text       */
+    --text-muted: #9ea2a9;                /* aeblack-300 — muted text         */
+    --accent: #b68a35;                    /* aegold-500  — lighter for dark bg */
+    --accent-hover: #cba344;              /* aegold-400                       */
     --accent-subtle: rgba(182, 138, 53, 0.15);
-    --danger: #ea4f49;
+    --danger: #ea4f49;                    /* aered-500                        */
     --danger-hover: #f87171;
 }
 

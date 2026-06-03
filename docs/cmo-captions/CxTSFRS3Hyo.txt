@@ -1,0 +1,312 @@
+# C: MO - Using Air Intercept Missions for Opportunity Scrambling
+Video: https://www.youtube.com/watch?v=CxTSFRS3Hyo
+Video ID: CxTSFRS3Hyo
+
+hello everyone in today's video we're
+going to be showing you how you can
+create a scramble Mission using an air
+intercept that way rather than having to
+use a big messy Air Patrol where
+basically people flying all over the
+place you can basically launch them the
+moment that something gets a little bit
+too close to your Airfield or whatever
+your hvt is so to do this what we're
+going to do is we're going to press
+contrl f11 and after we do that of
+course it's going to bring up our lovely
+screen that's going to allow us to go
+ahead and create a mission I'm going to
+go ahead and call this one scramble just
+like that I'm going to come down here
+it's going to be an air intercept air
+intercept active press okay go ahead and
+check to make sure the pause is engaged
+you don't want to be creating missions
+during non- engagements otherwise it'll
+make it crazy trust me so one of the
+things you'll notice here is this a
+scramble strike and there are no targets
+that is not a problem for us so what I'm
+going to do is grab my f-16s of course
+uh you can probably guess what version
+that is I'm just going to toss that down
+here now I'm going to head over to
+Mission settings now this is where
+things get kind of fun now one of the
+things you'll notice here is at the
+tippy top here it says Mission triggers
+when contact is minimum unknown this
+allows us to Define what types of
+targets we're going to intercept for
+example if I set this unknown anything
+that gets close to our air base that's
+in range will automatically be
+intercepted regardless of the status
+unfriendly and then hostile means only
+things that are hostile will be
+automatically engaged you just want to
+be mindful of that one there so what I'm
+going to do now is set my flight size
+two seems perfectly good and then you're
+going to notice here that it says
+maximum number of flights allowed to fly
+a mission the nice thing about this is
+you can always hold a slight Reserve so
+for example if I set this to two flights
+I'm saying I don't want more than two
+flights up in the air at a time
+obviously if you only have three flights
+you can adjust this accordingly again
+depends on what resources you have you
+have to think about this
+tactic scrolling down here it's a very
+tempting to play with the minimum and
+maximum strike radius you want to be
+very cautious with this it tends to not
+work the way you hope it does but
+theoretically you could set the Maxum
+range but that's okay so that's all set
+that's all set that's all set formation
+single L that looks lovely let's go
+ahead over to no targets now one of the
+things you're going to notice down here
+is we have this thing that says
+opportunity scrambling or focus on
+strike targets I'm going to set it to
+opportunity scrambling which is
+essentially going to say hey YOLO let's
+just go the other thing you'll notice
+here engage until shotgun and then of
+course you'll see targets destroyed
+continue Mission now the interesting
+thing is you can either tell them to go
+home as soon as the target's got
+destroyed or you can tell them to
+continue on their mission it is up to
+you generally when there's one target
+there's multiple targets so I generally
+leave that as continue Mission engage
+until shotgun simply means one attack go
+home I'd rather do Winchester in which
+case go nuts as a matter of fact I will
+go even harder than that I'll work over
+to my weapon release authorization
+should say my general rather in where it
+says uh let's see here air to ground let
+see Winchester here it is weapon state
+pre-planned I'm just going to set this
+to air to a guns as well if it's an
+emergency I'd much rather my
+interceptors be using their Cannon I
+don't I don't care if they have to get
+clo kind of a thing so we have ourselves
+flight size of two a maximum of two
+flights everything is ready to go that
+that's it it's as much as we needed to
+do so now what I'm going to do is I'm
+going to back myself out a little bit
+here and now we're just going to wait
+patiently to see if uh there's anything
+that shouldn't be in the sky now notice
+my f-16s did not launch as soon as I
+close that screen now apparently
+something has just appeared we have
+ourselves a bogey it's a 476 knots 36
+6,000 ft I'm doing some math in the back
+of my head uh that's probably civilian
+especially given the range we detected
+to that but that's okay so what's going
+to happen now is if I go back to my
+Airfield you will observe that my f-16s
+on their own are scrambling now if I
+unpause this it's actually pretty fun to
+watch you will watch my f-16s go tearing
+out of the runway there it's going to
+take them a second there they go and
+they're going to immediately begin their
+intercept option remember this is not in
+an area this is an air intercept mission
+that they're just racing over there now
+what gets really really interesting here
+they press nine at some point is they're
+racing together as a pair towards our
+Target here which is a Boeing 707
+obviously now the interesting thing is
+is this target now has been identified
+as neutral that does not mean they stop
+intercepting as a matter of fact quite
+humorously what'll happen here and this
+is a kind of sort of the fun that comes
+with it like I like to say as you'll
+observe they now fly in escort of 7 so
+this is going to spin around like that
+whoa whoa and they're probably scaring
+the pants out of the pilot right now so
+if I open this up in 3D view this is
+just just kind of a fun little thing to
+try but if you come over here let's grab
+my F16 there we go zoom in um that's not
+the direction he's facing but I
+appreciate the thought yeah you can see
+he's getting a little off fighter escort
+today which you know I mean I guess it's
+kind of cool but I I'd be slightly
+terrified I think I have to update my
+TCH view all right that looks pretty
+good cool so they're going to go back
+home now and they're going to kind of do
+the little escort thing and they're
+going to wait until basically take them
+to the county line so to speak now this
+is where your logic gets interesting and
+challenging one of the things you'll
+observe is the fact that two more
+aircraft appear now we have two bogis
+here they're 478 knots a little bit
+quicker but they're about the same
+altitude so that looks interesting
+except the fact they're flying in
+formation with each other generally
+airliners do not fly in formation with
+each other so the interesting problem we
+have now is if I go back to my Airfield
+real quick and open it up you will see
+that my f-16s are basically chilling on
+the ground and you're sitting there
+going but I thought you told them to
+just intercept stuff I did but what I
+also did is I limited the maximum number
+of flights allowed to fly the mission
+now you're sitting here going well if
+you crank that up to three what's that
+going to do well let's forward time a
+little bit here what you'll observe here
+is that my lovely level F-16 group uh
+def flight CH 37 I just took off and
+which you really really hoping right now
+is that they immediately turn to the
+right but you'll observe they turn to
+the left and go chasing after our good
+friend that one there now the reason
+that they're chasing after that
+particular one over there is on account
+of the fact that it was physically
+closer whenever you do any form of
+opportunity scrambling it is always
+based on proximity so if I turn these
+guys around by hand he's going to go
+ahead and take a nice long huh You're an
+F-16 my guy just turn around so he's of
+course going to go race over here and
+now you'll notice of course that they've
+automatically turned red so now here's
+the fun part you got a distance from
+here to here about 66 you have a
+distance of here to here to about 96 so
+now the cool thing is if I press delete
+here you'll observe my f-16s are much
+more interested in the Target that is
+closer to my starting point than they
+were before now there's a couple things
+we can do to fix this so of course we
+can detach them that was actually the
+wrong key to press there my bad I'll
+press G again what I meant to say is you
+for unassign now the cool thing is if
+you come here and go back to them and
+order them back to the scramble Mission
+let's go add them back you'll know
+observe they're still interested in this
+particular Target here they don't spread
+out now the reason they're not spreading
+out is as I mentioned before based on
+the number of flights that we limited
+now the cool thing is I can actually at
+any point press F1 and then go ahead and
+hold on shift and drag a box like that
+what that will do is immediately cause
+them to ignore what you just said and go
+chasing after the 707 you're starting to
+see how this could be used as a counter
+tactic now if I come rushing back over
+here and we can now go take a look at
+these directly now the interesting thing
+is you'll notice the target update up in
+that bright corner now says T 160m and
+they are more interested in these than
+they were in those other targets and
+again that has to do with that starting
+point and the distances involved which
+is one of those things you want to watch
+out for the best way to avoid this by
+the way is again set this to this please
+I'll make sure they're hostile only now
+what I can actually do is I can grab
+these two guys and actually send them
+back home and they will now pick on the
+blackjacks which are now chilling over
+there that's okay it's just one of those
+things that you have to be very very
+mindful of when you're setting up these
+types of missions the cool thing about
+these scramble missions is they work for
+anything so if you want to be goofy and
+know set up a scramble mission for a
+battleship you could set up a scramble
+mission for a battleship I don't know
+why you would but you could if that's
+something that you're interested in now
+of course we can't leave you without see
+if taking a look at the results of our
+engagement here oh those blackjacks
+really take some pepper oh my goodness
+that was two three
+three oh my goodness one two wow you
+guys need to switch to something a
+little bit bigger oh he broke
+apart engine fires will do that so as
+you can see this is a very useful way to
+create a little kind of a sort of a
+scramble point it makes some interesting
+AI decisions as well you can see by
+manipulating the features of it a little
+bit you can get a little more control
+over it and of course some of you are
+sitting here going ah but that's really
+iritating is there a way you could have
+fixed that I mean that's obnoxious one
+of the things you can do that works
+really well is you can actually create
+yourself an area so let me go a and
+create an area real fast here remember
+you can do this also in single player I
+can come in here and say this uh Danger
+Zone I should just call that zone Kenny
+logins so when I go in here of course
+what we can do is we can Define that
+specific Zone as a specific type of area
+let's go ahead and set this up it's
+already highlighted danger zone we're
+going to make this one a an exclusion
+zone so if I go in here and I basically
+add all eyelid plates on so if I go
+ahead and do that add those violators I
+can now set all the different colors so
+if I wanted to you can actually
+basically set the color so if the
+Violator is unknown I can mark them as
+unfriendly if they're red they're red if
+they're green there's no change so
+basically what you can do here is create
+a Nova avigation Zone let's validate
+that real quick make sure it's okay hey
+I did it right this time and what that's
+going to do is anybody who enters the
+Zone immediately gets flagged as red and
+that will basically create a situation
+where if they do go in here then we
+launch the mission we don't go chasing
+after this guy as soon as he appears
+until of course he crosses into the Zone
+enjoy

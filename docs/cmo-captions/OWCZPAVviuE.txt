@@ -1,0 +1,262 @@
+# C: MO - Attacking and Detecting Underground Targets
+Video: https://www.youtube.com/watch?v=OWCZPAVviuE
+Video ID: OWCZPAVviuE
+
+hello everyone in today's video we're
+going to be taking a look at how we can
+detect and Destroy underground Targets
+in command moded operations for those of
+you who are not familiar with
+underground targets there's a wide
+variety of them available the most
+simple one of course if I click on this
+guy right here is our lovely underground
+hanger which is auto detectable now when
+people are like how do you know that
+something is going to be underground or
+how do you know that something is going
+to be a Target we can't find well if you
+actually click on a unit that is an
+underground what you can do is scroll
+down and you'll see a couple things
+first of all you're going to notice its
+categories building underground and the
+second thing you're going to notice is
+it has no signatures uh when something
+has no signatures it's universal sign
+you're dealing with an underground
+Target so if I can also come over here
+type in underground you can see a wide
+variety of different items I got fuel
+tanks and stuff like that but again the
+key thing here is this is the word
+underground the other key thing you'll
+probably notice again no signature now
+that no signature is problematic for us
+and I'll show you why I to zoom way way
+way in here and I activate God's eye
+view you'll observe that we have a
+bunker that is not autod detectable and
+you'll notice we have an underground
+hanger which is detectable now if I take
+my Reaper here I'll go ahead and shut
+off auto detection real quickly here I
+have it just kind of do its little flyby
+here you will notice no matter how close
+you get you will never ever detect
+something that is a bunker that is not
+autod detectable that's a mouthful uh
+the reason you need to keep that in mind
+is if you are a scenario designer and
+you're trying to make that bunker nobody
+can see you can do that another thing
+people sometimes do is they use the
+bunkers and they do silly things like
+they amount radar mask to it and it
+creates sort of an interesting little um
+uh how does that work kind of question
+but again it's all depends on the
+scenario designer there so now that
+we've seen how to go ahead and detect
+these things let's take a look at how
+we're actually going to engage them so
+let me go ahead and grab my Reaper I'm
+going to pull them to the side here
+because I don't want don't want to
+accidentally some of the damage here so
+the first thing we're going to do is
+we're going to try to attack up with a
+B52 and B-52 is a very interesting unit
+for this purpose uh because number one
+it does a great job of blowing anything
+up that you drop bombs on uh the second
+problem is this shift F1 left click you
+will notice here that I'm out of range
+but that's okay I'm going to allocate
+all my weapons to that Target just like
+that I've got 108 Mark 82 is ready to go
+here we're going to lose some altitude
+here I got to be careful with my time
+acceleration all right we're going to
+make a pass we're lining ourselves up
+remember we are targeting the
+underground aircraft shelter here
+remember this was an autodetected unit
+if it was not an autodetected unit
+things would go a little differently as
+well so our B52 is running along here I
+really wish he had more control over
+like the time pauses like he could do
+like 8X or something but I get why they
+did it the way that they did it all
+right here they come so our B52 is going
+to come rolling over one mistake I
+always do is it autoc cancels everything
+nope we have allocator we're good so he
+just going to come flying over the top
+here we go B52 time B52 on something
+that's underground B52 there goes good
+job
+B52 all right here we go here we go here
+we
+go
+oh all right let's go ahead and switch
+to to the other team real quickly here
+and see how we did you'll observe that
+uh no damage was done and it's actually
+kind of fun cuz uh you can come down
+here and if you look you'll observe that
+every single one of the Mark 82s had
+missed because we can't hit something
+that's underground like that so you say
+oh it's not a problem I'll just use a
+bigger bomb okay we can do that too so
+what I'm going to do is grab myself a
+nuclear weapon here everybody knows my
+not love for nuclear weapons here shift
+F1 we're going to go ahead and launch
+all of the nuclear weapons at this
+particular Target now these are 15
+kiloton boms
+uh they they do the job um these are
+definitely good if you need to dig a
+well in the backyard or something like
+that uh this would definitely be the
+type of weapon to utilize for that
+purpose here so again these are nukes
+they're not penetrating nukes uh they're
+just basically tactical like I said 15
+kilotons you know that that that's big
+enough it's big enough that's a fat boy
+kind of a thing that's just I'll let
+this kind of fly over I love watching
+the airplanes do power Donuts there
+these weapons are re-entering the
+atmosphere notice they're 570 km up
+right now to make their way all the way
+down meanwhile the good folks here at my
+target region are about to hey what's
+that white line I'm seeing cutting
+through the atmosphere at maximum speed
+surprise that that that's
+it what do you think nice huh we take a
+look so you'll observe here that our
+Target was um completely unaffected
+again one of them of course malfunction
+that always happens but you'll notice
+nothing absolutely nothing our aircraft
+hanger is utterly unscratched also our
+little bunker that we've been hiding
+this entire time is it just sort of
+chilling there now some of you of course
+say well what if you dropped the Zar
+bomb on it um you're going to be
+disappointed I'm sorry so we need a
+different type of weapon to attack
+underground bunkers and now the weapon
+of choice of course is going to be
+something with a penetrator Warhead so
+as you can see I've got my F16 CM block
+52 Falcon and on board you'll notice
+that it is packing one of these lovely
+things here uh this is a GBU 24c this
+has this funky Warhead known as the Blu
+1116 SLB the SLB is the magic here so if
+I actually hit SLB over here for example
+example all you'll notice here it give
+you this a little description and when
+we come down to the bottom it will say
+the word penetrator penetrator is the
+magic term that you're going to need
+you'll actually see here if I come in
+here and if I type in P NE traitor
+you'll notice that there are many
+countries that have all sorts of
+different penetrating weapons uh for
+example you'll notice this guy right
+here the popey iir is also a penetrating
+weapon now you can see this one's
+specifically designed for the purposes
+of basically getting in is real here you
+can see the laser J down the MPR 500
+specially designed system for the
+purposes of and hit stuff that's
+underground so our F16 of course we're
+packing like I said the GBU 24 here it's
+the Paveway it's a two and Blu 116
+bravoo there which is a pretty solid
+little tool here uh one of the things
+you'll need to know here is it's
+intended for low altitude delivery it's
+got midcourse autopilot and all that
+other great stuff there so what I'm
+going to do is I'm grab my F16 I'm going
+to go ahead and order him to drop down
+to a middle altitude here it's going to
+be perfectly fine for him he's going to
+start swinging in get my shift F1 key
+going on there I'm going to go ahead and
+drop two of those that's perfectly fine
+and let him just kind of Zip by and sort
+of do his little deed here all right F16
+coming across Lichfield here he is just
+swinging into Farmington heading for the
+um actually Farmington would be down
+here this is more like Bristol uh
+swinging around here coming right over
+the course oh boy about range there
+Robertson airport right there on the
+right f-16's coming in he's got himself
+the special penetrator Warheads of
+Justice let's see what happens and fire
+in the hole fire in the hole and fire in
+the
+hole now these weapons as weird as it
+sounds you would think they would pack
+basically fly more vertically instead
+these kind of come out horizontally um
+I'm not judging just find that
+interesting I didn't design the weapon
+so I'm not showing that one all right
+let's see here 530 knots oh boy oh boy
+here we go here we go this underground
+aircraft hangers hey undergrounds guess
+what let's see what happens so I switch
+to where you will observe that the
+underground aircraft shelter here did
+take damage as a matter of fact not only
+did it take damage finally but it is
+also on fire uh which is um you know
+it's a good thing for the people
+attacking it not a good thing for the
+people down there trying to desperately
+get to the exits at the moment or you
+know trying to fight that fire as well
+when it come over here one of the things
+you're going to notice here is it said
+armor penetrated the reason this is a
+big deal is our underground aircraft
+shelter isn't just underground it's also
+3,200 damage points of durability which
+means it takes a really hard hit to
+disable so you know I come down here I
+can see we penetrate both of these
+actually did hit and I did do some
+damage here which is exactly what we
+wanted to do so as you can see
+underground targets are tricky um
+there's a lot of kind of fun ways to
+play with underground targets um I've
+seen some people say well I noticed that
+there's an underground entrance so do we
+need to use the underground entrance
+well that would be more for a mission
+that told you attack the underground
+entrance it doesn't like block airplanes
+underground from getting onto the
+surface or anything it's also worth
+noting that there's underground peers as
+well uh which gives you the ability to
+launch submarines without anybody
+noticing kind of a thing kind of a fun
+little toy but other than that enjoy

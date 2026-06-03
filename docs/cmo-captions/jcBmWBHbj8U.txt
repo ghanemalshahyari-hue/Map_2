@@ -1,0 +1,621 @@
+# C: MO - Bunker Busting Bombs
+Video: https://www.youtube.com/watch?v=jcBmWBHbj8U
+Video ID: jcBmWBHbj8U
+
+Hello everyone. In today's video, we're
+going to be showing you a little bit
+about bunker busting bombs. Now, that's
+just a fun way to say that. You know,
+one of the things I want to do is first
+of all mention the fact that trying to
+hit something that you can't see from
+the air is a kind of an interesting
+experience. So, always kind of preface
+anything that you're going to be hearing
+with that reality. So, something doesn't
+quite make sense, it might have
+something to do with that. So, first of
+all, let's take a look at bunkers in
+general in command modern operations.
+And I have a group of different ones
+just for the purposes of demonstration.
+I know you really want to see that thing
+hit this. And I set it all up nice and
+neat so it could show off the
+differences. I got you covered. Don't
+worry. So, let's go ahead and pause. So,
+the first thing is not a bunker as far
+as bunkers go. Underground bunker, I
+should be more specific here. You have a
+straightup surface bunker. And what
+you'll notice here, if you take a look
+here, is it'll have a category under the
+bunker. It'll say it is hardened. And of
+course, it'll be building bunker. That's
+just kind of fun to say. One thing
+you'll notice here is that it's got
+1,600 damage points. pretty average
+size, pretty big. Again, nothing too too
+special. Now, remember, this is a
+surface bunker. I know we're doing
+bunker busting today, but this is
+something on the ground. We don't have
+to get to it. We can just hit it
+conventionally, and you'll see what I
+mean in a moment. This guy in the
+middle, of course, is an actual
+underground target. And what makes it
+different in command modern operations,
+if I come swinging down here, you'll
+observe the fact it is a land structure
+hardened building underground.
+You also notice it general armor is
+pretty darn strong. It's got about
+double the damage points here, which
+that's not that big of a deal, but it's
+also a much bigger target. So,
+theoretically, it's easier to hit. Our
+final type of bunker, and this is kind
+of where it starts getting a little
+weird, is an actual mountain bunker.
+Now, this is something that, as you can
+see from our picture here, it is
+integrated. These things are not
+supposed to be easy to hit. Again, if
+you have an uh basically a hanger in the
+side of a mountain, this is the same
+concept here. It has something kind of
+unique about it, and I want to show you
+real quick because once you see it,
+you'll never not see it. Uh, did it do
+both screens? Yes, it did. Let me scroll
+down to the bottom. Do you notice my
+regular bunker has some signatures? It's
+got a v visual signature. It's got a
+radar signature. Watch what happens when
+I go to our buddy over here who's this
+underground mountain bunker. You'll
+observe it has no signatures. This
+target cannot be detected. I know that
+sounds kind of like, oh, obviously it's
+a bunker. But the reality is, if you're
+building a scenario and you make this
+thing not autodetectable, it also means
+you'll never be able to see it. You
+could be inside of this thing and you
+still will not be able to see it inside
+this game. Now, the third bunker I
+grabbed here is our lovely underground
+hardened bunker C3M. One of the things I
+really appreciate about this one is if
+you actually look here, it says
+underground hardened bunker C3M.
+Penetrators are required. That's only
+partially true as you'll see, but notice
+it's about the same hit points. It's
+about the same size. There's really
+nothing special and again it's invisible
+unless it is auto detect on. All right,
+those are the lessons. Let's see what
+happens now. So, first thing what I've
+done is I've asked this lovely B-52 to
+uh inconvenience these targets with some
+high explosives in the form of
+everybody's favorite GBU10E. This is
+sort of an early version of a laser
+guided bomb. But what I really
+appreciate about it is it makes a really
+big bang except when it doesn't hit the
+target,
+but it'll be able to prove my point
+pretty clearly anyway. Don't worry about
+it. There'll be a follow-up in a second.
+So, if I go ahead and switch on a god's
+eye view here, you can see here that my
+underground hardened bunker, um, it
+actually took a pretty heavy hit there.
+Again, when you have about 2,000 lbs of
+explosives precisely dropped basically
+on the front door, it's going to cause
+some problems. Now, if I swing over to
+my mountain bunker, you can see again, I
+broke some china kind of a thing like
+that. Swing to my underground bunker.
+Surprisingly, it wasn't a very clean
+hit, so it didn't do that much damage.
+And of course, my surface bunker, quite
+hilariously, um, had a malfunctioning
+GPU. So basically it made a whistling
+noise and you hear thunk and that's all
+you get. So if you want to imagine kind
+of a gutter ball I guess is what I would
+call that one. So what we have now too
+is you can take a look at my little
+scenarios. We have a group of GBU 31s
+here. Now the reason I picked these is
+because I wanted to demonstrate that
+this is a lot of explosives. These are
+all Mark 84s. Big big big big big bombs
+here. And what you'll observe is as they
+go slamming into this underground
+target. Ow. Oo. Ah. Ooh. Um, let me go
+ahead and I'll let this smoke set. That
+was some clean shooting, by the way.
+That's hard to do. If I actually were to
+click on this, let me took on God's eye
+view. You will notice that that many
+thousands and thousands of pounds of
+explosives did indeed do a substantial
+amount of damage. Actually cut it in
+half. You'll notice we didn't really
+penetrate into it. As a matter of fact,
+if you were to open up your little
+endgame here, you can read all about it
+and it'll say, you know, we struck the
+target kind of a thing like that. But
+what you'll notice is only a few of
+those actually did real damage. Again,
+we're shaking China here. And you can
+see 10% 10% 10%. We didn't start a fire.
+Obviously, we can't flood it because
+it's underwater. Obviously, it's not
+underwater kind of a thing. So, as you
+can see, traditional weapons just aren't
+optimized for the process. Now, like I
+said, I'm a little disappointed that
+that fellow on the right decided not to
+work correctly. You know, of course,
+it's going to do that when you go to do
+demonstrations. You know how these
+things go. All right, so let's go speed
+it up. Let's try that again. This time.
+Okay. Okay. Ready? Ready? Ready?
+Remember, this is the surface bunker.
+Surface bunker. Half the hit points,
+half the Here we go. Here we Here we go.
+There we go. Okay. Thank you. Now I can
+demonstrate my point here. All right.
+You'll see that this one did take
+substantial damage only on account of
+the fact that it was kind of a near
+miss. I mean obviously losing uh you
+know 15% of your existence is uh quite a
+near miss. But the key thing here is
+you'll see that it did do a regular
+amount of damage and again much less
+damage. Hopefully you get that part. All
+right. Now let's get to the actual
+bunker busting. So we'll go swing back
+and one of the things I'm going to
+change real fast. Here's a quick little
+tip. If you set this to computer only,
+you don't have to put up with that every
+time. All right, we're in business. So,
+we have a B-52 here. And now, what I've
+done is I've intentionally changed its
+loadout, and I've cheated a little bit
+here, but again, you could see I pretty
+much got all the bunker busters. And for
+some very, very sharp eyed folks, so
+you'll probably recognize a couple of
+the early bunker busters, like the Tall
+Boy and the Grand Slam, are not here.
+You also notice I didn't get a Bap 100.
+I didn't get a PB500 or anything like
+that. Those are all really, really,
+really solid ones. But what I did do is
+target the ones that pretty much
+everybody knows. So, you can see I got a
+Cab 1500 in there. Now, there's a wide
+variety of different style bunker
+busters. And of course, this B-52 could
+not possibly hold all these in here, but
+they're all basically the same general
+concept. The idea is you have some kind
+of guidance package on the end of
+something that is very hardened that has
+a very long delayed blast on it. So, if
+you take a look, for example, the GBU28
+here, which is the classic Gulf War
+weapon of choice, even USAF91, you get
+an idea here. You can see that this
+thing is basically a rocket boosted bomb
+with a very very very precise warhead.
+The idea is basically this thing would
+drop, the rocket would fire, go boom
+kind of like a uh and that's actually a
+pretty good demonstration. It's a lot
+louder than that, but the reality is
+this thing would basically dive into the
+ground and then explode. One of the
+things you don't realize about this
+thing which I saw was very fascinating
+is it is a 4700 lb bomb. This is not
+like something tiny and you can see just
+how much it's a 670 lb of titanol. This
+is not a messing around weapon. The
+other thing I found very interesting
+about the GPU 28 here is the fact that
+when you look at it, it's pretty
+reliable and it requires an a laser spot
+to do the D. So, let's go ahead and drop
+this thing on our good old friend
+really, really, really harden target
+here. Grab the command bunker. You can
+see I have such a good choice of what
+I'd like to use here. We're going to use
+the GB28 here. Let's go ahead and speed
+up time a little bit. Remember, this is
+the Gulf War era weapon. Almost 5,000
+lbs of explosives here. And there it
+goes. Now, one of the cool things here,
+and one of the things that blows my mind
+is, again, this is considered a guided
+weapon. You can see right now it's
+dropping just shy of the speed of sound.
+And one of the things it should do,
+which I don't think they're going to
+emulate or simulate, I should say,
+emulates one thing. Uh, simulate and
+command is this thing should more or
+less be dropped vertical. Like, you
+really shouldn't be doing this oblique
+shot like this. Like you can see right
+now, it's pitched at about 26°. You
+really want to come straight down with
+this weapon cuz that's how it would
+worked. And as you can see, remember we
+had a 15% chance of it malfunctioning.
+As you can see, we got the lucky lucky
+wave and it just cleaned flat out
+missed. The weapon malfunctioned. Isn't
+that kind of funny? I'm having a fun day
+with that. All right, back up. Try that
+again. All right, second time.
+Imagine how embarrassing that would have
+been for the air crew when just looking
+at each other going, it does explode,
+right? So, this is actually a little bit
+better of a shot because we're a little
+bit steeper. And again, you want to try
+to get it as vertical as you can get to
+get the maximum penetration, which again
+is our goal. We're trying to get
+underground with this weapon as it drops
+here. All right, see this one works
+better. Oh, we missed.
+Ah, that's a go 1991 G4 laser technology
+there. And you can see we just straight
+up missed 7 off the side. And obviously
+it blew up and didn't do much. But one
+of the things I love about that is just
+to demonstrate how the early versions
+you needed to drop a few of them to
+actually be successful with it. So,
+let's go ahead and fast forward time a
+little bit here. We'll go back into our
+lovely little inventory of weapons to
+something that was a little bit more
+modern. And again, you jump up to the
+GBU37, which kind of the improved
+version of this particular weapon. This
+is a little bit later on if you want to
+think more like a Serbia Kosivo kind of
+thing like that. And you can see we've
+got that large guard section. We have a
+very, very strong hardened warhead. And
+the actual explody bits are the ones in
+the middle here that's going to be doing
+the job there. Couple things have
+changed, of course. saw we now have INS
+navigation which theoretically will
+solve some of those issues we have. You
+also notice we kept the same 4700 lb
+weapon size and that's actually really
+really impressive cuz that's a lot of
+explosive and you can see B2 Spirit. So
+I'm about right with that one. All
+right. Now watch the difference here. So
+I'm going to go ahead and drop three of
+these at once. And you're going what?
+Let me show you a cool trick. Hold down
+shift F1 then press shift drag box. Let
+go. So I'm going to grab my Oop here.
+Wrong one. We'll get we'll get to you.
+We'll grab the GBU37. I'm going to grab
+all four of these with a shift click.
+Click my GBU37. Set this to the number
+one. And then press allocate weapons.
+Now, if I unpause like this, you will
+notice my lovely B-52 has no problem
+giving everybody a bomb. And you get a
+bomb, and you get a bomb. So, again,
+same kind of thing as last time, and you
+can see it's basically the same weapon,
+but just a much, much better guidance
+package. Theoretically, this thing
+should work. And I again, I'm uh should
+is in italics, by the way. I don't know
+if you could hear that from my voice.
+So, here they come again. Little bit
+flat. You wouldn't drop a bomb like that
+flat. And you can see it hits one of our
+bunkers. It's my surface bunker. It's
+that bunker. And of course, here comes
+the good one. Here comes the good one.
+Watch us. Bang. All right. Control V.
+Now, this is where things get
+interesting. All four of those look like
+they were pretty clean hits. I think the
+only one that did not hit was this one.
+Yeah, about 45 ft off, which against a
+bunker. That's that's a it's it's not
+good. That's not good. Again, you're
+going to break a bunch of light bulbs
+and stuff like that with a hit like
+that. So, one of the things we can see
+here is our surface bunker, which again
+has no protection from the ground above
+it. Basically caught fire and is having
+a bad day. Our little uh first one, the
+underground bunker one. Yeah, like I
+said, you probably shattered all the
+lights and stuff like that, but it's
+actually okay. This one, by the way, we
+missed. Coming over here, this is the
+mountain bunker. Theoretically, you've
+got a lot of mountain on top of you.
+Same thing again, about the same. Wasn't
+a clean hit. And when we swing over to
+this one, you'll see that we did
+actually pretty hefty amount of damage.
+This was a very, very clean hit against
+this. But notice the difference. Same
+amount of explosives, much much higher
+effect that we've had on our targets
+here. Next up on the mic, of course, is
+going to be the CAB 1500 LPR model. Now,
+this is kind of a neat weapon. This is
+basically an Eastern weapon, a Russian
+weapon. The big difference with this one
+compared to some of the other ones, I'm
+going to grab it real quickly here. You
+can keep running just in case something
+happens, is the weapon's just not as
+large. Uh, you'll see here it says 750
+kg. Um, if you want a quick translation,
+that's just shy of 2,000 pounds. So,
+it's about a Mark 84. It's not nearly as
+big as the other one, which is literally
+twice the size. But you'll notice that
+it does an enormous amount of damage
+because it has such a bigger warhead
+compared to the rest of the body of the
+weapon. So, this is a classic example of
+let's get more bang for our buck,
+literally by just having a larger one.
+One thing I really like about this
+weapon is it targets runways and puts
+very big holes in them, which is pretty
+cool. But anyway, let's uh jump back
+down here so you can see what the
+western version of this is. And again,
+this is a very very big explosion
+because more of the weapon is dedicated
+to the explody parts than the weapon is
+dedicated to the guidance parts. And
+again, now you'll see the difference
+pretty much right away hopefully. So,
+okay, here it comes. And we got a little
+CAB 1500. Again, this is a laser guided.
+The PR means I forget what it is. Don't
+ask. Again, I think of it as penetrator,
+but I'm sure it has another name for it.
+And let's see here. It looks like pretty
+clean again. Oo, right down the center.
+Let's see how we did here. Now, as you
+can see, this mangled the interior of
+this bunker here. And the reason it
+mangled it so well was several reasons.
+First of all, it was a clean hit.
+Several of these we haven't gotten
+clean. Second of all, and this is huge,
+the explosive was so much larger and
+more powerful than we had in the
+previous one, which just was targeting
+trying to get down deeper. Now again
+depending on the real world how deep the
+bunkers are and again those kind of
+elements are going to have a big impact
+on just how that would have matched up
+side by side. Now if we could of course
+we could dial in how deep the bunker is
+and then we would have seen that that
+previous weapon even though it was a
+smaller weapon probably would have been
+less effective than like I said the
+GBU28 and 37 only on account of the fact
+that those weapons were designed for
+more penetration. The other one was
+designed for more explosive potential.
+Now, the interesting thing is there's a
+couple weapons that exist that are
+basically kind of hybrids between the
+different types. And of course, those
+would be your BLU 109's and your BLU
+122s. And basically, they're almost the
+uh almost call them the American version
+of the CAB 1500 there because they're
+optimized for explody bits rather than
+diving. So, if I were to open up my
+little bit real quickly here, we'll pop
+into my weapons real fast. I believe I
+did one of those. Those are 113s.
+There's a 109. Got it. But one of the
+great things about this particular
+warhead is you'll notice that I can
+mount it on something other than a bomb
+that I got to walk up and drop right on
+somebody's head, giving us a whole
+different kind of tactical flexibility.
+So the AGM130, of course, is a really,
+really slick glide weapon. So if I were
+to go ahead and grab this one real
+quickly, you'll notice I'm already
+within range. I can just boop like that.
+Go ahead and hit spacebar there. And you
+can see that weapon goes just like that.
+And now the cool thing is you can
+actually see that this thing is
+basically a rocket powered bomb here.
+So, it gets a nice little boost. You can
+see it's actually busted the speed of
+sound already and it's basically gliding
+in a nice sweet arc all the way down
+onto the target area below. Speed up
+time a little bit here. We'll see if we
+can catch the fun part to happen. 30
+seconds to go. I love this feature. I'm
+so glad they added that. There we go.
+Again, still kind of flat. So, this is
+this would be basically a glancing shot.
+Bam. Woohoo. As we can see, as is
+today's trend, uh you'll notice here
+that we just missed the weapon
+malfunction. We are having a good day
+for that. Talk about probability not
+being on our side. That's okay. But the
+key thing there is that you notice that
+we have the same capability as these
+other bombs, but we just have a
+massively improved range. Now, when it
+comes to weapons, of course, and people
+think of the classic, what is the bunker
+buster to end all bunker busters? Like,
+I need to hit something a mile
+underground. You just can't do that.
+That technology doesn't exist unless it
+has a physics package. As I'm going to
+put that in finger quotes real quickly.
+However, if you absolutely have to do
+damage, you have this one, the GBU 57
+Alpha in Bravo. Now, you can see a
+picture of this thing and you're like,
+"Oh, that's looks like the other ones.
+It's got a big heavy nose. It's got the
+big guidance section on it." But there's
+something you might be missing with
+this. And uh this is what I think is
+kind of fun. You will observe that it is
+a GPU 57. It has 2400 kg of high
+explosive HTP. It's big stuff. And this
+does more damage than any of these
+bunkers can survive. Uh, the other thing
+that's incredible about this weapon is
+it's nice and fast. You get about 18
+seconds worth of cruise on it. But of
+course, it has all the latest and
+greatest and greatest weapon. Inertial
+navigation, GPS guidance, everything
+under the sun. This is a fun weapon to
+play with. So, let's go ahead and shift
+F1 there. We'll go ahead and drop. You
+get one. Let's see here. GPU 57. We'll
+go ahead and grab that. Again, I'm
+amazed you can carry two. These things
+are gigantic weapons. We'll go ahead and
+track that one. And we'll go ahead and
+drop. That was a 28, but that's okay.
+It's going to do the same deed. So,
+we're interested in the one on the left
+here, not the one on the right. All
+right. Getting a little bit closer.
+Getting a little closer. Getting a
+little close, my friend. Oh, there it
+goes. There's one. That was the 28,
+though. That one just got There it goes.
+That's the one we want to watch. So,
+again, this is the world's largest. You
+can see here, like I said, it's a huge
+weapon. I think it's uh just off the top
+of my head, I think it's like a 30,000
+lb bomb. Like, it's it's just huge. But
+anyway, bam. Okay, let's see what
+happened this time. V. You notice it
+didn't malfunction, right? So, if I open
+the sucker up one more time, we can see
+we got a pretty clean hit. And again, we
+did a pretty good amount of damage to
+it. I don't think it was a clean hit.
+No, it was not a clean hit. So, we
+actually missed it by 31 ft. But in
+missing it by 31 ft, not only did we
+shatter all their China and knock all
+their Legos over, but we also set fire
+to the bunker. So, it gives you an idea
+of just how lethal that weapon is. I'm
+not satisfied with that end result,
+though. So, let's go ahead and shift F1
+one more time here. We'll go grab
+another one of those. Ah, that's the one
+I want. 57A. I like how it's literally a
+mop because it's a massive ordinance
+penetrator. I mean, like that's on the
+nose. Okay, this time it's will succeed.
+And again, you're probably noticing you
+have to drop several of these to
+actually hit the bunker because you
+can't see the bunker. You might get like
+a little vent on the ground or something
+like that. Now, that's correct. It's a
+six. Oh,
+there we go. And you can see if you do
+hit the target, it obliterates it cuz
+that's exactly what that particular
+weapon is designed for.
+Now, at this point, you should have a
+pretty good idea of what's going on
+here. The key tactical considerations.
+Obviously, you have to detect the target
+first, but you can't unless the scenario
+designer let you. Uh, the other thing
+you probably observed I'll go move him
+back here. We'll have a nice little Oh,
+I just want to call it uh, you know,
+fireworks show at the end here just for
+fun. The other thing you probably
+observed is the weapons themselves are
+not terribly accurate. You know, no
+matter how hard we try with those kind
+of things, the reality is you're
+probably not going to hit it with one
+bomb. Uh, you probably also noticed that
+with the later generation, they traded
+penetrating power for having a little
+bit more explosive, which was a nice
+trade-off cuz the nice thing with those
+weapons is you can also use them against
+runways. And again, we have no runways
+here. Runways are very hardened. You can
+see we're trying. We're trying. He's got
+to go back and do it again because
+unfortunately uh he's all basically LGB
+and everything like that. So, if you
+open this sucker up, you can see my
+surface bunker on fire. You can see this
+one. Actually, the ammo bunker wins the
+game here. This one has been untouched.
+And of course, our lovely command
+bunker.
+And again, the last thing you probably
+noticed from this video, which again,
+this happens in the real world all the
+time, was the fact that many of my
+weapons did not hit. Many of my weapons
+malfunctioned, which is just kind of the
+nature of the beast when you're dealing
+with things like that. So, when it's
+like, "Hey, what am I going to use?"
+Just remember, you're going to need a
+lot more than you expect when you're
+hitting a target you can't see. Enjoy.

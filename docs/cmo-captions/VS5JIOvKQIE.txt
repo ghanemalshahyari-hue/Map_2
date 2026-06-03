@@ -1,0 +1,801 @@
+# C: MO - Play Along Tutorial 1:Air Intercept
+Video: https://www.youtube.com/watch?v=VS5JIOvKQIE
+Video ID: VS5JIOvKQIE
+
+hello everyone in today's video we're
+going to be getting started on a brief
+series with playalong missions for those
+of you who've been asking for something
+like this for a while especially a very
+very new players basically what we'll
+have here is that we have a play along
+tutorial number one this is an air
+intercept Mission you can grab this one
+over in the workshop the link is down in
+the comments for those of you coming
+from the workshop to find this video
+also cool I just keep in mind I guess
+it'd be backwards but I guess it doesn't
+really matter so either way it's fine so
+we're going to do today is we have an
+interesting little task here about
+protecting this little island here and
+of course if I open up the scenario one
+them more time you'll get this lovely
+little briefing that pops up now
+whenever you're playing any scenario
+it's a good idea to read through the
+briefing cuz usually the person who
+writes The Briefing knows how they would
+play the scenario but the good thing for
+us is there's a lot of really really
+simple things we need to pick out of it
+even though this looks pretty
+intimidating there we go Mission defend
+Bridgetown Port that's it and looks like
+we're dealing with aerial threats today
+that's all we have to worry about so
+there's nothing else we really have to
+worry about there's other things in here
+it tells us you know prioritize engaging
+enemy aircraft gives us a a mile
+limitation which is a little weird uh
+let's see here we got port protection
+Force preservation minimize risk to
+Friendly forces okay that's pretty easy
+that's really all we need to do so I'm
+going to go ahead and press enter
+scenario here and the first thing I like
+to do is I like to take a look at what I
+got now this scenario was designed for
+this purpose so it basically has a lot
+of things kind of simplified for us but
+the first thing I do is I press the o
+key and that's going to bring up your
+order of battle and contacts I can see
+here I have a Bridgetown Airbase we can
+open and close that real quickly here
+consisting of a bunch of regulars they
+all have Mirage 2005 FS which is awesome
+looks like we have quite a few ready to
+go some of them are unavailable ailable
+but that's going to happen from time to
+time we do have a structure and it's got
+a couple commercial container vessels
+now those container vessels which I
+think you'll find very interesting again
+zoom in with your mouse wheel right
+click and drag to move around so if I go
+to click on this port R prass and press
+the F7 key you can see that we have some
+friendly units actually sitting at our
+dock here and one of the amusing things
+here is you can actually eject them from
+the dock I wouldn't recommend doing that
+it's a little rude for them but at the
+same token is it's um we're here to
+protect them so you want to keep that in
+mind looks like there's a little buoy
+over here can't do anything about this
+one obviously because this one is an
+ally and we can't actually kick it off
+but that's perfectly fine we do have air
+base here and I can click on that I can
+take a look at it is definitely a pretty
+pretty improvised Air Base here we' got
+basically a road that we have a bunch of
+little hangers kind of hanging around
+some fuel tanks and stuff nearby not
+much if I wanted to inspect what was
+inside of course I could run up to the
+top you could press the aircraft
+operations button for those of you who
+have played this for a while you
+probably hit F6 and you can see here we
+got a nice collection of different
+airplanes here it's some Mirage 2000s
+they're pretty good if you click on it
+you can get a little detail these are
+things are small it's kind of the thing
+we do not see here but these are tiny
+airplanes one thing we do know however
+is they are equipped with the Micah em
+and the mic IR which are really really
+nice missiles one thing I would normally
+do is I come here and take a look looks
+like we have four of the EMS and two of
+the mic IRS each that's pretty good we
+also can see we get 140 mile cap at 150
+nautical miles it's pretty good and
+according to this they like to return to
+base after one engagement we've got to
+fix that uh because we do not want them
+to run back to base as fast as they fire
+the missiles off it's going to be pretty
+useless one thing I like to check too is
+the range of the weapons to get an idea
+and looks like our maximum range here is
+45 miles anybody who everybody will tell
+you 45 miles is a pipe dream you will
+never be able to hit a Target at that
+distance it just doesn't happen the
+missile runs out of energy before it
+gets there so we probably want to keep
+this in mind when we set up our attacks
+here so with that in mind uh we can go
+ahead and start our scenario so the
+first thing I'm going to do is run up to
+my lovely DPS 43 and click on that it's
+kind of an early warning radar and I'm
+going to turn it on that's an important
+point because if it's not on we're going
+to get get surprise attacked so I'm
+going to run down here and press my
+sensors window couple different ways you
+can do this the simplest way is where it
+says unit obeys mcon if you click this
+button you can now just like that and
+turn on the radar now if I click on this
+guy and move all the way out you'll see
+it is an early warning radar with a
+fantastic range here you can see pretty
+much everything so if they're coming out
+of the water over here we'll get a
+chance to see them if they're coming out
+of the land down here or anything around
+here we will get a pretty good chance to
+be able to see them in operation so at
+least we've got that so what I'm going
+to do now is I'm going go unpa now
+there's a bunch of different ways you
+can control the flow of time in this
+game one method that I've mentioned
+before so when you come down here you
+can actually basically say I want to
+advance Time by exactly one minute now
+the way you do that you have to be a
+little careful here if you click here
+let's say I want to do uh One Flame
+speed if I come down here and click on
+Advance Time by 1 minute and hit play
+you'll notice it's going to go fly ahead
+and it's going to ignore everything and
+you can see our scenario was almost lost
+so you would to be cautious when you
+press that that you don't make the two
+things basically get in each other's way
+when you're doing that so what I'm going
+to do is I'm going to reopen my scenario
+one more time just like that and again
+nothing bad happened the only thing we
+have to redo is open up our little radar
+and flip that back on again good
+practice and now we're ready to rock so
+what I'm do is I'm going to on pause I'm
+just going to speed up time a little bit
+here H oh we've got some targets now
+we're going to play this scenario a
+couple different ways to kind of give
+you an opportunity to sort of see the
+different methods in which you can
+engage right now I've got some unknowns
+it looks like they're forming up we can
+learn a lot about them just by clicking
+on them very quickly remember at any
+point you can pause the game so I can
+actually click on this guy real fast
+bogey number two and I can see 75 M away
+we picked him up with our radar set
+which is pretty good but more
+importantly I can see that he's climbing
+and he's moving very very quickly this
+is very unlikely to be a commercial
+aircraft it's climbing very very fast
+again 455 knots is a lot at 16,000 ft so
+it is most likely the ones we're going
+to be interested in we're not sure what
+the deal with this is yet but I think
+it's time to go ahead and engage these
+aircraft so we're going to do this
+manually first which is in my opinion
+the hard way to do it so I'm going to
+come down to my airport I'm going to
+press the F6 key on it again the other
+thing you can do too if you for is you
+can click on the aircraft operations
+button up at the top it's up to you now
+if you do that of course so you get all
+airplanes so let's see here we have two
+groups of any aircraft we should
+probably respond with two groups of our
+own it's very tempting to launch one big
+group of four especially if you played a
+lot of Falcon back in the day but we're
+going to launch them in two smaller
+groups so what I'm going to do is hold
+down my shift key click on to one and
+two press launch this group click on
+three and four launch this group now the
+cool thing here is it will say that's
+it's going to take them about 2 minutes
+to get ready remember they have to get
+in the air so they have to B basically
+start up they got to get the pins pulled
+out they get the pilots to the station
+all these things has to happen very
+quickly now you can see here our enemy
+targets seem to be kind of like jerking
+like they have lag and the reason is not
+because we've broken anything it's
+because this radar can't point in every
+direction at all the time so this is as
+much information as we can see based on
+what we have now now you're probably
+panicking going where's my aircraft ah
+there they are right there so this is
+one of our flights of aircraft and you
+can see they just took off a few seconds
+ago and they're pretty much ready to
+play so there's a couple different ways
+we can engage well we have this nice
+little red line here which tells us
+basically their air effective range keep
+in mind we're going to be shooting
+uphill here so that's going to reduce
+our range we want to get some altitude
+first and we basically want to kind of
+land on these guys so the first thing we
+need to do is identify them so what I'm
+going to do is get some some altitude
+and I'm just going to un pause and
+they're going to start climbing up right
+away heading in that channel Direction
+you can see they just got off the Runway
+plenty of fuel on board uh this is going
+to be pretty easy and yes there is only
+one of the two groups the other groups
+going have to catch up now since this is
+an emergency I'm going to order them to
+full afterburner
+so whenever you do a manual order you
+have to remember it's going to maintain
+that order the entire time so if I kick
+these guys up to afterburner like I just
+did this is an emergency we need to
+investigate it they're going to be
+cooking through fuel really really fast
+but they're going to stay on that unless
+I set back to Auto here now we do have
+Radars on board here now one of the
+reason I'm resisting the urge to
+flipping these Radars on manually here
+is because we have a good idea where the
+enemy Target is keep in mind there could
+be some lower altitudes that we can't
+see but for the purpose of the scenario
+I'm keeping this pretty simple so our
+mirages are picking up some speed you
+can see it takes him a very long time to
+get up to speed that's very authentic we
+got about 16 17,000 ft there again we're
+going uphill this makes this a much more
+challenging there's our second group
+we're going to go ahead and order the
+second group as
+well they're going to take a nice long
+Arc and they're going to start working
+their way towards the targets all right
+we're getting pretty closer within
+weapon range now but we still haven't
+identified the Target now yes they have
+not technically within five nautical
+miles if we're following orders
+correctly and you can see we just got
+high enough of this little thing this is
+Con s con s simply means we now have a
+cont Trail kicking from behind us
+letting people know where we are which
+means these folks over here probably
+know where we are now too that's okay
+though all right we're getting close we
+just need to get a positive
+identification before we start the shoes
+thing yes you could probably start
+shooting anytime now but it's important
+that you identify the thing well
+actually slow down for this there we go
+about slowing down coming down to normal
+speed here w we are
+moving again our visual distance you can
+see here from the targets oh getting
+close getting close Boi one Boi 2
+getting very close we got a
+visual and you could see the Bogies are
+below
+us now the reason this is so cool here
+is this is a perfect example of
+understanding the three-dimensionality
+of combat this group right here is
+actually about 50 ft off the ground
+they're actually 825 ft our group that's
+attacking them is quite a bit higher and
+the group that's following them up is
+1,000 fet which means the group that
+actually has a better chance of seeing
+them is actually the group that just
+took off and that's one of the things I
+love about this game is little tiny
+details like that really really really
+matter now this is interesting here
+because we're basically going to do a
+highspeed pass above them almost three
+miles above their heads basically
+letting them get by now I'm going to let
+this group over here kind of catch up
+and they're going to stay nice and low
+and see what we can do now the cool
+thing here is I can actually spin around
+with this group by using F3 and then
+clicking to basically come around and
+get a direct lock on them just like this
+and you can see that gives me a nice
+opportunity uh oh I'm picking something
+up
+what did we just detect we just picked
+up something called sural sural is a
+radar warning receiver let's see what
+the contact report says Fire Control
+radar those are enemy aircraft we know
+these are enemy aircraft because they
+turn their radar on and they're
+Illuminating us so I'm going to go ahead
+and press the F click on my group press
+F1 hold down shift drag a box over this
+hostile group and let go what they're
+going to do now is they're basically
+going to come around and do the deed now
+this group in the other hand while
+they're spinning around we're getting
+sneaking up on here and again this is
+all manual control but I never recommend
+let's see here we're going to do a nice
+high-speed
+pass oh weapons launched weapons
+launched we just got to get a good look
+at this one group here you can see we're
+about 2,000 knots we're moving very
+quickly switch back to Auto Let's see we
+still have no line of sight on here it's
+pretty early in the day this is a common
+problem is identification of targets
+there it is hostile F1 shift let go all
+right let's let them take care of that
+so we can see here that our two groups
+have started engaging
+now that one already got splashed this
+group here again I can order them to do
+it we have another group and this is
+where the chaos starts so we're
+basically diving out of the sun on these
+folks and I'm making a quite a good show
+of it Radars are coming on you can see
+they turn the radar on automatically but
+one of the groups have gotten
+away this is why it's very very
+difficult to do these scenarios by hand
+some people really enjoy doing it by
+hand looks like we got ourselves a nice
+little Rumble going over there all right
+we got to sneak up on this guy over here
+oh we got both he's got to kick up his
+speed after if he has any chance of
+catching
+up and one of the missiles has been
+launched now this is a tail Chase of a
+missile so this is very challenging for
+the missile oh we got it nicely done
+everybody nicely done so what we're
+going to do now is we're going to get
+them in a holding pattern to basically
+save as much fuel as possible so we're
+going to send up 36,000 ft loer go ahead
+and send them up nice and high 36,000 ft
+loer notice they shut their Radars off
+automatically but we also know that
+there's a bunch of hostile targets over
+here and we actually have a really good
+idea about these hostile targets because
+they are using Fire Control rad to
+basically go hey did you know we're here
+kind of a thing like that so let's go
+ahead and get everybody all squared away
+we can see this one sort of hanging out
+here at this point they're not oh see
+this little rtb they're trying to return
+home because they completed their
+objective so I'm going to press U on
+them and actually order them back into
+the field you remember they're
+programmed to only do one missile
+engagement and then return to base we
+absolutely have to watch out for stuff
+like that all right they climb back
+up other group here is looking very very
+good other also returned to base I'm
+going to order them to ignore that and
+turn back around and again this is going
+to be much easier when we do this as a
+mission when we play the scenario again
+all right so we have a bunch of enemy
+units they're much higher altitude this
+time that's interesting I wonder what
+the deal with that is so our units now
+are basically holding a nice little
+loiter here up at 36,000 ft trying to
+conserve fuel as best they can now I'm a
+little nervous the fact I only see one
+aircraft here y there's two there's two
+they're just very hard to say so now
+what we're going to do is we're going to
+do something very naughty I'm going to
+go ahead and pause our game real fast
+I'm going to go ahead and put them back
+on auto I'm going to press my F1 again
+for automatic Target shift drag a box
+around them like that click on this one
+F1 hold down shift drag a box around it
+now what you'll notice this time that's
+different is we actually automatically
+acquire them and we're actually going to
+engage them directly you can also see
+everybody turned on their Radars
+immediately this time and they're
+basically riging em missiles at very
+very stupidly long ranges this is
+something we'll fix later during our
+next
+attempt oh boy there it goes oh see how
+everybody turned around yeah yeah so you
+can see Modern Warfare is really an
+exercise and who has more
+missiles so one of the problems I'm
+noticing right away is we're going to
+run out of missiles so I'm immediately
+going to grab my air base here and I'm
+going to order up a next group of
+aircraft cuz otherwise when those guys
+finally run out of missiles the enemy
+can basically drive up and knock we
+could try using air to- air guns but
+that's never recommended that has a
+pretty high casualty rate uh looks like
+we might get away with this oh oh nice
+nice nice job everybody nice job so I'm
+going to go back to F6 here I'm actually
+going to abort that launch and again I
+just select them press aort they shut
+their engines down and they come on back
+and then of course this group here we
+can just send them right back over here
+and they can basically be Ling on high
+altitude waiting for any other enemy
+aircraft to come now the cool thing is
+there's no other enemy aircraft now the
+reason I know this is I set the scenario
+up so let's speed up time here they're
+going to run out of gas and go back and
+land Boop the scenario has concluded
+okay let's see how we did we win awesome
+so now what we're going to do is we're
+going to play the entire scenario again
+so I'm going to go load recent but this
+time we're going to do it differently
+all right so we have everything we had
+from before we'll go through the same
+motions as we did before I'm going to go
+up to our little sensor here I'm going
+to go ahead and flip this onto radar
+nice make sure he's looking but this
+time we're going to make an air
+intercept Mission rather than trying to
+do everything manually which was a lot
+of work if you recall so I'm going to go
+unpause this speed up time a little bit
+here let's see if we can acquire any
+unknowns again this scenario is
+massively simplified compared to many of
+them but it's a good way to kind of
+learn the ropes here again no target so
+far it's a 1402 everything's looking
+pretty calm it's a bit of a cloudy day
+so you know it's not unusual we can't
+see things through the clouds and like I
+said about 4 minutes in nothing's too
+bad nothing too bad uh oh we've got
+something pause so now we're going to
+create a mission to do this is actually
+really easy all you do is you take your
+map up to the top click on Mission
+editor now there's a bunch of different
+types of missions in this game and again
+we could go on for weeks on this
+particular tool and don't worry we will
+so what I'm going to do is come up to
+the top where it says add and then I'm
+going to create a mission that air
+intercepts so I'm going to call this air
+intercept
+uh alpha or west or whatever you want to
+call it it's up to you strike we're
+going to make sure this is an air
+intercept Mission air intercept it's an
+active Mission press okay so what I'm
+going to do is I'm going to come in here
+I'm going to add my aircraft keep in
+mind too these aircraft are unaccessible
+or inaccessible I should say because
+they're you know hanger Queens kind of a
+thing so if it really bothers you you
+can come in here you can actually remove
+them from the mission it's not going to
+do any damage so don't worry about it so
+once I've done that I'm going to make my
+way over to Mission settings here I'm
+going to do flight sizes of two that's a
+pretty good size right there pretty
+awesome we can of course limit how many
+flights are allowed to do it we're going
+to do two flights of two otherwise we're
+going to end up launching all eight
+aircraft that's not desirable especially
+if we need to do like a followup we have
+all sorts of crazy settings in here I
+won't worry about any of this today but
+the one thing we do want to do is I'm
+going to go to where it says no targets
+and you'll see a button down here that
+says opportunity scrambling it simply
+says uh shoot at anything that seems
+interesting in the air we want that the
+other thing you'll notice here is this
+thing that says engage until shotgun
+which basically says keep shooting or do
+one attack by click this you can
+actually order to engage into Winchester
+which means keep going until you're out
+of everything that's high highly highly
+desirable now the next thing I'm going
+to do so I'm going to go up to my mcon
+and WR now this is where things are
+going to get a little complicated
+remember earlier that we fired a bunch
+of missiles and we immediately ran back
+for base we're going to stop that from
+happening so what I'm going to do is
+come over to weapon state come down here
+and I'm going to click this one here
+that says what mission specific weapons
+have been expended allow targets of
+opportunity with air air guns oh yeah
+that means they're going to stay in the
+air and keep doing their thing until
+they r out of everything which is highly
+desirable here there's some other
+options in here we could fiddle with but
+I'm not going to at this time so that's
+all set that's all set that's looking
+pretty good again it says no targets so
+that's not a problem for us because we
+can actually add them from the map like
+I said it's not going to cause any
+problems so let's go ahead and close
+that screen real quickly here I'm going
+to go ahead and unpause give us a little
+bit of time and now what I'm going to do
+is I'm going to order these targets to
+be hostile I notice one had a fire
+controll radar most uh civilian aircraft
+don't have Fire Control Radars now the
+wild thing here is if I come back to my
+base you will see they're automatically
+launching you can see here they got a
+minute 39 seconds to go now the cool
+thing is Paul is watch this give it just
+a few moments here and this will be cool
+if they can get themselves to the end of
+that Runway it is a very short Runway as
+you
+know there they go and you'll see now
+they're completely un automatic I don't
+have to tell them to do anything they
+just know that there's some hostile
+aircraft look at them go they're doing
+full After Burner they're ripping up
+into the sky they're trying to acquire
+those targets look at that they're
+already firing missiles and I have had
+to touch anything yet the next set of
+missiles is going off you can see
+they're being a little wasteful with
+missiles here but um that happens look
+at this it's like a Spam attack look at
+that look at that look at that and now
+you'll also notice that quite foolishly
+they're attempting to run all the way to
+the enemy's Island and engage those
+targets as well as a matter of fact if I
+unpause them here you'll see that
+they'll go rushing over there and
+they'll probably run themselves out of
+fuel in the process which is always part
+of the fun here this is so cool though
+cuz this is completely automatic I
+haven't touched anything yet this
+thing's just doing its thing you can see
+oh oh looks like we got somebody
+sneaking up on our six here they're just
+confirming this target is hostile uhoh
+I'm sure these guys are pretty hostile
+too all right here we go here we go here
+we go spam now the cool thing here is
+they've succeeded at their objective so
+what they're going to do now is they're
+just going to head back and land but
+remember the mission is still valid so
+there's nothing wrong at all with them
+actually going back a little later on
+and taking off again let's see what
+happens when the scenario ends here oh
+oh look at that wasn't that awesome
+isn't that so much simpler all right so
+let's show you one more way of doing it
+so I'm going to go to edit load recent
+I'll to play along again read the
+scenario let's go get our radar turn in
+this time what we're going to do is
+we're going to create an area Mission
+basically a patrol Mission so I'm going
+to go up to my sensor here I'm going to
+go ahead and flip that back on because
+it does help if we can see but this time
+I'm going to Define an area that I want
+to engage enemy Targets in there's a
+bunch of different ways to do that in
+command the simplest way of course if I
+go ahead and run up to Mission reference
+points there's an option that says
+Define areas contrl K now watch this I'm
+going to click on that I'm just going to
+drag a box so let's say I want this to
+be my protector area and I'm just going
+to release like that it's going to say
+are you sure you want to make a Zone
+entity uh yeah let's see we'll call this
+the AO which is my area of
+responsibility delightful press the okay
+button there and now all we have to do
+is Define this area as a place we want
+my aircraft to stay in number one and
+number two be able to engage any of any
+aircraft that come rolling in so I'm
+going to press contr f11 here and again
+that's just a short cut to bring up the
+mission to go ahead and create a mission
+I'm going to call this Air Patrol sounds
+like an old TV show or something like
+that Air Patrol now in color some I'm
+going to come down here press Patrol
+we're going to do a a press oky do and
+now it's basically the same thing we did
+last time I'll grab my mirages including
+the two hanger Queens no problem go up
+to my mission settings you have an
+option here to keep oneir of aircraft in
+the air at a time 1/3 of eight that's
+not a good number I'm actually going to
+shut that off and I'm just going to say
+please keep four in the air at a time
+that's going to keep it nice and simple
+for us flight size is going to be two
+that's perfectly fine for us and you can
+see here we have all sorts of fun
+options as far as what we can do as
+speeds I'm perfectly happy with this
+today I'm not going to comp make things
+it's any more complex that looks good to
+me looks good to me looks good I go over
+to my mcon and WR we're going to come
+over here and fix that silly weapon
+thing again we're going to make sure
+they're allowed to use our air guns
+going to Winchester just like that let's
+see here mcon I want Active Radar that
+sounds good to me that sounds good that
+looks good that looks good yeah I think
+we're in great shape now there's one
+more that we can take a look at here
+before we get carried away one of the
+things you'll notice here is investigate
+unknown contacts outside the patrol area
+if you shut this box off it will try to
+keep them inside the patrol area so they
+don't go running all the way here and
+then running all the way back which is a
+really effective way to kind of reel
+them in there's other methods you can do
+with that too something called a
+prosecution area I'm not going to do
+that today though because that makes
+things slightly complicated so I'm not
+going to worry about that all right
+that's set that's set that is all
+delightful go ahead and close it now
+watch this I'm going to go and pause my
+scenario speed up some time here there
+they go and you'll see they took off
+immediately and they're actually flying
+around inside of the Zone just looking
+around now this is so fascinating I
+think you'll find this kind of cool they
+basically climb up to their altitude you
+can see that other ones they're looking
+around they're scanning the sky around
+them uh they see that one group there
+and they're actually coming to come take
+a look here and you can see they're
+basically very interested but they're
+trying to stay within their weapon range
+here so they're not going to go running
+way massively outside the patrol Zone
+and they're looking there interested
+they're
+interested oh boy here we go fireworks
+time hustle hustle now the interesting
+thing is this guy from behind was the
+one that ended up firing the weapon
+isn't that crazy uh-oh we've got so we
+got a leaker now you'll notice that
+they're automatically prioritizing
+Targets on their own so we can see this
+one is uh lining up looks like we don't
+know what this guy's about so we're
+going to go investigate you can see he's
+flying an intercept course to get closer
+and let's see here uh-oh he's getting
+through I'm pretty sure that's within
+five nautical miles we'll go ahead and
+flag that as hostile and of course these
+guys will start firing immediately uhoh
+he's getting close he's getting close oh
+hit him uh he's going to need another
+hot shot though uhoh he's going for the
+radar he's going for the
+radar uhoh I think he made his initial
+pass there stay with them stay on
+target now the problem here is my guys
+are up so high they can't they have to
+like run all the way down oh I think we
+almost got a friendly fire there there
+we go and unfortunately there's a bunch
+more hostiles that are on the way now
+the cool thing is since we order these
+guys to keep fighting until they run out
+of everything they're just got to keep
+running and again I'll fast forward time
+so you can see that and just like that
+our mission is successful they're going
+to go ripping around like crazy it's
+going to say would you like to see what
+you did and we won so as you can see
+there's a lot of different ways of doing
+these scenarios and each one kind of has
+its own unique advantages and
+disadvantages you your missions are very
+very high control but they're also kind
+of picky your patrols are really really
+effective but they're also kind of
+random and of course doing everything by
+hand is effective and you can see we
+didn't use that many missiles took no
+losses you can see my little scoring
+graph everything looks good enjoy

@@ -1,0 +1,497 @@
+# C: MO - Transferring Munitions from One Location to Another
+Video: https://www.youtube.com/watch?v=Mj7PZ9nHYqI
+Video ID: Mj7PZ9nHYqI
+
+Hello everyone. In today's video, we're
+going to be answering a viewer question
+about transferring munitions between
+locations. So, for the purpose of this,
+I'm going to show you all the different
+kind of minutia here, as well as kind of
+show you the relevance of it. One thing
+I'm going to tell you right now is once
+you start going down the logistics
+rabbit hole, be prepared to uh go all
+the way to say the least. Anyway, let's
+get started. So, we have ourselves the
+SSGN 726 Ohio. It is just coming in. it
+just dropped an entire rack of tactical
+tomahawks and it would like to get some
+more. Now, in this scenario, of course,
+if we were to go into scenario features
+and settings, one of the things you'll
+observe is I don't have unlimited ammo,
+which means my poor SSGN here is going
+to have to get its missiles somewhere
+else. Where is it going to get those
+missiles from? Well, ideally, you would
+get it from the factory, but in our
+case, we're going to make it complicated
+for the purposes of our example. So,
+first things first, when you're dealing
+with munitions as cargo, munitions as
+cargo needs to come in a box. I know
+that sounds like, yeah, what do you
+mean? Like, what's the point? Well, this
+is what I mean. Let's take this ammo
+truck for example. This is a facility.
+It actually consists of four smaller
+ammo trucks. You will notice here is if
+I come to the edit cargo button. I'm in
+the scenario editor here. Uh, we can
+take a look. Um, this is it. I can
+create cargo. Obviously, I'm not going
+to load the truck onto the truck, but
+you'll notice I can't actually carry
+anything on this particular unit. Um,
+and you're sitting there going, "But
+it's an ammo truck. I've seen you use it
+to supply things in the past. What's
+your secret?" Well, normally what you
+would do is you go to magazines, you go
+to munitions, and you can see I've got
+it loaded up with some sidewinders, for
+example. But the reality is is unless
+I'm providing a tank that shoots side
+winders with side winders, this
+particular ammo truck is going to do
+nothing for the purposes of actually our
+cargo operation here. We need something
+that can actually carry the box. If you
+can't carry the box, you can't move the
+cargo. That's the easiest way to think
+about it. So, what I have here is I have
+an M1074 Alpha 1 PLS, which is a Hemmit.
+Best way to think about this thing is a
+big old truck. Now, it's very obvious
+from looking at this picture here. It's
+a big old truck. Uh the reason that's
+important is you'll notice it has a
+cargo capacity of 9 tons and 16 square
+meters of area. That's really, really
+important because without that area, we
+can't put the box in it that holds the
+thing. I know that sounds kind of like
+obvious, but it you'll you'll see what I
+mean when we get to that point. So,
+let's say I want this truck to deliver
+some stuff. And why we don't have a
+generic tractor trailer blows my mind a
+little bit. Like, I'm not going to worry
+about that or anything, but it's just
+not there. So, I'm going to grab my
+truck here. I'm going to go ahead and
+edit its cargo right now. It is
+completely empty. So, what we're going
+to do is we're going to put a box on the
+back of this containing our tomahawk
+that we need, deliver it to the air
+base, fly it from the air base to the
+naval subyard. Watch the magic. So, I'm
+going to go to database real quickly
+here, and I need to get the box. So,
+there's a lot of different boxes, and
+they're called containers in this
+program. You'll notice I have things as
+basic as a generic wooden pallet, which
+are very limited for tomahawks. And of
+course, I have things that are more
+useful for me, such as iso containers, a
+20footer here, which is perfect for us.
+16 square meters. It's got 2.26 mass.
+Now, this is where you're going to get
+frustrated. You will observe that the
+box, the container, like I'm going to
+keep calling the box here, weighs 226,
+16 area. But you'll notice my truck has
+an area of 016, mass of 09. Do you see
+the nine? Important. Watch this. So, I'm
+going to go ahead and throw on one of
+these ISO containers. Do you see
+everybody turn red? This ISO container
+now is the entire back half of this
+truck, which is correct. That's what we
+want. But there's nothing in it. So,
+what we want to do is fill it up with
+tomahawks. So, I'm going to come down
+here to edit container. If you're
+playing a scenario, you will not have
+this button. Honestly, I This is going
+to sound cursed, but I would never play
+this game not scenario editor mode. I
+know that sounds like, oh, but you can
+cheat. I don't care. It's just easier.
+All right, edit container. Let's throw
+in some tomahawks. I happen to have this
+ready from last time. As you can see,
+there's our tomahawks. We need number
+377. This is a UGM 109 Echo. So, we're
+going to go ahead and load one at a
+time. You're saying load all of them at
+a time. Uh, no. Watch. See what I mean?
+Obviously, if you're dealing with a
+container vessel, you can do quite a bit
+more. Do you see how it yells at me and
+says, "You can't put any more in the
+container. What are you thinking?" Now,
+you're sitting there going, "But the
+container can hold 22." Oh, the truck
+can only hold 8.26. You got it. If you
+fill the box with stuff, like at a
+factory, for example, and try to jam it
+on the truck and it's heavier than the
+truck can take, it will not work. I
+can't say that enough because you will
+make that mistake. All right. So, our
+ISO container, the box, is now
+containing all of our yummy delicious um
+I don't know, apparently candy cane
+tomahawks, whatever. And we're going to
+deliver these to Barnes so that we can
+actually go ahead and deliver them down.
+Obviously, I can take this truck in
+order to go down Route 91, Route 95, and
+go drop them off. But that's too easy.
+We got to make things complicated for no
+reason. So, what I'm going to do is I'm
+going to head to our Barnes Air Force
+base here. He's going to stop at Toby
+Cove for some lunch. You'll probably see
+me there. The weather's been awful for
+flying. And what I'm going to do is have
+this truck drop our friends the missiles
+off at Barnes so I can transfer them.
+Before I do that, one of the things I
+want to do is I want to make sure the
+ammo box is obvious. Ammo box. Now, the
+reason I'm doing this is I want to make
+it obvious where I'm going to drop them
+off to. One of the oversightes of this
+process is I can't just kind of click on
+these things and know what it is
+immediately unless you named it in a way
+that makes it obvious. You'll see what I
+mean in a minute. All right, I'll click
+on my truck. I'll press cargo. And we're
+pressing edit cargo here. This is real
+RLG mode, whatever you want to call it.
+So, what you have here is a new box that
+has the box. It tells us what's in it,
+and it tells us we can transport it or
+we can unload it. I don't recommend
+unloading it. You basically drop a bunch
+of tomahawks on the roof of this
+vehicle. That can be kind of amusing,
+but that's useless because we're not
+dragging the tomahawks around. We need
+to move the box to get the box to, like
+I said, nace. All right. So, what I'm
+going to do is click transfer cargo.
+Now, remember a minute ago I said you
+should label it something obvious. Hey,
+hey, I labeled it something obvious and
+I don't have any problems. Confirm. Now,
+when you're ready, make sure you pick
+the thing you want to actually move
+here. So, in this case, I'm moving the
+box from the M107 to the ammo box.
+Unload all. This will take time. As you
+can see here, it will take 45 minutes to
+unload this cargo here. So, I actually
+got to go to uh
+and we're done. So, our truck now, if I
+were to click on the cargo button,
+notice it's non-existent. Is empty. It
+dropped that box off containing our
+tomahawk missiles. Now, if I come back
+over here to Barnes real quick and I go
+to my ammo box, you'll notice it has a
+new thing on it that says cargo one. And
+it now has my box of tomahawks. It's all
+ready to rock, so to speak, kind of a
+thing like that. So, what we can do now
+is we can now transport the ammo box all
+the way down to the submarine base.
+We'll do that next. I'll grab my barns.
+I'll skip the C7s and grab my CH53s.
+Grab this one. Cargo Ops. I'm going to
+go ahead and grab my ISO container
+containing remember it actually shows
+you the unit here which makes it a
+little easier for you. Containing my
+missiles. Remember, you've got to have
+enough room on the super stallion to
+carry this. Otherwise, you're busted.
+Once again, fortunately, I happened to
+do the math on this earlier, so I know
+that it'll work. Confirm. Notice it's
+going to take them almost a half of an
+hour to take that giant 20ft container
+with our five tomahawks and ram it into
+the back. That's good because we have
+some work to do. What we're going to do
+is we're going to send a ferry mission
+down here. So, I'm going to press Ctrl+
+F11. I'm going to say drop off. Drop off
+explosive candy canes. There we go.
+Nice. We're going to do this as a cargo
+mission. It's going to be a transfer.
+I'm going to press okay. And the only
+thing we really have to do here is
+pause. I always make that mistake
+sometimes. Drop that down here. It's
+going to say, "What would you like to
+do?" We can move all cargo, which is
+fine, but like I said, everything's
+already preloaded. You can see it's
+already loading. It knows we're doing
+that. Now notice automatically unpack
+container contents at destination. This
+is really cool because that means when
+it gets there, it's going to empty the
+box. That's good because then we can
+grab the box and bring it back home. So
+I'm actually going to order this command
+here. This is going to make this so so
+so much easier. And again, you can
+actually see that we've selected that. I
+did put a helipad there to make it
+possible. All right, everything's set.
+We're ready to rock. This is where the
+fun starts. So, we got to wait about 30
+minutes or so before we'll be able to
+actually launch thing. Cargo takes time,
+folks. It doesn't matter how aggressive
+you want to be with it. It It always
+takes time, but you can see here we have
+about a minute and a half to go before
+we're ready to deploy. And again,
+remember, we're moving the box. We're
+not moving the tomahawks themselves.
+Click. Uh-oh. He's taxing to take off.
+He's got about a minute and a half
+ready. Sort of wish there was a little
+like that progress bar. I know that's a
+little gamey, but like like a dramatic
+like sound effect that like builds up. I
+mean, it would be the engines starting
+or whatever. And he's now taken off. It
+takes him 30 seconds to get airborne.
+And believe it or not, those numbers are
+awesome. That's really fast for a
+helicopter. So, let's grab this guy.
+We'll go and press the T key. And you
+can see he is now on his way. Now, the
+crazy thing here is you'll notice in the
+upper right it says cargo now. So, if I
+click him, he's got the box. Isn't that
+kind of fun? The T key, by the way, if
+you want to goof off like that. So,
+notice how slow he's flying here. He's
+doing a actually a$145 is pretty quick
+for a helicopter. Now, what he's going
+to do is he's going to come into a
+landing at our naval air station here.
+I got like Jurassic Park. Like anytime I
+see helicopters like landing at
+something, I get the Jurassic Park a
+journey to the island of my head. And
+now our helicopter has landed on our
+naval air base. And you can actually see
+here he's basically finishing up his
+landing. Go. It's going to take him
+about half a minute to do, which is
+pretty darn quick. The other thing
+you'll notice is if I click here, you'll
+notice we have not actually done
+anything as far as loading or unloading.
+Just it takes time. You can't just throw
+these things out. That's, like I said,
+very important. Did you just see what I
+just saw? You now observe our explosive
+candy canes have been delivered. You can
+see we got five of them ready to go. Our
+helicopter, of course, at this pace. If
+you take a look at him right now, you
+can see he's got an hour and 59 minutes
+to go there. He's going through the
+motions, basically refueling, rearming.
+But you want to see something so cool? I
+can go down to cargo ops and I can put
+the empty box back inside of him. Just
+like that. Isn't that wild? I'm actually
+going to eject the empty box. And
+there's a reason why I want to eject the
+empty box is because I want to send some
+gifts back over to Barnes so that you
+can see this. In fact, by the way, now
+that the tactical tomahawks are
+available, they will be loaded onto our
+submarine who's chilling here. You can
+see he's got zero right now. They will
+be loaded as I'm talking kind of a
+thing. So, put up with me kind of a
+deal. All right. So, we want to find
+where the box is. So, if I click here
+and minimize this a little bit. If I
+come to Naval Air Station, I'm just
+going to do the same trick I did before
+where I just kind of rip through. There
+should be a icon that tells you there's
+cargo in something. This should be a
+thing in this game. All right. Uh, I saw
+boats. We don't care about that. We're
+just looking for wherever he dropped the
+box. Where'd you put the box? Bingo. The
+box got dropped off here. Which is
+actually pretty irritating. I'm going to
+take that and put it somewhere where I
+know where it is. So, I'm going to take
+this, transfer it, and I'm going to put
+it over on ammo box one or something
+like that. Here it is. Ammo bunker one.
+Confirm. Move it over. Confirm. Much,
+much better. That means that instead of
+sitting on the pier like it was a minute
+ago, it's up here in this box here,
+which is awesome because now we can fill
+it up with goodies that we're stealing
+from this naval subbase and sending it
+back home. Uh, let's see. What should we
+fill it up with? Let's go to magazines
+real quick. Uh, add weapons. We We need
+something. I guess we do like 12.7.
+I'm pretty sure I did 12.7. There it is.
+Um, what should we do here? I'll send
+him a bunch of bullets or something like
+I said. Keep it easy. Uh, burst two.
+That's a big gun. Um, let's see. 800
+rounds. We'll do 800 rounds. Why
+not?Oop.
+There we go. That's technical sound for
+the sound that makes. So, I've got a
+bunch of ammo here. And what I want to
+do is put it in the box. Now, if you're
+playing in regular single player here,
+you'll notice if you click cargo now,
+there's my box and there's the container
+button down here. Now, if I press
+container, you can see that this is the
+items that are on my ammo pad. And then
+on the left here, you can see what's in
+the box. Remember, we emptied the box
+and we're just going to refill it here.
+Now, you got to be careful with this.
+You'll notice here that it's mass is 24,
+it's area is 20.8. You'll notice our
+mass is 0 and 20. You'll notice our area
+is 0 and 16. Remember that your
+helicopter does not have unlimited mass.
+You've got to remember that. Otherwise,
+you're going to get really mad. So, I'm
+actually going to load half of the ammo
+here. You can see that gets us 12 tons.
+That gets us 65 area. I'm going to press
+confirm. Now, the moment you do that,
+this box now is loaded up with that
+stuff that we took out of the magazine
+to load it. So, I'm going to go ahead
+and close this. Now, I'll go run down
+here back to my naval subbase. F6.
+Remember, we're reing him. I'm going to
+go to cargo ops. Look at this. There's
+my box with the ammo. Load. Do you see
+what I just did there? I took the ammo
+out of here. Loaded it into here. And
+then when I press confirm, of course,
+it's going to start going through the
+motions of loading him up for that
+purpose. We actually got to delete this
+over here. Um, let's see here. We want
+to delete that mission. Doesn't do
+anything for us anymore. So, we're going
+to set the time to ready for this guy to
+be pretty darn quick. We'll do like 01.
+Again, that's a really fast cargo job
+there. Speed up time a little bit. All
+right, that should be plenty. If I go
+back to the subbase and I go to my
+helicopter, if I go to cargo ops, you
+can see the container is loaded and
+ready to go. So, I'm going to go ahead
+and said, "Hey, why don't you go ahead
+and take off?" I know it's going to take
+two minutes to take off. That's cool. C
+cool with me. That's one of the two
+minutes there. And again, I can just I
+can monitor the status by coming over
+here and looking. It's 48 seconds. You
+can see it updates smoothly. And engine
+started, we're taking off. We'll be in
+the air in 30 seconds. Bam. We're in the
+air. So now if I click on this
+helicopter, look at this. I go to cargo
+and there's my box of 12.7 mm
+ammunition. So now if I wanted to, I
+could go like that. Go ahead and right
+click just for this example. Select the
+new home base. I'm going to send him
+back to Barnes. Press B. And what he'll
+do is we'll actually fly back home with
+that box full of ammo. Meanwhile, what I
+want to see while he's on his way is if
+I open up my submarine, you'll notice
+I'm starting to load up those explosive
+candy canes. They're getting ready to
+go. So, let's go ahead and follow this
+guy all the way back home here.
+I don't want to follow him anymore. That
+looks good to me.
+And he's just going to settle. Look how
+much fuel that burns. Oh, smokes. So,
+now this is where things get fun. You'll
+notice that that helicopter landed. Now,
+if I press F6 here and go look at him,
+you can see he's basically getting ready
+to go. If I open up his I don't think we
+can do cargo apps on him yet because we
+got to give him some time. There we go.
+Like I said, a little bit of time. These
+things take a while. There we go. You
+can see he's got two hours to get some
+gas. If we go to cargo ops, we can see
+here that he automatically took all that
+lovely stuff he just landed with and
+basically dumped it directly onto the
+what is this? The tarmac. Yes, it
+dropped it on the tarmac space here. It
+dropped off in this particular tarmac
+space. So, that's not very helpful to
+us. But, the cool thing, too, of course,
+is we can go find out which one it
+dropped us on. Like I said, there should
+be a slightly easier way to do this, but
+it is what it is. And I'm just looking
+for the word cargo to appear here. Woo,
+that's not confusing. Let me find it for
+us. Gotcha. So now if I go to cargo, I
+can now grab this, transfer it, put it
+in the ammo box. Confirm. And now that
+it is in the ammo, I have to pick what I
+want to put. Put that stupid box of
+bullets in the ammo box. That sounds
+very obvious, I guess. Confirm. And now
+our ammo box is got the original
+container with its original um actually
+not original, it's new contents. So now
+if I were to go to the cargo menu here,
+you can see there's the box again. If I
+go to container, I can now empty it into
+the ammo bunker. Ready? Confirm. Tada.
+So now I took those ammos. I delivered
+missiles down to the naval air station
+and I came back with bullets on that
+original container that was delivered
+from that truck. If that's not
+sophisticated logistics in action, I
+don't know what is. Enjoy.

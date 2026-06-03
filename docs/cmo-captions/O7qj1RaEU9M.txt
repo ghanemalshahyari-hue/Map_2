@@ -1,0 +1,298 @@
+# C: MO - Grouping tips and Tricks
+Video: https://www.youtube.com/watch?v=O7qj1RaEU9M
+Video ID: O7qj1RaEU9M
+
+hello everyone in today's video we're
+going to be taking a look at breaking
+and making formations now this is a
+video I probably should have made many
+many many ages ago but there' been a
+couple questions about it kind of
+recently so I'm like this might be a
+really really good opportunity to kind
+of go over sort of almost like a command
+fundamental one of these days I will get
+around to basically re-recording
+everything and like starting a new
+playlist CU as you probably observed
+it's getting a little long but anyway so
+right now we have ourselves a bunch of
+different groups so we have one group
+here this is a bunch of block 52 Falcons
+of course over on this side we have a
+couple sort of disjointed ones and
+coming down here we have of course a
+couple different single ones now one
+thing I need to throw out off first of
+all is if I were to grab myself an
+aircraft oh of course you know which one
+I'm going to grab let's grab this one
+and one thing you really really really
+really got to pay attention to when
+you're trying to make any form of groups
+is what they are carrying uh aircraft do
+not like to group with things that are
+not them so right now I have myself an
+F16 over on this side which has got am
+Rams got this one over here it's got
+some Mavericks if I try to come over
+here and press G it will go ahead and
+give us an interesting little warning
+first of all it will say enforce a wing
+with homogeneous types of aircrafts th
+splitting it into multiple wings or no
+Force the entire selection into a mixed
+group uh this is actually a thing we did
+not have back in the day so if I
+actually come over here and press the no
+key you will get yourself a group of
+f-16s split who both on the Mavericks as
+well as the straight air-to-air load out
+as well now this is kind of a neat
+little toy and know one of the cool
+things we could do now and know if you
+look really really carefully you can see
+is now ready to be split off if I want
+to use a again now let's talk about
+splitting off real quick let's say that
+I'm I'm going to go ahead and delete
+this group here now I'm going to come up
+here I'm going to press the delete key
+people panic but nothing bad happens all
+it does is delete the grouping itself
+and instantly cause everybody to kind of
+split off one more time so let's go
+ahead and clean these two up real fast
+and go right over here and take a look
+at this group so this group right here
+is completely homogeneous they both have
+identical layouts here and they're
+pretty much ready to rock but let's say
+we want to combine this group with this
+guy down here cuz you know he's feeling
+a little lonely and yes they do have the
+same loadouts what I'm going to do is
+drag a box around the two I'm going to
+go ahead and press the G key now as soon
+as you do that you immediately order
+this one to join that group now that's a
+pretty handy tool it's actually really
+really handy tool so what I'm going to
+do now is I'm going to come over here
+I'm going to group this group remember
+these were all individual ones now what
+you're probably asking is is it possible
+to take two groups like this and Link
+them together yes if I go ahead and
+press G you're going to notice you're
+going to get this big Angry error uh
+they're going to give you this big big
+nasty warning here saying suggest a
+temporary workaround dissolve all groups
+and then add it to the remaining group
+what they're really saying here is they
+want you to click on this press delete
+click on this press delete select them
+all press G that's how you do that and
+um it's a pretty effective technique
+there and you'll actually see very
+clearly that all these different ones
+all split up now there's a couple other
+things we can do with groups too uh for
+example if I run up to unit orders here
+you're going to see that there's all
+sorts of fun little buttons down here
+including one that says merge one that
+says splits now you're probably sitting
+here
+going why can't I push a button the
+reason is is because this is the group
+selected these are the individual units
+so what I'm going to do is press nine on
+my numpad real quick and you're going to
+notice it actually will show you where
+they're supposed to be if I click on
+this guy you can actually see his
+supposed station in life is right over
+here actually and if you want to get a
+little more detail on that you can
+actually go back to regular mode hit the
+F4 key and you can actually see where
+everybody's supposed to be placed don't
+worry about that right now we're going
+to confuse you more in a second so let's
+say I want to take these two over here
+and I want to break them off as a
+separate group now what people try to do
+here is they press the G key you can
+push it all afternoon and nothing's
+going to happen because they're already
+part of a group now of course if you go
+up to unit operation
+you're also going to notice here that
+this particular guy has no split and no
+merge these are not four groups these
+are for ground units see now if you go
+over to group operations however you're
+going to notice we have a couple
+different options so one's going to be
+group selected units the other one's
+going to be detach selected units so if
+I press group I'm going go back to show
+everybody mode you'll see that that crew
+is did not break off instead if I wanted
+to do that i' come over here and I press
+the D key on the keyboard now if I go
+back to uh show just the groups you'll
+notice we actually have two separate
+groups here we have our original group
+that's over here and we have these two
+basically chilling here ready to rock so
+if I grab these two and press G I will
+go ahead and break them up into flights
+now another thing that's worth noting
+really really carefully here is right
+now this one is called flight 13 and
+this one is called flight 14 so let's go
+ahead and grab this group real quick I'm
+going to press nine I'm going to go
+ahead and select these two I'm going to
+go ahead and detach them I'm going to
+press G on these two and I'll watch what
+happens 13 14 flight 15 so if I keep
+breaking flights up over and over and
+over and over and over and over and over
+and over again what'll happen is it'll
+increment the number of that flight now
+things get a little more complicated
+once we start doing the aircraft that
+actually launch from a base there that
+looks pretty darn complicated and we
+have a bunch of aircraft all flying
+around these are all twos one of the
+things you're going to observe is the
+fact that they have a new ID this is a
+flight raidar 4 coming over here this is
+fight Vegas 43 this is flight Bubba 31
+as a matter of fact if I wouldn't press
+the F1 key or f11 I'm sorry you can come
+in here you can actually see all the
+different flights that were assigned to
+the little mission that we're doing
+right now this kind of cap operation up
+north here now this is where things get
+kind of confusing so I'm going to grab
+this flight real quickly here and I'm
+going to press the delete key what
+that's going to do is break these two
+units into two individual units now if I
+unpause real quickly and I click on this
+one now one of the things you're going
+to notice you see is still on the
+original assigned Mission now if I press
+the f11 key you will notice this group
+has been broken up into two smaller
+groups now you can see this one is now
+turned white to indicate that that is no
+longer a one combined group that was the
+original now if I grab everybody like
+this real quick press the G key and go
+ahead and click on this one you'll
+notice that we've lost our flight number
+here we've gone from that a cool one
+before over to flight 56 now if I press
+this the cool thing here is you'll
+actually see flight 56 is now
+represented inside of our missions which
+is kind of a nice way to keep track of
+them one of the things I've seen you
+know some really really old school
+hardcore command types do is they'll
+actually go through here and name each
+group individually I've even seen people
+go so far as to name them based on like
+you know fuel remaining and stuff like
+that you know you can press f11 I can
+click on this group here and it'll
+actually select elect that group for me
+now the reason this is so darn cool is I
+can now come in here and press the r key
+uh will land at four you I'm just I'm
+making up a number here and the reason
+that's so fun here is you can actually
+see in here exactly what you have
+created there we land at five is now
+located right there so it actually is
+kind of a neat little way to stay
+organized but keep in mind when you
+break the groups rejoin the groups break
+the groups rejoin the groups it's going
+to give you some interesting issues now
+one of the fun things we can do in Comm
+in t them I always love stuff like this
+so I'm going to pause I'm going to
+delete everybody yeah I'm going to press
+it okay I'm going to press okay it's
+going to do this a few times here again
+groups are fun groups are fun groups are
+fun and I'm going to grab everybody and
+I'm going to press the G key so what we
+just did is we took that entire flight
+and we've jammed them into one Mega
+group now the reason this is going to
+cause my computer to get a little chunky
+here is because it's trying to
+coordinate all of these airplanes
+simultaneously into one Mega formation
+as we're moving at 15 times speed here
+this is actually one heck of a polygon
+regenerating here because this is trying
+to show that we have complete govern
+cage of the entire environment around us
+now some people like doing things like
+this and of course if I press the f11
+key you're going to be like but that
+makes no sense it says 22 you said to
+only do two yes because I manually group
+them so this's one more trick we'll show
+you with groups here now normally when
+we develop groups here we're at an
+Airbase for example I'm actually paus by
+the way um you can see all these people
+have been assigned for that little cap
+Mission here you know one of the things
+we can do here is we can actually
+override the size of the groups being
+launched by launching the group
+ourselves now keep in mind if they've
+already been grouped up again if I un
+pause they will instantly group up oh we
+can just come in here and have a lot of
+fun with this let's say I want a group
+of four here 1 2 3 4 5 6 let's say I
+want to do a group there we one two
+three four we'll grab that group a
+launches group there one two 3 4 5 six
+7even 8 we'll go ahead and launch that
+group there and we'll grab this group
+here launch group now if I order unpause
+each one of those groups that I just
+created are now part of that group so
+I'll speed up time a little bit here and
+you can see some really weird things
+here you can see my little group of four
+here you can see my other group of six
+here if I come over here you can see
+there's a group of two and everybody's
+basically ready to go now if you're
+wondering why this crew here is just
+kind of being lazy it's because they
+haven't finished grouping up I remember
+it's the order the launch now if I go
+ahead and pause and I press my f11 key
+one more time you will see that all of
+the groups I just created notice they
+have a nice boring name um you'll notice
+each one of these groups here all has
+the size that I created pretty good
+stuff enjoy

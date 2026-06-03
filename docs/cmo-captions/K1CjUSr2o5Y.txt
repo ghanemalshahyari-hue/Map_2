@@ -1,0 +1,432 @@
+# C: MO - Task Pools, Packages and Escort Missions
+Video: https://www.youtube.com/watch?v=K1CjUSr2o5Y
+Video ID: K1CjUSr2o5Y
+
+Hello everyone. In today's video, we're
+going to be taking a look at a couple
+different things. The first thing is
+going to be dealing with task pools and
+packages, something we dealt with a
+little while ago, but again, for the
+purposes of this example, I'm answering
+a question somebody was having. And the
+other thing we're going to be dealing
+with is escorts and kind of how to best
+use them. So, in this case today, we
+have ourselves the Enterprise. It's
+loaded up with a bunch of different
+airplanes, all pretty much chilling up
+there on the flight deck, getting loaded
+up with some bombs and stuff like that.
+And uh we're going to be flying into
+here to basically do some damage to some
+SAM sites. And it should be pretty
+accurate because we're not going to be
+using harms. We're going to have to do
+this the hard way, which makes it kind
+of fun for us. So, let's go ahead and
+take a look what we have here. Open this
+one up. The F6 key. Yeah, there's a
+bunch of Marine F18C's. We can't use any
+of those. We got a couple EA2s. Ah, they
+got the ALQ99 X-ray. That's awesome. And
+of course, we have a couple JDAM
+equipped F-18s. Now, this is downright
+luxurious if you ask me. A lot of times
+you have like Mark 82s or like CBU 103s
+or something like that. So, I will
+definitely take this load out. So, let's
+go ahead and figure out what we're going
+to do here. Uh, first things first is
+our only target for this mission is
+going to be the SAM sites. So, we have
+no interest whatsoever in the early
+warning radar. Although, that could be
+helpful to destroy. And of course, we
+have no interest in this air base, which
+is absolutely loaded to the gills with
+really, really, really tasty targets. In
+the real world, of course, what they
+would do when they plan is they'd say,
+"Oh, we've got some bombs left. Bomb
+this on your way out." Kind of a thing
+like that. But, we're not going to do
+that today. We're going to keep it
+simple. So, what I'm going to do is I'm
+going start by grabbing the two SAM
+sites. Actually, the first thing I'm
+going to do is I'm going to go ahead and
+shut this thing off. It's going to make
+me crazy. Grab these two Sam sites with
+the shift key. Crl+ F11. It's going to
+bring up a screen that looks like this.
+Uh, what should we call this today? Um,
+come get some or something like that.
+And now, what I'm going to do this time
+is I'm going to intentionally set this
+mission to be a package as opposed to a
+regular mission. Now, if you come here,
+you'll notice it reset everything I just
+did. And it also gave me a package
+number. package one is uh well I guess
+this is DE AD today because technically
+we're striking targets like that you
+must select one parent task pool. Now
+you'll notice here that this thing
+panics. The reason it's panicking here
+is we have no aircraft ready to be
+tasked. So let's go ahead and take a
+look at what that looks like. So I'm
+going to press the F11 key real quick.
+I'm going to come up to the tippy top
+here. Press add. And this time I'm going
+to add the task pool. We'll call this
+Navy aircraft or something along those
+lines. Looks good to me. Looks good.
+Again these are some other tools we
+could use. we just can't use them
+unfortunately in the civvy version. So
+that's nice and ready to go. And now
+what I'm going to do is grab my Navy
+aircraft. Don't panic when you see this.
+I'm going to add the Navy aircraft into
+it. Now, one of the wild things you'll
+notice here is with my task pool is if
+we go up to mission settings, you have a
+button that basically could delete all
+the flight plans out of them. Like
+that's the only magical thing you can do
+with it. People say, should you be using
+task pools and packages and stuff? It
+totally depends on you. A lot of
+military organizations obviously that's
+how they do business. you know, your
+order 6122 today and off you go kind of
+a thing. It'll just make random up
+missions. But again, it's completely
+organizational. All right, let's go back
+and do that again. So, I'm going to grab
+this one, hold down shift, grab the
+other one, control F11. Uh, we're going
+to say blow this up. Blow up. Actually,
+no, no, no, no, no, no, no, no, no.
+Let's go ahead and do our package again.
+Package 4061. Deed. That is deed, not
+dead, by the way. We're going to do a
+strike. We're going to do a land strike.
+That looks lovely. And notice parent
+pool is Navy aircraft. I'm going to
+press okay. Now, check this out. You
+will observe at the top the only people
+available for tasking. Does that sound
+familiar? Does that sound a little bit?
+No. Oh well. Are going to be the
+aircraft that I put into this original
+group here. And our task pool is here.
+Here is our package. And again, it's
+completely organizational. And as you
+get your projects to get bigger and
+bigger and bigger and bigger and bigger,
+it gets more chaotic. And sometimes it's
+really, really nice, especially if
+you're doing something like Operation
+Allied Force or something like that. All
+right, so let's go get our project
+together here. So our flight size here,
+we have four F18s. We're going to split
+that in half. And now the reason we're
+going to split it in half is there are
+two targets. That makes it easy. Our
+escorts, of course, I'm going to go to
+my escort page here. I'm going to make
+sure that their flight sizes of one. And
+now, the reason I'm doing this is
+because I'm going to have two different
+groups attacking. I need two separate
+escorts. Obviously, if I had eight or
+something, I could send four escorts per
+group. But the reality is it it's going
+to be tough to get close enough to
+actually deploy those weapons without
+taking advantage of some terrain
+masking. But I'll let it do its thing.
+All right. So, we've got escorts of one,
+and of course, we have strikers of two.
+Let's add everybody in. Grab them both.
+Punk. Now, this is an important step a
+lot of people forget. We have to
+actually mark these two aircraft as
+escorts because we're basically going to
+use them to jam along the way here. Now,
+if I click on this guy, you'll notice I
+have the button that says mark selected
+as escorts. Now, there's a couple
+philosophies for this. The simplest way
+is simply hold down the control key,
+grab both of those mark as escorts. Or
+if you're like me, you click on the
+whole group, then click mark as escorts,
+and you get everybody underneath it,
+which makes it way, way, way easier. A
+lot of times what happens in scenarios
+is you have like 50 F-16s. Maybe it's
+just me. Uh, one of the things you have
+50 F-16s and you want a quarter of them
+to be escorts, you can just hold down
+the control and bang, bang, bang, hit
+mark selected, move on your day. All
+right, let's do some quick math here.
+There are four. There are two. Let's
+mentally check. four divided by two even
+number. Two divided by two. Two divided
+by one two even number. Good. We're all
+set. All right. So, let's go ahead and
+take care of a couple other things. So,
+we're not doing formation single aim
+here. Obviously, we're going to be doing
+independent aim. Uh we're going to keep
+it nice and simple. Uh split distance.
+Uh the split distance is fine. I'm not
+going to change it or anything like
+that. Offaxis attack is very very like I
+like that idea, but I'm actually going
+to avoid that here even though it looks
+like a simple choice. Supering settings.
+We're all set there. Escorts look good.
+Looks good. It looks good. Looks good.
+Looks good. Ah, maximum threat response
+radius. Uh, you want to be very careful
+with this. So, because these are seed
+aircraft, you don't want them flying
+halfway across the world in order to
+look at something that seemed
+interesting on the ground. So, I'm
+actually going to reduce the range on
+that just a little bit. I really wish
+these are options we could adjust. Like,
+come on. Let me push them. Let me push
+them. All right. So, that's good to go.
+Electronic warfare aircraft. Flight
+sizes of one. All set and ready to go.
+Minimum number good. I'm not going to
+worry about any of these things real
+quickly down here. It's going to be
+fine. Targets delightful. Uh, looks good
+to me. MC Con. Now, this is important.
+Our escorts are jammers, which means if
+we go to escorts, we have to actually
+tell them they're allowed to jam. That's
+an important point here. If we don't do
+that, uh they won't be turning on their
+jammers and being obnoxious. Now, keep
+in mind, we're going to get shot at no
+matter what in this scenario. You're
+just going to get too close and they're
+going to take a couple pot shots at you.
+All right, that looks pretty darn good
+to me. That looks good. That looks good.
+I think pretty much ready to go. Uh
+let's see. If we were smarter people, we
+would do a time on target. Now, the
+reason we do a time on target is to
+basically force them to get there at the
+same time just in case for some reason
+the flight planes don't quite work. So,
+let's go do that, too. You might as well
+be pros about this. It is at 9:30 right
+now. 12:30 is way too late. Uh, we'll do
+10:30. I think that's going to be fine.
+Go ahead and, uh, click there real quick
+just to make sure that it's set
+properly. Nice. Uh, one of the things
+you can do now if you just
+Whe, careful. Now, you got to go fix it.
+See? See? See how easy that is to do?
+Bo. All right. That looks much better.
+So, when we're ready to go now, we can
+come down here and hit create or update
+flight plans to sort of just double
+check to make sure everything is okay.
+You can see it generated everybody's
+flight plan pretty effectively there.
+Now, if we bring up the air tasking
+order, I don't think there's going to be
+anything in Oh, look at that. Turns out
+there is. All right, let's just do one
+quick mental check here. Uh, let's see
+here. So, they're going to come over.
+Well, this is actually really, really,
+really, really, really, really
+dangerous. All right, so this group is
+going to be launching. I'm just trying
+to study what they're doing here. Um,
+let's see here. Your weapon launch
+against that target needs to correspond
+with your weapon launch against that
+target. Okay. All right, folks. If
+you're going to do that, we have to do
+it correctly. All right, that looks a
+little bit better. Let's see here. Let's
+take a look at the other one. That's our
+group. That's our group there. And you
+can see we got that nice little split
+action going on. Pretty good. Pretty
+good. Not bad at all. All right, that is
+all taken care of. Now, if I wanted to
+be even more careful with this mission,
+what I really should have done is I
+should have split it into two separate
+missions to absolutely guarantee my
+timing, but um I don't know, being lazy.
+Let's test it. So, now I'm going to go
+and unpause. We're going to give it a
+moment to kind of process. Actually, one
+of the things I should have done under
+the air tasking order is take a look at
+what takeoff time is. That would have
+been smart on my point. Uh let's see
+here. Time on target. Local time on
+target. Oh, here we go. Local takeoff
+time is 55 five55. All right, that works
+great for me because then what I can do
+is I can come down here. I can actually
+here, watch this trick. I'm going to set
+my speed to uh hot tomatoes here. I'm
+going to go ahead and press the skip 15
+minute button. Check that out. See, now
+it's 9:45. I'll press the skip 5 minute
+button. I'll skip it again. And that's
+helps if you click it properly when you
+do the actual button push here. There we
+go. And you can see right at 955,
+everybody is taking off. This is a
+really long flight, too. I feel sorry
+for these poor pilots. Whoa. As I go
+ripping past what I'm supposed to be
+demonstrating here. Ah, sigh. All right,
+as you'll notice here, we have two of
+these lovely EA6s here. I love the fact
+that this put a back seat in A6. There's
+just something there's something very
+aircraft engineering about that. I don't
+know, puts a smile on my face. But we
+can see they've turned on their jammers
+and they're being nice and obnoxious.
+Now, the cool thing here is if you
+actually switch to the other side real
+fast, you will see these folks are
+completely clueless about what's coming
+to get them because the jammer is so
+effective against these old like 1950s
+and60s radars. It's just a bunch of
+lines right now, which is
+awesome. All right, let's see here. Time
+on target we said was 9:30. So, let's go
+ahead and pause. We'll go up to two
+tomatoes here or one tomato. And we'll
+go ahead and skip 5 minutes here. Skip a
+little bit of time. Skip a little bit of
+time. All right, now we're ready at the
+action sequence. Let me slow down a
+little bit here. Okay, so now we're
+going to run into a couple problems
+immediately. What's going to happen here
+is as our aircraft come out, you will
+observe that my jammers here are
+actually no longer in the effective area
+of the targets. What they're attempting
+to do at this time is jam for both of
+them. Uh that's just the way it works.
+If you remember what I was saying a
+couple moments ago, I was saying if we
+split them into two missions, we'd
+preclude this. Now, here's the scary
+part. If I switch to the other side real
+fast, you'll observe that we're having a
+difficult time actually getting a good
+lock on these targets even though they
+um basically are jamming from the center
+here. I can actually mark these all as
+hostile. And what these folks will try
+to do is bust out their targeting radars
+and start working it out. You know,
+again, you can shoot at a jamming
+target. It's actually just it makes you
+less likely to hit it. So anyway, this
+is where things are going to go downhill
+really fast. And this goes back to my
+original point of my jammers here
+because they're jamming from the center.
+Again, this is old technology. Here
+comes the missiles. All right, here they
+come. And there goes the first. Again,
+the SA3 is a better system in my
+opinion. It's Oh. Oh, got shot down. And
+here comes the other one. They're going
+a little wide here. Again, my jammers
+are doing I love that nice 3D effect.
+Yeah, there's no way in the universe
+that one's not going to get tapped. And
+we can see my guys have dropped. And
+there goes the second group of bombs
+against my SAM 2 there. My 75. Oh yeah,
+this is going to end pretty quick. Whoa,
+whoa, careful F-18s. Careful, careful,
+careful, careful. Oh, that would have
+been so embarrassing. Notice, by the
+way, that my extremely expensive jammers
+are flying right over the top of the
+party. And one of the things you'll find
+interesting here, again, because I
+didn't split them into two missions,
+they're perfectly visible. We can
+actually take a shot at them at any
+time, which would be awful because like
+I said, they're very, very expensive.
+The interesting thing here, as you'll
+probably observe though, is the mission
+was accomplished incredibly. I think
+this thing surv Well, it's in bad shape,
+but obviously it's probably not going to
+shoot back at us. Anybody got anything
+left? Oh, you do. Uh, let's see here.
+What are you doing right now? No, you do
+not need to. I'm actually going to
+unassign you real quick. I'm going to
+press F1. I'm click right there. Oh, his
+buddy was already on the
+way. Oh, get over there.
+I just hate the idea of them not
+finishing the job kind of a thing. All
+right, F1 click. Uh, they're going to go
+ahead and drop off a couple. And you
+know how much how many of these things
+we got left? Uh, we got one to go. I'll
+go ahead and drop one on the P70 as well
+because you know why we're here, right?
+All right, you folks can go home. You
+did a nice job. Keep in mind since I did
+unassign them. Notice how the two
+jammers are now paying way more
+attention to this group here. And I
+believe you all missed, but that's okay.
+All right, let's let everybody head back
+to the carrier and
+landoop. All right, that's the sound of
+carrier landings. Let's go over to
+losses and expenditures here. Let's see
+here. Looks good. Looks like we got
+everything we came for. They fired six
+of these, 10 of these, and somebody
+managed to get off one of the shoulder
+launch guys. That's embarrassing. No
+losses. Obviously, like I said, uh we
+had a very, very, very stacked mission
+here. If these were obviously an S400,
+this would have been very, very, very
+different. But at the very least, you
+got to see your test pools. You got to
+see how the jammers don't work
+effectively if you allow them to split
+up a group. And of course, you got to
+see a successful mission. Enjoy.

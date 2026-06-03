@@ -1,0 +1,671 @@
+# C: MO - Anti-Radiation Missiles and Tactics
+Video: https://www.youtube.com/watch?v=geXup7Gkcys
+Video ID: geXup7Gkcys
+
+hello everyone in today's video we're
+going to be taking a look at
+anti-radiation missiles and a little bit
+of the tactics and strategies both for
+how to employ them appropriately as well
+as uh how to kind of make them a little
+bit harder to be effective
+anti-radiation missiles are missiles
+that are typically fired from aircraft
+although they don't have to be as we'll
+show you in a minute and the purpose of
+them is to basically attack enemy Radars
+preferably Fire Control Radars and not
+just things like search Radars the way
+they work is relatively simple they have
+this little thing called a passive radar
+Seeker chilling in the nose and
+basically what they try to do is they
+try to identify a Target that's emitting
+a specific frequency these are frequency
+sensitive by the way you actually have
+to pick the right frequency for the
+right weapon in command they make that a
+little more generic but again that makes
+it a little bit easier for you and
+basically they're going to home in on
+that radar signal now there are
+different generations of these weapons
+with different effectivenesses and we're
+going to be taking a look at that today
+as well as like I said some kind of how
+you get away with it first things first
+um anti-radiation missiles require an
+active radar signal so if I actually un
+pause for a second here what You observe
+is I have several radiations com from
+all sorts of different signals I've got
+a little surface to a radar this is a
+target Illuminator we have a regular
+search radar actually a pair of them we
+also have a cheeseboard here which comes
+off you know the sa 10 or this is
+actually an sa2 sorry which is a very
+very scary scary radar of course and
+they're all emitting all over the place
+and naturally we also have a strange
+emission coming down there but we'll
+deal with that in a little bit later on
+so now that we have an emission we can
+go ahead and take a shot so what I'm
+going to do is start with my lovely
+lovely lovely AGM 45 strike here and
+when it comes to not good missiles this
+one is the ch Champion when the sucker
+first came out basically it was uh they
+took us if you've actually seen one of
+these are pretty cool here let me grab a
+picture of it real quick ah go find what
+happened to that window with my database
+on it so one of those are probably
+buried it on another monitor but that's
+okay let's go get it
+tm45 this thing sucks and if you look at
+it really carefully you realize it's a
+sparrow missile and somebody basically
+into the head here put a sensitive radar
+basically a radar design not a radar I'm
+sorry basically a sensor design to pick
+up radar mission of a specific band and
+basically you tuned it for fire can
+Radars you tuned it for like all sorts
+of sa2 sa3 Radars and it kind of sucked
+um what it would do is it leave the rail
+basically spin a couple times and then
+desperately try to get itself close
+enough to actually do any real damage so
+what I'm going to do is I'm going to go
+ah and demonstrate this weapon in place
+again everybody is admitting right now
+if you had somebody not admitting we
+would not be able to fire on them I
+can't say that enough so I'm going to
+grab my handy Danos right here I'm going
+to go ahead and attack this guy I'm
+going to go fire one into this one and
+I'm going go fire one into my dog gear
+over here as well so go ahead and speed
+up time just a little bit he's got come
+and ring down good old fashion great
+Intruder here gets in range here comes
+the first missile second missile he's
+going to head back home so these things
+are now tracking the electrical signal
+coming off of this radar if we had a
+moving Target these missiles would
+actually adjust for that and actually
+move with the target we can also see
+over here that our little flat face is
+just kind of chilling you know we've got
+a pretty good lock on it again it was an
+emitting RAR the whole time we can see
+the missiles are streaking across the
+air here and kind of Western Nevada
+looks pretty darn good we got got a
+radar Illuminator which probably is
+telling us that that fan song right here
+is lighting up for the purposes of
+trying to guide some weapons to try to
+hit it and you can actually see these
+missiles on the way to try to hit that
+uh probabilities are not good for an
+early Sam to be able to strike an
+incoming anti-radiation missile so let's
+see what happens that one uh pretty
+clean you can see that one right down
+the center blew that little vehicle to
+Pieces here this one's coming in here
+and looks like it malfunctioned it did
+basically nothing so if we open up real
+quick one of the things you're going to
+observe here is we can actually go
+through that first of all we have a
+weapon that Mal f it just didn't go off
+um that's going to happen especially in
+the early days the second one actually
+did a really surprisingly good job of
+actually striking the target as a matter
+of fact it did such a good job and
+missed it by 31 ft uh 31 ft fortunately
+is more than enough to destroy a vehicle
+now there's another thing that was going
+on that was going very very subtle and I
+don't know if you observed this but one
+of the vehicles on the left was actually
+not Illuminating Around the Clock as a
+matter of fact it was intermittent
+elimination which basically complicated
+things so what I'm going to do is I'm
+going to grab the standard here this is
+much much later version on of an
+anti-radiation missile and you'll see
+here how my little dog ear keeps like
+kind of flashing on and off is
+intentionally only luminating for a
+moment and then turning its radar back
+on to make its challenge a little bit
+harder to go ahead and guide so what I'm
+going to do here is I'm going to bring
+my handy dandy this is a phantom here
+into range I'm going to order him to go
+ahead and fire on my intermittent one as
+well as my regular one again this You'
+never waste them on a search radar
+basically but this is a demonstration so
+you have to be patient kind of a thing
+like that all right we're going to fire
+those two off so what I'm going to do
+now is I'm going to switch to the other
+side real fast switch over to Red I'm
+going to click on this radar right here
+and I'm going to shut this radar
+off now remember we need a Active Radar
+signal for the purposes of being able to
+guide this weapon so this weapon is
+pointing where it thought the radar last
+was I keep in mind the later models of
+this are slightly better this tactic
+meanwhile this weapon here is zooming in
+across the sky trying to sneak up on the
+dog gear radar right there and it's
+going to be interesting cuz if it's
+emitting when the radar shows up uhoh
+uhoh it turned on its radar at the last
+possible bad time here HOH that's going
+to be messy boom that thing's gone
+meanwhile you probably observe that this
+missile smacked into the side of the
+mountain here so if I actually open this
+up real quick you'll see that one of my
+weapons the one missed my dog gear by
+about 30 ft typical and if you can see
+this one it missed by um almost a
+nautical mile because the radar was no
+longer emitting which meant there's
+never ever ever going to hit so that's
+one of the interesting problems they had
+with these early weapons now the
+technology got better and there's kind
+of two general philosophies as to how
+they fix this techn techology one of
+course was to add memory to the weapon
+which is what you're going to get with
+the harm missile the second thing was to
+get a little more creative and that's
+called loitering and we'll take a look
+up with the alarm missile and of course
+um you could just you know use artillery
+and Conventional Weapons as well so I'm
+going to grab this guy I'm going to
+order him to attack I've got two of
+these so I'm going to go be ahead and be
+nice and thorough here I'm going to
+attack this one here I'm going to attack
+this one here as well now remember we're
+only attacking the emitting radar so if
+you actually look carefully here these
+are all search Radars that are emitting
+which is an absolute waste of an
+anti-radiation missile if you ask me so
+we switch to this time we're going to do
+the same thing we did the first time
+we're just going to shut that radar off
+real quickly and you're sitting here
+going oh please that's a lot of work
+yeah there are other ways to do it but
+it works for us so the two goes after
+the dog gear keep in mind the dog gear
+is intermittent you can see comes on
+comes off these two have a decent lock
+this one's attacking a radar that's no
+longer turned on and of course our
+lovely little spoon rest there which is
+just sort of chilling and this is going
+to be hard the dog gear did a good job
+here so let's see here and we get a
+strike on that Target and we get a
+strike on that Target so as you can see
+even though he shut his radar off the
+harm is smart enough because it has GPS
+guidance on board to actually keep going
+to the Target itself and actually strike
+it now you're sitting here going man
+that thing is really good so obviously
+there's no no defense against a weapon
+that effective and the answer is that's
+simply not correct so what I'm going to
+do is I'm going to order my guy to go up
+north here and we can see there's a
+cheese board radar emitting that usually
+tells you you're dealing with one of the
+s20s or you know I call them s400s cuz
+that's the way I do it so we're going to
+go ahead and fire off um not one but
+four of these anti-radiation missiles
+keep in mind these things are
+tremendously expensive weapons and that
+one exploded and if you actually do it
+to God's eye you can see each one of
+these weapons are simply getting slapped
+out of the sky one at a time and they
+all got wasted before we got within oh
+about 30 nautical miles of the Target
+and to be honest even if I did half that
+distance on that wouldn't make any
+difference now you know what you're
+saying I know what you're saying you're
+saying
+well what that's not fair how are you
+supposed to attack this welcome to the
+problem of the modern 21st century here
+we'll show you a trick in a minute with
+that so one of the other things I
+mentioned a moment ago go was the idea
+of a loitering weapon and one of the
+cool things they came up with is this
+lovely alarm missile and what it does is
+it's a little bizarre and employing it
+is even more Bizarre by the way let me
+show you a really quick trick with it
+see how there's about 3,000 ft elevation
+the first thing I would do is order your
+guy to low altitude if you keep it up at
+high altitude and it's not going to work
+I will show you what I mean once we get
+a little lower here all right so we're
+just going to go skirt skirting through
+our mountains here I'm trying not to
+speed up time too too much here I don't
+want to cause any Shenanigans a little
+out of our regular range here within our
+as RAM range which is pretty good so
+we're going to fire these things off
+they have a very weird firing mechanism
+do not attack them with conventional
+direct instead contrl F1 and what we're
+going to do is we're going to fire them
+in front of the targets and we're
+basically going to have them with a
+bearing only launch for the purposes of
+hanging out watch this so the weapon
+launches the weapon launches here comes
+another one here comes another one here
+comes another one and they're all
+leaving the rail there and basically
+what you see here let me go ahead and
+send this guy home thank you actually I
+think I fired them at the wrong time to
+be honest with you these weapons are on
+parachutes so if you notice did you see
+how all of them paused for half a second
+to do the parachute thing and then all
+of a sudden this one suddenly acquired a
+missile a Target so what he's going to
+do so you see how they just started
+hanging out in mid flate he actually ran
+out of energy there they do sink but you
+can see how this one actually stopped
+flying waited for this thing to Emit and
+then he flew in and did as a little
+attack strike there we didn't have a lot
+of altitude there so unfortunately my
+little alarms which are literally
+hanging waiting to reignite
+unfortunately didn't really get imployed
+perfectly there but you get the concept
+so of course another solution came out
+which I thought was very very creative
+as well and that is instead of trying to
+do this with slow weapons it's to
+repurpose an anti-ship missile and then
+you get something like the k31 for those
+of you with the Chinese versions a
+little bit different it's a YJ looks
+like this this thing is stupid if you
+take a look at the speed if I zoom down
+here to the bottom you'll see we travel
+at Ma 348 here and um it's hilariously
+effective except that is not let me show
+you what I mean so what I'm going to do
+is I'm going to go ahead and head up
+north here and now we're going to go
+attack our little lovely sa21 click on
+this guy we're going to do fire two
+remember these things are G gantic that
+also means very expensive getting range
+there they go in the air they're going
+up they're going up so you can see these
+guys are going to go ballistic they're
+basically going to travel up pretty high
+and then they're going to Arc back down
+basically travel in a straight line and
+you can see the first one's already been
+destroyed the second one already got
+destroyed so that strategy didn't work
+so then they said well I got a better
+idea what if we take the anti-radiation
+missile and make it proper ballistic and
+I'd say oh oh okay we can do that as
+well so you got this thing called the
+Hermos one which is a fantastic little
+vehicle it's kind of neat because it
+shoots a ballistic missile with an
+anti-radiation missile on the nose so
+we're going to try this one and see what
+happens we're going to go ahead and fire
+all those these are very amusing to
+watch and you can see they take a very
+very very long time to get airborne
+there and uh if you want to get an idea
+of the altitudes we're dealing with here
+let me go turn on the 3D view for Just a
+second here open this up Windows 11 is
+the new Beast new computer by the way so
+I'm still kind of finding all the
+goofiness with it and you can see just
+how weird my Tac view looks I gota like
+go back and like change it but you can
+see here um when we fire this thing it's
+going up
+it gets pretty high let's go actually
+speed up time a little bit here so you
+can get just an idea of how high up this
+thing
+goes I feel sorry for that sa21 he's
+looking up at that
+going okay if you want to play that game
+I guess we can try it and you can also
+notice they've already captured the
+Seeker in there starting to come back in
+now the part you probably aren't going
+to be surprised with is the fact that
+these are all Fireballs rering the
+atmosphere doing oh I don't know Mach
+4.15 but Mach 4.15 is pretty slow so if
+we actually zoom in here you can see the
+sa21 is like okay no problem and you can
+see as it just gently slaps um the first
+two out of the wayes another one little
+explosions a little early a little late
+uhoh uhoh spaghettio that's going to be
+a problem oh you're going to get it
+you're going to get it oh it
+malfunctioned bummer but you can see
+there that the fact that that was a
+fantastic solution to destroying Patriot
+batteries for example knowing the
+country of origin from that particular
+tool and you can see my little guy is
+not emitting or everything like that so
+as you can see the weapons have evolved
+significantly and they also have
+different platforms that they come from
+now things get more interesting with
+this and of course I like to pull this
+one out and I Nam this one of course the
+unfair aim and the reason I did this is
+um this is the latest generation of the
+har missile it does one really fun trick
+and I'll show you what that looks like
+in a second here it has the ability to
+go ahead and attack things that are not
+emitting so for example Champion guides
+I view here let's go ahead and attack
+this one you get one of these and you
+know you Mr guy who can't decide if he
+wants to admit or not you can have one
+too there there we go I'm going to go
+ahead and send them back home and that's
+it so even if these shut off their
+Radars now it doesn't matter these
+particular tools will flip on their
+automatic radar tools they're going to
+identify the Target on the ground and
+quite interestingly here you can see
+that these weapons are actually just
+going to rip just conventionally right
+into their targets very cleanly and very
+very very
+precisely so you're sitting here going
+okay so you've done a nice little tour
+to four as far as anti-radiation
+missiles I get the gist I get the gist
+where you going with all this well let
+me show you where I'm going with all
+this so what I'm going to do is I reopen
+my scenario again here I'm going to grab
+blue and I'm going to go ahead and grab
+my standard here now one of the things
+people forget about standards forget
+really about in radiation missile is the
+fact they target all Radars including
+those on ships now keep in mind you can
+only attack emitting Radars so if
+they're only putting on something lame
+like their little you know masted
+surface radar that's going to be the
+only thing you're going to be able to
+fire on so I can see here that he's
+emitting quite a bit here we have the
+Palm fron the top plate and the cads we
+get the hot flash so I'm going to click
+on him and go one two and go ahead fire
+two standards remember standards are 70s
+vintage they're not bad but um they're
+definitely not aarm by any means and
+again you need to be able to reliably
+Target there they go head back home now
+I did take all the missiles off the new
+Thia here so they will not return fire
+but keep in mind at any point he'd start
+popping up the naval s9s I think they
+are and it's going to come ripping in
+ripping in ripping in he's going to be
+tracking them and they're going to be
+load firing up the sea whz probably
+getting that thing spun up pointing up
+in the general direction on it h we're
+going to get some more last minute shots
+oh we go to hit see that last minute
+shot with the seway good shot so if we
+go to damage control here you'll notice
+that the cads naval radar the one that
+we targeted with our weapon struck and
+it got damaged as a matter of fact we
+did a little bit of damage here and you
+can see we completely snapped off the
+top plate that's gone and we did quite a
+bit of number to some of the other
+sensors on board as well so as you can
+see it's actually a valuable weapon
+against Naval targets keep in mind Naval
+targets are they they're they're whole
+of the Beast now one of the things I
+said a minute ago was how are you going
+to deal with things like our lovely and
+S2 SA sa21 S400 you know the one I'm
+talking about complex and this is a
+little more complicated because um we
+need to come up with a way to get our
+weapon close or use one of these he SSM
+armm which I think is awesome I think
+everybody needs one of these um my
+recommended strategy by the way is
+artillery or dumb bombs whenever you're
+dealing with something this effective
+but if you don't have any of those
+sitting around that's okay because um we
+can cheat with other things so what I'm
+going to do is I get everything set up
+all right let's do it so what we have
+here is we have a lovely fea1 18g
+Growler and it's uh basically jamming
+the hardest they can and following up we
+have the unfair anti-radiation missile
+that is going to fire through the
+altitude of this Target that is now
+jamming at maximum power so I'm going to
+go and lock onto that fire a couple of
+these I'm going go ahead and send him
+home as soon as the weapon fires there's
+one there's two so right now this poor
+sa21 is getting hammered with electronic
+noise and these teensy teensy tiny
+little anti-radiation missiles are going
+to be choing through all of that noise
+now one of the things you'll notice here
+is this particular weapon has done the
+exact opposite what I wanted it to do
+and it's gone up to maximum altitude
+before doing its plunge now you can see
+here it's actually arcing downwards now
+as it arcs downwards if you want to
+imagine this is a three-dimensional
+problem it's going to be cutting across
+my jamming here and now when it cuts
+across my jamming it's going to make
+this a much more interesting problem for
+these particular weapons to be acquired
+and attacked so if we actually switch
+real quickly over to Red here you can
+see we actually haven't identified the
+missiles yet and we haven't actually
+identified the Jammer yet because we are
+getting so hopelessly hosed now one of
+the things I can do here is I can
+actually flip on the big radar uh this
+is the one that's basically by Fire
+Control radar this one's got a lot more
+power and it's basically cutting through
+the sky right now looking looking it's
+looking it's looking it's looking it's
+searching it's scanning the sky surprise
+oh we got something so you can see right
+here we've identified those targets uh
+we've got a range on them of about 12
+nautical miles most likely we picked
+them up no no we picked them up with the
+gravestone so our big fire control
+Radars all got these guys right now the
+team is scrambling they're twisting
+knobs and they're pressing the but
+button that a zush on it the weapon is
+of course being deployed and keep in
+mind um they're firing like crazy mad
+right now trying to get these things
+weapon and you can even see the weapons
+themselves were jammed once they did get
+airborne and we actually don't even have
+a nice shot here at the Target that is
+jamming us right now but you can see
+with a little bit of saturation now we
+could have been a little more successful
+especially if we Ed something that was a
+little more specialized against
+something like this so what I'm going to
+do is I'm going to go and send him home
+and I'm going to grab something slightly
+more specialized so let's get to b-52h
+real quickly here now there's a lot of
+really really fun versions of this one
+so the long-range anti- ship missile is
+a pretty hilariously fun weapon but the
+one I really really really really enjoy
+other than this one which is hilariously
+fun to play with of course is the
+penetrator so let's grab that shift F1
+click on you and I'm going to go ahead
+and say actually we could probably Fire
+Let's do all of them why
+not this is called a lot of money coming
+out of your weapons and getting getting
+your money's worth so to speak uh-oh am
+I about to lose one of my aircraft
+because it got shot down uh you better
+B52 better go home there notice my F18
+is like got to go oh my gosh I'm about
+to
+lose I almost lost my p52 to a cheap
+shot got to be careful with stuff like
+that so anyway this thing's all been
+launched and uh this is really fun
+because um what he's going to do is
+those are active actually my God yeah so
+one of the fun things about this weapon
+here and you can kind of get a good look
+at it here is these are active radio
+frequency weapons so even if I highlight
+all these and press h this guy's going
+to be sitting here going uh what do we
+do and they're going to be sitting there
+squeezing triggers and pushing buttons
+and they're going to be locking onto the
+Jammers and they're going to be trying
+to do one of these and like even if I
+press uh F1 here and hold on shift and
+go like that and let go it's not going
+to matter because um the all the noise
+coming into this particular view right
+now is ridiculous not to mention my
+actual lethal weapons which are my JMS
+which are kind of mixed in with the
+group they're actually my jums are
+actually back here um these jasms
+haven't even been spotted yet so if you
+take a look here this guy basically does
+a little cha cha thing like with big
+nasty jamming noise right around my
+lovely little sa21 here and Meanwhile my
+jasms which are stealth cruise missiles
+by the way being backed up by my handy
+dandy little um you remember I had the
+F18 he's still jamming right now and of
+course um this is so
+goofy I don't know but uhoh surprise
+jams and of course he's going to start
+firing like crazy and the bomb always
+gets through and you can see my lovely
+sa400 sites here S400 rather is um
+struck and I don't think I killed it um
+I got about half of them to get the
+expensive part I got the cheap part nope
+didn't get the expensive part so
+unfortunately my tack still failed these
+are really sophisticated systems and
+like I said if you really want to do the
+deed effectively it's just best to use
+iron bombs against them so as you've
+seen now we've seen a wide variety of
+different anti-radiation missiles one
+thing I forgot to mention is the way
+that this inter um uses intermediate I
+can't talk today it's been a long week
+uh one of the things that it does do to
+make our life a little bit simpler is I
+did do some
+intermittent emission so if you actually
+come over here you can see my little
+setting here basically it turns on for
+five goes on for five and then it
+basically shuts itself off which makes
+it kind of nice because it makes it a
+lot harder what some people will do is
+they'll come in here into like emission
+duration two and it makes them even more
+difficult to Target so it's just kind of
+one of those neat little sort of tricks
+that you can utilize if you want to make
+them a little bit harder to hit but
+again if you're doing a search radar you
+could do like one minute and then one
+minute off I mean it's that easy as far
+as search radar stuff goes so as you can
+see very very useful tools very very
+useful weapons um obviously against very
+modern PL platforms it's a little more
+challenging but they work pretty well
+enjoy

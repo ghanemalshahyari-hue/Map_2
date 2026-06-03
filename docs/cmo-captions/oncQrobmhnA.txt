@@ -1,0 +1,139 @@
+# C: MO - Editing Unit Properties directly in the scenario editor
+Video: https://www.youtube.com/watch?v=oncQrobmhnA
+Video ID: oncQrobmhnA
+
+hello everyone in today's video we're
+going to show you how you can directly
+edit the altitude of a unit now this is
+something that we've wanted for a very
+long time and we finally got access to
+it so what I'm going to do is I'm going
+to grab myself a B52 here I'm going to
+get the correct B52 which is the B52 you
+can see over there in the upper right
+corner we'll load up on bombs now
+conventionally if you wanted this guy to
+lose some altitude you'd be the map
+editor like me you press Min altitude
+you'd hit the spacebar button and you'd
+watch the B-52 to a bunch of power
+donuts and then you can see about well
+six minutes later he's down on the right
+altitude that's okay though I really
+wanted about 36 000 feet so you speed up
+time
+nope still climbing
+that's how you guys doing today ah there
+we are ah so we started in a scenario at
+9 30 it is now 10 17. we burnt a ton of
+fuel and this bomber is at the altitude
+desired now one of the most recent
+things they've added if you go up here
+and see them on 1328 here is the ability
+to directly edit how high a unit is now
+the nice thing is you actually integrate
+it into something that we've already
+used before so what I'm going to do is
+just to demonstrate how quick this new
+method is I'm going to go back to 9 30
+in the morning press the F1 key go ahead
+and grab my B52 that looks pretty good
+to me I'm going to click on him right
+click on him scenario editor edit unit
+properties set unit properties ah let's
+see here 1500 feet please
+and you can see it drops them down to
+1500 feet Ah that's not what I wanted I
+actually wanted a 40 000 feet let's just
+sneak in here
+push that button just like that and you
+can see we jump up to 40 000 feet
+now we're to the wise by the way if I
+press the F2 key you have to double
+check to make sure that the overridden
+altitude is accurate here because um you
+can't obviously send this up to 150 000
+feet because the B52 can't do 150 000
+feet now you're saying though wait is
+there more of course there's more so
+what I'm going to do is I'm going to
+grab myself a lovely submarine here
+we're going to get ourselves the ssnc
+wolf because you know it's the Sea Wolf
+I'm gonna go ahead and click on him
+right click we're gonna go back to this
+edit unit properties and now the
+problems will start by the way please
+don't put it in fuel for something
+that's an ad fuel it's a nuclear sub
+don't put a number in here please zero
+feet press enter and you can see we are
+now chilling here on the surface
+probably not the best place for a sub
+now here's where everybody gets in
+trouble so I'm gonna go to scenario
+editor edit you know properties setting
+your properties notice this says depth
+not altitude so if you come in here and
+say minus 99 that's not minus 99 feet
+that's 99 feet above the surface because
+we're dealing with depth here so instead
+if I do 200 feet press the enter key
+you'll notice that does nothing because
+just because they said depth does not
+mean that they did not mean not out
+attitude let me show you what I mean so
+come back in here I'll do minus 200 feet
+go ahead and close that and you'll see
+now we're at minus 200 feet so you have
+to remember if you're going negative
+we're going negative we're going
+positive we're going positive I don't
+know of any flying submarines maybe you
+do but this one especially doesn't fly
+so if I wanted to of course I can come
+back in here I can say edit unit
+properties and I'll show you how clever
+this thing is let's say I want to do a
+minus 5 000 feet keep in mind the water
+is plenty deep here I press the enter
+key and of course that would crush our
+little sea wolf into Annihilation you'll
+notice indeed it will tolerate minus 5
+000 feet now if I press the F2 key here
+by the way you'll notice we are casually
+underneath our depth limit here now
+you're saying that must be some kind of
+bug or something like that well let's go
+ahead and unpause and you'll notice it
+is indeed not a bug it is a built-in
+safety check to make sure that you can't
+actually get under your maximum depth
+here so even if you did some Shenanigans
+like that the program is smart enough to
+fix that so that you can't get away with
+that little oopsie same goes over here
+for grab my B5 do real quick scenario
+edit unit I can't naturally do one of
+these 120 one two three
+aha see how this is 120 000 not true 45
+000 because our B-52 can never exceed
+its maximum ceiling no matter what silly
+value you actually put into that display
+right there
+so as you can see this is a super useful
+feature I am so glad that they added
+this I can't tell you how many times I
+have to run around these scenarios or
+everybody to move then to dive and have
+to climb have to dive they have to climb
+and it's a pain what this new feature
+does is really gives you the ability to
+kind of get into the nitty-gritty uh one
+word of warning like I mentioned before
+come back here and double check to make
+sure these numbers make sense otherwise
+all your hard work will be instantly
+undone as the submarine climbs or
+descends to whatever altitude that it
+has set in here enjoy

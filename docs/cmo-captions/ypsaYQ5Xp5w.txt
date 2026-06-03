@@ -1,0 +1,486 @@
+# C: MO - Aircraft Attack Methods
+Video: https://www.youtube.com/watch?v=ypsaYQ5Xp5w
+Video ID: ypsaYQ5Xp5w
+
+hello everyone in today's video we're
+going to be taking a look at some of the
+new features that have been coming out
+like crazy over in command land now it's
+almost gotten to the point where after
+that tiny update was released that i
+can't keep on top of everything that's
+changed it's almost like we've gotten
+like an expansion or like a command two
+and a half or something like that so
+we're going to take a look at today is a
+couple of features that i knew that
+there's going to be some questions on
+and people have some clarifications
+unfortunately no i won't be doing any
+video about the operational planner this
+by the way is really really cool it just
+needs a little bit more r d in order to
+make this really really really work well
+but the good news is there's ways to use
+this now that you can actually kind of
+overlap and make it work even better for
+you so let's go ahead and take a look at
+what i wanted to show you though so the
+first thing i wanted to share with you
+which i thought was very very very
+interesting is when we create missions
+let's go ahead and press the f11 key
+there and pop this up you're going to
+notice that we have brand new buttons
+down here now this is one of those like
+sneaky features that they just sort of
+stuck in there and i didn't let anybody
+know about it we also have this thing
+that says mark phase is satisfied upon
+reaching destination uh this is very
+very useful as well and also known as
+rtb on that these all go with the
+operations manager but um we're going to
+deal with that i think i promise a
+different week because um there's some
+stuff you're going to have that's going
+to make a little tricky to use
+another thing that we got which is
+fantastic and again i'm not going to go
+into too much detail here it's at the
+end of missions now when you deactivate
+you can actually unassign the units
+order them to return to b base and
+delete the mission itself so why is that
+freaking incredible it's amazing because
+now you have the ability to create
+entire massive sets of mission mission
+mission mission mission and when each
+mission aircraft is done they can come
+back to base that deactivates the
+mission activates them for the next
+mission that they could be going on it's
+really really cool but the thing i
+wanted to show today is i wanted to show
+off the new ability to control the paths
+that aircraft take when they're on
+strike missions so check this out so
+what i have here is i've taken my lovely
+homestay here and i've made it a target
+now one of my really really good friends
+um back at the new england air museum i
+used to work there for like i could do
+not 10 years uh he was a b-52 navigator
+and now what he actually would do is
+he'd sit there and he was a b-29 guy and
+then he became a b-52 guy kind of a
+thing and he says you can't tell me how
+many times i've blown up all the
+different major cities in the state that
+we lived in because he was always
+operating over here westover and so he
+gave me permission to blow things up in
+our own state so let's do it so i'm
+going to grab this real quick uh sorry
+bradley you become a target today so
+call this a target boomer that sounds
+good okay boomer land strike and we're
+gonna make sure it's active there's his
+parent pool don't worry about that yet
+we also have activation deactivation we
+can also when we're done we can unassign
+things i'm gonna press the ok button so
+what i'm going to do here is i'm going
+to go ahead and grab actually i'm going
+to edit my target list here no need to
+target runways don't waste your time uh
+oop there's a whole other set of runways
+apparently i can't see typical so what
+i'm going to do here is i'm going to go
+ahead and grab some aircraft that are
+going to help me out for this i have a
+couple different groups here i have
+these ones who have land only standoff
+weapons of gpu 38s and also have this
+crew over here that have these
+much much much much longer range uh
+these are jsow's so these have a little
+bit of reach so what i'm going to do is
+i'm going to grab the crew both sets of
+these crews here toss them into the
+mission notice by the way you can assign
+units for multiple missions now again
+that when we talk about the operations
+planner in another video we'll go into
+kind of how to make that work
+so here's what i'm going to do i'm going
+to come down here with flight size i'm
+going to set flight size 4 how they
+recently fixed the bug on this one and
+i'm going to scroll down here i'm
+actually going to set engage until
+winchester because why not and we have
+this brand new button down here this is
+attack method and it says split distance
+believe it or not we've had this for a
+long time we've only recently been able
+to use in the consumer version so we
+have two different problems we have to
+solve here the first one is what are we
+going to do as far as our attack goes
+the second one is how far apart are we
+when we do our break off so if you do
+formation single aim this is when
+everybody queues up in a conga lineup
+whatever target gets in the way now if
+we come in here we set it to independent
+aim now what we're going to do is order
+the formation to break up when they get
+to the target and pick something
+independent just do your own little
+targeting don't all attack the same
+thing at the same time that's wonderful
+and awesome so one of the ways i
+recommend experimenting with this when
+you're first trying to make it work for
+you is if you come down here with the
+creator edit flight plans button if you
+bop that button what it will do is it'll
+quickly generate the flight plan so you
+can see visually what's going on here so
+you can see very very clearly that this
+particular aircraft here is going to be
+doing one of those let me grab one of my
+d's here uh the nice thing about the ds
+by the way is the fact that they're
+going to be the ones that are going to
+drop it off so now notice with formation
+independent aim they kind of do one of
+those things video formation single
+volume updated flight plans notice
+everything stays the same this is what
+you're already familiar with where it
+changes is we have this thing called
+split at action point and we have
+echelon at action point each one of
+these different methods has a slightly
+different personality we'll take a look
+at both of them individually first one
+is split at action point using time
+deconfliction independent targeting what
+let me show you
+it looks a little bit like this so as
+you can see everything looks pretty much
+the same we don't have any extreme
+changes here because of the fact that
+we're not doing anything weird so what
+i'm going to do now is i'm going to come
+down here we have echelon at action
+point using time confliction run that
+one again and again you can see
+everything seems to be roughly the same
+you know we're not seeing anything
+extreme or weird or pretty much anything
+that we can say obviously keep in mind
+we have two different types of weapons
+that we're using here which sense that
+conflict things and you can see
+everything has basically stayed what
+you're used to at this point now watch
+what happens when we enable
+multi-axis simultaneous attacks so what
+we're going to do is we're going to do a
+multi
+um axis
+stacked tam of attack echelon attack
+there we go that's a lot to say press
+the button creator update whoa
+things just changed a teeny tiny bit so
+what we've done now is we've asked them
+to attack the target using an off-axis
+attack we've asked them to go ahead and
+tack in echelon which is what's going to
+basically create this kind of arc that
+they're going to be operating out of
+here and you can see all the individual
+weapon launch points kind of all spread
+out like that now we have different
+timing options
+we have a 20 second a 30 second and a 40
+second uh what's the difference uh if
+you take a look at the 20 seconds you
+see how everybody's a little bit closer
+together if we do the 40 seconds notice
+everybody spreads out so in essence your
+time here is what's going to be
+dictating the width of your attack that
+you're going to be utilizing now if we
+switch this to split attack instead of
+echelon attack
+create that a flight plan there you're
+going to see that it's going to create
+themselves this one point where
+everybody's going to go do their own
+thing and attack and kind of come back
+around and they're all going to come
+swinging back and and go ahead and land
+as well keep in mind we have aircraft
+with different weapon types here which
+complicates this but you can see the
+weapon launches now are all coming off
+with this really really far out then
+turn in kind of a thing versus just
+going and spreading kind of doing your
+thing and then breaking back apart
+basically making it more difficult for
+interceptors to be able to engage you
+because you're going so much far off the
+original axis of our attack that we have
+here now the interesting one here is we
+have these things called trail attacks
+now the nice thing about a trail attack
+is it's going to look a little boring is
+the fact that everybody's going to
+launch at the same time targeting
+different targets now that's awesome and
+it's also very very similar to what we
+had up here with these two as well now
+of course the one everybody's most
+curious about is this is banana split
+now i did a little bit of research to
+try to find out what the deal with the
+banana split is when you run it you get
+something that looks like this
+so the banana split is basically going
+to be an attack where you're going to be
+hitting from one axis and you're
+basically going to stay away from the
+target notice we have a huge right turn
+beaming the target then everybody turns
+fires turns around and runs so in
+essence this whole banana split sort of
+move here this is about 20 nautical
+miles by the way enables you to
+basically absorb and keep an eye on the
+target then turn and drop your munitions
+and then get the heck out as fast as you
+can keep in mind we need to have
+multiple flights unfortunately we can't
+change the split distance yet so
+otherwise we could take this point move
+it a little bit further a little bit
+closer so we have all of our aircraft
+ready to go one of the questions you're
+probably going to ask is does it work um
+yes and not only does it work but we
+also have this magical time on target
+capability which makes it even more
+powerful so what i'm going to do is i'm
+going to come down here oh let's see
+here 12 30 hour zulu time though 10 30
+11 30. uh we'll go ahead and call it at
+12 o'clock here zulu
+let's see that's going to be 10 30. no
+no what am i doing i'll do all this you
+well one hour from now it'll be 10 30.
+we'll do 11 zulu time i gotta remember
+this pretty early in the morning so now
+notice you're gonna get a little
+as all these things update and the other
+thing you're gonna do too is now you're
+gonna get the holding pattern that's
+gonna exist down here
+so we wanna go ahead and test this out
+so what i'm gonna do now is i'm gonna
+set up a little bit of an escort to help
+us out because um i knew
+this is a very complicated mission that
+i've been playing with quite a bit here
+so let's go ahead and get some cap going
+on here okay i wanted cap and that's one
+of the interesting things here so we'll
+set this to patrol aaw looks pretty good
+to me and don't worry about that you're
+going to see stuff like that once in a
+while so we're going to grab all the c's
+we're going to go toss them into the cap
+how many targets would you like to be on
+station at one time um let's see here i
+have 12. so uh let's see here we're
+going to uh forget it we're just going
+gonna launch them all groups of six why
+not that sounds pretty good to me uh the
+take off time we're gonna go ahead and
+try to get them a little bit before our
+striker is there ten o'clock is probably
+a pretty good takeoff time that's going
+to give these guys a little bit of time
+to circulate anyway so then what we'll
+do is go ahead and set up our seat as
+well because you know seed let's see
+seed we're going to do a patrol we're
+going to do a seed patrol press okay
+there i'm not going to worry about that
+nothing bad it's going to happen don't
+worry nothing bad will happen so we have
+seed we're going to grab our growlers
+and toss them into the group here um
+we're not going to do any of this
+one-third business but we are going to
+send them out in groups of four so let's
+see here the cap takes off at 10 o'clock
+uh the seed is going to go ahead and
+take off at uh 10 10 here just a little
+bit later and then our target boomers um
+their time on target is going to
+actually be 11 o'clock so they're gonna
+have to take off sometime during that
+sort of interval like that so let's go
+ahead and hit spacebar speed of time a
+little bit
+and people start getting airborne and of
+course you know exactly how the story
+goes let's go ahead and slow things down
+now one thing i love already in this
+particular version is we now have the
+air tasking order so in any moment i can
+pop this open and i can take a look and
+go let's see the aew is doing his thing
+uh cap everybody's getting ready i can
+scroll to the right here i can see
+exactly where they're taking off i can
+see the objective time it looks like
+they're gonna be taken off at this
+particular test it's local by the way so
+they're going to be getting airborne
+about 10 18 or so so nothing too too bad
+meanwhile all my these guys are on their
+way kind of heading directly towards
+their target which is kind of what i was
+hoping because this is a pretty we're
+going to lose some airplanes here like i
+have no doubt in my mind oh by the way
+uh if you look up top you'll notice we
+now have a new time acceleration we have
+a double fire which is awesome it gives
+you this like bizarre like five second
+thing unless there are missiles in the
+air in which case it unsettles down to a
+much more normal speed is kind of what
+i'm going to say here all right you're
+supposed to be getting the air
+superiority here you guys are getting
+wrecked
+come on give me some air superiority
+give me some of that mean air
+superiority oh yeah bring me some air
+superiority so because they've changed
+the missile model so much all battles
+now seem to take place like could they
+basically fire and run fire and run fire
+and run like that's that's like
+everything now
+i'm not saying there's anything wrong
+with that i played an awful lot of dcs
+in my day and i can tell you the only
+people you shoot down are the ones that
+didn't know you were there you don't
+shoot them down because you know you
+engage in these like vicious dogfights
+you basically run each other out of fuel
+and missiles oh speaking of out of fuel
+and missiles it looks like uh a bunch of
+our career guys that got wrecked but
+look at that right on schedule look at
+this all these guys have taken off and i
+remember supposed to be on the target at
+about 11 o'clock
+i think you promised uh none of those
+friendlies are from these so now notice
+look at this
+this is the one group for the long range
+this is for the brooches this group here
+is for the regular j dams so we're going
+to get into range here everybody's going
+to start firing all sorts of interceptor
+weapons here oh here they come
+whoa whoa
+well they're the best laid plans right
+unfortunately we're never going to get
+into range because those pesky ruskies
+are just going to start dumping stuff on
+us
+oh they're trying to shoot down the
+missiles there that's a great system
+there and meanwhile the other crew is
+still flying towards their targets here
+and it would be really really really
+nice if these guys will like help out
+now that they've kind of done the thing
+oh surprise
+and then of course we have this crew
+which i just did their banana split
+there again they popped out they came
+back around and now they're kind of
+splitting
+running back as fast as they can to this
+position and they're going to do this
+little like what do you
+um whoa whoa whoa whoa whoa whoa hold on
+guys hold on we have a flanker that
+seems to be being chased down would you
+be so kind as to inconvenience it just a
+there it goes
+ah i didn't expect boom
+now i have no idea why they didn't do
+that because i'm pretty confident i did
+my job here all right so everybody's
+going to finish up their little flight
+plan they're going to get the heck out
+of there they're going to land on the
+ground or well actually i mean well the
+mobile ground there because it's an
+aircraft carrier so let's go take a look
+at losses and expenditures and let's see
+kind of what happened here so from what
+you saw you noticed everybody did their
+thing they did the drop and immediately
+broke off and did this like run this
+crazy sprint to safety and then they
+kind of took back cover let's see we got
+a bunch of hangers uh we got a couple of
+these
+a terminal need to be redone anyway oh
+let's see here il-78 so we got some
+hokums and we got a good stuff uh the
+stupid sa-10 nsa11 was making our lives
+a little miserable here uh they went
+through a ton of ammo including only 20
+of those it makes me feel better uh they
+lost a lot and here's the worst part i
+guarantee you we lost seven f-18s
+one two three four five six
+not bad not bad we didn't lose any of
+the growlers but that's exactly what
+happens now here's a fun fact um go look
+up how much one of these aim 120 cost
+and then look at how many i just
+expended for not a lot so anyway
+hopefully that video helps you out as
+far as planning these out i think these
+are really really a lot of fun to play
+with now and i love some of the new
+features but again those are all going
+to be videos a little bit later in the
+future it'll be very interesting to see
+just how many people i love this new
+double fire mode look how fast it is
+isn't that awesome that's so much faster
+than it used to be
+and then of course we could come in here
+and we could you know pre-program you
+know how much they're going to be doing
+for the next one we can set them up for
+a separate land strike but like i said
+that'll probably be for a video for next
+week other than that enjoy

@@ -1,0 +1,254 @@
+# C: MO - Understanding Chaff, Flares and other countermeasures
+Video: https://www.youtube.com/watch?v=WV4w-TJdBoo
+Video ID: WV4w-TJdBoo
+
+Hello everyone. In today's video, we're
+going to be answering a question
+somebody had recently where they were
+asking, "How do I make uh decoys work?
+You know, if I want to fire a bunch of
+chaff or a bunch of flare, what button
+do I push?" And the reality is, for the
+most part, most of those things are
+handled completely automatically, as in
+the little miniature pilot, you know,
+the one pixel wide pilot who's operating
+our airplane right now is basically
+going to be the one who's responsible
+for deploying everything at exactly the
+moment it's supposed to be deployed.
+Now, it's important that I preface this
+real quickly saying you actually can
+intentionally lay chaff as a continuous
+stream. We covered that like about four
+years ago. So, you can go take a look at
+that if you want to check it out. But
+the point here is we have an F-16 and
+we're sneaking up on an SA2. I've
+ordered this F-16 and not to do anything
+defensive when it gets launched at. Now,
+the reason I like this scenario is
+because if I actually pop up the F-16
+here, I'm like, "Yay, F-16." One of the
+things you'll notice is it has a couple
+defensive tools. For one, of course, you
+probably notice that it's a radar
+warning receiver. Very helpful. By the
+way, you also observe that it has CM
+countermeasure dispensing system and has
+a bunch of chaff and a bunch of flare.
+And importantly, it has the ALE50
+version 2 twin 2 decoy 2 system with
+four decoys. What is that? That is a
+toad decoy aka the little buddy that
+theoretically creates a big enough radio
+frequency kind of target that if you
+shoot a missile at it, it goes after the
+decoy instead of the F-16 itself. That's
+the theory. Uh, it's also also worth
+noting that this particular loadout
+right now also has another defensive
+tool, and that's the fact that it has
+the lovely an ALQ184DECM
+pod. Now, you're sitting here going,
+"Well, that was a lot of uh ei.
+What does it all mean?" Well, let me
+show you what it means, cuz if you can
+see it, it'll make more sense when it
+happens. So, first thing I'm going to do
+is I'm going to go ahead and unpause
+because why not? But I'm also going to
+go ahead and switch over my map mode, or
+I should say my message log mode to be
+traditional. So, I'm going to click the
+little arrow and I have this little
+button right here. It's actually in all
+mode. You have enter mode. You have all
+you have all sorts of different little
+options here depending on what you need
+the message log to do. One thing you can
+do though is you can pop it into a
+separate window. And the reason I like
+popping it into a separate window is
+when the fireworks start, it's going to
+be easier to actually see it as it
+happens, which I don't know. I just find
+that helpful, I guess, kind of a thing.
+I don't know. It's just me. All right.
+So, let's call some problems here. F16
+is sneaking up on the SA2. I can't tell
+you how many games and how many times
+I've done this exact scenario with that
+exact type of airplane against that
+exact type of target. Although, let's be
+honest, very rarely would you get popped
+at by an SA2DE. That's a Soviet system.
+A lot of times they'd be Fs especially,
+and sometimes the um you like the C and
+the B's if it's like a Vietnam scenario.
+Regardless, we're going to go ahead and
+have them fire at us cuz they're only
+going to take a few sec. There it is.
+Beautiful. Pause. Excellent. Now, let's
+see what happened here. So, we notice
+there was a new weapon contact to Sam.
+Uh we also notice there was another
+weapon contact. We can see it sneaking
+in here. Connections been lost.
+Connections been lost. That was a little
+unusual because we lost sight of the
+missile as it came off the barrel. It's
+okay though because they'll fire another
+one in a second. There we go.
+Delightful. Here it comes. Here it
+comes. Here it comes. And pause. Nice.
+Excellent. That did everything I wanted.
+By the way, the reason it disappeared is
+there's a mountain range here. I forgot
+my own geometry. Okay. So, if you come
+down here now, you'll see that we have a
+weapon contact SAM number five detected
+at 13 miles. That's pretty good eyes to
+be honest. Now, you'll notice when the
+missile got to us, the first thing that
+happened is the ANLE50
+um went ahead and kicked on. It's a
+1990s technology. It attempted to seduce
+the incoming SAM. And you can see here,
+it has about a 40% chance to do so. It
+rolled an 81, so it failed. So, my anal
+blew it. So, then it moves on to the
+next defensive tool, which happens to be
+generic chaff. Now, this generic chaff,
+you push the chunk here. Chaff flare.
+Chaff flare. A bunch of chaff and flare
+came ejecting. I hope you just push the
+chaff button. You'll notice here that um
+it's got a really really good chance of
+actually confusing the missile. The
+reality is the SA2 is garbage against
+especially modern chaff. And you'll see
+here that it was a success which means
+that this particular tool, the chaff
+cartridge actually caused the missile to
+lose its actual target and miss. So this
+chaff cartridge won. Now if you come up
+here a little bit, you'll notice the
+anal had a second try. Now you're
+sitting here going, "Dude, that doesn't
+make sense because if you look here,
+according to this, the chaff already did
+it." That's correct. But remember these
+things are all happening simultaneously.
+So our two decoys failed are chaff one.
+If we come to this one, you'll notice
+that these two are not a second shot of
+the chaff, but the reality is it's the
+chaff against the second missile. So
+you'll see the first round went through,
+the RT failed. Chaff succeeded. The
+second missile, we have the RT again,
+the little buddy failed, but the Chaff
+again succeeded. So, as a result, both
+of these weapons completely missed the
+target. And it even says here, all
+seekers were spoofed, missed target. And
+you can see that they vanished because
+anybody who's ever played any flight sim
+would know that at this point, of
+course, what would happen is our sand
+would just go by and go and basically
+make a huge, really nasty, angry, loud
+firework. But the cool thing, of course,
+is R16 got in range. So, we can now go
+ahead and have the F16 get the heck out
+of here. Actually, I think he's got to
+finish dropping his weaponry there. Uh
+F-16. Yep. You can actually look over
+here and see that he's gone through
+quite a bit of his resources here. Uh
+you can turn around now and leave. Go,
+go, go, go, go, go. Maximum altitude
+after burner, which is the last thing
+you'd want to do. You'd want to drag it
+higher. But this is good. This is good.
+This is good. Check this out. Check this
+out. [laughter]
+Consider yourself splattered.
+Boom. Nicely done. F16. Nicely done.
+That's what I'm talking about. Now, one
+of the things you'll find kind of cool
+here is if I come back here, you can
+actually see that quite a bit of party
+went on here. And now you can actually
+see that other F-16 actually took a pot
+F-16. The other SA2 actually took a pot
+shot. Remember that one that was chasing
+me down? But you could see it basically
+ran out of energy. We also found out
+that an SA7, yes, some dude with a
+shoulder launched weapon actually took a
+pot shot at that weapon um wind
+corrected munitions dispenser. And I'm
+just going to tell you right now, let's
+see here what he had for a choice here.
+He had a 1% chance to hit, which is
+pretty good. But you can see the result.
+74. That's a miss. And again, he didn't
+hit anything. Of course, our weapons,
+they did their job perfectly and
+basically [snorts] all over the SAM site
+itself. So, the reason this is important
+is when you get some more complex units.
+Let me let me go get you one real
+quickly here. Let's get a B52
+H. And now we'll get a nice modern one.
+Ah, there we go. That's what I'm talking
+about. Yeah, let's go all out. Let's go
+all out. If we get to something like a
+B-52, one of the things you have to
+watch out for is that look at how many
+defensive tools it has. It actually only
+has flares and chaff. And you're like,
+are you kidding me? That's it. But the
+reality is, if you actually prop up
+here, you'll realize it has more than
+that. It also has, of course, the radar
+warning receiver, the defensive ECM,
+which would be subtracted directly from
+the attack. And of course, we have the
+OECM and DECM. So, it's actually
+possible to block the radars from ever
+knowing you were there, assuming you're
+on the correct wavelength, which is
+something I've discussed before. Now,
+the crazy thing here is this also
+applies to things like torpedoes. So, if
+a torpedo has a certain chance of
+hitting a ship, let's go get one just as
+an example here. We'll go grab ourselves
+submarine. Of course, we're going to
+grab Virginia. Meet Virginia. We'll grab
+that one. Looks good to me. And it
+doesn't really have a load out, but if I
+pop this one up, if I scroll down just a
+little bit, you'll see the fact that
+they've got the signal ejector, the 3-in
+one, and they have this nice torpedo
+decoy. If I actually hit that, you could
+get the stats on it. And if you just
+were curious here, you will observe that
+against a subsurface target, it only has
+a 20% chance of succeeding. That's
+assuming, by the way, that the thing
+that it's defending against is not a
+more modern version of whatever
+particular weapon system is. That's
+something we've dealt with in another
+day as well. The important thing to note
+here, though, is that is going to be
+subtracted as the torpedo hits. It's not
+going to have to be activated special
+for those of you who play cool waters
+and stuff like that. It's always
+automatic. Enjoy.

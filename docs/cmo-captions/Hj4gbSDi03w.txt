@@ -1,0 +1,202 @@
+# C:MO - Decoy Ladder Jamming
+Video: https://www.youtube.com/watch?v=Hj4gbSDi03w
+Video ID: Hj4gbSDi03w
+
+Hello everyone. In today's video, I'm
+going to show you a quick trick as far
+as how to use decoys more effectively.
+Now, one of the things you need to know
+about decoys, and again, I got my little
+squad here sneaking up on this radar, is
+the fact that decoys will try to stay
+out the altitude that you fire them.
+Now, think about that for half a second
+here. That would mean if I'm trying to
+engage a target that's on the ground,
+such as a SAM, if my decoy is launched
+at an altitude higher than the SAMs can
+shoot, it'll never bother with it.
+Likewise, if you have a active jamming
+decoy like my lovely ADM 160 here, that
+also means that it's not really going to
+be doing much jamming for us except at
+the altitude that you launch it at. So,
+that creates an interesting problem for
+us. So, what I would like to do, of
+course, is I'd like to go ahead and
+engage this target down here on the
+ground. And you can see it's just
+hanging out. I'm flip on the radar for a
+second here and I see if I get a better
+view. And ah, of course, there's got to
+be a SAM site. And it's got to be a
+nasty one that's going to do all sorts
+of damage to us if we're not careful.
+So, it's the SAM is the one I want to
+hit. and it's a mobile which makes it
+small but it doesn't mean it's any less
+lethal. I want to put that thing out of
+commission. So let's do it. So I'm going
+to grab myself my decoy launcher here.
+And the first thing I'm going to do is
+I'm going to launch myself one decoy.
+And now this decoy is going to be just a
+little bit in front where we're going to
+go ahead and launch our attack vector.
+I'm actually going to take these two and
+drop them down to loiter speed. Now what
+I don't get here is the loiter speed is
+like 250. Are you kidding me? Loer speed
+ain't 250. Loiter speed could be a lot
+slower than that if it had to be. The
+other thing I'm going to do is I'm going
+to now drop him down to a different
+altitude and I'm going to fire a second
+decoy. Let's go ahead and slow down a
+little bit here. Got to come down.
+That's about 30,000 ft. And that's about
+25. We'll call that close enough. I'll
+control F1 and go ahead and pop another
+one. And now what we're going to do is
+we're going to come down to our next
+altitude. Now, usually I try to do it a
+little bit lower. That's going to be
+about 20,000 ft. And that will be for my
+next decoy right there. Go ahead and
+fire. Come down a little bit lower here.
+That's about 16,000. That'll be my next
+decoy right here. Go ahead and pop
+another one of those. And we'll come
+down to about 12,000 ft. Actually, we
+want to keep coming down here. Keep
+coming down, my friend. All right,
+there's my next one. I'll go ahead and
+pop another one. And again, all I'm
+doing here is creating a vertical ladder
+of decoys. All right, let's come a
+little bit lower. 9,000 ft. That looks
+pretty good for my next one. Let's go
+ahead and pop this one. Remember, these
+are active jamming decoys also. And
+that's about a little bit lower. There
+we go. Right there. And this is going to
+be my minimum altitude decoy. Actually,
+I probably go a little bit lower than
+that. More
+[Laughter]
+All right, there we go. 2,000 ft. That's
+getting pretty low for the current
+weather conditions. Look at that. I'm
+actually too low. Uh, we'll have to make
+that above ground level so that it can
+get higher enough to actually fire that
+last one. Come on up. We'll order him
+back up to 12 grand, I guess. Go ahead.
+There he goes. Go ahead and fire that
+last one for me, please. Ah, he's done.
+All right, you can go home. Okay.
+Excellent. So, what we've done here is
+we have now launched a ladder. And if I
+pull my screen to the side, I'm tipping
+to the right, by the way. I don't know
+why. You'll notice that I am now doing a
+vertical line of jamming because
+remember jamming is line of sight. That
+means now that I've created my little
+ladder of doom here, um, anything that
+is trying to shoot through this ladder
+of doom has jamming support. And
+likewise, our HQ is going to be awfully
+busy. So, what I'm going to do here is
+I'm going to grab my Growler. I'm going
+to order him to go ahead and fire up his
+sensors here. We're gonna do some
+offensive ECM. And that's just going to
+make this a more effective attack for
+our strike here. And the other thing I'm
+going to do too is I'm going to drop
+these both down to kind of moderate
+altitude here about 20,000 ft. So they
+are in the thick of it. And now by thick
+of it I'm referring to the fact that um
+basically the nice part of the ladder if
+you want to kind of think about it. I'm
+going to call this the ladder jam. It's
+just kind of fun. So we've got a lot of
+electronic warfare going on here. But
+this is going to be fun. So I'm going to
+grab my F-18 here. I'm going to press
+the shift one key. And of course we're a
+little out of range here. What I like to
+do is fire a couple of them. Uh targets.
+I don't know enough of it, but that's
+okay. So, we're going to go and queue up
+two of those because no doubt he's going
+to try to take a pot shot at one of
+these. All right, come down a little bit
+there. That's about 20,000 ft. Now, I'm
+a very tempting target. Go ahead and
+launch our last two here. One of the
+things I like to do is to take a pot
+shot at the other thing, and when the
+missile leaves the rail, he'll turn his
+radar on, and then it becomes a free
+shot. Cheap shot. Cheap shot. So, as you
+can see here, um, basically our F-18 is
+now loading his little rack here. And of
+course, our E18 is doing a lovely job.
+Look at this. Do you see how our
+missiles, you can see very clearly now
+in 3D, are flying through the nasty
+jamming. And unfortunately, this makes
+it much more interesting for a guy on
+the ground to be able to basically
+identify the target now up through all
+this nastiness that is now raining down
+on him. It's not going to say that he's
+going to get a shot off, but
+geometrically speaking, you can see just
+how hard of a shot this is going to be.
+So, let's go ahead and watch the
+fireworks. And would you look at that?
+Not a single SAM was ever fired because
+that jamming was so complete in its
+ladder shape that it basically prevented
+any of that firework from getting
+through. Now, I am not satisfied. As you
+can see very very clearly here, we've
+disabled the j the radar basically of
+this thing. And of course, we're still
+being nice and irritating with our
+jammers. Unfortunately, our argams did
+not do the deed here, which is
+unfortunate, but that's going to happen
+sometimes. So, we have a couple choices.
+We can certainly sneak up on this thing
+and try to get a cheap shot on it
+without cannon. Cannon fire is fun, by
+the way. Look at this. Look at this in
+3D. This is just scattered. Or we can do
+the lazy thing, which is what I'm going
+to do cuz why would you ever do a
+mission like this with a single
+airplane? Let's be honest here. And
+let's get some in-flight
+rearming. We can't do this in the real
+world yet. Nice. Reload. All right,
+let's finish the job. I just hate the
+idea of a job that's just not done
+completely, you know. All right, there
+we go. Go ahead and fire the second
+shot. There it goes. And you can see
+it's locked right onto his radar. And
+bam. And bam. As you can see, our little
+ladder technique with our spread out
+jammers at multiple altitude plus all
+this other good stuff relied gave us
+this really, really amazing electrical
+edge, which made it so much simpler and
+safer to take the shot. And again, at
+any time, I could have come down with
+the cannon and basically buzzed it. But
+eh, it's not as much fun. Enjoy.

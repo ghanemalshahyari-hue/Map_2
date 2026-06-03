@@ -1,0 +1,129 @@
+# C: MO - Kinematic Range for Torpedoes
+Video: https://www.youtube.com/watch?v=hUtHFA6EFZM
+Video ID: hUtHFA6EFZM
+
+hi everyone in today's video we're going
+to be taking a look at the difference
+between a kinematic Max rain shot on a
+torpedo in a better
+um best chance hit of shot on Torpedoes
+so before we get carried away here um
+let's see exactly what I'm talking about
+if you were to take my look in the
+little sea wolf here and go pop up the
+mods seven ad cap Seabass torpedo you
+would see a bunch of interesting things
+in its data block starting up at the
+tippy top you got the size obviously you
+got the weight of course you also have
+this interesting thing here that
+wrenches range and one of the things
+you'll see is a range of 21 and nautical
+miles that is going to be the automatic
+fire I think we have the best shot of
+taking a shot range 21 nautical miles
+for torpedo is insanity in my mind the
+other notice thing you're going to see
+if you come down here is that there is a
+kinematic range of 27 nautical miles at
+50 knots in 20 nautical miles says 65
+knots what does that mean that means
+that if we want to fire this torpedo 27
+nautical miles we have to actually slow
+the Torpedoes propeller down so that it
+could take longer endurance so it
+actually can make that trip but that
+means we're going to be a little bit
+slower if we're less than 21 miles I'm
+going to we see up here that means we're
+going to get a 65 knot shot for
+somewhere in the middle we're going to
+get a little Shenanigans so what I'm
+doing here is I have my little p8
+Poseidon he's just turned around far
+enough to be able to probably see that
+ship and we probably identified that
+ship too ah the Boris of silicon here
+hmm it would be a shame if something hit
+it oh shoot looks like we're out of
+range with our Seawolf here it looks
+like we have a range here about 25
+nautical miles ah if only we're within
+range we are within range
+I'm gonna press shift F1 let me go ahead
+and select this target you're going to
+notice I cannot fire the target at this
+time we have plenty of weapons they're
+ready to rock but they are outside of
+the normal firing Arc of our particular
+weapon I should say we're not firing
+range now if I were to go into my WRA
+and M con and all that if you scroll
+down here where it says kinematic range
+for Torpedoes if you open this up you'll
+notice this thing this is kinematic
+range for manual only an automatic and
+manual so I'm going to select manual
+launches only go ahead and close that
+now you're sitting there going well that
+didn't really change anything I actually
+want to get my submarine underway here
+because it has to catch up to him in a
+minute but you'll notice if I press
+shift F1 then I go ahead and select that
+Target you will see that I can now take
+the shot so I'm gonna go ahead and
+double click both of these and go ahead
+and unpause
+and torpedo in the water that is the
+most insane long shot I mean this is
+like the long-lance torpedo times 10
+here this is ridiculously long range
+shot so what do we notice about the
+torpedo we launched first of all it's
+outside of the maximum engagement range
+again that's the Practical range as it
+was listed there the second thing is
+you'll notice is it's traveling at 50
+knots here which is pretty slow for a
+torpedo so I'm going to speed up time a
+little bit here ignore my Poseidon is
+making me dizzy ah let's close and
+resume here go ahead and unpause and you
+can see my 50 knot Torpedoes are showing
+right up on the target which has no
+internal sonar so it's unfortunately not
+going to see this coming nor is it going
+to be able to hear it coming it's just
+all man what a clean shot that was oh my
+gosh that torpedo officer gets a Extra
+metal here look at this oh that was
+sweet there's a little Swig wag there
+and let's give it a second here oh we
+don't know I have a confirmation on the
+durability of this target here
+attempting retargeting ah looks like we
+would turn around it's okay though
+because I can just turn the torpedo
+around because it is a wired guided
+torpedo that was a Kill Shot amazing so
+as you can see we were able to take that
+Target out even though we were a little
+outside of the range
+now a few of you are probably saying
+well is it worth it to take those long
+impossible shots should I just leave it
+on automatic fire the reality is it's
+all about the game if I'm attacking
+other submarines so one of the cool
+things you can do here is you can fire
+those maximum range shots outside of the
+range that the AI is expecting to have
+to engage you at so as a result at the
+end of basically receiving a torpedo
+much much sooner than they will be in
+range themselves to slaunch a torpedo at
+you so it's actually a very valid
+strategy the catch of course as you know
+is you have to be able to detect the
+targets but other than that enjoy

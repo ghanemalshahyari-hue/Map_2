@@ -1,0 +1,394 @@
+# C: MO - Useful Hotkeys
+Video: https://www.youtube.com/watch?v=auCS-BuFgn4
+Video ID: auCS-BuFgn4
+
+hello everyone in today's video we're
+going to be taking a look at the common
+hotkeys used in command modern
+operations now believe it or not there
+are a lot of hotkeys that you can
+utilize in this program and one of the
+greatest things is if you ever get lost
+at which ones to use if you go up to
+help there's a little button that
+actually says hotkeys so you can
+actually open that sucker up and it'll
+take you to a place where you can
+actually take a look at a lot of the
+different buttons that you're going to
+need now the question I was asked on a
+recent live stream is what are the
+common hotkeys that you find yourself
+using all the time well the first one
+that I'm always using is spacebar
+spacebar is going to be the one that
+actually starts and stops your actual
+running here believe it or not you can
+also press Ctrl enter if you're so
+inclined But A spacebar I can't tell you
+how often like my left hand is basically
+that thumb is how ready to go on that
+one at a moment's notice the other thing
+that really helps is changing your time
+compression now I'm a person who likes
+to use plus and minus on the numpad with
+my right hand but some people of course
+like to use it by pressing plus a bunch
+of times you can speed up all the way to
+double fire if you press minus a bunch
+of times it drops it all over now one of
+the coolest tricks here is if you go oh
+God just press the enter key and it
+immediately snaps it back to 1x that's a
+pretty helpful total tip there that you
+can use the next one I'm using all the
+time is Ctrl and S the warning control s
+by the way is we're currently sitting
+here in the scenario editor if I were to
+press Ctrl s what I'd actually be doing
+is I'd be saving the scenario at this
+exact moment which means my beautiful
+scenario file has now been overwritten
+so watch out for that one the next one
+is the one that I don't use very often
+but I actually find it to be pretty
+helpful and that's the ability to
+basically add units to a quick button so
+for example if I click on Homestead Air
+Force Base if I press Ctrl and then one
+on my keyboard as you can see I got
+karnatak going today now if I come over
+here and click over here I'm in the
+middle and looking at oh these look like
+pretty Islands if I press the number one
+on my keyboard boing it instantly will
+snap me back to that particular view
+which is a super duper duper handy there
+if you have a specific unit again I can
+take my little an FPS 20a there and
+control two and go one two one two one
+two one two not again you can have a lot
+of fun with that if that is something
+you're so inclined to do here so those
+are both very very helpful keys is you
+could actually do Z and X if you want to
+zoom in and out if you want to be honest
+though I just take the mouse and use the
+scroll wheel for that and now of course
+right click and drag is going to do one
+of those pieces as well next thing we're
+going to take a look at is we're going
+to take a look at all the stuff that we
+like to use as far as using different
+types of reference points now if you
+press Ctrl and you right click anywhere
+on the map it's going to bring up a
+handy-dandy little context menu that's
+going to be dependent on what's going on
+one that you see of course from the
+scenario editor so insert control insert
+gives me the ability to edit things but
+what I'm going to do is I'm going to go
+ahead and add reference point so you'll
+see that it turns into a finger so I can
+go ahead and click and get myself a
+deselected reference point now if I
+press Ctrl insert just on its own again
+as you can see in the bottom corner I
+can go there and actually create my
+reference points directly now the cool
+thing about reference points is if I go
+ahead and select both of these what
+you're going to have here is you're
+going to have my waypoints basically
+ready to rock let's go if I want to
+delete a reference point you press Ctrl
+and delete notice it deleted all of the
+reference points that I had selected so
+for example if I only have RP 280 4 Ctrl
+D it's gone so that's kind of something
+you want to kind of be a mindful of when
+you're actually pressing the buttons now
+one of the other tips I really really
+like to use and I recommend this is
+control end and what that will do is it
+will instantly deselect all reference
+points at the same time the reason this
+is super duper helpful is because if
+you're doing one of these you're like I
+want to create a new area control and
+Bam I'm ready to go I don't have to
+really worry about any of those
+components the next command that I'm
+probably using way more than I ever
+should need is a control D and what that
+will do is that will go ahead and give
+you the range and Bearing tool of course
+you've seen me lose this thing so many
+times I swear that I have like spacebar
+and control D or like completely worn
+out of my keyboard kind of a thing
+because they're so useful one of the
+nice things about this is that wherever
+you click it picks up where you went
+from so for example if I were to measure
+from this point to this point that this
+55 if I want to measure from this point
+to this place down here I can see
+immediately where it is and it actually
+works really really well so the next set
+of points and buttons we're going to see
+here is basically going to be linked to
+our handy-dandy message log now believe
+it or not there shouldn't really be
+anything in here other than it's going
+to tell me that I switched side here but
+if you want to pop this out just for
+convenience sake you can actually press
+Ctrl shift M and it will pop that sucker
+out so that it actually is its own page
+now the reason that's so incredibly
+useful here is if you want to switch to
+Raw mode which is like the OG Commando
+mode of doing things you could actually
+do that you can also press Ctrl M and
+it'll actually clean the entire log out
+if that is something that you need to do
+now when it comes to scenario editor I'm
+going to skip all those commands because
+those are going to be things for a
+different point and instead we're not
+actually going to take a look at the
+commands for getting some units and sort
+of actions uh sort of go in here so what
+I'm going to do is I'm going to go ahead
+and uh press the run my scenario here
+I'll take advantage of all my new
+learning kind of run it for a bit run it
+for a bit and we'll give you some real
+oh pause
+what's this we have some incoming
+targets now these are all coming right
+from us from Kuba so I think it's pretty
+safe to assume that they're probably not
+of the friendly variety here but believe
+it or not when a new bogeys are
+identified or skunks or you know goblins
+or anything like that you can actually
+click on them and you can press a button
+to Define what type of Target you expect
+this to be uh for me 99 of the time I'm
+pressing H which is immediately going to
+flag this guy saying hey the thing that
+you have right here is actually friendly
+now if I press n I'd be flagging it as
+neutral keep in mind if I re-identify
+this thing as something that's actually
+dangerous they'll override that
+particular component now if you press
+Ctrl H interestingly enough you can
+actually flag something as unfriendly
+pressing F brings it all the way up to
+Friendly keep in mind it doesn't make
+this guy friendly I promise you this guy
+is probably not very friendly but the
+cool thing that we have here is I can
+actually do all those different
+components I'll go ahead and mark them
+as hostile now interestingly enough you
+can re-name enemy contacts this is one
+of those interesting little things that
+people probably have missed and they
+played command for years sort of a thing
+but the reason this is super super
+helpful is you can actually come in here
+and for example I can put an asterisk
+here and what that's doing is that's
+just reminding me that that particular
+target has been identified and I usually
+use that little asterisk as a way to
+remind me that I've already launched an
+intercept Mission Against it for example
+so you know exactly what I'm doing it's
+kind of a neat little you know just a
+pro tip for the day maybe you didn't
+know that one kind of a thing like that
+so I'm gonna go ahead and grab all these
+and press the H key
+now another fun button to be honest I
+think a belugan's the only one who ever
+uses it I swear is if you press the T
+key so what the T key does is it auto
+tracks a unit so if I zoom in a little
+bit you can actually see that as this
+unit gets its position updated my world
+is actually updating itself along with
+that particular track as it's starting
+to change go ahead and pause there now
+that's kind of fun to play with like if
+you have a satellite it's a really
+really high altitude you can ride it
+around again the original is like I kind
+of jokingly say in that particular case
+the next thing we're going to take a
+look at of course is going to be the
+other one that I'm using all the time
+and that is going to be Doctrine and WRA
+now there's so many different ways you
+could do this um you could of course
+come up here and actually go to the
+settings and click on it or you can
+press Ctrl shift F9 and what that will
+do is that will bring up your Doctrine
+and Rules of Engagement for your entire
+side the reason I like this so much is
+it's so much simpler to just bang that
+key up and then just run up here and
+press that button that you have up here
+I use this one a lot some people say but
+what about control F9 Well Control F9 is
+for individual units it's the equivalent
+about coming up here and I'm mangling
+one of those buttons there there the
+next problem we'll take a look at is one
+that I find myself uh kind of like when
+we're in the ending the Zone using quite
+a bit so what I'm going to do is I'm
+going to grab this group of targets
+press Ctrl f11 and that will allow you
+to basically create a quick Mission
+intercept this SVP that's definitely
+what I want to do I'll press the OK key
+for that particular one and now we can
+go ahead and Define all the different
+components obviously we're going to be
+launching all these guys because why not
+Mission settings we'll do groups of four
+I don't want to change any of that to be
+ra obviously we want them to prioritize
+bombers targeting priority create we're
+going to be smart about this like do
+things actually correctly Target bombers
+first everything else though can
+obviously be attacked but um that's just
+one of those quick little another Pro
+tip for you I'm just being so nice today
+so one of the cool things we have here
+is uh they're basically going to run
+down there notice this is no targets by
+the way we want to add those on the map
+and they'll also flag them as hostile by
+the way so I'll just kind of be mindful
+of that now the reason I wanted to do
+that is because I wanted to get a bunch
+of airplanes in the air so we could
+start doing the shenanigans and going
+zones right away
+come on there they go fantastic
+negative radar contact Exchange
+now what I have here is I have a unit
+that has just launched and what I'm
+actually going to do is I'll grab onto
+them and tap that t key for track mode
+so one of the common problems and this
+is a common complaint is my little group
+here has now been launched definitely
+flying their way over to the targets is
+that we have a bunch of group members
+here and I can only select one of the
+group members I'm actually selecting the
+whole group at once one of the most
+common questions I get is people ask me
+well how do I get group members to not
+hang out with the rest of the group you
+know be losers kind of a thing like that
+like me so what I like to do is and
+there's a couple things you can do first
+is if you tap nine on the numpad what
+that will actually do is switch to group
+member mode so that everybody is an
+individual unit so now if I click on
+this guy for example you notice by the
+way track mode never exited I can
+actually click on these guys
+individually and I can actually see
+exactly who they are and all sorts of
+different details independent of the
+rush the crew you know if I click this
+guy for example you'll see that I've got
+this particular this is number three you
+can see it's an f-102 now let me say I
+want to break this guy off the rest of
+this group for some reason if I press
+the D key that will cause them to
+automatically break and of course when
+you do this I'm going to go ahead and
+press the number nine again on the
+keyboard you will see that this unit is
+now independent of the other units
+inside of the group now if I wanted to
+regroup them I could select the whole
+thing and press the G key which will
+slam those two groups back together and
+then they're going to reassume the
+mission that they have to be on you'll
+see here that they're back on The
+Intercept mission that we want a minute
+ago now some people say if what if I
+want to break up this entire group all
+you just have to press the delete key
+I'm not going to do that right now
+because um you can trust that it works
+perfectly fine but one of the other
+questions a lot of people say is what
+happens if you want a group to stop
+going towards a particular Target well
+the good news is this is relatively
+straightforward to do if I simply select
+a unit I can right click on them and I
+can actually unassign them and if you
+notice here the hotkey for this is the U
+key if I press that button you'll notice
+the immediately are going okay and um
+they're no longer assigned so if I
+wanted to I could actually go F1 and do
+a zip in there and I'll do my deed there
+if that's something that I needed to do
+but one of the cool things that we can
+do with that now is I can actually come
+back here assign to Mission and I can go
+back to intercept so that unassigned
+group now is going to go back to it now
+one of the things that people use that
+for all the time is in the event of the
+order rtb so if I click on this unit
+here for example and press on B see how
+that I'll turn it around going home I
+don't want them to do that so I'm going
+to unassign them and then I'm going to
+reassign them back to the mission which
+they're right back on just like that and
+that's a handy little method if you
+accidentally so to speak like that so we
+have a lot of different options here one
+other option I like to use too is called
+P which drops the contacts like this one
+for example I'll just press p and drops
+it completely the nice thing about that
+of course is that once I've dropped the
+contact I can now reacquire it so if
+things are getting very very cluttered
+and I'm not sure what's going on I can
+use that as a very very safe way to sort
+of engage
+so that's basically it for a primary
+hotkeys again if you go up to editor and
+hit I'm sorry help and press hotkeys
+it'll bring up a handy dandy menu that
+will provide you with everything else
+that you could possibly use here I like
+those things and again makes this game
+much more easy to play kind of being
+aware of them but at the end of the day
+it's like we use the most spacebar plus
+minus but that's just me enjoy

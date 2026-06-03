@@ -1,0 +1,452 @@
+# C: MO - Missile Performance at Altitude
+Video: https://www.youtube.com/watch?v=dui_lPsECfE
+Video ID: dui_lPsECfE
+
+hello everyone in today's video we're
+going to be exploring missile kinematics
+just a little more this is a thing that
+I often follow over on Discord I follow
+on the forums and it it seems to it's
+still challenging for some folks so I
+just want to take a little bit of time
+to kind of explain what's going on and
+why that's going to matter tactically so
+what I have here is I have a couple
+bogeys way way off here in the distance
+and of course we don't have the tips 43
+we have a tip 75 today I just needed
+something that had slightly better
+resolution for my purposes here and of
+course we have a pair of f-16s we have
+one chilling at 45 000 feet we have
+another one chilling at 5 000 feet now
+one of the things that came out a little
+while in command was the fact that
+missiles now act like missiles that you
+see in the real world when we watch
+movies in Hollywood you know the missile
+leaves the rail and it has this big
+white smoke Trail and it travels for
+some reason really slowly and
+dramatically to the Target you know the
+big tons of white smoke popping onto the
+back the entire time you know so people
+kept time to dodge it just in case kind
+of now this doesn't work that way uh
+realistically whenever you're dealing
+with any sort of especially a missile
+designed to attack other aircraft you're
+either going to have a boost missile
+where you're basically going to fire a
+ton of thrust get the thing going up
+really fast and then Coast to the Target
+or you can have a boost cosmiths or
+basically it's going to use a lot of
+bursts to get it up past the transonic
+high drag region of trial and pass the
+speed of sound and then we'll sustain
+itself trying to get to the Target so
+depending what model you have it's going
+to have a different impact on the
+performance of the actual weapon So
+today we're going to be looking at the
+amram now one of the things you're going
+to notice here is I've actually click on
+the hammer and let me grab the sucker
+real quick is you'll notice at the
+bottom is it has different speeds
+capable at different altitude bands now
+why does this matter this matters
+tremendously to us because it means if
+we try to fire one of these things at an
+altitude of less than 12 000 feet our
+top speed of our missile is going to be
+limited to 1 620 knots now I don't know
+about you but that's kind of slow the
+other thing we can think about too is if
+we're up at the higher band here this
+would be 36 000 feet and up you'll
+notice our top speed is not quite double
+but it's pretty darn Jolly close to that
+particular speed now that's going to
+have a really big impact in our overall
+range now remember this weapon will fire
+burn for a little bit and then Coast to
+its Target it's actually a lofting
+missile too
+what that means is when it fires it'll
+actually burn all of its motor get a
+bunch of altitude and then come riding
+back down to Earth but if we're firing
+from a low altitude at a Target we're
+never going to get to the top speed
+which is going to impact our maximum
+range of our weapon so what I'm going to
+do is I'm going to go ahead and flip on
+my Radars here because you know why not
+not that I'd ever get the F-16 radar to
+actually detect anything worth engaging
+there unless it's like a wall or
+something like that and I'm going to go
+ahead and check my WR wait a real fast
+go over it here and you can see right
+now we're at automatic firing range of
+course we could set this to No Escape
+range but for today I don't know I want
+to play with that one of the fun things
+by the way this will probably be a
+different video is we can actually set
+the range between these two numbers and
+that's almost Optimum and I'll explain
+why but that sounds like I said that's
+for another day DCS fans know why
+so we're going to do is we're going to
+pursue our targets here again we're
+getting pretty close to range if you're
+wondering why they drop out every once
+in a while is because when they put
+their nose on they have the minimum of
+basically a radar signature here it will
+actually drop out even though they're
+literally in visual range of these
+targets so I'm going to go ahead and
+order this guy to come a little bit more
+to the right here I'm going to press
+shift F1 and we're going to go ahead and
+order up an attack here so I'm going to
+use a single amram that's going to be
+plenty we're going to grab this one
+right here and we're going to swing this
+one around as well and it looks pretty
+good to me shift one helps if you
+actually push the button we're going to
+go now click on this guy it looks pretty
+good to me
+now the maximum firing range of the
+weapon is dictated by this little red
+band that you see right here but
+remember that best case scenario that's
+engaging a Target that is not only far
+away but it's also at an altitude where
+the missile can spend most of its time
+where the errors are nice and thin so
+we're already moving into range here
+I'll keep in mind our 16s are going to
+have to lock onto these targets before
+they're actually going to be able to
+fire we have no Cooperative engagement
+capability here if we were using like
+f-35s or something we could probably
+pull that trick and what you're actually
+going to find extremely fascinating here
+let me go ahead and pause if I were to
+order up a manual attack now you'll
+notice I'm outside of dlz range and
+you're saying they're going wait what I
+thought you didn't have no Escape Zone
+launch on I don't but keep in mind I
+still have to be able to actually hit
+the target with the weapon that I'm
+firing so as weird as that sounds it
+creates a kind of a fun problem now
+notice we're about half range and we
+still have not engaged our targets yet
+you know if I were to go back over to
+the one on the left especially who's got
+45 000 feet you'll notice I'm still in a
+problem where I can't actually lock onto
+the target so that's okay that's okay
+this is uh for the purpose of my
+demonstration that's actually going to
+work really really well for us so we're
+continuing to get closer and closer here
+all you can see our total range right
+now is at 25 nautical miles that should
+be close enough to be able to get a
+missile off here so our amram is ready
+it's sitting on the rail up there it is
+off it goes
+go ahead and pause for a second
+important demonstration here let's go
+ahead and open up that three-dimensional
+View
+and it looks lovely to me zoom in a bit
+and let's look right at that amram there
+and on pause so you'll notice this thing
+casually pops up to about 2500 knots
+it's a burning burning burning burning
+burning burning that motor is running at
+full capacity right now and it says
+starting to put itself up and whoa a
+little bit of a funky Arc and then you
+can see it bent itself over and now it's
+actually starting its terminal approach
+into the target itself so you can see I
+had that nice little Arc that it just
+traveled in we also noticed that the
+motor has burnt out at this particular
+point and we're just using gravity to
+help us out but remember we're still in
+a nice thick part of the atmosphere
+which makes it a little bit easier
+simultaneously if you come down here
+you'll notice the other one actually not
+simultaneously this is a few moments
+later our other amram got launched and
+you're going to notice that its
+performance is a little bit less it's
+actually pushing itself through the
+thickest part of the atmosphere very
+very aggressively attempting to climb
+here as it makes its way up towards the
+Target now remember this missile was
+fired at less than half of its maximum
+indicated range so it's going up it's
+going up pulling through that atmosphere
+up there it goes it's not going to go
+Glock on terminally and it is bleeding
+energy because now the missile has to a
+go uphill in B it has lost all of its
+energy on the way up on account of the
+fact that it has had to travel to the
+thick part of the atmosphere now right
+now this missile is just coasting you
+know it's just kind of doing its thing
+it's cruising along keep in mind this is
+a non-maneuvering Target and yes that
+other one I just got a hose there so
+we're not worried about this and you
+could see this missile is just it's just
+chugging uh if anybody was if I shoot an
+atomic 21 for example I'm firing to make
+29 or something like that uh he would
+have just turned around and gone away
+and then my missile wouldn't have
+achieved anything so remember that motor
+is not running this is not Hollywood
+kind of a thing and it wasted all of
+that time trying to get itself through
+this thick part of the atmosphere so it
+has no energy there it goes
+so as you can see here if I actually
+were to measure this that was 13 miles
+away
+um that was uh not much in terms of
+range there and you can see just what a
+difference that actual made now the fun
+thing here is if I press shift up one
+click on him like this is easy but
+notice it's out of the dlz range of the
+weapon even though he's right there so
+of course if I rotate him a little bit
+here and I kind of do my little locky
+piece here I should be able to get that
+shot off once again a little bit closer
+and again he's pulling away from me so
+unfortunately even though I'm in the
+range I can't actually succeed in
+getting a missile shot off here because
+he basically can outrun the missile now
+notice as he turned into us I can go
+ahead and pop that other missile into
+him and that should probably eliminate
+my drone here
+literally delightful so as you can see
+the important things you have to think
+about is the angles at which you're
+working at and keep in mind that air
+density really does play a role in the
+maximum performance of a weapon now some
+of you are probably saying what if you
+were to recreate this scenario and you
+actually did everything so the drones
+are at a low altitude well that makes
+things interesting
+then we run into an interesting
+situation we have a situation where we
+have a missile that is a very very very
+very capable in fit atmospheres and
+we're going to try to engage a missile
+Target that is going to have to
+basically not only be below us
+substantially but we're also kind of to
+punch through the thick part of the
+atmosphere to actually engage it uh same
+thing as we had before the only big
+change here is I've actually click on My
+Little Rock here I'll notice that it's
+altitude is 7 200 feet uh yes I did a
+consult a chart for that one to make
+sure it was not going to hit a mountain
+but now we're going to go ahead and do
+the same engagement that we've just done
+but this time our missiles are going to
+have a slightly different problem Our
+Miss on the right not only has to travel
+to the thick part of the atmosphere it
+has to travel through the thick part of
+the atmosphere for a substance entire
+Journey to the Target the one on the
+left side gets the benefit of getting
+all its speed initially in the thin part
+of the atmosphere but then it's going to
+have to drop down through the thick part
+of the atmosphere to actually engage the
+actual Target so we'll go ahead and
+align everybody up here I actually want
+to take the one on the left and move him
+just slightly reduce the angles a little
+bit here and we'll go ahead and speed up
+time here so one of the challenges we're
+going to have now is our little 16 on
+the left I might not be able to actually
+lock onto the Target on the ground
+because the angles are so steep here
+remember there's a mechanical limit to
+those particular Radars the guy on the
+right though you should be successful
+again keep in mind there's some Targets
+in the way and stuff like that all right
+we're getting very very very terminally
+closed here I'm going to bring them
+around a little bit here he's actually
+in a really good spot let's go ahead and
+double check the altitude here we're
+probably gonna have to bring him up tiny
+bit Yeah 5000 is actually too low for
+him we're gonna have to bring him up to
+at least an altitude where you can even
+see the other Target that he's supposed
+to be engaging here so let's go ahead
+and grab them again this is one downside
+of doing this not over the ocean but ink
+train mixing is interesting so our buddy
+on the left there you probably noticed
+uh he's struggling a little bit to get
+the shot off the reason why I'm still
+out of the DLC here and now one of the
+interesting things is we can actually
+order an attack that ignores the DLC
+it's just kind of an interesting little
+thing but um we're not going to worry
+about that today all right so we're
+cruising we're cruising I'm getting
+pretty darn close here this is a range
+of there's about 25 nautical miles here
+so we are very very close this one again
+more than close enough and we're in
+range we can go to fire we already have
+one allocated and there goes
+delightful let's go ahead and pause
+let's watch what happens so this weapon
+now is not going to get the benefit of
+Aloft I'll keep in mind we fired at a
+distance of oh geez it's like 12
+nautical is it nothing go ahead and grab
+onto that one and you'll notice it's got
+all the speed in the world as it drops
+through the atmosphere but notice as it
+starts to descend here again this is
+thousands of feet it starts to slow down
+very very very rapidly because now it's
+hitting the thicker part of the
+atmosphere and remember there's no motor
+burning anymore this is just the
+momentum basically that it's got and
+obviously remember gravity is helping us
+out but you can see that I burnt my
+energy all the way down to Mach 1.5 here
+or we're not out of energy but we're
+critically low this weapon might
+actually stall before it gets to a
+Target that was only 12 nautical miles
+away so speed up time a little bit here
+for dramatic effect and you will see our
+missile has completely stalled so which
+we want to see here is because of the
+Dynamics of these weapons because of the
+fact they're aerodynamic beings going
+through a nice thick realistic thick
+atmosphere they actually run into some
+really really interesting little
+mechanical problems because of that
+which limits your ability to
+successfully engage now I know you're
+sitting there going way hey that's a
+really good piece of information to know
+if I know this now I know that if I want
+to try to knock it hit with a missile
+that's been lofted at long range the
+safest thing to do is to go low
+um you're only half right there because
+remember some of the bigger heavier
+missiles that come off of Sam's don't
+care now we'll take this missile now now
+this one is going to do a partial Loft
+for the purposes of improving its range
+a little bit I'm going to grab that
+missile so if you actually look here it
+actually went up and now it's actually
+diving back down so our motor is run out
+of energy here but keep in mind look at
+the distance that we're firing this and
+this is like nothing what do we got here
+this is uh 12 nautical miles away that
+is that is squat from airplane ranges
+here so we're coming back into the
+atmosphere again now we burnt our motor
+we're in the much much thicker part of
+the atmosphere and you can see because
+of that our missile is just running out
+of energy as it's a cruising along
+remember this thing isn't very heavy I
+mean well relatively speaking I
+certainly wouldn't want to carry it
+around but it's not you know an sm-2 or
+something like that as far as weight
+goes and you can see that we've got
+ourselves a nice little we've got the
+angles you know if I look like this this
+target shouldn't move across the screen
+and let's see what happens here oh that
+was close no joy the missile stalled so
+now we're gonna fire another shot and
+now this particular one was from a
+ranger that's seven nautical miles here
+weapons kind of come shooting in keep in
+mind it's got plenty of energy left and
+we're either oh did you see that left
+turn there that was awesome so we got a
+1.9 I'm pretty confident we're going to
+catch up remember this is a
+non-maneuvering target we're taking
+shots at here this is just uh kind of
+chilling on its own and it ran out of
+energy
+oh boy you ever get the feeling
+so what I always like to do is just hit
+F1 and go ahead and click on the Target
+and say go figure this out so of course
+our F-16 buddy is gonna step up I'll go
+ahead and not limit it by any way
+because I do want it to go ahead and
+pick up a little bit of energy here
+let's see here off off do anything you
+need to do to engage that Target kind of
+was hoping you'd fire an aim9 at him
+because at this distance an A9 is a
+better missile there we go so this was
+the world's most expensive engagement on
+a couple of cheap Target drones here but
+I did want to make sure you that you
+could see how the performance of the
+missile and how the atmosphere affects
+everything really makes a massive
+difference from an engagement
+perspective and unless you keep those
+things in mind when you're trying to do
+air-to-air work you have to remember
+that you're not going to hit the target
+just because you appear to be in range
+of it especially if it's maneuvering
+enjoy

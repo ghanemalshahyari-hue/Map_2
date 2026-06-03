@@ -1,0 +1,386 @@
+# C: MO - Cargo Transfer 2.0
+Video: https://www.youtube.com/watch?v=ttwsBPgjgWo
+Video ID: ttwsBPgjgWo
+
+hello everyone in today's video we're
+going to be taking a look at cargo
+transfers and because they've just
+recently added a bunch more Logistics
+items to Cargo I figured it might
+probably a good time to kind of take a
+look at how to work with the cargo
+transfer system so first things first we
+have ourselves a single uniport called
+Westport we have ourselves another
+single unit board called Eastport and of
+course I've got this little facility
+thing down here that says port to the
+east now you're sitting there going well
+what's the difference between all these
+Shenanigans and goings-ons well the
+important thing you have to know here is
+my port to the east is a complete Naval
+Base as a matter of fact if you look up
+at the top this command knows that it's
+a naval base and recognizes as a naval
+base that's going to be really really
+important in a few minutes because
+without this designation it's not going
+to work now of course some of you are
+like what makes up enable base well it's
+pretty straightforward I have some kind
+of peer I have some kind of ammo I have
+some kind of fuel wall you can make this
+a lot more complicated if you want but
+the key thing is it has to be a naval
+base over here we have a single unit
+Port it looks like a naval base but it
+doesn't actually recognize it as a naval
+base it's an important concept so what
+I'm going to do now is we're going to
+set up some container transfer here so
+I'm gonna go over to Westport real fast
+hit the edit cargo button and we're
+going to go ahead and add in a bunch of
+containers here one of the neat things
+is now that we have containers you can
+play global Shipping magnet if you
+wanted to and um because we have all
+these classic little options now one of
+the things we'll probably be seeing soon
+is we'll start adding like the LED
+threes and like ld4s which are the
+airplane containers and then we could
+really play a UPS or FedEx or you know
+DHL if we wanted to have a very
+different gaming experience so what I'm
+going to do is I'm going to go ahead and
+add a bunch of these things I'm going to
+say 100 I know it's not going to let me
+do that it's not going to give me a few
+but it certainly isn't going to give me
+100. now you can see this is about a
+thousand square meters worth now
+something you are automatically going
+well wait a minute wait a minute wait a
+minute if I have a commercial Port I
+would obviously have a lot more of these
+than a hundred and you're correct oh you
+probably would have a lot more than 100
+but keep in mind this is a single unit
+Port this is like kind of like a
+self-contained thing this isn't really
+designed to be used finger quotes as a
+port one of the cool hacky things you
+can do by the way if you want to kind of
+give yourself a little bit more room
+which I think is actually kind of fun if
+you go to the actual cargo Itself by
+clicking the cargo button you see I have
+all these items here these items are all
+kind of like ready to rock and things
+like that so because these are all here
+you can actually eject them out of the
+port so that you can make a giant stack
+of them so you can grab them back for
+the purposes of a kind of continuing
+operation I find that kind of uh not
+hacky but you know what I mean
+all right I'm gonna hit F7 now I'm going
+to grab one of my ships real quick get
+load on low cargo you got that button in
+the bottom now let's say I want to add
+all these to you or should these aren't
+tus these are 40 Footers so I'll go
+ahead and sit in here and I'll do one of
+these things now as you probably observe
+oh this is going to take a very long
+time to get through all of these uh one
+of those things I have on my wish list
+here is for them to allow me to hold
+down the shift key and click as many of
+these as I want so I can go or to group
+them and I'm sure we're going to get
+that as a feature pretty soon so I press
+the OK button I'm gonna go ahead and
+look away unpause pause head F7 and you
+can see it's going to take them about an
+hour to load that ship up with those 40
+Footers which it makes sense again it's
+going to take a little while you know
+even with the best Gantry creams and
+really really good Steve doors it's
+going to take time so um let's automate
+that because man that's too much work
+for me so what I'm going to do is come
+down here to my port to the east let me
+go ahead and press that lovely control
+F7 we're going to add ourselves another
+container vessel this time oh
+apparently I went to boats mode as
+opposed to ships mode that is definitely
+something I would do let's see here
+right there we want to take this guy
+right here pure extra large there we are
+all right get me a feeder Max that's
+going to be more than big enough for my
+purpose this year today delightful so
+we're gonna go ahead and click on this
+guy you know we're gonna go and edit the
+cargo who um please individual units not
+a group do it every time I swear all
+right extra large peer edit cargo I'm
+gonna come in here we'll add some to use
+again we'll say a 20 we'll make it
+really really irritating we'll make up
+the 20 foot containers which is kind of
+the iso the standard container uh at
+100. all right sweet that's nothing more
+foreign
+200 meters that's plenty let me add some
+more man come on man let me do it
+reminds me of my students sometimes all
+right let's see here 20 feet We'll add a
+thousand that should be annoying success
+all right now we've got
+oodles and oodles is definitely the word
+I'll use there all right port to the
+east so we know that we have a feeder
+and we'd like it to go ahead and feed
+this port up here
+NOW Watch What Happens so we have our
+vessel and I'm gonna go ahead and click
+on my vessel real quickly over here this
+is a Westport I'm gonna go ahead and
+press Ctrl f11 we're going to go ahead
+and create a mission here uh delivery
+exclamation point I'm gonna come down
+here to Cargo and you're going to notice
+we have two options now on which I think
+is pretty slick we have delivery which
+means drop it off on the ground and we
+have transfer which means take it out of
+this box and put it into this box I'm
+gonna go ahead and press the transfer
+button and we're gonna watch what
+happens
+it's going to bring up this handy dandy
+little piece here ah let me go that was
+an earlier test trying to get that to
+work and now I have my self-delivery
+cargo so now we just have to pick what
+we want to send where so we got all
+sorts of different available here we
+have this guy make sure you pick the one
+that's at the correct Port that's the
+wrong one coming to this guy nope let's
+go grab this guy this is our feeder
+who's chilling down in this part this is
+the one so I'm gonna go ahead and toss
+him down into here and now he's ready to
+go he's got everything all set and we
+have all sorts of good stuff that we're
+going to be delivering obviously you can
+sit in here and you know Define it to be
+a specific time you can disable it all
+those other kind of things pop over to
+Mission settings and take a look at this
+now you'll notice all those lovely
+containers that we were stressing about
+a little while ago can now be select one
+of the coolest things that they added to
+this little cargo feature up here at the
+top is it gives us the ability to shock
+everything in from all available sources
+which is actually pretty slick if that's
+what you want to do if you want to
+transfer an entire base from one place
+to another for example uh one thing we
+could do too is we could come down here
+we could press the all button uh watch
+out for the all button though because
+all the all button does is grab all of
+those so again I'll be run into
+interesting situation where all I have
+to do is press move all and it grabs
+everything
+so what we're going to do now is that
+we're just going to take a look here
+return to base on completion we don't
+have to do this a vehicle is in cargo
+May self transfer this is a neat little
+feature where it allows like you know
+amphibious vehicles to just drive right
+off the ramp into the water and kind of
+do it that way so what I'm going to do
+is I'm going to do flank because why not
+and now ahead and close this I'm going
+to press the space bar so now what's
+going to happen is my buddy here in this
+commercial container vessel feeder is
+going to start filling itself up with
+all the nice yummy cargo that's located
+at my port to the east hit the F7 key
+and you can see it's going to take them
+about an hour and seven minutes but
+don't worry about that I told you not to
+worry about that
+so unfortunately when I set up my
+brilliant little Port scheme here I
+forgot the fact that in the Bahamas the
+water's a little shallow so I'm gonna go
+give this guy a little bit of a push
+here to help him out there you go is
+that a little better for you yeah he's
+doing all his coagulations and I'm
+trying to figure out the best way to get
+to his destination I got you buddy don't
+worry like I said the water here is
+fantastically shallow so um until you
+get off this little trench here you have
+to kind of do it so now this vessel
+right now is actually done everything we
+asked him to do automatically if I press
+the cargo button now you'll actually see
+that he's carrying all these ISO
+containers of course if I go back to
+West Point here we've got these two guys
+at chilling and I'm being ready to rock
+one thing you got to watch out for
+though is remember these this port is
+loaded so what I'm actually going to do
+is empty that Port out real quick
+because otherwise you're going to create
+a rather interesting situation where our
+ship buddy has uh can't do anything
+about I can actually delete that and now
+he's going to go back to automatic so
+here's our very very heavily Laden ship
+it tells us that he's three hours
+underway again relatively short Mission
+he's making his way there you know he's
+got all his happy cargo import
+everything's looking good and then
+disaster strikes
+let's go ahead and get ourselves a
+little enemy aircraft too I do a little
+bit of damage here we don't need to sync
+the darn thing but we just want to
+demonstrate kind of the consequences of
+some of this here let's see j6a I think
+that will do it
+um 90 millimeter Rockets I don't want to
+sync the thing let's grab this guy real
+fast all right come down to minimum
+altitude real quick will you all right
+it's a ship it should be hard to find
+it's right there man it's right there ah
+there it is
+I'm going to delete that real quick go
+ahead and pause that'll be a shame if
+somebody in the mig-19 came out of
+nowhere and decided to sort of strafe
+the ship I hate when this happens I'll
+go ahead and prove this guy's skill just
+a little bit here unit proficiency we're
+going to go ahead and allow him to go
+ahead and use his strafing because we
+want him to basically unload everything
+onto my poor little ship here let's see
+here to do standoff A.G that's the one I
+wanted cool
+and I'm getting a little closer getting
+a fix I love the ambiguity you get now
+when now you do these attacks like it's
+very very difficult to pick the exact
+point where to hit him of course so this
+poor guy in this little ship here is
+just sort of chilling he doesn't even
+see him maybe if I turn on his little
+navigation radar or something like that
+we'll be able to see it I don't think so
+I'd be I'd be impressed if he could but
+unfortunately it looks like this mig-19
+there he is
+I would suggest doing evasive maneuvers
+as fast as you can because this guy's
+going to do one heck oh here they come
+here they come
+oh no my TUS
+oh wow we're flooding um we might sink
+that was the most lethal attack I think
+I've ever seen there so I'm actually
+going to go to damage control and I'm
+going to remove the flooding because I
+almost lost my vessel here are you okay
+you okay are you okay and get yourself
+back up to speed and get the heck out of
+there
+I gotta watch out for this Rogue j6s
+that are just sort of like chilling you
+know they just come out of nowhere in
+the Bahamas you know the Pirates are
+getting much more sophisticated these
+days so now that that has been struck um
+one thing you're probably asking is what
+happened to all the wonderful cargo on
+board I mean usually that's going to be
+stored up in the top well if we head up
+to a game here real quickly and hit up
+our losses and expenditures oh one of
+the things you're going to notice here
+is that there were no losses or anything
+lost in this particular case so our TR
+and best beautiful cargo is actually
+stored in a big big badonker underneath
+this deck of the ship because it's only
+a little bit of it so we took no damage
+in that regard so one of the things I
+could see changing in the future is
+where you could actually lose cargo when
+you're struck like that naturally if our
+ship sunk we would have lost everything
+on board so let's go ahead and speed up
+and kind of conclude our conclusion here
+that poor Mig 19 is going to run out of
+fuel and go swimming
+serves him right for attacking an
+unarmed cargo vessel all right rolling
+into Port here real fast we have plenty
+of room in Port for him
+all right now sneaking in you can slow
+way way way down and he's now inside so
+now that we're inside of that lovely
+Port we can go back to edit cargo and
+you can see what will happen with time
+is he'll actually commence the unloading
+process I've actually hit F7 you can see
+um he's doing his delivery and it takes
+him about 15 minutes to get docked up
+that's about 15 minutes to get docked up
+hit F7 and you can see he's repairing
+and there's also some reading going on
+here on account of the fact that you
+know again we're trying to get all that
+stuff on here and of course because
+we've done all this lovely work here
+there's our cargo all ready to be all
+transferred and everything along those
+lines one thing to warn you however if
+you remember a little while ago I have
+it set for him to return back to base
+after he's finished his mission so as
+soon as he's done those repairs from
+that pesky j6 he's going to be heading
+right back to do this again in the event
+that um he was not successful at it so
+as you can see this is a super duper
+handy function one thing you got to
+remember is that you have enough space
+at the cargo the other thing to make
+sure that you want to have is you have
+enough room in the ports so that when
+you arrive it actually is able to dock
+properly drop everything off properly
+without getting yourself in a nasty Loop
+other than that enjoy

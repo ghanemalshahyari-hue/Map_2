@@ -45,3 +45,6 @@ UI_MOdified/data/units.db
 # NOTE: deliberately scoped to *.tmp.* only. The real journals (data/journal/*.jsonl)
 # and seed plans (data/users/**/*.geojson) are intentional baseline data and stay tracked.
 UI_MOdified/data/users/**/*.tmp.*
+
+# one-time bootstrap admin password — secret, never commit
+UI_MOdified/data/BOOTSTRAP_PASSWORD.txt

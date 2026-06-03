@@ -1,0 +1,727 @@
+# C: MO - Testing if Helicopters are good Anti-SAM weapons
+Video: https://www.youtube.com/watch?v=fT2Zbd5K6MY
+Video ID: fT2Zbd5K6MY
+
+Hello everyone. In today's video, we're
+going to be answering a question
+somebody was having about using
+helicopters as the ultimate anti-SAM
+platform. Now, we're definitely going to
+explore this question in kind of a
+creative sort of a way, but one of the
+things we want to demonstrate first is
+why we're going to attempt to use a
+helicopter for the purposes of
+destroying a SAM site. So, I have
+myself, my lovely F-35A chilling up
+here, and it's equipped with the latest
+and greatest of JSLs and of course, this
+fabulous radar. and we're going to go
+ahead and try to take a pot shot at this
+little SAM setup I've got here. So, in
+the SAM setup, of course, we have an
+SA22. It's a Pancier SM. Of course, we
+have our Triumph and S400 SA21. And of
+course, we have a big bird radar to keep
+an eye on things. So, what I'm going to
+do is say, hey, go ahead and take a shot
+at that one. And, you know, while you're
+at it, go ahead and take a shot at this
+one. Now, keep in mind, these aren't
+jamms or anything along those lines.
+This is just good oldfashioned
+conventional J cells kind of a thing.
+So, we're going to go ahead and release
+those. And I'm going to go ahead and
+order this guy to actually loiter at
+this particular point. The reason I have
+to order him to loiter is because if he
+gets any closer, he's going to get an
+S400 basically up his tailpipe because
+um stealth does not work against an S400
+unless you have a lot of jamming
+capability. But regardless, this is
+going to demonstrate kind of the point
+right away here. I don't know why you're
+still moving. Uh where you going? Stay
+away from that Samite, please, cuz if
+you get in I got shot down. No, the
+F-35, as you can see, I was absolutely
+worthless there. The J cells got
+intercepted about right here, if you
+could see it. that was about 26 mi away.
+Completely worthless, a waste of time.
+So, we're going to do is we're going to
+try to use a helicopter to do the same
+job. Uh helicopters, of course, have one
+massive advantage, and that's the fact
+that they can operate extraordinarily
+low. The other thing we're going to be
+doing is, of course, with scenario
+features and settings, we're going to
+make sure advanced terrain type is
+turned on for this particular purpose.
+So, what's this all about? Now, if I
+hold my mouse over something, you're
+going to notice that I have an elevation
+of 1,247
+ft. You're going to notice the fact that
+has a height of 16 ft and a skyline of
+1,263 ft. Now, if you put that math
+together in your head, it's not going to
+make any sense, but it actually does.
+What that tells us is we have helicopter
+hiding places, aka big trees and little
+things between it. So, for a helicopter
+lineup to try this out, we've got a
+bunch of different helicopters to help
+us today. We have the RH66A, which isn't
+a real helicopter. I called it the Ninja
+helicopter. We have the AH64E is the
+Apache Guardian. This thing is fabulous.
+It's a VTOR helicopter as far as I'm
+concerned. We're about to prey. We have
+the EC665
+Tiger. This is another fabulous
+helicopter. I call this one the Tiger
+with the laser pointer. We have the
+Hokum and barely knew them. This is the
+coaxial killer. And of course, we have
+the Z10, the Zulu 10 there, the Fierce
+Thunderbolt, Beijing Bug Zapper. So, we
+have a good little spread here. So, to
+try this the first time, we're going to
+go ahead and get the RAH66. And the
+reason I want to use the RA6 for this
+one first is because this is the
+stealthiest of the helicopter family. It
+doesn't actually have the best weaponry
+for this particular purpose. We'll see
+that in a minute. But the reality is
+this is going to be the one that's most
+likely to get close enough to actually
+do the deed. That being said, it only
+carries hellfire weapons, which is going
+to severely limit its range capability
+here. All right, let's do this. So, what
+I'm going to do is a couple things.
+First, I'm going to set my speed to
+loiter, minimum altitude, terrain
+following, land cover masking. Now, if
+you do that in that order, your
+helicopter will get itself as low as
+mechanically possible, which by the way
+is not as low as it sounds. All right,
+so our helicopter is going to go down.
+One of the things I want to share with
+you, of course, is I like to pick this
+particular region of Canada for this one
+cuz it's, you know, kind of mountainous.
+And if you actually take a look here
+structurally, you can see that he is
+operating very, very, very low, but that
+the terrain, although it has some
+detail, you know, it's not an excessive
+level of detail here. So, you get kind
+of a feel for it. All right, our
+helicopter is on the way. So the big
+thing here is that F-35 did us a huge
+flavor and it basically identified the
+targets. That's cool except the fact
+that we still have to detect the targets
+in order to safely go ahead and engage
+them here. So we're going to take
+advantage of this valley again right out
+of Hokum versus Comanche. Actually, I
+think it was Hokum versus Apache. I
+think it was the Janes game, but I think
+it was uh Comanche 4 was the one that I
+really cut my teeth on helicopters.
+Remember that back was that 1999 or
+something like that? That was a couple
+years ago. Either way, so we're closing
+in on the target here. Trying to take
+advantage of the train as best we can.
+Keep in mind these SAMs weapons are very
+very quick acting. Basically, if they
+see this helicopter, they will get a
+shot out. This is a stealth helicopter.
+Uh it doesn't mean it's a stealth
+helicopter, however. And as a matter of
+fact, if I come down here, you will see
+that its total stealth capability is uh
+it's not great. It's actually not great
+at all. You can see here it is about as
+good as an F-35, but it's a lot slower
+moving. So, that kind of helps out a
+bit. All right, we're getting into range
+here. Now, the big thing here is we need
+to get so close that when we fire, the
+travel time of our weapons is basically
+minimum. Keep in mind, we are traveling
+extraordinarily low right now. We're
+about 20 ft above ground level. We're
+trying to hide in the trees, which
+unfortunately, since it's mixed forest.
+That's only 16 ft of trees. So, there
+are 4T of clearance underneath this
+helicopter as we're kind of creeping
+along here. Now, this is where we get to
+the fun part. And this is always my
+favorite part. All right. All right.
+Okay. Okay, theoretically, we're in
+range right now, but the reality is is
+there's a bit of a hill between us of
+1,283 ft. We're down here at 1060 and
+they're up on the hill at 1135. So,
+we're going to have to go up in order to
+engage them. That is your first mistake.
+If we try to pop up now, we're going to
+get a real big surprise. But, I'm going
+to do it anyway for science. All right,
+let's come to a little hover right here.
+Delightful. Point him in this direction.
+We're going to order him to hover. He's
+just going to kind of hang out for a
+half a second. Good. He's hanging out.
+He's hanging out. He's looking good. and
+we're going to have him slowly rise
+upward, unload his payload, and then try
+to get the heck out of the way. So,
+we'll bring him up to about call it 60
+630 ft. We'll get him destroyed
+instantly. We bring up to 60 ft above
+ground level. So, he's going to slowly
+float upwards here. Whoop! New keyboard.
+That's not the minus key anymore. All
+right, I'm just slowing down time a
+little bit here. So, we have no line of
+sight to any of these, I don't think. I
+think they're still on the other side of
+a hill. Yes, they're still on the other
+side of a hill. Boo. All right, let's go
+bring them up to 100 ft above ground
+level. This is highly dangerous. I would
+never do this with a helicopter in a
+flight sim. All right. What did that do
+for us? I don't think that got things
+any better for us. Uh, let's see. It's
+an imprecise target, which again, it's
+an improvement of some kind. Uh, we have
+a laser designator. We can come up a
+little bit higher. Oh, this is going to
+be awful. This is going to get us
+destroyed right out. Little higher. A
+little higher. That's interesting. Um,
+we're going to have to actually start
+creeping forward here. We've managed to
+get ourselves just high enough, but I do
+see that there's a little bit of height
+here. And again, that will should get us
+above. So, let's send them back down.
+Whoops. Let's send them back down to a
+minimum altitude land cover masking.
+We're going to set it as minimum as
+possible. And we're going to have them
+creep forward. Oh, this is going to get
+bad. This is going to be awful. But
+we're going to try. This is science,
+right? And again, we're picking the most
+stacked helicopter we can possibly stack
+here. All right. Careful. Now, he's
+making his way up the side of this
+mountain here. And again, there's a
+little bit of trees he's going to try to
+duck behind. Like I said, absolutely
+stack the deck is Oh, pause, pause,
+pause, pause, pause, pause. All right,
+we can have a visual here. So,
+unfortunately, we cannot engage them
+because we are too low. So, this S400,
+if we can see the S400, they can see us.
+So, this is going to basically be fire
+the missiles and duck back behind the
+mountain as fast as you can. So, we're
+going to go and order a hover and we're
+going to go ahead get a little bit of
+altitude. We need at least 60 feet to
+fire. This is going to go bad. I feel so
+sorry for this Comanche. They don't make
+these things anymore. They never made
+them. That's was kind of the fight part.
+All right, here we go.
+One, two. Uh, I don't think we have line
+of sight here. Nope, we have no line of
+sight there. How about this guy? And we
+have no line of sight there. All right,
+we're just going to have to do the best
+we can with what we have kind of a
+thing. Uh, this is going to go so bad.
+We're so doomed. We're so doomed. All
+right, get a little bit higher. Again,
+this is just like a Oh, there we go. We
+were able to fire shot off. So, our
+problem here, of course, is um this is
+an old school hellfire, which means when
+we do engage with it, we have to
+actually get decked down. Um, we're
+using a laser pointer to keep an eye on
+it. But one of the things someone should
+observe here is watch this.
+We scored our hits. And now you can see
+here comes the second one right now.
+Scored a hit again. So that thing is
+completely crippled. I mean, we might
+not have got its radar, but we're going
+to pop a couple more into it. Oh, I also
+noticed the fact this guy's over here,
+so might as well fire a couple over
+there. This Comanche wins the prize. Uh,
+he is absolutely absolutely winning the
+prize here. And you can see this is just
+leisurely destruction. Now, you're
+probably sitting here going, "Why on
+earth was that helicopter able to do
+that? Wouldn't they have just fired a
+missile at him?" And the answer is this
+platform has a minimum range that we
+managed to get ourselves inside of with
+Ninja Helicopter here. Now, Ninja
+Helicopter, as you probably noticed, is
+just pounding away at the S400. There's
+no AAA coming at him. There's no jerk
+with a shoulder launched, whatever,
+taking pot shots out. Oh, there we go.
+Now, the pancer is jumping in. I was
+waiting for this, buddy. Where were you?
+This Oh, he got hit, too. Okay, so the
+Oh, Comanche wins. Comanche wins. they
+get the prize. All right, Ninja
+helicopter. Um, I would send you back to
+base just the way you are right now. But
+if we do that, you're going to get
+yourself comloed. So, uh, we're going to
+go ahead and, uh, manual override that
+sucker and, uh, just get out of here.
+Just get out of here. Get out of here,
+ninja helicopter. You did a beautiful
+job. You demonstrated everything that I
+needed you to demonstrate in this video.
+The stupidest thing I can do, by the
+way, is order him to fly back home right
+now, cuz if I do that, he will um,
+stupidly basically climb up into the
+range of the pansier and get himself
+shot down, which is uh, going to be
+hilariously not funny. All right, go
+back home. So, we still have the rest of
+everything and um you know, we I think
+we've demonstrated a point that it is
+totally possible to pull this off, but
+um let's go ahead and get with a
+different helicopter this time to kind
+of prove the concept. All right, let's
+grab ourselves uh we'll go into here.
+The ninja helicopter. Good job. Good
+job, Ninja. You get a gold prize. Let's
+go ahead and grab the tiger with a laser
+pointer this time. This is going to be a
+little different because it is a very
+unique weapon here. And this is one of
+the reasons why I like it. Let's go
+speed up time a little bit here. It also
+has better sensors. Uh, the command
+sheet was cool, but without that really
+really like the RFI like you get on the
+Guardian. Um, we're missing out on some
+kind of technology there. And should be
+Whoa.
+I'm going to be doing that for the next
+three months. All right, let's do it.
+So, this is the Tiger. Oh, this is a
+fabulous helicopter. Again, it's a
+two-seater. Very, very similar to what
+we saw earlier. Minimum altitude,
+terrain falling, land cover, loiter. All
+right, so we've ordered a helicopter to
+kind of get on its way. This helicopter
+is a little different because it has
+some other stuff on board which makes it
+a little bit easier to use. A lot of
+defensive equipment to kind of keep an
+eye on things. It's also got really nice
+little night vision goggles, missile
+warning system, pretty much everything
+under the sun, but it still doesn't have
+the RFI, so that's going to make this a
+little bit more difficult of an
+engagement. Now, keep in mind, we are
+operating at night. By the way, this is
+not a daytime op. So, we're going to use
+exactly the same philosophy as we did
+last time. We're going to maintain very
+low altitude for most of our journey
+here, trying to take advantage of all
+the land covered camera. We're taking
+advantage of valleys. This is a lot
+harder to do over water obviously. Like
+you can't do this over water. You're
+just going to get slapped out of the
+sky. That's again why I picked picked
+this particular region because it makes
+it kind of more fun kind of a thing like
+that, especially for people who like to
+fly these kind of operations in games.
+So again, we're staying low. We're very
+very very very low. Let's see here.
+Yeah, 20 ft above ground level. So
+again, you can imagine there's trees 4
+feet underneath this helicopter. Problem
+is we still have to acquire the target
+and that's going to be probably the
+problem. But we're going to try the same
+exact philosophy we did with our
+Comanche buddy. Try to get so close that
+it can't get in. Oh, that was bad.
+That's bad news.
+Missile. Missile. No. No. We're still
+getting tracked. Yeah, we're busted.
+You You need to get a little lower. You
+needed to get a little lower now. Uh,
+that's bad news. Of course, that's going
+to be hostile. And of course, they did
+not have enough time to take that shot
+when we were going between trees,
+basically. So, um, we got lucky. We got
+very lucky. And especially if I click on
+this one. Which one is this? This is H.
+Oh, yeah. That's definitely the our
+lovely friend, the um see that's the
+S400. All right, we're going to sneak up
+to the same spot. If it worked for
+Comanche, why won't it work for us right
+now? Notice we have a pretty long range
+with this weapon. So, um what we're
+going to do is we're going to slow down
+just a little bit. Actually, let me
+delete the way points. Try not to delete
+the unit. All right, we're going to go
+to a hover and we're going to pop up to
+100 ft above ground level. Again,
+careful. Do it slowly. Hey, guess what?
+I hit the calculator button three more
+times.
+That would have been bad. All right,
+let's slow down and I'll let this
+helicopter do his thing here. All right,
+come up just a little bit. Just a little
+bit. Just a little bit. All right, he's
+about 100 ft above ground level. We know
+this is here. So, we're going to go
+ahead and pop a couple of those. Those
+are those new ones. I'll bring up the
+stats on that in case you're curious.
+There it is. Kind of looks It's
+interesting. Like, it's interesting.
+It's a very, very fast weapon. It has a
+really big charge on it. And that's one
+of the things that's nice. It also has a
+really good seeker. All right. So, we're
+going to pop those off like that. And
+now what we're hoping to do is trigger
+the S400 into firing here. And it's not
+Oh, the S400 did fire and it did a
+beautiful job. Oh, we got the radar,
+though. We got the radar. Hey, look,
+more calculators.
+All right, so um we got the thing we
+could see. So, we're kind of at a loss
+here because we did not detect the SAM
+site. And without knowing where the SAM
+site is, we're kind of in trouble. As a
+matter of fact, we still know that guy's
+out there. So, I'm going to send him
+back to minimum altitude, and I'm going
+to get a buddy to help us out here
+because um it's going to be really tough
+to do this without some kind of like
+queueing is really the way to do it. So,
+let's go ahead and grab ourselves. Uh
+oh, H58
+Ka. That's it. Yeah. Yeah, I got it.
+Nice. Blue flash striker. I like that.
+Let's get the one that actually can see
+though. Uh we'll grab this one. Yeah,
+that's fine. We just need sensors
+basically. That's what I'm hoping for.
+And again, he's going to be way too high
+up and basically get himself killed
+before the party even starts. But ward
+order minimum altitude order loiter and
+we'll hope that he can get his head back
+down before he gets about 10 different
+missiles launched at him. Down.
+He'd be panicking.
+I don't think we have radar on here. No,
+we do not have radar. Whoa. Go down. Go
+down. Go down.
+Oh, it didn't work. It didn't matter.
+So, as you can see, our Kyway did a nice
+job of acquiring the other SAM, which
+now means our little leot tiger with a
+laser pointer now actually has a shot.
+We actually acquired both SAMs. And it
+takes us into two seconds before we can
+actually engage. So you will get two as
+well. And fire.
+And again, we're basically lobbing this
+over a hill is kind of another way to
+kind of visualize this. And of course,
+what's going to happen here is the
+Pancier, who now knows there's incoming
+missiles, is going to casually and quite
+humorously slap those out of the sky.
+Yep. Yep. You can see it's engaging with
+its 30 mm there. It's not going to
+matter.
+I think Tiger with a laser pointer also
+gets gold start today. Look at that.
+S400 is absolutely slapped. Keep in mind
+an S400. If you just hit it, it nothing
+happens. There's like plenty of things
+in the pants here. As you can see, it's
+still happily firing at the incoming
+weapons. And um we did not get it. So,
+we're going to have to actually both of
+you get one more. You're going to have
+to share everybody because they don't
+have enough missiles for all of you.
+There we go. We'll go ahead and fire a
+couple more of those.
+And again, we're inside of the minimum
+range of the S400, so it can't do much
+to us. And we're going to pop both of
+those. And he's got to RTB. And of
+course, if he RTBs, he's going to get
+himself blasted. So, I'm going to grab
+him. I'm just going to do that because
+nobody wants to see the tiger get shot
+down. All right, as you can see, the
+pants here did a really good job and we
+didn't actually hit. I think that was a
+bit of a dud there. Bummer. So, as you
+can see, it is totally a viable strategy
+when you're in terrain that actually
+supports it. But, um, what I want to do
+real quick is I want to get the Beijing
+bug zapper. I'm just curious. I'm just
+curious. Again, this is for science,
+right? So, let's go get Beijing bug
+zapper. Keep in mind, we've softened up
+the target a little bit here. It doesn't
+mean anything for us, but we'll
+demonstrate doing this the wrong way and
+you'll see just how good it was using
+that sneaky terrain stuff. There it is.
+Come on, Beijing. Would you like some
+more calculators? All right, Beijing bug
+zapper. Here we go. Oh, this thing's so
+cool. All right, let's go. All right,
+look at our range. It's plenty. We can
+fire at any time. So, we're going to
+fire right now and grab both of these.
+Um, each one of you is going to get
+eight fire. Now, this is a such a
+different philosophy as far as weaponry
+goes. Again, everything else was like,
+you know, these little tiny short range
+things that weigh a couple hundred
+pounds. This thing's like, watch this.
+Hey, more calculators. Um, this thing's
+going to go ahead and fire. Um, exactly.
+I got muscle memory. Uh, mandatory data
+link. Oh, no. We missed our mandatory
+data link. Whoopsies. Let me fix that.
+All right. After filling up with the
+data links for a couple minutes there, I
+could not find it quickly. I know it's
+there. Just have to poke around. In case
+you were curious, by the way, we were up
+to 36 calculators open at the time. All
+right. So, we're going to proceed
+directly towards our targets. Again,
+we're using the same philosophy. It's a
+little different this time because what
+we've done is we basically reduced our
+altitude substantially like just like we
+did before. We're also approaching the
+target directly. So, you can kind of see
+sort of the sideby-side comparisons if
+you want to see kind of what's going to
+be different here. I'm trying not to
+speed up time too much because if I get
+in the sweet spot of these things,
+they're going to mangle me. Um, very,
+very carefully reduce time. See? See? I
+got it right that time. And of course,
+again, without any RFI or anything like
+that we have in the Guardian, we're
+going to be a little bit limited in
+detection, but it's still going to work
+fine. I promise. The Pansier, I believe,
+still can fire. I don't think the S400
+can fire anymore, but um we'll see. Like
+I said, we've got 16 missiles, so that's
+plenty. They're both going, like I said,
+they're going to have to learn to share,
+but I think it should go perfectly fine
+once we get there. Keep in mind, there's
+also what they call the spike and loss,
+which is basically a um fire and forget
+weapon. It's awesome. All right, let's
+get a little closer. And we have line of
+sight on the S400. Again, we're just
+kind of creeping along here, but we can
+go ahead and take advantage of the
+technology while we have it. So, we have
+60 feet is the minimum. Uh you're going
+to actually, let's just be smart. Shift
+F1. Drag a box. Um, let's see. Select
+both of you. Select this one. Eight.
+Allocate. It's a lot of weapons. All
+right, let's go. Pop up to a little bit
+higher altitude here. We'll jump up to
+100 ft. AGL
+100. That makes no sense. We got to be
+terrain following. There we go. Weapons
+away. Of course, the latest and
+greatest. You can fire basically the
+entire salvo to alpha strike right out
+of battletech basically or mass missile
+massacre. So, whatever you prefer. And
+you can see there's our radar. Flips on.
+makes it a little bit easier. And I
+don't think this has got much left to
+it. So yeah, basically there's 10 more
+things to blow up here. And I'm
+basically going to swing in and use the
+cannon to do the rest. But again, that's
+going to be perfectly fun for us in a
+moment. This guy kind of surprises me,
+but knowing how shocked and terrified
+the crew is. Like it doesn't surprise
+me. And again, you can see that they
+still managed to Uh-oh.
+Guess who was still operational.
+Didn't go so well. Again, shame on me
+for assuming that the thing was broken.
+But it also lets you know just how
+incredibly effective helicopters are.
+Now, there's one more thing we're going
+to test real fast. And I'm kind of
+curious about this one. And that, of
+course, I've been joking about the
+Guardian the whole time, but one of my
+favorite uses of the Guardian. And
+again, we're going to cheat. We're going
+to cheat. It's It's okay. We're going to
+cheat. Hey, look. No calculators. All
+right. Uh, we're going to cheat. And
+now, the reason we're going to cheat
+here is because we're basically going to
+get a little bit closer than we would
+mechanically be able to in a short
+period of time. It would require quite a
+bit of maneuvering on our part to get as
+close as we're going to get. So, like I
+said, we're going to cheat a bit. I said
+it that again, right? All right, let's
+minimum altitude terrain following lane
+cover masking. Sounds good to me. And
+what we're going to do is uh one for the
+money, two for the show, three to get
+ready, and four to go. Right here.
+Hello.
+Surprise. So, the fun thing here, of
+course, is uh we're a little bit closer.
+And one of the things that the Apache
+has, basically, they call this an aerial
+weapon system, AWS. It's a big old
+cannon. I think it's 25mm if I remember.
+Uh let me see. Is it 20? I got to prove
+myself here. 25 millimeter to always
+have 30 millimeter w. Um, so the cool
+thing here is it does have a cannon on
+it. And the cannon is an aerial weapon
+system, meaning it's not accurate. And
+it also means you got a range of uh on a
+good day 20 ft. So what we're going to
+do is we're going to creep up on this
+radar site. And it just occurred to me
+we're going to get shot down because um
+the stupid pancier is going to get us
+first. So let's go ahead and
+inconvenience this right away because we
+don't want to give it the time of day.
+And then what I'm going to do is I'm
+going to use this. And then we're going
+to use the cannon on the S400 because
+I'm such a jerk like that. Fire.
+There's the guy I was looking for. This
+is the one I was actually trying to get.
+Look at the air speed. Look how fast
+these weapons travel. And again, you can
+see very clearly the fact that um the
+Pansier no problem inconveniencing that.
+Let's go sneak over here. We're going to
+try to get in the minimum range. Dude,
+don't turn around. Don't turn around. If
+you put your beam to him, he's just
+going to hit you from the side.
+I told you he'd hit you from the side.
+Sigh. He wasn't listening. All right,
+we'll send another one his way. And
+coming over here, I'm just going to use
+the lovely M230 here because this it's
+just fun. It's just fun. All right, get
+a little closer. Use the M230. Look at
+this. Look at this. Look at this. Oh,
+cheap shot. All right, I told you these
+are good helicopters. All right, so
+we're going to close into basically
+point blank range, which is the
+stupidest thing you can do with anything
+that shoots down aircraft for fun. And
+we're basically going to use the 30 mm
+cannon here. Uh, we can use this, but
+that's too easy. Uh, let's see here.
+Horizontal distance. I have to get
+within 6. Oh my goodness, that's close.
+Let's h jump up to 120 ft here. Yeah,
+not very high. Oh boy, this is stupid.
+This Oh, that's what I was waiting for.
+And as you can see, it did not stop them
+from uh firing. What is this? An SA6?
+Yeah, it's an SA16. So, our Apache is
+doomed. Uh there's simply no way we're
+going to get close enough before some
+jerk with basically a shoulder launch
+something is going to end this fight
+pretty quick. But we'll watch it happen
+anyway. Get closer. Get another one.
+Fire. Fire. Fire. Fire. Oh, it's not
+going to happen, is it? Well, we can
+fire that. What do you mean do not use
+Oh. Oh, I see what I did wrong. Oh, we
+have to tell them to actually be allowed
+to use guns. Yes, you may use guns.
+Fire. Now I just got to point blank him
+with a missile. You missed. You had one
+job, bro. One job. All right, switch
+over to the cannon. Use the cannon. Use
+the cannon. Don't disappoint me.
+The range is still too far away. Okay,
+point blank range. Got it. Point blank
+range. Oh, there he goes. And as you can
+see, helicopters do work. They just
+require a lot of really good terrain.

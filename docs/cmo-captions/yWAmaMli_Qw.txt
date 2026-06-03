@@ -1,0 +1,417 @@
+# C: MO - Flight Plan Editor Tips
+Video: https://www.youtube.com/watch?v=yWAmaMli_Qw
+Video ID: yWAmaMli_Qw
+
+hello everyone in today's video we're
+going to be taking a look at a bunch of
+different things at the same time now we
+recently got to build a 1268.1 which
+hopefully by the time you watch the
+video it's somewhat still relevant but
+i'm sure there's going to be some things
+that are in it so we're going to be
+doing today is we're going to be
+creating a complex airstrike up north
+here and in doing so we're going to be
+implementing the new flight plan
+features as well as kind of a neat
+little tip that uh i'm sure everybody's
+familiar with but it's worth reviewing
+so let's go ahead and do a little bit of
+reconnaissance and kind of work
+backwards so first things first they're
+looking up here at uh barnes air force
+base it's got a great japanese
+restaurant by the way if you're into
+flying to fbo kind of things and we've
+got ourselves a little reaper up here
+actually it's a predator not a reaper
+and so what i'm going to ask this nice
+little reaper to do is to do just a
+little bit of reki up here so that we
+can identify if there are any
+interesting targets how we're taking a
+pot shot out here oh oh that's not good
+well that's going to be a problem we're
+going to have to remember that later on
+there's something like a ks19 to ruin
+your day day and it looks to me like
+we've also spotted some hosted units
+here so if we go to contact looks like
+we spotted a bunch of big 21s now i'm
+not sure why the mig-21s have decided to
+land at this particular american air
+force base but somebody's going to have
+to blow them up and i guess it's going
+to have to be us
+so what we're going to do is lucky for
+us down here in pennsylvania at my
+secret airport uh we have ourselves some
+f-15es which are going to help us out so
+this is what i'm going to do i'm going
+to have the f-15es only target the part
+of the airport that contains spotted
+airports airplanes i should say
+obviously spotted airport spotted
+airports so i notice when i press the
+nine key on my numpad here that it
+exposes all the individual units and i
+can see a bunch of these with these
+little kind of triangle icons here so
+what i'm gonna do is i'm just gonna hold
+down the shift key and pick each one of
+those in turn it helps if you click on
+them properly though one two three nice
+one two three four five six i'm just
+looking to make sure i don't miss any
+looks good so now i'm gonna press ctrl
+f11 on the keyboard and i'm gonna say
+sorry barnes
+and we'll go ahead and call this a land
+strike press yokidok and now all these
+items in the target list only are the
+ones that have spotted aircraft at them
+cool so now we're going to do is we're
+just going to kind of go through some
+quick little motions here we're going to
+check to make sure flight size 4 i like
+that
+split distance attack method we're going
+to do independent aim here keep it super
+duper simple i'll leave everybody in
+formation i don't want to make this
+absurdly complicated and now what i'm
+going to do which is a little different
+is down here at the bottom it says use
+pre-generated flight plans only no auto
+generation by mission ai if you pick
+this box you are now saying i am
+responsible for flight planning but do
+my thing anyway and i'll go ahead and
+play with that
+i'm gonna click that box i'm gonna grab
+my f-15es toss them into this box here
+so now i'm gonna go set my time on
+target uh time on target today uh let's
+go ahead and call that 15 that's way too
+late let's do 13 15 0 0. that looks
+pretty good to me and now what i'm going
+to do is i'm going to reach up here it
+says create our edit flight update play
+plans and click this button as soon as
+you do that you basically committed the
+computer to go ahead and calculate your
+flight here so now if i actually come up
+here and click on this flight pan you
+can see the current breakdown of this
+flight plan which is really cool because
+you can go in and edit these components
+but what we're going to do today is
+we're actually going to go into the
+flight plan editor to fits with it and
+be a little bit more powerful here so
+i'm gonna come down here to flight plan
+editor and pop that button and you're
+gonna get a screen that looks like this
+now there's a couple things going on
+here that you probably want to be
+mindful i don't mind that i just want to
+make sure i didn't accidentally there
+there's a couple different things going
+on here that you want to be very very
+very careful with the first things first
+is you want to make sure you've selected
+the package you're actually working with
+here in this case i'm doing sorry barnes
+the other item you have of course is the
+flight itself so we can actually change
+this you know i can call this eli one
+one or or for those of you who have
+played way too much dcs
+we could do something like that there's
+a bunch of buttons over here with
+deleting and copying you want to be
+really cautious with these i played with
+these a lot i get the feeling these
+features are not quite ready for prime
+time especially this button right here
+be careful with that one so i'm not
+going to mess with this today but i'm
+going to show you some other things we
+got
+so scrolling down here we have a bunch
+of different hallway points by the way
+before you pick any changes here you
+want to make sure you've selected the
+flight leader if you don't select the
+flight leader here you're going to have
+issues like crazy so again pick the
+flight leader so we have a couple
+different options here we have the
+ability to take a look at what time
+specific way points are we can set
+specific speeds again people who do dcs
+you recognize this already we can either
+get there at a speed or we can get there
+at a time you can't have both in this
+case you'll notice this one that's got
+little red kind of thing here this is
+our lock this says this is the absolute
+you can't change this one when it comes
+to times it's difficult to have a lot of
+these if you create a lot of these
+little red guys you know like if i want
+to say my landing time must be 8 45. you
+know i can come in here and i can
+actually go at a time and say we
+actually want 13 45 in zero seconds so
+now that i have done that i've now
+created two time constraints not only do
+we have to be at the target at 815 but i
+want everybody to be landing at 8 45.
+the more constraints you create the more
+kind of math it has to do as a matter of
+fact if you look here you'll notice my
+marshalling point now has a speed of
+340. so there's other things we can do
+here and again i love the fact that we
+can do this like just quickly the other
+thing we can do is we can change the
+takeoff time so if we want them to rush
+to the target of course we could set the
+takeoff time later let's say i want my
+takeoff time to be just a little tiny
+bit later let's set at a time let's say
+we want it to be 12 45 and 0 seconds
+that's going to use a lot more fuel but
+that's okay so now what i've done is
+i've created three separate constraints
+and now the times on here are going to
+be a little bit weirder looking on
+account of that effect
+so the next thing we're going to do is
+we're going to take a look at editing
+things like altitude now keep in mind
+when you're in a holding pattern you're
+burning fuel so one of the most common
+tricks here that i've already discovered
+that works well is you can change the
+altitude that you hold so for example i
+can come in here and say oh i'd rather
+be holding at an altitude where i get
+better fuel economy so i click like that
+and whoosh my holding altitude is now 36
+000 feet which is going to save me fuel
+as they're doing their donut trying to
+wait for their kind of approach time so
+to speak so coming down here i've also
+got my turning point my ip my target so
+what i want to do here is i'm going to
+set my turning point to be at 12 000
+feet as opposed to 200 feet remember
+these are at 15es these things have
+pretty sophisticated targeting so i'm
+pretty confident they can hit something
+at that altitude somebody set these all
+at 12 000 feet and remember a little
+while ago when we did our recce that we
+spotted a bunch of enemy triple a up
+there so obviously we want to be a
+little bit higher to make them a little
+bit harder to hit next what i'm going to
+do is now because why not i'm going to
+come in here i'm going to set my speed
+i'm also going to come in an after
+burner speed so that means i have very
+very very little time over the target
+i'm a very very small target to strike
+so this is almost a perfect strike
+pattern here my altitude's perfectly
+selected my speed's perfect my timing is
+all completely synchronized everything
+is 100 ready to go
+now the other thing that's really really
+cool here is not only can we come in
+here and fits with stuff like this but
+we can actually add waypoints now if you
+come up here you can have this little
+kc-135 this is going to be some fuel i
+can actually force these guys to refuel
+so what i'm going to do is that we have
+this little turning point ingress that's
+a waypoint four this is one right here
+what i'm going to do is add a waypoint
+between the hold end and the turning
+point ingress so i'm going to come up
+here i'm going to press the insert
+waypoint button and what that's going to
+do is it's going to add ourselves a new
+waypoint notice this is turning point
+right here so instead of turning point
+i'm going to set this to refuel now
+watch what happens when i click this
+would you like me to disable it for all
+this except this one yes please do so
+now we don't only have a set take off
+time to set target time and landing time
+we now have a point during our journey
+where we're going to force our aircraft
+to refuel now this is so cool because if
+you look really carefully you can see i
+already have an airplane up ready to go
+so what i'm going to do is i'm going to
+grab this waypoint 4 and watch this i'm
+going to park it right here so that way
+when they get to that position they can
+actually start the refilling process
+surprised there's a kc-135 waiting for
+them now if you want to be ultimate
+supreme strategic air command perfect
+timing kind of a thing you can even
+synchronize this across the ocean if
+you're one of those people but again you
+can do things like this now that we
+weren't able to do before so when this
+is all done this is wonderful please
+don't click this button you're going to
+cry if you do it don't do it everything
+else is looking super duper so we're
+expecting a takeoff time about 12 45
+zulu close that close that we're good to
+go
+so let's go ahead on pause speed up some
+time
+ta-da they should be launching
+momentarily
+now we've gone past about a minute and a
+half and you've noticed they have not
+launched yet
+why have they not launched well the
+reason they haven't launched is let's go
+back up to that flight of enfield 1-1
+remember how we set that constraint
+where they had to take off at 12 45 well
+the other thing we did is we set a bunch
+of other constraints along here so the
+way that the ai calculates these flights
+you will sometimes run into a problem
+where it creates a situation where you
+can't figure out how to do it so rather
+than telling you hey something doesn't
+feel right it just sort of doesn't work
+so that's something you want to watch
+out for so if it does occur to you don't
+panic uh we can actually come up here
+and again oh you can see they've already
+started to deploy themselves which is
+wonderful give them a couple minutes
+here and takes two minutes to get
+airborne and again if that they don't
+immediately launch because now they're
+going to be very late to all of their
+times you can always just come in here
+and you can launch them manually now
+watch what happens if they launch them
+manually however though so i hit space i
+launched send them up in the air there
+they go
+um
+what do you notice i should probably see
+this right here see this lovely thing
+that says flight 166.
+now if we go back to f11 here notice my
+enfield 1-1 is gone
+um all that hard work we just did now if
+i come up here and says flight plan
+editor as you can see the flight plan
+has completely deleted itself so all
+that hard work that we just spent again
+let me switch this from enfield one to
+the current call sign that we have let
+me make sure we're on the right mission
+here uh sorry barnes let's grab this
+flight 166. you can see it has
+completely disconnected itself from the
+flight plan editor so it's one of those
+situations that if you start putting all
+those little stops there there's little
+locks on there really keep it to one
+otherwise you're going to be creating
+issues and you can see right now it kind
+of blew up so what i'm going to do is
+quickly recreate everything
+now as i'm kind of sitting here and i'm
+putting the last couple touches on this
+there's one thing i really want to
+quickly mention if you do do refueling
+if you actually go down here there's an
+edit error
+filling missions you can actually sit
+here and select the mission that you
+want to create and you can even have it
+do things like following receiver's
+flight plan i'm going to disable this
+here because i don't want them to be
+following along all the way to the
+strike which is basically 50 miles away
+but just kind of keep this in mind that
+you can edit that as well
+all right everybody is on the way so
+what we've just done is we've launched
+our flight here and they're going to do
+everything that we asked them to do you
+know they're going to enter into the
+little holding pattern here notice they
+did it at 36 000 feet now what they're
+going to do is they're going to fly to
+this waypoint 4 and now notice they've
+got plenty of gas on board but watch
+what happens the moment they hit the
+waypoint floor they're going to sit
+there and go you know what would be nice
+let's get some gas
+and now they got some gas and now
+they're back on their way again
+so if you recall we intentionally told
+these guys not to drop below 12 000 feet
+for the strike so they're swaying in
+they get nice and low over the terrain
+here they're flying right past halcott
+melon there scaring the bejesus out of
+all the people in the really expensive
+houses yep they're gonna hit right over
+the farmington valley oh boy come and
+pop in up into massachusetts here low
+altitude the kick up to afterburner at
+the last possible second and now they're
+going to go ripping across the target
+it's giving basically no time at all for
+anybody to have any sort of reaction
+look at this oh that was sweet
+nice it looks like one guy ignored my
+instruction now that is what i call a
+bug or i call it incompetence either one
+of those is acceptable depending on how
+you look at it so everybody zips back
+out ideally what they would have done is
+stayed at the same altitude rather than
+getting an engine shot out but again
+it's not perfect like i said it's
+definitely a work in progress now if we
+pop up to our losses and expenditures
+you can see that we did quite a bit of
+damage and had everybody stayed at the
+correct altitude like they were told to
+it would have worked even better and
+nobody'd even gotten shot at during that
+entire procedure
+so hopefully this video is helpful as
+showing us some of the different ways we
+can make a more complex flight plan in
+order to have a lot more granular
+control over what goes on and it was
+also great to see how you can do that
+refueling and how you have the ability
+to actually identify what part of an
+airport should actually strike other
+than that enjoy

@@ -1,0 +1,243 @@
+# C: MO - Loading Weapons into Magazines
+Video: https://www.youtube.com/watch?v=b3L5YTsUZLk
+Video ID: b3L5YTsUZLk
+
+hello everyone in today's video we're
+going to show you how you can fill an
+Airfield up with different Munitions
+inside of its magazine now for those of
+you who are not familiar with this if we
+were to grab an airport that's sure
+maybe you're making a mission or
+something you press that F6 button
+you're like I really like to launch one
+of these cool f-16s and you come down
+here and you had ready arm and then you
+notice that there was no ability to load
+anything into this airport you're
+sitting there going well that's not very
+cool I guess what I'll do is I'll just
+cheat a little so you go up to the
+editor you come up to the scenario
+features and settings you press okay
+when the pops up and you see this lovely
+button this is some of the magazines
+you're like cool let's do that so you
+press okay you come down here and of
+course you grab your F-16 again you go
+hit that ready arm button and you're
+like oh I've got everything I could
+possibly want I've got unlimited
+magazines this is awesome I don't have
+to worry about this at all of course
+then the person loads up your scenario
+and goes ooh a b61 that certainly will
+make the scenario a little bit shorter
+so then of course you go well that's
+that sucks that sucked okay fine fine
+fine all right so then you come up here
+you go up to the editor you go to
+scenario features and settings you hit
+okay you shut this one off you press
+okay again you're like okay I guess I'll
+add each bomb individually you go ahead
+and come over to here where it says the
+word magazines you click on that button
+it says musicians you come down here you
+say add weapons and then of course you
+have to sit here and
+go okay what about weapons that we
+actually have and then one of the things
+you probably observed is there this
+lovely checkbox that says show only
+weapons compatible with aircraft hosted
+by nice this won't be so bad so you come
+in here and say uh give me a few of
+those and give me a few of these and
+give me a few of those and give me one
+of those and you're like man this is
+taking a while just wish there was
+another way to do it I'm really really
+hoping that you know this is one he
+jumps in and does something in L that's
+magical and this is when I say no I'm
+not going to do something that does
+magical in Lua you could do Lua but
+that's for another video instead I'm
+going to show you a really cool shortcut
+so I'm going to go to magazines real
+quick actually no I'm not I'm going to
+go up to aircraft hit F6 by the way I'm
+going to go a and select my F-16 here
+this guy right here live one I'm going
+to come down right click on him I had a
+ready arm and what I'm going to do is
+I'm going to pick this load out now
+you're like why are you picking that
+load out the reason why is it's got all
+these good things down here what I'm
+going to do is hit ready immediately I'm
+going to come to this guy real quick
+look again I'm in scenario editor ready
+arm I'm going to scroll down a little
+bit I don't think I need any of this
+stuff the a an Al actually that sounds
+kind of interesting let me grab one of
+those so come down here I'll ready arm
+kind of a thing I'll scroll down a
+little bit let's see here do we want
+jasms we want jams give us a JM please
+somebody it ready arm I'm going to come
+down here do we want some D Mavericks
+you know what I'm going to take some
+daverick and so on and so forth 5
+minutes later actually not even that was
+like 3 minutes so what I did here is I
+went through and I populated all the
+different loadouts I want to be
+available in this Mission and it looks
+pretty good I skipped a couple of the
+ones that I didn't need I provided
+plenty of little details of the ones
+that we do and now I'm ready to add
+those into the magazine let's go over to
+the magazine but oh that's too much work
+instead what I'm going to do is I'm
+going to come over here I'm going to
+right click on this and press add load
+out to magazine this looks pretty good
+oh looks like I already have everything
+in the magazine for that oh it looks
+like we're missing some things there
+I'll add my magazine again add loadouts
+magazine you can see it populating my
+little pile in the about them let's
+scroll down oops it looks like we're
+missing some there let's go ahead and
+add load out to magazine I don't
+actually trust that any of these got
+loaded so just in case I'm just going to
+add them to the magazine too uh let's
+see oh looks like I missed some of those
+see this what happens when you rush
+through things you miss little stuff
+like that add Loadout to magazine I'm
+just going to scroll through it looks
+good looks good whoop none of those
+let's go in here add to magazine scroll
+down here I know why it's cuz I didn't
+click it my shet again my sh again I'll
+come on here add loadouts magazine go
+down to this one add nauseum and VOA and
+now we're all set I've got added all
+those things into the magazines and I'm
+ready to go now that's not helpful for
+us yet now the reason that's not helpful
+to us yet is because um I have all these
+aircraft with stuff in them so I'm going
+to come up here I'm going to select them
+all I'm going to right click I'm going
+to ready arm real fast I'm going to go
+ahead and order them all to be Reserve
+available which of course is going to
+eject all the stuff that was on their
+wings so now watch what happens when we
+scoot scoot over to the magazine
+magazine button button so when I come in
+here and open up Munitions you'll see
+that all of the possibilities I wanted
+for my scenario are now sitting here
+ready to rock all we have to do is come
+here and decide what quantities we want
+oh let's see here I want 100 drop tanks
+I want to come through here I'm going to
+select those two uh let me do uh 20 of
+those I want to do 20 of these again you
+can just come in here and dial that
+number if you really want to be lazy you
+can come in here and you can control a
+control V one thing you can do is you
+can actually put a zero in h backspace
+so if you come to like the jasm real
+quickly here see I still got it selected
+zero backspace uh that one let's do 100
+of those actually we'll do 200 of those
+why not you know we'll do 200 of those
+you get 200 wow that's a lot of those
+that looks expensive so what you can do
+now is you can actually zip through here
+and go ahead and fill up all the ones
+you want like coming down here yeah I
+definitely want a thousand of those let
+me have 200 of those too all right
+things are looking fantastic now if I
+close this menu and I go ahead and run
+over to my F6 key real fast if I select
+one of my f-16s note I'm not cheating
+right now if I come up to uh let's see
+ready arm for the purposes of my mission
+a as you can observe only the bombs that
+we have selected in our in our magazines
+are now
+selectable so let's say I want to grab
+um I going to grab the these four I'm
+going to right click ready arm real
+quick you folks are going to get all
+nice and heavy and ready to rock so I'm
+going to go ahead and ready whoopsies I
+Reed them immediately ah for shame I
+hate it when I do things like that let's
+go and hit that oh looks like we just
+dumped a bunch of extra bombs inside the
+magazine again so I'm going to go ahead
+and say a ready arm let's see here ready
+arm we're going to go ahead and select
+this one right here I'm going to press
+the okay we can exclude if we don't need
+them but that's fine I'm going to press
+okay they're going to start the reading
+process uh let's grab the rest of them
+here let's go ready arm and let's lot
+them up with a bunch of Mark 82s here
+we'll do Mark 84s why not press the okay
+button and you'll notice now that
+they're all starting to get ready and
+ready to rock and you can also see that
+my magazines down here have actually
+decreased in quantities which is exactly
+what we wanted it to do so you can see
+that's not a bad method um this whole
+process I think was eight or nine
+minutes tops and of course when you're
+doing more complex air bases you can
+pick a structure and fill them up with
+bombs and things and of course if you're
+doing an aircraft carrier everything
+works the same way one thing I want to
+warn you about aircraft carriers and
+this will kind of be my sort of last
+comment here let's go ahead and get the
+correct aircraft carrier which is the
+nits uh just want flying by that one get
+over here H the nits class ah there we
+go 2022 ding if I click on this guy real
+quick and I go to his magazines I just
+want to point something out real quick
+he comes preloaded and ready to go so
+one of the things you just have to be
+mindful of is when you do preload these
+um the magazines are just ready to be
+filled you can actually come down here
+and if you want to put a bunch of harms
+and argam and stuff in there you can
+come in here and do that now you can
+also use the strategy that I used before
+if you want to be a really really silly
+person for example if I want to do a c
+actually I don't think we're going to
+have any of those anymore not going to
+worry about it it would be pretty fun if
+we had an old escort carrier and we
+could fill it up with a bunch of nuclear
+weapons but I think you have the idea
+enjoy

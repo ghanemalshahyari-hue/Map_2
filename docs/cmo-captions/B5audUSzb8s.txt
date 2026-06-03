@@ -1,0 +1,353 @@
+# C: MO - Database Search Tips
+Video: https://www.youtube.com/watch?v=B5audUSzb8s
+Video ID: B5audUSzb8s
+
+hello everyone in today's video we're
+going to be taking a look at the
+database now i know we've taken a look
+at the database a few different times
+but i was watching a couple different
+threads over on discord kind of having
+some issues with sort of searching and
+kind of sorting through so i thought
+what we'd do today is just take a couple
+moments to take a look at the database
+as well as kind of the method that i use
+in order to kind of get the information
+that i need let's go ahead and get
+started so the first thing first now we
+want to go up to the editor here we want
+to double check to make sure that the
+current database that we are using is
+the database we indeed are interested in
+looking at one of the mistakes i made
+about 100 times i'll build a scenario
+way way back when it'll be like you know
+database version like 450 or 451 or
+something like that and i can't find out
+why is my f-16 with the app quiz not
+visible the reason is that we're on the
+wrong database keep in mind when you do
+open a new database you're going to be
+in a situation where any units you have
+on the map will immediately be
+overwritten so if you're in a situation
+where you have to check the database in
+the mission that you're flying just and
+you do want to update it you actually
+have the ability to upgrade scenario to
+latest db version but that's outside the
+context of today so let's go ahead and
+say we've got everything set up we're in
+the correct database like i said if you
+need to use a specific one you can come
+in here you can press this button you
+can go to here you can go to the db
+button scroll down and pick the exact
+database that you want in which case i'm
+fine with that i'm going to leave it
+just the way it is so next we're going
+to take a look at is the database viewer
+itself now the database viewer has come
+a very long way from the earliest
+version of this by the way for those of
+you who are interested you can actually
+go online and there's a website called
+commando db cmandb let me go ahead and
+call that up real fast and go ahead and
+share it with you it looks a little bit
+like this um it's a pretty neat little
+website where you can kind of get the
+most license i think it's a version 492
+where you can pick the different
+countries and do one of these things or
+you can go to list mode you know you can
+click on aircraft you can go pop through
+the aircraft and grab ourselves up
+already f16 cg here and then we can take
+a look at it and it even has this little
+neat thing on it that'll actually export
+it directly so that you folks can see it
+now in the old days we had another
+source for this online and that was
+going to be the belugan campaign wiki
+unfortunately because of changes to the
+apache server that one no longer works
+which is a bummer because honestly the
+reason i bought command mode operations
+was going through that website's
+database but again you got some pretty
+good stuff here that kind of simplifies
+it
+coming back here here's the database
+itself the first thing you want to
+remember is we have our different
+categories and notice we have a category
+for sensor now which is kind of new uh
+one thing you got to watch out for
+though is let's say i switched to
+aircraft and i'll go pick up bison real
+quick if i do click on one of these
+lovely hyperlinks here like for example
+i want to see what uh let's pick
+something easy here it looks pretty good
+right there i can click on that notice
+it keeps this on aircraft mode up at the
+tippy top even though we are now in
+weapon mode
+if you want to think about it another
+way so let's go back to aircraft and
+we'll go ahead and play with this a
+little bit so first things first the
+ability to filter by class which would
+be simply what is the airplane again i'm
+very partial to the f16 cm especially
+the blk make sure you hold your mouse
+over that one okay black 52 ah there it
+is right there oh i love that plane on
+the other ways we can of course surf
+through this information is we can do it
+by country now one of the neat things
+with command is the folks over there
+decided to go ahead and give us some
+really really cool little generic things
+so i can actually come in here and they
+have a generic quadcopter uav for
+example if i wanted to play around with
+it which is super duper cool now let's
+say i want to go to cuba we want to take
+a look at some of the different options
+here again we can click on all these
+different units and go check them out as
+well now if we want to search all the
+units and we instead want to search by
+hum if whether it's hypothetical or it's
+an actual real life platform you can
+come up here and press the hypothetical
+button we get these fun things like the
+a12 for those you're not familiar with
+it we have the faac team with the perdix
+drone which is really really fun you
+have the super tomcat the e model which
+never came into existence but i love all
+the cool stuff that they finger quote
+we're going to do with it also you can
+even get the one with the a152 like i
+just i love the hypothetical stuff so
+you can actually search that directly uh
+usually what i do is i leave it on real
+life platform so i don't accidentally
+our next thing we can take a look at is
+through this thing called subtype and
+this gives us the ability to pick the
+exact type of aircraft we want now for
+example i'm interested in let's have a
+dedicated wild weasel aircraft from the
+united states let's go to
+do united states and make it real life
+only and you can see these are the only
+dedicated wild weasel platforms now many
+of you say hey whoa slow down there i
+thought there was other wild visa
+platforms you know what about you know
+like the growler what about the f-16
+well this is the only wild weasel
+platform if i wanted to come in here for
+example and say hey what i really wanted
+was multi-role now you can see all the
+multi-role equivalents now this is a
+really really cool tool because let's
+say i want to get uh just the i don't
+know let's pick on something oh no i
+don't want to do that one because we
+have to go through all the different
+ones let's go poke around see if i can
+see something that goes pointing right
+out of me let's see here pakistan let's
+say i want to concentrate i'll go ahead
+and simplify this a little bit and we
+can see all the units from there let's
+say i only want to see dedicated
+fighters and you can see here i'm just
+going to get dedicated fighters from
+that country
+now this works the exact same way if you
+want to use the other types for example
+if i want to search different ships
+again i could do the same thing where i
+set it by country i could do
+hypothetical platforms which again we
+have some pretty fun hypothetical
+platforms the cgn which is a nuclear
+cruiser the vertical launch system
+version of it like seriously i love that
+i want one of these but again you can
+have a lot of fun with that the other
+thing too is we can always go down to
+the type and we can go ahead and select
+the different types for those you're not
+familiar with ships oh my gosh there are
+a couple of different versions i
+actually had a video probably two years
+ago explaining what all these different
+letters actually meant especially when
+you deal with the russian style now
+you're probably saying what do you mean
+by that well take a look bpk uh utiloy
+you know if i wanted to do rk for
+example and again depending on what you
+search for they just have a different
+way of labeling their ships on different
+countries the british for example tend
+to prefer just having a single letter
+and then describing that's the type of
+ship and then you'd have the actual name
+of the ship but again that's going to
+get confusing so what if i just wanted
+to look at russian cruisers for example
+and come in here go down to let's say i
+just want to concentrate on russia and
+we'll hit russia right there give me
+some only real life platforms and go
+ahead and give me what type of cruiser
+let's do what they consider a cruiser
+notice no cruisers if we want to do a
+heavy cruiser notice no heavy cruisers
+let's say i wanted a guided missile
+cruiser notice none of those as well so
+you really have to make sure that
+whatever you choose to search for it
+actually is going to be defined as so in
+this case because of the way that the
+russians do things they have a lot of
+different style ships now if you're
+sitting here going i can't find what i'm
+looking for someone help someone help
+let me make sure we've not done one of
+these all platforms let's go ahead and
+reset everything real quick make sure
+we're here i'll go up to the tippy top
+set it to none and let's go reset
+everything real quick ah there it goes
+nice let's go back up to ship let's go
+back down to russia
+and go mop that one real quick and now
+if i click on one it'll tell you the
+type of ship right here so again if i
+wanted to take a look at the crest 2 for
+example it's a guided missile cruiser
+now if i wanted to see all guided
+missile cruisers from russia now i have
+to do is go over here and find the one
+that says cg let's see here guided
+missile course
+and now i've only got the guided missile
+cruisers so you can see this is a great
+way to kind of surf through things now
+this is also true if you're dealing with
+things like submarines submarines are a
+little tricky especially depending on
+what country you know some countries
+will say a type five united states we
+have ssn you know in russia you have pla
+being
+which simply means that's atomic you
+know it's a non-diesel kind of a
+submarine or yeah it's nuclear submarine
+i was right so one of the things we can
+do here too is now we can go back to the
+subtype we can say give me an attack
+submarine you can get things like the
+kilo and the tango and stuff like that
+so you can already see now where the
+really really really cool stuff happens
+here and this will become the last thing
+that we take a look at is when you
+disable all this stuff and you go to the
+weapons page and you're like you know
+i'd love to know more about a particular
+weapon um can you tell me a little bit
+about the hellfire okay so i type in the
+name of the weapon again you can pick
+this up type of weapon such as a guided
+weapon but to make this even better i
+can actually click on the different
+weapons and say it'd be really cool i'd
+love to play with this 114 november
+version of the hellfire too the
+thermobaric um who fires that weapon
+i'll wait
+ah of course if you scroll to the bottom
+it tells you exactly who you need to
+know as you can see this is operated off
+of this version of the super cobra this
+is the 2003 edition and we also the 2012
+i believe these are both marines so if i
+click this real quickly here it gives
+you a nice little detailed thing but it
+also has this lovely little number at
+the tippy top so in the event that i
+want to spawn this into the game now
+let's go ahead and create a fake side
+real fast fake side
+i wish you could just press enter and it
+does its thing there go ahead and press
+the insert key now we just have to line
+up exactly as we had before so we'll go
+ahead and type in what was this this is
+ah-1w
+super
+cobra now notice this is united states
+2012. we come down here we have united
+states 2012. if i click on it you'll
+notice that it has the same exact id
+which means i've now found the correct
+unit in the database and we should take
+a look at that we've got all of our
+fancy little november versions of these
+we'll grab this one with the app quiz
+and ta-da we now have that unit
+available on our map now another really
+cool thing that they added relatively
+recently to this as well is the ability
+to search for specific sensors now the
+reason this is cool is there's a lot of
+sensors out there so one of the ones i
+always like to do is like to type in
+generic and then you scroll down here
+and say oh generic binoculars okay who
+gets generic but oh my
+and you can see there's plenty of people
+have generic binoculars but also if you
+wanted to do something like i would mean
+en apg-67 for example oh who uses the v4
+click and you can see exactly who uses
+that particular version of that now if i
+want to go over there and click on him
+it's going to take me right over here so
+oh this is cool i want to learn more
+about this drop tank
+oh look how many people carry that drop
+tank crazy it gives me 7.6 minutes of
+aviation fuel not exactly what this is i
+wish they'd actually clean this unit up
+and just tell us how many pounds or
+kilograms because that's the standard
+unit in this game but unfortunately we
+get minutes which it's not a bad thing
+it's just weird so hopefully this helps
+you out as far as your database woes
+like i said it's super helpful one thing
+to remember is the database is a
+compiled sql database which means if you
+want to actually open it up with
+software that can open a mysql database
+you could literally do it that way and i
+have a video from ooh boy probably three
+years ago of me actually cracking into
+the database keep in mind you cannot
+edit the database now that is an
+involved process many people like let's
+play with it but again you can probably
+understand why the developers chose to
+do it that way other than that enjoy

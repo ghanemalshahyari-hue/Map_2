@@ -1,0 +1,590 @@
+# C: MO - Using Decoys in Missions
+Video: https://www.youtube.com/watch?v=trL6M6PdnMM
+Video ID: trL6M6PdnMM
+
+Hello everyone. In today's video, we're
+going to be showing you why decoys are
+tricky to employ, as well as showing you
+some features from a scenario side
+perspective of how you can make them
+kind of work in a given situation. So,
+let's go ahead and take a look at what
+we've got here. We got ourselves the
+Enterprise. Uh, for some reason, it is
+off the coast of Connecticut. I don't
+know where Connecticut keeps getting all
+these, you know, Soviet era weapons. I
+think they just picked them up for a
+really, really good deal at an auction
+somewhere. And, you know, they've got to
+use them if they got them. I'm just
+saying. I guess technically what we
+could have done is like fill them up
+with like Nike Ajaxes or something like
+that, but I don't know. This works fine.
+But anyway, enough of that. So, what
+we're going to do is we're going to try
+to strike this airfield. And we're going
+to try doing it the silly way. And then
+we're going to show you how drones can
+kind of make things a little bit easier.
+Then, of course, we're going to show you
+how decoys can be used as well. So,
+without getting too technical here, I'm
+just going to come up here. I'll say
+attack this. We'll go ahead and do a
+land strike here. Again, not doing
+anything different, nothing unique here.
+Of course, we're a size of three. We'll
+go ahead and do our flight size there.
+Again, nothing unique. Please remove
+these runways. They're going to give you
+issues otherwise. All right, so we've
+got F-14DS. They're carrying the towel.
+Uh, this is a neat little weapon if you
+haven't seen this thing before.
+Basically, what it is is it's a flying
+decoy, and it kind of just sort of
+chills. And what makes it a little
+drone-like is the fact that it'll
+actually do power donuts once it gets to
+its destination. Just to confuse things
+even more. Now, the interesting thing is
+you'll see this doesn't work well. We
+have F-18C's. These are going to be our
+strikers. They've got Mark 83s. And of
+course the E here are going to be
+carrying an awful lot of these SAS. I
+think each one gets four harms each,
+which is a lot. So I'm going to go ahead
+and grab all this and toss this in here.
+We're going to mark these two crews as
+our escorts. That's good to go. Now what
+I'm going to do is I'm going to head
+over to my for my escort. And I'm going
+to tell them not to waste harms on
+everything. We're only going to do two
+allowed per shot. Now the interesting
+thing here is like I said, wait till you
+see the fireworks in a couple minutes.
+So, it'll put a smile on your face here.
+All right, that's all set to go. That's
+all set to go. That's all set to go. And
+that is all set to go. All right, let's
+demonstrate how silly this is going to
+be. So, I'm going to go ahead and
+unpause here. And obviously, we could go
+around the big wall of missile silos,
+but uh that would just be too easy for
+us. We can't do that. And I love the
+fact that everybody's doing their
+circles and wait for it. Anytime, folks.
+You don't have to sit there. Again, it's
+an aircraft carrier. You can only launch
+so many airplanes at a time. And this is
+basically what it's like 70 planes I'm
+launching or something awful like that.
+All right, folks. Anytime you're ready
+to head towards the target region,
+there's a bar lock. There they go.
+Finally. I don't know why that bar lock
+is happily tripping at me. I swear I
+shut this off every single time. Uh,
+we'll do that one. There we go.
+Nice. All right. So, right now, our
+basically on the other side is to you
+have to identify something before you're
+allowed to take some shots at it. So,
+we're going to cruise along here and uh
+what you're going to observe is the fact
+that we're going to basically get right
+up and knock before the party starts.
+Now, the reason the party's not going to
+start is on account of the fact Oh. Oh,
+they're getting close. Keep in mind, it
+is 5:15 in the morning. Oop, somebody
+had to go back for gas, it looks like.
+Ah, of course, it's the F-14s.
+Ironically, they're the ones carrying
+the drones, or I should say, uh, decoys.
+Now, one of the things you'll find very
+fascinating here is we actually launched
+the decoys. I didn't do any manual
+attacks or anything like that. They just
+decided to start flipping them out there
+just like that. And it's one of those
+cool features that saves us having to
+press Ctrl+ F1 like 30 times here. So,
+I'm going to go and speed up time a
+little bit. Uh-oh, here comes the
+missiles and the party has started. Now,
+what you'll observe here, as soon as the
+crews down here identified this one
+group, probably F-18s if I had to guess.
+Yeah, F18C's. Soon as they were
+identified as hostile, the party
+started. Now, here's the cool thing. If
+I switch over to red real
+fast, I don't know why this resets every
+single time, but it's like, let me shut
+that off so you can actually see what's
+going on here. So, we have a wall of
+yellow here, meaning it hasn't been
+identified, which means don't shoot at
+it until you identify it, which also,
+interestingly enough, means, as you're
+probably watching the party kind of
+unfold here, that we're not shooting at
+any of those decoys. It's basically
+hanging out up here, as if nothing's
+going on. Now, if I speed up time a
+little bit, uh, you'll see kind of the
+initial harms are going to find their
+marks here. We also notice that there's
+several other radar sites that we didn't
+identify when we did our initial pass
+here. And uh that's going to make things
+much much worse for us because now
+unfortunately we're going to be shot at
+by things we didn't know were there. So
+they never emitted. We didn't pick them
+up on radar. And again, you can see
+everybody's basically getting position.
+Look at the wall. Oh, a couple of the
+square pairs. We're taking a pot shot.
+Oh, look at this. There's another one we
+just detected. Yeah. The reason I put
+all those SAM eights basically around
+there is to make it a little bit harder
+to get cheap shots with harms. Harms are
+fantastic weapons, but if you want to
+stop them from cheapshotting enemy
+silos, you have to put something that
+has some anti-missile capability nearby.
+Otherwise, it's just not going to work.
+All right, party's continuing here.
+Looks like one of the F-18 groups did
+get through. We've got three of them
+basically hanging out. Two little
+teammates. And of course, the SAM teams
+are doing a beautiful job. You can see
+the decoys are doing exactly what the
+decoys were designed to do. And there's
+going to be an awful lot of fireworks at
+that airport in a second. Oh boy, here
+comes the fireworks. Couple more. It
+looks like we got that Sam 8. Also,
+here's another few more here. And that
+looks pretty good to me. Oh wow, the
+fireworks are beginning. Wow, look at
+that. Look at that. Look at that. Look
+at that. Man, that Sam just does not
+want to go down. And of course, our
+decoys are happily doing power donuts
+basically right over the heads of the
+Sams, distracting them as everybody
+basically pulls out right now. And one
+of the things I did do, and I learned
+this from fiddling with this earlier, is
+I do have these guys. These are the
+Stingray UAVs. They actually can do air
+refueling, which I don't know, there's
+something kind of neat about that if you
+ask me. I just I never think of using
+drones for that purpose, but hey,
+whatever. And meanwhile, of course,
+there's an inaglia down here, right at
+the little carrier trying to land. If
+you want to see something sort of
+amusing, let me switch on 3D view real
+quickly here. This is just so absurd.
+Look at this. Look at this. Oh boy. Let
+me click on this guy real quick. There
+we go. All right. Who's up
+next? Imagine that chaos going on above
+your heads there. So anyway, let's see
+how we did. So if I go to our losses and
+expenditures real fast, I will see that
+uh we got a couple we got a bunch of
+SAMs. Got a few of the airplanes though,
+so it's kind of a bust. They didn't fire
+very much at us, which is good signs.
+And we lost one F-18, which not great.
+Not great. So, let's go ahead and reset
+that. So, what happened here, and I
+think like you can probably get it now,
+is because the W on this side was
+basically saying only shoot at stuff
+that is known hostile. All of those
+decoys we fired were essentially wasted,
+and very few of them were ever engaged,
+if at all. Which means essentially the
+whole purpose of the decoys was
+completely thrown away because all they
+did is confuse the player. They didn't
+do anything to the Sams on the ground.
+So, let's make a little adjustment here.
+So, I'm going to jump back to this team
+real fast and I'm going to press control
+shift F9. And what I'm going to do is
+I'm going to say they can shoot at
+anything that's in the air. Now, of
+course, this is a very very permissive
+technique as far as doctrine goes. But
+it'll demonstrate my purpose pretty
+pretty effectively as far as how to
+tweak these things goes. So, strike two,
+I'll go ahead and call it like that.
+Land strike. Go ahead and grab all of
+Oh, almost did it. Almost did it. uh
+three and size three should be perfectly
+fine for us from a logistical
+perspective. One, two, three down here.
+Nice. Your mark selected as escorts.
+Your mark selected as escorts. And the
+one thing I want to do just like we did
+last time is we're going to pop off the
+two runways. Go to uh let's see here. We
+need
+escort. And we only want to fire two.
+Obviously, more than that is just
+wasteful. Okay, now things are going to
+be slightly different. Now, you get a
+kick out of this. Remember, the only
+thing we changed was to tell the other
+guys that they can yolo at anything in
+the air. Now, you're probably noticing
+my Awax right here and saying, "How come
+he's not getting shot at?" Cuz believe
+it or not, he's out of range. I actually
+check very carefully check the range
+before I embarrassed myself here. Keep
+in mind, in the real world, they might
+take the pot shot anyway, just to scare
+the crap out of the Awax crew. And it's
+not going to stop them from basically
+There it goes. Here comes the SAM fives.
+Ah, SAM fives, man. You got to respect
+the S200M. It's It's an impressive SAM
+system. despite its age. And I've always
+been I I just think it's cool. There's
+even a nuclear variation of it. And it
+also uses basically this phase. And of
+course, unfortunately, this guy's going
+to be breaking at the last second. Go,
+go, go, go, go, go, go, go. Turn. No,
+no, no, no, no, no, no,
+no. And the entire mission has failed
+already as uh we basically got shot down
+before we even got close. And notice
+there's another wave of these SA5s
+coming at us. Oh boy, here we go again.
+Everybody prepare to duck. Now, believe
+it or not, uh these folks are doing I
+don't know. I wouldn't climb against an
+SA5. I'd probably try to get under its
+radar. These are active or radar homing
+depending what model of the missile it
+is. But you can see basically the SAM 5
+wins the battle here today. We're not
+even getting close. Look at this. Here
+comes another one. Whoa. Run away. Run
+away. We are getting hammered here. And
+that is another loss of aircraft there.
+Now we're starting to launch some of our
+decoys. Finally. Oh, we finally got
+ourselves in a range here. Now, this is
+where it gets kind of fun because what
+you're going to see is 100 SAM twos,
+basically S75s, are going to start
+spamming these decoys because from their
+perspective, let me go switch the other
+team. Everything's hostile. And again,
+you can see it completely disregarded my
+setting there. And they're just going to
+start into the sky right now. Again,
+technical term. Meanwhile, my escorts
+are doing exactly what they should be
+doing, which is firing their harms at
+the now radiating missile silos or
+muscle sights, which makes this much,
+much easier to do. So now everything's
+actually working the way it's supposed
+to work. Here comes a bunch more of
+these decoys again. That's going to be
+basically a cheap shot. Bam. Look at
+that. Out of the
+fight. And we can see even the SAM 5 is
+getting in on it. Check it out. He's
+taking pot shots at that group there.
+Meanwhile, the rest of the crews are
+getting into position here. Of course,
+we've lost about half of everything that
+we started this battle with. So things
+aren't going so well for us here. And we
+can see, look at that. They're just
+wasting their time. Like at any point
+they could probably do a strafing run on
+that site. Assuming they're probably
+doing mad reloads right now. All right,
+here they go again. They're just taking
+all those pot shots. Oh, that one's
+definitely hostile, folks. That SAM is
+definitely not on your side. If it's
+shooting up at you, I don't trust it.
+But again, if you take a look, our
+decoys actually did an okay job here. So
+now our F-18s are getting into position.
+They're spamming that poor air base
+again. You can see almost every single
+bomb hit this time. So then they're
+going to turn around and they're going
+to start heading home. And you can see I
+lost almost every single one of those
+poor decoys that I launched. And this
+poor guy, he just just wants to go home.
+let him go home. And then he gets home.
+Now, the interesting thing here is if
+you take a look at a loss in
+expenditures again, you can see we did
+okay. We got a couple of these, we got a
+couple of these, but in general, we
+basically failed the mission. Now, if I
+scroll down here, they fired just about
+everything at us. And we lost 12
+FA18C Hornets. Uh, that is an
+embarrassing loss. And it's awful.
+That's like more than half a squadron
+worth. And that gives you an idea of how
+big of a failure that was. And that
+shows you how those kinds of things
+don't work that way. And hopefully
+you're starting to kind of see where
+we're going with this. So, let's go
+ahead and think about this from a
+scenario designer's perspective. That
+would have been very unsatisfying.
+Obviously, I could have manually
+launched every single one of those
+decoys. It wouldn't have mattered unless
+everything was very permissive. So, one
+of the things you can do as a scenario
+designer to kind of preclude this and
+actually make them work the way they
+were intended cuz that didn't work.
+Obviously, we'd have to go around. You
+know how these things go. Also, we could
+launch the decoys at low altitude, too,
+so we don't get pot shots by the S200.
+That's part of the fun. So what we're
+going to do here is instead we're just
+going to define a zone and we're going
+to make that zone the fire ref fire
+zone. And the reason this works best. Uh
+we're going to say fire fry. Go ahead
+and call it that. The reason this works
+really really well for these scenarios
+is it basically allows the other team
+kind of like a little bit of a respit at
+the same time as providing users with a
+little bit more uh not a chance but like
+you know what I mean? So what we're
+going to do is we're going to define
+this zone real quickly here as an
+exclusion zone. So, I'm going to go
+ahead and create it. Exclusion zones are
+basically a way that you can declare
+something that happens here. Um, shoot
+anything here. Mark violators as
+hostile. Now, this is a great solution
+to this problem. I'm going to go
+validate. I don't think I made a
+mistake, but um, we're going to go
+anything that crosses this magical line
+now basically gets to get shot at. So,
+I'll go ahead and make that a little
+more dramatic. And might as well include
+Nucket Martha's Vineyard there. All
+right, I'm going to save this. Don't
+forget to hit save. So, the way this
+works now is if anything crosses this
+line, it starts the party. Now, that is
+so much better for us because that's
+going to give us the ability to
+basically get all of our decoys off
+before anything goes downhill. You'll
+see what I mean. All right, let's do it.
+So, we're going to do the same thing we
+did last time. Uh, let's see. Shoot this
+third time. Third time is the charm. Go
+ahead and I'll lock everything up here.
+We're going to grab everybody like we
+did last time. These two folks are going
+to be escorts. We're going to double
+check to make sure we've done our sizes
+correctly. Sizes are correct. Sizes are
+correct. We don't want to shoot at
+these. It would be a waste of your time.
+Uh, the other thing I would save your
+time, too, is I get all these things out
+of here. For some reason, they love
+shooting at stuff like that. I I It's
+just a waste. Don't even bother. All
+right, we're going to make sure we only
+fire two of these this time. Now, this
+is going to be so cool this time. Uh, do
+not use weapons against surface
+contacts. Well, that would be pretty
+amusing if they did, but one of the
+things you can do here is if you kind of
+rip through this real quick, you've got
+your radars, you got runways, all sorts
+of good stuff here. One of the things I
+appreciate is the fact that it
+highlights things in green to tell you
+that this is the thing that you're
+looking for. All right, that all looks
+good. That all looks good. That all
+looks good. That all looks good. That
+looks delightful. Now, watch what
+happens. So, right now, as it stands,
+what's going to happen is our aircraft
+are not going to be engaged until it is
+essentially too late. And it creates a
+really neat little situation. And you'll
+see exactly what I mean when the party
+starts here. All right, here they go.
+Everybody's coming. And obviously, we're
+not doing manual control here. Now, let
+me go swing to the other team real
+fast. Now,
+what stop it? So, what you can see here
+is everybody's marked basically as an
+unknown at this point. And until they
+cross this magical line, none of the
+fireworks are going to start. And when
+it does start, it is going to be the
+spamiest thing you've ever seen in your
+life. So, let's use up front here. These
+are our these are why are they so far
+ahead, folks? When you do stuff like
+that, you tend to be the first ones to
+get shot at.
+Case in point, as you can see, they have
+crossed the magic line of doom. Let's go
+ahead and swing to the other seam here.
+And you can see as soon as they cross
+that, they started getting engaged. And
+each time the new one marks over, you
+can see the next one gets engaged as
+well. Whoa, I hope I didn't just lose
+another one. There we go. Nice. This is
+where things get really goofy, by the
+way. So, they're crossing into the
+marked this hostile zone. Marked his
+hostile. Really, the SAM 5 wins his
+battle, by the way. He's doing a
+delightful job here. And you can see
+everybody's basically lighting up all of
+their radars, which is exactly what they
+want them to do because the moment they
+turn their radars on, everybody with a
+harm is now going to start to fire the
+harm from the safety of the altitude
+that they were. Now, believe it or not,
+the enemy now is shooting at our decoys.
+They're not shooting at our actual
+aircraft. And now our harm teams, as you
+can see, are starting to do a beautiful
+job of basically lobbing these harms
+right into the danger zone, which they
+are no longer exposed to because, of
+course, all these missiles are doing
+their thing. You can see this other
+cruise launch there. You can see the
+next set of decoys are going out. You
+can even see that the SAM 5 is getting
+in on taking pot shots at those decoys.
+Actually, this whole zone is dangerous.
+So, he's firing at these, actually
+wasting his ammunition. Meanwhile, as
+you can see, my escorts are just going
+hard as far as these lovely SAMs go. The
+anti-raar missiles should be more
+technical here. But look at this.
+They're going right for that one. Oh,
+and he turned his radar on and got
+splattered for it. We can see my SAM 5
+here. He's about to get Ouch. Ouch.
+Ouch. The SAM 5 is no longer in the
+battle now. And it's just a party at
+this particular point. Everybody's
+firing their decoys. Uh the missiles are
+going all over the place and everything
+is looking incredible. Look at this guy.
+Even this guy's got to get hit. Look at
+that. Done. Thank you for playing. All
+right. Meanwhile, our F-18C's here. Oh,
+we lost one of them. That was going to
+happen because of um Mr. Sam 5 there. We
+should have come in at a much lower
+altitude during my initial. You will see
+quite the spike of lag in a few seconds
+here. Expecting to get the little
+warning that says your frame rate is
+low, but it's going to happen when it's
+going to happen. Look at this. Look at
+this. There's another one. Bam. Sorry,
+buddy. You should see what the new harms
+can do. Look at this. Look at this.
+B. Look at this party. They're all just
+doing power donuts and firing arms at
+them. I mean, it's fantastic. Of course,
+the F-18C's are just turning around.
+They're coming home. They're probably
+going to stop and get some gas from the
+drone here. Keep it nice and simple. And
+it is just like a party time up there.
+Of course, the SAM 5 is like, "Okay, why
+you all picking on me?" I'll tell you
+why we're picking on you, cuz you're
+dangerous. All right, let's keep on
+heading out. Uh, for those of you who
+have never seen this before, there's a
+program called Sam Simulator. Go look it
+up and give it a try sometime. It'll
+completely change your perspective on a
+lot of these things. All right,
+everybody's heading home. A few people
+are probably going to stop for some gas
+on the ride in. I would assume they
+would be stopping for gas, but again,
+they've done a nice job here. And of
+course, our last decoys are running out
+of gas. Okay, now this is where it gets
+kind of fun. Losses and expenditures.
+Let's see what happened here. So, we got
+three of those, eight of those, and
+three of those. Oh, we got lots of their
+SAM twos. We also got a B. We did
+really, really well here. This was
+almost half of the total enemy assets
+here. They fired plenty of missiles at
+us and we lost a single F-18C. Now, the
+part that you're probably going to be
+most impressed with is this F-18C was
+actually lost to the SA5 at the
+beginning of the fight. Isn't that crazy
+how effective that works? So, again,
+what we did there was we basically
+tweaked the so there was a no zone and
+that made it a little bit more fun for
+the player to be able to kind of crack
+that puzzle. And now, if we just made
+them fire at anything, you could see how
+chaotic that was. And of course, if
+you're a mission designer, you could do
+things like that. But the only reason
+you would is if you had some kind of
+civilian units or something like that.
+Good stuff. Enjoy.

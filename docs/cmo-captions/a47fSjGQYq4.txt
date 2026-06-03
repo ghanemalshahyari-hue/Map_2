@@ -1,0 +1,263 @@
+# C: MO - Ground Units
+Video: https://www.youtube.com/watch?v=a47fSjGQYq4
+Video ID: a47fSjGQYq4
+
+hello everyone in today's video we're
+going to be taking a look at ground
+units uh one of the latest and greatest
+additions to command one two three four
+five
+four three five sorry so what's the big
+difference between ground units and
+facilities well let's take a look so
+what i'm gonna do is i'm gonna go ahead
+and click on my map here i'll go ahead
+switch our team to the appropriate sim
+we want to be on red team i'm going to
+go ahead and drop a ground unit right
+here we're just going to use a regular
+ground unit uh we'll call this one nice
+and simple we'll do a t72 b3 nice and
+simple grab that one and then right over
+here we're going to go ahead and pop a
+facility and it's going to be a t-72
+t-s-72 and obviously we want the nice
+modern version as well
+okay so take a look you go hey obviously
+that ground unit looks exactly the same
+as his buddy over here except for one
+major difference the major difference is
+this is actually an armored platoon it
+is a group of ground units and the way
+that they store this is um basically if
+you popped over the weapons real quick
+you probably see that each mount weapon
+is an individual tank with one contained
+weapon system it's almost if you want to
+think about it this way there's three
+272 turrets here that are just kind of
+chilling with each other now our ground
+unit itself this guy up here is actually
+the same basic tank except if you pop up
+to weapons you're going to notice it now
+has a t-80 turret as its mount it is a
+different system it also has two
+countermeasure launchers an event that
+you want to play with them you've also
+got a remote weapons station if you want
+to play around with that as well this is
+a single unit now i know what you're
+thinking you're probably saying well can
+i come up here and do something silly
+well you you could i don't necessarily
+recommend that you do something silly
+but if you want to do something silly
+yeah you can come up here and do
+something really silly like this
+here t-80 main battle tank would be the
+tank itself t-80 turret looks pretty
+good and now i have the mammoth tank
+from
+many of the command and conquer games
+because i have dual t80 turrets now
+theoretically you could technically put
+a t-80 onto a t-80 like ta deception or
+like a you know it's kind of one of
+those sort of things but don't worry
+about it so what else is difference
+between the two well the first one is my
+group of tanks do not have fuel
+my guy up here my individual ground unit
+does have fuel as a matter of fact he
+has 1200 units of fuel remaining which
+means you can now replenish his fuel so
+you can actually simulate logistics now
+i know what some of you are thinking
+you're sitting here going wait a minute
+can i set the fuel quantity yeah you can
+so i can actually come up here and say
+uh he's a little low on the diesel uh
+diesel's gotten really expensive
+recently by the way so now he's got 250
+units so i can simulate logistical
+problems like oh there's a fuel truck
+over here that you have to race over to
+you know if i go to ground units real
+quick type in fuel you'll notice you
+have a fuel bowser this is the only unit
+that holds a fuel so now they've got my
+little fuel bowser down here i could
+actually grab this guy right click and i
+can actually order him to replenish
+select manually and then go ahead and
+click
+look at the little fuel icon okay that's
+that's just cute that's just cute so go
+ahead now oh my god how do you click
+that oh you have to click on it in the
+center oh my god make it an arrow boop
+just like that so what he's going to do
+now is i've actually unpause this now my
+t72 is going to go
+he's going to stop there and he's going
+to replenish his units of fuel here he's
+just kind of gassing up sort of a thing
+like that so you can see now logistics
+becomes a very very real potential
+concern so the other thing this big
+difference is if i click on the database
+entry it's a little weird click on the
+database entry for these guys you notice
+it has you know general sensors and
+things like that it has my t72 mounts it
+has my data link no fuel information
+when i take a look at the ground unit
+version on the flip side
+i get a big scary error
+that's the joke that's why i can't have
+nice things so anyway on the t72 i'm not
+going to rebuild the entire scenario
+just to show this to you but i can't at
+least show you sort of what this looks
+like so popping over here you're going
+to notice that all of the different
+weapons are now represented on top of
+this and instead of having a tank be one
+of my units you can see clearly that i
+got myself an abrams turret down here
+and that's going to be having the actual
+weapons and things along those as well
+as the different appropriate arcs the
+other big difference is if you scroll
+down and now we have things for
+performance details you know this is
+much more like a ship or it's a much
+much more like a piece like that now
+what some people are probably asking is
+the armor different unfortunately at
+this time the armor is still considered
+the same it is a relatively simple you
+know there's no like front arc back arc
+side arc or anything like that that we
+have to worry about with these
+particular new adjustments to ground
+units the next thing we're going to be
+interested in with ground units is that
+what happens when we try to carry them
+well that's where things get a little
+more fun for us but again nothing bad
+nothing bad so what i'm going to do is
+i'm going to give myself a good
+old-fashioned service ship i'm going to
+get everybody's favorite lcac let's see
+here here let's just grab the schlep
+it's a real schlep so we're going to
+grab that one go up to editor we're
+going to go and pop up to unit actions
+we're going to edit cargo and now notice
+we have the ability to go ahead and load
+units that are already on the ground how
+awesome is that so our t72 if we want to
+actually click on this right here i
+could say give me and now i've actually
+stolen the nt72 off the ground and i've
+slapped them into that that is one of
+the coolest new cargo features that
+they've added it just simplifies things
+so simple for the mission builder
+now let's go ahead and eject him um well
+i was very nice that was very nice i
+mean eject you go back from which you
+came but let's say we want to go ahead
+and grab something out of the database
+so if i click on the database you're now
+going to notice there's two different
+options here we have type ground unit
+and we have type mobile facility mobile
+facilities are the traditional ground
+units they're going to be platoons
+they're going to be your company's
+things along those lines ground units
+are going to be like the ground unit we
+saw now notice your masses and crews and
+all that other good stuff is going to be
+much much more precise here so let's say
+i want to grab a pair of btr82s or
+something like that a custom name cool
+car that sounds like a legitimate
+question i mean so you know cool car one
+and cool car too and notice we now have
+a little thing on here that lets us know
+that we have more spaces for cool car
+cool car we'll do uh can be two more of
+those then
+i should rename those a little bit there
+but you can see it automatically closes
+this down i could throw some combat
+swimmers in there if i wanted i could
+even put like a light armored car light
+utility vehicle this would be like a
+hummer or something like that and again
+it shows you exactly so now they've got
+all my cool cars i can theoretically
+unload it so i'm gonna grab my lcac here
+i'm actually gonna order him to come
+over here oh my god the new right click
+thing
+sorry it makes me crazy they'll fix it i
+believe they've actually added a
+checkbox for it so i can't complain
+anymore so what i'm gonna do is i'm
+actually gonna ask them quite nicely to
+go ahead and unload everything that does
+come on board real quickly here oh let's
+see on the car goes right there at the
+bottom on pause and he's going to come
+ripping in here and he's going to drop
+off everything that he has
+actually he would be ripping in here but
+i believe that little bug that came up a
+little bit earlier is that causing me
+issues for that one so normally what
+would happen is i'd press this i press
+unload cargo and all the things would
+kind of appear next to them like you're
+probably familiar with and it's going to
+be done in a different group of course
+the nice thing here is i can actually go
+up to the editor now and i can actually
+pop into it and do it directly if i
+wanted to now all right everybody get
+out get out get out get out get out
+sweet so i've unloaded everybody and you
+can see this is one of the major major
+differences here is the fact that each
+one of these is an individual unit now
+traditionally when we did this they came
+in giant bobs it'd be like you know
+infantry combat team it'd be like 30
+tanks in it now each one of these is its
+own vehicle
+so hopefully this helps you see the
+difference between ground units once
+they're on the ground by the way once i
+got fuel and all that other stuff i can
+order them to do pretty much anything
+you need them to do ah they didn't want
+to get out because apparently it's a
+little uh a little tricky to get in and
+out where we are parked here again
+sitting here in the middle of the
+bahamas it doesn't surprise me at all so
+hopefully this helps you see the
+difference between ground vehicles and
+facilities um it's not going to break
+old units or anything like that one
+really cool thing you could do by the
+way and this will be another video in
+the future is with the formation editor
+you can actually come in here you can
+make them do like a big v and you can
+have like charge across like the desert
+or something but that is for another day
+enjoy

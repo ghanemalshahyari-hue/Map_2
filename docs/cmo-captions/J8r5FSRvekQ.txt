@@ -1,0 +1,475 @@
+# C: MO - Time on Target Strategy
+Video: https://www.youtube.com/watch?v=J8r5FSRvekQ
+Video ID: J8r5FSRvekQ
+
+hello everyone in today's video we're
+going to be continuing to explore this
+uh 125 8.2 update and we're going to
+take a look at the impact of time on
+target versus the conga line method
+versus the mast air raid method and see
+what method is going to work best as far
+as ensuring that we have a successful
+mission and we bring as many planes back
+home as possible so let's take a look at
+this thing oh ash ali
+we're in akirja stand today you know we
+have ourselves a randomly generated set
+of targets here a bunch of factories and
+of course be protected by these three
+sam sites of course i can't count
+because there's actually a fourth sam
+site but we can't see that one just yet
+uh there is cool so we're going to do
+today is we're going to set up a mission
+where we're going to bomb these targets
+with a bunch of b29s and we're going to
+use it three different ways we're going
+to start by using the kanga method like
+i said a minute ago and it's basically
+we send a bunch of groups of four out
+and try to do as much damage as we can
+then we're going to try the mass bombing
+raid method we're going to launch 24 at
+a time and see what happens and then
+we're going to try this brand new time
+on target method and we'll see what
+happens so let's go ahead and get to it
+so let's grab all our targets here i'm
+gonna press ctrl f11 uh mission um
+boom
+why not make sure you set this land
+strike by the way i've made that mistake
+more times than i care to admit to so
+the first method we're going to use is
+the conga line method so i'm going to
+grab all my b29s toss them in here and
+i'm going to go ahead and set my flight
+size remember the old days bomber groups
+are usually little cells of three uh we
+could do up to six if we need we will do
+cells of um we'll call this excels of 6.
+we'll make it interesting let's see fuel
+and ordinance looks good looks good
+looks good number of we're not going to
+worry about that off axis we're not
+going to do that today like i said we
+want to test the conga line method first
+we can make this one time only if we
+have to we can include this in the ato
+which is a good choice now i'm not going
+to set a takeoff time or anything like
+that we're just going to let this flight
+go as is so to kind of kick things off
+and i get them moving quickly i'm
+actually going to go to my little air
+base here and i'm going to launch them
+manually now you're probably saying why
+are you not just letting the thing do it
+itself well if you do that that way it's
+going to take a few moments for the
+system to recognize the fact that you're
+launching these together so what i want
+to do is i want to launch from this a
+bunch of groups like i said so i don't
+have to wait all right let's test it
+here we go
+here comes the conga line method now you
+probably said why do you call this the
+conga line method i think you can see
+for yourself why i call it then one
+thing i'll do for us real fast is i'm
+actually going to shut this off so you
+can see what we're doing here there we
+go so like i said this is the conga
+method because basically everyone as
+soon as they take off they just make
+themselves a beeline towards the target
+region and they just go
+so now what i expect to happen now is i
+expect a bunch of uh cm2s to be starting
+to make their way upwards here pretty
+much any time these are the old sam
+tubes these are the a models like i said
+i don't want cold war database today
+because i knew that this would be the
+best way to do it so here comes the
+first sams
+lost b29 right oh here they come here
+they come whoa
+bombs away bombs away bombs away
+all right cool so let's see what
+happened there
+let's go ahead and i'll load up the
+mission here and we've lost that we blew
+up a couple buildings uh they fired 30
+sam so they've been busy uh we lost nine
+b29s using the conquer method here so
+what i'm gonna do is i'm gonna quickly
+reset the scenario right we're going to
+switch over to blue team here
+and we're going to do it again but this
+time we're going to try out the mast
+bombing raid method so what i'm going to
+do is grab all these guys right here
+ctrl f11
+uh
+i think we have some kind of reference
+to warhammer in there somewhere i can't
+quite figure it out though so i'm gonna
+grab all the b29s again and i'm gonna
+put them in a flight size of 24.
+[Laughter]
+like i said i call this the mast bombing
+raid method yeah world war ii method if
+you prefer subscribe all these guys
+launch them as a group and we'll see
+what happens this time so keep in mind
+we lost nine planes last time and we got
+two now let's gotta take them in here
+they go here we go
+oh man i still wanna hold on let's have
+a little bit of fun here oh
+you got to see this in 3d this is so
+satisfying one of the first missions i
+ever did in command was actually do this
+with like a 1000 bomber raid because i'm
+a terrible person and it was awesome
+look at this look at this
+oh yeah now that's what i call bombing
+raid now one fun thing you can do is you
+can edit f4 and you can actually dial in
+the formation if you wanted so if you
+wanted to you could make this the
+world's like the longest like skirmish
+line or something like that i don't
+necessarily recommend that for today i
+feel like that's a different video but
+um let's have some fun so anyway get you
+guys going up to kyrgyzstan well yeah so
+these guys are going to come ripping
+across the mountains here remember we
+lost quite a few last time and this is a
+large group here they go so we're going
+to be flying now i always think of that
+great scene from star wars uh when
+they're making their trench run here and
+there's just explosions actually let's
+call it empire strikes back when they're
+trying to basically make their run on
+the atats and there's explosions
+everywhere it's definitely going to be
+one of those kind of situations so
+anyway here comes my giant mass of
+bombers here comes the sams oop that guy
+ran away right away oh here they come
+here they come bring on the sams bring
+on the stamps
+it's lagging my computer
+i was like that because um it always
+like
+couple people forgot oh we had some last
+minute up trigger pullers here so one
+thing you got to watch out for is
+because of this technique unfortunately
+um every single one of the targets was
+only assigned one attacker so we'd have
+to go back and change the wra to enable
+more than one attacker here so we're
+gonna go sneak back out there and now
+we'll go ahead and take a look at the
+results there might be some last minute
+saving nope no last minute sammy here oh
+well so let's go losses and expenditures
+oh we got a communications hub nice they
+fired half of the missiles that we fired
+earlier you notice that and also if we
+come down here we lost one less bomber
+so what does that tell you that tells
+you that this method is actually a
+little bit better because they didn't
+have as much time to reload and now if i
+played with my wra a little bit i could
+have made it so everybody dropped the
+bombs and ran in which case we probably
+would have saved a b29 so let's go ahead
+and reload the scenario and now we're
+going to try the new tot method and see
+if there's any difference in my opinion
+it's probably going to be about the same
+but like i said let's test it let's test
+it this is what we're here to do so
+let's grab this group right here control
+f11
+ah meltas
+flyer fly up boys there we go we'll do
+some fly boys here press that one we'll
+do a land strike i made that mistake
+more times like i said then i care to
+admit grab all the b29s we're going to
+do them in ice groups of six with a time
+on target let's see this is about a four
+hour flight let's see 250 120 and uh so
+we're gonna have to set this for uh
+let's see here time on target so let's
+see right now it's set for nine that's
+not possible because at nine alright
+we're zulu time zulu time zulu time so
+we'll go ahead and set it for ten
+all right that looks pretty good so i'll
+go ahead and click on the ato we're
+gonna have nothing on the ato just yet
+so go ahead and close that now we're
+gonna have to speed up time a little bit
+here so the ato recognizes what we've
+done here
+all right go ahead and press f11 there
+let's see if the ato has populated here
+good so our takeoff time is going to be
+11 40. uh that's local i love how it
+gives you local time so that's a 740
+that's an hour from now there you go
+and you thought i was going to make you
+wait
+all right everybody's on the way
+so what's going to happen now is uh
+we're going to go ahead launch everybody
+we've got everybody taken off here like
+i said nothing crazy going on remember
+these are using the new time on target
+technique here so everybody's kind of
+doing their little ziggy zag and we are
+all airborne and we're heading towards
+the target oh that guy's speeding up oh
+there it is there it is there it is
+there it is look at that look at that so
+now what's happened is everybody is a
+group up together and you can see that
+this is extremely similar to what we saw
+earlier as a matter of fact if i switch
+over to my treaty view here let's go
+ahead and pick one of these guys as
+victim obama's notice doesn't this look
+familiar
+it should because this is the same
+pattern we saw earlier so let's go ahead
+and go ahead and rip them along they're
+going to go ahead and do the strike i've
+feeling it's going to be about the same
+actually looking at my watch they're
+supposed to be over the target at
+exactly 10 o'clock uh we're looking at
+951 952 53.
+somebody in the one of the navigators is
+going to get fired here you guys are
+just oh here comes the sams
+oh boy here comes another one
+whoa there's another one
+these sams are just having a good day
+today of course the um wow basically
+that front group took everything and the
+rest of them are just kind of cruising
+on in here so we had to get through you
+know they get dropping on pretty much
+right away there
+and let's see how that goes boom boom
+boom boom oh yeah that's b29 bombing
+accuracy for you here comes the rest
+that's exactly what i feel like that
+would sound like okay so now we're going
+to turn around and run for our lives as
+fast as we can and get out of here so we
+got two which is good um they got out
+the least number of sams so far
+now the interesting thing here is
+remember how that early group kind of
+take the damage and then the rest of the
+groups just kind of waltzed in and did
+their thing
+that was because of this now look at
+this we lost the least number of b-29s
+because that sacrificial group basically
+wasted everybody's time everybody else
+got their thing into position and
+because they had more time to choose
+their target we didn't have the issue
+where we kept zigzagging over the top of
+the target itself okay that was um i'm
+not going to call it unexpected i'm just
+going to call that awesome yes we did
+not cross the target on time now you
+probably noticed when i set up the
+scenario
+that we actually have two sets of
+aircraft here we have an air base over
+here and then we have an air base up
+here the reason i did that is because up
+here i have a bunch of b47s now i love
+the cold war database if other people
+that command decided to take away all
+the databases but leave one i would ask
+for the cold war databases the database
+i'd hang on to i just i don't know it's
+just it's
+shiny airplanes that didn't work well
+it's just cool
+strike again uh what do we call this um
+exterminatus
+so now i'll show you the real reason
+time on target is amazing so what i'm
+gonna do is i'm gonna order exterminatus
+on this particular target we're gonna do
+groups of six now notice here that we're
+going to have two different groups oh
+we'll say the timeline target again
+we'll go ahead and select it we'll
+assume a time of let's see at nine
+o'clock it's actually probably a pretty
+fair time um we're going to set our time
+to 0 9 30. whoa helps if you're on the
+right part of the keyboard when you go
+to type that colon 30 and 0 zero seconds
+so that's going to be very very very
+very interesting uh the next thing we're
+going to do of course is because we're
+doing exterminatus here um x off axis
+attack would be super fun to play with
+but i'd rather just overwhelm because i
+actually have a dual access attack here
+but one thing i do want to do and uh
+this is really really important is
+mission we're going to go to uh wra we
+have a bunch of different types of bombs
+here um obviously for these notice that
+it's going to say fire all to meet you
+whatever we can go ahead and do things
+like this or we say i just use two plays
+so i'm going to go down to land contact
+i'm just going to order two each the
+reason i'm doing this is because i want
+these guys to kind of help out a little
+bit so we're going to do two units each
+a runway facility unspecified you can go
+ahead and use two of those too i don't
+expect any mobile targets but uh why not
+so now our wra is a little bit more open
+here and obviously we can be very very
+very very picky and precise with this
+you can set this to one bomb so
+everybody drops one bomb like each
+person contributes one that's just i
+don't know that i find that a little
+gamey but that's okay
+okay the other thing i'm going to do too
+is under mission under m con we're going
+to go ahead and assume this is going to
+be orange and we're going to allow for
+radar active here the reason we're going
+to do that is we're going to go ahead
+and say use it for when we're on our
+attack leg to winchester and of course
+we're going to come down here engage
+until winchester continue mission when
+the mission target is destroyed again we
+can keep going that's a useful thing to
+do so now this is the real reason that
+the timeover target is incredible so if
+two separate bases two drastically
+different air speeds that i'm working
+with here ooh i probably should have
+inspected what time we're actually
+taking off here check the ato
+let's see here no second i love this
+this is so cool i love this is so nice
+i'm so glad they added this also there's
+a nice little lock button which i think
+is kind of a nice touch there so you can
+actually do one of these things and you
+can actually pull all the way to the
+right you can see where we're landing
+you can see my flight size you can see a
+priority you can even like turn down the
+priority like it's so cool i also like
+how they have all this in here but um i
+can't change any of these yet like i
+said at some point they'll probably open
+this up a little bit so we can have a
+little bit more i like houses planning
+uh no you guys aren't planning you guys
+are just sitting around relaxing all
+right so their takeoff time is going to
+be
+let's see here we need a zulu time
+they're going to be taking off at 7 10.
+so looking at the clock there we got
+about an hour fortunately this is
+command
+ready on my mark it's uh lag the
+computer
+all right here we go
+now my b29s are off now this is using
+the same strategy we used this last time
+the only difference is the fact that we
+have a group of b47s that are basically
+going to jump in on the flight at the
+last second watch this there they go
+so there's a b47 masscart8 century one
+one look at this look at this oh
+look at how much faster they are than
+the b29s
+okay so now this is what i call panic
+you know if i'm sitting there at the
+target region i'd be like okay looks
+like the b29s are gonna take it
+but notice as the b-29s are getting
+whacked out of nowhere a bunch of p-47s
+show up
+[Music]
+now the b-47s are very capable platforms
+actually what i'm finding very
+interesting here and i don't know why
+this is oh it's because the b-47s have
+better knowledge of when they're being
+dropped being attacked oh
+i should've worn them not to evade
+because you're not going to be motivated
+anyway so b-47s are also at stupidly low
+altitudes here as they're ripping in
+here so my casualties are going to be
+very very very high
+boom all right everybody run run run run
+run run run okay let's see how terrible
+that was i have a feeling i lost far
+more than i need to do for that
+particular assault all right let's see i
+got one two three four five six seven
+eight target destroyed which is the best
+we've done so far um they went through
+actually not a lot of missiles not
+nearly as bad as the conga line method
+here losses three
+isn't that
+incredible
+so now it's really neat that we
+basically over saturated and distracted
+them and did the maximum amount of
+damage to them honestly they were
+wasting under the b47s here these things
+have really really good ecm and this guy
+i think he's going to get my hum oh
+let's see what he lost here that got
+wrecked it got wrecked what why does he
+have a satcom
+uh unless he lost an engine look at that
+and he's coming home proud all right so
+hopefully this video is helpful i think
+the biggest takeaways at least for me
+not building this video is realizing the
+time over target is great because it
+creates its own artificial stupidity in
+the sense that one group basically took
+everything and all the other groups just
+kind of waltzed in and did their thing
+but you could also see how valuable it
+was for coordinating multiple strikes at
+the same time enjoy

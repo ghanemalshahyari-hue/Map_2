@@ -1,0 +1,394 @@
+# C: MO - 'Giraffe' Attack
+Video: https://www.youtube.com/watch?v=F5qmLn6o_j8
+Video ID: F5qmLn6o_j8
+
+hello everyone in today's video we're
+going to be taking a look at the giraffe
+attack now the giraffe attack of course
+when I was originally discussing this
+with my wife earlier was uh the idea of
+using giraffes launched on big
+springboards to kind of just smack into
+low-flying aircraft but the reality is
+the draff attack gets its name from the
+way that the profile is designed for the
+actual strike itself basically what
+you're going to be doing is approaching
+a Target usually at an oblique at a very
+very low altitude and then popping up at
+the last possible second hence the shape
+of a giraffe and then attacking it
+directly so what we have here is if I
+zoom out and as you can see we're in the
+middle of the 80s and we're on the Iran
+Iraq border kind of a thing like that
+and you can imagine exactly where we're
+going this except it's not the Iran Iraq
+border because that's Afghanistan Iraq
+is over here this is just what happens
+though when you don't watch your Maps
+carefully you shut your labels back off
+but it's going to demonstrate my point
+perfectly today so what we have is two
+f-14s I'm let me go and pause real fast
+here f-14s were very very prickly
+targets during the Iran Iraq war
+unfortunately it's now the um Iran
+Afghanistan war but oh well and one of
+the things that made them very prickly
+is the fact that their range was
+spectacular let's go ahead and open
+these guys up so you can get a feel for
+it by clicking on them you can see that
+I have a massive massive field of view
+here of let's see here that's a 75
+nautical miles it's a very very wide
+look here the other thing you're going
+to observe is the fact that I have a
+bunch of bogeys here that we've already
+identified with the an a meaning my
+lovely little radar because of its
+fantastic range plus his fantastic
+Missile Range gives us one heck of a
+huge huge Advantage as far as spotting
+enemy targets Go I mean if you want to
+look at it this way these targets are
+113 nautical miles and they are notching
+the radar just to give you an idea of
+the Staggering capability of the system
+so of course during the war that that's
+a problem you can't just have somebody
+who can basically run awax or if you
+want to think of it another way use
+these aim 54s basically with impunity so
+the strategy we're going to employ is
+we're going to take advantage of all
+this trrain that we have here we're
+going to remain at altitude that's very
+very low and then we're going to pop up
+one of the tricky things about the F4
+I'm go ahead and disagree make these
+guys disappear just to be fair is the
+fact that the radar itself is a
+mechanically scanned radar that means if
+you look at it from the side we can only
+look so many degrees down anybody who's
+ever played a flight s before especially
+like you know an F-15 or something knows
+that you have to adjust the elevation of
+your antenna if you want to see things
+that are closer to you especially if
+they are below you otherwise your
+antenna is only going to be seen things
+that you're basically looking at the
+front here so what we need to do is we
+need to figure out where are 30° antenna
+limit is going to be now this requires a
+little bit of fancy math for us but the
+good news is we already know the
+altitude of this particular Target it's
+a 45,000 ft here which makes it I again
+yes I boosted it up a little bit to kind
+of demonstrate things a little bit
+better here we would know that if 45,000
+ft up a 45 degree angle would be 45,000
+ft down we can actually do the math real
+quick with the arc sign on that if you
+want to get pretty fancy but the very
+very short version of the fact is as now
+since we're at about 9 miles up that
+gives us about a 13 about 1.5 is kind of
+a range outside of it which is pretty
+darn close that also means that we have
+to remain at low Alat to with my mix
+here until we cross within the
+particular point which is basically
+going to be here then we can come up
+underneath that mechanical limit if I'm
+detected prior to that point that means
+those f-14s are going to be ranging some
+really really high altitude am 54s down
+on us which is going to make a big mess
+of my entire plan here now one of the
+things that makes these kind of attacks
+very effective is the whole idea of
+trying to stay out of the lobe to begin
+with then move into position so in an
+ideal scenario we actually want to limit
+ourselves by put in God's eye view here
+to actually staying here and basically
+taking advantage of the uh Little Miss
+here and then sneaking in to do its
+attack now a lot of people are saying
+well if you have all day and all
+afternoon why don't you just kind of
+come around and do one of these things
+from the side you absolutely can do an
+attack like that that's excellent but
+you're also having to keep that in mind
+that when you do something like that
+which is obviously going to be safer
+than coming at them at the front because
+they always risk basically detecting you
+there might be terrain limitations there
+might be Sams there might be other
+objectives that limit your corridors to
+actually attack this particular Target
+the other consideration we have to make
+too is our little Target I'll speed up
+time just a tiny bit here so we have to
+consider the amount of time that
+everything is going to take to kind of
+to get into position here so F14 because
+of the incredible Missile Range here of
+75 NC miles keep in mind for us it's
+probably going to be about half that
+just because it's a 50% shot we're going
+to be trying to take a shot at them with
+this particular aircraft which has only
+got a range of H on a good day about 60
+Nal miles that is going to tell us that
+we need to get within that distance and
+we need to stay within that distance
+long enough to actually attack our
+targets now one of the things that a lot
+of these aircraft have the capability to
+do of course is to look around um not
+only are they riant on their regular old
+radar sensors they're also going to be
+reliant on anybody giving them
+information as well as providing them
+with visual sensors especially an F14 so
+one of the things we're going to have to
+figure out here is one of the things I
+really wish we had in command is I could
+right click and say identify Target and
+then when I identified it I could
+identify what it is so I could like
+predict what it thing is going to be
+here but we unfortunately going to have
+to do this manually so we're going to
+have to stay at low altitude and use the
+terrain to hide us as we sneak up on the
+target at Absolute minimum here so we're
+going to stay nice and low and we're
+going to start creeping up on our F14
+targets here now our two f-14s here have
+been programmed to engage anything they
+see so if they see something at any time
+they're immediately going to start
+getting usted now if I go press control
+real fast you can see that my little
+radar cone here we are just barely
+outside of the radar cone so we're
+actually completely safe down here and
+one of the great things is since this
+F14 even though it's got a really nice
+camera on it is looking down at us um
+we're going to be lost in the terrain
+very very easily and anybody's ever
+tried to use that sensor will tell you
+the fact that that sensor if you don't
+have anything to queue it with you're
+probably not going to find what you're
+looking for it's a very very much
+looking through a straw kind of a sensor
+sort of thing here one thing we can
+think about doing too and this would be
+more of a real world strategy is we
+could try to notch the radar as
+aggressively as it can so what we can
+actually do is put ourselves in an
+oblique like this trying to prevent that
+radar from having that nice cleaned
+wrecked um looking right at us looking
+right away from us one of the big
+limitations in the F14 also is the fact
+that it's going to have a little more
+difficulty seam targets leaving it or
+should say going away a Chase aspect if
+you want to think about it versus a
+approach aspect so we're just going to
+come spinning around here and now we can
+see my f14s are making their way across
+if I go back to God's eye view here you
+can see we're way outside of this range
+here so what we're going to do now is
+we're basically going to stay at this
+low altitude and start planning for
+actual strike here so I'm going to go
+get this all license set up so we're
+going to kick up the speed a little bit
+now one of the downsides is that we are
+using Mig 23s here Mig 23s are really
+good airplanes like they're really
+really good airplanes but unfortunately
+because of their range um this would be
+very very difficult to do because of
+that kind of effect so we're going to
+try to do stay nice and low and not be
+detected by our F-14 buddies of course
+as I'm doing the math in my head real
+quick I realize my attack points
+actually going to be right there which
+is double points for us because we
+basically get to come sneaking around
+here now one of the fun things that you
+can always do too is you can try to
+estimate these distances control d
+That's a 30 Nal miles 30 divided by
+whoops I'll go ahead and show that to
+you so you can see my calculations here
+480 time 60 that's 4 minutes to get to
+that point now if I press click on this
+one right here and press f2 it'll tell
+me it's going to take five minutes in 24
+seconds to get to that point isn't that
+handy uh you can just do the math and
+that's one thing I love about command is
+all these little pieces are basically
+there built in ready for you to use so
+my guys are going too slow so I'm
+actually going to kick them up to
+afterburn here which yes I know it's a
+low altitude after burn you're going to
+have to forgive us for that one CU
+that's going to decrease our time
+substantially by the way one of the cool
+things they changed in the last version
+of command which I'm very excited about
+is they finally reduce the acceleration
+on airplanes you're going to sit here
+going that's bad that means they cannot
+run Miss oh I see what they did there uh
+anyone who do military flight Sims
+probably is well aware of the fact that
+aircraft actually take a long time to
+get up to speed if you're doing like a
+Mach 2 airplane kind of a thing like
+that it could take as much as 15 minutes
+to get up to that speed uh but what we
+had previously is you could basically
+instantaneously accelerate which is just
+not realistic and I'm really really
+excited to see that they're finally
+changing that I like that notice by the
+way my time to go is 4 minutes and 14
+seconds it's like I planned it out or
+something like that all right so let's
+speed up time a little bit here uh keep
+in mind our aircraft are burning through
+fuel like crazy it probably would have
+been much better on my part but for the
+sake of the video I tried to keep it
+simple is actually attack through these
+mountains here so it's even less likely
+to be picked up so let's go ahead and
+swing over to Iran um Iran's completely
+clueless um keep in mind this is afcan
+Afghan IR right now so um you'll forgive
+me for that one all right let's see what
+we got so now we're going to start
+getting ready to execute the giraffe
+that doesn't sound right at all um so
+executing the giraffe is simply a matter
+of doing a pop-up attack on the target
+trying to collect as much altitude as
+possible and basically get them inside
+of your Kill Zone one of the things you
+have to watch out for is a lot of
+aircraft have limited capability to
+basically shoot themselves upwards so
+even though we're Mig 23s here we're not
+going to have the raw acceleration that
+our f-14s actually are going to be
+capable of here so we have to kind of
+keep that in mind that the other thing
+too is we're going to be firing up and
+we're not going to be firing out uh
+that's going to put us at a bit of a
+disadvantage here as far as our attack
+goes so switching back to the f14s
+perspective notice clueless uh we
+actually executed this attack a little
+late here by gaining a little bit of
+altitude we can sneak in timing this
+part is the hard part because if you get
+the timing on this wrong you're either
+going to be too low to get a good shot
+you're going to be too far away to get a
+good shot or you're going to be spotted
+early which now means that that's going
+to be the end of everything we're doing
+here which is why these things are
+tricky also notice by the way I am not
+using any Radars on my Mig 23s if I
+tried to do that that would get me all
+sorts of nasty and busted so we're more
+than close enough now to go ahead and
+take our shot this is not an Optimum
+shot ever because now I've got an
+oblique and again this is what I get for
+not planning ahead so what I'm going to
+do is so I'm going to go ahead and go
+ahead and shut off throttle here I'm
+going to press go a and click on them F1
+drag hostile why did they change that I
+liked it the way it was before I don't
+know why they felt they need to change
+that of course you're saying what did
+they change F1 click and drag ah why
+they change that so I'm going to go
+ahead and order the attack now so these
+guys are immediately going to start
+climbing and they're going to be putting
+on speed very rapidly which is
+incredibly critical for these aircraft
+because without that speed um this is
+not going to be a very successful attack
+so now if we swing back over to our F14
+here so uh you guys catch the uh
+baseball game yeah it was a pretty good
+baseball game what you think of the Bas
+I thought it was a pretty good baseball
+game and they're looking through their
+TCS they're looking down to their n AWG
+and these guys are just climbing like
+crazy now remember this shot is very
+challenging because you're going to have
+to take it at a higher altitude you're
+shooting up which means the required
+distance to take the shot is going to be
+minimum now from the side right now this
+is where the giraffe comes from missles
+away
+now our F14 buddies of course um they
+did not fire the prequisite number of
+missiles that was actually very sloppy
+these guys suddenly know there's
+something back there because the radar
+suddenly flipped on so they're
+immediately going to go defensive uh
+they know that there's all sorts of
+problems behind them and they're going
+to start doing their pieces oh one's out
+oh jeez here comes the other one here
+comes the other one we got both I did
+not actually expect to get both right
+away here so now our F14 is a panicking
+as he's trying to turn around here and
+trying to engage his buddies is now he's
+trying to out run another missile and
+again this was a very lucky attack as
+far as timing goes and these guys were
+never spotted at any point this can be
+all different of course and of course
+you're saying it's going to be a good
+defense against this well the big thing
+is having people at different altitudes
+is a huge defensive measure here of
+course this guy's kind of pulled right
+into that oh you got mged and you could
+see exactly how effective that is and
+how they never even saw that they were
+coming enjoy

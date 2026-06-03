@@ -1,0 +1,284 @@
+# C: MO - Laying Minefields accurately and easily
+Video: https://www.youtube.com/watch?v=9Aefk11L9VA
+Video ID: 9Aefk11L9VA
+
+Hello everyone. In today's video, we're
+going to be taking a look at making mine
+fields uh whatever shape that you desire
+rather than kind of letting an aircraft
+or submarine do things willy-nilly. So,
+of course, uh this scenario comes
+inspired by the fact that some guy in a
+sailboat cut me off. Now, as if I had a
+sailboat. No. But, what we're going to
+do is that we're going to go ahead and
+set a chain of mines in an interesting
+little pattern to basically uh cut off a
+Providence's harbor here. Now, one of
+the things you have to know about all
+mine-laying missions, and this is where
+most people get a little kind of
+confused here or get in trouble, is the
+fact that different types of mines have
+different depths they can operate at.
+And uh the reason I say that is if you
+take a look at this one, for example,
+here, this is a 2462, you'll notice that
+it has a launch altitude, which I would
+just need to be kind of mindful of. Uh
+you have a target altitude. Now, this is
+the important part. You'll notice here
+that its target altitude is minus 148
+ft, and it is a bottom mine. So, that
+means basically if uh you choose to drop
+this thing in water deeper than 148 ft,
+it's simply not going to drop. And
+that's just kind of one of those things
+that happens quite a bit uh when you're
+doing these mining missions. So, I'm
+pulling my mouse here, and I can see
+this whole region here is pretty
+shallow. As a matter of fact, if you
+want to have a little bit of fun with
+this, if you go to the relief layer, you
+can actually see the depths here, and
+pretty much everything is valid as far
+as a mine mission here. So, this makes
+it pretty good for our particular
+purposes. So, normally when people think
+mine missions, uh they think this kind
+of thing. Uh they do one of these kind
+of actions, and they're ready to go,
+which is awesome. Um mine zone. But, uh
+the problem with this, of course, is the
+fact that you're going to be dealing
+with a random placement of mines in this
+region. So, to say you can't use this
+method, it's just to say it's not very
+precise. So, what we're going to do
+instead is that we're going to delete
+that, control delete by the way, and
+we're simply going to draw a line of the
+shape of the mines we want to place.
+Now, I want to basically cut off uh
+Cuttyhunk Island basically all the way
+through Nantucket here. So, I'm going to
+go ahead and uh create myself a line,
+and we're going to have a little bit of
+fun with this line because, you know,
+why not? Well, this is a really good
+fishing here, so I want to kind of go
+around there. And again, I'm pressing
+control insert and left clicking here.
+And uh that's going to be the path of my
+mine fields, which looks pretty bizarre,
+but it's actually going to work really
+well for us.
+So, now what I'm going to do is I'm
+going to control F11, which is going to
+bring up our mission page. Uh
+mine this, yo. And now we're going to go
+ahead and set this mission to be a
+mining mission, not mine clearing.
+There's nothing about type here. Um we
+don't have the fancy PE version or
+anything like that. So, we can miss out
+on some of the fun toys in here, but
+that's okay.
+I'm going to press okay. Everything's
+good here, but uh before I toss my
+backfire into this, I'm just going to
+confirm that everything makes sense.
+I've got arming delay of 2 hours. Uh
+this is plenty, but since we're an
+aircraft, I could do 1 hour. And of
+course, it's like do you want the 1/3
+rule? I don't need any of that. Now, one
+of the things you're going to notice
+here in the upper right is we actually
+have this thing called line versus
+random mine mode. Now, this is actually
+pretty cool because it allows you to
+basically define groups of mines. And uh
+this is definitely something for another
+day cuz you can set like the distances
+between the mines and stuff. But, the
+way we're going to do it is going to
+make it a little bit easier. Except, I
+do want to set a mine interval here. So,
+let's see here. The Tu-114 20 20 I think
+it's 40 mines in this version. Let me go
+take a look real quick. Apparently,
+you're joining the mission one way or
+the other. Uh let's see here. Whoop.
+I push every button but the one you
+need. All right. So, we'll go ahead with
+the Tu-95 real quick. I'm just going to
+bop this one real fast.
+You're already uh launched yourself. Oh,
+thank you for that.
+&gt;&gt; [laughter]
+&gt;&gt; All right, there we go. All right. So,
+what we did want to do is we just want
+to confirm how many of those mines we're
+actually carrying today. I believe it's
+40 if I'm correct.
+I'm in 40s. That'll do it. Who needs a
+mine when you got a nuke? Let's see
+here. 20 20 22 42 mines. Excellent. So,
+that makes this much easier to do the
+division for us. All right. So, we Oh,
+as you can see, this looks funky. Um
+don't worry. We'll deal with this in a
+second. All right. So, that's going to
+be uh 9 nautical miles. That's going to
+be uh what was that? 8. So, that puts us
+up to 17. Uh that's going to get us up
+to uh that's 24. Uh coming down here,
+this is another six. It's going to be 30
+nautical miles. And coming over to this
+one, that's another so that's a 44
+nautical miles is going to be the
+distance of our mining up here.
+So a couple of little things we're going
+to do here. We're going to go shut off
+the flight size to set it down to one or
+shut off the enforced flight size
+button. Otherwise, it's going to give us
+issue and then finally, we're going to
+change this uh movement style to
+repeatable loop. Now, if you miss that
+step there, you're going to get a little
+confused and you got to be careful. But
+one of the things you just saw me
+calculating here was the total distance.
+Do you notice how we have a line here
+instead of an area? This is going to be
+the area by which we're going to be
+dropping our mines. Now, a minute ago,
+you probably noticed that I was uh
+cranking out this calculation here. So,
+we're dealing with 44 nautical miles
+times about 6,000 ft. So, that's 264,000
+ft and we need to cover it with 42
+mines. So, total feet divided by 42
+means we need 6,285
+ft between each one of our mines, which
+basically means there's one mine per
+nautical mile. Now, anybody who knows
+anything about mine warfare knows that
+would be absurd. You just wouldn't do
+that. But we're going to do it anyway
+because we're silly. So, I'm going to
+say 6,280 ft here. I'm leaving the group
+interval not set. It doesn't matter. And
+obviously, y'all we're not doing any of
+those. So, we're going to be going in a
+repeatable loop. We've got our aircraft
+sets, uh tankers aren't doing anything
+like that. Everything is set here. Uh
+station altitude, obviously, make sure
+your station altitude is set correctly
+cuz obviously, if you're too high, too
+low, it's not going to work, kind of a
+thing like that. So, just be mindful of
+that as well. All right, we're going to
+do multi-mission for a second. Ah, this
+thing is being funny for me today. Am I
+going to win or what?
+All right, let's watch the magic.
+Unpause.
+Go my two political
+Oh, sorry about that.
+But if you take a look, you will observe
+that in that little
+of action, that's a technical term, by
+the way, uh you'll notice that it laid
+the mines perfectly around that little
+fishing zone, which is exactly what I
+intended for it to do. Uh the other
+thing you'll notice if I press control D
+and do this quick measurement, you'll
+see it's 1.1 nautical miles. And all for
+those of you who can do math quicker
+than I can, you can confirm that it's
+exactly about 6,280 ft apart. Now, we'll
+go speed up time a little more gently
+here.
+And you'll see Look at how good of a job
+he's doing.
+Gosh, this guy is really good at this.
+Now, the interesting thing is, and this
+is where you have to kind of keep an eye
+on these kinds of missions, is that the
+fact that he's going to run all the way
+back to RP 7, and then he's going to do
+it again. But, um again, this is just a
+demonstration. I think I think you got
+the idea here. All right, he's going to
+come here. Now, you're going home.
+Nope, he's coming back.
+Do I need to move you? Hot you.
+Sometimes a little bit of nudging makes
+a big difference here, but uh one of the
+things you'll really, really appreciate
+is the fact that when he comes up in
+here
+&gt;&gt; Why did you do that?
+I believe my guy got a little carried
+away here. Um you're going a little out
+of scope by dropping those on the island
+itself, but as you can see, the distance
+is is absolutely perfect, and I'm going
+to send you home because you've done a
+beautiful job. Now, we can't just set up
+a mining mission without having a little
+bit of fun, though.
+One of the nice things about uh modern
+vessels is that they tend to have tools
+on board, which makes it a little bit
+harder for them to get crisploded by um
+basically an inadvertent mine. Again, if
+you missed where the minefield went,
+look at how beautiful this is. Isn't
+this so cool? And again, this works with
+sonobuoys, too, by the way, you know,
+we've done videos on that in the past.
+But, the key thing here is uh he's just
+going to be rolling, uh just enjoying
+his little thing, making all sorts of
+noise, and boom, water, boom, and he
+cooks it. Uh okay, let's let's take a
+look at what we actually got for damage
+here. Now, damage control, this is the
+Iowa taking the mine right on the cheek,
+and you can see here it's uh basically
+popped the servox, the uh decoys. It has
+uh mangled the Mark 13 fire control, and
+as you can see, this thing only took 1%
+damage. So, if we were awful, which I
+am, uh we're just going to order him to
+drive right through the minefield at
+full speed here, cuz uh like I said, I'm
+an awful person sometimes.
+Do do do do do.
+Boom. Oh, he missed the first one.
+That's no fun.
+See, the thing with mines is you
+basically have to land on them to
+actually get them to go off. So, as I
+mentioned, boom.
+&gt;&gt; This guy's just taking them all.
+As I was uh This is a tough boat. This
+is a really tough boat. But, what I
+really love about it though is he's at
+8.4% damage here and he's about to drive
+over another one of these mines. And
+again, as you probably observed, once
+one of my ships find one of these, it's
+it's pretty much over because there's no
+mathematical way that more of these
+vessels are going to get hit. You can
+just see he just took another hit and
+he's just just chugging along.
+Fantastic. Enjoy.

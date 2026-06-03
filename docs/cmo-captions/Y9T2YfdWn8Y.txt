@@ -1,0 +1,2736 @@
+# Command: Modern Operations Livestream - Introduction to the game and gameplay basics
+Video: https://www.youtube.com/watch?v=Y9T2YfdWn8Y
+Video ID: Y9T2YfdWn8Y
+
+Hello everyone, and welcome back. This
+is a live stream that we haven't done in
+a very, very long time. I actually think
+my last Command live stream was
+something a little over 2 years ago when
+I was actually demonstrating the
+professional edition of Command, which
+was absolutely wild. And believe it or
+not, I still do have the professional
+version of Command. And now, that's not
+actually what we're going to be showing
+off today. You might actually find it
+interesting to know that I don't usually
+play the professional edition. I
+actually prefer the civilian version for
+a lot of different reasons, but I'm kind
+of again, things you can ask to get a
+little later on. So, the purpose of this
+live stream today is to basically
+provide folks who are new to the game to
+understand what it is you're getting
+when you buy Command. And my hope also
+is that we get a little bit of
+interaction from the kind of the
+audience who are going to sneak in there
+and maybe toss in a couple of kind of
+unasked questions, or unanswered
+questions that we can kind of go
+through. Maybe there's something you'd
+like to see, and again, I'll kind of
+keep an eye on that as as I'm sort of
+doing my spiel here. So, uh what is
+Command Modern Operations? Well, Command
+Modern Operations, for those of you who
+know the Harpoon games or Fleet Command
+or any of those, is basically an
+all-encompassing air, ground,
+underwater, naval, every unit that ever
+existed, ever sort of game smashed into
+one in the terms of sort of a tactical
+slash theater sort of strategy game.
+Now, the base game itself, of course,
+comes with a bunch of different options.
+If you actually come in here, you have
+all sorts of really, really cool
+scenarios. Uh believe it or not, I spend
+very little time with scenarios. Uh that
+you know, it kind of sounds scandalous
+from somebody who's played it and kind
+of been the voice of Command for so many
+years, but believe it or not,
+you know, a lot of the time in this
+program, I actually spend developing my
+own scenarios. And that's actually what
+we're going to be doing today. So, what
+I'm going to do is uh from our main
+menu, we're on 1328.7. Uh one thing I
+got to say right now is there a couple
+of known bugs in 1328.7 that have
+already been addressed in the next
+version that's going to be coming out
+pretty soon. So, keep in mind, like some
+things might not work right, and I'll
+kind of comment on that as we go, but
+they're already being addressed. So, I'm
+going to come down here and create new
+scenario. Now, inside of Commands, when
+you're creating a new scenario, believe
+it or not, there's this is this is what
+you get. You get the globe and not much
+else. And now, that's what's so amazing
+about this program is that it actually
+has the whole globe.
+The first thing I usually do, and our
+scenario today is going to take place
+over here in Iran. Uh so, of course, uh
+things that change around a little bit
+as we do it, is we have to actually
+place everything that we intend to use.
+But there are actually some tools built
+in to kind of make our lives a little
+bit simpler. Now, when you're first
+learning this game, as tempting as it is
+to go right over there and uh hit the
+you know, the tutorial missions, which
+are absolutely fantastic, I actually
+recommend that you open up the scenarios
+that you're interested in playing and
+open them from there, so you can
+actually see kind of what's going on in
+the backdrop as you're working through a
+particular scenario. I find that makes
+it easier. Plus, if you need nuclear
+weapons to finish the other guy off, you
+can just get them, kind of a thing like
+that. So, what I'm going to do is set up
+a very, very basic scenario. We're going
+to be doing a good old-fashioned strike
+on an airfield. Now, the reason I pick
+an airfield for my target here is
+because of the fact that when a lot of
+people One of the most common questions,
+in fact, I've answered it hundreds of
+times now, is how do you disable an
+airfield? And that's exactly what we're
+going to try to do. So, what I'm going
+to do is go ahead and start by getting a
+couple of different details. I'll give
+us some scenario times. I'll go ahead
+and I'll make it a nice and uh modern
+scenario. We'll go ahead and do this in
+January. We'll make it uh let's see
+here, 1930. We'll go ahead and copy
+those. Uh this is the where the scenario
+starts. This is the current time. I'll
+press okay, and you can see up at the
+tippy top here, it's January 1st, 2020.
+You can see the uh Zulu time, which if I
+go over here, of course, the local
+time's going to change time zones. And
+you will also going to see up top where
+my local time is, which is about 13:30
+in the afternoon. That's a little late,
+actually. We probably want to make this
+a little bit earlier in the day here.
+Oops, that's going to be a little bit
+too much. We'll go ahead and pop
+something like that in there. Hit okay.
+7:30. I like that a little better. So,
+what we're going to do now is we're
+going to go ahead and add in some sides
+here. We'll keep it nice and simple
+here. We'll make Iran. And of course,
+we'll grab ourselves another side. Let's
+call it NATO. I don't know why NATO's
+down here. I'm sure it's somebody
+annoyed somebody, and again, I'm not
+going to get into the tactical nature.
+We'll go ahead and set up the sides
+here. Again, keeping it super duper
+simple. We're going to make them hostile
+to start. We're not going to make them
+unfriendly or have to do any of those
+like little scenario shenanigans. Again,
+we're trying to keep this uh relatively
+basic here. Uh one thing we do want to
+do though is under Iran here, we're
+going to take his proficiency and reduce
+it a little bit, and we're going to take
+a NATO's proficiency, and we're going to
+kind of leave it alone. Keep in mind,
+proficiency is kind of a catch-all term
+for things ranging from, you know, how
+capable do you are to how quickly can
+you get a missile launched to how low to
+the ground you can fly to how good your
+damage control processes. That's what
+that proficiency is. And let's be honest
+here. Uh if this were a little more
+realistic, this would probably be the
+proficiency ratings of the two sides. Uh
+one of the things that you have to know
+is that regular proficiency basically
+assumes that you have some combat
+experience, which at this time, there's
+really not a lot. But um for now, we'll
+kind of leave it that way.
+Now, there's another thing that's really
+valuable here, too. And we're not going
+to change that because we're not adding
+any civvies, but that's kind of a fun
+thing to do. So, I'm going to go ahead
+and uh double-click on Iran here, and
+now, we're going to go ahead and get
+ourselves uh some interesting targets.
+Now, when I do this, uh when I play the
+game, at least, uh one of the things I
+like to do is I kind of like to
+customize my views before I start
+getting too carried away with a lot of
+the different stuff that goes on sort of
+in a scenario. So, one of the things
+I'll do is actually come up here, and as
+much as everybody loves this, I actually
+shut that off. I find it to be kind of
+bright. And uh believe it or not, most
+of the time, I actually like to play in
+a one of the open topo maps, or I like
+to do kind of Stamen, where you have the
+terrain. The huge advantage to the
+terrain mode is that if you're building
+something like I'll come down here and
+keep it really zoom in on Bandar Abbas
+here. If you want to build something
+such as an airfield, um as you zoom in,
+you'll actually get to see the
+individual details of the airfield all
+highlighted for you because everything's
+basically going to be one giant gray.
+So, if I actually come in here, uh I had
+it a second ago. Let me zoom in. Whoop,
+too far. There we go. You can actually
+see just how simple it is to see the
+individual components of a target, for
+example. Or if I'm like trying to attack
+a building or something, I can actually
+zoom in and see the individual buildings
+down here, which makes it a lot easier.
+Now, the topo map they give you actually
+works pretty much the same way. And if I
+switch to open topo real fast, you can
+see Look at how easy this is to spot
+individual structures and different
+items that I might be interested in
+doing in a given scenario. Uh the
+downside for this one, of course, is it
+only has so much zoom that it is capable
+of. But if we actually wanted to sit
+here and construct this entire airport,
+I can actually zoom in and be like, "Oh,
+there's a medium building here, and it
+looks like there's a tower here. Maybe
+there's a barracks here. Maybe there's
+an ammunition This could be a control
+tower right here." And I can actually
+stick in these individual components on
+their own.
+Now, when you're building quick missions
+like the mission that we're uh setting
+up here, one of the things I actually
+will do is I will borrow the things that
+already exist inside of the program
+rather than trying to rebuild all of it
+on my own just because it can take a
+very long time. And uh especially if
+you're watching this and you're a new
+player to Command, you have to be
+careful of this thing called scenario
+creep, where basically you start with
+something really, really simple, and it
+just sort of snowballs, and uh suddenly
+you have 16,000 units, and you've
+recreated every single building in an
+entire country. Um that's that's
+ridiculous. And it's I you could do
+that, but um it's it's going to get
+pretty painful for you really, really
+quickly. So, what I'm going to do is I'm
+going to go ahead and double-check to
+make sure I'm on the side I want to be,
+which is Iran. I'm going to go swing
+down to import/export units, load units,
+and believe it or not, they have a bunch
+of built-in things we can summon. So, if
+I were to scroll down here, and uh say
+we hit up Iran, for example, look at all
+this good stuff they have, including
+Bandar Abbas.
+Whoop.
+Whoop. Just like that. So, now, if I
+close that, I can actually see here on
+my map that that exists. Unfortunately,
+my uh maps here is making things a
+little too bright. So, now, believe it
+or not, check this out. Somebody
+actually modeled this for us already,
+which makes this so much simpler for us
+to actually do the work now because I
+can see clearly that, you know, this is
+roughly what it is. Now, I know some of
+you are probably sitting here, "Can you
+turn the topo map back on for a second
+so we can see how well they did?" You
+can see how nice of a job they actually
+did as far as recreating a lot of the
+components. And I get a kick out of the
+fact they recognize the hardened
+aircraft shelters on this side. They
+give me some tarmac space on this side.
+They'll put things like magazines and
+stuff on this side. But uh more
+importantly, they provided us with the
+oh-so-important uh this is the runway
+access point. And you're probably
+saying, "Okay, so players who know this
+game, of course, know the runway access
+point is the magical target of any
+airfield." And we'll get into that in a
+little bit. Let's have said trying to
+answer that question.
+So, let's go ahead and uh put some
+different details in here. So, in Bandar
+Abbas here, um this is a major It's an
+international airport. Uh there are some
+military aircraft here. And people
+always ask me, "What is your source? How
+do you know X, Y, and Z?" Well, one of
+the things I love about this is if you
+want to nuke your house, you can nuke
+your house with every nuclear weapon in
+the entire Cold War in one whack if you
+want. It doesn't matter. And that's what
+I love about this program. This is why I
+have far more hours than anybody should
+have or have, kind of a thing like that.
+So, what I'm going to do is I'm going to
+go ahead and select the airfield itself.
+And since I'm in map editor, you'll
+notice I have a button up here in the
+upper right that allows me to actually
+edit aircrafts. And now, the cool thing
+here is I could if I press this, it's
+going to pop up a little screen that
+has, I kid you not, all the airplanes.
+If it flies and it exists and it's from
+1979 on, it is on this list. But it's
+more than that cuz I can go like this.
+Let's say I want to do Oh, call sign. I
+meant to do class. My bad, my bad. Let's
+say I'm going to do an F-16. Which one
+do you want? Uh I have a CM here. What
+if you want just an F-16A? Okay, which
+version of the F-16A would you have? And
+they're all here. I can even do an
+F-16XL if you're one of those people who
+agree with me that it's cooler than an
+F-15E. It's all here. And actually, I
+love the fact that they put this right
+at the top here to sort of give you that
+little hint. But the cool thing is if I
+want a bunch of Iranian uh F-16XLs, I
+can stick it in there. If I want to give
+them uh some MiG-29s, what version would
+you like? But one of the things that's
+so nice about this program that I get
+such a kick out of is, you know, I can
+come down here, and I can actually click
+Iran, and of course, I can click from
+for dates, and I can see when different
+aircraft actually came in and out of
+service. Uh for example, we know that
+they have a lot of Phantoms. So, we have
+F-4Ds and F-4Es. F-4E is the correct
+Phantom, by the way, in my opinion, but
+that's just me. And you can even see
+things like this Mohajer um UAV here
+actually came out of service in '97. So,
+if we're being accurate here, we could
+actually take the time to actually go
+through it. And of course, with F-14As,
+if we want to have some fun, we could
+have the 1980s F-14A that had the
+AIM-54s. Uh we could do MiG-21s. We
+could do things that were basically
+stolen from Iraq during the the Persian
+Gulf War, the first one 1990. And all
+these things are all located in here
+that I can just summon.
+Now, one thing that I will share really,
+really quickly, which is again so
+fascinating about this, is if I were to
+go up here and actually click on my
+database viewer, all this information is
+accessible. So, if I wanted to, I could
+do Let's go back to our F-14A for a
+second here. We'll go to the wrong one
+from Iran. And here are the details. But
+notice the level of detail and depth
+this program has. And again, people who
+are watching me all the time, this is a
+review. For those of you who are new,
+this is incredible. It tells me what it
+is, how big it is, how big the crew is,
+what its weights are, how long it takes
+to lock and to destroy something. It
+tells me its takeoff landing distance,
+climb rate, agility. It's got how
+durable it is. It's got Where is the
+armor? It's visibility. It has all of
+the different sensors on board. We've an
+Aug 9, which is Yeah, it's decent. We
+have all of these countermeasures. Then
+we have all of the different loadouts.
+We have communications radios. We have
+easy How easy it is to detect different
+types of thing We have different types
+of fuel consumptions at different
+altitudes. Everything is here for all
+the units that existed militarily.
+Honestly, you could buy this game just
+for the database. It's that good kind of
+thing. So, what we'll do here is I'll go
+ahead and just pick the our little
+AIM-54 here just for fun. And we'll
+scroll down. And look at how cool this
+is. I can actually come here and hit
+this. And it will tell me everything
+about this radar. And obviously, it's
+not going to tell me how far it can see
+a MiG-29, for example. That depends on
+the math. But what does it tell me? It
+tells me how many targets it can
+eliminate. Gives me an idea of the
+generation. It tells me what kind of
+information I can have. Tells me how
+often it updates, basically. It has its
+range. And one of the cool things is the
+back on our F-14, it even shows how
+tight the nose is on this. Now, notice
+here, my search arc is much, much
+tighter than my wide arc. DCS fans,
+you're screaming at me going, "No, no, I
+can make it to us. Let me do an
+eight-bar scan or something like that."
+Don't worry about it. It doesn't matter
+kind of a thing like that. It's just
+like I said, absolutely fantastic.
+So, let's go ahead and uh stack the deck
+a little bit here. So, we're going to go
+back to our airport here. Uh control F6,
+by the way, if all you're kind of
+following along with this mission as we
+go. So, we'll go grab it. Um let's see,
+1980. We'll
+We'll stack the deck a bit here. And uh
+we'll do 12 here. Uh call sign
+Um what was it from the movie? I can't
+remember the movie. It was a Hot Shots
+apart Yeah. Yeah,
+it had all the different like uh we can
+do Baba
+Kanoosh or something. I don't know. I
+feel like there's something wrong about
+that. Um
+uh we'll just leave it. We'll make it
+automatically generate one of these. And
+of course, it adds it on here. And one
+of the cool things is if you swing back
+to our screen here, you can actually see
+how there's this little icon that tells
+us that we actually have uh people at
+this particular shelter. So, if I click
+on this one right now and actually hit
+edit aircraft, that is the aircraft at
+that specific shelter. Now, there are
+people out there who actually like to
+come in here and edit all of these
+individually and put individual
+airplanes in individual shelters,
+go for it. Um again, by the way, you
+have to press the nine key on your
+numpad to switch between group mode and
+not group mode, cuz otherwise, you won't
+be able to select them as you can kind
+of see right there. So, it's it's up to
+you. Again, for our simplicity's sake,
+we're going to do that. We'll go ahead
+and add in some more juicy targets here.
+Um because we have F-14s, we'll do some
+F-4Es, cuz uh why not? Uh upgraded
+Project Iran. Well, it's after 2015, so
+we'll go through 24 of those on there.
+Uh what else should we do? We should add
+some uh What's What do I want to do?
+Tu-16s? Oh, again, let's see what we can
+throw in here. We'll throw a whole bunch
+604 of them. So, let's add 10. Uh why
+not? And you know what? Just for color,
+we'll go through some money. I think
+they had the Hind E. No, no, no. They
+had Cobras. What am I saying?
+Of course, I'm forgetting my own
+countries here. That's embarrassing.
+Let's see, Iran 2022 2013. That looks
+pretty good. Toufan. That looks pretty
+good. We'll add 12 of those, too.
+Now that we have a little bit of a stuff
+populating our airfields here, uh we're
+giving ourselves a plenty of juicy
+targets for the purposes of actually,
+you know, engaging, which is what we're
+going to start doing in a minute. So,
+I'm going to go ahead and tap the F6 key
+on the keyboard. And that's going to
+bring up a list. This is what you would
+see, by the way, if you're in a
+conventional mode, where you'd have the
+ability to basically see like if you're
+playing the scenario not in editor mode,
+this is what you would see. But one of
+the things you'll notice is all these
+aircraft are red right now. And the
+reason for that is they're telling us,
+"I've got no loadout, and I'm just
+parked." So, if I took this aircraft and
+hit launch individually, uh uh nothing
+would happen because unfortunately, it
+doesn't have anything. It doesn't have a
+job yet. So, what we can do is we can
+actually come down here, you know, we
+can actually change what it is. You
+know, I can right-click on this, and you
+can ready arm it. Um go ahead and change
+the different items. So, what I like to
+do is actually like to hold down the
+shift key, and I can arm them all in one
+whack here. So, I'm going to press ready
+arm. Now, you're going to notice that
+all of these loadouts right now are all
+italicized. Uh the reason for that is
+because the fact that we don't actually
+have any of these different items
+available. Now, one of the things that
+they simulate really well in Command is
+logistics. And there are no missiles
+anywhere in this place that they can
+actually draw from. And if we wanted to,
+and I'll show you how like again, how
+sophisticated you can get very quickly
+here. I can see here, let's see here,
+AIM-9D 7Es. I can come up here and say,
+"Okay, that's 181 is the AIM-70s
+AIM-70." Don't forget AIM-7A.
+Let's see here. I'll go ahead and close
+this real quick. I mean, you need to go
+find the ammo facility here, ammo
+shelter. So, I can actually go here,
+edit it, and I can actually edit what's
+inside of it. So, I could come in here,
+and I could say add some weapon, filter
+by keywords, and I can actually say
+AIM-7E. Ooh, oops if you type it in
+correctly.
+AIM-7E, and I could add, I don't know,
+1,000 of these if I wanted. You got to
+be careful. Make sure you get the right
+one here. So, let's add um I don't know.
+I'd
+uh I don't know, 10,000. Why not? That's
+an awful lot of those, but too bad.
+Let's add 50.
+Now, watch what happens when I go like
+this. Click on F6. If I were to go back
+to this one and hit ready arm, you'll
+notice the fact Ta-da! It actually
+recognizes the fact there it is.
+Uh sure, lad. Now, if you could give me
+a rough detail of what you're interested
+in, I might be able to help you out with
+a little bit. But uh for our purposes,
+obviously, this would be quite a pain in
+the butt to go through and have to load
+those magazines. So, one of the things
+they do for you, which Thank you, people
+at Command, for making our lives easier.
+So, we can actually go up to the
+magazines. And when we add the different
+weapons and stuff like that, we can say
+only show weapons compatible with the
+aircraft that exist here. This is
+awesome because it's only going to give
+us the different weapons that you can
+actually get at this airfield. Now, I
+know some people are like, "Well, can
+you do one of these things where you go
+like that, hold down shift, and go like
+that?" No.
+You're going to have to actually still
+go through, click this one at 100, click
+this one at 100. Uh the other method, of
+course, you can use, and again, for
+people who are not familiar with this
+game, is you can go up to editor, you
+can go up to scenario settings, and you
+can actually press okay there. You can
+actually tell it you have unlimited
+ammo. And uh the nice thing with that,
+of course, is you have unlimited ammo.
+The downside is now the Iranians have,
+you know, anti-ship missiles, you have
+nuclear weapons. Maybe you don't want to
+press that button. Now, you want to be
+very careful with some of these, by the
+way. We're actually going to leave that
+one off. Communications disruption, that
+works fine for me. So, now if we go back
+to the airfield, hit the F6 key again,
+you'll notice when I go to ready arm,
+all of these are available. So, again,
+for the purpose of our scenario, we're
+going to shoot up this airfield real
+nice and prevent them from taking off.
+So, what I'm going to do is I'm just
+going to select all of them. Again, I
+held down the shift key. Ready arm, and
+we'll go ahead and put them some nice
+yummy things here. Uh
+this looks cool. I like that. Let's do
+that. Press that button, and you can see
+they're all now green. They're ready for
+launch. Let's grab our handy-dandy our
+AH-1s. And we're going to assume these
+guys are basically equipped for reserve.
+You know, they're just training
+exercises kind of a thing like that. So,
+we'll leave them like that. Actually,
+not reserve. We'll actually set them to
+be ferry, so they carry plenty of fuel.
+So, they're nice tasty targets for us.
+Grab our F-14s here. We'll go ahead and
+load them up all sorts of yummy stuff,
+too.
+Look at this. A Hawk missile. Yes, a
+Hawk. So, we'll go ahead and uh throw
+that on there as well. Minimize that.
+We'll go to our Tu-16s here. Grab them
+all, and we're going to order them to be
+maintenance. Now, the interesting thing
+is people always ask me, "Why would you
+ever, ever use the maintenance loadout?"
+Cuz it takes the aircraft out of the
+availability pile. The reason you do
+this is to have targets, if you're ever
+kind of wondering. It's also a great
+simulation of some of the things you'll
+actually see in a real airfield. You'd
+never have this many aircraft ready to
+go. But I need to give the F-35
+something to shoot at. So,
+that's why we have that many aircraft
+there. So, my airport is uh pretty much
+ready to go. Our targets ready to rock.
+Uh we definitely want to consider some
+kind of defense, though. I don't want to
+leave this one all alone. Uh when we
+show up with a bunch of cruise missiles
+in a little while and actually smoosh
+this thing, we want to make sure that uh
+we're kind of ready to go.
+So, what I'm going to do is I Cuz since
+I'm in map editor mode, I have this
+ability. If you weren't a map editor,
+you'd have to do these things manually.
+I'm going to press insert. I'm going to
+go find a nice little hill nearby and go
+ahead and click. A real quick pro tip,
+by the way, uh if you actually go up to
+view, and there's this great thing that
+says uh relief. If you go to relief
+layer, it shows you where all the hills
+are. Now, the reason this is so super
+cool is uh like I say, I'm planning a
+strike or something like that. Oh,
+obviously, come down here and come
+around kind of a thing, which is what
+we'll do with the cruise missiles. But
+for me, who is planning, "Oh, where am I
+going to put my early warning radar?"
+Haha, of course, it's going to go over
+here kind of a thing like that on the
+absolute highest point. And that looks
+pretty good right there. Go over to the
+facility real fast. We'll get ourselves
+an early warning radar here. Um I'm a
+huge fan of the tips. Everybody knows
+that. But um we'll go ahead and use
+something a little more Iranian here,
+here. Let's see here. Scroll down. We're
+just going to get ourselves a new W
+radar. New W radar. And again, if we
+want to find more facts about it, we can
+click any I dog ear. Oh my god, they're
+there again. Spoon rest. Eh, I want
+something a little bit bigger here. TRS
+of Olex is actually pretty good. Let's
+just see what we have for this one. I
+want something a little bit bigger.
+Olex X. What do we got? 145. That's not
+bad. We can work with that. And then we
+also have a TRS. This is actually an SSM
+radar. Uh oh my gosh, that one looks a
+little more modern. What do we got here?
+275. Yeah, that's what I call an early
+warning radar. Let's go and press that
+one real quick.
+Now, one of the things that uh shock
+people when it comes to a Command is,
+believe it or not, after I place a unit,
+it doesn't just start turning a radar on
+and uh looking around. That's just not
+how it works. We can actually instruct
+it to turn itself on. So, what we can do
+is after selecting it, if you come over
+here, you're actually going to notice
+there's some controls over here that
+gives us direct control of that unit.
+These controls are also going to be
+available if you're playing in regular
+single player without being in map
+editor mode. But what they basically
+will do is give you the ability to turn
+stuff on and off. So, if I actually
+would come over here to the sensors
+window, for example, you can see that it
+says MCON. That's just emissions
+control. If I say no, ignore, you'll
+notice I now have the ability to turn
+individual things on. Like, for example,
+I can come over here and turn on the
+radar. If I want to be lazy, I can click
+this little checkbox here, which turns
+on all the radars. Now, the reason that
+could be useful, of course, is we want
+to see things. The reason it's not
+useful, as you'll see in a minute, is
+we're going to blow it up because it
+turned itself on. But, if you actually
+zoom out a little bit, you can see just
+how wide of this is going to have. It's
+not going to make any difference.
+There's going to be a bunch of F-35s
+knocking on the door anyway. And, of
+course, there's the identification
+problem, so we'll have to deal with that
+a little bit later on. So, let's go
+ahead and shut off that. It's going to
+make me absolutely crazy. And we'll add
+a little bit more defense here. So, what
+I'm going to do now is I'm going to toss
+up an SA-5, which has a staggering range
+on it. Uh for those of you not familiar
+with this one, it it's excessive. Like,
+uh if I click on it real quickly,
+that's its range. Now, keep in mind, uh
+this is one of those things that
+surprise people with Command, that just
+because it's in range doesn't mean it
+can hit it. As a matter of fact, uh one
+of the things you're going to see when
+this weapon, if it gets actually any
+action, I have a feeling my like the
+F-35s will come steamroll that thing.
+But, the reality is is um you can't
+necessarily hit something that's inside
+of this arc. Uh for example, if I take
+my little airplane and duck behind this
+mountain, guess what? That missile will
+self-destruct. If I'm trying to take
+potshots at people over here in Dubai, I
+I just hide behind the stuff in Qatar
+here and I'm gone. Uh they can't do
+anything for me. Likewise, I could just
+outmaneuver the weapon. I could
+basically turn around and fly away from
+it. It couldn't keep up with me. All
+those things are possibilities, and
+they're all accurately simulated when so
+we start getting into the shenanigans
+and goings-on. Now, one of the things I
+had mentioned earlier was the fact that
+this guy right here is a early warning
+radar, and this SA-5 here has its own
+ability to turn its sensors on. Inside
+of Command, the units are smart enough
+to know not to turn their radars on
+unless they absolutely are ready to
+start shooting. But, one of the things
+we could actually do if we wanted to is
+we could come in here and activate its
+battalion radar. And this is basically
+going to represent its kind of organic
+sensing capability. I'm actually not
+going to do that. And uh the reason I
+don't want to do that is I have an early
+warning radar that will give this guy a
+good heads-up whether or not he needs to
+be operable and start shooting at
+things. It's very, very tempting to
+activate his radar, but if we do that,
+we're just giving away what he is. Uh
+one of the things I see players do to
+kind of add a nice little layer of
+complexity to it is what they'll do is
+they'll grab a P-50 radar and they'll
+put it somewhere else, or they'll grab a
+square pair and they'll put it somewhere
+else. Square pair, by the way, is
+gigantic. Uh actually, I'm hoping you
+can see a picture of this. I don't think
+they're going to give us a picture of
+the square pair, but believe me when I
+say that thing is huge.
+Uh they got to give me a square pair.
+Ah, I don't have the square pair. So,
+let's go ahead and put a P-50 in here.
+Humbug, I say. Humbug. So, it looks to
+me. Oh, it's riveted this way. Let's
+see, do you get anything? Do we get
+anything?
+Do I get anything? Ah, there we go. So,
+if I do P- uh
+we do a P-19 and fake it. Yeah, let's do
+a P-20 or P-90 or something like that
+and fake it. So, I'm actually going to
+grab this a long track. That's uh
+Iranian defense. And we're going to
+pretend that that radar is actually our
+radar. So, check it out cool this is. I
+can come in here and say, "Hey, give me
+a P-40."
+Head down to Iran real quick.
+And then I can take this unit, rename
+it, instead of a P-40, I could rename it
+a P-50. Press okay. And then what I
+could do is I could actually change the
+sensors on board of this to simulate as
+if it was the actual P-50 that we have
+over here. So, by clicking this real
+quick, I could actually come over to
+sensors. You can see I got long track. I
+can actually shut that off, click on it,
+remove the sensor. Keep in mind, you
+can't do this in regular. Add sensor,
+and now I can actually grab that other
+radar. Even set the arcs and everything
+like that. So, if I come here and say
+P-50, tada! There's my Bar Lock C.
+Just like that. So, now if I flip this
+thing on, uh anytime they're doing ESM
+work, they will automatically be picking
+up this radar, even though it's not
+coming from this battery. And again,
+those are little teeny, tiny details
+that us scenario designers really love
+to throw in to make things a little more
+complicated for the other player who's
+trying to come back here and kind of
+smoosh all this stuff, which like I
+said, don't worry, we'll get to that. Uh
+we want a couple more surprises, of
+course. I'm just going to press the I on
+my numpad there. I'm going to go ahead
+and add a couple more. Um you got to
+have a Rapier. It's just it's it's it's
+required, if I can spell it correctly. I
+love how they said it's no longer a
+missile, it's a hittle because it's uh
+so capable kind of a thing like that.
+There's one right there. It's a
+blindfire, which means it's the radar
+version. This is going to give us a
+really fun surprise later on. I'm not
+going to turn the sensors on. I'll just
+let it fire when my F-35 gets too close.
+It's going to happen, you know, it's
+just kind of the nature of the beast, so
+to speak. So, I'll leave that right
+there. I'm perfectly fine with that.
+And, of course, uh you can't have
+anything without having a little bit of
+surprise, so we'll go ahead and throw in
+an SA-14, too. Which is basically uh you
+know, some guy with a little rocket
+launcher on his shoulder.
+That'd be funny if this is the thing
+that taps the F-35. I would have quite a
+smile on my face there. So, grab that
+one. I'll go ahead and copy and paste
+one of the other one. This basically
+represents the guy getting angry and
+running out of his little jeep kind of
+thing, "What are you doing?" and popping
+one of those in the air. Uh one more
+thing, of course, I will do is I'm just
+going to come over here. A quick tip, by
+the way, if you hold your mouse over the
+shore, when it says depth, it means you
+can't put ground units in it, even
+though it looks like it's on ground.
+Like, you zoom in, see how this looks
+like earth? It's not. It's because the
+map is separate from the actual height
+map. So, if I bring my mouse right here,
+we'll go ahead and put an observation
+post in there.
+I like that. Um
+observation post. Uh we'll just do a
+little tiny one. And the nice thing here
+is you can take the smallest observer.
+Oh my god, that's a real observation
+post. And one of the things I like to do
+as a programmer here, as a designer of
+scenarios, is I always come in here and
+throw in some kind of generic uh LLTV.
+So, basically, you're simulating a night
+vision goggles. Like, if I type in night
+vision. Yeah, there we go. So, we can do
+um second generation night vision
+goggles. Go ahead and toss those in. The
+nice advantage here is if it is
+nighttime, they have a slightly easier
+time of seeing aircraft. It also makes
+it easier for them to identify incoming
+enemy aircraft, which they kind of need
+to do so they can start popping things
+up at you. Now, a couple more things I'm
+going to add to our scenario just have a
+little bit of fun. We'll go ahead and
+throw up a couple ships here.
+Let's see here. We'll do a surface ship.
+Uh they've got all sorts of PCFGs and
+stuff like that. We'll go ahead and grab
+a couple of those. Again, the insert key
+is your magic button there. Uh
+there's the Bender a Boss right there.
+There's actually two of them on 1974.
+These things are kind of small, if I
+recall correctly. Uh
+108. Oh, take it back. That's pretty
+big.
+We'll keep it. Uh what's it packing
+here? We have a 20 mm and we have a 23
+mm. That's
+uh not great. Uh we're going to need
+something with a little more severity
+here.
+Uh here we go. Sea Killer replaced with
+C-802s. Nice. Anti-ship ship. Oh, by the
+way, if you have an issue where all your
+ranges are starting to kind of merge
+into each other, um all you have to do
+is go to map settings and set this to
+selected unit, and it will only show you
+the ranges of the thing you're clicking
+on, so they're not all kind of going all
+over the place on each other. If you're
+playing like a really, really big
+scenario, it gets ridiculous how um
+crazy that can get on you. So, anyway,
+I'm going to go ahead and uh set myself
+up a generic little pattern in this way.
+Uh set them to nice and slow. Again, you
+can control the actual speed of the
+units. Like, if I wanted to be weird, I
+could come in here and say, "You, go 11
+knots."
+He'll do it because I told him to. And
+again, if you need this level of
+fidelity, you need this granularity,
+it's available. If not, you could be
+like me and come over here say, "Just uh
+screw go cruising. Just do your thing."
+Now, one thing we do though is um again,
+for a little bit, not necessarily
+realism, but just one of those kind of
+little details, is you can come in here,
+shut off the MCON again, and we can
+actually find the DECCA. Now, for those
+of you who are not sure what a DECCA is,
+it's it's like this little kind of, you
+know, civilian radar thing. And one of
+the reasons I like it is because of the
+fact that it shows up as a civilian
+radar. So, when we're doing our
+reconnaissance a little later on, of
+course, so we'll know exactly, "Oh, it's
+a civilian vessel. We have to get closer
+to identify. Oh, it's a military vessel.
+We got to be careful." kind of a thing
+like that.
+So, I'm pretty happy with this side. I'm
+not going to go uh too too crazy here
+because um the details we'll see a
+little bit later on are going to be sort
+of centered around, you know, how do you
+disable this airfield efficiently? And
+uh we're going to kind of do that part
+next. So, what I'm going to do now is um
+I'm happy. I'm going to do my quick
+little save as. And we'll go save it as
+a scenario here. And of course, I always
+name my initial scenarios the same
+thing, and then I go rename them later.
+I don't know how many copies of that
+file I have. I don't want to know. So,
+now we're going to switch over to the
+other side here so we can start, you
+know, kind of planning our little
+strategy here. So, I'm going to select
+all. We're going to go over to NATO. And
+uh whoop, NATO. Notice, by the way, all
+the graphics got all kind of
+silly-looking. That's because when you
+switch sides, it resets this. I don't
+know why it does that. I kind of wish it
+didn't do that. And
+you know, I always like to joke about
+Uncle Demetrius there, you know, when
+he's watching and listening kind of a
+thing like that. But, it's like, can we
+have drawing tools one, and uh number
+two, can we have it keep it? You know
+what I mean. Anyway. So, what I'm going
+to do now is we're going to go ahead and
+get our allies set up, and we're going
+to do a couple different things here. Uh
+we're going to be interested, of course,
+in demonstrating some of the different
+weapon systems we have at our disposal,
+as well as, you know, kind of some of
+the
+What's the best way you know, a little
+bit of strategy. Again, we're trying to
+keep these really basic for today, for
+people who have not had an opportunity
+to play or not sure what this game's all
+about. So, we're going to go down here.
+Uh we've got our, you know, Dubai. Of
+course, we have Qatar and all that
+stuff. I'm going to go up to editor, and
+um instead of actually adding a
+pieces in, what I'm going to do instead
+is I'm going to switch over to topo
+mode, which is going to cause all sorts
+of uh nasty graphics to sort of I mean,
+look at this. This feels like a Windows
+95 GPS application kind of a thing like
+that. And the reason I'm doing that is
+because it actually highlights all the
+no-fly zones, which I think is kind of
+cool. And uh the reason I want that is
+because I want to basically, if I can
+get zoomed in enough without You're
+going to get this happening, by the way.
+You are at the mercy of the speed of the
+servers. You know, I have a 2-gigabit
+line coming into my house right now, and
+that still happens. But, now if I zoom
+in a little bit, tada! We have ourselves
+our airfield that we're going to be
+operating on of today. Now, some people
+are going to be sitting here saying, "Um
+so, could you go ahead and go do your
+load instant thing like you did
+earlier?" I'm not going to do that. You
+know, coming from a scenario designer
+who's I've literally played this game
+for 5, 6 years now. Uh you don't want to
+do that if you don't have to. So,
+instead, what I'm going to do is I'm
+going to first of all, check to make
+sure I'm on NATO side here. I'm going to
+press the insert key, click somewhere in
+the middle of the base, and I'm going to
+insert a unit that is a single unit
+airfield. So, if I do single unit, woo!
+S I N You know what? I'm just going to
+do it the easy way. Switch off Iran
+here. That probably would help. Type in
+airfield.
+Apparently, it's still on Iran mode
+here. Go away. So, we have a bunch of
+different airfields here. Um you can see
+the different lengths, different number
+of the two x just refers to runway. And
+if these things and people are like,
+"Well, how do you know how long the
+runway is?" It's actually pretty easy.
+You press control D and you just go
+ahead measure it. You can see here that
+it is two nautical miles. And now,
+people are always like, "What is two
+nautical miles? What does that even
+mean?" Uh, two nautical miles just
+multiply by two and now, you'll be close
+enough as far as your airfield length
+goes. So, a two nautical miles, that's a
+really, really, really long runway. So,
+again, that's one of those little things
+that you get. It's going to be about
+3,200 m is what it comes out to be. And
+now, I'm looking closely and I can see
+that we have That's a standard runway.
+It looks like a runway grade. Taxi. Too
+bad. I'm just going to do a 1x 3,200
+Now, the other thing I like to do, too,
+is after defining this, let me go ahead
+and hide all this junk that you don't
+actually hold on to it, is we have to
+tell it what direction the runway's
+pointing. And uh, the easiest way to do
+that, again, is if you press control D
+and you just drag the line. You know,
+it's hard to see. I can see that this
+angle right here Oh my god, as if I can
+see what that angle is right now.
+Oh my gosh.
+I've got I wish I had a little shadow.
+That's 390°. So, it's runway 31. So, if
+I actually were to come over to this,
+right click on it, scenario editor, I
+can actually sit in here and define the
+correct angle that the uh runway's
+actually coming at. Keep in mind,
+runways airplanes always take off in
+that direction no matter what the
+{finger quote} wind is. So, they're
+always going to be going that way. So,
+let's go ahead and now hide that real
+quick cuz uh, it's slowly burning my
+eyeballs out here. And we have our
+airport and I'll say airbase. We'll keep
+it nice and simple like I said. I'm not
+going to do anything too too
+complicated. I just don't need to for
+the purposes of it. Oh, one thing I like
+to recommend also is that if you right
+click on this and I go ahead and head
+over to scenario editor, shut the auto
+detect ability of this off. Uh, the
+reason I say that is because uh, one of
+the downsides to this being a unit is
+that it'll appear in the other guys'
+targeting scopes and if they have
+nuclear weapons and they're set on just
+shoot things, you end up with a bunch of
+ICBMs uh, raining down on your, you
+know, little airbase. And the other
+thing, of course, is saying is how come
+we can't see any of the other guys'
+stuff? Uh, the reason we can't is cuz we
+haven't run the scenario yet. You can
+always press control V, by the way, to
+switch to God's eye view and you can
+kind of see clearly how it's all kind of
+spread around.
+All right. So, the process here is going
+to be exactly the same as it was in the
+other side. We're actually going to have
+two different forces we're going to be
+working together with on this mission
+today. Uh, we're going to have an Air
+Force component and of course, we're
+going to have a naval component helping
+us out as well. So, I'm going to put the
+naval component into place first. I'm
+going to press the insert key, click
+right there. Go ahead and click on
+submarine and of course, which one do
+you think I was going to use? I'm going
+to grab myself the SSGN Ohio here. The
+Michigan's kind of fun cuz it has
+something called IRPCS. For you those of
+you who are not familiar with this, it's
+a ballistic missile. It's an HTV, a
+hypersonic glide vessel. It's fast uh,
+vehicle. By the way, not vessel. So,
+what I'm going to do is I'm going to
+grab this one.
+Press okay. And if I click on this, uh,
+you'll notice it carries not one, not
+17, 154
+Tomahawk cruise missiles, which um, it
+could win the scenario on its own, to be
+honest. And uh, what I have to actually
+do is I'm going to click on this guy
+real quick, click on WRA and I'm
+actually going to order him not to do
+that because if he does, he's going to
+ruin all the fun before I can have any
+fun myself. So, I'm actually going to
+tell him to hold fire. I'm going to
+forget that I told him to hold fire, but
+um, if I don't do this, he's just going
+to go, "Woo, target!" and just basically
+drop a deck of cruise missiles into our
+target. But, the F-35s gets dibs. So,
+you go sit there and you relax, Mr.
+SSGN. All right. So, let's go ahead and
+get some stuff at our airbase. I'm going
+here and press control F6 again. Uh, we
+need a couple things to help us out
+here. Uh, one thing is I love to get
+some AWACS action. So, uh, we'll go
+ahead grab ourselves an E-3. If you're
+not sure what a E-3 we have, uh, Saudi
+Arabia is right there. We could borrow
+theirs. We could also borrow, you know,
+an American version. We could borrow a
+French version. This is supposed to be a
+NATO operation here. So, I'm actually
+going to grab the E-3 here. Uh, we're
+going to grab two of them.
+I'm going the F6 key. I'm going to grab
+this Cohog one. Yeah, that makes sense.
+Oh, come on. We'll fix that in a second,
+but I'm just going to go up and give
+them a quick mission. Uh, quick, by the
+way, is simply saying that if I have to
+land in a hurry, just refuel me, get me
+back in the air air one more time.
+Otherwise, you're looking at like a 6 to
+9-hour turnaround time for some of these
+planes. So, uh, I recommend it if you
+can. So, he's ready to go. I'm going to
+rename him real quick just for my own
+sanity. Uh, rename. This is going to be
+eyeball
+11. Uh, we'll do 1-1. We'll do a
+hardcore DCS here. We'll come over here,
+rename. This will be eyeball 1-2. Just
+so I can keep them apart as I need it.
+Um, so we need some escorts for these
+guys. I'm not just going to send up
+these extremely expensive planes. Oh, by
+the way, remember I had the SA-5? Uh,
+yeah, that's going to be in range. So,
+we're going to have to deal with that
+before we can actually launch them.
+We'll deal with it, don't worry. So,
+I'll press my control F6 again. We'll go
+ahead and get some escorts here. It is
+uh, we'll get some uh, F-35s here.
+Actually, what I'm going to do
+Let me see if I can just type in
+lightning here and I should be able to
+get the one that I want. Ah, here it is.
+Bingo. Whoop, that's the wrong
+lightning. That'd be fun to bring out
+one of those, don't you think?
+All right. Let me actually we'll try the
+regular F-35 here. I believe I'm trying
+to think the UK gets them. Okay, they
+get the spear version, they get the Bs
+and they also get the As, I believe.
+Here we go. Nice. F-35A, United Kingdom
+Royal Air Force. Sweet.
+Um, what's a really, really British
+thing? Uh,
+chicken No, I'm not going to do that.
+So, we'll go ahead and say how many of
+these we want. We'll do 12 and they're
+F-35s. I'm not going to need a lot of
+these. So, go grab them. We're going to
+arm all of them. Nowhere in the universe
+will we have all 12 of these available
+for an actual mission. But, again, for
+the purposes of this, we're going to do
+it. It's ready arm. We've got plenty of
+yummy things that we can carry here.
+We've got all these uh, AMRAAMs. We have
+some ASRAAMs. We have some internals. We
+have some ASRAAMs. All these different
+unit tools. And of course, conveniently,
+we also have the ability to carry a
+pair. Two. A pair is two of these uh,
+lovely Mark 82 bombs, which are awesome.
+So, I'm actually going to ready those
+immediately and now, we're ready to go.
+These guys are not really equipped for
+air-to-air. You can see right now it's a
+C5 and you got the Paveway Mark IV. This
+is great and it's going to dent up that
+runway beautifully, which don't worry,
+we'll have them do it, but they're not
+really going to be much of a sweeping
+aircraft here.
+So, what I'm going to do instead is I'm
+also going to add some more. Let's go
+ahead and give myself something.
+That'll do it. Let's see, the F-15EX,
+which could be a very fun, very amusing
+aircraft for this purpose, but we're
+having fun. So, let's go all out here.
+So, I'm going to grab myself an F-22
+because I can. Uh, let's see here. GBU
+small diameter bomb. It's like cheating.
+So, uh, let's see here. How can we
+really unfairly stack this deck here? We
+lose the HMCS. Oh, that's disappointing.
+We have link 16. Man, these are
+fantastic versions of this aircraft.
+Honestly, I need four of these would be
+probably enough to win this scenario,
+but I'm just demonstrating how you can
+stack the deck here. F-22s, we'll grab
+them all. Ready arm. And we'll make sure
+these guys are ready to rock here. So,
+standard internal gets us Look at how
+many missiles this thing carries. And of
+course, if we want to, we can get the
+AIM-9X 3s, which
+it's not fair. These things are so not
+fair. And now, you'll see what I mean
+when we actually get to the engagement
+here. So, these guys are good. That's
+plenty of aircraft. I don't don't need
+any more than that. So, the one thing
+else we of course want to do is we want
+to grab ourselves a little bit of some
+carrier operations here, too, because
+why not? So, I'm going to hit insert
+again. We'll get ourselves an aircraft
+carrier. Let's see here. Surface ship.
+Let's see here. We'll do CVN. Which one
+do we want today? Which one do we want
+today?
+Oh, we'll do the John Stennis. That's a
+pretty easy one. He's looking pretty
+happy. He's not carrying anybody right
+now. And because I'm a jerk, we'll put
+some F-35s on him, too.
+This is just not fair.
+Let's see here. 2019. I like that.
+We'll do 12 again. Oh my god, that's 21.
+That's way too many.
+I didn't say this scenario was designed
+to be balanced. I said this scenario is
+to demonstrate the capabilities of the
+program.
+Uh, let's see here. So, we have JSOWs,
+which are great. Uh, let's see. JSOWs,
+we'll do internal ones. JSOWs are
+basically, if you haven't seen one of
+these things, it's a giant box with
+wing. Yeah, there it goes. And it
+basically what it will do is I'll
+release this thing and it just sort of
+glides very, very long distances. The
+interesting thing here is Let me see if
+I can find it for you.
+Uh, yeah, here it is. Notice it's barely
+detectable by radar. And uh, that's
+going to be important for us cuz we're
+going to use these guys basically to
+dent stuff up. These other items here
+that are really, really good, too, like
+the GBU-31s, they work great, but they
+just don't have the reach.
+Go ahead and add that. And now, we're
+ready to go. I think everything we could
+possibly need for this scenario has been
+equipped. Uh, some of you, of course,
+are like, uh, "Shouldn't this guy get an
+escort?"
+You guys just want everything. So, we'll
+go ahead and uh, stack the deck some
+harder. We'll add the Zumwalt here. Uh,
+SM-2. I like that. Go ahead and grab
+that version. Uh, this will be the
+escort and you can see it's not the
+longest range. It's not really the best
+carrier escort out there, but I'm not
+worried about that at all. So, let's go
+ahead and group those two guys. We're
+going to order them to kind of do a
+little one of these sort of things here
+in a little box. And again, we don't
+have to do that much. We'll set these
+guys to creep speed and uh, let me check
+check to make sure that this is working
+properly. Now, it is. And uh, one thing
+we will do is we will have the Zumwalt
+help us out with radar just to kind of
+act as sort of like an early sort of
+AWACS thing. So, again, going to go over
+to sensors here. Radars, we can turn
+them all on. Not needed. Honestly, just
+turn on the N spy here and that will be
+plenty. So, if I actually zoom out a
+little bit, you can see that this is his
+radar coverage here, which is absolutely
+fantastic. He'll be able to keep more
+than enough eye on things before we can
+get the E-8 in the air. Now, there's
+something you have to remember here is
+that we do have that E-8 at our
+disposal, but the moment we launch it,
+it's going to get shot down by an SA-5
+and we're all going to feel really
+stupid about it cuz that was an
+expensive plane to get cheap shot by,
+you know, a 1960s surface-to-air missile
+system.
+So, let's go ahead and uh, save our
+scenario and now, we're ready to
+actually begin the execution sequence
+here. So, what I'm going to do is I'm
+going to play
+and I'm going to wait a few moments and
+pause again. And what you'll observe is
+the fact that all these items have
+suddenly appeared on the screen. And
+now, one of the things you have to do,
+of course, See how 1 second has passed?
+You have to actually go back up here and
+I just change this like that. Press
+okay. Save it again. And now, our
+scenario is ready to rock. Now, this is
+where a lot of people who play Command
+uh, start to get a little lost in uh,
+the minutiae, sort of kind of the
+details, what I sort of would like to
+call. How does one strike an airfield
+that is uh, well protected by enemy
+radars, including the ones we can't see?
+Well, the first things first, you have
+to know they're there in order to engage
+them. By the way, we never actually set
+the weather. So, let's take a couple
+moments here to establish the weather.
+Hey, this is a Persian Gulf. It's a
+little warm.
+Oh, we'll go ahead and put some clouds
+in the sky. What is that? It's actually
+really bad clouds. Let's try that cloud.
+I like that. It's pretty good. We'll
+make it a little windy, not too windy
+here. Go ahead and save that. And again,
+this is what I love about this program.
+I could just do this. So now what I'm
+going to do is that we're going to plan
+our strike here.
+And as what anything, you have to define
+what you're trying to achieve before you
+try to achieve it, that way you know
+whether or not you didn't achieve it.
+And the key thing here is we want to
+[&nbsp;__&nbsp;] this airfield. We want to
+prevent it from launching any aircraft
+whatsoever at any time. So in order to
+do something like that, we're going to
+have to target the part of the airfield
+that it is most vulnerable at. And as
+for those of you who are veterans of
+this, we know exactly what the
+vulnerable part is. And that's the
+access point of the runway. So what an
+access point does is just like you can
+see here, that's going to be this little
+guy that allows the airplanes to
+actually taxi on the runway and go. Many
+people are like, "I got an idea. Let's
+just shoot up the runway." Let me show
+you why that doesn't work. If I scroll
+down here, you're actually going to
+notice that the runway access point has
+1,000 damage points, and if I recall, it
+has no general armor. Now if we take
+that knowledge and now we take a look at
+the runway itself, let's see if I can
+find the actual runway here.
+Ah, there's the runway. Let's take a
+look at the runway. The runway on the
+flip side has, let's see here, 1,400
+damage points and massive heavy armor.
+That means if we want to start
+Tomahawking this thing, it's going to
+take 25 Tomahawks and then they're just
+going to repair it anyway. Whereas if we
+want to go ahead and shoot up the access
+points, which are completely unarmored,
+if you actually go back and look at the
+Tomahawk missile, let me go pull one of
+these up so you can see just how much
+damage this thing can cause. Do do do do
+do. It's such an old picture. But if you
+come down here, you'll see that it
+actually does, let's see here, we want
+to get its elbow 311.
+Three, four Tomahawks basically will
+[&nbsp;__&nbsp;] an access point, but it will
+take probably 25 to [&nbsp;__&nbsp;] a runway.
+Start to see where we're going with
+this? So what we're going to do to kind
+of kick everything off here is we're
+going to [&nbsp;__&nbsp;] the runways. So I'm
+going to go ahead and press the click on
+my little handy dandy sub here. I'm
+going to press shift F1, and then what
+I'm going to do is I'm going to click on
+the airport.
+What that will do is that will bring up
+a little screen that looks like this.
+And that will allow me to manually
+target the targets. Remember I told him
+to hold fire because I didn't want him
+to like waste 25 billion dollars worth
+of taxpayer money. So what I'm going to
+do is I'm going to find all the access
+points here. Watch how simple this is.
+I'm just going to scroll down here.
+Runway access points. You're sitting
+here going, "Oh, you have to get all
+each one of these individually." No, no,
+don't waste time.
+Click on the first one.
+Hold shift. Click on the last one.
+Click on the Tomahawk, and now you can
+select how many you want.
+That'll do it. So all we have to do now
+is press this button right here, and
+we've automatically allocated 32
+Tomahawks. Some of you sharp-eyed
+viewers immediately say, "Wait a minute,
+didn't you just say it would only take
+24 to kill the runway?"
+Shut up.
+Of course, the real world we'd also be
+thing interested in things like the ammo
+bunkers, we target their fuel. Fuel
+doesn't matter right now. A lot of
+scenarios require you to hit the fuel
+tanks for points, but we're defining our
+own scenario here, so it doesn't matter.
+That should do it. That'll definitely
+inconvenience those Tomahawks to say the
+least. Now the other problem we're going
+to face, of course, is I've got my
+scenario paused right now. This thing's
+going to fire basically a conga line of
+those Tomahawks directly at our target
+here. The problem we're going to face is
+that our SAM systems, remember we had a
+Rapier here, is going to start going
+nutters and taking pot shots at those
+Tomahawks cuz believe it or not,
+Tomahawk is it's pretty easy to see. If
+you actually click on it, it's going to
+sound dumb, but the thing is basically a
+stupid straight line airplane. You can
+see it actually has this very, very tiny
+nose that is completely detectable by
+enemy radar, especially if it's coming
+at it. So we have to keep these SA-5s
+either completely out of commission or
+we're going to have to actually go ahead
+and [&nbsp;__&nbsp;] them, destroy them. So now
+it's time to put everybody to work here.
+So if you recall, we have J SAWs. And
+Jojo one, I like that. So what I'm going
+to do is I'm going to press control F11.
+I'm going to go ahead and give ourselves
+a name. I'm going to call it C indeed.
+And these guys are going to be
+responsible for basically destroying all
+the good stuff before our Tomahawks get
+into position. Remember our aircraft are
+going to be a little quicker than our
+Tomahawks. I'm going to press okay here.
+It's going to yell at me and say you
+need a reference point. That's easy.
+Control, right click.
+Draw area. Drag a box.
+Sure.
+Uh, target zone.
+Press the okay key. And now you can see
+this area is nice and highlighted. I
+press okay, and it's happy. It'll work.
+So this is going to be my kind of kill
+box is another way to think about it.
+And again, there's more sophisticated
+ways to do that, but that could be 100
+other videos in the end. This is just
+keeping it simple. So we need to find
+our group of F-35s that are ready to
+rock here, and I have plenty. I'm going
+to go ahead and grab them. One of the
+biggest mistakes that you can make is
+not hitting hard enough. And of course,
+a lot of people sit there going, "Oh, so
+we'll send two. I mean, it's an F-35, no
+problem." We could do that, but then
+you're going to be embarrassed when the
+SA-5, I kid you not, will shoot down
+half of your J SAWs before they get to
+the target. So you need to apply a
+little bit of force, otherwise they just
+reload and they're ready for you next
+time. So what we're going to do is that
+we're going to launch a pretty hefty
+chunk of these. We're not going to
+launch them all. You always want to have
+a reserve. Remember, you can always add
+these to the mission after the mission's
+already started. So I'm going to grab
+these, press the down arrow. It's going
+to shove all these in here. And then all
+we have to do is to find a couple
+settings. So let's see here. We have
+eight units going on the ride here.
+Flight size of two makes no sense in my
+mind. I'll do a flight size of four. So
+it's two flights of F-35s. Fantastic. I
+like that. Uh, of course, we can do
+things like what time do you want to go
+on station, what time do you want to
+take off. We can establish all that, but
+I'm not going to do any of that today
+because I just don't need to. When we do
+the big coup de grace on the rest of the
+airfield, don't worry, we'll get to
+that, but I don't want to do that yet.
+Instead, what I'm going to do is I'm
+going to check these guys. They're good
+to go. The mission's pretty much all
+set. Our prosecution looks good, looks
+good. M con WRA. We actually want them
+to use the radar. And you're sitting
+there going, "Why would you leave your
+radar? They'll know you're coming."
+F-35s are what they call
+they have a low probability intercept
+radar on board. If you actually click on
+this, hit this F-35.
+Scrolling down here, I'll see here,
+where's our fantastic god radar, the
+AN/APG-81. But it's an LPI radar. Right
+here. So there's very, very, very little
+chance they're actually going to detect
+the radar emissions, which means we'll
+let me see them and they can't see us.
+That sounds perfectly legit to me. So
+now we're pretty much ready to get our
+scenario started. One thing I will do
+want to do is I want to prepare my
+follow-up strike. Just want to do some
+quick little math here. So 85 nautical
+miles, 85, whoops, let's get my
+calculator here. Scroll down here. 85
+divided by what do we got, about 450 I
+think is the cruise speed, times 60 is
+going to be an 11-minute flight time
+plus 6 minutes, that's going to be 17
+minutes before the enemy airfields or I
+should say before we're actually able to
+destroy the SAMs here. So unfortunately,
+that means I can literally take off at
+any time, but for the sake of safety,
+I'm going to order my rest of my
+strikers to begin their takeoff process
+a little bit after the fun kind of
+starts here. So let's go ahead and now
+press control F
+Actually, we'll we'll do it
+we'll do it properly. So what I'm going
+to do is I'm going to zoom in here. By
+the way, if this bothers you and you
+can't see what you're doing, you can
+actually come over here into a map
+settings and you can shut this off if it
+bothers you. You can actually shut it
+off completely if it makes you crazy. So
+what I'm going to do is I'm going to go
+ahead and press the star What is it? I
+always get this one. There it is, star,
+asterisk. Go ahead and see what's going
+to be useful targets.
+My opinion, it's going to be this side
+of the airfield. And so what I'm going
+to do is I'm just going to drag a box
+around it.
+Control F11. Let's see mission here.
+Damage a boss. Sounds good to me. We'll
+do a land strike. Press okay doke. And
+now we're going to get everybody else
+involved in our little engagement here.
+So let's see here. Our takeoff time in
+Zulu, let's see, the current time is
+3:30. We said what, 17 minutes? So we'll
+say our takeoff time is going to be
+that'll be 47. So we'll call it 3:50. So
+we'll say 03:50:00, and that's going to
+be my takeoff time. It's an important
+point. Targets, we're going to eliminate
+anything that doesn't make sense. So
+ammo shelters do not make sense. Control
+tower.
+Ammo shelters, in the real world these
+would be very important, but we're not.
+I'm just interested in striking all
+their hangars and stuff like that. So
+going back to my units here, I'm going
+to go ahead and throw a tons and tons of
+units into it. We have our F-35As. These
+are the ones that we have awaiting for
+us. They have the Mark 82s. We're going
+to toss all those in the pile down
+below. We have the F-35Cs. They're
+already busy. That's why they got this
+little color. If I click the switch, by
+the way, it hides the ones that are
+already busy. And now what we can do is
+we can grab all the Raptors and we can
+use them all to jump into the fight.
+Click on the Raptors and we can actually
+tell these guys to be escorts. So I'm
+going to come in here and mark selected
+as escorts, which is going to make all
+of these aircraft here basically going
+to keep an eye on these and protect
+them. So swinging back over to mission
+settings, there's so many things you can
+do here. I've made plenty of videos on
+kind of going through all the different
+options that you have at your disposal.
+But a couple different things I want to
+do here. The first one here is I'm going
+to go ahead and say that they were going
+to split our attack. We're going to do
+multi-access. We're going to make it
+nice and painful. We're going to do 30
+seconds separation here, and we're going
+to do a we'll do a 10 out of 10 20.
+That's going to split our flight plan
+up. If I were to actually zoom out a
+little bit, let me go ahead and see one
+of these things. If I were to come down
+here to the bottom, hit creator update
+flight plans, what it will actually do
+is depending on what unit I have
+selected, it'll generate a flight plan
+for it that will allow you to kind of
+see it. One of the things you have to do
+is you have to actually set here. The
+air unit's not air pointing yet, so we
+won't be able to see that, but it will
+create this nice little split zigzag
+thing to make the intruders have a much,
+much tougher time. Another thing that's
+really nice, if I go to the ATO, is you
+can actually see the takeoff time is set
+exactly like I said it was, but it also
+gives us an important thing, this is
+time over target, which is going to be
+8:30, 8:16, which again, if you want to
+do the math there, you can actually
+calculate that. Again, I've done many,
+many videos on sort of the complexity
+that this involves, but that works
+pretty well.
+Now one thing I do want to change
+though, it just occurred to me, that our
+strikers are British F-35s here. We did
+Oh, no, we did. We did. We're good.
+That's exactly what I wanted. Three
+groups of four will be fine. One thing I
+will change though is actually make my
+escorts be groups of four as well. It
+just seems to make more sense to me.
+Let's do four. Of course, when you do
+that, we have to you go ahead and update
+all of our flight plans because like I
+said, now those F-22s are now Yeah, see
+I broke them up into the proper size
+groups. So this is going to be
+fantastic. All right. Wow. So now
+there's a one more thing we get to do
+and then we get to watch the fireworks
+as I like to say, and that's to give our
+E-8, our E-3 something to do. So I'm
+going to go over here.
+Press control F11 control insert,
+control insert. And this is going to be
+where our E-8, our E-3, I'm going to say
+it 10 more times, is basically going to
+be doing some donuts uh waiting to see
+for things stuff coming up here. So, I'm
+going to press control F11 again. We'll
+go ahead and call that AWACS. Again,
+keeping it super simple for this. We're
+going to set this to support, not
+patrol. Press okay doke. Grab our two
+E-3s, dump this on here. They're ready
+to rock. And then of course, what we're
+going to do is we're going to change
+their takeoff time. You've got to change
+the takeoff time because if they take
+off early, the stupid SA-5s will shoot
+them down. So, we'll come in here and
+we'll get them at 4:00. Uh that's
+actually pretty fair. If we wanted to be
+safer, we could do 3:50, but that will
+interfere with the uh British Lightnings
+that are going to be taking off at about
+the same time. Uh one thing we want to
+do here is we're just going to say just
+keep one on station. So, that way when
+this guy's done with this flight, he's
+going to fly back and the other buddy's
+going to take off at the same time. Last
+thing we want to do is we just want to
+pop up here real quick and double-check
+to make sure his radar's turned on,
+which it isn't because um it's supposed
+to be an AWACS plane. It needs to be
+able to see.
+All right, my friends. It is time. And
+this is one of the cool parts about
+this. Uh before we do all this
+shenanigans though, I'm going to save
+because if I broke something terribly,
+you want to be able to go back and fix
+it. And that's one thing I love the fact
+that they do. Uh one more mistake I've
+noticed, uh these are do we we don't
+actually have Tomahawks in here. Uh we
+have Tomahawks. So, our Zumwalt would
+have uh joined in in the uh Tomahawk
+shenanigans. Um I'd rather him not. So,
+uh what I'm actually going to do for him
+is I'm going to take the Tomahawks off.
+And again, look at how easy this is to
+do. I can just come up here, click
+weapons. I can go to the PVLS and you
+see how he's carrying all these
+Tomahawks. Guess what? Not anymore. So,
+that takes care of that. And of course,
+so we can put in a bunch of uh we can be
+fun here. Uh we'll do SM-2s, why not?
+And how many do we get? 16 out of 160
+out of four is eight is 36, right? Hey,
+good math. Good math. All right, let's
+come up here. We'll go ahead and I'll
+get rid of this one. Oh, I already knew
+that was 36 by the way. Oh well. Want to
+read about an SM-2? You can now. Go up
+to here to change. We'll set that back
+to 36. And you can see we're good. If
+you're wondering why it's 36 and not 40,
+it's cuz the other cells are occupied by
+something else. So, now we know he's not
+going to go pew pew pew pew pew pew pew
+pew pew. And I'm actually uh destroy
+anything that comes by. And that is the
+sound those uh missiles make when they
+launch, by the way. Go ahead and save
+one more time.
+There's something we have forgotten this
+entire time. And that is the fact that
+there's no enemy aircraft that are going
+to come and say hello. And that's not
+fun. So, what I'm going to do is I'm
+going to switch back to Iran one more
+time here. Press control right click.
+Add area. I'm just going to drag myself
+a little cap area. Press okay. Call this
+uh cap.
+Press control F11 one more time. We'll
+call this cap. And we'll go ahead and
+set this to a patrol. AW's fine for us.
+And what we're going to do inside of
+this patrol area is we're basically
+going to throw everything we've got up
+there.
+Top set one in. And we'll we'll be fair
+here. Uh we'll keep our flight sizes at
+uh flight sizes at four. And we're going
+to use the 1/3 rule, which just means
+only keep 1/3 of the airplane up in the
+air at a time. Now, one thing we're
+going to change here is we're going to
+make it so the transit throttle's a
+little quicker. And we're going to make
+it so the station throttle's a little
+bit quicker, too, cuz uh we want them to
+burn fuel to kind of come back and
+forth. We're also going to double-check
+to make sure the radar's active, which
+it is. So, this will keep at any given
+time, let's see. That's going to be 12
+airplanes in the air at a time. That's a
+lot. That's actually in my opinion maybe
+a little too much here. So, what I'm
+actually going to do is I'm going to say
+keep four each because I'd rather not
+have, like I said, 12 airplanes buzzing
+around here all the time. That's going
+to be a lot to shoot out for the F-22s.
+And especially that first round of F-35s
+that's going to come ripping in. Now,
+the important thing is you will get to
+see us disable this airfield, so many of
+these airplanes will never launch. Let's
+do it. All right, switch to the other
+side. I love this part. This is uh the
+bit where I have to remember to turn on
+my audio so you can actually hear the
+fireworks of the uh fireworks here. It's
+kind of fun. Uh you can see I don't use
+sound very often. I don't actually know
+what the music sounds like in this game.
+Like I know that sounds odd, but I don't
+think I've ever actually listened to it.
+It's just got to one of those things.
+Unpause.
+All right. So, a lot of things got to
+happen here. Um obviously, the aircraft
+have to get themselves in position in
+the airfield. I noticed, by the way,
+we've already identified the emissions
+of that one radar, which doesn't
+surprise me.
+Uh contact emissions. Uh let's see here.
+All the da da That's what I want to say.
+That's really honest me thing. So, our
+SSGN right now is uh floating his way
+up. He's uh got himself up at a pretty
+good depth. He's uh basically getting
+ready to fire.
+And uh I I forgot to turn my volume down
+from last time.
+So, off go the fireworks. And uh one of
+the fun things to see here is if I
+actually switch over to a 3D view.
+Let's go ahead and do this. I'll go
+ahead and click on this uh one missile
+here. And you can watch them actually
+come uh gushing gushing uh directly out
+of our little sub here. And one thing I
+really love, too, is you click on the
+actual sub, you can see that he's just
+chilling. Just kind of doing his thing.
+And the only missiles you actually see
+are going to be the ones that are
+already out of the water. You can see
+just his little whip-te-do and then it
+kind of Of course, in the real world, it
+goes ker-sploosh and then it arcs and it
+does that. And there's a bunch of smoke
+and drama that comes out of it. But I
+don't care. I think it's absolutely
+awesome.
+Man, that is going to be an awful lot of
+those in a minute.
+Let me make sure There he goes. Cool.
+So, one of the cool things is if you're
+like doing a display, you can just like
+shift click it and be like, "Oh yes, as
+you can see by this Tomahawk, you're
+about to get blown up. Ha ha ha ha ha."
+Nice. Meanwhile, on our little carrier
+group here, tap the F6 key, you can see
+all these people are almost ready to go.
+It's going to be about a minute and a
+half. They have to spot them on the
+carrier deck. And then they got to kind
+of push them out the window. And it's a
+big old mess.
+Go ahead and unpause. Speed up time a
+little bit.
+Again, this entire scenario took me 30
+minutes to make. You know, if I weren't
+explaining it as I go, I could probably
+do it in about half of that time.
+Off they go. Notice, by the way, that as
+soon as my F-35s got airborne, they
+instantaneously picked up this vessel we
+didn't even know was there. So, I feel
+bad just like leaving it there. So, uh
+shift F1. Don't think I have anything
+that I can actually
+Oh, I have no anti-ship weapons. Aw.
+Well, he's going to get away free today.
+Theoretically, I could take this F-35
+and I could be like really really mean
+or something like that. Also notice, as
+soon as the enemy aircraft got airborne,
+I instantaneously detected them by like
+the 50 radars I've got going on. Look at
+how accurate of a picture I have with
+them, too. If I zoom in, there is zero
+ambiguity as to the position of this
+target. I know exactly where it is. I
+know it's I know everything about it.
+Modern equipment is insane. Now, one of
+the things that will really really amuse
+you here is these F-14s are actually
+going to come around and they're going
+to start looking and chasing after all
+these Tomahawks that we launched. So,
+it's actually kind of neat to watch
+everything sort of happen all at the
+same time here. But it's kind of fun.
+Let's see how things are going for Iran
+right now. Notice we've identified every
+single one of these automatically as
+soon as they got launched. We even have
+a suspicious idea that they probably got
+launched from a submarine about right
+here. Isn't that amazing when you really
+really think about it? It's not that he
+stuck his head out of the water. It's
+the fact that we are able to kind of
+work backwards from where this giant
+stream of Tomahawk missiles is coming
+from. So, it's just uh like I said, part
+of the fun. Part of the fun. By the way,
+notice we have no concept that there is
+a bunch of F-35s literally right there.
+But that's kind of the fun, too.
+So, our F-35s, as you can see here, have
+already launched their JSOWs. And uh one
+thing I don't want my F-35s to do is I
+don't want them to waste AMRAAMs. I'm
+actually going to pause. Control shift
+F9. I'm going to go up to this thing
+that says WRA. And I'm actually going to
+order all AIM-120s to not fire at
+maximum range cuz otherwise you're going
+to waste a lot of them, trust me. So,
+automatic firing range, I'm going to say
+half range. Now, a lot of people are
+like, "Why would you do half range?
+These missiles go 75 miles." No, they
+don't. Don't delude yourself. Don't
+delude yourself. All right, we'll go
+ahead and do that. As for the C5s, the
+Ds on the flip side, look at the max
+range on these things. Woah! What are
+these things? AIM-54s?
+Set 50%. Of course, some of you will go,
+"Why don't you just do it to DLZ?" Uh
+not needed. 50% of range is plenty. And
+then my AIM-9s as well,
+uh no escape zones. Probably pretty safe
+for these guys. And I'm simply saying
+don't fire until you're pretty darn
+confident that you're actually going to
+hit the target that you're interested in
+hitting. Really important with things
+like, you know, those kind of missiles.
+Now, the reason I did that is you see
+this AIM-120 here? By the way, if you
+want to see something incredible,
+we'll put up my 3D view. This requires
+the professional TacView, by the way.
+And I use TacView for everything, so I'm
+totally fine with this. But check this
+out.
+Look at how high up they go.
+They just like whoops-y-daisies. And
+I'll speed up time a little bit. And
+these things just climb and climb and
+climb and climb and climb. And then what
+they do is they hit their apex and they
+actually start coming back down to
+Earth. Now, the most incredible thing
+here is if you look really carefully,
+you can see all of these uh lovely
+AMRAAMs basically coming back down to
+Earth. And as they descend, you can see
+that their speed is actually going to
+drop significantly because they're no
+longer burning their motors right now.
+Uh they're just basically reentering.
+Our four friends in these F-14s on the
+flip side, look at this.
+They have a vague idea there's missiles
+here. But the only reason they have a
+vague idea is because it was detected by
+the early warning radar. Otherwise,
+these poor F-14s would get a real real
+surprise without any knowledge. They're
+going to get smart though. And what
+they're going to do is they're
+immediately going to beam the missile.
+And they'll do all those things
+automatically. I don't have to reach in
+and tell them what to do here. Uh
+they're they're going to be smart enough
+to set all those things up themselves.
+There they go.
+Notice these F-14s just turn and ran.
+That's the best strategy. There's no
+reason why you should beam it if you can
+just leave. So, unfortunately, remember
+all those really really expensive
+AIM-120s that fired automatically
+because we didn't tell them not to?
+They're just wasting their time. And
+basically, they pushed the F-14s out of
+the way, which tactically speaking, I
+don't mind that. Oh, he almost got them.
+But notice, none of those AMRAAMs did
+anything because they were just too far
+out of range.
+So, our F-14s now, uh this is a real fun
+game if you've never played this game
+before. But basically, you have to come
+down to like, you know, 500 ft and chase
+after these and actually take shots on
+them as they're getting to position
+here. Now, the cool thing here is as I
+zoom in a bit, you can see them just
+spreading out to a really really wide
+fan as they start preparing to actually
+strike the individual components of the
+airfield. Meanwhile, simultaneously, you
+have all these uh JSOWs that we launched
+that are basically going to damage all
+the different radar systems and stuff
+like that. Of course, our F-35s, um
+they're spent. Uh they've done their
+thing. Um they have a couple more
+AMRAAMs. And uh one of the things that I
+do sometimes is I go find the guy who's
+still missile left, which is not him. Uh
+how about you? Do you have some missiles
+left? You do?
+I'll actually turn him around and I'll
+go put him to use here.
+We'll actually drop him out of the
+system here. We'll press D, right click,
+and we're actually going to cancel his
+mission here because I'd rather just use
+him. Let's get him to work here.
+You're unassigned, sir.
+So, now I'm going to order him right
+into the combat and we're going to go
+sneak up on those uh sneaky F-14s and
+I'll do our thing here.
+I hear some explosions.
+Not a very exciting explosion.
+Da da da da da da da da da.
+Now, notice our F-14 buddies are um
+having a heck of a fun time.
+Problem here is all it takes is one
+remaining access point and it won't
+matter.
+And now we're getting warnings saying
+missiles are being launched. Again,
+these missiles are chasing after our
+JASSMs here, which is exactly what I'd
+expect to happen here. So, let's go up
+to afterburner. We'll go up to uh F-35
+altitudes here.
+Put this up to max altitude, kick off
+the afterburner, and let's go.
+Whoop. I think I was controlling the
+missile there instead of this guy. My
+bad. There he goes.
+One of the downsides of the F-35 here is
+it is an incredible plane, but it's not
+the fastest thing going, believe it or
+not. So, uh we're going to It's not
+really its focus. And notice, by the
+way, almost none of my JASSMs uh got to
+my target.
+Oh, man. Ah. Ooh.
+Most important thing though is that we
+crippled the F uh SA-5 here. Even if
+that means I have to fire a couple more
+Tomahawks at it.
+There it goes.
+The main 120 is doing its thing. Now,
+notice, by the way, this one was shot at
+a much, much shorter range. This is much
+more reasonable, 43 miles. But,
+unfortunately, it stupidly shot at a
+target that's running. Don't shoot at
+running targets. Um
+Uh I didn't see that coming, but I'm not
+annoyed about it, I guess.
+I did say destroy anything. By the way,
+notice that all of the second group has
+automatically launched their weapons
+when they realized that the first group
+had basically not achieved their goals.
+Ah, go back home. You're done.
+One of the really useful things to do,
+by the way, is you can leave this guy up
+here doing donuts acting as an AWACS
+plane for you while we which makes it
+much, much simpler for it. And I see
+that none of these got remotely close.
+This is the only thing I actually need
+to damage here. Everything else is nice
+to kill, but um look at that Phantom's
+like, "I got it. I'm going to get it.
+I'm going to get it." Nah. That's got to
+do it right there.
+Oh. Ah.
+Hopefully, that crippled it cuz if it
+didn't, this battle is going to be a lot
+longer for us. Meanwhile, if you recall,
+uh we ordered up some stuff to get
+launched in a few minutes. If you
+actually go up to the air tasking order,
+you can see there that our takeoff time
+has been established at about 7:50. And
+in about 6, 7, 8 minutes, uh we're going
+to start doing our thing here. So, let's
+speed up time.
+Oh, that did a lot of damage. That was
+expensive. That was expensive. Notice,
+by the way, our aircraft are
+automatically here. And if you just
+heard that 7:50 roll around, there goes
+our first airplane, and that would be
+our F-35s, our English F-35s. So, one of
+the problems we have here is we don't
+know how much damage we did. And if I
+actually zoom in here, you can see that
+some of these access points were damaged
+badly, but some of the access points are
+probably still kicking pretty strong
+here. So, if I actually uh switch on to
+this mode real quick, you can see that a
+few survived. And uh we have to disable
+them because as long as they things
+survive, they can still launch planes at
+us. So, I'm going to go ahead and order
+up another attack there.
+Let's see, that's crippled. Let's go
+sneak up on this way. There's a tarmac
+spaces, ammo shelters. I think we got
+the other ones pretty well there. Tarmac
+space, I'm just going through each one
+individually.
+Yeah, I think we did a pretty nice job.
+You know what? This building taunts me.
+It gets a Tomahawk. Yeah, $20 is worth a
+wooden shack.
+We're also going to deal with that um
+blind fire cuz I don't want that Rapier
+shooting up our expensive F-35s. And you
+know what? You get a missile, too.
+And you know what? You get two missiles
+cuz I like you.
+All right, nice. And again, I just
+spent, you know, $2 billion of the
+taxpayer money. You know, the submarine
+is literally going to have to go all the
+way back to New London and reload.
+Oh, well. Notice, by the way, that all
+these Tomaha- or these um Tomcats are
+rushing towards our other aircraft. Uh
+the reason they're interested in me is
+cuz of my altitude. So, you can see why.
+Is because, if you remember that AWACS
+plane I was talking about, notice this
+is now detected. Um so, these um F-14s
+are like, "Listen, check that out. I
+want to I want a piece of that AWACS
+plane." What they don't realize though
+is they're about to fly into range of
+something much more deadly, which is
+again why you have to be so careful
+about these things. All right, we'll go
+speed up time. Here comes the next round
+of Tomahawks.
+Oh, man. This is what happens when you
+launch unescorted Tomahawk cruise
+missiles. Ah, happens every time. We
+should have sent them over the woods
+there. It's okay though. It's it's part
+of the fun. Also, I'd rather their F-14s
+waste time chasing those things down
+than my much more expensive planes that
+are going to be there in a few minutes.
+Come on. Oh oh oh oh oh, nope. They
+don't work. I love how my AWACS plane
+has got such a good radar it can detect
+the individual missiles launched at the
+Tomahawks at that range.
+Oh, man, these guys are having a fun
+time with us.
+Yes, strategically, this was the
+incorrect method to do this. Bam! Ah, I
+didn't even get the observer.
+Oh, I got the radar though.
+Unfortunately, the Rapier is uh still
+super strong. So, um
+Ah, I guess I'll do this correctly. I'll
+wait for my other planes to get into
+position.
+So, remember those F-22s I was telling
+you about?
+These guys are going to be very, very,
+very unhappy when they discover that
+these things are in the neighborhood.
+Look at the range in the radar on this
+thing. It's staggering.
+It's getting into range. Patience.
+Remember, I believe it was what, 43
+miles? Eh, still got a couple miles to
+go here. Notice these F-14s are chasing
+saying, "I I'm picking something up
+here." Now, watch this. I'll actually
+flip the radar screen around real fast.
+You can see they're clueless that
+there's a wall of F-35s, but we know
+there's an AWACS plane out there. So, of
+course, he's going to come do his thing
+here not realizing he's about to get
+steamrolled.
+Sometimes these things happen.
+Uh also, let the steamrolling begin.
+What are you guys waiting for?
+All right, let's go and take a look at
+our mission. One of the things we have
+to check is real quickly is uh double C
+Let's see here. Uh damage a base. We
+need to double-check to see what range
+we're allowed to engage at here. Now, 80
+nautical miles, that is in range. So,
+there's really no reason why we're not
+engaging these. Actually, let me press
+shift F1 real quick. I just want to
+confirm the fact that I didn't goof
+something up here. Um
+it's the difference in altitude is the
+problem.
+Oh,
+I did not I did not anticipate that.
+Let's see here. So, his altitude is
+2,000 ft. So, if I'm a smarter person
+here, I have to actually order my
+escorts to get down. Get down. Get down
+again.
+So, let's see here. Military transits,
+uh let's see here. Strike intercepts.
+Let's see, we are in damage a base here.
+Looks down. Submarine signals, we're not
+doing any of those. Cruise, we don't
+need to worry about any of that. Uh
+nope. I guess we're just going to have
+to fly past them. Otherwise, I'd have to
+take my main group. One thing you can do
+at any point, by the way, is you can
+cancel them and then manually uh work
+with them. So, if I wanted to, for
+example, I could actually kick them off
+of the mission here. Uh see here.
+Uh assign to mission. Oh, I just saw it.
+Assign to mission. Every time I see it,
+I don't see it. Ah, there we go. Let's
+go and dump them off the mission, and
+then I'm going to go press F1, and we're
+just going to engage them the
+old-fashioned way.
+Go down to minimum altitude.
+Things you got to watch out for because
+remember, these F-35s are very, very,
+very high flyers.
+We're going to speed up. And look at
+this, we're in range. Here comes the
+fireworks.
+Oh, those F-14s are never going to know
+what hit them.
+All of a sudden, there's just going to
+be missiles that appear from the sky and
+it's just going to start splattering on
+them. Notice, by the way, the F-14 still
+has a pretty heavy amount of agility
+You know what? I think they're doing a
+perfectly fine job. I'm going to assign
+them back to that mission. When you do
+this, by the way, make sure you set that
+as escort, otherwise they won't be
+escorts kind of a thing.
+Are you guys in the correct mission?
+Yeah. How about you? Are you guys in the
+correct mission? Yeah, you're good.
+One of those things that I must have
+right-clicked the wrong button at one
+point.
+Yeah, I'm good. We'll see what happens
+as the mission kind of shakes out here.
+Oh. What a hit. What a hit.
+All right, let's click on them. Looks
+pretty good to me. Looks pretty good to
+me. That's Oh, I thought that was an
+airplane. So, now we're have just doing
+its thing. All right, cool. So far, so
+good. So, one of the problems is that
+Rapier is still alive. Um that's very
+problematic for us because it means that
+um we're going to have to be really
+careful. So, one of the things that you
+can do is you can actually just take a
+guy and have him take a pot shot at as
+he goes by. So, what I'll actually do is
+give him a pre-order to basically take
+that shot. Another reason that'll give
+us an advantage later on is when he does
+go by, he'll kind of hit that Rapier.
+So, don't be surprised, by the way, if
+we lose an F-35.
+Now, notice, by the way, how all the
+aircraft have uh split themselves up
+into every which way. Also notice we've
+detected a couple more bogies, but
+notice there's less of them.
+All right, there goes my initial drop.
+There goes my initial set of drops. And
+notice my F-22s are like, "Me me me me.
+Let me have it. Me me me me." Watch
+this. So, order them to be manually
+hostile here.
+And the F-35 is like, "No, no, my shot,
+my kill, my kill, my kill." Notice, by
+the way, um Iran is just sitting there.
+Oh, the fireworks begins. Oh.
+Uh-oh. Here comes the lag. Once you get
+enough units going at one time, it
+starts to get a little chunky.
+Oh, there's some jerk with an SA-7 or
+something like that that tried to Oh,
+man. Ow. Ouch. Ah.
+Now, notice our strikers return, but
+here's the scariest part of all. If I
+actually were to switch real quickly
+over to Iran, you can see that we saw a
+couple of the airplanes at least for a
+couple moments there basically visually
+cuz of all, you know, just looking up
+kind of a thing like that. All right,
+looks pretty good. Everybody go home.
+Uh-oh.
+Why not, right?
+Really easy way to lose an airplane, by
+the way, is hanging around the uh target
+area too long kind of a thing like that.
+And that pretty much that takes care of
+our scenario here. So, uh this is the
+fun part. This is when we get to take a
+look at sort of uh the results.
+Obviously, we didn't put scoring or
+anything like that. So, that's going to
+be kind of a big aspect of it. So, let's
+go see what we did. We're going to
+switch over to the other side. And one
+thing you'll notice, by the way, is Iran
+continued to launch aircraft at us. That
+simply meant that we must have missed
+one of the access points here. You can
+see most of them are absolutely
+splattered here. But, I'm sure that just
+takes exactly one access point to
+survive and everything's fine. So, I
+think we got, like I said, most of them.
+There's one we missed. I don't know
+which one we missed, but it only takes
+one, folks. And they will just cha-cha
+line aircraft onto there. But, one of
+the things you can do is you can
+actually hit F6 here. Look at how much
+damage we did. If you order him to land,
+you can actually see how much damage do
+we have here. Including several aircraft
+that actually returned to base safely
+here and gives you some pretty good
+times there. All right, let's see how we
+did. So, we come up here, we go over to
+losses and expenditures.
+Let's see.
+Wow.
+That's embarrassing. We we we did
+nothing. This was an absolute
+embarrassment from a tactical
+achievement here. And yes, you're right,
+we did knock that airport and scared
+them. No, this is terrible. Like, this
+is embarrassing. Let's see decoys and
+all of those. Expenditures, let's see
+We used a lot of stuff. But, of course,
+take a look at the cost to the taxpayers
+here. That's the best part.
+See, NATO, none.
+Decoys, none. Expenditures, watch this.
+16 of these, one of these, 37 of those.
+What are they? $800,000 US each. Uh we
+got some 9Xs and 24 paveways. And oh my
+gosh, a cost of a Tomahawk cruise
+missile. Let me go look that up on
+Google for you real quickly here.
+Oh my god, they're almost 2 million a
+piece. So, this entire operation today
+probably cost the United States and
+government and NATO and the United
+Kingdom, you know, half a billion
+dollars for the achievement of
+eliminating, I don't know, six or seven
+airplanes and doing quite a bit of
+damage. So, there's a lot of things we
+could have done to do this one better.
+And like I said, this is one of the
+reasons I love this is we can reload the
+scenario and try again. You know, we can
+individually target individual
+buildings. We can go through. We can be
+very very carefully, precisely allocate
+our Tomahawks so they have an escort as
+they ride in. There are so many other
+things we could have done. But, that's
+the beauty of this program. And that's
+hopefully what you take away. All right.
+So, we're we've gone about an hour or
+so. Uh this is the point in the little
+live stream here. I'm going to ask if
+anybody has any questions or anything
+that they would like to see in command
+real fast. Uh that's definitely
+something I could call up for you or
+maybe you have a question about
+something you're not sure of. This would
+be a great time to kind of throw that
+over in the chat. Like I said, I'll keep
+it a going for a couple of minutes here
+to see if anything comes around. Um
+while that's going on, of course, uh
+we'll have to go back to uh somebody
+whose name was Belugan who was the
+reason why I play this game. And uh
+we'll get that all set up while you
+folks throw your questions in the chat,
+should you have any. If you don't,
+that's fine. Again, you can always uh go
+visit the forums and those folks are
+super duper helpful as far as that goes.
+Let's see here.
+See, United States. Uh
+there we go.
+Uh what do you want? Minot today? We'll
+do Minot Air Force Base. Bop.
+That sounds pretty good to me. Bop bop.
+Swing over to this side.
+Actually, you know what I could do is
+even easier. Uh let's see here.
+Uh just just just fire willy-nilly.
+Don't don't think that you need to wait
+around or anything like that.
+So, we'll let them kind of do their
+little thing here.
+Apparently, I lost a helicopter at some
+Oh, in that case, fine. I'll do it
+myself.
+See, shift F1. Oh, I'm on the wrong
+team.
+Whoops. That would have been
+embarrassing.
+Oh man, that would have been so
+embarrassing. Could you imagine me doing
+that? That that I would have laughed
+pretty hard. Would have laughed pretty
+hard. So, hopefully people in the
+audience have caught my little boo-boo
+All right. Let's go try that again.
+Import export. Oh, I accidentally
+selected all of them. That's probably
+not recommended. Let's go to the United
+States. I'll do ICBM. We'll go back to
+Minot. It's easy enough.
+Grab that. Control shift F9.
+Go ahead and say uh nuclear weapons. Yo,
+let's go. Grab that.
+Let's go ahead and press the shift F1
+and we'll do the old-fashioned way.
+There we go.
+Uh let's see. You get a nuclear weapon
+and you get a nuclear weapon. Uh you
+folks, unfortunately, can't do one of
+these things up here. So, like you can
+like click on one at a time sort of
+thing cuz you can only get one at a
+time. See, you get a nuclear weapon. You
+get a nuclear weapon. You get a nuclear
+weapon. You get a nuclear weapon. And
+you know what? You get a nuclear weapon,
+too. Why not? Okay. So, now, of course,
+when you do that, control shift F9, you
+can just tell them to willy-nilly just
+go.
+So, we'll let them do that and we'll see
+what happens. All right. Um safety guy
+says, "Why do you prefer this over the
+pro version? And uh which US plane has
+the best radar, the rivet joint?" Um so,
+safety guy, um the reason I don't like
+the pro version is a lot of things in
+the pro version, uh the best way to
+describe it is to say that it's designed
+for data use scientists and it's
+designed for data users. And there's a
+lot of little gameplay things that are
+for from an older version that I've
+really really really kind of gotten used
+to that I actually prefer in the
+civilian version than the pro version.
+The pro version is fantastic.
+If I want to run a scenario and see
+exactly how many missiles I used out of
+10 million times, I could do that
+easily, casually, no problem with the
+pro version. And it does a delightful
+job. The other thing the pro version
+does, which is incredibly awesome, is
+the fact that it gives you the ability
+to actually watch uh you can record
+everything and load it into TacView
+afterwards. That's something I really
+wish they would change in a command as
+well so we have it.
+And now, the other thing, too, is the
+way the licensing and some of that piece
+works. Like, I'm not going to describe
+how it works, but basically, it makes it
+a little tricky to actually open. And
+it's not to say if you're part of these
+organizations it is hard, which it is
+not. It's just for me as a consumer it's
+a little harder to use. Um and asking
+about the which US plane has the best
+radar, I that's it's it's going to be
+like anything. It's it's going to be
+highly dependent on what you mean by
+best radar. Uh there are definitely
+radars out there that are fantastic at
+detecting ground units and there are
+definitely a bunch of radars out there.
+The mission end already?
+What happened to all my missiles? They
+just launched.
+That was interesting. Do I have any
+missiles left? Nope, they all got
+launched.
+Huh.
+Did anybody just watch all the missiles
+do that? I would not be surprised if I
+found another bug. I'm famous for that.
+Um so, as far as the rivet joint goes,
+where did all my missiles go?
+Also,
+that's entertaining to watch. Um let's
+go take a look at the rivet joint real
+fast.
+I'll type in the rivet joint.
+Uh 2020. I don't think this thing has a
+strong of a radar, actually. This is an
+APQ It's a ground mapping radar. Yeah,
+you can't do much with that radar. Uh
+the one that I really really really
+really like is actually Where's the E2?
+Where's the new one? The D, I think it
+is.
+Uh this one. The radar in this thing is
+ridiculous. And of course, if you really
+want excessive, I'll go get the Zumwalt.
+That the radar on that thing, let me go
+grab it real quickly here, is absolutely
+positively incredibly good. Like, it's
+it's just it's like cheating. And then,
+of course, if you're a weirdo like me,
+you'd press insert and you type in SPY.
+And oh, that's not the one. Oh, what is
+it? APX?
+SPX? It's going to come to me in a
+second here. X band.
+Uh band radar. I'm going to get it. I'm
+going to get it. Oh, it's going to take
+me a while. I got to remember the name
+of that one. But, basically, it's a
+giant radar that floats and it's it's
+just it can see into space and stuff.
+It's super fun.
+All right, cool. I've no idea what
+happened to my Minuteman. I'm actually
+going to look into that. Kind of curious
+what happened here. Uh let's see here.
+Weapon end game. We'll go ahead and open
+that up real fast. UH
+I'VE NEVER
+OH.
+OH, INCOMPETENCE. INCOMPETENCE. That
+that was on me. That was on me. That's
+kind of thing that happened.
+Uh let's see here.
+I have no reason to do so, but I've done
+scenarios all around the world. All
+right. I'll give everybody a few more
+moments if they like to throw me some
+more questions. Otherwise, I'm just
+going to kind of enjoy what uh what is
+that, you know, two and a half billion
+dollars worth of Tomahawks can do to one
+Uh
+Not much. As a matter of fact, all we
+did is uh dent up the same six pieces of
+tarmac space 100 times. Again, if you
+want to waste Tomahawks, do an automatic
+attack. Otherwise, it's a heck of a lot
+more safer to just uh manually do it
+yourself.
+All right, cool. So, other than that,
+hopefully you guys enjoyed our live
+stream today. Like I said, I usually
+don't do command live streams. It tends
+to be longer and take a little more
+prep. But again, the purpose here was to
+let everybody see what this game is all
+about and give you a fairly good idea of
+what you're getting with it. I have 100%
+gotten all the money that I put into
+this game out of it. Like, no doubt in
+my mind in the slightest. If this is
+something that appeals to you, this is
+like heaven. There's a very very few
+other things. SPX1, thank you.
+Too late.
+There it is.
+Thank you. Thank you. There it is.
+I knew I Somebody remembered. I'm right.
+It had the word X band. I wasn't wrong.
+But yeah, this thing has a radar that
+can see, oh, 2,800 nautical miles. I
+think that's enough. I think that's
+enough.
+But other than that, I'll have a
+wonderful rest of the day, everybody. Uh
+for me, it's the afternoon in the United
+States. I'm going to get some lunch, go
+take the dog for a walk and everything
+like that. Uh coming up next week, uh
+we've got, like I said, every Monday we
+do a release another video. I do the
+best I can to try to keep it sort of
+timely. So, things that I see like on
+forums and Discord and that's usually
+where I'm looking for comments more than
+anything. But uh other than that, enjoy.

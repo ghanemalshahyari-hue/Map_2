@@ -1,0 +1,518 @@
+# C: MO - Flak Changes and Tactics
+Video: https://www.youtube.com/watch?v=kFfhkYXDd2o
+Video ID: kFfhkYXDd2o
+
+hello everyone in today's video we're
+going to be taking a look at some
+changes to the Triple A slash Flack that
+we have over here in command modern
+operations so what I've done is I've
+gone over to the Schulich testing range
+for those of you who are not familiar
+with this region now this is basically
+where the former Soviet Union Russia
+would test out all their latest and
+greatest surface area missile systems
+and hey why not so what I've done is
+I've put together a kind of like a
+little range here kind of a thing like
+that in a huge array of these lovely
+ks-19s for those of you not familiar
+with the ks19 you probably weren't
+flying F4 Phantoms over North Vietnam
+during the 1960s and 70s this is kind of
+the go-to anti-aircraft Gun there's also
+the ks-12 which is a little bit smaller
+and then if you want something extremely
+bizarre not bizarre but like oh my god
+what the heck you had the lovely ks3
+which is a 130 millimeter flat gun these
+things are huge now for those of you've
+been keeping track of the latest and
+greatest changes over in the command
+Universe I mean they've been cranking
+these things out once per week I swear
+they've actually adjusted the way that
+Flack works and instead of you get hit
+and it does one damage now there's a
+different probability a sliding scale of
+how clean of a hit that you had so for
+those of you who are unfamiliar with
+these kinds of weapons basically what
+you're going to do is you're going to
+launch a shell the shell is going to try
+to go within a certain proximity of a
+Target usually an air Target and it's
+going to go slowly and it's basically
+going to shatter with shrapnel now keep
+in mind just like depth charges these
+were not pinpoint precise weapons
+those of you who are fans of all sorts
+of World War II games you've probably
+seen these little flat bursts all around
+you and you probably know it's not the
+one flat burst that gets you although of
+course if you get cleanly hit with a
+piece of flack it's going to take a holy
+and snap you into those who fly to DCS
+if you've ever been smacked in the face
+by one of those you just go and explode
+but the important thing here is it's the
+accumulation of damage over time is what
+makes flax semi-effective now of course
+when we started getting things like jets
+that could travel five six hundred miles
+an hour is so they became very very
+challenging to actually use Flack well
+because it was just it was moving too
+fast by the time this Chapel got moving
+the target was already gone and then of
+course there's the tower getting
+challenges of actually trying to line up
+those shots and make them Land one of
+the things that they changed in a recent
+build and you can see I have a little
+Cha Cha line of aircraft approaching us
+here for my demonstration one of the big
+things they changed is now made it so
+that like I was saying it's not a clean
+hit anymore it could be a dead hit it
+could be a nearby hit it could be a near
+Miss which I'm pretty sure all hits are
+near misses it's not how that works the
+important thing to know though is if I
+would click on one of these just to make
+sure that this weapon is capable of this
+if you're actually going to go down to
+the actual weapon you can see ks19 rag
+that's the weapon you're looking for and
+when you click on it you'll actually
+notice that it's got the special fuse
+proximity now one of the problems with
+Flack back in World War II
+is the gun Crews actually firing the
+Flack had to basically predict the
+altitude and distance of the target when
+the flag shell needed to explode that's
+challenging especially if he didn't have
+high Precision radar which they didn't
+but what they did have is they had the
+old school rangefinders and a bunch of
+calculations of course he had things
+like b-17s all traveling in a big fat
+group all moving at the same speed
+Direction with each other to make it
+easier now what the Americans actually
+created which was a really wild
+invention at the time it was called the
+variable timing shell a VT shell for
+those of you who want to check that out
+later on and what they did is they put a
+radar in the nose of the shell and what
+would happen is as the shell is cruising
+out it's constantly scanning scanning oh
+I just detected a Doppler shift and then
+it'll explode those shells were so Top
+Secret at the time they refused to use
+them in Europe because they were afraid
+that somebody would find an unexploded
+shell and turn that technology back on
+allies which is why they used them in
+the Pacific exclusively just as a way
+because you know if they land in the
+water probably they're not going to fish
+them out kind of a thing like that
+enough chat let's get to the action here
+so what I've done is I've created a
+Cha-Cha line of all these different
+aircraft that are approaching us right
+now now with this aircraft are I'm click
+on one these are md11 drones yes they're
+drones and what I'm going to do is I'm
+going to fly them over the top of our
+lovely little uh kind of range here and
+my objective here is to demonstrate to
+you how altitude has a massive impact on
+the overall effectiveness and so that
+you can see the actual mechanics of that
+weapon as it cruises through so now a
+thousand feet uh that's not terribly
+high for those of you who see him he's
+moving about 250 knots here one thing
+that kind of surprises me is I believe I
+told him to fly a minimum altitude I'll
+go order them to minimum altitude
+unfortunately minimum altitude in an
+airliner is um kind of low let's put in
+zero and 20 feet let's see if it goes in
+lower yes
+just gotta be careful when you do those
+manual ones there all right so he's
+closing down so these Crews right now
+are working out the equations and
+calculations to take the shot you can
+see there are plenty of things detecting
+them I have a whole field here like I
+said I tried to design this pretty
+effectively
+so what's going to happen is let me open
+up the message log here one of the cool
+quick tips here let me go ahead and open
+my message log real fast is if you click
+in the upper right corner upper left
+corner or this is RAW button here this
+is super helpful and one of the things
+that I actually like to do is I like to
+pop it out the reason I like to do this
+like this is because it allows you to
+kind of have a separate screen for this
+enough for those of you who have a big
+screens here works really really well
+but what I want to do here and the
+reason why I'm pulling this down here
+like this is I want to be able to show
+you what the kind of final little
+actions are as this particular
+projectiles start to do their magic now
+remember this guy's cruising at 500 feet
+uh 500 feet is not very high and of
+course there goes the first couple shots
+and we have oh okay pause
+okay so now we took our first shot here
+now what you're going to notice here is
+a lot of data that has just come out
+here you can see our accuracy changes
+you can see the actual house it doesn't
+adjust it for altitude adjustment for
+proficiency aircraft is a weight of this
+and all those things but you're also
+going to notice now that we have this
+little piece this is proximity fused gun
+81 to 150. probability of hit has been
+increased by four Target is subsonic no
+alteration effective probability hit
+this now means our little flag shot that
+we just took here was actually adjusted
+based on the fact that it is a proximity
+shell and you can see that when we fired
+we had little explosion where all sorts
+of stuff came peppering all around that
+particular Target we actually did hit it
+and we did do damage to it now if I
+switch over to the Drone side real quick
+and click on this guy real quick you'll
+notice here I'll see here we want a
+weapon end game here I don't want this
+it's a weaponing game
+you'll see that it's attacking it's a
+missed and miss and miss and miss emit
+no alteration Flack hit but you can see
+we got a result of a one here which has
+caused a little bit of damage here to
+this particular one now this guy right
+here normally those flag shells do I
+believe it's something like one damage
+you can see that our hit here basically
+speckled him now it did not snap him in
+two it didn't blow him to pieces he has
+a total capacity here of damage a pretty
+high it's actually 20 damage points
+which is one of the reasons why but
+you'll notice his engine is a flame from
+that hit that almost barely did not hit
+him I was after too many words in one
+place now if I hit damage control you
+can see I've lost one engine there's a
+reason why I like this aircraft because
+it has three engines and now when you
+lose one you don't tend to lose the
+other but that fire is really really bad
+so let's go switch back over here here
+I'm gonna unpause and you can see
+everybody's joining in on the fun here
+and on basically just speckling this
+thing so even though traditionally that
+one percent chance you pretty much never
+ever ever hit him you can see very
+easily that we were able to do quite a
+bit of damage oh that's the deflection
+shot this one is the cleaned a shot
+though anybody who's firing straight in
+like that is going to be most likely now
+notice here our probabilities have hit
+were increased because of that proximity
+shell but just because we hit it did not
+mean we did a substantially greater
+amount of damage now one of the cool
+things if I ever press shift F1 and
+actually click on this one here you can
+see here that um we got ready to
+automatic fire and you can just go ahead
+and take a shot there one thing I will
+adjust real quickly here is I'll go
+ahead and let them rip and we'll go
+ahead and say let them rip again and now
+we're just going to let them kind of
+fire away one thing we do want to take a
+look at here is this all weapons kind of
+thing this is a fire like this fire to
+meet the Salvo quantity of course we can
+increase on how many people fire at that
+particular Target one thing I'm just
+confirming real quickly visually is you
+don't want them to not not fire
+all right you can see they just saw a
+cruise on by there I don't know why
+they're not off firing seems like a
+pretty clean shot to me but they're
+going to go ahead and do quite a bit of
+damage take a few more shots as he kind
+of passes over there not bad so now our
+next Target that's arriving in just a
+few minutes here was a programmed to be
+one thousand feet so I would not say
+this guy got unscathed he's a 4.7 okay
+so we was able to put the fire out so
+this is actually pretty good so pretty
+good amount of damage but very typical
+for a flat kind of run like that you're
+not going to get through you're probably
+not going to get blown up but at the
+same time as you're probably going to
+get hit a few times so we have this one
+cruising through now I know we've got a
+lot of Misses again I would never want
+to fly through Gauntlet like this and
+you can see the difference in altitude
+has halved the probability of a hit our
+low altitude guy at 500 feet was
+typically getting 12s oh you're seeing
+in here a probability of hits are fours
+uh there's probably a couple of Threes
+maybe a six or two in there and you can
+see he actually got through my entire
+flag feel completely unscathed so this
+guy's coming in at 2 000 feet now this
+one's quite a bit higher and you'll
+notice here that my probability of hit
+is the same exact as it was a moment ago
+you can see we're looking at a four
+percent probability some of those if you
+notice that last couple bursts yeah it's
+spec oh no
+uh it hit him pretty good there let's go
+switch the other side and see what
+happens
+I hope we have one of you have no con
+bomb he's no longer no con uh generic
+weather radar look at how little damage
+this was you know this particular hit
+that we suffered I'm actually going to
+shut this off so you can see it very
+clearly these hits here were not
+necessarily clean hits you can see this
+one was 0.84 this one was 0.1 these well
+0.42.84 again they're Modified by how
+close the actual projectile was to hit
+but notice our first victim here was
+actually believe it or not
+um the guy who was at 2000 feet so now
+we'll go ahead and speed up time a
+little bit here let's continue with my
+little Gauntlet exercise this guy right
+here is a cruising in at I believe he's
+three thousand feet uh he's coming
+through okay notice our probability to
+hit is uh still four percent so even
+though we've added two thousand feet our
+probability of hit has not changed
+dramatically here comes the next chap as
+I come running in is these guys are just
+going ham here and again we're attacking
+5000 feet here five thousand feet notice
+my probability of hit stayed the same
+it's still a four percent change that's
+very important that you keep that in the
+back of your head here because even
+though we've increased my altitude we've
+not necessarily made our probability of
+survival increase so that guy's icon are
+right back uh pretty bad there sixty
+percent four times again the probability
+of hit on that last one was one percent
+now the reason that's important is once
+we cross that threshold of six thousand
+five thousand six thousand feet the
+probability goes from four all the way
+down to one
+now why do we need to know that
+particular piece of information that's
+incredibly important to us because that
+tells us the magical altitude which to
+attack targets that are protected by
+Flack now in this particular Target here
+um we're about pretty high now we're
+about 7 000 feet and our probability is
+one percent whereas if we were like five
+six uh basically between 500 and 5000
+feet our probability hit was pretty darn
+good so one of the things you need to
+keep an eye out for let's go ahead and
+switch sides we'll make a quick little
+adjustment to my scenario here go up to
+add edit sides we'll grab red team here
+we'll actually go ahead and actually oh
+sorry not red we'll go wrap uh normal so
+that way we can actually see all the
+things shooting up at us here so if I
+were to grab for example an F16 a CM
+block 52 I feel bad if something bad
+happens to this one press Ok We're going
+to go load it up with some of course uh
+let's see here that would be a fun
+weapon to use good way to get shot down
+early though this is actually what I
+want uh Blu uh that looks good for me
+so let's take advantage of everything we
+know let's kick them up to afterburner
+Let's also of course reduces altitude
+we're going to put them down to five
+thousand one feet it seems like an odd
+altitude but it is the magical altitude
+here and we'll see how hard it is for
+him to get through the gauntlet so to
+speak I'm gonna go delete those last
+couple airplanes we've already
+demonstrated well beyond a shadow of a
+doubt that what the safest altitude is
+which is a little bit higher so let's go
+ahead and set his properties here we're
+going to drop him down to five thousand
+one feet just like that and we'll
+unpause
+okay now of course we're a little guy
+his little sniper pods are like uh oh
+this makes me uh think of in the uh Star
+Wars there when they're doing a little
+Death Star run the guns they've stopped
+firing so now watch what happens this
+time so we're exactly taking advantage
+of every bit of knowledge we have here
+actually we should go a little bit
+higher here we'll do uh train following
+so that way he actually climbs up to
+5001 feet and as we pass by of course if
+we're gonna order him to do a couple of
+attacks here we're gonna have him fire
+one at that one and we're gonna have him
+fire one at that one and I just noticed
+we need to be at least ten thousand feet
+oh well you'll just have to use your
+imagination here when he does this
+little pass so now we're going to switch
+back to the other team real quick go
+back to red
+and now of course though they're getting
+ready to fire at an F-16 something
+that's going to be an easy target
+all right they're lining up their sights
+the guy's about to squeeze the trigger
+he's gonna pull the string and of course
+Barry comes the first one pause
+now notice here that we are at the
+magical altitudes we're a little bit
+High here about 5000 feet which means
+we're no longer an eight percent
+probability we're a four percent
+probability the other problem we have
+here is you'll notice Target is at Mach
+2 effective Flack probability is reduced
+by the same factor this is the hit
+probability now if I were to go ahead
+and run back down my little drone real
+quickly here he's moving pretty quick if
+we were to kind of make him uh let's put
+him up to 8 000 here just a little tiny
+bit higher six thousand feet we'll go
+ahead and edit him real quick this isn't
+really fair for the guys taking pot
+shots at him right now but again this is
+just for demonstration let's do six
+thousand one and close it off unpause
+all right they're all taking their shots
+here comes the next one
+and we can see now the probability has
+been reduced to a staggering uh one
+percent
+and that is what you need to know about
+all this is that even though we have
+that new proximity fuse once you create
+a scenario like that it becomes
+basically impossible for this aircraft
+to get struck now I know what you're
+thinking you're saying well does this
+work in Reverse unfortunately it does so
+if I for example were to get a Cessna
+152 uh what do they do we want c.152 I'm
+just going to do 152 here to me it's a c
+Dash 152 but everybody's different and
+we were to grab this little training
+plane and we were to fly him through uh
+this should theoretically be the worst
+case scenario here let's see what
+happens here get him going I'll do a
+quick 15 000 feed and assess the 152 who
+are you kidding we'll grab them real
+quick we'll drop them down
+sorry I feel like this is such a waste
+of assessment 152. and we'll also order
+him to go down to a loiter speed there
+because we want we want to make my point
+pretty strong here so now if we swing
+back over to the other side we'll notice
+that these guys have the world's easiest
+shot to make all they have to literally
+do is control and by the way cleans out
+the message log there oh this is not
+very fair for my little 152 over here
+he's just oh
+how did that Miss oh probability fit
+still four percent uh there's a range
+distance there uh let's see here somehow
+we missed again seriously he's a 152 man
+Cup oh there it is let me go pause for a
+second now the reason I wanted to pause
+because I want to flip back over to my
+other side and I just wanted to show you
+here that um our weapon end game here
+very very critical damage you can see
+that we lost our radio but we took a
+little little teeny teeny tiny head here
+so while we basically got nipped at a
+long distance and that's going back to
+that new probability calculation
+if this guy gets through oh there's
+another one
+oh my gosh he's just oh
+I guess that's the end of that 150. it's
+okay though it was a drone there's
+nobody in it and um it had a bad engine
+anyway so they need to get rid of it but
+you can see here clearly the way that
+that works so big takeaways here when
+you're doing attacks through any sort of
+flack speed definitely makes it safer
+for you the next item that's a very very
+important for you is of course if you're
+going to be going through it and you
+have to go through it keep in mind in
+altitude better than 6000 feet
+drastically reduces the probability and
+altitude better than a thousand feet
+makes it a little less probable anything
+less than that and basically you're
+asking for it the other thing that's
+important takeaway here is if you do
+have a multi-engine plane you're
+probably going to get a lot further in
+life enjoy

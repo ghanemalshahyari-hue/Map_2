@@ -1,0 +1,357 @@
+# C: MO - Cloud Cover and Visual Sensors
+Video: https://www.youtube.com/watch?v=f8uR3dLCq0M
+Video ID: f8uR3dLCq0M
+
+Hello everyone. In today's video, we're
+going to be taking a look at the effects
+of cloud cover on detectability. Now,
+one of the things you probably have
+noticed in this game, other than the
+impacts of weather in general, is the
+fact there are different cloud layers
+that can do different things to the
+visibility of targets. Now, for the
+purpose of this demonstration, what I've
+done is I've actually grabbed ourselves
+a P8 Poseidon, which is a very modern
+maritime performance performance, I
+should say, patrol aircraft. And of
+course, the purpose of this thing is to
+spot ships. So, we're going to spot some
+ships. Now, currently we have ourselves
+about um it looks like we got 36,000 ft.
+We're cruising along pretty well.
+Visibility is basically unlimited. It's
+a nice day. It's about 25 Celsius. It's
+an absolutely clear sky. Now, one of the
+things you have to notice about all
+things visual sensors, and this is
+really, really important to know is that
+they have two ranges. And now, we've
+discussed this before, but it's
+important you understand it before you
+get panicky about it. What you'll notice
+here is there's a 20 mile range and
+there's a 30 mile range for our higher
+magnification flur. 20 refers to the
+searching range, meaning anything I'm
+looking for, I can see in 20. 30 means
+I've already seen a target, but I need
+to identify the target. So, unless I'm
+cued by some kind of external sensor,
+such as a radar, the 30 mile doesn't
+mean anything, but the 20 mile does mean
+something. Now, there's something else
+you need to be aware of, and that's the
+fact that our aircraft here has a
+vertical component to its altitude. And
+a lot of people miss this. You'll notice
+here that I'm cruising at about uh
+36,000 ft here, which if you do the math
+on that real quick, is about 7 miles up,
+which means when I'm looking straight
+down, I'm not looking down 0 feet. I'm
+looking 7 miles away. Now, for those of
+you who do math very, very quickly,
+something that I could never do kind of
+a thing. You probably notice that I have
+a now a slant angle that I have to
+consider. There's one more thing you
+have to remember when we're dealing with
+visual sensors. That's the fact the
+Earth is curved. Now, when I back out
+like this, it is very obvious the
+curvature of this Earth. But be
+surprised that if only 1,000 ft up, even
+if I have a 30-mi radius, doesn't mean I
+can see. Now, when you put all of that
+together, we need to take a look at the
+actual clouds themselves. So, if I open
+this aircraft up real quick and tap the
+F2 key, you'll notice that there is no
+clouds visible anywhere in the sky. I
+did that intentionally. So, we have a
+baseline. You can also hold your mouse
+and see here on the bottom that it is
+clear sky, no rain when C0 is basically
+flawless conditions. And the reason I
+chose that is so that we could set up a
+baseline and keep it pretty simple. Now,
+one thing I suggest whenever you're kind
+of fiddling around with the things, one
+of the things I like to do is um you can
+actually come up here and you can time
+scale 1x when you detect a new contact.
+And that is a great way to stop the game
+so that you can quickly see what you've
+detected and how far away it is. So,
+let's go ahead and speed up time here.
+Whoa. I see that did not reduce to 1x at
+all. All right, let me fix it. All
+right, all fixed. You had to set it to
+air contact or ground contact. Contact
+doesn't mean anything. All right, so
+again, clear day. I go ahead and fly in
+over here and I've already detected
+something. I have the Arc Royale and
+it's at a range of uh let's see here.
+This is about 19 kilometers or miles
+nautical miles I should say. I've been
+in Europe lately so I have to like
+readjust. But uh one of the things I
+notice here is if I actually click on
+this contact here, you can see I
+initially picked it up with my eyeball
+at about 18.6 and then just before that
+you can see my high magnification flare
+picked it up. Now we have line of
+sights. We're within our 20 m and we're
+able to pick up the target lickety split
+no problem. or speed up time a little
+bit here. Let me go ahead and do that
+real fast. You can see we picked up a
+second target a little bit closer
+because obviously it's a smaller target.
+This is an Achilles here. And you see we
+picked up at 15 miles. Great. All right,
+let's go ahead and uh take a look at
+things a little bit different here. I'll
+speed up time for a moment. Ah, we've
+just detected an air target. And what
+you'll notice about our air target here
+is it's co-altitude. And you'll also
+notice we picked it up at about 8 miles.
+Now, the interesting thing is we passed
+two airplanes along the way that just
+sailed right by us and we never actually
+saw them at any particular point because
+they were so much lower than us and we
+couldn't make them out from basically
+the clutter on the ground because we
+were so darn low to the ground. Now,
+keep that in mind. Again, 18 miles.
+Remember, 18 nautical miles there. So, I
+just want you to be thinking about that
+a little bit as we mix things up. So,
+the first thing we're going to do is
+we're going to show you the gentle
+clouds. So, let's go up to the top real
+quickly here. I'm going to go to the
+weather options. In the first click
+here, if you were to just grab this and
+pull it one click in here, you will
+notice this gets us light low clouds.
+Now, if I wanted to, I could actually
+click this to the middle and that gets
+us light middle clouds. If I click it
+one more to the right, that gets us
+light high clouds. So, what I'm going to
+do is I'm going to pick light middle
+clouds. Remember, we have to beat 18
+nautical miles. Let's see what happens.
+Ah, now you'll notice something
+different happened this time. you will
+observe the fact that our target here,
+uh, this is our lovely, lovely air
+target, we saw at a distance of about
+8.6 miles, which is what it was before.
+The other thing you'll observe is the
+fact we flew right over the top of the
+carriers and never saw them at any
+point. So, you can see here, if I
+actually click on the PA and press F2,
+that this light cloud 100% blocked my
+view of everything below it. Now, you're
+sitting there going, "Okey dokie. Um,
+that could be problematic. That means
+any form of cloud is bad. Well, it gets
+a little more complicated than that. Let
+me show you why. Let me go and grab my
+aircraft. I'll back them up real quick.
+I'll go ahead and drop this contact. So,
+what I'm going to do is I'm going to
+intentionally fly between the cloud
+layers here. It's going to be about
+12,000 ft. So, let's go ahead and drop
+down to 12,000 ft. I got to back up a
+little bit. It's still a 737. The
+thing's got to descend. So, it's going
+to go ahead and a dive there. I'm
+actually surprised it's not picking up
+speed in the descent here, but that's
+fine. And now, this is where things will
+get a little interesting. Let's go ahead
+and dive a little lower. I think we just
+cut through the cloud layer. Um, let's
+see here. 16,000 ft is our clouds. There
+we go. So, if I press F2, you'll see I'm
+between the two light cloud layers. I'll
+speed up time. You'll notice I picked
+something up. As a matter of fact, if I
+click right here, you will notice I
+identified a target at very, very, very,
+very, very close range. And of course,
+this one is the one at our co-altitude.
+You will also observe the fact that the
+one that is higher altitude we did not
+identify yet. and the one that is at
+lower altitude we did not identify yet.
+So let's go and speed time. And you will
+notice once again the cloud layer is
+completely opaque. At no point did we
+make a visual identification of an
+aircraft carrier. It was just that big.
+Now you're starting to see well so
+basically if you want to think about it
+another way that cloud layer is
+basically a line. It's like a veil or a
+curtain that disables that particular
+altitude. Now let's go ahead and reopen
+our scenario again as we've just done
+real quickly here. Let's go ahead and
+bring back that naughty cloud layer.
+Whoops. Let's go and bring it there.
+What did we decide? I think we decided
+the moderate the middle clouds today.
+Light middle clouds. And what we're
+going to do now is dip under the cloud
+layer. Now, watch what happens. So,
+right now, we can see we have light
+clouds there. If I were to drag this
+thing all the way down to we'll do 9,000
+ft. That's a pretty good altitude for
+us. I actually got to back us up again
+just to get us going. Let's go ahead and
+speed up time. And you'll see we pick
+something up right away. And of course,
+that will be our friend. This guy is the
+12,000 footer. You will notice that I
+was able to see into the cloud layer
+above me because I came so darn close to
+the actual aircraft itself. Let's go
+ahead and speed up time some more here.
+Ah, we detected something. And what
+you'll observe here is we have an
+unknown air. It's not an aircraft, it's
+a surface target that is chilling here
+at our maximum visibility range. Our
+slant angle is actually gone away. So
+again, very, very minimum. It took us
+just a second to basically swing the
+camera around, identify it as the Arc
+Royal with a bunch of Harriers on the
+deck there. If I speed up time a little
+bit more here, we can see that we've
+easily identified these two because
+we're underneath that layer. Now, notice
+we did not pick up any of those aircraft
+that passed us. The only one we saw was
+the one that was just a little bit above
+us. Now, where things get interesting,
+let me go ahead and rewind us a little
+bit here. Let me go grab this. As you're
+kind of understanding a cloud layer as
+being basically a curtain, watch what
+happens when you combine a cloud layer
+with actually using some kind of cued
+sensor. So, if I were to go to weather
+again, let's go ahead and get that
+naughty cloud layer. That looks good to
+me. I'm going to keep him up here, but
+this time I'm going to turn on his
+radar. If you remember what I said
+earlier, you'll remember the fact that I
+said that if we have a radar cued
+target, we can basically look in at that
+spot and have a better idea of seeing
+it. Basically expanding our search
+radius. Now, what you'll notice here is
+it took about a millisecond for us to
+identify a large building we haven't
+even noticed yet. And we immediately
+have identified these two aircraft
+instantly. Or not aircraft, surface
+vessels. I'm going to keep getting that
+wrong today. And we're able to identify
+them because of how sophisticated the
+radar is on board of the PA. It is a
+very sophisticated phase to raid radar.
+I could basically read the lettering off
+the side even though it's a radar. And
+you can see clouds didn't do anything. I
+was able to see it very quickly. But
+what you also notice is the fact I don't
+see any aircraft on the deck. So what
+we're seeing here is basically a
+synthetic aperture radar image of these
+two surface vessels. Hey, I got it right
+that time. And we have no ability to
+basically see them through that cloud
+layer. So we know they're there. We know
+what aircraft they are. And I did it
+again. See there? We know what kind of
+surface vessel they are, but we can't
+actually look at them. And again, that
+cloud layer acts as that kind of opaque
+sort of nastiness there. So what we'll
+do here is we'll go ahead and pass right
+over the top of them. And you can see at
+no point because of the clouds. Again,
+they're invisible. It' be kind of neat
+if there's like a visualization of the
+clouds or something later on. You'll see
+never ever ever. As a matter of fact,
+when we passed into the blind zone of
+the radar there, you can see they
+actually dropped out. It's also worth
+noting we did not see those other
+aircraft at any point during the
+scenario. There he is. The reason we saw
+this one, of course, is because it's
+basically at our altitude above the
+cloud layer. Now, let's go ahead and
+open up our scenario one more time.
+Let's grab it real quickly. This is
+going to be blue LU. Looks good to me.
+And now, what we're going to do this
+time is we're going to change the
+weather. And we're going to bring in the
+worst weather. So, I'm going to go ahead
+and drag this down to full width clouds.
+And you'll see it is thick fog 0 to
+2,000 ft. And if I press the F2 key
+here, you can actually see solid cloud
+at my altitude, solid cloud down here,
+and then of course nasty, nasty, nasty
+fog here. So if I do something really
+absurd, like say, "Hey, could you fly at
+minimum altitude for me, please?" This
+will be interesting. I'm go speed of
+time. Ah, exactly. We never once saw the
+vessels we passed by. Now you're sitting
+here going, "Okay, I get it. I get it."
+So basically, if you treat it like it's
+an opaque curtain, you're doing fine.
+Yeah, you are. as a matter of fact, and
+the thicker the cloud, the harder the
+older radars have to see things through
+them. But one of the tactical
+considerations you now have to realize
+is that the clouds are like that. You
+might be in a situation where ships
+could legitimately hide as long as you
+don't have any electronic emissions of
+any kind. That also means if you're
+doing an anti-ship operation, imagine
+how nasty it would be if a bunch of
+Harpoon missiles, which basically are
+invisible until the last second because
+of the cloud coverage, were suddenly pop
+out. You'd basically win the war before
+anybody could turn a radar on. Just to
+give you an idea, the other thing you
+need to keep in mind as well is if we're
+doing any laserg guided bombs, they're
+worthless in this weather. We can't
+point the laser at something you cannot
+see. Enjoy.

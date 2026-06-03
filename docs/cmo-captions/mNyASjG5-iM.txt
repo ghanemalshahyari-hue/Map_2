@@ -1,0 +1,568 @@
+# C: MO - Playalong Tutorial 3 - Air-To-Ground Strike Using Patrols
+Video: https://www.youtube.com/watch?v=mNyASjG5-iM
+Video ID: mNyASjG5-iM
+
+hello everyone welcome to part three of
+our playong tutorial 2 I think that math
+works out so this would be video six
+right two * three yeah good enough or
+maybe five I can never tell so in this
+video we're going to be showing you how
+to do the mission that we've been
+playing along with and again the mission
+is available down there in the comments
+below if you like to grab it and kind of
+do what I do so to speak keep in mind we
+have some stochastic stuff going on
+there that's a fancy word for it's
+random so sometimes things won't work
+out exactly the same which is why it's
+important to save your game frequently
+on whenever you're playing games
+especially like the
+so what we have is just a quick review
+here is we have a relatively
+straightforward scenario where we're
+trying to strike an Airfield and do as
+much damage to it as possible again you
+can read the description and all that
+stuff if you're looking for it from the
+previous video or just hit like I said
+hit up the scenario I'm not going to go
+over all of it but what we're going to
+do today is we're going to strike the
+target using a different technique uh we
+did it manually the first time that went
+pretty well we did it with missions last
+time which is a ton of fun and we were
+extremely successful but it was also a
+little tedious and this time we're going
+to do a completely different strategy
+we're actually going to strike the
+target using an air to ground Patrol now
+you're sitting there going why would
+anybody do that and it actually is one
+of the fun ways of doing these kinds of
+scenarios and you'll see exactly why
+when I do it so I'm going to go ahead
+and close that little screen right there
+our Mig 21r here is doing a nice job
+these are cutting through the atmosphere
+for those you remember from last time if
+I go ahead and click on him real quick
+we do have this nasty cloud cover which
+has made the scenario far more
+challenging than it would be otherwise
+if we had totally open terrain or open
+clouds this would be really easy to do
+but the reality is we don't
+which is good because it makes means we
+got to earn it so to speak so we're
+going to do is we're going to use a
+patrol mission to destroy the target
+this time and we're going to use Target
+prioritization as a way to basically
+Define what inside the target region is
+something we actually want to blow up
+now this is cool because basically they
+choose what they want to drop bombs on
+so to speak and it means he needs a lot
+less organization on our part the
+downside is you have very very little
+control over what gets hit and know
+you'll see what I mean so first things
+first I'm going to go and press the nine
+key here cuz I want to be able to see
+the whole base here and I'm going to
+Define an area around this target region
+couple different ways to do that uh you
+can do the old fashioned way where you
+create the individual points uh you can
+do kind of the cool kids modern way to
+do it or of course you can also just hit
+control right click and go ahead and hit
+Define area rectangle and what I'm going
+to do is I'm going to drag a box around
+here I'm going to let go it's going to
+say do you want to create an a Zone
+entity I'm going to say yeah I'm going
+to call this one the AO area of
+responsibility press the Okie do so this
+is going to be our tack region that
+we're going to be using in this Mission
+here and this is going to work pretty
+well cuz we have pretty good
+intelligence obviously there's some
+pesky AAA there that's going to make our
+lives very very miserable in this
+Mission we know all about that as you're
+probably familiar if you've been
+following along for the last two as well
+so what we have to do is we now have to
+set up a mission to do as much damage to
+this region as possible so what I'm
+going to do is I'm going to go ahead and
+pause I'm going to press the f11 key
+actually let's be more specific control
+f11 there we go and I'm going to call
+look for targets I'm going to go ahead
+and set this to a patrol I'm going to
+say this is an asuw ground Patrol we
+don't want them attacking the fish
+vessels so we could and we had some fun
+with that last time but this is fine the
+way it is right here some I'm going to
+press okay press okay so now we simply
+go ahead and decide what aircraft we're
+going to use to strike the Target now
+this is kind of fun because we have a
+lot of aircraft to use for this purposes
+so for this one I'm going to keep it
+nice and easy I'm going to grab all my
+suco 33s my j15s I'm going grab all of
+my flounders I'm not going to touch my
+Badgers and I don't want to touch the
+Badgers and the reason why I don't want
+to touch my Badgers is I'm keeping them
+for something special uh you'll see what
+I mean so with that all set I'm going to
+go my mission settings here and we're
+going to go with slightly smaller groups
+here we're going to be attacking groups
+of two now you'll notice here it says
+1/3 Rule and it's going to try to keep
+1/3 of aircraft on station at all times
+you could totally use this strategy here
+it just means you're going to have more
+time between strikes for me I'm shutting
+that sucker off because I want to be
+able to basically spam this place all
+with one quick attack one thing that
+I've learned uh from any military
+strategy is you don't want to spread
+something out uh you want to be very
+very precise very very pinpoint about it
+so my fate side is two that's a good
+size for here let's see here flights
+refueling that's fine that's all good
+now this is important if I go all the
+way over here you're going to notice I
+can Define things like their speed and
+altitude I can also do their attack
+throttle I could say their attack
+distance and altitudes and you notice it
+even says load out altitude which is
+going to be various here this isn't
+going to work for us because as you
+recall that cloud layer is kind of in
+our way so what I'm going to do is I'm
+going to make sure on station there at
+Cruise power I don't want them to be
+basically hanging around if anything I'm
+going to kick them up to military power
+so they're not teing is the word I'm
+going to use here so Transit altitude's
+fine station altitude I'm actually going
+to drop this significantly low I'm going
+to select a custom altitude of if you
+didn't guess it was going to be 6,900 ft
+you missed the last videos there attack
+altitude you'll notice it says various
+we'll come in here we'll set this one to
+a cust out as well we'll do 6,900 ft do
+you realize how incredibly useful that
+is we can set the altitude we want them
+to be striking at and they're going to
+stay at that altitude if anything we
+could this up to After Burner if we want
+to be even safer but this is glorious
+and this is going to save us a lot of
+frustration later on so mcon we can come
+over here obviously if they run out of
+fuel we want them to immediately break
+off and go home when first unit of
+flight reaches fuel State because this
+is a scenario where we're basically um
+nothing's going to be shooting up at us
+that much I'm just going to order them
+to leave the group to return and I'm
+going to do the same thing with this one
+as well for weapon state I really want
+them to leave their group and head back
+home if they run out of ammo but leave
+everybody else to keep causing damage uh
+weapon state pre-planned obviously going
+to do uh use all the good stuff that you
+have and that should work great I do not
+want them strafing the ground whenever
+they get low they're going to get shut
+down that's just how this problem
+goes everything else looks pretty good
+looks pretty good looks pretty good uh
+mcon settings if I wanted to
+theoretically I could turn on like their
+Active Radar or something I'm not really
+stressed about that if anything they
+really really don't need Active Radar
+because they're just going to be
+striking Targets on the ground let's be
+realistic The Radars aren't that
+sophisticated they're not going to be
+able to see things small so now we get
+to the hard part of this whole exercise
+this is is fine I'm going to leave this
+stuff alone what I'm going to do is go
+to targeting priority ah here comes the
+magic what we need to do is we need to
+prioritize what targets we're going to
+be wasting our ammunition on today and
+the way we do this is pretty easy simply
+come down here and press create it says
+any any any
+default I feel like the language on this
+needs to be changed a little bit I mean
+I appreciate what they're going for here
+but it's I don't know so I'm going to
+come down here and press add item and
+I'm going to go ahead and select my
+priority now if you're playing in the
+scenario editor like I am you're at this
+beautiful check boox which I really wish
+was here all the time if you click this
+it only locks you to available units in
+the scenario if you don't have this
+checkbox it means you're playing this
+Mission properly good for you so what
+I'm going to do is I'm going to come
+here and set this to facility and it's
+going to say Target subtype um I'm
+interested in anything related to our
+runways actually no we're not we want to
+avoid runways uh gr taxiways access
+points that's good stuff but you'll
+notice we have all these lovely
+buildings and structures right here and
+this is exactly what I want so I'm going
+to go to structure open it's going to
+say what did you want to hit tarmac for
+this one there's only one option here so
+I'm going to leave it as any first
+Target is structure open I'm going to
+press the add button delightful so now
+I'm going to go ahead and add a new one
+we're going to do the same thing we did
+last time we're going to set this to
+facility we'll come down here and let's
+see I think we said vehicle building
+surface would be the next priority you
+can see we have a bunch to choose from
+including a hanger which would be
+Priority One so I'm going to go ahead
+and add that one there now with those
+two buildings as my priorities we know
+that we're going to waste our ammo first
+on anything that's open such as charmx
+space easy kills and of course we're
+going to use our secondary ammunition on
+anything that is an aircraft hanger
+everything else after that part is
+completely free game which is exactly
+what we want to do here we want to make
+sure that their party starts and
+basically they're going to do all sorts
+of nasty damage to these things then
+they can start having fun with everybody
+else and inconveniencing AAA and stuff
+like that that's all going to be things
+we're going to deal with a little later
+on now one of the interesting problems
+we're going to have is if you recall we
+do have some AAA that's going to be
+taking pot shots out of us if we go by
+now if we wanted to be careful here one
+of the things we could actually do is if
+we go down to add item and go to
+facility don't forget to check that box
+before you do what I just did one of the
+things you'll notice is AA a is an
+option here and it actually can show you
+which different AAA options we have so
+if I actually add the AAA you'll see
+here that our number one priority is to
+destroy Triple A first to see how this
+is immediate I like that then of course
+we wanted to do the structures I'll move
+that up there so here we go Priority One
+AAA priority two open structures tarmac
+bace priority three is going to be
+hangers everybody else is going to be
+our priority Target afterwards which
+means everybody's going to gang up on
+the AAA first and then they're going to
+destroy all the useful targets just like
+we had in the previous Mission now as
+you recall if you come over here you'll
+probably remember because we set up our
+mission to be that sweet altitude of
+6,900 ft we're going to be spending the
+least amount of time in the danger zone
+so to speak and that actually makes for
+a really really good scenario for us so
+these folks are all set that's that's
+all I had to do there so let's deal with
+our friend the Badgers now one of the
+things I want to do here is I do want to
+set station time I want them all to get
+there at 10:00 uh let's do 10 we'll do
+1010 and the reason I want to do that a
+little later is because I do want to
+make sure that uh we have basically time
+to get there now the next thing I want
+to do is I want to use the
+Badgers now the Badgers are glorious
+area of effect weapons as you probably
+saw from last time I really want to make
+sure the Badgers get there first start
+the party in their own creative Badger
+sort of way and then go ahead and return
+to base the reason I want to do this is
+because they have a good probability of
+accidentally hitting the Triple A if we
+spread their attacks out enough so I'm
+actually going to close this real quick
+I'm going to press the nine key to
+switch back to this mode I'm going to
+click on the air base press contr f11
+I'm going to say Badger this badgering
+the witness and I'm going to set this to
+a land strike Mission now I said I was
+going to do this one with Patrol
+missions this one's special I could
+theoretically use bombers dropping
+single bombs at a time on targets that's
+a little goofy but people do stuff like
+that especially me but U for this one I
+just want to use an area effect attack
+to kind of soften them up a little bit
+so I'm going to grab all of them I'm
+just got to toss them in there like that
+and we're going to set them to flight
+size one I want them to really really
+spread out I also want them to go ahead
+and uh basically single axis basically
+split all over the place go everywhere
+and the reason I want them to go
+everywhere and just sort of spam is like
+I said I want to use an area of effect
+attack here so that they basically
+soften the target up before everybody
+shows up with their proper Firearms
+that's it that's all we needed to do so
+now what I'm going to do is save again
+have we learned anything here let's see
+auto save in case I messed up for the
+video again that sounds like a proper
+save name for something I would do all
+right let's see what happens all right
+now the interesting thing here is I
+haven't even finished with my Mig 21 yet
+oh here we go again that won't be the
+first of 500th time hey the mig21
+actually got through without getting
+shot at that never happens nice job
+mig21 you can go home and take a nap
+good job good job so the interesting
+thing here is here comes my Badgers
+first if you recall my Badgers are
+basically area of effect weapons so
+there they go and again what I want them
+to do hang on and you can see this like
+I said I am running the beta version you
+are going to be seeing stuff like that
+but as you probably notice my Badgers
+did a beautiful job basically hitting
+everything but what they aimed at which
+is exactly what I wanted them to do to
+my mind these guys are
+shotguns and they did a delightful job
+of it too so I'm very proud of them good
+job team good job so we're going to do
+now is I'm going to send them all home
+and U remember we have an order to
+basically get there I'm going to go
+double check the missions to make sure
+they launched okay
+looks like uh we have a Time on station
+1010 did I put the wrong time in uh I
+ordered you to take off at 1010 maybe
+they couldn't get there in time so I'm
+just going to go ahead and clear out the
+time here there we go that looks good to
+me good and that should get them
+launching and again if you ever have an
+issue where they don't seem to want to
+launch or something like that the
+quickest and easiest way to fix that is
+if you actually click on the air base
+itself you can oh nope never mind
+they're going one of the things you can
+do is you can actually manually launch
+them and that tends to kind of get them
+motivating it's just kind of a command
+thing like I said lots of little stuff
+St you got to be thinking about there
+they go all right here we go here we go
+here we go here we
+go okay let me go and slow down time
+here and again this you can see how much
+quicker this was compared to some of the
+other options all right so let's go get
+a look at one of these aircraft as they
+go rushing in here this one looks pretty
+good to me I like that flight Alamo 27
+no to 6,900 fet isn't that so cheating
+all right here he goes crossing the edge
+of the island here i' be very curious
+he's actually going for the tarmac space
+which is awesome cuz the tarmac space is
+definitely one of the targets we wanted
+to hit apparently there's only one thing
+of AA a remaining here so one of the
+things I will do on my way back oh there
+they go there they go see as you can see
+they're perfectly prioritizing the
+Target that I desired we still have a
+problem though because one of those
+triaa guys are still very much alive and
+he's probably going to open to fire in
+just a second oh there he goes uhoh
+let's see here is this one going for our
+friend the I'm actually going to change
+the order here I'm going to order him to
+attack this and we're a little out of
+range but that's okay I just want to
+confirm that that triple A is out of
+commission I don't want to take any
+chances as this one comes around again
+so there goes our
+lgbs and looks like ah manual attack see
+the manual attack got C canceled there
+so of course we're going to come ripping
+it again gets another pass let's see did
+you folks drop all your stuff
+already man these folks are great they
+did exactly what I told them to do have
+forbid they do something exact of course
+that AAA is still active and I do not
+care for that at all let's uh wait until
+we get a little closer he's just kind of
+wasting his time but like I said I want
+to do this mission as cleanly as
+possible and you can see we completely
+obliterated That Base real quickly here
+now one of the cool things you can do is
+if you're ever in a situation where you
+want to do kind of like an ad Hawk
+Attack pause your game what you can do
+is you can click on the unit press U
+which un assigns them press F1 and then
+go ahead and select the target you want
+to hit in this case now I can just come
+in here and basically preset the
+altitude 5,000 ft we'll go up to After
+Burner on this one and the cool thing is
+this unit will immediately say engaged
+defensive and you can see they're
+twisting around right now basically
+lining up I don't normally recommend
+pointing straight at Triple A with a
+rocket attack but for this case I'm not
+taking any chances there we go rocket
+attack is on the
+way and we got a hit I don't know if it
+did enough
+o now the cool thing is uh they'll
+actually come back around for a second
+pass all right they're still engaged
+defensive now the cool thing is I'm very
+curious as to where all my LGB Shooters
+are ah there they are they're coming and
+one of these guys of course as I
+promised you a moment ago you can see
+that he did take some damage because of
+the fact that he did point at AAA now
+they're going to come around real wide
+do they have any ammunition left they do
+so they're going to take another
+pass and here it
+comes watch all the Rockets come in oh
+it's gone all right now watch this so
+now I'm going to select the unit again
+right click I'm going to go ahead and
+order them to go ahead and assign to
+Mission I'm going to call this look for
+targets onpause and now they're back on
+automatic mode so I was able to hit the
+target that I needed to hit just like
+that now my LGB shooters are going to be
+here in a few moments uh like yeah here
+they come again staying at that lovely
+altitude that's kind of low for them
+obviously our Transit altitude should
+have been a little bit higher so I
+should have changed that to 36,000 just
+to save a little bit of fuel but that's
+okay meanwhile you can see our rocket
+crews are happily hammering the easy to
+hit Target while we're waiting for our
+friends here they come here comes our
+LGB Shooters and there they go doing
+their job perfectly look at that bam bam
+oh man this is like cheating this is
+downright
+luxurious remember that crew earlier
+he's still smoking a little bit from
+taking a shot from a 130 mm round but
+he's doing he's making it look good here
+comes the rest of my Shooters here comes
+the
+lgbs as you can see we've completely
+evaporated all the stuff that was on the
+ground it com some more rocket fire you
+can see they're spreading their targets
+out a little bit here and I did an
+absolutely glorious job here I think the
+only one left is uh gate number nine
+here what are you doing up gate number
+nine uh let's see here he's just having
+a fun time going against the ammo
+bunker nicely done nicely done all right
+all right rtb buddy you've done your job
+success so I'm going to go ahead and
+pause there I'll bring up our losses and
+expenditures obviously we got a lot they
+fired quite a bit of stuff at us but you
+can see we weren't quite as successful
+we only managed to get all of the
+aircraft just kidding we were 100%
+successful and not only did we get all
+our aircraft but you can see we did a
+lot of damage now the interesting thing
+here if we go down to here zero losses
+so this entire scenario which took us
+almost 45 minutes to set up we completed
+in I don't know about 20 minutes which
+is actually pretty darn impressive we
+only had to pause a couple times and
+that bug I know in the next beta they're
+going to fix it so I'm not worried about
+that so as you can see the final method
+of using attacks like this works great
+we were able to very quickly effectively
+do all the damage we want in things like
+this we use kind of basically missions
+work fabulously in the event that you're
+trying to do something where you want to
+um for example do close air supports it
+is the best at least in my opinion of
+playing this game enjoy

@@ -1,0 +1,392 @@
+# C: MO - Attacking Multiple Ground Targets
+Video: https://www.youtube.com/watch?v=fh1QmQVLiBs
+Video ID: fh1QmQVLiBs
+
+pull up pull up oh where else up hello
+everyone in today's video we're gonna be
+taking a look at a common problem that
+I've seen in a bunch of different places
+and that's getting the most bang for
+your buck on a strike on an Airfield now
+when a lot of people think of a striking
+an Airfield you know they try to
+approach things kind of the traditional
+let's build an individual strike Mission
+you know we'd come in here and grab this
+little group in a Time One strike
+Mission here we'd assign one strike
+Mission here and we kind of work our way
+down some other folks what they would do
+is they could come in here hit the good
+old-fashioned control f11 key and strike
+this go switch this over to land strike
+or something like that you know I'm
+gonna set a monthly Mission off for a
+second here grab everybody like that you
+come to 96 targets you go ahead and
+remove them like that you go to Mission
+settings that you'd come in here and you
+definitely do independent action here
+really really important that you do the
+independent action because if you don't
+do that you run into a problem where
+basically everybody is going to track
+the same Target which is what you don't
+want so you know you come here well it's
+able to do a 30 second separation I'll
+do a pretty compressed approach here and
+you can click off axis attack here
+doesn't make that make a difference the
+same course you would do is you'd come
+down here you'd set a set time on Target
+in order to make it a little bit tighter
+let's say 1930 it's going to take an
+hour to get there so we'll call that 20
+we'll call that 21.00 and zero zero and
+we go ahead and just click somewhere
+else real quick and that should work
+perfect nice everybody should be
+generated as a matter of fact if I zoom
+out by looking at the strike we'd be
+able to see the exact aircraft that are
+kind of planning that little operation
+there let's see here do we have you yeah
+we have you so we can get a pretty good
+feel of what this uh chaotic strike is
+going to be and then what you do of
+course is how you'd make sure you go
+over to omcon WRA you did to WRA and
+you'd very very carefully change it so
+that when you drop the bombs you don't
+drop everything on the same Target so
+that helps us spread the Weaponry out a
+little bit so that it's just a little
+bit more effective of a strike here
+let's go set the runway facility that
+looks pretty good mobile Target I don't
+think there's any mobile targets uh the
+other thing you could do too is again
+make sure we're not strike the runway
+so what I'm gonna do is I'm gonna pause
+and we're just going to evaluate the
+effectiveness of my little strike here
+don't worry about the B-52s for now
+they're just going to kind of pass over
+and do a bunch of donuts all right let's
+see here actually what we could do is we
+could go double check what our atos is
+the actual takeoff time is that would
+have been smart at my point actually you
+boys can head home and we're going to
+need you just a little while there we go
+ATO when are you guys taking off let's
+see 19 uh 12 19. awesome no big deal
+speed up time a little bit and here they
+go sweet beginning the holding patterns
+they form up and they're on their way
+look at that beautiful formation here
+now because I selected independent aim
+and because I kind of spread everything
+out so that it wasn't going to strike
+all at once theoretically when these
+strike their target they should
+basically be well spread out and strike
+targets almost randomly so let's go take
+a look at what they did here now you can
+see they're all targeting the exact same
+six facilities and we can see another
+groups coming in from the front here on
+what are they targeting here they're
+targeting a couple of front facilities
+here looking pretty good nice little
+spread nice spread oh we have the next
+group of aircraft I'll come in from this
+side they're doing a really nice job by
+the way they're getting an a for
+coordination here and then we can see
+the next group comes in from that side
+and remember these are the same f-15es I
+don't have like 10 groups here this is
+just 24 that I'm using and then last but
+not least I have one group that comes
+out Russian in here like this uh doing a
+little deed I'm making a big mess of
+things and um not a bad strike honestly
+that was that was actually better than
+expected I'm not gonna lie I didn't
+think it was going to work that well uh
+let's see here damage uh three F5s and a
+bunch of F5 not bad not bad at all so as
+you can see a pretty straightforward
+operation of course what we could do
+like I said is we could select the
+independent groups here and create
+separate missions for each independent
+group you're certainly welcome to do
+that but um and when you do things like
+that that's going to take a long time
+and it's a very micro managing so let's
+take a look at a slightly alternate
+strategy here so what I'm going to do is
+go back to my mission here and grab Bob
+blue team press OK and we'll grab myself
+my B-52s now I'm gonna be using B52 DS
+today because I like to have a little
+bit of fun and to me the correct B52 is
+the b52d so I'm going to grab a total of
+four of these I'm going to point them in
+the general direction of the Target and
+what I'm going to do
+is instead of letting them go
+willy-nilly I'm gonna go ahead and pause
+here let me show you what I mean by
+willy-nilly do you see how they've kind
+of put themselves in this kind of little
+tight formation here is what I'm going
+to do is I'm going to make them into a
+slightly wider pattern now if I press
+the 9 key now you can actually kind of
+see how wide their targeting zone is
+versus the targeting size of our actual
+Target we're going to be hitting this is
+actually a pretty darn good pattern to
+use here what I've seen some people what
+they'll do is let me show you I'll come
+in here you're gonna hit the F4 key go
+ahead and pause is what they'll actually
+do is take the individual aircraft and
+they'll set their positions to basically
+be on top of the aircraft that's in the
+lead so basically you're acting this
+entire unit as one complete unit so
+let's go ahead and unpause real quickly
+there so what they're going to do
+especially if I cheat and use move see
+how they're like this making this nice
+tight little cluster here this is
+exactly what I want so what I'm going to
+do now is I'm going to press shift F1
+I'm going to click on creature Air Force
+Base here now we have eight um I believe
+we have eight each let me confirm that
+real fast uh see 32 divided yes got to
+be eight so what I'm going to do is I'm
+going to select a bunch of things I'm
+going to blow up and I'm going to sign
+one big bomb each one two three I'll see
+this four five six seven eight so I'm
+gonna go ahead and come down here select
+the weapon allocate just like that come
+over here to this one one two three four
+five six seven eight go ahead and
+allocate go to the next group of targets
+one two three four five six seven eight
+obviously we gotta switch to the next
+B52 allocate and then of course I'm
+gonna grab the last group uh one two
+three four five six seven eight sweet go
+ahead and grab this one here and go
+ahead and allocate weapons uh it looks
+pretty good to me sweet awesome let it
+rip so now what I've done is I've
+allocated a separate bomb Target for
+each bomb on board now I'm not a
+bombardier but I can tell you I have
+just given this person a workload that
+it's it's a legendary amount of workload
+here and keep in mind we're a pretty
+high altitude speed up time just a
+little bit so we're approaching our
+target range looking pretty good looking
+pretty good we're gonna overfly remember
+concentrating and standby for a massive
+explosives notice they're coming out at
+all sorts of silly angles at all sorts
+of strange times here so now what I'm
+going to do is I'm going to order them
+to circle the base I think we didn't
+drop everything you never get them all
+in one pass especially if it's a big
+airport but what I did do is if you look
+carefully is it's about to make a really
+big mess of this hair forward here
+remember these are just mark 84s this is
+about as many as I dropped with those
+pinpoint f-15es a few minutes ago the
+only difference is each one's been
+independently targeted
+[Laughter]
+who needs ballistic missiles when you
+got a B-52 now keep in mind I still have
+a couple bombs to drop here so I'm gonna
+let them kind of do that real fast he's
+going to drop his last couple I don't
+think he had any other ones a little
+more speckle and don't worry about the
+accuracy by the way these are just
+unguided Bombs all right folks you have
+done a beautiful job please rtb and
+let's see how unsuccessful we were now
+remember we killed about what was it I'm
+gonna call between six and nine last
+time so let's see what my unguided not
+tactical B-52s were able to achieve here
+so we're looking at a 65es three f5es
+and another nine
+tf16s so we have essentially doubled our
+Effectiveness for half of the ordinance
+now the reason this is so interesting is
+because when you do strikes with those
+f-15es there's nothing stopping you from
+doing that as well and what I actually
+see people do is something looks a
+little bit like this
+so what we're gonna do is we're going to
+come over to this little place where
+those handy dandy f-15s we go ahead and
+press F6 here I'm going to grab all the
+f-15s I'm going to click on the launch
+as group button so what is this going to
+achieve well this has got to be kind of
+amusing so give it a couple moments
+they're going to sit there circling
+pretty viciously for a little while here
+because they have to get 24. and I'm
+going to go ahead and lock on my target
+here now remember I have
+almost three times as much explosive
+potential here so uh that's pretty
+significant so we're going to stack the
+deck a bit here I'm going to order
+everybody to drop down to a little bit
+lower altitude here get us a little
+closer to the environment that we want
+to annihilate here and what we're going
+to do is we're going to order an
+automatic attack at the last second now
+I know you're probably sitting there can
+I manually Target every single one of
+those bombs yeah you can but there's a
+slightly easier way and we're going to
+show you that real quick here so I'm
+gonna go ahead and pause Ctrl shift F9
+and I'm going to order these guys to go
+ahead and go Nutters when it comes to
+other plotted course when attacking now
+if I do a side view of this real fast
+you need to see this to believe it kind
+of a thing and again sometimes the fun
+weird strategies are the most fun
+strategies so you remember in World War
+II when they used to have like the big
+walls of B24 is doing this well I've got
+a big wall of f-15es and we're going to
+do the same thing here so I'm gonna go
+ahead and grab here and I'm not going to
+order my attack until I'm much much
+closer I want them to keep the bombs
+mid-flight so they independently Target
+pause so now here's the weird part so
+I'm going to go ahead and now press Ctrl
+shift F9 here we're going to go over to
+WRA Mark 84s so now notice so when I
+come over here to the WR for the land
+contact you see how it says how many we
+need I'm going to order one unit only
+this is a really important concept for
+us because it means nobody can double
+team our Target uh means everybody's
+just going to drop their bombs kind of
+willy-nilly which means we get 24
+different targets right now I'm going to
+make it even better you'll see what I
+mean so I'm going to set this to one
+unit I set this one to one unit as well
+like I said very very very critical
+component here otherwise my little spam
+will not work correctly and the other
+thing is each one of these has four Mark
+84s so what I'm going to do is actually
+order them to only fire two of these
+weapons at the targets as opposed to
+their entire stick now the advantage
+here is what's going to happen is
+they're not all going to engage the same
+Target and this is where it gets absurd
+they're not all going to be allowed to
+fire at the same Target so I'm going to
+press F1 and I'm just going to go ahead
+and do a standard attack go ahead and
+pause there
+all my f-15s are now going to start
+randomly targeting so if I zoom in a
+little bit you can see how they've got
+themselves all ready to go they're going
+to start closing in now notice that
+they're staying mostly clumped together
+this is a desirable characteristic for
+this silliness here but also notice that
+each one's starting to pick you know
+different targets some of them are
+starting to lose altitude I'm actually
+going to set you to Auto here
+unfortunately all of these chaps I
+decided to lose a bunch of altitude we
+could have manually overwritten so now
+Watch What Happens
+when those bombs get airborne they're
+still in the air meaning nobody else are
+allowed to attack those other targets so
+now as each one starts to deposit its
+bomb since the other bombs are still
+Airborne they're not allowed to continue
+their attack until such time that
+everything has been deployed so I'm
+going to go ahead and press F1 here
+unfortunately these guys are going to go
+a little wide but that's okay so now
+notice I had maximum spread on that
+strike I had people attacking in almost
+every possible Direction here so either
+going to come swinging back in here
+they're going to start lining up for
+their attacks and then they're going to
+start dropping the second round of bombs
+now keep in mind my timing was a little
+off here but unfortunately I'm not going
+to go back and not play with it too much
+this is a pretty straightforward
+demonstration when you watch it
+now look at that
+notice how beautifully spread out the
+attacks are they are everywhere
+throughout this base and I've only
+dropped down you know two-thirds of my
+bomb so far I still have quite a few to
+go
+they're gonna come swinging around and
+kind of do the thing the next group is
+going to come in they're going to drop a
+bunch more look at this spread out all
+over the place they're not grouping up
+on one particular Target the next round
+comes in they start speckling the place
+again spreading it out real nice they
+head back to base all right so let's
+take a look uh your expected numbers
+here we have to beat something like 12.
+what was it it was a 20 I don't know
+it's 15. so we got uh let's see three
+six seven eighteen eighteen nibs oh my
+gosh we almost got every single aircraft
+so hopefully this video was helpful as
+far as seeing how you can manipulate the
+WRA a little bit and kind of play keep
+in mind in the real world uh they shoot
+back at you so you can't sit there and
+leisurely blink away but at least you're
+able to see so the whole idea that you
+can't just waste all your bombs at one
+target and you don't have to go nuts
+with the micromanagement of each
+individual Target enjoy

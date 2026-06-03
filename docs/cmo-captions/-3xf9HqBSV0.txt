@@ -1,0 +1,211 @@
+# C: MO - Reference Points Tips
+Video: https://www.youtube.com/watch?v=-3xf9HqBSV0
+Video ID: -3xf9HqBSV0
+
+hello everyone in today's video I
+thought we'd be answering a question
+that I saw and I was trolling around the
+Discord the other day I was going to do
+something on that new cargo but I know
+that they're kind of still playing with
+it so I didn't want to mess with it too
+much so we're going to take a look at
+reference points today so a couple quick
+tips with reference points uh first of
+all when you need to create a reference
+point make sure you're on the right side
+before you create it so in this case I'm
+actually using nature as my example to
+keep things a little bit simpler the
+second thing I'm going to watch out for
+is when you create reference points you
+can do so by coming up here going
+reference points you can add new
+reference point the other thing I like
+to do is press Ctrl insert and then just
+kind of click my mouse when you first
+place a reference point it's going to be
+unselected now you're saying oh that's
+not that big a deal well let me show you
+what happens here
+all right cool all right let's go ahead
+and make a box out of these oops now you
+can see we got that one bonus one that
+we forgot to select or you run into this
+situation where you cross select a bunch
+of them and they go whoops and you want
+to kind of quickly deselect them and ah
+it starts making me absolutely insane
+let me go ahead and shut off Sentinel
+there and make it a little bit easier
+for you so the other quick tip I just
+wanted to share with a reference points
+I'm going to delete those is if you hold
+down the control key and hit right click
+you can actually Define areas right away
+so for example I can define an area
+rectangle drag a box ta-da I can press
+Ctrl delete to get rid of them control
+right click I can say Define area Circle
+and we're going to be drawing from the
+center of the circles in that case shame
+on me for doing such a bad job on that
+one let me go ahead and see if I can
+prove upon it there we go and that looks
+good enough for me the one downside to
+using the circle is obviously you've
+created quite a bit of extra data that
+we need to calculate if we're working in
+areas but you can see just how quickly
+and easy I go bang go ahead and create
+it
+so what I'm gonna do now is I'm going to
+go ahead and create two separate areas
+I'll go ahead and create this one on
+this island here why not and I'll go
+ahead and create myself a second area
+over on this set of violence here so
+many of you probably experimented a
+little bit with the reference points
+manager which is this really neat tool
+that gives you the ability to basically
+create no nav zones and environment
+zones exclusion zones pretty much all
+that stuff that had separate menus
+before but one of the other things I
+really really like about it is it has
+this little down thing down here for
+tags
+now you're saying wait why would you why
+would you need a tag like what what's
+the purpose of that well this gives you
+the ability Now to create things
+specific so for example um let's say I
+want to create a tag for a waypoint 106
+here I can also do something simple like
+saying on North East uh I'll say I'll
+call it a West way point of course I
+can't tell my direction some days West
+WP so go ahead and add that as one of
+impossible tags here actually before you
+do that you have to add that as a
+possibility so now we have Westway point
+now I also know that Waypoint 113 is
+also Westway Point somebody come down to
+113 go ahead and add that little detail
+as well I'm going to go over to 106 so
+go ahead and actually 110 I'm sorry add
+that as a little Waypoint and now we
+have these two that have been tagged for
+us so what I'm going to do now is I'm
+going to go ahead and deselect all these
+chaps here we'll go and grab these two
+we got 107 and 108.
+grab 107 we'll create ourselves a brand
+new tag we'll call it Eastway Point woo
+or emergency power wrong thing grab that
+one we'll go ahead and grab a 107 and
+we'll say that that goes ahead and
+becomes tagged as well pop that on there
+real fast then we'll grab a 108 here and
+go ahead and make that tagged as well so
+now what I've done is I've created a
+bunch of these little tags to make it a
+little bit easier to organize my
+specific waypoints so let's say I want
+to go ahead and I'll go even further I'm
+going to grab this whole zone I'll go
+ahead and create a new tag I'll call
+this a West Zone just as an example
+create that go ahead and add them as a
+tag we want to add them to I should say
+of course make sure you selected the
+correct elements when you do this so
+This actually uh does that make sense
+106 uh 106 is not one of those let's
+remove the tag shame on me for not
+clicking properly oh so we need 110 we
+need a 113 and we need ourselves 112 and
+we need 111. let's go ahead and tag all
+of those with West zone so now you can
+see that that zone has now got to solve
+an extra tag as well so let's go ahead
+and come over here go ahead and minimize
+that grab these two here 106.7 109 108
+106 you're not going to be known as East
+Zone
+and that is a new tag let's go ahead and
+grab 80106 I need 107 I need 108 I need
+109. let's go ahead and handle this all
+as tags and now you can see all these
+items are tagged by what particular
+purpose they have again keep in mind you
+can rename these any which way you want
+now the reason I love this feature is if
+I'm creating like a combat Air Patrol I
+can go in here and tag a specific area
+as being the cap area in addition to the
+ASW area for example if depending on
+what you're trying to achieve now let's
+say I go ahead and deselect everything
+real quick I'm going to create a quick
+area so now I can just go oh let me just
+go shuttle these boxes off leaving just
+the West Zone waypoints visible oh solid
+let's go ahead and grab that right there
+that looks pretty good come over here
+you know I'm actually going to change
+the color of these because um why not
+Green's cool and now I've gone ahead and
+flagged them if you look on the map now
+they're actually conveniently
+coordinated for us for that purpose so
+now I can shut them off I can grab my
+East Zone and grab all my e-sonies and
+now we're gonna go ahead and make my
+easoni homies uh I'll go with this kind
+of a pink color and just like that I can
+now quickly identify what's going on in
+the field now if I wanted to create an
+area I can actually come over here and
+create an area for example I want my
+East Zone to be just on kind of a
+regular zone so go ahead and anything we
+want to add all points we're going to go
+ahead and validate it make sure it's
+okay area validation is fine come over
+here and we'll kind of say the East
+because why not and of course if we
+wanted to we could come in here and you
+know go all the way with that and go
+ahead and apply a certain color go ahead
+and press the save notice it didn't grab
+any of the points here you have to
+actually select the points in order to
+have them added on the map but you can
+see now that I've selected that area go
+ahead and validate it it's going to be
+perfectly fine go ahead and save that
+zone and out I now have a zone that I
+can quickly summon just by playing with
+the tags as you can see right here and
+one of the neatest things you can come
+down here and actually transform zones
+like if I wanted to make that an
+exclusion Zone I could just press second
+go pop so now I've gone ahead and
+converted it into an exclusion zone so
+now I can go in here and change all my
+violators and all my properties and if I
+want submarines and stuff so it's a
+super handy way to deal with the amount
+of reference points you're going to have
+you know in a typical strike Mission if
+I'm doing like an aero land sea land I
+think I had two lands there I just like
+land strikes what can I say It's Not
+Unusual to have you know 40 50 of these
+different reference points and be able
+to tag them and change the color it just
+makes your life so much simpler so other
+than that enjoy

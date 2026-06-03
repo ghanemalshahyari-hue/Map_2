@@ -1,0 +1,379 @@
+# C: MO - Protecting High Value Targets with Prosecution Zones
+Video: https://www.youtube.com/watch?v=y0vcyujzgRE
+Video ID: y0vcyujzgRE
+
+hello everyone welcome back to a lovely
+New England today's video we're going to
+be taking a look at how you can create
+escort missions for your very very high
+value targets such as awax units or you
+know fuel re fuel refueling tankers and
+stuff like that and of course as we're
+exploring this so we're going to get an
+opportunity to explore some other things
+that sometimes come up uh when you're
+trying to develop these escorts in such
+a way that it makes most sense as far as
+not wasting missiles not putting
+yourself in danger not putting the high
+value targets in danger and we're going
+to kind of go take a look at those one
+at a time so what we've been done is
+we've been asked very very nicely to
+come fly over here and kind of go to
+awak come home so this is kind of where
+our awaks are supposed to be so we're
+going to send them out there as well as
+get ourselves a little air fuel
+refueling kind of going on there as well
+and we know that the enem is out there
+somewhere and they're going to come try
+to attack our awax and uh we have to
+detect them of course and uh naturally
+we're also going to have to you know
+engage them and unfortunately to help us
+today we have a bunch of F-15 Seas we
+have the nice ones so um we don't have
+an infinite Supply and there are plenty
+of enemy airplanes out there so it'll be
+interesting for us to try to figure out
+so the first thing I'm going to do is
+something that seems a little scandalous
+I'm going to create a single
+Waypoint now when people think of doing
+awax tracks or refilling tracks They
+always make a line like this that is
+completely unnecessary especially if you
+are doing a side looking Airborne radar
+it's actually simpler to use a single
+point because what'll happen now is awax
+is going to fly out here and he's going
+to just do air Donuts basically until
+he's U ready to come in for a landing
+sort of a thing so what I'm going to do
+is I'm going to come in here I'm going
+to go ahead and rename this chap control
+r i was foring one it is awack stay here
+kind of a thing we can also call it the
+Anor points so next one I'm going to do
+is I'm going to create myself a
+prosecution area I'm going to go ahead
+and make it 70 Mi wide which is a pretty
+good size here and the easiest way to do
+this of course is control right click
+add an area and you're just making a box
+around that Center Point all right let's
+see here are you sure you wanted to
+fight it yes yes I do and it looks
+pretty good to me I like that very
+nicely whoopsies I always forget to grab
+that one all right let's see here cppy
+weather so we'll go ahead and take
+advantage of that as well so let's go
+ahead and get our escorts all squared
+away first and then we'll get our awax
+and all that so our escorts here of
+course we're simply going to call um
+prot it's technically an HV cap H cap or
+half cap I'm just going to call HV cap
+that's simple enough Patrol aw press
+Okie looks good to me so what I'm going
+to do is I'm going to Define this region
+not as a patrol area but as a
+prosecution error uh area I should say I
+shouldn't say error that's what comes
+later when I mess something up but the
+key thing here is that this particular
+zone is where we're allowed to engage
+weapons but in order to make this work
+one of the things you have to do is you
+have to make sure investigate unknown
+contacts outside the patrol area is
+allowed that way they stay in the
+prosecution area but they stay at the
+patrol area it's an important point the
+next thing I'm going to do is shut off
+this one for weapon range I don't want
+them to do that um the only reason You'
+use this is if you don't want to define
+the prosecution Zone and you want them
+just to attack things that in weapon
+range from the central point I don't
+really want that I want them to be able
+to kind of run around cuz wait you see
+what's coming at us today a flight size
+I'm going to go with two uh the other
+thing I'm going to do is I'm going to
+order them to do four on station at a
+time uh this way we always have a couple
+in case we have to Target both
+directions next thing we want to take a
+look at is number of aircraft to
+investigate unknown contacts one engage
+hostile contacts so we're going to keep
+this to one flight uh that seems a
+little scandalous here but the reason
+we're doing that essentially is for the
+purposes of limiting how many directions
+we can run after the bad guys in and
+you'll see what I mean when we get to
+that point so I'm going to go to mquan
+where kind of a thing and one of the
+things I'm going to change is I'm
+actually go over here and if you look
+real real carefully we have our weapon
+state now one of the mistakes we always
+make is we go ahead and say shotgun so
+our missile fires one aim 120 and then
+he turns around and flies home
+completely wasting all of our effort and
+um being basically useless so the
+question is do we want to do Winchester
+which basically means keep firing
+missiles until you're out of missiles or
+do we want to do shotgun which is um
+keep firing um missiles until you're out
+of the expensive ones so to speak and
+it's kind of one of those things let me
+pull this to the side so you can take a
+little bit better look at this problem
+now the problem is the defaults are down
+here which is useless for us they
+basically fire once and leave uh we
+don't want that we want them to go ahead
+and basically keep shooting so for this
+one um there's this lovely thing here
+that says weapons have been expended
+allow easy targets of opportunity to wer
+or Strike weapons in air to air aha the
+reason I like this one is we're not
+going to get dangerous so we're not
+going to fly into close range with our a
+NES a9s are great missiles but guess
+what the enemies got stuff that's really
+good too so we want to be very mindful
+of that the next thing I'm going to do
+and this is really scandal I'm actually
+going to allow my aircraft to leave a
+flight when they reach their weapon
+state you're going why would you do that
+again think back to my logic here if one
+guy fires off six of his M1 120s and is
+out the entire flight including any
+missiles still sitting on the rail will
+leave which is not so good for us we
+need to be able to use that one thing we
+want to do too is a will K and Jag we're
+going to be using a lot of M1 120s today
+now the last thing I want to do with my
+guys is I want to go ahead and limit
+what they can do as far as firing so I'm
+going to grab my fif go ahead and dump
+into the mission now when I go to mcon
+and I go to R you're going to notice
+here that I have the opportunity to
+Define my properties excuse me U one of
+the things you'll notice here is whe
+there are contacts is how many missiles
+we're going to fire one's fine and then
+of course the range now if I click this
+little box you'll notice my range
+defaults to maximum range worthless so
+what I'm going to do is order it to be
+50% now some people of course are going
+to sit here going um is it better to
+just come in here and Define this as dlz
+um it can be um that's not B No Escape
+Zone is the one everybody thinks of
+that's fine um the key thing here though
+is this works pretty well especially for
+the Am ram especially at the altitudes
+we're probably going to be engaging
+things inside of our mission all right
+that looks pretty good I'm happy about
+that I'm happy about that just kind of
+doing kind of a mental thing looks good
+to me looks good to me okay so now we
+have to do the fun thing and now we have
+to Define that Central Waypoint as our
+position where we're actually going to
+be traveling to patrol area and add all
+points isn't that great so now I'm going
+to go Dum down here and hit repeatable
+Loop which means my f-15s are going to
+come here do power Donuts until
+something comes and says hello then
+they'll engage it and they'll come back
+and they'll do the best they can not to
+waste opportunities so now we're going
+to go ahead and set the awax mission up
+control f11 just like always uh wacky
+wax I don't know we can call just about
+anything press support uh looks good to
+me and press the oky do button uh we're
+going to try to keep one unit on at a
+time cuz we're also going to be using
+our Strat tankers here so Boop all these
+extremely expensive targets basically in
+one spot I don't need to change any of
+these things in here this is going to
+work fine continuous loop is fine rtb
+uncomplete all those things are fine but
+what I do need to do is I need to turn
+on the radar one of the problems we
+could have here is awax doesn't do much
+A lot of people go by the way you come
+in here and you say the active emission
+is only one on station the key reason
+people like this button a lot is because
+it's basically going to be designed so
+that they don't turn The Radars on early
+and give away like the aircraft carrier
+or something like that not critical not
+critical not for this particular Mission
+so we're ready to go so I'm going to go
+ahead and unpause speed up time a little
+bit a bunch of f-15s are going to come
+ripping
+out radar and and a couple things happen
+here my f-15s of course flip on their
+radar immediately um I handy D any my
+expensive e3s and stuff like that they
+start making their way towards the
+target region and we're getting pings
+and pongs like crazy I notice
+immediately we have some targets coming
+in from this direction I noticed we have
+some targets coming in from this
+direction which is cool cuz you'll
+notice what will happen here is my f-15s
+now are only going to engage things that
+violate the safety zone uh meanwhile of
+course is they're kind of flying and you
+can actually see whatever group of
+airplanes this ah Mig 21's a oh I
+wouldn't do that fire were you cuz
+what's going to happen is my f-15s are
+doing the little power Donuts here it's
+actually pretty cool because you can use
+these guys as awax now cuz it's just
+going to go into constant circle like a
+radar does and you could basically use
+this as a cheap way to use awax without
+actually having awax but what'll happen
+is these guys are going to enter into
+the don't come in here Zone and the
+moment they do that my f-15s are going
+to panic now one of the things you have
+to be ultra careful with and uh this is
+one of the downsides that you have to
+always be mindful of is because my awax
+didn't get here first the these chaps
+are attacking this group first um if
+they attack this group first of course
+we're going to lose all of our awax uh
+this is one of those excellent ways to
+basically prevent this strategy from
+working we basically caught them with
+their pants down because they weren't
+ready for the engagement yet so I'm
+actually going to order them not to do
+that and go ahead and do a Power donut
+here and that's a new technical term by
+the way and they're going to go chase
+this group down Mig 23s are far more
+dangerous than Mig 21s here as well so
+let's go ahead and see what
+happens you can see everybody's getting
+into position here my f-15s with their
+incredible thrust doing their thing
+cranking and
+dragging of course uh keep in mind
+teammates might do things differently so
+always be kind of mindful about that
+there they
+go and that's why H you got to be
+careful turning away I'm actually going
+to change that policy because I did not
+like the way that worked at all the
+crank and drag was much too aggressive
+we'll just or crank if possible I like
+that cool we're just going to change his
+logic a little bit hey we got
+one and we got two we got
+three nice good job everybody good job
+so now what's going to happen is
+everybody's going to head back to the
+awax stay here point you can see them
+all kind of queuing up right now for
+that particular 2D sort of thing and
+they're just going to spin here and uhoh
+here comes more bad
+guys isn't that fun it's like a big
+radar scope to spin it around so here
+they come again our little um enemies
+are sneaking in oh there's one of them
+you'll notice one of the F-15 groups
+immediately breaks after them and then
+of course the other F-15 group is going
+to go chase them down as
+well notice that other5 group turned
+around and they're rushing very very
+rapidly after our Mig 23s this is the
+great thing about having a
+15s
+oh
+ow
+I wish there's a little kill counter on
+the right that'd be really amusing to
+read oh one really nice thing we've got
+going here as well is the fact that we
+have a nice little air refueling unit so
+between battles if we wanted to get a
+little kind of uh whatever you want to
+call here we could actually order them
+to get a quick refuel and of course so
+when they refuel um they're just going
+to run over there gas up a bit and
+they'll have enough time to kind of get
+ready for the next thing keep in mind
+they will Refuel on their own we don't
+actually have to order them to refuel
+all right here they go
+again notice they change guards we we
+this is what they call a very busy day
+for F15
+kind how many of these things they going
+to launch at
+us enjoying the sound
+effects what the heck how many of these
+things did they have oh here comes some
+more oh yeah there it is there it
+is
+rad I feel like this goes on for a
+while
+[Laughter]
+come get
+some we
+win all right let's see how that went
+and as you can see very clearly it's a
+perfectly valid strategy so let's say
+they lost 48 airplanes and um zero we
+lost zero airplanes so it shows you just
+how effective this strategy is some
+people make this area smaller but that
+gets dangerous if you start dealing with
+enemies with long range missiles some
+people actually break this into two
+zones like a North Zone and a South Zone
+um that's fine um that works perfectly
+good you can see um let's see here 64 48
+divided 64 R a220s by the way had a 75%
+kill rate which is fantastic also notice
+by the way we did discharge a few of
+these a9s because of the guys who got a
+little too close so as you can see a
+little bit of strategy a little bit of
+uh kind of playing with the missions and
+we can protect those high value targets
+very efficiently enjoy

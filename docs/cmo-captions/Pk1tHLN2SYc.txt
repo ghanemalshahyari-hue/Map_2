@@ -1,0 +1,417 @@
+# C: MO - Using LUA to simulate loss of communications at a certain distance.
+Video: https://www.youtube.com/watch?v=Pk1tHLN2SYc
+Video ID: Pk1tHLN2SYc
+
+hello everyone in today's video we're
+going to be taking a look at how you can
+use the out of comms command
+in order to intentionally simulate the
+limitations of radio communications
+so first things first now let's go ahead
+and create a home base
+so we're going to be doing here is
+basically creating a unit and then that
+unit if any unit gets too far away from
+it
+it drops out of contact so we can create
+some really interesting scenarios with
+this so let's go ahead and call this one
+blue team and we'll go ahead and grab
+the other team as well go and call them
+red team why not
+keep it nice and simple we'll
+automatically assume these two are going
+to be hostile to each other
+go grab this one real quick throw that
+one over there too we'll go ahead and
+grab red team here now let's see here
+who do we want to pick on today
+and we'll go pick on now how about new
+work here this seems like a pretty good
+spot to kind of mess with things
+go ahead and add uh so just i kind of
+think of a kind of fun thing let's see i
+think a refinery might be kind of fun
+let's do a couple other oil refineries
+here you know when i think of new jersey
+i think of oil refineries mostly just
+because i spent so many times
+walking through not walking i should say
+driving through 95 here
+so i'm gonna go over on this side i'm
+gonna go ahead and create our own little
+home base here which is gonna act as our
+kind of location there's a quad
+reservoir which means i'm none too far
+away from ah there it is right there
+let's go ahead and create ourselves an
+airfield just for the purposes of our
+handy-dandy demonstration here
+um this is a gigantic airfield so i'm
+actually going to put that one here
+we're going to go ahead and call some
+courses west over afb
+and at westover air force base so we're
+going to go ahead and throw in some f-16
+cms because
+everybody knows that is my aircraft that
+i do everything to
+let's go ahead and get a group of four
+of those again that's just for the
+purposes of demonstration but i think
+you folks will appreciate it
+all right let's go ahead and scoot down
+here i'm gonna go ahead and get
+ourselves some gpu 38 sounds pretty good
+uh what does that get us for a range
+though we need about 150 miles beautiful
+let's make it happen
+all right perfect so now what we're
+going to do is we're going to set up the
+script that's going to do all the fun
+work for us how we can click on pause
+so normally what would happen is if i
+launched all these aircraft to attack
+these refineries down here in new jersey
+they do a great job of it and we'd be
+able to keep track of them the whole
+time however in the real world
+we actually have a very difficult time
+being able to keep track of where our
+units are as well as where the enemy is
+a lot of a fog of war i guess that's
+what i'm going to call it so i'm going
+to create a system of fog of war
+using a lua script so i'm going to go up
+to editor i'm going to pop
+over to the script console and let's do
+it to it so basically the way this is
+going to have to work is it's basically
+going to have to pull
+all of the units on our side let's say
+every 30 seconds or so we'll use that
+with an event
+and then every 30 seconds it's going to
+scan to see if any unit has exceeded
+let's say a 75 nautical mile range
+from western air force base if it has
+it'll drop it off the communication
+network if it has not
+or it comes back into 75 nautical miles
+it'll throw it back onto the
+communications network to simulate the
+fact that we create a mission we have no
+idea how things turn out
+so let's have some fun with this so the
+first thing i'm going to need to do is
+i'm going to need to get
+all the units that are going to be on
+our team here now the reason i have to
+do that naturally is because
+without them i'm not going to be able to
+um be able to pull through all them
+obviously in very large scenarios i
+really don't recommend this particular
+strategy it's going to get messy real
+fast
+let's go ahead now make sure that worked
+real quick now print units
+do a right parenthesis and it worked
+perfectly yes
+okay so now we're going to do is we're
+going to create our home base so i'm
+going to go ahead and type in
+why not center and we'll call it we'll
+make it a local variable so i'm going to
+say local
+center equals vp get unit so this is
+going to be
+my center object and this is going to be
+the one we're going to be checking so i
+call the westover air force
+base i'm going to say no name equals
+west over spell correctly be careful
+here afb
+all right perfect let's print center
+just to make sure that works too
+i always like to debug as i go perfect
+yes this is working i love it
+so now let's go ahead and create a loop
+that goes through all the units inside
+of our team here
+and it goes ahead and pulls each one of
+them individually so the units
+do go ahead and come down here and type
+an end okay so what do we need to do
+the first thing we need to do is
+determine how far away we are
+with this particular unit we're pulling
+against my center point
+so that's pretty easy to do we'll use
+the uh we'll go ahead and create a local
+variable
+we'll call it disk because it just seems
+to be pretty easy and i'll use the range
+tool actually it's tool underscore range
+my bad and i'll go ahead and say
+v.g.o.i.d which remember is the item
+inside of our list
+comma our center.guid remember the
+center is going to be the unit that
+we're actually using here
+go ahead and close that sucker off real
+quick it looks pretty good we'll go
+ahead and print
+disk again i just want to make sure
+everything's working okay so far here
+we don't need to echo but i do want to
+see the numbers perfect the distance is
+all zero because
+it's where you're starting from nice
+it's working so far
+now we need to get logical so we're now
+going to say if the distance
+is bigger than 75 nautical miles
+then let's see here what do we need to
+do here first thing we're going to have
+to do is we're going to have to tell
+that unit to
+drop off the commas grid fortunately
+there's an easy way to do that i'm just
+going to type in
+send edit i'll use the set unit command
+and we're just going to say guid equals
+v.g.oid remember this is the
+unit that we're looking at right now
+comma and this is a command you might
+not have seen before it's actually
+really really helpful
+out of comms
+equals true and all that's going to do
+is automatically disconnect it from our
+communications network we're not going
+to get any responses back from it
+so then i'll say let's see here else
+logically if um
+we are less than 75 nautical miles we
+want to make sure we are in orbit here
+or in our communications
+so do send edit set unit guid
+equals v.j id comma out of comms
+equals false because we're going to come
+back into communications if we get close
+enough
+and we're just going to type in an end
+there now we should be in pretty good
+shape so far i'm just kind of doing a
+mental checks for my own sanity and i
+can see my boo-boo right there
+boo boo corrected okay before this we're
+going to be able to test to see if this
+works so let's go up to the editor
+let's go over to our scenario options
+here right now make sure communications
+disruption is an option
+otherwise uh this isn't going to work so
+let's go ahead and give this a try
+so i'm going to go ahead and grab a unit
+now let's put it 83 nautical miles away
+we'll go ahead and get a f-16 because
+you know because science
+let's see here in f16 cm i'm gonna get
+one of these i just need this for
+testing purposes looks good to me
+let's go ahead and run the script and
+see if he drops off our communications
+network here
+uh-oh it worked perfectly yes
+so now what i'm going to do is i'm going
+to move him within 75 nautical miles
+remember he's still off the
+communications network
+i'll go ahead and press run and he's
+back on the communications network
+excellent so our script works so let's
+go ahead and give this a try now
+so what i'm going to do is i'm going to
+go up to events real quick event editor
+we'll go to events we'll go ahead and
+create a new event and we'll
+check for comms check for comms make
+sure this is repeatable naturally
+we'll edit triggers now we're going to
+do this on a regular amount of time
+uh usually 15 to 30 seconds is fine i'll
+tell people to do every second that's
+way too fast every 15 seconds
+looks good again the more aggressive you
+are with this
+the slower your scenario will run so be
+very cautious with it
+so let's go ahead and say every 15
+seconds edit conditions
+we need to say scenario started start
+sounds good started go ahead and close
+that one down go ahead and add that one
+in
+and now we need to put our lure script
+right down here so grab blue
+script we have all the hard work we did
+right here go ahead and create a new one
+um check for comms now lua
+go ahead and paste that sucker in there
+and press the ok button close that out
+we're going to go ahead over here and
+press
+out of comms for now lua i'm gonna press
+ok and i've already goofed up because i
+forgot to actually add the action cool
+all set
+so that's all set our console is all set
+we have our thing all ready to rock
+let's just do a quick idiot check here
+make sure this is more than 75 nautical
+miles
+perfect okay so to test our script here
+what we're going to do is we're going to
+do a quick strike mission on our little
+refinery zone here
+uh strike refinery seems pretty good
+we'll do a land strike look
+look looks good let's go ahead and add
+all our targets over to this we're going
+to say pre-planned targets only
+our 16s are going to do all the hard
+work here and everything looks good
+looks good looks good
+let's see radar usage for iep to
+winchester sounds pretty good to me i'm
+not really going to change anything else
+here
+we don't need an off-axis attack we're
+just testing things now of course to
+make things
+interesting for us and again to make a
+little bit of variety in our mission
+let's go ahead and add a simple sam site
+here just to make things a little bit
+more fun for our people coming out here
+we're going to keep it pretty
+straightforward let's go ahead and use
+an s8 we'll probably use an a model
+because it's kind of actually we'll do a
+b model you know why not
+we'll make it interesting we'll get a
+polish b model here go ahead and grab
+that sucker go ahead and flip it to this
+mode
+so now it makes things a little bit more
+exciting for us and a little bit more
+variety
+all right let's see what happens good
+thing i should probably save to make
+sure i'm not about to really goof up
+here but yeah stuff happens
+all right so every 15 seconds or so
+remember we're pulling to see if there's
+any unit more than 75 nautical miles
+away
+so usually two and a half minutes exceed
+and now here comes my f-16
+he's just taking off we got our buddy
+here look at how nice that plane looks
+like
+you can keep your f22 and f35 i'll take
+one of these now notice how we're
+getting good information here we're
+getting immediate information
+i'm going to go ahead and switch over to
+my thing we can watch these guys
+basically proceeding off the edge of the
+map i mean if we want to have a little
+bit of fun too
+we could actually come in here and let's
+go ahead and add a radar oh no that is
+not my radar of choice i always use the
+tips 43 that's just me
+let's go ahead and grab that one real
+quick go ahead and flip it on so we can
+keep an eye on what's going on over
+there if
+for some reason we lose contact with
+these guys now let's go ahead and see
+how far away we are so far 60
+so theoretically right when they cross
+that line or so where they should be too
+far away to be giving us useful
+and they're gone now where it gets
+interesting is
+the units are still there they've just
+dropped off of our communications
+network
+so they're not dead they're just um
+invisible early
+so this is interesting because if you
+actually come over here you'll see the
+no com
+shows itself from all the way over here
+there's a flight here
+like we have its flight plan and we
+actually have a rough idea of when we
+saw it
+and every once in a while which you'll
+actually see is you'll see these little
+yellow blips
+as they come back into existence and are
+re-correlated onto the previous units
+so unfortunately for us um we're
+completely in the dark you know we just
+sent our mission and we have no idea
+what's happening right now
+so um let's hope things are going well
+here speed up time a little bit
+oh and they're coming back sweet now
+notice as soon as they
+re-entered the communication network
+they told us how the battle went and it
+looks like
+if you take a quick look here they
+spotted the sae they mangled one of the
+refineries they mangled another one they
+mangled another one
+and there's still four of them left so
+our mission was a success
+and so was our script now i think this
+is a pretty cool script you know i can't
+wait to be using this more and more
+apparently they fired 12 s8s at my f-16
+crew here but my f-16 crew did a great
+job
+and they just told us how much fun they
+had back down there so hopefully this
+script helps you out i'll go ahead and
+i'll post it back up on the little
+screen here for those of you who kind of
+missed it a little bit earlier
+i really wish you could change the size
+of the font here because that would make
+things a little bit better
+all right we can zoom in a little bit
+control plus control z
+there we go so anybody who wants to see
+my script here remember you have to put
+that into that event
+so that it repeats it every so many
+amount of times so that it goes ahead
+and makes it successful
+now what makes this insanely cool is you
+can actually design this so there's more
+than one
+center unit so you could basically have
+like a relay airplane like you know an
+ee3 or something like that or the ec
+130s i think they're called
+and use things like that as a way to
+sort of link everybody together kind of
+like a data lake so this can get crazy
+other than that enjoy

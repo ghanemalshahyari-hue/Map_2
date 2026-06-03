@@ -1,0 +1,538 @@
+# C: MO - IFF
+Video: https://www.youtube.com/watch?v=0R6-5oQR-l0
+Video ID: 0R6-5oQR-l0
+
+hello everyone in today's video we're
+gonna be taking a look at something i
+was reading over on discord and now that
+was trying to identify aircraft without
+really having the proper tools to
+identify them now the reason i thought
+this would be kind of a fun scenario is
+that we can go over to sam simulated a
+little later on to kind of see how the
+technology has evolved a bit making it a
+little bit easier to do so let's go
+ahead and take a look what we have here
+so i have myself a good old-fashioned
+and tps43 obviously i use the tips 43
+for everything too bad and right next to
+it i have myself a lovely little patriot
+battery here ready to rock it's pointing
+in this direction of course you can see
+we're chilling over here in the northern
+island of new zealand today because you
+know why not so what we're going to do
+is we're going to pause things here and
+now we're going to allow our little
+radar here to see what's going on so the
+first thing i notice is i'm being jammed
+oh next thing i notice is as everything
+starts to populate as i see a bunch of
+bogeys start to appear on my screen here
+all right let's take a look what we got
+so first things first i got this guy way
+way over here in the corner i know
+nothing about him other than he's about
+220 um nautical miles away we've got
+these buddies here again i know nothing
+other than they're about 200 nautical
+miles away all right let's collect a
+little tiny bit more information this is
+the ooda loop by the way so we'll speed
+up time just a little bit and we're
+starting to collect useful information
+here first thing i noticed is that we
+were able to acquire these two they are
+flying awfully close together the other
+thing we noticed is the one in the back
+seems to be traveling accelerating
+trying to catch up to most likely his
+buddy so unless these are airliners
+flying in formation i immediately will
+flag these folks is probably not going
+to be the most friendly around at the
+very least they need more investigation
+so we're going over this guy right here
+he's at 45 000 feet traveling at 1400
+knots well i don't know about you but i
+thought the concord has had a service
+here so i'm not really a fan of that one
+either so let's see we got this guy
+doing 480 knots at about 25 26 000 feet
+oh i don't know what to think about this
+one we're gonna have to do a little bit
+of research on this one to try to
+identify it this guy over here by the
+way is still invisible which is actually
+kind of bothersome because i'm being
+jammed right now and usually when
+somebody suddenly drops off the radar
+and there's jamming involved i'm
+definitely super duper duper suspicious
+so i'm gonna mark that guy as suspicious
+as well this one is the puzzle i am very
+very curious as to what this could
+possibly be if you're wondering by the
+way why it takes so long to get a
+refresh is because when the tps43
+rotates it rotates at about the speed
+which means it takes time for the radar
+to come all the way around again and now
+reacquire everybody yeah if i had to
+guess i'm so i was going to assume that
+somebody who's in really really tight
+formation like i said airlines will fly
+in formation this guy still a puzzle who
+flies at 480 knots at 25 000 feet so
+let's do a little bit of research and
+see if we can try to figure out who this
+might be so let's go grab my scenario
+platforms go ahead and uh little green
+team here and see if we can identify all
+right 25 000 feet and what would we say
+the speed was uh 480 25 000 feet 480.
+nope nope nope definitely not one of
+those
+let's go take a look at the seven four
+here and see if we can get anything here
+band three cruise speed 320.6 new okay
+this is going to get interesting let's
+grab a leader jet 36 let's see here 25
+000 feet let's see here 25 000 feet
+cruises at 320 nope oh i think we're
+starting to get a conclusion here let
+the radar continue to run here c47
+dakota what
+um let's see here oh no you can't even
+get up that high don't worry about that
+cessna 172 can't get that high uh long
+ranger can definitely get that fresco
+what is this let's see what we got here
+let's see uh cruise speed at that
+altitude is 480 knots
+interesting so of course if he was a
+little bit higher up his crew speed
+would be 480 as well but he'd be moving
+at 0.84 so ha
+this one is a puzzler like a real real
+real puzzle like i'm not sure how to
+classify that one i don't have enough
+information to classify this one right
+now now if we switch over to the other
+guys maybe we can find something else
+let's see here f14 uh probably not uh
+flank or could be could be let's take a
+look uh cruise speed at 25 000 feet
+let's see here crew speed crew speed uh
+oh it's 480 it could be him too
+definitely not him uh it could be him
+and it's definitely not him because
+we've already identified him correctly
+so this one is a bit of a poser you know
+this is one of those classic situations
+that no matter how many resources you
+have at your disposal to identify him we
+may not be able to identify him except
+one thing that we do know is we know
+that he was picked up at a range of
+about 175 nautical miles now i know
+you're sitting there going 175 is so
+what's the difference with that well
+believe it or not whoever this guy is
+his radar cross section has got to be in
+the size in such a way that at certain
+distances we detect him if he was very
+small he'd have to get closer to detect
+him if he's very far away we would have
+to not be able to see him basically
+unless he was huge so this guy is
+suspicious as this one is a chilling
+right now like i said i'm a little kind
+of while wondering a little bit about
+this what out distance did we detect
+this particular aircraft if we picked it
+up way out here he's probably big if we
+picked it up right in here he's probably
+really small and we'll take a look at
+that a little later on in samsung so
+this guy is still up in the air so i'm
+gonna go ahead and i'll let the scenario
+run a teeny tiny bit here
+and we'll see if anything else comes out
+that helps reveal us now this guy i'm
+really suspicious about now i know from
+reading the scenario platforms there's
+only one guy in this whole group that
+would have a jamming pod available
+and that's probably going to be the
+sukhoi 24 which i'm guessing that's who
+that's going to be here all right we got
+somebody new uh we picked them up at an
+extremely long distance which suggests
+that is probably something very large
+all right 487 36 000 feet i can tell you
+with almost not having to look at the
+scenario platforms that this is most
+likely going to be a civilian airliner
+probably the 7th floor let's see here 36
+000 feet
+uh see 36 000 feet here we go 36 crews
+490.85
+that would be 487 that is not 487 uh-oh
+this is why we check let's see here
+cruise speed 480 that's 487 again so
+this is a little bit more tricky and
+we're gonna have to figure out who this
+guy is cruise speed 440 it's definitely
+not the learjet and now we've already
+probably identified one of those so this
+is actually kind of an interesting
+little one here and again it's another
+one of the scenarios where who travels
+at 488 knots let's go actually go take a
+look at the scenario platforms again and
+let's see if there's anybody in red team
+that could possibly be traveling at that
+speed i think we identified those guys
+i'm pretty confident that's who those
+are let's see here the flanker let's see
+the flanker if we are at
+uh cruise speed let's say 480 no that's
+480 not 489 oh he's changing speed here
+and that's why we check it out let's go
+ahead and take a peek it's definitely
+not him we've identified him already so
+he's doing a pretty high speed here so
+i'm immediately instantly suspicious of
+this particular guy as well all right
+somebody else has popped on real quick
+oh we have this guy going 480 that's
+civilian
+and we have this guy over here like i
+said just traveling up 490 which is a
+little fast for most commercial
+airliners so i'm definitely going to
+flag this guy's unfriendly as well i
+guess it's not to say you can travel
+that fast in 747 let's just say that it
+is unlikely this guy is still a puzzle
+i'm really not sure about that
+particular one normally in the real
+world of course if we have any doubt
+that's when we send one of our
+interceptors to go take a look and of
+course there's no emissions so let's go
+ahead and flip everything around for
+just a second here and put on our god's
+eye view now you're probably saying oh
+okay so it was the civilian one it's
+actually the big 15. so we did a pretty
+nice job identifying that one but notice
+it was still a military aircraft and we
+could still pick it because of its
+unusual speed now what we're going to do
+now is switch to the other team real
+fast and disable that jamming and see if
+anything changes as far as our scenario
+goes so we go to green oh sorry we're
+going to go to red actually in this
+particular case boink and we're going to
+grab this guy and tell him stop it now
+let's see if that changes what we can
+see here
+all right i'm starting to get some pings
+here right away because he's no longer
+blanking out that entire side of the
+world and let's see what we can see here
+all right well we know that this guy's
+actually a neutral here which again that
+was a trick question because of the fact
+he was flying at an odd altitude and he
+was a basically a demilitarized fighter
+that's not fair all right so we got this
+guy at 36 000 feet 440 knots so remember
+the only thing that travels that slow
+was the leader jet so we're going to go
+ahead and tag him we've got this guy
+doing 480 at 45 000 feet there's not
+many that can do that so whoa wrong
+color wrong color there we go so we've
+identified him pretty well as well now
+one thing i did not do in this scenario
+is i did not enable the emissions of the
+enemy targets now have we had the
+emissions enabled things are a little
+different we'll take a look at that in a
+minute i'm just going to give it some
+time and watch this guy go ripping over
+the top of our heads at full speed here
+and we're just going to let it go let it
+go 15x are pretty good speed everybody's
+closing in on us i think we're pretty
+good so far as far as doing a little bit
+of things now some of you are probably
+saying well wait a minute what if i told
+the fighter to fly the same speed as an
+airliner i would say you're smart in
+which case look for formations look for
+emissions otherwise you're probably
+gonna have to send up an intercept to do
+a take a peek because we have a couple
+guys that kind of trailing in the back
+here it's a c47 and a cessna 172 which
+of course we're not going to be able to
+identify so they're pretty much right on
+top whoa pause hey something new just
+appeared let's check it out aha these
+guys are traveling at 480 knots which
+isn't recommended for airliners they
+usually cap out at about 320 at that
+altitude and 2000 feet so without a
+doubt this entire group is uh probably
+not going to be considered a very
+friendly one and i always promise you
+that node is not so what time i advance
+just a teeny tiny bit let everybody kind
+of fly by us
+and we'll see if anything else kind of
+comes out got something notice we were
+able to identify it immediately as a
+helicopter type so what helicopter is
+this well i can tell you right away what
+helicopter it is because of its speed
+helicopters don't travel at 145 knots
+typically but there are a couple
+exceptions to that rule so we definitely
+want to go investigate that real quick
+so go pop over to browse scenario
+platforms we'll head over to red first
+we'll grab ourselves an aircraft we'll
+go ahead and grab ourselves a hokum
+let's see what we got here we are at
+2000 feet cruise speed at 2 000 feet is
+going to be 145 knots on the nose gotcha
+nice try nice try so you're probably
+saying didn't you have like a uh one out
+there or something like that no i have a
+bell 206. so let's go see what his speed
+is as well so we go to bell 206 and we
+can see that his cruise speed is going
+to be 115. like i said 145 is uniquely
+fast for a cruise speed for helicopter
+not to say you can it's just unusual
+also the altitude is tremendously low
+which again fly under the radar so now
+we're going to do is we're going to
+reopen the scenario real quick
+go ahead i'm going to switch our team to
+blue team here and we're going to make
+one actually we're going to start in red
+we're going to go ahead and do something
+really dumb here ctrl shift f9 i'm gonna
+go ahead and order everybody to go ahead
+and turn on their radars
+now you're probably saying oh
+why why why would you do that why would
+you do that well believe it or not in
+the real world civilian aircraft
+typically almost always fly with their
+radars on now this is going to
+completely change your scenario i'll go
+ahead and undo this which will help
+remind everybody how critically
+important it is to remember m-con of
+course if you have an enemy unit that is
+exactly at enemy military speeds and
+it's not emitting and everybody else
+around you is emitting that's usually a
+pretty solid sign that you're dealing
+with uh somebody who's probably on the
+hostile side one thing i'm going to do
+though is i'm going to go down to my
+little sensor i'm going to add on some
+esm just to make it a little bit easier
+esm go do one of these do one of these
+we'll do generic esm we'll do 2010s why
+not
+and watch what happens this time so we
+go ahead and fire that up immediately
+the radar does pass remember it's a very
+slow rotating radar and we've got
+ourselves all sorts of different units
+floating around here immediately we can
+see this guy he has a slar let's go
+ahead and change my contact emissions
+here and we'll do um let's see here
+that's pretty good we'll do all the
+missions watch this
+so now what happens is when these guys
+emit you'll pause you'll get this little
+guy let's see you have a fire control
+radar you're hostile let's see you have
+a fire control radar you're hostile um
+that's irritating that's that mig-15 we
+were telling you about before you are a
+neutral this guy over here he's a bogey
+we don't know yet these two are pokies
+as well so let's go ahead and unpause
+here and i'll see if anything useful
+pops out of any of their heads at any
+point as well we detect them
+let's see if we get a little bit closer
+it can be some more missions show me the
+emissions show me the emissions i'm
+looking at this guy am i right now oh we
+can see they're giving him a little
+blowout
+generic doppler radar you were friendly
+give it a little bit of time give a
+little bit of time generic doppler radar
+generic doppler radars are usually
+pretty safe give it a little moment so
+we got some of them speed up time a
+little bit this guy's not emitting
+anything
+but he's at 45 000 feet that's a little
+unusual so by default i would
+automatically be ultra suspicious of
+this guy because of the fact that he's
+flying so high so fast and he's
+intentionally not emitting so you're
+going to get added to my little list
+here oh you've got a generic doppler
+radar this guy's not doing anything
+either and his out of speed of course
+suggests that it was going to be our
+leader jet we saw that one from before
+that we cheated and we let everybody go
+by and again notice because of these
+raiders up there's his tfr terrain
+following but notice what type it is
+it's a re-left it's a tfr we can
+identify that exact emission we can
+actually click on him and come over here
+and actually click this check this out
+push this button it'll show you exactly
+who it is and why we got it if you go to
+the contact report it'll even tell us
+what the detected emissions are and we
+can immediately use that to identify who
+this most likely is even though we don't
+know it directly so again this is
+tremendously tremendously useful now
+you're probably saying well you said
+something about sam simulator a little
+while ago wow what's the deal with that
+ah here we go
+so what i was talking about before with
+samsim is the fact that the sam systems
+are actually very very very well modeled
+they're so modeled as a matter of fact
+that they give us the unique ability to
+basically identify things by their
+electronic missions so in this case
+let's turn that on we'll go to go dove
+go ahead and switch on the main radar
+itself let me show you what i mean so
+what i'm going to do here is i'm going
+to go ahead and i've got a couple
+different contacts pretty far away this
+is an sa5 i'm going to click on contact
+1201 i'm going to press this button to
+go ahead and try to manually acquire it
+now take a look we know a lot of things
+about this contact the first thing we
+know is by coming up here and looking
+you can see what it happens if you try
+to demodulate the radar signal that
+comes back to us we notice the fact that
+we're probably dealing with something
+that's a turbine because it has one very
+very strong signal it's not all kind of
+distributed like something with a
+propeller the other thing we know is it
+only has a single engine because it's
+like that so that's useful the other
+thing that's useful is the fact that we
+know that particular target has an
+electronic
+value if you want to think about it of
+about uh what do we got here these are
+microamps or milliamps i think i think
+they're microamps about let's call it 30
+and a half now what we can do is we can
+now compare the range of that target
+which we can quickly estimate here go
+ahead and zoom in a little bit so we can
+see it let's see here the range on that
+target is about let's call it 60
+kilometers so actually we'll switch down
+to 100 on our little scale here and i'll
+see exactly what we can determine and it
+looks like it is what do we got for a
+distance there that's about yeah about
+50 60 kilometers so if we take a value
+of 30 and we go to about 60 which is
+going to be about here we can identify
+the fact that this particular target
+must probably be a fighter which is
+going to be the bottom line here now if
+it was a bomber we'd be able to not only
+detect it at a longer distance but we'd
+also expect to see multiple engine
+signals and we'd expect its total return
+to be significantly higher now the
+interesting thing with this which i
+always get a kick out of is in order to
+actually attack it you have to lock it
+into a gate that basically is going to
+contain it at speed more than anything
+is basically one gigantic overkill uh i
+guess you want to call it um like a
+doppler radar set if you want to think
+about it another way so let's go ahead
+and take a look at that other target
+that we had a second ago so i'm gonna go
+ahead and break my lock here we'll go
+back over to the system here this is
+kind of our big old battalion radar here
+cancel and go ahead and exit out so
+we'll go ahead and grab the other one
+and we'll go grab this one real quick
+there he goes 1202 it's a different type
+of target we'll go ahead and acquire it
+and watch what happens notice our signal
+looks a little bit different because
+we're dealing with a different type of
+target the other thing is electronically
+let me go find the correct screen here
+you can see that its return is massive
+which tells us at its current range
+we're dealing with a bomber even though
+we can't directly see it now you're
+probably saying wait a minute it doesn't
+look like a bomber just have multiple
+engines well it's actually a drone i'm
+shooting at here it's not a bomber that
+i'm shooting at it was an actual bomber
+you'd actually see the individual lines
+representing its different engines so
+again one of the neat things of this is
+they actually simulate that another
+point worth noting is if you actually
+take a look at my little radar screen
+down here where you can see physically
+which targets are much larger and
+physically which targets are much
+smaller when we're trying to lock onto
+them that gives us a huge clue as to the
+type of target that we're looking at so
+hopefully this video was helpful as far
+as helping you with those kind of items
+out again you have to put a bunch of
+things together you really have to know
+the types of platforms and obviously if
+you start detecting fire control radars
+that's usually a pretty safe bet you're
+dealing with something dangerous enjoy

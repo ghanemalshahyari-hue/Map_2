@@ -1,0 +1,186 @@
+# C: MO - No Escape Zone WRA Quirks
+Video: https://www.youtube.com/watch?v=7DIqKLoe3p4
+Video ID: 7DIqKLoe3p4
+
+hello everyone in today's video we're
+going to be taking a look at a
+relatively a recent addition to our
+lovely betas of command here and that is
+the ability to not only attack a Target
+based on its speed coming towards you
+and basically taking what they call a No
+Escape Zone launch but also having the
+impact of actually knowing the type of
+Target and knowing when to take the shot
+so let's go and take a look at our
+scenario here so we have a luckily sa21
+this good old-fashioned s 400 and what
+we're going to do is we're going to go
+ahead and take some shots with this
+particular vehicle it should be
+relatively straightforward here so um
+we've got everything all kind of set up
+here and now we're going to unpause real
+fast and our radar is going to start
+sweeping the sky a little tiny bit and
+we're going to pick up a potential
+Target it's an unknown right now it's a
+boogie number three there chilling it
+pretty darn long range so I'm going to
+go ahead before we take that shot looks
+like we've identified them already sweet
+I'm going to go to WRA real fast and I'm
+going to go ahead and order up a No
+Escape Zone attack No Escape zones pop
+that into both types of missiles here
+the SAE you know 21 here has got quite
+the range so I'm actually going to make
+sure it's limited to a No Escape only
+attack I don't want it to start picking
+pop shots yet so we still have the
+Target in sight coming slowly towards us
+nothing worried about too much ah we
+picked up another Target we got just a
+taste of another Target all right let
+some time pass here okay we're not
+taking the shot because we don't want to
+shoot on somebody who's just going to
+turn around and run on US ah and now we
+have two Targets approaching at about
+equal speed to hold my mouse over we
+have no idea what kind of targets they
+are they're both just bogeys so we're
+gonna go and speed up time and they're
+just going to kind of keep on cruising
+keep on cruising they're going to get
+within that No Escape Zone launch our s
+400 crew is sitting here going can we
+fire okay we're gonna fire we're gonna
+fire and the weapon is on the way so
+we've already engaged one of our targets
+so we can see we're waiting on that
+other Target patiently here even though
+it's moving at exactly the same speed
+give it a few more moments here
+let's just double check to make sure we
+have enough illumination here I don't
+want to embarrass myself like that oh
+looks like we did have illumination I
+was just being silly fire so we fired
+the two Targets basically simultaneously
+missiles kind of travel way way way way
+up into the upper parts of the
+atmosphere then it's going to turn
+around it's going to start dipping down
+into the atmosphere and it's going to
+start cutting through you know is it by
+a couple clouds maybe it passes a low
+hanging satellite or something like that
+and it suddenly starts to rear into
+orbit starts to pick up a bunch of speed
+as it starts to re-enter coming down uh
+65 000 feet the Target on the left
+moving at that lovely speed there is
+suddenly oh missed I hate it when that
+happens I mean why the other one over
+here
+Splats now you'll notice that the two
+Targets were engaged at the same time I
+had to kind of nudge one of them just
+because there wasn't enough elimination
+now let's go ahead and reset everything
+without telling me what I did alrighty
+then I think everything's been nice and
+restarted and they're back on the way ah
+it's a repeat of last time let's go
+ahead and take a look here oh I forgot
+to tell them to be a No Escape Zone
+launch let's go to WRA let's go up to
+this weapon tell it to be no Escape Zone
+again we don't want to fire a shot
+unless we know the target Can't Turn and
+Burn away from us that looks pretty good
+there we'll go head over to the sa21b No
+Escape so much should be plenty here no
+Escape looks good sweet so we've already
+picked the same Target and things are
+going to go down pretty much the way
+they did last time we have both those
+targets visible they're traveling at the
+exact identical speed as you remember
+from last time we had a bit of an issue
+locking onto that one on the North there
+just because we had some reflection
+issues oh a missile's been launched now
+notice the target at the North was
+engaged first go ahead and not speed up
+time here we can see the missiles
+traveling back through the sky Target on
+the left even though it's traveling the
+same exact speed is not being engaged if
+you remember that particular Target was
+not oh Splat still not shooting still
+not shooting that Target's moving 450
+knots still not shooting wait until the
+last possible second here you're going
+to take that shot or you're just going
+to let the guy fly right over the top of
+your head here still waiting boom
+there's the shots are we gonna take
+another one oh at this point we're so
+Point playing fire
+just let them have it
+oh now you're never gonna get the shot
+so you're probably saying what was the
+difference well let me share it with you
+so one of our targets was a Boeing 737
+the other Target was a mig-31 so the
+reason this particular Target was
+engaged simultaneously or mostly
+simultaneously the first round is
+because under my settings I actually had
+designed it so the blue 4 knew what team
+everybody was on when I was aware of
+what type of unit it was it
+automatically changed its firing
+sequence so that it would automatically
+Engage The Target when it got in a
+position where it couldn't turn around
+and run maximum speed away from the
+target which makes classification more
+important than ever now I know what
+you're probably wondering here you're
+saying well what if you tell them not to
+do a No Escape Zone launch well there's
+an interesting consequence to that so
+let me go and show you what's going to
+happen here so we're going to fire early
+and I mean early weapons up it's coming
+down oh not quite a good shot there
+fired fire fire fire finally splattered
+them you'll notice that the shot was
+taken at extreme range or not so
+maneuverable Boeing 737 took an S 400
+right to the front windshield and it
+took our mig-31 quite a few hits here as
+a matter of fact if we go to weapon end
+game actually shut everybody off real
+fast there we go and you can see all the
+different jamming attempts here we can
+see the impact of the actual weapons of
+course we can see the impact on the
+other weapons as well so you can see
+exactly what happened throughout this
+entire scenario so what are the
+takeaways here and the first one is if
+you can identify a Target and you're
+taking a nose Cape so much A lot of
+times it works in your favor because I'm
+not going to fire until that Target gets
+in its actual Kill Zone the second thing
+is the opposite of that I know if I can
+get myself identified in a combat
+situation that they're going to be less
+likely to Fire With A No Escape Zone
+launch knowing I'm a more capable mood
+referring targets enjoy

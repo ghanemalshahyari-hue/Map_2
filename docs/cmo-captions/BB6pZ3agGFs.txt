@@ -1,0 +1,144 @@
+# C: MO - Collective Responsibility
+Video: https://www.youtube.com/watch?v=BB6pZ3agGFs
+Video ID: BB6pZ3agGFs
+
+hello everyone in today's video we're
+going to be showing you as well as
+explaining what Collective
+responsibility means now Collective
+responsibility is one of those settings
+that's kind of buried inside of the
+scenario editor that you've probably
+seen before and maybe you've fiddled
+with maybe you haven't maybe you're a
+little curious about it it's this little
+guide right here what Collective
+responsibility does is simply say that
+what happens to one unit will then
+affect others in the sense of
+allegiances so what I have here is a
+relatively straightforward scenario I've
+got my lovely F-16 block 52 here and we
+have a bunch of neutrals with a lot of
+angry
+s3000s so what we're going to do is
+we're going to go ahead and set
+Collective responsibility to be off for
+our team you can see right now the
+collective responsibility is set on I'm
+going to go ahead and uncheck that box I
+can also shut it off for blue team it
+really doesn't make a difference here so
+now what I'm going to do is I'm going to
+launch an attack on this Radar Site
+right here I'll go ahead and pick a
+couple of those I'll even be a little
+cheaty here and get a little bit closer
+to it so I don't have to wait so long
+and there goes the weapons so the two
+weapons are now launched and of course
+so one of the things you probably
+observe here which will find interesting
+is the fact that all of our Sam sites
+here have remained as neutral targets
+now what you expected is this entire
+team suddenly turn red because um
+basically we're attacking them in this
+location therefore they should be
+shooting us everywhere else as well
+let's go ahead and get this guy out of
+the way real quickly here I actually
+order order him to go fly over here to
+our s300 so let's go ahead and let that
+bomb go ahead and drop on that Radar
+Site B bam and as you can see none of
+the other Sam sites engage because they
+don't have that Collective respons
+ability in essence I can pink off one at
+a time so let's go ahead and reset the
+scenario again go switch our blue team
+here we're going to leave Collective
+responsibility turned on and this time
+what I'm going to do is I'm going to
+launch the same attack against the radar
+site but watch what happens this time
+let's go a and get ourselves a little
+bit closer go ahead and unpause here
+notice as soon as I ordered that the
+entire team turned red the reason the
+whole team turned red is because the
+collective responsibility for my side
+was set so once I declared a single unit
+of that side is hostile the entire side
+is now hostile the other thing you're
+going to observe one of the things I
+find kind of fun here I'm go ahead and
+order him to do this is the fact they
+have not actually started popping shots
+at us and you're probably sitting here
+going what's the deal with that well the
+reality is if we come over here real
+quick you will probably have observed
+the fact that this particular unit here
+has not been identified even though we
+know we've been attacked here we don't
+necessarily know that this is the unit
+that actually fired the attack so if
+you're saying why are none of the Sam
+sites going hard on this guy right here
+they should be taking shots at him it's
+because of that fact so what I'm going
+to do real quickly here is I'm just
+going to edit my scenario a little bit I
+had a watchtower I think I've used about
+a million watchtowers at this point the
+Watchtower by the way is one of my
+favorite little just like just stick it
+somewhere if I need a sensor let's go a
+and throw on really really really really
+good quality low light television here
+lltv H scroll down here lltv third
+generation surveillance Boop just like
+that so this going of get us a really
+really good quality camera there so he's
+going to look up and you'll notice as
+soon as we identify the target as being
+on my side
+every single Sam site in the entire
+group here is now trying to light this
+particular Target up and if you actually
+watch you can actually see all the
+Radars popping on basically one at a
+time for the purposes of engaging the
+first priority of course is going to be
+shoot down my guided weapons rather than
+go against my little aircraft that
+delivered it but you can see basically
+real time yeah I can see this guy on the
+sides actually doing the deed against
+the aircraft even though ironically this
+guy do a better job of it but he's
+obviously got a fire if he's going to
+hopefully hit those guy to weapons which
+as you can see one of his rounds one
+right past uhoh you're never going to
+hit this in time so that's kind of what
+happens so as you can see Collective
+responsibility is an interesting little
+elements now a lot of people say when on
+Earth would you actually have Collective
+responsibility turned off one of my
+favorite places to shut off Collective
+responsibility is when you're using
+civilian units uh civilian units if you
+accidentally hit one of them you don't
+need the entire civilian side to declare
+war on you which is kind of one of those
+things you'll also see this too if you
+have like a neutral Observer like you
+know we have a bunch of friendships and
+it's like a natox exercise or something
+like that and they're not necessarily
+friendly as in sharing information to us
+but they um are definitely possible
+targets if you miss with that TM enjoy

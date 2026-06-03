@@ -1,0 +1,76 @@
+# C: MO - Understanding Aircraft Operations
+Video: https://www.youtube.com/watch?v=k2Fc8dVycIQ
+Video ID: k2Fc8dVycIQ
+
+Hello everyone. In today's video, we're
+going to show you how to understand the
+aircraft operations page as well as pick
+the appropriate loadouts for missions.
+To get started, simply click on the unit
+or air base that contains air units.
+Then select the aircraft operations
+button on the toolbar. You will now see
+a list of all the aircraft currently
+stationed at that unit. If desired, you
+can click the blue hyperlinks to open up
+the database entry for them. To set the
+load out of a unit, click the unit and
+then press the ready arm button. You
+will now see a list of every possible
+loadout for that particular unit,
+including the weapons carried, the
+number of weapons carried by the air
+base or ship, and the various ranges and
+profiles for the mission.
+It's important to note at this point
+that the default shotgun and Winchester
+settings are here as well, as this may
+impact how your missions work. The
+enable click button allows to enable
+quick turnaround missions that foregoes
+the long turnaround times between
+landings for a limited number of
+sorties. Below this, you have a detailed
+breakdown of the weapons carried by this
+particular loadout. And as before, you
+can click on them to get the database
+page with further details. When
+satisfied, click okay. Ready to start
+preparing the unit. The two buttons in
+red are available only when using the
+scenario editor. The unit is now being
+prepared and the estimated time is
+listed as 3 hours. Now we'll show you
+the difference between sustained and
+surge air operations tempo. We'll begin
+by changing the tempo to sustained in
+the doctrine and roe page. Keep in mind
+you can only change this in the mission
+editor. Now we'll set up a new aircraft
+with the same loadout. Notice how the
+ready time jumps from 3 hours to 20
+hours. This reflects air operations that
+include time for things like
+maintenance, crew rest, and other
+critical factors. If you wish to ready
+several aircraft at once, you can click
+the first aircraft, hold down shift, and
+then click the last aircraft before
+pressing ready arm. You can also select
+individual aircraft by holding down the
+control key. It's also worth noting that
+you can only arm aircraft with weapons
+that exist in the magazines of the unit
+you are launching from. In some
+scenarios, magazines can be set to
+unlimited as shown in our example here.
+As before, changing this option can only
+be done in the scenario editor.
+There are two unique loadouts that you
+may encounter in scenarios. One is
+reserve which represents readyto use
+aircraft without loadouts and the other
+is maintenance which represents an
+unusable but still present for targeting
+aircraft.
+But other than that, enjoy.

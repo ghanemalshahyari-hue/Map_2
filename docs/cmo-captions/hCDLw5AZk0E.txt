@@ -1,0 +1,574 @@
+# C: MO - Why won't my weapons fire?
+Video: https://www.youtube.com/watch?v=hCDLw5AZk0E
+Video ID: hCDLw5AZk0E
+
+hello everyone in today's video we're
+going taking a look at one of the
+classic questions and the classic
+answers to why won't my weapons fire in
+command modern operations uh for those
+of you who are brand new to this game
+this is kind of one of those things it's
+so common it actually comes up as an FAQ
+item but I thought it'd be time to
+actually do a video to kind of address
+some of the different problems you're
+going to be facing as far as engaging
+targets it's actually involved it's
+involved so first things first let's
+take a look at another scenario here so
+pretty straightforward I've got myself
+an sa5 c um oh no we've just detected a
+Target oh that Target's very close by
+look at that it's an air Target of Some
+Kind we just detected at 54 antical
+miles oh boy let's go ahead and engage
+it obviously this target is way too
+close so I'm going to go ahead and
+market his hostile right away I'm going
+to go and un pause and any second now
+that sa5 battery they're twisting those
+little wheels getting ready to fire
+everything's looking pretty good the
+battery Commander is confirmed hostile
+he's calling it in everybody's getting
+excited and ready to fire and they're
+just kind of sitting around and
+nothing's happening D so this is one of
+the common problems that people who are
+new to command aren't used to you know
+you're thinking Starcraft if the thing
+is in range it should fire but in
+command it's different as a matter of
+fact if I were to go ahead and click on
+my unit here I can see that we are well
+within effective range as a matter of
+fact this guy's basically in The Sweet
+Spot he's about uh again we don't have
+an altitude here but if we can just do
+the math on our head real quick probably
+about three or four miles up so easy
+target easy target he's been identified
+he's picked up on radar everything's
+ready to go why are we not firing well
+one of the EAS eest ways in this game to
+determine why a weapon is not firing is
+to go ahead and do a manual engagement
+of the target so I'm going to come up
+here and click on manual engage you can
+also press shift F1 if you like I'm
+going to click on the target oh we have
+a lot of problems we have to solve here
+the first one I notice in this bright
+red again anything that's red means you
+can't fire automatic fire is not allowed
+weapons control status is weapons
+hold okay let's uh figure that out so
+that's a Doctrine issue so I'm going to
+bring up my control shift F9 here you
+can also access that right at the tippy
+top here and I'm going down I can see
+where holding fire against air targets
+well that's dumb let's go ahead and make
+that to positively identified hostile
+targets that are in the air cool let's
+go ahead and unpause oh let's go ahead
+and now check one more time shift F1
+click on him U let's see here automatic
+fire not allowed weapon release
+authorization says do not use weapon
+against this target type ah shoot
+another problem we got to solved let's
+bring up the control shift n again let's
+go over to a Wow Let's a weapon release
+we'll go down to gam look at that we
+were programmed not to fire any weapons
+against it that seems sick let's go
+ahead and not be extreme here we'll just
+go ahead and use three oh no yeah we'll
+just give them away no we'll do two
+we'll do two two's pretty good all right
+let's see here guided weapons un
+identified aircraft we'll set that to
+two weapons helicopter guided weapons is
+perfectly fine go ahead and close that
+I'm going to go ahead and pause again
+still nothing what the heck go ahead and
+click on this one ah we have some green
+now uh green is good green means we are
+good enough to fire um there's a couple
+little things we can see here that now
+it is in green the first one of course
+is that we have 30 canf fire this is be
+a manual weapon allocation second one 36
+cannot fire because the weapons are
+currently located on our magazines and
+we can't actually launch them now this
+is really really important to us because
+this is a classic case when automatic
+fire is allowed but um manual fire is
+allowed but there could be other reasons
+that allow us not to fire again as long
+as we got green we're good to fire here
+so we can see we can fire up to 30 of
+these at a time so I'm going to be very
+disrespectful to this particular Target
+here I'm going to go ahead and unpause
+one more time I'm just going to sit here
+I think the missiles would start firing
+any second now
+right why are the missiles not firing oh
+that's a problem let's see what else we
+could have done wrong here I'll go about
+to shift off one it's it looks good oh
+weapon release authorization two rounds
+per Salvo 15 nautical mile range minimum
+firing so even though it was not in red
+here it didn't actually let us fire
+because of a range limitation so let me
+go ahead and open the sucker up here and
+let's go back to my gamon ah we set it
+to 15 nautical miles or bad look at this
+we have up 116 naal miles here let's do
+a 50 50 seems pretty reasonable there
+we'll do 50 uh that's a pretty good
+range for us obviously anything less
+than 20 is probably fine for guided
+weapons okay let's unpause
+again just kind of relay I'll relax
+relax everything is going pretty well
+here he's doing his little kind of donut
+over there and what is his range and if
+we actually check that real quick we can
+see that he's out of range so that's all
+going to be ignored I'm going to go
+switch the other team again real fast
+here I'm just going to grab this guy
+we're going to tell him just a little
+big 21 here kind of anything like that
+our Mig 15 nothing special we'll pull
+him into range and we'll give it a
+second for the radar to go ahead and
+update here and we'll pick him up again
+remember Radars rotate very slowly if
+they're long range Radars this gu going
+to get a little bit closer to us so
+basically allow us to kind of acquire
+them oh there we go that's a little bit
+closer Andy look at that just like that
+the weapon fired right on schedule so
+one of these missiles is on the way oh
+there'll be a second one launching in
+just a few moments here which I would
+expect I should say oh it does
+necessarily again they've already made a
+couple Liars out of me although if I
+recall correctly we would only be firing
+one oh let's see here go back to our G
+oh there it
+is I knew it would fire sweet so this
+weapons are on the way up to that little
+Mig 15 there the little training version
+of the Mig 15 it's the cutest little
+thing you've ever seen oh
+Splash nice all right so um let's deal
+with all the other problems we have now
+so my battery is looking pretty good
+pretty cool calm confident collected
+kind of a thing and I noticed there's
+much more targets out there I'm noticing
+a bunch of fireballs Fireballs that's a
+disturbing concept for us and of course
+I've got this group of us something
+coming at us I'm going to go ahead and
+highlight them mark them red the other
+thing I'm going to do is I'm going to go
+back to my weapon release authorization
+I'm going to open it up a little bit I'm
+actually going to let them do automatic
+fire and the reason I want to do this is
+just to demonstrate uh how the problem
+gets complicated and why that manual
+fire trick works so well so we'll give a
+little bit of time we can see the
+Fireballs are actually pretty much
+re-entering orbit
+here oh boy they're coming they're
+coming I lost sight of them the
+Fireballs I would guess are right about
+here if I had to guesstimate remember
+they get up pretty high as a matter of
+fact they're uh let's see here what is
+the altitude on these Fireballs here uh
+848 km that's enough I think so anyway
+we lost sight of them because um we just
+can't see them they're up so high our
+radar literally just point mechanically
+high enough to be able to acquire those
+we know they're up there somewhere
+though and of course that other group of
+aircraft are getting awfully close now
+remember we have enabled automatic
+engagement and what you're noticing here
+is this group of aircraft is not being
+engaged even though they are within our
+firing Arc and we allowed it well let's
+press shift F1 again see what's going on
+here uh let's see here automatic fire
+not possible weapon is unable to engage
+imprecise targets that means because our
+weapon is so far or particular Target is
+so far away our radar can't reliably
+point to exactly where the actual Target
+is because of that we can't hit it um
+yeah we can't even aim at it at this
+particular point so again if I look at
+this guy he seems to be the best one see
+there any other issues weapons tight no
+everything else is good pretty much
+ready to fire here but unfortunately we
+can't because it's just not a precise
+Target so I'm going to try to order him
+to fire anyway so the moment that we do
+get close enough he will be able to take
+kind of that snapshot remember at any
+point these little Fireballs are getting
+dangerously close to us here all right
+they're well within our range here it's
+not like they're jamming or anything
+like that they're just very very
+challenging targets oh there we go
+finally got in
+range there we go so I fire my weapon
+and you can see the ambiguity was
+resolved immediately as a matter of fact
+the target which we thought was over
+here was actually over here now the
+reason for that of course has to do with
+the fact we're now using the gigantic
+Fire Control radar on the top of an f5c
+unfortunately yeah yeah that's right
+that was right uh which one let's see
+this is the square pair of the five
+November 62 radar like I wish I could
+show you a picture of this thing it's
+huge so um yes we're able to acquire
+it's also continuous wave radar which
+helps with this process a little bit so
+the missiles are on the way they're
+shooting up there and doing their thing
+and of course uh my first couple
+missiles missed missiles and meanwhile
+our Fireballs are getting pretty close
+I'm getting a little nervous actually as
+a matter of fact I think I'm going to
+order my sa5 here to basically engage
+those incom nasty missiles here we can
+actually see there're still in precise
+targets I'll go ahead and order two each
+you can even cancel the last missile
+attack there because there's really no
+reason to even continue tracking those
+so again we had that Target that they're
+firing at a minute ago one cool thing is
+if you press shift F1 and click on the
+thing you've already fired at you can
+actually cancel if you need to but I'm
+just going to let those missiles kind of
+ride in and not do much of anything and
+pause I don't want him to fire another
+one against this guy again he's
+automatically engaging good nothing's
+automatically fired there so right now
+he's sitting there panicking he's
+twisting the knobs desperately trying to
+get a lock on these incoming weapons
+some people say you can't really use an
+sa5 against a surface a weapon oh there
+they are I told you they're getting a
+little bit close so if we take a look
+now um they're almost here and we're
+swinging that radar around we're
+scanning we're scanning oh we visually
+looking oh no oh no well we got a weapon
+off at the last second there it seems
+like some of the dong fangs went a
+little short and now we're basically
+sending this a fun little Panic fire
+over into this gor Direction and we're
+just going to kind of spam our way to
+Victory now some of you are saying n sa5
+can't fire that many missiles at one
+time and that's actually not true um we
+can fire quite a few missiles at one
+time thank you because we have multiple
+batteries actually collocated at the
+same point making something like this
+possible and you can see we missed badly
+and I basically didn't hit anything
+which you know kind of typical now at
+this point you're probably going all
+right so I get it so you hit shift F1
+and that seems to be the magical trick
+to identify some of the problems you're
+going to have well that's accurate uh
+the other thing you have to remember is
+this was a flight of 75s um these are
+special they're steth planes and yes we
+almost shot down one of them a few times
+so let's go ahead and continue with our
+example here and show you other common
+places people kind of get goofed up here
+so I want to launch a retaliatory strike
+so I've got myself a pair of F-15 e
+they're ready to go I'm going to go
+ahead and launch them as a group real
+quickly here again actually I did click
+that button there they go cool it takes
+about two minutes to get them in the Air
+55 56 57 there they go fantastic all
+right let's get that group flying up
+north
+here and that looks pretty good to me
+my f-15s are going to do the thing here
+all right so my f-15s have GBU 24s which
+are these whoops that should not be
+there uh GBU 24s which are absolutely
+fantastic laser guided bombs like tip
+toop Notch best things you could
+possibly use against any sort of precise
+Target so I'm sneaking up on my target
+here sneaking up on my target here I'm
+going to go ahead and press my F1 key go
+ahead and click for an automatic attack
+and I'm just going to sit here I'm
+getting in range here looking pretty
+solid we're going to fly right over the
+target here's my maximum range of my
+lovely GB use here looking good looking
+good standby to drop the bombs got my
+finger on that red switch Master arm on
+check my laser code for the 10th
+time huh why didn't the weapons leave
+the arack let's rewind for a second here
+and I'll break this problem down so
+let's go ahead and get ourselves into
+range and we'll use our shift F1 trick
+one more time here let's see here GPU 29
+automatic fire not possible no directors
+are able ble to illuminate this target
+insufficient reflection no line of sight
+if we go down here you can also see that
+manual fire is not possible because no
+directors are available to eliminate the
+target you're saying it doesn't make
+sense this thing's got a laser pot on it
+I mean look at this thing it's got the a
+AQ look at how beautiful this plot is
+right here why isn't this thing able to
+fire well let we start scrolling down a
+little bit we can see there's a bunch of
+different stuff here the part that
+interesting is a laser designator it's
+got about a 15 nautical mile range and
+it's got a 40,000 foot limit so we're
+like ah we're too high oh no we're not
+too high we're 36,000 ft what could be
+the puzzle well the puzzle is basically
+invisible and that is the fact that
+there are clouds if I were to come to my
+airplane and press f2 you'll notice
+there's significant moderate clouds
+between us up here at 36,000 ft and down
+here at the ground where we actually
+want to do the deed as a matter of fact
+if we wanted to I go ahead and drag this
+thing and bring us down to basically the
+altitude required which should be about
+6,500 ft now we usually don't like to
+drop laser guid to bombs at 6,500 feet
+um it's a great way to get Triple A up
+at you but for the purposes of our
+example here we need to kind of just
+prove to how to solve the problem so our
+poor f-15s are basically diving straight
+down I have to keep moving them back to
+give them room to basically descend oh
+these poor guys yeah there's other
+strategies we could use all right we're
+now at 6500 ft fantastic and you
+probably observed they started throwing
+out the laser guided bombs just like I
+promised a few moments ago as soon as we
+broke through the cloud layer now the
+interesting thing is we actually have to
+maintain line of sight on them we can't
+just power up back through the clouds
+what we can do is we can turn away from
+them because as long as we have line
+asight on the target we can continue to
+gide our laser guided
+bombs so hopefully this helps you out a
+little bit as far as determining the
+mystery of why will my weapons fire um
+that little red text and green text it's
+there to help you as far as understand
+what those different kind of components
+are if you're ever in doubt you can
+always just push shift F1 and click and
+be like ah I can't fire automatic fire
+and you're sitting to go but this makes
+no sense there's no warning here we have
+to use a little bit of Common Sense the
+weapon simply can't shoot backwards it's
+kind of one of those things so we'll
+leave you with one other little thing
+that happens fairly often with
+this and that is remembering that you
+can't fire a weapon instantly even if
+you're able to acquire a Target that
+does not necessarily mean you can
+instantly engage that Target there's
+actually quite a process involved and
+one of the things I will do to
+demonstrate this real quick is let's go
+get myself a Fletcher which um that's
+the correct word for anything Destroyer
+related 1957 that sounds pretty good
+this will work perfectly for me let's go
+ahead and unpause here if uh oh we've
+acquired something so let's grab my Sam
+5 shift F1 click and one of the things I
+notice is this thing this is O OA Loop
+limitation we've talked about udal loops
+in previous videos here but basically it
+takes time to bring that weapon to Bear
+observe Orient decide act so we have to
+point the weapon calculate the weapon
+determine if it's hostile then we can
+start the actual shooting so this is
+going to take this crew 36 seconds to do
+which is very fast that is a really good
+Sam Crow I've done it in Sam Sim it
+takes longer to explain that it takes to
+do it's just one of those things all
+right let's take a look at our Fletcher
+here so I'm going to shift F1 click on
+here and we've got a lot of interesting
+targets here um again we're not really
+in range here we're a little out of all
+those range here so let's go ahead and
+fix a couple little boo boos that we've
+set up here we go ahead and say free
+firing and we'll go ahead and grab that
+flab that Target and move it a little
+bit closer so like within range and
+everything like that let's go ahead and
+grab that little Mig 15 let's go and
+pull him down to the ground so he's like
+easy to hit kind of a thing like that so
+unit properties unit properties we'll do
+uh I don't know we'll do uh 3,000 ft
+that's pretty darn low that looks pretty
+good to me go and do one of these things
+goad un pause we'll set him to do 2,000
+ft as his Cruise altitude let's go jump
+back to our Fletcher buddy here so
+here's our Fletcher let's go ahead and
+turn on his sensors and make a little
+bit easier for us to basically acquire
+that UTI there not that UTI all right
+let's give it just a moment to I mean
+you can just look at the guys just look
+at the window look at the window there
+you go there he is he looks pretty good
+to me uh let me go ahead and move my
+airplane look at this perfectly within
+range here shift of one click uh let's
+see here you will notice it will take us
+282 seconds before able to engage this
+target now the reason it's so long of
+course is because the commander you know
+basically the cic you look at this whole
+Destroyer here if you come down here
+you'll notice it's CS Generation 1 World
+We I vintage it takes time to get those
+5 in guns to turn around to actually
+start shooting at this and the only way
+of course you can approve this is if we
+knew about the target sooner which of
+course we don't now there is one
+consolation surprise and that's the fact
+that the little guns um you know
+sometimes the little machine guns and
+stuff like that can fire depending
+exactly what it is you're trying to
+shoot here but again all the little
+stuff is not represented here so
+unfortunately we're just we're in a bad
+way as far as this goes and quite
+hilariously there's nothing stopping
+that Mig 15 from basically taking pot
+shots at my extremely expensive
+Destroyer here now you're probably
+saying what about that Sam 5 a few
+minutes ago I can't he do some shooting
+um Sam five can't do some shooting
+anymore even though it's in time if I
+get extra lock back on again oh I'm
+sorry we're in range I forgot that I SLE
+my so that he couldn't take the shot I
+can still fire manually come get
+some oh yeah look at that four sa I'm
+sorry five sa
+FS oh boy here we go
+nice okay now let's end this properly
+I've got myself some F5s which are Mig
+28s I know and now what we're going to
+do is we're going to order them to
+engage our Intruders here the checkmates
+um obviously in the real world you
+wouldn't do something this silly this
+this is a great way to get shot down and
+the reason we're doing it anyway is cuz
+I want to demonstrate one more thing so
+let's go ahead and hu
+teleport actually have to find where
+these darn things are I use some God's
+eye view here this shouldn't give them
+enough time to react right let's go
+ahead move reverse there we go perfect
+fantastic so my F5s here are going to
+sneak up on this guy in this end here
+and we're let's get into range here
+let's get in range never knew that then
+Mig 28 could move like that did you so
+what we're going to do is we're going to
+go ahead and order these guys to engage
+this fighter now if you take a look
+we're in range it's we're running at
+each other this is a head-on engagement
+shift F1 click you'll observe that the
+target aspect is out of range for this
+type of weapon we can't hit it because
+we're not behind it and the only way you
+would know that is by checking the shift
+F1 or if you actually took a look at the
+side Winder itself and open it up one of
+the things you learn about it is that
+when you come down here you'll notice it
+tells you all about the weapons details
+and things it can do and notice it's a
+Stern Chase weapon so quite hilarious ly
+here um as we go burning by this um
+basically very very dangerous airplane
+high speed one of the hilarious methods
+to solve this is to fire cannons at
+it and you could see that every single
+one of my beautiful airplanes were
+obliterated in that one pass I mean we
+did fire we did fire we did take a shot
+at them but it gives you an idea of how
+complicated the project problem of
+hitting things are again shift up one is
+your front enjoy

@@ -1,0 +1,852 @@
+# C: MO - Playalong Tutorial 2 - Air-to-Ground Strike Manual Attack
+Video: https://www.youtube.com/watch?v=1PuSQh4Co3c
+Video ID: 1PuSQh4Co3c
+
+hello everyone in today's video we're
+going to be doing the second in our
+playalong tutorial series and this one
+is going to be dedicated to an air to
+ground strike specifically it's
+attacking an air base now this is an
+interesting scenario and again if you
+want access to this I do have it posted
+over on my workshop page which you can
+go access on the link below our chat
+here so to get us started here we just
+like to take a look at the briefing and
+again I'm playing the editor now which
+makes it a little bit easier especially
+when you're learning operation iron
+current or Rond island in the Caribbean
+it's a Precision strike which is a
+destroy an enemy Airfield before they
+can threaten our forces of some little
+situation kind of giving us a heads up
+with the different type of aircraft
+gives us an idea of the aircraft we have
+at our disposal all wonderful wonderful
+stuff here to kind of help us out now
+what we want to do before we really get
+too far into the scenario other than
+knowing we have to attack this Air Base
+here is trying to figure out what assets
+we have at our disposal and you're kind
+of want to get in the habit of doing
+this all the time but if we go up to
+game and hit order of battle you can
+actually see exactly what I have and
+where I have it one of the things you'll
+notice right away for examp example this
+have a single unit Airfield and it's got
+a bunch of badgers which are these
+really big bombers we've got some
+flounders which are these really really
+nice kind of a strike aircraft with
+laser guided bombs on them I can come
+down here and I can see the type three
+here let's see it's got some j15s which
+are like Su 33s very very nice kind of
+all multi-roll aircraft good stuff and
+of course have a MIG
+21r Mig 21r is going to seem kind of
+like the Oddball in the group but it
+actually does a really important job and
+it's one of those things that a lot of
+people neglect uh when you're kind of
+planning out operations so with that out
+of the way let's take a look at the
+weather situation looking at my Mouse
+real quickly I can see that now let's
+see here it's about Dawn 5:30 a.m. local
+time is 15 degrees celus so it's pretty
+cool moderate middle clouds between 7
+and 16,000 ft oh and there's some rain
+yuck uh that's problematic we're doing a
+strike Mission we usually need line of
+sight with our Target certain types of
+units such as our bombers for example
+can use radar to detect ground targets
+and obviously if I have an inertial
+guided weapon or I have some kind of GPS
+guided weapon I could also use one of
+those for the purpose but uh the first
+thing we have to do is we have to
+identify the target before we put any of
+our other units at risk here so the
+first thing I'm going to do is grab my
+Mig 21r here this is a Romeo this is the
+reconnaissance version of it and we want
+to make a high-speed pass of this
+Airfield now there's a lot of ways to do
+this and there's a lot of foolish ways
+to do this most people of course if we
+were to zoom in again we have this on
+automatic mode n on the keypad if I zoom
+in here I already can identify that
+there are several tarmac spaces that
+already have aircraft on them this is
+just some pre- intelligence that we got
+before the scenario itself it's good to
+know the means these will be priority
+targets we've got ourselves a Runway
+wish sure there was like an actual
+visual for this but it wouldn't look
+quite the same and of course we have you
+know an AV gas tank that's a pretty good
+priority Target and a bunch of hangers
+which probably also have targets inside
+what I want to do is make a high speed
+pass of this now one of the things
+everybody always makes a mistake here is
+they're going to rip across the middle
+of the Airfield at high speed now if
+there are any air defenses whatsoever
+they'll be expecting something like that
+which means we're going to get nailed
+obvious obviously we could rip this way
+of course if we want to go kind of the
+length of the runway like where on my
+mouse right now but if we do that we're
+going to have the same problem and every
+anti-aircraft system at this Air Base
+will'll also get a free shot on our
+reconnaissance plane which isn't good
+for us so believe it or not the safest
+way to make a pass is to not make a pass
+along the place where you're likely to
+get hit now without knowing the design
+of the scenario even though I designed
+it we can probably expect them to be
+protecting both ends of the runway from
+people basically running up the runway
+and dropping bombs on it so what I'm
+going to do is I'm going to grab my
+mig21 here a couple little
+things first of all if you study this
+unit for a moment you'll probably
+recognize it has a lovely little
+reconnaissance pod on board generic
+Recon pod the nice thing about the
+generic Recon pod is it has a camera
+with a max range of five nautical miles
+for searching 10 nautical miles for
+actually seeing something and confirming
+something on the ground if we zoom in
+down here real quick you'll notice that
+five nautical miles works out to be all
+the way out to here which means we don't
+actually have to get anywhere within
+this obviously if you get a little bit
+closer that's going to make it so we
+have better resolution of the target it
+also means we don't have to fly right
+over the top of the middle so what we'll
+do is we'll actually fly along this Edge
+the best place it actually be to fly
+parallel to it so what we're going to do
+is we're going to come out here kind of
+Mark out roughly where about a mile out
+is let Mark that real quickly on the
+Tactical map control insert I'm going to
+click and just going to Mark myself a
+couple marks this is going to represent
+basically the path that we're going to
+take with our reconnaissance aircraft
+basically right along here and about
+that distance a nautical mile away is
+it's a pretty long flight time for most
+anti-aircraft fire but but it will put
+us at a little bit of risk with giving
+us some intelligence so let's grab our
+aircraft here I'm just going to set it
+up I'll drag this Waypoint we don't need
+this I want to add on to this Waypoint I
+could just press F3 and I can actually
+build my waypoints just like that so
+we're going to have a waypoint here
+we're going to have a waypoint here and
+then of course we're probably going to
+xfill this way basically using the
+coverage of the island to protect
+us now as you can see our waypoints are
+not in the best spots uh because if you
+look at the actual altitude they are way
+way way way way way too high up we need
+to get underneath that cloud cover for
+using a visual pod so what we'll do here
+is we'll mark this point right here I'm
+just going to click on it real prep
+press f2 and then I can go ahead and
+dial in the altitude I want to use like
+for example we're going to do kind of
+our initial pass we'll set this to let's
+say 10,000 ft remember the clouds are
+about at an altitude of I think it was
+7,000 ft so then what we're going to do
+is we're also going to kick on the
+afterburners to start building up some
+speed before we do our pass once that's
+done we'll go to our next way point here
+I just left clicked on it press it again
+we're going to drop down to basically
+the minimum altitude we can safely
+operate which is 6,950 Ft which should
+basically be skimming along the clouds
+and we're going to keep that After
+Burner going we definitely do not want
+to let up on the After Burner otherwise
+that'll give us issues coming to RP 8188
+here we'll do the same thing I'm just
+going to go ahead and keep the After
+Burner going I'm not going to change my
+altitude is fine the way it is and then
+of course when we get this point
+basically our xfill we basically can
+convert all that into our momentum to
+climb up and get into a safe spot so the
+cool thing is because we took all that
+time to basically program our
+reconnaissance here you'll notice our
+Mig here is not going to start at 10,000
+ft the away points are actually going to
+trigger The Descent so if I actually
+want to get this one on my way down I
+could go ahead and order them up at
+medium altitude and they will basically
+start their descent downwards trying to
+cruise into a point where they can begin
+our high-speed pass here and again our
+highspeed pass can't be done at all
+until we get into the cloud layer and
+out the bottom of it otherwise we're not
+going to see much of anything so you can
+see it's drop down to 12,000 ft heing
+about 470 knots he's moving pretty quick
+MC 21s are not slow
+and now what we're going to do is we're
+going to execute that turn we're also
+going to drop down a little bit lower
+here it's about 10,000 ft we're also
+kicking on our After Burner we're trying
+to build up as much speed as possible so
+when we rip past this Airfield again
+we're running parallel to this Airfield
+here we're going to be spending the
+least amount of time possible basically
+in the danger zone here and now we're
+going along here about 10,000 ft
+unfortunately when I did that I clicked
+the wrong way point so I'll go ahead and
+order him to do the 6,950 Ft manually
+here always be willing to do things by
+hand you can always miss something like
+that all right he's coming in now about
+9,000 he's about to bust through the
+cloud layer again you're trying to
+minimize how much time he's in out of
+the clouds and 6,950 ft bam uh that's
+plenty uh we're getting some snapshots
+we're basically looking out the side of
+the aircraft the camera's running the
+camera's running we're getting all sorts
+of good pictures here we're able to
+identify the Watchtower taking a look
+here we can see some tarmac space we've
+got some cameras and again our highspeed
+passive reveals pretty much everything
+we kind of already know plus all these
+building and plus all these boats now
+the wild thing is when our aircraft
+basically hits this particular Point
+here he's going to start coming back up
+especially if you did not manually
+override his altitude like I did and
+he'll of course starts slowing down as
+well so I didn't get a lot of
+information about the actual Airfield
+itself so I'm going to do something very
+naughty here and I'm going to rip across
+the middle of the Airfield just to
+demonstrate how incredibly dangerous it
+would be to go ahead and fly over an
+anamy Airfield go ahead and spin around
+here we've got the intelligence that we
+needed but you let's go get some a
+little more here coming in down he's
+about 6,000 feet okay here we go this is
+stupidity so we're going to order him
+across there of course we're not going
+to be done with our speed here we're
+going to go right back up to After
+Burner in case there is any AAA it's a
+pretty much going to expose itself as we
+come through here so again we come
+ripping across this is super duper duper
+dangerous anything that's triaa it will
+start start taking shots at us and there
+it is and you can already see we're
+under Fire it looks like a mobile Target
+there that's taking a shot and we're
+getting shot out over on that side and
+you can see just enough altitude those
+are really big rounds that they're able
+to hit something moving that speed so
+I've seen what I need to see oh I can go
+ahead and order my guy to return back
+home here whoa no no no no no ooo that
+was close but you can see that
+high-speed pass got us under attack
+almost immediately it did of course
+reveal to us the location of two enemy
+targets as well as whatever this is
+chances are this nun here is most likely
+also going to be something hostile maybe
+it could be a truck or something like
+that but I don't want to risk it any
+more than I already have this M 21 has
+served its purpose beautifully
+now when we did the scenario last time
+one of the things we did is we walked
+you through both using the manual attack
+as well as the automatic attack we also
+showed you how you can use you know the
+missions and stuff like that as well so
+we're going to go ahead and walk you
+through that process again now when we
+run the scenario again obviously we
+already know the target's on the ground
+so we don't have to worry so much so I'm
+going to grab my Mig 21 I'm going to
+order him to head home and now it's time
+to actually get some aircraft Airborne
+first thing I'm going to do is I'm going
+to grab a huge group of badgers these
+are very very very heavy bombers bombers
+in my opinion are more of an area of
+effect unit less so than it is a
+pinpoint strike we have tactical
+aircraft for that we also have a couple
+of these KJ 500s which are basically
+awax planes I'm not going to bother
+deploying them today because I know
+we're not going to get any repeating air
+up in the air back at us but they would
+be very critical depending on what we
+need so I'm going to go ahead and launch
+these as one big group I will have some
+fun with this group in a second here
+then of course they have a bunch of
+flounders and other the flounders
+because we're doing the first strike
+manually I'm going to break them into
+smaller groups I'm going to take one
+group I'm going to go ahead and launch
+as a group second group again doing
+groups of four here to make my life a
+little bit simpler and I'll grab that
+last group and M them so basically we
+have a huge group of bombers and three
+groups of these flounders now we have
+one more units and that's going to be
+all the way down here that's going to be
+our carrier group right now I press my
+F6 key you can see that we have a bunch
+of these with these goofy 122 mm Rockets
+when I say goofy I am not exaggerating
+that is a very goofy weapon uh it works
+great but their accuracy is good to
+about 20 M so I'm going to go ahead and
+launch all these and again you can see
+how how as a mission gets bigger it
+becomes harder and harder to do things
+manually but again for our purposes
+we're going to use them in groups of
+four to kind of keep things cool we're
+not dealing with anything like AER
+refueling or anything like that at this
+time this is just a
+demonstration all right r on the way so
+our first group they consider born is
+our Badgers now Badgers are an
+interesting aircraft because like I said
+a few minutes ago they are a heavy
+bomber aircraft and again I'm using my
+time acceleration here to save a little
+bit of back and forth I'll also take all
+the carry aircraft I sent and I'm
+basically going to sent them to the
+Island to basically hang out for a
+little while so when we need them in a
+moment we can just call them up when it
+comes time for that part of the mission
+but our Badgers like I said because
+they're using unguided weapons it's more
+of an area of effect more than it is
+anything else let's grab this unit here
+we'll send them to that southern island
+again which should be another Palmer
+group lunch in a few seconds here looks
+good okay my carrier planes are on the
+way there's another group to send to
+that southern island again having like a
+rendevu point whenever you're
+controlling units manually is a great
+trick here it makes it a little bit
+easier and there goes my next launch too
+here comes my Mig 21 after being shot at
+I bet that Pilot's a little little
+shaken up those are pretty large caliber
+rounds being launched up at him and you
+can see my bombers my Badgers basically
+making their way to the Target region
+and I think I've got everybody Airborne
+at this point yes everybody's Airborne
+delightful so now our Badgers right here
+are a couple different ways to use them
+sort of manually and U one of the
+strategies I like to think in mind is
+because there's only Triple A as long as
+I stay out of the aaa's range of attack
+I pretty much basically immune from
+Strike obviously if there are missiles
+or Sams this whole thing changes quite a
+bit one of the things we want to think
+about is the orientation of the runway
+as we plan our strike so right now we
+know the runway here is going to be an
+East West Runway you're saying how did
+you know that well if you to actually
+open up the runway and click on it you
+can see the facing of that Runway is 1
+180 which is basically do doe South
+actually that is my apologies that is
+not an eastwest Runway that is a north
+south Runway uh don't worry I will fix
+that for later so one of the things you
+have to know is that when we are
+striking runways we always have to
+strike along the runway at an oblique so
+if this Runway were facing the correct
+direction which I'll fix real fast all
+right all fixed we need to make sure
+that our bombers are going to hit it
+along its length and we also need to
+make sure not only hitting it along its
+length but we have a slight oblique and
+you can see I've got a bit of an angle
+here so I did correct the runway we are
+facing the proper direction now so it's
+again it's an eastwest Runway so when
+we're going to bomb it we're basically
+going to bomb across it now there's one
+more thing I'm going to do and this is a
+huge huge manual aircraft control tip
+here is I'm going to go to my bombers F4
+and I'm actually going to put them into
+a formation so I'm going to go to column
+I'm going to go ahead and set them to
+have a spacing of about 250 M and I'm
+just going to assign them that way that
+way the aircraft will go in a straight
+line rather than this weird little
+spread here and basically not be able to
+concentrate their fire you'll have to
+make several passes essentially in order
+to safely get into position so you can
+see the Bomber Crew is quickly lining
+themselves up in a nice smooth line here
+which is exactly what we want them to do
+now the cool thing here is because
+there's so much cloud cover and we're
+dealing with AA a that's got limited
+altitude there's nothing stopping us
+from dropping to a lower altitude for
+the purposes of getting a more pinpoint
+strike but I'm actually going to leave
+them at high altitude and the reason for
+that is I want to demonstrate how
+inaccurate the bombs are going to be
+it's one of my favorite things about
+bombers it is like I said it's an area
+of effect weapon so what I'm going to do
+is I'm going to press the F1 key which
+is an automatic attack I'm going to go
+ahead and click on the air base itself
+and basically what you're doing is
+you're you folks are allowed to attack
+whenever it seems convenient now if you
+notice they're in this nice tight line
+right now come to the side it's more
+obvious the shape that they're in and
+that nice tight line is going to run
+basically along the length of the runway
+making it much much easier for it to
+score a hit now the funny part and
+you'll get a kick out of this in a
+second zoom in a little bit again we're
+doing manual control we're not doing a
+mission look at how high up these guys
+are yeah like you're going to hit
+anything from that altitude but you know
+it's part of the fun part of the fun
+I'll go and zoom over here and it's it's
+do doable it's doable coming into range
+now uhoh there comes our bombs bombs
+away and you can see how they released
+into three different groups of bombs
+four different groups they one bring up
+the rear here he's kind of sneaking in
+here he didn't quite have enough time to
+get into range we were still climbing
+and he's going to drop his bombs in just
+a few seconds
+here and delightful all right nice job
+Badgers you folks are welcome to return
+to base now one of the things I said a
+few moments ago is to remember that
+these are area of effect weapons because
+they're guided bombs so speed up time a
+little bit so from what you see right
+now as you can see the bombs making
+their way down to the ground there's the
+next group right there but we'll
+Fascinate You oh there it
+[Laughter]
+is as you probably observed uh my
+command froze up there as it calculates
+all the collisions but the important
+thing to notice is we were aiming at the
+middle of the Airfield but the
+concentration of bombs is everywhere you
+know that's one of the important things
+to know anytime even if you're using
+modern units here you're still going to
+have that same fundamental problem when
+you drop bombs using heavy bombers that
+are not guided you're basically going to
+get spetti like that it's going to make
+a big old mess but it's it's kind of fun
+it's a good way to suppress a region
+guess if you want to think of about
+another way so let's go ahead and head
+down here and take a look at some of our
+other options again we're manually
+controlling it so we have a couple
+different flights These are nice these
+are the fh7 they're kind of fun
+basically going to pull these guys to
+the side we're going to pull the fh7 and
+we're just going to cause them to
+basically group up based on what type of
+aircraft they are I think these are Al F
+h7s there we go and now the reason I'm
+doing this is it's going to make it a
+little bit easier to keep the two
+different groups of aircraft separated
+as I'm starting to plan my strike here
+now this group here these are soqu I'm
+going to go send them this way now if we
+take a look at these aircraft they're
+equipped with laser guided bombs now
+laser guided bombs are fabulous they do
+a lot of damage they're very very
+precise but they require us to see the
+target to hit them that means we need to
+be at an altitude of less than 7,000 ft
+in order to actually utilize the weapon
+correctly now if you remember a while
+ago we had a couple interesting targets
+now we had this Target and we had this
+target so what I really really love to
+do is I like to do something about that
+triple A if I can help it before I send
+everybody else in to basically join the
+party so what I'm going to do is I'm
+going to grab one of my flights here and
+I'm basically going to task them with
+attacking this particular unit here what
+they're actually going to try to do is
+they're going to try to get down and see
+the Target in order to hit it now since
+I have a manual Waypoint here they don't
+know to abandon the Waypoint so if I
+want them to actually do that I have to
+come in here and set their altitude so
+we'll go ahead and take a chance and
+send them down to 6,900 ft here we'll go
+ahead and duck down just like that I'll
+grab those fh7 and basically going to
+group them up so we're ready to use them
+in a second there we go delightful so
+again I don't like to do manual missions
+if I can help it but for the purpose of
+demonstrations here we go so we're going
+to duck below the 7,000 ft which is
+going to give us visibility and there is
+our Target we have line of sight on that
+particular Target now this is going to
+suck so what I'm going to do is I'm
+going to spend the least amount of time
+impossible hold on hold on I started
+pushing buttons by accident my apologies
+6,900 ft After Burner we're going to
+spend the least amount of time possible
+in the danger zone when we're moving
+through this regular Target so I'll go
+ahead and pause here I'll press shift F1
+I'll select this one right here uh
+you'll get a bomb uh this one over here
+I'll select a different unit and they
+will also get a bomb and the reason I
+like that is so we can basically spread
+our attacks out there goes the first
+bomb one of the fun tricks is of course
+once you drop a bomb you don't need to
+point at the Target anymore they're
+laser guided bombs now you can see we're
+basically pulling away to stay out of
+the line of sight of these weapons so
+once we get into the lethal range we get
+pretty nasty but you can see because we
+broke off like this we can actually slow
+down we're doing such a good job here uh
+we can now just guide the weapons nice
+and CA you know kind of do like a little
+Arc kind of a thing and you can see our
+Triple A is about to booom nice hit and
+we can see this next one's spinning
+around here and again by removing the
+tripa a you make the rest of this job a
+lot easier for everybody else w Dam that
+was
+delightful all right flight one ner zero
+you are clear for your strike so now
+we're going to go switch these folks
+over to their manual control and we're
+just going to have some fun with the
+airport so what I'm going to do to make
+this a little bit easier to control is I
+press shift F1 go ahead and click on the
+air base and now we have can leisurely
+select what we like to shoot at here we
+have some aircraft hangers but we need
+something as bombs I will drop you get
+you get a bomb and this guy will drop a
+couple bombs on this aircraft hanger and
+then this aircraft hanger we'll go a and
+use this one drop a couple bombs there
+and is delightful so as we come spinning
+around here making our lovely Arc
+remember we're under the cloud level if
+you're ever curious about the cloud you
+can just press f2 real quick and you can
+see that the cloud level is at 7,000 ft
+look at this oh my goodness look at
+those laser guided bombs thank you for
+playing oh look at this bam goodbye
+hangers and looks like we got solid hits
+in all the hangers there we didn't quite
+get a kill though um that's okay though
+as you recall we have other aircraft
+basically relaxing right now so I'm
+going to send that group back home I'm
+going to grab my next crew and I'm going
+to bring them up into position meanwhile
+I'm going to go bring up this suo just
+so they're ready to use basically as a
+follow-up strike in a few moments there
+we go we'll go ahead and grab this crew
+as well and bring them up this crew is
+on the way back home so I'm not going to
+worry about that too much all right next
+group is in so we're going to send these
+folks down to that 6,900 ft in case
+there's any Triple A that we missed
+they're going to take a nice long Arc
+here they
+come dropping about to hit the cloud
+layer this is really exciting to do in a
+real plane oh no we didn't give them
+enough room to come back down I'm going
+to cheat just a tiny bit here to give us
+more time to get down and like I said
+when you manually control this game it
+gets really easy to basically go get
+hyperfocused on one situation and not
+pay attention to other things that are
+going on all right about to plop through
+the cloud there through the clouds all
+right let's go ahead and take a look at
+what we have left shift one shift f one
+rather all right so we have a hanger I
+will give it a couple more bombs it
+seems the first time it didn't do the
+trick we have some taxi space we'll go
+ahead and drop some bombs on those we'll
+drop some bombs on this one again just
+clicking on it and I'm doing one of
+those and we'll do one of these all
+right cleared hot so what they're going
+to do now is they're going to make a
+pass over the Airfield and they're going
+to drop off their laser guided bombs as
+you can see very clearly here and that's
+probably going to be enough to finish
+this mission to be honest with you look
+at this
+oh nicely done all right folks you are
+done for the day go
+home fabulous looks like we did quite a
+bit of damage there taking a look here
+we have some contact reports hosted unit
+uh 14 seconds ago there's six on known
+units but incredibly our bombs actually
+didn't do the deed so let's go ahead and
+grab the next crew we're going to go
+ahead and order them to drop down to
+their 6,900 ft right away and we're
+going to start sending them in we'll
+kind of do a strike like this and look
+at this you can order up the strike
+really early like that don't mind the
+bug I am working the beta version all
+right let's go ahead and do this one you
+get a bomb let's see here actually you
+get two because somehow that thing keeps
+surviving I don't know how it keeps
+surviving but I'm not going to worry
+about it they're only 500 Pounders so
+maybe that's why all right there we go
+couple more bomb for that one again 500
+kgr bombs are pretty big all right so
+we're diving here we're at 3,000 30,000
+ft there's 6,000 6,900 ft we're swinging
+around our crew is getting into position
+and here comes the next round and you
+can see they're basically doing their
+thing and the great thing about this is
+I don't have to waste any Munitions
+because I checked to see if the target
+was destroyed every time I go by all
+right folks you are done go ahead and
+return to base delightfully done I zoom
+in now I can see these hangers or should
+say the tarmac spaces have been shot up
+pretty bad they're actually on fire the
+hangers are now completely gone so now
+we can go ahead and tag out to our
+friends over here this is our suqu the
+j15s basically so we're going to grab
+those grab these and grab these and now
+we're just going to order everybody to
+drop down to that 6,900 ft you go down
+to 6,900 ft because we know no matter
+what we do we're going to need 6,900 ft
+again to stay out of that cloud now if
+we had an inertial weapon we would not
+need to drop down below that to get a
+visual we can just basically go right in
+all right here we go here comes the
+group this is the uh j15s the flying
+shark
+we going to go ahead and do the same
+thing we did before click on the one
+shift F1 and we have these things called
+Rockets the s13 BS so we're going to go
+ahead and order this one to drop its
+entire rack again Rockets are not
+accurate so we're going to do the entire
+rack for this one we're going to do the
+entire rack for this one and of course
+we're going to do the entire rack for
+this one as well it's quite a bit of
+Maintenance quite a bit of ordinance to
+say the
+least all right here we come ripping
+across one thing we want to check real
+fast before I make that mistake is
+double check what altitude we have to
+launch it that um launch altitude okay
+that's fine we could certainly launch
+that altitude that's not an issue for us
+all right here we go coming through
+ripping across notice her aircraft are
+in the wrong formation I did tell you
+this would be a problem tonight there we
+go now the interesting thing here is the
+crew behind them is trying to take their
+shot but because they're in that weird
+star formation you could see they're
+basically spraying all around the base
+now if I unpause here I'm not unpaused
+if I don't order them to do anything
+you'll see they kind of do this little
+twisty thing where they keep trying to
+make like half passes and eventually
+they will continue to hit the target but
+every time you make a pass any jerk with
+a Sam launcher on his shoulder would be
+taking a pot shot at you there we go
+nicely done folks nicely done and now
+you folks have done enough so you can go
+ahead and head help so as you can see
+the manual strike was fairly effective
+one of the cool things I could do is I
+could actually click on this press F1
+and just click on the air base click on
+him press F1 and the air base and now
+I've actually got a completely automatic
+strike and you can see they're just just
+going at it and they're kind of switch
+to this view here so you can kind of get
+a feel for what this looks like but
+they're just doing their thing spraying
+around again not being terribly
+efficient we were having a much more
+luck as far as being precise and saving
+ammunition when we were doing this
+basically microman but obviously you saw
+the consequence of that was we've had to
+work really really hard just to Dent up
+an air base which is one of those things
+that you just have to be mindful of so
+these aircraft are back on their way
+home everything's fine this is a good
+time of course to see how we did so if I
+open up my scoring real quick you can
+see my score is 360 so we did delightful
+if we take a look at our loes
+expenditures this is the important part
+you'll notice we got their ks19 those
+are those big cannons firing at us the
+other thing you'll notice is we had got
+every single aircraft they have we blew
+them away we also got all of their
+hangers we shot up their TX we got their
+aircraft um they fired 48 rounds at us
+which is actually quite a bit total
+losses we lost one finback that's quite
+disappointing there very disappointing
+actually again that's one of the towns
+things we have to be cautious of
+expenditures though you can see just how
+many of these stupid 30 m 20 22 mm
+Rockets we fired unbelievable but at the
+end of the day is we still had a very
+very successful Mission we absolutely
+crippled their capability we destroyed
+their entire Air Force and the crazy
+thing is all my combat aircraft did get
+to go home that Finn backck by the way
+was a reconnaissance unit I said earlier
+that I forgot to say but that's okay so
+as you can see manual does work uh we
+had a very successful Mission everything
+went smoothly hopefully you're able to
+kind of fall along with us I'm looking
+at the time of this video realizing it's
+25 minutes and there's no way I'm going
+to be doing the other two two methods to
+do this attack today so we'll sa that
+for a video for next time but other than
+that enjoy

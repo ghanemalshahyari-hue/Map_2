@@ -1,0 +1,253 @@
+# C: MO - Estimating Lead
+Video: https://www.youtube.com/watch?v=5xC-OdCG0fc
+Video ID: 5xC-OdCG0fc
+
+hello everyone today's video we're going
+to be doing a little bit of geometry or
+we're going to try to solve the classic
+problem of two different objects moving
+in space
+and trying to get them to intercept each
+other now the interesting thing in
+command is if actually this were an
+interceptor and i pressed f1 and clicked
+on this guy
+that calculation could be done before
+you but let's say i want to go ahead and
+put a bunch of units together and like
+kind of do a co-support or something
+along those lines
+so now we've got to figure this one out
+so this is basically going to be an
+exercise in proportionality
+we know that our 172 travels at 120
+knots
+and we know that our boeing 737 here
+travels at 434 knots
+so we know that every little mile that
+this one travels
+this guy is basically going to travel if
+you want to think about it another way
+434 divided by 120
+3.616 which simply means for every mile
+like i said he's traveling
+we need to bring him back a factor of
+3.61
+so you're sitting there going okay so
+that kind of makes sense but the problem
+is you're working in a three-dimensional
+space here so that makes it a little bit
+more difficult in order to process your
+initial brain is going to say so if we
+just take
+this and we do the proportionality 150
+it's going to mean you're going to
+intercept right about here
+which is actually fairly accurate but
+remember as we start to take the
+position along this line
+we're increasing the distance this one
+has to travel
+so nobody said that this would be an
+easy problem you just said that this
+would be an interesting problem like i
+like to say
+now there's a couple different ways to
+do it if you want to do the estimation
+method which works really really fast
+simply work out the proportion of the
+speeds and that's where you need to be
+on the proportion of the course
+so in this case like i was just doing a
+mathematically a second ago 120 out of
+would simply mean about a quarter of the
+way about a third of the way so if you
+took the total distance here which is
+about 150 miles so you measured about a
+quarter of the way let's see 150 miles
+let's see if we want to divide that by
+four this is where you're having to put
+like 40 calculators that's 37.5 miles
+so if we moved up here at about 37.5
+this would be about the intercept point
+the problem is is because you're moving
+at an
+angle you've actually increased the
+distance that you have to travel
+so whenever you do that you always have
+to put a little bit of extra fudge in
+there to actually go ahead and
+compensate
+for this incredible amount of angle now
+if you want to do some really fast and
+really really nasty sine and cosine
+action
+you can get this pretty precise but this
+is a great rule of thumb so i'm simply
+going to take this
+estimate to be about let's call it right
+there so like i said that's going to be
+about that proportion of speed
+so now we're moving his distance at the
+proportion of speed obviously if you're
+a little bit slower you have to work
+this the other way around
+so i've unpaused this let's see how we
+did here
+almost perfect almost perfect so you can
+see the basic technique
+actually works really really well as far
+as estimating now if you want to get a
+little more accurate like i said you're
+gonna have to bust out a little crack
+calculator we're basically gonna have to
+zero out the speeds
+and work out the exact ratio between
+left and right now that's pretty fancy
+but it's not anything we need to do
+so let's go ahead and reset our scenario
+real quick
+and let's go ahead and try it in the
+other direction so now we know that
+this is going to be a lot more
+challenging of a problem to solve
+because this is a much faster aircraft
+so you're going to run into a situation
+where now we have to increase the
+distance along this line
+by the proportion of how much slower we
+are so if you remember 120 out of 434
+is 27 so we're doing 1 over 0.27
+and you can see i need to travel 3.7
+times the distance in order to intercept
+them
+so in this case we've actually run into
+a situation where we can't intercept
+this aircraft it's simply moving too
+quickly if we left it however at let's
+call it a 200
+250 knots actually would be even nicer
+we'll do 240 knots
+now we have a possible chance of
+intercepting it because
+we're not going to basically you know we
+can't keep up otherwise so now we know
+that this guy is going exactly double of
+our speed which means if we're going to
+try to intercept it whatever the total
+distance is
+let's see our total distance here is
+going to be uh let's see here
+nautical miles is going to work out to
+be 300 nautical miles where actual
+intercept point is
+now remember like i was saying before
+let's go ahead and mark out 300 miles
+right here
+it's going to be about right there when
+we move this we've actually
+increased the distance that we have to
+travel so we're not traveling 300
+nautical miles here
+we're actually traveling significantly
+more so you want to add a little bit
+extra to that particular point
+so let's go ahead and unpause actually
+first we've got to grab our boing and we
+have to actually order it to go all the
+way down here otherwise you're not going
+to see this so now let's go ahead and
+see what this looks like like this
+you could see that our assessment is
+really struggling to keep up
+so in this case that was never going to
+happen no matter how much lead we'd have
+that extra distance
+imposed upon us by that increased angle
+absolutely blew us away we literally
+could never possibly catch up to him
+so it's an important thing to keep in
+mind that if you're trying to chase down
+an sr-71 or something like that
+you have to be there incredibly earlier
+the most common use of this technique by
+the way is if you're doing a little bit
+of submarine work you know how far ahead
+of the convoy do i need to be
+in which case i say if you're exceeding
+45 degree angle to try to get away from
+the convoy
+you're almost never going to be able to
+catch it so hopefully this technique is
+helpful for you again i use it again
+it's just back of the envelope stuff i'm
+not going to pull out a graphing
+calculator or anything and work it out
+you can work it out if you want it just
+gets a little complicated it's also
+worth noting and i'll show this to you
+really real fast i'll go ahead and reset
+the scenario
+that command actually does this
+automatically for you so let's go ahead
+and
+change my scenario up just a teeny tiny
+bit just to prove my point let's go get
+ourselves everybody's favorite f16
+cm be okay 52 oh 41 what's that never
+heard of that before
+that one looks good let's go ahead and
+get into amd it looks good poke it
+just fly in that general direction and
+let's go ahead and get ourselves so
+added to the side real quick just for
+purposes
+go ahead and say postures we'll say
+hostile looks pretty good to me
+switch to the other team let's give them
+an sr-71 just to be annoying
+i didn't realize you could put an aim
+120 in an sr-71 that hurts my feelings a
+little bit
+all right we're going to order him to go
+down this direction and you know make
+this scenario a little bit easier for us
+we're going to get my favorite radar
+here we'll go guess ourselves at tips 43
+tps 43 that's the one
+oh apparently i'm putting it in the
+water who knew oh well that's florida
+for you right
+that looks good tips43 press okay turn
+it on
+and i just want to show you real quick
+that fortunately you don't usually have
+to do this for the purposes of
+identifying enemy aircraft so if i grab
+my f-16 and click on this guy like that
+he will actually if you order him of
+course tell him to ignore your plotted
+course
+so he will actually automatically if you
+watch him see how he's moving to
+intercept automatically
+so if i actually go back to my sr-71 and
+go hey watch this
+this is going to be a little one-sided
+watch what the f-16 actually does he
+will automatically
+compensate for that change of speed see
+how he's leading him do you see how he
+immediately turned the other way
+now notice my f-16 is now facing this
+way for the purposes of intercepting
+that aircraft
+there it goes no no no don't do it early
+don't do it early oh he's going for it
+he's going for it will it connect
+and you can see the missiles
+automatically lead as well
+nice we got them so hopefully this video
+is helpful as far as solving your lead
+problems it's just like a quick little
+tip that i thought people would enjoy

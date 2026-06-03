@@ -1,0 +1,431 @@
+# C: MO - Cargo loading and unloading
+Video: https://www.youtube.com/watch?v=c_ND_3U0TNY
+Video ID: c_ND_3U0TNY
+
+hello everyone in today's video we're
+going to be taking a look at cargo i've
+been following the discord quite a bit
+recently and if it's not talking about
+drones it's probably dealing with some
+of the issues with moving cargo and sort
+of understanding the differences between
+cargo loadouts and the actual loadout of
+cargo now i know that sounds like oh
+that makes sense it can be a little
+confusing and i'm not gonna lie i sort
+of wish they changed the way this was
+managed to make things a little bit
+simpler for folks so let's go ahead and
+get started so here we're sitting out
+right here on the west coast of alaska
+we're up way way way up here i think
+this would be a great place to go ahead
+and test a little amphibious operation
+i've got the lph iwo jima here in inside
+of it we have a couple different
+packages the first thing i have is if
+you look at my little ships page i have
+a group of rhibs these are like you know
+kind of like zodiac boot kind of things
+and inside the hangar itself i have a
+bunch of super stallions which are great
+for carrying a bunch of cargo for those
+you know an lph it's basically kind of
+an obsidian ship actually we got a
+pretty good picture up here you can kind
+of see it's like a self-contained
+amphibious little assault vessel it's
+actually pretty cool some of the stuff
+that it has in it uh things we know
+about it i'm just poking around real
+quickly is we have a troop capacity of
+about 1800 we can contain plenty of
+personnel we contain plenty of mass
+plenty of area and we also have a pretty
+large pier in the bottom of it as well
+now where things start to get a little
+bit tricky is when we actually want to
+start loading them up with guys so we're
+in scenario editor mode right now so i'm
+going to unit actions edit cargo it's
+going to bring up this handy dandy page
+now you're probably going why is
+everything red things are red because we
+can't actually carry them because
+they're too large as a matter of fact if
+you're trying to make this a little bit
+bigger you probably notice that my cargo
+mass which is how much it weighs my
+cargo area my cargo crew we have to make
+sure whatever we're carrying can fit
+within the particular space in here now
+the interesting thing is each unit has a
+certain limit to the biggest thing that
+can fit in here because we're just in
+lph we're fairly limited here so i'm
+going to scroll down here i'm going to
+go ahead and find something that's going
+to work out fairly well for me i'm going
+to load up a bunch of infantry because
+you know why not so let's see here
+forward observer sounds pretty good i
+was hoping for just a good old-fashioned
+boring infantry platoon here let's see
+epc to ef there we go ah infantry
+section perfect so you'll notice each
+one of these infantry sections cost for
+cargo crew space going to make iwo jima
+here you can see 1806 so if we do 1806
+divided by 4 we get 451 which is a lot
+let's go ahead and round that down to
+450.
+four five zero press add oop i hate it
+when it does that doesn't matter i'll
+just do it ten times ta-da now i close
+the screen you'll notice that i'm now
+carrying a cargo of a pretty substantial
+number of individuals chilling on so i
+board the ship here so now that they've
+all been loaded up what do we do with
+them well we can load them on let's see
+here double check double check i don't
+see the cargo that this did let me just
+make sure i press the ok key and that's
+why i like to check things like that
+because you'll do the same thing about
+100 times when you're building scenarios
+as well this is the infantry section
+we'll do 45
+and we'll press the ok button correctly
+this time there it is so now you can see
+we have a cargo of exactly 1800 out of
+1806 men we're not having any mass and
+we're not having any area i can't write
+them with any vehicles here today so you
+don't have to worry about that too much
+so now that we have a bunch of cargo how
+do we get them to the beach well we have
+two different ways we can do that the
+first method of course is we have a
+bunch of helicopters which is going to
+be the quickest way to get them to the
+beach typically and we also have a bunch
+of boats but you know to make things
+complicated let's do both so the first
+thing i'm going to do is i'm going to
+load up these boots with a bunch of
+people i notice that i've got a full
+capacity here my docking facilities i've
+got a little david pretty good dock in
+the back of this thing so let's go ahead
+and fill these guys up with some
+inventory so i'm going to click on load
+and unload cargo you can see exactly how
+much i can carry i can carry eight men
+not much so one of the cool tricks if
+you press load all it shoves as many as
+possible into here so go to this one
+load cargo grab my guess you know i can
+do one of these things load all press
+okay go to the next one we're gonna go
+load unload cargo click that one load
+all press okay go to this one i know
+you're saying wow this is a little
+tedious is there an easier way oh yes
+there's definitely an easier way but
+we'll take a look at that a little later
+so now these boats are now ready to rock
+it's going to take them about 30 minutes
+to fill them up with soldiers which
+doesn't surprise me that's pretty quick
+if you think about it again these guys
+have this nice you know shielded bay
+down there so now let's get a little
+more complicated let's look at our super
+stallions right now they're not carrying
+any loadouts so but that's actually a
+good thing because we can prove our
+point here so i'm going to go ahead and
+already arm and i notice i have a bunch
+of different loadouts i have one for
+marines i have one for marines i have
+one for marines and i have one for seals
+i also want some cargo now you're
+sitting there saying what's the
+difference as far as cargo capacity the
+answer is zero the only difference here
+is our technical delivery range now you
+notice if i say i want to carry 10
+marines i get a 475 mile radius if i
+carry 838 i only get a 350 nautical mile
+radius that's it now some of you are
+probably saying what's between a seal
+and a marine um nothing except a little
+teeny tiny distance change you just want
+to be very mindful of that because it
+doesn't matter what this word says it's
+still physical personnel that you're
+dragging here so in my case i'm going to
+go for marines 38x load them up and now
+actually let's go ahead and grab them
+all so we can shove everybody everybody
+on board ready arm 38 marines a lot of
+it's what i would consider flavor more
+than function so now we have gladiator
+one he's ready to hold 38 marines load
+unload cargo watch this load all press
+okay and now he's got nine infantry
+sections on board now you're sitting
+here saying wow this is going to take
+forever to do this
+you're absolutely right so let me skip
+this
+that took a few minutes
+but now all of my different helicopters
+and my ships are now filled up with
+marines and in about 30 minutes they'll
+be ready to go ahead and launch them
+actually look at my cargo now you'll
+notice that i sell 1300 people on this
+thing so this is a pretty big boat so
+let's go ahead and fast forward time by
+about half of an hour
+and stop
+my minute off no big deal now all my
+helicopters are completely loaded keep
+in mind if i wanted to unload them i
+would now have to go ahead and set this
+up so let's go ahead and get them
+getting to the beach here i'm going to
+press f6 i'll grab all of them and go
+ahead and launch them
+in a big group now this is a mistake and
+i'll go ahead and show you why so we're
+also going to take the boats now we're
+going to launch them as a group as well
+we'll launch as a group and this will be
+the second of our fatal mistakes here
+but exactly i want to show these things
+off all right we've got our helicopters
+on the way i'm going to order them to go
+to shore here have fun guys have fun
+gotta go meanwhile my boat's down here
+i've been now deployed i'm gonna go
+ahead and order them to the shore at
+flank speed because you know it's going
+to take them a few minutes to get there
+so they're on their way they've just
+deployed and off they go helicopters get
+in position helicopters get in position
+now this is where your instincts are
+going to beat you a little bit here and
+that's really kind of a shame because
+it'd be easier if it worked this way so
+i'm now in position to drop my soldiers
+off here now you're probably saying oh
+we gotta hover and jump them all off um
+you don't
+it's actually pretty easy you can treat
+them almost as paratroopers to be honest
+so the one thing you think is you right
+click here and you're going to go temp
+down here and you're going to press
+download cargo button you push that and
+nothing happens the reason that happens
+is if you're going to manually unload
+cargo it's by unit it's not by group so
+if i actually press the 9 key on my
+numpad you'll notice i can now pick
+individual units if you're coming here
+and go unload cargo what he'll actually
+do is dump off the cargo assuming that
+he has the ability to do at that
+particular point now this is one of
+those kind of tricky things that you're
+going to have to kind of get the hang of
+with this particular system because what
+they're actually going to have to do now
+is they're going to have to sit here
+slow down drop everything off and then
+they can head back home keep in mind if
+i had any water underneath me or
+anything along those lines interfering
+with this process none of these
+different units will actually be able to
+safely unload any of the cargo that i'm
+just asking them to do again i like to
+call this the long way of doing this but
+it's kind of important that you see it
+see everybody goes into hover they go
+they take a few minutes they take a few
+minutes they're doing their thing
+they're doing their thing and that's it
+they're done
+so now we can grab that group flight 18
+here and now we're going to go ahead and
+hit them back to base now keep in mind
+if these repair troopers they would fall
+right out of the back and you wouldn't
+have to stop first but off they go all
+my infantry is ashore meanwhile these
+guys where are you going
+the fight's this way guys whoop we'll
+get these guys right up to the shore as
+well i'm going to right click on them
+again you want to push that on the cargo
+button it's not going to work you have
+to do it individually so if i grab this
+boat i say get rid of your car go ahead
+and move them out of the way too i'll
+grab this guy right here this one looks
+pretty good go ahead and
+unload cargo grab this guy right here
+remember have a lot of these things move
+him out of the way and go grab this one
+unload cargo all right good job
+everybody good job good job good game
+good game all right everybody head home
+now you're probably saying hey you said
+a couple minutes ago that if you tried
+to do that they wouldn't hover well the
+reality is yeah it's because they're not
+paratrooper capable that was my bad
+speaking of paratroopers what if we
+wanted some paratroopers let's get some
+so what i'm going to do is i'm going to
+grab myself a paratrooper load out now
+this is where things get a little
+different marines have to be dropped off
+directly paratroopers do not but that's
+dictated by the loadout itself so let's
+go ahead and get ourselves a pair of a
+little handy-dandy aircraft we've got
+obviously a c-130h is the correct
+aircraft for this purpose
+1976. i'm going to pick paratroopers
+here and press okay i'm going to grab
+these guys real quickly here i'm going
+to go ahead and pause again edit i'll go
+up to my little cargo option right here
+let's do edit cargo we have
+not a lot to pick from here but that's
+okay because remember we can do just
+about anything infantry section looks
+pretty good how many paratroopers can i
+hold 64. 64 divided by four 64 divided
+by four i think that's 16 i don't know
+my math is terrible press okay hey we
+did it so now we're loaded up with a
+bunch of paratroopers i'm gonna order
+them to fly over here whoop skip the
+trip it looks like we're in a pretty
+good spot now remember because they are
+paratrooper capable i should be able to
+right click on these guys and very much
+unceremoniously yeah throw them out of
+the airplane so you can see there's a
+giant stack of infantry just chilling
+right here these are all my infantry
+squads now
+keep in mind the reverse of this is also
+true if i wanted to grab one of the
+helicopters of course if i'll go back
+home i can actually right click and you
+can also just go ahead and select an
+item that you want to pick up with that
+particular unit now that's a little bit
+different see the select units then i'd
+have to come over here i have to click
+on the guy he'd have to turn around he'd
+have to lock in i'd have to undo the
+base so that he could safely pick up the
+inventory now one of the things i said a
+little three minutes ago is wait a
+minute is there an easier way to do this
+again believe it or not there is an
+easier way to do this so let's go and
+take advantage of that so i'm gonna do
+the same thing i did the last time i'm
+gonna go ahead and set these all to be
+carrying oodles and noodles of marines
+here sounds good to me i'm not gonna
+load anybody i do have to edit my cargo
+again as you noticed from before
+remember i had to carry 450 guys so
+let's do edit cargo let's go ahead and
+not go back down i'm trying keep on it
+doesn't have to be infantry platoons it
+could be anything that i can technically
+carry and obviously you can have some
+really fun and i think i'll be making a
+fun amphibious mission in the next
+couple weeks just to kind of prove the
+point
+perfect okay nice so now what i'm going
+to do is i'm going to create a small
+zone let's go ahead and create a defined
+area rectangle by the way keep this zone
+tiny i can't emphasize this enough make
+sure there's no water here make sure it
+is tiny so what i'm going to do is i'm
+going to create a cargo mission i'll go
+ahead and say ah cargo press okay we're
+going to make sure that this is a cargo
+mission this is important and i've made
+a mistake already so i'm going to go fix
+my mistake the mistake i made is
+remember there's boats involved here so
+we need to make sure that one of these
+is very very close to the shore so we
+can actually reach it with the boat all
+right that looks like a pretty good
+concentration there everything looks
+good so now what i'm going to do this is
+going to seem crazy but i'm actually
+going to pick the units that i'd like to
+go ahead and now do this for this so i
+can go grab all these guys would throw
+these on the group notice the mothership
+shows up here and grab their ribs and go
+and throw them here as well now notice
+we now have motherships now also notice
+we have the items we want to unload see
+how there's 450 of these watch this boop
+i've now requested that 450 marines get
+unloaded and loaded into these boats
+unloaded on the shore and then
+everything goes back and forth back and
+forth back and forth until the mission
+is complete so watch so i'm gonna go
+ahead and now do this
+and in just a few moments we should have
+there they go
+now that's what i call an operation
+see all the little ships are coming out
+here they come here they're gonna come
+here comes actually all right go ahead
+and pause
+now notice all those units unloaded
+inside of this region from the
+helicopter and now these rhibs are here
+meanwhile on board you can see in about
+45 minutes the helicopters will be ready
+to go again to actually go ahead and
+deliver that mission one thing that we
+can't do here is unfortunately we can't
+do this as a quick but notice now we
+have buttons like collapsed knees and
+hiding that availables and occupation
+and everything like that so you can see
+that's a much much quicker way to handle
+cargo now i've heard some interesting
+rumors that they're going to be
+expanding cargo to include logistics but
+as far as what we know is for those kind
+of elements we're not sure yet maybe
+we'll see them maybe we will not so
+imagine things like shipping containers
+imagine things like bases imagine
+structures and things like that that you
+can move but that remains to be seen
+better than that enjoy

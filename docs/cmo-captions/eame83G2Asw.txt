@@ -1,0 +1,250 @@
+# C: MO - Grouped vs Single Ground Units
+Video: https://www.youtube.com/watch?v=eame83G2Asw
+Video ID: eame83G2Asw
+
+hello everyone in today's video we're
+going to be taking a look at the
+difference between a single unit and a
+unit that is made up of smaller parts of
+a unit now the reason that this question
+comes up and this is something that a
+couple folks were talking about over on
+Discord is that sometimes when you're
+attacking certain ground units the
+effect of the weapon is not what you
+expected it to be and we're going to go
+ahead and demonstrate that as well as
+kind of show you the differences in just
+a moment here so let me go ahead and
+pause our simulation real quick I'm
+going to go switch over to Red Force
+real fast we're going to go zoom in on
+our little Arrangement here what you'll
+notice here is I have two units plus a
+big old Airfield right here I've got
+myself an sa 2de this is the kind of the
+pvo version of it it's my favorite and
+of course we also have a flat face a p19
+now when I go ahead and bring up the
+database entry for the flat face you're
+going to notice a couple different
+things so first of all if I scroll down
+here it's got a nice little description
+it's got a size and if You observe
+carefully you'll observe that this
+particular one has one damage Point uh
+this entire truck can get hit by one
+thing then the truck is pretty much o
+now when I come over here to my good
+friend the SA 2de which is a large
+battery it's got all sorts of missiles
+and everything if I ever to run up to
+the database entry you'll observe that
+it has zero damage points now the reason
+it has zero damage points of course is
+because it is a distributed Target it is
+not a single Target you're not hitting
+the whole battery for one damage or zero
+damage in this case you have to hit each
+individual piece of it now unfortunately
+for us we don't get a nice little
+digital display that like shows just
+like the arrangement of the battery or
+anything but that's okay we can figure
+out what's inside the battery Itself by
+running up to our little weapons page
+here in which you'll actually notice is
+we're actually made up a bunch of
+different units we have six single rail
+guidelines here we also you come down
+here you can see we have a couple guys
+with basically shoulder launch man pads
+ready to go for that cheap shot we have
+the F song e and of course you have a
+spoon rest of p12 they're just kind of
+sitting there ready and all these can be
+damaged individually and that's an
+important concept now when I come over
+to my p19 if I went over to the weapons
+page you'll observe it is blank because
+the entire p19 is one complete unit now
+let me go ahead and bring in this
+Airfield for a second here and if you
+actually take a look at my Harden
+aircraft shelter now you'll go down to
+weapons here and you'll see that there's
+nothing here which makes sense however
+if you were to actually go into the
+database page here which you'll observe
+is the fact that has 350 damage points
+this thing takes a lot of pepper to take
+out of commission so let's go ahead and
+switch back to other side real quick so
+for the purpose of the scenario I have
+myself an F4 which is perfect aircraft
+for this kind of feel bad for him
+actually so what he's going to do is
+he's going to go ahead and commence an
+attack here I'm going to get myself a
+little bit closer into range before I do
+anything silly here look at pretty good
+here looking pretty good here I'm liking
+the way this goes fantastic so what we
+need is an active radar signal for this
+thing to actually fire and if I look
+down here you'll notice that I've got my
+flat face and I've got my S to here now
+if I press myh shift uh let's see that
+was shift F1 my bad and go aead and
+click on this guy you'll see I'm allowed
+to fire this weapon at him and this
+makes sense because it is a unit that
+has an active radar so I'm going to go
+ahead and pop that thing off it's going
+to come ripping off the rail there and
+it's going to start making its way down
+to the Target and of course uh you can
+see it's just kind of chilling kind of
+doing it thing kind of doing its thing
+making its way down all the way through
+of course our Sam 2 while we're going to
+go ahead and play the game a little bit
+here grab my Sam 2 we're going to go and
+flip that thing on just for the purposes
+of again our scenario here we're going
+to turn it on just like that just way we
+get a nice lock on that fire control
+radar that juicy juicy Fire Control
+radar which we actually want to damage
+here get a little bit closer go and
+shift F1 I'm going to go click on him
+you'll notice we're lowed to fire we're
+going to go ahead and fire one of
+those off he goes go home your mission's
+done today actually you know what don't
+go home let me go ahead and let's get
+you down here I'm going to make you come
+down here in a nice low altitude we're
+going to do a strafing around if things
+don't go well so we have the missile on
+the way you can see here that we have
+one missile allocated to this target you
+can see we have one missile allocated to
+this target the Sam to the reason the
+Illuminator just popped up is because
+it's basically desperately trying to hit
+that thing as it comes in it's not going
+to be able to do anything about it and
+this little 11 here just gives us a
+heads up of what's left of that battery
+so it comes down the first one gets hit
+you can see that it is obliterated that
+truck took that standard arm probably
+somewhere in the dish and probably
+exploded so that truck is gone again one
+damage point the standard arm does a lot
+of damage here if I actually open this
+up real quick and scroll down let's see
+here a standard arm what do we got here
+what do we got star if you prefer let's
+see here Warhead
+Warhead I am just going right by it
+aren't I where there we go 62 damage
+points oh yeah it'll obliterate that
+radar
+post now here comes the next one is a
+racing in you can see the sa2 is a
+triangle to acquire it um it's going to
+be a bit of a process it's not to say
+the sa2 can't do this it's just very
+unlikely just doesn't have the
+resolution to hit something that small
+and fast oh now one of the things you'll
+notice if you look in the upper left
+corner is the fact that this number is
+now 10 instead of the number 11 it was a
+few moments ago so if I were actually go
+to Red Team real quick you could see we
+took quite a hit there and if I actually
+click on this and go to damage control
+you will observe the fact that my spoon
+rest uh that's unfortunately not the
+thing that's not the expensive part that
+was the search radar the search radar
+basically took an arm to the face and
+you can see everything else in the
+batter is actually completely
+operational including the Fire Control
+radar so as long as there's something to
+cue this weapon um I'm not done with
+this fight I'm actually going to have to
+go switch on air to ground strafing here
+so I can come say hi let's see here air
+to ground strafing there we go go and
+flip that sucker on we're actually going
+to have to do this properly I kind of
+feel bad for this guy so I'm going to go
+ahead and get myself some shift of one
+button here click on that one one two
+that's it oh I only get two get two B oh
+those are Mavericks I'm I apologize I
+don't have a cannon on this thing that's
+okay though cuz Maverick's actually
+going to do a better job of what I want
+to do anyway let's go get ourselves into
+range one
+two go ahead and use the other one now
+you may go home you have completed your
+task my friend go home now these are
+Mavericks these are really really big
+missiles um this thing is much much
+bigger than it looks but one of the
+things you'll notice here is pretty fast
+all that other stuff but it hits very
+very very hard let's see if I can
+actually find it this time here ah here
+we go 66 damage points that's
+enough so here comes my two
+Mavericks we actually switch to the
+other side so you can watch the
+fireworks here uh we lost a sens
+remember we lost oh we fired
+one oh there's another one look at this
+look at this now we notice the maver oh
+ouch ouch now you'll see here we took
+some damage there now if I click back on
+this guy and go back to damage control
+you'll see we still didn't get the
+expensive part
+unfortunately we just got the search
+radar in two of the little pieces here
+so we did not succeed in splattering the
+whole battery and unfortunately for this
+Phantom he's going to have to really
+stomp on it to get out of the way those
+Sams pretty confident the Phantom's
+going to get away that is a tail Chase
+with a missile that's that's pretty
+unlikely uh uh uh uh is it going to get
+him nah it's not going to get him I like
+how he fired another one as if that's
+going to work one of the fun things you
+can do by the way now is if you turn a
+little pin cushion view if I go over
+here to a pin cushion mode ah there we
+go cool you can actually watch this
+missile kind of track towards him and
+the reason I love that now is like you
+you can actually kind of like see the
+action here so we go like this there you
+go so you can see the missile actually
+making its climb out towards my lovely
+little Phantom go pH go Phantom go
+Phantom this would be a very challenging
+shot by the way it's getting into the
+thinner air oh oh oh oh got to go like
+this so you can like see it about the
+same altitude here wait for it wait for
+it uhoh uhoh it's
+stalled so you can see the difference
+between those two unit types enjoy

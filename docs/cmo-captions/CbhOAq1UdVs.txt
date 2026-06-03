@@ -1,0 +1,548 @@
+# C: MO - Intermittent Emissions and Scan Interval
+Video: https://www.youtube.com/watch?v=CbhOAq1UdVs
+Video ID: CbhOAq1UdVs
+
+hello everyone in today's video we're
+going to be taking a look at the
+relationship between scan interval and
+using intermittent emissions now what
+you're probably going to see here is an
+interesting little I don't want to call
+it a gamey strategy but at the same
+point is it's a totally viable strategy
+and there's a lot of little pieces in
+here that sometimes it'll work sometimes
+it'll won't just like it is in the real
+world so let's take a look at our
+situation here we have ourselves a dog
+ear radar offer those of you not
+familiar with this this is basically
+kind of an early warning radar for
+things like the sa-13 and the sa9 so if
+you open up the details of that real
+quick scroll down just a teeny tiny bit
+we can see we have the 9s80 radar which
+is about 40 miles 1970s technology but
+more importantly if you take a look as a
+scan interval of five what does five
+mean five means that this interval has
+the capability of looking around the
+entire sky in five seconds that's really
+important for us because that tells us
+how fast the radar is actually rotating
+so if we were to take 360 divided by 5
+we know that our radar covers 72 degrees
+per second of this Sky now you're
+sitting there going well that's that's
+yeah so why do we care well the reason
+we care is because when a radar sweeps
+across the sky it basically acts as a
+giant flashlight that is now rotating as
+it makes its way doing this 360 degree
+turn that giant flashlight is only
+visible to the people who are looking at
+that giant flashlight and who are being
+blasted in the face with it so my radar
+is facing over here and I'm over here I
+won't know that that radar is pointing
+in that direction which means if I'm
+trying to detect it with something such
+as an rwr I'm going to get no warning
+until it swings around the other way now
+things get a little more complicated
+with the rwr however now if you take our
+ec130h Compass call this is a very very
+sophisticated aircraft lots of
+electronic equipment on board I already
+go over sensors real fast you'll see
+that as an analr 63 electronic
+intelligence platform that is an amazing
+piece of equipment it basically gives
+you the ability to detect incoming
+electronic emissions now if I scroll
+down a little bit click on this an ALR
+63 you'll be surprised to find out that
+it has a scan interval of 20 seconds
+which means it now takes 20 seconds to
+identify any particular electronic
+emissions now again I'm going to say
+this very very precisely here that when
+you are detecting electronic emissions
+there is always a chance that you're
+going to get a little taste of it within
+that 20 second looking around period so
+there's two different things we have to
+evaluate here the first one is how long
+does that 20 seconds actually take and
+then the second thing is how long does
+our five seconds actually take for our
+dog year radar so let's go ahead and
+unpolish real quickly I'm going to save
+everything real fast so we can quickly
+refresh it I'm going to go back down to
+my lovely little red dies here they've
+got my dog here radar he is set to go
+ahead and Emit and now we're just going
+to take a look at the clock here we are
+at a 1900 hours even spacebar
+0 1 0 2 0 3 0 4 0 5. now you'll notice
+exactly at 05 we suddenly identified a
+Target you'll notice at the time that it
+read it wasn't actually o5 after it was
+actually o4 after when the radar
+finished doing its sweep across the sky
+and you'll notice we were able to detect
+that Target I've got a lot of good
+information here we have some range we
+know who detected it and it took us
+about four seconds so if you want to
+imagine it probably the radar started
+facing 90 degrees it came all the way
+around and it just was about to finish
+this 90 degree sweep when it smacked
+into our potential Target here now let's
+switch over to the other guys real fast
+you'll notice that our Compass call even
+though he had a 20 second interval was
+still able to get a taste to that radar
+and know that he was being eliminated
+that's because most antennas on these
+sort of systems are going to be instead
+in a way that they're omnidirectional
+they actually face every direction
+listening for it as a matter of fact if
+we go to sensors real quick we could
+actually Define if we wanted to do again
+I'm not going to do this completely but
+I'll show you what it would look like if
+I were to grab some esm here and go
+ahead and make it detectable I could
+actually make it so it only picks up on
+one side of the aircraft for example if
+we actually hit our Compass call real
+fast take a look at this we'll see that
+that antenna is actually omnidirectional
+so it has the ability to see Electronics
+in all Direction so even though it's
+scanned was high it was still able to
+pick that up even though like I said
+only five seconds have passed now our
+dark gear on the flip side has only gone
+around once with this radar dish and it
+does know where this particular Target
+is but unfortunately as you can see here
+we actually were detected a multiple
+different platforms our 14s over here in
+the woods here not really the woods I'd
+be the Rocky Mountains also picked it up
+now the initial Instinct that most
+people have is like well wait a minute
+how how big of a difference can I kind
+of game this uh a little bit let me show
+you what I mean so what I'm gonna do is
+I'm gonna speed up time a little bit
+I'll let that dog year radar ping away
+so I'm now our dog ear radar has gone
+around six revolutions uh you're saying
+but comrade how do you know the
+revolutions uh the way that I know this
+is because that we know five seconds 30
+divided by five you get six or so so
+we've gone around six times and uh we
+have a pretty confident fix on where
+that dog ear is now if I was a more
+tactician here I take these guys and I
+put them over here so you get a little
+triangulation thing they can identify
+exactly where that dog here radar is but
+I'm not going to do that because I just
+don't need to it's at the point of the
+video so let's go back to the other team
+uh we are very confident about the
+position of this particular one we're
+actually so confident that the TV camera
+on board the sa2 has actually identified
+the Target and says it's probably an
+oecm platform of some kind not bad
+obviously if you turn on his Jammer this
+would be a much shorter video so let's
+see if we can game the system so what
+I'm going to do is I'm gonna load this
+up again
+and what I'm going to do a little
+differently is I'm going to grab my dog
+ear radar I love these things I've blown
+up so many of these in DCS I almost feel
+bad I'm gonna grab this one again I'm
+gonna go up to control F9 go over mccon
+settings and I'm going to define a
+custom M con setting here custom
+continuous mode so what I'm going to do
+is I'm going to order him to emit for
+exactly five seconds and then after five
+seconds I'm gonna have him just chill
+for about 30 seconds before re-emitting
+of course you can put the random
+interval in here if you want to have a
+little bit of fun with that but that's
+not required uh sleep mode obviously if
+somebody gets close by I'm actually not
+going to turn this on I don't want him
+to do that he's not an attack platform
+if you're an attack platform I would
+enable that so now what we've done is
+we've ordered him to flip his radar on
+for five seconds shut the radar off and
+then go ahead and take a look around
+again so let's go ahead and save real
+quick because there'll be a little bit
+of shenanigans I think you promise here
+so he flips his radar on uh originally
+he's going to admit for the full 30
+seconds here before he switches to that
+other mode or at least I think that says
+that it doesn't actually ah there he is
+yeah five seconds four seconds three
+okay pause I actually want to get them
+halfway through I'm going to drop that
+radar contact just to be fair four three
+two one should acquire the contact oh
+off so now the radar is going to shut
+itself off in that sweep of this guy it
+just did not have enough time to acquire
+the compass call so let it go around
+again
+and Raiders on so remember it takes five
+seconds for him to complete a sweep of
+the sky one zero and there it is got it
+and you'll notice that two seconds ago
+so about uh if you imagine he was
+pointing the radar this way he got to
+about this point in the beam width
+actually caught the edge of this we were
+able to acquire our Target here about
+two seconds ago which is fair because um
+that means as long as I have enough time
+to look around the sky I have enough
+time to acquire a potential Target now I
+don't know about you but as a wrong
+person who runs some Radars in Sam Sim
+that's a pretty impressive feat I don't
+think I could do that um that's that's
+on point that's that's some good radar
+work right there I can't do that all
+right so we have the ecu130 and we've
+gotten a taste of this strange radar
+here and we detected uh two seconds ago
+that we picked up the e at this
+particular one but our f-14s also got a
+taste of that particular signal as well
+and you'll notice that the propagation
+of the simple signal is a little
+different for the f-14s who are much
+farther away and they also have
+different equipment which has a
+different scanning interval as a matter
+of fact if we open up the f-14b real
+quickly here open the sucker up I'll we
+have an ALR 67 of course we do five
+seconds so it's actually a much quicker
+scan interval which makes sense it makes
+sense it won't be as accurate but at
+least be able to pick things up that are
+dangerous sooner so now of course we
+know that there's a dog ear radar out
+there somewhere and we have a pretty
+good idea of where it is our tomcast of
+course because they have Lantern pods
+could get close enough and actually look
+down on the ground and see this thing
+just kind of hanging out there
+but meanwhile of course they don't have
+a good fix so if we were to try to start
+launching harms at this poor dog year
+here uh we would have to have a slightly
+better idea of where the target is in
+order to actually engage them so you can
+see that all we've really done here is
+we've delayed how long it takes for our
+actual dog ear radar to be detected we
+have not prevented it should be detected
+again one of the other things you have
+to worry about electronically in the
+real world is called side lobes because
+when you shoot your radar beam out this
+flashlight you get some light off the
+side which a lot of these equipments can
+actually detect even though they're not
+being blasted in the face by it directly
+just one of those kind of radar
+engineering problems really really fun
+by the way you can solve this with face
+to right Radars but I'm nerding out on
+go ahead and stop so um how can we use
+this and technically well let's go back
+to our original situation here I'm
+actually going to delete my dog hair
+radar I'm going to pop in an sa8 we're
+going to use a classic S8 here we're
+going to do an SAA because I'm feeling
+generous I'll give the Americans a
+chance there and what I'm going to do is
+design the S8 so they're kind of off in
+the woods here now and make things
+interesting I'm not gonna have any other
+search Radars anywhere here and the
+other thing I'm going to do too is you
+notice the local time is 11 A.M not
+really fair so what I'm going to do is
+actually make this the middle of the
+night and the reason I'm making this in
+the middle of the night is to make it a
+little bit more fair for our American
+friends over here so we're going to do
+is we're going to use the S8 here as an
+early morning platform now the sa8 if
+you actually know it there's this full
+over radar I think you can just see it
+right here in the back this thing floats
+by the way and what you do is you pop it
+up and it spins around really really
+really really fast and looks around as a
+matter of fact if you were to scroll
+down real quickly and hit land roll Baza
+come down here you'll actually see that
+we have a little bit of capabilities
+here not the world's fanciest search
+radar that they have here now if you're
+familiar with other ones this is zsu 23
+here everybody knows this one how many
+times you've been hit by one of these in
+a flight Sim right if you were to scroll
+down on this one you'll also notice that
+has a little gun dish and this can be
+used as a search radar Believe It or Not
+In addition to you know a direct Fire
+Control radar so we're going to do here
+is we're going to use this one as a
+little kind of let's take a look around
+kind of platform sort of a thing like
+that
+now it's worth noting at this point that
+if I were trying to use the radar that's
+on the front that's the Fire Control
+radar on this thing aggressively to like
+try to look around it'd be like looking
+through a straw it'd be very challenging
+so we really do need a little radar
+chilling on the back so what I'm going
+to do is I'm going to press Ctrl F9
+again I'm going to go down to mcon
+settings I'm going to go ahead and
+continuous mode here you can see my
+mission duration is up pretty fast now
+if you remember this one had a two
+second capability here two second scan
+interval only takes two seconds to cover
+the sky here so what I'm going to do is
+I'm going to give it a three second
+emission duration and I'm going to give
+it 30 seconds of relaxation that seems
+pretty legit and obviously if anybody
+gets really really close um we're not
+going to go back to sleep until um
+obviously we've dealt with the threat
+NOW Watch What Happens here so go ahead
+and unpause let's go ahead and grab our
+American friends here I'll see here um
+we have no knowledge of that S8 by the
+way I mean of course the compass call
+I'll go put them up here because I'm a
+jerk so you get that nice triangulation
+effect we have our two f-14s I'm gonna
+order them down to low altitude somehow
+I remember to do that last time and
+we're just gonna Cruise along
+now what you probably observe here is
+the fact that we're not being painted by
+anybody right now those sa8s down there
+if I actually press Ctrl V real quickly
+you'll notice that they are happily
+turning The Radars on shutting off
+turning the Raiders on shutting them off
+and you can see they're basically
+pulsing those Radars but they're staying
+within that undetectable range so
+basically we've created a very very poor
+man's LPI here low probability of
+intercept by the way all right so we're
+going to come on down we're going to
+swing into get ready to do our little
+strike down here go ahead and do one of
+these things go ahead and do one of
+these things and I will go ahead and
+swing to the other team real quickly now
+here's where things get interesting if
+you take a look um we have no clue that
+there's two f-14s coming down here now
+you're sitting there going wait what
+that's that's not how that works they're
+supposed to detect it well if you looked
+really really really carefully and this
+is one of those things that it's like ah
+I didn't think of that kind of things
+but if you actually just scroll down
+here and go down to the Lan roll radar
+you probably observed something and
+that's the fact that if you look you
+have air search capability on here that
+doesn't mean you have the world's
+greatest air surge capability it just
+means you have some error search
+capability and because of that it's
+going to make a little bit more
+challenging to actually do it you'll
+also notice we're on the each band by
+the way so even though we have the
+ability to Omit our air search
+capabilities is actually fairly limited
+on account of the fact that our poor
+little radar this year is just not
+designed to be powered up look around
+significantly and look back down again
+as a matter of fact rf14s here are like
+whoa look at this they are uh let's see
+about in nautical miles away and our sa8
+has no idea they're about to get a
+surprise here
+that's again going back to that concept
+I had mentioned earlier that it takes
+time to process that radar information
+so even though the math says we should
+be able to get away with it doesn't mean
+that we can because the error search
+speed is a different speed than the fire
+control speed so let's go ahead and back
+my little guys up a little bit here oh
+they're doing thank you so much f14s
+you've proven my point beautifully go
+back go back go back go back go back
+back so now what I'm doing is I'm going
+to go grab my S8 again here and I'll pop
+them real fast and I'm going to increase
+his search time remember that's going to
+be two seconds so we'll go ahead and up
+it to a whopping 10 seconds of search
+time now so let's go ahead and speed up
+time a little bit here
+control V and we're going to go ahead
+and he'll flip on his radar here and
+it'll take a quick scan to the sky and
+uh he did not acquire anything let me
+just confirm that my numbers are correct
+there because I believe no they're not
+correct at all I'm pretty sure I typed
+in 10 there but um again I must have
+closed the window too fast there
+something I do all the time all right
+silent five four three two one emitting
+so now our guy is blasting this guy with
+electronic emissions all over the place
+and really really taking his time to
+take a look around and then he's gonna
+go flip it back off again so if we swing
+back over to The Blue Team real fast
+you'll see we did not acquire that radar
+down there we didn't pick it up at all
+on account of the fact like I was
+mentioning that that radar probably
+didn't spend very much time pointing the
+direction of our friends here so if I
+were to actually go over to this radar
+press Ctrl F9 if I set them to
+continuous mode as opposed to switching
+them to that you almost kind of on and
+off mode Let's go ahead and give them a
+chance radar comes on to full blast we
+instantaneously acquire these two
+Targets so again it's that little teeny
+tiny piece that you have to watch out
+for also notice by the way that our two
+f-14s immediately noticed that there's a
+fire control radar looking at them and
+again because of the fact that it's got
+that combo Fire Control radar thing is
+making this very very challenging so as
+much as we would love to have a radar
+that we could flip on and off every two
+seconds the reality is is we need that
+continuous blast of energy from that
+style of radar to actually be able to
+get any sort of reliable targeting
+information here so in this case um yeah
+we've kind of tipped our hand here that
+now there's a fire control radar out
+there taking a look at them right now so
+they're going to have a pretty good
+warning that they're about to be engaged
+by a particular platform so what are
+takeaways here uh the first ones first
+is our attempt to use our super duper
+high speed platform does not work it's
+just the mechanics of the search it's
+just the mechanics of the types of radar
+that are involved for the purposes of
+the engagement the second thing we saw
+is that with the intermitting you have
+to make sure you turn a radar on long
+enough to be able to see everything
+around so that you can make a tactical
+decisions
+so I'm actually going to grab this guy
+and go ahead and I'll shut this thing
+back off probably say why would you do
+that uh the reason why is he's gotten a
+taste that's all he needs so now of
+course on the camera on the sa2d can
+help us out actually targeting those so
+I can actually go like this and um we
+can leave him on that mode now and of
+course what will happen is our aircraft
+come ripping down here uh they're gonna
+be surprised that when a Fire Control
+radar suddenly flips up online and of
+course in just a few minutes we probably
+can't see them but he'll be firing his
+little s8s and they're already on the
+way
+how do I know because I've seen these
+things a million times and there they go
+so you can see now those missiles are
+coming reaching up to come say hello to
+my 14s and even though my f-14s are very
+very low altitude those s8s are just
+they're so good at this kind of
+Engagement it's like they were literally
+just like that guy could run down by
+that they were designed for that kind of
+Engagement you know you can see my poor
+F14 there I should be oh he's on fire
+get out get out get out get out get out
+get out
+I'm just curious I guess he didn't
+really have time to get out in that case
+so that that was bad now this guy's on
+fire you need to get out of that plane
+get out of that plane get get out get
+out get out get out get out get out get
+out get out get out no he's trying to
+beam the target to try to ruin itself
+he exploded all right so as you can see
+even though the Tactical competition the
+Tactical implications of this
+intermittent emission looks easier than
+it is it's really a combination of many
+elements that makes it possible to be
+able to reliably kind of play the cat
+and mouse game that is electronic
+warfare enjoy

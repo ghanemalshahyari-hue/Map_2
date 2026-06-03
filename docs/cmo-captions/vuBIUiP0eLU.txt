@@ -1,0 +1,536 @@
+# C: MO - Using LUA to simulate IADS disruption
+Video: https://www.youtube.com/watch?v=vuBIUiP0eLU
+Video ID: vuBIUiP0eLU
+
+hello everyone in today's video i
+thought we'd do a little bit of lua
+because we haven't done that in a little
+while and i figured hey why not and i
+was reading a bunch of recent articles
+about integrated air defense systems and
+i said i bet you i could come up with a
+really quick and easy way we can
+simulate what happens when a sector
+control system gets knocked out
+basically disrupting the iads so what i
+said is well how would you simulate that
+well normally what you'd have is one
+sector control station that'd be linked
+to some kind of ew radar if the ew radar
+went down the sector control station
+went down basically everybody else would
+flip on their radar so that they could
+kind of do things autonomously here so i
+said i think i could probably whip up a
+script for that and let's see if we can
+so we're sitting here in a lovely new
+england uh this is a mother's vineyard
+apparently the republic of martha's
+vineyard has decided to go ahead and now
+break off from the rest of the united
+states and i'll put up some um russian
+air defenses and they've sorted together
+a quick little sector control station
+that's basically monitoring everything
+around it now one thing i'm going to do
+real fast is i just want to measure
+that's about 50 nautical miles you'll
+see why so we're going to do is we're
+going to build a script so the sector
+control station gets destroyed it
+automatically sets all the sam batteries
+under its control into autonomous mode
+now if you want to make this even more
+effective you could actually order all
+these items to actually be out of
+contact which makes them even more
+powerful of a sort of situation that you
+can go ahead and create there but again
+that's a bit of an extension so let's go
+ahead and set the sucker up so give
+ourselves our handy dandy lua script
+console i'll go ahead and make this a
+little bit bigger so it's a little bit
+easier hello well it doesn't seem
+terribly easy to read
+hello control pop-up
+all right looks good okay so the first
+thing we need to do is we need to figure
+out what unit got killed so that's
+pretty straightforward all we have to do
+is go ahead and let's see here we'll
+call it local unit equals send edit
+equals send edit i believe the command
+is unit x so what that will do is
+that'll go ahead and return what unit
+just got triggered on a trigger so this
+will be the unit that died so the first
+thing we need to do after that is we now
+need to say if
+uh let's see here if unit
+dot uh let's call this a name
+i will do no we'll make it even easier
+we'll do string dot find unit dot name
+comma i'll call it control
+so basically what we're saying with this
+line of code is does the string that we
+used that we detected of the unit that
+got killed include the word control in
+it
+do
+then we'll come down here and say and so
+if it does contain the world control
+that simply means that one of our
+control stations has died so what we'll
+do is we'll simply now go ahead and
+calculate a radius of everything around
+itself and then we'll take a look at
+that unit is within that radius to
+automatically go autonomous so it
+shouldn't be too bad so now what we're
+going to have to do is we're going to go
+and get ourselves a little list of units
+so the local units equals let's see vp
+get side and we'll say side equals
+republic of martha's vineyard
+that's funny dot units was going to give
+us all the units on that side and now we
+just have to say 4 let's see k v and i
+pairs man i love this command we'll call
+this units
+do then we'll come down here and say n
+let's clean up my text a little bit here
+because it's a little bit sloppy right
+now okay so here's what we need to do so
+we need to now look at every unit around
+us and see if it contains the word sam
+if it does we'll flip it on to radar
+mode so we'll go ahead and type in if
+string dot find i love this command v
+dot name comma let's just call it sam
+again we can get more technical if we
+need to oh
+whoops there we go i almost made that
+mistake almost almost uh then we'll go
+ahead and let's see here send
+edit let's call set emcon
+mcon will say unit mode which is
+important
+the geo id and then we're going to say
+radar equals active
+so that way it goes ahead and turns the
+radar system on let's see i think that
+should do it for that end let's go ahead
+and check my logic here let's see
+okay so here's the next problem we're
+gonna have if we run this now it'll turn
+every single sam site on in the island
+which is pretty darn cool if you ask me
+i mean that's all kind of a handy little
+trick we could use as a matter of fact
+let's go ahead and test that out real
+fast yeah we'll be okay i trust that
+it's going to work so we're going to go
+ahead and expand this a little bit and
+get the range so that way we don't only
+determine if it's close enough we also
+say does it have enough range so let's
+go ahead and check oop i made a boo-boo
+i'm pretty confident you're going to
+need a second parenthesis so obviously
+we don't want to be measuring the range
+unless it contains the word sam just to
+save on cpu cycles here so we're going
+to come in here and say if that's what i
+hate nested ifs
+if let's see here what does it call a
+tool uh what is it range i think is the
+one we need tool range i believe is the
+one let me go double check real quick
+tool underscore range yeah that's the
+one perfect if tool underscore range
+we're going to go ahead and say v guid
+comma
+unit.guid
+now here's where we're going to get
+ourselves in a lot of trouble
+if you recall the unit that triggered
+all of this is a unit that was destroyed
+that means that because this unit was
+actually obliterated its possession no
+longer exists in the world so if we
+tried to get the distance between it and
+where it got blown up we're not going to
+be able to identify that information
+with the unit guid information anymore
+instead we're going to have to do is
+actually extract that information from
+it so i'm actually going to come up here
+and say units
+equals units
+send edits
+get units and we're going to go ahead
+and say side equals a republican mark
+this vineyard and we're going to say
+guid equals unit guid so that way we can
+extract the position of that particular
+unit so it'll give us the entire unit
+string not just just little pieces this
+should give us a little bit more
+ammunition to work with real quickly
+here so i like that i like that all
+right so that's all set let's come down
+here and say i've tool.range.guid
+oh let's see here is let's see lange is
+in nautical miles is less than
+20 why not
+then
+turn on the radars
+i knew this was going to get complicated
+i knew what i knew it i knew it make
+sure we include our little end statement
+here all right let's check my logic so
+the unit gets blown up we record the
+name of that unit into this unit
+variable then we say give me the details
+about that unit remember this unit no
+longer exists but we can still get the
+details about it so then we've got the
+unit so then we're going to say if we
+find that unit that got destroyed had
+the word control in it then we're
+assuming it's a sector control station
+then we're going to get a list of all
+the units on that side then we're going
+to create a quick little for loop that
+says give each item inside of that side
+units and then we're going to say if the
+string includes v name which remember is
+just the unit we're checking includes
+the word sam then it must be a sam then
+the next thing we're going to do is
+we're going to say if tool range between
+the classic position where the sector
+control station is and that particular
+sam that we picked up is less than 20
+miles then we're automatically going to
+set that to be radar active mode
+whoa okay so that's uh that's quite a
+handful there so let's go ahead and
+clean this up real quick i'm gonna go
+ctrl c go ahead and close this sucker
+we're gonna go up and i'll go ahead and
+set up the events for this one events
+we're gonna go ahead and have to create
+ourselves a new event here
+sam sector activates and we're going to
+call that because it seems to be pretty
+state we're going to say it's a
+repeatable event we'll go edit triggers
+create new trigger
+we'll say unit is destroyed this unit is
+sector control
+destroyed so we're going to say we're
+part of
+republic of martha's vineyard we're
+going to go ahead and come down here to
+land facility let's see here i think
+it's a type bunker if i recall correctly
+uh we don't want that one noop so let's
+see our building surface is that going
+to work for us uh sector control center
+i need to go ahead and get sector
+building underground is that going to
+work for ah there we go so as long as
+the target class is a sector control
+center this should go ahead and
+triggered i'm not going to do a specific
+unit at this time
+okay so now that that's been set up
+let's go ahead and close that one looks
+good we'll add that one in as a trigger
+good so conditions um i always do
+everybody's favorite the scenario has
+started
+yup so i'm going to go ahead and press
+the ok button here and close that one
+out we're going to go ahead and add that
+in yep add condition and now under
+actions we need to go ahead and create a
+lua script so let's go ahead and do here
+so we'll do a lua script create new
+action this one calls
+activate local sams
+because dd
+cool i like that
+that looks pretty good press the ok
+button check check check cheeky
+checkpoint you can check it looks pretty
+good activate okie doke so what we're
+going to do too is we're going to go
+ahead and add a message box in here just
+so we know that things happened so we're
+not just hallucinating here msg
+let's go ahead and msg box uh what is
+the command msg box i want to make sure
+all right send edit msg box is one of
+those things i almost forgot so do send
+edits
+message box
+and we'll call it uh units
+so that way we can display the screen
+unit that died on the screen so at least
+we know that that worked okay so i'm
+gonna go ahead and press the ok key and
+look around look around check check
+check check check press the ok key i've
+done that a million times and forgot to
+hit save okay so now we need to blow
+that thing up so we'll go ahead and do
+it with saboteurs initially here to have
+a little bit of fun so i'm gonna go
+ahead and unpause my scenario go ahead
+and grab some saboteurs let's go ahead
+now let's see what we're gonna use for
+this i think anyone abram should do the
+trick here m1a2 oh i can do the sep
+sweet i'm gonna do this i'll go ahead
+and blow them to pieces i don't know if
+they're going to have enough firepower
+to do the deed here but we'll find out
+pretty quick
+all right there he goes he's working him
+over he's working over let's see here
+his uh health is looking pretty strong
+though or abrams is not doing the
+world's best job here so i think we're
+going to have to get a little more
+technical this is uh we need something
+with a little bit more kick here so
+let's see here i'm going to pop over
+here let's go ahead and say
+i really like to use a pershing oh good
+i do have pershings i do have the first
+thing that i want to use though ah this
+will do it sweet we're going to go ahead
+and use this pershing oh doesn't want me
+to put it there fine be that white jerk
+we'll use this pershing right here we'll
+grab this one
+ctrl shift f9 we're going to go ahead
+and use nuclear weapons i hate nuclear
+weapons too bad we need to do this in a
+hurry one two three fire
+probably within minimum range aren't i
+man within minimum range yes i'm with a
+minimum wage how to feeling let's go put
+them in boston and let's see what we
+have for range here
+oh my that thing is uh some pretty
+serious range there can we take the shot
+now because our poor little m1 abrams
+there is going to be there for like a
+month still within minimum range what on
+earth is my range here let's go up to
+canada real fast i double check to make
+sure i've done that correctly i have
+locked onto this guy real quick now
+let's see here
+blast them then we're going to send some
+pershing nuclear missiles that should
+have end that thing pretty quick there
+that's what i get for making my sector
+control station not so conveniently
+named
+all right fire
+that should do it let me get that abrams
+out of the way because um unfortunately
+or fortunately depending on how you look
+at it i have a feeling that's going to
+be fairly effective
+i feel like i'm making a lot just
+imagine like the whistling noises you
+always see like in looney tunes and
+stuff like that
+all right for this to work we should get
+an angry message box
+i believe that blasted it's so um i did
+not see a message box up here which is a
+pretty bad sign which also probably
+tells me the message box probably popped
+up on the other side so let's see what
+happened to everybody no they did not
+turn on their sam they did not turn on
+the radar nothing got activated let's do
+some checking of my code real quick
+all right i think i figured it out
+so what i forgot is that the unit x is
+actually basically a fake raptor that
+has a raptor wrapper that has quite a
+bit of actual real detail in it that i
+probably could have extracted a little
+more intelligently so i'm going to do
+that now so what i'm going to do is i'm
+going to crank this up a little bit so
+you all can see so now that we have the
+unit that blew up we now want to go
+local attitude equals
+unit.latitude
+and we want to say local
+longitude equals unit dot longitude
+remember i was saying earlier how you're
+referencing an object that doesn't
+actually exist so the nice things about
+this is we can now come down here for a
+tool dot range and we can replace this
+entire thing with a table we can say
+latitude equals latitude and we can say
+longitude equals longitude because
+remember we're comparing that to the
+latitude and longitude of where the
+actual object was so we've got to kind
+of keep that in the back of our head the
+other thing i've deleted all this stuff
+here because that's not longer going to
+work so now we've extracted the latitude
+and longitude and we've extracted the
+name this should be slightly more polite
+to us now i'm just going through my
+notes so again real quick just to make
+sure i haven't made any too many goofies
+there but i think i've actually got this
+pretty close control a control c we had
+a little boo-boo earlier with the
+message box as well so we're going to
+press the ok button let's go ahead and
+take a look at our event again one more
+time just to make sure there's not doing
+anything too silly let's see here sector
+damage looks good and we'll go ahead and
+remove that we'll add in a sector
+control destroyed press okay go ahead
+and close that sucker press file save
+we're going to go ahead and make this a
+lot less dramatic than we did the last
+time so what i'm going to do is i'm
+going to go up to my weapons damage
+control actually i'll go ahead and set
+the damage to 99.9 we'll go ahead and
+set this thing on fire so theoretically
+it should burn itself out let's see what
+happens poof it's gone all right did it
+work let's find out
+no it did not work so if we actually
+take a look we can see that all these
+sams that were triggered clearly did not
+get triggered so something went wrong
+again so let's go ahead and open that
+sucker up and let's go double check to
+see what we've done so um i believe that
+should have worked but again i'm
+notorious and one of the problems is you
+get no warnings in this program it just
+sort of works exactly the way you see it
+so what i'm going to do now is i'm going
+to go ahead and grab my sector control
+station i'm going to go and load up my
+little script cancel ctrl a let's see
+here
+looks like you can see i've been playing
+around with this a little bit trying to
+discover what the mystery mystery here
+is my latitude is good latitude is good
+longitude longitude unit romv i've
+selected it let's see if the logic works
+on its own so i'm going to go ahead and
+press the run key theoretically the
+logic worked on its own i should be able
+to click this guy and his radar should
+be turned on which it is which means
+this side of the code is perfect so i'm
+going to do is i'm going to copy that
+let's go ahead and i'll reload the
+scenario real fast because i've done all
+my damage already let's go back over to
+the event editor actions we'll do edit
+go ahead and grab all of this stuff
+paste and we'll go ahead and stick that
+in there if i'm not mistaken it is
+literally identical maybe there's a
+little teeny tiny something in here that
+i'm missing but that should work unit
+that guid should be ah
+i see my mistake
+this shouldn't be unit.guid this should
+be v
+dot guyd because unit.gui doesn't exist
+anymore
+what a newbie mistake what a newbie
+newbie newbie mistake at least you're
+aware of it okay so now let's test this
+out so the radars are all shut off let's
+go ahead and set this guy on fire again
+let's go and check my event editor to
+make sure everything's set correctly
+first though our unit is destroyed looks
+good looks good looks good uh sector
+control station let's go ahead and set
+this thing on fire i know it's less
+dramatic than a pershing but oh well do
+99.9 we'll go ahead and set this to
+configuration go ahead and press space
+and we're just going to watch our sector
+control station
+and it burned up okay let's see if it
+worked
+it worked
+so there you have it you have a system
+now where when the sector control
+station gets destroyed it automatically
+turns on the radar of all of its buddy
+sams in the local environment so what
+i'll do real quick is i'll step through
+all the pieces we need to get to get
+that to go first thing is i have my
+little sector control destroyed i'll go
+ahead and show you what that looks like
+now you can see me trying to figure this
+one out a little bit earlier i said edit
+selected so you can see exactly how i
+did this obviously this one had a bunker
+in it previously but it's blown up so
+you don't have to worry about that under
+my conditions uh yup is the scenario
+started and then under my script itself
+i'll do edit actions we'll do edit
+selected i'll go ahead and make that
+nice and big so folks can see it
+drag one of these down oh my gosh what's
+the point of dragging the thing down if
+you can't actually change the size of it
+so here's what we did we grabbed the
+unit that blew up we have its position
+then we say was that unit's name
+including the word control if it was we
+get all the units on that side and then
+we surf through each unit to see if it
+has the word sam if it does we measure
+the distance between where the unit got
+blown up and we also go ahead and
+compare it to the position of that thing
+that had the word sam in it if that
+distance is less than 20 nautical miles
+then we automatically set that unit on
+nice hopefully this video is helpful now
+you can see part of the debugging
+process at trying to get that sucker to
+work but we can see that it actually
+works pretty well once you make sure you
+put in the right commands again this is
+a super useful like mini iad script in
+the future what i'll probably do is
+expand it a little more so that will
+happen is the radar is basically if the
+radar gets killed it turns everybody
+else on as well but that is for another
+day enjoy

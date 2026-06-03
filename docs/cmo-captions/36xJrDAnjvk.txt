@@ -1,0 +1,335 @@
+# C: MO - Using SAMs and Anti-Ship Missiles
+Video: https://www.youtube.com/watch?v=36xJrDAnjvk
+Video ID: 36xJrDAnjvk
+
+hello everyone in today's video we're
+going to be taking a look at using Sam's
+and surface to surface mode now one of
+the things I really wish here that would
+be kind of nice is if I had this little
+thing I could make up here in the bottom
+of the screen that says the
+Mediterranean 1986 or like something
+like that but uh someday we'll get to
+that so anyway we have ourselves a
+Spirits which is a pretty solid ship
+here we have the vertical launch version
+which of course has a bunch of missiles
+are ready to come Distributing out the
+top and uh We've detected some hostile
+targets over here on the other side of
+the Horizon it looks like uh let's see
+what do we have for a contact report
+here let's see we're looking at either a
+drum tilt radar and a square Tire radar
+and there's a huge list of them if I had
+to guess however it'd be pretty obvious
+that it's one of the versions of the Osa
+there and the Osa is a pretty neat
+little system it has a pretty nasty
+little system on it that shoots
+anti-ship missiles and it looks like
+there's a lot of them going at once so
+on that's definitely something I need to
+be worried about now unfortunately
+coming over to my handy dandy spreads
+here I'm looking at it let's see what we
+got uh we have harpoons harpoons are
+cool let's who we got for harpoons here
+uh harpoons let's see here we have a
+range of 75 which is eh not terrible
+let's go and take a look at our
+potential adversaries here let's say Osa
+yeah we'll do the osa2 that's fine and
+let's see it takes approximately two
+harpoons uh oh that would mean that
+we're gonna run out of harpoons before
+we're gonna run out of targets and the
+other problem with the Nosa too for
+those who are familiar with it is if we
+bring up that database entry one more
+time you'll probably observe how many
+missiles they have on board which is
+going to make it a little bit dangerous
+for us obviously we are a destroyer we
+could probably shoot down a few of the
+incoming missiles but if they timed it
+right we could be in a lot of the
+shouting telephone
+let's see here what do these guys carry
+uh Bell tap is the radar type DL
+datalink Grails aha stick single four
+so they fired simultaneously uh let's
+see that would be 20 missiles coming our
+way that's that's a lot oh we could
+probably shoot half of them and maybe
+two-thirds of them down without having
+too much issue here at least with this
+piece of technology so uh we're busted
+um we'll never be able to hit them all
+and we're doomed it's a game over the
+scenarios of failure and I've got my
+health itself a little sh-60b here which
+is sort of chilling problem with this
+guy of course is what is he carrying
+nothing so we can't even use him and I
+have no submarines I guess that's it
+that's game over not exactly so what I'm
+gonna do is I'm gonna go ahead and order
+him too I'll flip on his Radars here and
+now we have a very very confident track
+on this a group of aircraft or an
+aircraft that too a bunch of these
+little ships here there's only four of
+them so now what I'm going to do is I'm
+gonna press Ctrl shift F9 and you
+probably notice this many many times
+over but there's this little thing here
+this is anti-surface Warfare and it says
+use Sam's in asuw mode now believe it or
+not most and I'm not saying I should
+never say the word most many Sams
+actually have the capability of engaging
+in ground targets including the sa2 yeah
+the sa2 can be used to engage ground
+targets assuming you can lock onto it
+through the Clutter so now if I come in
+here and hit this little button here I'm
+actually authorizing my ship to go ahead
+and pop those things off as if it was uh
+using um using its Sams now what Sam do
+we have on here if you scroll down here
+you'll notice I have sm-6s now some of
+you would go oh man come on 1986 with an
+sa6 I don't sm-6 yeah it
+sorry it's the best I could do here but
+you'll notice it has a range of 130
+miles and that's an anti-surface range
+of 130 miles now some of you who played
+Dangerous Waters probably know this
+thing really really really well because
+you did the exact same thing with that
+thing and you actually never carried a
+single Harpoon in your life because it
+was just easier to use it's not what I'm
+doing is I'm going to order all these
+guys to be hostile of course I should
+probably get a visual ID and what's
+going to happen is my handy dandy little
+Destroyer here is going to be like okay
+no problem so we're gonna fast forward
+time here and you'll notice he is not
+launching his missiles and you're
+sitting there going oh that's a problem
+well the problem we have here is not
+that we're out of range
+we are actually in range the entire time
+the bigger problem here is if I press
+shift F1 and actually click on him
+you'll notice that this one is set so
+far at this maximum range it has a
+pretty good Target but you're not
+supposed to be attacking targets that
+are this small
+no man no shift F1 control F1
+try again manual gauge Target
+helps if you actually click the thing
+you're shooting with let's go ahead and
+um select all these at once we're going
+to come down here to this one we're
+going to allocate one each and now we're
+gonna watch the fireworks now the
+important thing that you just saw there
+was the fact that because I always had
+little teeny Tigers here he did not want
+to engage them all at the same time so
+we're going to pop that one over there
+I'm pretty confident I I gave one to
+each one the rest of you here there's
+always a chance that it did it
+incorrectly though obviously a three
+allocated oh that's why because then we
+need to wait until the data Lake Channel
+becomes available here so this missile
+right now is actually being data link
+controlled it's not actually being
+controlled by our ship the reason it's
+not being controlled by a ship of course
+is what you'd expect there's no actual
+we have a horizon issue here if I
+actually zoom out we are on this side
+and there on this side we can't actually
+see each other it's kind of one of those
+interesting little problems so our
+helicopter here is actually doing us a
+favor now notice uh what bam oh no joy
+hey
+come to the next one notice as soon as
+it gets into range to engage itself it
+automatically starts up popping itself
+off here now if I just do whoops have a
+fun time with that today I don't know
+why it's still doing that to me is this
+something they change
+don't tell me I just discovered a bug
+yeah that is definitely a bug
+nice I always find the fun ones it's
+always me who finds these things I swear
+that's okay though so Richard observing
+here is that our weapons are arriving
+and they're not really doing any damage
+you know the reason they're not doing
+any damage is on account of the fact
+that because of the way our situation is
+arranged here is that we can't actually
+see the thing we're shooting at we're
+basically trying to get it close enough
+and then it takes over the end if we
+actually were to go over the weapon
+itself and I'll bring up the screen I
+don't know why these keep coming up all
+maximize but that's all right for us but
+if you actually scroll down here you'll
+notice it's got an active radar Seeker
+with a 15 nautical mile range now I've
+opened up that Active Radar Seeker here
+you'll notice that it's late 2010s
+shipping information anti-service all
+these different components it actually
+has to detect that Target in order to
+reliably hit it so if I press shift F1
+again and I drag that box over here
+let's go ahead now now we are in range
+of our handy-dandy harpoons now watch
+what happens when we do this so I'm
+gonna come down here if I'm asking sexy
+so I'm going to give two each this is
+the biggest waste of sm-6s in the
+histories of the weapon here and he's
+just going to start popping these things
+off basically um wasting an awful lot of
+ammunition now one of the interesting
+things here is if you actually open up
+this and I switched to weapon endgame
+what you're going to observe here is
+that the weapon just missed missed by
+about seven feet well you can see was
+about 10 meters away from the target
+point you can see that it ripped by here
+it ripped by here and again exploding
+and it's having one heck of a time
+actually hitting any Targets this is
+actually very very common for this
+particular type of weapon against this
+type of Target it just was not the
+intended purpose of it I feel like I
+would have um seven foot close enough
+should be enough damage now I've
+actually grab here and I press that
+shift F1 again drag a box let's say we
+want to use the harpoons instead NOW
+Watch What Happens here there's one each
+that looks good this should be four on
+the way now the cool thing with harpoons
+is they're in these little box launchers
+and when they fire they actually come
+off a rail and they just go you know go
+flying these are not VLS weapons
+now these are purpose-built anti-ship
+weapons you know they're going to be
+sneaking up here or getting a little bit
+closer
+it's just popping off these sm6s like
+they're free so it's going to come
+rolling in here very very quickly oh
+that looks pretty good it's a pretty
+clean hit here comes my boom oh bam look
+at that coming in on this one we got a
+direct lock and oh my gosh look how bam
+caught him too and this guy of course
+look at this Panic turning
+and now he is out of the fight just like
+that now what you're probably saying is
+Well if this guy were in range of his
+actual radar would it make a difference
+as far as the effectiveness of that
+weapon well let's go ahead and do that
+real fast grab myself a red team here
+Ctrl V I'll get somebody who's well
+within range here we'll go ahead and
+I'll pop in a surface vessel we'll make
+it something big and Squishy that's easy
+to kill here oh let's see here container
+I feel so bad blowing these things up
+let's see here
+um not
+really a container ship
+that way you know it if I say it's not a
+container ship it's not actually a
+container ship so now let's go ahead and
+give our systems a half a moment to go
+ahead and acquire
+there is shift F1 go ahead and click on
+him we'll go ahead and pop off a couple
+of these
+52 seconds oof that's not bad though
+um actually improve the crew quality
+here real fast improving the crew
+quality the advantage here so once
+you've done that it will decrease the
+amount of time it takes them to Target
+that other ship
+there it goes I think it was a little
+too fast though let me go ahead and slow
+down time a little more carefully here
+all right fire
+that is not the sound that weapons make
+these days but you can see now we're
+actually in range and what I'm going to
+do to make it a little bit more reliable
+is under sensors I'm actually going to
+flip on our radar so we have very good
+quality track here yes so we're both
+within the Horizon and we're well within
+the weapons range and you can see it
+cleanly cleanly smacked into that thing
+so now if I wanted to I could just press
+why did it work that time whatever F1
+works now now if I just order him to do
+a conventional attack he's probably
+going to fire off the last couple
+harpoons yeah because the Harpoon is a
+much much better weapon for this there's
+the Active Radar boom hey I did mention
+this as a container well it's not really
+a container ship though let's be honest
+folks so we don't have to worry about
+that too much oh man how many of these
+is going to take here comes the sm-6s
+maybe you should use the 76 millimeter
+cannon and it would have been a little
+cheaper
+[Laughter]
+this is the biggest waste of sm-6s I
+think I don't even want to know how much
+more each one of these missiles cost
+but um maybe we need to go with the gun
+right oh that did it that did it cool
+so what are the takeaways here the
+important takeaway here is if you're not
+using if you first of all you can use
+Sam's in surface to surface mode that's
+one point the second point which is very
+important is if you're doing a data
+linked shot like we did with our
+helicopter buddy over here remember that
+the shot is going to have massively
+degraded accuracy there's not much you
+can do about that unless you're trying
+to like shoot the cruise Nets off or
+something like that and the final thing
+is if you are within range to go ahead
+and use your weapon and you can see and
+Target it yourself you're going to have
+a much much easier time of employing the
+weapon enjoy

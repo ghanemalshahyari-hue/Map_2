@@ -1,0 +1,232 @@
+# C: MO - Setting a Specific Aircraft Altitude to Employ Weapons
+Video: https://www.youtube.com/watch?v=O4HTj5ct7yg
+Video ID: O4HTj5ct7yg
+
+Hello everyone. In today's video, we're
+going to be answering a question about
+selecting the manual altitude for weapon
+release. Now, this is one of those
+things that I always take for granted
+that uh when you do automatic attacks
+with no sort of manual anything that it
+basically picks the optimum altitude for
+an attack. Now, let me show you why that
+would be a problem. So, I have my F16
+here. I'm going to press my lovely F1
+key. I'm going to go ahead and select
+this vehicle depot here. And our F-16 is
+going to get himself into a position to
+drop his weapons. Now, if I open up the
+weapons page real quick, I actually let
+the main game keep going here. You'll
+notice that our launch altitude is
+between 800 ft above ground level and
+65,000 ft above sea level. I know that
+they sneak that in there just to confuse
+you. But the reality is that's a pretty
+wide range of deployment of a weapon. As
+a matter of fact, if I speed up time a
+little bit for our little F-16 buddy
+here, I always feel bad for Black
+Island. It's just such a convenient
+target. I mean, it's like right there,
+right? So, he's going to go ahead and
+overfly. And I'm going to go ahead and
+press F1. Go ahead and click on him one
+more time. We are technically on
+automatic course mode. He's getting
+himself into position. You can see with
+the little 3D view there, he's optimally
+placing himself. He's putting the pipper
+on the target CCP mode. And now he's
+going to go zipping and ripping right by
+the target and disappointing all of us.
+And you're sitting here going, "That
+makes no sense. He was perfectly fine.
+Why did he not fire?" Well, let's go
+back to the standard thing with all
+things command. And let's go ahead and
+get them a little bit closer. Press
+shift F1, then click the target. As you
+can see here, we have our Mark 82 500
+pounders ready to go. You can see we are
+okay to fire them. When we tried to drop
+them the first time, I don't know if you
+were aware, but we were actually
+traveling at an oblique to the target,
+which means we never ever actually got
+the shot, but that's regardless. I'm
+going to go ahead and allocate
+everything and go ahead and unpause. So,
+as you can see, our lovely F-16 has
+deposited uh not one but 12 Mark 82s
+with the best and latest and greatest
+F-16 aiming technology upon our target,
+which is way down there. Now, by way
+down there, we're talking a distance of
+about 6 miles. Now, I don't know about
+you, but I got a feeling we're not going
+to do a lot of damage here. Yeah, that
+was a waste of ammunition. So, as you
+can see, um, none of these even came
+close. Uh, no units affected. They near
+missed. Near miss means hit. Uh, 1,000
+ft off. So, that was an absolute failure
+on our part. So, we're going to go and
+reopen the mission here. We're going to
+play smart. Like I said, build you up a
+little bit, one understanding at a time,
+as they say. So, what I'm going to do
+now is I'm going to go ahead and grab
+this guy. I'm going to order him to go
+to a much lower altitude. I'm going to
+send him to about 12,000 ft here. Go
+ahead and speed up time a little bit
+here. He's going to come flying down.
+It's great thing about an F-16. It comes
+down in a hurry. Uh-oh. Here we go again
+with buttons. All right. So, we've got
+ourselves in position. We're cruising
+over the target. We're going to make
+sure absolutely that we're right over
+the center. I'm going to press F1 again.
+If you select the target first, F1. Go
+ahead and click on him. Again, this is
+an automated attack. Automated attack.
+Before he gets in position, I'm going to
+make sure he's in automatic mode. So
+again, nothing's telling him not to do
+what he's about to do here. So he's
+going to come ripping over the target.
+And there is our bombs. And as you
+observed, we got a direct hit. Now,
+there's a couple little pieces there
+that are a little tricky to notice. One
+thing you'll notice here is that we got
+one within pretty much right on top of
+it. So it slammed into that depot and
+did a pretty darn nice job of it. So
+what was different? Well, the big
+difference you probably observed is
+before we dropped our weapon, I pressed
+the F2 key. And when I was inside the F2
+key, one of the things you'll have
+observed is I selected an altitude that
+I wanted him to drop the weapons at and
+actually ordered the attack and then I
+could actually cancel my automatic
+attack to enable it to go ahead and
+deploy those weapons at that altitude.
+Works great. Right now, let me show you
+the situation when this breaks down. So,
+what I'm going to do is create a strike
+mission on the target. Shoot this thing.
+We're going to go ahead and make it a
+land strike mission and press okay.
+We're going to go over here. We're going
+to go ahead disable the uh enforce
+flight size. Otherwise, it's going to
+give us issues. We're going to toss that
+F-16 into there. You can see it
+instantly creates the flight plan. It
+instantly creates all the doodads and
+boohookies. Let's see. Continue mission.
+Let's looks fine. Agent Winchester.
+We're going to give him all the orders
+in the world. Now, we are not issuing
+any orders to our F16 buddy here. He is
+completely on his own. You can see there
+he's hit way point 4 and he's starting
+to prepare for his attack. Now,
+everything's on automatic here. I mean,
+I can click over here and press
+automatic. He's doing all of his job.
+Actually, as a matter of fact, I clicked
+him off of automatic because when he
+hits the new waypoint, it'll actually
+snap him back to that mode. What you'll
+observe here is he's 1,460
+ft above ground level. Now, for those of
+you who are familiar with the ZSU23,
+especially the four barrel version with
+a radar on the top, that would make
+Swiss cheese out of our F-16 here at
+this altitude. And also, the added
+accuracy of this altitude is worthless.
+So, you can see F16 does his little rip.
+Beautiful, beautiful hit here. But he
+did the entire thing at 1,460 ft. Now,
+if you do the math on that real quick,
+like I said, you'd realize that's bad
+news for an F-16, and that ain't going
+to go well. So, how are you supposed to
+tell this F-16 that you actually wanted
+to travel at a specific altitude when
+you do a strike mission? Now, this is
+actually a little bit trickier than it
+is. You think it is, but it's not bad.
+So, I'm going to click on the target.
+I'm going to press Crl F11 more time, or
+I'm press F12 in my case. Uh, destroy
+again. That's how you spell it again,
+but oh well. We're going to do a land
+strike there. Press okay. We're going to
+go ahead and fix the thing before it
+breaks again. Let me go ahead and set
+all my stuff in here. Looks good to me.
+Okay, let's add our F-16, but this time
+we're going to cheat a little. So now,
+one of the things you probably observed
+is the fact that these little waypoints
+were created in the worlds. As a matter
+of fact, if I look at this one, this is
+IP5. I can go click somewhere else and
+go grab this one real quick. If I were
+to press F2, you can see I can actually
+dial in the desired altitude for my
+strike here. As a matter of fact, you
+can see right now it's 1,000 ft. Let's
+say I want to do 4,500 ft above ground
+level. So, I can actually order that
+particular thing to happen. Now, here's
+where the magic starts. If I go to my
+next waypoint, which of course is
+conveniently going to be my final
+waypoint, which is going to be the one
+that's going to do the deed here. I'm
+going grab my F16 buddy and hit F2 real
+fast. Uh, let's see here. F2. We need
+way point uh what do we need? That's the
+landing waypoint. Whoopsy daisies. Oh
+boy. Egress landing marshall. We don't
+need any There go. Target waypoint.
+Found it. All we have to do now is come
+in here and manually set it to whatever
+we want. So I can do 4,500 ft. Helps if
+you click the button before you type it.
+Not 4,500 ft above ground level. Cool,
+huh? So now watch what happens when I
+close this. RF16 here is going to be
+cruising around. You can see he's
+dipping down. RF6 dips if you prefer.
+He's gone down to 1,000 ft above ground
+level here. He's sneaking up on that
+first IP. He hits the IP and what would
+you look at? He jumped up to 4,000 ft.
+He's going to start descending again,
+but then he realizes the target's right
+there. He's going to pop up and drop his
+bombs just like a pro. Bam. Look at
+that. Slammed to that target. And we
+have the added benefit of being a little
+bit higher up in case that Zeus wants to
+shoot us down. So, as you can see, that
+is the trick to manually deploying
+weapons. Keep in mind, these aircraft
+have smart enough AI that if there's
+some kind of weather pattern that's kind
+of interfering with things, they know to
+stay underneath it if they want to use
+like a laser guided bomb, which once
+again will put you right in the line of
+fire with the Zeus. Enjoy.

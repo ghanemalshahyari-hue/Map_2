@@ -1,0 +1,385 @@
+# C: MO - ASW Search Patterns
+Video: https://www.youtube.com/watch?v=7Bh85no2ge4
+Video ID: 7Bh85no2ge4
+
+hello everyone in today's video we're
+going to take a look at search patterns
+that you can use for awfully slow
+warfare i mean anti-submarine warfare
+yeah that's the one that's the one so we
+have today is a couple different
+platforms for the purposes of searching
+we also have some intelligence
+suggesting that there's some sort of
+enemy sub in this massive chunk of ocean
+here so what we need to do is we need to
+try to find and identify that sub and of
+course you know if it's a hostile sub
+we'll go ahead and drop a couple
+torpedoes right onto it because you know
+why not so one of the things we need to
+think about is how are we going to
+arrange our assets that we can cover
+first of all the most territory and
+second of all so that we can have the
+best coverage so that they can't slip
+through now unfortunately for us this is
+a huge area to try to search here and
+unfortunately again our ships are
+relatively slow especially if you're
+going to be using their best
+anti-submarine warfare tools at their
+disposal such as their total race on our
+ah can't talk today so we're gonna do is
+we're gonna go ahead and take this uh
+ship here and we'll demonstrate the
+different patterns we'll test them out
+and then we'll see exactly what happens
+against other pieces so um one thing
+i've noticed is i've somehow broken this
+so i'm just going to go fix that real
+quick
+all fixed nice all right let's go ahead
+and fix it so the first pattern we're
+going to take a look at is what i like
+to call the raster pattern
+now the raster pattern is simply on the
+word you probably hear is a stacked
+ladder the basic idea here is we're
+going to cover a zone and then we're
+going to come down and then cover
+another zone if you want to think about
+it another way i always think of it kind
+of like the typewriter so i'm going to
+grab my little ship here and go ahead
+and set this pattern up real quickly
+here we're just going to go ahead and
+set this one up again i like to call
+this one a raster pattern it's a little
+old-fashioned but if you want to you can
+also call this the stat ladder so what
+we're going to do is these long
+positions here and then of course what
+we're going to do is we're going to try
+to make it so that this is like this now
+the bad news for us is that this
+distance is so high go ahead and put a
+victory one back to the center here that
+since the distance we're spending over
+here so long a really creepy sub could
+basically wait for go silent as we come
+by and then go ahead and make a bunch of
+noises that run out and unfortunately we
+don't have to deal with that typically
+but you never know so what i'm going to
+do is i'm going to go ahead and order
+him to go about as quick as you can go
+safely and still be able to hear things
+so i'm going to go ahead and call up 10
+knots here and i'm going to go ahead and
+order him to go ahead and avoid
+cavitation at all costs if you go too
+fast you can't use this toe-to-race
+sonar which is a kind of a buster so one
+of the reasons i really like this
+particular pattern is if you know the
+particular enemy you're dealing with is
+going across a certain path you can
+actually make this pattern all the way
+down that path and try to kind of catch
+them early so now that he's busy with
+that let's go ahead and grab our sub and
+get him ready to go so this one i'm
+going to use what i call the sawtooth
+pattern
+now the sawtooth pattern is exactly as
+it sounds it's similar to this except
+we're constantly changing direction to
+try to improve our tma situation so what
+i like to do is kind of visualize two
+different points i'm going to grab my
+little f3 key and move towards the first
+point and then i'm gonna go ahead and
+move back towards the other point so
+we're gonna make a zigzag across our
+expected zone here so i'm gonna have
+them zigzags this way i'm gonna have
+them zigzag this way i'm gonna have them
+zigzag this way i'm gonna have them
+zigzag this way so we have a pattern
+that kind of looks a little bit like a
+sawtooth now if you know that somebody's
+in a very concentrated area this is an
+amazing technique this is also extremely
+effective because if you make these
+zigzags nice and small because i could
+call them tax if you want to think about
+it another way you also have the ability
+to not have much time spent where your
+baffles are pointing the wrong direction
+that's the part that you can't hear so
+this is another pattern now these two
+patterns are very very very very similar
+but this one has the added benefit
+because when you switch direction and
+you're doing tma analysis it makes it
+easier to pinpoint a passive target so
+now that that's set let's go ahead and
+put this guy to work for our last
+pattern let me go ahead and hide all my
+movements here because unfortunately
+while that's super duper helpful it
+doesn't help us at all so i'm going to
+grab a miles o'keefe here and i'm going
+to go ahead and get him moving so for
+him i'm going to use another pattern i'm
+going to use what they call an expanding
+box pattern so what i'm going to do is
+i'm going to start him here and i'm
+going to go ahead and take it out just a
+tiny bit now i'm going to go out a
+little more and then i'm going to go out
+a little more and i'm going to go out a
+little more and i'm going to go out a
+little more the reason i really like
+this pattern is though if you've
+detected something at some point you can
+use this as a way to sort of try to
+reacquire where that particular target
+disappeared too the downside of course
+is look at how much time was spent on
+each one of these legs making it much
+much more difficult now because my
+aircraft is a p8 which is a very modern
+basically maritime patrol aircraft
+we don't have to worry about things like
+mad in the old days we'd always fly
+really really low so we could use mad
+sensors now we're going to go ahead and
+let this run on its own and then we're
+going to bring some missions into it so
+i can kind of show you how you can sort
+of play with this so let's go ahead and
+pause now some of you are immediately
+going well wait a minute wait a minute
+wait a minute did you tell this guy to
+go the right speed um i don't remember
+telling him to go the right speed but
+luckily he's a 10 not so good this guy
+10 knots void cavitation is good now
+remember i have two different types of
+helicopters at my disposal which brings
+us to the last one of the two patterns
+that i'd like to use and that's called
+the barrier so what you're going to do
+is basically you're going to set up two
+different items and you're going to have
+them run a constant pattern back and
+forth to constantly scan along that line
+consider that like your last line of
+defense kind of a thing the way i'm
+going to set that up actually i'll go
+ahead and cancel out this little mission
+here is i'm going to go ahead and create
+two little reconnaissance points create
+one here i'll go ahead and create one
+here this will be my patrol region then
+what i'm going to do is i'm going to go
+ahead and create a mission we're going
+to go call this uh asws helicopter or
+something like that
+set it over to patrol mode and we're
+going to go ahead and set this to asw
+patrol i'm going to press the ok button
+so what i'm going to do now is grab my
+two ocean hawks and i'm going to make
+sure
+usually one of these on station at a
+time is going to be more than enough for
+this and of course i'll allow him to go
+go exploring all he needs to do he's
+going to do a station throttle that
+cruise which seems a little kind of
+weird but it actually works really
+really well if you're trying to cover
+really long distance if you switch it to
+loiter they never actually get to the
+other side before they have to come back
+to base which doesn't do anything for us
+so the next thing i'm going to do is i'm
+going to go under a mission doctrine wra
+here you notice he's got active radar
+that's okay we can leave this on of
+course we tip off where we are if we
+disable that of course that means we
+can't do all periscope searches anybody
+dumb enough to stick their head up
+during this kind of an operation they
+deserve to get spot by periscope search
+but the other thing i'm actually going
+to do is flip on sonar as well because i
+do want him to use the dipping sonar to
+take a listen every once in a while
+these guys are good to go these guys are
+good to go and if you take a look here
+i've got my two points so what i'm going
+to do is what they call repeatable loop
+which is going to cause them to
+constantly go back and forth along this
+line now i have no idea where the sub is
+in the water down here so if i repeat my
+loop and make it too big i'll never get
+over here by the time the guy comes the
+other direction one of the reasons i
+love this pattern is you can actually
+build one of these patterns and use this
+tool of the repeating loop to actually
+have them follow the whole pattern
+constantly now this is super fun if you
+have like 800 airplanes or something
+like that but i don't so we're gonna
+have to kind of deal with what we have
+there single aircraft um those are my
+patrol areas prosecution i'm not gonna
+mess with or anything like that you
+could define that as a prosecution
+repeatable loop sounds perfectly good to
+me go ahead and click that button and
+now they have work to do
+so i'm gonna do now is my speed up time
+a little bit remember this is asw that's
+awfully slow warfare and we're just
+gonna kind of kick everybody all right
+guys have fun
+[Music]
+all right begin
+so the first guy here miles o'keefe is
+kind of concentrating in here and he's
+going to do an expanding box now notice
+he is not dropping sono buoys now if we
+really want to use something like this
+properly we really have to be dropping
+son of buoys along the way so what do i
+do well if you remember i created this
+little mission outside and i'm going to
+put that mission to use so i'm going to
+go ahead and hit control f1 i'm going to
+asw i will go patrol 2 we'll call this
+asw patrol that sounds good for me we'll
+go ahead and grab this guy and i'm going
+to go ahead and add him to the target
+here we only want one of these on
+station at a time and what i'm going to
+do is i'm going to let him do his piece
+here however what i'm going to do is
+grab him one more time and i'm just
+going to redraw that fancy pattern that
+i created earlier so i'm going to grab
+him put it here we're going to do one of
+these we're gonna do one of these and
+that way even though he's on a patrol
+mission he will now automatically drop
+out the sona buoys as he's kind of
+ripping around inside this particular
+region and we'll see exactly you're
+probably asking who's gonna get caught
+first i don't know what time the sub is
+so now what he'll do is he'll go ahead
+cruising now constantly scanning now one
+thing he probably noticed is he dropped
+himself down to this little tiny low
+speed i don't want him to do that i want
+to keep his speed up so that he can
+cover more terrain so now he's going to
+speed up but notice he's now making a
+path of of bullies in the path that i
+asked him to travel which means i'm
+gonna get this crazy little
+whip kind of pattern all along the way i
+feel really sorry for that sub now
+because you know he's gonna set one of
+these things off speed up time i gotta
+love my asw
+got him
+excellent
+okay
+attention all units investigate
+attention all units investigate so in
+this case you could see that he went
+right across my barrier that it was
+starting to build now let's say he was
+here he would have gone up and bumped
+into my barrier here as well but since i
+made my barrier so wide there's no way
+he could have transited this zone
+without accidentally bumping into one of
+these particular options now as you know
+these will slowly start dying over time
+which is perfectly fine that's again
+part of the fun so everybody let's go
+let's investigate let's investigate
+oh we've got a confirmation let's see
+here the guy is a echo one in his uh
+depth he's probably very deep oh yeah
+he's uh yeah he's he's
+he's underwater he's underwater so now
+of course we have to ask ourselves um
+now that we've identified a target and
+do we want to prosecute well this is
+modern times of course dropping a
+torpedo through the front windshield of
+a cis submarine is a great way to start
+world war iii so unfortunately um we're
+not going to be able to drop that one
+what wait wait wait wait good thing
+they're on red team and not with a cis
+which means they're gone
+let's see who gets them first
+i think it's going to go to the p8 the
+p8 of course when you drop torpedoes
+from such a stupid high altitude i
+believe they have to come with a
+parachute i don't remember if you're
+allowed to drop them at that altitude
+nope so we have to actually order this
+guy to come down to normal people
+altitude so that he can uh prosecute the
+target so to speak haha come get some
+now in old times when you're going
+against you know really really bad sonar
+systems and you have to kind of do this
+the hard way you know
+this is a good way to do it and show you
+a bunch of different patterns so miles
+o'keefe is aligning himself up here
+about 300 feet above the water
+i'm gonna drop two because you know
+these are la these are mark 54 is i
+don't want to give this guy too much
+we'll go ahead and switch to the other
+team and go take a watch at some tom
+clancy vision here actually we'll do
+god's iv that's much safer we'll switch
+over to tom clancy vision and let's see
+what happens here
+i'm going to click on the sub here he's
+just chilling he's just chilling here
+comes miles o'keefe lht's in the water
+this guy's gonna go what i was just
+chilling this isn't fair look at this
+there's the turn there's the turn he's
+taking the turn he's taking the turn
+meanwhile the other lady like torpedoed
+went completely by him oh boy that's a
+mark 50.
+so hopefully this was a helpful video as
+far as showing you some of the different
+patterns um that worked too well keep in
+mind you don't always get the benefit of
+being able to do something like this but
+keep in mind if we just had traditional
+passive sonar ships you could basically
+use these different patterns in
+different ways as a way to try to
+identify where a sub is other than that
+enjoy

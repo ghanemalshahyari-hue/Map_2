@@ -1,0 +1,1058 @@
+# C: MO - Designing a Scenario to be Annoying
+Video: https://www.youtube.com/watch?v=KX53_D1jUS0
+Video ID: KX53_D1jUS0
+
+hello everyone in today's video we're
+going to be taking a look at how to make
+a scenario difficult for players now you
+probably played a Million to one
+scenarios and you've been frustrated by
+the intense complexity that exists
+there's a lot of different ways to make
+a scenario difficult now one thing you
+could do of course is make it so there's
+a lot of enemies another thing you could
+do is you could randomize the position
+of the enemies other things you could do
+of course is you could create a
+imbalance for example I have two f-16s
+and they have 30 Sukhoi 27s uh how are
+we going to kind of make that one work
+what we're going to see today is just a
+way to kind of frustrate the player in
+little ways that can also not force them
+to go ah and we'll go ahead and do that
+so let's take a look at our scenario so
+we're in here in Colombia and Mary kaybo
+and what we have here is a wide variety
+of different structures I'm kind of
+calling this downtown of course I'm
+thinking Mary kaybo I'm always thinking
+about this beautiful bridge that goes
+right across and kind of acts as the
+entrance to the Lago de Mayo Capital
+which is due south of that which is
+super cool so let's take a look at what
+we're working with here one of the first
+things you do as a player by the way or
+as a designer is you can come in here
+and make sure that they don't have good
+stuff to work with so I have wow that's
+a 36 harm missiles that's a lot coming
+over here of course I have a bunch of
+gb10s that's pretty nasty a couple
+Hawkeyes typical and of course I have
+you know this wonderful offensive
+electronic countermeasures on top of
+that of course I have 36 tomahawk
+missiles that's actually closer to 72
+tomahawk missiles so when you do the
+math real quick you realize that's
+enough Firepower to end this scenario
+instantaneously so we're all sitting
+there going well how on Earth are you
+supposed to make this difficult well
+let's experiment a little bit uh the
+first thing of course if I really really
+want to frustrate the players right away
+is we can create something that they
+didn't expect so we'll go ahead and
+start with that so we have a carry about
+a group here and what I'm going to do is
+I'm going to go ahead and get a little
+sneaky I'm going to come about oh we'll
+call it 10 nautical miles away or
+something like that let's go get myself
+a submarine now let's go ahead and now
+see here what could be a fun submarine
+all right it's Colombia what do you have
+for us today unfortunately we have three
+to pick from we have this one that which
+we don't technically have yet we have
+the type 209 which is actually a great
+sub we also have this Cosmos kind of a
+tiny one so I'm actually just going to
+grab this one real quickly right here
+I'm gonna go ahead and point him in this
+direction now one of the cool things is
+I know where this crew is going because
+I designed the scenario the first thing
+we'll do is we'll give these guys a Ryu
+fun surprise I'll go ahead and set him
+to be shallow depth here I'll go ahead
+and set him to stop and I'll go ahead
+and have him kind of uh kind of creep
+well let's actually do like two knots or
+something like that nice and nice and
+slow again like I said these are the
+little things that the players don't
+expect are fantastic ways of annoying
+the heck out of the players so what do I
+do is I'm actually gonna grab him I'm
+going to grab his uh WRA here and what
+I'm going to do is I'm he's got these
+sst4s which are not terribly good
+weapons so what I'm going to do is I'm
+going to use all weapons against now
+you're going why on Earth would you do
+that
+let me show you why I'm not going to use
+these weapons against ships you're like
+are you kidding me why would you not do
+that that makes no sense why what here's
+why I'm going to tell him to only attack
+carriers and I'm only going to order him
+to attack every round that he has on
+board with those particular carriers so
+in this case what I've done is I've
+actually taken this guy said don't shoot
+your Torpedoes unless of course it
+happens to be an aircraft carrier you
+can already see exactly how frustrating
+this is going to be another thing we
+want to do too is we want to set these
+guys up for the Ambush shot here so he's
+going to be down shallow depth he's
+basically going to be making no noise
+he's going to be making enough noise
+basically to get into position here to
+be able to dump his entire rack on him
+so one thing we need to think about too
+is of course when they take their shot
+weapon release authorization we need to
+think about the automatic firing range a
+carrier this is a very very short range
+weapon so basically we're going to dump
+this or right on them when they get
+within that magical range of course you
+can put a self-defense on here but good
+players will do that so that's the first
+thing we're going to do
+nothing like disrupting carrier
+operations when you least expect it so
+the next thing we're going to do is
+we're going to set up the surface-to-air
+missile system here in marikaivo and um
+we have to think about the players for a
+second here because what most players
+will do is again again depending on the
+player depending on how many times
+you've watched my videos here you would
+probably say oh Mary kybo there's
+probably going to be some big nasty Sam
+sites down here so I want to probably do
+is fire a bunch of tomahawk missiles I
+might come go through the mountains here
+other than kind of come around looks
+like we have some low mountains here so
+I'll probably have my guys Ingress this
+way it will basically concentrate on
+doing this you know anybody who's dumb
+enough to come down the front here
+deserves to get whacked kind of a thing
+like that
+you know that's a good tactical Doctrine
+it makes a lot of sense you know some
+scenario designers what they'll actually
+do is come in here and they'll block off
+there's a little nice Nation directly to
+the West here as a way to stop the
+players from basically chewing down here
+but you know if they if they want to be
+sneaky they can be sneaky let's do that
+however let's take advantage of the
+smart players sneakiness a little bit
+here the first we have to do is convince
+them that we're using a conventional
+defense so let's do that first so what
+I'm going to do is I'm going to grab
+myself a good old-fashioned Patriot
+missile battery because why not make
+things interesting for us let's get
+ourselves a patriot so it helps if you
+don't click Columbia because Colombia
+does not have Patriots
+of course you're like why are you using
+a patriot I'm using a patriot because
+they're cool there we go Netherlands
+that looks good uh Germany frig looks
+pretty good too uh the pack two I really
+wanted the uh pack three we can't get
+yeah only pulling's got the pack three
+here so I'm not gonna get that one so
+let's go down to 1987 2006 United States
+Army 97 that sounds good I really wanted
+the gem plus though the errant a ghost
+eye oh that's a fancy one let's see here
+United States Army here we go we can go
+so we have ourselves a patriot missile
+battery uh these are fantastic weapons
+uh what we're actually going to do here
+is we're going to come in here and we're
+going to say set as Auto detectable
+so what we're doing is we're forcing
+them to waste missiles on my lovely
+patroness of battery here
+um this is a sacrificial base missile
+battery so I'm actually going to go up
+to weapons here and I'm going to strip
+all of this stuff off of it you're like
+what do you why would you do this why
+why the reason I'm doing this is because
+the player is going to know where the
+Patriot missile battery is so they're
+either going to whack it with missiles
+which is pretty typical everybody knows
+that the Patriot missile battery is
+going to be pointed in the direction of
+the threat whoops helps if we are in the
+correct side here said unit set let's go
+back to Red Team here and switch back
+over there the other thing we're going
+to know is the fact that because there's
+a patriot there it's a pretty effective
+weapons platform it's going to be in the
+direction of the threat so we're
+basically providing the user if you want
+to think about it kind of another way
+with a free shot on the intention of
+tricking the user into wasting their
+free shot so I'm gonna go ahead and take
+this and park it there and you can see
+that now we've created a little bubble
+of awareness in that direction and we're
+probably going to get it blown up which
+is exactly the intention in so how do
+you solve the problem of getting this
+guy blown up remember he's acting as a
+Decoy for us I'm actually going to move
+on to this mountain so we're going to do
+is convince the American player that we
+are indeed having a real system here so
+what I'm actually going to do is come
+down here and I'm going to go ahead and
+park a second Patriot missile battery in
+place here so I'm gonna go ahead and
+grab another one the only difference is
+I'll just go ahead and copy the one we
+already have here see I'm gonna put that
+one right there I'm going to go ahead
+and make sure it's orientation makes
+sense I think the orientation in this
+one was pretty much far over to the side
+so go ahead and grab it I'm going to
+flip on the radar just for a second here
+again we're just doing this so we can
+kind of establish roughly where the
+threat's going to come from and we know
+of course they're going to try to fire
+the tomahawk missiles kind of around the
+corner so that they can avoid the
+detection Zone here but remember our
+detection Zone this Patriot missile
+battery isn't going to be detected so
+what we really want to do is design it
+so it's facing the direction where the
+enemy is likely to come through again
+we're using a little bit of a meta
+gaming here but the cool Advantage is if
+I shoot a tomahawk around this corner
+this Patriot missile will light up
+without warning our American friends
+that we've gone ahead and fired a
+patriot missile all they'll see is the
+missile being shot down convincing them
+that this is actually the real battery
+even though the fake battery is indeed a
+not even visible so I'm gonna go ahead
+and shut that one down
+now the next thing we're going to do is
+we're going to make it hard for the
+player by creating weird weather so I'm
+going to come in here right now the
+weather's pretty good so what I want
+them to do is fly into a hail of
+infrared missiles so I'm going to take
+this guy I'm going to go ahead and make
+it kind of nasty that's moderate middle
+clouds about 7000 feet that's perfect
+I'll make it just a tiny bit windy and
+now we'll leave like nodes Columbia so
+we're going to check up the temperature
+a little tiny bit there go ahead and
+save my scenarios so far everything's
+coming together so the next thing we
+want to do is we want to surprise the
+player who's going to attempt to go
+directly through these mountain ranges
+over here there's going to be two likely
+choices like I said if we do a no
+navigation Zone most of them will
+probably try to use this mountain as
+coverage of course if we do the math
+real quick that's a 42 miles where
+you're going to be seen if we come from
+the other direction our best mountains
+probably about here it's about 35
+nautical miles so really smart players
+are probably going to come down from
+this direction so we want to go and
+annoy them too so what I'm going to do
+is I'm going to come in here and click
+right here I'll go ahead and get myself
+another Patriot missile battery because
+I'm so mean I'll go ahead and copy that
+I want to park it right here and now
+we're going going to do with this one is
+we're going to face it that way so we're
+basically acting as a surprise for the
+person who's not expecting it so we're
+going to go ahead and take this one too
+we're going to make these guys Aces
+we're also going to take the old battery
+itself go ahead and grab him real quick
+let's go ahead and set it sensor I need
+to flip a sensor on for just a second
+here so I can go perfect
+so he's got to be parked there and the
+other thing I'm gonna do with him too
+and this is a really really important is
+I'm going to order all of my launchers
+not to waste ammo on something that you
+can't hit so I'm going to go ahead and
+select No Escape Zone here for all of
+these which is going to make it a little
+bit better you can actually do less than
+No Escape Zone especially when you're
+dealing with the more nasty stuff here
+so let's see no Escape Zone we'll do No
+Escape Zone if you want to shoot at like
+a weapon or something like that they can
+go nuts with that but I'm not so worried
+about those things all right file save
+I'm so mean so um this guy's basically
+going to act as a surprise to everybody
+who comes in here now we need to help
+him out a little bit so this is one of
+the fun strategies that I love doing so
+if you go to building real quick and you
+actually scroll down here oh there's a
+bunch of fun Point defense systems that
+you can put in here but you can grab a
+building with an observer and actually
+just stick them on the top of the hill
+here now he's undetectable because it
+will not be let me see here is he
+detectable now he's not detectable so
+what I would like to do is I like to go
+to the sensors window and I do a couple
+little things here the first thing we're
+going to do is we're going to do a pair
+of night vision goggles
+now the reason you do this is it's going
+to make it nice and complicated for the
+person who's going to be flying over us
+because we're going to see them the
+other thing you can do too is you can do
+four looking infrared and what I've done
+is I've basically created a little
+system where I can actually Identify
+some depreciate it and we have all the
+different flares and stuff like that
+it's okay that it's depreciated it still
+works so we can go ahead and do
+surveillance and now what I've done is
+I've created the world's smartest a
+little platform here now if you're
+nervous you can actually come up to here
+and hit the line of sight tool real fast
+and go ahead and say same as Observer
+and look at the field of view I have
+here I can see all the way into America
+over there which is fantastic I should
+probably want to do um visual right here
+perfect so that means uh right now we're
+going to have an array of these
+basically a little forward observers I
+press shift C by the way if you don't
+press shift C uh c as in Charlie uh
+you're of course going to have a problem
+where my observers here are going to be
+um not including all my fancy sensors
+that we're gonna get here so I'm gonna
+go and set those guys up I'll go ahead
+and set a pair of Coast Watchers up here
+too whoops apparently I tried to put him
+in the ocean which is always amusing to
+do
+grab him real quick I'll do one of those
+things again I'm just just pretty
+standard stuff here but it works very
+very very very very well to annoy the
+heck out of players and again they're
+probably going to come through this I
+almost can predict your average player
+is going to probably come through here
+so let's go ahead and grab that one and
+do one of those and you know just for
+science here let's go ahead and grab and
+park another one up on the coast here so
+in case they really want to do something
+silly we can come here like that and
+we'll go ahead and grab this and click
+right here we're going to right click
+and set that one to uh not Auto
+detectable and you know most players
+like again if this is a no navigation
+set which technically we don't own this
+part of the country anyway we're not
+supposed to be there ourselves too bad
+uh we can go ahead and not program that
+as well so come down here and we'll go
+and put them right in the Border it's
+just a little border again these are
+little observation posts are nothing
+special now some players are going to be
+really crafty and they're going to come
+up the lake here which makes a lot of
+sense because you can fly so low on this
+Lake which means when we do our strike
+we can come there and come back around
+here unfortunately that's actually
+fairly challenging for us to compensate
+for even though it seems like the last
+place you'd want to go ahead what do you
+mean underwater says it was an elevation
+of three feet it's more than enough so
+one of the disadvantages of this of
+course is ironically the best strategies
+to come up through here because none of
+my stuff is expecting them to come out
+of here but don't worry we have a
+surprise downtown for those fools so
+let's also go ahead and pop an
+observation post down here just in case
+the players are that creative all right
+so now we have a bunch of visual
+observation posts we're ready to go so
+now we're going to go ahead and
+establish a kind of a radar to kind of
+give us a general hint keep in mind this
+radar is going to be the victim of a
+tomahawk cruise missile very very
+shortly so what I like to do is use the
+exact same strategy I create the fake
+radar and then I create the real radar
+and it Infuse it confuses the crap out
+of players so I'm gonna come over here
+and grab myself on my standard radar TPS
+43 TPS 43es the one I like to use even
+though it's old it works so I'm going to
+take one of these I'm gonna go and take
+that radar I'm gonna go ahead and flip
+it on
+Boop just like that now this is a good
+time of course to set intermittent
+emissions here that's just a really
+really solid strategy somebody come to M
+con window here camera making things
+challenging for this guy we'll assume we
+are in yellow right now this particular
+guy under the yellow is not continuous
+I'll run for 10 seconds uh 10 and I
+always like F5 that works perfectly fine
+so what that's going to do is it's going
+to go ahead and make him kind of flick
+his radar on and off which is uh
+fantastic because it confuses the heck
+out of players and one thing we're going
+to do to make this a little challenging
+is we're going to make sure he's not
+Auto detectable so basically yeah we
+think we've got them now here's where
+you can be a real jerk face so what you
+do is you take this radar you clone it
+and then you put it two feet away
+now the reason you put it two feet away
+is what happens is the player will try
+to go ahead and fire at this thinking
+it's the only radar not realizing
+there's actually two Radars there so
+they end up undershooting or
+overshooting the amount of weapons that
+they need to fire which wastes a lot of
+time on the other thing too because
+naturally most players are probably
+going to try to Target that for the
+purposes of you know destroying it so
+you know you kind of blind them kind of
+a thing like that is to go ahead and do
+something like that we'll go and give
+them a different intermission here we'll
+do five eight random variation is three
+just to make it a little bit trickier
+there
+that's gonna be so fun so this is a
+great way to annoy the players as well
+let's go ahead and file save real quick
+here
+and now we need to deal with the defense
+of maricabo personally um right now as
+you know we have this bit of a surprise
+here which we're not supposed to have
+because it's not even our country that's
+okay we can move it down if we want to
+be more fair but let's just assume we
+put them in the mountains there we have
+this great Patriot missile surprise for
+everybody who's going to be passing
+through in that direction my next
+Patriot missile surprise is actually
+going to come right in here again
+Patriot missiles are difficult to work
+with because they can't shoot in all
+directions like an S 300 but that's okay
+because like I said we're about here to
+be annoying we're not about here to be
+uh devastating so I'm gonna go and grab
+myself a hawk next which are super fun
+to play with especially the later
+versions of them there we go and grab
+one of these and of course I'm going to
+leave him off if I left if I turned him
+on of course he would basically fire it
+the first thing he could try to fire at
+and basically I get duped into getting
+whacked so what I'm gonna do here is
+actually set these to No Escape zones I
+don't expect him to get that many
+victories my goal here is to cause him
+to scare the crap out of whoever he
+shoots at here so what I'm going to do
+is I'm going to select an extremely
+difficult Target I know that seems like
+a waste ammunition but I'm not going to
+be able to terrify the player enough
+unless I can trick the player into
+trying to engage this with more effort
+than it needs to be engaged with again a
+smart player will basically back out of
+the way and then come back around and
+try to drop a bunch of tomahawks on it
+which is a lot of ammunition Wasted by
+the way but if we do any other
+combination of this we're just going to
+get whacked so the other thing we want
+to do too is we want to visualize that
+player trying to sneak in and dick that
+a direct shot of Mary kibo here so we're
+going to do is we're just going to take
+I like to call this the cheap shot here
+so we're going to see if it's going to
+come down here he's probably going to
+use this thing right here right past my
+Observer so right in that Valley right
+there we're going to go ahead and put a
+chaparral chaparral I always never
+pronounced that correctly it's a type of
+terrain as my understanding I'm just
+going to park it right there
+because what will happen is that when
+they try to come through this little
+Valley to minimize the damage from my
+soon-to-be other Patriot missile
+launcher systems we're going to make
+sure that they have to own it and they
+have to uh suffer
+the next thing we're going to do too is
+we're gonna put one of those chaparrals
+um we're gonna pop it right here as well
+the reason why is because if they want
+to just walk up and knock on the Radar
+Site which is one of my favorite things
+to do as a strategy they're not going to
+expect to suddenly get a bunch of
+sidewinders along to them and again I
+don't expect to be able to shoot on
+every plane here that's not my goal my
+goal is to make it difficult for the
+player and make it expensive for the
+player it's the other thing too and what
+I'm going to do is I'm going to come
+over here I'm gonna go ahead and add one
+of those here well helps if you actually
+click the right button when you do that
+let's go ahead and grab one of these I'm
+gonna go ahead and toss them right here
+too again the purpose of this is not to
+be able to it's a gotcha it's to deny
+the player that cheap shot once they
+have identified it to come around the
+back of the Patriot and be like ding
+dong with a bunch of cluster bombs it's
+not going to work because they're going
+to get surprised by a bunch of
+sidewinders that are gonna get flinged
+up at them okay so let's head into a
+Mary kibo proper now I'll go ahead and
+save real quick everything is looking
+great so obviously their concentration
+is here and it's you know the classic
+expression the best place the best
+defense is good offense we don't have a
+choice we can't do that here other
+obviously we had a bunch of anti-ship
+missiles we could scare the crap out of
+the players but we're not going to do
+that we're just we have a submarine I've
+already got that surprise built in
+nobody needs to know so we're going to
+do now is we're gonna come down to Mary
+kivo and we're basically going to design
+this to be Fortress Mary kaibel so
+there's really two different
+philosophies the players are going to
+use Unfortunately they have gbus which
+means they need visuals to have visuals
+on the flip side if you go to weather
+real quick you realize that my weather
+is at a 7 000 foot ceiling that means
+that they have to drop below 7000 feet
+to use their gpus which means to hit
+anything they need to come within the
+critical range of my death making
+machines which are also known as my
+little chabarls which is exactly what I
+was using this whole time so what I'm
+going to do is grab one of my
+observation posts I'm coming here to
+marikaibo I assume he's sitting on the
+top of the bridge or something like that
+come over here make sure he is
+detectable I'll press file save looks
+pretty good right now I'm loving the way
+this is set up and now we're going to
+make this a death trap for anybody who
+wants to fly less than seven thousand
+feet so I'm gonna come right downtown
+here I'll make this interest this
+interesting let's go ahead and get the
+Avenger I love the Avenger because it's
+just so much fun to play with so we have
+one of these as you can see the Avenger
+it doesn't have the world's greatest
+range here so one of the things I'll do
+is I'll actually come here I'll control
+right click and I'll go ahead and hit
+Circle and I'll go ahead and draw
+and it did not work at all let's do it
+from the center this time when I do that
+click and drag
+let go so what that does is it creates a
+lovely little ring of area points there
+so I'm going to do is I'm going to shut
+off the statement to rain here so I can
+very clearly see where my ring of death
+has to be
+like I said it's all about Annoying the
+player here so go ahead
+that looks pretty good
+let's see I need to make sure we don't
+actually put them in the ocean here
+which is pretty amusing and I'll show
+you how to deal with that in a second
+say I put him here we'll go ahead and
+put him here and obviously in the middle
+this is one we're going to set up our
+Patriot batteries so I'm gonna go ahead
+and grab one of these buildings here one
+of the fun things to do is to put
+something that seems really innocuous
+just to confuse the heck out of the
+player grab here type in ATC like it's
+just a generic ATC radar just to confuse
+the heck out of them I don't think they
+call it that I think it's air traffic
+there it is
+he
+I'm so mean let's go ahead and turn The
+Radars on right there so now we have a
+generic little radar downtown kind of a
+thing and of course now we're going to
+place our regular folks well so I'm
+gonna go ahead and press the insert key
+and press that real quick we'll go ahead
+and toss in our last couple batteries
+we'll go and talk in a couple Hawks and
+again we don't need to worry so much
+about not being able to see the
+Americans coming because we will be able
+to see the Americans coming so I'm not
+stressed about that all right let's see
+United States Marine Corps that sounds
+pretty good I don't know why we have one
+of these uh we're gonna go ahead and
+grab these guys we're going to jack
+their proficiency up to Ace to make
+things a little extra fun for us and I'm
+also going to go ahead and press Ctrl
+shift F9 one more time WRA we'll set to
+my Hawk real quickly remember no Escape
+Zone for these guys this one is exactly
+the same we want to make them earn this
+shot here the fun thing with these
+weapons is they're pretty short range to
+begin with so I'm not really expecting
+them to be like ferociously awesomely
+useful or anything like that but like I
+said you'd be very very surprised as far
+as how effective that can be so let's go
+ahead so This Guy's in position he's
+looking in all assistant directions
+right here again I'm using him but
+basically minimum range here because I
+don't want to waste it and then like I
+said you always have to have that one
+little surprise that nobody's expecting
+kind of at the end so type in Patriot
+real quick let's go ahead and why not I
+didn't want to make this easy I want to
+make the player earn this one so let's
+grab my a little patreon here and we're
+gonna go ahead and face my Patriots I'll
+turn on his radar just temporarily
+Radars turn them on perfect so I'm gonna
+have him kind of cover that approach
+Corridor I'm gonna have another one with
+his radar shut off in the obvious
+Direction so that way the player thinks
+he's cracked my secret but the reality
+is he hasn't so that's what makes his
+life I think so much fun again you'd be
+dumb to come from that direction so
+shame on you if you came in that
+direction so using the same strategy we
+used before I'm just going to grab this
+guy real quick I'm going to spin them
+around so that we have nice even
+coverage in both directions I'm also
+going to shut his radar off here because
+I don't want to get him away this one
+I'm okay with giving away but on this
+one I'm not okay with giving away so now
+we have our defensive ring here
+we placed a bunch of people
+strategically oh we've designed plenty
+of little kind of surprises here and
+there uh one thing that's really really
+fun is like I said the player a smart
+player will try to come up the lake
+which seems to be like the last place
+you'd want to come because you've got
+all this lovely Lake but it's okay
+because I prepared a surprise for the
+person who decides to come up the lake
+as well uh right inside here I have an
+evil Dock and of course I have the
+entire uh not it's not the entire I take
+it back a good chunk of the Colombian
+Navy here including this little guy
+right here which is actually a lot of
+fun go ahead and click on this one which
+is this lovely little kind of a frigate
+piece here which is neat we also have
+these two Patrol craft and mounted on
+these lovely Patrol craft you know I've
+got some you know cannons and things
+like that we also have this little guy
+right here this is the almerante Padilla
+which is a little Corvette little piece
+here nothing too too excessive as far as
+Weapons goes you have a couple mistrals
+which again are pretty short-ranged
+weapons so we're not going to be able to
+really surprise anyone with that
+directly but the reality is the
+Americans are probably not expecting to
+bump into a boat as weird as that sounds
+so let's not give them a fun little
+surprise as far as that goes too so
+we'll go to surface ship we'll go ahead
+and grab ourselves something appropriate
+let's go to Columbia again uh Colombia
+sounds good we have all these other type
+15s uh let's see it's just the one I
+want to use well let's see I just want
+to make sure his missile is good enough
+so now what we have is we have a boat
+that is literally sitting there just
+patiently waiting for somebody half
+foolish enough to try to come directly
+up here and obviously I don't expect
+that boat to be able to shoot everything
+down so what I will do is I'll go ahead
+and imagine the players they see it they
+take a right turn they immediately dive
+to this side of things so let's go ahead
+and leave a couple surprises on this
+side of things as well
+now you're saying okay so you've done a
+lot of ir missiles here you've done a
+lot of stuff with all radar guided
+missiles I haven't done a lot with AAA
+so let's go do some AAA let's make it
+interesting right let's go ahead and
+scroll down they have the tip 70 which
+actually really really nice weapon so
+we're going to come in here and then
+we're going to go ahead and say oh let's
+see what we want 60s are pretty fun
+ks19s I love those I think the new Point
+defense type four which is the one I
+want to use here because this could be a
+fun little surprise here let's see it's
+a 30 millimeter can a 35mm oh that
+sounds like fun let's grab that real
+quick what's the range in this thing
+nothing
+that's fine with me so go ahead and set
+up a little array of these and again a
+little bit of a surprise for the player
+who doesn't expect this one we're going
+to make these not Auto detectable
+remember turning something on auto
+detectable is a great way to trick the
+player into acting in a way they
+shouldn't act so we'll go ahead and save
+that one go ahead and right click and
+save that one and now we're in great
+shape all right Fortress Columbia
+[Laughter]
+of course it turns out I'm in the wrong
+country here which is you know typical
+something I would do there but that's
+okay all right so let's go and switch to
+the other player real quicker there we
+go actually one more thing I want to do
+as the other players real fast let's go
+back to this one Ctrl shift F9 one thing
+I do want to do here is for my torpedos
+All Surface targets are considered valid
+targets as far as I'm concerned free
+fire free fire free fire free fire
+optimistic delightful so that way uh
+there's no delay so to speak here so
+let's go ahead and switch back to the
+Americans and uh see how this goes so
+we've got a pretty good setup right now
+obviously we've got any of this Fortress
+down here that's everything's ready to
+rock in we've designed it to be nice and
+annoying we've got the Americans so
+let's let's do this conventionally real
+quick and kind of see what happens here
+I'll see strike Amari strike City that
+look sounds good to me we'll do a land
+strike and we'll just be conventional
+here I'm not going to do anything weird
+so I'm gonna grab all of these guys toss
+them down here these are obviously going
+to be marked as escorts I believe the
+other ones yeah these are definitely
+gonna be marked as escorts and the rest
+of you are kind of be doing the deed
+there all right Mission settings that's
+fine I'm not going to change any of this
+uh yes I am can't not change it actually
+let's see here flight size we're going
+to do flight size of six or slight size
+of three flight size of three I think
+yes flight size of three perfect uh WRA
+that's perfectly fine let's also make
+sure we're going to use extremely
+aggressive oecm this entire flight here
+you want to make it as fun as possible
+oecn it looks good escort we're going to
+go flip on your oecm again try to make
+this as miserable as possible but again
+I'm not going to do anything too
+excessive here then of course the last
+thing we're going to do to test this
+scenario I'll go ahead and create two
+reference points we'll create one there
+one there Ctrl f11 that will do support
+I think I may have made a mistake I'll
+go check in a second though so go ahead
+and press the uh let's see this is
+support method support okey doke let's
+grab those two e2s go ahead and toss
+them down here of course the one thing
+we want to do is actually turn them on
+that could be a mistake on my part if I
+did not do not inherit perfect let's see
+this is a land strike all right
+let's try it someone press the space bar
+key you can go ahead and fast forward
+time here we're going to go ahead and
+launch all of our aircraft everything's
+in the way the Jammers have flipped on
+which is exactly what I anticipated them
+to do uh they're going to start floating
+down towards the city oh we've picked up
+a Radar Site oh looks like a TPS 43 is
+aware of us meanwhile of course as you
+know we have a surprise
+so we're gonna go ahead and send
+everybody a flying down there and
+they're getting into position we're
+picking up um missile site notice we
+know about this missile site so again
+every player in their right mind will
+pop that with a bunch of uh missiles oh
+we picked something else up what's this
+ah there's something else down there but
+we're not sure what it is strange
+because it's not emitting anything bam
+well that's about to get curse floated
+yeah but wait Watch What Happens
+oh no you killed my decoy
+all right let's continue with our
+scenario here
+I'm so evil all right let's go switch to
+the other team real quick and as we know
+we're completely aware of all of these
+guys coming towards us here and our
+lucky batter remember how we have a
+second one that's basically sitting
+there ready to rock notice which
+direction he's pointed
+they'd never see it coming because it's
+going to come from behind them all right
+we're getting into position here my
+Strikers of course if I was a little
+more strategic about this I could design
+them so that if I was especially
+manually controlling things I could kind
+of get that kind of free shot but look
+what's about to happen
+all right we have a good look on that
+burning Patriot missile batter still not
+sure what that object on the top of the
+hill is oh we picked up another object
+there other people tear to be two radar
+sites and they're they're awfully
+ambiguous oh we've identified it as a
+Sam oh he's going to get Chris bloated
+oh well those f-18s are gonna eat that
+guy up in about half of their gun there
+they go
+oh my Patriot got cursed splattered oh
+well I'll have to adjust his orientation
+to the right a little bit more to
+provide a better surprise oh
+oh I hate to say it f-18s but uh you
+basically shot your shot there so
+unfortunately the rest of my Strikers
+are just going to kind of continue along
+hope you're very proud of yourselves and
+here comes the rest of my Strikers here
+they're coming into position uh they're
+gonna have to lose a lot of altitude in
+order to be able to get underneath that
+a cloud layer now remember the way I
+designed my little setup here we're
+definitely aware of some nastiness
+floating through the clouds coming
+through the clouds again this is just
+doing a straight up strike here
+hits his ins IP he's going to go ahead
+and turn in oh we got some missiles
+launched
+and they drop without getting engaged
+let's go ahead and take a look at what's
+going here so my bombs are on the way
+I'm mpq there we have these guys the
+gbus I don't know how on Earth they're
+being guided what else to tutor you at
+sir
+5371 incredibly nobody seems to be
+firing let's see if I can find out what
+happened wrong here click on this guy
+why are you not firing at that control
+one F1 why did you not fire must detect
+the target prior to firing uh what is
+his altitude here that's uh 9334 which
+this guy's altitude that's pretty darn
+close I should be able to take that shot
+huh that's a little strange
+and we shoot down half of the gpus with
+my Hawk
+here comes the second round of them he's
+going to overfly directly on top of him
+not 100 sure why he decided to do that
+no Escape Zone within weapon minimum
+range oh so we're gonna get the cheap
+shot on the way back
+looks like our Hawk battery's doing
+exactly what I was hoping the hawk
+better we lost one building that's all
+right
+and we're going to go ahead and I'll
+waste some rounds in that
+and notice my Hawk battery ends up being
+the number one thing that carries all
+the weight here not because it's
+engaging my missile targets here but
+because it's shooting down all the
+guided weapons that could do the actual
+damage in my city so I'm a little
+disappointed with these guys not gonna
+lie I was kind of hoping they'd be able
+to pop them as they go by but it just
+goes to show you that my secret weapon
+here was the hidden Hawk that actually
+shot down all the missiles so that's one
+of the reasons why it's so important to
+have defense in depth so what I have to
+do now is I have to go find out why
+these guys are having such a tough time
+detecting them you know if I were to put
+another missile battery in here was this
+kind of creative thing must detect the
+target before doing why have you not
+been able to let's do some quick little
+examination here let's call it an
+experiments call this Fleur again it's
+just a quick little experiment now let's
+see here we'll do weapon director Boop
+right here that little bunk let's see if
+that makes a difference there moreover
+this is like I said for science
+and we should be able to detect them is
+he popping up into the clouds because
+that could be what's going on here let's
+see is 8 200 feet yeah he's just
+slightly outside of my range let's go
+take a look at the weather again real
+fast uh maybe what we'll do is again
+this is just for signs just for science
+there we go let's unpause that
+and let's see if it changes things a
+little bit well it's certainly looks
+like a decent shot to me
+fire
+ah so I see what happened there
+so it looks to me like one of the
+problems that I just faced here was the
+fact that they did a pretty nice job the
+only issue there was they kept diving in
+to the actual kind of weapon range here
+so unfortunately every time they passed
+into the clouds they were escaping on my
+wrath here which is kind of a shame but
+at the same time as those kind of things
+could happen but now that I've raised up
+the cloud sailing a teeny tiny bit that
+would have been interesting yeah we're
+gonna have a lot of f-18s about to get
+popped here so

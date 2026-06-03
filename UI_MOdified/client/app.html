@@ -4972,6 +4972,11 @@
          available when paintDryRunPreview() runs during workspace init. -->
     <script src="shell/scenario-dry-run-fixtures.js?v=1"></script>
     <script src="shell/scenario-workspace.js?v=1"></script>
+    <!-- PR2: RMOOZ-native scenario loader + home-hub launch-intent wiring.
+         Reuses AppShellScenarioWorkspace.loadLiveScenarioFromJson (global path);
+         only acts when a ?launch= intent is present, so direct /app.html and the
+         Wargame-3 path are untouched. -->
+    <script src="shell/native-scenario-loader.js?v=1"></script>
     <!-- Owner ruling 2026-06-01: editable scenario workspace (slice 1: metadata/sides/posture).
          P0 authoring schema (draft/working-copy engine) must load before edit-mode.
          Edits stay in-memory; commit/journal boundary untouched. -->

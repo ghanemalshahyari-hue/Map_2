@@ -1918,17 +1918,28 @@
         if (obj && obj.coord) {
             objMarker = window.L.marker(
                 [obj.coord[1], obj.coord[0]],
-                { icon: targetIcon(COLORS.OBJ.DORMANT, obj.name), title: obj.name },
+                { icon: targetIcon(COLORS.OBJ.DORMANT, obj.name),
+                  title: obj.name + ' — click for objective evidence (combat / readiness / doctrine)',
+                  riseOnHover: true },
             ).bindTooltip(buildObjTooltip(obj, 'DORMANT'), { permanent: false, sticky: true });
 
-            // OBJ-C: Click handler for objective evidence panel
+            // OBJ-C: Click handler for objective evidence panel.
+            // FIX: `stepIdx` was undefined here (ReferenceError on click → panel never
+            // opened). Read the live current step from the last applied state instead.
             objMarker.on('click', function() {
+                const _si = (lastAppliedState && Number.isFinite(lastAppliedState.step_index))
+                    ? lastAppliedState.step_index : 0;
                 document.dispatchEvent(new CustomEvent('rmooz:objective-selected', {
-                    detail: { objective: obj, objective_id: obj.id || 'objective_0', step_index: stepIdx || 0 }
+                    detail: { objective: obj, objective_id: obj.id || 'objective_0', step_index: _si }
                 }));
             });
 
             objMarker.addTo(layerGroup);
+            // OBJ-C: make the objective discoverably clickable — it opens the evidence panel.
+            try {
+                const _objEl = objMarker.getElement && objMarker.getElement();
+                if (_objEl) { _objEl.style.cursor = 'pointer'; _objEl.classList.add('rmooz-objective-clickable'); }
+            } catch (_e) { /* non-fatal */ }
 
             if (Number.isFinite(obj.radius_km) && obj.radius_km > 0) {
                 objSecurityRing = window.L.circle([obj.coord[1], obj.coord[0]], {

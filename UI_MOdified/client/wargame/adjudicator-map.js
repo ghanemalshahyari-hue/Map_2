@@ -5550,8 +5550,12 @@
         // FIRST step a BLS goes from STAGED to anything contested/secure.
         // The badge represents the red force breaching the coastal defense
         // at that landing site; it's stamped once and persists.
-        if (state.bls_status) {
-            for (const [name, status] of Object.entries(state.bls_status)) {
+        // PR-WS-BLS-A: World State owns BLS status when available; authored
+        // state.bls_status is the fallback (parity / non-W3 scenarios).
+        const wsBls = lastWorldState && lastWorldState.derived && lastWorldState.derived.bls_status;
+        const activeBls = wsBls || state.bls_status;
+        if (activeBls) {
+            for (const [name, status] of Object.entries(activeBls)) {
                 const m = blsMarkers[name];
                 if (!m) continue;
                 const blsMeta = m._wgBls || {};

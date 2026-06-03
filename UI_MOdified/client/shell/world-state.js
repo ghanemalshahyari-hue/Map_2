@@ -283,6 +283,39 @@
         };
     }
 
+    // PR-WS-BLS-A: contest zone radius — any RED unit closer than this (nm)
+    // is counted as local to a BLS. One constant; no thresholds below.
+    var BLS_RADIUS_NM = 10;   // 10 nm ≈ 18.5 km
+
+    // PR-WS-BLS-A: first BLS ownership inversion.
+    // Rule: CONTESTED if any non-destroyed, non-off-map RED unit is within
+    // BLS_RADIUS_NM of the BLS position; STAGED otherwise.
+    // Returns a { [bls_id]: 'CONTESTED'|'STAGED' } map, or null when the
+    // parity gate fires (degraded/no-unit scenarios) so the renderer falls
+    // through to the authored state.bls_status.
+    function computeBlsStatus(ws) {
+        if (!ws || ws.degraded) return null;
+        var bls = arr(ws.lines && ws.lines.bls);
+        if (!bls.length) return null;
+        var allUnits = arr(ws.units);
+        if (!allUnits.length) return null;  // parity gate: no units in scenario at all
+        // Live RED units that can contest a BLS (destroyed / off-map are excluded).
+        var reds = allUnits.filter(function (u) {
+            return u.side === 'RED' && !u.off_map &&
+                   u.status !== 'DESTROYED' && Array.isArray(u.position);
+        });
+        var result = {};
+        bls.forEach(function (b) {
+            if (!b.id || !Array.isArray(b.position)) return;
+            var near = reds.some(function (u) {
+                var d = nmBetween(b.position, u.position);
+                return d != null && d <= BLS_RADIUS_NM;
+            });
+            result[b.id] = near ? 'CONTESTED' : 'STAGED';
+        });
+        return Object.keys(result).length ? result : null;
+    }
+
     // Objective status display: only CAPTURED is re-litigated against the
     // evidence (force ratio + losses); every other status passes through.
     // PR-WS4: evidence is read from WS-OWNED balance_summary (computed from
@@ -313,7 +346,8 @@
     // ORDER MATTERS: balance_summary runs first so the objective rule sees the
     // computed evidence. New derived fields are added here (one row each).
     var DERIVATIONS = {
-        balance_summary: computeBalanceSummary,
+        balance_summary:          computeBalanceSummary,
+        bls_status:               computeBlsStatus,
         objective_status_display: computeObjectiveStatusDisplay
     };
     function applyDerivations(ws) {
@@ -376,6 +410,9 @@
         // (DB2 will replace getUnitOperationalWeight's source).
         computeBalanceSummary: computeBalanceSummary,
         getUnitOperationalWeight: getUnitOperationalWeight,
+        // PR-WS-BLS-A: BLS ownership inversion (presence-only rule).
+        computeBlsStatus: computeBlsStatus,
+        BLS_RADIUS_NM: BLS_RADIUS_NM,
         DERIVATIONS: DERIVATIONS,
         // exposed for tests / future rule modules
         _bearing: bearing,

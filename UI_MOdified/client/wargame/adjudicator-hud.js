@@ -208,7 +208,7 @@
             if (window.AppAdjudicatorMap && window.map && window.L) {
                 const drew = window.AppAdjudicatorMap.drawScenario(sc);
                 if (drew) {
-                    setStatus('Scenario drawn on map — BLS, OBJ NASSER, pipeline, Red units visible.', 'ok');
+                    setStatus('Scenario drawn on map — objective, BLS, and units visible.', 'ok');
                     return;
                 }
             }

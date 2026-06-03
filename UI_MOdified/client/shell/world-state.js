@@ -505,25 +505,59 @@
         return result.length ? result : null;
     }
 
+    // Helper: extract evidence value by type from evidence ledger.
+    // PR-OBJ-B: evidence-based consumer (replaces direct balance_summary reads).
+    function getEvidenceValue(evidence, type) {
+        if (!Array.isArray(evidence)) return null;
+        for (var i = 0; i < evidence.length; i++) {
+            if (evidence[i].evidence_type === type) return evidence[i].value;
+        }
+        return null;
+    }
+
     // Objective status display: only CAPTURED is re-litigated against the
     // evidence (force ratio + losses); every other status passes through.
-    // PR-WS4: evidence is read from WS-OWNED balance_summary (computed from
-    // units) with the `state` mirror (ws.balance) as the parity fallback.
+    // PR-OBJ-B: evidence is read from objective_evidence ledger (WS-owned);
+    // balance_summary fallback remains for parity gate (degraded scenarios).
     function computeObjectiveStatusDisplay(ws) {
         var d = obj(ws && ws.derived);
         var status = d.objective_status || 'DORMANT';
         if (status !== 'CAPTURED') return status;
-        var bal = obj(d.balance_summary);
-        var b = obj(ws && ws.balance);
-        var haveComputedFr = (typeof bal.force_ratio_value === 'number');
-        var frNum    = haveComputedFr ? bal.force_ratio_value : parseFrRatio(String(b.force_ratio || ''));
-        // Keyword blocks only apply to the authored string mirror (computed FR is numeric).
-        var frBlocks = !haveComputedFr && /\b(below\s+decisive|not\s+engaged|N\/A)\b/i.test(String(b.force_ratio || ''));
-        var cl = obj(bal.losses);
-        var lc = (cl.blue_destroyed != null || cl.red_company_equivalent != null) ? cl : obj(b.losses);
-        var blueLost  = Number(lc.blue_destroyed) || 0;
-        var blueTotal = Number(lc.blue_total) || 39;
-        var redCoyEq  = Number(lc.red_company_equivalent) || 0;
+
+        // PR-OBJ-B: Try evidence ledger first
+        var evidence = arr(d.objective_evidence);
+        var useEvidencePath = evidence && evidence.length > 0;
+
+        var frNum, blueLost, blueTotal, redCoyEq, frBlocks;
+
+        if (useEvidencePath) {
+            // Primary path: extract from objective_evidence ledger
+            frNum    = getEvidenceValue(evidence, 'force_ratio');
+            blueLost = getEvidenceValue(evidence, 'blue_destroyed_count');
+            redCoyEq = getEvidenceValue(evidence, 'red_company_equivalent');
+            // Compute blueTotal from blue_intact_ratio if available
+            var blueIntactRatio = getEvidenceValue(evidence, 'blue_intact_ratio');
+            if (blueIntactRatio != null && blueLost != null) {
+                blueTotal = blueLost / (1 - blueIntactRatio);
+            } else {
+                blueTotal = 39;  // default fallback (from W3 scenario)
+            }
+            frBlocks = false;  // no keyword blocks from evidence ledger (only from authored mirror)
+        } else {
+            // Fallback path: use balance_summary (backward compat)
+            var bal = obj(d.balance_summary);
+            var b = obj(ws && ws.balance);
+            var haveComputedFr = (typeof bal.force_ratio_value === 'number');
+            frNum    = haveComputedFr ? bal.force_ratio_value : parseFrRatio(String(b.force_ratio || ''));
+            frBlocks = !haveComputedFr && /\b(below\s+decisive|not\s+engaged|N\/A)\b/i.test(String(b.force_ratio || ''));
+            var cl = obj(bal.losses);
+            var lc = (cl.blue_destroyed != null || cl.red_company_equivalent != null) ? cl : obj(b.losses);
+            blueLost  = Number(lc.blue_destroyed) || 0;
+            blueTotal = Number(lc.blue_total) || 39;
+            redCoyEq  = Number(lc.red_company_equivalent) || 0;
+        }
+
+        // Apply thresholds (unchanged logic)
         var frNumBlocks = (frNum !== null && frNum < 2);
         var blueIntact  = (blueLost / blueTotal) < 0.25;
         var redSpent    = redCoyEq > 6;

@@ -101,7 +101,7 @@
         return (window.location && window.location.origin ? window.location.origin : '') + p;
     }
 
-    const DEFAULT_NEXT = 'app.html';
+    const DEFAULT_NEXT = 'home.html';   // PR1: land on the RMOOZ launch hub by default (deep links to /app.html still honored via ?next=)
 
     function sanitizeNext(raw) {
         const d = DEFAULT_NEXT;

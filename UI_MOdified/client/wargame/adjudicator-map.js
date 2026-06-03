@@ -5170,15 +5170,11 @@
     // These are COMPUTED firing solutions — distinct from the scenario's authored
     // engagement_arcs (adjudicated kill outcomes) drawn elsewhere.
     function computeEngagementRecords(state) {
-        if (!window.AppEngagement || typeof window.AppEngagement.computeEngagements !== 'function') return null;
-        const { units, posByUid } = buildDetectionUnits(state);
-        if (!units.length) return null;
-        // PR-WS-DET1-A: read contacts from World State (DERIVATIONS),
-        // not direct DET1 call. Pass to ENG1.
-        let contacts = (lastWorldState && lastWorldState.derived && lastWorldState.derived.contacts) || [];
-        let recs = [];
-        try { recs = window.AppEngagement.computeEngagements({ units }, contacts) || []; } catch (_) { return null; }
-        return { recs, posByUid };
+        const { posByUid } = buildDetectionUnits(state);
+        // PR-WS-ENG1-A: read engagement outcomes from World State (computed once per decision),
+        // not direct ENG1 call. No recomputation.
+        let recs = (lastWorldState && lastWorldState.derived && lastWorldState.derived.engagement_outcomes) || [];
+        return recs.length ? { recs, posByUid } : null;
     }
 
     function clearEngagements() {

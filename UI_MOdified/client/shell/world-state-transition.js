@@ -159,6 +159,12 @@
         var pairWs = { units: [shooter, target] };
         var synthetic = [{ target_uid: target.uid, detected_by_side: shooter.side, confidence: 'firm' }];
         var recs = e.computeEngagements(pairWs, synthetic, (opts && opts.eng) || {});
+
+        // PR-WS-ENG1-A: store outcomes in World State for all consumers (map, HUD, future layers)
+        if (!ws.derived) ws.derived = {};
+        if (!Array.isArray(ws.derived.engagement_outcomes)) ws.derived.engagement_outcomes = [];
+        ws.derived.engagement_outcomes = ws.derived.engagement_outcomes.concat(recs);
+
         var rec = recs.filter(function (r) { return r.status === 'engaged' && r.target === target.uid; })
                       .sort(function (a, b) { return b.pk_kill - a.pk_kill; })[0];
         if (!rec) {

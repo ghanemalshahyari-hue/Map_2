@@ -5139,9 +5139,9 @@
             if (!ll) continue;
             const firm = c.confidence === 'firm';
             // colour by the side HOLDING the contact (blue sees red, red sees blue)
-            const color = c.detected_by_side === 'blue' ? '#3a96d2' : '#c41e1e';
+            const color = c.detected_by_side === 'BLUE' ? '#3a96d2' : '#c41e1e';
             const method = (c.method || 'radar').toUpperCase();
-            const sideLbl = c.detected_by_side === 'blue' ? 'Blue' : 'Red';
+            const sideLbl = c.detected_by_side === 'BLUE' ? 'Blue' : 'Red';
             const dot = window.L.circleMarker(ll, {
                 radius: firm ? 9 : 11,
                 color, weight: firm ? 2 : 1.4,

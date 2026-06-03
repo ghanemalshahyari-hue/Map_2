@@ -228,6 +228,7 @@
         var objStatus = (ws.derived && ws.derived.objective_status_display) || 'UNKNOWN';
 
         html += '<header class="oep-header">';
+        html += '  <button type="button" class="oep-close" aria-label="Close" title="Close (Esc)">&times;</button>';
         html += '  <span class="oep-eyebrow" data-i18n="oep-eyebrow">OBJECTIVE</span>';
         html += '  <h2 class="oep-title">' + escapeHtml(objName) + '</h2>';
         html += '  <p class="oep-status oep-status-' + objStatus.toLowerCase() + '">' + objStatus + '</p>';
@@ -278,6 +279,10 @@
         // Render
         panelEl.innerHTML = html;
         panelEl.classList.remove('oep-hidden');
+
+        // Wire the close button (innerHTML was just replaced, so re-bind each render).
+        var closeBtn = panelEl.querySelector('.oep-close');
+        if (closeBtn) closeBtn.addEventListener('click', hideObjectiveEvidence);
 
         // Apply i18n if available
         if (typeof window.applyI18nToElement === 'function') {
@@ -342,6 +347,16 @@
      */
     if (typeof window !== 'undefined' && window.document) {
         window.document.addEventListener('rmooz:selection-cleared', hideObjectiveEvidence);
+
+        // Esc closes the panel when it's open (only acts if visible, so it
+        // doesn't swallow Escape for other surfaces).
+        window.document.addEventListener('keydown', function(e) {
+            if (e.key !== 'Escape' && e.key !== 'Esc') return;
+            var panelEl = document.getElementById('objective-evidence-panel');
+            if (panelEl && !panelEl.classList.contains('oep-hidden')) {
+                hideObjectiveEvidence();
+            }
+        });
     }
 
 })();

@@ -5235,8 +5235,14 @@
            the normal workspace view; the "Developer / Import" toggle reveals them.
            Nothing is deleted — the global import path + diagnostics stay recoverable. */
         body:not(.rmooz-dev-import-open) #sw-scenario-source-section,
+        body:not(.rmooz-dev-import-open) #sw-dp-loader-row,
         body:not(.rmooz-dev-import-open) #wg-adj-import,
         body:not(.rmooz-dev-import-open) label[data-i18n="wg-adj-import-label"] { display: none !important; }
+        /* The decision-package sample/fixture row (Load sample / Clear / Load fixture)
+           is shown by its .sw-dpkg-loader-row class even with its hidden attribute, so
+           it must be hidden explicitly above and revealed only under the toggle — keeping
+           every clutter loader behind one Developer / Import control. */
+        body.rmooz-dev-import-open #sw-dp-loader-row { display: flex !important; }
         .rmooz-dev-import-toggle {
             display: inline-block; margin: 10px 0; padding: 4px 12px; font-size: 11px;
             background: transparent; color: #8d949e; border: 1px dashed #2a2f37;

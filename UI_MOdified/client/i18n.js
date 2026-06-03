@@ -1664,6 +1664,11 @@
             // PR-70: Scenario Briefing Header
             'sw-briefing-hdr-title':     'Scenario Briefing',
             'sw-briefing-hdr-sub':       'Read-only operational overview from loaded local scenario data.',
+            // L3-B-1: Why-Not Review card
+            'wn-hdr-title':              'Why-Not Review',
+            'wn-hdr-sub':                'Read-only explanation of why the current action is feasible, blocked, or risky.',
+            'wn-empty':                  'No action selected for Why-Not review.',
+            'wn-clear':                  'No blockers, risks, or evidence gaps in the current state.',
             // PR-132: Scenario Briefing Panel card labels
             'sw-brfg-title':             'Scenario Brief',
             'sw-brfg-field-purpose':     'Purpose',
@@ -4035,6 +4040,11 @@
             // PR-70: Scenario Briefing Header
             'sw-briefing-hdr-title':     'موجز السيناريو',
             'sw-briefing-hdr-sub':       'نظرة تشغيلية للقراءة فقط من بيانات السيناريو المحلية المحمّلة.',
+            // L3-B-1: Why-Not Review card
+            'wn-hdr-title':              'مراجعة موانع الإجراء',
+            'wn-hdr-sub':                'شرح للقراءة فقط يوضّح سبب كون الإجراء الحالي ممكناً أو محظوراً أو محفوفاً بالمخاطر.',
+            'wn-empty':                  'لا يوجد إجراء محدد لمراجعة الموانع.',
+            'wn-clear':                  'لا توجد عوائق أو مخاطر أو فجوات في الأدلة ضمن الحالة الحالية.',
             // PR-132: Scenario Briefing Panel card labels
             'sw-brfg-title':             'موجز السيناريو',
             'sw-brfg-field-purpose':     'الغرض',

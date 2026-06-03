@@ -976,6 +976,19 @@
                         <span class="sw-briefing-hdr-sub" data-i18n="sw-briefing-hdr-sub">Read-only operational overview from loaded local scenario data.</span>
                     </div>
 
+                    <!-- L3-B-1: Why-Not Review (read-only). Painted by shell/why-not-panel.js from
+                         AppActionFeasibility.evaluateAction — action type, verdict, blockers, risks,
+                         evidence gaps. No controls, no apply/commit, no mutation, no recommendations. -->
+                    <section class="wn-card" id="why-not-card" aria-label="Why-Not review">
+                        <div class="wn-hdr" role="heading" aria-level="3">
+                            <span class="wn-hdr-title" data-i18n="wn-hdr-title">Why-Not Review</span>
+                            <span class="wn-hdr-sub" data-i18n="wn-hdr-sub">Read-only explanation of why the current action is feasible, blocked, or risky.</span>
+                        </div>
+                        <div class="wn-body" id="wn-body">
+                            <p class="wn-empty" data-i18n="wn-empty">No action selected for Why-Not review.</p>
+                        </div>
+                    </section>
+
                     <!-- PR-287L0: Wargame 3 Dry-Run Preview header — HIDDEN from production workspace.
                          User direction: stop showing parallel W3 dry-run beside live scenario.
                          The underlying JS functions remain available via window.AppShellScenarioWorkspace
@@ -4765,7 +4778,7 @@
     <script src="chat.js"></script>
     <script src="units.js"></script>
     <script src="units-orbat.js?v=1"></script>
-    <script src="i18n.js"></script>
+    <script src="i18n.js?v=2"></script>
     <script src="../lib/leaflet.js"></script>
     <script src="../lib/mgrs.min.js"></script>
     <script src="../lib/coord-utils.js"></script>
@@ -4798,6 +4811,8 @@
          objective status through it (parity-proof read seam — World State
          mirrors `state` today; WS4 inverts ownership). -->
     <script src="shell/world-state.js?v=3"></script>
+    <!-- L3-A: "Why-Not" action feasibility evaluator (pure; reads ENG1 + evidence ledger). -->
+    <script src="shell/action-feasibility.js?v=1"></script>
     <script src="wargame/adjudicator-map.js?v=44"></script>
     <script src="wargame/cesium-view.js?v=3"></script>
     <script src="dem-layer.js?v=1"></script>
@@ -4820,6 +4835,9 @@
     <script src="shell/side-picker.js?v=1"></script>
     <script src="shell/unit-panel.js?v=1"></script>
     <script src="shell/objective-evidence-panel.js?v=3"></script>
+    <!-- L3-B-1: read-only Why-Not display panel in the Scenario Workspace.
+         Paints #wn-body from AppActionFeasibility.evaluateAction. No controls. -->
+    <script src="shell/why-not-panel.js?v=1"></script>
     <!-- PR-4: Event Log placeholder. UI foundation only — static
          placeholder rows, collapse/expand, no journal feed yet. -->
     <script src="shell/event-log.js?v=1"></script>
@@ -5173,6 +5191,33 @@
         }
         .oep-close:hover { background: #2a2f37; color: #fff; }
         html[dir="rtl"] .oep-close { right: auto; left: 8px; }
+
+        /* L3-B-1: Why-Not Review card (read-only, compact) */
+        .wn-card { margin: 8px 0; border: 1px solid var(--border, #2a2f37); border-radius: 8px;
+            background: var(--panel-bg, #161a1f); overflow: hidden; }
+        .wn-hdr { padding: 8px 12px; border-bottom: 1px solid var(--border, #2a2f37); }
+        .wn-hdr-title { display: block; font-size: 12px; font-weight: 600; letter-spacing: .03em; }
+        .wn-hdr-sub { display: block; font-size: 10px; opacity: .65; margin-top: 2px; }
+        .wn-body { padding: 8px 12px; font-size: 12px; }
+        .wn-empty { opacity: .6; font-style: italic; margin: 4px 0; }
+        .wn-clear { color: #4caf50; margin: 4px 0; }
+        .wn-action { font-weight: 600; margin-bottom: 6px; }
+        .wn-verdict { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px;
+            font-weight: 700; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px; }
+        .wn-verdict-feasible           { background: rgba(76,175,80,.18);  color: #6fcf73; }
+        .wn-verdict-feasible_with_risk { background: rgba(255,193,7,.18);  color: #ffce54; }
+        .wn-verdict-blocked            { background: rgba(196,30,30,.20);  color: #ef6b6b; }
+        .wn-group { margin-top: 8px; }
+        .wn-group-title { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; opacity: .7; margin-bottom: 4px; }
+        .wn-blockers .wn-group-title { color: #ef6b6b; }
+        .wn-risks .wn-group-title    { color: #ffce54; }
+        .wn-gaps .wn-group-title     { color: #8d949e; }
+        .wn-list { list-style: none; margin: 0; padding: 0; }
+        .wn-item { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; padding: 4px 0;
+            border-top: 1px solid rgba(255,255,255,.04); }
+        .wn-code { font-weight: 600; font-size: 11px; }
+        .wn-exp { flex: 1 1 100%; opacity: .85; font-size: 11px; }
+        .wn-src { font-size: 9px; opacity: .5; font-family: monospace; }
 
         .oep-eyebrow {
             display: block; font-size: 10px; text-transform: uppercase;

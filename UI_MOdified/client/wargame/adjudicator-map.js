@@ -802,14 +802,14 @@
         let svg = '';
         try {
             if (window.ms && typeof window.ms.Symbol === 'function') {
-                const sym = new window.ms.Symbol(sidc, { size: 34 });
+                const sym = new window.ms.Symbol(sidc, { size: 20 });
                 if (sym.isValid && sym.isValid()) svg = sym.asSVG();
             }
         } catch (_) { /* fall back below */ }
-        const inner = svg || ('<div style="width:34px;height:24px;border:2px solid ' + color + ';background:rgba(0,0,0,0.05);"></div>');
+        const inner = svg || ('<div style="width:20px;height:14px;border:2px solid ' + color + ';background:rgba(0,0,0,0.05);"></div>');
         const html = '<div class="wg-adj-aggregate-inner" style="position:relative;display:inline-block;">' + inner +
             '<span class="wg-adj-aggregate-badge" style="background:' + color + ';">' + count + '</span></div>';
-        return window.L.divIcon({ className: 'wg-adj-aggregate', html: html, iconSize: [42, 42], iconAnchor: [21, 21] });
+        return window.L.divIcon({ className: 'wg-adj-aggregate', html: html, iconSize: [28, 28], iconAnchor: [14, 14] });
     }
 
     // Render the roll-up for the current zoom. Idempotent: clears + rebuilds
@@ -1622,10 +1622,10 @@
     // Icon size by Blue echelon — division biggest, company smallest.
     function blueIconSize(echelon) {
         switch (echelon) {
-            case 'division':  return 38;
-            case 'brigade':   return 34;
-            case 'battalion': return 30;
-            default:          return 26; // company
+            case 'division':  return 20;
+            case 'brigade':   return 18;
+            case 'battalion': return 16;
+            default:          return 14; // company
         }
     }
 
@@ -1678,10 +1678,10 @@
     // echelons. Visually parity with Blue: division big, company small.
     function redIconSize(echelon) {
         switch (echelon) {
-            case 'division':  return 38;
-            case 'brigade':   return 34;
-            case 'battalion': return 30;
-            default:          return 26; // support / company
+            case 'division':  return 20;
+            case 'brigade':   return 18;
+            case 'battalion': return 16;
+            default:          return 14; // support / company
         }
     }
 

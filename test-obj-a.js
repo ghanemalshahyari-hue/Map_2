@@ -83,23 +83,45 @@ ok('determinism: same world state → same evidence',
    json1 === json2);
 
 ok('evidence values are stable across runs',
-   evidence && evidence.every(r => typeof r.value === 'number' || typeof r.value === 'object' || typeof r.value === 'string'));
+   evidence && evidence.every(r => typeof r.value === 'number' || typeof r.value === 'object' || typeof r.value === 'string' || typeof r.value === 'boolean' || r.value === null));
 
 ok('confidence values are in [0, 1]',
    evidence && evidence.every(r => r.confidence >= 0 && r.confidence <= 1));
 
-/* 11–15. TRACEABILITY ============================================== */
-const hasValidSources = evidence && evidence.every(r =>
-    ['balance_summary', 'bls_status', 'engagement_outcomes', 'contacts'].indexOf(r.source) >= 0
-);
+/* 11–15. TRACEABILITY ==============================================
+ * D4 RESOLVED 2026-06-03: the allowed-set is the UNION of every contributor's
+ * sources/types — combat (OBJ-A) + readiness (READINESS-A) + doctrine (DOCTRINE-A).
+ * Adding a contributor extends these lists (matches the ledger's open design). */
+const ALLOWED_SOURCE_PREFIXES = [
+    // combat / control / contacts (OBJ-A)
+    'balance_summary', 'bls_status', 'engagement_outcomes', 'contacts',
+    // readiness (READINESS-A)
+    'ws.units[].supply', 'ws.units[].readiness',
+    // doctrine (DOCTRINE-A)
+    'ws.units[].doctrine_tags', 'ws.units[].echelon', 'ws.units[].posture',
+    'ws.doctrine.weapon_control_status', 'ws.doctrine.emcon', 'ws.doctrine.engage_ambiguous',
+    'inferred', 'ws.objectives[].doctrine_priority', 'objectives[].doctrine_priority', 'aggregate'
+];
+// sources may carry a "(default — ...)" / ".losses" / " + ..." suffix; match by prefix.
+function sourceAllowed(src) {
+    return ALLOWED_SOURCE_PREFIXES.some(p => String(src).indexOf(p) === 0);
+}
 ok('all sources are in allowed set',
-   hasValidSources);
+   evidence && evidence.every(r => sourceAllowed(r.source)));
 
 const validTypes = [
+    // combat / control / contacts
     'force_ratio', 'blue_destroyed_count', 'blue_intact_ratio', 'red_company_equivalent',
     'bls_control_count', 'bls_contested_count',
     'engagement_outcomes_total', 'engagement_effectiveness_ratio',
-    'contact_confidence_summary'
+    'contact_confidence_summary',
+    // readiness (READINESS-A)
+    'unit_strength_avg', 'force_availability_ratio', 'ammunition_sustainability',
+    'supply_sustainability', 'combat_readiness_state', 'casualty_rate',
+    // doctrine (DOCTRINE-A)
+    'unit_doctrine_tags', 'unit_echelon_level', 'unit_posture_state',
+    'side_weapons_control_status', 'side_emcon_status', 'side_engage_ambiguous',
+    'unit_doctrine_inheritance_scope', 'objective_doctrine_priority', 'doctrine_compliance_summary'
 ];
 ok('all evidence_types are known',
    evidence && evidence.every(r => validTypes.indexOf(r.evidence_type) >= 0));
@@ -111,13 +133,7 @@ ok('objective_id is consistent',
    evidence && evidence.length > 0 && evidence.every(r => r.objective_id === evidence[0].objective_id));
 
 ok('evidence records reference known sources',
-   evidence && evidence.every(r => {
-       if (r.source === 'balance_summary') return ws0.derived && ws0.derived.balance_summary;
-       if (r.source === 'bls_status') return ws0.derived && ws0.derived.bls_status;
-       if (r.source === 'engagement_outcomes') return ws0.derived && ws0.derived.engagement_outcomes;
-       if (r.source === 'contacts') return ws0.derived && ws0.derived.contacts;
-       return false;
-   }));
+   evidence && evidence.every(r => sourceAllowed(r.source)));
 
 /* 16–19. VALUE VALIDATION ========================================= */
 const frEvidence = evidence && evidence.find(r => r.evidence_type === 'force_ratio');

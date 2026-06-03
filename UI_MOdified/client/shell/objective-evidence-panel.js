@@ -70,7 +70,16 @@
             label: 'Doctrine',
             i18nKey: 'evidence-group-doctrine',
             types: [
-                // Future: DOCTRINE-A will add types here
+                // DOCTRINE-A: evidence source only (no behavior)
+                'unit_doctrine_tags',
+                'unit_echelon_level',
+                'unit_posture_state',
+                'side_weapons_control_status',
+                'side_emcon_status',
+                'side_engage_ambiguous',
+                'unit_doctrine_inheritance_scope',
+                'objective_doctrine_priority',
+                'doctrine_compliance_summary'
             ]
         },
         system: {
@@ -104,6 +113,15 @@
         'bls_control_count': { label: 'BLS Controlled', key: 'evidence-bls-control' },
         'bls_contested_count': { label: 'BLS Contested', key: 'evidence-bls-contested' },
         'contact_confidence_summary': { label: 'Contacts', key: 'evidence-contacts' },
+        'unit_doctrine_tags': { label: 'Doctrine Tags', key: 'evidence-doctrine-tags' },
+        'unit_echelon_level': { label: 'Echelon Level', key: 'evidence-doctrine-echelon' },
+        'unit_posture_state': { label: 'Posture', key: 'evidence-doctrine-posture' },
+        'side_weapons_control_status': { label: 'Weapons Control (ROE)', key: 'evidence-doctrine-wcs' },
+        'side_emcon_status': { label: 'EMCON State', key: 'evidence-doctrine-emcon' },
+        'side_engage_ambiguous': { label: 'Engage Ambiguous', key: 'evidence-doctrine-ambiguous' },
+        'unit_doctrine_inheritance_scope': { label: 'Inheritance Scope', key: 'evidence-doctrine-scope' },
+        'objective_doctrine_priority': { label: 'Objective Priority', key: 'evidence-doctrine-priority' },
+        'doctrine_compliance_summary': { label: 'Compliance', key: 'evidence-doctrine-compliance' },
         'engagement_outcomes_total': { label: 'Engagements', key: 'evidence-engagements' },
         'engagement_effectiveness_ratio': { label: 'Engagement Success', key: 'evidence-engagement-success' },
         'evidence_record_count': { label: 'Evidence Records', key: 'evidence-record-count' },
@@ -141,8 +159,12 @@
         if (typeof value === 'boolean') {
             return value ? 'true' : 'false';
         }
+        if (Array.isArray(value)) {
+            // e.g. doctrine_tags → "air_defense, IADS, maneuver"
+            return value.length ? value.join(', ') : '—';
+        }
         if (typeof value === 'object') {
-            // For contact_confidence_summary and similar
+            // For contact_confidence_summary, WCS {air,surface,subsurface}, compliance, etc.
             return JSON.stringify(value);
         }
         return String(value);

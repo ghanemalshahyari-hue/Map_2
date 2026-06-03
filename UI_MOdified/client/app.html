@@ -4029,6 +4029,14 @@
                 </div>
             </aside>
 
+            <!-- OBJ-C: OBJECTIVE EVIDENCE PANEL — Read-only display of objective_evidence ledger -->
+            <!-- Populated by client/shell/objective-evidence-panel.js in response to the
+                 rmooz:objective-selected event emitted by the objective marker click.
+                 Pure passthrough of ws.derived.objective_evidence — no calculations, no new fields. -->
+            <aside class="oep-panel oep-hidden" id="objective-evidence-panel" aria-label="Objective evidence details">
+                <!-- Content populated by objective-evidence-panel.js -->
+            </aside>
+
         </div><!-- /.workspace -->
 
         <!-- ═══════════ TIMELINE / TRANSPORT STRIP — PR-5 ═══════════ -->
@@ -4811,6 +4819,7 @@
     <script src="shell/coord-readout.js?v=1"></script>
     <script src="shell/side-picker.js?v=1"></script>
     <script src="shell/unit-panel.js?v=1"></script>
+    <script src="shell/objective-evidence-panel.js?v=1"></script>
     <!-- PR-4: Event Log placeholder. UI foundation only — static
          placeholder rows, collapse/expand, no journal feed yet. -->
     <script src="shell/event-log.js?v=1"></script>
@@ -5130,6 +5139,115 @@
         .sw-editmode-badge.in-memory { background:#3a76c2; color:#fff; }
         .sw-editmode-badge.on-server { background:#1a7f37; color:#fff; }
         .sw-editmode-badge.on-disk   { background:#2f6fed; color:#fff; }
+
+        /* OBJ-C: Objective Evidence Panel Styles */
+        .oep-panel {
+            position: absolute; inset: 0; right: 0; top: 0;
+            width: 340px; max-width: 100%; overflow-y: auto; overflow-x: hidden;
+            background: linear-gradient(180deg, #1c1f24 0%, #161a1f 100%);
+            border-left: 1px solid #2a2f37; display: flex; flex-direction: column;
+            z-index: 1050; color: #e8eaed; font-size: 13px; line-height: 1.5;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .oep-hidden {
+            display: none !important;
+        }
+
+        .oep-header {
+            padding: 12px 16px; border-bottom: 1px solid #2a2f37;
+            background: #0d0f12; position: sticky; top: 0; z-index: 11;
+        }
+
+        .oep-eyebrow {
+            display: block; font-size: 10px; text-transform: uppercase;
+            letter-spacing: 0.04em; color: #8d949e; margin-bottom: 4px;
+        }
+
+        .oep-title {
+            margin: 4px 0; font-size: 16px; font-weight: 600; color: #fff;
+        }
+
+        .oep-status {
+            margin: 4px 0 0; font-size: 12px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.02em;
+            padding: 3px 8px; display: inline-block; border-radius: 3px;
+            background: #2a2f37;
+        }
+
+        .oep-status-threatened { background: #c97a3e; color: #fff; }
+        .oep-status-dormant { background: #4a4f57; color: #cfd4dc; }
+        .oep-status-contested { background: #c9a227; color: #1c1f24; }
+        .oep-status-captured { background: #1a7f37; color: #fff; }
+        .oep-status-lost { background: #d1242f; color: #fff; }
+        .oep-status-unknown { background: #3a3f47; color: #a8b0bb; }
+
+        .oep-groups {
+            flex: 1 1 auto; padding: 8px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+
+        .oep-group {
+            border: 1px solid #2a2f37; border-radius: 5px;
+            background: #1c1f24; padding: 8px;
+        }
+
+        .oep-group-system {
+            background: #1a1d22; border-color: #3a3f47;
+        }
+
+        .oep-group-title {
+            margin: 0 0 6px; font-size: 12px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.02em;
+            color: #cfd4dc; padding: 2px 0;
+        }
+
+        .oep-empty {
+            color: #8d949e; font-style: italic; font-size: 12px;
+            margin: 4px 0; padding: 4px 0;
+        }
+
+        .oep-evidence-list {
+            margin: 0; padding: 0; list-style: none;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+
+        .oep-evidence-item {
+            display: flex; flex-direction: column; gap: 2px;
+            padding: 6px; background: #0d0f12; border-radius: 3px;
+            border-left: 2px solid #2f6fed;
+        }
+
+        .oep-evidence-item dt {
+            margin: 0; font-size: 12px; font-weight: 500;
+            color: #cfd4dc; display: flex; justify-content: space-between;
+            align-items: center;
+        }
+
+        .oep-evidence-item dd {
+            margin: 0; font-size: 13px; font-weight: 600;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 8px;
+        }
+
+        .oep-value {
+            color: #bcd2ff; font-family: ui-monospace, Menlo, Consolas, monospace;
+            font-size: 12px;
+        }
+
+        .oep-dots {
+            display: inline-block; letter-spacing: 1px; color: #8d949e;
+            font-size: 11px; cursor: help;
+        }
+
+        .oep-source {
+            font-size: 11px; color: #8d949e; margin-top: 2px;
+        }
     </style>
     <script>
         // Mount Edit Mode once the DOM (workspace panel) is ready.
@@ -5180,3 +5298,4 @@
 </body>
 
 </html>
+<!-- RUNTIME-INTEGRATION-AUDIT-MARKER-1780485969 -->

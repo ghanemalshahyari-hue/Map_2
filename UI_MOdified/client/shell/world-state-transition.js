@@ -41,9 +41,20 @@
         return null;
     }
     function recomputeContacts(ws, opts) {
-        var d = det();
-        if (d && typeof d.computeContacts === 'function') {
-            try { ws.contacts = d.computeContacts(ws, (opts && opts.det) || {}); } catch (_) {}
+        // PR-WS-DET1-A: contacts now owned by World State (DERIVATIONS).
+        // Call applyDerivations to recompute all derived fields (contacts, balance, BLS, etc.)
+        // after unit positions or state have changed via a decision.
+        var ws1 = root.AppWorldState || (typeof require === 'function' ? safeReq('./world-state.js') : null);
+        if (ws1 && typeof ws1.applyDerivations === 'function') {
+            try { ws1.applyDerivations(ws); } catch (_) {}
+        }
+        // Fallback: if WS1 not available, call DET1 directly to maintain backward compat
+        // (e.g., in server tests that don't have full WS1 loaded).
+        if (!ws.derived || !ws.derived.contacts) {
+            var d = det();
+            if (d && typeof d.computeContacts === 'function') {
+                try { ws.contacts = d.computeContacts(ws, (opts && opts.det) || {}); } catch (_) {}
+            }
         }
         return ws;
     }
@@ -132,7 +143,15 @@
         if (!e || typeof e.computeEngagements !== 'function') return { type: 'engagement', status: 'blocked', reason: 'no_engine' };
 
         // detection gate: shooter's side must hold a contact on target (unless forced)
-        var contacts = ws.contacts && ws.contacts.length ? ws.contacts : (det() ? det().computeContacts(ws, (opts && opts.det) || {}) : []);
+        // PR-WS-DET1-A: read contacts from World State (DERIVATIONS), with fallback to authored/computed.
+        var contacts = (ws.derived && ws.derived.contacts) || (ws.contacts && ws.contacts.length ? ws.contacts : []);
+        if (!contacts || !contacts.length) {
+            // Last-resort fallback: compute contacts via DET1 (shouldn't happen in normal flow)
+            var d_tmp = det();
+            if (d_tmp && typeof d_tmp.computeContacts === 'function') {
+                try { contacts = d_tmp.computeContacts(ws, (opts && opts.det) || {}) || []; } catch (_) { contacts = []; }
+            }
+        }
         var detected = contacts.some(function (c) { return c.detected_by_side === shooter.side && c.target_uid === target.uid; });
         if (!detected && !d.force) return { type: 'engagement', status: 'blocked', reason: 'no_detection', shooter: shooter.uid, target: target.uid };
 
@@ -140,6 +159,12 @@
         var pairWs = { units: [shooter, target] };
         var synthetic = [{ target_uid: target.uid, detected_by_side: shooter.side, confidence: 'firm' }];
         var recs = e.computeEngagements(pairWs, synthetic, (opts && opts.eng) || {});
+
+        // PR-WS-ENG1-A: store outcomes in World State for all consumers (map, HUD, future layers)
+        if (!ws.derived) ws.derived = {};
+        if (!Array.isArray(ws.derived.engagement_outcomes)) ws.derived.engagement_outcomes = [];
+        ws.derived.engagement_outcomes = ws.derived.engagement_outcomes.concat(recs);
+
         var rec = recs.filter(function (r) { return r.status === 'engaged' && r.target === target.uid; })
                       .sort(function (a, b) { return b.pk_kill - a.pk_kill; })[0];
         if (!rec) {

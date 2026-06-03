@@ -5129,11 +5129,11 @@
     function renderDetectionContacts(state) {
         clearDetectionContacts();
         if (!detectionContactsEnabled || !layerGroup || !window.L) return;
-        if (!window.AppDetection || typeof window.AppDetection.computeContacts !== 'function') return;
-        const { units, posByUid } = buildDetectionUnits(state);
-        if (!units.length) return;
-        let contacts = [];
-        try { contacts = window.AppDetection.computeContacts({ units }) || []; } catch (_) { return; }
+        // PR-WS-DET1-A: read contacts from World State (computed once per step in DERIVATIONS),
+        // not direct DET1 call. Still build posByUid for marker placement.
+        const { posByUid } = buildDetectionUnits(state);
+        let contacts = (lastWorldState && lastWorldState.derived && lastWorldState.derived.contacts) || [];
+        if (!contacts.length) return;
         for (const c of contacts) {
             const ll = posByUid[c.target_uid];
             if (!ll) continue;
@@ -5170,12 +5170,13 @@
     // These are COMPUTED firing solutions — distinct from the scenario's authored
     // engagement_arcs (adjudicated kill outcomes) drawn elsewhere.
     function computeEngagementRecords(state) {
-        if (!window.AppDetection || typeof window.AppDetection.computeContacts !== 'function') return null;
         if (!window.AppEngagement || typeof window.AppEngagement.computeEngagements !== 'function') return null;
         const { units, posByUid } = buildDetectionUnits(state);
         if (!units.length) return null;
-        let contacts = [], recs = [];
-        try { contacts = window.AppDetection.computeContacts({ units }) || []; } catch (_) { return null; }
+        // PR-WS-DET1-A: read contacts from World State (DERIVATIONS),
+        // not direct DET1 call. Pass to ENG1.
+        let contacts = (lastWorldState && lastWorldState.derived && lastWorldState.derived.contacts) || [];
+        let recs = [];
         try { recs = window.AppEngagement.computeEngagements({ units }, contacts) || []; } catch (_) { return null; }
         return { recs, posByUid };
     }
@@ -6314,15 +6315,14 @@
             return detectionContactsEnabled;
         },
         isDetectionContactsVisible: () => !!detectionContactsEnabled,
-        // Diagnostics / 3D parity: computed contacts for `state` with each
-        // target's CURRENT lon/lat, so callers (Cesium, tests) reuse the same
-        // detection.js engine + DB-Lite rather than re-deriving the picture.
+        // Diagnostics / 3D parity: read contacts from World State (DERIVATIONS),
+        // not direct DET1 call. Adds lon/lat from current marker positions.
         getDetectionContacts: (state) => {
-            if (!window.AppDetection || typeof window.AppDetection.computeContacts !== 'function') return [];
-            const { units, posByUid } = buildDetectionUnits(state || lastAppliedState);
-            if (!units.length) return [];
-            let contacts = [];
-            try { contacts = window.AppDetection.computeContacts({ units }) || []; } catch (_) { return []; }
+            // PR-WS-DET1-A: read from World State snapshot
+            const ws = lastWorldState || (state ? lastAppliedState : null);
+            let contacts = (ws && ws.derived && ws.derived.contacts) || [];
+            if (!contacts.length) return [];
+            const { posByUid } = buildDetectionUnits(state || lastAppliedState);
             return contacts.map((c) => {
                 const ll = posByUid[c.target_uid];
                 return Object.assign({}, c, { lon: ll ? ll.lng : null, lat: ll ? ll.lat : null });

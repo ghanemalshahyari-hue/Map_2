@@ -215,6 +215,12 @@
             engagement_arcs: clone(arr(s.engagement_arcs))
         };
 
+        // PR-DB1: enrich units with DB1 capability catalog BEFORE deriving,
+        // so that derived fields (e.g., contacts) can read enriched sensors/weapons.
+        if (typeof root.AppWorldStateDB === 'object' && typeof root.AppWorldStateDB.enrichWorldState === 'function') {
+            try { ws = root.AppWorldStateDB.enrichWorldState(ws) || ws; } catch (_) {}
+        }
+
         // PR-WS2.5: World State computes its derived fields from its OWN inputs
         // (objective_status_display today; balance/threat/control/readiness later
         // add a row to DERIVATIONS). Owns the derivation, not just storage.
@@ -392,9 +398,23 @@
     // into ws.derived[name]. This is the ONE place a new derived field is added.
     // ORDER MATTERS: balance_summary runs first so the objective rule sees the
     // computed evidence. New derived fields are added here (one row each).
+    // PR-WS-DET1-A: contact generation — DET1 ownership inversion.
+    // Computes detection contacts (radar/ESM) from enriched units (sensors, RCS).
+    // Returns array of contacts with confidence/range or null if engine unavailable.
+    // Parity gate: degraded scenario or missing engine → null (fallback to authored).
+    function computeContacts(ws) {
+        if (!ws || ws.degraded) return null;
+        var det = root.AppDetection || (typeof require === 'function' ? (function() {
+            try { return require('./detection.js'); } catch (_) { return null; }
+        })() : null);
+        if (!det || typeof det.computeContacts !== 'function') return null;
+        try { return det.computeContacts(ws) || null; } catch (_) { return null; }
+    }
+
     var DERIVATIONS = {
         balance_summary:          computeBalanceSummary,
         bls_status:               computeBlsStatusB,
+        contacts:                 computeContacts,
         objective_status_display: computeObjectiveStatusDisplay
     };
     function applyDerivations(ws) {
@@ -462,6 +482,9 @@
         // PR-WS-BLS-B: BLS control ownership (STAGED/SECURED/DENIED/CONTESTED).
         // Temporary, explainable model; future MTH1 may use richer formula.
         computeBlsStatusB: computeBlsStatusB,
+        // PR-WS-DET1-A: contact generation from World State (DET1 ownership inversion).
+        // Computes detection contacts (radar/ESM) from enriched units with sensors.
+        computeContacts: computeContacts,
         BLS_RADIUS_NM: BLS_RADIUS_NM,
         DERIVATIONS: DERIVATIONS,
         // exposed for tests / future rule modules

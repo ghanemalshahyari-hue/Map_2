@@ -6,6 +6,44 @@
 
 ---
 
+## 0. IMPLEMENTATION BOUNDARIES (STRICT)
+
+### OBJ-C Is: Display Layer Only
+
+✅ **ALLOWED:**
+- Show evidence records grouped by type
+- Display evidence values and confidence indicators
+- Sort/arrange evidence visually
+- Show sources (where evidence came from)
+- Explain thresholds (e.g., "< 2 to block CAPTURED")
+- Add System Evidence debug group (collapsible)
+- Enable operator to understand WHY a status is set
+
+❌ **FORBIDDEN:**
+- Score or weight evidence
+- Rank evidence by importance
+- Change objective_status_display output
+- Recommend actions
+- Explain doctrine (that's OBJ-D+)
+- New formulas or calculations
+- Consumption of evidence for simulation logic
+- Mutation of world state
+
+### Pattern Enforced
+
+```
+Evidence Source (READINESS-A, DOCTRINE-A, etc.)
+  ↓ generates evidence
+Visibility (OBJ-C) — THIS LAYER
+  ↓ displays evidence
+Consumption (OBJ-D+) — FUTURE
+  ↓ interprets evidence for simulation
+```
+
+OBJ-C stops at visibility. It does NOT consume.
+
+---
+
 ## 1. UI LOCATION & LAYOUT
 
 ### Primary Location: New Objective Detail Panel
@@ -122,7 +160,7 @@ app.js:
 
 ## 3. EVIDENCE GROUPING STRATEGY
 
-### Five Groups (In Order)
+### Six Groups (In Order)
 
 **Group 1: COMBAT EVIDENCE** (Existing OBJ-A)
 - force_ratio
@@ -148,6 +186,15 @@ app.js:
 **Group 5: DOCTRINE EVIDENCE** (Placeholder, DOCTRINE-A Future)
 - (Not yet implemented)
 - Show placeholder card: "Doctrine evidence not yet available"
+
+**Group 6: SYSTEM EVIDENCE** (Hidden by Default, Debugging)
+- evidence_record_count (total records in ledger)
+- last_derivation_step (step index of last computation)
+- confidence_average (avg confidence across all records)
+- ledger_complete (boolean: all sources populated)
+- degraded_scenario (boolean: fallback mode active)
+
+**Note:** System Evidence is shown in a collapsible "Debug Info" section, useful for troubleshooting doctrine/logistics/AI evidence but not part of the primary operator display.
 
 ### Grouping Logic
 

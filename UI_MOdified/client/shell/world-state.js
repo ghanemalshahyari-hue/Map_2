@@ -369,6 +369,142 @@
         return Object.keys(result).length ? result : null;
     }
 
+    // PR-OBJ-A: Objective Evidence Ledger — evidence aggregation point.
+    // Flat array of evidence records (no nesting, no grouping).
+    // Each record: objective_id, evidence_type, value, source, confidence, step_index.
+    // Storage only; no weights, scoring, or interpretation (deferred to OBJ-B).
+    // Aggregates from: balance_summary, bls_status, engagement_outcomes, contacts.
+    function computeObjectiveEvidence(ws) {
+        if (!ws || ws.degraded) return null;  // parity gate
+        var objectives = arr(ws.objectives);
+        if (!objectives.length) return null;
+        var objId = (objectives[0] && (objectives[0].id || objectives[0].objective_id)) || 'objective_0';
+        var step = ws.meta ? (ws.meta.step_index || 0) : 0;
+        var d = obj(ws && ws.derived);
+        var result = [];
+
+        // Collect evidence from balance_summary
+        var bal = obj(d.balance_summary);
+        if (bal.force_ratio_value != null) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'force_ratio',
+                value: bal.force_ratio_value,
+                source: 'balance_summary',
+                confidence: 0.95,
+                step_index: step
+            });
+        }
+        var losses = obj(bal.losses);
+        if (losses.blue_destroyed != null) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'blue_destroyed_count',
+                value: losses.blue_destroyed,
+                source: 'balance_summary',
+                confidence: 1.0,
+                step_index: step
+            });
+        }
+        if (losses.blue_total != null && losses.blue_destroyed != null) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'blue_intact_ratio',
+                value: (losses.blue_total - losses.blue_destroyed) / losses.blue_total,
+                source: 'balance_summary',
+                confidence: 1.0,
+                step_index: step
+            });
+        }
+        if (losses.red_company_equivalent != null) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'red_company_equivalent',
+                value: losses.red_company_equivalent,
+                source: 'balance_summary',
+                confidence: 0.9,
+                step_index: step
+            });
+        }
+
+        // Collect evidence from bls_status
+        var blsStatus = obj(d.bls_status);
+        var blsControlCount = 0, blsContestedCount = 0, blsDeniedCount = 0, blsSecuredCount = 0;
+        for (var blsKey in blsStatus) {
+            if (Object.prototype.hasOwnProperty.call(blsStatus, blsKey)) {
+                var status = blsStatus[blsKey];
+                if (status === 'CONTESTED') blsContestedCount++;
+                else if (status === 'DENIED') blsDeniedCount++;
+                else if (status === 'SECURED') blsSecuredCount++;
+            }
+        }
+        if (blsSecuredCount > 0 || blsDeniedCount > 0) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'bls_control_count',
+                value: blsSecuredCount + blsDeniedCount,
+                source: 'bls_status',
+                confidence: 1.0,
+                step_index: step
+            });
+        }
+        if (blsContestedCount > 0) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'bls_contested_count',
+                value: blsContestedCount,
+                source: 'bls_status',
+                confidence: 1.0,
+                step_index: step
+            });
+        }
+
+        // Collect evidence from engagement_outcomes
+        var outcomes = arr(d.engagement_outcomes);
+        if (outcomes.length > 0) {
+            result.push({
+                objective_id: objId,
+                evidence_type: 'engagement_outcomes_total',
+                value: outcomes.length,
+                source: 'engagement_outcomes',
+                confidence: 1.0,
+                step_index: step
+            });
+            var engagedCount = outcomes.filter(function(o) { return o.status === 'engaged'; }).length;
+            result.push({
+                objective_id: objId,
+                evidence_type: 'engagement_effectiveness_ratio',
+                value: engagedCount / outcomes.length,
+                source: 'engagement_outcomes',
+                confidence: 0.85,
+                step_index: step
+            });
+        }
+
+        // Collect evidence from contacts
+        var contacts = arr(d.contacts);
+        if (contacts.length > 0) {
+            var firmCount = contacts.filter(function(c) { return c.confidence === 'firm'; }).length;
+            var probableCount = contacts.filter(function(c) { return c.confidence === 'probable'; }).length;
+            var possibleCount = contacts.filter(function(c) { return c.confidence === 'possible'; }).length;
+            result.push({
+                objective_id: objId,
+                evidence_type: 'contact_confidence_summary',
+                value: {
+                    total: contacts.length,
+                    firm: firmCount,
+                    probable: probableCount,
+                    possible: possibleCount
+                },
+                source: 'contacts',
+                confidence: 0.95,
+                step_index: step
+            });
+        }
+
+        return result.length ? result : null;
+    }
+
     // Objective status display: only CAPTURED is re-litigated against the
     // evidence (force ratio + losses); every other status passes through.
     // PR-WS4: evidence is read from WS-OWNED balance_summary (computed from
@@ -415,6 +551,7 @@
         balance_summary:          computeBalanceSummary,
         bls_status:               computeBlsStatusB,
         contacts:                 computeContacts,
+        objective_evidence:       computeObjectiveEvidence,        // PR-OBJ-A: evidence ledger (before status)
         objective_status_display: computeObjectiveStatusDisplay
     };
     function applyDerivations(ws) {
@@ -485,6 +622,9 @@
         // PR-WS-DET1-A: contact generation from World State (DET1 ownership inversion).
         // Computes detection contacts (radar/ESM) from enriched units with sensors.
         computeContacts: computeContacts,
+        // PR-OBJ-A: objective evidence ledger (flat array of evidence records).
+        // Aggregates balance, BLS, engagements, contacts into auditable evidence.
+        computeObjectiveEvidence: computeObjectiveEvidence,
         BLS_RADIUS_NM: BLS_RADIUS_NM,
         DERIVATIONS: DERIVATIONS,
         // exposed for tests / future rule modules

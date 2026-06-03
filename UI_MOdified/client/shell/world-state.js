@@ -316,6 +316,53 @@
         return Object.keys(result).length ? result : null;
     }
 
+    // PR-WS-BLS-B: control-based BLS status (SIMPLE ownership model).
+    // Rule: STAGED if empty; SECURED if Red only; DENIED if Blue only;
+    // CONTESTED if both Red & Blue are present locally.
+    // This is a TEMPORARY, EXPLAINABLE model. Future MTH1 may replace it
+    // with a richer control-score formula (e.g., force ratio, distance weight).
+    // Uses the same BLS_RADIUS_NM (10 nm) and parity gates as WS-BLS-A.
+    function computeBlsStatusB(ws) {
+        if (!ws || ws.degraded) return null;
+        var bls = arr(ws.lines && ws.lines.bls);
+        if (!bls.length) return null;
+        var allUnits = arr(ws.units);
+        if (!allUnits.length) return null;  // parity gate: no units in scenario at all
+        // Live units (destroyed / off-map excluded).
+        var reds = allUnits.filter(function (u) {
+            return u.side === 'RED' && !u.off_map &&
+                   u.status !== 'DESTROYED' && Array.isArray(u.position);
+        });
+        var blues = allUnits.filter(function (u) {
+            return u.side === 'BLUE' && !u.off_map &&
+                   u.status !== 'DESTROYED' && Array.isArray(u.position);
+        });
+        var result = {};
+        bls.forEach(function (b) {
+            if (!b.id || !Array.isArray(b.position)) return;
+            // Count live units of each side within radius.
+            var redNear = reds.some(function (u) {
+                var d = nmBetween(b.position, u.position);
+                return d != null && d <= BLS_RADIUS_NM;
+            });
+            var blueNear = blues.some(function (u) {
+                var d = nmBetween(b.position, u.position);
+                return d != null && d <= BLS_RADIUS_NM;
+            });
+            // Control framing: who is present, who controls?
+            if (!redNear && !blueNear) {
+                result[b.id] = 'STAGED';      // empty beach
+            } else if (redNear && !blueNear) {
+                result[b.id] = 'SECURED';     // Red controls unopposed
+            } else if (!redNear && blueNear) {
+                result[b.id] = 'DENIED';      // Blue controls unopposed
+            } else {
+                result[b.id] = 'CONTESTED';   // both fighting for it
+            }
+        });
+        return Object.keys(result).length ? result : null;
+    }
+
     // Objective status display: only CAPTURED is re-litigated against the
     // evidence (force ratio + losses); every other status passes through.
     // PR-WS4: evidence is read from WS-OWNED balance_summary (computed from
@@ -347,7 +394,7 @@
     // computed evidence. New derived fields are added here (one row each).
     var DERIVATIONS = {
         balance_summary:          computeBalanceSummary,
-        bls_status:               computeBlsStatus,
+        bls_status:               computeBlsStatusB,
         objective_status_display: computeObjectiveStatusDisplay
     };
     function applyDerivations(ws) {
@@ -412,6 +459,9 @@
         getUnitOperationalWeight: getUnitOperationalWeight,
         // PR-WS-BLS-A: BLS ownership inversion (presence-only rule).
         computeBlsStatus: computeBlsStatus,
+        // PR-WS-BLS-B: BLS control ownership (STAGED/SECURED/DENIED/CONTESTED).
+        // Temporary, explainable model; future MTH1 may use richer formula.
+        computeBlsStatusB: computeBlsStatusB,
         BLS_RADIUS_NM: BLS_RADIUS_NM,
         DERIVATIONS: DERIVATIONS,
         // exposed for tests / future rule modules

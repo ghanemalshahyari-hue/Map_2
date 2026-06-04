@@ -20,8 +20,11 @@
 (function (root) {
     'use strict';
 
-    // ── Readiness enum labels ──────────────────────────────────────────
-    const READINESS_VALUES = new Set(['ready', 'limited', 'degraded']);
+    // ── Readiness enum labels (canonical RMOOZ Phase 6) ─────────────────
+    // ready: operationally ready for all tasking
+    // limited: partially capable; some degradation (risk state in Why-Not)
+    // not_ready: unit unavailable (BLOCKER in Why-Not)
+    const READINESS_VALUES = new Set(['ready', 'limited', 'not_ready']);
 
     /**
      * reconstructUnits(scenario, deltaEvents, step) → Array of cloned units with deltas applied

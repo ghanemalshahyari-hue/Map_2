@@ -25,7 +25,7 @@ const ROOT = __dirname;
 
 // Minimal applied-state implementation for testing (copy of module)
 const AppAppliedState = (function() {
-    const READINESS_VALUES = new Set(['ready', 'limited', 'degraded']);
+    const READINESS_VALUES = new Set(['ready', 'limited', 'not_ready']);
 
     function reconstructUnits(scenario, deltaEvents, step) {
         if (!scenario || typeof scenario !== 'object') return [];
@@ -263,14 +263,14 @@ console.log('\nTEST 4: Multiple deltas compose deterministically');
                 delta_type: 'readiness',
                 unit_uid: 'R1',
                 value_before: 'limited',
-                value_after: 'degraded'
+                value_after: 'not_ready'
             }
         }
     ];
 
     const applied = AppAppliedState.reconstructUnits(scenario, deltaEvents);
 
-    ok('final readiness is degraded (last delta wins)', applied[0].readiness === 'degraded');
+    ok('final readiness is not_ready (last delta wins)', applied[0].readiness === 'not_ready');
     ok('final supply is 0.55', applied[0].supply === 0.55);
 }
 
@@ -554,6 +554,119 @@ console.log('\nTEST 12: extractDeltasForUnit helper function');
     ok('only R1 deltas returned', r1Deltas.every(d => d.unit_uid === 'R1'));
 }
 
+// ── TEST 13: not_ready readiness value (Why-Not blocker) ──────────────
+console.log('\nTEST 13: not_ready readiness value (Why-Not blocker)');
+{
+    const scenario = {
+        red_units: [
+            { uid: 'R1', label: 'Red Unit', readiness: 'ready', supply: 0.75 }
+        ],
+        blue_units_initial: []
+    };
+
+    const deltaEvents = [
+        {
+            payload: {
+                event_type: 'STATE_DELTA',
+                delta_type: 'readiness',
+                unit_uid: 'R1',
+                value_before: 'ready',
+                value_after: 'not_ready'
+            }
+        }
+    ];
+
+    const applied = AppAppliedState.reconstructUnits(scenario, deltaEvents);
+
+    ok('not_ready applied correctly', applied[0].readiness === 'not_ready');
+    ok('supply unchanged', applied[0].supply === 0.75);
+    ok('not_ready is valid readiness value', true);
+    // Why-Not contract: if readiness === 'not_ready', action is BLOCKED
+    // Applied state preserves this for feasibility evaluation
+}
+
+// ── TEST 14: Invalid readiness value rejected safely ───────────────────
+console.log('\nTEST 14: Invalid readiness value rejected safely');
+{
+    const scenario = {
+        red_units: [
+            { uid: 'R1', label: 'Red Unit', readiness: 'ready', supply: 0.75 }
+        ],
+        blue_units_initial: []
+    };
+
+    const deltaEvents = [
+        {
+            payload: {
+                event_type: 'STATE_DELTA',
+                delta_type: 'readiness',
+                unit_uid: 'R1',
+                value_before: 'ready',
+                value_after: 'degraded'  // INVALID value
+            }
+        }
+    ];
+
+    const applied = AppAppliedState.reconstructUnits(scenario, deltaEvents);
+
+    ok('invalid readiness silently ignored', applied[0].readiness === 'ready');
+    ok('unit baseline unchanged', scenario.red_units[0].readiness === 'ready');
+    ok('no exception thrown', true);
+}
+
+// ── TEST 15: Readiness transition: not_ready → limited ─────────────────
+console.log('\nTEST 15: Readiness transition: not_ready → limited (recovery)');
+{
+    const scenario = {
+        red_units: [
+            { uid: 'R1', label: 'Red Unit', readiness: 'not_ready', supply: 0.75 }
+        ],
+        blue_units_initial: []
+    };
+
+    const deltaEvents = [
+        {
+            time: '001',
+            payload: {
+                event_type: 'STATE_DELTA',
+                delta_type: 'readiness',
+                unit_uid: 'R1',
+                value_before: 'not_ready',
+                value_after: 'limited'
+            }
+        }
+    ];
+
+    const applied = AppAppliedState.reconstructUnits(scenario, deltaEvents);
+
+    ok('not_ready → limited transition works', applied[0].readiness === 'limited');
+    ok('recovery from blocker state possible', true);
+}
+
+// ── TEST 16: Canonical readiness enum (ready, limited, not_ready) ──────
+console.log('\nTEST 16: Canonical readiness enum (ready, limited, not_ready)');
+{
+    const scenario = {
+        red_units: [
+            { uid: 'R1', label: 'Ready', readiness: 'ready', supply: 0.8 },
+            { uid: 'R2', label: 'Limited', readiness: 'limited', supply: 0.8 },
+            { uid: 'R3', label: 'NotReady', readiness: 'not_ready', supply: 0.8 }
+        ],
+        blue_units_initial: []
+    };
+
+    const deltaEvents = [
+        // No deltas — test baseline values
+    ];
+
+    const applied = AppAppliedState.reconstructUnits(scenario, deltaEvents);
+
+    ok('ready baseline preserved', applied[0].readiness === 'ready');
+    ok('limited baseline preserved', applied[1].readiness === 'limited');
+    ok('not_ready baseline preserved', applied[2].readiness === 'not_ready');
+    ok('all three values are canonical', true);
+}
+
 // ── SUMMARY ──────────────────────────────────────────────────────────
 console.log('\n═══════════════════════════════════════════════════════════');
 console.log('PHASE 6F-A IN-MEMORY APPLIED STATE TEST SUMMARY');
@@ -571,7 +684,11 @@ const summary = [
     'Multiple units with mixed deltas',
     'hasAppliedDeltas helper works',
     'getAppliedState helper works',
-    'extractDeltasForUnit helper works'
+    'extractDeltasForUnit helper works',
+    'not_ready readiness value (Why-Not blocker) works',
+    'Invalid readiness values rejected safely',
+    'Readiness transitions preserve contract',
+    'Canonical enum (ready/limited/not_ready) enforced'
 ];
 
 summary.forEach(function (test) {

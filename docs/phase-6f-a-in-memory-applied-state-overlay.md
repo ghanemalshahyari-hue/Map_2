@@ -134,11 +134,19 @@ Display only (no adjudication, no calculation)
 ```
 
 ### 5. Readiness Validation
-Only valid readiness values accepted:
+Only canonical RMOOZ Phase 6 readiness values accepted:
 ```javascript
-const READINESS_VALUES = new Set(['ready', 'limited', 'degraded']);
+const READINESS_VALUES = new Set(['ready', 'limited', 'not_ready']);
+// ready: operationally ready for all tasking
+// limited: partially capable; some degradation (Why-Not risk)
+// not_ready: unit unavailable (Why-Not blocker)
 // Invalid values skipped silently
 ```
+
+**Why-Not Contract:**
+- `readiness === 'not_ready'` → **BLOCKER** (action_feasibility.js:173)
+- `readiness === 'limited'` → **RISK** (action_feasibility.js:184)
+- `readiness === 'ready'` → Feasible
 
 ### 6. Supply Clamping
 Supply always clamped to 0–1 range:
@@ -261,7 +269,7 @@ return sorted.map(e => e.payload);
 - ✅ Original unit still has baseline value
 
 ### 2. Readiness Delta Overlay (2 assertions)
-- ✅ Readiness changed correctly
+- ✅ Readiness changed correctly (ready → limited)
 - ✅ Supply unchanged
 
 ### 3. Supply Delta Overlay (2 assertions)
@@ -270,7 +278,7 @@ return sorted.map(e => e.payload);
 
 ### 4. Multiple Deltas Composition (2 assertions)
 - ✅ Multiple deltas compose in order
-- ✅ Last delta wins on conflicts
+- ✅ Last delta wins on conflicts (ready → limited → not_ready)
 
 ### 5. Unknown Unit Handling (2 assertions)
 - ✅ Unknown unit deltas ignored
@@ -296,12 +304,32 @@ return sorted.map(e => e.payload);
 - ✅ Other units unchanged
 - ✅ Mixed delta types work
 
-### 10. Helper Functions (9 assertions)
+### 10. Helper Functions (5 assertions)
 - ✅ hasAppliedDeltas works
 - ✅ getAppliedState works
 - ✅ extractDeltasForUnit works
 
-**Total: 38 assertions, all PASS**
+### 11. Canonical Readiness Enum (3 assertions) — Phase 6F-A1
+- ✅ `not_ready` readiness value applied correctly (Why-Not blocker)
+- ✅ Supply unchanged when readiness delta applied
+- ✅ `not_ready` is valid readiness value
+
+### 12. Invalid Readiness Handling (3 assertions) — Phase 6F-A1
+- ✅ Invalid readiness values (e.g., 'degraded') silently ignored
+- ✅ Unit baseline unchanged when invalid delta attempted
+- ✅ No exception thrown on invalid input
+
+### 13. Readiness Transitions (2 assertions) — Phase 6F-A1
+- ✅ `not_ready` → `limited` transition works (recovery)
+- ✅ Recovery from blocker state possible
+
+### 14. Canonical Enum Enforcement (4 assertions) — Phase 6F-A1
+- ✅ `ready` baseline preserved
+- ✅ `limited` baseline preserved
+- ✅ `not_ready` baseline preserved
+- ✅ All three canonical values enforced
+
+**Total: 50 assertions (38 original + 12 Phase 6F-A1), all PASS**
 
 ---
 

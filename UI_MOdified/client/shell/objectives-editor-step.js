@@ -94,9 +94,10 @@
             var obj = draft.objectives[selectedIndex];
             var dl = el('dl', { class: 'sw-kv' });
 
-            // Helper to create field rows with common styling
-            function addField(label, inputNode, required) {
+            // Helper to create field rows with validation
+            function addField(label, inputNode, required, validator) {
                 var hint = required ? el('span', { class: 'sw-meta-hint sw-meta-hint--required', text: ' *required' }) : null;
+                var errHint = el('div', { class: 'sw-meta-hint sw-meta-hint--err' });
                 var labelEl = el('div', { class: 'sw-field-label-with-hint' }, [
                     el('span', { text: label }),
                     hint
@@ -105,30 +106,60 @@
                     labelEl,
                     el('dd', null, [inputNode])
                 ]);
+
+                // Add validation feedback if validator provided
+                if (validator && inputNode) {
+                    var checkValidation = function () {
+                        var err = validator();
+                        if (err) {
+                            errHint.textContent = err;
+                            errHint.style.display = 'block';
+                        } else {
+                            errHint.style.display = 'none';
+                        }
+                    };
+                    if (inputNode.addEventListener) {
+                        inputNode.addEventListener('change', checkValidation);
+                        inputNode.addEventListener('blur', checkValidation);
+                    }
+                }
+
                 dl.appendChild(row);
+                if (validator) dl.appendChild(errHint);
             }
 
             // id (read-only — changing id breaks references)
-            addField('id', el('input', {
+            var idInput = el('input', {
                 type: 'text', class: 'sw-edit-input', value: obj.id || '', readonly: 'readonly',
                 style: 'opacity: 0.7;'
-            }), true);
+            });
+            addField('id', idInput, true, function () {
+                return !obj.id ? 'objective id is required' : null;
+            });
 
             // name (required)
-            addField('name / label', textInput(obj.name, function (v) {
+            var nameInput = textInput(obj.name, function (v) {
                 obj.name = v;
                 markDirty();
                 renderList(); // Update list display
-            }), true);
+            });
+            addField('name / label', nameInput, true, function () {
+                return !obj.name || obj.name.trim().length === 0 ? 'objective name is required' : null;
+            });
 
             // owner (side — select from defined sides)
             var sideIds = (draft.sides || []).map(function (s) { return s.id; });
             if (sideIds.length === 0) sideIds = ['BLUE', 'RED', 'NEUTRAL'];
-            addField('owner / side', selectInput(sideIds, obj.owner || '', function (v) {
+            var ownerInput = selectInput(sideIds, obj.owner || '', function (v) {
                 obj.owner = v;
                 markDirty();
                 renderList();
-            }), !!draft.sides && draft.sides.length > 0);
+            });
+            addField('owner / side', ownerInput, !!draft.sides && draft.sides.length > 0, function () {
+                if (!draft.sides || draft.sides.length === 0) return null;
+                var knownSideIds = draft.sides.map(function (s) { return s.id; });
+                return obj.owner && knownSideIds.indexOf(obj.owner) === -1 ? 'owner must be one of: ' + knownSideIds.join(', ') : null;
+            });
 
             // type/category
             addField('type / category', textInput(obj.type, function (v) {
@@ -138,15 +169,23 @@
 
             // location: lat/lon
             if (!obj.location) obj.location = { lat: 0, lon: 0 };
-            addField('latitude', numberInput(obj.location.lat, function (v) {
+            var latInput = numberInput(obj.location.lat, function (v) {
                 obj.location.lat = parseFloat(v) || 0;
                 markDirty();
-            }, { step: '0.01' }), false);
+            }, { step: '0.01' });
+            addField('latitude', latInput, false, function () {
+                var lat = obj.location?.lat;
+                return (lat != null && !Number.isFinite(lat)) ? 'latitude must be a valid number' : null;
+            });
 
-            addField('longitude', numberInput(obj.location.lon, function (v) {
+            var lonInput = numberInput(obj.location.lon, function (v) {
                 obj.location.lon = parseFloat(v) || 0;
                 markDirty();
-            }, { step: '0.01' }), false);
+            }, { step: '0.01' });
+            addField('longitude', lonInput, false, function () {
+                var lon = obj.location?.lon;
+                return (lon != null && !Number.isFinite(lon)) ? 'longitude must be a valid number' : null;
+            });
 
             // difficulty_rating
             var difficultyOptions = ['VERY_HIGH', 'HIGH', 'MEDIUM_HIGH', 'MEDIUM', 'MEDIUM_LOW', 'LOW'];

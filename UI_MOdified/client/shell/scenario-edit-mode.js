@@ -202,8 +202,9 @@
     function validateAllHardRules(d) {
         var a = validateDraftHardRules(d);
         var b = validateForcesHardRules(d);
-        if (a.ok && b.ok) return { ok: true, why: '' };
-        var why = [a.why, b.why].filter(Boolean).join('; ');
+        var c = validateObjectivesHardRules(d);
+        if (a.ok && b.ok && c.ok) return { ok: true, why: '' };
+        var why = [a.why, b.why, c.why].filter(Boolean).join('; ');
         return { ok: false, why: why };
     }
 
@@ -255,6 +256,45 @@
             if (!Number.isInteger(c) || c < 0 || c > 60) {
                 why.push('obj.carver must be integer 0..60 (got ' + c + ')');
             }
+        }
+        return { ok: why.length === 0, why: why.join('; ') };
+    }
+
+    /* ---- Slice 2A: objectives validation (Phase 4A) ----------------------- */
+    function validateObjectivesHardRules(d) {
+        var why = [];
+        if (d && Array.isArray(d.objectives)) {
+            var knownSideIds = (Array.isArray(d.sides) ? d.sides : []).map(function (s) { return s && s.id; }).filter(Boolean);
+            var seenId = Object.create(null);
+            d.objectives.forEach(function (obj, i) {
+                if (!obj || typeof obj !== 'object') {
+                    why.push('objectives[' + i + '] is not an object');
+                    return;
+                }
+                if (!obj.id || !String(obj.id).trim()) {
+                    why.push('objectives[' + i + '].id is empty (required)');
+                } else if (seenId[obj.id]) {
+                    why.push('objectives[' + i + '].id duplicates "' + obj.id + '"');
+                } else {
+                    seenId[obj.id] = true;
+                }
+                if (!obj.name || !String(obj.name).trim()) {
+                    why.push('objectives[' + i + '].name is empty (required)');
+                }
+                if (obj.owner && knownSideIds.length > 0 && knownSideIds.indexOf(obj.owner) === -1) {
+                    why.push('objectives[' + i + '].owner "' + obj.owner + '" not in defined sides');
+                }
+                if (obj.location && typeof obj.location === 'object') {
+                    var lat = obj.location.lat;
+                    var lon = obj.location.lon;
+                    if (lat != null && !Number.isFinite(lat)) {
+                        why.push('objectives[' + i + '].location.lat must be a valid number (got ' + lat + ')');
+                    }
+                    if (lon != null && !Number.isFinite(lon)) {
+                        why.push('objectives[' + i + '].location.lon must be a valid number (got ' + lon + ')');
+                    }
+                }
+            });
         }
         return { ok: why.length === 0, why: why.join('; ') };
     }

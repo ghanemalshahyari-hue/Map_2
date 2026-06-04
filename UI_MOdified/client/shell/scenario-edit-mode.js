@@ -1358,6 +1358,36 @@
         host.appendChild(card);
     }
 
+    /* ---- Sides name validator (Step 3 hardening) ---- */
+    function sideNameInput(initValue, onCommit, required) {
+        var wrap = document.createElement('div');
+        var inp = el('input', { type: 'text', class: 'sw-edit-input',
+                               value: initValue == null ? '' : String(initValue) });
+        var hint = el('small', { class: 'sw-meta-hint' });
+        wrap.appendChild(inp);
+        wrap.appendChild(hint);
+
+        function evaluate() {
+            var v = inp.value ? inp.value.trim() : '';
+            if (required && !v) {
+                inp.className = 'sw-edit-input sw-input-err';
+                hint.className = 'sw-meta-hint sw-meta-hint--err';
+                hint.textContent = '* Required';
+            } else {
+                inp.className = 'sw-edit-input';
+                hint.className = 'sw-meta-hint';
+                hint.textContent = '';
+            }
+            onCommit(v); // pass actual value (empty allowed, but saveDraft will block)
+            _markDirty();
+        }
+
+        inp.addEventListener('input', evaluate);
+        inp.addEventListener('blur', evaluate);
+        evaluate(); // initial check
+        return wrap;
+    }
+
     function renderSidesCard(host) {
         var card = el('div', { class: 'builder-card sw-card' }, [
             el('div', { class: 'builder-card-header' }, [
@@ -1366,10 +1396,14 @@
         ]);
         _draft.sides.forEach(function (side) {
             card.appendChild(el('dl', { class: 'sw-kv' }, [
-                fieldRow(side.id + ' · name (EN)', textInput(side.name_en, function (v) { side.name_en = v; })),
-                fieldRow(side.id + ' · name (AR)', textInput(side.name_ar, function (v) { side.name_ar = v; })),
-                fieldRow(side.id + ' · role',      selectInput(ROLES, side.role, function (v) { side.role = v; })),
-                fieldRow(side.id + ' · color',     textInput(side.color, function (v) { side.color = v; }))
+                fieldRow(side.id + ' · name (EN) *',
+                    sideNameInput(side.name_en, function (v) { side.name_en = v; }, true)),
+                fieldRow(side.id + ' · name (AR)',
+                    sideNameInput(side.name_ar, function (v) { side.name_ar = v; }, false)),
+                fieldRow(side.id + ' · role',
+                    selectInput(ROLES, side.role, function (v) { side.role = v; })),
+                fieldRow(side.id + ' · color (hex)',
+                    textInput(side.color, function (v) { side.color = v; }))
             ]));
         });
         host.appendChild(card);
@@ -1945,6 +1979,16 @@
         var labelOk = !!(_draft.scenario_label && _draft.scenario_label.trim());
         if (!nameOk)  { setStatus('Name is required (Step 1 — use letters, digits, dashes).', true); return; }
         if (!labelOk) { setStatus('Label is required (Step 1).', true); return; }
+
+        /* Step 3 required-field guard — each side must have a name_en */
+        if (Array.isArray(_draft.sides)) {
+            for (var i = 0; i < _draft.sides.length; i++) {
+                if (!(_draft.sides[i].name_en && _draft.sides[i].name_en.trim())) {
+                    setStatus('Step 3: Side "' + (_draft.sides[i].id || 'unknown') + '" requires an English name.', true);
+                    return;
+                }
+            }
+        }
 
         // Slice 2B: keep the derived blue_units_base_ids parallel array in
         // lockstep with the authoritative blue_units_initial. Runs FIRST so

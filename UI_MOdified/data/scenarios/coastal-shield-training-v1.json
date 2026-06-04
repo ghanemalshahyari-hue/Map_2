@@ -722,7 +722,13 @@
       ],
       "name_ar": "كتيبة S-300 SAM (مركز ميريديا)",
       "appear": 0,
-      "strength": 1
+      "strength": 1,
+      "weapon_range_km": 165,
+      "sensor_range_km": 200,
+      "coverage_role": "strategic_sam",
+      "sensor_class": "S300_SEARCH_RADAR",
+      "weapon_class": "S300_MISSILE",
+      "range_class": "strategic"
     },
     {
       "uid": "R-sam-002",
@@ -738,7 +744,13 @@
       ],
       "name_ar": "كتيبة S-300 SAM (شمال ميريديا)",
       "appear": 0,
-      "strength": 1
+      "strength": 1,
+      "weapon_range_km": 165,
+      "sensor_range_km": 200,
+      "coverage_role": "strategic_sam",
+      "sensor_class": "S300_SEARCH_RADAR",
+      "weapon_class": "S300_MISSILE",
+      "range_class": "strategic"
     },
     {
       "uid": "R-sam-003",
@@ -754,7 +766,13 @@
       ],
       "name_ar": "نظام S-75 Dvina SAM (شرق ميريديا)",
       "appear": 0,
-      "strength": 0.8
+      "strength": 0.8,
+      "weapon_range_km": 35,
+      "sensor_range_km": 75,
+      "coverage_role": "tactical_sam",
+      "sensor_class": "S75_RADAR",
+      "weapon_class": "S75_MISSILE",
+      "range_class": "tactical"
     },
     {
       "uid": "R-aaa-001",
@@ -770,7 +788,13 @@
       ],
       "name_ar": "ZSU-23-4 Shilka AAA (شمال غرب ميريديا)",
       "appear": 0,
-      "strength": 0.7
+      "strength": 0.7,
+      "weapon_range_km": 3.5,
+      "sensor_range_km": 40,
+      "coverage_role": "point_defense_aaa",
+      "sensor_class": "ZSU_RADAR",
+      "weapon_class": "ZSU_GUN",
+      "range_class": "point_defense"
     },
     {
       "uid": "R-aaa-002",
@@ -786,7 +810,11 @@
       ],
       "name_ar": "مدفع 23mm AAA (جنوب غرب ميريديا)",
       "appear": 0,
-      "strength": 0.6
+      "strength": 0.6,
+      "weapon_range_km": 2.5,
+      "sensor_range_km": 15,
+      "coverage_role": "point_defense_aaa",
+      "range_class": "point_defense"
     },
     {
       "uid": "R-radar-001",
@@ -802,7 +830,11 @@
       ],
       "name_ar": "رادار P-37 Flatface (مركز ميريديا)",
       "appear": 0,
-      "strength": 0.95
+      "strength": 0.95,
+      "sensor_range_km": 250,
+      "coverage_role": "early_warning_radar",
+      "sensor_class": "P37_RADAR",
+      "range_class": "strategic"
     }
   ],
   "blue_units_initial": [

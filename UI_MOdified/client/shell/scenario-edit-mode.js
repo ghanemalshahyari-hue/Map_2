@@ -180,6 +180,9 @@
             });
         }
         if (d && Array.isArray(d.blue_units_initial)) {
+            var blueBaseIds = new Set((Array.isArray(d.bls_template) ? d.bls_template : [])
+                .filter(function (b) { return b && (b.side === 'BLUE' || !b.side); })
+                .map(function (b) { return b && b.name; }).filter(Boolean));
             var seenBlueUid = Object.create(null);
             d.blue_units_initial.forEach(function (u, i) {
                 if (!u || typeof u !== 'object') {
@@ -192,6 +195,9 @@
                     why.push('blue_units_initial[' + i + '].unit_uid duplicates "' + u.unit_uid + '"');
                 } else {
                     seenBlueUid[u.unit_uid] = true;
+                }
+                if (u.base_id && blueBaseIds.size > 0 && !blueBaseIds.has(u.base_id)) {
+                    why.push('blue_units_initial[' + i + '].base_id "' + u.base_id + '" is not a defined BLUE base');
                 }
             });
         }
@@ -614,6 +620,8 @@
                     el('dl', { class: 'sw-kv' }, [
                         fieldRow(label + ' · name',
                             textInput(b.name || '', function (v) { b.name = v; })),
+                        fieldRow(label + ' · side (BLUE/RED)',
+                            selectInput(['BLUE', 'RED'], b.side || 'RED', function (v) { b.side = v; })),
                         fieldRow(label + ' · coord.lon',
                             numberInput(b.coord[0], function (v) { b.coord[0] = (v == null ? 0 : v); })),
                         fieldRow(label + ' · coord.lat',
@@ -639,15 +647,73 @@
         addBls.addEventListener('click', function () {
             _draft.bls_template.push({
                 name: 'BLS-' + (_draft.bls_template.length + 1),
-                coord: [0, 0], role: '', throughput: 0, terrain_friction: 0
+                side: 'RED', coord: [0, 0], role: '', throughput: 0, terrain_friction: 0
             });
             rerenderBlsList();
+            rerenderUtilizationSummary();
             // Slice 2B: notify the Forces card so Add Red unit can enable.
             if (typeof _refreshForcesAvailability === 'function') {
                 try { _refreshForcesAvailability(); } catch (_) {}
             }
         });
+
+        // ── Base Utilization Summary ──────────────────────────────────────
+        var utilizationContainer = el('div', { class: 'sw-utilization-summary' });
+        function rerenderUtilizationSummary() {
+            utilizationContainer.innerHTML = '';
+            var heading = el('div', { class: 'builder-card-header' }, [
+                el('span', { class: 'builder-card-title', text: 'Base Utilization Summary' })
+            ]);
+            utilizationContainer.appendChild(heading);
+
+            var redUnits = _draft.red_units || [];
+            var blueUnits = _draft.blue_units_initial || [];
+            var blsTemplates = _draft.bls_template || [];
+
+            // Group by base
+            var blsByName = {};
+            blsTemplates.forEach(function (b) {
+                blsByName[b.name] = { base: b, redCount: 0, blueCount: 0 };
+            });
+            redUnits.forEach(function (u) {
+                if (blsByName[u.bls]) blsByName[u.bls].redCount++;
+            });
+            blueUnits.forEach(function (u) {
+                if (blsByName[u.base_id]) blsByName[u.base_id].blueCount++;
+            });
+
+            var summaryTable = el('table', { class: 'sw-utilization-table' }, [
+                el('tr', {}, [
+                    el('th', { text: 'Base Name' }),
+                    el('th', { text: 'Side' }),
+                    el('th', { text: 'RED Units' }),
+                    el('th', { text: 'BLUE Units' }),
+                    el('th', { text: 'Total' }),
+                    el('th', { text: 'Throughput' })
+                ])
+            ]);
+
+            Object.keys(blsByName).forEach(function (baseName) {
+                var entry = blsByName[baseName];
+                var total = entry.redCount + entry.blueCount;
+                var throughput = entry.base.throughput || '—';
+                var isOversubscribed = throughput !== '—' && total > throughput;
+
+                summaryTable.appendChild(el('tr', { class: isOversubscribed ? 'oversubscribed' : '' }, [
+                    el('td', { text: baseName }),
+                    el('td', { text: entry.base.side || 'RED' }),
+                    el('td', { text: String(entry.redCount) }),
+                    el('td', { text: String(entry.blueCount) }),
+                    el('td', { text: String(total) }),
+                    el('td', { text: String(throughput), class: isOversubscribed ? 'sw-warning' : '' })
+                ]));
+            });
+
+            utilizationContainer.appendChild(summaryTable);
+        }
+        rerenderUtilizationSummary();
         card.appendChild(el('div', { class: 'sw-edit-actions' }, [addBls]));
+        card.appendChild(utilizationContainer);
 
         host.appendChild(card);
     }
@@ -1195,12 +1261,28 @@
                 fields.push(fieldRow('sidc',
                     textInput(u.sidc || '', function (v) { u.sidc = v; rerenderTree(); })));
             } else {
+                // BLUE base selector: include bases with side=BLUE or no side set
+                var blueBaseNames = (Array.isArray(_draft.bls_template) ? _draft.bls_template : [])
+                    .filter(function (b) { return b && (b.side === 'BLUE' || !b.side); })
+                    .map(function (b) { return b && b.name; }).filter(Boolean);
+                var blueBaseOpts = blueBaseNames.slice();
+                if (u.base_id && blueBaseOpts.indexOf(u.base_id) === -1) blueBaseOpts.push(u.base_id);
+
                 fields.push(fieldRow('base_id',
-                    textInput(u.base_id || '', function (v) { u.base_id = v; rerenderTree(); })));
+                    blueBaseOpts.length > 0 ?
+                        selectInput(blueBaseOpts, u.base_id || (blueBaseOpts[0] || ''),
+                            function (v) { u.base_id = v; rerenderTree(); }) :
+                        textInput(u.base_id || '', function (v) { u.base_id = v; rerenderTree(); })));
+                fields.push(fieldRow('label',
+                    textInput(u.label || '', function (v) { u.label = v; rerenderTree(); })));
                 fields.push(fieldRow('coord.lon',
                     numberInput(u.coord[0], function (v) { u.coord[0] = (v == null ? 0 : v); })));
                 fields.push(fieldRow('coord.lat',
                     numberInput(u.coord[1], function (v) { u.coord[1] = (v == null ? 0 : v); })));
+                fields.push(fieldRow('role',
+                    textInput(u.role || '', function (v) { u.role = v; rerenderTree(); })));
+                fields.push(fieldRow('domain',
+                    textInput(u.domain || '', function (v) { u.domain = v; rerenderTree(); })));
                 fields.push(fieldRow('echelon',
                     textInput(u.echelon || '', function (v) { u.echelon = v; rerenderTree(); })));
                 fields.push(fieldRow('sidc',

@@ -81,10 +81,34 @@
     ]
   ],
   "phase_table": [
-    { "index": 0, "time_label": "P0", "elapsed_hours": 0, "phase": "PRE-STRIKE", "kind_native": null },
-    { "index": 1, "time_label": "P1", "elapsed_hours": 0.33, "phase": "STRIKE-1", "kind_native": null },
-    { "index": 2, "time_label": "P2", "elapsed_hours": 0.83, "phase": "ASSESS", "kind_native": null },
-    { "index": 3, "time_label": "P3", "elapsed_hours": 1.5, "phase": "COMPLETE", "kind_native": null }
+    {
+      "index": 0,
+      "time_label": "P0",
+      "elapsed_hours": 0,
+      "phase": "PRE-STRIKE",
+      "kind_native": null
+    },
+    {
+      "index": 1,
+      "time_label": "P1",
+      "elapsed_hours": 0.33,
+      "phase": "STRIKE-1",
+      "kind_native": null
+    },
+    {
+      "index": 2,
+      "time_label": "P2",
+      "elapsed_hours": 0.83,
+      "phase": "ASSESS",
+      "kind_native": null
+    },
+    {
+      "index": 3,
+      "time_label": "P3",
+      "elapsed_hours": 1.5,
+      "phase": "COMPLETE",
+      "kind_native": null
+    }
   ],
   "objectives": [
     {
@@ -485,7 +509,8 @@
       ],
       "role": "Fighter Base",
       "throughput": 100,
-      "terrain_friction": 0.1
+      "terrain_friction": 0.1,
+      "side": "RED"
     },
     {
       "name": "Meridia East Base",
@@ -495,7 +520,8 @@
       ],
       "role": "Fighter Base",
       "throughput": 100,
-      "terrain_friction": 0.1
+      "terrain_friction": 0.1,
+      "side": "RED"
     },
     {
       "name": "Meridia Central Base",
@@ -505,7 +531,8 @@
       ],
       "role": "Fighter Base",
       "throughput": 100,
-      "terrain_friction": 0.1
+      "terrain_friction": 0.1,
+      "side": "RED"
     },
     {
       "name": "Meridia Northwest Base",
@@ -515,7 +542,8 @@
       ],
       "role": "Fighter Base",
       "throughput": 80,
-      "terrain_friction": 0.1
+      "terrain_friction": 0.1,
+      "side": "RED"
     },
     {
       "name": "Meridia Southwest Base",
@@ -525,7 +553,30 @@
       ],
       "role": "Fighter Base",
       "throughput": 80,
-      "terrain_friction": 0.1
+      "terrain_friction": 0.1,
+      "side": "RED"
+    },
+    {
+      "name": "Bretania Forward Air Base",
+      "side": "BLUE",
+      "coord": [
+        155.5,
+        -20
+      ],
+      "role": "Forward Operating Base (BLUE)",
+      "throughput": 120,
+      "terrain_friction": 0.2
+    },
+    {
+      "name": "Diego-Analog Airfield",
+      "side": "BLUE",
+      "coord": [
+        151,
+        -21.5
+      ],
+      "role": "Strategic Air Base (BLUE)",
+      "throughput": 150,
+      "terrain_friction": 0.15
     }
   ],
   "red_units": [
@@ -757,7 +808,7 @@
   "blue_units_initial": [
     {
       "unit_uid": "B-f15c-001",
-      "base_id": "B-f15c-001",
+      "base_id": "Bretania Forward Air Base",
       "label": "F-15C Eagle CAP 1",
       "role": "fighter_air_superiority",
       "domain": "air",
@@ -772,7 +823,7 @@
     },
     {
       "unit_uid": "B-f15c-002",
-      "base_id": "B-f15c-002",
+      "base_id": "Bretania Forward Air Base",
       "label": "F-15C Eagle CAP 2",
       "role": "fighter_air_superiority",
       "domain": "air",
@@ -787,7 +838,7 @@
     },
     {
       "unit_uid": "B-f16-001",
-      "base_id": "B-f16-001",
+      "base_id": "Bretania Forward Air Base",
       "label": "F-16 Strike Package 1",
       "role": "attack_fighter",
       "domain": "air",
@@ -802,7 +853,7 @@
     },
     {
       "unit_uid": "B-f16-002",
-      "base_id": "B-f16-002",
+      "base_id": "Bretania Forward Air Base",
       "label": "F-16 Strike Package 2",
       "role": "attack_fighter",
       "domain": "air",
@@ -817,7 +868,7 @@
     },
     {
       "unit_uid": "B-kc135-001",
-      "base_id": "B-kc135-001",
+      "base_id": "Bretania Forward Air Base",
       "label": "KC-135 Stratotanker (Bretania Forward)",
       "role": "tanker_support",
       "domain": "air",
@@ -832,7 +883,7 @@
     },
     {
       "unit_uid": "B-awacs-001",
-      "base_id": "B-awacs-001",
+      "base_id": "Bretania Forward Air Base",
       "label": "E-3 Sentry AWACS",
       "role": "early_warning_control",
       "domain": "air",
@@ -847,7 +898,7 @@
     },
     {
       "unit_uid": "B-b52-001",
-      "base_id": "B-b52-001",
+      "base_id": "Diego-Analog Airfield",
       "label": "B-52 Stratofortress (Diego-Analog Remote)",
       "role": "heavy_bomber",
       "domain": "air",
@@ -862,7 +913,7 @@
     },
     {
       "unit_uid": "B-kc135-002",
-      "base_id": "B-kc135-002",
+      "base_id": "Diego-Analog Airfield",
       "label": "KC-135 Stratotanker (Diego-Analog)",
       "role": "tanker_support",
       "domain": "air",

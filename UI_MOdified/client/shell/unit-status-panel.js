@@ -42,7 +42,12 @@
         container.innerHTML = '';
 
         if (!unit) {
-            container.textContent = '—';
+            container.innerHTML = `
+                <svg class="symbol-placeholder" viewBox="0 0 100 100" width="80" height="80">
+                    <circle cx="50" cy="50" r="40" fill="#f0f0f0" stroke="#ccc" stroke-width="2"/>
+                    <text x="50" y="60" font-size="36" font-weight="bold" text-anchor="middle" fill="#999">?</text>
+                </svg>
+            `;
             return;
         }
 
@@ -58,8 +63,14 @@
             }
         } catch (_) { /* fall through */ }
 
-        // Fallback: text label
-        container.textContent = unit.label ? unit.label.charAt(0).toUpperCase() : '?';
+        // Fallback: SVG placeholder with unit label
+        const label = (unit.label || '?').charAt(0).toUpperCase();
+        container.innerHTML = `
+            <svg class="symbol-placeholder" viewBox="0 0 100 100" width="80" height="80">
+                <circle cx="50" cy="50" r="40" fill="#f0f0f0" stroke="#ccc" stroke-width="2"/>
+                <text x="50" y="60" font-size="36" font-weight="bold" text-anchor="middle" fill="#999">${label}</text>
+            </svg>
+        `;
     }
 
     /**
@@ -142,12 +153,19 @@
             readinessElem.className = `readiness-value ${appliedReadiness}`;
         }
 
-        // Readiness source
+        // Readiness source (applied delta or baseline)
         setText('readiness-source',
             hasReadinessDelta
                 ? tr('source-applied', 'Applied (baseline: ' + formatReadiness(baselineReadiness) + ')')
                 : tr('source-baseline', 'Baseline')
         );
+
+        // Readiness data source (where the baseline value came from)
+        if (!hasReadinessDelta) {
+            setText('readiness-data-source', getDataSource(unit, 'readiness'));
+        } else {
+            setText('readiness-data-source', '');
+        }
 
         // Supply
         const baselineSupply = unit.supply || 0.8;
@@ -163,12 +181,19 @@
 
         setText('supply-pct', Math.round(appliedSupply * 100) + '%');
 
-        // Supply source
+        // Supply source (applied delta or baseline)
         setText('supply-source',
             hasSupplyDelta
                 ? tr('source-applied', 'Applied (baseline: ' + Math.round(baselineSupply * 100) + '%)')
                 : tr('source-baseline', 'Baseline')
         );
+
+        // Supply data source (where the baseline value came from)
+        if (!hasSupplyDelta) {
+            setText('supply-data-source', getDataSource(unit, 'supply'));
+        } else {
+            setText('supply-data-source', '');
+        }
     }
 
     /**
@@ -178,6 +203,7 @@
         const sensors = unit.sensors || [];
         const section = $('sensors-section');
         const list = $('sensor-list');
+        const emptyState = $('sensors-empty');
         const count = $('sensor-count');
 
         if (!sensors.length) {
@@ -199,6 +225,8 @@
                 list.appendChild(li);
             });
         }
+
+        if (emptyState) emptyState.setAttribute('hidden', '');
     }
 
     /**
@@ -211,6 +239,7 @@
         const wlist = $('weapon-list');
         const mlist = $('magazine-list');
         const mtitle = $('magazines-title');
+        const emptyState = $('weapons-empty');
         const wcount = $('weapon-count');
 
         if (!weapons.length && !magazines.length) {
@@ -251,6 +280,8 @@
         } else {
             mtitle?.setAttribute('hidden', '');
         }
+
+        if (emptyState) emptyState.setAttribute('hidden', '');
     }
 
     /**
@@ -261,6 +292,7 @@
         const deltas = extractDeltasForUnit(eventLog, unit.uid);
         const section = $('deltas-section');
         const list = $('delta-list');
+        const emptyState = $('deltas-empty');
         const count = $('delta-count');
 
         // Show only last 5 deltas
@@ -290,6 +322,8 @@
                 list.appendChild(li);
             });
         }
+
+        if (emptyState) emptyState.setAttribute('hidden', '');
     }
 
     /**
@@ -358,6 +392,50 @@
     }
 
     /**
+     * Setup section collapse/expand toggles
+     */
+    function setupSectionToggles() {
+        document.querySelectorAll('.section-toggle').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const controls = btn.getAttribute('aria-controls');
+                const list = document.getElementById(controls);
+
+                if (!list) return;
+
+                const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+                btn.setAttribute('aria-expanded', !isExpanded);
+                list.setAttribute('data-collapsed', isExpanded);
+            });
+        });
+    }
+
+    /**
+     * Get data source for readiness/supply values
+     */
+    function getDataSource(unit, field) {
+        if (!unit) return '';
+
+        // Check if value is from scenario baseline
+        if (unit[field] !== undefined && unit[field] !== null) {
+            return 'Source: Scenario Baseline';
+        }
+
+        // Check if platform catalog provides it
+        if (unit.platform_id && root.AppMiddleEastPlatform) {
+            try {
+                const platform = root.AppMiddleEastPlatform.getPlatform(unit.platform_id);
+                if (platform && platform[field + '_default'] !== undefined) {
+                    return 'Source: Middle East Catalog';
+                }
+            } catch (_) { /* fall through */ }
+        }
+
+        // Default to DB-Lite
+        return 'Source: DB-Lite Default';
+    }
+
+    /**
      * Setup event listeners
      */
     function setupListeners() {
@@ -371,6 +449,7 @@
             if (unit) {
                 populatePanel(unit);
                 openPanel();
+                setupSectionToggles();
             }
         });
     }

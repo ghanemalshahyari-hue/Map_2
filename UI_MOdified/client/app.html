@@ -4084,6 +4084,7 @@
                             <label data-i18n="cup-readiness">Readiness</label>
                             <div class="readiness-value" id="readiness-value"></div>
                             <div class="readiness-source" id="readiness-source"></div>
+                            <div class="readiness-data-source" id="readiness-data-source"></div>
                         </div>
 
                         <div class="supply-row">
@@ -4095,35 +4096,63 @@
                                 <div class="supply-percentage" id="supply-pct"></div>
                             </div>
                             <div class="supply-source" id="supply-source"></div>
+                            <div class="supply-data-source" id="supply-data-source"></div>
                         </div>
                     </section>
 
                     <!-- Section 3: Sensors -->
                     <section class="panel-section sensors-section" id="sensors-section" hidden>
-                        <h3 class="section-title" data-i18n="cup-sensors">
-                            Sensors <span class="count-badge" id="sensor-count"></span>
-                        </h3>
-                        <ul class="sensor-list" id="sensor-list"></ul>
+                        <div class="section-header">
+                            <h3 class="section-title" data-i18n="cup-sensors">
+                                Sensors <span class="count-badge" id="sensor-count"></span>
+                            </h3>
+                            <button class="section-toggle"
+                                    aria-expanded="true"
+                                    aria-controls="sensor-list"
+                                    data-i18n="section-toggle">▼</button>
+                        </div>
+                        <ul class="sensor-list" id="sensor-list" data-collapsed="false"></ul>
+                        <div class="section-empty-state" id="sensors-empty" hidden>
+                            <p data-i18n="cup-sensors-empty">No sensors on this unit</p>
+                        </div>
                     </section>
 
                     <!-- Section 4: Weapons & Magazines -->
                     <section class="panel-section weapons-section" id="weapons-section" hidden>
-                        <h3 class="section-title" data-i18n="cup-weapons">
-                            Weapons <span class="count-badge" id="weapon-count"></span>
-                        </h3>
-                        <ul class="weapon-list" id="weapon-list"></ul>
+                        <div class="section-header">
+                            <h3 class="section-title" data-i18n="cup-weapons">
+                                Weapons <span class="count-badge" id="weapon-count"></span>
+                            </h3>
+                            <button class="section-toggle"
+                                    aria-expanded="true"
+                                    aria-controls="weapon-list"
+                                    data-i18n="section-toggle">▼</button>
+                        </div>
+                        <ul class="weapon-list" id="weapon-list" data-collapsed="false"></ul>
 
                         <h4 class="subsection-title" data-i18n="cup-magazines"
                             id="magazines-title" hidden>Magazines</h4>
-                        <ul class="magazine-list" id="magazine-list"></ul>
+                        <ul class="magazine-list" id="magazine-list" data-collapsed="false"></ul>
+                        <div class="section-empty-state" id="weapons-empty" hidden>
+                            <p data-i18n="cup-weapons-empty">No weapons configured</p>
+                        </div>
                     </section>
 
                     <!-- Section 5: Recent State Deltas -->
                     <section class="panel-section deltas-section" id="deltas-section" hidden>
-                        <h3 class="section-title" data-i18n="cup-recent-changes">
-                            Recent Changes <span class="count-badge" id="delta-count"></span>
-                        </h3>
-                        <ul class="delta-list" id="delta-list"></ul>
+                        <div class="section-header">
+                            <h3 class="section-title" data-i18n="cup-recent-changes">
+                                Recent Changes <span class="count-badge" id="delta-count"></span>
+                            </h3>
+                            <button class="section-toggle"
+                                    aria-expanded="true"
+                                    aria-controls="delta-list"
+                                    data-i18n="section-toggle">▼</button>
+                        </div>
+                        <ul class="delta-list" id="delta-list" data-collapsed="false"></ul>
+                        <div class="section-empty-state" id="deltas-empty" hidden>
+                            <p data-i18n="cup-deltas-empty">No recent state changes</p>
+                        </div>
                     </section>
 
                     <!-- Empty state -->
@@ -5713,6 +5742,79 @@
 
         @media (max-width: 768px) {
             .unit-status-panel { width: 100%; }
+        }
+
+        /* Section headers with collapse/expand toggles */
+        .unit-status-panel .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .unit-status-panel .section-toggle {
+            appearance: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            padding: 0.25rem 0.5rem;
+            transition: transform 0.2s ease;
+            border-radius: 4px;
+        }
+
+        .unit-status-panel .section-toggle:hover {
+            background: #f0f0f0;
+        }
+
+        .unit-status-panel .section-toggle[aria-expanded="false"] {
+            transform: rotate(-90deg);
+        }
+
+        /* Hide content when collapsed */
+        .unit-status-panel .sensor-list[data-collapsed="true"],
+        .unit-status-panel .weapon-list[data-collapsed="true"],
+        .unit-status-panel .magazine-list[data-collapsed="true"],
+        .unit-status-panel .delta-list[data-collapsed="true"] {
+            display: none;
+        }
+
+        /* Empty state messaging */
+        .unit-status-panel .section-empty-state {
+            padding: 1rem;
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .unit-status-panel .section-empty-state p {
+            margin: 0;
+        }
+
+        /* Data source labels */
+        .unit-status-panel .readiness-data-source,
+        .unit-status-panel .supply-data-source {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+
+        /* Symbol placeholder (SVG fallback) */
+        .unit-status-panel .unit-symbol-preview .symbol-placeholder {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .unit-status-panel .unit-symbol-preview canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
     </style>
     <script>

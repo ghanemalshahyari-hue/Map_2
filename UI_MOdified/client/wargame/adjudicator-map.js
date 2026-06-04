@@ -40,6 +40,8 @@
         PIPELINE: '#a45ec8',
         RED_UNIT: '#d23a3a',
         BLUE_UNIT: '#3a96d2',
+        RED_BASE: '#d23a3a',       // RED base color (same as RED units)
+        BLUE_BASE: '#3a96d2',      // BLUE base color (same as BLUE units)
         DESTROYED: '#7a7a7a',     // gray applied via CSS grayscale filter on destroyed units
     };
 
@@ -1317,12 +1319,22 @@
     // JSON fields that otherwise sit unused (`score`, `terrain_friction`,
     // `nearest_blue_km`, `throughput`, `capacity`) so the operator can read
     // why a beach was picked.
-    function buildBlsTooltip(bls, status) {
+    function buildBlsTooltip(bls, status, unitCounts) {
         if (!bls) return '';
         const parts = [
             `<strong>${esc(bls.name)} — ${esc(status || 'STAGED')}</strong>`,
             `<em>${esc(bls.role || '')}</em>`,
         ];
+        if (bls.side) {
+            const sideLabel = bls.side === 'BLUE' ? '🔵 BLUE' : '🔴 RED';
+            parts.push(`Side: ${sideLabel}`);
+        }
+        if (unitCounts) {
+            const redCount = unitCounts.red || 0;
+            const blueCount = unitCounts.blue || 0;
+            const total = redCount + blueCount;
+            if (total > 0) parts.push(`Units: RED ${redCount} · BLUE ${blueCount} (${total} total)`);
+        }
         if (Number.isFinite(bls.score))            parts.push(`Score: ${bls.score}`);
         if (bls.terrain_friction)                  parts.push(`Terrain: ${esc(bls.terrain_friction)}`);
         if (Number.isFinite(bls.throughput))       parts.push(`Throughput: ${bls.throughput}`);
@@ -1872,16 +1884,26 @@
         // Role + score + terrain are stashed on the marker so subsequent
         // setIcon calls (status updates) can re-render the role tag and
         // tooltip rebuilds can pull the full site assessment.
+        // Phase 4C-2: Support BLUE bases with distinct color and unit counts.
         for (const bls of scenario.bls_template || []) {
+            // Calculate unit counts assigned to this base
+            const redCount = (scenario.red_units || []).filter(u => u.bls === bls.name).length;
+            const blueCount = (scenario.blue_units_initial || []).filter(u => u.base_id === bls.name).length;
+            const unitCounts = { red: redCount, blue: blueCount };
+
+            // Choose base color based on side (BLUE or RED)
+            const baseColor = (bls.side === 'BLUE') ? COLORS.BLUE_BASE : COLORS.RED_BASE;
+
             const m = window.L.marker(
                 [bls.coord[1], bls.coord[0]],
                 {
-                    icon: blsIcon(COLORS.BLS.STAGED, bls.name.replace('BLS-', ''), bls.role),
+                    icon: blsIcon(baseColor, bls.name.replace('BLS-', ''), bls.role),
                     title: `${bls.name} — ${bls.role}`,
                 },
-            ).bindTooltip(buildBlsTooltip(bls, 'STAGED'), { permanent: false, sticky: true });
+            ).bindTooltip(buildBlsTooltip(bls, 'STAGED', unitCounts), { permanent: false, sticky: true });
             m._wgBls = {
                 name:             bls.name,
+                side:             bls.side || 'RED',
                 role:             bls.role,
                 score:            bls.score,
                 terrain_friction: bls.terrain_friction,
@@ -1889,6 +1911,8 @@
                 nearest_blue_km:  bls.nearest_blue_km,
                 throughput:       bls.throughput,
                 capacity:         bls.capacity,
+                red_unit_count:   redCount,
+                blue_unit_count:  blueCount,
             };
             m.addTo(layerGroup);
             blsMarkers[bls.name] = m;
@@ -5593,7 +5617,8 @@
                 if (!m) continue;
                 const blsMeta = m._wgBls || {};
                 m.setIcon(blsIcon(COLORS.BLS[status] || '#888', name.replace('BLS-', ''), blsMeta.role));
-                m.setTooltipContent(buildBlsTooltip({ name, ...blsMeta }, status));
+                const unitCounts = { red: blsMeta.red_unit_count || 0, blue: blsMeta.blue_unit_count || 0 };
+                m.setTooltipContent(buildBlsTooltip({ name, ...blsMeta }, status, unitCounts));
                 // Breach badge: when this BLS first leaves STAGED, stamp a
                 // small NATO-style breach marker just offshore of it.
                 if (status !== 'STAGED' && !breachBadges[name] && !instant) {
@@ -5936,7 +5961,8 @@
         for (const [name, m] of Object.entries(blsMarkers)) {
             const blsMeta = m._wgBls || {};
             m.setIcon(blsIcon(COLORS.BLS.STAGED, name.replace('BLS-', ''), blsMeta.role));
-            m.setTooltipContent(buildBlsTooltip({ name, ...blsMeta }, 'STAGED'));
+            const unitCounts = { red: blsMeta.red_unit_count || 0, blue: blsMeta.blue_unit_count || 0 };
+            m.setTooltipContent(buildBlsTooltip({ name, ...blsMeta }, 'STAGED', unitCounts));
         }
         if (objMarker) {
             const obj = (scenarioRef && scenarioRef.obj) || null;

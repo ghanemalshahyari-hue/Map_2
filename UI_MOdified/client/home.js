@@ -201,7 +201,33 @@
 
     /* ---- intent: Start New Scenario ------------------------------------- */
     function handleNewClick() {
-        hubNotify(tx('notify-new'), false, 7000);
+        /* Build the minimal blank RMOOZ-native scenario that loadLiveScenarioFromJson
+         * accepts. scenario-authoring-schema.js is only available in app.html, so we
+         * build inline here. app.html's scenario-edit-mode.js will fill in the full
+         * authoring defaults from this seed via its buildDraft() → fillGeographyDefaults
+         * + fillForcesDefaults path once Edit Mode opens. */
+        var blank = {
+            scenario_id:      'new-draft',
+            name:             'new-draft',
+            scenario_label:   'New Scenario',
+            authoring_status: 'draft',
+            sides: [
+                { id: 'BLUE', name_en: 'Blue Force', name_ar: 'القوات الزرقاء', color: '#2563eb' },
+                { id: 'RED',  name_en: 'Red Force',  name_ar: 'القوات الحمراء',  color: '#dc2626' }
+            ],
+            postures: {
+                BLUE: { BLUE: 'FRIENDLY', RED: 'HOSTILE' },
+                RED:  { BLUE: 'HOSTILE',  RED: 'FRIENDLY' }
+            },
+            steps: [{ id: 1, title: 'H+00:00', phase: 'Initial' }]
+        };
+        try {
+            sessionStorage.setItem(STORAGE_PENDING, JSON.stringify(blank));
+        } catch (_) {
+            hubNotify(tx('notify-file-big'), true);
+            return;
+        }
+        go('new');
     }
 
     /* ---- intent: Resume Last Session ------------------------------------ */

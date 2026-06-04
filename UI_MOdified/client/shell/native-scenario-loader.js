@@ -235,21 +235,75 @@
         );
     }
 
-    /* ---- intent: editor / new ------------------------------------------- */
+    /* ---- intent: new scenario ------------------------------------------- */
+    function handleNewIntent() {
+        var raw = null;
+        try { raw = sessionStorage.getItem(STORAGE_PENDING); } catch (_) {}
+
+        if (!raw) {
+            logEvent('New Scenario: no draft template found. Go back and use Start New Scenario again.');
+            showAppNotice(
+                'No draft was passed from the launcher.',
+                'Go back (← Main Window) and use Start New Scenario again.',
+                true, 8000
+            );
+            return;
+        }
+
+        var json;
+        try { json = JSON.parse(raw); } catch (_) {
+            logEvent('New Scenario: draft template was invalid JSON.');
+            showAppNotice('The new scenario template could not be parsed.', null, true, 8000);
+            try { sessionStorage.removeItem(STORAGE_PENDING); } catch (_) {}
+            return;
+        }
+
+        var ws = workspace();
+        if (!ws) { logEvent('New Scenario: workspace loader unavailable.'); return; }
+
+        var res = ws.loadLiveScenarioFromJson(json);
+        if (res && res.passed) {
+            var label = res.scenarioLabel || json.scenario_label || 'New Scenario';
+            logEvent('New Scenario: blank draft loaded — opening Edit Mode.');
+            saveLastSession(raw, 'new', res.scenarioId || 'new-draft', label);
+            try { sessionStorage.removeItem(STORAGE_PENDING); } catch (_) {}
+
+            /* Open the scenario workspace panel + Edit Mode after the workspace
+             * and map have had time to paint (loadLiveScenarioFromJson schedules
+             * a 360ms map-fit; we wait a bit longer to let it settle). */
+            setTimeout(function () {
+                try {
+                    if (window.AppToolRail && typeof window.AppToolRail.switchTool === 'function') {
+                        window.AppToolRail.switchTool('scenario-workspace');
+                    }
+                } catch (_) {}
+                try {
+                    if (window.AppEditMode && typeof window.AppEditMode.setMode === 'function') {
+                        window.AppEditMode.setMode(true);
+                    }
+                } catch (_) {}
+            }, 600);
+            return;
+        }
+
+        var reasons = (res && res.blockedReasons && res.blockedReasons.length)
+            ? res.blockedReasons.join('; ')
+            : 'validation failed';
+        logEvent('New Scenario blocked: ' + reasons);
+        showAppNotice(
+            'Could not load the new scenario draft: ' + reasons,
+            'The workspace was not changed.',
+            true, 10000
+        );
+        try { sessionStorage.removeItem(STORAGE_PENDING); } catch (_) {}
+    }
+
+    /* ---- intent: editor ------------------------------------------------- */
     function handleEditorIntent() {
         logEvent('Launch intent "editor": scenario authoring controls are in development.');
         showAppNotice(
             'Scenario Editor — authoring controls are being built.',
             'Available now: Edit Mode in the workspace panel (metadata, sides, posture).',
-            false, 8000
-        );
-    }
-
-    function handleNewIntent() {
-        logEvent('Launch intent "new": scenario authoring flow in development.');
-        showAppNotice(
-            'New Scenario — authoring is being built for the next release.',
-            'Load an existing RMOOZ-native JSON to get started.',
             false, 8000
         );
     }
@@ -260,11 +314,11 @@
         try { intent = new URLSearchParams(window.location.search).get('launch'); } catch (_) {}
         if (!intent) return;
 
-        if (intent === 'demo')   { loadNativeSample(); return; }
-        if (intent === 'load')   { handleLoadIntent(); return; }
+        if (intent === 'demo')   { loadNativeSample();   return; }
+        if (intent === 'load')   { handleLoadIntent();   return; }
         if (intent === 'resume') { handleResumeIntent(); return; }
+        if (intent === 'new')    { handleNewIntent();    return; }
         if (intent === 'editor') { handleEditorIntent(); return; }
-        if (intent === 'new')    { handleNewIntent(); return; }
 
         /* settings / layers / help / unknown — receipt only */
         logEvent('Launch intent "' + intent + '" received.');
@@ -278,8 +332,8 @@
             try { intent = new URLSearchParams(window.location.search).get('launch'); } catch (_) {}
             if (!intent) return;
 
-            /* demo, load, resume all need the workspace loader; editor/new do not */
-            var needsWs = (intent === 'demo' || intent === 'load' || intent === 'resume');
+            /* demo, load, resume, new all need the workspace loader; editor does not */
+            var needsWs = (intent === 'demo' || intent === 'load' || intent === 'resume' || intent === 'new');
             if (needsWs && !workspace() && tries < 20) {
                 tries++;
                 return void setTimeout(attempt, 150);

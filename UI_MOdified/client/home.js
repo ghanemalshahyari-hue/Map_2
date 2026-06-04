@@ -22,7 +22,7 @@
     var STORAGE_PENDING   = 'rmooz.pending-import';
     var STORAGE_LAST_JSON = 'rmooz.last-json';
     var STORAGE_LAST_META = 'rmooz.last-session';
-    var WORKSPACE         = '/app.html';
+    var WORKSPACE_FILE    = 'app.html';
 
     /* ---- bilingual labels ------------------------------------------------ */
     var I18N = {
@@ -107,6 +107,23 @@
         el._t = setTimeout(function () { el.setAttribute('hidden', ''); }, durationMs || 6000);
     }
 
+    function resolveClientUrl(target) {
+        try { return new URL(target, window.location.href).toString(); }
+        catch (_) { return target; }
+    }
+
+    function buildWorkspaceUrl(intent) {
+        var url = resolveClientUrl(WORKSPACE_FILE);
+        if (!intent) return url;
+        try {
+            var next = new URL(url);
+            next.searchParams.set('launch', intent);
+            return next.toString();
+        } catch (_) {
+            return url + '?launch=' + encodeURIComponent(intent);
+        }
+    }
+
     /* ---- status clock --------------------------------------------------- */
     function pad(n) { return (n < 10 ? '0' : '') + n; }
     function tickClock() {
@@ -121,21 +138,29 @@
     function guard() {
         try {
             fetch('/api/auth/me', { credentials: 'same-origin' })
-                .then(function (r) { if (!r.ok) location.replace('/?next=/home.html'); })
+                .then(function (r) {
+                    if (r.ok) return;
+                    try {
+                        var loginUrl = new URL(resolveClientUrl('index.html'));
+                        loginUrl.searchParams.set('next', 'home.html');
+                        location.replace(loginUrl.toString());
+                    } catch (_) {
+                        location.replace('index.html?next=home.html');
+                    }
+                })
                 .catch(function () { /* offline/dev — do not lock out */ });
         } catch (_) {}
     }
 
     /* ---- navigation ----------------------------------------------------- */
     function go(intent) {
-        var url = WORKSPACE + (intent ? ('?launch=' + encodeURIComponent(intent)) : '');
-        window.location.assign(url);
+        window.location.assign(buildWorkspaceUrl(intent));
     }
     function logout() {
         try {
             fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' })
-                .finally(function () { location.replace('/'); });
-        } catch (_) { location.replace('/'); }
+                .finally(function () { location.replace(resolveClientUrl('index.html')); });
+        } catch (_) { location.replace(resolveClientUrl('index.html')); }
     }
 
     /* ---- intent: Load Scenario ------------------------------------------ */

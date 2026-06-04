@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "version": "1.0.0-db1-alpha",
-    "title": "Middle East Operational Platform Catalog",
-    "description": "RMOOZ Middle East platform registry. Minimal seed: 5 representative platforms. Public/unclassified values only. Authored scenario fields take precedence.",
+    "version": "1.1.0-db1-b-expanded",
+    "title": "Middle East Operational Platform Catalog — Expanded",
+    "description": "RMOOZ Middle East platform registry. Expanded catalog: 15 representative platforms. Public/unclassified values only. Authored scenario fields take precedence.",
     "region": "Middle East",
     "sources": [
       "SIPRI Military Database",
@@ -12,7 +12,8 @@
       "Academic sources on Middle East conflicts"
     ],
     "confidence_notice": "All values are approximations from public sources. Not intended as classified intelligence estimates.",
-    "fallback_note": "If any field is missing, DB-Lite generic defaults apply. Scenario-authored fields always take precedence."
+    "fallback_note": "If any field is missing, DB-Lite generic defaults apply. Scenario-authored fields always take precedence.",
+    "expansion_note": "DB-1-B expanded from 5 seed entries to 15 representative platforms covering fighter, strike, AEW, SAM, AAA, naval, ground, and artillery categories."
   },
   "platforms": {
     "f16c-fighter": {
@@ -25,320 +26,456 @@
       "rcs_class": "medium",
       "readiness_default": "ready",
       "supply_default": 0.8,
-      "doctrine_tags": [
-        "air_superiority",
-        "cas",
-        "strike",
-        "interdict"
-      ],
+      "doctrine_tags": ["air_superiority", "cas", "strike", "interdict"],
       "sensors": [
-        {
-          "id": "apg68",
-          "label": "AN/APG-68 multifunction radar",
-          "type": "radar",
-          "class": "multifunction",
-          "detection_range_class": "long_range_3d",
-          "emcon_capable": true
-        },
-        {
-          "id": "ir",
-          "label": "Infrared search and track (IRST)",
-          "type": "ir",
-          "class": "passive_tracking",
-          "emcon_capable": true
-        }
+        { "id": "apg68", "label": "AN/APG-68 multifunction radar", "type": "radar", "class": "multifunction", "detection_range_class": "long_range_3d", "emcon_capable": true },
+        { "id": "irst", "label": "Infrared search and track (IRST)", "type": "ir", "class": "passive_tracking", "emcon_capable": true }
       ],
       "weapons": [
-        {
-          "id": "aim120",
-          "label": "AIM-120C AMRAAM",
-          "type": "missile",
-          "class": "medium_aa_missile",
-          "range_class": "long_range",
-          "quantity_typical": 6
-        },
-        {
-          "id": "aim9",
-          "label": "AIM-9 Sidewinder",
-          "type": "missile",
-          "class": "short_aa_missile",
-          "range_class": "short_range",
-          "quantity_typical": 2
-        },
-        {
-          "id": "agm65",
-          "label": "AGM-65 Maverick",
-          "type": "missile",
-          "class": "ag_missile",
-          "range_class": "medium_range",
-          "quantity_typical": 2
-        }
+        { "id": "aim120", "label": "AIM-120C AMRAAM", "type": "missile", "class": "medium_aa_missile", "range_class": "long_range", "quantity_typical": 6 },
+        { "id": "aim9", "label": "AIM-9 Sidewinder", "type": "missile", "class": "short_aa_missile", "range_class": "short_range", "quantity_typical": 2 },
+        { "id": "agm65", "label": "AGM-65 Maverick", "type": "missile", "class": "ag_missile", "range_class": "medium_range", "quantity_typical": 2 }
       ],
-      "magazines": [
-        {
-          "mount": "internal",
-          "stock": {
-            "medium_aa_missile": 6,
-            "short_aa_missile": 2,
-            "ag_missile": 2
-          }
-        }
+      "magazines": [{ "mount": "internal", "stock": 500 }],
+      "source_notes": "SIPRI, Jane's Fighting Aircraft public summaries",
+      "confidence": 0.85,
+      "approximation_level": "typical_regional"
+    },
+    "gripen-fighter": {
+      "id": "gripen-fighter",
+      "label": "JF-17 / Gripen",
+      "domain": "air",
+      "role": "fighter",
+      "category": "air_unit",
+      "description": "Lightweight multirole combat aircraft, cost-effective air superiority and CAS platform",
+      "rcs_class": "small",
+      "readiness_default": "ready",
+      "supply_default": 0.8,
+      "doctrine_tags": ["air_superiority", "cas", "light_fighter", "cost_effective"],
+      "sensors": [
+        { "id": "aesa", "label": "AESA radar (Gripen/JF-17)", "type": "radar", "class": "multifunction", "detection_range_class": "medium_range", "emcon_capable": true },
+        { "id": "irst_light", "label": "Infrared search and track", "type": "ir", "class": "passive_tracking", "emcon_capable": true }
       ],
-      "source_notes": "SIPRI, Jane's Fighting Aircraft (public specs), open aviation sources",
-      "confidence": "medium",
-      "approximation_level": "class-based (not exact specs)"
+      "weapons": [
+        { "id": "meteor", "label": "Meteor air-to-air missile", "type": "missile", "class": "medium_aa_missile", "range_class": "long_range", "quantity_typical": 4 },
+        { "id": "ag_missile", "label": "Air-to-ground missile", "type": "missile", "class": "ag_missile", "range_class": "medium_range", "quantity_typical": 2 },
+        { "id": "gun_27mm", "label": "27mm internal gun", "type": "gun", "class": "gun", "range_class": "short_range", "quantity_typical": 1 }
+      ],
+      "magazines": [{ "mount": "fuselage_stations", "stock": 300 }],
+      "source_notes": "Jane's Fighting Aircraft, open-source specifications",
+      "confidence": 0.75,
+      "approximation_level": "typical_regional"
+    },
+    "mirage-2000": {
+      "id": "mirage-2000",
+      "label": "Mirage 2000",
+      "domain": "air",
+      "role": "fighter",
+      "category": "air_unit",
+      "description": "Air superiority and strike fighter with delta-canard design, widely deployed in Middle East",
+      "rcs_class": "small",
+      "readiness_default": "ready",
+      "supply_default": 0.8,
+      "doctrine_tags": ["air_superiority", "strike", "interdict", "regional_standard"],
+      "sensors": [
+        { "id": "rbe2", "label": "RBE2 AESA radar", "type": "radar", "class": "multifunction", "detection_range_class": "long_range_3d", "emcon_capable": true },
+        { "id": "irst_mirage", "label": "IRST system (Mirage 2000)", "type": "ir", "class": "passive_tracking", "emcon_capable": true }
+      ],
+      "weapons": [
+        { "id": "mica", "label": "MICA air-to-air missile", "type": "missile", "class": "medium_aa_missile", "range_class": "medium_range", "quantity_typical": 4 },
+        { "id": "scalp", "label": "SCALP/Storm Shadow cruise missile", "type": "missile", "class": "cruise_missile", "range_class": "long_range", "quantity_typical": 1 },
+        { "id": "gun_30mm", "label": "30mm DEFA gun", "type": "gun", "class": "gun", "range_class": "short_range", "quantity_typical": 1 }
+      ],
+      "magazines": [{ "mount": "fuselage_external", "stock": 400 }],
+      "source_notes": "Jane's Fighting Aircraft, SIPRI database",
+      "confidence": 0.8,
+      "approximation_level": "typical_regional"
+    },
+    "mig-29": {
+      "id": "mig-29",
+      "label": "MiG-29",
+      "domain": "air",
+      "role": "fighter",
+      "category": "air_unit",
+      "description": "Russian air superiority fighter with twin engines, significant Middle East presence",
+      "rcs_class": "small",
+      "readiness_default": "ready",
+      "supply_default": 0.75,
+      "doctrine_tags": ["air_superiority", "fighter_sweep", "cas", "air_defense"],
+      "sensors": [
+        { "id": "slot_back", "label": "Slot-back radar (MiG-29)", "type": "radar", "class": "fire_control", "detection_range_class": "medium_range", "emcon_capable": true },
+        { "id": "irst_mig", "label": "IRST system (MiG-29)", "type": "ir", "class": "passive_tracking", "emcon_capable": true }
+      ],
+      "weapons": [
+        { "id": "r27", "label": "R-27 medium-range AAM", "type": "missile", "class": "medium_aa_missile", "range_class": "medium_range", "quantity_typical": 4 },
+        { "id": "r73", "label": "R-73 short-range AAM", "type": "missile", "class": "short_aa_missile", "range_class": "short_range", "quantity_typical": 2 },
+        { "id": "kh29", "label": "Kh-29 air-to-ground missile", "type": "missile", "class": "ag_missile", "range_class": "medium_range", "quantity_typical": 2 },
+        { "id": "gun_30mm_mig", "label": "30mm GSh-301 gun", "type": "gun", "class": "gun", "range_class": "short_range", "quantity_typical": 1 }
+      ],
+      "magazines": [{ "mount": "pylons", "stock": 350 }],
+      "source_notes": "SIPRI Military Database, Jane's Fighting Aircraft",
+      "confidence": 0.8,
+      "approximation_level": "typical_regional"
+    },
+    "f15e-strike": {
+      "id": "f15e-strike",
+      "label": "F-15E Strike Eagle",
+      "domain": "air",
+      "role": "striker",
+      "category": "air_unit",
+      "description": "Dual-role fighter-bomber with all-weather strike capability and air-to-air defense",
+      "rcs_class": "medium",
+      "readiness_default": "ready",
+      "supply_default": 0.8,
+      "doctrine_tags": ["strike", "interdict", "cas", "escort"],
+      "sensors": [
+        { "id": "apg70", "label": "AN/APG-70 radar", "type": "radar", "class": "multifunction", "detection_range_class": "long_range_3d", "emcon_capable": true },
+        { "id": "lantirn", "label": "LANTIRN targeting pod", "type": "ir", "class": "fire_control", "emcon_capable": false }
+      ],
+      "weapons": [
+        { "id": "aim120_e", "label": "AIM-120 air-to-air missile", "type": "missile", "class": "medium_aa_missile", "range_class": "long_range", "quantity_typical": 4 },
+        { "id": "aim9_e", "label": "AIM-9 Sidewinder", "type": "missile", "class": "short_aa_missile", "range_class": "short_range", "quantity_typical": 2 },
+        { "id": "jdam", "label": "JDAM/HARM anti-radiation missile", "type": "missile", "class": "ag_missile", "range_class": "long_range", "quantity_typical": 4 },
+        { "id": "maverick_e", "label": "Maverick air-to-ground missile", "type": "missile", "class": "ag_missile", "range_class": "medium_range", "quantity_typical": 2 },
+        { "id": "gun_20mm", "label": "M61A1 20mm Vulcan gun", "type": "gun", "class": "gun", "range_class": "short_range", "quantity_typical": 1 }
+      ],
+      "magazines": [{ "mount": "pylons_fuselage", "stock": 800 }],
+      "source_notes": "Jane's Fighting Aircraft, public specifications",
+      "confidence": 0.85,
+      "approximation_level": "typical_regional"
+    },
+    "tornado-strike": {
+      "id": "tornado-strike",
+      "label": "Panavia Tornado",
+      "domain": "air",
+      "role": "striker",
+      "category": "air_unit",
+      "description": "European strike/interdiction aircraft with terrain-following radar capability",
+      "rcs_class": "medium",
+      "readiness_default": "ready",
+      "supply_default": 0.8,
+      "doctrine_tags": ["strike", "interdict", "anti_ship", "reconnaissance"],
+      "sensors": [
+        { "id": "tfr", "label": "Terrain-following radar (Tornado)", "type": "radar", "class": "fire_control", "detection_range_class": "medium_range", "emcon_capable": true },
+        { "id": "ews", "label": "Electronic warfare suite", "type": "ew", "class": "jamming", "emcon_capable": true }
+      ],
+      "weapons": [
+        { "id": "storm_shadow", "label": "Storm Shadow cruise missile", "type": "missile", "class": "cruise_missile", "range_class": "long_range", "quantity_typical": 2 },
+        { "id": "lgb", "label": "Paveway laser-guided bomb", "type": "bomb", "class": "guided_bomb", "range_class": "short_range", "quantity_typical": 4 },
+        { "id": "gun_27mm_t", "label": "27mm Mauser cannon", "type": "gun", "class": "gun", "range_class": "short_range", "quantity_typical": 1 }
+      ],
+      "magazines": [{ "mount": "rotary_launcher", "stock": 400 }],
+      "source_notes": "Jane's Fighting Aircraft, SIPRI database",
+      "confidence": 0.8,
+      "approximation_level": "typical_regional"
+    },
+    "e3-sentry": {
+      "id": "e3-sentry",
+      "label": "E-3 Sentry AWACS",
+      "domain": "air",
+      "role": "command",
+      "category": "air_unit",
+      "description": "Airborne warning and control system for C2 and air battle management, strategic asset",
+      "rcs_class": "very_large",
+      "readiness_default": "ready",
+      "supply_default": 0.85,
+      "doctrine_tags": ["c2", "air_battle_management", "surveillance", "strategic"],
+      "sensors": [
+        { "id": "ppa", "label": "Rotating phased-array radar (AWACS)", "type": "radar", "class": "search", "detection_range_class": "long_range_3d", "emcon_capable": true },
+        { "id": "gsr", "label": "Ground search radar mode", "type": "radar", "class": "search", "detection_range_class": "long_range", "emcon_capable": true },
+        { "id": "iff", "label": "IFF/identification system", "type": "iff", "class": "identification", "emcon_capable": false }
+      ],
+      "weapons": [],
+      "magazines": [],
+      "source_notes": "Jane's All the World's Aircraft, published specifications",
+      "confidence": 0.9,
+      "approximation_level": "published_specification"
     },
     "patriot-sam": {
       "id": "patriot-sam",
-      "label": "Patriot Air Defense System",
+      "label": "Patriot SAM System",
       "domain": "ground",
       "role": "air_defense",
-      "category": "air_defense",
-      "description": "Mobile medium-range air defense system, primary regional SAM platform",
+      "category": "aad_system",
+      "description": "Medium-range surface-to-air system with phased-array radar, primary regional air defense",
       "rcs_class": "medium",
       "readiness_default": "ready",
-      "supply_default": 0.75,
-      "doctrine_tags": [
-        "air_defense",
-        "iads",
-        "mobile",
-        "medium_range_sam"
-      ],
+      "supply_default": 0.8,
+      "doctrine_tags": ["air_defense", "medium_range", "layered_defense"],
       "sensors": [
-        {
-          "id": "an_ppy27",
-          "label": "AN/PPY-27 search radar",
-          "type": "radar",
-          "class": "3d_surveillance",
-          "detection_range_class": "long_range_3d",
-          "emcon_capable": false
-        },
-        {
-          "id": "pag68",
-          "label": "Phased array guidance radar",
-          "type": "radar",
-          "class": "fire_control",
-          "detection_range_class": "medium_range",
-          "emcon_capable": false
-        }
+        { "id": "search", "label": "AN/MPQ-53 phased-array search radar", "type": "radar", "class": "search", "detection_range_class": "long_range_3d", "emcon_capable": true },
+        { "id": "track", "label": "Engagement radar", "type": "radar", "class": "fire_control", "detection_range_class": "long_range", "emcon_capable": true }
       ],
       "weapons": [
-        {
-          "id": "mim104f",
-          "label": "MIM-104F Patriot missile",
-          "type": "missile",
-          "class": "medium_sam",
-          "range_class": "medium_range",
-          "quantity_typical": 8
-        }
+        { "id": "mim104", "label": "MIM-104 Patriot SAM", "type": "missile", "class": "sam", "range_class": "long_range", "quantity_typical": 8 }
       ],
-      "magazines": [
-        {
-          "mount": "tractor",
-          "label": "Trailer-mounted magazine",
-          "stock": {
-            "medium_sam": 8
-          }
-        }
-      ],
-      "source_notes": "SIPRI, Jane's Air-Launched Weapons (public summaries)",
-      "confidence": "medium-high",
-      "approximation_level": "class-based (not exact engagement formulas)"
+      "magazines": [{ "mount": "launcher_pods", "stock": 16 }],
+      "source_notes": "SIPRI, Jane's Weapons Systems, public specifications",
+      "confidence": 0.85,
+      "approximation_level": "typical_regional"
     },
     "s300-sam": {
       "id": "s300-sam",
-      "label": "S-300 Air Defense System",
+      "label": "S-300 SAM System",
       "domain": "ground",
       "role": "air_defense",
-      "category": "air_defense",
-      "description": "Long-range air defense system, regional strategic SAM platform",
-      "rcs_class": "large",
+      "category": "aad_system",
+      "description": "Long-range surface-to-air system with integrated phased-array radar, high-altitude capability",
+      "rcs_class": "medium",
       "readiness_default": "ready",
-      "supply_default": 0.7,
-      "doctrine_tags": [
-        "air_defense",
-        "iads",
-        "long_range_sam",
-        "static"
-      ],
+      "supply_default": 0.8,
+      "doctrine_tags": ["air_defense", "long_range", "strategic_defense"],
       "sensors": [
-        {
-          "id": "S300_search",
-          "label": "Long-range search radar",
-          "type": "radar",
-          "class": "3d_surveillance",
-          "detection_range_class": "long_range_3d",
-          "emcon_capable": false
-        },
-        {
-          "id": "S300_fire",
-          "label": "Fire control radar",
-          "type": "radar",
-          "class": "fire_control",
-          "detection_range_class": "long_range_3d",
-          "emcon_capable": false
-        }
+        { "id": "array", "label": "Phased-array search radar (S-300)", "type": "radar", "class": "search", "detection_range_class": "long_range_3d", "emcon_capable": true },
+        { "id": "track_s300", "label": "Tracking and engagement radar", "type": "radar", "class": "fire_control", "detection_range_class": "long_range", "emcon_capable": true }
       ],
       "weapons": [
-        {
-          "id": "5V55",
-          "label": "5V55 SAM",
-          "type": "missile",
-          "class": "long_range_sam",
-          "range_class": "long_range",
-          "quantity_typical": 6
-        }
+        { "id": "5v55", "label": "5V55 surface-to-air missile", "type": "missile", "class": "sam", "range_class": "long_range", "quantity_typical": 8 }
       ],
-      "magazines": [
-        {
-          "mount": "launcher",
-          "label": "Vertical launch magazine",
-          "stock": {
-            "long_range_sam": 6
-          }
-        }
-      ],
-      "source_notes": "SIPRI, open military databases (public domain specs)",
-      "confidence": "medium",
-      "approximation_level": "class-based (not exact Soviet specs)"
+      "magazines": [{ "mount": "launcher_complex", "stock": 24 }],
+      "source_notes": "SIPRI Military Database, Jane's Weapons Systems",
+      "confidence": 0.8,
+      "approximation_level": "typical_regional"
     },
-    "frigate-combatant": {
-      "id": "frigate-combatant",
-      "label": "MEKO-class Frigate",
+    "tor-aads": {
+      "id": "tor-aads",
+      "label": "TOR AAA/SAM System",
+      "domain": "ground",
+      "role": "air_defense",
+      "category": "aad_system",
+      "description": "Short-range integrated air defense with autocannon and missiles, mobile SHORAD",
+      "rcs_class": "small",
+      "readiness_default": "ready",
+      "supply_default": 0.75,
+      "doctrine_tags": ["air_defense", "short_range", "shorad", "mobile"],
+      "sensors": [
+        { "id": "search_tor", "label": "Search radar (TOR)", "type": "radar", "class": "search", "detection_range_class": "medium_range", "emcon_capable": true },
+        { "id": "track_tor", "label": "Fire-control radar", "type": "radar", "class": "fire_control", "detection_range_class": "medium_range", "emcon_capable": true }
+      ],
+      "weapons": [
+        { "id": "tor_missile", "label": "TOR surface-to-air missile", "type": "missile", "class": "sam", "range_class": "medium_range", "quantity_typical": 8 },
+        { "id": "30mm_aads", "label": "30mm autocannon", "type": "gun", "class": "gun", "range_class": "short_range", "quantity_typical": 1 }
+      ],
+      "magazines": [{ "mount": "internal", "stock": 400 }],
+      "source_notes": "SIPRI, open-source military publications",
+      "confidence": 0.75,
+      "approximation_level": "typical_regional"
+    },
+    "mistral-manpads": {
+      "id": "mistral-manpads",
+      "label": "Mistral MANPADS",
+      "domain": "ground",
+      "role": "air_defense",
+      "category": "aad_system",
+      "description": "Shoulder-fired infrared air defense missile, forward air defense platform",
+      "rcs_class": "very_small",
+      "readiness_default": "ready",
+      "supply_default": 0.8,
+      "doctrine_tags": ["air_defense", "short_range", "portable", "shorad"],
+      "sensors": [
+        { "id": "irccd", "label": "Infrared CCD seeker (Mistral)", "type": "ir", "class": "passive_tracking", "emcon_capable": true }
+      ],
+      "weapons": [
+        { "id": "mistral_missile", "label": "Mistral infrared MANPADS", "type": "missile", "class": "manpads", "range_class": "short_range", "quantity_typical": 1 }
+      ],
+      "magazines": [{ "mount": "individual_operator", "stock": 4 }],
+      "source_notes": "Jane's Weapons Systems, open-source specifications",
+      "confidence": 0.85,
+      "approximation_level": "published_specification"
+    },
+    "s1-aaa": {
+      "id": "s1-aaa",
+      "label": "S-1 Skyshield AAA",
+      "domain": "ground",
+      "role": "air_defense",
+      "category": "aad_system",
+      "description": "Self-propelled twin 35mm anti-aircraft gun system with fire-control radar",
+      "rcs_class": "small",
+      "readiness_default": "ready",
+      "supply_default": 0.75,
+      "doctrine_tags": ["air_defense", "short_range", "rapid_fire", "point_defense"],
+      "sensors": [
+        { "id": "fc_radar", "label": "Fire-control radar (S-1)", "type": "radar", "class": "fire_control", "detection_range_class": "short_range", "emcon_capable": true }
+      ],
+      "weapons": [
+        { "id": "35mm_twin", "label": "Twin 35mm Oerlikon autocannon", "type": "gun", "class": "gun", "range_class": "short_range", "quantity_typical": 2 }
+      ],
+      "magazines": [{ "mount": "ammo_drum", "stock": 600 }],
+      "source_notes": "Open-source military specifications, SIPRI",
+      "confidence": 0.75,
+      "approximation_level": "typical_regional"
+    },
+    "meko-frigate": {
+      "id": "meko-frigate",
+      "label": "MEKO Frigate",
       "domain": "sea",
       "role": "naval_combatant",
       "category": "naval_combatant",
-      "description": "Modern frigate-class naval combatant, primary regional naval platform",
-      "rcs_class": "large",
+      "description": "Multi-mission frigate with modern combat systems, helicopter-capable, regional standard",
+      "rcs_class": "medium",
       "readiness_default": "ready",
-      "supply_default": 0.75,
-      "doctrine_tags": [
-        "naval_combatant",
-        "sea_control",
-        "air_defense",
-        "antiship"
-      ],
+      "supply_default": 0.8,
+      "doctrine_tags": ["sea_control", "anti_air", "anti_ship", "helicopter_ops"],
       "sensors": [
-        {
-          "id": "phased_array",
-          "label": "SMART-S phased array radar",
-          "type": "radar",
-          "class": "3d_surveillance",
-          "detection_range_class": "long_range_3d",
-          "emcon_capable": false
-        },
-        {
-          "id": "fire_control",
-          "label": "Fire control radar",
-          "type": "radar",
-          "class": "fire_control",
-          "detection_range_class": "medium_range",
-          "emcon_capable": false
-        }
+        { "id": "search_nav", "label": "Air search radar (MEKO)", "type": "radar", "class": "search", "detection_range_class": "long_range", "emcon_capable": true },
+        { "id": "surf_search", "label": "Surface search radar", "type": "radar", "class": "search", "detection_range_class": "medium_range", "emcon_capable": true },
+        { "id": "sonar_active", "label": "Active sonar", "type": "sonar", "class": "active", "detection_range_class": "medium_range", "emcon_capable": false },
+        { "id": "sonar_passive", "label": "Passive sonar", "type": "sonar", "class": "passive", "detection_range_class": "medium_range", "emcon_capable": true }
       ],
       "weapons": [
-        {
-          "id": "harpoon",
-          "label": "RGM-84 Harpoon antiship missile",
-          "type": "missile",
-          "class": "antiship_missile",
-          "range_class": "medium_range",
-          "quantity_typical": 4
-        },
-        {
-          "id": "sam",
-          "label": "Medium-range SAM",
-          "type": "missile",
-          "class": "medium_sam",
-          "range_class": "medium_range",
-          "quantity_typical": 16
-        },
-        {
-          "id": "gun",
-          "label": "Deck gun",
-          "type": "gun",
-          "class": "naval_gun",
-          "caliber": "76mm",
-          "quantity_typical": 1
-        }
+        { "id": "sam_frigate", "label": "Surface-to-air missile (Frigate)", "type": "missile", "class": "sam", "range_class": "medium_range", "quantity_typical": 8 },
+        { "id": "asuw", "label": "Anti-ship missile", "type": "missile", "class": "asuw_missile", "range_class": "medium_range", "quantity_typical": 4 },
+        { "id": "gun_76mm", "label": "76mm main gun", "type": "gun", "class": "gun", "range_class": "medium_range", "quantity_typical": 1 },
+        { "id": "torpedo", "label": "Torpedo tubes", "type": "torpedo", "class": "torpedo", "range_class": "medium_range", "quantity_typical": 6 }
       ],
-      "magazines": [
-        {
-          "mount": "launcher",
-          "label": "SAM magazine",
-          "stock": {
-            "medium_sam": 16
-          }
-        }
-      ],
-      "source_notes": "Jane's Fighting Ships (public summaries), SIPRI",
-      "confidence": "medium-high",
-      "approximation_level": "class-based (not exact naval specs)"
+      "magazines": [{ "mount": "frigate_storage", "stock": 800 }],
+      "source_notes": "Jane's Fighting Ships, SIPRI Naval Database",
+      "confidence": 0.85,
+      "approximation_level": "typical_regional"
     },
-    "infantry-maneuver": {
-      "id": "infantry-maneuver",
-      "label": "Infantry Battalion (Motorized)",
+    "corvette-patrol": {
+      "id": "corvette-patrol",
+      "label": "Type F2000S Corvette",
+      "domain": "sea",
+      "role": "naval_combatant",
+      "category": "naval_combatant",
+      "description": "Light frigate/corvette for coastal defense and sea control, modern combat systems",
+      "rcs_class": "small",
+      "readiness_default": "ready",
+      "supply_default": 0.8,
+      "doctrine_tags": ["coastal_defense", "sea_control", "anti_air", "anti_ship"],
+      "sensors": [
+        { "id": "phased_corvette", "label": "Phased-array radar (Corvette)", "type": "radar", "class": "search", "detection_range_class": "long_range", "emcon_capable": true },
+        { "id": "sonar_corvette", "label": "Sonar suite", "type": "sonar", "class": "combined", "detection_range_class": "medium_range", "emcon_capable": true }
+      ],
+      "weapons": [
+        { "id": "sam_corvette", "label": "Surface-to-air missile", "type": "missile", "class": "sam", "range_class": "medium_range", "quantity_typical": 8 },
+        { "id": "asuw_corvette", "label": "Anti-ship missile", "type": "missile", "class": "asuw_missile", "range_class": "medium_range", "quantity_typical": 2 },
+        { "id": "gun_corvette", "label": "Main gun armament", "type": "gun", "class": "gun", "range_class": "medium_range", "quantity_typical": 1 },
+        { "id": "torpedo_corvette", "label": "Torpedo tubes", "type": "torpedo", "class": "torpedo", "range_class": "short_range", "quantity_typical": 4 }
+      ],
+      "magazines": [{ "mount": "corvette_deck", "stock": 400 }],
+      "source_notes": "Jane's Fighting Ships, open-source specifications",
+      "confidence": 0.75,
+      "approximation_level": "typical_regional"
+    },
+    "patrol-boat": {
+      "id": "patrol-boat",
+      "label": "Damen Stan Patrol Boat",
+      "domain": "sea",
+      "role": "naval_combatant",
+      "category": "naval_combatant",
+      "description": "Coastal patrol and interdiction craft, high-speed maneuverable platform",
+      "rcs_class": "very_small",
+      "readiness_default": "ready",
+      "supply_default": 0.8,
+      "doctrine_tags": ["coastal_patrol", "harbor_defense", "interdiction"],
+      "sensors": [
+        { "id": "nav_radar", "label": "Navigation radar (Patrol boat)", "type": "radar", "class": "search", "detection_range_class": "short_range", "emcon_capable": true },
+        { "id": "sonobuoys", "label": "Sonobuoy system", "type": "sonar", "class": "passive", "detection_range_class": "medium_range", "emcon_capable": true }
+      ],
+      "weapons": [
+        { "id": "mg_mount", "label": "Machine gun flexible mounts", "type": "gun", "class": "gun", "range_class": "short_range", "quantity_typical": 2 },
+        { "id": "weapon_flex", "label": "Flexible weapon system", "type": "missile", "class": "flexible", "range_class": "short_range", "quantity_typical": 1 }
+      ],
+      "magazines": [{ "mount": "patrol_deck", "stock": 200 }],
+      "source_notes": "Open-source marine specifications, Jane's Fighting Ships",
+      "confidence": 0.7,
+      "approximation_level": "typical_regional"
+    },
+    "infantry-battalion": {
+      "id": "infantry-battalion",
+      "label": "Infantry Battalion",
       "domain": "ground",
-      "role": "ground_maneuver",
+      "role": "maneuver",
       "category": "ground_maneuver",
-      "description": "Motorized infantry battalion, basic ground maneuver element",
+      "description": "Motorized rifle company structure, primary infantry maneuver element",
       "rcs_class": "small",
       "readiness_default": "ready",
       "supply_default": 0.7,
-      "doctrine_tags": [
-        "ground_maneuver",
-        "infantry",
-        "motorized",
-        "maneuver"
-      ],
+      "doctrine_tags": ["maneuver", "infantry", "primary_assault"],
       "sensors": [
-        {
-          "id": "scout_net",
-          "label": "Organic scouts and reconnaissance",
-          "type": "visual",
-          "class": "organic_recon",
-          "detection_range_class": "short_range",
-          "emcon_capable": true
-        }
+        { "id": "mortar_observer", "label": "Mortar fire control", "type": "ground", "class": "fire_control", "detection_range_class": "short_range", "emcon_capable": true }
       ],
       "weapons": [
-        {
-          "id": "rifle",
-          "label": "Rifles and light machine guns",
-          "type": "small_arms",
-          "class": "rifle",
-          "quantity_typical": 100
-        },
-        {
-          "id": "mortar",
-          "label": "81mm mortars",
-          "type": "mortar",
-          "class": "mortar",
-          "quantity_typical": 6
-        },
-        {
-          "id": "atgm",
-          "label": "Anti-tank guided missiles",
-          "type": "missile",
-          "class": "atgm",
-          "range_class": "medium_range",
-          "quantity_typical": 4
-        }
+        { "id": "assault_rifle", "label": "Assault rifles", "type": "gun", "class": "rifle", "range_class": "short_range", "quantity_typical": 120 },
+        { "id": "mg", "label": "Machine guns", "type": "gun", "class": "machine_gun", "range_class": "medium_range", "quantity_typical": 6 },
+        { "id": "mortar_60mm", "label": "60mm mortars", "type": "mortar", "class": "mortar", "range_class": "short_range", "quantity_typical": 2 }
       ],
-      "magazines": [
-        {
-          "mount": "organic",
-          "label": "Battalion ammunition storage",
-          "stock": {
-            "rifle": 100,
-            "mortar": 6,
-            "atgm": 4
-          }
-        }
+      "magazines": [{ "mount": "soldier_packs", "stock": 5000 }],
+      "source_notes": "Military organizational standards, SIPRI",
+      "confidence": 0.85,
+      "approximation_level": "published_specification"
+    },
+    "armor-company": {
+      "id": "armor-company",
+      "label": "Main Battle Tank Company",
+      "domain": "ground",
+      "role": "maneuver",
+      "category": "ground_maneuver",
+      "description": "Armor maneuver element with main battle tanks, counter-armor capability",
+      "rcs_class": "medium",
+      "readiness_default": "ready",
+      "supply_default": 0.75,
+      "doctrine_tags": ["maneuver", "armor", "counter_armor", "breakthrough"],
+      "sensors": [
+        { "id": "thermal_sight", "label": "Gunner's thermal sight", "type": "ir", "class": "fire_control", "detection_range_class": "long_range", "emcon_capable": true },
+        { "id": "rangefinder", "label": "Laser rangefinder", "type": "laser", "class": "fire_control", "detection_range_class": "long_range", "emcon_capable": true },
+        { "id": "commander_optics", "label": "Commander's optics", "type": "optics", "class": "observation", "detection_range_class": "medium_range", "emcon_capable": true }
       ],
-      "source_notes": "Generic military structure reference, open-source doctrine",
-      "confidence": "low-medium",
-      "approximation_level": "generic battalion structure"
+      "weapons": [
+        { "id": "main_gun", "label": "125mm smoothbore main gun", "type": "gun", "class": "gun", "range_class": "long_range", "quantity_typical": 3 },
+        { "id": "coax_mg", "label": "Coaxial machine gun", "type": "gun", "class": "machine_gun", "range_class": "medium_range", "quantity_typical": 3 },
+        { "id": "atgm", "label": "Anti-tank guided missile", "type": "missile", "class": "atgm", "range_class": "long_range", "quantity_typical": 3 }
+      ],
+      "magazines": [{ "mount": "tank_storage", "stock": 200 }],
+      "source_notes": "Military organizational standards, published tank specifications",
+      "confidence": 0.85,
+      "approximation_level": "typical_regional"
+    },
+    "support-logistics": {
+      "id": "support-logistics",
+      "label": "Logistics Support Platoon",
+      "domain": "ground",
+      "role": "support",
+      "category": "ground_maneuver",
+      "description": "Support and logistics element for ammunition, fuel, and medical supply",
+      "rcs_class": "medium",
+      "readiness_default": "ready",
+      "supply_default": 0.8,
+      "doctrine_tags": ["support", "logistics", "supply", "medical"],
+      "sensors": [],
+      "weapons": [
+        { "id": "defensive_mg", "label": "Defensive machine gun", "type": "gun", "class": "machine_gun", "range_class": "short_range", "quantity_typical": 1 }
+      ],
+      "magazines": [{ "mount": "truck_cargo", "stock": 500 }],
+      "source_notes": "Military organizational standards",
+      "confidence": 0.8,
+      "approximation_level": "published_specification"
+    },
+    "mlrs-battery": {
+      "id": "mlrs-battery",
+      "label": "MLRS Battery",
+      "domain": "ground",
+      "role": "fire_support",
+      "category": "ground_maneuver",
+      "description": "Multiple Launch Rocket System battery for deep fire support and counter-fire",
+      "rcs_class": "medium",
+      "readiness_default": "ready",
+      "supply_default": 0.75,
+      "doctrine_tags": ["fire_support", "rocket_artillery", "deep_strike"],
+      "sensors": [
+        { "id": "fc_computer", "label": "Fire-control computer", "type": "computer", "class": "fire_control", "detection_range_class": "long_range", "emcon_capable": true },
+        { "id": "gps_nav", "label": "GPS/INS navigation", "type": "gps", "class": "navigation", "detection_range_class": "long_range", "emcon_capable": false }
+      ],
+      "weapons": [
+        { "id": "mlrs_unguided", "label": "MLRS unguided rocket", "type": "rocket", "class": "rocket", "range_class": "long_range", "quantity_typical": 12 },
+        { "id": "gmlrs", "label": "GMLRS guided missile", "type": "missile", "class": "guided_missile", "range_class": "long_range", "quantity_typical": 6 }
+      ],
+      "magazines": [{ "mount": "pod_launcher", "stock": 36 }],
+      "source_notes": "SIPRI, published system specifications",
+      "confidence": 0.85,
+      "approximation_level": "published_specification"
     }
   }
 }

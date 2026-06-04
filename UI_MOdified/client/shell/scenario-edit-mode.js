@@ -1269,6 +1269,37 @@
         host.appendChild(card);
     }
 
+    /* ---- Slice 2A: Objectives card (Step 5) ------------------------------ */
+    function renderObjectivesCard(host) {
+        // Initialize objectives if not present
+        if (!Array.isArray(_draft.objectives)) {
+            _draft.objectives = [];
+        }
+
+        // Set up shared state for the objectives editor module
+        if (typeof window !== 'undefined') {
+            window._RMOOZEditModeObjectives = {
+                shared: {
+                    _draft: _draft,
+                    _markDirty: _markDirty
+                }
+            };
+        }
+
+        // Call the module's render function
+        if (window.RMOOZEditModeObjectives && typeof window.RMOOZEditModeObjectives.renderObjectivesCard === 'function') {
+            window.RMOOZEditModeObjectives.renderObjectivesCard(host);
+        } else {
+            // Fallback if module not loaded
+            host.appendChild(el('div', { class: 'builder-card sw-card' }, [
+                el('div', { class: 'builder-card-header' }, [
+                    el('span', { class: 'builder-card-title', text: 'Objectives' })
+                ]),
+                el('div', { class: 'sw-error', text: 'Objectives editor module not loaded. Check console for errors.' })
+            ]));
+        }
+    }
+
     /* ---- Slice 2C: Time & Duration card (Step 6) ------------------------- */
     // The 6-step Sahil-style default. Mirrors the playbook walkthrough.
     function synthesizeDefaultPhaseTable() {
@@ -1427,6 +1458,8 @@
           render: function (h) { renderSidesCard(h); } },
         { id: 'posture',  title_en: 'Posture',             title_ar: 'الموقف',
           render: function (h) { renderPostureCard(h); } },
+        { id: 'objectives', title_en: 'Objectives',        title_ar: 'الأهداف',
+          render: function (h) { renderObjectivesCard(h); } },
         { id: 'doctrine', title_en: 'Doctrine / ROE',      title_ar: 'العقيدة / قواعد الاشتباك', gap: true,
           render: function (h) { renderPlaceholderCard(h, {
             title: 'Doctrine / ROE / WRA',

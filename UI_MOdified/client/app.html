@@ -4989,6 +4989,7 @@
          Edits stay in-memory; commit/journal boundary untouched. -->
     <script src="shell/scenario-authoring-schema.js?v=1"></script>
     <script src="shell/scenario-edit-mode.js?v=7"></script>
+    <script src="shell/objectives-editor-step.js?v=1"></script>
     <style>
         .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
@@ -5335,6 +5336,24 @@
         .oep-source {
             font-size: 11px; color: #8d949e; margin-top: 2px;
         }
+
+        /* Slice 2A — Objectives Editor (Step 5) */
+        .sw-objectives-container { display: flex; gap: 12px; padding: 8px; min-height: 300px; }
+        .sw-objectives-list-pane { flex: 0 0 220px; border-right: 1px solid #2a2f37; overflow-y: auto; max-height: 60vh; }
+        .sw-objectives-detail-pane { flex: 1 1 auto; padding: 8px; min-width: 0; overflow-y: auto; max-height: 60vh; background: #1a1d22; border-radius: 4px; }
+        .sw-objectives-list { display: flex; flex-direction: column; gap: 6px; }
+        .sw-objective-item { display: flex; flex-direction: column; gap: 3px; padding: 8px; border: 1px solid #3a3f47; border-radius: 4px; background: #1c1f24; cursor: pointer; user-select: none; }
+        .sw-objective-item:hover { background: #22324d; border-color: #4a4f57; }
+        .sw-objective-item--selected { background: #22324d; border-color: #2f6fed; box-shadow: 0 0 0 2px rgba(47, 111, 237, 0.2); }
+        .sw-objective-item-id { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 600; color: #bcd2ff; }
+        .sw-objective-item-name { font-size: 12px; color: #e8eaed; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .sw-objective-item-owner { font-size: 10px; color: #8d949e; }
+        .sw-objectives-empty { color: #8d949e; font-style: italic; padding: 14px 8px; font-size: 12px; }
+        .sw-objectives-detail-empty { color: #8d949e; font-style: italic; padding: 14px 8px; font-size: 12px; }
+        .sw-edit-textarea { width: 100%; box-sizing: border-box; font: inherit; padding: 3px 6px; border: 1px solid #5a6270; border-radius: 4px; background: #1f242b; color: #e8eaed; resize: vertical; min-height: 60px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+        .sw-field-label-with-hint { display: flex; align-items: center; gap: 4px; }
+        .sw-meta-hint--required { font-size: 10px; color: #d6332e; font-weight: 600; }
+        .sw-field-display { padding: 3px 6px; background: #1f242b; border: 1px solid #3a3f47; border-radius: 4px; color: #8d949e; font-size: 12px; }
     </style>
     <script>
         // Mount Edit Mode once the DOM (workspace panel) is ready.

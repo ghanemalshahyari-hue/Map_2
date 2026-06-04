@@ -36,7 +36,12 @@
             medium_sam:      { max_range_nm: 30, pk: 0.65, salvo: 2, autonomous: false, vs: ['air'] },
             point_defense:   { max_range_nm: 5,  pk: 0.45, salvo: 1, autonomous: true,  vs: ['air','missile'] },
             anti_ship:       { max_range_nm: 75, pk: 0.55, salvo: 2, autonomous: false, vs: ['sea'] },
-            gun:             { max_range_nm: 12, pk: 0.30, salvo: 3, autonomous: true,  vs: ['ground','sea'] }
+            gun:             { max_range_nm: 12, pk: 0.30, salvo: 3, autonomous: true,  vs: ['ground','sea'] },
+            // Phase 5D-1: Soviet air-defense variant weapon classes
+            S300_MISSILE:    { max_range_nm: 89, pk: 0.70, salvo: 2, autonomous: false, vs: ['air'] },  // ~165 km
+            S75_MISSILE:     { max_range_nm: 19, pk: 0.60, salvo: 2, autonomous: false, vs: ['air'] },  // ~35 km
+            ZSU_GUN:         { max_range_nm: 1.9, pk: 0.50, salvo: 4, autonomous: true,  vs: ['air','missile'] },  // ~3.5 km
+            AAA_GUN:         { max_range_nm: 1.3, pk: 0.45, salvo: 3, autonomous: true,  vs: ['air','missile'] }   // ~2.5 km
         }
     };
     var RANGE_MODE_FACTOR = { max: 1.0, '75pct': 0.75, nez: 0.5 };

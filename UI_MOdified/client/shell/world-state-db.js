@@ -58,6 +58,38 @@
         generic: {
             rcs_class: 'medium', readiness: 'ready', supply: 0.8, doctrine_tags: [],
             sensors: [], weapons: [], magazines: []
+        },
+        // Phase 5D-1: Soviet air-defense platform variants
+        sam_s300: {
+            rcs_class: 'large', readiness: 'ready', supply: 0.9, doctrine_tags: ['IADS', 'SAM', 'strategic', 'standoff'],
+            sensors: [{ id: 'sr', type: 'radar', class: 'S300_SEARCH_RADAR', emcon: 'active' },
+                      { id: 'fc', type: 'radar', subtype: 'fire_control', class: 'fire_control', emcon: 'active', channels: 2 }],
+            weapons: [{ id: 'sam', class: 'S300_MISSILE', mount: 'm1', wra: { mode: 'max', salvo: 2 } }],
+            magazines: [{ mount: 'm1', stock: { S300_MISSILE: 48 } }]
+        },
+        sam_s75: {
+            rcs_class: 'medium', readiness: 'ready', supply: 0.8, doctrine_tags: ['IADS', 'SAM', 'tactical', 'standoff'],
+            sensors: [{ id: 'sr', type: 'radar', class: 'S75_RADAR', emcon: 'active' },
+                      { id: 'fc', type: 'radar', subtype: 'fire_control', class: 'fire_control', emcon: 'active', channels: 1 }],
+            weapons: [{ id: 'sam', class: 'S75_MISSILE', mount: 'm1', wra: { mode: 'max', salvo: 2 } }],
+            magazines: [{ mount: 'm1', stock: { S75_MISSILE: 32 } }]
+        },
+        aaa_zsu: {
+            rcs_class: 'small', readiness: 'ready', supply: 0.7, doctrine_tags: ['AAA', 'point_defense', 'autonomous'],
+            sensors: [{ id: 'sr', type: 'radar', class: 'ZSU_RADAR', emcon: 'active' }],
+            weapons: [{ id: 'gun', class: 'ZSU_GUN', mount: 'm1', wra: { mode: 'max', salvo: 1 } }],
+            magazines: [{ mount: 'm1', stock: { ZSU_GUN: 4000 } }]
+        },
+        aaa_23mm: {
+            rcs_class: 'small', readiness: 'ready', supply: 0.7, doctrine_tags: ['AAA', 'point_defense', 'optical'],
+            sensors: [{ id: 'opt', type: 'optical', class: 'visual', emcon: 'always' }],
+            weapons: [{ id: 'gun', class: 'AAA_GUN', mount: 'm1', wra: { mode: 'max', salvo: 1 } }],
+            magazines: [{ mount: 'm1', stock: { AAA_GUN: 2000 } }]
+        },
+        radar_p37: {
+            rcs_class: 'large', readiness: 'ready', supply: 0.95, doctrine_tags: ['radar', 'early_warning', 'strategic', 'no_weapons'],
+            sensors: [{ id: 'ewr', type: 'radar', class: 'P37_RADAR', emcon: 'active' }],
+            weapons: [], magazines: []
         }
     };
 
@@ -65,6 +97,13 @@
     function classifyKind(u) {
         var role = (u && u.role || '').toLowerCase();
         var dom = (u && u.domain) || '';
+        // Phase 5D-1: Soviet SAM/AAA variants (more specific than generic air_defense)
+        if (/s-?300|s300|s-300/i.test(role)) return 'sam_s300';
+        if (/s-?75|s75|dvina|volkhov/i.test(role)) return 'sam_s75';
+        if (/zsu|shilka/i.test(role)) return 'aaa_zsu';
+        if (/23\s*mm|gun.*aaa|aaa.*gun/i.test(role)) return 'aaa_23mm';
+        if (/p-?37|flatface|barlock/i.test(role)) return 'radar_p37';
+        // Fallback to generic air-defense for unknown AD systems
         if (/air.?def|sam|\bad\b|s-?\d{3}|missile.?def/.test(role)) return 'air_defense';
         // strategic / fixed installations first, so "naval_base" isn't caught by the naval keyword.
         if (dom === 'strategic' || /base|airfield|depot|\bhq\b|command|radar|ewr|sigint/.test(role)) return 'ew_site';

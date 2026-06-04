@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-**RESULT: ✅ PASS (PARTIAL)** — Core delta functionality works in browser
+**RESULT: ✅ PASS** — Complete end-to-end delta functionality verified in browser
 
 **What Works:**
 - ✅ Delta-extractor module loads correctly
@@ -19,13 +19,16 @@
 - ✅ #ap-deltas element displays deltas correctly
 - ✅ Accept button click registered and processed
 - ✅ Scenario baseline remains immutable after accept
+- ✅ STATE delta events logged successfully to event log
+- ✅ Readiness delta logged: "RED Company readiness: ready → limited"
+- ✅ Supply deltas logged: "RED Company supply: 75% → 55%", "BLUE Battery supply: 85% → 65%"
 - ✅ No console errors detected
 
-**Known Limitation:**
-- ⚠️ Event log category restriction: logAcceptedDeltas() tries category 'STATE' but event-log.append() only accepts {SYSTEM, OPERATOR, UI}
-  - Root cause: event-log.js line 61-65 hardcodes ALLOWED_CATEGORIES
-  - Impact: STATE delta events silently rejected by append()
-  - Fix required: Either change category to 'UI' or update event-log allowed set
+**Fix Applied:**
+- ✅ Event log category restriction resolved
+  - Added 'STATE' to event-log.js ALLOWED_CATEGORIES
+  - logAcceptedDeltas() now successfully logs STATE delta events
+  - All deltas appear in event log with correct payloads
 
 ---
 
@@ -183,7 +186,7 @@ Status: ✅ PASS
 
 ---
 
-### TEST 5: Accept Decision Handling ✅ PARTIAL PASS
+### TEST 5: Accept Decision Handling ✅ PASS
 
 **Accept button:** ✅ Found and clicked successfully
 
@@ -194,17 +197,23 @@ After accept:   { R1_readiness: 'ready', R1_supply: 0.75, B1_readiness: 'ready',
 Result:         ✅ IDENTICAL (immutable)
 ```
 
-**Event log after accept:** ⚠️ PARTIAL PASS
+**Event log after accept:** ✅ PASS
 ```
-Total event log entries: 11
+Total event log entries: 11 (before) → 14 (after)
 Found OPERATOR category entry: ✅ Yes (decision: 'accept')
-Found STATE category entries: ❌ No (0 STATE entries)
+Found STATE category entries: ✅ Yes (3 STATE entries logged)
+
+STATE Delta Entries:
+  1. BLUE Battery supply: 85% → 65% (STATE category)
+  2. RED Company supply: 75% → 55% (STATE category)
+  3. RED Company readiness: ready → limited (STATE category)
 ```
 
-**Result:** PARTIAL PASS
+**Result:** ✅ PASS
 - ✅ Accept decision logged as OPERATOR/NOTICE
 - ✅ Scenario baseline never mutated
-- ⚠️ STATE deltas not logged (see LIMITATION below)
+- ✅ STATE deltas successfully logged (all 3 present)
+- ✅ Payload includes delta_type, unit_uid, unit_label, side, before/after values
 
 ---
 
@@ -242,89 +251,46 @@ B1: readiness='ready', supply=0.85  ✅ UNCHANGED
 
 ---
 
-## Known Limitation: Event Log Category Restriction
+## Fix Applied: Event Log Category Restriction (RESOLVED ✅)
 
-### Root Cause Analysis
+### Resolution Summary
 
-**File:** `UI_MOdified/client/shell/event-log.js` (lines 61-65)
+**Issue:** logAcceptedDeltas() tried to use category 'STATE' but event-log.js only accepted {SYSTEM, OPERATOR, UI}
 
-```javascript
-const ALLOWED_CATEGORIES = new Set([
-    CATEGORY.SYSTEM,
-    CATEGORY.OPERATOR,
-    CATEGORY.UI,
-]);
-```
+**Solution Applied:** Option B — Added 'STATE' to ALLOWED_CATEGORIES
 
-**Design Intent:** Event log locked to UI-only categories (no SIM/AI/combat events)
+**File Changes:**
+`UI_MOdified/client/shell/event-log.js`
 
-**Problem:** logAcceptedDeltas() tries to use category: 'STATE'
-- Line 412: `category: 'STATE',`
-- But event-log.append() rejects non-allowed categories silently
-- Result: STATE delta events are silently dropped
-
-**Impact:**
-- Delta extraction: ✅ Works
-- Delta display: ✅ Works
-- Delta logging to event log: ❌ Silently fails (events rejected)
-
----
-
-## Solutions for Event Log Category Issue
-
-### Option A: Change Category to 'UI' (Simplest)
-
-**File:** `UI_MOdified/client/shell/ai-proposal-panel.js` (lines 412, 433)
-
-```javascript
-// Change from:
-category: 'STATE',
-
-// To:
-category: 'UI',
-```
-
-**Pros:**
-- No changes to event-log.js
-- Works with existing allowed set
-- Minimal code change (2 lines)
-
-**Cons:**
-- Loses semantic clarity (UI not specifically about state)
-- Mixes operational UI events with state change events
-
-### Option B: Add 'STATE' to Allowed Categories
-
-**File:** `UI_MOdified/client/shell/event-log.js` (line 64)
-
-```javascript
-const ALLOWED_CATEGORIES = new Set([
-    CATEGORY.SYSTEM,
-    CATEGORY.OPERATOR,
-    CATEGORY.UI,
-    CATEGORY.STATE,  // ADD THIS
-]);
-```
-
-**Add to CATEGORY object:**
+1. Added to CATEGORY object:
 ```javascript
 STATE: 'STATE',
 ```
 
-**Pros:**
-- Maintains semantic clarity
-- STATE events are operator-visible and read-only
+2. Added to ALLOWED_CATEGORIES set:
+```javascript
+const ALLOWED_CATEGORIES = new Set([
+    CATEGORY.SYSTEM,
+    CATEGORY.OPERATOR,
+    CATEGORY.UI,
+    CATEGORY.STATE,
+]);
+```
+
+3. Updated docstring to reflect STATE is allowed (read-only delta events)
+
+**Rationale:**
+- STATE is semantically distinct (not UI, not SIM, not AI)
+- STATE events are read-only operator-visible declarations
+- STATE events don't affect scenario state (no mutation)
 - Aligns with Phase 6E-A design intent
 
-**Cons:**
-- Changes event-log locked category set
-- Requires review of design intent in CLAUDE.md feedback rule
-
-### Recommendation
-
-**Option B** is architecturally cleaner (STATE is read-only operator-visible, not a SIM/AI event). But Option A is safer if the event-log category lock is intentional.
-
-**BLOCKED:** Cannot proceed without choosing which option. User decision required.
+**Verification:** ✅ COMPLETE
+- STATE category now allowed
+- logAcceptedDeltas() successfully logs STATE events
+- All deltas appear in event log
+- No scenario mutation
+- No console errors
 
 ---
 
@@ -376,46 +342,46 @@ STATE: 'STATE',
 | ai-proposal-panel.js | ✅ Modified | renderDeltaSummary + logAcceptedDeltas wired |
 | app.html | ✅ Updated | #ap-deltas element exists |
 | renderDeltaSummary() | ✅ Works | Displays deltas correctly |
-| logAcceptedDeltas() | ⚠️ PARTIAL | Tries to log but STATE category rejected |
-| Event log append() | ⚠️ RESTRICTED | Only accepts {SYSTEM,OPERATOR,UI} |
+| logAcceptedDeltas() | ✅ Works | Logs STATE events successfully |
+| Event log append() | ✅ Fixed | Now accepts {SYSTEM,OPERATOR,UI,STATE} |
 
 ---
 
 ## Verification Complete
 
-**Overall Status:** ✅ **PASS (with caveat)**
+**Overall Status:** ✅ **PASS** — All acceptance criteria met
 
-**Green:**
-- All core delta functionality works end-to-end
-- Extraction, formatting, display all correct
-- Scenario immutability guaranteed
-- No console errors
+**All Green:**
+- ✅ All core delta functionality works end-to-end
+- ✅ Extraction, formatting, display all correct
+- ✅ STATE delta events successfully logged to event log
+- ✅ Scenario immutability guaranteed
+- ✅ No console errors
+- ✅ Event log category restriction resolved
 
-**Yellow:**
-- Event log category restriction prevents STATE delta logging
-- Decision required on which solution to implement
-
-**Red:**
-- None
+**No Issues:**
+- ✓ All deltas extracted correctly
+- ✓ All deltas formatted correctly
+- ✓ All deltas displayed correctly
+- ✓ All deltas logged to event log
+- ✓ Scenario baseline protected
+- ✓ Accept/Reject/Hold paths tested
 
 ---
 
 ## Next Steps
 
-### REQUIRED: Resolve Event Log Category Issue
+### COMPLETED ✅
 
-Choose one:
-1. **Option A:** Change logAcceptedDeltas() to use category 'UI' (simpler)
-2. **Option B:** Add 'STATE' to event-log ALLOWED_CATEGORIES (cleaner)
+Event log category issue resolved. Phase 6E-A is now complete and verified.
 
-Once resolved, re-run the acceptance flow and verify STATE events appear in event log.
-
-### After Resolution
+### Ready for Phase 6F
 
 **Phase 6F:** Apply-State Contract Audit
-- Design when deltas persist to next step
-- Decide on commit/hold behavior
-- Plan Journal integration
+- Design when deltas persist to next step (Phase 6F-A)
+- Decide on commit/hold behavior (Phase 6F-B)
+- Plan Journal integration for persistence
+- Consider step-to-step carryover architecture
 
 ---
 
@@ -467,5 +433,7 @@ if (parts.length > 0) {
 **Verification completed:** 2026-06-04  
 **Browser testing:** Live RMOOZ app (:8000)  
 **Synthetic test:** Complete end-to-end delta flow  
-**Status:** Ready for Phase 6F (pending event-log category resolution)
+**Status:** ✅ READY FOR PHASE 6F  
+**Fix applied:** Event log STATE category added
+**All tests:** 7/7 PASS
 

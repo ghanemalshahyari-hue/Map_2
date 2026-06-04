@@ -104,6 +104,9 @@
             // operator/sustainment slots (null for W3; filled by DB-Lite/WS3)
             readiness: u.readiness || null,
             supply: num(u.supply),
+            // PR-DOCTRINE-A: operator-declared engagement posture (read-only echo;
+            // null for W3 → doctrine evidence falls back to 'active'). Evidence source only.
+            posture: u.posture || null,
             // CMO-style COMPONENT shape — empty for W3, populated by PR-DB1
             sensors: arr(u.sensors),
             weapons: arr(u.weapons),
@@ -121,12 +124,24 @@
         var s = obj(steps[step]);
         var sPrev = obj(steps[Math.max(0, step - 1)]);
         var w3 = scn.schema_variant === 'w3-rich';
+        // PR de-W3 gate: decision-support eligibility is CAPABILITY-based, not
+        // schema-label-based. A scenario can drive the evidence layers (OBJ-A/B,
+        // readiness, doctrine, contacts, Why-Not) if it carries the minimum data
+        // they read — an objective + at least one unit. schema_variant no longer
+        // gates this, so RMOOZ-native scenarios qualify too. W3 keeps
+        // schema_variant 'w3-rich' AND has objectives+units, so it stays eligible
+        // and every downstream derivation is byte-for-byte unchanged. Scenarios
+        // lacking objectives/units stay degraded → contributors return null →
+        // neutral / evidence-gap state (no fabrication, no new thresholds).
+        var hasObjective = !!(obj(scn.obj).name || obj(scn.obj).coord) || arr(scn.objectives).length > 0;
+        var hasUnits = arr(scn.red_units).length > 0 || arr(scn.blue_units_initial).length > 0 || arr(scn.units).length > 0;
+        var decisionCapable = w3 || (hasObjective && hasUnits);
         var curEl = num(s.elapsed_hours), prevEl = num(sPrev.elapsed_hours);
 
         var ws = {
             ws_version: WS_VERSION,
             source_variant: scn.schema_variant || null,
-            degraded: !w3,                         // honest: non-W3 = positions/objectives/phase only
+            degraded: !decisionCapable,            // capability-based (objective + units), not schema-label
             meta: {
                 scenario_id: scn.scenario_id || null,
                 scenario_label: scn.scenario_label || scn.name || null,
@@ -167,6 +182,10 @@
                 ew_effect: s.ew_effect_baseline || null,
                 logistics_state: s.logistics_state_baseline || null
             },
+            // PR-DOCTRINE-A: side/scenario doctrine echo (WCS/EMCON/ROE/engage_ambiguous).
+            // {} for W3 (no authored doctrine) → side-level doctrine evidence uses defaults.
+            // Read-only projection; the single sanctioned read path for doctrine evidence.
+            doctrine: clone(obj(scn.doctrine)),
             decisions: [],                         // seam — appended by applyDecision / PR-WS3
             derived: {
                 objective_status: s.objective_status_baseline || null,
@@ -202,7 +221,7 @@
                 uid: m.id, side: m.side || null, role: m.type || null, domain: 'strategic',
                 echelon: null, sidc: m.sidc || null, label: m.name_ar || m.name_en || m.id,
                 position: m.coord || null, strength: null, status: null, suppressed_pct: null,
-                readiness: null, supply: null, sensors: [], weapons: [], magazines: [],
+                readiness: null, supply: null, posture: null, sensors: [], weapons: [], magazines: [],
                 kinematics: { prev: null, course: [], heading: null, speed_kn: null },
                 off_map: true
             });
@@ -676,7 +695,136 @@
             });
         }
 
+        // PR-DOCTRINE-A: doctrine evidence (classification + read + defaults).
+        // SOURCE layer only — no ROE/WRA/targeting/engagement behavior, no consumption.
+        // Contract: DOCTRINE-A-SPECIFICATION.md. Records ride this same flat ledger.
+        var doctrineRecords = computeDoctrineEvidence(ws, objId, step);
+        for (var dri = 0; dri < doctrineRecords.length; dri++) result.push(doctrineRecords[dri]);
+
         return result.length ? result : null;
+    }
+
+    // PR-DOCTRINE-A: Doctrine evidence contributor — NOT a behavior engine.
+    // Classifies + reads + defaults doctrine into evidence records (the 9 types in
+    // DOCTRINE-A-SPECIFICATION.md). Pure: no mutation, no scoring, no decisions, no
+    // consumption. Unit-level aggregates computed over BLUE units (the operator's
+    // force, consistent with READINESS-A). Confidence = provenance certainty; a
+    // hard-coded default for an absent scenario field drops confidence to 0.5 and
+    // tags the source "(default — no scenario doctrine)".
+    var DOCTRINE_POSTURES = ['active', 'defensive', 'hold', 'retire'];
+    var DOCTRINE_WCS_DEFAULT = { air: 'FREE', surface: 'FREE', subsurface: 'HOLD' };
+
+    function computeDoctrineEvidence(ws, objId, step) {
+        var result = [];
+        var units = arr(ws && ws.units);
+        var blueUnits = units.filter(function (u) { return u.side === 'BLUE' && !u.off_map; });
+        var doctrine = obj(ws && ws.doctrine);
+        var majorityPosture = 'active';
+
+        function rec(type, value, source, confidence) {
+            return { objective_id: objId, evidence_type: type, value: value,
+                     source: source, confidence: confidence, step_index: step };
+        }
+
+        // Type 1: unit_doctrine_tags — unique tags across BLUE units (from DB1 enrichment).
+        if (blueUnits.length) {
+            var tagSet = {};
+            blueUnits.forEach(function (u) {
+                arr(u.doctrine_tags).forEach(function (t) { if (t) tagSet[t] = true; });
+            });
+            var tags = Object.keys(tagSet).sort();
+            result.push(rec('unit_doctrine_tags', tags, 'ws.units[].doctrine_tags',
+                            tags.length ? 0.95 : 0.5));
+        }
+
+        // Type 2: unit_echelon_level — dominant (most common) echelon among BLUE units.
+        if (blueUnits.length) {
+            var ech = {};
+            blueUnits.forEach(function (u) { if (u.echelon) ech[u.echelon] = (ech[u.echelon] || 0) + 1; });
+            var echKeys = Object.keys(ech);
+            if (echKeys.length) {
+                echKeys.sort(function (a, b) { return ech[b] - ech[a] || (a < b ? -1 : 1); });
+                result.push(rec('unit_echelon_level', echKeys[0], 'ws.units[].echelon', 0.95));
+            } else {
+                result.push(rec('unit_echelon_level', null, 'ws.units[].echelon', 0.5));
+            }
+        }
+
+        // Type 3: unit_posture_state — majority posture (unauthored/null → 'active').
+        if (blueUnits.length) {
+            var pc = {};
+            blueUnits.forEach(function (u) {
+                var p = (DOCTRINE_POSTURES.indexOf(u.posture) >= 0) ? u.posture : 'active';
+                pc[p] = (pc[p] || 0) + 1;
+            });
+            var pk = Object.keys(pc);
+            pk.sort(function (a, b) { return pc[b] - pc[a] || (a < b ? -1 : 1); });
+            majorityPosture = pk[0];
+            var anyAuthored = blueUnits.some(function (u) { return DOCTRINE_POSTURES.indexOf(u.posture) >= 0; });
+            result.push(rec('unit_posture_state', majorityPosture, 'ws.units[].posture',
+                            anyAuthored ? 0.85 : 0.5));
+        }
+
+        // Type 4: side_weapons_control_status — per-domain ROE state (default liberal).
+        var wcsAuthored = doctrine.weapon_control_status && typeof doctrine.weapon_control_status === 'object';
+        var wcsSrc = doctrine.weapon_control_status || {};
+        var wcs = {
+            air: wcsSrc.air || DOCTRINE_WCS_DEFAULT.air,
+            surface: wcsSrc.surface || DOCTRINE_WCS_DEFAULT.surface,
+            subsurface: wcsSrc.subsurface || DOCTRINE_WCS_DEFAULT.subsurface
+        };
+        result.push(rec('side_weapons_control_status', wcs,
+                        wcsAuthored ? 'ws.doctrine.weapon_control_status'
+                                    : 'ws.doctrine.weapon_control_status (default — no scenario doctrine)',
+                        wcsAuthored ? 0.95 : 0.5));
+
+        // Type 5: side_emcon_status — electronics control state (default 'active').
+        var emconAuthored = typeof doctrine.emcon === 'string';
+        var emconVal = emconAuthored ? doctrine.emcon : 'active';
+        result.push(rec('side_emcon_status', emconVal,
+                        emconAuthored ? 'ws.doctrine.emcon'
+                                      : 'ws.doctrine.emcon (default — no scenario doctrine)',
+                        emconAuthored ? 0.9 : 0.5));
+
+        // Type 6: side_engage_ambiguous — engage unidentified contacts? (default false, conservative).
+        var ambAuthored = typeof doctrine.engage_ambiguous === 'boolean';
+        result.push(rec('side_engage_ambiguous', ambAuthored ? doctrine.engage_ambiguous : false,
+                        ambAuthored ? 'ws.doctrine.engage_ambiguous'
+                                    : 'ws.doctrine.engage_ambiguous (default — no scenario doctrine)',
+                        ambAuthored ? 0.95 : 0.5));
+
+        // Type 7: unit_doctrine_inheritance_scope — inferred; W3 has no mission/override → 'side'.
+        if (blueUnits.length) {
+            result.push(rec('unit_doctrine_inheritance_scope', 'side',
+                            'inferred (role/echelon; no mission/override fields)', 0.8));
+        }
+
+        // Type 8: objective_doctrine_priority — authored or CMO default (first objective = primary).
+        var firstObj = obj(arr(ws && ws.objectives)[0]);
+        var priorityAuthored = typeof firstObj.doctrine_priority === 'string';
+        result.push(rec('objective_doctrine_priority',
+                        priorityAuthored ? firstObj.doctrine_priority : 'primary',
+                        priorityAuthored ? 'ws.objectives[].doctrine_priority'
+                                         : 'objectives[].doctrine_priority (CMO default — first objective)',
+                        0.7));
+
+        // Type 9: doctrine_compliance_summary — audit trail. No enforcement: every unit is
+        // "compliant" (DOCTRINE-A does not judge); constraints list = active non-default rules.
+        if (blueUnits.length) {
+            var constraints = [];
+            if (wcs.air !== 'FREE') constraints.push('WCS_air_' + wcs.air);
+            if (wcs.surface !== 'FREE') constraints.push('WCS_surface_' + wcs.surface);
+            if (wcs.subsurface !== 'FREE') constraints.push('WCS_subsurface_' + wcs.subsurface);
+            if (emconVal !== 'active') constraints.push('EMCON_' + emconVal);
+            if (majorityPosture === 'hold') constraints.push('POSTURE_hold');
+            result.push(rec('doctrine_compliance_summary', {
+                compliant_unit_count: blueUnits.length,
+                non_compliant_unit_count: 0,
+                doctrine_constraints_active: constraints
+            }, 'aggregate (doctrine_tags + ws.doctrine)', 0.75));
+        }
+
+        return result;
     }
 
     // Helper: extract evidence value by type from evidence ledger.
@@ -833,6 +981,9 @@
         // PR-OBJ-A: objective evidence ledger (flat array of evidence records).
         // Aggregates balance, BLS, engagements, contacts into auditable evidence.
         computeObjectiveEvidence: computeObjectiveEvidence,
+        // PR-DOCTRINE-A: doctrine evidence contributor (9 types). SOURCE layer only —
+        // classification + read + defaults, no behavior. See DOCTRINE-A-SPECIFICATION.md.
+        computeDoctrineEvidence: computeDoctrineEvidence,
         BLS_RADIUS_NM: BLS_RADIUS_NM,
         DERIVATIONS: DERIVATIONS,
         // exposed for tests / future rule modules

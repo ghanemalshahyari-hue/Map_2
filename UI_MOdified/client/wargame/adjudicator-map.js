@@ -151,6 +151,7 @@
     let scenarioRef    = null;
     let blsCoordByName = {};     // { 'BLS-1': [lon,lat] }
     let objCoord       = null;   // [lon, lat]
+    let objName        = null;   // PR3: current scenario's objective label (legend + fallbacks)
     let objDepthKm     = 95;     // OBJ NASSER nominal depth from coast
 
     // ── km / lon-lat helpers (mirror wargame.py offset_lonlat / lerp) ─
@@ -1794,6 +1795,7 @@
             if (b && b.name && Array.isArray(b.coord)) blsCoordByName[b.name] = b.coord;
         }
         objCoord   = (scenario.obj && Array.isArray(scenario.obj.coord)) ? scenario.obj.coord : null;
+        objName    = (scenario.obj && (scenario.obj.name || scenario.obj.id)) || null;   // PR3: scenario-derived label
         objDepthKm = (scenario.obj && Number.isFinite(scenario.obj.target_depth_km))
                      ? scenario.obj.target_depth_km : 95;
 
@@ -1803,7 +1805,14 @@
         // Blue brigade rear and the two battalion flanks. Same source as
         // the Python renders (nato-map-layers.geojson, autoFlank metadata).
         for (const ao of (scenario.ao_boundaries || [])) {
-            const polys = ao.type === 'MultiPolygon' ? ao.coordinates : [ao.coordinates];
+            // PR3: tolerate BOTH GeoJSON (type/coordinates) and the bare `coords`
+            // ring shape. Normalize to polys = [ [ring,...], ... ] for the loops
+            // below; unknown/malformed → [] (skip, never throw).
+            const polys = ao.type === 'MultiPolygon'
+                ? (Array.isArray(ao.coordinates) ? ao.coordinates : [])
+                : Array.isArray(ao.coordinates) ? [ao.coordinates]
+                : (Array.isArray(ao.coords) && Array.isArray(ao.coords[0]) && typeof ao.coords[0][0] === 'number') ? [[ao.coords]]
+                : [];
             const roleLabel = ao.role ? displayRole(ao.role) : '';
             const lengthTxt = Number.isFinite(ao.lengthKm) ? `${ao.lengthKm} km` : '';
             const pillHtml = (roleLabel || lengthTxt)
@@ -1811,6 +1820,7 @@
                 : '';
             for (const poly of polys) {
                 for (const ring of poly) {
+                    if (!Array.isArray(ring) || ring.length < 2 || !Array.isArray(ring[0])) continue;
                     const latlngs = ring.map(c => [c[1], c[0]]);
                     const line = window.L.polygon(latlngs, {
                         color: '#5da9e8',
@@ -1918,9 +1928,28 @@
         if (obj && obj.coord) {
             objMarker = window.L.marker(
                 [obj.coord[1], obj.coord[0]],
-                { icon: targetIcon(COLORS.OBJ.DORMANT, obj.name), title: obj.name },
+                { icon: targetIcon(COLORS.OBJ.DORMANT, obj.name),
+                  title: obj.name + ' — click for objective evidence (combat / readiness / doctrine)',
+                  riseOnHover: true },
             ).bindTooltip(buildObjTooltip(obj, 'DORMANT'), { permanent: false, sticky: true });
+
+            // OBJ-C: Click handler for objective evidence panel.
+            // FIX: `stepIdx` was undefined here (ReferenceError on click → panel never
+            // opened). Read the live current step from the last applied state instead.
+            objMarker.on('click', function() {
+                const _si = (lastAppliedState && Number.isFinite(lastAppliedState.step_index))
+                    ? lastAppliedState.step_index : 0;
+                document.dispatchEvent(new CustomEvent('rmooz:objective-selected', {
+                    detail: { objective: obj, objective_id: obj.id || 'objective_0', step_index: _si }
+                }));
+            });
+
             objMarker.addTo(layerGroup);
+            // OBJ-C: make the objective discoverably clickable — it opens the evidence panel.
+            try {
+                const _objEl = objMarker.getElement && objMarker.getElement();
+                if (_objEl) { _objEl.style.cursor = 'pointer'; _objEl.classList.add('rmooz-objective-clickable'); }
+            } catch (_e) { /* non-fatal */ }
 
             if (Number.isFinite(obj.radius_km) && obj.radius_km > 0) {
                 objSecurityRing = window.L.circle([obj.coord[1], obj.coord[0]], {
@@ -2213,7 +2242,7 @@
                 <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
                 <div><span style="color:${COLORS.RED_UNIT};font-weight:700;">◆</span>&nbsp;Red unit (hostile, APP-6)</div>
                 <div><span style="color:${COLORS.BLUE_UNIT};font-weight:700;">▮</span>&nbsp;Blue unit (friendly, APP-6)</div>
-                <div><span style="color:#888;">⊕</span>&nbsp;OBJ&nbsp;NASSER</div>
+                <div><span style="color:#888;">⊕</span>&nbsp;<span class="wg-adj-legend-obj">Objective</span></div>
                 <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
                 <div><span style="display:inline-block;width:18px;border-top:2px dashed ${COLORS.PIPELINE};vertical-align:middle;margin-right:6px;"></span>Pipeline (planned)</div>
                 <div><span style="display:inline-block;width:18px;border-top:3px solid ${COLORS.RED_UNIT};vertical-align:middle;margin-right:6px;"></span>Red advance</div>
@@ -2245,6 +2274,12 @@
     function showLegend() {
         legendVisible = true;
         addLegend();
+        // PR3: the legend control is cached, so refresh the scenario-derived
+        // objective label here on every (re)draw. textContent auto-escapes.
+        try {
+            const oe = document.querySelector('.wg-adj-legend-obj');
+            if (oe) oe.textContent = objName || 'Objective';
+        } catch (_) {}
         return legendVisible;
     }
 
@@ -5247,6 +5282,7 @@
         scenarioRef = null;
         blsCoordByName = {};
         objCoord = null;
+        objName = null;
         unitRegistry = {};
         lastAppliedState = null;
         lastAppliedScenario = null;

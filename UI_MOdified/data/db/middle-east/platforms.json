@@ -1,0 +1,344 @@
+{
+  "metadata": {
+    "version": "1.0.0-db1-alpha",
+    "title": "Middle East Operational Platform Catalog",
+    "description": "RMOOZ Middle East platform registry. Minimal seed: 5 representative platforms. Public/unclassified values only. Authored scenario fields take precedence.",
+    "region": "Middle East",
+    "sources": [
+      "SIPRI Military Database",
+      "Jane's Fighting Aircraft (public summaries)",
+      "Jane's Fighting Ships (public summaries)",
+      "Open-source military specifications",
+      "Academic sources on Middle East conflicts"
+    ],
+    "confidence_notice": "All values are approximations from public sources. Not intended as classified intelligence estimates.",
+    "fallback_note": "If any field is missing, DB-Lite generic defaults apply. Scenario-authored fields always take precedence."
+  },
+  "platforms": {
+    "f16c-fighter": {
+      "id": "f16c-fighter",
+      "label": "F-16C Fighting Falcon",
+      "domain": "air",
+      "role": "fighter",
+      "category": "air_unit",
+      "description": "Multirole fighter-bomber, primary air combat platform in regional air forces",
+      "rcs_class": "medium",
+      "readiness_default": "ready",
+      "supply_default": 0.8,
+      "doctrine_tags": [
+        "air_superiority",
+        "cas",
+        "strike",
+        "interdict"
+      ],
+      "sensors": [
+        {
+          "id": "apg68",
+          "label": "AN/APG-68 multifunction radar",
+          "type": "radar",
+          "class": "multifunction",
+          "detection_range_class": "long_range_3d",
+          "emcon_capable": true
+        },
+        {
+          "id": "ir",
+          "label": "Infrared search and track (IRST)",
+          "type": "ir",
+          "class": "passive_tracking",
+          "emcon_capable": true
+        }
+      ],
+      "weapons": [
+        {
+          "id": "aim120",
+          "label": "AIM-120C AMRAAM",
+          "type": "missile",
+          "class": "medium_aa_missile",
+          "range_class": "long_range",
+          "quantity_typical": 6
+        },
+        {
+          "id": "aim9",
+          "label": "AIM-9 Sidewinder",
+          "type": "missile",
+          "class": "short_aa_missile",
+          "range_class": "short_range",
+          "quantity_typical": 2
+        },
+        {
+          "id": "agm65",
+          "label": "AGM-65 Maverick",
+          "type": "missile",
+          "class": "ag_missile",
+          "range_class": "medium_range",
+          "quantity_typical": 2
+        }
+      ],
+      "magazines": [
+        {
+          "mount": "internal",
+          "stock": {
+            "medium_aa_missile": 6,
+            "short_aa_missile": 2,
+            "ag_missile": 2
+          }
+        }
+      ],
+      "source_notes": "SIPRI, Jane's Fighting Aircraft (public specs), open aviation sources",
+      "confidence": "medium",
+      "approximation_level": "class-based (not exact specs)"
+    },
+    "patriot-sam": {
+      "id": "patriot-sam",
+      "label": "Patriot Air Defense System",
+      "domain": "ground",
+      "role": "air_defense",
+      "category": "air_defense",
+      "description": "Mobile medium-range air defense system, primary regional SAM platform",
+      "rcs_class": "medium",
+      "readiness_default": "ready",
+      "supply_default": 0.75,
+      "doctrine_tags": [
+        "air_defense",
+        "iads",
+        "mobile",
+        "medium_range_sam"
+      ],
+      "sensors": [
+        {
+          "id": "an_ppy27",
+          "label": "AN/PPY-27 search radar",
+          "type": "radar",
+          "class": "3d_surveillance",
+          "detection_range_class": "long_range_3d",
+          "emcon_capable": false
+        },
+        {
+          "id": "pag68",
+          "label": "Phased array guidance radar",
+          "type": "radar",
+          "class": "fire_control",
+          "detection_range_class": "medium_range",
+          "emcon_capable": false
+        }
+      ],
+      "weapons": [
+        {
+          "id": "mim104f",
+          "label": "MIM-104F Patriot missile",
+          "type": "missile",
+          "class": "medium_sam",
+          "range_class": "medium_range",
+          "quantity_typical": 8
+        }
+      ],
+      "magazines": [
+        {
+          "mount": "tractor",
+          "label": "Trailer-mounted magazine",
+          "stock": {
+            "medium_sam": 8
+          }
+        }
+      ],
+      "source_notes": "SIPRI, Jane's Air-Launched Weapons (public summaries)",
+      "confidence": "medium-high",
+      "approximation_level": "class-based (not exact engagement formulas)"
+    },
+    "s300-sam": {
+      "id": "s300-sam",
+      "label": "S-300 Air Defense System",
+      "domain": "ground",
+      "role": "air_defense",
+      "category": "air_defense",
+      "description": "Long-range air defense system, regional strategic SAM platform",
+      "rcs_class": "large",
+      "readiness_default": "ready",
+      "supply_default": 0.7,
+      "doctrine_tags": [
+        "air_defense",
+        "iads",
+        "long_range_sam",
+        "static"
+      ],
+      "sensors": [
+        {
+          "id": "S300_search",
+          "label": "Long-range search radar",
+          "type": "radar",
+          "class": "3d_surveillance",
+          "detection_range_class": "long_range_3d",
+          "emcon_capable": false
+        },
+        {
+          "id": "S300_fire",
+          "label": "Fire control radar",
+          "type": "radar",
+          "class": "fire_control",
+          "detection_range_class": "long_range_3d",
+          "emcon_capable": false
+        }
+      ],
+      "weapons": [
+        {
+          "id": "5V55",
+          "label": "5V55 SAM",
+          "type": "missile",
+          "class": "long_range_sam",
+          "range_class": "long_range",
+          "quantity_typical": 6
+        }
+      ],
+      "magazines": [
+        {
+          "mount": "launcher",
+          "label": "Vertical launch magazine",
+          "stock": {
+            "long_range_sam": 6
+          }
+        }
+      ],
+      "source_notes": "SIPRI, open military databases (public domain specs)",
+      "confidence": "medium",
+      "approximation_level": "class-based (not exact Soviet specs)"
+    },
+    "frigate-combatant": {
+      "id": "frigate-combatant",
+      "label": "MEKO-class Frigate",
+      "domain": "sea",
+      "role": "naval_combatant",
+      "category": "naval_combatant",
+      "description": "Modern frigate-class naval combatant, primary regional naval platform",
+      "rcs_class": "large",
+      "readiness_default": "ready",
+      "supply_default": 0.75,
+      "doctrine_tags": [
+        "naval_combatant",
+        "sea_control",
+        "air_defense",
+        "antiship"
+      ],
+      "sensors": [
+        {
+          "id": "phased_array",
+          "label": "SMART-S phased array radar",
+          "type": "radar",
+          "class": "3d_surveillance",
+          "detection_range_class": "long_range_3d",
+          "emcon_capable": false
+        },
+        {
+          "id": "fire_control",
+          "label": "Fire control radar",
+          "type": "radar",
+          "class": "fire_control",
+          "detection_range_class": "medium_range",
+          "emcon_capable": false
+        }
+      ],
+      "weapons": [
+        {
+          "id": "harpoon",
+          "label": "RGM-84 Harpoon antiship missile",
+          "type": "missile",
+          "class": "antiship_missile",
+          "range_class": "medium_range",
+          "quantity_typical": 4
+        },
+        {
+          "id": "sam",
+          "label": "Medium-range SAM",
+          "type": "missile",
+          "class": "medium_sam",
+          "range_class": "medium_range",
+          "quantity_typical": 16
+        },
+        {
+          "id": "gun",
+          "label": "Deck gun",
+          "type": "gun",
+          "class": "naval_gun",
+          "caliber": "76mm",
+          "quantity_typical": 1
+        }
+      ],
+      "magazines": [
+        {
+          "mount": "launcher",
+          "label": "SAM magazine",
+          "stock": {
+            "medium_sam": 16
+          }
+        }
+      ],
+      "source_notes": "Jane's Fighting Ships (public summaries), SIPRI",
+      "confidence": "medium-high",
+      "approximation_level": "class-based (not exact naval specs)"
+    },
+    "infantry-maneuver": {
+      "id": "infantry-maneuver",
+      "label": "Infantry Battalion (Motorized)",
+      "domain": "ground",
+      "role": "ground_maneuver",
+      "category": "ground_maneuver",
+      "description": "Motorized infantry battalion, basic ground maneuver element",
+      "rcs_class": "small",
+      "readiness_default": "ready",
+      "supply_default": 0.7,
+      "doctrine_tags": [
+        "ground_maneuver",
+        "infantry",
+        "motorized",
+        "maneuver"
+      ],
+      "sensors": [
+        {
+          "id": "scout_net",
+          "label": "Organic scouts and reconnaissance",
+          "type": "visual",
+          "class": "organic_recon",
+          "detection_range_class": "short_range",
+          "emcon_capable": true
+        }
+      ],
+      "weapons": [
+        {
+          "id": "rifle",
+          "label": "Rifles and light machine guns",
+          "type": "small_arms",
+          "class": "rifle",
+          "quantity_typical": 100
+        },
+        {
+          "id": "mortar",
+          "label": "81mm mortars",
+          "type": "mortar",
+          "class": "mortar",
+          "quantity_typical": 6
+        },
+        {
+          "id": "atgm",
+          "label": "Anti-tank guided missiles",
+          "type": "missile",
+          "class": "atgm",
+          "range_class": "medium_range",
+          "quantity_typical": 4
+        }
+      ],
+      "magazines": [
+        {
+          "mount": "organic",
+          "label": "Battalion ammunition storage",
+          "stock": {
+            "rifle": 100,
+            "mortar": 6,
+            "atgm": 4
+          }
+        }
+      ],
+      "source_notes": "Generic military structure reference, open-source doctrine",
+      "confidence": "low-medium",
+      "approximation_level": "generic battalion structure"
+    }
+  }
+}

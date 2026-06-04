@@ -190,12 +190,57 @@
             riskEl.textContent = riskLabel(p.risk);
         }
 
+        // Phase 6E-A: Extract and display readiness/supply deltas
+        renderDeltaSummary(p);
+
         setHidden($('ap-fields'),   false);
         setHidden($('ap-actions'),  false);
         setHidden($('ap-sample-badge'), !isSample);
         setButtonActive(null);
         setButtonsDisabled(false);
         setStatusPill(STATUS.PENDING);
+    }
+
+    function renderDeltaSummary(p) {
+        // Display readiness/supply deltas if proposal has projected_state
+        // and delta extractor is available. Read-only display only.
+        try {
+            if (!window.AppDeltaExtractor || !p.projected_state) {
+                setHidden($('ap-deltas'), true);
+                return;
+            }
+
+            const scenario = window.RmoozScenario && window.RmoozScenario.scenario;
+            if (!scenario) {
+                setHidden($('ap-deltas'), true);
+                return;
+            }
+
+            const deltas = window.AppDeltaExtractor.extractDeltas(p.projected_state, scenario);
+            if (!window.AppDeltaExtractor.hasDelta(deltas)) {
+                setHidden($('ap-deltas'), true);
+                return;
+            }
+
+            // Build delta display text
+            const lines = [];
+            for (let i = 0; i < deltas.readiness.length; i++) {
+                const d = deltas.readiness[i];
+                lines.push(d.unit_label + ' readiness: ' + window.AppDeltaExtractor.formatReadinessDelta(d));
+            }
+            for (let i = 0; i < deltas.supply.length; i++) {
+                const d = deltas.supply[i];
+                lines.push(d.unit_label + ' supply: ' + window.AppDeltaExtractor.formatSupplyDelta(d));
+            }
+
+            if (lines.length > 0) {
+                const deltaEl = $('ap-deltas');
+                if (deltaEl) {
+                    deltaEl.textContent = lines.join(' · ');
+                    setHidden(deltaEl, false);
+                }
+            }
+        } catch (_) { /* Never throw out of render */ }
     }
 
     // Re-resolve dynamic localized cells (risk) on language change.
@@ -299,6 +344,11 @@
         setButtonActive(decision);
         setButtonsDisabled(true);
 
+        // Phase 6E-A: Log state deltas when operator accepts
+        if (decision === 'accept') {
+            logAcceptedDeltas(proposal);
+        }
+
         // Log a single OPERATOR/NOTICE row to PR-6's Event Log.
         // Category is OPERATOR (the act is the operator's), source
         // identifies this panel. No SIM/SCENARIO/AI events emitted.
@@ -334,6 +384,68 @@
                 window.AppShellAIProposalCommitBridge.commitDecision(UPPER, proposal);
             }
         } catch (_) { /* never throw out of a click handler */ }
+    }
+
+    function logAcceptedDeltas(p) {
+        // Phase 6E-A: Log state deltas as STATE category events
+        // when operator accepts a proposal. Read-only logging only.
+        // NO SCENARIO MUTATION.
+        try {
+            if (!window.AppDeltaExtractor || !p.projected_state) return;
+
+            const scenario = window.RmoozScenario && window.RmoozScenario.scenario;
+            if (!scenario) return;
+
+            const deltas = window.AppDeltaExtractor.extractDeltas(p.projected_state, scenario);
+            if (!deltas || (!deltas.readiness || !deltas.readiness.length) && (!deltas.supply || !deltas.supply.length)) {
+                return;
+            }
+
+            const log = window.AppShellEventLog;
+            if (!log || typeof log.append !== 'function') return;
+
+            // Log readiness deltas
+            for (let i = 0; i < (deltas.readiness || []).length; i++) {
+                const d = deltas.readiness[i];
+                log.append({
+                    severity:   'INFO',
+                    category:   'STATE',
+                    source:     'ai-proposal-panel',
+                    messageKey: 'elog-evt-state-readiness-delta',
+                    message:    d.unit_label + ' readiness: ' + window.AppDeltaExtractor.formatReadinessDelta(d),
+                    payload: {
+                        delta_type: 'readiness',
+                        unit_uid: d.unit_uid,
+                        unit_label: d.unit_label,
+                        side: d.side,
+                        value_before: d.value_before,
+                        value_after: d.value_after,
+                        proposal_id: p.id || null,
+                    },
+                });
+            }
+
+            // Log supply deltas
+            for (let i = 0; i < (deltas.supply || []).length; i++) {
+                const d = deltas.supply[i];
+                log.append({
+                    severity:   'INFO',
+                    category:   'STATE',
+                    source:     'ai-proposal-panel',
+                    messageKey: 'elog-evt-state-supply-delta',
+                    message:    d.unit_label + ' supply: ' + window.AppDeltaExtractor.formatSupplyDelta(d),
+                    payload: {
+                        delta_type: 'supply',
+                        unit_uid: d.unit_uid,
+                        unit_label: d.unit_label,
+                        side: d.side,
+                        value_before: d.value_before,
+                        value_after: d.value_after,
+                        proposal_id: p.id || null,
+                    },
+                });
+            }
+        } catch (_) { /* Never throw out of event logging */ }
     }
 
     // ── Wiring ─────────────────────────────────────────────────────

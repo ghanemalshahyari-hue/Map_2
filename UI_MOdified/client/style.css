@@ -774,6 +774,10 @@ details[open] > .details-summary {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
+    min-height: 0;
+    min-width: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .panel-section {
@@ -3909,6 +3913,17 @@ details[open] > .details-summary {
     gap: var(--space-3);
     margin-bottom: var(--space-4);
     direction: ltr;
+    min-height: 0;
+    min-width: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#drawing-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
 }
 
 .wargame-panel.hidden {
@@ -3957,6 +3972,8 @@ details[open] > .details-summary {
     border: 1px solid rgba(148, 163, 184, 0.24);
     border-radius: var(--radius-xs);
     background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.92));
+    flex-shrink: 0;
+    min-width: 0;
 }
 
 .wargame-brief-card {

@@ -124,6 +124,7 @@
         if (!d.postures || typeof d.postures !== 'object') d.postures = defaultPostures();
         fillGeographyDefaults(d);
         fillForcesDefaults(d);
+        if (!d.model_version) d.model_version = 'authored-v1';
         d.authoring_status = 'draft';
         return d;
     }
@@ -1202,31 +1203,158 @@
     }
 
     /* ---- Slice 2C: factored existing card renderers ---------------------- */
+    /* ---- Metadata Step 1: name sanitiser (module-scope so saveDraft can use it) */
+    function sanitiseMetaName(raw) {
+        return String(raw || '').toLowerCase()
+            .replace(/[^a-z0-9._-]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .slice(0, 64);
+    }
+
+    /* ---- Metadata Step 1: validated name input (sanitises + shows inline hint) */
+    function metaNameInput(initValue, onCommit) {
+        var wrap = document.createElement('div');
+        var inp  = el('input', { type: 'text', class: 'sw-edit-input',
+                                 value: initValue == null ? '' : String(initValue) });
+        var hint = el('small', { class: 'sw-meta-hint' });
+        wrap.appendChild(inp);
+        wrap.appendChild(hint);
+
+        function evaluate(raw) {
+            var sane = sanitiseMetaName(raw);
+            _draft.name = sane;
+            if (!raw) {
+                inp.className  = 'sw-edit-input sw-input-err';
+                hint.className = 'sw-meta-hint sw-meta-hint--err';
+                hint.textContent = '* Required — use letters, digits, and dashes (a-z 0-9 -)';
+            } else if (sane !== raw) {
+                inp.className  = 'sw-edit-input sw-input-warn';
+                hint.className = 'sw-meta-hint sw-meta-hint--warn';
+                hint.textContent = 'Saved as: ' + (sane || '(invalid — enter valid characters)');
+            } else {
+                inp.className  = 'sw-edit-input';
+                hint.className = 'sw-meta-hint';
+                hint.textContent = '';
+            }
+            onCommit(sane);
+            _markDirty();
+        }
+
+        inp.addEventListener('input', function () { evaluate(inp.value); });
+        /* On blur, snap the displayed value to the canonical form so the
+         * user sees what was actually stored (no silent drift). */
+        inp.addEventListener('blur', function () {
+            var sane = sanitiseMetaName(inp.value);
+            if (inp.value !== sane) { inp.value = sane; }
+            evaluate(inp.value);
+        });
+        evaluate(initValue == null ? '' : String(initValue)); // initial validation
+        return wrap;
+    }
+
+    /* ---- Metadata Step 1: validated label input (required, plain text) ----- */
+    function metaLabelInput(initValue, onCommit) {
+        var wrap = document.createElement('div');
+        var inp  = el('input', { type: 'text', class: 'sw-edit-input',
+                                 value: initValue == null ? '' : String(initValue) });
+        var hint = el('small', { class: 'sw-meta-hint' });
+        wrap.appendChild(inp);
+        wrap.appendChild(hint);
+
+        function evaluate() {
+            var v = inp.value;
+            if (!v.trim()) {
+                inp.className  = 'sw-edit-input sw-input-err';
+                hint.className = 'sw-meta-hint sw-meta-hint--err';
+                hint.textContent = '* Required';
+            } else {
+                inp.className  = 'sw-edit-input';
+                hint.className = 'sw-meta-hint';
+                hint.textContent = '';
+            }
+            onCommit(v);
+            _markDirty();
+        }
+
+        inp.addEventListener('input', evaluate);
+        evaluate(); // initial validation
+        return wrap;
+    }
+
     function renderMetadataCard(host) {
-        // Slice 2D-1J: Name + Label edits must also live-refresh the indicator
-        // chip in the bar (the chip displays the current name + label as a title).
-        // _markDirty() is already called by textInput; we additionally renderIndicator
-        // so the visible chip text tracks keystrokes.
+        /* Step 1 hardening: Name sanitises to lowercase-dashes (it becomes the
+         * filename on Save-to-server), Label is required plain text. Scenario ID
+         * mirrors the sanitised Name on every Name change; the operator can
+         * override it independently if needed. model_version defaults to
+         * 'authored-v1' when blank. */
+
+        /* Label row (no i18n key for the `*` — done via CSS .sw-meta-req) */
+        function labeledRow(labelTxt, required, inputNode) {
+            var dt = document.createElement('dt');
+            var span = el('span', { text: labelTxt });
+            if (required) span.className = 'sw-meta-req';
+            dt.appendChild(span);
+            var dd = document.createElement('dd');
+            dd.appendChild(inputNode);
+            var row = el('div', { class: 'sw-kv-row sw-edit-row' });
+            row.appendChild(dt);
+            row.appendChild(dd);
+            return row;
+        }
+
+        /* Scenario ID input — follows Name by default, editable independently */
+        var idInp = el('input', { type: 'text', class: 'sw-edit-input',
+                                  value: _draft.scenario_id == null ? '' : String(_draft.scenario_id) });
+        idInp.addEventListener('input', function () { _draft.scenario_id = idInp.value; _markDirty(); });
+
+        var dl = el('dl', { class: 'sw-kv' });
+        dl.appendChild(labeledRow(
+            'Name / الاسم (filename)',
+            true,
+            metaNameInput(_draft.name, function (v) {
+                renderIndicator();
+                /* Auto-sync scenario_id if it was in-step with name */
+                if (!idInp.value || idInp.value === _draft.scenario_id) {
+                    idInp.value = v;
+                    _draft.scenario_id = v;
+                }
+            })
+        ));
+        dl.appendChild(labeledRow(
+            'Label / التسمية',
+            true,
+            metaLabelInput(_draft.scenario_label, function (v) {
+                _draft.scenario_label = v;
+                renderIndicator();
+            })
+        ));
+        dl.appendChild(labeledRow('Scenario ID', false, idInp));
+        /* CMO Step 1: Database / version. RMOOZ uses model_version only. */
+        dl.appendChild(labeledRow('model_version',
+            false,
+            (function () {
+                var i = el('input', { type: 'text', class: 'sw-edit-input',
+                                      value: _draft.model_version || 'authored-v1' });
+                if (!_draft.model_version) { _draft.model_version = 'authored-v1'; }
+                i.addEventListener('input', function () {
+                    _draft.model_version = i.value;
+                    _markDirty();
+                });
+                return i;
+            })()
+        ));
+        dl.appendChild(labeledRow('schema_variant (e.g. "authored", "w3-rich")',
+            false,
+            textInput(_draft.schema_variant, function (v) { _draft.schema_variant = v; })
+        ));
+
         var card = el('div', { class: 'builder-card sw-card' }, [
             el('div', { class: 'builder-card-header' }, [
                 el('span', { class: 'builder-card-title',
                              text: 'Edit · Scenario Metadata & Version / بيانات السيناريو + الإصدار' })
-            ]),
-            el('dl', { class: 'sw-kv' }, [
-                fieldRow('Name / الاسم (filename — must equal on-disk name)',
-                    textInput(_draft.name, function (v) { _draft.name = v; renderIndicator(); })),
-                fieldRow('Label / التسمية',
-                    textInput(_draft.scenario_label, function (v) { _draft.scenario_label = v; renderIndicator(); })),
-                fieldRow('Scenario ID',
-                    textInput(_draft.scenario_id, function (v) { _draft.scenario_id = v; })),
-                // CMO Step 1: Database / version. RMOOZ has no unit DB, so this
-                // maps to model_version + schema_variant only.
-                fieldRow('model_version',
-                    textInput(_draft.model_version, function (v) { _draft.model_version = v; })),
-                fieldRow('schema_variant (e.g. "authored", "w3-rich")',
-                    textInput(_draft.schema_variant, function (v) { _draft.schema_variant = v; }))
             ])
         ]);
+        card.appendChild(dl);
         host.appendChild(card);
     }
 
@@ -1810,6 +1938,13 @@
     /* ---- save: validate → apply to in-memory scenario → repaint ----------- */
     function saveDraft() {
         if (!_draft) return;
+
+        /* Step 1 required-field guard — block save before writing to RmoozScenario
+         * so no partially-invalid metadata ever replaces a working scenario. */
+        var nameOk  = !!(sanitiseMetaName(_draft.name || ''));
+        var labelOk = !!(_draft.scenario_label && _draft.scenario_label.trim());
+        if (!nameOk)  { setStatus('Name is required (Step 1 — use letters, digits, dashes).', true); return; }
+        if (!labelOk) { setStatus('Label is required (Step 1).', true); return; }
 
         // Slice 2B: keep the derived blue_units_base_ids parallel array in
         // lockstep with the authoritative blue_units_initial. Runs FIRST so

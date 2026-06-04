@@ -4988,7 +4988,7 @@
          P0 authoring schema (draft/working-copy engine) must load before edit-mode.
          Edits stay in-memory; commit/journal boundary untouched. -->
     <script src="shell/scenario-authoring-schema.js?v=1"></script>
-    <script src="shell/scenario-edit-mode.js?v=7"></script>
+    <script src="shell/scenario-edit-mode.js?v=8"></script>
     <style>
         .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
@@ -5009,6 +5009,14 @@
         .sw-edit-list-item { border:1px solid #3a3f47; border-radius:5px; padding:8px; background:#1c1f24; }
         .sw-edit-empty { font-style:italic; color:#8d949e; padding:4px 0; font-size:12px; }
         .sw-edit-hint { font-size:11px; color:#a8b0bb; padding:2px 8px 6px; }
+        /* Metadata field validation hints (Step 1 hardening) */
+        .sw-meta-hint { font-size:11px; padding:2px 0 0; min-height:14px; line-height:1.3; }
+        .sw-meta-hint:empty { display:none; }
+        .sw-meta-hint--err  { color:#e05252; }
+        .sw-meta-hint--warn { color:#c9a227; }
+        .sw-edit-input.sw-input-err  { border-color:#e05252; }
+        .sw-edit-input.sw-input-warn { border-color:#c9a227; }
+        .sw-meta-req::after { content:' *'; color:#e05252; font-size:10px; vertical-align:super; }
         .sw-edit-subcard { border:1px solid #3a3f47; border-radius:6px; margin:6px 8px; background:#1a1d22; }
         .sw-edit-subcard-header { padding:6px 10px; font-weight:600; border-bottom:1px solid #2a2f37;
             background:#222630; color:#cfd4dc; font-size:12.5px; letter-spacing:.02em; }

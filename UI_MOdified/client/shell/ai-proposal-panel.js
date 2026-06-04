@@ -409,11 +409,12 @@
                 const d = deltas.readiness[i];
                 log.append({
                     severity:   'INFO',
-                    category:   'STATE',
+                    category:   'SYSTEM',
                     source:     'ai-proposal-panel',
                     messageKey: 'elog-evt-state-readiness-delta',
                     message:    d.unit_label + ' readiness: ' + window.AppDeltaExtractor.formatReadinessDelta(d),
                     payload: {
+                        event_type: 'STATE_DELTA',
                         delta_type: 'readiness',
                         unit_uid: d.unit_uid,
                         unit_label: d.unit_label,
@@ -430,11 +431,12 @@
                 const d = deltas.supply[i];
                 log.append({
                     severity:   'INFO',
-                    category:   'STATE',
+                    category:   'SYSTEM',
                     source:     'ai-proposal-panel',
                     messageKey: 'elog-evt-state-supply-delta',
                     message:    d.unit_label + ' supply: ' + window.AppDeltaExtractor.formatSupplyDelta(d),
                     payload: {
+                        event_type: 'STATE_DELTA',
                         delta_type: 'supply',
                         unit_uid: d.unit_uid,
                         unit_label: d.unit_label,

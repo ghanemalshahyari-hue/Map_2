@@ -62,6 +62,24 @@
         }
     }
 
+    // ── PR-???: Coverage Summary Panel ──────────────────────────────────────
+    // Updates the coverage summary with air-defense unit data from the scenario.
+    function updateCoverageSummary() {
+        const elem = document.getElementById('wg-adj-coverage-summary');
+        if (!elem) return;
+
+        if (!scenarioCache || !window.AppCoverageSummary) {
+            elem.innerHTML = '<div class="coverage-summary-empty"><p>Coverage summary unavailable.</p></div>';
+            return;
+        }
+
+        try {
+            elem.innerHTML = window.AppCoverageSummary.renderPanel(scenarioCache);
+        } catch (e) {
+            elem.innerHTML = '<div class="coverage-summary-empty"><p>Error loading coverage summary.</p></div>';
+        }
+    }
+
     // item #9 — feedback button state. Tracks the step the buttons currently
     // refer to and which steps already have feedback this session so the
     // same step can't be double-posted (server is idempotent but the UX
@@ -313,6 +331,16 @@
                     <button id="wg-adj-contacts-btn" class="wargame-action-btn secondary" type="button" title="Toggle live sensor contacts (detection.js) — read-only">&#128225; Contacts</button>
                     <button id="wg-adj-eng-btn"      class="wargame-action-btn secondary" type="button" title="Toggle live firing solutions (engagement.js) — read-only">&#127919; Firing solutions</button>
                 </div>
+            </div>
+
+            <!-- ── Coverage Summary ── -->
+            <div class="wg-adj-section">
+                <details class="wg-adj-disclosure" open>
+                    <summary class="wg-adj-section-title">Coverage Analysis</summary>
+                    <div id="wg-adj-coverage-summary" style="margin-top:8px;">
+                        <!-- Filled by updateCoverageSummary() -->
+                    </div>
+                </details>
             </div>
 
             <!-- ── Step-by-step adjudication ── -->
@@ -808,6 +836,7 @@
         if (!r.ok) { setStatus('Could not load scenario JSON: ' + (r.error || 'unknown'), 'error'); return null; }
         scenarioCache = r.scenario;
         publishRmoozScenario();   // PR-50B: mirror to scenario-workspace.js slot
+        updateCoverageSummary();  // Update coverage summary panel
         return scenarioCache;
     }
 

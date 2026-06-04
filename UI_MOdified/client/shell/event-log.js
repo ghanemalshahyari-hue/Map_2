@@ -15,9 +15,10 @@
  * This is intentionally NOT a journal subscriber. There is no
  * sim/AI/scenario hookup, no backend POST, no localStorage row write,
  * no journal file write. Categories accepted by `append()` are
- * locked to the closed set { SYSTEM, OPERATOR, UI } — combat,
+ * locked to the closed set { SYSTEM, OPERATOR, UI, STATE } — combat,
  * detection, engagement, casualty, weapon, sensor, fog-of-war, ROE,
  * AI-recommendation events cannot reach the log through this surface.
+ * STATE is reserved for declared state changes (read-only deltas).
  *
  * Public bridge:
  *   window.AppShellEventLog.append(event)   – add a row (in-memory)
@@ -53,6 +54,7 @@
         SYSTEM:   'SYSTEM',
         OPERATOR: 'OPERATOR',
         UI:       'UI',
+        STATE:    'STATE',
         SCENARIO: 'SCENARIO',
         AI:       'AI',
         SIM:      'SIM',
@@ -62,6 +64,7 @@
         CATEGORY.SYSTEM,
         CATEGORY.OPERATOR,
         CATEGORY.UI,
+        CATEGORY.STATE,
     ]);
 
     // ── Helpers ────────────────────────────────────────────────────

@@ -1,19 +1,42 @@
 # Phase 4B-1B — Coastal Shield Unit Seed: In-App Verification Report
 
 **Date:** 2026-06-04  
-**Status:** ⏳ OFFLINE VERIFICATION COMPLETE; IN-APP TESTING PENDING SERVER RESTART  
-**Commit:** `db16812` — Units added, `292749c` — Verification audit
+**Status:** ✅ SCHEMA VALIDATION FIXED; API RETURNING 22 UNITS; IN-APP TESTING READY  
+**Commit:** `790efb2` — Schema validation fixed (map_bbox, obj, pipeline, phase_table, coordinate format)
 
 ---
 
 ## Overview
 
-Phase 4B-1B testing validates the 22-unit Coastal Shield seed inside the RMOOZ app using the existing Step 8 Forces/OOB editor. Testing is **READY TO EXECUTE** after server restart but **BLOCKED by server cache** (preview server loaded old scenario version before units were added).
+Phase 4B-1B testing validates the 22-unit Coastal Shield seed inside the RMOOZ app using the existing Step 8 Forces/OOB editor. Testing is **NOW READY TO EXECUTE** — schema validation blocker has been resolved.
 
 **Test Status:**
 - ✅ **Offline verification:** Units present in file, JSON valid, schema compatible
-- ⏳ **In-app testing:** Requires server restart (npm run serve or node server/web-server.js)
-- ✅ **Test suite prepared:** 16 test cases documented below
+- ✅ **Schema validation fix (commit 790efb2):** Added map_bbox, obj, pipeline, phase_table; fixed coordinate format [lon, lat]
+- ✅ **API verification:** Scenario loads successfully via `/api/ai/scenario/coastal-shield-training-v1` returning 14 RED + 8 BLUE units
+- ⏳ **In-app testing:** Requires browser navigation to scenario and Step 8 Forces editor
+- ✅ **Test suite prepared:** 20 test cases documented below
+
+---
+
+## Schema Validation Fix (COMPLETED — Commit 790efb2)
+
+**Issue:** Coastal Shield scenario was failing schema validation with 43 errors on initial load attempt:
+- Missing top-level fields: `map_bbox`, `obj`, `pipeline`, `phase_table`
+- Invalid coordinate format in all units and BLS templates
+- Steps missing required `index`, `time_label`, `elapsed_hours` fields
+
+**Resolution Applied:**
+1. Added `map_bbox: [155.0, -22.0, 165.0, -15.0]` (format: [min_lon, min_lat, max_lon, max_lat])
+2. Added `obj` field with Meridian coastal region AOI definition
+3. Added `pipeline` array with 2 waypoints for scenario routing
+4. Added `phase_table` with 4 phases (P0-P3) including index, time_label, elapsed_hours, phase fields
+5. Fixed all coordinates in bls_template from [lat, lon] to [lon, lat] format
+6. Fixed all coordinates in red_units (14 units) from [lat, lon] to [lon, lat] format
+7. Fixed all coordinates in blue_units_initial (8 units) from [lat, lon] to [lon, lat] format
+8. Updated steps array to include index, time_label, elapsed_hours fields
+
+**Validation Result:** ✅ Scenario now loads successfully with 5 pattern-deviation warnings (expected — counts differ from standard norms but valid)
 
 ---
 

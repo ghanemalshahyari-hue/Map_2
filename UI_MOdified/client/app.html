@@ -3660,6 +3660,7 @@
                             <dt data-i18n="ap-affected">Affected Units</dt>  <dd id="ap-affected">-</dd>
                             <dt data-i18n="ap-effect">Expected Effect</dt>   <dd id="ap-effect">-</dd>
                             <dt data-i18n="ap-risk">Risk</dt>                <dd id="ap-risk">-</dd>
+                            <dt data-i18n="ap-deltas">State Changes</dt>     <dd id="ap-deltas" hidden>—</dd>
                             <dt data-i18n="ap-decision">Operator Decision</dt><dd id="ap-decision"  class="ap-decision-cell"><span id="ap-decision-text" data-i18n="ap-status-pending">Pending</span></dd>
                         </dl>
 
@@ -4856,9 +4857,14 @@
          can call AppShellAIProposalContract.normalizeProposal() on
          every setProposal(). -->
     <script src="shell/ai-proposal-contract.js?v=1"></script>
+    <!-- Phase 6E-A: Delta Extractor. Pure utility for extracting
+         readiness/supply deltas from projected state. Loads BEFORE
+         ai-proposal-panel.js so the panel can call
+         AppDeltaExtractor.extractDeltas(). -->
+    <script src="shell/delta-extractor.js?v=1"></script>
     <!-- PR-7: AI Proposal Review. UI foundation only — Accept/Reject/Hold
          log to the PR-6 Event Log but do not mutate scenario state. -->
-    <script src="shell/ai-proposal-panel.js?v=2"></script>
+    <script src="shell/ai-proposal-panel.js?v=3"></script>
     <!-- PR-9: AI Proposal Inbox. In-memory store between any future
          proposal source and the PR-7 panel. Loads AFTER contract.js
          and ai-proposal-panel.js because it depends on both bridges. -->

@@ -1153,6 +1153,16 @@
                     numberInput(u.strength == null ? 1 : u.strength,
                         function (v) { u.strength = (v == null ? 1 : v); },
                         { min: 0, max: 1, step: '0.05' })));
+                fields.push(fieldRow('readiness',
+                    selectInput(['ready', 'limited', 'not_ready'], u.readiness || 'ready',
+                        function (v) { u.readiness = v; rerenderTree(); })));
+                fields.push(fieldRow('supply (0..1)',
+                    numberInput(u.supply == null ? 0.8 : u.supply,
+                        function (v) {
+                            if (v == null) u.supply = 0.8;
+                            else u.supply = Math.max(0, Math.min(1, v));
+                        },
+                        { min: 0, max: 1, step: '0.1' })));
                 fields.push(fieldRow('sidc',
                     textInput(u.sidc || '', function (v) { u.sidc = v; rerenderTree(); })));
             } else {
@@ -1164,6 +1174,16 @@
                     numberInput(u.coord[1], function (v) { u.coord[1] = (v == null ? 0 : v); })));
                 fields.push(fieldRow('echelon',
                     textInput(u.echelon || '', function (v) { u.echelon = v; rerenderTree(); })));
+                fields.push(fieldRow('readiness',
+                    selectInput(['ready', 'limited', 'not_ready'], u.readiness || 'ready',
+                        function (v) { u.readiness = v; rerenderTree(); })));
+                fields.push(fieldRow('supply (0..1)',
+                    numberInput(u.supply == null ? 0.8 : u.supply,
+                        function (v) {
+                            if (v == null) u.supply = 0.8;
+                            else u.supply = Math.max(0, Math.min(1, v));
+                        },
+                        { min: 0, max: 1, step: '0.1' })));
                 fields.push(fieldRow('sidc',
                     textInput(u.sidc || '', function (v) { u.sidc = v; rerenderTree(); })));
             }

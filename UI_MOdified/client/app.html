@@ -4992,16 +4992,17 @@
     <style>
         .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
-            color:#e8eaed; border-radius:5px; padding:4px 10px; }
+            color:#e8eaed; border-radius:5px; padding:4px 10px; pointer-events: auto; }
         .sw-edit-btn:hover { background:#343a44; }
         .sw-edit-btn[disabled] { opacity:0.5; cursor:not-allowed; }
-        .sw-edit-btn-primary { background:#2f6fed; border-color:#2f6fed; color:#fff; }
+        .sw-edit-btn-primary { background:#2f6fed; border-color:#2f6fed; color:#fff; pointer-events: auto; }
         .sw-edit-btn-primary:hover { background:#3b78f0; }
         .sw-editmode-editor[hidden] { display:none; }
         .sw-edit-row dd { width:100%; pointer-events: auto; }
         .sw-edit-input { width:100%; box-sizing:border-box; font:inherit; padding:3px 6px;
             border:1px solid #5a6270; border-radius:4px; background:#1f242b; color:#e8eaed; pointer-events: auto; }
-        textarea.sw-edit-input { resize:vertical; min-height:60px; font-family:ui-monospace,Menlo,Consolas,monospace; }
+        textarea.sw-edit-input { resize:vertical; min-height:60px; font-family:ui-monospace,Menlo,Consolas,monospace; pointer-events: auto; }
+        select.sw-edit-input { pointer-events: auto; }
         .sw-edit-actions { display:flex; gap:8px; align-items:center; padding:8px; flex-wrap:wrap; }
         .sw-edit-status { font-size:12px; }
         /* Slice 2A/2B item styling (was using browser defaults) */

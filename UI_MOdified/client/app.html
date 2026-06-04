@@ -4998,9 +4998,9 @@
         .sw-edit-btn-primary { background:#2f6fed; border-color:#2f6fed; color:#fff; }
         .sw-edit-btn-primary:hover { background:#3b78f0; }
         .sw-editmode-editor[hidden] { display:none; }
-        .sw-edit-row dd { width:100%; }
+        .sw-edit-row dd { width:100%; pointer-events: auto; }
         .sw-edit-input { width:100%; box-sizing:border-box; font:inherit; padding:3px 6px;
-            border:1px solid #5a6270; border-radius:4px; background:#1f242b; color:#e8eaed; }
+            border:1px solid #5a6270; border-radius:4px; background:#1f242b; color:#e8eaed; pointer-events: auto; }
         textarea.sw-edit-input { resize:vertical; min-height:60px; font-family:ui-monospace,Menlo,Consolas,monospace; }
         .sw-edit-actions { display:flex; gap:8px; align-items:center; padding:8px; flex-wrap:wrap; }
         .sw-edit-status { font-size:12px; }
@@ -5039,7 +5039,7 @@
         .sw-step-pill.ok    { background:#1a7f37; border-color:#1a7f37; }
         .sw-step-pill.warn  { background:#c9a227; border-color:#c9a227; }
         .sw-step-pill.gap   { background:transparent; border-color:#4a4f57; border-style:dashed; }
-        .sw-step-content { flex:1 1 auto; padding:8px; min-width:0; overflow-x:hidden; max-height:80vh; overflow-y:auto; }
+        .sw-step-content { flex:1 1 auto; padding:8px; min-width:0; overflow-x:hidden; max-height:80vh; overflow-y:auto; pointer-events: auto; }
         /* Slice 2C — New Scenario inline form */
         .sw-newscen-form { border:1px solid #3a3f47; border-radius:6px; padding:10px;
             background:#1c1f24; margin:6px 8px; display:flex; flex-direction:column; gap:6px; }

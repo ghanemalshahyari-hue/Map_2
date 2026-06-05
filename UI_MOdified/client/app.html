@@ -5087,6 +5087,7 @@
            viewport. Map sits underneath; Pick-on-map shrinks the overlay
            temporarily so the operator can click the map. */
         #scenario-workspace-panel.sw-editmode-wide {
+            display: flex !important;   /* override .context-section.hidden when Edit Mode is active */
             position: fixed !important;
             left: var(--rail-w, 72px) !important;
             top: var(--header-h, 52px) !important;

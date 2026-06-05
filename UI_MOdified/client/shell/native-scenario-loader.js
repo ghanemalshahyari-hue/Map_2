@@ -314,26 +314,46 @@
      * the existing FAST-INT-2 / FAST-DOC-1 card into view — we never load,
      * convert, or mutate scenario state. The card's own buttons remain the
      * single, explicit import trigger. */
+    function openWorkspacePanel() {
+        // Prefer the official rail API; fall back to directly un-hiding the panel
+        // (covers the case where AppToolRail isn't ready yet).
+        try {
+            if (window.AppToolRail && typeof window.AppToolRail.switchTool === 'function') {
+                window.AppToolRail.switchTool('scenario-workspace');
+                return;
+            }
+        } catch (_) {}
+        var p = document.getElementById('scenario-workspace-panel');
+        if (p) p.classList.remove('hidden');
+    }
     function revealImportCard(cardId, label) {
-        var tries = 0;
+        // Robust against the heavier real-app init race: on the full app, later
+        // initialization can switch the active tool back AFTER this runs, so we
+        // (a) retry finding the card for up to ~8s, re-asserting the panel open
+        // each attempt, and (b) re-assert a few more times after it's found to
+        // beat any late override. Visual-only — never mutates scenario state.
+        var start = Date.now(), DEADLINE = 8000;
         (function attempt() {
-            try {
-                if (window.AppToolRail && typeof window.AppToolRail.switchTool === 'function') {
-                    window.AppToolRail.switchTool('scenario-workspace');
-                }
-            } catch (_) {}
+            openWorkspacePanel();
             var card = document.getElementById(cardId);
-            if (!card && tries < 20) { tries++; return void setTimeout(attempt, 150); }
             if (!card) {
+                if (Date.now() - start < DEADLINE) return void setTimeout(attempt, 200);
                 showAppNotice(label + ' panel not found.',
                     'Open Scenario Workspace → Source & Origin to use it.', true, 8000);
                 return;
             }
-            try { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
-            // brief, self-clearing highlight — visual only
+            function focusCard() {
+                openWorkspacePanel();
+                try { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+            }
+            focusCard();
             var prev = card.style.boxShadow;
             card.style.boxShadow = '0 0 0 2px #e0c060';
-            setTimeout(function () { card.style.boxShadow = prev; }, 2200);
+            setTimeout(function () { card.style.boxShadow = prev; }, 2600);
+            // Re-assert against late init that may re-hide the panel.
+            setTimeout(focusCard, 500);
+            setTimeout(focusCard, 1200);
+            setTimeout(focusCard, 2500);
             logEvent('Launch intent "' + label + '": revealed import panel (no scenario change).');
         })();
     }

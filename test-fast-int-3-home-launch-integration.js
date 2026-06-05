@@ -57,7 +57,9 @@ const body = m ? m[0] : '';
 ok(body.length > 0, 'revealImportCard body located');
 ok(!/loadLiveScenarioFromJson/.test(body), 'reveal does NOT call loadLiveScenarioFromJson (no scenario mutation)');
 ok(!/buildScenarioFromGeoJson|\/api\/scenario\/import/.test(body), 'reveal does NOT invoke the importer (no duplicate import)');
-ok(/switchTool\('scenario-workspace'\)/.test(body) && /scrollIntoView/.test(body), 'reveal opens the workspace panel + scrolls the card into view');
+ok(/openWorkspacePanel\(\)/.test(body) && /scrollIntoView/.test(body), 'reveal opens the workspace panel + scrolls the card into view');
+ok(/function openWorkspacePanel[\s\S]*?switchTool\('scenario-workspace'\)/.test(loader), 'openWorkspacePanel uses AppToolRail.switchTool(scenario-workspace) with a direct-unhide fallback');
+ok(/function openWorkspacePanel[\s\S]*?classList\.remove\('hidden'\)/.test(loader), 'openWorkspacePanel falls back to un-hiding the panel directly');
 
 console.log('\n══════════════════════════════════════════');
 console.log('  FAST-INT-3 — Passed: ' + pass + '  |  Failed: ' + fail);

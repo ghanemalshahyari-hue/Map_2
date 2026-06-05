@@ -40,8 +40,8 @@
             background: #1c2733; color: #9fb3c6; text-transform: uppercase; }
 
         /* center stage: globe visual + action stack */
-        .hub-main { position: relative; display: grid; grid-template-columns: 1.1fr .9fr; align-items: center;
-            gap: 24px; padding: 24px 6vw; }
+        .hub-main { position: relative; display: grid; grid-template-columns: 1.1fr .9fr; align-items: safe center;
+            gap: 24px; padding: 24px 6vw; overflow-y: auto; min-height: 0; }
         .hub-stage { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; }
         .hub-globe { width: min(46vh, 460px); aspect-ratio: 1; border-radius: 50%;
             background: radial-gradient(circle at 34% 30%, #224a72 0%, #12273f 55%, #081523 100%);

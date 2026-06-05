@@ -308,17 +308,49 @@
         );
     }
 
+    /* ---- intents: reveal an existing import card (NO scenario mutation) --- */
+    /* FAST-INT-3: the Home Command Launch screen routes the two WarGamingGEN
+     * import flows here. We only OPEN the scenario-workspace panel and scroll
+     * the existing FAST-INT-2 / FAST-DOC-1 card into view — we never load,
+     * convert, or mutate scenario state. The card's own buttons remain the
+     * single, explicit import trigger. */
+    function revealImportCard(cardId, label) {
+        var tries = 0;
+        (function attempt() {
+            try {
+                if (window.AppToolRail && typeof window.AppToolRail.switchTool === 'function') {
+                    window.AppToolRail.switchTool('scenario-workspace');
+                }
+            } catch (_) {}
+            var card = document.getElementById(cardId);
+            if (!card && tries < 20) { tries++; return void setTimeout(attempt, 150); }
+            if (!card) {
+                showAppNotice(label + ' panel not found.',
+                    'Open Scenario Workspace → Source & Origin to use it.', true, 8000);
+                return;
+            }
+            try { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+            // brief, self-clearing highlight — visual only
+            var prev = card.style.boxShadow;
+            card.style.boxShadow = '0 0 0 2px #e0c060';
+            setTimeout(function () { card.style.boxShadow = prev; }, 2200);
+            logEvent('Launch intent "' + label + '": revealed import panel (no scenario change).');
+        })();
+    }
+
     /* ---- dispatch -------------------------------------------------------- */
     function handleLaunchIntent() {
         var intent = null;
         try { intent = new URLSearchParams(window.location.search).get('launch'); } catch (_) {}
         if (!intent) return;
 
-        if (intent === 'demo')   { loadNativeSample();   return; }
-        if (intent === 'load')   { handleLoadIntent();   return; }
-        if (intent === 'resume') { handleResumeIntent(); return; }
-        if (intent === 'new')    { handleNewIntent();    return; }
-        if (intent === 'editor') { handleEditorIntent(); return; }
+        if (intent === 'demo')           { loadNativeSample();   return; }
+        if (intent === 'load')           { handleLoadIntent();   return; }
+        if (intent === 'resume')         { handleResumeIntent(); return; }
+        if (intent === 'new')            { handleNewIntent();    return; }
+        if (intent === 'editor')         { handleEditorIntent(); return; }
+        if (intent === 'import-geojson') { revealImportCard('wg-geojson-import-card', 'Import WarGamingGEN GeoJSON'); return; }
+        if (intent === 'import-docx')    { revealImportCard('wg-sim-import-card', 'DOCX Simulation Import'); return; }
 
         /* settings / layers / help / unknown — receipt only */
         logEvent('Launch intent "' + intent + '" received.');

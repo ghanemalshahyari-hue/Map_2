@@ -5105,6 +5105,11 @@
          the existing POST /api/scenario/import porter. Read-only pre-flight summary;
          mutates the live scenario only on explicit operator import. -->
     <script src="shell/wargame-geojson-import.js?v=1"></script>
+    <!-- FAST-DOC-1: DOCX Force Upload → WarGamingGEN → GeoJSON import bridge.
+         Uploads red/blue .docx to a staging folder, runs/stages the existing
+         WarGamingGEN generation, then imports the generated all_phases.geojson
+         through the same porter. RMOOZ never parses DOCX or calls the LLM. -->
+    <script src="shell/wargame-sim-import.js?v=1"></script>
     <!-- PR2: RMOOZ-native scenario loader + home-hub launch-intent wiring.
          Reuses AppShellScenarioWorkspace.loadLiveScenarioFromJson (global path);
          only acts when a ?launch= intent is present, so direct /app.html and the

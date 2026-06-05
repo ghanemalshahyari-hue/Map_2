@@ -350,10 +350,20 @@
             var prev = card.style.boxShadow;
             card.style.boxShadow = '0 0 0 2px #e0c060';
             setTimeout(function () { card.style.boxShadow = prev; }, 2600);
-            // Re-assert against late init that may re-hide the panel.
-            setTimeout(focusCard, 500);
-            setTimeout(focusCard, 1200);
-            setTimeout(focusCard, 2500);
+            // GUARD: tool-rail's syncRailFromMode (driven by the legacy modeSelect
+            // change) re-hides scenario-workspace whenever the app sets its mode
+            // during init. We can't predict when that fires, so for ~5s we re-open
+            // the panel any time it becomes hidden again. Direct un-hide avoids
+            // re-triggering the rail cascade. Visual-only — no scenario mutation.
+            var guardUntil = Date.now() + 5000;
+            var guard = setInterval(function () {
+                var p = document.getElementById('scenario-workspace-panel');
+                if (p && p.classList.contains('hidden')) {
+                    p.classList.remove('hidden');
+                    try { card.scrollIntoView({ block: 'center' }); } catch (_) {}
+                }
+                if (Date.now() > guardUntil) clearInterval(guard);
+            }, 250);
             logEvent('Launch intent "' + label + '": revealed import panel (no scenario change).');
         })();
     }

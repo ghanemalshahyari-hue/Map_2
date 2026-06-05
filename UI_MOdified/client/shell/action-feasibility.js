@@ -41,12 +41,12 @@
         objective_already_captured: 'Objective is already CAPTURED — an attack is unnecessary.',    // objective_status_display
         objective_evidence_missing: 'No objective evidence ledger is available to assess this action.', // world_state
         objective_not_actionable:   'Objective has no position in the current state — it cannot be targeted.', // world_state
-        readiness_unavailable:      'Actor readiness is not_ready — the unit cannot act.',           // ws.units[].readiness
+        readiness_unavailable:      'Unit is not ready to execute this action.',                   // ws.units[].readiness
         // --- ATTACK_OBJECTIVE (L3-A-2) — risks -------------------------------
         objective_contested:        'Objective control is contested (current evidence).',           // objective_status_display / bls_status
         objective_threatened:       'Objective is under threat and not yet ready for capture.',      // objective_status_display
-        readiness_degraded:         'Unit readiness is limited (not ideal).',                        // ws.units[].readiness
-        supply_limited:             'Supply is below the readiness layer’s neutral level.',           // ws.units[].supply
+        readiness_degraded:         'Unit readiness is limited - execution risk is increased.',      // ws.units[].readiness
+        supply_limited:             'Supply is low (below 50%) - sustainability is at risk.',         // ws.units[].supply
         contact_unresolved:         'The contact picture is uncertain (non-firm or missing contacts).', // contacts
         engagement_pressure:        'Opposing forces currently have firing solutions against friendly units.', // engagement
         doctrine_caution:           'Doctrine indicates caution (weapons HOLD / hold posture).',      // ws.doctrine

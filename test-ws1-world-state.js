@@ -50,16 +50,22 @@ ok('contacts[] seam exists (empty until PR-DET1)', Array.isArray(ws.contacts));
 ok('activity echoes actors/affected/engagement_arcs',
    ws.activity && Array.isArray(ws.activity.actors) && Array.isArray(ws.activity.engagement_arcs));
 
-/* 6. Degraded (non-W3) projection */
+/* 6. Capability-based eligibility (de-W3 gate): a NON-W3 scenario with an
+ *    objective + units is now ELIGIBLE (not degraded); one lacking them stays degraded. */
 const mini = { scenario_id: 'mini', name: 'Mini', map_bbox: [0,0,1,1],
     obj: { name: 'OBJ-1', coord: [0.5,0.5] },
     red_units: [{ uid: 'R1', role: 'inf', domain: 'ground', coord: [0.2,0.2] }],
     blue_units_initial: [{ unit_uid: 'B1', base_id: 'B1', coord: [0.8,0.8] }],
     steps: [{ index: 0, time_label: 'H+0', elapsed_hours: 0, phase: 'PHASE 1' }] };
 const wsm = WS.deriveWorldState(mini, 0);
-ok('degraded flag true for non-w3', wsm.degraded === true);
-ok('degraded still projects units + objective + phase',
+ok('non-w3 WITH objective+units is eligible (not degraded)', wsm.degraded === false);
+ok('eligible non-w3 still projects units + objective + phase',
    wsm.units.length === 2 && wsm.objectives.length === 1 && wsm.meta.phase === 'PHASE 1');
+
+const barren = { scenario_id: 'barren', name: 'Barren', map_bbox: [0,0,1,1],
+    steps: [{ index: 0, time_label: 'H+0', elapsed_hours: 0, phase: 'PHASE 1' }] };
+const wsb = WS.deriveWorldState(barren, 0);
+ok('non-w3 WITHOUT objective/units stays degraded', wsb.degraded === true);
 
 /* 7. applyDecision is PURE + transitions work */
 const before = JSON.stringify(ws);

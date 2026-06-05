@@ -1,0 +1,102 @@
+{
+  "scenario_id": "rmooz-native-01",
+  "name": "rmooz-native-01",
+  "scenario_label": "RMOOZ Native — Coastal Picket (sample)",
+  "model_version": "rmooz-native-v1",
+  "note": "Small RMOOZ-native scenario proving the global pipeline is NOT Wargame-3-specific. Capability-class fields only; no invented per-unit ranges (ranges resolve from DB1 / detection.js / engagement.js classes).",
+
+  "region": { "name_en": "Coastal Picket Sector", "name_ar": "قطاع المرابطة الساحلي" },
+  "map_bbox": [17.95, 30.05, 19.25, 31.05],
+
+  "sides": [
+    { "id": "BLUE", "name_en": "Blue (Defender)", "name_ar": "الأزرق (المدافع)", "color": "#3a76c2" },
+    { "id": "RED",  "name_en": "Red (Probe)",     "name_ar": "الأحمر (الاستطلاع الهجومي)", "color": "#c23a3a" }
+  ],
+  "postures": {
+    "BLUE": { "BLUE": "FRIENDLY", "RED": "HOSTILE" },
+    "RED":  { "BLUE": "HOSTILE",  "RED": "FRIENDLY" }
+  },
+
+  "doctrine": {
+    "weapon_control_status": { "air": "TIGHT", "surface": "FREE", "subsurface": "HOLD" },
+    "emcon": "restricted",
+    "engage_ambiguous": false
+  },
+
+  "obj": {
+    "name": "OBJ ANCHOR",
+    "coord": [18.62, 30.58],
+    "target_depth_km": 28,
+    "radius_km": 5
+  },
+
+  "bls_template": [
+    { "name": "BLS-NORTH", "coord": [18.40, 30.42], "role": "main",       "throughput": 900, "terrain_friction": 0.25 },
+    { "name": "BLS-SOUTH", "coord": [18.70, 30.34], "role": "supporting", "throughput": 500, "terrain_friction": 0.45 }
+  ],
+
+  "red_units": [
+    { "uid": "RED-1", "label": "Mech Coy (Probe)", "role": "ground_maneuver", "domain": "ground", "echelon": "company",  "coord": [18.45, 30.30], "strength": 1.0, "readiness": "ready",   "supply": 0.8, "posture": "active", "sidc": "10061000001211000000" },
+    { "uid": "RED-2", "label": "Recon Det",        "role": "recon",           "domain": "ground", "echelon": "platoon",  "coord": [18.72, 30.28], "strength": 1.0, "readiness": "ready",   "supply": 0.7, "posture": "active", "sidc": "10061500001213000000" },
+    { "uid": "RED-3", "label": "SAM Battery",      "role": "air_defense",     "domain": "ground", "echelon": "battery",  "coord": [18.30, 30.22], "strength": 1.0, "readiness": "ready",   "supply": 0.9, "posture": "defensive",
+      "sensors": [ { "id": "ewr", "class": "long_range_3d", "type": "radar", "emcon": "active" }, { "id": "fc", "class": "fire_control", "subtype": "fire_control", "type": "radar", "channels": 2 } ],
+      "weapons": [ { "id": "sam", "class": "long_range_sam", "mount": "m1" } ],
+      "magazines": [ { "mount": "m1", "stock": { "long_range_sam": 4 } } ],
+      "sidc": "10061000001213000000" },
+    { "uid": "RED-4", "label": "Armor Bn",         "role": "ground_maneuver", "domain": "ground", "echelon": "battalion","coord": [18.38, 30.26], "strength": 1.0, "readiness": "limited", "supply": 0.6, "posture": "active", "sidc": "10061000001205000000" }
+  ],
+
+  "blue_units_initial": [
+    { "unit_uid": "BLUE-HQ",   "base_id": "HQ",   "label": "Sector HQ",     "role": "command",        "domain": "ground", "echelon": "brigade",  "coord": [18.66, 30.66], "readiness": "ready",   "supply": 0.9, "posture": "defensive", "sidc": "10031000001211000000" },
+    { "unit_uid": "BLUE-1",    "base_id": "B1",   "label": "Coastal Bn",    "role": "ground_maneuver","domain": "ground", "echelon": "battalion","coord": [18.55, 30.52], "readiness": "ready",   "supply": 0.8, "posture": "defensive", "sidc": "10031000001211000000" },
+    { "unit_uid": "BLUE-SAM",  "base_id": "SAM",  "label": "Air-Defense Bty","role": "air_defense",    "domain": "ground", "echelon": "battery",  "coord": [18.68, 30.60], "readiness": "ready",   "supply": 0.85, "posture": "defensive",
+      "sensors": [ { "id": "as", "class": "air_search", "type": "radar", "emcon": "active" }, { "id": "fc", "class": "fire_control", "subtype": "fire_control", "type": "radar", "channels": 2 } ],
+      "weapons": [ { "id": "msam", "class": "medium_sam", "mount": "m1" } ],
+      "magazines": [ { "mount": "m1", "stock": { "medium_sam": 6 } } ],
+      "sidc": "10031000001213000000" },
+    { "unit_uid": "BLUE-ARTY", "base_id": "ARTY", "label": "Field Arty Bn",  "role": "artillery",      "domain": "ground", "echelon": "battalion","coord": [18.70, 30.70], "readiness": "limited", "supply": 0.7, "posture": "defensive", "sidc": "10031000001505000000" }
+  ],
+
+  "ao_boundaries": [
+    { "name": "AO PICKET", "type": "Polygon",
+      "coordinates": [ [ [18.05, 30.12], [19.15, 30.12], [19.15, 30.95], [18.05, 30.95], [18.05, 30.12] ] ] }
+  ],
+
+  "phase_table": [
+    { "index": 0, "time_label": "H-2",  "elapsed_hours": -2, "phase": "PRE-H" },
+    { "index": 1, "time_label": "H+0",  "elapsed_hours": 0,  "phase": "PHASE 1" },
+    { "index": 2, "time_label": "H+6",  "elapsed_hours": 6,  "phase": "PHASE 2" },
+    { "index": 3, "time_label": "H+18", "elapsed_hours": 18, "phase": "RESOLUTION" }
+  ],
+
+  "steps": [
+    {
+      "index": 0, "time_label": "H-2", "elapsed_hours": -2, "phase": "PRE-H",
+      "objective_status_baseline": "DORMANT",
+      "force_ratio_baseline": "Not engaged",
+      "narrative_en_baseline": "Red probe forms up inland; Blue holds the coastal picket line around OBJ ANCHOR.",
+      "narrative_ar_baseline": "يتجمّع الاستطلاع الهجومي الأحمر في العمق، ويتمركز الأزرق على خط المرابطة الساحلي حول الهدف."
+    },
+    {
+      "index": 1, "time_label": "H+0", "elapsed_hours": 0, "phase": "PHASE 1",
+      "objective_status_baseline": "THREATENED",
+      "force_ratio_baseline": "1.6:1",
+      "narrative_en_baseline": "Red recon screens forward and the mech company advances toward the southern beach landing site.",
+      "narrative_ar_baseline": "يتقدّم استطلاع الأحمر وتتحرك السرية الآلية نحو موقع الإنزال الجنوبي."
+    },
+    {
+      "index": 2, "time_label": "H+6", "elapsed_hours": 6, "phase": "PHASE 2",
+      "objective_status_baseline": "CONTESTED",
+      "force_ratio_baseline": "2.1:1",
+      "narrative_en_baseline": "Armor commits along the northern axis; Blue coastal battalion and artillery contest the approach to OBJ ANCHOR.",
+      "narrative_ar_baseline": "تدفع المدرعات على المحور الشمالي، وتتصدّى الكتيبة الساحلية والمدفعية الزرقاء للاقتراب من الهدف."
+    },
+    {
+      "index": 3, "time_label": "H+18", "elapsed_hours": 18, "phase": "RESOLUTION",
+      "objective_status_baseline": "CONTESTED",
+      "force_ratio_baseline": "2.0:1",
+      "narrative_en_baseline": "The probe culminates short of the objective; the picket line holds but remains pressured.",
+      "narrative_ar_baseline": "يبلغ الاستطلاع الهجومي ذروته دون بلوغ الهدف، ويصمد خط المرابطة مع استمرار الضغط."
+    }
+  ]
+}

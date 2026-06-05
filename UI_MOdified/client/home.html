@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<!--
+  home.html — RMOOZ Launch Hub (PR1: Entry Shell + Global Launch Baseline).
+  Sits AFTER login (index.html) and BEFORE the operational workspace (app.html).
+  Lightweight, scenario-GLOBAL entry — no engine, no 3D, no scenario hardcoding.
+  Buttons transition into the untouched app.html operational workspace.
+-->
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RMOOZ — رموز · Command Launch</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --hub-bg-0: #070b11; --hub-bg-1: #0c131c; --hub-line: #1b2735;
+            --hub-accent: #3a96d2; --hub-text: #e8eef5; --hub-dim: #8d99a8;
+            --hub-panel: rgba(18,24,33,.72); --hub-border: #233042;
+        }
+        html, body { height: 100%; }
+        body.hub-body {
+            margin: 0; background: radial-gradient(1200px 700px at 70% 18%, #11243a 0%, var(--hub-bg-1) 45%, var(--hub-bg-0) 100%);
+            color: var(--hub-text); font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+        }
+        .hub-shell { position: fixed; inset: 0; display: grid; grid-template-rows: auto 1fr auto; }
+
+        /* top identity bar */
+        .hub-top { display: flex; align-items: center; gap: 14px; padding: 14px 22px;
+            border-bottom: 1px solid var(--hub-border); background: rgba(7,11,17,.55); backdrop-filter: blur(4px); }
+        .hub-logo { width: 34px; height: 34px; border-radius: 7px; object-fit: cover; }
+        .hub-id { display: flex; flex-direction: column; line-height: 1.15; }
+        .hub-id-name { font-size: 18px; font-weight: 700; letter-spacing: .12em; }
+        .hub-id-sub { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--hub-dim); }
+        .hub-top-spacer { flex: 1; }
+        .hub-lang { background: transparent; color: var(--hub-text); border: 1px solid var(--hub-border);
+            border-radius: 6px; padding: 5px 12px; cursor: pointer; font-size: 12px; }
+        .hub-lang:hover { background: rgba(58,150,210,.12); }
+        .hub-classbar { text-align: center; font-size: 10px; letter-spacing: .28em; padding: 3px;
+            background: #1c2733; color: #9fb3c6; text-transform: uppercase; }
+
+        /* center stage: globe visual + action stack */
+        .hub-main { position: relative; display: grid; grid-template-columns: 1.1fr .9fr; align-items: center;
+            gap: 24px; padding: 24px 6vw; }
+        .hub-stage { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; }
+        .hub-globe { width: min(46vh, 460px); aspect-ratio: 1; border-radius: 50%;
+            background: radial-gradient(circle at 34% 30%, #224a72 0%, #12273f 55%, #081523 100%);
+            box-shadow: inset -28px -34px 90px rgba(0,0,0,.65), inset 18px 18px 60px rgba(58,150,210,.12),
+                        0 0 90px rgba(58,150,210,.22); position: relative; overflow: hidden; }
+        /* lightweight lat/long grid — pure CSS, no engine */
+        .hub-globe::before, .hub-globe::after { content: ""; position: absolute; inset: 0; border-radius: 50%;
+            background:
+              repeating-linear-gradient(0deg, transparent 0 30px, rgba(120,170,210,.10) 30px 31px),
+              repeating-linear-gradient(90deg, transparent 0 30px, rgba(120,170,210,.08) 30px 31px);
+            -webkit-mask: radial-gradient(circle at 34% 30%, #000 60%, transparent 78%);
+                    mask: radial-gradient(circle at 34% 30%, #000 60%, transparent 78%); }
+        .hub-ring { position: absolute; border: 1px solid rgba(58,150,210,.28); border-radius: 50%;
+            width: min(58vh, 580px); aspect-ratio: 1; animation: hub-spin 60s linear infinite; }
+        .hub-ring.r2 { width: min(52vh, 520px); border-style: dashed; opacity: .5; animation-duration: 95s; animation-direction: reverse; }
+        @keyframes hub-spin { to { transform: rotate(360deg); } }
+        @media (prefers-reduced-motion: reduce) { .hub-ring { animation: none; } }
+        .hub-stage-tag { position: absolute; bottom: 4%; font-size: 11px; letter-spacing: .2em;
+            text-transform: uppercase; color: var(--hub-dim); }
+
+        /* action panel */
+        .hub-actions { background: var(--hub-panel); border: 1px solid var(--hub-border); border-radius: 14px;
+            padding: 22px 22px 18px; backdrop-filter: blur(6px); max-width: 440px; }
+        .hub-actions-eyebrow { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--hub-accent); }
+        .hub-actions-title { margin: 4px 0 16px; font-size: 22px; font-weight: 700; }
+        .hub-btn-grid { display: grid; gap: 10px; }
+        .hub-btn { display: flex; align-items: center; gap: 12px; width: 100%; text-align: start;
+            padding: 13px 15px; border-radius: 10px; border: 1px solid var(--hub-border);
+            background: #131c27; color: var(--hub-text); cursor: pointer; font-size: 14px; font-weight: 600;
+            transition: background .14s ease, border-color .14s ease, transform .05s ease; }
+        .hub-btn:hover { background: #1a2735; border-color: var(--hub-accent); }
+        .hub-btn:active { transform: translateY(1px); }
+        .hub-btn.primary { background: #2f7fb8; border-color: #57a8db; }
+        .hub-btn.primary:hover { background: #3a96d2; }
+        .hub-btn-ico { font-size: 17px; width: 22px; text-align: center; opacity: .9; }
+        .hub-btn-sub { display: block; font-size: 10px; font-weight: 400; color: var(--hub-dim); margin-top: 2px; }
+        .hub-secondary { display: flex; gap: 14px; margin-top: 16px; flex-wrap: wrap; }
+        .hub-link { background: none; border: none; color: var(--hub-dim); cursor: pointer; font-size: 12px;
+            padding: 4px 2px; text-decoration: none; }
+        .hub-link:hover { color: var(--hub-text); }
+
+        /* inline action notify */
+        .hub-notify { margin-top: 10px; padding: 9px 13px; border-radius: 8px;
+            font-size: 12px; line-height: 1.5; }
+        .hub-notify[hidden] { display: none; }
+        .hub-notify--info { background: rgba(58,150,210,.14); border: 1px solid rgba(58,150,210,.35); color: #c5ddf0; }
+        .hub-notify--err  { background: rgba(180,50,40,.18);  border: 1px solid rgba(180,50,40,.4);  color: #e8a0a0; }
+
+        /* status strip */
+        .hub-status { display: flex; align-items: center; gap: 22px; padding: 8px 22px;
+            border-top: 1px solid var(--hub-border); background: rgba(7,11,17,.6); font-size: 11px; }
+        .hub-status .k { color: var(--hub-dim); letter-spacing: .06em; text-transform: uppercase; font-size: 9px; }
+        .hub-status .v { color: var(--hub-text); font-family: "Cascadia Mono", Consolas, monospace; }
+        .hub-status-spacer { flex: 1; }
+        .hub-status .dot { width: 7px; height: 7px; border-radius: 50%; background: #d68a2f; display: inline-block; }
+
+        @media (max-width: 880px) {
+            .hub-main { grid-template-columns: 1fr; }
+            .hub-stage { display: none; }
+        }
+    </style>
+</head>
+<body class="hub-body">
+    <div class="hub-classbar" data-i18n="hub-classbar">UNCLASSIFIED // TRAINING USE ONLY</div>
+    <div class="hub-shell">
+
+        <!-- TOP IDENTITY -->
+        <header class="hub-top">
+            <img src="../assets/brand-logo.jpeg" alt="RMOOZ" class="hub-logo" decoding="async"
+                 onerror="this.style.display='none'">
+            <div class="hub-id">
+                <span class="hub-id-name">RMOOZ · رموز</span>
+                <span class="hub-id-sub" data-i18n="hub-id-sub">Regional Operational Command &amp; Decision Simulator</span>
+            </div>
+            <div class="hub-top-spacer"></div>
+            <button type="button" id="hub-lang" class="hub-lang">English</button>
+            <button type="button" id="hub-logout" class="hub-lang" data-i18n="hub-logout">Logout</button>
+        </header>
+
+        <!-- CENTER STAGE -->
+        <main class="hub-main">
+            <section class="hub-stage" aria-hidden="true">
+                <div class="hub-ring"></div>
+                <div class="hub-ring r2"></div>
+                <div class="hub-globe"></div>
+                <span class="hub-stage-tag" data-i18n="hub-stage-tag">2D Operational Theater · Strategic Overview (preview)</span>
+            </section>
+
+            <section class="hub-actions" aria-label="Launch actions">
+                <div class="hub-actions-eyebrow" data-i18n="hub-eyebrow">Command Launch</div>
+                <h1 class="hub-actions-title" data-i18n="hub-title">Begin an operation</h1>
+                <div class="hub-btn-grid">
+                    <button type="button" class="hub-btn primary" data-intent="demo">
+                        <span class="hub-btn-ico">▶</span>
+                        <span><span data-i18n="hub-demo">Quick Demo</span>
+                            <span class="hub-btn-sub" data-i18n="hub-demo-sub">Enter the operational workspace with the active scenario.</span></span>
+                    </button>
+                    <button type="button" class="hub-btn" data-intent="new">
+                        <span class="hub-btn-ico">＋</span>
+                        <span><span data-i18n="hub-new">Start New Scenario</span>
+                            <span class="hub-btn-sub" data-i18n="hub-new-sub">Open the workspace to build a new scenario.</span></span>
+                    </button>
+                    <button type="button" class="hub-btn" data-intent="load">
+                        <span class="hub-btn-ico">▦</span>
+                        <span><span data-i18n="hub-load">Load Scenario</span>
+                            <span class="hub-btn-sub" data-i18n="hub-load-sub">Open a saved scenario in the workspace.</span></span>
+                    </button>
+                    <button type="button" class="hub-btn" data-intent="editor">
+                        <span class="hub-btn-ico">✎</span>
+                        <span><span data-i18n="hub-editor">Scenario Editor</span>
+                            <span class="hub-btn-sub" data-i18n="hub-editor-sub">Author geography, forces, and steps.</span></span>
+                    </button>
+                    <button type="button" class="hub-btn" data-intent="resume">
+                        <span class="hub-btn-ico">⟲</span>
+                        <span><span data-i18n="hub-resume">Resume Last Session</span>
+                            <span class="hub-btn-sub" data-i18n="hub-resume-sub">Return to the most recent operational view.</span></span>
+                    </button>
+                </div>
+                <div id="hub-notify" class="hub-notify" hidden role="status" aria-live="polite"></div>
+                <div class="hub-secondary">
+                    <button type="button" class="hub-link" data-intent="settings" data-i18n="hub-settings">Settings</button>
+                    <button type="button" class="hub-link" data-intent="layers" data-i18n="hub-layers">Map Layers</button>
+                    <button type="button" class="hub-link" data-intent="help" data-i18n="hub-help">Help / Guide</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- STATUS STRIP -->
+        <footer class="hub-status">
+            <span><span class="k" data-i18n="hub-zulu">Zulu</span> <span class="v" id="hub-zulu">—</span></span>
+            <span><span class="k" data-i18n="hub-local">Local</span> <span class="v" id="hub-local">—</span></span>
+            <span><span class="k" data-i18n="hub-mode">Map Mode</span> <span class="v" data-i18n="hub-mode-v">2D Operational</span></span>
+            <span class="hub-status-spacer"></span>
+            <span><span class="dot"></span> <span class="v" id="hub-scenario" data-i18n="hub-no-scenario">No scenario loaded</span></span>
+        </footer>
+    </div>
+    <script defer src="home.js"></script>
+</body>
+</html>

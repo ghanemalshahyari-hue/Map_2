@@ -16921,12 +16921,14 @@
                 var rid = ru.uid || ru.unit_uid || ru.id || ru.base_id;
                 if (rid === undefined || rid === null || rid === '') { continue; }
                 index[String(rid)] = {
-                    uid:     String(rid),
-                    side:    'RED',
-                    label:   ru.label || ru.name || ru.name_ar || String(rid),
-                    role:    ru.role || null,
-                    domain:  ru.domain || null,
-                    echelon: ru.echelon || null
+                    uid:       String(rid),
+                    side:      'RED',
+                    label:     ru.label || ru.name || ru.name_ar || String(rid),
+                    role:      ru.role || null,
+                    domain:    ru.domain || null,
+                    echelon:   ru.echelon || null,
+                    readiness: ru.readiness || 'ready',
+                    supply:    typeof ru.supply === 'number' ? ru.supply : 0.8
                 };
                 redCount++;
             }
@@ -16937,12 +16939,14 @@
                 var bid = bu.unit_uid || bu.uid || bu.base_id || bu.id;
                 if (bid === undefined || bid === null || bid === '') { continue; }
                 index[String(bid)] = {
-                    uid:     String(bid),
-                    side:    'BLUE',
-                    label:   bu.label || bu.name || bu.name_ar || String(bid),
-                    role:    bu.role || null,
-                    domain:  bu.domain || null,
-                    echelon: bu.echelon || null
+                    uid:       String(bid),
+                    side:      'BLUE',
+                    label:     bu.label || bu.name || bu.name_ar || String(bid),
+                    role:      bu.role || null,
+                    domain:    bu.domain || null,
+                    echelon:   bu.echelon || null,
+                    readiness: bu.readiness || 'ready',
+                    supply:    typeof bu.supply === 'number' ? bu.supply : 0.8
                 };
                 blueCount++;
             }
@@ -17001,6 +17005,7 @@
             if (u.acts)               { acting++; }
             if (u.affected)           { aff++; }
             if (u.acts && u.affected) { both++; }
+            var oobRec = oob.index[u.uid] || {};
             units.push({
                 uid:         u.uid,
                 side:        u.side ? String(u.side).toUpperCase() : null,
@@ -17009,6 +17014,8 @@
                 domain:      u.domain,
                 involvement: involvement,   // 'acts' | 'affected' | 'both'
                 resolved:    u.resolved,
+                readiness:   oobRec.readiness || 'ready',
+                supply:      typeof oobRec.supply === 'number' ? oobRec.supply : 0.8,
                 readOnly:    true
             });
         }
@@ -17033,6 +17040,21 @@
         if (side === 'RED')  { return tx('sw-live-step-units-side-red', 'Red'); }
         if (side === 'BLUE') { return tx('sw-live-step-units-side-blue', 'Blue'); }
         return side || '—';
+    }
+    function _liveReadinessLabel(readiness) {
+        switch (readiness) {
+            case 'ready':     return tx('sw-live-step-units-readiness-ready', 'Ready');
+            case 'limited':   return tx('sw-live-step-units-readiness-limited', 'Limited');
+            case 'not_ready': return tx('sw-live-step-units-readiness-not-ready', 'Not Ready');
+            default:          return readiness || '—';
+        }
+    }
+    function _liveSupplyLabel(supply) {
+        if (typeof supply === 'number') {
+            var pct = Math.round(supply * 100);
+            return pct + '%';
+        }
+        return '—';
     }
 
     function getLiveStepInvolvedUnits(stepIndex) {
@@ -17077,11 +17099,13 @@
                     tr.setAttribute('data-side', u.side || 'NA');
                     tr.setAttribute('data-involvement', u.involvement);
                 }
-                _sluCell(tr, 'sw-slu-cell-unit',    u.label || u.uid);
-                _sluCell(tr, 'sw-slu-cell-side',    _liveSideLabel(u.side));
-                _sluCell(tr, 'sw-slu-cell-role',    u.role || '—');
-                _sluCell(tr, 'sw-slu-cell-domain',  u.domain || '—');
-                _sluCell(tr, 'sw-slu-cell-involve', _liveInvolveLabel(u.involvement));
+                _sluCell(tr, 'sw-slu-cell-unit',      u.label || u.uid);
+                _sluCell(tr, 'sw-slu-cell-side',      _liveSideLabel(u.side));
+                _sluCell(tr, 'sw-slu-cell-role',      u.role || '—');
+                _sluCell(tr, 'sw-slu-cell-domain',    u.domain || '—');
+                _sluCell(tr, 'sw-slu-cell-involve',   _liveInvolveLabel(u.involvement));
+                _sluCell(tr, 'sw-slu-cell-readiness', _liveReadinessLabel(u.readiness));
+                _sluCell(tr, 'sw-slu-cell-supply',    _liveSupplyLabel(u.supply));
                 rowsEl.appendChild(tr);
             }
         }

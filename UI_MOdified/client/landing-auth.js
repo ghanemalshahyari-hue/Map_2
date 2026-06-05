@@ -101,7 +101,7 @@
         return (window.location && window.location.origin ? window.location.origin : '') + p;
     }
 
-    const DEFAULT_NEXT = 'app.html';
+    const DEFAULT_NEXT = 'home.html';   // PR1: land on the RMOOZ launch hub by default (deep links to /app.html still honored via ?next=)
 
     function sanitizeNext(raw) {
         const d = DEFAULT_NEXT;
@@ -140,6 +140,14 @@
             q = new URL(window.location.href).searchParams.get('next') || '';
         } catch (_) {}
         return sanitizeNext(q);
+    }
+
+    function resolveClientUrl(target) {
+        try {
+            return new URL(target || DEFAULT_NEXT, window.location.href).toString();
+        } catch {
+            return target || DEFAULT_NEXT;
+        }
     }
 
     function el(id) {
@@ -199,15 +207,7 @@
     }
 
     function goNext() {
-        let target = getNextTarget();
-        if (!target.startsWith('/')) {
-            try {
-                target = new URL(target, window.location.origin + '/').pathname;
-            } catch {
-                target = '/' + DEFAULT_NEXT;
-            }
-        }
-        window.location.assign(target);
+        window.location.assign(resolveClientUrl(getNextTarget()));
     }
 
     function readCreds() {

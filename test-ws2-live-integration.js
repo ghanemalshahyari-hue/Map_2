@@ -85,14 +85,19 @@ const wsSame = reconcile(WS.deriveWorldState(w3, i3), { objective_status: w3.ste
 ok('default playback (state==baseline) → snapshot value identical to baseline',
    wsSame.derived.objective_status === w3.steps[i3].objective_status_baseline);
 
-/* 5. Degraded (non-W3) projects without throwing -------------------------- */
-let degradedOk = true, degraded;
+/* 5. Non-W3 derives without throwing; degraded is CAPABILITY-based (de-W3 gate) -- */
+let degradedOk = true, degraded, dp;
 try {
-    const dp = require(path.join(ROOT, 'UI_MOdified/data/scenarios/dp-test-001.json'));
+    dp = require(path.join(ROOT, 'UI_MOdified/data/scenarios/dp-test-001.json'));
     degraded = WS.deriveWorldState(dp, 0);
 } catch (_) { degradedOk = false; }
 ok('non-W3 scenario derives without throwing', degradedOk && !!degraded);
-ok('non-W3 snapshot flagged degraded', degradedOk && degraded.degraded === true);
+// degraded now reflects DATA capability (objective + units), not schema_variant.
+const dpHasObj = !!(dp && dp.obj && (dp.obj.name || dp.obj.coord)) ||
+                 !!(dp && Array.isArray(dp.objectives) && dp.objectives.length > 0);
+const dpHasUnits = !!(dp && (((dp.red_units || []).length) || ((dp.blue_units_initial || []).length) || ((dp.units || []).length)));
+ok('non-W3 degraded flag is capability-based (objective+units), not schema-based',
+   degradedOk && degraded.degraded === !(dpHasObj && dpHasUnits));
 
 /* 6. Render read is GUARDED — legacy fallback present --------------------- */
 // WS2.5 relocated the rule into World State; deriveDisplayOutcome now returns the

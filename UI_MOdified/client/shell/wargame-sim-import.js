@@ -108,6 +108,8 @@
                     var ws = window.AppShellScenarioWorkspace;
                     if (ws && typeof ws.loadLiveScenarioFromJson === 'function') ws.loadLiveScenarioFromJson(json);
                     setStatus(els.status, 'import_complete', 'loaded "' + b.name + '" on the map.');
+                    // Tell the launch popup (if open) to close so the map is revealed.
+                    try { document.dispatchEvent(new CustomEvent('rmooz:wg-import-loaded')); } catch (_) {}
                 });
         }).catch(function (e) {
             setStatus(els.status, 'import_failed', e.message, true);

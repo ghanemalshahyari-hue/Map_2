@@ -95,6 +95,8 @@
                     if (ws && typeof ws.loadLiveScenarioFromJson === 'function') {
                         ws.loadLiveScenarioFromJson(scenarioJson);
                     }
+                    // Tell the launch popup (if open) to close so the map is revealed.
+                    try { document.dispatchEvent(new CustomEvent('rmooz:wg-import-loaded')); } catch (_) {}
                     return resp.body;   // the after-summary
                 });
         });

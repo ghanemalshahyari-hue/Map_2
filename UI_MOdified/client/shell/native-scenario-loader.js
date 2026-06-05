@@ -352,11 +352,16 @@
                 if (origParent) { origNext ? origParent.insertBefore(card, origNext) : origParent.appendChild(card); }
                 if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
                 document.removeEventListener('keydown', onKey);
+                document.removeEventListener('rmooz:wg-import-loaded', onImported);
             }
             function onKey(e) { if (e.key === 'Escape') close(); }
+            // Auto-close once the import actually loads, so the map is revealed
+            // (the popup would otherwise cover the freshly-drawn scenario).
+            function onImported() { setTimeout(close, 400); }
             x.addEventListener('click', close);
             backdrop.addEventListener('click', function (e) { if (e.target === backdrop) close(); });
             document.addEventListener('keydown', onKey);
+            document.addEventListener('rmooz:wg-import-loaded', onImported);
 
             hdr.appendChild(h); hdr.appendChild(x);
             // Move the REAL card (keeps its wired file inputs + import buttons).

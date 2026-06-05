@@ -1563,11 +1563,13 @@
                             <table class="sw-live-step-units-table" id="sw-live-step-units-table" role="presentation">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="sw-slu-col-unit"    data-i18n="sw-live-step-units-col-unit">Unit</th>
-                                        <th scope="col" class="sw-slu-col-side"    data-i18n="sw-live-step-units-col-side">Side</th>
-                                        <th scope="col" class="sw-slu-col-role"    data-i18n="sw-live-step-units-col-role">Role</th>
-                                        <th scope="col" class="sw-slu-col-domain"  data-i18n="sw-live-step-units-col-domain">Domain</th>
-                                        <th scope="col" class="sw-slu-col-involve" data-i18n="sw-live-step-units-col-involvement">Involvement</th>
+                                        <th scope="col" class="sw-slu-col-unit"        data-i18n="sw-live-step-units-col-unit">Unit</th>
+                                        <th scope="col" class="sw-slu-col-side"        data-i18n="sw-live-step-units-col-side">Side</th>
+                                        <th scope="col" class="sw-slu-col-role"        data-i18n="sw-live-step-units-col-role">Role</th>
+                                        <th scope="col" class="sw-slu-col-domain"      data-i18n="sw-live-step-units-col-domain">Domain</th>
+                                        <th scope="col" class="sw-slu-col-involve"     data-i18n="sw-live-step-units-col-involvement">Involvement</th>
+                                        <th scope="col" class="sw-slu-col-readiness"   data-i18n="sw-live-step-units-col-readiness">Readiness</th>
+                                        <th scope="col" class="sw-slu-col-supply"      data-i18n="sw-live-step-units-col-supply">Supply</th>
                                     </tr>
                                 </thead>
                                 <tbody id="sw-live-step-units-rows"></tbody>
@@ -3658,6 +3660,7 @@
                             <dt data-i18n="ap-affected">Affected Units</dt>  <dd id="ap-affected">-</dd>
                             <dt data-i18n="ap-effect">Expected Effect</dt>   <dd id="ap-effect">-</dd>
                             <dt data-i18n="ap-risk">Risk</dt>                <dd id="ap-risk">-</dd>
+                            <dt data-i18n="ap-deltas">State Changes</dt>     <dd id="ap-deltas" hidden>—</dd>
                             <dt data-i18n="ap-decision">Operator Decision</dt><dd id="ap-decision"  class="ap-decision-cell"><span id="ap-decision-text" data-i18n="ap-status-pending">Pending</span></dd>
                         </dl>
 
@@ -4043,6 +4046,119 @@
                             </details>
                         </section>
                     </section>
+                </div>
+            </aside>
+
+            <!-- UI-Unit-1-A: COMMANDER UNIT STATUS PANEL — Right-slide read-only panel -->
+            <aside id="unit-status-panel" class="unit-status-panel" hidden>
+                <header class="panel-header">
+                    <h2 id="panel-title" data-i18n="cup-panel-title">Unit Status</h2>
+                    <button id="panel-close"
+                            class="panel-close-btn"
+                            aria-label="Close panel"
+                            data-i18n="cup-close">✕</button>
+                </header>
+
+                <div class="panel-body">
+
+                    <!-- Section 1: Unit Identity -->
+                    <section class="panel-section identity-section">
+                        <div class="unit-symbol-preview" id="unit-symbol"></div>
+                        <div class="unit-identity-info">
+                            <div class="unit-name" id="unit-label"></div>
+                            <div class="unit-uid" id="unit-uid"></div>
+                            <div class="unit-classification">
+                                <span class="unit-side" id="unit-side"></span>
+                                <span class="unit-domain" id="unit-domain"></span>
+                                <span class="unit-role" id="unit-role"></span>
+                            </div>
+                            <div class="unit-echelon" id="unit-echelon" hidden></div>
+                        </div>
+                    </section>
+
+                    <!-- Section 2: Readiness & Supply -->
+                    <section class="panel-section readiness-supply-section">
+                        <h3 class="section-title" data-i18n="cup-readiness-supply">Readiness & Supply</h3>
+
+                        <div class="readiness-row">
+                            <label data-i18n="cup-readiness">Readiness</label>
+                            <div class="readiness-value" id="readiness-value"></div>
+                            <div class="readiness-source" id="readiness-source"></div>
+                            <div class="readiness-data-source" id="readiness-data-source"></div>
+                        </div>
+
+                        <div class="supply-row">
+                            <label data-i18n="cup-supply">Supply</label>
+                            <div class="supply-bar-container">
+                                <div class="supply-bar">
+                                    <div class="supply-fill" id="supply-fill"></div>
+                                </div>
+                                <div class="supply-percentage" id="supply-pct"></div>
+                            </div>
+                            <div class="supply-source" id="supply-source"></div>
+                            <div class="supply-data-source" id="supply-data-source"></div>
+                        </div>
+                    </section>
+
+                    <!-- Section 3: Sensors -->
+                    <section class="panel-section sensors-section" id="sensors-section" hidden>
+                        <div class="section-header">
+                            <h3 class="section-title" data-i18n="cup-sensors">
+                                Sensors <span class="count-badge" id="sensor-count"></span>
+                            </h3>
+                            <button class="section-toggle"
+                                    aria-expanded="true"
+                                    aria-controls="sensor-list"
+                                    data-i18n="section-toggle">▼</button>
+                        </div>
+                        <ul class="sensor-list" id="sensor-list" data-collapsed="false"></ul>
+                        <div class="section-empty-state" id="sensors-empty" hidden>
+                            <p data-i18n="cup-sensors-empty">No sensors on this unit</p>
+                        </div>
+                    </section>
+
+                    <!-- Section 4: Weapons & Magazines -->
+                    <section class="panel-section weapons-section" id="weapons-section" hidden>
+                        <div class="section-header">
+                            <h3 class="section-title" data-i18n="cup-weapons">
+                                Weapons <span class="count-badge" id="weapon-count"></span>
+                            </h3>
+                            <button class="section-toggle"
+                                    aria-expanded="true"
+                                    aria-controls="weapon-list"
+                                    data-i18n="section-toggle">▼</button>
+                        </div>
+                        <ul class="weapon-list" id="weapon-list" data-collapsed="false"></ul>
+
+                        <h4 class="subsection-title" data-i18n="cup-magazines"
+                            id="magazines-title" hidden>Magazines</h4>
+                        <ul class="magazine-list" id="magazine-list" data-collapsed="false"></ul>
+                        <div class="section-empty-state" id="weapons-empty" hidden>
+                            <p data-i18n="cup-weapons-empty">No weapons configured</p>
+                        </div>
+                    </section>
+
+                    <!-- Section 5: Recent State Deltas -->
+                    <section class="panel-section deltas-section" id="deltas-section" hidden>
+                        <div class="section-header">
+                            <h3 class="section-title" data-i18n="cup-recent-changes">
+                                Recent Changes <span class="count-badge" id="delta-count"></span>
+                            </h3>
+                            <button class="section-toggle"
+                                    aria-expanded="true"
+                                    aria-controls="delta-list"
+                                    data-i18n="section-toggle">▼</button>
+                        </div>
+                        <ul class="delta-list" id="delta-list" data-collapsed="false"></ul>
+                        <div class="section-empty-state" id="deltas-empty" hidden>
+                            <p data-i18n="cup-deltas-empty">No recent state changes</p>
+                        </div>
+                    </section>
+
+                    <!-- Empty state -->
+                    <div id="empty-state" class="empty-state" hidden>
+                        <p data-i18n="cup-no-unit">No unit selected. Click a unit on the map.</p>
+                    </div>
                 </div>
             </aside>
 
@@ -4839,6 +4955,8 @@
     <script src="shell/coord-readout.js?v=1"></script>
     <script src="shell/side-picker.js?v=1"></script>
     <script src="shell/unit-panel.js?v=1"></script>
+    <script src="shell/applied-state.js?v=1"></script>
+    <script src="shell/unit-status-panel.js?v=1"></script>
     <script src="shell/objective-evidence-panel.js?v=3"></script>
     <!-- L3-B-1: read-only Why-Not display panel in the Scenario Workspace.
          Paints #wn-body from AppActionFeasibility.evaluateAction. No controls. -->
@@ -4855,9 +4973,14 @@
          can call AppShellAIProposalContract.normalizeProposal() on
          every setProposal(). -->
     <script src="shell/ai-proposal-contract.js?v=1"></script>
+    <!-- Phase 6E-A: Delta Extractor. Pure utility for extracting
+         readiness/supply deltas from projected state. Loads BEFORE
+         ai-proposal-panel.js so the panel can call
+         AppDeltaExtractor.extractDeltas(). -->
+    <script src="shell/delta-extractor.js?v=1"></script>
     <!-- PR-7: AI Proposal Review. UI foundation only — Accept/Reject/Hold
          log to the PR-6 Event Log but do not mutate scenario state. -->
-    <script src="shell/ai-proposal-panel.js?v=2"></script>
+    <script src="shell/ai-proposal-panel.js?v=3"></script>
     <!-- PR-9: AI Proposal Inbox. In-memory store between any future
          proposal source and the PR-7 panel. Loads AFTER contract.js
          and ai-proposal-panel.js because it depends on both bridges. -->
@@ -4981,7 +5104,7 @@
          Reuses AppShellScenarioWorkspace.loadLiveScenarioFromJson (global path);
          only acts when a ?launch= intent is present, so direct /app.html and the
          Wargame-3 path are untouched. -->
-    <script src="shell/native-scenario-loader.js?v=1"></script>
+    <script src="shell/native-scenario-loader.js?v=3"></script>
     <!-- Scenario Entry Consolidation: Back to Main Window, Export Scenario JSON,
          and the Developer/Import disclosure that hides scenario-load clutter. -->
     <script src="shell/workspace-consolidation.js?v=1"></script>
@@ -4989,21 +5112,22 @@
          P0 authoring schema (draft/working-copy engine) must load before edit-mode.
          Edits stay in-memory; commit/journal boundary untouched. -->
     <script src="shell/scenario-authoring-schema.js?v=1"></script>
-    <script src="shell/scenario-edit-mode.js?v=7"></script>
+    <script src="shell/scenario-edit-mode.js?v=8"></script>
     <script src="shell/objectives-editor-step.js?v=1"></script>
     <style>
         .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
-            color:#e8eaed; border-radius:5px; padding:4px 10px; }
+            color:#e8eaed; border-radius:5px; padding:4px 10px; pointer-events: auto; }
         .sw-edit-btn:hover { background:#343a44; }
         .sw-edit-btn[disabled] { opacity:0.5; cursor:not-allowed; }
-        .sw-edit-btn-primary { background:#2f6fed; border-color:#2f6fed; color:#fff; }
+        .sw-edit-btn-primary { background:#2f6fed; border-color:#2f6fed; color:#fff; pointer-events: auto; }
         .sw-edit-btn-primary:hover { background:#3b78f0; }
         .sw-editmode-editor[hidden] { display:none; }
-        .sw-edit-row dd { width:100%; }
+        .sw-edit-row dd { width:100%; pointer-events: auto; }
         .sw-edit-input { width:100%; box-sizing:border-box; font:inherit; padding:3px 6px;
-            border:1px solid #5a6270; border-radius:4px; background:#1f242b; color:#e8eaed; }
-        textarea.sw-edit-input { resize:vertical; min-height:60px; font-family:ui-monospace,Menlo,Consolas,monospace; }
+            border:1px solid #5a6270; border-radius:4px; background:#1f242b; color:#e8eaed; pointer-events: auto; }
+        textarea.sw-edit-input { resize:vertical; min-height:60px; font-family:ui-monospace,Menlo,Consolas,monospace; pointer-events: auto; }
+        select.sw-edit-input { pointer-events: auto; }
         .sw-edit-actions { display:flex; gap:8px; align-items:center; padding:8px; flex-wrap:wrap; }
         .sw-edit-status { font-size:12px; }
         /* Slice 2A/2B item styling (was using browser defaults) */
@@ -5011,15 +5135,23 @@
         .sw-edit-list-item { border:1px solid #3a3f47; border-radius:5px; padding:8px; background:#1c1f24; }
         .sw-edit-empty { font-style:italic; color:#8d949e; padding:4px 0; font-size:12px; }
         .sw-edit-hint { font-size:11px; color:#a8b0bb; padding:2px 8px 6px; }
+        /* Metadata field validation hints (Step 1 hardening) */
+        .sw-meta-hint { font-size:11px; padding:2px 0 0; min-height:14px; line-height:1.3; }
+        .sw-meta-hint:empty { display:none; }
+        .sw-meta-hint--err  { color:#e05252; }
+        .sw-meta-hint--warn { color:#c9a227; }
+        .sw-edit-input.sw-input-err  { border-color:#e05252; }
+        .sw-edit-input.sw-input-warn { border-color:#c9a227; }
+        .sw-meta-req::after { content:' *'; color:#e05252; font-size:10px; vertical-align:super; }
         .sw-edit-subcard { border:1px solid #3a3f47; border-radius:6px; margin:6px 8px; background:#1a1d22; }
         .sw-edit-subcard-header { padding:6px 10px; font-weight:600; border-bottom:1px solid #2a2f37;
             background:#222630; color:#cfd4dc; font-size:12.5px; letter-spacing:.02em; }
         /* Slice 2C — stepped layout */
         .sw-step-layout { display:flex; gap:0; align-items:stretch; min-height:300px; }
         .sw-step-rail { flex:0 0 200px; border-right:1px solid #2a2f37; padding:6px 4px;
-            background:#161a1f; display:flex; flex-direction:column; gap:2px; max-height:80vh; overflow-y:auto; }
+            background:#161a1f; display:flex; flex-direction:column; gap:2px; max-height:80vh; overflow-y:auto; pointer-events: auto; }
         .sw-step-item { display:flex; align-items:center; gap:8px; padding:6px 8px;
-            cursor:pointer; border-radius:4px; font-size:12.5px; color:#cfd4dc; user-select:none; }
+            cursor:pointer; border-radius:4px; font-size:12.5px; color:#cfd4dc; user-select:none; pointer-events: auto; }
         .sw-step-item:hover { background:#222630; }
         .sw-step-item.active { background:#2f6fed; color:#fff; }
         .sw-step-item.gap { color:#8d949e; }
@@ -5033,7 +5165,7 @@
         .sw-step-pill.ok    { background:#1a7f37; border-color:#1a7f37; }
         .sw-step-pill.warn  { background:#c9a227; border-color:#c9a227; }
         .sw-step-pill.gap   { background:transparent; border-color:#4a4f57; border-style:dashed; }
-        .sw-step-content { flex:1 1 auto; padding:8px; min-width:0; overflow-x:hidden; max-height:80vh; overflow-y:auto; }
+        .sw-step-content { flex:1 1 auto; padding:8px; min-width:0; overflow-x:hidden; max-height:80vh; overflow-y:auto; pointer-events: auto; }
         /* Slice 2C — New Scenario inline form */
         .sw-newscen-form { border:1px solid #3a3f47; border-radius:6px; padding:10px;
             background:#1c1f24; margin:6px 8px; display:flex; flex-direction:column; gap:6px; }
@@ -5357,6 +5489,408 @@
         .sw-meta-hint--required { font-size: 10px; color: #d6332e; font-weight: 600; }
         .sw-meta-hint--err { font-size: 10px; color: #d6332e; display: none; padding: 2px 0 6px 8px; font-style: italic; }
         .sw-field-display { padding: 3px 6px; background: #1f242b; border: 1px solid #3a3f47; border-radius: 4px; color: #8d949e; font-size: 12px; }
+        /* ── UI-Unit-1-A: Commander Unit Status Panel ──────────────────── */
+        .unit-status-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            width: 420px;
+            background: #f9f9f9;
+            border-left: 1px solid #d0d0d0;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+            z-index: 900;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: slideInRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            box-sizing: border-box;
+        }
+
+        .unit-status-panel[hidden] {
+            display: none !important;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .unit-status-panel .panel-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #e0e0e0;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-shrink: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .unit-status-panel .panel-header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #222;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .unit-status-panel .panel-close-btn {
+            appearance: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #666;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .unit-status-panel .panel-close-btn:hover {
+            background: #f0f0f0;
+            color: #222;
+        }
+
+        .unit-status-panel .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .unit-status-panel .panel-section {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e8e8e8;
+            width: 100%;
+            box-sizing: border-box;
+            display: block;
+            overflow-x: hidden;
+        }
+
+        .unit-status-panel .section-title {
+            margin: 0 0 1rem 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .unit-status-panel .subsection-title {
+            margin: 1rem 0 0.75rem 0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .unit-status-panel .identity-section {
+            padding: 1rem 1.25rem;
+            background: #fff;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        /* Ensure all sections size properly and don't overlap */
+        .unit-status-panel .readiness-supply-section,
+        .unit-status-panel .sensors-section,
+        .unit-status-panel .weapons-section,
+        .unit-status-panel .deltas-section {
+            display: block;
+            margin: 0;
+            padding: 1rem 1.25rem;
+            width: 100%;
+            box-sizing: border-box;
+            border-bottom: 1px solid #e8e8e8;
+            overflow-x: hidden;
+        }
+
+        .unit-status-panel .unit-symbol-preview {
+            width: 80px;
+            height: 80px;
+            background: #fff;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .unit-status-panel .unit-identity-info {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .unit-status-panel .unit-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 0.25rem;
+            word-break: break-word;
+        }
+
+        .unit-status-panel .unit-uid {
+            font-size: 0.8rem;
+            color: #888;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+
+        .unit-status-panel .unit-classification {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .unit-status-panel .unit-side,
+        .unit-status-panel .unit-domain,
+        .unit-status-panel .unit-role {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: #f0f0f0;
+            border-radius: 3px;
+        }
+
+        .unit-status-panel .unit-echelon {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .unit-status-panel .readiness-value {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .unit-status-panel .readiness-value.ready {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .unit-status-panel .readiness-value.limited {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .unit-status-panel .readiness-value.not_ready {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .unit-status-panel .readiness-source {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+
+        .unit-status-panel .supply-bar-container {
+            margin: 0.5rem 0;
+        }
+
+        .unit-status-panel .supply-bar {
+            width: 100%;
+            height: 24px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #d0d0d0;
+            box-sizing: border-box;
+        }
+
+        .unit-status-panel .supply-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 0.5rem;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: bold;
+            box-sizing: border-box;
+        }
+
+        .unit-status-panel .supply-percentage {
+            font-size: 0.9rem;
+            color: #333;
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+
+        .unit-status-panel .supply-source {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .unit-status-panel .sensor-list,
+        .unit-status-panel .weapon-list,
+        .unit-status-panel .magazine-list,
+        .unit-status-panel .delta-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .unit-status-panel .sensor-list li,
+        .unit-status-panel .weapon-list li,
+        .unit-status-panel .magazine-list li,
+        .unit-status-panel .delta-list li {
+            padding: 0.75rem;
+            background: #fff;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            border-left: 3px solid #2196F3;
+            font-size: 0.9rem;
+            color: #333;
+            word-break: break-word;
+        }
+
+        .unit-status-panel .delta-list li {
+            border-left-color: #FF9800;
+        }
+
+        .unit-status-panel .delta-list li .delta-timestamp {
+            display: block;
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.25rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .unit-status-panel .count-badge {
+            display: inline-block;
+            padding: 0.1rem 0.4rem;
+            background: #e0e0e0;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            font-weight: normal;
+            margin-left: 0.5rem;
+        }
+
+        .unit-status-panel .empty-state {
+            padding: 2rem 1.25rem;
+            text-align: center;
+            color: #999;
+        }
+
+        @media (max-width: 1200px) {
+            .unit-status-panel { width: 380px; }
+        }
+
+        @media (max-width: 768px) {
+            .unit-status-panel { width: 100%; }
+        }
+
+        /* Section headers with collapse/expand toggles */
+        .unit-status-panel .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .unit-status-panel .section-toggle {
+            appearance: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            padding: 0.25rem 0.5rem;
+            transition: transform 0.2s ease;
+            border-radius: 4px;
+        }
+
+        .unit-status-panel .section-toggle:hover {
+            background: #f0f0f0;
+        }
+
+        .unit-status-panel .section-toggle[aria-expanded="false"] {
+            transform: rotate(-90deg);
+        }
+
+        /* Hide content when collapsed */
+        .unit-status-panel .sensor-list[data-collapsed="true"],
+        .unit-status-panel .weapon-list[data-collapsed="true"],
+        .unit-status-panel .magazine-list[data-collapsed="true"],
+        .unit-status-panel .delta-list[data-collapsed="true"] {
+            display: none;
+        }
+
+        /* Empty state messaging */
+        .unit-status-panel .section-empty-state {
+            padding: 1rem;
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .unit-status-panel .section-empty-state p {
+            margin: 0;
+        }
+
+        /* Data source labels */
+        .unit-status-panel .readiness-data-source,
+        .unit-status-panel .supply-data-source {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+
+        /* Symbol placeholder (SVG fallback) */
+        .unit-status-panel .unit-symbol-preview .symbol-placeholder {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .unit-status-panel .unit-symbol-preview canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
     </style>
     <script>
         // Mount Edit Mode once the DOM (workspace panel) is ready.

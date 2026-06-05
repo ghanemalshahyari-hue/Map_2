@@ -142,6 +142,14 @@
         return sanitizeNext(q);
     }
 
+    function resolveClientUrl(target) {
+        try {
+            return new URL(target || DEFAULT_NEXT, window.location.href).toString();
+        } catch {
+            return target || DEFAULT_NEXT;
+        }
+    }
+
     function el(id) {
         return document.getElementById(id);
     }
@@ -199,15 +207,7 @@
     }
 
     function goNext() {
-        let target = getNextTarget();
-        if (!target.startsWith('/')) {
-            try {
-                target = new URL(target, window.location.origin + '/').pathname;
-            } catch {
-                target = '/' + DEFAULT_NEXT;
-            }
-        }
-        window.location.assign(target);
+        window.location.assign(resolveClientUrl(getNextTarget()));
     }
 
     function readCreds() {

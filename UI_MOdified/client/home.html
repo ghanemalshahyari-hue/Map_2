@@ -83,6 +83,13 @@
             padding: 4px 2px; text-decoration: none; }
         .hub-link:hover { color: var(--hub-text); }
 
+        /* inline action notify */
+        .hub-notify { margin-top: 10px; padding: 9px 13px; border-radius: 8px;
+            font-size: 12px; line-height: 1.5; }
+        .hub-notify[hidden] { display: none; }
+        .hub-notify--info { background: rgba(58,150,210,.14); border: 1px solid rgba(58,150,210,.35); color: #c5ddf0; }
+        .hub-notify--err  { background: rgba(180,50,40,.18);  border: 1px solid rgba(180,50,40,.4);  color: #e8a0a0; }
+
         /* status strip */
         .hub-status { display: flex; align-items: center; gap: 22px; padding: 8px 22px;
             border-top: 1px solid var(--hub-border); background: rgba(7,11,17,.6); font-size: 11px; }
@@ -153,6 +160,7 @@
                             <span class="hub-btn-sub" data-i18n="hub-resume-sub">Return to the most recent operational view.</span></span>
                     </button>
                 </div>
+                <div id="hub-notify" class="hub-notify" hidden role="status" aria-live="polite"></div>
                 <div class="hub-secondary">
                     <button type="button" class="hub-link" data-intent="settings" data-i18n="hub-settings">Settings</button>
                     <button type="button" class="hub-link" data-intent="layers" data-i18n="hub-layers">Map Layers</button>

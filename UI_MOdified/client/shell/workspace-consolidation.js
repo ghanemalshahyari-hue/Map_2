@@ -45,7 +45,11 @@
 
     function backToMainWindow() {
         // Navigate only. No state clear/mutation — a natural reload handles state.
-        window.location.assign('/home.html');
+        try {
+            window.location.assign(new URL('home.html', window.location.href).toString());
+        } catch (_) {
+            window.location.assign('home.html');
+        }
     }
 
     // Inject one collapsed "Developer / Import" toggle before the source section.

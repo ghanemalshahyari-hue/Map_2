@@ -115,12 +115,16 @@ function waitFor(n){ return request('GET','/api/wargame-sim/status').catch(funct
         r = await request('POST', '/api/wargame-sim/import', {}, false);
         eq(r.status, 404, 'import 404 when no export present');
 
-        console.log('\n── publish a synthetic export, then import via porter ──');
-        fs.mkdirSync(path.join(EXPORT_DIR, 'geojson'), { recursive: true });
+        console.log('\n── publish a synthetic DATED export, then import via porter ──');
+        const RUN_ID = '2026-06-05_99-99-99';
+        const DATED = path.join(EXPORT_DIR, RUN_ID);
+        fs.mkdirSync(path.join(DATED, 'geojson'), { recursive: true });
         const fc = buildAllPhases();
-        fs.writeFileSync(path.join(EXPORT_DIR, 'geojson', 'all_phases.geojson'), JSON.stringify(fc), 'utf8');
-        fs.writeFileSync(path.join(EXPORT_DIR, 'wargame_report.md'), '# report', 'utf8');
-        fs.writeFileSync(path.join(EXPORT_DIR, 'wargameschedule.csv'), 'phase\n0', 'utf8');
+        fs.writeFileSync(path.join(DATED, 'geojson', 'all_phases.geojson'), JSON.stringify(fc), 'utf8');
+        fs.writeFileSync(path.join(DATED, 'wargame_report.md'), '# report', 'utf8');
+        fs.writeFileSync(path.join(DATED, 'wargameschedule.csv'), 'phase\n0', 'utf8');
+        fs.writeFileSync(path.join(EXPORT_DIR, 'latest.json'),
+            JSON.stringify({ latest: RUN_ID, all_phases: RUN_ID + '/geojson/all_phases.geojson' }), 'utf8');
 
         r = await request('POST', '/api/wargame-sim/import?name=fast-doc-1-test', {}, false);
         eq(r.status, 200, 'import route 200');
@@ -136,6 +140,7 @@ function waitFor(n){ return request('GET','/api/wargame-sim/status').catch(funct
         eq(r.body && r.body.generated_from_docs, true, 'provenance generated_from_docs');
         eq(r.body && r.body.imported_from_geojson, true, 'provenance imported_from_geojson');
         ok(r.body && Array.isArray(r.body.input_docs) && r.body.input_docs.length === 2, 'provenance input_docs');
+        eq(r.body && r.body.source_run, RUN_ID, 'provenance source_run = dated export folder');
 
         if (r.body && r.body.file) writtenFiles.push(r.body.file);
         const onDisk = JSON.parse(fs.readFileSync(r.body.file, 'utf8'));

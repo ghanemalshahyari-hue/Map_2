@@ -102,3 +102,24 @@ Red count · Blue count · phase count · objective present · GeoJSON source fi
 
 ## Acceptance
 ✅ RMOOZ has a clear path to use uploaded `red_team.docx` + `blue_team.docx` to **stage** (and optionally trigger, no-LLM) WarGamingGEN generation, then **import the generated GeoJSON via the existing porter**, with import summary + provenance and **no hardcoded units or invented data**. Verified: Node **29/29 PASS**; browser confirms the panel mounts with the full status flow.
+
+---
+
+## Addendum (FAST-DOC-2) — real run + dated export folders
+
+**What changed:** the bridge now actually *runs* WarGamingGEN on the uploaded DOCX and versions each export, instead of only importing a pre-existing file.
+
+- **`POST /api/wargame-sim/run`** (when `RMOOZ_ALLOW_SIM_RUN=1`): launches the **full** sim — `python tests/test_full_run.py --all` — in `WarGamingGEN/`, on the staged DOCX, forcing a working config via child env (`LLM_LOCAL_FORCE_FALLBACK=0`, `LLM_MODEL=$RMOOZ_SIM_MODEL`). Runs in the background; `GET /status` reports `sim.running`. On exit-0 it auto-publishes.
+- **Dated export folders:** each generation is published to **`export_to_rmooz/<run-id>/`** (run-id = the WarGamingGEN `runs/<timestamp>` name), with its own `manifest.json`, mirroring the `runs/` versioning so every export is traceable. A top-level **`export_to_rmooz/latest.json`** points at the newest (Windows symlink-free).
+- **`POST /api/wargame-sim/import`** reads the **latest dated export** and stamps `source_run: <run-id>` on the imported scenario (provenance now records *which* generation produced it).
+- **Windows fix:** `runs/latest` symlink can't be created on Windows, so the bridge selects the newest run by its timestamped name.
+
+**Root cause of "import doesn't generate":** `WarGamingGEN/.env` had **`LLM_LOCAL_FORCE_FALLBACK=1`** — a kill-switch in `src/llm/client.py:99` that makes every local run emit placeholder output *without calling the model*. The bridge now overrides it (`=0`) when it launches the run.
+
+**Local-model reality (measured on this Windows box):**
+- `llama3.2:1b` — fast, but emits invalid JSON → schema fallback (garbage).
+- `qwen2.5:7b` — produces real attempts but **>10 min/phase** (≈ hours for 17 phases) — impractical.
+- `gpt-oss:20b` — won't load (memory).
+- **GPT-4o (cloud)** — fast + capable; this is what generated the existing good data (`runs/..._gpt4o_v2`). For usable end-to-end generation, point `.env` at OpenAI GPT-4o (or set `RMOOZ_SIM_MODEL`/`.env` to a capable+fast model). The wiring is model-agnostic.
+
+Tests: `node test-fast-doc-1-docx-sim-bridge.js` → **30/30** (now covers dated export + `source_run` provenance).

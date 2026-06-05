@@ -63,10 +63,9 @@
             if (!state.runEnabled && state.commands) {
                 els.cmds.style.display = 'block';
                 els.cmds.textContent =
-                    'Local run disabled. To (re)generate, run manually then click "Check / Import":\n' +
-                    '• full sim (reflects new DOCX): ' + state.commands.full_run + '\n' +
-                    '• regenerate ($0, no LLM):       ' + state.commands.regenerate + '\n' +
-                    '• publish to export folder:      ' + state.commands.publish;
+                    'Local run disabled (set RMOOZ_ALLOW_SIM_RUN=1 to enable one-click). To generate manually, then Check / Import:\n' +
+                    '• full sim (uses your DOCX): ' + state.commands.full_run + '\n' +
+                    '• then in RMOOZ: Check outputs → Import';
             } else {
                 els.cmds.style.display = 'none';
             }
@@ -121,8 +120,15 @@
         setStatus(els.status, 'simulation_running', 'requesting run…');
         return api('POST', '/api/wargame-sim/run').then(function (r) {
             var b = r.body || {};
+            if (b.ok && (b.started || b.already_running)) {
+                // Long full sim launched on the staged DOCX — runs in background.
+                setStatus(els.status, 'simulation_running',
+                    (b.already_running ? 'simulation already running' : 'simulation started on your DOCX') +
+                    ' — this takes a while. Click "Check outputs" periodically; Import enables when the dated export is ready.');
+                return refreshStatus(els);
+            }
             if (b.ok) {
-                setStatus(els.status, 'outputs_found', 'regenerated + published to export.');
+                setStatus(els.status, 'outputs_found', 'published to export.');
                 return refreshStatus(els);
             }
             // manual mode — surface the exact command(s)

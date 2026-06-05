@@ -44,22 +44,22 @@ console.log('\n── home.js: i18n strings (EN + AR) ──');
 });
 ok(/else\s*\{\s*go\(intent\);\s*\}/.test(homeJs), 'unknown intents fall through to go(intent) → app.html?launch=<intent>');
 
-console.log('\n── native-scenario-loader.js: reveal-only dispatch (no mutation, no dup) ──');
-ok(/intent === 'import-geojson'.*revealImportCard\('wg-geojson-import-card'/s.test(loader),
-   'import-geojson dispatches to revealImportCard(wg-geojson-import-card)');
-ok(/intent === 'import-docx'.*revealImportCard\('wg-sim-import-card'/s.test(loader),
-   'import-docx dispatches to revealImportCard(wg-sim-import-card)');
-ok(/function revealImportCard/.test(loader), 'revealImportCard helper defined');
+console.log('\n── native-scenario-loader.js: popup dispatch (no mutation, no dup) ──');
+ok(/intent === 'import-geojson'.*openImportCardModal\('wg-geojson-import-card'/s.test(loader),
+   'import-geojson dispatches to openImportCardModal(wg-geojson-import-card)');
+ok(/intent === 'import-docx'.*openImportCardModal\('wg-sim-import-card'/s.test(loader),
+   'import-docx dispatches to openImportCardModal(wg-sim-import-card)');
+ok(/function openImportCardModal/.test(loader), 'openImportCardModal helper defined');
 
-// Isolate the revealImportCard body and prove it does NOT import or mutate.
-const m = loader.match(/function revealImportCard[\s\S]*?\n    \}/);
+// Isolate the openImportCardModal body and prove it does NOT import or mutate.
+const m = loader.match(/function openImportCardModal[\s\S]*?\n    \}/);
 const body = m ? m[0] : '';
-ok(body.length > 0, 'revealImportCard body located');
-ok(!/loadLiveScenarioFromJson/.test(body), 'reveal does NOT call loadLiveScenarioFromJson (no scenario mutation)');
-ok(!/buildScenarioFromGeoJson|\/api\/scenario\/import/.test(body), 'reveal does NOT invoke the importer (no duplicate import)');
-ok(/openWorkspacePanel\(\)/.test(body) && /scrollIntoView/.test(body), 'reveal opens the workspace panel + scrolls the card into view');
-ok(/function openWorkspacePanel[\s\S]*?switchTool\('scenario-workspace'\)/.test(loader), 'openWorkspacePanel uses AppToolRail.switchTool(scenario-workspace) with a direct-unhide fallback');
-ok(/function openWorkspacePanel[\s\S]*?classList\.remove\('hidden'\)/.test(loader), 'openWorkspacePanel falls back to un-hiding the panel directly');
+ok(body.length > 0, 'openImportCardModal body located');
+ok(!/loadLiveScenarioFromJson/.test(body), 'popup does NOT call loadLiveScenarioFromJson (no scenario mutation)');
+ok(!/buildScenarioFromGeoJson|\/api\/scenario\/import/.test(body), 'popup does NOT invoke the importer (no duplicate import)');
+ok(/wg-import-modal/.test(body) && /position:fixed/.test(body), 'popup builds a top-level fixed modal (independent of the side panel / tool-rail)');
+ok(/body\.appendChild\(card\)|appendChild\(card\)/.test(body), 'popup MOVES the existing card element (reuses wired handlers, no duplication)');
+ok(/origParent[\s\S]*?insertBefore\(card|origParent[\s\S]*?appendChild\(card\)/.test(body), 'popup restores the card to its original parent on close');
 
 console.log('\n══════════════════════════════════════════');
 console.log('  FAST-INT-3 — Passed: ' + pass + '  |  Failed: ' + fail);

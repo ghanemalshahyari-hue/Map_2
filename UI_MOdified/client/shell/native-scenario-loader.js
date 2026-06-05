@@ -308,63 +308,63 @@
         );
     }
 
-    /* ---- intents: reveal an existing import card (NO scenario mutation) --- */
+    /* ---- intents: open an existing import card in a POPUP (NO mutation) --- */
     /* FAST-INT-3: the Home Command Launch screen routes the two WarGamingGEN
-     * import flows here. We only OPEN the scenario-workspace panel and scroll
-     * the existing FAST-INT-2 / FAST-DOC-1 card into view — we never load,
-     * convert, or mutate scenario state. The card's own buttons remain the
-     * single, explicit import trigger. */
-    function openWorkspacePanel() {
-        // Prefer the official rail API; fall back to directly un-hiding the panel
-        // (covers the case where AppToolRail isn't ready yet).
-        try {
-            if (window.AppToolRail && typeof window.AppToolRail.switchTool === 'function') {
-                window.AppToolRail.switchTool('scenario-workspace');
-                return;
-            }
-        } catch (_) {}
-        var p = document.getElementById('scenario-workspace-panel');
-        if (p) p.classList.remove('hidden');
-    }
-    function revealImportCard(cardId, label) {
-        // Robust against the heavier real-app init race: on the full app, later
-        // initialization can switch the active tool back AFTER this runs, so we
-        // (a) retry finding the card for up to ~8s, re-asserting the panel open
-        // each attempt, and (b) re-assert a few more times after it's found to
-        // beat any late override. Visual-only — never mutates scenario state.
+     * import flows here. Earlier attempts revealed the card inside the
+     * scenario-workspace side panel, but the tool-rail re-hides that panel
+     * during init (syncRailFromMode → setVisibleSections('select')), so on the
+     * full app the card never appeared. Instead we host the EXISTING card in a
+     * top-level modal popup (z-index above everything) — immune to the tool-rail
+     * / side-panel state. We MOVE the real card element (preserving its wired
+     * buttons — no importer logic is duplicated) and move it back on close.
+     * Pure presentation — never loads/converts/mutates scenario state. */
+    function openImportCardModal(cardId, title) {
         var start = Date.now(), DEADLINE = 8000;
         (function attempt() {
-            openWorkspacePanel();
             var card = document.getElementById(cardId);
             if (!card) {
                 if (Date.now() - start < DEADLINE) return void setTimeout(attempt, 200);
-                showAppNotice(label + ' panel not found.',
-                    'Open Scenario Workspace → Source & Origin to use it.', true, 8000);
+                showAppNotice(title + ' is not available yet.', 'Reload the page and try again.', true, 8000);
                 return;
             }
-            function focusCard() {
-                openWorkspacePanel();
-                try { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+            if (document.getElementById('wg-import-modal')) return;   // already open
+
+            // Remember where the card lives so we can restore it on close.
+            var origParent = card.parentNode, origNext = card.nextSibling, origStyle = card.getAttribute('style') || '';
+
+            var backdrop = document.createElement('div');
+            backdrop.id = 'wg-import-modal';
+            backdrop.style.cssText = 'position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.62);' +
+                'display:flex;align-items:flex-start;justify-content:center;padding:46px 16px;overflow:auto;';
+            var box = document.createElement('div');
+            box.style.cssText = 'background:#141a22;border:1px solid #2a3a55;border-radius:10px;max-width:660px;' +
+                'width:100%;box-shadow:0 14px 52px rgba(0,0,0,.6);';
+            var hdr = document.createElement('div');
+            hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #2a3a55;';
+            var h = document.createElement('div'); h.textContent = title;
+            h.style.cssText = 'color:#e0c060;font-weight:700;font-size:13px;';
+            var x = document.createElement('button'); x.textContent = '✕'; x.setAttribute('aria-label', 'Close');
+            x.style.cssText = 'background:none;border:none;color:#c5ddf0;font-size:16px;cursor:pointer;line-height:1;';
+            var body = document.createElement('div'); body.style.cssText = 'padding:14px;';
+
+            function close() {
+                card.setAttribute('style', origStyle);
+                if (origParent) { origNext ? origParent.insertBefore(card, origNext) : origParent.appendChild(card); }
+                if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+                document.removeEventListener('keydown', onKey);
             }
-            focusCard();
-            var prev = card.style.boxShadow;
-            card.style.boxShadow = '0 0 0 2px #e0c060';
-            setTimeout(function () { card.style.boxShadow = prev; }, 2600);
-            // GUARD: tool-rail's syncRailFromMode (driven by the legacy modeSelect
-            // change) re-hides scenario-workspace whenever the app sets its mode
-            // during init. We can't predict when that fires, so for ~5s we re-open
-            // the panel any time it becomes hidden again. Direct un-hide avoids
-            // re-triggering the rail cascade. Visual-only — no scenario mutation.
-            var guardUntil = Date.now() + 5000;
-            var guard = setInterval(function () {
-                var p = document.getElementById('scenario-workspace-panel');
-                if (p && p.classList.contains('hidden')) {
-                    p.classList.remove('hidden');
-                    try { card.scrollIntoView({ block: 'center' }); } catch (_) {}
-                }
-                if (Date.now() > guardUntil) clearInterval(guard);
-            }, 250);
-            logEvent('Launch intent "' + label + '": revealed import panel (no scenario change).');
+            function onKey(e) { if (e.key === 'Escape') close(); }
+            x.addEventListener('click', close);
+            backdrop.addEventListener('click', function (e) { if (e.target === backdrop) close(); });
+            document.addEventListener('keydown', onKey);
+
+            hdr.appendChild(h); hdr.appendChild(x);
+            // Move the REAL card (keeps its wired file inputs + import buttons).
+            card.style.margin = '0'; card.style.boxShadow = 'none'; card.style.border = 'none';
+            body.appendChild(card);
+            box.appendChild(hdr); box.appendChild(body); backdrop.appendChild(box);
+            document.body.appendChild(backdrop);
+            logEvent('Launch intent "' + title + '": opened import popup (no scenario change).');
         })();
     }
 
@@ -379,8 +379,8 @@
         if (intent === 'resume')         { handleResumeIntent(); return; }
         if (intent === 'new')            { handleNewIntent();    return; }
         if (intent === 'editor')         { handleEditorIntent(); return; }
-        if (intent === 'import-geojson') { revealImportCard('wg-geojson-import-card', 'Import WarGamingGEN GeoJSON'); return; }
-        if (intent === 'import-docx')    { revealImportCard('wg-sim-import-card', 'DOCX Simulation Import'); return; }
+        if (intent === 'import-geojson') { openImportCardModal('wg-geojson-import-card', 'Import WarGamingGEN GeoJSON'); return; }
+        if (intent === 'import-docx')    { openImportCardModal('wg-sim-import-card', 'WarGamingGEN DOCX Simulation Import'); return; }
 
         /* settings / layers / help / unknown — receipt only */
         logEvent('Launch intent "' + intent + '" received.');

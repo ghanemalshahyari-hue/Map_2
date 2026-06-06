@@ -1,0 +1,24 @@
+# WarGameGenerator runtime deps.
+# Most are already installed in SmartSearch/venv_mac.
+# Listed here so this repo is self-installable if you choose to use its own venv.
+
+# LLM + config
+openai==2.32.0
+python-dotenv>=1.0.0
+pydantic==2.13.1
+
+# Parsers
+python-docx>=1.1.0
+
+# GIS
+numpy>=1.26.0
+Pillow>=10.0.0
+scipy>=1.11.0           # for sea-mask morphology
+
+# Output (Arabic)
+arabic-reshaper>=3.0
+python-bidi>=0.4.2
+
+# Smart-search local-mode dependencies (used via sys.path injection)
+# (these are already installed in DecisionMakingSteps venv_mac — listed for completeness)
+qdrant-client==1.17.1

@@ -1,0 +1,58 @@
+# Runtime dependencies for DecisionMakingSteps ingestion pipeline.
+#
+# Versions match what is pinned in docs/memory.md and installed in venv/.
+# Any upgrade requires verifying compatibility, re-running the end-to-end
+# smoke test, and updating the "Pinned Versions" table in docs/memory.md.
+#
+# Grouped for readability; order does not matter for pip.
+
+# ── Graph / LLM gate ──────────────────────────────────────────────────────
+langgraph==1.1.6
+langchain-openai==1.1.14
+openai==2.32.0
+python-dotenv
+pydantic==2.13.1
+
+# ── Ingestion stack ───────────────────────────────────────────────────────
+# Docling parses/chunks documents; fastembed-gpu runs bge-m3 (registered via
+# TextEmbedding.add_custom_model → aapot/bge-m3-onnx) and Qdrant/bm25;
+# qdrant-client upserts + queries Qdrant.
+#
+# `fastembed-gpu` (and its `onnxruntime-gpu` dep) is the auto-detect wheel:
+# it ships BOTH CUDAExecutionProvider and CPUExecutionProvider in one
+# package.  On a GPU host it uses CUDA; on a CPU-only host it transparently
+# falls back to CPU.  The CPU-only `fastembed` wheel does not contain the
+# GPU code path and is NOT a valid substitute for "auto" behaviour.
+docling==2.89.0
+fastembed-gpu==0.8.0
+onnxruntime-gpu==1.25.1
+qdrant-client==1.17.1
+
+# ── Tokenizer for HybridChunker ───────────────────────────────────────────
+# chunk_document uses HuggingFaceTokenizer(AutoTokenizer.from_pretrained("BAAI/bge-m3"))
+# to get bge-m3-accurate token counts. Installed transitively by some of the
+# above, but pin it explicitly so chunk_document does not silently break on
+# a dependency upgrade.
+transformers==5.5.4
+
+# ── Torch (required by Docling layout + TableFormer models) ───────────────
+# MPS-enabled on macOS Apple Silicon; CUDA on Ubuntu prod.
+torch==2.11.0
+torchvision==0.26.0
+
+# ── Phase 2 retrieval UI ──────────────────────────────────────────────────
+# Streamlit powers the local-only retrieval testing UI (ui/app.py).
+# Dev-only dependency; no Phase 1 ingestion code imports streamlit.
+streamlit==1.56.0
+
+# ── Phase 3 document generation ───────────────────────────────────────────
+# python-docx emits the Arabic .docx files; arabic_reshaper + Pillow are
+# used by the renderer's kashida header stretcher (graph/generation/
+# renderers/arabic_docx.py, ported verbatim from the user's prior
+# generator per referencedocs/19_phase3_arabic_renderer.md).
+# PyYAML parses the four templates/ YAML files consumed by
+# graph/generation/template_loader.py.
+python-docx==1.2.0
+arabic_reshaper==3.0.0
+Pillow==12.2.0
+PyYAML==6.0.3

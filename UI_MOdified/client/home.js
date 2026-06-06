@@ -39,7 +39,7 @@
             'hub-editor': 'Scenario Editor', 'hub-editor-sub': 'Author geography, forces, and steps.',
             'hub-resume': 'Resume Last Session', 'hub-resume-sub': 'Return to the most recent operational view.',
             'hub-import-geojson': 'Import WarGamingGEN GeoJSON', 'hub-import-geojson-sub': 'Load generated GeoJSON phases into RMOOZ.',
-            'hub-import-docx': 'DOCX Simulation Import', 'hub-import-docx-sub': 'Stage Red/Blue force documents and import generated results.',
+            'hub-import-docx': 'Import Scenario', 'hub-import-docx-sub': 'Upload Red/Blue DOCX documents and generate the scenario.',
             'hub-settings': 'Settings', 'hub-layers': 'Map Layers', 'hub-help': 'Help / Guide',
             'hub-zulu': 'Zulu', 'hub-local': 'Local', 'hub-mode': 'Map Mode', 'hub-mode-v': '2D Operational',
             'hub-no-scenario': 'No scenario loaded',
@@ -64,7 +64,7 @@
             'hub-editor': 'محرّر السيناريو', 'hub-editor-sub': 'حرّر الجغرافيا والقوات والخطوات.',
             'hub-resume': 'استئناف آخر جلسة', 'hub-resume-sub': 'عُد إلى آخر عرض عملياتي.',
             'hub-import-geojson': 'استيراد WarGamingGEN GeoJSON', 'hub-import-geojson-sub': 'حمّل مراحل GeoJSON المولّدة إلى RMOOZ.',
-            'hub-import-docx': 'استيراد محاكاة DOCX', 'hub-import-docx-sub': 'جهّز وثائق قوات الأحمر/الأزرق واستورد النتائج المولّدة.',
+            'hub-import-docx': 'استيراد سيناريو', 'hub-import-docx-sub': 'حمّل وثائق DOCX للأحمر/الأزرق لتوليد السيناريو.',
             'hub-settings': 'الإعدادات', 'hub-layers': 'طبقات الخريطة', 'hub-help': 'مساعدة / دليل',
             'hub-zulu': 'زولو', 'hub-local': 'محلي', 'hub-mode': 'نمط الخريطة', 'hub-mode-v': 'ثنائي الأبعاد',
             'hub-no-scenario': 'لا يوجد سيناريو محمّل',
@@ -234,6 +234,32 @@
         go('new');
     }
 
+    /* ---- intent: Scenario Editor ---------------------------------------- */
+    function handleEditorClick() {
+        var blank = {
+            scenario_id:      'editor-draft',
+            name:             'editor-draft',
+            scenario_label:   'Scenario Editor',
+            authoring_status: 'draft',
+            sides: [
+                { id: 'BLUE', name_en: 'Blue Force', name_ar: 'Ø§Ù„Ù‚ÙˆØ§Øª Ø§Ù„Ø²Ø±Ù‚Ø§Ø¡', color: '#2563eb' },
+                { id: 'RED',  name_en: 'Red Force',  name_ar: 'Ø§Ù„Ù‚ÙˆØ§Øª Ø§Ù„Ø­Ù…Ø±Ø§Ø¡',  color: '#dc2626' }
+            ],
+            postures: {
+                BLUE: { BLUE: 'FRIENDLY', RED: 'HOSTILE' },
+                RED:  { BLUE: 'HOSTILE',  RED: 'FRIENDLY' }
+            },
+            steps: [{ id: 1, title: 'H+00:00', phase: 'Initial' }]
+        };
+        try {
+            sessionStorage.setItem(STORAGE_PENDING, JSON.stringify(blank));
+        } catch (_) {
+            hubNotify(tx('notify-file-big'), true);
+            return;
+        }
+        go('editor');
+    }
+
     /* ---- intent: Resume Last Session ------------------------------------ */
     function handleResumeClick() {
         /* prefer in-tab session data (survives navigation in the same tab) */
@@ -274,6 +300,7 @@
                 btn.addEventListener('click', function () {
                     if      (intent === 'load')   { handleLoadClick(); }
                     else if (intent === 'new')    { handleNewClick(); }
+                    else if (intent === 'editor') { handleEditorClick(); }
                     else if (intent === 'resume') { handleResumeClick(); }
                     else                          { go(intent); }
                 });

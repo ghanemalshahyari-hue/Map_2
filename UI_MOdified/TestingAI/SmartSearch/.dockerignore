@@ -1,0 +1,53 @@
+# Keep secrets, large local artifacts, and dev caches out of the image.
+# `COPY . /app` in the Dockerfile uses this list to filter the build context.
+#
+# Anything listed here is BOTH excluded from the build context (faster
+# builds, smaller images) AND prevents accidental secret leakage into
+# image layers (where they're recoverable forever).
+
+# Secrets — never bake live keys into image layers.
+.env
+.env.bak.*
+.env.*.local
+
+# Local virtualenv — pip install in the Dockerfile produces a fresh one.
+venv/
+.venv/
+env/
+
+# Runtime artefacts — created on the host or by other containers.
+output/
+output_docs/
+qdrant_storage/
+*.tar
+*.tar.gz
+
+# Git metadata — not needed at runtime.
+.git/
+.gitignore
+.gitattributes
+
+# IDE / editor noise.
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# Bytecode + caches — pip will rebuild as needed.
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Logs.
+*.log
+
+# Old transfer artefacts that may be lying around in the working tree.
+*.bak
+*.backup
+DecisionMakingSteps_TRANSFER.tar*
+dms_app.tar*
+qdrant.tar*

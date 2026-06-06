@@ -1,0 +1,246 @@
+/* ===========================================================
+   WarGame viewer — Cesium-based 3D operations viewer
+   =========================================================== */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #04060a;
+  color: #e2e6ee;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+#cesiumContainer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Override Cesium default chrome — we want a clean ops display */
+.cesium-viewer-bottom,
+.cesium-viewer-toolbar,
+.cesium-viewer-fullscreenContainer,
+.cesium-viewer-animationContainer,
+.cesium-viewer-timelineContainer,
+.cesium-viewer-geocoderContainer {
+  display: none !important;
+}
+
+/* ---------- HUD top-left ---------- */
+#hud-top {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 10;
+  background: rgba(8, 14, 24, 0.85);
+  border: 1px solid rgba(120, 170, 220, 0.20);
+  border-radius: 6px;
+  padding: 10px 14px;
+  max-width: 360px;
+  backdrop-filter: blur(10px);
+}
+#op-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #a8c4e6;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+#phase-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 4px;
+}
+
+/* ---------- Right narrative panel ---------- */
+#narrative-panel {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  bottom: 90px;
+  width: 380px;
+  z-index: 10;
+  background: rgba(8, 14, 24, 0.88);
+  border: 1px solid rgba(120, 170, 220, 0.20);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-y: auto;
+  backdrop-filter: blur(10px);
+}
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #7ea7d6;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 14px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(120, 170, 220, 0.15);
+  padding-bottom: 3px;
+}
+.section-title:first-child {
+  margin-top: 0;
+}
+.prose {
+  font-size: 12.5px;
+  color: #d2dae6;
+}
+.prose.red { color: #ffaeae; }
+.prose.blue { color: #aed4ff; }
+.metrics {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 11.5px;
+  color: #cfe1f5;
+  white-space: pre-wrap;
+}
+.outcomes {
+  font-size: 11.5px;
+}
+.outcome {
+  padding: 4px 0;
+  border-bottom: 1px dashed rgba(120, 170, 220, 0.10);
+}
+.outcome-uid {
+  color: #ffd47a;
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+}
+.outcome-status {
+  display: inline-block;
+  padding: 1px 6px;
+  margin-left: 5px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.outcome-status.destroyed       { background: #b00020; color: white; }
+.outcome-status.damaged_partial  { background: #d97706; color: white; }
+.outcome-status.suppressed       { background: #ca8a04; color: white; }
+.outcome-status.delayed          { background: #7c3aed; color: white; }
+.outcome-status.expended         { background: #2563eb; color: white; }
+.outcome-status.unchanged        { background: #4b5563; color: #d1d5db; }
+.outcome-cause {
+  color: #98a8bd;
+  margin-top: 2px;
+  font-size: 11px;
+}
+.outcome-doctrine {
+  color: #6f8aa6;
+  font-style: italic;
+  font-size: 10.5px;
+}
+
+/* ---------- Bottom scrubber ---------- */
+#scrubber {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  height: 56px;
+  z-index: 10;
+  background: rgba(8, 14, 24, 0.92);
+  border: 1px solid rgba(120, 170, 220, 0.20);
+  border-radius: 6px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  backdrop-filter: blur(10px);
+}
+#play-btn {
+  background: #1f3d66;
+  color: #d6e6fa;
+  border: 1px solid #355789;
+  border-radius: 4px;
+  width: 36px;
+  height: 30px;
+  font-size: 14px;
+  cursor: pointer;
+}
+#play-btn:hover { background: #2a4d80; }
+#play-btn.playing { background: #b91c1c; }
+#phase-slider {
+  flex: 1;
+  height: 6px;
+  accent-color: #aed4ff;
+}
+#phase-label {
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  color: #aed4ff;
+  min-width: 140px;
+  text-align: right;
+}
+#speed-sel {
+  background: #0f1c2c;
+  color: #d6e6fa;
+  border: 1px solid #355789;
+  border-radius: 3px;
+  padding: 4px 6px;
+  font-size: 11px;
+}
+
+/* ---------- Legend ---------- */
+#legend {
+  position: absolute;
+  left: 14px;
+  bottom: 84px;
+  z-index: 10;
+  background: rgba(8, 14, 24, 0.85);
+  border: 1px solid rgba(120, 170, 220, 0.15);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 11px;
+  backdrop-filter: blur(10px);
+}
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+  color: #c0cfe2;
+}
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.dot.red { background: #ef4444; }
+.dot.blue { background: #3b82f6; }
+.dot.obj { background: #facc15; }
+.ring {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid;
+  box-sizing: border-box;
+}
+.ring.affected { border-color: #fbbf24; }
+.ring.actor    { border-color: #34d399; }
+.line.phase {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  border-top: 2px dashed #fb923c;
+}
+
+/* ---------- Scrollbar — keep it subtle ---------- */
+#narrative-panel::-webkit-scrollbar {
+  width: 6px;
+}
+#narrative-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+#narrative-panel::-webkit-scrollbar-thumb {
+  background: rgba(120, 170, 220, 0.20);
+  border-radius: 3px;
+}

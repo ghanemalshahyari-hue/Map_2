@@ -1,0 +1,28 @@
+model_list:
+  # VIP route — high priority tag
+  - model_name: "vllm-model"
+    litellm_params:
+      model: "openai/Qwen/Qwen3-4B-Instruct-2507-FP8"
+      api_base: "http://localhost:8000/v1"
+      api_key: "Empty"
+      tags: ["vip"]
+
+  # Default route — normal users pass NO extra params
+  - model_name: "vllm-model"
+    litellm_params:
+      model: "openai/Qwen/Qwen3-4B-Instruct-2507-FP8"
+      api_base: "http://localhost:8000/v1"
+      api_key: "Empty"
+
+litellm_settings:
+  cache: true
+  database_url: "postgresql://litellm:litellm@localhost:5433/litellm"
+  drop_params: true
+  master_key: "sk-1234"
+  routing_strategy: usage-based-routing
+general_settings:
+  use_redis_transaction_buffer: true
+router_settings:
+  redis_host: "localhost"
+  redis_port: 6379
+  enable_tag_filtering: True      # Activates tag-based routing

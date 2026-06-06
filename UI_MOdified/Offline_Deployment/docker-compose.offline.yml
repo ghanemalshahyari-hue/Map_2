@@ -1,0 +1,123 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  RMOOZ — Offline Deployment Compose File  (OFFLINE-IMAGE-1B)
+#
+#  Usage (from UI_MOdified/):
+#    cp Offline_Deployment/.env.offline.example Offline_Deployment/.env.offline
+#    # Edit Offline_Deployment/.env.offline — set LDAP_SERVER, SESSION_SECRET, etc.
+#    docker compose -f Offline_Deployment/docker-compose.offline.yml \
+#                   --env-file Offline_Deployment/.env.offline up -d
+#
+#  Requirements:
+#    - Offline_Deployment/.env.offline must exist (copy from .env.offline.example)
+#    - Container must reach LDAP_SERVER:LDAP_PORT (for LDAP auth)
+#    - Ollama must be running on host for WarGamingGEN (RMOOZ_ALLOW_SIM_RUN=1)
+# ─────────────────────────────────────────────────────────────────────────────
+version: "3.9"
+
+services:
+  rmooz-offline:
+    build:
+      context: ..
+      dockerfile: Offline_Deployment/Dockerfile.offline
+    image: rmooz-offline:latest
+    container_name: rmooz-offline
+
+    # ── Port mapping ──────────────────────────────────────────────────────────
+    # 5006: RMOOZ web server   8080: MBTiles tile server (accessed by browser for satellite map)
+    ports:
+      - "${PORT:-5006}:${PORT:-5006}"
+      - "8080:8080"
+
+    # ── Environment ───────────────────────────────────────────────────────────
+    # All values read from .env.offline (passed via --env-file).
+    environment:
+      PORT:                  "${PORT:-5006}"
+      RMOOZ_AUTH_BACKEND:    "${RMOOZ_AUTH_BACKEND:-ldap}"
+
+      # LDAP — site-specific. LDAP_SERVER has no safe default; must be set.
+      LDAP_SERVER:           "${LDAP_SERVER:-}"
+      LDAP_PORT:             "${LDAP_PORT:-389}"
+      LDAP_DOMAIN:           "${LDAP_DOMAIN:-sss.dir}"
+      LDAP_TIMEOUT:          "${LDAP_TIMEOUT:-5}"
+      LDAP_USE_SSL:          "${LDAP_USE_SSL:-0}"
+
+      # Map source — tile server + DEM
+      OFFLINE_TILES:         "${OFFLINE_TILES:-1}"
+      TILE_URL:              "${TILE_URL:-}"
+      RMOOZ_MAPS_DIR:        "${RMOOZ_MAPS_DIR:-/app/maps}"
+      MAP_SOURCE_MODE:       "${MAP_SOURCE_MODE:-auto}"
+      # LOCAL_TILE_URL points to the MBTiles tile server at port 8080.
+      # Tileset name = MBTiles filename without extension.
+      LOCAL_TILE_URL:        "${LOCAL_TILE_URL:-http://localhost:8080/services/satellite-2017-11-02_asia_gcc-states/{z}/{x}/{y}.png}"
+      FALLBACK_TILE_URL:     "${FALLBACK_TILE_URL:-}"
+      MAP_HEALTHCHECK_URL:   "${MAP_HEALTHCHECK_URL:-}"
+      MAP_FALLBACK_ENABLED:  "${MAP_FALLBACK_ENABLED:-1}"
+      OFFLINE_MAP_DATA_DIR:  "${OFFLINE_MAP_DATA_DIR:-/app/offline_map_data}"
+      # DEM elevation file for 3D terrain (Cesium) and /api/dem/* endpoints
+      DEM_PATH:              "${DEM_PATH:-/app/dem_data/libya_demx5.tif}"
+
+      # WarGamingGEN / Simulation
+      # Set RMOOZ_ALLOW_SIM_RUN=1 in .env.offline to enable simulation.
+      # Ollama must be running on host at OLLAMA_HOST for generation to work.
+      RMOOZ_ALLOW_SIM_RUN:   "${RMOOZ_ALLOW_SIM_RUN:-0}"
+      RMOOZ_TESTINGAI_DIR:   "${RMOOZ_TESTINGAI_DIR:-/app/TestingAI}"
+      RMOOZ_PYTHON:          "${RMOOZ_PYTHON:-/opt/rmooz-venv/bin/python}"
+      RMOOZ_SIM_MODEL:       "${RMOOZ_SIM_MODEL:-qwen2.5:7b}"
+      OLLAMA_HOST:           "${OLLAMA_HOST:-http://host.docker.internal:11434}"
+
+      SESSION_SECRET:        "${SESSION_SECRET}"
+      RMOOZ_BOOTSTRAP_PASSWORD: "disabled"
+
+    # ── Persistent volumes ────────────────────────────────────────────────────
+    volumes:
+      # App runtime data (SQLite, scenarios, journal)
+      - rmooz_data:/app/data
+      # MBTiles satellite map tiles — bind-mounted from map_data/base/
+      # Run prepare-map-bundle.ps1 first to copy satellite MBTiles here.
+      # tile-server.js auto-discovers *.mbtiles files in this directory.
+      - ./map_data/base:/app/maps:ro
+      # File uploads (staged DOCX files)
+      - rmooz_uploads:/app/uploads
+
+      # Offline map tile package root (read-only — for offline resolver health check)
+      - ./map_data:/app/offline_map_data:ro
+
+      # Libya DEM elevation file — for 3D terrain + /api/dem/* endpoints
+      # Run prepare-map-bundle.ps1 first to stage the .tif file here.
+      # If empty, DEM endpoints return flat terrain; Cesium 3D still opens.
+      - ./map_data/dem:/app/dem_data:ro
+
+      # WarGamingGEN runtime directories (mounted writable for I/O)
+      # Operator copies DOCX OOB files to TestingAI_Runtime/import_from_rmooz/
+      # before triggering generation.
+      - ./TestingAI_Runtime/import_from_rmooz:/app/TestingAI/import_from_rmooz
+      - ./TestingAI_Runtime/export_to_rmooz:/app/TestingAI/export_to_rmooz
+      # runs/ contains per-run checkpoint and output subdirectories:
+      #   runs/<timestamp>/checkpoints/  — resumable phase snapshots
+      #   runs/<timestamp>/outputs/      — CSV, Markdown, GeoJSON outputs
+      - ./TestingAI_Runtime/runs:/app/TestingAI/WarGamingGEN/runs
+
+    # ── Restart policy ────────────────────────────────────────────────────────
+    restart: unless-stopped
+
+    # ── Health check ─────────────────────────────────────────────────────────
+    healthcheck:
+      test: ["CMD", "node", "-e",
+             "require('http').get('http://127.0.0.1:5006/api/auth/me', r => process.exit(r.statusCode === 401 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+# ── Named volumes ─────────────────────────────────────────────────────────────
+volumes:
+  rmooz_data:
+    driver: local
+  rmooz_uploads:
+    driver: local
+# Bind-mounts (not named volumes):
+#   ./map_data/base         → /app/maps               (MBTiles — run prepare-map-bundle.ps1 first)
+#   ./map_data/dem          → /app/dem_data            (Libya DEM .tif — run prepare-map-bundle.ps1 first)
+#   ./map_data              → /app/offline_map_data    (read-only tiles root)
+#   ./TestingAI_Runtime/*  → /app/TestingAI/*          (writable runtime I/O)
+# Note: rmooz_maps named volume removed — maps now come from ./map_data/base bind-mount

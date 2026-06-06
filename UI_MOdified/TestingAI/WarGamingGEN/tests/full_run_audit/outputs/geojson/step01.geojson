@@ -1,0 +1,132 @@
+{
+  "type": "FeatureCollection",
+  "name": "step01",
+  "properties": {
+    "phase": 1,
+    "time_label": "D-5",
+    "phase_name_ar": "تبادل صواريخ استراتيجية",
+    "kind": "strategic_strike",
+    "phase_line_km": 0.0,
+    "combined_effect": "Red initiated EW operations to disrupt Blue's C2, but Blue's counter-EW measures maintained C2 integrity. Both sides preserved their strategic missile capabilities for future decisive engagements. No significant attrition occurred as both sides focused on electronic warfare and strategic posturing.",
+    "step_advantage": "BLUE_ADV",
+    "force_ratio_local": 0.23,
+    "force_ratio_operational": 1.43
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.55,
+          29.74
+        ]
+      },
+      "properties": {
+        "kind": "objective",
+        "id": "OBJ-X",
+        "name_ar": "الهدف X (نقطة الناصر-البريقة)",
+        "name_en": "Objective X (Nasser-Brega pipeline midpoint)",
+        "phase": 1,
+        "depth_km_from_coast": 90.1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.0,
+          32.0
+        ]
+      },
+      "properties": {
+        "kind": "affected_unit",
+        "uid": "R-d3-405-014",
+        "side": "RED",
+        "domain": "ground",
+        "type": "ew_bn",
+        "name_ar": "كتيبة حرب الكترونية 405.  (4) سرايا",
+        "phase": 1,
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "B-d1-505-022",
+        "cause_what": "Counter-EW operations maintained C2 functionality",
+        "cause_doctrine": "WarReferences.md — Side with better EW/ECM can survive in a longer-range opponent's 'envelope.'"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.57,
+          30.03
+        ]
+      },
+      "properties": {
+        "kind": "affected_unit",
+        "uid": "B-d1-505-022",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "الحرب الالكترونية. كتيبة الحرب الإلكترونية 505 وتتألف من :",
+        "phase": 1,
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "R-d3-405-014",
+        "cause_what": "Continuous jamming operations against Blue's C2",
+        "cause_doctrine": "Operational tempo over methodical advance"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.0,
+          32.0
+        ]
+      },
+      "properties": {
+        "kind": "actor_unit",
+        "uid": "R-d0-500-077",
+        "side": "RED",
+        "domain": "strategic",
+        "type": "ssm_brigade",
+        "name_ar": "لواء صواريخ أرض/أرض متوسط المدى (500 - 600) كيلومتر",
+        "phase": 1,
+        "component": "strategic",
+        "action": "Held in reserve — preserving SSM magazine for H-hour saturation salvo per opening-day concentration doctrine",
+        "doctrine_cited": [
+          "WarReferences.md §1"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.4,
+          29.1
+        ]
+      },
+      "properties": {
+        "kind": "actor_unit",
+        "uid": "B-d0-المكون-030",
+        "side": "BLUE",
+        "domain": "naval",
+        "type": "naval_unit",
+        "name_ar": "المكون البحري . ويتألف من:",
+        "phase": 1,
+        "component": "strategic",
+        "action": "Held position — preserving SSM magazine for decisive engagement at Red culmination per ADP 3-0.",
+        "doctrine_cited": [
+          "Doctrines.md — Tenet: Defending division shapes the close, deep, support area.",
+          "Doctrines.md — Application: Blue strikes Red's follow-on echelons with 800-1000 km SSM."
+        ]
+      }
+    }
+  ]
+}

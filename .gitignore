@@ -4,6 +4,12 @@ UI_MOdified/node_modules/
 # Large map tile files
 *.mbtiles
 
+# Local/offline heavyweight artifacts. Keep these on disk or in transfer bundles,
+# not in git history.
+UI_MOdified/TestingAI/SmartSearch/litellm/litellm-image.tar
+UI_MOdified/TestingAI/_archive/source_data/geo/*.tif
+UI_MOdified/Offline_Deployment/dist/
+
 # Uploads (user-generated at runtime)
 UI_MOdified/uploads/
 
@@ -27,6 +33,8 @@ Desktop.ini
 # Environment / secrets
 .env
 .env.*
+# …but the committed TEMPLATE (no secrets, documents the vars) stays tracked.
+!UI_MOdified/.env.example
 
 # AI gateway local secrets (api keys, etc.) — never commit.
 # `ai-config.js` is the committed defaults; this overlay file (if present)
@@ -48,3 +56,13 @@ UI_MOdified/data/users/**/*.tmp.*
 
 # one-time bootstrap admin password — secret, never commit
 UI_MOdified/data/BOOTSTRAP_PASSWORD.txt
+
+# LOCAL-IMPORT-2: local Wargame output drop. Run folders copied here are bulk
+# generated geojson (large, machine-local) — ignore them. Keep the folder on a
+# fresh clone by tracking ONLY the README + .gitkeep.
+UI_MOdified/data/imports/wargame_outputs/*
+!UI_MOdified/data/imports/wargame_outputs/README.md
+!UI_MOdified/data/imports/wargame_outputs/.gitkeep
+
+# Local API key/archive secret files
+UI_MOdified/TestingAI/_archive/apik.rtf

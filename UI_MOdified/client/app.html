@@ -4188,6 +4188,23 @@
                 <span class="timeline-title" data-i18n="tl-title">Timeline</span>
             </div>
 
+            <!-- APP-FLOW-2: in-app scenario run controls. One place to see the
+                 current scenario and Load / Import it, next to the transport. -->
+            <div class="timeline-group timeline-group--scenario" role="group" aria-label="Scenario">
+                <!-- Static bilingual labels (no data-i18n): the i18n dictionary
+                     has no keys for these, and applyLanguage would overwrite the
+                     visible text with the raw key. Bilingual inline text is intended. -->
+                <span class="timeline-group-label">Scenario · السيناريو</span>
+                <span id="tl-scenario-name" class="timeline-scenario-name" dir="auto"
+                      title="Current scenario · السيناريو الحالي">No scenario loaded · لا يوجد سيناريو محمّل</span>
+                <button type="button" class="timeline-btn timeline-btn--text timeline-btn--scenario" id="tl-load-scenario"
+                        title="Load Scenario · تحميل سيناريو">Load · تحميل</button>
+                <button type="button" class="timeline-btn timeline-btn--text timeline-btn--scenario" id="tl-import-scenario"
+                        title="Import Scenario · استيراد سيناريو">Import · استيراد</button>
+            </div>
+
+            <div class="timeline-divider" aria-hidden="true"></div>
+
             <div class="timeline-group timeline-group--transport" role="group" aria-label="Transport">
                 <button type="button" class="timeline-btn timeline-btn--transport" id="tl-step-back" data-i18n-title="tl-step-back" title="Step Back">
                     <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3v10M9 8 4 4v8z" fill="currentColor"/></g></svg>
@@ -5105,11 +5122,22 @@
          the existing POST /api/scenario/import porter. Read-only pre-flight summary;
          mutates the live scenario only on explicit operator import. -->
     <script src="shell/wargame-geojson-import.js?v=1"></script>
+    <!-- LOCAL-IMPORT-2: Import Local Wargame Output. Lists run folders copied into
+         data/imports/wargame_outputs/<run_id>/ and imports the selected run through
+         the same porter. Read-only summary; mutates only on explicit operator import.
+         No external TestingAI path, no runs/latest, no stale flat bundle. -->
+    <script src="shell/wargame-local-import.js?v=1"></script>
+    <!-- UNIFIED-IMPORT-2: the one primary "Import Scenario" wizard. Upload DOCX →
+         Start → real checkpoint progress → auto publish/import → opens the scenario.
+         On a stopped run: Continue (resume) / Restart / View Logs / Import Partial
+         (≥4 phases). Relocates the three cards above into a collapsed "Advanced
+         Import Tools" (kept, not deleted). Orchestration only; porter unchanged. -->
+    <script src="shell/scenario-import-wizard.js?v=1"></script>
     <!-- FAST-DOC-1: DOCX Force Upload → WarGamingGEN → GeoJSON import bridge.
          Uploads red/blue .docx to a staging folder, runs/stages the existing
          WarGamingGEN generation, then imports the generated all_phases.geojson
          through the same porter. RMOOZ never parses DOCX or calls the LLM. -->
-    <script src="shell/wargame-sim-import.js?v=1"></script>
+    <script src="shell/wargame-sim-import.js?v=4"></script>
     <!-- PR2: RMOOZ-native scenario loader + home-hub launch-intent wiring.
          Reuses AppShellScenarioWorkspace.loadLiveScenarioFromJson (global path);
          only acts when a ?launch= intent is present, so direct /app.html and the

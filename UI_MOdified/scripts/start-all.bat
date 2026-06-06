@@ -5,6 +5,8 @@ cd /d "%~dp0.."
 
 echo Starting Ops Planner...
 echo.
+set "RMOOZ_ALLOW_SIM_RUN=1"
+set "RMOOZ_SIM_MODEL=qwen2.5:3b"
 
 rem --- 1. Check Node is on PATH ---
 where node >nul 2>&1
@@ -97,7 +99,7 @@ timeout /t 3 /nobreak >nul
 
 rem --- 6. Start the app server (port 8000) ---
 echo [2/2] Starting app server (port 8000)...
-start "App Server" cmd /k node server\web-server.js
+start "App Server" cmd /k "set RMOOZ_ALLOW_SIM_RUN=1&& set RMOOZ_SIM_MODEL=qwen2.5:3b&& node server\web-server.js"
 
 timeout /t 4 /nobreak >nul
 

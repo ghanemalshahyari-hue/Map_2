@@ -1,0 +1,42 @@
+# --- Secrets (NEVER commit) ---
+.env
+.env.*
+!.env.example
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# --- Virtualenv (~1.3 GB, reproducible from requirements.txt) ---
+venv/
+.venv/
+
+# --- Runtime artefacts (ingestion pipeline) ---
+# Entire output/ tree is runtime-only (one subfolder per source doc).
+output/
+*.log
+
+# --- Inputs (user documents — not versioned) ---
+inputs/
+
+# --- Model / embedding caches ---
+.cache/
+
+# --- Qdrant (Docker volume; included defensively) ---
+qdrant_storage/
+
+# --- Large vendored source archives (keep extracted libs/<pkg>/ for reference) ---
+libs/sources/
+
+# --- OS / IDE ---
+.DS_Store
+.idea/
+.vscode/
+*.swp
+.claude/worktrees/

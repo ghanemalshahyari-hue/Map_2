@@ -330,8 +330,31 @@ function generateBootstrapPassword() {
 // apply). We deliberately do NOT print the password to stdout — log capture
 // systems (systemd journal, Docker, Electron debug log) would otherwise
 // retain admin credentials in cleartext indefinitely.
+function bootstrapPasswordFilePath() {
+    return path.join(_dataDir, 'BOOTSTRAP_PASSWORD.txt');
+}
+
+function readBootstrapPasswordFile() {
+    const filePath = bootstrapPasswordFilePath();
+    let body;
+    try {
+        body = fs.readFileSync(filePath, 'utf8');
+    } catch (err) {
+        if (err && err.code === 'ENOENT') return null;
+        throw err;
+    }
+    const match = body.match(/^# Password:\s*([^\r\n]+)\r?$/m);
+    const password = match && match[1] ? match[1].trim() : '';
+    if (!password) {
+        const err = new Error('existing bootstrap password file is missing a usable "# Password:" line');
+        err.code = 'RMOOZ_BOOTSTRAP_PASSWORD_FILE_INVALID';
+        throw err;
+    }
+    return { filePath, password };
+}
+
 function writeBootstrapPasswordFile(password) {
-    const filePath = path.join(_dataDir, 'BOOTSTRAP_PASSWORD.txt');
+    const filePath = bootstrapPasswordFilePath();
     const body =
         '# rmooz first-time bootstrap administrator password\r\n' +
         '#\r\n' +
@@ -370,9 +393,20 @@ function ensureBootstrapUser(db) {
     // The previous default ('admin') is removed: shipping a known credential
     // means any LAN reachable copy of rmooz is one guess away from admin.
     const envPassword = process.env.RMOOZ_BOOTSTRAP_PASSWORD;
-    const password = envPassword && String(envPassword).length > 0
-        ? String(envPassword)
-        : generateBootstrapPassword();
+    let reusedPasswordFile = null;
+    let password = '';
+    if (envPassword && String(envPassword).length > 0) {
+        password = String(envPassword);
+    } else {
+        try {
+            reusedPasswordFile = readBootstrapPasswordFile();
+        } catch (err) {
+            console.error('[app-data] FAILED to read existing bootstrap password file at ' + bootstrapPasswordFilePath() + ': ' + (err && err.message ? err.message : err));
+            console.error('[app-data] Bootstrap user not created. Delete the stale file, set RMOOZ_BOOTSTRAP_PASSWORD and restart, or fix the data dir permissions.');
+            return;
+        }
+        password = reusedPasswordFile ? reusedPasswordFile.password : generateBootstrapPassword();
+    }
 
     db.prepare(
         'INSERT INTO users (id, username, password_hash, display_name, role, created_at, updated_at) VALUES (?,?,?,?,?,?,?)'
@@ -380,6 +414,10 @@ function ensureBootstrapUser(db) {
 
     if (envPassword) {
         console.log('[app-data] Created bootstrap user "' + username + '" using RMOOZ_BOOTSTRAP_PASSWORD env var.');
+        return;
+    }
+    if (reusedPasswordFile) {
+        console.log('[app-data] Re-created bootstrap user "' + username + '" using the existing one-time password file at ' + reusedPasswordFile.filePath + ' (read it, log in once, change the password in the Users panel, then DELETE that file).');
         return;
     }
     try {
@@ -393,7 +431,7 @@ function ensureBootstrapUser(db) {
         try {
             db.prepare('DELETE FROM users WHERE id=?').run(id);
         } catch (_) { /* ignore — we'll surface the original error */ }
-        console.error('[app-data] FAILED to write bootstrap password file at ' + path.join(_dataDir, 'BOOTSTRAP_PASSWORD.txt') + ': ' + (err && err.message ? err.message : err));
+        console.error('[app-data] FAILED to write bootstrap password file at ' + bootstrapPasswordFilePath() + ': ' + (err && err.message ? err.message : err));
         console.error('[app-data] Bootstrap user not created. Set RMOOZ_BOOTSTRAP_PASSWORD and restart, or fix the data dir permissions.');
     }
 }

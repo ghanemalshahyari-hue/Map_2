@@ -756,43 +756,42 @@ const AMP_BY_ECHELON = {
     unit:      '00',
 };
 
-// Pick the symbol set from a unit's domain + echelon + Arabic description.
-// W3 sources tag `domain` ∈ {strategic, naval, air, ground, sof} but the
-// Arabic name sometimes contradicts it. Rule: if the Arabic name STARTS
-// with a ship/aircraft noun, override the source domain; if the noun
-// appears only deep in the description (e.g. a ground brigade that
-// happens to mention having "12 unmanned boats"), trust the source.
+// Pick the symbol set from a unit's domain + Arabic description.
+//
+// SYMBOL-FIX-1: DOMAIN is authoritative for the symbol set. Previously an
+// Arabic formation word at the head of name_ar (لواء/كتيبة/قيادة…) could force
+// the LAND set even for naval/air units, so e.g. a naval `landing_ship` named
+// "لواء الإبرار" or an air `strike` named "لواء الطيران" rendered as a land
+// unit. The formation word legitimately influences ECHELON and the main ICON,
+// but it must NOT override the unit's domain when choosing the symbol set.
+// Name-head heuristics now apply only as a FALLBACK when domain is
+// missing/unknown (so legacy domain-less data still resolves sensibly).
 function pickSymbolSet(props) {
     const dom  = String(props.domain || '').toLowerCase();
     const name = stripArabicDiacritics(props.name_ar);
     const role = String(props.type || props.role || '').toLowerCase();
 
-    // First-word vocabulary tells us what KIND of unit this primarily is.
-    // We strip leading numerics ("10 فرقاطات" → "فرقاطات") before checking.
+    // First-word vocabulary (used only for the no-domain fallback below).
+    // Strip leading numerics ("10 فرقاطات" → "فرقاطات") before checking.
     const head = name.replace(/^\s*[(\d\s]+/, '').trim();
 
-    // Sea subsurface — submarines override everything regardless of dom.
+    // Subsurface — explicit submarine data wins regardless of the domain label.
     if (dom === 'subsurface' || /غواصة/.test(head) || role === 'submarine') return SS_SEA_SUB;
 
-    // Arabic unit-prefix words that mark this as a LAND unit definitively.
-    // "كتيبة 85 مدفعية مضاد طائرات" = "85th AAA Battalion" — even though
-    // it's anti-aircraft, it's a ground-based artillery battery. We
-    // pin it to SS_LAND when the name STARTS with one of these prefixes,
-    // overriding any air/naval domain mistag in the source.
+    // ── Domain-first (authoritative) ──────────────────────────────────────
+    if (dom === 'naval' || dom === 'maritime' || dom === 'sea' || dom === 'surface') return SS_SEA_SURFACE;
+    if (dom === 'air') return SS_AIR;
+    // Ground, SOF, and on-map strategic (e.g. SSM TELs) are land symbols.
+    // Off-map installations (bases / SSM sites) are handled separately by
+    // w3SidcForOffMap (SS_INSTALLATION) — unchanged.
+    if (dom === 'ground' || dom === 'land' || dom === 'sof' || dom === 'strategic') return SS_LAND_UNIT;
+
+    // ── Fallback: domain missing/unknown → infer from the Arabic name head ──
     const landPrefix = /^(?:ال)?(?:كتيبة|كتائب|لواء|فرقة|سرية|سرايا|قيادة|احتياط|المرحلة|العمل|المكون|المدفع)/.test(head);
-
-    // Sea surface — first-word ship vocabulary OR explicit naval domain.
-    // "10 فرقاطات" (10 frigates) → ship at head; tag as SEA.
-    // "لواء المشاة 23 ... + 12 زورق" (infantry brigade with attached boats)
-    // → "لواء" (brigade) at head; KEEP as land unit.
     const shipHead = /^(?:زورق|سفينة|سفن|مدمر|مدمرات|فرقاط|كورفيت|إبرار|هوفر|كاسحة|قانصة|قاعدة\s*[أب]?\s*البحري)/.test(head);
-    if (!landPrefix && (shipHead || dom === 'naval' || dom === 'subsurface')) return SS_SEA_SURFACE;
-
-    // Air — first-word aircraft vocabulary OR explicit air domain.
-    // "سرب طائرات" (squadron of aircraft) → air at head.
-    // "رف طائرات" (flight of aircraft) → air at head.
+    if (!landPrefix && shipHead) return SS_SEA_SURFACE;
     const airHead = /^(?:سرب|رف|طائرات?|عمودي)/.test(head);
-    if (!landPrefix && (airHead || dom === 'air')) return SS_AIR;
+    if (!landPrefix && airHead) return SS_AIR;
 
     return SS_LAND_UNIT;
 }

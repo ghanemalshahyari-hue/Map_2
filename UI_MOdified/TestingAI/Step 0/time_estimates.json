@@ -1,0 +1,12 @@
+{
+    "time_now": "10:00",
+    "time_Y": "يوم ي-25",
+    "mission_start": "يوم ي 0700",
+    "total_available_time": "600",
+    "allocated_planning_time": "200",
+    "available_time_for_subordinate_units": "400",
+    "time_for_mission_receipt": "60",
+    "time_for_development": "40",
+    "time_for_mission_analysis": "60",
+    "time_for_plan": "40"
+}

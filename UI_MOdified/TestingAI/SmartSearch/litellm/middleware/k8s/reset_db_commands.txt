@@ -1,0 +1,17 @@
+# Replace 'postgres-0' with the actual name of your postgres pod
+# Replace 'vllm' with the namespace where postgres is running
+
+# 1. Connect to default postgres DB -> Drop connections to 'litellm' -> Drop DB -> Recreate DB
+kubectl exec -it postgres-0 -n vllm -- psql -U litellm -d postgres -c "
+SELECT pg_terminate_backend(pg_stat_activity.pid)
+FROM pg_stat_activity
+WHERE pg_stat_activity.datname = 'litellm' AND pid <> pg_backend_pid();
+
+DROP DATABASE IF EXISTS litellm;
+CREATE DATABASE litellm;"
+
+# 2. Connect to the new 'litellm' DB -> Grant schema and table permissions for Prisma migrations
+kubectl exec -it postgres-0 -n vllm -- psql -U litellm -d litellm -c "
+GRANT ALL PRIVILEGES ON DATABASE litellm TO litellm;
+GRANT ALL ON SCHEMA public TO litellm;
+ALTER SCHEMA public OWNER TO litellm;"

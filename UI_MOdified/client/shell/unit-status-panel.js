@@ -337,6 +337,17 @@
         }
     }
 
+    function isOperationalScenarioSelection(unit) {
+        if (unit && unit._scenario) return true;
+        try {
+            return !!(root.AppAdjudicatorMap
+                && typeof root.AppAdjudicatorMap.isScenarioDrawn === 'function'
+                && root.AppAdjudicatorMap.isScenarioDrawn());
+        } catch (_) {
+            return false;
+        }
+    }
+
     /**
      * Open the panel (show it)
      */
@@ -446,6 +457,10 @@
         // Unit selected event
         document.addEventListener('rmooz:unit-selected', (e) => {
             const unit = e.detail && e.detail.unit;
+            if (isOperationalScenarioSelection(unit)) {
+                closePanel();
+                return;
+            }
             if (unit) {
                 populatePanel(unit);
                 openPanel();

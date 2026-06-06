@@ -1,0 +1,65 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  RMOOZ offline Docker — build context exclusions
+#  Build context: UI_MOdified/ (the project root)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Git and IDE ───────────────────────────────────────────────────────────────
+.git
+.gitignore
+.claude
+*.claude/
+
+# ── Node.js ───────────────────────────────────────────────────────────────────
+# node_modules will be rebuilt inside the container via npm install
+node_modules
+npm-*.log
+*.log
+
+# ── Python caches ─────────────────────────────────────────────────────────────
+**/__pycache__
+**/*.pyc
+**/*.pyo
+
+# ── TestingAI exclusions ──────────────────────────────────────────────────────
+# Windows .venv — NOT compatible with Linux container; container gets its own
+# Python venv at /opt/rmooz-venv built from requirements.offline.txt
+TestingAI/.venv
+
+# SmartSearch is 2.2 GB (torch, transformers, fastembed models, Qdrant data).
+# Excluded to keep image size manageable. WarGamingGEN uses Markdown fallback
+# for doctrine retrieval when SmartSearch is absent.
+TestingAI/SmartSearch
+
+# Runtime I/O directories — mounted as volumes at compose time
+TestingAI/export_to_rmooz
+TestingAI/import_from_rmooz
+TestingAI/WarGamingGEN/runs
+
+# Step 0 planning artifacts — not needed at runtime
+TestingAI/Step 0
+TestingAI/_archive
+
+# ── Runtime data (mounted as volumes) ─────────────────────────────────────────
+data
+uploads
+maps
+
+# ── Offline_Deployment runtime directories (not needed in image) ──────────────
+Offline_Deployment/map_data/base
+Offline_Deployment/map_data/terrain
+Offline_Deployment/map_data/styles
+Offline_Deployment/map_data/attribution
+Offline_Deployment/TestingAI_Runtime
+Offline_Deployment/.env.offline
+
+# ── Docs and tests (not needed in runtime image) ─────────────────────────────
+docs
+test-*.js
+*.test.js
+
+# ── Development artifacts ─────────────────────────────────────────────────────
+*.bat
+*.tar.gz
+*.tar
+web-server.log
+web-server.err.log

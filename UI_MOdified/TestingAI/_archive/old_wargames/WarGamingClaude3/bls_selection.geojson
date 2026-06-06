@@ -1,0 +1,200 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.170027793218456,
+          30.268463445917057
+        ]
+      },
+      "properties": {
+        "id": "BLS-1",
+        "role": "BLS",
+        "score": 1.483777884591734,
+        "anchor_lonlat": [
+          19.170027793218456,
+          30.283463445917057
+        ],
+        "marker_lonlat": [
+          19.170027793218456,
+          30.268463445917057
+        ],
+        "throughput": {
+          "veh_per_hour": 719,
+          "bde_per_day": 3.83,
+          "usable_beach_width_m_est": 840,
+          "exit_to_road_dist_km_est": 1.5,
+          "limiting_notes": "Approach + dry-beach + defender-distance proxy combined; no bathymetry data."
+        },
+        "approach_lane": 0.9950657894736842,
+        "dry_beach_proxy": 0.2,
+        "min_blue_dist_km": 5.495498196183897,
+        "inland_crossings": [],
+        "rgb_at_inland_strip": [
+          1,
+          1,
+          1
+        ],
+        "satellite_xy": [
+          608,
+          100
+        ],
+        "satellite_land_snap_applied": true,
+        "source_coord": [
+          19.170027793218456,
+          30.28446344591706
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.670305725403,
+          30.42164001710132
+        ]
+      },
+      "properties": {
+        "id": "BLS-2",
+        "role": "BLS",
+        "score": 1.7026869159645155,
+        "anchor_lonlat": [
+          19.670305725403,
+          30.436640017101322
+        ],
+        "marker_lonlat": [
+          19.670305725403,
+          30.42164001710132
+        ],
+        "throughput": {
+          "veh_per_hour": 826,
+          "bde_per_day": 4.41,
+          "usable_beach_width_m_est": 840,
+          "exit_to_road_dist_km_est": 1.5,
+          "limiting_notes": "Approach + dry-beach + defender-distance proxy combined; no bathymetry data."
+        },
+        "approach_lane": 0.9888888888888889,
+        "dry_beach_proxy": 0.2,
+        "min_blue_dist_km": 10.493048536769717,
+        "inland_crossings": [],
+        "rgb_at_inland_strip": [
+          1,
+          1,
+          1
+        ],
+        "satellite_xy": [
+          270,
+          1100
+        ],
+        "satellite_land_snap_applied": true,
+        "source_coord": [
+          19.670305725403,
+          30.437640017101323
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.76035575319622,
+          30.48010089781958
+        ]
+      },
+      "properties": {
+        "id": "BLS-3",
+        "role": "BLS",
+        "score": 1.6945345003430452,
+        "anchor_lonlat": [
+          19.76035575319622,
+          30.49510089781958
+        ],
+        "marker_lonlat": [
+          19.76035575319622,
+          30.48010089781958
+        ],
+        "throughput": {
+          "veh_per_hour": 821,
+          "bde_per_day": 4.38,
+          "usable_beach_width_m_est": 840,
+          "exit_to_road_dist_km_est": 1.5,
+          "limiting_notes": "Approach + dry-beach + defender-distance proxy combined; no bathymetry data."
+        },
+        "approach_lane": 0.9787234042553191,
+        "dry_beach_proxy": 0.2,
+        "min_blue_dist_km": 20.58646324224241,
+        "inland_crossings": [],
+        "rgb_at_inland_strip": [
+          0,
+          4,
+          4
+        ],
+        "satellite_xy": [
+          141,
+          1280
+        ],
+        "satellite_land_snap_applied": true,
+        "source_coord": [
+          19.76035575319622,
+          30.49610089781958
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.810383546414673,
+          30.539468148781527
+        ]
+      },
+      "properties": {
+        "id": "BLS-4",
+        "role": "BLS",
+        "score": 1.4975,
+        "anchor_lonlat": [
+          19.810383546414673,
+          30.554468148781528
+        ],
+        "marker_lonlat": [
+          19.810383546414673,
+          30.539468148781527
+        ],
+        "throughput": {
+          "veh_per_hour": 685,
+          "bde_per_day": 3.65,
+          "usable_beach_width_m_est": 840,
+          "exit_to_road_dist_km_est": 1.5,
+          "limiting_notes": "Approach + dry-beach + defender-distance proxy combined; no bathymetry data."
+        },
+        "approach_lane": 0.7,
+        "dry_beach_proxy": 0.2,
+        "min_blue_dist_km": 28.738313022965063,
+        "inland_crossings": [],
+        "rgb_at_inland_strip": [
+          2,
+          3,
+          5
+        ],
+        "satellite_xy": [
+          10,
+          1380
+        ],
+        "satellite_land_snap_applied": true,
+        "source_coord": [
+          19.810383546414673,
+          30.55546814878153
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "total_bde_per_day": 16.27
+  }
+}

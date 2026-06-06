@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litellm-deployment
+  namespace: default
+  labels:
+    app: litellm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: litellm
+  template:
+    metadata:
+      labels:
+        app: litellm
+    spec:
+      containers:
+      - name: litellm
+        image: litellm:latest
+        imagePullPolicy: IfNotPresent # Important for air-gapped clusters
+        args: ["--config", "/app/litellm_config.yaml", "--port", "4000", "--telemetry", "False"]
+        ports:
+        - containerPort: 4000
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+        env:
+        - name: MASTER_KEY
+          value: "sk-1234"
+        - name: UI_USERNAME
+          value: "admin"
+        - name: UI_PASSWORD
+          value: "admin"
+        - name: LITELLM_LOG
+          value: "INFO"
+        - name: WORKERS
+          value: "2"
+        - name: MAX_REQUESTS
+          value: "10000"
+        - name: LITELLM_LOCAL_MODEL_COST_MAP
+          value: "True"
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        # Remember to mount your Postgres correctly or provide a valid DATABASE_URL!
+        - name: DATABASE_URL
+          value: "postgresql://litellm:litellm@postgres-service:5432/litellm"
+        volumeMounts:
+        - name: litellm-config-volume
+          mountPath: /app/litellm_config.yaml
+          subPath: litellm_config.yaml
+      volumes:
+      - name: litellm-config-volume
+        configMap:
+          name: litellm-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: litellm-service
+  namespace: default
+spec:
+  type: NodePort # Use LoadBalancer if you have one configured (e.g., MetalLB)
+  selector:
+    app: litellm
+  ports:
+    - protocol: TCP
+      port: 4000       # Port accessed inside cluster
+      targetPort: 4000 # Port running in container
+      nodePort: 30400  # Port accessible externally on cluster nodes

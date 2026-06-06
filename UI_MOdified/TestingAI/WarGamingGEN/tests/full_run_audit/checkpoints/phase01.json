@@ -1,0 +1,201 @@
+{
+  "phase": 1,
+  "time_label": "D-5",
+  "phase_name_ar": "تبادل صواريخ استراتيجية",
+  "phase_name_en": "",
+  "kind": "strategic_strike",
+  "phase_line_km": 0.0,
+  "scene": "At D-5, Red initiated a strategic missile exchange targeting Blue's coastal defenses, but their efforts were largely ineffective due to the overwhelming Blue defensive capabilities. Both sides maintained equal electronic warfare intensity, but Red's limited combat power in contact hindered their ability to make significant progress.",
+  "metrics_before": {
+    "phase": 1,
+    "red_power_in_contact": 16.97,
+    "blue_power_in_contact": 74.73,
+    "red_power_total": 158.65,
+    "blue_power_total": 145.52,
+    "force_ratio_local": 0.23,
+    "force_ratio_operational": 1.43,
+    "ew_strength_red": 0.7,
+    "ew_strength_blue": 0.7,
+    "blue_mines_remaining": 400,
+    "advantage_label": "BLUE_ADV",
+    "advantage_reason_brief": "force ratio 0.23:1 < 1.5:1 — Red approaching culmination"
+  },
+  "red_action": {
+    "phase": 1,
+    "side": "RED",
+    "strategic": {
+      "actor": "R-d0-500-077",
+      "what": "Held in reserve — preserving SSM magazine for H-hour saturation salvo per opening-day concentration doctrine",
+      "why": "Preserving strategic strike capability for a decisive opening move at H-hour to achieve maximum impact.",
+      "intended_effect": "Maintain full SSM capability for future decisive engagement.",
+      "doctrine_cited": [
+        "WarReferences.md §1"
+      ]
+    },
+    "maritime": null,
+    "air": null,
+    "mines": null,
+    "usv_uav": null,
+    "sof": null,
+    "land": null,
+    "ew": {
+      "actor": "R-d3-405-014",
+      "what": "Initiate continuous jamming operations against Blue's C2 systems.",
+      "why": "To disrupt Blue's command and control, maintaining operational tempo and reducing Blue's ability to coordinate defenses.",
+      "intended_effect": "Degrade Blue's C2 effectiveness by ≥30% during initial phases.",
+      "doctrine_cited": [
+        "Operational tempo over methodical advance"
+      ]
+    },
+    "overall_intent": "Preserve strategic assets for decisive engagement at H-hour while initiating EW operations to disrupt Blue's C2. This approach maintains flexibility and readiness for future phases, ensuring maximum impact when the main assault begins."
+  },
+  "blue_reaction": {
+    "phase": 1,
+    "side": "BLUE",
+    "strategic": {
+      "actor": "B-d0-المكون-030",
+      "what": "Held position — preserving SSM magazine for decisive engagement at Red culmination per ADP 3-0.",
+      "why": "Red has not committed its SSMs, indicating a potential future saturation strike. Holding preserves our strategic strike capability for a decisive counter when Red culminates.",
+      "intended_effect": "Maintain strategic strike capability for future decisive engagement.",
+      "doctrine_cited": [
+        "Doctrines.md — Tenet: Defending division shapes the close, deep, support area.",
+        "Doctrines.md — Application: Blue strikes Red's follow-on echelons with 800-1000 km SSM."
+      ]
+    },
+    "maritime": null,
+    "air": null,
+    "mines": null,
+    "usv_uav": null,
+    "sof": null,
+    "land": null,
+    "ew": {
+      "actor": "B-d1-505-022",
+      "what": "Initiate counter-EW operations to protect C2 systems.",
+      "why": "Red's continuous jamming operations threaten our C2 integrity. Counter-EW operations are necessary to maintain command and control.",
+      "intended_effect": "Disrupt Red's jamming efforts and maintain C2 functionality.",
+      "doctrine_cited": [
+        "WarReferences.md — Lesson: Side with better EW/ECM can survive in a longer-range opponent's 'envelope.'"
+      ]
+    },
+    "overall_intent": "Hold-and-attrit posture. Preserve strategic strike capability for decisive engagement. Counter Red's EW operations to maintain C2 integrity."
+  },
+  "resolution": {
+    "phase": 1,
+    "combined_effect": "Red initiated EW operations to disrupt Blue's C2, but Blue's counter-EW measures maintained C2 integrity. Both sides preserved their strategic missile capabilities for future decisive engagements. No significant attrition occurred as both sides focused on electronic warfare and strategic posturing.",
+    "unit_outcomes": [
+      {
+        "unit_uid": "R-d3-405-014",
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "B-d1-505-022",
+        "cause_what": "Counter-EW operations maintained C2 functionality",
+        "cause_doctrine": "WarReferences.md — Side with better EW/ECM can survive in a longer-range opponent's 'envelope.'"
+      },
+      {
+        "unit_uid": "B-d1-505-022",
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "R-d3-405-014",
+        "cause_what": "Continuous jamming operations against Blue's C2",
+        "cause_doctrine": "Operational tempo over methodical advance"
+      }
+    ],
+    "step_advantage": "BLUE_ADV",
+    "advantage_reason": "Force ratio 0.23:1 < 1.5:1 per FM 3-90 — Red approaching culmination.",
+    "force_ratio_local": 0.23,
+    "force_ratio_operational": 1.43,
+    "mines_remaining": 400,
+    "ew_strength_red": 0.7,
+    "ew_strength_blue": 0.7
+  },
+  "snapshot_after": {
+    "phase": 1,
+    "red_alive": 84,
+    "blue_alive": 89,
+    "red_power_total": 158.65,
+    "blue_power_total": 111.0,
+    "red_power_in_contact": 18.25,
+    "blue_power_in_contact": 57.0,
+    "ew_red": 0.7,
+    "ew_blue": 0.7,
+    "blue_mines_remaining": 400,
+    "losses_to_date": 10
+  },
+  "inventory_red": {
+    "by_domain": {
+      "strategic": {
+        "alive": 1,
+        "total": 1,
+        "power": 1.5
+      },
+      "naval": {
+        "alive": 18,
+        "total": 18,
+        "power": 17.6
+      },
+      "air": {
+        "alive": 21,
+        "total": 21,
+        "power": 85.8
+      },
+      "ground": {
+        "alive": 40,
+        "total": 40,
+        "power": 51.0
+      },
+      "sof": {
+        "alive": 4,
+        "total": 4,
+        "power": 2.75
+      }
+    },
+    "alive_total": 84,
+    "destroyed_total": 0,
+    "power_total": 158.65
+  },
+  "inventory_blue": {
+    "by_domain": {
+      "strategic": {
+        "alive": 0,
+        "total": 0,
+        "power": 0
+      },
+      "naval": {
+        "alive": 6,
+        "total": 6,
+        "power": 6.0
+      },
+      "air": {
+        "alive": 19,
+        "total": 19,
+        "power": 48.0
+      },
+      "ground": {
+        "alive": 64,
+        "total": 64,
+        "power": 57.0
+      },
+      "sof": {
+        "alive": 0,
+        "total": 0,
+        "power": 0
+      }
+    },
+    "alive_total": 89,
+    "destroyed_total": 0,
+    "power_total": 111.0
+  },
+  "cum_losses_red": 5,
+  "cum_losses_blue": 5,
+  "ammo_red": {
+    "magazines_remaining": 396,
+    "airframes_remaining": 225,
+    "hulls_remaining": 412
+  },
+  "ammo_blue": {
+    "magazines_remaining": 240,
+    "airframes_remaining": 166,
+    "hulls_remaining": 9
+  },
+  "wall_seconds": 30.1
+}

@@ -45,6 +45,7 @@ const redTeam      = require('./ai/red-team-agent');
 const adjudicator  = require('./ai/adjudicator-agent');
 const scenarios    = require('./ai/scenario-loader');
 const wargameSimBridge = require('./wargame-sim-bridge'); // FAST-DOC-1 DOCX→sim→import bridge
+const wargameLocalBridge = require('./wargame-local-bridge'); // LOCAL-IMPORT-2 local folder import
 const mcRunner     = require('./ai/monte-carlo-runner');
 const feedbackStore = require('./ai/feedback-store');
 const lessonStore   = require('./ai/lesson-store');
@@ -461,6 +462,9 @@ const server = http.createServer((req, res) => {
 
     // FAST-DOC-1: DOCX → WarGamingGEN → GeoJSON import bridge (staged handoff).
     if (wargameSimBridge.handle(req, res, { url, pathname, method: req.method, sendJson, scenarios })) return;
+
+    // LOCAL-IMPORT-2: import Wargame outputs copied into data/imports/wargame_outputs.
+    if (wargameLocalBridge.handle(req, res, { url, pathname, method: req.method, sendJson, scenarios })) return;
 
     // --- Local Ollama gateway (Chunk 08): browser never talks to Ollama
     // directly — it goes through these endpoints so we keep one bottleneck

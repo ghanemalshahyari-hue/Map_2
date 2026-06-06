@@ -1,0 +1,10 @@
+
+> rmooz@1.0.0 serve
+> set RMOOZ_ALLOW_SIM_RUN=1&& set RMOOZ_TESTINGAI_DIR=C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\TestingAI&& set RMOOZ_PYTHON=C:\Users\ADMIN\AppData\Local\Programs\Python\Python313\python.exe&& set RMOOZ_SIM_MODEL=qwen2.5:7b&& node server/web-server.js
+
+[scenario-watcher] watching C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios
+Web server running at http://127.0.0.1:8000 (LAN accessible)
+  Open workspace: http://127.0.0.1:8000/app.html
+  Landing page:   http://127.0.0.1:8000/
+  Note: if localhost is served by another process on this machine, prefer 127.0.0.1.
+[dem] Opened C:\Users\ADMIN\Desktop\libya_demx5.tif

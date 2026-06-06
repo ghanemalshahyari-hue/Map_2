@@ -1,0 +1,27 @@
+{
+  "schema": "testingai-export",
+  "version": 2,
+  "run_id": "2026-06-06_18-27-23",
+  "generated_at": "2026-06-06T14:32:56.071Z",
+  "input_docs": [
+    "red_team.docx",
+    "blue_team.docx"
+  ],
+  "files": {
+    "geojson_all": "geojson/all_phases.geojson",
+    "geojson_steps": [
+      "geojson/step00.geojson",
+      "geojson/step01.geojson",
+      "geojson/step02.geojson",
+      "geojson/step03.geojson",
+      "geojson/step04.geojson",
+      "geojson/step05.geojson",
+      "geojson/step06.geojson",
+      "geojson/step07.geojson",
+      "geojson/step08.geojson",
+      "geojson/step09.geojson"
+    ],
+    "report": "wargame_report.md",
+    "schedule": "wargameschedule.csv"
+  }
+}

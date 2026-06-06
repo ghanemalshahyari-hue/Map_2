@@ -1,0 +1,107 @@
+# prompts/warning_order/template.yaml
+# ===================================
+# Y-approved shape: 50 flat fields keyed exactly like
+# /Users/hextechkraken/Desktop/y/WarningOrderJson.rtf.
+#
+# Field kinds in use:
+#   source_file_extracted  — dominant kind.  The Warning Order itself is
+#                            the primary source of scenario facts, with
+#                            a few environment/enemy fields that may
+#                            appear in the Intel Report instead.
+#
+# No doctrine retrieval on this document — the WARNO is a scenario-fact
+# directive, not a doctrinally-grounded essay.  Fields the sources do
+# not cover fall through to the "غير متوفر في المدخلات" placeholder
+# via the dispatcher's sentinel handling.
+
+meta:
+  template_id: warning_order
+  template_version: 2
+  title_arabic: "الأمر الإنذاري"
+  document_slug: warning_order
+  output_filename: "{document_slug}.docx"
+  default_collections: []
+
+schemas:
+  WarningOrder:
+    fields:
+      # ---------------- higher-command mission & intent ----------------
+      friendly_forces:             { kind: source_file_extracted, source_hint: warning_order }
+      join_op_mission:             { kind: source_file_extracted, source_hint: warning_order }
+      join_op_purp:                { kind: source_file_extracted, source_hint: warning_order }
+      joint_ops_how:               { kind: source_file_extracted, source_hint: warning_order }
+      joint_ops_desired_end:       { kind: source_file_extracted, source_hint: warning_order }
+      mission_of_supporting_unit:  { kind: source_file_extracted, source_hint: warning_order }
+
+      # ---------------- civilian / external coordination ----------------
+      CIVILIAN_CONSIDERATIONS:     { kind: source_file_extracted, source_hint: either }
+      gov_and_nongov_org:          { kind: source_file_extracted, source_hint: warning_order }
+      local_authorities:           { kind: source_file_extracted, source_hint: warning_order }
+      red_crescent:                { kind: source_file_extracted, source_hint: warning_order }
+
+      # ---------------- task organization / assumptions ----------------
+      Attached_and_Detached_units: { kind: source_file_extracted, source_hint: warning_order }
+      Operational_Assumptions:     { kind: source_file_extracted, source_hint: warning_order }
+
+      # ---------------- ground component mission & execution ----------------
+      GROUND_COMPONENT_MISSION:    { kind: source_file_extracted, source_hint: warning_order }
+      Exc_command_purp:            { kind: source_file_extracted, source_hint: warning_order }
+      Concept_of_operations:       { kind: source_file_extracted, source_hint: warning_order }
+      Units_Duty:                  { kind: source_file_extracted, source_hint: warning_order }
+      Duties_of_Other_Combat_Units_and_Combat_Support_Units:
+                                   { kind: source_file_extracted, source_hint: warning_order }
+      Timings:                     { kind: source_file_extracted, source_hint: warning_order }
+      Commanders_Crtitical_Information_Requirements:
+                                   { kind: source_file_extracted, source_hint: warning_order }
+
+      # ---------------- document headers ----------------
+      header:                      { kind: source_file_extracted, source_hint: warning_order }
+      header2:                     { kind: source_file_extracted, source_hint: warning_order }
+      header3:                     { kind: source_file_extracted, source_hint: warning_order }
+      header4:                     { kind: source_file_extracted, source_hint: warning_order }
+
+      # ---------------- admin metadata ----------------
+      Assembly_Area:               { kind: source_file_extracted, source_hint: warning_order }
+      date_time:                   { kind: source_file_extracted, source_hint: warning_order }
+      letter_ref_number:           { kind: source_file_extracted, source_hint: warning_order }
+      letter_ref_number2:          { kind: source_file_extracted, source_hint: warning_order }
+      References:                  { kind: source_file_extracted, source_hint: warning_order }
+      Maps:                        { kind: source_file_extracted, source_hint: warning_order }
+      task_assembly:               { kind: source_file_extracted, source_hint: warning_order }
+      time_zone:                   { kind: source_file_extracted, source_hint: warning_order }
+      Appendices:                  { kind: source_file_extracted, source_hint: warning_order }
+      Viewports:                   { kind: source_file_extracted, source_hint: warning_order }
+
+      # ---------------- situation / environment ----------------
+      situation:                   { kind: source_file_extracted, source_hint: either }
+      area_interest:               { kind: source_file_extracted, source_hint: either }
+      operations_area:             { kind: source_file_extracted, source_hint: warning_order }
+      terrain:                     { kind: source_file_extracted, source_hint: intel_report }
+      weather:                     { kind: source_file_extracted, source_hint: intel_report }
+      civil_considerations:        { kind: source_file_extracted, source_hint: either }
+      enemy_forces:                { kind: source_file_extracted, source_hint: intel_report }
+
+      # ---------------- coordination instructions ----------------
+      Fire_support_coordination:   { kind: source_file_extracted, source_hint: warning_order }
+      Air_support_coordination:    { kind: source_file_extracted, source_hint: warning_order }
+      Risk_assy:                   { kind: source_file_extracted, source_hint: warning_order }
+      ROE:                         { kind: source_file_extracted, source_hint: warning_order }
+      Other_coordination_media:    { kind: source_file_extracted, source_hint: warning_order }
+      Other_coordination_meeting:  { kind: source_file_extracted, source_hint: warning_order }
+      Other_coordination_Excu:     { kind: source_file_extracted, source_hint: warning_order }
+      Other_coordination_movm:     { kind: source_file_extracted, source_hint: warning_order }
+
+      # ---------------- sustainment / command & control ----------------
+      Sustainment:                 { kind: source_file_extracted, source_hint: warning_order }
+      ACCS:                        { kind: source_file_extracted, source_hint: warning_order }
+
+structure:
+  - kind: title
+    text: "الأمر الإنذاري"
+    alignment: center
+    underline: true
+
+  - kind: section
+    schema: WarningOrder
+    layout: y_warning_order
+    citation_collection: false

@@ -1,0 +1,375 @@
+# templates/initial_planning_guidance.yaml
+# =========================================
+# Doc 4 — دليل التخطيط الأولي (Initial Planning Guidance / WARNO).
+#
+# Retrieval groups (M5 deliverable — 2 groups):
+#   - PLANNING_DIRECTIVES           → reuse MDMP / operations-process doctrine
+#   - OPERATIONAL_SAFETY_STANDARDS  → force-protection doctrine (CBRN, engineer)
+#
+# Two non-retrieved classes inherit Doc 3's math:
+#   - INITIAL_PLAN_TIMELINE         → same shape as MISSION_TIMELINE (computed)
+#   - CURRENT_TIME_REFERENCE_2      → same shape as CURRENT_TIME_REFERENCE (computed)
+#
+# Design references:
+#   - referencedocs/20_phase3_templates_and_kinds.md §3 (routing), §5 (YAML shape)
+#   - referencedocs/18_phase3_generation.md §6.4 (collection scope),
+#     §7 (prompt shape)
+#   - NewClasses.md (INITIAL_PLAN_TIMELINE, CURRENT_TIME_REFERENCE_2,
+#     PLANNING_DIRECTIVES, OPERATIONAL_SAFETY_STANDARDS)
+#
+# Collection scope: single doctrine collection with per-manual narrowing
+# via filters.source_doc.
+#
+# §18 C17 (2026-04-22) — corpus swapped. The four doctrine PDFs now in
+# inputs/doctrine/ are the MDMP Step 1 set:
+#   - FM-6-0-Commander-Staff-Organization.pdf
+#   - FM-5-0-Planning-and-Orders-Production.pdf
+#   - ADP-5-0-Operations-Process.pdf
+#   - ADP-2-0-Intelligence.pdf
+# The 21 tactics manuals previously referenced by this template
+# (FM-3-0-Operations, FM-3-90-Tactics, ADP-3-0-Operations, FM-3-98, etc.)
+# are archived at /Users/hextechkraken/Desktop/NatoDocs/ and are no
+# longer in the corpus. Every retrieved field's source_doc allowlist
+# below has been re-scoped to the Step 1 set. Field coverage of force-
+# protection and movement specifics is weaker in the Step 1 corpus —
+# the drafter will emit "غير متوفر في العقيدة المتاحة" when the
+# retrieved chunks don't support a field, which is the correct
+# behaviour per §6.6 and §7.1.
+
+meta:
+  template_id: initial_planning_guidance
+  template_version: 1
+  title_arabic: "دليل التخطيط الأولي"
+  document_slug: initial_planning_guidance
+  output_filename: "{document_slug}.docx"
+  default_collections:
+    - ingest__doctrine__bgem3
+
+schemas:
+  # -----------------------------------------------------------------
+  # Timeline math — identical shape to Doc 3's MISSION_TIMELINE, just
+  # re-emitted inside the WARNO so the receiving unit sees it in
+  # context. The assembler does NOT share computation across Docs 3
+  # and 4; each template evaluates independently. If the user wants a
+  # single computation shared, switch these to `kind: derived` and
+  # reference MISSION_TIMELINE.* — but that only works when Docs 3 and
+  # 4 are generated in the same run.
+  # -----------------------------------------------------------------
+  CURRENT_TIME_REFERENCE_2:
+    fields:
+      time_now:
+        kind: computed
+        function: time_math.format_time_now
+        arguments:
+          reporting_time: "{{input: timing.reporting_date_gregorian}}"
+          time_zone: "{{input: timing.time_zone}}"
+        label_ar: "الوقت الحالي"
+
+  INITIAL_PLAN_TIMELINE:
+    fields:
+      current_date:
+        kind: computed
+        function: time_math.format_gregorian_hijri_pair
+        arguments:
+          when: "{{input: timing.reporting_date_gregorian}}"
+        label_ar: "التاريخ الحالي (ميلادي / هجري)"
+
+      mission_start_time:
+        kind: computed
+        function: time_math.format_h_hour
+        arguments:
+          when: "{{input: timing.h_hour_gregorian}}"
+          time_zone: "{{input: timing.time_zone}}"
+        label_ar: "وقت بدء المهمة (T₀)"
+
+      total_available_time:
+        kind: computed
+        function: time_math.format_duration_hours
+        arguments:
+          minutes: "{{input: timing.total_available_minutes}}"
+        label_ar: "إجمالي الوقت المتاح قبل بدء المهمة"
+
+      allocated_planning_time:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: planning_minutes_display
+        label_ar: "الوقت المخصص للتخطيط (الإجمالي ÷ 3)"
+
+      available_time_for_subordinate_units:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: subordinate_minutes_display
+        label_ar: "الوقت المتاح للوحدات الفرعية (الإجمالي × 2/3)"
+
+      time_for_mission_receipt_analysis:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_1_display
+        label_ar: "استلام المهمة وتحليلها (30%)"
+
+      time_for_coa_development:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_2_display
+        label_ar: "تطوير مسار العمل (20%)"
+
+      time_for_coa_analysis_comparison:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_3_display
+        label_ar: "تحليل ومقارنة مسارات العمل (30%)"
+
+      time_for_plan_order_production:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_4_display
+        label_ar: "إعداد الخطة والأمر (20%)"
+
+  # -----------------------------------------------------------------
+  # PLANNING_DIRECTIVES — one retrieval group. All seven fields share
+  # retrieval context (MDMP + operations-process doctrine).
+  # -----------------------------------------------------------------
+  PLANNING_DIRECTIVES:
+    fields:
+      report_production:
+        kind: retrieved
+        group: PLANNING_DIRECTIVES
+        label_ar: "إصدار التقارير ونشرها"
+        query_seeds:
+          - "report production and dissemination MDMP planning"
+          - "staff running estimate reporting requirements"
+          - "warning order production initial planning guidance"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-5-0-Planning-and-Orders-Production.pdf"
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+            - "ADP-5-0-Operations-Process.pdf"
+        rerank_query_ar: "إصدار التقارير ونشرها في عملية التخطيط"
+        prompt_ar: >
+          اذكر إجراءات إصدار التقارير ونشرها خلال مرحلة التخطيط الأولي
+          اعتماداً على العقيدة المعطاة في المقاطع. استشهد بعد كل جملة
+          أساسية بالوسم الموجود بجانب المقطع المصدر حرفياً — لا تُعدِّل
+          الوسم ولا تخترع واحداً. إذا لم تدعم المقاطع الحقل، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 250
+
+      coordination_duties:
+        kind: retrieved
+        group: PLANNING_DIRECTIVES
+        label_ar: "واجبات التنسيق"
+        query_seeds:
+          - "staff coordination duties and responsibilities"
+          - "liaison coordination mission command MDMP"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+            - "FM-5-0-Planning-and-Orders-Production.pdf"
+            - "ADP-5-0-Operations-Process.pdf"
+        prompt_ar: >
+          حدِّد واجبات التنسيق بين عناصر هيئة الركن خلال التخطيط الأولي
+          بناءً على المقاطع المعطاة. استشهد بعد كل جملة أساسية بالوسم
+          الموجود بجانب المقطع حرفياً. إذا لم تدعم المقاطع الحقل، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 250
+
+      authorized_movements:
+        kind: retrieved
+        group: PLANNING_DIRECTIVES
+        label_ar: "التحركات المأذون بها"
+        query_seeds:
+          - "authorized movements initial planning guidance"
+          - "pre-mission movement control boundaries {operation.echelon}"
+          - "warning order movement initiation MDMP"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-5-0-Planning-and-Orders-Production.pdf"
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+            - "ADP-5-0-Operations-Process.pdf"
+        prompt_ar: >
+          اذكر التحركات المأذون بها خلال مرحلة التخطيط الأولي بناءً على
+          المقاطع. استشهد بعد كل جملة بوسم المقطع المصدر حرفياً. إذا
+          لم تدعم المقاطع الحقل، اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 220
+
+      staff_duties:
+        kind: retrieved
+        group: PLANNING_DIRECTIVES
+        label_ar: "واجبات هيئة الركن"
+        query_seeds:
+          - "staff duties and responsibilities MDMP"
+          - "staff roles operations process"
+          - "staff sections G1 G2 G3 G4 running estimates"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+            - "FM-5-0-Planning-and-Orders-Production.pdf"
+            - "ADP-5-0-Operations-Process.pdf"
+        prompt_ar: >
+          وضِّح واجبات هيئة الركن خلال مرحلة التخطيط الأولي بناءً على
+          المقاطع المعطاة. استشهد بعد كل جملة أساسية بوسم المقطع المصدر
+          حرفياً. إذا لم تدعم المقاطع الحقل، اكتب "غير متوفر في العقيدة
+          المتاحة".
+        max_tokens: 250
+
+      collaborative_planning_times_locations:
+        kind: retrieved
+        group: PLANNING_DIRECTIVES
+        label_ar: "أوقات ومواقع التخطيط المشترك"
+        query_seeds:
+          - "collaborative planning sessions times locations"
+          - "parallel planning subordinate units coordination"
+          - "planning horizons timeline MDMP steps"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-5-0-Planning-and-Orders-Production.pdf"
+            - "ADP-5-0-Operations-Process.pdf"
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+        prompt_ar: >
+          حدِّد أوقات ومواقع جلسات التخطيط المشترك بين العناصر. اعتمد
+          على المقاطع المعطاة. استشهد بعد كل جملة بوسم المقطع المصدر
+          حرفياً. إذا لم تدعم المقاطع الحقل، اكتب "غير متوفر في العقيدة
+          المتاحة".
+        max_tokens: 250
+
+      commanders_critical_information_requirements:
+        kind: retrieved
+        group: PLANNING_DIRECTIVES
+        label_ar: "متطلبات المعلومات الحرجة للقائد (CCIR)"
+        query_seeds:
+          - "commander's critical information requirements CCIR PIR FFIR"
+          - "priority intelligence requirements information management"
+          - "intelligence preparation of the battlefield IPB"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+            - "ADP-2-0-Intelligence.pdf"
+            - "FM-5-0-Planning-and-Orders-Production.pdf"
+            - "ADP-5-0-Operations-Process.pdf"
+        prompt_ar: >
+          اذكر متطلبات المعلومات الحرجة للقائد (CCIR) مقسَّمة إلى
+          متطلبات الاستخبارات ذات الأولوية (PIR) ومتطلبات المعلومات
+          الصديقة (FFIR). اعتمد على المقاطع فقط. استشهد بعد كل جملة
+          بوسم المقطع المصدر حرفياً. إذا لم تدعم المقاطع الحقل، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 300
+
+      additional_information:
+        kind: input
+        path: mission_intent_free_text
+        required: false
+        default: ""
+        label_ar: "معلومات إضافية"
+
+  # -----------------------------------------------------------------
+  # OPERATIONAL_SAFETY_STANDARDS — one retrieval group, one field.
+  # §18 C17 note: the Step 1 corpus (FM 6-0, FM 5-0, ADP 5-0, ADP 2-0)
+  # covers force protection only at the planning-guidance level, not
+  # at the branch-specific (CBRN / engineer / chemical) detail that
+  # FM 3-11 / FM 3-34 carried. The drafter is instructed to emit the
+  # "غير متوفر في العقيدة المتاحة" fallback when chunks don't support
+  # the field — weaker-than-tactical grounding is expected here.
+  # -----------------------------------------------------------------
+  OPERATIONAL_SAFETY_STANDARDS:
+    fields:
+      force_protection_protocols:
+        kind: retrieved
+        group: OPERATIONAL_SAFETY_STANDARDS
+        label_ar: "بروتوكولات حماية القوة"
+        query_seeds:
+          - "force protection planning considerations MDMP"
+          - "risk management planning force protection"
+          - "commander risk guidance initial planning"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+            - "FM-5-0-Planning-and-Orders-Production.pdf"
+            - "ADP-5-0-Operations-Process.pdf"
+        rerank_query_ar: "معايير حماية القوة وتوجيهات القائد لإدارة المخاطر"
+        prompt_ar: >
+          اكتب بروتوكولات حماية القوة وتوجيهات إدارة المخاطر على مستوى
+          التخطيط الأولي استناداً إلى المقاطع المعطاة من عقيدة MDMP
+          والعمليات. اذكر القيود التشغيلية ذات الأثر المباشر على التخطيط.
+          استشهد بعد كل جملة أساسية بوسم المقطع المصدر حرفياً. إذا لم
+          تدعم المقاطع الحقل، اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 400
+
+structure:
+  - kind: title
+    text: "دليل التخطيط الأولي"
+    alignment: center
+    underline: true
+
+  - kind: section
+    schema: CURRENT_TIME_REFERENCE_2
+    heading:
+      text: "الوقت المرجعي"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: false
+
+  - kind: section
+    schema: INITIAL_PLAN_TIMELINE
+    heading:
+      text: "الإطار الزمني الأولي للتخطيط"
+      underline: true
+      space_before_cm: 1.0
+    layout: timeline_table
+    citation_collection: false
+
+  - kind: section
+    schema: PLANNING_DIRECTIVES
+    heading:
+      text: "توجيهات التخطيط"
+      underline: true
+      space_before_cm: 1.0
+    layout: directives_list
+    citation_collection: true
+
+  - kind: section
+    schema: OPERATIONAL_SAFETY_STANDARDS
+    heading:
+      text: "معايير السلامة التشغيلية"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: true

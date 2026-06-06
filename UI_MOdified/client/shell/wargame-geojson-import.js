@@ -92,8 +92,15 @@
                 .then(function (r) { if (!r.ok) throw new Error('generated scenario fetch ' + r.status); return r.json(); })
                 .then(function (scenarioJson) {
                     var ws = window.AppShellScenarioWorkspace;
-                    if (ws && typeof ws.loadLiveScenarioFromJson === 'function') {
-                        ws.loadLiveScenarioFromJson(scenarioJson);
+                    if (!ws || typeof ws.loadLiveScenarioFromJson !== 'function') {
+                        throw new Error('workspace loader unavailable');
+                    }
+                    var res = ws.loadLiveScenarioFromJson(scenarioJson);
+                    if (!res || res.passed !== true) {
+                        var reasons = (res && res.blockedReasons && res.blockedReasons.length)
+                            ? res.blockedReasons.join('; ')
+                            : 'validation failed';
+                        throw new Error('scenario load blocked: ' + reasons);
                     }
                     // Tell the launch popup (if open) to close so the map is revealed.
                     try { document.dispatchEvent(new CustomEvent('rmooz:wg-import-loaded')); } catch (_) {}

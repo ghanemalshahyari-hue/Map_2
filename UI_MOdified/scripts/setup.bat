@@ -121,6 +121,8 @@ if not exist "node_modules\sql.js\package.json" (
 :LAUNCH
 echo.
 echo  [4/4] Starting servers...
+set "RMOOZ_ALLOW_SIM_RUN=1"
+set "RMOOZ_SIM_MODEL=qwen2.5:3b"
 
 for /f "tokens=5" %%P in ('netstat -ano ^| findstr ":8080 " 2^>nul') do taskkill /PID %%P /F >nul 2>&1
 for /f "tokens=5" %%P in ('netstat -ano ^| findstr ":8000 " 2^>nul') do taskkill /PID %%P /F >nul 2>&1
@@ -135,7 +137,7 @@ timeout /t 5 /nobreak >nul
 
 :: Start web server - minimized
 echo        Starting web server   (port 8000)...
-start "Ops Planner - Web Server" /min cmd /k "node server\web-server.js"
+start "Ops Planner - Web Server" /min cmd /k "set RMOOZ_ALLOW_SIM_RUN=1&& set RMOOZ_SIM_MODEL=qwen2.5:3b&& node server\web-server.js"
 timeout /t 2 /nobreak >nul
 
 :: Open browser

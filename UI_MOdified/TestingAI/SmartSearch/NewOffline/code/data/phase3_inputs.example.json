@@ -1,0 +1,58 @@
+{
+  "_comment": "Phase 3 generation input template. One operation per run. Port target: the user's separate health codebase plugs a differently-shaped JSON here; the generator itself does not change. See referencedocs/18_phase3_generation.md §14 and referencedocs/20_phase3_templates_and_kinds.md §4 for full semantics.",
+  "_comment_on_scope": "v1 scope (§18 C21, 2026-04-23) ships four documents — time_analysis + initial_planning_guidance + warning_order + staff_brief. The full Steps 2–6 staff_estimate and the Step 7 operation_order stay deferred to v2 (§18 C17) via v1_scope: false at their YAML top level; the CLI skips them with a stderr log line even if flipped true below.",
+
+  "operation": {
+    "name": "عملية صقر الشمال",
+    "echelon": "brigade",
+    "axis": "الشمالي",
+    "operation_type": "attack"
+  },
+
+  "references": {
+    "letter_ref_number": "أ.ع/2/1/2026",
+    "warning_order_ref_number": "أ.ت/1/1/2026",
+    "maps": "خريطة استراتيجية مقياس 1:50,000 ورقة R-4، خريطة تكتيكية 1:100,000 ورقة R-4a"
+  },
+
+  "locations": {
+    "assembly_area": "إحداثي (Q T 12345 67890)",
+    "area_of_interest": "الحدود الشمالية من نقطة R-3 إلى R-7",
+    "area_of_operations": "المحور الشمالي — أرض حاكمة شمال خط الوسط",
+    "civil_considerations": "تجمعات سكانية متفرقة في القرى الشمالية، مع وجود مستشفى ميداني مدني"
+  },
+
+  "_comment_on_timing": "total_available_minutes is the window from reporting_date_gregorian to h_hour_gregorian; all three must agree to the minute. compute_allocation raises on drift.",
+
+  "timing": {
+    "reporting_date_gregorian": "2026-04-30T16:00:00+03:00",
+    "h_hour_gregorian": "2026-05-01T07:00:00+03:00",
+    "total_available_minutes": 900,
+    "time_zone": "UTC+3"
+  },
+
+  "retrieval": {
+    "collections": [
+      "ingest__doctrine__bgem3"
+    ],
+    "_comment_on_collections": "Phase 3 v1 targets one collection per domain. Doctrine lives entirely in ingest__doctrine__bgem3; per-manual narrowing is done in the YAML templates via filters.source_doc allowlists, not by listing per-FM collections here. Future non-doctrine corpora (e.g. medical emergency) will be ingested into their own collections and added to this list by a template that targets them. See referencedocs/18_phase3_generation.md §6.4.",
+    "_comment_on_absent_collections": "If a listed collection is not found in the _registry, the generator logs a warning and falls back to meta.default_collections from the template. Nothing aborts."
+  },
+
+  "mission_intent_free_text": "هجوم لواء مدرع على المحور الشمالي للاستيلاء على الأرض الحاكمة شمال خط الوسط وحرمان قوات العدو من حرية الحركة؛ المحافظة على إيقاع العمليات واستدامة القوة خلال 72 ساعة.",
+
+  "document_selection": {
+    "_comment": "§18 C21 (2026-04-23): v1 ships four documents — time_analysis + initial_planning_guidance + warning_order + staff_brief. The full OPORD (operation_order) and full Steps 2–6 Staff Estimate (staff_estimate) stay v2 only; even if flipped true here the CLI v1-scope gate skips them with a stderr log line. See §18 C17 + §18 C21.",
+    "operation_order": false,
+    "staff_estimate": false,
+    "time_analysis": true,
+    "initial_planning_guidance": true,
+    "warning_order": true,
+    "staff_brief": true
+  },
+
+  "output": {
+    "run_id": "2026-04-22_saqr_shamal_0400",
+    "output_root_override": null
+  }
+}

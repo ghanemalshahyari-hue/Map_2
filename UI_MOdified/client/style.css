@@ -7043,6 +7043,65 @@ body.orbat-dock-resizing .map-workspace .leaflet-bottom {
     background: rgba(234, 179,   8, 0.16);
 }
 
+/* APP-FLOW-2 (visual): scenario run controls — readable name + real text buttons.
+   Layout/styling only; the transport buttons above stay fixed squares. The base
+   .timeline-btn forces width:26px/padding:0 (square icon buttons), which squeezed
+   the text buttons — override to auto width with a min so "Load/Import" are legible. */
+.timeline-group--scenario {
+    gap: 8px;
+    min-width: 0;                 /* allow the name to truncate inside the flex row */
+    margin-inline-end: 4px;       /* breathing room before the divider/transport */
+}
+.timeline-scenario-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-main);
+    max-width: 240px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.timeline-btn--text {
+    width: auto;                  /* override the 26px square base */
+    min-width: 66px;
+    height: 24px;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    border-radius: 5px;
+    white-space: nowrap;
+    color: var(--text-main);
+}
+/* Keep the prior load=blue / import=gold affordance so the two read as distinct. */
+#tl-load-scenario {
+    border-color: #3a5570;
+    background: rgba( 59, 130, 246, 0.12);
+    color: #cfe3f5;
+}
+#tl-load-scenario:hover {
+    border-color: rgba( 59, 130, 246, 0.6);
+    background: rgba( 59, 130, 246, 0.20);
+}
+#tl-import-scenario {
+    border-color: #5a4a1c;
+    background: rgba(234, 179,   8, 0.12);
+    color: #e8d9a0;
+}
+#tl-import-scenario:hover {
+    border-color: rgba(234, 179,   8, 0.6);
+    background: rgba(234, 179,   8, 0.20);
+}
+/* Responsive fallback: tighten the scenario name first (buttons stay readable). */
+@media (max-width: 1180px) {
+    .timeline-scenario-name { max-width: 150px; }
+}
+@media (max-width: 980px) {
+    .timeline-scenario-name { max-width: 96px; }
+    .timeline-group--scenario .timeline-group-label { display: none; }
+}
+
 /* Segmented (speed + phase) */
 .timeline-segmented {
     display: inline-flex;
@@ -9875,6 +9934,177 @@ body.orbat-dock-resizing .map-workspace .leaflet-bottom {
 [data-theme="light"] .sw-live-scenario-import-card .sw-src-subcard-title { color: rgba(20,100,40,.92); }
 [data-theme="light"] .sw-live-scenario-import-btn { border-color: rgba(40,140,60,.55); background: rgba(40,140,60,.10); }
 [data-theme="light"] .sw-live-scenario-import-status[data-level="ok"] { color: rgba(20,100,40,.92); }
+
+/* Unified DOCX scenario import wizard */
+.wg-wz-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+.wg-wz-doc-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+.wg-wz-doc-card {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-left-width: 3px;
+    border-radius: 6px;
+    background: rgba(15, 23, 42, 0.45);
+    transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+.wg-wz-doc-card--red { border-left-color: rgba(239, 68, 68, 0.72); }
+.wg-wz-doc-card--blue { border-left-color: rgba(59, 130, 246, 0.78); }
+.wg-wz-doc-card.is-active {
+    background: rgba(30, 41, 59, 0.82);
+    border-color: rgba(125, 211, 252, 0.72);
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.18), 0 10px 24px rgba(2, 6, 23, 0.22);
+}
+.wg-wz-doc-card--red.is-active {
+    border-color: rgba(248, 113, 113, 0.82);
+    box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.18), 0 10px 24px rgba(2, 6, 23, 0.22);
+}
+.wg-wz-doc-card--blue.is-active {
+    border-color: rgba(96, 165, 250, 0.86);
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2), 0 10px 24px rgba(2, 6, 23, 0.22);
+}
+.wg-wz-doc-card.is-ready {
+    border-color: rgba(74, 222, 128, 0.72);
+    background: rgba(22, 101, 52, 0.16);
+}
+.wg-wz-doc-card.is-error {
+    border-color: rgba(248, 113, 113, 0.88);
+    background: rgba(127, 29, 29, 0.2);
+}
+.wg-wz-doc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.wg-wz-doc-side {
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 12px;
+}
+.wg-wz-doc-type {
+    padding: 1px 6px;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 3px;
+    color: var(--text-muted);
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+.wg-wz-doc-file {
+    min-height: 18px;
+    color: var(--text-muted);
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wg-wz-doc-card.has-file .wg-wz-doc-file {
+    color: var(--text-main);
+    font-family: "Cascadia Code", Consolas, monospace;
+}
+.wg-wz-file-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: 6px 12px;
+    border: 1px solid rgba(96, 165, 250, 0.42);
+    border-radius: 5px;
+    background: rgba(30, 41, 59, 0.92);
+    color: #e8eaed;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    overflow: hidden;
+}
+.wg-wz-file-btn:hover,
+.wg-wz-doc-card.is-active .wg-wz-file-btn {
+    border-color: rgba(125, 211, 252, 0.78);
+    background: rgba(37, 99, 235, 0.28);
+}
+.wg-wz-file-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+.wg-wz-action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+.wg-wz-start-btn {
+    align-self: flex-start;
+    min-height: 34px;
+    padding: 7px 16px;
+    border: 1px solid rgba(74, 222, 128, 0.5);
+    border-radius: 6px;
+    background: linear-gradient(180deg, rgba(34, 197, 94, 0.28), rgba(21, 128, 61, 0.24));
+    color: #e8eaed;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+}
+.wg-wz-start-btn:hover:not([disabled]) {
+    border-color: rgba(134, 239, 172, 0.72);
+    background: linear-gradient(180deg, rgba(34, 197, 94, 0.38), rgba(21, 128, 61, 0.3));
+}
+.wg-wz-start-btn[disabled] {
+    opacity: 0.48;
+    cursor: not-allowed;
+}
+.wg-wz-stop-btn {
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 7px 16px;
+    border: 1px solid rgba(248, 113, 113, 0.62);
+    border-radius: 6px;
+    background: linear-gradient(180deg, rgba(220, 38, 38, 0.28), rgba(127, 29, 29, 0.24));
+    color: #fee2e2;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+}
+.wg-wz-stop-btn:hover:not([disabled]) {
+    border-color: rgba(252, 165, 165, 0.82);
+    background: linear-gradient(180deg, rgba(220, 38, 38, 0.38), rgba(127, 29, 29, 0.32));
+}
+.wg-wz-stop-btn[disabled] {
+    opacity: 0.56;
+    cursor: wait;
+}
+@media (max-width: 720px) {
+    .wg-wz-doc-grid { grid-template-columns: 1fr; }
+}
+[data-theme="light"] .wg-wz-doc-card {
+    background: rgba(248, 250, 252, 0.9);
+    border-color: rgba(100, 116, 139, 0.28);
+}
+[data-theme="light"] .wg-wz-doc-card.is-active {
+    background: rgba(239, 246, 255, 0.96);
+}
+[data-theme="light"] .wg-wz-file-btn {
+    background: rgba(226, 232, 240, 0.95);
+    color: var(--text-main);
+}
+[data-theme="light"] .wg-wz-stop-btn {
+    color: #7f1d1d;
+    background: rgba(254, 226, 226, 0.95);
+}
 
 /* PR-286L1: Scenario Folder Intake ───────────────────────────────────── */
 .sw-live-scenario-folder-intake { margin-top: 10px; padding: 6px 8px; border-top: 1px dashed rgba(80,170,90,.3); }

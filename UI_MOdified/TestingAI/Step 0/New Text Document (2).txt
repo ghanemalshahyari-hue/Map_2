@@ -1,0 +1,78 @@
++# Step 1: Planning (التخطيط الأولي)
++
++## Overview
++
++Step 1 is the **Receipt of Mission** phase in the Military Decision-Making Process (MDMP). This step extracts preliminary data from uploaded source documents and generates initial planning documents for subordinate units.
++
++**Location**: `/opt/hermes/MODE_PRJOECT/src/pipeline/steps/step1_planning.py`
++
++---
++
++## Purpose
++
++The primary objectives of Step 1 are:
++
++1. **Extract preliminary information** from higher command's Warning Order and Intelligence Summary
++2. **Generate initial planning documents** to guide the planning process
++3. **Issue Warning Order #1** to subordinate units to initiate their preparation
++4. **Establish initial time estimates** for the planning cycle
++5. **Create initial staff brief** for command team awareness
++
++---
++
++## Input Files
++
++### Required Documents
++
++| File Name (Arabic) | File Name (English) | Purpose |
++|-------------------|---------------------|---------|
++| الامر الانذاري.docx | Warning Order from Higher | Directive from higher command initiating the operation |
++| الملخص الاستخباري.docx | Intelligence Summary | Intelligence assessment of the operational environment |
++
++### User-Provided Parameters
++
++| Parameter | Description | Example |
++|-----------|-------------|---------|
++| `brigade_input` | Brigade name/identifier | "اللواء  مشاة آلية" |
++| `notes` | Planning start time | "1500 يوم ي-18" |
++| `notes2` | H-hour timing | "0600 يوم ي-1" |
++| `trip_datetime` | Decision process start datetime | "2026-06-05 10:00" |
++
++### File Loading Code (main.py lines 368-393)
++
++```python
++files_step1: List[UploadFile] = []
++if certificate_step1 and certificate_step1.filename:
++    files_step1.append(certificate_step1)  # الامر الانذاري
++if report_step1 and report_step1.filename:
++    files_step1.append(report_step1)  # الملخص الاستخباري
++```
++
++---
++
++## Processing Behind Step 1
++
++### Execution Flow
++
++1. **File Upload**: User uploads Warning Order and Intelligence Summary via UI
++2. **Pipeline Initialization**: `run_langchain_pipeline_on_files()` is called
++3. **Parallel Chain Execution**: 16 LangChain chains run simultaneously
++4. **Data Extraction**: Each chain extracts specific data fields from source documents
++5. **JSON Generation**: Output saved to separate JSON files in `output/` directories
++6. **DOCX Generation**: Document generator creates formatted Arabic documents
++7. **Download**: Documents automatically downloaded to user's device
++
++### Key Function
++
++```python
++async_main(the_user_question_to_be_, brigade_input)
++```
++
++This function orchestrates the entire Step 1 pipeline:
++- Loads source documents
++- Executes 16 parallel LangChain chains
++- Processes structured output
++- Generates DOCX documents
++- Saves JSON files for potential downstream use
++
++### Chain Architecture

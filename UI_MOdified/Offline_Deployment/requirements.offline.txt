@@ -1,0 +1,31 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  RMOOZ offline Docker — Python dependencies
+#  Installed into /opt/rmooz-venv at image BUILD time (never at runtime).
+#  Source: TestingAI/WarGamingGEN/requirements.txt (WarGamingGEN runtime deps).
+#
+#  SmartSearch deps (torch, transformers, fastembed, onnxruntime) are EXCLUDED:
+#  • SmartSearch directory is excluded from the image (2.2 GB).
+#  • WarGamingGEN falls back to Markdown doctrine corpus when SmartSearch absent.
+#  • Set SMART_SEARCH_MODE=local in .env.offline; fallback activates automatically.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── LLM client (OpenAI-compatible: Ollama, LM Studio, or OpenAI cloud) ────────
+openai==2.32.0
+python-dotenv>=1.0.0
+pydantic==2.13.1
+
+# ── DOCX input parser (reads red_team.docx / blue_team.docx OOB) ─────────────
+python-docx>=1.1.0
+
+# ── GIS / force model math ────────────────────────────────────────────────────
+numpy>=1.26.0
+Pillow>=10.0.0
+scipy>=1.11.0
+
+# ── Arabic text output (wargame report markdown + display) ───────────────────
+arabic-reshaper>=3.0
+python-bidi>=0.4.2
+
+# ── Qdrant client (optional — for SmartSearch retrieval if added later) ───────
+# Listed here so imports don't fail; Qdrant server itself is not in this image.
+qdrant-client==1.17.1

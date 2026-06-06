@@ -5,9 +5,9 @@
   "main": "electron/main.js",
   "scripts": {
     "start": "node server/tile-server.js",
-    "serve": "node server/web-server.js",
+    "serve": "set RMOOZ_ALLOW_SIM_RUN=1&& set RMOOZ_TESTINGAI_DIR=C:\\Users\\ADMIN\\Desktop\\MAP_2\\UI_MOdified\\TestingAI&& set RMOOZ_PYTHON=C:\\Users\\ADMIN\\AppData\\Local\\Programs\\Python\\Python313\\python.exe&& set RMOOZ_SIM_MODEL=qwen2.5:7b&& node server/web-server.js",
     "seed": "node scripts/seed-units.js",
-    "web": "node server/web-server.js",
+    "web": "set RMOOZ_ALLOW_SIM_RUN=1&& set RMOOZ_TESTINGAI_DIR=C:\\Users\\ADMIN\\Desktop\\MAP_2\\UI_MOdified\\TestingAI&& set RMOOZ_PYTHON=C:\\Users\\ADMIN\\AppData\\Local\\Programs\\Python\\Python313\\python.exe&& set RMOOZ_SIM_MODEL=qwen2.5:7b&& node server/web-server.js",
     "app": "concurrently \"npm run start\" \"npm run serve\"",
     "port-scenarios": "node scripts/port-wargame2.js && node scripts/port-wargame1.js",
     "test-scenarios": "node scripts/test-scenarios.js",

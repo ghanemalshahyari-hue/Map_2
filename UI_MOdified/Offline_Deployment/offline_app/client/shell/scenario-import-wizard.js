@@ -666,8 +666,28 @@
                     }
                     st.polling = false; clearPollTimer(); st.running = false; st.stopping = false; updateStartEnabled();
                     var exportReady = !!(b.export && b.export.all_phases);
+                    // OFFLINE-GEN-RUN-FIX-1: a generation ERROR must NOT silently reset
+                    // to idle. Surface the failure + error summary + run id so the
+                    // operator can see why (and where error.log lives).
+                    var genFailed = (sim.status === 'error') ||
+                                    (typeof sim.exit_code === 'number' && sim.exit_code !== 0 && !sim.cancelled) ||
+                                    (sim.error && !sim.cancelled);
                     if (sim.status === 'complete' || (sim.exit_code === 0 && exportReady)) {
                         finishSuccess(b);
+                    } else if (genFailed) {
+                        var runId = (b.export && b.export.run_id) || sim.run_name || sim.last_run_id || null;
+                        var rawErr = String(sim.error || sim.message || 'Generation process exited with an error.');
+                        var summary = rawErr.length > 600 ? rawErr.slice(-600) : rawErr;
+                        var hint = runId
+                            ? ('Run: ' + runId + ' — check runs/' + runId + '/error.log inside the container.')
+                            : 'Check the container logs (docker logs rmooz-offline) for details.';
+                        showFailure('Generation failed.', {
+                            status: 'error',
+                            message: summary + '\n\n' + hint
+                        });
+                        setStatus('Generation failed' + (runId ? ' (run ' + runId + ')' : '') +
+                            ' — see error details above.', '#e05252');
+                        updateStartEnabled();
                     } else if (stoppedBelongsToSetup(sim)) {
                         // The run we just watched belongs to this setup (we started
                         // it; its meta matches) — surface Continue / Partial / Restart.

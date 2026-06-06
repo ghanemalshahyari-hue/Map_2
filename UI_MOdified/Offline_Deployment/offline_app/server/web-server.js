@@ -466,10 +466,23 @@ const server = http.createServer((req, res) => {
         sendJson(res, 200, { provider: aiProvider, model: aiModel, baseUrlConfigured: aiBase.length > 0 });
         return;
     }
-    if (pathname === '/api/ai/health' && req.method === 'GET') {
+    // OFFLINE-GEN-RUN-FIX-1: generation-aware AI health. Tests the SAME endpoint
+    // the WarGamingGEN Python generator will use (RMOOZ_AI_BASE_URL or Ollama).
+    // /api/ai/generation-health is an explicit alias of /api/ai/health.
+    if ((pathname === '/api/ai/health' || pathname === '/api/ai/generation-health') && req.method === 'GET') {
         const aiProvider = (process.env.RMOOZ_AI_PROVIDER || 'ollama').toLowerCase();
-        const aiBase     = (process.env.RMOOZ_AI_BASE_URL || process.env.RMOOZ_OLLAMA_URL || 'http://host.docker.internal:11434').trim();
-        const httpMod    = aiBase.startsWith('https') ? require('https') : require('http');
+        const aiModel    = (process.env.RMOOZ_AI_MODEL || process.env.RMOOZ_OLLAMA_MODEL || process.env.RMOOZ_SIM_MODEL || '').trim();
+        // Generation base URL resolves exactly like buildLlmChildEnv in the bridge.
+        let aiBase = (process.env.RMOOZ_AI_BASE_URL || '').trim();
+        if (!aiBase) {
+            const ollama = (process.env.RMOOZ_OLLAMA_URL || process.env.OLLAMA_HOST || 'http://host.docker.internal:11434').trim();
+            aiBase = ollama.replace(/\/+$/, '') + '/v1';
+        }
+        const apiKeyConfigured = !!(process.env.RMOOZ_AI_API_KEY && process.env.RMOOZ_AI_API_KEY.trim());
+        // Safe base — no key. Only the configured fields are returned, never the key.
+        const safe = { provider: aiProvider, model: aiModel || null,
+                       baseUrlConfigured: aiBase.length > 0, apiKeyConfigured: apiKeyConfigured };
+        const httpMod = aiBase.startsWith('https') ? require('https') : require('http');
         try {
             const parsed   = new URL(aiBase.replace(/\/v1\/?$/, ''));
             const testPath = aiProvider === 'ollama' ? '/' : '/models';
@@ -478,14 +491,14 @@ const server = http.createServer((req, res) => {
                 reqOpts.headers = { Authorization: 'Bearer ' + process.env.RMOOZ_AI_API_KEY };
             }
             const probe = httpMod.request(reqOpts, (r) => {
-                sendJson(res, 200, { ok: r.statusCode < 500, provider: aiProvider, statusCode: r.statusCode });
+                sendJson(res, 200, Object.assign({ ok: r.statusCode < 500, reachable: r.statusCode < 500, statusCode: r.statusCode }, safe));
                 r.resume();
             });
-            probe.on('error', () => sendJson(res, 200, { ok: false, provider: aiProvider, error: 'unreachable' }));
-            probe.on('timeout', () => { probe.destroy(); sendJson(res, 200, { ok: false, provider: aiProvider, error: 'timeout' }); });
+            probe.on('error', () => sendJson(res, 200, Object.assign({ ok: false, reachable: false, error: 'unreachable' }, safe)));
+            probe.on('timeout', () => { probe.destroy(); sendJson(res, 200, Object.assign({ ok: false, reachable: false, error: 'timeout' }, safe)); });
             probe.end();
         } catch (e) {
-            sendJson(res, 200, { ok: false, provider: aiProvider, error: e.message });
+            sendJson(res, 200, Object.assign({ ok: false, reachable: false, error: e.message }, safe));
         }
         return;
     }

@@ -9,6 +9,7 @@ UI_MOdified/node_modules/
 UI_MOdified/TestingAI/SmartSearch/litellm/litellm-image.tar
 UI_MOdified/TestingAI/_archive/source_data/geo/*.tif
 UI_MOdified/Offline_Deployment/dist/
+UI_MOdified/Offline_Deployment/TestingAI_Runtime/runs/
 
 # Uploads (user-generated at runtime)
 UI_MOdified/uploads/

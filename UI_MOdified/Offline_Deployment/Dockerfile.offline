@@ -91,9 +91,17 @@ COPY Offline_Deployment/offline_app/client/wargame/offline-map-source.js \
 # Offline Cesium view overlay: local Cesium only, offline tile imagery only.
 COPY Offline_Deployment/offline_app/client/wargame/cesium-view.js \
      ./client/wargame/cesium-view.js
-# Offline map patch (runs after app.js — swaps OSM layers for resolved offline URL)
+# Global Leaflet tile guard — intercepts ALL L.tileLayer() calls, blocks OSM/localhost
+COPY Offline_Deployment/offline_app/client/offline-leaflet-tile-guard.js \
+     ./client/offline-leaflet-tile-guard.js
+# Offline map patch (runs after app.js — replaces any remaining bad tile layers)
 COPY Offline_Deployment/offline_app/client/offline-map-patch.js \
      ./client/offline-map-patch.js
+# Scenario import wizard overlay — uses offline tile source instead of OSM
+COPY Offline_Deployment/offline_app/client/shell/scenario-import-wizard.js \
+     ./client/shell/scenario-import-wizard.js
+# Brand logo and assets
+COPY Offline_Deployment/offline_app/client/assets/ ./client/assets/
 # Offline web-server with /api/offline/* route (replaces main version)
 # ONE line added at request dispatch: routes /api/offline/* to handleOfflineApi
 COPY Offline_Deployment/offline_app/server/web-server.js ./server/web-server.js
@@ -101,7 +109,8 @@ COPY Offline_Deployment/offline_app/server/web-server.js ./server/web-server.js
 COPY Offline_Deployment/offline_app/server/tile-server.js ./server/tile-server.js
 # Startup script — runs both tile-server (8080) and web-server (5006)
 COPY Offline_Deployment/offline_app/start-offline.sh ./start-offline.sh
-RUN chmod +x ./start-offline.sh
+# Strip Windows CRLF line endings and make executable
+RUN sed -i 's/\r$//' ./start-offline.sh && chmod +x ./start-offline.sh
 
 # ── Runtime environment defaults ─────────────────────────────────────────────
 # All values here can be overridden by docker-compose or --env-file.

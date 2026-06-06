@@ -1,169 +1,169 @@
 /**
- * offline-map-patch.js — Offline tile layer hot-swap
+ * offline-map-patch.js — Offline tile layer hot-swap (post-load patcher)
  *
- * OFFLINE_APP ONLY — this file is NOT in the main app.
+ * OFFLINE_APP ONLY — not in the main app.
+ * OFFLINE-RUNTIME-FIX-4: Expanded to also patch:
+ *   - localhost:8080 tile layers (not reachable from remote browser)
+ *   - Scenario import wizard objective map (#wg-wz-obj-map)
+ *   - All Leaflet maps found in the DOM (not just window.map)
  *
- * Runs after app.js has initialised the Leaflet map and (if present) the
- * Cesium 3D viewer. Reads the URL resolved by offline-map-source.js
- * (window.__RMOOZ_OFFLINE_MAP__.activeTileUrl) and replaces the hardcoded
- * OSM tile layer with the operator-configured offline source.
- *
- * Priority order (same as offline-map-source.js resolver):
- *   1. Local tile package  → served from /offline-tiles/{z}/{x}/{y}.png
- *   2. Fallback URL        → FALLBACK_TILE_URL in .env.offline
- *   3. No patch            → original OSM layers stay (app functions, no tiles)
- *
- * No internet calls. No credentials. Falls back silently if resolver is not ready.
+ * Runs at end of <body>. Works together with offline-leaflet-tile-guard.js
+ * (which patches future tile layer CREATIONS) — this script patches layers
+ * that were already created before the guard could intercept them.
  */
 (function () {
     'use strict';
 
-    const MAX_WAIT_MS  = 10000;  // wait up to 10 s for the resolver
-    const POLL_INTERVAL = 150;   // check every 150 ms
+    var MAX_WAIT_MS  = 12000;
+    var POLL_INTERVAL = 300;
 
-    // ── Utility: wait for a condition ────────────────────────────────────────
+    /** URL patterns that must be replaced with the offline tile URL. */
+    function isBannedUrl(url) {
+        if (!url || typeof url !== 'string') return false;
+        var u = url.toLowerCase();
+        return (
+            u.includes('openstreetmap.org')  ||
+            u.includes('tile.openstreetmap') ||
+            u.includes('mapbox.com')         ||
+            (u.includes('localhost:8080') && u.includes('/services/'))
+        );
+    }
+
     function waitFor(condition, maxMs) {
-        return new Promise(resolve => {
-            const deadline = Date.now() + maxMs;
-            const interval = setInterval(() => {
-                const val = condition();
-                if (val !== null && val !== undefined) {
-                    clearInterval(interval);
-                    resolve(val);
-                } else if (Date.now() > deadline) {
-                    clearInterval(interval);
-                    resolve(null);
-                }
+        return new Promise(function (resolve) {
+            var elapsed = 0;
+            var iv = setInterval(function () {
+                elapsed += POLL_INTERVAL;
+                var val = condition();
+                if (val !== null && val !== undefined) { clearInterval(iv); resolve(val); }
+                else if (elapsed >= maxMs) { clearInterval(iv); resolve(null); }
             }, POLL_INTERVAL);
         });
     }
 
-    // ── Patch Leaflet 2D map ──────────────────────────────────────────────────
-    function patch2DMap(tileUrl, attribution) {
-        const map = window.map;
+    // ── Patch a single Leaflet map ────────────────────────────────────────────
+    function patchMap(map, tileUrl, label) {
         if (!map || typeof map.eachLayer !== 'function') return;
-
-        // Find the OSM layer (the one with openstreetmap in its URL or known class)
-        let osmLayer = null;
-        map.eachLayer(layer => {
-            if (layer._url && (
-                layer._url.includes('openstreetmap.org') ||
-                layer._url.includes('{s}.tile')
-            )) {
-                osmLayer = layer;
+        map.eachLayer(function (layer) {
+            if (layer._url && isBannedUrl(layer._url)) {
+                var wasActive = map.hasLayer(layer);
+                map.removeLayer(layer);
+                var replacement = window.L.tileLayer(tileUrl, {
+                    maxZoom:      layer.options.maxZoom      || 17,
+                    minZoom:      layer.options.minZoom      || 0,
+                    attribution:  'Offline Tiles',
+                    errorTileUrl: layer.options.errorTileUrl || ''
+                });
+                if (wasActive) replacement.addTo(map);
+                console.info('[offline-patch] ' + label + ': Replaced', layer._url.slice(0, 60));
             }
         });
+    }
 
-        if (osmLayer) {
-            // Remove the OSM layer and add the offline one in its place
-            const wasActive = map.hasLayer(osmLayer);
-            map.removeLayer(osmLayer);
-
-            const offlineLayer = L.tileLayer(tileUrl, {
-                maxZoom:     17,
-                attribution: attribution || 'Offline Tiles',
-                errorTileUrl: osmLayer.options && osmLayer.options.errorTileUrl
-                    ? osmLayer.options.errorTileUrl
-                    : ''
-            });
-
-            if (wasActive) offlineLayer.addTo(map);
-
-            console.info('[offline-map-patch] 2D tile layer replaced →', tileUrl);
-        } else {
-            // OSM wasn't active — just add the offline layer as default base
-            L.tileLayer(tileUrl, {
-                maxZoom:     17,
-                attribution: attribution || 'Offline Tiles'
-            }).addTo(map);
-            console.info('[offline-map-patch] 2D offline layer added →', tileUrl);
+    // ── Find all Leaflet maps in the DOM ──────────────────────────────────────
+    function findAllLeafletMaps() {
+        var maps = [];
+        // Main map
+        if (window.map) maps.push({ map: window.map, label: 'main' });
+        // Any Leaflet maps stored on DOM elements with class 'leaflet-container'
+        var containers = document.querySelectorAll('.leaflet-container');
+        for (var i = 0; i < containers.length; i++) {
+            var m = containers[i]._leaflet_map;
+            if (m && m !== window.map) {
+                maps.push({ map: m, label: 'dom-' + i });
+            }
         }
+        return maps;
     }
 
     // ── Patch Cesium 3D viewer ────────────────────────────────────────────────
-    function patch3DViewer(tileUrl, attribution) {
-        // Cesium viewer is opened lazily by cesium-view.js; poll for it.
-        const viewer = window.__cesiumViewer ||
+    function patchCesium(tileUrl, attribution) {
+        var viewer = window.__cesiumViewer ||
             (window.AppMapEngine && window.AppMapEngine.getCesiumViewer
                 ? window.AppMapEngine.getCesiumViewer()
                 : null);
-
-        if (!viewer) return; // 3D not open — will be patched when opened
+        if (!viewer) return false;
 
         try {
-            // Remove all existing imagery layers
             viewer.imageryLayers.removeAll();
-
-            // Add the offline tile source
             viewer.imageryLayers.addImageryProvider(
-                new Cesium.UrlTemplateImageryProvider({
+                new window.Cesium.UrlTemplateImageryProvider({
                     url:          tileUrl,
                     credit:       attribution || 'Offline Tiles',
                     minimumLevel: 0,
                     maximumLevel: 19
                 })
             );
-
-            // Re-apply the dark tint that cesium-view.js normally sets
-            const base = viewer.imageryLayers.get(0);
-            if (base) {
-                base.brightness = 0.6;
-                base.saturation = 0.5;
-                base.hue        = 0.02;
-            }
-
-            console.info('[offline-map-patch] Cesium imagery replaced →', tileUrl);
+            var base = viewer.imageryLayers.get(0);
+            if (base) { base.brightness = 0.6; base.saturation = 0.5; base.hue = 0.02; }
+            console.info('[offline-patch] Cesium imagery replaced');
+            return true;
         } catch (e) {
-            console.warn('[offline-map-patch] Could not patch Cesium imagery:', e.message);
+            console.warn('[offline-patch] Cesium patch failed:', e.message);
+            return false;
         }
     }
 
     // ── Main entry point ──────────────────────────────────────────────────────
     async function run() {
-        // 1. Wait for the offline resolver to complete
-        const offlineMap = await waitFor(
-            () => window.__RMOOZ_OFFLINE_MAP__ || null,
+        // 1. Wait for offline resolver
+        var offlineMap = await waitFor(
+            function () { return window.__RMOOZ_OFFLINE_MAP__ || null; },
             MAX_WAIT_MS
         );
-
         if (!offlineMap) {
-            console.info('[offline-map-patch] Offline resolver not ready — no patch applied');
+            console.info('[offline-patch] Resolver not ready — skipping');
             return;
         }
 
-        const tileUrl     = offlineMap.activeTileUrl;
-        const status      = offlineMap.state && offlineMap.state.status;
-        const attribution = tileUrl && tileUrl.includes('offline-tiles')
-            ? 'Local Offline Tiles'
-            : 'Offline Tile Server';
+        var tileUrl = offlineMap.activeTileUrl;
+        var status  = offlineMap.state && offlineMap.state.status;
 
         if (!tileUrl) {
-            // Resolver completed but no tile source available
-            console.info('[offline-map-patch] No offline tile URL resolved (status:', status, ')');
-            // Show a status bar if the element exists
-            const bar = document.getElementById('offline-map-status-bar');
+            console.info('[offline-patch] No tile URL resolved (status:', status, ')');
+            // Show status bar if element exists
+            var bar = document.getElementById('offline-map-status-bar');
             if (bar) {
                 bar.style.display = 'block';
-                bar.textContent   = '🔴 Map tiles unavailable — configure FALLBACK_TILE_URL in .env.offline';
+                bar.textContent = '🔴 Map tiles unavailable — set FALLBACK_TILE_URL in .env.offline';
             }
             return;
         }
 
-        // 2. Wait for the Leaflet map to be initialised (window.map is set in app.js)
-        const map = await waitFor(() => window.map || null, 8000);
-        if (map) patch2DMap(tileUrl, attribution);
+        // 2. Wait for Leaflet + main map
+        await waitFor(function () { return window.L && window.map ? true : null; }, 8000);
 
-        // 3. Patch Cesium if the 3D viewer is already open
-        patch3DViewer(tileUrl, attribution);
+        // 3. Patch all Leaflet maps found now
+        findAllLeafletMaps().forEach(function (entry) {
+            patchMap(entry.map, tileUrl, entry.label);
+        });
 
-        // 4. Also patch Cesium when it opens later (event-driven)
-        // cesium-view.js fires 'cesium:ready' on window when the viewer is created
-        window.addEventListener('cesium:ready', () => {
-            patch3DViewer(tileUrl, attribution);
+        // 4. Keep polling for late-created maps (e.g. scenario import wizard)
+        //    The wizard map (#wg-wz-obj-map) is created when the user opens the
+        //    Import panel — it may not exist yet at page load time.
+        var pollCount = 0;
+        var pollIv = setInterval(function () {
+            pollCount++;
+            findAllLeafletMaps().forEach(function (entry) {
+                patchMap(entry.map, tileUrl, 'late-' + entry.label);
+            });
+            // Also check for wizard map specifically
+            var wizardContainer = document.getElementById('wg-wz-obj-map');
+            if (wizardContainer && wizardContainer._leaflet_map) {
+                patchMap(wizardContainer._leaflet_map, tileUrl, 'wizard-obj-map');
+            }
+            if (pollCount >= 60) clearInterval(pollIv); // stop after ~30s
+        }, 500);
+
+        // 5. Patch Cesium if open
+        patchCesium(tileUrl);
+
+        // 6. Patch Cesium when it opens later
+        window.addEventListener('cesium:ready', function () {
+            patchCesium(tileUrl);
         }, { once: false });
     }
 
-    // Run after DOMContentLoaded so app.js has started loading modules
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', run);
     } else {

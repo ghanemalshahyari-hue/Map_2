@@ -458,6 +458,37 @@ const server = http.createServer((req, res) => {
 
     if (appData.handleOfflineApi && appData.handleOfflineApi(req, res)) return;
     if (appData.handleAuthApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
+    // OFFLINE-RUNTIME-FIX-4: AI config/health — safe, no key exposed to browser
+    if (pathname === '/api/ai/config' && req.method === 'GET') {
+        const aiProvider = (process.env.RMOOZ_AI_PROVIDER || 'ollama').toLowerCase();
+        const aiBase     = (process.env.RMOOZ_AI_BASE_URL  || process.env.RMOOZ_OLLAMA_URL || '').trim();
+        const aiModel    = (process.env.RMOOZ_AI_MODEL     || process.env.RMOOZ_OLLAMA_MODEL || '').trim();
+        sendJson(res, 200, { provider: aiProvider, model: aiModel, baseUrlConfigured: aiBase.length > 0 });
+        return;
+    }
+    if (pathname === '/api/ai/health' && req.method === 'GET') {
+        const aiProvider = (process.env.RMOOZ_AI_PROVIDER || 'ollama').toLowerCase();
+        const aiBase     = (process.env.RMOOZ_AI_BASE_URL || process.env.RMOOZ_OLLAMA_URL || 'http://host.docker.internal:11434').trim();
+        const httpMod    = aiBase.startsWith('https') ? require('https') : require('http');
+        try {
+            const parsed   = new URL(aiBase.replace(/\/v1\/?$/, ''));
+            const testPath = aiProvider === 'ollama' ? '/' : '/models';
+            const reqOpts  = { hostname: parsed.hostname, port: parsed.port || (aiBase.startsWith('https') ? 443 : 80), path: testPath, method: 'GET', timeout: 4000 };
+            if (aiProvider !== 'ollama' && process.env.RMOOZ_AI_API_KEY) {
+                reqOpts.headers = { Authorization: 'Bearer ' + process.env.RMOOZ_AI_API_KEY };
+            }
+            const probe = httpMod.request(reqOpts, (r) => {
+                sendJson(res, 200, { ok: r.statusCode < 500, provider: aiProvider, statusCode: r.statusCode });
+                r.resume();
+            });
+            probe.on('error', () => sendJson(res, 200, { ok: false, provider: aiProvider, error: 'unreachable' }));
+            probe.on('timeout', () => { probe.destroy(); sendJson(res, 200, { ok: false, provider: aiProvider, error: 'timeout' }); });
+            probe.end();
+        } catch (e) {
+            sendJson(res, 200, { ok: false, provider: aiProvider, error: e.message });
+        }
+        return;
+    }
     if (appData.handlePlansApi(req, res, url, pathname, req.method, sendJson, readJsonBody)) return;
     if (appData.handlePrefsApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
 

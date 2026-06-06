@@ -23,15 +23,22 @@ services:
     container_name: rmooz-offline
 
     # ── Port mapping ──────────────────────────────────────────────────────────
-    # 5006: RMOOZ web server   8080: MBTiles tile server (accessed by browser for satellite map)
+    # WEB_PUBLIC_PORT: the host port browsers use to reach the app (default 5006).
+    #   Set WEB_PUBLIC_PORT=8640 in .env.offline if the site uses port 8640.
+    # TILE_PUBLIC_PORT: the host port for the MBTiles tile server (default 8080).
+    # Container always listens on 5006 (web) and 8080 (tiles) internally.
     ports:
-      - "${PORT:-5006}:${PORT:-5006}"
-      - "8080:8080"
+      - "${WEB_PUBLIC_PORT:-5006}:5006"
+      - "${TILE_PUBLIC_PORT:-8080}:8080"
 
     # ── Environment ───────────────────────────────────────────────────────────
     # All values read from .env.offline (passed via --env-file).
     environment:
-      PORT:                  "${PORT:-5006}"
+      PORT:                  "5006"                          # container always 5006
+      WEB_PUBLIC_PORT:       "${WEB_PUBLIC_PORT:-5006}"      # host port (informational)
+      WEB_PUBLIC_BASE_URL:   "${WEB_PUBLIC_BASE_URL:-}"      # e.g. http://155.140.70.51:8640
+      TILE_PUBLIC_BASE_URL:  "${TILE_PUBLIC_BASE_URL:-}"     # e.g. http://155.140.70.51:8080
+      RMOOZ_TILE_DATASET_NAME: "${RMOOZ_TILE_DATASET_NAME:-satellite-2017-11-02_asia_gcc-states}"
       RMOOZ_AUTH_BACKEND:    "${RMOOZ_AUTH_BACKEND:-ldap}"
 
       # LDAP — site-specific. LDAP_SERVER has no safe default; must be set.
@@ -65,13 +72,25 @@ services:
       RMOOZ_SIM_MODEL:       "${RMOOZ_SIM_MODEL:-qwen2.5:7b}"
       OLLAMA_HOST:           "${OLLAMA_HOST:-http://host.docker.internal:11434}"
 
+      # ── AI provider (LiteLLM / OpenAI-compatible) ─────────────────────────
+      # Set RMOOZ_AI_PROVIDER=litellm to use a LiteLLM HTTPS endpoint.
+      # RMOOZ_AI_API_KEY is read server-side only — never exposed to browsers.
+      RMOOZ_AI_PROVIDER:     "${RMOOZ_AI_PROVIDER:-ollama}"
+      RMOOZ_AI_BASE_URL:     "${RMOOZ_AI_BASE_URL:-}"
+      RMOOZ_AI_API_KEY:      "${RMOOZ_AI_API_KEY:-}"
+      RMOOZ_AI_MODEL:        "${RMOOZ_AI_MODEL:-}"
+      # Ollama (used when RMOOZ_AI_PROVIDER=ollama)
+      RMOOZ_OLLAMA_URL:      "${RMOOZ_OLLAMA_URL:-http://host.docker.internal:11434}"
+      RMOOZ_OLLAMA_MODEL:    "${RMOOZ_OLLAMA_MODEL:-qwen2.5:7b}"
+
       SESSION_SECRET:        "${SESSION_SECRET}"
       RMOOZ_BOOTSTRAP_PASSWORD: "disabled"
 
     # ── Persistent volumes ────────────────────────────────────────────────────
     volumes:
-      # App runtime data (SQLite, scenarios, journal)
-      - rmooz_data:/app/data
+      # App runtime data — bind-mount so scenarios/journal persist on the host
+      # and can be pre-populated (e.g. wargame3.json in data_runtime/scenarios/).
+      - ./data_runtime:/app/data
       # MBTiles satellite map tiles — bind-mounted from map_data/base/
       # Run prepare-map-bundle.ps1 first to copy satellite MBTiles here.
       # tile-server.js auto-discovers *.mbtiles files in this directory.
@@ -111,13 +130,11 @@ services:
 
 # ── Named volumes ─────────────────────────────────────────────────────────────
 volumes:
-  rmooz_data:
-    driver: local
   rmooz_uploads:
     driver: local
-# Bind-mounts (not named volumes):
+# All bind-mounts (no named volumes for data — everything persists on host):
+#   ./data_runtime          → /app/data               (SQLite + scenarios + journal)
 #   ./map_data/base         → /app/maps               (MBTiles — run prepare-map-bundle.ps1 first)
-#   ./map_data/dem          → /app/dem_data            (Libya DEM .tif — run prepare-map-bundle.ps1 first)
+#   ./map_data/dem          → /app/dem_data            (Libya DEM — run prepare-map-bundle.ps1 first)
 #   ./map_data              → /app/offline_map_data    (read-only tiles root)
 #   ./TestingAI_Runtime/*  → /app/TestingAI/*          (writable runtime I/O)
-# Note: rmooz_maps named volume removed — maps now come from ./map_data/base bind-mount

@@ -38,6 +38,7 @@ try { fs.mkdirSync(DATA_DIR,   { recursive: true }); } catch {}
 try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch {}
 
 const appData = require('./app-data');
+const roadmapStore = require('./roadmap-store'); // ROADMAP-4: isolated; reads/writes data/roadmap-status.json only (no ai/sim)
 const demService   = require('./dem-service');
 const ollama       = require('./ai/ollama-client');
 const aiProvider   = require('./ai/ai-provider');
@@ -584,6 +585,10 @@ const server = http.createServer((req, res) => {
     }
     if (appData.handlePlansApi(req, res, url, pathname, req.method, sendJson, readJsonBody)) return;
     if (appData.handlePrefsApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
+    // ROADMAP-4: roadmap status persistence (GET read / POST admin-only). Isolated
+    // from the scenario/sim domain — never touches World State, units, or the journal.
+    // Persists to data/roadmap-status.json under the mounted /app/data volume.
+    if (roadmapStore.handleRoadmapApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
 
     // FAST-DOC-1: DOCX → WarGamingGEN → GeoJSON import bridge (staged handoff).
     if (wargameSimBridge.handle(req, res, { url, pathname, method: req.method, sendJson, scenarios })) return;

@@ -133,6 +133,8 @@
                                                 'settings-toggle-title': 'Settings & tools',
                                                 'legend-toggle-btn': 'Legend',
                                                 'legend-toggle-title': 'Show or hide the map legend',
+                                                'roadmap-btn': 'Roadmap',
+                                                'roadmap-toggle-title': 'RMOOZ development roadmap',
                                                 'lang-toggle-title': 'Switch language',
                                                 'import-invalid-json': 'Invalid JSON file.',
                                                 'import-invalid-format': 'Invalid format: not a recognised plan file.',
@@ -2575,6 +2577,8 @@
             'lang-btn': 'English',
             'legend-toggle-btn': 'الدليل',
             'legend-toggle-title': 'إظهار دليل الخريطة أو إخفاؤه',
+            'roadmap-btn': 'خارطة التطوير',
+            'roadmap-toggle-title': 'خارطة تطوير منصة RMOOZ',
 
             'sidebar-title': 'رموز',
             'sidebar-subtitle': 'خريطة تكتيكية غير متصلة',

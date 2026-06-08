@@ -104,6 +104,15 @@ services:
       SESSION_SECRET:        "${SESSION_SECRET}"
       RMOOZ_BOOTSTRAP_PASSWORD: "${RMOOZ_BOOTSTRAP_PASSWORD:-disabled}"
 
+      # ── Roadmap admins (ROADMAP-4) ────────────────────────────────────────
+      # Comma-separated usernames allowed to EDIT the development roadmap status
+      # (GET is read-only for any logged-in user; POST is admin-only). A user is
+      # also an admin if their account role is "admin" (e.g. the local bootstrap
+      # admin). For LDAP sites, list the employee numbers here, e.g.
+      #   RMOOZ_ROADMAP_ADMINS=s1234567,s7654321
+      # These are usernames, not secrets. Default: the bootstrap "admin" account.
+      RMOOZ_ROADMAP_ADMINS: "${RMOOZ_ROADMAP_ADMINS:-admin}"
+
     # ── Persistent volumes ────────────────────────────────────────────────────
     volumes:
       # App runtime data — bind-mount so scenarios/journal persist on the host

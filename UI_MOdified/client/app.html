@@ -62,6 +62,11 @@
                 <button id="legend-toggle-btn" class="header-btn header-btn--text" type="button" aria-pressed="true" data-i18n-title="legend-toggle-title" title="Show or hide the map legend">
                     <span data-i18n="legend-toggle-btn">Legend</span>
                 </button>
+                <!-- ROADMAP-1: opens an informational, UI-only development roadmap overlay.
+                     Does not touch scenarios, units, map, simulation, or the Event Log. -->
+                <button id="roadmap-toggle-btn" class="header-btn header-btn--text" type="button" aria-haspopup="dialog" aria-expanded="false" data-i18n-title="roadmap-toggle-title" title="RMOOZ development roadmap">
+                    <span data-i18n="roadmap-btn">Roadmap</span>
+                </button>
                 <button id="lang-toggle-btn" class="header-btn" type="button" data-i18n-title="lang-toggle-title" title="Switch language">عربي</button>
                 <!-- Scenario Entry Consolidation: launch-window nav + safe local export -->
                 <button id="rmooz-back-home" class="header-btn header-btn--text" type="button" title="Back to the main launch window"><span data-i18n="rmooz-back-home">← Main Window</span></button>
@@ -5975,6 +5980,14 @@
     <script type="module" src="ui/panels/layers-panel.js"></script>
     <script type="module" src="ui/panels/utility-panel.js"></script>
     <script type="module" src="ui/panels/welcome-panel.js"></script>
+
+    <!-- ═══════════ ROADMAP-1 (informational, UI-only overlay) ═══════════ -->
+    <!-- Full-screen RTL roadmap dashboard. Hidden until the Roadmap button is
+         clicked. roadmap-page.js builds + drives it. No backend, no storage,
+         no scenario/unit/map/simulation mutation. -->
+    <div id="roadmap-overlay" class="roadmap-overlay" role="dialog" aria-modal="true"
+         aria-labelledby="roadmap-title" dir="rtl" hidden></div>
+    <script src="roadmap-page.js?v=roadmap-1"></script>
 
 </body>
 

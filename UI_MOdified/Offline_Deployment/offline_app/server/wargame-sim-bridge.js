@@ -165,6 +165,19 @@ function buildLlmChildEnv(c, baseEnv) {
             'Mount the internal CA certificate (RMOOZ_AI_CA_CERT_PATH) instead.');
     }
 
+    // ── OFFLINE-LITELLM-MTLS-1: optional client certificate (mutual TLS) ─────
+    // Forward cert + key PATHS (never contents) and the optional key password to
+    // the Python child under both the RMOOZ_AI_CLIENT_* names and the shorter
+    // LLM_CLIENT_* aliases config.py also accepts. The password is forwarded so
+    // an encrypted key can be opened, but it is NEVER logged or summarised.
+    const clientCertPath = (process.env.RMOOZ_AI_CLIENT_CERT_PATH || '').trim();
+    const clientKeyPath  = (process.env.RMOOZ_AI_CLIENT_KEY_PATH  || '').trim();
+    const clientCertPw   = (process.env.RMOOZ_AI_CLIENT_CERT_PASSWORD || ''); // not trimmed; not logged
+    if (clientCertPath) { env.RMOOZ_AI_CLIENT_CERT_PATH = clientCertPath; env.LLM_CLIENT_CERT_PATH = clientCertPath; }
+    if (clientKeyPath)  { env.RMOOZ_AI_CLIENT_KEY_PATH  = clientKeyPath;  env.LLM_CLIENT_KEY_PATH  = clientKeyPath; }
+    if (clientCertPw)   { env.RMOOZ_AI_CLIENT_CERT_PASSWORD = clientCertPw; env.LLM_CLIENT_CERT_PASSWORD = clientCertPw; }
+    const mtlsConfigured = !!(clientCertPath && clientKeyPath);
+
     const summary = {
         provider:           provider,
         baseUrlConfigured:  !!baseUrl,
@@ -177,6 +190,12 @@ function buildLlmChildEnv(c, baseEnv) {
         caCertConfigured:   !!caCertPath,
         caCertPath:         caCertPath || null,        // path only, never a secret
         tlsVerify:          tlsVerify !== '0',
+        // mTLS — booleans + paths only; the key password is NEVER included here.
+        clientCertConfigured: !!clientCertPath,
+        clientKeyConfigured:  !!clientKeyPath,
+        clientCertPath:       clientCertPath || null,  // path only, never a secret
+        clientKeyPath:        clientKeyPath || null,    // path only, never a secret
+        mtlsConfigured:       mtlsConfigured,
     };
     return { env: env, summary: summary };
 }
@@ -901,6 +920,10 @@ function handle(req, res, ctx) {
             ' baseUrl=' + (_llm.summary.baseUrl || '(none)') +
             ' model=' + (_llm.summary.model || '(none)') +
             ' apiKeyConfigured=' + _llm.summary.apiKeyConfigured +
+            ' caCertConfigured=' + _llm.summary.caCertConfigured +
+            ' mtlsConfigured=' + _llm.summary.mtlsConfigured +
+            ' clientCertConfigured=' + _llm.summary.clientCertConfigured +
+            ' clientKeyConfigured=' + _llm.summary.clientKeyConfigured +
             ' localForceFallback=' + _llm.summary.localForceFallback);
         // Run-id gating (Part A): remember the newest run that EXISTS right now.
         // While the spawned process hasn't created its own run dir yet, the
@@ -963,7 +986,27 @@ function handle(req, res, ctx) {
                         'The model "' + (model || process.env.RMOOZ_AI_MODEL || '?') + '" may be slow. ' +
                         'Try a faster model or increase RMOOZ_AI_TIMEOUT_MS (currently ' + timeoutMs + ' ms). ' +
                         'stderr: ' + rawErr.slice(-300);
-                } else if (/SSL|certificate|CERTIFICATE|ssl_cert|UNABLE_TO_VERIFY|self.signed|tlsv1|CERT_/i.test(rawErr)) {
+                } else if (/certificate required|alert certificate required|tlsv13 alert certificate required|peer did not return a certificate|SSL_ERROR_WANT_CLIENT_CERT|client certificate (?:is )?required/i.test(rawErr)) {
+                    // mTLS: the server is asking RMOOZ to present a client cert.
+                    errorCode = 'mtls_client_cert_required';
+                    classifiedError =
+                        'LiteLLM appears to require a client certificate. Configure ' +
+                        'RMOOZ_AI_CLIENT_CERT_PATH and RMOOZ_AI_CLIENT_KEY_PATH if mTLS is required. ' +
+                        'stderr: ' + rawErr.slice(-300);
+                } else if (/unknown ca|certificate verify failed|unable to get local issuer|self.signed|self-signed|UNABLE_TO_VERIFY/i.test(rawErr)) {
+                    // Server cert not trusted — CA chain problem (one-way TLS).
+                    errorCode = 'tls_ca_trust_failed';
+                    classifiedError =
+                        'TLS CA trust failed — the LiteLLM server certificate is not trusted. ' +
+                        'Mount the internal CA chain and set RMOOZ_AI_CA_CERT_PATH=/app/certs/tawasol-ca.crt. ' +
+                        'stderr: ' + rawErr.slice(-300);
+                } else if (/handshake failure|bad certificate|sslv3 alert|alert handshake|decryption failed|wrong version number|tlsv1 alert/i.test(rawErr)) {
+                    errorCode = 'tls_handshake_failed';
+                    classifiedError =
+                        'TLS handshake failed with the LiteLLM endpoint. If the server requires mTLS, ' +
+                        'configure RMOOZ_AI_CLIENT_CERT_PATH and RMOOZ_AI_CLIENT_KEY_PATH; otherwise verify ' +
+                        'the CA chain (RMOOZ_AI_CA_CERT_PATH). stderr: ' + rawErr.slice(-300);
+                } else if (/SSL|certificate|CERTIFICATE|ssl_cert|self.signed|tlsv1|CERT_/i.test(rawErr)) {
                     errorCode = 'tls_cert';
                     classifiedError =
                         'TLS/certificate error reaching the LiteLLM endpoint. ' +
@@ -1008,6 +1051,7 @@ function handle(req, res, ctx) {
                             'provider:     ' + (process.env.RMOOZ_AI_PROVIDER || 'ollama') + '\n' +
                             'timeout_ms:   ' + timeoutMs + '\n' +
                             'ca_cert:      ' + (process.env.RMOOZ_AI_CA_CERT_PATH ? 'configured' : 'not configured') + '\n' +
+                            'mtls:         ' + ((process.env.RMOOZ_AI_CLIENT_CERT_PATH && process.env.RMOOZ_AI_CLIENT_KEY_PATH) ? 'client cert+key configured' : 'not configured') + '\n' +
                             '\n--- classified error ---\n' +
                             classifiedError + '\n' +
                             '\n--- stderr (secrets redacted) ---\n' +

@@ -486,6 +486,21 @@ const server = http.createServer((req, res) => {
             try { caCertPathExists = require('fs').existsSync(caCertPath); } catch (_) {}
         }
 
+        // OFFLINE-LITELLM-MTLS-1: client-certificate (mutual TLS) diagnostics.
+        // Booleans + existence only — never the key contents or the password.
+        const clientCertPath = (process.env.RMOOZ_AI_CLIENT_CERT_PATH || process.env.LLM_CLIENT_CERT_PATH || '').trim();
+        const clientKeyPath  = (process.env.RMOOZ_AI_CLIENT_KEY_PATH  || process.env.LLM_CLIENT_KEY_PATH  || '').trim();
+        let clientCertPathExists = false, clientKeyPathExists = false;
+        try { if (clientCertPath) clientCertPathExists = require('fs').existsSync(clientCertPath); } catch (_) {}
+        try { if (clientKeyPath)  clientKeyPathExists  = require('fs').existsSync(clientKeyPath); } catch (_) {}
+        const clientCertConfigured = !!clientCertPath;
+        const clientKeyConfigured  = !!clientKeyPath;
+        // mTLS "configured" = both halves set. "half-only" = exactly one set (error).
+        const mtlsConfigured  = clientCertConfigured && clientKeyConfigured;
+        const mtlsHalfOnly    = (clientCertConfigured !== clientKeyConfigured);
+        // "valid" = no half-only error AND (mTLS not in use, or both files present).
+        const mtlsConfigValid = !mtlsHalfOnly && (!mtlsConfigured || (clientCertPathExists && clientKeyPathExists));
+
         // Resolve generation base URL exactly like buildLlmChildEnv.
         let aiBase = (process.env.RMOOZ_AI_BASE_URL || '').trim();
         if (!aiBase) {
@@ -494,7 +509,7 @@ const server = http.createServer((req, res) => {
         }
         const apiKeyConfigured = !!(process.env.RMOOZ_AI_API_KEY && process.env.RMOOZ_AI_API_KEY.trim());
 
-        // Safe base response — NO key value, NO cert content.
+        // Safe base response — NO key value, NO cert/key content, NO password.
         const safe = {
             provider:         aiProvider,
             model:            aiModel || null,
@@ -504,7 +519,29 @@ const server = http.createServer((req, res) => {
             caCertConfigured: !!caCertPath,
             caCertPathExists: caCertPathExists,
             timeoutMs:        timeoutMs,
+            // mTLS client-cert status (OFFLINE-LITELLM-MTLS-1) — safe booleans only.
+            clientCertConfigured: clientCertConfigured,
+            clientKeyConfigured:  clientKeyConfigured,
+            clientCertPathExists: clientCertPathExists,
+            clientKeyPathExists:  clientKeyPathExists,
+            mtlsConfigured:       mtlsConfigured,
+            mtlsConfigValid:      mtlsConfigValid,
         };
+
+        // Short-circuit on a clearly-broken mTLS config — report it precisely
+        // rather than letting it surface as a generic network/handshake failure.
+        if (mtlsHalfOnly) {
+            sendJson(res, 200, Object.assign({ ok: false, reachable: false,
+                errorCode: 'mtls_config_incomplete',
+                errorMessage: 'Client certificate and client key must both be configured for mTLS.' }, safe));
+            return;
+        }
+        if (mtlsConfigured && !mtlsConfigValid) {
+            sendJson(res, 200, Object.assign({ ok: false, reachable: false,
+                errorCode: 'mtls_file_missing',
+                errorMessage: 'mTLS is configured but a client certificate or key file is missing on disk.' }, safe));
+            return;
+        }
 
         // Probe: GET /models with Authorization header (LiteLLM supports GET /models;
         // HEAD returns 405 on LiteLLM). 8-second probe timeout (separate from gen timeout).
@@ -524,14 +561,22 @@ const server = http.createServer((req, res) => {
             if (aiProvider !== 'ollama' && process.env.RMOOZ_AI_API_KEY) {
                 reqOpts.headers = { Authorization: 'Bearer ' + process.env.RMOOZ_AI_API_KEY };
             }
-            // If a CA cert is configured and we're on HTTPS, add the agent with the cert.
-            // Node.js https module reads SSL_CERT_FILE from env automatically; this is
-            // belt-and-suspenders for explicit cert path support.
-            if (caCertPath && caCertPathExists && aiBase.startsWith('https')) {
+            // Build a TLS secure context with the CA chain and (if mTLS is valid)
+            // the client certificate, so the probe exercises the same trust path
+            // generation will use. The key/password are read from disk into the
+            // context only — never returned or logged.
+            if (aiBase.startsWith('https') && ((caCertPath && caCertPathExists) || mtlsConfigValid && mtlsConfigured)) {
                 try {
                     const tls = require('tls');
-                    const certContent = require('fs').readFileSync(caCertPath);
-                    const ctx = tls.createSecureContext({ ca: certContent });
+                    const fsx = require('fs');
+                    const ctxOpts = {};
+                    if (caCertPath && caCertPathExists) ctxOpts.ca = fsx.readFileSync(caCertPath);
+                    if (mtlsConfigured && mtlsConfigValid) {
+                        ctxOpts.cert = fsx.readFileSync(clientCertPath);
+                        ctxOpts.key  = fsx.readFileSync(clientKeyPath);
+                        if (process.env.RMOOZ_AI_CLIENT_CERT_PASSWORD) ctxOpts.passphrase = process.env.RMOOZ_AI_CLIENT_CERT_PASSWORD;
+                    }
+                    const ctx = tls.createSecureContext(ctxOpts);
                     reqOpts.agent = new (require('https').Agent)({ secureContext: ctx });
                 } catch (_) { /* fall through — env SSL_CERT_FILE may still work */ }
             }
@@ -554,7 +599,18 @@ const server = http.createServer((req, res) => {
                 let errorCode = 'network_error';
                 let errorMessage = e.message || String(e);
                 const msg = errorMessage.toLowerCase();
-                if (/ssl|certificate|cert|tls/i.test(msg) || e.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE' || e.code === 'CERT_HAS_EXPIRED' || e.code === 'SELF_SIGNED_CERT') {
+                const code = e.code || '';
+                if (/certificate required|alert certificate required|peer did not return a certificate|client certificate/i.test(msg)) {
+                    // mTLS: server demands a client certificate.
+                    errorCode = 'mtls_client_cert_required';
+                    errorMessage = 'LiteLLM appears to require a client certificate. Configure RMOOZ_AI_CLIENT_CERT_PATH and RMOOZ_AI_CLIENT_KEY_PATH if mTLS is required.';
+                } else if (/unknown ca|certificate verify failed|unable to get local issuer|self.signed/i.test(msg) || code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE' || code === 'SELF_SIGNED_CERT_IN_CHAIN' || code === 'SELF_SIGNED_CERT') {
+                    errorCode = 'tls_ca_trust_failed';
+                    errorMessage = 'TLS CA trust failed — the LiteLLM server certificate is not trusted. Mount the internal CA chain and set RMOOZ_AI_CA_CERT_PATH=/app/certs/tawasol-ca.crt. (' + e.message + ')';
+                } else if (/handshake failure|bad certificate|sslv3 alert|alert handshake|wrong version number|decryption failed/i.test(msg)) {
+                    errorCode = 'tls_handshake_failed';
+                    errorMessage = 'TLS handshake failed. If the server requires mTLS, configure RMOOZ_AI_CLIENT_CERT_PATH and RMOOZ_AI_CLIENT_KEY_PATH; otherwise verify the CA chain. (' + e.message + ')';
+                } else if (/ssl|certificate|cert|tls/i.test(msg) || code === 'CERT_HAS_EXPIRED') {
                     errorCode = 'tls_cert';
                     errorMessage = 'TLS/certificate error. Mount the internal CA certificate and set RMOOZ_AI_CA_CERT_PATH. (' + e.message + ')';
                 } else if (/enotfound|getaddrinfo|dns|name or service/i.test(msg) || e.code === 'ENOTFOUND') {

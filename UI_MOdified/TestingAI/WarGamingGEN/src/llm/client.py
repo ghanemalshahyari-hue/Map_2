@@ -69,9 +69,13 @@ class LLMClient:
         """Return an httpx.Client with the right SSL settings, or None for defaults.
 
         None means: let the openai library pick its own default (uses system
-        trust store + env SSL_CERT_FILE). We only build a custom client when
-        an explicit CA path or a TLS-verify override is configured, so that
-        the normal code path stays simple.
+        trust store + env SSL_CERT_FILE). We only build a custom client when we
+        deviate from those defaults — i.e. an explicit CA path, a TLS-verify
+        override, OR a client certificate (mTLS) is configured.
+
+        OFFLINE-LITELLM-MTLS-1: when both client_cert_path and client_key_path are
+        set, the client presents that certificate to the server (mutual TLS). The
+        key contents and password are NEVER printed.
         """
         try:
             import httpx
@@ -79,42 +83,57 @@ class LLMClient:
             # httpx not installed — openai's own bundled client will be used.
             return None
 
-        ca_path = cfg.ca_cert_path
+        from pathlib import Path as _Path
 
+        # ── Resolve `verify` (server-cert trust) — unchanged CA behaviour ────────
+        verify = True
         if not cfg.tls_verify:
             # Emergency-only: TLS verification disabled. Loud warning already
-            # logged by config.py. We still build the client explicitly so the
-            # setting is guaranteed to reach httpx regardless of env var timing.
+            # logged by config.py; repeat here so it appears next to the client.
             print(
                 "[llm-client] WARNING: TLS verification DISABLED (RMOOZ_AI_TLS_VERIFY=0). "
                 "This is insecure. Mount the internal CA certificate instead.",
                 file=sys.stderr,
             )
-            return httpx.Client(verify=False, timeout=cfg.timeout_seconds)
-
-        if ca_path:
-            from pathlib import Path as _Path
-            ca_file = _Path(ca_path)
-            if ca_file.exists():
-                print(
-                    f"[llm-client] Using CA certificate: {ca_path}",
-                    file=sys.stderr,
-                )
-                return httpx.Client(verify=str(ca_file), timeout=cfg.timeout_seconds)
+            verify = False
+        elif cfg.ca_cert_path:
+            if _Path(cfg.ca_cert_path).exists():
+                print(f"[llm-client] Using CA certificate: {cfg.ca_cert_path}", file=sys.stderr)
+                verify = str(cfg.ca_cert_path)
             else:
                 print(
-                    f"[llm-client] WARNING: CA certificate file not found: {ca_path} — "
+                    f"[llm-client] WARNING: CA certificate file not found: {cfg.ca_cert_path} — "
                     "falling back to system trust store. TLS may fail if the endpoint "
                     "uses a private CA.",
                     file=sys.stderr,
                 )
-                # Don't return None here; fall through to system-store client
-                # but still honour the explicit timeout.
+                verify = True  # fall back to system trust store
 
-        # No custom CA, TLS verify on — let openai use its own httpx defaults
-        # (they already read SSL_CERT_FILE from env).  Only override if we have
-        # a reason to build a custom client (e.g. the cert path exists or not).
-        return None
+        # ── Resolve `cert` (client cert for mutual TLS) ─────────────────────────
+        cert = None
+        if cfg.client_cert_path and cfg.client_key_path:
+            # config.py already validated both halves exist. httpx accepts a
+            # 2-tuple (cert, key) or 3-tuple (cert, key, password) for encrypted keys.
+            if cfg.client_cert_password:
+                cert = (cfg.client_cert_path, cfg.client_key_path, cfg.client_cert_password)
+            else:
+                cert = (cfg.client_cert_path, cfg.client_key_path)
+            print(
+                "[llm-client] mTLS client certificate ENABLED "
+                f"(cert={cfg.client_cert_path}; key/password contents never logged).",
+                file=sys.stderr,
+            )
+
+        # ── Only build a custom client when we deviate from openai defaults ─────
+        # verify is True (system store) AND no client cert → let openai use its
+        # own httpx client (which still reads SSL_CERT_FILE from the environment).
+        if verify is True and cert is None:
+            return None
+
+        kwargs = {"verify": verify, "timeout": cfg.timeout_seconds}
+        if cert is not None:
+            kwargs["cert"] = cert
+        return httpx.Client(**kwargs)
 
     # ------------------------------------------------------------------
     # Plain call (no schema validation) — for the scene setter, debug, etc.

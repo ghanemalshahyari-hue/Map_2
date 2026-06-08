@@ -62,6 +62,13 @@ class LLMConfig:
     # tls_verify=False only when RMOOZ_AI_TLS_VERIFY=0 (emergency use only).
     ca_cert_path: str | None
     tls_verify: bool
+    # OFFLINE-LITELLM-MTLS-1: OPTIONAL client certificate for mutual TLS.
+    # Set RMOOZ_AI_CLIENT_CERT_PATH + RMOOZ_AI_CLIENT_KEY_PATH (both or neither);
+    # client_cert_password is the optional passphrase for an encrypted key.
+    # When unset, behaviour is identical to a normal one-way-TLS connection.
+    client_cert_path: str | None
+    client_key_path: str | None
+    client_cert_password: str | None
 
 
 @dataclass(frozen=True)
@@ -137,6 +144,29 @@ def load_llm_config() -> LLMConfig:
         )
         _tls_verify = False
 
+    # OFFLINE-LITELLM-MTLS-1: optional client certificate (mutual TLS).
+    # RMOOZ_AI_CLIENT_* preferred; LLM_CLIENT_* aliases accepted. The password is
+    # read but NEVER printed or logged anywhere.
+    _client_cert = _get("RMOOZ_AI_CLIENT_CERT_PATH") or _get("LLM_CLIENT_CERT_PATH")
+    _client_key  = _get("RMOOZ_AI_CLIENT_KEY_PATH")  or _get("LLM_CLIENT_KEY_PATH")
+    _client_pw   = _get("RMOOZ_AI_CLIENT_CERT_PASSWORD") or _get("LLM_CLIENT_CERT_PASSWORD")
+
+    # mTLS needs BOTH halves — cert and key must be set together, or neither.
+    if bool(_client_cert) != bool(_client_key):
+        raise RuntimeError(
+            "LiteLLM mTLS is misconfigured: set BOTH RMOOZ_AI_CLIENT_CERT_PATH and "
+            "RMOOZ_AI_CLIENT_KEY_PATH, or neither. (The key password is never logged.)"
+        )
+    # If configured, the files must exist. Clear message; never prints the key.
+    if _client_cert and not Path(_client_cert).exists():
+        raise RuntimeError(
+            f"LiteLLM mTLS client certificate is configured but file is missing: {_client_cert}"
+        )
+    if _client_key and not Path(_client_key).exists():
+        raise RuntimeError(
+            f"LiteLLM mTLS client key is configured but file is missing: {_client_key}"
+        )
+
     return LLMConfig(
         base_url=_get("LLM_BASE_URL"),
         api_key=api_key,
@@ -148,6 +178,9 @@ def load_llm_config() -> LLMConfig:
         timeout_seconds=_timeout_s,
         ca_cert_path=_ca_cert,
         tls_verify=_tls_verify,
+        client_cert_path=_client_cert,
+        client_key_path=_client_key,
+        client_cert_password=_client_pw,
     )
 
 

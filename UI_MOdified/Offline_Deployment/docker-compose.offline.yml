@@ -101,6 +101,16 @@ services:
       # loud warning in the server logs. NEVER use in production if avoidable.
       RMOOZ_AI_TLS_VERIFY:   "${RMOOZ_AI_TLS_VERIFY:-}"
 
+      # ── Optional client certificate / mutual TLS (OFFLINE-LITELLM-MTLS-1) ─
+      # Only needed if the LiteLLM endpoint REQUIRES RMOOZ to present its own
+      # client certificate. Leave all three blank for a normal HTTPS + Bearer
+      # connection (behaviour is then identical to CA-trust-only). Place the
+      # client cert + key in certs/ (mounted at /app/certs). The password is
+      # read server-side only and is NEVER returned by any API or logged.
+      RMOOZ_AI_CLIENT_CERT_PATH:     "${RMOOZ_AI_CLIENT_CERT_PATH:-}"
+      RMOOZ_AI_CLIENT_KEY_PATH:      "${RMOOZ_AI_CLIENT_KEY_PATH:-}"
+      RMOOZ_AI_CLIENT_CERT_PASSWORD: "${RMOOZ_AI_CLIENT_CERT_PASSWORD:-}"
+
       SESSION_SECRET:        "${SESSION_SECRET}"
       RMOOZ_BOOTSTRAP_PASSWORD: "${RMOOZ_BOOTSTRAP_PASSWORD:-disabled}"
 

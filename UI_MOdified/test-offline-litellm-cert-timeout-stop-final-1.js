@@ -137,8 +137,10 @@ check('F1  timeout NOT hardcoded to 90',         !pyClient.includes('"timeout": 
 check('F2  timeout uses cfg.timeout_seconds',    pyClient.includes('cfg.timeout_seconds'));
 check('F3  _build_http_client method exists',    pyClient.includes('_build_http_client'));
 check('F4  httpx used for CA cert',              pyClient.includes('httpx.Client'));
-check('F5  CA cert path existence checked',      pyClient.includes('ca_file.exists()'));
-check('F6  verify=False logs warning',           pyClient.includes('verify=False') && pyClient.includes('WARNING'));
+// (mTLS refactor: _build_http_client now uses _Path(cfg.ca_cert_path).exists()
+//  and verify=False instead of the old ca_file variable — behaviour unchanged.)
+check('F5  CA cert path existence checked',      pyClient.includes('.exists()') && pyClient.includes('cfg.ca_cert_path'));
+check('F6  verify=False logs warning',           pyClient.includes('verify = False') && pyClient.includes('WARNING'));
 check('F7  TLS verify disabled logs to stderr',  pyClient.includes('sys.stderr'));
 
 // ──────────────────────────────────────────────────────────────────────────────

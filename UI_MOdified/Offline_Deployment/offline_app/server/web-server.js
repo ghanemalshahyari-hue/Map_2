@@ -509,11 +509,18 @@ const server = http.createServer((req, res) => {
         }
         const apiKeyConfigured = !!(process.env.RMOOZ_AI_API_KEY && process.env.RMOOZ_AI_API_KEY.trim());
 
+        // Safely-redacted base URL: expose ONLY scheme + host[:port], never any
+        // path, query, or embedded credentials. Lets an operator confirm which
+        // endpoint generation targets without leaking anything sensitive.
+        let baseUrlHost = null;
+        try { const u = new URL(aiBase); baseUrlHost = u.protocol + '//' + u.host; } catch (_) { baseUrlHost = null; }
+
         // Safe base response — NO key value, NO cert/key content, NO password.
         const safe = {
             provider:         aiProvider,
             model:            aiModel || null,
             baseUrlConfigured: aiBase.length > 0,
+            baseUrlHost:      baseUrlHost,   // scheme+host only (redacted) — proves the target endpoint
             apiKeyConfigured: apiKeyConfigured,
             tlsVerify:        tlsVerify,
             caCertConfigured: !!caCertPath,

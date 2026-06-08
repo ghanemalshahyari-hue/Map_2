@@ -82,6 +82,9 @@ Copy-TreeIfPresent "Offline_Deployment/data_runtime" "$BundleDir/data_runtime" "
 Get-ChildItem -Path "$BundleDir/data_runtime" -File -Filter "app.db*" -ErrorAction SilentlyContinue | Remove-Item -Force
 Copy-TreeIfPresent "Offline_Deployment/TestingAI_Runtime" "$BundleDir/TestingAI_Runtime" "TestingAI_Runtime"
 Copy-TreeIfPresent "Offline_Deployment/docs" "$BundleDir/docs" "docs"
+# OFFLINE-LITELLM-CA-1: copy the certs/ placeholder so operators know where to put the CA cert.
+# The real certificate (*.crt, *.pem, *.key) is gitignored and never committed.
+Copy-TreeIfPresent "Offline_Deployment/certs" "$BundleDir/certs" "certs (CA cert placeholder)"
 
 $scriptDst = "$BundleDir/scripts"
 New-Item -ItemType Directory -Force -Path $scriptDst | Out-Null

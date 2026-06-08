@@ -983,7 +983,7 @@ function handle(req, res, ctx) {
                     errorCode = 'timeout';
                     classifiedError =
                         'LiteLLM request timed out after ' + timeoutMs + ' ms. ' +
-                        'The model "' + (model || process.env.RMOOZ_AI_MODEL || '?') + '" may be slow. ' +
+                        'The model "' + (_llm.summary.model || process.env.RMOOZ_AI_MODEL || '?') + '" may be slow. ' +
                         'Try a faster model or increase RMOOZ_AI_TIMEOUT_MS (currently ' + timeoutMs + ' ms). ' +
                         'stderr: ' + rawErr.slice(-300);
                 } else if (/certificate required|alert certificate required|tlsv13 alert certificate required|peer did not return a certificate|SSL_ERROR_WANT_CLIENT_CERT|client certificate (?:is )?required/i.test(rawErr)) {

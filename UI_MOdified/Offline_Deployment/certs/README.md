@@ -23,17 +23,17 @@ certificate (e.g. `litellm.tawasol.mil.ae`).
 The `docker-compose.offline.yml` mounts this file into the container at:
 
 ```
-/usr/local/share/ca-certificates/tawasol-ca.crt
+/app/certs/tawasol-ca.crt
 ```
 
 The following env vars in `.env.offline` point to that path so both Node.js and Python
 trust the certificate:
 
 ```env
-RMOOZ_AI_CA_CERT_PATH=/usr/local/share/ca-certificates/tawasol-ca.crt
-SSL_CERT_FILE=/usr/local/share/ca-certificates/tawasol-ca.crt
-REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/tawasol-ca.crt
-NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/tawasol-ca.crt
+RMOOZ_AI_CA_CERT_PATH=/app/certs/tawasol-ca.crt
+SSL_CERT_FILE=/app/certs/tawasol-ca.crt
+REQUESTS_CA_BUNDLE=/app/certs/tawasol-ca.crt
+NODE_EXTRA_CA_CERTS=/app/certs/tawasol-ca.crt
 ```
 
 ## Verify after container restart

@@ -90,13 +90,12 @@ function cfg() {
     };
 }
 
-// ── OFFLINE-GEN-RUN-FIX-1: LLM env injection for the Python generator ────────
-// The container has no Ollama on localhost:11434. WarGamingGEN's baked .env
-// points LLM_BASE_URL there, so generation died on the first call with
-// openai.APIConnectionError. We map the operator-configured RMOOZ_AI_* (or
-// Ollama) settings onto the LLM_* vars the Python reads, and pass them in the
-// spawn env so they OVERRIDE WarGamingGEN/.env (python-dotenv does not override
-// existing environment variables).
+// ── OFFLINE-GEN-RUN-FIX-1 / OFFLINE-LITELLM-CERT-TIMEOUT-1 ──────────────────
+// Build the Python child process environment.
+// Maps RMOOZ_AI_* → LLM_* vars so WarGamingGEN uses the operator endpoint,
+// NOT its baked localhost:11434 default.
+// Also injects CA cert and timeout vars so the Python OpenAI client can
+// reach internal HTTPS LiteLLM endpoints securely.
 //
 // Returns { env, summary } where summary is SAFE to log (no key value).
 function buildLlmChildEnv(c, baseEnv) {
@@ -135,14 +134,49 @@ function buildLlmChildEnv(c, baseEnv) {
     // fallback (that path skips the LLM and never progresses on schema calls).
     env.LLM_LOCAL_FORCE_FALLBACK = baseUrl ? '0' : '1';
 
+    // ── OFFLINE-LITELLM-CERT-TIMEOUT-1: timeout vars ─────────────────────────
+    // Python client.py reads RMOOZ_AI_TIMEOUT_MS / LLM_TIMEOUT_MS / OPENAI_TIMEOUT_MS
+    // and converts to seconds. Default is 300 000 ms (300 s) in config.py.
+    // Pass all three so the Python side can pick up whichever it checks first.
+    const timeoutMs = (process.env.RMOOZ_AI_TIMEOUT_MS || '300000').trim();
+    env.RMOOZ_AI_TIMEOUT_MS = timeoutMs;
+    env.LLM_TIMEOUT_MS      = timeoutMs;
+    env.OPENAI_TIMEOUT_MS   = timeoutMs;
+
+    // ── OFFLINE-LITELLM-CA-1: CA certificate + TLS verify ────────────────────
+    // Python ssl / httpx honours SSL_CERT_FILE and REQUESTS_CA_BUNDLE.
+    // RMOOZ_AI_CA_CERT_PATH is read explicitly by config.py.
+    // Pass all four so every Python HTTP library in the venv can find the cert.
+    const caCertPath = (process.env.RMOOZ_AI_CA_CERT_PATH || '').trim();
+    const sslCertFile = (process.env.SSL_CERT_FILE || caCertPath || '').trim();
+    const reqsCaBundle = (process.env.REQUESTS_CA_BUNDLE || caCertPath || '').trim();
+    const nodeExtraCa  = (process.env.NODE_EXTRA_CA_CERTS || '').trim();
+    if (caCertPath)    env.RMOOZ_AI_CA_CERT_PATH = caCertPath;
+    if (sslCertFile)   env.SSL_CERT_FILE          = sslCertFile;
+    if (reqsCaBundle)  env.REQUESTS_CA_BUNDLE     = reqsCaBundle;
+    if (nodeExtraCa)   env.NODE_EXTRA_CA_CERTS    = nodeExtraCa;
+
+    // RMOOZ_AI_TLS_VERIFY: pass through to Python (0 = disable TLS check).
+    // Emergency use only. Default is absent (TLS on). Log a warning if used.
+    const tlsVerify = (process.env.RMOOZ_AI_TLS_VERIFY || '').trim();
+    if (tlsVerify === '0') {
+        env.RMOOZ_AI_TLS_VERIFY = '0';
+        console.warn('[wargame-sim] WARNING: RMOOZ_AI_TLS_VERIFY=0 — TLS verification is DISABLED. ' +
+            'Mount the internal CA certificate (RMOOZ_AI_CA_CERT_PATH) instead.');
+    }
+
     const summary = {
-        provider:          provider,
-        baseUrlConfigured: !!baseUrl,
-        baseUrl:           baseUrl || null,            // endpoint URL is not a secret
-        model:             model || null,
-        apiKeyConfigured:  !!(env.LLM_API_KEY && env.LLM_API_KEY !== 'ollama'),
-        useResponsesApi:   env.LLM_USE_RESPONSES_API,
+        provider:           provider,
+        baseUrlConfigured:  !!baseUrl,
+        baseUrl:            baseUrl || null,           // endpoint URL is not a secret
+        model:              model || null,
+        apiKeyConfigured:   !!(env.LLM_API_KEY && env.LLM_API_KEY !== 'ollama'),
+        useResponsesApi:    env.LLM_USE_RESPONSES_API,
         localForceFallback: env.LLM_LOCAL_FORCE_FALLBACK,
+        timeoutMs:          timeoutMs,
+        caCertConfigured:   !!caCertPath,
+        caCertPath:         caCertPath || null,        // path only, never a secret
+        tlsVerify:          tlsVerify !== '0',
     };
     return { env: env, summary: summary };
 }
@@ -917,7 +951,48 @@ function handle(req, res, ctx) {
                 simState.runName = pub.ok ? pub.run_id : simState.runName;
                 if (!pub.ok) simState.error = 'publish: ' + pub.error;
             } else {
-                simState.error = 'sim exited ' + code + (errTail ? ' — ' + redactSecrets(errTail).slice(-300) : '');
+                // OFFLINE-LITELLM-CERT-TIMEOUT-1: classify the error for operators.
+                const rawErr = redactSecrets(errTail);
+                const timeoutMs = (process.env.RMOOZ_AI_TIMEOUT_MS || '300000').trim();
+                let classifiedError = 'sim exited ' + code + (rawErr ? ' — ' + rawErr.slice(-400) : '');
+                let errorCode = 'unknown';
+                if (/APITimeoutError|Request timed out|timeout/i.test(rawErr)) {
+                    errorCode = 'timeout';
+                    classifiedError =
+                        'LiteLLM request timed out after ' + timeoutMs + ' ms. ' +
+                        'The model "' + (model || process.env.RMOOZ_AI_MODEL || '?') + '" may be slow. ' +
+                        'Try a faster model or increase RMOOZ_AI_TIMEOUT_MS (currently ' + timeoutMs + ' ms). ' +
+                        'stderr: ' + rawErr.slice(-300);
+                } else if (/SSL|certificate|CERTIFICATE|ssl_cert|UNABLE_TO_VERIFY|self.signed|tlsv1|CERT_/i.test(rawErr)) {
+                    errorCode = 'tls_cert';
+                    classifiedError =
+                        'TLS/certificate error reaching the LiteLLM endpoint. ' +
+                        'Mount the internal CA certificate and set RMOOZ_AI_CA_CERT_PATH. ' +
+                        'stderr: ' + rawErr.slice(-300);
+                } else if (/401|Unauthorized|unauthorized/i.test(rawErr)) {
+                    errorCode = 'auth_401';
+                    classifiedError = 'LiteLLM returned 401 Unauthorized — check RMOOZ_AI_API_KEY.';
+                } else if (/403|Forbidden|forbidden/i.test(rawErr)) {
+                    errorCode = 'auth_403';
+                    classifiedError = 'LiteLLM returned 403 Forbidden — key may lack generation permissions.';
+                } else if (/404|Not Found|NotFoundError/i.test(rawErr)) {
+                    errorCode = 'not_found_404';
+                    classifiedError =
+                        'LiteLLM returned 404 — check RMOOZ_AI_BASE_URL and RMOOZ_AI_MODEL. ' +
+                        'Model "' + (process.env.RMOOZ_AI_MODEL || '?') + '" may not exist at this endpoint.';
+                } else if (/Connection refused|ECONNREFUSED|APIConnectionError/i.test(rawErr)) {
+                    errorCode = 'connection_refused';
+                    classifiedError =
+                        'Connection refused to LiteLLM endpoint (' + (process.env.RMOOZ_AI_BASE_URL || '?') + '). ' +
+                        'Is the endpoint running? Is the container network configured correctly?';
+                } else if (/Name or service not known|EAI_AGAIN|getaddrinfo/i.test(rawErr)) {
+                    errorCode = 'dns_failure';
+                    classifiedError =
+                        'DNS resolution failed for LiteLLM endpoint (' + (process.env.RMOOZ_AI_BASE_URL || '?') + '). ' +
+                        'Is the hostname reachable from inside the container?';
+                }
+                simState.error     = classifiedError;
+                simState.errorCode = errorCode;
                 // OFFLINE-GEN-RUN-FIX-1: persist the full (redacted) stderr to the
                 // run folder so the operator can see WHY generation failed.
                 try {
@@ -925,11 +1000,18 @@ function handle(req, res, ctx) {
                     if (failDir) {
                         var logBody =
                             '# WarGamingGEN generation error\n' +
-                            'exit_code: ' + code + '\n' +
-                            'finished_at: ' + simState.finishedAt + '\n' +
-                            'run_dir: ' + failDir + '\n' +
+                            'exit_code:    ' + code + '\n' +
+                            'error_code:   ' + errorCode + '\n' +
+                            'finished_at:  ' + simState.finishedAt + '\n' +
+                            'run_dir:      ' + failDir + '\n' +
+                            'model:        ' + (process.env.RMOOZ_AI_MODEL || '?') + '\n' +
+                            'provider:     ' + (process.env.RMOOZ_AI_PROVIDER || 'ollama') + '\n' +
+                            'timeout_ms:   ' + timeoutMs + '\n' +
+                            'ca_cert:      ' + (process.env.RMOOZ_AI_CA_CERT_PATH ? 'configured' : 'not configured') + '\n' +
+                            '\n--- classified error ---\n' +
+                            classifiedError + '\n' +
                             '\n--- stderr (secrets redacted) ---\n' +
-                            redactSecrets(errTail);
+                            rawErr;
                         fs.writeFileSync(path.join(failDir, 'error.log'), logBody, 'utf8');
                         simState.errorLog = path.join(failDir, 'error.log');
                         simState.runName  = simState.runName || path.basename(failDir);
@@ -946,10 +1028,13 @@ function handle(req, res, ctx) {
     // ── UNIFIED-IMPORT-3: stop/cancel active generation (preserve checkpoints) ──
     if (pathname === '/api/wargame-sim/cancel' && method === 'POST') {
         if (!simState.running || !activeChild) {
-            sendJson(res, 409, Object.assign({
-                ok: false,
+            // No-op: nothing to stop. Return 200 with safe status so the UI
+            // can treat a double-press gracefully without showing an error.
+            sendJson(res, 200, Object.assign({
+                ok: true,
                 cancelled: false,
-                error: 'no active WarGamingGEN run to cancel',
+                no_active_run: true,
+                message: 'No active generation — nothing to stop.',
             }, computeSimProgress(c, simState)));
             return true;
         }

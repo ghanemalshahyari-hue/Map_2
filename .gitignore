@@ -34,8 +34,16 @@ Desktop.ini
 # Environment / secrets
 .env
 .env.*
-# …but the committed TEMPLATE (no secrets, documents the vars) stays tracked.
+# …but the committed TEMPLATES (no secrets, document the vars) stay tracked.
 !UI_MOdified/.env.example
+!UI_MOdified/Offline_Deployment/.env.offline.example
+
+# Offline deployment CA certificate — operator-supplied at the site, never committed.
+# Only the README placeholder in certs/ is committed.
+UI_MOdified/Offline_Deployment/certs/*.crt
+UI_MOdified/Offline_Deployment/certs/*.pem
+UI_MOdified/Offline_Deployment/certs/*.key
+UI_MOdified/Offline_Deployment/dist/bundle/.env.offline
 
 # AI gateway local secrets (api keys, etc.) — never commit.
 # `ai-config.js` is the committed defaults; this overlay file (if present)

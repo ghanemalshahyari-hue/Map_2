@@ -2,28 +2,32 @@
  * offline-leaflet-tile-guard.js — Global Leaflet tile-source enforcer
  *
  * OFFLINE_APP ONLY — not in the main app.
- * OFFLINE-RUNTIME-FIX-4: Prevents any Leaflet tile layer from calling
- * public internet tile servers (OSM, Mapbox, etc.) or localhost:8080 from
- * a remote browser. Replaces those URLs with the resolved offline tile URL.
+ * OFFLINE-RUNTIME-FIX-4 / OFFLINE-MAP-GUARD-SYNC-1:
+ *
+ *   Prevents any Leaflet tile layer from calling public internet tile servers
+ *   (OSM, Mapbox, etc.) or internal-only URLs (localhost:8080) from a remote
+ *   browser. Replaces banned URLs with the resolved offline tile URL.
+ *
+ * SYNC INSTALL (OFFLINE-MAP-GUARD-SYNC-1):
+ *   Previous version waited for an async fetch before patching L.tileLayer,
+ *   so app.js could fire a few OSM requests at startup before the guard
+ *   activated. This version installs the factory/class override SYNCHRONOUSLY
+ *   as soon as Leaflet is available — using a placeholder URL initially, then
+ *   repointing all layers once the real offline URL resolves.
  *
  * Load order: AFTER ../lib/leaflet.js, BEFORE app.js and any module
  * that creates a tileLayer.
  *
  * Intercepted URL patterns:
  *   - openstreetmap.org  (all subdomains)
- *   - tile.openstreetmap.org
- *   - a/b/c.tile.openstreetmap.org
  *   - mapbox.com
  *   - localhost:8080/services/...  (internal tile server — not reachable
  *                                   from a remote browser)
- *
- * The guard reads the resolved tile URL from:
- *   window.__RMOOZ_OFFLINE_MAP__.activeTileUrl  (set by offline-map-source.js)
- * If not yet available, polls every 200 ms until it is or times out (10 s).
  */
 (function () {
     'use strict';
 
+    var PLACEHOLDER_TILE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
     var MAX_WAIT_MS = 10000;
 
     /** Returns true if the URL should be replaced with the offline tile URL. */
@@ -32,56 +36,46 @@
         var u = url.toLowerCase();
         return (
             u.includes('openstreetmap.org')  ||
-            u.includes('openstreetmap.org')  ||
             u.includes('tile.openstreetmap') ||
             u.includes('mapbox.com')         ||
             // Intercept localhost:8080 tile service — accessible from same machine
             // only; browsers on another machine get ERR_CONNECTION_REFUSED.
-            // After the guard runs, the correct public IP URL will be used instead.
-            (u.includes('localhost:8080')    && u.includes('/services/'))
+            (u.includes('localhost:8080') && u.includes('/services/'))
         );
     }
 
-    /** Wait up to maxMs for a condition to be truthy, polling every 200 ms. */
-    function waitFor(condition, maxMs, cb) {
-        var elapsed = 0;
-        var iv = setInterval(function () {
-            elapsed += 200;
-            var val = condition();
-            if (val) { clearInterval(iv); cb(val); }
-            else if (elapsed >= maxMs) { clearInterval(iv); cb(null); }
-        }, 200);
-    }
+    // Shared reference — updated once the real URL resolves.
+    var _offlineUrl = PLACEHOLDER_TILE;
 
-    /** Patch L.TileLayer so every instance created with a banned URL gets replaced. */
-    function installGuard(L, offlineUrl) {
+    /** Patch L.TileLayer synchronously so every future L.tileLayer() call
+     *  with a banned URL gets replaced immediately — no async wait. */
+    function installGuardSync(L) {
         if (!L || !L.TileLayer || L._offlineGuardInstalled) return;
         L._offlineGuardInstalled = true;
 
         var OrigTileLayer = L.TileLayer;
+        var origFactory   = L.tileLayer;
 
-        // Override the TileLayer factory method used by L.tileLayer(url, opts)
-        var origFactory = L.tileLayer;
         L.tileLayer = function (url, options) {
             if (isBannedUrl(url)) {
-                console.info('[offline-guard] Blocked:', url.slice(0, 80), '→ offline');
-                url = offlineUrl;
+                console.info('[offline-guard] Blocked (sync):', url.slice(0, 80), '→ offline');
+                url = _offlineUrl;
             }
             return origFactory.call(this, url, options);
         };
 
-        // Also patch the class constructor so new L.TileLayer() is guarded
+        // Also patch the class constructor so `new L.TileLayer()` is guarded.
         L.TileLayer = OrigTileLayer.extend({
             initialize: function (url, options) {
                 if (isBannedUrl(url)) {
                     console.info('[offline-guard] Blocked (class):', url.slice(0, 80));
-                    url = offlineUrl;
+                    url = _offlineUrl;
                 }
                 OrigTileLayer.prototype.initialize.call(this, url, options);
             }
         });
 
-        console.info('[offline-guard] Installed. Offline tile URL:', offlineUrl.slice(0, 80));
+        console.info('[offline-guard] Installed synchronously (placeholder until real URL resolves).');
     }
 
     /** Replace the URL on any already-existing tile layers on a Leaflet map. */
@@ -103,53 +97,94 @@
         });
     }
 
+    /** Once the real offline URL resolves, update the shared reference and
+     *  repoint any layers that were created with the placeholder. */
+    function repointToRealUrl(offlineUrl) {
+        _offlineUrl = offlineUrl;
+        console.info('[offline-guard] Real offline URL set:', offlineUrl.slice(0, 80));
+        // Repoint the map immediately if it exists.
+        if (window.map) patchExistingLayers(window.map, offlineUrl);
+        // Also watch for the map appearing later.
+        var mapCheckInterval = setInterval(function () {
+            if (window.map && !window._offlineGuardMainMapPatched) {
+                window._offlineGuardMainMapPatched = true;
+                patchExistingLayers(window.map, offlineUrl);
+            }
+        }, 500);
+        setTimeout(function () { clearInterval(mapCheckInterval); }, 30000);
+    }
+
+    /** Wait up to maxMs for a condition to be truthy, polling every 100 ms. */
+    function waitFor(condition, maxMs, cb) {
+        var elapsed = 0;
+        var iv = setInterval(function () {
+            elapsed += 100;
+            var val = condition();
+            if (val) { clearInterval(iv); cb(val); }
+            else if (elapsed >= maxMs) { clearInterval(iv); cb(null); }
+        }, 100);
+    }
+
     function run() {
-        // Step 1: Wait for Leaflet to be available
-        waitFor(function () { return window.L; }, MAX_WAIT_MS, function (L) {
-            if (!L) { console.warn('[offline-guard] Leaflet not available — guard not installed'); return; }
+        var L = window.L;
 
-            // Step 2: Wait for offline map source to resolve
-            waitFor(
-                function () {
-                    var om = window.__RMOOZ_OFFLINE_MAP__;
-                    return om && om.activeTileUrl ? om.activeTileUrl : null;
-                },
-                MAX_WAIT_MS,
-                function (offlineUrl) {
-                    if (!offlineUrl) {
-                        console.warn('[offline-guard] No offline tile URL — guard not installed');
-                        return;
-                    }
-                    // Install the factory/class guard for future tile layers
-                    installGuard(L, offlineUrl);
+        // ── Phase 1: Install guard synchronously if Leaflet is already loaded. ──
+        // The script tag is placed AFTER leaflet.js so L should be available now.
+        if (L) {
+            installGuardSync(L);
+        } else {
+            // Fallback: Leaflet not yet loaded — wait (should not normally happen
+            // since our script tag comes after leaflet.js in app.html).
+            waitFor(function () { return window.L; }, MAX_WAIT_MS, function (LLate) {
+                if (!LLate) { console.warn('[offline-guard] Leaflet not available — guard not installed'); return; }
+                installGuardSync(LLate);
+                resolveRealUrl();
+            });
+            return;
+        }
 
-                    // Patch any tile layers already on the main map
-                    if (window.map) patchExistingLayers(window.map, offlineUrl);
+        resolveRealUrl();
+    }
 
-                    // Listen for the main map being created later
-                    var mapCheckInterval = setInterval(function () {
-                        if (window.map && !window._offlineGuardMainMapPatched) {
-                            window._offlineGuardMainMapPatched = true;
-                            patchExistingLayers(window.map, offlineUrl);
-                        }
-                    }, 500);
-                    // Stop polling after 30 s
-                    setTimeout(function () { clearInterval(mapCheckInterval); }, 30000);
+    function resolveRealUrl() {
+        // ── Phase 2: Resolve the real offline tile URL asynchronously. ──────────
+        // Guard is ALREADY active with the placeholder; these layers will be
+        // repointed to the real URL once it resolves.
+        waitFor(
+            function () {
+                var om = window.__RMOOZ_OFFLINE_MAP__;
+                return om && om.activeTileUrl ? om.activeTileUrl : null;
+            },
+            MAX_WAIT_MS,
+            function (offlineUrl) {
+                if (!offlineUrl) {
+                    // Fallback: fetch directly from the server API.
+                    fetch('/api/offline/map-config', { credentials: 'same-origin' })
+                        .then(function (r) { return r.json(); })
+                        .then(function (cfg) {
+                            var url = cfg && (cfg.localTileUrl || cfg.tileUrl);
+                            if (url) { repointToRealUrl(url); }
+                            else { console.warn('[offline-guard] No offline tile URL in map-config — using placeholder'); }
+                        })
+                        .catch(function (e) {
+                            console.warn('[offline-guard] Could not fetch map-config:', e.message || e);
+                        });
+                    return;
                 }
-            );
-        });
+                repointToRealUrl(offlineUrl);
+            }
+        );
     }
 
-    // Run after DOM is ready so Leaflet has had time to load
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', run);
-    } else {
-        run();
-    }
+    // Install immediately — the script tag is at DOMContentLoaded-safe position
+    // (after Leaflet, before app.js) so we run synchronously.
+    run();
 
-    // Export for use by other offline scripts
+    // Export for use by other offline scripts and tests.
     window.OfflineLeafletGuard = {
-        isBannedUrl: isBannedUrl,
-        patchExistingLayers: patchExistingLayers
+        isBannedUrl:          isBannedUrl,
+        patchExistingLayers:  patchExistingLayers,
+        repointToRealUrl:     repointToRealUrl,
+        getOfflineUrl:        function () { return _offlineUrl; },
     };
 })();

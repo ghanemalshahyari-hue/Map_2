@@ -6,10 +6,20 @@ endpoint config works against OpenAI cloud (now) and any compatible
 self-hosted endpoint (later — litellm, LM Studio, vLLM).
 
 Single class: LLMClient. One method: call_with_schema(messages, schema, ...).
+
+OFFLINE-LITELLM-CERT-TIMEOUT-1:
+  Timeout is now configurable via RMOOZ_AI_TIMEOUT_MS / LLM_TIMEOUT_MS.
+  Default 300 s (was 90 s) — needed for oss-120b / oss-120b-fast.
+
+OFFLINE-LITELLM-CA-1:
+  CA certificate for private HTTPS LiteLLM endpoints.
+  Set RMOOZ_AI_CA_CERT_PATH or SSL_CERT_FILE. TLS verification stays ON
+  unless RMOOZ_AI_TLS_VERIFY=0 (emergency only — logs a loud warning).
 """
 from __future__ import annotations
 import json
 import os
+import sys
 import time
 from pathlib import Path
 from typing import Type, TypeVar
@@ -34,13 +44,77 @@ class LLMClient:
     def __init__(self, *, audit_dir: Path | None = None) -> None:
         cfg = load_llm_config()
         self.cfg = cfg
-        kwargs: dict = {"api_key": cfg.api_key, "timeout": 90.0}
+
+        # OFFLINE-LITELLM-CERT-TIMEOUT-1: use configurable timeout.
+        # cfg.timeout_seconds comes from RMOOZ_AI_TIMEOUT_MS / LLM_TIMEOUT_MS
+        # (default 300 s). The old 90 s hardcode timed out oss-120b-fast.
+        kwargs: dict = {"api_key": cfg.api_key, "timeout": cfg.timeout_seconds}
         if cfg.base_url:
             kwargs["base_url"] = cfg.base_url
+
+        # OFFLINE-LITELLM-CA-1: custom CA certificate or TLS-verify override.
+        # We construct an httpx client explicitly so httpx uses the cert even if
+        # the env var is set AFTER the process starts (belt-and-suspenders).
+        _http_client = self._build_http_client(cfg)
+        if _http_client is not None:
+            kwargs["http_client"] = _http_client
+
         self.client = OpenAI(**kwargs)
         self.audit_dir = audit_dir
         if audit_dir:
             audit_dir.mkdir(parents=True, exist_ok=True)
+
+    @staticmethod
+    def _build_http_client(cfg):
+        """Return an httpx.Client with the right SSL settings, or None for defaults.
+
+        None means: let the openai library pick its own default (uses system
+        trust store + env SSL_CERT_FILE). We only build a custom client when
+        an explicit CA path or a TLS-verify override is configured, so that
+        the normal code path stays simple.
+        """
+        try:
+            import httpx
+        except ImportError:
+            # httpx not installed — openai's own bundled client will be used.
+            return None
+
+        ca_path = cfg.ca_cert_path
+
+        if not cfg.tls_verify:
+            # Emergency-only: TLS verification disabled. Loud warning already
+            # logged by config.py. We still build the client explicitly so the
+            # setting is guaranteed to reach httpx regardless of env var timing.
+            print(
+                "[llm-client] WARNING: TLS verification DISABLED (RMOOZ_AI_TLS_VERIFY=0). "
+                "This is insecure. Mount the internal CA certificate instead.",
+                file=sys.stderr,
+            )
+            return httpx.Client(verify=False, timeout=cfg.timeout_seconds)
+
+        if ca_path:
+            from pathlib import Path as _Path
+            ca_file = _Path(ca_path)
+            if ca_file.exists():
+                print(
+                    f"[llm-client] Using CA certificate: {ca_path}",
+                    file=sys.stderr,
+                )
+                return httpx.Client(verify=str(ca_file), timeout=cfg.timeout_seconds)
+            else:
+                print(
+                    f"[llm-client] WARNING: CA certificate file not found: {ca_path} — "
+                    "falling back to system trust store. TLS may fail if the endpoint "
+                    "uses a private CA.",
+                    file=sys.stderr,
+                )
+                # Don't return None here; fall through to system-store client
+                # but still honour the explicit timeout.
+
+        # No custom CA, TLS verify on — let openai use its own httpx defaults
+        # (they already read SSL_CERT_FILE from env).  Only override if we have
+        # a reason to build a custom client (e.g. the cert path exists or not).
+        return None
 
     # ------------------------------------------------------------------
     # Plain call (no schema validation) — for the scene setter, debug, etc.

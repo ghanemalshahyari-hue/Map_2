@@ -53,6 +53,15 @@ class LLMConfig:
     temperature_red: float
     temperature_blue: float
     temperature_adjudicator: float
+    # OFFLINE-LITELLM-CERT-TIMEOUT-1: configurable timeout for large models.
+    # RMOOZ_AI_TIMEOUT_MS / LLM_TIMEOUT_MS / OPENAI_TIMEOUT_MS → seconds.
+    # Default 300 s (5 min) — generous enough for oss-120b / oss-120b-fast.
+    timeout_seconds: float
+    # OFFLINE-LITELLM-CA-1: internal CA certificate for private HTTPS endpoints.
+    # Set RMOOZ_AI_CA_CERT_PATH or SSL_CERT_FILE to the PEM file path.
+    # tls_verify=False only when RMOOZ_AI_TLS_VERIFY=0 (emergency use only).
+    ca_cert_path: str | None
+    tls_verify: bool
 
 
 @dataclass(frozen=True)
@@ -93,6 +102,41 @@ class DoctrinalConfig:
 
 def load_llm_config() -> LLMConfig:
     api_key = _get("LLM_API_KEY") or _get("OPENAI_API_KEY", required=True)
+
+    # OFFLINE-LITELLM-CERT-TIMEOUT-1: resolve timeout from any of the three
+    # env vars (prefer most-specific first). Convert ms → seconds.
+    # Default 300 000 ms (300 s) so oss-120b-fast and oss-120b can complete.
+    _timeout_ms_raw = (
+        os.environ.get("RMOOZ_AI_TIMEOUT_MS")
+        or os.environ.get("LLM_TIMEOUT_MS")
+        or os.environ.get("OPENAI_TIMEOUT_MS")
+    )
+    try:
+        _timeout_s = float(_timeout_ms_raw) / 1000.0 if _timeout_ms_raw else 300.0
+    except (ValueError, TypeError):
+        _timeout_s = 300.0
+
+    # OFFLINE-LITELLM-CA-1: CA certificate path.
+    # Prefer RMOOZ_AI_CA_CERT_PATH, fall back to SSL_CERT_FILE.
+    _ca_cert = (
+        _get("RMOOZ_AI_CA_CERT_PATH")
+        or _get("SSL_CERT_FILE")
+        or None
+    )
+
+    # tls_verify: False ONLY when RMOOZ_AI_TLS_VERIFY=0 (emergency only).
+    _tls_verify = True
+    _tls_env = (os.environ.get("RMOOZ_AI_TLS_VERIFY") or "").strip()
+    if _tls_env in ("0", "false", "no", "off"):
+        import sys
+        print(
+            "[llm-config] WARNING: RMOOZ_AI_TLS_VERIFY=0 — TLS verification is DISABLED. "
+            "This is insecure. Recommended fix: mount the internal CA certificate and set "
+            "RMOOZ_AI_CA_CERT_PATH=/usr/local/share/ca-certificates/tawasol-ca.crt",
+            file=sys.stderr,
+        )
+        _tls_verify = False
+
     return LLMConfig(
         base_url=_get("LLM_BASE_URL"),
         api_key=api_key,
@@ -101,6 +145,9 @@ def load_llm_config() -> LLMConfig:
         temperature_red=_get_float("LLM_TEMPERATURE_RED", 0.4),
         temperature_blue=_get_float("LLM_TEMPERATURE_BLUE", 0.3),
         temperature_adjudicator=_get_float("LLM_TEMPERATURE_ADJUDICATOR", 0.1),
+        timeout_seconds=_timeout_s,
+        ca_cert_path=_ca_cert,
+        tls_verify=_tls_verify,
     )
 
 

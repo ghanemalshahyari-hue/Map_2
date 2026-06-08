@@ -83,8 +83,26 @@ services:
       RMOOZ_OLLAMA_URL:      "${RMOOZ_OLLAMA_URL:-http://host.docker.internal:11434}"
       RMOOZ_OLLAMA_MODEL:    "${RMOOZ_OLLAMA_MODEL:-qwen2.5:7b}"
 
+      # ── LiteLLM generation timeout ────────────────────────────────────────
+      # oss-120b / oss-120b-fast can take several minutes per phase.
+      # Default 300 000 ms (5 min). Increase for slower models.
+      RMOOZ_AI_TIMEOUT_MS:   "${RMOOZ_AI_TIMEOUT_MS:-300000}"
+
+      # ── Internal CA certificate (OFFLINE-LITELLM-CA-1) ───────────────────
+      # Set these to the container path of the internal CA PEM certificate.
+      # The cert file is mounted via the certs/ volume below.
+      # Leave blank to use the system trust store (works for public CAs).
+      RMOOZ_AI_CA_CERT_PATH: "${RMOOZ_AI_CA_CERT_PATH:-}"
+      SSL_CERT_FILE:         "${SSL_CERT_FILE:-}"
+      REQUESTS_CA_BUNDLE:    "${REQUESTS_CA_BUNDLE:-}"
+      NODE_EXTRA_CA_CERTS:   "${NODE_EXTRA_CA_CERTS:-}"
+      # Emergency TLS override — set to 0 ONLY if cert mounting is impossible.
+      # Default is blank (TLS ON). Setting to 0 disables verification with a
+      # loud warning in the server logs. NEVER use in production if avoidable.
+      RMOOZ_AI_TLS_VERIFY:   "${RMOOZ_AI_TLS_VERIFY:-}"
+
       SESSION_SECRET:        "${SESSION_SECRET}"
-      RMOOZ_BOOTSTRAP_PASSWORD: "disabled"
+      RMOOZ_BOOTSTRAP_PASSWORD: "${RMOOZ_BOOTSTRAP_PASSWORD:-disabled}"
 
     # ── Persistent volumes ────────────────────────────────────────────────────
     volumes:
@@ -105,6 +123,14 @@ services:
       # Run prepare-map-bundle.ps1 first to stage the .tif file here.
       # If empty, DEM endpoints return flat terrain; Cesium 3D still opens.
       - ./map_data/dem:/app/dem_data:ro
+
+      # ── Internal CA certificate (OFFLINE-LITELLM-CA-1) ───────────────────
+      # Place the internal CA PEM certificate at certs/tawasol-ca.crt on the
+      # host. The container reads it from the path set in RMOOZ_AI_CA_CERT_PATH.
+      # If the file is absent the mount is still safe — Docker treats a
+      # missing bind-mount source as an empty directory (cert path won't exist,
+      # but caCertPathExists=false will be reported by /api/ai/generation-health).
+      - ./certs/tawasol-ca.crt:/usr/local/share/ca-certificates/tawasol-ca.crt:ro
 
       # WarGamingGEN runtime directories (mounted writable for I/O)
       # Operator copies DOCX OOB files to TestingAI_Runtime/import_from_rmooz/
@@ -137,4 +163,5 @@ volumes:
 #   ./map_data/base         → /app/maps               (MBTiles — run prepare-map-bundle.ps1 first)
 #   ./map_data/dem          → /app/dem_data            (Libya DEM — run prepare-map-bundle.ps1 first)
 #   ./map_data              → /app/offline_map_data    (read-only tiles root)
+#   ./certs/tawasol-ca.crt → /usr/local/share/ca-certificates/tawasol-ca.crt (CA cert, optional)
 #   ./TestingAI_Runtime/*  → /app/TestingAI/*          (writable runtime I/O)

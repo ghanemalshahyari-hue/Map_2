@@ -4920,9 +4920,11 @@
     <script src="units-orbat.js?v=1"></script>
     <script src="i18n.js?v=2"></script>
     <script src="../lib/leaflet.js"></script>
-    <!-- OFFLINE-RUNTIME-FIX-4: global guard installed right after Leaflet loads,
-         before any module calls L.tileLayer(). Blocks OSM and localhost:8080. -->
-    <script src="offline-leaflet-tile-guard.js?v=offline-fix4"></script>
+    <!-- OFFLINE-MAP-GUARD-SYNC-1: guard installed synchronously right after
+         Leaflet loads, before any module calls L.tileLayer(). Blocks OSM and
+         localhost:8080 immediately with a placeholder; repoints to the real
+         offline tile URL once /api/offline/map-config resolves. -->
+    <script src="offline-leaflet-tile-guard.js?v=offline-guard-sync1"></script>
     <script src="../lib/mgrs.min.js"></script>
     <script src="../lib/coord-utils.js"></script>
     <script src="../lib/sql.js"></script>

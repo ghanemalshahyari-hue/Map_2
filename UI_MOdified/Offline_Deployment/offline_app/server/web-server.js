@@ -466,39 +466,119 @@ const server = http.createServer((req, res) => {
         sendJson(res, 200, { provider: aiProvider, model: aiModel, baseUrlConfigured: aiBase.length > 0 });
         return;
     }
-    // OFFLINE-GEN-RUN-FIX-1: generation-aware AI health. Tests the SAME endpoint
-    // the WarGamingGEN Python generator will use (RMOOZ_AI_BASE_URL or Ollama).
+    // OFFLINE-GEN-RUN-FIX-1 / OFFLINE-LITELLM-CERT-TIMEOUT-1:
+    // Generation-aware AI health. Tests the SAME endpoint the WarGamingGEN
+    // Python generator will use (RMOOZ_AI_BASE_URL or Ollama).
+    // Uses GET /models (not HEAD — LiteLLM returns 405 for HEAD).
+    // Never returns the API key value. Classifies errors for operator diagnosis.
     // /api/ai/generation-health is an explicit alias of /api/ai/health.
     if ((pathname === '/api/ai/health' || pathname === '/api/ai/generation-health') && req.method === 'GET') {
         const aiProvider = (process.env.RMOOZ_AI_PROVIDER || 'ollama').toLowerCase();
         const aiModel    = (process.env.RMOOZ_AI_MODEL || process.env.RMOOZ_OLLAMA_MODEL || process.env.RMOOZ_SIM_MODEL || '').trim();
-        // Generation base URL resolves exactly like buildLlmChildEnv in the bridge.
+        const timeoutMs  = parseInt(process.env.RMOOZ_AI_TIMEOUT_MS || '300000', 10);
+        const caCertPath = (process.env.RMOOZ_AI_CA_CERT_PATH || process.env.SSL_CERT_FILE || '').trim();
+        const tlsVerify  = (process.env.RMOOZ_AI_TLS_VERIFY || '1').trim() !== '0';
+
+        // Check cert file existence (safe — path only, never contents).
+        let caCertPathExists = false;
+        if (caCertPath) {
+            try { caCertPathExists = require('fs').existsSync(caCertPath); } catch (_) {}
+        }
+
+        // Resolve generation base URL exactly like buildLlmChildEnv.
         let aiBase = (process.env.RMOOZ_AI_BASE_URL || '').trim();
         if (!aiBase) {
             const ollama = (process.env.RMOOZ_OLLAMA_URL || process.env.OLLAMA_HOST || 'http://host.docker.internal:11434').trim();
             aiBase = ollama.replace(/\/+$/, '') + '/v1';
         }
         const apiKeyConfigured = !!(process.env.RMOOZ_AI_API_KEY && process.env.RMOOZ_AI_API_KEY.trim());
-        // Safe base — no key. Only the configured fields are returned, never the key.
-        const safe = { provider: aiProvider, model: aiModel || null,
-                       baseUrlConfigured: aiBase.length > 0, apiKeyConfigured: apiKeyConfigured };
+
+        // Safe base response — NO key value, NO cert content.
+        const safe = {
+            provider:         aiProvider,
+            model:            aiModel || null,
+            baseUrlConfigured: aiBase.length > 0,
+            apiKeyConfigured: apiKeyConfigured,
+            tlsVerify:        tlsVerify,
+            caCertConfigured: !!caCertPath,
+            caCertPathExists: caCertPathExists,
+            timeoutMs:        timeoutMs,
+        };
+
+        // Probe: GET /models with Authorization header (LiteLLM supports GET /models;
+        // HEAD returns 405 on LiteLLM). 8-second probe timeout (separate from gen timeout).
+        const PROBE_TIMEOUT_MS = 8000;
         const httpMod = aiBase.startsWith('https') ? require('https') : require('http');
         try {
             const parsed   = new URL(aiBase.replace(/\/v1\/?$/, ''));
             const testPath = aiProvider === 'ollama' ? '/' : '/models';
-            const reqOpts  = { hostname: parsed.hostname, port: parsed.port || (aiBase.startsWith('https') ? 443 : 80), path: testPath, method: 'GET', timeout: 4000 };
+            const reqOpts  = {
+                hostname: parsed.hostname,
+                port:     parsed.port || (aiBase.startsWith('https') ? 443 : 80),
+                path:     testPath,
+                method:   'GET',
+                timeout:  PROBE_TIMEOUT_MS,
+            };
+            // Include Authorization so LiteLLM doesn't reject the probe with 401.
             if (aiProvider !== 'ollama' && process.env.RMOOZ_AI_API_KEY) {
                 reqOpts.headers = { Authorization: 'Bearer ' + process.env.RMOOZ_AI_API_KEY };
             }
+            // If a CA cert is configured and we're on HTTPS, add the agent with the cert.
+            // Node.js https module reads SSL_CERT_FILE from env automatically; this is
+            // belt-and-suspenders for explicit cert path support.
+            if (caCertPath && caCertPathExists && aiBase.startsWith('https')) {
+                try {
+                    const tls = require('tls');
+                    const certContent = require('fs').readFileSync(caCertPath);
+                    const ctx = tls.createSecureContext({ ca: certContent });
+                    reqOpts.agent = new (require('https').Agent)({ secureContext: ctx });
+                } catch (_) { /* fall through — env SSL_CERT_FILE may still work */ }
+            }
+
             const probe = httpMod.request(reqOpts, (r) => {
-                sendJson(res, 200, Object.assign({ ok: r.statusCode < 500, reachable: r.statusCode < 500, statusCode: r.statusCode }, safe));
+                let statusCode = r.statusCode;
+                let ok = statusCode < 400;
+                let errorCode = null;
+                let errorMessage = null;
+                // Classify HTTP-level errors for operator diagnosis.
+                if      (statusCode === 401) { errorCode = 'auth_401'; errorMessage = 'Unauthorized — check RMOOZ_AI_API_KEY.'; ok = false; }
+                else if (statusCode === 403) { errorCode = 'auth_403'; errorMessage = 'Forbidden — key may lack permissions.'; ok = false; }
+                else if (statusCode === 404) { errorCode = 'not_found_404'; errorMessage = 'Endpoint not found — check RMOOZ_AI_BASE_URL and RMOOZ_AI_MODEL.'; ok = false; }
+                else if (statusCode === 405) { ok = true; errorCode = null; errorMessage = 'HEAD not allowed (405); endpoint is reachable (GET /models is the correct probe).'; }
+                else if (statusCode >= 500)  { errorCode = 'server_error'; errorMessage = 'LiteLLM server error (' + statusCode + ').'; ok = false; }
+                sendJson(res, 200, Object.assign({ ok, reachable: true, statusCode, errorCode, errorMessage }, safe));
                 r.resume();
             });
-            probe.on('error', () => sendJson(res, 200, Object.assign({ ok: false, reachable: false, error: 'unreachable' }, safe)));
-            probe.on('timeout', () => { probe.destroy(); sendJson(res, 200, Object.assign({ ok: false, reachable: false, error: 'timeout' }, safe)); });
+            probe.on('error', (e) => {
+                let errorCode = 'network_error';
+                let errorMessage = e.message || String(e);
+                const msg = errorMessage.toLowerCase();
+                if (/ssl|certificate|cert|tls/i.test(msg) || e.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE' || e.code === 'CERT_HAS_EXPIRED' || e.code === 'SELF_SIGNED_CERT') {
+                    errorCode = 'tls_cert';
+                    errorMessage = 'TLS/certificate error. Mount the internal CA certificate and set RMOOZ_AI_CA_CERT_PATH. (' + e.message + ')';
+                } else if (/enotfound|getaddrinfo|dns|name or service/i.test(msg) || e.code === 'ENOTFOUND') {
+                    errorCode = 'dns_failure';
+                    errorMessage = 'DNS resolution failed. Is the hostname reachable from inside the container? (' + e.message + ')';
+                } else if (e.code === 'ECONNREFUSED') {
+                    errorCode = 'connection_refused';
+                    errorMessage = 'Connection refused. Is the LiteLLM endpoint running? (' + e.message + ')';
+                } else if (/ECONNRESET|socket hang/i.test(msg) || e.code === 'ECONNRESET') {
+                    errorCode = 'connection_reset';
+                    errorMessage = 'Connection reset. (' + e.message + ')';
+                }
+                sendJson(res, 200, Object.assign({ ok: false, reachable: false, errorCode, errorMessage }, safe));
+            });
+            probe.on('timeout', () => {
+                probe.destroy();
+                sendJson(res, 200, Object.assign({
+                    ok: false, reachable: false,
+                    errorCode: 'probe_timeout',
+                    errorMessage: 'Health probe timed out after ' + PROBE_TIMEOUT_MS + ' ms. Generation timeout is ' + timeoutMs + ' ms (RMOOZ_AI_TIMEOUT_MS).',
+                }, safe));
+            });
             probe.end();
         } catch (e) {
-            sendJson(res, 200, Object.assign({ ok: false, reachable: false, error: e.message }, safe));
+            sendJson(res, 200, Object.assign({ ok: false, reachable: false, errorCode: 'url_parse_error', errorMessage: e.message }, safe));
         }
         return;
     }

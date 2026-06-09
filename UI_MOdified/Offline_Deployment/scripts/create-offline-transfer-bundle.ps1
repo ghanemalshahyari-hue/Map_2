@@ -51,10 +51,11 @@ if (Test-Path $ImageTar) {
 
 Copy-Item "Offline_Deployment/docker-compose.offline.yml" "$BundleDir/docker-compose.offline.yml" -Force
 Copy-Item "Offline_Deployment/.env.offline.example" "$BundleDir/.env.offline.example" -Force
-if (Test-Path "Offline_Deployment/.env.offline") {
-    Copy-Item "Offline_Deployment/.env.offline" "$BundleDir/.env.offline" -Force
-}
-Write-Host "  [OK]  Copied compose and env files"
+# SECURITY: the REAL .env.offline (API key, secrets) is intentionally NEVER bundled.
+# The operator creates it on the offline server from .env.offline.example. If a stale
+# copy is present in the bundle dir from an older run, remove it so it can't ship.
+if (Test-Path "$BundleDir/.env.offline") { Remove-Item -Force "$BundleDir/.env.offline" }
+Write-Host "  [OK]  Copied compose + .env.offline.example (real .env.offline excluded by design)"
 
 function Copy-TreeIfPresent {
     param(

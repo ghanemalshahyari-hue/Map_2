@@ -2,16 +2,29 @@
  * unit-status-panel.js — Commander Unit Status Panel
  *
  * Static read-only right-slide panel showing:
- * - Unit identity (label, uid, side, domain, role, echelon)
- * - Readiness/supply (baseline + applied state overlay)
- * - Sensors, weapons, magazines
+ * - Unit identity (label, uid, side, domain, role, echelon, DB1 platform label)
+ * - Readiness/supply (baseline + applied state overlay, source attribution)
+ * - Sensors, weapons, magazines (DB1-enriched when absent from scenario)
  * - Recent STATE_DELTA events
  *
- * Data sources:
- *   - window.RmoozScenario (scenario baseline units)
- *   - window.AppAppliedState (readiness/supply overlay)
- *   - window.AppEventLog (STATE_DELTA event history)
- *   - milsymbol (unit symbols if available)
+ * Data sources (in precedence order):
+ *   1. window.RmoozScenario — scenario baseline units (authored values always win)
+ *   2. window.AppAppliedState — readiness/supply overlay from accepted STATE_DELTA events
+ *   3. window.AppWorldStateDB — DB-Lite platform/sensor/weapon defaults (DB1, single source)
+ *   4. window.AppEventLog — STATE_DELTA event history for delta display section
+ *   5. milsymbol — unit symbol rendering if SIDC present
+ *
+ * UI-Unit-1-C (2026-06-09):
+ *   - DB1 enrichment wired: sensors/weapons/magazines filled from catalog when absent
+ *     from scenario (AppWorldStateDB.enrichUnit — read-only, never mutates input)
+ *   - Source attribution labels show data origin per field (Scenario Baseline /
+ *     DB-Lite — {label} / DB-Lite — {kind} (default))
+ *   - Platform label appended to role field for DB1 named-platform entries
+ *   - Sensor rows now include emcon field
+ *   - Magazine stock handles DB1 object format ({ weapon_class: count })
+ *   - Source footnote added at bottom of sensor/weapon lists
+ *   D5 note: middle-east-platform-loader.js and platforms.json deleted 2026-06-09.
+ *   DB1 (AppWorldStateDB) is the single source of truth for capability data.
  *
  * DESIGN: Read-only display only. No edit controls, no mutations,
  * no fake data. Empty-state labels for unavailable fields.
@@ -107,13 +120,22 @@
         const empty = $('empty-state');
         if (empty) empty.setAttribute('hidden', '');
 
-        // 1. Unit identity
+        // Enrich unit with DB1 capability data for display.
+        // Read-only — never mutates input; authored fields always take precedence.
+        const enriched = enrichUnitForDisplay(unit);
+
+        // 1. Unit identity (always from the raw scenario unit)
         renderUnitSymbol(unit);
         setText('unit-label', unit.label || '—');
         setText('unit-uid', unit.uid || '—');
         setText('unit-side', unit.side || '—');
         setText('unit-domain', unit.domain || '—');
-        setText('unit-role', unit.role || '—');
+
+        // Append DB1 platform label to role row when a named catalog entry matched
+        const platformLabel = getPlatformLabel(enriched);
+        setText('unit-role', platformLabel
+            ? (unit.role || '—') + ' · ' + platformLabel
+            : (unit.role || '—'));
 
         if (unit.echelon) {
             setText('unit-echelon', unit.echelon);
@@ -122,23 +144,25 @@
             $('unit-echelon')?.setAttribute('hidden', '');
         }
 
-        // 2. Readiness & Supply
-        populateReadinessSupply(unit);
+        // 2. Readiness & Supply (raw unit for baseline; enriched for DB1 source context)
+        populateReadinessSupply(unit, enriched);
 
-        // 3. Sensors
-        populateSensors(unit);
+        // 3. Sensors — DB1-enriched unit; source label passed for footnote
+        populateSensors(enriched, getCapabilitySourceLabel(unit, enriched, 'sensors'));
 
-        // 4. Weapons & Magazines
-        populateWeapons(unit);
+        // 4. Weapons & Magazines — DB1-enriched unit; source label passed for footnote
+        populateWeapons(enriched, getCapabilitySourceLabel(unit, enriched, 'weapons'));
 
-        // 5. Recent STATE_DELTA events
+        // 5. Recent STATE_DELTA events (always from raw unit uid)
         populateDeltas(unit);
     }
 
     /**
-     * Populate readiness and supply section
+     * Populate readiness and supply section.
+     * @param {object} unit - Raw scenario unit (baseline readiness/supply values)
+     * @param {object} enriched - DB1-enriched unit (provides kind/label for source labels)
      */
-    function populateReadinessSupply(unit) {
+    function populateReadinessSupply(unit, enriched) {  // eslint-disable-line no-unused-vars
         const eventLog = getEventLog();
         const appliedState = getAppliedState(unit, eventLog);
 
@@ -197,9 +221,11 @@
     }
 
     /**
-     * Populate sensors section
+     * Populate sensors section.
+     * @param {object} unit - DB1-enriched unit (sensors may come from catalog)
+     * @param {string|null} sourceLabel - Data origin label for footnote attribution
      */
-    function populateSensors(unit) {
+    function populateSensors(unit, sourceLabel) {
         const sensors = unit.sensors || [];
         const section = $('sensors-section');
         const list = $('sensor-list');
@@ -218,21 +244,33 @@
             list.innerHTML = '';
             sensors.forEach(sensor => {
                 const li = document.createElement('li');
+                const emconPart = sensor.emcon ? ' · emcon: ' + sensor.emcon : '';
+                const detail = [sensor.type, sensor.class].filter(Boolean).join(' · ') + emconPart;
                 li.innerHTML = `
                     <strong>${sensor.label || sensor.id || '—'}</strong>
-                    ${sensor.type ? `<br><span style="color:#888;font-size:0.85rem">${sensor.type}</span>` : ''}
+                    ${detail ? `<br><span style="color:#888;font-size:0.85rem">${detail}</span>` : ''}
                 `;
                 list.appendChild(li);
             });
+            // Source attribution footnote at bottom of list
+            if (sourceLabel) {
+                const srcLi = document.createElement('li');
+                srcLi.style.cssText = 'color:#aaa;font-size:0.78rem;list-style:none;' +
+                    'padding-top:0.35rem;border-top:1px solid #f0f0f0;margin-top:0.35rem';
+                srcLi.textContent = 'Source: ' + sourceLabel;
+                list.appendChild(srcLi);
+            }
         }
 
         if (emptyState) emptyState.setAttribute('hidden', '');
     }
 
     /**
-     * Populate weapons and magazines section
+     * Populate weapons and magazines section.
+     * @param {object} unit - DB1-enriched unit (weapons/magazines may come from catalog)
+     * @param {string|null} sourceLabel - Data origin label for footnote attribution
      */
-    function populateWeapons(unit) {
+    function populateWeapons(unit, sourceLabel) {
         const weapons = unit.weapons || [];
         const magazines = unit.magazines || [];
         const section = $('weapons-section');
@@ -250,29 +288,39 @@
         section?.removeAttribute('hidden');
         if (wcount) wcount.textContent = weapons.length;
 
-        // Weapons
+        // Weapons list
         if (wlist) {
             wlist.innerHTML = '';
             weapons.forEach(weapon => {
                 const li = document.createElement('li');
+                const mountPart = weapon.mount ? ' · ' + weapon.mount : '';
                 li.innerHTML = `
                     <strong>${weapon.label || weapon.id || '—'}</strong>
-                    ${weapon.class ? `<br><span style="color:#888;font-size:0.85rem">${weapon.class}</span>` : ''}
+                    ${weapon.class ? `<br><span style="color:#888;font-size:0.85rem">${weapon.class}${mountPart}</span>` : ''}
                 `;
                 wlist.appendChild(li);
             });
+            // Source attribution footnote at bottom of weapons list
+            if (sourceLabel) {
+                const srcLi = document.createElement('li');
+                srcLi.style.cssText = 'color:#aaa;font-size:0.78rem;list-style:none;' +
+                    'padding-top:0.35rem;border-top:1px solid #f0f0f0;margin-top:0.35rem';
+                srcLi.textContent = 'Source: ' + sourceLabel;
+                wlist.appendChild(srcLi);
+            }
         }
 
-        // Magazines
+        // Magazines list — formatMagStock handles DB1 object format and legacy numbers
         if (magazines.length) {
             mtitle?.removeAttribute('hidden');
             if (mlist) {
                 mlist.innerHTML = '';
                 magazines.forEach(mag => {
                     const li = document.createElement('li');
+                    const stockStr = formatMagStock(mag.stock);
                     li.innerHTML = `
                         <strong>${mag.mount || 'Magazine'}</strong>
-                        ${mag.stock ? `<br><span style="color:#888;font-size:0.85rem">Stock: ${mag.stock}</span>` : ''}
+                        ${stockStr ? `<br><span style="color:#888;font-size:0.85rem">Stock: ${stockStr}</span>` : ''}
                     `;
                     mlist.appendChild(li);
                 });
@@ -422,29 +470,111 @@
     }
 
     /**
-     * Get data source for readiness/supply values
+     * Get data source label for a readiness/supply field.
+     * Priority: Scenario Baseline → DB-Lite named platform → DB-Lite generic role.
+     * Returns a human-readable string for display in the panel source row.
+     *
+     * @param {object} unit - Raw scenario unit (not enriched; authored values only)
+     * @param {string} field - 'readiness' | 'supply'
+     * @returns {string}
      */
     function getDataSource(unit, field) {
         if (!unit) return '';
 
-        // Check if value is from scenario baseline
+        // 1. Scenario baseline: field was explicitly authored in the scenario
         if (unit[field] !== undefined && unit[field] !== null) {
-            return 'Source: Scenario Baseline';
+            return 'Scenario Baseline';
         }
 
-        // Check if DB-Lite platform catalog provides it (D5: ME catalog folded into DB1)
-        if (unit.platform_id && root.AppWorldStateDB) {
+        // 2. DB-Lite catalog — named platform or generic role class (DB1, single source)
+        if (root.AppWorldStateDB) {
             try {
-                var tmpUnit = { platform_id: unit.platform_id };
-                var cap = root.AppWorldStateDB.capabilityFor(tmpUnit);
+                const cap = root.AppWorldStateDB.capabilityFor(unit);
                 if (cap && cap[field] !== undefined) {
-                    return 'Source: DB-Lite Platform';
+                    if (cap.label) return 'DB-Lite — ' + cap.label;
+                    const kind = root.AppWorldStateDB.classifyKind(unit);
+                    return 'DB-Lite — ' + kind + ' (default)';
                 }
             } catch (_) { /* fall through */ }
         }
 
-        // Default to DB-Lite generic
-        return 'Source: DB-Lite Default';
+        return 'DB-Lite Default';
+    }
+
+    // ── UI-Unit-1-C: DB1 enrichment helpers (read-only) ────────────
+
+    /**
+     * Enrich a unit's sensors/weapons/magazines from DB1 catalog.
+     * Returns a new object — NEVER mutates the input unit.
+     * Falls back to a shallow clone if AppWorldStateDB is unavailable.
+     *
+     * @param {object} unit - Raw scenario unit
+     * @returns {object} Enriched copy (sensors/weapons/magazines filled from catalog)
+     */
+    function enrichUnitForDisplay(unit) {
+        if (!unit) return unit;
+        if (root.AppWorldStateDB && typeof root.AppWorldStateDB.enrichUnit === 'function') {
+            try { return root.AppWorldStateDB.enrichUnit(unit); } catch (_) { /* fall through */ }
+        }
+        return Object.assign({}, unit);
+    }
+
+    /**
+     * Get the DB1 catalog label for this unit (named platform only).
+     * Returns null for generic role classes.
+     *
+     * @param {object} enrichedUnit - DB1-enriched unit (has .kind set)
+     * @returns {string|null}
+     */
+    function getPlatformLabel(enrichedUnit) {
+        if (!root.AppWorldStateDB || !enrichedUnit) return null;
+        try {
+            const cap = root.AppWorldStateDB.capabilityFor(enrichedUnit);
+            return (cap && cap.label) ? cap.label : null;
+        } catch (_) { return null; }
+    }
+
+    /**
+     * Get display-ready source label for a capability section (sensors/weapons).
+     * Returns null when the section has no data at all.
+     *
+     * @param {object} rawUnit - Original scenario unit (before enrichment)
+     * @param {object} enrichedUnit - DB1-enriched unit
+     * @param {string} field - 'sensors' | 'weapons'
+     * @returns {string|null}
+     */
+    function getCapabilitySourceLabel(rawUnit, enrichedUnit, field) {
+        const rawArr = rawUnit && rawUnit[field];
+        if (Array.isArray(rawArr) && rawArr.length) return 'Scenario Baseline';
+        const enrichedArr = enrichedUnit && enrichedUnit[field];
+        if (!Array.isArray(enrichedArr) || !enrichedArr.length) return null;
+        if (root.AppWorldStateDB) {
+            try {
+                const cap = root.AppWorldStateDB.capabilityFor(enrichedUnit);
+                if (cap && cap.label) return 'DB-Lite — ' + cap.label;
+                const kind = (enrichedUnit.kind) || root.AppWorldStateDB.classifyKind(enrichedUnit);
+                return 'DB-Lite — ' + kind + ' (default)';
+            } catch (_) { /* fall through */ }
+        }
+        return 'DB-Lite';
+    }
+
+    /**
+     * Format a magazine stock value for display.
+     * DB1 format: { weapon_class: count }  |  legacy: number
+     *
+     * @param {number|object|null} stock
+     * @returns {string}
+     */
+    function formatMagStock(stock) {
+        if (stock == null) return '';
+        if (typeof stock === 'number') return String(Math.round(stock));
+        if (typeof stock === 'object') {
+            return Object.entries(stock)
+                .map(function (kv) { return kv[0].replace(/_/g, ' ') + ': ' + kv[1]; })
+                .join(', ');
+        }
+        return String(stock);
     }
 
     /**

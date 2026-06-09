@@ -432,17 +432,18 @@
             return 'Source: Scenario Baseline';
         }
 
-        // Check if platform catalog provides it
-        if (unit.platform_id && root.AppMiddleEastPlatform) {
+        // Check if DB-Lite platform catalog provides it (D5: ME catalog folded into DB1)
+        if (unit.platform_id && root.AppWorldStateDB) {
             try {
-                const platform = root.AppMiddleEastPlatform.getPlatform(unit.platform_id);
-                if (platform && platform[field + '_default'] !== undefined) {
-                    return 'Source: Middle East Catalog';
+                var tmpUnit = { platform_id: unit.platform_id };
+                var cap = root.AppWorldStateDB.capabilityFor(tmpUnit);
+                if (cap && cap[field] !== undefined) {
+                    return 'Source: DB-Lite Platform';
                 }
             } catch (_) { /* fall through */ }
         }
 
-        // Default to DB-Lite
+        // Default to DB-Lite generic
         return 'Source: DB-Lite Default';
     }
 

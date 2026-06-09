@@ -14,15 +14,24 @@
  * catalog is the data. Authored components are NEVER overwritten.
  *
  * SAFETY: pure (clones), framework-free (browser + Node). All values are OURS.
+ *
+ * D5 (2026-06-09): 18 Middle East platform entries folded from the parallel
+ * middle-east-platform-loader.js + platforms.json into this file. Those files
+ * are now deleted — DB1 is the single source of truth for all capability data.
+ * Source on all D5 entries: SIPRI / Jane's public summaries / open-source specs.
+ * Note: s300-sam is already represented by sam_s300 (Phase 5D-1); not duplicated.
+ * Units may set platform_id/platform to get the named profile; role-keyword
+ * shortcuts cover common scenario role strings without requiring platform_id.
  * ========================================================================== */
 (function (root) {
     'use strict';
 
-    var DB_VERSION = '1.0.0-db1';
+    var DB_VERSION = '1.1.0-d5';  // D5: 18 ME platform entries folded in (2026-06-09)
 
     /* ---- the catalog (DATA — extend by adding/editing rows) --------------- */
     // mount ids + class names align with detection.js / engagement.js DB-Lite.
     var CAPABILITY_CATALOG = {
+        // ── Generic role classes (fallback when no named platform matched) ──
         air_defense: {
             rcs_class: 'medium', readiness: 'ready', supply: 0.8, doctrine_tags: ['IADS', 'air_defense'],
             sensors: [{ id: 'ewr', type: 'radar', class: 'long_range_3d', emcon: 'active' },
@@ -59,7 +68,8 @@
             rcs_class: 'medium', readiness: 'ready', supply: 0.8, doctrine_tags: [],
             sensors: [], weapons: [], magazines: []
         },
-        // Phase 5D-1: Soviet air-defense platform variants
+
+        // ── Phase 5D-1: Soviet air-defense platform variants ─────────────────
         sam_s300: {
             rcs_class: 'large', readiness: 'ready', supply: 0.9, doctrine_tags: ['IADS', 'SAM', 'strategic', 'standoff'],
             sensors: [{ id: 'sr', type: 'radar', class: 'S300_SEARCH_RADAR', emcon: 'active' },
@@ -90,19 +100,346 @@
             rcs_class: 'large', readiness: 'ready', supply: 0.95, doctrine_tags: ['radar', 'early_warning', 'strategic', 'no_weapons'],
             sensors: [{ id: 'ewr', type: 'radar', class: 'P37_RADAR', emcon: 'active' }],
             weapons: [], magazines: []
+        },
+
+        // ── D5: Air platforms (folded from ME catalog 2026-06-09) ────────────
+        // source: SIPRI + Jane's Fighting Aircraft public summaries
+        f16c: {
+            label: 'F-16C Fighting Falcon', source: "SIPRI; Jane's Fighting Aircraft",
+            rcs_class: 'medium', readiness: 'ready', supply: 0.8,
+            doctrine_tags: ['air_superiority', 'cas', 'strike', 'interdict'],
+            sensors: [
+                { id: 'apg68', label: 'AN/APG-68 multifunction radar', type: 'radar', class: 'multifunction', emcon: 'active' },
+                { id: 'irst',  label: 'IRST',                          type: 'ir',    class: 'passive_tracking', emcon: 'active' }
+            ],
+            weapons: [
+                { id: 'aim120', label: 'AIM-120C AMRAAM',  class: 'medium_aa_missile', mount: 'm1', wra: { mode: 'max', salvo: 2 } },
+                { id: 'aim9',   label: 'AIM-9 Sidewinder', class: 'short_aa_missile',  mount: 'm2' },
+                { id: 'agm65',  label: 'AGM-65 Maverick',  class: 'ag_missile',         mount: 'm3' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { medium_aa_missile: 6 } },
+                { mount: 'm2', stock: { short_aa_missile: 2 } },
+                { mount: 'm3', stock: { ag_missile: 2 } }
+            ]
+        },
+        mig29: {
+            label: 'MiG-29', source: "SIPRI; Jane's Fighting Aircraft",
+            rcs_class: 'small', readiness: 'ready', supply: 0.75,
+            doctrine_tags: ['air_superiority', 'fighter_sweep', 'cas', 'air_defense'],
+            sensors: [
+                { id: 'slot_back', label: 'Slot-back radar', type: 'radar', class: 'fire_control',  emcon: 'active' },
+                { id: 'irst_mig',  label: 'IRST (MiG-29)',   type: 'ir',    class: 'passive_tracking', emcon: 'active' }
+            ],
+            weapons: [
+                { id: 'r27',     label: 'R-27 AAM',       class: 'medium_aa_missile', mount: 'm1', wra: { mode: 'max', salvo: 2 } },
+                { id: 'r73',     label: 'R-73 AAM',       class: 'short_aa_missile',  mount: 'm2' },
+                { id: 'kh29',    label: 'Kh-29 AGM',      class: 'ag_missile',         mount: 'm3' },
+                { id: 'gun_30',  label: '30mm GSh-301',   class: 'gun',                mount: 'm4' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { medium_aa_missile: 4 } },
+                { mount: 'm2', stock: { short_aa_missile: 2 } },
+                { mount: 'm3', stock: { ag_missile: 2 } },
+                { mount: 'm4', stock: { gun: 150 } }
+            ]
+        },
+        f15e: {
+            label: 'F-15E Strike Eagle', source: "Jane's Fighting Aircraft; public specifications",
+            rcs_class: 'medium', readiness: 'ready', supply: 0.8,
+            doctrine_tags: ['strike', 'interdict', 'cas', 'escort'],
+            sensors: [
+                { id: 'apg70',   label: 'AN/APG-70 radar',      type: 'radar', class: 'multifunction', emcon: 'active' },
+                { id: 'lantirn', label: 'LANTIRN targeting pod', type: 'ir',    class: 'fire_control',  emcon: 'always' }
+            ],
+            weapons: [
+                { id: 'aim120', label: 'AIM-120 AMRAAM',  class: 'medium_aa_missile', mount: 'm1', wra: { mode: 'max', salvo: 2 } },
+                { id: 'aim9',   label: 'AIM-9 Sidewinder', class: 'short_aa_missile', mount: 'm2' },
+                { id: 'jdam',   label: 'JDAM / HARM',      class: 'ag_missile',        mount: 'm3' },
+                { id: 'mav',    label: 'AGM-65 Maverick',  class: 'ag_missile',        mount: 'm4' },
+                { id: 'gun',    label: 'M61A1 20mm Vulcan', class: 'gun',              mount: 'm5' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { medium_aa_missile: 4 } },
+                { mount: 'm2', stock: { short_aa_missile: 2 } },
+                { mount: 'm3', stock: { ag_missile: 4 } },
+                { mount: 'm4', stock: { ag_missile: 2 } },
+                { mount: 'm5', stock: { gun: 511 } }
+            ]
+        },
+        mirage2000: {
+            label: 'Mirage 2000', source: "Jane's Fighting Aircraft; SIPRI",
+            rcs_class: 'small', readiness: 'ready', supply: 0.8,
+            doctrine_tags: ['air_superiority', 'strike', 'interdict', 'regional_standard'],
+            sensors: [
+                { id: 'rbe2', label: 'RBE2 AESA radar',    type: 'radar', class: 'multifunction',  emcon: 'active' },
+                { id: 'irst', label: 'IRST (Mirage 2000)', type: 'ir',    class: 'passive_tracking', emcon: 'active' }
+            ],
+            weapons: [
+                { id: 'mica',  label: 'MICA AAM',           class: 'medium_aa_missile', mount: 'm1', wra: { mode: 'max', salvo: 2 } },
+                { id: 'scalp', label: 'SCALP / Storm Shadow', class: 'cruise_missile',  mount: 'm2' },
+                { id: 'gun',   label: '30mm DEFA gun',       class: 'gun',              mount: 'm3' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { medium_aa_missile: 4 } },
+                { mount: 'm2', stock: { cruise_missile: 1 } },
+                { mount: 'm3', stock: { gun: 250 } }
+            ]
+        },
+        gripen: {
+            label: 'JF-17 / Gripen', source: "Jane's Fighting Aircraft; open-source specifications",
+            rcs_class: 'small', readiness: 'ready', supply: 0.8,
+            doctrine_tags: ['air_superiority', 'cas', 'light_fighter', 'cost_effective'],
+            sensors: [
+                { id: 'aesa', label: 'AESA radar',  type: 'radar', class: 'multifunction',  emcon: 'active' },
+                { id: 'irst', label: 'IRST system', type: 'ir',    class: 'passive_tracking', emcon: 'active' }
+            ],
+            weapons: [
+                { id: 'meteor', label: 'Meteor / medium AAM', class: 'medium_aa_missile', mount: 'm1', wra: { mode: 'max', salvo: 1 } },
+                { id: 'agm',    label: 'Air-to-ground missile', class: 'ag_missile',       mount: 'm2' },
+                { id: 'gun',    label: '27mm internal gun',     class: 'gun',               mount: 'm3' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { medium_aa_missile: 4 } },
+                { mount: 'm2', stock: { ag_missile: 2 } },
+                { mount: 'm3', stock: { gun: 150 } }
+            ]
+        },
+        tornado: {
+            label: 'Panavia Tornado', source: "Jane's Fighting Aircraft; SIPRI",
+            rcs_class: 'medium', readiness: 'ready', supply: 0.8,
+            doctrine_tags: ['strike', 'interdict', 'anti_ship', 'reconnaissance'],
+            sensors: [
+                { id: 'tfr', label: 'Terrain-following radar', type: 'radar', class: 'fire_control',  emcon: 'active' },
+                { id: 'ews', label: 'EW suite',                type: 'esm',   class: 'esm_intercept', emcon: 'active' }
+            ],
+            weapons: [
+                { id: 'storm_shadow', label: 'Storm Shadow cruise missile', class: 'cruise_missile', mount: 'm1' },
+                { id: 'lgb',          label: 'Paveway LGB',                 class: 'ag_missile',     mount: 'm2' },
+                { id: 'gun',          label: '27mm Mauser cannon',          class: 'gun',             mount: 'm3' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { cruise_missile: 2 } },
+                { mount: 'm2', stock: { ag_missile: 4 } },
+                { mount: 'm3', stock: { gun: 180 } }
+            ]
+        },
+        awacs: {
+            label: 'E-3 Sentry AWACS / AEW&C', source: "Jane's All the World's Aircraft; published specifications",
+            rcs_class: 'very_large', readiness: 'ready', supply: 0.85,
+            doctrine_tags: ['c2', 'air_battle_management', 'surveillance', 'strategic'],
+            sensors: [
+                { id: 'ppa', label: 'Rotating phased-array radar', type: 'radar', class: 'long_range_3d',  emcon: 'active', channels: 8 },
+                { id: 'gsr', label: 'Ground search mode',          type: 'radar', class: 'surface_search', emcon: 'active' },
+                { id: 'iff', label: 'IFF / identification system', type: 'iff',   class: 'identification',  emcon: 'always' }
+            ],
+            weapons: [], magazines: []
+        },
+
+        // ── D5: Air-defense — Western / SHORAD / MANPADS ─────────────────────
+        // (Soviet S-300 covered by sam_s300 above; not duplicated)
+        patriot: {
+            label: 'Patriot SAM System (MIM-104)', source: "SIPRI; Jane's Weapons Systems",
+            rcs_class: 'medium', readiness: 'ready', supply: 0.8,
+            doctrine_tags: ['air_defense', 'medium_range', 'layered_defense'],
+            sensors: [
+                { id: 'search', label: 'AN/MPQ-53 phased-array search', type: 'radar', class: 'long_range_3d', emcon: 'active' },
+                { id: 'fc',     label: 'Engagement radar',               type: 'radar', subtype: 'fire_control', class: 'fire_control', emcon: 'active', channels: 6 }
+            ],
+            weapons: [{ id: 'mim104', label: 'MIM-104 Patriot SAM', class: 'long_range_sam', mount: 'm1', wra: { mode: '75pct', salvo: 2 } }],
+            magazines: [{ mount: 'm1', stock: { long_range_sam: 16 } }]
+        },
+        tor_aads: {
+            label: 'TOR M1 (SHORAD SAM + AAA)', source: "SIPRI; open-source military publications",
+            rcs_class: 'small', readiness: 'ready', supply: 0.75,
+            doctrine_tags: ['air_defense', 'short_range', 'shorad', 'mobile'],
+            sensors: [
+                { id: 'search', label: 'TOR search radar',    type: 'radar', class: 'surface_search', emcon: 'active' },
+                { id: 'fc',     label: 'Fire-control radar',  type: 'radar', subtype: 'fire_control', class: 'fire_control', emcon: 'active', channels: 2 }
+            ],
+            weapons: [
+                { id: 'tor_m', label: 'TOR SAM',        class: 'medium_sam',   mount: 'm1', wra: { mode: 'max', salvo: 2 } },
+                { id: 'aaa',   label: '30mm autocannon', class: 'point_defense', mount: 'm2' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { medium_sam: 8 } },
+                { mount: 'm2', stock: { point_defense: 400 } }
+            ]
+        },
+        mistral: {
+            label: 'Mistral MANPADS', source: "Jane's Weapons Systems; open-source specifications",
+            rcs_class: 'very_small', readiness: 'ready', supply: 0.8,
+            doctrine_tags: ['air_defense', 'short_range', 'portable', 'shorad'],
+            sensors: [{ id: 'ir_seeker', label: 'IR CCD seeker', type: 'ir', class: 'passive_tracking', emcon: 'active' }],
+            weapons: [{ id: 'mistral_m', label: 'Mistral IR missile', class: 'short_range_sam', mount: 'm1', wra: { mode: 'max', salvo: 1 } }],
+            magazines: [{ mount: 'm1', stock: { short_range_sam: 4 } }]
+        },
+        s1_aaa: {
+            label: 'Skyshield 35mm AAA (S-1)', source: "Open-source military specifications; SIPRI",
+            rcs_class: 'small', readiness: 'ready', supply: 0.75,
+            doctrine_tags: ['air_defense', 'short_range', 'rapid_fire', 'point_defense'],
+            sensors: [{ id: 'fc_radar', label: 'Fire-control radar', type: 'radar', class: 'fire_control', emcon: 'active', channels: 1 }],
+            weapons: [{ id: 'twin_35', label: 'Twin 35mm Oerlikon autocannon', class: 'point_defense', mount: 'm1', wra: { mode: 'max', salvo: 1 } }],
+            magazines: [{ mount: 'm1', stock: { point_defense: 600 } }]
+        },
+
+        // ── D5: Naval platforms ───────────────────────────────────────────────
+        meko: {
+            label: 'MEKO Frigate', source: "Jane's Fighting Ships; SIPRI Naval Database",
+            rcs_class: 'medium', readiness: 'ready', supply: 0.8,
+            doctrine_tags: ['sea_control', 'anti_air', 'anti_ship', 'helicopter_ops'],
+            sensors: [
+                { id: 'air_s',  label: 'Air search radar',    type: 'radar', class: 'air_search',     emcon: 'active' },
+                { id: 'surf_s', label: 'Surface search radar', type: 'radar', class: 'surface_search', emcon: 'active' },
+                { id: 'sonar_a', label: 'Active sonar',        type: 'sonar', class: 'sonar_active',   emcon: 'always' },
+                { id: 'sonar_p', label: 'Passive sonar',       type: 'sonar', class: 'sonar_passive',  emcon: 'active' },
+                { id: 'fc',     label: 'Fire-control radar',   type: 'radar', subtype: 'fire_control', class: 'fire_control', emcon: 'active', channels: 4 }
+            ],
+            weapons: [
+                { id: 'sam',     label: 'Medium SAM',         class: 'medium_sam',   mount: 'm1', wra: { mode: 'max', salvo: 2 } },
+                { id: 'asuw',    label: 'Anti-ship missile',  class: 'asuw_missile', mount: 'm2' },
+                { id: 'gun_76',  label: '76mm main gun',      class: 'gun',          mount: 'm3' },
+                { id: 'torpedo', label: 'Torpedo tubes',      class: 'torpedo',      mount: 'm4' },
+                { id: 'ciws',    label: 'CIWS',               class: 'point_defense', mount: 'm5' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { medium_sam: 8 } },
+                { mount: 'm2', stock: { asuw_missile: 4 } },
+                { mount: 'm3', stock: { gun: 800 } },
+                { mount: 'm4', stock: { torpedo: 6 } },
+                { mount: 'm5', stock: { point_defense: 1500 } }
+            ]
+        },
+        corvette: {
+            label: 'Type F2000S Corvette', source: "Jane's Fighting Ships; open-source specifications",
+            rcs_class: 'small', readiness: 'ready', supply: 0.8,
+            doctrine_tags: ['coastal_defense', 'sea_control', 'anti_air', 'anti_ship'],
+            sensors: [
+                { id: 'phased', label: 'Phased-array radar', type: 'radar', class: 'long_range_3d',  emcon: 'active' },
+                { id: 'sonar',  label: 'Sonar suite',        type: 'sonar', class: 'sonar_passive',  emcon: 'active' },
+                { id: 'fc',     label: 'Fire-control radar', type: 'radar', subtype: 'fire_control', class: 'fire_control', emcon: 'active', channels: 2 }
+            ],
+            weapons: [
+                { id: 'sam',     label: 'Medium SAM',        class: 'medium_sam',   mount: 'm1', wra: { mode: 'max', salvo: 2 } },
+                { id: 'asuw',    label: 'Anti-ship missile', class: 'asuw_missile', mount: 'm2' },
+                { id: 'gun',     label: 'Main gun',          class: 'gun',          mount: 'm3' },
+                { id: 'torpedo', label: 'Torpedo tubes',     class: 'torpedo',      mount: 'm4' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { medium_sam: 8 } },
+                { mount: 'm2', stock: { asuw_missile: 2 } },
+                { mount: 'm3', stock: { gun: 400 } },
+                { mount: 'm4', stock: { torpedo: 4 } }
+            ]
+        },
+        patrol_boat: {
+            label: 'Damen Stan Patrol Boat', source: "Open-source marine specifications; Jane's Fighting Ships",
+            rcs_class: 'very_small', readiness: 'ready', supply: 0.8,
+            doctrine_tags: ['coastal_patrol', 'harbor_defense', 'interdiction'],
+            sensors: [
+                { id: 'nav', label: 'Navigation radar', type: 'radar', class: 'surface_search', emcon: 'active' }
+            ],
+            weapons: [
+                { id: 'mg', label: 'Machine gun mounts', class: 'gun', mount: 'm1' }
+            ],
+            magazines: [{ mount: 'm1', stock: { gun: 200 } }]
+        },
+
+        // ── D5: Ground platforms — named types ───────────────────────────────
+        infantry_bn: {
+            label: 'Infantry Battalion', source: "Military organizational standards; SIPRI",
+            rcs_class: 'small', readiness: 'ready', supply: 0.7,
+            doctrine_tags: ['maneuver', 'infantry', 'primary_assault'],
+            sensors: [{ id: 'obs', label: 'Forward observer optics', type: 'optical', class: 'visual', emcon: 'always' }],
+            weapons: [
+                { id: 'rifle',  label: 'Assault rifles',  class: 'gun', mount: 'm1' },
+                { id: 'mg',     label: 'Machine guns',    class: 'gun', mount: 'm2' },
+                { id: 'mortar', label: '60mm mortars',    class: 'gun', mount: 'm3' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { gun: 5000 } },
+                { mount: 'm2', stock: { gun: 500 } },
+                { mount: 'm3', stock: { gun: 60 } }
+            ]
+        },
+        armor_company: {
+            label: 'Main Battle Tank Company', source: "Military organizational standards; published tank specifications",
+            rcs_class: 'medium', readiness: 'ready', supply: 0.75,
+            doctrine_tags: ['maneuver', 'armor', 'counter_armor', 'breakthrough'],
+            sensors: [
+                { id: 'thermal', label: "Gunner's thermal sight", type: 'ir',    class: 'fire_control', emcon: 'always' },
+                { id: 'laser',   label: 'Laser rangefinder',      type: 'laser', class: 'fire_control', emcon: 'active' }
+            ],
+            weapons: [
+                { id: 'main_gun', label: '125mm smoothbore gun',      class: 'gun',       mount: 'm1' },
+                { id: 'atgm',     label: 'Anti-tank guided missile',   class: 'ag_missile', mount: 'm2', wra: { mode: 'max', salvo: 1 } }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { gun: 40 } },
+                { mount: 'm2', stock: { ag_missile: 4 } }
+            ]
+        },
+        mlrs: {
+            label: 'MLRS Battery', source: "SIPRI; published system specifications",
+            rcs_class: 'medium', readiness: 'ready', supply: 0.75,
+            doctrine_tags: ['fire_support', 'rocket_artillery', 'deep_strike'],
+            sensors: [
+                { id: 'fc_comp', label: 'Fire-control computer + GPS/INS', type: 'radar', class: 'surface_search', emcon: 'active' }
+            ],
+            weapons: [
+                { id: 'rocket', label: 'MLRS unguided rocket', class: 'gun',        mount: 'm1' },
+                { id: 'gmlrs',  label: 'GMLRS guided missile', class: 'ag_missile', mount: 'm2', wra: { mode: 'max', salvo: 1 } }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { gun: 36 } },
+                { mount: 'm2', stock: { ag_missile: 12 } }
+            ]
+        },
+        logistics: {
+            label: 'Logistics Support Element', source: "Military organizational standards",
+            rcs_class: 'medium', readiness: 'ready', supply: 0.8,
+            doctrine_tags: ['support', 'logistics', 'supply'],
+            sensors: [],
+            weapons: [{ id: 'def_mg', label: 'Defensive MG', class: 'gun', mount: 'm1' }],
+            magazines: [{ mount: 'm1', stock: { gun: 200 } }]
         }
     };
 
     /* ---- generic classification (role keywords + domain; NOT scenario-specific) */
     function classifyKind(u) {
+        // D5: named platform lookup — unit may set platform_id or platform field
+        var pid = u && (u.platform_id || u.platform || '');
+        if (pid) {
+            var normPid = String(pid).toLowerCase().replace(/-/g, '_');
+            if (CAPABILITY_CATALOG[normPid]) return normPid;
+            if (CAPABILITY_CATALOG[pid]) return pid;
+        }
+
         var role = (u && u.role || '').toLowerCase();
         var dom = (u && u.domain) || '';
+
         // Phase 5D-1: Soviet SAM/AAA variants (more specific than generic air_defense)
         if (/s-?300|s300|s-300/i.test(role)) return 'sam_s300';
         if (/s-?75|s75|dvina|volkhov/i.test(role)) return 'sam_s75';
         if (/zsu|shilka/i.test(role)) return 'aaa_zsu';
         if (/23\s*mm|gun.*aaa|aaa.*gun/i.test(role)) return 'aaa_23mm';
         if (/p-?37|flatface|barlock/i.test(role)) return 'radar_p37';
+
+        // D5: named platform keyword shortcuts (unambiguous platform names only)
+        if (/\bf-?16\b/i.test(role)) return 'f16c';
+        if (/\bf-?15e\b|strike.eagle/i.test(role)) return 'f15e';
+        if (/mirage.?2000/i.test(role)) return 'mirage2000';
+        if (/\bmig.?29\b/i.test(role)) return 'mig29';
+        if (/panavia.*tornado|tornado.*strike/i.test(role)) return 'tornado';
+        if (/gripen|jf.?17/i.test(role)) return 'gripen';
+        if (/\bawacs\b|\be-?3\b.*sentry|aew.?c/i.test(role)) return 'awacs';
+        if (/\bpatriot\b|mim.?104/i.test(role)) return 'patriot';
+        if (/\btor.?m\d\b|tor.?aads/i.test(role)) return 'tor_aads';
+        if (/\bmistral\b|manpads/i.test(role)) return 'mistral';
+        if (/skyshield/i.test(role)) return 's1_aaa';
+        if (/\bmlrs\b|multiple.launch.rocket/i.test(role)) return 'mlrs';
+        if (/\bmeko\b|type.f2000|f2000s/i.test(role)) return 'meko';
+
         // Fallback to generic air-defense for unknown AD systems
         if (/air.?def|sam|\bad\b|s-?\d{3}|missile.?def/.test(role)) return 'air_defense';
         // strategic / fixed installations first, so "naval_base" isn't caught by the naval keyword.

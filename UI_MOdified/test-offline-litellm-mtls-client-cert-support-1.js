@@ -67,7 +67,9 @@ check('B3  documents RMOOZ_AI_CLIENT_CERT_PASSWORD', envEx.includes('RMOOZ_AI_CL
 // All three mTLS lines must be COMMENTED OUT (optional — off by default).
 check('B4  client cert path is commented out',     !/^RMOOZ_AI_CLIENT_CERT_PATH=/m.test(envEx) && /#\s*RMOOZ_AI_CLIENT_CERT_PATH=/.test(envEx));
 check('B5  client key path is commented out',      !/^RMOOZ_AI_CLIENT_KEY_PATH=/m.test(envEx) && /#\s*RMOOZ_AI_CLIENT_KEY_PATH=/.test(envEx));
-check('B6  CA trust lines still ACTIVE (uncommented)', /^RMOOZ_AI_CA_CERT_PATH=\/app\/certs\/tawasol-ca\.crt/m.test(envEx));
+// CA path must be ACTIVE (uncommented) and under /app/certs — filename is
+// deployment-specific (e.g. ._mil_dir.crt or tawasol-ca.crt), so don't hardcode it.
+check('B6  CA trust lines still ACTIVE (uncommented)', /^RMOOZ_AI_CA_CERT_PATH=\/app\/certs\/\S+/m.test(envEx));
 check('B7  CA timeout still documented',           envEx.includes('RMOOZ_AI_TIMEOUT_MS=300000'));
 
 // ──────────────────────────────────────────────────────────────────────────────

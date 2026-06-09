@@ -554,6 +554,19 @@ const server = http.createServer((req, res) => {
         // HEAD returns 405 on LiteLLM). 8-second probe timeout (separate from gen timeout).
         const PROBE_TIMEOUT_MS = 8000;
         const httpMod = aiBase.startsWith('https') ? require('https') : require('http');
+        // OFFLINE-HEALTH-PROBE-DOUBLE-SEND-1 (hardens OFFLINE-LITELLM-CERT-TIMEOUT-1's
+        // probe): a single probe can fire more than one terminal event — notably
+        // probe.destroy() inside the timeout handler triggers a follow-up 'error'
+        // (ECONNRESET / "socket hang up"). Without a latch, sendJson() runs twice on
+        // the same response and the second call throws ERR_HTTP_HEADERS_SENT
+        // ("Cannot set headers after they are sent"). respondOnce() guarantees
+        // exactly one response across the success / error / timeout / catch paths.
+        let settled = false;
+        const respondOnce = (status, payload) => {
+            if (settled) return;
+            settled = true;
+            sendJson(res, status, payload);
+        };
         try {
             const parsed   = new URL(aiBase.replace(/\/v1\/?$/, ''));
             const testPath = aiProvider === 'ollama' ? '/' : '/models';
@@ -599,7 +612,7 @@ const server = http.createServer((req, res) => {
                 else if (statusCode === 404) { errorCode = 'not_found_404'; errorMessage = 'Endpoint not found — check RMOOZ_AI_BASE_URL and RMOOZ_AI_MODEL.'; ok = false; }
                 else if (statusCode === 405) { ok = true; errorCode = null; errorMessage = 'HEAD not allowed (405); endpoint is reachable (GET /models is the correct probe).'; }
                 else if (statusCode >= 500)  { errorCode = 'server_error'; errorMessage = 'LiteLLM server error (' + statusCode + ').'; ok = false; }
-                sendJson(res, 200, Object.assign({ ok, reachable: true, statusCode, errorCode, errorMessage }, safe));
+                respondOnce(200, Object.assign({ ok, reachable: true, statusCode, errorCode, errorMessage }, safe));
                 r.resume();
             });
             probe.on('error', (e) => {
@@ -630,11 +643,11 @@ const server = http.createServer((req, res) => {
                     errorCode = 'connection_reset';
                     errorMessage = 'Connection reset. (' + e.message + ')';
                 }
-                sendJson(res, 200, Object.assign({ ok: false, reachable: false, errorCode, errorMessage }, safe));
+                respondOnce(200, Object.assign({ ok: false, reachable: false, errorCode, errorMessage }, safe));
             });
             probe.on('timeout', () => {
                 probe.destroy();
-                sendJson(res, 200, Object.assign({
+                respondOnce(200, Object.assign({
                     ok: false, reachable: false,
                     errorCode: 'probe_timeout',
                     errorMessage: 'Health probe timed out after ' + PROBE_TIMEOUT_MS + ' ms. Generation timeout is ' + timeoutMs + ' ms (RMOOZ_AI_TIMEOUT_MS).',
@@ -642,7 +655,7 @@ const server = http.createServer((req, res) => {
             });
             probe.end();
         } catch (e) {
-            sendJson(res, 200, Object.assign({ ok: false, reachable: false, errorCode: 'url_parse_error', errorMessage: e.message }, safe));
+            respondOnce(200, Object.assign({ ok: false, reachable: false, errorCode: 'url_parse_error', errorMessage: e.message }, safe));
         }
         return;
     }

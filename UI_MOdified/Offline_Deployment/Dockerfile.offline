@@ -110,6 +110,9 @@ COPY Offline_Deployment/offline_app/server/tile-server.js ./server/tile-server.j
 # OFFLINE-GEN-RUN-FIX-1: bridge overlay — injects LiteLLM/Ollama LLM_* into the
 # WarGamingGEN Python child and writes redacted error.log on failure.
 COPY Offline_Deployment/offline_app/server/wargame-sim-bridge.js ./server/wargame-sim-bridge.js
+# LiteLLM connectivity diagnostic — operator runs:
+#   docker exec rmooz-offline /opt/rmooz-venv/bin/python /app/server/diag-litellm.py
+COPY Offline_Deployment/offline_app/server/diag-litellm.py ./server/diag-litellm.py
 # Startup script — runs both tile-server (8080) and web-server (5006)
 COPY Offline_Deployment/offline_app/start-offline.sh ./start-offline.sh
 # Strip Windows CRLF line endings and make executable

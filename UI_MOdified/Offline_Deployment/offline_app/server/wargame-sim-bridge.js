@@ -32,7 +32,7 @@
 const fs     = require('fs');
 const path   = require('path');
 const crypto = require('crypto');
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');                 // UI_MOdified/
 const PORTER = require(path.join(ROOT, 'scripts', 'port-wargame.js'));
@@ -674,12 +674,18 @@ function getDefaultObjective(c) {
     } catch (_) { return null; }
 }
 function readObjectiveOverride(c) {
-    // Read scenario_overrides.json if present, extract objective override.
-    var overridePath = path.join(c.wgen, 'inputs', 'scenario_overrides.json');
-    try {
-        var data = JSON.parse(fs.readFileSync(overridePath, 'utf8'));
-        return (data && typeof data === 'object' && data.objective) || null;
-    } catch (_) { return null; }
+    // Read the operator objective override if present. WarGamingGEN reads the
+    // canonical plural name (scenario_overrides.json); also accept the singular
+    // scenario_override.json an operator might hand-create. Plural wins.
+    var dir = path.join(c.wgen, 'inputs');
+    var candidates = [path.join(dir, 'scenario_overrides.json'), path.join(dir, 'scenario_override.json')];
+    for (var i = 0; i < candidates.length; i++) {
+        try {
+            var data = JSON.parse(fs.readFileSync(candidates[i], 'utf8'));
+            if (data && typeof data === 'object' && data.objective) return data.objective;
+        } catch (_) { /* try next */ }
+    }
+    return null;
 }
 function writeObjectiveOverride(c, obj) {
     // Write scenario_overrides.json with the operator-selected objective.
@@ -703,6 +709,115 @@ function writeObjectiveOverride(c, obj) {
         fs.writeFileSync(overridePath, JSON.stringify(override, null, 2), 'utf8');
         return true;
     } catch (_) { return false; }
+}
+
+// ── SCENARIO-AUTOGEN-1: guarantee inputs/scenario.json exists with a valid objective ──
+// WarGamingGEN (tests/test_full_run.py) loads inputs/scenario.json and reads
+// scenario.objective.lon/.lat; the objective-override route reads the same file.
+// RMOOZ never created it, so a fresh container failed with:
+//   - "no default objective found in scenario.json"  (Save Objective Position)
+//   - FileNotFoundError: scenario file not found      (WarGamingGEN run)
+// These helpers make generation self-sufficient — no manual file injection.
+function scenarioJsonPathOf(c) { return path.join(c.wgen, 'inputs', 'scenario.json'); }
+
+function isValidScenarioObjective(o) {
+    return !!(o && typeof o === 'object' && o.id && typeof o.id === 'string' &&
+              typeof o.lon === 'number' && isFinite(o.lon) &&
+              typeof o.lat === 'number' && isFinite(o.lat));
+}
+
+// Minimal but schema-valid Scenario (matches WarGamingGEN scenario_parser.py).
+// Fallback only — used when the canonical Python sample can't be written.
+function buildMinimalScenario(lon, lat) {
+    var L = (typeof lon === 'number' && isFinite(lon)) ? lon : 32.89;
+    var T = (typeof lat === 'number' && isFinite(lat)) ? lat : 34.76;
+    return {
+        operation_name: 'RMOOZ Auto Scenario',
+        bbox_wgs84: [L - 0.6, T - 0.6, L + 0.6, T + 0.6],
+        coast_lat_approx: T + 0.5,
+        objective: { id: 'OBJ-X', name_ar: 'الهدف X', name_en: 'Objective X',
+                     lon: L, lat: T, depth_km_from_coast: 50.0, carver_total: 40 },
+        d_day_iso: '2026-05-20T00:00:00Z',
+        phases: [
+            { step: 0, time_label: 'D-7',   phase_name_ar: 'تمهيد',          phase_name_en: 'Shaping',          kind: 'shaping',                  phase_line_km: 0.0 },
+            { step: 1, time_label: 'D-H',   phase_name_ar: 'الضربة والإنزال', phase_name_en: 'H-hour strike',    kind: 'h_hour_strike',            phase_line_km: 1.5 },
+            { step: 2, time_label: 'D+12h', phase_name_ar: 'رأس الجسر',       phase_name_en: 'Beachhead',        kind: 'beachhead_consolidation',  phase_line_km: 8.5 },
+            { step: 3, time_label: 'D+144h',phase_name_ar: 'الحسم النهائي',   phase_name_en: 'Final resolution', kind: 'final_resolution',         phase_line_km: 95.0 }
+        ],
+        off_map_markers: [],
+        attack_ratio_decisive: 3.0, attack_ratio_contested: 1.5, prepared_defense_mult: 1.5
+    };
+}
+
+// Prefer the canonical 17-phase Libya sample via the EXISTING Python writer (zero
+// drift; the DOCX force lay-down is authored around it). Returns true on success.
+function writeCanonicalScenarioViaPython(c) {
+    try {
+        var r = spawnSync(c.python, ['-c',
+            'from src.parsers.scenario_parser import write_libya_sample;' +
+            'from pathlib import Path;' +
+            'write_libya_sample(Path("inputs/scenario.json"))'
+        ], { cwd: c.wgen, timeout: 60000, encoding: 'utf8' });
+        if (r && r.status === 0) {
+            var sc = readJson(scenarioJsonPathOf(c));
+            return isValidScenarioObjective(sc && sc.objective);
+        }
+    } catch (_) { /* fall through to Node fallback */ }
+    return false;
+}
+
+// Guarantee scenario.json exists + has a valid objective.
+// Returns { scenario, created, source }. Never throws on the happy path.
+function ensureScenarioJson(c, opts) {
+    opts = opts || {};
+    var p = scenarioJsonPathOf(c);
+    var existing = readJson(p);
+    // 1) Already valid → preserve untouched (never overwrite operator/demo data).
+    if (existing && isValidScenarioObjective(existing.objective)) {
+        return { scenario: existing, created: false, source: 'existing' };
+    }
+    // 2) Structurally usable but missing/invalid objective → inject one, keep the rest.
+    if (existing && Array.isArray(existing.phases) && existing.phases.length >= 1 &&
+        Array.isArray(existing.bbox_wgs84) && existing.bbox_wgs84.length === 4) {
+        var fallbackObj = buildMinimalScenario(opts.lon, opts.lat).objective;
+        var cur = (existing.objective && typeof existing.objective === 'object') ? existing.objective : {};
+        existing.objective = {
+            id: cur.id || fallbackObj.id,
+            name_ar: cur.name_ar || fallbackObj.name_ar,
+            name_en: cur.name_en || fallbackObj.name_en,
+            lon: isFinite(cur.lon) ? cur.lon : fallbackObj.lon,
+            lat: isFinite(cur.lat) ? cur.lat : fallbackObj.lat
+        };
+        if (isFinite(cur.depth_km_from_coast)) existing.objective.depth_km_from_coast = cur.depth_km_from_coast;
+        if (Number.isInteger(cur.carver_total)) existing.objective.carver_total = cur.carver_total;
+        try { mkdirp(path.dirname(p)); fs.writeFileSync(p, JSON.stringify(existing, null, 2), 'utf8'); } catch (_) {}
+        return { scenario: existing, created: true, source: 'objective_injected' };
+    }
+    // 3) Missing/unusable → prefer the canonical Python sample, else Node minimal.
+    mkdirp(path.dirname(p));
+    if (writeCanonicalScenarioViaPython(c)) {
+        return { scenario: readJson(p), created: true, source: 'python_canonical' };
+    }
+    var min = buildMinimalScenario(opts.lon, opts.lat);
+    try { fs.writeFileSync(p, JSON.stringify(min, null, 2), 'utf8'); } catch (_) {}
+    return { scenario: min, created: true, source: 'node_minimal' };
+}
+
+// If an operator hand-created the SINGULAR scenario_override.json but not the
+// canonical plural scenario_overrides.json (the only name WarGamingGEN reads),
+// mirror it to the plural so the Python pipeline picks it up. Never overwrites.
+function normalizeOverrideFile(c) {
+    var dir = path.join(c.wgen, 'inputs');
+    var plural = path.join(dir, 'scenario_overrides.json');
+    var singular = path.join(dir, 'scenario_override.json');
+    try {
+        if (!exists(plural) && exists(singular)) {
+            mkdirp(dir);
+            fs.copyFileSync(singular, plural);
+            return 'mirrored_singular_to_plural';
+        }
+    } catch (_) {}
+    return null;
 }
 
 // ── WIZARD-FINGERPRINT-1: tie a stopped run to the setup that produced it ─────
@@ -932,6 +1047,21 @@ function handle(req, res, ctx) {
         // run's progress (that caused the "17 then 0" flash). For a resume we
         // keep counting the baseline (we're continuing it), so no gating.
         const baselineRun = resume ? null : (function () { const d = latestRunDir(c); return d ? path.basename(d) : null; })();
+        // SCENARIO-AUTOGEN-1: WarGamingGEN requires inputs/scenario.json. Create it
+        // (and mirror any singular override file) BEFORE Python starts, so a fresh
+        // container never dies with FileNotFoundError. Existing scenarios untouched.
+        try {
+            normalizeOverrideFile(c);
+            const ens = ensureScenarioJson(c);
+            if (!ens || !isValidScenarioObjective(ens.scenario && ens.scenario.objective)) {
+                sendJson(res, 500, { ok: false, error: 'could not prepare inputs/scenario.json for generation' });
+                return true;
+            }
+            if (ens.created) console.log('[wargame-sim] scenario.json prepared before run (source=' + ens.source + ')');
+        } catch (e) {
+            sendJson(res, 500, { ok: false, error: 'scenario.json preparation failed: ' + e.message });
+            return true;
+        }
         let child;
         try {
             child = spawn(c.python, runArgs(resume), { cwd: c.wgen, env: env });
@@ -1313,15 +1443,21 @@ function handle(req, res, ctx) {
         var lon = parseFloat(url.searchParams.get('lon') || '');
         var lat = parseFloat(url.searchParams.get('lat') || '');
         var name = url.searchParams.get('name') || 'Objective X';
-        // Validate
-        if (isNaN(lon) || lon < -180 || lon > 180 || isNaN(lat) || lat < -90 || lat > 90) {
+        // SCENARIO-AUTOGEN-1: UI normally sends lon/lat; if absent, use a safe default
+        // instead of erroring. A value that IS provided but out of range is still rejected.
+        if (isNaN(lon)) lon = 32.89;
+        if (isNaN(lat)) lat = 34.76;
+        if (lon < -180 || lon > 180 || lat < -90 || lat > 90) {
             sendJson(res, 400, { ok: false, error: 'invalid coordinates (lon [-180..180], lat [-90..90])', lon: lon, lat: lat });
             return true;
         }
+        // SCENARIO-AUTOGEN-1: ensure scenario.json exists so a default objective is
+        // always available — Save Objective Position must never fail for a missing file.
+        try { ensureScenarioJson(c, { lon: lon, lat: lat }); } catch (_) {}
         var defObj = getDefaultObjective(c);
         if (!defObj || !defObj.id) {
-            sendJson(res, 400, { ok: false, error: 'no default objective found in scenario.json' });
-            return true;
+            // Last-resort: synthesize a stable objective id so the placement still saves.
+            defObj = { id: 'OBJ-X' };
         }
         var override = { id: defObj.id, lon: lon, lat: lat, name_en: name };
         if (defObj.depth_km_from_coast !== undefined) override.depth_km_from_coast = defObj.depth_km_from_coast;
@@ -1350,6 +1486,9 @@ module.exports = { handle, _internals: {
     computeSources, listStep0, oobCounts, countGeoFeatures, fileStatus,
     // PREGEN-CONTROL-2
     getDefaultObjective, readObjectiveOverride, writeObjectiveOverride,
+    // SCENARIO-AUTOGEN-1
+    scenarioJsonPathOf, isValidScenarioObjective, buildMinimalScenario,
+    writeCanonicalScenarioViaPython, ensureScenarioJson, normalizeOverrideFile,
     // WIZARD-FINGERPRINT-1
     hashFile, round4, currentSetupFingerprint, setupMatchesRun, persistRunMetaWhenReady,
 } };

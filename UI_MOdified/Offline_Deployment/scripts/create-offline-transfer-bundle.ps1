@@ -50,6 +50,11 @@ if (Test-Path $ImageTar) {
 }
 
 Copy-Item "Offline_Deployment/docker-compose.offline.yml" "$BundleDir/docker-compose.offline.yml" -Force
+# Host-networking fallback compose — used only if the container cannot reach
+# LiteLLM on the default bridge network (diag-litellm.py shows DNS/route failure).
+if (Test-Path "Offline_Deployment/docker-compose.hostnet.offline.yml") {
+    Copy-Item "Offline_Deployment/docker-compose.hostnet.offline.yml" "$BundleDir/docker-compose.hostnet.offline.yml" -Force
+}
 Copy-Item "Offline_Deployment/.env.offline.example" "$BundleDir/.env.offline.example" -Force
 # SECURITY: the REAL .env.offline (API key, secrets) is intentionally NEVER bundled.
 # The operator creates it on the offline server from .env.offline.example. If a stale

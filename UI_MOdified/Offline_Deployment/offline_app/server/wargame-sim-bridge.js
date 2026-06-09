@@ -1153,16 +1153,41 @@ function handle(req, res, ctx) {
                     classifiedError =
                         'LiteLLM returned 404 — check RMOOZ_AI_BASE_URL and RMOOZ_AI_MODEL. ' +
                         'Model "' + (process.env.RMOOZ_AI_MODEL || '?') + '" may not exist at this endpoint.';
-                } else if (/Connection refused|ECONNREFUSED|APIConnectionError/i.test(rawErr)) {
-                    errorCode = 'connection_refused';
-                    classifiedError =
-                        'Connection refused to LiteLLM endpoint (' + (process.env.RMOOZ_AI_BASE_URL || '?') + '). ' +
-                        'Is the endpoint running? Is the container network configured correctly?';
-                } else if (/Name or service not known|EAI_AGAIN|getaddrinfo/i.test(rawErr)) {
+                } else if (/Name or service not known|Temporary failure in name resolution|nodename nor servname|getaddrinfo|EAI_AGAIN|\[Errno -2\]|\[Errno -3\]/i.test(rawErr)) {
+                    // DNS must be checked BEFORE the generic APIConnectionError — the
+                    // OpenAI SDK wraps DNS failures in APIConnectionError("Connection error.").
                     errorCode = 'dns_failure';
                     classifiedError =
-                        'DNS resolution failed for LiteLLM endpoint (' + (process.env.RMOOZ_AI_BASE_URL || '?') + '). ' +
-                        'Is the hostname reachable from inside the container?';
+                        'DNS resolution failed inside the container for the LiteLLM host (' + (process.env.RMOOZ_AI_BASE_URL || '?') + '). ' +
+                        'The host may resolve it but the container does not. Run the diagnostic: ' +
+                        'docker exec rmooz-offline /opt/rmooz-venv/bin/python /app/server/diag-litellm.py — ' +
+                        'then use the host-networking compose or add the LiteLLM IP via extra_hosts. stderr: ' + rawErr.slice(-300);
+                } else if (/Connection refused|ECONNREFUSED|\[Errno 111\]/i.test(rawErr)) {
+                    errorCode = 'connection_refused';
+                    classifiedError =
+                        'Connection REFUSED by the LiteLLM endpoint (' + (process.env.RMOOZ_AI_BASE_URL || '?') + '). ' +
+                        'A host answered with RST — wrong port, or a proxy/firewall actively refusing. stderr: ' + rawErr.slice(-300);
+                } else if (/No route to host|Network is unreachable|\[Errno 113\]|\[Errno 101\]/i.test(rawErr)) {
+                    errorCode = 'network_unreachable';
+                    classifiedError =
+                        'No route from the container to the LiteLLM host (' + (process.env.RMOOZ_AI_BASE_URL || '?') + '). ' +
+                        'The host can reach it but the container bridge network cannot (route/VPN). ' +
+                        'Use the host-networking compose (docker-compose.hostnet.offline.yml). stderr: ' + rawErr.slice(-300);
+                } else if (/ConnectTimeout|Connection timed out|\[Errno 110\]/i.test(rawErr)) {
+                    errorCode = 'connect_timeout';
+                    classifiedError =
+                        'TCP connect to the LiteLLM host timed out (' + (process.env.RMOOZ_AI_BASE_URL || '?') + '). ' +
+                        'Likely a route/firewall drop from the container. Run diag-litellm.py; consider host networking. stderr: ' + rawErr.slice(-300);
+                } else if (/APIConnectionError|Connection error|httpx\.ConnectError|ConnectError/i.test(rawErr)) {
+                    // Generic connection failure — the SDK could not establish the HTTP
+                    // connection but did not surface a more specific cause. Do NOT claim
+                    // "refused"; point the operator at the layered diagnostic.
+                    errorCode = 'connection_error';
+                    classifiedError =
+                        'Could not connect to the LiteLLM endpoint (' + (process.env.RMOOZ_AI_BASE_URL || '?') + ') from inside the container. ' +
+                        'The host may reach it while the container cannot (DNS/route/VPN). ' +
+                        'Run: docker exec rmooz-offline /opt/rmooz-venv/bin/python /app/server/diag-litellm.py to pinpoint the failing layer, ' +
+                        'then use the host-networking compose if the container has no route. stderr: ' + rawErr.slice(-300);
                 }
                 simState.error     = classifiedError;
                 simState.errorCode = errorCode;

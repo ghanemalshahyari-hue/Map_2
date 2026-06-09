@@ -1,420 +1,103 @@
 /**
- * unit-status-panel.js — Commander Unit Status Panel
+ * unit-status-panel.js — Commander Unit Status Panel (UI-Unit-1-C visual redesign)
  *
- * Static read-only right-slide panel showing:
- * - Unit identity (label, uid, side, domain, role, echelon, DB1 platform label)
- * - Readiness/supply (baseline + applied state overlay, source attribution)
- * - Sensors, weapons, magazines (DB1-enriched when absent from scenario)
- * - Recent STATE_DELTA events
+ * Military-tactical read-only right-slide panel.
  *
- * Data sources (in precedence order):
- *   1. window.RmoozScenario — scenario baseline units (authored values always win)
- *   2. window.AppAppliedState — readiness/supply overlay from accepted STATE_DELTA events
- *   3. window.AppWorldStateDB — DB-Lite platform/sensor/weapon defaults (DB1, single source)
- *   4. window.AppEventLog — STATE_DELTA event history for delta display section
- *   5. milsymbol — unit symbol rendering if SIDC present
+ * Data sources (precedence order):
+ *   1. window.RmoozScenario   — scenario baseline (authored values always win)
+ *   2. window.AppAppliedState — readiness/supply overlay (STATE_DELTA events)
+ *   3. window.AppWorldStateDB — DB-Lite catalog / DB1 (single capability source)
+ *   4. window.AppEventLog     — STATE_DELTA history for delta display
+ *   5. milsymbol              — unit symbol rendering if SIDC present
  *
- * UI-Unit-1-C (2026-06-09):
- *   - DB1 enrichment wired: sensors/weapons/magazines filled from catalog when absent
- *     from scenario (AppWorldStateDB.enrichUnit — read-only, never mutates input)
- *   - Source attribution labels show data origin per field (Scenario Baseline /
- *     DB-Lite — {label} / DB-Lite — {kind} (default))
- *   - Platform label appended to role field for DB1 named-platform entries
- *   - Sensor rows now include emcon field
- *   - Magazine stock handles DB1 object format ({ weapon_class: count })
- *   - Source footnote added at bottom of sensor/weapon lists
- *   D5 note: middle-east-platform-loader.js and platforms.json deleted 2026-06-09.
- *   DB1 (AppWorldStateDB) is the single source of truth for capability data.
+ * D5 (2026-06-09): middle-east-platform-loader.js + platforms.json DELETED.
+ * DB1 (AppWorldStateDB) is the single source of truth for capability data.
  *
  * DESIGN: Read-only display only. No edit controls, no mutations,
- * no fake data. Empty-state labels for unavailable fields.
+ * no simulation calls. Empty-state labels for unavailable fields.
  */
 (function (root) {
     'use strict';
 
-    // ── Element lookups ────────────────────────────────────────────
-    const $ = (id) => document.getElementById(id);
-    const panel = () => $('unit-status-panel');
+    var $ = function(id) { return document.getElementById(id); };
+    var currentUnit = null;
 
-    let currentUnit = null;
-
+    // ── i18n helper ───────────────────────────────────────────────────
     function tr(key, fallback) {
         if (typeof root.t === 'function') {
-            const v = root.t(key);
+            var v = root.t(key);
             if (typeof v === 'string' && v && v !== key) return v;
         }
         return fallback;
     }
 
-    /**
-     * Render unit milsymbol in the preview area
-     */
-    function renderUnitSymbol(unit) {
-        const container = $('unit-symbol');
-        if (!container) return;
-        container.innerHTML = '';
-
-        if (!unit) {
-            container.innerHTML = `
-                <svg class="symbol-placeholder" viewBox="0 0 100 100" width="80" height="80">
-                    <circle cx="50" cy="50" r="40" fill="#f0f0f0" stroke="#ccc" stroke-width="2"/>
-                    <text x="50" y="60" font-size="36" font-weight="bold" text-anchor="middle" fill="#999">?</text>
-                </svg>
-            `;
-            return;
-        }
-
-        try {
-            // If milsymbol and SIDC are available, render symbol
-            if (root.ms && typeof root.ms.Symbol === 'function' && unit.sidc) {
-                const symbol = new root.ms.Symbol(unit.sidc, { size: 35 });
-                const canvas = symbol.getCanvas();
-                if (canvas) {
-                    container.appendChild(canvas);
-                    return;
-                }
-            }
-        } catch (_) { /* fall through */ }
-
-        // Fallback: SVG placeholder with unit label
-        const label = (unit.label || '?').charAt(0).toUpperCase();
-        container.innerHTML = `
-            <svg class="symbol-placeholder" viewBox="0 0 100 100" width="80" height="80">
-                <circle cx="50" cy="50" r="40" fill="#f0f0f0" stroke="#ccc" stroke-width="2"/>
-                <text x="50" y="60" font-size="36" font-weight="bold" text-anchor="middle" fill="#999">${label}</text>
-            </svg>
-        `;
-    }
-
-    /**
-     * Format readiness value with color coding
-     */
-    function formatReadiness(readiness) {
-        const val = (readiness || 'ready').toLowerCase();
-        const labels = {
-            'ready': tr('readiness-ready', 'Ready'),
-            'limited': tr('readiness-limited', 'Limited'),
-            'not_ready': tr('readiness-not-ready', 'Not Ready'),
-        };
-        return labels[val] || val;
-    }
-
-    /**
-     * Populate panel with unit data
-     */
-    function populatePanel(unit) {
-        if (!unit) {
-            // Empty state
-            const body = panel()?.querySelector('.panel-body');
-            if (body) {
-                body.querySelectorAll('.panel-section').forEach(s => s.setAttribute('hidden', ''));
-                const empty = $('empty-state');
-                if (empty) empty.removeAttribute('hidden');
-            }
-            return;
-        }
-
-        currentUnit = unit;
-
-        // Remove empty state
-        const empty = $('empty-state');
-        if (empty) empty.setAttribute('hidden', '');
-
-        // Enrich unit with DB1 capability data for display.
-        // Read-only — never mutates input; authored fields always take precedence.
-        const enriched = enrichUnitForDisplay(unit);
-
-        // 1. Unit identity (always from the raw scenario unit)
-        renderUnitSymbol(unit);
-        setText('unit-label', unit.label || '—');
-        setText('unit-uid', unit.uid || '—');
-        setText('unit-side', unit.side || '—');
-        setText('unit-domain', unit.domain || '—');
-
-        // Append DB1 platform label to role row when a named catalog entry matched
-        const platformLabel = getPlatformLabel(enriched);
-        setText('unit-role', platformLabel
-            ? (unit.role || '—') + ' · ' + platformLabel
-            : (unit.role || '—'));
-
-        if (unit.echelon) {
-            setText('unit-echelon', unit.echelon);
-            $('unit-echelon')?.removeAttribute('hidden');
-        } else {
-            $('unit-echelon')?.setAttribute('hidden', '');
-        }
-
-        // 2. Readiness & Supply (raw unit for baseline; enriched for DB1 source context)
-        populateReadinessSupply(unit, enriched);
-
-        // 3. Sensors — DB1-enriched unit; source label passed for footnote
-        populateSensors(enriched, getCapabilitySourceLabel(unit, enriched, 'sensors'));
-
-        // 4. Weapons & Magazines — DB1-enriched unit; source label passed for footnote
-        populateWeapons(enriched, getCapabilitySourceLabel(unit, enriched, 'weapons'));
-
-        // 5. Recent STATE_DELTA events (always from raw unit uid)
-        populateDeltas(unit);
-    }
-
-    /**
-     * Populate readiness and supply section.
-     * @param {object} unit - Raw scenario unit (baseline readiness/supply values)
-     * @param {object} enriched - DB1-enriched unit (provides kind/label for source labels)
-     */
-    function populateReadinessSupply(unit, enriched) {  // eslint-disable-line no-unused-vars
-        const eventLog = getEventLog();
-        const appliedState = getAppliedState(unit, eventLog);
-
-        // Readiness
-        const baselineReadiness = unit.readiness || 'ready';
-        const appliedReadiness = appliedState.readiness;
-        const hasReadinessDelta = baselineReadiness !== appliedReadiness;
-
-        const readinessElem = $('readiness-value');
-        if (readinessElem) {
-            readinessElem.textContent = formatReadiness(appliedReadiness);
-            readinessElem.className = `readiness-value ${appliedReadiness}`;
-        }
-
-        // Readiness source (applied delta or baseline)
-        setText('readiness-source',
-            hasReadinessDelta
-                ? tr('source-applied', 'Applied (baseline: ' + formatReadiness(baselineReadiness) + ')')
-                : tr('source-baseline', 'Baseline')
-        );
-
-        // Readiness data source (where the baseline value came from)
-        if (!hasReadinessDelta) {
-            setText('readiness-data-source', getDataSource(unit, 'readiness'));
-        } else {
-            setText('readiness-data-source', '');
-        }
-
-        // Supply
-        const baselineSupply = unit.supply || 0.8;
-        const appliedSupply = appliedState.supply;
-        const hasSupplyDelta = Math.abs(baselineSupply - appliedSupply) > 0.01;
-
-        const fillElem = $('supply-fill');
-        if (fillElem) {
-            const pct = Math.round(appliedSupply * 100);
-            fillElem.style.width = pct + '%';
-            fillElem.textContent = pct + '%';
-        }
-
-        setText('supply-pct', Math.round(appliedSupply * 100) + '%');
-
-        // Supply source (applied delta or baseline)
-        setText('supply-source',
-            hasSupplyDelta
-                ? tr('source-applied', 'Applied (baseline: ' + Math.round(baselineSupply * 100) + '%)')
-                : tr('source-baseline', 'Baseline')
-        );
-
-        // Supply data source (where the baseline value came from)
-        if (!hasSupplyDelta) {
-            setText('supply-data-source', getDataSource(unit, 'supply'));
-        } else {
-            setText('supply-data-source', '');
-        }
-    }
-
-    /**
-     * Populate sensors section.
-     * @param {object} unit - DB1-enriched unit (sensors may come from catalog)
-     * @param {string|null} sourceLabel - Data origin label for footnote attribution
-     */
-    function populateSensors(unit, sourceLabel) {
-        const sensors = unit.sensors || [];
-        const section = $('sensors-section');
-        const list = $('sensor-list');
-        const emptyState = $('sensors-empty');
-        const count = $('sensor-count');
-
-        if (!sensors.length) {
-            section?.setAttribute('hidden', '');
-            return;
-        }
-
-        section?.removeAttribute('hidden');
-        if (count) count.textContent = sensors.length;
-
-        if (list) {
-            list.innerHTML = '';
-            sensors.forEach(sensor => {
-                const li = document.createElement('li');
-                const emconPart = sensor.emcon ? ' · emcon: ' + sensor.emcon : '';
-                const detail = [sensor.type, sensor.class].filter(Boolean).join(' · ') + emconPart;
-                li.innerHTML = `
-                    <strong>${sensor.label || sensor.id || '—'}</strong>
-                    ${detail ? `<br><span style="color:#888;font-size:0.85rem">${detail}</span>` : ''}
-                `;
-                list.appendChild(li);
-            });
-            // Source attribution footnote at bottom of list
-            if (sourceLabel) {
-                const srcLi = document.createElement('li');
-                srcLi.style.cssText = 'color:#aaa;font-size:0.78rem;list-style:none;' +
-                    'padding-top:0.35rem;border-top:1px solid #f0f0f0;margin-top:0.35rem';
-                srcLi.textContent = 'Source: ' + sourceLabel;
-                list.appendChild(srcLi);
-            }
-        }
-
-        if (emptyState) emptyState.setAttribute('hidden', '');
-    }
-
-    /**
-     * Populate weapons and magazines section.
-     * @param {object} unit - DB1-enriched unit (weapons/magazines may come from catalog)
-     * @param {string|null} sourceLabel - Data origin label for footnote attribution
-     */
-    function populateWeapons(unit, sourceLabel) {
-        const weapons = unit.weapons || [];
-        const magazines = unit.magazines || [];
-        const section = $('weapons-section');
-        const wlist = $('weapon-list');
-        const mlist = $('magazine-list');
-        const mtitle = $('magazines-title');
-        const emptyState = $('weapons-empty');
-        const wcount = $('weapon-count');
-
-        if (!weapons.length && !magazines.length) {
-            section?.setAttribute('hidden', '');
-            return;
-        }
-
-        section?.removeAttribute('hidden');
-        if (wcount) wcount.textContent = weapons.length;
-
-        // Weapons list
-        if (wlist) {
-            wlist.innerHTML = '';
-            weapons.forEach(weapon => {
-                const li = document.createElement('li');
-                const mountPart = weapon.mount ? ' · ' + weapon.mount : '';
-                li.innerHTML = `
-                    <strong>${weapon.label || weapon.id || '—'}</strong>
-                    ${weapon.class ? `<br><span style="color:#888;font-size:0.85rem">${weapon.class}${mountPart}</span>` : ''}
-                `;
-                wlist.appendChild(li);
-            });
-            // Source attribution footnote at bottom of weapons list
-            if (sourceLabel) {
-                const srcLi = document.createElement('li');
-                srcLi.style.cssText = 'color:#aaa;font-size:0.78rem;list-style:none;' +
-                    'padding-top:0.35rem;border-top:1px solid #f0f0f0;margin-top:0.35rem';
-                srcLi.textContent = 'Source: ' + sourceLabel;
-                wlist.appendChild(srcLi);
-            }
-        }
-
-        // Magazines list — formatMagStock handles DB1 object format and legacy numbers
-        if (magazines.length) {
-            mtitle?.removeAttribute('hidden');
-            if (mlist) {
-                mlist.innerHTML = '';
-                magazines.forEach(mag => {
-                    const li = document.createElement('li');
-                    const stockStr = formatMagStock(mag.stock);
-                    li.innerHTML = `
-                        <strong>${mag.mount || 'Magazine'}</strong>
-                        ${stockStr ? `<br><span style="color:#888;font-size:0.85rem">Stock: ${stockStr}</span>` : ''}
-                    `;
-                    mlist.appendChild(li);
-                });
-            }
-        } else {
-            mtitle?.setAttribute('hidden', '');
-        }
-
-        if (emptyState) emptyState.setAttribute('hidden', '');
-    }
-
-    /**
-     * Populate recent STATE_DELTA events
-     */
-    function populateDeltas(unit) {
-        const eventLog = getEventLog();
-        const deltas = extractDeltasForUnit(eventLog, unit.uid);
-        const section = $('deltas-section');
-        const list = $('delta-list');
-        const emptyState = $('deltas-empty');
-        const count = $('delta-count');
-
-        // Show only last 5 deltas
-        const recent = deltas.slice(-5).reverse();
-
-        if (!recent.length) {
-            section?.setAttribute('hidden', '');
-            return;
-        }
-
-        section?.removeAttribute('hidden');
-        if (count) count.textContent = recent.length;
-
-        if (list) {
-            list.innerHTML = '';
-            recent.forEach(delta => {
-                const li = document.createElement('li');
-                const deltaType = delta.delta_type || '?';
-                const before = delta.value_before !== undefined ? String(delta.value_before) : '?';
-                const after = delta.value_after !== undefined ? String(delta.value_after) : '?';
-                const timestamp = delta.timestamp || delta.time || '';
-
-                li.innerHTML = `
-                    <strong>${deltaType}:</strong> ${before} → ${after}
-                    ${timestamp ? `<span class="delta-timestamp">${timestamp}</span>` : ''}
-                `;
-                list.appendChild(li);
-            });
-        }
-
-        if (emptyState) emptyState.setAttribute('hidden', '');
-    }
-
-    /**
-     * Close the panel
-     */
-    function closePanel() {
-        const p = panel();
-        if (p) {
-            p.setAttribute('hidden', '');
-            currentUnit = null;
-        }
-    }
-
-    function isOperationalScenarioSelection(unit) {
-        if (unit && unit._scenario) return true;
-        try {
-            return !!(root.AppAdjudicatorMap
-                && typeof root.AppAdjudicatorMap.isScenarioDrawn === 'function'
-                && root.AppAdjudicatorMap.isScenarioDrawn());
-        } catch (_) {
-            return false;
-        }
-    }
-
-    /**
-     * Open the panel (show it)
-     */
-    function openPanel() {
-        const p = panel();
-        if (p) p.removeAttribute('hidden');
-    }
-
-    /**
-     * Helper: set text content safely
-     */
     function setText(id, text) {
-        const elem = $(id);
-        if (elem) elem.textContent = text;
+        var el = $(id);
+        if (el) el.textContent = text;
     }
 
-    /**
-     * Get event log (fallback if not available)
-     */
+    // ── Magazine stock formatter ──────────────────────────────────────
+    function formatMagStock(stock) {
+        if (stock == null) return '';
+        if (typeof stock === 'number') return String(Math.round(stock));
+        if (typeof stock === 'object') {
+            return Object.keys(stock).map(function(k) {
+                return k.replace(/_/g, ' ') + ': ' + stock[k];
+            }).join(', ');
+        }
+        return String(stock);
+    }
+
+    // ── DB1 enrichment ────────────────────────────────────────────────
+    function enrichUnitForDisplay(unit) {
+        if (!unit) return unit;
+        if (root.AppWorldStateDB && typeof root.AppWorldStateDB.enrichUnit === 'function') {
+            try { return root.AppWorldStateDB.enrichUnit(unit); } catch (_) {}
+        }
+        return Object.assign({}, unit);
+    }
+
+    function getPlatformLabel(enrichedUnit) {
+        if (!root.AppWorldStateDB || !enrichedUnit) return null;
+        try {
+            var cap = root.AppWorldStateDB.capabilityFor(enrichedUnit);
+            return (cap && cap.label) ? cap.label : null;
+        } catch (_) { return null; }
+    }
+
+    function getCapabilitySourceLabel(rawUnit, enrichedUnit, field) {
+        var rawArr = rawUnit && rawUnit[field];
+        if (Array.isArray(rawArr) && rawArr.length) return 'Scenario Baseline';
+        var enrichedArr = enrichedUnit && enrichedUnit[field];
+        if (!Array.isArray(enrichedArr) || !enrichedArr.length) return null;
+        if (root.AppWorldStateDB) {
+            try {
+                var cap = root.AppWorldStateDB.capabilityFor(enrichedUnit);
+                if (cap && cap.label) return 'DB-Lite — ' + cap.label;
+                var kind = enrichedUnit.kind || root.AppWorldStateDB.classifyKind(enrichedUnit);
+                return 'DB-Lite — ' + kind + ' (default)';
+            } catch (_) {}
+        }
+        return 'DB-Lite';
+    }
+
+    function getDataSource(unit, field) {
+        if (!unit) return '';
+        if (unit[field] !== undefined && unit[field] !== null) return 'Scenario Baseline';
+        if (root.AppWorldStateDB) {
+            try {
+                var cap = root.AppWorldStateDB.capabilityFor(unit);
+                if (cap && cap[field] !== undefined) {
+                    if (cap.label) return 'DB-Lite — ' + cap.label;
+                    var kind = root.AppWorldStateDB.classifyKind(unit);
+                    return 'DB-Lite — ' + kind + ' (default)';
+                }
+            } catch (_) {}
+        }
+        return 'DB-Lite Default';
+    }
+
+    // ── Event log / applied state ─────────────────────────────────────
     function getEventLog() {
         if (root.AppEventLog && typeof root.AppEventLog.getRows === 'function') {
             return root.AppEventLog.getRows();
@@ -422,206 +105,454 @@
         return [];
     }
 
-    /**
-     * Get applied state (readiness + supply overlay from event log)
-     */
     function getAppliedState(unit, eventLog) {
         if (root.AppAppliedState && typeof root.AppAppliedState.getAppliedState === 'function') {
             return root.AppAppliedState.getAppliedState(unit, eventLog);
         }
-        // Fallback: return baseline
-        return {
-            readiness: unit.readiness || 'ready',
-            supply: unit.supply || 0.8
-        };
+        return { readiness: unit.readiness || 'ready', supply: unit.supply || 0.8 };
     }
 
-    /**
-     * Extract deltas for a unit from event log
-     */
     function extractDeltasForUnit(eventLog, unitUid) {
         if (root.AppAppliedState && typeof root.AppAppliedState.extractDeltasForUnit === 'function') {
             return root.AppAppliedState.extractDeltasForUnit(eventLog, unitUid);
         }
-
-        // Fallback: manually filter
         return eventLog
-            .filter(e => e && e.payload && e.payload.event_type === 'STATE_DELTA' && e.payload.unit_uid === unitUid)
-            .map(e => e.payload);
+            .filter(function(e) {
+                return e && e.payload && e.payload.event_type === 'STATE_DELTA'
+                    && e.payload.unit_uid === unitUid;
+            })
+            .map(function(e) { return e.payload; });
     }
 
-    /**
-     * Setup section collapse/expand toggles
-     */
-    function setupSectionToggles() {
-        document.querySelectorAll('.section-toggle').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+    // ── Scenario guard ────────────────────────────────────────────────
+    function isOperationalScenarioSelection(unit) {
+        if (unit && unit._scenario) return true;
+        try {
+            return !!(root.AppAdjudicatorMap
+                && typeof root.AppAdjudicatorMap.isScenarioDrawn === 'function'
+                && root.AppAdjudicatorMap.isScenarioDrawn());
+        } catch (_) { return false; }
+    }
+
+    // ── Panel open/close ──────────────────────────────────────────────
+    function openPanel() {
+        var p = $('unit-status-panel');
+        if (p) p.removeAttribute('hidden');
+    }
+
+    function closePanel() {
+        var p = $('unit-status-panel');
+        if (p) { p.setAttribute('hidden', ''); currentUnit = null; }
+    }
+
+    function _showEmpty() {
+        var e = $('empty-state'), b = $('usp-body');
+        if (e) e.removeAttribute('hidden');
+        if (b) b.setAttribute('hidden', '');
+    }
+
+    function _showBody() {
+        var e = $('empty-state'), b = $('usp-body');
+        if (e) e.setAttribute('hidden', '');
+        if (b) b.removeAttribute('hidden');
+    }
+
+    function _formatReadiness(val) {
+        var map = { ready: 'Ready', limited: 'Limited', not_ready: 'Not Ready' };
+        return map[(val || 'ready').toLowerCase()] || val;
+    }
+
+    function _capitalise(s) {
+        return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '';
+    }
+
+    // ── Main populate ─────────────────────────────────────────────────
+    function populatePanel(unit) {
+        if (!unit) { _showEmpty(); return; }
+        currentUnit = unit;
+        var enriched = enrichUnitForDisplay(unit);
+        var eventLog = getEventLog();
+        _showBody();
+        populateHero(unit, enriched);
+        populateIdentity(unit, enriched);
+        populateCoreStats(unit, enriched, eventLog);
+        populateSystems(unit, enriched, eventLog);
+        populateMagazines(enriched);
+        populateFuelAmmo(unit, enriched);
+        populateAssignment(unit);
+        populateSensors(enriched, getCapabilitySourceLabel(unit, enriched, 'sensors'));
+        populateWeapons(enriched, getCapabilitySourceLabel(unit, enriched, 'weapons'));
+        populateSpeed(unit);
+        populateFuelSection(unit, enriched);
+        populateEMCON(enriched);
+        populateDeltas(unit, eventLog);
+        setupSectionToggles();
+    }
+
+    // ── Hero ──────────────────────────────────────────────────────────
+    function populateHero(unit, enriched) {
+        setText('unit-label', unit.label || '—');
+        var badge = $('usp-status-badge');
+        if (badge) {
+            var txt = unit.veteran ? 'VETERAN'
+                : unit.elite   ? 'ELITE'
+                : unit.status  ? String(unit.status).toUpperCase().slice(0, 12)
+                : '';
+            badge.textContent = txt;
+            badge.style.display = txt ? 'inline-block' : 'none';
+        }
+        _renderSymbol(unit, $('unit-symbol'));
+    }
+
+    function _renderSymbol(unit, container) {
+        if (!container) return;
+        container.innerHTML = '';
+        if (root.ms && typeof root.ms.Symbol === 'function' && unit.sidc) {
+            try {
+                var sym = new root.ms.Symbol(unit.sidc, { size: 42 });
+                var canvas = sym.getCanvas();
+                if (canvas) { container.appendChild(canvas); return; }
+            } catch (_) {}
+        }
+        var initial = (unit.label || '?').charAt(0).toUpperCase();
+        var domColors = { air: '#1a4a8a', sea: '#1a5a5a', ground: '#3a4a20', strategic: '#4a3a10' };
+        var fill = domColors[unit.domain] || '#1a2535';
+        container.innerHTML =
+            '<svg viewBox="0 0 120 80" width="120" height="80" xmlns="http://www.w3.org/2000/svg">'
+          + '<rect x="0" y="0" width="120" height="80" fill="#080c14"/>'
+          + '<rect x="1" y="1" width="118" height="78" fill="none" stroke="#1a2a3a" stroke-width="1"/>'
+          + '<rect x="45" y="15" width="30" height="30" fill="' + fill + '" stroke="#2a3a4a" stroke-width="1"/>'
+          + '<text x="60" y="35" font-size="14" font-weight="bold" text-anchor="middle" fill="#8aaac0"'
+          + ' font-family="Consolas,monospace">' + initial + '</text>'
+          + '<text x="60" y="60" font-size="8" text-anchor="middle" fill="#3a5060"'
+          + ' font-family="Consolas,monospace">' + (unit.domain || '').toUpperCase() + '</text>'
+          + '</svg>';
+    }
+
+    // ── Identity ──────────────────────────────────────────────────────
+    function populateIdentity(unit, enriched) {
+        var platformLabel = getPlatformLabel(enriched);
+        var pidEl = $('usp-platform-id');
+        if (pidEl) {
+            var parts = [unit.uid, unit.echelon].filter(Boolean).join(' · ');
+            pidEl.textContent = parts || unit.uid || '—';
+        }
+        var ptEl = $('usp-platform-type');
+        if (ptEl) {
+            var domain = unit.domain ? unit.domain.toUpperCase() : '';
+            var role   = unit.role   ? unit.role.replace(/_/g, ' ') : '';
+            ptEl.textContent = platformLabel
+                ? (domain ? domain + ' – ' : '') + platformLabel
+                : [domain, role].filter(Boolean).join(' – ') || '—';
+        }
+        setText('unit-uid', unit.uid || '—');
+    }
+
+    // ── Core stats ────────────────────────────────────────────────────
+    function populateCoreStats(unit, enriched, eventLog) {
+        setText('unit-side', unit.side || '—');
+        setText('usp-course', unit.course != null ? unit.course + '°' : '—');
+        setText('usp-speed',
+            (unit.speed != null ? unit.speed + ' kts' : '—')
+            + (unit.throttle ? ' (' + _capitalise(unit.throttle) + ')' : ''));
+
+        var appliedState = getAppliedState(unit, eventLog);
+        var baselineRead = unit.readiness || 'ready';
+        var appliedRead  = appliedState.readiness;
+        var hasReadDelta = baselineRead !== appliedRead;
+
+        var chip = $('readiness-value');
+        if (chip) {
+            chip.textContent = _formatReadiness(appliedRead);
+            chip.className   = 'usp-readiness-chip ' + appliedRead;
+        }
+        setText('readiness-source',
+            hasReadDelta ? 'Applied (was: ' + _formatReadiness(baselineRead) + ')' : 'Baseline');
+        setText('readiness-data-source', hasReadDelta ? '' : getDataSource(unit, 'readiness'));
+
+        var fillEl = $('usp-readiness-fill');
+        if (fillEl) {
+            var pctMap = { ready: 100, limited: 50, not_ready: 10 };
+            var pct = pctMap[appliedRead] != null ? pctMap[appliedRead] : 0;
+            fillEl.style.width = pct + '%';
+            fillEl.className = 'usp-bar-fill usp-readiness-fill ' + appliedRead;
+        }
+    }
+
+    // ── Systems / supply ──────────────────────────────────────────────
+    function populateSystems(unit, enriched, eventLog) {
+        var appliedState   = getAppliedState(unit, eventLog);
+        var baselineSupply = unit.supply != null ? unit.supply : 0.8;
+        var appliedSupply  = appliedState.supply;
+        var hasSupplyDelta = Math.abs(baselineSupply - appliedSupply) > 0.01;
+        var pct = Math.round(appliedSupply * 100);
+
+        var fillEl = $('supply-fill');
+        if (fillEl) {
+            fillEl.style.width = pct + '%';
+            fillEl.textContent = '';
+            fillEl.classList.remove('supply-amber', 'supply-red');
+            if (pct < 40)      fillEl.classList.add('supply-red');
+            else if (pct < 70) fillEl.classList.add('supply-amber');
+        }
+        setText('supply-pct', pct + '%');
+        setText('supply-source',
+            hasSupplyDelta ? 'Applied (was: ' + Math.round(baselineSupply * 100) + '%)' : 'Baseline');
+        setText('supply-data-source', hasSupplyDelta ? '' : getDataSource(unit, 'supply'));
+    }
+
+    // ── Magazines ─────────────────────────────────────────────────────
+    function populateMagazines(enriched) {
+        var magazines = enriched.magazines || [];
+        var list  = $('magazine-list');
+        var block = $('usp-magazines-block');
+        if (!list) return;
+        list.innerHTML = '';
+        if (!magazines.length) { if (block) block.style.display = 'none'; return; }
+        if (block) block.style.display = '';
+        magazines.forEach(function(mag) {
+            var li = document.createElement('li');
+            var stockStr = formatMagStock(mag.stock);
+            var mount = mag.mount || 'Magazine';
+            li.innerHTML = '<strong>' + mount + '</strong>'
+                + (stockStr ? ' <span style="color:#3a6080;font-size:0.65rem">' + stockStr + '</span>' : '');
+            list.appendChild(li);
+        });
+    }
+
+    // ── Fuel and Ammo ─────────────────────────────────────────────────
+    function populateFuelAmmo(unit, enriched) {
+        var supplyPct = Math.round((unit.supply != null ? unit.supply : 0.8) * 100);
+        var nameEl = $('usp-fuelammo-name');
+        if (nameEl) nameEl.textContent = unit.label || '—';
+        var fuelFill = $('usp-fuel-fill');
+        if (fuelFill) fuelFill.style.width = supplyPct + '%';
+        var detail = $('usp-fuelammo-detail');
+        if (detail) {
+            var tags = enriched.doctrine_tags ? enriched.doctrine_tags.slice(0, 3).join(', ') : '';
+            detail.textContent = tags ? '(' + tags + ')' : '';
+        }
+    }
+
+    // ── Assignment ────────────────────────────────────────────────────
+    function populateAssignment(unit) {
+        setText('unit-domain',       unit.domain   || '—');
+        setText('unit-role',         unit.role     ? unit.role.replace(/_/g, ' ') : '—');
+        setText('unit-echelon',      unit.echelon  || '—');
+        setText('usp-assigned-base', unit.assigned_base || unit.base || 'None');
+        setText('usp-unit-status',   unit.status   || unit.posture || '—');
+        var mission = unit.mission || unit.objective || '—';
+        var mEl = $('usp-mission');
+        if (mEl) {
+            mEl.textContent = mission;
+            mEl.className = 'usp-arow-val' + (mission !== '—' ? ' usp-link' : '');
+        }
+    }
+
+    // ── Sensors tab ───────────────────────────────────────────────────
+    function populateSensors(unit, sourceLabel) {
+        var sensors    = unit.sensors || [];
+        var list       = $('sensor-list');
+        var emptyState = $('sensors-empty');
+        var countEl    = $('sensor-count');
+        if (countEl) countEl.textContent = sensors.length ? '[' + sensors.length + ']' : '';
+        if (!list) return;
+        list.innerHTML = '';
+        if (!sensors.length) {
+            if (emptyState) emptyState.removeAttribute('hidden');
+            return;
+        }
+        if (emptyState) emptyState.setAttribute('hidden', '');
+        sensors.forEach(function(sensor) {
+            var li = document.createElement('li');
+            var emconPart = sensor.emcon ? ' · emcon: ' + sensor.emcon : '';
+            var detailParts = sensor.label
+                ? [sensor.class].filter(Boolean)
+                : [sensor.type, sensor.class].filter(Boolean);
+            var detail = detailParts.join(' · ') + emconPart;
+            li.innerHTML = '<strong>' + (sensor.label || sensor.id || '—') + '</strong>'
+                + (detail ? '<br><span>' + detail + '</span>' : '');
+            list.appendChild(li);
+        });
+        if (sourceLabel) {
+            var src = document.createElement('li');
+            src.className = 'capability-source';
+            src.textContent = 'Source: ' + sourceLabel;
+            list.appendChild(src);
+        }
+    }
+
+    // ── Weapons tab ───────────────────────────────────────────────────
+    function populateWeapons(unit, sourceLabel) {
+        var weapons    = unit.weapons || [];
+        var list       = $('weapon-list');
+        var emptyState = $('weapons-empty');
+        var countEl    = $('weapon-count');
+        if (countEl) countEl.textContent = weapons.length ? '[' + weapons.length + ']' : '';
+        if (!list) return;
+        list.innerHTML = '';
+        if (!weapons.length) {
+            if (emptyState) emptyState.removeAttribute('hidden');
+            return;
+        }
+        if (emptyState) emptyState.setAttribute('hidden', '');
+        weapons.forEach(function(weapon) {
+            var li = document.createElement('li');
+            var mountPart = weapon.mount ? ' · ' + weapon.mount : '';
+            li.innerHTML = '<strong>' + (weapon.label || weapon.id || '—') + '</strong>'
+                + (weapon.class ? '<br><span>' + weapon.class + mountPart + '</span>' : '');
+            list.appendChild(li);
+        });
+        if (sourceLabel) {
+            var src = document.createElement('li');
+            src.className = 'capability-source';
+            src.textContent = 'Source: ' + sourceLabel;
+            list.appendChild(src);
+        }
+    }
+
+    // ── Speed / Throttle ─────────────────────────────────────────────
+    function populateSpeed(unit) {
+        var alt = unit.altitude != null
+            ? unit.altitude + (unit.altitude_unit || ' ft')
+            : (unit.domain === 'air' ? 'Airborne' : '—');
+        setText('usp-altitude', alt);
+        setText('usp-speed-val', unit.speed != null ? unit.speed + ' kts' : '—');
+        var throttleState = (unit.throttle || '').toLowerCase();
+        var btns = document.querySelectorAll('#usp-throttle-btns .usp-throttle-btn');
+        btns.forEach(function(btn) {
+            var t = btn.getAttribute('data-throttle');
+            btn.classList.toggle('usp-throttle-btn--active',
+                throttleState ? t === throttleState : t === 'cruise');
+        });
+    }
+
+    // ── Fuel section ─────────────────────────────────────────────────
+    function populateFuelSection(unit, enriched) {
+        var nameEl = $('usp-fuel-unit-name');
+        if (nameEl) nameEl.textContent = unit.label || '—';
+        var fuelPct = unit.fuel != null
+            ? Math.round(Math.min(1, Math.max(0, unit.fuel)) * 100)
+            : Math.round((unit.supply != null ? unit.supply : 0.8) * 100);
+        var fuelBar = $('usp-fuel-bar');
+        if (fuelBar) fuelBar.style.width = fuelPct + '%';
+        var fuelTextEl = $('usp-fuel-text');
+        if (fuelTextEl) {
+            var remaining = unit.fuel_remaining
+                ? unit.fuel_remaining + ' fuel units remaining'
+                : fuelPct + '% fuel remaining';
+            var fuelType = unit.fuel_type || (unit.domain === 'air' ? 'AvGas' : 'DieselFuel');
+            fuelTextEl.innerHTML = remaining
+                + '<br><span style="color:#253848">' + fuelType + '</span>';
+        }
+    }
+
+    // ── EMCON ─────────────────────────────────────────────────────────
+    function populateEMCON(enriched) {
+        var stateEl = $('usp-emcon-state');
+        if (!stateEl) return;
+        var sensors = enriched.sensors || [];
+        var active  = sensors.filter(function(s) {
+            return s.emcon === 'active' || s.emcon === 'always';
+        });
+        stateEl.textContent = !sensors.length ? '' :
+            active.length === sensors.length
+                ? 'All sensors ACTIVE (' + sensors.length + ')'
+                : active.length + ' / ' + sensors.length + ' sensors active';
+    }
+
+    // ── State deltas ──────────────────────────────────────────────────
+    function populateDeltas(unit, eventLog) {
+        var deltas  = extractDeltasForUnit(eventLog, unit.uid);
+        var section = $('deltas-section');
+        var list    = $('delta-list');
+        var empty   = $('deltas-empty');
+        var countEl = $('delta-count');
+        var recent  = deltas.slice(-5).reverse();
+        if (!recent.length) { if (section) section.setAttribute('hidden', ''); return; }
+        if (section) section.removeAttribute('hidden');
+        if (countEl) countEl.textContent = '[' + recent.length + ']';
+        if (!list) return;
+        list.innerHTML = '';
+        recent.forEach(function(delta) {
+            var li = document.createElement('li');
+            var before = delta.value_before !== undefined ? String(delta.value_before) : '?';
+            var after  = delta.value_after  !== undefined ? String(delta.value_after)  : '?';
+            var ts     = delta.timestamp || delta.time || '';
+            li.innerHTML = '<strong>' + (delta.delta_type || '?') + ':</strong> '
+                + before + ' → ' + after
+                + (ts ? '<span class="delta-timestamp">' + ts + '</span>' : '');
+            list.appendChild(li);
+        });
+        if (empty) empty.setAttribute('hidden', '');
+    }
+
+    // ── Tabs ──────────────────────────────────────────────────────────
+    function setupTabs() {
+        var panel = $('unit-status-panel');
+        if (!panel) return;
+        panel.querySelectorAll('.usp-tab').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
                 e.preventDefault();
-                const controls = btn.getAttribute('aria-controls');
-                const list = document.getElementById(controls);
-
-                if (!list) return;
-
-                const isExpanded = btn.getAttribute('aria-expanded') === 'true';
-                btn.setAttribute('aria-expanded', !isExpanded);
-                list.setAttribute('data-collapsed', isExpanded);
+                var tabId = btn.getAttribute('data-tab');
+                if (!tabId) return;
+                panel.querySelectorAll('.usp-tab').forEach(function(b) {
+                    b.classList.remove('usp-tab--active');
+                });
+                panel.querySelectorAll('.usp-tab-pane').forEach(function(p) {
+                    p.classList.remove('usp-tab-pane--active');
+                });
+                btn.classList.add('usp-tab--active');
+                var pane = document.getElementById(tabId);
+                if (pane) pane.classList.add('usp-tab-pane--active');
             });
         });
     }
 
-    /**
-     * Get data source label for a readiness/supply field.
-     * Priority: Scenario Baseline → DB-Lite named platform → DB-Lite generic role.
-     * Returns a human-readable string for display in the panel source row.
-     *
-     * @param {object} unit - Raw scenario unit (not enriched; authored values only)
-     * @param {string} field - 'readiness' | 'supply'
-     * @returns {string}
-     */
-    function getDataSource(unit, field) {
-        if (!unit) return '';
-
-        // 1. Scenario baseline: field was explicitly authored in the scenario
-        if (unit[field] !== undefined && unit[field] !== null) {
-            return 'Scenario Baseline';
-        }
-
-        // 2. DB-Lite catalog — named platform or generic role class (DB1, single source)
-        if (root.AppWorldStateDB) {
-            try {
-                const cap = root.AppWorldStateDB.capabilityFor(unit);
-                if (cap && cap[field] !== undefined) {
-                    if (cap.label) return 'DB-Lite — ' + cap.label;
-                    const kind = root.AppWorldStateDB.classifyKind(unit);
-                    return 'DB-Lite — ' + kind + ' (default)';
-                }
-            } catch (_) { /* fall through */ }
-        }
-
-        return 'DB-Lite Default';
-    }
-
-    // ── UI-Unit-1-C: DB1 enrichment helpers (read-only) ────────────
-
-    /**
-     * Enrich a unit's sensors/weapons/magazines from DB1 catalog.
-     * Returns a new object — NEVER mutates the input unit.
-     * Falls back to a shallow clone if AppWorldStateDB is unavailable.
-     *
-     * @param {object} unit - Raw scenario unit
-     * @returns {object} Enriched copy (sensors/weapons/magazines filled from catalog)
-     */
-    function enrichUnitForDisplay(unit) {
-        if (!unit) return unit;
-        if (root.AppWorldStateDB && typeof root.AppWorldStateDB.enrichUnit === 'function') {
-            try { return root.AppWorldStateDB.enrichUnit(unit); } catch (_) { /* fall through */ }
-        }
-        return Object.assign({}, unit);
-    }
-
-    /**
-     * Get the DB1 catalog label for this unit (named platform only).
-     * Returns null for generic role classes.
-     *
-     * @param {object} enrichedUnit - DB1-enriched unit (has .kind set)
-     * @returns {string|null}
-     */
-    function getPlatformLabel(enrichedUnit) {
-        if (!root.AppWorldStateDB || !enrichedUnit) return null;
-        try {
-            const cap = root.AppWorldStateDB.capabilityFor(enrichedUnit);
-            return (cap && cap.label) ? cap.label : null;
-        } catch (_) { return null; }
-    }
-
-    /**
-     * Get display-ready source label for a capability section (sensors/weapons).
-     * Returns null when the section has no data at all.
-     *
-     * @param {object} rawUnit - Original scenario unit (before enrichment)
-     * @param {object} enrichedUnit - DB1-enriched unit
-     * @param {string} field - 'sensors' | 'weapons'
-     * @returns {string|null}
-     */
-    function getCapabilitySourceLabel(rawUnit, enrichedUnit, field) {
-        const rawArr = rawUnit && rawUnit[field];
-        if (Array.isArray(rawArr) && rawArr.length) return 'Scenario Baseline';
-        const enrichedArr = enrichedUnit && enrichedUnit[field];
-        if (!Array.isArray(enrichedArr) || !enrichedArr.length) return null;
-        if (root.AppWorldStateDB) {
-            try {
-                const cap = root.AppWorldStateDB.capabilityFor(enrichedUnit);
-                if (cap && cap.label) return 'DB-Lite — ' + cap.label;
-                const kind = (enrichedUnit.kind) || root.AppWorldStateDB.classifyKind(enrichedUnit);
-                return 'DB-Lite — ' + kind + ' (default)';
-            } catch (_) { /* fall through */ }
-        }
-        return 'DB-Lite';
-    }
-
-    /**
-     * Format a magazine stock value for display.
-     * DB1 format: { weapon_class: count }  |  legacy: number
-     *
-     * @param {number|object|null} stock
-     * @returns {string}
-     */
-    function formatMagStock(stock) {
-        if (stock == null) return '';
-        if (typeof stock === 'number') return String(Math.round(stock));
-        if (typeof stock === 'object') {
-            return Object.entries(stock)
-                .map(function (kv) { return kv[0].replace(/_/g, ' ') + ': ' + kv[1]; })
-                .join(', ');
-        }
-        return String(stock);
-    }
-
-    /**
-     * Setup event listeners
-     */
-    function setupListeners() {
-        // Close button
-        const closeBtn = $('panel-close');
-        if (closeBtn) closeBtn.addEventListener('click', closePanel);
-
-        // Unit selected event
-        document.addEventListener('rmooz:unit-selected', (e) => {
-            const unit = e.detail && e.detail.unit;
-            if (isOperationalScenarioSelection(unit)) {
-                closePanel();
-                return;
-            }
-            if (unit) {
-                populatePanel(unit);
-                openPanel();
-                setupSectionToggles();
-            }
+    // ── Collapsible toggles ───────────────────────────────────────────
+    function setupSectionToggles() {
+        document.querySelectorAll('.usp-collapse-btn').forEach(function(btn) {
+            var fresh = btn.cloneNode(true);
+            if (btn.parentNode) btn.parentNode.replaceChild(fresh, btn);
+            fresh.addEventListener('click', function(e) {
+                e.preventDefault();
+                var cid = fresh.getAttribute('aria-controls');
+                var target = cid ? document.getElementById(cid) : null;
+                if (!target) return;
+                var expanded = fresh.getAttribute('aria-expanded') === 'true';
+                fresh.setAttribute('aria-expanded', !expanded);
+                target.setAttribute('data-collapsed', expanded ? 'true' : 'false');
+            });
         });
     }
 
-    /**
-     * Initialize on DOM ready
-     */
+    // ── Event listeners ───────────────────────────────────────────────
+    function setupListeners() {
+        var closeBtn = $('panel-close');
+        if (closeBtn) closeBtn.addEventListener('click', closePanel);
+        document.addEventListener('rmooz:unit-selected', function(e) {
+            var unit = e.detail && e.detail.unit;
+            if (isOperationalScenarioSelection(unit)) { closePanel(); return; }
+            if (unit) { populatePanel(unit); openPanel(); }
+        });
+    }
+
+    // ── Init ──────────────────────────────────────────────────────────
     function init() {
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', setupListeners);
+            document.addEventListener('DOMContentLoaded', function() {
+                setupListeners(); setupTabs();
+            });
         } else {
-            setupListeners();
+            setupListeners(); setupTabs();
         }
     }
 
-    /**
-     * Public API
-     */
-    const api = {
-        openPanel,
-        closePanel,
-        populatePanel,
+    root.AppUnitStatusPanel = {
+        openPanel: openPanel,
+        closePanel: closePanel,
+        populatePanel: populatePanel
     };
-
-    root.AppUnitStatusPanel = api;
-
-    // Auto-initialize
     init();
+
 })(window);

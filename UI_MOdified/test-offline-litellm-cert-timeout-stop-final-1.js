@@ -59,12 +59,13 @@ console.log('\n═══ OFFLINE-LITELLM-CERT-TIMEOUT-STOP-FINAL-1 ═══\n')
 // ──────────────────────────────────────────────────────────────────────────────
 console.log('A) .env.offline.example — CA cert + timeout vars');
 const envEx = read(path.join(OFF, '.env.offline.example'));
-// Cert path is /app/certs/tawasol-ca.crt (directory mount — robust vs the old
-// single-file mount that auto-created a phantom dir when the cert was absent).
-check('A1  RMOOZ_AI_CA_CERT_PATH documented',   envEx.includes('RMOOZ_AI_CA_CERT_PATH=/app/certs/tawasol-ca.crt'));
-check('A2  SSL_CERT_FILE documented',            envEx.includes('SSL_CERT_FILE=/app/certs/tawasol-ca.crt'));
-check('A3  REQUESTS_CA_BUNDLE documented',       envEx.includes('REQUESTS_CA_BUNDLE=/app/certs/tawasol-ca.crt'));
-check('A4  NODE_EXTRA_CA_CERTS documented',      envEx.includes('NODE_EXTRA_CA_CERTS=/app/certs/tawasol-ca.crt'));
+// Each CA var must be documented pointing at a /app/certs/ path (directory mount —
+// robust vs the old single-file mount). The cert FILENAME is site-specific
+// (e.g. ._mil_dir.crt), so assert the var + mount prefix, not a hardcoded name.
+check('A1  RMOOZ_AI_CA_CERT_PATH documented',   /RMOOZ_AI_CA_CERT_PATH=\/app\/certs\/\S+/.test(envEx));
+check('A2  SSL_CERT_FILE documented',            /SSL_CERT_FILE=\/app\/certs\/\S+/.test(envEx));
+check('A3  REQUESTS_CA_BUNDLE documented',       /REQUESTS_CA_BUNDLE=\/app\/certs\/\S+/.test(envEx));
+check('A4  NODE_EXTRA_CA_CERTS documented',      /NODE_EXTRA_CA_CERTS=\/app\/certs\/\S+/.test(envEx));
 check('A5  RMOOZ_AI_TIMEOUT_MS documented',      envEx.includes('RMOOZ_AI_TIMEOUT_MS=300000'));
 check('A6  RMOOZ_AI_TLS_VERIFY=0 is commented',  envEx.includes('RMOOZ_AI_TLS_VERIFY=0') && !envEx.match(/^RMOOZ_AI_TLS_VERIFY=0/m), 'insecure var must be commented out in example');
 check('A7  LiteLLM example URL present',         envEx.includes('litellm.tawasol.mil.ae'));

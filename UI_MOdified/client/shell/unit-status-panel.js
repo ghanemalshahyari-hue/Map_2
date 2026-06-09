@@ -200,7 +200,11 @@
         if (fillElem) {
             const pct = Math.round(appliedSupply * 100);
             fillElem.style.width = pct + '%';
-            fillElem.textContent = pct + '%';
+            fillElem.textContent = '';  // text shown in #supply-pct, not inside bar
+            // CMO colour coding: green ≥70 / amber 40-69 / red <40
+            fillElem.classList.remove('supply-amber', 'supply-red');
+            if (pct < 40)      fillElem.classList.add('supply-red');
+            else if (pct < 70) fillElem.classList.add('supply-amber');
         }
 
         setText('supply-pct', Math.round(appliedSupply * 100) + '%');

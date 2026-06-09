@@ -4061,7 +4061,7 @@
                     <button id="panel-close"
                             class="panel-close-btn"
                             aria-label="Close panel"
-                            data-i18n="cup-close">✕</button>
+                            data-i18n="cup-close">✕ CLOSE</button>
                 </header>
 
                 <div class="panel-body">
@@ -4114,7 +4114,7 @@
                             <button class="section-toggle"
                                     aria-expanded="true"
                                     aria-controls="sensor-list"
-                                    data-i18n="section-toggle">▼</button>
+                                    data-i18n="section-toggle">«</button>
                         </div>
                         <ul class="sensor-list" id="sensor-list" data-collapsed="false"></ul>
                         <div class="section-empty-state" id="sensors-empty" hidden>
@@ -4131,7 +4131,7 @@
                             <button class="section-toggle"
                                     aria-expanded="true"
                                     aria-controls="weapon-list"
-                                    data-i18n="section-toggle">▼</button>
+                                    data-i18n="section-toggle">«</button>
                         </div>
                         <ul class="weapon-list" id="weapon-list" data-collapsed="false"></ul>
 
@@ -4152,7 +4152,7 @@
                             <button class="section-toggle"
                                     aria-expanded="true"
                                     aria-controls="delta-list"
-                                    data-i18n="section-toggle">▼</button>
+                                    data-i18n="section-toggle">«</button>
                         </div>
                         <ul class="delta-list" id="delta-list" data-collapsed="false"></ul>
                         <div class="section-empty-state" id="deltas-empty" hidden>
@@ -5934,6 +5934,362 @@
             object-fit: contain;
             display: block;
         }
+
+        /* ════════════════════════════════════════════════════════════════
+           Commander Unit Status Panel — CMO Dark Military Style Override
+           UI-Unit-1-C · 2026-06-09
+           All rules here intentionally override the light-theme defaults
+           above. Same specificity — last-declared wins.
+           ════════════════════════════════════════════════════════════════ */
+
+        /* ── Panel container ─────────────────────────────────────────── */
+        .unit-status-panel {
+            width: 320px;
+            background: #0f1117;
+            border-left: 2px solid #1e2a3a;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.85);
+            font-family: 'Consolas','Courier New',monospace;
+            font-size: 0.8rem;
+            color: #c8ccd4;
+        }
+
+        /* ── Header bar ──────────────────────────────────────────────── */
+        .unit-status-panel .panel-header {
+            padding: 0 0.5rem;
+            height: 26px;
+            background: #141820;
+            border-bottom: 1px solid #2a2e3a;
+            gap: 0.5rem;
+        }
+        .unit-status-panel .panel-header h2 {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #e8eaf0;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .unit-status-panel .panel-close-btn {
+            background: none;
+            border: 1px solid #2e3240;
+            font-size: 0.7rem;
+            color: #505868;
+            padding: 1px 6px;
+            letter-spacing: 0.05em;
+            font-family: 'Consolas','Courier New',monospace;
+            border-radius: 0;
+            transition: background 0.15s, color 0.15s;
+        }
+        .unit-status-panel .panel-close-btn:hover {
+            background: #1e2230;
+            color: #c8ccd4;
+            border-color: #4a5060;
+        }
+
+        /* ── Identity section ────────────────────────────────────────── */
+        .unit-status-panel .identity-section {
+            background: #0f1117;
+            border-bottom: 2px solid #1e3a5f;
+            gap: 0;
+            padding: 0;
+        }
+        .unit-status-panel .unit-symbol-preview {
+            width: 100%;
+            height: 52px;
+            background: #141820;
+            border: none;
+            border-bottom: 1px solid #1e2230;
+            border-radius: 0;
+            margin: 0;
+        }
+        .unit-status-panel .unit-identity-info {
+            padding: 0.35rem 0.6rem 0.25rem;
+        }
+        .unit-status-panel .unit-name {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.15rem;
+            font-family: 'Consolas','Courier New',monospace;
+            letter-spacing: 0.02em;
+        }
+        .unit-status-panel .unit-uid {
+            font-size: 0.68rem;
+            color: #44505e;
+            font-family: 'Consolas','Courier New',monospace;
+            margin-bottom: 0.25rem;
+        }
+        .unit-status-panel .unit-classification {
+            gap: 0.25rem;
+            font-size: 0.68rem;
+            margin-bottom: 0.15rem;
+        }
+        .unit-status-panel .unit-side,
+        .unit-status-panel .unit-domain,
+        .unit-status-panel .unit-role {
+            padding: 1px 4px;
+            background: #141820;
+            border: 1px solid #252d3a;
+            border-radius: 0;
+            color: #6a7888;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-size: 0.65rem;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .unit-status-panel .unit-echelon {
+            font-size: 0.68rem;
+            color: #44505e;
+            text-transform: uppercase;
+            font-family: 'Consolas','Courier New',monospace;
+            margin-top: 0.15rem;
+        }
+
+        /* ── Generic section wrappers ────────────────────────────────── */
+        .unit-status-panel .panel-section {
+            padding: 0;
+            border-bottom: 1px solid #191e2a;
+        }
+        .unit-status-panel .readiness-supply-section,
+        .unit-status-panel .sensors-section,
+        .unit-status-panel .weapons-section,
+        .unit-status-panel .deltas-section {
+            padding: 0;
+            border-bottom: 1px solid #191e2a;
+        }
+
+        /* Section title bars (h3 without collapse button) */
+        .unit-status-panel .section-title {
+            margin: 0;
+            padding: 3px 6px;
+            font-size: 0.68rem;
+            font-weight: bold;
+            color: #4dd0e1;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            background: #141820;
+            border-bottom: 1px solid #1e2230;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .unit-status-panel .subsection-title {
+            margin: 0;
+            padding: 2px 6px 2px 12px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            color: #2e6a78;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: #0d1018;
+            border-bottom: 1px solid #181c26;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+
+        /* Section header row with collapse toggle */
+        .unit-status-panel .section-header {
+            background: #141820;
+            border-bottom: 1px solid #1e2230;
+            margin-bottom: 0;
+            gap: 0;
+        }
+        .unit-status-panel .section-toggle {
+            border: none;
+            border-left: 1px solid #1e2230;
+            border-radius: 0;
+            font-size: 0.7rem;
+            color: #3a4456;
+            padding: 3px 7px;
+            font-family: 'Consolas','Courier New',monospace;
+            transition: color 0.15s, background 0.15s;
+        }
+        .unit-status-panel .section-toggle:hover {
+            background: #1a1f2e;
+            color: #4dd0e1;
+        }
+        .unit-status-panel .section-toggle[aria-expanded="false"] {
+            transform: none;
+            color: #2a3040;
+        }
+        .unit-status-panel .count-badge {
+            background: #1a2235;
+            border: 1px solid #263040;
+            border-radius: 0;
+            color: #4dd0e1;
+            font-size: 0.62rem;
+            padding: 0 3px;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+
+        /* ── Readiness & Supply rows ─────────────────────────────────── */
+        .unit-status-panel .readiness-row,
+        .unit-status-panel .supply-row {
+            padding: 4px 6px;
+            border-bottom: 1px solid #141820;
+            display: grid;
+            grid-template-columns: 68px 1fr;
+            gap: 0 4px;
+            align-items: start;
+        }
+        .unit-status-panel .readiness-row label,
+        .unit-status-panel .supply-row label {
+            font-size: 0.68rem;
+            color: #5a6474;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-family: 'Consolas','Courier New',monospace;
+            padding-top: 2px;
+        }
+        .unit-status-panel .readiness-value {
+            padding: 1px 5px;
+            border-radius: 0;
+            font-size: 0.72rem;
+            font-family: 'Consolas','Courier New',monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0;
+        }
+        .unit-status-panel .readiness-value.ready {
+            background: #071d07;
+            color: #00e676;
+            border: 1px solid #0e380e;
+        }
+        .unit-status-panel .readiness-value.limited {
+            background: #1e1200;
+            color: #ffab00;
+            border: 1px solid #3a2200;
+        }
+        .unit-status-panel .readiness-value.not_ready {
+            background: #1e0707;
+            color: #ff5252;
+            border: 1px solid #3a0e0e;
+        }
+        .unit-status-panel .readiness-source,
+        .unit-status-panel .supply-source {
+            font-size: 0.65rem;
+            color: #354050;
+            font-family: 'Consolas','Courier New',monospace;
+            grid-column: 2;
+        }
+        .unit-status-panel .readiness-data-source,
+        .unit-status-panel .supply-data-source {
+            font-size: 0.62rem;
+            color: #2a3240;
+            font-family: 'Consolas','Courier New',monospace;
+            font-style: normal;
+            grid-column: 1 / -1;
+            margin-top: 0;
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        /* Supply bar */
+        .unit-status-panel .supply-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .unit-status-panel .supply-bar {
+            flex: 1;
+            height: 7px;
+            background: #141820;
+            border: 1px solid #2a2e3a;
+            border-radius: 0;
+            overflow: hidden;
+        }
+        .unit-status-panel .supply-fill {
+            height: 100%;
+            background: #00c853;
+            transition: width 0.3s ease;   /* colour snaps instantly — military readiness indicators should not fade */
+            padding-right: 0;
+            color: transparent;
+            font-size: 0;
+            box-shadow: 0 0 5px rgba(0,200,83,0.25);
+        }
+        .unit-status-panel .supply-fill.supply-amber { background: #ffab00; box-shadow: 0 0 5px rgba(255,171,0,0.2); }
+        .unit-status-panel .supply-fill.supply-red   { background: #ff5252; box-shadow: 0 0 5px rgba(255,82,82,0.2); }
+        .unit-status-panel .supply-percentage {
+            font-size: 0.7rem;
+            color: #6a7888;
+            font-family: 'Consolas','Courier New',monospace;
+            min-width: 30px;
+            text-align: right;
+            font-weight: normal;
+            margin-top: 0;
+        }
+
+        /* ── Sensor / Weapon / Magazine / Delta lists ─────────────────── */
+        .unit-status-panel .sensor-list li,
+        .unit-status-panel .weapon-list li,
+        .unit-status-panel .magazine-list li,
+        .unit-status-panel .delta-list li {
+            padding: 3px 6px 3px 8px;
+            background: #0f1117;
+            border: none;
+            border-bottom: 1px solid #141820;
+            border-left: 2px solid #1e3d5a;
+            border-radius: 0;
+            font-size: 0.74rem;
+            color: #b8c0cc;
+            font-family: 'Consolas','Courier New',monospace;
+            margin-bottom: 0;
+        }
+        .unit-status-panel .weapon-list li {
+            border-left-color: #3d2e14;
+        }
+        .unit-status-panel .magazine-list li {
+            border-left-color: #2a1e36;
+            background: #0d1018;
+            padding-left: 14px;
+        }
+        .unit-status-panel .delta-list li {
+            border-left-color: #3d2000;
+        }
+        .unit-status-panel .delta-list li .delta-timestamp {
+            font-size: 0.62rem;
+            color: #384050;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+
+        /* Source footnote rows */
+        .unit-status-panel .sensor-list li:last-child:not(:first-child),
+        .unit-status-panel .weapon-list li:last-child:not(:first-child) {
+            /* Let JS .capability-source class handle these */
+        }
+        .unit-status-panel .capability-source {
+            border-left-color: transparent !important;
+            background: #0c0f14 !important;
+            color: #2e3a48 !important;
+            font-size: 0.62rem !important;
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+            border-top: 1px solid #141820 !important;
+            font-style: italic;
+        }
+
+        /* ── Empty states ──────────────────────────────────────────── */
+        .unit-status-panel .empty-state {
+            padding: 2rem 1rem;
+            color: #2e3a48;
+            font-family: 'Consolas','Courier New',monospace;
+            font-size: 0.72rem;
+        }
+        .unit-status-panel .section-empty-state {
+            padding: 3px 6px 4px 8px;
+            color: #2e3a48;
+            font-size: 0.68rem;
+            font-style: italic;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .unit-status-panel .section-empty-state p { margin: 0; }
+
+        /* ── Scrollbar ─────────────────────────────────────────────── */
+        .unit-status-panel::-webkit-scrollbar { width: 4px; }
+        .unit-status-panel::-webkit-scrollbar-track { background: #090c12; }
+        .unit-status-panel::-webkit-scrollbar-thumb { background: #1e2a3a; }
+        .unit-status-panel::-webkit-scrollbar-thumb:hover { background: #2e3a4a; }
+
+        /* ── Responsive ────────────────────────────────────────────── */
+        @media (max-width: 1200px) { .unit-status-panel { width: 295px; } }
+        @media (max-width: 768px)  { .unit-status-panel { width: 100%; } }
     </style>
     <script>
         // Mount Edit Mode once the DOM (workspace panel) is ready.

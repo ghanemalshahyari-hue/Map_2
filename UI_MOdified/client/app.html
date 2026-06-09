@@ -4055,116 +4055,253 @@
             </aside>
 
             <!-- UI-Unit-1-A: COMMANDER UNIT STATUS PANEL — Right-slide read-only panel -->
+            <!-- ═══════════════════════════════════════════════════════
+                 COMMANDER UNIT STATUS PANEL  (UI-Unit-1-C)
+                 Read-only tactical status display.
+                 Data: RmoozScenario → AppAppliedState → AppWorldStateDB (DB1)
+                 ═══════════════════════════════════════════════════════ -->
             <aside id="unit-status-panel" class="unit-status-panel" hidden>
-                <header class="panel-header">
-                    <h2 id="panel-title" data-i18n="cup-panel-title">Unit Status</h2>
-                    <button id="panel-close"
-                            class="panel-close-btn"
-                            aria-label="Close panel"
-                            data-i18n="cup-close">✕ CLOSE</button>
+
+                <!-- ── Header bar ───────────────────────────────────────── -->
+                <header class="usp-header">
+                    <span class="usp-header-title">UNIT STATUS</span>
+                    <button id="panel-close" class="usp-close-btn" aria-label="Close panel">✕</button>
                 </header>
 
-                <div class="panel-body">
-
-                    <!-- Section 1: Unit Identity -->
-                    <section class="panel-section identity-section">
-                        <div class="unit-symbol-preview" id="unit-symbol"></div>
-                        <div class="unit-identity-info">
-                            <div class="unit-name" id="unit-label"></div>
-                            <div class="unit-uid" id="unit-uid"></div>
-                            <div class="unit-classification">
-                                <span class="unit-side" id="unit-side"></span>
-                                <span class="unit-domain" id="unit-domain"></span>
-                                <span class="unit-role" id="unit-role"></span>
-                            </div>
-                            <div class="unit-echelon" id="unit-echelon" hidden></div>
-                        </div>
-                    </section>
-
-                    <!-- Section 2: Readiness & Supply -->
-                    <section class="panel-section readiness-supply-section">
-                        <h3 class="section-title" data-i18n="cup-readiness-supply">Readiness & Supply</h3>
-
-                        <div class="readiness-row">
-                            <label data-i18n="cup-readiness">Readiness</label>
-                            <div class="readiness-value" id="readiness-value"></div>
-                            <div class="readiness-source" id="readiness-source"></div>
-                            <div class="readiness-data-source" id="readiness-data-source"></div>
-                        </div>
-
-                        <div class="supply-row">
-                            <label data-i18n="cup-supply">Supply</label>
-                            <div class="supply-bar-container">
-                                <div class="supply-bar">
-                                    <div class="supply-fill" id="supply-fill"></div>
-                                </div>
-                                <div class="supply-percentage" id="supply-pct"></div>
-                            </div>
-                            <div class="supply-source" id="supply-source"></div>
-                            <div class="supply-data-source" id="supply-data-source"></div>
-                        </div>
-                    </section>
-
-                    <!-- Section 3: Sensors -->
-                    <section class="panel-section sensors-section" id="sensors-section" hidden>
-                        <div class="section-header">
-                            <h3 class="section-title" data-i18n="cup-sensors">
-                                Sensors <span class="count-badge" id="sensor-count"></span>
-                            </h3>
-                            <button class="section-toggle"
-                                    aria-expanded="true"
-                                    aria-controls="sensor-list"
-                                    data-i18n="section-toggle">«</button>
-                        </div>
-                        <ul class="sensor-list" id="sensor-list" data-collapsed="false"></ul>
-                        <div class="section-empty-state" id="sensors-empty" hidden>
-                            <p data-i18n="cup-sensors-empty">No sensors on this unit</p>
-                        </div>
-                    </section>
-
-                    <!-- Section 4: Weapons & Magazines -->
-                    <section class="panel-section weapons-section" id="weapons-section" hidden>
-                        <div class="section-header">
-                            <h3 class="section-title" data-i18n="cup-weapons">
-                                Weapons <span class="count-badge" id="weapon-count"></span>
-                            </h3>
-                            <button class="section-toggle"
-                                    aria-expanded="true"
-                                    aria-controls="weapon-list"
-                                    data-i18n="section-toggle">«</button>
-                        </div>
-                        <ul class="weapon-list" id="weapon-list" data-collapsed="false"></ul>
-
-                        <h4 class="subsection-title" data-i18n="cup-magazines"
-                            id="magazines-title" hidden>Magazines</h4>
-                        <ul class="magazine-list" id="magazine-list" data-collapsed="false"></ul>
-                        <div class="section-empty-state" id="weapons-empty" hidden>
-                            <p data-i18n="cup-weapons-empty">No weapons configured</p>
-                        </div>
-                    </section>
-
-                    <!-- Section 5: Recent State Deltas -->
-                    <section class="panel-section deltas-section" id="deltas-section" hidden>
-                        <div class="section-header">
-                            <h3 class="section-title" data-i18n="cup-recent-changes">
-                                Recent Changes <span class="count-badge" id="delta-count"></span>
-                            </h3>
-                            <button class="section-toggle"
-                                    aria-expanded="true"
-                                    aria-controls="delta-list"
-                                    data-i18n="section-toggle">«</button>
-                        </div>
-                        <ul class="delta-list" id="delta-list" data-collapsed="false"></ul>
-                        <div class="section-empty-state" id="deltas-empty" hidden>
-                            <p data-i18n="cup-deltas-empty">No recent state changes</p>
-                        </div>
-                    </section>
-
-                    <!-- Empty state -->
-                    <div id="empty-state" class="empty-state" hidden>
-                        <p data-i18n="cup-no-unit">No unit selected. Click a unit on the map.</p>
-                    </div>
+                <!-- ── Empty state (no unit selected) ──────────────────── -->
+                <div id="empty-state" class="usp-empty">
+                    <div class="usp-empty-icon">◈</div>
+                    <p>No unit selected.<br>Click a unit on the map.</p>
                 </div>
+
+                <!-- ── Populated body ───────────────────────────────────── -->
+                <div class="usp-body" id="usp-body" hidden>
+
+                    <!-- HERO: unit name + status badge + symbol area -->
+                    <div class="usp-hero">
+                        <div class="usp-hero-top">
+                            <div class="usp-unit-name" id="unit-label">—</div>
+                            <span class="usp-status-badge" id="usp-status-badge"></span>
+                        </div>
+                        <div class="usp-hero-symbol" id="unit-symbol"></div>
+                    </div>
+
+                    <!-- IDENTITY: platform designation + type + UID -->
+                    <div class="usp-identity-block">
+                        <div class="usp-platform-id" id="usp-platform-id"></div>
+                        <div class="usp-platform-type" id="usp-platform-type"></div>
+                        <div class="usp-uid" id="unit-uid"></div>
+                    </div>
+
+                    <!-- CORE STATS: Side | Course | Speed -->
+                    <div class="usp-stats-row">
+                        <div class="usp-stat">
+                            <div class="usp-stat-lbl">Side</div>
+                            <div class="usp-stat-val" id="unit-side">—</div>
+                        </div>
+                        <div class="usp-stat">
+                            <div class="usp-stat-lbl">Course</div>
+                            <div class="usp-stat-val" id="usp-course">—</div>
+                        </div>
+                        <div class="usp-stat">
+                            <div class="usp-stat-lbl">Speed</div>
+                            <div class="usp-stat-val" id="usp-speed">—</div>
+                        </div>
+                    </div>
+
+                    <!-- READINESS row -->
+                    <div class="usp-readiness-block">
+                        <div class="usp-readiness-top">
+                            <span class="usp-field-lbl">Readiness</span>
+                            <span class="usp-readiness-chip" id="readiness-value"></span>
+                            <span class="usp-delta-src" id="readiness-source"></span>
+                        </div>
+                        <div class="usp-bar-track">
+                            <div class="usp-bar-fill usp-readiness-fill" id="usp-readiness-fill"></div>
+                        </div>
+                        <div class="usp-data-src" id="readiness-data-source"></div>
+                    </div>
+
+                    <!-- DAMAGE / SYSTEMS -->
+                    <div class="usp-systems-block">
+                        <div class="usp-mini-hdr">
+                            <span class="usp-mini-label">SYSTEMS</span>
+                            <span class="usp-ctrl-tag">Damage Ctrl</span>
+                        </div>
+                        <div class="usp-bar-track usp-bar-track--tall">
+                            <div class="usp-bar-fill supply-fill" id="supply-fill"></div>
+                        </div>
+                        <div class="usp-systems-foot">
+                            <span class="usp-field-lbl">Supply</span>
+                            <span class="usp-stat-val usp-supply-pct" id="supply-pct"></span>
+                            <span class="usp-delta-src" id="supply-source"></span>
+                        </div>
+                        <div class="usp-data-src" id="supply-data-source"></div>
+                    </div>
+
+                    <!-- MAGAZINES -->
+                    <div class="usp-magazines-block" id="usp-magazines-block">
+                        <div class="usp-mini-hdr">
+                            <span class="usp-mini-label">MAGAZINES</span>
+                            <span class="usp-ctrl-tag">View Magazines</span>
+                        </div>
+                        <!-- magazines-title: kept for JS compat, hidden by default -->
+                        <h4 id="magazines-title" hidden style="display:none"></h4>
+                        <ul class="usp-mag-list" id="magazine-list"></ul>
+                    </div>
+
+                    <!-- FUEL AND AMMO -->
+                    <div class="usp-fuelammo-block" id="usp-fuelammo-block">
+                        <div class="usp-mini-hdr">
+                            <span class="usp-mini-label">FUEL AND AMMO</span>
+                        </div>
+                        <div class="usp-fuelammo-name" id="usp-fuelammo-name">—</div>
+                        <div class="usp-bar-track usp-bar-track--tall">
+                            <div class="usp-bar-fill usp-fuel-fill" id="usp-fuel-fill"></div>
+                        </div>
+                        <div class="usp-fuelammo-detail" id="usp-fuelammo-detail"></div>
+                    </div>
+
+                    <!-- ASSIGNMENT: domain / role / echelon / base / status / mission -->
+                    <div class="usp-assignment-block">
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl">Domain</span>
+                            <span class="usp-arow-val" id="unit-domain">—</span>
+                        </div>
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl">Role</span>
+                            <span class="usp-arow-val" id="unit-role">—</span>
+                        </div>
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl">Echelon</span>
+                            <span class="usp-arow-val" id="unit-echelon">—</span>
+                        </div>
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl">Assigned Base</span>
+                            <span class="usp-arow-val" id="usp-assigned-base">None</span>
+                        </div>
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl">Status</span>
+                            <span class="usp-arow-val" id="usp-unit-status">—</span>
+                        </div>
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl">Mission</span>
+                            <span class="usp-arow-val usp-link" id="usp-mission">—</span>
+                        </div>
+                    </div>
+
+                    <!-- SENSOR / COMMS / WEAPONS TABS -->
+                    <div class="usp-tabs-block">
+                        <div class="usp-tabs-nav">
+                            <button class="usp-tab usp-tab--active" data-tab="tab-sensors">
+                                Sensors <span class="usp-tab-count" id="sensor-count"></span>
+                            </button>
+                            <button class="usp-tab" data-tab="tab-comms">Comms</button>
+                            <button class="usp-tab" data-tab="tab-weapons">
+                                Weapons <span class="usp-tab-count" id="weapon-count"></span>
+                            </button>
+                        </div>
+
+                        <div class="usp-tab-pane usp-tab-pane--active" id="tab-sensors">
+                            <div id="sensors-section">
+                                <ul class="usp-item-list" id="sensor-list"></ul>
+                                <div class="usp-tab-empty" id="sensors-empty" hidden>No sensors configured</div>
+                            </div>
+                        </div>
+
+                        <div class="usp-tab-pane" id="tab-comms">
+                            <div class="usp-tab-empty">No comms data available</div>
+                        </div>
+
+                        <div class="usp-tab-pane" id="tab-weapons">
+                            <div id="weapons-section">
+                                <ul class="usp-item-list" id="weapon-list"></ul>
+                                <div class="usp-tab-empty" id="weapons-empty" hidden>No weapons configured</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ALT / SPEED + THROTTLE -->
+                    <div class="usp-speed-block">
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">UNIT ALT / SPEED</span>
+                            <button class="usp-collapse-btn section-toggle"
+                                    aria-expanded="true"
+                                    aria-controls="usp-speed-body">«</button>
+                        </div>
+                        <div id="usp-speed-body" class="usp-section-body" data-collapsed="false">
+                            <div class="usp-speed-grid">
+                                <div class="usp-arow">
+                                    <span class="usp-arow-lbl">Altitude</span>
+                                    <span class="usp-arow-val" id="usp-altitude">—</span>
+                                </div>
+                                <div class="usp-arow">
+                                    <span class="usp-arow-lbl">Speed</span>
+                                    <span class="usp-arow-val" id="usp-speed-val">—</span>
+                                </div>
+                            </div>
+                            <div class="usp-throttle-wrap">
+                                <div class="usp-throttle-lbl">Throttle</div>
+                                <div class="usp-throttle-btns" id="usp-throttle-btns">
+                                    <span class="usp-throttle-btn" data-throttle="stop">Stop</span>
+                                    <span class="usp-throttle-btn" data-throttle="creep">Creep</span>
+                                    <span class="usp-throttle-btn" data-throttle="cruise">Cruise</span>
+                                    <span class="usp-throttle-btn" data-throttle="full">Full</span>
+                                    <span class="usp-throttle-btn" data-throttle="flank">Flank</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UNIT FUEL (detailed) -->
+                    <div class="usp-fuel-block">
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">UNIT FUEL</span>
+                            <button class="usp-collapse-btn section-toggle"
+                                    aria-expanded="true"
+                                    aria-controls="usp-fuel-body">«</button>
+                        </div>
+                        <div id="usp-fuel-body" class="usp-section-body" data-collapsed="false">
+                            <div class="usp-fuel-unit-name" id="usp-fuel-unit-name"></div>
+                            <div class="usp-bar-track usp-bar-track--tall">
+                                <div class="usp-bar-fill usp-fuel-fill2" id="usp-fuel-bar"></div>
+                            </div>
+                            <div class="usp-fuel-text" id="usp-fuel-text"></div>
+                        </div>
+                    </div>
+
+                    <!-- EMCON -->
+                    <div class="usp-emcon-block">
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">UNIT EMCON</span>
+                            <button class="usp-collapse-btn section-toggle"
+                                    aria-expanded="true"
+                                    aria-controls="usp-emcon-body">«</button>
+                        </div>
+                        <div id="usp-emcon-body" class="usp-section-body" data-collapsed="false">
+                            <div class="usp-emcon-btn">
+                                EMCON Window <span class="usp-keybind">(Ctrl + F9)</span>
+                            </div>
+                            <div class="usp-emcon-state" id="usp-emcon-state"></div>
+                        </div>
+                    </div>
+
+                    <!-- RECENT STATE DELTAS -->
+                    <div class="usp-deltas-block" id="deltas-section" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">RECENT CHANGES
+                                <span class="usp-count-badge" id="delta-count"></span>
+                            </span>
+                            <button class="usp-collapse-btn section-toggle"
+                                    aria-expanded="true"
+                                    aria-controls="delta-list">«</button>
+                        </div>
+                        <ul class="usp-item-list usp-delta-list" id="delta-list" data-collapsed="false"></ul>
+                        <div class="usp-tab-empty" id="deltas-empty" hidden>No recent state changes</div>
+                    </div>
+
+                </div><!-- /.usp-body -->
+
             </aside>
 
             <!-- OBJ-C: OBJECTIVE EVIDENCE PANEL — Read-only display of objective_evidence ledger -->
@@ -5532,30 +5669,39 @@
         .sw-meta-hint--required { font-size: 10px; color: #d6332e; font-weight: 600; }
         .sw-meta-hint--err { font-size: 10px; color: #d6332e; display: none; padding: 2px 0 6px 8px; font-style: italic; }
         .sw-field-display { padding: 3px 6px; background: #1f242b; border: 1px solid #3a3f47; border-radius: 4px; color: #8d949e; font-size: 12px; }
-        /* ── UI-Unit-1-A: Commander Unit Status Panel ──────────────────── */
+        /* ═══════════════════════════════════════════════════════════════════
+           COMMANDER UNIT STATUS PANEL — Military Tactical Style (UI-Unit-1-C)
+           Design: dark charcoal base · steel-blue accents · green for ready
+           ═══════════════════════════════════════════════════════════════════ */
+
+        /* ── Container ───────────────────────────────────────────────────── */
         .unit-status-panel {
             position: fixed;
             right: 0;
             top: 0;
             height: 100vh;
-            width: 420px;
-            background: #f9f9f9;
-            border-left: 1px solid #d0d0d0;
-            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+            width: 340px;
+            background: #0b0e15;
+            border-left: 2px solid #1a2535;
+            box-shadow: -6px 0 24px rgba(0,0,0,0.75);
             z-index: 900;
             overflow-y: auto;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            animation: slideInRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            animation: uspSlideIn 0.22s ease-out;
+            font-family: 'Consolas','Courier New',monospace;
+            font-size: 0.8rem;
+            color: #c5d2de;
             box-sizing: border-box;
         }
+        .unit-status-panel[hidden] { display: none !important; }
 
-        .unit-status-panel[hidden] {
-            display: none !important;
+        @keyframes uspSlideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to   { transform: translateX(0);    opacity: 1; }
         }
-
+        /* ── legacy (unused) keep for keyframe compat ── */
         @keyframes slideInRight {
             from {
                 transform: translateX(100%);
@@ -6288,7 +6434,398 @@
         .unit-status-panel::-webkit-scrollbar-thumb:hover { background: #2e3a4a; }
 
         /* ── Responsive ────────────────────────────────────────────── */
-        @media (max-width: 1200px) { .unit-status-panel { width: 295px; } }
+        @media (max-width: 1200px) { .unit-status-panel { width: 310px; } }
+        @media (max-width: 768px)  { .unit-status-panel { width: 100%; } }
+
+        /* ═══════════════════════════════════════════════════════════════
+           USP — Commander Unit Status Panel · Military Tactical Design
+           All classes prefixed usp- to avoid conflicts with legacy CSS.
+           ═══════════════════════════════════════════════════════════════ */
+
+        /* ── Header bar ───────────────────────────────────────────────── */
+        .usp-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 0.6rem;
+            height: 26px; flex-shrink: 0;
+            background: linear-gradient(90deg, #0a1018 0%, #0c1520 100%);
+            border-bottom: 1px solid #1a2535;
+        }
+        .usp-header-title {
+            font-size: 0.68rem; font-weight: bold; letter-spacing: 0.16em;
+            text-transform: uppercase; color: #d0dce8;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .usp-close-btn {
+            appearance: none; background: none; cursor: pointer;
+            border: 1px solid #243545; padding: 1px 6px;
+            font-size: 0.68rem; color: #445566;
+            font-family: 'Consolas','Courier New',monospace;
+            letter-spacing: 0.04em; transition: all 0.15s;
+        }
+        .usp-close-btn:hover { background: #151e2a; color: #8aaabb; border-color: #3a5060; }
+
+        /* ── Empty state ──────────────────────────────────────────────── */
+        .usp-empty {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: #2e4050; font-size: 0.75rem; text-align: center; padding: 2rem;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .usp-empty-icon { font-size: 2rem; margin-bottom: 0.75rem; color: #1a2535; }
+        .usp-empty p { margin: 0; line-height: 1.7; }
+
+        /* ── Body wrapper ─────────────────────────────────────────────── */
+        .usp-body { display: flex; flex-direction: column; flex: 1; overflow-x: hidden; }
+        .usp-body[hidden] { display: none !important; }
+
+        /* ── Hero section ─────────────────────────────────────────────── */
+        .usp-hero {
+            background: linear-gradient(180deg, #0c1420 0%, #0b0e15 100%);
+            border-bottom: 1px solid #1a2535;
+        }
+        .usp-hero-top {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            padding: 0.55rem 0.7rem 0.3rem;
+        }
+        .usp-unit-name {
+            font-size: 0.95rem; font-weight: bold; color: #ffffff;
+            font-family: 'Consolas','Courier New',monospace;
+            letter-spacing: 0.02em; line-height: 1.2; word-break: break-word;
+        }
+        .usp-status-badge {
+            display: inline-block; padding: 1px 6px;
+            background: #0e2030; border: 1px solid #2a4560;
+            color: #6aaan4; font-size: 0.62rem; letter-spacing: 0.08em;
+            text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+            font-family: 'Consolas','Courier New',monospace; color: #5a8aaa;
+        }
+        .usp-hero-symbol {
+            width: 100%; height: 120px;
+            background: linear-gradient(180deg, #0a1420 0%, #06090f 100%);
+            border-top: 1px solid #141e2e; border-bottom: 1px solid #0a1018;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; position: relative;
+        }
+        .usp-hero-symbol::before {
+            content: ''; position: absolute; inset: 0;
+            background: repeating-linear-gradient(
+                90deg, transparent 0, transparent 39px,
+                rgba(26,37,53,0.25) 39px, rgba(26,37,53,0.25) 40px
+            ), repeating-linear-gradient(
+                0deg, transparent 0, transparent 29px,
+                rgba(26,37,53,0.25) 29px, rgba(26,37,53,0.25) 30px
+            );
+        }
+        .usp-hero-symbol canvas,
+        .usp-hero-symbol svg { position: relative; z-index: 1; }
+        .usp-hero-symbol .symbol-placeholder { width: 60px; height: 60px; }
+
+        /* ── Identity block ───────────────────────────────────────────── */
+        .usp-identity-block {
+            padding: 0.35rem 0.7rem 0.4rem;
+            background: #0d1420;
+            border-bottom: 1px solid #1a2535;
+        }
+        .usp-platform-id {
+            font-size: 0.78rem; color: #4a90c0;
+            font-family: 'Consolas','Courier New',monospace;
+            margin-bottom: 0.1rem; cursor: default;
+        }
+        .usp-platform-type {
+            font-size: 0.72rem; color: #6a8090;
+            font-family: 'Consolas','Courier New',monospace; margin-bottom: 0.15rem;
+        }
+        .usp-uid {
+            font-size: 0.65rem; color: #354555;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+
+        /* ── Core stats row ───────────────────────────────────────────── */
+        .usp-stats-row {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            border-bottom: 1px solid #141e2a;
+        }
+        .usp-stat {
+            padding: 0.35rem 0.6rem;
+            border-right: 1px solid #141e2a;
+        }
+        .usp-stat:last-child { border-right: none; }
+        .usp-stat-lbl {
+            display: block; font-size: 0.62rem; color: #3a5060;
+            text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 2px;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .usp-stat-val {
+            display: block; font-size: 0.75rem; color: #b0c8d8;
+            font-family: 'Consolas','Courier New',monospace; font-weight: bold;
+        }
+
+        /* ── Readiness block ──────────────────────────────────────────── */
+        .usp-readiness-block {
+            padding: 0.4rem 0.7rem;
+            background: #0d1320;
+            border-bottom: 1px solid #141e2a;
+        }
+        .usp-readiness-top {
+            display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;
+        }
+        .usp-field-lbl {
+            font-size: 0.62rem; color: #3a5060; text-transform: uppercase;
+            letter-spacing: 0.07em; font-family: 'Consolas','Courier New',monospace;
+        }
+        .usp-readiness-chip {
+            display: inline-block; padding: 1px 6px;
+            font-size: 0.68rem; font-weight: bold;
+            font-family: 'Consolas','Courier New',monospace;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .usp-readiness-chip.ready    { background: #071a10; color: #00d476; border: 1px solid #0e2e1a; }
+        .usp-readiness-chip.limited  { background: #1e1500; color: #e09000; border: 1px solid #3a2800; }
+        .usp-readiness-chip.not_ready{ background: #1e0808; color: #e05050; border: 1px solid #3a1010; }
+        .usp-delta-src { font-size: 0.65rem; color: #304050; font-family: 'Consolas','Courier New',monospace; }
+        .usp-data-src  { font-size: 0.62rem; color: #283848; font-family: 'Consolas','Courier New',monospace; padding-top: 1px; }
+
+        /* Shared bar track/fill */
+        .usp-bar-track {
+            height: 8px; background: #0c1520; border: 1px solid #1a2535; overflow: hidden;
+        }
+        .usp-bar-track--tall { height: 12px; }
+        .usp-bar-fill { height: 100%; transition: width 0.3s ease; }
+        .usp-readiness-fill       { background: #1a7a48; }
+        .usp-readiness-fill.ready { background: #1e9958; box-shadow: 0 0 6px rgba(30,153,88,0.25); }
+        .usp-readiness-fill.limited   { background: #8a6010; }
+        .usp-readiness-fill.not_ready { background: #882020; }
+
+        /* ── Damage / Systems block ───────────────────────────────────── */
+        .usp-systems-block {
+            padding: 0.35rem 0.7rem 0.4rem;
+            border-bottom: 1px solid #141e2a;
+        }
+        .usp-mini-hdr {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 0.3rem;
+        }
+        .usp-mini-label {
+            font-size: 0.62rem; color: #3a6a88; text-transform: uppercase;
+            letter-spacing: 0.1em; font-family: 'Consolas','Courier New',monospace; font-weight: bold;
+        }
+        .usp-ctrl-tag {
+            font-size: 0.6rem; color: #3a5868; font-family: 'Consolas','Courier New',monospace;
+            border: 1px solid #1e3040; padding: 1px 5px; background: #0c1520;
+            cursor: default; user-select: none;
+        }
+        .supply-fill, .usp-supply-fill-el {
+            background: #1a6a3a;
+            box-shadow: 0 0 5px rgba(26,106,58,0.3);
+        }
+        .supply-fill.supply-amber { background: #8a5a10; box-shadow: 0 0 5px rgba(138,90,16,0.2); }
+        .supply-fill.supply-red   { background: #882020; box-shadow: 0 0 5px rgba(136,32,32,0.2); }
+        .usp-systems-foot {
+            display: flex; align-items: center; gap: 0.5rem; margin-top: 0.3rem;
+        }
+        .usp-supply-pct { font-size: 0.72rem; color: #7a9aaa; font-weight: bold; }
+
+        /* ── Magazines block ──────────────────────────────────────────── */
+        .usp-magazines-block {
+            padding: 0.35rem 0.7rem 0.4rem;
+            border-bottom: 1px solid #141e2a;
+            background: #0b0f18;
+        }
+        .usp-mag-list { list-style: none; margin: 0; padding: 0; }
+        .usp-mag-list li {
+            padding: 2px 0 2px 8px; border-left: 2px solid #2a3545;
+            font-size: 0.72rem; color: #8aaan8; font-family: 'Consolas','Courier New',monospace;
+            margin-bottom: 2px; color: #8098a8;
+        }
+        .usp-mag-list li strong { color: #9ab0c0; }
+
+        /* ── Fuel and Ammo block ──────────────────────────────────────── */
+        .usp-fuelammo-block {
+            padding: 0.35rem 0.7rem 0.4rem;
+            border-bottom: 1px solid #141e2a;
+            background: #0b0f18;
+        }
+        .usp-fuelammo-name {
+            font-size: 0.7rem; color: #4a90c0;
+            font-family: 'Consolas','Courier New',monospace; margin-bottom: 0.3rem;
+        }
+        .usp-fuel-fill { background: #1a6a3a; }
+        .usp-fuelammo-detail {
+            font-size: 0.68rem; color: #4a6070;
+            font-family: 'Consolas','Courier New',monospace; margin-top: 0.25rem; line-height: 1.5;
+        }
+
+        /* ── Assignment rows ──────────────────────────────────────────── */
+        .usp-assignment-block {
+            border-bottom: 1px solid #141e2a;
+        }
+        .usp-arow {
+            display: flex; padding: 3px 0.7rem;
+            border-bottom: 1px solid #0d1420;
+        }
+        .usp-arow:last-child { border-bottom: none; }
+        .usp-arow-lbl {
+            font-size: 0.65rem; color: #374e60; text-transform: uppercase;
+            letter-spacing: 0.05em; min-width: 90px; flex-shrink: 0;
+            font-family: 'Consolas','Courier New',monospace; padding-top: 1px;
+        }
+        .usp-arow-val {
+            font-size: 0.72rem; color: #90aac0;
+            font-family: 'Consolas','Courier New',monospace; word-break: break-word;
+        }
+        .usp-link { color: #4a90c0; cursor: default; }
+
+        /* ── Sensor / Comms / Weapons tabs ────────────────────────────── */
+        .usp-tabs-block { border-bottom: 1px solid #141e2a; }
+        .usp-tabs-nav {
+            display: flex; border-bottom: 1px solid #141e2a;
+            background: #0a1018;
+        }
+        .usp-tab {
+            flex: 1; appearance: none; background: none; border: none;
+            border-right: 1px solid #141e2a; padding: 5px 0;
+            font-size: 0.65rem; color: #3a5060; cursor: pointer;
+            font-family: 'Consolas','Courier New',monospace;
+            text-transform: uppercase; letter-spacing: 0.07em;
+            transition: background 0.15s, color 0.15s;
+        }
+        .usp-tab:last-child { border-right: none; }
+        .usp-tab:hover { background: #0d1a26; color: #6a8aa0; }
+        .usp-tab--active {
+            background: #0e1e30; color: #5aaad0;
+            border-bottom: 2px solid #3a7aaa;
+        }
+        .usp-tab-count {
+            font-size: 0.6rem; color: #2a4a60;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .usp-tab--active .usp-tab-count { color: #3a6a90; }
+
+        .usp-tab-pane { display: none; }
+        .usp-tab-pane--active { display: block; }
+        .usp-tab-empty {
+            padding: 6px 0.7rem; font-size: 0.68rem;
+            color: #2e4050; font-style: italic;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+
+        /* ── Item lists (sensors, weapons, deltas) ─────────────────────── */
+        .usp-item-list { list-style: none; margin: 0; padding: 0; }
+        .usp-item-list li {
+            padding: 3px 6px 3px 8px;
+            background: #0b0e15; border-bottom: 1px solid #10161e;
+            border-left: 2px solid #1e3a56;
+            font-size: 0.72rem; color: #90a8bc;
+            font-family: 'Consolas','Courier New',monospace; word-break: break-word;
+        }
+        #weapon-list li { border-left-color: #2e2010; }
+        .usp-delta-list li { border-left-color: #2e1800; }
+        .usp-item-list li strong { color: #a8c0d0; }
+        .usp-item-list li span[style*="color:#888"] { color: #425870 !important; }
+        .usp-item-list li .delta-timestamp { display: block; font-size: 0.62rem; color: #2e4050; }
+
+        /* Source footnote rows in item lists */
+        .capability-source {
+            border-left-color: transparent !important;
+            background: #080b10 !important; color: #253545 !important;
+            font-size: 0.62rem !important; border-top: 1px solid #10161e !important;
+            font-style: italic;
+        }
+
+        /* ── Collapsible section headers (speed/fuel/EMCON/deltas) ─────── */
+        .usp-speed-block, .usp-fuel-block, .usp-emcon-block, .usp-deltas-block {
+            border-bottom: 1px solid #141e2a;
+        }
+        .usp-section-hdr {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 3px 0.5rem 3px 0.7rem;
+            background: linear-gradient(90deg, #0a1220 0%, #0c1520 100%);
+            border-bottom: 1px solid #141e2a;
+        }
+        .usp-section-label {
+            font-size: 0.65rem; font-weight: bold; color: #4a7a9a;
+            text-transform: uppercase; letter-spacing: 0.12em;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .usp-count-badge {
+            font-size: 0.6rem; color: #2a4a60; margin-left: 4px;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .usp-collapse-btn {
+            appearance: none; background: none; border: none; cursor: pointer;
+            font-size: 0.7rem; color: #304050; padding: 0 4px;
+            font-family: 'Consolas','Courier New',monospace;
+            transition: color 0.15s;
+        }
+        .usp-collapse-btn:hover { color: #5a8aaa; }
+
+        .usp-section-body { overflow: hidden; }
+        .usp-section-body[data-collapsed="true"] { display: none; }
+
+        /* ── Speed / Throttle ─────────────────────────────────────────── */
+        .usp-speed-grid { padding: 0.2rem 0; }
+        .usp-speed-grid .usp-arow { padding-top: 2px; padding-bottom: 2px; }
+        .usp-throttle-wrap {
+            padding: 0.3rem 0.7rem 0.4rem;
+            border-top: 1px solid #141e2a;
+        }
+        .usp-throttle-lbl {
+            font-size: 0.6rem; color: #304050; text-transform: uppercase;
+            letter-spacing: 0.07em; margin-bottom: 0.3rem;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .usp-throttle-btns { display: flex; gap: 3px; }
+        .usp-throttle-btn {
+            flex: 1; display: block; text-align: center;
+            padding: 3px 2px; font-size: 0.63rem;
+            background: #0c1520; border: 1px solid #1a2535; color: #304858;
+            font-family: 'Consolas','Courier New',monospace;
+            cursor: default; user-select: none; pointer-events: none;
+        }
+        .usp-throttle-btn--active {
+            background: #0e2a3a; border-color: #2a5a78;
+            color: #5aaad0; box-shadow: inset 0 1px 0 rgba(90,170,208,0.15);
+        }
+
+        /* ── Fuel section ─────────────────────────────────────────────── */
+        .usp-fuel-unit-name {
+            padding: 0.25rem 0.7rem 0.2rem;
+            font-size: 0.7rem; color: #4a90c0;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        .usp-fuel-fill2 { background: #1a5e35; }
+        .usp-fuel-text {
+            padding: 0.2rem 0.7rem 0.35rem;
+            font-size: 0.68rem; color: #3a5868;
+            font-family: 'Consolas','Courier New',monospace; line-height: 1.5;
+        }
+        .usp-bar-track { margin: 0 0.7rem; }
+
+        /* ── EMCON section ────────────────────────────────────────────── */
+        .usp-emcon-block .usp-section-body { padding: 0.3rem 0.7rem; }
+        .usp-emcon-btn {
+            display: block; width: 100%; text-align: center;
+            padding: 4px 8px; font-size: 0.68rem;
+            background: linear-gradient(180deg, #0e1a28 0%, #0a1220 100%);
+            border: 1px solid #1e3a50; color: #4a7a9a;
+            font-family: 'Consolas','Courier New',monospace;
+            cursor: default; user-select: none;
+        }
+        .usp-emcon-btn:hover { border-color: #2a4a64; color: #5a8aaa; }
+        .usp-keybind { color: #2e4858; }
+        .usp-emcon-state {
+            margin-top: 0.25rem; font-size: 0.65rem;
+            color: #2e4050; font-family: 'Consolas','Courier New',monospace;
+        }
+
+        /* ── Scrollbar ────────────────────────────────────────────────── */
+        .unit-status-panel::-webkit-scrollbar { width: 4px; }
+        .unit-status-panel::-webkit-scrollbar-track { background: #060910; }
+        .unit-status-panel::-webkit-scrollbar-thumb { background: #1a2535; }
+        .unit-status-panel::-webkit-scrollbar-thumb:hover { background: #2a3848; }
+
+        /* ── Responsive ───────────────────────────────────────────────── */
+        @media (max-width: 1200px) { .unit-status-panel { width: 310px; } }
         @media (max-width: 768px)  { .unit-status-panel { width: 100%; } }
     </style>
     <script>

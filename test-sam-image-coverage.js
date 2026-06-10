@@ -202,6 +202,83 @@ ok('SAM-23: authored unit.image_url wins over DB1 image_asset',
     })());
 
 // ═══════════════════════════════════════════════════════════════════════════
+// SAM-24..32: image_match / image_note provenance metadata (metadata correction)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// SAM-24: patriot is 'representative' (actual Patriot system depicted)
+ok('SAM-24: patriot image_match is "representative"',
+    DB.CAPABILITY_CATALOG.patriot.image_match === 'representative',
+    DB.CAPABILITY_CATALOG.patriot.image_match);
+
+// SAM-25: air_defense is 'generic'
+ok('SAM-25: air_defense image_match is "generic"',
+    DB.CAPABILITY_CATALOG.air_defense.image_match === 'generic',
+    DB.CAPABILITY_CATALOG.air_defense.image_match);
+
+// SAM-26: sam_s300 is explicitly 'generic' (not exact S-300 photo)
+ok('SAM-26: sam_s300 image_match is "generic"',
+    DB.CAPABILITY_CATALOG.sam_s300.image_match === 'generic',
+    DB.CAPABILITY_CATALOG.sam_s300.image_match);
+
+// SAM-27: sam_s75 is explicitly 'generic' (not exact S-75 photo)
+ok('SAM-27: sam_s75 image_match is "generic"',
+    DB.CAPABILITY_CATALOG.sam_s75.image_match === 'generic',
+    DB.CAPABILITY_CATALOG.sam_s75.image_match);
+
+// SAM-28: image_note exists and is non-empty for all four entries
+['air_defense','patriot','sam_s300','sam_s75'].forEach(function(k, i) {
+    var entry = DB.CAPABILITY_CATALOG[k];
+    ok('SAM-28-' + k + ': image_note is a non-empty string',
+        typeof entry.image_note === 'string' && entry.image_note.length > 0,
+        entry && entry.image_note);
+});
+
+// SAM-29: sam_s300 image_note explicitly says NOT an S-300 photo
+ok('SAM-29a: sam_s300 image_note states it is NOT an S-300 photo',
+    DB.CAPABILITY_CATALOG.sam_s300.image_note.includes('NOT') &&
+    DB.CAPABILITY_CATALOG.sam_s300.image_note.includes('S-300'));
+
+ok('SAM-29b: sam_s75 image_note states it is NOT an S-75 photo',
+    DB.CAPABILITY_CATALOG.sam_s75.image_note.includes('NOT') &&
+    DB.CAPABILITY_CATALOG.sam_s75.image_note.includes('S-75'));
+
+// SAM-30: enrichUnit propagates image_match and image_note
+var enrichedAD = DB.enrichUnit({ uid:'TEST', role:'air_defense' });
+ok('SAM-30a: enrichUnit propagates image_match for air_defense',
+    enrichedAD.image_match === 'generic', enrichedAD.image_match);
+ok('SAM-30b: enrichUnit propagates image_note for air_defense',
+    typeof enrichedAD.image_note === 'string' && enrichedAD.image_note.length > 0);
+
+var enrichedPat = DB.enrichUnit({ uid:'TEST2', platform_id:'patriot' });
+ok('SAM-30c: enrichUnit propagates image_match for patriot',
+    enrichedPat.image_match === 'representative', enrichedPat.image_match);
+
+var enrichedS300 = DB.enrichUnit({ uid:'TEST3', role:'s-300 battalion' });
+ok('SAM-30d: enrichUnit propagates image_match for sam_s300',
+    enrichedS300.image_match === 'generic', enrichedS300.image_match);
+
+// SAM-31: authored image_match not overwritten
+var authoredMatch = DB.enrichUnit({ uid:'U4', role:'air_defense', image_match:'exact' });
+ok('SAM-31: authored unit.image_match not overwritten by DB1',
+    authoredMatch.image_match === 'exact', authoredMatch.image_match);
+
+// SAM-32: manifest platform_match entries exist for all four SAM kinds
+var manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'UI_MOdified/client/assets/units/manifest.json'), 'utf8'));
+var samManifest = manifest.images && manifest.images[SAM_IMG];
+ok('SAM-32a: manifest.platform_match.patriot.image_match is representative',
+    samManifest && samManifest.platform_match && samManifest.platform_match.patriot &&
+    samManifest.platform_match.patriot.image_match === 'representative');
+ok('SAM-32b: manifest.platform_match.air_defense.image_match is generic',
+    samManifest && samManifest.platform_match && samManifest.platform_match.air_defense &&
+    samManifest.platform_match.air_defense.image_match === 'generic');
+ok('SAM-32c: manifest.platform_match.sam_s300.image_match is generic',
+    samManifest && samManifest.platform_match && samManifest.platform_match.sam_s300 &&
+    samManifest.platform_match.sam_s300.image_match === 'generic');
+ok('SAM-32d: manifest.platform_match.sam_s75.image_match is generic',
+    samManifest && samManifest.platform_match && samManifest.platform_match.sam_s75 &&
+    samManifest.platform_match.sam_s75.image_match === 'generic');
+
+// ═══════════════════════════════════════════════════════════════════════════
 // REG-1..2: Regressions
 // ═══════════════════════════════════════════════════════════════════════════
 ok('REG-1: DB1 CAPABILITY_CATALOG still has 29 entries',

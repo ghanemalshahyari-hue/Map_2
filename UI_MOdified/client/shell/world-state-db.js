@@ -40,6 +40,8 @@
             // Real-Unit-Images SAM: Patriot battery Poland 2010 · U.S. Army · Public Domain
             image_asset:  '/client/assets/units/patriot-sam-battery.jpg',
             image_credit: 'U.S. Army Patriot SAM · Public Domain',
+            image_match:  'generic',
+            image_note:   'Generic air-defense / SAM reference image. Not an exact platform photo. Depicts MIM-104 Patriot; used as visual placeholder for any air-defense unit.',
             rcs_class: 'medium', readiness: 'ready', supply: 0.8, doctrine_tags: ['IADS', 'air_defense'],
             sensors: [{ id: 'ewr', type: 'radar', class: 'long_range_3d', emcon: 'active' },
                       { id: 'fc',  type: 'radar', subtype: 'fire_control', class: 'fire_control', emcon: 'active', channels: 4 }],
@@ -80,6 +82,8 @@
         sam_s300: {
             image_asset:  '/client/assets/units/patriot-sam-battery.jpg',
             image_credit: 'U.S. Army Patriot SAM · Public Domain',
+            image_match:  'generic',
+            image_note:   'Generic SAM placeholder. This is NOT an S-300 photo. Replace with actual S-300 imagery when a suitable public-domain source is available.',
             rcs_class: 'large', readiness: 'ready', supply: 0.9, doctrine_tags: ['IADS', 'SAM', 'strategic', 'standoff'],
             sensors: [{ id: 'sr', type: 'radar', class: 'S300_SEARCH_RADAR', emcon: 'active' },
                       { id: 'fc', type: 'radar', subtype: 'fire_control', class: 'fire_control', emcon: 'active', channels: 2 }],
@@ -89,6 +93,8 @@
         sam_s75: {
             image_asset:  '/client/assets/units/patriot-sam-battery.jpg',
             image_credit: 'U.S. Army Patriot SAM · Public Domain',
+            image_match:  'generic',
+            image_note:   'Generic SAM placeholder. This is NOT an S-75 Dvina photo. Replace with actual S-75 imagery when a suitable public-domain source is available.',
             rcs_class: 'medium', readiness: 'ready', supply: 0.8, doctrine_tags: ['IADS', 'SAM', 'tactical', 'standoff'],
             sensors: [{ id: 'sr', type: 'radar', class: 'S75_RADAR', emcon: 'active' },
                       { id: 'fc', type: 'radar', subtype: 'fire_control', class: 'fire_control', emcon: 'active', channels: 1 }],
@@ -253,6 +259,8 @@
             label: 'Patriot SAM System (MIM-104)', source: "SIPRI; Jane's Weapons Systems",
             image_asset:  '/client/assets/units/patriot-sam-battery.jpg',
             image_credit: 'U.S. Army Patriot SAM (Poland 2010) · Public Domain',
+            image_match:  'representative',
+            image_note:   'MIM-104 Patriot battery (Poland 2010). Representative match for this entry — actual Patriot system depicted.',
             rcs_class: 'medium', readiness: 'ready', supply: 0.8,
             doctrine_tags: ['air_defense', 'medium_range', 'layered_defense'],
             sensors: [
@@ -489,6 +497,8 @@
         // (unit-level image_url / image_credit always wins — only fill if absent)
         if (u.image_asset == null && cap.image_asset) u.image_asset = cap.image_asset;
         if (u.image_credit == null && cap.image_credit) u.image_credit = cap.image_credit;
+        if (u.image_match  == null && cap.image_match)  u.image_match  = cap.image_match;
+        if (u.image_note   == null && cap.image_note)   u.image_note   = cap.image_note;
         return u;
     }
 

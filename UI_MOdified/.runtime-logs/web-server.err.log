@@ -1,0 +1,73 @@
+[scenario-loader] "teat_77" loaded with 5 warning(s):
+  - steps: count 8 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 17 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 32 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 6 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "gulf_of_sidra_2026_amphibious_assault__partial-05" loaded with 5 warning(s):
+  - steps: count 5 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 17 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 32 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 2 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] "gulf_of_sidra_2026_amphibious_assault__partial-05" loaded with 5 warning(s):
+  - steps: count 5 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 17 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 32 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 2 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "teat_77" loaded with 5 warning(s):
+  - steps: count 8 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 17 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 32 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 6 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "teat_77" loaded with 5 warning(s):
+  - steps: count 8 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 17 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 32 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 6 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "gulf_of_sidra_2026_amphibious_assault__partial-05" loaded with 5 warning(s):
+  - steps: count 5 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 17 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 32 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 2 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "teat_77" loaded with 5 warning(s):
+  - steps: count 8 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 17 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 32 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 6 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "teat_77" loaded with 5 warning(s):
+  - steps: count 8 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 17 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 32 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 6 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'
+[scenario-loader] could not write _active.json: UNKNOWN: unknown error, open 'C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios\_active.json'

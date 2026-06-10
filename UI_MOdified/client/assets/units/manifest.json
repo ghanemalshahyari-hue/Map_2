@@ -1,6 +1,6 @@
 {
   "_comment": "RMOOZ unit image asset manifest — provenance record for every locally cached image.",
-  "_format": "1.1",
+  "_format": "1.2",
   "_generated": "2026-06-10",
   "images": {
     "uss-lake-champlain-cvs39.jpg": {
@@ -17,12 +17,15 @@
       "license": "Public Domain — U.S. Government work (17 U.S.C. § 105); no copyright applies.",
       "applies_to_platform": "meko",
       "applies_to_unit_id": "CVS-39",
-      "notes": "Naval combatant / meko DB1 catalog default image + specific unit-level image for USS Lake Champlain. Pass as unit.image_url in scenario or eval to override with ship-specific context."
+      "platform_match": {
+        "meko": { "image_match": "representative", "note": "Naval combatant catalog default; Essex-class carrier used as representative naval asset." }
+      },
+      "notes": "Naval combatant / meko DB1 catalog default + specific unit-level image for USS Lake Champlain. Pass as unit.image_url in scenario to use ship-specific context."
     },
     "patriot-sam-battery.jpg": {
       "local_asset": "/client/assets/units/patriot-sam-battery.jpg",
       "subject": "U.S. Army Patriot SAM Battery (MIM-104), Poland 2010",
-      "description": "U.S. Army soldiers from Alpha Battery, 5-7 ADA instructing Polish forces on Patriot preventive maintenance in Morag, Poland, June 2010. First U.S. missile system deployed to Poland under rotational training initiative.",
+      "description": "U.S. Army soldiers from Alpha Battery, 5-7 ADA instructing Polish forces on Patriot preventive maintenance in Morag, Poland, June 2010.",
       "source_name": "Wikimedia Commons / U.S. Army",
       "source_author": "Staff Sergeant Lawree Roscoe Washington Jr., U.S. Army",
       "source_url": "https://commons.wikimedia.org/wiki/File:PATRIOT_battery_in_Poland,_2010.JPG",
@@ -32,7 +35,13 @@
       "date_cached": "2026-06-10",
       "license": "Public Domain — U.S. Army work created in official capacity (17 U.S.C. § 105); no copyright applies.",
       "applies_to_platforms": ["air_defense", "patriot", "sam_s300", "sam_s75"],
-      "notes": "Generic air-defense / SAM battery image used for all sam/air_defense catalog entries. Specific Patriot system visible; appropriate for generic long-range SAM depiction."
+      "platform_match": {
+        "patriot":     { "image_match": "representative", "note": "MIM-104 Patriot system actually depicted. Representative match for this catalog entry." },
+        "air_defense": { "image_match": "generic",         "note": "Generic air-defense / SAM reference image. Depicts Patriot; used as visual placeholder for any air-defense unit." },
+        "sam_s300":    { "image_match": "generic",         "note": "Generic SAM placeholder. This is NOT an S-300 photo. Replace with actual S-300 imagery when available." },
+        "sam_s75":     { "image_match": "generic",         "note": "Generic SAM placeholder. This is NOT an S-75 Dvina photo. Replace with actual S-75 imagery when available." }
+      },
+      "notes": "Patriot photo acceptable for 'patriot' catalog entry. Used as generic placeholder for other SAM/air-defense entries until platform-specific imagery is sourced."
     }
   },
   "offline_note": "All images in this manifest are cached locally and do not require network access. For online use, source_url is the canonical public-domain reference."

@@ -294,30 +294,6 @@
             analyzeBtn.addEventListener('click', runAnalyze);
         })();
 
-        function reviewChip(label, val, color) {
-            return '<span style="display:inline-block;margin:2px 6px 2px 0;padding:2px 8px;border-radius:10px;font-size:11px;' +
-                'background:#16222e;border:1px solid #2e5d7d;color:' + (color || '#cfe6ff') + ';">' +
-                esc(label) + (val != null ? ': <b>' + esc(val) + '</b>' : '') + '</span>';
-        }
-        function briefBlock(title, text) {
-            return '<div style="margin-bottom:8px;"><div style="font-size:11px;color:#8fa5b8;margin-bottom:2px;">' + esc(title) +
-                '</div><div style="font-size:12px;color:#e8eaed;direction:rtl;text-align:right;background:#121a22;border-radius:4px;padding:6px;">' +
-                esc(text) + '</div></div>';
-        }
-        function sideBlock(title, text, bg, fg) {
-            if (!text) return '';
-            return '<div style="margin-bottom:8px;"><div style="font-size:11px;color:' + fg + ';margin-bottom:2px;">' + esc(title) +
-                '</div><div style="font-size:12px;color:#e8eaed;direction:rtl;text-align:right;background:' + bg +
-                ';border:1px solid #2a2f37;border-radius:4px;padding:6px;white-space:pre-wrap;max-height:150px;overflow:auto;">' + esc(text) + '</div></div>';
-        }
-        function listBlock(title, items, color) {
-            items = (items || []).filter(Boolean);
-            if (!items.length) return '';
-            var lis = items.map(function (it) { return '<li style="margin:1px 0;">' + esc(it) + '</li>'; }).join('');
-            return '<div style="margin-bottom:8px;"><div style="font-size:11px;color:' + (color || '#8fa5b8') + ';margin-bottom:2px;">' +
-                esc(title) + ' (' + items.length + ')</div><ul style="margin:0;padding:0 18px;font-size:12px;color:#e8eaed;direction:rtl;text-align:right;">' +
-                lis + '</ul></div>';
-        }
         function showReviewError(msg) {
             el.review.style.display = 'block';
             el.review.innerHTML = '<div style="color:#e0a93a;font-size:12px;">⚠ ' + esc(msg) + '</div>';
@@ -335,62 +311,22 @@
                 renderReview(r.body);
             }).catch(function (e) { el.analyze.disabled = false; el.analyze.textContent = prev; showReviewError(e.message); });
         }
+        // Phase E renderer lives in shell/doc-understanding-review.js (shared
+        // with the standalone verify page) so the rendered UI cannot drift.
         function renderReview(p) {
-            var u = p.understanding || {};
-            var pc = u.proposed_unit_counts || {};
-            var html = '<div style="font-size:14px;color:#7fd6a0;font-weight:600;margin-bottom:8px;">AI understood this as — فهم الذكاء الاصطناعي</div>';
-            html += '<div style="margin-bottom:8px;">' + reviewChip('Type / النوع', (u.set_label_en || '') + ' — ' + (u.set_label_ar || ''), '#7fd6a0');
-            (p.documents || []).forEach(function (d) {
-                html += reviewChip(d.filename || (d.hash || '').slice(0, 8), (d.type_label_en || d.detected_type) + ' · ' + Math.round((d.confidence || 0) * 100) + '%');
-            });
-            html += '</div>';
-            if (p.dedupe && p.dedupe.same_in_both_slots) {
-                html += '<div style="margin-bottom:8px;padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:12px;">' +
-                    '⮕ Same document in both slots — treated as ONE Mixed Operational Document. نفس الوثيقة في الخانتين — عوملت كوثيقة عمليات واحدة.</div>';
+            if (!window.RmoozDocReview || !window.RmoozDocReview.render) {
+                showReviewError('review renderer not loaded (shell/doc-understanding-review.js)');
+                return;
             }
-            if (u.mission) html += briefBlock('Mission — المهمة', u.mission);
-            if (u.commander_intent) html += briefBlock("Commander's intent — نية القائد", u.commander_intent);
-            html += sideBlock('Friendly (BLUE) — قواتنا (الزرقاء)', u.friendly && u.friendly.summary, '#16241b', '#7fd6a0');
-            html += sideBlock('Enemy (RED) — العدو (الحمراء)', u.enemy && u.enemy.summary, '#241616', '#f0a0a0');
-            if (u.neutral && (u.neutral.civilian || []).length) html += sideBlock('Neutral / civilian — محايد / مدني', (u.neutral.civilian || []).join('\n'), '#24220f', '#d8d870');
-            html += listBlock('Objectives — الأهداف', (u.objectives || []).map(function (o) { return o.name; }));
-            html += listBlock('Phases — المراحل', (u.phases || []).map(function (ph) { return 'P' + ph.index + ': ' + ph.label; }));
-            html += listBlock('Constraints / ROE — القيود', (u.constraints || []).map(function (c) { return c.text; }));
-            html += '<div style="margin:8px 0;">' +
-                reviewChip('Proposed units — أعداد مقترحة', 'RED ' + (pc.red || 0) + ' · BLUE ' + (pc.blue || 0) + ' · NEUTRAL ' + (pc.neutral || 0)) +
-                reviewChip('Map bounds — حدود الخريطة', u.proposed_map_bounds ? 'from document' : 'not specified — set objective on map') + '</div>';
-            html += listBlock('Missing / ambiguous — نواقص وغموض', u.ambiguities || [], '#e0a93a');
-            if (p.llm_fill && !p.llm_fill.available) {
-                html += '<div style="font-size:11px;color:#9aa3ad;margin:6px 0;">ℹ Deep extraction (exact units &amp; intent) runs on the deployment LLM; this is the offline structural read.</div>';
-            }
-            html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;border-top:1px solid #23303d;padding-top:10px;">' +
-                '<button type="button" id="wg-wz-rev-generate" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:6px;padding:7px 14px;font-weight:600;">Generate Scenario — توليد السيناريو</button>' +
-                '<button type="button" id="wg-wz-rev-edit" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#22303f;color:#cfe6ff;border-radius:6px;padding:7px 14px;">Edit Understanding — تعديل الفهم</button>' +
-                '<button type="button" id="wg-wz-rev-more" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Upload More — وثائق إضافية</button>' +
-                '<button type="button" id="wg-wz-rev-cancel" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Cancel — إلغاء</button>' +
-                '</div>' +
-                '<details id="wg-wz-rev-editbox" style="margin-top:8px;"><summary style="cursor:pointer;font-size:12px;color:#8fa5b8;">Operational Brief JSON — مسودة الموجز</summary>' +
-                '<textarea id="wg-wz-rev-json" spellcheck="false" style="width:100%;height:160px;margin-top:6px;background:#0a0e12;color:#c0c6cd;border:1px solid #2a2f37;border-radius:4px;font-size:11px;font-family:monospace;box-sizing:border-box;"></textarea>' +
-                '<div style="font-size:11px;color:#9aa3ad;margin-top:4px;">Structured editing is applied on the deployment network; this view is for review/transparency.</div></details>';
-            el.review.innerHTML = html;
-            el.review.style.display = 'block';
-            var g = el.review.querySelector('#wg-wz-rev-generate');
-            var ed = el.review.querySelector('#wg-wz-rev-edit');
-            var more = el.review.querySelector('#wg-wz-rev-more');
-            var cancel = el.review.querySelector('#wg-wz-rev-cancel');
-            if (g) g.addEventListener('click', function () { el.review.style.display = 'none'; start(false); });
-            if (ed) ed.addEventListener('click', function () {
-                var ta = el.review.querySelector('#wg-wz-rev-json');
-                var box = el.review.querySelector('#wg-wz-rev-editbox');
-                if (ta && !ta.value) { try { ta.value = JSON.stringify(p.brief, null, 2); } catch (_) {} }
-                if (box) box.open = true;
+            window.RmoozDocReview.render(el.review, p, {
+                onGenerate: function () { el.review.style.display = 'none'; start(false); },
+                onUploadMore: function () {
+                    el.review.style.display = 'none';
+                    var grid = card.querySelector('.wg-wz-doc-grid');
+                    if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                },
+                onCancel: function () { el.review.style.display = 'none'; },
             });
-            if (more) more.addEventListener('click', function () {
-                el.review.style.display = 'none';
-                var grid = card.querySelector('.wg-wz-doc-grid');
-                if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            });
-            if (cancel) cancel.addEventListener('click', function () { el.review.style.display = 'none'; });
             el.review.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 

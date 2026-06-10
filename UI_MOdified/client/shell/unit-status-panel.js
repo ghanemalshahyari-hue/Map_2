@@ -529,10 +529,21 @@
         }
     }
 
+    /**
+     * Render the hero symbol area.
+     * Priority order:
+     *   1. milsymbol canvas  — when unit.sidc is present
+     *   2. Real cached image — unit.image_url  (unit-level, e.g. from scenario)
+     *                        → enriched.image_asset (DB1 catalog-level cached path)
+     *   3. SVG silhouette   — fallback when no image is available
+     * All real images must be locally cached paths (offline support).
+     * Image load errors fall back silently to SVG silhouette.
+     */
     function _renderSymbol(unit, enriched, container) {
         if (!container) return;
         container.innerHTML = '';
-        // milsymbol takes priority when SIDC is available
+
+        // 1. milsymbol when SIDC is present
         if (root.ms && typeof root.ms.Symbol === 'function' && unit.sidc) {
             try {
                 var sym = new root.ms.Symbol(unit.sidc, { size: 42 });
@@ -544,8 +555,74 @@
                 }
             } catch (_) {}
         }
-        // SVG illustration
+
+        // 2. Real image — unit-level override or DB1 catalog asset
+        var imgSrc = (unit.image_url)
+            || (enriched && enriched.image_asset)
+            || null;
+        if (imgSrc) {
+            _renderRealImage(imgSrc, unit, enriched, container);
+            return;
+        }
+
+        // 3. SVG silhouette fallback
         container.innerHTML = _unitSvg(unit, enriched);
+    }
+
+    /**
+     * Render a real (locally cached) image in the hero container.
+     * Applies a subtle military filter (desaturate + slight darken).
+     * On any load error, silently falls back to the SVG silhouette.
+     * Shows a small attribution line from enriched.image_credit.
+     *
+     * @param {string}  src       - Local asset path e.g. /client/assets/units/xxx.jpg
+     * @param {object}  unit      - Raw unit object
+     * @param {object}  enriched  - DB1-enriched unit (may carry image_credit)
+     * @param {Element} container - #unit-symbol element
+     */
+    function _renderRealImage(src, unit, enriched, container) {
+        // Wrapper keeps position:relative for attribution overlay
+        container.style.position = 'relative';
+        container.style.overflow = 'hidden';
+
+        var img = document.createElement('img');
+        img.alt  = unit.label || unit.name || '';
+        img.style.cssText = [
+            'width:100%', 'height:100%',
+            'object-fit:cover', 'object-position:center top',
+            'filter:brightness(0.85) contrast(1.1) saturate(0.65)',
+            'display:block'
+        ].join(';');
+        img.setAttribute('loading', 'lazy');
+        img.setAttribute('decoding', 'async');
+
+        // Graceful degradation — if image fails to load (offline, path wrong, etc.)
+        // fall back to the SVG silhouette without any console noise
+        img.onerror = function() {
+            container.innerHTML = _unitSvg(unit, enriched);
+            container.style.position = '';
+            container.style.overflow = '';
+        };
+
+        img.src = src;
+        container.appendChild(img);
+
+        // Small attribution overlay (bottom-right, non-intrusive)
+        var credit = (enriched && enriched.image_credit) || (unit.image_credit) || '';
+        if (credit) {
+            var attr = document.createElement('div');
+            attr.style.cssText = [
+                'position:absolute', 'bottom:3px', 'right:5px',
+                'font-size:0.52rem', 'font-family:Consolas,monospace',
+                'color:rgba(255,255,255,0.55)',
+                'background:rgba(0,0,0,0.35)', 'padding:1px 4px',
+                'pointer-events:none', 'line-height:1.4',
+                'max-width:90%', 'text-align:right',
+                'white-space:nowrap', 'overflow:hidden', 'text-overflow:ellipsis'
+            ].join(';');
+            attr.textContent = credit;
+            container.appendChild(attr);
+        }
     }
 
     // ── Identity ──────────────────────────────────────────────────────

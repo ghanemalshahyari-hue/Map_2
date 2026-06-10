@@ -1,0 +1,24 @@
+{
+  "_comment": "RMOOZ unit image asset manifest — provenance record for every locally cached image.",
+  "_format": "1.0",
+  "_generated": "2026-06-10",
+  "images": {
+    "uss-lake-champlain-cvs39.jpg": {
+      "local_asset": "/client/assets/units/uss-lake-champlain-cvs39.jpg",
+      "subject": "USS Lake Champlain (CVS-39)",
+      "description": "USS Lake Champlain (CVS-39) underway, February 1965. Essex-class anti-submarine aircraft carrier.",
+      "source_name": "Naval History and Heritage Command (NHHC)",
+      "source_accession": "USN 1114106",
+      "source_url": "https://commons.wikimedia.org/wiki/File:USS_Lake_Champlain_(CVS-39)_underway_in_February_1965_(USN_1114106).jpg",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/e/ef/USS_Lake_Champlain_%28CVS-39%29_underway_in_February_1965_%28USN_1114106%29.jpg",
+      "credit": "U.S. Navy / NHHC (photo USN 1114106)",
+      "date_original": "February 1965",
+      "date_cached": "2026-06-10",
+      "license": "Public Domain — U.S. Government work (17 U.S.C. § 105); no copyright applies.",
+      "applies_to_platform": null,
+      "applies_to_unit_id": "CVS-39",
+      "notes": "Unit-level image (specific ship); not bound to a generic platform catalog entry. Pass as unit.image_url in scenario or eval."
+    }
+  },
+  "offline_note": "All images in this manifest are cached locally and do not require network access. For online use, source_url is the canonical public-domain reference."
+}

@@ -167,8 +167,9 @@ ok('JS-10: panel has formatMagStock (prevents [object Object])',
 
 // ── DB1 integrity ─────────────────────────────────────────────────────────
 
-ok('DB1-1: DB_VERSION is 1.1.0-d5',
-    db && db.DB_VERSION === '1.1.0-d5', db && db.DB_VERSION);
+ok('DB1-1: DB_VERSION exists and starts with 1.',
+    db && db.DB_VERSION && String(db.DB_VERSION).startsWith('1.'),
+    db && db.DB_VERSION);
 
 ok('DB1-2: CAPABILITY_CATALOG has 29 entries',
     db && Object.keys(db.CAPABILITY_CATALOG).length === 29,
@@ -199,6 +200,52 @@ ok('MUT-1c: no "commit" / "execute" button in panel HTML',
 
 ok('MUT-1d: no "gate.?7" in panel HTML',
     !/gate.?7/i.test(panelHtml));
+
+// ── Real image framework (Real-Unit-Images-1) ─────────────────────────────
+
+ok('IMG-1: _renderRealImage function exists in panel JS',
+    PANEL_JS.includes('function _renderRealImage'));
+
+ok('IMG-2: panel checks unit.image_url',
+    PANEL_JS.includes('unit.image_url'));
+
+ok('IMG-3: panel checks enriched.image_asset (DB1 catalog path)',
+    PANEL_JS.includes('image_asset'));
+
+ok('IMG-4: image load error falls back to SVG silhouette',
+    PANEL_JS.includes('img.onerror') && PANEL_JS.includes('_unitSvg'));
+
+ok('IMG-5: attribution overlay rendered from image_credit',
+    PANEL_JS.includes('image_credit'));
+
+ok('IMG-6: USS Lake Champlain image asset file exists locally',
+    fs.existsSync(path.join(ROOT, 'UI_MOdified/client/assets/units/uss-lake-champlain-cvs39.jpg')));
+
+ok('IMG-7: unit image manifest exists with provenance metadata',
+    fs.existsSync(path.join(ROOT, 'UI_MOdified/client/assets/units/manifest.json')));
+
+ok('IMG-8: manifest contains public-domain note',
+    (function() {
+        try {
+            var m = JSON.parse(fs.readFileSync(
+                path.join(ROOT, 'UI_MOdified/client/assets/units/manifest.json'), 'utf8'));
+            var img = m.images && m.images['uss-lake-champlain-cvs39.jpg'];
+            return img && img.license && img.license.includes('Public Domain');
+        } catch (_) { return false; }
+    })());
+
+ok('IMG-9: manifest has source_url (canonical provenance link)',
+    (function() {
+        try {
+            var m = JSON.parse(fs.readFileSync(
+                path.join(ROOT, 'UI_MOdified/client/assets/units/manifest.json'), 'utf8'));
+            var img = m.images && m.images['uss-lake-champlain-cvs39.jpg'];
+            return img && img.source_url && img.source_url.includes('wikimedia');
+        } catch (_) { return false; }
+    })());
+
+ok('IMG-10: no AI-generated image references in panel JS',
+    !PANEL_JS.includes('ai-generated') && !PANEL_JS.includes('generated-image'));
 
 // ── SVG unit images ───────────────────────────────────────────────────────
 

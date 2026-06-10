@@ -26,7 +26,11 @@
 (function (root) {
     'use strict';
 
-    var DB_VERSION = '1.1.0-d5';  // D5: 18 ME platform entries folded in (2026-06-09)
+    var DB_VERSION = '1.2.0-img';  // D5 + Real-Unit-Images-1 (2026-06-10)
+    // image_asset  — local path served by the verify/web server; offline-safe
+    // image_credit — attribution string shown in panel hero overlay
+    // image_source — canonical public-domain URL for provenance
+    // These fields are optional; absent = SVG silhouette fallback in panel
 
     /* ---- the catalog (DATA — extend by adding/editing rows) --------------- */
     // mount ids + class names align with detection.js / engagement.js DB-Lite.

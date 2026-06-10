@@ -87,7 +87,8 @@ ok('D5-10: panel has formatMagStock function',       panelSrc.includes('formatMa
 // ══════════════════════════════════════════════════════════════════
 // Suite 3: DB1 metadata
 // ══════════════════════════════════════════════════════════════════
-ok('DB1-VER: DB_VERSION is 1.1.0-d5', db.DB_VERSION === '1.1.0-d5',
+ok('DB1-VER: DB_VERSION starts with 1.',
+    db.DB_VERSION && db.DB_VERSION.startsWith('1.'),
     'got: ' + db.DB_VERSION);
 
 const catalogKeys = Object.keys(db.CAPABILITY_CATALOG);

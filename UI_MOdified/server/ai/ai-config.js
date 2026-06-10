@@ -36,7 +36,7 @@
  *   │  ── For secrets you DON'T want committed ──                  │
  *   │  Create `ai-secrets.local.js` (gitignored) next to this      │
  *   │  file with shape:                                            │
- *   │      module.exports = { apiKey: 'sk-...', url: '...' };      │
+ *   │      module.exports = { apiKey: '<api-key>', url: '...' };   │
  *   │  Its values overlay the defaults below (env vars still win). │
  *   │                                                              │
  *   │  No server restart strategy here — Node doesn't hot-reload.  │
@@ -115,7 +115,7 @@ const defaults = {
 
     // ── Claude (Anthropic) — optional cloud backend ────────────────────
     // The Claude path is enabled when ANTHROPIC_API_KEY is set in the
-    // environment OR `{ claude: { apiKey: 'sk-ant-...' } }` is present
+    // environment OR `{ claude: { apiKey: '<claude-api-key>' } }` is present
     // in ai-secrets.local.js. Leaving apiKey empty disables the Claude
     // backend entirely; the Ollama path above remains the default.
     //

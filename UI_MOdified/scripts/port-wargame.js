@@ -1103,7 +1103,7 @@ function buildW3Scenario(stepJsons, folderName, meta) {
     // Instead, anchor staging to the actual coastline: the pipeline's
     // northernmost latitude is the phase_line lat at D-H (the line of
     // departure, ≈ 30.54° N for Brega). +0.5° puts staging ~55 km offshore,
-    // which is a realistic amphibious task-force standoff distance and
+    // which is a realistic amphibious task force standoff distance and
     // keeps the D-H sweep visible-but-not-jarring.
     const bbox = deriveBbox(stepJsons);
     const coastLat = pipeline.length

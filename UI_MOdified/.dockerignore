@@ -35,6 +35,12 @@ TestingAI/export_to_rmooz
 TestingAI/import_from_rmooz
 TestingAI/WarGamingGEN/runs
 
+# Large, OPTIONAL, gitignored GIS data (DEM raster + terrain/imagery layers, ~960 MB).
+# NOT part of origin/main; gis_loader treats elevation/terrain as optional and
+# degrades gracefully when absent. Excluded so the image reflects committed source
+# and stays lean. If terrain-aware generation is wanted, mount inputs/gis at runtime.
+TestingAI/WarGamingGEN/inputs/gis
+
 # Step 0 planning artifacts — not needed at runtime
 TestingAI/Step 0
 TestingAI/_archive
@@ -55,7 +61,12 @@ Offline_Deployment/.env.offline
 # ── Docs and tests (not needed in runtime image) ─────────────────────────────
 docs
 test-*.js
+**/test-*.js
+scripts/test-*.js
 *.test.js
+
+# ── Build output / transfer bundle (never belongs in the image context) ──────
+Offline_Deployment/dist
 
 # ── Development artifacts ─────────────────────────────────────────────────────
 *.bat

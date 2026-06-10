@@ -25,7 +25,10 @@
             u.includes('openstreetmap.org')  ||
             u.includes('tile.openstreetmap') ||
             u.includes('mapbox.com')         ||
-            (u.includes('localhost:8080') && u.includes('/services/'))
+            (u.includes('localhost:8080') && u.includes('/services/')) ||
+            // Relative/absolute /tiles/ template URLs — app.js fallback that
+            // resolves against the web-server port instead of the tile-server.
+            ((u.includes('/tiles/') || u.startsWith('tiles/')) && u.includes('{z}'))
         );
     }
 
@@ -42,10 +45,24 @@
     }
 
     // ── Patch a single Leaflet map ────────────────────────────────────────────
+    //
+    // Catches two classes of layers:
+    //  1. Layers with a banned URL still in _url (isBannedUrl match).
+    //  2. Layers whose _url was set to a data: placeholder by the sync guard
+    //     interception — any data: URI used as a tile URL template is wrong
+    //     and must be repointed to the real offline URL.
+    //
+    // Uses setUrl() in preference to remove+add so that app.js layer references
+    // (localLocalLayer, osmLayer) remain valid for removeFallbackBases().
     function patchMap(map, tileUrl, label) {
         if (!map || typeof map.eachLayer !== 'function') return;
         map.eachLayer(function (layer) {
-            if (layer._url && isBannedUrl(layer._url)) {
+            var u = layer._url || '';
+            if (!isBannedUrl(u) && !u.startsWith('data:')) return;
+            if (typeof layer.setUrl === 'function') {
+                layer.setUrl(tileUrl);
+                console.info('[offline-patch] ' + label + ': Repointed', u.slice(0, 60));
+            } else {
                 var wasActive = map.hasLayer(layer);
                 map.removeLayer(layer);
                 var replacement = window.L.tileLayer(tileUrl, {
@@ -55,7 +72,7 @@
                     errorTileUrl: layer.options.errorTileUrl || ''
                 });
                 if (wasActive) replacement.addTo(map);
-                console.info('[offline-patch] ' + label + ': Replaced', layer._url.slice(0, 60));
+                console.info('[offline-patch] ' + label + ': Replaced', u.slice(0, 60));
             }
         });
     }

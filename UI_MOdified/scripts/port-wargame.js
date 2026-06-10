@@ -40,7 +40,13 @@ const fs   = require('fs');
 const path = require('path');
 
 const ROOT       = path.join(__dirname, '..');
-const SCENARIOS  = path.join(ROOT, 'data', 'scenarios');
+// PARTIAL-IMPORT-404-1: honor RMOOZ_DATA_DIR exactly like server/ai/scenario-loader.js.
+// Previously this hardcoded ROOT/data/scenarios while the loader read
+// $RMOOZ_DATA_DIR/scenarios — so if RMOOZ_DATA_DIR was set, imports wrote to one
+// dir and GET /api/ai/scenario read another, causing a 404 right after a
+// "successful" import. Writer and reader must resolve the SAME directory.
+const DATA_DIR   = process.env.RMOOZ_DATA_DIR || path.join(ROOT, 'data');
+const SCENARIOS  = path.join(DATA_DIR, 'scenarios');
 
 const STEP_RE   = /^step(\d{2,3})\.geojson$/i;
 const BLS_RE    = /^BLS-\d+$/i;

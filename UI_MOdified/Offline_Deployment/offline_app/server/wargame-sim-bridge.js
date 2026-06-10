@@ -331,7 +331,9 @@ function latestExport(c) {
 }
 
 // ── UNIFIED-IMPORT-2: phase progress, resume/regenerate args, partial import ──
-const SCENARIOS_DIR = path.join(ROOT, 'data', 'scenarios');   // where the porter writes
+// PARTIAL-IMPORT-404-1: honor RMOOZ_DATA_DIR like the porter + scenario-loader,
+// so collision/existence checks here match where the file is actually written/read.
+const SCENARIOS_DIR = path.join(process.env.RMOOZ_DATA_DIR || path.join(ROOT, 'data'), 'scenarios');   // where the porter writes
 function scenarioFilePath(name) { return path.join(SCENARIOS_DIR, name + '.json'); }
 
 // ── WIZARD-SAVE-1: non-destructive scenario naming ───────────────────────────

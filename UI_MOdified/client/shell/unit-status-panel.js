@@ -634,7 +634,8 @@
     root.AppUnitStatusPanel = {
         openPanel: openPanel,
         closePanel: closePanel,
-        populatePanel: populatePanel
+        populatePanel: populatePanel,
+        getCurrentUnit: function() { return currentUnit; }
     };
     init();
 

@@ -248,8 +248,8 @@
     }
 
     function getPopupRightOffset() {
-        const unitPanel = document.querySelector('.unit-panel');
-        if (unitPanel) {
+        const unitPanel = document.querySelector('.unit-status-panel');
+        if (unitPanel && !unitPanel.hasAttribute('hidden')) {
             const r = unitPanel.getBoundingClientRect();
             return window.innerWidth - r.left + 8;
         }

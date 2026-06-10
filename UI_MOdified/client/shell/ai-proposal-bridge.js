@@ -82,15 +82,12 @@
         // Optional caller context — accepted only as primitives.
         const o = (overrides && typeof overrides === 'object') ? overrides : {};
 
-        // Selected unit identity, if any. Pull from the PR-3 unit-panel
-        // bridge; fall back gracefully if the panel hasn't loaded a
-        // unit yet. We deliberately do NOT read window.units / map /
-        // scenario directly — that risks accidentally surfacing more
-        // than the operator's current selection.
+        // Selected unit identity from the Commander Unit Status Panel.
+        // Falls back gracefully if no unit is selected.
         let selUnit = null;
         try {
-            if (window.AppShellUnitPanel && typeof window.AppShellUnitPanel.getCurrentUnit === 'function') {
-                selUnit = window.AppShellUnitPanel.getCurrentUnit();
+            if (window.AppUnitStatusPanel && typeof window.AppUnitStatusPanel.getCurrentUnit === 'function') {
+                selUnit = window.AppUnitStatusPanel.getCurrentUnit();
             }
         } catch (_) {}
 

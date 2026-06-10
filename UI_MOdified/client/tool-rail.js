@@ -203,17 +203,10 @@
 
     /* ── Unit panel visibility ────────────────────────────────────────── */
     function syncUnitPanel(tool) {
-        const unitPanel = document.getElementById('unit-panel');
-        if (!unitPanel) return;
+        // Commander Unit Status Panel: close when switching away from select tool
+        const up = window.AppUnitStatusPanel;
         if (tool !== 'select') {
-            unitPanel.setAttribute('hidden', '');
-        } else {
-            const up = window.AppShellUnitPanel;
-            if (up) {
-                const unit = up.getCurrentUnit();
-                if (unit) up.renderUnit(unit);
-                else up.renderEmpty();
-            }
+            if (up && typeof up.closePanel === 'function') up.closePanel();
         }
     }
 

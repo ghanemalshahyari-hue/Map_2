@@ -1,16 +1,16 @@
 # Graph Report - MAP_2  (2026-06-10)
 
 ## Corpus Check
-- 4157 files · ~12,251,988 words
+- 4159 files · ~12,254,251 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1666 nodes · 3516 edges · 76 communities (72 shown, 4 thin omitted)
+- 2096 nodes · 3949 edges · 106 communities (101 shown, 5 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a7fa4e97`
+- Built from commit: `15660c9b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -84,24 +84,54 @@
 - [[_COMMUNITY_Community 67|Community 67]]
 - [[_COMMUNITY_Community 68|Community 68]]
 - [[_COMMUNITY_Community 69|Community 69]]
+- [[_COMMUNITY_Community 70|Community 70]]
+- [[_COMMUNITY_Community 71|Community 71]]
+- [[_COMMUNITY_Community 72|Community 72]]
 - [[_COMMUNITY_Community 73|Community 73]]
 - [[_COMMUNITY_Community 74|Community 74]]
 - [[_COMMUNITY_Community 75|Community 75]]
 - [[_COMMUNITY_Community 76|Community 76]]
 - [[_COMMUNITY_Community 77|Community 77]]
 - [[_COMMUNITY_Community 78|Community 78]]
+- [[_COMMUNITY_Community 79|Community 79]]
+- [[_COMMUNITY_Community 80|Community 80]]
+- [[_COMMUNITY_Community 81|Community 81]]
+- [[_COMMUNITY_Community 82|Community 82]]
+- [[_COMMUNITY_Community 83|Community 83]]
+- [[_COMMUNITY_Community 84|Community 84]]
+- [[_COMMUNITY_Community 85|Community 85]]
+- [[_COMMUNITY_Community 86|Community 86]]
+- [[_COMMUNITY_Community 87|Community 87]]
+- [[_COMMUNITY_Community 88|Community 88]]
+- [[_COMMUNITY_Community 89|Community 89]]
+- [[_COMMUNITY_Community 90|Community 90]]
+- [[_COMMUNITY_Community 91|Community 91]]
+- [[_COMMUNITY_Community 92|Community 92]]
+- [[_COMMUNITY_Community 93|Community 93]]
+- [[_COMMUNITY_Community 94|Community 94]]
+- [[_COMMUNITY_Community 95|Community 95]]
+- [[_COMMUNITY_Community 96|Community 96]]
+- [[_COMMUNITY_Community 97|Community 97]]
+- [[_COMMUNITY_Community 98|Community 98]]
+- [[_COMMUNITY_Community 99|Community 99]]
+- [[_COMMUNITY_Community 100|Community 100]]
+- [[_COMMUNITY_Community 101|Community 101]]
+- [[_COMMUNITY_Community 102|Community 102]]
+- [[_COMMUNITY_Community 103|Community 103]]
+- [[_COMMUNITY_Community 104|Community 104]]
+- [[_COMMUNITY_Community 105|Community 105]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `tx()` - 71 edges
 2. `init()` - 45 edges
 3. `getScenario()` - 38 edges
-4. `handle()` - 31 edges
-5. `removeLayer()` - 30 edges
-6. `normalizeCatkArrowParams()` - 30 edges
-7. `getActiveStepIndex()` - 27 edges
-8. `addToActiveLayer()` - 26 edges
-9. `goToStep()` - 24 edges
-10. `scheduleSaveToStorage()` - 23 edges
+4. `blue_unit_step_coords` - 33 edges
+5. `blue_unit_step_prev` - 33 edges
+6. `blue_unit_step_coords` - 33 edges
+7. `blue_unit_step_prev` - 33 edges
+8. `handle()` - 31 edges
+9. `removeLayer()` - 30 edges
+10. `normalizeCatkArrowParams()` - 30 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `handle()` --calls--> `sendJson()`  [INFERRED]
@@ -114,7 +144,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (76 total, 4 thin omitted)
+## Communities (106 total, 5 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.12
@@ -182,15 +212,15 @@ Nodes (11): bridge, failures, fs, i18n, loader, localBr, mainHtml, OFF (+3 more)
 
 ### Community 17 - "Community 17"
 Cohesion: 0.02
-Nodes (63): addEmblemMarkerEdgeHighlight(), addSelectionHighlightsForElement(), bestIntersectionOnOpenPolyline(), bindMinefieldResizeHandles(), boundaryPathForward(), buildRectangleAutoFlankZoneRings(), centroid(), clipPolygonByObstacles() (+55 more)
+Nodes (78): addCurrentSidcToFavorites(), addEmblemMarkerEdgeHighlight(), addSelectionHighlightsForElement(), applyFavoriteSidc(), applyLayerTemplate(), bestIntersectionOnOpenPolyline(), bindMinefieldResizeHandles(), boundaryPathForward() (+70 more)
 
 ### Community 19 - "Community 19"
 Cohesion: 0.07
 Nodes (24): airCap, authoredRcs, authoredReadiness, authoredSupply, authoredTags, authoredUnit, catalogKeys, emptyAD (+16 more)
 
 ### Community 20 - "Community 20"
-Cohesion: 0.06
-Nodes (34): _comment, _format, _generated, images, patriot-sam-battery.jpg, uss-lake-champlain-cvs39.jpg, offline_note, applies_to_platforms (+26 more)
+Cohesion: 0.13
+Nodes (15): uss-lake-champlain-cvs39.jpg, applies_to_platform, applies_to_unit_id, credit, date_cached, date_original, description, license (+7 more)
 
 ### Community 21 - "Community 21"
 Cohesion: 0.73
@@ -230,43 +260,43 @@ Nodes (22): applyDecision(), applyDerivations(), arr(), bearing(), clampStep(), 
 
 ### Community 33 - "Community 33"
 Cohesion: 0.11
-Nodes (47): catkApplyArrowParamsToData(), catkArrowEditHandleLatLngs(), catkArrowGeometryPx(), catkArrowOverlayLatLngs(), catkArrowParamsFromNeckDragSession(), catkArrowParamsFromTipAndTailCursor(), catkArrowParamsFromTipCursor(), catkArrowParamsWithTailFromCursor() (+39 more)
+Nodes (52): applyCatkMultiPointStyle(), applyTmgStyle(), attachCatkGroupEvents(), catkApplyArrowParamsToData(), catkArrowEditHandleLatLngs(), catkArrowGeometryPx(), catkArrowGroupStylePayload(), catkArrowOverlayLatLngs() (+44 more)
 
 ### Community 34 - "Community 34"
 Cohesion: 0.07
-Nodes (50): addMinefieldDecorations(), addRangeCircleToMarker(), addRangeSectorToMarker(), afterGeoPrimaryKmEdit(), applyGeoObstacleAwareLineHatch(), applyGeoPathFill(), applyGeoPrimaryKmFromPopup(), applyGeoShapeStyle() (+42 more)
+Nodes (45): addMinefieldDecorations(), addRangeCircleToMarker(), addRangeSectorToMarker(), afterGeoPrimaryKmEdit(), applyGeoObstacleAwareLineHatch(), applyGeoPathFill(), applyGeoPrimaryKmFromPopup(), applyGeoShapeStyle() (+37 more)
 
 ### Community 35 - "Community 35"
 Cohesion: 0.11
-Nodes (41): addAttackArrows(), addFrontLines(), addLayerToFolder(), addPolylineFeatures(), addSlots(), addSymbolUnits(), addToActiveLayer(), applyImportedDisplayNameProps() (+33 more)
+Nodes (42): addAttackArrows(), addFrontLines(), addLayerToFolder(), addPolylineFeatures(), addScallopedFrontLineFromChordPairs(), addSlots(), addSymbolUnits(), addToActiveLayer() (+34 more)
 
 ### Community 36 - "Community 36"
-Cohesion: 0.13
-Nodes (24): activateDrawingModeFromTopBar(), activateEraserMode(), activateFreehandDrawMode(), activatePanInspectMode(), activateTextBoxMode(), beginMapDrawPointerCapture(), getClientXY(), getGeoSelectedTool() (+16 more)
+Cohesion: 0.10
+Nodes (25): addAutoFlankEchelonMarkers(), createDistanceSegmentLabelMarkers(), createDistanceWaypointMarkers(), finishDeferredUiInit(), formatApproxAlternateDistanceFromKm(), formatDistanceSecondaryHintFromKm(), formatDistanceSecondaryHintSpanFromKm(), formatKmAndNm() (+17 more)
 
 ### Community 37 - "Community 37"
-Cohesion: 0.15
-Nodes (18): areAnyCircleXRingsOverlapping(), autoDrawCircleXFlankLines(), buildCatkVectorHeadIconHtml(), buildReadonlyTmgMarker(), ensureObstaclePolygonsLoaded(), findClosestCircleXCenter(), frontlineCoversAllCircles(), getCircleXCenters() (+10 more)
+Cohesion: 0.11
+Nodes (23): areAnyCircleXRingsOverlapping(), autoDrawCircleXFlankLines(), buildCatkVectorHeadIconHtml(), buildReadonlyTmgMarker(), buildRectangleAutoFlankZoneRings(), collectOrderedScallopedSegmentsForSession(), ensureObstaclePolygonsLoaded(), flattenScallopedVerticesFromSegments() (+15 more)
 
 ### Community 38 - "Community 38"
-Cohesion: 0.12
-Nodes (19): createMultiSegmentTmgGroupSelectionBox(), createPlainLineEndpointHandles(), createTmgSelectionBox(), findOpenPolylineChainMatchingBeforeState(), findPolylinesForEraseRedo(), getMultiSegmentTmgGroupAabbLatLngs(), getPolylineFlatLatLngs(), getPolylineFlatRingAndSetter() (+11 more)
+Cohesion: 0.06
+Nodes (33): ao_boundaries, bls_template, blue_units_base_ids, blue_units_initial, blue_units_source, can_resume_generation, expected_phase_count, generated_from_docs (+25 more)
 
 ### Community 39 - "Community 39"
-Cohesion: 0.10
-Nodes (32): addScallopedFrontLineFromChordPairs(), applyCatkMultiPointStyle(), applyTmgStyle(), attachCatkGroupEvents(), cancelLineDrawing(), catkArrowGroupStylePayload(), catkDeriveArrowParamsFromLegacyPoints(), catkHitPolylineOptions() (+24 more)
+Cohesion: 0.07
+Nodes (38): activateDrawingModeFromTopBar(), activateEraserMode(), activateFreehandDrawMode(), activatePanInspectMode(), activateTextBoxMode(), applyZoomScaledStrokeToPolyline(), beginMapDrawPointerCapture(), catkPlacementPointsAreNear() (+30 more)
 
 ### Community 40 - "Community 40"
-Cohesion: 0.08
-Nodes (32): addAutoFlankEchelonMarkers(), bindDistanceWaypointLabelTooltip(), buildCatkTailPopupContent(), buildLinePopupContent(), catkPopupStylePayload(), distanceWaypointLabelTooltipHtml(), escapeHtml(), finishDeferredUiInit() (+24 more)
+Cohesion: 0.14
+Nodes (20): bindDistanceWaypointLabelTooltip(), buildCatkTailPopupContent(), buildLinePopupContent(), buildTextLabelIcon(), buildTextLabelPopupContent(), catkPopupStylePayload(), coordInputHtml(), distanceWaypointLabelTooltipHtml() (+12 more)
 
 ### Community 41 - "Community 41"
-Cohesion: 0.20
-Nodes (14): applyLayerTemplate(), buildFolderMoveOptions(), captureTemplateFromLayer(), captureTemplateFromSelection(), createLayerRowElement(), createLayerTemplateId(), getFolderForLayer(), getLayerDisplayName() (+6 more)
+Cohesion: 0.15
+Nodes (12): brief, document_set_id, documents, document_set_id, documents, llm_fill, available, reason (+4 more)
 
 ### Community 42 - "Community 42"
-Cohesion: 0.11
-Nodes (25): applyZoomScaledStrokeToPolyline(), cancelGeoDrawing(), cleanupElementDecorations(), clearCatkPreviewAdornments(), clearGeoPlacementPreview(), clearGeoRadiusGuide(), createRectangleCorners(), createTmgResizeHandle() (+17 more)
+Cohesion: 0.08
+Nodes (39): cancelGeoDrawing(), cancelLineDrawing(), cleanupElementDecorations(), clearCatkPreviewAdornments(), clearGeoRadiusGuide(), clearPlacementPreview(), createMultiSegmentTmgGroupSelectionBox(), createTmgResizeHandle() (+31 more)
 
 ### Community 43 - "Community 43"
 Cohesion: 0.21
@@ -277,8 +307,8 @@ Cohesion: 0.05
 Nodes (53): buildExternalScenarioCatalogFromManifest(), buildExternalScenarioSourceTrace(), buildLiveOobUnitIndex(), buildLiveStepInvolvedUnits(), buildSingleExternalScenarioCatalogEntry(), buildW3PreviewFromLoadedScenario(), buildWargame3PreviewUnitScopeSummary(), checkScenarioHealth() (+45 more)
 
 ### Community 45 - "Community 45"
-Cohesion: 0.22
-Nodes (10): addCurrentSidcToFavorites(), applyFavoriteSidc(), getSidcMetadataLabel(), getSymbolPopupDisplayName(), loadSidcFavorites(), pullSidcFromManualInput(), renderTopFavoritesPanel(), saveSidcFavorites() (+2 more)
+Cohesion: 0.06
+Nodes (33): blue_unit_step_coords, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
 
 ### Community 46 - "Community 46"
 Cohesion: 0.30
@@ -376,6 +406,18 @@ Nodes (5): _bindTimelineTransport(), _swPlayIntervalMs(), _swStartPlay(), _swSte
 Cohesion: 1.00
 Nodes (3): Path, _looks_like_smart_search_repo(), _resolve_smart_search_repo_path()
 
+### Community 70 - "Community 70"
+Cohesion: 0.06
+Nodes (33): blue_unit_step_prev, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
+
+### Community 71 - "Community 71"
+Cohesion: 0.06
+Nodes (33): blue_unit_step_coords, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
+
+### Community 72 - "Community 72"
+Cohesion: 0.06
+Nodes (33): blue_unit_step_prev, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
+
 ### Community 73 - "Community 73"
 Cohesion: 0.13
 Nodes (8): baseScn(), BOX, FAR, mkSteps(), norm, path, PT, validator
@@ -400,22 +442,126 @@ Nodes (5): C, MIXED_AR, path, WARNO_AR, WARNO_BOTH_SIDES
 Cohesion: 0.29
 Nodes (4): B, C, MIXED_ORDER, path
 
+### Community 79 - "Community 79"
+Cohesion: 0.07
+Nodes (28): ao_boundaries, bls_template, blue_units_base_ids, blue_units_initial, blue_units_source, generated_from_docs, imported_from_geojson, input_docs (+20 more)
+
+### Community 80 - "Community 80"
+Cohesion: 0.09
+Nodes (22): Executive summary, Final inventory by domain, Final state at end of run, Force-ratio progression, Phase 0 — D-7 — تمهيد - الوضع قبل العمليات, Phase 10 — D+36h — الفرقة 9 تلتحق - دفع 8-10 كم, Phase 11 — D+48h — اندفاع نحو 40-50 كم, Phase 12 — D+72h — المرحلة 3 - الفرقة المدرعة 1 تنزل (+14 more)
+
+### Community 81 - "Community 81"
+Cohesion: 0.11
+Nodes (18): red_unit_step_coords, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
+
+### Community 82 - "Community 82"
+Cohesion: 0.11
+Nodes (18): red_unit_step_prev, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
+
+### Community 83 - "Community 83"
+Cohesion: 0.11
+Nodes (18): red_unit_step_coords, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
+
+### Community 84 - "Community 84"
+Cohesion: 0.11
+Nodes (18): red_unit_step_prev, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
+
+### Community 85 - "Community 85"
+Cohesion: 0.14
+Nodes (14): patriot-sam-battery.jpg, applies_to_platforms, credit, date_cached, date_original, description, license, local_asset (+6 more)
+
+### Community 86 - "Community 86"
+Cohesion: 0.15
+Nodes (13): image_match, note, image_match, note, platform_match, air_defense, patriot, sam_s300 (+5 more)
+
+### Community 87 - "Community 87"
+Cohesion: 0.18
+Nodes (10): files, geojson_all, geojson_steps, report, schedule, generated_at, input_docs, run_id (+2 more)
+
+### Community 88 - "Community 88"
+Cohesion: 0.18
+Nodes (10): files, geojson_all, geojson_steps, report, schedule, generated_at, input_docs, run_id (+2 more)
+
+### Community 89 - "Community 89"
+Cohesion: 0.18
+Nodes (10): Executive summary, Final inventory by domain, Final state at end of run, Force-ratio progression, Phase 0 — D-7 — تمهيد - الوضع قبل العمليات, Phase 1 — D-5 — تبادل صواريخ استراتيجية, Phase 2 — D-3 — حملة قمع الدفاع الجوي SEAD, Phase 3 — D-2 — اشتباك بحري سطحي + ASW (+2 more)
+
+### Community 90 - "Community 90"
+Cohesion: 0.67
+Nodes (6): briefBlock(), chip(), esc(), listBlock(), render(), sideBlock()
+
+### Community 91 - "Community 91"
+Cohesion: 0.21
+Nodes (13): catkArrowParamsFromNeckDragSession(), catkArrowParamsFromTipAndTailCursor(), catkArrowParamsFromTipCursor(), catkArrowParamsWithTailFromCursor(), catkPixelsToKm(), catkPxPerKmAtLatLng(), catkScaleKmFromTipCursor(), catkScalePxFromTipCursor() (+5 more)
+
+### Community 92 - "Community 92"
+Cohesion: 0.33
+Nodes (6): obj, carver, coord, name, radius_km, target_depth_km
+
+### Community 93 - "Community 93"
+Cohesion: 0.33
+Nodes (6): obj, carver, coord, name, radius_km, target_depth_km
+
+### Community 94 - "Community 94"
+Cohesion: 0.33
+Nodes (5): _comment, _format, _generated, images, offline_note
+
+### Community 95 - "Community 95"
+Cohesion: 0.50
+Nodes (4): image_match, note, meko, platform_match
+
+### Community 97 - "Community 97"
+Cohesion: 0.67
+Nodes (3): objective_override_expected, lat, lon
+
+### Community 98 - "Community 98"
+Cohesion: 0.67
+Nodes (3): objective_override_expected, lat, lon
+
+### Community 99 - "Community 99"
+Cohesion: 0.17
+Nodes (12): understanding, ambiguities, assumptions, commander_intent, constraints, mission, objectives, phases (+4 more)
+
+### Community 100 - "Community 100"
+Cohesion: 0.18
+Nodes (11): operational_brief, ambiguities, area_of_operations, assumptions, commander_intent, constraints, mission, objectives (+3 more)
+
+### Community 101 - "Community 101"
+Cohesion: 0.29
+Nodes (7): assessed_capabilities, source, summary, tasks, units, enemy, enemy
+
+### Community 102 - "Community 102"
+Cohesion: 0.33
+Nodes (6): source, summary, tasks, units, friendly, friendly
+
+### Community 103 - "Community 103"
+Cohesion: 0.40
+Nodes (5): dedupe, duplicates_removed, input_count, same_in_both_slots, unique_count
+
+### Community 104 - "Community 104"
+Cohesion: 0.67
+Nodes (4): civilian, infrastructure, neutral, neutral
+
+### Community 105 - "Community 105"
+Cohesion: 0.50
+Nodes (4): blue, neutral, red, proposed_unit_counts
+
 ## Knowledge Gaps
-- **397 isolated node(s):** `path`, `fs`, `B`, `{ extractDocxText }`, `C` (+392 more)
+- **771 isolated node(s):** `Legend`, `⚠️ DRIFT — code vs. documented decisions (confirm before relying on memory)`, `A. Client shell — operational modules (`UI_MOdified/client/shell/`)`, `B. Wargame / adjudicator visualization (`UI_MOdified/client/wargame/`)`, `C. Server — AI agents + sim boundary (`UI_MOdified/server/ai/`, `server/sim/`)` (+766 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Path` connect `Community 69` to `Community 64`, `Community 65`, `Community 66`, `Community 73`, `Community 76`, `Community 77`, `Community 78`, `Community 49`, `Community 55`, `Community 56`, `Community 25`, `Community 26`, `Community 27`, `Community 61`, `Community 62`, `Community 63`?**
-  _High betweenness centrality (0.027) - this node is a cross-community bridge._
-- **Why does `load_llm_config()` connect `Community 27` to `Community 69`?**
-  _High betweenness centrality (0.002) - this node is a cross-community bridge._
-- **Why does `tx()` connect `Community 47` to `Community 44`, `Community 51`, `Community 52`, `Community 53`, `Community 54`, `Community 58`, `Community 60`?**
-  _High betweenness centrality (0.002) - this node is a cross-community bridge._
-- **What connects `path`, `fs`, `B` to the rest of the system?**
-  _401 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._
+- **Why does `blue_unit_step_coords` connect `Community 71` to `Community 79`?**
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
+- **Why does `blue_unit_step_coords` connect `Community 45` to `Community 38`?**
+  _High betweenness centrality (0.003) - this node is a cross-community bridge._
+- **What connects `Legend`, `⚠️ DRIFT — code vs. documented decisions (confirm before relying on memory)`, `A. Client shell — operational modules (`UI_MOdified/client/shell/`)` to the rest of the system?**
+  _775 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.125 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**

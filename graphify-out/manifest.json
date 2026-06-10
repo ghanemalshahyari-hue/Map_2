@@ -15895,8 +15895,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/shell/scenario-import-wizard.js": {
-    "mtime": 1781081815.1448493,
-    "ast_hash": "aa5803218ba2c2ea96cd74e409bec8a0",
+    "mtime": 1781082466.160973,
+    "ast_hash": "08e6a83820880ff10e390736828ede36",
     "semantic_hash": ""
   },
   "UI_MOdified/client/shell/scenario-workspace.js": {
@@ -15950,8 +15950,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/shell/world-state-db.js": {
-    "mtime": 1781080275.1242232,
-    "ast_hash": "c312c88efbed965e686a5e49866e3b38",
+    "mtime": 1781082748.0145364,
+    "ast_hash": "eefa0068fea975f86311e678ac2ac544",
     "semantic_hash": ""
   },
   "UI_MOdified/client/shell/world-state-transition.js": {
@@ -16765,8 +16765,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/data/scenarios/_active.json": {
-    "mtime": 1781082075.8640835,
-    "ast_hash": "8ef903f33a83bd8f01e97395763b571d",
+    "mtime": 1781084486.1773937,
+    "ast_hash": "667add2549293081a66e243987b876ec",
     "semantic_hash": ""
   },
   "UI_MOdified/data/scenarios/coastal-shield-training-v1.json": {
@@ -18090,8 +18090,8 @@
     "semantic_hash": ""
   },
   "APP_INVENTORY.md": {
-    "mtime": 1781078421.0201957,
-    "ast_hash": "31b9d79c2d56718bf9e1b89c0ee895d4",
+    "mtime": 1781083528.1253023,
+    "ast_hash": "1a9b693dcb0a1f7d900509e9ed730e72",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
@@ -20290,8 +20290,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/app.html": {
-    "mtime": 1781077064.3795693,
-    "ast_hash": "34ced0735bdd3c1b48a0794c3f79751b",
+    "mtime": 1781082487.5217645,
+    "ast_hash": "b2af1fdc129c3df1f778936c8f0174a3",
     "semantic_hash": ""
   },
   "UI_MOdified/client/home.html": {
@@ -24695,8 +24695,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/assets/units/manifest.json": {
-    "mtime": 1781080146.274895,
-    "ast_hash": "956fe58ca52ea668fc9e11d03fe62028",
+    "mtime": 1781082772.448032,
+    "ast_hash": "e1bd731b03a1ee5e3a1b2931e870a3b8",
     "semantic_hash": ""
   },
   "UI_MOdified/client/assets/units/uss-lake-champlain-cvs39.jpg": {
@@ -24790,13 +24790,28 @@
     "semantic_hash": ""
   },
   "test-sam-image-coverage.js": {
-    "mtime": 1781080346.1288247,
-    "ast_hash": "5d5a2a57f500b8f628b3d85d582ac4bb",
+    "mtime": 1781082803.023342,
+    "ast_hash": "e507d04926b1cb72eae271c524a9313e",
     "semantic_hash": ""
   },
   "UI_MOdified/client/assets/units/patriot-sam-battery.jpg": {
     "mtime": 1781080125.545197,
     "ast_hash": "ed8064534becfaad7ccd0d9c34d066fc",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/client/shell/doc-understanding-review.js": {
+    "mtime": 1781082367.4047172,
+    "ast_hash": "8d2e3339fdf34c5463f2c4b23774dab3",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/client/doc-understanding-verify.html": {
+    "mtime": 1781083400.5541735,
+    "ast_hash": "1f13839ce63e78838846296f861b4205",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/client/doc-understanding-sample.json": {
+    "mtime": 1781083394.601238,
+    "ast_hash": "70f9f7c7f0bbb169fb40447694053cb9",
     "semantic_hash": ""
   }
 }

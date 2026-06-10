@@ -36,8 +36,8 @@ services:
     environment:
       PORT:                  "5006"                          # container always 5006
       WEB_PUBLIC_PORT:       "${WEB_PUBLIC_PORT:-5006}"      # host port (informational)
-      WEB_PUBLIC_BASE_URL:   "${WEB_PUBLIC_BASE_URL:-}"      # e.g. http://155.140.70.51:8640
-      TILE_PUBLIC_BASE_URL:  "${TILE_PUBLIC_BASE_URL:-}"     # e.g. http://155.140.70.51:8080
+      WEB_PUBLIC_BASE_URL:   "${WEB_PUBLIC_BASE_URL:-}"      # e.g. http://<server-ip>:8640
+      TILE_PUBLIC_BASE_URL:  "${TILE_PUBLIC_BASE_URL:-}"     # e.g. http://<server-ip>:8080
       RMOOZ_TILE_DATASET_NAME: "${RMOOZ_TILE_DATASET_NAME:-satellite-2017-11-02_asia_gcc-states}"
       RMOOZ_AUTH_BACKEND:    "${RMOOZ_AUTH_BACKEND:-ldap}"
 

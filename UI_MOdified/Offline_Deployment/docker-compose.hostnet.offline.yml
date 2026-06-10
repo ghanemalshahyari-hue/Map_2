@@ -18,7 +18,7 @@
 #    docker compose -f Offline_Deployment/docker-compose.hostnet.offline.yml \
 #                   --env-file Offline_Deployment/.env.offline up -d
 #
-#  App  → http://155.140.70.51:8640   Tiles → http://155.140.70.51:8080
+#  App  → http://<server-ip>:8640   Tiles → http://<server-ip>:8080
 #  (Same .env.offline as the bridge compose; WEB_PUBLIC_PORT mapping is unused here.)
 # ─────────────────────────────────────────────────────────────────────────────
 version: "3.9"
@@ -37,8 +37,8 @@ services:
       # Web server binds THIS port directly on the host (no mapping under host net).
       # Browsers reach the app at http://<host-ip>:8640.
       PORT:                  "8640"
-      WEB_PUBLIC_BASE_URL:   "${WEB_PUBLIC_BASE_URL:-}"      # e.g. http://155.140.70.51:8640
-      TILE_PUBLIC_BASE_URL:  "${TILE_PUBLIC_BASE_URL:-}"     # e.g. http://155.140.70.51:8080
+      WEB_PUBLIC_BASE_URL:   "${WEB_PUBLIC_BASE_URL:-}"      # e.g. http://<server-ip>:8640
+      TILE_PUBLIC_BASE_URL:  "${TILE_PUBLIC_BASE_URL:-}"     # e.g. http://<server-ip>:8080
       RMOOZ_TILE_DATASET_NAME: "${RMOOZ_TILE_DATASET_NAME:-satellite-2017-11-02_asia_gcc-states}"
       RMOOZ_AUTH_BACKEND:    "${RMOOZ_AUTH_BACKEND:-ldap}"
 

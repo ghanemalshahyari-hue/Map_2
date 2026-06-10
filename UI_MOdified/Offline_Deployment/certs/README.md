@@ -72,7 +72,7 @@ RMOOZ_AI_CLIENT_KEY_PATH=/app/certs/rmooz-client.key
 ## Verify after container restart
 
 ```
-curl http://155.140.70.51:8640/api/ai/generation-health
+curl http://<server-ip>:8640/api/ai/generation-health
 ```
 
 Expected (CA trust only):

@@ -166,10 +166,13 @@ check('G16 statusCode in response',              ws.includes('statusCode'));
 check('G17 errorMessage in response',            ws.includes('errorMessage'));
 
 // ──────────────────────────────────────────────────────────────────────────────
-console.log('\nH) maps.json — no localhost:8080');
+console.log('\nH) maps.json — no hardcoded host (security scrub; tiles via TILE_PUBLIC_BASE_URL)');
 const mapsJson = read(path.join(OFF, 'map_data', 'base', 'maps.json'));
-check('H1  maps.json does not use localhost',    !mapsJson.includes('"tileServer":"http://localhost'));
-check('H2  maps.json uses server IP',            mapsJson.includes('155.140.70.51:8080'));
+check('H1  maps.json does not use localhost',    !mapsJson.includes('localhost'));
+// Security scrub: maps.json must NOT hardcode a real IP. The browser tile URL is
+// derived at runtime from TILE_PUBLIC_BASE_URL via /api/offline/map-config; app.js
+// skips its maps.json probe when tileServer is empty. So: no IP, no localhost.
+check('H2  maps.json has no hardcoded IP',       !/\d{1,3}(?:\.\d{1,3}){3}/.test(mapsJson), mapsJson.trim());
 check('H3  maps.json has mbtiles array',         mapsJson.includes('"mbtiles"'));
 
 // ──────────────────────────────────────────────────────────────────────────────

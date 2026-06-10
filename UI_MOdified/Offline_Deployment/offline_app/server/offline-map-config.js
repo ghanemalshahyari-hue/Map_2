@@ -5,11 +5,11 @@
  *
  * OFFLINE-RUNTIME-FIX-4: Added TILE_PUBLIC_BASE_URL support so the returned
  * localTileUrl is browser-reachable when the app runs on a remote server
- * (e.g. http://155.140.70.51:8640) and the browser is on a different machine.
+ * (e.g. http://<server-ip>:8640) and the browser is on a different machine.
  *
  * Key env vars:
  *   TILE_PUBLIC_BASE_URL     — browser-facing base URL of the tile server
- *                              e.g. http://155.140.70.51:8080
+ *                              e.g. http://<server-ip>:8080
  *                              If set, localTileUrl is derived from this.
  *   RMOOZ_TILE_DATASET_NAME  — MBTiles tileset name (filename without .mbtiles)
  *                              default: satellite-2017-11-02_asia_gcc-states

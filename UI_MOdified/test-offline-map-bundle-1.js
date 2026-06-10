@@ -79,9 +79,13 @@ if (fs.existsSync(mapsJsonPath)) {
             mapsJson.mbtiles.some(f => f.includes('satellite'));
         assert.ok(hasEntry, 'maps.json must list the satellite MBTiles filename');
     });
-    test('map_data/base/maps.json tileServer points to localhost:8080', () => {
-        assert.ok(mapsJson.tileServer && mapsJson.tileServer.includes('8080'),
-            'tileServer must point to port 8080');
+    test('map_data/base/maps.json tileServer is not a hardcoded host (security scrub)', () => {
+        // Security: maps.json must NOT hardcode localhost or a real IP. The browser
+        // tile URL comes from TILE_PUBLIC_BASE_URL via /api/offline/map-config; the
+        // tile server itself listens on 8080 inside the container regardless.
+        const ts = mapsJson.tileServer || '';
+        assert.ok(!/localhost/.test(ts) && !/\d{1,3}(?:\.\d{1,3}){3}/.test(ts),
+            'tileServer must not hardcode localhost or an IP (got: ' + JSON.stringify(ts) + ')');
     });
 } else {
     skip('maps.json exists in map_data/base/', 'Run prepare-map-bundle.ps1 first');

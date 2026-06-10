@@ -144,6 +144,11 @@ ENV PORT=5006 \
     NODE_ENV=production
 
 # ── Writable / volume-mounted directories ─────────────────────────────────────
+# NOTE: do NOT pre-create /app/TestingAI/WarGamingGEN/runs here. The pure-image
+# audit requires it absent (`test ! -d .../runs`), and pre-creating an empty dir
+# fails that check. At runtime the orchestrator does run_dir.mkdir(parents=True,
+# exist_ok=True) and the compose file bind-mounts ./TestingAI_Runtime/runs over
+# it, so the directory always exists when generation actually runs.
 RUN mkdir -p \
     /app/data \
     /app/maps \
@@ -151,8 +156,7 @@ RUN mkdir -p \
     /app/offline_map_data \
     /app/dem_data \
     /app/TestingAI/import_from_rmooz/forces \
-    /app/TestingAI/export_to_rmooz \
-    /app/TestingAI/WarGamingGEN/runs
+    /app/TestingAI/export_to_rmooz
 
 # Port 5006: web server — Port 8080: MBTiles tile server
 EXPOSE 5006 8080

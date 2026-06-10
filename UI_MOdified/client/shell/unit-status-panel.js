@@ -138,17 +138,22 @@
     function openPanel() {
         var p = $('unit-status-panel');
         if (p) p.removeAttribute('hidden');
+        var tab = $('usp-reopen-tab');
+        if (tab) tab.setAttribute('hidden', '');
     }
 
     function closePanel() {
         var p = $('unit-status-panel');
-        if (p) { p.setAttribute('hidden', ''); currentUnit = null; }
+        if (p) p.setAttribute('hidden', '');
+        // Show reopen tab only if we had a unit (operator deliberately closed)
+        var tab = $('usp-reopen-tab');
+        if (tab && currentUnit) tab.removeAttribute('hidden');
+        currentUnit = null;
     }
 
     function _showEmpty() {
-        var e = $('empty-state'), b = $('usp-body');
-        if (e) e.removeAttribute('hidden');
-        if (b) b.setAttribute('hidden', '');
+        // When no unit is selected, close the panel entirely (no blank empty state)
+        closePanel();
     }
 
     function _showBody() {
@@ -610,13 +615,62 @@
     }
 
     // ── Event listeners ───────────────────────────────────────────────
+    // ── Collapse / reopen tab ─────────────────────────────────────────
+    function _showReopenTab(show) {
+        var tab = $('usp-reopen-tab');
+        if (!tab) return;
+        if (show) tab.removeAttribute('hidden');
+        else      tab.setAttribute('hidden', '');
+    }
+
+    function collapsePanel() {
+        var p = $('unit-status-panel');
+        if (p) p.setAttribute('hidden', '');
+        _showReopenTab(!!currentUnit);   // show reopen only when a unit was selected
+    }
+
+    function expandPanel() {
+        var p = $('unit-status-panel');
+        if (p) p.removeAttribute('hidden');
+        _showReopenTab(false);
+    }
+
     function setupListeners() {
         var closeBtn = $('panel-close');
         if (closeBtn) closeBtn.addEventListener('click', closePanel);
+
+        var collapseTab = $('usp-collapse-tab');
+        if (collapseTab) collapseTab.addEventListener('click', function() {
+            var p = $('unit-status-panel');
+            if (p && !p.hasAttribute('hidden')) {
+                collapsePanel();
+            } else {
+                expandPanel();
+                if (currentUnit) {
+                    var b = $('usp-body'), e = $('empty-state');
+                    if (b) b.removeAttribute('hidden');
+                    if (e) e.setAttribute('hidden', '');
+                }
+            }
+        });
+
+        var reopenTab = $('usp-reopen-tab');
+        if (reopenTab) reopenTab.addEventListener('click', function() {
+            expandPanel();
+            if (currentUnit) {
+                var b = $('usp-body'), e = $('empty-state');
+                if (b) b.removeAttribute('hidden');
+                if (e) e.setAttribute('hidden', '');
+            }
+        });
+
         document.addEventListener('rmooz:unit-selected', function(e) {
             var unit = e.detail && e.detail.unit;
             var selectedAt = (e.detail && e.detail.selectedAt) || Date.now();
-            if (unit) { populatePanel(unit, selectedAt); openPanel(); }
+            if (unit) {
+                populatePanel(unit, selectedAt);
+                expandPanel();   // expand (show panel, hide reopen tab)
+            }
         });
     }
 

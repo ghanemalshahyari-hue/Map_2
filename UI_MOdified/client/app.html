@@ -3442,6 +3442,191 @@
             </aside>
 
             <!-- ═══════════ SELECTED UNIT PANEL — PR-3 ═══════════ -->
+            
+            <!-- COMMANDER UNIT STATUS PANEL (UI-Unit-1-C) read-only tactical display -->
+            <aside id="unit-status-panel" class="unit-status-panel" hidden>
+
+                <!-- Collapse tab - protrudes from left edge -->
+                <button id="usp-collapse-tab" class="usp-collapse-tab"
+                        title="Collapse panel" aria-label="Collapse panel">&#8249;</button>
+                <header class="usp-header">
+                    <span class="usp-header-title">UNIT STATUS</span>
+                    <button id="panel-close" class="usp-close-btn" aria-label="Close panel">&#x2715;</button>
+                </header>
+
+                <div id="empty-state" class="usp-empty">
+                    <div class="usp-empty-icon">&#x25C8;</div>
+                    <p>No unit selected.<br>Click a unit on the map.</p>
+                </div>
+
+                <div class="usp-body" id="usp-body" hidden>
+                    <div class="usp-hero">
+                        <div class="usp-hero-top">
+                            <div class="usp-unit-name" id="unit-label">&#8212;</div>
+                            <span class="usp-status-badge" id="usp-status-badge"></span>
+                        </div>
+                        <div class="usp-hero-symbol" id="unit-symbol"></div>
+                    </div>
+
+                    <div class="usp-identity-block">
+                        <div class="usp-platform-id" id="usp-platform-id"></div>
+                        <div class="usp-platform-type" id="usp-platform-type"></div>
+                        <div class="usp-uid" id="unit-uid"></div>
+                        <div class="usp-sidc" id="usp-sidc"></div>
+                        <div class="usp-code-line" id="usp-code"></div>
+                    </div>
+
+                    <div class="usp-stats-row">
+                        <div class="usp-stat"><div class="usp-stat-lbl">Side</div><div class="usp-stat-val" id="unit-side">&#8212;</div></div>
+                        <div class="usp-stat"><div class="usp-stat-lbl">Course</div><div class="usp-stat-val" id="usp-course">&#8212;</div></div>
+                        <div class="usp-stat"><div class="usp-stat-lbl">Speed</div><div class="usp-stat-val" id="usp-speed">&#8212;</div></div>
+                    </div>
+
+                    <div class="usp-readiness-block">
+                        <div class="usp-readiness-top">
+                            <span class="usp-field-lbl">Readiness</span>
+                            <span class="usp-readiness-chip" id="readiness-value"></span>
+                            <span class="usp-delta-src" id="readiness-source"></span>
+                        </div>
+                        <div class="usp-bar-track"><div class="usp-bar-fill usp-readiness-fill" id="usp-readiness-fill"></div></div>
+                        <div class="usp-data-src" id="readiness-data-source"></div>
+                    </div>
+
+                    <div class="usp-systems-block">
+                        <div class="usp-mini-hdr">
+                            <span class="usp-mini-label">SYSTEMS</span>
+                            <span class="usp-ctrl-tag">Damage Ctrl</span>
+                        </div>
+                        <div class="usp-bar-track usp-bar-track--tall"><div class="usp-bar-fill supply-fill" id="supply-fill"></div></div>
+                        <div class="usp-systems-foot">
+                            <span class="usp-field-lbl">Supply</span>
+                            <span class="usp-stat-val usp-supply-pct" id="supply-pct"></span>
+                            <span class="usp-delta-src" id="supply-source"></span>
+                        </div>
+                        <div class="usp-data-src" id="supply-data-source"></div>
+                    </div>
+
+                    <div class="usp-magazines-block" id="usp-magazines-block">
+                        <div class="usp-mini-hdr">
+                            <span class="usp-mini-label">MAGAZINES</span>
+                            <span class="usp-ctrl-tag">View Magazines</span>
+                        </div>
+                        <h4 id="magazines-title" hidden style="display:none"></h4>
+                        <ul class="usp-mag-list" id="magazine-list"></ul>
+                    </div>
+
+                    <div class="usp-fuelammo-block" id="usp-fuelammo-block">
+                        <div class="usp-mini-hdr"><span class="usp-mini-label">FUEL AND AMMO</span></div>
+                        <div class="usp-fuelammo-name" id="usp-fuelammo-name">&#8212;</div>
+                        <div class="usp-bar-track usp-bar-track--tall"><div class="usp-bar-fill usp-fuel-fill" id="usp-fuel-fill"></div></div>
+                        <div class="usp-fuelammo-detail" id="usp-fuelammo-detail"></div>
+                    </div>
+
+                    <div class="usp-assignment-block">
+                        <div class="usp-arow"><span class="usp-arow-lbl">Domain</span><span class="usp-arow-val" id="unit-domain">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl">Role</span><span class="usp-arow-val" id="unit-role">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl">Echelon</span><span class="usp-arow-val" id="unit-echelon">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl">Assigned Base</span><span class="usp-arow-val" id="usp-assigned-base">None</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl">Status</span><span class="usp-arow-val" id="usp-unit-status">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl">Mission</span><span class="usp-arow-val usp-link" id="usp-mission">&#8212;</span></div>
+                    </div>
+
+                    <!-- POSITION section -->
+                    <div class="usp-pos-section">
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl">MGRS</span>
+                            <span class="usp-pos-val" id="usp-mgrs">&#8212;</span>
+                        </div>
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl">Lat / Lng</span>
+                            <span class="usp-pos-val" id="usp-latlng">&#8212;</span>
+                        </div>
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl">Selected at</span>
+                            <span class="usp-pos-selat" id="usp-selat">&#8212;</span>
+                        </div>
+                    </div>
+
+                    <div class="usp-tabs-block">
+                        <div class="usp-tabs-nav">
+                            <button class="usp-tab usp-tab--active" data-tab="tab-sensors">Sensors <span class="usp-tab-count" id="sensor-count"></span></button>
+                            <button class="usp-tab" data-tab="tab-comms">Comms</button>
+                            <button class="usp-tab" data-tab="tab-weapons">Weapons <span class="usp-tab-count" id="weapon-count"></span></button>
+                        </div>
+                        <div class="usp-tab-pane usp-tab-pane--active" id="tab-sensors">
+                            <div id="sensors-section">
+                                <ul class="usp-item-list" id="sensor-list"></ul>
+                                <div class="usp-tab-empty" id="sensors-empty" hidden>No sensors configured</div>
+                            </div>
+                        </div>
+                        <div class="usp-tab-pane" id="tab-comms"><div class="usp-tab-empty">No comms data</div></div>
+                        <div class="usp-tab-pane" id="tab-weapons">
+                            <div id="weapons-section">
+                                <ul class="usp-item-list" id="weapon-list"></ul>
+                                <div class="usp-tab-empty" id="weapons-empty" hidden>No weapons configured</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usp-speed-block">
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">UNIT ALT / SPEED</span>
+                            <button class="usp-collapse-btn" aria-expanded="true" aria-controls="usp-speed-body">&#171;</button>
+                        </div>
+                        <div id="usp-speed-body" class="usp-section-body" data-collapsed="false">
+                            <div class="usp-speed-grid">
+                                <div class="usp-arow"><span class="usp-arow-lbl">Altitude</span><span class="usp-arow-val" id="usp-altitude">&#8212;</span></div>
+                                <div class="usp-arow"><span class="usp-arow-lbl">Speed</span><span class="usp-arow-val" id="usp-speed-val">&#8212;</span></div>
+                            </div>
+                            <div class="usp-throttle-wrap">
+                                <div class="usp-throttle-lbl">Throttle</div>
+                                <div class="usp-throttle-btns" id="usp-throttle-btns">
+                                    <span class="usp-throttle-btn" data-throttle="stop">Stop</span>
+                                    <span class="usp-throttle-btn" data-throttle="creep">Creep</span>
+                                    <span class="usp-throttle-btn" data-throttle="cruise">Cruise</span>
+                                    <span class="usp-throttle-btn" data-throttle="full">Full</span>
+                                    <span class="usp-throttle-btn" data-throttle="flank">Flank</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usp-fuel-block">
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">UNIT FUEL</span>
+                            <button class="usp-collapse-btn" aria-expanded="true" aria-controls="usp-fuel-body">&#171;</button>
+                        </div>
+                        <div id="usp-fuel-body" class="usp-section-body" data-collapsed="false">
+                            <div class="usp-fuel-unit-name" id="usp-fuel-unit-name"></div>
+                            <div class="usp-bar-track usp-bar-track--tall"><div class="usp-bar-fill usp-fuel-fill2" id="usp-fuel-bar"></div></div>
+                            <div class="usp-fuel-text" id="usp-fuel-text"></div>
+                        </div>
+                    </div>
+
+                    <div class="usp-emcon-block">
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">UNIT EMCON</span>
+                            <button class="usp-collapse-btn" aria-expanded="true" aria-controls="usp-emcon-body">&#171;</button>
+                        </div>
+                        <div id="usp-emcon-body" class="usp-section-body" data-collapsed="false">
+                            <div class="usp-emcon-btn">EMCON Window <span class="usp-keybind">(Ctrl + F9)</span></div>
+                            <div class="usp-emcon-state" id="usp-emcon-state"></div>
+                        </div>
+                    </div>
+
+                    <div class="usp-deltas-block" id="deltas-section" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">RECENT CHANGES <span class="usp-count-badge" id="delta-count"></span></span>
+                            <button class="usp-collapse-btn" aria-expanded="true" aria-controls="delta-list">&#171;</button>
+                        </div>
+                        <ul class="usp-item-list usp-delta-list" id="delta-list" data-collapsed="false"></ul>
+                        <div class="usp-tab-empty" id="deltas-empty" hidden>No recent state changes</div>
+                    </div>
+
+                </div><!-- /.usp-body -->
+
+            </aside>
+
             <!-- OBJ-C: OBJECTIVE EVIDENCE PANEL — Read-only display of objective_evidence ledger -->
             <!-- Populated by client/shell/objective-evidence-panel.js in response to the
                  rmooz:objective-selected event emitted by the objective marker click.
@@ -3449,6 +3634,12 @@
             <aside class="oep-panel oep-hidden" id="objective-evidence-panel" aria-label="Objective evidence details">
                 <!-- Content populated by objective-evidence-panel.js -->
             </aside>
+
+        <!-- floating reopen tab — shown when Commander Panel is collapsed -->
+        <button id="usp-reopen-tab" class="usp-reopen-tab" hidden
+                title="Open unit panel" aria-label="Open unit status panel">
+            &#8250; UNIT
+        </button>
 
         </div><!-- /.workspace -->
 
@@ -5217,12 +5408,41 @@
 
         .unit-status-panel { width:340px; background:#0b0e15; border-left:2px solid #1a2535; box-shadow:-6px 0 24px rgba(0,0,0,0.75); font-family:'Consolas','Courier New',monospace; font-size:0.8rem; color:#c5d2de; }
 
+        /* ── Panel collapse / reopen toggle ─── */
+        .unit-status-panel { overflow: visible; }  /* allow tab to protrude */
+        .usp-collapse-tab {
+            position:absolute; left:-22px; top:50%; transform:translateY(-50%);
+            width:22px; height:64px;
+            background:linear-gradient(90deg,#060a10,#0a1018);
+            border:1px solid #1a2535; border-right:none;
+            color:#4a7a9a; font-size:0.85rem; cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            z-index:901; writing-mode:horizontal-tb;
+            transition:background 0.15s,color 0.15s;
+        }
+        .usp-collapse-tab:hover { background:#0e1a28; color:#7ab0d0; }
+        .usp-reopen-tab {
+            position:fixed; right:0; top:50%; transform:translateY(-50%);
+            width:22px; height:80px;
+            background:linear-gradient(270deg,#060a10,#0a1018);
+            border:1px solid #1a2535; border-right:none;
+            color:#4a7a9a; font-size:0.65rem; cursor:pointer;
+            z-index:899; writing-mode:vertical-rl; text-orientation:mixed;
+            letter-spacing:0.08em; text-transform:uppercase;
+            display:flex; align-items:center; justify-content:center;
+            transition:background 0.15s,color 0.15s;
+            padding:4px 0;
+        }
+        .usp-reopen-tab:hover { background:#0e1a28; color:#7ab0d0; }
+        .usp-reopen-tab[hidden] { display:none !important; }
+
         .usp-header { display:flex; align-items:center; justify-content:space-between; padding:0 0.6rem; height:26px; flex-shrink:0; background:linear-gradient(90deg,#0a1018,#0c1520); border-bottom:1px solid #1a2535; }
         .usp-header-title { font-size:0.68rem; font-weight:bold; letter-spacing:0.16em; text-transform:uppercase; color:#d0dce8; font-family:'Consolas','Courier New',monospace; }
         .usp-close-btn { appearance:none; background:none; cursor:pointer; border:1px solid #243545; padding:1px 6px; font-size:0.68rem; color:#445566; font-family:'Consolas','Courier New',monospace; transition:all 0.15s; }
         .usp-close-btn:hover { background:#151e2a; color:#8aaabb; border-color:#3a5060; }
 
         .usp-empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#2e4050; font-size:0.75rem; text-align:center; padding:2rem; }
+        .usp-empty[hidden] { display:none !important; }
         .usp-empty-icon { font-size:2rem; margin-bottom:0.75rem; color:#1a2535; }
         .usp-empty p { margin:0; line-height:1.7; }
 

@@ -290,6 +290,12 @@
         // ── D5: Naval platforms ───────────────────────────────────────────────
         meko: {
             label: 'MEKO Frigate', source: "Jane's Fighting Ships; SIPRI Naval Database",
+            // Real-Unit-Images-1: USS Lake Champlain CVS-39 used as representative
+            // Essex-class/ASW carrier photo (closest available cached asset).
+            // image_asset is a locally cached path — works offline.
+            image_asset:  '/client/assets/units/uss-lake-champlain-cvs39.jpg',
+            image_credit: 'USS Lake Champlain CVS-39 · U.S. Navy / NHHC · Public Domain',
+            image_source: 'https://commons.wikimedia.org/wiki/File:USS_Lake_Champlain_(CVS-39)_underway_in_February_1965_(USN_1114106).jpg',
             rcs_class: 'medium', readiness: 'ready', supply: 0.8,
             doctrine_tags: ['sea_control', 'anti_air', 'anti_ship', 'helicopter_ops'],
             sensors: [
@@ -470,6 +476,10 @@
         if (!Array.isArray(u.sensors) || !u.sensors.length) u.sensors = cap.sensors;
         if (!Array.isArray(u.weapons) || !u.weapons.length) u.weapons = cap.weapons;
         if (!Array.isArray(u.magazines) || !u.magazines.length) u.magazines = cap.magazines;
+        // Real-Unit-Images-1: propagate image metadata from catalog to enriched unit
+        // (unit-level image_url / image_credit always wins — only fill if absent)
+        if (u.image_asset == null && cap.image_asset) u.image_asset = cap.image_asset;
+        if (u.image_credit == null && cap.image_credit) u.image_credit = cap.image_credit;
         return u;
     }
 

@@ -531,19 +531,30 @@
 
     /**
      * Render the hero symbol area.
-     * Priority order:
-     *   1. milsymbol canvas  — when unit.sidc is present
-     *   2. Real cached image — unit.image_url  (unit-level, e.g. from scenario)
-     *                        → enriched.image_asset (DB1 catalog-level cached path)
-     *   3. SVG silhouette   — fallback when no image is available
-     * All real images must be locally cached paths (offline support).
-     * Image load errors fall back silently to SVG silhouette.
+     *
+     * Priority order (real images beat milsymbol):
+     *   1. unit.image_url       — scenario/unit-level real image (explicit field)
+     *   2. enriched.image_asset — DB1 catalog-level locally cached image
+     *   3. milsymbol canvas     — when unit.sidc is valid (no real image available)
+     *   4. SVG silhouette       — final fallback (no real image, no valid SIDC)
+     *
+     * All real images MUST be locally cached paths (offline-safe).
+     * Image load errors fall back silently through the chain to SVG.
      */
     function _renderSymbol(unit, enriched, container) {
         if (!container) return;
         container.innerHTML = '';
 
-        // 1. milsymbol when SIDC is present
+        // 1 + 2. Real cached image — unit-level or DB1 catalog-level
+        var imgSrc = (unit.image_url)
+            || (enriched && enriched.image_asset)
+            || null;
+        if (imgSrc) {
+            _renderRealImage(imgSrc, unit, enriched, container);
+            return;
+        }
+
+        // 3. milsymbol — only when no real image is available
         if (root.ms && typeof root.ms.Symbol === 'function' && unit.sidc) {
             try {
                 var sym = new root.ms.Symbol(unit.sidc, { size: 42 });
@@ -556,16 +567,7 @@
             } catch (_) {}
         }
 
-        // 2. Real image — unit-level override or DB1 catalog asset
-        var imgSrc = (unit.image_url)
-            || (enriched && enriched.image_asset)
-            || null;
-        if (imgSrc) {
-            _renderRealImage(imgSrc, unit, enriched, container);
-            return;
-        }
-
-        // 3. SVG silhouette fallback
+        // 4. SVG silhouette fallback
         container.innerHTML = _unitSvg(unit, enriched);
     }
 

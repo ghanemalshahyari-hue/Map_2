@@ -218,6 +218,30 @@ ok('IMG-4: image load error falls back to SVG silhouette',
 ok('IMG-5: attribution overlay rendered from image_credit',
     PANEL_JS.includes('image_credit'));
 
+// ── Priority order: real image before milsymbol ───────────────────────────
+ok('IMG-5b: real image check comes BEFORE milsymbol check in _renderSymbol',
+    (function() {
+        // Find _renderSymbol function body
+        var start = PANEL_JS.indexOf('function _renderSymbol(');
+        var end   = PANEL_JS.indexOf('\n    }', start + 100) + 6;
+        var body  = PANEL_JS.slice(start, end);
+        var imgIdx = body.indexOf('unit.image_url');
+        var milIdx = body.indexOf('ms.Symbol');
+        return imgIdx > 0 && milIdx > 0 && imgIdx < milIdx;
+    })(),
+    'unit.image_url check must appear before ms.Symbol in _renderSymbol');
+
+// ── DB1 meko entry has image metadata ────────────────────────────────────
+ok('IMG-5c: DB1 meko entry has image_asset',
+    db && db.CAPABILITY_CATALOG.meko && db.CAPABILITY_CATALOG.meko.image_asset,
+    db && db.CAPABILITY_CATALOG.meko && db.CAPABILITY_CATALOG.meko.image_asset);
+
+ok('IMG-5d: DB1 meko image_asset is a local path (not a remote URL)',
+    (function() {
+        var ia = db && db.CAPABILITY_CATALOG.meko && db.CAPABILITY_CATALOG.meko.image_asset;
+        return ia && ia.startsWith('/') && !ia.startsWith('//') && !ia.startsWith('/http');
+    })());
+
 ok('IMG-6: USS Lake Champlain image asset file exists locally',
     fs.existsSync(path.join(ROOT, 'UI_MOdified/client/assets/units/uss-lake-champlain-cvs39.jpg')));
 

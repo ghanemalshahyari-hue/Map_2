@@ -872,14 +872,91 @@
             mEl.textContent = missionText;
             mEl.className = 'usp-arow-val'
                 + (missionText !== '—' ? ' usp-link' : '');
-            // Add source hint as a title attribute so the operator can see origin
             if (tasking && tasking.action_what) {
                 mEl.title = (tasking.phase ? '[' + tasking.phase + '] ' : '')
-                           + 'Step ' + (tasking.step_index != null ? tasking.step_index + 1 : '?')
-                           + ' · ' + tr('usp-tab-sensors', 'Actor') + ': ' + (tasking.uid || '');
+                           + 'Step ' + (tasking.step_index != null ? tasking.step_index + 1 : '?');
             } else {
                 mEl.title = '';
             }
+        }
+
+        // ── TASK1-C: populate Current Orders detail block ────────────────
+        _populateTaskingDetails(tasking);
+    }
+
+    /**
+     * Populate the collapsible "CURRENT ORDERS" detail block.
+     * Shows: step/phase label, action_why, action_intended_effect,
+     *        action_doctrine_cited[] (joined with ' · ').
+     * Hides the entire block when tasking is null.
+     * Each row shown only when its value is a non-empty string.
+     * Read-only; never mutates tasking or any scenario data.
+     *
+     * @param {{action_why, action_intended_effect, action_doctrine_cited[],
+     *           step_index, phase}|null} tasking
+     */
+    function _populateTaskingDetails(tasking) {
+        var block = $('usp-tasking-block');
+        if (!block) return;
+
+        if (!tasking) {
+            block.setAttribute('hidden', '');
+            return;
+        }
+
+        // Step / phase label in section header
+        var stepLabel = '';
+        if (tasking.phase) {
+            stepLabel = tasking.phase;
+            if (tasking.step_index != null) {
+                stepLabel = 'Step ' + (tasking.step_index + 1) + ' \xb7 ' + stepLabel;
+            }
+        } else if (tasking.step_index != null) {
+            stepLabel = 'Step ' + (tasking.step_index + 1);
+        }
+        setText('usp-tasking-step', stepLabel ? ' – ' + stepLabel : '');
+
+        // Why row
+        _setTaskingRow('usp-tasking-why-row', 'usp-tasking-why', tasking.action_why);
+
+        // Intended Effect row
+        _setTaskingRow('usp-tasking-effect-row', 'usp-tasking-effect', tasking.action_intended_effect);
+
+        // Doctrine row — join array cleanly with ' · '
+        var docArr = Array.isArray(tasking.action_doctrine_cited)
+            ? tasking.action_doctrine_cited.filter(function(d) { return d && String(d).trim(); })
+            : [];
+        var docText = docArr.length ? docArr.join(' \xb7 ') : null;
+        _setTaskingRow('usp-tasking-doctrine-row', 'usp-tasking-doctrine', docText);
+
+        // Show block only if at least one row is visible
+        var anyVisible = !!(
+            (tasking.action_why && String(tasking.action_why).trim()) ||
+            (tasking.action_intended_effect && String(tasking.action_intended_effect).trim()) ||
+            docArr.length
+        );
+        if (anyVisible) {
+            block.removeAttribute('hidden');
+        } else {
+            block.setAttribute('hidden', '');
+        }
+    }
+
+    /**
+     * Show/hide a single tasking detail row.
+     * @param {string} rowId  - element id of the row div
+     * @param {string} valId  - element id of the value span
+     * @param {string|null} text - value to display (null/empty → hide row)
+     */
+    function _setTaskingRow(rowId, valId, text) {
+        var row = $(rowId), val = $(valId);
+        if (!row) return;
+        var trimmed = text && String(text).trim();
+        if (trimmed) {
+            if (val) val.textContent = trimmed;
+            row.removeAttribute('hidden');
+        } else {
+            row.setAttribute('hidden', '');
         }
     }
 

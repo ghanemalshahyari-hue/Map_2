@@ -2286,6 +2286,7 @@
             'sw-live-step-units-col-role':      'Role',
             'sw-live-step-units-col-domain':    'Domain',
             'sw-live-step-units-col-involvement':'Involvement',
+            'sw-live-step-units-col-orders':    'Orders',       /* TASK1-D */
             'sw-live-step-units-side-red':      'Red',
             'sw-live-step-units-side-blue':     'Blue',
             'sw-live-step-units-involve-acts':  'Acts',
@@ -4699,6 +4700,7 @@
             'sw-live-step-units-col-role':      'الدور',
             'sw-live-step-units-col-domain':    'المجال',
             'sw-live-step-units-col-involvement':'نوع المشاركة',
+            'sw-live-step-units-col-orders':    'الأوامر',      /* TASK1-D */
             'sw-live-step-units-side-red':      'أحمر',
             'sw-live-step-units-side-blue':     'أزرق',
             'sw-live-step-units-involve-acts':  'فاعلة',

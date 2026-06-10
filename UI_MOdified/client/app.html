@@ -1590,6 +1590,7 @@
                                         <th scope="col" class="sw-slu-col-involve"     data-i18n="sw-live-step-units-col-involvement">Involvement</th>
                                         <th scope="col" class="sw-slu-col-readiness"   data-i18n="sw-live-step-units-col-readiness">Readiness</th>
                                         <th scope="col" class="sw-slu-col-supply"      data-i18n="sw-live-step-units-col-supply">Supply</th>
+                                        <th scope="col" class="sw-slu-col-orders"      data-i18n="sw-live-step-units-col-orders">Orders</th>
                                     </tr>
                                 </thead>
                                 <tbody id="sw-live-step-units-rows"></tbody>
@@ -5954,6 +5955,42 @@
         [dir="rtl"] .usp-tasking-row { flex-direction:row-reverse; }
         [dir="rtl"] .usp-tasking-lbl { text-align:right; }
         [dir="rtl"] .usp-tasking-step { margin-left:0; margin-right:6px; }
+
+
+        /* ── TASK1-D: Tasking indicator column in involved-units table ──── */
+        .sw-slu-col-orders {
+            width: 110px; min-width: 80px; max-width: 130px;
+            font-weight: 600; letter-spacing: 0.04em;
+        }
+        .sw-slu-cell-orders {
+            font-size: 0.75rem; vertical-align: middle;
+            color: var(--text-muted, #7a8898);
+        }
+        .sw-slu-orders-chip {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+            vertical-align: middle;
+            /* Dark theme defaults */
+            background: #1a2a40;
+            color: #5aaad0;
+            border: 1px solid #2a4060;
+        }
+        /* Light theme */
+        [data-theme="light"] .sw-slu-orders-chip {
+            background: #e8f0fa;
+            color: #1a4080;
+            border-color: #aac0e0;
+        }
+        /* RTL */
+        [dir="rtl"] .sw-slu-cell-orders { text-align: right; }
 
     </style>
     <script>

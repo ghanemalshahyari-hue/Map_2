@@ -17106,6 +17106,8 @@
                 _sluCell(tr, 'sw-slu-cell-involve',   _liveInvolveLabel(u.involvement));
                 _sluCell(tr, 'sw-slu-cell-readiness', _liveReadinessLabel(u.readiness));
                 _sluCell(tr, 'sw-slu-cell-supply',    _liveSupplyLabel(u.supply));
+                // TASK1-D: tasking indicator — reads ws.derived.unit_tasking (read-only)
+                _sluCellOrders(tr, u.uid);
                 rowsEl.appendChild(tr);
             }
         }
@@ -17127,6 +17129,52 @@
         var td = document.createElement('td');
         td.className = cls;
         td.textContent = (text === null || text === undefined) ? '' : String(text);
+        tr.appendChild(td);
+    }
+
+    /**
+     * TASK1-D: look up component_label for a unit uid from the current world state.
+     * Uses the same AppAdjudicatorMap.getWorldState() accessor as the Commander Panel.
+     * Returns null when: no world state, unit has no actor this step.
+     * Never throws; fully guarded.
+     *
+     * @param {string} uid
+     * @returns {string|null}
+     */
+    function _sluTaskingLabel(uid) {
+        if (!uid) return null;
+        try {
+            var map = window.AppAdjudicatorMap;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            var ws = map.getWorldState();
+            if (!ws || !ws.derived || !ws.derived.unit_tasking) return null;
+            var t = ws.derived.unit_tasking[uid];
+            if (!t) return null;
+            return t.component_label || t.action_component || 'Tasked';
+        } catch (_) { return null; }
+    }
+
+    /**
+     * TASK1-D: create the Orders cell for a row.
+     * When tasking data exists: renders a compact chip with the component label.
+     * When absent: plain '—' in muted style.
+     *
+     * @param {HTMLElement} tr  - table row
+     * @param {string}      uid - unit uid
+     */
+    function _sluCellOrders(tr, uid) {
+        var td = document.createElement('td');
+        td.className = 'sw-slu-cell-orders';
+        var label = _sluTaskingLabel(uid);
+        if (label) {
+            var chip = document.createElement('span');
+            chip.className = 'sw-slu-orders-chip';
+            chip.textContent = label;
+            chip.title = label;  // tooltip for truncated text
+            td.appendChild(chip);
+        } else {
+            td.textContent = '—';
+        }
         tr.appendChild(td);
     }
 

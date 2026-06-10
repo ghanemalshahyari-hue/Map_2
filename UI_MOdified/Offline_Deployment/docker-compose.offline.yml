@@ -84,7 +84,7 @@ services:
       RMOOZ_OLLAMA_MODEL:    "${RMOOZ_OLLAMA_MODEL:-qwen2.5:7b}"
 
       # ── LiteLLM generation timeout ────────────────────────────────────────
-      # oss-120b / oss-120b-fast can take several minutes per phase.
+      # Large models can take several minutes per phase.
       # Default 300 000 ms (5 min). Increase for slower models.
       RMOOZ_AI_TIMEOUT_MS:   "${RMOOZ_AI_TIMEOUT_MS:-300000}"
 
@@ -145,8 +145,8 @@ services:
 
       # ── Internal CA certificate (OFFLINE-LITELLM-CA-1) ───────────────────
       # Mount the WHOLE certs/ directory (read-only) at /app/certs. The operator
-      # drops the internal CA PEM at host certs/tawasol-ca.crt → it appears at
-      # /app/certs/tawasol-ca.crt (the path RMOOZ_AI_CA_CERT_PATH points to).
+      # drops the internal CA PEM at host certs/._mil_dir.crt → it appears at
+      # /app/certs/._mil_dir.crt (the path RMOOZ_AI_CA_CERT_PATH points to).
       #
       # Why a directory mount, not a single-file mount: a bind mount of a single
       # file whose source does NOT yet exist makes Docker auto-create an empty
@@ -187,5 +187,5 @@ volumes:
 #   ./map_data/base         → /app/maps               (MBTiles — run prepare-map-bundle.ps1 first)
 #   ./map_data/dem          → /app/dem_data            (Libya DEM — run prepare-map-bundle.ps1 first)
 #   ./map_data              → /app/offline_map_data    (read-only tiles root)
-#   ./certs                → /app/certs                (CA cert dir, optional; place tawasol-ca.crt inside)
+#   ./certs                → /app/certs                (CA cert dir, optional; place ._mil_dir.crt inside)
 #   ./TestingAI_Runtime/*  → /app/TestingAI/*          (writable runtime I/O)

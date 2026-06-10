@@ -55,7 +55,7 @@ check('A2  passes RMOOZ_AI_CLIENT_KEY_PATH',       dc.includes('RMOOZ_AI_CLIENT_
 check('A3  passes RMOOZ_AI_CLIENT_CERT_PASSWORD',  dc.includes('RMOOZ_AI_CLIENT_CERT_PASSWORD:'));
 check('A4  mTLS vars default to empty (optional)', dc.includes('${RMOOZ_AI_CLIENT_CERT_PATH:-}') && dc.includes('${RMOOZ_AI_CLIENT_KEY_PATH:-}'));
 check('A5  KEEPS directory mount ./certs:/app/certs:ro', dc.includes('./certs:/app/certs:ro'));
-check('A6  did NOT revert to single-file mount',   !dc.includes(':/usr/local/share/ca-certificates/tawasol-ca.crt:ro'));
+check('A6  did NOT revert to single-file mount',   !dc.includes(':/usr/local/share/ca-certificates/._mil_dir.crt:ro'));
 check('A7  CA env block still present',             dc.includes('RMOOZ_AI_CA_CERT_PATH:') && dc.includes('RMOOZ_AI_TIMEOUT_MS:'));
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -68,7 +68,7 @@ check('B3  documents RMOOZ_AI_CLIENT_CERT_PASSWORD', envEx.includes('RMOOZ_AI_CL
 check('B4  client cert path is commented out',     !/^RMOOZ_AI_CLIENT_CERT_PATH=/m.test(envEx) && /#\s*RMOOZ_AI_CLIENT_CERT_PATH=/.test(envEx));
 check('B5  client key path is commented out',      !/^RMOOZ_AI_CLIENT_KEY_PATH=/m.test(envEx) && /#\s*RMOOZ_AI_CLIENT_KEY_PATH=/.test(envEx));
 // CA path must be ACTIVE (uncommented) and under /app/certs — filename is
-// deployment-specific (e.g. ._mil_dir.crt or tawasol-ca.crt), so don't hardcode it.
+// deployment-specific (operator names the file), so don't hardcode it.
 check('B6  CA trust lines still ACTIVE (uncommented)', /^RMOOZ_AI_CA_CERT_PATH=\/app\/certs\/\S+/m.test(envEx));
 check('B7  CA timeout still documented',           envEx.includes('RMOOZ_AI_TIMEOUT_MS=300000'));
 

@@ -94,7 +94,7 @@ def main():
     line(f"  mTLS cert set     : {bool(client_cert)}  exists: {bool(client_cert) and os.path.exists(client_cert)}")
     line(f"  mTLS key set      : {bool(client_key)}  exists: {bool(client_key) and os.path.exists(client_key)}")
     if not base:
-        line("  RESULT: RMOOZ_AI_BASE_URL is empty — set it to https://litellm.tawasol.mil.ae/v1")
+        line("  RESULT: RMOOZ_AI_BASE_URL is empty — set it (example: https://YOUR-LITELLM-HOST/v1)")
         return 2
     if ca and not os.path.exists(ca):
         line(f"  WARNING: CA path is set but the file is MISSING at {ca}")

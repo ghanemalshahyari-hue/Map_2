@@ -68,8 +68,8 @@ check('A3  REQUESTS_CA_BUNDLE documented',       /REQUESTS_CA_BUNDLE=\/app\/cert
 check('A4  NODE_EXTRA_CA_CERTS documented',      /NODE_EXTRA_CA_CERTS=\/app\/certs\/\S+/.test(envEx));
 check('A5  RMOOZ_AI_TIMEOUT_MS documented',      envEx.includes('RMOOZ_AI_TIMEOUT_MS=300000'));
 check('A6  RMOOZ_AI_TLS_VERIFY=0 is commented',  envEx.includes('RMOOZ_AI_TLS_VERIFY=0') && !envEx.match(/^RMOOZ_AI_TLS_VERIFY=0/m), 'insecure var must be commented out in example');
-check('A7  LiteLLM example URL present',         envEx.includes('litellm.tawasol.mil.ae'));
-check('A8  oss-120b-fast model example present', envEx.includes('oss-120b-fast'));
+check('A7  RMOOZ_AI_BASE_URL is a blank placeholder (no hardcoded endpoint)', /^RMOOZ_AI_BASE_URL=\s*$/m.test(envEx) && !/^RMOOZ_AI_BASE_URL=\s*https?:/m.test(envEx));
+check('A8  RMOOZ_AI_MODEL is a blank placeholder', /^RMOOZ_AI_MODEL=\s*$/m.test(envEx));
 
 // ──────────────────────────────────────────────────────────────────────────────
 console.log('\nB) docker-compose.offline.yml — cert volume + env vars');
@@ -87,7 +87,7 @@ check('B9  existing volumes unchanged',          dc.includes('./data_runtime:/ap
 // ──────────────────────────────────────────────────────────────────────────────
 console.log('\nC) certs/ placeholder');
 check('C1  certs/README.md exists',              exists(path.join(OFF, 'certs', 'README.md')));
-check('C2  README explains tawasol-ca.crt',      read(path.join(OFF, 'certs', 'README.md')).includes('tawasol-ca.crt'));
+check('C2  README documents the CA cert path',   read(path.join(OFF, 'certs', 'README.md')).includes('RMOOZ_AI_CA_CERT_PATH'));
 check('C3  README says no private keys',         read(path.join(OFF, 'certs', 'README.md')).includes('Private keys'));
 
 // ──────────────────────────────────────────────────────────────────────────────

@@ -6,7 +6,7 @@
 #     docker exec rmooz-offline /opt/rmooz-venv/bin/python /app/server/diag-litellm.py
 #  showing a DNS / TCP / route failure). With network_mode: host the container
 #  shares the host's network namespace — same DNS, /etc/hosts, routes, and VPN —
-#  so if `curl --cacert ... https://litellm.tawasol.mil.ae/...` works on the host,
+#  so if `curl --cacert ... https://YOUR-LITELLM-HOST/...` works on the host,
 #  generation will reach LiteLLM identically.
 #
 #  TRADE-OFFS of host networking:

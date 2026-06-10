@@ -38,6 +38,8 @@ const ROOT = path.join(__dirname, '..');                 // UI_MOdified/
 const PORTER = require(path.join(ROOT, 'scripts', 'port-wargame.js'));
 // DOC-UNDERSTANDING-1 / Phase C: deterministic per-side unit cap before save.
 const NORMALIZER = require(path.join(__dirname, 'ai', 'scenario-normalizer.js'));
+// DOC-UNDERSTANDING-1 / Phase D: document classify + dedupe + Operational Brief.
+const BRIEF = require(path.join(__dirname, 'ai', 'operational-brief.js'));
 
 // Resolve the TestingAI root. DEBUG-DOCX-1 root cause RC-2: the old hardcoded
 // 'C:/Users/ADMIN/Desktop/TestingAI' default is dead on any box whose user isn't
@@ -861,6 +863,30 @@ function handle(req, res, ctx) {
     // ── SOURCE-INSPECTOR-1: read-only source-chain map (no writes, no sim, no DOCX parse) ──
     if (pathname === '/api/wargame-sim/sources' && method === 'GET') {
         sendJson(res, 200, computeSources(c, ctx));
+        return true;
+    }
+
+    // ── DOC-UNDERSTANDING-1 / Phase D: analyze staged documents ──
+    // Read-only: extract text, dedupe by content hash (same file in both slots
+    // → one Mixed Operational Document), classify, separate by side, and seed
+    // the Operational Brief. No writes, no sim, no LLM (graceful JS gate). The
+    // review screen renders this BEFORE generation. POST or GET both accepted.
+    if (pathname === '/api/wargame-sim/analyze' && (method === 'POST' || method === 'GET')) {
+        try {
+            const inputs = [];
+            for (const slot of ['red', 'blue']) {
+                let p = path.join(c.importFromRmooz, SLOT_FILE[slot]);
+                if (!exists(p)) p = path.join(c.forcesDir, SLOT_FILE[slot]);
+                if (exists(p)) inputs.push({ slot, filename: SLOT_FILE[slot], bytes: fs.readFileSync(p) });
+            }
+            if (!inputs.length) {
+                sendJson(res, 404, { ok: false, error: 'no staged documents — upload a red and/or blue .docx first' });
+                return true;
+            }
+            sendJson(res, 200, BRIEF.analyzeDocuments(inputs));
+        } catch (e) {
+            sendJson(res, 500, { ok: false, error: 'analyze failed: ' + (e && e.message) });
+        }
         return true;
     }
 

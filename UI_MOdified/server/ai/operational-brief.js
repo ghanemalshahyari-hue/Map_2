@@ -19,6 +19,7 @@
 
 const crypto = require('crypto');
 const C = require('./document-classifier');
+const { extractDocxText } = require('./docx-text');
 
 function sha256(input) {
     const h = crypto.createHash('sha256');
@@ -123,30 +124,12 @@ function buildDocumentSet(inputs) {
 }
 
 // ── Side segmentation (Arabic + English headings) ───────────────────
-const N_FRIENDLY = C.FRIENDLY_MARKERS.map(C.normalize);
-const N_ENEMY    = C.ENEMY_MARKERS.map(C.normalize);
-const N_NEUTRAL  = C.NEUTRAL_MARKERS.map(C.normalize);
-const N_STRUCT   = C.STRUCTURE_MARKERS.map(C.normalize);
-
-function firstIdx(zone, markers) {
-    let min = Infinity;
-    for (const m of markers) {
-        if (!m) continue;
-        const i = zone.indexOf(m);
-        if (i !== -1 && i < min) min = i;
-    }
-    return min;
-}
-function hasAny(zone, markers) {
-    for (const m of markers) if (m && zone.indexOf(m) !== -1) return true;
-    return false;
-}
-
-// Split text into friendly/enemy/neutral/unmapped. A line is treated as a
-// SIDE heading only when a side marker appears in its first 30 normalized
-// chars (a heading, not a mid-paragraph mention); ties go to the earliest
-// marker. Structure headings (المهمة/التنفيذ/…) reset to "unmapped" so an
-// order section doesn't leak into the previous side bucket.
+// Walk the text line by line. A SIDE heading (friendly/enemy/neutral) must
+// START the line after any list bullet — see document-classifier.lineRole —
+// so a mid-sentence mention ("كشف اتصالات العدو") does NOT switch buckets.
+// A structure heading (المهمة/التنفيذ/قيود/…) resets to "unmapped" so an order
+// section doesn't leak into the previous side bucket. Lines that aren't
+// headings continue the current bucket.
 function segmentSides(text) {
     const raw = typeof text === 'string' ? text : '';
     const buckets = { friendly: [], enemy: [], neutral: [], unmapped: [] };
@@ -154,17 +137,9 @@ function segmentSides(text) {
 
     for (const line of raw.split(/\r?\n/)) {
         if (!line.trim()) continue;
-        const norm = C.normalize(line);
-        const zone = norm.slice(0, 30);
-        const fi = firstIdx(zone, N_FRIENDLY);
-        const ei = firstIdx(zone, N_ENEMY);
-        const ni = firstIdx(zone, N_NEUTRAL);
-        const minSide = Math.min(fi, ei, ni);
-        if (minSide !== Infinity) {
-            cur = (minSide === fi) ? 'friendly' : (minSide === ei) ? 'enemy' : 'neutral';
-        } else if (hasAny(zone, N_STRUCT)) {
-            cur = 'unmapped';
-        }
+        const role = C.lineRole(line);
+        if (role === 'friendly' || role === 'enemy' || role === 'neutral') cur = role;
+        else if (role === 'structure') cur = 'unmapped';
         buckets[cur].push(line.trim());
     }
 
@@ -181,9 +156,193 @@ function segmentSides(text) {
     };
 }
 
+// ── Deterministic brief seeding (offline; LLM refines on deployment) ─
+const AR_ORDINALS = ['الأولى', 'الثانية', 'الثالثة', 'الرابعة', 'الخامسة', 'السادسة', 'السابعة', 'الثامنة'];
+
+// Phases: lines headed "المرحلة <ordinal>".
+function extractPhases(text) {
+    const lines = String(text == null ? '' : text).split(/\r?\n/);
+    const seen = new Set();
+    const out = [];
+    for (const line of lines) {
+        const norm = C.normalize(line);
+        for (let i = 0; i < AR_ORDINALS.length; i++) {
+            if (norm.indexOf(C.normalize('المرحلة ' + AR_ORDINALS[i])) !== -1 && !seen.has(i)) {
+                seen.add(i);
+                out.push({ index: i + 1, label: line.trim().slice(0, 100), source: 'phase-heading' });
+            }
+        }
+    }
+    return out.sort((a, b) => a.index - b.index);
+}
+
+// Objectives: "الهدف X" / "objective X" mentions (deduped).
+function extractObjectives(text) {
+    const norm = C.normalize(text || '');
+    const out = [];
+    const seen = new Set();
+    const push = name => { const k = name.trim(); if (k && !seen.has(k)) { seen.add(k); out.push({ name: k, source: 'document' }); } };
+    let m;
+    const reAr = /الهدف\s+([^\s().،,]{1,16})/g;
+    while ((m = reAr.exec(norm)) !== null) push('الهدف ' + m[1].toUpperCase());
+    const reEn = /objective\s+([a-z0-9]{1,16})/g;
+    while ((m = reEn.exec(norm)) !== null) push('Objective ' + m[1].toUpperCase());
+    return out.slice(0, 10);
+}
+
+// Lines under the first heading starting with one of `startMarkers`, up to
+// maxLines, stopping at the next heading of any kind.
+function extractSection(text, startMarkers, maxLines) {
+    const lines = String(text == null ? '' : text).split(/\r?\n/);
+    const out = [];
+    let collecting = false;
+    for (const line of lines) {
+        if (!line.trim()) continue;
+        if (!collecting && C.headingFor(line, startMarkers)) {
+            collecting = true;
+            const after = line.split(/[:：]/).slice(1).join(':').trim();
+            if (after) out.push(after);
+            continue;
+        }
+        if (collecting) {
+            if (C.lineRole(line) !== null) break;
+            out.push(line.trim());
+            if (maxLines && out.length >= maxLines) break;
+        }
+    }
+    return out;
+}
+
+// Rough per-side unit estimate from echelon-word occurrences (a labelled estimate).
+function estimateUnitCount(text) {
+    const n = C.normalize(text || '');
+    let c = 0;
+    for (const raw of C.UNIT_ECHELON_MARKERS) {
+        const m = C.normalize(raw);
+        if (!m) continue;
+        let i = 0;
+        while ((i = n.indexOf(m, i)) !== -1) { c++; i += m.length; }
+    }
+    return Math.min(500, c);
+}
+
+// ── Orchestrator: documents → AI-Understanding payload ──────────────
+// inputs: [{ slot:'red'|'blue', filename, bytes?, text? }]
+// Extracts text, dedupes by content hash, classifies, separates by side
+// (slot first; a genuinely-mixed single doc is segmented), and seeds the
+// Operational Brief deterministically. The Python docling+LLM stage refines
+// mission/intent/units when reachable (see llm_fill marker).
+function analyzeDocuments(inputs, opts) {
+    opts = opts || {};
+    const items = (Array.isArray(inputs) ? inputs : []).filter(Boolean).map(it => ({
+        slot: it.slot, filename: it.filename, bytes: it.bytes, hash: it.hash,
+        text: (it.text != null && it.text !== '') ? it.text
+            : (it.bytes != null ? extractDocxText(it.bytes) : ''),
+    }));
+
+    const set = buildDocumentSet(items);
+
+    const textByHash = new Map();
+    for (const it of items) {
+        const h = it.hash || sha256(it.bytes != null ? it.bytes : (it.text || ''));
+        if (it.text && !textByHash.has(h)) textByHash.set(h, it.text);
+    }
+
+    const friendlyText = [], enemyText = [], neutralText = [], orderText = [];
+    for (const doc of set.documents) {
+        const text = textByHash.get(doc.hash) || '';
+        orderText.push(text);
+        if (doc.contains_both_sides || doc.in_both_slots) {
+            const seg = segmentSides(text);
+            if (seg.friendly) friendlyText.push(seg.friendly);
+            if (seg.enemy) enemyText.push(seg.enemy);
+            if (seg.neutral) neutralText.push(seg.neutral);
+        } else if (doc.slots.indexOf('blue') !== -1 || doc.detected_type === C.TYPES.FRIENDLY_ORBAT) {
+            friendlyText.push(text);
+        } else if (doc.slots.indexOf('red') !== -1 || doc.detected_type === C.TYPES.ENEMY_ORBAT) {
+            enemyText.push(text);
+        }
+    }
+    const fJoin = friendlyText.join('\n'), eJoin = enemyText.join('\n'),
+          nJoin = neutralText.join('\n'), allText = orderText.join('\n');
+
+    const missionLines = extractSection(allText, ['المهمة المستخلصة', 'المهمة', 'mission'], 2);
+    const intentLines  = extractSection(allText, ['نية القائد', "commander's intent", 'commander intent'], 3);
+    const constraints  = extractSection(allText, ['قيود', 'القيود', 'مخاطر', 'المخاطر', 'constraints'], 8)
+        .map(t => ({ text: t, source: 'constraints-section' }));
+    const phases       = extractPhases(allText);
+    const objectives   = extractObjectives(allText);
+
+    const brief = emptyBrief();
+    brief.document_set_id = set.document_set_id;
+    brief.documents = set.documents.map(d => ({
+        filename: d.filename, slots: d.slots, hash: d.hash,
+        detected_type: d.detected_type, type_label_ar: d.type_label_ar,
+        type_label_en: d.type_label_en, language: d.language, confidence: d.confidence,
+    }));
+    const ob = brief.operational_brief;
+    ob.mission = missionLines.join(' ').slice(0, 600);
+    ob.commander_intent = intentLines.join(' ').slice(0, 600);
+    ob.friendly.summary = fJoin.slice(0, 500);
+    ob.enemy.summary = eJoin.slice(0, 500);
+    if (nJoin) ob.neutral.civilian = [nJoin.slice(0, 300)];
+    ob.objectives = objectives;
+    ob.phases = phases.map(p => ({ index: p.index, label: p.label }));
+    ob.constraints = constraints;
+
+    const proposed_unit_counts = {
+        red: estimateUnitCount(eJoin),
+        blue: estimateUnitCount(fJoin),
+        neutral: nJoin ? estimateUnitCount(nJoin) : 0,
+    };
+
+    const ambiguities = [];
+    if (!ob.mission) ambiguities.push('Mission not found deterministically — confirm or let the LLM extract it.');
+    if (!objectives.length) ambiguities.push('No named objective (الهدف …) detected — set the objective position on the map.');
+    if (!phases.length) ambiguities.push('No phases (المرحلة …) detected.');
+    ambiguities.push('Map bounds / منطقة العمليات not specified in the document — operator must set the objective position.');
+    for (const d of set.documents) {
+        if (d.confidence < 0.5) ambiguities.push('Low-confidence document type for ' + (d.filename || d.hash.slice(0, 8)) + ' — please confirm.');
+    }
+    if (!proposed_unit_counts.blue) ambiguities.push('Could not estimate friendly (BLUE) unit count.');
+    if (!proposed_unit_counts.red) ambiguities.push('Could not estimate enemy (RED) unit count.');
+
+    return {
+        ok: true,
+        document_set_id: set.document_set_id,
+        set_type: set.set_type,
+        set_label_ar: set.set_label_ar,
+        set_label_en: set.set_label_en,
+        documents: brief.documents,
+        dedupe: set.dedupe,
+        brief,
+        understanding: {
+            set_type: set.set_type,
+            set_label_ar: set.set_label_ar,
+            set_label_en: set.set_label_en,
+            mission: ob.mission,
+            commander_intent: ob.commander_intent,
+            friendly: { summary: ob.friendly.summary, source: 'BLUE slot / friendly ORBAT' },
+            enemy: { summary: ob.enemy.summary, source: 'RED slot / enemy ORBAT' },
+            neutral: ob.neutral,
+            objectives, phases, constraints,
+            assumptions: ob.assumptions,
+            ambiguities,
+            proposed_unit_counts,
+            proposed_map_bounds: null,
+        },
+        llm_fill: { available: false, reason: opts.llmReason || 'LLM endpoint not reached from this host; deterministic JS-gate brief only.' },
+    };
+}
+
 module.exports = {
     sha256,
     emptyBrief,
     buildDocumentSet,
     segmentSides,
+    extractPhases,
+    extractObjectives,
+    extractSection,
+    estimateUnitCount,
+    analyzeDocuments,
 };

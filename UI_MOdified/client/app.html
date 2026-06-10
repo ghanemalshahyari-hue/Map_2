@@ -4081,6 +4081,8 @@
                         <div class="usp-platform-id" id="usp-platform-id"></div>
                         <div class="usp-platform-type" id="usp-platform-type"></div>
                         <div class="usp-uid" id="unit-uid"></div>
+                        <div class="usp-sidc" id="usp-sidc"></div>
+                        <div class="usp-code-line" id="usp-code"></div>
                     </div>
 
                     <div class="usp-stats-row">
@@ -4136,6 +4138,22 @@
                         <div class="usp-arow"><span class="usp-arow-lbl">Assigned Base</span><span class="usp-arow-val" id="usp-assigned-base">None</span></div>
                         <div class="usp-arow"><span class="usp-arow-lbl">Status</span><span class="usp-arow-val" id="usp-unit-status">&#8212;</span></div>
                         <div class="usp-arow"><span class="usp-arow-lbl">Mission</span><span class="usp-arow-val usp-link" id="usp-mission">&#8212;</span></div>
+                    </div>
+
+                    <!-- POSITION section -->
+                    <div class="usp-pos-section">
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl">MGRS</span>
+                            <span class="usp-pos-val" id="usp-mgrs">&#8212;</span>
+                        </div>
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl">Lat / Lng</span>
+                            <span class="usp-pos-val" id="usp-latlng">&#8212;</span>
+                        </div>
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl">Selected at</span>
+                            <span class="usp-pos-selat" id="usp-selat">&#8212;</span>
+                        </div>
                     </div>
 
                     <div class="usp-tabs-block">
@@ -6113,6 +6131,17 @@
         .usp-emcon-btn { display:block; width:100%; text-align:center; padding:4px 8px; font-size:0.68rem; background:linear-gradient(180deg,#0e1a28,#0a1220); border:1px solid #1e3a50; color:#4a7a9a; cursor:default; user-select:none; }
         .usp-keybind { color:#2e4858; }
         .usp-emcon-state { margin-top:0.25rem; font-size:0.65rem; color:#2e4050; }
+
+        /* ── Hide the old unit-panel — all data now in Commander Panel ── */
+        #unit-panel { display: none !important; }
+
+        /* ── Position / SIDC rows in identity block ──────────────────── */
+        .usp-sidc { font-size:0.65rem; color:#4a90c0; font-family:'Consolas','Courier New',monospace; word-break:break-all; padding:2px 0; letter-spacing:0.04em; }
+        .usp-code-line { font-size:0.65rem; color:#5a7880; font-family:'Consolas','Courier New',monospace; }
+        .usp-pos-section { border-bottom:1px solid #141e2a; }
+        .usp-pos-section .usp-arow-lbl { color:#2e4a58; }
+        .usp-pos-val { font-size:0.7rem; color:#6a9ab0; font-family:'Consolas','Courier New',monospace; word-break:break-word; }
+        .usp-pos-selat { font-size:0.65rem; color:#354555; font-family:'Consolas','Courier New',monospace; }
 
         .unit-status-panel::-webkit-scrollbar { width:4px; }
         .unit-status-panel::-webkit-scrollbar-track { background:#060910; }

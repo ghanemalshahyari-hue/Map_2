@@ -167,14 +167,14 @@
     }
 
     // ── Main populate ─────────────────────────────────────────────────
-    function populatePanel(unit) {
+    function populatePanel(unit, selectedAt) {
         if (!unit) { _showEmpty(); return; }
         currentUnit = unit;
         var enriched = enrichUnitForDisplay(unit);
         var eventLog = getEventLog();
         _showBody();
         populateHero(unit, enriched);
-        populateIdentity(unit, enriched);
+        populateIdentity(unit, enriched, selectedAt);
         populateCoreStats(unit, enriched, eventLog);
         populateSystems(unit, enriched, eventLog);
         populateMagazines(enriched);
@@ -230,13 +230,17 @@
     }
 
     // ── Identity ──────────────────────────────────────────────────────
-    function populateIdentity(unit, enriched) {
+    function populateIdentity(unit, enriched, selectedAt) {
         var platformLabel = getPlatformLabel(enriched);
+
+        // Platform ID line: uid + echelon
         var pidEl = $('usp-platform-id');
         if (pidEl) {
-            var parts = [unit.uid, unit.echelon].filter(Boolean).join(' · ');
+            var parts = [unit.uid || unit.id || unit.code, unit.echelon].filter(Boolean).join(' · ');
             pidEl.textContent = parts || unit.uid || '—';
         }
+
+        // Platform type: domain + DB1 label
         var ptEl = $('usp-platform-type');
         if (ptEl) {
             var domain = unit.domain ? unit.domain.toUpperCase() : '';
@@ -245,7 +249,86 @@
                 ? (domain ? domain + ' – ' : '') + platformLabel
                 : [domain, role].filter(Boolean).join(' – ') || '—';
         }
-        setText('unit-uid', unit.uid || '—');
+
+        // UID / callsign
+        setText('unit-uid', unit.uid || unit.name || unit.label || '—');
+
+        // SIDC (monospace, shown when present)
+        var sidcEl = $('usp-sidc');
+        if (sidcEl) {
+            sidcEl.textContent = (unit.sidc && String(unit.sidc).trim()) || '—';
+            sidcEl.style.display = '';
+        }
+
+        // Unit code (like B1, B-d1-51-002)
+        var codeEl = $('usp-code');
+        if (codeEl) {
+            var codeVal = unit.code || unit.id || '';
+            codeEl.textContent = codeVal || '—';
+            codeEl.style.display = codeVal ? '' : 'none';
+        }
+
+        // MGRS + Lat/Lng position
+        var lat = parseFloat(unit.lat), lng = parseFloat(unit.lng);
+        // Try marker for live position
+        try {
+            if (root.AppAdjudicatorMap && typeof root.AppAdjudicatorMap.getScenarioMarkers === 'function') {
+                var ms = root.AppAdjudicatorMap.getScenarioMarkers();
+                var want = String(unit.id || unit.code || '');
+                var all = [].concat((ms && ms.red) || [], (ms && ms.blue) || []);
+                for (var i = 0; i < all.length; i++) {
+                    var m = all[i];
+                    var uid = m && (m._unitId || (m._unitData && m._unitData.id));
+                    if (uid && String(uid) === want && typeof m.getLatLng === 'function') {
+                        var ll = m.getLatLng();
+                        if (ll) { lat = ll.lat; lng = ll.lng; }
+                        break;
+                    }
+                }
+            }
+        } catch (_) {}
+
+        var mgrsEl = $('usp-mgrs');
+        var latlngEl = $('usp-latlng');
+        if (isFinite(lat) && isFinite(lng)) {
+            // MGRS
+            if (mgrsEl) {
+                try {
+                    if (root.mgrs && typeof root.mgrs.forward === 'function') {
+                        var s = root.mgrs.forward([lng, lat], 5);
+                        var mm = s && s.match(/^(\d{1,2}[A-Z])([A-Z]{2})(\d+)$/);
+                        if (mm) {
+                            var half = mm[3].length / 2;
+                            mgrsEl.textContent = mm[1] + ' ' + mm[2] + ' ' + mm[3].slice(0, half) + ' ' + mm[3].slice(half);
+                        } else {
+                            mgrsEl.textContent = s || '—';
+                        }
+                    } else { mgrsEl.textContent = '—'; }
+                } catch (_) { mgrsEl.textContent = '—'; }
+            }
+            // Lat/Lng
+            if (latlngEl) {
+                var latStr = Math.abs(lat).toFixed(4) + '°' + (lat >= 0 ? 'N' : 'S');
+                var lngStr = Math.abs(lng).toFixed(4) + '°' + (lng >= 0 ? 'E' : 'W');
+                latlngEl.textContent = latStr + '  ' + lngStr;
+            }
+        } else {
+            if (mgrsEl)   mgrsEl.textContent = '—';
+            if (latlngEl) latlngEl.textContent = '—';
+        }
+
+        // Selected at timestamp
+        var selatEl = $('usp-selat');
+        if (selatEl) {
+            try {
+                var d = new Date(selectedAt || Date.now());
+                if (root.AppShellClock && typeof root.AppShellClock.formatZuluDtg === 'function') {
+                    selatEl.textContent = root.AppShellClock.formatZuluDtg(d);
+                } else {
+                    selatEl.textContent = d.toISOString();
+                }
+            } catch (_) { selatEl.textContent = '—'; }
+        }
     }
 
     // ── Core stats ────────────────────────────────────────────────────
@@ -532,8 +615,8 @@
         if (closeBtn) closeBtn.addEventListener('click', closePanel);
         document.addEventListener('rmooz:unit-selected', function(e) {
             var unit = e.detail && e.detail.unit;
-            if (isOperationalScenarioSelection(unit)) { closePanel(); return; }
-            if (unit) { populatePanel(unit); openPanel(); }
+            var selectedAt = (e.detail && e.detail.selectedAt) || Date.now();
+            if (unit) { populatePanel(unit, selectedAt); openPanel(); }
         });
     }
 

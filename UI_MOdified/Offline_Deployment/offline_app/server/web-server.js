@@ -626,7 +626,7 @@ const server = http.createServer((req, res) => {
                     errorMessage = 'LiteLLM appears to require a client certificate. Configure RMOOZ_AI_CLIENT_CERT_PATH and RMOOZ_AI_CLIENT_KEY_PATH if mTLS is required.';
                 } else if (/unknown ca|certificate verify failed|unable to get local issuer|self.signed/i.test(msg) || code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE' || code === 'SELF_SIGNED_CERT_IN_CHAIN' || code === 'SELF_SIGNED_CERT') {
                     errorCode = 'tls_ca_trust_failed';
-                    errorMessage = 'TLS CA trust failed — the LiteLLM server certificate is not trusted. Mount the internal CA chain and set RMOOZ_AI_CA_CERT_PATH=/app/certs/._mil_dir.crt. (' + e.message + ')';
+                    errorMessage = 'TLS CA trust failed — the LiteLLM server certificate is not trusted. Mount the internal CA chain and set RMOOZ_AI_CA_CERT_PATH=/app/certs/ca-chain.crt. (' + e.message + ')';
                 } else if (/handshake failure|bad certificate|sslv3 alert|alert handshake|wrong version number|decryption failed/i.test(msg)) {
                     errorCode = 'tls_handshake_failed';
                     errorMessage = 'TLS handshake failed. If the server requires mTLS, configure RMOOZ_AI_CLIENT_CERT_PATH and RMOOZ_AI_CLIENT_KEY_PATH; otherwise verify the CA chain. (' + e.message + ')';

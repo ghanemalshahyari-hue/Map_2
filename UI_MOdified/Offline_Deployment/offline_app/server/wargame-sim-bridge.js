@@ -1130,7 +1130,7 @@ function handle(req, res, ctx) {
                     errorCode = 'tls_ca_trust_failed';
                     classifiedError =
                         'TLS CA trust failed — the LiteLLM server certificate is not trusted. ' +
-                        'Mount the internal CA chain and set RMOOZ_AI_CA_CERT_PATH=/app/certs/._mil_dir.crt. ' +
+                        'Mount the internal CA chain and set RMOOZ_AI_CA_CERT_PATH=/app/certs/ca-chain.crt. ' +
                         'stderr: ' + rawErr.slice(-300);
                 } else if (/handshake failure|bad certificate|sslv3 alert|alert handshake|decryption failed|wrong version number|tlsv1 alert/i.test(rawErr)) {
                     errorCode = 'tls_handshake_failed';

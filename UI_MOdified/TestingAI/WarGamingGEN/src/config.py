@@ -139,7 +139,7 @@ def load_llm_config() -> LLMConfig:
         print(
             "[llm-config] WARNING: RMOOZ_AI_TLS_VERIFY=0 — TLS verification is DISABLED. "
             "This is insecure. Recommended fix: mount the internal CA certificate and set "
-            "RMOOZ_AI_CA_CERT_PATH=/usr/local/share/ca-certificates/._mil_dir.crt",
+            "RMOOZ_AI_CA_CERT_PATH=/usr/local/share/ca-certificates/ca-chain.crt",
             file=sys.stderr,
         )
         _tls_verify = False

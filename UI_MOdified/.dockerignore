@@ -16,10 +16,21 @@ npm-*.log
 *.log
 # `*.log` is NOT recursive in Docker ignore (a `*` never crosses `/`), so nested
 # logs like server/logs/web-server.err.log slipped through and baked Windows dev
-# paths into the image. Catch them recursively + exclude the runtime log dir.
+# paths into the image. Catch logs recursively + exclude EVERY runtime log dir at
+# any depth (incl. the offline overlay's server tree). These never belong in the image.
 **/*.log
+**/*.log.*
+logs/
 server/logs
 server/logs/
+offline_app/server/logs/
+Offline_Deployment/offline_app/server/logs/
+**/logs
+**/logs/
+# Runtime state pointers that record absolute host paths (scenario watcher writes
+# the active-scenario pointer with a machine path). Pure runtime — never baked.
+_active.json
+**/_active.json
 
 # ── Python caches ─────────────────────────────────────────────────────────────
 **/__pycache__
@@ -46,6 +57,10 @@ TestingAI/WarGamingGEN/runs
 # when present, and the bridge injects LLM_* at spawn time, so excluding it is safe
 # (the offline LiteLLM env comes from .env.offline → buildLlmChildEnv).
 TestingAI/WarGamingGEN/.env
+TestingAI/WarGamingGEN/.env.*
+TestingAI/WarGamingGEN/runs/
+**/.env
+**/.env.*
 
 # TestingAI top-level dev notes / screenshots are NOT runtime artifacts (the
 # WarGamingGEN Python pipeline imports none of them). SESSION_WARGAMINGGEN_REVIEW_

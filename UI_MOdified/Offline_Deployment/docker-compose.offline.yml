@@ -145,8 +145,8 @@ services:
 
       # ── Internal CA certificate (OFFLINE-LITELLM-CA-1) ───────────────────
       # Mount the WHOLE certs/ directory (read-only) at /app/certs. The operator
-      # drops the internal CA PEM at host certs/._mil_dir.crt → it appears at
-      # /app/certs/._mil_dir.crt (the path RMOOZ_AI_CA_CERT_PATH points to).
+      # drops the internal CA PEM at host certs/ca-chain.crt → it appears at
+      # /app/certs/ca-chain.crt (the path RMOOZ_AI_CA_CERT_PATH points to).
       #
       # Why a directory mount, not a single-file mount: a bind mount of a single
       # file whose source does NOT yet exist makes Docker auto-create an empty
@@ -187,5 +187,5 @@ volumes:
 #   ./map_data/base         → /app/maps               (MBTiles — run prepare-map-bundle.ps1 first)
 #   ./map_data/dem          → /app/dem_data            (Libya DEM — run prepare-map-bundle.ps1 first)
 #   ./map_data              → /app/offline_map_data    (read-only tiles root)
-#   ./certs                → /app/certs                (CA cert dir, optional; place ._mil_dir.crt inside)
+#   ./certs                → /app/certs                (CA cert dir, optional; place ca-chain.crt inside)
 #   ./TestingAI_Runtime/*  → /app/TestingAI/*          (writable runtime I/O)

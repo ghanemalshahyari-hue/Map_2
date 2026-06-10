@@ -23,6 +23,11 @@
  *   - mapbox.com
  *   - localhost:8080/services/...  (internal tile server — not reachable
  *                                   from a remote browser)
+ *   - tiles/{z}/{x}/{y}.png and /tiles/{z}/{x}/{y}.png  (relative/absolute
+ *     paths that resolve against the web-server port instead of the
+ *     tile-server port — app.js creates this as its local-directory fallback;
+ *     in the Docker deployment it must be replaced with the real offline tile
+ *     URL from /api/offline/map-config)
  */
 (function () {
     'use strict';
@@ -40,7 +45,11 @@
             u.includes('mapbox.com')         ||
             // Intercept localhost:8080 tile service — accessible from same machine
             // only; browsers on another machine get ERR_CONNECTION_REFUSED.
-            (u.includes('localhost:8080') && u.includes('/services/'))
+            (u.includes('localhost:8080') && u.includes('/services/')) ||
+            // Intercept relative and absolute /tiles/ template URLs (e.g. app.js
+            // creates L.tileLayer('tiles/{z}/{x}/{y}.png') as a local-dir fallback).
+            // These resolve against the web-server port and return 404 in Docker.
+            ((u.includes('/tiles/') || u.startsWith('tiles/')) && u.includes('{z}'))
         );
     }
 
@@ -78,11 +87,28 @@
         console.info('[offline-guard] Installed synchronously (placeholder until real URL resolves).');
     }
 
-    /** Replace the URL on any already-existing tile layers on a Leaflet map. */
+    /** Replace the URL on any already-existing tile layers on a Leaflet map.
+     *
+     *  Catches two classes of layers:
+     *   1. Layers whose _url still contains a banned pattern (e.g. if the guard
+     *      was not yet installed when the layer was created).
+     *   2. Layers whose _url was already set to PLACEHOLDER_TILE by the
+     *      synchronous guard interception — those need to be repointed to the
+     *      real offline URL once it resolves.
+     *
+     *  Uses setUrl() in preference to remove+add so that the original JS layer
+     *  reference is preserved — app.js's removeFallbackBases() can still find
+     *  and remove the layer by reference after the URL has been updated.
+     */
     function patchExistingLayers(map, offlineUrl) {
         if (!map || !map.eachLayer) return;
         map.eachLayer(function (layer) {
-            if (layer._url && isBannedUrl(layer._url)) {
+            var u = layer._url || '';
+            if (!isBannedUrl(u) && u !== PLACEHOLDER_TILE) return;
+            if (typeof layer.setUrl === 'function') {
+                layer.setUrl(offlineUrl);
+                console.info('[offline-guard] Repointed layer:', u.slice(0, 60), '→ offline');
+            } else {
                 var wasActive = map.hasLayer(layer);
                 map.removeLayer(layer);
                 var replacement = window.L.tileLayer(offlineUrl, {
@@ -92,7 +118,7 @@
                     errorTileUrl: layer.options.errorTileUrl || ''
                 });
                 if (wasActive) replacement.addTo(map);
-                console.info('[offline-guard] Replaced existing layer:', layer._url.slice(0, 60));
+                console.info('[offline-guard] Replaced layer:', u.slice(0, 60));
             }
         });
     }

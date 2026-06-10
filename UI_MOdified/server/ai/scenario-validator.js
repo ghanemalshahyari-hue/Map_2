@@ -115,18 +115,23 @@ function validateTopLevel(scenario, errors) {
 // ── Count range check (errors when wildly out of bounds, warnings when off-norm) ──
 function validateCounts(scenario, errors, warnings, isW3) {
     const summary = {};
-    // W3-rich carries a full 173-unit OOB; raise the red cap to accommodate it.
-    const W3_RED_MAX = 200;
+    // DOC-UNDERSTANDING-1: per-side ceilings now live entirely in COUNT_BOUNDS
+    // (red/blue/neutral max 500). The old W3-only red cap of 200 is retired —
+    // 500 covers the 173-unit W3 OOB and real-world ORBATs alike. `isW3` is
+    // still threaded through for the phase-enum handling in the caller; it no
+    // longer changes the count ceiling.
+    void isW3;
     for (const [field, bounds] of Object.entries(spec.COUNT_BOUNDS)) {
         const value = scenario[field];
-        if (!Array.isArray(value)) continue;     // missing required arrays caught by top-level
+        // missing required arrays caught by top-level; optional arrays
+        // (neutral_units) are simply skipped when absent.
+        if (!Array.isArray(value)) continue;
         const n = value.length;
         summary[field] = n;
-        const effectiveMax = (isW3 && field === 'red_units') ? W3_RED_MAX : bounds.max;
-        if (n < bounds.min || n > effectiveMax) {
+        if (n < bounds.min || n > bounds.max) {
             pushErr(errors, field,
-                `count ${n} out of allowed range [${bounds.min}..${effectiveMax}]`);
-        } else if (n !== bounds.normal) {
+                `count ${n} out of allowed range [${bounds.min}..${bounds.max}]`);
+        } else if (bounds.normal != null && n !== bounds.normal) {
             pushWarn(warnings, field,
                 `count ${n} deviates from wargame1/2 norm (${bounds.normal}); valid but off-pattern`);
         }
@@ -225,6 +230,10 @@ function validateScenario(parsed) {
     if (Array.isArray(parsed.blue_units_initial)) {
         validateArrayOfShape(parsed.blue_units_initial, spec.SHAPES.blue_units_initial_item, 'blue_units_initial', errors);
     }
+    // DOC-UNDERSTANDING-1: optional neutral/civilian/infrastructure track.
+    if (Array.isArray(parsed.neutral_units)) {
+        validateArrayOfShape(parsed.neutral_units, spec.SHAPES.neutral_units_item, 'neutral_units', errors);
+    }
     if (Array.isArray(parsed.phase_table)) {
         validateArrayOfShape(parsed.phase_table, phaseTableShape, 'phase_table', errors);
     }
@@ -241,8 +250,9 @@ function validateScenario(parsed) {
         summary: {
             stepCount:  Array.isArray(parsed.steps)              ? parsed.steps.length              : 0,
             blsCount:   Array.isArray(parsed.bls_template)       ? parsed.bls_template.length       : 0,
-            redCount:   Array.isArray(parsed.red_units)          ? parsed.red_units.length          : 0,
-            blueCount:  Array.isArray(parsed.blue_units_initial) ? parsed.blue_units_initial.length : 0,
+            redCount:    Array.isArray(parsed.red_units)          ? parsed.red_units.length          : 0,
+            blueCount:   Array.isArray(parsed.blue_units_initial) ? parsed.blue_units_initial.length : 0,
+            neutralCount: Array.isArray(parsed.neutral_units)     ? parsed.neutral_units.length      : 0,
             ...summary,
         },
     };

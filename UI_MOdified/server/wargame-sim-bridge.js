@@ -36,6 +36,8 @@ const { spawn, spawnSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');                 // UI_MOdified/
 const PORTER = require(path.join(ROOT, 'scripts', 'port-wargame.js'));
+// DOC-UNDERSTANDING-1 / Phase C: deterministic per-side unit cap before save.
+const NORMALIZER = require(path.join(__dirname, 'ai', 'scenario-normalizer.js'));
 
 // Resolve the TestingAI root. DEBUG-DOCX-1 root cause RC-2: the old hardcoded
 // 'C:/Users/ADMIN/Desktop/TestingAI' default is dead on any box whose user isn't
@@ -1137,6 +1139,19 @@ function handle(req, res, ctx) {
                 }
             }
 
+            // DOC-UNDERSTANDING-1 / Phase C: deterministic unit normalization
+            // BEFORE save — caps each side at the schema ceiling (≤500) so a
+            // large generated ORBAT both writes AND loads. No-op when under cap;
+            // never blocks the import if the normalizer itself errors.
+            let normalization = null;
+            try {
+                const nr = NORMALIZER.normalizeScenario(scenario);   // mutates scenario in place
+                if (nr.changed) {
+                    normalization = nr.report;
+                    scenario.normalization = { cap: nr.report.cap, before: nr.report.before, after: nr.report.after };
+                }
+            } catch (eN) { console.warn('[wargame-sim] normalizer skipped:', eN && eN.message); }
+
             const nSteps = (scenario.steps || []).length;
 
             // Determine the BASE name for this import. Partials default to a
@@ -1209,6 +1224,8 @@ function handle(req, res, ctx) {
                 // PREGEN-CONTROL-2: did the generated GeoJSON contain the override coords?
                 objective_override_in_geojson: scenario.objective_override_in_geojson || false,
                 objective_override_warning: scenario.objective_override_warning || null,
+                // DOC-UNDERSTANDING-1 / Phase C: unit-normalization report (null when no side exceeded the cap).
+                normalization,
             });
         } catch (e) { sendJson(res, 400, { ok: false, error: 'import failed: ' + e.message }); }
         return true;

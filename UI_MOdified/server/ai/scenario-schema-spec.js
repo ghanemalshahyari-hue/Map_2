@@ -21,14 +21,26 @@ const adjSchema = require('./adjudicator-schema');
 // Parametric: the wargame2/1 scenarios use 12/4/11/39, but the system
 // must accept smaller and larger operations as long as they stay sane.
 // The validator emits a *warning* (not an error) when counts deviate
-// from the established wargame1/2 norms, so producers know they're off
-// the well-trodden path without being blocked.
+// from the established wargame1/2 norms (only when a `normal` is set), so
+// producers know they're off the well-trodden path without being blocked.
+//
+// DOC-UNDERSTANDING-1 (2026-06-10): a single real-world operational order
+// (Arabic "الأمر الإنذاري" / OPORD) can field a large ORBAT per side. The
+// per-side ceilings were raised to 500 (red_units / blue_units_initial /
+// optional neutral_units) so a faithful import is not rejected. Validation
+// is NOT removed — anything over 500/side is still a hard error, and the
+// deterministic normalizer (scenario-normalizer.js) caps counts before save
+// so a generated scenario both writes AND loads.
 const COUNT_BOUNDS = Object.freeze({
-    steps:              { min: 4,  max: 20, normal: 12 },
-    bls_template:       { min: 1,  max: 8,  normal: 4  },
-    red_units:          { min: 1,  max: 200, normal: 11 },
-    blue_units_initial: { min: 1,  max: 100, normal: 39 },
-    pipeline:           { min: 2,  max: 64, normal: 15 },
+    steps:              { min: 4,  max: 20,  normal: 12 },
+    bls_template:       { min: 1,  max: 8,   normal: 4  },
+    red_units:          { min: 1,  max: 500, normal: 11 },
+    blue_units_initial: { min: 1,  max: 500, normal: 39 },
+    // Optional side — only enforced when the scenario actually carries it
+    // (validateCounts skips fields whose value isn't an array). normal:null
+    // ⇒ no off-norm warning, since there is no established neutral baseline.
+    neutral_units:      { min: 0,  max: 500, normal: null },
+    pipeline:           { min: 2,  max: 64,  normal: 15 },
 });
 
 // ── Top-level keys ─────────────────────────────────────────────────
@@ -62,6 +74,12 @@ const TOP_LEVEL = Object.freeze({
 
     blue_units_initial: { required: true,  type: 'array',
         desc: 'Blue starting positions. Each item: { unit_uid, base_id, echelon?, sidc?, coord, posture? }.' },
+
+    // DOC-UNDERSTANDING-1: optional NEUTRAL/civilian/infrastructure track.
+    // Absent on all legacy W1/W2/W3 scenarios; emitted by the document
+    // pipeline when a source order names neutral or civilian entities.
+    neutral_units:      { required: false, type: 'array',
+        desc: 'Optional Neutral/civilian/infrastructure entities. Each item: { uid, coord, label?, kind? }.' },
 
     bls_template:       { required: true,  type: 'array',
         desc: 'Beach Landing Sites. Each: { name, coord, role?, throughput?, terrain_friction?, permanently_limited? }.' },
@@ -137,6 +155,13 @@ const SHAPES = Object.freeze({
     blue_units_initial_item: {
         required: ['unit_uid', 'base_id', 'coord'],
         optional: ['echelon', 'sidc', 'posture'],
+    },
+    // DOC-UNDERSTANDING-1: lenient neutral/civilian/infrastructure shape.
+    // Only uid + coord are mandatory; everything else is optional so the
+    // document pipeline can emit sparse civilian/infrastructure markers.
+    neutral_units_item: {
+        required: ['uid', 'coord'],
+        optional: ['label', 'kind', 'sidc', 'role', 'echelon', 'side'],
     },
     phase_table_item: {
         required: ['index', 'time_label', 'elapsed_hours', 'phase'],

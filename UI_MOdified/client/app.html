@@ -851,6 +851,21 @@
                         <span id="wg-state-pill" class="wargame-state-pill is-idle">Idle</span>
                     </div>
 
+                    <!-- OPSCENARIO-AI-1: generate this operational scenario with the SAME
+                         offline AI engine as Scenario Import (WarGamingGEN/LiteLLM, env-based —
+                         no Ollama, no separate integration). Opens the existing generation
+                         wizard: upload force docs → Start → 17-phase generation → Continue /
+                         Import Partial → loads on the map via the normal scenario loader. -->
+                    <div class="wargame-brief-card" id="wg-ai-gen-card">
+                        <div>
+                            <span class="wargame-eyebrow" data-i18n="wg-ai-gen-eyebrow">Offline AI generation</span>
+                            <strong data-i18n="wg-ai-gen-title">Generate operational scenario</strong>
+                        </div>
+                        <button id="wg-generate-ai" class="wargame-action-btn primary" type="button"
+                                data-i18n="wg-ai-gen-btn" data-i18n-title="wg-ai-gen-hint"
+                                title="Generate, continue, or import a partial operational scenario using the offline AI engine">Generate / Continue</button>
+                    </div>
+
                     <div class="wargame-phase-track" aria-label="Operational scenario phases">
                         <span id="wg-phase-setup" class="active">Setup</span>
                         <span id="wg-phase-orders">Orders</span>
@@ -3450,13 +3465,13 @@
                 <button id="usp-collapse-tab" class="usp-collapse-tab"
                         title="Collapse panel" aria-label="Collapse panel">&#8249;</button>
                 <header class="usp-header">
-                    <span class="usp-header-title">UNIT STATUS</span>
+                    <span class="usp-header-title" data-i18n="usp-unit-status">UNIT STATUS</span>
                     <button id="panel-close" class="usp-close-btn" aria-label="Close panel">&#x2715;</button>
                 </header>
 
                 <div id="empty-state" class="usp-empty">
                     <div class="usp-empty-icon">&#x25C8;</div>
-                    <p>No unit selected.<br>Click a unit on the map.</p>
+                    <p data-i18n="usp-no-unit">No unit selected.<br>Click a unit on the map.</p>
                 </div>
 
                 <div class="usp-body" id="usp-body" hidden>
@@ -3477,14 +3492,14 @@
                     </div>
 
                     <div class="usp-stats-row">
-                        <div class="usp-stat"><div class="usp-stat-lbl">Side</div><div class="usp-stat-val" id="unit-side">&#8212;</div></div>
-                        <div class="usp-stat"><div class="usp-stat-lbl">Course</div><div class="usp-stat-val" id="usp-course">&#8212;</div></div>
-                        <div class="usp-stat"><div class="usp-stat-lbl">Speed</div><div class="usp-stat-val" id="usp-speed">&#8212;</div></div>
+                        <div class="usp-stat"><div class="usp-stat-lbl" data-i18n="up-field-side">Side</div><div class="usp-stat-val" id="unit-side">&#8212;</div></div>
+                        <div class="usp-stat"><div class="usp-stat-lbl" data-i18n="usp-lbl-course">Course</div><div class="usp-stat-val" id="usp-course">&#8212;</div></div>
+                        <div class="usp-stat"><div class="usp-stat-lbl" data-i18n="usp-lbl-speed">Speed</div><div class="usp-stat-val" id="usp-speed">&#8212;</div></div>
                     </div>
 
                     <div class="usp-readiness-block">
                         <div class="usp-readiness-top">
-                            <span class="usp-field-lbl">Readiness</span>
+                            <span class="usp-field-lbl" data-i18n="usp-lbl-readiness">Readiness</span>
                             <span class="usp-readiness-chip" id="readiness-value"></span>
                             <span class="usp-delta-src" id="readiness-source"></span>
                         </div>
@@ -3494,12 +3509,12 @@
 
                     <div class="usp-systems-block">
                         <div class="usp-mini-hdr">
-                            <span class="usp-mini-label">SYSTEMS</span>
+                            <span class="usp-mini-label" data-i18n="usp-lbl-systems">SYSTEMS</span>
                             <span class="usp-ctrl-tag">Damage Ctrl</span>
                         </div>
                         <div class="usp-bar-track usp-bar-track--tall"><div class="usp-bar-fill supply-fill" id="supply-fill"></div></div>
                         <div class="usp-systems-foot">
-                            <span class="usp-field-lbl">Supply</span>
+                            <span class="usp-field-lbl" data-i18n="usp-lbl-supply">Supply</span>
                             <span class="usp-stat-val usp-supply-pct" id="supply-pct"></span>
                             <span class="usp-delta-src" id="supply-source"></span>
                         </div>
@@ -3508,7 +3523,7 @@
 
                     <div class="usp-magazines-block" id="usp-magazines-block">
                         <div class="usp-mini-hdr">
-                            <span class="usp-mini-label">MAGAZINES</span>
+                            <span class="usp-mini-label" data-i18n="usp-lbl-magazines">MAGAZINES</span>
                             <span class="usp-ctrl-tag">View Magazines</span>
                         </div>
                         <h4 id="magazines-title" hidden style="display:none"></h4>
@@ -3516,42 +3531,42 @@
                     </div>
 
                     <div class="usp-fuelammo-block" id="usp-fuelammo-block">
-                        <div class="usp-mini-hdr"><span class="usp-mini-label">FUEL AND AMMO</span></div>
+                        <div class="usp-mini-hdr"><span class="usp-mini-label" data-i18n="usp-lbl-fuel-ammo">FUEL AND AMMO</span></div>
                         <div class="usp-fuelammo-name" id="usp-fuelammo-name">&#8212;</div>
                         <div class="usp-bar-track usp-bar-track--tall"><div class="usp-bar-fill usp-fuel-fill" id="usp-fuel-fill"></div></div>
                         <div class="usp-fuelammo-detail" id="usp-fuelammo-detail"></div>
                     </div>
 
                     <div class="usp-assignment-block">
-                        <div class="usp-arow"><span class="usp-arow-lbl">Domain</span><span class="usp-arow-val" id="unit-domain">&#8212;</span></div>
-                        <div class="usp-arow"><span class="usp-arow-lbl">Role</span><span class="usp-arow-val" id="unit-role">&#8212;</span></div>
-                        <div class="usp-arow"><span class="usp-arow-lbl">Echelon</span><span class="usp-arow-val" id="unit-echelon">&#8212;</span></div>
-                        <div class="usp-arow"><span class="usp-arow-lbl">Assigned Base</span><span class="usp-arow-val" id="usp-assigned-base">None</span></div>
-                        <div class="usp-arow"><span class="usp-arow-lbl">Status</span><span class="usp-arow-val" id="usp-unit-status">&#8212;</span></div>
-                        <div class="usp-arow"><span class="usp-arow-lbl">Mission</span><span class="usp-arow-val usp-link" id="usp-mission">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="up-field-domain">Domain</span><span class="usp-arow-val" id="unit-domain">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="up-field-role">Role</span><span class="usp-arow-val" id="unit-role">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="up-field-echelon">Echelon</span><span class="usp-arow-val" id="unit-echelon">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="usp-lbl-assigned-base">Assigned Base</span><span class="usp-arow-val" id="usp-assigned-base">None</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="up-field-status">Status</span><span class="usp-arow-val" id="usp-unit-status">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="up-field-mission">Mission</span><span class="usp-arow-val usp-link" id="usp-mission">&#8212;</span></div>
                     </div>
 
                     <!-- POSITION section -->
                     <div class="usp-pos-section">
                         <div class="usp-arow">
-                            <span class="usp-arow-lbl">MGRS</span>
+                            <span class="usp-arow-lbl" data-i18n="up-field-mgrs">MGRS</span>
                             <span class="usp-pos-val" id="usp-mgrs">&#8212;</span>
                         </div>
                         <div class="usp-arow">
-                            <span class="usp-arow-lbl">Lat / Lng</span>
+                            <span class="usp-arow-lbl" data-i18n="up-field-latlng">Lat / Lng</span>
                             <span class="usp-pos-val" id="usp-latlng">&#8212;</span>
                         </div>
                         <div class="usp-arow">
-                            <span class="usp-arow-lbl">Selected at</span>
+                            <span class="usp-arow-lbl" data-i18n="up-field-selected-at">Selected at</span>
                             <span class="usp-pos-selat" id="usp-selat">&#8212;</span>
                         </div>
                     </div>
 
                     <div class="usp-tabs-block">
                         <div class="usp-tabs-nav">
-                            <button class="usp-tab usp-tab--active" data-tab="tab-sensors">Sensors <span class="usp-tab-count" id="sensor-count"></span></button>
-                            <button class="usp-tab" data-tab="tab-comms">Comms</button>
-                            <button class="usp-tab" data-tab="tab-weapons">Weapons <span class="usp-tab-count" id="weapon-count"></span></button>
+                            <button class="usp-tab usp-tab--active" data-tab="tab-sensors"><span data-i18n="usp-tab-sensors">Sensors</span> <span class="usp-tab-count" id="sensor-count"></span></button>
+                            <button class="usp-tab" data-tab="tab-comms"><span data-i18n="usp-tab-comms">Comms</span></button>
+                            <button class="usp-tab" data-tab="tab-weapons"><span data-i18n="usp-tab-weapons">Weapons</span> <span class="usp-tab-count" id="weapon-count"></span></button>
                         </div>
                         <div class="usp-tab-pane usp-tab-pane--active" id="tab-sensors">
                             <div id="sensors-section">
@@ -3559,7 +3574,7 @@
                                 <div class="usp-tab-empty" id="sensors-empty" hidden>No sensors configured</div>
                             </div>
                         </div>
-                        <div class="usp-tab-pane" id="tab-comms"><div class="usp-tab-empty">No comms data</div></div>
+                        <div class="usp-tab-pane" id="tab-comms"><div class="usp-tab-empty" data-i18n="usp-no-comms-data">No comms data</div></div>
                         <div class="usp-tab-pane" id="tab-weapons">
                             <div id="weapons-section">
                                 <ul class="usp-item-list" id="weapon-list"></ul>
@@ -3570,16 +3585,16 @@
 
                     <div class="usp-speed-block">
                         <div class="usp-section-hdr">
-                            <span class="usp-section-label">UNIT ALT / SPEED</span>
+                            <span class="usp-section-label" data-i18n="usp-lbl-alt-speed">UNIT ALT / SPEED</span>
                             <button class="usp-collapse-btn" aria-expanded="true" aria-controls="usp-speed-body">&#171;</button>
                         </div>
                         <div id="usp-speed-body" class="usp-section-body" data-collapsed="false">
                             <div class="usp-speed-grid">
-                                <div class="usp-arow"><span class="usp-arow-lbl">Altitude</span><span class="usp-arow-val" id="usp-altitude">&#8212;</span></div>
-                                <div class="usp-arow"><span class="usp-arow-lbl">Speed</span><span class="usp-arow-val" id="usp-speed-val">&#8212;</span></div>
+                                <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="usp-lbl-altitude">Altitude</span><span class="usp-arow-val" id="usp-altitude">&#8212;</span></div>
+                                <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="usp-lbl-speed">Speed</span><span class="usp-arow-val" id="usp-speed-val">&#8212;</span></div>
                             </div>
                             <div class="usp-throttle-wrap">
-                                <div class="usp-throttle-lbl">Throttle</div>
+                                <div class="usp-throttle-lbl" data-i18n="usp-lbl-throttle">Throttle</div>
                                 <div class="usp-throttle-btns" id="usp-throttle-btns">
                                     <span class="usp-throttle-btn" data-throttle="stop">Stop</span>
                                     <span class="usp-throttle-btn" data-throttle="creep">Creep</span>
@@ -3593,7 +3608,7 @@
 
                     <div class="usp-fuel-block">
                         <div class="usp-section-hdr">
-                            <span class="usp-section-label">UNIT FUEL</span>
+                            <span class="usp-section-label" data-i18n="usp-lbl-fuel">UNIT FUEL</span>
                             <button class="usp-collapse-btn" aria-expanded="true" aria-controls="usp-fuel-body">&#171;</button>
                         </div>
                         <div id="usp-fuel-body" class="usp-section-body" data-collapsed="false">
@@ -3605,7 +3620,7 @@
 
                     <div class="usp-emcon-block">
                         <div class="usp-section-hdr">
-                            <span class="usp-section-label">UNIT EMCON</span>
+                            <span class="usp-section-label" data-i18n="usp-lbl-emcon">UNIT EMCON</span>
                             <button class="usp-collapse-btn" aria-expanded="true" aria-controls="usp-emcon-body">&#171;</button>
                         </div>
                         <div id="usp-emcon-body" class="usp-section-body" data-collapsed="false">
@@ -3616,7 +3631,7 @@
 
                     <div class="usp-deltas-block" id="deltas-section" hidden>
                         <div class="usp-section-hdr">
-                            <span class="usp-section-label">RECENT CHANGES <span class="usp-count-badge" id="delta-count"></span></span>
+                            <span class="usp-section-label"><span data-i18n="usp-lbl-recent-changes">RECENT CHANGES</span> <span class="usp-count-badge" id="delta-count"></span></span>
                             <button class="usp-collapse-btn" aria-expanded="true" aria-controls="delta-list">&#171;</button>
                         </div>
                         <ul class="usp-item-list usp-delta-list" id="delta-list" data-collapsed="false"></ul>
@@ -5573,6 +5588,310 @@
 
         @media (max-width: 1200px) { .unit-status-panel { width: 310px; } }
         @media (max-width: 768px)  { .unit-status-panel { width: 100%; } }
+
+
+        /* ════════════════════════════════════════════════════════════════
+           COMMANDER UNIT STATUS PANEL — Theme + RTL (A/B/C fix)
+           ════════════════════════════════════════════════════════════════ */
+
+        /* ── A: Readability — dark theme improvements ─────────────────── */
+        .unit-status-panel {
+            font-size: 0.84rem;  /* slightly larger base */
+        }
+        .usp-arow { padding: 5px 0.75rem; }
+        .usp-arow-lbl { min-width: 96px; font-size: 0.7rem; }
+        .usp-arow-val { font-size: 0.78rem; }
+        .usp-stat { padding: 0.45rem 0.7rem; }
+        .usp-stat-lbl { font-size: 0.67rem; margin-bottom: 3px; }
+        .usp-stat-val { font-size: 0.82rem; }
+        .usp-item-list li { padding: 5px 8px 5px 10px; font-size: 0.76rem; }
+        .usp-item-list li strong { font-size: 0.77rem; }
+        .usp-mag-list li { padding: 4px 0 4px 10px; font-size: 0.76rem; }
+        .usp-readiness-block { padding: 0.5rem 0.75rem; }
+        .usp-readiness-top { gap: 0.6rem; }
+        .usp-readiness-chip { padding: 2px 8px; font-size: 0.72rem; }
+        .usp-systems-block { padding: 0.45rem 0.75rem 0.5rem; }
+        .usp-bar-track { height: 9px; }
+        .usp-bar-track--tall { height: 13px; }
+        .usp-section-hdr { padding: 5px 0.6rem 5px 0.75rem; }
+        .usp-section-label { font-size: 0.7rem; letter-spacing: 0.1em; }
+        .usp-tabs-nav .usp-tab { padding: 6px 0; font-size: 0.69rem; }
+        .usp-unit-name { font-size: 1rem; padding: 0.55rem 0.75rem 0.3rem; }
+        .usp-hero-top { padding: 0.55rem 0.75rem 0.3rem; }
+        .usp-identity-block { padding: 0.4rem 0.75rem 0.45rem; }
+        .usp-platform-id { font-size: 0.82rem; }
+        .usp-platform-type { font-size: 0.75rem; }
+        .usp-uid { font-size: 0.69rem; }
+        .usp-sidc { font-size: 0.7rem; letter-spacing: 0.06em; }
+        .usp-systems-foot { margin-top: 0.35rem; gap: 0.6rem; }
+        .usp-supply-pct { font-size: 0.78rem; }
+        .usp-throttle-btns { gap: 4px; }
+        .usp-throttle-btn { font-size: 0.66rem; padding: 4px 2px; }
+
+        /* ── B: Light theme overrides ─────────────────────────────────── */
+        [data-theme="light"] .unit-status-panel {
+            background: #f4f7fb;
+            border-left: 3px solid #c8d8ea;
+            box-shadow: -4px 0 18px rgba(0,30,80,0.12);
+            color: #1a2940;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        [data-theme="light"] .usp-header {
+            background: linear-gradient(90deg, #1e3a5a, #24466e);
+            border-bottom: 1px solid #1a3050;
+        }
+        [data-theme="light"] .usp-header-title { color: #dce8f4; }
+        [data-theme="light"] .usp-close-btn {
+            border-color: #2a4a6a; color: #8aaac8;
+        }
+        [data-theme="light"] .usp-close-btn:hover { background:#1e3a58; color:#c0d8f0; }
+
+        [data-theme="light"] .usp-collapse-tab {
+            background: linear-gradient(90deg, #f0f4f8, #e8eef6);
+            border-color: #c8d8ea; color: #4a7aa0;
+        }
+        [data-theme="light"] .usp-reopen-tab {
+            background: linear-gradient(270deg, #1e3a5a, #24466e);
+            border-color: #1a3050; color: #8aaac8;
+        }
+
+        [data-theme="light"] .usp-empty { color: #8aa0ba; }
+        [data-theme="light"] .usp-empty-icon { color: #c8d8ea; }
+
+        [data-theme="light"] .usp-hero {
+            background: linear-gradient(180deg, #1e3a5a 0%, #162e48 100%);
+            border-bottom: 1px solid #c8d8ea;
+        }
+        [data-theme="light"] .usp-hero-symbol {
+            background: linear-gradient(180deg, #162840 0%, #0e1e30 100%);
+            border-color: #1a3050;
+        }
+        [data-theme="light"] .usp-unit-name { color: #f0f8ff; }
+        [data-theme="light"] .usp-status-badge {
+            background: #e8f0fe; border-color: #aac0e8; color: #2563eb;
+        }
+
+        [data-theme="light"] .usp-identity-block {
+            background: #ffffff; border-bottom: 1px solid #dde8f0;
+        }
+        [data-theme="light"] .usp-platform-id { color: #2060b0; }
+        [data-theme="light"] .usp-platform-type { color: #486888; }
+        [data-theme="light"] .usp-uid { color: #8aaabb; }
+        [data-theme="light"] .usp-sidc { color: #2060b0; }
+        [data-theme="light"] .usp-code-line { color: #708090; }
+
+        [data-theme="light"] .usp-stats-row { border-bottom: 1px solid #dde8f0; }
+        [data-theme="light"] .usp-stat { border-right-color: #dde8f0; }
+        [data-theme="light"] .usp-stat-lbl { color: #5a7890; }
+        [data-theme="light"] .usp-stat-val { color: #1a2940; }
+
+        [data-theme="light"] .usp-readiness-block {
+            background: #f8fafd; border-bottom: 1px solid #dde8f0;
+        }
+        [data-theme="light"] .usp-field-lbl { color: #5a7890; }
+        [data-theme="light"] .usp-delta-src { color: #7a9ab0; }
+        [data-theme="light"] .usp-data-src { color: #9ab0c0; }
+        [data-theme="light"] .usp-bar-track {
+            background: #e0eaf4; border-color: #c8d8ea;
+        }
+        [data-theme="light"] .usp-readiness-fill.ready { background: #16a34a; box-shadow: none; }
+        [data-theme="light"] .usp-readiness-fill.limited { background: #d97706; }
+        [data-theme="light"] .usp-readiness-fill.not_ready { background: #dc2626; }
+        [data-theme="light"] .usp-readiness-chip.ready {
+            background: #dcfce7; color: #15803d; border-color: #86efac;
+        }
+        [data-theme="light"] .usp-readiness-chip.limited {
+            background: #fef9c3; color: #a16207; border-color: #fde047;
+        }
+        [data-theme="light"] .usp-readiness-chip.not_ready {
+            background: #fee2e2; color: #b91c1c; border-color: #fca5a5;
+        }
+
+        [data-theme="light"] .usp-systems-block { border-bottom: 1px solid #dde8f0; }
+        [data-theme="light"] .usp-mini-label { color: #2060b0; }
+        [data-theme="light"] .usp-ctrl-tag {
+            background: #e8f0fa; border-color: #aac0e0; color: #3a70a0;
+        }
+        [data-theme="light"] .unit-status-panel .supply-fill { background: #16a34a; box-shadow: none; }
+        [data-theme="light"] .unit-status-panel .supply-fill.supply-amber { background: #d97706; }
+        [data-theme="light"] .unit-status-panel .supply-fill.supply-red { background: #dc2626; }
+        [data-theme="light"] .usp-supply-pct { color: #2060b0; }
+        [data-theme="light"] .usp-systems-foot .usp-field-lbl { color: #5a7890; }
+
+        [data-theme="light"] .usp-magazines-block {
+            background: #f8fafd; border-bottom: 1px solid #dde8f0;
+        }
+        [data-theme="light"] .usp-mag-list li {
+            border-left-color: #aac0e0; color: #2a4060; background: transparent;
+        }
+        [data-theme="light"] .usp-mag-list li strong { color: #1a3060; }
+
+        [data-theme="light"] .usp-fuelammo-block {
+            background: #f8fafd; border-bottom: 1px solid #dde8f0;
+        }
+        [data-theme="light"] .usp-fuelammo-name { color: #2060b0; }
+        [data-theme="light"] .usp-fuel-fill { background: #16a34a; }
+        [data-theme="light"] .usp-fuelammo-detail { color: #5a7890; }
+
+        [data-theme="light"] .usp-assignment-block { border-bottom: 1px solid #dde8f0; }
+        [data-theme="light"] .usp-arow { border-bottom-color: #edf2f7; }
+        [data-theme="light"] .usp-arow-lbl { color: #5a7890; }
+        [data-theme="light"] .usp-arow-val { color: #1a2940; }
+        [data-theme="light"] .usp-link { color: #2060b0; }
+        [data-theme="light"] .usp-pos-val { color: #1a3060; }
+        [data-theme="light"] .usp-pos-selat { color: #8aaabb; }
+        [data-theme="light"] .usp-pos-section { border-bottom-color: #dde8f0; }
+
+        [data-theme="light"] .usp-tabs-block { border-bottom: 1px solid #dde8f0; }
+        [data-theme="light"] .usp-tabs-nav {
+            background: #eef3f9; border-bottom-color: #c8d8ea;
+        }
+        [data-theme="light"] .usp-tab { color: #5a7890; border-right-color: #c8d8ea; }
+        [data-theme="light"] .usp-tab:hover { background: #dce8f4; color: #1a3060; }
+        [data-theme="light"] .usp-tab--active {
+            background: #ffffff; color: #1a3060; border-bottom-color: #2060b0;
+        }
+        [data-theme="light"] .usp-tab-count { color: #8aaabb; }
+        [data-theme="light"] .usp-tab--active .usp-tab-count { color: #5a7890; }
+        [data-theme="light"] .usp-tab-empty { color: #8aaabb; }
+        [data-theme="light"] .usp-tab-pane { background: #ffffff; }
+
+        [data-theme="light"] .usp-item-list li {
+            background: #f8fafd; border-bottom-color: #edf2f7;
+            border-left-color: #5588cc; color: #1a2940;
+        }
+        [data-theme="light"] #weapon-list li { border-left-color: #c07820; }
+        [data-theme="light"] .usp-delta-list li { border-left-color: #c05020; }
+        [data-theme="light"] .usp-item-list li strong { color: #1a2940; }
+        [data-theme="light"] .usp-item-list li span { color: #5a7890; }
+        [data-theme="light"] .capability-source {
+            background: #f0f4f8 !important; color: #8aaabb !important;
+            border-top-color: #dde8f0 !important;
+        }
+
+        [data-theme="light"] .usp-speed-block,
+        [data-theme="light"] .usp-fuel-block,
+        [data-theme="light"] .usp-emcon-block,
+        [data-theme="light"] .usp-deltas-block { border-bottom-color: #dde8f0; }
+        [data-theme="light"] .usp-section-hdr {
+            background: linear-gradient(90deg, #eef3f9, #e8f0f8);
+            border-bottom-color: #c8d8ea;
+        }
+        [data-theme="light"] .usp-section-label { color: #2060b0; }
+        [data-theme="light"] .usp-count-badge { color: #5a7890; }
+        [data-theme="light"] .usp-collapse-btn { color: #7a9ab0; }
+        [data-theme="light"] .usp-collapse-btn:hover { color: #1a4080; }
+        [data-theme="light"] .usp-section-body[data-collapsed="true"] { display: none; }
+
+        [data-theme="light"] .usp-speed-grid .usp-arow { border-bottom-color: #edf2f7; }
+        [data-theme="light"] .usp-throttle-wrap { border-top-color: #c8d8ea; }
+        [data-theme="light"] .usp-throttle-lbl { color: #5a7890; }
+        [data-theme="light"] .usp-throttle-btn {
+            background: #eef3f9; border-color: #c8d8ea; color: #5a7890;
+        }
+        [data-theme="light"] .usp-throttle-btn--active {
+            background: #dce8f6; border-color: #5588cc; color: #1a4080;
+        }
+
+        [data-theme="light"] .usp-fuel-unit-name { color: #2060b0; }
+        [data-theme="light"] .usp-fuel-fill2 { background: #16a34a; }
+        [data-theme="light"] .usp-fuel-text { color: #5a7890; }
+
+        [data-theme="light"] .usp-emcon-btn {
+            background: linear-gradient(180deg, #eef3f9, #e4edf6);
+            border-color: #aac0e0; color: #1a4080;
+        }
+        [data-theme="light"] .usp-emcon-btn:hover { border-color: #5588cc; }
+        [data-theme="light"] .usp-keybind { color: #8aaabb; }
+        [data-theme="light"] .usp-emcon-state { color: #5a7890; }
+
+        [data-theme="light"] .unit-status-panel::-webkit-scrollbar-track { background: #e8f0f8; }
+        [data-theme="light"] .unit-status-panel::-webkit-scrollbar-thumb { background: #aac0d8; }
+        [data-theme="light"] .unit-status-panel::-webkit-scrollbar-thumb:hover { background: #5588b0; }
+
+        /* ── C: RTL layout overrides ──────────────────────────────────── */
+        /* Panel flips to left side */
+        [dir="rtl"] .unit-status-panel {
+            right: auto;
+            left: 0;
+            border-left: none;
+            border-right: 3px solid #2a4060;
+            box-shadow: 6px 0 24px rgba(0,0,0,0.75);
+        }
+        [data-theme="light"][dir="rtl"] .unit-status-panel,
+        [dir="rtl"][data-theme="light"] .unit-status-panel {
+            border-right: 3px solid #c8d8ea;
+            box-shadow: 6px 0 18px rgba(0,30,80,0.12);
+        }
+        /* Collapse tab flips to right edge */
+        [dir="rtl"] .usp-collapse-tab {
+            left: auto;
+            right: -22px;
+            border-left: 1px solid #1a2535;
+            border-right: none;
+        }
+        [data-theme="light"][dir="rtl"] .usp-collapse-tab,
+        [dir="rtl"][data-theme="light"] .usp-collapse-tab {
+            border-left-color: #c8d8ea;
+        }
+        /* Reopen tab flips to left side */
+        [dir="rtl"] .usp-reopen-tab {
+            right: auto;
+            left: 0;
+        }
+        /* Stats row — mirror */
+        [dir="rtl"] .usp-stats-row { direction: rtl; }
+        [dir="rtl"] .usp-stat { border-right: none; border-left: 1px solid #141e2a; }
+        [dir="rtl"] .usp-stat:last-child { border-left: none; }
+        [data-theme="light"][dir="rtl"] .usp-stat,
+        [dir="rtl"][data-theme="light"] .usp-stat { border-left-color: #dde8f0; }
+
+        /* Assignment rows — label on right, value on left */
+        [dir="rtl"] .usp-arow { flex-direction: row-reverse; }
+        [dir="rtl"] .usp-arow-lbl { text-align: right; }
+        [dir="rtl"] .usp-arow-val { text-align: left; }
+
+        /* Readiness row — mirror */
+        [dir="rtl"] .usp-readiness-top { flex-direction: row-reverse; }
+
+        /* Tabs — mirror order */
+        [dir="rtl"] .usp-tabs-nav { flex-direction: row-reverse; }
+        [dir="rtl"] .usp-tab { border-right: none; border-left: 1px solid #141e2a; }
+        [dir="rtl"] .usp-tab:first-child { border-left: none; }
+        [data-theme="light"][dir="rtl"] .usp-tab,
+        [dir="rtl"][data-theme="light"] .usp-tab { border-left-color: #c8d8ea; }
+
+        /* Item lists — border on right */
+        [dir="rtl"] .usp-item-list li {
+            border-left: none;
+            border-right: 2px solid #1e3a56;
+            padding-left: 6px;
+            padding-right: 10px;
+        }
+        [dir="rtl"] #weapon-list li { border-right-color: #2e2010; }
+        [dir="rtl"] .usp-delta-list li { border-right-color: #2e1800; }
+        [data-theme="light"][dir="rtl"] .usp-item-list li,
+        [dir="rtl"][data-theme="light"] .usp-item-list li { border-right-color: #5588cc; }
+        [dir="rtl"] .usp-mag-list li {
+            border-left: none;
+            border-right: 2px solid #3a5070;
+            padding-left: 0;
+            padding-right: 10px;
+        }
+
+        /* Section headers — mirror */
+        [dir="rtl"] .usp-section-hdr { flex-direction: row-reverse; }
+        [dir="rtl"] .usp-mini-hdr { flex-direction: row-reverse; }
+        [dir="rtl"] .usp-systems-foot { flex-direction: row-reverse; }
+
+        /* Throttle buttons — mirror */
+        [dir="rtl"] .usp-throttle-btns { flex-direction: row-reverse; }
+
+        /* Hero top — mirror */
+        [dir="rtl"] .usp-hero-top { flex-direction: row-reverse; }
+
+        /* Close button RTL */
+        [dir="rtl"] .usp-header { flex-direction: row-reverse; }
 
     </style>
     <script>

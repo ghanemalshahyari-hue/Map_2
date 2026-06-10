@@ -851,6 +851,21 @@
                         <span id="wg-state-pill" class="wargame-state-pill is-idle">Idle</span>
                     </div>
 
+                    <!-- OPSCENARIO-AI-1: generate this operational scenario with the SAME
+                         offline AI engine as Scenario Import (WarGamingGEN/LiteLLM, env-based —
+                         no Ollama, no separate integration). Opens the existing generation
+                         wizard: upload force docs → Start → 17-phase generation → Continue /
+                         Import Partial → loads on the map via the normal scenario loader. -->
+                    <div class="wargame-brief-card" id="wg-ai-gen-card">
+                        <div>
+                            <span class="wargame-eyebrow" data-i18n="wg-ai-gen-eyebrow">Offline AI generation</span>
+                            <strong data-i18n="wg-ai-gen-title">Generate operational scenario</strong>
+                        </div>
+                        <button id="wg-generate-ai" class="wargame-action-btn primary" type="button"
+                                data-i18n="wg-ai-gen-btn" data-i18n-title="wg-ai-gen-hint"
+                                title="Generate, continue, or import a partial operational scenario using the offline AI engine">Generate / Continue</button>
+                    </div>
+
                     <div class="wargame-phase-track" aria-label="Operational scenario phases">
                         <span id="wg-phase-setup" class="active">Setup</span>
                         <span id="wg-phase-orders">Orders</span>

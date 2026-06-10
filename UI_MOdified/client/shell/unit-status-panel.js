@@ -199,8 +199,8 @@
         setText('unit-label', unit.label || '—');
         var badge = $('usp-status-badge');
         if (badge) {
-            var txt = unit.veteran ? 'VETERAN'
-                : unit.elite   ? 'ELITE'
+            var txt = unit.veteran ? tr('usp-badge-veteran','VETERAN')
+                : unit.elite   ? tr('usp-badge-elite','ELITE')
                 : unit.status  ? String(unit.status).toUpperCase().slice(0, 12)
                 : '';
             badge.textContent = txt;

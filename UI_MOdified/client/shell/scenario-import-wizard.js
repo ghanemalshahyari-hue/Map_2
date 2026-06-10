@@ -865,8 +865,21 @@
         }
 
         function openScenario(body, partial) {
+            // PARTIAL-IMPORT-404-1: guard a missing name and SURFACE the server's real
+            // reason instead of the opaque "fetch generated scenario 404" — the GET
+            // throws when the loader can't find/validate the file the import just saved;
+            // the server body carries the actual path/cause.
+            if (!body || !body.name) {
+                return Promise.reject(new Error('import did not return a scenario name (body.name missing)'));
+            }
             return fetch('/api/ai/scenario/' + encodeURIComponent(body.name), { credentials: 'same-origin' })
-                .then(function (rr) { if (!rr.ok) throw new Error('fetch generated scenario ' + rr.status); return rr.json(); })
+                .then(function (rr) {
+                    if (rr.ok) return rr.json();
+                    return rr.json().catch(function () { return null; }).then(function (errBody) {
+                        var detail = (errBody && errBody.error) ? errBody.error : ('HTTP ' + rr.status);
+                        throw new Error('could not load the saved scenario "' + body.name + '" (' + rr.status + '): ' + detail);
+                    });
+                })
                 .then(function (json) {
                     // GET /api/ai/scenario returns { ok, scenario: {...} } — unwrap before
                     // passing to the workspace validator, which expects the scenario object

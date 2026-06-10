@@ -631,12 +631,28 @@
         })();
     }
 
+    // OPSCENARIO-AI-1: wire the Operational Scenario panel's "Generate (offline AI)"
+    // button to the SAME generation flow Scenario Import uses — no separate AI
+    // integration, no Ollama, no new endpoint. It simply opens the existing
+    // WarGamingGEN wizard modal (DOCX → Start → 17-phase LiteLLM generation →
+    // stop/continue → Import Partial → loads via the normal scenario loader).
+    function bindOperationalScenarioGenerate() {
+        var btn = document.getElementById('wg-generate-ai');
+        if (!btn || btn._opGenBound) return;
+        btn._opGenBound = true;
+        btn.addEventListener('click', function (ev) {
+            if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+            openImportScenario();   // reuse the proven offline generation wizard
+        });
+    }
+
     if (typeof window !== 'undefined' && window.document) {
-        if (document.readyState !== 'loading') start();
-        else document.addEventListener('DOMContentLoaded', start);
+        if (document.readyState !== 'loading') { start(); bindOperationalScenarioGenerate(); }
+        else document.addEventListener('DOMContentLoaded', function () { start(); bindOperationalScenarioGenerate(); });
     }
 
     window.AppNativeScenarioLoader = {
+        bindOperationalScenarioGenerate: bindOperationalScenarioGenerate,
         loadNativeSample: loadNativeSample,
         SAMPLE_URL: SAMPLE_URL,
         // fix(loader): exposed so other load paths (e.g. the import wizard) can

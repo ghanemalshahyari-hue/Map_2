@@ -28,23 +28,26 @@
         (function () {
             var statusEl = document.getElementById('status');
             var reviewEl = document.getElementById('review');
+            function paint(body, source) {
+                statusEl.textContent = source + ' · set_type=' + body.set_type + ' · docs=' + (body.documents || []).length;
+                window.RmoozDocReview.render(reviewEl, body, {
+                    onGenerate: function () { alert('Generate clicked (verify harness — no generation here).'); },
+                    onUploadMore: function () { alert('Upload More clicked (verify harness).'); },
+                    onCancel: function () { reviewEl.style.display = 'none'; }
+                });
+            }
+            function loadStatic() {
+                statusEl.textContent = 'Live endpoint unavailable — loading static sample (real analyze output)…';
+                return fetch('./doc-understanding-sample.json')
+                    .then(function (r) { return r.json(); })
+                    .then(function (j) { paint(j, 'static sample (real analyze output)'); });
+            }
             function run() {
                 statusEl.textContent = 'Analyzing staged documents…';
                 fetch('/api/wargame-sim/analyze', { method: 'POST', credentials: 'same-origin' })
-                    .then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j }; }); })
-                    .then(function (res) {
-                        if (!res.body || !res.body.ok) {
-                            statusEl.textContent = 'analyze failed (' + res.status + '): ' + ((res.body && res.body.error) || 'unknown');
-                            return;
-                        }
-                        statusEl.textContent = 'document_set_id = ' + res.body.document_set_id + ' · set_type = ' + res.body.set_type;
-                        window.RmoozDocReview.render(reviewEl, res.body, {
-                            onGenerate: function () { alert('Generate clicked (verify harness — no generation here).'); },
-                            onUploadMore: function () { alert('Upload More clicked (verify harness).'); },
-                            onCancel: function () { reviewEl.style.display = 'none'; }
-                        });
-                    })
-                    .catch(function (e) { statusEl.textContent = 'error: ' + e.message; });
+                    .then(function (r) { return r.json(); })
+                    .then(function (j) { if (j && j.ok) { paint(j, 'live /api/wargame-sim/analyze'); } else { return loadStatic(); } })
+                    .catch(function () { return loadStatic(); });
             }
             document.getElementById('reload').addEventListener('click', run);
             run();

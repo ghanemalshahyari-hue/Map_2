@@ -388,6 +388,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     maxZoom: 17,
                     errorTileUrl: TRANSPARENT_TILE,
                 });
+                // OVERZOOM: the MBTiles often stops at a lower zoom than the map's
+                // maxZoom (e.g. satellite caps at z13). Read the tileset's real
+                // maxzoom from the tile-server's TileJSON and set maxNativeZoom, so
+                // zooming in past the data ceiling UPSCALES the deepest tiles
+                // instead of requesting non-existent tiles (blank/grey + false
+                // "tiles not loading" banners). Defaults to 13 if unavailable.
+                fetch(tileServer + '/services/' + encodeURIComponent(tileset) + '.json', { cache: 'no-store' })
+                    .then(r => (r.ok ? r.json() : null)).catch(() => null)
+                    .then(tj => {
+                        const mz = tj && Number.isFinite(+tj.maxzoom) ? +tj.maxzoom : 13;
+                        layer.options.maxNativeZoom = mz;
+                        if (map.hasLayer(layer)) layer.redraw();
+                    });
                 layer.on('tileerror', (ev) => {
                     errorCountsByTileset[tileset] = (errorCountsByTileset[tileset] || 0) + 1;
                     // After a handful of consecutive errors, surface a banner.

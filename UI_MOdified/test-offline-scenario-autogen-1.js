@@ -147,8 +147,12 @@ test('D2: plural is never overwritten when it already exists', () => {
 console.log('\n── §E  env / model / CA ──────────────────────────────────────────');
 const envEx   = fs.readFileSync(ENV_EXAMPLE, 'utf8');
 const compose = fs.readFileSync(COMPOSE, 'utf8');
-test('E1: env example documents oss-120b-fast', () => {
-    assert.ok(envEx.includes('oss-120b-fast'), 'oss-120b-fast must be the documented model');
+test('E1: env example exposes RMOOZ_AI_MODEL as a configurable (blank) placeholder', () => {
+    // Security scrub (intentional): the COMMITTED example must NOT hardcode a real
+    // model/endpoint — oss-120b-fast is set only in the operator's real .env.offline.
+    // The example just exposes the var as a blank placeholder. (oss-20b-fast guarded by E2.)
+    assert.ok(/RMOOZ_AI_MODEL\s*[:=]/.test(envEx), 'RMOOZ_AI_MODEL must be documented in the example');
+    assert.ok(/^RMOOZ_AI_MODEL=\s*$/m.test(envEx), 'RMOOZ_AI_MODEL should be a blank placeholder (no hardcoded model) in the committed example');
 });
 test('E2: NO oss-20b-fast assigned as RMOOZ_AI_MODEL anywhere in env example/compose', () => {
     assert.ok(!/RMOOZ_AI_MODEL\s*[:=].*oss-20b-fast/.test(envEx), 'env example must not set model=oss-20b-fast');

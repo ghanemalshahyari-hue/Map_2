@@ -163,6 +163,22 @@ function resolveLatest(c, runs) {
     return { runId: null, source: null };
 }
 
+// WARGAME-LOCAL-LATEST-1: resolve a requested ?run= token to a real run id.
+// The literal sentinel "latest" (any case) and an empty/missing value both mean
+// "the resolved latest run" — NOT a directory literally named "latest" (which
+// caused `?run=latest` → 400 "invalid run id: latest" / 404). Any other value is
+// returned verbatim for the normal RUN_ID_RE + traversal validation in
+// runDirFor(). Safe by construction: a resolved id comes from listRuns() (each
+// basename already RUN_ID_RE-checked) and is re-validated by runDirFor() at the
+// call site, so "latest" can never point outside the imports dir.
+function resolveRunToken(c, raw, runs) {
+    const req = (raw == null ? '' : String(raw)).trim();
+    if (!req || req.toLowerCase() === 'latest') {
+        return resolveLatest(c, runs).runId;   // real run_id, or null when none exist
+    }
+    return req;
+}
+
 // Stale = the selected run is older (by all_phases mtime) than the newest run
 // AND is not itself the newest. Mirrors FAST-DOC-2's export_behind semantics.
 function stalenessFor(runs, selectedId) {
@@ -221,15 +237,16 @@ function handle(req, res, ctx) {
     if (pathname === '/api/wargame-local/status' && method === 'GET') {
         const { runs, ignoredFlat } = listRuns(c);
         const latest = resolveLatest(c, runs);
-        const reqRun = (url.searchParams.get('run') || '').trim() || null;
-        const selectedId = reqRun || latest.runId;
+        const rawRun = (url.searchParams.get('run') || '').trim() || null;
+        // WARGAME-LOCAL-LATEST-1: "latest"/empty → the resolved newest run.
+        const selectedId = resolveRunToken(c, rawRun, runs);
 
         // Optional server-side summary for a single requested run.
         let summary = null, summaryError = null;
-        if (reqRun && url.searchParams.get('summary') === '1') {
-            const runDir = runDirFor(c, reqRun);
+        if (rawRun && url.searchParams.get('summary') === '1') {
+            const runDir = runDirFor(c, selectedId);
             const all = runDir && allPhasesPathIn(runDir);
-            if (!all) summaryError = 'all_phases.geojson not found for run ' + reqRun;
+            if (!all) summaryError = 'all_phases.geojson not found for run ' + selectedId;
             else {
                 const fc = readJson(all);
                 if (!fc) summaryError = 'all_phases.geojson is not valid JSON';
@@ -254,9 +271,13 @@ function handle(req, res, ctx) {
 
     // ── file: serve a run's all_phases.geojson (read-only; for client summary) ──
     if (pathname === '/api/wargame-local/file' && method === 'GET') {
-        const reqRun = (url.searchParams.get('run') || '').trim();
+        const rawRun = (url.searchParams.get('run') || '').trim();
+        // WARGAME-LOCAL-LATEST-1: resolve "latest"/empty to the newest real run.
+        const { runs } = listRuns(c);
+        const reqRun = resolveRunToken(c, rawRun, runs);
+        if (!reqRun) { sendJson(res, 404, { ok: false, error: 'no local run found' }); return true; }
         const runDir = runDirFor(c, reqRun);
-        if (!runDir) { sendJson(res, 400, { ok: false, error: 'invalid or missing run id' }); return true; }
+        if (!runDir) { sendJson(res, 400, { ok: false, error: 'invalid run id: ' + (rawRun || '(empty)') }); return true; }
         const all = allPhasesPathIn(runDir);
         if (!all) { sendJson(res, 404, { ok: false, error: 'all_phases.geojson not found for run ' + reqRun }); return true; }
         try {
@@ -270,15 +291,16 @@ function handle(req, res, ctx) {
     // ── import: porter → data/scenarios/<name>.json, set active on success ──
     if (pathname === '/api/wargame-local/import' && method === 'POST') {
         const { runs } = listRuns(c);
-        const latest = resolveLatest(c, runs);
-        const reqRun = (url.searchParams.get('run') || '').trim() || null;
-        const runId  = reqRun || latest.runId;
+        const rawRun = (url.searchParams.get('run') || '').trim() || null;
+        // WARGAME-LOCAL-LATEST-1: accept ?run=latest (and empty) and resolve it to
+        // the real newest run id, instead of rejecting "latest" as a literal id.
+        const runId  = resolveRunToken(c, rawRun, runs);
         if (!runId) {
             sendJson(res, 404, { ok: false, error: 'no local run found — copy a folder into ' + relFromRoot(c.localDir) + '/<run_id>/ first' });
             return true;
         }
         const runDir = runDirFor(c, runId);
-        if (!runDir || !exists(runDir)) { sendJson(res, 400, { ok: false, error: 'invalid run id: ' + runId }); return true; }
+        if (!runDir || !exists(runDir)) { sendJson(res, 400, { ok: false, error: 'invalid run id: ' + (rawRun || runId) }); return true; }
         const all = allPhasesPathIn(runDir);
         if (!all) {
             sendJson(res, 404, { ok: false, error: 'run "' + runId + '" has no all_phases.geojson' });

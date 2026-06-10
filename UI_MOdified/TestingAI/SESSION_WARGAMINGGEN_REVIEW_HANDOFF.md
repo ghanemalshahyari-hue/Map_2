@@ -1,7 +1,7 @@
 # WarGamingGEN Review Session Handoff
 
 Date: 2026-06-05
-Workspace reviewed: `c:\Users\ADMIN\Desktop\TestingAI`
+Workspace reviewed: `TestingAI/` (the WarGamingGEN workspace tree)
 
 This handoff captures the discussion and findings from a review of `WarGamingGEN`, ignoring everything under `./Step 0`.
 

@@ -202,3 +202,6 @@ No internet connection is required for map tile serving once the `.mbtiles` file
 - Audit: [`docs/integration/ldap-offline-auth-0-audit.md`](../docs/integration/ldap-offline-auth-0-audit.md)
 - App entry point: [`server/web-server.js`](../server/web-server.js)
 - Environment template (main): [`.env.example`](../.env.example)
+- **Upgrading over an old install (clear stale mounted host dirt):**
+  [`docs/host-cleanup-on-upgrade.md`](docs/host-cleanup-on-upgrade.md)
+- Troubleshooting: [`docs/troubleshooting.md`](docs/troubleshooting.md)

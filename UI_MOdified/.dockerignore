@@ -14,6 +14,12 @@
 node_modules
 npm-*.log
 *.log
+# `*.log` is NOT recursive in Docker ignore (a `*` never crosses `/`), so nested
+# logs like server/logs/web-server.err.log slipped through and baked Windows dev
+# paths into the image. Catch them recursively + exclude the runtime log dir.
+**/*.log
+server/logs
+server/logs/
 
 # ── Python caches ─────────────────────────────────────────────────────────────
 **/__pycache__
@@ -34,6 +40,21 @@ TestingAI/SmartSearch
 TestingAI/export_to_rmooz
 TestingAI/import_from_rmooz
 TestingAI/WarGamingGEN/runs
+
+# Stale dev artifact: WarGamingGEN/.env carries a Windows dev path + localhost
+# Ollama creds. MUST NEVER bake into the image. config.py only load_dotenv()s it
+# when present, and the bridge injects LLM_* at spawn time, so excluding it is safe
+# (the offline LiteLLM env comes from .env.offline → buildLlmChildEnv).
+TestingAI/WarGamingGEN/.env
+
+# TestingAI top-level dev notes / screenshots are NOT runtime artifacts (the
+# WarGamingGEN Python pipeline imports none of them). SESSION_WARGAMINGGEN_REVIEW_
+# HANDOFF.md also carries an absolute C:\Users dev path — must never bake.
+TestingAI/*.md
+TestingAI/*.png
+TestingAI/.__archive
+# macOS AppleDouble resource-fork droppings (committed from a Mac) — pure junk.
+**/._*
 
 # Large, OPTIONAL, gitignored GIS data (DEM raster + terrain/imagery layers, ~960 MB).
 # NOT part of origin/main; gis_loader treats elevation/terrain as optional and
@@ -74,3 +95,4 @@ Offline_Deployment/dist
 *.tar
 web-server.log
 web-server.err.log
+.runtime-logs/

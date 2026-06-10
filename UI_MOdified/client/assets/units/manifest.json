@@ -1,6 +1,6 @@
 {
   "_comment": "RMOOZ unit image asset manifest — provenance record for every locally cached image.",
-  "_format": "1.0",
+  "_format": "1.1",
   "_generated": "2026-06-10",
   "images": {
     "uss-lake-champlain-cvs39.jpg": {
@@ -15,9 +15,24 @@
       "date_original": "February 1965",
       "date_cached": "2026-06-10",
       "license": "Public Domain — U.S. Government work (17 U.S.C. § 105); no copyright applies.",
-      "applies_to_platform": null,
+      "applies_to_platform": "meko",
       "applies_to_unit_id": "CVS-39",
-      "notes": "Unit-level image (specific ship); not bound to a generic platform catalog entry. Pass as unit.image_url in scenario or eval."
+      "notes": "Naval combatant / meko DB1 catalog default image + specific unit-level image for USS Lake Champlain. Pass as unit.image_url in scenario or eval to override with ship-specific context."
+    },
+    "patriot-sam-battery.jpg": {
+      "local_asset": "/client/assets/units/patriot-sam-battery.jpg",
+      "subject": "U.S. Army Patriot SAM Battery (MIM-104), Poland 2010",
+      "description": "U.S. Army soldiers from Alpha Battery, 5-7 ADA instructing Polish forces on Patriot preventive maintenance in Morag, Poland, June 2010. First U.S. missile system deployed to Poland under rotational training initiative.",
+      "source_name": "Wikimedia Commons / U.S. Army",
+      "source_author": "Staff Sergeant Lawree Roscoe Washington Jr., U.S. Army",
+      "source_url": "https://commons.wikimedia.org/wiki/File:PATRIOT_battery_in_Poland,_2010.JPG",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/0/02/PATRIOT_battery_in_Poland%2C_2010.JPG",
+      "credit": "U.S. Army / SSG Washington (PATRIOT battery in Poland, 2010)",
+      "date_original": "June 2010",
+      "date_cached": "2026-06-10",
+      "license": "Public Domain — U.S. Army work created in official capacity (17 U.S.C. § 105); no copyright applies.",
+      "applies_to_platforms": ["air_defense", "patriot", "sam_s300", "sam_s75"],
+      "notes": "Generic air-defense / SAM battery image used for all sam/air_defense catalog entries. Specific Patriot system visible; appropriate for generic long-range SAM depiction."
     }
   },
   "offline_note": "All images in this manifest are cached locally and do not require network access. For online use, source_url is the canonical public-domain reference."

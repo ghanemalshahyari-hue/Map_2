@@ -37,6 +37,9 @@
     var CAPABILITY_CATALOG = {
         // ── Generic role classes (fallback when no named platform matched) ──
         air_defense: {
+            // Real-Unit-Images SAM: Patriot battery Poland 2010 · U.S. Army · Public Domain
+            image_asset:  '/client/assets/units/patriot-sam-battery.jpg',
+            image_credit: 'U.S. Army Patriot SAM · Public Domain',
             rcs_class: 'medium', readiness: 'ready', supply: 0.8, doctrine_tags: ['IADS', 'air_defense'],
             sensors: [{ id: 'ewr', type: 'radar', class: 'long_range_3d', emcon: 'active' },
                       { id: 'fc',  type: 'radar', subtype: 'fire_control', class: 'fire_control', emcon: 'active', channels: 4 }],
@@ -75,6 +78,8 @@
 
         // ── Phase 5D-1: Soviet air-defense platform variants ─────────────────
         sam_s300: {
+            image_asset:  '/client/assets/units/patriot-sam-battery.jpg',
+            image_credit: 'U.S. Army Patriot SAM · Public Domain',
             rcs_class: 'large', readiness: 'ready', supply: 0.9, doctrine_tags: ['IADS', 'SAM', 'strategic', 'standoff'],
             sensors: [{ id: 'sr', type: 'radar', class: 'S300_SEARCH_RADAR', emcon: 'active' },
                       { id: 'fc', type: 'radar', subtype: 'fire_control', class: 'fire_control', emcon: 'active', channels: 2 }],
@@ -82,6 +87,8 @@
             magazines: [{ mount: 'm1', stock: { S300_MISSILE: 48 } }]
         },
         sam_s75: {
+            image_asset:  '/client/assets/units/patriot-sam-battery.jpg',
+            image_credit: 'U.S. Army Patriot SAM · Public Domain',
             rcs_class: 'medium', readiness: 'ready', supply: 0.8, doctrine_tags: ['IADS', 'SAM', 'tactical', 'standoff'],
             sensors: [{ id: 'sr', type: 'radar', class: 'S75_RADAR', emcon: 'active' },
                       { id: 'fc', type: 'radar', subtype: 'fire_control', class: 'fire_control', emcon: 'active', channels: 1 }],
@@ -244,6 +251,8 @@
         // (Soviet S-300 covered by sam_s300 above; not duplicated)
         patriot: {
             label: 'Patriot SAM System (MIM-104)', source: "SIPRI; Jane's Weapons Systems",
+            image_asset:  '/client/assets/units/patriot-sam-battery.jpg',
+            image_credit: 'U.S. Army Patriot SAM (Poland 2010) · Public Domain',
             rcs_class: 'medium', readiness: 'ready', supply: 0.8,
             doctrine_tags: ['air_defense', 'medium_range', 'layered_defense'],
             sensors: [

@@ -206,32 +206,346 @@
             badge.textContent = txt;
             badge.style.display = txt ? 'inline-block' : 'none';
         }
-        _renderSymbol(unit, $('unit-symbol'));
+        _renderSymbol(unit, enriched, $('unit-symbol'));
     }
 
-    function _renderSymbol(unit, container) {
+    /* ── Unit silhouette SVGs (inline, no external files) ─────────────── */
+    var _SVG = (function() {
+        var BG  = '<rect width="280" height="100" fill="#080c14"/>';
+        var GRD = '<g stroke="#14202e" stroke-width="0.5" opacity="0.5">'
+                + '<line x1="0" y1="25" x2="280" y2="25"/>'
+                + '<line x1="0" y1="50" x2="280" y2="50"/>'
+                + '<line x1="0" y1="75" x2="280" y2="75"/>'
+                + '<line x1="70" y1="0" x2="70" y2="100"/>'
+                + '<line x1="140" y1="0" x2="140" y2="100"/>'
+                + '<line x1="210" y1="0" x2="210" y2="100"/>'
+                + '</g>';
+        var OPEN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 100" '
+                 + 'style="width:100%;height:100%;display:block">';
+        var CLOSE = '</svg>';
+
+        function make(body) { return OPEN + BG + GRD + body + CLOSE; }
+
+        // ── Fighter jet (top-down silhouette) ────────────────────────────
+        var FIGHTER = make(
+            '<g transform="translate(140,50)" fill="#2a5080" stroke="#4a80b8" stroke-width="0.8">'
+          + '<ellipse cx="0" cy="0" rx="5" ry="36"/>'   // fuselage
+          + '<path d="M0,-18 L-36,12 L-28,16 L0,2 L28,16 L36,12 Z"/>'  // main wings
+          + '<path d="M0,27 L-15,38 L-11,40 L0,32 L11,40 L15,38 Z"/>'  // tail fins
+          + '<ellipse cx="0" cy="-22" rx="3" ry="7" fill="#6aaae0" opacity="0.7"/>' // canopy
+          + '<circle cx="0" cy="-36" r="2.5" fill="#6aaae0"/>'          // nose
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a6080" '
+          + 'font-size="7" font-family="Consolas,monospace">FIGHTER / STRIKE</text>'
+        );
+
+        // ── AWACS (top-down + rotodome disc) ────────────────────────────
+        var AWACS = make(
+            '<g transform="translate(140,50)" fill="#2a5080" stroke="#4a80b8" stroke-width="0.8">'
+          + '<ellipse cx="0" cy="0" rx="5" ry="40"/>'    // long fuselage
+          + '<path d="M0,-10 L-32,18 L-25,22 L0,6 L25,22 L32,18 Z"/>'  // wings
+          + '<ellipse cx="0" cy="-5" rx="22" ry="7" fill="#1a3060" stroke="#4a80b8"/>'  // rotodome
+          + '<line x1="-22" y1="-5" x2="22" y2="-5" stroke="#4a80b8" stroke-width="1"/>'
+          + '<circle cx="0" cy="-5" r="3" fill="#4a80b8"/>'
+          + '<path d="M0,30 L-10,40 L-7,42 L0,36 L7,42 L10,40 Z" fill="#2a5080"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a6080" '
+          + 'font-size="7" font-family="Consolas,monospace">AWACS / AEW</text>'
+        );
+
+        // ── Ship (side silhouette) ───────────────────────────────────────
+        var SHIP = make(
+            '<g transform="translate(140,50)" fill="#1a4a6a" stroke="#3a7aa0" stroke-width="0.8">'
+          + '<path d="M-70,18 L-60,0 L-30,-5 L30,-5 L60,0 L70,18 L60,22 L-60,22 Z"/>'  // hull
+          + '<rect x="-20" y="-24" width="40" height="22" rx="2"/>'  // superstructure
+          + '<rect x="-8" y="-36" width="16" height="15"/>'           // bridge top
+          + '<line x1="0" y1="-36" x2="0" y2="-50" stroke="#3a7aa0" stroke-width="1.5"/>'  // mast
+          + '<rect x="-6" y="-28" width="12" height="8" fill="#12304a"/>'  // window
+          + '<line x1="-60" y1="0" x2="-70" y2="0" stroke="#3a7aa0" stroke-width="1"/>'  // bow
+          + '<rect x="20" y="-15" width="8" height="12" rx="1" fill="#12304a"/>'  // funnel
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a6080" '
+          + 'font-size="7" font-family="Consolas,monospace">NAVAL COMBATANT</text>'
+        );
+
+        // ── Patrol boat (smaller than ship) ─────────────────────────────
+        var PATROL = make(
+            '<g transform="translate(140,55)" fill="#1a4a6a" stroke="#3a7aa0" stroke-width="0.8">'
+          + '<path d="M-45,12 L-38,-2 L-10,-8 L10,-8 L38,-2 L45,12 L38,16 L-38,16 Z"/>'
+          + '<rect x="-10" y="-20" width="20" height="14" rx="2"/>'
+          + '<line x1="0" y1="-20" x2="0" y2="-34" stroke="#3a7aa0" stroke-width="1.5"/>'
+          + '<line x1="-20" y1="-5" x2="-30" y2="-14" stroke="#3a7aa0" stroke-width="1.5"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a6080" '
+          + 'font-size="7" font-family="Consolas,monospace">PATROL CRAFT</text>'
+        );
+
+        // ── Tank (side silhouette) ───────────────────────────────────────
+        var TANK = make(
+            '<g transform="translate(140,52)" fill="#2a4a18" stroke="#4a8030" stroke-width="0.8">'
+          + '<rect x="-42" y="8" width="84" height="20" rx="4"/>'  // hull
+          + '<rect x="-24" y="-12" width="40" height="22" rx="3"/>'  // turret
+          + '<rect x="14" y="-5" width="34" height="5" rx="2"/>'    // barrel
+          + '<ellipse cx="-38" cy="26" rx="10" ry="6" fill="#1a3010"/>'  // track L
+          + '<ellipse cx="38" cy="26" rx="10" ry="6" fill="#1a3010"/>'   // track R
+          + '<rect x="-42" y="20" width="84" height="12" rx="2" fill="#1a3010"/>'  // track body
+          + '<circle cx="-28" cy="26" r="5" fill="#2a4a18" stroke="#3a6020"/>'  // wheel L
+          + '<circle cx="28" cy="26" r="5" fill="#2a4a18" stroke="#3a6020"/>'   // wheel R
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a6030" '
+          + 'font-size="7" font-family="Consolas,monospace">MAIN BATTLE TANK</text>'
+        );
+
+        // ── SAM launcher (side view, missiles upward) ────────────────────
+        var SAM = make(
+            '<g transform="translate(140,55)" fill="#1a3a6a" stroke="#3a6ab0" stroke-width="0.8">'
+          + '<rect x="-50" y="10" width="100" height="14" rx="3"/>'    // vehicle hull
+          + '<rect x="-44" y="16" width="90" height="10" rx="2" fill="#0e2448"/>  '  // tracks
+          // Launcher arm elevated
+          + '<rect x="-5" y="-30" width="10" height="44" rx="2" transform="rotate(-5,-5,-30)"/>'
+          // Missiles
+          + '<g fill="#2a5090" stroke="#4a80c0">'
+          + '<rect x="-22" y="-38" width="7" height="28" rx="3"/>'   // missile 1
+          + '<polygon points="-22,-38 -15,-38 -18.5,-46"/>'           // tip 1
+          + '<rect x="-12" y="-42" width="7" height="30" rx="3"/>'   // missile 2
+          + '<polygon points="-12,-42 -5,-42 -8.5,-50"/>'             // tip 2
+          + '<rect x="5" y="-42" width="7" height="30" rx="3"/>'     // missile 3
+          + '<polygon points="5,-42 12,-42 8.5,-50"/>'                // tip 3
+          + '<rect x="15" y="-38" width="7" height="28" rx="3"/>'    // missile 4
+          + '<polygon points="15,-38 22,-38 18.5,-46"/>'              // tip 4
+          + '</g>'
+          // Radar dish
+          + '<ellipse cx="36" cy="-20" rx="16" ry="8" fill="none" stroke="#4a80c0" stroke-width="1.5"/>'
+          + '<line x1="36" y1="-20" x2="36" y2="5" stroke="#4a80c0" stroke-width="1.5"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#2a4880" '
+          + 'font-size="7" font-family="Consolas,monospace">SAM BATTERY</text>'
+        );
+
+        // ── SHORAD / AAA (short-range air defense) ───────────────────────
+        var SHORAD = make(
+            '<g transform="translate(140,55)" fill="#1a3a6a" stroke="#3a6ab0" stroke-width="0.8">'
+          + '<rect x="-40" y="8" width="80" height="14" rx="3"/>'
+          + '<rect x="-36" y="14" width="72" height="10" rx="2" fill="#0e2448"/>'
+          + '<rect x="-5" y="-5" width="10" height="20" rx="2"/>'
+          // Twin barrels
+          + '<rect x="-10" y="-28" width="6" height="30" rx="2"/>'
+          + '<rect x="4" y="-28" width="6" height="30" rx="2"/>'
+          // Radar
+          + '<ellipse cx="28" cy="-10" rx="12" ry="5" fill="none" stroke="#4a80c0" stroke-width="1.2"/>'
+          + '<line x1="28" y1="-10" x2="28" y2="5" stroke="#4a80c0" stroke-width="1.2"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#2a4880" '
+          + 'font-size="7" font-family="Consolas,monospace">SHORAD / AAA</text>'
+        );
+
+        // ── Radar / EW site ──────────────────────────────────────────────
+        var RADAR = make(
+            '<g transform="translate(140,55)" fill="#1a3060" stroke="#3a6090" stroke-width="0.8">'
+          // Rotating dish
+          + '<ellipse cx="0" cy="-28" rx="32" ry="14" fill="#0e2040" stroke="#3a6090" stroke-width="1.5"/>'
+          + '<line x1="-32" y1="-28" x2="32" y2="-28" stroke="#4a80a0" stroke-width="0.8"/>'
+          + '<line x1="0" y1="-42" x2="0" y2="-14" stroke="#4a80a0" stroke-width="0.8"/>'
+          + '<ellipse cx="0" cy="-28" rx="10" ry="5" fill="none" stroke="#4a80a0" stroke-width="0.5"/>'
+          // Support mast
+          + '<line x1="0" y1="-14" x2="0" y2="12" stroke="#3a6090" stroke-width="2"/>'
+          // Platform / bunker
+          + '<rect x="-36" y="8" width="72" height="14" rx="2"/>'
+          + '<rect x="-20" y="0" width="40" height="12" rx="2" fill="#0e2040"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#2a4060" '
+          + 'font-size="7" font-family="Consolas,monospace">RADAR / EW SITE</text>'
+        );
+
+        // ── MLRS (rocket artillery) ──────────────────────────────────────
+        var MLRS = make(
+            '<g transform="translate(140,55)" fill="#2a4018" stroke="#4a7028" stroke-width="0.8">'
+          // Vehicle
+          + '<rect x="-44" y="8" width="88" height="16" rx="3"/>'
+          + '<rect x="-40" y="16" width="80" height="10" rx="2" fill="#1a2c10"/>'
+          // Rocket pod
+          + '<rect x="-30" y="-20" width="60" height="32" rx="2" fill="#1e3414"/>'
+          // Rocket tubes (12)
+          + '<g fill="#0c1c08" stroke="#2a4018">'
+          + '<rect x="-27" y="-17" width="10" height="26" rx="1"/>'
+          + '<rect x="-15" y="-17" width="10" height="26" rx="1"/>'
+          + '<rect x="-3" y="-17" width="10" height="26" rx="1"/>'
+          + '<rect x="9" y="-17" width="10" height="26" rx="1"/>'
+          + '<rect x="21" y="-17" width="8" height="26" rx="1"/>'
+          + '</g>'
+          // Elevation
+          + '<rect x="-6" y="-24" width="12" height="10" fill="#2a4018"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a5020" '
+          + 'font-size="7" font-family="Consolas,monospace">MLRS BATTERY</text>'
+        );
+
+        // ── Infantry ─────────────────────────────────────────────────────
+        var INFANTRY = make(
+            '<g transform="translate(140,50)" fill="#2a4018" stroke="#4a7028" stroke-width="0.8">'
+          // Crossed rifles
+          + '<line x1="-28" y1="-28" x2="28" y2="28" stroke="#5a8030" stroke-width="4" stroke-linecap="round"/>'
+          + '<line x1="28" y1="-28" x2="-28" y2="28" stroke="#5a8030" stroke-width="4" stroke-linecap="round"/>'
+          // Rifle stocks and barrels
+          + '<rect x="-30" y="-32" width="8" height="16" rx="2" fill="#3a5820"/>'
+          + '<rect x="22" y="-32" width="8" height="16" rx="2" fill="#3a5820"/>'
+          + '<rect x="-8" y="20" width="8" height="16" rx="2" fill="#3a5820"/>'
+          + '<rect x="0" y="20" width="8" height="16" rx="2" fill="#3a5820"/>'
+          // Helmet silhouette
+          + '<ellipse cx="0" cy="-8" rx="18" ry="14" fill="#2a4018" stroke="#4a7028"/>'
+          + '<ellipse cx="0" cy="-10" rx="12" ry="10" fill="#1a3010"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a5020" '
+          + 'font-size="7" font-family="Consolas,monospace">INFANTRY UNIT</text>'
+        );
+
+        // ── Logistics / supply truck ──────────────────────────────────────
+        var LOGISTICS = make(
+            '<g transform="translate(140,55)" fill="#3a3020" stroke="#6a5830" stroke-width="0.8">'
+          // Cargo body
+          + '<rect x="-40" y="-18" width="60" height="30" rx="2"/>'
+          // Cab
+          + '<rect x="20" y="-10" width="28" height="22" rx="3"/>'
+          + '<rect x="22" y="-8" width="24" height="14" rx="2" fill="#0e0c08"/>'  // windshield
+          // Chassis
+          + '<rect x="-44" y="12" width="88" height="8" rx="2"/>'
+          // Wheels
+          + '<circle cx="-32" cy="22" r="9" fill="#1a1808" stroke="#4a4020"/>'
+          + '<circle cx="-32" cy="22" r="5" fill="#2a2810"/>'
+          + '<circle cx="16" cy="22" r="9" fill="#1a1808" stroke="#4a4020"/>'
+          + '<circle cx="16" cy="22" r="5" fill="#2a2810"/>'
+          + '<circle cx="36" cy="22" r="9" fill="#1a1808" stroke="#4a4020"/>'
+          + '<circle cx="36" cy="22" r="5" fill="#2a2810"/>'
+          // Supply boxes in cargo
+          + '<rect x="-36" y="-14" width="18" height="12" rx="1" fill="#2a2010"/>'
+          + '<rect x="-14" y="-14" width="18" height="12" rx="1" fill="#2a2010"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#504020" '
+          + 'font-size="7" font-family="Consolas,monospace">LOGISTICS / SUPPORT</text>'
+        );
+
+        // ── Frigate (more detailed than generic ship) ─────────────────────
+        var FRIGATE = make(
+            '<g transform="translate(140,52)" fill="#1a4060" stroke="#3a7090" stroke-width="0.8">'
+          + '<path d="M-68,16 L-58,-2 L-35,-8 L35,-8 L58,-2 L68,16 L56,20 L-56,20 Z"/>'  // hull
+          + '<rect x="-18" y="-28" width="36" height="24" rx="2"/>'  // main superstructure
+          + '<rect x="-10" y="-40" width="20" height="16"/>'          // bridge
+          + '<rect x="10" y="-26" width="12" height="20" fill="#102030"/>'  // hangar
+          + '<line x1="0" y1="-40" x2="0" y2="-55" stroke="#3a7090" stroke-width="1.5"/>'  // main mast
+          + '<line x1="-4" y1="-48" x2="4" y2="-48" stroke="#3a7090" stroke-width="1"/>'  // yardarm
+          // Gun
+          + '<rect x="-28" y="-20" width="16" height="8" rx="2"/>'
+          + '<rect x="-30" y="-17" width="20" height="5" rx="2"/>'
+          // VLS
+          + '<rect x="-48" y="-14" width="22" height="18" rx="1" fill="#0e2438"/>'
+          // Sonar dome
+          + '<ellipse cx="0" cy="24" rx="10" ry="5" fill="#102030"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#2a5070" '
+          + 'font-size="7" font-family="Consolas,monospace">FRIGATE / CORVETTE</text>'
+        );
+
+        // ── Generic (domain-based) ────────────────────────────────────────
+        function generic(unit) {
+            var d = unit.domain || '';
+            var colors = {
+                air: { bg:'#0e1828', stroke:'#4a80b0', text:'#2a4860', label:'AIR UNIT' },
+                sea: { bg:'#0a1820', stroke:'#3a7090', text:'#1a4060', label:'NAVAL UNIT' },
+                ground: { bg:'#0e1408', stroke:'#4a7030', text:'#2a4018', label:'GROUND UNIT' },
+                strategic: { bg:'#180e08', stroke:'#7050a0', text:'#402060', label:'STRATEGIC' }
+            };
+            var c = colors[d] || { bg:'#0e1220', stroke:'#405070', text:'#2a3848', label:'UNIT' };
+            var initial = (unit.label || unit.name || '?').charAt(0).toUpperCase();
+            return OPEN
+                + '<rect width="280" height="100" fill="' + c.bg + '"/>'
+                + GRD
+                + '<circle cx="140" cy="46" r="28" fill="none" stroke="' + c.stroke + '" stroke-width="1.5" opacity="0.6"/>'
+                + '<circle cx="140" cy="46" r="18" fill="none" stroke="' + c.stroke + '" stroke-width="1" opacity="0.4"/>'
+                + '<text x="140" y="54" text-anchor="middle" fill="' + c.stroke + '" '
+                + 'font-size="22" font-weight="bold" font-family="Consolas,monospace">' + initial + '</text>'
+                + '<text x="140" y="82" text-anchor="middle" fill="' + c.text + '" '
+                + 'font-size="7" font-family="Consolas,monospace">' + (d.toUpperCase() || c.label) + '</text>'
+                + CLOSE;
+        }
+
+        return {
+            FIGHTER:   FIGHTER,
+            AWACS:     AWACS,
+            SHIP:      SHIP,
+            PATROL:    PATROL,
+            TANK:      TANK,
+            SAM:       SAM,
+            SHORAD:    SHORAD,
+            RADAR:     RADAR,
+            MLRS:      MLRS,
+            INFANTRY:  INFANTRY,
+            LOGISTICS: LOGISTICS,
+            FRIGATE:   FRIGATE,
+            generic:   generic
+        };
+    })();
+
+    /* Returns the appropriate SVG illustration for a unit */
+    function _unitSvg(unit, enriched) {
+        var kind = enriched && enriched.kind;
+        if (!kind && root.AppWorldStateDB) {
+            try { kind = root.AppWorldStateDB.classifyKind(unit); } catch (_) {}
+        }
+        switch (kind) {
+            // ── Air ──
+            case 'f16c': case 'f15e': case 'mirage2000':
+            case 'mig29': case 'gripen': case 'tornado':
+            case 'air_unit':
+                return _SVG.FIGHTER;
+            case 'awacs':
+                return _SVG.AWACS;
+            // ── Naval ──
+            case 'meko': case 'corvette':
+            case 'naval_combatant':
+                return _SVG.FRIGATE;
+            case 'patrol_boat':
+                return _SVG.PATROL;
+            // ── Ground maneuver ──
+            case 'armor_company':
+                return _SVG.TANK;
+            case 'infantry_bn': case 'ground_maneuver':
+                return _SVG.INFANTRY;
+            case 'mlrs':
+                return _SVG.MLRS;
+            case 'logistics':
+                return _SVG.LOGISTICS;
+            // ── Air defense ──
+            case 'patriot': case 'sam_s300': case 'sam_s75': case 'air_defense':
+                return _SVG.SAM;
+            case 'tor_aads': case 'mistral': case 's1_aaa':
+            case 'aaa_zsu': case 'aaa_23mm':
+                return _SVG.SHORAD;
+            // ── EW / Radar ──
+            case 'ew_site': case 'radar_p37':
+                return _SVG.RADAR;
+            // ── Fallback ──
+            default:
+                return _SVG.generic(unit);
+        }
+    }
+
+    function _renderSymbol(unit, enriched, container) {
         if (!container) return;
         container.innerHTML = '';
+        // milsymbol takes priority when SIDC is available
         if (root.ms && typeof root.ms.Symbol === 'function' && unit.sidc) {
             try {
                 var sym = new root.ms.Symbol(unit.sidc, { size: 42 });
                 var canvas = sym.getCanvas();
-                if (canvas) { container.appendChild(canvas); return; }
+                if (canvas) {
+                    container.style.background = '#0a1018';
+                    container.appendChild(canvas);
+                    return;
+                }
             } catch (_) {}
         }
-        var initial = (unit.label || '?').charAt(0).toUpperCase();
-        var domColors = { air: '#1a4a8a', sea: '#1a5a5a', ground: '#3a4a20', strategic: '#4a3a10' };
-        var fill = domColors[unit.domain] || '#1a2535';
-        container.innerHTML =
-            '<svg viewBox="0 0 120 80" width="120" height="80" xmlns="http://www.w3.org/2000/svg">'
-          + '<rect x="0" y="0" width="120" height="80" fill="#080c14"/>'
-          + '<rect x="1" y="1" width="118" height="78" fill="none" stroke="#1a2a3a" stroke-width="1"/>'
-          + '<rect x="45" y="15" width="30" height="30" fill="' + fill + '" stroke="#2a3a4a" stroke-width="1"/>'
-          + '<text x="60" y="35" font-size="14" font-weight="bold" text-anchor="middle" fill="#8aaac0"'
-          + ' font-family="Consolas,monospace">' + initial + '</text>'
-          + '<text x="60" y="60" font-size="8" text-anchor="middle" fill="#3a5060"'
-          + ' font-family="Consolas,monospace">' + (unit.domain || '').toUpperCase() + '</text>'
-          + '</svg>';
+        // SVG illustration
+        container.innerHTML = _unitSvg(unit, enriched);
     }
 
     // ── Identity ──────────────────────────────────────────────────────

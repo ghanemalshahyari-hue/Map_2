@@ -903,12 +903,62 @@
         try { return det.computeContacts(ws) || null; } catch (_) { return null; }
     }
 
+    /* ---- TASK1-B: unit tasking lookup (ws.derived.unit_tasking) -----------
+     * Builds a uid → tasking record index from ws.activity.actors.
+     * ws.activity.actors is a READ-ONLY echo of step.actors[] set by
+     * deriveWorldState(). This derivation does NOT read or touch engagement,
+     * detection, objective, readiness, supply, or DB1 fields.
+     * Result: { [uid]: { uid, side, action_component, action_what,
+     *                    action_why, action_intended_effect,
+     *                    action_doctrine_cited[], step_index, phase,
+     *                    component_label } }
+     * Units with no actor record in the current step are absent from the map.
+     * Consumers should always check for null / missing keys.
+     */
+    var _COMPONENT_LABELS = {
+        air:       'Air Operations',
+        land:      'Land Maneuver',
+        naval:     'Naval Operations',
+        ew:        'Electronic Warfare',
+        strategic: 'Strategic Strike',
+        sof:       'Special Operations',
+        usv_uav:   'Drone / USV',
+        mines:     'Mine Warfare',
+        logistics: 'Logistics'
+    };
+    function computeUnitTasking(ws) {
+        var out    = {};
+        var actors = arr(ws && ws.activity && ws.activity.actors);
+        var meta   = obj(ws && ws.meta);
+        var stepIdx = (meta.step_index != null) ? meta.step_index : null;
+        var phase   = meta.phase || null;
+        for (var i = 0; i < actors.length; i++) {
+            var a = obj(actors[i]);
+            if (!a.uid) continue;
+            var comp = String(a.action_component || '').toLowerCase();
+            out[a.uid] = {
+                uid:                    a.uid,
+                side:                   a.side || null,
+                action_component:       a.action_component || null,
+                action_what:            a.action_what || null,
+                action_why:             a.action_why || null,
+                action_intended_effect: a.action_intended_effect || null,
+                action_doctrine_cited:  arr(a.action_doctrine_cited),
+                step_index:             stepIdx,
+                phase:                  phase,
+                component_label:        _COMPONENT_LABELS[comp] || (a.action_component || null)
+            };
+        }
+        return out;
+    }
+
     var DERIVATIONS = {
         balance_summary:          computeBalanceSummary,
         bls_status:               computeBlsStatusB,
         contacts:                 computeContacts,
         objective_evidence:       computeObjectiveEvidence,        // PR-OBJ-A: evidence ledger (before status)
-        objective_status_display: computeObjectiveStatusDisplay
+        objective_status_display: computeObjectiveStatusDisplay,
+        unit_tasking:             computeUnitTasking               // TASK1-B: per-uid step action index
     };
     function applyDerivations(ws) {
         if (!ws) return ws;
@@ -986,6 +1036,8 @@
         computeDoctrineEvidence: computeDoctrineEvidence,
         BLS_RADIUS_NM: BLS_RADIUS_NM,
         DERIVATIONS: DERIVATIONS,
+        // TASK1-B: exposed for tests and accessors
+        computeUnitTasking: computeUnitTasking,
         // exposed for tests / future rule modules
         _bearing: bearing,
         _nmBetween: nmBetween

@@ -815,18 +815,71 @@
         }
     }
 
+    // ── TASK1-B: unit tasking accessor ────────────────────────────────
+    /**
+     * Look up the current-step tasking record for a unit uid from the
+     * world state derived by AppAdjudicatorMap.
+     *
+     * Priority chain (read-only, no side effects):
+     *   AppAdjudicatorMap.getWorldState()
+     *     → ws.derived.unit_tasking[uid]    (DERIVATIONS['unit_tasking'])
+     *
+     * Returns null when:
+     *   - AppAdjudicatorMap is not loaded (e.g. no scenario on map)
+     *   - No world state projected yet (getWorldState() returns null)
+     *   - Unit has no actor record in the current step
+     *
+     * Callers must treat null as "no tasking available" and fall through
+     * to scenario fields or '—'.
+     *
+     * @param {string} uid - unit.uid
+     * @returns {{ action_what, action_component, component_label, ... }|null}
+     */
+    function _getUnitTasking(uid) {
+        if (!uid) return null;
+        try {
+            var map = root.AppAdjudicatorMap;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            var ws = map.getWorldState();
+            if (!ws || !ws.derived || !ws.derived.unit_tasking) return null;
+            return ws.derived.unit_tasking[uid] || null;
+        } catch (_) { return null; }
+    }
+
     // ── Assignment ────────────────────────────────────────────────────
     function populateAssignment(unit) {
-        setText('unit-domain',       unit.domain   || '—');
-        setText('unit-role',         unit.role     ? unit.role.replace(/_/g, ' ') : '—');
-        setText('unit-echelon',      unit.echelon  || '—');
-        setText('usp-assigned-base', unit.assigned_base || unit.base || 'None');
-        setText('usp-unit-status',   unit.status   || unit.posture || '—');
-        var mission = unit.mission || unit.objective || '—';
+        // Read current-step tasking record (null = no actor for this unit this step)
+        var tasking = _getUnitTasking(unit.uid || unit.id);
+
+        setText('unit-domain',  unit.domain  || '—');
+        setText('unit-role',    unit.role ? unit.role.replace(/_/g, ' ') : '—');
+        setText('unit-echelon', unit.echelon || '—');
+
+        // Assigned base: unit-level override → BLS reference → 'None'
+        setText('usp-assigned-base',
+            unit.assigned_base || unit.base || unit.bls || 'None');
+
+        // Status row: component label from tasking → unit.status → unit.posture → '—'
+        setText('usp-unit-status',
+            (tasking && (tasking.component_label || tasking.action_component))
+            || unit.status || unit.posture || '—');
+
+        // Mission row: action_what from tasking → unit.mission → unit.objective → '—'
+        var missionText = (tasking && tasking.action_what)
+            || unit.mission || unit.objective || '—';
         var mEl = $('usp-mission');
         if (mEl) {
-            mEl.textContent = mission;
-            mEl.className = 'usp-arow-val' + (mission !== '—' ? ' usp-link' : '');
+            mEl.textContent = missionText;
+            mEl.className = 'usp-arow-val'
+                + (missionText !== '—' ? ' usp-link' : '');
+            // Add source hint as a title attribute so the operator can see origin
+            if (tasking && tasking.action_what) {
+                mEl.title = (tasking.phase ? '[' + tasking.phase + '] ' : '')
+                           + 'Step ' + (tasking.step_index != null ? tasking.step_index + 1 : '?')
+                           + ' · ' + tr('usp-tab-sensors', 'Actor') + ': ' + (tasking.uid || '');
+            } else {
+                mEl.title = '';
+            }
         }
     }
 

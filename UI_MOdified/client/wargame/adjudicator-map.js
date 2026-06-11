@@ -95,6 +95,8 @@
     let detectionContactsEnabled = false; // off by default — read-only overlay, toggled from the HUD
     let engagementLines = [];    // ENG1: per-step firing-solution lines (L.polyline)
     let engagementsEnabled = false; // off by default — read-only overlay, toggled from the HUD
+    let taskingOverlayMarkers = []; // TASK2C: per-step tasking badge markers (L.circleMarker)
+    let taskingOverlayEnabled = false; // off by default — read-only overlay, toggled from HUD
     let aoLayers = [];           // dashed blue polygons for AO boundaries
     let advanceArrows = [];      // L.polylines with arrow tips, BLS → tip
     let attackArrows = [];       // per-step engagement arrows (red kill + blue counterattack pulse)
@@ -1819,6 +1821,7 @@
     // graphics (520) and unit markers (600) — they annotate units, never occlude.
     const CONTACTS_PANE = 'rmoozContactsPane';
     const ENGAGEMENTS_PANE = 'rmoozEngagementsPane';
+    const TASKING_OVERLAY_PANE = 'rmoozTaskingOverlayPane'; // TASK2C: sits above contacts (430), below graphics (520)
     function ensureScenarioGraphicsPane() {
         const m = window.map;
         if (!m || typeof m.createPane !== 'function') return;
@@ -1841,6 +1844,13 @@
             const p = m.createPane(ENGAGEMENTS_PANE);
             p.style.zIndex = '425';
             p.style.pointerEvents = 'none'; // read-only annotation, never intercepts clicks
+        }
+        // TASK2C: Tasking order badges sit above contact dots (430) but below
+        // scenario graphics (520). Read-only annotation; never intercepts clicks.
+        if (!m.getPane(TASKING_OVERLAY_PANE)) {
+            const p = m.createPane(TASKING_OVERLAY_PANE);
+            p.style.zIndex = '435';
+            p.style.pointerEvents = 'none';
         }
     }
 
@@ -5450,6 +5460,49 @@
         }
     }
 
+    // TASK2C: Read-only tasking orders overlay.
+    // Small circleMarker badges placed at each tasked unit's position.
+    // Off by default; toggled from the HUD. Never modifies markers, icons, or state.
+    function clearTaskingOverlay() {
+        for (const m of taskingOverlayMarkers) {
+            if (m && layerGroup) { try { layerGroup.removeLayer(m); } catch (_) {} }
+        }
+        taskingOverlayMarkers = [];
+    }
+
+    function renderTaskingOverlay() {
+        clearTaskingOverlay();
+        if (!taskingOverlayEnabled || !layerGroup || !window.L) return;
+        if (!lastWorldState || !lastWorldState.derived) return;
+        const tasking = lastWorldState.derived.unit_tasking || {};
+        const allMarkers = Object.assign({}, redMarkers, blueMarkers);
+        for (const uid of Object.keys(tasking)) {
+            const marker = allMarkers[uid];
+            if (!marker) continue;
+            const ll = marker.getLatLng && marker.getLatLng();
+            if (!ll) continue;
+            const t = tasking[uid];
+            const comp = t.component_label || t.action_component || '';
+            const isBlue = String(t.side || '').toUpperCase() === 'BLUE';
+            const dotColor = isBlue ? '#3a96d2' : '#c41e1e';
+            const badge = window.L.circleMarker(ll, {
+                radius: 5,
+                color: dotColor,
+                weight: 1.5,
+                opacity: 0.92,
+                fillColor: dotColor,
+                fillOpacity: 0.55,
+                interactive: false,
+                pane: TASKING_OVERLAY_PANE,
+            }).bindTooltip(
+                `Orders: ${esc(comp)}${t.action_what ? '<br>' + esc(t.action_what) : ''}`,
+                { sticky: true, direction: 'top' }
+            );
+            badge.addTo(layerGroup);
+            taskingOverlayMarkers.push(badge);
+        }
+    }
+
     // TASK2B: Read-only tasking evidence appended to existing hover tooltips.
     // Reads ws.derived.unit_tasking[uid] from the last computed World State and
     // re-binds each scenario marker's tooltip to include a compact tasking line.
@@ -5504,6 +5557,7 @@
         coverageRings = [];
         detectionContacts = [];
         engagementLines = [];
+        taskingOverlayMarkers = [];
         contactHalo = null;
         aoLayers = [];
         advanceArrows = [];
@@ -5792,6 +5846,7 @@
         renderCoverageRings(state); // CMO rings: after unit positions update (~:5150), no-op when toggle off
         renderDetectionContacts(state); // DET1 contacts: after positions update, no-op when toggle off
         renderEngagements(state); // ENG1 firing solutions: after contacts, no-op when toggle off
+        renderTaskingOverlay(); // TASK2C: orders badges — after lastWorldState set, no-op when toggle off
         updateAdvanceArrows(state, scenario || scenarioRef, { instant });
         updateAttackArrows(state, scenario || scenarioRef);
         // W3-rich: explicit engagement mission graphics replace the nearest-red
@@ -6626,6 +6681,22 @@
             return engagementsEnabled;
         },
         isEngagementsVisible: () => !!engagementsEnabled,
+        // TASK2C: Read-only tasking orders overlay — small colored dot per tasked unit.
+        // Mirrors the coverage-rings / detection-contacts / engagements toggle pattern.
+        // Off by default; toggling re-renders against the last applied state.
+        renderTaskingOverlay,
+        clearTaskingOverlay,
+        setTaskingOverlay: (on) => {
+            taskingOverlayEnabled = (on !== false);
+            try { taskingOverlayEnabled ? renderTaskingOverlay() : clearTaskingOverlay(); } catch (_) {}
+            return taskingOverlayEnabled;
+        },
+        toggleTaskingOverlay: () => {
+            taskingOverlayEnabled = !taskingOverlayEnabled;
+            try { taskingOverlayEnabled ? renderTaskingOverlay() : clearTaskingOverlay(); } catch (_) {}
+            return taskingOverlayEnabled;
+        },
+        isTaskingOverlayVisible: () => !!taskingOverlayEnabled,
         // Diagnostics / 3D parity: computed engagement records for `state`, each
         // augmented with shooter + target lon/lat, so callers (Cesium, tests)
         // reuse the same engine rather than re-deriving the firing picture.

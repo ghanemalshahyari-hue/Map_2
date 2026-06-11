@@ -331,6 +331,9 @@
                     <button id="wg-adj-contacts-btn" class="wargame-action-btn secondary" type="button" title="Toggle live sensor contacts (detection.js) — read-only">&#128225; Contacts</button>
                     <button id="wg-adj-eng-btn"      class="wargame-action-btn secondary" type="button" title="Toggle live firing solutions (engagement.js) — read-only">&#127919; Firing solutions</button>
                 </div>
+                <div class="wg-adj-btn-row" style="margin-top:6px;">
+                    <button id="wg-adj-orders-btn" class="wargame-action-btn secondary" type="button" title="Toggle tasking orders overlay — read-only dot per tasked unit (TASK2C)">&#9997; Orders overlay</button>
+                </div>
             </div>
 
             <!-- ── Coverage Summary ── -->
@@ -2058,6 +2061,14 @@
             const map = window.AppAdjudicatorMap;
             if (!map || typeof map.toggleEngagements !== 'function') return;
             const on = map.toggleEngagements();
+            e.currentTarget.classList.toggle('active', !!on);
+        });
+        // TASK2C: Orders overlay toggle — same pattern as rings/contacts/engagements
+        const ordersBtn = root.querySelector('#wg-adj-orders-btn');
+        if (ordersBtn) ordersBtn.addEventListener('click', (e) => {
+            const map = window.AppAdjudicatorMap;
+            if (!map || typeof map.toggleTaskingOverlay !== 'function') return;
+            const on = map.toggleTaskingOverlay();
             e.currentTarget.classList.toggle('active', !!on);
         });
         root.querySelector('#wg-adj-step-btn').addEventListener('click', async () => { await ensureScenarioLoaded(); adjudicateNext(); });

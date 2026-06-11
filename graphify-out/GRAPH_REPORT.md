@@ -1,16 +1,16 @@
-# Graph Report - MAP_2  (2026-06-10)
+# Graph Report - MAP_2  (2026-06-11)
 
 ## Corpus Check
-- 4159 files · ~12,254,251 words
+- 4180 files · ~12,285,139 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2096 nodes · 3949 edges · 106 communities (101 shown, 5 thin omitted)
+- 3062 nodes · 5339 edges · 176 communities (168 shown, 8 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `15660c9b`
+- Built from commit: `25338ae6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -120,31 +120,101 @@
 - [[_COMMUNITY_Community 103|Community 103]]
 - [[_COMMUNITY_Community 104|Community 104]]
 - [[_COMMUNITY_Community 105|Community 105]]
+- [[_COMMUNITY_Community 106|Community 106]]
+- [[_COMMUNITY_Community 107|Community 107]]
+- [[_COMMUNITY_Community 108|Community 108]]
+- [[_COMMUNITY_Community 109|Community 109]]
+- [[_COMMUNITY_Community 110|Community 110]]
+- [[_COMMUNITY_Community 111|Community 111]]
+- [[_COMMUNITY_Community 112|Community 112]]
+- [[_COMMUNITY_Community 113|Community 113]]
+- [[_COMMUNITY_Community 114|Community 114]]
+- [[_COMMUNITY_Community 115|Community 115]]
+- [[_COMMUNITY_Community 116|Community 116]]
+- [[_COMMUNITY_Community 117|Community 117]]
+- [[_COMMUNITY_Community 118|Community 118]]
+- [[_COMMUNITY_Community 119|Community 119]]
+- [[_COMMUNITY_Community 120|Community 120]]
+- [[_COMMUNITY_Community 121|Community 121]]
+- [[_COMMUNITY_Community 122|Community 122]]
+- [[_COMMUNITY_Community 123|Community 123]]
+- [[_COMMUNITY_Community 124|Community 124]]
+- [[_COMMUNITY_Community 125|Community 125]]
+- [[_COMMUNITY_Community 126|Community 126]]
+- [[_COMMUNITY_Community 127|Community 127]]
+- [[_COMMUNITY_Community 128|Community 128]]
+- [[_COMMUNITY_Community 129|Community 129]]
+- [[_COMMUNITY_Community 130|Community 130]]
+- [[_COMMUNITY_Community 131|Community 131]]
+- [[_COMMUNITY_Community 132|Community 132]]
+- [[_COMMUNITY_Community 133|Community 133]]
+- [[_COMMUNITY_Community 134|Community 134]]
+- [[_COMMUNITY_Community 135|Community 135]]
+- [[_COMMUNITY_Community 136|Community 136]]
+- [[_COMMUNITY_Community 137|Community 137]]
+- [[_COMMUNITY_Community 138|Community 138]]
+- [[_COMMUNITY_Community 139|Community 139]]
+- [[_COMMUNITY_Community 140|Community 140]]
+- [[_COMMUNITY_Community 141|Community 141]]
+- [[_COMMUNITY_Community 142|Community 142]]
+- [[_COMMUNITY_Community 143|Community 143]]
+- [[_COMMUNITY_Community 144|Community 144]]
+- [[_COMMUNITY_Community 145|Community 145]]
+- [[_COMMUNITY_Community 146|Community 146]]
+- [[_COMMUNITY_Community 147|Community 147]]
+- [[_COMMUNITY_Community 148|Community 148]]
+- [[_COMMUNITY_Community 149|Community 149]]
+- [[_COMMUNITY_Community 150|Community 150]]
+- [[_COMMUNITY_Community 151|Community 151]]
+- [[_COMMUNITY_Community 152|Community 152]]
+- [[_COMMUNITY_Community 153|Community 153]]
+- [[_COMMUNITY_Community 154|Community 154]]
+- [[_COMMUNITY_Community 155|Community 155]]
+- [[_COMMUNITY_Community 156|Community 156]]
+- [[_COMMUNITY_Community 157|Community 157]]
+- [[_COMMUNITY_Community 158|Community 158]]
+- [[_COMMUNITY_Community 159|Community 159]]
+- [[_COMMUNITY_Community 160|Community 160]]
+- [[_COMMUNITY_Community 161|Community 161]]
+- [[_COMMUNITY_Community 162|Community 162]]
+- [[_COMMUNITY_Community 163|Community 163]]
+- [[_COMMUNITY_Community 164|Community 164]]
+- [[_COMMUNITY_Community 165|Community 165]]
+- [[_COMMUNITY_Community 166|Community 166]]
+- [[_COMMUNITY_Community 167|Community 167]]
+- [[_COMMUNITY_Community 168|Community 168]]
+- [[_COMMUNITY_Community 169|Community 169]]
+- [[_COMMUNITY_Community 170|Community 170]]
+- [[_COMMUNITY_Community 171|Community 171]]
+- [[_COMMUNITY_Community 172|Community 172]]
+- [[_COMMUNITY_Community 173|Community 173]]
+- [[_COMMUNITY_Community 174|Community 174]]
+- [[_COMMUNITY_Community 175|Community 175]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `tx()` - 71 edges
-2. `init()` - 45 edges
-3. `getScenario()` - 38 edges
-4. `blue_unit_step_coords` - 33 edges
-5. `blue_unit_step_prev` - 33 edges
-6. `blue_unit_step_coords` - 33 edges
-7. `blue_unit_step_prev` - 33 edges
-8. `handle()` - 31 edges
-9. `removeLayer()` - 30 edges
-10. `normalizeCatkArrowParams()` - 30 edges
+2. `$()` - 61 edges
+3. `init()` - 45 edges
+4. `applyState()` - 41 edges
+5. `getScenario()` - 38 edges
+6. `drawScenario()` - 33 edges
+7. `blue_unit_step_coords` - 33 edges
+8. `blue_unit_step_prev` - 33 edges
+9. `blue_unit_step_coords` - 33 edges
+10. `blue_unit_step_prev` - 33 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `handle()` --calls--> `sendJson()`  [INFERRED]
   UI_MOdified/server/wargame-sim-bridge.js → UI_MOdified/Offline_Deployment/offline_app/server/web-server.js
-- `mount()` --calls--> `start()`  [INFERRED]
-  UI_MOdified/client/shell/scenario-import-wizard.js → UI_MOdified/client/shell/native-scenario-loader.js
 - `handle()` --calls--> `buildLlmChildEnv()`  [EXTRACTED]
   UI_MOdified/server/wargame-sim-bridge.js → UI_MOdified/Offline_Deployment/offline_app/server/wargame-sim-bridge.js
+- `mount()` --calls--> `start()`  [INFERRED]
+  UI_MOdified/client/shell/scenario-import-wizard.js → UI_MOdified/client/shell/native-scenario-loader.js
 
 ## Import Cycles
 - None detected.
 
-## Communities (106 total, 5 thin omitted)
+## Communities (176 total, 8 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.12
@@ -187,8 +257,8 @@ Cohesion: 0.22
 Nodes (8): `ca-chain.crt` — server-certificate trust, Exporting the CA certificate on Windows, How it is used, `rmooz-client.crt` / `rmooz-client.key` — OPTIONAL mTLS client cert, RMOOZ Offline Certificates — OFFLINE-LITELLM-CA-1 / OFFLINE-LITELLM-MTLS-1, Verify after container restart, What does NOT go here / must NEVER be committed, When do I need each file?
 
 ### Community 10 - "Community 10"
-Cohesion: 0.38
-Nodes (6): fs, getMapConfig(), handleOfflineMapConfigApi(), isMapDataDirConfigured(), path, VALID_MODES
+Cohesion: 0.25
+Nodes (5): Path, B, C, MIXED_ORDER, path
 
 ### Community 12 - "Community 12"
 Cohesion: 0.15
@@ -212,7 +282,7 @@ Nodes (11): bridge, failures, fs, i18n, loader, localBr, mainHtml, OFF (+3 more)
 
 ### Community 17 - "Community 17"
 Cohesion: 0.02
-Nodes (78): addCurrentSidcToFavorites(), addEmblemMarkerEdgeHighlight(), addSelectionHighlightsForElement(), applyFavoriteSidc(), applyLayerTemplate(), bestIntersectionOnOpenPolyline(), bindMinefieldResizeHandles(), boundaryPathForward() (+70 more)
+Nodes (93): addCurrentSidcToFavorites(), addEmblemMarkerEdgeHighlight(), addSelectionHighlightsForElement(), applyFavoriteSidc(), applyLayerTemplate(), bestIntersectionOnOpenPolyline(), bindMinefieldResizeHandles(), boundaryPathForward() (+85 more)
 
 ### Community 19 - "Community 19"
 Cohesion: 0.07
@@ -239,16 +309,16 @@ Cohesion: 0.25
 Nodes (7): Host cleanup when deploying a NEW bundle over an OLD install, Linux host (bash) — run from `Offline_Deployment/`, Verify the running container is clean, What is PRESERVED (never deleted by this cleanup), What is REFRESHED / CLEARED (stale, safe to remove), Why this exists, Windows host (PowerShell) — run from `UI_MOdified\Offline_Deployment\`
 
 ### Community 25 - "Community 25"
-Cohesion: 0.08
-Nodes (61): BRIEF, buildLlmChildEnv(), buildMinimalScenario(), cfg(), cleanEnvPath(), computeFreshness(), computeSimProgress(), computeSources() (+53 more)
+Cohesion: 0.07
+Nodes (67): BRIEF, buildLlmChildEnv(), buildMinimalScenario(), cfg(), cleanEnvPath(), computeFreshness(), computeSimProgress(), computeSources() (+59 more)
 
 ### Community 26 - "Community 26"
 Cohesion: 0.04
 Nodes (28): adjudicator, aiProvider, appData, CHAT_FILE, CHAT_GROUPS_FILE, CHAT_PRESENCE_FILE, CHAT_USERS_FILE, coaAgent (+20 more)
 
 ### Community 27 - "Community 27"
-Cohesion: 0.24
-Nodes (17): DoctrinalConfig, _get(), _get_bool(), _get_float(), _get_int(), LLMConfig, load_doctrinal_config(), load_llm_config() (+9 more)
+Cohesion: 0.22
+Nodes (19): DoctrinalConfig, _get(), _get_bool(), _get_float(), _get_int(), LLMConfig, load_doctrinal_config(), load_llm_config() (+11 more)
 
 ### Community 28 - "Community 28"
 Cohesion: 0.33
@@ -263,28 +333,28 @@ Cohesion: 0.11
 Nodes (52): applyCatkMultiPointStyle(), applyTmgStyle(), attachCatkGroupEvents(), catkApplyArrowParamsToData(), catkArrowEditHandleLatLngs(), catkArrowGeometryPx(), catkArrowGroupStylePayload(), catkArrowOverlayLatLngs() (+44 more)
 
 ### Community 34 - "Community 34"
-Cohesion: 0.07
-Nodes (45): addMinefieldDecorations(), addRangeCircleToMarker(), addRangeSectorToMarker(), afterGeoPrimaryKmEdit(), applyGeoObstacleAwareLineHatch(), applyGeoPathFill(), applyGeoPrimaryKmFromPopup(), applyGeoShapeStyle() (+37 more)
+Cohesion: 0.06
+Nodes (52): addMinefieldDecorations(), addRangeCircleToMarker(), addRangeSectorToMarker(), afterGeoPrimaryKmEdit(), applyGeoObstacleAwareLineHatch(), applyGeoPathFill(), applyGeoPrimaryKmFromPopup(), applyGeoShapeStyle() (+44 more)
 
 ### Community 35 - "Community 35"
-Cohesion: 0.11
-Nodes (42): addAttackArrows(), addFrontLines(), addLayerToFolder(), addPolylineFeatures(), addScallopedFrontLineFromChordPairs(), addSlots(), addSymbolUnits(), addToActiveLayer() (+34 more)
+Cohesion: 0.12
+Nodes (39): addAttackArrows(), addFrontLines(), addLayerToFolder(), addPolylineFeatures(), addScallopedFrontLineFromChordPairs(), addSlots(), addSymbolUnits(), addToActiveLayer() (+31 more)
 
 ### Community 36 - "Community 36"
-Cohesion: 0.10
-Nodes (25): addAutoFlankEchelonMarkers(), createDistanceSegmentLabelMarkers(), createDistanceWaypointMarkers(), finishDeferredUiInit(), formatApproxAlternateDistanceFromKm(), formatDistanceSecondaryHintFromKm(), formatDistanceSecondaryHintSpanFromKm(), formatKmAndNm() (+17 more)
+Cohesion: 0.18
+Nodes (17): activateDrawingModeFromTopBar(), activateEraserMode(), activateFreehandDrawMode(), activatePanInspectMode(), activateTextBoxMode(), clearGeoPlacementPreview(), createRectangleCorners(), getGeoSelectedTool() (+9 more)
 
 ### Community 37 - "Community 37"
-Cohesion: 0.11
-Nodes (23): areAnyCircleXRingsOverlapping(), autoDrawCircleXFlankLines(), buildCatkVectorHeadIconHtml(), buildReadonlyTmgMarker(), buildRectangleAutoFlankZoneRings(), collectOrderedScallopedSegmentsForSession(), ensureObstaclePolygonsLoaded(), flattenScallopedVerticesFromSegments() (+15 more)
+Cohesion: 0.15
+Nodes (18): areAnyCircleXRingsOverlapping(), autoDrawCircleXFlankLines(), buildCatkVectorHeadIconHtml(), buildReadonlyTmgMarker(), ensureObstaclePolygonsLoaded(), findClosestCircleXCenter(), frontlineCoversAllCircles(), getCircleXCenters() (+10 more)
 
 ### Community 38 - "Community 38"
 Cohesion: 0.06
 Nodes (33): ao_boundaries, bls_template, blue_units_base_ids, blue_units_initial, blue_units_source, can_resume_generation, expected_phase_count, generated_from_docs (+25 more)
 
 ### Community 39 - "Community 39"
-Cohesion: 0.07
-Nodes (38): activateDrawingModeFromTopBar(), activateEraserMode(), activateFreehandDrawMode(), activatePanInspectMode(), activateTextBoxMode(), applyZoomScaledStrokeToPolyline(), beginMapDrawPointerCapture(), catkPlacementPointsAreNear() (+30 more)
+Cohesion: 0.06
+Nodes (48): applyZoomScaledStrokeToPolyline(), beginMapDrawPointerCapture(), cancelGeoDrawing(), cancelLineDrawing(), catkPlacementPointsAreNear(), cleanupElementDecorations(), clearCatkPreviewAdornments(), clearGeoRadiusGuide() (+40 more)
 
 ### Community 40 - "Community 40"
 Cohesion: 0.14
@@ -296,7 +366,7 @@ Nodes (12): brief, document_set_id, documents, document_set_id, documents, llm_f
 
 ### Community 42 - "Community 42"
 Cohesion: 0.08
-Nodes (39): cancelGeoDrawing(), cancelLineDrawing(), cleanupElementDecorations(), clearCatkPreviewAdornments(), clearGeoRadiusGuide(), clearPlacementPreview(), createMultiSegmentTmgGroupSelectionBox(), createTmgResizeHandle() (+31 more)
+Nodes (46): decodeEntities(), documentXmlToText(), extractDocxText(), fs, readZipEntry(), zlib, adaptMdmpBundle(), BRIEF (+38 more)
 
 ### Community 43 - "Community 43"
 Cohesion: 0.21
@@ -356,7 +426,7 @@ Nodes (15): APP_HTML, dbSrc, failures, fs, PANEL_JS, panelEnd, panelStart, path 
 
 ### Community 57 - "Community 57"
 Cohesion: 0.06
-Nodes (48): anyPresent(), classifyDocument(), countPresent(), detectLanguage(), detectSideHeadings(), detectTeam(), ENEMY_MARKERS, FRIENDLY_MARKERS (+40 more)
+Nodes (38): addLegend(), attritionStatusOf(), buildDestroyedIcon(), buildDetectionUnits(), buildManeuverArrowPolygonLatLngs(), buildUnitMarkerIcon(), clearCoverageRings(), clearDetectionContacts() (+30 more)
 
 ### Community 58 - "Community 58"
 Cohesion: 0.42
@@ -403,8 +473,8 @@ Cohesion: 0.60
 Nodes (5): _bindTimelineTransport(), _swPlayIntervalMs(), _swStartPlay(), _swStepCount(), _swStopPlay()
 
 ### Community 69 - "Community 69"
-Cohesion: 1.00
-Nodes (3): Path, _looks_like_smart_search_repo(), _resolve_smart_search_repo_path()
+Cohesion: 0.10
+Nodes (16): appHtml, appHtmlPath, assert, cfgPath, cfgSrc, dockerfilePath, dockerSrc, fs (+8 more)
 
 ### Community 70 - "Community 70"
 Cohesion: 0.06
@@ -439,8 +509,8 @@ Cohesion: 0.25
 Nodes (5): C, MIXED_AR, path, WARNO_AR, WARNO_BOTH_SIDES
 
 ### Community 78 - "Community 78"
-Cohesion: 0.29
-Nodes (4): B, C, MIXED_ORDER, path
+Cohesion: 0.15
+Nodes (5): BACKUP_PATH, fs, HUD_SRC, MAP_SRC, path
 
 ### Community 79 - "Community 79"
 Cohesion: 0.07
@@ -491,8 +561,8 @@ Cohesion: 0.67
 Nodes (6): briefBlock(), chip(), esc(), listBlock(), render(), sideBlock()
 
 ### Community 91 - "Community 91"
-Cohesion: 0.21
-Nodes (13): catkArrowParamsFromNeckDragSession(), catkArrowParamsFromTipAndTailCursor(), catkArrowParamsFromTipCursor(), catkArrowParamsWithTailFromCursor(), catkPixelsToKm(), catkPxPerKmAtLatLng(), catkScaleKmFromTipCursor(), catkScalePxFromTipCursor() (+5 more)
+Cohesion: 0.40
+Nodes (6): catkArrowParamsFromTipAndTailCursor(), catkArrowParamsFromTipCursor(), catkPixelsToKm(), catkScaleKmFromTipCursor(), catkScalePxFromTipCursor(), catkTipCursorPixelDistance()
 
 ### Community 92 - "Community 92"
 Cohesion: 0.33
@@ -546,22 +616,290 @@ Nodes (4): civilian, infrastructure, neutral, neutral
 Cohesion: 0.50
 Nodes (4): blue, neutral, red, proposed_unit_counts
 
+### Community 106 - "Community 106"
+Cohesion: 0.11
+Nodes (21): addAutoFlankEchelonMarkers(), finishDeferredUiInit(), formatApproxAlternateDistanceFromKm(), formatDistanceSecondaryHintFromKm(), formatDistanceSecondaryHintSpanFromKm(), formatKmAndNm(), getAllElements(), getDistanceUnitPrimary() (+13 more)
+
+### Community 107 - "Community 107"
+Cohesion: 0.22
+Nodes (13): http, httpGet(), https, isPortOpen(), net, OFFLINE_URL, parseUrl(), path (+5 more)
+
+### Community 108 - "Community 108"
+Cohesion: 0.54
+Nodes (7): installGuardSync(), isBannedUrl(), patchExistingLayers(), repointToRealUrl(), resolveRealUrl(), run(), waitFor()
+
+### Community 109 - "Community 109"
+Cohesion: 0.52
+Nodes (6): findAllLeafletMaps(), isBannedUrl(), patchCesium(), patchMap(), run(), waitFor()
+
+### Community 110 - "Community 110"
+Cohesion: 0.15
+Nodes (12): brief, document_set_id, documents, document_set_id, documents, llm_fill, available, reason (+4 more)
+
+### Community 111 - "Community 111"
+Cohesion: 0.17
+Nodes (12): understanding, ambiguities, assumptions, commander_intent, constraints, mission, objectives, phases (+4 more)
+
+### Community 112 - "Community 112"
+Cohesion: 0.18
+Nodes (11): operational_brief, ambiguities, area_of_operations, assumptions, commander_intent, constraints, mission, objectives (+3 more)
+
+### Community 113 - "Community 113"
+Cohesion: 0.29
+Nodes (7): assessed_capabilities, source, summary, tasks, units, enemy, enemy
+
+### Community 114 - "Community 114"
+Cohesion: 0.33
+Nodes (6): source, summary, tasks, units, friendly, friendly
+
+### Community 115 - "Community 115"
+Cohesion: 0.40
+Nodes (5): dedupe, duplicates_removed, input_count, same_in_both_slots, unique_count
+
+### Community 116 - "Community 116"
+Cohesion: 0.67
+Nodes (4): civilian, infrastructure, neutral, neutral
+
+### Community 117 - "Community 117"
+Cohesion: 0.50
+Nodes (4): blue, neutral, red, proposed_unit_counts
+
+### Community 118 - "Community 118"
+Cohesion: 0.15
+Nodes (15): axis(), clamp(), generateScenarioFromBrief(), num(), r5(), resolveObjective(), ring(), sanitizeName() (+7 more)
+
+### Community 119 - "Community 119"
+Cohesion: 0.13
+Nodes (12): B, BOX, { extractDocxText }, fs, GEN, mkSteps(), N, path (+4 more)
+
+### Community 120 - "Community 120"
+Cohesion: 0.12
+Nodes (20): applyState(), applySuppressionHalos(), _applyTaskingToMarkerMap(), applyW3UnitNarrative(), clearSuppressionHalos(), clearTaskingOverlay(), deriveDisplayOutcome(), ensureScenarioGraphicsPane() (+12 more)
+
+### Community 121 - "Community 121"
+Cohesion: 0.09
+Nodes (32): addSitrep(), applyStepProgress(), blsIcon(), blueIconSize(), blueSidcFor(), buildBlsTooltip(), buildEchelonDivisionGroups(), buildObjTooltip() (+24 more)
+
+### Community 122 - "Community 122"
+Cohesion: 0.22
+Nodes (16): applyW3Spread(), bluePositionLonLat(), clamp01(), computeDisplayOffset(), engLaneOffset(), kmPerDegLng(), kmPerPixelAtZoom(), lerpLonLat() (+8 more)
+
+### Community 123 - "Community 123"
+Cohesion: 0.18
+Nodes (14): animateLineDraw(), blueActionsFor(), createTacticalArrow(), displayBlueId(), displayRedId(), engStopShort(), findNearestRedMarker(), groupArcsByTargetCluster() (+6 more)
+
+### Community 124 - "Community 124"
+Cohesion: 0.18
+Nodes (13): applyStepAttrition(), buildStepEvents(), canUnitAct(), collectAllMarkers(), computeStepAttrition(), dbg(), echelonOf(), getEffectiveUnitStatus() (+5 more)
+
+### Community 125 - "Community 125"
+Cohesion: 0.09
+Nodes (56): $(), adjudicateNext(), autoDrawWhenReady(), bindHandlers(), boot(), cancelMc(), classifyHistoricalStep(), classifyRun() (+48 more)
+
+### Community 126 - "Community 126"
+Cohesion: 0.31
+Nodes (9): applyW3PerStepDamage(), markUnitAsDamaged(), renderMarkerByStatus(), _resolveSidc(), restoreMarker(), setSidcStatusDigit(), sidcIcon(), unmarkUnitAsDamaged() (+1 more)
+
+### Community 127 - "Community 127"
+Cohesion: 0.31
+Nodes (10): bindZoomHookOnce(), findBlueMarkerByBaseId(), hasMap(), spawnBreachBadge(), spawnDeathRing(), spawnExpendedFlash(), spawnExplosion(), spawnHitFlash() (+2 more)
+
+### Community 128 - "Community 128"
+Cohesion: 0.20
+Nodes (11): animateSalvoLaunches(), clearEngagementArcs(), clearSalvoAnimations(), fitScenarioAO(), isFiniteLonLatCoord(), isObjectiveRef(), objectiveIdentityTokens(), parseSalvoCount() (+3 more)
+
+### Community 129 - "Community 129"
+Cohesion: 0.39
+Nodes (5): _applyTaskingToMarkerMap(), bindTooltip(), esc(), _refreshTaskingTooltips(), unbindTooltip()
+
+### Community 131 - "Community 131"
+Cohesion: 0.09
+Nodes (17): a1, a5, appjs, b1, cfgPath, composeBase, composeDebug, dockerfile (+9 more)
+
+### Community 132 - "Community 132"
+Cohesion: 0.39
+Nodes (7): checkFallbackHealth(), checkLocalTileHealth(), checkTileSourceHealth(), fetchMapConfig(), init(), resolveOfflineTileSource(), showMapSourceStatus()
+
+### Community 133 - "Community 133"
+Cohesion: 0.31
+Nodes (9): createMultiSegmentTmgGroupSelectionBox(), createTmgSelectionBox(), getMultiSegmentTmgGroupAabbLatLngs(), getTmgBoundingBoxCorners(), refreshMultiSegmentTmgGroupSelectionBox(), removeOverlayFromMapOrGroups(), removeTmgResizeHandle(), rotateTmgSegmentGroupByDegrees() (+1 more)
+
+### Community 134 - "Community 134"
+Cohesion: 0.02
+Nodes (108): ACCS, Air_support_coordination, allocated_planning_time, ammunition, Appendices, area_interest, Assembly_Area, Attached_units (+100 more)
+
+### Community 135 - "Community 135"
+Cohesion: 0.04
+Nodes (55): combat_on_objectives_acting_phase1, combat_on_objectives_acting_phase1_2, combat_on_objectives_acting_phase2, combat_on_objectives_acting_phase2_2, combat_on_objectives_counter_action_phase1, combat_on_objectives_counter_action_phase1_2, combat_on_objectives_counter_action_phase2, combat_on_objectives_counter_action_phase2_2 (+47 more)
+
+### Community 136 - "Community 136"
+Cohesion: 0.04
+Nodes (48): ACCS, Air_support_coordination, Appendices, area_interest, Assembly_Area, Attached_and_Detached_units, civil_considerations, CIVILIAN_CONSIDERATIONS (+40 more)
+
+### Community 137 - "Community 137"
+Cohesion: 0.04
+Nodes (47): Acceptance_of_packaging_risk, Acceptance_of_packaging_risk2, Artillery, Artillery2, Artillery_fires_phose_one, Artillery_fires_phose_one2, Artillery_fires_phose_three, Artillery_fires_phose_three2 (+39 more)
+
+### Community 138 - "Community 138"
+Cohesion: 0.08
+Nodes (25): conclusions_c1, conclusions_c2, overall_comparison_conclusion, possible_operation_1, possible_operation_2, strengths_admin_support, strengths_admin_support_c2, strengths_attacking_cog (+17 more)
+
+### Community 139 - "Community 139"
+Cohesion: 0.50
+Nodes (4): Air_defense_enemy_forces, count, unit_type, weight
+
+### Community 140 - "Community 140"
+Cohesion: 0.50
+Nodes (4): Air_defense_our_forces, count, unit_type, weight
+
+### Community 141 - "Community 141"
+Cohesion: 0.50
+Nodes (4): Engineering_units_total_enemy_forces, count, unit_type, weight
+
+### Community 142 - "Community 142"
+Cohesion: 0.50
+Nodes (4): Engineering_units_total_our_forces, count, unit_type, weight
+
+### Community 143 - "Community 143"
+Cohesion: 0.50
+Nodes (4): Helicopter_units_total_enemy, count, unit_type, weight
+
+### Community 144 - "Community 144"
+Cohesion: 0.50
+Nodes (4): Helicopter_units_total_our, count, unit_type, weight
+
+### Community 145 - "Community 145"
+Cohesion: 0.50
+Nodes (4): Infantry_Battalion_total_enemy, count, unit_type, weight
+
+### Community 146 - "Community 146"
+Cohesion: 0.50
+Nodes (4): Infantry_Battalion_total_our, count, unit_type, weight
+
+### Community 147 - "Community 147"
+Cohesion: 0.50
+Nodes (4): medium_artillery_fire_total_enemy_forces, count, unit_type, weight
+
+### Community 148 - "Community 148"
+Cohesion: 0.50
+Nodes (4): medium_artillery_fire_total_our_forces, count, unit_type, weight
+
+### Community 149 - "Community 149"
+Cohesion: 0.50
+Nodes (4): mortar_fire_total_enemy_forces, count, unit_type, weight
+
+### Community 150 - "Community 150"
+Cohesion: 0.50
+Nodes (4): mortar_fire_total_our_forces, count, unit_type, weight
+
+### Community 151 - "Community 151"
+Cohesion: 0.50
+Nodes (4): Reconnaissance_units_total_enemy, count, unit_type, weight
+
+### Community 152 - "Community 152"
+Cohesion: 0.50
+Nodes (4): Reconnaissance_units_total_our, count, unit_type, weight
+
+### Community 153 - "Community 153"
+Cohesion: 0.50
+Nodes (4): Units_of_armor_resistance_total_enemy, count, unit_type, weight
+
+### Community 154 - "Community 154"
+Cohesion: 0.50
+Nodes (4): Units_of_armor_resistance_total_our, count, unit_type, weight
+
+### Community 155 - "Community 155"
+Cohesion: 0.50
+Nodes (4): Units_of_Tanks_armor_total_enemy, count, unit_type, weight
+
+### Community 156 - "Community 156"
+Cohesion: 0.50
+Nodes (4): Units_of_Tanks_armor_total_our, count, unit_type, weight
+
+### Community 157 - "Community 157"
+Cohesion: 0.67
+Nodes (3): Strengths_and_weaknesses_of_our_forces_in_terms_of_firepower, Strengths, weaknesses
+
+### Community 158 - "Community 158"
+Cohesion: 0.67
+Nodes (3): Strengths_and_weaknesses_of_our_forces_in_terms_of_information, Strengths, weaknesses
+
+### Community 159 - "Community 159"
+Cohesion: 0.67
+Nodes (3): Strengths_and_weaknesses_of_our_forces_in_terms_of_leadership, Strengths, weaknesses
+
+### Community 160 - "Community 160"
+Cohesion: 0.67
+Nodes (3): Strengths_and_weaknesses_of_our_forces_in_terms_of_maneuverability, Strengths, weaknesses
+
+### Community 161 - "Community 161"
+Cohesion: 0.67
+Nodes (3): Strengths_and_weaknesses_of_our_forces_in_terms_of_protection, Strengths, weaknesses
+
+### Community 162 - "Community 162"
+Cohesion: 0.67
+Nodes (3): Strengths_and_weaknesses_of_the_enemy_in_terms_of_firepower, Strengths, weaknesses
+
+### Community 163 - "Community 163"
+Cohesion: 0.67
+Nodes (3): Strengths_and_weaknesses_of_the_enemy_in_terms_of_information, Strengths, weaknesses
+
+### Community 164 - "Community 164"
+Cohesion: 0.67
+Nodes (3): Strengths_and_weaknesses_of_the_enemy_in_terms_of_leadership, Strengths, weaknesses
+
+### Community 165 - "Community 165"
+Cohesion: 0.67
+Nodes (3): Strengths_and_weaknesses_of_the_enemy_in_terms_of_maneuverability, Strengths, weaknesses
+
+### Community 166 - "Community 166"
+Cohesion: 0.67
+Nodes (3): Strengths_and_weaknesses_of_the_enemy_in_terms_of_protection, Strengths, weaknesses
+
+### Community 168 - "Community 168"
+Cohesion: 0.18
+Nodes (7): B, EXPECTED_STEP, FILES, FIX, fs, { parseJsonc, stripJsonc }, path
+
+### Community 169 - "Community 169"
+Cohesion: 0.10
+Nodes (29): anyPresent(), classifyDocument(), countPresent(), detectLanguage(), detectSideHeadings(), detectTeam(), ENEMY_MARKERS, FRIENDLY_MARKERS (+21 more)
+
+### Community 171 - "Community 171"
+Cohesion: 0.09
+Nodes (22): 1. A real Start was triggered, 2. Status ~12s later, 3. Full Python error (from sim.error), 4. Run directory WAS created (so paths/permissions are fine), 5. Generator LLM config (baked into image, NOT overridden by the bridge), 6. Container env (the bridge inherits this for the Python child), 7. Misleading green health check, Cleanup note (+14 more)
+
+### Community 172 - "Community 172"
+Cohesion: 0.14
+Nodes (13): 0. Locked decision register, 1. COA Review Panel, 2. Unit Tasking Mode (CMO-style, L4 + L5), 3. Wargame Timeline (L3 + L10), 4.3 Outcome vocabulary (L8) — existing vs additive, 4. White Adjudication (L9), 5. Doctrine Rule Cards (L7), 6. Animation requirements (+5 more)
+
+### Community 173 - "Community 173"
+Cohesion: 0.14
+Nodes (10): ADAPTER, B, D9_FIELDS, FIX, fs, { parseJsonc }, path, STEP3_FILLED (+2 more)
+
+### Community 174 - "Community 174"
+Cohesion: 0.38
+Nodes (6): fs, getMapConfig(), handleOfflineMapConfigApi(), isMapDataDirConfigured(), path, VALID_MODES
+
+### Community 175 - "Community 175"
+Cohesion: 0.08
+Nodes (22): APP_HTML, CLIENT, CLOCK_SRC, fs, I18N_SRC, ordersIdx_ar, ordersIdx_en, path (+14 more)
+
 ## Knowledge Gaps
-- **771 isolated node(s):** `Legend`, `⚠️ DRIFT — code vs. documented decisions (confirm before relying on memory)`, `A. Client shell — operational modules (`UI_MOdified/client/shell/`)`, `B. Wargame / adjudicator visualization (`UI_MOdified/client/wargame/`)`, `C. Server — AI agents + sim boundary (`UI_MOdified/server/ai/`, `server/sim/`)` (+766 more)
+- **1315 isolated node(s):** `fs`, `path`, `CLIENT`, `USP_SRC`, `I18N_SRC` (+1310 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Path` connect `Community 69` to `Community 64`, `Community 65`, `Community 66`, `Community 73`, `Community 76`, `Community 77`, `Community 78`, `Community 49`, `Community 55`, `Community 56`, `Community 25`, `Community 26`, `Community 27`, `Community 61`, `Community 62`, `Community 63`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
-- **Why does `blue_unit_step_coords` connect `Community 71` to `Community 79`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `blue_unit_step_coords` connect `Community 45` to `Community 38`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **What connects `Legend`, `⚠️ DRIFT — code vs. documented decisions (confirm before relying on memory)`, `A. Client shell — operational modules (`UI_MOdified/client/shell/`)` to the rest of the system?**
-  _775 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `Path` connect `Community 10` to `Community 130`, `Community 131`, `Community 6`, `Community 8`, `Community 25`, `Community 26`, `Community 27`, `Community 168`, `Community 173`, `Community 174`, `Community 175`, `Community 49`, `Community 55`, `Community 56`, `Community 61`, `Community 62`, `Community 63`, `Community 64`, `Community 65`, `Community 66`, `Community 69`, `Community 73`, `Community 76`, `Community 77`, `Community 78`, `Community 107`, `Community 119`?**
+  _High betweenness centrality (0.026) - this node is a cross-community bridge._
+- **Why does `Reconnaissance_units_total_enemy` connect `Community 151` to `Community 137`?**
+  _High betweenness centrality (0.001) - this node is a cross-community bridge._
+- **Why does `red_unit_step_coords` connect `Community 83` to `Community 79`?**
+  _High betweenness centrality (0.000) - this node is a cross-community bridge._
+- **What connects `fs`, `path`, `CLIENT` to the rest of the system?**
+  _1319 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.125 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**

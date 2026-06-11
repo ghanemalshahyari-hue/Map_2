@@ -30,13 +30,13 @@
     "semantic_hash": ""
   },
   "UI_MOdified/Offline_Deployment/offline_app/client/offline-leaflet-tile-guard.js": {
-    "mtime": 1780889429.3985817,
-    "ast_hash": "46b939c40b11f44a7a88028e33c9ba09",
+    "mtime": 1781092928.033596,
+    "ast_hash": "c7852134d2c8460fa219750ce014bddb",
     "semantic_hash": ""
   },
   "UI_MOdified/Offline_Deployment/offline_app/client/offline-map-patch.js": {
-    "mtime": 1780770660.0027776,
-    "ast_hash": "01c5df891c0d6efb07014b3aa2424ab0",
+    "mtime": 1781092955.512653,
+    "ast_hash": "c14709c15a4fdb226165bbfcf69039fa",
     "semantic_hash": ""
   },
   "UI_MOdified/Offline_Deployment/offline_app/client/shell/scenario-import-wizard.js": {
@@ -50,8 +50,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/Offline_Deployment/offline_app/client/wargame/offline-map-source.js": {
-    "mtime": 1780767534.9062033,
-    "ast_hash": "0cc7284db8b0dff87dbab4bd2bc17ff0",
+    "mtime": 1781151422.5465255,
+    "ast_hash": "12b54d2379a30bdc4f63c0ccf6d8d2c0",
     "semantic_hash": ""
   },
   "UI_MOdified/Offline_Deployment/offline_app/package.json": {
@@ -80,8 +80,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/Offline_Deployment/offline_app/server/offline-map-config.js": {
-    "mtime": 1781059115.577117,
-    "ast_hash": "c360880ba447fbba989002e223b830b5",
+    "mtime": 1781151414.3404362,
+    "ast_hash": "a4a15f6c257415cf287ccbbd8b0f1240",
     "semantic_hash": ""
   },
   "UI_MOdified/Offline_Deployment/offline_app/server/tile-server.js": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/Offline_Deployment/offline_app/server/web-server.js": {
-    "mtime": 1781070935.3796937,
-    "ast_hash": "788d55d9355e246d105f27f00a299333",
+    "mtime": 1781151371.9717364,
+    "ast_hash": "dc2fc72025ac5cfec25d9fb97f005add",
     "semantic_hash": ""
   },
   "UI_MOdified/Offline_Deployment/offline_app/start-offline.sh": {
@@ -15615,8 +15615,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/app.js": {
-    "mtime": 1781076019.5803196,
-    "ast_hash": "3b201301e5df6546b300c307d0142abb",
+    "mtime": 1781151429.9349997,
+    "ast_hash": "2cda95b492b04cfea8d6eb1e6f7c974a",
     "semantic_hash": ""
   },
   "UI_MOdified/client/arrow-animation.js": {
@@ -15670,8 +15670,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/i18n.js": {
-    "mtime": 1781077292.018033,
-    "ast_hash": "caf4c377ed628e8b2f66ab6b00d14326",
+    "mtime": 1781165697.33149,
+    "ast_hash": "4371e91056fd99a581bfec34b8a12106",
     "semantic_hash": ""
   },
   "UI_MOdified/client/identity.js": {
@@ -15895,8 +15895,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/shell/scenario-import-wizard.js": {
-    "mtime": 1781082466.160973,
-    "ast_hash": "08e6a83820880ff10e390736828ede36",
+    "mtime": 1781153197.0181231,
+    "ast_hash": "e50d9d0683c1bd27750d70d4898f57ac",
     "semantic_hash": ""
   },
   "UI_MOdified/client/shell/scenario-workspace.js": {
@@ -15920,8 +15920,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/shell/unit-status-panel.js": {
-    "mtime": 1781075650.6534688,
-    "ast_hash": "b49b925b3a00a9e43d31a89f36fef637",
+    "mtime": 1781165687.6915493,
+    "ast_hash": "c2aac496cc10b1f946e9c4fa830015aa",
     "semantic_hash": ""
   },
   "UI_MOdified/client/shell/wargame-geojson-import.js": {
@@ -16210,13 +16210,13 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/wargame/adjudicator-hud.js": {
-    "mtime": 1780673072.0,
-    "ast_hash": "0f043e28badfab10cd254a840657a759",
+    "mtime": 1781155457.9797463,
+    "ast_hash": "040b213cf3b0682fcfb7d04ace051d89",
     "semantic_hash": ""
   },
   "UI_MOdified/client/wargame/adjudicator-map.js": {
-    "mtime": 1780767537.8397367,
-    "ast_hash": "866e6f482b22413648224b7821f63437",
+    "mtime": 1781155438.0353205,
+    "ast_hash": "a7e130787d1b3e271fe5bcadc831609a",
     "semantic_hash": ""
   },
   "UI_MOdified/client/wargame/approved-actions.js": {
@@ -16765,8 +16765,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/data/scenarios/_active.json": {
-    "mtime": 1781084553.1470432,
-    "ast_hash": "f026f85b3b2c8603b0f36dac061bd7a3",
+    "mtime": 1781166854.2479613,
+    "ast_hash": "0040193d3cfe5a50358c8fd1eb4b5da9",
     "semantic_hash": ""
   },
   "UI_MOdified/data/scenarios/coastal-shield-training-v1.json": {
@@ -17160,8 +17160,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/server/wargame-sim-bridge.js": {
-    "mtime": 1781080703.1342235,
-    "ast_hash": "7854ede4ea310e82469b6062a8513acf",
+    "mtime": 1781160980.339111,
+    "ast_hash": "acb593f14975f8fb2407dcfd34629d98",
     "semantic_hash": ""
   },
   "UI_MOdified/server/web-server.js": {
@@ -17190,13 +17190,13 @@
     "semantic_hash": ""
   },
   "UI_MOdified/test-offline-isolation-0.js": {
-    "mtime": 1780767537.8864007,
-    "ast_hash": "82f6834e164d79fa1c251a81ffae7f1e",
+    "mtime": 1781153379.0352504,
+    "ast_hash": "5b7fd3a009d072a2e7b2590464cdd589",
     "semantic_hash": ""
   },
   "UI_MOdified/test-offline-litellm-cert-timeout-stop-final-1.js": {
-    "mtime": 1781059997.8966055,
-    "ast_hash": "2f2104256ac630e4dd2f775be4b201ac",
+    "mtime": 1781158511.6548688,
+    "ast_hash": "0228198b53424662f56b0af0462930a8",
     "semantic_hash": ""
   },
   "UI_MOdified/test-offline-litellm-e2e-connectivity-1.js": {
@@ -17225,8 +17225,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/test-offline-map-bundle-1.js": {
-    "mtime": 1781060009.965748,
-    "ast_hash": "d90def40f67fae2fab378a6fda492d46",
+    "mtime": 1781158576.6304674,
+    "ast_hash": "7f1f0261b7b58622716dd429ce835c9b",
     "semantic_hash": ""
   },
   "UI_MOdified/test-offline-partial-import-404-1.js": {
@@ -18090,8 +18090,8 @@
     "semantic_hash": ""
   },
   "APP_INVENTORY.md": {
-    "mtime": 1781083528.1253023,
-    "ast_hash": "1a9b693dcb0a1f7d900509e9ed730e72",
+    "mtime": 1781165719.8906045,
+    "ast_hash": "727ff1983e38e1cbf693602cf735d5e2",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
@@ -18245,8 +18245,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/Offline_Deployment/docker-compose.offline.yml": {
-    "mtime": 1781070938.8542993,
-    "ast_hash": "434fe8e737caa21175457e9174d86487",
+    "mtime": 1781158457.4680972,
+    "ast_hash": "99da3416e1ff70291a677a40ad7d91be",
     "semantic_hash": ""
   },
   "UI_MOdified/Offline_Deployment/docs/ldap-configuration-guide.md": {
@@ -20350,8 +20350,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/docs/integration/offline-gen-diag-0-generation-reset-diagnosis.md": {
-    "mtime": 1780775782.3415184,
-    "ast_hash": "d629c63563480901ee276671731b0f9c",
+    "mtime": 1781158450.8480422,
+    "ast_hash": "9020d6326d863fa87d2d6b25342fda58",
     "semantic_hash": ""
   },
   "UI_MOdified/docs/integration/offline-image-0-runtime-inventory-and-packaging-plan.md": {
@@ -24695,12 +24695,12 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/assets/units/manifest.json": {
-    "mtime": 1781082772.448032,
-    "ast_hash": "e1bd731b03a1ee5e3a1b2931e870a3b8",
+    "mtime": 1781152501.6848128,
+    "ast_hash": "f596ffba12630b64ee9be7bb52834277",
     "semantic_hash": ""
   },
   "UI_MOdified/client/assets/units/uss-lake-champlain-cvs39.jpg": {
-    "mtime": 1781069036.2560174,
+    "mtime": 1781152501.687814,
     "ast_hash": "12d2343c8a2484245243cb179d694432",
     "semantic_hash": ""
   },
@@ -24765,8 +24765,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/server/ai/operational-brief.js": {
-    "mtime": 1781080433.1001513,
-    "ast_hash": "07d4e678ef9b4c9244b38d85840cf9c4",
+    "mtime": 1781160836.5283294,
+    "ast_hash": "8ea6a2d70ecd548d408ed8a7fe1f9c75",
     "semantic_hash": ""
   },
   "test-task1d-data-driven.js": {
@@ -24795,23 +24795,168 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/assets/units/patriot-sam-battery.jpg": {
-    "mtime": 1781080125.545197,
+    "mtime": 1781152501.6868143,
     "ast_hash": "ed8064534becfaad7ccd0d9c34d066fc",
     "semantic_hash": ""
   },
   "UI_MOdified/client/shell/doc-understanding-review.js": {
-    "mtime": 1781082367.4047172,
-    "ast_hash": "8d2e3339fdf34c5463f2c4b23774dab3",
+    "mtime": 1781153166.096983,
+    "ast_hash": "1fbd0481c778f4b4c4438c82f49b5888",
     "semantic_hash": ""
   },
-  "UI_MOdified/client/doc-understanding-verify.html": {
-    "mtime": 1781083400.5541735,
-    "ast_hash": "1f13839ce63e78838846296f861b4205",
+  "UI_MOdified/test-offline-tile-fix-1.js": {
+    "mtime": 1781159815.9441135,
+    "ast_hash": "874a40f468641c93a487c74dd8aace18",
     "semantic_hash": ""
   },
-  "UI_MOdified/client/doc-understanding-sample.json": {
-    "mtime": 1781083394.601238,
+  "UI_MOdified/verify-offline-tile-fix-1.js": {
+    "mtime": 1781158509.8183851,
+    "ast_hash": "bc8733ff902606cb16de2fab75035ae5",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/devtools/fixtures/doc-understanding/sample.json": {
+    "mtime": 1781152430.2419538,
     "ast_hash": "70f9f7c7f0bbb169fb40447694053cb9",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/test-offline-tile-proxy-1.js": {
+    "mtime": 1781158506.0651395,
+    "ast_hash": "2bd76507d6474aad14e97a59170975ac",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/devtools/fixtures/doc-understanding/verify.html": {
+    "mtime": 1781151608.7270584,
+    "ast_hash": "2c739d3ceff187f01cf9a6450cde73b1",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/TestingAI/Other_App_Ai_Generated output/Business_compare/step5.json": {
+    "mtime": 1781150980.0,
+    "ast_hash": "db71b074152b06bec62adeb369610a60",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/TestingAI/Other_App_Ai_Generated output/Business_development/step3.json": {
+    "mtime": 1781151094.0,
+    "ast_hash": "3b29e4b9979b61b058857d336f45a6e3",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/TestingAI/Other_App_Ai_Generated output/Staff_Brief/step2_staff_brief.py": {
+    "mtime": 1781151514.0,
+    "ast_hash": "c1bf7ded0386f1613ff997f3257a5bec",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/TestingAI/Other_App_Ai_Generated output/business_analysis/step4_out.json": {
+    "mtime": 1781150880.0,
+    "ast_hash": "15ccd922a074dd123c2a7aff2c33eebb",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/TestingAI/Other_App_Ai_Generated output/initial_planning_guide/step1.json": {
+    "mtime": 1781151300.0,
+    "ast_hash": "7ad183e4175166d37425440ba991e508",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/TestingAI/Other_App_Ai_Generated output/task_Analysi/step2_task_analysis.py": {
+    "mtime": 1778051194.0,
+    "ast_hash": "51b1d13e6068f6a54a659bfed5cfefa8",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/TestingAI/Other_App_Ai_Generated output/warning_order/warning_order.json": {
+    "mtime": 1781151722.0,
+    "ast_hash": "488b154711173cb391b4bc06bda12f54",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/scripts/test-phase-f-generate-1.js": {
+    "mtime": 1781153062.536582,
+    "ast_hash": "f6d9264ed454079e6714713d8fec6b3f",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/server/ai/brief-to-scenario.js": {
+    "mtime": 1781152716.5696154,
+    "ast_hash": "c4e60e8755c79137b041d94b922e8a06",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/server/ai/operation-templates.js": {
+    "mtime": 1781152604.6337175,
+    "ast_hash": "ecb43d8b4e6a6a0363acfd10bac702d5",
+    "semantic_hash": ""
+  },
+  "test-task2b-tasking-tooltip.js": {
+    "mtime": 1781153623.419837,
+    "ast_hash": "71543f6fbb74a09d59e9c0c1941b11eb",
+    "semantic_hash": ""
+  },
+  "test-task2c-tasking-overlay.js": {
+    "mtime": 1781155683.1366491,
+    "ast_hash": "d8ca0753744f53532127440ce32ac521",
+    "semantic_hash": ""
+  },
+  "test-task2d-map-tasking-hardening.js": {
+    "mtime": 1781159212.6021497,
+    "ast_hash": "dc53a7f0b4cc59f37521b7939833a6a4",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/Offline_Deployment/docker-compose.tiles-debug.yml": {
+    "mtime": 1781158463.0953438,
+    "ast_hash": "e9880e025f46c425cd46c5fe023459ca",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/devtools/fixtures/mdmp-external/step1.json": {
+    "mtime": 1781159471.672294,
+    "ast_hash": "7ad183e4175166d37425440ba991e508",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/devtools/fixtures/mdmp-external/step3.json": {
+    "mtime": 1781159471.672294,
+    "ast_hash": "3b29e4b9979b61b058857d336f45a6e3",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/devtools/fixtures/mdmp-external/step4_out.json": {
+    "mtime": 1781159471.672294,
+    "ast_hash": "15ccd922a074dd123c2a7aff2c33eebb",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/devtools/fixtures/mdmp-external/step5.json": {
+    "mtime": 1781159471.672294,
+    "ast_hash": "db71b074152b06bec62adeb369610a60",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/devtools/fixtures/mdmp-external/warning_order.json": {
+    "mtime": 1781159471.672294,
+    "ast_hash": "488b154711173cb391b4bc06bda12f54",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/devtools/fixtures/mdmp-external/README.md": {
+    "mtime": 1781159500.3606284,
+    "ast_hash": "8f416a0e9ecbdc7630c7d322a7c591f9",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/scripts/test-mdmp-external-detect-1.js": {
+    "mtime": 1781159689.7661161,
+    "ast_hash": "3f8f8c1774110ea88b718723908ea779",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/server/ai/jsonc.js": {
+    "mtime": 1781159541.8700898,
+    "ast_hash": "474fe122773b8365fe01223b2c1a56a0",
+    "semantic_hash": ""
+  },
+  "docs/coa-wargame-design.md": {
+    "mtime": 1781160806.951647,
+    "ast_hash": "fe3c489127579a9fcaece91c7ed44b31",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/scripts/test-mdmp-adapter-1.js": {
+    "mtime": 1781161073.784131,
+    "ast_hash": "2f92423d9f1cb66001f0259959f150b7",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/server/ai/mdmp-external-adapter.js": {
+    "mtime": 1781160941.7937872,
+    "ast_hash": "5ee1a351e44bdcd0c5ff72e52f35e6ff",
+    "semantic_hash": ""
+  },
+  "test-ui-fix-1-2.js": {
+    "mtime": 1781166615.965139,
+    "ast_hash": "1b85489d0ef94d33f9953d07e8f058fa",
     "semantic_hash": ""
   }
 }

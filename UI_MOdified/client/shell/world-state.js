@@ -213,7 +213,9 @@
         // Read BLS status by id from HERE — NOT ws.lines.bls[].status: the loop above
         // assigns the whole map object onto each line's .status (the line-shape wrinkle
         // the audit flagged), so the per-line value is not a usable status string.
-        ws.lines.bls_status_baseline = obj(s.bls_status_baseline);
+        // clone() so the snapshot never aliases the scenario's step object (a
+        // stray consumer write must corrupt only the snapshot, never the scenario).
+        ws.lines.bls_status_baseline = clone(obj(s.bls_status_baseline));
 
         // units (red + blue)
         arr(scn.red_units).forEach(function (u) {
@@ -983,6 +985,7 @@
         var single = objs.length === 1;
         var obj0   = obj(objs[0]);
         var objectiveId     = hasObj ? (obj0.id || obj0.name || null) : null;
+        var objectiveName   = hasObj ? (obj0.name || null) : null;   // approved shape: id AND name
         var objectiveStatus = (hasObj && obj0.status != null) ? obj0.status : null;
 
         var blsBaseline = obj(ws && ws.lines && ws.lines.bls_status_baseline);
@@ -998,9 +1001,14 @@
             var blsStatus = (blsId != null && blsBaseline[blsId] != null) ? blsBaseline[blsId] : null;
 
             // Route summary from kinematics.course (null when no course points).
+            // from/to are COPIES — link records must never share coordinate
+            // references with kinematics.course (aliasing hygiene).
             var course = arr(u.kinematics && u.kinematics.course);
+            var c0 = course[0], cN = course[course.length - 1];
             var route = course.length
-                ? { points: course.length, from: course[0], to: course[course.length - 1] }
+                ? { points: course.length,
+                    from: Array.isArray(c0) ? c0.slice(0, 2) : null,
+                    to:   Array.isArray(cN) ? cN.slice(0, 2) : null }
                 : null;
 
             // Objective link is INFERRED. Basis is 'scenario_single_objective'
@@ -1013,6 +1021,7 @@
                 uid:              uid,
                 side:             u.side || null,
                 objective_id:     objectiveId,
+                objective_name:   objectiveName,
                 objective_status: objectiveStatus,
                 link_basis:       linkBasis,
                 confidence:       hasObj ? 'inferred' : null,           // objective link: inferred, never declared

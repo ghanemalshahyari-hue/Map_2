@@ -44,6 +44,8 @@ ok('RED BLS is DECLARED (bls_confidence = "declared")',
 const r0 = redLinks[0];
 ok('objective_id present on RED link', !!r0.objective_id);
 ok('objective_id == ws.objectives[0].id (parity, not invented)', r0.objective_id === ws.objectives[0].id);
+ok('objective_name present + parity with ws.objectives[0].name (approved shape)',
+   ('objective_name' in r0) && r0.objective_name === (ws.objectives[0].name || null));
 ok('objective_status field present on link', 'objective_status' in r0);
 ok('objective_status == step.objective_status_baseline (parity)',
    r0.objective_status === ((ws.objectives[0] && ws.objectives[0].status != null) ? ws.objectives[0].status : null));
@@ -82,8 +84,9 @@ ok('off-map / no-course units are null-safe (route null, no throw)',
 const noObjScn = { schema_variant: 'rmooz', steps: [{ phase: 'P0' }], red_units: [{ uid: 'X1', side: 'RED', coord: [10, 20] }] };
 const wsNoObj = WS.deriveWorldState(noObjScn, 0);
 const xLink = wsNoObj.derived.unit_objective_links['X1'];
-ok('no objective => objective_id null + confidence null + link_basis null',
-   xLink && xLink.objective_id === null && xLink.confidence === null && xLink.link_basis === null);
+ok('no objective => objective_id/name null + confidence null + link_basis null',
+   xLink && xLink.objective_id === null && xLink.objective_name === null &&
+   xLink.confidence === null && xLink.link_basis === null);
 ok('unit with no uid is skipped (null-safe)',
    (() => { try { const r = WS.computeUnitObjectiveLinks({ units: [{ side: 'RED' }, null], meta: {} }); return Object.keys(r).length === 0; } catch (_) { return false; } })());
 

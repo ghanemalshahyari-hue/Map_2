@@ -75,3 +75,9 @@ UI_MOdified/data/imports/wargame_outputs/*
 
 # Local API key/archive secret files
 UI_MOdified/TestingAI/_archive/apik.rtf
+
+# MDMP-EXTERNAL-1: raw drop from the other AI app's MDMP pipeline. Its
+# step2_task_analysis.py carries internal LLM endpoint IPs — never commit the
+# raw folder. Sanitized key-schema fixtures live (tracked) under
+# UI_MOdified/devtools/fixtures/mdmp-external/.
+UI_MOdified/TestingAI/Other_App_Ai_Generated output/

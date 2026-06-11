@@ -1,0 +1,212 @@
+{
+  /* ---------- 1️⃣  Maneuveringunits (force‑comparison) ---------- */
+  "Our_available_forces": "<نص يصف قواتنا المتاحة حسب الجداول>",
+  "Enemy_forces_available": "<نص يصف قوات العدو المتاحة حسب الجداول>",
+
+  "Infantry_Battalion_total_our": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+  "Infantry_Battalion_total_enemy": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+
+  "Units_of_Tanks_armor_total_our": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+  "Units_of_Tanks_armor_total_enemy": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+
+  "Reconnaissance_units_total_our": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+  "Reconnaissance_units_total_enemy": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+
+  "Units_of_armor_resistance_total_our": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+  "Units_of_armor_resistance_total_enemy": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+
+  "Helicopter_units_total_our": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+  "Helicopter_units_total_enemy": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+
+  "The_air_situation": "<تحليل الموقف الجوي لدينا وتلك العدو>",
+
+  "mortar_fire_total_our_forces": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+  "mortar_fire_total_enemy_forces": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+
+  "medium_artillery_fire_total_our_forces": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+  "medium_artillery_fire_total_enemy_forces": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+
+  "Engineering_units_total_our_forces": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+  "Engineering_units_total_enemy_forces": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+
+  "Air_defense_our_forces": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+  "Air_defense_enemy_forces": {
+    "count": 0,
+    "unit_type": "كتائب",
+    "weight": 0.0
+  },
+
+  "Inference_of_firepower_of_the_forces": "<نتيجة مقارنة القدرة النارية>",
+
+  /* ---------- 2️⃣  Fire3_2 (deception & camouflage) ---------- */
+  "Comparison_of_superiority_of_forces_with_Deception_and_camouflage": "<نص يحدد أي طرف يتفوق في الخدعة والتمويه>",
+  "Percentage_of_superiority_of_forces_with_Mobility": "<نسبة التفوق الحركي>",
+
+  /* ---------- 3️⃣  Abilities (non‑material capabilities) ---------- */
+  "The_level_of_training_in_our_forces": "<جيد/جيد جداً/…>",
+  "Level_of_training_of_enemy_forces": "<جيد/جيد جداً/…>",
+
+  "The_morale_of_our_forces": "<جيد/جيد جداً/…>",
+  "Enemy_forces_morale": "<جيد/جيد جداً/…>",
+
+  "Combat_experience_of_our_forces": "<جيد/جيد جداً/…>",
+  "Combat_experience_of_enemy_forces": "<جيد/جيد جداً/…>",
+
+  "The_level_of_technology_in_our_forces": "<جيد/جيد جداً/…>",
+  "The_level_of_technology_of_the_enemy_forces": "<جيد/جيد جداً/…>",
+
+  "Our_forces_command_center": "<جيد/جيد جداً/…>",
+  "Enemy_forces_command_center": "<جيد/جيد جداً/…>",
+
+  "The_combat_doctrine_of_our_forces": "دفاعية",
+  "The_combat_doctrine_of_enemy_forces": "هجومية",
+
+  /* ---------- 4️⃣  Analysisofcapabilities (strength/weakness matrix) ---------- */
+  "Strengths_and_weaknesses_of_the_enemy_in_terms_of_maneuverability": {
+    "Strengths": "<قوة العدو في التحرك>",
+    "weaknesses": "<ضعف العدو في التحرك>"
+  },
+  "Strengths_and_weaknesses_of_our_forces_in_terms_of_maneuverability": {
+    "Strengths": "<قوة قواتنا في التحرك>",
+    "weaknesses": "<ضعف قواتنا في التحرك>"
+  },
+
+  "Strengths_and_weaknesses_of_the_enemy_in_terms_of_firepower": {
+    "Strengths": "<قوة العدو في القدرة النارية>",
+    "weaknesses": "<ضعف العدو في القدرة النارية>"
+  },
+  "Strengths_and_weaknesses_of_our_forces_in_terms_of_firepower": {
+    "Strengths": "<قوة قواتنا في القدرة النارية>",
+    "weaknesses": "<ضعف قواتنا في القدرة النارية>"
+  },
+
+  "Strengths_and_weaknesses_of_the_enemy_in_terms_of_protection": {
+    "Strengths": "<قوة العدو في الحماية>",
+    "weaknesses": "<ضعف العدو في الحماية>"
+  },
+  "Strengths_and_weaknesses_of_our_forces_in_terms_of_protection": {
+    "Strengths": "<قوة قواتنا في الحماية>",
+    "weaknesses": "<ضعف قواتنا في الحماية>"
+  },
+
+  "Strengths_and_weaknesses_of_the_enemy_in_terms_of_leadership": {
+    "Strengths": "<قوة العدو في القيادة>",
+    "weaknesses": "<ضعف العدو في القيادة>"
+  },
+  "Strengths_and_weaknesses_of_our_forces_in_terms_of_leadership": {
+    "Strengths": "<قوة قواتنا في القيادة>",
+    "weaknesses": "<ضعف قواتنا في القيادة>"
+  },
+
+  "Strengths_and_weaknesses_of_the_enemy_in_terms_of_information": {
+    "Strengths": "<قوة العدو في المعلومات>",
+    "weaknesses": "<ضعف العدو في المعلومات>"
+  },
+  "Strengths_and_weaknesses_of_our_forces_in_terms_of_information": {
+    "Strengths": "<قوة قواتنا في المعلومات>",
+    "weaknesses": "<ضعف قواتنا في المعلومات>"
+  },
+
+  /* ---------- 5️⃣  Thefirstwork (first possible‑work) ---------- */
+  "task": "<مهمة أولى – ماذا، من، متى، أين، لماذا>",
+  "commander_intent": "<قصد القائد للواجب>",
+  "main_duties": "<واجبات رئيسية (3 سطور) للواجب>",
+  "desired_end_state": "<النهاية المرغوبة للواجب>",
+  "critical_operations": "<عمليات حاسمة للنجاح>",
+
+  "Reserve": "<بيان عن الاحتياطي>",
+  "Mobilization_leadership": "<بيان عن القيادة التعبوية>",
+  "Close_air_support": "<بيان عن الإسناد الجوي القريب>",
+  "Intelligence_reconnaissance_and_surveillance": "<بيان عن الاستخبارات والاستطلاع>",
+
+  "phose_one": "<نص المرحلة الأولى>",
+  "phose_two": "<نص المرحلة الثانية>",
+  "phose_three": "<نص المرحلة الثالثة>",
+  "Boot_operations": "<نص عمليات التمهيد>",
+  "Artillery": "<نص عن المدفعية>",
+  "Artillery_fires_phose_one": "<نص مدفعي للمرحلة الأولى>",
+  "Artillery_fires_phose_two": "<نص مدفعي للمرحلة الثانية>",
+  "Artillery_fires_phose_three": "<نص مدفعي للمرحلة الثالثة>",
+  "Operations_and_maintenance": "<نص عن عمليات الإدامة>",
+  "Acceptance_of_packaging_risk": "<نص عن قبول المخاطر>",
+
+  /* ---------- 6️⃣  Thesecondwork (second possible‑work) ---------- */
+  "phose_one2": "<نص المرحلة الأولى (العمل الثاني)>",
+  "phose_two2": "<نص المرحلة الثانية (العمل الثاني)>",
+  "phose_three2": "<نص المرحلة الثالثة (العمل الثاني)>",
+  "Boot_operations2": "<نص عمليات التمهيد (العمل الثاني)>",
+  "Artillery2": "<نص عن المدفعية (العمل الثاني)>",
+  "Artillery_fires_phose_one2": "<نص مدفعي للمرحلة الأولى (العمل الثاني)>",
+  "Artillery_fires_phose_two2": "<نص مدفعي للمرحلة الثانية (العمل الثاني)>",
+  "Artillery_fires_phose_three2": "<نص مدفعي للمرحلة الثالثة (العمل الثاني)>",
+  "Operations_and_maintenance2": "<نص عن عمليات الإدامة (العمل الثاني)>",
+  "Acceptance_of_packaging_risk2": "<نص عن قبول المخاطر (العمل الثاني)>"
+}

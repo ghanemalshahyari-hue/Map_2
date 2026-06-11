@@ -1,0 +1,74 @@
+{
+  // ---------- Results from the first prompt (Operations) ----------
+  "possible_operation_phase1": "…generated text for phase‑1 possible operation…",
+  "possible_operation_phase2": "…generated text for phase‑2 possible operation…",
+  "possible_operation_phase3": "…generated text for phase‑3 possible operation…",
+  "Most_likely_enemy_action": "…most likely enemy action description…",
+  "our_forces": "…our force sequence of actions…",
+  "exposure_in_acting_assembly_area": "…opening in the acting assembly area…",
+  "exposure_in_reaction_assembly_area": "…opening in the reaction assembly area…",
+  "exposure_in_counter_action_assembly_area": "…opening in the counter‑action assembly area…",
+  "movement_from_assembly_to_acting_form": "…movement details from assembly to acting formation…",
+  "movement_from_assembly_to_reaction_form": "…enemy reaction while we move…",
+  "movement_from_assembly_to_counter_action_form": "…movement details for counter‑action…",
+
+  // ---------- Results from the second prompt (Operations2) ----------
+  "Enemy_forces_available": "…list of enemy units available…",
+  "contact_with_security_forces_acting_area": "…description of our contact in the acting area…",
+  "contact_with_security_forces_reaction_area": "…enemy reaction to our contact…",
+  "contact_with_security_forces_counter_action_area": "…counter‑action contact description…",
+  "crossing_LD_and_breaching_mines_acting": "…breaching details for the acting phase…",
+  "crossing_LD_and_breaching_mines_reaction": "…enemy reaction while we breach…",
+  "crossing_LD_and_breaching_mines_counter_action": "…breaching details for the counter‑action phase…",
+
+  // ---------- Results from the third prompt (Operations3) ----------
+  "combat_on_objectives_acting_phase1": "…combat description for acting‑phase‑1…",
+  "combat_on_objectives_reaction_phase1": "…combat description for reaction‑phase‑1…",
+  "combat_on_objectives_counter_action_phase1": "…combat description for counter‑action‑phase‑1…",
+  "combat_on_objectives_acting_phase2": "…combat description for acting‑phase‑2…",
+  "combat_on_objectives_reaction_phase2": "…combat description for reaction‑phase‑2…",
+  "combat_on_objectives_counter_action_phase2": "…combat description for counter‑action‑phase‑2…",
+
+  // ---------- Results from the fourth prompt (Operations4) ----------
+  "transition_to_defense_acting": "…defense transition details after acting…",
+  "transition_to_defense_reaction": "…defense transition details after reaction…",
+  "transition_to_defense_counter_action": "…defense transition details after counter‑action…",
+
+  // ---------- Results from the fifth prompt (Operations5) ----------
+  "task_organization": "…full task‑organization (التجميع للواجب) text…",
+
+  // ---------- Results from the sixth prompt (Operations_2) ----------
+  "possible_operation_phase1_2": "…generated text for phase‑1 possible operation (set 2)…",
+  "possible_operation_phase2_2": "…generated text for phase‑2 possible operation (set 2)…",
+  "possible_operation_phase3_2": "…generated text for phase‑3 possible operation (set 2)…",
+  "Most_likely_enemy_action_2": "…most likely enemy action description (set 2)…",
+  "our_forces_2": "…our force sequence of actions (set 2)…",
+  "exposure_in_acting_assembly_area_2": "…opening in the acting assembly area (set 2)…",
+  "exposure_in_reaction_assembly_area_2": "…opening in the reaction assembly area (set 2)…",
+  "exposure_in_counter_action_assembly_area_2": "…opening in the counter‑action assembly area (set 2)…",
+  "movement_from_assembly_to_acting_form_2": "…movement details from assembly to acting formation (set 2)…",
+  "movement_from_assembly_to_reaction_form_2": "…enemy reaction while we move (set 2)…",
+  "movement_from_assembly_to_counter_action_form_2": "…movement details for counter‑action (set 2)…",
+
+  // ---------- Results from the seventh prompt (Operations2_2) ----------
+  "Enemy_forces_available_2": "…list of enemy units (set 2)…",
+  "contact_with_security_forces_acting_area_2": "…our contact (set 2)…",
+  "contact_with_security_forces_reaction_area_2": "…enemy reaction (set 2)…",
+  "contact_with_security_forces_counter_action_area_2": "…counter‑action contact (set 2)…",
+  "crossing_LD_and_breaching_mines_acting_2": "…breaching (set 2) – acting…",
+  "crossing_LD_and_breaching_mines_reaction_2": "…breaching (set 2) – reaction…",
+  "crossing_LD_and_breaching_mines_counter_action_2": "…breaching (set 2) – counter‑action…",
+
+  // ---------- Results from the eighth prompt (Operations3_2) ----------
+  "combat_on_objectives_acting_phase1_2": "…combat (set 2) – acting‑phase‑1…",
+  "combat_on_objectives_reaction_phase1_2": "…combat (set 2) – reaction‑phase‑1…",
+  "combat_on_objectives_counter_action_phase1_2": "…combat (set 2) – counter‑action‑phase‑1…",
+  "combat_on_objectives_acting_phase2_2": "…combat (set 2) – acting‑phase‑2…",
+  "combat_on_objectives_reaction_phase2_2": "…combat (set 2) – reaction‑phase‑2…",
+  "combat_on_objectives_counter_action_phase2_2": "…combat (set 2) – counter‑action‑phase‑2…",
+
+  // ---------- Results from the ninth prompt (Operations4_2) ----------
+  "transition_to_defense_acting_2": "…defense transition (set 2) – acting…",
+  "transition_to_defense_reaction_2": "…defense transition (set 2) – reaction…",
+  "transition_to_defense_counter_action_2": "…defense transition (set 2) – counter‑action…"
+}

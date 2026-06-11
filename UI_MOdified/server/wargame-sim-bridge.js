@@ -45,16 +45,20 @@ const VALIDATOR = require(path.join(__dirname, 'ai', 'scenario-validator.js'));
 const GEN       = require(path.join(__dirname, 'ai', 'brief-to-scenario.js'));
 const TEMPLATES = require(path.join(__dirname, 'ai', 'operation-templates.js'));
 
-// Collect a request body and JSON.parse it. cb(obj) on success; cb(null) when
-// the body is empty; cb(undefined) when a body is present but not valid JSON.
+// Collect a request body and parse it. cb(obj) on success; cb(null) when the
+// body is empty; cb(undefined) when a body is present but not valid JSON.
+// MDMP-EXTERNAL-1 (G-1): external staff tools emit JSONC (comments, trailing
+// commas) — tolerate it via the string-aware jsonc parser instead of strict
+// JSON.parse, so their files don't silently fall through as "no body".
+const JSONC = require(path.join(__dirname, 'ai', 'jsonc.js'));
 function readJsonBody(req, cb) {
     var chunks = [], size = 0, MAX = 8000000;
     req.on('data', function (d) { size += d.length; if (size <= MAX) chunks.push(d); });
     req.on('error', function () { cb(null); });
     req.on('end', function () {
         if (!chunks.length) return cb(null);
-        try { cb(JSON.parse(Buffer.concat(chunks).toString('utf8'))); }
-        catch (_) { cb(undefined); }
+        var parsed = JSONC.parseJsonc(Buffer.concat(chunks).toString('utf8'));
+        cb(parsed.ok ? parsed.value : undefined);
     });
 }
 
@@ -903,7 +907,18 @@ function handle(req, res, ctx) {
         };
         if (method === 'GET') { analyzeStaged(); return true; }
         readJsonBody(req, function (body) {
-            if (!(body && typeof body === 'object' && !Array.isArray(body))) { analyzeStaged(); return; }
+            // G-1: explicit contract — no body ⇒ analyze the staged DOCX;
+            // a body that ISN'T valid JSON/JSONC (or isn't an object) ⇒ 400,
+            // never a silent fallthrough to the DOCX path.
+            if (body === null) { analyzeStaged(); return; }
+            if (body === undefined) {
+                sendJson(res, 400, { ok: false, error: 'request body is not valid JSON/JSONC — fix the payload or POST with an empty body to analyze the staged documents' });
+                return;
+            }
+            if (typeof body !== 'object' || Array.isArray(body)) {
+                sendJson(res, 400, { ok: false, error: 'JSON body must be an object (an Operational Brief, an RMOOZ scenario, or an external MDMP-stage file)' });
+                return;
+            }
             try {
                 var kind = BRIEF.classifyJsonInput(body);
                 if (kind === 'rmooz_scenario') {
@@ -927,6 +942,23 @@ function handle(req, res, ctx) {
                         document_set_id: nb.document_set_id, set_type: nb.set_type || 'operational_brief',
                         understanding: BRIEF.understandingFromBrief(nb),
                         llm_fill: { available: false, reason: 'Operational Brief provided directly' },
+                    });
+                } else if (kind === 'mdmp_external') {
+                    // MDMP-EXTERNAL-1 (G-1): recognized as an external MDMP-stage
+                    // file (the other app's pipeline). Detection + safe best-effort
+                    // mapping only — the full field adapter (synonym map, COA
+                    // extraction) is G-2 and awaits owner design decisions.
+                    var det = BRIEF.detectMdmp(body);
+                    var um = BRIEF.unknownToBrief(body);
+                    um.brief.operational_brief.ambiguities = [
+                        'Recognized as an external MDMP-stage file (' + det.step + ') — the dedicated field adapter is pending; only generic fields were mapped. Review everything before generating.',
+                    ].concat(um.brief.operational_brief.ambiguities || []);
+                    sendJson(res, 200, {
+                        ok: true, kind: 'mdmp_external', mdmp_step: det.step, matched_keys: det.matched,
+                        requires_review: true, confidence: 'low', adapter: 'pending',
+                        brief: um.brief, mapped: um.mapped, document_set_id: um.brief.document_set_id,
+                        understanding: BRIEF.understandingFromBrief(um.brief),
+                        llm_fill: { available: false, reason: 'External MDMP file detected (' + det.step + '); dedicated adapter pending (G-2)' },
                     });
                 } else {
                     var u = BRIEF.unknownToBrief(body);

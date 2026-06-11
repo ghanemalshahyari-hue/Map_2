@@ -348,6 +348,42 @@ function mergeSide(side, defaults) {
     return out;
 }
 
+// ── MDMP-EXTERNAL-1 (G-1): detect the other app's MDMP-stage JSON ────
+// The external pipeline emits flat key→Arabic-narrative objects per MDMP
+// stage. We recognize them by KEY fingerprints (values are often placeholder
+// templates), and tag which stage so the adapter (G-2, pending owner
+// decisions) and the review screen know what they hold. Order matters:
+// the most distinctive stages are checked first.
+const MDMP_STEPS = [
+    { step: 'coa_analysis',     // step 4 — wargame (action/reaction/counteraction)
+      any: ['possible_operation_phase1', 'Most_likely_enemy_action',
+            'crossing_LD_and_breaching_mines_acting', 'combat_on_objectives_acting_phase1'] },
+    { step: 'coa_comparison',   // step 5 — strengths/weaknesses per criterion
+      any: ['possible_operation_1', 'strengths_attacking_cog',
+            'overall_comparison_conclusion', 'strengths_attacking_cog_c2'] },
+    { step: 'coa_development',  // step 3 — force comparison + possible works
+      any: ['phose_one', 'Infantry_Battalion_total_our', 'Our_available_forces',
+            'Strengths_and_weaknesses_of_the_enemy_in_terms_of_maneuverability'] },
+    // planning_guidance BEFORE staff_brief: the step-1 package embeds the
+    // intel-summary keys too, so it must be claimed by its unique header
+    // fields (letter ref / assembly area / task_assembly) first.
+    { step: 'planning_guidance', // step 1 / WARNO package (also the field dictionary)
+      any: ['letter_ref_number', 'Assembly_Area', 'task_assembly',
+            'GROUND_COMPONENT_MISSION', 'Operational_Assumptions'] },
+    { step: 'staff_brief',      // step 2 outputs — intel summary / capabilities
+      any: ['Enemy_Capabilities', 'First_light', 'Recent_and_Ongoing_Activities',
+            'join_op_mission'] },
+];
+
+function detectMdmp(obj) {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return { is: false };
+    for (const def of MDMP_STEPS) {
+        const matched = def.any.filter(k => k in obj);
+        if (matched.length) return { is: true, step: def.step, matched };
+    }
+    return { is: false };
+}
+
 // Detect what a posted JSON object is.
 function classifyJsonInput(obj) {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return 'unknown';
@@ -357,6 +393,7 @@ function classifyJsonInput(obj) {
         (typeof obj.mission === 'string' || Array.isArray(obj.objectives) || Array.isArray(obj.phases))) {
         return 'operational_brief';   // bare operational_brief object
     }
+    if (detectMdmp(obj).is) return 'mdmp_external';
     return 'unknown';
 }
 
@@ -492,6 +529,7 @@ module.exports = {
     analyzeDocuments,
     // Phase F JSON input:
     classifyJsonInput,
+    detectMdmp,
     validateBrief,
     normalizeBrief,
     understandingFromBrief,

@@ -1,0 +1,487 @@
+/**
+ * MDMP external adapter — MDMP-EXTERNAL-1 / G-2 (build contract:
+ * docs/coa-wargame-design.md, owner rulings D1–D10 of 2026-06-11).
+ *
+ * Maps the other app's MDMP-stage JSON (steps 1–5, detected by
+ * operational-brief.detectMdmp) into the canonical Operational Brief:
+ *
+ *   step 3 (coa_development)  → courses_of_action[] (2 BLUE COAs) +
+ *                               force_comparison (9 categories, qualitative,
+ *                               strengths/weaknesses ×5 functions)
+ *   step 4 (coa_analysis)     → courses_of_action[].wargame_turns[] — the
+ *                               action → reaction → counteraction triads of
+ *                               the staff wargame (7 event families ×2 COAs),
+ *                               Most_likely_enemy_action → RED ML COA (D3),
+ *                               expected_enemy_reaction per COA
+ *   step 5 (coa_comparison)   → per-COA evaluation (5 criteria) +
+ *                               coa_recommendation (rationale only —
+ *                               decided_by is OPERATOR-ONLY, never AI)
+ *   step 1 / staff brief      → mission / intent / constraints / assumptions /
+ *                               timeline / AO / side summaries
+ *
+ * Hard rules honored:
+ *   • PLACEHOLDER SCRUBBING — template values (`<نص>`, `…`, `"..."`,
+ *     `يصدر لاحقاً`) are treated as MISSING, recorded in missing_information,
+ *     and never copied into brief content (no-invention).
+ *   • CITATIONS — every populated field records { file, keys[] } so the
+ *     review screen and WHITE rulings can point back at the source.
+ *   • Everything emitted is ai_assisted + needs_review + confidence:'low'
+ *     (L6); white_decision/result on every turn start EMPTY (pending the
+ *     G-5 wargame; D2 — no silent adjudication).
+ *   • Suffix families: `<k>` = COA 1; `<k>2` / `<k>_2` / `<k>_c2` = COA 2.
+ *
+ * Entry point: adaptMdmpBundle(entries) — entries: [{ filename, data }].
+ * Deterministic, no LLM, no I/O.
+ */
+'use strict';
+
+const BRIEF = require('./operational-brief');
+
+// ── Placeholder scrubbing ───────────────────────────────────────────
+// External templates mark unfilled fields with angle brackets, ellipses or
+// "issued later". Anything matching is MISSING, never content.
+function isPlaceholder(s) {
+    if (typeof s !== 'string') return true;
+    const t = s.trim();
+    if (!t) return true;
+    if (/^[.…]{1,4}$/.test(t)) return true;                       // "...", "…"
+    if (t.startsWith('…') || t.startsWith('...')) return true;     // "…generated text…"
+    if (t.startsWith('<') && t.endsWith('>')) return true;         // "<نص>"
+    if (t.startsWith('<') && t.indexOf('>') !== -1 && t.length < 120) return true;
+    if (t.startsWith('يصدر لاحق')) return true;                    // "issued later"
+    return false;
+}
+// value(): scrubbed read. Returns the trimmed string or null when missing.
+function val(obj, key) {
+    const v = obj ? obj[key] : undefined;
+    if (typeof v !== 'string' || isPlaceholder(v)) return null;
+    return v.trim();
+}
+
+// COA-2 suffix families: <k>2 (step3), <k>_2 (step4), <k>_c2 (step5).
+function coaKeyName(obj, base, idx) {
+    if (idx === 0) return (obj && base in obj) ? base : null;
+    for (const k of [base + '2', base + '_2', base + '_c2']) {
+        if (obj && k in obj) return k;
+    }
+    return null;
+}
+// Scrubbed read of a COA-indexed key; returns { value, key } (key = the
+// actual source key name, for citations).
+function coaVal(obj, base, idx) {
+    const k = coaKeyName(obj, base, idx);
+    if (!k) return { value: null, key: null };
+    return { value: val(obj, k), key: k };
+}
+
+// ── COA scaffold (D9 — every locked field present even when empty) ──
+function newCoa(id, side, name, nameEn) {
+    return {
+        id, side,
+        name, name_en: nameEn,
+        intent: null,
+        phases: [],
+        unit_tasking: [],            // filled by G-4 (Unit Tasking Mode)
+        wargame_turns: [],
+        expected_enemy_reaction: null,
+        counteraction: null,
+        risks: [],
+        assumptions: [],
+        missing_information: [],
+        confidence: 'low',
+        needs_review: true,
+        ai_assisted: true,
+        source_citations: [],
+        // non-locked extras the panel renders when present:
+        fires: [], summary: null, task_organization: null,
+        own_forces_summary: null, support_elements: {}, evaluation: null,
+        status: 'proposed',
+    };
+}
+function cite(target, file, keys) {
+    const ks = keys.filter(Boolean);
+    if (!ks.length) return;
+    const existing = target.source_citations.find(c => c.file === file);
+    if (existing) {
+        for (const k of ks) if (existing.keys.indexOf(k) === -1) existing.keys.push(k);
+    } else {
+        target.source_citations.push({ file, keys: ks });
+    }
+}
+function miss(target, what) {
+    if (target.missing_information.indexOf(what) === -1) target.missing_information.push(what);
+}
+
+// ── step 3 — COA development ────────────────────────────────────────
+const FORCE_CATEGORIES = [
+    ['infantry_battalions', 'Infantry_Battalion_total_our',            'Infantry_Battalion_total_enemy'],
+    ['armor',               'Units_of_Tanks_armor_total_our',          'Units_of_Tanks_armor_total_enemy'],
+    ['reconnaissance',      'Reconnaissance_units_total_our',          'Reconnaissance_units_total_enemy'],
+    ['anti_armor',          'Units_of_armor_resistance_total_our',     'Units_of_armor_resistance_total_enemy'],
+    ['helicopters',         'Helicopter_units_total_our',              'Helicopter_units_total_enemy'],
+    ['mortars',             'mortar_fire_total_our_forces',            'mortar_fire_total_enemy_forces'],
+    ['medium_artillery',    'medium_artillery_fire_total_our_forces',  'medium_artillery_fire_total_enemy_forces'],
+    ['engineering',         'Engineering_units_total_our_forces',      'Engineering_units_total_enemy_forces'],
+    ['air_defense',         'Air_defense_our_forces',                  'Air_defense_enemy_forces'],
+];
+const SW_FUNCTIONS = ['maneuverability', 'firepower', 'protection', 'leadership', 'information'];
+
+function sideCount(obj, key) {
+    const v = obj ? obj[key] : null;
+    if (!v || typeof v !== 'object') return null;
+    return {
+        count: Number.isFinite(v.count) ? v.count : 0,
+        unit_type: typeof v.unit_type === 'string' ? v.unit_type : null,
+        weight: Number.isFinite(v.weight) ? v.weight : 0,
+    };
+}
+
+function mapStep3(data, file, state) {
+    // Force comparison — structured counts pass through verbatim (zeros are
+    // faithful source data, not invention).
+    const categories = [];
+    for (const [key, ourK, enemyK] of FORCE_CATEGORIES) {
+        const our = sideCount(data, ourK), enemy = sideCount(data, enemyK);
+        if (our || enemy) categories.push({ key, our, enemy, source_keys: [ourK, enemyK] });
+    }
+    const sw = {};
+    for (const fn of SW_FUNCTIONS) {
+        const e = data['Strengths_and_weaknesses_of_the_enemy_in_terms_of_' + fn];
+        const o = data['Strengths_and_weaknesses_of_our_forces_in_terms_of_' + fn];
+        const pick = x => (x && typeof x === 'object')
+            ? { strengths: (typeof x.Strengths === 'string' && !isPlaceholder(x.Strengths)) ? x.Strengths.trim() : null,
+                weaknesses: (typeof x.weaknesses === 'string' && !isPlaceholder(x.weaknesses)) ? x.weaknesses.trim() : null }
+            : null;
+        const our = pick(o), enemy = pick(e);
+        if (our || enemy) sw[fn] = { our, enemy };
+    }
+    if (categories.length || Object.keys(sw).length) {
+        state.force_comparison = {
+            categories,
+            qualitative: {
+                training:          { our: val(data, 'The_level_of_training_in_our_forces'), enemy: val(data, 'Level_of_training_of_enemy_forces') },
+                morale:            { our: val(data, 'The_morale_of_our_forces'),            enemy: val(data, 'Enemy_forces_morale') },
+                combat_experience: { our: val(data, 'Combat_experience_of_our_forces'),     enemy: val(data, 'Combat_experience_of_enemy_forces') },
+                technology:        { our: val(data, 'The_level_of_technology_in_our_forces'), enemy: val(data, 'The_level_of_technology_of_the_enemy_forces') },
+                command_center:    { our: val(data, 'Our_forces_command_center'),           enemy: val(data, 'Enemy_forces_command_center') },
+                doctrine:          { our: val(data, 'The_combat_doctrine_of_our_forces'),   enemy: val(data, 'The_combat_doctrine_of_enemy_forces') },
+                air_situation: val(data, 'The_air_situation'),
+                firepower_inference: val(data, 'Inference_of_firepower_of_the_forces'),
+                deception: val(data, 'Comparison_of_superiority_of_forces_with_Deception_and_camouflage'),
+                mobility_superiority: val(data, 'Percentage_of_superiority_of_forces_with_Mobility'),
+            },
+            strengths_weaknesses: sw,
+            source: { file },
+        };
+    }
+    const ourSummary = val(data, 'Our_available_forces');
+    if (ourSummary) state.friendly_summary = state.friendly_summary || { text: ourSummary, file, key: 'Our_available_forces' };
+    const enemySummary = val(data, 'Enemy_forces_available');
+    if (enemySummary) state.enemy_summary = state.enemy_summary || { text: enemySummary, file, key: 'Enemy_forces_available' };
+
+    // Two BLUE COAs.
+    for (let idx = 0; idx < 2; idx++) {
+        const coa = state.blue[idx];
+        // Intent block exists only on COA 1 in this producer's schema.
+        for (const [field, base] of [['intent', 'task'], ['commander_intent', 'commander_intent'],
+                                     ['main_duties', 'main_duties'], ['desired_end_state', 'desired_end_state'],
+                                     ['critical_operations', 'critical_operations']]) {
+            const { value, key } = coaVal(data, base, idx);
+            if (value) {
+                if (field === 'intent') coa.intent = value;
+                else coa[field] = value;
+                cite(coa, file, [key]);
+            } else if (idx === 0 && field === 'intent') {
+                miss(coa, 'intent (task) — placeholder/absent in ' + file);
+            }
+        }
+        // Phases: prep + three maneuver phases.
+        const prep = coaVal(data, 'Boot_operations', idx);
+        if (prep.value) { coa.phases.push({ index: 0, kind: 'preparation', label: prep.value }); cite(coa, file, [prep.key]); }
+        ['phose_one', 'phose_two', 'phose_three'].forEach((base, i) => {
+            const { value, key } = coaVal(data, base, idx);
+            if (value) { coa.phases.push({ index: i + 1, kind: 'maneuver', label: value }); cite(coa, file, [key]); }
+            else miss(coa, 'maneuver phase ' + (i + 1) + ' — placeholder/absent in ' + file);
+        });
+        // Fires.
+        const art = coaVal(data, 'Artillery', idx);
+        if (art.value) { coa.fires.push({ index: 0, label: art.value }); cite(coa, file, [art.key]); }
+        ['Artillery_fires_phose_one', 'Artillery_fires_phose_two', 'Artillery_fires_phose_three'].forEach((base, i) => {
+            const { value, key } = coaVal(data, base, idx);
+            if (value) { coa.fires.push({ index: i + 1, label: value }); cite(coa, file, [key]); }
+        });
+        // Sustainment + risk.
+        const sus = coaVal(data, 'Operations_and_maintenance', idx);
+        if (sus.value) { coa.support_elements.sustainment = sus.value; cite(coa, file, [sus.key]); }
+        const risk = coaVal(data, 'Acceptance_of_packaging_risk', idx);
+        if (risk.value) { coa.risks.push({ text: risk.value, source: file }); cite(coa, file, [risk.key]); }
+        else miss(coa, 'risk acceptance — placeholder/absent in ' + file);
+    }
+    // COA-1-section support elements.
+    const coa1 = state.blue[0];
+    for (const [k, label] of [['Reserve', 'reserve'], ['Mobilization_leadership', 'mobilization_leadership'],
+                              ['Close_air_support', 'close_air_support'],
+                              ['Intelligence_reconnaissance_and_surveillance', 'isr']]) {
+        const v = val(data, k);
+        if (v) { coa1.support_elements[label] = v; cite(coa1, file, [k]); }
+    }
+}
+
+// ── step 4 — COA analysis (the staff wargame) ───────────────────────
+// Seven event families, each an action/reaction/counteraction triad.
+const TURN_FAMILIES = [
+    { trigger_en: 'Exposure in assembly areas',            trigger_ar: 'الانكشاف في مناطق التجمع',
+      acting: 'exposure_in_acting_assembly_area', reaction: 'exposure_in_reaction_assembly_area', counter: 'exposure_in_counter_action_assembly_area' },
+    { trigger_en: 'Movement from assembly to formation',   trigger_ar: 'الحركة من التجمع إلى التشكيل',
+      acting: 'movement_from_assembly_to_acting_form', reaction: 'movement_from_assembly_to_reaction_form', counter: 'movement_from_assembly_to_counter_action_form' },
+    { trigger_en: 'Contact with security forces',          trigger_ar: 'التماس مع قوات الأمن',
+      acting: 'contact_with_security_forces_acting_area', reaction: 'contact_with_security_forces_reaction_area', counter: 'contact_with_security_forces_counter_action_area' },
+    { trigger_en: 'Crossing LD & breaching minefields',    trigger_ar: 'عبور خط الانطلاق وفتح الثغرات',
+      acting: 'crossing_LD_and_breaching_mines_acting', reaction: 'crossing_LD_and_breaching_mines_reaction', counter: 'crossing_LD_and_breaching_mines_counter_action' },
+    { trigger_en: 'Combat on objectives — phase 1',        trigger_ar: 'القتال على الأهداف — المرحلة الأولى',
+      acting: 'combat_on_objectives_acting_phase1', reaction: 'combat_on_objectives_reaction_phase1', counter: 'combat_on_objectives_counter_action_phase1' },
+    { trigger_en: 'Combat on objectives — phase 2',        trigger_ar: 'القتال على الأهداف — المرحلة الثانية',
+      acting: 'combat_on_objectives_acting_phase2', reaction: 'combat_on_objectives_reaction_phase2', counter: 'combat_on_objectives_counter_action_phase2' },
+    { trigger_en: 'Transition to defense',                 trigger_ar: 'التحول إلى الدفاع',
+      acting: 'transition_to_defense_acting', reaction: 'transition_to_defense_reaction', counter: 'transition_to_defense_counter_action' },
+];
+
+function mapStep4(data, file, state) {
+    for (let idx = 0; idx < 2; idx++) {
+        const coa = state.blue[idx];
+        // Phases from the possible-operation narrative (enrich when step 3 absent).
+        ['possible_operation_phase1', 'possible_operation_phase2', 'possible_operation_phase3'].forEach((base, i) => {
+            const { value, key } = coaVal(data, base, idx);
+            if (value && !coa.phases.some(p => p.index === i + 1)) {
+                coa.phases.push({ index: i + 1, kind: 'maneuver', label: value });
+                cite(coa, file, [key]);
+            }
+        });
+        // Wargame turns — only when at least one beat carries real content.
+        TURN_FAMILIES.forEach((fam, t) => {
+            const a = coaVal(data, fam.acting, idx);
+            const r = coaVal(data, fam.reaction, idx);
+            const c = coaVal(data, fam.counter, idx);
+            if (!a.value && !r.value && !c.value) {
+                miss(coa, 'wargame turn "' + fam.trigger_en + '" — all beats placeholder/absent in ' + file);
+                return;
+            }
+            const turn = {
+                turn_id: coa.id + '-t' + (t + 1),
+                phase_index: t,
+                trigger: { en: fam.trigger_en, ar: fam.trigger_ar },
+                action:        { side: 'BLUE', units: [], what: a.value, why: null },
+                reaction:      { side: 'RED',  units: [], what: r.value, why: null },
+                counteraction: { side: 'BLUE', units: [], what: c.value, why: null },
+                // D2 — adjudication is NEVER pre-filled by the adapter; the
+                // wargame engine (G-5) + WHITE fill these.
+                white_decision: { decision: null, decided_by: null, rule_cards_fired: [], rationale: null, journal_ref: null },
+                result: { effects: [], state_delta: null, narrative_ar: null, narrative_en: null },
+                affected_units: [],
+                status: 'proposed',
+                ai_assisted: true, needs_review: true, confidence: 'low',
+                source_citations: [{ file, keys: [a.key, r.key, c.key].filter(Boolean) }],
+            };
+            coa.wargame_turns.push(turn);
+            cite(coa, file, [a.key, r.key, c.key]);
+        });
+        // Expected enemy reaction + COA-level counteraction summary.
+        const ml = coaVal(data, 'Most_likely_enemy_action', idx);
+        if (ml.value) {
+            coa.expected_enemy_reaction = ml.value;
+            cite(coa, file, [ml.key]);
+            if (!state.red_ml) state.red_ml = { text: ml.value, file, key: ml.key };
+        } else {
+            miss(coa, 'most likely enemy action — placeholder/absent in ' + file);
+        }
+        if (!coa.counteraction) {
+            const firstCounter = coa.wargame_turns.map(t => t.counteraction.what).find(Boolean);
+            if (firstCounter) coa.counteraction = firstCounter;
+        }
+        const own = coaVal(data, 'our_forces', idx);
+        if (own.value) { coa.own_forces_summary = own.value; cite(coa, file, [own.key]); }
+    }
+    const torg = val(data, 'task_organization');
+    if (torg) { state.blue[0].task_organization = torg; cite(state.blue[0], file, ['task_organization']); }
+    const enemyAvail = val(data, 'Enemy_forces_available') || val(data, 'Enemy_forces_available_2');
+    if (enemyAvail && !state.enemy_summary) state.enemy_summary = { text: enemyAvail, file, key: 'Enemy_forces_available' };
+}
+
+// ── step 5 — COA comparison ─────────────────────────────────────────
+const EVAL_CRITERIA = [
+    ['attacking_cog',   'strengths_attacking_cog',   'weaknesses_attacking_cog'],
+    ['fire_support',    'strengths_fire_support',    'weaknesses_fire_support'],
+    ['command_control', 'strengths_command_control', 'weaknesses_command_control'],
+    ['protection',      'strengths_protection',      'weaknesses_protection'],
+    ['admin_support',   'strengths_admin_support',   'weaknesses_admin_support'],
+];
+
+function mapStep5(data, file, state) {
+    for (let idx = 0; idx < 2; idx++) {
+        const coa = state.blue[idx];
+        const summary = coaVal(data, 'possible_operation_' + (idx + 1), 0);   // exact keys, no family
+        if (summary.value) { coa.summary = summary.value; cite(coa, file, ['possible_operation_' + (idx + 1)]); }
+        const criteria = {};
+        let any = false;
+        for (const [name, sBase, wBase] of EVAL_CRITERIA) {
+            const s = coaVal(data, sBase, idx);
+            const w = coaVal(data, wBase, idx);
+            if (s.value || w.value) {
+                criteria[name] = { strengths: s.value, weaknesses: w.value };
+                cite(coa, file, [s.key, w.key]);
+                any = true;
+            }
+        }
+        const conclusion = val(data, idx === 0 ? 'conclusions_c1' : 'conclusions_c2');
+        if (any || conclusion) {
+            coa.evaluation = { criteria, conclusion: conclusion || null, source: file };
+            if (conclusion) cite(coa, file, [idx === 0 ? 'conclusions_c1' : 'conclusions_c2']);
+        } else {
+            miss(coa, 'evaluation criteria — placeholder/absent in ' + file);
+        }
+    }
+    const overall = val(data, 'overall_comparison_conclusion');
+    if (overall) {
+        // decided_by is OPERATOR-ONLY (D9): the adapter records rationale,
+        // never a decision.
+        state.recommendation = { recommended_id: null, rationale: overall, decided_by: null, source: { file, key: 'overall_comparison_conclusion' } };
+    }
+}
+
+// ── step 1 / staff brief — situation & guidance fields ──────────────
+function mapPlanning(data, file, state) {
+    state.mission = state.mission || (function () {
+        for (const k of ['join_op_mission', 'GROUND_COMPONENT_MISSION', 'Exc_command_mission']) {
+            const v = val(data, k);
+            if (v) return { text: v, file, key: k };
+        }
+        return null;
+    })();
+    const intentParts = ['Join_op_purp', 'joint_ops_how', 'joint_ops_desired_end']
+        .map(k => ({ k, v: val(data, k) })).filter(x => x.v);
+    if (intentParts.length && !state.intent) {
+        state.intent = { text: intentParts.map(x => x.v).join(' — '), file, keys: intentParts.map(x => x.k) };
+    }
+    for (const [k, type] of [['ROE', 'roe'], ['Risk_assy', 'risk']]) {
+        const v = val(data, k);
+        if (v) state.constraints.push({ text: v, type, source: { file, key: k } });
+    }
+    const assume = val(data, 'Operational_Assumptions');
+    if (assume) state.assumptions.push({ text: assume, source: { file, key: 'Operational_Assumptions' } });
+    for (const k of ['Timings', 'date_time', 'time_zone']) {
+        const v = val(data, k);
+        if (v) state.timeline.push({ label: k, text: v, source: { file, key: k } });
+    }
+    const ao = {};
+    for (const k of ['operations_area', 'area_interest', 'Assembly_Area', 'Maps']) {
+        const v = val(data, k);
+        if (v) ao[k] = v;
+    }
+    if (Object.keys(ao).length) state.area = Object.assign(state.area || {}, ao, { source_file: file });
+    const ff = val(data, 'friendly_forces');
+    if (ff && !state.friendly_summary) state.friendly_summary = { text: ff, file, key: 'friendly_forces' };
+    const ef = val(data, 'enemy_forces');
+    if (ef && !state.enemy_summary) state.enemy_summary = { text: ef, file, key: 'enemy_forces' };
+    const cap = val(data, 'Enemy_Capabilities');
+    if (cap) state.enemy_capabilities.push({ text: cap, source: { file, key: 'Enemy_Capabilities' } });
+}
+
+// ── Bundle entry point ──────────────────────────────────────────────
+// entries: [{ filename, data }] — data already parsed (JSONC handled upstream).
+function adaptMdmpBundle(entries) {
+    const list = (Array.isArray(entries) ? entries : []).filter(e => e && e.data && typeof e.data === 'object');
+    const state = {
+        blue: [
+            newCoa('coa-blue-1', 'BLUE', 'العمل الممكن الأول', 'COA 1'),
+            newCoa('coa-blue-2', 'BLUE', 'العمل الممكن الثاني', 'COA 2'),
+        ],
+        red_ml: null, recommendation: null, force_comparison: null,
+        mission: null, intent: null, friendly_summary: null, enemy_summary: null,
+        constraints: [], assumptions: [], timeline: [], area: null, enemy_capabilities: [],
+        files: [], steps: [],
+    };
+
+    for (const e of list) {
+        const det = BRIEF.detectMdmp(e.data);
+        const step = det.is ? det.step : 'unknown';
+        const file = e.filename || '(unnamed)';
+        state.files.push({ filename: file, mdmp_step: step, matched_keys: det.is ? det.matched : [] });
+        if (det.is) state.steps.push(step);
+        if (step === 'coa_development') mapStep3(e.data, file, state);
+        else if (step === 'coa_analysis') mapStep4(e.data, file, state);
+        else if (step === 'coa_comparison') mapStep5(e.data, file, state);
+        else if (step === 'planning_guidance' || step === 'staff_brief') mapPlanning(e.data, file, state);
+    }
+
+    // Assemble the brief.
+    const brief = BRIEF.emptyBrief();
+    const ob = brief.operational_brief;
+    brief.document_set_id = 'ds_mdmp_' + BRIEF.sha256(JSON.stringify(state.files)).slice(0, 12);
+    brief.set_type = 'mdmp_external';
+    brief.documents = state.files.map(f => ({
+        filename: f.filename, slots: [], hash: null,
+        detected_type: 'mdmp_external', mdmp_step: f.mdmp_step,
+        type_label_ar: 'ملف مرحلة من تطبيق خارجي (MDMP)', type_label_en: 'External MDMP-stage file (' + f.mdmp_step + ')',
+        language: 'ar', confidence: 0.6,
+    }));
+
+    if (state.mission) { ob.mission = state.mission.text; ob.source_citations.push({ field: 'mission', file: state.mission.file, keys: [state.mission.key] }); }
+    if (state.intent) { ob.commander_intent = state.intent.text; ob.source_citations.push({ field: 'commander_intent', file: state.intent.file, keys: state.intent.keys }); }
+    if (state.friendly_summary) { ob.friendly.summary = state.friendly_summary.text; ob.source_citations.push({ field: 'friendly.summary', file: state.friendly_summary.file, keys: [state.friendly_summary.key] }); }
+    if (state.enemy_summary) { ob.enemy.summary = state.enemy_summary.text; ob.source_citations.push({ field: 'enemy.summary', file: state.enemy_summary.file, keys: [state.enemy_summary.key] }); }
+    if (state.enemy_capabilities.length) ob.enemy.assessed_capabilities = state.enemy_capabilities;
+    ob.constraints = state.constraints;
+    ob.assumptions = state.assumptions;
+    ob.timeline = state.timeline;
+    if (state.area) ob.area_of_operations = state.area;
+    if (state.force_comparison) ob.force_comparison = state.force_comparison;
+
+    // COAs: 2 BLUE always (even if empty — the operator sees what's missing),
+    // + RED most-likely when the source carried it. RED most-dangerous is
+    // NEVER invented (D3) — Generate More produces it later.
+    const coas = state.blue.slice();
+    if (state.red_ml) {
+        const red = newCoa('coa-red-ml', 'RED', 'العمل الأكثر احتمالاً للعدو', 'Enemy Most Likely COA');
+        red.intent = state.red_ml.text;
+        cite(red, state.red_ml.file, [state.red_ml.key]);
+        miss(red, 'Enemy Most Dangerous COA not provided by source — use Generate More (D3: RED default = ML + MD).');
+        coas.push(red);
+    }
+    ob.courses_of_action = coas;
+    if (state.recommendation) ob.coa_recommendation = state.recommendation;
+
+    // Brief-level ambiguities: per-COA gaps roll up so the review screen's
+    // single funnel shows them.
+    const ambiguities = [];
+    for (const c of coas) {
+        for (const m of c.missing_information) ambiguities.push('[' + c.id + '] ' + m);
+    }
+    if (!state.mission) ambiguities.push('Mission not found in the bundle (or placeholder-only).');
+    if (!state.steps.includes('coa_analysis')) ambiguities.push('No step-4 (COA analysis) file in the bundle — wargame turns are empty.');
+    if (!state.steps.includes('coa_comparison')) ambiguities.push('No step-5 (COA comparison) file — no evaluation/recommendation.');
+    ob.ambiguities = ambiguities;
+
+    const report = {
+        files: state.files,
+        steps_present: Array.from(new Set(state.steps)),
+        coas: coas.map(c => ({
+            id: c.id, side: c.side, name: c.name,
+            phases: c.phases.length, turns: c.wargame_turns.length,
+            has_evaluation: !!c.evaluation, missing: c.missing_information.length,
+            citations: c.source_citations.length,
+        })),
+        force_comparison_categories: state.force_comparison ? state.force_comparison.categories.length : 0,
+        recommendation_present: !!state.recommendation,
+        scrubbed_note: 'placeholder template values were treated as missing (no-invention)',
+    };
+
+    return { brief, report };
+}
+
+module.exports = {
+    adaptMdmpBundle,
+    // exposed for tests:
+    isPlaceholder,
+    TURN_FAMILIES,
+    FORCE_CATEGORIES,
+};

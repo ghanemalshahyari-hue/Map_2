@@ -12,18 +12,20 @@ tactical truth.
 
 ## 0. Locked decision register
 
-| # | Ruling |
+| # | Ruling (final, per owner D1–D10 of 2026-06-11) |
 |---|---|
-| **L1** | User **chooses role every time** (wargame start); **default BLUE**. |
-| **L2** | **Default COAs = 3**; a **Generate More** action adds candidates on demand. |
-| **L3** | Wargame mode is **user-selectable**: (a) Auto-run full sequence, (b) Step-by-step — pause after action / reaction / counteraction, (c) commander-driven **manual mode — later phase**. |
-| **L4** | Unit control is **CMO-style tasking**, not only drag: select unit → assign direction/task/objective/route/posture → run scenario/turn → AI/engine predicts reaction → WHITE adjudicates → commander accepts/rejects/modifies. |
-| **L5** | A **global `unit_tasking` model** is added. Baseline units are **never mutated directly**. |
-| **L6** | AI placement may be rendered draft- or final-looking, but **every AI placement keeps `needs_review` + `confidence` + `source`** — no exceptions. |
-| **L7** | Doctrine: start with **public NATO-style test doctrine**; later the user uploads PDF/DOCX doctrine, which must be **extracted into reviewed doctrine rule cards before use**. |
-| **L8** | Reuse **existing RMOOZ action/result vocabulary** where it exists; anything missing is added as **additive enums, never hardcoded text** (inventory in §4.3). |
-| **L9** | **WHITE = adjudicator/controller**: AI suggests → rule engine evaluates → human commander/controller approves. |
-| **L10** | External Step 4 maps into **`courses_of_action[].wargame_turns[]`** with `action → reaction → counteraction → white_decision → result`. |
+| **L1 (D1)** | Role picker **every session**, default **BLUE**. User may choose BLUE / RED / WHITE. Choosing BLUE ⇒ RED is AI opposing force; choosing RED ⇒ BLUE is AI opposing force. **WHITE is always controller/adjudicator, never a fighting side.** |
+| **L2 (D3)** | **BLUE default = 3 COAs. RED default = 2 COAs** (1 most-likely + 1 most-dangerous). **Generate More** available; **hard cap = 5 COAs per side** for now. |
+| **L3 (D4)** | Modes user-selectable: Auto-run / Step-by-step / Manual (later). **Default = Step-by-step approval**: Action → Reaction → Counteraction → WHITE decision → commander accepts/rejects/modifies → next turn. |
+| **L4 (D2/D9)** | **Hybrid WHITE adjudication**: AI/rules may *suggest* the WHITE decision; the human must be able to approve/reject/modify; auto-run may write `WHITE-AUTO` entries; **every state-changing result is journaled — no silent mutation.** |
+| **L5 (D7)** | Planning uses **both** targets: in-session **working copy** for temporary planning + **save-as-new-draft** for committed wargame output. **Deltas first: `baseline + planning delta = current planning view`.** Baseline never mutated. |
+| **L6** | AI placement may render draft- or final-looking, but **every AI placement keeps `needs_review` + `confidence` + `source`** — no exceptions. |
+| **L7** | Doctrine: public NATO-style test doctrine first; uploaded PDF/DOCX later — **extracted into reviewed doctrine rule cards before use**. |
+| **L8** | Reuse existing RMOOZ vocabulary; missing terms (suppressed, delayed, turn beats) added as **additive enums, never hardcoded text** (§4.3). |
+| **L9 (D5)** | **Detailed timeline records**: action, reaction, counteraction, WHITE adjudication, result, **affected units, confidence, needs_review, source_citations** — mapping directly from external Step-4 triads. |
+| **L10 (D6)** | `amphibious_landing` / عملية إبرار requires **objective AND landing-area confirmation; missing either ⇒ 422.** AI may *suggest* draft landing areas; the user must confirm. |
+| **L11 (D8)** | **Animation is NOT built first** (G-7, after timeline + tasking). When built: one event at a time, play/pause/step fwd/back, arrows/routes/effects tied to actual A/R/C records, **no decorative-only animation**, commander can stop & modify before continuing. |
+| **L12 (D10)** | Build order: **G-2** MDMP adapter (step3→COAs+force comparison, step4→A/R/C wargame turns, step5→comparison/recommendation, placeholder scrub, per-key citations) → **G-3** COA Review Panel → **G-4** Unit Tasking Mode → **G-5** Wargame Timeline (RED/BLUE/WHITE) → **G-6** Doctrine Rule Cards → **G-7** Animation → **G-8** civilians/infrastructure/ROE reality layer (later). |
 
 Roles (L1): at wargame start a role picker offers **BLUE (default) / RED / WHITE**; the chosen
 role gates which side's taskings the user may issue and whether they hold the WHITE approval
@@ -118,8 +120,10 @@ courses_of_action[].wargame_turns[] = {
   result: { effects[],                        // UNIT_EFFECTS additive enum (§4.3)
             state_delta, losses{}, objective_status?,   // existing OBJECTIVE_STATUS
             narrative_ar, narrative_en },
+  affected_units: [],                         // L9/D5: uids touched by this turn
   status: proposed | approved | edited | rejected | adjudicated,
-  ai_assisted: true, needs_review: true
+  ai_assisted: true, needs_review: true,
+  confidence: low|medium|high, source_citations: [{file, keys[]}]   // L9/D5
 }
 ```
 
@@ -258,8 +262,7 @@ scenario units; baseline markers never get `draggable:true`.
 
 ## Appendix B — Remaining minor opens (non-blocking, resolve during build)
 
-- Amphibious landing-area confirmation in addition to objective (recommended yes; v1 D6).
-- Generate More soft cap (proposed 5) and whether RED also gets Generate More or stays ML+MD.
-- Turn → game-time mapping (elapsed_hours per turn) defaults.
-- Working-copy persistence beyond session: save-as-new-draft-scenario via existing
-  `POST /api/scenarios` (recommended) — never overwriting baseline.
+- ~~Amphibious landing-area confirmation~~ **RESOLVED (L10/D6): required, 422 when missing.**
+- ~~COA caps~~ **RESOLVED (L2/D3): BLUE 3 / RED 2 (ML+MD), Generate More, hard cap 5/side.**
+- ~~Planning save target~~ **RESOLVED (L5/D7): working copy + save-as-new-draft; deltas first.**
+- Turn → game-time mapping (elapsed_hours per turn) defaults — resolve in G-5.

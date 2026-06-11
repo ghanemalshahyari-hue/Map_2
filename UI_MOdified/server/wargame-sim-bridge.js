@@ -44,6 +44,8 @@ const BRIEF = require(path.join(__dirname, 'ai', 'operational-brief.js'));
 const VALIDATOR = require(path.join(__dirname, 'ai', 'scenario-validator.js'));
 const GEN       = require(path.join(__dirname, 'ai', 'brief-to-scenario.js'));
 const TEMPLATES = require(path.join(__dirname, 'ai', 'operation-templates.js'));
+// MDMP-EXTERNAL-1 / G-2: step 3/4/5 → courses_of_action[].wargame_turns[].
+const MDMP_ADAPTER = require(path.join(__dirname, 'ai', 'mdmp-external-adapter.js'));
 
 // Collect a request body and parse it. cb(obj) on success; cb(null) when the
 // body is empty; cb(undefined) when a body is present but not valid JSON.
@@ -920,6 +922,48 @@ function handle(req, res, ctx) {
                 return;
             }
             try {
+                // MDMP-EXTERNAL-1 / G-2: a bundle of external MDMP-stage files
+                // ({ bundle: [{ filename|name, content }] }) maps into ONE brief
+                // via the adapter (step3→COAs+force comparison, step4→wargame
+                // turns, step5→evaluation/recommendation). Entries may be
+                // pre-parsed objects or JSONC strings.
+                if (Array.isArray(body.bundle)) {
+                    var entries = [];
+                    for (var bi = 0; bi < body.bundle.length; bi++) {
+                        var it = body.bundle[bi] || {};
+                        var content = it.content;
+                        if (typeof content === 'string') {
+                            var pc = JSONC.parseJsonc(content);
+                            if (!pc.ok) {
+                                sendJson(res, 400, { ok: false, error: 'bundle[' + bi + '] (' + (it.filename || it.name || '?') + ') is not valid JSON/JSONC: ' + pc.error });
+                                return;
+                            }
+                            content = pc.value;
+                        }
+                        if (!content || typeof content !== 'object' || Array.isArray(content)) {
+                            sendJson(res, 400, { ok: false, error: 'bundle[' + bi + '] content must be a JSON object' });
+                            return;
+                        }
+                        if (!BRIEF.detectMdmp(content).is) {
+                            sendJson(res, 400, { ok: false, error: 'bundle[' + bi + '] (' + (it.filename || it.name || '?') + ') is not a recognized external MDMP-stage file — post it alone for brief/scenario/unknown handling' });
+                            return;
+                        }
+                        entries.push({ filename: it.filename || it.name || ('bundle-' + bi), data: content });
+                    }
+                    var bundleOut = MDMP_ADAPTER.adaptMdmpBundle(entries);
+                    sendJson(res, 200, {
+                        ok: true, kind: 'mdmp_external', bundle: true,
+                        steps_present: bundleOut.report.steps_present,
+                        requires_review: true, confidence: 'low',
+                        adapter: 'mdmp-external-adapter@1',
+                        brief: bundleOut.brief, report: bundleOut.report,
+                        document_set_id: bundleOut.brief.document_set_id,
+                        documents: bundleOut.brief.documents,
+                        understanding: BRIEF.understandingFromBrief(bundleOut.brief),
+                        llm_fill: { available: false, reason: 'External MDMP bundle adapted deterministically; LLM enrichment runs on deployment' },
+                    });
+                    return;
+                }
                 var kind = BRIEF.classifyJsonInput(body);
                 if (kind === 'rmooz_scenario') {
                     // RMOOZ Scenario JSON → schema validate + 500/side normalize (before/after).
@@ -944,21 +988,20 @@ function handle(req, res, ctx) {
                         llm_fill: { available: false, reason: 'Operational Brief provided directly' },
                     });
                 } else if (kind === 'mdmp_external') {
-                    // MDMP-EXTERNAL-1 (G-1): recognized as an external MDMP-stage
-                    // file (the other app's pipeline). Detection + safe best-effort
-                    // mapping only — the full field adapter (synonym map, COA
-                    // extraction) is G-2 and awaits owner design decisions.
+                    // MDMP-EXTERNAL-1 / G-2: single external MDMP-stage file →
+                    // the dedicated adapter (placeholder scrub + citations).
+                    // A lone file yields a PARTIAL brief; the response's
+                    // ambiguities say which stages are absent.
                     var det = BRIEF.detectMdmp(body);
-                    var um = BRIEF.unknownToBrief(body);
-                    um.brief.operational_brief.ambiguities = [
-                        'Recognized as an external MDMP-stage file (' + det.step + ') — the dedicated field adapter is pending; only generic fields were mapped. Review everything before generating.',
-                    ].concat(um.brief.operational_brief.ambiguities || []);
+                    var single = MDMP_ADAPTER.adaptMdmpBundle([{ filename: '(posted body)', data: body }]);
                     sendJson(res, 200, {
                         ok: true, kind: 'mdmp_external', mdmp_step: det.step, matched_keys: det.matched,
-                        requires_review: true, confidence: 'low', adapter: 'pending',
-                        brief: um.brief, mapped: um.mapped, document_set_id: um.brief.document_set_id,
-                        understanding: BRIEF.understandingFromBrief(um.brief),
-                        llm_fill: { available: false, reason: 'External MDMP file detected (' + det.step + '); dedicated adapter pending (G-2)' },
+                        requires_review: true, confidence: 'low',
+                        adapter: 'mdmp-external-adapter@1',
+                        brief: single.brief, report: single.report,
+                        document_set_id: single.brief.document_set_id,
+                        understanding: BRIEF.understandingFromBrief(single.brief),
+                        llm_fill: { available: false, reason: 'External MDMP file adapted deterministically (' + det.step + '); LLM enrichment runs on deployment' },
                     });
                 } else {
                     var u = BRIEF.unknownToBrief(body);

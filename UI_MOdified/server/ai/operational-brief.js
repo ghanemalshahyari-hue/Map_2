@@ -46,6 +46,14 @@ function emptyBrief() {
             assumptions: [],
             ambiguities: [],
             source_citations: [],
+            // ── COA layer (additive; D9 approved 2026-06-11) ─────────
+            // Candidate courses of action (each with wargame_turns[] per
+            // L10), the structured force comparison, and the AI/rule-engine
+            // recommendation. coa_recommendation.decided_by may ONLY ever be
+            // set by the operator — never by AI.
+            courses_of_action: [],
+            force_comparison: null,
+            coa_recommendation: null,
         },
     };
 }
@@ -440,6 +448,10 @@ function normalizeBrief(input) {
     o.assumptions = arr(ob.assumptions);
     o.ambiguities = arr(ob.ambiguities);
     o.source_citations = arr(ob.source_citations);
+    // COA layer (additive, D9) — preserved verbatim through normalization.
+    o.courses_of_action = arr(ob.courses_of_action);
+    o.force_comparison = (ob.force_comparison && typeof ob.force_comparison === 'object') ? ob.force_comparison : null;
+    o.coa_recommendation = (ob.coa_recommendation && typeof ob.coa_recommendation === 'object') ? ob.coa_recommendation : null;
     return out;
 }
 
@@ -465,6 +477,12 @@ function understandingFromBrief(brief) {
             neutral: arr(ob.neutral && ob.neutral.civilian).length,
         },
         proposed_map_bounds: (ob.area_of_operations && ob.area_of_operations.bbox) || null,
+        // COA layer summary (additive, D9) — cards rendered by the COA panel (G-3).
+        coas: arr(ob.courses_of_action).map(function (c) {
+            return { id: c.id, name: c.name, side: c.side, confidence: c.confidence,
+                     turns: arr(c.wargame_turns).length, needs_review: c.needs_review !== false };
+        }),
+        coa_recommendation: ob.coa_recommendation || null,
     };
 }
 

@@ -105,6 +105,9 @@ scripts/test-*.js
 Offline_Deployment/dist
 
 # ── Development artifacts ─────────────────────────────────────────────────────
+# DOC-UNDERSTANDING-1: devtools verify harnesses / fixtures are never runtime.
+devtools
+**/devtools
 *.bat
 *.tar.gz
 *.tar

@@ -3,7 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOC-UNDERSTANDING-1 — AI Understanding review (verify)</title>
+    <title>DOC-UNDERSTANDING-1 — AI Understanding review (devtools verify)</title>
+    <!--
+      DEVTOOLS-ONLY harness — NOT part of the production client bundle and excluded
+      from the offline image (.dockerignore: devtools/). To run it, serve UI_MOdified/
+      as a static root (e.g. `node scripts/verify-server.js`) and open
+      /devtools/fixtures/doc-understanding/verify.html, or copy this file into client/
+      temporarily. It renders POST /api/wargame-sim/analyze with the same
+      shell/doc-understanding-review.js the wizard uses, falling back to the bundled
+      sample.json when no live server is reachable.
+    -->
     <style>
         body { background:#0b0f0d; color:#e8eaed; font-family:'Segoe UI',Tahoma,Arial,sans-serif; margin:0; padding:18px; }
         .hdr { font-size:15px; color:#7fd6a0; font-weight:600; margin-bottom:4px; }
@@ -15,15 +24,15 @@
 </head>
 <body>
     <div class="wrap">
-        <div class="hdr">AI Understanding — Verify Harness</div>
-        <div class="sub">DOC-UNDERSTANDING-1 / Phase E — renders the live <code>POST /api/wargame-sim/analyze</code> payload
-            using the same <code>shell/doc-understanding-review.js</code> the import wizard uses. No auth required (read-only JS gate).</div>
+        <div class="hdr">AI Understanding — Verify Harness (devtools)</div>
+        <div class="sub">DOC-UNDERSTANDING-1 — renders the live <code>POST /api/wargame-sim/analyze</code> payload
+            via the shared <code>/shell/doc-understanding-review.js</code>, with a static <code>sample.json</code> fallback. Read-only.</div>
         <button id="reload" type="button">Re-run analyze</button>
         <div id="status">Loading…</div>
         <div id="review" style="border:1px solid #2e5d7d;border-radius:8px;background:#0e1620;padding:12px;"></div>
     </div>
 
-    <script src="shell/doc-understanding-review.js?v=1"></script>
+    <script src="/shell/doc-understanding-review.js?v=1"></script>
     <script>
         (function () {
             var statusEl = document.getElementById('status');
@@ -38,9 +47,7 @@
             }
             function loadStatic() {
                 statusEl.textContent = 'Live endpoint unavailable — loading static sample (real analyze output)…';
-                return fetch('./doc-understanding-sample.json')
-                    .then(function (r) { return r.json(); })
-                    .then(function (j) { paint(j, 'static sample (real analyze output)'); });
+                return fetch('./sample.json').then(function (r) { return r.json(); }).then(function (j) { paint(j, 'static sample (real analyze output)'); });
             }
             function run() {
                 statusEl.textContent = 'Analyzing staged documents…';

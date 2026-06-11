@@ -304,10 +304,24 @@ test('main app client/app.html has Google Fonts CDN (original state)', () => {
     );
 });
 
-test('main app client/assets/ directory does not exist', () => {
+// client/assets/ now legitimately exists in the MAIN app: client/assets/units/
+// is a git-tracked feature (manifest.json provenance + unit photos such as
+// patriot-sam-battery.jpg / uss-lake-champlain-cvs39.jpg) consumed by the
+// Commander Unit Status Panel (client/shell/unit-status-panel.js + the
+// `image_asset` paths in client/shell/world-state-db.js). It is NOT an
+// offline-only asset. What MUST stay offline-only is the offline overlay's
+// local font CSS (assets/fonts/) + brand logo (brand-logo.jpeg), staged into
+// the image via Dockerfile.offline:  COPY offline_app/client/assets/ ./client/assets/
+// So we no longer forbid the whole directory — we allow units/ and enforce that
+// the offline-only assets stay out of the main app.
+test('main app client/assets/ has no offline-only assets (fonts/, brand-logo.jpeg); units/ allowed', () => {
+    const offlineOnly = ['fonts', 'brand-logo.jpeg'];
+    const leaked = offlineOnly.filter(
+        name => fs.existsSync(path.join(ROOT, 'client', 'assets', name))
+    );
     assert.ok(
-        !fs.existsSync(path.join(ROOT, 'client', 'assets')),
-        'client/assets/ must not exist in main app — it was added only for offline use'
+        leaked.length === 0,
+        `main client/assets/ must not contain offline-only assets (these live only in offline_app): ${leaked.join(', ')}`
     );
 });
 

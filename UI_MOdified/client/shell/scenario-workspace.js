@@ -1002,6 +1002,39 @@
                 window.AppAdjudicatorMap.applyStepProgress(newIdx);
             }
         } catch (_) { /* no-op */ }
+        // RUNFIX-1 diagnostics: publish this run path's source summary so the
+        // Play-vs-Trial mismatch is observable (window.__rmoozRunDiag.playAnimation;
+        // set window.__rmoozRunDiagVerbose=true for a console line per step).
+        try {
+            var _mk = (window.AppAdjudicatorMap && window.AppAdjudicatorMap.getScenarioMarkers)
+                ? window.AppAdjudicatorMap.getScenarioMarkers() : { red: [], blue: [] };
+            var _sample = [].concat(_mk.red || [], _mk.blue || [])
+                .map(function (m) { return { uid: m && m._unitId, ll: m && m.getLatLng && m.getLatLng() }; })
+                .filter(function (s) { return s.uid && s.ll; })
+                .sort(function (a, b) { return String(a.uid).localeCompare(String(b.uid)); })
+                .slice(0, 5)
+                .map(function (s) { return { uid: s.uid, lat: +s.ll.lat.toFixed(5), lng: +s.ll.lng.toFixed(5) }; });
+            var _ptr = null;
+            try { _ptr = JSON.parse(localStorage.getItem('rmooz.last-loaded') || 'null'); } catch (_) {}
+            window.__rmoozRunDiag = window.__rmoozRunDiag || {};
+            window.__rmoozRunDiag.playAnimation = {
+                path: 'scenario-workspace goToStep → AppAdjudicatorMap.applyStepProgress (client step render)',
+                scenario_id: sc && sc.scenario_id || null,
+                scenario_name: sc && sc.name || null,
+                scenario_label: sc && sc.scenario_label || null,
+                step_index: newIdx,
+                step_count: steps.length,
+                unit_count: ((sc && sc.red_units && sc.red_units.length) || 0)
+                          + ((sc && sc.blue_units_initial && sc.blue_units_initial.length) || 0),
+                sample_units: _sample,
+                world_state_projection: false,  // synthetic per-step state; positions from step coord tables
+                preview_or_live: 'live step navigation (NOT adjudicated)',
+                scenario_source: 'window.RmoozScenario.scenario' +
+                    (_ptr && sc && _ptr.name === sc.name ? ' (= localStorage last-loaded pointer "' + _ptr.name + '")' : ' (in-memory)'),
+                ts: Date.now(),
+            };
+            if (window.__rmoozRunDiagVerbose) console.debug('[run-diag]', 'playAnimation', window.__rmoozRunDiag.playAnimation);
+        } catch (_) { /* diagnostics never break the run */ }
         // P4: keep the VISIBLE bottom transport bar coherent with the active step.
         // timeline.js is UI-only (its scenario-time stays at H+00:00), so sync the
         // time readout + phase chip here from the step's own time_label / phase.
@@ -1073,6 +1106,10 @@
     function _bindTimelineTransport() {
         if (window.__swTimelineBridgeBound) return;
         window.__swTimelineBridgeBound = true;
+        // Canonical runner (shell/scenario-runner.js) owns the bottom transport
+        // when present — it is the single engine. This legacy bridge only binds
+        // as a fallback, so we never run two playback timers off one click.
+        if (window.AppScenarioRunner) return;
         document.addEventListener('rmooz:timeline-ui-action', function (e) {
             var action = e && e.detail && e.detail.action;
             var value  = e && e.detail && e.detail.value;
@@ -7330,6 +7367,13 @@
     // No animation. No backend. No storage. No engagement arcs. No combat data.
 
     function stopPlayback() {
+        // Canonical engine owns the timer when present (single-engine rule).
+        if (window.AppScenarioRunner) {
+            try { window.AppScenarioRunner.pause(); } catch (_) { /* no-op */ }
+            _swIsPlaying = false;
+            paintPlayButton();
+            return;
+        }
         if (_swPlayIntervalId !== null) {
             clearInterval(_swPlayIntervalId);
             _swPlayIntervalId = null;
@@ -7339,6 +7383,12 @@
     }
 
     function startPlayback() {
+        // Canonical engine owns playback when present (single timer, shared by
+        // the nav Play button, the bottom transport, and turn-engine Start).
+        if (window.AppScenarioRunner) {
+            try { window.AppScenarioRunner.play(); } catch (_) { /* no-op */ }
+            return; // play-button visual synced via the rmooz:scenario-run listener
+        }
         var sc    = getScenario();
         var steps = (sc && Array.isArray(sc.steps)) ? sc.steps : [];
         if (!steps.length) return;
@@ -7376,6 +7426,22 @@
     }
 
     function initStepNavigator() {
+        // ── Canonical runner integration (one-time) ──────────────────────────
+        // Register goToStep as THE preview renderer so the canonical engine
+        // moves markers + repaints cards exactly like manual nav, and mirror the
+        // engine's play state onto the nav Play button regardless of which
+        // control (nav / bottom transport / turn-engine Start) started playback.
+        if (window.AppScenarioRunner && !window.__swRunnerBound) {
+            window.__swRunnerBound = true;
+            try { window.AppScenarioRunner.registerPreviewRenderer(goToStep); } catch (_) { /* no-op */ }
+            document.addEventListener('rmooz:scenario-run', function (e) {
+                var ev = e && e.detail && e.detail.event;
+                if (ev === 'play') { _swIsPlaying = true; }
+                else if (ev === 'pause' || ev === 'ended') { _swIsPlaying = false; }
+                else { return; }
+                try { paintPlayButton(); } catch (_) { /* no-op */ }
+            });
+        }
         var btnPlay  = document.getElementById('sw-nav-play');
         var speedSel = document.getElementById('sw-nav-speed');
         var btnFirst = document.getElementById('sw-nav-first');
@@ -7400,7 +7466,11 @@
             speedSel.addEventListener('change', function () {
                 var v = ALLOWED_SPEEDS[String(speedSel.value)];
                 _swPlaySpeedMs = (v !== undefined) ? v : 2000;
-                restartPlaybackTimerIfPlaying();
+                if (window.AppScenarioRunner) {
+                    try { window.AppScenarioRunner.setSpeed(_swPlaySpeedMs); } catch (_) { /* no-op */ }
+                } else {
+                    restartPlaybackTimerIfPlaying();
+                }
             });
         }
 
@@ -16921,12 +16991,14 @@
                 var rid = ru.uid || ru.unit_uid || ru.id || ru.base_id;
                 if (rid === undefined || rid === null || rid === '') { continue; }
                 index[String(rid)] = {
-                    uid:     String(rid),
-                    side:    'RED',
-                    label:   ru.label || ru.name || ru.name_ar || String(rid),
-                    role:    ru.role || null,
-                    domain:  ru.domain || null,
-                    echelon: ru.echelon || null
+                    uid:       String(rid),
+                    side:      'RED',
+                    label:     ru.label || ru.name || ru.name_ar || String(rid),
+                    role:      ru.role || null,
+                    domain:    ru.domain || null,
+                    echelon:   ru.echelon || null,
+                    readiness: ru.readiness || 'ready',
+                    supply:    typeof ru.supply === 'number' ? ru.supply : 0.8
                 };
                 redCount++;
             }
@@ -16937,12 +17009,14 @@
                 var bid = bu.unit_uid || bu.uid || bu.base_id || bu.id;
                 if (bid === undefined || bid === null || bid === '') { continue; }
                 index[String(bid)] = {
-                    uid:     String(bid),
-                    side:    'BLUE',
-                    label:   bu.label || bu.name || bu.name_ar || String(bid),
-                    role:    bu.role || null,
-                    domain:  bu.domain || null,
-                    echelon: bu.echelon || null
+                    uid:       String(bid),
+                    side:      'BLUE',
+                    label:     bu.label || bu.name || bu.name_ar || String(bid),
+                    role:      bu.role || null,
+                    domain:    bu.domain || null,
+                    echelon:   bu.echelon || null,
+                    readiness: bu.readiness || 'ready',
+                    supply:    typeof bu.supply === 'number' ? bu.supply : 0.8
                 };
                 blueCount++;
             }
@@ -17001,6 +17075,7 @@
             if (u.acts)               { acting++; }
             if (u.affected)           { aff++; }
             if (u.acts && u.affected) { both++; }
+            var oobRec = oob.index[u.uid] || {};
             units.push({
                 uid:         u.uid,
                 side:        u.side ? String(u.side).toUpperCase() : null,
@@ -17009,6 +17084,8 @@
                 domain:      u.domain,
                 involvement: involvement,   // 'acts' | 'affected' | 'both'
                 resolved:    u.resolved,
+                readiness:   oobRec.readiness || 'ready',
+                supply:      typeof oobRec.supply === 'number' ? oobRec.supply : 0.8,
                 readOnly:    true
             });
         }
@@ -17033,6 +17110,21 @@
         if (side === 'RED')  { return tx('sw-live-step-units-side-red', 'Red'); }
         if (side === 'BLUE') { return tx('sw-live-step-units-side-blue', 'Blue'); }
         return side || '—';
+    }
+    function _liveReadinessLabel(readiness) {
+        switch (readiness) {
+            case 'ready':     return tx('sw-live-step-units-readiness-ready', 'Ready');
+            case 'limited':   return tx('sw-live-step-units-readiness-limited', 'Limited');
+            case 'not_ready': return tx('sw-live-step-units-readiness-not-ready', 'Not Ready');
+            default:          return readiness || '—';
+        }
+    }
+    function _liveSupplyLabel(supply) {
+        if (typeof supply === 'number') {
+            var pct = Math.round(supply * 100);
+            return pct + '%';
+        }
+        return '—';
     }
 
     function getLiveStepInvolvedUnits(stepIndex) {
@@ -17077,11 +17169,15 @@
                     tr.setAttribute('data-side', u.side || 'NA');
                     tr.setAttribute('data-involvement', u.involvement);
                 }
-                _sluCell(tr, 'sw-slu-cell-unit',    u.label || u.uid);
-                _sluCell(tr, 'sw-slu-cell-side',    _liveSideLabel(u.side));
-                _sluCell(tr, 'sw-slu-cell-role',    u.role || '—');
-                _sluCell(tr, 'sw-slu-cell-domain',  u.domain || '—');
-                _sluCell(tr, 'sw-slu-cell-involve', _liveInvolveLabel(u.involvement));
+                _sluCell(tr, 'sw-slu-cell-unit',      u.label || u.uid);
+                _sluCell(tr, 'sw-slu-cell-side',      _liveSideLabel(u.side));
+                _sluCell(tr, 'sw-slu-cell-role',      u.role || '—');
+                _sluCell(tr, 'sw-slu-cell-domain',    u.domain || '—');
+                _sluCell(tr, 'sw-slu-cell-involve',   _liveInvolveLabel(u.involvement));
+                _sluCell(tr, 'sw-slu-cell-readiness', _liveReadinessLabel(u.readiness));
+                _sluCell(tr, 'sw-slu-cell-supply',    _liveSupplyLabel(u.supply));
+                // TASK1-D: tasking indicator — reads ws.derived.unit_tasking (read-only)
+                _sluCellOrders(tr, u.uid);
                 rowsEl.appendChild(tr);
             }
         }
@@ -17103,6 +17199,52 @@
         var td = document.createElement('td');
         td.className = cls;
         td.textContent = (text === null || text === undefined) ? '' : String(text);
+        tr.appendChild(td);
+    }
+
+    /**
+     * TASK1-D: look up component_label for a unit uid from the current world state.
+     * Uses the same AppAdjudicatorMap.getWorldState() accessor as the Commander Panel.
+     * Returns null when: no world state, unit has no actor this step.
+     * Never throws; fully guarded.
+     *
+     * @param {string} uid
+     * @returns {string|null}
+     */
+    function _sluTaskingLabel(uid) {
+        if (!uid) return null;
+        try {
+            var map = window.AppAdjudicatorMap;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            var ws = map.getWorldState();
+            if (!ws || !ws.derived || !ws.derived.unit_tasking) return null;
+            var t = ws.derived.unit_tasking[uid];
+            if (!t) return null;
+            return t.component_label || t.action_component || 'Tasked';
+        } catch (_) { return null; }
+    }
+
+    /**
+     * TASK1-D: create the Orders cell for a row.
+     * When tasking data exists: renders a compact chip with the component label.
+     * When absent: plain '—' in muted style.
+     *
+     * @param {HTMLElement} tr  - table row
+     * @param {string}      uid - unit uid
+     */
+    function _sluCellOrders(tr, uid) {
+        var td = document.createElement('td');
+        td.className = 'sw-slu-cell-orders';
+        var label = _sluTaskingLabel(uid);
+        if (label) {
+            var chip = document.createElement('span');
+            chip.className = 'sw-slu-orders-chip';
+            chip.textContent = label;
+            chip.title = label;  // tooltip for truncated text
+            td.appendChild(chip);
+        } else {
+            td.textContent = '—';
+        }
         tr.appendChild(td);
     }
 

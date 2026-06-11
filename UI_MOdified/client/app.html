@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>rmooz - رموز</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&family=Alexandria:wght@400;700;800&family=Noto+Kufi+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../lib/leaflet.css">
     <link rel="stylesheet" href="style.css?v=102c">
 </head>
@@ -59,7 +62,16 @@
                 <button id="legend-toggle-btn" class="header-btn header-btn--text" type="button" aria-pressed="true" data-i18n-title="legend-toggle-title" title="Show or hide the map legend">
                     <span data-i18n="legend-toggle-btn">Legend</span>
                 </button>
+                <!-- ROADMAP-1: opens an informational, UI-only development roadmap overlay.
+                     Does not touch scenarios, units, map, simulation, or the Event Log. -->
+                <button id="roadmap-toggle-btn" class="header-btn header-btn--text" type="button" aria-haspopup="dialog" aria-expanded="false" data-i18n-title="roadmap-toggle-title" title="RMOOZ development roadmap">
+                    <span data-i18n="roadmap-btn">Roadmap</span>
+                </button>
                 <button id="lang-toggle-btn" class="header-btn" type="button" data-i18n-title="lang-toggle-title" title="Switch language">عربي</button>
+                <!-- Scenario Entry Consolidation: launch-window nav + safe local export -->
+                <button id="rmooz-back-home" class="header-btn header-btn--text" type="button" title="Back to the main launch window"><span data-i18n="rmooz-back-home">← Main Window</span></button>
+                <button id="rmooz-export-scenario" class="header-btn header-btn--text" type="button" title="Export the current scenario as JSON"><span data-i18n="rmooz-export-scenario">Export Scenario</span></button>
+                <span id="rmooz-export-status" class="rmooz-export-status" aria-live="polite"></span>
                 <div id="server-account-bar" class="server-account-bar hidden" aria-label="Server plans">
                     <select id="server-plan-select" class="glass-select server-plan-select" title="Plans"></select>
                     <span id="plan-save-status" class="plan-save-status plan-save-status--hidden" aria-live="polite" role="status"></span>
@@ -839,6 +851,21 @@
                         <span id="wg-state-pill" class="wargame-state-pill is-idle">Idle</span>
                     </div>
 
+                    <!-- OPSCENARIO-AI-1: generate this operational scenario with the SAME
+                         offline AI engine as Scenario Import (WarGamingGEN/LiteLLM, env-based —
+                         no Ollama, no separate integration). Opens the existing generation
+                         wizard: upload force docs → Start → 17-phase generation → Continue /
+                         Import Partial → loads on the map via the normal scenario loader. -->
+                    <div class="wargame-brief-card" id="wg-ai-gen-card">
+                        <div>
+                            <span class="wargame-eyebrow" data-i18n="wg-ai-gen-eyebrow">Offline AI generation</span>
+                            <strong data-i18n="wg-ai-gen-title">Generate operational scenario</strong>
+                        </div>
+                        <button id="wg-generate-ai" class="wargame-action-btn primary" type="button"
+                                data-i18n="wg-ai-gen-btn" data-i18n-title="wg-ai-gen-hint"
+                                title="Generate, continue, or import a partial operational scenario using the offline AI engine">Generate / Continue</button>
+                    </div>
+
                     <div class="wargame-phase-track" aria-label="Operational scenario phases">
                         <span id="wg-phase-setup" class="active">Setup</span>
                         <span id="wg-phase-orders">Orders</span>
@@ -972,6 +999,19 @@
                         <span class="sw-briefing-hdr-title" data-i18n="sw-briefing-hdr-title">Scenario Briefing</span>
                         <span class="sw-briefing-hdr-sub" data-i18n="sw-briefing-hdr-sub">Read-only operational overview from loaded local scenario data.</span>
                     </div>
+
+                    <!-- L3-B-1: Why-Not Review (read-only). Painted by shell/why-not-panel.js from
+                         AppActionFeasibility.evaluateAction — action type, verdict, blockers, risks,
+                         evidence gaps. No controls, no apply/commit, no mutation, no recommendations. -->
+                    <section class="wn-card" id="why-not-card" aria-label="Why-Not review">
+                        <div class="wn-hdr" role="heading" aria-level="3">
+                            <span class="wn-hdr-title" data-i18n="wn-hdr-title">Why-Not Review</span>
+                            <span class="wn-hdr-sub" data-i18n="wn-hdr-sub">Read-only explanation of why the current action is feasible, blocked, or risky.</span>
+                        </div>
+                        <div class="wn-body" id="wn-body">
+                            <p class="wn-empty" data-i18n="wn-empty">No action selected for Why-Not review.</p>
+                        </div>
+                    </section>
 
                     <!-- PR-287L0: Wargame 3 Dry-Run Preview header — HIDDEN from production workspace.
                          User direction: stop showing parallel W3 dry-run beside live scenario.
@@ -1543,11 +1583,14 @@
                             <table class="sw-live-step-units-table" id="sw-live-step-units-table" role="presentation">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="sw-slu-col-unit"    data-i18n="sw-live-step-units-col-unit">Unit</th>
-                                        <th scope="col" class="sw-slu-col-side"    data-i18n="sw-live-step-units-col-side">Side</th>
-                                        <th scope="col" class="sw-slu-col-role"    data-i18n="sw-live-step-units-col-role">Role</th>
-                                        <th scope="col" class="sw-slu-col-domain"  data-i18n="sw-live-step-units-col-domain">Domain</th>
-                                        <th scope="col" class="sw-slu-col-involve" data-i18n="sw-live-step-units-col-involvement">Involvement</th>
+                                        <th scope="col" class="sw-slu-col-unit"        data-i18n="sw-live-step-units-col-unit">Unit</th>
+                                        <th scope="col" class="sw-slu-col-side"        data-i18n="sw-live-step-units-col-side">Side</th>
+                                        <th scope="col" class="sw-slu-col-role"        data-i18n="sw-live-step-units-col-role">Role</th>
+                                        <th scope="col" class="sw-slu-col-domain"      data-i18n="sw-live-step-units-col-domain">Domain</th>
+                                        <th scope="col" class="sw-slu-col-involve"     data-i18n="sw-live-step-units-col-involvement">Involvement</th>
+                                        <th scope="col" class="sw-slu-col-readiness"   data-i18n="sw-live-step-units-col-readiness">Readiness</th>
+                                        <th scope="col" class="sw-slu-col-supply"      data-i18n="sw-live-step-units-col-supply">Supply</th>
+                                        <th scope="col" class="sw-slu-col-orders"      data-i18n="sw-live-step-units-col-orders">Orders</th>
                                     </tr>
                                 </thead>
                                 <tbody id="sw-live-step-units-rows"></tbody>
@@ -3415,616 +3458,227 @@
             </aside>
 
             <!-- ═══════════ SELECTED UNIT PANEL — PR-3 ═══════════ -->
-            <!-- Right-edge (inline-end) overlay inside .workspace. Always
-                 mounted; shows an empty state until a unit is selected on
-                 the map. Populated by client/shell/unit-panel.js in response
-                 to the rmooz:unit-selected event emitted by units-map.js.
-                 PR-3 is UI foundation only — every section that requires
-                 simulation data (fuel/ammo/damage/ROE/etc.) shows a
-                 localized "Not available" placeholder. -->
-            <aside class="unit-panel unit-panel--empty" id="unit-panel" aria-label="Selected unit details">
-                <header class="unit-panel-header">
-                    <span class="unit-panel-eyebrow" data-i18n="up-eyebrow">SELECTED UNIT</span>
-                    <h3 class="unit-panel-title" id="up-name" data-i18n="up-empty-title">No unit selected</h3>
-                    <div class="unit-panel-chips">
-                        <span class="up-side-chip" id="up-side-chip" data-side="" hidden></span>
-                        <span class="up-echelon-chip" id="up-echelon-chip" hidden></span>
-                    </div>
+            
+            <!-- COMMANDER UNIT STATUS PANEL (UI-Unit-1-C) read-only tactical display -->
+            <aside id="unit-status-panel" class="unit-status-panel" hidden>
+
+                <!-- Collapse tab - protrudes from left edge -->
+                <button id="usp-collapse-tab" class="usp-collapse-tab"
+                        title="Collapse panel" aria-label="Collapse panel">&#8249;</button>
+                <header class="usp-header">
+                    <span class="usp-header-title" data-i18n="usp-unit-status">UNIT STATUS</span>
+                    <button id="panel-close" class="usp-close-btn" aria-label="Close panel">&#x2715;</button>
                 </header>
 
-                <div class="unit-panel-body">
-                    <p class="unit-panel-empty-hint" id="up-empty-hint" data-i18n="up-empty-hint">Click any unit on the map to inspect its identity, position, and operational status.</p>
-
-                    <!-- Section 1: Identity -->
-                    <section class="up-section" id="up-section-identity" hidden>
-                        <h4 class="up-section-title" data-i18n="up-section-identity">Unit Identity</h4>
-                        <dl class="up-kv">
-                            <dt data-i18n="up-field-callsign">Callsign</dt>           <dd id="up-callsign">-</dd>
-                            <dt data-i18n="up-field-side">Side</dt>                   <dd id="up-side">-</dd>
-                            <dt data-i18n="up-field-sidc">SIDC</dt>                   <dd id="up-sidc" class="up-mono" dir="ltr">-</dd>
-                            <dt data-i18n="up-field-echelon">Echelon</dt>             <dd id="up-echelon">-</dd>
-                            <dt data-i18n="up-field-code">Code</dt>                   <dd id="up-code" class="up-mono" dir="ltr">-</dd>
-                            <dt data-i18n="up-field-parent">Parent formation</dt>     <dd id="up-parent">-</dd>
-                        </dl>
-                    </section>
-
-                    <!-- Section 2: Position -->
-                    <section class="up-section" id="up-section-position" hidden>
-                        <h4 class="up-section-title" data-i18n="up-section-position">Position</h4>
-                        <dl class="up-kv">
-                            <dt data-i18n="up-field-latlng">Lat / Lng</dt>            <dd id="up-latlng"  class="up-mono" dir="ltr">-</dd>
-                            <dt data-i18n="up-field-mgrs">MGRS</dt>                   <dd id="up-mgrs"    class="up-mono" dir="ltr">-</dd>
-                            <dt data-i18n="up-field-selected-at">Selected at</dt>     <dd id="up-selat"   class="up-mono" dir="ltr">-</dd>
-                        </dl>
-                    </section>
-
-                    <!-- Section 3: Operational Status — placeholders only -->
-                    <section class="up-section" id="up-section-opstatus" hidden>
-                        <h4 class="up-section-title" data-i18n="up-section-opstatus">Operational Status</h4>
-                        <dl class="up-kv">
-                            <dt data-i18n="up-field-status">Status</dt>               <dd class="up-na" data-i18n="up-na">Not available</dd>
-                            <dt data-i18n="up-field-mission">Mission</dt>             <dd class="up-na" data-i18n="up-na">Not available</dd>
-                            <dt data-i18n="up-field-posture">Posture</dt>             <dd class="up-na" data-i18n="up-na">Not available</dd>
-                            <dt data-i18n="up-field-readiness">Readiness</dt>         <dd class="up-na" data-i18n="up-na">Not available</dd>
-                        </dl>
-                    </section>
-
-                    <!-- Section 4: Combat Readiness — placeholders only -->
-                    <section class="up-section" id="up-section-combat" hidden>
-                        <h4 class="up-section-title" data-i18n="up-section-combat">Combat Readiness</h4>
-                        <dl class="up-kv">
-                            <dt data-i18n="up-field-fuel">Fuel</dt>                   <dd class="up-na" data-i18n="up-na">Not available</dd>
-                            <dt data-i18n="up-field-ammo">Ammunition</dt>             <dd class="up-na" data-i18n="up-na">Not available</dd>
-                            <dt data-i18n="up-field-damage">Damage</dt>               <dd class="up-na" data-i18n="up-na">Not available</dd>
-                            <dt data-i18n="up-field-suppression">Suppression</dt>     <dd class="up-na" data-i18n="up-na">Not available</dd>
-                        </dl>
-                    </section>
-
-                    <!-- Section 5: Command & Control — placeholders only -->
-                    <section class="up-section" id="up-section-c2" hidden>
-                        <h4 class="up-section-title" data-i18n="up-section-c2">Command &amp; Control</h4>
-                        <dl class="up-kv">
-                            <dt data-i18n="up-field-roe">ROE</dt>                     <dd class="up-na" data-i18n="up-na">Not available</dd>
-                            <dt data-i18n="up-field-doctrine">Doctrine</dt>           <dd class="up-na" data-i18n="up-na">Not available</dd>
-                            <dt data-i18n="up-field-assigned-mission">Assigned mission</dt> <dd class="up-na" data-i18n="up-na">Not available</dd>
-                        </dl>
-                    </section>
-
-                    <!-- Section 6: Advisor — inactive placeholder -->
-                    <section class="up-section up-section--advisor" id="up-section-advisor" hidden>
-                        <h4 class="up-section-title" data-i18n="up-section-advisor">AI Advisor</h4>
-                        <p class="up-advisor-note" data-i18n="up-advisor-inactive">Advisor will analyze this unit after simulation journal is enabled.</p>
-                    </section>
-
-                    <!-- ═══════════ AI PROPOSAL REVIEW — PR-7 ═══════════ -->
-                    <!-- Always-visible section inside .unit-panel-body, independent
-                         of unit selection. Establishes the command principle:
-                         AI proposes · Operator decides · System records.
-                         Buttons are UI-only — they log a single OPERATOR/NOTICE
-                         row via PR-6's safe Event Log bus and lock the local
-                         decision state. NO sim/AI/scenario hookup. -->
-                    <section class="up-section ai-proposal" id="ai-proposal-section">
-                        <header class="ap-header">
-                            <h4 class="up-section-title" data-i18n="ap-title">AI Proposal Review</h4>
-                            <!-- PR-26: Safety Regression Badge (read-only mirror).
-                                 Tiny indicator that mirrors PR-25's overall safety
-                                 summary. Subscribes to `rmooz:safety-regression-summary-changed`.
-                                 NEVER runs a test, NEVER mutates state, NEVER calls
-                                 backend / file / download paths. Default state on
-                                 load: yellow "Safety: Not run".
-
-                                 PR-27: badge is promoted (via JS) to role=button +
-                                 tabindex=0 + aria-haspopup=dialog and controls
-                                 #ap-safety-popover. Click / Enter / Space toggle the
-                                 popover. Escape and outside-click close it. The
-                                 popover is a pure read-only viewer of the summary. -->
-                            <span class="ap-safety-badge-wrap">
-                                <span id="ap-safety-regression-badge"
-                                      class="ap-safety-badge"
-                                      data-tone="yellow"
-                                      data-state="not-run"
-                                      data-i18n="ap-safety-not-run">Safety: Not run</span>
-                                <div id="ap-safety-popover"
-                                     class="ap-safety-popover"
-                                     role="dialog"
-                                     aria-modal="false"
-                                     aria-labelledby="ap-safety-popover-title"
-                                     aria-hidden="true"
-                                     hidden>
-                                    <header class="ap-safety-popover-header">
-                                        <span id="ap-safety-popover-title"
-                                              class="ap-safety-popover-title"
-                                              data-i18n="ap-safety-details-title">Safety Details</span>
-                                        <span id="ap-safety-popover-overall"
-                                              class="ap-safety-popover-overall"
-                                              data-tone="yellow"
-                                              data-state="not-run"
-                                              data-i18n="ap-safety-not-run">Safety: Not run</span>
-                                    </header>
-                                    <ul class="ap-safety-popover-rows" role="list">
-                                        <li class="ap-safety-popover-row">
-                                            <span class="ap-safety-popover-label" data-i18n="ap-safety-overall">Overall</span>
-                                            <span class="ap-safety-popover-value">
-                                                <span class="ap-safety-popover-overall-mirror"
-                                                      data-i18n="ap-safety-not-run">Safety: Not run</span>
-                                            </span>
-                                        </li>
-                                        <li class="ap-safety-popover-row">
-                                            <span class="ap-safety-popover-label" data-i18n="ap-safety-selftest">Self-test</span>
-                                            <span id="ap-safety-popover-selftest"
-                                                  class="ap-safety-popover-chip"
-                                                  data-state="notRun"
-                                                  data-i18n="ba-summary-perrow-not-run">Not run</span>
-                                        </li>
-                                        <li class="ap-safety-popover-row">
-                                            <span class="ap-safety-popover-label" data-i18n="ap-safety-vtests">Violation tests</span>
-                                            <span id="ap-safety-popover-vtests"
-                                                  class="ap-safety-popover-chip"
-                                                  data-state="notRun"
-                                                  data-i18n="ba-summary-perrow-not-run">Not run</span>
-                                        </li>
-                                        <li class="ap-safety-popover-row">
-                                            <span class="ap-safety-popover-label" data-i18n="ap-safety-last-result">Last result</span>
-                                            <span id="ap-safety-popover-ran-at"
-                                                  class="ap-safety-popover-ran-at">—</span>
-                                        </li>
-                                    </ul>
-                                    <p class="ap-safety-popover-local-only" data-i18n="ap-safety-local-only">Local only</p>
-                                </div>
-                            </span>
-                            <span id="ap-sample-badge" class="ap-sample-badge" data-i18n="ap-sample-badge" hidden>SAMPLE / NOT CONNECTED</span>
-                            <span id="ap-status-pill" class="ap-status-pill" data-state="empty">
-                                <span id="ap-status-text" data-i18n="ap-empty">No active proposal</span>
-                            </span>
-                        </header>
-
-                        <!-- PR-121: Operator workflow guide. Static instructional
-                             text — collapsed by default. Offline/dry-run only;
-                             no backend, no storage, no scenario mutation.
-                             All text driven by i18n (EN+AR). -->
-                        <details id="ap-workflow-guide" class="ap-workflow-guide">
-                            <summary class="ap-workflow-guide-summary" data-i18n="ap-workflow-guide-title">Operator workflow</summary>
-                            <ol class="ap-workflow-steps">
-                                <li data-i18n="ap-workflow-step-1">Load a sample proposal.</li>
-                                <li data-i18n="ap-workflow-step-2">Review the proposal fields.</li>
-                                <li data-i18n="ap-workflow-step-3">Choose Accept, Reject, or Hold.</li>
-                                <li data-i18n="ap-workflow-step-4">Check the local decision record.</li>
-                                <li data-i18n="ap-workflow-step-5">Preview the draft or export text if needed.</li>
-                            </ol>
-                            <p class="ap-workflow-note" data-i18n="ap-workflow-note">Offline and dry-run only. No scenario changes are made.</p>
-                        </details>
-
-                        <!-- PR-9: Inbox count row. Updated by the PR-7 panel's
-                             rmooz:ai-proposal-inbox-changed listener. Decoupled
-                             from the proposal renderer so the count survives
-                             collapse/expand and proposal lifecycle changes.
-                             PR-10: Request Proposal button sits alongside the
-                             count. Click → ai-proposal-bridge → /api/sim/propose
-                             (with mockMode:true). UI-only loading state; never
-                             auto-accepts; never commits. -->
-                        <div class="ap-inbox-row">
-                            <span id="ap-inbox-count" class="ap-inbox-count">Inbox: 0 proposals</span>
-                            <button type="button" id="ap-request-btn" class="ap-request-btn" data-i18n="ap-request">Request Proposal</button>
-                        </div>
-
-                        <!-- PR-11: Proposal service connection status. Pill text
-                             and color derive from AppShellAIProposalBridge.getState()
-                             — see ai-proposal-panel.js / renderServicePill().
-                             The toggle button is a dev/admin affordance; it calls
-                             setServiceEnabled() and logs one UI/NOTICE row to the
-                             Event Log. NEVER persisted — reload reverts to off. -->
-                        <div class="ap-service-row">
-                            <span class="ap-service-label" data-i18n="ap-service-label">Proposal Service</span>
-                            <span id="ap-service-status" class="ap-service-status" data-state="not-connected">Not connected</span>
-                            <button type="button" id="ap-service-toggle" class="ap-service-toggle" data-i18n="ap-service-enable">Enable service</button>
-                        </div>
-
-                        <!-- PR-116: Sample proposal loader. Calls setSampleProposal() —
-                             in-memory only, no backend, no /api/sim/propose, no
-                             /api/sim/commit, no scenario mutation. Dry-run commit bridge
-                             only. Activates #ap-actions for offline operator workflow
-                             testing. #ap-sample-badge ("SAMPLE / NOT CONNECTED") appears
-                             automatically when isSample:true is set by the panel. -->
-                        <div class="ap-service-row">
-                            <button type="button" id="ap-load-sample-btn" class="ap-service-toggle" data-i18n="ap-load-sample" title="Mock · Offline · Dry-run only">Load Sample Proposal</button>
-                        </div>
-
-                        <!-- Fields — hidden until a proposal is loaded -->
-                        <dl class="up-kv ap-fields" id="ap-fields" hidden>
-                            <dt data-i18n="ap-id">Proposal ID</dt>           <dd id="ap-id"         class="up-mono" dir="ltr">-</dd>
-                            <dt data-i18n="ap-source">Source</dt>            <dd id="ap-source"     class="up-mono" dir="ltr">-</dd>
-                            <dt data-i18n="ap-confidence">Confidence</dt>    <dd id="ap-confidence">-</dd>
-                            <dt data-i18n="ap-summary">Summary</dt>          <dd id="ap-summary">-</dd>
-                            <dt data-i18n="ap-affected">Affected Units</dt>  <dd id="ap-affected">-</dd>
-                            <dt data-i18n="ap-effect">Expected Effect</dt>   <dd id="ap-effect">-</dd>
-                            <dt data-i18n="ap-risk">Risk</dt>                <dd id="ap-risk">-</dd>
-                            <dt data-i18n="ap-decision">Operator Decision</dt><dd id="ap-decision"  class="ap-decision-cell"><span id="ap-decision-text" data-i18n="ap-status-pending">Pending</span></dd>
-                        </dl>
-
-                        <!-- Action row — hidden until a proposal is loaded -->
-                        <div class="ap-actions" id="ap-actions" hidden role="group" aria-label="Operator decision">
-                            <button type="button" id="ap-accept" class="ap-btn ap-btn--accept" data-i18n="ap-accept">Accept</button>
-                            <button type="button" id="ap-reject" class="ap-btn ap-btn--reject" data-i18n="ap-reject">Reject</button>
-                            <button type="button" id="ap-hold"   class="ap-btn ap-btn--hold"   data-i18n="ap-hold">Hold</button>
-                        </div>
-
-                        <!-- Operator note — always visible. UNLOCKED 2026-06-01:
-                             Accept/Reject now commit to the durable server journal;
-                             Hold defers. Kept explicit so the operator knows a
-                             decision mutates state. -->
-                        <p class="ap-safety-note" data-i18n="ap-not-connected">
-                            Accept/Reject commit to the durable journal; Hold defers
-                        </p>
-
-                        <!-- ═══════════ DECISION RECORDS — PR-13 ═══════════ -->
-                        <!-- In-memory only. Records dry-run decisions captured
-                             AFTER the PR-12 commit bridge returns dryrun-ok.
-                             NEVER a real journal: no file write, no
-                             localStorage, no fetch. The badge + sub-note make
-                             the local/transient nature explicit. -->
-                        <section class="ap-decision-records" id="ap-decision-records">
-                            <header class="dr-header">
-                                <h5 class="dr-title" data-i18n="dr-title">Decision Records</h5>
-                                <span class="dr-local-only" data-i18n="dr-local-only">Local only</span>
-                                <button type="button" id="dr-clear-btn" class="dr-clear-btn" data-i18n="dr-clear">Clear records</button>
-                            </header>
-                            <p class="dr-not-saved" data-i18n="dr-not-saved">Not saved after reload</p>
-                            <!-- UNLOCKED 2026-06-01: the real journal is enabled —
-                                 commits write durable rows server-side at
-                                 data/journal/<run>.jsonl. This in-memory list mirrors
-                                 those decisions; it is not itself the durable store. -->
-                            <p class="dr-real-journal-note">
-                                <span data-i18n="dr-real-journal-disabled">Real journal enabled (server)</span>
-                                <span class="dr-draft-badge" data-i18n="dr-draft-contract-ready">Commit active</span>
-                            </p>
-                            <div id="dr-list" class="dr-list">
-                                <p id="dr-empty" class="dr-empty" data-i18n="dr-empty">No local decision records</p>
-                            </div>
-
-                            <!-- PR-15: Journal Draft Preview (read-only).
-                                 Generates an in-memory PR-14 draft from the
-                                 newest PR-13 record and renders the result as
-                                 JSON via textContent (never innerHTML). No
-                                 file write, no export, no download, no
-                                 persistence. -->
-                            <div id="dr-preview" class="dr-preview">
-                                <header class="dr-preview-header">
-                                    <h6 class="dr-preview-title" data-i18n="dr-preview-title">Journal Draft Preview</h6>
-                                    <span class="dr-preview-badge" data-i18n="dr-preview-badge">Preview only</span>
-                                </header>
-                                <p class="dr-preview-note" data-i18n="dr-preview-note">Not saved / Not exported</p>
-                                <div class="dr-preview-actions" role="group" aria-label="Journal draft preview controls">
-                                    <button type="button" id="dr-preview-latest-btn" class="dr-preview-btn" data-i18n="dr-preview-latest" disabled aria-disabled="true">Preview latest record</button>
-                                    <button type="button" id="dr-preview-clear-btn" class="dr-preview-btn dr-preview-btn--clear" data-i18n="dr-preview-clear">Clear preview</button>
-                                    <!-- PR-16: Copy preview JSON. Clipboard only.
-                                         Disabled until a preview exists. No file
-                                         write, no download, no Blob, no fallback. -->
-                                    <button type="button" id="dr-preview-copy-btn" class="dr-preview-btn dr-preview-btn--copy" data-i18n="dr-preview-copy" disabled aria-disabled="true">Copy preview JSON</button>
-                                </div>
-                                <!-- PR-16: transient status chip — appears for ~1.6s after copy. -->
-                                <div class="dr-preview-copy-status-row" aria-live="polite">
-                                    <span id="dr-preview-copy-status" class="dr-preview-copy-status" hidden></span>
-                                </div>
-                                <pre id="dr-preview-body" class="dr-preview-body" dir="ltr" hidden></pre>
-                                <p id="dr-preview-empty" class="dr-preview-empty" data-i18n="dr-preview-empty-text">No preview available</p>
-                            </div>
-
-                            <!-- PR-18: Journal Export Package Preview (read-only).
-                                 Renders a PR-17 JOURNAL_EXPORT_PREVIEW package
-                                 built from current PR-13 records (each mapped
-                                 through PR-14). textContent only, no innerHTML.
-                                 No write, no export, no download, no fetch. -->
-                            <div id="dr-export-preview" class="dr-export-preview">
-                                <header class="dr-export-header">
-                                    <h6 class="dr-export-title" data-i18n="dr-export-title">Export Package Preview</h6>
-                                    <span class="dr-export-badge" data-i18n="dr-export-badge">Preview only</span>
-                                    <span class="dr-export-no-file" data-i18n="dr-export-no-file">No file created</span>
-                                </header>
-                                <!-- PR-20: Download Guard status. Locked-by-design.
-                                     Pill is derived from AppShellJournalDownloadGuard.getState();
-                                     in this build it is permanently LOCKED. No
-                                     Download button — the actual download function
-                                     is left for a future PR. -->
-                                <div class="dl-guard-row">
-                                    <span class="dl-guard-label" data-i18n="dl-label">Download Guard</span>
-                                    <span id="dl-guard-status" class="dl-guard-status" data-state="locked" data-i18n="dl-status-locked">Locked</span>
-                                </div>
-                                <p class="dl-guard-explainer" data-i18n="dl-explainer">Download is locked by design in this build</p>
-                                <div class="dr-export-actions" role="group" aria-label="Export package preview controls">
-                                    <button type="button" id="dr-export-preview-btn" class="dr-preview-btn" data-i18n="dr-export-preview-btn" disabled aria-disabled="true">Preview package</button>
-                                    <button type="button" id="dr-export-clear-btn" class="dr-preview-btn dr-preview-btn--clear" data-i18n="dr-export-clear-btn">Clear package preview</button>
-                                    <!-- PR-19: Copy package JSON. Clipboard only.
-                                         Disabled until a package preview exists.
-                                         No file write, no Blob, no download. -->
-                                    <button type="button" id="dr-export-copy-btn" class="dr-preview-btn dr-preview-btn--copy" data-i18n="dr-export-copy" disabled aria-disabled="true">Copy package JSON</button>
-                                    <!-- PR-21: Download package. Visible but disabled.
-                                         Controlled by PR-20 AppShellJournalDownloadGuard
-                                         (locked-by-design). NO actual download code:
-                                         no Blob, no URL.createObjectURL, no <a download>,
-                                         no link.click(). The bridge method
-                                         downloadPackage() short-circuits to a
-                                         UI/WARNING row when isAllowed() is false. -->
-                                    <button type="button" id="dr-export-download-btn" class="dr-preview-btn dr-preview-btn--download" data-i18n="dr-export-download" data-i18n-title="dr-export-download-locked" data-state="locked" disabled aria-disabled="true" title="Download locked by guard">Download package</button>
-                                </div>
-                                <!-- PR-19: transient status chip — visible for ~1.6s after copy attempt. -->
-                                <div class="dr-export-copy-status-row" aria-live="polite">
-                                    <span id="dr-export-copy-status" class="dr-export-copy-status" hidden></span>
-                                </div>
-                                <pre id="dr-export-body" class="dr-export-body" dir="ltr" hidden></pre>
-                                <p id="dr-export-empty" class="dr-export-empty" data-i18n="dr-export-empty-text">No package preview available</p>
-                            </div>
-                        </section>
-
-                        <!-- PR-22: Boundary Audit Panel (read-only).
-                             Renders the current state of every safety
-                             boundary in this build (proposal service,
-                             commit bridge, decision records, real
-                             journal, journal draft, export package,
-                             download, backend commit, scenario
-                             mutation). Each row reads ONLY from the
-                             corresponding existing bridge; no row
-                             contains a button that mutates state. The
-                             panel is collapsible via native <details>
-                             (no JS state, no localStorage). -->
-                        <section class="ba-panel" id="ba-panel">
-                            <details class="ba-panel-details" open>
-                                <summary class="ba-panel-summary">
-                                    <span class="ba-panel-title" data-i18n="ba-title">Boundary Audit</span>
-                                    <span class="ba-panel-note" data-i18n="ba-readonly-note">Read-only</span>
-                                </summary>
-                                <ul class="ba-rows" role="list">
-                                    <li class="ba-row" data-row="proposalService">
-                                        <span class="ba-label" data-i18n="ba-row-proposal-service">Proposal Service</span>
-                                        <span class="ba-status" data-tone="grey" data-state="ba-status-not-connected" data-i18n="ba-status-not-connected">Not connected</span>
-                                    </li>
-                                    <li class="ba-row" data-row="commitBridge">
-                                        <span class="ba-label" data-i18n="ba-row-commit-bridge">Commit Bridge</span>
-                                        <span class="ba-status" data-tone="yellow" data-state="ba-status-dry-run-only" data-i18n="ba-status-dry-run-only">Dry-run only</span>
-                                    </li>
-                                    <li class="ba-row" data-row="decisionRecords">
-                                        <span class="ba-label" data-i18n="ba-row-decision-records">Decision Records</span>
-                                        <span class="ba-status" data-tone="yellow" data-state="ba-status-in-memory-only" data-i18n="ba-status-in-memory-only">In-memory only</span>
-                                    </li>
-                                    <li class="ba-row" data-row="realJournal">
-                                        <span class="ba-label" data-i18n="ba-row-real-journal">Real Journal</span>
-                                        <span class="ba-status" data-tone="red" data-state="ba-status-not-enabled" data-i18n="ba-status-not-enabled">Not enabled</span>
-                                    </li>
-                                    <li class="ba-row" data-row="journalDraft">
-                                        <span class="ba-label" data-i18n="ba-row-journal-draft">Journal Draft</span>
-                                        <span class="ba-status" data-tone="yellow" data-state="ba-status-preview-only" data-i18n="ba-status-preview-only">Preview only</span>
-                                    </li>
-                                    <li class="ba-row" data-row="exportPackage">
-                                        <span class="ba-label" data-i18n="ba-row-export-package">Export Package</span>
-                                        <span class="ba-status" data-tone="yellow" data-state="ba-status-preview-only" data-i18n="ba-status-preview-only">Preview only</span>
-                                    </li>
-                                    <li class="ba-row" data-row="download">
-                                        <span class="ba-label" data-i18n="ba-row-download">Download</span>
-                                        <span class="ba-status" data-tone="red" data-state="ba-status-locked" data-i18n="ba-status-locked">Locked</span>
-                                    </li>
-                                    <li class="ba-row" data-row="backendCommit">
-                                        <span class="ba-label" data-i18n="ba-row-backend-commit">Backend Commit</span>
-                                        <span class="ba-status" data-tone="red" data-state="ba-status-blocked" data-i18n="ba-status-blocked">Blocked</span>
-                                    </li>
-                                    <li class="ba-row" data-row="scenarioMutation">
-                                        <span class="ba-label" data-i18n="ba-row-scenario-mutation">Scenario Mutation</span>
-                                        <span class="ba-status" data-tone="red" data-state="ba-status-forbidden" data-i18n="ba-status-forbidden">Forbidden</span>
-                                    </li>
-                                </ul>
-
-                                <!-- PR-23: Boundary Self-Test (read-only).
-                                     Button calls AppShellBoundaryAuditPanel.runSelfTest()
-                                     which performs eight read-only checks using ONLY
-                                     getState / isAllowed / validateJournalEntry /
-                                     validateExportPackage / Object.keys. No setter is
-                                     ever called from this block; the button never
-                                     mutates any audited module's state. -->
-                                <div class="ba-selftest" id="ba-selftest">
-                                    <div class="ba-selftest-header">
-                                        <span class="ba-selftest-title" data-i18n="ba-selftest-title">Self-test</span>
-                                        <span class="ba-selftest-summary" id="ba-selftest-summary" data-state="not-run" data-i18n="ba-selftest-not-run">Not run</span>
-                                    </div>
-                                    <div class="ba-selftest-controls">
-                                        <button type="button" id="ba-selftest-run-btn" class="ba-selftest-run-btn" data-i18n="ba-selftest-run">Run self-test</button>
-                                        <span class="ba-selftest-last-row">
-                                            <span class="ba-selftest-last-label" data-i18n="ba-selftest-last-checked">Last checked</span>
-                                            <span class="ba-selftest-last-sep">:</span>
-                                            <span class="ba-selftest-ran-at" id="ba-selftest-ran-at">—</span>
-                                        </span>
-                                    </div>
-                                    <p class="ba-selftest-explainer" data-i18n="ba-selftest-all-closed">All boundaries closed</p>
-                                    <ul class="ba-selftest-rows" id="ba-selftest-rows" role="list"></ul>
-                                </div>
-
-                                <!-- PR-24: Boundary Violation Test Harness (read-only).
-                                     Button calls AppShellBoundaryAuditPanel.runViolationTests()
-                                     which runs ten synthetic violation attempts and confirms
-                                     each is rejected by the existing contracts / guards.
-                                     Synthetic payloads are local objects only — never persisted.
-                                     The PR-21 short-circuit (downloadPackage) is exercised with
-                                     internal spies that count Blob / createObjectURL / anchor
-                                     clicks during the call (must remain 0). -->
-                                <div class="ba-vtest" id="ba-vtest">
-                                    <div class="ba-vtest-header">
-                                        <span class="ba-vtest-title" data-i18n="ba-vtest-title">Violation tests</span>
-                                        <span class="ba-vtest-summary" id="ba-vtest-summary" data-state="not-run" data-i18n="ba-vtest-not-run">Not run</span>
-                                    </div>
-                                    <div class="ba-vtest-controls">
-                                        <button type="button" id="ba-vtest-run-btn" class="ba-vtest-run-btn" data-i18n="ba-vtest-run">Run violation tests</button>
-                                        <span class="ba-vtest-last-row">
-                                            <span class="ba-vtest-last-label" data-i18n="ba-vtest-last-run">Last run</span>
-                                            <span class="ba-vtest-last-sep">:</span>
-                                            <span class="ba-vtest-ran-at" id="ba-vtest-ran-at">—</span>
-                                        </span>
-                                    </div>
-                                    <p class="ba-vtest-explainer" data-i18n="ba-vtest-all-rejected">All synthetic violations rejected</p>
-                                    <ul class="ba-vtest-rows" id="ba-vtest-rows" role="list"></ul>
-                                </div>
-
-                                <!-- PR-25: Safety Regression Summary (read-only mirror).
-                                     Compact card that summarizes the latest PR-23
-                                     self-test and PR-24 violation-tests results.
-                                     NEVER triggers a test; reads the module-private
-                                     cache only. Auto-repaints whenever the underlying
-                                     paint functions run, and on language switch. -->
-                                <div class="ba-summary" id="ba-summary">
-                                    <div class="ba-summary-header">
-                                        <span class="ba-summary-title" data-i18n="ba-summary-title">Safety Regression Summary</span>
-                                        <span class="ba-summary-overall"
-                                              id="ba-summary-overall"
-                                              data-state="attention"
-                                              data-tone="yellow"
-                                              data-i18n="ba-summary-not-run">Not run</span>
-                                    </div>
-                                    <div class="ba-summary-overall-row">
-                                        <span class="ba-summary-overall-label" data-i18n="ba-summary-overall-label">Overall status</span>
-                                        <span class="ba-summary-ran-at-row">
-                                            <span class="ba-summary-ran-at-label" data-i18n="ba-vtest-last-run">Last run</span>
-                                            <span class="ba-summary-ran-at-sep">:</span>
-                                            <span class="ba-summary-ran-at" id="ba-summary-ran-at">—</span>
-                                        </span>
-                                    </div>
-                                    <ul class="ba-summary-rows" role="list">
-                                        <li class="ba-summary-row">
-                                            <span class="ba-summary-row-label" data-i18n="ba-summary-row-selftest">Self-test</span>
-                                            <span class="ba-summary-row-state"
-                                                  id="ba-summary-selftest-state"
-                                                  data-state="notRun"
-                                                  data-i18n="ba-summary-perrow-not-run">Not run</span>
-                                        </li>
-                                        <li class="ba-summary-row">
-                                            <span class="ba-summary-row-label" data-i18n="ba-summary-row-vtests">Violation tests</span>
-                                            <span class="ba-summary-row-state"
-                                                  id="ba-summary-vtest-state"
-                                                  data-state="notRun"
-                                                  data-i18n="ba-summary-perrow-not-run">Not run</span>
-                                        </li>
-                                    </ul>
-                                    <p class="ba-summary-local-only" data-i18n="ba-summary-local-only">Last result is local only</p>
-                                </div>
-
-                                <!-- PR-28: Safety Checklist Preview (read-only).
-                                     Generates a strictly summarized JSON object
-                                     covering boundary statuses, test results,
-                                     regression overall, and a static safety-flag
-                                     block. textContent ONLY (no innerHTML).
-                                     NEVER persists, NEVER calls backend, NEVER
-                                     writes files. Operator must click Generate;
-                                     no auto-run on page load. -->
-                                <div class="ba-checklist" id="ba-checklist">
-                                    <header class="ba-checklist-header">
-                                        <span class="ba-checklist-title" data-i18n="ba-checklist-title">Safety Checklist Preview</span>
-                                        <span class="ba-checklist-badge" data-i18n="ba-checklist-badge">Preview only</span>
-                                    </header>
-                                    <p class="ba-checklist-note" data-i18n="ba-checklist-note">Not saved / Not exported</p>
-                                    <div class="ba-checklist-actions" role="group" aria-label="Safety checklist preview controls">
-                                        <button type="button"
-                                                id="ba-checklist-gen-btn"
-                                                class="ba-checklist-btn ba-checklist-btn--gen"
-                                                data-i18n="ba-checklist-gen">Generate checklist</button>
-                                        <button type="button"
-                                                id="ba-checklist-clear-btn"
-                                                class="ba-checklist-btn ba-checklist-btn--clear"
-                                                data-i18n="ba-checklist-clear"
-                                                disabled>Clear checklist</button>
-                                        <!-- PR-29: Copy checklist JSON. Clipboard ONLY.
-                                             Reads <pre>.textContent exactly as displayed.
-                                             Disabled until a checklist exists. No file
-                                             write, no download, no Blob, no fallback. -->
-                                        <button type="button"
-                                                id="ba-checklist-copy-btn"
-                                                class="ba-checklist-btn ba-checklist-btn--copy"
-                                                data-i18n="ba-checklist-copy"
-                                                disabled
-                                                aria-disabled="true">Copy checklist JSON</button>
-                                    </div>
-                                    <!-- PR-29: transient status chip — appears for ~1.6s after copy attempt. -->
-                                    <div class="ba-checklist-copy-status-row" aria-live="polite">
-                                        <span id="ba-checklist-copy-status"
-                                              class="ba-checklist-copy-status"
-                                              hidden></span>
-                                    </div>
-                                    <pre id="ba-checklist-body"
-                                         class="ba-checklist-body"
-                                         dir="ltr"
-                                         hidden></pre>
-                                    <p id="ba-checklist-empty"
-                                       class="ba-checklist-empty"
-                                       data-i18n="ba-checklist-empty">No checklist generated</p>
-
-                                    <!-- PR-31: Safety Checklist Copy Payload Inspector (display-only).
-                                         Shows the most recent PR-30 audit payload produced by
-                                         copyChecklist() so the operator can visually confirm
-                                         what metadata was logged. UI-only, memory-only, no
-                                         persistence. Fields are filled via textContent from a
-                                         fixed allowlist; the copied JSON / clipboard text /
-                                         raw err.message are NEVER shown here. Hidden by
-                                         default; revealed only after the first copy attempt. -->
-                                    <details id="ba-copy-audit" class="ba-copy-audit" hidden>
-                                        <summary class="ba-copy-audit-summary">
-                                            <span class="ba-copy-audit-summary-text"
-                                                  data-i18n="ba-copy-audit-title">Latest copy audit details</span>
-                                            <!-- PR-33: Last-action badge. Derived only from
-                                                 the PR-30/PR-31 payload.action field. Hidden
-                                                 by default; revealed only when a payload
-                                                 exists. textContent only. -->
-                                            <span id="ba-copy-audit-status-badge"
-                                                  class="ba-copy-audit-status-badge"
-                                                  hidden></span>
-                                        </summary>
-                                        <ul class="ba-copy-audit-rows" role="list">
-                                            <li class="ba-copy-audit-row" data-field="source">
-                                                <span class="ba-copy-audit-label" data-i18n="ba-copy-audit-source">source</span>
-                                                <span class="ba-copy-audit-value">—</span>
-                                            </li>
-                                            <li class="ba-copy-audit-row" data-field="action">
-                                                <span class="ba-copy-audit-label" data-i18n="ba-copy-audit-action">action</span>
-                                                <span class="ba-copy-audit-value">—</span>
-                                            </li>
-                                            <li class="ba-copy-audit-row" data-field="bytes" hidden>
-                                                <span class="ba-copy-audit-label" data-i18n="ba-copy-audit-bytes">bytes</span>
-                                                <span class="ba-copy-audit-value">—</span>
-                                            </li>
-                                            <li class="ba-copy-audit-row" data-field="reason" hidden>
-                                                <span class="ba-copy-audit-label" data-i18n="ba-copy-audit-reason">reason</span>
-                                                <span class="ba-copy-audit-value">—</span>
-                                            </li>
-                                            <li class="ba-copy-audit-row" data-field="checklistVisible">
-                                                <span class="ba-copy-audit-label" data-i18n="ba-copy-audit-visible">checklistVisible</span>
-                                                <span class="ba-copy-audit-value">—</span>
-                                            </li>
-                                            <!-- PR-35: ba-copy-audit-row--with-note enables flex-wrap so
-                                                 the help note drops to a second line. The note is static
-                                                 i18n text only — no payload content, no clipboard text. -->
-                                            <li class="ba-copy-audit-row ba-copy-audit-row--with-note" data-field="copySource">
-                                                <span class="ba-copy-audit-label" data-i18n="ba-copy-audit-source-kind">copySource</span>
-                                                <span class="ba-copy-audit-value">—</span>
-                                                <span class="ba-copy-source-help" data-i18n="ba-copy-audit-copy-source-help">Copied from the visible checklist preview only.</span>
-                                            </li>
-                                            <li class="ba-copy-audit-row" data-field="timestamp">
-                                                <span class="ba-copy-audit-label" data-i18n="ba-copy-audit-timestamp">timestamp</span>
-                                                <span class="ba-copy-audit-value">—</span>
-                                                <!-- PR-34: age label — UI-only, derived only from payload.timestamp -->
-                                                <span id="ba-copy-audit-age" class="ba-copy-audit-age" hidden></span>
-                                            </li>
-                                        </ul>
-                                        <!-- PR-32: Clear audit details. UI-only, memory-only.
-                                             Hides the inspector and resets the 7 rows to "—".
-                                             Does NOT touch the checklist <pre>, the Copy
-                                             checklist JSON button, the Event Log history,
-                                             clipboard, network, storage, or scenario state. -->
-                                        <div class="ba-copy-audit-actions">
-                                            <button type="button"
-                                                    id="ba-copy-audit-clear-btn"
-                                                    class="ba-copy-audit-clear-btn"
-                                                    data-i18n="ba-copy-audit-clear">Clear audit details</button>
-                                        </div>
-                                    </details>
-                                </div>
-                            </details>
-                        </section>
-                    </section>
+                <div id="empty-state" class="usp-empty">
+                    <div class="usp-empty-icon">&#x25C8;</div>
+                    <p data-i18n="usp-no-unit">No unit selected.<br>Click a unit on the map.</p>
                 </div>
+
+                <div class="usp-body" id="usp-body" hidden>
+                    <div class="usp-hero">
+                        <div class="usp-hero-top">
+                            <div class="usp-unit-name" id="unit-label">&#8212;</div>
+                            <span class="usp-status-badge" id="usp-status-badge"></span>
+                        </div>
+                        <div class="usp-hero-symbol" id="unit-symbol"></div>
+                    </div>
+
+                    <div class="usp-identity-block">
+                        <div class="usp-platform-id" id="usp-platform-id"></div>
+                        <div class="usp-platform-type" id="usp-platform-type"></div>
+                        <div class="usp-uid" id="unit-uid"></div>
+                        <div class="usp-sidc" id="usp-sidc"></div>
+                        <div class="usp-code-line" id="usp-code"></div>
+                    </div>
+
+                    <div class="usp-stats-row">
+                        <div class="usp-stat"><div class="usp-stat-lbl" data-i18n="up-field-side">Side</div><div class="usp-stat-val" id="unit-side">&#8212;</div></div>
+                        <div class="usp-stat"><div class="usp-stat-lbl" data-i18n="usp-lbl-course">Course</div><div class="usp-stat-val" id="usp-course">&#8212;</div></div>
+                        <div class="usp-stat"><div class="usp-stat-lbl" data-i18n="usp-lbl-speed">Speed</div><div class="usp-stat-val" id="usp-speed">&#8212;</div></div>
+                    </div>
+
+                    <div class="usp-readiness-block">
+                        <div class="usp-readiness-top">
+                            <span class="usp-field-lbl" data-i18n="usp-lbl-readiness">Readiness</span>
+                            <span class="usp-readiness-chip" id="readiness-value"></span>
+                            <span class="usp-delta-src" id="readiness-source"></span>
+                        </div>
+                        <div class="usp-bar-track"><div class="usp-bar-fill usp-readiness-fill" id="usp-readiness-fill"></div></div>
+                        <div class="usp-data-src" id="readiness-data-source"></div>
+                    </div>
+
+                    <div class="usp-systems-block">
+                        <div class="usp-mini-hdr">
+                            <span class="usp-mini-label" data-i18n="usp-lbl-systems">SYSTEMS</span>
+                            <span class="usp-ctrl-tag">Damage Ctrl</span>
+                        </div>
+                        <div class="usp-bar-track usp-bar-track--tall"><div class="usp-bar-fill supply-fill" id="supply-fill"></div></div>
+                        <div class="usp-systems-foot">
+                            <span class="usp-field-lbl" data-i18n="usp-lbl-supply">Supply</span>
+                            <span class="usp-stat-val usp-supply-pct" id="supply-pct"></span>
+                            <span class="usp-delta-src" id="supply-source"></span>
+                        </div>
+                        <div class="usp-data-src" id="supply-data-source"></div>
+                    </div>
+
+                    <div class="usp-magazines-block" id="usp-magazines-block">
+                        <div class="usp-mini-hdr">
+                            <span class="usp-mini-label" data-i18n="usp-lbl-magazines">MAGAZINES</span>
+                            <span class="usp-ctrl-tag">View Magazines</span>
+                        </div>
+                        <h4 id="magazines-title" hidden style="display:none"></h4>
+                        <ul class="usp-mag-list" id="magazine-list"></ul>
+                    </div>
+
+                    <div class="usp-fuelammo-block" id="usp-fuelammo-block">
+                        <div class="usp-mini-hdr"><span class="usp-mini-label" data-i18n="usp-lbl-fuel-ammo">FUEL AND AMMO</span></div>
+                        <div class="usp-fuelammo-name" id="usp-fuelammo-name">&#8212;</div>
+                        <div class="usp-bar-track usp-bar-track--tall"><div class="usp-bar-fill usp-fuel-fill" id="usp-fuel-fill"></div></div>
+                        <div class="usp-fuelammo-detail" id="usp-fuelammo-detail"></div>
+                    </div>
+
+                    <div class="usp-assignment-block">
+                        <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="up-field-domain">Domain</span><span class="usp-arow-val" id="unit-domain">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="up-field-role">Role</span><span class="usp-arow-val" id="unit-role">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="up-field-echelon">Echelon</span><span class="usp-arow-val" id="unit-echelon">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="usp-lbl-assigned-base">Assigned Base</span><span class="usp-arow-val" id="usp-assigned-base">None</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="up-field-status">Status</span><span class="usp-arow-val" id="usp-unit-status">&#8212;</span></div>
+                        <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="up-field-mission">Mission</span><span class="usp-arow-val usp-link" id="usp-mission">&#8212;</span></div>
+                    </div>
+
+
+                    <!-- CURRENT ORDERS: populated from ws.derived.unit_tasking[uid] -->
+                    <div class="usp-tasking-block" id="usp-tasking-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label"><span data-i18n="usp-lbl-orders">CURRENT ORDERS</span><span class="usp-tasking-step" id="usp-tasking-step"></span></span>
+                            <button class="usp-collapse-btn" aria-expanded="true" aria-controls="usp-tasking-body">&#171;</button>
+                        </div>
+                        <div id="usp-tasking-body" class="usp-section-body" data-collapsed="false">
+                            <div class="usp-tasking-row" id="usp-tasking-why-row" hidden>
+                                <span class="usp-tasking-lbl" data-i18n="usp-lbl-why">Why</span>
+                                <span class="usp-tasking-val" id="usp-tasking-why"></span>
+                            </div>
+                            <div class="usp-tasking-row" id="usp-tasking-effect-row" hidden>
+                                <span class="usp-tasking-lbl" data-i18n="usp-lbl-effect">Intended Effect</span>
+                                <span class="usp-tasking-val" id="usp-tasking-effect"></span>
+                            </div>
+                            <div class="usp-tasking-row" id="usp-tasking-doctrine-row" hidden>
+                                <span class="usp-tasking-lbl" data-i18n="usp-lbl-doctrine">Doctrine</span>
+                                <span class="usp-tasking-val usp-tasking-doctrine-val" id="usp-tasking-doctrine"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- POSITION section -->
+                    <div class="usp-pos-section">
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl" data-i18n="up-field-mgrs">MGRS</span>
+                            <span class="usp-pos-val" id="usp-mgrs">&#8212;</span>
+                        </div>
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl" data-i18n="up-field-latlng">Lat / Lng</span>
+                            <span class="usp-pos-val" id="usp-latlng">&#8212;</span>
+                        </div>
+                        <div class="usp-arow">
+                            <span class="usp-arow-lbl" data-i18n="up-field-selected-at">Selected at</span>
+                            <span class="usp-pos-selat" id="usp-selat">&#8212;</span>
+                        </div>
+                    </div>
+
+                    <div class="usp-tabs-block">
+                        <div class="usp-tabs-nav">
+                            <button class="usp-tab usp-tab--active" data-tab="tab-sensors"><span data-i18n="usp-tab-sensors">Sensors</span> <span class="usp-tab-count" id="sensor-count"></span></button>
+                            <button class="usp-tab" data-tab="tab-comms"><span data-i18n="usp-tab-comms">Comms</span></button>
+                            <button class="usp-tab" data-tab="tab-weapons"><span data-i18n="usp-tab-weapons">Weapons</span> <span class="usp-tab-count" id="weapon-count"></span></button>
+                        </div>
+                        <div class="usp-tab-pane usp-tab-pane--active" id="tab-sensors">
+                            <div id="sensors-section">
+                                <ul class="usp-item-list" id="sensor-list"></ul>
+                                <div class="usp-tab-empty" id="sensors-empty" hidden>No sensors configured</div>
+                            </div>
+                        </div>
+                        <div class="usp-tab-pane" id="tab-comms"><div class="usp-tab-empty" data-i18n="usp-no-comms-data">No comms data</div></div>
+                        <div class="usp-tab-pane" id="tab-weapons">
+                            <div id="weapons-section">
+                                <ul class="usp-item-list" id="weapon-list"></ul>
+                                <div class="usp-tab-empty" id="weapons-empty" hidden>No weapons configured</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usp-speed-block">
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label" data-i18n="usp-lbl-alt-speed">UNIT ALT / SPEED</span>
+                            <button class="usp-collapse-btn" aria-expanded="true" aria-controls="usp-speed-body">&#171;</button>
+                        </div>
+                        <div id="usp-speed-body" class="usp-section-body" data-collapsed="false">
+                            <div class="usp-speed-grid">
+                                <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="usp-lbl-altitude">Altitude</span><span class="usp-arow-val" id="usp-altitude">&#8212;</span></div>
+                                <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="usp-lbl-speed">Speed</span><span class="usp-arow-val" id="usp-speed-val">&#8212;</span></div>
+                            </div>
+                            <div class="usp-throttle-wrap">
+                                <div class="usp-throttle-lbl" data-i18n="usp-lbl-throttle">Throttle</div>
+                                <div class="usp-throttle-btns" id="usp-throttle-btns">
+                                    <span class="usp-throttle-btn" data-throttle="stop">Stop</span>
+                                    <span class="usp-throttle-btn" data-throttle="creep">Creep</span>
+                                    <span class="usp-throttle-btn" data-throttle="cruise">Cruise</span>
+                                    <span class="usp-throttle-btn" data-throttle="full">Full</span>
+                                    <span class="usp-throttle-btn" data-throttle="flank">Flank</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usp-fuel-block">
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label" data-i18n="usp-lbl-fuel">UNIT FUEL</span>
+                            <button class="usp-collapse-btn" aria-expanded="true" aria-controls="usp-fuel-body">&#171;</button>
+                        </div>
+                        <div id="usp-fuel-body" class="usp-section-body" data-collapsed="false">
+                            <div class="usp-fuel-unit-name" id="usp-fuel-unit-name"></div>
+                            <div class="usp-bar-track usp-bar-track--tall"><div class="usp-bar-fill usp-fuel-fill2" id="usp-fuel-bar"></div></div>
+                            <div class="usp-fuel-text" id="usp-fuel-text"></div>
+                        </div>
+                    </div>
+
+                    <div class="usp-emcon-block">
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label" data-i18n="usp-lbl-emcon">UNIT EMCON</span>
+                            <button class="usp-collapse-btn" aria-expanded="true" aria-controls="usp-emcon-body">&#171;</button>
+                        </div>
+                        <div id="usp-emcon-body" class="usp-section-body" data-collapsed="false">
+                            <div class="usp-emcon-btn">EMCON Window <span class="usp-keybind">(Ctrl + F9)</span></div>
+                            <div class="usp-emcon-state" id="usp-emcon-state"></div>
+                        </div>
+                    </div>
+
+                    <div class="usp-deltas-block" id="deltas-section" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label"><span data-i18n="usp-lbl-recent-changes">RECENT CHANGES</span> <span class="usp-count-badge" id="delta-count"></span></span>
+                            <button class="usp-collapse-btn" aria-expanded="true" aria-controls="delta-list">&#171;</button>
+                        </div>
+                        <ul class="usp-item-list usp-delta-list" id="delta-list" data-collapsed="false"></ul>
+                        <div class="usp-tab-empty" id="deltas-empty" hidden>No recent state changes</div>
+                    </div>
+
+                </div><!-- /.usp-body -->
+
             </aside>
+
+            <!-- OBJ-C: OBJECTIVE EVIDENCE PANEL — Read-only display of objective_evidence ledger -->
+            <!-- Populated by client/shell/objective-evidence-panel.js in response to the
+                 rmooz:objective-selected event emitted by the objective marker click.
+                 Pure passthrough of ws.derived.objective_evidence — no calculations, no new fields. -->
+            <aside class="oep-panel oep-hidden" id="objective-evidence-panel" aria-label="Objective evidence details">
+                <!-- Content populated by objective-evidence-panel.js -->
+            </aside>
+
+        <!-- floating reopen tab — shown when Commander Panel is collapsed -->
+        <button id="usp-reopen-tab" class="usp-reopen-tab" hidden
+                title="Open unit panel" aria-label="Open unit status panel">
+            &#8250; UNIT
+        </button>
 
         </div><!-- /.workspace -->
 
@@ -4043,6 +3697,23 @@
                 <span class="timeline-eyebrow" data-i18n="tl-eyebrow">TL</span>
                 <span class="timeline-title" data-i18n="tl-title">Timeline</span>
             </div>
+
+            <!-- APP-FLOW-2: in-app scenario run controls. One place to see the
+                 current scenario and Load / Import it, next to the transport. -->
+            <div class="timeline-group timeline-group--scenario" role="group" aria-label="Scenario">
+                <!-- Static bilingual labels (no data-i18n): the i18n dictionary
+                     has no keys for these, and applyLanguage would overwrite the
+                     visible text with the raw key. Bilingual inline text is intended. -->
+                <span class="timeline-group-label">Scenario · السيناريو</span>
+                <span id="tl-scenario-name" class="timeline-scenario-name" dir="auto"
+                      title="Current scenario · السيناريو الحالي">No scenario loaded · لا يوجد سيناريو محمّل</span>
+                <button type="button" class="timeline-btn timeline-btn--text timeline-btn--scenario" id="tl-load-scenario"
+                        title="Load Scenario · تحميل سيناريو">Load · تحميل</button>
+                <button type="button" class="timeline-btn timeline-btn--text timeline-btn--scenario" id="tl-import-scenario"
+                        title="Import Scenario · استيراد سيناريو">Import · استيراد</button>
+            </div>
+
+            <div class="timeline-divider" aria-hidden="true"></div>
 
             <div class="timeline-group timeline-group--transport" role="group" aria-label="Transport">
                 <button type="button" class="timeline-btn timeline-btn--transport" id="tl-step-back" data-i18n-title="tl-step-back" title="Step Back">
@@ -4754,7 +4425,7 @@
     <script src="chat.js"></script>
     <script src="units.js"></script>
     <script src="units-orbat.js?v=1"></script>
-    <script src="i18n.js"></script>
+    <script src="i18n.js?v=2"></script>
     <script src="../lib/leaflet.js"></script>
     <script src="../lib/mgrs.min.js"></script>
     <script src="../lib/coord-utils.js"></script>
@@ -4782,10 +4453,23 @@
     <script src="shell/detection.js?v=1"></script>
     <script src="shell/engagement.js?v=1"></script>
     <script src="shell/world-state-db.js?v=1"></script>
-    <script src="wargame/adjudicator-map.js?v=41"></script>
+    <!-- PR-WS2: World State projection (WS1). Loaded before the map so the
+         adjudicator can derive a live World State snapshot per step and route
+         objective status through it (parity-proof read seam — World State
+         mirrors `state` today; WS4 inverts ownership). -->
+    <script src="shell/world-state.js?v=3"></script>
+    <!-- L3-A: "Why-Not" action feasibility evaluator (pure; reads ENG1 + evidence ledger). -->
+    <script src="shell/action-feasibility.js?v=1"></script>
+    <script src="wargame/adjudicator-map.js?v=45"></script>
+    <!-- Canonical scenario RUN dispatcher + single client PREVIEW playback engine.
+         Loaded before movement-playback / timeline / scenario-workspace so it owns
+         the bottom-transport listener and the others defer to it (kills the
+         multi-engine race). See shell/scenario-runner.js header. -->
+    <script src="shell/scenario-runner.js?v=1"></script>
     <script src="wargame/cesium-view.js?v=3"></script>
     <script src="dem-layer.js?v=1"></script>
-    <script src="wargame/adjudicator-hud.js?v=22"></script>
+    <script src="wargame/coverage-summary.js?v=1"></script>
+    <script src="wargame/adjudicator-hud.js?v=23"></script>
     <!-- PR-MOVE1: continuous movement + playback clock. Drives the existing
          AppAdjudicatorMap.applyStepProgress over wall-clock time and wires the
          transport bar (#tl-play/#tl-pause/#tl-speed). Additive — does not touch
@@ -4802,7 +4486,13 @@
     <script src="shell/classification-bar.js?v=1"></script>
     <script src="shell/coord-readout.js?v=1"></script>
     <script src="shell/side-picker.js?v=1"></script>
-    <script src="shell/unit-panel.js?v=1"></script>
+
+    <script src="shell/applied-state.js?v=1"></script>
+    <script src="shell/unit-status-panel.js?v=1"></script>
+    <script src="shell/objective-evidence-panel.js?v=3"></script>
+    <!-- L3-B-1: read-only Why-Not display panel in the Scenario Workspace.
+         Paints #wn-body from AppActionFeasibility.evaluateAction. No controls. -->
+    <script src="shell/why-not-panel.js?v=1"></script>
     <!-- PR-4: Event Log placeholder. UI foundation only — static
          placeholder rows, collapse/expand, no journal feed yet. -->
     <script src="shell/event-log.js?v=1"></script>
@@ -4815,9 +4505,14 @@
          can call AppShellAIProposalContract.normalizeProposal() on
          every setProposal(). -->
     <script src="shell/ai-proposal-contract.js?v=1"></script>
+    <!-- Phase 6E-A: Delta Extractor. Pure utility for extracting
+         readiness/supply deltas from projected state. Loads BEFORE
+         ai-proposal-panel.js so the panel can call
+         AppDeltaExtractor.extractDeltas(). -->
+    <script src="shell/delta-extractor.js?v=1"></script>
     <!-- PR-7: AI Proposal Review. UI foundation only — Accept/Reject/Hold
          log to the PR-6 Event Log but do not mutate scenario state. -->
-    <script src="shell/ai-proposal-panel.js?v=2"></script>
+    <script src="shell/ai-proposal-panel.js?v=3"></script>
     <!-- PR-9: AI Proposal Inbox. In-memory store between any future
          proposal source and the PR-7 panel. Loads AFTER contract.js
          and ai-proposal-panel.js because it depends on both bridges. -->
@@ -4937,24 +4632,1375 @@
          available when paintDryRunPreview() runs during workspace init. -->
     <script src="shell/scenario-dry-run-fixtures.js?v=1"></script>
     <script src="shell/scenario-workspace.js?v=1"></script>
+    <!-- FAST-INT-2: WarGamingGEN GeoJSON Import UI Bridge. Self-mounts a labeled
+         card beside the Live Scenario Import card; routes external GeoJSON through
+         the existing POST /api/scenario/import porter. Read-only pre-flight summary;
+         mutates the live scenario only on explicit operator import. -->
+    <script src="shell/wargame-geojson-import.js?v=1"></script>
+    <!-- LOCAL-IMPORT-2: Import Local Wargame Output. Lists run folders copied into
+         data/imports/wargame_outputs/<run_id>/ and imports the selected run through
+         the same porter. Read-only summary; mutates only on explicit operator import.
+         No external TestingAI path, no runs/latest, no stale flat bundle. -->
+    <script src="shell/wargame-local-import.js?v=1"></script>
+    <!-- UNIFIED-IMPORT-2: the one primary "Import Scenario" wizard. Upload DOCX →
+         Start → real checkpoint progress → auto publish/import → opens the scenario.
+         On a stopped run: Continue (resume) / Restart / View Logs / Import Partial
+         (≥4 phases). Relocates the three cards above into a collapsed "Advanced
+         Import Tools" (kept, not deleted). Orchestration only; porter unchanged. -->
+    <!-- DOC-UNDERSTANDING-1 / G-3: COA Review Panel (cards + Select/Reject/Edit/Compare + generation gate). Must load BEFORE the review renderer. -->
+    <script src="shell/coa-review-panel.js?v=1"></script>
+    <!-- DOC-UNDERSTANDING-1 / Phase E: shared AI-Understanding review renderer (used by the wizard + verify page). -->
+    <script src="shell/doc-understanding-review.js?v=1"></script>
+    <script src="shell/scenario-import-wizard.js?v=1"></script>
+    <!-- FAST-DOC-1: DOCX Force Upload → WarGamingGEN → GeoJSON import bridge.
+         Uploads red/blue .docx to a staging folder, runs/stages the existing
+         WarGamingGEN generation, then imports the generated all_phases.geojson
+         through the same porter. RMOOZ never parses DOCX or calls the LLM. -->
+    <script src="shell/wargame-sim-import.js?v=4"></script>
+    <!-- PR2: RMOOZ-native scenario loader + home-hub launch-intent wiring.
+         Reuses AppShellScenarioWorkspace.loadLiveScenarioFromJson (global path);
+         only acts when a ?launch= intent is present, so direct /app.html and the
+         Wargame-3 path are untouched. -->
+    <script src="shell/native-scenario-loader.js?v=3"></script>
+    <!-- Scenario Entry Consolidation: Back to Main Window, Export Scenario JSON,
+         and the Developer/Import disclosure that hides scenario-load clutter. -->
+    <script src="shell/workspace-consolidation.js?v=1"></script>
     <!-- Owner ruling 2026-06-01: editable scenario workspace (slice 1: metadata/sides/posture).
          P0 authoring schema (draft/working-copy engine) must load before edit-mode.
          Edits stay in-memory; commit/journal boundary untouched. -->
     <script src="shell/scenario-authoring-schema.js?v=1"></script>
-    <script src="shell/scenario-edit-mode.js?v=1"></script>
+    <script src="shell/scenario-edit-mode.js?v=8"></script>
+    <script src="shell/objectives-editor-step.js?v=1"></script>
     <style>
-        .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; }
+        .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
-            color:#e8eaed; border-radius:5px; padding:4px 10px; }
+            color:#e8eaed; border-radius:5px; padding:4px 10px; pointer-events: auto; }
         .sw-edit-btn:hover { background:#343a44; }
-        .sw-edit-btn-primary { background:#2f6fed; border-color:#2f6fed; color:#fff; }
+        .sw-edit-btn[disabled] { opacity:0.5; cursor:not-allowed; }
+        .sw-edit-btn-primary { background:#2f6fed; border-color:#2f6fed; color:#fff; pointer-events: auto; }
         .sw-edit-btn-primary:hover { background:#3b78f0; }
         .sw-editmode-editor[hidden] { display:none; }
-        .sw-edit-row dd { width:100%; }
+        .sw-edit-row dd { width:100%; pointer-events: auto; }
         .sw-edit-input { width:100%; box-sizing:border-box; font:inherit; padding:3px 6px;
-            border:1px solid #5a6270; border-radius:4px; background:#1f242b; color:#e8eaed; }
+            border:1px solid #5a6270; border-radius:4px; background:#1f242b; color:#e8eaed; pointer-events: auto; }
+        textarea.sw-edit-input { resize:vertical; min-height:60px; font-family:ui-monospace,Menlo,Consolas,monospace; pointer-events: auto; }
+        select.sw-edit-input { pointer-events: auto; }
         .sw-edit-actions { display:flex; gap:8px; align-items:center; padding:8px; flex-wrap:wrap; }
         .sw-edit-status { font-size:12px; }
+        /* Slice 2A/2B item styling (was using browser defaults) */
+        .sw-edit-list { display:flex; flex-direction:column; gap:8px; padding:4px 8px 8px; }
+        .sw-edit-list-item { border:1px solid #3a3f47; border-radius:5px; padding:8px; background:#1c1f24; }
+        .sw-edit-empty { font-style:italic; color:#8d949e; padding:4px 0; font-size:12px; }
+        .sw-edit-hint { font-size:11px; color:#a8b0bb; padding:2px 8px 6px; }
+        /* Metadata field validation hints (Step 1 hardening) */
+        .sw-meta-hint { font-size:11px; padding:2px 0 0; min-height:14px; line-height:1.3; }
+        .sw-meta-hint:empty { display:none; }
+        .sw-meta-hint--err  { color:#e05252; }
+        .sw-meta-hint--warn { color:#c9a227; }
+        .sw-edit-input.sw-input-err  { border-color:#e05252; }
+        .sw-edit-input.sw-input-warn { border-color:#c9a227; }
+        .sw-meta-req::after { content:' *'; color:#e05252; font-size:10px; vertical-align:super; }
+        .sw-edit-subcard { border:1px solid #3a3f47; border-radius:6px; margin:6px 8px; background:#1a1d22; }
+        .sw-edit-subcard-header { padding:6px 10px; font-weight:600; border-bottom:1px solid #2a2f37;
+            background:#222630; color:#cfd4dc; font-size:12.5px; letter-spacing:.02em; }
+        /* Slice 2C — stepped layout */
+        .sw-step-layout { display:flex; gap:0; align-items:stretch; min-height:300px; }
+        .sw-step-rail { flex:0 0 200px; border-right:1px solid #2a2f37; padding:6px 4px;
+            background:#161a1f; display:flex; flex-direction:column; gap:2px; max-height:80vh; overflow-y:auto; pointer-events: auto; }
+        .sw-step-item { display:flex; align-items:center; gap:8px; padding:6px 8px;
+            cursor:pointer; border-radius:4px; font-size:12.5px; color:#cfd4dc; user-select:none; pointer-events: auto; }
+        .sw-step-item:hover { background:#222630; }
+        .sw-step-item.active { background:#2f6fed; color:#fff; }
+        .sw-step-item.gap { color:#8d949e; }
+        .sw-step-item.gap:hover { background:#1d2026; }
+        .sw-step-num { flex:0 0 18px; font-variant-numeric:tabular-nums; font-size:11px;
+            color:#8d949e; text-align:right; }
+        .sw-step-item.active .sw-step-num { color:#bcd2ff; }
+        .sw-step-title { flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .sw-step-pill { flex:0 0 12px; height:12px; border-radius:50%; background:#3a3f47;
+            border:1px solid #4a4f57; }
+        .sw-step-pill.ok    { background:#1a7f37; border-color:#1a7f37; }
+        .sw-step-pill.warn  { background:#c9a227; border-color:#c9a227; }
+        .sw-step-pill.gap   { background:transparent; border-color:#4a4f57; border-style:dashed; }
+        .sw-step-content { flex:1 1 auto; padding:8px; min-width:0; overflow-x:hidden; max-height:80vh; overflow-y:auto; pointer-events: auto; }
+        /* Slice 2C — New Scenario inline form */
+        .sw-newscen-form { border:1px solid #3a3f47; border-radius:6px; padding:10px;
+            background:#1c1f24; margin:6px 8px; display:flex; flex-direction:column; gap:6px; }
+        .sw-newscen-form-title { font-weight:600; font-size:13px; color:#e8eaed; margin-bottom:4px; }
+        /* Slice 2C — placeholder ("gap") card */
+        .sw-gap-card { padding:14px; border:1px dashed #4a4f57; border-radius:6px;
+            background:#1a1d22; color:#a8b0bb; }
+        .sw-gap-card-title { font-weight:600; color:#cfd4dc; margin-bottom:6px; }
+        .sw-gap-card-why   { font-size:12px; line-height:1.5; }
+        /* Slice 2D — Forces (OOB) tree + detail pane (scale-aware) */
+        .sw-forces-toolbar { display:flex; gap:6px; align-items:center; padding:6px 8px;
+            border-bottom:1px solid #2a2f37; background:#1a1d22; flex-wrap:wrap; }
+        .sw-forces-toolbar input.sw-edit-input { flex:1 1 200px; max-width:340px; }
+        .sw-forces-counts { font-size:11px; color:#8d949e; margin-left:auto; }
+        .sw-forces-tree { padding:4px 0; max-height:55vh; overflow-y:auto; border-bottom:1px solid #2a2f37; }
+        .sw-forces-group-header { display:flex; align-items:center; gap:6px; padding:4px 8px;
+            cursor:pointer; user-select:none; font-size:12.5px; color:#cfd4dc; font-weight:600; }
+        .sw-forces-group-header:hover { background:#1f242b; }
+        .sw-forces-group-chev { display:inline-block; width:10px; color:#8d949e; text-align:center;
+            font-variant-numeric:tabular-nums; }
+        .sw-forces-group-count { color:#8d949e; font-weight:normal; font-size:11px; }
+        .sw-forces-side-RED  { color:#d6332e; }
+        .sw-forces-side-BLUE { color:#3a76c2; }
+        .sw-forces-group-echelon { font-weight:500; color:#a8b0bb; padding-left:22px; font-size:12px; }
+        .sw-forces-row { display:flex; align-items:center; gap:8px; padding:3px 8px 3px 40px;
+            cursor:pointer; user-select:none; font-size:12px; border-left:3px solid transparent; }
+        .sw-forces-row:hover { background:#1f242b; }
+        .sw-forces-row.selected { background:#22324d; border-left-color:#2f6fed; }
+        .sw-forces-row .sw-forces-sym { flex:0 0 22px; height:22px; display:flex;
+            align-items:center; justify-content:center; }
+        .sw-forces-row .sw-forces-sym svg { max-width:22px; max-height:22px; }
+        .sw-forces-row .sw-forces-uid { flex:0 0 90px; color:#bcd2ff; font-family:ui-monospace,Menlo,Consolas,monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .sw-forces-row .sw-forces-label { flex:1 1 auto; color:#e8eaed; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .sw-forces-row .sw-forces-tag { flex:0 0 auto; font-size:10.5px; color:#8d949e;
+            background:#2a2f37; padding:1px 5px; border-radius:3px; }
+        .sw-forces-empty { color:#8d949e; font-style:italic; padding:8px; font-size:12px; }
+        .sw-forces-detail { padding:8px; background:#1a1d22; }
+        .sw-forces-detail-header { display:flex; align-items:center; gap:8px; padding:0 4px 6px;
+            border-bottom:1px solid #2a2f37; margin-bottom:6px; }
+        .sw-forces-detail-title { font-weight:600; color:#e8eaed; font-size:13px; flex:1 1 auto; }
+        .sw-forces-detail-empty { color:#8d949e; font-style:italic; padding:14px 8px; font-size:12px; }
+        .sw-forces-pick-banner { background:#22324d; color:#cfd4dc; padding:4px 8px;
+            border-radius:4px; font-size:11px; margin-top:6px; }
+        /* Slice 2D-1M (revised) — Edit Mode opens a full-area OVERLAY.
+           Previous attempt (width: min(900px, 75vw)) was still constrained by
+           the parent sidebar AND by the viewport width — on a sub-1000px screen
+           the panel only reached ~615 px and the right edge was still clipped
+           (user screenshot 2026-06-02). Real fix: detach the panel from its
+           sidebar position when Edit Mode is ON and pin it as a fixed overlay
+           that spans from just past the tool rail to the right edge of the
+           viewport. Map sits underneath; Pick-on-map shrinks the overlay
+           temporarily so the operator can click the map. */
+        #scenario-workspace-panel.sw-editmode-wide {
+            display: flex !important;   /* override .context-section.hidden when Edit Mode is active */
+            position: fixed !important;
+            left: var(--rail-w, 72px) !important;
+            top: var(--header-h, 52px) !important;
+            right: 8px !important;
+            bottom: 8px !important;
+            width: auto !important;
+            max-width: none !important;
+            height: auto !important;
+            max-height: none !important;
+            z-index: 600;
+            background: var(--panel-bg, rgba(15, 23, 42, 0.98));
+            border: 1px solid var(--panel-border, rgba(148,163,184,0.2));
+            border-radius: var(--radius, 12px);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.55);
+            padding: 12px 14px;
+            overflow-y: auto;
+        }
+        #scenario-workspace-panel.sw-editmode-wide .sw-step-rail {
+            flex: 0 0 200px;
+            max-height: calc(100vh - var(--header-h, 52px) - 200px);
+        }
+        #scenario-workspace-panel.sw-editmode-wide .sw-step-content {
+            min-width: 0;       /* allow inner flex children to shrink instead of overflow */
+            max-height: calc(100vh - var(--header-h, 52px) - 200px);
+        }
+        #scenario-workspace-panel.sw-editmode-wide .sw-card,
+        #scenario-workspace-panel.sw-editmode-wide .builder-card {
+            min-width: 0;
+        }
+        #scenario-workspace-panel.sw-editmode-wide .builder-card-title {
+            white-space: normal;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+        }
+        /* When Edit Mode is ON, hide the rest of the workspace panel's
+           read-only content (briefing, summary, etc.) so the operator sees
+           only the editor. They're back when Edit Mode is OFF. */
+        #scenario-workspace-panel.sw-editmode-wide > :not(#sw-editmode-bar):not(#sw-editmode-editor) {
+            display: none !important;
+        }
+        /* Slice 2D-1O — when "Pick coord on map" is active, collapse the
+           overlay to a thin right-edge strip showing just a banner so the
+           map underneath is fully clickable. */
+        #scenario-workspace-panel.sw-editmode-wide.sw-editmode-picking {
+            left: auto !important;
+            width: 280px !important;
+            background: rgba(34, 50, 77, 0.96) !important;
+        }
+        #scenario-workspace-panel.sw-editmode-wide.sw-editmode-picking #sw-editmode-editor {
+            display: none !important;
+        }
+        #scenario-workspace-panel.sw-editmode-wide.sw-editmode-picking #sw-editmode-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .sw-editmode-pick-banner-global {
+            display: block; padding: 10px; margin: 8px 0;
+            background: #2f6fed; color: #fff; border-radius: 6px;
+            font-size: 13px; font-weight: 600; text-align: center;
+        }
+        .sw-editmode-pick-banner-global small {
+            display: block; font-weight: normal; opacity: 0.85; margin-top: 4px;
+            font-size: 11px;
+        }
+        /* The two-column field rows ("dt | dd") were laid out for a wide pane —
+           when the panel is the default narrow width (Edit Mode OFF, read-only
+           strip), stack each row's dt above dd. */
+        #scenario-workspace-panel:not(.sw-editmode-wide) .sw-edit-row {
+            display: flex; flex-direction: column; gap: 2px;
+        }
+        /* Slice 2D-1J — "Editing: {name}" indicator + saved-state badge */
+        .sw-editmode-indicator { display:inline-flex; align-items:center; gap:6px;
+            margin-left:8px; padding:3px 8px; border-radius:4px; background:#1c1f24;
+            border:1px solid #3a3f47; font-size:12px; color:#cfd4dc; }
+        .sw-editmode-indicator-label { color:#8d949e; font-size:11px; }
+        .sw-editmode-indicator-name { font-family:ui-monospace,Menlo,Consolas,monospace;
+            font-weight:600; color:#e8eaed; max-width:240px; overflow:hidden;
+            text-overflow:ellipsis; white-space:nowrap; }
+        .sw-editmode-badge { display:inline-block; padding:1px 6px; border-radius:3px;
+            font-size:10.5px; font-weight:600; letter-spacing:.02em; }
+        .sw-editmode-badge.unsaved   { background:#c9a227; color:#1c1f24; }
+        .sw-editmode-badge.in-memory { background:#3a76c2; color:#fff; }
+        .sw-editmode-badge.on-server { background:#1a7f37; color:#fff; }
+        .sw-editmode-badge.on-disk   { background:#2f6fed; color:#fff; }
+
+        /* OBJ-C: Objective Evidence Panel Styles */
+        .oep-panel {
+            position: absolute; inset: 0; right: 0; top: 0;
+            width: 340px; max-width: 100%; overflow-y: auto; overflow-x: hidden;
+            background: linear-gradient(180deg, #1c1f24 0%, #161a1f 100%);
+            border-left: 1px solid #2a2f37; display: flex; flex-direction: column;
+            z-index: 1050; color: #e8eaed; font-size: 13px; line-height: 1.5;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .oep-hidden {
+            display: none !important;
+        }
+
+        .oep-header {
+            padding: 12px 16px; border-bottom: 1px solid #2a2f37;
+            background: #0d0f12; position: sticky; top: 0; z-index: 11;
+        }
+
+        .oep-close {
+            position: absolute; top: 8px; right: 8px;
+            width: 28px; height: 28px; line-height: 26px; text-align: center;
+            border: 1px solid #2a2f37; border-radius: 6px;
+            background: #161a1f; color: #c2c7cf; font-size: 18px; cursor: pointer;
+            padding: 0; transition: background 0.15s ease, color 0.15s ease;
+        }
+        .oep-close:hover { background: #2a2f37; color: #fff; }
+        html[dir="rtl"] .oep-close { right: auto; left: 8px; }
+
+        /* L3-B-1: Why-Not Review card (read-only, compact) */
+        .wn-card { margin: 8px 0; border: 1px solid var(--border, #2a2f37); border-radius: 8px;
+            background: var(--panel-bg, #161a1f); overflow: hidden; }
+        .wn-hdr { padding: 8px 12px; border-bottom: 1px solid var(--border, #2a2f37); }
+        .wn-hdr-title { display: block; font-size: 12px; font-weight: 600; letter-spacing: .03em; }
+        .wn-hdr-sub { display: block; font-size: 10px; opacity: .65; margin-top: 2px; }
+        .wn-body { padding: 8px 12px; font-size: 12px; }
+        .wn-empty { opacity: .6; font-style: italic; margin: 4px 0; }
+        .wn-clear { color: #4caf50; margin: 4px 0; }
+        .wn-action { font-weight: 600; margin-bottom: 6px; }
+        .wn-verdict { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px;
+            font-weight: 700; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px; }
+        .wn-verdict-feasible           { background: rgba(76,175,80,.18);  color: #6fcf73; }
+        .wn-verdict-feasible_with_risk { background: rgba(255,193,7,.18);  color: #ffce54; }
+        .wn-verdict-blocked            { background: rgba(196,30,30,.20);  color: #ef6b6b; }
+        .wn-group { margin-top: 8px; }
+        .wn-group-title { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; opacity: .7; margin-bottom: 4px; }
+        .wn-blockers .wn-group-title { color: #ef6b6b; }
+        .wn-risks .wn-group-title    { color: #ffce54; }
+        .wn-gaps .wn-group-title     { color: #8d949e; }
+        .wn-list { list-style: none; margin: 0; padding: 0; }
+        .wn-item { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; padding: 4px 0;
+            border-top: 1px solid rgba(255,255,255,.04); }
+        .wn-code { font-weight: 600; font-size: 11px; }
+        .wn-exp { flex: 1 1 100%; opacity: .85; font-size: 11px; }
+        .wn-src { font-size: 9px; opacity: .5; font-family: monospace; }
+
+        /* Scenario Entry Consolidation: scenario import/source loaders are hidden in
+           the normal workspace view; the "Developer / Import" toggle reveals them.
+           Nothing is deleted — the global import path + diagnostics stay recoverable. */
+        body:not(.rmooz-dev-import-open) #sw-scenario-source-section,
+        body:not(.rmooz-dev-import-open) #sw-dp-loader-row,
+        body:not(.rmooz-dev-import-open) #wg-adj-import,
+        body:not(.rmooz-dev-import-open) label[data-i18n="wg-adj-import-label"] { display: none !important; }
+        /* The decision-package sample/fixture row (Load sample / Clear / Load fixture)
+           is shown by its .sw-dpkg-loader-row class even with its hidden attribute, so
+           it must be hidden explicitly above and revealed only under the toggle — keeping
+           every clutter loader behind one Developer / Import control. */
+        body.rmooz-dev-import-open #sw-dp-loader-row { display: flex !important; }
+        .rmooz-dev-import-toggle {
+            display: inline-block; margin: 10px 0; padding: 4px 12px; font-size: 11px;
+            background: transparent; color: #8d949e; border: 1px dashed #2a2f37;
+            border-radius: 6px; cursor: pointer; letter-spacing: .03em;
+        }
+        .rmooz-dev-import-toggle:hover { color: #fff; border-color: #3a96d2; }
+        .rmooz-export-status { font-size: 11px; color: #8d949e; margin: 0 6px; }
+
+        .oep-eyebrow {
+            display: block; font-size: 10px; text-transform: uppercase;
+            letter-spacing: 0.04em; color: #8d949e; margin-bottom: 4px;
+        }
+
+        .oep-title {
+            margin: 4px 0; font-size: 16px; font-weight: 600; color: #fff;
+        }
+
+        .oep-status {
+            margin: 4px 0 0; font-size: 12px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.02em;
+            padding: 3px 8px; display: inline-block; border-radius: 3px;
+            background: #2a2f37;
+        }
+
+        .oep-status-threatened { background: #c97a3e; color: #fff; }
+        .oep-status-dormant { background: #4a4f57; color: #cfd4dc; }
+        .oep-status-contested { background: #c9a227; color: #1c1f24; }
+        .oep-status-captured { background: #1a7f37; color: #fff; }
+        .oep-status-lost { background: #d1242f; color: #fff; }
+        .oep-status-unknown { background: #3a3f47; color: #a8b0bb; }
+
+        .oep-groups {
+            flex: 1 1 auto; padding: 8px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+
+        .oep-group {
+            border: 1px solid #2a2f37; border-radius: 5px;
+            background: #1c1f24; padding: 8px;
+        }
+
+        .oep-group-system {
+            background: #1a1d22; border-color: #3a3f47;
+        }
+
+        .oep-group-title {
+            margin: 0 0 6px; font-size: 12px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.02em;
+            color: #cfd4dc; padding: 2px 0;
+        }
+
+        .oep-empty {
+            color: #8d949e; font-style: italic; font-size: 12px;
+            margin: 4px 0; padding: 4px 0;
+        }
+
+        .oep-evidence-list {
+            margin: 0; padding: 0; list-style: none;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+
+        .oep-evidence-item {
+            display: flex; flex-direction: column; gap: 2px;
+            padding: 6px; background: #0d0f12; border-radius: 3px;
+            border-left: 2px solid #2f6fed;
+        }
+
+        .oep-evidence-item dt {
+            margin: 0; font-size: 12px; font-weight: 500;
+            color: #cfd4dc; display: flex; justify-content: space-between;
+            align-items: center;
+        }
+
+        .oep-evidence-item dd {
+            margin: 0; font-size: 13px; font-weight: 600;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 8px;
+        }
+
+        .oep-value {
+            color: #bcd2ff; font-family: ui-monospace, Menlo, Consolas, monospace;
+            font-size: 12px;
+        }
+
+        .oep-dots {
+            display: inline-block; letter-spacing: 1px; color: #8d949e;
+            font-size: 11px; cursor: help;
+        }
+
+        .oep-source {
+            font-size: 11px; color: #8d949e; margin-top: 2px;
+        }
+
+        /* Slice 2A — Objectives Editor (Step 5) */
+        .sw-objectives-container { display: flex; gap: 12px; padding: 8px; min-height: 300px; }
+        .sw-objectives-list-pane { flex: 0 0 220px; border-right: 1px solid #2a2f37; overflow-y: auto; max-height: 60vh; }
+        .sw-objectives-detail-pane { flex: 1 1 auto; padding: 8px; min-width: 0; overflow-y: auto; max-height: 60vh; background: #1a1d22; border-radius: 4px; }
+        .sw-objectives-list { display: flex; flex-direction: column; gap: 6px; }
+        .sw-objective-item { display: flex; flex-direction: column; gap: 3px; padding: 8px; border: 1px solid #3a3f47; border-radius: 4px; background: #1c1f24; cursor: pointer; user-select: none; }
+        .sw-objective-item:hover { background: #22324d; border-color: #4a4f57; }
+        .sw-objective-item--selected { background: #22324d; border-color: #2f6fed; box-shadow: 0 0 0 2px rgba(47, 111, 237, 0.2); }
+        .sw-objective-item-id { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 600; color: #bcd2ff; }
+        .sw-objective-item-name { font-size: 12px; color: #e8eaed; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .sw-objective-item-owner { font-size: 10px; color: #8d949e; }
+        .sw-objectives-empty { color: #8d949e; font-style: italic; padding: 14px 8px; font-size: 12px; }
+        .sw-objectives-detail-empty { color: #8d949e; font-style: italic; padding: 14px 8px; font-size: 12px; }
+        .sw-edit-textarea { width: 100%; box-sizing: border-box; font: inherit; padding: 3px 6px; border: 1px solid #5a6270; border-radius: 4px; background: #1f242b; color: #e8eaed; resize: vertical; min-height: 60px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+        .sw-field-label-with-hint { display: flex; align-items: center; gap: 4px; }
+        .sw-meta-hint--required { font-size: 10px; color: #d6332e; font-weight: 600; }
+        .sw-meta-hint--err { font-size: 10px; color: #d6332e; display: none; padding: 2px 0 6px 8px; font-style: italic; }
+        .sw-field-display { padding: 3px 6px; background: #1f242b; border: 1px solid #3a3f47; border-radius: 4px; color: #8d949e; font-size: 12px; }
+        /* ── UI-Unit-1-A: Commander Unit Status Panel ──────────────────── */
+        .unit-status-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            width: 420px;
+            background: #f9f9f9;
+            border-left: 1px solid #d0d0d0;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+            z-index: 900;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: slideInRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            box-sizing: border-box;
+        }
+
+        .unit-status-panel[hidden] {
+            display: none !important;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .unit-status-panel .panel-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #e0e0e0;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-shrink: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .unit-status-panel .panel-header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #222;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .unit-status-panel .panel-close-btn {
+            appearance: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #666;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .unit-status-panel .panel-close-btn:hover {
+            background: #f0f0f0;
+            color: #222;
+        }
+
+        .unit-status-panel .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .unit-status-panel .panel-section {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e8e8e8;
+            width: 100%;
+            box-sizing: border-box;
+            display: block;
+            overflow-x: hidden;
+        }
+
+        .unit-status-panel .section-title {
+            margin: 0 0 1rem 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .unit-status-panel .subsection-title {
+            margin: 1rem 0 0.75rem 0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .unit-status-panel .identity-section {
+            padding: 1rem 1.25rem;
+            background: #fff;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        /* Ensure all sections size properly and don't overlap */
+        .unit-status-panel .readiness-supply-section,
+        .unit-status-panel .sensors-section,
+        .unit-status-panel .weapons-section,
+        .unit-status-panel .deltas-section {
+            display: block;
+            margin: 0;
+            padding: 1rem 1.25rem;
+            width: 100%;
+            box-sizing: border-box;
+            border-bottom: 1px solid #e8e8e8;
+            overflow-x: hidden;
+        }
+
+        .unit-status-panel .unit-symbol-preview {
+            width: 80px;
+            height: 80px;
+            background: #fff;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .unit-status-panel .unit-identity-info {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .unit-status-panel .unit-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 0.25rem;
+            word-break: break-word;
+        }
+
+        .unit-status-panel .unit-uid {
+            font-size: 0.8rem;
+            color: #888;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+
+        .unit-status-panel .unit-classification {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .unit-status-panel .unit-side,
+        .unit-status-panel .unit-domain,
+        .unit-status-panel .unit-role {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: #f0f0f0;
+            border-radius: 3px;
+        }
+
+        .unit-status-panel .unit-echelon {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .unit-status-panel .readiness-value {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .unit-status-panel .readiness-value.ready {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .unit-status-panel .readiness-value.limited {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .unit-status-panel .readiness-value.not_ready {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .unit-status-panel .readiness-source {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+
+        .unit-status-panel .supply-bar-container {
+            margin: 0.5rem 0;
+        }
+
+        .unit-status-panel .supply-bar {
+            width: 100%;
+            height: 24px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #d0d0d0;
+            box-sizing: border-box;
+        }
+
+        .unit-status-panel .supply-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 0.5rem;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: bold;
+            box-sizing: border-box;
+        }
+
+        .unit-status-panel .supply-percentage {
+            font-size: 0.9rem;
+            color: #333;
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+
+        .unit-status-panel .supply-source {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .unit-status-panel .sensor-list,
+        .unit-status-panel .weapon-list,
+        .unit-status-panel .magazine-list,
+        .unit-status-panel .delta-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .unit-status-panel .sensor-list li,
+        .unit-status-panel .weapon-list li,
+        .unit-status-panel .magazine-list li,
+        .unit-status-panel .delta-list li {
+            padding: 0.75rem;
+            background: #fff;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            border-left: 3px solid #2196F3;
+            font-size: 0.9rem;
+            color: #333;
+            word-break: break-word;
+        }
+
+        .unit-status-panel .delta-list li {
+            border-left-color: #FF9800;
+        }
+
+        .unit-status-panel .delta-list li .delta-timestamp {
+            display: block;
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.25rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .unit-status-panel .count-badge {
+            display: inline-block;
+            padding: 0.1rem 0.4rem;
+            background: #e0e0e0;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            font-weight: normal;
+            margin-left: 0.5rem;
+        }
+
+        .unit-status-panel .empty-state {
+            padding: 2rem 1.25rem;
+            text-align: center;
+            color: #999;
+        }
+
+        @media (max-width: 1200px) {
+            .unit-status-panel { width: 380px; }
+        }
+
+        @media (max-width: 768px) {
+            .unit-status-panel { width: 100%; }
+        }
+
+        /* Section headers with collapse/expand toggles */
+        .unit-status-panel .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .unit-status-panel .section-toggle {
+            appearance: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            padding: 0.25rem 0.5rem;
+            transition: transform 0.2s ease;
+            border-radius: 4px;
+        }
+
+        .unit-status-panel .section-toggle:hover {
+            background: #f0f0f0;
+        }
+
+        .unit-status-panel .section-toggle[aria-expanded="false"] {
+            transform: rotate(-90deg);
+        }
+
+        /* Hide content when collapsed */
+        .unit-status-panel .sensor-list[data-collapsed="true"],
+        .unit-status-panel .weapon-list[data-collapsed="true"],
+        .unit-status-panel .magazine-list[data-collapsed="true"],
+        .unit-status-panel .delta-list[data-collapsed="true"] {
+            display: none;
+        }
+
+        /* Empty state messaging */
+        .unit-status-panel .section-empty-state {
+            padding: 1rem;
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .unit-status-panel .section-empty-state p {
+            margin: 0;
+        }
+
+        /* Data source labels */
+        .unit-status-panel .readiness-data-source,
+        .unit-status-panel .supply-data-source {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+
+        /* Symbol placeholder (SVG fallback) */
+        .unit-status-panel .unit-symbol-preview .symbol-placeholder {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .unit-status-panel .unit-symbol-preview canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* ===============================================================
+           USP -- Commander Unit Status Panel - Military Tactical CSS
+           All classes prefixed usp- to avoid legacy CSS conflicts.
+           =============================================================== */
+
+        .unit-status-panel { width:340px; background:#0d1119; border-left:3px solid #2a4060; box-shadow:-6px 0 24px rgba(0,0,0,0.75); font-family:'Consolas','Courier New',monospace; font-size:0.82rem; color:#cdd8e4; }
+
+        /* ── Panel collapse / reopen toggle ─── */
+        .unit-status-panel { overflow: visible; }  /* allow tab to protrude */
+        .usp-collapse-tab {
+            position:absolute; left:-22px; top:50%; transform:translateY(-50%);
+            width:22px; height:64px;
+            background:linear-gradient(90deg,#060a10,#0a1018);
+            border:1px solid #1a2535; border-right:none;
+            color:#4a7a9a; font-size:0.85rem; cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            z-index:901; writing-mode:horizontal-tb;
+            transition:background 0.15s,color 0.15s;
+        }
+        .usp-collapse-tab:hover { background:#0e1a28; color:#7ab0d0; }
+        .usp-reopen-tab {
+            position:fixed; right:0; top:50%; transform:translateY(-50%);
+            width:22px; height:80px;
+            background:linear-gradient(270deg,#060a10,#0a1018);
+            border:1px solid #1a2535; border-right:none;
+            color:#4a7a9a; font-size:0.65rem; cursor:pointer;
+            z-index:899; writing-mode:vertical-rl; text-orientation:mixed;
+            letter-spacing:0.08em; text-transform:uppercase;
+            display:flex; align-items:center; justify-content:center;
+            transition:background 0.15s,color 0.15s;
+            padding:4px 0;
+        }
+        .usp-reopen-tab:hover { background:#0e1a28; color:#7ab0d0; }
+        .usp-reopen-tab[hidden] { display:none !important; }
+
+        .usp-header { display:flex; align-items:center; justify-content:space-between; padding:0 0.6rem; height:26px; flex-shrink:0; background:linear-gradient(90deg,#0a1018,#0c1520); border-bottom:1px solid #1a2535; }
+        .usp-header-title { font-size:0.68rem; font-weight:bold; letter-spacing:0.16em; text-transform:uppercase; color:#d0dce8; font-family:'Consolas','Courier New',monospace; }
+        .usp-close-btn { appearance:none; background:none; cursor:pointer; border:1px solid #243545; padding:1px 6px; font-size:0.68rem; color:#445566; font-family:'Consolas','Courier New',monospace; transition:all 0.15s; }
+        .usp-close-btn:hover { background:#151e2a; color:#8aaabb; border-color:#3a5060; }
+
+        .usp-empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#2e4050; font-size:0.75rem; text-align:center; padding:2rem; }
+        .usp-empty[hidden] { display:none !important; }
+        .usp-empty-icon { font-size:2rem; margin-bottom:0.75rem; color:#1a2535; }
+        .usp-empty p { margin:0; line-height:1.7; }
+
+        .usp-body { display:flex; flex-direction:column; flex:1; overflow-x:hidden; }
+        .usp-body[hidden] { display:none !important; }
+
+        .usp-hero { background:linear-gradient(180deg,#0c1420,#0b0e15); border-bottom:1px solid #1a2535; }
+        .usp-hero-top { display:flex; align-items:flex-start; justify-content:space-between; padding:0.5rem 0.7rem 0.25rem; }
+        .usp-unit-name { font-size:0.95rem; font-weight:bold; color:#fff; font-family:'Consolas','Courier New',monospace; letter-spacing:0.02em; word-break:break-word; }
+        .usp-status-badge { display:inline-block; padding:1px 6px; background:#0e2030; border:1px solid #2a4560; color:#5a8aaa; font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; white-space:nowrap; flex-shrink:0; }
+        .usp-hero-symbol { width:100%; height:120px; background:linear-gradient(180deg,#0a1420,#06090f); border-top:1px solid #141e2e; border-bottom:1px solid #0a1018; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
+        .usp-hero-symbol::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(90deg,transparent 0,transparent 39px,rgba(26,37,53,0.2) 39px,rgba(26,37,53,0.2) 40px),repeating-linear-gradient(0deg,transparent 0,transparent 29px,rgba(26,37,53,0.2) 29px,rgba(26,37,53,0.2) 30px); }
+        .usp-hero-symbol canvas, .usp-hero-symbol svg { position:relative; z-index:1; }
+
+        .usp-identity-block { padding:0.35rem 0.7rem 0.4rem; background:#0d1420; border-bottom:1px solid #1a2535; }
+        .usp-platform-id { font-size:0.8rem; color:#5aaad8; margin-bottom:0.1rem; }
+        .usp-platform-type { font-size:0.74rem; color:#90aabe; margin-bottom:0.15rem; }
+        .usp-uid { font-size:0.67rem; color:#5a7888; }
+
+        .usp-stats-row { display:grid; grid-template-columns:1fr 1fr 1fr; border-bottom:1px solid #141e2a; }
+        .usp-stat { padding:0.35rem 0.6rem; border-right:1px solid #141e2a; }
+        .usp-stat:last-child { border-right:none; }
+        .usp-stat-lbl { display:block; font-size:0.65rem; color:#7a9ab0; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:2px; }
+        .usp-stat-val { display:block; font-size:0.78rem; color:#d4e8f8; font-weight:bold; }
+
+        .usp-readiness-block { padding:0.4rem 0.7rem; background:#0d1320; border-bottom:1px solid #141e2a; }
+        .usp-readiness-top { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem; }
+        .usp-field-lbl { font-size:0.65rem; color:#7a9ab0; text-transform:uppercase; letter-spacing:0.07em; }
+        .usp-readiness-chip { display:inline-block; padding:1px 6px; font-size:0.68rem; font-weight:bold; text-transform:uppercase; letter-spacing:0.05em; }
+        .usp-readiness-chip.ready     { background:#0a2216; color:#00e880; border:1px solid #166030; }
+        .usp-readiness-chip.limited   { background:#1e1500; color:#e09000; border:1px solid #3a2800; }
+        .usp-readiness-chip.not_ready { background:#1e0808; color:#e05050; border:1px solid #3a1010; }
+        .usp-delta-src { font-size:0.65rem; color:#506878; }
+        .usp-data-src  { font-size:0.63rem; color:#405868; padding-top:1px; }
+
+        .usp-bar-track { height:8px; background:#0c1520; border:1px solid #1a2535; overflow:hidden; margin:0 0; }
+        .usp-bar-track--tall { height:12px; }
+        .usp-bar-fill { height:100%; transition:width 0.3s ease; }
+        .usp-readiness-fill           { background:#1a7a48; }
+        .usp-readiness-fill.ready     { background:#22aa60; }
+        .usp-readiness-fill.limited   { background:#8a6010; }
+        .usp-readiness-fill.not_ready { background:#882020; }
+
+        .usp-systems-block { padding:0.35rem 0.7rem 0.4rem; border-bottom:1px solid #141e2a; }
+        .usp-mini-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.3rem; }
+        .usp-mini-label { font-size:0.65rem; color:#5aaac8; text-transform:uppercase; letter-spacing:0.1em; font-weight:bold; }
+        .usp-ctrl-tag { font-size:0.6rem; color:#3a5868; border:1px solid #1e3040; padding:1px 5px; background:#0c1520; cursor:default; user-select:none; }
+        .unit-status-panel .supply-fill { background:#1f8048; }
+        .unit-status-panel .supply-fill.supply-amber { background:#8a5a10; }
+        .unit-status-panel .supply-fill.supply-red   { background:#882020; }
+        .usp-systems-foot { display:flex; align-items:center; gap:0.5rem; margin-top:0.3rem; }
+        .usp-supply-pct { font-size:0.75rem; color:#a0c0d0; font-weight:bold; }
+
+        .usp-magazines-block { padding:0.35rem 0.7rem 0.4rem; border-bottom:1px solid #141e2a; background:#0b0f18; }
+        .usp-mag-list { list-style:none; margin:0; padding:0; }
+        .usp-mag-list li { padding:3px 0 3px 8px; border-left:2px solid #3a5070; font-size:0.74rem; color:#a0b8cc; margin-bottom:2px; }
+        .usp-mag-list li strong { color:#b8d0e0; }
+
+        .usp-fuelammo-block { padding:0.35rem 0.7rem 0.4rem; border-bottom:1px solid #141e2a; background:#0b0f18; }
+        .usp-fuelammo-name { font-size:0.72rem; color:#5aaad4; margin-bottom:0.3rem; }
+        .usp-fuel-fill { background:#1a6a3a; }
+        .usp-fuelammo-detail { font-size:0.68rem; color:#4a6070; margin-top:0.25rem; line-height:1.5; }
+
+        .usp-assignment-block { border-bottom:1px solid #141e2a; }
+        .usp-arow { display:flex; padding:3px 0.7rem; border-bottom:1px solid #0d1420; }
+        .usp-arow:last-child { border-bottom:none; }
+        .usp-arow-lbl { font-size:0.68rem; color:#7898b4; text-transform:uppercase; letter-spacing:0.05em; min-width:88px; flex-shrink:0; padding-top:1px; }
+        .usp-arow-val { font-size:0.74rem; color:#c4d8ec; word-break:break-word; }
+        .usp-link { color:#4a90c0; cursor:default; }
+
+        .usp-tabs-block { border-bottom:1px solid #141e2a; }
+        .usp-tabs-nav { display:flex; border-bottom:1px solid #141e2a; background:#0a1018; }
+        .usp-tab { flex:1; appearance:none; background:none; border:none; border-right:1px solid #141e2a; padding:5px 0; font-size:0.67rem; color:#5a7888; cursor:pointer; font-family:'Consolas','Courier New',monospace; text-transform:uppercase; letter-spacing:0.07em; transition:background 0.15s,color 0.15s; }
+        .usp-tab:last-child { border-right:none; }
+        .usp-tab:hover { background:#0d1a26; color:#6a8aa0; }
+        .usp-tab--active { background:#0e1e30; color:#5aaad0; border-bottom:2px solid #3a7aaa; }
+        .usp-tab-count { font-size:0.63rem; color:#5a7a90; }
+        .usp-tab-pane { display:none; }
+        .usp-tab-pane--active { display:block; }
+        .usp-tab-empty { padding:6px 0.7rem; font-size:0.68rem; color:#2e4050; font-style:italic; }
+
+        .usp-item-list { list-style:none; margin:0; padding:0; }
+        .usp-item-list li { padding:4px 6px 4px 8px; background:#0d1018; border-bottom:1px solid #141a24; border-left:2px solid #2a4a70; font-size:0.74rem; color:#a8c4d8; word-break:break-word; }
+        #weapon-list li { border-left-color:#2e2010; }
+        .usp-delta-list li { border-left-color:#2e1800; }
+        .usp-item-list li strong { color:#c8e0f0; }
+        .usp-item-list li span { color:#6888a0; }
+        .capability-source { border-left-color:transparent !important; background:#080b10 !important; color:#253545 !important; font-size:0.62rem !important; border-top:1px solid #10161e !important; font-style:italic; }
+
+        .usp-speed-block, .usp-fuel-block, .usp-emcon-block, .usp-deltas-block { border-bottom:1px solid #141e2a; }
+        .usp-section-hdr { display:flex; align-items:center; justify-content:space-between; padding:3px 0.5rem 3px 0.7rem; background:linear-gradient(90deg,#0a1220,#0c1520); border-bottom:1px solid #141e2a; }
+        .usp-section-label { font-size:0.68rem; font-weight:bold; color:#5aaac8; text-transform:uppercase; letter-spacing:0.12em; }
+        .usp-count-badge { font-size:0.6rem; color:#2a4a60; margin-left:4px; }
+        .usp-collapse-btn { appearance:none; background:none; border:none; cursor:pointer; font-size:0.7rem; color:#304050; padding:0 4px; transition:color 0.15s; }
+        .usp-collapse-btn:hover { color:#5a8aaa; }
+        .usp-section-body { overflow:hidden; }
+        .usp-section-body[data-collapsed="true"] { display:none; }
+
+        .usp-speed-grid .usp-arow { padding-top:2px; padding-bottom:2px; }
+        .usp-throttle-wrap { padding:0.3rem 0.7rem 0.4rem; border-top:1px solid #141e2a; }
+        .usp-throttle-lbl { font-size:0.6rem; color:#304050; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:0.3rem; }
+        .usp-throttle-btns { display:flex; gap:3px; }
+        .usp-throttle-btn { flex:1; display:block; text-align:center; padding:3px 2px; font-size:0.63rem; background:#0c1520; border:1px solid #1a2535; color:#304858; cursor:default; user-select:none; pointer-events:none; }
+        .usp-throttle-btn--active { background:#0f3040; border-color:#3a6a90; color:#6ac0e8; }
+
+        .usp-fuel-unit-name { padding:0.25rem 0.7rem 0.2rem; font-size:0.7rem; color:#4a90c0; }
+        .usp-fuel-fill2 { background:#1a5e35; }
+        .usp-fuel-text { padding:0.2rem 0.7rem 0.35rem; font-size:0.7rem; color:#6a8898; line-height:1.5; }
+        .usp-bar-track { margin:0 0.7rem; }
+
+        .usp-emcon-block .usp-section-body { padding:0.3rem 0.7rem; }
+        .usp-emcon-btn { display:block; width:100%; text-align:center; padding:5px 8px; font-size:0.7rem; background:linear-gradient(180deg,#10202e,#0c1624); border:1px solid #2a4a64; color:#5a9abe; cursor:default; user-select:none; }
+        .usp-keybind { color:#2e4858; }
+        .usp-emcon-state { margin-top:0.25rem; font-size:0.65rem; color:#2e4050; }
+
+        /* ── Position / SIDC rows in identity block ──────────────────── */
+        .usp-sidc { font-size:0.68rem; color:#5aaad4; font-family:'Consolas','Courier New',monospace; word-break:break-all; padding:2px 0; letter-spacing:0.04em; }
+        .usp-code-line { font-size:0.65rem; color:#5a7880; font-family:'Consolas','Courier New',monospace; }
+        .usp-pos-section { border-bottom:1px solid #141e2a; }
+        .usp-pos-section .usp-arow-lbl { color:#2e4a58; }
+        .usp-pos-val { font-size:0.73rem; color:#90bcd4; font-family:'Consolas','Courier New',monospace; word-break:break-word; }
+        .usp-pos-selat { font-size:0.65rem; color:#354555; font-family:'Consolas','Courier New',monospace; }
+
+        .unit-status-panel::-webkit-scrollbar { width:4px; }
+        .unit-status-panel::-webkit-scrollbar-track { background:#060910; }
+        .unit-status-panel::-webkit-scrollbar-thumb { background:#1a2535; }
+        .unit-status-panel::-webkit-scrollbar-thumb:hover { background:#2a3848; }
+
+        @media (max-width: 1200px) { .unit-status-panel { width: 310px; } }
+        @media (max-width: 768px)  { .unit-status-panel { width: 100%; } }
+
+
+        /* ════════════════════════════════════════════════════════════════
+           COMMANDER UNIT STATUS PANEL — Theme + RTL (A/B/C fix)
+           ════════════════════════════════════════════════════════════════ */
+
+        /* ── A: Readability — dark theme improvements ─────────────────── */
+        .unit-status-panel {
+            font-size: 0.84rem;  /* slightly larger base */
+        }
+        .usp-arow { padding: 5px 0.75rem; }
+        .usp-arow-lbl { min-width: 96px; font-size: 0.7rem; }
+        .usp-arow-val { font-size: 0.78rem; }
+        .usp-stat { padding: 0.45rem 0.7rem; }
+        .usp-stat-lbl { font-size: 0.67rem; margin-bottom: 3px; }
+        .usp-stat-val { font-size: 0.82rem; }
+        .usp-item-list li { padding: 5px 8px 5px 10px; font-size: 0.76rem; }
+        .usp-item-list li strong { font-size: 0.77rem; }
+        .usp-mag-list li { padding: 4px 0 4px 10px; font-size: 0.76rem; }
+        .usp-readiness-block { padding: 0.5rem 0.75rem; }
+        .usp-readiness-top { gap: 0.6rem; }
+        .usp-readiness-chip { padding: 2px 8px; font-size: 0.72rem; }
+        .usp-systems-block { padding: 0.45rem 0.75rem 0.5rem; }
+        .usp-bar-track { height: 9px; }
+        .usp-bar-track--tall { height: 13px; }
+        .usp-section-hdr { padding: 5px 0.6rem 5px 0.75rem; }
+        .usp-section-label { font-size: 0.7rem; letter-spacing: 0.1em; }
+        .usp-tabs-nav .usp-tab { padding: 6px 0; font-size: 0.69rem; }
+        .usp-unit-name { font-size: 1rem; padding: 0.55rem 0.75rem 0.3rem; }
+        .usp-hero-top { padding: 0.55rem 0.75rem 0.3rem; }
+        .usp-identity-block { padding: 0.4rem 0.75rem 0.45rem; }
+        .usp-platform-id { font-size: 0.82rem; }
+        .usp-platform-type { font-size: 0.75rem; }
+        .usp-uid { font-size: 0.69rem; }
+        .usp-sidc { font-size: 0.7rem; letter-spacing: 0.06em; }
+        .usp-systems-foot { margin-top: 0.35rem; gap: 0.6rem; }
+        .usp-supply-pct { font-size: 0.78rem; }
+        .usp-throttle-btns { gap: 4px; }
+        .usp-throttle-btn { font-size: 0.66rem; padding: 4px 2px; }
+
+        /* ── B: Light theme overrides ─────────────────────────────────── */
+        [data-theme="light"] .unit-status-panel {
+            background: #f4f7fb;
+            border-left: 3px solid #c8d8ea;
+            box-shadow: -4px 0 18px rgba(0,30,80,0.12);
+            color: #1a2940;
+            font-family: 'Consolas','Courier New',monospace;
+        }
+        [data-theme="light"] .usp-header {
+            background: linear-gradient(90deg, #1e3a5a, #24466e);
+            border-bottom: 1px solid #1a3050;
+        }
+        [data-theme="light"] .usp-header-title { color: #dce8f4; }
+        [data-theme="light"] .usp-close-btn {
+            border-color: #2a4a6a; color: #8aaac8;
+        }
+        [data-theme="light"] .usp-close-btn:hover { background:#1e3a58; color:#c0d8f0; }
+
+        [data-theme="light"] .usp-collapse-tab {
+            background: linear-gradient(90deg, #f0f4f8, #e8eef6);
+            border-color: #c8d8ea; color: #4a7aa0;
+        }
+        [data-theme="light"] .usp-reopen-tab {
+            background: linear-gradient(270deg, #1e3a5a, #24466e);
+            border-color: #1a3050; color: #8aaac8;
+        }
+
+        [data-theme="light"] .usp-empty { color: #8aa0ba; }
+        [data-theme="light"] .usp-empty-icon { color: #c8d8ea; }
+
+        [data-theme="light"] .usp-hero {
+            background: linear-gradient(180deg, #1e3a5a 0%, #162e48 100%);
+            border-bottom: 1px solid #c8d8ea;
+        }
+        [data-theme="light"] .usp-hero-symbol {
+            background: linear-gradient(180deg, #162840 0%, #0e1e30 100%);
+            border-color: #1a3050;
+        }
+        [data-theme="light"] .usp-unit-name { color: #f0f8ff; }
+        [data-theme="light"] .usp-status-badge {
+            background: #e8f0fe; border-color: #aac0e8; color: #2563eb;
+        }
+
+        [data-theme="light"] .usp-identity-block {
+            background: #ffffff; border-bottom: 1px solid #dde8f0;
+        }
+        [data-theme="light"] .usp-platform-id { color: #2060b0; }
+        [data-theme="light"] .usp-platform-type { color: #486888; }
+        [data-theme="light"] .usp-uid { color: #8aaabb; }
+        [data-theme="light"] .usp-sidc { color: #2060b0; }
+        [data-theme="light"] .usp-code-line { color: #708090; }
+
+        [data-theme="light"] .usp-stats-row { border-bottom: 1px solid #dde8f0; }
+        [data-theme="light"] .usp-stat { border-right-color: #dde8f0; }
+        [data-theme="light"] .usp-stat-lbl { color: #5a7890; }
+        [data-theme="light"] .usp-stat-val { color: #1a2940; }
+
+        [data-theme="light"] .usp-readiness-block {
+            background: #f8fafd; border-bottom: 1px solid #dde8f0;
+        }
+        [data-theme="light"] .usp-field-lbl { color: #5a7890; }
+        [data-theme="light"] .usp-delta-src { color: #7a9ab0; }
+        [data-theme="light"] .usp-data-src { color: #9ab0c0; }
+        [data-theme="light"] .usp-bar-track {
+            background: #e0eaf4; border-color: #c8d8ea;
+        }
+        [data-theme="light"] .usp-readiness-fill.ready { background: #16a34a; box-shadow: none; }
+        [data-theme="light"] .usp-readiness-fill.limited { background: #d97706; }
+        [data-theme="light"] .usp-readiness-fill.not_ready { background: #dc2626; }
+        [data-theme="light"] .usp-readiness-chip.ready {
+            background: #dcfce7; color: #15803d; border-color: #86efac;
+        }
+        [data-theme="light"] .usp-readiness-chip.limited {
+            background: #fef9c3; color: #a16207; border-color: #fde047;
+        }
+        [data-theme="light"] .usp-readiness-chip.not_ready {
+            background: #fee2e2; color: #b91c1c; border-color: #fca5a5;
+        }
+
+        [data-theme="light"] .usp-systems-block { border-bottom: 1px solid #dde8f0; }
+        [data-theme="light"] .usp-mini-label { color: #2060b0; }
+        [data-theme="light"] .usp-ctrl-tag {
+            background: #e8f0fa; border-color: #aac0e0; color: #3a70a0;
+        }
+        [data-theme="light"] .unit-status-panel .supply-fill { background: #16a34a; box-shadow: none; }
+        [data-theme="light"] .unit-status-panel .supply-fill.supply-amber { background: #d97706; }
+        [data-theme="light"] .unit-status-panel .supply-fill.supply-red { background: #dc2626; }
+        [data-theme="light"] .usp-supply-pct { color: #2060b0; }
+        [data-theme="light"] .usp-systems-foot .usp-field-lbl { color: #5a7890; }
+
+        [data-theme="light"] .usp-magazines-block {
+            background: #f8fafd; border-bottom: 1px solid #dde8f0;
+        }
+        [data-theme="light"] .usp-mag-list li {
+            border-left-color: #aac0e0; color: #2a4060; background: transparent;
+        }
+        [data-theme="light"] .usp-mag-list li strong { color: #1a3060; }
+
+        [data-theme="light"] .usp-fuelammo-block {
+            background: #f8fafd; border-bottom: 1px solid #dde8f0;
+        }
+        [data-theme="light"] .usp-fuelammo-name { color: #2060b0; }
+        [data-theme="light"] .usp-fuel-fill { background: #16a34a; }
+        [data-theme="light"] .usp-fuelammo-detail { color: #5a7890; }
+
+        [data-theme="light"] .usp-assignment-block { border-bottom: 1px solid #dde8f0; }
+        [data-theme="light"] .usp-arow { border-bottom-color: #edf2f7; }
+        [data-theme="light"] .usp-arow-lbl { color: #5a7890; }
+        [data-theme="light"] .usp-arow-val { color: #1a2940; }
+        [data-theme="light"] .usp-link { color: #2060b0; }
+        [data-theme="light"] .usp-pos-val { color: #1a3060; }
+        [data-theme="light"] .usp-pos-selat { color: #8aaabb; }
+        [data-theme="light"] .usp-pos-section { border-bottom-color: #dde8f0; }
+
+        [data-theme="light"] .usp-tabs-block { border-bottom: 1px solid #dde8f0; }
+        [data-theme="light"] .usp-tabs-nav {
+            background: #eef3f9; border-bottom-color: #c8d8ea;
+        }
+        [data-theme="light"] .usp-tab { color: #5a7890; border-right-color: #c8d8ea; }
+        [data-theme="light"] .usp-tab:hover { background: #dce8f4; color: #1a3060; }
+        [data-theme="light"] .usp-tab--active {
+            background: #ffffff; color: #1a3060; border-bottom-color: #2060b0;
+        }
+        [data-theme="light"] .usp-tab-count { color: #8aaabb; }
+        [data-theme="light"] .usp-tab--active .usp-tab-count { color: #5a7890; }
+        [data-theme="light"] .usp-tab-empty { color: #8aaabb; }
+        [data-theme="light"] .usp-tab-pane { background: #ffffff; }
+
+        [data-theme="light"] .usp-item-list li {
+            background: #f8fafd; border-bottom-color: #edf2f7;
+            border-left-color: #5588cc; color: #1a2940;
+        }
+        [data-theme="light"] #weapon-list li { border-left-color: #c07820; }
+        [data-theme="light"] .usp-delta-list li { border-left-color: #c05020; }
+        [data-theme="light"] .usp-item-list li strong { color: #1a2940; }
+        [data-theme="light"] .usp-item-list li span { color: #5a7890; }
+        [data-theme="light"] .capability-source {
+            background: #f0f4f8 !important; color: #8aaabb !important;
+            border-top-color: #dde8f0 !important;
+        }
+
+        [data-theme="light"] .usp-speed-block,
+        [data-theme="light"] .usp-fuel-block,
+        [data-theme="light"] .usp-emcon-block,
+        [data-theme="light"] .usp-deltas-block { border-bottom-color: #dde8f0; }
+        [data-theme="light"] .usp-section-hdr {
+            background: linear-gradient(90deg, #eef3f9, #e8f0f8);
+            border-bottom-color: #c8d8ea;
+        }
+        [data-theme="light"] .usp-section-label { color: #2060b0; }
+        [data-theme="light"] .usp-count-badge { color: #5a7890; }
+        [data-theme="light"] .usp-collapse-btn { color: #7a9ab0; }
+        [data-theme="light"] .usp-collapse-btn:hover { color: #1a4080; }
+        [data-theme="light"] .usp-section-body[data-collapsed="true"] { display: none; }
+
+        [data-theme="light"] .usp-speed-grid .usp-arow { border-bottom-color: #edf2f7; }
+        [data-theme="light"] .usp-throttle-wrap { border-top-color: #c8d8ea; }
+        [data-theme="light"] .usp-throttle-lbl { color: #5a7890; }
+        [data-theme="light"] .usp-throttle-btn {
+            background: #eef3f9; border-color: #c8d8ea; color: #5a7890;
+        }
+        [data-theme="light"] .usp-throttle-btn--active {
+            background: #dce8f6; border-color: #5588cc; color: #1a4080;
+        }
+
+        [data-theme="light"] .usp-fuel-unit-name { color: #2060b0; }
+        [data-theme="light"] .usp-fuel-fill2 { background: #16a34a; }
+        [data-theme="light"] .usp-fuel-text { color: #5a7890; }
+
+        [data-theme="light"] .usp-emcon-btn {
+            background: linear-gradient(180deg, #eef3f9, #e4edf6);
+            border-color: #aac0e0; color: #1a4080;
+        }
+        [data-theme="light"] .usp-emcon-btn:hover { border-color: #5588cc; }
+        [data-theme="light"] .usp-keybind { color: #8aaabb; }
+        [data-theme="light"] .usp-emcon-state { color: #5a7890; }
+
+        [data-theme="light"] .unit-status-panel::-webkit-scrollbar-track { background: #e8f0f8; }
+        [data-theme="light"] .unit-status-panel::-webkit-scrollbar-thumb { background: #aac0d8; }
+        [data-theme="light"] .unit-status-panel::-webkit-scrollbar-thumb:hover { background: #5588b0; }
+
+        /* ── C: RTL layout overrides ──────────────────────────────────── */
+        /* Panel flips to left side */
+        [dir="rtl"] .unit-status-panel {
+            right: auto;
+            left: 0;
+            border-left: none;
+            border-right: 3px solid #2a4060;
+            box-shadow: 6px 0 24px rgba(0,0,0,0.75);
+        }
+        [data-theme="light"][dir="rtl"] .unit-status-panel,
+        [dir="rtl"][data-theme="light"] .unit-status-panel {
+            border-right: 3px solid #c8d8ea;
+            box-shadow: 6px 0 18px rgba(0,30,80,0.12);
+        }
+        /* Collapse tab flips to right edge */
+        [dir="rtl"] .usp-collapse-tab {
+            left: auto;
+            right: -22px;
+            border-left: 1px solid #1a2535;
+            border-right: none;
+        }
+        [data-theme="light"][dir="rtl"] .usp-collapse-tab,
+        [dir="rtl"][data-theme="light"] .usp-collapse-tab {
+            border-left-color: #c8d8ea;
+        }
+        /* Reopen tab flips to left side */
+        [dir="rtl"] .usp-reopen-tab {
+            right: auto;
+            left: 0;
+        }
+        /* Stats row — mirror */
+        [dir="rtl"] .usp-stats-row { direction: rtl; }
+        [dir="rtl"] .usp-stat { border-right: none; border-left: 1px solid #141e2a; }
+        [dir="rtl"] .usp-stat:last-child { border-left: none; }
+        [data-theme="light"][dir="rtl"] .usp-stat,
+        [dir="rtl"][data-theme="light"] .usp-stat { border-left-color: #dde8f0; }
+
+        /* Assignment rows — label on right, value on left */
+        [dir="rtl"] .usp-arow { flex-direction: row-reverse; }
+        [dir="rtl"] .usp-arow-lbl { text-align: right; }
+        [dir="rtl"] .usp-arow-val { text-align: left; }
+
+        /* Readiness row — mirror */
+        [dir="rtl"] .usp-readiness-top { flex-direction: row-reverse; }
+
+        /* Tabs — mirror order */
+        [dir="rtl"] .usp-tabs-nav { flex-direction: row-reverse; }
+        [dir="rtl"] .usp-tab { border-right: none; border-left: 1px solid #141e2a; }
+        [dir="rtl"] .usp-tab:first-child { border-left: none; }
+        [data-theme="light"][dir="rtl"] .usp-tab,
+        [dir="rtl"][data-theme="light"] .usp-tab { border-left-color: #c8d8ea; }
+
+        /* Item lists — border on right */
+        [dir="rtl"] .usp-item-list li {
+            border-left: none;
+            border-right: 2px solid #1e3a56;
+            padding-left: 6px;
+            padding-right: 10px;
+        }
+        [dir="rtl"] #weapon-list li { border-right-color: #2e2010; }
+        [dir="rtl"] .usp-delta-list li { border-right-color: #2e1800; }
+        [data-theme="light"][dir="rtl"] .usp-item-list li,
+        [dir="rtl"][data-theme="light"] .usp-item-list li { border-right-color: #5588cc; }
+        [dir="rtl"] .usp-mag-list li {
+            border-left: none;
+            border-right: 2px solid #3a5070;
+            padding-left: 0;
+            padding-right: 10px;
+        }
+
+        /* Section headers — mirror */
+        [dir="rtl"] .usp-section-hdr { flex-direction: row-reverse; }
+        [dir="rtl"] .usp-mini-hdr { flex-direction: row-reverse; }
+        [dir="rtl"] .usp-systems-foot { flex-direction: row-reverse; }
+
+        /* Throttle buttons — mirror */
+        [dir="rtl"] .usp-throttle-btns { flex-direction: row-reverse; }
+
+        /* Hero top — mirror */
+        [dir="rtl"] .usp-hero-top { flex-direction: row-reverse; }
+
+        /* Close button RTL */
+        [dir="rtl"] .usp-header { flex-direction: row-reverse; }
+
+
+        /* ── TASK1-C: Current Orders / Tasking Details ────────────────────── */
+        .usp-tasking-block { border-bottom:1px solid #141e2a; }
+        .usp-tasking-block[hidden] { display:none !important; }
+        .usp-tasking-step {
+            font-size:0.58rem; color:#2e4050;
+            margin-left:6px; font-family:'Consolas','Courier New',monospace;
+            letter-spacing:0.04em; vertical-align:middle;
+        }
+        .usp-tasking-row {
+            display:flex; padding:4px 0.75rem;
+            border-bottom:1px solid #0d1420; align-items:flex-start; gap:4px;
+        }
+        .usp-tasking-row[hidden] { display:none !important; }
+        .usp-tasking-row:last-child { border-bottom:none; }
+        .usp-tasking-lbl {
+            font-size:0.65rem; color:#3a6080; text-transform:uppercase;
+            letter-spacing:0.05em; min-width:88px; flex-shrink:0;
+            font-family:'Consolas','Courier New',monospace; padding-top:1px;
+        }
+        .usp-tasking-val {
+            font-size:0.72rem; color:#8aaabb; line-height:1.45;
+            word-break:break-word; font-family:'Consolas','Courier New',monospace;
+        }
+        .usp-tasking-doctrine-val { color:#6080a0; font-style:italic; font-size:0.68rem; }
+
+        /* Light theme */
+        [data-theme="light"] .usp-tasking-block { border-bottom-color:#dde8f0; }
+        [data-theme="light"] .usp-tasking-step { color:#8aaabb; }
+        [data-theme="light"] .usp-tasking-row { border-bottom-color:#edf2f7; }
+        [data-theme="light"] .usp-tasking-lbl { color:#5a7890; }
+        [data-theme="light"] .usp-tasking-val { color:#2a4060; }
+        [data-theme="light"] .usp-tasking-doctrine-val { color:#486888; }
+
+        /* RTL */
+        [dir="rtl"] .usp-tasking-row { flex-direction:row-reverse; }
+        [dir="rtl"] .usp-tasking-lbl { text-align:right; }
+        [dir="rtl"] .usp-tasking-step { margin-left:0; margin-right:6px; }
+
+
+        /* ── TASK1-D: Tasking indicator column in involved-units table ──── */
+        .sw-slu-col-orders {
+            width: 110px; min-width: 80px; max-width: 130px;
+            font-weight: 600; letter-spacing: 0.04em;
+        }
+        .sw-slu-cell-orders {
+            font-size: 0.75rem; vertical-align: middle;
+            color: var(--text-muted, #7a8898);
+        }
+        .sw-slu-orders-chip {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+            vertical-align: middle;
+            /* Dark theme defaults */
+            background: #1a2a40;
+            color: #5aaad0;
+            border: 1px solid #2a4060;
+        }
+        /* Light theme */
+        [data-theme="light"] .sw-slu-orders-chip {
+            background: #e8f0fa;
+            color: #1a4080;
+            border-color: #aac0e0;
+        }
+        /* RTL */
+        [dir="rtl"] .sw-slu-cell-orders { text-align: right; }
+
     </style>
     <script>
         // Mount Edit Mode once the DOM (workspace panel) is ready.
@@ -5002,6 +6048,15 @@
     <script type="module" src="ui/panels/utility-panel.js"></script>
     <script type="module" src="ui/panels/welcome-panel.js"></script>
 
+    <!-- ═══════════ ROADMAP-1 (informational, UI-only overlay) ═══════════ -->
+    <!-- Full-screen RTL roadmap dashboard. Hidden until the Roadmap button is
+         clicked. roadmap-page.js builds + drives it. No backend, no storage,
+         no scenario/unit/map/simulation mutation. -->
+    <div id="roadmap-overlay" class="roadmap-overlay" role="dialog" aria-modal="true"
+         aria-labelledby="roadmap-title" dir="rtl" hidden></div>
+    <script src="roadmap-page.js?v=roadmap-1"></script>
+
 </body>
 
 </html>
+<!-- RUNTIME-INTEGRATION-AUDIT-MARKER-1780485969 -->

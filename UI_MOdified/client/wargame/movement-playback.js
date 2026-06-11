@@ -138,6 +138,11 @@
 
     /* ---- wire to the existing transport bar ------------------------------- */
     document.addEventListener('rmooz:timeline-ui-action', function (e) {
+        // The canonical runner (shell/scenario-runner.js) owns the bottom
+        // transport when present — it is the single preview engine. Defer to it
+        // so one Play click never runs this rAF tween AND the runner's timer at
+        // the same time (the old multi-engine race on RmoozScenario.stepIndex).
+        if (window.AppScenarioRunner) return;
         var d = (e && e.detail) || {};
         if (d.action === 'play') play();
         else if (d.action === 'pause') pause();

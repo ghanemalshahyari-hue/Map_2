@@ -53,6 +53,12 @@ services:
       TILE_URL:              "${TILE_URL:-}"
       RMOOZ_MAPS_DIR:        "${RMOOZ_MAPS_DIR:-/app/maps}"
       MAP_SOURCE_MODE:       "${MAP_SOURCE_MODE:-auto}"
+      # In-app tile proxy: when "web", the browser fetches tiles from the RMOOZ
+      # web port (WEB_PUBLIC_BASE_URL) and the web-server proxies them to the
+      # internal tile-server. Users then need ONLY the web port — the internal
+      # 8080 is never exposed. Set to "" to fall back to the TILE_PUBLIC_BASE_URL
+      # / LOCAL_TILE_URL (:8080) behaviour. Default: web.
+      RMOOZ_TILE_PROXY_MODE: "${RMOOZ_TILE_PROXY_MODE:-web}"
       # LOCAL_TILE_URL points to the MBTiles tile server at port 8080.
       # Tileset name = MBTiles filename without extension.
       LOCAL_TILE_URL:        "${LOCAL_TILE_URL:-http://localhost:8080/services/satellite-2017-11-02_asia_gcc-states/{z}/{x}/{y}.png}"

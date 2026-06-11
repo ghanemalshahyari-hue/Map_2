@@ -82,7 +82,8 @@
             .replace('{x}', '0')
             .replace('{y}', '0');
         try {
-            const r = await fetch(probeUrl, { method: 'HEAD', credentials: 'omit' });
+            // GET, not HEAD — some tile services / proxies reject HEAD.
+            const r = await fetch(probeUrl, { method: 'GET', credentials: 'omit', cache: 'no-store' });
             return r.ok;                          // 200 = local tiles present
         } catch (_) {
             return false;
@@ -97,7 +98,8 @@
             .replace('{x}', '0')
             .replace('{y}', '0');
         try {
-            const r = await fetch(probeUrl, { method: 'HEAD', credentials: 'omit' });
+            // GET, not HEAD — some tile services / proxies reject HEAD.
+            const r = await fetch(probeUrl, { method: 'GET', credentials: 'omit', cache: 'no-store' });
             return r.ok;
         } catch (_) {
             return false;

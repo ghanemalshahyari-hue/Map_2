@@ -31,35 +31,45 @@ const DEFAULT_DATASET   = 'satellite-2017-11-02_asia_gcc-states';
 
 function getMapConfig() {
     const mode = (process.env.MAP_SOURCE_MODE || 'auto').toLowerCase().trim();
+    const dataset = (process.env.RMOOZ_TILE_DATASET_NAME || DEFAULT_DATASET).trim();
 
-    // ── Derive browser-reachable tile URL ────────────────────────────────────
-    // TILE_PUBLIC_BASE_URL takes priority — it is the public IP:port that
-    // browsers can reach even when running on a remote server.
-    // Without it, localTileUrl defaults to the explicit LOCAL_TILE_URL env var.
+    // ── In-app tile proxy mode (RMOOZ_TILE_PROXY_MODE=web) ────────────────────
+    // Serve tiles through the RMOOZ WEB port — the same origin the user opened —
+    // which web-server.js proxies to the internal tile-server. Users then need
+    // ONLY the web app port (e.g. :8640); the internal 8080 is never exposed.
+    // localTileUrl is built from WEB_PUBLIC_BASE_URL; if that is blank we emit a
+    // same-origin RELATIVE URL ("/services/...") that works no matter how the
+    // browser reached the server.
+    const proxyMode      = (process.env.RMOOZ_TILE_PROXY_MODE || '').toLowerCase().trim() === 'web';
+    const webPublicBase  = (process.env.WEB_PUBLIC_BASE_URL || '').trim().replace(/\/$/, '');
+
+    // TILE_PUBLIC_BASE_URL = the public IP:port of the (separate) tile server,
+    // used only when proxy mode is OFF.
     const tilePublicBase = (process.env.TILE_PUBLIC_BASE_URL || '').trim().replace(/\/$/, '');
-    let localTileUrl;
 
-    if (tilePublicBase) {
-        // Build from TILE_PUBLIC_BASE_URL + tileset name
-        const dataset = (process.env.RMOOZ_TILE_DATASET_NAME || DEFAULT_DATASET).trim();
+    let localTileUrl, tileBase;
+    if (proxyMode) {
+        localTileUrl = `${webPublicBase}/services/${encodeURIComponent(dataset)}/{z}/{x}/{y}.png`;
+        tileBase     = webPublicBase;   // '' → same-origin relative probe
+    } else if (tilePublicBase) {
         localTileUrl = `${tilePublicBase}/services/${encodeURIComponent(dataset)}/{z}/{x}/{y}.png`;
+        tileBase     = tilePublicBase;
     } else {
-        // Fall back to explicit LOCAL_TILE_URL (may be localhost — only works when
-        // the browser is on the same machine as the Docker host)
+        // Localhost-only — works when the browser is on the Docker host itself.
         localTileUrl = (process.env.LOCAL_TILE_URL ||
-            `http://localhost:8080/services/${DEFAULT_DATASET}/{z}/{x}/{y}.png`).trim();
+            `http://localhost:8080/services/${dataset}/{z}/{x}/{y}.png`).trim();
+        tileBase     = 'http://localhost:8080';
     }
 
     // ── Health-check URL ──────────────────────────────────────────────────────
-    // MAP_HEALTHCHECK_URL lets the operator specify a known-good tile URL to
-    // probe. If not set, the client probes z=7/x=79/y=53 of the tileset.
-    const dataset = (process.env.RMOOZ_TILE_DATASET_NAME || DEFAULT_DATASET).trim();
-    const tileBase = tilePublicBase || 'http://localhost:8080';
+    // Probed with GET (not HEAD — some tile services reject HEAD). z=7/79/53 is a
+    // known-present tile of the GCC satellite set. tileBase '' → relative probe.
     const defaultHealthcheck = `${tileBase}/services/${encodeURIComponent(dataset)}/7/79/53.png`;
     const healthcheckUrl = (process.env.MAP_HEALTHCHECK_URL || defaultHealthcheck).trim();
 
     return {
         mapSourceMode:    VALID_MODES.has(mode) ? mode : 'auto',
+        tileProxyMode:    proxyMode ? 'web' : 'off',
         localTileUrl,
         fallbackTileUrl:  (process.env.FALLBACK_TILE_URL || '').trim(),
         fallbackEnabled:  (process.env.MAP_FALLBACK_ENABLED || '1') !== '0',

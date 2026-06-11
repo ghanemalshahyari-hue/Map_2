@@ -334,7 +334,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Probe the tile server with a HEAD request. We accept ANY response
     // (including 404) as proof the server is up — only network errors throw.
     function probeTileServer(url) {
-        return fetch(url + '/', { method: 'HEAD', mode: 'no-cors', cache: 'no-store' })
+        // GET, not HEAD — some tile services / proxies reject HEAD requests.
+        return fetch(url + '/', { method: 'GET', mode: 'no-cors', cache: 'no-store' })
             .then(() => true)
             .catch(() => false);
     }

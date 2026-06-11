@@ -458,6 +458,40 @@ const server = http.createServer((req, res) => {
     }
 
     if (appData.handleOfflineApi && appData.handleOfflineApi(req, res)) return;
+
+    // ── OFFLINE-TILE-PROXY (RMOOZ_TILE_PROXY_MODE=web) ──────────────────────────
+    // Serve map tiles through THIS web port so remote users only ever need the
+    // RMOOZ web app port (e.g. :8640) and never the internal tile-server port
+    // (8080, which may not be reachable from other machines). Proxies
+    //   GET|HEAD /services/:dataset/:z/:x/:y.(png|jpg|jpeg)
+    // to the internal tile-server at 127.0.0.1:TILE_SERVER_PORT (default 8080).
+    // PUBLIC (declared before the auth/API routes) — basemap tiles are not
+    // sensitive and the health probe runs with credentials omitted. Internal 8080
+    // is never exposed to the browser. The route is always available; whether the
+    // browser is TOLD to use it is decided by offline-map-config.js.
+    {
+        const tm = pathname.match(/^\/services\/([^/]+)\/(\d+)\/(\d+)\/(\d+)\.(png|jpg|jpeg)$/);
+        if (tm && (req.method === 'GET' || req.method === 'HEAD')) {
+            const tilePort = parseInt(process.env.TILE_SERVER_PORT, 10) || 8080;
+            const target = 'http://127.0.0.1:' + tilePort + '/services/' +
+                encodeURIComponent(tm[1]) + '/' + tm[2] + '/' + tm[3] + '/' + tm[4] + '.' + tm[5];
+            const isHead = req.method === 'HEAD';
+            const upstream = http.get(target, (tr) => {
+                const code = tr.statusCode || 502;
+                if (code !== 200) { res.writeHead(code); tr.resume(); res.end(); return; }
+                res.writeHead(200, {
+                    'Content-Type':  tr.headers['content-type'] || 'image/png',
+                    'Cache-Control': 'public, max-age=86400',
+                    'Access-Control-Allow-Origin': '*',
+                });
+                if (isHead) { tr.resume(); res.end(); } else { tr.pipe(res); }
+            });
+            upstream.on('error', () => { if (!res.headersSent) res.writeHead(502); res.end(); });
+            upstream.setTimeout(15000, () => { upstream.destroy(); if (!res.headersSent) { res.writeHead(504); res.end(); } });
+            return;
+        }
+    }
+
     if (appData.handleAuthApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
     // OFFLINE-RUNTIME-FIX-4: AI config/health — safe, no key exposed to browser
     if (pathname === '/api/ai/config' && req.method === 'GET') {
@@ -2270,6 +2304,24 @@ const server = http.createServer((req, res) => {
         } else {
             res.writeHead(403); res.end(); return;
         }
+    }
+
+    // OFFLINE-TILE-PROXY: in web-proxy mode, rewrite the served maps.json so
+    // app.js points its MBTiles layer at the web/proxy base (or a same-origin
+    // relative path) instead of localhost:8080 — so the browser never requests
+    // :8080. The map_data file on disk is NOT modified (we rewrite the response).
+    if (filePath && /[\\/]maps\.json$/i.test(filePath) &&
+        (process.env.RMOOZ_TILE_PROXY_MODE || '').toLowerCase().trim() === 'web') {
+        try {
+            const cfg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            // '' → app.js builds a same-origin '/services/...' URL (works regardless
+            // of how the user reached the server); a set base pins it explicitly.
+            cfg.tileServer = (process.env.WEB_PUBLIC_BASE_URL || '').trim().replace(/\/$/, '');
+            const body = JSON.stringify(cfg);
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+            res.end(req.method === 'HEAD' ? undefined : body);
+            return;
+        } catch (_) { /* malformed maps.json — fall through to normal static serve */ }
     }
 
     fs.readFile(filePath, (err, data) => {

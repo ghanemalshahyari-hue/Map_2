@@ -76,7 +76,17 @@
         if (p.llm_fill && !p.llm_fill.available) {
             html += '<div style="font-size:11px;color:#9aa3ad;margin:6px 0;">ℹ Deep extraction (exact units &amp; intent) runs on the deployment LLM; this is the offline structural read.</div>';
         }
-        html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;border-top:1px solid #23303d;padding-top:10px;">' +
+        html += '<div style="margin:10px 0 6px;font-size:12px;color:#9aa3ad;display:flex;align-items:center;gap:6px;flex-wrap:wrap;border-top:1px solid #23303d;padding-top:10px;">' +
+            '<span>Operation template — قالب العملية:</span>' +
+            '<select data-el="template" style="font:inherit;background:#161b18;color:#e8eaed;border:1px solid #4a5a6a;border-radius:4px;padding:3px 6px;">' +
+            '<option value="">(auto-detect — كشف تلقائي)</option>' +
+            '<option value="amphibious_landing">amphibious_landing — عملية إبرار</option>' +
+            '<option value="attack_objective">attack_objective — هجوم على هدف</option>' +
+            '<option value="defend_objective">defend_objective — دفاع عن هدف</option>' +
+            '<option value="reconnaissance">reconnaissance — استطلاع</option>' +
+            '<option value="air_defense">air_defense — دفاع جوي</option>' +
+            '</select></div>';
+        html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
             '<button type="button" data-act="generate" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:6px;padding:7px 14px;font-weight:600;">Generate Scenario — توليد السيناريو</button>' +
             '<button type="button" data-act="edit" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#22303f;color:#cfe6ff;border-radius:6px;padding:7px 14px;">Edit Understanding — تعديل الفهم</button>' +
             '<button type="button" data-act="more" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Upload More — وثائق إضافية</button>' +
@@ -93,7 +103,11 @@
             if (b && fn) b.addEventListener('click', fn);
             return b;
         }
-        bind('generate', handlers.onGenerate);
+        // Generate passes the chosen operation template (or null = auto-detect).
+        bind('generate', function () {
+            var sel = container.querySelector('[data-el="template"]');
+            if (handlers.onGenerate) handlers.onGenerate(sel ? (sel.value || null) : null);
+        });
         bind('edit', function () {
             var ta = container.querySelector('[data-el="json"]');
             var box = container.querySelector('[data-el="editbox"]');

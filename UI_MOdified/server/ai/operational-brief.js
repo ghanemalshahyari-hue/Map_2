@@ -335,6 +335,151 @@ function analyzeDocuments(inputs, opts) {
     };
 }
 
+// ── JSON input support (Phase F, steps 2-5) ─────────────────────────
+function arr(v) { return Array.isArray(v) ? v : []; }
+function mergeSide(side, defaults) {
+    var out = Object.assign({}, defaults);
+    if (side && typeof side === 'object') {
+        if (typeof side.summary === 'string') out.summary = side.summary;
+        if (Array.isArray(side.units)) out.units = side.units;
+        if (Array.isArray(side.tasks)) out.tasks = side.tasks;
+        if (Array.isArray(side.assessed_capabilities)) out.assessed_capabilities = side.assessed_capabilities;
+    }
+    return out;
+}
+
+// Detect what a posted JSON object is.
+function classifyJsonInput(obj) {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return 'unknown';
+    if (Array.isArray(obj.red_units) && Array.isArray(obj.blue_units_initial)) return 'rmooz_scenario';
+    if (obj.operational_brief && typeof obj.operational_brief === 'object') return 'operational_brief';
+    if (obj.friendly && obj.enemy &&
+        (typeof obj.mission === 'string' || Array.isArray(obj.objectives) || Array.isArray(obj.phases))) {
+        return 'operational_brief';   // bare operational_brief object
+    }
+    return 'unknown';
+}
+
+// Lenient brief validation: present operational_brief ⇒ ok; thin fields ⇒ warnings.
+function validateBrief(input) {
+    var errors = [], warnings = [];
+    if (!input || typeof input !== 'object' || Array.isArray(input)) {
+        errors.push({ path: '', msg: 'brief must be a JSON object' });
+        return { ok: false, errors, warnings };
+    }
+    var ob = (input.operational_brief && typeof input.operational_brief === 'object') ? input.operational_brief : input;
+    if (!ob || typeof ob !== 'object') { errors.push({ path: 'operational_brief', msg: 'missing operational_brief' }); }
+    else {
+        if (typeof ob.mission !== 'string' || !ob.mission.trim()) warnings.push({ path: 'mission', msg: 'mission empty' });
+        if (!ob.friendly || typeof ob.friendly !== 'object') warnings.push({ path: 'friendly', msg: 'missing friendly' });
+        if (!ob.enemy || typeof ob.enemy !== 'object') warnings.push({ path: 'enemy', msg: 'missing enemy' });
+        if (!Array.isArray(ob.objectives) || !ob.objectives.length) warnings.push({ path: 'objectives', msg: 'no objectives' });
+    }
+    return { ok: errors.length === 0, errors, warnings };
+}
+
+// Coerce any brief (wrapped or bare) into the canonical emptyBrief() shape.
+function normalizeBrief(input) {
+    var out = emptyBrief();
+    if (!input || typeof input !== 'object') return out;
+    var ob = (input.operational_brief && typeof input.operational_brief === 'object') ? input.operational_brief : input;
+    out.document_set_id = input.document_set_id || ('ds_brief_' + sha256(JSON.stringify(ob)).slice(0, 12));
+    out.documents = arr(input.documents);
+    if (input.template) out.template = input.template;
+    if (input.set_type) out.set_type = input.set_type;
+    var o = out.operational_brief;
+    o.mission = typeof ob.mission === 'string' ? ob.mission : '';
+    o.commander_intent = typeof ob.commander_intent === 'string' ? ob.commander_intent : '';
+    o.area_of_operations = (ob.area_of_operations && typeof ob.area_of_operations === 'object') ? ob.area_of_operations : {};
+    o.friendly = mergeSide(ob.friendly, { summary: '', units: [], tasks: [] });
+    o.enemy = mergeSide(ob.enemy, { summary: '', units: [], assessed_capabilities: [], tasks: [] });
+    o.neutral = (ob.neutral && typeof ob.neutral === 'object')
+        ? { civilian: arr(ob.neutral.civilian), infrastructure: arr(ob.neutral.infrastructure) }
+        : { civilian: [], infrastructure: [] };
+    o.objectives = arr(ob.objectives);
+    o.phases = arr(ob.phases);
+    o.timeline = arr(ob.timeline);
+    o.constraints = arr(ob.constraints);
+    o.assumptions = arr(ob.assumptions);
+    o.ambiguities = arr(ob.ambiguities);
+    o.source_citations = arr(ob.source_citations);
+    return out;
+}
+
+// Build the AI-Understanding payload from a normalized brief.
+function understandingFromBrief(brief) {
+    var ob = (brief && brief.operational_brief) || {};
+    var ambiguities = arr(ob.ambiguities).slice();
+    if (!ob.mission) ambiguities.push('Mission not present in the brief.');
+    if (!arr(ob.objectives).length) ambiguities.push('No objectives in the brief — set the objective on the map.');
+    if (!arr(ob.phases).length) ambiguities.push('No phases in the brief.');
+    return {
+        set_type: brief.set_type || 'operational_brief',
+        set_label_en: 'Operational Brief', set_label_ar: 'الموجز التشغيلي',
+        mission: ob.mission || '', commander_intent: ob.commander_intent || '',
+        friendly: { summary: (ob.friendly && ob.friendly.summary) || '', source: 'brief JSON' },
+        enemy: { summary: (ob.enemy && ob.enemy.summary) || '', source: 'brief JSON' },
+        neutral: ob.neutral || { civilian: [], infrastructure: [] },
+        objectives: arr(ob.objectives), phases: arr(ob.phases), constraints: arr(ob.constraints),
+        assumptions: arr(ob.assumptions), ambiguities: ambiguities,
+        proposed_unit_counts: {
+            red: arr(ob.enemy && ob.enemy.units).length,
+            blue: arr(ob.friendly && ob.friendly.units).length,
+            neutral: arr(ob.neutral && ob.neutral.civilian).length,
+        },
+        proposed_map_bounds: (ob.area_of_operations && ob.area_of_operations.bbox) || null,
+    };
+}
+
+// Summarize an already-built RMOOZ scenario for the review screen.
+function understandingFromScenario(scn) {
+    scn = scn || {};
+    return {
+        set_type: 'rmooz_scenario', set_label_en: 'RMOOZ Scenario', set_label_ar: 'سيناريو جاهز',
+        mission: scn.scenario_label || '', commander_intent: '',
+        friendly: { summary: 'BLUE units: ' + arr(scn.blue_units_initial).length, source: 'scenario JSON' },
+        enemy: { summary: 'RED units: ' + arr(scn.red_units).length, source: 'scenario JSON' },
+        neutral: { civilian: [], infrastructure: [] },
+        objectives: (scn.obj && scn.obj.name) ? [{ name: scn.obj.name, coord: scn.obj.coord, source: 'scenario' }] : [],
+        phases: arr(scn.phase_table).map(function (p, i) { return { index: i, label: String(p.phase || p.time_label || ('P' + i)) }; }),
+        constraints: [], assumptions: [], ambiguities: [],
+        proposed_unit_counts: { red: arr(scn.red_units).length, blue: arr(scn.blue_units_initial).length, neutral: arr(scn.neutral_units).length },
+        proposed_map_bounds: scn.map_bbox || null,
+    };
+}
+
+// Best-effort map an unrecognized JSON object into a low-confidence brief.
+function unknownToBrief(input) {
+    var out = emptyBrief();
+    var mapped = [], o = out.operational_brief;
+    if (input && typeof input === 'object' && !Array.isArray(input)) {
+        var pick = function (keys) { for (var i = 0; i < keys.length; i++) { var k = keys[i]; if (typeof input[k] === 'string' && input[k].trim()) return input[k]; } return ''; };
+        o.mission = pick(['mission', 'task', 'objective_text', 'summary']); if (o.mission) mapped.push('mission');
+        o.commander_intent = pick(['commander_intent', 'intent']); if (o.commander_intent) mapped.push('commander_intent');
+        if (Array.isArray(input.objectives)) {
+            o.objectives = input.objectives.map(function (x) {
+                return typeof x === 'string' ? { name: x, source: 'unknown-json' }
+                    : (x && x.name ? { name: x.name, coord: x.coord, source: 'unknown-json' } : null);
+            }).filter(Boolean);
+            if (o.objectives.length) mapped.push('objectives');
+        }
+        if (Array.isArray(input.phases)) {
+            o.phases = input.phases.map(function (x, i) {
+                return typeof x === 'string' ? { index: i + 1, label: x }
+                    : (x && (x.label || x.name) ? { index: x.index || i + 1, label: x.label || x.name } : null);
+            }).filter(Boolean);
+            if (o.phases.length) mapped.push('phases');
+        }
+        if (input.friendly) { o.friendly.summary = typeof input.friendly === 'string' ? input.friendly : (input.friendly.summary || ''); if (o.friendly.summary) mapped.push('friendly'); }
+        if (input.enemy) { o.enemy.summary = typeof input.enemy === 'string' ? input.enemy : (input.enemy.summary || ''); if (o.enemy.summary) mapped.push('enemy'); }
+    }
+    out.document_set_id = 'ds_unknown_' + sha256(JSON.stringify(input || {})).slice(0, 12);
+    var ambiguities = ['Input JSON type not recognized — mapped best-effort into an Operational Brief. Review every field before generating.'];
+    if (!mapped.length) ambiguities.push('No recognizable operational fields were found.');
+    out.operational_brief.ambiguities = ambiguities;
+    return { brief: out, mapped: mapped, confidence: 'low' };
+}
+
 module.exports = {
     sha256,
     emptyBrief,
@@ -345,4 +490,11 @@ module.exports = {
     extractSection,
     estimateUnitCount,
     analyzeDocuments,
+    // Phase F JSON input:
+    classifyJsonInput,
+    validateBrief,
+    normalizeBrief,
+    understandingFromBrief,
+    understandingFromScenario,
+    unknownToBrief,
 };

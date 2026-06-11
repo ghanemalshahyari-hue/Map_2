@@ -319,7 +319,7 @@
                 return;
             }
             window.RmoozDocReview.render(el.review, p, {
-                onGenerate: function () { el.review.style.display = 'none'; start(false); },
+                onGenerate: function (template) { generateFromReviewedBrief(p, template); },
                 onUploadMore: function () {
                     el.review.style.display = 'none';
                     var grid = card.querySelector('.wg-wz-doc-grid');
@@ -328,6 +328,42 @@
                 onCancel: function () { el.review.style.display = 'none'; },
             });
             el.review.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Phase F: "Generate from Reviewed Brief" — RMOOZ generates a DRAFT
+        // scenario from the APPROVED review payload (the brief), never from raw
+        // document chunks or LLM free text. The objective comes from Scenario
+        // Setup; without it the server refuses and we ask the operator to set it.
+        function generateFromReviewedBrief(payload, template) {
+            var lon = parseFloat(el.objLon && el.objLon.value);
+            var lat = parseFloat(el.objLat && el.objLat.value);
+            var objective = (isFinite(lon) && isFinite(lat)) ? { lon: lon, lat: lat } : undefined;
+            var reqBody = {
+                brief: payload && payload.brief,
+                understanding: payload && payload.understanding,
+                template: template || undefined,
+                objective: objective,
+                name: enteredName() || undefined,
+            };
+            setStatus('RMOOZ generating a draft scenario from the reviewed brief…');
+            api('POST', '/api/wargame-sim/generate', reqBody).then(function (r) {
+                if (r.status === 422 && r.body && r.body.requires_objective) {
+                    setStatus('Set the objective position on the map first (open "Scenario Setup"), then Generate.', '#e0a93a');
+                    var setup = card.querySelector('#wg-wz-setup'); if (setup) setup.open = true;
+                    return;
+                }
+                if (!r.body || !r.body.ok) {
+                    setStatus('generate failed: ' + ((r.body && r.body.error) || ('HTTP ' + r.status)), '#e0a93a');
+                    return;
+                }
+                el.review.style.display = 'none';
+                var tplName = (r.body.generation && r.body.generation.template) || 'template';
+                showBadge('Draft from Brief — ' + tplName + (r.body.draft ? ' (review positions)' : ''), true);
+                setStatus('Draft scenario "' + r.body.name + '" generated (RED ' + r.body.red_units + ' / BLUE ' + r.body.blue_units + ', ' + r.body.steps + ' phases) — opening…');
+                openScenario(r.body, false).then(function () {
+                    setStatus('Draft scenario "' + r.body.name + '" opened. Positions are DRAFT — refine on the map.');
+                }).catch(function (e) { setStatus('generated but load failed: ' + e.message, '#e0a93a'); });
+            }).catch(function (e) { setStatus('generate error: ' + e.message, '#e0a93a'); });
         }
 
         function setStatus(msg, color) { el.status.style.color = color || '#c5ddf0'; el.status.textContent = msg || ''; }

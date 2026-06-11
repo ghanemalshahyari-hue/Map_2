@@ -40,6 +40,23 @@ const PORTER = require(path.join(ROOT, 'scripts', 'port-wargame.js'));
 const NORMALIZER = require(path.join(__dirname, 'ai', 'scenario-normalizer.js'));
 // DOC-UNDERSTANDING-1 / Phase D: document classify + dedupe + Operational Brief.
 const BRIEF = require(path.join(__dirname, 'ai', 'operational-brief.js'));
+// DOC-UNDERSTANDING-1 / Phase F: JSON input + brief→scenario generation.
+const VALIDATOR = require(path.join(__dirname, 'ai', 'scenario-validator.js'));
+const GEN       = require(path.join(__dirname, 'ai', 'brief-to-scenario.js'));
+const TEMPLATES = require(path.join(__dirname, 'ai', 'operation-templates.js'));
+
+// Collect a request body and JSON.parse it. cb(obj) on success; cb(null) when
+// the body is empty; cb(undefined) when a body is present but not valid JSON.
+function readJsonBody(req, cb) {
+    var chunks = [], size = 0, MAX = 8000000;
+    req.on('data', function (d) { size += d.length; if (size <= MAX) chunks.push(d); });
+    req.on('error', function () { cb(null); });
+    req.on('end', function () {
+        if (!chunks.length) return cb(null);
+        try { cb(JSON.parse(Buffer.concat(chunks).toString('utf8'))); }
+        catch (_) { cb(undefined); }
+    });
+}
 
 // Resolve the TestingAI root. DEBUG-DOCX-1 root cause RC-2: the old hardcoded
 // 'C:/Users/ADMIN/Desktop/TestingAI' default is dead on any box whose user isn't
@@ -866,27 +883,123 @@ function handle(req, res, ctx) {
         return true;
     }
 
-    // ── DOC-UNDERSTANDING-1 / Phase D: analyze staged documents ──
-    // Read-only: extract text, dedupe by content hash (same file in both slots
-    // → one Mixed Operational Document), classify, separate by side, and seed
-    // the Operational Brief. No writes, no sim, no LLM (graceful JS gate). The
-    // review screen renders this BEFORE generation. POST or GET both accepted.
+    // ── DOC-UNDERSTANDING-1 / Phase D+F: analyze staged docs OR a JSON input ──
+    // Read-only. With no body (or GET): extract + classify + dedupe + side-
+    // separate the staged DOCX → Operational Brief. With a JSON body: detect
+    // whether it is an Operational Brief, an RMOOZ Scenario, or unknown, and
+    // validate/normalize accordingly. No writes, no sim, no LLM (graceful gate).
     if (pathname === '/api/wargame-sim/analyze' && (method === 'POST' || method === 'GET')) {
-        try {
-            const inputs = [];
-            for (const slot of ['red', 'blue']) {
-                let p = path.join(c.importFromRmooz, SLOT_FILE[slot]);
-                if (!exists(p)) p = path.join(c.forcesDir, SLOT_FILE[slot]);
-                if (exists(p)) inputs.push({ slot, filename: SLOT_FILE[slot], bytes: fs.readFileSync(p) });
+        var analyzeStaged = function () {
+            try {
+                var inputs = [];
+                ['red', 'blue'].forEach(function (slot) {
+                    var p = path.join(c.importFromRmooz, SLOT_FILE[slot]);
+                    if (!exists(p)) p = path.join(c.forcesDir, SLOT_FILE[slot]);
+                    if (exists(p)) inputs.push({ slot: slot, filename: SLOT_FILE[slot], bytes: fs.readFileSync(p) });
+                });
+                if (!inputs.length) { sendJson(res, 404, { ok: false, error: 'no staged documents — upload a red and/or blue .docx, or POST a JSON brief/scenario' }); return; }
+                sendJson(res, 200, BRIEF.analyzeDocuments(inputs));
+            } catch (e) { sendJson(res, 500, { ok: false, error: 'analyze failed: ' + (e && e.message) }); }
+        };
+        if (method === 'GET') { analyzeStaged(); return true; }
+        readJsonBody(req, function (body) {
+            if (!(body && typeof body === 'object' && !Array.isArray(body))) { analyzeStaged(); return; }
+            try {
+                var kind = BRIEF.classifyJsonInput(body);
+                if (kind === 'rmooz_scenario') {
+                    // RMOOZ Scenario JSON → schema validate + 500/side normalize (before/after).
+                    var validation = VALIDATOR.validateScenario(body);
+                    var clone = JSON.parse(JSON.stringify(body));
+                    var nr = NORMALIZER.normalizeScenario(clone);
+                    var v2 = VALIDATOR.validateScenario(clone);
+                    sendJson(res, 200, {
+                        ok: true, kind: 'rmooz_scenario',
+                        validation: validation, normalization: nr.report, normalized_validation: v2,
+                        loadable: v2.ok, understanding: BRIEF.understandingFromScenario(clone),
+                        llm_fill: { available: false, reason: 'RMOOZ scenario JSON — validated + normalized deterministically' },
+                    });
+                } else if (kind === 'operational_brief') {
+                    var vb = BRIEF.validateBrief(body);
+                    var nb = BRIEF.normalizeBrief(body);
+                    sendJson(res, 200, {
+                        ok: true, kind: 'operational_brief',
+                        validation: vb, brief: nb, documents: nb.documents,
+                        document_set_id: nb.document_set_id, set_type: nb.set_type || 'operational_brief',
+                        understanding: BRIEF.understandingFromBrief(nb),
+                        llm_fill: { available: false, reason: 'Operational Brief provided directly' },
+                    });
+                } else {
+                    var u = BRIEF.unknownToBrief(body);
+                    sendJson(res, 200, {
+                        ok: true, kind: 'unknown', requires_review: true, confidence: 'low',
+                        brief: u.brief, mapped: u.mapped, document_set_id: u.brief.document_set_id,
+                        understanding: BRIEF.understandingFromBrief(u.brief),
+                        llm_fill: { available: false, reason: 'Unknown JSON mapped best-effort into a brief — review required' },
+                    });
+                }
+            } catch (e) { sendJson(res, 500, { ok: false, error: 'analyze failed: ' + (e && e.message) }); }
+        });
+        return true;
+    }
+
+    // ── DOC-UNDERSTANDING-1 / Phase F: RMOOZ generates from a REVIEWED brief ──
+    // Global rule: AI understands → user reviews → RMOOZ validates → RMOOZ
+    // generates. Body = { brief|scenario, objective?, template?, name?, overwrite? }.
+    // Brief → deterministic template-driven DRAFT scenario (never LLM free text,
+    // never raw chunks). Scenario → load path. Both are normalized (≤500/side)
+    // and schema-validated; only a VALID scenario is written + set active.
+    if (pathname === '/api/wargame-sim/generate' && method === 'POST') {
+        readJsonBody(req, function (body) {
+            if (!(body && typeof body === 'object' && !Array.isArray(body))) {
+                sendJson(res, 400, { ok: false, error: 'JSON body required: { brief | scenario, objective?, template?, name? }' });
+                return;
             }
-            if (!inputs.length) {
-                sendJson(res, 404, { ok: false, error: 'no staged documents — upload a red and/or blue .docx first' });
-                return true;
-            }
-            sendJson(res, 200, BRIEF.analyzeDocuments(inputs));
-        } catch (e) {
-            sendJson(res, 500, { ok: false, error: 'analyze failed: ' + (e && e.message) });
-        }
+            try {
+                var scenario, genReport = null, mode;
+                var hasScenario = body.scenario || (Array.isArray(body.red_units) && Array.isArray(body.blue_units_initial));
+                if (hasScenario) {
+                    scenario = body.scenario || body;
+                    mode = 'load_scenario_json';
+                } else {
+                    var briefSrc = body.brief || body;
+                    var briefNorm = BRIEF.normalizeBrief(briefSrc);
+                    if (body.understanding) briefNorm.understanding = body.understanding;
+                    else if (briefSrc && briefSrc.understanding) briefNorm.understanding = briefSrc.understanding;
+                    if (body.template) briefNorm.template = body.template;
+                    var gen = GEN.generateScenarioFromBrief(briefNorm, { objective: body.objective, template: body.template, name: body.name });
+                    if (gen.requiresObjective) { sendJson(res, 422, { ok: false, requires_objective: true, error: gen.reason }); return; }
+                    scenario = gen.scenario; genReport = gen.report; mode = 'generate_from_brief';
+                }
+                // RMOOZ validates + normalizes BEFORE save.
+                var nr = NORMALIZER.normalizeScenario(scenario);
+                var validation = VALIDATOR.validateScenario(scenario);
+                if (!validation.ok) {
+                    sendJson(res, 400, { ok: false, error: 'scenario failed validation', mode: mode, validation: validation, normalization: nr.report, generation: genReport });
+                    return;
+                }
+                var safeName = safeScenarioName(body.name || scenario.name || 'brief-scenario');
+                var target = resolveScenarioSaveTarget({ baseName: safeName, explicit: !!body.name, overwrite: body.overwrite === true });
+                if (target.conflict) {
+                    sendJson(res, 409, { ok: false, name_conflict: true, requestedName: target.requestedName, suggestedName: target.suggestedName });
+                    return;
+                }
+                if (!isSafeScenarioName(target.name)) { sendJson(res, 400, { ok: false, error: 'unsafe scenario name' }); return; }
+                scenario.name = target.name;
+                var outFile = PORTER.writeScenario(scenario);
+                if (ctx.scenarios) { try { ctx.scenarios.clearCache(); } catch (_) {} try { ctx.scenarios.setActiveName(scenario.name); } catch (_) {} }
+                sendJson(res, 200, {
+                    ok: true, mode: mode, name: scenario.name, file: outFile,
+                    auto_renamed: !!target.auto_renamed, replaced: !!target.replaced,
+                    generation: genReport,
+                    normalization: nr.changed ? nr.report : null,
+                    warnings: validation.warnings,
+                    draft: !!(scenario.generation && scenario.generation.draft),
+                    red_units: (scenario.red_units || []).length, blue_units: (scenario.blue_units_initial || []).length,
+                    steps: (scenario.steps || []).length,
+                    objective: !!(scenario.obj && Array.isArray(scenario.obj.coord) && scenario.obj.coord.length === 2),
+                });
+            } catch (e) { sendJson(res, 400, { ok: false, error: 'generate failed: ' + (e && e.message) }); }
+        });
         return true;
     }
 

@@ -2140,18 +2140,14 @@
             const size = redIconSize(unit.echelon);
             const _sym = resolveUnitSymbolProfile(unit); // SYM2: remap unsupported SIDCs to family symbols
             const icon = sidcIcon(_sym.resolved_sidc, size) || diamondIcon(COLORS.RED_UNIT, unit.label);
+            const _redTT = `${unit.label || displayRedId(unit.uid)} — ${displayRole(unit.role)} — STAGED` +
+                // PR-109: Red staging-cluster transparency note.
+                `<div style="margin-top:4px;padding-top:3px;border-top:1px solid #3a2a2a;font-size:9px;color:#8a6a6a;font-style:italic;">${esc((window.t && window.t('tooltip-red-staging-note')) || 'Multiple Red units may be intentionally staged at this assembly area.')}</div>`;
             const m = window.L.marker(
                 [initialLonLat[1], initialLonLat[0]],
                 { icon, title: (unit.label || displayRedId(unit.uid)) + ' — ' + displayRole(unit.role) },
-            ).bindTooltip(
-                `${unit.label || displayRedId(unit.uid)} — ${displayRole(unit.role)} — STAGED` +
-                // PR-109: Red staging-cluster transparency note.
-                // Informs the operator that co-located Red markers are intentional
-                // staging-area groupings, not a display error.
-                // No raw coords exposed, no Event Log entries, no storage writes.
-                `<div style="margin-top:4px;padding-top:3px;border-top:1px solid #3a2a2a;font-size:9px;color:#8a6a6a;font-style:italic;">${esc((window.t && window.t('tooltip-red-staging-note')) || 'Multiple Red units may be intentionally staged at this assembly area.')}</div>`,
-                { permanent: false }
-            );
+            ).bindTooltip(_redTT, { permanent: false });
+            m._baseTooltip = _redTT; // TASK2B: base content; _refreshTaskingTooltips() appends tasking line on top
             m._wgRedMeta = meta;
             // Expose the same hooks the Units feature attaches to drag-placed
             // markers, so red-team-controller.scanMapForUnits() can discover
@@ -2207,17 +2203,14 @@
             const sidc = unit.sidc || blueSidcFor(unit);
             const _symB = resolveUnitSymbolProfile(unit); // SYM2: remap unsupported SIDCs to family symbols
             const icon = sidcIcon(_symB.resolved_sidc, size) || squareIcon(COLORS.BLUE_UNIT, unit.base_id, Math.max(10, Math.round(size / 2)));
+            const _blueTT = `${displayBlueId(unit.base_id)}${unit.echelon ? ' (' + unit.echelon + ')' : ''} — ACTIVE` +
+                // PR-107: display-offset transparency footer (Blue units only).
+                `<div style="margin-top:4px;padding-top:3px;border-top:1px solid #2a3a4a;font-size:9px;color:#6a7a8a;font-style:italic;">${esc((window.t && window.t('tooltip-display-offset-notice')) || 'Displayed position is offset for readability.')}</div>`;
             const m = window.L.marker(
                 [unit.coord[1], unit.coord[0]],
                 { icon, title: displayBlueId(unit.base_id) + (unit.role ? ' · ' + displayRole(unit.role) : '') + (unit.echelon ? ' (' + unit.echelon + ')' : '') },
-            ).bindTooltip(
-                `${displayBlueId(unit.base_id)}${unit.echelon ? ' (' + unit.echelon + ')' : ''} — ACTIVE` +
-                // PR-107: display-offset transparency footer (Blue units only).
-                // textContent-equivalent: esc() encodes the i18n string before
-                // inserting into the template. No raw coords, no event log, no storage.
-                `<div style="margin-top:4px;padding-top:3px;border-top:1px solid #2a3a4a;font-size:9px;color:#6a7a8a;font-style:italic;">${esc((window.t && window.t('tooltip-display-offset-notice')) || 'Displayed position is offset for readability.')}</div>`,
-                { permanent: false }
-            );
+            ).bindTooltip(_blueTT, { permanent: false });
+            m._baseTooltip = _blueTT; // TASK2B: base content; _refreshTaskingTooltips() appends tasking line on top
             m._wgBlueMeta = {
                 uid:       unit.unit_uid,
                 side:      'BLUE',
@@ -3461,10 +3454,13 @@
                 lines.push(`<div style="margin-top:3px;font-size:10px;">${stateBits.join(' · ')}</div>`);
             }
 
-            // Actor narrative (what this unit DID this phase)
+            // Actor narrative (what this unit DID this phase).
+            // TASK2B: prefer component_label from world state (human-readable) over raw action_component.
             if (actor && actor.action_what) {
+                const _wsT = lastWorldState && lastWorldState.derived && lastWorldState.derived.unit_tasking;
+                const _compLabel = (_wsT && _wsT[uid] && _wsT[uid].component_label) || actor.action_component || 'action';
                 lines.push(`<div style="margin-top:6px;padding-top:4px;border-top:1px solid #345;font-size:11px;">
-                    <strong style="color:#9bd6a3;">▶ ${esc(actor.action_component || 'action')}:</strong> ${esc(actor.action_what)}
+                    <strong style="color:#9bd6a3;">▶ ${esc(_compLabel)}:</strong> ${esc(actor.action_what)}
                 </div>`);
                 if (actor.action_intended_effect) {
                     lines.push(`<div style="font-size:10px;color:#bcd;font-style:italic;">→ ${esc(actor.action_intended_effect)}</div>`);
@@ -5454,6 +5450,38 @@
         }
     }
 
+    // TASK2B: Read-only tasking evidence appended to existing hover tooltips.
+    // Reads ws.derived.unit_tasking[uid] from the last computed World State and
+    // re-binds each scenario marker's tooltip to include a compact tasking line.
+    // Always rebuilds from m._baseTooltip so calling twice is idempotent.
+    // No marker icons, no simulation state, no unit objects are mutated.
+    function _refreshTaskingTooltips() {
+        if (!lastWorldState || !lastWorldState.derived) return;
+        const tasking = lastWorldState.derived.unit_tasking || {};
+        _applyTaskingToMarkerMap(redMarkers, tasking);
+        _applyTaskingToMarkerMap(blueMarkers, tasking);
+    }
+
+    function _applyTaskingToMarkerMap(markerMap, tasking) {
+        for (const uid of Object.keys(markerMap)) {
+            const m = markerMap[uid];
+            if (!m || !m._baseTooltip) continue;
+            const t = tasking[uid];
+            if (!t) {
+                // No tasking this step — restore to base (removes any previous task line).
+                try { m.unbindTooltip().bindTooltip(m._baseTooltip, { permanent: false }); } catch (_) {}
+                continue;
+            }
+            const comp = t.component_label || t.action_component || '';
+            const what = t.action_what || '';
+            const taskLine = '<div style="margin-top:4px;padding-top:3px;border-top:1px solid #4a4a3a;font-size:9px;color:#c8c080;font-family:monospace;">'
+                + '<span style="opacity:.7;">Orders:</span> ' + esc(comp)
+                + (what ? '<br><span style="opacity:.7;">Mission:</span> ' + esc(what) : '')
+                + '</div>';
+            try { m.unbindTooltip().bindTooltip(m._baseTooltip + taskLine, { permanent: false }); } catch (_) {}
+        }
+    }
+
     function clearScenario() {
         if (layerGroup && window.map) {
             window.map.removeLayer(layerGroup);
@@ -6026,6 +6054,12 @@
         // is purely a UX layer; data is already on state.actors /
         // state.affected / state.unit_state via the adjudicator.
         applyW3UnitNarrative(state);
+        // TASK2B: For non-W3 scenarios, applyW3UnitNarrative is a no-op so
+        // _refreshTaskingTooltips adds tasking evidence to the static base tooltips.
+        // For W3-rich, applyW3UnitNarrative already shows component_label + action_what.
+        if (!scenarioRef || scenarioRef.schema_variant !== 'w3-rich') {
+            _refreshTaskingTooltips();
+        }
 
         // 4e. Schedule the staggered explosion + delayed X re-mark for the
         // new kills (no-op on rewind / when there are no new kills).

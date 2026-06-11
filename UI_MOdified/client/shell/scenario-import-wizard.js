@@ -364,8 +364,19 @@
                 el.analyze.disabled = false; el.analyze.textContent = prev;
                 if (!r.body) { showReviewError('No response from analyze (is the server running?).'); return; }
                 if (!r.body.ok) { showReviewError((r.body && r.body.error) || ('analyze failed (' + r.status + ')')); return; }
-                renderReview(r.body);
+                attachPlacement(r.body).then(function () { renderReview(r.body); });
             }).catch(function (e) { el.analyze.disabled = false; el.analyze.textContent = prev; showReviewError(e.message); });
+        }
+        // G-3C: enrich the analyze payload with location placement candidates
+        // (the G-3B resolver, server-side). Read-only + best-effort — a failure
+        // here NEVER blocks the review (the panel just stays empty).
+        function attachPlacement(payload) {
+            var brief = payload && payload.brief;
+            if (!brief) return Promise.resolve(payload);
+            return api('POST', '/api/wargame-sim/placement', { brief: brief }).then(function (pr) {
+                if (pr && pr.body && pr.body.ok) payload.placement = pr.body;
+                return payload;
+            }).catch(function () { return payload; });
         }
         // Phase E renderer lives in shell/doc-understanding-review.js (shared
         // with the standalone verify page) so the rendered UI cannot drift.

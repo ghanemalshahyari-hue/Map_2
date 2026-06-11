@@ -79,6 +79,10 @@
         // DOC-UNDERSTANDING-1 / G-3: COA Review Panel mount point. Painted by
         // shell/coa-review-panel.js when the brief carries courses_of_action[].
         html += '<div data-el="coa-panel"></div>';
+        // DOC-UNDERSTANDING-1 / G-3C: location placement-candidates mount point.
+        // Painted by shell/placement-candidates-panel.js when the wizard has
+        // attached payload.placement (from /api/wargame-sim/placement).
+        html += '<div data-el="placement-panel"></div>';
         html += '<div style="margin:10px 0 6px;font-size:12px;color:#9aa3ad;display:flex;align-items:center;gap:6px;flex-wrap:wrap;border-top:1px solid #23303d;padding-top:10px;">' +
             '<span>Operation template — قالب العملية:</span>' +
             '<select data-el="template" style="font:inherit;background:#161b18;color:#e8eaed;border:1px solid #4a5a6a;border-radius:4px;padding:3px 6px;">' +
@@ -108,6 +112,14 @@
         if (coaMount && window.RmoozCoaPanel && window.RmoozCoaPanel.hasCoas(p)) {
             try { window.RmoozCoaPanel.render(coaMount, p); } catch (eCoa) {
                 coaMount.innerHTML = '<div style="color:#e0a93a;font-size:11px;">COA panel failed to render: ' + esc(eCoa && eCoa.message) + '</div>';
+            }
+        }
+
+        // G-3C: paint placement candidates when the wizard attached p.placement.
+        var placeMount = container.querySelector('[data-el="placement-panel"]');
+        if (placeMount && window.RmoozPlacementPanel && window.RmoozPlacementPanel.hasCandidates(p)) {
+            try { window.RmoozPlacementPanel.render(placeMount, p); } catch (ePl) {
+                placeMount.innerHTML = '<div style="color:#e0a93a;font-size:11px;">Placement panel failed to render: ' + esc(ePl && ePl.message) + '</div>';
             }
         }
 

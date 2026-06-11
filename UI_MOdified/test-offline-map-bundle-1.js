@@ -154,10 +154,15 @@ console.log('\n── §5  docker-compose.offline.yml ────────�
 
 const compose = fs.readFileSync(path.join(OD, 'docker-compose.offline.yml'), 'utf8');
 
-test('compose exposes port 8080 (tile server)', () => {
-    // May be literal "8080:8080" or dynamic "${TILE_PUBLIC_PORT:-8080}:8080"
-    assert.ok(compose.includes('8080:8080') || (compose.includes('8080}:8080') || compose.includes('8080"')),
-        'Must expose port 8080 for tile server');
+test('compose does NOT publish host 8080 by default (proxy mode); debug override does', () => {
+    // Default = in-app proxy: the browser uses only the web port; the tile port is
+    // reached internally by the web-server proxy, so a published host→container
+    // 8080 mapping ( - "…:8080" ) must NOT appear in the base compose. The optional
+    // docker-compose.tiles-debug.yml override re-adds it for direct tile debugging.
+    const publishes8080 = src => /-\s*"[^"\n]*:8080"/.test(src);
+    assert.ok(!publishes8080(compose), 'base compose must not publish host 8080 in proxy mode');
+    const debugOverride = fs.readFileSync(path.join(OD, 'docker-compose.tiles-debug.yml'), 'utf8');
+    assert.ok(publishes8080(debugOverride), 'tiles-debug override must publish 8080 for direct debugging');
 });
 
 test('compose mounts map_data/base to /app/maps', () => {
@@ -320,7 +325,7 @@ test('test-offline-map-0.js still passes (43/43)', () => {
 });
 
 // ─── §11 Runtime tests ────────────────────────────────────────────────────────
-console.log('\n── §11 Runtime tests (require rebuilt container on 5006+8080) ──');
+console.log('\n── §11 Runtime tests (require rebuilt container on the web port; tiles via in-app proxy) ──');
 
 function httpGet(urlPath, timeoutMs = 5000) {
     return new Promise((resolve, reject) => {
@@ -369,21 +374,24 @@ async function runRuntimeTests() {
         assert.ok('localTileUrl' in r.body, 'Missing localTileUrl');
     });
 
-    await testAsync('/api/offline/map-config.localTileUrl points to tile server', async () => {
+    await testAsync('/api/offline/map-config.localTileUrl points to tile source (/services/)', async () => {
         const r = await httpGet('/api/offline/map-config');
         const url = r.body && r.body.localTileUrl;
-        assert.ok(url && url.includes('8080'), `Expected 8080 in localTileUrl, got: ${url}`);
+        // Proxy mode (default): localTileUrl is the web-port (or same-origin)
+        // /services/ URL — NOT :8080. Direct/debug mode: still a /services/ URL.
+        assert.ok(url && url.includes('/services/'), `Expected /services/ in localTileUrl, got: ${url}`);
     });
 
-    await testAsync('Tile server on port 8080 responds', async () => {
-        const r = await httpGetPort(8080, '/services/', 5000);
-        // The tile server may return 404 for /services/ but the server itself responds
-        assert.ok(r.status < 500, `Tile server should respond, got status ${r.status}`);
+    await testAsync('Tile proxy on the web port forwards /services/ requests', async () => {
+        const r = await httpGet('/services/satellite-2017-11-02_asia_gcc-states/7/79/53.png');
+        // The web-server proxies to the internal tile-server; 200 (tile present) or
+        // 404 (coord absent) both prove the proxy path works. <500 = no crash.
+        assert.ok(r.status < 500, `Tile proxy should forward, got status ${r.status}`);
     });
 
     if (mbtilesStagedExists) {
-        await testAsync('Tile server serves satellite MBTiles tiles', async () => {
-            const r = await httpGetPort(8080, '/services/satellite-2017-11-02_asia_gcc-states/7/79/53.png', 5000);
+        await testAsync('Tile proxy serves satellite MBTiles tiles via the web port', async () => {
+            const r = await httpGet('/services/satellite-2017-11-02_asia_gcc-states/7/79/53.png');
             assert.ok(r.status === 200 || r.status === 404,
                 `Expected 200 or 404 (tile may not exist at this coord), got ${r.status}`);
         });

@@ -12,13 +12,20 @@
  *   node verify-offline-tile-fix-1.js
  *
  *   # With Playwright for browser network tests:
- *   RMOOZ_OFFLINE_URL=http://155.140.70.51:8640 node verify-offline-tile-fix-1.js
+ *   RMOOZ_OFFLINE_URL=http://198.51.100.10:8640 node verify-offline-tile-fix-1.js
  *
  *   # Custom container URL:
  *   RMOOZ_OFFLINE_URL=http://localhost:5006 node verify-offline-tile-fix-1.js
  *
  * The script exits 0 if all run tests pass (or are skipped), 1 if any fail.
  * If the container is not running, all runtime tests are skipped gracefully.
+ *
+ * SCOPE: this verifies the LEGACY direct-tile model where the browser talks to
+ * the tile server on :8080 (i.e. RMOOZ_TILE_PROXY_MODE off, or the optional
+ * docker-compose.tiles-debug.yml override). The DEFAULT deployment now uses the
+ * in-app proxy (RMOOZ_TILE_PROXY_MODE=web): tiles come from the web port and the
+ * tile :8080 is not published — verify that path with test-offline-tile-proxy-1.js
+ * plus the proxy runtime curl / browser checks instead.
  */
 'use strict';
 
@@ -28,8 +35,8 @@ const net   = require('net');
 const path  = require('path');
 const url   = require('url');
 
-const OFFLINE_URL = (process.env.RMOOZ_OFFLINE_URL || 'http://155.140.70.51:8640').replace(/\/$/, '');
-const TILE_URL    = (process.env.RMOOZ_TILE_URL    || 'http://155.140.70.51:8080').replace(/\/$/, '');
+const OFFLINE_URL = (process.env.RMOOZ_OFFLINE_URL || 'http://198.51.100.10:8640').replace(/\/$/, '');
+const TILE_URL    = (process.env.RMOOZ_TILE_URL    || 'http://198.51.100.10:8080').replace(/\/$/, '');
 // Probe timeout: containers can be slow to accept connections
 const PROBE_MS    = 5000;
 

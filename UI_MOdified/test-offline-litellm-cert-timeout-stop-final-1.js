@@ -81,7 +81,8 @@ check('B4  REQUESTS_CA_BUNDLE env var',          dc.includes('REQUESTS_CA_BUNDLE
 check('B5  NODE_EXTRA_CA_CERTS env var',         dc.includes('NODE_EXTRA_CA_CERTS:'));
 check('B6  RMOOZ_AI_TIMEOUT_MS env var',         dc.includes('RMOOZ_AI_TIMEOUT_MS:'));
 check('B7  RMOOZ_AI_TLS_VERIFY env var',         dc.includes('RMOOZ_AI_TLS_VERIFY:'));
-check('B8  ports 8640:5006 and 8080:8080',       dc.includes('5006}:5006') && dc.includes('8080}:8080'));
+check('B8  web port published; tile :8080 NOT published by default (proxy mode)',
+                                                 dc.includes('5006}:5006') && !/-\s*"[^"\n]*:8080"/.test(dc));
 check('B9  existing volumes unchanged',          dc.includes('./data_runtime:/app/data') && dc.includes('./map_data/base:/app/maps:ro'));
 
 // ──────────────────────────────────────────────────────────────────────────────

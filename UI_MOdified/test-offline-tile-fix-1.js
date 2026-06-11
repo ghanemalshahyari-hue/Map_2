@@ -81,9 +81,15 @@ test('guard does not hardcode port 8640', () => {
         'Guard must not hardcode the web-server port 8640 — tile URL comes from /api/offline/map-config');
 });
 
-test('guard does not hardcode 155.140.70.51', () => {
-    assert.ok(!guardSrc.includes('155.140.70.51'),
-        'Guard must not hardcode the deployment IP — tile URL comes from /api/offline/map-config');
+test('guard does not hardcode a real deployment IP', () => {
+    // The guard must resolve the tile URL dynamically (from /api/offline/map-config
+    // via __RMOOZ_OFFLINE_MAP__), never bake in a site IP. Scan for any IPv4
+    // literal that is not loopback / RFC-5737 documentation.
+    const ips = (guardSrc.match(/\b\d{1,3}(?:\.\d{1,3}){3}\b/g) || [])
+        .filter(ip => ip !== '127.0.0.1' &&
+            !/^(?:192\.0\.2\.|198\.51\.100\.|203\.0\.113\.)\d{1,3}$/.test(ip));
+    assert.strictEqual(ips.length, 0,
+        'Guard must not hardcode a deployment IP (tile URL comes from /api/offline/map-config); found: ' + ips.join(', '));
 });
 
 test('guard resolves real URL from __RMOOZ_OFFLINE_MAP__.activeTileUrl', () => {

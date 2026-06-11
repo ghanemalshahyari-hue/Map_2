@@ -23,13 +23,21 @@ services:
     container_name: rmooz-offline
 
     # ── Port mapping ──────────────────────────────────────────────────────────
-    # WEB_PUBLIC_PORT: the host port browsers use to reach the app (default 5006).
+    # ONLY the web port is published. In the default in-app tile-proxy mode
+    # (RMOOZ_TILE_PROXY_MODE=web) the browser fetches tiles from the web port and
+    # the web-server proxies them to the tile-server on the container-internal
+    # 127.0.0.1:8080 — so the tile port does NOT need to be published to the host.
+    # Users need ONLY  http://<server-ip>:${WEB_PUBLIC_PORT:-5006}  (e.g. :8640).
     #   Set WEB_PUBLIC_PORT=8640 in .env.offline if the site uses port 8640.
-    # TILE_PUBLIC_PORT: the host port for the MBTiles tile server (default 8080).
-    # Container always listens on 5006 (web) and 8080 (tiles) internally.
+    # Container still listens on 5006 (web) and 8080 (tiles) INTERNALLY.
+    #
+    # Need the tile server published directly on the host (direct tile debugging,
+    # or RMOOZ_TILE_PROXY_MODE off)? Layer the optional override file:
+    #   docker compose -f Offline_Deployment/docker-compose.offline.yml \
+    #                  -f Offline_Deployment/docker-compose.tiles-debug.yml \
+    #                  --env-file Offline_Deployment/.env.offline up -d
     ports:
       - "${WEB_PUBLIC_PORT:-5006}:5006"
-      - "${TILE_PUBLIC_PORT:-8080}:8080"
 
     # ── Environment ───────────────────────────────────────────────────────────
     # All values read from .env.offline (passed via --env-file).

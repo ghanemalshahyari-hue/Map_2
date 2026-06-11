@@ -44,21 +44,21 @@ console.log('\n═══ OFFLINE-TILE-PROXY-1 ═══\n');
 
 // ── A ──────────────────────────────────────────────────────────────────────
 console.log('A) RMOOZ_TILE_PROXY_MODE=web → web-port localTileUrl');
-const a1 = freshConfig({ RMOOZ_TILE_PROXY_MODE: 'web', WEB_PUBLIC_BASE_URL: 'http://155.140.70.51:8640', RMOOZ_TILE_DATASET_NAME: DATASET });
+const a1 = freshConfig({ RMOOZ_TILE_PROXY_MODE: 'web', WEB_PUBLIC_BASE_URL: 'http://198.51.100.10:8640', RMOOZ_TILE_DATASET_NAME: DATASET });
 check('A1  localTileUrl uses WEB_PUBLIC_BASE_URL + :8640',
-    a1.localTileUrl === `http://155.140.70.51:8640/services/${DATASET}/{z}/{x}/{y}.png`, a1.localTileUrl);
+    a1.localTileUrl === `http://198.51.100.10:8640/services/${DATASET}/{z}/{x}/{y}.png`, a1.localTileUrl);
 check('A2  localTileUrl does NOT contain :8080', !a1.localTileUrl.includes(':8080'));
 check('A3  tileProxyMode reported as "web"', a1.tileProxyMode === 'web');
-check('A4  healthcheck also via web port (no :8080)', a1.healthcheckUrl.startsWith('http://155.140.70.51:8640/') && !a1.healthcheckUrl.includes(':8080'));
+check('A4  healthcheck also via web port (no :8080)', a1.healthcheckUrl.startsWith('http://198.51.100.10:8640/') && !a1.healthcheckUrl.includes(':8080'));
 const a5 = freshConfig({ RMOOZ_TILE_PROXY_MODE: 'web', WEB_PUBLIC_BASE_URL: '', RMOOZ_TILE_DATASET_NAME: DATASET });
 check('A5  blank WEB_PUBLIC_BASE_URL → same-origin relative /services/ URL',
     a5.localTileUrl === `/services/${DATASET}/{z}/{x}/{y}.png`, a5.localTileUrl);
 
 // ── B ──────────────────────────────────────────────────────────────────────
 console.log('\nB) proxy OFF preserves :8080 behaviour');
-const b1 = freshConfig({ RMOOZ_TILE_PROXY_MODE: '', TILE_PUBLIC_BASE_URL: 'http://155.140.70.51:8080', RMOOZ_TILE_DATASET_NAME: DATASET });
+const b1 = freshConfig({ RMOOZ_TILE_PROXY_MODE: '', TILE_PUBLIC_BASE_URL: 'http://198.51.100.10:8080', RMOOZ_TILE_DATASET_NAME: DATASET });
 check('B1  off + TILE_PUBLIC_BASE_URL → :8080 URL (unchanged)',
-    b1.localTileUrl === `http://155.140.70.51:8080/services/${DATASET}/{z}/{x}/{y}.png`, b1.localTileUrl);
+    b1.localTileUrl === `http://198.51.100.10:8080/services/${DATASET}/{z}/{x}/{y}.png`, b1.localTileUrl);
 check('B2  tileProxyMode reported as "off"', b1.tileProxyMode === 'off');
 
 // ── C ──────────────────────────────────────────────────────────────────────
@@ -99,6 +99,32 @@ check('F1  copies offline web-server.js', dockerfile.includes('offline_app/serve
 check('F2  copies offline-map-config.js', dockerfile.includes('offline_app/server/offline-map-config.js'));
 check('F3  copies offline-map-source.js', dockerfile.includes('offline_app/client/wargame/offline-map-source.js'));
 check('F4  copies offline-leaflet-tile-guard.js', dockerfile.includes('offline-leaflet-tile-guard.js'));
+
+// ── G ──────────────────────────────────────────────────────────────────────
+// Cleanup invariants (OFFLINE-TILE-PROXY-1 cleanup):
+//   • no real deployment IP baked into this test — RFC-5737 doc IPs only.
+//   • the default offline compose must NOT publish host 8080 (proxy mode is the
+//     default; users need only the web port). A separate optional override file
+//     (docker-compose.tiles-debug.yml) re-adds the 8080 publish for debugging.
+console.log('\nG) cleanup — no real IP, no default :8080 publish');
+
+const selfSrc = read(path.join(ROOT, 'test-offline-tile-proxy-1.js'));
+const ipLiterals = selfSrc.match(/\b\d{1,3}(?:\.\d{1,3}){3}\b/g) || [];
+const allowedIp = ip => /^(?:192\.0\.2\.|198\.51\.100\.|203\.0\.113\.)\d{1,3}$/.test(ip) || ip === '127.0.0.1';
+const realIps = ipLiterals.filter(ip => !allowedIp(ip));
+check('G1  test contains only RFC-5737 doc IPs / loopback (no real deployment IP)',
+    realIps.length === 0, 'non-doc IPs found: ' + realIps.join(', '));
+
+// A published host→container 8080 mapping looks like  - "....:8080"  in the
+// compose ports: list. The internal LOCAL_TILE_URL ("…localhost:8080/services…")
+// is a  KEY: "value"  line, not a  - "…:8080"  list item, so it is not matched.
+const publishes8080 = src => /-\s*"[^"\n]*:8080"/.test(src);
+const composeBase  = read(path.join(OFF, 'docker-compose.offline.yml'));
+const composeDebug = read(path.join(OFF, 'docker-compose.tiles-debug.yml'));
+check('G2  default offline compose does NOT publish host 8080 (proxy mode default)',
+    !publishes8080(composeBase));
+check('G3  optional tiles-debug override exists and publishes 8080',
+    composeDebug.length > 0 && publishes8080(composeDebug));
 
 console.log('\n═══ RESULTS ═══');
 console.log('  Passed: ' + passed + '   Failed: ' + failed);

@@ -2,7 +2,7 @@
 
 **Status:** Diagnosis complete (read-only — no production files changed)
 **Date:** 2026-06-06
-**Server:** 155.140.70.51 · App: http://155.140.70.51:8640
+**Server:** 198.51.100.10 · App: http://198.51.100.10:8640
 **Symptom:** Start Scenario Generation shows "20% — generating phase 0 / 17 / Starting new generation…" then resets to idle with no useful logs.
 
 ---
@@ -89,7 +89,7 @@ GET /api/ai/health → {"ok":true,"provider":"ollama","statusCode":200}
 `/api/ai/health` tests the **RMOOZ Node AI** path (Ollama via `OLLAMA_HOST=host.docker.internal`,
 which resolves on this Windows Docker-Desktop test box). It does **NOT** test the WarGamingGEN
 Python generator LLM. **AI health passing does not mean generation will work** — they are two
-different LLM configs. On the Linux server (155.140.70.51) `host.docker.internal` will not
+different LLM configs. On the Linux server (198.51.100.10) `host.docker.internal` will not
 resolve either, so even the Node AI path will fail there unless `extra_hosts` is set.
 
 ---
@@ -188,7 +188,7 @@ Add an offline AI health that tests the **actual generation endpoint** (LLM_BASE
 so a green check reflects whether generation can run. Never expose the key.
 
 ### Fix 5 (Linux server caveat)
-On the Linux host 155.140.70.51, `host.docker.internal` does not resolve by default. If the LLM
+On the Linux host 198.51.100.10, `host.docker.internal` does not resolve by default. If the LLM
 runs on the host, add to compose:
 ```
 extra_hosts:

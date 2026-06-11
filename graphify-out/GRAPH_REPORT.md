@@ -5,12 +5,12 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3267 nodes · 5591 edges · 190 communities (182 shown, 8 thin omitted)
+- 3312 nodes · 5642 edges · 192 communities (184 shown, 8 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `85100c5c`
+- Built from commit: `10047a20`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -204,6 +204,8 @@
 - [[_COMMUNITY_Community 187|Community 187]]
 - [[_COMMUNITY_Community 188|Community 188]]
 - [[_COMMUNITY_Community 189|Community 189]]
+- [[_COMMUNITY_Community 190|Community 190]]
+- [[_COMMUNITY_Community 191|Community 191]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `tx()` - 71 edges
@@ -228,7 +230,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (190 total, 8 thin omitted)
+## Communities (192 total, 8 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.12
@@ -244,7 +246,7 @@ Nodes (22): allPhasesPathIn(), cfg(), countStepGeojson(), crypto, exists(), fs, 
 
 ### Community 3 - "Community 3"
 Cohesion: 0.10
-Nodes (46): activateFreeDrawSignature(), activateScallopedDrawingMode(), applyFdTranslations(), attachFlankCardSelection(), callFlank(), cancelFreeDrawWorkflow(), cleanupSketch(), clearCirclePlacementPreview() (+38 more)
+Nodes (47): activateFreeDrawSignature(), activateScallopedDrawingMode(), applyFdTranslations(), attachFlankCardSelection(), buildCustomFlankCol(), callFlank(), cancelFreeDrawWorkflow(), cleanupSketch() (+39 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.32
@@ -954,8 +956,16 @@ Nodes (6): source, summary, tasks, units, friendly, friendly
 Cohesion: 0.67
 Nodes (4): civilian, infrastructure, neutral, neutral
 
+### Community 190 - "Community 190"
+Cohesion: 0.06
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
+
+### Community 191 - "Community 191"
+Cohesion: 0.43
+Nodes (6): hideAllPanels(), hideAutoFlankControls(), hideChatSidebar(), hideContextPanel(), hideOpsIntelPanel(), hideOrbatDock()
+
 ## Knowledge Gaps
-- **1448 isolated node(s):** `Legend`, `⚠️ DRIFT — code vs. documented decisions (confirm before relying on memory)`, `A. Client shell — operational modules (`UI_MOdified/client/shell/`)`, `B. Wargame / adjudicator visualization (`UI_MOdified/client/wargame/`)`, `C. Server — AI agents + sim boundary (`UI_MOdified/server/ai/`, `server/sim/`)` (+1443 more)
+- **1480 isolated node(s):** `name`, `updatedAt`, `name`, `scenario_label`, `model_version` (+1475 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -963,16 +973,16 @@ Nodes (4): civilian, infrastructure, neutral, neutral
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Path` connect `Community 177` to `Community 130`, `Community 131`, `Community 6`, `Community 8`, `Community 10`, `Community 25`, `Community 26`, `Community 27`, `Community 168`, `Community 173`, `Community 174`, `Community 175`, `Community 49`, `Community 55`, `Community 56`, `Community 184`, `Community 185`, `Community 61`, `Community 62`, `Community 63`, `Community 64`, `Community 65`, `Community 66`, `Community 69`, `Community 73`, `Community 76`, `Community 77`, `Community 78`, `Community 107`, `Community 119`?**
-  _High betweenness centrality (0.024) - this node is a cross-community bridge._
-- **Why does `blue_unit_step_prev` connect `Community 70` to `Community 38`?**
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
+- **Why does `blue_unit_step_coords` connect `Community 71` to `Community 79`?**
   _High betweenness centrality (0.001) - this node is a cross-community bridge._
-- **Why does `qualitative` connect `Community 179` to `Community 183`?**
+- **Why does `load_llm_config()` connect `Community 27` to `Community 177`?**
   _High betweenness centrality (0.001) - this node is a cross-community bridge._
-- **What connects `Legend`, `⚠️ DRIFT — code vs. documented decisions (confirm before relying on memory)`, `A. Client shell — operational modules (`UI_MOdified/client/shell/`)` to the rest of the system?**
-  _1452 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `name`, `updatedAt`, `name` to the rest of the system?**
+  _1484 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.125 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.09869375907111756 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09783368273934312 - nodes in this community are weakly interconnected._
 - **Should `Community 5` be split into smaller, more focused modules?**
   _Cohesion score 0.09250693802035152 - nodes in this community are weakly interconnected._

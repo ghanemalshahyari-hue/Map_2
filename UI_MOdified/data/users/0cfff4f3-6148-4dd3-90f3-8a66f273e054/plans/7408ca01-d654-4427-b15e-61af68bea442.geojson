@@ -13,5 +13,175 @@
     }
   ],
   "__folders": [],
-  "features": []
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            34.360075231178655,
+            37.71214405001193
+          ],
+          [
+            34.360075231178655,
+            37.71214405001193
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            34.360075231178655,
+            37.71214405001193
+          ],
+          "latlng2": [
+            34.360075231178655,
+            37.71214405001193
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5,
+          "sessionId": "free-draw-1781166635460-6859"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            34.61032676149215,
+            37.7626420567852
+          ],
+          [
+            34.61032676149215,
+            37.7626420567852
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            34.61032676149215,
+            37.7626420567852
+          ],
+          "latlng2": [
+            34.61032676149215,
+            37.7626420567852
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5,
+          "sessionId": "free-draw-1781166635460-6859"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            34.49083800708518,
+            37.73658287057078
+          ],
+          [
+            34.49083800708518,
+            37.73658287057078
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            34.49083800708518,
+            37.73658287057078
+          ],
+          "latlng2": [
+            34.49083800708518,
+            37.73658287057078
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5,
+          "sessionId": "free-draw-1781166635460-6859"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            34.360075231178655,
+            37.71214405001193
+          ],
+          [
+            34.38748710169296,
+            37.716760889380396
+          ],
+          [
+            34.49083800708518,
+            37.73658287057078
+          ],
+          [
+            34.5361613277223,
+            37.749342160426245
+          ],
+          [
+            34.61032676149215,
+            37.7626420567852
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-group",
+          "points": [
+            [
+              34.360075231178655,
+              37.71214405001193
+            ],
+            [
+              34.38748710169296,
+              37.716760889380396
+            ],
+            [
+              34.49083800708518,
+              37.73658287057078
+            ],
+            [
+              34.5361613277223,
+              37.749342160426245
+            ],
+            [
+              34.61032676149215,
+              37.7626420567852
+            ]
+          ],
+          "typeId": "scalloped",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5
+        },
+        "layerId": "layer-1"
+      }
+    }
+  ]
 }

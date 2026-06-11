@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G-3 — COA Review Panel (devtools verify)</title>
+    <!--
+      DEVTOOLS-ONLY harness — NOT part of the production client and excluded
+      from the offline image (.dockerignore: devtools/). Serve UI_MOdified/ as
+      a static root (e.g. `node scripts/verify-server.js`, port 8001) and open
+      /devtools/fixtures/doc-understanding/verify-coa.html.
+
+      Renders sample-coa.json (REAL G-2 adapter output over filled step3/4/5 —
+      regenerate with make-sample-coa.js) through the production renderers
+      /shell/coa-review-panel.js + /shell/doc-understanding-review.js, so what
+      you see is exactly what the import wizard shows.
+    -->
+    <style>
+        body { background:#0b0f0d; color:#e8eaed; font-family:'Segoe UI',Tahoma,Arial,sans-serif; margin:0; padding:18px; }
+        .hdr { font-size:15px; color:#7fd6a0; font-weight:600; margin-bottom:4px; }
+        .sub { font-size:12px; color:#9aa3ad; margin-bottom:12px; }
+        .wrap { max-width:860px; margin:0 auto; }
+        #status { font-size:12px; color:#c5ddf0; margin-bottom:8px; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="hdr">COA Review Panel — Verify Harness (G-3)</div>
+        <div class="sub">sample-coa.json → <code>RmoozDocReview.render()</code> (which mounts <code>RmoozCoaPanel</code>).
+            Generate is gated until a BLUE COA is selected.</div>
+        <div id="status">Loading…</div>
+        <div id="review" style="border:1px solid #2e5d7d;border-radius:8px;background:#0e1620;padding:12px;"></div>
+    </div>
+
+    <script src="/shell/coa-review-panel.js?v=1"></script>
+    <script src="/shell/doc-understanding-review.js?v=1"></script>
+    <script>
+        (function () {
+            var statusEl = document.getElementById('status');
+            var reviewEl = document.getElementById('review');
+            fetch('./sample-coa.json')
+                .then(function (r) { return r.json(); })
+                .then(function (p) {
+                    statusEl.textContent = 'sample loaded · set=' + p.document_set_id +
+                        ' · coas=' + ((p.understanding && p.understanding.coas) || []).length +
+                        ' · steps=' + (p.steps_present || []).join(',');
+                    window.RmoozDocReview.render(reviewEl, p, {
+                        onGenerate: function (tpl) {
+                            statusEl.textContent = 'GENERATE CALLED (gate passed) · template=' + (tpl || 'auto') +
+                                ' · approved_coa_id=' + (p.brief.operational_brief.approved_coa_id || '(none)');
+                        },
+                        onUploadMore: function () { statusEl.textContent = 'Upload More clicked (harness)'; },
+                        onCancel: function () { reviewEl.style.display = 'none'; }
+                    });
+                })
+                .catch(function (e) { statusEl.textContent = 'error: ' + e.message; });
+        })();
+    </script>
+</body>
+</html>

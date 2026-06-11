@@ -76,6 +76,9 @@
         if (p.llm_fill && !p.llm_fill.available) {
             html += '<div style="font-size:11px;color:#9aa3ad;margin:6px 0;">ℹ Deep extraction (exact units &amp; intent) runs on the deployment LLM; this is the offline structural read.</div>';
         }
+        // DOC-UNDERSTANDING-1 / G-3: COA Review Panel mount point. Painted by
+        // shell/coa-review-panel.js when the brief carries courses_of_action[].
+        html += '<div data-el="coa-panel"></div>';
         html += '<div style="margin:10px 0 6px;font-size:12px;color:#9aa3ad;display:flex;align-items:center;gap:6px;flex-wrap:wrap;border-top:1px solid #23303d;padding-top:10px;">' +
             '<span>Operation template — قالب العملية:</span>' +
             '<select data-el="template" style="font:inherit;background:#161b18;color:#e8eaed;border:1px solid #4a5a6a;border-radius:4px;padding:3px 6px;">' +
@@ -86,6 +89,8 @@
             '<option value="reconnaissance">reconnaissance — استطلاع</option>' +
             '<option value="air_defense">air_defense — دفاع جوي</option>' +
             '</select></div>';
+        // G-3 approval gate message (hidden until a blocked Generate attempt).
+        html += '<div data-el="coa-block-warn" style="display:none;margin:0 0 8px;padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:12px;"></div>';
         html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
             '<button type="button" data-act="generate" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:6px;padding:7px 14px;font-weight:600;">Generate Scenario — توليد السيناريو</button>' +
             '<button type="button" data-act="edit" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#22303f;color:#cfe6ff;border-radius:6px;padding:7px 14px;">Edit Understanding — تعديل الفهم</button>' +
@@ -98,13 +103,44 @@
         container.innerHTML = html;
         container.style.display = 'block';
 
+        // G-3: paint the COA cards when the brief carries courses_of_action[].
+        var coaMount = container.querySelector('[data-el="coa-panel"]');
+        if (coaMount && window.RmoozCoaPanel && window.RmoozCoaPanel.hasCoas(p)) {
+            try { window.RmoozCoaPanel.render(coaMount, p); } catch (eCoa) {
+                coaMount.innerHTML = '<div style="color:#e0a93a;font-size:11px;">COA panel failed to render: ' + esc(eCoa && eCoa.message) + '</div>';
+            }
+        }
+
         function bind(act, fn) {
             var b = container.querySelector('[data-act="' + act + '"]');
             if (b && fn) b.addEventListener('click', fn);
             return b;
         }
         // Generate passes the chosen operation template (or null = auto-detect).
+        // G-3 approval rule: when COAs exist, generation requires an operator-
+        // selected BLUE COA (recommendation alone never satisfies this — D9).
         bind('generate', function () {
+            var warn = container.querySelector('[data-el="coa-block-warn"]');
+            if (window.RmoozCoaPanel && window.RmoozCoaPanel.hasCoas(p)) {
+                var gate = window.RmoozCoaPanel.canGenerateNow();
+                if (!gate.ok) {
+                    if (warn) { warn.style.display = 'block'; warn.textContent = '⛔ ' + (gate.reason || window.RmoozCoaPanel.BLOCK_MESSAGE); }
+                    return;
+                }
+                if (warn) warn.style.display = 'none';
+                // Safe metadata wiring only: stamp the operator's approval on
+                // the brief (the COA's own status survives normalizeBrief).
+                try {
+                    var chosen = window.RmoozCoaPanel.getSelectedBlue();
+                    var ob = p.brief && p.brief.operational_brief;
+                    if (chosen && ob) {
+                        ob.approved_coa_id = chosen.id;
+                        (ob.courses_of_action || []).forEach(function (c) {
+                            if (c && c.id === chosen.id) { c.status = 'approved'; c.approved_by = 'operator'; }
+                        });
+                    }
+                } catch (_) {}
+            }
             var sel = container.querySelector('[data-el="template"]');
             if (handlers.onGenerate) handlers.onGenerate(sel ? (sel.value || null) : null);
         });

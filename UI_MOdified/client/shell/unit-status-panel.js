@@ -719,11 +719,13 @@
         var selatEl = $('usp-selat');
         if (selatEl) {
             try {
-                var d = new Date(selectedAt || Date.now());
-                if (root.AppShellClock && typeof root.AppShellClock.formatZuluDtg === 'function') {
-                    selatEl.textContent = root.AppShellClock.formatZuluDtg(d);
+                var _ts = (selectedAt != null && Number.isFinite(+selectedAt)) ? +selectedAt : null;
+                var d   = _ts !== null ? new Date(_ts) : null;
+                if (d && !isNaN(d.getTime())) {
+                    selatEl.textContent = (root.AppShellClock && typeof root.AppShellClock.formatZuluDtg === 'function')
+                        ? root.AppShellClock.formatZuluDtg(d) : d.toISOString();
                 } else {
-                    selatEl.textContent = d.toISOString();
+                    selatEl.textContent = '—';
                 }
             } catch (_) { selatEl.textContent = '—'; }
         }

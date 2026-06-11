@@ -2287,6 +2287,8 @@
             'sw-live-step-units-col-domain':    'Domain',
             'sw-live-step-units-col-involvement':'Involvement',
             'sw-live-step-units-col-orders':    'Orders',       /* TASK1-D */
+            'sw-live-step-units-col-readiness': 'Readiness',   /* UI-FIX-2 */
+            'sw-live-step-units-col-supply':    'Supply',      /* UI-FIX-2 */
             'sw-live-step-units-side-red':      'Red',
             'sw-live-step-units-side-blue':     'Blue',
             'sw-live-step-units-involve-acts':  'Acts',
@@ -4701,6 +4703,8 @@
             'sw-live-step-units-col-domain':    'المجال',
             'sw-live-step-units-col-involvement':'نوع المشاركة',
             'sw-live-step-units-col-orders':    'الأوامر',      /* TASK1-D */
+            'sw-live-step-units-col-readiness': 'الجاهزية',   /* UI-FIX-2 */
+            'sw-live-step-units-col-supply':    'الإمداد',    /* UI-FIX-2 */
             'sw-live-step-units-side-red':      'أحمر',
             'sw-live-step-units-side-blue':     'أزرق',
             'sw-live-step-units-involve-acts':  'فاعلة',

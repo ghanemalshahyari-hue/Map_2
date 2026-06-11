@@ -1,262 +1,265 @@
-# COA Visualization & Wargame Design — DECISION DOCUMENT
+# COA Visualization & Wargame Design — v2 (DECISIONS LOCKED)
 
-**Status: PROPOSED — implementation paused after MDMP-EXTERNAL-1/G-1 until the owner confirms the
-decisions marked `DECISION D#` below.** (2026-06-11)
-
-Scope: how RMOOZ turns a reviewed Operational Brief (from DOCX, JSON, or the external MDMP
-bundle) into **AI-assisted COA possibilities**, wargames them BLUE vs RED under WHITE control,
-and lets the commander adjust draft unit positions — without ever bypassing review, mutating
-the baseline scenario, or presenting AI output as tactical truth.
+**Status: LOCKED by owner 2026-06-11 (rulings L1–L10 below). This document is the build
+contract for G-2/G-3 and the COA/wargame phases that follow.** Supersedes the v1 decision
+draft (D1–D10 are resolved by L1–L10).
 
 Global rule (unchanged, enforced): **AI understands → user reviews → RMOOZ validates → RMOOZ
-generates.** Everything below is marked *AI-assisted possibilities / needs review*.
+generates.** Everything AI-produced is *AI-assisted possibilities / needs review* — never
+tactical truth.
 
 ---
 
-## 1. BLUE / RED / WHITE roles
+## 0. Locked decision register
 
-| Role | What it is | Maps to existing RMOOZ |
-|---|---|---|
-| **BLUE** | Friendly commander — the operator. Owns BLUE COAs, approves plans, drags draft units. | Operator session (`operator_id` already stamped on commits); `blue-team-agent` proposes, never decides. |
-| **RED** | Enemy — plays reaction/counteraction. | `red-team-agent` (exists, perspective-flipped, rule-validated, no mutation). Could be a second human later. |
-| **WHITE** | Control/adjudication cell — rules on each engagement, owns ground truth, writes the ledger. | `adjudicator-agent` **proposes** → operator Accept/Reject/Hold → `POST /api/sim/commit` → durable journal. WHITE = the *role* wrapped around that existing boundary. |
+| # | Ruling |
+|---|---|
+| **L1** | User **chooses role every time** (wargame start); **default BLUE**. |
+| **L2** | **Default COAs = 3**; a **Generate More** action adds candidates on demand. |
+| **L3** | Wargame mode is **user-selectable**: (a) Auto-run full sequence, (b) Step-by-step — pause after action / reaction / counteraction, (c) commander-driven **manual mode — later phase**. |
+| **L4** | Unit control is **CMO-style tasking**, not only drag: select unit → assign direction/task/objective/route/posture → run scenario/turn → AI/engine predicts reaction → WHITE adjudicates → commander accepts/rejects/modifies. |
+| **L5** | A **global `unit_tasking` model** is added. Baseline units are **never mutated directly**. |
+| **L6** | AI placement may be rendered draft- or final-looking, but **every AI placement keeps `needs_review` + `confidence` + `source`** — no exceptions. |
+| **L7** | Doctrine: start with **public NATO-style test doctrine**; later the user uploads PDF/DOCX doctrine, which must be **extracted into reviewed doctrine rule cards before use**. |
+| **L8** | Reuse **existing RMOOZ action/result vocabulary** where it exists; anything missing is added as **additive enums, never hardcoded text** (inventory in §4.3). |
+| **L9** | **WHITE = adjudicator/controller**: AI suggests → rule engine evaluates → human commander/controller approves. |
+| **L10** | External Step 4 maps into **`courses_of_action[].wargame_turns[]`** with `action → reaction → counteraction → white_decision → result`. |
 
-- WHITE is a **role, not a side** — the NEUTRAL side stays as-is (civilians/infrastructure).
-- In **auto-run** mode WHITE's accept step is performed automatically **but still journaled** with
-  `operator_id: "WHITE-AUTO"` so the ledger never has silent state changes.
-- `DECISION D1` — RED player default: AI red-team-agent (recommended) vs second operator seat.
-- `DECISION D2` — may WHITE auto-adjudicate in auto-run, or must every ruling stay human-gated
-  even there? (Recommended: auto allowed in auto-run only, always journaled, reversible by replay.)
+Roles (L1): at wargame start a role picker offers **BLUE (default) / RED / WHITE**; the chosen
+role gates which side's taskings the user may issue and whether they hold the WHITE approval
+gavel. `operator_id` + chosen role are stamped on every journal row. NEUTRAL remains a side,
+not a role.
 
-## 2. COA count behavior
+---
 
-- **BLUE:** default **2** candidates (matches the external app's output), operator may request up
-  to **5**; minimum 1. External MDMP import yields exactly its 2 — never padded with invented COAs.
-- **RED:** the doctrinal pair — **most likely** + **most dangerous** enemy action (the external
-  step-4 `Most_likely_enemy_action` feeds the first; most-dangerous is AI-assisted and flagged).
-- Exactly **one approved BLUE COA** proceeds to scenario draft; the others are retained in the
-  brief for audit/comparison (`status: rejected|retained`).
-- `DECISION D3` — confirm counts (BLUE default 2 / max 5; RED = ML+MD pair, not full COA sets).
+## 1. COA Review Panel
 
-## 3. Wargame mode
+Where: a new section of the existing AI-Understanding review flow (shared renderer pattern —
+`client/shell/coa-review-panel.js` consuming the same `/analyze` payload; loaded like
+`doc-understanding-review.js`). RTL Arabic-first.
 
-One engine, three modes (mode picker at wargame start; pausing auto-run drops into step mode):
+**Layout**
+- Header: operation type chip + role chip (L1) + recommendation strip (rule-engine + AI
+  rationale, from step-5 `overall_comparison_conclusion` when external) — **final selection is
+  operator-only** (`coa_recommendation.decided_by` can never be AI).
+- **3 COA cards by default (L2)**, horizontally scrollable; **+ Generate More** card appends one
+  candidate per click (engine/template first, LLM on deployment), soft cap 5 with "more requires
+  removing one" beyond it.
+- Card contents: name + side badge · intent · phase mini-strip (P1..Pn) · units-involved count
+  (from `force_comparison` counts) · risks · `missing_data` chips · confidence badge (L6) ·
+  expected enemy reaction · possible counter · evaluation block (step-5 criteria
+  strengths/weaknesses) · source-file citations.
+- Card actions: **Approve** (exactly one BLUE COA may hold `approved`; approving another demotes
+  the first to `retained`) · **Edit** (inline fields write back to the *reviewed* brief) ·
+  **Reject** · **Compare** (two-card side-by-side of the 5 evaluation criteria).
+- Footer: existing Generate flow — the approved COA id is passed to `/api/wargame-sim/generate`;
+  the 422 objective guard and the review gate stay exactly as built.
 
-| Mode | Behavior | Boundary posture |
-|---|---|---|
-| **auto-run** | AI plays BLUE+RED, WHITE auto-adjudicates; operator watches the animation, can pause anytime. | Like today's WarGamingGEN python run, but every adjudication journaled (`WHITE-AUTO`). |
-| **step-by-step approval** *(recommended default)* | Engine pauses at every timeline beat (action → reaction → counteraction → adjudication); operator Approve / Edit / Reject each before it commits. | Exactly the existing propose→commit pattern — zero new mutation paths. |
-| **manual** | Operator moves units on the planning layer and declares outcomes; AI only suggests (Why-Not / feasibility panels). WHITE ruling still required to advance state. | Operator-driven; AI advisory only. |
-| `DECISION D4` — confirm the three modes + step-by-step as default. |
+**States:** `proposed → edited → approved | rejected | retained`. The panel never mutates the
+brief silently; every edit lands in the reviewed-brief working copy with an audit field.
 
-## 4. COA timeline structure
+## 2. Unit Tasking Mode (CMO-style, L4 + L5)
 
-The wargame is a sequence of **events**; each event is one beat of the classic staff wargame and
-maps 1:1 onto the external step-4 triads and the existing adjudicator schema:
+**Flow (one turn):**
+```
+select unit (existing rmooz:unit-selected event)
+  → Tasking Panel: task kind · direction (bearing picker) · objective (pick existing brief/scenario
+    objective or map point) · route (draw / pick waypoints — reuses drawing tools) · posture
+  → [Run Turn]
+  → engine prediction: movement (MOVE1/World-State), detection (DET1), engagement (ENG1),
+    feasibility pre-check (action-feasibility.js)
+  → AI predicts opposing reaction (red/blue-team agent, perspective-flipped)
+  → WHITE adjudication (§4)
+  → commander Accept / Reject / Modify (modify → edits tasking → re-run)
+  → on Accept: result applied to the WORKING COPY + journal entry; baseline untouched (L5)
+```
+
+**Global `unit_tasking` model (L5)** — additive, lives OUTSIDE the baseline scenario file:
 
 ```
-event = {
-  event_id, phase_index, trigger,                     // e.g. "crossing LD", from step-4 event families
-  action:         { side, units[], what, why, source_citation },
-  reaction:       { side, units[], what, why },        // opposing side
-  counteraction:  { side, units[], what, why },        // initiator's counter
-  white_adjudication: {
-      ruling, losses{}, effects[], rationale,
-      mode: 'operator' | 'WHITE-AUTO',                 // who accepted it
-      journal_ref                                      // ledger entry id
-  },
-  result: { state_delta, narrative_ar, narrative_en }, // feeds the next event
+tasking = {
+  tasking_id, scenario_name, turn_id,
+  unit_uid, side,                       // side must match the user's role (L1) unless WHITE
+  task: TASK_KINDS,                     // additive enum extending ACTION_KINDS (§4.3)
+  direction_deg?: number,
+  objective_ref?: { id? , coord? },     // never invented — picked or existing
+  route?: [[lon,lat], ...],
+  posture?: existing posture enum,
+  status: draft | submitted | predicted | adjudicated | accepted | rejected | modified,
+  issued_by: operator_id, issued_role: BLUE|RED|WHITE, issued_at,
+  source: 'commander' | 'coa' | 'ai-suggested',
+  needs_review: true, confidence, citations[]          // L6 invariants
+}
+```
+
+- Store: in-memory tasking store per scenario+turn (server `server/sim/` next to
+  proposal-store, same pattern), journaled on accept; **never written into
+  `data/scenarios/<name>.json`**.
+- A COA's `units_involved` pre-seeds taskings (`source: 'coa'`) which the commander can edit —
+  the same model serves commander-manual and COA-driven play.
+- Map affordances: direction ghost arrow, draft-styled route polyline, objective link line —
+  drawn on the planning overlay layer (Appendix A), never on baseline markers.
+- Drag remains available as a *positional* tasking (`task: MOVE` with route = [drop point]) —
+  drag is a shortcut into the same tasking model, not a separate mutation path.
+
+## 3. Wargame Timeline (L3 + L10)
+
+**Structure** — per approved COA:
+
+```
+courses_of_action[].wargame_turns[] = {
+  turn_id, phase_index, trigger,              // e.g. "crossing LD & breaching" (step-4 event families)
+  action:        { side, units[], taskings[], what, why, source_citation },
+  reaction:      { side, units[], what, why },
+  counteraction: { side, units[], what, why },
+  white_decision: { decision: accept|reject|auto,      // existing journal DECISIONS enum
+                    decided_by: operator_id | 'WHITE-AUTO', rule_cards_fired[],
+                    rationale, journal_ref },
+  result: { effects[],                        // UNIT_EFFECTS additive enum (§4.3)
+            state_delta, losses{}, objective_status?,   // existing OBJECTIVE_STATUS
+            narrative_ar, narrative_en },
   status: proposed | approved | edited | rejected | adjudicated,
   ai_assisted: true, needs_review: true
 }
 ```
 
-- Events group under **phases** (template phases P1..P4); the per-event A/R/C/W/R beats are the
-  animation sub-steps (§7).
-- Every adjudication writes a **journal entry** — the Event Log remains a **ledger, not chat**
-  (DTG/severity/category/source/message — locked rule respected).
-- `DECISION D5` — timeline granularity: per-event beats (recommended) vs per-phase rollup only.
+**Mode behavior (L3):**
+- **Auto-run:** all turns process continuously; `white_decision.decision='auto'` (existing enum
+  value) with `decided_by:'WHITE-AUTO'`; every turn journaled; **nothing durable until the
+  commander's end-of-run batch Accept** (or rewind to a turn and accept up to it).
+- **Step-by-step (default):** engine pauses after **each beat** — action, reaction,
+  counteraction — and at the white_decision; commander approves/edits/rejects before the next
+  beat. This is the existing propose→commit pattern applied per beat.
+- **Manual (later phase):** no auto-beats; commander issues taskings (§2) and explicitly runs
+  each turn; AI only suggests.
+- Timeline UI: horizontal phase-grouped turn strip; each turn shows five beat icons
+  (A/R/C/W/R) with status colors; click to jump; synchronized with the Event Log ledger
+  (tabular, DTG/severity/category/source/message — locked rule respected).
 
-## 5. Draft unit placement rules (confirmed behavior, already partly implemented)
+## 4. White Adjudication (L9)
 
-Priority ladder, never inventing precision:
+**Three-stage gate per turn:**
+1. **AI suggests** — adjudicator-agent proposal (existing Proposal contract:
+   `proposal_id/step_index/source/proposed_actions`, `PROPOSAL_SOURCES`).
+2. **Rule engine evaluates** — deterministic checks, each producing pass/warn/fail + citation:
+   feasibility (`action-feasibility.js`), movement/terrain (World-State MOVE1), detection
+   plausibility (DET1), engagement ratios (ENG1 + `parseForceRatio`), throughput ceiling
+   (`throughputCeilingKm`), **active doctrine rule cards (§5)** → `rule_cards_fired[]`.
+3. **Human approves** — commander/controller Accept/Reject/Modify via the existing
+   `/api/sim/commit` boundary (`validateCommitRequest`: operator_id required); journal row per
+   decision. In auto-run, stage 3 is the batch acceptance (see §3).
 
-1. **Explicit coordinates** in source/brief → use them, `placement: 'exact'`.
-2. **MGRS string** (e.g. step-1 `Assembly_Area: "R CN 64215 7114840"`) → parse server-side →
-   `placement: 'approximate'`, `needs_review: true` (server needs a small MGRS→lon/lat util; the
-   client already ships an MGRS lib).
-3. **Location name only** → geocode-free: anchor to the named brief feature if it exists (objective,
-   BLS, AO center), else leave unplaced → `placement: 'approximate'`, flagged.
-4. **Nothing** → template placeholder geometry (existing axis/ring around the operator-set
-   objective), `placement: 'template'`, `draft: true`, low confidence.
-5. **No objective coordinate ⇒ no generation** — the existing 422 `requires_objective` stands;
-   amphibious additionally requires the operator to confirm the **landing area** on the map
-   (objective alone is not enough). `DECISION D6` — confirm landing-area confirmation is required
-   for `amphibious_landing` (recommended yes).
+### 4.3 Outcome vocabulary (L8) — existing vs additive
 
-Amphibious skeleton stays: P1 preparation/recon → P2 sea approach/movement → P3 landing →
-P4 secure/expand. Every placed unit carries `placement_confidence` + `missing_fields`.
-
-## 6. Editable unit planning layer (from the marker investigation — see §11)
-
-**Today:** scenario units on the adjudicator map are **read-only by design** (no `draggable`);
-the separate ORBAT placement system (`units-map.js`) *is* draggable but **commits straight to the
-server on dragend** (`/api/units/{id}/place`) — drag-to-commit, no draft stage.
-
-**Design — "Planning Overlay" (no baseline mutation):**
-
-- New `planningUnitsLayer` (own pane, z-index just above units). Entering *Planning Mode* spawns
-  **draggable clones** of the selected scenario units; the baseline markers stay untouched.
-- Drags update only an in-memory delta store:
-  `RmoozPlanningOverlay.positions[uid] = { lat, lng, dirty: true }` + emit
-  `rmooz:planning-position-changed`. **No server call on dragend.**
-- Visuals: draft marker style (dashed halo + "draft" badge), ghost line from baseline position to
-  draft position, counter chip "N units repositioned · Save / Discard".
-- **Save** routes through sanctioned paths only — `DECISION D7`, pick one:
-  - (a) in-memory working copy only (`window.RmoozScenario.scenario` clone, like Edit Mode Slice 1) —
-    survives the session, not the disk;
-  - (b) durable save via existing `POST /api/scenarios` (validates, 409 anti-clobber, `?overwrite=1`) —
-    recommended: save **as a new draft scenario name** (`<name>-plan-<n>`), never overwriting the baseline;
-  - (c) both: working copy immediately, explicit "Save as draft scenario" button for (b).
-- **Discard** clears deltas and removes the overlay. Baseline scenario JSON on disk is never
-  modified by the overlay in any option.
-- Out of scope: changing `units-map.js` drag-to-commit (different feature — live ORBAT placement).
-
-## 7. Animation requirements
-
-- **Reuse the W3 per-step machinery**: `red/blue_unit_step_coords` + `*_step_prev` lerp hooks and
-  `engagement_arcs` already exist in the schema and the adjudicator map — the COA player drives the
-  same primitives per event beat instead of per step.
-- Controls: play / pause / step-forward / step-back / scrub; speeds 1× / 2× / 4×; "skip to ruling".
-- Beat choreography per event: action units move/engage → reaction → counteraction → WHITE ruling
-  badge (with Accept/Edit/Reject in step mode) → result applied (losses/markers update).
-- Arabic-first labels (RTL), severity-colored engagement arcs, draft units keep the draft halo.
-- Performance budget: ≤500 units/side — marker pooling + `setLatLng` tweening only (no per-frame
-  DOM rebuilds), arcs as one canvas/SVG layer.
-- `DECISION D8` — animation granularity default: per-event beats (recommended) vs per-phase.
-
-## 8. Missing data handling
-
-- Placeholder values from external files (`<نص>`, `…`, `"..."`, `يصدر لاحقاً`) are scrubbed at the
-  adapter and listed in `missing[]` — never displayed as content (no-invention rule, tested).
-- Two classes: **blockers** (objective/landing area absent → generation refused, 422) vs
-  **flags** (everything else → draft proceeds with `needs_review` + chips on the review screen).
-- Every COA carries `missing_data[]`, `required_assumptions[]`, `confidence: low|medium|high`
-  (low = template/external-placeholder origin; medium = single-source extracted; high = operator-
-  confirmed). Confidence is shown on the COA card and inherited by generated units.
-- The review screen's ambiguity list remains the single funnel — nothing generates around it.
-
-## 9. Step 3/4/5 → `courses_of_action[]` mapping
-
-New **additive** brief sections (schema change is backward-compatible):
-
-```
-operational_brief.force_comparison = {
-  categories: [ { key: 'infantry_battalions', our: {count, unit_type, weight},
-                  enemy: {count, unit_type, weight} }, ... ×9 ],
-  qualitative: { training, morale, experience, technology, c2, doctrine_our, doctrine_enemy },
-  strengths_weaknesses: { maneuver|firepower|protection|leadership|information:
-                          { our: {strengths, weaknesses}, enemy: {...} } }
-}
-operational_brief.courses_of_action = [ {
-  id: 'coa-1', name, side: 'BLUE',
-  intent,                                  // step3 commander_intent / task
-  phases: [ {index, label} ×3 + prep ],    // step3 phose_one/two/three + Boot_operations
-  fires:  [ per-phase artillery ],         // step3 Artillery_fires_phose_*
-  units_involved: [],                      // step3 task + step4 task_organization (+ counts)
-  required_assumptions: [],                // step1/WARNO Operational_Assumptions
-  risks: [],                               // step3 Acceptance_of_packaging_risk, step1 Risk_assy
-  missing_data: [],                        // adapter placeholder scrub
-  wargame_events: [ event × ≤6 ],          // §4 records seeded from step4 triads
-  expected_enemy_reaction,                 // step4 *_reaction fields + Most_likely_enemy_action
-  possible_counter,                        // step4 *_counter_action fields
-  evaluation: { criteria: { attacking_cog|fire_support|c2|protection|admin_support:
-                            {strengths, weaknesses} },  // step5
-                conclusion },                            // step5 conclusions_c1/c2
-  confidence: 'low', ai_assisted: true, needs_review: true,
-  source_files: [ {file, keys[]} ]         // citations per populated field
-} ]
-operational_brief.coa_recommendation = {
-  recommended_id, rationale,               // step5 overall_comparison_conclusion
-  decided_by: 'operator' | null            // ONLY the operator can set final
-}
-```
-
-Per-file mapping (suffix families `<k>` / `<k>2` / `<k>_2` / `<k>_c2` → COA 1 / COA 2; `phose` typo
-is a registered synonym):
-
-| External (step file) | Lands in |
-|---|---|
-| step3 `task`, `commander_intent`, `main_duties`, `desired_end_state`, `critical_operations` | `coa.name/intent` (+ brief.mission context) |
-| step3 `phose_one/two/three(2)`, `Boot_operations(2)` | `coa.phases` |
-| step3 `Artillery*`, `Artillery_fires_phose_*(2)` | `coa.fires` |
-| step3 `*_total_our/enemy {count, unit_type, weight}` ×9 | `force_comparison.categories` → draft `units_involved` counts |
-| step3 strengths/weaknesses ×5 functions | `force_comparison.strengths_weaknesses` |
-| step4 `possible_operation_phase1-3(_2)` | `coa.phases` enrichment |
-| step4 `*_acting` / `*_reaction` / `*_counter_action` ×6 events | `coa.wargame_events[].action/reaction/counteraction` |
-| step4 `Most_likely_enemy_action(_2)` | `coa.expected_enemy_reaction` + RED ML COA |
-| step4 `task_organization` | `coa.units_involved` |
-| step5 `strengths/weaknesses_*(_c2)` ×5 criteria | `coa.evaluation.criteria` |
-| step5 `conclusions_c1/c2`, `overall_comparison_conclusion` | `coa.evaluation.conclusion`, `coa_recommendation.rationale` |
-| step1 `Operational_Assumptions`, `Risk_assy`, `ROE`, `Timings`, `Assembly_Area` | brief `assumptions/constraints/timeline/area_of_operations` |
-
-`DECISION D9` — approve the schema above (esp. that `coa_recommendation.decided_by` can only be
-set by the operator, never by AI).
-
-## 10. Tests required (when un-paused)
-
-| Layer | Tests |
-|---|---|
-| Adapter (G-2) | step3→2 COAs + force_comparison sides correct; step4 triads→wargame_events/reaction/counter; step5→evaluation+recommendation rationale; placeholders→`missing_data` never content; suffix families resolve to COA 1/2; warning_order dictionary never produces content |
-| Bundle (G-3) | 5 files → ONE brief, 2 COAs (not 4/6); conflicts[] on disagreeing values; per-file `source_files` citations |
-| COA review (G-4) | payload carries courses_of_action + recommendation; cards render (browser verify); operator edit/approve persists to the reviewed brief; recommendation cannot auto-finalize |
-| Generation (G-5) | approved-COA-only input; objective/landing-area blockers (422); counts→draft units ≤500; placement ladder (exact/approximate/template) flags correct |
-| Modes | step mode: nothing advances without approval (no journal entry ⇒ no state change); auto mode: every adjudication journaled `WHITE-AUTO`; manual: AI never moves units |
-| Planning layer | drag updates delta store only; baseline scenario file hash unchanged on disk; Save-as-draft writes NEW name (409 on collision honored); Discard restores; boundary-audit self-test still green |
-| Animation | beat sequencing fires in order; scrub idempotent; 500-unit perf smoke |
-| Regression | all 7 existing suites; existing AI/import button; offline-image gate before any rebuild |
-
----
-
-## 11. Marker investigation findings (why clickable but not draggable)
-
-**Two marker systems exist; only one is draggable:**
-
-| | Scenario units (what the commander sees) | ORBAT placement units |
+| Decision-8 term | Status | Source of truth |
 |---|---|---|
-| File | `client/wargame/adjudicator-map.js` (marker sites at :895, :3119, …) | `client/units-map.js:347-349` |
-| Draggable | **No** — `L.marker(..., { icon, interactive: true })`, no `draggable` option (Leaflet default false) | **Yes** — `draggable: true` |
-| Click | popup/select handlers bound (hence "clickable") | click → `rmooz:unit-selected` |
-| On drag | n/a | `dragend` → **immediate `POST /api/units/{id}/place`** (drag-to-commit, `units-map.js:364-388`) |
-| Layer | per-step `L.layerGroup`s — read-only render of scenario JSON | `unitsMarkerPane` (z-650) / active user layer |
+| mission success / fail | **EXISTS** | `OBJECTIVE_STATUS` → `CAPTURED` / `DENIED` (+ `step_advantage`) |
+| destroyed | **EXISTS** | World-State `status:'DESTROYED'` (`world-state.js:102`), `blue_destroyed` deltas, destroyed-marker styling (MAP-CLARITY-1) |
+| damaged | **EXISTS (as degraded)** | `RED_UNIT_STATUS.DEGRADED`, W3 `affected.status_change` + `damage_pct`, `world-state-transition.js:180` |
+| withdrawn | **EXISTS** | `BLUE_ACTION_VALUES.WITHDRAW` |
+| detected | **EXISTS (domain)** | DET1 detection engine (`shell/detection.js`) contact states |
+| white decision accept/reject/auto | **EXISTS** | `DECISIONS` (journal contract) |
+| task kinds MOVE/ENGAGE/HOLD | **EXISTS** | `ACTION_KINDS` (+ `client/wargame/approved-actions.js`) |
+| confidence high/medium/low | **EXISTS** | `confidence_per_field` convention |
+| action / reaction / counteraction | **ADD** | new `TURN_BEATS = ['action','reaction','counteraction','white_decision','result']` |
+| suppressed | **ADD** | new `UNIT_EFFECTS` entry |
+| delayed | **ADD** | new `UNIT_EFFECTS` entry |
 
-- **Root cause:** scenario unit markers are created without `draggable: true` — a deliberate
-  read-only render of `red_units`/`blue_units_initial`, consistent with the boundary rule that the
-  client never mutates scenario state (`window.units`/map/lines closed; `boundary-audit-panel.js`
-  asserts it).
-- **No editable unit layer exists today**: no geoman/L.Draw/`pm:` on units; the draggable
-  infrastructure that does exist is for **drawing-shape handles** (`app.js:7019`, `:9245`, `:10283`)
-  and the drag-to-commit ORBAT system — neither is a draft layer.
-- **Working-copy precedent exists**: Edit Mode (`scenario-edit-mode.js:36,113-130,2182-2204`)
-  already keeps a deep-clone draft and saves to `window.RmoozScenario.scenario` only — the planning
-  overlay (§6) extends this proven pattern to positions.
-- **Minimal change for commander drag/drop without touching baseline:** add the planning overlay
-  layer + delta store + `rmooz:planning-*` events (§6); reuse `units-map.js` drag/`nudgeAwayFromOthers`
-  spacing logic and Edit Mode's save gate. Do **not** add `draggable: true` to the adjudicator-map
-  markers themselves — that would invite direct baseline mutation and violate the read-only-surface
-  audit.
+**Implementation rule:** one additive registry module — `server/sim/wargame-enums.js` —
+re-exporting the existing enums from `adjudicator-schema.js` and adding
+`TURN_BEATS`, `UNIT_EFFECTS = ['DETECTED','DAMAGED','DESTROYED','DELAYED','SUPPRESSED','WITHDRAWN']`
+(mapping DAMAGED→DEGRADED where legacy code expects it) and
+`TASK_KINDS = ACTION_KINDS ∪ ['RECON','SCREEN','DEFEND','SUPPORT','SUPPRESS','WITHDRAW']`.
+Validators accept only enum values — **no free-text statuses anywhere** (L8).
+
+## 5. Doctrine Rule Cards (L7)
+
+A rule card is a **reviewed, structured, citable** rule the WHITE rule engine can evaluate:
+
+```
+rule_card = {
+  card_id, title_ar, title_en,
+  source: { doc, section, page?, quote },              // citation is mandatory
+  applies_to: { sides?, unit_roles?, task_kinds?, phase_kinds?, terrain? },
+  rule_type: 'constraint' | 'modifier' | 'trigger' | 'evaluation',
+  logic: { when: {field, op, value}[], then: {effect, magnitude?, message} },   // structured, no prose logic
+  status: draft | reviewed | active | retired,
+  reviewed_by?, reviewed_at?, confidence, language, version
+}
+```
+
+- **Seed pack (now):** public NATO-style *test* doctrine shipped as already-`reviewed` cards in
+  `data/doctrine/seed/*.json` (clearly stamped `source.doc: 'NATO-style public test doctrine'`)
+  — e.g. 3:1 attacker ratio guidance, recon-before-movement, AD coverage of high-value assets,
+  amphibious lodgement-before-buildup. `docs/cmo-functional-rules/` (945 caption-grounded rules)
+  is a named future source for additional cards.
+- **Upload path (later):** PDF/DOCX → existing extractors (`docx-text.js`; pdf skill on
+  deployment) → LLM extraction into **`draft` cards** → operator review screen (same card-grid
+  pattern as the COA panel) → only `active` cards are evaluated. **Draft/retired cards are never
+  evaluated** — same gate philosophy as the brief review.
+- Every adjudication lists `rule_cards_fired[]` (card_id + message) — explainable rulings.
+
+## 6. Animation requirements
+
+- **Beat choreography per turn (L10):** action units move/engage → reaction → counteraction →
+  WHITE badge (decision + fired cards; pauses in step mode) → result (effect badges from
+  `UNIT_EFFECTS`, loss counters, objective status).
+- **Mode coupling (L3):** auto-run plays beats continuously (pause anytime → drops to step
+  mode); step mode auto-pauses after action, reaction, and counteraction (locked); manual
+  animates only on explicit Run Turn.
+- **Reuse, don't rebuild:** W3 per-step lerp hooks (`*_unit_step_coords/_prev`),
+  `engagement_arcs` rendering, destroyed-marker styling + arrows (MAP-CLARITY-1), detection
+  rings (DET1 overlays). The COA player drives these per beat instead of per step.
+- Controls: play/pause, step fwd/back, scrub, speeds 1×/2×/4×, "skip to ruling".
+- Tasking visuals (§2): animated route polyline, direction ghost, objective link.
+- Draft/AI placements keep the draft halo + confidence badge during animation (L6).
+- Perf: ≤500 units/side — marker pooling, `setLatLng` tweening, one canvas/SVG layer for arcs,
+  no per-frame DOM rebuilds. RTL labels throughout.
+
+## 7. Required schema additions (all additive — validator ignores unknown keys; precedent: `neutral_units`)
+
+| Addition | Where | Notes |
+|---|---|---|
+| `operational_brief.courses_of_action[]` | brief (operational-brief.js `emptyBrief`) | card fields (§1) + `wargame_turns[]` (§3, L10) |
+| `operational_brief.force_comparison` | brief | step-3 `{count, unit_type, weight}` ×9 categories ×2 sides + qualitative + strengths/weaknesses |
+| `operational_brief.coa_recommendation` | brief | `{ recommended_id, rationale, decided_by: operator-only }` |
+| `unit_tasking` store | `server/sim/` (NOT scenario JSON) | §2 model; journaled on accept (L5) |
+| `wargame-enums.js` registry | `server/sim/` | §4.3 — `TURN_BEATS`, `UNIT_EFFECTS`, `TASK_KINDS`; re-exports existing enums |
+| Doctrine rule cards | `data/doctrine/` + card schema module | §5; seed pack `reviewed`, uploads land `draft` |
+| Journal row kinds | journal (additive) | `white_decision`, `tasking_accepted` alongside existing kinds |
+| Placement invariants (L6) | brief-to-scenario + adapters | every AI-placed unit: `needs_review`, `placement_confidence`, `source` — schema-checked, not convention |
+| Role stamp (L1) | commit/journal payloads | `issued_role: BLUE|RED|WHITE` next to `operator_id` |
+
+## 8. Tests
+
+| Area | Required tests |
+|---|---|
+| Adapter (G-2) | step3→**3-default behavior** (2 external COAs imported as-is + Generate More path adds the 3rd); step4 triads → `wargame_turns[].action/reaction/counteraction`; step5 → evaluation + recommendation rationale; placeholders → `missing_data` never content; suffix families (`<k>`/`<k>2`/`<k>_2`/`<k>_c2`) resolve to COA 1/2 |
+| Bundle (G-3) | 5 files → ONE brief; conflicts[]; per-file citations; JSONC regression stays green |
+| COA panel | exactly-one-approved invariant; Generate More appends (soft cap honored); operator-only recommendation (`decided_by` rejects AI values); edits land in reviewed brief; browser verify (cards render RTL) |
+| Tasking (L4/L5) | creating/submitting taskings leaves the baseline scenario file hash unchanged; accept → journal row + working-copy delta; reject discards; role gating (BLUE user cannot task RED units); drag produces a MOVE tasking, not a position write |
+| White adjudication (L9) | step mode: no state advance without a journaled decision; auto-run: all turns `decision:'auto'` + nothing durable before batch accept; `rule_cards_fired[]` present; Modify loops back to prediction |
+| Enums (L8) | registry-only values pass validators; free-text status rejected; legacy enums unchanged (adjudicator regression) |
+| Doctrine cards (L7) | draft/retired never evaluated; seed pack loads as reviewed; extracted card requires operator transition to active; every ruling cites fired cards |
+| Animation | beat order A→R→C→W→R; step-mode pauses after A, R, C (locked); scrub idempotent; 500/side perf smoke |
+| Regression | all 8 existing suites; existing AI/import button; boundary-audit self-test; offline-image gate before any rebuild |
 
 ---
 
-## 12. Decision checklist (blockers for un-pausing)
+## Appendix A — Marker investigation (unchanged from v1, grounds §2/§6)
 
-- [ ] **D1** RED default player: AI red-team-agent vs human seat
-- [ ] **D2** WHITE auto-adjudication allowed in auto-run (journaled) — yes/no
-- [ ] **D3** COA counts: BLUE default 2 / max 5; RED = most-likely + most-dangerous
-- [ ] **D4** Three wargame modes; step-by-step approval as default
-- [ ] **D5** Timeline granularity: per-event A/R/C/W/R beats vs per-phase
-- [ ] **D6** Amphibious requires operator-confirmed landing area (in addition to objective)
-- [ ] **D7** Planning-layer save target: (a) working copy only / (b) save-as-new-draft-scenario / (c) both
-- [ ] **D8** Animation default granularity: per-event vs per-phase
-- [ ] **D9** `courses_of_action[]` schema + operator-only final recommendation
-- [ ] **D10** Confirm G-2→G-5 build order: adapter → bundle → COA review cards → COA-aware generation
+Two marker systems: scenario units (`adjudicator-map.js` :895/:3119…) are **read-only by
+design** (no `draggable`); ORBAT placement markers (`units-map.js:348`) are draggable but
+**drag-commits immediately** (`/api/units/{id}/place`, :364-388). No draft/planning layer
+exists; draggable infra that does exist is drawing-shape handles (`app.js:7019/:9245/:10283`).
+Edit Mode proves the working-copy pattern (`scenario-edit-mode.js:36,113-130,2182-2204`).
+**Resolution (L4/L5):** the tasking model + planning overlay replace naive drag-to-commit for
+scenario units; baseline markers never get `draggable:true`.
+
+## Appendix B — Remaining minor opens (non-blocking, resolve during build)
+
+- Amphibious landing-area confirmation in addition to objective (recommended yes; v1 D6).
+- Generate More soft cap (proposed 5) and whether RED also gets Generate More or stays ML+MD.
+- Turn → game-time mapping (elapsed_hours per turn) defaults.
+- Working-copy persistence beyond session: save-as-new-draft-scenario via existing
+  `POST /api/scenarios` (recommended) — never overwriting baseline.

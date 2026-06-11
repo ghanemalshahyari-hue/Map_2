@@ -15645,8 +15645,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/free_draw_signature.js": {
-    "mtime": 1781059042.4653118,
-    "ast_hash": "8aea21941e56c6c9fbfab098e14d4d31",
+    "mtime": 1781167407.0687263,
+    "ast_hash": "01c1758478b779ee133a0f38fd470cc8",
     "semantic_hash": ""
   },
   "UI_MOdified/client/geo-convert.js": {
@@ -15705,8 +15705,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/map-hide-panels.js": {
-    "mtime": 1780328582.0,
-    "ast_hash": "b21c0c66bb2b62472bb6d9a137545a83",
+    "mtime": 1781168004.9587617,
+    "ast_hash": "c351aabff0b7b6205b1dd2d62f2b7c10",
     "semantic_hash": ""
   },
   "UI_MOdified/client/ops-panel.js": {
@@ -16765,8 +16765,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/data/scenarios/_active.json": {
-    "mtime": 1781166854.2479613,
-    "ast_hash": "0040193d3cfe5a50358c8fd1eb4b5da9",
+    "mtime": 1781167560.6296585,
+    "ast_hash": "e2cf2897ba9a1102e7d5333ae73a5123",
     "semantic_hash": ""
   },
   "UI_MOdified/data/scenarios/coastal-shield-training-v1.json": {
@@ -18090,8 +18090,8 @@
     "semantic_hash": ""
   },
   "APP_INVENTORY.md": {
-    "mtime": 1781165719.8906045,
-    "ast_hash": "727ff1983e38e1cbf693602cf735d5e2",
+    "mtime": 1781168666.110073,
+    "ast_hash": "e595690d8645acaedc1eb2a28517783b",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
@@ -20290,8 +20290,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/app.html": {
-    "mtime": 1781082487.5217645,
-    "ast_hash": "b2af1fdc129c3df1f778936c8f0174a3",
+    "mtime": 1781167759.7030854,
+    "ast_hash": "a4619df1b81c632483dbf72b56f9ea14",
     "semantic_hash": ""
   },
   "UI_MOdified/client/home.html": {
@@ -24800,8 +24800,8 @@
     "semantic_hash": ""
   },
   "UI_MOdified/client/shell/doc-understanding-review.js": {
-    "mtime": 1781153166.096983,
-    "ast_hash": "1fbd0481c778f4b4c4438c82f49b5888",
+    "mtime": 1781167729.2113655,
+    "ast_hash": "080eca5a3b74e31e3992d666de36e9c9",
     "semantic_hash": ""
   },
   "UI_MOdified/test-offline-tile-fix-1.js": {
@@ -24957,6 +24957,41 @@
   "test-ui-fix-1-2.js": {
     "mtime": 1781166615.965139,
     "ast_hash": "1b85489d0ef94d33f9953d07e8f058fa",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/data/scenarios/amphibious_landing_draft.json": {
+    "mtime": 1781167145.485216,
+    "ast_hash": "2a185fc65f6dd8e54f3ded42f9d3f25d",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/client/shell/coa-review-panel.js": {
+    "mtime": 1781167683.6391363,
+    "ast_hash": "9c922f2148cb2da9a773f7d71dd06572",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/data/scenarios/attack_objective_draft.json": {
+    "mtime": 1781167492.8094425,
+    "ast_hash": "45d71a804ad1845ffedc7ff6e1a7940d",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/devtools/fixtures/doc-understanding/make-sample-coa.js": {
+    "mtime": 1781168277.9687366,
+    "ast_hash": "8be1a01fbf6512cd1eb6b399e94ede40",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/devtools/fixtures/doc-understanding/sample-coa.json": {
+    "mtime": 1781168307.568368,
+    "ast_hash": "cd0515b23956b7b9742516857b147f5d",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/scripts/test-coa-review-panel-1.js": {
+    "mtime": 1781168353.9208038,
+    "ast_hash": "2dc74e186fa489fd4d81ca89891786bc",
+    "semantic_hash": ""
+  },
+  "UI_MOdified/devtools/fixtures/doc-understanding/verify-coa.html": {
+    "mtime": 1781168297.1668756,
+    "ast_hash": "c49350ac9d4247e9f0d3c478fd176990",
     "semantic_hash": ""
   }
 }

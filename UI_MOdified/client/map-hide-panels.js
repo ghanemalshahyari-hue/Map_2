@@ -61,6 +61,14 @@
     }
 
     function hideAutoFlankControls() {
+        // Respect the free-draw workflow: while it is mid-flow (placing circles,
+        // drawing the frontline, or choosing flank distances) a map click must
+        // NOT dismiss the flank panel. The click that completes the frontline is
+        // itself a map click — hiding here made the battalion/brigade Draw cards
+        // vanish the instant they appeared. Idle-time dismissal is owned by
+        // free_draw_signature.js's own document-level handler.
+        const stage = window.freeDrawSignatureStage;
+        if (stage && stage !== 'idle') return;
         const controls = document.getElementById('auto-flank-controls');
         if (!controls || controls.style.display === 'none') return;
         controls.style.display = 'none';

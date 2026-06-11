@@ -46,6 +46,13 @@
     let savedBatDeep   = _fdDefaults.batDeep;
     let savedBrigFront = _fdDefaults.brigFront;
     let savedBrigDeep  = _fdDefaults.brigDeep;
+    // Selected CUSTOM formation (if any). Captured at selection/Start time because
+    // the affiliation popup — and the custom card's inputs — are destroyed at Start,
+    // while the post-frontline flank panel still needs the name + distances to draw.
+    let savedCustomName   = null;
+    let savedCustomArName = null;
+    let savedCustomFront  = null;
+    let savedCustomDeep   = null;
     let _initialized = false;
 
     // ── Default/favorite formation persistence ──
@@ -574,6 +581,14 @@
     }
 
     function getSelectedFrontOrgDistance() {
+        // Custom formation: its popup inputs are gone after Start — use the
+        // values captured at selection/Start time.
+        if (selectedFlankTag && selectedFlankTag !== 'battalion' && selectedFlankTag !== 'brigade') {
+            if (selectedFlankTag === savedCustomName && isFinite(savedCustomFront) && savedCustomFront > 0) {
+                return savedCustomFront;
+            }
+            return savedBatFront;
+        }
         const frontId = selectedFlankTag === 'brigade' ? 'fd-brig-front' : 'fd-bat-front';
         const input = document.getElementById(frontId);
         const value = input ? parseFloat(input.value) : NaN;
@@ -927,18 +942,35 @@
             setCriticalMessage('Auto-flank draw is not ready yet. Reload the page if this persists.');
             return;
         }
-        const dist1 = parseFloat(document.getElementById('fd-bat-front')?.value) || savedBatFront;
-        const dist2 = parseFloat(document.getElementById('fd-bat-deep')?.value) || savedBatDeep;
-        const dist3 = parseFloat(document.getElementById('fd-brig-front')?.value) || savedBrigFront;
-        const dist4 = parseFloat(document.getElementById('fd-brig-deep')?.value) || savedBrigDeep;
-        // Clear the other tag's lines so they don't overlap
-        const otherTag = tag === 'battalion' ? 'brigade' : 'battalion';
-        if (typeof window.clearAutoFlankLinesByTag === 'function') {
-            window.clearAutoFlankLinesByTag(otherTag);
+        let opts;
+        if (tag === 'custom') {
+            // Custom formation card: distances from its own inputs (fall back to
+            // the values captured when the formation was selected in the popup).
+            const cFront = parseFloat(document.getElementById('fd-cust-front')?.value)
+                || (isFinite(savedCustomFront) && savedCustomFront > 0 ? savedCustomFront : 8);
+            const cDeep = parseFloat(document.getElementById('fd-cust-deep')?.value)
+                || (isFinite(savedCustomDeep) && savedCustomDeep > 0 ? savedCustomDeep : cFront * 2);
+            // Clear built-in tags' lines so they don't overlap
+            if (typeof window.clearAutoFlankLinesByTag === 'function') {
+                window.clearAutoFlankLinesByTag('battalion');
+                window.clearAutoFlankLinesByTag('brigade');
+            }
+            opts = { mode, tag: savedCustomName || 'custom', dist1: cFront, dist2: cDeep };
+        } else {
+            const dist1 = parseFloat(document.getElementById('fd-bat-front')?.value) || savedBatFront;
+            const dist2 = parseFloat(document.getElementById('fd-bat-deep')?.value) || savedBatDeep;
+            const dist3 = parseFloat(document.getElementById('fd-brig-front')?.value) || savedBrigFront;
+            const dist4 = parseFloat(document.getElementById('fd-brig-deep')?.value) || savedBrigDeep;
+            // Clear the other tag's lines (and any custom formation's) so they don't overlap
+            const otherTag = tag === 'battalion' ? 'brigade' : 'battalion';
+            if (typeof window.clearAutoFlankLinesByTag === 'function') {
+                window.clearAutoFlankLinesByTag(otherTag);
+                if (savedCustomName) window.clearAutoFlankLinesByTag(savedCustomName);
+            }
+            opts = tag === 'battalion'
+                ? { mode, tag: 'battalion', dist1, dist2 }
+                : { mode, tag: 'brigade', dist1: dist3, dist2: dist4 };
         }
-        const opts = tag === 'battalion'
-            ? { mode, tag: 'battalion', dist1, dist2 }
-            : { mode, tag: 'brigade', dist1: dist3, dist2: dist4 };
         const p = window.autoDrawCircleXFlankLines(opts);
         if (p && typeof p.then === 'function') {
             p.catch((err) => {
@@ -961,7 +993,11 @@
             ['fd-bat-both', '8&20', 'battalion'],
             ['fd-brig-front-draw', '8', 'brigade'],
             ['fd-brig-deep-draw', '20', 'brigade'],
-            ['fd-brig-both', '8&20', 'brigade']
+            ['fd-brig-both', '8&20', 'brigade'],
+            // Custom formation card (built on demand by showAutoFlankControls)
+            ['fd-cust-front-draw', '8', 'custom'],
+            ['fd-cust-deep-draw', '20', 'custom'],
+            ['fd-cust-both', '8&20', 'custom']
         ];
         pairs.forEach(([id, mode, tag]) => {
             const btn = panel.querySelector('#' + id);
@@ -1029,6 +1065,7 @@
                 btn.textContent = fdT('select');
                 btn.style.background = '#1e293b';
                 btn.style.border = '1px solid #475569';
+                delete c.dataset.fdSelected;
             }
         });
         // Clear breathing on formations section when user makes a selection
@@ -1117,6 +1154,37 @@
         return panel;
     }
 
+    /**
+     * Card for the selected CUSTOM formation inside the floating flank panel,
+     * mirroring the battalion/brigade cards. Distances come from the values
+     * captured when the formation was selected (the popup is gone by now).
+     */
+    function buildCustomFlankCol() {
+        const INPUT = 'width:52px;padding:4px 6px;border-radius:5px;border:1px solid #475569;background:#1e293b;color:#fff;font-size:0.82rem;text-align:center;';
+        const BTN_BLUE = 'background:#2563eb;color:#fff;border:none;border-radius:5px;padding:5px 9px;font-size:0.78rem;cursor:pointer;';
+        const BTN_GREEN = 'background:#16a34a;color:#fff;border:none;border-radius:5px;padding:5px 9px;font-size:0.78rem;cursor:pointer;margin-top:4px;width:100%;';
+        const COL = 'display:flex;flex-direction:column;gap:5px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.06);min-width:160px;';
+        const ROW = 'display:flex;align-items:center;gap:5px;';
+        const LBL = 'font-size:0.7rem;color:#94a3b8;white-space:nowrap;';
+
+        const front = (isFinite(savedCustomFront) && savedCustomFront > 0) ? savedCustomFront : 8;
+        const deep = (isFinite(savedCustomDeep) && savedCustomDeep > 0) ? savedCustomDeep : front * 2;
+
+        const col = document.createElement('div');
+        col.id = 'fd-col-custom';
+        col.style.cssText = COL;
+        col.innerHTML = `
+            <span id="fd-cust-title" style="font-size:0.8rem;font-weight:700;color:#22c55e;margin-bottom:2px;"></span>
+            <div style="${ROW}"><span data-fd-i18n="front-org" style="${LBL}">${fdT('front-org')}</span><input id="fd-cust-front" type="number" min="1" max="999" value="${front}" style="${INPUT}"/><span data-fd-i18n="km" style="${LBL}">${fdT('km')}</span><button type="button" data-fd-i18n="draw" id="fd-cust-front-draw" style="${BTN_BLUE}">${fdT('draw')}</button></div>
+            <div style="${ROW}"><span data-fd-i18n="deep-org" style="${LBL}">${fdT('deep-org')}</span><input id="fd-cust-deep" type="number" min="1" max="999" value="${deep}" style="${INPUT}"/><span data-fd-i18n="km" style="${LBL}">${fdT('km')}</span><button type="button" data-fd-i18n="draw" id="fd-cust-deep-draw" style="${BTN_BLUE}">${fdT('draw')}</button></div>
+            <button type="button" data-fd-i18n="both" id="fd-cust-both" style="${BTN_GREEN}">${fdT('both')}</button>
+        `;
+        // Formation names are user input — set via textContent, never innerHTML.
+        const title = col.querySelector('#fd-cust-title');
+        if (title) title.textContent = isArabic() ? (savedCustomArName || savedCustomName) : savedCustomName;
+        return col;
+    }
+
     function showAutoFlankControls() {
         removeChangeSetupButton();
         let controls = document.getElementById('auto-flank-controls');
@@ -1133,6 +1201,23 @@
         if (batCol) batCol.style.display = tag === 'battalion' ? 'flex' : 'none';
         if (brigCol) brigCol.style.display = tag === 'brigade' ? 'flex' : 'none';
         if (divider) divider.style.display = 'none';
+
+        // Custom formation tag (neither battalion nor brigade): both built-in
+        // cards are hidden above, so without its own card the panel would come
+        // up empty — no Draw buttons after connecting the circles. Build a card
+        // for the selected custom formation; if the tag is unknown (e.g. stale
+        // state), fall back to showing BOTH built-in cards rather than none.
+        const oldCustomCol = controls.querySelector('#fd-col-custom');
+        if (oldCustomCol) oldCustomCol.remove();
+        if (tag && tag !== 'battalion' && tag !== 'brigade') {
+            if (tag === savedCustomName && isFinite(savedCustomFront) && savedCustomFront > 0) {
+                controls.insertBefore(buildCustomFlankCol(), controls.firstChild);
+            } else if (batCol && brigCol) {
+                batCol.style.display = 'flex';
+                brigCol.style.display = 'flex';
+                if (divider) divider.style.display = '';
+            }
+        }
 
         // Lock all number inputs so values can't be changed at this stage
         controls.querySelectorAll('input[type="number"]').forEach(inp => {
@@ -1399,6 +1484,7 @@
                 c.querySelector('.fd-custom-select-btn').textContent = fdT('select');
                 c.querySelector('.fd-custom-select-btn').style.background = '#1e293b';
                 c.querySelector('.fd-custom-select-btn').style.border = '1px solid #475569';
+                delete c.dataset.fdSelected;
             });
             // Deselect battalion/brigade
             setSelectedFlankTag(null);
@@ -1408,8 +1494,18 @@
             card.querySelector('.fd-custom-select-btn').textContent = fdT('selected');
             card.querySelector('.fd-custom-select-btn').style.background = '#166534';
             card.querySelector('.fd-custom-select-btn').style.border = '2px solid #4ade80';
+            card.dataset.fdSelected = '1';
             // Store selection
             selectedFlankTag = engName;
+            // Capture name + distances now — the popup (and these inputs) are
+            // destroyed at Start, but the post-frontline flank panel still
+            // needs them to build the custom Draw card.
+            savedCustomName = engName;
+            savedCustomArName = arName || null;
+            const cf = parseFloat(card.querySelector('.fd-custom-front')?.value);
+            const cd = parseFloat(card.querySelector('.fd-custom-deep')?.value);
+            savedCustomFront = (isFinite(cf) && cf > 0) ? cf : 8;
+            savedCustomDeep = (isFinite(cd) && cd > 0) ? cd : savedCustomFront * 2;
             // Custom formation selected → enable Box 1 (Affiliation) + refresh Start
             refreshAffButtonHighlight();
             syncAffiliationEnabled();
@@ -1514,8 +1610,12 @@
         });
 
         // ── Reset formation: use default favorite if set, otherwise nothing ──
+        // Only honor BUILT-IN tags here. Custom formations are per-popup (not
+        // persisted), so a stored custom default cannot exist when the popup
+        // (re)opens — honoring it would silently select a ghost formation and
+        // leave the post-frontline flank panel with no Draw cards at all.
         const defaultFormationTag = getDefaultFormation();
-        if (defaultFormationTag) {
+        if (defaultFormationTag === 'battalion' || defaultFormationTag === 'brigade') {
             setSelectedFlankTag(defaultFormationTag);
         } else {
             setSelectedFlankTag(null);
@@ -1573,6 +1673,15 @@
             if (isFinite(bd) && bd > 0) savedBatDeep = bd;
             if (isFinite(gf) && gf > 0) savedBrigFront = gf;
             if (isFinite(gd) && gd > 0) savedBrigDeep = gd;
+            // Custom formation: re-capture its (possibly edited) distances
+            // before the popup — and the card's inputs — are destroyed.
+            const selCustomCard = affiliationPopup.querySelector('.fd-col-custom-formation[data-fd-selected="1"]');
+            if (selCustomCard && selectedFlankTag && selectedFlankTag === savedCustomName) {
+                const cf = parseFloat(selCustomCard.querySelector('.fd-custom-front')?.value);
+                const cd = parseFloat(selCustomCard.querySelector('.fd-custom-deep')?.value);
+                if (isFinite(cf) && cf > 0) savedCustomFront = cf;
+                if (isFinite(cd) && cd > 0) savedCustomDeep = cd;
+            }
 
             chosenAffiliation = aff;
             window.freeDrawSignatureAffiliation = aff;

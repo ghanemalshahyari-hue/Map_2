@@ -1,16 +1,16 @@
 # Graph Report - MAP_2  (2026-06-11)
 
 ## Corpus Check
-- 4180 files · ~12,285,139 words
+- 4186 files · ~12,298,801 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3062 nodes · 5339 edges · 176 communities (168 shown, 8 thin omitted)
+- 3267 nodes · 5591 edges · 190 communities (182 shown, 8 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `25338ae6`
+- Built from commit: `85100c5c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -190,6 +190,20 @@
 - [[_COMMUNITY_Community 173|Community 173]]
 - [[_COMMUNITY_Community 174|Community 174]]
 - [[_COMMUNITY_Community 175|Community 175]]
+- [[_COMMUNITY_Community 176|Community 176]]
+- [[_COMMUNITY_Community 177|Community 177]]
+- [[_COMMUNITY_Community 178|Community 178]]
+- [[_COMMUNITY_Community 179|Community 179]]
+- [[_COMMUNITY_Community 180|Community 180]]
+- [[_COMMUNITY_Community 181|Community 181]]
+- [[_COMMUNITY_Community 182|Community 182]]
+- [[_COMMUNITY_Community 183|Community 183]]
+- [[_COMMUNITY_Community 184|Community 184]]
+- [[_COMMUNITY_Community 185|Community 185]]
+- [[_COMMUNITY_Community 186|Community 186]]
+- [[_COMMUNITY_Community 187|Community 187]]
+- [[_COMMUNITY_Community 188|Community 188]]
+- [[_COMMUNITY_Community 189|Community 189]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `tx()` - 71 edges
@@ -197,11 +211,11 @@
 3. `init()` - 45 edges
 4. `applyState()` - 41 edges
 5. `getScenario()` - 38 edges
-6. `drawScenario()` - 33 edges
-7. `blue_unit_step_coords` - 33 edges
-8. `blue_unit_step_prev` - 33 edges
-9. `blue_unit_step_coords` - 33 edges
-10. `blue_unit_step_prev` - 33 edges
+6. `Path` - 34 edges
+7. `drawScenario()` - 33 edges
+8. `blue_unit_step_coords` - 33 edges
+9. `blue_unit_step_prev` - 33 edges
+10. `blue_unit_step_coords` - 33 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `handle()` --calls--> `sendJson()`  [INFERRED]
@@ -214,7 +228,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (176 total, 8 thin omitted)
+## Communities (190 total, 8 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.12
@@ -257,8 +271,8 @@ Cohesion: 0.22
 Nodes (8): `ca-chain.crt` — server-certificate trust, Exporting the CA certificate on Windows, How it is used, `rmooz-client.crt` / `rmooz-client.key` — OPTIONAL mTLS client cert, RMOOZ Offline Certificates — OFFLINE-LITELLM-CA-1 / OFFLINE-LITELLM-MTLS-1, Verify after container restart, What does NOT go here / must NEVER be committed, When do I need each file?
 
 ### Community 10 - "Community 10"
-Cohesion: 0.25
-Nodes (5): Path, B, C, MIXED_ORDER, path
+Cohesion: 0.29
+Nodes (4): B, C, MIXED_ORDER, path
 
 ### Community 12 - "Community 12"
 Cohesion: 0.15
@@ -557,7 +571,7 @@ Cohesion: 0.18
 Nodes (10): Executive summary, Final inventory by domain, Final state at end of run, Force-ratio progression, Phase 0 — D-7 — تمهيد - الوضع قبل العمليات, Phase 1 — D-5 — تبادل صواريخ استراتيجية, Phase 2 — D-3 — حملة قمع الدفاع الجوي SEAD, Phase 3 — D-2 — اشتباك بحري سطحي + ASW (+2 more)
 
 ### Community 90 - "Community 90"
-Cohesion: 0.67
+Cohesion: 0.71
 Nodes (6): briefBlock(), chip(), esc(), listBlock(), render(), sideBlock()
 
 ### Community 91 - "Community 91"
@@ -877,29 +891,85 @@ Cohesion: 0.14
 Nodes (10): ADAPTER, B, D9_FIELDS, FIX, fs, { parseJsonc }, path, STEP3_FILLED (+2 more)
 
 ### Community 174 - "Community 174"
-Cohesion: 0.38
-Nodes (6): fs, getMapConfig(), handleOfflineMapConfigApi(), isMapDataDirConfigured(), path, VALID_MODES
+Cohesion: 0.15
+Nodes (13): assert, dockerfile, fs, ldapAuthSrc, mainAppData, mainAppHtml, mainIndexHtml, mainLandingJs (+5 more)
 
 ### Community 175 - "Community 175"
 Cohesion: 0.08
 Nodes (22): APP_HTML, CLIENT, CLOCK_SRC, fs, I18N_SRC, ordersIdx_ar, ordersIdx_en, path (+14 more)
 
+### Community 176 - "Community 176"
+Cohesion: 0.06
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
+
+### Community 177 - "Community 177"
+Cohesion: 0.32
+Nodes (7): Path, fs, getMapConfig(), handleOfflineMapConfigApi(), isMapDataDirConfigured(), path, VALID_MODES
+
+### Community 178 - "Community 178"
+Cohesion: 0.19
+Nodes (24): applyEdit(), arr(), badge(), btn(), canGenerate(), cardShell(), citeLine(), coaById() (+16 more)
+
+### Community 179 - "Community 179"
+Cohesion: 0.09
+Nodes (23): enemy, our, enemy, our, enemy, our, qualitative, enemy (+15 more)
+
+### Community 180 - "Community 180"
+Cohesion: 0.12
+Nodes (16): adapter, brief, document_set_id, documents, set_type, bundle, confidence, document_set_id (+8 more)
+
+### Community 181 - "Community 181"
+Cohesion: 0.12
+Nodes (17): blue, neutral, red, understanding, ambiguities, assumptions, coas, commander_intent (+9 more)
+
+### Community 182 - "Community 182"
+Cohesion: 0.17
+Nodes (12): operational_brief, ambiguities, area_of_operations, assumptions, commander_intent, constraints, courses_of_action, mission (+4 more)
+
+### Community 183 - "Community 183"
+Cohesion: 0.21
+Nodes (12): decided_by, rationale, recommended_id, source, categories, source, strengths_weaknesses, coa_recommendation (+4 more)
+
+### Community 184 - "Community 184"
+Cohesion: 0.17
+Nodes (8): ADAPTER, B, fs, PANEL_SRC, path, STEP3, STEP4, STEP5
+
+### Community 185 - "Community 185"
+Cohesion: 0.18
+Nodes (10): ADAPTER, BRIEF, dest, fs, out, path, payload, STEP3_FILLED (+2 more)
+
+### Community 186 - "Community 186"
+Cohesion: 0.29
+Nodes (7): assessed_capabilities, source, summary, tasks, units, enemy, enemy
+
+### Community 187 - "Community 187"
+Cohesion: 0.29
+Nodes (7): report, coas, files, force_comparison_categories, recommendation_present, scrubbed_note, steps_present
+
+### Community 188 - "Community 188"
+Cohesion: 0.33
+Nodes (6): source, summary, tasks, units, friendly, friendly
+
+### Community 189 - "Community 189"
+Cohesion: 0.67
+Nodes (4): civilian, infrastructure, neutral, neutral
+
 ## Knowledge Gaps
-- **1315 isolated node(s):** `fs`, `path`, `CLIENT`, `USP_SRC`, `I18N_SRC` (+1310 more)
+- **1448 isolated node(s):** `Legend`, `⚠️ DRIFT — code vs. documented decisions (confirm before relying on memory)`, `A. Client shell — operational modules (`UI_MOdified/client/shell/`)`, `B. Wargame / adjudicator visualization (`UI_MOdified/client/wargame/`)`, `C. Server — AI agents + sim boundary (`UI_MOdified/server/ai/`, `server/sim/`)` (+1443 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Path` connect `Community 10` to `Community 130`, `Community 131`, `Community 6`, `Community 8`, `Community 25`, `Community 26`, `Community 27`, `Community 168`, `Community 173`, `Community 174`, `Community 175`, `Community 49`, `Community 55`, `Community 56`, `Community 61`, `Community 62`, `Community 63`, `Community 64`, `Community 65`, `Community 66`, `Community 69`, `Community 73`, `Community 76`, `Community 77`, `Community 78`, `Community 107`, `Community 119`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
-- **Why does `Reconnaissance_units_total_enemy` connect `Community 151` to `Community 137`?**
+- **Why does `Path` connect `Community 177` to `Community 130`, `Community 131`, `Community 6`, `Community 8`, `Community 10`, `Community 25`, `Community 26`, `Community 27`, `Community 168`, `Community 173`, `Community 174`, `Community 175`, `Community 49`, `Community 55`, `Community 56`, `Community 184`, `Community 185`, `Community 61`, `Community 62`, `Community 63`, `Community 64`, `Community 65`, `Community 66`, `Community 69`, `Community 73`, `Community 76`, `Community 77`, `Community 78`, `Community 107`, `Community 119`?**
+  _High betweenness centrality (0.024) - this node is a cross-community bridge._
+- **Why does `blue_unit_step_prev` connect `Community 70` to `Community 38`?**
   _High betweenness centrality (0.001) - this node is a cross-community bridge._
-- **Why does `red_unit_step_coords` connect `Community 83` to `Community 79`?**
-  _High betweenness centrality (0.000) - this node is a cross-community bridge._
-- **What connects `fs`, `path`, `CLIENT` to the rest of the system?**
-  _1319 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `qualitative` connect `Community 179` to `Community 183`?**
+  _High betweenness centrality (0.001) - this node is a cross-community bridge._
+- **What connects `Legend`, `⚠️ DRIFT — code vs. documented decisions (confirm before relying on memory)`, `A. Client shell — operational modules (`UI_MOdified/client/shell/`)` to the rest of the system?**
+  _1452 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.125 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**

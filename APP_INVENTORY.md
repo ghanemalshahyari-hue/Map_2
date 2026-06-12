@@ -67,6 +67,7 @@ These were found during the 2026-05-30 deep-dig. The memory notes were true when
 | Safety Regression Badge | 🟡 | `shell/safety-regression-badge.js` | Read-only mirror of safety summary + popover; never runs tests. |
 | Scenario Dry-Run Fixtures | 🟡 | `shell/scenario-dry-run-fixtures.js` | Static data only ("AMBER RIDGE"); consumed by a builder not yet implemented. |
 | Timeline / Transport | ⏸️ | `shell/timeline.js` | UI scaffolding; buttons flip local CSS only. No event dispatch / sim hook / map mutation. |
+| Canonical Scenario Runner | ✅ | `shell/scenario-runner.js` | **RUNFIX-1:** single canonical PREVIEW playback engine — `window.AppScenarioRunner`; `runScenarioCanonical`, `play`/`pause`/`toggle`/`seek`/`stepBy`/`setSpeed`, `registerPreviewRenderer`/`registerLiveRunner`. One `setInterval` timer; `_bindTransport` owns `rmooz:timeline-ui-action` when present (workspace defers to it). Loaded before movement-playback/timeline/workspace (`app.html:4468`). |
 | Unit Panel (selected unit) | ✅ | `shell/unit-panel.js` | Reads `rmooz:unit-selected`; shows MGRS/echelon/side. **P5b** adds marker-derived readouts — symbol profile, current-step status, capability (`:182`/`:369`; tests 19/19, `test-p5b-selected-unit-readout.js`, `11e17b1`). Combat/C2 sim sections still placeholders pending a sim-data feed. |
 | Side Picker (BLUE/RED/GOD) | ✅ | `shell/side-picker.js` | Persists to localStorage; broadcasts `rmooz:view-side-changed`. |
 | Classification Bar | ✅ | `shell/classification-bar.js` | i18n text into top/bottom bars. |

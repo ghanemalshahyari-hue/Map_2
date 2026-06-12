@@ -863,12 +863,40 @@
         } catch (_) { return null; }
     }
 
+    // G-4-E: read-only dry-run diff viewer source.
+    // The diff must already exist in derived state; this panel never builds,
+    // approves, applies, or persists tasking overlay changes.
+    function _getUnitTaskingOverlayDryRunDiff(uid) {
+        if (!uid) return null;
+        try {
+            var map = root.AppAdjudicatorMap;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            var ws = map.getWorldState();
+            var derived = ws && ws.derived;
+            if (!derived) return null;
+            var src = derived.unit_tasking_overlay_dry_run_diff
+                || derived.tasking_overlay_dry_run_diff
+                || null;
+            if (!src) return null;
+            if (Array.isArray(src)) {
+                for (var i = 0; i < src.length; i++) {
+                    if (src[i] && (src[i].unit_uid === uid || src[i].uid === uid)) return src[i];
+                }
+                return null;
+            }
+            if (src[uid]) return src[uid];
+            if (src.unit_uid === uid || src.uid === uid) return src;
+            return null;
+        } catch (_) { return null; }
+    }
+
     // ── Assignment ────────────────────────────────────────────────────
     function populateAssignment(unit) {
         // Read current-step tasking record (null = no actor for this unit this step)
         var uid = unit.uid || unit.id;
         var tasking = _getUnitTasking(uid);
         var overlayPreview = _getUnitTaskingOverlayPreview(uid);
+        var overlayDiff = _getUnitTaskingOverlayDryRunDiff(uid);
 
         setText('unit-domain',  unit.domain  || '—');
         setText('unit-role',    unit.role ? unit.role.replace(/_/g, ' ') : '—');
@@ -900,26 +928,27 @@
         }
 
         // ── TASK1-C: populate Current Orders detail block ────────────────
-        _populateTaskingDetails(tasking, overlayPreview);
+        _populateTaskingDetails(tasking, overlayPreview, overlayDiff);
     }
 
     /**
      * Populate the collapsible "CURRENT ORDERS" detail block.
      * Shows: step/phase label, action_why, action_intended_effect,
      *        action_doctrine_cited[] (joined with ' · ').
-     * Hides the entire block when tasking and overlayPreview are null.
+     * Hides the entire block when tasking, overlayPreview, and overlayDiff are null.
      * Each row shown only when its value is a non-empty string.
      * Read-only; never mutates tasking or any scenario data.
      *
      * @param {{action_why, action_intended_effect, action_doctrine_cited[],
      *           step_index, phase}|null} tasking
      * @param {{source, read_only, overlay_only, baseline_mutation}|null} overlayPreview
+     * @param {{before, after, blocked_reasons, step_index, phase}|null} overlayDiff
      */
-    function _populateTaskingDetails(tasking, overlayPreview) {
+    function _populateTaskingDetails(tasking, overlayPreview, overlayDiff) {
         var block = $('usp-tasking-block');
         if (!block) return;
 
-        if (!tasking && !overlayPreview) {
+        if (!tasking && !overlayPreview && !overlayDiff) {
             block.setAttribute('hidden', '');
             return;
         }
@@ -937,6 +966,7 @@
         setText('usp-tasking-step', stepLabel ? ' – ' + stepLabel : '');
 
         _populateTaskingOverlayPreview(overlayPreview);
+        _populateTaskingOverlayDryRunDiff(overlayDiff);
 
         // Why row
         _setTaskingRow('usp-tasking-why-row', 'usp-tasking-why', tasking && tasking.action_why);
@@ -954,6 +984,7 @@
         // Show block only if at least one row is visible
         var anyVisible = !!(
             overlayPreview ||
+            overlayDiff ||
             (tasking && tasking.action_why && String(tasking.action_why).trim()) ||
             (tasking && tasking.action_intended_effect && String(tasking.action_intended_effect).trim()) ||
             docArr.length
@@ -986,6 +1017,72 @@
                 + (readOnly ? ' · read_only:true' : '')
                 + (overlayOnly ? ' · overlay_only:true' : '');
         }
+        row.removeAttribute('hidden');
+    }
+
+    var _G4_TASKING_DIFF_FIELDS = [
+        'action_component',
+        'action_what',
+        'action_why',
+        'action_intended_effect',
+        'action_doctrine_cited'
+    ];
+
+    function _formatTaskingDiffValue(value) {
+        if (Array.isArray(value)) {
+            var list = value.map(function (v) { return String(v == null ? '' : v).trim(); })
+                .filter(Boolean);
+            return list.length ? list.join(' / ') : '-';
+        }
+        if (value == null || String(value).trim() === '') return '-';
+        return String(value);
+    }
+
+    function _formatTaskingDiffLine(field, before, after) {
+        return field + ': ' + _formatTaskingDiffValue(before && before[field])
+            + ' -> ' + _formatTaskingDiffValue(after && after[field]);
+    }
+
+    function _forbiddenTaskingDiffWarnings(diff) {
+        var warnings = [];
+        var reasons = Array.isArray(diff && diff.blocked_reasons) ? diff.blocked_reasons : [];
+        reasons.forEach(function (reason) {
+            var text = String(reason || '');
+            if (text.indexOf('forbidden_field:') === 0) warnings.push(text);
+        });
+        var fields = Array.isArray(diff && diff.forbidden_fields) ? diff.forbidden_fields : [];
+        fields.forEach(function (field) {
+            var text = String(field || '').trim();
+            if (text) warnings.push('forbidden_field:' + text);
+        });
+        return warnings;
+    }
+
+    function _populateTaskingOverlayDryRunDiff(diff) {
+        var row = $('usp-tasking-diff-row');
+        var val = $('usp-tasking-diff');
+        if (!row) return;
+        if (!diff) {
+            row.setAttribute('hidden', '');
+            if (val) val.textContent = '';
+            return;
+        }
+
+        var before = diff.before || {};
+        var after = diff.after || {};
+        var lines = [
+            'Dry-run diff viewer',
+            'read_only:true / overlay_only:true / baseline_mutation:false'
+        ];
+        _G4_TASKING_DIFF_FIELDS.forEach(function (field) {
+            lines.push(_formatTaskingDiffLine(field, before, after));
+        });
+        lines.push('step_index: ' + _formatTaskingDiffValue(diff.step_index));
+        lines.push('phase: ' + _formatTaskingDiffValue(diff.phase));
+        var warnings = _forbiddenTaskingDiffWarnings(diff);
+        if (warnings.length) lines.push('Forbidden-field warnings: ' + warnings.join(' / '));
+
+        if (val) val.textContent = lines.join('\n');
         row.removeAttribute('hidden');
     }
     /**

@@ -53,9 +53,9 @@ ok('accessor reads only derived.unit_tasking_overlay_preview',
     !/ws\.derived\.unit_tasking\s*=/.test(PANEL_JS));
 ok('populateAssignment passes overlay preview into tasking details',
     PANEL_JS.includes('var overlayPreview = _getUnitTaskingOverlayPreview(uid)') &&
-    PANEL_JS.includes('_populateTaskingDetails(tasking, overlayPreview)'));
+    PANEL_JS.includes('_populateTaskingDetails(tasking, overlayPreview, overlayDiff)'));
 ok('tasking detail block can show overlay-only indicator',
-    PANEL_JS.includes('if (!tasking && !overlayPreview)') &&
+    PANEL_JS.includes('if (!tasking && !overlayPreview && !overlayDiff)') &&
     PANEL_JS.includes('overlayPreview ||'));
 ok('indicator text includes exact availability message',
     PANEL_JS.includes('Overlay preview available'));

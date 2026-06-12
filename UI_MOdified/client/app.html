@@ -3559,6 +3559,10 @@
                                 <span class="usp-tasking-lbl">Overlay Preview</span>
                                 <span class="usp-tasking-val usp-tasking-overlay-val" id="usp-tasking-overlay"></span>
                             </div>
+                            <div class="usp-tasking-row usp-tasking-diff-row" id="usp-tasking-diff-row" hidden>
+                                <span class="usp-tasking-lbl">Dry-run Diff</span>
+                                <span class="usp-tasking-val usp-tasking-diff-val" id="usp-tasking-diff"></span>
+                            </div>
                             <div class="usp-tasking-row" id="usp-tasking-why-row" hidden>
                                 <span class="usp-tasking-lbl" data-i18n="usp-lbl-why">Why</span>
                                 <span class="usp-tasking-val" id="usp-tasking-why"></span>
@@ -5976,6 +5980,14 @@
             border-bottom-color:#183247;
         }
         .usp-tasking-overlay-val { color:#78c6ff; }
+        .usp-tasking-diff-row {
+            background:#0b1018;
+            border-bottom-color:#223047;
+        }
+        .usp-tasking-diff-val {
+            color:#a8c8e8;
+            white-space:pre-line;
+        }
 
         /* Light theme */
         [data-theme="light"] .usp-tasking-block { border-bottom-color:#dde8f0; }
@@ -5986,6 +5998,8 @@
         [data-theme="light"] .usp-tasking-doctrine-val { color:#486888; }
         [data-theme="light"] .usp-tasking-overlay-row { background:#eef7ff; border-bottom-color:#c8dff2; }
         [data-theme="light"] .usp-tasking-overlay-val { color:#0f5f94; }
+        [data-theme="light"] .usp-tasking-diff-row { background:#f6fbff; border-bottom-color:#d5e4f0; }
+        [data-theme="light"] .usp-tasking-diff-val { color:#244c68; }
 
         /* RTL */
         [dir="rtl"] .usp-tasking-row { flex-direction:row-reverse; }

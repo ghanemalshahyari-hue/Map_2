@@ -79,6 +79,35 @@
             '</div></section>';
         return html;
     }
+    function renderUnitsDuty(p) {
+        var ud = opBrief(p).units_duty;
+        if (!ud) return '';
+        var duties = Array.isArray(ud.duties) ? ud.duties : [];
+        var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
+            '<div style="font-size:13px;color:#cfe6ff;font-weight:600;margin-bottom:6px;">\u0648\u0627\u062c\u0628\u0627\u062a \u0627\u0644\u0648\u062d\u062f\u0627\u062a \u2014 Units Duty</div>';
+        html += fieldRow('summary', ud.summary || (typeof ud === 'string' ? ud : ''));
+        html += listBlock('duties', duties.map(function (d) {
+            if (d && typeof d === 'object') return [(d.unit || d.unit_name || ''), (d.duty || d.task || d.summary || '')].filter(Boolean).join(': ');
+            return String(d || '');
+        }));
+        html += fieldRow('needs_review', ud.needs_review ? 'true' : 'false');
+        html += fieldRow('source_type', ud.source_type);
+        html += '</section>';
+        return html;
+    }
+    function renderDoctrineRequired(p) {
+        var ta = opBrief(p).task_assembly || {};
+        var hasDoctrine = ('doctrine_upload_required' in ta) || Array.isArray(ta.doctrine_sources) || ta.doctrine_application_policy;
+        if (!hasDoctrine) return '';
+        var sources = Array.isArray(ta.doctrine_sources) && ta.doctrine_sources.length ? ta.doctrine_sources : ['pending_upload'];
+        var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
+            '<div style="font-size:13px;color:#e0c060;font-weight:600;margin-bottom:6px;">\u0627\u0644\u0639\u0642\u064a\u062f\u0629 \u0627\u0644\u0645\u0637\u0644\u0648\u0628\u0629 \u2014 Doctrine Required</div>';
+        html += fieldRow('doctrine_upload_required', ta.doctrine_upload_required === true ? 'true' : (ta.doctrine_upload_required === false ? 'false' : ''));
+        html += fieldRow('doctrine_sources', sources);
+        html += fieldRow('doctrine_application_policy', ta.doctrine_application_policy);
+        html += '</section>';
+        return html;
+    }
     function renderProposedUnits(p) {
         var ob = opBrief(p);
         var units = (Array.isArray(ob.proposed_units) && ob.proposed_units.length) ? ob.proposed_units :
@@ -91,7 +120,7 @@
             (groups[key] = groups[key] || []).push(u);
         });
         var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
-            '<div style="font-size:13px;color:#f0a0a0;font-weight:600;margin-bottom:6px;">\u0627\u0644\u0648\u062d\u062f\u0627\u062a \u0627\u0644\u0645\u0642\u062a\u0631\u062d\u0629 \u2014 Proposed Units</div>';
+            '<div style="font-size:13px;color:#f0a0a0;font-weight:600;margin-bottom:6px;">\u0642\u0648\u0627\u062a \u0627\u0644\u0639\u062f\u0648 \u0627\u0644\u0645\u0646\u0638\u0645\u0629 \u2014 Enemy Force Structure</div>';
         Object.keys(groups).forEach(function (k) {
             var list = groups[k], first = list[0] || {};
             var coord = (first.lat != null && first.lon != null) ? (first.lat + ', ' + first.lon) : 'pending';
@@ -103,12 +132,75 @@
                     fieldRow('estimated_count', u.estimated_count) +
                     fieldRow('type', u.type_ar) +
                     fieldRow('needs_review', u.needs_review ? 'true' : 'false') +
+                    fieldRow('source_type', u.source_type) +
                     fieldRow('warning', u.warning || (u.warnings || []).join(', ')) +
                     '<div style="color:#e0a93a;font-size:11px;direction:rtl;text-align:right;">AI information requires review</div>' +
                     '</div>';
             });
             html += '</div>';
         });
+        html += '</section>';
+        return html;
+    }
+    function renderEnemyBases(p) {
+        var bases = opBrief(p).enemy_bases || [];
+        if (!bases.length) return '';
+        var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
+            '<div style="font-size:13px;color:#f0a0a0;font-weight:600;margin-bottom:6px;">\u0642\u0648\u0627\u0639\u062f \u0648\u0645\u0637\u0627\u0631\u0627\u062a \u0627\u0644\u0639\u062f\u0648 \u2014 Enemy Bases</div>';
+        bases.forEach(function (b) {
+            var coord = (b.lat != null && b.lon != null) ? (b.lat + ', ' + b.lon) : 'pending';
+            html += '<div style="margin:4px 0;padding:6px 8px;border:1px solid #3d2a2a;background:#1a1212;border-radius:4px;font-size:12px;">' +
+                fieldRow('base_name_ar', b.base_name_ar) +
+                fieldRow('base_name_en', b.base_name_en) +
+                fieldRow('coordinates', coord) +
+                fieldRow('site_type', b.site_type || 'airbase') +
+                fieldRow('needs_review', b.needs_review ? 'true' : 'false') +
+                fieldRow('source_type', b.source_type) +
+                '</div>';
+        });
+        html += '</section>';
+        return html;
+    }
+    function renderMissingInformation(p) {
+        var ob = opBrief(p);
+        var missing = (ob.missing_information || []).concat((ob.staff_brief_2 && ob.staff_brief_2.missing_information) || []);
+        var seen = {};
+        missing = missing.filter(function (m) { if (!m || seen[m]) return false; seen[m] = true; return true; });
+        if (!missing.length) return '';
+        return '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
+            '<div style="font-size:13px;color:#e0a93a;font-weight:600;margin-bottom:6px;">\u0627\u0644\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0627\u0644\u0646\u0627\u0642\u0635\u0629 \u2014 Missing Information</div>' +
+            listBlock('missing_information', missing, '#e0a93a') + '</section>';
+    }
+    function renderStaffBrief2(p) {
+        var sb = opBrief(p).staff_brief_2;
+        if (!sb || !sb.sections) return '';
+        var labels = {
+            intel_summary: 'intel_summary',
+            enemy_capabilities: 'enemy_capabilities',
+            operations: 'operations',
+            hr: 'hr',
+            logistics: 'logistics',
+        };
+        var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
+            '<div style="font-size:13px;color:#cfe6ff;font-weight:600;margin-bottom:6px;">Staff Brief 2 \u2014 \u0645\u0648\u062c\u0632 \u0627\u0644\u0623\u0631\u0643\u0627\u0646 2</div>';
+        Object.keys(labels).forEach(function (name) {
+            var section = sb.sections[name] || {};
+            var keys = Object.keys(section);
+            html += '<div style="margin:8px 0;"><div style="font-size:12px;color:#8fa5b8;margin-bottom:4px;">' + esc(labels[name]) + '</div>';
+            if (!keys.length) html += '<div style="font-size:12px;color:#e0a93a;">missing_information</div>';
+            keys.forEach(function (k) {
+                var item = section[k] || {};
+                html += '<div style="margin:3px 0;padding:5px 7px;border:1px solid #2a2f37;background:#121a22;border-radius:4px;">' +
+                    fieldRow(k, item.value) +
+                    fieldRow('needs_review', item.needs_review ? 'true' : 'false') +
+                    fieldRow('source_type', item.source_type) +
+                    '</div>';
+            });
+            html += '</div>';
+        });
+        if (sb.duplicate_key_warnings && sb.duplicate_key_warnings.length) {
+            html += listBlock('duplicate_key_warnings', sb.duplicate_key_warnings.map(function (w) { return w.section + '.' + w.key; }), '#e0a93a');
+        }
         html += '</section>';
         return html;
     }
@@ -141,7 +233,12 @@
             chip('Map bounds — حدود الخريطة', u.proposed_map_bounds ? 'from document' : 'not specified — set objective on map') + '</div>';
         html += listBlock('Missing / ambiguous — نواقص وغموض', u.ambiguities || [], '#e0a93a');
         html += renderTaskAssembly(p);
+        html += renderUnitsDuty(p);
+        html += renderDoctrineRequired(p);
         html += renderProposedUnits(p);
+        html += renderEnemyBases(p);
+        html += renderMissingInformation(p);
+        html += renderStaffBrief2(p);
         if (p.llm_fill && !p.llm_fill.available) {
             html += '<div style="font-size:11px;color:#9aa3ad;margin:6px 0;">ℹ Deep extraction (exact units &amp; intent) runs on the deployment LLM; this is the offline structural read.</div>';
         }

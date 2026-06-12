@@ -47,6 +47,30 @@ const STEP1_FILLED = {
                 { platform: 'F-14A Tomcat', estimated_count: 24, type_ar: 'figter' },
                 { platform: 'F-4D/E Phantom II', estimated_count: 12, type_ar: 'fighter' },
             ],
+        }, {
+            base_name_ar: '\u0645\u0637\u0627\u0631 \u0645\u0647\u0631\u0622\u0628\u0627\u062f',
+            base_name_en: 'Mehrabad',
+            lat: 35.6892,
+            lon: 51.3134,
+            units: [{ platform: 'F-5E Tiger II', estimated_count: 18, type_ar: 'fighter' }],
+        }, {
+            base_name_ar: '\u0642\u0627\u0639\u062f\u0629 \u0628\u0648\u0634\u0647\u0631',
+            base_name_en: 'Bushehr',
+            lat: 28.9448,
+            lon: 50.8346,
+            units: [{ platform: 'F-4E Phantom II', estimated_count: 10, type_ar: 'fighter' }],
+        }, {
+            base_name_ar: '\u0642\u0627\u0639\u062f\u0629 \u0628\u0646\u062f\u0631 \u0639\u0628\u0627\u0633',
+            base_name_en: 'Bandar Abbas',
+            lat: 27.2183,
+            lon: 56.3778,
+            units: [{ platform: 'Su-22', estimated_count: 8, type_ar: '\u0645\u0642\u0627\u062a\u0644\u0629 / \u0637\u0627\u0626\u0631\u0629' }],
+        }, {
+            base_name_ar: '\u0643\u0646\u0627\u0631\u0643 / \u062a\u0634\u0627\u0628\u0647\u0627\u0631',
+            base_name_en: 'Konarak / Chabahar',
+            lat: 25.4433,
+            lon: 60.3821,
+            units: [{ platform: 'P-3F Orion', estimated_count: 4, type_ar: '\u0637\u0627\u0626\u0631\u0629' }],
         }],
     },
     Assembly_Area: '\u0645\u0646\u0637\u0642\u0629 \u0627\u0644\u062a\u062c\u0645\u0639 40RCN596875',
@@ -84,8 +108,8 @@ test('Step 1 task objects carry doctrine fields and AI review metadata', () => {
 test('enemy_forces.air_bases creates proposed RED units with counts and review flags', () => {
     const ob = adapt(STEP1_FILLED);
     assert(ob.enemy_forces && Array.isArray(ob.enemy_forces.air_bases), 'enemy_forces.air_bases preserved');
-    assert(Array.isArray(ob.enemy_bases) && ob.enemy_bases.length === 1, 'base/location object created');
-    assert(Array.isArray(ob.proposed_units) && ob.proposed_units.length === 2, 'two proposed units');
+    assert(Array.isArray(ob.enemy_bases) && ob.enemy_bases.length === 5, 'base/location objects created');
+    assert(Array.isArray(ob.proposed_units) && ob.proposed_units.length === 6, 'six proposed units');
     const f14 = ob.proposed_units.find(u => u.id === 'RED-F14A-HAMEDAN');
     const f4 = ob.proposed_units.find(u => u.id === 'RED-F4-HAMEDAN');
     assert(f14 && f4, 'expected RED ids');
@@ -145,8 +169,8 @@ test('normalizeBrief and understanding preserve Step 1 proposed-unit fields', ()
     assert(ob.task_assembly && ob.task_assembly.summary === STEP1_FILLED.task_assembly.summary, 'task_assembly survives');
     assert(ob.units_duty && ob.units_duty.summary.indexOf('\u0645\u0631\u0627\u0642\u0628\u0629 \u0627\u0644\u0633\u0627\u062d\u0644') !== -1, 'units_duty survives');
     assert(ob.placement_candidates.length >= 4, 'placement candidates survive');
-    assert(ob.proposed_units.length === 2 && ob.enemy_bases.length === 1 && ob.enemy_forces.air_bases.length === 1, 'proposed units and air bases survive');
-    assert(u.proposed_unit_counts.red === 2 && u.proposed_unit_counts.blue === 0 && u.proposed_unit_counts.neutral === 0, 'RED proposed count');
+    assert(ob.proposed_units.length === 6 && ob.enemy_bases.length === 5 && ob.enemy_forces.air_bases.length === 5, 'proposed units and air bases survive');
+    assert(u.proposed_unit_counts.red === 6 && u.proposed_unit_counts.blue === 0 && u.proposed_unit_counts.neutral === 0, 'RED proposed count');
 });
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');

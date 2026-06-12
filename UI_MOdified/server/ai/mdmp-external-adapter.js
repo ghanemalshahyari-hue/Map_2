@@ -231,6 +231,7 @@ function addEnemyAirBases(data, file, state) {
             country: firstText(base, ['country']) || '\u0625\u064a\u0631\u0627\u0646',
             base_name_ar: baseNameAr,
             base_name_en: baseNameEn,
+            site_type: firstText(base, ['site_type', 'type', 'location_type']) || 'airbase',
             lat: coords.lat,
             lon: coords.lon,
             exact_unit_position: false,
@@ -252,6 +253,7 @@ function addEnemyAirBases(data, file, state) {
                 side: 'RED',
                 base_name_ar: baseNameAr,
                 base_name_en: baseNameEn,
+                site_type: firstText(base, ['site_type', 'type', 'location_type']) || 'airbase',
                 exact_unit_position: false,
                 needs_review: true,
                 confidence: 'medium',
@@ -287,6 +289,120 @@ function addEnemyAirBases(data, file, state) {
             });
         });
     });
+}
+
+const STAFF2_SECTIONS = {
+    intel_summary: ['Terrain', 'Weather', 'First_light', 'Last_light', 'Moon',
+        'Effect_of_Weather_and_Terrain_on_Operations', 'Composition', 'Deployments',
+        'Force_Coverage', 'Morale', 'Training', 'Recent_and_Ongoing_Activities',
+        'Enemy_Tactics_in_Exposure_Operations_Phase1_Preparation',
+        'Enemy_Tactics_in_Exposure_Operations_Phase2_Preparation',
+        'Enemy_Tactics_in_Exposure_Operations_Phase3_Main_Attack',
+        'Intentions_and_Objectives', 'Counter_Intelligence_Observations', 'Conclusions'],
+    enemy_capabilities: ['Enemy_Capabilities'],
+    operations: ['join_op_mission', 'Join_op_purp', 'joint_ops_how', 'joint_ops_desired_end',
+        'Exc_command_mission', 'Exc_command_purp', 'Exc_command_main_mission',
+        'joint_ops_desired_end2', 'Land_component_force', 'Attached_units',
+        'Force_Composition', 'Training_Readiness_Level', 'Combat_Effectiveness',
+        'Operational_Conclusions'],
+    hr: ['Force_Cover', 'Combat_Morale', 'Reinforcements', 'Projected_Casualties',
+        'Control_and_Coordination', 'Prisoners_of_War', 'Civilian_Users',
+        'Civilian_Prisoners_and_Detainees', 'Human_Force_Conclusions'],
+    logistics: ['Logistical_Rations', 'Logistical_sustainment', 'Fuel', 'ammunition',
+        'Spare_parts', 'Engineering_materiel', 'Transportation', 'Maintenance',
+        'Field_Hospitals', 'Supply_Conclusions'],
+};
+
+function newStaffBrief2(file) {
+    return {
+        sections: {
+            intel_summary: {},
+            enemy_capabilities: {},
+            operations: {},
+            hr: {},
+            logistics: {},
+        },
+        raw_external_json: null,
+        duplicate_key_warnings: [],
+        missing_information: [],
+        source_type: 'ai_candidate_from_external_llm',
+        needs_review: true,
+        source: { file, key: 'Staff_Brief_2' },
+    };
+}
+
+function addStaff2Field(staff, sectionName, key, value, file, sourceKey) {
+    if (value == null) return;
+    const section = staff.sections[sectionName];
+    if (!section) return;
+    if (Object.prototype.hasOwnProperty.call(section, key)) {
+        const old = section[key] && section[key].value;
+        if (JSON.stringify(old) !== JSON.stringify(value)) {
+            staff.duplicate_key_warnings.push({
+                key,
+                section: sectionName,
+                kept: old,
+                ignored: value,
+                source_type: 'ai_candidate_from_external_llm',
+                needs_review: true,
+                source: { file, key: sourceKey || key },
+            });
+        }
+        return;
+    }
+    section[key] = {
+        value,
+        source_type: 'ai_candidate_from_external_llm',
+        needs_review: true,
+        source: { file, key: sourceKey || key },
+    };
+}
+
+function mapStaff2Object(staff, obj, file, prefix) {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return;
+    Object.keys(STAFF2_SECTIONS).forEach(sectionName => {
+        const nested = obj[sectionName];
+        if (nested && typeof nested === 'object' && !Array.isArray(nested)) {
+            Object.keys(nested).forEach(k => {
+                const raw = rawStructuredValue(nested, k);
+                if (raw != null) addStaff2Field(staff, sectionName, k, raw, file, (prefix ? prefix + '.' : '') + sectionName + '.' + k);
+            });
+        }
+    });
+    Object.keys(STAFF2_SECTIONS).forEach(sectionName => {
+        STAFF2_SECTIONS[sectionName].forEach(k => {
+            const raw = rawStructuredValue(obj, k);
+            if (raw != null) addStaff2Field(staff, sectionName, k, raw, file, (prefix ? prefix + '.' : '') + k);
+        });
+    });
+}
+
+function mapStaffBrief2(data, file, state) {
+    const staff = state.staff_brief_2 || newStaffBrief2(file);
+    staff.raw_external_json = staff.raw_external_json || clone(data);
+    const wrapped = rawStructuredValue(data, 'Staff_Brief_2') || rawStructuredValue(data, 'staff_brief_2');
+    if (wrapped && typeof wrapped === 'object' && !Array.isArray(wrapped)) mapStaff2Object(staff, wrapped, file, 'Staff_Brief_2');
+    mapStaff2Object(staff, data, file, '');
+    Object.keys(staff.sections).forEach(sectionName => {
+        if (!Object.keys(staff.sections[sectionName]).length) {
+            const missKey = 'staff_brief_2.sections.' + sectionName;
+            if (staff.missing_information.indexOf(missKey) === -1) staff.missing_information.push(missKey);
+            addMissing(state, missKey);
+        }
+    });
+    state.staff_brief_2 = staff;
+    if (!state.external_raw.staff_brief_2) state.external_raw.staff_brief_2 = clone(data);
+    if (!state.enemy_summary && staff.sections.enemy_capabilities.Enemy_Capabilities) {
+        state.enemy_summary = { text: String(staff.sections.enemy_capabilities.Enemy_Capabilities.value), file, key: 'Enemy_Capabilities' };
+    }
+    if (staff.sections.enemy_capabilities.Enemy_Capabilities) {
+        state.enemy_capabilities.push({
+            text: String(staff.sections.enemy_capabilities.Enemy_Capabilities.value),
+            source_type: 'ai_candidate_from_external_llm',
+            needs_review: true,
+            source: { file, key: 'Enemy_Capabilities' },
+        });
+    }
 }
 
 // COA-2 suffix families: <k>2 (step3), <k>_2 (step4), <k>_c2 (step5).
@@ -652,6 +768,7 @@ function adaptMdmpBundle(entries) {
         task_assembly: null, units_duty: null, placement_candidates: [], missing_information: [], seen_planning: false,
         doctrine_upload_required: null, doctrine_sources: [], doctrine_application_policy: null,
         enemy_forces: null, enemy_bases: [], proposed_units: [],
+        staff_brief_2: null, external_raw: {},
         files: [], steps: [],
     };
 
@@ -664,7 +781,8 @@ function adaptMdmpBundle(entries) {
         if (step === 'coa_development') mapStep3(e.data, file, state);
         else if (step === 'coa_analysis') mapStep4(e.data, file, state);
         else if (step === 'coa_comparison') mapStep5(e.data, file, state);
-        else if (step === 'planning_guidance' || step === 'staff_brief') mapPlanning(e.data, file, state);
+        else if (step === 'planning_guidance') mapPlanning(e.data, file, state);
+        else if (step === 'staff_brief' || step === 'staff_brief_2') mapStaffBrief2(e.data, file, state);
     }
 
     // Assemble the brief.
@@ -712,6 +830,8 @@ function adaptMdmpBundle(entries) {
     }
     if (state.area) ob.area_of_operations = state.area;
     if (state.force_comparison) ob.force_comparison = state.force_comparison;
+    if (state.staff_brief_2) ob.staff_brief_2 = state.staff_brief_2;
+    if (Object.keys(state.external_raw).length) ob.external_raw = state.external_raw;
 
     // COAs: 2 BLUE always (even if empty — the operator sees what's missing),
     // + RED most-likely when the source carried it. RED most-dangerous is

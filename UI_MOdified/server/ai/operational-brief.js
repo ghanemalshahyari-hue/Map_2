@@ -53,6 +53,8 @@ function emptyBrief() {
             proposed_units: [],
             enemy_bases: [],
             enemy_forces: null,
+            staff_brief_2: null,
+            external_raw: {},
             // ── COA layer (additive; D9 approved 2026-06-11) ─────────
             // Candidate courses of action (each with wargame_turns[] per
             // L10), the structured force comparison, and the AI/rule-engine
@@ -385,6 +387,9 @@ const MDMP_STEPS = [
     { step: 'planning_guidance', // step 1 / WARNO package (also the field dictionary)
       any: ['letter_ref_number', 'Assembly_Area', 'task_assembly',
             'Units_Duty', 'GROUND_COMPONENT_MISSION', 'Operational_Assumptions'] },
+    { step: 'staff_brief_2',
+      any: ['Staff_Brief_2', 'staff_brief_2', 'intel_summary', 'enemy_capabilities',
+            'operations', 'hr', 'logistics'] },
     { step: 'staff_brief',      // step 2 outputs — intel summary / capabilities
       any: ['Enemy_Capabilities', 'First_light', 'Recent_and_Ongoing_Activities',
             'join_op_mission'] },
@@ -462,6 +467,8 @@ function normalizeBrief(input) {
     o.proposed_units = arr(ob.proposed_units);
     o.enemy_bases = arr(ob.enemy_bases);
     o.enemy_forces = (ob.enemy_forces && typeof ob.enemy_forces === 'object') ? ob.enemy_forces : null;
+    o.staff_brief_2 = (ob.staff_brief_2 && typeof ob.staff_brief_2 === 'object') ? ob.staff_brief_2 : null;
+    o.external_raw = (ob.external_raw && typeof ob.external_raw === 'object') ? ob.external_raw : {};
     // COA layer (additive, D9) — preserved verbatim through normalization.
     o.courses_of_action = arr(ob.courses_of_action);
     o.force_comparison = (ob.force_comparison && typeof ob.force_comparison === 'object') ? ob.force_comparison : null;
@@ -499,6 +506,7 @@ function understandingFromBrief(brief) {
         },
         proposed_units: proposedUnits,
         task_assembly: ob.task_assembly || null,
+        staff_brief_2: ob.staff_brief_2 || null,
         proposed_map_bounds: (ob.area_of_operations && ob.area_of_operations.bbox) || null,
         // COA layer summary (additive, D9) — cards rendered by the COA panel (G-3).
         coas: arr(ob.courses_of_action).map(function (c) {

@@ -1160,71 +1160,39 @@
         _showReopenTab(false);
     }
 
-    function bindPanelChrome() {
+    function setupListeners() {
         var closeBtn = $('panel-close');
-        if (closeBtn) {
-            var freshClose = closeBtn.cloneNode(true);
-            if (closeBtn.parentNode) closeBtn.parentNode.replaceChild(freshClose, closeBtn);
-            freshClose.addEventListener('click', closePanel);
-        }
+        if (closeBtn) closeBtn.addEventListener('click', closePanel);
 
         var collapseTab = $('usp-collapse-tab');
-        if (collapseTab) {
-            var freshCollapse = collapseTab.cloneNode(true);
-            if (collapseTab.parentNode) collapseTab.parentNode.replaceChild(freshCollapse, collapseTab);
-            freshCollapse.addEventListener('click', function() {
-                var p = $('unit-status-panel');
-                if (p && !p.hasAttribute('hidden')) {
-                    collapsePanel();
-                } else {
-                    expandPanel();
-                    if (currentUnit) {
-                        var b = $('usp-body'), e = $('empty-state');
-                        if (b) b.removeAttribute('hidden');
-                        if (e) e.setAttribute('hidden', '');
-                    }
-                }
-            });
-        }
-
-        var reopenTab = $('usp-reopen-tab');
-        if (reopenTab) {
-            var freshReopen = reopenTab.cloneNode(true);
-            if (reopenTab.parentNode) reopenTab.parentNode.replaceChild(freshReopen, reopenTab);
-            freshReopen.addEventListener('click', function() {
+        if (collapseTab) collapseTab.addEventListener('click', function() {
+            var p = $('unit-status-panel');
+            if (p && !p.hasAttribute('hidden')) {
+                collapsePanel();
+            } else {
                 expandPanel();
                 if (currentUnit) {
                     var b = $('usp-body'), e = $('empty-state');
                     if (b) b.removeAttribute('hidden');
                     if (e) e.setAttribute('hidden', '');
                 }
-            });
-        }
-    }
+            }
+        });
 
-    function rehydratePanelControls() {
-        bindPanelChrome();
-        setupTabs();
-        setupSectionToggles();
-    }
+        var reopenTab = $('usp-reopen-tab');
+        if (reopenTab) reopenTab.addEventListener('click', function() {
+            expandPanel();
+            if (currentUnit) {
+                var b = $('usp-body'), e = $('empty-state');
+                if (b) b.removeAttribute('hidden');
+                if (e) e.setAttribute('hidden', '');
+            }
+        });
 
-    function setupListeners() {
-        bindPanelChrome();
         document.addEventListener('rmooz:unit-selected', function(e) {
             var unit = e.detail && e.detail.unit;
             var selectedAt = (e.detail && e.detail.selectedAt) || Date.now();
             if (unit) {
-                if (root.openSelectedObjectPanel && !e.detail.__selectedObjectRouted) {
-                    root.openSelectedObjectPanel({
-                        object_kind: 'unit',
-                        source: 'unit_selection',
-                        review_only: false,
-                        exact_unit_position: true,
-                        data: unit,
-                        selectedAt: selectedAt
-                    });
-                    return;
-                }
                 populatePanel(unit, selectedAt);
                 expandPanel();   // expand (show panel, hide reopen tab)
             }
@@ -1246,7 +1214,6 @@
         openPanel: openPanel,
         closePanel: closePanel,
         populatePanel: populatePanel,
-        rehydratePanelControls: rehydratePanelControls,
         getCurrentUnit: function() { return currentUnit; }
     };
     init();

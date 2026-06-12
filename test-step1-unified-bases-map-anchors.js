@@ -113,6 +113,34 @@ function postPlacement(body) {
     });
 }
 
+function postAnalyze(body) {
+    return new Promise((resolve, reject) => {
+        const payload = Buffer.from(JSON.stringify(body), 'utf8');
+        const req = Readable.from([payload]);
+        req.method = 'POST';
+        req.url = '/api/wargame-sim/analyze';
+        const res = {
+            statusCode: 0,
+            headers: {},
+            writeHead: function (code, headers) { this.statusCode = code; this.headers = headers || {}; },
+            end: function (text) {
+                try { resolve({ status: this.statusCode, body: JSON.parse(text) }); }
+                catch (e) { reject(e); }
+            },
+        };
+        const handled = BRIDGE.handle(req, res, {
+            url: new URL('http://local.test/api/wargame-sim/analyze'),
+            pathname: '/api/wargame-sim/analyze',
+            method: 'POST',
+            sendJson: function (r, code, obj) {
+                r.writeHead(code, { 'Content-Type': 'application/json' });
+                r.end(JSON.stringify(obj));
+            },
+        });
+        if (!handled) reject(new Error('analyze route not handled'));
+    });
+}
+
 console.log('\nSTEP1-C unified bases and anchors\n');
 
 test('canonical enemy_forces.bases drives RED bases and preserves top-level proposed units', () => {
@@ -126,6 +154,7 @@ test('canonical enemy_forces.bases drives RED bases and preserves top-level prop
     assert(ob.proposed_units.every(u => u.needs_review === true), 'proposed units need review');
     assert(ob.proposed_units.every(u => u.exact_unit_position === false), 'proposed units not exact placement');
     assert(ob.enemy.units.length === 0 && ob.friendly.units.length === 0, 'no final unit placement');
+    assert(ob.courses_of_action.length === 0, 'no COA objects for Step 1-only import');
     assert(ob.courses_of_action.every(c => c.unit_tasking.length === 0), 'no final tasking');
 });
 
@@ -171,6 +200,31 @@ test('Review UI shows RED/BLUE proposed counts and base counts', () => {
 });
 
 async function asyncTests() {
+    const analyze = await postAnalyze({
+        bundle: [{
+            filename: 'Iran_Qatar_step1_updated_red_blue_trial.json',
+            content: JSON.stringify(UPDATED_STEP1),
+        }],
+    });
+    assert(analyze.status === 200 && analyze.body.ok, 'analyze route returns ok');
+    assert(analyze.body.kind === 'mdmp_external', 'updated Step 1 route kind is mdmp_external');
+    assert(analyze.body.understanding.set_label_en === 'External App Step 1', 'type is External App Step 1');
+    assert(analyze.body.understanding.set_label_en !== 'Operational Brief', 'type is not Operational Brief');
+    const liveOb = analyze.body.brief.operational_brief;
+    assert(liveOb.task_assembly, 'live route preserves task_assembly');
+    assert(liveOb.task_assembly.doctrine_upload_required === true, 'live route preserves doctrine_upload_required true');
+    assert(Array.isArray(liveOb.proposed_units), 'live route returns proposed_units');
+    assert(liveOb.proposed_units.filter(u => u.side === 'RED').length > 0, 'live route RED proposed units > 0');
+    assert(liveOb.proposed_units.filter(u => u.side === 'BLUE').length > 0, 'live route BLUE proposed units > 0');
+    assert(Array.isArray(liveOb.enemy_bases) && liveOb.enemy_bases.length > 0, 'live route bases count > 0');
+    assert(Array.isArray(liveOb.placement_candidates) && liveOb.placement_candidates.length > 0, 'live route placement candidates exist');
+    assert(liveOb.proposed_units.every(u => u.exact_unit_position === false), 'live route exact_unit_position false');
+    assert(liveOb.enemy.units.length === 0 && liveOb.friendly.units.length === 0, 'live route creates no final placement');
+    assert(liveOb.courses_of_action.length === 0, 'live route creates no COA objects');
+    assert(liveOb.courses_of_action.every(c => c.unit_tasking.length === 0), 'live route creates no final tasking');
+    console.log('  [PASS] live analyze route classifies updated Step 1 as External App Step 1');
+    passed++;
+
     const brief = adapt(UPDATED_STEP1);
     const response = await postPlacement({ brief });
     assert(response.status === 200 && response.body.ok, 'placement endpoint returns ok');

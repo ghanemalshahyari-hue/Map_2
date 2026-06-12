@@ -112,11 +112,11 @@
         var ob = opBrief(p);
         var units = (Array.isArray(ob.proposed_units) && ob.proposed_units.length) ? ob.proposed_units :
             ((p.understanding && Array.isArray(p.understanding.proposed_units)) ? p.understanding.proposed_units : []);
-        units = units.filter(function (u) { return String((u && u.side) || '').toUpperCase() === 'RED'; });
         if (!units.length) return '';
         var groups = {};
         units.forEach(function (u) {
-            var key = (u.base_name_ar || u.base_name_en || 'RED base') + '|' + (u.lat != null ? u.lat : '') + ',' + (u.lon != null ? u.lon : '');
+            var side = String((u && u.side) || 'RED').toUpperCase();
+            var key = side + '|' + (u.base_name_ar || u.base_name_en || side + ' base') + '|' + (u.lat != null ? u.lat : '') + ',' + (u.lon != null ? u.lon : '');
             (groups[key] = groups[key] || []).push(u);
         });
         var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
@@ -124,11 +124,16 @@
             '<div style="font-size:11px;color:#8fa5b8;margin-bottom:6px;">\u0642\u0648\u0627\u062a \u0627\u0644\u0639\u062f\u0648 \u0627\u0644\u0645\u0646\u0638\u0645\u0629 \u2014 Enemy Force Structure</div>';
         Object.keys(groups).forEach(function (k) {
             var list = groups[k], first = list[0] || {};
+            var side = String(first.side || 'RED').toUpperCase();
+            var sideColor = side === 'BLUE' ? '#7fd6a0' : (side === 'NEUTRAL' ? '#d8d870' : '#f0a0a0');
+            var sideBg = side === 'BLUE' ? '#121a16' : (side === 'NEUTRAL' ? '#1b1a10' : '#1a1212');
+            var sideBorder = side === 'BLUE' ? '#294333' : (side === 'NEUTRAL' ? '#3f3b22' : '#3d2a2a');
             var coord = (first.lat != null && first.lon != null) ? (first.lat + ', ' + first.lon) : 'pending';
-            html += '<div style="margin:8px 0;"><div style="font-size:12px;color:#f0a0a0;margin-bottom:4px;direction:rtl;text-align:right;">' +
-                esc(first.base_name_ar || first.base_name_en || 'RED base') + ' <span style="color:#8fa5b8;">(' + esc(coord) + ')</span></div>';
+            html += '<div style="margin:8px 0;"><div style="font-size:12px;color:' + sideColor + ';margin-bottom:4px;direction:rtl;text-align:right;">' +
+                esc(side + ' · ' + (first.base_name_ar || first.base_name_en || side + ' base')) + ' <span style="color:#8fa5b8;">(' + esc(coord) + ')</span></div>';
             list.forEach(function (u) {
-                html += '<div style="margin:4px 0;padding:6px 8px;border:1px solid #3d2a2a;background:#1a1212;border-radius:4px;font-size:12px;">' +
+                html += '<div style="margin:4px 0;padding:6px 8px;border:1px solid ' + sideBorder + ';background:' + sideBg + ';border-radius:4px;font-size:12px;">' +
+                    fieldRow('side', u.side || side) +
                     fieldRow('platform', u.platform) +
                     fieldRow('estimated_count', u.estimated_count) +
                     fieldRow('type', u.type_ar) +

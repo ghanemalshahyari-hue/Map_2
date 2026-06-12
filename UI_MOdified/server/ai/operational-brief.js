@@ -399,6 +399,9 @@ const MDMP_STEPS = [
 const STEP1_WRAPPER_KEYS = [
     'operational_brief', 'step1', 'Step1', 'Step_1', 'planning_guidance',
     'Planning_Guidance', 'external_step1', 'External_Step_1',
+    'step_1', 'Step_1_Output', 'initial_planning_guide',
+    'initial_planning_guidance', 'data', 'payload', 'document',
+    'external_json', 'raw_external_json',
 ];
 
 function step1FingerprintKeys(obj) {
@@ -409,6 +412,11 @@ function step1FingerprintKeys(obj) {
      'GROUND_COMPONENT_MISSION', 'Operational_Assumptions'].forEach(function (k) {
         if (k in obj) matched.push(k);
     });
+    if (String(obj.external_step || obj.step || '').trim() === '1') matched.push('external_step');
+    var pkg = String(obj.package_type || obj.Package_Type || obj.document_type || obj.type || '');
+    if (/step\s*[-_ ]*1|staff\s*brief\s*1|planning\s*guidance|initial\s*planning|warnord|warning\s*order/i.test(pkg)) {
+        matched.push('package_type');
+    }
     if (obj.enemy_forces && typeof obj.enemy_forces === 'object') {
         ['bases', 'air_bases', 'naval_bases', 'land_bases'].forEach(function (k) {
             if (Array.isArray(obj.enemy_forces[k])) matched.push('enemy_forces.' + k);
@@ -425,11 +433,34 @@ function step1FingerprintKeys(obj) {
 function getExternalStep1Root(obj) {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return null;
     var roots = [{ path: '', value: obj }];
-    STEP1_WRAPPER_KEYS.forEach(function (k) {
-        if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
-            roots.push({ path: k, value: obj[k] });
+    var seen = new Set([obj]);
+    for (var depth = 0; depth < roots.length && depth < 24; depth++) {
+        var cur = roots[depth].value;
+        STEP1_WRAPPER_KEYS.forEach(function (k) {
+            if (cur[k] && typeof cur[k] === 'object' && !Array.isArray(cur[k]) && !seen.has(cur[k])) {
+                seen.add(cur[k]);
+                roots.push({ path: roots[depth].path ? roots[depth].path + '.' + k : k, value: cur[k] });
+            }
+        });
+    }
+    var baseRoots = roots.slice();
+    for (var ui = 0; ui < baseRoots.length; ui++) {
+        var root = baseRoots[ui].value;
+        if (root.operational_brief && typeof root.operational_brief === 'object' && !Array.isArray(root.operational_brief)) {
+            var merged = Object.assign({}, root.operational_brief);
+            ['task_assembly', 'Units_Duty', 'doctrine_upload_required', 'doctrine_sources',
+             'doctrine_application_policy', 'enemy_forces', 'friendly_forces',
+             'proposed_units', 'placement_candidates', 'missing_information',
+             'external_step', 'step', 'package_type', 'Package_Type', 'document_type',
+             'type', 'scenario_metadata'].forEach(function (k) {
+                if (root[k] !== undefined && merged[k] === undefined) merged[k] = root[k];
+            });
+            roots.push({
+                path: baseRoots[ui].path ? baseRoots[ui].path + '.operational_brief' : 'operational_brief',
+                value: merged,
+            });
         }
-    });
+    }
     for (var i = 0; i < roots.length; i++) {
         var matched = step1FingerprintKeys(roots[i].value);
         if (matched.length) return {

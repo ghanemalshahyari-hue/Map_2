@@ -1030,10 +1030,10 @@ function adaptMdmpBundle(entries) {
     }
     if (Object.keys(state.external_raw).length) ob.external_raw = state.external_raw;
 
-    // COAs: 2 BLUE always (even if empty — the operator sees what's missing),
-    // + RED most-likely when the source carried it. RED most-dangerous is
-    // NEVER invented (D3) — Generate More produces it later.
-    const coas = state.blue.slice();
+    // COAs are review objects only when a COA-stage source exists. Step 1/2
+    // imports remain task/force understanding, not draft COA creation.
+    const hasCoaStage = state.steps.some(s => s === 'coa_development' || s === 'coa_analysis' || s === 'coa_comparison');
+    const coas = hasCoaStage ? state.blue.slice() : [];
     if (state.red_ml) {
         const red = newCoa('coa-red-ml', 'RED', 'العمل الأكثر احتمالاً للعدو', 'Enemy Most Likely COA');
         red.intent = state.red_ml.text;

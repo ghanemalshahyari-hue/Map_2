@@ -928,6 +928,27 @@ function handle(req, res, ctx) {
                 return;
             }
             try {
+                var analyzeDiagEnabled = String(process.env.RMOOZ_ANALYZE_DIAG || '').trim() === '1';
+                var analyzeDiag = function (filename, content, det, adaptedOb) {
+                    if (!analyzeDiagEnabled) return;
+                    var step1 = BRIEF.getExternalStep1Root(content);
+                    var root = (step1 && step1.root) || content || {};
+                    var ef = (root.enemy_forces && typeof root.enemy_forces === 'object') ? root.enemy_forces : {};
+                    var diag = {
+                        uploaded_filename: filename || '(posted body)',
+                        detected_external_step: (det && det.step) || null,
+                        detected_package_type: root.package_type || root.Package_Type || root.document_type || root.type || null,
+                        has_task_assembly: root.task_assembly !== undefined,
+                        has_Units_Duty: root.Units_Duty !== undefined,
+                        has_enemy_forces_air_bases: Array.isArray(ef.air_bases),
+                        has_enemy_forces_bases: Array.isArray(ef.bases),
+                        proposed_units_count: Array.isArray(root.proposed_units) ? root.proposed_units.length :
+                            (adaptedOb && Array.isArray(adaptedOb.proposed_units) ? adaptedOb.proposed_units.length : 0),
+                        placement_candidates_count: Array.isArray(root.placement_candidates) ? root.placement_candidates.length :
+                            (adaptedOb && Array.isArray(adaptedOb.placement_candidates) ? adaptedOb.placement_candidates.length : 0),
+                    };
+                    console.log('[analyze-classification]', JSON.stringify(diag));
+                };
                 // MDMP-EXTERNAL-1 / G-2: a bundle of external MDMP-stage files
                 // ({ bundle: [{ filename|name, content }] }) maps into ONE brief
                 // via the adapter (step3→COAs+force comparison, step4→wargame
@@ -950,13 +971,18 @@ function handle(req, res, ctx) {
                             sendJson(res, 400, { ok: false, error: 'bundle[' + bi + '] content must be a JSON object' });
                             return;
                         }
-                        if (!BRIEF.detectMdmp(content).is) {
+                        var bundleDet = BRIEF.detectMdmp(content);
+                        analyzeDiag(it.filename || it.name || ('bundle-' + bi), content, bundleDet, null);
+                        if (!bundleDet.is) {
                             sendJson(res, 400, { ok: false, error: 'bundle[' + bi + '] (' + (it.filename || it.name || '?') + ') is not a recognized external MDMP-stage file — post it alone for brief/scenario/unknown handling' });
                             return;
                         }
                         entries.push({ filename: it.filename || it.name || ('bundle-' + bi), data: content });
                     }
                     var bundleOut = MDMP_ADAPTER.adaptMdmpBundle(entries);
+                    for (var ai = 0; ai < entries.length; ai++) {
+                        analyzeDiag(entries[ai].filename, entries[ai].data, BRIEF.detectMdmp(entries[ai].data), bundleOut.brief.operational_brief);
+                    }
                     sendJson(res, 200, {
                         ok: true, kind: 'mdmp_external', bundle: true,
                         steps_present: bundleOut.report.steps_present,
@@ -984,6 +1010,7 @@ function handle(req, res, ctx) {
                         llm_fill: { available: false, reason: 'RMOOZ scenario JSON — validated + normalized deterministically' },
                     });
                 } else if (kind === 'operational_brief') {
+                    analyzeDiag('(posted body)', body, BRIEF.detectMdmp(body), null);
                     var vb = BRIEF.validateBrief(body);
                     var nb = BRIEF.normalizeBrief(body);
                     sendJson(res, 200, {
@@ -1000,6 +1027,7 @@ function handle(req, res, ctx) {
                     // ambiguities say which stages are absent.
                     var det = BRIEF.detectMdmp(body);
                     var single = MDMP_ADAPTER.adaptMdmpBundle([{ filename: '(posted body)', data: body }]);
+                    analyzeDiag('(posted body)', body, det, single.brief.operational_brief);
                     sendJson(res, 200, {
                         ok: true, kind: 'mdmp_external', mdmp_step: det.step, matched_keys: det.matched,
                         requires_review: true, confidence: 'low',

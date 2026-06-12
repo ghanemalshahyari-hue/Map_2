@@ -292,6 +292,59 @@
             el.analyze = analyzeBtn;
             el.review = review;
             analyzeBtn.addEventListener('click', runAnalyze);
+
+            // ── MDMP-EXTERNAL-1 / G-3 wiring: stage external MDMP JSON files ──
+            // The G-2 server adapter accepts { bundle: [{ filename, content }] }
+            // on /analyze, but the wizard previously had no way to feed it —
+            // the COA Review Panel (G-3) was reachable only from the devtools
+            // fixture page. This row lets the operator pick the step 3/4/5
+            // JSON/JSONC files; runAnalyze() then posts them as the bundle.
+            // Files are read client-side only — no staging endpoint, no writes.
+            st.mdmpFiles = [];
+            var mdmpRow = document.createElement('div');
+            mdmpRow.id = 'wg-wz-mdmp-row';
+            mdmpRow.style.cssText = 'margin:10px 0 4px;padding:8px;border:1px dashed #4a7bb8;border-radius:6px;background:#101a24;';
+            mdmpRow.innerHTML =
+                '<div style="font-size:12px;color:#8fb8e0;margin-bottom:4px;">External MDMP files (steps 3/4/5, JSON) — ملفات MDMP خارجية <span style="color:#6a7a8a;">(optional)</span></div>' +
+                '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+                  '<label class="wg-wz-file-btn" for="wg-wz-mdmp" style="margin:0;">' +
+                    '<span>Choose MDMP JSON</span>' +
+                    '<input type="file" id="wg-wz-mdmp" class="wg-wz-file-input" accept=".json,.jsonc" multiple>' +
+                  '</label>' +
+                  '<span id="wg-wz-mdmp-names" style="font-size:11px;color:#9aa3ad;">No MDMP files staged</span>' +
+                  '<button type="button" id="wg-wz-mdmp-clear" style="display:none;font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#cfd6dd;border-radius:4px;padding:2px 8px;font-size:11px;">Clear</button>' +
+                '</div>';
+            actionRow.parentNode.insertBefore(mdmpRow, actionRow);
+            el.mdmpInput = mdmpRow.querySelector('#wg-wz-mdmp');
+            el.mdmpNames = mdmpRow.querySelector('#wg-wz-mdmp-names');
+            el.mdmpClear = mdmpRow.querySelector('#wg-wz-mdmp-clear');
+            function paintMdmpStaged() {
+                var n = st.mdmpFiles.length;
+                el.mdmpNames.textContent = n
+                    ? (n + ' staged: ' + st.mdmpFiles.map(function (f) { return f.filename; }).join(', '))
+                    : 'No MDMP files staged';
+                el.mdmpNames.style.color = n ? '#7fc07f' : '#9aa3ad';
+                el.mdmpClear.style.display = n ? '' : 'none';
+                updateStartEnabled();
+            }
+            el.mdmpInput.addEventListener('change', function () {
+                var files = Array.prototype.slice.call(el.mdmpInput.files || []);
+                if (!files.length) return;
+                Promise.all(files.map(function (f) {
+                    return f.text().then(function (text) { return { filename: f.name, content: text }; });
+                })).then(function (loaded) {
+                    st.mdmpFiles = loaded;
+                    paintMdmpStaged();
+                    setStatus(loaded.length + ' MDMP file(s) staged — click "Review AI Understanding".', '#7fc07f');
+                }).catch(function (e) {
+                    setStatus('Could not read MDMP file(s): ' + e.message, '#e05252');
+                });
+            });
+            el.mdmpClear.addEventListener('click', function () {
+                st.mdmpFiles = [];
+                el.mdmpInput.value = '';
+                paintMdmpStaged();
+            });
         })();
 
         function showReviewError(msg) {
@@ -304,7 +357,10 @@
             el.analyze.disabled = true;
             var prev = el.analyze.textContent;
             el.analyze.textContent = 'Analyzing… جارٍ التحليل';
-            api('POST', '/api/wargame-sim/analyze').then(function (r) {
+            // G-3 wiring: staged external MDMP JSONs go up as the G-2 bundle;
+            // otherwise the empty-body DOCX path runs exactly as before.
+            var analyzeBody = (st.mdmpFiles && st.mdmpFiles.length) ? { bundle: st.mdmpFiles } : null;
+            api('POST', '/api/wargame-sim/analyze', analyzeBody).then(function (r) {
                 el.analyze.disabled = false; el.analyze.textContent = prev;
                 if (!r.body) { showReviewError('No response from analyze (is the server running?).'); return; }
                 if (!r.body.ok) { showReviewError((r.body && r.body.error) || ('analyze failed (' + r.status + ')')); return; }
@@ -515,7 +571,8 @@
             // at least one document is staged (red OR blue) and we're idle.
             if (el.analyze) {
                 el.analyze.style.display = st.stopped ? 'none' : '';
-                el.analyze.disabled = !(st.red || st.blue) || st.running;
+                // G-3 wiring: staged MDMP JSONs also enable review (no DOCX needed).
+                el.analyze.disabled = !(st.red || st.blue || (st.mdmpFiles && st.mdmpFiles.length)) || st.running;
             }
         }
 

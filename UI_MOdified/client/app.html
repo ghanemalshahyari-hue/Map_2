@@ -4461,6 +4461,11 @@
     <!-- L3-A: "Why-Not" action feasibility evaluator (pure; reads ENG1 + evidence ledger). -->
     <script src="shell/action-feasibility.js?v=1"></script>
     <script src="wargame/adjudicator-map.js?v=45"></script>
+    <!-- Canonical scenario RUN dispatcher + single client PREVIEW playback engine.
+         Loaded before movement-playback / timeline / scenario-workspace so it owns
+         the bottom-transport listener and the others defer to it (kills the
+         multi-engine race). See shell/scenario-runner.js header. -->
+    <script src="shell/scenario-runner.js?v=1"></script>
     <script src="wargame/cesium-view.js?v=3"></script>
     <script src="dem-layer.js?v=1"></script>
     <script src="wargame/coverage-summary.js?v=1"></script>
@@ -4644,7 +4649,6 @@
          Import Tools" (kept, not deleted). Orchestration only; porter unchanged. -->
     <!-- DOC-UNDERSTANDING-1 / G-3: COA Review Panel (cards + Select/Reject/Edit/Compare + generation gate). Must load BEFORE the review renderer. -->
     <script src="shell/coa-review-panel.js?v=1"></script>
-    <!-- DOC-UNDERSTANDING-1 / G-3C: read-only Location Placement Candidates panel (sibling of coa-review-panel). Must load BEFORE the review renderer. -->
     <script src="shell/placement-candidates-panel.js?v=1"></script>
     <!-- DOC-UNDERSTANDING-1 / Phase E: shared AI-Understanding review renderer (used by the wizard + verify page). -->
     <script src="shell/doc-understanding-review.js?v=1"></script>

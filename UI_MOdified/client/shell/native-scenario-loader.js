@@ -95,8 +95,31 @@
     function clearRememberedScenario() {
         try { localStorage.removeItem(STORAGE_LAST_LOADED); } catch (_) {}
     }
+    // RUNFIX-1: announce the canonical active scenario to every run surface.
+    // The Wargame HUD listens (syncs its #wg-adj-scenario dropdown + default) so
+    // "Run trial" adjudicates the SAME scenario the workspace/Play path renders.
+    // persist=true also records it as the server's active scenario — the single
+    // cross-surface arbiter (data/scenarios/_active.json) the HUD reads at init.
+    function announceActiveScenario(name, persist) {
+        if (!isSafeScenarioName(name)) return;
+        if (persist) {
+            try {
+                fetch('/api/scenario/active', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ name: name }),
+                }).catch(function () {});
+            } catch (_) {}
+        }
+        try {
+            document.dispatchEvent(new CustomEvent('rmooz:active-scenario-changed', {
+                detail: { name: name, source: 'native-scenario-loader' }
+            }));
+        } catch (_) {}
+    }
     // Load a data/scenarios scenario by (validated) name into the workspace.
-    function _restoreByName(ws, name) {
+    function _restoreByName(ws, name, persistActive) {
         if (!isSafeScenarioName(name)) return Promise.reject(new Error('unsafe name'));
         return fetch('/api/ai/scenario/' + encodeURIComponent(name), { credentials: 'same-origin' })
             .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
@@ -105,33 +128,38 @@
                 var res = ws.loadLiveScenarioFromJson(sc);
                 if (!res || res.passed !== true) throw new Error('blocked');
                 rememberLastLoadedScenario(name);              // keep the pointer fresh
+                announceActiveScenario(name, persistActive !== false);   // RUNFIX-1: one canonical scenario
                 logEvent('Restored scenario: ' + name);
                 return true;
             });
     }
     // On a plain refresh (no explicit launch intent), reload the last scenario
-    // via the NORMAL loader path. Tries the local pointer first, then falls back
-    // to the SERVER's active scenario (set by the latest import/load) so a fresh
-    // re-import — even if it auto-suffixed to a new name — is what shows after a
-    // refresh, never a stale earlier copy. Invalid/missing everywhere → cleared
-    // pointer + clean default state, no modal, no crash.
+    // via the NORMAL loader path. RUNFIX-1: the SERVER's active scenario (set by
+    // the latest explicit import/load/selection on ANY surface, incl. the HUD
+    // dropdown) is canonical and is tried FIRST; the local pointer is only the
+    // offline fallback. This stops a stale localStorage pointer from overriding
+    // the operator's latest selection — the old order let the stale pointer win
+    // whenever it still loaded. Invalid/missing everywhere → cleared pointer +
+    // clean default state, no modal, no crash.
     function restoreLastLoadedScenario() {
         var ws = workspace();
         if (!ws) return;
         var p = getRememberedScenario();
-        var primary = p ? p.name : null;
-        var attempt = primary ? _restoreByName(ws, primary) : Promise.reject(new Error('no pointer'));
-        attempt.catch(function () {
-            // Fallback: whatever the server reports as the active scenario.
-            return fetch('/api/ai/scenarios', { credentials: 'same-origin' })
-                .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
-                .then(function (j) {
-                    var active = j && j.active;
-                    if (!isSafeScenarioName(active) || active === primary) throw new Error('no active fallback');
-                    return _restoreByName(ws, active);
-                })
-                .catch(function () { if (primary) clearRememberedScenario(); });   // self-heal
-        });
+        var pointer = p ? p.name : null;
+        fetch('/api/ai/scenarios', { credentials: 'same-origin' })
+            .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+            .then(function (j) {
+                var active = j && j.active;
+                if (!isSafeScenarioName(active)) throw new Error('no server active');
+                // Server active is already canonical — restoring it must not re-POST.
+                return _restoreByName(ws, active, false);
+            })
+            .catch(function () {
+                // Offline / no server active: fall back to the local pointer.
+                if (!pointer) return;
+                return _restoreByName(ws, pointer, false)
+                    .catch(function () { clearRememberedScenario(); });   // self-heal
+            });
     }
 
     /* APP-FLOW-2: in-app load/import entry points (reuse existing flows) ----- */
@@ -157,6 +185,7 @@
                     throw new Error((res && res.blockedReasons && res.blockedReasons.join('; ')) || 'validation failed');
                 }
                 rememberLastLoadedScenario(name);
+                announceActiveScenario(name, true);   // RUNFIX-1: explicit load ⇒ new canonical active
                 logEvent('Loaded scenario: ' + name);
             })
             .catch(function (e) {
@@ -328,6 +357,9 @@
                 label);
             // Remember the data/scenarios pointer so a refresh restores it.
             rememberLastLoadedScenario(json.name || res.scenarioId);
+            // RUNFIX-1: sync run surfaces to the loaded identity (event only — a
+            // launcher file may not exist server-side, so don't persist active).
+            announceActiveScenario(json.name || res.scenarioId, false);
             try { sessionStorage.removeItem(STORAGE_PENDING); } catch (_) {}
             return;
         }
@@ -661,6 +693,8 @@
         getRememberedScenario: getRememberedScenario,
         clearRememberedScenario: clearRememberedScenario,
         restoreLastLoadedScenario: restoreLastLoadedScenario,
+        // RUNFIX-1: canonical active-scenario announcement (HUD dropdown sync).
+        announceActiveScenario: announceActiveScenario,
         // APP-FLOW-2: in-app run-bar entry points.
         openImportScenario: openImportScenario,
         loadScenarioByName: loadScenarioByName,

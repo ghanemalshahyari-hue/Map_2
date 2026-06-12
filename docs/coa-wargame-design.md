@@ -1,12 +1,18 @@
-# COA Visualization & Wargame Design — v2 (DECISIONS LOCKED)
+# COA Visualization & Wargame Design — v3 (DECISIONS LOCKED · MISSION-FIRST)
 
-**Status: LOCKED by owner 2026-06-11 (rulings L1–L10 below). This document is the build
-contract for G-2/G-3 and the COA/wargame phases that follow.** Supersedes the v1 decision
-draft (D1–D10 are resolved by L1–L10).
+**Status: LOCKED by owner (L1–L13 ruled 2026-06-11; L14–L16 mission-first rulings added by
+owner the same day). This document is the build contract for the G-track — COA, location
+intelligence, tasking, timeline, doctrine, animation.** Supersedes the v1 decision draft
+(D1–D10 are resolved by L1–L10). v3 adds the **mission-first / outcome-driven operating model**
+(§0.6) and the updated build order (L12).
 
-Global rule (unchanged, enforced): **AI understands → user reviews → RMOOZ validates → RMOOZ
-generates.** Everything AI-produced is *AI-assisted possibilities / needs review* — never
-tactical truth.
+Global rule (unchanged, enforced): **AI suggests → RMOOZ validates → commander approves →
+WHITE adjudicates → state changes are journaled.** Everything AI-produced is *AI-assisted
+possibilities / needs review* — never tactical truth.
+
+> **Identity (L14): RMOOZ is a mission decision-support and wargaming platform — NOT an AI
+> document importer.** Documents are one data feed among many (§0.6.3); the session starts from
+> a desired **outcome**, not from an upload.
 
 ---
 
@@ -25,12 +31,184 @@ tactical truth.
 | **L9 (D5)** | **Detailed timeline records**: action, reaction, counteraction, WHITE adjudication, result, **affected units, confidence, needs_review, source_citations** — mapping directly from external Step-4 triads. |
 | **L10 (D6)** | `amphibious_landing` / عملية إبرار requires **objective AND landing-area confirmation; missing either ⇒ 422.** AI may *suggest* draft landing areas; the user must confirm. |
 | **L11 (D8)** | **Animation is NOT built first** (G-7, after timeline + tasking). When built: one event at a time, play/pause/step fwd/back, arrows/routes/effects tied to actual A/R/C records, **no decorative-only animation**, commander can stop & modify before continuing. |
-| **L12 (D10)** | Build order: **G-2** MDMP adapter (step3→COAs+force comparison, step4→A/R/C wargame turns, step5→comparison/recommendation, placeholder scrub, per-key citations) → **G-3** COA Review Panel → **G-4** Unit Tasking Mode → **G-5** Wargame Timeline (RED/BLUE/WHITE) → **G-6** Doctrine Rule Cards → **G-7** Animation → **G-8** civilians/infrastructure/ROE reality layer (later). |
+| **L12 (D10 · updated by owner 2026-06-11)** | Build order: **G-2** MDMP adapter ✅ → **G-3** COA Review Panel ✅ (visible in the real wizard flow) → **G-3A** Planning Model Unification (upload data and in-app-built scenario data normalize into ONE internal planning model — the implementation slot of L13) → **G-3B** Location Intelligence Resolver (place names, coordinates, AO checks, confidence, incident history — `docs/location-intelligence-design.md`) → **OBJLINK-B** Unit ↔ Objective/BLS/Route derivation ✅ (read-only evidence layer from existing World State; `ws.derived.unit_objective_links`) → **G-4** Unit Tasking Mode (CMO-style task/order/direction/objective/posture — not just dragging) → **G-5** RED/BLUE/WHITE Wargame Timeline (action → reaction → counteraction → WHITE decision → result) → **G-6** Doctrine Rule Cards (public NATO-style test doctrine first, uploaded doctrine later) → **G-7** Animation (timeline-driven playback only after tasking/timeline exist) → **G-8** civilian / infrastructure / ROE reality layer (later). |
+| **L13 (owner, 2026-06-11)** | **Native Scenario Builder parity is MANDATORY.** Every COA/planning capability must work from BOTH input paths: **(A) upload/import** (MDMP docs, external JSON) and **(B) the RMOOZ in-app scenario builder** — user-created AO, objectives, BLUE/RED units, assigned/requested locations, manual incident notes (مجرى الحوادث), and "ask AI for COAs" with **no document uploaded**. All manually created app data is converted into the **same Operational Brief / Planning Model** used by imported data before any AI step — **no separate upload-only AI logic, ever.** Every planning object carries a `source.type` from the global taxonomy (§0.5). |
+| **L14 (owner, 2026-06-11)** | **Mission-first / outcome-driven, NOT upload-first.** A session starts from a desired **outcome** — السيطرة على هدف · اختبار عملية إبرار · حماية قاعدة · منع تقدم عدو · تقييم رد فعل العدو · مقارنة الأعمال الممكنة — and **RMOOZ derives what it needs** (AO, objectives, BLUE/RED units, locations, incident history, doctrine, readiness/supply, routes/BLS/objective links, COAs, missing-info list) as a deterministic requirements checklist (§0.6.2). Uploads, the builder, and AI are all just ways to **fill** that checklist. Outcome-driven tasking: taskings/COAs are evaluated against the mission's success criteria, not in the abstract. |
+| **L15 (owner, 2026-06-11)** | **Data fusion model.** All sources — manual scenario builder · DOCX/PDF · JSON/MDMP external outputs · location DB/gazetteer · incident log (مجرى الحوادث) · doctrine PDF/DOCX · existing World State · DB-Lite capabilities · commander input — normalize into the **one** planning model (§0.5), each object stamped `source.type` + confidence + citations. Fusion precedence: **operator-declared > reviewed > derived > AI-suggested**; conflicts are SURFACED for review (`conflicts[]`), never silently resolved. AI is an **orchestration/reasoning layer over fused data — never final authority** (the global rule). |
+| **L16 (owner, 2026-06-11)** | **Inspiration attribution & boundary.** The public product direction of **tacticalabs.ai / TACTICA AI** (mission-first tasking, data fusion, human-in-the-loop, digital-twin visualization, AI-as-orchestration, outcome/risk analysis, on-prem modular deployment) is acknowledged as *direction inspiration only*. **No UI, code, asset, schema, or text is to be copied from it.** RMOOZ implements these ideas on its own locked architecture (L1–L15, the AI/sim boundary, the journal). Digital-twin direction per §0.6.5: the live map + World State projection is the twin — evidence-first, every rendered relationship traceable to a derivation or a declared source. |
 
 Roles (L1): at wargame start a role picker offers **BLUE (default) / RED / WHITE**; the chosen
 role gates which side's taskings the user may issue and whether they hold the WHITE approval
 gavel. `operator_id` + chosen role are stamped on every journal row. NEUTRAL remains a side,
 not a role.
+
+---
+
+## 0.5 Input paths — upload AND native builder (L13, MANDATORY)
+
+The planning pipeline has exactly **one** model and **two** front doors. Everything downstream of
+the Operational Brief (COA generation, review panel, tasking, wargame turns, adjudication,
+location resolution) is **source-blind** — it must not know or care whether the brief came from a
+document or from in-app authoring.
+
+**Path A — Upload / import (exists / G-2):** doc-understanding flow (PDF/DOCX → extractors →
+reviewed brief), MDMP step-3/4/5 adapter, external JSON import. Source types: `uploaded_doc`,
+`external_json`, `mdmp_adapter`.
+
+**Path B — RMOOZ native scenario builder (in-app, no document):** the user can
+- create the **AO** (draw/confirm boundaries),
+- create **objectives**,
+- create **BLUE/RED units**,
+- **assign locations** (map click / typed place name / pick from `location_db`) or **request**
+  a location (typed phrase → the same Location Intelligence resolver ladder,
+  `docs/location-intelligence-design.md` LI‑11),
+- add **incident notes / مجرى الحوادث manually** (same `incident_log` schema, `source.type:
+  'manual_app_entry'`),
+- **ask AI for COAs without uploading any document.**
+
+**Convergence rule (the heart of L13):** native-builder objects are assembled into the **same
+`operational_brief` / planning model** (same `emptyBrief` shape, same validators, same
+`/analyze`-equivalent payload) that Path A produces. One brief builder, one COA engine, one
+review panel. **Do not create separate upload-only AI logic** — if a capability works for an
+uploaded brief it must work for a hand-built brief, and vice versa.
+
+**Global `source` field (mandatory on every planning object)** — every brief object, unit,
+objective, AO, incident, placement candidate, tasking, COA, and wargame turn carries:
+
+```
+source: {
+  type: 'uploaded_doc'      // extracted from an uploaded document
+      | 'external_json'     // imported machine-readable scenario/package
+      | 'mdmp_adapter'      // produced by the MDMP step-3/4/5 adapter
+      | 'manual_app_entry'  // typed/authored in the RMOOZ builder UI
+      | 'map_click'         // operator clicked/drew it on the map
+      | 'location_db'       // resolved from the internal gazetteer
+      | 'incident_log'      // derived from a مجرى الحوادث entry
+      | 'llm_candidate'     // AI-suggested, needs_review (L6 invariants apply)
+      | 'doctrine_rule',    // produced/required by a doctrine rule card
+  ref?, citation?           // existing per-source citation conventions
+}
+```
+
+`source.type` composes with — never replaces — the L6 invariants (`needs_review`, `confidence`,
+citations). Operator-authored objects (`manual_app_entry`, `map_click`) are declared data:
+`confidence:'high'`, no review gate; AI/LLM objects keep `needs_review:true` regardless of path.
+
+## 0.6 Mission-first operating model (L14–L16, owner 2026-06-11)
+
+### 0.6.1 The mission-first workflow (the front door)
+
+The session begins with an **outcome**, not a file. Upload is demoted from "step 1" to "one way
+to fill a requirement."
+
+```
+1. OUTCOME   المطلوب أولاً — operator picks/states the desired outcome (§0.6.2 catalog)
+      → mission object created (journaled, source.type:'manual_app_entry')
+2. DERIVE    RMOOZ computes the requirements checklist for that outcome — deterministic
+      needs-matrix, NOT prose: AO · objectives · BLUE/RED units · locations · incident
+      history (مجرى الحوادث) · doctrine rules · readiness/supply · routes/BLS/objective
+      links · COAs · explicit missing-information list
+3. FUSE      each requirement row shows status (present / missing / stale) and is fillable
+      from ANY source in §0.6.3 — builder, upload, location DB, world state, commander…
+4. REVIEW    human-in-the-loop gates (§0.6.4): nothing fused becomes planning truth
+      without review, unless operator-declared
+5. EXECUTE   COAs (§1) → tasking (§2) → RED/BLUE/WHITE timeline (§3) → WHITE
+      adjudication (§4) — all evaluated AGAINST the mission's success criteria
+6. ASSESS    outcome analysis: results vs success_criteria; risk / predicted-outcome view
+      (COA evaluation block + wargame results + MC distribution where available)
+```
+
+### 0.6.2 Outcome catalog → requirements matrix (deterministic, data-driven)
+
+`OUTCOME_TYPES` — additive enum (L8 style; AR labels via i18n, never hardcoded prose):
+
+| Outcome | النتيجة | Auto-derived requirements (checklist seeds) |
+|---|---|---|
+| `SEIZE_OBJECTIVE` | السيطرة على هدف | objective + AO · BLUE maneuver units · RED defenders · routes/BLS/objective links · force comparison · attack-ratio doctrine cards · COAs |
+| `TEST_AMPHIB_OP` | اختبار عملية إبرار | objective **and landing area (L10 — 422 if either missing)** · naval/amphib BLUE · RED coastal defense · BLS/throughput · coastal incident history · readiness/supply |
+| `DEFEND_BASE` | حماية قاعدة | base location (location DB) · BLUE defenders + AD coverage (DB-Lite/DET1) · RED threat axis · detection coverage · incident history at the base |
+| `DENY_ADVANCE` | منع تقدم عدو | AO + avenue of approach · RED units + routes · BLUE blocking units · terrain/BLS · doctrine constraints |
+| `ASSESS_ENEMY_REACTION` | تقييم رد فعل العدو | an existing plan/tasking set · RED doctrine/posture · red-team agent · wargame timeline |
+| `COMPARE_COAS` | مقارنة الأعمال الممكنة | ≥2 COAs · evaluation criteria · force comparison (step-3/step-5 model) |
+
+**`mission` object (additive schema, §7):**
+
+```
+mission = {
+  mission_id, outcome_type: OUTCOME_TYPES, title_ar, title_en,
+  params: { objective_ref?, base_ref?, axis?, enemy_focus? },        // picked/existing, never invented
+  success_criteria: [ { metric, target, source } ],
+  requirements: [ { kind, status: present|missing|stale|declined,
+                    filled_by: source.type, refs[] } ],
+  status: draft | ready | in_planning | wargamed | assessed,
+  created_by: operator_id, created_at, journal_refs[]
+}
+```
+
+### 0.6.3 Data fusion model (L15)
+
+One planning model (§0.5), many feeds. Every object carries `source.type` + confidence +
+citations; the fusion layer's job is **inventory and conflict surfacing**, not silent merging.
+
+| Source | `source.type` | Trust class |
+|---|---|---|
+| Manual scenario builder (in-app) | `manual_app_entry` / `map_click` | operator-declared |
+| DOCX/PDF documents | `uploaded_doc` | reviewed-after-extraction |
+| JSON / MDMP external outputs | `external_json` / `mdmp_adapter` | reviewed-after-adaptation |
+| Location DB / gazetteer | `location_db` | reviewed data |
+| Incident log (مجرى الحوادث) | `incident_log` | evidence (LI-8: never truth) |
+| Doctrine PDF/DOCX → rule cards | `doctrine_rule` | active cards only (L7) |
+| Existing World State | (derived) | derived evidence (e.g. OBJLINK-B links) |
+| DB-Lite unit capabilities | (derived) | derived enrichment |
+| Commander input | `manual_app_entry` | operator-declared |
+| LLM suggestions | `llm_candidate` | AI-suggested (lowest; never auto-truth) |
+
+**Precedence: operator-declared > reviewed > derived > AI-suggested.** Disagreement between
+sources ⇒ `conflicts[]` entry surfaced for review (same philosophy as the location resolver
+ladder, LI-2). **AI is an orchestration/reasoning layer over fused data — never final authority.**
+
+### 0.6.4 Human-in-the-loop validation (unchanged rule, mapped to gates)
+
+**AI suggests → RMOOZ validates → commander approves → WHITE adjudicates → state changes are
+journaled.** Gate map: brief/understanding review (G-1/G-2) · placement-candidate review (G-3B)
+· COA approve/reject/edit (§1) · tasking accept (§2) · per-beat / batch WHITE decisions (§3–§4)
+· journal boundary on every commit (`operator_id` + role stamp). No gate may be bypassed by any
+source type — including operator uploads.
+
+### 0.6.5 Digital-twin visualization direction (L16)
+
+The live map + World State projection **is** the twin — *evidence-first*: every rendered
+relationship must trace to a derivation or a declared source (no decorative intel).
+
+- **Exists now:** read-only overlays of the deterministic engines (DB1 coverage rings, DET1
+  contacts, ENG1 firing solutions), W3 presentation suite, OBJLINK-B objective/BLS/route
+  evidence links, doctrine/objective evidence panels.
+- **Adds per slot:** G-3B location confidence/AO halos on candidates · G-4 tasking ghosts
+  (direction arrow, draft route, objective link) on the planning overlay · G-5 turn-beat state
+  on the timeline · G-7 timeline-driven playback (only after tasking/timeline exist, L11).
+- **Planned-vs-actual:** baseline + planning delta (L5) is the twin's "two layers" — the
+  baseline never mutates; the working copy is the what-if surface. Risk / predicted-outcome
+  views read the COA evaluation block, wargame `result` records, and MC distributions.
+- Deployment stays modular + on-prem capable (offline image): every fusion source is an
+  adapter; no cloud dependency is ever required for the core loop.
+
+### 0.6.6 Coverage map (where each mandated capability lives)
+
+| Capability | Where |
+|---|---|
+| Mission-first workflow / outcome catalog | §0.6.1–0.6.2 (model lands with **G-3A**) |
+| Outcome-driven tasking | §2 + mission.success_criteria (G-4) |
+| Data fusion model | §0.6.3 (G-3A normalization is the enforcement point) |
+| Human-in-the-loop validation | §0.6.4 gates (already enforced; extended per slot) |
+| Digital-twin visualization | §0.6.5 (incremental per slot) |
+| Manual scenario builder support | §0.5 Path B (L13) |
+| Upload / import support | §0.5 Path A (G-1/G-2, shipped) |
+| Location intelligence | `docs/location-intelligence-design.md` (**G-3B**) |
+| Incident history (مجرى الحوادث) | location design §B.3 + fusion row (LI-8) |
+| COA review | §1 (shipped, G-3) |
+| Unit tasking | §2 (G-4) |
+| RED/BLUE/WHITE timeline | §3 (G-5) |
+| Event journal boundary | §4 + global rule (shipped: commit boundary + journal) |
 
 ---
 
@@ -103,6 +281,10 @@ tasking = {
   drawn on the planning overlay layer (Appendix A), never on baseline markers.
 - Drag remains available as a *positional* tasking (`task: MOVE` with route = [drop point]) —
   drag is a shortcut into the same tasking model, not a separate mutation path.
+- **Live unit state (L13 test #5):** the prediction/feasibility stage consumes the unit's
+  existing `readiness` / `supply` / `status` (World-State projection, DB-Lite enrichment) **when
+  available**, and degrades honestly when absent (W3 carries nulls) — no fabricated values, same
+  rule for both input paths.
 
 ## 3. Wargame Timeline (L3 + L10)
 
@@ -233,6 +415,11 @@ rule_card = {
 | Journal row kinds | journal (additive) | `white_decision`, `tasking_accepted` alongside existing kinds |
 | Placement invariants (L6) | brief-to-scenario + adapters | every AI-placed unit: `needs_review`, `placement_confidence`, `source` — schema-checked, not convention |
 | Role stamp (L1) | commit/journal payloads | `issued_role: BLUE|RED|WHITE` next to `operator_id` |
+| **`source.type` on EVERY planning object (L13)** | brief objects, units, objectives, AO, incidents, placement candidates, taskings, COAs, wargame turns | global taxonomy (§0.5): `uploaded_doc · external_json · mdmp_adapter · manual_app_entry · map_click · location_db · incident_log · llm_candidate · doctrine_rule` — schema-checked enum, composes with L6 invariants |
+| Native builder → brief assembly (L13) | one brief builder module shared by Path A + Path B | in-app AO/objectives/units/incidents serialize into the same `operational_brief`; no upload-only branch anywhere in the AI pipeline |
+| **`mission` object (L14)** | planning model root (additive; NOT scenario JSON) | §0.6.2 — outcome_type enum + success_criteria + requirements checklist; journaled on create/state-change |
+| `OUTCOME_TYPES` enum (L14) | `server/sim/wargame-enums.js` (same registry as §4.3) | additive enum; AR labels in i18n, no free text |
+| `conflicts[]` on fused artifacts (L15) | brief / candidates / fusion layer | source disagreements surfaced for review, never silently resolved |
 
 ## 8. Tests
 
@@ -246,6 +433,10 @@ rule_card = {
 | Enums (L8) | registry-only values pass validators; free-text status rejected; legacy enums unchanged (adjudicator regression) |
 | Doctrine cards (L7) | draft/retired never evaluated; seed pack loads as reviewed; extracted card requires operator transition to active; every ruling cites fired cards |
 | Animation | beat order A→R→C→W→R; step-mode pauses after A, R, C (locked); scrub idempotent; 500/side perf smoke |
+| **Dual input path (L13)** | (1) COA review works end-to-end from **uploaded MDMP files**; (2) COA review works end-to-end from a **manual RMOOZ-built scenario with NO upload** (AO + objectives + units + incidents authored in-app → same brief → COAs); both runs produce the same brief/COA shape (source fields differ, structure identical); every object in both runs carries a valid `source.type`; no code path branches on "was uploaded" |
+| **Tasking uses live unit state (L13)** | unit tasking prediction/feasibility consumes existing unit `readiness` / `supply` / `status` **when available** (DB-Lite/WS-enriched units), and degrades honestly (no fabricated values) when absent — asserted for both input paths |
+| Location resolver dual path | see `docs/location-intelligence-design.md` §C — resolver works from **document text** AND from a **manually typed location** (LI‑11 parity tests) |
+| **Mission-first (L14/L15)** | outcome pick → deterministic requirements checklist (same checklist for the same outcome, every run); checklist fillable builder-only AND upload-only with identical resulting planning-model shape; missing-info list explicit (no silent gaps); fusion conflict ⇒ `conflicts[]` + review (never silent); mission create/state-change journaled; no gate bypassed by any `source.type` |
 | Regression | all 8 existing suites; existing AI/import button; boundary-audit self-test; offline-image gate before any rebuild |
 
 ---

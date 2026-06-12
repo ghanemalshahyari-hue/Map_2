@@ -393,6 +393,27 @@ let activeCombats = [];
             && window.AppAdjudicatorMap.isScenarioDrawn());
     }
 
+    // Last step INDEX for the loaded scenario (scenario-length-aware). Replaces
+    // the old hard-coded SCENARIO_TOTAL_STEPS=11, which truncated Wargame 3's
+    // 17-step timeline. Falls back to the legacy constant when no canonical
+    // runner / scenario length is available.
+    function scenarioStepCap() {
+        var n = (window.AppScenarioRunner && typeof window.AppScenarioRunner.stepCount === 'function')
+            ? window.AppScenarioRunner.stepCount() : 0;
+        return (n > 1) ? (n - 1) : SCENARIO_TOTAL_STEPS;
+    }
+    // Route scenario-mode step rendering through the canonical engine so the
+    // turn-engine HUD animates the same scenario identically to the workspace /
+    // bottom transport (one renderer, one step cursor). Falls back to the direct
+    // applyStepProgress call when the runner isn't present.
+    function renderScenarioStep(idx, progress) {
+        if (window.AppScenarioRunner && typeof window.AppScenarioRunner.seek === 'function') {
+            window.AppScenarioRunner.seek(idx);
+        } else if (window.AppAdjudicatorMap && typeof window.AppAdjudicatorMap.applyStepProgress === 'function') {
+            window.AppAdjudicatorMap.applyStepProgress(idx, progress);
+        }
+    }
+
     function initScenarioMode() {
         const { red, blue } = window.AppAdjudicatorMap.getScenarioMarkers();
         if (!red.length) {
@@ -401,7 +422,7 @@ let activeCombats = [];
         }
         // Snap markers to step-0 positions FIRST, then capture initial
         // positions so resetScenario() doesn't override with stale coords.
-        window.AppAdjudicatorMap.applyStepProgress(0, 0);
+        renderScenarioStep(0, 0);
         const unitPaths = red.map(m => ({
             marker:        m,
             unitCode:      (m._wgRedMeta && m._wgRedMeta.uid) || '?',
@@ -446,14 +467,15 @@ let activeCombats = [];
         if (state.stopped) {
             return { error: 'stopped', reason: state.contact ? 'contact' : 'end-of-scenario' };
         }
-        const nextStep = Math.min(SCENARIO_TOTAL_STEPS, state.turn + 1);
+        const cap = scenarioStepCap();
+        const nextStep = Math.min(cap, state.turn + 1);
         if (nextStep === state.turn) {
             state.stopped = true;
             renderHud();
             return { error: 'stopped', reason: 'end-of-scenario' };
         }
-        const progress = nextStep / SCENARIO_TOTAL_STEPS;
-        window.AppAdjudicatorMap.applyStepProgress(nextStep, progress);
+        const progress = cap > 0 ? nextStep / cap : 0;
+        renderScenarioStep(nextStep, progress);
 
         state.turn       = nextStep;
         state.advancedKm = +(state.axis.lengthKm * progress).toFixed(1);
@@ -486,7 +508,7 @@ let activeCombats = [];
             state.contact = contact;
             state.stopped = true;
             flashContact(contact);
-        } else if (nextStep >= SCENARIO_TOTAL_STEPS) {
+        } else if (nextStep >= cap) {
             state.stopped = true;
         }
         renderHud();
@@ -501,7 +523,7 @@ let activeCombats = [];
 
     function resetScenario() {
         if (!state || !state.scenarioMode) return;
-        window.AppAdjudicatorMap.applyStepProgress(0, 0);
+        renderScenarioStep(0, 0);
         state.turn       = 0;
         state.advancedKm = 0;
         state.stopped    = false;

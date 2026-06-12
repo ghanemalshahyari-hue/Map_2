@@ -351,7 +351,7 @@
                 <div class="wg-adj-section-title">Adjudicate</div>
                 <div class="wg-adj-btn-row wg-adj-btn-row--3">
                     <button id="wg-adj-step-btn"  class="wargame-action-btn primary"   type="button">Next step</button>
-                    <button id="wg-adj-trial-btn" class="wargame-action-btn success"   type="button">Run trial (12)</button>
+                    <button id="wg-adj-trial-btn" class="wargame-action-btn success"   type="button">Run trial</button>
                     <button id="wg-adj-reset-btn" class="wargame-action-btn secondary" type="button">Reset</button>
                 </div>
                 <div class="wg-adj-form-grid">
@@ -712,6 +712,32 @@
         setStatus('Connecting to AI backend…', 'idle');
     }
 
+    // RUNFIX-1: keep the HUD's scenario selector synced to the CANONICAL active
+    // scenario. The workspace-side loaders (picker / refresh-restore / launcher)
+    // announce rmooz:active-scenario-changed after loading a scenario into
+    // window.RmoozScenario; without this sync, "Run trial" kept adjudicating the
+    // stale dropdown selection while ▶ Play animated the newly loaded scenario —
+    // two different scenarios from two "run" buttons. The loader already
+    // persisted /api/scenario/active when appropriate, so this only mirrors
+    // (sel.value set directly — no synthetic 'change', which would re-POST).
+    document.addEventListener('rmooz:active-scenario-changed', (ev) => {
+        const name = ev && ev.detail && ev.detail.name;
+        if (!name || typeof name !== 'string') return;
+        SCENARIO_DEFAULT = name;          // covers the dropdown-not-built-yet case
+        scenarioCache = null;             // next trial/step re-fetches the right one
+        const sel = $('wg-adj-scenario');
+        if (!sel) return;
+        const has = Array.prototype.some.call(sel.options, (o) => o.value === name);
+        if (has) {
+            sel.value = name;
+            updateReportLink();
+        } else {
+            // List is stale (e.g. scenario imported elsewhere): refresh it; the
+            // server's active (just set by the announcer) selects the right row.
+            loadScenarios().catch(() => {});
+        }
+    });
+
     // ── Import zone ──────────────────────────────────────────────────
     // Drop or pick an `all_phases.geojson` (or a step bundle). The file is
     // streamed straight to /api/scenario/import which runs the porter and
@@ -814,17 +840,23 @@
                 let payload = {};
                 try { payload = JSON.parse(ev.data || '{}'); } catch (_) {}
                 const sel = $('wg-adj-scenario');
-                const active = sel && sel.value;
-                // Refresh the list (catches added/removed scenarios).
+                const before = sel && sel.value;
+                // Refresh the list (catches added/removed scenarios). loadScenarios()
+                // selects the SERVER's active — the canonical scenario — so all
+                // surfaces converge on it. RUNFIX-1: the old handler re-imposed the
+                // pre-event local selection via a synthetic 'change', whose listener
+                // re-POSTs /api/scenario/active — that both reverted cross-surface
+                // scenario switches and amplified the _active.json SSE feedback loop.
+                // No synthetic 'change' here, ever: SSE is a mirror, not an intent.
                 try { await loadScenarios(); } catch (_) {}
-                if (sel && active) {
-                    sel.value = active;
-                    sel.dispatchEvent(new Event('change'));
-                }
-                if (payload.name && active && payload.name === active) {
+                updateReportLink();
+                const nowActive = sel && sel.value;
+                if (payload.name && nowActive && payload.name === nowActive) {
                     scenarioCache = null;
                     setStatus('Scenario "' + payload.name + '" updated on disk — redrawing.', 'ok');
                     try { await showScenarioOnMap(); } catch (_) {}
+                } else if (before && nowActive && before !== nowActive) {
+                    setStatus('Active scenario is now "' + nowActive + '".', 'idle');
                 }
             });
             es.onerror = () => { /* let the browser auto-reconnect */ };
@@ -840,6 +872,13 @@
         scenarioCache = r.scenario;
         publishRmoozScenario();   // PR-50B: mirror to scenario-workspace.js slot
         updateCoverageSummary();  // Update coverage summary panel
+        // Keep the Run-trial button honest: show the REAL number of adjudicated
+        // steps for the loaded scenario (was a stale hard-coded "(12)").
+        try {
+            const _tb = $('wg-adj-trial-btn');
+            const _n = (scenarioCache && Array.isArray(scenarioCache.steps)) ? scenarioCache.steps.length - 1 : 0;
+            if (_tb && _n > 0) _tb.textContent = 'Run trial (' + _n + ')';
+        } catch (_) { /* no-op */ }
         return scenarioCache;
     }
 
@@ -1263,6 +1302,44 @@
 
         // item #9 — make the feedback row visible/refreshed for this step.
         showFeedbackRow(state.step_index);
+
+        // RUNFIX-1 diagnostics: publish this run path's source summary so the
+        // Play-vs-Trial mismatch is observable (window.__rmoozRunDiag.runTrial;
+        // set window.__rmoozRunDiagVerbose=true for a console line per step).
+        publishRunDiag('runTrial', state);
+    }
+
+    // RUNFIX-1: run-path diagnostic publisher (read-only; no behavior change).
+    function publishRunDiag(pathKey, state) {
+        try {
+            const sc = scenarioCache || {};
+            const mk = (window.AppAdjudicatorMap && window.AppAdjudicatorMap.getScenarioMarkers)
+                ? window.AppAdjudicatorMap.getScenarioMarkers() : { red: [], blue: [] };
+            const sample = [].concat(mk.red || [], mk.blue || [])
+                .map(m => ({ uid: m && m._unitId, ll: m && m.getLatLng && m.getLatLng() }))
+                .filter(s => s.uid && s.ll)
+                .sort((a, b) => String(a.uid).localeCompare(String(b.uid)))
+                .slice(0, 5)
+                .map(s => ({ uid: s.uid, lat: +s.ll.lat.toFixed(5), lng: +s.ll.lng.toFixed(5) }));
+            const diag = {
+                path: 'adjudicator-hud renderStep → AppAdjudicatorMap.applyState (server-adjudicated)',
+                scenario_id: sc.scenario_id || null,
+                scenario_name: sc.name || null,
+                scenario_label: sc.scenario_label || null,
+                step_index: state && state.step_index,
+                step_count: Array.isArray(sc.steps) ? sc.steps.length : null,
+                unit_count: (Array.isArray(sc.red_units) ? sc.red_units.length : 0)
+                          + (Array.isArray(sc.blue_units_initial) ? sc.blue_units_initial.length : 0),
+                sample_units: sample,
+                world_state_projection: true,   // applyState derives the World-State snapshot
+                preview_or_live: 'live (server adjudication)',
+                scenario_source: 'hud server fetch — #wg-adj-scenario / SCENARIO_DEFAULT (' + (($('wg-adj-scenario') && $('wg-adj-scenario').value) || SCENARIO_DEFAULT) + ')',
+                ts: Date.now(),
+            };
+            window.__rmoozRunDiag = window.__rmoozRunDiag || {};
+            window.__rmoozRunDiag[pathKey] = diag;
+            if (window.__rmoozRunDiagVerbose) console.debug('[run-diag]', pathKey, diag);
+        } catch (_) { /* diagnostics never break the run */ }
     }
 
     function escapeHtml(s) {
@@ -1892,7 +1969,7 @@
             // In mock mode each call is ~5 ms; without this delay you'd
             // never see the progression. In live Ollama mode each step is
             // already ~100 s so paceMs adds little.
-            if (i < 11 && paceMs > 0) await sleep(paceMs);
+            if (i < lastStep && paceMs > 0) await sleep(paceMs);
         }
         const modeLabels = {
             live: 'Live', mock: 'Mock', model_error: 'Model err',
@@ -2071,8 +2148,28 @@
             const on = map.toggleTaskingOverlay();
             e.currentTarget.classList.toggle('active', !!on);
         });
-        root.querySelector('#wg-adj-step-btn').addEventListener('click', async () => { await ensureScenarioLoaded(); adjudicateNext(); });
-        root.querySelector('#wg-adj-trial-btn').addEventListener('click', async () => { await ensureScenarioLoaded(); runOneTrial(); });
+        // ── Canonical run dispatcher integration ─────────────────────────────
+        // The Wargame HUD is the LIVE (server-adjudicated) runner. Register it so
+        // runScenarioCanonical({mode:'live'}) routes here, and send the HUD's own
+        // Run trial / Next step buttons through the dispatcher too — so every
+        // "run the scenario" control shares one entry point.
+        function _liveRun(opts) {
+            const btn = opts && opts.sourceButton;
+            if (btn === 'wg-adj-step-btn') { ensureScenarioLoaded().then(() => adjudicateNext()); }
+            else { ensureScenarioLoaded().then(() => runOneTrial()); }
+        }
+        if (window.AppScenarioRunner && typeof window.AppScenarioRunner.registerLiveRunner === 'function') {
+            window.AppScenarioRunner.registerLiveRunner(_liveRun);
+        }
+        function _dispatchLive(sourceButton) {
+            if (window.AppScenarioRunner && typeof window.AppScenarioRunner.runScenarioCanonical === 'function') {
+                window.AppScenarioRunner.runScenarioCanonical({ mode: 'live', sourceButton });
+            } else {
+                _liveRun({ sourceButton }); // fallback when the runner module isn't present
+            }
+        }
+        root.querySelector('#wg-adj-step-btn').addEventListener('click', () => { _dispatchLive('wg-adj-step-btn'); });
+        root.querySelector('#wg-adj-trial-btn').addEventListener('click', () => { _dispatchLive('wg-adj-trial-btn'); });
         root.querySelector('#wg-adj-reset-btn').addEventListener('click', resetTrial);
         root.querySelector('#wg-adj-mc-btn').addEventListener('click', startMc);
         root.querySelector('#wg-adj-mc-cancel').addEventListener('click', cancelMc);

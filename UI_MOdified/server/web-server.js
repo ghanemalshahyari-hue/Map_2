@@ -82,6 +82,12 @@ function publishScenarioEvent(evt, data) {
     try {
         fs.watch(dir, { persistent: false }, (evType, fname) => {
             if (!fname || !/\.json$/i.test(fname)) return;
+            // RUNFIX-1: underscore-prefixed files are bookkeeping (_active.json —
+            // written by POST /api/scenario/active), not scenarios. Emitting for
+            // them created a feedback loop: POST → _active write → SSE → HUD
+            // synthetic dropdown change → POST … (a storm that also reverted any
+            // cross-surface scenario switch).
+            if (/^_/.test(String(fname))) return;
             const name = String(fname).replace(/\.json$/i, '');
             if (pending.has(name)) clearTimeout(pending.get(name));
             pending.set(name, setTimeout(() => {

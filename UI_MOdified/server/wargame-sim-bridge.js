@@ -136,6 +136,54 @@ function mkdirp(d) { try { fs.mkdirSync(d, { recursive: true }); } catch (_) {} 
 function exists(p) { try { return fs.existsSync(p); } catch (_) { return false; } }
 function readJson(p) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (_) { return null; } }
 
+function buildHead() {
+    try {
+        var r = spawnSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: ROOT, encoding: 'utf8', windowsHide: true });
+        if (r && r.status === 0 && r.stdout) return String(r.stdout).trim();
+    } catch (_) {}
+    return 'unknown';
+}
+
+function analyzeDebugPayload(payload) {
+    payload = payload || {};
+    var brief = payload.brief || {};
+    var ob = (brief && brief.operational_brief) || {};
+    var understanding = payload.understanding || {};
+    var units = Array.isArray(ob.proposed_units) ? ob.proposed_units
+        : (Array.isArray(understanding.proposed_units) ? understanding.proposed_units : []);
+    var countSide = function (side) {
+        return units.filter(function (u) { return String((u && u.side) || '').toUpperCase() === side; }).length;
+    };
+    return {
+        build_commit: buildHead(),
+        detected_type: understanding.set_label_en || payload.kind || brief.set_type || 'unknown',
+        proposed_units_count: units.length,
+        proposed_units_blue: countSide('BLUE'),
+        proposed_units_red: countSide('RED'),
+        proposed_units_neutral: countSide('NEUTRAL'),
+        placement_candidates_count: Array.isArray(ob.placement_candidates) ? ob.placement_candidates.length : 0,
+        enemy_bases_count: Array.isArray(ob.enemy_bases) ? ob.enemy_bases.length : 0,
+    };
+}
+
+function analyzeDebugEnabled() {
+    return String(process.env.RMOOZ_DEBUG_ANALYZE || '').trim() === '1';
+}
+
+function withAnalyzeDebug(payload) {
+    if (!analyzeDebugEnabled()) return payload;
+    var debug = analyzeDebugPayload(payload);
+    payload.debug = debug;
+    payload.debug_line = 'build ' + debug.build_commit +
+        ' | type ' + debug.detected_type +
+        ' | proposed_units ' + debug.proposed_units_count +
+        ' (BLUE ' + debug.proposed_units_blue + ', RED ' + debug.proposed_units_red + ', NEUTRAL ' + debug.proposed_units_neutral + ')' +
+        ' | placement_candidates ' + debug.placement_candidates_count +
+        ' | enemy_bases ' + debug.enemy_bases_count;
+    console.log('[analyze-debug]', payload.debug_line);
+    return payload;
+}
+
 function terminateChildTree(child) {
     if (!child || !child.pid) return false;
     try {
@@ -910,7 +958,7 @@ function handle(req, res, ctx) {
                     if (exists(p)) inputs.push({ slot: slot, filename: SLOT_FILE[slot], bytes: fs.readFileSync(p) });
                 });
                 if (!inputs.length) { sendJson(res, 404, { ok: false, error: 'no staged documents — upload a red and/or blue .docx, or POST a JSON brief/scenario' }); return; }
-                sendJson(res, 200, BRIEF.analyzeDocuments(inputs));
+                sendJson(res, 200, withAnalyzeDebug(BRIEF.analyzeDocuments(inputs)));
             } catch (e) { sendJson(res, 500, { ok: false, error: 'analyze failed: ' + (e && e.message) }); }
         };
         if (method === 'GET') { analyzeStaged(); return true; }
@@ -928,7 +976,7 @@ function handle(req, res, ctx) {
                 return;
             }
             try {
-                var analyzeDiagEnabled = String(process.env.RMOOZ_ANALYZE_DIAG || '').trim() === '1';
+                var analyzeDiagEnabled = analyzeDebugEnabled();
                 var analyzeDiag = function (filename, content, det, adaptedOb) {
                     if (!analyzeDiagEnabled) return;
                     var step1 = BRIEF.getExternalStep1Root(content);
@@ -983,7 +1031,7 @@ function handle(req, res, ctx) {
                     for (var ai = 0; ai < entries.length; ai++) {
                         analyzeDiag(entries[ai].filename, entries[ai].data, BRIEF.detectMdmp(entries[ai].data), bundleOut.brief.operational_brief);
                     }
-                    sendJson(res, 200, {
+                    sendJson(res, 200, withAnalyzeDebug({
                         ok: true, kind: 'mdmp_external', bundle: true,
                         steps_present: bundleOut.report.steps_present,
                         requires_review: true, confidence: 'low',
@@ -993,7 +1041,7 @@ function handle(req, res, ctx) {
                         documents: bundleOut.brief.documents,
                         understanding: BRIEF.understandingFromBrief(bundleOut.brief),
                         llm_fill: { available: false, reason: 'External MDMP bundle adapted deterministically; LLM enrichment runs on deployment' },
-                    });
+                    }));
                     return;
                 }
                 var kind = BRIEF.classifyJsonInput(body);
@@ -1003,23 +1051,23 @@ function handle(req, res, ctx) {
                     var clone = JSON.parse(JSON.stringify(body));
                     var nr = NORMALIZER.normalizeScenario(clone);
                     var v2 = VALIDATOR.validateScenario(clone);
-                    sendJson(res, 200, {
+                    sendJson(res, 200, withAnalyzeDebug({
                         ok: true, kind: 'rmooz_scenario',
                         validation: validation, normalization: nr.report, normalized_validation: v2,
                         loadable: v2.ok, understanding: BRIEF.understandingFromScenario(clone),
                         llm_fill: { available: false, reason: 'RMOOZ scenario JSON — validated + normalized deterministically' },
-                    });
+                    }));
                 } else if (kind === 'operational_brief') {
                     analyzeDiag('(posted body)', body, BRIEF.detectMdmp(body), null);
                     var vb = BRIEF.validateBrief(body);
                     var nb = BRIEF.normalizeBrief(body);
-                    sendJson(res, 200, {
+                    sendJson(res, 200, withAnalyzeDebug({
                         ok: true, kind: 'operational_brief',
                         validation: vb, brief: nb, documents: nb.documents,
                         document_set_id: nb.document_set_id, set_type: nb.set_type || 'operational_brief',
                         understanding: BRIEF.understandingFromBrief(nb),
                         llm_fill: { available: false, reason: 'Operational Brief provided directly' },
-                    });
+                    }));
                 } else if (kind === 'mdmp_external') {
                     // MDMP-EXTERNAL-1 / G-2: single external MDMP-stage file →
                     // the dedicated adapter (placeholder scrub + citations).
@@ -1028,7 +1076,7 @@ function handle(req, res, ctx) {
                     var det = BRIEF.detectMdmp(body);
                     var single = MDMP_ADAPTER.adaptMdmpBundle([{ filename: '(posted body)', data: body }]);
                     analyzeDiag('(posted body)', body, det, single.brief.operational_brief);
-                    sendJson(res, 200, {
+                    sendJson(res, 200, withAnalyzeDebug({
                         ok: true, kind: 'mdmp_external', mdmp_step: det.step, matched_keys: det.matched,
                         requires_review: true, confidence: 'low',
                         adapter: 'mdmp-external-adapter@1',
@@ -1036,15 +1084,15 @@ function handle(req, res, ctx) {
                         document_set_id: single.brief.document_set_id,
                         understanding: BRIEF.understandingFromBrief(single.brief),
                         llm_fill: { available: false, reason: 'External MDMP file adapted deterministically (' + det.step + '); LLM enrichment runs on deployment' },
-                    });
+                    }));
                 } else {
                     var u = BRIEF.unknownToBrief(body);
-                    sendJson(res, 200, {
+                    sendJson(res, 200, withAnalyzeDebug({
                         ok: true, kind: 'unknown', requires_review: true, confidence: 'low',
                         brief: u.brief, mapped: u.mapped, document_set_id: u.brief.document_set_id,
                         understanding: BRIEF.understandingFromBrief(u.brief),
                         llm_fill: { available: false, reason: 'Unknown JSON mapped best-effort into a brief — review required' },
-                    });
+                    }));
                 }
             } catch (e) { sendJson(res, 500, { ok: false, error: 'analyze failed: ' + (e && e.message) }); }
         });

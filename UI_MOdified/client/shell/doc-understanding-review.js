@@ -48,6 +48,27 @@
     function opBrief(p) {
         return (p && p.brief && p.brief.operational_brief) || (p && p.operational_brief) || {};
     }
+    function proposedUnits(p) {
+        var ob = opBrief(p);
+        return (Array.isArray(ob.proposed_units) && ob.proposed_units.length) ? ob.proposed_units :
+            ((p && p.understanding && Array.isArray(p.understanding.proposed_units)) ? p.understanding.proposed_units : []);
+    }
+    function proposedCounts(p) {
+        var u = (p && p.understanding) || {};
+        var pc = u.proposed_unit_counts || {};
+        var units = proposedUnits(p);
+        if (units.length) {
+            var counts = { blue: 0, red: 0, neutral: 0 };
+            units.forEach(function (unit) {
+                var side = String((unit && unit.side) || '').toUpperCase();
+                if (side === 'BLUE') counts.blue++;
+                else if (side === 'NEUTRAL') counts.neutral++;
+                else counts.red++;
+            });
+            return counts;
+        }
+        return { blue: pc.blue || 0, red: pc.red || 0, neutral: pc.neutral || 0 };
+    }
     function fieldRow(label, value) {
         if (value == null || value === '' || (Array.isArray(value) && !value.length)) return '';
         var text = Array.isArray(value) ? value.join(', ') : value;
@@ -109,9 +130,7 @@
         return html;
     }
     function renderProposedUnits(p) {
-        var ob = opBrief(p);
-        var units = (Array.isArray(ob.proposed_units) && ob.proposed_units.length) ? ob.proposed_units :
-            ((p.understanding && Array.isArray(p.understanding.proposed_units)) ? p.understanding.proposed_units : []);
+        var units = proposedUnits(p);
         if (!units.length) return '';
         var groups = {};
         units.forEach(function (u) {
@@ -258,13 +277,23 @@
         handlers = handlers || {};
         p = p || {};
         var u = p.understanding || {};
-        var pc = u.proposed_unit_counts || {};
+        var pc = proposedCounts(p);
         var html = '<div style="font-size:14px;color:#7fd6a0;font-weight:600;margin-bottom:8px;">AI understood this as — فهم الذكاء الاصطناعي</div>';
         html += '<div style="margin-bottom:8px;">' + chip('Type / النوع', (u.set_label_en || '') + ' — ' + (u.set_label_ar || ''), '#7fd6a0');
         (p.documents || []).forEach(function (d) {
             html += chip(d.filename || (d.hash || '').slice(0, 8), (d.type_label_en || d.detected_type) + ' · ' + Math.round((d.confidence || 0) * 100) + '%');
         });
         html += '</div>';
+        if (p.debug_line || p.debug) {
+            var dbg = p.debug || {};
+            var debugLine = p.debug_line || ('build ' + (dbg.build_commit || '?') +
+                ' | type ' + (dbg.detected_type || u.set_label_en || '?') +
+                ' | proposed_units ' + (dbg.proposed_units_count || 0) +
+                ' | placement_candidates ' + (dbg.placement_candidates_count || 0) +
+                ' | enemy_bases ' + (dbg.enemy_bases_count || 0));
+            html += '<div style="margin:0 0 8px;padding:5px 7px;border:1px solid #4a5a6a;background:#101820;color:#cfe6ff;border-radius:4px;font-size:11px;font-family:Consolas,monospace;direction:ltr;text-align:left;">' +
+                esc(debugLine) + '</div>';
+        }
         if (p.dedupe && p.dedupe.same_in_both_slots) {
             html += '<div style="margin-bottom:8px;padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:12px;">' +
                 '⮕ Same document in both slots — treated as ONE Mixed Operational Document. نفس الوثيقة في الخانتين — عوملت كوثيقة عمليات واحدة.</div>';

@@ -1,0 +1,383 @@
+{
+  "type": "FeatureCollection",
+  "app": {
+    "version": 3,
+    "appName": "tactical-map"
+  },
+  "__layers": [
+    {
+      "id": "layer-1",
+      "name": "Layer 1",
+      "visible": true,
+      "active": false
+    },
+    {
+      "id": "layer-2",
+      "name": "frontline-persistence-verification",
+      "visible": true,
+      "active": false
+    },
+    {
+      "id": "layer-3",
+      "name": "frontline-persistence-verification-fallback (imported)",
+      "visible": true,
+      "active": true
+    }
+  ],
+  "__folders": [],
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            54.94,
+            24.7
+          ],
+          [
+            54.94,
+            24.7
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            54.94,
+            24.7
+          ],
+          "latlng2": [
+            54.94,
+            24.7
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5,
+          "sessionId": "verify-frontline-1781235294848"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            54.98,
+            24.735
+          ],
+          [
+            54.98,
+            24.735
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            54.98,
+            24.735
+          ],
+          "latlng2": [
+            54.98,
+            24.735
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5,
+          "sessionId": "verify-frontline-1781235294848"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            55.03,
+            24.71
+          ],
+          [
+            55.03,
+            24.71
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            55.03,
+            24.71
+          ],
+          "latlng2": [
+            55.03,
+            24.71
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5,
+          "sessionId": "verify-frontline-1781235294848"
+        },
+        "layerId": "layer-1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            54.94,
+            24.7
+          ],
+          [
+            54.98,
+            24.735
+          ],
+          [
+            55.03,
+            24.71
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-group",
+          "points": [
+            [
+              54.94,
+              24.7
+            ],
+            [
+              54.98,
+              24.735
+            ],
+            [
+              55.03,
+              24.71
+            ]
+          ],
+          "typeId": "scalloped",
+          "color": "#3b82f6",
+          "filled": true,
+          "dashed": false,
+          "strokeWidth": 2,
+          "sessionId": "verify-frontline-1781235294848",
+          "scallopSide": 1
+        },
+        "layerId": "layer-3"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              54.98100070778384,
+              24.734938690433484
+            ],
+            [
+              55.03051757812501,
+              24.709410369765177
+            ],
+            [
+              55.02090454101563,
+              24.78174733781577
+            ],
+            [
+              54.975348543034244,
+              24.776733806947174
+            ],
+            [
+              54.98100070778384,
+              24.734938690433484
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polygon",
+          "color": "#3b82f6",
+          "weight": 3,
+          "fillColor": "#3b82f6",
+          "fillOpacity": 0.08,
+          "dashArray": null,
+          "autoFlank": {
+            "area": true,
+            "typeId": "auto-flank-area",
+            "sessionId": "verify-frontline-1781235294848",
+            "tag": "battalion",
+            "lengthKm": 8,
+            "parentUnitId": null,
+            "areaRole": null,
+            "className": "auto-flank-area",
+            "stroke": false
+          }
+        },
+        "layerId": "layer-3"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            55.03051757812501,
+            24.709410369765177
+          ],
+          [
+            55.02090454101563,
+            24.78174733781577
+          ],
+          [
+            54.975348543034244,
+            24.776733806947174
+          ],
+          [
+            54.98100070778384,
+            24.734938690433484
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 3,
+          "dashArray": null,
+          "autoFlank": {
+            "area": true,
+            "typeId": "auto-flank-area-outline",
+            "sessionId": "verify-frontline-1781235294848",
+            "tag": "battalion",
+            "lengthKm": 8,
+            "parentUnitId": null,
+            "areaRole": null,
+            "className": "auto-flank-area-outline"
+          }
+        },
+        "layerId": "layer-3"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              54.975348543034244,
+              24.776733806947174
+            ],
+            [
+              54.93026733398438,
+              24.77177232822881
+            ],
+            [
+              54.93988037109376,
+              24.69942955501979
+            ],
+            [
+              54.979705810546875,
+              24.735606201766874
+            ],
+            [
+              54.98100070778384,
+              24.734938690433484
+            ],
+            [
+              54.975348543034244,
+              24.776733806947174
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polygon",
+          "color": "#3b82f6",
+          "weight": 3,
+          "fillColor": "#3b82f6",
+          "fillOpacity": 0.08,
+          "dashArray": null,
+          "autoFlank": {
+            "area": true,
+            "typeId": "auto-flank-area",
+            "sessionId": "verify-frontline-1781235294848",
+            "tag": "battalion",
+            "lengthKm": 8,
+            "parentUnitId": null,
+            "areaRole": null,
+            "className": "auto-flank-area",
+            "stroke": false
+          }
+        },
+        "layerId": "layer-3"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            54.98100070778384,
+            24.734938690433484
+          ],
+          [
+            54.975348543034244,
+            24.776733806947174
+          ],
+          [
+            54.975348543034244,
+            24.776733806947174
+          ],
+          [
+            54.93026733398438,
+            24.77177232822881
+          ],
+          [
+            54.93988037109376,
+            24.69942955501979
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 3,
+          "dashArray": null,
+          "autoFlank": {
+            "area": true,
+            "typeId": "auto-flank-area-outline",
+            "sessionId": "verify-frontline-1781235294848",
+            "tag": "battalion",
+            "lengthKm": 8,
+            "parentUnitId": null,
+            "areaRole": null,
+            "className": "auto-flank-area-outline"
+          }
+        },
+        "layerId": "layer-3"
+      }
+    }
+  ]
+}

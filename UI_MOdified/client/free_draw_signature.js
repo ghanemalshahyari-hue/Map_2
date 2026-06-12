@@ -1246,6 +1246,27 @@
             controls.appendChild(newAreaBtn);
         }
 
+        if (!controls.querySelector('#fd-frontline-debug-row')) {
+            const debugRow = document.createElement('div');
+            debugRow.id = 'fd-frontline-debug-row';
+            debugRow.style.cssText = 'display:flex;gap:6px;width:100%;';
+            const debugBtn = document.createElement('button');
+            debugBtn.id = 'fd-frontline-debug-btn';
+            debugBtn.type = 'button';
+            debugBtn.textContent = 'Debug Front Line';
+            debugBtn.style.cssText = 'flex:1;margin-top:4px;padding:6px;border-radius:6px;border:1px solid #f59e0b;background:rgba(245,158,11,0.12);color:#fbbf24;font-size:0.75rem;font-weight:700;cursor:pointer;';
+            debugBtn.addEventListener('click', () => window.RMOOZFrontLineDebug?.show?.());
+            const flipBtn = document.createElement('button');
+            flipBtn.id = 'fd-frontline-flip-btn';
+            flipBtn.type = 'button';
+            flipBtn.textContent = 'Flip Side';
+            flipBtn.style.cssText = 'flex:1;margin-top:4px;padding:6px;border-radius:6px;border:1px solid #38bdf8;background:rgba(56,189,248,0.12);color:#7dd3fc;font-size:0.75rem;font-weight:700;cursor:pointer;';
+            flipBtn.addEventListener('click', () => window.RMOOZFrontLineDebug?.flip?.());
+            debugRow.appendChild(debugBtn);
+            debugRow.appendChild(flipBtn);
+            controls.appendChild(debugRow);
+        }
+
         controls.style.display = 'flex';
         // Advance stage so the global dismiss handler may hide this panel when idle
         stage = 'post-flank';

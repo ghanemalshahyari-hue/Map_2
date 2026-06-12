@@ -479,6 +479,10 @@
                 filled: el._tmgData.filled !== false,
                 dashed: el._tmgData.dashed || false,
                 strokeWidth: el._tmgData.strokeWidth ?? 4,
+                sessionId: el._tmgData.sessionId || segs[0]?._tmgData?.sessionId || undefined,
+                scallopSide: el._tmgData.typeId === 'scalloped'
+                    ? ((segs[0]?._tmgData?.scallopSide === -1) ? -1 : 1)
+                    : undefined,
             };
         }
         // Auto-flank echelon labels (X / II / I on AOI boundary lines) are
@@ -498,6 +502,7 @@
                 filled: d.filled !== false, dashed: d.dashed || false,
                 strokeWidth: d.strokeWidth ?? 4,
                 sessionId: d.sessionId || undefined,
+                scallopSide: d.typeId === 'scalloped' ? (d.scallopSide === 1 ? 1 : -1) : undefined,
             };
         }
         if (el instanceof L.Marker) {
@@ -1019,7 +1024,7 @@
                             layer.group.addLayer(group);
                         }
                     } else {
-                        const seg = createTmgLayer(latlng1, latlng2, tid, elData.color || '#3b82f6', false, false, { filled: elData.filled !== false, dashed: elData.dashed || false, strokeWidth: elData.strokeWidth ?? 4 });
+                        const seg = createTmgLayer(latlng1, latlng2, tid, elData.color || '#3b82f6', false, false, { filled: elData.filled !== false, dashed: elData.dashed || false, strokeWidth: elData.strokeWidth ?? 4, scallopSide: elData.scallopSide === 1 ? 1 : -1 });
                         if (seg) {
                             Object.assign(seg._tmgData, applyImportedDisplayNameProps(elData));
                             if (elData.sessionId) seg._tmgData.sessionId = elData.sessionId;
@@ -1068,9 +1073,10 @@
                                 layer.group.addLayer(group);
                             }
                         } else {
-                            const seg = createTmgLayer(pts[0], pts[1], typeId, color, false, false, { filled, dashed, strokeWidth });
+                            const seg = createTmgLayer(pts[0], pts[1], typeId, color, false, false, { filled, dashed, strokeWidth, scallopSide: elData.scallopSide === 1 ? 1 : -1 });
                             if (seg) {
                                 Object.assign(seg._tmgData, applyImportedDisplayNameProps(elData));
+                                if (elData.sessionId) seg._tmgData.sessionId = elData.sessionId;
                                 seg._layerId = layer.id;
                                 layer.elements.push(seg);
                                 layer.group.addLayer(seg);
@@ -1081,14 +1087,15 @@
                         const segments = [];
                         for (let i = 0; i < pts.length - 1; i++) {
                             const useBodyOnly = i < pts.length - 2;
-                            const seg = createTmgLayer(pts[i], pts[i + 1], typeId, color, useBodyOnly, true, { filled, dashed, strokeWidth });
+                            const seg = createTmgLayer(pts[i], pts[i + 1], typeId, color, useBodyOnly, true, { filled, dashed, strokeWidth, scallopSide: elData.scallopSide === 1 ? 1 : -1 });
                             if (seg) {
+                                if (elData.sessionId) seg._tmgData.sessionId = elData.sessionId;
                                 group.addLayer(seg);
                                 segments.push(seg);
                                 seg.on('click', () => group.openPopup(seg.getLatLng()));
                             }
                         }
-                        group._tmgData = { segments, typeId, color, filled, dashed, strokeWidth, ...applyImportedDisplayNameProps(elData) };
+                        group._tmgData = { segments, typeId, color, filled, dashed, strokeWidth, sessionId: elData.sessionId || undefined, ...applyImportedDisplayNameProps(elData) };
                         group.bindPopup(window.AppPopups.buildGroupTmgPopupContent(group));
                         group.on('popupclose', () => removeTmgResizeHandle());
                         group.on('popupopen', () => {

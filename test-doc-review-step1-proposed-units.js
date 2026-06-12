@@ -184,6 +184,10 @@ assert(rawValidCaps.status === 'map_ready', 'raw valid Step 1 capability status 
 assert(rawValidCaps.proposed_unit_count === 83, 'raw valid Step 1 capability counts 83 units');
 assert(rawValidCaps.placement_candidate_count === 36, 'raw valid Step 1 capability counts 36 placement candidates');
 assert(rawValidCaps.enemy_base_count === 32, 'raw valid Step 1 capability counts 32 nested RED bases');
+assert(window.RmoozDocReview.assessReviewPayloadCapabilities({
+    brief: { operational_brief: rawValidStep1 },
+    placement: { placement_candidates: rawValidPlacements.slice(0, 12) },
+}).placement_candidate_count === 12, 'attached placement result is not double-counted with brief placement_candidates');
 assert(rawValidHtml.indexOf('BLUE 7 / RED 76 / NEUTRAL 0') !== -1, 'raw valid Step 1 shows 83 proposed units');
 assert(rawValidHtml.indexOf('RED bases') !== -1 && rawValidHtml.indexOf('<b>32</b>') !== -1, 'raw valid Step 1 shows 32 nested RED bases');
 assert(rawValidHtml.indexOf('Nested RED Base 1') !== -1, 'raw valid Step 1 renders nested enemy_forces.bases');

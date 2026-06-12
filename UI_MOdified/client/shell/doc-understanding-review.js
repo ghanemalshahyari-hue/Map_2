@@ -101,6 +101,10 @@
         var ob = opBrief(p);
         var src = (p && p.placement) || p || {};
         var out = [];
+        if (p && p.placement) {
+            if (Array.isArray(src.placement_candidates)) return src.placement_candidates;
+            if (Array.isArray(src.candidates)) return src.candidates;
+        }
         if (Array.isArray(ob.placement_candidates)) out = out.concat(ob.placement_candidates);
         if (src !== ob && Array.isArray(src.placement_candidates)) out = out.concat(src.placement_candidates);
         if (src !== ob && Array.isArray(src.candidates)) out = out.concat(src.candidates);
